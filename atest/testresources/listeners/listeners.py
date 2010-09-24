@@ -1,6 +1,8 @@
 import os
 import tempfile
 
+from robot.libraries.BuiltIn import BuiltIn
+
 
 class ListenSome:
     ROBOT_LISTENER_API_VERSION = '2'
@@ -55,3 +57,28 @@ class SuiteAndTestCounts(object):
         if not data == self.exp_data[name]:
             raise RuntimeError('Wrong tests or suites in %s, %s != %s' %
                                (name, self.exp_data[name], data))
+
+
+class KeywordExecutingListener(object):
+    ROBOT_LISTENER_API_VERSION = '2'
+
+    def start_suite(self, name, attrs):
+        self._start(name)
+
+    def end_suite(self, name, attrs):
+        self._end(name)
+
+    def start_test(self, name, attrs):
+        self._start(name)
+
+    def end_test(self, name, attrs):
+        self._end(name)
+
+    def _start(self, name):
+        self._run_keyword('Start %s' % name)
+
+    def _end(self, name):
+        self._run_keyword('End %s' % name)
+
+    def _run_keyword(self, arg):
+        BuiltIn().run_keyword('Log', arg)
