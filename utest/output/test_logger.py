@@ -1,22 +1,22 @@
 import unittest
 
-from robot.utils.asserts import *
+from robot.utils.asserts import assert_equals, assert_true, assert_false
 
 from robot.output.logger import _Logger, CommandLineMonitor
 
 
 class MessageMock:
-    
+
     def __init__(self, timestamp, level, message):
         self.timestamp = timestamp
         self.level = level
         self.message = message
-    
+
 class LoggerMock:
 
     def __init__(self, *expected):
         self.expected = list(expected)
-    
+
     def message(self, msg):
         exp_msg, exp_level = self.expected.pop(0)
         assert_equals(msg.level, exp_level)
@@ -36,7 +36,7 @@ class LoggerMock2(LoggerMock):
 
 
 class TestLogger(unittest.TestCase):
-    
+
     def setUp(self):
         self.logger = _Logger()
         self.logger.disable_automatic_console_logger()
@@ -46,13 +46,13 @@ class TestLogger(unittest.TestCase):
         self.logger.register_logger(logger)
         self.logger.write('Hello, world!', 'INFO')
         assert_true(logger.msg.timestamp.startswith('20'))
-        
+
     def test_write_to_one_logger_with_trace_level(self):
         logger = LoggerMock(('expected message', 'TRACE'))
         self.logger.register_logger(logger)
         self.logger.write('expected message', 'TRACE')
         assert_true(hasattr(logger, 'msg'))
-    
+
     def test_write_to_multiple_loggers(self):
         logger = LoggerMock(('Hello, world!', 'INFO'))
         logger2 = logger.copy()
@@ -70,7 +70,7 @@ class TestLogger(unittest.TestCase):
             self.logger.write(msg, level)
             assert_equals(logger.msg.message, msg)
             assert_equals(logger.msg.level, level)
-        
+
     def test_all_methods(self):
         logger = LoggerMock2(('Hello, world!', 'INFO'))
         self.logger.register_logger(logger)
@@ -99,7 +99,7 @@ class TestLogger(unittest.TestCase):
     def test_cached_messages_are_given_to_registered_writers(self):
         self.logger.write('This is a cached message', 'INFO')
         self.logger.write('Another cached message', 'TRACE')
-        logger = LoggerMock(('This is a cached message', 'INFO'), 
+        logger = LoggerMock(('This is a cached message', 'INFO'),
                             ('Another cached message', 'TRACE'))
         self.logger.register_logger(logger)
         assert_equals(logger.msg.message, 'Another cached message')
@@ -123,12 +123,12 @@ class TestLogger(unittest.TestCase):
         self.logger.register_logger(logger)
         for name in 'suite', 'test', 'keyword':
             for stend in 'start', 'end':
-                getattr(self.logger, stend+'_'+name)(name)
-                assert_equals(getattr(logger, stend+'ed_'+name), name)
+                getattr(self.logger, stend + '_' + name)(name)
+                assert_equals(getattr(logger, stend + 'ed_' + name), name)
 
     def test_console_logger_is_automatically_registered(self):
         logger = _Logger()
-        assert_true(logger._loggers[0].start_suite.im_class is CommandLineMonitor) 
+        assert_true(logger._loggers[0].start_suite.im_class is CommandLineMonitor)
 
     def test_automatic_console_logger_can_be_disabled(self):
         logger = _Logger()
@@ -141,7 +141,7 @@ class TestLogger(unittest.TestCase):
         logger.register_logger(mock)
         logger.disable_automatic_console_logger()
         assert_equals(len(logger._loggers), 1)
-        assert_true(logger._loggers[0].message.im_class is LoggerMock) 
+        assert_true(logger._loggers[0].message.im_class is LoggerMock)
 
     def test_disabling_automatic_logger_multiple_times_has_no_effect(self):
         logger = _Logger()
