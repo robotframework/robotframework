@@ -46,7 +46,7 @@ class Logger(AbstractLogger):
     def disable_automatic_console_logger(self):
         if not self._console_logger_disabled:
             self._console_logger_disabled = True
-            self._loggers.remove_first_regular_logger()
+            return self._loggers.remove_first_regular_logger()
 
     def register_logger(self, *loggers):
         for log in loggers:
@@ -92,14 +92,14 @@ class Logger(AbstractLogger):
 
     def message(self, msg):
         """Messages about what the framework is doing, warnings, errors, ..."""
-        for logger in self._loggers.get_loggers():
+        for logger in self._loggers.all_loggers():
             logger.message(msg)
         if self._message_cache is not None:
             self._message_cache.append(msg)
 
     def log_message(self, msg):
         """Log messages written (mainly) by libraries"""
-        for logger in self._loggers.get_loggers():
+        for logger in self._loggers.all_loggers():
             logger.log_message(msg)
         if msg.level == 'WARN':
             msg.linkable = True
@@ -111,37 +111,37 @@ class Logger(AbstractLogger):
 
     def output_file(self, name, path):
         """Finished output, report, log, summary or debug file (incl. split)"""
-        for logger in self._loggers.get_loggers():
+        for logger in self._loggers.all_loggers():
             logger.output_file(name, path)
 
     def close(self):
-        for logger in self._loggers.get_loggers():
+        for logger in self._loggers.all_loggers():
             logger.close()
         self._loggers = LoggerCollection()
         self._message_cache = []
 
     def start_suite(self, suite):
-        for logger in self._loggers.get_starting_loggers():
+        for logger in self._loggers.starting_loggers():
             logger.start_suite(suite)
 
     def end_suite(self, suite):
-        for logger in self._loggers.get_ending_loggers():
+        for logger in self._loggers.ending_loggers():
             logger.end_suite(suite)
 
     def start_test(self, test):
-        for logger in self._loggers.get_starting_loggers():
+        for logger in self._loggers.starting_loggers():
             logger.start_test(test)
 
     def end_test(self, test):
-        for logger in self._loggers.get_ending_loggers():
+        for logger in self._loggers.ending_loggers():
             logger.end_test(test)
 
     def start_keyword(self, keyword):
-        for logger in self._loggers.get_starting_loggers():
+        for logger in self._loggers.starting_loggers():
             logger.start_keyword(keyword)
 
     def end_keyword(self, keyword):
-        for logger in self._loggers.get_ending_loggers():
+        for logger in self._loggers.ending_loggers():
             logger.end_keyword(keyword)
 
 
@@ -169,13 +169,13 @@ class LoggerCollection(object):
                                           in self._context_changing_loggers
                                           if proxy.logger is not logger]
 
-    def get_starting_loggers(self):
-        return self.get_loggers()
+    def starting_loggers(self):
+        return self.all_loggers()
 
-    def get_ending_loggers(self):
+    def ending_loggers(self):
         return self._regular_loggers + self._context_changing_loggers
 
-    def get_loggers(self):
+    def all_loggers(self):
         return self._context_changing_loggers + self._regular_loggers
 
 
