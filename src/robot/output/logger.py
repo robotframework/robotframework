@@ -22,7 +22,7 @@ from filelogger import FileLogger
 from monitor import CommandLineMonitor
 
 
-class _Logger(AbstractLogger):
+class Logger(AbstractLogger):
     """A global logger proxy to which new loggers may be registered.
 
     Whenever something is written to LOGGER in code, all registered loggers are
@@ -150,4 +150,4 @@ class _LoggerProxy(AbstractLoggerProxy):
                 'start_keyword', 'end_keyword']
 
 
-LOGGER = _Logger()
+LOGGER = Logger()

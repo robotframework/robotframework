@@ -2,7 +2,7 @@ import unittest
 
 from robot.utils.asserts import assert_equals, assert_true, assert_false
 
-from robot.output.logger import _Logger, CommandLineMonitor
+from robot.output.logger import Logger, CommandLineMonitor
 
 
 class MessageMock:
@@ -38,7 +38,7 @@ class LoggerMock2(LoggerMock):
 class TestLogger(unittest.TestCase):
 
     def setUp(self):
-        self.logger = _Logger()
+        self.logger = Logger()
         self.logger.disable_automatic_console_logger()
 
     def test_write_to_one_logger(self):
@@ -112,14 +112,14 @@ class TestLogger(unittest.TestCase):
         assert_false(hasattr(logger, 'msg'))
 
     def test_start_and_end_suite_test_and_keyword(self):
-        class Logger:
+        class MyLogger:
             def start_suite(self, suite): self.started_suite = suite
             def end_suite(self, suite): self.ended_suite = suite
             def start_test(self, test): self.started_test = test
             def end_test(self, test): self.ended_test = test
             def start_keyword(self, keyword): self.started_keyword = keyword
             def end_keyword(self, keyword): self.ended_keyword = keyword
-        logger = Logger()
+        logger = MyLogger()
         self.logger.register_logger(logger)
         for name in 'suite', 'test', 'keyword':
             for stend in 'start', 'end':
@@ -127,16 +127,16 @@ class TestLogger(unittest.TestCase):
                 assert_equals(getattr(logger, stend + 'ed_' + name), name)
 
     def test_console_logger_is_automatically_registered(self):
-        logger = _Logger()
+        logger = Logger()
         assert_true(logger._loggers[0].start_suite.im_class is CommandLineMonitor)
 
     def test_automatic_console_logger_can_be_disabled(self):
-        logger = _Logger()
+        logger = Logger()
         logger.disable_automatic_console_logger()
         assert_equals(logger._loggers, [])
 
     def test_automatic_console_logger_can_be_disabled_after_registering_logger(self):
-        logger = _Logger()
+        logger = Logger()
         mock = LoggerMock()
         logger.register_logger(mock)
         logger.disable_automatic_console_logger()
@@ -144,7 +144,7 @@ class TestLogger(unittest.TestCase):
         assert_true(logger._loggers[0].message.im_class is LoggerMock)
 
     def test_disabling_automatic_logger_multiple_times_has_no_effect(self):
-        logger = _Logger()
+        logger = Logger()
         logger.disable_automatic_console_logger()
         assert_equals(len(logger._loggers), 0)
         logger.disable_automatic_console_logger()
@@ -155,7 +155,7 @@ class TestLogger(unittest.TestCase):
         assert_equals(len(logger._loggers), 1)
 
     def test_registering_console_logger_disables_automatic_console_logger(self):
-        logger = _Logger()
+        logger = Logger()
         logger.register_console_logger(width=42)
         assert_equals(len(logger._loggers), 1)
         assert_equals(logger._loggers[0].start_suite.im_self._width, 42)
