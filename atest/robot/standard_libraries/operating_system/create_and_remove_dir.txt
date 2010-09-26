@@ -32,3 +32,9 @@ Emptying Non-Existing Directory Fails
 Emptying Dir When Directory Is File Fails
     Check Test Case  ${TESTNAME}
 
+Create And Remove Non-ASCII Directory
+    Check Test Case  ${TESTNAME}
+
+Create And Remove Directory With Space
+    Check Test Case  ${TESTNAME}
+

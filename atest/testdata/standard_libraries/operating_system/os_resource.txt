@@ -6,13 +6,15 @@ ${BASE}          ${TEMPDIR}${/}robot-os-tests
 ${TESTFILE}      ${BASE}${/}f1.txt
 ${TESTFILE 2}    ${BASE}${/}f2.txt
 ${TESTDIR}       ${BASE}${/}d1
+${NON ASCII}     ${BASE}${/}ŋöñ-äßçíï
+${WITH SPACE}    ${BASE}${/}with space
 ${ANYDIR}        .*[/\\\\]
 
 *** Keywords ***
 Create And Verify File
-    [Arguments]  ${content}  ${encoding}
-    Create File  ${TESTFILE}  ${content}  ${encoding}
-    Verify File  ${TESTFILE}  ${content}  ${encoding}
+    [Arguments]  ${content}=content  ${encoding}=UTF-8  ${file}=${TESTFILE}
+    Create File  ${file}  ${content}  ${encoding}
+    Verify File  ${file}  ${content}  ${encoding}
 
 Verify File
     [Arguments]  ${path}  ${expected}  ${encoding}=UTF-8

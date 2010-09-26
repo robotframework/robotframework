@@ -11,6 +11,12 @@ Create File
 Create File With Encoding
     Check Test Case  ${TESTNAME}
 
+Create Non-Ascii File
+    Check Test Case  ${TESTNAME}
+
+Create File With Space In Name
+    Check Test Case  ${TESTNAME}
+
 Create File Fails If Encoding Is Incorrect
     Check Test Case  ${TESTNAME}
 

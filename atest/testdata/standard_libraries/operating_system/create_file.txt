@@ -11,12 +11,19 @@ Create File
     Verify File  ${TESTFILE}  This is content in\n3\nlines
 
 Create File With Encoding
-    Create And Verify FIle  Just normal ASCII  ASCII
-    Create And Verify FIle  Hyvää yötä!  UTF-8
-    Create And Verify FIle  Hyvää yötä!  ISO-8859-1
+    Create And Verify File  Just normal ASCII  ASCII
+    Create And Verify File  Hyvää yötä!  UTF-8
+    Create And Verify File  Hyvää yötä!  ISO-8859-1
     ${russian} =  Evaluate  u'\\u0421\\u043F\\u0430\\u0441\\u0438\\u0431\\u043E'
-    Create And Verify FIle  ${russian}  UTF-8
-    Create And Verify FIle  ${russian}  ISO-8859-5
+    Create And Verify File  ${russian}  UTF-8
+    Create And Verify File  ${russian}  ISO-8859-5
+
+Create Non-Ascii File
+    Create And Verify File  ASCII content  file=${NON ASCII}
+    Create And Verify File  ${NON ASCII}   file=${NON ASCII}
+
+Create File With Space In Name
+    Create And Verify File  file=${WITH SPACE}
 
 Create File Fails If Encoding Is Incorrect
     [Documentation]  FAIL REGEXP: Unicode(Encode|)Error: .*
