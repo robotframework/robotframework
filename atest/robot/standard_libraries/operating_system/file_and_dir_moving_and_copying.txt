@@ -6,26 +6,32 @@ Resource        atest_resource.txt
 
 *** Test Cases ***
 Move File
-    Check testcase  Move File
+    Check testcase  ${TESTNAME}
 
 Move File To Existing Dir
-    Check testcase  Move File To Existing Dir
+    Check testcase  ${TESTNAME}
 
 Move File To Non-Existing Dir
-    Check testcase  Move File To Non-Existing Dir
+    Check testcase  ${TESTNAME}
 
 Move File Using Just File Name
-    Check testcase  Move File Using Just File Name
+    Check testcase  ${TESTNAME}
 
 Moving Non-Existing File Fails
-    Check testcase  Moving Non-Existing File Fails
+    Check testcase  ${TESTNAME}
 
 Move Directory
-    Check testcase  Move Directory
+    Check testcase  ${TESTNAME}
+
+Move Directory To Existing Dir
+    Check testcase  ${TESTNAME}
+
+Move Directory To Non-Existing Dir Tree
+    Check testcase  ${TESTNAME}
 
 Move Directory Using Just Dir Name
-    Check testcase  Move Directory Using Just Dir Name
+    Check testcase  ${TESTNAME}
 
 Moving Non-Existing Directory Fails
-    Check testcase  Moving Non-Existing Directory Fails
+    Check testcase  ${TESTNAME}
 

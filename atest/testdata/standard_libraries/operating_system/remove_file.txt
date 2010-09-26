@@ -1,7 +1,7 @@
 *** Settings ***
-Suite Teardown  Remove Temps
-Test Setup      Remove Temps
-Resource        file_and_dir_resource.txt
+Test Setup      Create Base Test Directory
+Suite Teardown  Remove Base Test Directory
+Resource        os_resource.txt
 
 *** Test Cases ***
 

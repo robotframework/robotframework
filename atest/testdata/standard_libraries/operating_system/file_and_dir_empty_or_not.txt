@@ -1,17 +1,7 @@
 *** Settings ***
-Suite Teardown  Remove Temps
-Test Setup      Remove Temps
-Library         OperatingSystem
-Resource        file_and_dir_resource.txt
-
-*** Variables ***
-${FILE PATTERN}  ${CURDIR}${/}R-F*.txt
-${TESTFILE}  ${CURDIR}${/}R-F.txt
-${TESTFILE2}  ${CURDIR}${/}R-F2.txt
-${TESTFILE3}  ${CURDIR}${/}R-F3.txt
-${TESTDIR}  ${CURDIR}${/}R-D
-${TESTDIR2}  ${CURDIR}${/}R-D2
-${ANYDIR}  .*[/\\\\]
+Test Setup      Create Base Test Directory
+Suite Teardown  Remove Base Test Directory
+Resource        os_resource.txt
 
 *** Test Cases ***
 Directory Should Be Empty

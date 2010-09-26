@@ -1,0 +1,28 @@
+*** Settings ***
+Library         OperatingSystem
+
+*** Variables ***
+${BASE}          ${TEMPDIR}${/}robot-os-tests
+${TESTFILE}      ${BASE}${/}f1.txt
+${TESTFILE 2}    ${BASE}${/}f2.txt
+${TESTDIR}       ${BASE}${/}d1
+${ANYDIR}        .*[/\\\\]
+
+*** Keywords ***
+Create And Verify File
+    [Arguments]  ${content}  ${encoding}
+    Create File  ${TESTFILE}  ${content}  ${encoding}
+    Verify File  ${TESTFILE}  ${content}  ${encoding}
+
+Verify File
+    [Arguments]  ${path}  ${expected}  ${encoding}=UTF-8
+    ${content} =  Log File  ${path}  ${encoding}
+    Should Be Equal  ${content}  ${expected}
+
+Create Base Test Directory
+    Remove Directory  ${BASE}  recursive
+    Create Directory  ${BASE}
+
+Remove Base Test Directory
+    Remove Directory  ${BASE}  recursive
+

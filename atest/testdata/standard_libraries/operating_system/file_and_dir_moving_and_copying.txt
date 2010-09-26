@@ -1,5 +1,7 @@
 *** Settings ***
-Resource        file_and_dir_resource.txt
+Test Setup      Create Base Test Directory
+Suite Teardown  Remove Base Test Directory
+Resource        os_resource.txt
 
 *** Test Cases ***
 Move File
@@ -9,75 +11,80 @@ Move File
     Verify File  ${TESTFILE2}  contents
 
 Move File To Existing Dir
-    Create Directory  ${TESTDIR}${/}foo
-    Create Directory  ${TESTDIR}${/}bar
-    Create FIle  ${TESTFILE}  contents
-    Move File  ${TESTFILE}  ${TESTDIR}${/}foo${/}bar
-    Should Not Exist  ${TESTFILE}
-    Verify File  ${TESTDIR}${/}foo${/}bar  contents
-    Move File  ${TESTDIR}${/}foo${/}bar  ${TESTDIR}${/}bar
-    Should Not Exist  ${TESTDIR}${/}foo${/}bar
-    Verify File  ${TESTDIR}${/}bar${/}bar  contents
+    Create Directory  ${BASE}/foo
+    Create Directory  ${BASE}/bar
+    Create File  ${BASE}/zap  contents
+    Move File  ${BASE}/zap  ${BASE}${/}foo${/}file
+    Should Not Exist  ${BASE}/zap
+    Verify File  ${BASE}/foo/file  contents
+    Move File  ${BASE}/foo${/}file  ${BASE}/bar
+    Should Not Exist  ${BASE}/foo/bar
+    Verify File  ${BASE}/bar/file  contents
 
 Move File To Non-Existing Dir
-    Create FIle  ${TESTFILE}  contents
-    Move File  ${TESTFILE}  ${TESTDIR}${/}foo${/}bar
+    Directory Should Not Exist  ${BASE}/*
+    Create File  ${TESTFILE}  contents
+    Move File  ${TESTFILE}  ${BASE}${/}dir/new.file
     Should Not Exist  ${TESTFILE}
-    Verify File  ${TESTDIR}${/}foo${/}bar  contents
-    Move File  ${TESTDIR}${/}foo${/}bar  ${TESTDIR}${/}bar${/}
-    Should Not Exist  ${TESTDIR}${/}foo${/}bar
-    Verify File  ${TESTDIR}${/}bar${/}bar  contents
+    Verify File  ${BASE}/dir/new.file  contents
+    Move File  ${BASE}/dir/new.file  ${BASE}${/}dir2${/}
+    Should Not Exist  ${BASE}/dir/new.file
+    Verify File  ${BASE}/dir2/new.file  contents
 
 Move File Using Just File Name
-    Create File  just_name.1  contents
-    ${contents 1} =  Get File  just_name.1
-    Move File  just_name.1  just_name.2
-    Should Not Exist  just_name.1
-    ${contents 2} =  Get File  just_name.2
+    Create File  rf_test.1  contents
+    ${contents 1} =  Get File  rf_test.1
+    Move File  rf_test.1  rf_test.2
+    Should Not Exist  rf_test.1
+    Should Exist  ${EXECDIR}/rf_test.2
+    ${contents 2} =  Get File  rf_test.2
     Should Be Equal  -${contents 1}-${contents 2}-  -contents-contents-
-    [Teardown]  Remove Files  just_name.?
+    [Teardown]  Remove Files  rf_test.1  rf_test.2
 
 Moving Non-Existing File Fails
     [Documentation]  FAIL REGEXP: Source file '${ANYDIR}non-existing-file.txt' does not exist
     Move File  non-existing-file.txt  whatever.txt
 
 Move Directory
-    [Documentation]  Moving directory around. Moving to excisting and non-existing directory should pass. *TODO:* Split this test
-    Comment  Setup
-    Create Directory  ${TESTDIR}${/}sub
-    Create File  ${TESTDIR}${/}world.txt  world
-    Create File  ${TESTDIR}${/}tellus.txt  tellus
-    Create File  ${TESTDIR}${/}sub${/}marine.txt  sub\nmarine
-    Comment  Move to new dir (same as rename)
-    Move Directory  ${TESTDIR}  ${TESTDIR2}${/}foo
-    Should Not Exist  ${TESTDIR}
-    Verify File  ${TESTDIR2}${/}foo${/}world.txt  world
-    Verify File  ${TESTDIR2}${/}foo${/}tellus.txt  tellus
-    Verify File  ${TESTDIR2}${/}foo${/}sub${/}marine.txt  sub\nmarine
-    Comment  Move to existing dir
-    Create Directory  ${TESTDIR}
-    Move Directory  ${TESTDIR2}${/}foo  ${TESTDIR}
-    Should Not Exist  ${TESTDIR2}${/}foo
-    Verify File  ${TESTDIR}${/}foo${/}world.txt  world
-    Verify File  ${TESTDIR}${/}foo${/}tellus.txt  tellus
-    Verify File  ${TESTDIR}${/}foo${/}sub${/}marine.txt  sub\nmarine
-    Comment  Move to non-existing with missing intermediate dirs
-    Move Directory  ${TESTDIR}${/}foo  ${TESTDIR2}${/}foo${/}bar
-    Should Not Exist  ${TESTDIR}${/}foo
-    Verify File  ${TESTDIR2}${/}foo${/}bar${/}world.txt  world
-    Verify File  ${TESTDIR2}${/}foo${/}bar${/}tellus.txt  tellus
-    Verify File  ${TESTDIR2}${/}foo${/}bar${/}sub${/}marine.txt  sub\nmarine
+    Create File  ${BASE}/dir/f1      file1
+    Create File  ${BASE}/dir/sub/f2  file2
+    Move Directory  ${BASE}/dir  ${BASE}/dir2
+    Should Not Exist  ${BASE}/dir
+    Verify File  ${BASE}/dir2/f1      file1
+    Verify File  ${BASE}/dir2/sub/f2  file2
+
+Move Directory To Existing Dir
+    Create File  ${BASE}/dir/f1      file1
+    Create File  ${BASE}/dir/sub/f2  file2
+    Create File  ${BASE}/dir2/f3     file3
+    Create Directory  ${BASE}/dir2
+    Move Directory  ${BASE}/dir  ${BASE}/dir2
+    Should Not Exist  ${BASE}/dir
+    Verify File  ${BASE}/dir2/dir/f1      file1
+    Verify File  ${BASE}/dir2/dir/sub/f2  file2
+    Verify File  ${BASE}/dir2/f3          file3
+
+Move Directory To Non-Existing Dir Tree
+    Create File  ${BASE}/dir/file  content
+    Move Directory  ${BASE}${/}dir  ${BASE}/1/2/3/4/5
+    Should Not Exist  ${BASE}/dir
+    Verify File  ${BASE}/1/2/3/4/5/file  content
 
 Move Directory Using Just Dir Name
-    Create File  just_name_1/file  contents
-    ${contents 1} =  Get File  just_name_1/file
-    Move Directory  just_name_1  just_name_2
-    Should Not Exist  just_name_1
-    ${contents 2} =  Get File  just_name_2/file
+    Create File  rf_test_1/file  contents
+    ${contents 1} =  Get File  rf_test_1/file
+    Move Directory  rf_test_1  rf_test_2
+    Should Not Exist  rf_test_1
+    Should Exist  ${EXECDIR}/rf_test_2
+    ${contents 2} =  Get File  rf_test_2/file
     Should Be Equal  -${contents 1}-${contents 2}-  -contents-contents-
-    [Teardown]  Remove Temps
+    [Teardown]  Remove Just Name Dirs
 
 Moving Non-Existing Directory Fails
     [Documentation]  FAIL REGEXP: Source directory '${ANYDIR}non-existing-dir' does not exist
     Move Directory  non-existing-dir  whatever
 
+***Keywords***
+Remove Just Name Dirs
+    Remove Directory  rf_test_1  recursive
+    Remove Directory  rf_test_2  recursive

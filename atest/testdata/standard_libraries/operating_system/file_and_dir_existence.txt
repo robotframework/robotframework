@@ -1,17 +1,7 @@
 *** Settings ***
-Suite Teardown  Remove Temps
-Test Setup      Remove Temps
-Library         OperatingSystem
-Resource        file_and_dir_resource.txt
-
-*** Variables ***
-${FILE PATTERN}  ${CURDIR}${/}R-F*.txt
-${TESTFILE}  ${CURDIR}${/}R-F.txt
-${TESTFILE2}  ${CURDIR}${/}R-F2.txt
-${TESTFILE3}  ${CURDIR}${/}R-F3.txt
-${TESTDIR}  ${CURDIR}${/}R-D
-${TESTDIR2}  ${CURDIR}${/}R-D2
-${ANYDIR}  .*[/\\\\]
+Test Setup      Create Base Test Directory
+Suite Teardown  Remove Base Test Directory
+Resource        os_resource.txt
 
 *** Test Cases ***
 Should Exist
@@ -27,14 +17,13 @@ Should Exist With Non Default Message
 
 Should Exist With Pattern
     [Documentation]  FAIL REGEXP: Path '${ANYDIR}\\*non\\*existing\\*' does not match any file or directory
-    Create File  ${TESTFILE}
-    Create File  ${TESTFILE2}
-    Create Dir  ${TESTDIR}
-    Should Exist  ${CURDIR}/*
-    Should Exist  ${CURDIR}/*.txt
-    Should Exist  ${CURDIR}${/}R*
-    Should Exist  ${CURDIR}${/}R-?
-    Should Exist  ${CURDIR}${/}[RX]-[ABCD]*
+    Create File  ${BASE}/file.txt
+    Create Directory  ${BASE}/dir
+    Should Exist  ${BASE}/*
+    Should Exist  ${BASE}/*.txt
+    Should Exist  ${BASE}${/}f*
+    Should Exist  ${BASE}${/}d??
+    Should Exist  ${BASE}${/}[abcd]i[rst]
     Should Exist  *non*existing*
 
 Should Not Exist
@@ -47,15 +36,15 @@ Should Not Exist With Non Default Message
     Should Not Exist  ${CURDIR}  This is a non-default error message
 
 Should Not Exist With Pattern
-    [Documentation]  FAIL Path '${CURDIR}${/}R-*' matches '${CURDIR}${/}R-D' and '${CURDIR}${/}R-F.txt'
+    [Documentation]  FAIL Path '${BASE}${/}f?' matches '${BASE}${/}f1' and '${BASE}${/}f2'
     Should Not Exist  *non?existing*
-    Create File  ${TESTFILE}
-    Create Dir  ${TESTDIR}
-    Should Not Exist  ${CURDIR}${/}R-*
+    Create File  ${BASE}/f1
+    Create File  ${BASE}/f2
+    Should Not Exist  ${BASE}${/}f?
 
 File Should Exist
     [Documentation]  FAIL REGEXP: Path '${ANYDIR}non-existing-file' does not match any file
-    Create File  ${TESTFILE}  whatever
+    Create File  ${TESTFILE}
     File Should Exist  ${TESTFILE}
     File Should Exist  non-existing-file
 
@@ -68,12 +57,12 @@ File Should Exist With Non Default Message
     File Should Exist  ${CURDIR}  Hello, this is a non-default error
 
 File Should Exist With Pattern
-    [Documentation]  FAIL Path '${CURDIR}${/}robot_temp_d??' does not match any file
-    Create File  ${TESTFILE}  whatever
-    Create Dir  ${TESTDIR}
-    File Should Exist  ${CURDIR}${/}R-*
-    File Should Exist  ${CURDIR}/R[!abcd][FD].t?t
-    File Should Exist  ${CURDIR}${/}robot_temp_d??
+    [Documentation]  FAIL Path '${BASE}${/}d??' does not match any file
+    Create File  ${BASE}/file.txt
+    Create Directory  ${BASE}/dir
+    File Should Exist  ${BASE}/*
+    File Should Exist  ${BASE}/f[!abcd]l[efgh].???
+    File Should Exist  ${BASE}${/}d??
 
 File Should Not Exist
     [Documentation]  FAIL File '${TESTFILE}' exists
@@ -88,18 +77,18 @@ File Should Not Exist With Non Default Message
     File Should Not Exist  ${TESTFILE}  My non-default
 
 File Should Not Exist With Pattern Matching One File
-    [Documentation]  FAIL Path '${CURDIR}${/}R-*.txt' matches file '${CURDIR}${/}R-F.txt'
-    Create File  ${TESTFILE}  whatever
-    Create Dir  ${TESTDIR}
+    [Documentation]  FAIL Path '${BASE}${/}*.txt' matches file '${BASE}${/}file.txt'
+    Create File  ${BASE}/file.txt
+    Create Directory  ${BASE}/dir
     File Should Not Exist  *non?existing*
-    File Should Not Exist  ${CURDIR}${/}R-D
-    File Should Not Exist  ${CURDIR}/R-*.txt
+    File Should Not Exist  ${BASE}${/}dir
+    File Should Not Exist  ${BASE}/*.txt
 
 File Should Not Exist With Pattern Matching Multiple Files
-    [Documentation]  FAIL Path '${CURDIR}${/}R-*.txt' matches files '${CURDIR}${/}R-F.txt' and '${CURDIR}${/}R-F2.txt'
-    Create File  ${TESTFILE}  whatever
-    Create File  ${TESTFILE2}  whatever
-    File Should Not Exist  ${CURDIR}/R-*.txt
+    [Documentation]  FAIL Path '${BASE}/f*.txt' matches files '${BASE}/f1.txt' and '${BASE}/f2.txt'
+    Create File  ${BASE}/f1.txt
+    Create File  ${BASE}/f2.txt
+    File Should Not Exist  ${BASE}/f*.txt
 
 Directory Should Exist
     [Documentation]  Normal ok cases and failure with default message when dir doesn't exists FAIL REGEXP: Path '${ANYDIR}non-existing-directory' does not match any directory
@@ -116,12 +105,12 @@ Directory Should Exist Exists With Non Default Message
     Directory Should Exist  non-existing-directory  One more non-default error
 
 Directory Should Exist With Pattern
-    [Documentation]  FAIL Path '${CURDIR}${/}R-F.txt' does not match any directory
-    Create File  ${TESTFILE}
-    Create Dir  ${TESTDIR}
-    Directory Should Exist  ${CURDIR}${/}R-*
-    Directory Should Exist  ${CURDIR}/R[!whatever][DB]*
-    Directory Should Exist  ${CURDIR}${/}R-F.txt
+    [Documentation]  FAIL Path '${BASE}${/}f*' does not match any directory
+    Create File  ${BASE}/file.txt
+    Create Directory  ${BASE}/dir
+    Directory Should Exist  ${BASE}${/}*
+    Directory Should Exist  ${BASE}/d[!whatever]?
+    Directory Should Exist  ${BASE}/f*
 
 Directory Should Not Exist
     [Documentation]  FAIL Directory '${CURDIR}' exists
@@ -135,16 +124,16 @@ Directory Should Not Exist With Non Default Message
     Directory Should Not Exist  ${CURDIR}  Still one more non-default msg
 
 Directory Should Not Exist With Pattern Matching One Dir
-    [Documentation]  FAIL Path '${CURDIR}${/}R-*' matches directory '${TESTDIR}'
-    Create File  ${TESTFILE}
-    Create Dir  ${TESTDIR}
+    [Documentation]  FAIL Path '${BASE}${/}d*' matches directory '${BASE}${/}dir'
+    Create File  ${BASE}/file.txt
+    Create Directory  ${BASE}/dir
     Directory Should Not Exist  *non?existing*
-    Directory Should Not Exist  ${CURDIR}${/}R-F.txt
-    Directory Should Not Exist  ${CURDIR}${/}R-*
+    Directory Should Not Exist  ${BASE}${/}file.txt
+    Directory Should Not Exist  ${BASE}/d*
 
 Directory Should Not Exist With Pattern Matching Multiple Dirs
-    [Documentation]  FAIL Path '${CURDIR}${/}R-[DF]*' matches directories '${TESTDIR}' and '${TESTDIR2}'
-    Create Dir  ${TESTDIR}
-    Create Dir  ${TESTDIR2}
-    Directory Should Not Exist  ${CURDIR}${/}R-[DF]*
+    [Documentation]  FAIL Path '${BASE}${/}*r' matches directories '${BASE}${/}another' and '${BASE}${/}dir'
+    Create Directory  ${BASE}/dir
+    Create Directory  ${BASE}/another
+    Directory Should Not Exist  ${BASE}${/}*r
 
