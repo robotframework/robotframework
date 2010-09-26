@@ -1,0 +1,113 @@
+*** Settings ***
+Library         OperatingSystem
+
+*** Test Cases ***
+Join Path
+    ${path}  Join Path  abc
+    Equals  ${path}  abc
+    ${path}  Join Path  abc  123
+    Equals  ${path}  abc${/}123
+    ${path}  Join Path  abc${/}  123${/}
+    Equals  ${path}  abc${/}123
+    ${path}  Join Path  a  b  c  d${/}e
+    Equals  ${path}  a${/}b${/}c${/}d${/}e
+    ${path}  Join Path  ${CURDIR}  foo
+    Equals  ${path}  ${CURDIR}${/}foo
+    ${path}  Join Path  foo  ${CURDIR}
+    Equals  ${path}  ${CURDIR}
+    ${path}  Join Path  ${TEMPDIR}  ${CURDIR}  bar
+    Equals  ${path}  ${CURDIR}${/}bar
+
+Join Paths
+    @{paths}  Join Paths  base  example  other
+    Equals  @{paths}[0]  base${/}example
+    Equals  @{paths}[1]  base${/}other
+    Fail Unless  len(@{paths}) == 2
+    @{paths}  Join Paths  ${CURDIR}${/}my${/}base  ${TEMPDIR}${/}example  other
+    Equals  @{paths}[0]  ${TEMPDIR}${/}example
+    Equals  @{paths}[1]  ${CURDIR}${/}my${/}base${/}other
+    Fail Unless  len(@{paths}) == 2
+    @{paths}  Join Paths  my${/}base  example${/}path${/}  other  one${/}more
+    Equals  @{paths}[0]  my${/}base${/}example${/}path
+    Equals  @{paths}[1]  my${/}base${/}other
+    Equals  @{paths}[2]  my${/}base${/}one${/}more
+    Fail Unless  len(@{paths}) == 3
+
+Normalize Path
+    Normalize Path And Check  abc  abc
+    Normalize Path And Check  abc${/}def  abc${/}def
+    Normalize Path And Check  .  .
+    Normalize Path And Check  abc${/}  abc
+    Normalize Path And Check  abc${/}..${/}def  def
+    Normalize Path And Check  abc${/}..${/}def${/}..${/}ghi  ghi
+    Normalize Path And Check  abc${/}def${/}..${/}..${/}ghi  ghi
+    Normalize Path And Check  abc${/}..  .
+    Normalize Path And Check  abc${/}..${/}  .
+    Normalize Path And Check  abc${/}.  abc
+    Normalize Path And Check  abc${/}.${/}  abc
+    Normalize Path And Check  ..  ..
+    Normalize Path And Check  ..${/}abc  ..${/}abc
+    Normalize Path And Check  abc${/}${/}def  abc${/}def
+    Normalize Path And Check  abc${/ * 10}def  abc${/}def
+    Normalize Path And Check  ${CURDIR}${/}${/}abc${/}.${/}..${/}.${/}${/}  ${CURDIR}
+
+Split Path
+    Split Path And Check  abc${/}def  abc  def
+    Split Path And Check  abc${/}def${/}ghi${/}  abc${/}def  ghi
+    Split Path And Check  abc${/}..${/}def${/}.${/}${/}ghi  def  ghi
+    Split Path And Check  abc${/}  ${EMPTY}  abc
+    Split Path And Check  abc  ${EMPTY}  abc
+    Split Path And Check  ${CURDIR}${/}abc  ${CURDIR}  abc
+    Split Path And Check  ..${/}abc  ..  abc
+    Split Path And Check  ..  ${EMPTY}  ..
+
+Split Extension
+    Split Extension And Check  abc.ext  abc  ext
+    Split Extension And Check  abc  abc  ${EMPTY}
+    Split Extension And Check  abc.  abc.  ${EMPTY}
+    Split Extension And Check  abc.ext.  abc  ext.
+    Split Extension And Check  abc...ext...  abc..  ext...
+    Split Extension And Check  .abc  .abc  ${EMPTY}
+    Split Extension And Check  .abc.ext  .abc  ext
+    Split Extension And Check  ..abc.ext  ..abc  ext
+    Split Extension And Check  ...abc....ext...  ...abc...  ext...
+    Split Extension And Check  abc.def.extension  abc.def  extension
+    Split Extension And Check  .abc.def.extension  .abc.def  extension
+    Split Extension And Check  path/abc.ext  path${/}abc  ext
+    Split Extension And Check  ${CURDIR}/path${/}abc.ext2  ${CURDIR}${/}path${/}abc  ext2
+    Split Extension And Check  path${/}..${/}abc.e_x_t  abc  e_x_t
+    Split Extension And Check  p1${/}..${/}p2${/}/  p2  ${EMPTY}
+    Split Extension And Check  p1${/}..${/}p2${/}${/}${/}abc.ext  p2${/}abc  ext
+    Split Extension And Check  path/.file.ext  path${/}.file  ext
+    Split Extension And Check  path/.file  path${/}.file  ${EMPTY}
+    Split Extension And Check  path/...file.ext  path${/}...file  ext
+    Split Extension And Check  path/...file  path${/}...file  ${EMPTY}
+    Split Extension And Check  path/file.ext.  path${/}file  ext.
+    Split Extension And Check  path/file.ext...  path${/}file  ext...
+    Split Extension And Check  path/...file..ext...  path${/}...file.  ext...
+
+Forward Slash Works as Separator On All OSes
+    ${path} =  Join Path  a/b  c/d/e  f/g
+    Should Be Equal  ${path}  a${/}b${/}c${/}d${/}e${/}f${/}g
+    Normalize Path And Check  foo/bar/../zap  foo${/}zap
+    Split Path And Check  foo/bar/zap  foo${/}bar  zap
+    Split Extension And Check  foo/bar/zap.txt  foo${/}bar${/}zap  txt
+
+*** Keywords ***
+Normalize Path And Check
+    [Arguments]  ${input}  ${expected}
+    ${path}  Normalize Path  ${input}
+    Equals  ${path}  ${expected}  Normalizing ${input} failed
+
+Split Path And Check
+    [Arguments]  ${input}  ${exp1}  ${exp2}
+    ${out1}  ${out2}  Split Path  ${input}
+    Equals  ${out1}  ${exp1}  Splitting path ${input} failed
+    Equals  ${out2}  ${exp2}  Splitting path ${input} failed
+
+Split Extension And Check
+    [Arguments]  ${input}  ${exp1}  ${exp2}
+    ${out1}  ${out2}  Split Extension  ${input}
+    Equals  ${out1}  ${exp1}  Splitting extension from ${input} failed
+    Equals  ${out2}  ${exp2}  Splitting extension from ${input} failed
+
