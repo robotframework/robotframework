@@ -5,33 +5,98 @@ Resource        os_resource.txt
 
 *** Test Cases ***
 Directory Should Be Empty
-    [Documentation]  FAIL Directory '${TESTDIR}' is not empty. Contents: 'f1.txt', 'f2.txt', 'f3.txt'
-    Create Dir  ${TESTDIR}
-    Directory Should Be Empty  ${TESTDIR}
-    Create File  ${TESTDIR}${/}f1.txt
-    Create File  ${TESTDIR}/f2.txt
-    Create File  ${TESTDIR}${/}f3.txt
-    Directory Should Be Empty  ${TESTDIR}
+    [Documentation]  FAIL Directory '${BASE}' is not empty. Contents: 'dir', 'file.txt', 'nöẗ önlÿ äscïï'
+    Test Directory Should Be Empty  ${BASE}
+
+Non-ASCII Directory Should Be Empty
+    [Documentation]  FAIL Directory '${NON ASCII}' is not empty. Contents: 'dir', 'file.txt', 'nöẗ önlÿ äscïï'
+    Test Directory Should Be Empty  ${NON ASCII}
+
+Directory With Space Should Be Empty
+    [Documentation]  FAIL Directory '${WITH SPACE}' is not empty. Contents: 'dir', 'file.txt', 'nöẗ önlÿ äscïï'
+    Test Directory Should Be Empty  ${WITH SPACE}
+
+Directory Should Be Empty When Directory Does Not Exist
+    [Documentation]  FAIL   Directory '${NON ASCII}' does not exist
+    Directory Should Be Empty  ${NON ASCII}
 
 Directory Should Not Be Empty
-    [Documentation]  FAIL Directory '${TESTDIR}' is empty.
-    Create Dir  ${TESTDIR}
-    Create File  ${TESTDIR}${/}file.txt
-    Directory Should Not Be Empty  ${TESTDIR}
-    Remove File  ${TESTDIR}${/}file.txt
-    Directory Should Not Be Empty  ${TESTDIR}
+    [Documentation]  FAIL Directory '${BASE}' is empty.
+    Test Directory Should Not Be Empty  ${BASE}
+
+Non-ASCII Directory Should Not Be Empty
+    [Documentation]  FAIL Directory '${NON ASCII}' is empty.
+    Test Directory Should Not Be Empty  ${NON ASCII}
+
+Directory With Space Should Not Be Empty
+    [Documentation]  FAIL Directory '${WITH SPACE}' is empty.
+    Test Directory Should Not Be Empty  ${WITH SPACE}
+
+Directory Should Not Be Empty When Directory Does Not Exist
+    [Documentation]  FAIL   Directory '${NON ASCII}' does not exist
+    Directory Should Not Be Empty  ${NON ASCII}
 
 File Should Be Empty
     [Documentation]  FAIL File '${TESTFILE}' is not empty. Size: 12 bytes
-    Create File  ${TESTFILE}
-    File Should Be Empty  ${TESTFILE}
-    Create File  ${TESTFILE}  some content
-    File Should Be Empty  ${TESTFILE}
+    Test File Should Be Empty  ${TESTFILE}
+
+Non-ASCII File Should Be Empty
+    [Documentation]  FAIL File '${NON ASCII}' is not empty. Size: 12 bytes
+    Test File Should Be Empty  ${NON ASCII}
+
+File With Space Should Be Empty
+    [Documentation]  FAIL File '${WITH SPACE}' is not empty. Size: 12 bytes
+    Test File Should Be Empty  ${WITH SPACE}
+	
+File Should Be Empty When File Does Not Exist
+    [Documentation]  FAIL   File '${NON ASCII}' does not exist
+    File Should Be Empty  ${NON ASCII}
 
 File Should Not Be Empty
     [Documentation]  FAIL File '${TESTFILE}' is empty.
-    Create File  ${TESTFILE}  some content
-    File Should Not Be Empty  ${TESTFILE}
-    Create File  ${TESTFILE}
-    File Should Not Be Empty  ${TESTFILE}
+    Test File Should Not Be Empty  ${TESTFILE}
+
+Non-ASCII File Should Not Be Empty
+    [Documentation]  FAIL File '${NON ASCII}' is empty.
+    Test File Should Not Be Empty  ${NON ASCII}
+
+File With Space Should Not Be Empty
+    [Documentation]  FAIL File '${WITH SPACE}' is empty.
+    Test File Should Not Be Empty  ${WITH SPACE}
+
+File Should Not Be Empty When File Does Not Exist
+    [Documentation]  FAIL   File '${NON ASCII}' does not exist
+    File Should Not Be Empty  ${NON ASCII}
+
+***Keywords***
+Test Directory Should Be Empty
+    [Arguments]  ${dir}
+    Create Directory  ${dir}
+    Directory Should Be Empty  ${dir}
+    Create Directory  ${dir}/dir
+    Create File  ${dir}/file.txt
+    Create File  ${dir}/nöẗ önlÿ äscïï
+    Directory Should Be Empty  ${dir}
+
+Test Directory Should Not Be Empty
+    [Arguments]  ${dir}
+    Create File  ${dir}/file.txt
+    Directory Should Not Be Empty  ${dir}
+    Remove File  ${dir}/file.txt
+    Directory Should Not Be Empty  ${dir}
+
+Test File Should Be Empty
+    [Arguments]  ${file}
+    Create File  ${file}
+    File Should Be Empty  ${file}
+    Create File  ${file}  some content
+    File Should Be Empty  ${file}
+
+Test File Should Not Be Empty
+    [Arguments]  ${file}
+    Create File  ${file}  some content
+    File Should Not Be Empty  ${file}
+    Create File  ${file}
+    File Should Not Be Empty  ${file}
+
 
