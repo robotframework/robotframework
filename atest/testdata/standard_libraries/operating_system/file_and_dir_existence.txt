@@ -96,7 +96,7 @@ File Should Not Exist With Pattern Matching One File
     File Should Not Exist  ${BASE}/*.txt
 
 File Should Not Exist With Pattern Matching Multiple Files
-    [Documentation]  FAIL Path '${BASE}/f*.txt' matches files '${BASE}/f1.txt' and '${BASE}/f2.txt'
+    [Documentation]  FAIL Path '${BASE}${/}f*.txt' matches files '${BASE}${/}f1.txt' and '${BASE}${/}f2.txt'
     Create File  ${BASE}/f1.txt
     Create File  ${BASE}/f2.txt
     File Should Not Exist  ${BASE}/f*.txt

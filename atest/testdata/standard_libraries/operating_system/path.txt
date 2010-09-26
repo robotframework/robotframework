@@ -87,7 +87,7 @@ Forward Slash Works as Separator On All OSes
 
 Non-ASCII
     Join Path And Check  ñõñ${/}âŝĉîî  ñõñ  âŝĉîî  
-    Normalize Path And Check  ñõñ/.${/}âŝĉîî${/}  ñõñ/âŝĉîî
+    Normalize Path And Check  ñõñ/.${/}âŝĉîî${/}  ñõñ${/}âŝĉîî
     Split Path And Check  ñõñ/âŝĉîî  ñõñ  âŝĉîî
     Split Extension And Check  ñõñ/âŝĉîî.åäö  ñõñ${/}âŝĉîî  åäö
 
