@@ -20,8 +20,8 @@ if __name__ == '__main__':
     sys.exit(252)  # 252 == DATA_ERROR
 
 
+# Global workaround for os.listdir bug http://bugs.jython.org/issue1593
 if sys.platform.startswith('java') and sys.version_info[:3] < (2,5,2):
-    # Global workaround for http://bugs.jython.org/issue1593
     from java.lang import String
     def listdir(path):
         items = os._listdir(path)
@@ -31,6 +31,10 @@ if sys.platform.startswith('java') and sys.version_info[:3] < (2,5,2):
     os._listdir = os.listdir
     os.listdir = listdir
 
+# Global workaround for os.stat bug http://bugs.jython.org/issue1658
+if sys.platform.startswith('java') and os.sep == '\\':
+    os._posix = os.JavaPOSIX(os.PythonPOSIXHandler())
+    os._native_posix = False
 
 if 'pythonpathsetter' not in sys.modules:
     import pythonpathsetter
