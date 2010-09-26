@@ -1,11 +1,9 @@
-﻿*** Settings ***
+*** Settings ***
 Test Setup      Create Test Directories
-Suite Teardown  Remove Test Directories
-Library         OperatingSystem
-Library         Collections
+Suite Teardown  Remove Base Test Directory
+Resource        os_resource.txt
 
 *** Variables ***
-${BASE}   ${TEMPDIR}${/}robot_list_dir_temp
 ${DIR}    foodir
 ${F1}     foo.txt
 ${F2}     ŋöŋ-äßćïï.txt
@@ -57,14 +55,11 @@ List Directory With Absolute
 *** Keywords ***
 
 Create Test Directories
-    Remove Test Directories
+    Remove Base Test Directory
     Create Directory  ${BASE}
     Create Directory  ${BASE}/${DIR}
     Create File       ${BASE}/${F1}
     Create File       ${BASE}/${F2}
-
-Remove Test Directories
-    Remove Directory  ${BASE}  recursive
 
 List And Count Directory
     [Arguments]  @{expected}

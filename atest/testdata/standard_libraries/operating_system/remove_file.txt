@@ -6,22 +6,51 @@ Resource        os_resource.txt
 *** Test Cases ***
 
 Remove File
-    Create File  ${TESTFILE}  whatever
+    Create File  ${TESTFILE}
     File Should Exist  ${TESTFILE}
     Remove File  ${TESTFILE}
     Should Not Exist  ${TESTFILE}
 
-Remove File Using Glob Pattern
-    Create Dir  ${TESTDIR}
-    Create File  ${TESTDIR}${/}file1.txt  content
-    Create File  ${TESTDIR}${/}file2.txt  content
-    Create File  ${TESTDIR}${/}myfile.txt  content
-    Remove File  ${TESTDIR}${/}file?.txt
-    File Should Exist  ${TESTDIR}${/}myfile.txt
-    ${count} =  Count Items In Dir  ${TESTDIR}
-    Should Be Equal As Integers  ${count}  1
-    Remove File  ${TESTDIR}${/}*.txt
-    Directory Should Be Empty  ${TESTDIR}
+Remove Files
+    Create File  ${BASE}/foo.txt
+    Create File  ${BASE}/bar.txt
+    Create File  ${BASE}/zap.txt
+    Remove Files  ${BASE}${/}foo.txt  ${BASE}/./bar.txt  ${BASE}/zap.txt
+    Should Not Exist  ${BASE}/foo.txt
+    Should Not Exist  ${BASE}/bar.txt
+    Should Not Exist  ${BASE}/zap.txt
+
+Remove Non-ASCII File
+    Create File  ${NONASCII}
+    File Should Exist  ${NONASCII}
+    Remove File  ${NONASCII}
+    Should Not Exist  ${NONASCII}
+
+Remove File With Space
+    Create File  ${WITHSPACE}
+    File Should Exist  ${WITHSPACE}
+    Remove File  ${WITHSPACE}
+    Should Not Exist  ${WITHSPACE}
+
+Remove Files Using Glob Pattern
+    Create File  ${BASE}/file-1.txt
+    Create File  ${BASE}/file 2.txt
+    Create File  ${BASE}/myfile.txt
+    Remove File  ${BASE}/file??.txt
+    Directory Should Have Items  ${BASE}  myfile.txt
+    Remove File  ${BASE}/*.txt
+    Directory Should Be Empty  ${BASE}
+
+Remove Non-ASCII Files Using Glob Pattern
+    Create File  ${BASE}/file
+    Create File  ${BASE}/fïlë
+    Create File  ${BASE}/fĩlẽ
+    Create File  ${BASE}/fîlê
+    Create File  ${BASE}/fílé
+    Remove Files  ${BASE}/*e  ${BASE}/???ê
+    Directory Should Have Items  ${BASE}  fílé  fïlë  fĩlẽ  
+    Remove File  ${BASE}${/}f*
+    Directory Should Be Empty  ${BASE}
 
 Remove Non-Existing File
     Remove File  non-existing.txt
@@ -29,13 +58,4 @@ Remove Non-Existing File
 Removing Directory As A File Fails
     [Documentation]  FAIL Path '${CURDIR}' is not a file
     Remove File  ${CURDIR}
-
-Remove Files
-    Create File  ${CURDIR}${/}foo.txt
-    Create File  ${CURDIR}${/}bar.txt
-    Create File  ${CURDIR}${/}zap.txt
-    Remove Files  ${CURDIR}/foo.txt  ${CURDIR}${/}bar.txt  ${CURDIR}${/}zap.txt
-    Should Not Exist  ${CURDIR}${/}foo.txt
-    Should Not Exist  ${CURDIR}${/}bar.txt
-    Should Not Exist  ${CURDIR}${/}zap.txt
 

@@ -3,35 +3,28 @@ Library         OperatingSystem
 
 *** Test Cases ***
 Join Path
-    ${path}  Join Path  abc
-    Equals  ${path}  abc
-    ${path}  Join Path  abc  123
-    Equals  ${path}  abc${/}123
-    ${path}  Join Path  abc${/}  123${/}
-    Equals  ${path}  abc${/}123
-    ${path}  Join Path  a  b  c  d${/}e
-    Equals  ${path}  a${/}b${/}c${/}d${/}e
-    ${path}  Join Path  ${CURDIR}  foo
-    Equals  ${path}  ${CURDIR}${/}foo
-    ${path}  Join Path  foo  ${CURDIR}
-    Equals  ${path}  ${CURDIR}
-    ${path}  Join Path  ${TEMPDIR}  ${CURDIR}  bar
-    Equals  ${path}  ${CURDIR}${/}bar
+    Join Path And Check  abc  abc
+    Join Path And Check  abc${/}123  abc  123
+    Join Path And Check  abc${/}123  abc${/}  123${/}
+    Join Path And Check  a${/}b${/}c${/}d${/}e  a  b  c  d${/}e
+    Join Path And Check  ${CURDIR}  ${CURDIR}
+    Join Path And Check  ${CURDIR}${/}foo  ${CURDIR}  foo
+    Join Path And Check  ${CURDIR}${/}bar  ${TEMPDIR}  ${CURDIR}  bar
 
 Join Paths
-    @{paths}  Join Paths  base  example  other
-    Equals  @{paths}[0]  base${/}example
-    Equals  @{paths}[1]  base${/}other
-    Fail Unless  len(@{paths}) == 2
-    @{paths}  Join Paths  ${CURDIR}${/}my${/}base  ${TEMPDIR}${/}example  other
-    Equals  @{paths}[0]  ${TEMPDIR}${/}example
-    Equals  @{paths}[1]  ${CURDIR}${/}my${/}base${/}other
-    Fail Unless  len(@{paths}) == 2
-    @{paths}  Join Paths  my${/}base  example${/}path${/}  other  one${/}more
-    Equals  @{paths}[0]  my${/}base${/}example${/}path
-    Equals  @{paths}[1]  my${/}base${/}other
-    Equals  @{paths}[2]  my${/}base${/}one${/}more
-    Fail Unless  len(@{paths}) == 3
+    @{paths} =  Join Paths  base  example  other
+    Should Be Equal  @{paths}[0]  base${/}example
+    Should Be Equal  @{paths}[1]  base${/}other
+    Length Should Be  ${paths}  2
+    @{paths} =  Join Paths  ${CURDIR}${/}my${/}base  ${TEMPDIR}${/}example  other
+    Should Be Equal  @{paths}[0]  ${TEMPDIR}${/}example
+    Should Be Equal  @{paths}[1]  ${CURDIR}${/}my${/}base${/}other
+    Length Should Be  ${paths}  2
+    @{paths} =  Join Paths  my${/}base  example${/}path${/}  other  one${/}more
+    Should Be Equal  @{paths}[0]  my${/}base${/}example${/}path
+    Should Be Equal  @{paths}[1]  my${/}base${/}other
+    Should Be Equal  @{paths}[2]  my${/}base${/}one${/}more
+    Length Should Be  ${paths}  3
 
 Normalize Path
     Normalize Path And Check  abc  abc
@@ -87,27 +80,43 @@ Split Extension
     Split Extension And Check  path/...file..ext...  path${/}...file.  ext...
 
 Forward Slash Works as Separator On All OSes
-    ${path} =  Join Path  a/b  c/d/e  f/g
-    Should Be Equal  ${path}  a${/}b${/}c${/}d${/}e${/}f${/}g
+    Join Path And Check  a${/}b${/}c${/}d${/}e${/}f${/}g  a/b  c/d${/}e  f/g
     Normalize Path And Check  foo/bar/../zap  foo${/}zap
     Split Path And Check  foo/bar/zap  foo${/}bar  zap
     Split Extension And Check  foo/bar/zap.txt  foo${/}bar${/}zap  txt
 
+Non-ASCII
+    Join Path And Check  ñõñ${/}âŝĉîî  ñõñ  âŝĉîî  
+    Normalize Path And Check  ñõñ/.${/}âŝĉîî${/}  ñõñ/âŝĉîî
+    Split Path And Check  ñõñ/âŝĉîî  ñõñ  âŝĉîî
+    Split Extension And Check  ñõñ/âŝĉîî.åäö  ñõñ${/}âŝĉîî  åäö
+
+With Space
+    Join Path And Check  with space${/}and another  with space  and another
+    Normalize Path And Check  with space/./and another/.  with space${/}and another
+    Split Path And Check  with space/and another  with space  and another
+    Split Extension And Check  with space.and another  with space  and another
+
 *** Keywords ***
+Join Path And Check
+    [Arguments]  ${expected}  @{inputs}
+    ${path} =  Join Path  @{inputs}
+    Should Be Equal  ${path}  ${expected}  Joining ${inputs} failed
+    
 Normalize Path And Check
     [Arguments]  ${input}  ${expected}
-    ${path}  Normalize Path  ${input}
-    Equals  ${path}  ${expected}  Normalizing ${input} failed
+    ${path} =  Normalize Path  ${input}
+    Should Be Equal  ${path}  ${expected}  Normalizing ${input} failed
 
 Split Path And Check
     [Arguments]  ${input}  ${exp1}  ${exp2}
-    ${out1}  ${out2}  Split Path  ${input}
-    Equals  ${out1}  ${exp1}  Splitting path ${input} failed
-    Equals  ${out2}  ${exp2}  Splitting path ${input} failed
+    ${out1}  ${out2} =  Split Path  ${input}
+    Should Be Equal  ${out1}  ${exp1}  Splitting path ${input} failed
+    Should Be Equal  ${out2}  ${exp2}  Splitting path ${input} failed
 
 Split Extension And Check
     [Arguments]  ${input}  ${exp1}  ${exp2}
     ${out1}  ${out2}  Split Extension  ${input}
-    Equals  ${out1}  ${exp1}  Splitting extension from ${input} failed
-    Equals  ${out2}  ${exp2}  Splitting extension from ${input} failed
+    Should Be Equal  ${out1}  ${exp1}  Splitting extension from ${input} failed
+    Should Be Equal  ${out2}  ${exp2}  Splitting extension from ${input} failed
 

@@ -3,17 +3,28 @@ Suite Setup     Run Tests  ${EMPTY}  standard_libraries/operating_system/touch.t
 Force Tags      regression  jybot  pybot
 Resource        atest_resource.txt
 
-*** Test Cases ***
-Touch
-    ${tc} =  Check testcase  Touch
-    ${path} =  Join Path  ${CURDIR}/../../..  testdata  standard_libraries  operating_system  robot_temp_file.txt
-    Check Log Message  ${tc.kws[1].msgs[0]}  Touched new file '<a href="file://${path}">${path}</a>'  HTML
-    Check Log Message  ${tc.kws[5].msgs[0]}  Touched existing file '<a href="file://${path}">${path}</a>'  HTML
-    Check Log Message  ${tc.kws[9].msgs[0]}  Touched existing file '<a href="file://${path}">${path}</a>'  HTML
+*** Variables ***
+${TESTFILE}      ${TEMPDIR}${/}robot-os-tests${/}f1.txt
 
-Touch Dir Fails
-    Check testcase  Touch Dir Fails
+*** Test Cases ***
+Touch Non-Existing File
+    ${tc} =  Check testcase  ${TESTNAME}
+    Check Log Message  ${tc.kws[0].msgs[0]}  Touched new file '<a href="file://${TESTFILE}">${TESTFILE}</a>'  HTML
+
+Touch Existing File
+    ${tc} =  Check testcase  ${TESTNAME}
+    Check Log Message  ${tc.kws[3].msgs[0]}  Touched existing file '<a href="file://${TESTFILE}">${TESTFILE}</a>'  HTML
+    Check Log Message  ${tc.kws[6].msgs[0]}  Touched existing file '<a href="file://${TESTFILE}">${TESTFILE}</a>'  HTML
+
+Touch Non-ASCII File
+    Check testcase  ${TESTNAME}
+
+Touch File With Space
+    Check testcase  ${TESTNAME}
+
+Touching Directory Fails
+    Check testcase  ${TESTNAME}
 
 Touch When Parent Does Not Exist Fails
-    Check testcase  Touch When Parent Does Not Exist Fails
+    Check testcase  ${TESTNAME}
 

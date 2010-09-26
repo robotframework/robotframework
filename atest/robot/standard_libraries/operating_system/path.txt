@@ -22,3 +22,9 @@ Split Extension
 Forward Slash Works as Separator On All OSes
     Check testcase  ${TESTNAME}
 
+Non-ASCII
+    Check testcase  ${TESTNAME}
+
+With Space
+    Check testcase  ${TESTNAME}
+

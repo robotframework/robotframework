@@ -1,5 +1,6 @@
 *** Settings ***
 Library         OperatingSystem
+Library         Collections
 
 *** Variables ***
 ${BASE}          ${TEMPDIR}${/}robot-os-tests
@@ -28,3 +29,7 @@ Create Base Test Directory
 Remove Base Test Directory
     Remove Directory  ${BASE}  recursive
 
+Directory Should Have Items
+    [Arguments]  ${path}  @{expected}
+    ${items} =  List Directory  ${path}
+    Lists Should Be Equal  ${items}  ${expected}

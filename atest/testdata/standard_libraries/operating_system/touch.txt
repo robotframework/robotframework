@@ -1,28 +1,33 @@
 *** Settings ***
-Suite Teardown  Remove Temps
-Test Setup      Remove Temps
-Library         OperatingSystem
-
-*** Variables ***
-${TESTFILE}  ${CURDIR}${/}robot_temp_file.txt
-${TESTDIR}  ${CURDIR}${/}robot_temp_dir
+Test Setup      Create Base Test Directory
+Suite Teardown  Remove Base Test Directory
+Resource        os_resource.txt
 
 *** Test Cases ***
-Touch
-    Should Not Exist  ${TESTFILE}
+Touch Non-Existing File
     Touch  ${TESTFILE}
     File Should Be Empty  ${TESTFILE}
+
+Touch Existing File
+    Create File  ${TESTFILE}  Some text\nin 2 lines\n
     ${time1} =  Get Modified Time  ${TESTFILE}  epoch
     Sleep  2.5 s
     Touch  ${TESTFILE}
     ${time2} =  Get Modified Time  ${TESTFILE}  epoch
     Should Be True  ${time2} > ${time1}
-    Create File  ${TESTFILE}  Some text\nin 2 lines\n
     Touch  ${TESTFILE}
     ${content} =  Get File  ${TESTFILE}
     Should Be Equal  ${content}  Some text\nin 2 lines\n
 
-Touch Dir Fails
+Touch Non-ASCII File
+    Touch  ${NONASCII}
+    File Should Be Empty  ${NONASCII}
+
+Touch File With Space
+    Touch  ${WITHSPACE}
+    File Should Be Empty  ${WITHSPACE}
+
+Touching Directory Fails
     [Documentation]  FAIL Cannot touch '${CURDIR}' because it is a directory
     Touch  ${CURDIR}
 
