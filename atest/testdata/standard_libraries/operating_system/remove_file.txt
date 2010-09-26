@@ -1,0 +1,41 @@
+*** Settings ***
+Suite Teardown  Remove Temps
+Test Setup      Remove Temps
+Resource        file_and_dir_resource.txt
+
+*** Test Cases ***
+
+Remove File
+    Create File  ${TESTFILE}  whatever
+    File Should Exist  ${TESTFILE}
+    Remove File  ${TESTFILE}
+    Should Not Exist  ${TESTFILE}
+
+Remove File Using Glob Pattern
+    Create Dir  ${TESTDIR}
+    Create File  ${TESTDIR}${/}file1.txt  content
+    Create File  ${TESTDIR}${/}file2.txt  content
+    Create File  ${TESTDIR}${/}myfile.txt  content
+    Remove File  ${TESTDIR}${/}file?.txt
+    File Should Exist  ${TESTDIR}${/}myfile.txt
+    ${count} =  Count Items In Dir  ${TESTDIR}
+    Should Be Equal As Integers  ${count}  1
+    Remove File  ${TESTDIR}${/}*.txt
+    Directory Should Be Empty  ${TESTDIR}
+
+Remove Non-Existing File
+    Remove File  non-existing.txt
+
+Removing Directory As A File Fails
+    [Documentation]  FAIL Path '${CURDIR}' is not a file
+    Remove File  ${CURDIR}
+
+Remove Files
+    Create File  ${CURDIR}${/}foo.txt
+    Create File  ${CURDIR}${/}bar.txt
+    Create File  ${CURDIR}${/}zap.txt
+    Remove Files  ${CURDIR}/foo.txt  ${CURDIR}${/}bar.txt  ${CURDIR}${/}zap.txt
+    Should Not Exist  ${CURDIR}${/}foo.txt
+    Should Not Exist  ${CURDIR}${/}bar.txt
+    Should Not Exist  ${CURDIR}${/}zap.txt
+

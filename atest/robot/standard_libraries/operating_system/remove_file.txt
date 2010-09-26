@@ -1,0 +1,22 @@
+*** Settings ***
+Suite Setup     Run Tests  ${EMPTY}  standard_libraries/operating_system/remove_file.txt
+Force Tags      regression  pybot  jybot
+Resource        atest_resource.txt
+
+*** Test Cases ***
+
+Remove File
+    Check Test Case  ${TESTNAME}
+
+Remove File Using Glob Pattern
+    Check Test Case  ${TESTNAME}
+
+Remove Non-Existing File
+    Check Test Case  ${TESTNAME}
+
+Removing Directory As A File Fails
+    Check Test Case  ${TESTNAME}
+
+Remove Files
+    Check Test Case  ${TESTNAME}
+

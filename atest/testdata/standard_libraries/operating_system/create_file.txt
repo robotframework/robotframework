@@ -1,0 +1,36 @@
+*** Settings ***
+Suite Teardown  Remove Temps
+Test Setup      Remove Temps
+Resource        file_and_dir_resource.txt
+
+*** Test Cases ***
+Create File
+    Create File  ${TESTFILE}
+    Verify File  ${TESTFILE}  ${EMPTY}
+    Create File  ${TESTFILE}  This is content in\n3\nlines
+    Verify File  ${TESTFILE}  This is content in\n3\nlines
+
+Create File With Encoding
+    Create And Verify FIle  Just normal ASCII  ASCII
+    Create And Verify FIle  Hyvää yötä!  UTF-8
+    Create And Verify FIle  Hyvää yötä!  ISO-8859-1
+    ${russian} =  Evaluate  u'\\u0421\\u043F\\u0430\\u0441\\u0438\\u0431\\u043E'
+    Create And Verify FIle  ${russian}  UTF-8
+    Create And Verify FIle  ${russian}  ISO-8859-5
+
+Create File Fails If Encoding Is Incorrect
+    [Documentation]  FAIL REGEXP: Unicode(Encode|)Error: .*
+    Create File  ${TESTFILE}  Hyvää yötä!  ASCII
+
+"Create File With Encoding" Keyword Is Deprecated
+    Create File With Encoding  ${TESTFILE}  whatever  ASCII
+
+Append To File
+    Append To File  ${TESTFILE}  First line\n
+    Append To File  ${TESTFILE}  Second line\n  ASCII
+    Verify File  ${TESTFILE}  First line\nSecond line\n
+
+Create File To Non-Existing Dir
+    Create File  ${TESTDIR}${/}file.txt  my content
+    Verify File  ${TESTDIR}${/}file.txt  my content
+

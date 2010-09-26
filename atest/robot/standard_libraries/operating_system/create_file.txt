@@ -1,0 +1,26 @@
+*** Settings ***
+Suite Setup     Run Tests  ${EMPTY}  standard_libraries/operating_system/create_file.txt
+Force Tags      regression  pybot  jybot
+Resource        atest_resource.txt
+
+*** Test Cases ***
+
+Create File
+    Check Test Case  ${TESTNAME}
+
+Create File With Encoding
+    Check Test Case  ${TESTNAME}
+
+Create File Fails If Encoding Is Incorrect
+    Check Test Case  ${TESTNAME}
+
+"Create File With Encoding" Keyword Is Deprecated
+    ${tc} =  Check Test Case  ${TEST NAME}
+    Check Log Message  ${tc.kws[0].msgs[0]}  Keyword 'OperatingSystem.Create File With Encoding' is deprecated. Use `Create File` instead. This keyword will be removed in RF 2.6.  WARN
+
+Append To File
+    Check Test Case  ${TESTNAME}
+
+Create File To Non-Existing Dir
+    Check Test Case  ${TESTNAME}
+
