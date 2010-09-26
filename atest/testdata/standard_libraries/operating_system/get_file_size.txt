@@ -1,23 +1,21 @@
 *** Settings ***
-Library         OperatingSystem
-
-*** Variables ***
-${TESTFILE}  ${TEMPDIR}/robot_temp_file.txt
+Test Setup      Create Base Test Directory
+Suite Teardown  Remove Base Test Directory
+Resource        os_resource.txt
 
 *** Test Cases ***
 Get File Size
     Create File  ${TESTFILE}
     ${size} =  Get File Size  ${TESTFILE}
     Should Be Equal  ${size}  ${0}
-    Create File  ${TESTFILE}  x
-    ${size} =  Get File Size  ${TESTFILE}
+    Create File  ${NON ASCII}  x
+    ${size} =  Get File Size  ${NON ASCII}
     Should Be Equal  ${size}  ${1}
-    Create File  ${TESTFILE}  some content
-    ${size} =  Get File Size  ${TESTFILE}
+    Create File  ${WITH SPACE}  some content
+    ${size} =  Get File Size  ${WITH SPACE}
     Should Be Equal  ${size}  ${12}
     ${size} =  Get File Size  ${CURDIR}/get_file_size.txt
     Should Be True  0 < ${size} < 1000
-    [Teardown]  Remove FIle  ${TESTFILE}
 
 Get size of non-existing file
    [Documentation]  FAIL  File '${EXECDIR}${/}non.ex' does not exist.

@@ -1,10 +1,7 @@
 *** Settings ***
-Suite Teardown  Remove Temps
-Test Setup      Remove Temps
-Library         OperatingSystem
-
-*** Variables ***
-${TESTFILE}  ${CURDIR}${/}robot_temp_file.txt
+Test Setup      Create Base Test Directory
+Suite Teardown  Remove Base Test Directory
+Resource        os_resource.txt
 
 *** Test Cases ***
 Get Modified Time As Timestamp
@@ -83,8 +80,15 @@ Set Modified Time Fails When Path Is Directory
     [Documentation]  FAIL Setting modified time of '${CURDIR}' failed: Modified time can only be set to regular files
     Set Modified Time  ${CURDIR}  0
 
+Set And Get Modified Time Of Non-ASCII File
+    Create File  ${NON ASCII}
+    Set Modified Time  ${NON ASCII}  2010-09-26 21:22:42
+    ${time} =  Get Modified Time  ${NON ASCII}
+    Should Be Equal  ${time}  2010-09-26 21:22:42
 
-*** Keywords ***
-Remove Temps
-    Remove File  ${TESTFILE}
+Set And Get Modified Time Of File With Spaces In Name
+    Create File  ${WITH SPACE}
+    Set Modified Time  ${WITH SPACE}  2010-09-26 21:24
+    ${time} =  Get Modified Time  ${WITH SPACE}
+    Should Be Equal  ${time}  2010-09-26 21:24:00
 
