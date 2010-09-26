@@ -1,27 +1,35 @@
 *** Settings ***
-Suite Teardown  Remove Temps
-Test Setup      Remove Temps
-Library         OperatingSystem
+Test Setup      Create Base Test Directory
+Suite Teardown  Remove Base Test Directory
+Resource        os_resource.txt
 Variables       files/result.py
 
 *** Variables ***
-${testfile}  ${CURDIR}${/}robot_temp_file.txt
-${testdir}  ${CURDIR}${/}robot_temp_dir
 ${utf-8file}  ${CURDIR}${/}files${/}utf-8.txt
 ${asciifile}  ${CURDIR}${/}files${/}ascii.txt
 ${latin-1file}  ${CURDIR}${/}files${/}latin-1.txt
 
 *** Test Cases ***
 Get File
-    Create File  ${testfile}  hello world\nwith two lines
-    ${file} =  Get File  ${testfile}
+    Create File  ${TESTFILE}  hello world\nwith two lines
+    ${file} =  Get File  ${TESTFILE}
     Should Be Equal  ${file}  hello world\nwith two lines
-    ${file} =  Get File  ${testfile}  ascii
+    ${file} =  Get File  ${TESTFILE}  ascii
     Should Be Equal  ${file}  hello world\nwith two lines
 
+Get File With Non-ASCII Name
+    Create File  ${NON ASCII}  content
+    ${file} =  Get File  ${NON ASCII}
+    Should Be Equal  ${file}  content
+
+Get File With Space In Name
+    Create File  ${WITH SPACE}  content
+    ${file} =  Get File  ${WITH SPACE}
+    Should Be Equal  ${file}  content
+
 Log File
-    Create File  ${testfile}  hello world\nwith two lines
-    ${file} =  Log File  ${testfile}
+    Create File  ${TESTFILE}  hello world\nwith two lines
+    ${file} =  Log File  ${TESTFILE}
     Should Be Equal  ${file}  hello world\nwith two lines
 
 Get Utf-8 File
@@ -70,8 +78,4 @@ Grep And Check File
     [Arguments]  ${pattern}  ${expected}
     ${content} =  Grep File  ${TESTFILE}  ${pattern}
     Should Be Equal  ${content}  ${expected}
-
-Remove Temps
-    Remove File  ${testfile}
-    Remove Directory  ${testdir}  recursive
 

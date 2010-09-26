@@ -6,32 +6,38 @@ Variables       ../../../testdata/standard_libraries/operating_system/files/resu
 
 *** Test Cases ***
 Get File
-    ${tc} =  Check testcase  Get File
-    ${path} =  Join Path  ${CURDIR}${/}..${/}..${/}..  testdata  standard_libraries  operating_system  robot_temp_file.txt
-    Check Log Message  ${tc.kws[1].messages[0]}  Getting file '<a href="file://${path}">${path}</a>'  HTML
+    ${tc} =  Check testcase  ${TESTNAME}
+    ${path} =  Join Path  ${TEMPDIR}  robot-os-tests  f1.txt
+    Check Log Message  ${tc.kws[1].msgs[0]}  Getting file '<a href="file://${path}">${path}</a>'  HTML
+
+Get File With Non-ASCII Name
+    Check testcase  ${TESTNAME}
+
+Get File With Space In Name
+    Check testcase  ${TESTNAME}
 
 Log File
-    ${tc} =  Check testcase  Log File
-    Check Log Message  ${tc.kws[1].messages[1]}  hello world\nwith two lines
+    ${tc} =  Check testcase  ${TESTNAME}
+    Check Log Message  ${tc.kws[1].msgs[1]}  hello world\nwith two lines
 
 Get Utf-8 File
-    Check testcase  Get Utf-8 File
+    Check testcase  ${TESTNAME}
 
 Get Ascii File With Default Encoding
-    Check testcase  Get Ascii File With Default Encoding
+    Check testcase  ${TESTNAME}
 
 Get Latin-1 With Default Encoding
-    Check testcase  Get Latin-1 With Default Encoding
+    Check testcase  ${TESTNAME}
 
 Get Latin-1 With Latin-1 Encoding
-    Check testcase  Get Latin-1 With Latin-1 Encoding
+    Check testcase  ${TESTNAME}
 
 Log Latin-1 With Latin-1 Encoding
-    ${tc} =  Check testcase  Log Latin-1 With Latin-1 Encoding
-    Check Log Message  ${tc.kws[0].messages[1]}  ${RESULT}
+    ${tc} =  Check testcase  ${TESTNAME}
+    Check Log Message  ${tc.kws[0].msgs[1]}  ${RESULT}
 
 Grep File
-    ${tc} =  Check testcase  Grep File
+    ${tc} =  Check testcase  ${TESTNAME}
     Check Log Message  ${tc.kws[1].kws[0].msgs[1]}  5 out of 5 lines matched
     Check Log Message  ${tc.kws[2].kws[0].msgs[1]}  2 out of 5 lines matched
     Check Log Message  ${tc.kws[3].kws[0].msgs[1]}  1 out of 5 lines matched
