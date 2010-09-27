@@ -67,18 +67,19 @@ ARGUMENTS = ' '.join('''
 def atests(interpreter, *params):
     if os.path.isdir(RESULTDIR):
         shutil.rmtree(RESULTDIR)
+    runner = ('jython' in os.path.basename(interpreter) and 'jybot'
+                   or 'pybot')
     args = ARGUMENTS % {
         'PYTHONPATH' : os.path.join(CURDIR, 'resources'),
         'OUTPUTDIR' : RESULTDIR,
         'INTERPRETER': interpreter,
         'PLATFORM': sys.platform,
-        'RUNNER': ('jython' in os.path.basename(interpreter) and 'jybot'
-                   or 'pybot')
+        'RUNNER': runner
         }
     if os.name == 'nt':
         args += ' --exclude nonwindows'
-    if sys.platform == 'darwin':
-        args += ' --exclude nonmac'
+    if sys.platform == 'darwin' and runner == 'pybot':
+        args += ' --exclude nonmacpython'
     runner = os.path.join(os.path.dirname(robot.__file__), 'runner.py')
     command = '%s %s %s %s' % (sys.executable, runner, args, ' '.join(params))
     print 'Running command\n%s\n' % command
