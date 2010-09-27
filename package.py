@@ -196,8 +196,8 @@ def _create_jar_distribution(version):
     tmpdir = _create_tmpdir()
     _copy_files_to(tmpdir)
     jar_path = _create_jar_file(version)
-    _fill_jar(tmpdir, jar_path)
     _create_manifest(tmpdir, version)
+    _fill_jar(tmpdir, jar_path)
     shutil.rmtree(tmpdir)
     print 'Created %s based on %s' % (jar_path, JYTHON_JAR)
 
