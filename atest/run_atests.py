@@ -77,6 +77,8 @@ def atests(interpreter, *params):
         }
     if os.name == 'nt':
         args += ' --exclude nonwindows'
+    if sys.platform == 'darwin':
+        args += ' --exclude nonmac'
     runner = os.path.join(os.path.dirname(robot.__file__), 'runner.py')
     command = '%s %s %s %s' % (sys.executable, runner, args, ' '.join(params))
     print 'Running command\n%s\n' % command
