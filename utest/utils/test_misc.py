@@ -56,7 +56,7 @@ class TestMiscUtils(unittest.TestCase):
                 ( 'c:\\path\\to', 'c:\\path\\to\\dir\\result_in_sub_dir.html', 'dir/result_in_sub_dir.html' ),
                 ( 'c:\\commonprefix\\sucks\\baR', 'c:\\commonprefix\\sucks\\baZ.txt', '../baz.txt' ),
                 ( 'c:\\a\\very\\long\\path', 'c:\\no\\depth\\limitation', '../../../../no/depth/limitation' ),
-                ( 'c:\\windows\explorer.exe', 'c:\\windows\\path\\to\\existing\\file', 'path/to/existing/file' ),
+                ( 'c:\\windows\\explorer.exe', 'c:\\windows\\path\\to\\existing\\file', 'path/to/existing/file' ),
                 ( 'c:\\path\\to\\identity', 'c:\\path\\to\\identity', 'identity' ),
             ]
         import robot.utils.normalizing
