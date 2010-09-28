@@ -196,8 +196,8 @@ def _create_jar_distribution(version):
     tmpdir = _create_tmpdir()
     _copy_files_to(tmpdir)
     jar_path = _create_jar_file(version)
-    _create_manifest(tmpdir, version)
     _fill_jar(tmpdir, jar_path)
+    _overwrite_manifest(jar_path, version)
     shutil.rmtree(tmpdir)
     print 'Created %s based on %s' % (jar_path, JYTHON_JAR)
 
@@ -217,15 +217,14 @@ def _copy_files_to(tmpdir):
         shutil.copytree(srcdir, todir, ignore=shutil.ignore_patterns('*.pyc*'))
     subprocess.call(['java', '-jar', JYTHON_JAR, '-m', 'compileall', tmpdir])
 
-def _create_manifest(tmpdir, version):
-    mffile = os.path.join(tmpdir, 'META-INF', 'MANIFEST.MF')
-    if os.path.exists(mffile):
-        os.remove(mffile)
-    os.mkdir(os.path.dirname(mffile))
-    open(mffile, 'w').write('''Manifest-Version: 1.0
+def _overwrite_manifest(jarpath, version):
+    jarfile = zipfile.ZipFile(jarpath, 'a')
+    jarfile.writestr('META-INF/MANIFEST.MF','''Manifest-Version: 1.0
 Main-Class: org.robotframework.RobotFramework
 Specification-Version: 2
-Implementation-Version: %s''' % version)
+Implementation-Version: %s
+''' % version)
+    jarfile.close()
 
 def _create_jar_file(version):
     jar_path = os.path.join(DIST_PATH, 'robotframework-%s.jar' % version)
@@ -239,21 +238,30 @@ def _create_jar_file(version):
     return jar_path
 
 def _fill_jar(tmpdir, jar_path):
-    jar = zipfile.ZipFile(jar_path, 'a')
-    for dirname in ('Lib', 'org', 'META-INF'):
-        _copy_files_to_jar(tmpdir, dirname, jar)
-    jar.close()
+    #jar = zipfile.ZipFile(jar_path, 'a')
+    for dirname in ('Lib', 'org'):
+        _copy_files_to_jar(tmpdir, dirname, jar_path)
+    #jar.close()
 
-def _copy_files_to_jar(tmpdir, dirname, jar):
+def _copy_files_to_jar(tmpdir, dirname, jar_path):
+    targets = []
     for root, _, files in os.walk(os.path.join(tmpdir, dirname)):
         for name in files:
-            if not name.endswith(('.class', '.MF')):
+            if not name.endswith('.class'):
                 continue
             source = os.path.join(root, name)
             target = source.replace(tmpdir+os.sep, '')
             print 'Adding %s' % target
-            jar.write(source, target)
+            targets.append(target)
+    if targets:
+        _update_files_to_jar(targets, jar_path, tmpdir)
 
+def _update_files_to_jar(targets, jar_path, tmpdir):
+	# We have to use M-option to remove the old MANIFEST.MF-file
+    params = ['jar', '-uMf', jar_path]
+    for arg in targets:
+        params.extend(['-C', tmpdir, arg])
+    subprocess.call(params)
 
 if __name__ == '__main__':
     try:
