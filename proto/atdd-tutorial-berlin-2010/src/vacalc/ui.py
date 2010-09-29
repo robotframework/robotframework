@@ -1,4 +1,4 @@
-from javax.swing import JFrame, JList, JPanel, JLabel, JTextField, JButton
+from javax.swing import JFrame, JList, JPanel, JLabel, JTextField, JButton, Box
 from javax.swing.event import ListSelectionListener
 from java.awt.event import ActionListener
 from java.awt import FlowLayout, GridLayout, BorderLayout
@@ -66,18 +66,21 @@ class EmployeeDetailsPanel(object):
     def __init__(self, employeestore):
         self._store = employeestore
         self._panel = JPanel(layout=BorderLayout(), preferredSize=(300, 200))
-        itempanel = JPanel(layout=GridLayout(2,2))
+        itempanel = JPanel(layout=GridLayout(3,2))
         itempanel.add(JLabel(text='Name'))
         self._name_editor = JTextField()
         itempanel.add(self._name_editor)
         itempanel.add(JLabel(text='Start'))
         self._start_date_editor = JTextField()
         itempanel.add(self._start_date_editor)
-        button = JButton('<Add>')
+        button = JButton('Save')
         button.addActionListener(ListenerFactory(ActionListener,
                                                  self._add_button_pushed))
+        btnpanel = Box.createHorizontalBox()
+        btnpanel.createVerticalStrut(100)
+        btnpanel.add(button)
+        itempanel.add(btnpanel)
         self._panel.add(itempanel, BorderLayout.PAGE_START)
-        self._panel.add(button, BorderLayout.SOUTH)
 
     def show_employee(self, employee):
         self._name_editor.setText(employee.name)
