@@ -7,6 +7,7 @@ import datetime
 class VacalcError(RuntimeError): pass
 
 
+
 class EmployeeStore(object):
 
     def __init__(self, db_file):
@@ -23,6 +24,9 @@ class EmployeeStore(object):
                 employee = Employee(row[0], self._parse_date(row[1]))
                 employees[employee.name] = employee
         return employees
+
+    def refresh(self):
+        self.__init__(self._db_file)
 
     def get_employee(self, name):
         try:

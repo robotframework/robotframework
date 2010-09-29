@@ -40,6 +40,9 @@ class VacalcFrame(object):
     def show(self):
         self._frame.setVisible(True)
 
+    def employees_changed(self):
+        self._employee_list.refresh()
+
 
 class EmployeeList(object):
 
@@ -64,6 +67,12 @@ class EmployeeList(object):
 
     def adding_employee_failed(self, error):
         pass
+
+    def refresh(self):
+        idx = self._list.getSelectedIndex()
+        self._populate_list()
+        if idx < self._list.getModel().getSize():
+            self._list.setSelectedIndex(idx)
 
     @property
     def widget(self):
