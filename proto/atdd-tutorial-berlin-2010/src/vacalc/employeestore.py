@@ -57,7 +57,7 @@ class EmployeeStore(object):
         try:
             year, month, day = (int(item) for item in datestring.split('-'))
         except ValueError:
-            raise VacalcError("Invalid time string '%s'." % datestring)
+            raise VacalcError('Invalid time string.')
         try:
             return datetime.date(year, month, day)
         except ValueError, err:
