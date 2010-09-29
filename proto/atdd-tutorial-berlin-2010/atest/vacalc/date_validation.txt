@@ -1,0 +1,34 @@
+***Settings***
+Resource        resource.txt
+Test Template   Validate start date
+
+
+***Test Cases***
+Valid date
+    2010-09-29  User example successfully added.
+    2010-9-9    User example successfully added.
+
+Invalid date format
+    invalid     Invalid time string.
+    2010-10-mm  Invalid time string.
+    29.9.2010   Invalid time string.
+
+Invalid month
+    2010-42-01  Month must be in 1..12.
+    2010-00-01  Month must be in 1..12.
+
+Invalid day
+    2010-1-00   Day must be in 1..31.
+    2010-1-42   Day must be in 1..31.
+    2010-3-31   Day must be in 1..30.
+    2010-2-30   Day must be in 1..28.
+    2012-2-30   Day must be in 1..29.
+
+
+***Keywords***
+Validate start date
+    [Arguments]  ${date}  ${message}
+    Clear database
+    Add employee  Mr. Roboto  ${date}
+    Status message should be  ${message}
+
