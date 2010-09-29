@@ -17,6 +17,7 @@ Adding employee with same ID
 *** Keywords ***
 Given no employee "${name}" exists in the system
     Clear Database
+    Sleep  1
 
 When "${name}" with start date ${date} is added
     Add Employee  ${name}  ${date}
