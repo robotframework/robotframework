@@ -3,10 +3,14 @@ Resource        resource.txt
 Test Template   Validate start date
 
 
+*** Variables ***
+${USER}  Mr. Roboto
+
+
 ***Test Cases***
 Valid date
-    2010-09-29  User example successfully added.
-    2010-9-9    User example successfully added.
+    2010-09-29  User ${USER} successfully added.
+    2010-9-9    User ${USER} successfully added.
 
 Invalid date format
     invalid     Invalid time string.
@@ -29,6 +33,6 @@ Invalid day
 Validate start date
     [Arguments]  ${date}  ${message}
     Clear database
-    Add employee  Mr. Roboto  ${date}
+    Add employee  ${USER}  ${date}
     Status message should be  ${message}
 
