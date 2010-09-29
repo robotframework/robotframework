@@ -28,15 +28,15 @@ class EmployeeStore(object):
         try:
             return self._employees[name]
         except KeyError:
-            raise VacalcError("Employee '%s' not found" % name)
+            raise VacalcError("Employee '%s' not found." % name)
 
     def get_all_employees(self):
         return self._employees.values()
 
     def add_employee(self, name, startdate):
         if name in self._employees:
-            raise VacalcError("Employee '%s' already exists in the system" %
-                              name)
+            raise VacalcError("Employee '%s' already exists in the system."
+                              % name)
         employee = Employee(name, self._parse_date(startdate))
         self._employees[employee.name] = employee
         self._serialize(employee)
@@ -53,11 +53,11 @@ class EmployeeStore(object):
         try:
             year, month, day = (int(item) for item in datestring.split('-'))
         except ValueError:
-            raise VacalcError("Invalid time string '%s'" % datestring)
+            raise VacalcError("Invalid time string '%s'." % datestring)
         try:
             return datetime.date(year, month, day)
         except ValueError, err:
-            raise VacalcError(err.args[0].capitalize())
+            raise VacalcError(err.args[0].capitalize() + '.')
 
 
 class Employee(object):

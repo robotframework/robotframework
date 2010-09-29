@@ -10,8 +10,8 @@ from vacalc.employeestore import EmployeeStore, Employee, VacalcError
 class VacalcApplication(VacationCalculator):
 
     def create(self):
-        db_file = os.environ.get('VACALC_DB', os.path.join(tempfile.gettempdir(),
-                                                           'vacalcdb.csv'))
+        default_db = os.path.join(tempfile.gettempdir(), 'vacalcdb.csv')
+        db_file = os.environ.get('VACALC_DB', default_db)
         store = EmployeeStore(db_file)
         self._frame = VacalcFrame(EmployeeController(store))
         self._frame.show()
