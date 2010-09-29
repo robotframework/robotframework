@@ -51,10 +51,13 @@ class EmployeeStore(object):
 
     def _parse_date(self, datestring):
         try:
-            year, month, day = datestring.split('-')
-            return datetime.date(int(year), int(month), int(day))
-        except (TypeError, ValueError):
+            year, month, day = (int(item) for item in datestring.split('-'))
+        except ValueError:
             raise VacalcError("Invalid time string '%s'" % datestring)
+        try:
+            return datetime.date(year, month, day)
+        except ValueError, err:
+            raise VacalcError(err.args[0].capitalize())
 
 
 class Employee(object):
