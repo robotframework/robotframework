@@ -19,7 +19,7 @@ class VacalcApplication(VacationCalculator):
         self._store = EmployeeStore(self._db_file)
         self._frame = VacalcFrame(EmployeeController(self._store))
         self._timer = Timer()
-        self._timer.scheduleAtFixedRate(DbModificationTask(self), 0, 500)
+        self._timer.scheduleAtFixedRate(DbModificationTask(self), 0, 100)
         self._frame.show()
 
     def check_modified_time(self):
