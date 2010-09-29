@@ -32,7 +32,8 @@ Employee Should Be Selected
     ${selected item}=  Get Selected Value From List  employee_list
     Should Be Equal  ${name}  ${selected item}
 
-Employee exists in the database  ${name}  ${date}
+Employee exists in the database
+    [Arguments]  ${name}  ${date}
     ${data} =  Get File  ${DATABASE}
-    Should Contain  ${data}  ${name}, ${date}
+    Should Contain  ${data}  ${name},${date}
 

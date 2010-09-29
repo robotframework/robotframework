@@ -2,10 +2,10 @@
 
 Adding employee
     Given no employee "Juha" exists in the system
-    When "Juha" with start date 2010-1-1 is added
+    When "Juha" with start date 2010-01-01 is added
     Then message "Employee 'Juha' was added successfully" is shown
     and "Juha" exists in the employee listing
-    and "Juha" with start date 2010-1-1 exists in the database
+    and "Juha" with start date 2010-01-01 exists in the database
 
 Adding employee with same ID
     Given employee "Juha" with start date 2010-1-1 exists in the system
