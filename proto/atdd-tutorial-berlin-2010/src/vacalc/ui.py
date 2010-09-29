@@ -48,7 +48,7 @@ class EmployeeList(object):
     def __init__(self, employees):
         self._employees = employees
         data = [e.name for e in employees]
-        self._list = JList(data, preferredSize=(200, 200))
+        self._list = JList(data, preferredSize=(200, 200), name='employee_list')
 
     def add_selection_listener(self, listener):
         self._list.addListSelectionListener(listener)
@@ -68,12 +68,12 @@ class EmployeeDetailsPanel(object):
         self._panel = JPanel(layout=BorderLayout(), preferredSize=(300, 200))
         itempanel = JPanel(layout=GridLayout(3,2))
         itempanel.add(JLabel(text='Name'))
-        self._name_editor = JTextField()
+        self._name_editor = JTextField(name='name_input')
         itempanel.add(self._name_editor)
         itempanel.add(JLabel(text='Start'))
-        self._start_date_editor = JTextField()
+        self._start_date_editor = JTextField(name='start_input')
         itempanel.add(self._start_date_editor)
-        button = JButton('Save')
+        button = JButton('Save', name='name_button')
         button.addActionListener(ListenerFactory(ActionListener,
                                                  self._add_button_pushed))
         itempanel.add(Box.createHorizontalStrut(1))
