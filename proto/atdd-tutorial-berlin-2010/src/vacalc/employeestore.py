@@ -20,14 +20,9 @@ class EmployeeStore(object):
         employees = {}
         with open(path) as db:
             for row in csv.reader(db):
-                date = self._convert_date(row[1])
-                employee = Employee(row[0], date)
+                employee = Employee(row[0], row[1])
                 employees[employee.name] = employee
         return employees
-
-    def _convert_date(self, isodate):
-        year, month, day = isodate.split('-')
-        return '%s.%s.%s' % (day, month, year)
 
     def get_employee(self, name):
         try:
@@ -60,5 +55,5 @@ class Employee(object):
         self.startdate = self._parse_date(startdate)
 
     def _parse_date(self, datestring):
-        day, month, year = datestring.split('.')
+        year, month, day = datestring.split('-')
         return datetime.date(int(year), int(month), int(day))
