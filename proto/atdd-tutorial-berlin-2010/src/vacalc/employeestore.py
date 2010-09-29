@@ -33,10 +33,11 @@ class EmployeeStore(object):
     def get_all_employees(self):
         return self._employees.values()
 
-    def add_employee(self, employee):
-        if employee.name in self._employees:
+    def add_employee(self, name, startdate):
+        if name in self._employees:
             raise VacalcError("Employee '%s' already exists in the system" %
-                              employee.name)
+                              name)
+        employee = Employee(name, startdate)
         self._employees[employee.name] = employee
         self._serialize(employee)
 
