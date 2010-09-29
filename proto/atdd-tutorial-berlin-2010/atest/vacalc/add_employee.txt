@@ -3,7 +3,7 @@
 Adding employee
     Given no employee "Juha" exists in the system
     When "Juha" with start date 2010-01-01 is added
-    Then message "Employee 'Juha' was added successfully" is shown
+    Then message "Employee 'Juha' was added successfully." is shown
     and "Juha" exists in the employee listing
     and "Juha" with start date 2010-01-01 exists in the database
 
