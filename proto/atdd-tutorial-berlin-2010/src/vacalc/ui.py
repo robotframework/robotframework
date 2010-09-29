@@ -111,7 +111,7 @@ class EmployeeDetailsPanel(object):
                             self._start_date_editor.getText())
 
     def employee_added(self, employee):
-        self._status_label.setText("Employee '%s' added succesfully" % employee.name)
+        self._status_label.setText("Employee '%s' was added successfully" % employee.name)
 
     def adding_employee_failed(self, reason):
         self._status_label.setText(reason)
