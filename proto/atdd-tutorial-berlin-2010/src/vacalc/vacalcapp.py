@@ -4,7 +4,7 @@ import tempfile
 from org.robotframework.vacalc import VacationCalculator
 
 from vacalc.ui import VacalcFrame
-from vacalc.employeestore import EmployeeStore, Employee
+from vacalc.employeestore import EmployeeStore, Employee, VacalcError
 
 
 class VacalcApplication(VacationCalculator):
@@ -13,8 +13,30 @@ class VacalcApplication(VacationCalculator):
         db_file = os.environ.get('VACALC_DB', os.path.join(tempfile.gettempdir(),
                                                            'vacalcdb.csv'))
         store = EmployeeStore(db_file)
-        self._frame = VacalcFrame(store)
+        self._frame = VacalcFrame(EmployeeController(store))
         self._frame.show()
+
+
+class EmployeeController(object):
+
+    def __init__(self, employeestore):
+        self._store = employeestore
+        self._change_listeners = []
+
+    def all(self):
+        return self._store.get_all_employees()
+
+    def add(self, name, startdate, add_listener):
+        try:
+            self._store.add_employee(name, startdate)
+        except VacalcError, err:
+            print err
+        else:
+            for l in self._change_listeners:
+                l.employee_added()
+
+    def add_change_listener(self, listener):
+        self._change_listeners.append(listener)
 
 
 class VacationCalculator(object):
