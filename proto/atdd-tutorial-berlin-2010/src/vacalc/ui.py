@@ -60,6 +60,7 @@ class EmployeeList(object):
 
     def employee_added(self, employee):
         self._populate_list()
+        self._list.setSelectedValue(employee.name, True)
 
     def adding_employee_failed(self, error):
         pass
