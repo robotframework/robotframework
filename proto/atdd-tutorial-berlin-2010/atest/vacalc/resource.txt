@@ -34,6 +34,11 @@ Employee Should Be Selected
 
 Employee exists in the database
     [Arguments]  ${name}  ${date}
-    ${data} =  Get File  ${DATABASE}
-    Should Contain  ${data}  ${name},${date}
+    ${db} =  Get File  ${DATABASE}
+    Should Contain  ${db}  ${name},${date}
+
+Employee should not exist in the database
+    [Arguments]  ${name}
+    ${db} =  Get File  ${DATABASE}
+    Should Not Contain  ${db}  ${name}
 
