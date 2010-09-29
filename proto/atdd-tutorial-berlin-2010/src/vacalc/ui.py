@@ -76,8 +76,9 @@ class EmployeeDetailsPanel(object):
         button = JButton('Save')
         button.addActionListener(ListenerFactory(ActionListener,
                                                  self._add_button_pushed))
+        itempanel.add(Box.createHorizontalStrut(1))
         btnpanel = Box.createHorizontalBox()
-        btnpanel.createVerticalStrut(100)
+        btnpanel.add(btnpanel.createHorizontalStrut(80))
         btnpanel.add(button)
         itempanel.add(btnpanel)
         self._panel.add(itempanel, BorderLayout.PAGE_START)
