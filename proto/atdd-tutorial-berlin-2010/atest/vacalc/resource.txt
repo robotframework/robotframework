@@ -3,25 +3,24 @@ Library  SwingLibrary
 Library  OperatingSystem
 
 *** Variables ***
-${database}  ${CURDIR}${/}test_db.txt
+${DATABASE}  ${CURDIR}${/}test_db.txt
 
 *** Keywords ***
+
 Start Vacalc
-    Set Environment Variable  VACALC_DB  ${database}
+    Set Environment Variable  VACALC_DB  ${DATABASE}
     Start Application  org.robotframework.vacalc.VacalcRunner
     Select Window  Vacation Calculator
     ${title}=  Get Selected Window Title
 
 Clear Database
-    Remove File  ${database}
+    Remove File  ${DATABASE}
 
 Add Employee
     [Arguments]  ${name}  ${date}
     Insert Into Text Field  name_input  ${name}
     Insert Into Text Field  start_input  ${date}
     Push Button  save_button
-    
-    
 
 Status Message Should Be
     [Arguments]  ${message}
@@ -33,5 +32,6 @@ Employee Should Be Selected
     Should Be Equal  ${name}  ${selected item}
 
 Employee exists in the database  ${name}  ${date}
-    ${data} =  Get File  ${database}
+    ${data} =  Get File  ${DATABASE}
     Should Contain  ${data}  ${name}, ${date}
+
