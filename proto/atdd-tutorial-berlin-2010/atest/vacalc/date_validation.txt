@@ -9,8 +9,8 @@ ${USER}  Mr. Roboto
 
 ***Test Cases***
 Valid date
-    2010-09-29  User ${USER} successfully added.
-    2010-9-9    User ${USER} successfully added.
+    2010-09-29  Employee '${USER}' was added successfully.
+    2010-9-9    Employee '${USER}' was added successfully.
 
 Invalid date format
     invalid     Invalid time string.
