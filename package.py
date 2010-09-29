@@ -50,6 +50,7 @@ Examples:
 
 import sys
 import os
+from os.path import abspath, dirname, exists, join
 import shutil
 import re
 import time
@@ -58,15 +59,14 @@ import zipfile
 from glob import glob
 
 
-ROOT_PATH = os.path.abspath(os.path.dirname(__file__))
-DIST_PATH = os.path.join(ROOT_PATH, 'dist')
-BUILD_PATH = os.path.join(ROOT_PATH, 'build')
-ROBOT_PATH = os.path.join(ROOT_PATH, 'src', 'robot')
-JAVA_SRC_ROOT = os.path.join(ROOT_PATH, 'src', 'java')
-JAVA_PKG = ('org', 'robotframework')
-JYTHON_JAR = glob(os.path.join(ROOT_PATH, 'ext-lib', 'jython-standalone-*.jar'))[0]
-SETUP_PATH = os.path.join(ROOT_PATH, 'setup.py')
-VERSION_PATH = os.path.join(ROBOT_PATH, 'version.py')
+ROOT_PATH = abspath(dirname(__file__))
+DIST_PATH = join(ROOT_PATH, 'dist')
+BUILD_PATH = join(ROOT_PATH, 'build')
+ROBOT_PATH = join(ROOT_PATH, 'src', 'robot')
+JAVA_SRC = join(ROOT_PATH, 'src', 'java', 'org', 'robotframework')
+JYTHON_JAR = glob(join(ROOT_PATH, 'ext-lib', 'jython-standalone-*.jar'))[0]
+SETUP_PATH = join(ROOT_PATH, 'setup.py')
+VERSION_PATH = join(ROBOT_PATH, 'version.py')
 VERSIONS = [re.compile('^2\.\d+(\.\d+)?$'), 'trunk', 'keep']
 RELEASES = [re.compile('^alpha\d*$'), re.compile('^beta\d*$'),
             re.compile('^rc\d*$'), 'final']
@@ -148,7 +148,7 @@ def _keep_version():
 def _clean():
     print 'Cleaning up...'
     for path in [DIST_PATH, BUILD_PATH]:
-        if os.path.exists(path):
+        if exists(path):
             shutil.rmtree(path)
 
 def _verify_platform(version_number, release_tag=None):
@@ -178,90 +178,78 @@ def _create(command, name):
 def _announce():
     print 'Created:'
     for path in os.listdir(DIST_PATH):
-        print os.path.abspath(os.path.join(DIST_PATH, path))
+        print abspath(join(DIST_PATH, path))
 
 def jar(*version_info):
     ver = version(*version_info)
-    _compile_java_classes()
-    _create_jar_distribution(ver)
-
-def _compile_java_classes():
-    source_path = os.path.join(JAVA_SRC_ROOT, *JAVA_PKG)
-    source_files = [ os.path.join(source_path, f) for f
-                     in os.listdir(source_path) if f.endswith('java') ]
-    print 'Compiling %d source files' % len(source_files)
-    subprocess.call(['javac', '-target', '1.5', '-cp', JYTHON_JAR]  + source_files)
-
-def _create_jar_distribution(version):
     tmpdir = _create_tmpdir()
-    _copy_files_to(tmpdir)
-    jar_path = _create_jar_file(version)
-    _fill_jar(tmpdir, jar_path)
-    _overwrite_manifest(jar_path, version)
+    _compile_java_classes(tmpdir)
+    _unzip_jython_jar(tmpdir)
+    _copy_robot_files(tmpdir)
+    _compile_all_py_files(tmpdir)
+    _overwrite_manifest(tmpdir, ver)
+    jar_path = _create_jar_file(tmpdir, ver)
     shutil.rmtree(tmpdir)
     print 'Created %s based on %s' % (jar_path, JYTHON_JAR)
 
+def _compile_java_classes(tmpdir):
+    source_files = [join(JAVA_SRC, f)
+                    for f in os.listdir(JAVA_SRC) if f.endswith('.java')]
+    print 'Compiling %d source files' % len(source_files)
+    subprocess.call(['javac', '-d', tmpdir, '-target', '1.5', '-cp', JYTHON_JAR]
+                    + source_files)
+
 def _create_tmpdir():
-    tmpdir = os.path.join(ROOT_PATH, 'tmp-jar-dir')
-    if os.path.exists(tmpdir):
+    tmpdir = join(ROOT_PATH, 'tmp-jar-dir')
+    if exists(tmpdir):
         shutil.rmtree(tmpdir)
     os.mkdir(tmpdir)
     return tmpdir
 
-def _copy_files_to(tmpdir):
-    for srcdir, todir in [(ROBOT_PATH,
-                           os.path.join(tmpdir, 'Lib', 'robot')),
-                          (os.path.join(JAVA_SRC_ROOT, *JAVA_PKG),
-                           os.path.join(tmpdir, 'org', 'robotframework'))]:
-        # pyc files must be excluded so that compileall works properly.
-        shutil.copytree(srcdir, todir, ignore=shutil.ignore_patterns('*.pyc*'))
-    subprocess.call(['java', '-jar', JYTHON_JAR, '-m', 'compileall', tmpdir])
+def _unzip_jython_jar(tmpdir):
+    zipfile.ZipFile(JYTHON_JAR).extractall(tmpdir)
 
-def _overwrite_manifest(jarpath, version):
-    jarfile = zipfile.ZipFile(jarpath, 'a')
-    jarfile.writestr('META-INF/MANIFEST.MF','''Manifest-Version: 1.0
+def _copy_robot_files(tmpdir):
+    # pyc files must be excluded so that compileall works properly.
+    todir = join(tmpdir, 'Lib', 'robot')
+    shutil.copytree(ROBOT_PATH, todir, ignore=shutil.ignore_patterns('*.pyc*'))
+
+def _compile_all_py_files(tmpdir):
+    subprocess.call(['java', '-jar', JYTHON_JAR, '-m', 'compileall', tmpdir])
+    for root, _, files in os.walk(tmpdir):
+        for f in files:
+            if f.endswith('.py'):
+                os.remove(join(root, f))
+
+def _overwrite_manifest(tmpdir, version):
+    with open(join(tmpdir, 'META-INF', 'MANIFEST.MF'), 'w') as mf:
+        mf.write('''Manifest-Version: 1.0
 Main-Class: org.robotframework.RobotFramework
 Specification-Version: 2
 Implementation-Version: %s
 ''' % version)
-    jarfile.close()
 
-def _create_jar_file(version):
-    jar_path = os.path.join(DIST_PATH, 'robotframework-%s.jar' % version)
-    if not os.path.exists(DIST_PATH):
+def _create_jar_file(source, version):
+    path = join(DIST_PATH, 'robotframework-%s.jar' % version)
+    if not exists(DIST_PATH):
         os.mkdir(DIST_PATH)
-    for path in [os.path.join(DIST_PATH, name) for name in os.listdir(DIST_PATH)]:
-        if path.endswith('.jar'):
-            print 'removing old jarfile', path
-            os.remove(path)
-    shutil.copyfile(JYTHON_JAR, jar_path)
-    return jar_path
+    _fill_jar(source, path)
+    return path
 
-def _fill_jar(tmpdir, jar_path):
-    #jar = zipfile.ZipFile(jar_path, 'a')
-    for dirname in ('Lib', 'org'):
-        _copy_files_to_jar(tmpdir, dirname, jar_path)
-    #jar.close()
-
-def _copy_files_to_jar(tmpdir, dirname, jar_path):
-    targets = []
-    for root, _, files in os.walk(os.path.join(tmpdir, dirname)):
+def _fill_jar(sourcedir, jarpath):
+    subprocess.call(['zip', jarpath, '-r', '.'], cwd=sourcedir)
+    return
+    jar = zipfile.ZipFile(jarpath, 'w', compression=zipfile.ZIP_DEFLATED)
+    for root, _, files in os.walk(sourcedir):
         for name in files:
-            if not name.endswith('.class'):
+            if name.endswith('.py'):
                 continue
-            source = os.path.join(root, name)
-            target = source.replace(tmpdir+os.sep, '')
+            source = join(root, name)
+            target= source.replace(sourcedir+os.sep, '')
             print 'Adding %s' % target
-            targets.append(target)
-    if targets:
-        _update_files_to_jar(targets, jar_path, tmpdir)
+            jar.write(source, target)
+    jar.close()
 
-def _update_files_to_jar(targets, jar_path, tmpdir):
-	# We have to use M-option to remove the old MANIFEST.MF-file
-    params = ['jar', '-uMf', jar_path]
-    for arg in targets:
-        params.extend(['-C', tmpdir, arg])
-    subprocess.call(params)
 
 if __name__ == '__main__':
     try:
