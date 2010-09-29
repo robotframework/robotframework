@@ -14,4 +14,6 @@ Adding employee with same ID
 
 ***Settings***
 Force Tags   Sprint-1
-Resource  resource.txt
+
+*** Keywords ***
+

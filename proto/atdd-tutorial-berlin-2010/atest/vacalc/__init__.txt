@@ -1,0 +1,3 @@
+*** Settings ***
+Resource  resource.txt
+Suite Setup  Start Vacalc
