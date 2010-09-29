@@ -1,0 +1,1 @@
+from vacalcapp import VacalcApplication

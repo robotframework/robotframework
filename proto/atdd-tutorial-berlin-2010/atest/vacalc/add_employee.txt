@@ -1,0 +1,17 @@
+***Test Cases***
+
+Adding employee
+    Given no employee "Juha" exists in the system
+    When "Juha" with start date 1.1.2010 is added
+    Then message "Employee 'Juha' was added successfully" is shown
+    and "Juha" with start date 1.1.2010 exists in the database
+
+Adding employee with same ID
+    Given employee "Juha" with start date 1.1.2010 exists in the system
+    When "Juha" with start date 2.1.2010 is added
+    Then message "Employee 'Juha' already exists in the system" is shown
+    and "Juha" with start date 1.1.2010 exists in the database
+
+***Settings***
+Force Tags   Sprint-1
+Resource  resource.txt

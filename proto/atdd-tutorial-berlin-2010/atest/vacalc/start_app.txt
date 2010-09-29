@@ -1,0 +1,7 @@
+* settings *
+Library  SwingLibrary
+
+* test cases *
+Test  Start Application  org.robotframework.vacalc.VacalcRunner
+    Select Window  Vacation Calculator
+    ${title}=  Get Selected Window Title
