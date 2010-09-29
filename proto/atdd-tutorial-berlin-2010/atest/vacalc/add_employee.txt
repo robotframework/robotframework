@@ -2,18 +2,35 @@
 
 Adding employee
     Given no employee "Juha" exists in the system
-    When "Juha" with start date 1.1.2010 is added
+    When "Juha" with start date 2010-1-1 is added
     Then message "Employee 'Juha' was added successfully" is shown
-    and "Juha" with start date 1.1.2010 exists in the database
+    and "Juha" exists in the employee listing
+    and "Juha" with start date 2010-1-1 exists in the database
 
 Adding employee with same ID
-    Given employee "Juha" with start date 1.1.2010 exists in the system
-    When "Juha" with start date 2.1.2010 is added
+    Given employee "Juha" with start date 2010-1-1 exists in the system
+    When "Juha" with start date 2010-2-2 is added
     Then message "Employee 'Juha' already exists in the system" is shown
-    and "Juha" with start date 1.1.2010 exists in the database
+    and "Juha" with start date 2010-1-1 exists in the database
+
+
+*** Keywords ***
+Given no employee "${name}" exists in the system
+    Clear Database
+
+When "${name}" with start date ${date} is added
+    Add Employee  ${name}  ${date}
+
+Then message "${message}" is shown
+    Status Message Should Be  ${message}
+
+and "${name}" exists in the employee listing
+    Employee Should Be Selected  ${name}
+
+and "${name}" with start date ${date} exists in the database
+    Employee exists in the database  ${name}  ${date}
+
 
 ***Settings***
 Force Tags   Sprint-1
-
-*** Keywords ***
-
+Resource  resource.txt

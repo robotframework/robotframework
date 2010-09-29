@@ -1,3 +1,4 @@
 *** Settings ***
 Resource  resource.txt
 Suite Setup  Start Vacalc
+Suite Teardown  Clear Database
