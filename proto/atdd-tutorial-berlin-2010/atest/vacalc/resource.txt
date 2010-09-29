@@ -15,6 +15,7 @@ Start Vacalc
 
 Clear Database
     Remove File  ${DATABASE}
+    Sleep  1
 
 Add Employee
     [Arguments]  ${name}  ${date}
