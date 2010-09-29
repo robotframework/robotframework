@@ -3,8 +3,6 @@ from javax.swing.event import ListSelectionListener
 from java.awt.event import ActionListener
 from java.awt import FlowLayout, GridLayout, BorderLayout
 
-from vacalc.employeestore import Employee
-
 
 class VacalcFrame(object):
 
@@ -27,8 +25,8 @@ class VacalcFrame(object):
         panel.add(self._details.widget)
         self._frame.setContentPane(panel)
 
-    def _create_employee_list(self, employeestore):
-        list = EmployeeList(employeestore.get_all_employees())
+    def _create_employee_list(self, employees):
+        list = EmployeeList(employees)
         list.add_selection_listener(ListenerFactory(ListSelectionListener,
                                                     self._list_item_selected))
         return list
@@ -47,14 +45,21 @@ class EmployeeList(object):
 
     def __init__(self, employees):
         self._employees = employees
-        data = [e.name for e in employees]
-        self._list = JList(data, preferredSize=(200, 200), name='employee_list')
+        self._employees.add_change_listener(self)
+        self._list = JList(preferredSize=(200, 200), name='employee_list')
+        self._populate_list()
+
+    def _populate_list(self):
+        self._list.setListData([e.name for e in self._employees.all()])
 
     def add_selection_listener(self, listener):
         self._list.addListSelectionListener(listener)
 
     def selected_employee(self):
-        return self._employees[self._list.getSelectedIndex()]
+        return self._employees.all()[self._list.getSelectedIndex()]
+
+    def employee_added(self):
+        self._populate_list()
 
     @property
     def widget(self):
@@ -63,8 +68,8 @@ class EmployeeList(object):
 
 class EmployeeDetailsPanel(object):
 
-    def __init__(self, employeestore):
-        self._store = employeestore
+    def __init__(self, employees):
+        self._employees = employees
         self._panel = JPanel(layout=BorderLayout(), preferredSize=(300, 200))
         itempanel = JPanel(layout=GridLayout(3,2))
         itempanel.add(JLabel(text='Name'))
@@ -96,8 +101,8 @@ class EmployeeDetailsPanel(object):
         return self._panel
 
     def _add_button_pushed(self, event):
-        self._store.add_employee(Employee(self._name_editor.getText(),
-                                          self._start_date_editor.getText()))
+        self._employees.add(self._name_editor.getText(),
+                            self._start_date_editor.getText(), self)
 
 
 def ListenerFactory(interface, func):
