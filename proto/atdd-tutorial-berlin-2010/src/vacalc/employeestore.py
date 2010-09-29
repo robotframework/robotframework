@@ -20,7 +20,7 @@ class EmployeeStore(object):
         employees = {}
         with open(path) as db:
             for row in csv.reader(db):
-                employee = Employee(row[0], row[1])
+                employee = Employee(row[0], self._parse_date(row[1]))
                 employees[employee.name] = employee
         return employees
 
@@ -37,7 +37,7 @@ class EmployeeStore(object):
         if name in self._employees:
             raise VacalcError("Employee '%s' already exists in the system" %
                               name)
-        employee = Employee(name, startdate)
+        employee = Employee(name, self._parse_date(startdate))
         self._employees[employee.name] = employee
         self._serialize(employee)
 
@@ -48,13 +48,16 @@ class EmployeeStore(object):
             writer = csv.writer(db, lineterminator='\n')
             writer.writerow([employee.name, employee.startdate])
 
+    def _parse_date(self, datestring):
+        try:
+            year, month, day = datestring.split('-')
+            return datetime.date(int(year), int(month), int(day))
+        except (TypeError, ValueError):
+            raise VacalcError("Invalid time string '%s'" % datestring)
+
 
 class Employee(object):
 
     def __init__(self, name, startdate):
         self.name = name
-        self.startdate = self._parse_date(startdate)
-
-    def _parse_date(self, datestring):
-        year, month, day = datestring.split('-')
-        return datetime.date(int(year), int(month), int(day))
+        self.startdate = startdate
