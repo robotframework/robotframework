@@ -40,6 +40,7 @@ class EmployeeStore(object):
         employee = Employee(name, self._parse_date(startdate))
         self._employees[employee.name] = employee
         self._serialize(employee)
+        return employee
 
     def _serialize(self, employee):
         if not self._db_file:

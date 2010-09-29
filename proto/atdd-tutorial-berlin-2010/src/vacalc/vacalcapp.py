@@ -26,14 +26,15 @@ class EmployeeController(object):
     def all(self):
         return self._store.get_all_employees()
 
-    def add(self, name, startdate, add_listener):
+    def add(self, name, startdate):
         try:
-            self._store.add_employee(name, startdate)
+            employee = self._store.add_employee(name, startdate)
         except VacalcError, err:
-            print err
+            for l in self._change_listeners:
+                l.adding_employee_failed(unicode(err))
         else:
             for l in self._change_listeners:
-                l.employee_added()
+                l.employee_added(employee)
 
     def add_change_listener(self, listener):
         self._change_listeners.append(listener)

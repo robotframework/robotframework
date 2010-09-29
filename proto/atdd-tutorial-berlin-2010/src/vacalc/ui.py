@@ -1,4 +1,4 @@
-from javax.swing import JFrame, JList, JPanel, JLabel, JTextField, JButton, Box
+from javax.swing import JFrame, JList, JPanel, JLabel, JTextField, JButton, Box, JTextArea
 from javax.swing.event import ListSelectionListener
 from java.awt.event import ActionListener
 from java.awt import FlowLayout, GridLayout, BorderLayout
@@ -58,8 +58,11 @@ class EmployeeList(object):
     def selected_employee(self):
         return self._employees.all()[self._list.getSelectedIndex()]
 
-    def employee_added(self):
+    def employee_added(self, employee):
         self._populate_list()
+
+    def adding_employee_failed(self, error):
+        pass
 
     @property
     def widget(self):
@@ -70,8 +73,9 @@ class EmployeeDetailsPanel(object):
 
     def __init__(self, employees):
         self._employees = employees
+        employees.add_change_listener(self)
         self._panel = JPanel(layout=BorderLayout(), preferredSize=(300, 200))
-        itempanel = JPanel(layout=GridLayout(3,2))
+        itempanel = JPanel(layout=GridLayout(4,2))
         itempanel.add(JLabel(text='Name'))
         self._name_editor = JTextField(name='name_input')
         itempanel.add(self._name_editor)
@@ -87,6 +91,8 @@ class EmployeeDetailsPanel(object):
         btnpanel.add(button)
         itempanel.add(btnpanel)
         self._panel.add(itempanel, BorderLayout.PAGE_START)
+        self._status_label = JTextArea(editable=False, name='status_label', visible=False)
+        self._panel.add(self._status_label, BorderLayout.PAGE_END)
 
     def show_employee(self, employee):
         self._name_editor.setText(employee.name)
@@ -102,7 +108,14 @@ class EmployeeDetailsPanel(object):
 
     def _save_button_pushed(self, event):
         self._employees.add(self._name_editor.getText(),
-                            self._start_date_editor.getText(), self)
+                            self._start_date_editor.getText())
+
+    def employee_added(self, employee):
+        self._status_label.setText("Employee '%s' added succesfully" % employee.name)
+
+    def adding_employee_failed(self, reason):
+        self._status_label.setText(reason)
+        self._status_label.setVisible(True)
 
 
 def ListenerFactory(interface, func):
