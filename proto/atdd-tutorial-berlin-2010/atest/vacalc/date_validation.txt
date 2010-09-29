@@ -29,7 +29,7 @@ Invalid day
     2010-1-00   Day must be in 1..31.
     2010-1-32   Day must be in 1..31.
     2010-1-100  Day must be in 1..31.
-    2010-3-31   Day must be in 1..30.
+    2010-4-31   Day must be in 1..30.
     2010-2-30   Day must be in 1..28.
     2012-2-30   Day must be in 1..29.
 
