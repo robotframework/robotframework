@@ -78,9 +78,9 @@ class EmployeeDetailsPanel(object):
         itempanel.add(JLabel(text='Start'))
         self._start_date_editor = JTextField(name='start_input')
         itempanel.add(self._start_date_editor)
-        button = JButton('Save', name='name_button')
+        button = JButton('Save', name='save_button')
         button.addActionListener(ListenerFactory(ActionListener,
-                                                 self._add_button_pushed))
+                                                 self._save_button_pushed))
         itempanel.add(Box.createHorizontalStrut(1))
         btnpanel = Box.createHorizontalBox()
         btnpanel.add(btnpanel.createHorizontalStrut(80))
@@ -100,7 +100,7 @@ class EmployeeDetailsPanel(object):
     def widget(self):
         return self._panel
 
-    def _add_button_pushed(self, event):
+    def _save_button_pushed(self, event):
         self._employees.add(self._name_editor.getText(),
                             self._start_date_editor.getText(), self)
 
