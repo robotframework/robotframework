@@ -132,7 +132,7 @@ class EmployeeDetails(JPanel):
         self._add_with_padding(self._name_editor, 5)
 
     def _create_start_date_editor(self):
-        self.add(JLabel(text='Start Date (YYYY-MM-DD):'))
+        self.add(JLabel(text='Start Date (yyyy-mm-dd):'))
         self._start_date_editor = FixedHeightTextField('start_input')
         self._add_with_padding(self._start_date_editor, 5)
 
