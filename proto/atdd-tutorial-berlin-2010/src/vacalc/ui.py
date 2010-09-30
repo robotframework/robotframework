@@ -113,7 +113,7 @@ class EmployeeDetails(JPanel):
         self._add_with_padding(self._status_label, 5)
 
     def _create_name_editor(self):
-        self.add(JLabel(text='Name'))
+        self.add(JLabel(text='Employee Name'))
         self._name_editor = FixedHeightTextField('name_input')
         self._add_with_padding(self._name_editor, 5)
 
