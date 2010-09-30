@@ -105,6 +105,7 @@ class EmployeeDetails(JPanel):
         self._create_start_date_editor()
         self._create_save_button()
         self._create_vacation_display()
+        self._adding_employee = False
 
     def _create_status_label(self):
         self._status_label = JLabel(name='status_label',
@@ -142,6 +143,10 @@ class EmployeeDetails(JPanel):
         self._name_editor.setText(employee.name)
         self._start_date_editor.setText(str(employee.startdate))
         self._save_button.setVisible(False)
+        if self._adding_employee:
+            self._adding_employee = False
+        else:
+            self._status_label.setText('')
         self._display.setVisible(True)
         self._display.setModel(VacationTableModel(employee))
         self._header.setVisible(True)
@@ -152,6 +157,7 @@ class EmployeeDetails(JPanel):
         self._save_button.setVisible(True)
         self._display.setVisible(False)
         self._header.setVisible(False)
+        self._adding_employee = True
 
     def _save_button_pushed(self, event):
         self._employees.add(self._name_editor.getText(),
