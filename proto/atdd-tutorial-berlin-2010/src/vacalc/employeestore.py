@@ -55,11 +55,11 @@ class EmployeeStore(object):
 
     def _parse_date(self, datestring):
         if not datestring:
-            raise VacalcError('No start time given.')
+            raise VacalcError('No start date given.')
         try:
             year, month, day = (int(item) for item in datestring.split('-'))
         except ValueError:
-            raise VacalcError('Invalid time string.')
+            raise VacalcError('Invalid start date.')
         try:
             return datetime.date(year, month, day)
         except ValueError, err:

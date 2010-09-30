@@ -15,15 +15,15 @@ Valid date
     2010-9-9    Employee '${USER}' was added successfully.
 
 Invalid date format
-    invalid     Invalid time string.
-    2010-09-xx  Invalid time string.
-    2010-09     Invalid time string.
-    2010.09.09  Invalid time string.
-    20101010    Invalid time string.
-    29.9.2010   Invalid time string.
+    invalid     Invalid start date.
+    2010-09-xx  Invalid start date.
+    2010-09     Invalid start date.
+    2010.09.09  Invalid start date.
+    20101010    Invalid start date.
+    29.9.2010   Invalid start date.
 
-Empty time string
-    ${EMPTY}    No start time given.
+Empty date
+    ${EMPTY}    No start date given.
 
 Invalid month
     2010-42-01  Month must be in 1..12.
