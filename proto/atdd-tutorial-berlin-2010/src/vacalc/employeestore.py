@@ -54,6 +54,8 @@ class EmployeeStore(object):
             writer.writerow([employee.name, employee.startdate])
 
     def _parse_date(self, datestring):
+        if not datestring:
+            raise VacalcError('No start time given.')
         try:
             year, month, day = (int(item) for item in datestring.split('-'))
         except ValueError:

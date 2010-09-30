@@ -22,6 +22,9 @@ Invalid date format
     20101010    Invalid time string.
     29.9.2010   Invalid time string.
 
+Empty time string
+    ${EMPTY}    No start time given.
+
 Invalid month
     2010-42-01  Month must be in 1..12.
     2010-13-01  Month must be in 1..12.
