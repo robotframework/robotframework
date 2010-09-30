@@ -1,5 +1,6 @@
-from javax.swing import JFrame, JList, JPanel, JLabel, JTextField, JButton, Box, BoxLayout
+from javax.swing import JFrame, JList, JPanel, JLabel, JTextField, JButton, Box, BoxLayout, JTable
 from javax.swing.event import ListSelectionListener
+from javax.swing.table import AbstractTableModel
 from java.awt.event import ActionListener
 from java.awt import FlowLayout, BorderLayout, Dimension, Font, Color
 
@@ -111,32 +112,43 @@ class EmployeeDetails(JPanel):
         self._create_name_editor()
         self._create_start_date_editor()
         self._create_save_button()
+        self._create_vacation_display()
 
     def _create_status_label(self):
         self._status_label = JLabel(name='status_label',
                                    font=Font(Font.SERIF, Font.PLAIN, 9))
         self.add(self._status_label)
-        self.add(Box.createRigidArea(Dimension(0, 5)))
+        self._add_with_padding(self._status_label, 5)
 
     def _create_name_editor(self):
         self.add(JLabel(text='Name'))
         self._name_editor = FixedHeightTextField('name_input')
-        self.add(self._name_editor)
+        self._add_with_padding(self._name_editor, 5)
 
     def _create_start_date_editor(self):
         self.add(JLabel(text='Start Date (YYYY-MM-DD)'))
         self._start_date_editor = FixedHeightTextField('start_input')
-        self.add(self._start_date_editor)
+        self._add_with_padding(self._start_date_editor, 5)
 
     def _create_save_button(self):
         button = JButton('Save', name='save_button')
         button.addActionListener(ListenerFactory(ActionListener,
                                                  self._save_button_pushed))
-        self.add(button)
+        self._add_with_padding(button, 5)
+
+    def _create_vacation_display(self):
+        self._display = VacationTable()
+        self.add(self._display.getTableHeader())
+        self.add(self._display)
+
+    def _add_with_padding(self, component, padding):
+        self.add(component)
+        self.add(Box.createRigidArea(Dimension(0, padding)))
 
     def show_employee(self, employee):
         self._name_editor.setText(employee.name)
         self._start_date_editor.setText(str(employee.startdate))
+        self._display.setModel(VacationTableModel(employee))
 
     def edit_new_employee(self):
         self._name_editor.setText('')
@@ -162,6 +174,33 @@ class FixedHeightTextField(JTextField):
         prefsize = self.preferredSize
         maxsize = self.maximumSize
         self.setMaximumSize(Dimension(maxsize.width, prefsize.height))
+
+
+class VacationTableModel(AbstractTableModel):
+    _columns = ['Year', 'Vacation']
+
+    def __init__(self, employee):
+        self._employee = employee
+
+    def getColumnName(self, index):
+        return self._columns[index]
+
+    def getColumnCount(self):
+        return 2
+
+    def getRowCount(self):
+        return 1
+
+    def getValueAt(self, row, col):
+        if col == 0:
+            return '2010'
+        return self._employee.count_vacation(2010)
+
+
+class VacationTable(JTable):
+
+    def __init__(self):
+        JTable.__init__(self)
 
 
 def ListenerFactory(interface, func):
