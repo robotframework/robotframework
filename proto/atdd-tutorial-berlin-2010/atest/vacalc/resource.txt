@@ -8,7 +8,7 @@ ${DATABASE}  ${CURDIR}${/}test_db.txt
 *** Keywords ***
 
 Start Vacalc
-    ${ctx} =  Run Keyword And Ignore Error  Get Current Context
+    Close Vacalc
     Set Environment Variable  VACALC_DB  ${DATABASE}
     Start Application  org.robotframework.vacalc.VacalcRunner
     Select Window  Vacation Calculator
@@ -18,7 +18,8 @@ Start Vacalc with No Employees
     Start Vacalc
 
 Close Vacalc
-    Close Window  Vacation Calculator
+    ${status}  ${title} =  Run Keyword And Ignore Error  Get Current Context
+    Run Keyword If  "${status}" == "PASS"  Close Window  ${title}
 
 Clear Database
     Remove File  ${DATABASE}

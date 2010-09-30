@@ -1,13 +1,13 @@
 ***Settings***
 Resource        resource.txt
 Test Template   Validate start date
-
+Suite Teardown  Close Vacalc
 
 *** Variables ***
 ${USER}  Mr. Roboto
 
-
 ***Test Cases***
+
 Valid date
     2010-09-29  Employee '${USER}' was added successfully.
     2010-9-9    Employee '${USER}' was added successfully.
@@ -35,9 +35,10 @@ Invalid day
 
 
 ***Keywords***
+
 Validate start date
     [Arguments]  ${date}  ${message}
     Start Vacalc with no employees
     Add employee  ${USER}  ${date}
     Status message should be  ${message}
-    Close Vacalc
+
