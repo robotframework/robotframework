@@ -2,24 +2,26 @@
 Library  SwingLibrary
 Library  OperatingSystem
 
+
 *** Variables ***
 ${DATABASE}  ${CURDIR}${/}test_db.txt
+
 
 *** Keywords ***
 
 Start Vacalc
-    Close Vacalc
+    Close Vacalc If It Has Been Opened
     Set Environment Variable  VACALC_DB  ${DATABASE}
     Start Application  org.robotframework.vacalc.VacalcRunner
     Select Window  Vacation Calculator
 
+Close Vacalc If It Has Been Opened
+    ${status}  ${title} =  Run Keyword And Ignore Error  Get Current Context
+    Run Keyword If  "${status}" == "PASS"  Close Window  ${title}
+
 Start Vacalc with No Employees
     Clear Database
     Start Vacalc
-
-Close Vacalc
-    ${status}  ${title} =  Run Keyword And Ignore Error  Get Current Context
-    Run Keyword If  "${status}" == "PASS"  Close Window  ${title}
 
 Clear Database
     Remove File  ${DATABASE}
@@ -40,12 +42,12 @@ Employee Should Be Selected
     ${selected item}=  Get Selected Value From List  employee_list
     Should Be Equal  ${name}  ${selected item}
 
-Employee exists in the database
+Employee Exists In The Database
     [Arguments]  ${name}  ${date}
     ${db} =  Get File  ${DATABASE}
     Should Contain  ${db}  ${name},${date}
 
-Employee should not exist in the database
+Employee Should Not Exist In The Database
     [Arguments]  ${name}
     ${db} =  Get File  ${DATABASE}
     Should Not Contain  ${db}  ${name}

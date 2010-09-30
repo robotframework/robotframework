@@ -1,4 +1,9 @@
-***Test Cases***
+*** Settings ***
+Force Tags   Sprint-0  regression
+Resource  resource.txt
+
+
+*** Test Cases ***
 
 Adding employee
     Given no employee "Juha" exists in the system
@@ -13,7 +18,7 @@ Adding employee with same name
     Then message "Employee 'Juha' already exists in the system." is shown
     and "Juha" with start date 2010-01-01 exists in the database
 
-Adding Two Employees
+Adding two employees
     Given no employee exists in the system
     When "Pekka" with start date 2010-01-01 is added
     and "Janne" with start date 2010-01-01 is added
@@ -22,10 +27,8 @@ Adding Two Employees
 
 
 *** Keywords ***
-Given no employee "${name}" exists in the system
-    Start Vacalc With No Employees
 
-Given no employee exists in the system
+Given no employee "${name}" exists in the system
     Start Vacalc With No Employees
 
 "${name}" with start date ${date} is added
@@ -37,15 +40,12 @@ Then message "${message}" is shown
 "${name}" exists in the employee listing
     Employee Should Be Selected  ${name}
 
-and "${name}" with start date ${date} exists in the database
+And "${name}" with start date ${date} exists in the database
     Employee exists in the database  ${name}  ${date}
+
+Given no employee exists in the system
+    Start Vacalc With No Employees
 
 Given employee "${name}" with start date ${date} exists in the system
     Start Vacalc With No Employees
     Add Employee  ${name}  ${date}
-
-
-***Settings***
-Force Tags   Sprint-1
-Resource  resource.txt
-Test Teardown  Close Vacalc
