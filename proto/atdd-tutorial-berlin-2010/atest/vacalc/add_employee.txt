@@ -13,6 +13,12 @@ Adding employee with same ID
     Then message "Employee 'Juha' already exists in the system" is shown
     and "Juha" with start date 2010-1-1 exists in the database
 
+Viewing employees
+    Given employee "Janne" with start date 2010-2-2 exists in the system
+    When "Janne" is selected
+    Then UI shows "Janne" with start date 2010-02-02
+    And editing details is disabled
+
 
 *** Keywords ***
 Given no employee "${name}" exists in the system
