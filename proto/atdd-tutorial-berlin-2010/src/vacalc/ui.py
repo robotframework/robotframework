@@ -1,4 +1,4 @@
-from javax.swing import JFrame, JList, JPanel, JLabel, JTextField, JButton, Box, JTextArea, BoxLayout
+from javax.swing import JFrame, JList, JPanel, JLabel, JTextField, JButton, Box, BoxLayout
 from javax.swing.event import ListSelectionListener
 from java.awt.event import ActionListener
 from java.awt import FlowLayout, BorderLayout, Dimension, Font, Color
