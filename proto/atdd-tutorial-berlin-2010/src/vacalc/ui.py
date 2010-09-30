@@ -15,16 +15,22 @@ class VacalcFrame(object):
 
     def _create_ui(self, employees):
         panel = JPanel(layout=FlowLayout())
-        self._details = EmployeeDetails(employees)
         self._overview = EmployeeOverview(employees, self)
+        self._details = EmployeeDetails(employees)
+        self._welcome = Welcome()
         panel.add(self._overview)
-        panel.add(self._details)
+        panel.add(self._welcome)
         return panel
 
     def show(self):
         self._frame.setVisible(True)
 
     def employee_selected(self, employee):
+        if self._welcome:
+            self._frame.contentPane.remove(self._welcome)
+            self._frame.contentPane.add(self._details)
+            self._frame.pack()
+            self._welcome = None
         self._details.show_employee(employee)
 
     def edit_new_employee(self):
@@ -40,7 +46,6 @@ class EmployeeOverview(JPanel):
         new_emp_btn = self._create_new_employee_button()
         self.add(self._employee_list.widget, BorderLayout.PAGE_START)
         self.add(new_emp_btn, BorderLayout.PAGE_END)
-        self._employee_list.select_first()
 
     def _create_employee_list(self, employees):
         list = EmployeeList(employees)
@@ -71,11 +76,6 @@ class EmployeeList(object):
 
     def _populate_list(self):
         self._list.setListData(self._employee_names())
-
-    def select_first(self):
-        names = self._employee_names()
-        if names:
-            self._list.setSelectedValue(names[0], True)
 
     def _employee_names(self):
         return [e.name for e in self._employees.all()]
@@ -189,6 +189,13 @@ class FixedHeightTextField(JTextField):
         prefsize = self.preferredSize
         maxsize = self.maximumSize
         self.setMaximumSize(Dimension(maxsize.width, prefsize.height))
+
+
+class Welcome(JPanel):
+
+    def __init__(self):
+        JPanel.__init__(self, preferredSize=(300,200))
+        self.add(JLabel('VaCalc v0.1'))
 
 
 class VacationTableModel(AbstractTableModel):
