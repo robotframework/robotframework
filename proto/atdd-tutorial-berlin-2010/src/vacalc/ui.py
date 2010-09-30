@@ -24,9 +24,6 @@ class VacalcFrame(object):
     def show(self):
         self._frame.setVisible(True)
 
-    def employees_changed(self):
-        self._overview.refresh()
-
     def employee_selected(self, employee):
         self._details.show_employee(employee)
 
@@ -62,9 +59,6 @@ class EmployeeOverview(JPanel):
         self._employee_list.clear_selection()
         self._listener.edit_new_employee()
 
-    def refresh(self):
-        self._employee_list.refresh()
-
 
 class EmployeeList(object):
 
@@ -92,12 +86,6 @@ class EmployeeList(object):
 
     def clear_selection(self):
         self._list.clearSelection()
-
-    def refresh(self):
-        idx = self._list.getSelectedIndex()
-        self._populate_list()
-        if idx < self._list.getModel().getSize():
-            self._list.setSelectedIndex(idx)
 
     @property
     def widget(self):
