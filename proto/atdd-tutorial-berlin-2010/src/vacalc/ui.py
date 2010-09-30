@@ -15,8 +15,8 @@ class VacalcFrame(object):
 
     def _create_ui(self, employees):
         panel = JPanel(layout=FlowLayout())
-        self._overview = EmployeeOverview(employees, self)
         self._details = EmployeeDetails(employees)
+        self._overview = EmployeeOverview(employees, self)
         panel.add(self._overview)
         panel.add(self._details)
         return panel
@@ -40,6 +40,7 @@ class EmployeeOverview(JPanel):
         new_emp_btn = self._create_new_employee_button()
         self.add(self._employee_list.widget, BorderLayout.PAGE_START)
         self.add(new_emp_btn, BorderLayout.PAGE_END)
+        self._employee_list.select_first()
 
     def _create_employee_list(self, employees):
         list = EmployeeList(employees)
@@ -69,7 +70,15 @@ class EmployeeList(object):
         self._populate_list()
 
     def _populate_list(self):
-        self._list.setListData([e.name for e in self._employees.all()])
+        self._list.setListData(self._employee_names())
+
+    def select_first(self):
+        names = self._employee_names()
+        if names:
+            self._list.setSelectedValue(names[0], True)
+
+    def _employee_names(self):
+        return [e.name for e in self._employees.all()]
 
     def add_selection_listener(self, listener):
         self._list.addListSelectionListener(listener)
