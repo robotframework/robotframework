@@ -1,6 +1,7 @@
 *** Settings ***
-Resource        resource.txt
-Test Template   Validate start date
+Force Tags     Sprint-0  Regression
+Resource       resource.txt
+Test Template  Validate start date
 
 
 *** Variables ***

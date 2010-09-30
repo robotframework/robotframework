@@ -1,6 +1,6 @@
 *** Settings ***
-Force Tags   Sprint-0  regression
-Resource  resource.txt
+Force Tags  Sprint-0  Regression
+Resource    resource.txt
 
 
 *** Test Cases ***
