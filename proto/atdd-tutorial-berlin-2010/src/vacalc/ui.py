@@ -50,7 +50,7 @@ class EmployeeOverview(JPanel):
         return list
 
     def _create_new_employee_button(self):
-        btn = JButton('New Employee')
+        btn = JButton('New Employee', name='new_employee_button')
         btn.addActionListener(ListenerFactory(ActionListener, self._new_employee))
         return btn
 
@@ -116,7 +116,7 @@ class EmployeeDetails(JPanel):
         self._status_label = JLabel(name='status_label',
                                    font=Font(Font.SERIF, Font.PLAIN, 9))
         self.add(self._status_label)
-        self.add(Box.createRigidArea(Dimension(0,5)))
+        self.add(Box.createRigidArea(Dimension(0, 5)))
 
     def _create_name_editor(self):
         self.add(JLabel(text='Name'))
