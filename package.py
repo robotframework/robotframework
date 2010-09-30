@@ -216,7 +216,8 @@ def _copy_robot_files(tmpdir):
 
 def _compile_all_py_files(tmpdir):
     subprocess.call(['java', '-jar', JYTHON_JAR, '-m', 'compileall', tmpdir])
-    for root, _, files in os.walk(tmpdir):
+    # Jython will not work without its py-files, but robot will
+    for root, _, files in os.walk(join(tmpdir,'Lib','robot')):
         for f in files:
             if f.endswith('.py'):
                 os.remove(join(root, f))
@@ -242,8 +243,6 @@ def _fill_jar(sourcedir, jarpath):
     jar = zipfile.ZipFile(jarpath, 'w', compression=zipfile.ZIP_DEFLATED)
     for root, _, files in os.walk(sourcedir):
         for name in files:
-            if name.endswith('.py'):
-                continue
             source = join(root, name)
             target= source.replace(sourcedir+os.sep, '')
             print 'Adding %s' % target
