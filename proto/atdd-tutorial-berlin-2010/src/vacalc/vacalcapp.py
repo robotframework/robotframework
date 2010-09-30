@@ -7,7 +7,7 @@ from javax.swing import SwingUtilities
 from org.robotframework.vacalc import VacationCalculator
 
 from vacalc.ui import VacalcFrame
-from vacalc.employeestore import EmployeeStore, Employee, VacalcError
+from vacalc.employeestore import EmployeeStore, VacalcError
 
 
 class VacalcApplication(VacationCalculator):
