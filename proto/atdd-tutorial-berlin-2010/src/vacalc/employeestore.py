@@ -78,7 +78,7 @@ class Employee(object):
         self.startdate = startdate
 
     def count_vacation(self, year):
-        return '%s days ' % self._count_vacation(self.startdate, year)
+        return self._count_vacation(self.startdate, year)
 
     def _count_vacation(self, startdate, year):
         if self._has_worked_longer_than_year(startdate, year):

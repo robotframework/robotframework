@@ -225,7 +225,7 @@ class VacationTableModel(AbstractTableModel):
     def getValueAt(self, row, col):
         if col == 0:
             return '2010'
-        return self._employee.count_vacation(2010)
+        return '%s days' % self._employee.count_vacation(2010)
 
 
 def ListenerFactory(interface, func):
