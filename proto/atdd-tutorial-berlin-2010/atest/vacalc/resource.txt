@@ -20,8 +20,8 @@ Clear Database
 Add Employee
     [Arguments]  ${name}  ${date}
     Push Button  new_employee_button
-    Insert Into Text Field  name_input  ${name}
-    Insert Into Text Field  start_input  ${date}
+    Type Into Text Field  name_input  ${name}
+    Type Into Text Field  start_input  ${date}
     Push Button  save_button
 
 Status Message Should Be

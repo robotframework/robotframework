@@ -13,30 +13,34 @@ Adding employee with same name
     Then message "Employee 'Juha' already exists in the system." is shown
     and "Juha" with start date 2010-01-01 exists in the database
 
-Viewing employees
-    Given employee "Janne" with start date 2010-2-2 exists in the system
-    When "Janne" is selected
-    Then UI shows "Janne" with start date 2010-02-02
-    And editing details is disabled
+Adding Two Employees
+    Given no employee exists in the system
+    When "Pekka" with start date 2010-01-01 is added
+    and "Janne" with start date 2010-01-01 is added
+    Then "Janne" exists in the employee listing
+    and "Janne" with start date 2010-01-01 exists in the database
 
 
 *** Keywords ***
 Given no employee "${name}" exists in the system
     Clear Database
 
-When "${name}" with start date ${date} is added
+Given no employee exists in the system
+    Clear Database
+
+"${name}" with start date ${date} is added
     Add Employee  ${name}  ${date}
 
 Then message "${message}" is shown
     Status Message Should Be  ${message}
 
-and "${name}" exists in the employee listing
+"${name}" exists in the employee listing
     Employee Should Be Selected  ${name}
 
 and "${name}" with start date ${date} exists in the database
     Employee exists in the database  ${name}  ${date}
 
- Given employee "${name}" with start date ${date} exists in the system
+Given employee "${name}" with start date ${date} exists in the system
     Clear Database
     Add Employee  ${name}  ${date}
 
