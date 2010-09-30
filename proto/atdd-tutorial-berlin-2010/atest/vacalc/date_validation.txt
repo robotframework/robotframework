@@ -40,4 +40,4 @@ Validate start date
     Start Vacalc with no employees
     Add employee  ${USER}  ${date}
     Status message should be  ${message}
-
+    Close Vacalc
