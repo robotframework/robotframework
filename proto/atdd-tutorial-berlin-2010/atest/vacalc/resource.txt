@@ -25,8 +25,7 @@ Add Employee
 
 Status Message Should Be
     [Arguments]  ${message}
-    ${status}=  Get Text Field Value  status_label
-    Should Be Equal  ${status}  ${message}
+    Label Text Should Be  status_label  ${message}
 
 Employee Should Be Selected
     [Arguments]  ${name}
