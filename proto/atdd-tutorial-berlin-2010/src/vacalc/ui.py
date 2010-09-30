@@ -129,7 +129,7 @@ class EmployeeDetails(JPanel):
         self._add_with_padding(self._save_button, 5)
 
     def _create_vacation_display(self):
-        self._display = VacationTable()
+        self._display = JTable()
         self._header = self._display.getTableHeader()
         self.add(self._header)
         self.add(self._display)
@@ -195,12 +195,6 @@ class VacationTableModel(AbstractTableModel):
         if col == 0:
             return '2010'
         return self._employee.count_vacation(2010)
-
-
-class VacationTable(JTable):
-
-    def __init__(self):
-        JTable.__init__(self)
 
 
 def ListenerFactory(interface, func):
