@@ -26,15 +26,19 @@ class VacalcFrame(object):
         self._frame.setVisible(True)
 
     def employee_selected(self, employee):
+        self._ensure_details_shown()
+        self._details.show_employee(employee)
+
+    def edit_new_employee(self):
+        self._ensure_details_shown()
+        self._details.edit_new_employee()
+
+    def _ensure_details_shown(self):
         if self._welcome:
             self._frame.contentPane.remove(self._welcome)
             self._frame.contentPane.add(self._details)
             self._frame.pack()
             self._welcome = None
-        self._details.show_employee(employee)
-
-    def edit_new_employee(self):
-        self._details.edit_new_employee()
 
 
 class EmployeeOverview(JPanel):
