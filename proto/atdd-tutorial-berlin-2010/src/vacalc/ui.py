@@ -108,7 +108,7 @@ class EmployeeList(object):
 class EmployeeDetails(JPanel):
 
     def __init__(self, employees):
-        JPanel.__init__(self, preferredSize=(300, 200))
+        JPanel.__init__(self, preferredSize=(400, 200))
         layout = BoxLayout(self, BoxLayout.Y_AXIS)
         self.setLayout(layout)
         self._employees = employees
@@ -122,7 +122,7 @@ class EmployeeDetails(JPanel):
 
     def _create_status_label(self):
         self._status_label = JLabel(name='status_label',
-                                   font=Font(Font.SERIF, Font.PLAIN, 10))
+                                   font=Font(Font.SANS_SERIF, Font.PLAIN, 11))
         self.add(self._status_label)
         self._add_with_padding(self._status_label, 5)
 
@@ -198,7 +198,7 @@ class FixedHeightTextField(JTextField):
 class Welcome(JPanel):
 
     def __init__(self):
-        JPanel.__init__(self, preferredSize=(300,200))
+        JPanel.__init__(self, preferredSize=(400,200))
         self.add(JLabel('VaCalc v0.1'))
 
 
