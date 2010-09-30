@@ -108,17 +108,17 @@ class EmployeeDetails(JPanel):
 
     def _create_status_label(self):
         self._status_label = JLabel(name='status_label',
-                                   font=Font(Font.SERIF, Font.PLAIN, 9))
+                                   font=Font(Font.SERIF, Font.PLAIN, 10))
         self.add(self._status_label)
         self._add_with_padding(self._status_label, 5)
 
     def _create_name_editor(self):
-        self.add(JLabel(text='Employee Name'))
+        self.add(JLabel(text='Employee Name:'))
         self._name_editor = FixedHeightTextField('name_input')
         self._add_with_padding(self._name_editor, 5)
 
     def _create_start_date_editor(self):
-        self.add(JLabel(text='Start Date (YYYY-MM-DD)'))
+        self.add(JLabel(text='Start Date (YYYY-MM-DD):'))
         self._start_date_editor = FixedHeightTextField('start_input')
         self._add_with_padding(self._start_date_editor, 5)
 
