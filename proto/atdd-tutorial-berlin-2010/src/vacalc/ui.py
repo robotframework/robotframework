@@ -59,6 +59,7 @@ class EmployeeOverview(JPanel):
         self._listener.employee_selected(self._employee_list.selected_employee())
 
     def _new_employee(self, event):
+        self._employee_list.clear_selection()
         self._listener.edit_new_employee()
 
     def refresh(self):
@@ -88,6 +89,9 @@ class EmployeeList(object):
 
     def adding_employee_failed(self, error):
         pass
+
+    def clear_selection(self):
+        self._list.clearSelection()
 
     def refresh(self):
         idx = self._list.getSelectedIndex()
@@ -131,14 +135,15 @@ class EmployeeDetails(JPanel):
         self._add_with_padding(self._start_date_editor, 5)
 
     def _create_save_button(self):
-        button = JButton('Save', name='save_button')
-        button.addActionListener(ListenerFactory(ActionListener,
-                                                 self._save_button_pushed))
-        self._add_with_padding(button, 5)
+        self._save_button = JButton('Save', name='save_button', visible=False)
+        self._save_button.addActionListener(ListenerFactory(ActionListener,
+                                            self._save_button_pushed))
+        self._add_with_padding(self._save_button, 5)
 
     def _create_vacation_display(self):
         self._display = VacationTable()
-        self.add(self._display.getTableHeader())
+        self._header = self._display.getTableHeader()
+        self.add(self._header)
         self.add(self._display)
 
     def _add_with_padding(self, component, padding):
@@ -148,11 +153,17 @@ class EmployeeDetails(JPanel):
     def show_employee(self, employee):
         self._name_editor.setText(employee.name)
         self._start_date_editor.setText(str(employee.startdate))
+        self._save_button.setVisible(False)
+        self._display.setVisible(True)
         self._display.setModel(VacationTableModel(employee))
+        self._header.setVisible(True)
 
     def edit_new_employee(self):
         self._name_editor.setText('')
         self._start_date_editor.setText('')
+        self._save_button.setVisible(True)
+        self._display.setVisible(False)
+        self._header.setVisible(False)
 
     def _save_button_pushed(self, event):
         self._employees.add(self._name_editor.getText(),
@@ -161,6 +172,7 @@ class EmployeeDetails(JPanel):
     def employee_added(self, employee):
         self._status_label.setForeground(Color.BLACK)
         self._status_label.setText("Employee '%s' was added successfully." % employee.name)
+        self._save_button.setVisible(False)
 
     def adding_employee_failed(self, reason):
         self._status_label.setForeground(Color.RED)
