@@ -143,10 +143,11 @@ class EmployeeDetails(JPanel):
         self._add_with_padding(self._save_button, 5)
 
     def _create_vacation_display(self):
-        self._display = JTable()
-        self._header = self._display.getTableHeader()
-        self.add(self._header)
-        self.add(self._display)
+#        self._display = JTable()
+#        self._header = self._display.getTableHeader()
+#        self.add(self._header)
+#        self.add(self._display)
+        pass
 
     def _add_with_padding(self, component, padding):
         self.add(component)
@@ -162,9 +163,9 @@ class EmployeeDetails(JPanel):
             self._adding_employee = False
         else:
             self._status_label.setText('')
-        self._display.setVisible(True)
-        self._display.setModel(VacationTableModel(employee))
-        self._header.setVisible(True)
+#        self._display.setVisible(True)
+#        self._display.setModel(VacationTableModel(employee))
+#        self._header.setVisible(True)
 
     def edit_new_employee(self):
         self._name_editor.setText('')
@@ -172,8 +173,8 @@ class EmployeeDetails(JPanel):
         self._name_editor.setEditable(True)
         self._start_date_editor.setEditable(True)
         self._save_button.setVisible(True)
-        self._display.setVisible(False)
-        self._header.setVisible(False)
+#        self._display.setVisible(False)
+#        self._header.setVisible(False)
         self._adding_employee = True
 
     def _save_button_pushed(self, event):
