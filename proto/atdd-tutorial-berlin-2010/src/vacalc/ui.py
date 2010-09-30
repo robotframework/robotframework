@@ -155,6 +155,8 @@ class EmployeeDetails(JPanel):
     def show_employee(self, employee):
         self._name_editor.setText(employee.name)
         self._start_date_editor.setText(str(employee.startdate))
+        self._name_editor.setEditable(False)
+        self._start_date_editor.setEditable(False)
         self._save_button.setVisible(False)
         if self._adding_employee:
             self._adding_employee = False
@@ -167,6 +169,8 @@ class EmployeeDetails(JPanel):
     def edit_new_employee(self):
         self._name_editor.setText('')
         self._start_date_editor.setText('')
+        self._name_editor.setEditable(True)
+        self._start_date_editor.setEditable(True)
         self._save_button.setVisible(True)
         self._display.setVisible(False)
         self._header.setVisible(False)
