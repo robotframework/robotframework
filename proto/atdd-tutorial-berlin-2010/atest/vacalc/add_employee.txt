@@ -23,10 +23,10 @@ Adding Two Employees
 
 *** Keywords ***
 Given no employee "${name}" exists in the system
-    Clear Database
+    Start Vacalc With No Employees
 
 Given no employee exists in the system
-    Clear Database
+    Start Vacalc With No Employees
 
 "${name}" with start date ${date} is added
     Add Employee  ${name}  ${date}
@@ -41,10 +41,11 @@ and "${name}" with start date ${date} exists in the database
     Employee exists in the database  ${name}  ${date}
 
 Given employee "${name}" with start date ${date} exists in the system
-    Clear Database
+    Start Vacalc With No Employees
     Add Employee  ${name}  ${date}
 
 
 ***Settings***
 Force Tags   Sprint-1
 Resource  resource.txt
+Test Teardown  Close Vacalc
