@@ -2,7 +2,7 @@ import datetime
 
 from vacalc.employeestore import Employee
 
-def amount_of_vacation_should_be(startdate, vacation_year, exp_vacation_days):
+def calculate_vacation(startdate, vacation_year, exp_vacation_days):
     try:
         sdate = datetime.date(*(int(item) for item in startdate.split('-')))
     except Exception, err:
