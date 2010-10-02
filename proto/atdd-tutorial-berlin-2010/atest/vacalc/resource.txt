@@ -1,6 +1,7 @@
 *** Settings ***
 Library  SwingLibrary
 Library  OperatingSystem
+Library  VacalcLibrary
 
 
 *** Variables ***
