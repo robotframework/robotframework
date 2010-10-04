@@ -26,11 +26,11 @@ Note: Dialogs library cannot be used with timeouts on Windows with Python.
 import sys
 
 try:
-    from robot.version import get_version
+    from robot.version import get_version as _get_version
 except ImportError:
     __version__ = 'unknown'
 else:
-    __version__ = get_version()
+    __version__ = _get_version()
 
 
 DIALOG_TITLE = 'Robot Framework'
@@ -83,12 +83,12 @@ if not sys.platform.startswith('java'):
                         BOTH, END, LEFT
     import tkMessageBox
     import tkSimpleDialog
-    from threading import currentThread
+    from threading import currentThread as _currentThread
 
 
     def _prevent_execution_with_timeouts(method):
         def _check_timeout(*args):
-            if 'linux' not in sys.platform and currentThread().getName() != 'MainThread':
+            if 'linux' not in sys.platform and _currentThread().getName() != 'MainThread':
                 raise AssertionError("Dialogs library is not supported with timeouts " +
                                      "on Python on this platform.")
             return method(*args)
