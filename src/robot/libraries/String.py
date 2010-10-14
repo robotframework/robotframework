@@ -240,7 +240,7 @@ class String:
         | ${pre} | ${post} = | Split String | ${string} | ::    | 1 |
 
         See `Split String From Right` if you want to start splitting
-        from right, and `Fetch From Right` and `Fetch From Right` if
+        from right, and `Fetch From Left` and `Fetch From Right` if
         you only want to get first/last part of the string.
         """
         if separator == '':
