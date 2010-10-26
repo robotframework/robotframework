@@ -3,7 +3,7 @@ Variables       extended_variables.py
 Library         ExampleJavaLibrary
 
 *** Variables ***
-${list}  ${42}  foo  ${None}
+@{LIST}  ${42}  foo  ${None}
 
 *** Test Cases ***
 Using Attribute
