@@ -54,8 +54,8 @@ Non-Existing Variables In Values 1
     ${var} =  Set Variable If  ${existing}  ${now this breaks}  Not used
 
 Non-Existing Variables In Values 2
-    [Documentation]  FAIL Non-existing variable '\${nonex.variable}'.
-    ${var} =  Set Variable If  False is True  ${not used}  ${nonex.variable}
+    [Documentation]  FAIL Resolving variable '${nonex.extended}' failed: Non-existing variable '${nonex}'.
+    ${var} =  Set Variable If  False is True  ${not used}  ${nonex.extended}
 
 Non-Existing Variables In Values 3
     [Documentation]  FAIL Non-existing variable '\${ooooops}'.

@@ -42,8 +42,8 @@ Repeat Keyword Arguments As Variables
     Repeat Keyword  1x  @{items}
 
 Repeated Keyword As Non-existing Variable
-    [Documentation]  FAIL Non-existing variable '\${non-existing}'.
-    Repeat Keyword  1 x  ${non-existing}
+    [Documentation]  FAIL Non-existing variable '\${non existing}'.
+    Repeat Keyword  1 x  ${non existing}
 
 Argument To Repeated Keyword As Non-existing Variable
     [Documentation]  FAIL Non-existing variable '\${nonex}'.

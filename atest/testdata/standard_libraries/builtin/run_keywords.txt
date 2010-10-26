@@ -36,8 +36,8 @@ Keywords as variables
     Run keywords  ${NOOP}  ${PASSING}  @{KEYWORDS}  ${FAILING}
 
 Non-existing variable as keyword name
-    [Documentation]  FAIL  Non-existing variable '${NON-EXISTING}'.${ATD ERR}
-    Run keywords  Not Executed  ${NON-EXISTING}  Not Executed
+    [Documentation]  FAIL  Non-existing variable '${NONEX}'.${ATD ERR}
+    Run keywords  Not Executed  ${NONEX}  Not Executed
 
 Non-existing keyword
     [Documentation]  FAIL  No keyword with name 'Non-Existing' found.${ATD ERR}
