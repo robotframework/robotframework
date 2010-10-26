@@ -10,6 +10,9 @@ Using List Variable As Scalar
 List Variable As Scalar With Extended Syntax
     Check Test Case  ${TESTNAME}
 
+Non-alphanumeric characters in name
+    Check Test Case  ${TESTNAME}
+
 Access and Modify List Variable With Keywords From Collections Library
     Check Test Case  ${TESTNAME}
 

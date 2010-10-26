@@ -17,6 +17,10 @@ List Variable As Scalar With Extended Syntax
     Should Be Equal  ${list [2] * 2}  ${42}
     Should Be Equal  ${LIST.__len__()}  ${3}
 
+Non-alphanumeric characters in name
+    @{"special" ch@rs?!} =  Create List  spam  eggs  ${21}
+    Should Be Equal  ${"special" ch@rs?!}  ${LIST}
+
 Access and Modify List Variable With Keywords From Collections Library
     Lists Should Be Equal  ${LIST}  ${SCALAR}
     Append To List  ${LIST}  new value

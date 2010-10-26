@@ -81,9 +81,9 @@ class Variables(utils.NormalizedDict):
         except KeyError:
             try: return self._get_number_var(name)
             except ValueError:
-                try: return self._get_extended_var(name)
+                try: return self._get_list_var_as_scalar(name)
                 except ValueError:
-                    try: return self._get_list_var_as_scalar(name)
+                    try: return self._get_extended_var(name)
                     except ValueError:
                         raise DataError("Non-existing variable '%s'." % name)
 
@@ -104,6 +104,7 @@ class Variables(utils.NormalizedDict):
         raise ValueError
 
     def _get_extended_var(self, name):
+        err_pre = "Resolving variable '%s' failed: " % name
         res = self._extended_var_re.search(name)
         if res is None:
             raise ValueError
@@ -111,13 +112,12 @@ class Variables(utils.NormalizedDict):
         expression = res.group(2)
         try:
             variable = self['${%s}' % base_name]
-        except DataError:
-            raise ValueError
+        except DataError, err:
+            raise DataError(err_pre + unicode(err))
         try:
             return eval('_BASE_VAR_' + expression, {'_BASE_VAR_': variable})
         except:
-            raise DataError("Resolving variable '%s' failed: %s"
-                            % (name, utils.get_error_message()))
+            raise DataError(err_pre + utils.get_error_message())
 
     def _get_number_var(self, name):
         if name[0] != '$':
