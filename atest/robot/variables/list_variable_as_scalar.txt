@@ -1,0 +1,18 @@
+*** Settings ***
+Suite Setup     Run Tests  ${EMPTY}  variables/list_variable_as_scalar.txt
+Force Tags      pybot  jybot  regression
+Resource        atest_resource.txt
+
+*** Test Cases ***
+Using List Variable As Scalar
+    Check Test Case  ${TESTNAME}
+
+List Variable As Scalar With Extended Syntax
+    Check Test Case  ${TESTNAME}
+
+Access and Modify List Variable With Keywords From Collections Library
+    Check Test Case  ${TESTNAME}
+
+Modifications To List Variables Live Between Test Cases
+    Check Test Case  ${TESTNAME}
+
