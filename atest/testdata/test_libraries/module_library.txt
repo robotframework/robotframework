@@ -1,6 +1,7 @@
 *** Settings ***
 Library         module_library
 Library         pythonmodule.library
+Library         module_lib_with_all.py
 
 *** Variables ***
 @{INTS}  1  2  3  4  5  6  7
@@ -50,6 +51,30 @@ Only Methods And Functions Are Keywords
 Class Methods In Module Library Are Not Keywords
     [Documentation]  FAIL No keyword with name 'Not Keyword' found.
     Not Keyword
+
+Functions starting with underscore are not keywords
+    [Documentation]  FAIL No keyword with name '_not_keyword' found.
+    _not_keyword    
+
+If __all__ is present, only functions listed there are available 1
+    [Documentation]  FAIL No keyword with name 'Not in all' found.
+    ${path} =  Join with execdir  xxx
+    Should Be Equal  ${path}  ${EXECDIR}${/}xxx
+    ${path} =  Abspath  .
+    Should Be Equal  ${path}  ${EXECDIR}
+    Not in all
+
+If __all__ is present, only functions listed there are available 2
+    [Documentation]  FAIL No keyword with name 'Join' found.
+    Join  arg1  arg2
+
+If __all__ is present, only functions listed there are available 3
+    [Documentation]  FAIL No keyword with name 'attr_is_not_kw' found.
+    attr_is_not_kw
+
+If __all__ is present, only functions listed there are available 4
+    [Documentation]  FAIL No keyword with name '_not_kw_even_if_listed_in_all' found.
+    _not_kw_even_if_listed_in_all
 
 Class Method Assigned To Module Variable
     [Documentation]  FAIL Arguments should have been unequal, both were 'Hi'

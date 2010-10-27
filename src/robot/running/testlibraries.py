@@ -260,6 +260,12 @@ class _ModuleLibrary(_BaseTestLibrary):
     def _get_scope(self, libcode):
         return 'GLOBAL'
 
+    def _get_handler_method(self, libcode, name):
+        method = _BaseTestLibrary._get_handler_method(self, libcode, name)
+        if hasattr(libcode, '__all__') and name not in libcode.__all__:
+            raise TypeError('Not exposed as keyword')
+        return method
+
     def get_instance(self):
         self.init.arguments.check_arg_limits(self.positional_args)
         return self._libcode

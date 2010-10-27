@@ -311,16 +311,72 @@ A Java class using :code:`ROBOT_LIBRARY_VERSION`:
 Creating static keywords
 ~~~~~~~~~~~~~~~~~~~~~~~~
 
-Keyword names
-'''''''''''''
+What methods are considered keywords
+''''''''''''''''''''''''''''''''''''
 
 When the static library API is used, Robot Framework uses reflection
-to find out what methods the library implements. With `dynamic library
-API`_ and `hybrid library API`_, keyword names are got from the
-library directly. Naturally, Robot Framework can see only the public
-methods and it also excludes all methods starting with an
-underscore. With Java libraries, also methods that are implemented in
-:code:`java.lang.Object` and not overridden are ignored.
+to find out what public methods the library class or module
+implements. It will exclude all methods starting with an underscore,
+and with Java libraries also methods that are implemented only in
+:code:`java.lang.Object` are ignored. All the methods that are not
+ignored are considered keywords. For example, the Python and Java
+libraries below implement single keyword :name:`My Keyword`.
+
+.. sourcecode:: python
+
+    class MyLibrary:
+
+        def my_keyword(self, arg):
+            return self._helper_method(arg):
+
+        def _helper_method(self, arg):
+            return arg.upper()
+
+.. sourcecode:: java
+
+    public class MyLibrary {
+        
+        public String myKeyword(String arg) {
+            return helperMethod(arg);
+        }
+
+        private String helperMethod(String arg) {
+            return arg.toUpperCase();
+        }
+    }
+
+When the library is implemented as a Python module, it is also
+possible to limit what methods are keywords by using Python's
+:code:`__all__` attribute. If :code:`__all__` is used, only methods
+listed in it can be keywords. For example, the library below
+implements keywords :name:`Example Keyword` and :name:`Second
+Example`. Without :code:`__all__`, it would implement also keywords
+:name:`Not Exposed As Keyword` and :name:`Current Thread`. The most
+important usage for :code:`__all__` is making sure imported helper
+methods, such as :code:`current_thread` in the example below, are not
+accidentally exposed as keywords.
+
+.. sourcecode:: python
+
+   from threading import current_thread
+
+   __all__ = ['example_keyword', 'second_example']
+   
+   def example_keyword():
+       if current_thread().name == 'MainThread':
+           print 'Running in main thread'
+
+   def second_example():
+       pass
+
+   def not_exposed_as_keyword():
+       pass
+
+.. note:: Support for the :code:`__all__` attribute is available from
+          Robot Framework 2.5.5 onwards.
+
+Keyword names
+'''''''''''''
 
 Keyword names used in the test data are compared with method names to
 find the method implementing these keywords. Name comparison is

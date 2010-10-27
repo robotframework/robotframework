@@ -1,4 +1,4 @@
-ROBOT_LIBRARY_SCOPE = 'Test Suite' # this should be igonred.
+ROBOT_LIBRARY_SCOPE = 'Test Suite'  # this should be ignored
 __version__ = 'test'  # this should be used as version of this library
 
 
@@ -46,6 +46,8 @@ two_arguments_from_class = notlib.two_arguments
 lambda_keyword = lambda arg: int(arg) + 1
 lambda_keyword_with_two_args = lambda x, y: int(x) / int(y)
 
+def _not_keyword():
+    pass
 
 def module_library():
     return "It should be OK to have an attribute with same name as the module"
