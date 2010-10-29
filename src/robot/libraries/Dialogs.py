@@ -23,6 +23,9 @@ Jython but they provide the same functionality.
 Note: Dialogs library cannot be used with timeouts on Windows with Python.
 """
 
+__all__ = ['execute_manual_step', 'get_value_from_user',
+           'get_selection_from_user', 'pause_execution']
+
 import sys
 
 try:
