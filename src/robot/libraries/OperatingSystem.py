@@ -287,12 +287,17 @@ class OperatingSystem:
         'UTF-8', which means that UTF-8 and ASCII-encoded files are read
         correctly.
         """
+        content = self.get_binary_file(path)
+        return unicode(content, encoding).replace('\r\n', '\n')
+
+    def get_binary_file(self, path):
         path = self._absnorm(path)
         self._link("Getting file '%s'", path)
         f = open(path, 'rb')
-        content = f.read()
-        f.close()
-        return unicode(content, encoding).replace('\r\n', '\n')
+        try:
+            return f.read()
+        finally:
+            f.close()
 
     def grep_file(self, path, pattern, encoding='UTF-8'):
         """Returns the lines of the specified file that match the `pattern`.
