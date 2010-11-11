@@ -21,7 +21,7 @@ except ImportError:
     except ImportError:
         try:
             import xml.etree.ElementTree as ET
-            # Raises ImportError due to missing expact on IronPython by default
+            # Raises ImportError due to missing expat on IronPython by default
             ET.parse(StringIO('<test/>'))
         except ImportError:
             try:
