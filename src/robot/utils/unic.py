@@ -15,21 +15,27 @@
 import sys
 
 
+# Need different unic implementations for different Pythons because:
+# 1) Importing unicodedata module on Jython takes a very long time, and doesn't
+# seem to be necessary as Java probably already handles normalization.
+# Furthermore, Jython on Java 1.5 doesn't even have unicodedata.normalize.
+# 2) IronPython 2.6 doesn't have unicodedata and probably doesn't need it.
+# 3) CPython doesn't automatically normalize Unicode strings.
+
 if sys.platform.startswith('java'):
     from java.lang import Object, Class
-
     def unic(item, *args):
         # http://bugs.jython.org/issue1564
         if isinstance(item, Object) and not isinstance(item, Class):
             item = item.toString()  # http://bugs.jython.org/issue1563
         return _unic(item, *args)
 
+elif sys.platform == 'cli':
+    def unic(item, *args):
+        return _unic(item, *args)
+
 else:
-    # importing unicodedata on jython takes a very long time, and does not seem 
-    # necessary as java probably already handles normalization. Furthermore 
-    # java 1.5 does not even have unicodedata.normalize
     from unicodedata import normalize
-    
     def unic(item, *args):
         return normalize('NFC', _unic(item, *args))
 

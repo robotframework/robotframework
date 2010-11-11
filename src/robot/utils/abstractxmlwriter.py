@@ -12,11 +12,9 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-
 from unic import unic
 
 
-# See http://www.spamagogo.com/wiki/index.php/Illegal_XML_characters
 _ILLEGAL_CHARS_IN_XML = u'\x00\x01\x02\x03\x04\x05\x06\x07\x08\x0b\x0c\x0e' \
     + u'\x0f\x10\x11\x12\x13\x14\x15\x16\x17\x18\x19\x1a\x1b\x1c\x1d\x1e\x1f\ufffe'
 
@@ -43,5 +41,7 @@ class AbstractXmlWriter:
     def _encode(self, message):
         message = unic(message)
         for char in _ILLEGAL_CHARS_IN_XML:
-            message = message.replace(char, '')
+            # Avoid bug http://ironpython.codeplex.com/workitem/29402
+            if char in message:
+                message = message.replace(char, '')
         return message

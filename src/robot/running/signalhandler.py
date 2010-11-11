@@ -12,8 +12,11 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-import signal
 import sys
+try:
+    import signal
+except ImportError:
+    signal = None  # IronPython 2.6 doesn't have signal module by default
 
 from robot.errors import ExecutionFailed
 from robot.output import LOGGER
@@ -39,8 +42,9 @@ class _StopSignalMonitor(object):
         raise ExecutionFailed('Execution terminated by signal', exit=True)
 
     def start(self):
-        signal.signal(signal.SIGINT, self)
-        signal.signal(signal.SIGTERM, self)
+        if signal:
+            signal.signal(signal.SIGINT, self)
+            signal.signal(signal.SIGTERM, self)
 
     def start_running_keyword(self, in_teardown):
         self._running_keyword = True

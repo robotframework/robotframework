@@ -21,8 +21,13 @@ except ImportError:
     except ImportError:
         try:
             import xml.etree.ElementTree as ET
+            # Raises ImportError due to missing expact on IronPython by default
+            ET.parse(StringIO('<test/>'))
         except ImportError:
-            import elementtree.ElementTree as ET
+            try:
+                import elementtree.ElementTree as ET
+            except ImportError:
+                raise ImportError('No valid ElementTree XML parser module found')
 
 
 class DomWrapper(object):
