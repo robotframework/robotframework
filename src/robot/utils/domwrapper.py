@@ -53,10 +53,7 @@ class DomWrapper(object):
             return node
         # Cannot give path to ET.parse because it doesn't close files it opens
         # http://bugs.jython.org/issue1598
-        if path:
-            source = open(path, 'rb')
-        else:
-            source = StringIO(string)
+        source = open(path, 'rb') if path else StringIO(string)
         try:
             return ET.parse(source).getroot()
         finally:
