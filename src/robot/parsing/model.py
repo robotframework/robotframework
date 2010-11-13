@@ -22,7 +22,6 @@ from robot import utils
 from settings import (Documentation, Fixture, Timeout, Tags, Metadata,
                       Library, Resource, Variables, Arguments, Return, Template)
 from populators import FromFilePopulator, FromDirectoryPopulator
-from robot.utils.normalizing import normalize
 
 
 def TestData(parent=None, source=None, include_suites=[]):
@@ -211,16 +210,14 @@ class _Table(object):
 
 class _WithSettings(object):
 
-    normalizer = lambda s: normalize(s, [], True, True)
-
     def get_setter(self, setting_name):
-        normalized = normalize(setting_name)
+        normalized = utils.normalize(setting_name)
         if normalized in self._setters:
-            return self._setters[normalized]
+            return self._setters[normalized](self)
         self.report_invalid_syntax("Non-existing setting '%s'." % setting_name)
 
     def is_setting(self, setting_name):
-        return normalize(setting_name) in self._setters
+        return utils.normalize(setting_name) in self._setters
 
 
 class _SettingTable(_Table, _WithSettings):
@@ -239,7 +236,6 @@ class _SettingTable(_Table, _WithSettings):
         self.test_timeout = Timeout('Test Timeout', self)
         self.metadata = []
         self.imports = []
-        self._setters = self._get_setters()
 
     def _get_adder(self, adder_method):
         def adder(value, comment):
@@ -269,25 +265,24 @@ class _SettingTable(_Table, _WithSettings):
 
 class TestCaseFileSettingTable(_SettingTable):
 
-    def _get_setters(self):
-        return {'documentation': self.doc.populate,
-                'document': self.doc.populate,
-                'suitesetup': self.suite_setup.populate,
-                'suiteprecondition': self.suite_setup.populate,
-                'suiteteardown': self.suite_teardown.populate,
-                'suitepostcondition': self.suite_teardown.populate,
-                'testsetup': self.test_setup.populate,
-                'testprecondition': self.test_setup.populate,
-                'testteardown': self.test_teardown.populate,
-                'testpostcondition': self.test_teardown.populate,
-                'forcetags': self.force_tags.populate,
-                'defaulttags': self.default_tags.populate,
-                'testtemplate': self.test_template.populate,
-                'testtimeout': self.test_timeout.populate,
-                'library': self._get_adder(self.add_library),
-                'resource': self._get_adder(self.add_resource),
-                'variables': self._get_adder(self.add_variables),
-                'metadata': self._get_adder(self.add_metadata)}
+    _setters = {'documentation': lambda s: s.doc.populate,
+                'document': lambda s: s.doc.populate,
+                'suitesetup': lambda s: s.suite_setup.populate,
+                'suiteprecondition': lambda s: s.suite_setup.populate,
+                'suiteteardown': lambda s: s.suite_teardown.populate,
+                'suitepostcondition': lambda s: s.suite_teardown.populate,
+                'testsetup': lambda s: s.test_setup.populate,
+                'testprecondition': lambda s: s.test_setup.populate,
+                'testteardown': lambda s: s.test_teardown.populate,
+                'testpostcondition': lambda s: s.test_teardown.populate,
+                'forcetags': lambda s: s.force_tags.populate,
+                'defaulttags': lambda s: s.default_tags.populate,
+                'testtemplate': lambda s: s.test_template.populate,
+                'testtimeout': lambda s: s.test_timeout.populate,
+                'library': lambda s: s._get_adder(s.add_library),
+                'resource': lambda s: s._get_adder(s.add_resource),
+                'variables': lambda s: s._get_adder(s.add_variables),
+                'metadata': lambda s: s._get_adder(s.add_metadata)}
 
     def __iter__(self):
         for setting in [self.doc, self.suite_setup, self.suite_teardown,
@@ -299,12 +294,11 @@ class TestCaseFileSettingTable(_SettingTable):
 
 class ResourceFileSettingTable(_SettingTable):
 
-    def _get_setters(self):
-        return {'documentation': self.doc.populate,
-                'document': self.doc.populate,
-                'library': self._get_adder(self.add_library),
-                'resource': self._get_adder(self.add_resource),
-                'variables': self._get_adder(self.add_variables)}
+    _setters = {'documentation': lambda s: s.doc.populate,
+                'document': lambda s: s.doc.populate,
+                'library': lambda s: s._get_adder(s.add_library),
+                'resource': lambda s: s._get_adder(s.add_resource),
+                'variables': lambda s: s._get_adder(s.add_variables)}
 
     def __iter__(self):
         for setting in [self.doc] + self.imports:
@@ -313,22 +307,21 @@ class ResourceFileSettingTable(_SettingTable):
 
 class InitFileSettingTable(_SettingTable):
 
-    def _get_setters(self):
-        return {'documentation': self.doc.populate,
-                'document': self.doc.populate,
-                'suitesetup': self.suite_setup.populate,
-                'suiteprecondition': self.suite_setup.populate,
-                'suiteteardown': self.suite_teardown.populate,
-                'suitepostcondition': self.suite_teardown.populate,
-                'testsetup': self.test_setup.populate,
-                'testprecondition': self.test_setup.populate,
-                'testteardown': self.test_teardown.populate,
-                'testpostcondition': self.test_teardown.populate,
-                'forcetags': self.force_tags.populate,
-                'library': self._get_adder(self.add_library),
-                'resource': self._get_adder(self.add_resource),
-                'variables': self._get_adder(self.add_variables),
-                'metadata': self._get_adder(self.add_metadata)}
+    _setters = {'documentation': lambda s: s.doc.populate,
+                'document': lambda s: s.doc.populate,
+                'suitesetup': lambda s: s.suite_setup.populate,
+                'suiteprecondition': lambda s: s.suite_setup.populate,
+                'suiteteardown': lambda s: s.suite_teardown.populate,
+                'suitepostcondition': lambda s: s.suite_teardown.populate,
+                'testsetup': lambda s: s.test_setup.populate,
+                'testprecondition': lambda s: s.test_setup.populate,
+                'testteardown': lambda s: s.test_teardown.populate,
+                'testpostcondition': lambda s: s.test_teardown.populate,
+                'forcetags': lambda s: s.force_tags.populate,
+                'library': lambda s: s._get_adder(s.add_library),
+                'resource': lambda s: s._get_adder(s.add_resource),
+                'variables': lambda s: s._get_adder(s.add_variables),
+                'metadata': lambda s: s._get_adder(s.add_metadata)}
 
     def __iter__(self):
         for setting in [self.doc, self.suite_setup, self.suite_teardown,
@@ -436,18 +429,16 @@ class TestCase(_WithSteps, _WithSettings):
         self.teardown = Fixture('[Teardown]', self)
         self.timeout = Timeout('[Timeout]', self)
         self.steps = []
-        self._setters = self._get_setters()
 
-    def _get_setters(self):
-        return {'documentation': self.doc.populate,
-                'document': self.doc.populate,
-                'template': self.template.populate,
-                'setup': self.setup.populate,
-                'precondition': self.setup.populate,
-                'teardown': self.teardown.populate,
-                'postcondition': self.teardown.populate,
-                'tags': self.tags.populate,
-                'timeout': self.timeout.populate}
+    _setters = {'documentation': lambda s: s.doc.populate,
+                'document': lambda s: s.doc.populate,
+                'template': lambda s: s.template.populate,
+                'setup': lambda s: s.setup.populate,
+                'precondition': lambda s: s.setup.populate,
+                'teardown': lambda s: s.teardown.populate,
+                'postcondition': lambda s: s.teardown.populate,
+                'tags': lambda s: s.tags.populate,
+                'timeout': lambda s: s.timeout.populate}
 
 
     @property
@@ -484,14 +475,12 @@ class UserKeyword(TestCase):
         self.return_ = Return('[Return]', self)
         self.timeout = Timeout('[Timeout]', self)
         self.steps = []
-        self._setters = self._get_setters()
 
-    def _get_setters(self):
-        return {'documentation': self.doc.populate,
-                'document': self.doc.populate,
-                'arguments': self.args.populate,
-                'return': self.return_.populate,
-                'timeout': self.timeout.populate}
+    _setters = {'documentation': lambda s: s.doc.populate,
+                'document': lambda s: s.doc.populate,
+                'arguments': lambda s: s.args.populate,
+                'return': lambda s: s.return_.populate,
+                'timeout': lambda s: s.timeout.populate}
 
     def __iter__(self):
         for element in [self.args, self.doc, self.timeout] \
