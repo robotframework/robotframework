@@ -60,6 +60,7 @@ class ConnectionCache:
         try:
             index = self._get_index(index_or_alias)
         except ValueError:
+            # TODO: Should not raise DataError here anymore.
             raise DataError("Non-existing index or alias '%s'" % index_or_alias)
         self.current = self._connections[index-1]
         self.current_index = index
