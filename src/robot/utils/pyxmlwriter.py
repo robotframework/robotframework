@@ -12,6 +12,7 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+import sys
 from xml.sax.saxutils import XMLGenerator
 from xml.sax.xmlreader import AttributesImpl
 
@@ -45,3 +46,8 @@ class XmlWriter(AbstractXmlWriter):
         self._writer.endDocument()
         self._output.close()
         self.closed = True
+
+    # Workaround for http://ironpython.codeplex.com/workitem/29474
+    if sys.platform == 'cli':
+        def _encode(self, content):
+            return AbstractXmlWriter._encode(self, content).encode('UTF-8')
