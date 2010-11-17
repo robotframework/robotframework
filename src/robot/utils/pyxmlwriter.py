@@ -12,7 +12,6 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-
 from xml.sax.saxutils import XMLGenerator
 from xml.sax.xmlreader import AttributesImpl
 
@@ -24,13 +23,12 @@ class XmlWriter(AbstractXmlWriter):
     def __init__(self, path):
         self.path = path
         self._output = open(path, 'wb')
-        self._writer = XMLGenerator(self._output, 'UTF-8')
+        self._writer = XMLGenerator(self._output, encoding='UTF-8')
         self._writer.startDocument()
         self.closed = False
 
     def start(self, name, attributes={}, newline=True):
-        attrs = AttributesImpl(attributes)
-        self._writer.startElement(name, attrs)
+        self._writer.startElement(name, AttributesImpl(attributes))
         if newline:
             self.content('\n')
 
