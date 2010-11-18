@@ -166,7 +166,7 @@ class TestNormalizedDict(unittest.TestCase):
 
     def test_str(self):
         nd = NormalizedDict({'a': 1, 'B': 1})
-        assert_equals(str(nd), "{'a': 1, 'B': 1}")
+        assert_true(str(nd) in ("{'a': 1, 'B': 1}", "{'B': 1, 'a': 1}"))
 
     def test_update(self):
         nd = NormalizedDict({'a': 1})

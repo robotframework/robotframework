@@ -1,14 +1,16 @@
 import unittest
-import unicodedata
+import sys
+
 from robot.utils import unic, is_jython
 from robot.utils.asserts import assert_equals, assert_true
+is_ironpython = sys.platform == 'cli'
+
 if is_jython:
+
     from java.lang import String
     import JavaObject
     import UnicodeJavaLibrary
-
-
-if is_jython:
+    
     class TestJavaUnic(unittest.TestCase):
 
         def test_with_java_object(self):
@@ -30,7 +32,8 @@ if is_jython:
 
 class TestUnic(unittest.TestCase):
 
-    if not is_jython:
+    if not (is_jython or is_ironpython):
+        import unicodedata
         def test_unicode_nfc_and_nfd_decomposition_equality(self):
             text = u'Hyv\xe4'
             assert_equals(unic(unicodedata.normalize('NFC', text)), text)
@@ -45,6 +48,8 @@ class TestUnic(unittest.TestCase):
         objects = [UnicodeRepr(), UnicodeRepr()]
         if is_jython:
             expected = '[Hyv\\xe4, Hyv\\xe4]' # This is actually wrong behavior
+        elif is_ironpython:
+            expected = '[Hyv\xe4, Hyv\xe4]'   # And so is this.
         else:
             expected = "<unrepresentable object 'list'>"
         assert_equals(unic(objects), expected)

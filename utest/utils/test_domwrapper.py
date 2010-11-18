@@ -7,7 +7,6 @@ from robot.utils import DomWrapper
 
 
 XML_STR = '''<?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE root PUBLIC "-//BLAA/BLAA//EN" "nonexisting.dtd">
 <!-- Comment before root - all comments (and doctypes) should be ignored -->
 <root>
   <!-- Comment inside root -->
