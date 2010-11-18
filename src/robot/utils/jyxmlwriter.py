@@ -32,25 +32,17 @@ class XmlWriter(AbstractXmlWriter):
         self.content('\n')
         self.closed = False
 
-    def start(self, name, attributes={}, newline=True):
-        attrs = AttributesImpl()
-        for attrname, attrvalue in attributes.items():
-            attrs.addAttribute('', '', attrname, '', attrvalue)
-        self._writer.startElement('', '', name, attrs)
-        if newline:
-            self.content('\n')
+    def _start(self, name, attrs):
+        self._writer.startElement('', '', name, self._get_attrs_impl(attrs))
 
-    def content(self, content):
-        if content is not None:
-            content = self._encode(content)
-            self._writer.characters(content, 0, len(content))
+    def _get_attrs_impl(self, attrs):
+        ai = AttributesImpl()
+        for name, value in attrs.items():
+            ai.addAttribute('', '', name, '', value)
+        return ai
 
-    def end(self, name, newline=True):
+    def _content(self, content):
+        self._writer.characters(content, 0, len(content))
+
+    def _end(self, name):
         self._writer.endElement('', '', name)
-        if newline:
-            self.content('\n')
-
-    def close(self):
-        self._writer.endDocument()
-        self._output.close()
-        self.closed = True

@@ -28,32 +28,16 @@ class XmlWriter(AbstractXmlWriter):
         self._writer.startDocument()
         self.closed = False
 
-    def start(self, name, attributes={}, newline=True):
-        self._writer.startElement(name, AttributesImpl(attributes))
-        if newline:
-            self.content('\n')
+    def _start(self, name, attrs):
+        self._writer.startElement(name, AttributesImpl(attrs))
 
-    def content(self, content):
-        if content is not None:
-            self._writer.characters(self._encode(content))
+    def _content(self, content):
+        self._writer.characters(content)
 
-    def end(self, name, newline=True):
+    def _end(self, name):
         self._writer.endElement(name)
-        if newline:
-            self.content('\n')
-
-    def close(self):
-        self._writer.endDocument()
-        self._output.close()
-        self.closed = True
 
     # Workaround for http://ironpython.codeplex.com/workitem/29474
     if sys.platform == 'cli':
-        _start = start
-
-        def start(self, name, attrs={}, newline=True):
-            attrs = dict((n, v.encode('UTF-8')) for n, v in attrs.items())
-            self._start(name, attrs, newline)
-        
-        def _encode(self, content):
-            return AbstractXmlWriter._encode(self, content).encode('UTF-8')
+        def _escape(self, content):
+            return AbstractXmlWriter._escape(self, content).encode('UTF-8')
