@@ -110,6 +110,10 @@ class TestXmlWriter(unittest.TestCase):
         f.close()
         assert_true(content.count('Me, Myself &amp; I &gt; you') > 0)
 
+    def test_remove_illegal_chars(self):
+        assert_equals(self.writer._escape(u'\x1b[31m'), '[31m')
+        assert_equals(self.writer._escape(u'\x00'), '')
+
     def _verify_node(self, node, name, text=None, attrs={}):
         if node is None:
             node = utils.DomWrapper(PATH)
@@ -117,18 +121,6 @@ class TestXmlWriter(unittest.TestCase):
         if text is not None:
             assert_equals(node.text, text)
         assert_equals(node.attrs, attrs)
-
-
-class TestXmlWriterUtils(unittest.TestCase):
-    
-    def setUp(self):
-        self.writer = utils.abstractxmlwriter.AbstractXmlWriter()
-
-    def test_encode_with_illegal_chars(self):
-        assert_equals(self.writer._encode(u'\x1b[31m'), '[31m')
-
-    def test_encode_without_illegal_char(self):
-        assert_equals(self.writer._encode('\\x09'), '\\x09')
         
 
 if __name__ == '__main__':
