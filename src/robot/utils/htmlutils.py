@@ -22,7 +22,7 @@ from unic import unic
 _hr_re = re.compile('^-{3,} *$')
 _bold_re = re.compile('''
 (                         # prefix (group 1)
-  (\A|\ )                 # begin of line or space
+  (^|\ )                  # begin of line or space
   ["'(]* _?               # optionally any char "'( and optional begin of italic
 )                         #
 \*                        # start of bold
@@ -30,20 +30,20 @@ _bold_re = re.compile('''
 \*                        # end of bold
 (?=                       # start of postfix (non-capturing group)
   _? ["').,!?:;]*         # optional end of italic and any char "').,!?:;
-  (\Z|\ )                 # end of line or space
+  ($|\ )                  # end of line or space
 )
 ''', re.VERBOSE)
 _italic_re = re.compile('''
-( (\A|\ ) ["'(]* )         # begin of line or space and opt. any char "'(
+( (^|\ ) ["'(]* )          # begin of line or space and opt. any char "'(
 _                          # start of italic
 ([^\ _].*?)                # no space or underline and then anything
 _                          # end of italic
-(?= ["').,!?:;]* (\Z|\ ) ) # opt. any char "').,!?:; and end of line or space
+(?= ["').,!?:;]* ($|\ ) )  # opt. any char "').,!?:; and end of line or space
 ''', re.VERBOSE)
 _url_re = re.compile('''
-( (\A|\ ) ["'([]* )         # begin of line or space and opt. any char "'([
-(\w{3,9}://[\S]+?)          # url (protocol is any alphanum 3-9 long string)
-(?= [])"'.,!?:;]* (\Z|\ ) ) # opt. any char ])"'.,!?:; and end of line or space
+( (^|\ ) ["'([]* )         # begin of line or space and opt. any char "'([
+(\w{3,9}://[\S]+?)         # url (protocol is any alphanum 3-9 long string)
+(?= [])"'.,!?:;]* ($|\ ) ) # opt. any char ])"'.,!?:; and end of line or space
 ''', re.VERBOSE)
 
 
