@@ -49,5 +49,11 @@ class XmlWriter(AbstractXmlWriter):
 
     # Workaround for http://ironpython.codeplex.com/workitem/29474
     if sys.platform == 'cli':
+        _start = start
+
+        def start(self, name, attrs={}, newline=True):
+            attrs = dict((n, v.encode('UTF-8')) for n, v in attrs.items())
+            self._start(name, attrs, newline)
+        
         def _encode(self, content):
             return AbstractXmlWriter._encode(self, content).encode('UTF-8')

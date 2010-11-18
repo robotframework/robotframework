@@ -26,6 +26,9 @@ def decode_output(string):
 
 def encode_output(string, errors='replace'):
     """Encodes string from Unicode to console encoding."""
+    # http://ironpython.codeplex.com/workitem/29487
+    if sys.platform == 'cli':
+        return string
     return string.encode(_output_encoding, errors)
 
 

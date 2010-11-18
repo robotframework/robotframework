@@ -1187,7 +1187,10 @@ class OperatingSystem:
             self._link("Touched new file '%s'", path)
 
     def _absnorm(self, path):
-        return os.path.normpath(os.path.abspath(path.replace('/', os.sep)))
+        try:
+            return os.path.normpath(os.path.abspath(path.replace('/', os.sep)))
+        except ValueError:  # http://ironpython.codeplex.com/workitem/29489
+            return os.path.normpath(path.replace('/', os.sep))
 
     def _fail(self, error, default):
         raise AssertionError(error or default)
@@ -1196,7 +1199,7 @@ class OperatingSystem:
         self._log(msg, 'INFO')
 
     def _link(self, msg, *paths):
-        paths = tuple([ '<a href="file://%s">%s</a>' % (p, p) for p in paths ])
+        paths = tuple('<a href="file://%s">%s</a>' % (p, p) for p in paths)
         self._log(msg % paths, 'HTML')
 
     def _warn(self, msg):
