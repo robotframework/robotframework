@@ -33,8 +33,8 @@ if is_jython:
 class TestUnic(unittest.TestCase):
 
     if not (is_jython or is_ironpython):
-        import unicodedata
         def test_unicode_nfc_and_nfd_decomposition_equality(self):
+            import unicodedata
             text = u'Hyv\xe4'
             assert_equals(unic(unicodedata.normalize('NFC', text)), text)
             # In Mac filesystem umlaut characters are presented in NFD-format.
