@@ -1111,10 +1111,9 @@ class OperatingSystem:
     def count_items_in_directory(self, path, pattern=None):
         """Returns and logs the number of all items in the given directory.
 
-        The arguments `pattern` and `pattern_type` have the same
-        semantics as in the `List Directory` keyword. The count is
-        returned as an integer, so it must be checked e.g. with the
-        built-in keyword `Should Be Equal As Integers`.
+        The argument `pattern` has the same semantics as in the `List Directory`
+        keyword. The count is returned as an integer, so it must be checked e.g.
+        with the built-in keyword `Should Be Equal As Integers`.
         """
         count = len(self._list_dir(path, pattern))
         self._info("%s item%s." % (count, plural_or_not(count)))
