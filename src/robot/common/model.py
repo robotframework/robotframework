@@ -30,13 +30,13 @@ class _TestAndSuiteHelper:
         self.status = 'NOT_RUN'
         self.message = ''
 
-    def __getattr__(self, name):
-        if name == 'htmldoc':
-            return utils.html_escape(self.doc, formatting=True)
-        if name == 'longname':
-            return self.get_long_name()
-        raise AttributeError("%s does not have attribute '%s'"
-                             % (self.__class__.__name__, name))
+    @property
+    def htmldoc(self):
+        return utils.html_escape(self.doc, formatting=True)
+
+    @property
+    def longname(self):
+        return self.get_long_name()
 
     def get_long_name(self, split_level=-1, separator='.'):
         """Returns long name. If separator is None, list of names is returned."""
