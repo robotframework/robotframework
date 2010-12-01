@@ -33,31 +33,31 @@ from defaultvalues import DefaultValues
 
 def TestSuite(datasources, settings):
     datasources = [ utils.normpath(path) for path in datasources ]
-    suite = _get_suite(datasources, settings['SuiteNames'])
+    suite = _get_suite(datasources, settings['SuiteNames'], settings['WarnOnSkipped'])
     suite.set_options(settings)
     _check_suite_contains_tests(suite)
     return suite
 
-def _get_suite(datasources, include_suites):
+def _get_suite(datasources, include_suites, warn_on_skipped):
     if not datasources:
         raise DataError("No data sources given.")
     if len(datasources) > 1:
-        return _get_multisource_suite(datasources, include_suites)
-    return RunnableTestSuite(_parse_suite(datasources[0], include_suites))
+        return _get_multisource_suite(datasources, include_suites, warn_on_skipped)
+    return RunnableTestSuite(_parse_suite(datasources[0], include_suites, warn_on_skipped))
 
-def _parse_suite(path, include_suites):
+def _parse_suite(path, include_suites, warn_on_skipped):
     try:
         if os.path.isdir(path):
-            return TestDataDirectory(source=path, include_suites=include_suites)
+            return TestDataDirectory(source=path, include_suites=include_suites, warn_on_skipped=warn_on_skipped)
         return TestCaseFile(source=path)
     except DataError, err:
         raise DataError("Parsing '%s' failed: %s" % (path, unicode(err)))
 
-def _get_multisource_suite(datasources, include_suites):
+def _get_multisource_suite(datasources, include_suites, warn_on_skipped):
     suitedatas = []
     for datasource in datasources:
         try:
-            suitedatas.append(_parse_suite(datasource, include_suites))
+            suitedatas.append(_parse_suite(datasource, include_suites, warn_on_skipped))
         except DataError, err:
             LOGGER.info(err)
     suite = RunnableMultiTestSuite(suitedatas)

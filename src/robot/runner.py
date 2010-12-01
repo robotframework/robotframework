@@ -215,6 +215,10 @@ Options:
                           Arguments to listener class can be given after class
                           name, using colon as separator. For example:
                           --listener MyListenerClass:arg1:arg2
+    --warnonskipped       If this option is used, skipped files will cause a
+                          warning that is visible to console output and log
+                          files. By default skipped files only cause an info 
+                          level log message.
  -W --monitorwidth chars  Width of the monitor output. Default is 78.
  -C --monitorcolors on|off|force  Using ANSI colors in console. Normally colors
                           work in unixes but not in Windows. Default is 'on'.

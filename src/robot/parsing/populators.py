@@ -105,7 +105,7 @@ class FromDirectoryPopulator(object):
     ignored_prefixes = ('_', '.')
     ignored_dirs = ('CVS',)
 
-    def populate(self, path, datadir, include_suites):
+    def populate(self, path, datadir, include_suites, warn_on_skipped):
         LOGGER.info("Parsing test data directory '%s'" % path)
         include_sub_suites = self._get_include_suites(path, include_suites)
         initfile, children = self._get_children(path, include_sub_suites)
@@ -119,8 +119,14 @@ class FromDirectoryPopulator(object):
             try:
                 datadir.add_child(child, include_sub_suites)
             except DataError, err:
-                LOGGER.info("Parsing data source '%s' failed: %s"
-                            % (child, unicode(err)))
+                self._log_failed_parsing("Parsing data source '%s' failed: %s"
+                            % (child, unicode(err)), warn_on_skipped)
+
+    def _log_failed_parsing(self, message, warn):
+        if warn:
+            LOGGER.warn(message)
+        else:
+            LOGGER.info(message)
 
     def _get_include_suites(self, path, include_suites):
         # If directory is included also all it children should be included

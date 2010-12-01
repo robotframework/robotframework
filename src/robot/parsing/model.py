@@ -24,9 +24,9 @@ from settings import (Documentation, Fixture, Timeout, Tags, Metadata,
 from populators import FromFilePopulator, FromDirectoryPopulator
 
 
-def TestData(parent=None, source=None, include_suites=[]):
+def TestData(parent=None, source=None, include_suites=[], warn_on_skipped=False):
     if os.path.isdir(source):
-        return TestDataDirectory(parent, source, include_suites)
+        return TestDataDirectory(parent, source, include_suites, warn_on_skipped)
     return TestCaseFile(parent, source)
 
 
@@ -152,7 +152,7 @@ class ResourceFile(_TestData):
 
 class TestDataDirectory(_TestData):
 
-    def __init__(self, parent=None, source=None, include_suites=[]):
+    def __init__(self, parent=None, source=None, include_suites=[], warn_on_skipped=False):
         _TestData.__init__(self, parent, source)
         self.directory = self.source
         self.initfile = None
@@ -161,7 +161,7 @@ class TestDataDirectory(_TestData):
         self.testcase_table = TestCaseTable(self)
         self.keyword_table = KeywordTable(self)
         if self.source:
-            FromDirectoryPopulator().populate(self.source, self, include_suites)
+            FromDirectoryPopulator().populate(self.source, self, include_suites, warn_on_skipped)
             self.children = [ ch for ch in self.children if ch.has_tests() ]
 
     def _valid_table(self, table):
