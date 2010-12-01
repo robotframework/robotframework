@@ -144,6 +144,9 @@ class Logger(AbstractLogger):
         for logger in self._loggers.ending_loggers():
             logger.end_keyword(keyword)
 
+    def __iter__(self):
+        return iter(self._loggers)
+
 
 class LoggerCollection(object):
 

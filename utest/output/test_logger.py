@@ -135,6 +135,12 @@ class TestLogger(unittest.TestCase):
         for log in logger._loggers:
             assert_true(log)
 
+    def test_logger_is_iterable(self):
+        logger = Logger()
+        for log in logger:
+            assert_true(log)
+        assert_equals(list(logger), list(logger._loggers))
+
     def test_automatic_console_logger_can_be_disabled(self):
         logger = Logger()
         logger.disable_automatic_console_logger()
