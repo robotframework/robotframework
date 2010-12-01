@@ -283,6 +283,9 @@ class OperatingSystem:
         """Returns the contents of a specified file.
 
         This keyword reads the specified file and returns the contents.
+        Line breaks in content are converted to platform independent form.
+        See also `Get Binary File`.
+
         `encoding` defines the encoding of the file. By default the value is
         'UTF-8', which means that UTF-8 and ASCII-encoded files are read
         correctly.
@@ -291,6 +294,13 @@ class OperatingSystem:
         return unicode(content, encoding).replace('\r\n', '\n')
 
     def get_binary_file(self, path):
+        """Returns the contents of a specified file.
+
+        This keyword reads the specified file and returns the contents as is.
+        See also `Get File`.
+
+        New in Robot Framework 2.5.5.
+        """
         path = self._absnorm(path)
         self._link("Getting file '%s'", path)
         f = open(path, 'rb')
