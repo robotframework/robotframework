@@ -217,6 +217,9 @@ For In Range With Start, Stop And Step
 For In Range With Variables In Arguments
     Check Test Case  For In Range With Variables In Arguments
 
+For In Range With Expressions in Arguments
+    Check Test Case  For In Range With Expressions in Arguments
+
 For In Range With Multiple Variables
     ${test} =  Check Test Case  For In Range With Multiple Variables
     Should Be For In Range Keyword  ${test.kws[1]}  4

@@ -247,6 +247,12 @@ For In Range With Variables In Arguments
     :FOR  ${j}  IN RANGE  @{var}
     \  Equals  ${j}  ${1}
 
+For In Range With Expressions in Arguments
+    @{var} =  List
+    :FOR  ${i}  IN RANGE  ${3}-2  (3+${6})/3
+    \  @{var} =  List  @{var}  ${i}
+    Fail Unless  @{var} == [1,2]
+
 For In Range With Multiple Variables
     @{var} =  List
     :FOR  ${i}  ${j}  ${k}  IN RANGE  -1  11
@@ -264,7 +270,7 @@ For In Range With No Arguments
     \  Fail  Not executed
 
 For In Range With Non Number Arguments
-    [Documentation]  FAIL STARTS: Converting argument of FOR IN RANGE failed: ValueError: 
+    [Documentation]  FAIL STARTS: Converting argument of FOR IN RANGE failed: SyntaxError:
     :FOR  ${i}  IN RANGE  not a number
     \  Fail  Not executed
 

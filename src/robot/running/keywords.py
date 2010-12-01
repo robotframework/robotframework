@@ -336,7 +336,7 @@ class ForLoop(BaseKeyword):
 
     def _get_range_items(self, items):
         try:
-            items = [ int(item) for item in items ]
+            items = [ self._to_int(item) for item in items ]
         except:
             raise DataError('Converting argument of FOR IN RANGE failed: %s'
                             % utils.get_error_message())
@@ -344,6 +344,9 @@ class ForLoop(BaseKeyword):
             raise DataError('FOR IN RANGE expected 1-3 arguments, '
                             'got %d instead.' % len(items))
         return range(*items)
+
+    def _to_int(self, item):
+        return int(eval(str(item)))
 
 
 class _ForItem(BaseKeyword):
