@@ -178,6 +178,9 @@ class LoggerCollection(object):
     def all_loggers(self):
         return self._context_changing_loggers + self._regular_loggers
 
+    def __iter__(self):
+        return iter(self.all_loggers())
+
 
 class _LoggerProxy(AbstractLoggerProxy):
     _methods = ['message', 'log_message', 'output_file', 'close',

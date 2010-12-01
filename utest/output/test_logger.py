@@ -130,6 +130,11 @@ class TestLogger(unittest.TestCase):
         logger = Logger()
         assert_true(logger._loggers.all_loggers()[0].start_suite.im_class is CommandLineMonitor)
 
+    def test_loggercollection_is_iterable(self):
+        logger = Logger()
+        for log in logger._loggers:
+            assert_true(log)
+
     def test_automatic_console_logger_can_be_disabled(self):
         logger = Logger()
         logger.disable_automatic_console_logger()
