@@ -211,14 +211,17 @@ class _Table(object):
 class _WithSettings(object):
 
     def get_setter(self, setting_name):
-        normalized = utils.normalize(setting_name)
+        normalized = self.normalize(setting_name)
         if normalized in self._setters:
             return self._setters[normalized](self)
         self.report_invalid_syntax("Non-existing setting '%s'." % setting_name)
 
     def is_setting(self, setting_name):
-        return utils.normalize(setting_name) in self._setters
+        return self.normalize(setting_name) in self._setters
 
+    def normalize(self, setting):
+        result = utils.normalize(setting)
+        return result[0:-1] if result and result[-1]==':' else result
 
 class _SettingTable(_Table, _WithSettings):
     type = 'setting'

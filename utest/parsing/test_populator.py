@@ -175,6 +175,15 @@ class TablePopulatorTest(_PopulatorTest):
 class SettingTablePopulatingTest(_PopulatorTest):
 
     def test_testcasefile_settings(self):
+        self._try_testcasefile_settings_with_postfix('')
+
+    def test_testcasefile_settings_with_colon(self):
+        self._try_testcasefile_settings_with_postfix(':')
+
+    def test_testcasefile_settings_with_colon_and_spaces(self):
+        self._try_testcasefile_settings_with_postfix('  :  ')
+
+    def _try_testcasefile_settings_with_postfix(self, postfix):
         doc = 'This is doc'
         template = 'Foo'
         more_doc = 'smore'
@@ -183,20 +192,22 @@ class SettingTablePopulatingTest(_PopulatorTest):
         even_more_tags = 'even more'
         default_tags = 'default'
         setup_name, setup_args = 'Keyword Name', ['a1', 'a2']
-        self._create_table('Settings', [['Documentation', doc],
-                                        ['S  uite Tear Down'] + [setup_name],
-                                        ['S  uite SeTUp'] + [setup_name] + setup_args,
-                                        ['S  uite teardown'] + setup_args,
-                                        ['Doc um entati on', more_doc],
-                                        ['force tags', force_tags],
-                                        ['Default tags', default_tags],
-                                        ['FORCETAGS', more_tags],
-                                        ['test timeout', '1s'],
-                                        ['De Fault TAGS', more_tags, even_more_tags],
-                                        ['test timeout', 'timeout message'],
-                                        ['test timeout', more_doc],
-                                        ['test template', template]
-                                        ])
+        table = [['Documentation', doc],
+                 ['S  uite Tear Down'] + [setup_name],
+                 ['S  uite SeTUp'] + [setup_name] + setup_args,
+                 ['S  uite teardown'] + setup_args,
+                 ['Doc um entati on', more_doc],
+                 ['force tags', force_tags],
+                 ['Default tags', default_tags],
+                 ['FORCETAGS', more_tags],
+                 ['test timeout', '1s'],
+                 ['De Fault TAGS', more_tags, even_more_tags],
+                 ['test timeout', 'timeout message'],
+                 ['test timeout', more_doc],
+                 ['test template', template]
+                ]
+        self._postfix_settings(table, postfix)
+        self._create_table('Settings', table)
         self._assert_setting('doc', doc + ' ' + more_doc)
         self._assert_fixture('suite_setup', setup_name, setup_args)
         self._assert_fixture('suite_teardown', setup_name, setup_args)
@@ -206,6 +217,10 @@ class SettingTablePopulatingTest(_PopulatorTest):
         assert_equals(timeout.value, '1s')
         assert_equals(timeout.message, 'timeout message '+more_doc)
         self._assert_setting('test_template', template)
+
+    def _postfix_settings(self, table, postfix):
+        for setting in table:
+            setting[0] = setting[0]+postfix
 
     def test_imports(self):
         self._create_table('settings', [['Library', 'FooBarness'],
@@ -319,15 +334,24 @@ class TestCaseTablePopulatingTest(_PopulatorTest):
         assert_equals(self._first_test().steps[0].comment, 'comment')
 
     def test_test_settings(self):
-        doc = 'This is domumentation for the test case'
-        self._create_table('Test cases', [['My test name'],
-                                          ['', '[Documentation]', doc],
-                                          ['', '[  Tags  ]', 'ankka', 'kameli'],
-                                          ['', '... ', '', 'aasi'],
-                                          ['', 'Log', 'barness']])
+        self._try_test_settings([['My test name'],
+                                ['', '[Documentation]', 'This is domumentation for the test case'],
+                                ['', '[  Tags  ]', 'ankka', 'kameli'],
+                                ['', '... ', '', 'aasi'],
+                                ['', 'Log', 'barness']])
+
+    def test_test_settings_with_colons(self):
+        self._try_test_settings([['My test name'],
+                                ['', '[Documentation:]', 'This is domumentation for the test case'],
+                                ['', '[  Tags  :  ]', 'ankka', 'kameli'],
+                                ['', '... ', '', 'aasi'],
+                                ['', 'Log', 'barness']])
+
+    def _try_test_settings(self, table):
+        self._create_table('Test cases', table)
         test = self._first_test()
         assert_equals(len(test.steps), 1)
-        assert_equals(test.doc.value, doc)
+        assert_equals(test.doc.value, 'This is domumentation for the test case')
         assert_equals(test.tags.value, ['ankka', 'kameli', '', 'aasi'])
 
     def test_invalid_test_settings(self):
