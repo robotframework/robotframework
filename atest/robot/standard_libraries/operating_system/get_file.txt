@@ -16,6 +16,9 @@ Get File With Non-ASCII Name
 Get File With Space In Name
     Check testcase  ${TESTNAME}
 
+Get Binary File
+    Check testcase  ${TESTNAME}
+
 Log File
     ${tc} =  Check testcase  ${TESTNAME}
     Check Log Message  ${tc.kws[1].msgs[1]}  hello world\nwith two lines

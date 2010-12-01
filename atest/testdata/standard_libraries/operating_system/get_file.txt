@@ -27,6 +27,11 @@ Get File With Space In Name
     ${file} =  Get File  ${WITH SPACE}
     Should Be Equal  ${file}  content
 
+Get Binary File
+    Create File  ${TESTFILE}  hello world\r\nbinary
+    ${file}=  Get Binary File  ${TESTFILE}
+    Should Be Equal  ${file}  hello world\r\nbinary
+
 Log File
     Create File  ${TESTFILE}  hello world\nwith two lines
     ${file} =  Log File  ${TESTFILE}
