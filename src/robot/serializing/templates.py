@@ -25,6 +25,9 @@ _STYLE = '''
   h2 {
     margin-top: 1.2em;
   }
+  br {
+    mso-data-placement: same-cell;  /* maintain line breaks in Excel */
+  }
   /* Statistics Table */
   table.statistics {
     width: 58em;
