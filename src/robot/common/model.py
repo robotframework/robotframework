@@ -34,9 +34,11 @@ class _TestAndSuiteHelper:
     def htmldoc(self):
         return utils.html_escape(self.doc, formatting=True)
 
-    @property
-    def longname(self):
-        return self.get_long_name()
+    # TODO: Replace with simple @property in 2.6.
+    # Cannot do that now because Mabot assigns longname.
+    _longname = None
+    longname = property(lambda self: self._longname or self.get_long_name(),
+                        lambda self, name: setattr(self, '_longname', name))
 
     def get_long_name(self, split_level=-1, separator='.'):
         """Returns long name. If separator is None, list of names is returned."""
