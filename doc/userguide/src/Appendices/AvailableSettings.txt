@@ -63,6 +63,11 @@ importing libraries, resources, and variables.
    | Test Timeout    | Used for specifying a default `test case timeout`_.    |
    +-----------------+--------------------------------------------------------+
 
+.. note:: All setting names can optionally include a colon at the end, for
+      example :opt:`Documentation:`. This can make reading the settings easier
+      especially when using the plain text format. This is a
+      new feature in Robot Framework 2.5.5.
+
 __ `Test suite documentation`_
 __ `Documenting resource files`_
 
