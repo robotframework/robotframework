@@ -455,22 +455,22 @@ class _VariableScopes:
         self.current = self._uk_handlers.pop()
 
     def set_global(self, name, value):
-        GLOBAL_VARIABLES.__setitem__(name, value, depr_warning=False)
+        GLOBAL_VARIABLES.__setitem__(name, value)
         for ns in robot.running.NAMESPACES:
             ns.variables.set_suite(name, value)
 
     def set_suite(self, name, value):
-        self._suite.__setitem__(name, value, depr_warning=False)
+        self._suite.__setitem__(name, value)
         self.set_test(name, value, False)
 
     def set_test(self, name, value, fail_if_no_test=True):
         if self._test is not None:
-            self._test.__setitem__(name, value, depr_warning=False)
+            self._test.__setitem__(name, value)
         elif fail_if_no_test:
             raise DataError("Cannot set test variable when no test is started")
         for varz in self._uk_handlers:
-            varz.__setitem__(name, value, depr_warning=False)
-        self.current.__setitem__(name, value, depr_warning=True)
+            varz.__setitem__(name, value)
+        self.current.__setitem__(name, value)
 
     def keys(self):
         return self.current.keys()

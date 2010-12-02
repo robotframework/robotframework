@@ -46,25 +46,9 @@ class Variables(utils.NormalizedDict):
         utils.NormalizedDict.__init__(self, ignore=['_'])
         self._identifiers = identifiers
 
-    def __setitem__(self, name, value, path=None, depr_warning=True):
+    def __setitem__(self, name, value, path=None):
         self._validate_var_name(name)
-        if depr_warning:
-            self._deprecation_warning_if_basename_already_used(name, path)
         utils.NormalizedDict.__setitem__(self, name, value)
-
-    def _deprecation_warning_if_basename_already_used(self, name, path):
-        other = ('@' if name[0] == '$' else '$') + name[1:]
-        if utils.NormalizedDict.__contains__(self, other):
-            self._log_warning_when_basename_already_used(name, other, path)
-
-    def _log_warning_when_basename_already_used(self, name, other, path):
-        msg = ("Using same base name with scalar and list variables is "
-               "deprecated. Please change either '%s' or '%s'") % (name, other)
-        if path:
-            msg += " in file '%s'" % path
-        msg += " before Robot Framework 2.6."
-        # If path is not known we are executing keywords and can log message
-        LOGGER.warn(msg, log=not path)
 
     def update(self, dict=None, **kwargs):
         if dict:
