@@ -241,11 +241,12 @@ class Namespace:
         except:
             error = utils.get_error_message()
             handler = UserErrorHandler(name, error)
-        try:
-            handler.replace_variables(self.variables)
-        except AttributeError:  # only applicable for UserHandlers
-            pass
+        self._replace_variables_from_user_handlers(handler)
         return handler
+
+    def _replace_variables_from_user_handlers(self, handler):
+        if hasattr(handler, 'replace_variables'):
+            handler.replace_variables(self.variables)
 
     def _get_handler(self, name):
         handler = None
