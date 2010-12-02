@@ -48,7 +48,7 @@ Empty TXT File
     Check Parsing Error  empty.txt  ${EMPTY TC TABLE MSG}  ${TXTDIR}${/}empty.txt
 
 Run Suite Dir And Warn On Skipped
-    Run Tests  --warnonskipped  ${HTMLDIR}
+    Run Tests  --warnonskippedfiles  ${HTMLDIR}
     ${empty} =  Join Path  ${DATADIR}  ${HTMLDIR}  empty.html
     Check Syslog Contains  Parsing data source '${empty}' failed:  File has no test case table.
     Check Log Message  ${ERRORS.msgs[0]}  Parsing data source '${empty}' failed: File has no test case table.  level=WARN
