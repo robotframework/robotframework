@@ -21,6 +21,7 @@ if __name__ == '__main__':
 
 
 # Global workaround for os.listdir bug http://bugs.jython.org/issue1593
+# This bug has been fixed in Jython 2.5.2 RC 2
 if sys.platform.startswith('java') and sys.version_info[:3] < (2,5,2):
     from java.lang import String
     def listdir(path):
@@ -32,7 +33,9 @@ if sys.platform.startswith('java') and sys.version_info[:3] < (2,5,2):
     os.listdir = listdir
 
 # Global workaround for os.stat bug http://bugs.jython.org/issue1658
-if sys.platform.startswith('java') and os.sep == '\\':
+# Jython 2.5.2 RC 2 still contains this bug, but additionally the workaround used
+# here does not work on that version either.
+if sys.platform.startswith('java') and os.sep == '\\' and sys.version_info < (2,5,2):
     os._posix = os.JavaPOSIX(os.PythonPOSIXHandler())
     os._native_posix = False
 
