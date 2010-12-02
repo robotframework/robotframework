@@ -54,6 +54,8 @@ Command line options for test execution
   --tagstatlink <pattern:link:title>   Adds `external links`_ to the :name:`Statistics by 
                           Tag` table in outputs.
   --listener <name:args>  `Sets a listener`_ for monitoring test execution. 
+  --warnonskippedfiles    Causes `skipped files to cause a warning`_ that is visible to 
+                          console output and log files.
   -W, --monitorwidth <chars>  `Sets the width`_ of the monitor output. 
   -C, --monitorcolors <on|off|force>  `Specifies are colors`_ used in the console.
   -P, --pythonpath <path>   Additional locations where to `search test libraries`_ from when they are imported.
@@ -138,6 +140,7 @@ Command line options for post-processing outputs
 .. _external links: `Creating links from tag names`_
 
 .. _Sets a listener: `Setting listeners`_
+.. _skipped files to cause a warning: `Warning on invalid files`_
 .. _Sets the width: `Controlling the monitor output`_
 .. _Specifies are colors: `Sets the width`_
 .. _search test libraries: `library search path`_

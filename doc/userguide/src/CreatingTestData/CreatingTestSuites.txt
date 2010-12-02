@@ -31,6 +31,11 @@ test suite:
    Specify `suite setup and teardown`_. Have also synonyms
    :opt:`Suite Precondition` and :opt:`Suite Postcondition`, respectively.
 
+.. note:: All setting names can optionally include a colon at the end. For
+      example 'Documentation:'. This can make reading the settings easier
+      especially when using text format for test suite files. This is a
+      new feature in Robot Framework 2.5.5.
+
 __ `Test case syntax`_
 
 Test suite directories
@@ -58,6 +63,15 @@ contains are processed recursively as follows:
 If a file or directory that is processed does not contain any test
 cases, it is silently ignored (a message is written to the syslog_)
 and the processing continues.
+
+Warning on invalid files
+''''''''''''''''''''''''
+
+Normally files that don't have a valid test case table are silently ignored
+with a message written to the syslog_. As of Robot Framework 2.5.5 it is
+now possible to set a command line option --warnonskippedfiles, which will cause
+Robot to write a warning to command line and to the top of the log file
+for each skipped file.
 
 __ `Supported file formats`_
 
