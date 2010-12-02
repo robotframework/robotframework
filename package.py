@@ -244,16 +244,7 @@ def _create_jar_file(source, version):
     return path
 
 def _fill_jar(sourcedir, jarpath):
-    subprocess.call(['zip', jarpath, '-r', '.'], cwd=sourcedir)
-    return
-    jar = zipfile.ZipFile(jarpath, 'w', compression=zipfile.ZIP_DEFLATED)
-    for root, _, files in os.walk(sourcedir):
-        for name in files:
-            source = join(root, name)
-            target= source.replace(sourcedir+os.sep, '')
-            print 'Adding %s' % target
-            jar.write(source, target)
-    jar.close()
+    subprocess.call(['jar', 'cvfM', jarpath, '.'], cwd=sourcedir)
 
 
 if __name__ == '__main__':
