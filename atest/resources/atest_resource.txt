@@ -268,3 +268,7 @@ Is Valid Elapsed Time
     Log  ${time}
     Should Be True  isinstance(${time}, int) and ${time} >= 0  Not valid elapsed time
 
+Previous test should have passed
+    [Arguments]  ${name}
+    Should be equal  ${PREV TEST NAME}  ${name}
+    Should be equal  ${PREV TEST STATUS}  PASS

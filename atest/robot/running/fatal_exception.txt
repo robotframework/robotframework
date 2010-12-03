@@ -23,6 +23,10 @@ Multiple Suite Aware Exiting
     Check Test Case  Test That Should Not Be Run 2.1
     Check Test Case  Test That Should Not Be Run 2.2
 
+Skip Imports On Exit
+    Previous test should have passed  Multiple Suite Aware Exiting
+    Should be empty  ${ERRORS.messages}
+
 Fatal Exception and Runmode Exit on Failure
     Run Tests  --runmode exitonfailure  running/fatal_exception/01__python_library_kw.txt
     Check Test Case  Test That Should Not Be Run 1  FAIL

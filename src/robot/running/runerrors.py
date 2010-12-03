@@ -20,7 +20,6 @@ class SuiteRunErrors(object):
     _parent_suite_init_error = 'Initialization of the parent suite failed.'
     _parent_suite_setup_error = 'Setup of the parent suite failed.'
 
-
     def __init__(self, run_mode_is_exit_on_failure=False, run_mode_skip_teardowns_on_exit=False):
         self._run_mode_is_exit_on_failure = run_mode_is_exit_on_failure
         self._run_mode_skip_teardowns_on_exit = run_mode_skip_teardowns_on_exit
@@ -30,6 +29,10 @@ class SuiteRunErrors(object):
         self._init_current_errors()
         self._exit_runmode = self._exit_fatal = False
         self._current_suite_setup_executed = False
+
+    @property
+    def exit(self):
+        return self._exit_fatal or self._exit_runmode
 
     def _init_current_errors(self):
         self._current_init_err = self._current_setup_err = self._NO_ERROR

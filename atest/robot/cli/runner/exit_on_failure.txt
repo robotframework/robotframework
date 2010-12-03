@@ -4,11 +4,15 @@ Resource        atest_resource.txt
 
 *** Test Cases ***
 Exit On Failure
-    [Setup]  Run Tests  --runmode exitonfailure  misc/pass_and_fail.html  misc/suites
+    [Setup]  Run Tests  --runmode exitonfailure  misc/pass_and_fail.html  misc/suites  running/fatal_exception/02__irrelevant.txt
     Check Test Case  Pass
     Check Test Case  Fail
     Check Test Case  SubSuite1 First  FAIL  Critical failure occurred and ExitOnFailure option is in use
     Check Test Case  Suite3 First  FAIL  Critical failure occurred and ExitOnFailure option is in use
+
+Imports Are Skipped On Exit
+    Previous test should have passed  Exit On Failure
+    Should be empty  ${ERRORS.messages}
 
 Correct Suite Teardown Is Executed When Exitonfailure Is Used
     [Setup]  Run Tests  --runmode exitonfailure  misc/suites

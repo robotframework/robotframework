@@ -127,8 +127,8 @@ class RunnableTestSuite(BaseTestSuite):
         self.status = 'RUNNING'
         self.starttime = utils.get_timestamp()
         parent_vars = parent.context.get_current_vars() if parent else None
-        self.context = ExecutionContext(Namespace(self, parent_vars), output,
-                                        self._run_mode_dry_run)
+        ns = Namespace(self, parent_vars, skip_imports=errors.exit)
+        self.context = ExecutionContext(ns, output, self._run_mode_dry_run)
         self._set_variable_dependent_metadata(self.context)
         output.start_suite(self)
         return self.context

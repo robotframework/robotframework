@@ -40,7 +40,7 @@ class Namespace:
     A new instance of this class is created for each test suite.
     """
 
-    def __init__(self, suite, parent_vars):
+    def __init__(self, suite, parent_vars, skip_imports=False):
         if suite is not None:
             LOGGER.info("Initializing namespace for test suite '%s'" % suite.longname)
         self.variables = _VariableScopes(suite, parent_vars)
@@ -55,7 +55,7 @@ class Namespace:
         self.import_library('BuiltIn')
         self.import_library('Reserved')
         self.import_library('Easter')
-        if suite.source is not None:
+        if suite.source and not skip_imports:
             self._handle_imports(suite.imports)
         robot.running.NAMESPACES.start_suite(self)
         self.variables['${SUITE_NAME}'] = suite.longname
