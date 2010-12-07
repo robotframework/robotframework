@@ -17,12 +17,26 @@ import sys
 import os
 import tempfile
 
-from java.awt import Toolkit, Robot, Rectangle
-from javax.imageio import ImageIO
-from java.io import File
-
 from robot.version import get_version
 from robot import utils
+
+
+if sys.platform.startswith('java'):
+    from java.awt import Toolkit, Robot, Rectangle
+    from javax.imageio import ImageIO
+    from java.io import File
+
+    def take_screenshot(path):
+        screensize = Toolkit.getDefaultToolkit().getScreenSize()
+        rectangle = Rectangle(0, 0, screensize.width, screensize.height)
+        image = Robot().createScreenCapture(rectangle)
+        ImageIO.write(image, "jpg", File(path))
+
+else:
+
+    def take_screenshot(path):
+        raise RuntimeError('Taking screenshots is not supported on this platform '
+                           'by default. See library documentation for details.')
 
 
 class Screenshot:
@@ -81,10 +95,7 @@ class Screenshot:
         The directory holding the file must exist or an exception is raised.
         """
         path = self._get_save_path(path)
-        screensize = Toolkit.getDefaultToolkit().getScreenSize()
-        rectangle = Rectangle(0, 0, screensize.width, screensize.height)
-        image = Robot().createScreenCapture(rectangle)
-        ImageIO.write(image, "jpg", File(path))
+        take_screenshot(path)
         print "Screenshot saved to '%s'" % path
         return path
 
