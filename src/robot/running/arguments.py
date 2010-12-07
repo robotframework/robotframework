@@ -16,7 +16,7 @@ import sys
 import inspect
 from array import ArrayType
 
-from robot.errors import DataError
+from robot.errors import DataError, FrameworkError
 from robot.variables import is_list_var, is_scalar_var
 from robot import utils
 
@@ -34,13 +34,13 @@ class _KeywordArguments(object):
                                                    kw_or_lib_name, self._type)
 
     def resolve(self, args, variables, output=None):
-        posargs, namedargs = self._resolve(args, variables)
+        posargs, namedargs = self._resolve(args, variables, output)
         self.check_arg_limits(posargs, namedargs)
         self._tracelog_args(output, posargs, namedargs)
         return posargs, namedargs
 
-    def _resolve(self, args, variables):
-        return self._get_argument_resolver().resolve(args, variables)
+    def _resolve(self, args, variables, output):
+        return self._get_argument_resolver().resolve(args, output, variables)
 
     def check_arg_limits(self, args, namedargs={}):
         self._arg_limit_checker.check_arg_limits(args, namedargs)
@@ -185,7 +185,7 @@ class RunKeywordArguments(PythonKeywordArguments):
         PythonKeywordArguments.__init__(self, argument_source, name)
         self._arg_resolution_index = arg_resolution_index
 
-    def _resolve(self, args, variables):
+    def _resolve(self, args, variables, output):
         args = variables.replace_from_beginning(self._arg_resolution_index, args)
         return args, {}
 
@@ -261,31 +261,31 @@ class UserKeywordArguments(object):
     def _fill_missing_args(self, arguments, needed):
         return arguments + needed * [None]
 
-    def resolve(self, arguments, variables):
-        positional, varargs, named = self._resolve_arg_usage(arguments, variables)
+    def resolve(self, arguments, variables, output):
+        positional, varargs, named = self._resolve_arg_usage(arguments, variables, output)
         self._arg_limit_checker.check_arg_limits(positional+varargs, named)
         argument_values = self._resolve_arg_values(variables, named, positional)
         argument_values += varargs
         self._arg_limit_checker.check_missing_args(argument_values, len(arguments))
         return argument_values
 
-    def _template_for(self, variables):
-        return [ _MissingArg() for _ in range(self.minargs) ] \
-                + variables.replace_list(list(self.defaults))
+    def _resolve_arg_usage(self, arguments, variables, output):
+        resolver = UserKeywordArgumentResolver(self)
+        positional, named = resolver.resolve(arguments, output=output)
+        positional, named = self._replace_variables(variables, positional, named)
+        return self._split_args_and_varargs(positional) + (named,)
 
     def _resolve_arg_values(self, variables, named, positional):
         template = self._template_for(variables)
         for name, value in named.items():
-            template[self.names.index(name)] = value
+            template.set_value(self.names.index(name), value)
         for index, value in enumerate(positional):
-            template[index] = value
-        return template
+            template.set_value(index, value)
+        return template.as_list()
 
-    def _resolve_arg_usage(self, arguments, variables):
-        resolver = UserKeywordArgumentResolver(self)
-        positional, named = self._replace_variables(variables,
-                                                    *resolver.resolve(arguments))
-        return self._split_args_and_varargs(positional) + (named,)
+    def _template_for(self, variables):
+        defaults = variables.replace_list(list(self.defaults))
+        return UserKeywordArgsTemplate(self.minargs, defaults)
 
     def _replace_variables(self, variables, positional, named):
         for name in named:
@@ -318,7 +318,23 @@ class UserKeywordArguments(object):
 
 class _MissingArg(object):
     def __getattr__(self, name):
-        raise RuntimeError
+        raise DataError
+
+
+class UserKeywordArgsTemplate(object):
+
+    def __init__(self, minargs, defaults):
+        self._template = [_MissingArg() for _ in range(minargs)] + defaults
+        self._already_set = set()
+
+    def set_value(self, idx, value):
+        if idx in self._already_set:
+            raise FrameworkError
+        self._already_set.add(idx)
+        self._template[idx] = value
+
+    def as_list(self):
+        return self._template
 
 
 class _ArgumentResolver(object):
@@ -327,31 +343,38 @@ class _ArgumentResolver(object):
         self._arguments = arguments
         self._mand_arg_count = len(arguments.names) - len(arguments.defaults)
 
-    def resolve(self, values, variables=None):
-        positional, named = self._resolve_argument_usage(values)
+    def resolve(self, values, output, variables=None):
+        positional, named = self._resolve_argument_usage(values, output)
         return self._resolve_variables(positional, named, variables)
 
-    def _resolve_argument_usage(self, values):
-        positional = []
+    def _resolve_argument_usage(self, values, output):
         named = {}
-        named_args_allowed = True
-        for arg in reversed(self._optional(values)):
-            if named_args_allowed and self._is_named(arg):
-                name, value = self._parse_named(arg)
-                if name in named:
-                    raise RuntimeError('Keyword argument %s repeated.' % name)
-                named[name] = value
+        last_positional = self._get_last_positional_idx(values)
+        used_names = self._arguments.names[:last_positional]
+        for arg in values[last_positional:]:
+            name, value = self._parse_named(arg)
+            if name in named:
+                raise DataError('Keyword argument %s repeated.' % name)
+            if name in used_names:
+                output.warn("Could not resolve named arguments because value for "
+                            "argument '%s' was given twice." % name)
+                return values, {}
             else:
-                positional.append(arg)
-                named_args_allowed = False
-        positional = self._mandatory(values) + list(reversed(positional))
-        return positional, named
+                used_names.append(name)
+                named[name] = value
+        return values[:last_positional], named
+
+    def _get_last_positional_idx(self, values):
+        last_positional_idx = self._mand_arg_count
+        named_allowed = True
+        for arg in reversed(self._optional(values)):
+            if not (named_allowed and self._is_named(arg)):
+                named_allowed = False
+                last_positional_idx += 1
+        return last_positional_idx
 
     def _optional(self, values):
         return values[self._mand_arg_count:]
-
-    def _mandatory(self, values):
-        return values[:self._mand_arg_count]
 
     def _is_named(self, arg):
         if self._is_str_with_kwarg_sep(arg):

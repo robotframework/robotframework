@@ -49,6 +49,13 @@ Default value with escaped content
     ${ret}=  Escaped default value  d4=\${nv}
     Should Be Equal  ${ret}  \${notvariable} \\\\ \n${SPACE}\${nv}
 
+Same Argument Specified Twice
+    ${ret}=  Two Kwargs  bar  first=foo
+    Should Be Equal  ${ret}  bar, first=foo
+    ${ret}=  Two Kwargs  second=foo  bar
+    Should Be Equal  ${ret}  second=foo, bar
+
+
 *** Keywords ***
 One Kwarg
     [arguments]  ${kwarg}=

@@ -137,13 +137,13 @@ class UserKeywordHandler(object):
         return None
 
     def _variable_resolving_run(self, context, variables, args_spec, argument_values):
-        resolved_arguments = args_spec.resolve(argument_values, variables)
+        resolved_arguments = args_spec.resolve(argument_values, variables,
+                                               context.output)
         self._execute(context, variables, args_spec, resolved_arguments)
         return self._get_return_value(variables)
 
     def _execute(self, context, variables, args_spec, resolved_arguments):
-        args_spec.set_variables(resolved_arguments, variables,
-                                     context.output)
+        args_spec.set_variables(resolved_arguments, variables, context.output)
         self._verify_keyword_is_valid()
         self.timeout.start()
         self.keywords.run(context)
