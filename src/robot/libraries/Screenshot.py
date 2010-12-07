@@ -21,6 +21,8 @@ from robot.version import get_version
 from robot import utils
 
 
+take_screenshot = None
+
 if sys.platform.startswith('java'):
     from java.awt import Toolkit, Robot, Rectangle
     from javax.imageio import ImageIO
@@ -32,7 +34,17 @@ if sys.platform.startswith('java'):
         image = Robot().createScreenCapture(rectangle)
         ImageIO.write(image, "jpg", File(path))
 
-else:
+elif os.name == 'nt':
+
+    try:
+        from PIL import ImageGrab
+    except ImportError:
+        pass
+    else:
+        def take_screenshot(path):
+            ImageGrab.grab().save(path)
+
+if not take_screenshot:
 
     def take_screenshot(path):
         raise RuntimeError('Taking screenshots is not supported on this platform '
