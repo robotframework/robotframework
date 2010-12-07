@@ -80,16 +80,20 @@ class Screenshot:
 
         The directory holding the file must exist or an exception is raised.
         """
-        path = os.path.abspath(path.replace('/', os.sep))
-        if not os.path.exists(os.path.dirname(path)):
-            raise RuntimeError("Directory '%s' where to save the screenshot does "
-                            "not exist" % os.path.dirname(path))
+        path = self._get_save_path(path)
         screensize = Toolkit.getDefaultToolkit().getScreenSize()
         rectangle = Rectangle(0, 0, screensize.width, screensize.height)
         image = Robot().createScreenCapture(rectangle)
         ImageIO.write(image, "jpg", File(path))
         print "Screenshot saved to '%s'" % path
         return path
+
+    def _get_save_path(self, path):
+        path = os.path.abspath(path.replace('/', os.sep))
+        if os.path.exists(os.path.dirname(path)):
+            return path
+        raise RuntimeError("Directory '%s' where to save the screenshot does "
+                           "not exist" % os.path.dirname(path))
 
     def save_screenshot(self, basename="screenshot", directory=None):
         """Saves a screenshot with a generated unique name.
