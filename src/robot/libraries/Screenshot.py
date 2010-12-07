@@ -12,7 +12,6 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-
 import sys
 import os
 import tempfile
@@ -23,26 +22,54 @@ from robot import utils
 
 take_screenshot = None
 
+def _java_screenshot(path):
+    size = Toolkit.getDefaultToolkit().getScreenSize()
+    rectangle = Rectangle(0, 0, size.width, size.height)
+    image = Robot().createScreenCapture(rectangle)
+    ImageIO.write(image, 'jpg', File(path))
+
+def _wx_screenshot(path):
+    context = wx.ScreenDC()
+    width, height = context.GetSize()
+    bitmap = wx.EmptyBitmap(width, height, -1)
+    memory = wx.MemoryDC()
+    memory.SelectObject(bitmap)
+    memory.Blit(0, 0, width, height, context, -1, -1)
+    memory.SelectObject(wx.NullBitmap)
+    bitmap.SaveFile(path, wx.BITMAP_TYPE_JPEG)
+
+def _gtk_screenshot(path):
+    window = gdk.get_default_root_window()
+    width, height = window.get_size()
+    pb = gdk.Pixbuf(gdk.COLORSPACE_RGB, False, 8, width, height)
+    pb = pb.get_from_drawable(window, window.get_colormap(),
+                              0, 0, 0, 0, width, height)
+    if not pb:
+        raise RuntimeError('Taking screenshot failed')
+    pb.save(path, 'jpeg')
+
+def _pil_screenshot(path):
+    ImageGrab.grab().save(path)
+
+def _no_screenshot(path):
+    raise RuntimeError('Taking screenshots is not supported on this platform '
+                       'by default. See library documentation for details.')
+
+
 if sys.platform.startswith('java'):
     from java.awt import Toolkit, Robot, Rectangle
     from javax.imageio import ImageIO
     from java.io import File
+    take_screenshot = _java_screenshot
 
-    def take_screenshot(path):
-        screensize = Toolkit.getDefaultToolkit().getScreenSize()
-        rectangle = Rectangle(0, 0, screensize.width, screensize.height)
-        image = Robot().createScreenCapture(rectangle)
-        ImageIO.write(image, "jpg", File(path))
-
-elif os.name == 'nt':
-
+if not take_screenshot:
     try:
-        from PIL import ImageGrab
+        import wx
     except ImportError:
         pass
     else:
-        def take_screenshot(path):
-            ImageGrab.grab().save(path)
+        take_screenshot = _wx_screenshot
+        _wx_app_reference = wx.PySimpleApp()
 
 if not take_screenshot:
     try:
@@ -50,31 +77,41 @@ if not take_screenshot:
     except ImportError:
         pass
     else:
-        def take_screenshot(path):
-            window = gdk.get_default_root_window()
-            width, height = window.get_size()
-            pb = gdk.Pixbuf(gdk.COLORSPACE_RGB, False, 8, width, height)
-            pb = pb.get_from_drawable(window, window.get_colormap(),
-                                      0, 0, 0, 0, width, height)
-            if not pb:
-                raise RuntimeError('Taking screenshot failed')
-            pb.save(path, 'jpeg')
+        take_screenshot = _gtk_screenshot
 
 if not take_screenshot:
+    try:
+        from PIL import ImageGrab  # apparently available only on Windows
+    except ImportError:
+        pass
+    else:
+        take_screenshot = _pil_screenshot
 
-    def take_screenshot(path):
-        raise RuntimeError('Taking screenshots is not supported on this platform '
-                           'by default. See library documentation for details.')
+if not take_screenshot:
+    take_screenshot = _no_screenshot
 
 
 class Screenshot:
 
     """A test library for taking full-screen screenshots of the desktop.
 
-    `Screenshot` is Robot Framework's standard library that provides
-    keywords to capture and store screenshots of the whole desktop.
-    This library is implemented with Java AWT APIs, so it can be used
-    only when running Robot Framework on Jython.
+    `Screenshot` is Robot Framework's standard library that provides keywords
+    to capture and store screenshots of the whole desktop.
+
+    On Jython this library uses Java AWT APIs. They are always available
+    and thus no external modules are needed.
+
+    On Python you need to have one of the following modules installed to be
+    able to use this library:
+    - wxPython :: http://wxpython.org :: Required also by RIDE so many Robot
+      Framework users already have this module installed.
+    - PyGTK :: http://pygtk.org :: This module is available by default on most
+      Linux distributions.
+    - Python Imaging Library (PIL) :: http://www.pythonware.com/products/pil ::
+      This module can take screenshots only on Windows.
+
+    The support for using this library on Python was added in Robot
+    Framework 2.5.5.
     """
 
     ROBOT_LIBRARY_SCOPE = 'TEST SUITE'
@@ -123,8 +160,10 @@ class Screenshot:
         The directory holding the file must exist or an exception is raised.
         """
         path = self._get_save_path(path)
+        print '*DEBUG* Using %s modules for taking screenshot.' \
+            % take_screenshot.__name__.split('_')[1]
         take_screenshot(path)
-        print "Screenshot saved to '%s'" % path
+        print "*INFO* Screenshot saved to '%s'" % path
         return path
 
     def _get_save_path(self, path):
