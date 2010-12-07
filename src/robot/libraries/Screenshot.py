@@ -45,6 +45,24 @@ elif os.name == 'nt':
             ImageGrab.grab().save(path)
 
 if not take_screenshot:
+    try:
+        from gtk import gdk
+    except ImportError:
+        pass
+    else:
+        # Code below originally from http://ubuntuforums.org/showpost.php?p=2681009&postcount=5
+        # TODO: Cleanup
+        def take_screenshot(path):
+            window = gdk.get_default_root_window()
+            size = window.get_size()
+            pb = gdk.Pixbuf(gdk.COLORSPACE_RGB, False, 8, size[0], size[1])
+            pb = pb.get_from_drawable(window, window.get_colormap(),
+                                      0, 0, 0, 0, size[0], size[1])
+            if not pb:
+                raise RuntimeError('Taking screenshot failed')
+            pb.save()
+
+if not take_screenshot:
 
     def take_screenshot(path):
         raise RuntimeError('Taking screenshots is not supported on this platform '
