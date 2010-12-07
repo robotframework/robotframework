@@ -1,0 +1,66 @@
+*** Settings ***
+Suite Setup     Run Tests  ${EMPTY}  standard_libraries/screenshot.txt
+Force Tags      pybot  jybot  regression
+Resource        atest_resource.txt
+
+*** Test Cases ***
+Save Screenshot To Temp Dir twice
+    Check Test Case  Save Screenshot To Temp Dir Twice
+
+Save Screenshot To Temp Dir With File Name
+    Check Test Case  Save Screenshot To Temp Dir With File Name
+
+Save Screenshot With File Name and Path Defined
+    ${test} =  Check Test Case  Save Screenshot With File Name and Path Defined
+    ${exp_path} =  Normalize Path  ${CURDIR}../../../testdata/standard_libraries/mybase_1.jpg
+    Check Log Message  ${test.kws[0].msgs[0]}  Screenshot saved to '${exp_path}'
+
+Save Screenshot To Non Existing Path
+    Check Test Case  Save Screenshot To Non Existing Path
+
+Save Screenshot To Overwrite Should Succeed
+    Check Test Case  Save Screenshot To Overwrite Should Succeed
+
+Save Screenshot To With Non Existing Path
+    Check Test Case  Save Screenshot To With Non Existing Path
+
+Log Screenshot With Defaults
+    ${test} =  Check Test Case  Log Screenshot With Defaults
+    Message Should Contain  ${test.kws[0].msgs[1]}  ${TEMPDIR}${/}screenshot_1.jpg
+
+Log Screenshot With Filename Defined
+    ${test} =  Check Test Case  Log Screenshot With Filename Defined
+    Message Should Contain  ${test.kws[0].msgs[1]}  ${TEMPDIR}${/}image_1.jpg
+
+Log Screenshot With Filename And Path Defined
+    ${test} =  Check Test Case  Log Screenshot With Filename And Path Defined
+    Message Should Contain  ${test.kws[0].msgs[1]}  ${OUTDIR}${/}image_1.jpg
+
+Log Screenshot With Filename, Path And Log Path Defined
+    ${test} =  Check Test Case  Log Screenshot With Filename, Path And Log Path Defined
+    Check Link In Log  ${test.kws[0].msgs[1]}  image_1.jpg
+
+Log Screenshot With Filename, Path, Log Path And Width Defined
+    ${test} =  Check Test Case  Log Screenshot With Filename, Path, Log Path And Width Defined
+    Check Link In Log  ${test.kws[0].msgs[1]}  image_1.jpg  50%
+
+Set Screenshot Directories With Default Path
+    Check Test Case  Set Screenshot Directories With Default Path
+
+Set Screenshot Directories With Default Path and Log Path Defined
+    ${test} =  Check Test Case  Set Screenshot Directories With Default Path and Log Path Defined
+    Check Link In Log  ${test.kws[1].msgs[1]}  screenshot_1.jpg
+
+Log Screenshot With Initializing The Screenshot Library
+    ${test} =  Check Test Case  Log Screenshot With Initializing The Screenshot Library
+    Check Link In Log  ${test.kws[0].msgs[1]}  screenshot_1.jpg
+
+*** Keywords ***
+Check Link In Log
+    [Arguments]  ${message}  ${path}  ${width}=100%
+    Check Log Message  ${message}  <a href="${path}"><img src="${path}" width="${width}" /></a>  HTML
+
+Message Should contain
+    [Arguments]  ${message}  ${expected}
+    Should Contain  ${message.message.rstrip().lower()}  ${expected.replace('\\','/').lower()}
+
