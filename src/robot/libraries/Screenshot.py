@@ -50,14 +50,12 @@ if not take_screenshot:
     except ImportError:
         pass
     else:
-        # Code below originally from http://ubuntuforums.org/showpost.php?p=2681009&postcount=5
-        # TODO: Cleanup
         def take_screenshot(path):
             window = gdk.get_default_root_window()
-            size = window.get_size()
-            pb = gdk.Pixbuf(gdk.COLORSPACE_RGB, False, 8, size[0], size[1])
+            width, height = window.get_size()
+            pb = gdk.Pixbuf(gdk.COLORSPACE_RGB, False, 8, width, height)
             pb = pb.get_from_drawable(window, window.get_colormap(),
-                                      0, 0, 0, 0, size[0], size[1])
+                                      0, 0, 0, 0, width, height)
             if not pb:
                 raise RuntimeError('Taking screenshot failed')
             pb.save(path, 'jpeg')
