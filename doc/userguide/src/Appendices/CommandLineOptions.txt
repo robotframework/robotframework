@@ -26,8 +26,8 @@ Command line options for test execution
   -n, --noncritical <tag>  Tests that have the given tag are `not critical`_. 
   --runmode <mode>        Sets the execution mode for this test run.
                           Valid modes are `ContinueOnFailure`_,
- 			  `ExitOnFailure`_, `SkipTeardownOnExit`_, 
-			  `DryRun`_, and `Random`_:<what>.
+                          `ExitOnFailure`_, `SkipTeardownOnExit`_, 
+                          `DryRun`_, and `Random`_:<what>.
   -v, --variable <name:value>   Sets `individual variables`_.
   -V, --variablefile <path:args>  Sets variables using `variable files`_. 
   -d, --outputdir <dir>   Defines where to `create output files`_.
@@ -35,7 +35,9 @@ Command line options for test execution
   -l, --log <file>        Sets the path to the generated `log file`_. 
   -r, --report <file>     Sets the path to the generated `report file`_. 
   -S, --summary <file>    Sets the path to the generated `summary file`_. 
-  -b, --debugfile <file>  The `debug file`_ that is written during execution. 
+  -x, --xunitfile <file>  Sets the path to the generated `XUnit compatible result file`_.
+                          New in Robot Framework 2.5.5.
+  -b, --debugfile <file>  A `debug file`_ that is written during execution. 
   -T, --timestampoutputs  `Adds a timestamp`_ to all output files.
   --splitoutputs <level>  `Splits output and log`_ files. 
   --logtitle <title>      `Sets a title`_ for the generated test log. 
@@ -80,7 +82,9 @@ Command line options for post-processing outputs
   -o, --output <file>     Sets the path to the generated `output file`_.
   -l, --log <file>        Sets the path to the generated `log file`_. 
   -r, --report <file>     Sets the path to the generated `report file`_.
-  -S, --summary <file>    Sets the path to the generated `summary file`_. 
+  -S, --summary <file>    Sets the path to the generated `summary file`_.
+  -x, --xunitfile <file>  Sets the path to the generated `XUnit compatible result file`_.
+                          New in Robot Framework 2.5.5.
   -T, --timestampoutputs  `Adds a timestamp`_ to all output files.
   --splitoutputs <level>  `Splits output and log`_ files.
   --logtitle <title>    `Sets a title`_ for the generated test log.

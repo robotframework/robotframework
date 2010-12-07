@@ -129,6 +129,16 @@ can be created using the command line option :opt:`--summary
 
    An example summary file
 
+XUnit compatible result file
+''''''''''''''''''''''''''''
+XUnit result files contain the test run summary in XUnit compatible XML format.
+This file can be used as input for tools that process XUnit data. For example,
+Hudson continuous integration server has built-in support for this output format
+and can be configured to generate test history based on this file.
+
+XUnit output files are not created unless the command line option
+:opt:`--xunitfile (-x)` is used explicitly.
+
 Debug file
 ''''''''''
 
