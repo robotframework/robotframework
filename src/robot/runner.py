@@ -144,10 +144,10 @@ Options:
                           similarly as --log. Default: report.html
  -S --summary file        HTML summary report. Not created unless this option
                           is specified. Example: '--summary summary.html'
- -b --debugfile file      Debug file written during execution. Not created
-                          unless this option is specified.
  -x --xunitfile file      xUnit compatible result file. Not created unless this
                           option is specified.
+ -b --debugfile file      Debug file written during execution. Not created
+                          unless this option is specified.
  -T --timestampoutputs    When this option is used, timestamp in a format
                           'YYYYMMDD-hhmmss' is added to all generated output
                           files between their basename and extension. For
