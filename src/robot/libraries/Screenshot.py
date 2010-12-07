@@ -60,7 +60,7 @@ if not take_screenshot:
                                       0, 0, 0, 0, size[0], size[1])
             if not pb:
                 raise RuntimeError('Taking screenshot failed')
-            pb.save()
+            pb.save(path, 'jpeg')
 
 if not take_screenshot:
 
