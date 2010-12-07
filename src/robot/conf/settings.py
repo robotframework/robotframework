@@ -34,6 +34,7 @@ class _BaseSettings:
                   'Log'              : ('log', 'log.html'),
                   'Report'           : ('report', 'report.html'),
                   'Summary'          : ('summary', 'NONE'),
+                  'XUnitFile'        : ('xunitfile', 'NONE'),
                   'SplitOutputs'     : ('splitoutputs', -1),
                   'TimestampOutputs' : ('timestampoutputs', False),
                   'LogTitle'         : ('logtitle', None),
@@ -112,14 +113,14 @@ class _BaseSettings:
     def __getitem__(self, name):
         if not self._cli_opts.has_key(name):
             raise KeyError("Non-existing setting '%s'" % name)
-        elif name in ['Output', 'Log', 'Report', 'Summary', 'DebugFile']:
+        elif name in ['Output', 'Log', 'Report', 'Summary', 'DebugFile', 'XUnitFile']:
             return self._get_output_file(name)
         return self._opts[name]
 
     def _get_output_file(self, type_):
         """Returns path of the requested ouput file and creates needed dirs.
 
-        Type can be 'Output', 'Log', 'Report' or 'Summary'.
+        Type can be 'Output', 'Log', 'Report', 'Summary', 'DebugFile' or 'XUnitFile'.
         """
         name = self._opts[type_]
         if name == 'NONE' and type_ in self._optional_outputs:
@@ -139,7 +140,7 @@ class _BaseSettings:
     def _get_output_extension(self, ext, type_):
         if ext != '':
             return ext
-        if type_ == 'Output':
+        if type_ in ('Output', 'XUnitFile'):
             return '.xml'
         if type_ in ['Log', 'Report', 'Summary']:
             return '.html'
@@ -195,13 +196,13 @@ class RobotSettings(_BaseSettings):
                         'RunMode'       : ('runmode', []),
                         'WarnOnSkipped' : ('warnonskippedfiles', False),
                         'Variables'     : ('variable', []),
-                        'VariableFiles' : ('variablefile', []),
-                        'Listeners'     : ('listener', []),
-                        'DebugFile'     : ('debugfile', 'NONE') }
-    _optional_outputs = ['Log', 'Report', 'Summary', 'DebugFile']
-
+                        'VariableFiles' : ('variablefile', []), 
+                        'Listeners'     : ('listener', []), 
+                        'DebugFile'     : ('debugfile', 'NONE'),}
+    _optional_outputs = ['Log', 'Report', 'Summary', 'DebugFile', 'XUnitFile']
+    
     def is_rebot_needed(self):
-        return not ('NONE' == self['Log'] == self['Report'] == self['Summary'])
+        return not ('NONE' == self['Log'] == self['Report'] == self['Summary'] == self['XUnitFile'])
 
     def get_rebot_datasources_and_settings(self):
         datasources = [ self['Output'] ]
@@ -224,4 +225,4 @@ class RebotSettings(_BaseSettings):
                         'RemoveKeywords' : ('removekeywords', 'NONE'),
                         'StartTime'      : ('starttime', 'N/A'),
                         'EndTime'        : ('endtime', 'N/A')}
-    _optional_outputs = ['Output', 'Log', 'Report', 'Summary']
+    _optional_outputs = ['Output', 'Log', 'Report', 'Summary', 'XUnitFile']

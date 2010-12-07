@@ -27,6 +27,7 @@ from statserializers import (LogStatSerializer, SplitLogStatSerializer,
 from logserializers import LogSerializer, SplitLogSerializer, ErrorSerializer
 from reportserializers import (ReportSerializer, SplitReportSerializer,
                                TagDetailsSerializer)
+from xunitserializers import XUnitSerializer
 
 
 class RobotTestOutput:
@@ -53,6 +54,7 @@ class RobotTestOutput:
                               settings['SplitOutputs'])
         self.serialize_log(settings['Log'], settings['LogTitle'],
                            settings['SplitOutputs'])
+        self.serialize_xunit(settings['XUnitFile'])
 
     def serialize_output(self, path, split=-1):
         if path == 'NONE':
@@ -63,6 +65,16 @@ class RobotTestOutput:
         self.exec_errors.serialize(serializer)
         serializer.close()
         LOGGER.output_file('Output', path)
+
+    def serialize_xunit(self, path):
+        if path == 'NONE':
+            return
+        serializer = XUnitSerializer(path)
+        try:
+            self.suite.serialize(serializer)
+        finally:
+            serializer.close()
+        LOGGER.output_file('XUnit', path)
 
     def serialize_summary(self, path, title=None, background=None):
         outfile = self._get_outfile(path, 'summary')

@@ -1,0 +1,37 @@
+*** Settings ***
+Default Tags      regression    jybot    pybot
+Suite Setup       Create Input File
+Test Setup        Empty Directory     ${MYOUTDIR}
+Suite Teardown    Remove Temps
+Resource          ../../resources/rebot_resource.html
+Resource          xunit_resource.txt
+
+*** Variables ***
+${TESTDATA_TEST}    misc${/}many_tests.html
+${TESTDATA_SUITES}  misc${/}suites
+${MYOUTDIR}         ${TEMPDIR}${/}robot-test-xunit
+${INPUT FILE}       ${TEMPDIR}${/}robot-test-xunit-file.xml
+
+*** Test Cases ***
+No Xunit Option Given
+    Run Rebot  ${EMPTY}  ${INPUT FILE}
+    Stderr Should Be Empty
+    Check Stdout Does Not Contain  XUnit
+
+Xunit Option Given
+    Run Rebot  --xunitfile xunit.xml  ${INPUT FILE}
+    Stderr Should Be Empty
+    Check Stdout Contains  XUnit
+    Should Exist  ${OUTDIR}${/}xunit.xml
+    ${dom} =  Get Dom
+    Check Root Element Is Test Suite  ${dom}
+    Check Element Count  ${dom}  testcase  15
+    Check Element Count  ${dom}  failure   1
+
+*** Keywords ***
+Create Input File
+    Create Output With Robot  ${INPUT FILE}  ${EMPTY}  ${TESTDATA_TEST}  ${TESTDATA_SUITES}
+    Create Directory          ${MYOUTDIR}
+Remove Temps
+    Remove Directory    ${MYOUTDIR}  recursive
+    Remove File         ${INPUT FILE}

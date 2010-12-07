@@ -130,12 +130,13 @@ Options:
                           directory where tests are run from and the given path
                           is considered relative to that unless it is absolute.
  -o --output file         XML output file. Given path, similarly as paths given
-                          to --log, --report, --summary and --debugfile, is
-                          relative to --outputdir unless given as an absolute
-                          path. Other output files are created from XML output
-                          file after the test execution and XML output can also
-                          be further processed with Rebot tool (e.g. combined
-                          with other XML output files). Default: output.xml
+                          to --log, --report, --summary, --debugfile and
+                          --xunitfile, is relative to --outputdir unless given
+                          as an absolute path. Other output files are created
+                          from XML output file after the test execution and XML
+                          output can also be further processed with Rebot tool
+                          (e.g. combined with other XML output files).
+                          Default: output.xml
  -l --log file            HTML log file. Can be disabled by giving a special
                           name 'NONE'. Default: log.html
                           Examples: '--log mylog.html', '-l NONE'
@@ -145,6 +146,8 @@ Options:
                           is specified. Example: '--summary summary.html'
  -b --debugfile file      Debug file written during execution. Not created
                           unless this option is specified.
+ -x --xunitfile file      xUnit compatible result file. Not created unless this
+                          option is specified.
  -T --timestampoutputs    When this option is used, timestamp in a format
                           'YYYYMMDD-hhmmss' is added to all generated output
                           files between their basename and extension. For
