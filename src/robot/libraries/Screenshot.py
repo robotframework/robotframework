@@ -38,42 +38,6 @@ from robot.version import get_version
 from robot import utils
 
 
-def _java_screenshot(path):
-    size = Toolkit.getDefaultToolkit().getScreenSize()
-    rectangle = Rectangle(0, 0, size.width, size.height)
-    image = Robot().createScreenCapture(rectangle)
-    ImageIO.write(image, 'jpg', File(path))
-
-def _wx_screenshot(path):
-    context = wx.ScreenDC()
-    width, height = context.GetSize()
-    bitmap = wx.EmptyBitmap(width, height, -1)
-    memory = wx.MemoryDC()
-    memory.SelectObject(bitmap)
-    memory.Blit(0, 0, width, height, context, -1, -1)
-    memory.SelectObject(wx.NullBitmap)
-    bitmap.SaveFile(path, wx.BITMAP_TYPE_JPEG)
-
-def _gtk_screenshot(path):
-    window = gdk.get_default_root_window()
-    if not window:
-        raise RuntimeError('Taking screenshot failed')
-    width, height = window.get_size()
-    pb = gdk.Pixbuf(gdk.COLORSPACE_RGB, False, 8, width, height)
-    pb = pb.get_from_drawable(window, window.get_colormap(),
-                              0, 0, 0, 0, width, height)
-    if not pb:
-        raise RuntimeError('Taking screenshot failed')
-    pb.save(path, 'jpeg')
-
-def _pil_screenshot(path):
-    ImageGrab.grab().save(path)
-
-def _no_screenshot(path):
-    raise RuntimeError('Taking screenshots is not supported on this platform '
-                       'by default. See library documentation for details.')
-
-
 class Screenshot:
 
     """A test library for taking full-screen screenshots of the desktop.
@@ -128,21 +92,7 @@ class Screenshot:
         library uses the first available module.
         """
         self.set_screenshot_directories(default_directory, log_file_directory)
-        self._take_screenshot = self._get_screenshot_taker(screenshot_module)
-
-    def _get_screenshot_taker(self, module_name):
-        if sys.platform.startswith('java'):
-            return _java_screenshot
-        if module_name:
-            method_name = '_%s_screenshot' % module_name.lower()
-            if method_name in globals():
-                return globals()[method_name]
-        for module, screenshot_taker in [(wx, _wx_screenshot),
-                                         (gdk, _gtk_screenshot),
-                                         (ImageGrab, _pil_screenshot),
-                                         (True, _no_screenshot)]:
-            if module:
-                return screenshot_taker
+        self._screenshot_taker = _ScreenshotTaker(screenshot_module)
 
     def set_screenshot_directories(self, default_directory=None,
                                    log_file_directory=None):
@@ -166,8 +116,8 @@ class Screenshot:
         """
         path = self._get_save_path(path)
         print '*DEBUG* Using %s modules for taking screenshot.' \
-            % self._take_screenshot.__name__.split('_')[1]
-        self._take_screenshot(path)
+            % self._screenshot_taker.module
+        self._screenshot_taker(path)
         print "*INFO* Screenshot saved to '%s'" % path
         return path
 
@@ -239,6 +189,68 @@ class Screenshot:
         print '*HTML* <a href="%s"><img src="%s" width="%s" /></a>' \
               % (link, link, width)
         return path
+
+
+class _ScreenshotTaker(object):
+
+    def __init__(self, module_name):
+        self._screenshot = self._get_screenshot_taker(module_name)
+        self.module = self._screenshot.__name__.split('_')[1]
+
+    def __call__(self, path):
+        self._screenshot(path)
+
+    def _get_screenshot_taker(self, module_name):
+        if sys.platform.startswith('java'):
+            return self._java_screenshot
+        if module_name:
+            method_name = '_%s_screenshot' % module_name.lower()
+            if hasattr(self, method_name):
+                return getattr(self, method_name)
+        return self._get_default_screenshot_taker()
+
+    def _get_default_screenshot_taker(self):
+        for module, screenshot_taker in [(wx, self._wx_screenshot),
+                                         (gdk, self._gtk_screenshot),
+                                         (ImageGrab, self._pil_screenshot),
+                                         (True, self._no_screenshot)]:
+            if module:
+                return screenshot_taker
+
+    def _java_screenshot(self, path):
+        size = Toolkit.getDefaultToolkit().getScreenSize()
+        rectangle = Rectangle(0, 0, size.width, size.height)
+        image = Robot().createScreenCapture(rectangle)
+        ImageIO.write(image, 'jpg', File(path))
+
+    def _wx_screenshot(self, path):
+        context = wx.ScreenDC()
+        width, height = context.GetSize()
+        bitmap = wx.EmptyBitmap(width, height, -1)
+        memory = wx.MemoryDC()
+        memory.SelectObject(bitmap)
+        memory.Blit(0, 0, width, height, context, -1, -1)
+        memory.SelectObject(wx.NullBitmap)
+        bitmap.SaveFile(path, wx.BITMAP_TYPE_JPEG)
+
+    def _gtk_screenshot(self, path):
+        window = gdk.get_default_root_window()
+        if not window:
+            raise RuntimeError('Taking screenshot failed')
+        width, height = window.get_size()
+        pb = gdk.Pixbuf(gdk.COLORSPACE_RGB, False, 8, width, height)
+        pb = pb.get_from_drawable(window, window.get_colormap(),
+                                  0, 0, 0, 0, width, height)
+        if not pb:
+            raise RuntimeError('Taking screenshot failed')
+        pb.save(path, 'jpeg')
+
+    def _pil_screenshot(self, path):
+        ImageGrab.grab().save(path)
+
+    def _no_screenshot(self, path):
+        raise RuntimeError('Taking screenshots is not supported on this platform '
+                           'by default. See library documentation for details.')
 
 
 if __name__ == "__main__":
