@@ -197,7 +197,7 @@ class PythonInitArguments(PythonKeywordArguments):
 class JavaInitArguments(JavaKeywordArguments):
     _type = 'Test Library'
 
-    def resolve(self, args, output=None, variables=None):
+    def resolve(self, args, variables=None):
         if variables:
             args = variables.replace_list(args)
         self.check_arg_limits(args)
