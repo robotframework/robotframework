@@ -197,7 +197,7 @@ class PythonInitArguments(PythonKeywordArguments):
 class JavaInitArguments(JavaKeywordArguments):
     _type = 'Test Library'
 
-    def resolve(self, args, variables=None):
+    def resolve(self, args, output=None, variables=None):
         if variables:
             args = variables.replace_list(args)
         self.check_arg_limits(args)
@@ -436,7 +436,7 @@ class JavaKeywordArgumentResolver(object):
         self._arguments = arguments
         self._minargs, self._maxargs = arguments.minargs, arguments.maxargs
 
-    def resolve(self, values, variables):
+    def resolve(self, values, output, variables):
         values = variables.replace_list(values)
         self._arguments.check_arg_limits(values)
         if self._expects_varargs() and self._last_is_not_list(values):
