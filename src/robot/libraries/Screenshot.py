@@ -15,12 +15,28 @@
 import sys
 import os
 import tempfile
+if sys.platform.startswith('java'):
+    from java.awt import Toolkit, Robot, Rectangle
+    from javax.imageio import ImageIO
+    from java.io import File
+else:
+    try:
+        import wx
+        _wx_app_reference = wx.PySimpleApp()
+    except ImportError:
+        wx = None
+    try:
+        from gtk import gdk
+    except ImportError:
+        gdk = None
+    try:
+        from PIL import ImageGrab  # apparently available only on Windows
+    except ImportError:
+        ImageGrab = None
 
 from robot.version import get_version
 from robot import utils
 
-
-take_screenshot = None
 
 def _java_screenshot(path):
     size = Toolkit.getDefaultToolkit().getScreenSize()
@@ -40,6 +56,8 @@ def _wx_screenshot(path):
 
 def _gtk_screenshot(path):
     window = gdk.get_default_root_window()
+    if not window:
+        raise RuntimeError('Taking screenshot failed')
     width, height = window.get_size()
     pb = gdk.Pixbuf(gdk.COLORSPACE_RGB, False, 8, width, height)
     pb = pb.get_from_drawable(window, window.get_colormap(),
@@ -54,41 +72,6 @@ def _pil_screenshot(path):
 def _no_screenshot(path):
     raise RuntimeError('Taking screenshots is not supported on this platform '
                        'by default. See library documentation for details.')
-
-
-if sys.platform.startswith('java'):
-    from java.awt import Toolkit, Robot, Rectangle
-    from javax.imageio import ImageIO
-    from java.io import File
-    take_screenshot = _java_screenshot
-
-if not take_screenshot:
-    try:
-        import wx
-    except ImportError:
-        pass
-    else:
-        take_screenshot = _wx_screenshot
-        _wx_app_reference = wx.PySimpleApp()
-
-if not take_screenshot:
-    try:
-        from gtk import gdk
-    except ImportError:
-        pass
-    else:
-        take_screenshot = _gtk_screenshot
-
-if not take_screenshot:
-    try:
-        from PIL import ImageGrab  # apparently available only on Windows
-    except ImportError:
-        pass
-    else:
-        take_screenshot = _pil_screenshot
-
-if not take_screenshot:
-    take_screenshot = _no_screenshot
 
 
 class Screenshot:
@@ -117,7 +100,8 @@ class Screenshot:
     ROBOT_LIBRARY_SCOPE = 'TEST SUITE'
     ROBOT_LIBRARY_VERSION = get_version()
 
-    def __init__(self, default_directory=None, log_file_directory=None):
+    def __init__(self, default_directory=None, log_file_directory=None,
+                 screenshot_module=None):
         """Screenshot library can be imported with optional arguments.
 
         If the `default_directory` is provided, all the screenshots are saved
@@ -138,6 +122,19 @@ class Screenshot:
         Directories` keyword.
         """
         self.set_screenshot_directories(default_directory, log_file_directory)
+        self._take_screenshot = self._get_screenshot_taker(screenshot_module)
+
+    def _get_screenshot_taker(self, module_name):
+        if sys.platform.startswith('java'):
+            return _java_screenshot
+        if module_name:
+            return globals().get('_%s_screenshot' % module_name, _no_screenshot)
+        for module, screenshot in [(wx, _wx_screenshot),
+                                   (gdk, _gtk_screenshot),
+                                   (ImageGrab, _pil_screenshot),
+                                   (True, _no_screenshot)]:
+            if module:
+                return screenshot
 
     def set_screenshot_directories(self, default_directory=None,
                                    log_file_directory=None):
@@ -161,8 +158,8 @@ class Screenshot:
         """
         path = self._get_save_path(path)
         print '*DEBUG* Using %s modules for taking screenshot.' \
-            % take_screenshot.__name__.split('_')[1]
-        take_screenshot(path)
+            % self._take_screenshot.__name__.split('_')[1]
+        self._take_screenshot(path)
         print "*INFO* Screenshot saved to '%s'" % path
         return path
 
@@ -237,7 +234,9 @@ class Screenshot:
 
 
 if __name__ == "__main__":
-    if len(sys.argv) != 2:
-        print "Usage: %s path" % os.path.basename(sys.argv[0])
-    else:
-        Screenshot().save_screenshot_to(sys.argv[1])
+    if len(sys.argv) not in [2, 3]:
+        print "Usage: %s path [wx|gtk|pil]" % os.path.basename(sys.argv[0])
+        sys.exit(1)
+    path = sys.argv[1]
+    module = sys.argv[2] if len(sys.argv) == 3 else None
+    Screenshot(screenshot_module=module).save_screenshot_to(path)
