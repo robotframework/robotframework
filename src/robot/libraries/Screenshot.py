@@ -120,6 +120,12 @@ class Screenshot:
 
         It is also possible to set these directories using `Set Screenshot
         Directories` keyword.
+
+        `screenshot_module` is used for overriding the underlying
+        module for taking the screenshots when running tests on
+        Python. It can have value `WX`, `GTK` or `PIL`, matching the
+        modules described in the `introduction`. By default the
+        library uses the first available module.
         """
         self.set_screenshot_directories(default_directory, log_file_directory)
         self._take_screenshot = self._get_screenshot_taker(screenshot_module)
@@ -128,13 +134,15 @@ class Screenshot:
         if sys.platform.startswith('java'):
             return _java_screenshot
         if module_name:
-            return globals().get('_%s_screenshot' % module_name, _no_screenshot)
-        for module, screenshot in [(wx, _wx_screenshot),
-                                   (gdk, _gtk_screenshot),
-                                   (ImageGrab, _pil_screenshot),
-                                   (True, _no_screenshot)]:
+            method_name = '_%s_screenshot' % module_name.lower()
+            if method_name in globals():
+                return globals()[method_name]
+        for module, screenshot_taker in [(wx, _wx_screenshot),
+                                         (gdk, _gtk_screenshot),
+                                         (ImageGrab, _pil_screenshot),
+                                         (True, _no_screenshot)]:
             if module:
-                return screenshot
+                return screenshot_taker
 
     def set_screenshot_directories(self, default_directory=None,
                                    log_file_directory=None):
