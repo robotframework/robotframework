@@ -1,5 +1,5 @@
 *** Settings ***
-Suite Setup     Run Tests  ${EMPTY}  standard_libraries/screenshot.txt
+Suite Setup     Run Tests  ${EMPTY}  standard_libraries/screenshot/screenshot.txt
 Force Tags      pybot  jybot  regression
 Resource        atest_resource.txt
 
@@ -12,7 +12,7 @@ Save Screenshot To Temp Dir With File Name
 
 Save Screenshot With File Name and Path Defined
     ${test} =  Check Test Case  Save Screenshot With File Name and Path Defined
-    ${exp_path} =  Normalize Path  ${CURDIR}../../../testdata/standard_libraries/mybase_1.jpg
+    ${exp_path} =  Normalize Path  ${CURDIR}../../../../testdata/standard_libraries/screenshot/mybase_1.jpg
     Check Log Message  ${test.kws[0].msgs[0]}  Screenshot saved to '${exp_path}'
 
 Save Screenshot To Non Existing Path
