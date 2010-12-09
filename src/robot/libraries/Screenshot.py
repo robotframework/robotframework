@@ -90,7 +90,11 @@ class Screenshot:
         2.5.5 the default location was system's temporary directory.
 
         It is possible to save screenshots into a custom directory using
-        `screenshot_directory` argument or `Set Screenshot Directory` keyword. 
+        `screenshot_directory` argument or `Set Screenshot Directory` keyword.
+
+        `log_file_directory` has been deprecated in 2.5.5 release and has no
+        effect. The information provided with it earlier is nowadays got
+        automatically. This argument will be removed in the 2.6 release.
 
         Examples (use only one of these):
 
@@ -100,7 +104,7 @@ class Screenshot:
 
         `log_file_directory` has been deprecated in 2.5.5 release and has no
         effect. The information provided with it earlier is nowadays got
-        automatically. This argument will be removed in the 2.6 release. 
+        automatically. This argument will be removed in the 2.6 release.
         """
         if log_file_directory != 'DEPRECATED':
             print '*WARN* TODO'
@@ -148,19 +152,21 @@ class Screenshot:
         Without Embedding` instead. This keyword will be deprecated in Robot
         Framework 2.6 and removed later.
         """
-        path = self._get_save_path(path)
+        return self._screenshot_to_file(path)
+
+    def _screenshot_to_file(self, path, loglevel='INFO'):
+        path = os.path.abspath(path.replace('/', os.sep))
+        self._validate_screenshot_path(path)
         print '*DEBUG* Using %s modules for taking screenshot.' \
             % self._screenshot_taker.module
         self._screenshot_taker(path)
-        print "*INFO* Screenshot saved to '%s'" % path
+        print "*%s* Screenshot saved to '%s'" % (loglevel, path)
         return path
 
-    def _get_save_path(self, path):
-        path = os.path.abspath(path.replace('/', os.sep))
-        if os.path.exists(os.path.dirname(path)):
-            return path
-        raise RuntimeError("Directory '%s' where to save the screenshot does "
-                           "not exist" % os.path.dirname(path))
+    def _validate_screenshot_path(self, path):
+        if not os.path.exists(os.path.dirname(path)):
+            raise RuntimeError("Directory '%s' where to save the screenshot does "
+                               "not exist" % os.path.dirname(path))
 
     def save_screenshot(self, basename="screenshot", directory=None):
         """Saves a screenshot with a generated unique name.
@@ -189,14 +195,22 @@ class Screenshot:
         2. /tmp/mypic_1.jpg, /tmp/mypic_2.jpg, ...
         3. /tmp/screenshot_1.jpg, /tmp/screenshot_2.jpg, ...
         """
+        return self._save_screenshot(basename, directory)
+
+    def _save_screenshot(self, basename, directory=None):
+        path = self._get_screenshot_path(basename, directory)
+        return self._screenshot_to_file(path)
+
+    def _get_screenshot_path(self, basename, directory):
         directory = self._norm_path(directory) if directory else self._screenshot_dir
+        if basename.endswith('.jpg'):
+            return os.path.join(directory, basename)
         index = 0
         while True:
             index += 1
             path = os.path.join(directory, "%s_%d.jpg" % (basename, index))
             if not os.path.exists(path):
-                break
-        return self.save_screenshot_to(path)
+                return path
 
     def log_screenshot(self, basename='screenshot', directory=None,
                        log_file_directory='DEPRECATED', width='100%'):
@@ -214,18 +228,21 @@ class Screenshot:
 
         `log_file_directory` has been deprecated in 2.5.5 release and has no
         effect. The information provided with it earlier is nowadays got
-        automatically. This argument will be removed in the 2.6 release. 
+        automatically. This argument will be removed in the 2.6 release.
         """
-        path = self.save_screenshot(basename, directory)
         if log_file_directory != 'DEPRECATED':
             print '*WARN* TODO'
+        return self._log_screenshot_as_html(basename, width, directory)
+
+    def _log_screenshot_as_html(self, basename, width, directory=None):
+        path = self._save_screenshot(basename, directory)
         link = utils.get_link_path(path, self._log_dir)
         print '*HTML* <a href="%s"><img src="%s" width="%s" /></a>' \
               % (link, link, width)
         return path
 
-    def take_screenshot(self, basename="screenshot"):
-        self.log_screenshot(basename)
+    def take_screenshot(self, basename="screenshot", width="800px"):
+        return self._log_screenshot_as_html(basename, width=width)
 
 
 class ScreenshotTaker(object):
