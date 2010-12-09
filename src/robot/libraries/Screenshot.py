@@ -151,20 +151,6 @@ class Screenshot:
         """
         return self._screenshot_to_file(path)
 
-    def _screenshot_to_file(self, path, loglevel='INFO'):
-        path = os.path.abspath(path.replace('/', os.sep))
-        self._validate_screenshot_path(path)
-        print '*DEBUG* Using %s modules for taking screenshot.' \
-            % self._screenshot_taker.module
-        self._screenshot_taker(path)
-        print "*%s* Screenshot saved to '%s'" % (loglevel, path)
-        return path
-
-    def _validate_screenshot_path(self, path):
-        if not os.path.exists(os.path.dirname(path)):
-            raise RuntimeError("Directory '%s' where to save the screenshot does "
-                               "not exist" % os.path.dirname(path))
-
     def save_screenshot(self, basename="screenshot", directory=None):
         """Saves a screenshot with a generated unique name.
 
@@ -193,21 +179,6 @@ class Screenshot:
         3. /tmp/screenshot_1.jpg, /tmp/screenshot_2.jpg, ...
         """
         return self._save_screenshot(basename, directory)
-
-    def _save_screenshot(self, basename, directory=None):
-        path = self._get_screenshot_path(basename, directory)
-        return self._screenshot_to_file(path)
-
-    def _get_screenshot_path(self, basename, directory):
-        directory = self._norm_path(directory) if directory else self._screenshot_dir
-        if basename.endswith('.jpg'):
-            return os.path.join(directory, basename)
-        index = 0
-        while True:
-            index += 1
-            path = os.path.join(directory, "%s_%d.jpg" % (basename, index))
-            if not os.path.exists(path):
-                return path
 
     def log_screenshot(self, basename='screenshot', directory=None,
                        log_file_directory='DEPRECATED', width='100%'):
@@ -256,6 +227,42 @@ class Screenshot:
         3. LOGDIR/pic.jpg, LOGDIR/pic.jpg
         """
         return self._log_screenshot_as_html(name, width=width)
+
+    def _save_screenshot(self, basename, directory=None):
+        path = self._get_screenshot_path(basename, directory)
+        return self._screenshot_to_file(path)
+
+    def _screenshot_to_file(self, path, loglevel='INFO'):
+        path = os.path.abspath(path.replace('/', os.sep))
+        self._validate_screenshot_path(path)
+        print '*DEBUG* Using %s modules for taking screenshot.' \
+            % self._screenshot_taker.module
+        self._screenshot_taker(path)
+        print "*%s* Screenshot saved to '%s'" % (loglevel, path)
+        return path
+
+    def _validate_screenshot_path(self, path):
+        if not os.path.exists(os.path.dirname(path)):
+            raise RuntimeError("Directory '%s' where to save the screenshot does "
+                               "not exist" % os.path.dirname(path))
+
+    def _get_screenshot_path(self, basename, directory):
+        directory = self._norm_path(directory) if directory else self._screenshot_dir
+        if basename.endswith('.jpg'):
+            return os.path.join(directory, basename)
+        index = 0
+        while True:
+            index += 1
+            path = os.path.join(directory, "%s_%d.jpg" % (basename, index))
+            if not os.path.exists(path):
+                return path
+
+    def _log_screenshot_as_html(self, basename, width, directory=None):
+        path = self._save_screenshot(basename, directory)
+        link = utils.get_link_path(path, self._log_dir)
+        print '*HTML* <a href="%s"><img src="%s" width="%s" /></a>' \
+              % (link, link, width)
+        return path
 
     def _warn_if_deprecated_argument_was_used(self, log_file_directory):
         if log_file_directory != 'DEPRECATED':
