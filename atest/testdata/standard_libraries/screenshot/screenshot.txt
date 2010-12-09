@@ -10,15 +10,15 @@ Library         Screenshot  ${OUTPUTDIR}  ${OUTPUTDIR}  WITH NAME  Screenshot2
 ...  ${OUTPUTDIR}${/}image_2.jpg  ${OUTPUTDIR}${/}screenshot_1.jpg  ${OUTPUTDIR}${/}screenshot_2.jpg  ${OUTPUTDIR}${/}screenshot_3.jpg
 
 *** Test Cases ***
-Save Screenshot To Temp Dir Twice
+Save Screenshot To Default Dir Twice
     Screenshot.Save Screenshot
-    Screenshot Should Exist  ${TEMPDIR}${/}screenshot_1.jpg
+    Screenshot Should Exist  ${OUTPUTDIR}${/}screenshot_1.jpg
     Screenshot.Save Screenshot
-    Screenshot Should Exist  ${TEMPDIR}${/}screenshot_2.jpg
+    Screenshot Should Exist  ${OUTPUTDIR}${/}screenshot_2.jpg
 
-Save Screenshot To Temp Dir With File Name
+Save Screenshot To Default Dir With File Name
     Screenshot.Save Screenshot  mybase
-    Screenshot Should Exist  ${TEMPDIR}${/}mybase_1.jpg
+    Screenshot Should Exist  ${OUTPUTDIR}${/}mybase_1.jpg
 
 Save Screenshot With File Name and Path Defined
     Screenshot.Save Screenshot  mybase  ${CURDIR}/./
@@ -41,22 +41,18 @@ Save Screenshot To With Non Existing Path
 
 Log Screenshot With Defaults
     Screenshot.Log Screenshot
-    Screenshot Should Exist  ${TEMPDIR}${/}screenshot_1.jpg
+    Screenshot Should Exist  ${OUTPUTDIR}${/}screenshot_1.jpg
 
 Log Screenshot With Filename Defined
     Screenshot.Log Screenshot  image
-    Screenshot Should Exist  ${TEMPDIR}${/}image_1.jpg
+    Screenshot Should Exist  ${OUTPUTDIR}${/}image_1.jpg
 
 Log Screenshot With Filename And Path Defined
     Screenshot.Log Screenshot  image  ${OUTPUTDIR}
     Screenshot Should Exist  ${OUTPUTDIR}${/}image_1.jpg
 
-Log Screenshot With Filename, Path And Log Path Defined
-    Screenshot.Log Screenshot  image  ${OUTPUTDIR}  ${OUTPUTDIR}
-    Screenshot Should Exist  ${OUTPUTDIR}${/}image_1.jpg
-
-Log Screenshot With Filename, Path, Log Path And Width Defined
-    Screenshot.Log Screenshot  image  ${OUTPUTDIR}  ${OUTPUTDIR}  50%
+Log Screenshot With Filename, Path And Width Defined
+    Screenshot.Log Screenshot  image  ${OUTPUTDIR}  width=50%
     Screenshot Should Exist  ${OUTPUTDIR}${/}image_1.jpg
 
 Set Screenshot Directories With Default Path
