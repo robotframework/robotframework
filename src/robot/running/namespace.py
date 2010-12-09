@@ -18,7 +18,7 @@ import copy
 
 from robot import utils
 from robot.errors import FrameworkError, DataError
-from robot.variables import GLOBAL_VARIABLES
+from robot.variables import GLOBAL_VARIABLES, is_scalar_var
 from robot.common import UserErrorHandler
 from robot.output import LOGGER
 from robot.parsing.settings import Library, Variables, Resource
@@ -27,6 +27,7 @@ import robot
 from userkeyword import UserLibrary
 from importer import Importer
 from runkwregister import RUN_KW_REGISTER
+from handlers import _XTimesHandler
 
 
 STDLIB_NAMES = ['BuiltIn', 'Collections', 'Dialogs', 'Easter', 'OperatingSystem',
@@ -258,7 +259,27 @@ class Namespace:
             handler = self._get_implicit_handler(name)
         if not handler:
             handler = self._get_bdd_style_handler(name)
+        if not handler:
+            handler = self._get_x_times_handler(name)
         return handler
+
+    def _get_x_times_handler(self, name):
+        if not self._is_old_x_times_syntax(name):
+            return None
+        return _XTimesHandler(self._get_handler('Repeat Keyword'), name)
+
+    def _is_old_x_times_syntax(self, name):
+        if not name.lower().endswith('x'):
+            return False
+        times = name[:-1].strip()
+        if is_scalar_var(times):
+            return True
+        try:
+            int(times)
+        except ValueError:
+            return False
+        else:
+            return True
 
     def _get_bdd_style_handler(self, name):
         for prefix in ['given ', 'when ', 'then ', 'and ']:

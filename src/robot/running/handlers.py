@@ -258,6 +258,22 @@ class _RunKeywordHandler(_PythonHandler):
         except DataError:
             return True
 
+class _XTimesHandler(_RunKeywordHandler):
+
+    def __init__(self, handler, name):
+        _RunKeywordHandler.__init__(self, handler.library, handler.name, 
+                                    handler._handler_method)
+        self.name = name
+        self.doc = "*DEPRECATED* Replace X times syntax with 'Repeat Keyword'."
+
+    def run(self, context, args):
+        resolved_times = context.namespace.variables.replace_string(self.name)
+        _RunnableHandler.run(self, context, [resolved_times] + args)
+
+    @property
+    def longname(self):
+        return self.name
+
 
 class _DynamicRunKeywordHandler(_DynamicHandler, _RunKeywordHandler):
     _parse_arguments = _RunKeywordHandler._parse_arguments
