@@ -133,7 +133,7 @@ class Screenshot:
         path = self._norm_path(path)
         if not os.path.isdir(path):
             raise RuntimeError("Directory '%s' does not exist." % path)
-        old = self._given_screenshot_dir
+        old = self._screenshot_dir
         self._given_screenshot_dir = path
         return old
 

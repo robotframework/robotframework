@@ -1,0 +1,8 @@
+*** Settings ***
+Suite Setup     Run Tests  ${EMPTY}  standard_libraries/screenshot/set_screenshot_directory.txt
+Force Tags      regression  pybot  jybot
+Resource        atest_resource.txt
+
+*** Test Cases ***
+Set Screenshot Directory
+    ${tc}=  Check Test Case  ${TESTNAME}
