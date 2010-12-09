@@ -206,15 +206,12 @@ class Screenshot(object):
         The path where the screenshot is saved is returned.
 
         Examples: (LOGDIR is determined automatically by the library)
-        | Take Screenshot |                   | # (1) |
-        | Take Screenshot | mypic             | # (2) |
-        | Take Screenshot | ${TEMPDIR}/mypic  | # (3) |
-        | Take Screenshot | pic.jpg           | # (4) |
-        =>
-        1. LOGDIR/screenshot_1.jpg,LOGDIR/screenshot_2.jpg, ... 
-        2. LOGDIR/mypic_1.jpg, LOGDIR/mypic_2.jpg, ...
-        3. /tmp/mypic_1.jpg, /tmp/mypic_2.jpg, ...
-        4. LOGDIR/pic.jpg, LOGDIR/pic.jpg, ...
+        | Take Screenshot |                  |     | # LOGDIR/screenshot_1.jpg (index automatically incremented) |
+        | Take Screenshot | mypic            |     | # LOGDIR/mypic_1.jpg (index automatically incremented) |
+        | Take Screenshot | ${TEMPDIR}/mypic |     | # /tmp/mypic_1.jpg (index automatically incremented) |
+        | Take Screenshot | pic.jpg          |     | # LOGDIR/pic.jpg (always uses this file) |
+        | Take Screenshot | images/login.jpg | 80% | # Specify both name and width. |
+        | Take Screenshot | width=550px      |     | # Specify only width. |
 
         Screenshots can be only taken in JPEG format. It is possible to use `/`
         as a path separator in all operating systems. 
