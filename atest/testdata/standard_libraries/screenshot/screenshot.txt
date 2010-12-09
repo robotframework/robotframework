@@ -6,8 +6,11 @@ Resource        screenshot_resource.txt
 Library         Screenshot  ${OUTPUTDIR}  ${OUTPUTDIR}  WITH NAME  Screenshot2
 
 *** Variables ***
-@{SCREENSHOTS}  ${TEMPDIR}${/}screenshot_1.jpg  ${TEMPDIR}${/}screenshot_2.jpg  ${TEMPDIR}${/}mybase_1.jpg  ${CURDIR}${/}mybase_1.jpg  ${CURDIR}${/}screenshot.jpeg  ${TEMPDIR}${/}image_1.jpg  ${OUTPUTDIR}${/}image_1.jpg
-...  ${OUTPUTDIR}${/}image_2.jpg  ${OUTPUTDIR}${/}screenshot_1.jpg  ${OUTPUTDIR}${/}screenshot_2.jpg  ${OUTPUTDIR}${/}screenshot_3.jpg
+@{SCREENSHOTS}  ${OUTPUTDIR}${/}screenshot_1.jpg  ${OUTPUTDIR}${/}screenshot_2.jpg
+...  ${OUTPUTDIR}${/}mybase_1.jpg  ${CURDIR}${/}mybase_1.jpg  ${CURDIR}${/}screenshot.jpeg
+...  ${OUTPUTDIR}${/}image_1.jpg  ${OUTPUTDIR}${/}image_1.jpg
+...  ${OUTPUTDIR}${/}image_2.jpg  ${OUTPUTDIR}${/}screenshot_1.jpg
+...  ${OUTPUTDIR}${/}screenshot_2.jpg  ${OUTPUTDIR}${/}screenshot_3.jpg
 
 *** Test Cases ***
 Save Screenshot To Default Dir Twice
