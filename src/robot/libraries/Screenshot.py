@@ -39,7 +39,7 @@ from robot import utils
 from robot.libraries.BuiltIn import BuiltIn
 
 
-class Screenshot:
+class Screenshot(object):
 
     """A test library for taking screenshots and embedding them into log files.
 
@@ -60,6 +60,8 @@ class Screenshot:
     - Python Imaging Library (PIL) :: http://www.pythonware.com/products/pil ::
       This module can take screenshots only on Windows.
 
+    Python support was added in Robot Framework 2.5.5. 
+
     *Where screenshots are saved*
 
     By default screenshots are saved into the same directory where the Robot
@@ -76,7 +78,7 @@ class Screenshot:
 
     *Changes in Robot Framework 2.5.5*
 
-    This library was enhanced heavily in Robot Framework 2.5.5 release. The
+    This library was heavily enhanced in Robot Framework 2.5.5 release. The
     changes are listed below and explained more thoroughly in affected places.
 
     - The support for using this library on Python (see above) was added.
@@ -92,7 +94,7 @@ class Screenshot:
     ROBOT_LIBRARY_VERSION = get_version()
 
     def __init__(self, screenshot_directory=None, log_file_directory='DEPRECATED'):
-        """Optionally save screenshots into a custom directory.
+        """Configure where screenshots are saved.
 
         If `screenshot_directory` is not given, screenshots are saved into
         same directory as the log file. The directory can also be set using
@@ -127,7 +129,7 @@ class Screenshot:
         outdir = variables['${OUTPUTDIR}']
         log = variables['${LOGFILE}']
         log = os.path.dirname(log) if log != 'NONE' else '.'
-        return os.path.join(outdir, log)
+        return self._norm_path(os.path.join(outdir, log))
 
     def set_screenshot_directory(self, path):
         """Sets the directory where screenshots are saved.
@@ -210,6 +212,8 @@ class Screenshot:
         1. LOGDIR/mypic_1.jpg, LOGDIR/mypic_2.jpg, ...
         2. /tmp/mypic_1.jpg, /tmp/mypic_2.jpg, ...
         3. LOGDIR/pic.jpg, LOGDIR/pic.jpg
+
+        Screenshots can be only taken in JPEG format.
         """
         path = self._save_screenshot(name)
         self._embed_screenshot(path, width)
