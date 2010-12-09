@@ -1,0 +1,34 @@
+*** Settings ***
+Suite Setup     Run Tests  ${EMPTY}  standard_libraries/screenshot/take_screenshot.txt
+Force Tags      regression  pybot  jybot
+Resource        atest_resource.txt
+
+*** Test Cases ***
+
+Screenshot Is Embedded in Log File
+    ${tc}=  Check Test Case  ${TESTNAME}
+    Check Link In Log  ${tc.kws[0].kws[0].msgs[1]}  screenshot_1.jpg
+
+Each Screenshot Gets Separate Index
+    ${tc}=  Check Test Case  ${TESTNAME}
+
+Basename May Be Defined
+    ${tc}=  Check Test Case  ${TESTNAME}
+    Check Link In Log  ${tc.kws[0].kws[0].msgs[1]}  foo_1.jpg
+
+Basename With Exception Turns Off Index Generation
+    ${tc}=  Check Test Case  ${TESTNAME}
+    Check Link In Log  ${tc.kws[0].kws[0].msgs[1]}  foo.jpg
+
+Screenshot Width Can Be Given
+    ${tc}=  Check Test Case  ${TESTNAME}
+    Check Link In Log  ${tc.kws[0].msgs[1]}  screenshot_1.jpg  300px
+
+Basename With Non-existing Directories Fails
+    Check Test Case  ${TESTNAME}
+
+
+*** Keywords ***
+Check Link In Log
+    [Arguments]  ${message}  ${path}  ${width}=800px
+    Check Log Message  ${message}  <a href="${path}"><img src="${path}" width="${width}" /></a>  HTML
