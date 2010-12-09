@@ -39,7 +39,7 @@ Failing Repeat Keyword and Teardown
     [Teardown]  Fail  Teardown is executed but fails
 
 Non-Exising Variable In Repeat Keyword
-    [Documentation]  FAIL Non-existing variable '\${non-exiting-variable}'
+    [Documentation]  FAIL Resolving variable '${non-exiting-variable}' failed: Non-existing variable '${non}'.
     1000x  Log  ${non-exiting-variable}
 
 Non Existing Keyword In Repeat

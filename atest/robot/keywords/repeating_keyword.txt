@@ -50,24 +50,24 @@ Repeating Inside User Keyword
 
 Repeating Inside Repeating
     ${test} =  Check Test Case  Repeating Inside Repeating
-    Test Repeating Inside UK  ${test.kws[0].kws[0]}
-    Test Repeating Inside UK  ${test.kws[0].kws[1]}
-    Test Repeating Inside UK  ${test.kws[0].kws[2]}
-    Test Repeating Inside UK  ${test.kws[0].kws[3]}
+    Test Repeating Inside UK  ${test.kws[0].kws[0].kws[0]}
+    Test Repeating Inside UK  ${test.kws[0].kws[1].kws[0]}
+    Test Repeating Inside UK  ${test.kws[0].kws[2].kws[0]}
+    Test Repeating Inside UK  ${test.kws[0].kws[3].kws[0]}
 
 Failing Repeat Keyword
     ${test} =  Check Test Case  Failing Repeat Keyword
-    Check Log Message  ${test.kws[0].msgs[1]}  Failing instead of repeating  FAIL
+    Check Log Message  ${test.kws[0].kws[0].msgs[0]}  Failing instead of repeating  FAIL
     ${test} =  Check Test Case  Not First Repeat Keyword Failing
-    Check Log Message  ${test.kws[0].kws[0].msgs[0]}  \${limit} = 9
-    Check Log Message  ${test.kws[0].kws[3].msgs[0]}  \${limit} = 8
-    Check Log Message  ${test.kws[0].kws[6].msgs[0]}  \${limit} = 7
-    Check Log Message  ${test.kws[0].kws[27].msgs[0]}  \${limit} = 0
-    Check Log Message  ${test.kws[0].kws[29].msgs[0]}  Recursion limit exceeded  FAIL
+    Check Log Message  ${test.kws[0].kws[0].kws[0].msgs[0]}  \${limit} = 9
+    Check Log Message  ${test.kws[0].kws[1].kws[0].msgs[0]}  \${limit} = 8
+    Check Log Message  ${test.kws[0].kws[2].kws[0].msgs[0]}  \${limit} = 7
+    Check Log Message  ${test.kws[0].kws[9].kws[0].msgs[0]}  \${limit} = 0
+    Check Log Message  ${test.kws[0].kws[9].kws[2].msgs[0]}  Recursion limit exceeded  FAIL
     ${test} =  Check Test Case  Failing Repeat Keyword and Teardown
-    Check Log Message  ${test.kws[0].msgs[1]}  Failing, again, instead of repeating  FAIL
+    Check Log Message  ${test.kws[0].kws[0].msgs[0]}  Failing, again, instead of repeating  FAIL
     ${test} =  Check Test Case  Non-Exising Variable In Repeat Keyword
-    Check Log Message  ${test.kws[0].msgs[1]}  Non-existing variable '\${non-exiting-variable}'  FAIL
+    Check Log Message  ${test.kws[0].kws[0].msgs[0]}  Resolving variable '\${non-exiting-variable}' failed: Non-existing variable '\${non}'.  FAIL
 
 Non Existing Keyword In Repeat
     Check Test Case  Non Existing Keyword In Repeat
@@ -75,32 +75,32 @@ Non Existing Keyword In Repeat
 Zero Repeat
     [Documentation]  Zero repeat means not executing the keyword at all
     ${test} =  Check Test Case  Zero Repeat
-    Equals  ${test.kws[0].name}  0x BuiltIn.Fail
+    Equals  ${test.kws[0].name}  0 x
 
 Negative Repeat
     [Documentation]  Negative repeat is the same as zero repeat
     ${test} =  Check Test Case  Negative Repeat
-    Equals  ${test.kws[0].name}  -1x BuiltIn.Fail
+    Equals  ${test.kws[0].name}  -1 x
 
 Repeat With Valid Int Variable
     ${test} =  Check Test Case  Repeat With Valid Int Variable
     Verify Deprecation Messages  ${test.kws[0].msgs[0]}  \${3} x
-    Equals  ${test.kws[0].name}  3x BuiltIn.Log
-    Check Log Message  ${test.kws[0].msgs[1]}  Repeated 3 times
-    Check Log Message  ${test.kws[0].msgs[2]}  Repeated 3 times
-    Check Log Message  ${test.kws[0].msgs[3]}  Repeated 3 times
-    Equals  ${test.kws[1].name}  2x BuiltIn.Log
-    Check Log Message  ${test.kws[1].msgs[1]}  Repeated 2 times
-    Check Log Message  ${test.kws[1].msgs[2]}  Repeated 2 times
-    Equals  ${test.kws[2].name}  0x BuiltIn.Fail
+    Equals  ${test.kws[0].name}  \${3} x
+    Check Log Message  ${test.kws[0].kws[0].msgs[0]}  Repeated 3 times
+    Check Log Message  ${test.kws[0].kws[1].msgs[0]}  Repeated 3 times
+    Check Log Message  ${test.kws[0].kws[2].msgs[0]}  Repeated 3 times
+    Equals  ${test.kws[1].name}  \${2}X
+    Check Log Message  ${test.kws[1].kws[0].msgs[0]}  Repeated 2 times
+    Check Log Message  ${test.kws[1].kws[1].msgs[0]}  Repeated 2 times
+    Equals  ${test.kws[2].name}  \${0} X
 
 Repeat With Valid String Variable
     ${test} =  Check Test Case  Repeat With Valid String Variable
-    Equals  ${test.kws[1].name}  4x BuiltIn.Log
-    Check Log Message  ${test.kws[1].msgs[1]}  Repeated 4 times
-    Check Log Message  ${test.kws[1].msgs[2]}  Repeated 4 times
-    Check Log Message  ${test.kws[1].msgs[3]}  Repeated 4 times
-    Check Log Message  ${test.kws[1].msgs[4]}  Repeated 4 times
+    Equals  ${test.kws[1].name}  \${foo} x
+    Check Log Message  ${test.kws[1].kws[0].msgs[0]}  Repeated 4 times
+    Check Log Message  ${test.kws[1].kws[1].msgs[0]}  Repeated 4 times
+    Check Log Message  ${test.kws[1].kws[2].msgs[0]}  Repeated 4 times
+    Check Log Message  ${test.kws[1].kws[3].msgs[0]}  Repeated 4 times
 
 Repeat With Variable Using Different Values
     Check Test Case  Repeat With Variable Using Different Values In One test
@@ -125,12 +125,12 @@ Normal Keyword With X At The End
 *** Keywords ***
 Test Repeating Inside UK
     [Arguments]  ${kw}
-    Check Log Message  ${kw.kws[0].msgs[0]}  Hello from Repeating UK
-    Check Log Message  ${kw.kws[1].msgs[0]}  Inside UK
-    Check Log Message  ${kw.kws[2].msgs[0]}  Hello from Repeating UK
-    Check Log Message  ${kw.kws[3].msgs[0]}  Inside UK
-    Check Log Message  ${kw.kws[4].msgs[0]}  Hello from Repeating UK
-    Check Log Message  ${kw.kws[5].msgs[0]}  Inside UK
+    Check Log Message  ${kw.kws[0].kws[0].msgs[0]}  Hello from Repeating UK
+    Check Log Message  ${kw.kws[0].kws[1].msgs[0]}  Inside UK
+    Check Log Message  ${kw.kws[1].kws[0].msgs[0]}  Hello from Repeating UK
+    Check Log Message  ${kw.kws[1].kws[1].msgs[0]}  Inside UK
+    Check Log Message  ${kw.kws[2].kws[0].msgs[0]}  Hello from Repeating UK
+    Check Log Message  ${kw.kws[2].kws[1].msgs[0]}  Inside UK
 
 Verify Deprecation Messages
     [Arguments]  ${msg}  ${x times}
