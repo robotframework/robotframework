@@ -2,9 +2,8 @@
 Suite Setup     Remove Files  @{SCREENSHOTS}
 Test Setup      Save Start Time
 Test Teardown   Remove Files  @{SCREENSHOTS}
-Library         Screenshot
+Resource        screenshot_resource.txt
 Library         Screenshot  ${OUTPUTDIR}  ${OUTPUTDIR}  WITH NAME  Screenshot2
-Library         OperatingSystem
 
 *** Variables ***
 @{SCREENSHOTS}  ${TEMPDIR}${/}screenshot_1.jpg  ${TEMPDIR}${/}screenshot_2.jpg  ${TEMPDIR}${/}mybase_1.jpg  ${CURDIR}${/}mybase_1.jpg  ${CURDIR}${/}screenshot.jpeg  ${TEMPDIR}${/}image_1.jpg  ${OUTPUTDIR}${/}image_1.jpg
@@ -74,16 +73,3 @@ Set Screenshot Directories With Default Path and Log Path Defined
 Log Screenshot With Initializing The Screenshot Library
     Screenshot2.Log Screenshot
     Saved File Should Exist  ${OUTPUTDIR}${/}screenshot_1.jpg
-
-*** Keywords ***
-Saved File Should Exist
-    [Arguments]  ${path}
-    [Documentation]  Checks that saved file exists and is newer than given timestamp
-    File Should Exist  ${path}
-    ${filetime} =  Get Modified Time  ${path}
-    Should Be True  '${filetime}' >= '${START TIME}'
-
-Save Start Time
-    ${start time} =  Get Time
-    Set Test Variable  \${START TIME}
-

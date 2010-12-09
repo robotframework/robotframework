@@ -1,0 +1,17 @@
+*** Settings ***
+Library         Screenshot
+Library         OperatingSystem
+
+*** Keywords ***
+Saved File Should Exist
+    [Arguments]  ${path}
+    [Documentation]  Checks that saved file exists and is newer than given timestamp
+    File Should Exist  ${path}
+    ${filetime} =  Get Modified Time  ${path}
+    Should Be True  '${filetime}' >= '${START TIME}'
+
+Save Start Time
+    ${start time} =  Get Time
+    Set Test Variable  \${START TIME}
+
+
