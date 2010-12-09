@@ -41,10 +41,7 @@ from robot.libraries.BuiltIn import BuiltIn
 
 class Screenshot:
 
-    """A test library for taking full-screen screenshots of the desktop.
-
-    `Screenshot` is Robot Framework's standard library that provides keywords
-    to capture and store screenshots of the whole desktop.
+    """A test library for taking screenshots and embedding them into log files.
 
     *Using with Jython*
 
@@ -54,7 +51,7 @@ class Screenshot:
     *Using with Python*
 
     On Python you need to have one of the following modules installed to be
-    able to use this library. The first found module will be used.
+    able to use this library. The first module that is found will be used.
 
     - wxPython :: http://wxpython.org :: Required also by RIDE so many Robot
       Framework users already have this module installed.
@@ -63,44 +60,45 @@ class Screenshot:
     - Python Imaging Library (PIL) :: http://www.pythonware.com/products/pil ::
       This module can take screenshots only on Windows.
 
+    *Where screenshots are saved*
+
+    By default screenshots are saved into the same directory where the Robot
+    Framework log file is written. If no log is created, screenshots are saved
+    into the directory where the XML output file is written.
+
+    It is possible to specify a custom location for screenshots using
+   `screenshot_directory` argument in `importing` and `Set Screenshot Directory`
+    keyword during execution. It is also possible to save screenshots using
+    an absolute path.
+
+    Note that prior to Robot Framework 2.5.5 the default screenshot location
+    was system's temporary directory.
+
     *Changes in Robot Framework 2.5.5*
 
     This library was enhanced heavily in Robot Framework 2.5.5 release. The
     changes are listed below and explained more thoroughly in affected places.
 
     - The support for using this library on Python (see above) was added.
+    - The default location where screenshots are saved was changed (see above).
     - New `Take Screenshot` and `Take Screenshot Without Embedding` keywords
       were added. These keywords should be used for taking screenshots in
       the future. Other screenshot taking keywords will be deprecated and
       removed later.
-    - `log_file_directory` configuration option was deprecated. This
-      information is nowadays got automatically.
-    - The default location where screenshots are saved was changed.
+    - `log_file_directory` argument was deprecated everywhere it was used..
     """
 
     ROBOT_LIBRARY_SCOPE = 'TEST SUITE'
     ROBOT_LIBRARY_VERSION = get_version()
 
     def __init__(self, screenshot_directory=None, log_file_directory='DEPRECATED'):
-        """This library has some optional parameters.
-
-        By default screenshots are saved into the same directory where the
-        log file is written. If no logs are created, screenshots are saved into
-        the directory where the output file is written. Prior to Robot Framework
-        2.5.5 the default location was system's temporary directory.
-
-        It is possible to save screenshots into a custom directory using
-        `screenshot_directory` argument or `Set Screenshot Directory` keyword.
-
-        `log_file_directory` has been deprecated in 2.5.5 release and has no
-        effect. The information provided with it earlier is nowadays got
-        automatically. This argument will be removed in the 2.6 release.
+        """Optionally save screenshots into a custom directory.
 
         Examples (use only one of these):
 
-        | *Setting* | *Value*  | *Value* | *Value* |
-        | Library | Screenshot |
-        | Library | Screenshot | ${TEMPDIR} |
+        | *Setting* | *Value*  | *Value*    | *Value* |
+        | Library | Screenshot |            | # Default location |
+        | Library | Screenshot | ${TEMPDIR} | # System temp (this was default prior to 2.5.5) |
 
         `log_file_directory` has been deprecated in 2.5.5 release and has no
         effect. The information provided with it earlier is nowadays got
