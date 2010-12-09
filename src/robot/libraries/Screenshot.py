@@ -104,8 +104,7 @@ class Screenshot:
         effect. The information provided with it earlier is nowadays got
         automatically. This argument will be removed in the 2.6 release.
         """
-        if log_file_directory != 'DEPRECATED':
-            print '*WARN* TODO'
+        self._warn_if_deprecated_argument_was_used(log_file_directory)
         self._given_screenshot_dir = self._norm_path(screenshot_directory)
         self._screenshot_taker = ScreenshotTaker()
 
@@ -228,19 +227,39 @@ class Screenshot:
         effect. The information provided with it earlier is nowadays got
         automatically. This argument will be removed in the 2.6 release.
         """
-        if log_file_directory != 'DEPRECATED':
-            print '*WARN* TODO'
+        self._warn_if_deprecated_argument_was_used(log_file_directory)
         return self._log_screenshot_as_html(basename, width, directory)
 
-    def _log_screenshot_as_html(self, basename, width, directory=None):
-        path = self._save_screenshot(basename, directory)
-        link = utils.get_link_path(path, self._log_dir)
-        print '*HTML* <a href="%s"><img src="%s" width="%s" /></a>' \
-              % (link, link, width)
-        return path
+    def take_screenshot(self, name="screenshot", width="800px"):
+        """Takes a screenshot and logs it to Robot Framework's log file.
 
-    def take_screenshot(self, basename="screenshot", width="800px"):
-        return self._log_screenshot_as_html(basename, width=width)
+        Name of the file where the screenshot is stored is derived from `name`.
+        If `name` ends with extension `.jpg` the screenshot will be stored with
+        that name, otherwise a unique name is derived by adding underscore, a
+        running index and extension to the `name`.
+
+        The name will be interpreted to be relative to the directory where
+        log file is written.
+
+        `width` can be used to determine the size of the screenshot that is
+        visible in the log file.
+
+        The path where the screenshot is saved is returned.
+
+        Examples: (LOGDIR is determined automatically by the library)
+        | Save Screenshot | mypic             |  | # (1) |
+        | Save Screenshot | ${TEMPDIR}/mypic  |  | # (2) |
+        | Save Screenshot | pic.jpg           |  | # (3) |
+        =>
+        1. LOGDIR/mypic_1.jpg, LOGDIR/mypic_2.jpg, ...
+        2. /tmp/mypic_1.jpg, /tmp/mypic_2.jpg, ...
+        3. LOGDIR/pic.jpg, LOGDIR/pic.jpg
+        """
+        return self._log_screenshot_as_html(name, width=width)
+
+    def _warn_if_deprecated_argument_was_used(self, log_file_directory):
+        if log_file_directory != 'DEPRECATED':
+            print '*WARN* argument `log_file_directory` is deprecated and should not be used.'
 
 
 class ScreenshotTaker(object):
