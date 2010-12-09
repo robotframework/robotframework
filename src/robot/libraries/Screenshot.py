@@ -85,7 +85,7 @@ class Screenshot:
       were added. These keywords should be used for taking screenshots in
       the future. Other screenshot taking keywords will be deprecated and
       removed later.
-    - `log_file_directory` argument was deprecated everywhere it was used..
+    - `log_file_directory` argument was deprecated everywhere it was used.
     """
 
     ROBOT_LIBRARY_SCOPE = 'TEST SUITE'
@@ -93,6 +93,10 @@ class Screenshot:
 
     def __init__(self, screenshot_directory=None, log_file_directory='DEPRECATED'):
         """Optionally save screenshots into a custom directory.
+
+        If `screenshot_directory` is not given, screenshots are saved into
+        same directory as the log file. The directory can also be set using
+        `Set Screenshot Directory` keyword.
 
         Examples (use only one of these):
 
@@ -129,6 +133,8 @@ class Screenshot:
         """Sets the directory where screenshots are saved.
 
         The old value is returned.
+
+        The directory can also be set in `importing`. 
         """
         path = self._norm_path(path)
         if not os.path.isdir(path):
@@ -149,7 +155,9 @@ class Screenshot:
         Without Embedding` instead. This keyword will be deprecated in Robot
         Framework 2.6 and removed later.
         """
-        return self._screenshot_to_file(path)
+        path = self._screenshot_to_file(path)
+        self._link_screenshot(path)
+        return path
 
     def save_screenshot(self, basename="screenshot", directory=None):
         """Saves a screenshot with a generated unique name.
@@ -157,28 +165,10 @@ class Screenshot:
         *This keyword is obsolete.* Use `Take Screenshot` or `Take Screenshot
         Without Embedding` instead. This keyword will be deprecated in Robot
         Framework 2.6 and removed later.
-
-        The unique name is derived based on the provided `basename` and
-        `directory` passed in as optional arguments. If a `directory`
-        is provided, the screenshot is saved under that directory.
-        Otherwise, the `default_directory` set during the library
-        import or by the keyword `Set Screenshot Directories` is used.
-        If a `basename` for the screenshot file is provided, a unique
-        filename is determined by appending an underscore and a running
-        counter. Otherwise, the `basename` defaults to 'screenshot'.
-
-        The path where the screenshot is saved is returned.
-
-        Examples:
-        | Save Screenshot | mypic | /home/user | # (1) |
-        | Save Screenshot | mypic |            | # (2) |
-        | Save Screenshot |       |            | # (3) |
-        =>
-        1. /home/user/mypic_1.jpg, /home/user/mypic_2.jpg, ...
-        2. /tmp/mypic_1.jpg, /tmp/mypic_2.jpg, ...
-        3. /tmp/screenshot_1.jpg, /tmp/screenshot_2.jpg, ...
         """
-        return self._save_screenshot(basename, directory)
+        path = self._save_screenshot(basename, directory)
+        self._link_screenshot(path)
+        return path
 
     def log_screenshot(self, basename='screenshot', directory=None,
                        log_file_directory='DEPRECATED', width='100%'):
@@ -188,32 +178,27 @@ class Screenshot:
         Without Embedding` instead. This keyword will be deprecated in Robot
         Framework 2.6 and removed later.
 
-        Saves the files as defined in the keyword `Save Screenshot` and creates
-        a picture to Robot Framework's log. `directory` defines the directory
-        where the screenshots are saved. By default, its value is
-        `screenshot_directory`, which is set at the library import or with the
-        keyword `Set Screenshot Directory`.
-
         `log_file_directory` has been deprecated in 2.5.5 release and has no
         effect. The information provided with it earlier is nowadays got
-        automatically. This argument will be removed in the 2.6 release.
+        automatically.
         """
         self._warn_if_deprecated_argument_was_used(log_file_directory)
-        return self._log_screenshot_as_html(basename, width, directory)
+        path = self._save_screenshot(basename, directory)
+        self._embed_screenshot(path, width)
+        return path
 
     def take_screenshot(self, name="screenshot", width="800px"):
-        """Takes a screenshot and logs it to Robot Framework's log file.
+        """Takes a screenshot and embeds it into the log file.
 
         Name of the file where the screenshot is stored is derived from `name`.
-        If `name` ends with extension `.jpg` the screenshot will be stored with
-        that name, otherwise a unique name is derived by adding underscore, a
-        running index and extension to the `name`.
+        If `name` ends with extension `.jpg` or `.jpeg`, the screenshot will be
+        stored with that name. Otherwise a unique name is created by adding
+        underscore, a running index and extension to the `name`.
 
         The name will be interpreted to be relative to the directory where
-        log file is written.
+        the log file is written. It is also possible to use absolute paths.
 
-        `width` can be used to determine the size of the screenshot that is
-        visible in the log file.
+        `width` specifies the size of the screenshot in the log file.
 
         The path where the screenshot is saved is returned.
 
@@ -226,19 +211,31 @@ class Screenshot:
         2. /tmp/mypic_1.jpg, /tmp/mypic_2.jpg, ...
         3. LOGDIR/pic.jpg, LOGDIR/pic.jpg
         """
-        return self._log_screenshot_as_html(name, width=width)
+        path = self._save_screenshot(name)
+        self._embed_screenshot(path, width)
+        return path
+
+    def take_screenshot_without_embedding(self, name="screenshot"):
+        """Takes a screenshot and links it from the log file.
+
+        This keyword is otherwise identical to `Take Screenshot` but the saved
+        screenshot is not embedded into the log file. The screenshot is linked
+        so it is nevertheless easily available.
+        """
+        path = self._save_screenshot(name)
+        self._link_screenshot(path)
+        return path
 
     def _save_screenshot(self, basename, directory=None):
         path = self._get_screenshot_path(basename, directory)
         return self._screenshot_to_file(path)
 
-    def _screenshot_to_file(self, path, loglevel='INFO'):
-        path = os.path.abspath(path.replace('/', os.sep))
+    def _screenshot_to_file(self, path):
+        path = os.path.abspath(self._norm_path(path))
         self._validate_screenshot_path(path)
         print '*DEBUG* Using %s modules for taking screenshot.' \
             % self._screenshot_taker.module
         self._screenshot_taker(path)
-        print "*%s* Screenshot saved to '%s'" % (loglevel, path)
         return path
 
     def _validate_screenshot_path(self, path):
@@ -248,7 +245,7 @@ class Screenshot:
 
     def _get_screenshot_path(self, basename, directory):
         directory = self._norm_path(directory) if directory else self._screenshot_dir
-        if basename.endswith('.jpg'):
+        if basename.lower().endswith(('.jpg', '.jpeg')):
             return os.path.join(directory, basename)
         index = 0
         while True:
@@ -257,16 +254,18 @@ class Screenshot:
             if not os.path.exists(path):
                 return path
 
-    def _log_screenshot_as_html(self, basename, width, directory=None):
-        path = self._save_screenshot(basename, directory)
+    def _embed_screenshot(self, path, width):
         link = utils.get_link_path(path, self._log_dir)
         print '*HTML* <a href="%s"><img src="%s" width="%s" /></a>' \
               % (link, link, width)
-        return path
+
+    def _link_screenshot(self, path):
+        link = utils.get_link_path(path, self._log_dir)
+        print "*HTML* Screenshot saved to '<a href=\"%s\">%s</a>'." % (link, path)
 
     def _warn_if_deprecated_argument_was_used(self, log_file_directory):
         if log_file_directory != 'DEPRECATED':
-            print '*WARN* argument `log_file_directory` is deprecated and should not be used.'
+            print '*WARN* Argument `log_file_directory` is deprecated and should not be used.'
 
 
 class ScreenshotTaker(object):
