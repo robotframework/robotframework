@@ -89,7 +89,8 @@ class Screenshot:
         module for taking the screenshots when running tests on
         Python. It can have value `WX`, `GTK` or `PIL`, matching the
         modules described in the `introduction`. By default the
-        library uses the first available module.
+        library uses the first available module and usually you do not
+        need to alter it.
         """
         self.set_screenshot_directories(default_directory, log_file_directory)
         self._screenshot_taker = _ScreenshotTaker(screenshot_module)
