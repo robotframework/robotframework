@@ -46,11 +46,15 @@ class Screenshot:
     `Screenshot` is Robot Framework's standard library that provides keywords
     to capture and store screenshots of the whole desktop.
 
+    *Using with Jython*
+
     On Jython this library uses Java AWT APIs. They are always available
     and thus no external modules are needed.
 
+    *Using with Python*
+
     On Python you need to have one of the following modules installed to be
-    able to use this library:
+    able to use this library. The first found module will be used.
     - wxPython :: http://wxpython.org :: Required also by RIDE so many Robot
       Framework users already have this module installed.
     - PyGTK :: http://pygtk.org :: This module is available by default on most
@@ -58,47 +62,49 @@ class Screenshot:
     - Python Imaging Library (PIL) :: http://www.pythonware.com/products/pil ::
       This module can take screenshots only on Windows.
 
-    The support for using this library on Python was added in Robot
-    Framework 2.5.5.
+    *Changes in Robot Framework 2.5.5*
+
+    This library was enhanced heavily in Robot Framework 2.5.5 release. The
+    changes are listed below and explained more thoroughly in affected places.
+
+    1) The support for using this library on Python (see above) was added.
+    2) New `Take Screenshot` and `Take Screenshot Without Embedding` keywords
+       were added. These keywords should be used for taking screenshots in
+       the future. Other screenshot taking keywords will be deprecated and
+       removed later.
+    3) `log_file_directory` configuration option was deprecated. This
+       information is nowadays got automatically.
+    4) The default location where screenshots are saved was changed.
     """
 
     ROBOT_LIBRARY_SCOPE = 'TEST SUITE'
     ROBOT_LIBRARY_VERSION = get_version()
 
-    def __init__(self, screenshot_directory=None, log_file_directory=None,
-                 screenshot_module=None):
-        """Screenshot library can be imported with optional arguments.
+    def __init__(self, screenshot_directory=None, log_file_directory='DEPRECATED'):
+        """A test library to take screenshots and embed them into log files.
 
-        TODO: Update doc
+        By default screenshots are saved into the same directory where the
+        log file is written. If no logs are created, screenshots are saved into
+        the directory where the output file is written. Prior to Robot Framework
+        2.5.5 the default location was system's temporary directory.
 
-        If the `default_directory` is provided, all the screenshots are saved
-        into that directory by default. Otherwise the default location is the
-        system temporary directory.
+        It is possible to save screenshots into a custom directory using
+        `screenshot_directory` argument or `Set Screenshot Directory` keyword. 
 
-        `log_file_directory` is used to create relative paths when screenshots
-        are logged. By default the paths to images in the log file are absolute.
+        `log_file_directory` has been deprecated in 2.5.5 release and has no
+        effect. The information provided with it earlier is nowadays got
+        automatically. This argument will be removed in the 2.6 release. 
 
         Examples (use only one of these):
 
         | *Setting* | *Value*  | *Value* | *Value* |
-        | Library | Screenshot |         |         |
-        | Library | Screenshot | ${CURDIR}/images | |
-        | Library | Screenshot | ${OUTPUTDIR} | ${OUTPUTDIR} |
-
-        It is also possible to set these directories using `Set Screenshot
-        Directories` keyword.
-
-        `screenshot_module` is used for overriding the underlying
-        module for taking the screenshots when running tests on
-        Python. It can have value `WX`, `GTK` or `PIL`, matching the
-        modules described in the `introduction`. By default the
-        library uses the first available module and usually you do not
-        need to alter it.
+        | Library | Screenshot |
+        | Library | Screenshot | ${TEMPDIR} |
         """
-        if log_file_directory is not None:
+        if log_file_directory != 'DEPRECATED':
             print '*WARN* TODO'
         self._given_screenshot_dir = self._norm_path(screenshot_directory)
-        self._screenshot_taker = _ScreenshotTaker(screenshot_module)
+        self._screenshot_taker = ScreenshotTaker()
 
     def _norm_path(self, path):
         if not path:
@@ -118,20 +124,25 @@ class Screenshot:
         return os.path.join(outdir, log)
 
     def set_screenshot_directory(self, path):
-        """TODO"""
+        """Sets the directory where screensthos are saved.
+
+        The old value is returned.
+        """
         old = self._given_screenshot_dir
         self._given_screenshot_dir = self._norm_path(path)
         return old
 
     def set_screenshot_directories(self, default_directory=None,
-                                   log_file_directory=None):
-        """TODO: Deprecate"""
+                                   log_file_directory='DEPRECATED'):
+        """*DEPRECATED* Use `Set Screenshot Directory` keyword instead."""
         self.set_screenshot_directory(default_directory)
 
     def save_screenshot_to(self, path):
         """Saves a screenshot to the specified file.
 
-        The directory holding the file must exist or an exception is raised.
+        *This keyword is obsolete.* Use `Take Screenshot` or `Take Screenshot
+        Without Embedding` instead. This keyword will be deprecated in Robot
+        Framework 2.6 and removed later.
         """
         path = self._get_save_path(path)
         print '*DEBUG* Using %s modules for taking screenshot.' \
@@ -149,6 +160,10 @@ class Screenshot:
 
     def save_screenshot(self, basename="screenshot", directory=None):
         """Saves a screenshot with a generated unique name.
+
+        *This keyword is obsolete.* Use `Take Screenshot` or `Take Screenshot
+        Without Embedding` instead. This keyword will be deprecated in Robot
+        Framework 2.6 and removed later.
 
         The unique name is derived based on the provided `basename` and
         `directory` passed in as optional arguments. If a `directory`
@@ -183,6 +198,10 @@ class Screenshot:
                        log_file_directory=None, width="100%"):
         """Takes a screenshot and logs it to Robot Framework's log file.
 
+        *This keyword is obsolete.* Use `Take Screenshot` or `Take Screenshot
+        Without Embedding` instead. This keyword will be deprecated in Robot
+        Framework 2.6 and removed later.
+
         Saves the files as defined in the keyword `Save Screenshot` and creates
         a picture to Robot Framework's log. `directory` defines the directory
         where the screenshots are saved. By default, its value is
@@ -207,9 +226,9 @@ class Screenshot:
         self.log_screenshot(basename)
 
 
-class _ScreenshotTaker(object):
+class ScreenshotTaker(object):
 
-    def __init__(self, module_name):
+    def __init__(self, module_name=None):
         self._screenshot = self._get_screenshot_taker(module_name)
         self.module = self._screenshot.__name__.split('_')[1]
 
@@ -273,6 +292,9 @@ if __name__ == "__main__":
     if len(sys.argv) not in [2, 3]:
         print "Usage: %s path [wx|gtk|pil]" % os.path.basename(sys.argv[0])
         sys.exit(1)
-    path = sys.argv[1]
+    path = os.path.abspath(sys.argv[1])
     module = sys.argv[2] if len(sys.argv) == 3 else None
-    Screenshot(screenshot_module=module).save_screenshot_to(path)
+    shooter = ScreenshotTaker(module)
+    print 'Using %s modules' % shooter.module
+    shooter(path)
+    print path
