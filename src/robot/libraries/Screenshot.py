@@ -262,7 +262,7 @@ class _ScreenshotTaker(object):
         pb.save(path, 'jpeg')
 
     def _pil_screenshot(self, path):
-        ImageGrab.grab().save(path)
+        ImageGrab.grab().save(path, 'JPEG')
 
     def _no_screenshot(self, path):
         raise RuntimeError('Taking screenshots is not supported on this platform '
