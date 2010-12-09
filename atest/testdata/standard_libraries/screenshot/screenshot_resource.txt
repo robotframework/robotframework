@@ -1,6 +1,7 @@
 *** Settings ***
 Library         Screenshot
 Library         OperatingSystem
+Library         Collections
 
 *** Keywords ***
 Screenshot Should Exist
@@ -15,4 +16,7 @@ Save Start Time
     ${start time} =  Get Time
     Set Test Variable  \${START TIME}
 
-
+Screenshots Should Exist
+    [Arguments]  ${directory}  @{files}
+    @{actual files}  List Directory  ${directory}  *.jpg  absolute
+    Lists Should Be Equal  ${actual files}  ${files}
