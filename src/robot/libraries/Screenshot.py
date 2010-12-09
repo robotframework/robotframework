@@ -110,7 +110,7 @@ class Screenshot(object):
         effect. The information provided with it earlier is nowadays got
         automatically. This argument will be removed in the 2.6 release.
         """
-        self._warn_if_deprecated_argument_was_used(log_file_directory)
+        self._depr_log_file_dir_given_to_init = log_file_directory
         self._given_screenshot_dir = self._norm_path(screenshot_directory)
         self._screenshot_taker = ScreenshotTaker()
 
@@ -184,7 +184,7 @@ class Screenshot(object):
         effect. The information provided with it earlier is nowadays got
         automatically.
         """
-        self._warn_if_deprecated_argument_was_used(log_file_directory)
+        self._warn_if_depr_log_file_dir_given(log_file_directory)
         path = self._save_screenshot(basename, directory)
         self._embed_screenshot(path, width)
         return path
@@ -235,6 +235,7 @@ class Screenshot(object):
         return self._screenshot_to_file(path)
 
     def _screenshot_to_file(self, path):
+        self._warn_if_depr_log_file_dir_given_to_init()
         path = os.path.abspath(self._norm_path(path))
         self._validate_screenshot_path(path)
         print '*DEBUG* Using %s modules for taking screenshot.' \
@@ -267,8 +268,14 @@ class Screenshot(object):
         link = utils.get_link_path(path, self._log_dir)
         print "*HTML* Screenshot saved to '<a href=\"%s\">%s</a>'." % (link, path)
 
-    def _warn_if_deprecated_argument_was_used(self, log_file_directory):
-        if log_file_directory != 'DEPRECATED':
+    def _warn_if_depr_log_file_dir_given_to_init(self):
+        if self._depr_log_file_dir_given_to_init != 'DEPRECATED':
+            print '*WARN* Argument `log_file_directory` given to Screenshot ' \
+                + 'library is deprecated and should not be used.'
+            self._depr_log_file_dir_given_to_init = 'DEPRECATED'
+
+    def _warn_if_depr_log_file_dir_given(self, given_value):
+        if given_value != 'DEPRECATED':
             print '*WARN* Argument `log_file_directory` is deprecated and should not be used.'
 
 

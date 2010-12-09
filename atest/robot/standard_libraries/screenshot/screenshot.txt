@@ -49,7 +49,8 @@ Set Screenshot Directories With Default Path and Log Path Defined Should Be Depr
 
 Log Screenshot With Initializing The Screenshot Library
     ${test} =  Check Test Case  ${TESTNAME}
-    Check Link In Log  ${test.kws[0].msgs[0]}  screenshot_1.jpg
+    Check Log Message  ${test.kws[0].msgs[0]}  Argument `log_file_directory` given to Screenshot library is deprecated and should not be used.   WARN
+    Check Link In Log  ${test.kws[0].msgs[1]}  screenshot_1.jpg
 
 *** Keywords ***
 Check Link In Log
