@@ -55,13 +55,13 @@ Log Screenshot With Filename, Path And Width Defined
     Screenshot.Log Screenshot  image  ${OUTPUTDIR}  width=50%
     Screenshot Should Exist  ${OUTPUTDIR}${/}image_1.jpg
 
-Set Screenshot Directories With Default Path
+Set Screenshot Directories With Default Path Should Be Deprecated
     Screenshot.Set Screenshot Directories  ${OUTPUTDIR}
     Screenshot.Save Screenshot To  ${OUTPUTDIR}${/}screenshot_1.jpg
     Screenshot.Log Screenshot
     Screenshot Should Exist  ${OUTPUTDIR}${/}screenshot_2.jpg
 
-Set Screenshot Directories With Default Path and Log Path Defined
+Set Screenshot Directories With Default Path and Log Path Defined Should Be Deprecated
     Screenshot.Set Screenshot Directories  ${OUTPUTDIR.replace('\\', '/')}  ${OUTPUTDIR}/
     Screenshot.Log Screenshot
     Screenshot Should Exist  ${OUTPUTDIR}${/}screenshot_1.jpg
