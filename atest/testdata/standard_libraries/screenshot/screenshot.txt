@@ -12,17 +12,17 @@ Library         Screenshot  ${OUTPUTDIR}  ${OUTPUTDIR}  WITH NAME  Screenshot2
 *** Test Cases ***
 Save Screenshot To Temp Dir Twice
     Screenshot.Save Screenshot
-    Saved File Should Exist  ${TEMPDIR}${/}screenshot_1.jpg
+    Screenshot Should Exist  ${TEMPDIR}${/}screenshot_1.jpg
     Screenshot.Save Screenshot
-    Saved File Should Exist  ${TEMPDIR}${/}screenshot_2.jpg
+    Screenshot Should Exist  ${TEMPDIR}${/}screenshot_2.jpg
 
 Save Screenshot To Temp Dir With File Name
     Screenshot.Save Screenshot  mybase
-    Saved File Should Exist  ${TEMPDIR}${/}mybase_1.jpg
+    Screenshot Should Exist  ${TEMPDIR}${/}mybase_1.jpg
 
 Save Screenshot With File Name and Path Defined
     Screenshot.Save Screenshot  mybase  ${CURDIR}/./
-    Saved File Should Exist  ${CURDIR}/mybase_1.jpg
+    Screenshot Should Exist  ${CURDIR}/mybase_1.jpg
 
 Save Screenshot To Non Existing Path
     [Documentation]  FAIL Directory '${CURDIR}${/}non-existing' where to save the screenshot does not exist
@@ -30,10 +30,10 @@ Save Screenshot To Non Existing Path
 
 Save Screenshot To Overwrite Should Succeed
     Screenshot.Save Screenshot To  ${CURDIR}/screenshot.jpeg
-    Saved File Should Exist  ${CURDIR}${/}screenshot.jpeg
+    Screenshot Should Exist  ${CURDIR}${/}screenshot.jpeg
     Save Start Time
     Screenshot.Save Screenshot To  ${CURDIR}${/}screenshot.jpeg
-    Saved File Should Exist  ${CURDIR}${/}screenshot.jpeg
+    Screenshot Should Exist  ${CURDIR}${/}screenshot.jpeg
 
 Save Screenshot To With Non Existing Path
     [Documentation]  FAIL Directory '${CURDIR}${/}non-existing' where to save the screenshot does not exist
@@ -41,35 +41,35 @@ Save Screenshot To With Non Existing Path
 
 Log Screenshot With Defaults
     Screenshot.Log Screenshot
-    Saved File Should Exist  ${TEMPDIR}${/}screenshot_1.jpg
+    Screenshot Should Exist  ${TEMPDIR}${/}screenshot_1.jpg
 
 Log Screenshot With Filename Defined
     Screenshot.Log Screenshot  image
-    Saved File Should Exist  ${TEMPDIR}${/}image_1.jpg
+    Screenshot Should Exist  ${TEMPDIR}${/}image_1.jpg
 
 Log Screenshot With Filename And Path Defined
     Screenshot.Log Screenshot  image  ${OUTPUTDIR}
-    Saved File Should Exist  ${OUTPUTDIR}${/}image_1.jpg
+    Screenshot Should Exist  ${OUTPUTDIR}${/}image_1.jpg
 
 Log Screenshot With Filename, Path And Log Path Defined
     Screenshot.Log Screenshot  image  ${OUTPUTDIR}  ${OUTPUTDIR}
-    Saved File Should Exist  ${OUTPUTDIR}${/}image_1.jpg
+    Screenshot Should Exist  ${OUTPUTDIR}${/}image_1.jpg
 
 Log Screenshot With Filename, Path, Log Path And Width Defined
     Screenshot.Log Screenshot  image  ${OUTPUTDIR}  ${OUTPUTDIR}  50%
-    Saved File Should Exist  ${OUTPUTDIR}${/}image_1.jpg
+    Screenshot Should Exist  ${OUTPUTDIR}${/}image_1.jpg
 
 Set Screenshot Directories With Default Path
     Screenshot.Set Screenshot Directories  ${OUTPUTDIR}
     Screenshot.Save Screenshot To  ${OUTPUTDIR}${/}screenshot_1.jpg
     Screenshot.Log Screenshot
-    Saved File Should Exist  ${OUTPUTDIR}${/}screenshot_2.jpg
+    Screenshot Should Exist  ${OUTPUTDIR}${/}screenshot_2.jpg
 
 Set Screenshot Directories With Default Path and Log Path Defined
     Screenshot.Set Screenshot Directories  ${OUTPUTDIR.replace('\\', '/')}  ${OUTPUTDIR}/
     Screenshot.Log Screenshot
-    Saved File Should Exist  ${OUTPUTDIR}${/}screenshot_1.jpg
+    Screenshot Should Exist  ${OUTPUTDIR}${/}screenshot_1.jpg
 
 Log Screenshot With Initializing The Screenshot Library
     Screenshot2.Log Screenshot
-    Saved File Should Exist  ${OUTPUTDIR}${/}screenshot_1.jpg
+    Screenshot Should Exist  ${OUTPUTDIR}${/}screenshot_1.jpg

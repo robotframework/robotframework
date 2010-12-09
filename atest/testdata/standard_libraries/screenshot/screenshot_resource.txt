@@ -3,9 +3,10 @@ Library         Screenshot
 Library         OperatingSystem
 
 *** Keywords ***
-Saved File Should Exist
+Screenshot Should Exist
     [Arguments]  ${path}
-    [Documentation]  Checks that saved file exists and is newer than given timestamp
+    [Documentation]  Checks that screenshot file exists and is newer than
+    ...  timestamp set in test setup.
     File Should Exist  ${path}
     ${filetime} =  Get Modified Time  ${path}
     Should Be True  '${filetime}' >= '${START TIME}'
