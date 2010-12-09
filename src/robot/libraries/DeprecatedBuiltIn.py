@@ -13,6 +13,10 @@
 #  limitations under the License.
 
 
+import re
+import fnmatch
+
+
 from robot.utils import asserts
 
 import BuiltIn
@@ -58,3 +62,28 @@ class DeprecatedBuiltIn:
     def error(self, msg=None):
         """Errors the test immediately with the given message."""
         asserts.error(msg)
+
+    def grep(self, text, pattern, pattern_type='literal string'):
+        lines = self._filter_lines(text.splitlines(), pattern, pattern_type)
+        return '\n'.join(lines)
+
+    def _filter_lines(self, lines, pattern, ptype):
+        ptype = ptype.lower().replace(' ','').replace('-','')
+        if not pattern:
+            filtr = lambda line: True
+        elif 'simple' in ptype or 'glob' in ptype:
+            if 'caseinsensitive' in ptype:
+                pattern = pattern.lower()
+                filtr = lambda line: fnmatch.fnmatchcase(line.lower(), pattern)
+            else:
+                filtr = lambda line: fnmatch.fnmatchcase(line, pattern)
+        elif 'regularexpression' in ptype or 'regexp' in ptype:
+            pattern = re.compile(pattern)
+            filtr = lambda line: pattern.search(line)
+        elif 'caseinsensitive' in ptype:
+            pattern = pattern.lower()
+            filtr = lambda line: pattern in line.lower()
+        else:
+            filtr = lambda line: pattern in line
+        return [ line for line in lines if filtr(line) ]
+
