@@ -1,7 +1,7 @@
 *** Settings ***
-Suite Setup     Remove Files  ${OUTPUTDIR}/*.jpg
+Suite Setup     Remove Files  ${OUTPUTDIR}/*.jp*g
 Test Setup      Save Start Time
-Test Teardown   Remove Files  ${OUTPUTDIR}/*.jpg
+Test Teardown   Remove Files  ${OUTPUTDIR}/*.jp*g
 Resource        screenshot_resource.txt
 
 *** Variables ***
@@ -36,6 +36,9 @@ Screenshot Width Can Be Given
 Basename With Non-existing Directories Fails
     [Documentation]  FAIL Directory '${OUTPUTDIR}${/}non-existing' where to save the screenshot does not exist
     Take Screenshot  ${OUTPUTDIR}${/}non-existing${/}foo
+
+Without Embedding
+    Take Screenshot Without Embedding  no_embed.jpeg
 
 
 *** Keywords ***
