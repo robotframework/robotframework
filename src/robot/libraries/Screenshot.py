@@ -36,6 +36,7 @@ else:
 
 from robot.version import get_version
 from robot import utils
+from robot.libraries.BuiltIn import BuiltIn
 
 
 class Screenshot:
@@ -64,9 +65,11 @@ class Screenshot:
     ROBOT_LIBRARY_SCOPE = 'TEST SUITE'
     ROBOT_LIBRARY_VERSION = get_version()
 
-    def __init__(self, default_directory=None, log_file_directory=None,
+    def __init__(self, screenshot_directory=None, log_file_directory=None,
                  screenshot_module=None):
         """Screenshot library can be imported with optional arguments.
+
+        TODO: Update doc
 
         If the `default_directory` is provided, all the screenshots are saved
         into that directory by default. Otherwise the default location is the
@@ -92,23 +95,37 @@ class Screenshot:
         library uses the first available module and usually you do not
         need to alter it.
         """
-        self.set_screenshot_directories(default_directory, log_file_directory)
+        if log_file_directory is not None:
+            print '*WARN* TODO'
+        self._given_screenshot_dir = self._norm_path(screenshot_directory)
         self._screenshot_taker = _ScreenshotTaker(screenshot_module)
+
+    def _norm_path(self, path):
+        if not path:
+            return path
+        return os.path.normpath(path.replace('/', os.sep))
+
+    @property
+    def _screenshot_dir(self):
+        return self._given_screenshot_dir or self._log_dir
+
+    @property
+    def _log_dir(self):
+        variables = BuiltIn().get_variables()
+        outdir = variables['${OUTPUTDIR}']
+        log = variables['${LOGFILE}']
+        return os.path.join(outdir, log if log != 'NONE' else '.')
+
+    def set_screenshot_directory(self, path):
+        """TODO"""
+        old = self._given_screenshot_dir
+        self._given_screenshot_dir = self._norm_path(path)
+        return old
 
     def set_screenshot_directories(self, default_directory=None,
                                    log_file_directory=None):
-        """Used to set `default_directory` and `log_file_directory`.
-
-        See the `library importing` for details.
-        """
-        if not default_directory:
-            self._default_dir = tempfile.gettempdir()
-        else:
-            self._default_dir = os.path.normpath(default_directory.replace('/', os.sep))
-        if not log_file_directory:
-            self._log_file_dir = None
-        else:
-            self._log_file_dir = os.path.normpath(log_file_directory.replace('/', os.sep))
+        """TODO: Deprecate"""
+        self.set_screenshot_directory(default_directory)
 
     def save_screenshot_to(self, path):
         """Saves a screenshot to the specified file.
@@ -152,10 +169,7 @@ class Screenshot:
         2. /tmp/mypic_1.jpg, /tmp/mypic_2.jpg, ...
         3. /tmp/screenshot_1.jpg, /tmp/screenshot_2.jpg, ...
         """
-        if directory is None:
-            directory = self._default_dir
-        else:
-            directory = directory.replace('/', os.sep)
+        directory = self._norm_path(directory) if directory else self._screenshot_dir
         index = 0
         while True:
             index += 1
@@ -181,12 +195,9 @@ class Screenshot:
         The path where the screenshot is saved is returned.
         """
         path = self.save_screenshot(basename, directory)
-        if log_file_directory is None:
-            log_file_directory = self._log_file_dir
         if log_file_directory is not None:
-            link = utils.get_link_path(path, log_file_directory)
-        else:
-            link = 'file:///' + path.replace('\\', '/')
+            print '*WARN* TODO'
+        link = utils.get_link_path(path, self._log_dir)
         print '*HTML* <a href="%s"><img src="%s" width="%s" /></a>' \
               % (link, link, width)
         return path
