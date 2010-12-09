@@ -114,8 +114,8 @@ def get_link_path(target, base):
     return url.replace('%5C', '/').replace('%3A', ':').replace('|', ':')
 
 def _get_pathname(target, base):
-    target = normpath(target)
-    base = normpath(base)
+    target = normpath(target, normcase=False)
+    base = normpath(base, normcase=False)
     if os.path.isfile(base):
         base = os.path.dirname(base)
     if base == target:

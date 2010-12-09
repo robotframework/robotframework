@@ -54,15 +54,12 @@ class TestMiscUtils(unittest.TestCase):
                 ( 'c:\\path\\to', 'c:\\path\\to\\result_in_same_dir.html', 'result_in_same_dir.html' ),
                 ( 'c:\\path\\to\\dir', 'c:\\path\\to\\result_in_parent_dir.html', '../result_in_parent_dir.html' ),
                 ( 'c:\\path\\to', 'c:\\path\\to\\dir\\result_in_sub_dir.html', 'dir/result_in_sub_dir.html' ),
-                ( 'c:\\commonprefix\\sucks\\baR', 'c:\\commonprefix\\sucks\\baZ.txt', '../baz.txt' ),
+                ( 'c:\\commonprefix\\sucks\\baR', 'c:\\commonprefix\\sucks\\baZ.txt', '../baZ.txt' ),
                 ( 'c:\\a\\very\\long\\path', 'c:\\no\\depth\\limitation', '../../../../no/depth/limitation' ),
                 ( 'c:\\windows\\explorer.exe', 'c:\\windows\\path\\to\\existing\\file', 'path/to/existing/file' ),
                 ( 'c:\\path\\to\\identity', 'c:\\path\\to\\identity', 'identity' ),
             ]
-        import robot.utils.normalizing
         for basedir, target, expected in inputs:
-            if robot.utils.normalizing._CASE_INSENSITIVE_FILESYSTEM :
-                expected = expected.lower()
             assert_equals(get_link_path(target, basedir).replace('R:', 'r:'), expected,
                          '%s -> %s' % (target, basedir))
 
