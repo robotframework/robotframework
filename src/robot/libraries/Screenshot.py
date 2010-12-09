@@ -114,7 +114,8 @@ class Screenshot:
         variables = BuiltIn().get_variables()
         outdir = variables['${OUTPUTDIR}']
         log = variables['${LOGFILE}']
-        return os.path.join(outdir, log if log != 'NONE' else '.')
+        log = os.path.dirname(log) if log != 'NONE' else '.'
+        return os.path.join(outdir, log)
 
     def set_screenshot_directory(self, path):
         """TODO"""
@@ -201,6 +202,9 @@ class Screenshot:
         print '*HTML* <a href="%s"><img src="%s" width="%s" /></a>' \
               % (link, link, width)
         return path
+
+    def take_screenshot(self, basename="screenshot"):
+        self.log_screenshot(basename)
 
 
 class _ScreenshotTaker(object):
