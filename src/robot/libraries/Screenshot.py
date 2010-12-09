@@ -134,7 +134,8 @@ class Screenshot(object):
     def set_screenshot_directory(self, path):
         """Sets the directory where screenshots are saved.
 
-        The old value is returned.
+        It is possible to use `/` as a path separator in all operating systems.
+        Path to the old directory is returned.
 
         The directory can also be set in `importing`. 
         """
@@ -205,15 +206,18 @@ class Screenshot(object):
         The path where the screenshot is saved is returned.
 
         Examples: (LOGDIR is determined automatically by the library)
-        | Save Screenshot | mypic             |  | # (1) |
-        | Save Screenshot | ${TEMPDIR}/mypic  |  | # (2) |
-        | Save Screenshot | pic.jpg           |  | # (3) |
+        | Take Screenshot |                   | # (1) |
+        | Take Screenshot | mypic             | # (2) |
+        | Take Screenshot | ${TEMPDIR}/mypic  | # (3) |
+        | Take Screenshot | pic.jpg           | # (4) |
         =>
-        1. LOGDIR/mypic_1.jpg, LOGDIR/mypic_2.jpg, ...
-        2. /tmp/mypic_1.jpg, /tmp/mypic_2.jpg, ...
-        3. LOGDIR/pic.jpg, LOGDIR/pic.jpg
+        1. LOGDIR/screenshot_1.jpg,LOGDIR/screenshot_2.jpg, ... 
+        2. LOGDIR/mypic_1.jpg, LOGDIR/mypic_2.jpg, ...
+        3. /tmp/mypic_1.jpg, /tmp/mypic_2.jpg, ...
+        4. LOGDIR/pic.jpg, LOGDIR/pic.jpg, ...
 
-        Screenshots can be only taken in JPEG format.
+        Screenshots can be only taken in JPEG format. It is possible to use `/`
+        as a path separator in all operating systems. 
         """
         path = self._save_screenshot(name)
         self._embed_screenshot(path, width)
