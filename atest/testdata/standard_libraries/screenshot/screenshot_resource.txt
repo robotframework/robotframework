@@ -18,5 +18,5 @@ Save Start Time
 
 Screenshots Should Exist
     [Arguments]  ${directory}  @{files}
-    @{actual files}  List Directory  ${directory}  *.jpg  absolute
+    @{actual files}=  List Directory  ${directory}  *.jp*g  absolute
     Lists Should Be Equal  ${actual files}  ${files}
