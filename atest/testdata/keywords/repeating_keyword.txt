@@ -73,7 +73,7 @@ Repeat With Variable Using Different Values In Another test
     Repeat With Variables  3
 
 Repeat With Invalid String Variable
-    [Documentation]  FAIL 'bar' cannot be converted to an integer: ValueError: invalid literal for int() with base 10: 'bar'
+    [Documentation]  FAIL STARTS:'bar' cannot be converted to an integer: ValueError:
     ${foo} =  Set  bar
     ${foo} x  Noop
 
