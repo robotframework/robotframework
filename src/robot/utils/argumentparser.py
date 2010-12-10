@@ -276,7 +276,7 @@ class ArgumentParser:
     def _glob_args(self, args):
         temp = []
         for path in args:
-            paths = glob.glob(path)
+            paths = sorted(glob.glob(path))
             if paths:
                 temp.extend(paths)
             else:
