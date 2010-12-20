@@ -10,13 +10,13 @@ execfile(os.path.join(os.path.dirname(__file__),'src','robot','version.py'))
 
 # Maximum width in Windows installer seems to be 70 characters -------|
 DESCRIPTION = """
-Robot Framework is a generic Python based test automation framework
-for acceptance testing and acceptance test-driven development (ATDD).
-It has easy-to-use tabular test data syntax and utilizes the
-keyword-driven testing approach. Its testing capabilities can be
-extended by test libraries implemented either with Python or Java, and
-users can create new keywords from existing ones using the same syntax
-that is used for creating test cases.
+Robot Framework is a generic test automation framework for acceptance
+testing and acceptance test-driven development (ATDD). It has
+easy-to-use tabular test data syntax and utilizes the keyword-driven
+testing approach. Its testing capabilities can be extended by test
+libraries implemented either with Python or Java, and users can create
+new keywords from existing ones using the same syntax that is used for
+creating test cases.
 """[1:-1]
 CLASSIFIERS = """
 Development Status :: 5 - Production/Stable
