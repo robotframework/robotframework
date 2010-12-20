@@ -3,8 +3,8 @@
 import sys
 
 VERSION = 'trunk'
-RELEASE = '20101201'
-TIMESTAMP = '20101201-152028'
+RELEASE = '20101220'
+TIMESTAMP = '20101220-151655'
 
 def get_version(sep=' '):
     if RELEASE == 'final':
@@ -23,6 +23,3 @@ def _get_interpreter():
     if sys.platform == 'cli':
         return 'IronPython'
     return 'Python'
-
-if __name__ == '__main__':
-    print get_version(*sys.argv[1:])
