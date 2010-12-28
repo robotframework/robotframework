@@ -216,6 +216,7 @@ class RobotSettings(_BaseSettings):
             settings._opts[name] = 'NONE'
         for name in ['Name', 'Doc']:
             settings._opts[name] = None
+        settings._opts['LogLevel'] = 'TRACE'
         return datasources, settings
 
 
