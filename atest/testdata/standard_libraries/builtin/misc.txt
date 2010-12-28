@@ -60,31 +60,6 @@ Comment
     Comment  Should work also with ${NON EXISTING} variable and  ${OTHER NON EXISTING} variable
     Comment  @{NON EXISTING LIST} variable should work also  @{OTHER NON EXISTING LIST}
 
-Set Log Level
-    [Documentation]  FAIL Invalid log level 'INVALID'
-    Set Log Level  TRACE
-    Log  This is logged  TRACE
-    Log  This is logged  DEBUG
-    Log  This is logged  INFO
-    ${old} =  Set Log Level  debug
-    Should Be Equal  ${old}  TRACE
-    Log  This is NOT logged  TRACE
-    Log  This is logged  DEBUG
-    Log  This is logged  INFO
-    Set Log Level  Info
-    Log  This is NOT logged  TRACE
-    Log  This is NOT logged  DEBUG
-    Log  This is logged  INFO
-    ${old} =  Set Log Level  ErRoR
-    Should Be Equal  ${old}  INFO
-    Log  This is NOT logged  INFO
-    Log  This is logged  ERROR
-    Set Log Level  NONE
-    Log  NOT logged
-    Log  NOT logged  FAIL
-    Set Log Level  INVALID
-    [Teardown]  Set Log Level  INFO
-
 Import Library 1
     [Documentation]  Verify that keyword to be imported is not yet available FAIL No keyword with name 'Directory Should Exist' found.
     Directory Should Exist  ${CURDIR}

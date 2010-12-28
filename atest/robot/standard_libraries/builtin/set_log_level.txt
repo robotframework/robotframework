@@ -1,0 +1,30 @@
+*** Settings ***
+Suite Setup     Run Tests  --log set_log_level_log.html  standard_libraries/builtin/set_log_level.txt
+Force Tags      regression
+Default Tags    jybot  pybot
+Resource        atest_resource.txt
+
+*** Test Cases ***
+Set Log Level
+    ${tc} =  Check Test Case
+    Check Log Message  ${tc.kws[1].msgs[1]}  This is logged  TRACE
+    Check Log Message  ${tc.kws[2].msgs[1]}  This is logged  DEBUG
+    Check Log Message  ${tc.kws[3].msgs[1]}  This is logged  INFO
+    Should Be Equal As Integers  ${tc.kws[6].message_count}  0
+    Check Log Message  ${tc.kws[7].msgs[0]}  This is logged  DEBUG
+    Check Log Message  ${tc.kws[8].msgs[0]}  This is logged  INFO
+    Should Be Equal As Integers  ${tc.kws[10].message_count}  0
+    Should Be Equal As Integers  ${tc.kws[11].message_count}  0
+    Check Log Message  ${tc.kws[12].msgs[0]}  This is logged  INFO
+    Should Be Equal As Integers  ${tc.kws[15].message_count}  0
+    Check Log Message  ${tc.kws[16].msgs[0]}  This is logged  ERROR
+    Should Be Equal As Integers  ${tc.kws[18].message_count}  0
+    Should Be Equal As Integers  ${tc.kws[19].message_count}  0
+    Should Be Equal As Integers  ${tc.kws[20].message_count}  0
+
+Log Level Goes To HTML
+    ${tc} =  Check Test Case
+    Check File Contains    ${OUTDIR}${/}set_log_level_log.html    KW Info to log
+    Check File Contains    ${OUTDIR}${/}set_log_level_log.html    KW Trace to log
+    Check File Contains    ${OUTDIR}${/}set_log_level_log.html    TC Info to log
+    Check File Contains    ${OUTDIR}${/}set_log_level_log.html    TC Trace to log

@@ -103,7 +103,7 @@ Get Coverage Runner
     [return]  ${INTERPRETER}
 
 Check Test Case
-    [Arguments]  ${name}  ${status}=${None}  ${message}=${None}
+    [Arguments]  ${name}=${TEST NAME}  ${status}=${None}  ${message}=${None}
     ${test} =  Get Test From Suite  ${SUITE}  ${name}
     Check Test Status  ${test}  ${status}  ${message}
     [Return]  ${test}
