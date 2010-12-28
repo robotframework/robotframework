@@ -21,6 +21,7 @@ Levels below given level are ignored
     ${tc} =  Rebot  -L INFO
     Check Log Message  ${tc.kws[0].msgs[0]}  Test 1  INFO
     Should Be Empty  ${tc.kws[1].msgs}
+    Should Be Empty  ${tc.kws[2].kws[0].msgs}
 
 All messages are ignored when NONE level is used
     ${tc} =  Rebot  --loglevel NONE
