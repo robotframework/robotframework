@@ -143,7 +143,7 @@ class _KeywordReader(_BaseReader):
         log_filter = IsLogged(log_level or 'TRACE')
         for child in node.children:
             if child.name == 'kw':
-                kw = Keyword(child)
+                kw = Keyword(child, log_level)
                 self.keywords.append(kw)
                 self.children.append(kw)
             elif child.name == 'msg' and log_filter(child.get_attr('level', 'INFO')):
