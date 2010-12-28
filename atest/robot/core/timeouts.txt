@@ -19,6 +19,15 @@ Timed Test Passes
 Timed Test Fails Before Timeout
     Check Test Case  Failing Before Timeout
 
+Show Correct Trace Back When Failing Before Timeout
+    ${tc} =   Check Test Case
+    Should Contain    ${tc.kws[0].msgs[-1].message}    raise AssertionError(msg) if msg else AssertionError()
+
+Show Correct Trace Back When Failing In Java Before Timeout
+    [tags]  jybot
+    ${tc} =   Check Test Case
+    Should Contain    ${tc.kws[0].msgs[-1].message}    at ExampleJavaLibrary.exception(
+
 Timed Test Timeouts
     Check Test Case  Sleeping And Timeouting
     Check Test Case  Total Time Too Long

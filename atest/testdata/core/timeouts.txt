@@ -23,6 +23,18 @@ Failing Before Timeout
     [Documentation]  FAIL Failure before timeout
     Fail  Failure before timeout
 
+Show Correct Trace Back When Failing Before Timeout
+    [Documentation]  FAIL Failure before timeout
+    [Setup]   Set Log Level   DEBUG
+    Fail  Failure before timeout
+    [Teardown]   Set Log Level   INFO
+
+Show Correct Trace Back When Failing In Java Before Timeout
+    [Documentation]  FAIL ArrayStoreException: This is exception message
+    [Setup]   Set Log Level   DEBUG
+    java exception    This is exception message
+    [Teardown]   Set Log Level   INFO
+
 Sleeping And Timeouting
     [Documentation]  FAIL Test timeout 4 seconds exceeded.
     Sleep Without Logging  10

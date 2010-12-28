@@ -12,20 +12,14 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-
 import sys
 from threading import Event
 
-
 if sys.platform.startswith('java'):
-    from java.lang import Thread, Runnable, Throwable
-    JAVA_EXCEPTIONS = (Throwable,)
-
+    from java.lang import Thread, Runnable
 else:
     from stoppablethread import Thread
-    class Runnable(object):
-        pass
-    JAVA_EXCEPTIONS = ()
+    Runnable = object
 
 
 class ThreadedRunner(Runnable):
@@ -35,15 +29,14 @@ class ThreadedRunner(Runnable):
         self._notifier = Event()
         self._result = None
         self._error = None
+        self._traceback = None
         self._thread = None
 
     def run(self):
         try:
             self._result = self._runnable()
-        except JAVA_EXCEPTIONS, error:
-            self._error = error
         except:
-            self._error = sys.exc_info()[1]
+            self._error, self._traceback = sys.exc_info()[1:]
         self._notifier.set()
 
     __call__ = run
@@ -57,7 +50,7 @@ class ThreadedRunner(Runnable):
 
     def get_result(self):
         if self._error:
-            raise self._error
+            raise self._error, None, self._traceback
         return self._result
 
     def stop_thread(self):
