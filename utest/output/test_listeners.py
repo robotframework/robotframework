@@ -173,6 +173,10 @@ class _BaseListenerTest:
         self.listeners.output_file('debug', 'path/to/debug')
         self._assert_output('Debug: path/to/debug')
 
+    def test_xunit_file(self):
+        self.listeners.output_file('XUnit', 'path/to/xunit')
+        self._assert_output('XUnit: path/to/xunit')
+
     def test_close(self):
         self.listeners.close()
         self._assert_output('Closing...')
