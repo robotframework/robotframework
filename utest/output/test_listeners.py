@@ -40,7 +40,31 @@ class KwMock(_Mock):
         self.status = 'PASS'
 
 
-class ListenAllOldStyle:
+class ListenOutputs(object):
+
+    def output_file(self, path):
+        self._out_file('Output', path)
+
+    def summary_file(self, path):
+        self._out_file('Summary', path)
+
+    def report_file(self, path):
+        self._out_file('Report', path)
+
+    def log_file(self, path):
+        self._out_file('Log', path)
+
+    def debug_file(self, path):
+        self._out_file('Debug', path)
+
+    def xunit_file(self, path):
+        self._out_file('XUnit', path)
+
+    def _out_file(self, name, path):
+        print '%s: %s' % (name, path)
+
+
+class ListenAllOldStyle(ListenOutputs):
 
     def start_suite(self, name, doc):
         print "SUITE START: %s '%s'" % (name, doc)
@@ -59,23 +83,12 @@ class ListenAllOldStyle:
             print "TEST END: %s %s" % (status, message)
     def end_suite(self, status, message):
         print 'SUITE END: %s %s' % (status, message)
-    def output_file(self, path):
-        self._out_file('Output', path)
-    def summary_file(self, path):
-        self._out_file('Summary', path)
-    def report_file(self, path):
-        self._out_file('Report', path)
-    def log_file(self, path):
-        self._out_file('Log', path)
-    def debug_file(self, path):
-        self._out_file('Debug', path)
-    def _out_file(self, name, path):
-        print '%s: %s' % (name, path)
+
     def close(self):
         print 'Closing...'
 
 
-class ListenAllNewStyle:
+class ListenAllNewStyle(ListenOutputs):
 
     ROBOT_LISTENER_API_VERSION = '2'
 
@@ -96,18 +109,6 @@ class ListenAllNewStyle:
             print "TEST END: %s %s" % (attrs['status'], attrs['message'])
     def end_suite(self, name, attrs):
         print 'SUITE END: %s %s' % (attrs['status'], attrs['statistics'])
-    def output_file(self, path):
-        self._out_file('Output', path)
-    def summary_file(self, path):
-        self._out_file('Summary', path)
-    def report_file(self, path):
-        self._out_file('Report', path)
-    def log_file(self, path):
-        self._out_file('Log', path)
-    def debug_file(self, path):
-        self._out_file('Debug', path)
-    def _out_file(self, name, path):
-        print '%s: %s' % (name, path)
     def close(self):
         print 'Closing...'
 
