@@ -68,6 +68,10 @@ public class NewStyleJavaListener {
         printOutputFile("Debug", path);
     }
 
+    public void xunitFile(String path) {
+        printOutputFile("XUnit", path);
+    }
+
     public void close() {
         System.out.println("Closing...");
     }
