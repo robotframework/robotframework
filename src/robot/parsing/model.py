@@ -72,7 +72,7 @@ class _TestData(object):
         name = name.split('__', 1)[-1]  # Strip possible prefix
         name = name.replace('_', ' ').strip()
         if name.islower():
-            name = ' '.join(w[0].upper() + w[1:] for w in name.split())
+            name = name.title()
         return name
 
     @property
