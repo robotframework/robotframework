@@ -31,3 +31,6 @@ Set Variable in User Keyword
 
 Local Variables in Test Case Leak
   Check Test Case  Local Variables in Test Case Leak
+
+Get Length Of Variables
+  Check Test Case  Get Length Of Variables

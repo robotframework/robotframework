@@ -388,12 +388,19 @@ class _VariableScopes:
         if suite is not None:
             suite.variables.update(GLOBAL_VARIABLES)
             self._suite = self.current = suite.variables
+        else:
+            self._suite = self.current = None
         self._parents = []
         if parent_vars is not None:
             self._parents.append(parent_vars.current)
             self._parents.extend(parent_vars._parents)
         self._test = None
         self._uk_handlers = []
+
+    def __len__(self):
+        if self.current:
+            return len(self.current)
+        return 0
 
     def copy_all(self):
         vs = _VariableScopes(None, None)

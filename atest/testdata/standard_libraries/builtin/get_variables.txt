@@ -45,6 +45,10 @@ Test Case Variable
 Set Variable in User Keyword
   Set Var In UK
 
+Get Length Of Variables
+    ${variables}=   Get Variables
+    ${var_count}  get length  ${variables}
+    Should Be Equal As Integers  ${var_count}  33
 
 * Keywords *
 Set Some Variables
