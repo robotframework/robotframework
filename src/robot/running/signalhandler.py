@@ -43,8 +43,17 @@ class _StopSignalMonitor(object):
 
     def start(self):
         if signal:
-            signal.signal(signal.SIGINT, self)
-            signal.signal(signal.SIGTERM, self)
+            try:
+                self._register_signal_handlers()
+            except ValueError:
+                # When robot is run programmatically in another thread, the
+                # signaling doesn't work and the raised ValueError can be
+                # ignored.
+                pass
+
+    def _register_signal_handlers(self):
+        signal.signal(signal.SIGINT, self)
+        signal.signal(signal.SIGTERM, self)
 
     def start_running_keyword(self, in_teardown):
         self._running_keyword = True
