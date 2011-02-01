@@ -232,7 +232,11 @@ class ArgumentParser:
         except (IOError, UnicodeError), err:
             raise DataError("Opening argument file '%s' failed: %s" % (path, err))
         finally:
-            f.close()
+            try:
+                f.close()
+            except UnboundLocalError:
+                #Ignored - happens only if some exception has already happened
+                pass
         if content.startswith(codecs.BOM_UTF8.decode('UTF-8')):
             content = content[1:]
         return content
