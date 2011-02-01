@@ -20,13 +20,6 @@ from robot import utils
 from loggerhelper import IsLogged
 
 
-# ANSI colors
-ANSI_RED    = '\033[31m'
-ANSI_GREEN  = '\033[32m'
-ANSI_YELLOW = '\033[33m'
-ANSI_RESET  = '\033[0m'
-
-
 class CommandLineMonitor:
 
     def __init__(self, width=78, colors=True):
@@ -65,7 +58,7 @@ class CommandLineMonitor:
     def message(self, msg):
         # called by LOGGER
         if self._is_logged(msg.level):
-            message = '[ %s ] %s' % (self._highlight(msg.level), msg.message)
+            message = '[ %s ] %s' % (HighlightedMessage(msg.level), msg.message)
             self._write(message, stream=sys.__stderr__)
 
     def _write(self, message, newline=True, stream=sys.__stdout__):
@@ -90,7 +83,7 @@ class CommandLineMonitor:
         return utils.pad_console_length(info, maxwidth)
 
     def _write_status(self, status):
-        self._write(' | %s |' % self._highlight(status))
+        self._write(' | %s |' % HighlightedMessage(status))
 
     def _write_message(self, message):
         if message:
@@ -99,17 +92,28 @@ class CommandLineMonitor:
     def _write_separator(self, sep_char):
         self._write(sep_char * self._width)
 
-    def _highlight(self, text):
-        color = self._get_highlight_color(text)
+
+# ANSI colors
+ANSI_RED    = '\033[31m'
+ANSI_GREEN  = '\033[32m'
+ANSI_YELLOW = '\033[33m'
+ANSI_RESET  = '\033[0m'
+
+class HighlightedMessage:
+
+    def __init__(self, msg):
+        color = self._get_highlight_color(msg)
         reset = color != '' and ANSI_RESET or ''
-        return color + text + reset
+        self._msg = color + msg + reset
+
+    def __str__(self):
+        return self._msg
 
     def _get_highlight_color(self, text):
-        if self._colors:
-            if text in ['FAIL','ERROR']:
-                return ANSI_RED
-            elif text == 'WARN':
-                return ANSI_YELLOW
-            elif text == 'PASS':
-                return ANSI_GREEN
+        if text in ['FAIL','ERROR']:
+            return ANSI_RED
+        elif text == 'WARN':
+            return ANSI_YELLOW
+        elif text == 'PASS':
+            return ANSI_GREEN
         return ''
