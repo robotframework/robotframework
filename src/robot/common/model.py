@@ -219,7 +219,8 @@ class BaseTestSuite(_TestAndSuiteHelper):
                         if suite._filter_by_names(suites, tests) ]
         if not suites:
             self.tests = [ test for test in self.tests if tests == [] or
-                           utils.matches_any(test.name, tests, ignore=['_']) ]
+                           any(utils.matches_any(name, tests, ignore=['_']) 
+                               for name in [test.name, test.get_long_name()])]
         else:
             self.tests = []
         return self.suites or self.tests
