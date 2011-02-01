@@ -97,6 +97,10 @@ class TestArgumentParserParseArgs(unittest.TestCase):
     def setUp(self):
         self.ap = ArgumentParser(USAGE)
 
+    def test_missing_argument_file_throws_data_error(self):
+        inargs = '--argumentfile missing_argument_file_that_really_is_not_there.txt'.split()
+        self.assertRaises(DataError, self.ap.parse_args, inargs, argfile='argumentfile')
+
     def test_single_options(self):
         inargs = '-d reports --reportfile report.html -? arg'.split()
         exp_opts = {'reportdir':'reports', 'reportfile':'report.html',
