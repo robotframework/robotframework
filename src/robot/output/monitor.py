@@ -16,6 +16,7 @@
 import sys
 
 from robot import utils
+from robot.errors import FrameworkError
 
 from loggerhelper import IsLogged
 
@@ -58,8 +59,11 @@ class CommandLineMonitor:
     def message(self, msg):
         # called by LOGGER
         if self._is_logged(msg.level):
-            message = '[ %s ] %s' % (HighlightedMessage(msg.level), msg.message)
+            message = '[ %s ] %s' % (self._status_text(msg.level), msg.message)
             self._write(message, stream=sys.__stderr__)
+
+    def _status_text(self, text):
+        return StatusText(text, self._colors)
 
     def _write(self, message, newline=True, stream=sys.__stdout__):
         if newline:
@@ -83,7 +87,7 @@ class CommandLineMonitor:
         return utils.pad_console_length(info, maxwidth)
 
     def _write_status(self, status):
-        self._write(' | %s |' % HighlightedMessage(status))
+        self._write(' | %s |' % self._status_text(status))
 
     def _write_message(self, message):
         if message:
@@ -93,27 +97,37 @@ class CommandLineMonitor:
         self._write(sep_char * self._width)
 
 
-# ANSI colors
-ANSI_RED    = '\033[31m'
-ANSI_GREEN  = '\033[32m'
-ANSI_YELLOW = '\033[33m'
-ANSI_RESET  = '\033[0m'
+def StatusText(msg, colors=True):
+    if colors:
+        return HiglightedStatusText(msg)
+    return PlainStatusText(msg)
 
-class HighlightedMessage:
+
+class PlainStatusText:
 
     def __init__(self, msg):
-        color = self._get_highlight_color(msg)
-        reset = color != '' and ANSI_RESET or ''
-        self._msg = color + msg + reset
+        self._msg = msg
 
     def __str__(self):
         return self._msg
 
+
+class HiglightedStatusText(PlainStatusText):
+    ANSI_RED    = '\033[31m'
+    ANSI_GREEN  = '\033[32m'
+    ANSI_YELLOW = '\033[33m'
+    ANSI_RESET  = '\033[0m'
+
+    def __str__(self):
+        color = self._get_highlight_color(self._msg)
+        reset = color != '' and self.ANSI_RESET or ''
+        return color + self._msg + reset
+
     def _get_highlight_color(self, text):
         if text in ['FAIL','ERROR']:
-            return ANSI_RED
+            return self.ANSI_RED
         elif text == 'WARN':
-            return ANSI_YELLOW
+            return self.ANSI_YELLOW
         elif text == 'PASS':
-            return ANSI_GREEN
-        return ''
+            return self.ANSI_GREEN
+        raise FrameworkError
