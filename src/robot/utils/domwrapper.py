@@ -12,63 +12,24 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-import sys
-from StringIO import StringIO
-try:
-    import xml.etree.cElementTree as ET
-except ImportError:
-    try:
-        import cElementTree as ET
-    except ImportError:
-        try:
-            import xml.etree.ElementTree as ET
-            # Raises ImportError due to missing expat on IronPython by default
-            ET.parse(StringIO('<test/>'))
-        except ImportError:
-            try:
-                import elementtree.ElementTree as ET
-            except ImportError:
-                raise ImportError('No valid ElementTree XML parser module found')
+import etreewrapper
 
 
 class DomWrapper(object):
-    
+
     def __init__(self, path=None, string=None, node=None):
         """Initialize by giving 'path' to an xml file or xml as a 'string'.
-        
+
         Alternative initialization by giving dom 'node' ment to be used only
         internally. 'path' may actually also be an already opened file object
         (or anything accepted by ElementTree.parse).
         """
-        node = self._get_node(path, string, node)
+        node = etreewrapper.get_root(path, string, node)
         self.source = path
         self.name = node.tag
         self.attrs = dict(node.items())
         self.text = node.text or ''
         self.children = [DomWrapper(path, node=child) for child in list(node)]
-
-    def _get_node(self, path, string, node):
-        # This should NOT be changed to 'if not node:'. See chapter Truth Testing
-        # from http://effbot.org/zone/element.htm#the-element-type 
-        if node is not None:
-            return node
-        source = self._get_source(path, string)
-        try:
-            return ET.parse(source).getroot()
-        finally:
-            if hasattr(source, 'close'):
-                source.close()
-
-    def _get_source(self, path, string):
-        if not path:
-            return StringIO(string)
-        # ElementTree 1.2.7 preview (first ET with IronPython support) doesn't
-        # handler non-ASCII chars correctly if an open file given to it.
-        if sys.platform == 'cli':
-            return path
-        # ET.parse doesn't close files it opens, which causes serious problems
-        # with Jython 2.5(.1) on Windows: http://bugs.jython.org/issue1598
-        return open(path, 'rb')
 
     def get_nodes(self, path):
         """Returns a list of descendants matching given 'path'.
