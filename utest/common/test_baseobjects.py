@@ -117,7 +117,9 @@ class TestFilterByNames(unittest.TestCase):
                               (['t*'], 5),
                               (['??1'], 2),
                               (['T11','T12'], 2),
-                              (['Nonex','T21','Nonex2'], 1) ]:
+                              (['Nonex','T21','Nonex2'], 1),
+                              (['Root.Sub1.Sub11.Sub.T'], 1),
+                              (['Root.Sub1.Sub.T'], 1) ]:
             suite = _get_suite()
             suite.filter_by_names([], names)
             assert_equals(suite.get_test_count(), count)
