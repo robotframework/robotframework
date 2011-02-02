@@ -74,13 +74,15 @@ class SuiteRunErrors(object):
                 return True
         return False
 
-    def suite_init_err(self, err):
-        self._current_init_err = err
+    def suite_init_err(self, error_message):
+        self._current_init_err = error_message
 
     def setup_executed(self):
         self._current_suite_setup_executed = True
 
     def suite_setup_err(self, err):
+        if err.exit:
+            self._exit_fatal = True
         self._current_setup_err = unicode(err)
 
     def suite_error(self):

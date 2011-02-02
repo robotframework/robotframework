@@ -27,6 +27,26 @@ Skip Imports On Exit
     Previous test should have passed  Multiple Suite Aware Exiting
     Should be empty  ${ERRORS.messages}
 
+Multiple Suite Aware Exiting From Suite Setup
+    Run Tests  ${EMPTY}  running/fatal_exception_suite_setup/
+    Check Test Case  Test That Should Not Be Run 1
+    ${ts1} =  Get Test Suite  Suite Setup
+    Should End With  ${ts1.teardown.msgs[0].message}  Tearing down 1
+    Check Test Case  Test That Should Not Be Run 2.1
+    Check Test Case  Test That Should Not Be Run 2.2
+    ${ts2} =  Get Test Suite  Irrelevant
+    Should Be Equal  ${ts2.teardown}  ${None}
+
+Multiple Suite Aware Exiting From Suite Setup With Skip Teardowns
+    Run Tests  --runmode SkipTeardownOnExit  running/fatal_exception_suite_setup/
+    Check Test Case  Test That Should Not Be Run 1
+    ${ts1} =  Get Test Suite  Suite Setup
+    Should Be Equal  ${ts1.teardown}  ${None}
+    Check Test Case  Test That Should Not Be Run 2.1
+    Check Test Case  Test That Should Not Be Run 2.2
+    ${ts2} =  Get Test Suite  Irrelevant
+    Should Be Equal  ${ts2.teardown}  ${None}
+
 Fatal Exception and Runmode Exit on Failure
     Run Tests  --runmode exitonfailure  running/fatal_exception/01__python_library_kw.txt
     Check Test Case  Test That Should Not Be Run 1  FAIL

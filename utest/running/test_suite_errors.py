@@ -1,6 +1,7 @@
 import unittest
 from robot.running.runerrors import SuiteRunErrors
 from robot.utils.asserts import assert_true, assert_false
+from robot.errors import ExecutionFailed
 
 
 class TestSuiteRunErrors(unittest.TestCase):
@@ -17,12 +18,12 @@ class TestSuiteRunErrors(unittest.TestCase):
         self._setup_and_teardown_disallowed()
 
     def test_teardown_executed_after_setup_errs(self):
-        self.errs.suite_setup_err('Terriblesness occured!')
+        self.errs.suite_setup_err(ExecutionFailed('Terriblesness occured!'))
         self.errs.setup_executed()
         assert_true(self.errs.is_suite_teardown_allowed())
 
     def test_higher_level_setup_err_prevents_all_lower_level_setups(self):
-        self.errs.suite_setup_err('Terriblesness occured!')
+        self.errs.suite_setup_err(ExecutionFailed('Terriblesness occured!'))
         self.errs.start_suite()
         self._setup_and_teardown_disallowed()
         self.errs.end_suite()
@@ -37,7 +38,7 @@ class TestSuiteRunErrors(unittest.TestCase):
 
     def test_sibling_errors_dont_affect_each_other(self):
         self.errs.start_suite()
-        self.errs.suite_setup_err('Terriblesness occured!')
+        self.errs.suite_setup_err(ExecutionFailed('Terriblesness occured!'))
         self.errs.start_suite()
         self._setup_and_teardown_disallowed()
         self.errs.end_suite()
@@ -55,7 +56,6 @@ class TestSuiteRunErrors(unittest.TestCase):
 
     def test_teardown_is_run_after_setup_called(self):
         self.errs.start_suite()
-        self.errs.suite_setup_err(None)
         self.errs.setup_executed()
         self.errs.test_failed(exit=True)
         assert_true(self.errs.is_suite_teardown_allowed())

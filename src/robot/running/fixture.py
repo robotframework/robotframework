@@ -64,7 +64,7 @@ class SuiteSetupListener(object):
     def __init__(self, suite):
         self._suite = suite
     def notify(self, error):
-        self._suite.run_errors.suite_setup_err(unicode(error))
+        self._suite.run_errors.suite_setup_err(error)
 
 
 class _TestListener(object):
