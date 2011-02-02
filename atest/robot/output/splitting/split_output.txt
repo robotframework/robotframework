@@ -110,7 +110,6 @@ Run Deeply Nested Suite With Given Split Level
 
 My Run Tests
     [Arguments]  ${args}  ${path}  ${status}=PASS
-    Remove File  ${OUTDIR}${/}${OUTBASE}*.xml
     Run Tests  ${args}  ${path}
     Should Be Equal  ${SUITE.status}  ${status}
     @{files} =  List Directory  ${OUTDIR}  ${OUTBASE}*.xml

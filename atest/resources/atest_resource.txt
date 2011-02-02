@@ -60,7 +60,7 @@ Run Rebot Without Processing Output
 
 Run Helper
     [Arguments]  ${runner}  ${options}  ${data string}
-    Remove File  ${OUTFILE}
+    Remove Files  ${OUTFILE}  ${OUTDIR}/*.xml  ${OUTDIR}/*.html
     ${cmd} =  Catenate  ${runner}  --monitorcolors OFF  --outputdir ${OUTDIR}  --output ${OUTFILE}  --report NONE  --log NONE
     ...  ${options}  ${data string}  1>${STDOUTFILE}  2>${STDERRFILE}
     ${rc} =  Run And Return RC  ${cmd}
