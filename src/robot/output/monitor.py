@@ -59,8 +59,7 @@ class CommandLineMonitor:
     def message(self, msg):
         # called by LOGGER
         if self._is_logged(msg.level):
-            message = '[ %s ] %s' % (self._status_text(msg.level), msg.message)
-            self._write(message, stream=sys.__stderr__)
+            self._status_text(msg.level).write_msg(msg.message)
 
     def _status_text(self, text):
         return StatusText(text, self._colors)
@@ -87,7 +86,7 @@ class CommandLineMonitor:
         return utils.pad_console_length(info, maxwidth)
 
     def _write_status(self, status):
-        self._write(' | %s |' % self._status_text(status))
+        self._status_text(status).write_status()
 
     def _write_message(self, message):
         if message:
@@ -110,6 +109,18 @@ class PlainStatusText:
 
     def __str__(self):
         return self._msg
+
+    def write_status(self, stream=sys.__stdout__):
+        self.write(' | %s |' % self, stream)
+
+    def write_msg(self, msg):
+        self.write('[ %s ] %s' % (self, msg), stream=sys.__stderr__)
+
+    def write(self, message, newline=True, stream=sys.__stdout__):
+        if newline:
+            message += '\n'
+        stream.write(utils.encode_output(message).replace('\t', ' '*8))
+        stream.flush()
 
 
 class HiglightedStatusText(PlainStatusText):
