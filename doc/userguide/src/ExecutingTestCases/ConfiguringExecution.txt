@@ -36,8 +36,13 @@ with matching names are selected.
   --test Example
   --test mytest --test yourtest
   --test example*
+  --test mysuite.mytest
+  --test *.suite.mytest
   --suite example-??
   --suite mysuite --test mytest --test your*
+
+.. note:: Selecting test cases using long name (e.g. :name:`mysuite.mytest`)
+          works with Robot Framework 2.5.6 and newer.
 
 Using the :opt:`--suite` option is more or less the same as executing only
 the appropriate test case file or directory. One major benefit is the
