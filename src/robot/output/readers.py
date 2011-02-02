@@ -46,7 +46,7 @@ def process_output(path, read_level=-1, log_level=None):
         raise DataError("Output file '%s' does not exist." % path)
     LOGGER.info("Processing output file '%s'." % path)
     try:
-        root = utils.DomWrapper(path)
+        root = utils.etreewrapper.get_root(path)
     except:
         err = utils.get_error_message()
         raise DataError("Opening XML file '%s' failed: %s" % (path, err))
@@ -55,54 +55,51 @@ def process_output(path, read_level=-1, log_level=None):
     return TestSuite(suite, read_level, log_level=log_level), ExecutionErrors(errors)
 
 def _get_suite_node(root, path):
-    if root.name != 'robot':
+    if root.tag != 'robot':
         raise DataError("File '%s' is not Robot Framework output file." % path)
-    node = root.get_node('suite')
-    node.generator = root.get_attr('generator', 'notset').split()[0].lower()
+    node = root.find('suite')
+    node.set('generator', root.get('generator', 'notset').split()[0].lower())
+    node.set('path', path)
     return node
 
 def _get_errors_node(root):
-    try:
-        try:
-            return root.get_node('errors')
-        except AttributeError:
-            return root.get_node('syslog') # Compatibility for RF 2.0.x outputs
-    except AttributeError:
-        return None
+    return root.find('errors')
 
 
 class _MissingStatus:
     """If XML was fixed for example by fixml.py, status tag may be missing"""
     text = 'Could not find status.'
-    get_attr = lambda self, name, default: name == 'status' and 'FAIL' or 'N/A'
+    get = lambda self, name, default: name == 'status' and 'FAIL' or 'N/A'
 
 
 class _BaseReader:
 
     def __init__(self, node):
-        try:
-            self.doc = node.get_node('doc').text
-        except AttributeError:
-            self.doc = ''
-        try:
-            status = node.get_node('status')
-        except AttributeError:
-            status = _MissingStatus()
-        self.status = status.get_attr('status','').upper()
+        self.doc = self._get_doc(node)
+        stnode = node.find('status')
+        if stnode is None:
+            stnode = _MissingStatus()
+        self.status = stnode.get('status','').upper()
         if self.status not in ['PASS','FAIL', 'NOT_RUN']:
             raise DataError("Item '%s' has invalid status '%s'"
-                            % (self.name, status))
-        self.message = status.text
-        self.starttime = status.get_attr('starttime', 'N/A')
-        self.endtime = status.get_attr('endtime', 'N/A')
+                            % (self.name, self.status))
+        self.message = stnode.text or ''
+        self.starttime = stnode.get('starttime', 'N/A')
+        self.endtime = stnode.get('endtime', 'N/A')
         self.elapsedtime = utils.get_elapsed_time(self.starttime, self.endtime)
+
+    def _get_doc(self, node):
+        docnode = node.find('doc')
+        if docnode is not None:
+            return docnode.text or ''
+        return ''
 
 
 class _TestAndSuiteReader(_BaseReader):
 
     def __init__(self, node, log_level=None):
         _BaseReader.__init__(self, node)
-        self.keywords = [Keyword(kw, log_level) for kw in node.get_nodes('kw')]
+        self.keywords = [Keyword(kw, log_level) for kw in node.findall('kw')]
         if self.keywords and self.keywords[0].type == 'setup':
             self.setup = self.keywords.pop(0)
         if self.keywords and self.keywords[-1].type == 'teardown':
@@ -114,19 +111,19 @@ class _SuiteReader(_TestAndSuiteReader):
     def __init__(self, node, log_level=None):
         _TestAndSuiteReader.__init__(self, node, log_level)
         del(self.keywords)
-        for metanode in node.get_nodes('metadata/item'):
-            self.metadata[metanode.get_attr('name')] = metanode.text
+        for metanode in node.findall('metadata/item'):
+            self.metadata[metanode.get('name')] = metanode.text
 
     def _get_texts(self, node, path):
-        return [item.text for item in node.get_nodes(path)]
+        return [item.text for item in node.findall(path)]
 
 
 class _TestReader(_TestAndSuiteReader):
 
     def __init__(self, node, log_level=None):
         _TestAndSuiteReader.__init__(self, node, log_level)
-        self.tags = [tag.text for tag in node.get_nodes('tags/tag')]
-        self.timeout = node.get_attr('timeout', '')
+        self.tags = [tag.text for tag in node.findall('tags/tag')]
+        self.timeout = node.get('timeout', '')
 
 
 class _KeywordReader(_BaseReader):
@@ -134,19 +131,19 @@ class _KeywordReader(_BaseReader):
     def __init__(self, node, log_level=None):
         _BaseReader.__init__(self, node)
         del(self.message)
-        self.args = [arg.text for arg in node.get_nodes('arguments/arg')]
-        self.type = node.get_attr('type', 'kw')
-        self.timeout = node.get_attr('timeout', '')
+        self.args = [(arg.text or '') for arg in node.findall('arguments/arg')]
+        self.type = node.get('type', 'kw')
+        self.timeout = node.get('timeout', '')
         self.keywords = []
         self.messages = []
         self.children = []
         log_filter = IsLogged(log_level or 'TRACE')
-        for child in node.children:
-            if child.name == 'kw':
+        for child in node:
+            if child.tag == 'kw':
                 kw = Keyword(child, log_level)
                 self.keywords.append(kw)
                 self.children.append(kw)
-            elif child.name == 'msg' and log_filter(child.get_attr('level', 'INFO')):
+            elif child.tag == 'msg' and log_filter(child.get('level', 'INFO')):
                 msg = MessageFromXml(child)
                 self.messages.append(msg)
                 self.children.append(msg)
@@ -156,29 +153,30 @@ class TestSuite(BaseTestSuite, _SuiteReader):
 
     def __init__(self, node, read_level=-1, level=1, parent=None, log_level=None):
         node = self._get_node(node, read_level, level)
-        BaseTestSuite.__init__(self, node.attrs.get('name'),
-                               node.attrs.get('source', None), parent)
+        BaseTestSuite.__init__(self, node.get('name'),
+                               node.get('source', None), parent)
         _SuiteReader.__init__(self, node, log_level=log_level)
-        for snode in node.get_nodes('suite'):
-            snode.generator = node.generator
+        for snode in node.findall('suite'):
+            snode.set('generator', node.get('generator'))
+            snode.set('path', node.get('path'))
             TestSuite(snode, read_level, level+1, parent=self, log_level=log_level)
-        for tnode in node.get_nodes('test'):
+        for tnode in node.findall('test'):
             TestCase(tnode, parent=self, log_level=log_level)
         self.set_status()
-        if node.generator == 'robot' and \
+        if node.get('generator') == 'robot' and \
                 self.teardown is not None and self.teardown.status == 'FAIL':
             self.suite_teardown_failed()
 
     def _get_node(self, orignode, read_level, level):
         if read_level > 0 and level > read_level:
             return orignode
-        try:
-            src = orignode.get_attr('src')
-        except AttributeError:
+        src = orignode.get('src')
+        if src is None:
             return orignode
-        path = os.path.join(os.path.dirname(orignode.source), src)
-        node = utils.DomWrapper(path).get_node('suite')
-        node.generator = orignode.generator
+        path = os.path.join(os.path.dirname(orignode.get('path')), src)
+        node = utils.etreewrapper.get_root(path).find('suite')
+        node.set('generator', orignode.get('generator'))
+        node.set('path', path)
         return node
 
     def set_status(self):
@@ -251,7 +249,7 @@ class CombinedTestSuite(TestSuite):
 class TestCase(BaseTestCase, _TestReader):
 
     def __init__(self, node, parent, log_level=None):
-        BaseTestCase.__init__(self, node.get_attr('name'), parent)
+        BaseTestCase.__init__(self, node.get('name'), parent)
         _TestReader.__init__(self, node, log_level=log_level)
         self.set_criticality(parent.critical)
 
@@ -266,7 +264,7 @@ class Keyword(BaseKeyword, _KeywordReader):
 
     def __init__(self, node, log_level=None):
         self._init_data()
-        BaseKeyword.__init__(self, node.get_attr('name'))
+        BaseKeyword.__init__(self, node.get('name'))
         _KeywordReader.__init__(self, node, log_level)
 
     def _init_data(self):
@@ -294,10 +292,10 @@ class MessageFromXml(Message):
 
     def __init__(self, node):
         Message.__init__(self, node.text,
-                         level=node.get_attr('level', 'INFO'),
-                         html=node.get_attr('html', 'no') == 'yes',
-                         timestamp=node.get_attr('timestamp', 'N/A'),
-                         linkable=node.get_attr('linkable', 'no') == 'yes')
+                         level=node.get('level', 'INFO'),
+                         html=node.get('html', 'no') == 'yes',
+                         timestamp=node.get('timestamp', 'N/A'),
+                         linkable=node.get('linkable', 'no') == 'yes')
 
     def serialize(self, serializer):
         serializer.message(self)
@@ -317,7 +315,7 @@ class ExecutionErrors:
         if node is None:
             self.messages = []
         else:
-            self.messages = [MessageFromXml(msg) for msg in node.get_nodes('msg')]
+            self.messages = [MessageFromXml(msg) for msg in node.findall('msg')]
 
     def serialize(self, serializer):
         serializer.start_errors(self)
