@@ -143,6 +143,19 @@ Statistics By Suite Table Should Contain Correct Links In Index Log
     Statistics Table Should Contain Link  ${name}.html  ${name}-012.html  Subsuites.Sub1  Misc.Suites.Subsuites.Sub1
     Statistics Table Should Contain Link  ${name}.html  ${EMPTY}  Misc.Unicode  Misc.Unicode
 
+Splitting output with criticality
+    @{files} =  My Run Tests  --splitoutputs 1 --noncritical FOO --log subsuites-log --report subsuites-report  output${/}splitting  FAIL
+    ${index} =  Log File  ${OUTDIR}/${LOGBASE}.html
+    Log Should Contain correct Statistics  ${index}  Splitting
+    ...  FAIL  1  0  1  2  0  2
+    ${log1} =  Log File  ${OUTDIR}/subsuites-log-001.html
+    Log Should Contain correct Statistics  ${log1}  Test
+    ...  FAIL  1  0  1  1  0  1
+    ${log2} =  Log File  ${OUTDIR}/subsuites-log-002.html
+    Log Should Contain correct Statistics  ${log2}  Test2
+    ...  PASS  0  0  0  1  0  1
+
+
 *** Keywords ***
 Run Nested Suite With Given Split Level
     [Arguments]  ${level}

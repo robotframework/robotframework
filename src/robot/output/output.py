@@ -77,7 +77,7 @@ class Output(AbstractLogger):
         if self._namegen is None:
             return
         logpath = self._namegen.get_prev()
-        output = robot.serializing.SplitSubTestOutput(outpath)
+        output = robot.serializing.SplitSubTestOutput(outpath, self._settings)
         output.serialize_log(logpath)
         suite.context.log_file_changed(self._namegen.get_base())
 

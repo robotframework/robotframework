@@ -206,8 +206,9 @@ class RebotTestOutput(RobotTestOutput):
 
 class SplitSubTestOutput(RobotTestOutput):
 
-    def __init__(self, path):
+    def __init__(self, path, settings):
         suite, exec_errors = process_output(path)
+        suite.set_critical_tags(settings['Critical'], settings['NonCritical'])
         RobotTestOutput.__init__(self, suite, exec_errors)
 
 
