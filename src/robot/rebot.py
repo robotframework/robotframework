@@ -48,11 +48,11 @@ Options:
                           spaces. Value can contain same HTML formatting as
                           --doc. Example: '--metadata version:1.2'
  -G --settag tag *        Sets given tag(s) to all executed test cases.
- -t --test name *         Select test cases by name. Name is case and space
-                          insensitive and it can also be a simple pattern where
-                          '*' matches anything and '?' matches any character.
-                          If using '*' and '?' in the console is problematic
-                          see --escape and --argumentfile.
+ -t --test name *         Select test cases to run by name or long name. Name
+                          is case and space insensitive and it can also be a
+                          simple pattern where '*' matches anything and '?'
+                          matches any char. If using '*' and '?' in the console
+                          is problematic see --escape and --argumentfile.
  -s --suite name *        Select test suites by name. When this option is used
                           with --test, --include or --exclude, only test cases
                           in matching suites and also matching other filtering
