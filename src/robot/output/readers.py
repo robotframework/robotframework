@@ -26,8 +26,9 @@ def process_outputs(paths, settings):
     if not paths:
         raise DataError('No output files given.')
     if len(paths) == 1:
-        return process_output(paths[0], log_level=settings['LogLevel'])
-    suite = CombinedTestSuite(settings['StartTime'], settings['EndTime'])
+        return process_output(paths[0], log_level=settings['LogLevel'],
+                              settings=settings)
+    suite = CombinedTestSuite(settings)
     exec_errors = CombinedExecutionErrors()
     for path in paths:
         subsuite, suberrors = process_output(path, log_level=settings['LogLevel'])
@@ -36,7 +37,7 @@ def process_outputs(paths, settings):
     return suite, exec_errors
 
 
-def process_output(path, read_level=-1, log_level=None):
+def process_output(path, read_level=-1, log_level=None, settings=None):
     """Process one output file and return TestSuite and ExecutionErrors
 
     'read_level' can be used to limit how many suite levels are read. This is
@@ -52,7 +53,8 @@ def process_output(path, read_level=-1, log_level=None):
         raise DataError("Opening XML file '%s' failed: %s" % (path, err))
     suite = _get_suite_node(root, path)
     errors = _get_errors_node(root)
-    return TestSuite(suite, read_level, log_level=log_level), ExecutionErrors(errors)
+    return TestSuite(suite, read_level, log_level=log_level, settings=settings),\
+                ExecutionErrors(errors)
 
 def _get_suite_node(root, path):
     if root.tag != 'robot':
@@ -151,11 +153,13 @@ class _KeywordReader(_BaseReader):
 
 class TestSuite(BaseTestSuite, _SuiteReader):
 
-    def __init__(self, node, read_level=-1, level=1, parent=None, log_level=None):
+    def __init__(self, node, read_level=-1, level=1, parent=None,
+                 log_level=None, settings=None):
         node = self._get_node(node, read_level, level)
         BaseTestSuite.__init__(self, node.get('name'),
                                node.get('source', None), parent)
         _SuiteReader.__init__(self, node, log_level=log_level)
+        self._set_times_from_settings(settings)
         for snode in node.findall('suite'):
             snode.set('generator', node.get('generator'))
             snode.set('path', node.get('path'))
@@ -178,6 +182,34 @@ class TestSuite(BaseTestSuite, _SuiteReader):
         node.set('generator', orignode.get('generator'))
         node.set('path', path)
         return node
+
+    def _set_times_from_settings(self, settings):
+        starttime, endtime = self._times_from_settings(settings)
+        if not self.starttime or starttime != 'N/A':
+            self.starttime = starttime
+        if not self.endtime or endtime != 'N/A':
+            self.endtime = endtime
+        self.elapsedtime = utils.get_elapsed_time(self.starttime, self.endtime)
+
+    def _times_from_settings(self, settings):
+        try:
+            return (self._get_time(settings['StartTime']),
+                    self._get_time(settings['EndTime']))
+        except (KeyError, TypeError):
+            # We end up here if the settings do not contain StartTime/Endtime
+            # (i.e. if pybot, not rebot, is executed) or if the API is used
+            # from outside, in which case settings is None.
+            return 'N/A', 'N/A'
+
+    def _get_time(self, timestamp):
+        if not timestamp or utils.eq(timestamp, 'N/A'):
+            return 'N/A'
+        try:
+            seps = (' ', ':', '.', '-', '_')
+            secs = utils.timestamp_to_secs(timestamp, seps, millis=True)
+        except DataError:
+            return 'N/A'
+        return utils.secs_to_timestamp(secs, millis=True)
 
     def set_status(self):
         BaseTestSuite.set_status(self)
@@ -221,21 +253,10 @@ class TestSuite(BaseTestSuite, _SuiteReader):
 
 class CombinedTestSuite(TestSuite):
 
-    def __init__(self, starttime, endtime):
+    def __init__(self, settings):
         BaseTestSuite.__init__(self, name='')
-        self.starttime = self._get_time(starttime)
-        self.endtime = self._get_time(endtime)
-        self.elapsedtime = utils.get_elapsed_time(self.starttime, self.endtime)
-
-    def _get_time(self, timestamp):
-        if utils.eq(timestamp, 'N/A'):
-            return 'N/A'
-        try:
-            seps = (' ', ':', '.', '-', '_')
-            secs = utils.timestamp_to_secs(timestamp, seps, millis=True)
-        except DataError:
-            return 'N/A'
-        return utils.secs_to_timestamp(secs, millis=True)
+        self.starttime = self.endtime = None
+        self._set_times_from_settings(settings)
 
     def add_suite(self, suite):
         self.suites.append(suite)
