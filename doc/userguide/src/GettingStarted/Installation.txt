@@ -321,7 +321,7 @@ Python installer on Windows does not create
 created during Robot Framework installation.
 
 .. Note:: Environment variable :var:`PYTHONCASEOK` should not be set on
-          Windows machines. Robotframework will not work correctly with 
+          Windows machines. Robot Framework will not work correctly with 
           this environment variable.
 
 Verifying installation
