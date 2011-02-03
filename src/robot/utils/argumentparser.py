@@ -12,7 +12,7 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-
+from __future__ import with_statement
 import getopt     # optparse not supported by Jython 2.2
 import os
 import re
@@ -28,17 +28,16 @@ from misc import plural_or_not
 from unic import unic
 
 
-ESCAPES = { 'space'   : ' ', 'apos'    : "'", 'quot'    : '"', 'lt'      : '<',
-            'gt'      : '>', 'pipe'    : '|', 'star'    : '*', 'comma'   : ',',
-            'slash'   : '/', 'semic'   : ';', 'colon'   : ':', 'quest'   : '?',
-            'hash'    : '#', 'amp'     : '&', 'dollar'  : '$', 'percent' : '%',
-            'at'      : '@', 'exclam'  : '!', 'paren1'  : '(', 'paren2'  : ')',
-            'square1' : '[', 'square2' : ']', 'curly1'  : '{', 'curly2'  : '}',
-            'bslash'  : '\\' }
+ESCAPES = dict(
+    space   = ' ', apos    = "'", quot   = '"', lt     = '<', gt     = '>',
+    pipe    = '|', star    = '*', comma  = ',', slash  = '/', semic  = ';',
+    colon   = ':', quest   = '?', hash   = '#', amp    = '&', dollar = '$',
+    percent = '%', at      = '@', exclam = '!', paren1 = '(', paren2 = ')',
+    square1 = '[', square2 = ']', curly1 = '{', curly2 = '}', bslash = '\\'
+)
 
 
 class ArgumentParser:
-
     _opt_line_re = re.compile('''
     ^\s{,4}       # max 4 spaces in the beginning of the line
     ((-\S\s)*)    # all possible short options incl. spaces (group 1)
@@ -46,7 +45,6 @@ class ArgumentParser:
     (\s\S+)?      # optional value (group 4)
     (\s\*)?       # optional '*' telling option allowed multiple times (group 5)
     ''', re.VERBOSE)
-
     _usage_line_re = re.compile('''
     ^usage:.*
     \[options\]\s*
@@ -128,7 +126,7 @@ class ArgumentParser:
 
         Possible errors in processing arguments are reported using DataError.
         """
-        args_list = [ self._decode_from_file_system(a) for a in args_list ]
+        args_list = [self._decode_from_file_system(a) for a in args_list]
         if argfile:
             args_list = self._add_args_from_file(args_list, argfile)
         opts, args = self._parse_args(args_list)
@@ -153,7 +151,7 @@ class ArgumentParser:
         return unic(arg, encoding) if encoding else unic(arg)
 
     def _parse_args(self, args):
-        args = [ self._lowercase_long_option(a) for a in args ]
+        args = [self._lowercase_long_option(a) for a in args]
         try:
             opts, args = getopt.getopt(args, self._short_opts, self._long_opts)
         except getopt.GetoptError, err:
@@ -192,7 +190,7 @@ class ArgumentParser:
         for name, value in opts.items():
             if name != escape_opt:
                 opts[name] = self._unescape(value, escapes)
-        args = [ self._unescape(arg, escapes) for arg in args ]
+        args = [self._unescape(arg, escapes) for arg in args]
         return opts, args
 
     def _add_args_from_file(self, args, argfile_opt):
@@ -216,30 +214,28 @@ class ArgumentParser:
         raise IndexError
 
     def _get_args_from_file(self, path):
+        return self._process_argfile(self._read_argfile(path))
+
+    def _read_argfile(self, path):
+        try:
+            with codecs.open(path, encoding='UTF-8') as f:
+                content = f.read()
+        except (IOError, UnicodeError), err:
+            raise DataError("Opening argument file '%s' failed: %s"
+                            % (path, err))
+        if content.startswith(codecs.BOM_UTF8.decode('UTF-8')):
+            content = content[1:]
+        return content
+
+    def _process_argfile(self, content):
         args = []
-        for line in self._read_argfile(path).splitlines():
+        for line in content.splitlines():
             line = line.strip()
             if line.startswith('-'):
                 args.extend(line.split(' ', 1))
             elif line and not line.startswith('#'):
                 args.append(line)
         return args
-    
-    def _read_argfile(self, path):
-        try:
-            f = codecs.open(path, encoding='UTF-8')
-            content = f.read()
-        except (IOError, UnicodeError), err:
-            raise DataError("Opening argument file '%s' failed: %s" % (path, err))
-        finally:
-            try:
-                f.close()
-            except UnboundLocalError:
-                #Ignored - happens only if some exception has already happened
-                pass
-        if content.startswith(codecs.BOM_UTF8.decode('UTF-8')):
-            content = content[1:]
-        return content
 
     def _get_escapes(self, escape_strings):
         escapes = {}
@@ -247,8 +243,8 @@ class ArgumentParser:
             try:
                 name, value = estr.split(':', 1)
             except ValueError:
-                raise DataError("Invalid escape string syntax '%s'. Expected: %s"
-                                % (estr, 'what:with'))
+                raise DataError("Invalid escape string syntax '%s'. "
+                                "Expected: what:with" % estr)
             try:
                 escapes[value] = ESCAPES[name.lower()]
             except KeyError:
@@ -260,7 +256,7 @@ class ArgumentParser:
         if value in [None, True, False]:
             return value
         if isinstance(value, list):
-            return [ self._unescape(item, escapes) for item in value ]
+            return [self._unescape(item, escapes) for item in value]
         for esc_name, esc_value in escapes.items():
             value = value.replace(esc_name, esc_value)
         return value
