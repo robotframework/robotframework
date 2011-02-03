@@ -104,8 +104,8 @@ Command line options for post-processing outputs
                           table in outputs.
   --removekeywords <all|passed>  `Removes keyword data`_ from the generated outputs. 
   --starttime <timestamp>  Sets the `starting time`_ of test execution when creating
-                          combined reports.
-  --endtime <timestamp>   Sets the `ending time`_ of test execution when creating combined reports.
+                          reports.
+  --endtime <timestamp>   Sets the `ending time`_ of test execution when creating reports.
   -E, --escape <what:with>  `Escapes characters`_ that are problematic in the console.
   -A, --argumentfile <path>   A text file to `read more arguments`_ from.
   -h, --help              Prints `usage instructions`_.
@@ -153,5 +153,5 @@ Command line options for post-processing outputs
 .. _version information: `usage instructions`_
 
 .. _Removes keyword data: `Removing keywords from outputs`_
-.. _starting time: `Setting times for combined outputs`_
+.. _starting time: `Setting times for outputs`_
 .. _ending time: `starting time`_

@@ -577,16 +577,20 @@ Additional options for post-processing outputs
 These options are available only when `post-processing outputs`_ with
 :prog:`rebot`.
 
-Setting times for combined outputs
-''''''''''''''''''''''''''''''''''
+Setting times for outputs
+'''''''''''''''''''''''''
 
-When `combining outputs`_, it is possible to set the start and end
-time of the combined test suite using the options
-:opt:`--starttime` and :opt:`--endtime`, respectively. This is
-convenient, because by default, combined suites do not have these
-values. When both the start and end time are given, the elapsed time
-is also calculated based on them. Otherwise the elapsed time is got by
-adding the elapsed times of the child test suites together.
+When `combining outputs`_, it is possible to set the start and end time of the
+combined test suite using the options :opt:`--starttime` and :opt:`--endtime`,
+respectively. This is convenient, because by default, combined suites do not
+have these values. When both the start and end time are given, the elapsed time
+is also calculated based on them. Otherwise the elapsed time is got by adding
+the elapsed times of the child test suites together.
+
+Starting from Robot Framework 2.5.6, it is also possible to use the above
+mentioned options to set start and end times for a single suite when using
+:prog:`rebot`.  Using these options with a single output always affects the
+elapsed time of the suite.
 
 Times must be given as timestamps in the format :code:`YYYY-MM-DD
 hh:mm:ss.mil`, where all separators are optional and the parts from
@@ -598,6 +602,7 @@ Examples::
 
    rebot --starttime 20080611-17:59:20.495 output1.xml output2.xml
    rebot --starttime 20080611-175920 --endtime 20080611-180242 *.xml
+   rebot --starttime 20110302-1317 --endtime 20110302-11418 myoutput.xml
 
 Removing keywords from outputs
 ''''''''''''''''''''''''''''''
