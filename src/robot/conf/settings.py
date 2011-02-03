@@ -196,18 +196,18 @@ class RobotSettings(_BaseSettings):
                         'RunMode'       : ('runmode', []),
                         'WarnOnSkipped' : ('warnonskippedfiles', False),
                         'Variables'     : ('variable', []),
-                        'VariableFiles' : ('variablefile', []), 
-                        'Listeners'     : ('listener', []), 
+                        'VariableFiles' : ('variablefile', []),
+                        'Listeners'     : ('listener', []),
                         'DebugFile'     : ('debugfile', 'NONE'),}
     _optional_outputs = ['Log', 'Report', 'Summary', 'DebugFile', 'XUnitFile']
-    
+
     def is_rebot_needed(self):
         return not ('NONE' == self['Log'] == self['Report'] == self['Summary'] == self['XUnitFile'])
 
     def get_rebot_datasources_and_settings(self):
         datasources = [ self['Output'] ]
         settings = RebotSettings(log=False)
-        settings._opts = self._opts.copy()
+        settings._opts.update(self._opts)
         for name in ['Variables', 'VariableFiles', 'Listeners']:
             del(settings._opts[name])
         for name in ['Include', 'Exclude', 'TestNames', 'SuiteNames', 'Metadata']:

@@ -192,14 +192,10 @@ class TestSuite(BaseTestSuite, _SuiteReader):
         self.elapsedtime = utils.get_elapsed_time(self.starttime, self.endtime)
 
     def _times_from_settings(self, settings):
-        try:
-            return (self._get_time(settings['StartTime']),
-                    self._get_time(settings['EndTime']))
-        except (KeyError, TypeError):
-            # We end up here if the settings do not contain StartTime/Endtime
-            # (i.e. if pybot, not rebot, is executed) or if the API is used
-            # from outside, in which case settings is None.
+        if not settings:
             return 'N/A', 'N/A'
+        return (self._get_time(settings['StartTime']),
+                self._get_time(settings['EndTime']))
 
     def _get_time(self, timestamp):
         if not timestamp or utils.eq(timestamp, 'N/A'):
