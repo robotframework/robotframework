@@ -167,16 +167,19 @@ Options:
                           'passed' - remove data only from keywords in passed
                                      test cases and suites
     --starttime timestamp  Set starting time of test execution when creating
-                          combined reports. Timestamp must be given in format
+                          reports. Timestamp must be given in format
                           '2007-10-01 15:12:42.268' where all separators are
                           optional (e.g. '20071001151242268' is ok too) and
                           parts from milliseconds to hours can be omitted if
-                          they are zero (e.g. '2007-10-01'). If this option is
-                          not used, start time of combined reports is 'N/A'.
+                          they are zero (e.g. '2007-10-01'). This can be used
+                          to override starttime of the suite when reports are
+                          created from a single suite or to set starttime for
+                          combined suite, which is otherwise set to 'N/A'.
     --endtime timestamp   Same as --starttime but for ending time. If both
-                          options are used, elapsed time is calculated based on
-                          them. Otherwise it is calculated by adding elapsed
-                          times of combined test suites together.
+                          options are used, elapsed time of the suite is
+                          calculated based on them. For combined suites,
+                          it is otherwise calculated by adding elapsed times
+                          of combined test suites together.
  -C --monitorcolors on|off|force  Using ANSI colors in console. Normally colors
                           work in unixes but not in Windows. Default is 'on'.
                           'on'    - use colors in unixes but not in Windows
