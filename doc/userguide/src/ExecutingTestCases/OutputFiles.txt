@@ -577,8 +577,8 @@ Additional options for post-processing outputs
 These options are available only when `post-processing outputs`_ with
 :prog:`rebot`.
 
-Setting times for outputs
-'''''''''''''''''''''''''
+Setting start and end time of execution
+'''''''''''''''''''''''''''''''''''''''
 
 When `combining outputs`_, it is possible to set the start and end time of the
 combined test suite using the options :opt:`--starttime` and :opt:`--endtime`,
