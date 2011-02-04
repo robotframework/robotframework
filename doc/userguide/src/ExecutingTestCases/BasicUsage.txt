@@ -365,6 +365,14 @@ option multiple times or even recursively::
 
 __ `Specifying test data to be executed`_
 
+Special value :opt:`STDIN` can be used to read arguments from stdin
+instead of a file. This can be useful when generating options for Robot with a 
+script::
+
+   generate_arguments.sh | pybot --argumentfile STDIN mytest.txt
+
+This is a new feature in Robot Framework 2.5.6.
+
 Getting help and version information
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
