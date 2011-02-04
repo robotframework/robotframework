@@ -1,0 +1,52 @@
+*** Settings ***
+Test Setup  Log  Default Setup
+Test Teardown  Log  Default Teardown
+Test Template  Log
+Test Timeout   100 ms
+Default Tags   d1  d2
+
+*** Test Cases ***
+Overriding Test Setup
+    [Setup]  NONE
+    ${TEST NAME}
+
+Overriding Test Setup from Command Line
+    [Setup]  ${CONFIG}
+    ${TEST NAME}
+
+Overriding Test Teardown
+    [Teardown]  NONE
+    ${TEST NAME}
+
+Overriding Test Teardown from Command Line
+    [Teardown]  ${CONFIG}
+    ${TEST NAME}
+
+Overriding Test Template
+    [Template]  NONE
+    No Operation
+
+Overriding Test Timeout
+    [Timeout]  NONE
+    [Template]  NONE
+    Sleep  300ms
+
+Overriding Test Timeout from Command Line
+    [Timeout]  ${CONFIG}
+    [Template]  NONE
+    Sleep  300ms
+
+Overriding Default Tags
+    [Tags]  NONE
+    ${TEST NAME}
+
+Overriding Default Tags from Command Line
+    [Tags]  ${CONFIG}
+    ${TEST NAME}
+
+Overriding Is Case Insensitive
+    [Setup]     none
+    [Teardown]  NoNe
+    [Template]  nonE
+    [Tags]      NONe
+    No Operation
