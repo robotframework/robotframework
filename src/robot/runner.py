@@ -223,11 +223,10 @@ Options:
                           files. By default skipped files only cause an info 
                           level log message.
  -W --monitorwidth chars  Width of the monitor output. Default is 78.
- -C --monitorcolors on|off|force  Using ANSI colors in console. Normally colors
-                          work in unixes but not in Windows. Default is 'on'.
-                          'on'    - use colors in unixes but not in Windows
-                          'off'   - never use colors
-                          'force' - always use colors (also in Windows)
+ -C --monitorcolors auto|on|off  Use colors on console output or not.
+                          auto: use colors when output not redirected (default)
+                          on: always use colors
+                          off: never use colors
  -P --pythonpath path *   Additional locations (directories, ZIPs, JARs) where
                           to search test libraries from when they are imported.
                           Multiple paths can be given by separating them with a

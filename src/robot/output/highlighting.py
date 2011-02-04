@@ -32,18 +32,23 @@ class Highlighter:
         self._current = self._highlighters[stream]
         if not self._current:
             return
-        {'PASS': self._current.green, 'FAIL': self._current.red,
-         'ERROR': self._current.red, 'WARN': self._current.yellow}[message]()
+        {'PASS': self._current.green,
+         'FAIL': self._current.red,
+         'ERROR': self._current.red,
+         'WARN': self._current.yellow}[message]()
 
     def end(self):
         if self._current:
             self._current.reset()
 
     def _get_highlighter(self, stream, colors):
-        if not colors:
+        enable = {'ON': True,
+                  'FORCE': True,   # compatibility with 2.5.5 and earlier
+                  'OFF': False,
+                  'AUTO': stream.isatty()}.get(colors.upper(), True)
+        if not enable:
             return None
-        HL = UnixHiglighter if os.sep == '/' else DosHiglighter
-        return HL(stream)
+        return (UnixHiglighter if os.sep == '/' else DosHiglighter)(stream)
 
 
 class UnixHiglighter:

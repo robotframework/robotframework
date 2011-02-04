@@ -66,13 +66,11 @@ class Logger(AbstractLogger):
         for log in loggers:
             self._loggers.unregister_logger(log)
 
-    def register_console_logger(self, width=78, colors=True):
+    def register_console_logger(self, width=78, colors='AUTO'):
         self.disable_automatic_console_logger()
         self._register_console_logger(width, colors)
 
-    def _register_console_logger(self, width=78, colors=None):
-        if colors is None:
-            colors = os.sep == '/'
+    def _register_console_logger(self, width=78, colors='AUTO'):
         monitor = CommandLineMonitor(width, colors)
         self._loggers.register_regular_logger(monitor)
 

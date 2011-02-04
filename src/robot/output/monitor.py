@@ -21,7 +21,7 @@ from loggerhelper import IsLogged
 
 class CommandLineMonitor:
 
-    def __init__(self, width=78, colors=True):
+    def __init__(self, width=78, colors='AUTO'):
         self._width = width
         self._highlighter = Highlighter(colors)
         self._running_suites = 0

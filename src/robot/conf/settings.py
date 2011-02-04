@@ -48,7 +48,7 @@ class _BaseSettings:
                   'TagDoc'           : ('tagdoc', []),
                   'TagStatLink'      : ('tagstatlink', []),
                   'MonitorWidth'     : ('monitorwidth', 78),
-                  'MonitorColors'    : ('monitorcolors', 'ON') }
+                  'MonitorColors'    : ('monitorcolors', 'AUTO') }
     _deprecated = {}
 
     def __init__(self, options={}, log=True):
@@ -105,9 +105,6 @@ class _BaseSettings:
             return self._process_tag_stat_link(value)
         if name == 'RemoveKeywords':
             return value.upper()
-        if name == 'MonitorColors':
-            return (utils.eq(value, 'ON') and os.sep == '/') \
-                or utils.eq(value, 'FORCE')
         return value
 
     def __getitem__(self, name):
