@@ -103,7 +103,8 @@ class ArgumentParser:
         the argument file. Typical usage is '--argumentfile path *' in usage doc
         and calling this method with 'argfile="argumentfile"'. If 'argfile' is
         used, it can always be given multiple times and thus it is recommended
-        to use '*' to denote that.
+        to use '*' to denote that. Special value 'stdin' can be used to read
+        arguments from stdin instead of a file.
 
         'pythonpath' can be used to specify option(s) containing extra paths to
         be added into 'sys.path'. Value can be either a string containing the
