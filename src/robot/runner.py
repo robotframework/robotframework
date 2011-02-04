@@ -247,17 +247,21 @@ Options:
                           Examples:
                           --escape space:_ --metadata X:Value_with_spaces
                           -E space:SP -E quot:Q -v var:QhelloSPworldQ
- -A --argumentfile path *  Text file to read more arguments from. File can have
-                          both options and data sources one per line. Contents
-                          do not need to be escaped but spaces in the beginning
-                          and end of lines are removed. Empty lines and lines
-                          starting with a hash character (#) are ignored.
+ -A --argumentfile path *  Text file to read more arguments from. Use special
+                          path 'STDIN' to read contents from the standard input
+                          stream. File can have both options and data sources
+                          one per line. Contents do not need to be escaped but
+                          spaces in the beginning and end of lines are removed.
+                          Empty lines and lines starting with a hash character
+                          (#) are ignored.
                           Example file:
                           |  --include regression
                           |  --name Regression Tests
                           |  # This is a comment line
                           |  my_tests.html
                           |  path/to/test/directory/
+                          Examples:
+                          --argumentfile argfile.txt --argumentfile STDIN
  -h -? --help             Print usage instructions.
  --version                Print version information.
 
