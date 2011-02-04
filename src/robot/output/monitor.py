@@ -16,7 +16,7 @@ import os
 import sys
 
 from robot import utils
-from robot.output.statustext import NoHiglighting, Higlighting
+from robot.output.highlighting import NoHiglighting, Higlighting
 from loggerhelper import IsLogged
 
 
@@ -24,7 +24,7 @@ def HighlightingFor(stream, msg, colors):
     if not colors:
         return NoHiglighting()
     if os.sep == '\\':
-        from dosstatustext import DosHiglighting
+        from doshighlighting import DosHiglighting
         return DosHiglighting(msg)
     return Higlighting(msg)
 
