@@ -16,17 +16,17 @@ import os
 import sys
 
 from robot import utils
-from robot.output.statustext import PlainStatusText, HiglightedStatusText
+from robot.output.statustext import NoHiglighting, Higlighting
 from loggerhelper import IsLogged
 
 
-def StatusText(msg, colors=True):
+def HighlightingFor(stream, msg, colors):
     if not colors:
-        return PlainStatusText(msg)
-    if not os.sep == '\\':
-        return HiglightedStatusText(msg)
-    from dosstatustext import DosHiglightedStatusText
-    return DosHiglightedStatusText(msg)
+        return NoHiglighting()
+    if os.sep == '\\':
+        from dosstatustext import DosHiglighting
+        return DosHiglighting(msg)
+    return Higlighting(msg)
 
 
 class CommandLineMonitor:
@@ -59,25 +59,6 @@ class CommandLineMonitor:
         self._write_message(test.message)
         self._write_separator('-')
 
-    def output_file(self, name, path):
-        # called by LOGGER
-        if not self._running_suites:  # ignore split output files
-            self._write('%s %s' % ((name+':').ljust(8), path))
-
-    def message(self, msg):
-        # called by LOGGER
-        if self._is_logged(msg.level):
-            self._status_text(msg.level).write_message(msg.message)
-
-    def _status_text(self, text):
-        return StatusText(text, self._colors)
-
-    def _write(self, message, newline=True, stream=sys.__stdout__):
-        if newline:
-            message += '\n'
-        stream.write(utils.encode_output(message).replace('\t', ' '*8))
-        stream.flush()
-
     def _write_info(self, name, doc, start_suite=False):
         maxwidth = self._width
         if not start_suite:
@@ -94,11 +75,39 @@ class CommandLineMonitor:
         return utils.pad_console_length(info, maxwidth)
 
     def _write_status(self, status):
-        self._status_text(status).write_status()
+        self._write_with_highlighting(status, ' |', '|')
+        self._write('')
+
+    def _write_separator(self, sep_char):
+        self._write(sep_char * self._width)
+
+    def output_file(self, name, path):
+        # called by LOGGER
+        if not self._running_suites:  # ignore split output files
+            self._write('%s %s' % ((name+':').ljust(8), path))
+
+    def message(self, msg):
+        # called by LOGGER
+        if self._is_logged(msg.level):
+            self._write_message_with_level(msg)
+
+    def _write(self, message, newline=True, stream=sys.__stdout__):
+        if newline:
+            message += '\n'
+        stream.write(utils.encode_output(message).replace('\t', ' '*8))
+        stream.flush()
+
+    def _write_message_with_level(self, message):
+        self._write_with_highlighting(message.level, '[', '] ')
+        self._write(message.message, stream=sys.__stderr__)
+
+    def _write_with_highlighting(self, msg, start_sep, end_sep, stream=sys.__stdout__):
+        higlighter = HighlightingFor(stream, msg, self._colors)
+        self._write('%s ' % start_sep, newline=False)
+        self._write(higlighter.start(), newline=False)
+        self._write(msg, newline=False)
+        self._write('%s %s' % (higlighter.end(), end_sep), newline=False)
 
     def _write_message(self, message):
         if message:
             self._write(message.strip())
-
-    def _write_separator(self, sep_char):
-        self._write(sep_char * self._width)
