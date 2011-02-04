@@ -13,6 +13,7 @@
 #  limitations under the License.
 
 
+import sys
 from ctypes import windll, Structure, c_short, c_ushort, byref
 
 from robot import utils
@@ -46,23 +47,24 @@ class DosHiglighting:
     FOREGROUND_INTENSITY = 0x0008
     FOREGROUND_GREY = 0x0007
 
-    STD_OUTPUT_HANDLE = -11
-    STD_ERROR_HANDLE = -12
+    STDOUT_HANLDE = -11
+    STDERR_HANLDE = -12
 
     _highlight_colors = {'FAIL': FOREGROUND_RED,
                          'ERROR': FOREGROUND_RED,
                          'WARN': FOREGROUND_YELLOW,
                          'PASS': FOREGROUND_GREEN}
 
-    def __init__(self, msg):
+    def __init__(self, stream, msg):
+        self._out_handle = self.STDOUT_HANLDE if stream is sys.__stdout__ else self.STDERR_HANLDE
         self._msg = msg
 
     def _set_text_attr(self, color):
-        windll.kernel32.SetConsoleTextAttribute(windll.kernel32.GetStdHandle(self.STD_OUTPUT_HANDLE), color)
+        windll.kernel32.SetConsoleTextAttribute(windll.kernel32.GetStdHandle(self._out_handle), color)
 
     def _get_text_attr(self):
         csbi = CONSOLE_SCREEN_BUFFER_INFO()
-        windll.kernel32.GetConsoleScreenBufferInfo(self.STD_OUTPUT_HANDLE, byref(csbi))
+        windll.kernel32.GetConsoleScreenBufferInfo(self._out_handle, byref(csbi))
         return csbi.wAttributes
 
     def _write_encoded_with_tab_replacing(self, stream, message):
@@ -71,8 +73,6 @@ class DosHiglighting:
     def start(self):
         self._default_colors = self._get_text_attr()
         self._set_text_attr(self._highlight_colors[self._msg] | self.FOREGROUND_INTENSITY)
-        return ''
 
     def end(self):
         self._set_text_attr(self._default_colors | self.FOREGROUND_INTENSITY)
-        return ''

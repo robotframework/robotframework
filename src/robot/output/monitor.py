@@ -25,8 +25,8 @@ def HighlightingFor(stream, msg, colors):
         return NoHiglighting()
     if os.sep == '\\':
         from doshighlighting import DosHiglighting
-        return DosHiglighting(msg)
-    return Higlighting(msg)
+        return DosHiglighting(stream, msg)
+    return Higlighting(stream, msg)
 
 
 class CommandLineMonitor:
@@ -104,9 +104,10 @@ class CommandLineMonitor:
     def _write_with_highlighting(self, msg, start_sep, end_sep, stream=sys.__stdout__):
         higlighter = HighlightingFor(stream, msg, self._colors)
         self._write('%s ' % start_sep, newline=False, stream=stream)
-        self._write(higlighter.start(), newline=False, stream=stream)
+        higlighter.start()
         self._write(msg, newline=False, stream=stream)
-        self._write('%s %s' % (higlighter.end(), end_sep), newline=False, stream=stream)
+        higlighter.end()
+        self._write(' %s' % end_sep, newline=False, stream=stream)
 
     def _write_message(self, message):
         if message:

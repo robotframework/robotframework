@@ -13,8 +13,11 @@
 #  limitations under the License.
 
 
+from robot import utils
+
+
 class NoHiglighting:
-    start = end = lambda self: ''
+    start = end = lambda self: None
 
 
 class Higlighting:
@@ -28,11 +31,12 @@ class Higlighting:
                          'WARN': ANSI_YELLOW,
                          'PASS': ANSI_GREEN}
 
-    def __init__(self, msg):
+    def __init__(self, stream, msg):
+        self._stream = stream
         self._msg = msg
 
     def start(self):
-        return self._highlight_colors[self._msg]
+        self._stream.write(utils.encode_output(self._highlight_colors[self._msg]).replace('\t', ' '*8))
 
     def end(self):
-        return self.ANSI_RESET
+        self._stream.write(utils.encode_output(self.ANSI_RESET).replace('\t', ' '*8))
