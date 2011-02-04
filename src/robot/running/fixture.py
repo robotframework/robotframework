@@ -31,8 +31,9 @@ class _Fixture(object):
             except DataError, err:
                 errors.append('Replacing variables from %s failed: %s'
                               % (self.__class__.__name__, unicode(err)))
-            self._keyword = Keyword(self.name, self.args, 
-                                    type=type(self).__name__.lower())
+            if self.name.upper() != 'NONE':
+                self._keyword = Keyword(self.name, self.args,
+                                        type=type(self).__name__.lower())
 
     def run(self, context, error_listener):
         if self._keyword:

@@ -41,7 +41,7 @@ class _Timeout(object):
     def replace_variables(self, variables):
         try:
             self.string = variables.replace_string(self.string)
-            if not self.string:
+            if not self.string or self.string.upper() == 'NONE':
                 return
             self.secs = utils.timestr_to_secs(self.string)
             self.string = utils.secs_to_timestr(self.secs)

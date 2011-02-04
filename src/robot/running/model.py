@@ -83,9 +83,9 @@ class RunnableTestSuite(BaseTestSuite):
         self.metadata = self._get_metadata(data.setting_table.metadata)
         self.imports = data.imports
         self.user_keywords = UserLibrary(data.keywords)
-        self.setup = Setup(data.setting_table.suite_setup.name, 
+        self.setup = Setup(data.setting_table.suite_setup.name,
                            data.setting_table.suite_setup.args)
-        self.teardown = Teardown(data.setting_table.suite_teardown.name, 
+        self.teardown = Teardown(data.setting_table.suite_teardown.name,
                                  data.setting_table.suite_teardown.args)
         defaults = DefaultValues(data.setting_table, defaults)
         for suite in data.children:
@@ -103,7 +103,7 @@ class RunnableTestSuite(BaseTestSuite):
                 self.suites.remove(suite)
                 LOGGER.info("Running test suite '%s' failed: Test suite"
                             " contains no test cases." % (suite.source))
- 
+
     def _get_metadata(self, metadata):
         meta = utils.NormalizedDict()
         for item in metadata:
@@ -233,9 +233,8 @@ class RunnableTestCase(BaseTestCase):
                                                      errors)
         self.setup.replace_variables(context.get_current_vars(), errors)
         self.teardown.replace_variables(context.get_current_vars(), errors)
-        self.tags = utils.normalize_tags(context.replace_vars_from_setting('Tags',
-                                                                           self.tags,
-                                                                           errors))
+        tags = context.replace_vars_from_setting('Tags', self.tags, errors)
+        self.tags = utils.normalize_tags(t for t in tags if t.upper() != 'NONE')
         self.timeout.replace_variables(context.get_current_vars())
         if errors:
             return 'Test case initialization failed:\n%s' % '\n'.join(errors)
