@@ -224,7 +224,7 @@ Check Stdout Contains
 
 Check Stdout Does Not Contain
     [Arguments]  @{expected}
-    Check File Does Not Contain  ${STDERR_FILE}  @{expected}
+    Check File Does Not Contain  ${STDOUT_FILE}  @{expected}
 
 Check Stdout Matches Regexp
     [Arguments]  @{expected}
