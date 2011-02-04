@@ -98,15 +98,15 @@ class CommandLineMonitor:
         stream.flush()
 
     def _write_message_with_level(self, message):
-        self._write_with_highlighting(message.level, '[', '] ')
+        self._write_with_highlighting(message.level, '[', '] ', sys.__stderr__)
         self._write(message.message, stream=sys.__stderr__)
 
     def _write_with_highlighting(self, msg, start_sep, end_sep, stream=sys.__stdout__):
         higlighter = HighlightingFor(stream, msg, self._colors)
-        self._write('%s ' % start_sep, newline=False)
-        self._write(higlighter.start(), newline=False)
-        self._write(msg, newline=False)
-        self._write('%s %s' % (higlighter.end(), end_sep), newline=False)
+        self._write('%s ' % start_sep, newline=False, stream=stream)
+        self._write(higlighter.start(), newline=False, stream=stream)
+        self._write(msg, newline=False, stream=stream)
+        self._write('%s %s' % (higlighter.end(), end_sep), newline=False, stream=stream)
 
     def _write_message(self, message):
         if message:
