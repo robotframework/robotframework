@@ -12,28 +12,18 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-import os
 import sys
 
 from robot import utils
-from robot.output.highlighting import NoHiglighting, Higlighting
+from highlighting import Highlighter
 from loggerhelper import IsLogged
-
-
-def HighlightingFor(stream, msg, colors):
-    if not colors:
-        return NoHiglighting()
-    if os.sep == '\\':
-        from doshighlighting import DosHiglighting
-        return DosHiglighting(stream, msg)
-    return Higlighting(stream, msg)
 
 
 class CommandLineMonitor:
 
     def __init__(self, width=78, colors=True):
         self._width = width
-        self._colors = colors
+        self._highlighter = Highlighter(colors)
         self._running_suites = 0
         self._is_logged = IsLogged('WARN')
 
@@ -75,7 +65,7 @@ class CommandLineMonitor:
         return utils.pad_console_length(info, maxwidth)
 
     def _write_status(self, status):
-        self._write_with_highlighting(status, ' |', '|')
+        self._write_with_highlighting(' | ', status, ' |')
         self._write('')
 
     def _write_separator(self, sep_char):
@@ -89,7 +79,9 @@ class CommandLineMonitor:
     def message(self, msg):
         # called by LOGGER
         if self._is_logged(msg.level):
-            self._write_message_with_level(msg)
+            self._write_with_highlighting('[ ' , msg.level, ' ] ',
+                                          stream=sys.__stderr__)
+            self._write(msg.message, stream=sys.__stderr__)
 
     def _write(self, message, newline=True, stream=sys.__stdout__):
         if newline:
@@ -97,17 +89,13 @@ class CommandLineMonitor:
         stream.write(utils.encode_output(message).replace('\t', ' '*8))
         stream.flush()
 
-    def _write_message_with_level(self, message):
-        self._write_with_highlighting(message.level, '[', '] ', sys.__stderr__)
-        self._write(message.message, stream=sys.__stderr__)
-
-    def _write_with_highlighting(self, msg, start_sep, end_sep, stream=sys.__stdout__):
-        higlighter = HighlightingFor(stream, msg, self._colors)
-        self._write('%s ' % start_sep, newline=False, stream=stream)
-        higlighter.start()
-        self._write(msg, newline=False, stream=stream)
-        higlighter.end()
-        self._write(' %s' % end_sep, newline=False, stream=stream)
+    def _write_with_highlighting(self, before, highlighted, after,
+                                 stream=sys.__stdout__):
+        self._write(before, newline=False, stream=stream)
+        self._highlighter.start(highlighted, stream)
+        self._write(highlighted, newline=False, stream=stream)
+        self._highlighter.end()
+        self._write(after, newline=False, stream=stream)
 
     def _write_message(self, message):
         if message:

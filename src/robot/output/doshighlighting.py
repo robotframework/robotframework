@@ -12,67 +12,68 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+# Code adapted from color_console.py licensed under CC BY 3.0 and available at
+# http://www.burgaud.com/bring-colors-to-the-windows-console-with-python/
 
 import sys
 from ctypes import windll, Structure, c_short, c_ushort, byref
 
-from robot import utils
+
+class _COORD(Structure):
+    _fields_ = [("X", c_short),
+                ("Y", c_short)]
+
+class _SMALL_RECT(Structure):
+    _fields_ = [("Left", c_short),
+                ("Top", c_short),
+                ("Right", c_short),
+                ("Bottom", c_short)]
+
+class _CONSOLE_SCREEN_BUFFER_INFO(Structure):
+    _fields_ = [("dwSize", _COORD),
+                ("dwCursorPosition", _COORD),
+                ("wAttributes", c_ushort),
+                ("srWindow", _SMALL_RECT),
+                ("dwMaximumWindowSize", _COORD)]
 
 
-class COORD(Structure):
-  _fields_ = [
-    ("X", c_short),
-    ("Y", c_short)]
+class DosHiglighter:
+    _FOREGROUND_GREEN = 0x2
+    _FOREGROUND_RED = 0x4
+    _FOREGROUND_YELLOW = 0x6
+    _FOREGROUND_GREY = 0x7
+    _FOREGROUND_INTENSITY = 0x8
+    _STDOUT_HANDLE = -11
+    _STDERR_HANDLE = -12
 
-class SMALL_RECT(Structure):
-  _fields_ = [
-    ("Left", c_short),
-    ("Top", c_short),
-    ("Right", c_short),
-    ("Bottom", c_short)]
+    def __init__(self, stream):
+        self._handle = self._get_std_handle(stream)
+        self._orig_colors = self._get_colors()
 
-class CONSOLE_SCREEN_BUFFER_INFO(Structure):
-  _fields_ = [
-    ("dwSize", COORD),
-    ("dwCursorPosition", COORD),
-    ("wAttributes", c_ushort),
-    ("srWindow", SMALL_RECT),
-    ("dwMaximumWindowSize", COORD)]
+    def green(self):
+        self._set_colors(self._FOREGROUND_GREEN)
 
+    def red(self):
+        self._set_colors(self._FOREGROUND_RED)
 
-class DosHiglighting:
-    FOREGROUND_RED = 0x0004
-    FOREGROUND_YELLOW = 0x0006
-    FOREGROUND_GREEN = 0x0002
-    FOREGROUND_INTENSITY = 0x0008
-    FOREGROUND_GREY = 0x0007
+    def yellow(self):
+        self._set_colors(self._FOREGROUND_YELLOW)
 
-    STDOUT_HANLDE = -11
-    STDERR_HANLDE = -12
+    def reset(self):
+        self._set_colors(self._orig_colors, intense=False)
 
-    _highlight_colors = {'FAIL': FOREGROUND_RED,
-                         'ERROR': FOREGROUND_RED,
-                         'WARN': FOREGROUND_YELLOW,
-                         'PASS': FOREGROUND_GREEN}
+    def _get_std_handle(self, stream):
+        handle = self._STDOUT_HANDLE if stream is sys.__stdout__ else self._STDERR_HANDLE
+        return windll.kernel32.GetStdHandle(handle)
 
-    def __init__(self, stream, msg):
-        self._out_handle = self.STDOUT_HANLDE if stream is sys.__stdout__ else self.STDERR_HANLDE
-        self._msg = msg
-
-    def _set_text_attr(self, color):
-        windll.kernel32.SetConsoleTextAttribute(windll.kernel32.GetStdHandle(self._out_handle), color)
-
-    def _get_text_attr(self):
-        csbi = CONSOLE_SCREEN_BUFFER_INFO()
-        windll.kernel32.GetConsoleScreenBufferInfo(self._out_handle, byref(csbi))
+    def _get_colors(self):
+        csbi = _CONSOLE_SCREEN_BUFFER_INFO()
+        ok = windll.kernel32.GetConsoleScreenBufferInfo(self._handle, byref(csbi))
+        if not ok:  # Call failed, return default console color
+            return self._FOREGROUND_GREY
         return csbi.wAttributes
 
-    def _write_encoded_with_tab_replacing(self, stream, message):
-        stream.write(utils.encode_output(message).replace('\t', ' '*8))
-
-    def start(self):
-        self._default_colors = self._get_text_attr()
-        self._set_text_attr(self._highlight_colors[self._msg] | self.FOREGROUND_INTENSITY)
-
-    def end(self):
-        self._set_text_attr(self._default_colors | self.FOREGROUND_INTENSITY)
+    def _set_colors(self, colors, intense=True):
+        if intense:
+            colors = colors | self._FOREGROUND_INTENSITY
+        windll.kernel32.SetConsoleTextAttribute(self._handle, colors)
