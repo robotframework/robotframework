@@ -26,6 +26,7 @@ from robot.errors import DataError, Information, FrameworkError
 
 from misc import plural_or_not
 from unic import unic
+from encoding import decode_output
 
 
 ESCAPES = dict(
@@ -214,7 +215,11 @@ class ArgumentParser:
         raise IndexError
 
     def _get_args_from_file(self, path):
-        return self._process_argfile(self._read_argfile(path))
+        if path.upper() != 'STDIN':
+            content = self._read_argfile(path)
+        else:
+            content = decode_output(sys.__stdin__.read())
+        return self._process_argfile(content)
 
     def _read_argfile(self, path):
         try:

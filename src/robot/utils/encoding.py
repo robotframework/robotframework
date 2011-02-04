@@ -47,7 +47,8 @@ def _get_encoding_from_std_streams():
     # Stream may not have encoding attribute if it is intercepted outside RF
     # in Python. Encoding is None if process's outputs are redirected.
     return getattr(sys.__stdout__, 'encoding', None) \
-        or getattr(sys.__stderr__, 'encoding', None)
+        or getattr(sys.__stderr__, 'encoding', None) \
+        or getattr(sys.__stdin__, 'encoding', None)
 
 def _read_encoding_from_unix_env():
     for name in 'LANG', 'LC_CTYPE', 'LANGUAGE', 'LC_ALL':

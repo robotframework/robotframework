@@ -58,6 +58,15 @@ Run Rebot Without Processing Output
     ${data string} =  Set Variables And Get Datasources  @{data list}
     Run Helper  ${REBOT}  ${options}  ${data string}
 
+Run Robot With Stdout Piping
+    [Arguments]   ${command to pipe}  ${options}  ${data file}  ${use data string}=${True}
+    ${data string} =  Set Variables And Get Datasources  ${data file}
+    ${datas} =  Set Variable If  ${use data string}  ${data string}  ${EMPTY}
+    ${options} =  Catenate  ${options}  --variable interpreter:${INTERPRETER}  --pythonpath ${LIBPATH1}  --pythonpath ${LIBPATH2}  --argumentfile stdin
+    ${piped commands} =  Catenate  ${command to pipe}  |  ${ROBOT}
+    Run Helper  ${piped commands}  ${options}  ${datas}
+    Process Output  ${OUTFILE}
+
 Run Helper
     [Arguments]  ${runner}  ${options}  ${data string}
     Remove Files  ${OUTFILE}  ${OUTDIR}/*.xml  ${OUTDIR}/*.html

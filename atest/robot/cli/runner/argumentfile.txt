@@ -36,6 +36,29 @@ Argument File with Non-ASCII Characters
     Should Not Contain  ${output.upper()}  ERROR
     Should Contain  ${output}  Testäö :: äëïöüÿ
 
+Arguments From Stdin
+    ${echo var value} =  Set Variable  echo --metadata A1:NöneÄscii
+    Run Robot With Stdout Piping  ${echo var value}  ${EMPTY}  ${TESTFILE}
+    Should Be Equal  ${SUITE.metadata['A1']}  NöneÄscii
+
+Arguments From Stdin and Command prompt
+    ${echo var value} =  Set Variable  echo --metadata A1:Leko
+    Run Robot With Stdout Piping  ${echo var value}  --metadata A2:Heko  ${TESTFILE}
+    Should Be Equal  ${SUITE.metadata['A1']}  Leko
+    Should Be Equal  ${SUITE.metadata['A2']}  Heko
+
+Two Arguments From Stdin
+    ${echo var value} =  Set Variable  echo "--metadata A1:Vi \n --metadata A2:Lo"
+    Run Robot With Stdout Piping  ${echo var value}  ${EMPTY}  ${TESTFILE}
+    Should Be Equal  ${SUITE.metadata['A1']}  Vi
+    Should Be Equal  ${SUITE.metadata['A2']}  Lo
+
+Argument And Test File From Stdin
+    ${testis file} =  Normalize Path  ${CURDIR}/../../../testdata/misc/normal.html
+    ${echo var value} =  Set Variable  echo "--metadata A1:Voi \n${testis file}"
+    Run Robot With Stdout Piping  ${echo var value}  ${EMPTY}  ${TESTFILE}  use data string=${False}
+    Should Be Equal  ${SUITE.metadata['A1']}  Voi
+
 
 *** Keywords ***
 
