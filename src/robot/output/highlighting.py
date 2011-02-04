@@ -65,4 +65,4 @@ class UnixHiglighter:
         self._stream.write(self._ANSI_YELLOW)
 
     def reset(self):
-        self._stream.write(self.ANSI_RESET)
+        self._stream.write(self._ANSI_RESET)
