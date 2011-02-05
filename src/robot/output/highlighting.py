@@ -12,48 +12,25 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+# Windows highlighting code adapted from color_console.py. It is copyright
+# Andre Burgaud, licensed under the MIT License, and available here:
+# http://www.burgaud.com/bring-colors-to-the-windows-console-with-python/
+
 import os
 import sys
-
 try:
-    from doshighlighting import DosHighlighter
-except ImportError:
-    DosHighlighter = None
+    from ctypes import windll, Structure, c_short, c_ushort, byref
+except ImportError:  # Not on Windows or using Jython
+    windll = None
 
 
-class Highlighter:
+def Highlighter(stream):
+    if os.sep == '/':
+        return UnixHighlighter(stream)
+    return DosHighlighter(stream) if windll else NoHighlighting(stream)
 
-    def __init__(self, colors):
-        self._current = None
-        self._highlighters = {
-            sys.__stdout__: self._get_highlighter(sys.__stdout__, colors),
-            sys.__stderr__: self._get_highlighter(sys.__stderr__, colors)
-        }
 
-    def start(self, message, stream=sys.__stdout__):
-        self._current = self._highlighters[stream]
-        if not self._current:
-            return
-        {'PASS': self._current.green,
-         'FAIL': self._current.red,
-         'ERROR': self._current.red,
-         'WARN': self._current.yellow}[message]()
-
-    def end(self):
-        if self._current:
-            self._current.reset()
-
-    def _get_highlighter(self, stream, colors):
-        enable = {'ON': True,
-                  'FORCE': True,   # compatibility with 2.5.5 and earlier
-                  'OFF': False,
-                  'AUTO': stream.isatty()}.get(colors.upper(), True)
-        HighlightClass = UnixHighlighter if os.sep == '/' else DosHighlighter
-        if enable and HighlightClass:
-            return HighlightClass(stream)
-        return None
-
-class UnixHighlighter:
+class UnixHighlighter(object):
     _ANSI_GREEN  = '\033[32m'
     _ANSI_RED = '\033[31m'
     _ANSI_YELLOW = '\033[33m'
@@ -63,13 +40,85 @@ class UnixHighlighter:
         self._stream = stream
 
     def green(self):
-        self._stream.write(self._ANSI_GREEN)
+        self._set_color(self._ANSI_GREEN)
 
     def red(self):
-        self._stream.write(self._ANSI_RED)
+        self._set_color(self._ANSI_RED)
 
     def yellow(self):
-        self._stream.write(self._ANSI_YELLOW)
+        self._set_color(self._ANSI_YELLOW)
 
     def reset(self):
-        self._stream.write(self._ANSI_RESET)
+        self._set_color(self._ANSI_RESET)
+
+    def _set_color(self, color):
+        self._stream.write(color)
+
+
+class NoHighlighting(UnixHighlighter):
+
+    def _set_color(self, color):
+        pass
+
+
+class DosHighlighter(object):
+    _FOREGROUND_GREEN = 0x2
+    _FOREGROUND_RED = 0x4
+    _FOREGROUND_YELLOW = 0x6
+    _FOREGROUND_GREY = 0x7
+    _FOREGROUND_INTENSITY = 0x8
+    _STDOUT_HANDLE = -11
+    _STDERR_HANDLE = -12
+
+    def __init__(self, stream):
+        self._handle = self._get_std_handle(stream)
+        self._orig_colors = self._get_colors()
+
+    def green(self):
+        self._set_colors(self._FOREGROUND_GREEN)
+
+    def red(self):
+        self._set_colors(self._FOREGROUND_RED)
+
+    def yellow(self):
+        self._set_colors(self._FOREGROUND_YELLOW)
+
+    def reset(self):
+        self._set_colors(self._orig_colors, intense=False)
+
+    def _get_std_handle(self, stream):
+        handle = self._STDOUT_HANDLE \
+            if stream is sys.__stdout__ else self._STDERR_HANDLE
+        return windll.kernel32.GetStdHandle(handle)
+
+    def _get_colors(self):
+        csbi = _CONSOLE_SCREEN_BUFFER_INFO()
+        ok = windll.kernel32.GetConsoleScreenBufferInfo(self._handle, byref(csbi))
+        if not ok:  # Call failed, return default console color
+            return self._FOREGROUND_GREY
+        return csbi.wAttributes
+
+    def _set_colors(self, colors, intense=True):
+        if intense:
+            colors = colors | self._FOREGROUND_INTENSITY
+        windll.kernel32.SetConsoleTextAttribute(self._handle, colors)
+
+
+if windll:
+
+    class _COORD(Structure):
+        _fields_ = [("X", c_short),
+                    ("Y", c_short)]
+    
+    class _SMALL_RECT(Structure):
+        _fields_ = [("Left", c_short),
+                    ("Top", c_short),
+                    ("Right", c_short),
+                    ("Bottom", c_short)]
+    
+    class _CONSOLE_SCREEN_BUFFER_INFO(Structure):
+        _fields_ = [("dwSize", _COORD),
+                    ("dwCursorPosition", _COORD),
+                    ("wAttributes", c_ushort),
+                    ("srWindow", _SMALL_RECT),
+                    ("dwMaximumWindowSize", _COORD)]

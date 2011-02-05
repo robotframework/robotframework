@@ -15,7 +15,7 @@
 import sys
 
 from robot import utils
-from highlighting import Highlighter
+from highlighting import Highlighter, NoHighlighting
 from loggerhelper import IsLogged
 
 
@@ -23,7 +23,7 @@ class CommandLineMonitor:
 
     def __init__(self, width=78, colors='AUTO'):
         self._width = width
-        self._highlighter = Highlighter(colors)
+        self._highlighter = StatusHighlighter(colors)
         self._running_suites = 0
         self._is_logged = IsLogged('WARN')
 
@@ -100,3 +100,30 @@ class CommandLineMonitor:
     def _write_message(self, message):
         if message:
             self._write(message.strip())
+
+
+class StatusHighlighter:
+
+    def __init__(self, colors):
+        self._current = None
+        self._highlighters = {
+            sys.__stdout__: self._get_highlighter(sys.__stdout__, colors),
+            sys.__stderr__: self._get_highlighter(sys.__stderr__, colors)
+        }
+
+    def start(self, message, stream=sys.__stdout__):
+        self._current = self._highlighters[stream]
+        {'PASS': self._current.green,
+         'FAIL': self._current.red,
+         'ERROR': self._current.red,
+         'WARN': self._current.yellow}[message]()
+
+    def end(self):
+        self._current.reset()
+
+    def _get_highlighter(self, stream, colors):
+        enable = {'ON': True,
+                  'FORCE': True,   # compatibility with 2.5.5 and earlier
+                  'OFF': False,
+                  'AUTO': stream.isatty()}.get(colors.upper(), True)
+        return Highlighter(stream) if enable else NoHighlighting(stream)
