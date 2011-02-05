@@ -122,8 +122,9 @@ class StatusHighlighter:
         self._current.reset()
 
     def _get_highlighter(self, stream, colors):
-        enable = {'ON': True,
+        auto = stream.isatty()
+        enable = {'AUTO': auto,
+                  'ON': True,
                   'FORCE': True,   # compatibility with 2.5.5 and earlier
-                  'OFF': False,
-                  'AUTO': stream.isatty()}.get(colors.upper(), True)
+                  'OFF': False}.get(colors.upper(), auto)
         return Highlighter(stream) if enable else NoHighlighting(stream)

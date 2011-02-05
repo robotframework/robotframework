@@ -347,20 +347,18 @@ option :opt:`--monitorwidth (-W)`. The default value for the monitor
 width is 78 characters.
 
 The :opt:`--monitorcolors (-C)` option is used to control whether
-colors should be used in the monitor output. These so-called ANSI
-colors do not work on Windows by default, but they ought to work on
-all UNIX-like systems. This option has three possible, case-insensitive
-values:
+colors should be used in the monitor output. This option has three possible,
+case-insensitive values:
 
-:opt:`on`
+:opt:`auto`
     Colors are used on UNIX-like systems, but not on Windows. This is
     the default.
 
-:opt:`off`
+:opt:`on`
     Colors are never used. Useful for example when redirecting the
     output to a file.
 
-:opt:`force`
+:opt:`off`
     Colors are always used, also on Windows.
 
 Example::
