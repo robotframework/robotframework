@@ -227,6 +227,7 @@ Options:
                           auto: use colors when output not redirected (default)
                           on: always use colors
                           off: never use colors
+                          Note that colors do not work with Jython on Windows.
  -P --pythonpath path *   Additional locations (directories, ZIPs, JARs) where
                           to search test libraries from when they are imported.
                           Multiple paths can be given by separating them with a

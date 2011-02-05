@@ -37,7 +37,7 @@ class _CONSOLE_SCREEN_BUFFER_INFO(Structure):
                 ("dwMaximumWindowSize", _COORD)]
 
 
-class DosHiglighter:
+class DosHighlighter:
     _FOREGROUND_GREEN = 0x2
     _FOREGROUND_RED = 0x4
     _FOREGROUND_YELLOW = 0x6

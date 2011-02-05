@@ -15,8 +15,10 @@
 import os
 import sys
 
-if os.sep == '\\':
-    from doshighlighting import DosHiglighter
+try:
+    from doshighlighting import DosHighlighter
+except ImportError:
+    DosHighlighter = None
 
 
 class Highlighter:
@@ -46,12 +48,12 @@ class Highlighter:
                   'FORCE': True,   # compatibility with 2.5.5 and earlier
                   'OFF': False,
                   'AUTO': stream.isatty()}.get(colors.upper(), True)
-        if not enable:
-            return None
-        return (UnixHiglighter if os.sep == '/' else DosHiglighter)(stream)
+        HighlightClass = UnixHighlighter if os.sep == '/' else DosHighlighter
+        if enable and HighlightClass:
+            return HighlightClass(stream)
+        return None
 
-
-class UnixHiglighter:
+class UnixHighlighter:
     _ANSI_GREEN  = '\033[32m'
     _ANSI_RED = '\033[31m'
     _ANSI_YELLOW = '\033[33m'
