@@ -25,8 +25,9 @@ Monitor Colors On
     Outputs should have ANSI colors when not on Windows
 
 Invalid Monitor Colors
+    [Documentation]  Invalid color mapped to 'auto' (default)
     Run Tests With Colors  -C INVALID
-    Outputs should have ANSI colors when not on Windows
+    Outputs should not have ANSI colors
 
 Monitor Width
     ${name} =  Evaluate  'Start-' + '0123456789' * 9 + '-end'
