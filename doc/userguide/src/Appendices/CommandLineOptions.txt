@@ -57,7 +57,7 @@ Command line options for test execution
                           Tag` table in outputs.
   --listener <name:args>  `Sets a listener`_ for monitoring test execution. 
   --warnonskippedfiles    Show a warning when `an invalid file is skipped`_.
-  -W, --monitorwidth <chars>  `Sets the width`_ of the monitor output. 
+  -W, --monitorwidth <chars>  `Sets the width`_ of the console output. 
   -C, --monitorcolors <on|off|force>  `Specifies are colors`_ used in the console.
   -P, --pythonpath <path>   Additional locations where to `search test libraries`_ from when they are imported.
   -E, --escape <what:with>   `Escapes characters`_ that are problematic in the console.
@@ -144,8 +144,8 @@ Command line options for post-processing outputs
 
 .. _Sets a listener: `Setting listeners`_
 .. _an invalid file is skipped: `Warning on invalid files`_
-.. _Sets the width: `Controlling the monitor output`_
-.. _Specifies are colors: `Sets the width`_
+.. _Sets the width: `Console width`_
+.. _Specifies are colors: `Console colors`_
 .. _search test libraries: `library search path`_
 .. _Escapes characters: `Escaping complicated characters`_
 .. _read more arguments: `Argument files`_

@@ -113,7 +113,7 @@ many interesting possibilities:
   :opt:`<num>` specifies the number of the current iteration, and
   after executing all test cases, a separate report containing only
   the tests for a certain iteration can be generated (for example, :cli:`rebot
-  --include iter-42 ouput.xml`).
+  --include iter-42 output.xml`).
 
 Setting criticality
 ~~~~~~~~~~~~~~~~~~~
@@ -319,13 +319,13 @@ __ `Errors and warnings during execution`_
 Randomizing execution order
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-The :opt:`--runmode` option can also be used to randomize the test 
+The :opt:`--runmode` option can also be used to randomize the test
 execution order. This is done using the different values explained
 below.
 
 :opt:`random:test`
     Test cases inside each test suite are executed in random
-    order. 
+    order.
 
 :opt:`random:suite`
     All test suites are executed in a random order, but test cases inside
@@ -333,37 +333,50 @@ below.
 
 :opt:`random:all`
     Both test cases and test suites are executed in a random
-    order. 
+    order.
 
 Example::
 
     pybot --runmode random:test my_test.txt
 
-Controlling the monitor output
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Controlling console output
+~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-The width of the test execution output in the console is set using the
-option :opt:`--monitorwidth (-W)`. The default value for the monitor
-width is 78 characters.
+Console width
+'''''''''''''
+
+The width of the test execution output in the console can be set using
+the option :opt:`--monitorwidth (-W)`. The default width is 78 characters.
+
+.. tip:: On many UNIX-like machines you can use handy :var:`$COLUMNS`
+         variable like :cli:`--monitorwidth $COLUMNS`.
+
+Console colors
+''''''''''''''
 
 The :opt:`--monitorcolors (-C)` option is used to control whether
-colors should be used in the monitor output. This option has three possible,
-case-insensitive values:
+colors should be used in the console output. Colors should work on all
+other platforms except for Windows when using Jython. This option has
+following case-insensitive values:
 
 :opt:`auto`
-    Colors are used on UNIX-like systems, but not on Windows. This is
-    the default.
+    Colors are enabled when output is written into the console but
+    not when it is redirected into a file. This is the default and there
+    is rarely need to change it.
 
 :opt:`on`
-    Colors are never used. Useful for example when redirecting the
-    output to a file.
+    Colors are used also when output is redirected into a file.
+    Does not have effect on Windows.
 
 :opt:`off`
-    Colors are always used, also on Windows.
+    Colors are disabled.
 
-Example::
+:opt:`force`
+    Backwards compatibility with Robot Framework 2.5.5 and older.
+    Should not be used.
 
-   pybot --monitorwidth 140 --monitorcolors OFF tests.html > output.txt
+.. note:: Support for colors on Windows and the :opt:`auto` mode are
+          new features in Robot Framework 2.5.6.
 
 Setting listeners
 ~~~~~~~~~~~~~~~~~
