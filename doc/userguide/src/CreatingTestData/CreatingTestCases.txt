@@ -434,7 +434,10 @@ approaches can naturally be used together.
 
 `[Tags]`:opt: in the Test Case table
    A test case always gets these tags. Additionally, it does not get the
-   possible tags specified with :opt:`Default Tags`.
+   possible tags specified with :opt:`Default Tags`, so it is possible
+   to override the :opt:`Default Tags` by using empty value. Starting
+   from Robot Framework 2.5.6, is also possible to use value :misc:`NONE` 
+   to override default tags.
 
 `--settag`:opt: command line option
    All executed test cases get tags set with this option in addition
@@ -546,7 +549,8 @@ also have their own setup or teardown. They are defined with the
 table and they override possible :opt:`Test Setup` and
 :opt:`Test Teardown` settings. Having no keyword after a
 :opt:`[Setup]` or :opt:`[Teardown]` setting means having no
-setup or teardown.
+setup or teardown. Starting from Robot Framework 2.5.6, it is also possible
+to use value :misc:`NONE` to indicate that a test has no setup/teardown.
 
 .. table:: Test setup and teardown examples
    :class: example
@@ -574,6 +578,10 @@ setup or teardown.
    No teardown         [Documentation]  Default setup, no    teardown at all
    \                   Do Something
    \                   [Teardown]
+   \
+   No teardown 2       [Documentation]  Using special NONE,  works with 2.5.6
+   \                   Do Something
+   \                   [Teardown]       NONE
    \
    Using variables     [Documentation]  Setup and teardown   given as variables
    \                   [Setup]          ${SETUP}
@@ -637,7 +645,9 @@ setting in the Setting table, in which case the template is applied
 for all test cases in that test case file. The :opt:`[Template]`
 setting overrides the possible template set in the Setting table, and
 an empty value for :opt:`[Template]` means that the test has no
-template even when :opt:`Test Template` is used.
+template even when :opt:`Test Template` is used. Starting from Robot Framework
+2.5.6, it is also possible to use value :misc:`NONE` to indicate that a test
+has no template.
 
 If a templated test case has multiple data rows in its body, like in
 the example below, the template is applied for all the rows. This

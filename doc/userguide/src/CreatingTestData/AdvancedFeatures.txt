@@ -120,6 +120,10 @@ the test suite, whereas :opt:`[Timeout]` in the Test Case table
 applies a timeout to an individual test case and overrides the
 possible default value.
 
+Using an empty :opt:`[Timeout]` means that the test has no
+timeout even when :opt:`Test Timeout` is used. Starting from Robot Framework
+2.5.6, it is also possible to use value :misc:`NONE` for this purpose.
+
 Regardless of where the test timeout is defined, the first cell after
 the setting name contains the duration of the timeout. The duration
 must be given in Robot Framework's `time format`_, that is,
@@ -158,24 +162,28 @@ keywords with `user keyword timeouts`_.
    ===============  ===============  ========================================  ==========================  ==================
       Test Case         Action                      Argument                           Argument                 Argument
    ===============  ===============  ========================================  ==========================  ==================
-   Default Timeout  [Documentation]  Timeout from the Setting table is used    \                           \
-   \                Some Keyword     argument                                  \                           \
-   \                \                \                                         \                           \
-   Override         [Documentation]  Override default, use 10 seconds timeout  \                           \
-   \                [Timeout]        10                                        \                           \
-   \                Some Keyword     argument                                  \                           \
-   \                \                \                                         \                           \
-   Custom Message   [Documentation]  Override default and use custom message   \                           \
+   Default Timeout  [Documentation]  Timeout from the Setting table is used
+   \                Some Keyword     argument
+   \
+   Override         [Documentation]  Override default, use 10 seconds timeout
+   \                [Timeout]        10
+   \                Some Keyword     argument
+   \
+   Custom Message   [Documentation]  Override default and use custom message
    \                [Timeout]        1min 10s                                  This is my custom error.    It continues here.
-   \                Some Keyword     argument                                  \                           \
-   \                \                \                                         \                           \
-   Variables        [Documentation]  It is possible to use variables too       \                           \
-   \                [Timeout]        ${TIMEOUT}                                \                           \
-   \                Some Keyword     argument                                  \                           \
-   \                \                \                                         \                           \
-   No Timeout       [Documentation]  Empty timeout means no timeout even when  Test Timeout has been used  \
-   \                [Timeout]        \                                         \                           \
-   \                Some Keyword     argument                                  \                           \
+   \                Some Keyword     argument
+   \
+   Variables        [Documentation]  It is possible to use variables too
+   \                [Timeout]        ${TIMEOUT}
+   \                Some Keyword     argument
+   \
+   No Timeout       [Documentation]  Empty timeout means no timeout even when  Test Timeout has been used
+   \                [Timeout]
+   \                Some Keyword     argument
+   \
+   No Timeout 2     [Documentation]  Empty timeout using NONE, works with      2.5.6
+   \                [Timeout]        NONE
+   \                Some Keyword     argument
    ===============  ===============  ========================================  ==========================  ==================
 
 
