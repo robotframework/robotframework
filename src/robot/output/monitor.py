@@ -122,7 +122,7 @@ class StatusHighlighter:
         self._current.reset()
 
     def _get_highlighter(self, stream, colors):
-        auto = stream.isatty()
+        auto = hasattr(stream, 'isatty') and stream.isatty()
         enable = {'AUTO': auto,
                   'ON': True,
                   'FORCE': True,   # compatibility with 2.5.5 and earlier
