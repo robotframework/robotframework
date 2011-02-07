@@ -1,15 +1,13 @@
 *** Settings ***
-Test Setup      Create Output Directory and Set Variables
 Suite Teardown  Delete Environment Variable  ROBOT_SYSLOG_FILE
+Test Setup      Create Output Directory and Set Variables
 Default Tags    regression  pybot  jybot
 Resource        cli_resource.txt
 
-
 *** Test Cases ***
-
 Argument File
-    Create Argument File  ${ARGFILE}  --name From Argfile  -M Meta1:From AF  -M Meta2:To be overwritten
-    ...  \# comment line  --outputdir ${CLI OUTDIR}  -l none  -r none  ${EMPTY}  -o output.xml  ${EMPTY}
+    Create Argument File  ${ARGFILE}  --name From Argfile  -M Meta1:From AF  -M Meta2:To be overwritten  \# comment line  --outputdir ${CLI OUTDIR}  -l none
+    ...  -r none  ${EMPTY}  -o output.xml  ${EMPTY}
     Run Tests Without Processing Output  -M Meta1:Overwritten -A ${ARGFILE} -M Meta2:cli  ${TESTFILE}
     Process Output  ${CLI OUTDIR}/output.xml
     Should Be Equal  ${SUITE.name}  From Argfile
@@ -30,47 +28,38 @@ Recursive Argument File
     Should Be Equal  ${SUITE.metadata['Second']}  2
 
 Argument File with Non-ASCII Characters
-    ${path} =  Join Path  ${CURDIR}/../../../testdata/parsing/unicode_paths/testäö.txt 
+    ${path} =  Join Path  ${CURDIR}/../../../testdata/parsing/unicode_paths/testäö.txt
     Create Argument File  ${ARGFILE 3}  -D äëïöüÿ  -C off  ${path}
     ${output} =  Run Robot Directly  --argumentfile ${ARGFILE 3}
     Should Not Contain  ${output.upper()}  ERROR
     Should Contain  ${output}  Testäö :: äëïöüÿ
 
 Arguments From Stdin
-    ${echo var value} =  Set Variable  echo --metadata A1:NöneÄscii
-    Run Robot With Stdout Piping  ${echo var value}  ${EMPTY}  ${TESTFILE}
-    Should Be Equal  ${SUITE.metadata['A1']}  NöneÄscii
-
-Arguments From Stdin and Command prompt
-    ${echo var value} =  Set Variable  echo --metadata A1:Leko
-    Run Robot With Stdout Piping  ${echo var value}  --metadata A2:Heko  ${TESTFILE}
-    Should Be Equal  ${SUITE.metadata['A1']}  Leko
-    Should Be Equal  ${SUITE.metadata['A2']}  Heko
-
-Two Arguments From Stdin
-    ${echo var value} =  Set Variable  echo "--metadata A1:Vi \n --metadata A2:Lo"
-    Run Robot With Stdout Piping  ${echo var value}  ${EMPTY}  ${TESTFILE}
-    Should Be Equal  ${SUITE.metadata['A1']}  Vi
-    Should Be Equal  ${SUITE.metadata['A2']}  Lo
-
-Argument And Test File From Stdin
-    ${testis file} =  Normalize Path  ${CURDIR}/../../../testdata/misc/normal.html
-    ${echo var value} =  Set Variable  echo "--metadata A1:Voi \n${testis file}"
-    Run Robot With Stdout Piping  ${echo var value}  ${EMPTY}  ${TESTFILE}  use data string=${False}
-    Should Be Equal  ${SUITE.metadata['A1']}  Voi
-
+    ${test dir} =  Normalize Path  ${CURDIR}/../../../testdata/misc/
+    Create Argument File Without BOM  ${ARG FILE}  --name My Name with Nön Äscii  ${test dir}${/}normal.html
+    ${output}=  Run Robot Directly  --doc from_command_line --argumentfile stdin ${test dir}${/}pass_and_fail.html < ${ARG FILE}
+    Should Contain  ${output}  Normal
+    Should Contain  ${output}  Pass And Fail
+    Should Contain  ${output}  My Name with N
+    Should Contain  ${output}  from command line
 
 *** Keywords ***
-
 Create Output Directory and Set Variables
     Create Output Directory
-    Set Suite Variable  ${ARGFILE}    ${CLI OUTDIR}/arg_file_1.txt
+    Set Suite Variable  ${ARGFILE}  ${CLI OUTDIR}/arg_file_1.txt
     Set Suite Variable  ${ARGFILE 2}  ${CLI OUTDIR}/arg_file_2.txt
     Set Suite Variable  ${ARGFILE 3}  ${CLI OUTDIR}/ärg_fïlë_3.txt
     Set Environment Variable  ROBOT_SYSLOG_FILE  ${CLI OUTDIR}/syslog.txt
 
-Create Argument File  [Arguments]  ${path}  @{lines}
+Create Argument File
+    [Arguments]  ${path}  @{lines}
     [Documentation]  Writes also UTF8 BOM to the file to test it's ignored
     ${content} =  Catenate  SEPARATOR=\n  @{lines}
     ${bom} =  Evaluate  __import__('codecs').BOM_UTF8.decode('UTF-8')
     Create File  ${path}  ${bom}${content}
+
+Create Argument File Without BOM
+    [Arguments]  ${path}  @{lines}
+    ${content} =  Catenate  SEPARATOR=\n  @{lines}
+    Create File  ${path}  ${content}
+

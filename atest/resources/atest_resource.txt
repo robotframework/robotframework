@@ -24,7 +24,6 @@ ${LIBPATH2}  ${CURDIR}${/}..${/}testresources${/}listeners
 ${USAGE_TIP}  \n\nTry --help for usage information.
 
 *** Keywords ***
-
 Run Robot Directly
     [Arguments]  ${opts and args}
     Set Runners
@@ -57,15 +56,6 @@ Run Rebot Without Processing Output
     [Arguments]  ${options}  @{data list}
     ${data string} =  Set Variables And Get Datasources  @{data list}
     Run Helper  ${REBOT}  ${options}  ${data string}
-
-Run Robot With Stdout Piping
-    [Arguments]   ${command to pipe}  ${options}  ${data file}  ${use data string}=${True}
-    ${data string} =  Set Variables And Get Datasources  ${data file}
-    ${datas} =  Set Variable If  ${use data string}  ${data string}  ${EMPTY}
-    ${options} =  Catenate  ${options}  --variable interpreter:${INTERPRETER}  --pythonpath ${LIBPATH1}  --pythonpath ${LIBPATH2}  --argumentfile stdin
-    ${piped commands} =  Catenate  ${command to pipe}  |  ${ROBOT}
-    Run Helper  ${piped commands}  ${options}  ${datas}
-    Process Output  ${OUTFILE}
 
 Run Helper
     [Arguments]  ${runner}  ${options}  ${data string}
@@ -109,7 +99,7 @@ Set Runners
 
 Get Coverage Runner
     ${INTERPRETER} =  Set Variable If  '${INTERPRETER}' == 'coverage'  coverage run -p  ${INTERPRETER}
-    [return]  ${INTERPRETER}
+    [Return]  ${INTERPRETER}
 
 Check Test Case
     [Arguments]  ${name}=${TEST NAME}  ${status}=${None}  ${message}=${None}
@@ -163,8 +153,7 @@ Get Output File
     [Arguments]  ${path}
     [Documentation]  Output encoding avare helper
     ${encoding} =  Evaluate  __import__('robot').utils.encoding._output_encoding
-    ${encoding} =  Set Variable If  '${path}' in ['${STDERR FILE}','${STDOUT FILE}']
-    ...  ${encoding}  UTF-8
+    ${encoding} =  Set Variable If  '${path}' in ['${STDERR FILE}','${STDOUT FILE}']  ${encoding}  UTF-8
     ${file} =  Log File  ${path}  ${encoding}
     [Return]  ${file}
 
@@ -216,7 +205,7 @@ Check Stderr Matches Regexp
 
 Check Stderr Contains Regexp
     [Arguments]  @{expected}
-    Check File Contains Regexp  ${STDERR_FILE}  @{expected}    
+    Check File Contains Regexp  ${STDERR_FILE}  @{expected}
 
 Check Stdout Contains
     [Arguments]  @{expected}
@@ -232,7 +221,7 @@ Check Stdout Matches Regexp
 
 Check Stdout Contains Regexp
     [Arguments]  @{expected}
-    Check File Contains Regexp  ${STDOUT_FILE}  @{expected}    
+    Check File Contains Regexp  ${STDOUT_FILE}  @{expected}
 
 Get Syslog
     ${file} =  Get Output File  ${SYSLOG_FILE}
@@ -281,3 +270,4 @@ Previous test should have passed
     [Arguments]  ${name}
     Should be equal  ${PREV TEST NAME}  ${name}
     Should be equal  ${PREV TEST STATUS}  PASS
+
