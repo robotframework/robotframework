@@ -67,24 +67,26 @@ class DosHighlighter(object):
     _FOREGROUND_YELLOW = 0x6
     _FOREGROUND_GREY = 0x7
     _FOREGROUND_INTENSITY = 0x8
+    _BACKGROUND_MASK = 0xF0
     _STDOUT_HANDLE = -11
     _STDERR_HANDLE = -12
 
     def __init__(self, stream):
         self._handle = self._get_std_handle(stream)
         self._orig_colors = self._get_colors()
+        self._background = self._orig_colors & self._BACKGROUND_MASK
 
     def green(self):
-        self._set_colors(self._FOREGROUND_GREEN)
+        self._set_foreground_colors(self._FOREGROUND_GREEN)
 
     def red(self):
-        self._set_colors(self._FOREGROUND_RED)
+        self._set_foreground_colors(self._FOREGROUND_RED)
 
     def yellow(self):
-        self._set_colors(self._FOREGROUND_YELLOW)
+        self._set_foreground_colors(self._FOREGROUND_YELLOW)
 
     def reset(self):
-        self._set_colors(self._orig_colors, intense=False)
+        self._set_colors(self._orig_colors)
 
     def _get_std_handle(self, stream):
         handle = self._STDOUT_HANDLE \
@@ -94,13 +96,14 @@ class DosHighlighter(object):
     def _get_colors(self):
         csbi = _CONSOLE_SCREEN_BUFFER_INFO()
         ok = windll.kernel32.GetConsoleScreenBufferInfo(self._handle, byref(csbi))
-        if not ok:  # Call failed, return default console color
+        if not ok:  # Call failed, return default console colors (gray on black)
             return self._FOREGROUND_GREY
         return csbi.wAttributes
 
-    def _set_colors(self, colors, intense=True):
-        if intense:
-            colors = colors | self._FOREGROUND_INTENSITY
+    def _set_foreground_colors(self, colors):
+        self._set_colors(colors | self._FOREGROUND_INTENSITY | self._background)
+
+    def _set_colors(self, colors):
         windll.kernel32.SetConsoleTextAttribute(self._handle, colors)
 
 
