@@ -332,7 +332,7 @@ the HTML format. Robot Framework identifies `test data tables`_ based on the
 text in the first cell and all content outsided of the recognized table types is
 ignored.
 
-An example of each of the four types of test data dable is shown below
+An example of each of the four test data tables is shown below
 using the reST `Simple Tables` syntax. Note that :code:`\\` or
 :code:`..` must be used to indicate an empty cell in the first column
 of the table::
