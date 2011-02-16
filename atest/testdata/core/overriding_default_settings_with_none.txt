@@ -2,7 +2,7 @@
 Test Setup  Log  Default Setup
 Test Teardown  Log  Default Teardown
 Test Template  Log
-Test Timeout   100 ms
+Test Timeout   200 ms
 Default Tags   d1  d2
 
 *** Test Cases ***
