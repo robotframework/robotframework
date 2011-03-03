@@ -1,5 +1,5 @@
 *** Settings ***
-Library         parallel.py
+Library         Parallel.py  pybot
 
 *** Variables ***
 ${PARALLEL}  False
@@ -12,11 +12,12 @@ Foo
 Bar
     : FOR  ${i}  IN RANGE  1  1000
     \  Log  hoi(${PARALLEL})
+    Fail
 
 Run all
     Log Variables
     Log  (${PARALLEL})
-    ${foo}=  Run Parallel Test   Foo
-    ${bar}=  Run Parallel Test   Bar
-    Wait For  ${foo}  ${bar}
+    Run Parallel Robot   Foo  ${SUITE SOURCE}
+    Run Parallel Robot   Bar  ${SUITE SOURCE}
+    Wait For All Parallel Tests To Be Ready
 
