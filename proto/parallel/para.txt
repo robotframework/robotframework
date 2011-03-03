@@ -1,0 +1,22 @@
+*** Settings ***
+Library         parallel.py
+
+*** Variables ***
+${PARALLEL}  False
+
+*** Test Cases ***
+Foo
+    : FOR  ${i}  IN RANGE  1  1000
+    \  Log  moro(${PARALLEL})
+
+Bar
+    : FOR  ${i}  IN RANGE  1  1000
+    \  Log  hoi(${PARALLEL})
+
+Run all
+    Log Variables
+    Log  (${PARALLEL})
+    ${foo}=  Run Parallel Test   Foo
+    ${bar}=  Run Parallel Test   Bar
+    Wait For  ${foo}  ${bar}
+
