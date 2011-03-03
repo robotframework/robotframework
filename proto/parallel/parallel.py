@@ -28,21 +28,25 @@ class _ParaRobo(object):
         id = "%s%s" % (time(), randint(0, 1000000))
         self._output = 'output_%s.xml' % id
         self._log = 'log_%s.html' % id
-        self._monitor_out = 'monitor_%s.txt' % id
         self._test = test
-        self._suite = os.path.split(self._built_in.replace_variables("${SUITE_SOURCE}"))[1]
+        self._output_dir = self._built_in.replace_variables("${OUTPUT DIR}")
+        self._monitor_out = os.path.join(self._output_dir, 'monitor_%s.txt' % id)
+        self._suite = self._built_in.replace_variables("${SUITE_SOURCE}")
         self._suite_name = self._built_in.replace_variables("${SUITE_NAME}")
 
     def run(self):
         monitor_file = open(self._monitor_out, 'w')
-        self._process = subprocess.Popen(['pybot',
+        cmd = ['pybot',
                                           '-l', self._log,
                                           '-o', self._output,
                                           '--monitorcolors', 'off',
                                           '--variable', 'PARALLEL:True',
                                           '--test', self._test,
                                           '--report', 'None',
-                                          self._suite],
+                                          '--outputdir', self._output_dir,
+                                          self._suite]
+        print ' '.join(cmd)
+        self._process = subprocess.Popen(cmd,
                                           shell=os.sep == '\\',
                                           stdout=monitor_file, 
                                           stderr=monitor_file)
@@ -59,5 +63,5 @@ class _ParaRobo(object):
         else:
             LEVEL = '*ERROR*'
             STATUS = 'FAIL'
-        print '%s[%s] "%s.%s" output (%s)' % (LEVEL, STATUS, self._suite, self._test, self._output)
-        print '*HTML* <a href="%s#test_%s.%s">Process log</a>' % (self._log, os.path.splitext(self._suite)[0].capitalize(), self._test)
+        print '%s[%s] "%s.%s" output (%s)' % (LEVEL, STATUS, self._suite_name, self._test, self._output)
+        print '*HTML* <a href="%s#test_%s.%s">Process log</a>' % (self._log, self._suite_name, self._test)
