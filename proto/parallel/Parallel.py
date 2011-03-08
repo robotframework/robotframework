@@ -17,7 +17,7 @@ class Parallel(object):
     def run_parallel_robot(self, test_name, *args):
         args = list(args)
         for var in self._variables:
-            args = ['--variable', var]+args
+            args = ['-v', var]+args
         process = _ParaRobo(test_name, *args)
         process.run(self._script)
         self._processes.append(process)
