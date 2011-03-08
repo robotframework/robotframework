@@ -1,5 +1,5 @@
 *** Settings ***
-Library         Parallel.py  pybot
+Library         Parallel.py  pybot  PARALLEL:True
 
 *** Variables ***
 ${PARALLEL}  False
