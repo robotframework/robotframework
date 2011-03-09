@@ -9,15 +9,16 @@ from robot.utils import html_escape
 
 class Parallel(object):
 
-    def __init__(self, runner_script, *variables):
+    def __init__(self, runner_script, *arguments):
         self._script = runner_script
-        self._variables = variables
+        self._arguments = list(arguments)
         self._processes = []
 
+    def add_parallel_arguments(self, *args):
+        self._argumens += list(args)
+
     def run_parallel_robot(self, test_name, *args):
-        args = list(args)
-        for var in self._variables:
-            args = ['-v', var]+args
+        args = self._arguments+list(args)
         process = _ParaRobo(test_name, *args)
         process.run(self._script)
         self._processes.append(process)
