@@ -37,7 +37,7 @@ class Parallel(object):
     def set_suite_for_parallel_tests(self, suite):
         self._suite = suite
 
-    def run_parallel_robot(self, test_name, *args):
+    def run_parallel_test(self, test_name, *args):
         if self._suite is None:
             self._suite = BuiltIn.BuiltIn().replace_variables('${SUITE_SOURCE}')
         arguments = self._arguments+list(args)+[self._suite]
