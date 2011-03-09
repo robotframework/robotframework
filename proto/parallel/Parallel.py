@@ -68,6 +68,7 @@ class Parallel(object):
 
 
 class _ParaRobo(object):
+
     def __init__(self, test, *args):
         self._built_in = BuiltIn.BuiltIn()
         id = "%s%s" % (time(), randint(0, 1000000))
@@ -93,7 +94,14 @@ class _ParaRobo(object):
             self._process = subprocess.Popen(cmd,
                                               shell=os.sep == '\\',
                                               stdout=monitor_file, 
-                                              stderr=monitor_file)
+                                              stderr=monitor_file,
+                                              env=self._get_environment_variables())
+
+    def _get_environment_variables(self):
+        environment_variables = os.environ.copy()
+        if environment_variables.has_key("ROBOT_SYSLOG_FILE"):
+            del(environment_variables["ROBOT_SYSLOG_FILE"])
+        return environment_variables
 
     def wait(self):
         return self._process.wait()
