@@ -13,16 +13,27 @@ class Parallel(object):
         self._script = runner_script
         self._arguments = list(arguments)
         self._processes = []
+        self._suite = None
 
     def add_parallel_arguments(self, *args):
         self._argumens += list(args)
 
+    def set_suite_for_parallel_tests(self, suite):
+        self._suite = suite
+
     def run_parallel_robot(self, test_name, *args):
-        args = self._arguments+list(args)
-        process = _ParaRobo(test_name, *args)
+        if self._suite is None:
+            self._suite = BuiltIn.BuiltIn().replace_variables('${SUITE_SOURCE}')
+        arguments = self._arguments+list(args)+[self._suite]
+        process = _ParaRobo(test_name, *arguments)
         process.run(self._script)
         self._processes.append(process)
         return process
+
+    def run_parallel_tests(self, *tests):
+        for test in tests:
+            self.run_parallel_robot(test)
+        self.wait_for_all_parallel_tests_to_be_ready()
 
     def wait_for_parallel_tests_to_be_ready(self, *processes):
         failed = []
