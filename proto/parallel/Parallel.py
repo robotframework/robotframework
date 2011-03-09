@@ -48,7 +48,7 @@ class Parallel(object):
 
     def run_parallel_tests(self, *tests):
         for test in tests:
-            self.run_parallel_robot(test)
+            self.run_parallel_test(test)
         self.wait_for_all_parallel_tests_to_be_ready()
 
     def wait_for_parallel_tests_to_be_ready(self, *processes):
