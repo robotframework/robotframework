@@ -13,6 +13,7 @@
 #  limitations under the License.
 
 
+from __future__ import with_statement
 import subprocess
 from time import time
 from random import randint
