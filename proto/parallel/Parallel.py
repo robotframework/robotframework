@@ -15,7 +15,7 @@
 
 from __future__ import with_statement
 import subprocess
-from time import time
+import time
 from random import randint
 import os
 import re
@@ -76,7 +76,7 @@ class _ParaRobo(object):
 
     def __init__(self, test, *args):
         self._built_in = BuiltIn.BuiltIn()
-        id = "%s%s" % (time(), randint(0, 1000000))
+        id = self._create_id()
         self._output = 'output_%s.xml' % id
         self._log = 'log_%s.html' % id
         self.test = test
@@ -84,6 +84,10 @@ class _ParaRobo(object):
         self._output_dir = self._built_in.replace_variables("${OUTPUT DIR}")
         self._monitor_out = os.path.join(self._output_dir, 'monitor_%s.txt' % id)
         self._suite_name = self._built_in.replace_variables("${SUITE_NAME}")
+
+    def _create_id(self):
+        return "%s_%s" % (randint(0, 10000), time.strftime('%Y%m%d_%H%m%S.')+\
+                                    ('%03d' % (int(time.time()*1000) % 1000)))
 
     def run(self, script):
         self._monitor_file = open(self._monitor_out, 'w')
