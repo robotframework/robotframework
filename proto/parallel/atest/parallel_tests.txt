@@ -1,5 +1,5 @@
 *** Settings ***
-Test Setup      Set Suite For Parallel Tests  ${CURDIR}/../testdata/tests.txt
+Test Setup      Set Data Source For Parallel Tests  ${CURDIR}/../testdata/tests.txt
 Library         Parallel  pybot
 
 *** Test Cases ***

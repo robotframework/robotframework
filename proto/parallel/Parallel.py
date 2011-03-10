@@ -25,34 +25,69 @@ from robot.utils import html_escape
 
 
 class Parallel(object):
+    """
+    Library for executing tests in parallel from inside of a robot test case.
+    """
 
     def __init__(self, runner_script, *arguments):
+        """
+        `runner_script` is pybot or jybot or a custom script.
+
+        `*arguments` is default arguments to give to every test execution.
+        """
         self._script = runner_script
         self._arguments = list(arguments)
         self._processes = []
         self._suite = None
 
     def add_parallel_arguments(self, *args):
+        """
+        Add arguments to run script.
+
+        `*args` is list of arguments to pass to parallel executions.
+        """
         self._argumens += list(args)
 
-    def set_suite_for_parallel_tests(self, suite):
-        self._suite = suite
+    def set_data_source_for_parallel_tests(self, data_source):
+        """
+        Set the path to the data source that contains the tests to be
+        executed in parallel.
+
+        `suite` is file path.
+        """   
+        self._data_source = data_source
 
     def run_parallel_test(self, test_name, *args):
+        """
+        `test_name` is name of the test to be executed.
+
+        `*args` is list of arguments to pass to this execution.
+        
+        Returns a process object that represents this execution.
+        
+        NOTE! default arguments set during library import and by calling
+        `Add Parallel Arguments` will also be given to this test execution.
+        """
         if self._suite is None:
             self._suite = BuiltIn.BuiltIn().replace_variables('${SUITE_SOURCE}')
-        arguments = self._arguments+list(args)+[self._suite]
+        arguments = self._arguments+list(args)+[self._data_source]
         process = _ParaRobo(test_name, *arguments)
         process.run(self._script)
         self._processes.append(process)
         return process
 
     def run_parallel_tests(self, *tests):
+        """
+        `*tests` is list of tests to be executed in parallel.
+        """
         for test in tests:
             self.run_parallel_test(test)
         self.wait_for_all_parallel_tests_to_be_ready()
 
     def wait_for_parallel_tests_to_be_ready(self, *processes):
+        """
+        `*processes` is list of all the processes to wait.
+        """
         failed = []
         for process in processes:
             rval = process.wait()
@@ -67,9 +102,12 @@ class Parallel(object):
         self.wait_for_parallel_tests_to_be_ready(*self._processes)
 
     def stop_all_parallel_tests(self):
+        """
+        Forcefully stops all the executions.
+        """
         for process in self._processes:
             process.stop_test_execution()
-            self._processes.remove(process)
+        self._processes = []
 
 
 class _ParaRobo(object):
