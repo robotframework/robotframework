@@ -36,7 +36,7 @@ class Parallel(object):
         `arguments` are default arguments given to every test execution.
 
         Example:
-        | Library | Parallel | --variable | variable:value | --loglevel | DEBUG |
+        | Library | Parallel | pybot | --variable | variable:value | --loglevel | DEBUG |
         """
         self._script = runner_script
         self._arguments = list(arguments)
