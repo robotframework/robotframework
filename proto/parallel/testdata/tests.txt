@@ -1,0 +1,15 @@
+*** Test Case ***
+Passing
+    No Operation
+
+Failing
+    Fail  Expected failure
+
+Expect Variable
+    Should Be Equal  ${VARIABLE}  Hello World!
+
+Long Lasting Test
+    Sleep  10 minutes
+
+Test Name Contains Special Chars Like \ / ' `
+    No Operation

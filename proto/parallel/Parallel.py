@@ -55,16 +55,21 @@ class Parallel(object):
     def wait_for_parallel_tests_to_be_ready(self, *processes):
         failed = []
         for process in processes:
-          rval = process.wait()
-          process.report()
-          if rval != 0:
-            failed.append(process.test)
+            rval = process.wait()
+            process.report()
+            if rval != 0:
+                failed.append(process.test)
+        self._processes = []
         if failed:
             raise AssertionError("Following tests failed:\n%s" % "\n".join(failed))
 
     def wait_for_all_parallel_tests_to_be_ready(self):
         self.wait_for_parallel_tests_to_be_ready(*self._processes)
-        self._processes = []
+
+    def stop_all_parallel_tests(self):
+        for process in self._processes:
+            process.stop_test_execution()
+            self._processes.remove(process)
 
 
 class _ParaRobo(object):
@@ -81,21 +86,21 @@ class _ParaRobo(object):
         self._suite_name = self._built_in.replace_variables("${SUITE_NAME}")
 
     def run(self, script):
-        with open(self._monitor_out, 'w') as monitor_file:
-            cmd = [script, 
-                  '--outputdir', self._output_dir,
-                   '--output', self._output,
-                  '--report', 'None',
-                   '--log', self._log, 
-                  '--monitorcolors', 'off',
-                  '--test', self.test.replace(' ', '').replace('/', '?')]+\
-                  self._args
-            print "Starting test execution: %s" % " ".join(cmd)
-            self._process = subprocess.Popen(cmd,
-                                              shell=os.sep == '\\',
-                                              stdout=monitor_file, 
-                                              stderr=monitor_file,
-                                              env=self._get_environment_variables())
+        self._monitor_file = open(self._monitor_out, 'w')
+        cmd = [script,
+              '--outputdir', self._output_dir,
+               '--output', self._output,
+              '--report', 'None',
+               '--log', self._log,
+              '--monitorcolors', 'off',
+              '--test', self.test.replace(' ', '').replace('/', '?')]+\
+              self._args
+        print "Starting test execution: %s" % " ".join(cmd)
+        self._process = subprocess.Popen(cmd,
+                                          shell=os.sep == '\\',
+                                          stdout=self._monitor_file, 
+                                          stderr=self._monitor_file,
+                                          env=self._get_environment_variables())
 
     def _get_environment_variables(self):
         environment_variables = os.environ.copy()
@@ -104,7 +109,9 @@ class _ParaRobo(object):
         return environment_variables
 
     def wait(self):
-        return self._process.wait()
+        rc = self._process.wait()
+        self._monitor_file.close()
+        return rc
 
     def report(self):
         with open(self._monitor_out, 'r') as monitor_file:
@@ -124,3 +131,10 @@ class _ParaRobo(object):
         for name, colour in [("PASS", "pass"), ("FAIL", "fail"), ("ERROR", "fail")]:
             output = output.replace(' %s ' % name, ' <span class="%s">%s</span> ' % (colour, name))
         return output
+
+    def stop_test_execution(self):
+        try:
+            self._process.terminate()
+        except AttributeError:
+            pass
+        self.report()

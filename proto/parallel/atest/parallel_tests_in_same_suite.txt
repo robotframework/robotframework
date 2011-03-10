@@ -1,0 +1,17 @@
+*** Settings ***
+Library         Parallel  pybot
+
+*** Test Cases ***
+Paralel Tests In Same Suite
+    Run Parallel Test  Passing
+    Run Parallel Test  Failing
+    Run Keyword And Expect Error  Following tests failed:\nFailing  Wait For All Parallel Tests To Be Ready
+
+Passing
+    [Tags]  parallel
+    No Operation
+
+Failing
+    [Tags]  parallel
+    Fail  Expected failure
+
