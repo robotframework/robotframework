@@ -38,9 +38,9 @@ class Parallel(object):
         self._script = runner_script
         self._arguments = list(arguments)
         self._processes = []
-        self._suite = None
+        self._data_source = None
 
-    def add_parallel_arguments(self, *args):
+    def add_arguments_for_parallel_tests(self, *args):
         """
         Add arguments to run script.
 
@@ -53,11 +53,11 @@ class Parallel(object):
         Set the path to the data source that contains the tests to be
         executed in parallel.
 
-        `suite` is file path.
+        `data_source` is file path.
         """   
         self._data_source = data_source
 
-    def run_parallel_test(self, test_name, *args):
+    def start_parallel_test(self, test_name, *args):
         """
         `test_name` is name of the test to be executed.
 
@@ -65,11 +65,14 @@ class Parallel(object):
         
         Returns a process object that represents this execution.
         
-        NOTE! default arguments set during library import and by calling
+        NOTE: default arguments set during library import and by calling
         `Add Parallel Arguments` will also be given to this test execution.
+
+        NOTE: Set suite by using 'Set Data Source For Parallel Tests' or library will use 
+        ${SUITE_SOURCE}
         """
-        if self._suite is None:
-            self._suite = BuiltIn.BuiltIn().replace_variables('${SUITE_SOURCE}')
+        if self._data_source is None:
+            self._data_source = BuiltIn.BuiltIn().replace_variables('${SUITE_SOURCE}')
         arguments = self._arguments+list(args)+[self._data_source]
         process = _ParaRobo(test_name, *arguments)
         process.run(self._script)
@@ -80,30 +83,32 @@ class Parallel(object):
         """
         `*tests` is list of tests to be executed in parallel.
         """
+        processes = []
         for test in tests:
-            self.run_parallel_test(test)
-        self.wait_for_all_parallel_tests_to_be_ready()
+            processes += [self.start_parallel_test(test)]
+        self.wait_parallel_tests(*processes)
 
-    def wait_for_parallel_tests_to_be_ready(self, *processes):
+    def wait_parallel_tests(self, *processes):
         """
         `*processes` is list of all the processes to wait.
         """
         failed = []
         for process in processes:
-            rval = process.wait()
+            if process.wait() != 0:
+                failed += [process.test]
             process.report()
-            if rval != 0:
-                failed.append(process.test)
-        self._processes = []
+            self._processes.remove(process)
         if failed:
             raise AssertionError("Following tests failed:\n%s" % "\n".join(failed))
 
-    def wait_for_all_parallel_tests_to_be_ready(self):
-        self.wait_for_parallel_tests_to_be_ready(*self._processes)
+    def wait_all_parallel_tests(self):
+        self.wait_parallel_tests(*self._processes)
 
     def stop_all_parallel_tests(self):
         """
         Forcefully stops all the executions.
+        
+        NOTE: Requires Python 2.6 or later.
         """
         for process in self._processes:
             process.stop_test_execution()

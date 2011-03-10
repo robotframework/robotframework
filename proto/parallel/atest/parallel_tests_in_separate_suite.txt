@@ -4,7 +4,7 @@ Library         Parallel  pybot
 *** Test Cases ***
 Paralel Tests In Separate Suite
     Set Data Source For Parallel Tests  ${CURDIR}/../testdata/tests.txt
-    Run Parallel Test  Passing
-    Run Parallel Test  Failing
-    Run Keyword And Expect Error  Following tests failed:\nFailing  Wait For All Parallel Tests To Be Ready
+    Start Parallel Test  Passing
+    Start Parallel Test  Failing
+    Run Keyword And Expect Error  Following tests failed:\nFailing  Wait All Parallel Tests
 

@@ -4,13 +4,13 @@ Library         Parallel  pybot
 
 *** Test Cases ***
 Set Variable To Parallel Process
-    Run Parallel Test  Expect Variable  --variable  VARIABLE:Hello World!
-    Wait For All Parallel Tests To Be Ready
+    Start Parallel Test  Expect Variable  --variable  VARIABLE:Hello World!
+    Wait All Parallel Tests
 
 Timeout Test Case
     [Timeout]  1 second  Expected Timeout
-    Run Parallel Test  Long Lasting Test
-    Wait For All Parallel Tests To Be Ready
+    Start Parallel Test  Long Lasting Test
+    Wait All Parallel Tests
     [Teardown]  Stop All Parallel Tests
 
 Run All Parallel Test Cases
