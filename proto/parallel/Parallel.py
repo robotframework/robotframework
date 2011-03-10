@@ -46,7 +46,7 @@ class Parallel(object):
 
         `*args` is list of arguments to pass to parallel executions.
         """
-        self._argumens += list(args)
+        self._arguments += list(args)
 
     def set_data_source_for_parallel_tests(self, data_source):
         """
@@ -73,8 +73,7 @@ class Parallel(object):
         """
         if self._data_source is None:
             self._data_source = BuiltIn.BuiltIn().replace_variables('${SUITE_SOURCE}')
-        arguments = self._arguments+list(args)+[self._data_source]
-        process = _ParaRobo(test_name, *arguments)
+        process = _ParaRobo(test_name, self._data_source, self._arguments+list(args))
         process.run(self._script)
         self._processes.append(process)
         return process
@@ -117,16 +116,25 @@ class Parallel(object):
 
 class _ParaRobo(object):
 
-    def __init__(self, test, *args):
+    def __init__(self, test, data_source, arguments):
+        self.test = test
+        self._data_source = data_source
+        self._args = arguments
         self._built_in = BuiltIn.BuiltIn()
         id = self._create_id()
         self._output = 'output_%s.xml' % id
         self._log = 'log_%s.html' % id
-        self.test = test
-        self._args = list(args)
         self._output_dir = self._built_in.replace_variables("${OUTPUT DIR}")
         self._monitor_out = os.path.join(self._output_dir, 'monitor_%s.txt' % id)
-        self._suite_name = self._built_in.replace_variables("${SUITE_NAME}")
+
+    @property
+    def _suite_name(self):
+        name = os.path.splitext(os.path.basename(self._data_source))[0]
+        name = name.split('__', 1)[-1]  # Strip possible prefix
+        name = name.replace('_', ' ').strip()
+        if name.islower():
+            name = name.title()
+        return name
 
     def _create_id(self):
         return "%s_%s" % (randint(0, 10000), time.strftime('%Y%m%d_%H%m%S.')+\
@@ -140,8 +148,8 @@ class _ParaRobo(object):
               '--report', 'None',
                '--log', self._log,
               '--monitorcolors', 'off',
-              '--test', self.test.replace(' ', '').replace('/', '?')]+\
-              self._args
+              '--test', self.test]+\
+              self._args + [self._data_source]
         print "Starting test execution: %s" % " ".join(cmd)
         self._process = subprocess.Popen(cmd,
                                           shell=os.sep == '\\',

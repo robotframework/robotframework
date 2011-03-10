@@ -19,3 +19,10 @@ Run All Parallel Test Cases
 Special Characters In Test Name
     Run Parallel Tests  Test Name Contains Special Chars Like \\ / ' `
 
+Additional Arguments To The Tests
+    Add Arguments For Parallel Tests  --variable  VARIABLE:Hello World!
+    Run Parallel Tests  Expect Variable  Expect Variable
+    Wait All Parallel Tests
+
+Wait Nothingness
+    Wait All Parallel Tests
