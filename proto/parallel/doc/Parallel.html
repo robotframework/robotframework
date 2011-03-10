@@ -1,0 +1,231 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<title>Parallel</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style media="all" type="text/css">
+body {
+  background: white;
+  color: black;
+  font-size: small;
+  font-family: sans-serif;
+  padding: 0.1em 0.5em;
+}
+a.name, span.name {
+  font-style: italic;
+}
+a, a:link, a:visited {
+  color: #c30;
+}
+a:hover, a:active {
+  text-decoration: underline;
+  color: black;
+}
+div.shortcuts {
+  margin: 1em 0em;
+  font-size: 0.9em;
+}
+div.shortcuts a {
+  text-decoration: none;
+  color: black;
+}
+div.shortcuts a:hover {
+  text-decoration: underline;
+}
+table.keywords {
+  border: 2px solid black;
+  border-collapse: collapse;
+  empty-cells: show;
+  margin: 0.3em 0em;
+  width: 100%;
+}
+table.keywords th, table.keywords td {
+  border: 2px solid black;
+  padding: 0.2em;
+  vertical-align: top;
+}
+table.keywords th {
+  background: #bbb;
+  color: black;
+}
+table.keywords td.kw {
+  width: 150px;
+  font-weight: bold;
+}
+table.keywords td.arg {
+  width: 300px;
+  font-style: italic;
+}
+table.doc {
+  border: 1px solid black;
+  background: transparent;
+  border-collapse: collapse;
+  empty-cells: show;
+  font-size: 0.85em;
+}
+table.doc td {
+  border: 1px solid black;
+  padding: 0.1em 0.3em;
+  height: 1.2em;
+
+}
+#footer {
+  font-size: 0.9em;
+}
+</style>
+<style media="print" type="text/css">
+body {
+  margin: 0px 1px;
+  padding: 0px;
+  font-size: 10px;
+}
+a {
+  text-decoration: none;
+}
+</style>
+</head>
+<body>
+<h1>Parallel</h1>
+<b>Scope:</b> test case<br>
+<b>Named arguments: </b>
+supported
+
+<h2 id="introduction">Introduction</h2>
+<p>Library for executing tests in parallel from inside of a robot test case.</p>
+
+<h2 id="importing">Importing</h2>
+<table border="1" class="keywords">
+<tr>
+  <th class="arg">Arguments</th>
+  <th class="doc">Documentation</th>
+</tr>
+<tr>
+  <td class="arg">runner_script, *arguments</td>
+  <td class="doc"><span class="name">runner_script</span> is pybot or jybot or a custom script.<br />
+<br />
+<span class="name">arguments</span> are default arguments given to every test execution.<br />
+<br />
+Example:<br />
+<table border="1" class="doc">
+<tr>
+<td>Library</td>
+<td>Parallel</td>
+<td>--variable</td>
+<td>variable:value</td>
+<td>--loglevel</td>
+<td>DEBUG</td>
+</tr>
+</table>
+</td>
+</tr>
+</table>
+
+<h2>Shortcuts</h2>
+<div class='shortcuts'>
+<a href="#Add Arguments For Parallel Tests" title="Adds `arguments` to be used when parallel test is started.">Add&nbsp;Arguments&nbsp;For&nbsp;Parallel&nbsp;Tests</a>
+&nbsp;&middot;&nbsp;
+<a href="#Run Parallel Tests" title="Executes all given tests parallel and wait those to be ready.">Run&nbsp;Parallel&nbsp;Tests</a>
+&nbsp;&middot;&nbsp;
+<a href="#Set Data Source For Parallel Tests" title="Sets data source which is used when parallel tests are started.">Set&nbsp;Data&nbsp;Source&nbsp;For&nbsp;Parallel&nbsp;Tests</a>
+&nbsp;&middot;&nbsp;
+<a href="#Start Parallel Test" title="Starts executing test with given `test_name` and `arguments`.">Start&nbsp;Parallel&nbsp;Test</a>
+&nbsp;&middot;&nbsp;
+<a href="#Stop All Parallel Tests" title="Forcefully stops all the executions.">Stop&nbsp;All&nbsp;Parallel&nbsp;Tests</a>
+&nbsp;&middot;&nbsp;
+<a href="#Wait All Parallel Tests" title="">Wait&nbsp;All&nbsp;Parallel&nbsp;Tests</a>
+&nbsp;&middot;&nbsp;
+<a href="#Wait Parallel Tests" title="Wait given `processes` to be ready. ">Wait&nbsp;Parallel&nbsp;Tests</a>
+</div>
+
+<h2>Keywords</h2>
+<table border="1" class="keywords">
+<tr>
+  <th class="kw">Keyword</th>
+  <th class="arg">Arguments</th>
+  <th class="doc">Documentation</th>
+</tr>
+<tr>
+  <td class="kw"><a name="Add Arguments For Parallel Tests"></a>Add Arguments For Parallel Tests</td>
+  <td class="arg">*arguments</td>
+  <td class="doc">Adds <span class="name">arguments</span> to be used when parallel test is started.<br />
+<br />
+<span class="name">arguments</span> is a list of arguments to pass to parallel executions.<br />
+<br />
+In the following example variable my_var is used in both of the tests started with the keyword <a href="#Run Parallel Tests" class="name">Run Parallel Tests</a>:<br />
+<table border="1" class="doc">
+<tr>
+<td>Add Arguments For Parallel Tests</td>
+<td>--variable</td>
+<td>my_var:value</td>
+</tr>
+<tr>
+<td>Run Parallel Tests</td>
+<td>Test</td>
+<td>Another Test</td>
+</tr>
+</table>
+</td>
+</tr>
+<tr>
+  <td class="kw"><a name="Run Parallel Tests"></a>Run Parallel Tests</td>
+  <td class="arg">*test_names</td>
+  <td class="doc">Executes all given tests parallel and wait those to be ready.<br />
+<br />
+Arguments can be set with keyword <a href="#Add Arguments For Parallel Tests" class="name">Add Arguments For Parallel Tests</a> and data source with keyword <a href="#Set Data Source For Parallel Tests" class="name">Set Data Source For Parallel Tests</a>. In case test cases are from different data sources, combination of <a href="#Set Data Source For Parallel Tests" class="name">Set Data Source For Parallel Tests</a>, <a href="#Start Parallel Test" class="name">Start Parallel Test</a> and <a href="#Wait All Parallel Tests" class="name">Wait All Parallel Tests</a> keywords needs to be used.</td>
+</tr>
+<tr>
+  <td class="kw"><a name="Set Data Source For Parallel Tests"></a>Set Data Source For Parallel Tests</td>
+  <td class="arg">data_source</td>
+  <td class="doc">Sets data source which is used when parallel tests are started.<br />
+<br />
+<span class="name">data_source</span> is path to file which contains the test/tests which are started/executed with keywords <a href="#Start Parallel Test" class="name">Start Parallel Test</a> or <a href="#Run Parallel Tests" class="name">Run Parallel Tests</a>.<br />
+<br />
+If tests to be executed are in the same suite and Robot Framework 2.5 or later is used, there is no need to use this keyword as <span class="name">data_source</span> can be automatically resolved.<br />
+<br />
+Examples:<br />
+<table border="1" class="doc">
+<tr>
+<td>Set Data Source For Parallel Tests</td>
+<td>${CURDIR}${/}my_parallel_suite.txt</td>
+</tr>
+<tr>
+<td>Start Parallel Test</td>
+<td>My Parallel Test</td>
+</tr>
+</table>
+</td>
+</tr>
+<tr>
+  <td class="kw"><a name="Start Parallel Test"></a>Start Parallel Test</td>
+  <td class="arg">test_name, *arguments</td>
+  <td class="doc">Starts executing test with given <span class="name">test_name</span> and <span class="name">arguments</span>.<br />
+<br />
+<span class="name">arguments</span> is list of Robot Framework command line arguments passed to the started test execution. It should not include data source. Use <a href="#Set Data Source For Parallel Tests" class="name">Set Data Source For Parallel Tests</a> keyword for setting the data source. Additional arguments can also be set in library import and with <a href="#Add Arguments For Parallel Tests" class="name">Add Arguments For Parallel Tests</a> keyword.<br />
+<br />
+Returns a process object that represents this execution.</td>
+</tr>
+<tr>
+  <td class="kw"><a name="Stop All Parallel Tests"></a>Stop All Parallel Tests</td>
+  <td class="arg"></td>
+  <td class="doc">Forcefully stops all the executions.<br />
+<br />
+NOTE: Requires Python 2.6 or later.</td>
+</tr>
+<tr>
+  <td class="kw"><a name="Wait All Parallel Tests"></a>Wait All Parallel Tests</td>
+  <td class="arg"></td>
+  <td class="doc"></td>
+</tr>
+<tr>
+  <td class="kw"><a name="Wait Parallel Tests"></a>Wait Parallel Tests</td>
+  <td class="arg">*processes</td>
+  <td class="doc">Wait given <span class="name">processes</span> to be ready. <span class="name">*processes</span> is list of all the processes to wait.</td>
+</tr>
+</table>
+<p id="footer">
+Altogether 7 keywords.<br />
+Generated by <a href="http://code.google.com/p/robotframework/wiki/LibraryDocumentationTool">libdoc.py</a>
+on 2011-03-10 21:47:32.
+</p>
+</body>
+</html>

@@ -33,63 +33,83 @@ class Parallel(object):
         """
         `runner_script` is pybot or jybot or a custom script.
 
-        `*arguments` is default arguments to give to every test execution.
+        `arguments` are default arguments given to every test execution.
+
+        Example:
+        | Library | Parallel | --variable | variable:value | --loglevel | DEBUG |
         """
         self._script = runner_script
         self._arguments = list(arguments)
         self._processes = []
         self._data_source = None
 
-    def add_arguments_for_parallel_tests(self, *args):
-        """
-        Add arguments to run script.
+    def add_arguments_for_parallel_tests(self, *arguments):
+        """Adds `arguments` to be used when parallel test is started.
 
-        `*args` is list of arguments to pass to parallel executions.
+        `arguments` is a list of arguments to pass to parallel executions.
+
+        In the following example variable my_var is used in both of the tests 
+        started with the keyword `Run Parallel Tests`:
+        | Add Arguments For Parallel Tests | --variable | my_var:value |
+        | Run Parallel Tests | Test | Another Test |
         """
-        self._arguments += list(args)
+        self._arguments += list(arguments)
 
     def set_data_source_for_parallel_tests(self, data_source):
-        """
-        Set the path to the data source that contains the tests to be
-        executed in parallel.
+        """Sets data source which is used when parallel tests are started.
 
-        `data_source` is file path.
+        `data_source` is path to file which contains the test/tests which are
+        started/executed with keywords `Start Parallel Test` or `Run Parallel
+        Tests`.
+
+        If tests to be executed are in the same suite and Robot Framework 2.5
+        or later is used, there is no need to use this keyword as `data_source`
+        can be automatically resolved.
+
+        Examples:
+        | Set Data Source For Parallel Tests | ${CURDIR}${/}my_parallel_suite.txt |
+        | Start Parallel Test | My Parallel Test |
         """   
         self._data_source = data_source
 
-    def start_parallel_test(self, test_name, *args):
-        """
-        `test_name` is name of the test to be executed.
+    def start_parallel_test(self, test_name, *arguments):
+        """Starts executing test with given `test_name` and `arguments`.
 
-        `*args` is list of arguments to pass to this execution.
-        
+        `arguments` is list of Robot Framework command line arguments passed to 
+        the started test execution. It should not include data source. Use
+        `Set Data Source For Parallel Tests` keyword for setting the data
+        source. Additional arguments can also be set in library import and with
+        `Add Arguments For Parallel Tests` keyword.
+
         Returns a process object that represents this execution.
-        
-        NOTE: default arguments set during library import and by calling
-        `Add Parallel Arguments` will also be given to this test execution.
-
-        NOTE: Set suite by using 'Set Data Source For Parallel Tests' or library will use 
-        ${SUITE_SOURCE}
         """
         if self._data_source is None:
             self._data_source = BuiltIn.BuiltIn().replace_variables('${SUITE_SOURCE}')
-        process = _ParaRobo(test_name, self._data_source, self._arguments+list(args))
+        process = _ParaRobo(test_name, self._data_source, 
+                            self._arguments+list(arguments))
         process.run(self._script)
         self._processes.append(process)
         return process
 
-    def run_parallel_tests(self, *tests):
-        """
-        `*tests` is list of tests to be executed in parallel.
+    def run_parallel_tests(self, *test_names):
+        """Executes all given tests parallel and wait those to be ready.
+
+        Arguments can be set with keyword `Add Arguments For Parallel Tests`
+        and data source with keyword `Set Data Source For Parallel Tests`. In 
+        case test cases are from different data sources, combination of 
+        `Set Data Source For Parallel Tests`, `Start Parallel Test` and 
+        `Wait All Parallel Tests` keywords needs to be used.
         """
         processes = []
-        for test in tests:
-            processes += [self.start_parallel_test(test)]
+        for name in test_names:
+            processes += [self.start_parallel_test(name)]
         self.wait_parallel_tests(*processes)
 
     def wait_parallel_tests(self, *processes):
-        """
-        `*processes` is list of all the processes to wait.
+        """Waits given `processes` to be ready and fails if any of the tests failed.
+
+        `Processes` are list of test execution processes returned from keyword 
+        `Start Parallel Test`.
         """
         failed = []
         for process in processes:
@@ -101,11 +121,11 @@ class Parallel(object):
             raise AssertionError("Following tests failed:\n%s" % "\n".join(failed))
 
     def wait_all_parallel_tests(self):
+        """Wait all started test executions to be ready and fails if any of those failed."""
         self.wait_parallel_tests(*self._processes)
 
     def stop_all_parallel_tests(self):
-        """
-        Forcefully stops all the executions.
+        """Forcefully stops all the test executions.
         
         NOTE: Requires Python 2.6 or later.
         """
