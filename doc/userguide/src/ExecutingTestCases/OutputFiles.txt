@@ -43,11 +43,11 @@ post-processed`__ after the test execution.
 
 The command line option :opt:`--output (-o)` determines where
 output files are created. Output files are always created when tests
-are executed, and unless outputs are `splitted`__, only one output file 
+are executed, and unless outputs are `splitted`__, only one output file
 is created. The default name for the output file is :path:`output.xml`.
-If outputs are splitted to several output files, they are named by 
-postfixing the name of the first output file with sequence numbers. When 
-post-processing outputs, new output files are not created unless 
+If outputs are splitted to several output files, they are named by
+postfixing the name of the first output file with sequence numbers. When
+post-processing outputs, new output files are not created unless
 :opt:`--output (-o)` option is explicitly used.
 
 __ `Post-processing outputs`_
@@ -208,7 +208,7 @@ test succeed, the second when only non-critical tests have failed, and
 the last when there are critical failures. This feature thus allows
 using a separate background color, for example yellow, when
 non-critical tests have failed.
-	
+
 The specified colors are used as a value for the :code:`body`
 element's :code:`background` CSS property. The value is used as-is and
 can be a HTML color name (e.g. :code:`red`), a hexadecimal value
@@ -234,8 +234,8 @@ log levels are:
    Used to display warnings. They shown also in `the console and in
    the Test Execution Errors section in log files`__, but they
    do not affect the test case status.
- 
-:msg:`INFO` 
+
+:msg:`INFO`
    The default level for normal messages. By default,
    messages below this level are not shown in the log file.
 
@@ -348,30 +348,30 @@ as follows, and the following table lists all the created output files::
 .. table:: All output files created in the first example
    :class: tabular
 
-   +---------------+-------------------------------------------------------+ 
+   +---------------+-------------------------------------------------------+
    | Created File  |                       Contents                        |
    +===============+=======================================================+
    | output.xml    | Information about the :name:`Project` test suite,     |
    |               | excluding its child test suites. Lower-level output   |
    |               | files are referenced.                                 |
-   +---------------+-------------------------------------------------------+ 
+   +---------------+-------------------------------------------------------+
    | output-001.xml| Information about the whole :name:`Component A` suite.|
-   +---------------+-------------------------------------------------------+ 
+   +---------------+-------------------------------------------------------+
    | output-002.xml| Information about the whole :name:`Component B` suite.|
-   +---------------+-------------------------------------------------------+ 
+   +---------------+-------------------------------------------------------+
    | output-003.xml| Information about the whole :name:`Component C` suite.|
-   +---------------+-------------------------------------------------------+ 
+   +---------------+-------------------------------------------------------+
    | log.html      | A log file created from :path:`output.xml`,           |
    |               | lower-level log files are linked.                     |
-   +---------------+-------------------------------------------------------+ 
+   +---------------+-------------------------------------------------------+
    | log-001.html  | A log file created from :path:`output-001.xml`.       |
-   +---------------+-------------------------------------------------------+ 
+   +---------------+-------------------------------------------------------+
    | log-002.html  | A log file created from :path:`output-002.xml`.       |
-   +---------------+-------------------------------------------------------+ 
+   +---------------+-------------------------------------------------------+
    | log-003.html  | A log file created from :path:`output-003.xml`.       |
-   +---------------+-------------------------------------------------------+ 
+   +---------------+-------------------------------------------------------+
    | report.html   | A normal report file.                                 |
-   +---------------+-------------------------------------------------------+ 
+   +---------------+-------------------------------------------------------+
 
 The fact that output files are split is transparent when
 post-processing outputs afterwards, and it is enough to point
@@ -388,27 +388,27 @@ output files by default, they are not listed in the table.
 .. table:: All output files created in the second example
    :class: tabular
 
-   +---------------+-------------------------------------------------------+ 
+   +---------------+-------------------------------------------------------+
    | Created File  |                       Contents                        |
    +===============+=======================================================+
    | log.html      | Information about the :name:`Project` and all the     |
    |               | :name:`Component ?` suites, but not their child       |
    |               | suites. Lower-level log files are linked.             |
-   +---------------+-------------------------------------------------------+ 
+   +---------------+-------------------------------------------------------+
    | log-001.html  | The whole :name:`Feature A1` test suite.              |
-   +---------------+-------------------------------------------------------+ 
+   +---------------+-------------------------------------------------------+
    | log-002.html  | The whole :name:`Feature A2` test suite.              |
-   +---------------+-------------------------------------------------------+ 
+   +---------------+-------------------------------------------------------+
    | log-003.html  | The whole :name:`Feature B1` test suite.              |
-   +---------------+-------------------------------------------------------+ 
+   +---------------+-------------------------------------------------------+
    | log-004.html  | The whole :name:`C1` test suite.                      |
-   +---------------+-------------------------------------------------------+ 
+   +---------------+-------------------------------------------------------+
    | log-005.html  | The whole :name:`C2` test suite.                      |
-   +---------------+-------------------------------------------------------+ 
+   +---------------+-------------------------------------------------------+
    | log-006.html  | The whole :name:`C3` test suite.                      |
-   +---------------+-------------------------------------------------------+ 
+   +---------------+-------------------------------------------------------+
    | report.html   | A normal report file.                                 |
-   +---------------+-------------------------------------------------------+ 
+   +---------------+-------------------------------------------------------+
 
 The last example splits outputs from the third level. It also shows
 how to configure output file names when splitting::
@@ -418,24 +418,24 @@ how to configure output file names when splitting::
 .. table:: All output files created in the third example
    :class: tabular
 
-   +---------------+-------------------------------------------------------+ 
+   +---------------+-------------------------------------------------------+
    | Created File  |                       Contents                        |
    +===============+=======================================================+
    | mylog.html    | Information about the :name:`Project` test suite all  |
    |               | the way to its second-level child suites. This        |
    |               | includes test cases in the :name:`C?` suites.         |
    |               | Lower-level logs are linked.                          |
-   +---------------+-------------------------------------------------------+ 
+   +---------------+-------------------------------------------------------+
    | mylog-001.html| The whole :name:`A11` test suite.                     |
-   +---------------+-------------------------------------------------------+ 
+   +---------------+-------------------------------------------------------+
    | mylog-002.html| The whole :name:`A12` test suite.                     |
-   +---------------+-------------------------------------------------------+ 
+   +---------------+-------------------------------------------------------+
    | mylog-003.html| The whole :name:`A21` test suite.                     |
-   +---------------+-------------------------------------------------------+ 
+   +---------------+-------------------------------------------------------+
    | mylog-004.html| The whole :name:`B11` test suite.                     |
-   +---------------+-------------------------------------------------------+ 
+   +---------------+-------------------------------------------------------+
    | mylog-005.html| The whole :name:`B12` test suite.                     |
-   +---------------+-------------------------------------------------------+ 
+   +---------------+-------------------------------------------------------+
 
 If a split level higher than three is used with this test data, all the
 information ends up to index files. The end result is thus exactly the
@@ -502,8 +502,8 @@ Two or more tags separated by :code:`NOT`
    The combined statistics contain tests that have the first tag but
    not the others. Also in this case tags may be patterns.
 
-The following examples illustrate these usages, and the figure below shows a snippet 
-of the resulting :name:`Statistics by Tag` table when the example test data is 
+The following examples illustrate these usages, and the figure below shows a snippet
+of the resulting :name:`Statistics by Tag` table when the example test data is
 executed with these options::
 
     --tagstatcombine owner-*
@@ -517,8 +517,8 @@ executed with these options::
 
 As the above example shows, the name of the added combined statistic is, by default,
 generated from the given pattern. In certain situations this name can look pretty
-cryptic and, starting from Robot Framework 2.0.2, it is possible to specify a 
-more descriptive name. This name is given after the pattern separating it 
+cryptic and, starting from Robot Framework 2.0.2, it is possible to specify a
+more descriptive name. This name is given after the pattern separating it
 with a colon (:code:`:`). Example below generates combined tag so that the name shown
 in reports and logs is :name:`Critical Tests`::
 
@@ -595,7 +595,7 @@ elapsed time of the suite.
 Times must be given as timestamps in the format :code:`YYYY-MM-DD
 hh:mm:ss.mil`, where all separators are optional and the parts from
 milliseconds to hours can be omitted. For example, :code:`2008-06-11
-17:59:20.495` is equivalent both to :code:`20080611-175920.495` and 
+17:59:20.495` is equivalent both to :code:`20080611-175920.495` and
 :code:`20080611175920495`, and also mere :code:`20080611` would work.
 
 Examples::
@@ -615,10 +615,11 @@ command line option :opt:`--removekeywords` can be used to dispose
 of unnecessary keywords. It has two possible values:
 
 :opt:`ALL`
-   All keywords are unconditionally removed. 
+   All keywords are unconditionally removed.
 
 :opt:`PASSED`
-   Keywords are removed only from the passed test cases. In most cases, log
+   Keywords are removed only from test cases that have passed and do not contain
+   messages written with loglevel :msg:`WARN`. In most cases, log
    files created after this contain enough information to investigate
    possible failures.
 
@@ -626,7 +627,7 @@ Removing keywords makes output files considerably smaller and thus
 faster to process further. Even when keywords are removed, names,
 arguments and statuses of top-level keywords are preserved, so it is
 still possible to create log files and see the high-level structure of
-each test case. 
+each test case.
 
 System log
 ~~~~~~~~~~

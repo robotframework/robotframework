@@ -234,17 +234,20 @@ class TestSuite(BaseTestSuite, _SuiteReader):
         return metastr
 
     def remove_keywords(self, how):
-        how = how.upper()
-        if how not in ['ALL','PASSED']:
+        should_remove = ShouldRemoveCallable(how)
+        if not should_remove:
             return
-        if how == 'ALL' or (how == 'PASSED' and self.critical_stats.failed == 0):
-            for kw in self.setup, self.teardown:
-                if kw is not None:
-                    kw.remove_data()
+        self._remove_fixture_keywords(should_remove)
         for suite in self.suites:
             suite.remove_keywords(how)
         for test in self.tests:
-            test.remove_keywords(how)
+            test.remove_keywords(should_remove)
+
+    def _remove_fixture_keywords(self, should_remove):
+        critical_failures = self.critical_stats.failed != 0
+        for kw in self.setup, self.teardown:
+            if should_remove(kw, critical_failures):
+                kw.remove_data()
 
 
 class CombinedTestSuite(TestSuite):
@@ -270,11 +273,14 @@ class TestCase(BaseTestCase, _TestReader):
         _TestReader.__init__(self, node, log_level=log_level)
         self.set_criticality(parent.critical)
 
-    def remove_keywords(self, how):
-        if how == 'ALL' or (how == 'PASSED' and self.status == 'PASS'):
+    def remove_keywords(self, should_remove):
+        if should_remove(self, (self.status != 'PASS')):
             for kw in self.keywords + [self.setup, self.teardown]:
                 if kw is not None:
                     kw.remove_data()
+
+    def contains_warnings(self):
+        return any(kw.contains_warnings() for kw in self.keywords)
 
 
 class Keyword(BaseKeyword, _KeywordReader):
@@ -291,6 +297,10 @@ class Keyword(BaseKeyword, _KeywordReader):
 
     def remove_data(self):
         self._init_data()
+
+    def contains_warnings(self):
+        return any(msg.level == 'WARN' for msg in self.messages) or \
+                    any(kw.contains_warnings() for kw in self.keywords)
 
     def __str__(self):
         return self.name
@@ -348,3 +358,18 @@ class CombinedExecutionErrors(ExecutionErrors):
 
     def add(self, other):
         self.messages += other.messages
+
+
+def ShouldRemoveCallable(how):
+    def _removes_all(item, critical_failures):
+        return item is not None
+    def _removes_passed_not_containing_warnings(item, critical_failures):
+        if item is None:
+            return False
+        if critical_failures:
+            return False
+        return not item.contains_warnings()
+    how = how.upper()
+    if how == 'ALL':
+        return _removes_all
+    return _removes_passed_not_containing_warnings if how == 'PASSED' else None
