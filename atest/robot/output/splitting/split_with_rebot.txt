@@ -14,8 +14,8 @@ ${BASEOUT}  output
 *** Test Cases ***
 Split Level 1
     Run Rebot With Given Split Level  1
-    Correct Files Should Be Created  ${BASEOUT}  xml  8
-    Correct Files Should Be Created  split1  html  8
+    Correct Files Should Be Created  ${BASEOUT}  xml  9
+    Correct Files Should Be Created  split1  html  9
 
 Split Level 2
     Run Rebot With Given Split Level  2
