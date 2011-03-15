@@ -196,11 +196,17 @@ class _ParaRobo(object):
         except:
             pass
         match = re.search('^Log:     (.*)$', monitor_output, re.MULTILINE)
+        monitor_output = self._replace_stdout_log_message_levels(monitor_output)
         monitor_output = html_escape(monitor_output)
         if match:
             monitor_output = monitor_output.replace(match.group(1), '<a href="%s#test_%s.%s">%s</a>' % (self._log, self._suite_name, self.test, match.group(1)))
         monitor_output = self._add_colours(monitor_output)
         print "*HTML* %s" % monitor_output
+
+    def _replace_stdout_log_message_levels(self, output):
+        for level in ['TRACE', 'WARN', 'DEBUG', 'INFO', 'HTML']:
+            output = output.replace('\n*%s*' % level, '\n *%s*' % level)
+        return output
 
     def _add_colours(self, output):
         for name, colour in [("PASS", "pass"), ("FAIL", "fail"), ("ERROR", "fail")]:
