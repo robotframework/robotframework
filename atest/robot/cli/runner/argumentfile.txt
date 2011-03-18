@@ -28,7 +28,8 @@ Recursive Argument File
     Should Be Equal  ${SUITE.metadata['Second']}  2
 
 Argument File with Non-ASCII Characters
-    ${path} =  Join Path  ${CURDIR}/../../../testdata/parsing/unicode_paths/testäö.txt
+    Copy File  ${CURDIR}/../../../testdata/parsing/unicode_paths/test-auml-ouml.txt  ${TEMPDIR}/testäö.txt
+    ${path} =  Join Path  ${TEMPDIR}/testäö.txt
     Create Argument File  ${ARGFILE 3}  -D äëïöüÿ  -C off  ${path}
     ${output} =  Run Robot Directly  --argumentfile ${ARGFILE 3}
     Should Not Contain  ${output.upper()}  ERROR
