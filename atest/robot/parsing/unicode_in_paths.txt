@@ -1,11 +1,13 @@
 ﻿*** Settings ***
 Force Tags  regression  pybot  jybot
-Suite Setup  Run Tests  --log ulog.html --report ureport.html  parsing/unicode_paths/testäö.txt  parsing/unicode_paths/Työ
+Suite Setup  Create input data and run tests
+Suite Teardown   Revert input data
 Resource  atest_resource.txt
 
 
 *** Variables ***
-${ROOT}  Testäö & Työ
+${ROOT}     Testäö & Työ
+${BASEDIR}  ${CURDIR}/../../testdata/parsing/unicode_paths
 
 
 *** Test Cases ***
@@ -27,7 +29,31 @@ Creating logs and reports should succeed
   Stderr should be empty
 
 Failures processing files are handled gracefully
-  ${path} =  Normalize Path  ${CURDIR}/../../testdata/parsing/unicode_paths/Työ/tyhjä.txt
+  ${path} =  Normalize Path  ${BASEDIR}/Työ/tyhjä.txt
   ${path} =  Set Variable If  __import__('robot').utils.normalizing._CASE_INSENSITIVE_FILESYSTEM
   ...  ${path.lower()}  ${path}
   Check syslog contains  Parsing data source '${path}' failed: File has no test case table.
+
+
+*** Keywords ***
+
+Create input data and run tests
+  Create input data
+  Run Tests  --log ulog.html --report ureport.html  parsing/unicode_paths/testäö.txt  parsing/unicode_paths/Työ
+
+Create input data
+  [Documentation]  Mercurial doesn't seem to handle non-ASCII file names too well.
+  ...  Need to store files with ASCII names and rename them during execution.
+  Move File  ${BASEDIR}/test-auml-ouml.txt  ${BASEDIR}/testäö.txt
+  Move Directory  ${BASEDIR}/Ty-ouml  ${BASEDIR}/Työ
+  Move File  ${BASEDIR}/Työ/tyhj-auml.txt  ${BASEDIR}/Työ/tyhjä.txt
+  Move File  ${BASEDIR}/Työ/sect-test-sect.txt  ${BASEDIR}/Työ/§test§.txt
+
+Revert input data
+  [Documentation]  Revert ASCII -> non-ASCII conversion done by `Create input data`.
+  Move File  ${BASEDIR}/Työ/§test§.txt  ${BASEDIR}/Työ/sect-test-sect.txt
+  Move File  ${BASEDIR}/Työ/tyhjä.txt  ${BASEDIR}/Työ/tyhj-auml.txt
+  Move Directory  ${BASEDIR}/Työ  ${BASEDIR}/Ty-ouml
+  Move File  ${BASEDIR}/testäö.txt  ${BASEDIR}/test-auml-ouml.txt
+
+  
