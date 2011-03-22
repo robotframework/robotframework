@@ -1,0 +1,32 @@
+*** Settings ***
+Library         Parallel  pybot
+
+*** Variables ***
+${VARRI}  Original
+${EXPECTED}  ExpectedValue
+${VALUE_FROM_VAR_FILE}  Original
+
+*** Test Cases ***
+Main
+    Add Arguments For Parallel Tests  --variable  VARRI:${EXPECTED}
+    Add Arguments For Parallel Tests  --loglevel  DEBUG
+    Add Arguments For Parallel Tests  --variablefile  atest/varfile.py
+    Run Parallel Tests  Para Executor
+
+Para Executor
+    [Tags]  parallel
+    Run Parallel Tests  Verify Arguments
+
+Verify Arguments
+    [Tags]  parallel
+    Should Be Equal  ${VARRI}  ${EXPECTED}
+    Should Be Equal  ${VALUE_FROM_VAR_FILE}  ${EXPECTED}
+    Log Level Should Be  DEBUG
+
+*** Keywords ***
+Log Level Should Be
+    [Arguments]  ${expected log level}
+    ${YAKKI}=  Set Log Level  INFO
+    Set Log Level  ${YAKKI}
+    Should Be Equal  ${YAKKI}  ${expected log level}
+

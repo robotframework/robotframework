@@ -21,8 +21,8 @@ import os
 import re
 import sys
 from robot.libraries import BuiltIn
-from robot.utils import html_escape
-
+import robot.runner as runner
+from robot.utils import html_escape, ArgumentParser
 
 class Parallel(object):
     """
@@ -39,9 +39,30 @@ class Parallel(object):
         | Library | Parallel | pybot | --variable | variable:value | --loglevel | DEBUG |
         """
         self._script = runner_script
-        self._arguments = list(arguments)
+        self._arguments = self._get_arguments(arguments)
         self._processes = []
         self._data_source = None
+
+    def _get_arguments(self, additional_arguments):
+        options,_ = ArgumentParser(runner.__doc__).parse_args(sys.argv[1:])
+        args = []
+        args += self._get_type_argument(options, 'loglevel')
+        args += self._get_type_arguments(options, 'variable')
+        args += self._get_type_arguments(options, 'variablefile')
+        args += list(additional_arguments)
+        return args
+
+    def _get_type_arguments(self, options, key):
+        args = []
+        for var in options[key]:
+            args += ['--%s' % key, var]
+        return args  
+
+    def _get_type_argument(self, options, key):
+        value = options[key]
+        if value is not None:
+            return ['--%s' % key, value]
+        return []
 
     def add_arguments_for_parallel_tests(self, *arguments):
         """Adds `arguments` to be used when parallel test is started.
