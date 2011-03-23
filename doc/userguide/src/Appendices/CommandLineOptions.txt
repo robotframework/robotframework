@@ -25,8 +25,7 @@ Command line options for test execution
   -c, --critical <tag>    Tests that have the given tag are `considered critical`_. 
   -n, --noncritical <tag>  Tests that have the given tag are `not critical`_. 
   --runmode <mode>        Sets the execution mode for this test run.
-                          Valid modes are `ContinueOnFailure`_,
-                          `ExitOnFailure`_, `SkipTeardownOnExit`_, 
+                          Valid modes are `ExitOnFailure`_, `SkipTeardownOnExit`_, 
                           `DryRun`_, and `Random`_:<what>.
   -v, --variable <name:value>   Sets `individual variables`_.
   -V, --variablefile <path:args>  Sets variables using `variable files`_. 
