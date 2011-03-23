@@ -27,6 +27,32 @@ from robot.utils import html_escape, ArgumentParser
 class Parallel(object):
     """
     Library for executing tests in parallel from inside of a robot test case.
+    Tests are executed in subprocesses. 
+    
+    You can add arguments to all parallel test runs from `library importing`,
+    for a set of parallel tests with `Add Arguments For Parallel Tests` and
+    for an individual parallel test by passing the arguments in `Start Parallel Test`.
+     
+    The following command line arguments (also from argument files) are automatically 
+    passed to parallel tests:
+    --loglevel, --runmode, --pythonpath, --variable, --variablefile
+    
+    Example:
+    | *Settings* |
+    | Library | Parallel | pybot |
+    
+    
+    | *Test Cases* |
+    | Runner |
+    |        | Run Parallel Tests | Hello | World |  
+    | Hello |
+    |       | [Tags] | parallel |
+    |       | Log    | Hello ${WORLD} |
+    | World |
+    |       | [Tags] | parallel |
+    |       | Log    | ${HELLO} World |
+    
+    `pybot --exclude parallel --variable HELLO:Hello --variable WORLD:World .`
     """
 
     def __init__(self, runner_script, *arguments):
@@ -87,19 +113,27 @@ class Parallel(object):
         Examples:
         | Set Data Source For Parallel Tests | ${CURDIR}${/}my_parallel_suite.txt |
         | Start Parallel Test | My Parallel Test |
+        | Wait All Parallel Tests |
         """   
         self._data_source = data_source
 
     def start_parallel_test(self, test_name, *arguments):
         """Starts executing test with given `test_name` and `arguments`.
 
-        `arguments` is list of Robot Framework command line arguments passed to 
+        `arguments` is a list of Robot Framework command line arguments passed to 
         the started test execution. It should not include data source. Use
         `Set Data Source For Parallel Tests` keyword for setting the data
         source. Additional arguments can also be set in library import and with
         `Add Arguments For Parallel Tests` keyword.
 
         Returns a process object that represents this execution.
+        
+        Example:
+        | Set Data Source For Parallel Tests | MySuite.txt |
+        | Start Parallel Test | Test From My Suite |
+        | Set Data Source For Parallel Tests | MyFriendsSuite.txt |
+        | Start Parallel Test | Test From My Friends Suite |
+        | Wait All Parallel Tests |
         """
         if self._data_source is None:
             self._data_source = BuiltIn.BuiltIn().replace_variables('${SUITE_SOURCE}')
@@ -113,10 +147,14 @@ class Parallel(object):
         """Executes all given tests parallel and wait those to be ready.
 
         Arguments can be set with keyword `Add Arguments For Parallel Tests`
-        and data source with keyword `Set Data Source For Parallel Tests`. In 
-        case test cases are from different data sources, combination of 
-        `Set Data Source For Parallel Tests`, `Start Parallel Test` and 
-        `Wait All Parallel Tests` keywords needs to be used.
+        and data source with keyword `Set Data Source For Parallel Tests`. 
+        
+        Example:
+        | Add Arguments For Parallel Tests | --variable | SOME_VARIABLE:someValue |
+        | Set Data Source For Parallel Tests | MySuite.txt |
+        | Run Parallel Tests | My Parallel Test | My Another Parallel Test |
+        
+        When the parallel tests are from different data sources see the example in `Start Parallel Test`.
         """
         processes = []
         for name in test_names:
@@ -128,6 +166,13 @@ class Parallel(object):
 
         `Processes` are list of test execution processes returned from keyword 
         `Start Parallel Test`.
+        
+        Example
+        | ${test 1}= | Start Parallel Test | First Test |
+        | ${test 2}= | Start Parallel Test | Test That Runs All The Time |
+        | Wait Parallel Tests | ${test 1} |
+        | ${test 3}= | Start Parallel Test | Third Test |
+        | Wait Parallel Tests | ${test 2} | ${test 3} |
         """
         failed = []
         for process in processes:

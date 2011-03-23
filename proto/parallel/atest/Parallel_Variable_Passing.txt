@@ -36,6 +36,7 @@ Variable From Argument File
     Should Be Equal  ${VALUE_FROM_ARG_FILE}  ${EXPECTED}
 
 Log Level From Command Line
+    [Tags]  sdf
     Log Level Should Be  DEBUG
 
 *** Keywords ***
