@@ -44,25 +44,22 @@ class Parallel(object):
         self._data_source = None
 
     def _get_arguments(self, additional_arguments):
-        options,_ = ArgumentParser(runner.__doc__).parse_args(sys.argv[1:])
+        options,_ = ArgumentParser(runner.__doc__).parse_args(sys.argv[1:], argfile='argumentfile', unescape='escape')
         args = []
-        args += self._get_type_argument(options, 'loglevel')
-        args += self._get_type_arguments(options, 'variable')
-        args += self._get_type_arguments(options, 'variablefile')
+        for arg in ['loglevel', 'runmode', 'pythonpath', 'variable', 'variablefile']:
+           args += self._get_type_arguments(options, arg)
         args += list(additional_arguments)
         return args
 
     def _get_type_arguments(self, options, key):
-        args = []
-        for var in options[key]:
-            args += ['--%s' % key, var]
-        return args  
-
-    def _get_type_argument(self, options, key):
         value = options[key]
+        args = []
         if value is not None:
-            return ['--%s' % key, value]
-        return []
+            if not isinstance(value, list):
+                value = [value]
+            for var in value:
+                args += ['--%s' % key, var]
+        return args  
 
     def add_arguments_for_parallel_tests(self, *arguments):
         """Adds `arguments` to be used when parallel test is started.
