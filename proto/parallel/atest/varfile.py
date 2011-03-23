@@ -1,1 +1,1 @@
-VALUE_FROM_VAR_FILE='ExpectedValue'
+VALUE_FROM_VAR_FILE='Expected Value'

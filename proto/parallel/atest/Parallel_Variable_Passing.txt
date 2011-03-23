@@ -2,25 +2,40 @@
 Library         Parallel  pybot
 
 *** Variables ***
+${EXPECTED}  Expected Value
 ${VARRI}  Original
-${EXPECTED}  ExpectedValue
 ${VALUE_FROM_VAR_FILE}  Original
+${VALUE_FROM_ARG_FILE}  Original
 
 *** Test Cases ***
 Main
-    Add Arguments For Parallel Tests  --variable  VARRI:${EXPECTED}
+    Add Arguments For Parallel Tests  --variable  VARRI:Expected__Value
     Add Arguments For Parallel Tests  --loglevel  DEBUG
     Add Arguments For Parallel Tests  --variablefile  atest/varfile.py
+    Add Arguments For Parallel Tests  --pythonpath  atest/
+    Add Arguments For Parallel Tests  --argumentfile  atest/argfile.arg
+    Add Arguments For Parallel Tests  --escape  space:__
     Run Parallel Tests  Para Executor
 
 Para Executor
     [Tags]  parallel
-    Run Parallel Tests  Verify Arguments
+    Run Parallel Tests  Variable From Command Line  Variable From Variable File  Variable From Argument File  Python Path From Command Line  Log Level From Command Line
 
-Verify Arguments
+Python Path From Command Line
     [Tags]  parallel
+    Import Library  funnylib
+    This keyword is in funnylib
+
+Variable From Command Line
     Should Be Equal  ${VARRI}  ${EXPECTED}
+
+Variable From Variable File
     Should Be Equal  ${VALUE_FROM_VAR_FILE}  ${EXPECTED}
+
+Variable From Argument File
+    Should Be Equal  ${VALUE_FROM_ARG_FILE}  ${EXPECTED}
+
+Log Level From Command Line
     Log Level Should Be  DEBUG
 
 *** Keywords ***
