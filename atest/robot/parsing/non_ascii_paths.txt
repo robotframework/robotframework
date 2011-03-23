@@ -7,20 +7,20 @@ Resource  atest_resource.txt
 
 *** Variables ***
 ${ROOT}     Testäö & Työ
-${BASEDIR}  ${CURDIR}/../../testdata/parsing/unicode_paths
+${BASEDIR}  ${CURDIR}/../../testdata/parsing/non_ascii_paths
 
 
 *** Test Cases ***
 
-Unicode characters in test case file name
-  ${tc}=  Check Test Case  Test In Unicode Filename (€åäö§)
-  Should Be Equal  ${tc.longname}  
-  ...  ${ROOT}.Testäö.Test In Unicode Filename (€åäö§)
-
-Unicode characters in test data directory name
-  ${tc}=  Check Test Case  Test In Unicode Directory (€ÅÄÖ§)
+Non-ASCII characters in test case file name
+  ${tc}=  Check Test Case  Non-ASCII Filename (€åäö§)
   Should Be Equal  ${tc.longname}
-  ...  ${ROOT}.Työ.§Test§.Test In Unicode Directory (€ÅÄÖ§)
+  ...  ${ROOT}.Testäö.Non-ASCII Filename (€åäö§)
+
+Non-ASCII characters in test data directory name
+  ${tc}=  Check Test Case  Non-ASCII Directory (€ÅÄÖ§)
+  Should Be Equal  ${tc.longname}
+  ...  ${ROOT}.Työ.§Test§.Non-ASCII Directory (€ÅÄÖ§)
 
 Creating logs and reports should succeed
   [Documentation]  http://code.google.com/p/robotframework/issues/detail?id=530
@@ -39,7 +39,7 @@ Failures processing files are handled gracefully
 
 Create input data and run tests
   Create input data
-  Run Tests  --log ulog.html --report ureport.html  parsing/unicode_paths/testäö.txt  parsing/unicode_paths/Työ
+  Run Tests  --log ulog.html --report ureport.html  parsing/non_ascii_paths/testäö.txt  parsing/non_ascii_paths/Työ
 
 Create input data
   [Documentation]  Mercurial doesn't seem to handle non-ASCII file names too well.
@@ -55,5 +55,3 @@ Revert input data
   Move File  ${BASEDIR}/Työ/tyhjä.txt  ${BASEDIR}/Työ/tyhj-auml.txt
   Move Directory  ${BASEDIR}/Työ  ${BASEDIR}/Ty-ouml
   Move File  ${BASEDIR}/testäö.txt  ${BASEDIR}/test-auml-ouml.txt
-
-  
