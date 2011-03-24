@@ -87,7 +87,6 @@ class CommandLineMonitor:
         if newline:
             message += '\n'
         stream.write(utils.encode_output(message).replace('\t', ' '*8))
-        stream.flush()
 
     def _write_with_highlighting(self, before, highlighted, after,
                                  stream=sys.__stdout__):
