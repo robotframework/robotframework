@@ -3,6 +3,7 @@ Library         Parallel  pybot
 
 *** Test Cases ***
 Paralel Tests In Same Suite
+    Set Datasource for Parallel Tests  ${CURDIR}${/}parallel_tests_in_same_suite.txt
     Start Parallel Test  Passing In Same Suite
     Start Parallel Test  Failing In Same Suite
     Run Keyword And Expect Error  Following tests failed:\nFailing In Same Suite  Wait All Parallel Tests

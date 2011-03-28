@@ -6,19 +6,22 @@ ${EXPECTED}  Expected Value
 ${VARRI}  Original
 ${VALUE_FROM_VAR_FILE}  Original
 ${VALUE_FROM_ARG_FILE}  Original
+${CURRENT FILE}  ${CURDIR}${/}Parallel_Variable_Passing.txt
 
 *** Test Cases ***
 Main
+    Set Datasource for Parallel Tests  ${CURRENT FILE}
     Add Arguments For Parallel Tests  --variable  VARRI:Expected__Value
     Add Arguments For Parallel Tests  --loglevel  DEBUG
-    Add Arguments For Parallel Tests  --variablefile  atest/varfile.py
-    Add Arguments For Parallel Tests  --pythonpath  atest/
-    Add Arguments For Parallel Tests  --argumentfile  atest/argfile.arg
+    Add Arguments For Parallel Tests  --variablefile  ${CURDIR}${/}varfile.py
+    Add Arguments For Parallel Tests  --pythonpath  ${CURDIR}
+    Add Arguments For Parallel Tests  --argumentfile  ${CURDIR}${/}argfile.arg
     Add Arguments For Parallel Tests  --escape  space:__
     Run Parallel Tests  Para Executor
 
 Para Executor
     [Tags]  parallel
+    Set Datasource for Parallel Tests  ${CURRENT FILE}
     Run Parallel Tests  Variable From Command Line  Variable From Variable File  Variable From Argument File  Python Path From Command Line  Log Level From Command Line
 
 Python Path From Command Line
@@ -27,16 +30,19 @@ Python Path From Command Line
     This keyword is in funnylib
 
 Variable From Command Line
+    [Tags]  parallel
     Should Be Equal  ${VARRI}  ${EXPECTED}
 
 Variable From Variable File
+    [Tags]  parallel
     Should Be Equal  ${VALUE_FROM_VAR_FILE}  ${EXPECTED}
 
 Variable From Argument File
+    [Tags]  parallel
     Should Be Equal  ${VALUE_FROM_ARG_FILE}  ${EXPECTED}
 
 Log Level From Command Line
-    [Tags]  sdf
+    [Tags]  parallel
     Log Level Should Be  DEBUG
 
 *** Keywords ***
