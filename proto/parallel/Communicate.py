@@ -1,6 +1,14 @@
 from Queue import Queue
 from threading import Event
-from multiprocessing.managers import BaseManager
+try:
+    from multiprocessing.managers import BaseManager
+except ImportError:
+    class Python26Required(object):
+          def __call__(self, *args):
+            raise RuntimeError('Requires Python > 2.6')
+          def __getattr__(self, name):
+            raise RuntimeError('Requires Python > 2.6')
+    BaseManager = Python26Required()
 
 def _create_caching_getter(clazz):
     objects = {}
@@ -12,6 +20,7 @@ def _create_caching_getter(clazz):
 
 class Communicate(object):
     """Library for communication between processes.
+    For example this can be used to handle communication between processes of the Parallel robot library.
     
     Requires Python 2.6
     
@@ -44,11 +53,14 @@ class Communicate(object):
     """
 
     def __init__(self, address='127.0.0.1', port=2187):
+        """
+        `address` of the communication server.
+        `port` of the communication server.
+        """
         self._address = address
-        self._port = port
+        self._port = int(port)
         self._authkey = 'live long and prosper'
         self._queue = None
-        self._server = False
         self._connected = False
 
     def _connect(self):
@@ -60,7 +72,6 @@ class Communicate(object):
         """
         self._create_manager(_create_caching_getter(Queue),
                              _create_caching_getter(Event)).start()
-        self._server = True
         self._connected = True
 
     def stop_communication_service(self):
@@ -69,7 +80,6 @@ class Communicate(object):
         To ensure that this keyword really happens place this in the teardown section.
         """
         self._manager.shutdown()
-        self._server = False
         self._connected = False
 
     def _create_manager(self, queue_getter=None, event_getter=None):
@@ -95,7 +105,7 @@ class Communicate(object):
         """
         self._get_queue(queue_id).put(value)
 
-    def receive_message_from(self, queue_id):
+    def receive_message_from(self, queue_id, timeout=None):
         """Receive and consume a message from a message queue.
         By default this keyword will block until there is a message in the queue.
 
@@ -113,7 +123,8 @@ class Communicate(object):
         | ${message}= | Receive Message From | my queue |
         | Should Be Equal | ${message} | hello world! |
         """
-        return self._get_queue(queue_id).get()
+        timeout = float(timeout) if timeout is not None else None
+        return self._get_queue(queue_id).get(timeout=timeout)
 
     def _get_queue(self, queue_id):
         if not self._connected:
