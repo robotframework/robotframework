@@ -132,10 +132,7 @@ class Communicate(object):
         return self._manager.get_queue(queue_id)
 
     def wait_for_event(self, event_id):
-        """Signals an event.
-        If a process is waiting for this event it will stop waiting after the signal.
-
-        `event` is the identifier for the event.
+        """Waits until event with `event_id` is signaled.
 
         Example:
         In one process
