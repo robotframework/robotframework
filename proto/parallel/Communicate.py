@@ -10,13 +10,16 @@ except ImportError:
             raise RuntimeError('Requires Python > 2.6')
     BaseManager = Python26Required()
 
-def _create_caching_getter(clazz):
-    objects = {}
-    def get_object(key):
-        if key not in objects:
-            objects[key] = clazz()
-        return objects[key]
-    return get_object
+class _create_caching_getter(object):
+
+    def __init__(self, clazz):
+        self._clazz = clazz
+        self._objects = {}
+
+    def __call__(self, key):
+        if key not in self._objects:
+            self._objects[key] = self._clazz()
+        return self._objects[key]
 
 class Communicate(object):
     """Library for communication between processes.
