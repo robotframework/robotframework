@@ -134,8 +134,11 @@ class Communicate(object):
             self._connect()
         return self._manager.get_queue(queue_id)
 
-    def wait_for_event(self, event_id):
+    def wait_for_event(self, event_id, timeout=None):
         """Waits until event with `event_id` is signaled.
+        Fails if optional timeout expires.
+
+        `timeout` is the time out in seconds to wait.
 
         Example:
         In one process
@@ -144,7 +147,12 @@ class Communicate(object):
         In another process
         | Signal Event | my event |
         """
-        return self._get_event(event_id).wait()
+        timeout = float(timeout) if timeout is not None else None
+        self._get_event(event_id).wait(timeout=timeout)
+        #NOTE! If Event#clear is ever exposed it has to be secured (for example r/w lock) that none
+        #of the processes can do it while another is at this position.
+        if not self._get_event(event_id).isSet():
+            raise Exception('Timeout')
 
     def signal_event(self, event_id):
         """Signals an event.
