@@ -13,6 +13,7 @@
 #  limitations under the License.
 
 import sys
+from threading import currentThread
 try:
     import signal
 except ImportError:
@@ -20,7 +21,7 @@ except ImportError:
 if sys.platform.startswith('java'):
     from java.lang import IllegalArgumentException
 else:
-    IllegalArgumentException = ValueError
+    IllegalArgumentException = None
 
 from robot.errors import ExecutionFailed
 from robot.output import LOGGER
@@ -53,10 +54,18 @@ class _StopSignalMonitor(object):
     def _register_signal_handler(self, signum):
         try:
             signal.signal(signum, self)
-        except (ValueError, IllegalArgumentException):
+        except (ValueError, IllegalArgumentException), err:
             # ValueError occurs e.g. if Robot doesn't run on main thread.
             # IllegalArgumentException is http://bugs.jython.org/issue1729
-            pass
+            if currentThread().getName() == 'MainThread':
+                self._warn_about_registeration_error(signum, err)
+
+    def _warn_about_registeration_error(self, signum, err):
+        name, ctrlc = {signal.SIGINT: ('INT', 'or with Ctrl-C '),
+                       signal.SIGTERM: ('TERM', '')}[signum]
+        LOGGER.warn('Registering signal %s failed. Stopping execution '
+                    'gracefully with this signal %sis not possible. '
+                    'Original error was: %s' % (name, ctrlc, err))
 
     def start_running_keyword(self, in_teardown):
         self._running_keyword = True
