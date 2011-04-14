@@ -17,6 +17,10 @@ try:
     import signal
 except ImportError:
     signal = None  # IronPython 2.6 doesn't have signal module by default
+if sys.platform.startswith('java'):
+    from java.lang import IllegalArgumentException
+else:
+    IllegalArgumentException = ValueError
 
 from robot.errors import ExecutionFailed
 from robot.output import LOGGER
@@ -43,17 +47,16 @@ class _StopSignalMonitor(object):
 
     def start(self):
         if signal:
-            try:
-                self._register_signal_handlers()
-            except ValueError:
-                # When robot is run programmatically in another thread, the
-                # signaling doesn't work and the raised ValueError can be
-                # ignored.
-                pass
+            for signum in signal.SIGINT, signal.SIGTERM:
+                self._register_signal_handler(signum)
 
-    def _register_signal_handlers(self):
-        signal.signal(signal.SIGINT, self)
-        signal.signal(signal.SIGTERM, self)
+    def _register_signal_handler(self, signum):
+        try:
+            signal.signal(signum, self)
+        except (ValueError, IllegalArgumentException):
+            # ValueError occurs e.g. if Robot doesn't run on main thread.
+            # IllegalArgumentException is http://bugs.jython.org/issue1729
+            pass
 
     def start_running_keyword(self, in_teardown):
         self._running_keyword = True
