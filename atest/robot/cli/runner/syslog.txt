@@ -13,9 +13,13 @@ No syslog environment variable file
     File Should Not Exist  ${CLI OUTDIR}/syslog.txt
 
 Setting syslog sile
+    [Documentation]  Also tests that syslog has correct line separators
     Set Environment Variable  ROBOT_SYSLOG_FILE  ${CLI OUTDIR}${/}syslog.txt
     Run Some Tests
     File Should Not Be Empty  ${CLI OUTDIR}/syslog.txt
+    ${syslog} =  Get Binary File  ${CLI OUTDIR}/syslog.txt
+    ${linesep} =  Evaluate  os.linesep  modules=os
+    Should Contain  ${syslog}  ${linesep}
 
 Syslog file set to NONE
     Set Environment Variable  ROBOT_SYSLOG_FILE  none
@@ -46,4 +50,3 @@ Invalid syslog level
     ${output} =  Run Some Tests
     Should Contain  ${output}  Opening syslog file '${CLI OUTDIR}${/}syslog.txt' failed: Invalid log level 'invalid'
     [Teardown]  Delete Environment Variable  ROBOT_SYSLOG_LEVEL
-
