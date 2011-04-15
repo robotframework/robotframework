@@ -192,8 +192,7 @@ class ArgumentParser:
         for name, value in opts.items():
             if name != escape_opt:
                 opts[name] = self._unescape(value, escapes)
-        args = [self._unescape(arg, escapes) for arg in args]
-        return opts, args
+        return opts, [self._unescape(arg, escapes) for arg in args]
 
     def _add_args_from_file(self, args, argfile_opt):
         argfile_opts = ['--'+argfile_opt]
@@ -354,8 +353,7 @@ class ArgumentParser:
         temp = []
         for path in self._split_pythonpath(paths):
             temp.extend(glob.glob(path))
-        paths = [ os.path.normpath(path) for path in temp if path != '' ]
-        return paths
+        return [os.path.normpath(path) for path in temp if path != '']
 
     def _split_pythonpath(self, paths):
         # paths may already contain ':' as separator
