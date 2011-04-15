@@ -14,8 +14,6 @@
 
 import os
 
-from robot import utils
-
 from loggerhelper import AbstractLogger
 
 
