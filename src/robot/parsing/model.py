@@ -34,7 +34,7 @@ class _TestData(object):
 
     def __init__(self, parent=None, source=None):
         self.parent = parent
-        self.source = os.path.abspath(source) if source else None
+        self.source = utils.abspath(source) if source else None
         self.children = []
         self._tables = None
 

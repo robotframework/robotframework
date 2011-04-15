@@ -237,7 +237,7 @@ class Screenshot(object):
 
     def _screenshot_to_file(self, path):
         self._warn_if_depr_log_file_dir_given_to_init()
-        path = os.path.abspath(self._norm_path(path))
+        path = utils.abspath(self._norm_path(path))
         self._validate_screenshot_path(path)
         print '*DEBUG* Using %s modules for taking screenshot.' \
             % self._screenshot_taker.module
@@ -346,7 +346,7 @@ if __name__ == "__main__":
     if len(sys.argv) not in [2, 3]:
         print "Usage: %s path [wx|gtk|pil]" % os.path.basename(sys.argv[0])
         sys.exit(1)
-    path = os.path.abspath(sys.argv[1])
+    path = utils.abspath(sys.argv[1])
     module = sys.argv[2] if len(sys.argv) == 3 else None
     shooter = ScreenshotTaker(module)
     print 'Using %s modules' % shooter.module

@@ -15,6 +15,8 @@
 import os
 import urllib
 
+from encoding import decode_from_file_system
+
 
 if os.sep == '\\':
     _CASE_INSENSITIVE_FILESYSTEM = True
@@ -38,12 +40,15 @@ def normpath(path, normcase=True):
 
 
 def abspath(path):
-    """Replacement for os.path.abspath with some bug fixes.
+    """Replacement for os.path.abspath with some bug fixes and enhancements.
 
-    1) At least Jython 2.5.1 on Windows returns wrong path with 'c:'.
-    2) Python until 2.6.5 and at least Jython 2.5.1 don't handle non-ASCII
+    1) Converts non-Unicode paths to Unicode using file system encoding
+    2) At least Jython 2.5.1 on Windows returns wrong path with 'c:'.
+    3) Python until 2.6.5 and at least Jython 2.5.1 don't handle non-ASCII
     characters in the working directory: http://bugs.python.org/issue3426
     """
+    if not isinstance(path, unicode):
+        path = decode_from_file_system(path)
     if os.sep == '\\' and len(path) == 2 and path[1] == ':':
         return path + '\\'
     return os.path.normpath(os.path.join(os.getcwdu(), path))

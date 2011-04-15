@@ -1,11 +1,27 @@
 import unittest
 import os
 
-from robot.utils import normpath, get_link_path
-from robot.utils.asserts import assert_equal
+from robot.utils import abspath, normpath, get_link_path
+from robot.utils.asserts import assert_equal, assert_true
 
 
-class TestNormPath(unittest.TestCase):
+class TestAbsNormPath(unittest.TestCase):
+
+    def test_abspath(self):
+        path = abspath('xxx')
+        assert_equal(path, os.path.abspath('xxx'))
+        assert_true(isinstance(path, unicode))
+
+    def test_abspath_when_cwd_is_non_ascii(self):
+        orig = abspath('.')
+        nonasc = u'\xe4'
+        os.mkdir(nonasc)
+        os.chdir(nonasc)
+        try:
+            assert_equal(abspath('.'), orig + os.sep + nonasc)
+        finally:
+            os.chdir('..')
+            os.rmdir(nonasc)
 
     def test_normpath(self):
         for inp, exp in self._get_normpath_inputs():

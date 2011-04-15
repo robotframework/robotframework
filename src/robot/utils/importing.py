@@ -17,8 +17,9 @@ import sys
 import inspect
 
 from robot.errors import DataError
+
 from error import get_error_message, get_error_details
-from robotpath import normpath
+from robotpath import normpath, abspath
 
 
 def simple_import(path_to_module):
@@ -73,7 +74,7 @@ def import_(name, type_='test library'):
 
 
 def _split_path_to_module(path):
-    moddir, modfile = os.path.split(os.path.abspath(path))
+    moddir, modfile = os.path.split(abspath(path))
     modname = os.path.splitext(modfile)[0]
     sys.path.insert(0, moddir)
     return moddir, modname
@@ -117,14 +118,10 @@ def _get_import_params(name):
     return modname, classname, fromlist
 
 def _get_module_source(module):
-    try:
-        source = module.__file__
-        if not source:
-            raise AttributeError
-    except AttributeError:
-        # Java classes not packaged in a jar file do not have __file__.
+    source = getattr(module, '__file__', None)
+    if not source:
         return '<unknown>'
-    dirpath, filename = os.path.split(os.path.abspath(source))
+    dirpath, filename = os.path.split(abspath(source))
     return os.path.join(normpath(dirpath), filename)
 
 def _raise_import_failed(type_, name):

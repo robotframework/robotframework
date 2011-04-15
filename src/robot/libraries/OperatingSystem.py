@@ -24,15 +24,16 @@ try:
     from robot.output import LOGGER
     from robot.version import get_version
     from robot.utils import (ConnectionCache, seq2str, timestr_to_secs,
-                             secs_to_timestr, plural_or_not, get_time,
+                             secs_to_timestr, plural_or_not, get_time, abspath,
                              secs_to_timestamp, parse_time, unic, decode_output)
     __version__ = get_version()
     PROCESSES = ConnectionCache('No active processes')
 
 except ImportError:
+    from os.path import abspath
     DataError = RuntimeError
     __version__ = '<unknown>'
-    seq2str = lambda items: ', '.join(["'%s'" % item for item in items])
+    seq2str = lambda items: ', '.join("'%s'" % item for item in items)
     timestr_to_secs = int
     plural_or_not = lambda count: count != 1 and 's' or ''
     secs_to_timestr = lambda secs: '%d second%s' % (secs, plural_or_not(secs))
@@ -1197,7 +1198,7 @@ class OperatingSystem:
 
     def _absnorm(self, path):
         try:
-            return os.path.normpath(os.path.abspath(path.replace('/', os.sep)))
+            return abspath(path.replace('/', os.sep))
         except ValueError:  # http://ironpython.codeplex.com/workitem/29489
             return os.path.normpath(path.replace('/', os.sep))
 
