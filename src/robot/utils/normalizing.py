@@ -71,7 +71,10 @@ def _abspath(path):
             return path + '\\'
         if pathlen == 3:
             return path
-    return os.path.abspath(path)
+    # Workaround for os.path.abspath bug when the working directory has
+    # non-ASCII characters: http://bugs.python.org/issue3426
+    # It exists in Python until 2.6.5 and in Jython at least in 2.5.2
+    return os.path.normpath(os.path.join(os.getcwdu(), path))
 
 
 class NormalizedDict(UserDict):
