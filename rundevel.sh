@@ -1,2 +1,3 @@
 #!/bin/bash
-ROBOT_SYSLOG_FILE=tmp/syslog.txt python src/robot/runner.py -P atest/testresources/testlibs -P tmp -L debug -d tmp $*
+base=`dirname $0`
+ROBOT_SYSLOG_FILE=$base/tmp/syslog.txt python $base/src/robot/runner.py -P $base/atest/testresources/testlibs -P $base/tmp -L debug -d $base/tmp $*
