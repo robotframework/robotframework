@@ -62,18 +62,12 @@ def normpath(path, normcase=True):
     return path
 
 def _abspath(path):
-    pathlen = len(path)
-    # Return 'x:\' both when the given path is 'x:\' and 'x:'. Notice that
-    # os.path.abspath('x:') returns the current dir (we don't want that) and
-    # with Jython os.path.abspath('x:\') returns 'x:' (don't want that either)
-    if os.sep == '\\' and pathlen > 1 and path[1] == ':':
-        if pathlen == 2:
-            return path + '\\'
-        if pathlen == 3:
-            return path
+    # At least Jython 2.5.1 doesn't handle paths like 'c:' correctly 
+    if os.sep == '\\' and len(path) == 2 and path[1] == ':':
+        return path + '\\'
     # Workaround for os.path.abspath bug when the working directory has
     # non-ASCII characters: http://bugs.python.org/issue3426
-    # It exists in Python until 2.6.5 and in Jython at least in 2.5.2
+    # It exists in Python until 2.6.5 and in Jython at least in 2.5.1
     return os.path.normpath(os.path.join(os.getcwdu(), path))
 
 
