@@ -12,19 +12,11 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-import os
 import re
 from UserDict import UserDict
 
 
 _WHITESPACE_REGEXP = re.compile('\s+')
-if os.sep == '\\':
-    _CASE_INSENSITIVE_FILESYSTEM = True
-else:
-    try:
-        _CASE_INSENSITIVE_FILESYSTEM = os.listdir('/tmp') == os.listdir('/TMP')
-    except OSError:
-        _CASE_INSENSITIVE_FILESYSTEM = False
 
 
 def normalize(string, ignore=[], caseless=True, spaceless=True):
@@ -48,27 +40,6 @@ def normalize_tags(tags):
             dupes[tag] = 1
     ret.sort(lambda x, y: cmp(normalize(x), normalize(y)))
     return ret
-
-
-def normpath(path, normcase=True):
-    """Returns path in normalized and absolute format.
-
-    On case-insensitive file systems the path is also casenormalized
-    (if normcase is True).
-    """
-    path = _abspath(path)
-    if normcase and _CASE_INSENSITIVE_FILESYSTEM:
-        path = path.lower()
-    return path
-
-def _abspath(path):
-    # At least Jython 2.5.1 doesn't handle paths like 'c:' correctly 
-    if os.sep == '\\' and len(path) == 2 and path[1] == ':':
-        return path + '\\'
-    # Workaround for os.path.abspath bug when the working directory has
-    # non-ASCII characters: http://bugs.python.org/issue3426
-    # It exists in Python until 2.6.5 and in Jython at least in 2.5.1
-    return os.path.normpath(os.path.join(os.getcwdu(), path))
 
 
 class NormalizedDict(UserDict):

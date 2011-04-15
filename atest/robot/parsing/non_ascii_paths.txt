@@ -30,7 +30,7 @@ Creating logs and reports should succeed
 
 Failures processing files are handled gracefully
   ${path} =  Normalize Path  ${BASEDIR}/Työ/tyhjä.txt
-  ${path} =  Set Variable If  __import__('robot').utils.normalizing._CASE_INSENSITIVE_FILESYSTEM
+  ${path} =  Set Variable If  __import__('robot').utils.robotpath._CASE_INSENSITIVE_FILESYSTEM
   ...  ${path.lower()}  ${path}
   Check syslog contains  Parsing data source '${path}' failed: File has no test case table.
 

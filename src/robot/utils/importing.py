@@ -12,14 +12,13 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-
 import os
 import sys
 import inspect
 
 from robot.errors import DataError
 from error import get_error_message, get_error_details
-from normalizing import normpath
+from robotpath import normpath
 
 
 def simple_import(path_to_module):

@@ -1,39 +1,10 @@
 import unittest
-import os
 
-from robot.utils import *
-from robot.utils.asserts import *
+from robot.utils import normalize, normalize_tags, NormalizedDict
+from robot.utils.asserts import assert_equals, assert_true, assert_false
 
 
 class TestNormalizing(unittest.TestCase):
-
-    def test_normpath(self):
-        if os.sep == '/':
-            inputs = [ ('/tmp/', '/tmp'),
-                       ('/tmp', '/tmp'),
-                       ('/tmp/foo/..', '/tmp'),
-                       ('/tmp//', '/tmp'),
-                       ('/tmp/./', '/tmp'),
-                       ('/var/../opt/../tmp/.', '/tmp'),
-                       ('/non/Existing/..', '/non'),
-                       ('/', '/') ]
-        else:
-            inputs = [ ('c:\\temp', 'c:\\temp'),
-                       ('C:\\TEMP\\', 'c:\\temp'),
-                       ('c:\\Temp\\foo\..', 'c:\\temp'),
-                       ('c:\\temp\\\\', 'c:\\temp'),
-                       ('c:\\temp\\.\\', 'c:\\temp'),
-                       ('C:\\xxx\\..\\yyy\\..\\temp\\.', 'c:\\temp'),
-                       ('c:\\Non\\Existing\\..', 'c:\\non') ]
-            for x in 'ABCDEFGHIJKLMNOPQRSTUVXYZ':
-                base = '%s:\\' % x
-                exp = base.lower()
-                inputs.append((base, exp))
-                inputs.append((base[:2], exp))
-                inputs.append((base + '\\foo\\..\\.\\BAR\\\\', exp + 'bar'))
-
-        for inp, exp in inputs:
-            assert_equal(normpath(inp), exp, inp)
 
     def test_normalize_with_defaults(self):
         for inp, exp in [ ('', ''),
@@ -106,8 +77,8 @@ class TestNormalizedDict(unittest.TestCase):
 
     def test_has_key_and_contains(self):
         nd = NormalizedDict({'Foo': 'bar'})
-        fail_unless(nd.has_key('Foo') and nd.has_key(' f O o '))
-        fail_unless('Foo' in nd and 'foo' in nd and 'FOO' in nd)
+        assert_true(nd.has_key('Foo') and nd.has_key(' f O o '))
+        assert_true('Foo' in nd and 'foo' in nd and 'FOO' in nd)
 
     def test_original_keys_are_kept(self):
         nd = NormalizedDict()
