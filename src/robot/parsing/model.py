@@ -141,7 +141,8 @@ class ResourceFile(_TestData):
 
     def _valid_table(self, table):
         if table is self.testcase_table:
-            raise DataError('Test case table not allowed in resource file.')
+            raise DataError("Resource file '%s' contains a test case table "
+                            "which is not allowed." % self.source)
         return table
 
     def __iter__(self):
@@ -166,7 +167,8 @@ class TestDataDirectory(_TestData):
 
     def _valid_table(self, table):
         if table is self.testcase_table:
-            LOGGER.error('Test case table not allowed in test suite init file.')
+            LOGGER.error("Test suite init file in '%s' contains a test case "
+                         "table which is not allowed." % self.source)
             return None
         return table
 
