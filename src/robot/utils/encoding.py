@@ -31,6 +31,15 @@ def encode_output(string, errors='replace'):
         return string
     return string.encode(_output_encoding, errors)
 
+def decode_from_file_system(string):
+    """Decodes path from file system to Unicode."""
+    encoding = sys.getfilesystemencoding()
+    if sys.platform.startswith('java'):
+        # http://bugs.jython.org/issue1592
+        from java.lang import String
+        string = String(string)
+    return unic(string, encoding) if encoding else unic(string)
+
 
 def _get_output_encoding():
     # Jython is buggy on Windows: http://bugs.jython.org/issue1568
