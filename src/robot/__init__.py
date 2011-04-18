@@ -41,7 +41,7 @@ if sys.platform.startswith('java') and os.sep == '\\' and sys.version_info < (2,
 
 if 'pythonpathsetter' not in sys.modules:
     import pythonpathsetter
-from output import Output, CommandLineMonitor, LOGGER
+from output import Output, LOGGER
 from conf import RobotSettings, RebotSettings
 from running import TestSuite, STOP_SIGNAL_MONITOR
 from serializing import RobotTestOutput, RebotTestOutput, SplitIndexTestOutput
@@ -65,20 +65,24 @@ def rebot_from_cli(args, usage):
 
 def _run_or_rebot_from_cli(method, cliargs, usage, **argparser_config):
     LOGGER.register_file_logger()
+    options, datasources = _parse_arguments(cliargs, usage, **argparser_config)
+    LOGGER.info('Data sources: %s' % utils.seq2str(datasources))
+    _execute(method, datasources, options)
+
+def _parse_arguments(cliargs, usage, **argparser_config):
     ap = utils.ArgumentParser(usage, get_full_version())
     try:
-        options, datasources = \
-            ap.parse_args(cliargs, argfile='argumentfile', unescape='escape',
-                          help='help', version='version', check_args=True,
-                          **argparser_config)
+        return ap.parse_args(cliargs, argfile='argumentfile', unescape='escape',
+                             help='help', version='version', check_args=True,
+                             **argparser_config)
     except Information, msg:
         _exit(INFO_PRINTED, utils.unic(msg))
     except DataError, err:
         _exit(DATA_ERROR, utils.unic(err))
 
-    LOGGER.info('Data sources: %s' % utils.seq2str(datasources))
+def _execute(method, datasources, options):
     try:
-        suite = method(*datasources, **options)
+        critical_failures = method(*datasources, **options)
     except DataError, err:
         _exit(DATA_ERROR, unicode(err))
     except (KeyboardInterrupt, SystemExit):
@@ -87,13 +91,7 @@ def _run_or_rebot_from_cli(method, cliargs, usage, **argparser_config):
         error, details = utils.get_error_details()
         _exit(FRAMEWORK_ERROR, 'Unexpected error: %s' % error, details)
     else:
-        _exit(_failed_critical_test_count(suite))
-
-def _failed_critical_test_count(suite):
-    rc = suite.critical_stats.failed
-    if rc > 250:
-        rc = 250
-    return rc
+        _exit(critical_failures)
 
 
 def run(*datasources, **options):
@@ -131,7 +129,7 @@ def run(*datasources, **options):
             testoutput = RebotTestOutput(datasources, settings)
         testoutput.serialize(settings)
     LOGGER.close()
-    return suite
+    return _return_code(suite, settings)
 
 
 def run_rebot(*datasources, **options):
@@ -155,7 +153,15 @@ def run_rebot(*datasources, **options):
     testoutput = RebotTestOutput(datasources, settings)
     testoutput.serialize(settings, generator='Rebot')
     LOGGER.close()
-    return testoutput.suite
+    return _return_code(testoutput.suite, settings)
+
+
+def _return_code(suite, settings):
+    return _failed_critical_test_count(suite) if \
+                not settings['NoStatusRC'] else 0
+
+def _failed_critical_test_count(suite):
+    return min(suite.critical_stats.failed, 250)
 
 
 def _exit(rc, message=None, details=None):

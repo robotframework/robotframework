@@ -180,6 +180,8 @@ Options:
                           calculated based on them. For combined suites,
                           it is otherwise calculated by adding elapsed times
                           of combined test suites together.
+    --nostatusrc          Sets the return code to zero regardless of failures
+                          in test cases. Error codes are returned normally.
  -C --monitorcolors on|off|force  Using ANSI colors in console. Normally colors
                           work in unixes but not in Windows. Default is 'on'.
                           'on'    - use colors in unixes but not in Windows

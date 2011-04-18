@@ -47,6 +47,7 @@ class _BaseSettings:
                   'TagStatCombine'   : ('tagstatcombine', []),
                   'TagDoc'           : ('tagdoc', []),
                   'TagStatLink'      : ('tagstatlink', []),
+                  'NoStatusRC'       : ('nostatusrc', False),
                   'MonitorWidth'     : ('monitorwidth', 78),
                   'MonitorColors'    : ('monitorcolors', 'AUTO') }
     _deprecated = {}
