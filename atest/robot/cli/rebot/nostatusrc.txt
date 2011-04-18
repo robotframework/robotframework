@@ -1,0 +1,24 @@
+*** Settings ***
+Suite Setup     Set Runners
+Default Tags    regression  pybot  jybot
+Resource       rebot_cli_resource.txt
+
+*** Variables ***
+${MISCDIR}  ${CURDIR}${/}..${/}..${/}..${/}testdata${/}misc
+${PASSINGSUITE}  ${MISCDIR}${/}normal.html
+${FAILINGSUITE}  ${MISCDIR}${/}pass_and_fail.html
+
+*** Test Cases ***
+Zero Return Code When All Tests Pass
+    Return code can be forced to zero from commandline  ${PASSINGSUITE}
+
+Zero Return Code When Some Tests Fail
+    Return code can be forced to zero from commandline  ${FAILINGSUITE}
+
+*** Keywords ***
+Return code can be forced to zero from commandline
+    [Arguments]  ${datasource}
+    Run Tests Without Processing Output  ${EMPTY}  ${datasource}
+    ${rc}=  Run And Return Rc  ${REBOT} --nostatusrc ${OUTFILE}
+    Should Be Equal As Integers  ${rc}  0
+
