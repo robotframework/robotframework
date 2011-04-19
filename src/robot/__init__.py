@@ -82,7 +82,7 @@ def _parse_arguments(cliargs, usage, **argparser_config):
 
 def _execute(method, datasources, options):
     try:
-        critical_failures = method(*datasources, **options)
+        suite = method(*datasources, **options)
     except DataError, err:
         _exit(DATA_ERROR, unicode(err))
     except (KeyboardInterrupt, SystemExit):
@@ -91,7 +91,7 @@ def _execute(method, datasources, options):
         error, details = utils.get_error_details()
         _exit(FRAMEWORK_ERROR, 'Unexpected error: %s' % error, details)
     else:
-        _exit(critical_failures)
+        _exit(suite.return_code)
 
 
 def run(*datasources, **options):
@@ -129,7 +129,7 @@ def run(*datasources, **options):
             testoutput = RebotTestOutput(datasources, settings)
         testoutput.serialize(settings)
     LOGGER.close()
-    return _return_code(suite, settings)
+    return suite
 
 
 def run_rebot(*datasources, **options):
@@ -153,15 +153,7 @@ def run_rebot(*datasources, **options):
     testoutput = RebotTestOutput(datasources, settings)
     testoutput.serialize(settings, generator='Rebot')
     LOGGER.close()
-    return _return_code(testoutput.suite, settings)
-
-
-def _return_code(suite, settings):
-    return _failed_critical_test_count(suite) if \
-                not settings['NoStatusRC'] else 0
-
-def _failed_critical_test_count(suite):
-    return min(suite.critical_stats.failed, 250)
+    return testoutput.suite
 
 
 def _exit(rc, message=None, details=None):
