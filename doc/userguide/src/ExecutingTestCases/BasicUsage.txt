@@ -231,10 +231,9 @@ documentation for how to get the return code.
 
 Starting from Robot Framework 2.5.7, the return code can be set to 0 even if
 there are critical failures using the :opt:`--NoStatusRC` command line option.
-This might be useful in e.g. continuous integration servers where
+This might be useful, for example, in continuous integration servers where
 post-processing of results is needed before the overall status of test
-exectuion can be determined.
-
+execution can be determined.
 
 Errors and warnings during execution
 ''''''''''''''''''''''''''''''''''''
