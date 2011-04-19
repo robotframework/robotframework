@@ -223,7 +223,7 @@ Options:
                           files. By default skipped files only cause an info
                           level log message.
     --nostatusrc          Sets the return code to zero regardless of failures
-                          in test cases.
+                          in test cases. Error codes are returned normally.
  -W --monitorwidth chars  Width of the monitor output. Default is 78.
  -C --monitorcolors auto|on|off  Use colors on console output or not.
                           auto: use colors when output not redirected (default)
