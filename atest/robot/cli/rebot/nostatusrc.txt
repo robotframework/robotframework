@@ -19,6 +19,6 @@ Zero Return Code When Some Tests Fail
 Return code can be forced to zero from commandline
     [Arguments]  ${datasource}
     Run Tests Without Processing Output  ${EMPTY}  ${datasource}
-    ${rc}=  Run And Return Rc  ${REBOT} --nostatusrc ${OUTFILE}
+    ${rc}=  Run And Return Rc  ${REBOT} --nostatusrc --outputdir ${OUTDIR} ${OUTFILE}
     Should Be Equal As Integers  ${rc}  0
 
