@@ -2,10 +2,10 @@
 Variables       variables_to_verify.py
 
 *** Variables ***
-${str0}  0
-${str1}  1
-${int0}  ${0}
-${int1}  ${1}
+${STR0}  0
+${STR1}  1
+${INT0}  ${0}
+${INT1}  ${1}
 @{LIST}  a  b  cee  b  ${42}
 
 *** Test Cases ***
@@ -22,7 +22,7 @@ Should Not Be True
     Should Not Be True  0 > 1
     ${empty list} =  Create List
     Should Not Be True  ${empty list}
-    Should Not Be True  ${int0} < ${int1}
+    Should Not Be True  ${INT0} < ${INT1}
 
 Should Not Be True With Message
     [Documentation]  FAIL My message
@@ -34,8 +34,8 @@ Should Not Be True With Invalid Expression
 
 Should Be True
     [Documentation]  FAIL '1 != 1 and True or False' should be true
-    Should Be True  -1 <= ${str1} <= 1
-    Should Be True  -${str1} < ${str0} < ${str1}
+    Should Be True  -1 <= ${STR1} <= 1
+    Should Be True  -${STR1} < ${STR0} < ${STR1}
     ${list} =  Create List  0
     Should Be True  ${list}
     Should Be True  1 != 1 and True or False
@@ -50,34 +50,34 @@ Should Be True With Invalid Expression
 
 Should Not Be Equal
     [Documentation]  FAIL 1 == 1
-    Should Not Be Equal  ${str1}  Not ${str1}
-    Should Not Be Equal  ${str1}  1
+    Should Not Be Equal  ${STR1}  Not ${STR1}
+    Should Not Be Equal  ${STR1}  1
 
 Should Be Equal
     [Documentation]  FAIL Error message: 1 != 1
-    Should Be Equal  ${str1}  1
-    Should Be Equal  ${str1}  ${int1}  Error message
+    Should Be Equal  ${STR1}  1
+    Should Be Equal  ${STR1}  ${INT1}  Error message
 
 Should Not Be Equal As Integers
     [Documentation]  FAIL This message only
-    Should Not Be Equal As Integers  1  ${str0}
-    Should Not Be Equal As Integers  0  ${int1}
-    Should Not Be Equal As Integers  1  ${int1}  This message only  No values
+    Should Not Be Equal As Integers  1  ${STR0}
+    Should Not Be Equal As Integers  0  ${INT1}
+    Should Not Be Equal As Integers  1  ${INT1}  This message only  No values
 
 Should Be Equal As Integers
     [Documentation]  FAIL -1 != 1
-    Should Be Equal As Integers  ${str1}${str0}${str0}  ${str1}${str0}${str0}
-    Should Be Equal As Integers  -${str1}  ${str1}
+    Should Be Equal As Integers  ${STR1}${STR0}${STR0}  ${STR1}${STR0}${STR0}
+    Should Be Equal As Integers  -${STR1}  ${STR1}
 
 Should Not Be Equal As Numbers
     [Documentation]  FAIL Fails again: 1.1 == 1.1
-    Should Not Be Equal As Numbers  ${str1}.${str1}  1.2
-    Should Not Be Equal As Numbers  ${str1}.${str1}  1.1  Fails again
+    Should Not Be Equal As Numbers  ${STR1}.${STR1}  1.2
+    Should Not Be Equal As Numbers  ${STR1}.${STR1}  1.1  Fails again
 
 Should Be Equal As Numbers
     [Documentation]  FAIL Only this message again
-    Should Be Equal As Numbers  ${str1}  ${str1}.${str0}${str0}
-    Should Be Equal As Numbers  ${str1}.000001  ${str1}.${str0}${str0}${str1}  Only this message again  False
+    Should Be Equal As Numbers  ${STR1}  ${STR1}.${STR0}${STR0}
+    Should Be Equal As Numbers  ${STR1}.000001  ${STR1}.${STR0}${STR0}${STR1}  Only this message again  False
 
 Should Not Be Equal As Strings
     [Documentation]  FAIL These strings most certainly should not be equal
@@ -98,7 +98,7 @@ Should Not Start With
 
 Should Start With
     [Documentation]  FAIL My message: 'This is a big longer sentence and it even has a friend here. This is the friend of the previous sentence -- also this is quite long, actually even longer than its friend.' does not start with 'Whatever'
-    Should Start With  ${str0}${str0}7  00
+    Should Start With  ${STR0}${STR0}7  00
     Should Start With  This is a big longer sentence and it even has a friend here. This is the friend of the previous sentence -- also this is quite long, actually even longer than its friend.  Whatever  My message
 
 Should Not End With
@@ -108,8 +108,8 @@ Should Not End With
 
 Should End With
     [Documentation]  FAIL '007' does not end with '00'
-    Should End With  ${str0}${str0}7  007
-    Should End With  ${str0}${str0}7  00
+    Should End With  ${STR0}${STR0}7  007
+    Should End With  ${STR0}${STR0}7  00
 
 Should Not Contain
     [Documentation]  FAIL 'Hello yet again' contains 'yet'
