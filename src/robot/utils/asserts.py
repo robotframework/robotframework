@@ -242,4 +242,12 @@ def _report_unequality_failure(obj1, obj2, msg, values, delim, extra=None):
     _report_failure(msg)
 
 def _get_default_message(obj1, obj2, delim):
+    if delim == '!=' and unicode(obj1) == unicode(obj2):
+        return '%s (%s) != %s (%s)' % (obj1, _type_name(obj1),
+                                       obj2, _type_name(obj2))
     return '%s %s %s' % (obj1, delim, obj2)
+
+def _type_name(val):
+    known_types = {int: 'number', long: 'number', float: 'number',
+                   str: 'string', unicode: 'string', bool: 'boolean'}
+    return known_types.get(type(val), type(val).__name__)
