@@ -11,11 +11,14 @@ AE = AssertionError
 class MyExc(Exception):
     pass
 
-class MyEqual:
+class MyEqual(object):
     def __init__(self, attr=None):
         self.attr = attr
     def __eq__(self, obj):
-        return self.attr == obj.attr
+        try:
+            return self.attr == obj.attr
+        except AttributeError:
+            return False
     def __str__(self):
         return str(self.attr)
     __repr__ = __str__
@@ -23,7 +26,7 @@ class MyEqual:
 def func(msg=None):
     if msg is not None:
         raise ValueError, msg
-    
+
 
 class TestAsserts(unittest.TestCase):
 
@@ -47,7 +50,7 @@ class TestAsserts(unittest.TestCase):
         except AE, err:
             expected = "Correct exception but wrong message: msg1 != msg2"
             assert_equal(str(err), expected)
-            
+
     def test_fail_unless_equal(self):
         fail_unless_equal('str', 'str')
         fail_unless_equal(42, 42, 'hello', True)
@@ -57,7 +60,16 @@ class TestAsserts(unittest.TestCase):
         assert_raises(AE, fail_unless_equal, 42, 43)
         assert_raises(AE, assert_equal, MyEqual('hello'), MyEqual('world'))
         assert_raises(AE, assert_equals, None, True)
-        
+
+    def test_fail_unless_equal_with_values_having_same_string_repr(self):
+        for val, type_ in [(1, 'number'), (1L, 'number'), (MyEqual(1), 'MyEqual')]:
+            assert_raises_with_msg(AE, '1 (string) != 1 (%s)' % type_,
+                                   fail_unless_equal, '1', val)
+        assert_raises_with_msg(AE, '1.0 (number) != 1.0 (string)',
+                               fail_unless_equal, 1.0, u'1.0')
+        assert_raises_with_msg(AE, 'True (string) != True (boolean)',
+                               fail_unless_equal, 'True', True)
+
     def test_fail_if_equal(self):
         fail_if_equal('abc', 'ABC')
         fail_if_equal(42, -42, 'hello', True)
@@ -68,11 +80,11 @@ class TestAsserts(unittest.TestCase):
         raise_msg(AE, "hello: 42 == 42", fail_if_equal, 42, 42, 'hello')
         raise_msg(AE, "hello", fail_if_equal, MyEqual('cat'), MyEqual('cat'),
                   'hello', False)
-        
+
     def test_fail(self):
         assert_raises(AE, fail)
         assert_raises_with_msg(AE, 'hello', fail, 'hello')
-        
+
     def test_error(self):
         assert_raises(Exception, error)
         assert_raises_with_msg(Exception, 'hello', error, 'hello')
@@ -84,7 +96,7 @@ class TestAsserts(unittest.TestCase):
         assert_raises(AE, fail_unless, False)
         assert_raises(AE, assert_true, '')
         assert_raises_with_msg(AE, 'message', assert_, 1 < 0, 'message')
-        
+
     def test_fail_if(self):
         fail_if(False)
         assert_false('')
@@ -106,7 +118,7 @@ class TestAsserts(unittest.TestCase):
                                assert_not_none, None, 'message')
         assert_raises_with_msg(AE, "message",
                                assert_not_none, None, 'message', False)
-                    
+
     def test_fail_unless_almost_equal(self):
         fail_unless_almost_equal(1.0, 1.00000001)
         assert_almost_equal(10, 10.01, 1)
@@ -122,8 +134,8 @@ class TestAsserts(unittest.TestCase):
                                assert_not_almost_equals, 1, 1, msg='hello')
         assert_raises_with_msg(AE, 'hi',
                                assert_not_almost_equals, 1, 1.1, 0, 'hi', False)
-                               
+
 
 if __name__ == '__main__':
     unittest.main()
-        
+

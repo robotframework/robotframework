@@ -199,7 +199,12 @@ class _Verify:
           string 'False' or 'No Values', the error message is simply `msg`.
         - Otherwise the error message is '`msg`: `first` != `second`'.
         """
+        self._log_types(first, second)
         asserts.fail_unless_equal(first, second, msg, self._include_values(values))
+
+    def _log_types(self, *args):
+        msg = ["Argument types are:"] + [str(type(a)) for a in args]
+        self.log('\n'.join(msg))
 
     def _include_values(self, values):
         if isinstance(values, basestring):
@@ -212,6 +217,7 @@ class _Verify:
         See `Should Be Equal` for an explanation on how to override the default
         error message with `msg` and `values`.
         """
+        self._log_types(first, second)
         asserts.fail_if_equal(first, second, msg, self._include_values(values))
 
     def should_not_be_equal_as_integers(self, first, second, msg=None, values=True):
@@ -857,7 +863,7 @@ class _RunKeyword:
         | Log | This keyword is executed |
 
         This keyword was added in Robot Framework 2.5. The execution is not
-        continued if the failure is caused by invalid syntax, timeout, or 
+        continued if the failure is caused by invalid syntax, timeout, or
         fatal exception.
         """
         try:
@@ -1285,7 +1291,7 @@ class _Misc:
 
         Resources imported with this keyword are set into the test suite scope
         similarly when importing them in the Setting table using the Resource
-        setting. 
+        setting.
 
         The given path must be absolute. Forward slashes can be used as path
         separator regardless the operating system.
@@ -1354,7 +1360,7 @@ class _Misc:
         argument is only available in Robot Framework 2.1.1 and newer.
 
         1) If `time` is a floating point number, it is interpreted as
-           seconds since the epoch. This documentation is written about 
+           seconds since the epoch. This documentation is written about
            1177654467 seconds after the epoch.
 
         2) If `time` is a valid timestamp, that time will be used. Valid
