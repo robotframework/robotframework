@@ -4,26 +4,34 @@ Force Tags      regression
 Default Tags    jybot  pybot
 Resource        atest_resource.txt
 
+*** Variables ***
+${ARG TYPES MSG}=  Argument types are:\n
+
 *** Test Cases ***
 Convert To Integer
-    Check testcase  Convert To Integer
+    ${tc}=  Check testcase  Convert To Integer
+    Check Log Message  ${tc.kws[0].kws[0].msgs[0]}  ${ARG TYPES MSG}<type 'unicode'>
 
 Convert To Integer With Java Objects
     [Tags]  jybot
-    Check testcase  Convert To Integer With Java Objects
+    ${tc}=  Check testcase  Convert To Integer With Java Objects
+    Check Log Message  ${tc.kws[0].kws[0].msgs[0]}  ${ARG TYPES MSG}<type 'unicode'>
 
 Convert To Number
-    Check testcase  Convert To Number
+    ${tc}=  Check testcase  Convert To Number
+    Check Log Message  ${tc.kws[0].kws[0].msgs[0]}  ${ARG TYPES MSG}<type 'unicode'>
 
 Convert To Number With Java Objects
     [Tags]  jybot
-    Check testcase  Convert To Number With Java Objects
+    ${tc}=  Check testcase  Convert To Number With Java Objects
 
 Convert To String
-    Check testcase  Convert To String
+    ${tc}=  Check testcase  Convert To String
+    Check Log Message  ${tc.kws[0].msgs[0]}  ${ARG TYPES MSG}<type 'unicode'>
 
 Convert To Boolean
-    Check testcase  Convert To Boolean
+    ${tc}=  Check testcase  Convert To Boolean
+    Check Log Message  ${tc.kws[0].msgs[0]}  ${ARG TYPES MSG}<type 'unicode'>
 
 Create List
     Check testcase  Create List

@@ -46,22 +46,28 @@ Should Be Equal When Types Differ But String Representations Are Same
     Verify argument type message  ${tc.kws[0].msgs[0]}  unicode  long
 
 Should Not Be Equal As Integers
-    Check test case  ${TESTNAME}
+    ${tc}=  Check test case  ${TESTNAME}
+    Verify argument type message  ${tc.kws[0].msgs[0]}  unicode  unicode
 
 Should Be Equal As Integers
-    Check test case  ${TESTNAME}
+    ${tc}=  Check test case  ${TESTNAME}
+    Verify argument type message  ${tc.kws[0].msgs[0]}  unicode  unicode
 
 Should Not Be Equal As Numbers
-    Check test case  ${TESTNAME}
+    ${tc}=  Check test case  ${TESTNAME}
+    Verify argument type message  ${tc.kws[0].msgs[0]}  unicode  unicode
 
 Should Be Equal As Numbers
-    Check test case  ${TESTNAME}
+    ${tc}=  Check test case  ${TESTNAME}
+    Verify argument type message  ${tc.kws[0].msgs[0]}  unicode  unicode
 
 Should Not Be Equal As Strings
-    Check test case  ${TESTNAME}
+    ${tc}=  Check test case  ${TESTNAME}
+    Verify argument type message  ${tc.kws[0].msgs[0]}  unicode  float
 
 Should Be Equal As Strings
-    Check test case  ${TESTNAME}
+    ${tc}=  Check test case  ${TESTNAME}
+    Verify argument type message  ${tc.kws[0].msgs[0]}  long  unicode
 
 Should Not Start With
     Check test case  ${TESTNAME}
