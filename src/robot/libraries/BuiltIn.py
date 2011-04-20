@@ -200,7 +200,11 @@ class _Verify:
         - Otherwise the error message is '`msg`: `first` != `second`'.
         """
         self._log_types(first, second)
-        asserts.fail_unless_equal(first, second, msg, self._include_values(values))
+        self._should_be_equal(first, second, msg, values)
+
+    def _should_be_equal(self, first, second, msg, values):
+        asserts.fail_unless_equal(first, second, msg,
+                                  self._include_values(values))
 
     def _log_types(self, *args):
         msg = ["Argument types are:"] + [str(type(a)) for a in args]
@@ -218,6 +222,9 @@ class _Verify:
         error message with `msg` and `values`.
         """
         self._log_types(first, second)
+        self._should_not_be_equal(first, second, msg, values)
+
+    def _should_not_be_equal(self, first, second, msg, values):
         asserts.fail_if_equal(first, second, msg, self._include_values(values))
 
     def should_not_be_equal_as_integers(self, first, second, msg=None, values=True):
@@ -227,7 +234,7 @@ class _Verify:
         error message with `msg` and `values`.
         """
         first, second = [ self.convert_to_integer(i) for i in first, second ]
-        self.should_not_be_equal(first, second, msg, values)
+        self._should_not_be_equal(first, second, msg, values)
 
     def should_be_equal_as_integers(self, first, second, msg=None, values=True):
         """Fails if objects are unequal after converting them to integers.
@@ -236,7 +243,7 @@ class _Verify:
         error message with `msg` and `values`.
         """
         first, second = [ self.convert_to_integer(i) for i in first, second ]
-        self.should_be_equal(first, second, msg, values)
+        self._should_be_equal(first, second, msg, values)
 
     def should_not_be_equal_as_numbers(self, first, second, msg=None, values=True):
         """Fails if objects are equal after converting them to real numbers.
@@ -248,7 +255,7 @@ class _Verify:
         """
         first = round(self.convert_to_number(first), 6)
         second = round(self.convert_to_number(second), 6)
-        self.should_not_be_equal(first, second, msg, values)
+        self._should_not_be_equal(first, second, msg, values)
 
     def should_be_equal_as_numbers(self, first, second, msg=None, values=True):
         """Fails if objects are unequal after converting them to real numbers.
@@ -260,7 +267,7 @@ class _Verify:
         """
         first = round(self.convert_to_number(first), 6)
         second = round(self.convert_to_number(second), 6)
-        self.should_be_equal(first, second, msg, values)
+        self._should_be_equal(first, second, msg, values)
 
     def should_not_be_equal_as_strings(self, first, second, msg=None, values=True):
         """Fails if objects are equal after converting them to strings.
@@ -269,7 +276,7 @@ class _Verify:
         error message with `msg` and `values`.
         """
         first, second = [ self.convert_to_string(i) for i in first, second ]
-        self.should_not_be_equal(first, second, msg, values)
+        self._should_not_be_equal(first, second, msg, values)
 
     def should_be_equal_as_strings(self, first, second, msg=None, values=True):
         """Fails if objects are unequal after converting them to strings.
@@ -278,7 +285,7 @@ class _Verify:
         error message with `msg` and `values`.
         """
         first, second = [ self.convert_to_string(i) for i in first, second ]
-        self.should_be_equal(first, second, msg, values)
+        self._should_be_equal(first, second, msg, values)
 
     def should_not_start_with(self, str1, str2, msg=None, values=True):
         """Fails if the string `str1` starts with the string `str2`.
