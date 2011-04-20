@@ -30,10 +30,20 @@ Should Be True With Invalid Expression
     Check test case  ${TESTNAME}
 
 Should Not Be Equal
-    Check test case  ${TESTNAME}
+    ${tc}=  Check test case  ${TESTNAME}
+    Verify argument type message  ${tc.kws[0].msgs[0]}  unicode  unicode
+    Verify argument type message  ${tc.kws[1].msgs[0]}  unicode  long
+    Verify argument type message  ${tc.kws[2].msgs[0]}  unicode  unicode
 
 Should Be Equal
-    Check test case  ${TESTNAME}
+    ${tc}=  Check test case  ${TESTNAME}
+    Verify argument type message  ${tc.kws[0].msgs[0]}  unicode  unicode
+    Verify argument type message  ${tc.kws[1].msgs[0]}  long  long
+    Verify argument type message  ${tc.kws[2].msgs[0]}  unicode  unicode
+
+Should Be Equal When Types Differ But String Representations Are Same
+    ${tc}=  Check test case  ${TESTNAME}
+    Verify argument type message  ${tc.kws[0].msgs[0]}  unicode  long
 
 Should Not Be Equal As Integers
     Check test case  ${TESTNAME}
@@ -176,3 +186,9 @@ Get Count
     Check Log Message  ${tc.kws[3].kws[0].msgs[0]}  Item found from the first item 50 times
     Check Log Message  ${tc.kws[4].kws[0].msgs[0]}  Item found from the first item 0 times
 
+
+*** Keywords ***
+
+Verify argument type message
+    [Arguments]  ${msg}  ${type1}  ${type2}
+    Check log message  ${msg}  Argument types are:\n<type '${type1}'>\n<type '${type2}'>

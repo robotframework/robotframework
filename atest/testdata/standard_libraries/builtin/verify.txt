@@ -51,12 +51,18 @@ Should Be True With Invalid Expression
 Should Not Be Equal
     [Documentation]  FAIL 1 == 1
     Should Not Be Equal  ${STR1}  Not ${STR1}
+    Should Not Be Equal  ${STR1}  ${INT1}
     Should Not Be Equal  ${STR1}  1
 
 Should Be Equal
-    [Documentation]  FAIL Error message: 1 != 1
+    [Documentation]  FAIL Error message: A != B
     Should Be Equal  ${STR1}  1
-    Should Be Equal  ${STR1}  ${INT1}  Error message
+    Should Be Equal  ${INT1}  ${1}
+    Should Be Equal  A  B  Error message
+
+Should Be Equal When Types Differ But String Representations Are Same
+    [Documentation]  FAIL Error message: 1 (string) != 1 (number)
+    Should Be Equal  ${STR1}  ${INT1}
 
 Should Not Be Equal As Integers
     [Documentation]  FAIL This message only
