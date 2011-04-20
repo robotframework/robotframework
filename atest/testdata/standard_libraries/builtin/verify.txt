@@ -61,7 +61,7 @@ Should Be Equal
     Should Be Equal  A  B  Error message
 
 Should Be Equal When Types Differ But String Representations Are Same
-    [Documentation]  FAIL Error message: 1 (string) != 1 (number)
+    [Documentation]  FAIL 1 (string) != 1 (number)
     Should Be Equal  ${STR1}  ${INT1}
 
 Should Not Be Equal As Integers
