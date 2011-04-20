@@ -63,7 +63,7 @@ Failing Repeat Keyword
     Check Log Message  ${test.kws[0].kws[1].kws[0].msgs[0]}  \${limit} = 8
     Check Log Message  ${test.kws[0].kws[2].kws[0].msgs[0]}  \${limit} = 7
     Check Log Message  ${test.kws[0].kws[9].kws[0].msgs[0]}  \${limit} = 0
-    Check Log Message  ${test.kws[0].kws[9].kws[2].msgs[0]}  Recursion limit exceeded  FAIL
+    Check Log Message  ${test.kws[0].kws[9].kws[2].msgs[1]}  Recursion limit exceeded  FAIL
     ${test} =  Check Test Case  Failing Repeat Keyword and Teardown
     Check Log Message  ${test.kws[0].kws[0].msgs[0]}  Failing, again, instead of repeating  FAIL
     ${test} =  Check Test Case  Non-Exising Variable In Repeat Keyword
