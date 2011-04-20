@@ -33,6 +33,10 @@ class _Converter:
 
     def convert_to_integer(self, item):
         """Converts the given item to an integer number."""
+        self._log_types(item)
+        return self._convert_to_integer(item)
+
+    def _convert_to_integer(self, item):
         try:
             if utils.is_jython:
                 return self._jython_to_integer(item)
@@ -57,6 +61,10 @@ class _Converter:
 
     def convert_to_number(self, item):
         """Converts the given item to a floating point number."""
+        self._log_types(item)
+        return self._convert_to_number(item)
+
+    def _convert_to_number(self, item):
         try:
             if utils.is_jython:
                 return self._jython_to_number(item)
@@ -64,7 +72,7 @@ class _Converter:
         except:
             error = utils.get_error_message()
             try:
-                return float(self.convert_to_integer(item))
+                return float(self._convert_to_integer(item))
             except RuntimeError:
                 raise RuntimeError("'%s' cannot be converted to a floating point "
                                  "number: %s" % (item, error))
@@ -86,6 +94,10 @@ class _Converter:
         Uses '__unicode__' or '__str__' method with Python objects and
         'toString' with Java objects.
         """
+        self._log_types(item)
+        return self._convert_to_string(item)
+
+    def _convert_to_string(self, item):
         return utils.unic(item)
 
     def convert_to_boolean(self, item):
@@ -96,6 +108,7 @@ class _Converter:
         For more information about truth values, see
         http://docs.python.org/lib/truth.html.
         """
+        self._log_types(item)
         if isinstance(item, basestring):
             if utils.eq(item, 'True'):
                 return True
@@ -233,7 +246,8 @@ class _Verify:
         See `Should Be Equal` for an explanation on how to override the default
         error message with `msg` and `values`.
         """
-        first, second = [ self.convert_to_integer(i) for i in first, second ]
+        self._log_types(first, second)
+        first, second = [self._convert_to_integer(i) for i in first, second]
         self._should_not_be_equal(first, second, msg, values)
 
     def should_be_equal_as_integers(self, first, second, msg=None, values=True):
@@ -242,7 +256,8 @@ class _Verify:
         See `Should Be Equal` for an explanation on how to override the default
         error message with `msg` and `values`.
         """
-        first, second = [ self.convert_to_integer(i) for i in first, second ]
+        self._log_types(first, second)
+        first, second = [self._convert_to_integer(i) for i in first, second]
         self._should_be_equal(first, second, msg, values)
 
     def should_not_be_equal_as_numbers(self, first, second, msg=None, values=True):
@@ -253,8 +268,9 @@ class _Verify:
         See `Should Be Equal` for an explanation on how to override the default
         error message with `msg` and `values`.
         """
-        first = round(self.convert_to_number(first), 6)
-        second = round(self.convert_to_number(second), 6)
+        self._log_types(first, second)
+        first = round(self._convert_to_number(first), 6)
+        second = round(self._convert_to_number(second), 6)
         self._should_not_be_equal(first, second, msg, values)
 
     def should_be_equal_as_numbers(self, first, second, msg=None, values=True):
@@ -265,8 +281,9 @@ class _Verify:
         See `Should Be Equal` for an explanation on how to override the default
         error message with `msg` and `values`.
         """
-        first = round(self.convert_to_number(first), 6)
-        second = round(self.convert_to_number(second), 6)
+        self._log_types(first, second)
+        first = round(self._convert_to_number(first), 6)
+        second = round(self._convert_to_number(second), 6)
         self._should_be_equal(first, second, msg, values)
 
     def should_not_be_equal_as_strings(self, first, second, msg=None, values=True):
@@ -275,7 +292,8 @@ class _Verify:
         See `Should Be Equal` for an explanation on how to override the default
         error message with `msg` and `values`.
         """
-        first, second = [ self.convert_to_string(i) for i in first, second ]
+        self._log_types(first, second)
+        first, second = [ self._convert_to_string(i) for i in first, second ]
         self._should_not_be_equal(first, second, msg, values)
 
     def should_be_equal_as_strings(self, first, second, msg=None, values=True):
@@ -284,7 +302,8 @@ class _Verify:
         See `Should Be Equal` for an explanation on how to override the default
         error message with `msg` and `values`.
         """
-        first, second = [ self.convert_to_string(i) for i in first, second ]
+        self._log_types(first, second)
+        first, second = [ self._convert_to_string(i) for i in first, second ]
         self._should_be_equal(first, second, msg, values)
 
     def should_not_start_with(self, str1, str2, msg=None, values=True):
@@ -519,7 +538,7 @@ class _Verify:
         The length of the item is got using the `Get Length` keyword. The
         default error message can be overridden with the `msg` argument.
         """
-        length = self.convert_to_integer(length)
+        length = self._convert_to_integer(length)
         if self.get_length(item) != length:
             if msg is None:
                 msg = "Length of '%s' should be %d but it is %d" \
@@ -937,7 +956,7 @@ class _RunKeyword:
             times = times[:-5]
         elif times.endswith('x'):
             times = times[:-1]
-        times = self.convert_to_integer(times)
+        times = self._convert_to_integer(times)
         if times <= 0:
             self.log("Keyword '%s' repeated zero times" % name)
         for i in xrange(times):
