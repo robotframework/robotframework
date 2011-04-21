@@ -1,0 +1,23 @@
+*** Settings ***
+Force Tags  pybot  jybot  regression
+Resource  atest_resource.txt
+Suite Setup  Run some tests and parse XML
+
+*** Test Cases ***
+Test Criticality Should Be Serialized Inside Status Tag
+    Check Test Criticality in Output  0  yes
+    Check Test Criticality in Output  1  no
+
+*** Keywords ***
+Run some tests and parse XML
+    Run Tests   --noncritical fail  misc${/}pass_and_fail.html
+    ${SUITE}=  Get Node  ${OUTFILE}  suite
+    Set Suite Variable  ${SUITE}
+
+Check Test Criticality in Output
+    [Arguments]  ${testindex}  ${expected criticality}
+    ${test}=  Set Variable  ${suite.get_nodes('test')[${testindex}]}
+    Should Be Equal  ${test.get_node('status').get_attr('critical')}
+    ...   ${expected criticality}
+
+

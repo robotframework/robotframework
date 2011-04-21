@@ -95,7 +95,8 @@ class XmlLogger:
 
     def end_test(self, test):
         self._write_list('tag', test.tags, 'tags')
-        self._write_status(test, test.message)
+        self._write_status(test, test.message,
+                           extra_attrs={'critical': test.critical})
         self._writer.end('test')
 
     def start_suite(self, suite):
@@ -214,7 +215,9 @@ class XmlLogger:
         if container is not None:
             self._writer.end(container)
 
-    def _write_status(self, item, message=None):
-        self._writer.element('status', message, {'status': item.status,
-                                                 'starttime': item.starttime,
-                                                 'endtime': item.endtime})
+    def _write_status(self, item, message=None, extra_attrs=None):
+        attrs = {'status': item.status, 'starttime': item.starttime,
+                 'endtime': item.endtime}
+        if extra_attrs:
+            attrs.update(extra_attrs)
+        self._writer.element('status', message, attrs)
