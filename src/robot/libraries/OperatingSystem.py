@@ -1072,8 +1072,7 @@ class OperatingSystem:
         self._link("Size of file '%%s' is %d byte%s" % (size, plural), path)
         return size
 
-    def list_directory(self, path, pattern=None, absolute=False,
-                       deprecated_absolute=None):
+    def list_directory(self, path, pattern=None, absolute=False):
         """Returns and logs items in a directory, optionally filtered with `pattern`.
 
         File and directory names are returned in case-sensitive alphabetical
@@ -1088,34 +1087,26 @@ class OperatingSystem:
 
         If `pattern` is given, only items matching it are returned. The pattern
         matching syntax is explained in `introduction`, and in this case
-        matching is case-sensitive. Support for different pattern types
-        was removed in Robot Framework 2.5.
+        matching is case-sensitive.
 
         Examples (using also other `List Directory` variants):
         | @{items} = | List Directory           | ${TEMPDIR} |
         | @{files} = | List Files In Directory  | /tmp | *.txt | absolute |
         | ${count} = | Count Files In Directory | ${CURDIR} | ??? |
-
-        The signature of this keyword was changed in RF 2.5 when the deprecated
-        `pattern_type` argument was removed. The `deprecated_absolute` argument
-        was added to keep the signature backwards compatible, but it will be
-        removed in RF 2.6.
         """
-        items = self._list_dir(path, pattern, absolute, deprecated_absolute)
+        items = self._list_dir(path, pattern, absolute)
         self._info('%d item%s:\n%s' % (len(items), plural_or_not(items), '\n'.join(items)))
         return items
 
-    def list_files_in_directory(self, path, pattern=None, absolute=False,
-                                deprecated_absolute=None):
+    def list_files_in_directory(self, path, pattern=None, absolute=False):
         """A wrapper for `List Directory` that returns only files."""
-        files = self._list_files_in_dir(path, pattern, absolute, deprecated_absolute)
+        files = self._list_files_in_dir(path, pattern, absolute)
         self._info('%d file%s:\n%s' % (len(files), plural_or_not(files), '\n'.join(files)))
         return files
 
-    def list_directories_in_directory(self, path, pattern=None, absolute=False,
-                                      deprecated_absolute=None):
+    def list_directories_in_directory(self, path, pattern=None, absolute=False):
         """A wrapper for `List Directory` that returns only directories."""
-        dirs = self._list_dirs_in_dir(path, pattern, absolute, deprecated_absolute)
+        dirs = self._list_dirs_in_dir(path, pattern, absolute)
         self._info('%d director%s:\n%s' % (len(dirs), 'y' if len(dirs) == 1 else 'ies', '\n'.join(dirs)))
         return dirs
 
@@ -1142,8 +1133,7 @@ class OperatingSystem:
         self._info("%s director%s." % (count, 'y' if count == 1 else 'ies'))
         return count
 
-    def _list_dir(self, path, pattern=None, absolute=False,
-                  deprecated_absolute=None):
+    def _list_dir(self, path, pattern=None, absolute=False):
         path = self._absnorm(path)
         self._link("Listing contents of directory '%s'.", path)
         if not os.path.isdir(path):
@@ -1151,27 +1141,19 @@ class OperatingSystem:
         # result is already unicode but unic also handles NFC normalization
         items = sorted(unic(item) for item in os.listdir(path))
         if pattern:
-            items = [ i for i in items if fnmatch.fnmatchcase(i, pattern) ]
-        if deprecated_absolute is not None:
-            self._warn("Signature of 'List Directory' keywords has changed. "
-                       "Please update how 'absolute' argumemt is given.")
-            absolute = deprecated_absolute
+            items = [i for i in items if fnmatch.fnmatchcase(i, pattern)]
         if absolute:
             path = os.path.normpath(path)
-            items = [ os.path.join(path,item) for item in items ]
+            items = [os.path.join(path,item) for item in items]
         return items
 
-    def _list_files_in_dir(self, path, pattern=None, absolute=False,
-                           deprecated_absolute=None):
-        return [ item for item in
-                 self._list_dir(path, pattern, absolute, deprecated_absolute)
-                 if os.path.isfile(os.path.join(path, item)) ]
+    def _list_files_in_dir(self, path, pattern=None, absolute=False):
+        return [item for item in self._list_dir(path, pattern, absolute)
+                if os.path.isfile(os.path.join(path, item))]
 
-    def _list_dirs_in_dir(self, path, pattern=None, absolute=False,
-                          deprecated_absolute=None):
-        return [ item for item in
-                 self._list_dir(path, pattern, absolute, deprecated_absolute)
-                 if os.path.isdir(os.path.join(path, item)) ]
+    def _list_dirs_in_dir(self, path, pattern=None, absolute=False):
+        return [item for item in self._list_dir(path, pattern, absolute)
+                if os.path.isdir(os.path.join(path, item))]
 
     def touch(self, path):
         """Emulates the UNIX touch command.

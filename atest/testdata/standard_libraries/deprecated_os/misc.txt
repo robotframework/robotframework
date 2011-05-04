@@ -48,15 +48,14 @@ List Dir With Absolute
     Create File  ${TESTDIR}${/}foo.txt
     Create File  ${TESTDIR}${/}bar.txt
     Create Dir  ${TESTDIR}${/}foodir
-    ${names} =  List Dir  ${TESTDIR}  ${EMPTY}  ${EMPTY}  absolute
-    Log  ${names}
+    ${names} =  List Dir  ${TESTDIR}  ${EMPTY}  yes
     Equals  ${names[0]}  ${TESTDIR}${/}bar.txt
     Equals  ${names[1]}  ${TESTDIR}${/}foo.txt
     Equals  ${names[2]}  ${TESTDIR}${/}foodir
-    ${names} =  List Files In Dir  ${TESTDIR}  ${EMPTY}  ${EMPTY}  absolute
+    ${names} =  List Files In Dir  ${TESTDIR}  ${EMPTY}  absolute
     Equals  ${names[0]}  ${TESTDIR}${/}bar.txt
     Equals  ${names[1]}  ${TESTDIR}${/}foo.txt
-    ${names} =  List Dirs In Dir  ${TESTDIR}  ${EMPTY}  ${EMPTY}  absolute
+    ${names} =  List Dirs In Dir  ${TESTDIR}  ${EMPTY}  absolute
     Equals  ${names[0]}  ${TESTDIR}${/}foodir
 
 List And Count Files And Dirs In Dir
