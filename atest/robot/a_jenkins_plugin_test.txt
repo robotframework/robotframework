@@ -1,5 +1,5 @@
 ***TestCases***
 The test
-    [Tags]  regression
+    [Tags]  regression  pybot
     Remove Tags  regression
     Fail  I should not be critical!
