@@ -88,8 +88,7 @@ class XmlLogger:
         self._writer.end('kw')
 
     def start_test(self, test):
-        attrs = {'name': test.name, 'critical': test.critical,
-                 'timeout': str(test.timeout)}
+        attrs = {'name': test.name, 'timeout': str(test.timeout)}
         self._writer.start('test', attrs)
         self._writer.element('doc', test.doc)
 
