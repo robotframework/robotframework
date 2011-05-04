@@ -124,7 +124,7 @@ def _verify_version(given, valid):
 
 def _update_version(version_number, release_tag):
     timestamp = '%d%02d%02d-%02d%02d%02d' % time.localtime()[:6]
-    vfile = open(VERSION_PATH, 'w')
+    vfile = open(VERSION_PATH, 'wb')
     vfile.write(VERSION_CONTENT % locals())
     vfile.close()
     print 'Updated version to %s %s' % (version_number, release_tag)
