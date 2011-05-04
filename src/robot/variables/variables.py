@@ -16,9 +16,11 @@ import re
 import os
 from UserDict import UserDict
 if os.name == 'java':
+    from java.lang.System import getProperty as getJavaSystemProperty
     from java.util import Map
 else:
     class Map: pass
+    getJavaSystemProperty = lambda name: None
 
 from robot import utils
 from robot.errors import DataError
@@ -190,17 +192,18 @@ class Variables(utils.NormalizedDict):
                         "escape it like '\\%s'." % (value, value))
             return value
 
-        # 2) Handle environment variables
+        # 2) Handle environment variables and Java system properties
         elif var.identifier == '%':
+            name = var.get_replaced_base(self).strip()
+            if name == '':
+                return '%%{%s}' % var.base
             try:
-                name = var.get_replaced_base(self).strip()
-                if name != '':
-                    return os.environ[name]
-                else:
-                    return '%%{%s}' % var.base
+                return os.environ[name]
             except KeyError:
-                raise DataError("Environment variable '%s' does not exist"
-                                % name)
+                property = getJavaSystemProperty(name)
+                if property:
+                    return property
+                raise DataError("Environment variable '%s' does not exist" % name)
 
         # 3) Handle ${scalar} variables and @{list} variables without index
         elif var.index is None:
