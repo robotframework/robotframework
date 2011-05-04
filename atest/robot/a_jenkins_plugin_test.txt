@@ -1,0 +1,5 @@
+***TestCases***
+The test
+    [Tags]  regression
+    Remove Tags  regression
+    Fail  I should not be critical!
