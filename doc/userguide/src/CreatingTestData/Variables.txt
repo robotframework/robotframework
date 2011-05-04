@@ -305,20 +305,21 @@ not effective after the test execution.
 Java system properties
 ''''''''''''''''''''''
 
-When running tests with Jython, it is possible to access Java system properties
-using same syntax as `environment variables`_. Support for this was added in
-Robot Framework 2.6.
+When running tests with Jython, it is possible to access `Java system properties`__
+using same syntax as `environment variables`_. If an environment variable and a
+system property with same name exist, the environment variable will be used.
+Support for accessing Java system properties was added in Robot Framework 2.6.
 
 .. table:: Using Java system properties
    :class: example
 
-   =================  ========  ====================================  ==========
-     Test Case         Action          Argument                        Argument
-   =================  ========  ====================================  ==========
-   System Properties   Log      Current operating system: %{os.name}
-   =================  ========  ====================================  ==========
+   =================  ========  ========================================  ==========
+     Test Case         Action          Argument                            Argument
+   =================  ========  ========================================  ==========
+   System Properties   Log      %{user.name} running tests on %{os.name}
+   =================  ========  ========================================  ==========
 
-
+__ http://download.oracle.com/javase/tutorial/essential/environment/sysprop.html
 
 Creating variables
 ~~~~~~~~~~~~~~~~~~
