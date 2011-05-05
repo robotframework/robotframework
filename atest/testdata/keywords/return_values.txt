@@ -103,7 +103,7 @@ Multiple Scalars When No List Returned
     ${a}  ${b} =  Set Variable  This is not list
 
 List When No List Returned
-    [Documentation]  FAIL Cannot assign return values: Expected list-like object, got long instead.
+    [Documentation]  FAIL Cannot assign return values: Expected list-like object, got int instead.
     @{list} =  Set Variable  ${42}
 
 List To Scalar And List Varibles

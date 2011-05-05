@@ -32,18 +32,18 @@ Should Be True With Invalid Expression
 Should Not Be Equal
     ${tc}=  Check test case  ${TESTNAME}
     Verify argument type message  ${tc.kws[0].msgs[0]}  unicode  unicode
-    Verify argument type message  ${tc.kws[1].msgs[0]}  unicode  long
+    Verify argument type message  ${tc.kws[1].msgs[0]}  unicode  int
     Verify argument type message  ${tc.kws[2].msgs[0]}  unicode  unicode
 
 Should Be Equal
     ${tc}=  Check test case  ${TESTNAME}
     Verify argument type message  ${tc.kws[0].msgs[0]}  unicode  unicode
-    Verify argument type message  ${tc.kws[1].msgs[0]}  long  long
+    Verify argument type message  ${tc.kws[1].msgs[0]}  int  int
     Verify argument type message  ${tc.kws[2].msgs[0]}  unicode  unicode
 
 Should Be Equal When Types Differ But String Representations Are Same
     ${tc}=  Check test case  ${TESTNAME}
-    Verify argument type message  ${tc.kws[0].msgs[0]}  unicode  long
+    Verify argument type message  ${tc.kws[0].msgs[0]}  unicode  int
 
 Should Not Be Equal As Integers
     ${tc}=  Check test case  ${TESTNAME}
@@ -67,7 +67,7 @@ Should Not Be Equal As Strings
 
 Should Be Equal As Strings
     ${tc}=  Check test case  ${TESTNAME}
-    Verify argument type message  ${tc.kws[0].msgs[0]}  long  unicode
+    Verify argument type message  ${tc.kws[0].msgs[0]}  int  unicode
 
 Should Not Start With
     Check test case  ${TESTNAME}
