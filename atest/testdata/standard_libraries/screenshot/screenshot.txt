@@ -3,7 +3,7 @@ Suite Setup     Remove Files  @{SCREENSHOTS}
 Test Setup      Save Start Time
 Test Teardown   Remove Files  @{SCREENSHOTS}
 Resource        screenshot_resource.txt
-Library         Screenshot  ${OUTPUTDIR}  this is deprecated  WITH NAME  Screenshot2
+Library         Screenshot  ${OUTPUTDIR}  WITH NAME  Screenshot2
 
 *** Variables ***
 @{SCREENSHOTS}  ${OUTPUTDIR}${/}screenshot_1.jpg  ${OUTPUTDIR}${/}screenshot_2.jpg
