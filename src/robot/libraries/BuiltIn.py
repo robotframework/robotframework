@@ -26,7 +26,7 @@ from robot.running.model import ExecutionContext
 from robot.version import get_version
 
 if utils.is_jython:
-    from java.lang import String, Number, Long, Double
+    from java.lang import String, Number
 
 
 class _Converter:
@@ -39,17 +39,17 @@ class _Converter:
     def _convert_to_integer(self, item):
         try:
             if utils.is_jython:
-                item = self._handle_java_types(item)
+                item = self._handle_java_numbers(item)
             return int(item)
         except:
             raise RuntimeError("'%s' cannot be converted to an integer: %s"
                                % (item, utils.get_error_message()))
 
-    def _handle_java_types(self, item):
+    def _handle_java_numbers(self, item):
         if isinstance(item, String):
             return utils.unic(item)
         if isinstance(item, Number):
-            return item.longValue()
+            return item.doubleValue()
         return item
 
     def convert_to_number(self, item):
@@ -60,26 +60,15 @@ class _Converter:
     def _convert_to_number(self, item):
         try:
             if utils.is_jython:
-                return self._jython_to_number(item)
+                item = self._handle_java_numbers(item)
             return float(item)
         except:
             error = utils.get_error_message()
             try:
                 return float(self._convert_to_integer(item))
             except RuntimeError:
-                raise RuntimeError("'%s' cannot be converted to a floating point "
-                                 "number: %s" % (item, error))
-
-    def _jython_to_number(self, item):
-        # This helper handles Java Strings and Numbers
-        try:
-            return float(item)
-        except (TypeError, AttributeError):
-            if isinstance(item, String):
-                return Double.parseDouble(item)
-            if isinstance(item, Number):
-                return item.doubleValue()
-            raise
+                raise RuntimeError("'%s' cannot be converted to a floating "
+                                   "point number: %s" % (item, error))
 
     def convert_to_string(self, item):
         """Converts the given item to a Unicode string.

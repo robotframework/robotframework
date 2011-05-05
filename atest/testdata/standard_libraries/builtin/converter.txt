@@ -30,7 +30,7 @@ Convert To Number
     Convert To Number  ${OBJECT_FAILING}
 
 Convert To Number With Java Objects
-    [Documentation]  FAIL STARTS: 'foobar' cannot be converted to a floating point number: NumberFormatException:
+    [Documentation]  FAIL STARTS: 'foobar' cannot be converted to a floating point number: ValueError:
     Test Convert To Number  ${JAVA_STRING_INT}  ${1.0}
     Test Convert To Number  ${JAVA_STRING_FLOAT}  ${1.1}
     Test Convert To Number  ${JAVA_INTEGER}  ${1.0}
