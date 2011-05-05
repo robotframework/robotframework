@@ -86,13 +86,14 @@ class Screenshot(object):
       were added. These keywords should be used for taking screenshots in
       the future. Other screenshot taking keywords will be deprecated and
       removed later.
+    - `log_file_directory` argument was deprecated everywhere it was used.
 
-    In Robot Framework 2.6, following additional changes were made
+    In Robot Framework 2.6, following additional changes were made:
 
     - `log_file_directory` argument was removed altogether.
-    - `Set Screenshot Directories` keyword was removed
+    - `Set Screenshot Directories` keyword was removed.
     - `Save Screenshot`, `Save Screenshot To` and `Log Screenshot`
-      keywords were deprecated.
+      keywords were deprecated. They will be removed in 2.7 version.
     """
 
     ROBOT_LIBRARY_SCOPE = 'TEST SUITE'
