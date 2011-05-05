@@ -147,35 +147,20 @@ class Screenshot(object):
         self.set_screenshot_directory(default_directory)
 
     def save_screenshot_to(self, path):
-        """Saves a screenshot to the specified file.
-
-        *This keyword is obsolete.* Use `Take Screenshot` or `Take Screenshot
-        Without Embedding` instead. This keyword will be deprecated in Robot
-        Framework 2.6 and removed later.
-        """
+        """*DEPRECATED* Use `Take Screenshot` or `Take Screenshot Without Embedding` instead."""
         path = self._screenshot_to_file(path)
         self._link_screenshot(path)
         return path
 
     def save_screenshot(self, basename="screenshot", directory=None):
-        """Saves a screenshot with a generated unique name.
-
-        *This keyword is obsolete.* Use `Take Screenshot` or `Take Screenshot
-        Without Embedding` instead. This keyword will be deprecated in Robot
-        Framework 2.6 and removed later.
-        """
+        """*DEPRECATED* Use `Take Screenshot` or `Take Screenshot Without Embedding` instead."""
         path = self._save_screenshot(basename, directory)
         self._link_screenshot(path)
         return path
 
     def log_screenshot(self, basename='screenshot', directory=None,
                        width='100%'):
-        """Takes a screenshot and logs it to Robot Framework's log file.
-
-        *This keyword is obsolete.* Use `Take Screenshot` or `Take Screenshot
-        Without Embedding` instead. This keyword will be deprecated in Robot
-        Framework 2.6 and removed later.
-        """
+        """*DEPRECATED* Use `Take Screenshot` or `Take Screenshot Without Embedding` instead."""
         path = self._save_screenshot(basename, directory)
         self._embed_screenshot(path, width)
         return path
