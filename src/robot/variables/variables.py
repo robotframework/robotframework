@@ -110,7 +110,7 @@ class Variables(utils.NormalizedDict):
             raise ValueError
         base = self._normalize(name)[2:-1]
         try:
-            return long(base)
+            return int(base)
         except ValueError:
             return float(base)
 
