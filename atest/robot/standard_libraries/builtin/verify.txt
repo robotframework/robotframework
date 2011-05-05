@@ -49,9 +49,15 @@ Should Not Be Equal As Integers
     ${tc}=  Check test case  ${TESTNAME}
     Verify argument type message  ${tc.kws[0].msgs[0]}  unicode  unicode
 
+Should Not Be Equal As Integers With Base
+    Check test case  ${TESTNAME}
+
 Should Be Equal As Integers
     ${tc}=  Check test case  ${TESTNAME}
     Verify argument type message  ${tc.kws[0].msgs[0]}  unicode  unicode
+
+Should Be Equal As Integers With Base
+    Check test case  ${TESTNAME}
 
 Should Not Be Equal As Numbers
     ${tc}=  Check test case  ${TESTNAME}

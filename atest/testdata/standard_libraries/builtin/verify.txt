@@ -70,10 +70,26 @@ Should Not Be Equal As Integers
     Should Not Be Equal As Integers  0  ${INT1}
     Should Not Be Equal As Integers  1  ${INT1}  This message only  No values
 
+Should Not Be Equal As Integers With Base
+    [Documentation]  Conversion functionality tested with `Convert To Integer`
+    Should Not Be Equal As Integers  ABC   DEF  base=16
+    Should Not Be Equal As Integers  0b10  10
+    Should Not Be Equal As Integers  0x10  0o10
+
 Should Be Equal As Integers
     [Documentation]  FAIL -1 != 1
     Should Be Equal As Integers  ${STR1}${STR0}${STR0}  ${STR1}${STR0}${STR0}
     Should Be Equal As Integers  -${STR1}  ${STR1}
+
+Should Be Equal As Integers With Base
+    [Documentation]  Conversion functionality tested with `Convert To Integer`
+    Should Be Equal As Integers  ABCD  abcd   base=16
+    Should Be Equal As Integers  0b10  2
+    Should Be Equal As Integers  0xFF  0o377  base=ignored
+    Should Be Equal As Integers  0b0   0
+    Should Be Equal As Integers  0x0   0o0
+    Should Be Equal As Integers  0b1   1
+    Should Be Equal As Integers  0x1   0o1
 
 Should Not Be Equal As Numbers
     [Documentation]  FAIL Fails again: 1.1 == 1.1

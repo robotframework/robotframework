@@ -31,15 +31,36 @@ if utils.is_jython:
 
 class _Converter:
 
-    def convert_to_integer(self, item):
-        """Converts the given item to an integer number."""
-        self._log_types(item)
-        return self._convert_to_integer(item)
+    def convert_to_integer(self, item, base=None):
+        """Converts the given item to an integer number.
 
-    def _convert_to_integer(self, item):
+        If the item is a string, it is by default expected to be an
+        integer in base 10. Starting from Robot Framework 2.6 there
+        are two ways to convert from other bases:
+
+        1) Give base explicitly to the keyword as `base` argument.
+
+        2) Prefix the given string with the base so that `0b` means base 2
+        (binary), `0o` means base 8 (octal), and `0x` means base 16 (hex).
+        In this case possible `base` argument is ignored.
+
+        Examples:
+        | ${result} = | Convert To Integer | 100   |   | # Result is 100 |
+        | ${result} = | Convert To Integer | 100   | 8 | # Result is 64  |
+        | ${result} = | Convert To Integer | 100   | 2 | # Result is 4   |
+        | ${result} = | Convert To Integer | 0b100 |   | # Result is 4   |
+        | ${result} = | Convert To Integer | 0x100 |   | # Result is 256 |
+        """
+        self._log_types(item)
+        return self._convert_to_integer(item, base)
+
+    def _convert_to_integer(self, item, base=None):
         try:
             if utils.is_jython:
                 item = self._handle_java_numbers(item)
+            item, base = self._get_base(item, base)
+            if base:
+                return int(item, self._convert_to_integer(base))
             return int(item)
         except:
             raise RuntimeError("'%s' cannot be converted to an integer: %s"
@@ -51,6 +72,13 @@ class _Converter:
         if isinstance(item, Number):
             return item.doubleValue()
         return item
+
+    def _get_base(self, item, base):
+        bases = {'0b': 2, '0o': 8, '0x': 16}
+        if isinstance(item, basestring) \
+                and item.lower().startswith(tuple(bases)):
+            return item[2:], bases[item.lower()[:2]]
+        return item, base
 
     def convert_to_number(self, item):
         """Converts the given item to a floating point number."""
@@ -222,25 +250,35 @@ class _Verify:
     def _should_not_be_equal(self, first, second, msg, values):
         asserts.fail_if_equal(first, second, msg, self._include_values(values))
 
-    def should_not_be_equal_as_integers(self, first, second, msg=None, values=True):
+    def should_not_be_equal_as_integers(self, first, second, msg=None,
+                                        values=True, base=None):
         """Fails if objects are equal after converting them to integers.
 
+        See `Convert To Integer` for information how to convert integers from
+        other bases than 10 using `base` argument or `0b/0o/0x` prefixes.
+
         See `Should Be Equal` for an explanation on how to override the default
         error message with `msg` and `values`.
         """
         self._log_types(first, second)
-        first, second = [self._convert_to_integer(i) for i in first, second]
-        self._should_not_be_equal(first, second, msg, values)
+        self._should_not_be_equal(self._convert_to_integer(first, base),
+                                  self._convert_to_integer(second, base),
+                                  msg, values)
 
-    def should_be_equal_as_integers(self, first, second, msg=None, values=True):
+    def should_be_equal_as_integers(self, first, second, msg=None, values=True,
+                                    base=None):
         """Fails if objects are unequal after converting them to integers.
 
+        See `Convert To Integer` for information how to convert integers from
+        other bases than 10 using `base` argument or `0b/0o/0x` prefixes.
+
         See `Should Be Equal` for an explanation on how to override the default
         error message with `msg` and `values`.
         """
         self._log_types(first, second)
-        first, second = [self._convert_to_integer(i) for i in first, second]
-        self._should_be_equal(first, second, msg, values)
+        self._should_be_equal(self._convert_to_integer(first, base),
+                              self._convert_to_integer(second, base),
+                              msg, values)
 
     def should_not_be_equal_as_numbers(self, first, second, msg=None, values=True):
         """Fails if objects are equal after converting them to real numbers.

@@ -2,6 +2,7 @@
 Variables       numbers_to_convert.py
 
 *** Test Cases ***
+
 Convert To Integer
     [Documentation]  FAIL STARTS: 'MyObject' cannot be converted to an integer: ZeroDivisionError:
     [Template]  Test Convert To Integer
@@ -21,6 +22,33 @@ Convert To Integer With Java Objects
     ${JAVA_FLOAT}
     ${JAVA_DOUBLE}
     ${JAVA_STRING_INVALID}  This fails!
+
+Convert To Integer With Base
+    [Documentation]  FAIL STARTS: 'B' cannot be converted to an integer: ValueError:
+    [Template]  Test Convert To Integer
+    10  10  10
+    A   10  16
+    10  8   ${8}
+    10  2   2
+    B   -   2
+
+Convert To Integer With Embedded Base
+    [Documentation]  FAIL STARTS: 'XXX' cannot be converted to an integer: ValueError:
+    [Template]  Test Convert To Integer
+    0xF00  3840
+    0XF00  3840
+    0b101  5     base is ignored
+    0B101  5
+    0o101  65    10
+    0O101  65
+    0xXXX  -
+
+Convert To Integer With Base And Java Objects
+    [Documentation]  FAIL STARTS: 'F00' cannot be converted to an integer: ValueError:
+    [Template]  Test Convert To Integer
+    ${JAVA_STRING_HEX}            3840  16
+    ${JAVA_STRING_EMBEDDED_BASE}  3840  -
+    ${JAVA_STRING_HEX}            -     8
 
 Convert To Number
     [Documentation]  FAIL REGEXP: ^'MyObject' cannot be converted to a floating point number: (Attribute|Type)Error: .*$
@@ -73,10 +101,12 @@ Create List
     ${mixed} =  Create List  one  ${int_one}
     Should Be True  ${mixed} == ['one', 1]
 
+
 *** Keywords ***
+
 Test Convert To Integer
-    [Arguments]  ${item}  ${exp}=1
-    ${act} =  Convert To Integer  ${item}
+    [Arguments]  ${item}  ${exp}=1  ${base}=
+    ${act} =  Convert To Integer  ${item}  ${base}
     ${exp} =  Evaluate  ${exp}
     Should Be Equal  ${act}  ${exp}
 
