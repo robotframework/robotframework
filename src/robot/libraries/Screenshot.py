@@ -14,7 +14,6 @@
 
 import sys
 import os
-import tempfile
 if sys.platform.startswith('java'):
     from java.awt import Toolkit, Robot, Rectangle
     from javax.imageio import ImageIO
@@ -76,7 +75,7 @@ class Screenshot(object):
     Note that prior to Robot Framework 2.5.5 the default screenshot location
     was system's temporary directory.
 
-    *Changes in Robot Framework 2.5.5*
+    *Changes in Robot Framework 2.5.5 and Robot Framework 2.6*
 
     This library was heavily enhanced in Robot Framework 2.5.5 release. The
     changes are listed below and explained more thoroughly in affected places.
@@ -87,7 +86,13 @@ class Screenshot(object):
       were added. These keywords should be used for taking screenshots in
       the future. Other screenshot taking keywords will be deprecated and
       removed later.
-    - `log_file_directory` argument was deprecated everywhere it was used.
+
+    In Robot Framework 2.6, following additional changes were made
+
+    - `log_file_directory` argument was removed altogether.
+    - `Set Screenshot Directories` keyword was removed
+    - `Save Screenshot`, `Save Screenshot To` and `Log Screenshot`
+      keywords were deprecated.
     """
 
     ROBOT_LIBRARY_SCOPE = 'TEST SUITE'
