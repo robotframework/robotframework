@@ -39,25 +39,18 @@ class _Converter:
     def _convert_to_integer(self, item):
         try:
             if utils.is_jython:
-                return self._jython_to_integer(item)
+                item = self._handle_java_types(item)
             return int(item)
         except:
             raise RuntimeError("'%s' cannot be converted to an integer: %s"
-                            % (item, utils.get_error_message()))
+                               % (item, utils.get_error_message()))
 
-    def _jython_to_integer(self, item):
-        # This helper handles Java Strings and Numbers as well as Jython
-        # not handling overflow automatically
-        try:
-            return int(item)
-        except ValueError:
-            return long(item)
-        except TypeError:
-            if isinstance(item, String):
-                return Long.parseLong(item)
-            if isinstance(item, Number):
-                return item.longValue()
-            raise
+    def _handle_java_types(self, item):
+        if isinstance(item, String):
+            return utils.unic(item)
+        if isinstance(item, Number):
+            return item.longValue()
+        return item
 
     def convert_to_number(self, item):
         """Converts the given item to a floating point number."""

@@ -12,7 +12,7 @@ Convert To Integer
     Convert To Integer  ${OBJECT_FAILING}
 
 Convert To Integer With Java Objects
-    [Documentation]  FAIL STARTS: 'foobar' cannot be converted to an integer: NumberFormatException:
+    [Documentation]  FAIL STARTS: 'foobar' cannot be converted to an integer: ValueError:
     Test Convert To Integer  ${JAVA_STRING_INT}
     Test Convert To Integer  ${JAVA_INTEGER}
     Test Convert To Integer  ${JAVA_LONG}
