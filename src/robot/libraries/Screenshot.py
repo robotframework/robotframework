@@ -141,11 +141,6 @@ class Screenshot(object):
         self._given_screenshot_dir = path
         return old
 
-    def set_screenshot_directories(self, default_directory=None,
-                                   log_file_directory='DEPRECATED'):
-        """*DEPRECATED* Use `Set Screenshot Directory` keyword instead."""
-        self.set_screenshot_directory(default_directory)
-
     def save_screenshot_to(self, path):
         """*DEPRECATED* Use `Take Screenshot` or `Take Screenshot Without Embedding` instead."""
         path = self._screenshot_to_file(path)
