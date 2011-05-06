@@ -4,7 +4,10 @@ Force Tags      pybot  jybot  regression
 Resource        atest_resource.txt
 
 *** Test Cases ***
-Number Variables
+Integer Variables
+    Check Test Case  ${TESTNAME}
+
+Float Variables
     Check Test Case  ${TESTNAME}
 
 Boolean Variables
