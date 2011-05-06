@@ -31,6 +31,14 @@ Continuable Failure in Keyword
     [Documentation]  FAIL Please continue
     Continuable Failure in Keyword
 
+Non-ASCII Failure in Keyword Teardown
+    [Documentation]  FAIL Keyword teardown failed:\nHyvää äitienpäivää!
+    Non-ASCII Failure in Keyword Teardown
+
+Keyword cannot have only teardown
+    [Documentation]  FAIL User keyword 'Keyword cannot have only teardown' contains no keywords
+    Keyword cannot have only teardown
+
 Replacing Variables in Keyword Teardown Fails
     [Documentation]  FAIL Keyword teardown failed:\nNo keyword with name '${NON EXISTING}' found.
     Replacing Variables in Keyword Teardown Fails
@@ -75,6 +83,13 @@ Multiple Failures
     Fail  Failure in Teardown
     Failing keyword with Teardown
     Fail  Third failure in Teardown
+
+Non-ASCII Failure in Keyword Teardown
+    Log  åäö
+    [Teardown]  Fail  Hyvää äitienpäivää!
+
+Keyword cannot have only teardown
+    [Teardown]  Fail  This is not executed
 
 Replacing Variables in Keyword Teardown Fails
     Log  In UK

@@ -49,6 +49,14 @@ Continuable Failure in Keyword
     Check Log Message  ${tc.kws[0].kws[1].msgs[0]}  After continuable failure
     Check Log Message  ${tc.kws[0].kws[2].msgs[0]}  In UK Teardown
 
+Non-ASCII Failure in Keyword Teardown
+    ${tc}=  Check Test Case  ${TESTNAME}
+    Check Log Message  ${tc.kws[0].kws[0].msgs[0]}  åäö
+    Check Log Message  ${tc.kws[0].kws[1].msgs[0]}  Hyvää äitienpäivää!  FAIL
+
+Keyword cannot have only teardown
+    Check Test Case  ${TESTNAME}
+
 Replacing Variables in Keyword Teardown Fails
     Check Test Case  ${TESTNAME}
 
