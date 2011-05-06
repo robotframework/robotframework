@@ -1,0 +1,89 @@
+*** Settings ***
+Documentation   Tests for using libraries implemented with Java. This stuff is tested also in keywords/java_arguments.txt and these files should be combined.
+Suite Setup     Run Tests  ${EMPTY}  test_libraries/java_libraries.txt
+Force Tags      regression  jybot
+Resource        atest_resource.txt
+
+*** Test Cases ***
+String Arg
+    ${test} =  Check Test Case  String Arg
+    Check Log Message  ${test.kws[0].msgs[0]}  Hello world
+
+Char Arg
+    ${test} =  Check Test Case  Char Arg
+    Check Log Message  ${test.kws[0].msgs[0]}  x
+    Check Log Message  ${test.kws[1].msgs[0]}  y
+
+Boolean Arg
+    ${test} =  Check Test Case  Boolean Arg
+    Check Log Message  ${test.kws[0].msgs[0]}  Oh Yes!!
+    Check Log Message  ${test.kws[1].msgs[0]}  Oh No!!
+
+Double Arg
+    ${test} =  Check Test Case  Double Arg
+    Check Log Message  ${test.kws[0].msgs[0]}  3.14
+    Check Log Message  ${test.kws[1].msgs[0]}  1000.0
+
+Float Arg
+    ${test} =  Check Test Case  Float Arg
+    Check Log Message  ${test.kws[0].msgs[0]}  -3.14
+    Check Log Message  ${test.kws[1].msgs[0]}  -0.1
+
+Long Arg
+    ${test} =  Check Test Case  Long Arg
+    Check Log Message  ${test.kws[0].msgs[0]}  1000000000000000
+    Check Log Message  ${test.kws[1].msgs[0]}  -1
+
+Integer Arg
+    ${test} =  Check Test Case  Integer Arg
+    Check Log Message  ${test.kws[0].msgs[0]}  42
+    Check Log Message  ${test.kws[1].msgs[0]}  -1
+
+Short Arg
+    ${test} =  Check Test Case  Short Arg
+    Check Log Message  ${test.kws[0].msgs[0]}  2006
+    Check Log Message  ${test.kws[1].msgs[0]}  -100
+
+Byte Arg
+    ${test} =  Check Test Case  Byte Arg
+    Check Log Message  ${test.kws[0].msgs[0]}  8
+    Check Log Message  ${test.kws[1].msgs[0]}  0
+
+String Array Arg
+    ${test} =  Check Test Case  String Array Arg
+    Check Log Message  ${test.kws[0].msgs[0]}  Hello\nmy\nworld
+    Check Log Message  ${test.kws[1].msgs[0]}  Hi your tellus
+    Fail Unless  len(${test.kws[2].msgs}) == 0
+    Check Log Message  ${test.kws[4].msgs[0]}  Moi\nmaailma
+    Check Log Message  ${test.kws[6].msgs[0]}  a\nb\nc
+
+Integer Array Arg
+    ${test} =  Check Test Case  Integer Array Arg
+    Check Log Message  ${test.kws[0].msgs[0]}  1\n2\n3
+    Check Log Message  ${test.kws[1].msgs[0]}  -2006\n2006
+    Fail Unless  len(${test.keywords[2].messages}) == 0
+    Fail Unless  len(${test.keywords[3].messages}) == 0
+    Check Log Message  ${test.kws[5].msgs[0]}  -1\n1
+    Check Log Message  ${test.kws[6].msgs[0]}  -1\n1
+
+Return Integer
+    Check Test Case  Return Integer
+
+Return Double
+    Check Test Case  Return Double
+
+Return Boolean
+    Check Test Case  Return Boolean
+
+Return String
+    Check Test Case  Return String
+
+Return Null
+    Check Test Case  Return Null
+
+Return String Array
+    Check Test Case  Return String Array
+
+Return Int Array
+    Check Test Case  Return Int Array
+
