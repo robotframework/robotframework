@@ -7,6 +7,9 @@ Resource        atest_resource.txt
 Integer Variables
     Check Test Case  ${TESTNAME}
 
+Integer Variables With Base
+    Check Test Case  ${TESTNAME}
+
 Float Variables
     Check Test Case  ${TESTNAME}
 

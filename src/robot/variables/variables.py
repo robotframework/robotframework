@@ -108,11 +108,17 @@ class Variables(utils.NormalizedDict):
     def _get_number_var(self, name):
         if name[0] != '$':
             raise ValueError
-        base = self._normalize(name)[2:-1]
+        number = self._normalize(name)[2:-1]
         try:
-            return int(base)
+            return self._get_int_var(number)
         except ValueError:
-            return float(base)
+            return float(number)
+
+    def _get_int_var(self, number):
+        bases = {'0b': 2, '0o': 8, '0x': 16}
+        if number.startswith(tuple(bases)):
+            return int(number[2:], bases[number[:2]])
+        return int(number)
 
     def replace_list(self, items):
         """Replaces variables from a list of items.

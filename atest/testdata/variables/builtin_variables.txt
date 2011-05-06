@@ -1,5 +1,5 @@
 *** Settings ***
-Library         Operating System
+Library         OperatingSystem
 
 *** Variables ***
 ${TEMPDIR}  Cannot be overridden
@@ -11,12 +11,23 @@ ${-4.1}  Can be overridden
 
 *** Test Cases ***
 Integer Variables
+    [Documentation]  FAIL  Non-existing variable '${FF}'.
     ${one} =  Convert To Integer  1
     ${minus_two} =  Convert To Integer  -2
     Should Be Equal  ${1}  ${one}
     Should Be Equal  ${ - 2 }  ${minus_two}
     Should Be True  repr(${12345}) == '12345'
     Should Be True  repr(${123456789012345678901234567890}).endswith('L')
+    Log  No automatic hex conversion ${FF}
+
+Integer Variables With Base
+    [Documentation]  FAIL  Non-existing variable '${0b123}'.
+    Should Be Equal  ${0xFF}    ${255}
+    Should Be Equal  ${ 0 X A}  ${10}
+    Should Be Equal  ${0b1010}  ${10}
+    Should Be Equal  ${0B0}     ${0O0}
+    Should Be Equal  ${0o10}    ${8}
+    Log  This fails: ${0b123}
 
 Float Variables
     ${pi} =  Convert To Number  3.14
