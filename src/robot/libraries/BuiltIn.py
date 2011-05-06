@@ -259,6 +259,8 @@ class _Verify:
 
         See `Should Be Equal` for an explanation on how to override the default
         error message with `msg` and `values`.
+
+        See `Should Be Equal As Integers` for some usage examples.
         """
         self._log_types(first, second)
         self._should_not_be_equal(self._convert_to_integer(first, base),
@@ -274,6 +276,11 @@ class _Verify:
 
         See `Should Be Equal` for an explanation on how to override the default
         error message with `msg` and `values`.
+
+        Examples:
+        | Should Be Equal As Integers | 42   | ${42} | Error message |
+        | Should Be Equal As Integers | ABCD | abcd  | base=16 |
+        | Should Be Equal As Integers | 0b1011 | 11  |
         """
         self._log_types(first, second)
         self._should_be_equal(self._convert_to_integer(first, base),
