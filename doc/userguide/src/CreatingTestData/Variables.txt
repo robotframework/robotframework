@@ -611,6 +611,22 @@ string that just looks like a number, as an argument.
    Example 2    Do X      ${3.14}      ${-1e-4}    # Do X gets floating point numbers 3.14 and -0.0001
    ===========  ========  ===========  ==========  ===================================================
 
+Starting from Robot Framework 2.6, it is possible to create integers
+also from binary, octal, and hexadecimal values using :var:`0b`, :var:`0o`
+and :var:`0x` prefixes, respectively. The syntax is case insetive.
+
+.. table:: Using integer variables with base
+   :class: example
+
+   ===========  ===============  ==========  ==========
+    Test Case        Action       Argument    Argument
+   ===========  ===============  ==========  ==========
+   Example      Should Be Equal  ${0b1011}   ${11}
+   \            Should Be Equal  ${0o10}     ${8}
+   \            Should Be Equal  ${0xff}     ${255}
+   \            Should Be Equal  ${0B1010}   ${0XA}
+   ===========  ===============  ==========  ==========
+
 Boolean and None/null variables
 '''''''''''''''''''''''''''''''
 
