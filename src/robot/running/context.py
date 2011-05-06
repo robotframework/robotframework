@@ -21,7 +21,7 @@ class ExecutionContext(object):
         self.namespace = namespace
         self.output = output
         self.dry_run = dry_run
-        self._in_teardown = False
+        self._in_teardown = 0
 
     @property
     def teardown(self):
@@ -32,10 +32,10 @@ class ExecutionContext(object):
         return test_or_suite.status != 'RUNNING'
 
     def start_teardown(self):
-        self._in_teardown = True
+        self._in_teardown += 1
 
     def end_teardown(self):
-        self._in_teardown = False
+        self._in_teardown -= 1
 
     def get_current_vars(self):
         return self.namespace.variables

@@ -16,7 +16,7 @@ import os
 import re
 
 from robot.common import BaseLibrary, UserErrorHandler
-from robot.errors import DataError, ExecutionFailed
+from robot.errors import DataError, ExecutionFailed, UserKeywordExecutionFailed
 from robot.variables import is_list_var, VariableSplitter
 from robot import utils
 
@@ -149,22 +149,26 @@ class UserKeywordHandler(object):
         args_spec.set_variables(resolved_arguments, variables, context.output)
         self._verify_keyword_is_valid()
         self.timeout.start()
-        run_errors = KeywordRunErrors()
         try:
             self.keywords.run(context)
-        except ExecutionFailed, err:
-            run_errors.kw_err(err)
-        self._run_teardown(context, run_errors)
-        msg = run_errors.get_message()
-        if msg:
-            raise ExecutionFailed(msg)
+        except ExecutionFailed, error:
+            pass
+        else:
+            error = None
+        td_error = self._run_teardown(context)
+        if error or td_error:
+            raise UserKeywordExecutionFailed(error, td_error)
 
-    def _run_teardown(self, context, run_errors):
+    def _run_teardown(self, context):
+        if not self.teardown:
+            return
         teardown = Teardown(self.teardown.name, self.teardown.args)
         teardown.replace_variables(context.get_current_vars(), [])
         context.start_teardown()
+        run_errors = KeywordRunErrors()
         teardown.run(context, KeywordTeardownListener(run_errors))
         context.end_teardown()
+        return run_errors.teardown_error
 
     def _verify_keyword_is_valid(self):
         if self._errors:
@@ -226,8 +230,10 @@ class EmbeddedArgs(UserKeywordHandler):
             raise TypeError('Does not match given name')
         self.embedded_args = zip(template.embedded_args, match.groups())
         self.name = name
+        self.teardown = None
         self.origname = template.name
         self._copy_attrs_from_template(template)
+
 
     def run(self, context, args):
         for name, value in self.embedded_args:

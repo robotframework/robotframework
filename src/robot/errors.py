@@ -72,7 +72,7 @@ class Information(RobotError):
 class ExecutionFailed(RobotError):
     """Used for communicating failures in test execution."""
 
-    def __init__(self, message, timeout=False, syntax=False, exit=False, 
+    def __init__(self, message, timeout=False, syntax=False, exit=False,
                  cont=False, exit_for_loop=False):
         RobotError.__init__(self, utils.cut_long_message(message))
         self.timeout = timeout
@@ -121,7 +121,8 @@ class HandlerExecutionFailed(ExecutionFailed):
 class ExecutionFailures(ExecutionFailed):
 
     def __init__(self, errors):
-        ExecutionFailed.__init__(self, self._format_message(errors),
+        msg = self._format_message(*(unicode(e) for e in errors))
+        ExecutionFailed.__init__(self, msg,
                                  any(err.timeout for err in errors),
                                  any(err.syntax for err in errors),
                                  any(err.exit for err in errors),
@@ -129,15 +130,33 @@ class ExecutionFailures(ExecutionFailed):
                                  all(err.exit_for_loop for err in errors))
         self._errors = errors
 
-    def _format_message(self, errors):
-        if len(errors) == 1:
-            return unicode(errors[0])
+    def _format_message(self, *msgs):
+        if len(msgs) == 1:
+            return msgs[0]
         lines = ['Several failures occurred:'] \
-                + ['%d) %s' % (i+1, unicode(e)) for i, e in enumerate(errors)]
+                + ['%d) %s' % (i+1, m) for i, m in enumerate(msgs)]
         return '\n\n'.join(lines)
 
     def get_errors(self):
         return self._errors
+
+
+class UserKeywordExecutionFailed(ExecutionFailures):
+
+    def __init__(self, run_error, teardown_error):
+        no_error = ExecutionFailed('', cont=True, exit_for_loop=True)
+        errors = (run_error or no_error,
+                  teardown_error or no_error)
+        ExecutionFailures.__init__(self, errors)
+        self._errors = run_error.get_errors() if \
+        (run_error and not teardown_error) else [self]
+
+    def _format_message(self, run_msg, td_msg):
+        if not td_msg:
+            return run_msg
+        if not run_msg:
+            return 'Keyword teardown failed:\n%s' % td_msg
+        return '%s\n\nAlso keyword teardown failed:\n%s' % (run_msg, td_msg)
 
 
 class RemoteError(RobotError):
