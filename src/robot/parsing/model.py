@@ -464,7 +464,7 @@ class TestCase(_WithSteps, _WithSettings):
         self.parent.report_invalid_syntax(message, level)
 
     def __iter__(self):
-        for element in [self.doc, self.tags, self.setup, 
+        for element in [self.doc, self.tags, self.setup,
                         self.template, self.timeout] \
                         + self.steps + [self.teardown]:
             yield element
@@ -479,17 +479,19 @@ class UserKeyword(TestCase):
         self.args = Arguments('[Arguments]', self)
         self.return_ = Return('[Return]', self)
         self.timeout = Timeout('[Timeout]', self)
+        self.teardown = Fixture('[Teardown]', self)
         self.steps = []
 
     _setters = {'documentation': lambda s: s.doc.populate,
                 'document': lambda s: s.doc.populate,
                 'arguments': lambda s: s.args.populate,
                 'return': lambda s: s.return_.populate,
-                'timeout': lambda s: s.timeout.populate}
+                'timeout': lambda s: s.timeout.populate,
+                'teardown': lambda s: s.teardown.populate}
 
     def __iter__(self):
         for element in [self.args, self.doc, self.timeout] \
-                        + self.steps + [self.return_]:
+                        + self.steps + [self.teardown, self.return_]:
             yield element
 
 

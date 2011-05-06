@@ -16,13 +16,15 @@ import os
 import re
 
 from robot.common import BaseLibrary, UserErrorHandler
-from robot.errors import DataError
+from robot.errors import DataError, ExecutionFailed
 from robot.variables import is_list_var, VariableSplitter
 from robot import utils
 
 from keywords import Keywords
+from fixture import Teardown, KeywordTeardownListener
 from timeouts import KeywordTimeout
 from arguments import UserKeywordArguments
+from runerrors import  KeywordRunErrors
 
 
 class UserLibrary(BaseLibrary):
@@ -98,6 +100,7 @@ class UserKeywordHandler(object):
         self.name = keyword.name
         self.keywords = Keywords(keyword.steps)
         self.return_value = keyword.return_.value
+        self.teardown = keyword.teardown
         self._libname = libname
         self.doc = self._doc = keyword.doc.value
         self._timeout = keyword.timeout
@@ -146,7 +149,22 @@ class UserKeywordHandler(object):
         args_spec.set_variables(resolved_arguments, variables, context.output)
         self._verify_keyword_is_valid()
         self.timeout.start()
-        self.keywords.run(context)
+        run_errors = KeywordRunErrors()
+        try:
+            self.keywords.run(context)
+        except ExecutionFailed, err:
+            run_errors.kw_err(err)
+        self._run_teardown(context, run_errors)
+        msg = run_errors.get_message()
+        if msg:
+            raise ExecutionFailed(msg)
+
+    def _run_teardown(self, context, run_errors):
+        teardown = Teardown(self.teardown.name, self.teardown.args)
+        teardown.replace_variables(context.get_current_vars(), [])
+        context.start_teardown()
+        teardown.run(context, KeywordTeardownListener(run_errors))
+        context.end_teardown()
 
     def _verify_keyword_is_valid(self):
         if self._errors:

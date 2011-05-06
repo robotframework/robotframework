@@ -83,4 +83,11 @@ class TestSetupListener(_TestListener):
 
 class TestTeardownListener(_TestListener):
     def _notify_run_errors(self, error):
-        self._test.run_errors.teardown_err(unicode(error))
+        self._test.run_errors.teardown_err(error)
+
+
+class KeywordTeardownListener(object):
+    def __init__(self, run_errors):
+        self._run_errors = run_errors
+    def notify(self, error):
+        self._run_errors.teardown_err(error)
