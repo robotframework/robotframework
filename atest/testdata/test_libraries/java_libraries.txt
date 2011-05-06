@@ -45,13 +45,13 @@ Short Arg
     [Documentation]  FAIL TypeError: short1(): 1st arg can't be coerced to short
     Short 1  ${2006}
     Short 2  ${-100}
-    Short 1  ${1000000}
+    Short 1  ${1000000000000000}
 
 Byte Arg
     [Documentation]  FAIL TypeError: byte1(): 1st arg can't be coerced to byte
     Byte 1  ${8}
     Byte 2  ${0}
-    Byte 1  ${1000}
+    Byte 1  ${1000000000000000}
 
 String Array Arg
     [Documentation]  FAIL TypeError: string_array(): 1st arg can't be coerced to String[]
