@@ -85,7 +85,7 @@ Should Be Equal As Integers With Base
     [Documentation]  Conversion functionality tested with `Convert To Integer`
     Should Be Equal As Integers  ABCD  abcd   base=16
     Should Be Equal As Integers  0b10  2
-    Should Be Equal As Integers  0xFF  0o377  base=ignored
+    Should Be Equal As Integers  0xFF  0o377
     Should Be Equal As Integers  0b0   0
     Should Be Equal As Integers  0x0   0o0
     Should Be Equal As Integers  0b1   1
