@@ -57,33 +57,34 @@ class _Converter:
         self._log_types(item)
         return self._convert_to_integer(item, base)
 
-    def _convert_to_integer(self, item, base=None):
+    def _convert_to_integer(self, orig, base=None):
         try:
-            if utils.is_jython:
-                item = self._handle_java_numbers(item)
-            item, base = self._normalize_and_get_base(item, base)
+            item = self._handle_java_numbers(orig)
+            item, base = self._get_base(item, base)
             if base:
                 return int(item, self._convert_to_integer(base))
             return int(item)
         except:
             raise RuntimeError("'%s' cannot be converted to an integer: %s"
-                               % (item, utils.get_error_message()))
+                               % (orig, utils.get_error_message()))
 
     def _handle_java_numbers(self, item):
+        if not utils.is_jython:
+            return item
         if isinstance(item, String):
             return utils.unic(item)
         if isinstance(item, Number):
             return item.doubleValue()
         return item
 
-    def _normalize_and_get_base(self, item, base):
+    def _get_base(self, item, base):
         if not isinstance(item, basestring):
             return item, base
-        item = item.replace(' ', '')
+        item = utils.normalize(item)
         bases = {'0b': 2, '0o': 8, '0x': 16}
-        if base or not item.lower().startswith(tuple(bases)):
+        if base or not item.startswith(tuple(bases)):
             return item, base
-        return item[2:], bases[item.lower()[:2]]
+        return item[2:], bases[item[:2]]
 
     def convert_to_number(self, item):
         """Converts the given item to a floating point number."""

@@ -26,31 +26,31 @@ Convert To Integer With Java Objects
 Convert To Integer With Base
     [Documentation]  FAIL STARTS: 'B' cannot be converted to an integer: ValueError:
     [Template]  Test Convert To Integer
-    10  10  10
-    A   10  16
-    10  8   ${8}
-    10  2   2
-    B   -   2
+    10         10     10
+    A          10     16
+    10         8      ${8}
+    10         2      2
     FF 00      65280  16
     1010 1010  170    2
+    B          this fails
 
 Convert To Integer With Invalid Base
     [Documentation]  FAIL STARTS: '1' cannot be converted to an integer: 'invalid' cannot be converted to an integer: ValueError:
     Convert To Integer  1  invalid
 
 Convert To Integer With Embedded Base
-    [Documentation]  FAIL STARTS: 'XXX' cannot be converted to an integer: ValueError:
+    [Documentation]  FAIL STARTS: '0xXXX' cannot be converted to an integer: ValueError:
     [Template]  Test Convert To Integer
-    0xf00  3840
-    0XF00  3840
-    0b10   2
-    0B10   2
-    0B10   2832  base=16  # Explicit base wins
-    0o101  65
-    0O102  66
-    0xXXX  -
+    0xf00         3840
+    0XF00         3840
+    0b10          2
+    0B10          2
+    0B10          2832  base=16  # Explicit base wins
+    0o101         65
+    0O102         66
     0x FF 00      65280
     0b 1010 1010  170
+    0xXXX         this fails
 
 Convert To Integer With Base And Java Objects
     [Documentation]  FAIL STARTS: 'F00' cannot be converted to an integer: ValueError:
