@@ -31,6 +31,8 @@ Convert To Integer With Base
     10  8   ${8}
     10  2   2
     B   -   2
+    FF 00      65280  16
+    1010 1010  170    2
 
 Convert To Integer With Invalid Base
     [Documentation]  FAIL STARTS: '1' cannot be converted to an integer: 'invalid' cannot be converted to an integer: ValueError:
@@ -47,6 +49,8 @@ Convert To Integer With Embedded Base
     0o101  65
     0O102  66
     0xXXX  -
+    0x FF 00      65280
+    0b 1010 1010  170
 
 Convert To Integer With Base And Java Objects
     [Documentation]  FAIL STARTS: 'F00' cannot be converted to an integer: ValueError:

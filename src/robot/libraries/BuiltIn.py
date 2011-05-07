@@ -34,9 +34,9 @@ class _Converter:
     def convert_to_integer(self, item, base=None):
         """Converts the given item to an integer number.
 
-        If the item is a string, it is by default expected to be an
-        integer in base 10. Starting from Robot Framework 2.6 there
-        are two ways to convert from other bases:
+        If the given item is a string, it is by default expected to be an
+        integer in base 10. Starting from Robot Framework 2.6 there are two
+        ways to convert from other bases:
 
         1) Give base explicitly to the keyword as `base` argument.
 
@@ -44,12 +44,15 @@ class _Converter:
         (binary), `0o` means base 8 (octal), and `0x` means base 16 (hex).
         The prefix is considered only when `base` argument is not given.
 
+        The syntax is case-insensitive and possible spaces are ignored.
+
         Examples:
-        | ${result} = | Convert To Integer | 100   |   | # Result is 100 |
-        | ${result} = | Convert To Integer | 100   | 8 | # Result is 64  |
-        | ${result} = | Convert To Integer | 100   | 2 | # Result is 4   |
-        | ${result} = | Convert To Integer | 0b100 |   | # Result is 4   |
-        | ${result} = | Convert To Integer | 0x100 |   | # Result is 256 |
+        | ${result} = | Convert To Integer | 100   |    | # Result is 100   |
+        | ${result} = | Convert To Integer | FF AA | 16 | # Result is 65450 |
+        | ${result} = | Convert To Integer | 100   | 8  | # Result is 64    |
+        | ${result} = | Convert To Integer | 100   | 2  | # Result is 4     |
+        | ${result} = | Convert To Integer | 0b100 |    | # Result is 4     |
+        | ${result} = | Convert To Integer | 0x100 |    | # Result is 256   |
         """
         self._log_types(item)
         return self._convert_to_integer(item, base)
@@ -58,7 +61,7 @@ class _Converter:
         try:
             if utils.is_jython:
                 item = self._handle_java_numbers(item)
-            item, base = self._get_base(item, base)
+            item, base = self._normalize_and_get_base(item, base)
             if base:
                 return int(item, self._convert_to_integer(base))
             return int(item)
@@ -73,12 +76,14 @@ class _Converter:
             return item.doubleValue()
         return item
 
-    def _get_base(self, item, base):
+    def _normalize_and_get_base(self, item, base):
+        if not isinstance(item, basestring):
+            return item, base
+        item = item.replace(' ', '')
         bases = {'0b': 2, '0o': 8, '0x': 16}
-        if not base and isinstance(item, basestring) \
-                and item.lower().startswith(tuple(bases)):
-            return item[2:], bases[item.lower()[:2]]
-        return item, base
+        if base or not item.lower().startswith(tuple(bases)):
+            return item, base
+        return item[2:], bases[item.lower()[:2]]
 
     def convert_to_number(self, item):
         """Converts the given item to a floating point number."""
