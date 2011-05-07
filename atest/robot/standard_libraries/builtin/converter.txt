@@ -18,14 +18,17 @@ Convert To Integer With Java Objects
     Verify argument type message  ${tc.kws[0].kws[0].msgs[0]}  java.lang.String
 
 Convert To Integer With Base
-    ${tc}=  Check Test Case  ${TEST NAME}
+    Check Test Case  ${TEST NAME}
+
+Convert To Integer With Invalid Base
+    Check Test Case  ${TEST NAME}
 
 Convert To Integer With Embedded Base
-    ${tc}=  Check Test Case  ${TEST NAME}
+    Check Test Case  ${TEST NAME}
 
 Convert To Integer With Base And Java Objects
     [Tags]  jybot
-    ${tc}=  Check Test Case  ${TEST NAME}
+    Check Test Case  ${TEST NAME}
 
 Convert To Number
     ${tc}=  Check Test Case  ${TEST NAME}

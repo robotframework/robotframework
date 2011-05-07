@@ -32,15 +32,20 @@ Convert To Integer With Base
     10  2   2
     B   -   2
 
+Convert To Integer With Invalid Base
+    [Documentation]  FAIL STARTS: '1' cannot be converted to an integer: 'invalid' cannot be converted to an integer: ValueError:
+    Convert To Integer  1  invalid
+
 Convert To Integer With Embedded Base
     [Documentation]  FAIL STARTS: 'XXX' cannot be converted to an integer: ValueError:
     [Template]  Test Convert To Integer
-    0xF00  3840
+    0xf00  3840
     0XF00  3840
-    0b101  5     base is ignored
-    0B101  5
-    0o101  65    10
-    0O101  65
+    0b10   2
+    0B10   2
+    0B10   2832  base=16  # Explicit base wins
+    0o101  65
+    0O102  66
     0xXXX  -
 
 Convert To Integer With Base And Java Objects

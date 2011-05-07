@@ -42,7 +42,7 @@ class _Converter:
 
         2) Prefix the given string with the base so that `0b` means base 2
         (binary), `0o` means base 8 (octal), and `0x` means base 16 (hex).
-        In this case possible `base` argument is ignored.
+        The prefix is considered only when `base` argument is not given.
 
         Examples:
         | ${result} = | Convert To Integer | 100   |   | # Result is 100 |
@@ -75,7 +75,7 @@ class _Converter:
 
     def _get_base(self, item, base):
         bases = {'0b': 2, '0o': 8, '0x': 16}
-        if isinstance(item, basestring) \
+        if not base and isinstance(item, basestring) \
                 and item.lower().startswith(tuple(bases)):
             return item[2:], bases[item.lower()[:2]]
         return item, base
