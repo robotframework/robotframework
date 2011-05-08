@@ -55,9 +55,9 @@ Convert To Integer With Embedded Base
 Convert To Integer With Base And Java Objects
     [Documentation]  FAIL STARTS: 'F00' cannot be converted to an integer: ValueError:
     [Template]  Test Convert To Integer
-    ${JAVA_STRING_HEX}            3840  16
-    ${JAVA_STRING_EMBEDDED_BASE}  3840  -
-    ${JAVA_STRING_HEX}            -     8
+    ${JAVA_STRING_HEX}            3840   16
+    ${JAVA_STRING_EMBEDDED_BASE}  3840
+    ${JAVA_STRING_HEX}            fails  8
 
 Convert To Number
     [Documentation]  FAIL REGEXP: ^'MyObject' cannot be converted to a floating point number: (Attribute|Type)Error: .*$
