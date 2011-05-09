@@ -788,18 +788,21 @@ Logging information
 '''''''''''''''''''
 
 Exception messages are not the only way to give information to the
-users. In addition to that, methods can also send messages to `log
+users. In addition to them, methods can also send messages to `log
 files`_ simply by writing to the standard output stream (stdout) or to
 the standard error stream (stderr), and they can even use different
-`log levels`_.
+`log levels`_. Another logging possibility is using the Python based
+`logging API`__ that is explained at the end of this section.
 
 By default, everything written by a method into the standard output is
 written to the log file as a single entry with the log level
 :msg:`INFO`. Messages written into the standard error are handled
 similarly otherwise, but they are echoed back to the original stderr
 after the keyword execution has finished. It is thus possible to use
-stderr if you need some messages to be visible on the console where
+the stderr if you need some messages to be visible on the console where
 tests are executed.
+
+__ `Public logging API`_
 
 Using log levels
 ````````````````
@@ -915,6 +918,30 @@ as pseudocode meaning :code:`System.out.println("message");`.
        <td class="msg"><a href="http://robotframework.org">Robot Framework</a></td>
      </tr>
    </table>
+
+Public logging API
+``````````````````
+
+Robot Framework 2.6 has a new Python based logging API for writing
+messages to the log file and the console. Test libraries can use this
+API like :code:`logger.info('My message')` instead of logging through
+the standard output like :code:`print '*INFO* My message'`. In
+addition to a programmatic interface being cleaner to use, this API has a
+benefit that the log messages have accurate timestamps.
+
+The logging API is documented as part of the API documentation but
+here is a simple usage example:
+
+.. FIXME: Link to API docs.
+
+.. sourcecode:: python
+
+   from robot.api import logger
+
+   def my_keyword(arg):
+       logger.debug('Got argument %s' % arg)
+       do_something()
+       logger.info('<i>This</i> is a boring example', html=True)
 
 Returning values
 ''''''''''''''''
