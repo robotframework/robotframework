@@ -121,21 +121,23 @@ class HandlerExecutionFailed(ExecutionFailed):
 class ExecutionFailures(ExecutionFailed):
 
     def __init__(self, errors):
-        msg = self._format_message(*(unicode(e) for e in errors))
-        ExecutionFailed.__init__(self, msg,
-                                 any(err.timeout for err in errors),
-                                 any(err.syntax for err in errors),
-                                 any(err.exit for err in errors),
-                                 all(err.cont for err in errors),
-                                 all(err.exit_for_loop for err in errors))
+        msg = self._format_message([unicode(e) for e in errors])
+        ExecutionFailed.__init__(self, msg, **self._get_attrs(errors))
         self._errors = errors
 
-    def _format_message(self, *msgs):
-        if len(msgs) == 1:
-            return msgs[0]
+    def _format_message(self, messages):
+        if len(messages) == 1:
+            return messages[0]
         lines = ['Several failures occurred:'] \
-                + ['%d) %s' % (i+1, m) for i, m in enumerate(msgs)]
+                + ['%d) %s' % (i+1, m) for i, m in enumerate(messages)]
         return '\n\n'.join(lines)
+
+    def _get_attrs(self, errors):
+        return {'timeout': any(err.timeout for err in errors),
+                'syntax': any(err.syntax for err in errors),
+                'exit': any(err.exit for err in errors),
+                'cont': all(err.cont for err in errors),
+                'exit_for_loop': all(err.exit_for_loop for err in errors)}
 
     def get_errors(self):
         return self._errors
@@ -143,15 +145,17 @@ class ExecutionFailures(ExecutionFailed):
 
 class UserKeywordExecutionFailed(ExecutionFailures):
 
-    def __init__(self, run_error, teardown_error):
-        no_error = ExecutionFailed('', cont=True, exit_for_loop=True)
-        errors = (run_error or no_error,
-                  teardown_error or no_error)
-        ExecutionFailures.__init__(self, errors)
-        self._errors = run_error.get_errors() if \
-        (run_error and not teardown_error) else [self]
+    def __init__(self, run_errors=None, teardown_errors=None):
+        no_errors = ExecutionFailed('', cont=True, exit_for_loop=True)
+        ExecutionFailures.__init__(self, [run_errors or no_errors,
+                                          teardown_errors or no_errors])
+        if run_errors and not teardown_errors:
+            self._errors = run_errors.get_errors()
+        else:
+            self._errors = [self]
 
-    def _format_message(self, run_msg, td_msg):
+    def _format_message(self, messages):
+        run_msg, td_msg = messages
         if not td_msg:
             return run_msg
         if not run_msg:
