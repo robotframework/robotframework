@@ -417,12 +417,14 @@ Keyword teardown
 Starting from Robot Framework 2.6, also user keywords may have a teardown.
 It is defined using :opt:`[Teardown]` setting.
 
-Keyword teardown works much in the same way as a `test case teardown`__.
-Most importantly, the teardown is always a single keyword and it gets executed
-also when the user keyword fails. In addition, all steps of the teardown
-are executed even if one of them fails. However, a failure in keyword teardown
-will fail the test case and subsequent steps in the test are not run. The name
-of the keyword to be executed as a teardown can also be a variable.
+Keyword teardown works much in the same way as a `test case
+teardown`__.  Most importantly, the teardown is always a single
+keyword, although it can be another user keyword, and it gets executed
+also when the user keyword fails. In addition, all steps of the
+teardown are executed even if one of them fails. However, a failure in
+keyword teardown will fail the test case and subsequent steps in the
+test are not run. The name of the keyword to be executed as a teardown
+can also be a variable.
 
 .. table::
    :class: example
@@ -431,7 +433,7 @@ of the keyword to be executed as a teardown can also be a variable.
      User Keyword           Action            Argument            Argument
    ==================  ===============  ===================  ==================
    With Teardown       Do Something
-                       [Teardown]       Log                  keyword teardown
+   \                   [Teardown]       Log                  keyword teardown
    \
    Using variables     [Documentation]  Teardown given as    variable
    \                   Do Something
