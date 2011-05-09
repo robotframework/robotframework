@@ -9,8 +9,8 @@ chapter illustrates, Robot Framework's library API is simple
 and straightforward.
 
 .. contents::
-   :depth: 2 
-   :local: 
+   :depth: 2
+   :local:
 
 Introduction
 ~~~~~~~~~~~~
@@ -37,8 +37,8 @@ scripts or tools as separate processes.
 .. tip:: `Python Tutorial for Robot Framework Test Library Developers`__
          covers enough of Python language to get started writing test
          libraries using it. It also contains a simple example library
-         and test cases that you can execute and otherwise investigate 
-         on your machine. 
+         and test cases that you can execute and otherwise investigate
+         on your machine.
 
 __ http://docs.python.org/c-api/index.html
 __ http://docs.python.org/library/ctypes.html
@@ -47,12 +47,12 @@ __ http://code.google.com/p/robotframework/wiki/PythonTutorial
 Different test library APIs
 '''''''''''''''''''''''''''
 
-Robot Framework has three different test library APIs. 
+Robot Framework has three different test library APIs.
 
-Static API 
+Static API
 
   The simplest approach is having a module (in Python) or a class
-  (in Python or Java) with methods which map directly to 
+  (in Python or Java) with methods which map directly to
   `keyword names`_. Keywords also take the same `arguments`__ as
   the methods implementing them.  Keywords `report failures`__ with
   exceptions, `log`__ by writing to standard output and can `return
@@ -61,7 +61,7 @@ Static API
 Dynamic API
 
   Dynamic libraries are classes that implement a method to get the names
-  of the keywords they implement, and another method to execute a named 
+  of the keywords they implement, and another method to execute a named
   keyword with given arguments. The names of the keywords to implement, as
   well as how they are executed, can be determined dynamically at
   runtime, but reporting the status, logging and returning values is done
@@ -74,7 +74,7 @@ Hybrid API
   those keywords must be available directly. Everything else except
   discovering what keywords are implemented is similar as in the
   static API.
-  
+
 All these APIs are described in this chapter. Everything is based on
 how the static API works, so its functions are discussed first. How
 the `dynamic library API`_ and the `hybrid library API`_ differ from it
@@ -216,7 +216,7 @@ a string and it can have the following three values:
   instances of their own, and higher-level suites all get their own instances
   for their possible setups and teardowns.
 
-`GLOBAL`:code: 
+`GLOBAL`:code:
   Only one instance is created during the whole test execution and it
   is shared by all test cases and test suites. Libraries created from
   modules are always global.
@@ -241,7 +241,7 @@ Example Python library using the :code:`TEST SUITE` scope:
 
         def __init__(self):
             self._counter = 0
-  
+
         def count(self):
             self._counter += 1
             print self._counter
@@ -282,7 +282,7 @@ Version information is read from attribute
 :code:`ROBOT_LIBRARY_VERSION`, similarly as `test library scope`_ is
 read from :code:`ROBOT_LIBRARY_SCOPE`. If
 :code:`ROBOT_LIBRARY_VERSION` does not exist, information is tried to
-be read from :code:`__version__` attribute. These attributes must be 
+be read from :code:`__version__` attribute. These attributes must be
 class or module attributes, depending whether the library is
 implemented as a class or a module.  For Java libraries the version
 attribute must be declared as :code:`static final`.
@@ -301,9 +301,9 @@ A Java class using :code:`ROBOT_LIBRARY_VERSION`:
 .. sourcecode:: java
 
     public class VersionExample {
-        
+
         public static final String ROBOT_LIBRARY_VERSION = "1.0.2";
-        
+
         public void keyword() {
         }
     }
@@ -335,7 +335,7 @@ libraries below implement single keyword :name:`My Keyword`.
 .. sourcecode:: java
 
     public class MyLibrary {
-        
+
         public String myKeyword(String arg) {
             return helperMethod(arg);
         }
@@ -361,7 +361,7 @@ accidentally exposed as keywords.
    from threading import current_thread
 
    __all__ = ['example_keyword', 'second_example']
-   
+
    def example_keyword():
        if current_thread().name == 'MainThread':
            print 'Running in main thread'
@@ -406,7 +406,7 @@ Example Java library implemented as a class in the :path:`MyLibrary.java` file:
           System.out.println("Hello, " + name + "!");
       }
 
-      public void doNothing() { 
+      public void doNothing() {
       }
 
   }
@@ -416,7 +416,7 @@ used. If you want to try this yourself, make sure that the library is
 in the `library search path`_.
 
 .. table:: Using simple example library
-   :class: example  
+   :class: example
 
    =========  ===========  =======  =======
     Setting      Value      Value    Value
@@ -496,7 +496,7 @@ with one to three arguments.
    :class: example
 
    ===========  ==================  =============  ============  =============
-    Test Case         Action          Argument       Argument       Argument 
+    Test Case         Action          Argument       Argument       Argument
    ===========  ==================  =============  ============  =============
    Defaults     One Default
    \            One Default         argument
@@ -515,7 +515,7 @@ illustrated by the example below, which is functionally identical to
 the earlier Python example:
 
 .. sourcecode:: java
-  
+
    public void oneDefault(String arg) {
        System.out.println("Argument has value '" + arg "'");
    }
@@ -545,8 +545,8 @@ in test libraries is different in Python and Java.
 
 Variable number of arguments with Python
 ````````````````````````````````````````
-Python supports methods accepting any number of arguments. The same 
-syntax works in libraries and, as the examples below show, it can also 
+Python supports methods accepting any number of arguments. The same
+syntax works in libraries and, as the examples below show, it can also
 be combined with other ways of specifying arguments:
 
 .. sourcecode:: python
@@ -568,7 +568,7 @@ be combined with other ways of specifying arguments:
    :class: example
 
    ===========  ==============  =============  ============  ==============
-    Test Case       Action         Argument      Argument       Argument 
+    Test Case       Action         Argument      Argument       Argument
    ===========  ==============  =============  ============  ==============
    Varargs      Any Arguments
    \            Any Arguments   argument
@@ -577,25 +577,27 @@ be combined with other ways of specifying arguments:
    \            One Required    required arg
    \            One Required    required arg   another arg   yet another
    \            Also Defaults   required
-   \            Also Defaults   required       these two     have defaults 
+   \            Also Defaults   required       these two     have defaults
    \            Also Defaults   1              2             3
    \            ...             4              5             6
    ===========  ==============  =============  ============  ==============
 
 Variable number of arguments with Java
 ``````````````````````````````````````
-Robot supports Java varargs syntax for defining variable number of arguments.
-Robot also will translate an array as the last argument in a keyword signature as
-a list of variable number of arguments. In this case, all leftover arguments to the
-keyword are packed into the list. This also works if the keyword is used with one
-argument less than the actual number of arguments in the signature - in this case 
+Robot supports Java varargs syntax for defining variable number of
+arguments.  Robot also will translate an array as the last argument in
+a keyword signature as a list of variable number of arguments. In this
+case, all leftover arguments to the keyword are packed into the
+list. This also works if the keyword is used with one argument less
+than the actual number of arguments in the signature - in this case
 the array at the end will be empty.
 
-Robot's support for variable number of arguments in Java has one limitation:
-it only works if the method has only one signature. Thus it is not possible to have a
-Java keyword that has both the default values and a variable number of arguments.
-Of course, having a number of required arguments is still possible, as the 
-examples below illustrate:
+Robot's support for variable number of arguments in Java has one
+limitation: it only works if the method has only one signature. Thus
+it is not possible to have a Java keyword that has both the default
+values and a variable number of arguments.  Of course, having a number
+of required arguments is still possible, as the examples below
+illustrate:
 
 .. sourcecode:: java
 
@@ -665,7 +667,7 @@ example, the conversion can be done for keywords :code:`doubleArgument`
 and :code:`compatibleTypes`, but not for :code:`conflictingTypes`.
 
 .. sourcecode:: java
-  
+
    public void doubleArgument(double arg) {}
 
    public void compatibleTypes(String arg1, Integer arg2) {}
@@ -679,23 +681,23 @@ string containing a number, and with the boolean type the data must
 contain either string :code:`true` or :code:`false`. Coercion is only
 done if the original value was a string from the test data, but it is
 of course still possible to use variables containing correct types with
-these keywords. Using variables is the only option if keywords have 
+these keywords. Using variables is the only option if keywords have
 conflicting signatures.
 
 .. table:: Using automatic type coercion
    :class: example
 
    ===========  =================  =============  ==========  =====================
-    Test Case         Action          Argument     Argument        Argument 
+    Test Case         Action          Argument     Argument        Argument
    ===========  =================  =============  ==========  =====================
    Coercion     Double Argument    3.14
    \            Double Argument    2e16                       # scientific notation
-   \            Compatible Types   Hello, world!  1234          
+   \            Compatible Types   Hello, world!  1234
    \            Compatible Types   Hi again!      -10         true
    \
-   No Coercion  Double Argument    ${3.14}                         
+   No Coercion  Double Argument    ${3.14}
    \            Conflicting Types  1              ${2}        # must use variables
-   \            Conflicting Types  ${1}           2              
+   \            Conflicting Types  ${1}           2
    ===========  =================  =============  ==========  =====================
 
 Communicating with Robot Framework
@@ -705,7 +707,7 @@ After a method implementing a keyword is called, it can use any
 mechanism to communicate with the system under test. It can then also
 send messages to Robot Framework's log file, return information that
 can be saved to variables and, most importantly, report if the
-keyword passed or not. 
+keyword passed or not.
 
 Reporting keyword status
 ''''''''''''''''''''''''
@@ -737,7 +739,7 @@ Stopping test execution
 
 Starting from Robot Framework 2.5 it is possible to fail a test case so that
 `the whole test execution is stopped`__. This is done simply by having a special
-:code:`ROBOT_EXIT_ON_FAILURE` attribute with :code:`True` value set on the 
+:code:`ROBOT_EXIT_ON_FAILURE` attribute with :code:`True` value set on the
 exception raised from the keyword. This is illustrated in the examples below.
 
 Python:
@@ -753,7 +755,7 @@ Java:
 
     public class MyFatalError extends RuntimeException {
         public static final boolean ROBOT_EXIT_ON_FAILURE = true;
-    } 
+    }
 
 __ `Stopping test execution gracefully`_
 
@@ -810,7 +812,7 @@ Warnings
 Starting from Robot Framework 2.1 messages with :msg:`WARN` level are
 automatically written into `the console and into separate Test Execution
 Errors section`__ in log files. This makes warnings more visible than
-other messages and allows using them for reporting important but 
+other messages and allows using them for reporting important but
 non-critical problems to users.
 
 __ `Errors and warnings during execution`_
@@ -834,7 +836,7 @@ In most cases, the :msg:`INFO` level is adequate. The levels below it,
 :msg:`DEBUG` and :msg:`TRACE`, are useful for writing debug information.
 These messages are normally not shown, but they can facilitate debugging
 possible problems in the library itself. The :msg:`WARN` level can
-be used to make messages more visible and :msg:`HTML` is useful if any 
+be used to make messages more visible and :msg:`HTML` is useful if any
 kind of formatting is needed.
 
 The following examples clarify how logging with different levels
@@ -899,7 +901,7 @@ The final way for keywords to communicate back to the core framework
 is returning information retrieved from the system under test or
 generated by some other means. The returned values can be `assigned to
 variables`__ in the test data and then used as inputs for other keywords,
-even from different test libraries. 
+even from different test libraries.
 
 Values are returned using the :code:`return` statement both from
 the Python and Java methods. Normally, one value is assigned into one
@@ -926,8 +928,8 @@ __ `Scalar variables`_
    ================  ===============  ==============
    ${string} =       Return String
    Should Be Equal   ${string}        Hello, world!
-   ${object} =       Return Object    Robot        
-   Should Be Equal   ${object.name}   Robot        
+   ${object} =       Return Object    Robot
+   Should Be Equal   ${object.name}   Robot
    ================  ===============  ==============
 
 Keywords can also return values so that they can be assigned into
@@ -1040,7 +1042,7 @@ Testing libraries
 
 Any non-trivial test library needs to be thoroughly tested to prevent
 bugs in them. Of course, this testing should be automated to make it
-easy to rerun tests when libraries are changed. 
+easy to rerun tests when libraries are changed.
 
 Both Python and Java have excellent unit testing tools, and they suite
 very well for testing libraries. There are no major differences in
@@ -1054,7 +1056,7 @@ and that way have actual end-to-end acceptance tests for them. There are
 plenty of useful keywords in the `BuiltIn library`_ for this
 purpose. One worth mentioning specifically is :name:`Run Keyword And Expect
 Error`, which is useful for testing that keywords report errors
-correctly. 
+correctly.
 
 Whether to use a unit- or acceptance-level testing approach depends on
 the context. If there is a need to simulate the actual system under
@@ -1141,7 +1143,7 @@ __ `Documenting libraries`_
 __ `Errors and warnings during execution`_
 __ `User keyword name and documentation`_
 __ `Creating static keywords`_
- 
+
 Dynamic library API
 ~~~~~~~~~~~~~~~~~~~
 
@@ -1308,7 +1310,7 @@ The final special method that dynamic libraries can implement is
 :code:`get_keyword_documentation` (alias
 :code:`getKeywordDocumentation`). It takes a keyword name as an
 argument and, as the method name implies, returns its documentation as
-a string. 
+a string.
 
 The returned documentation is used similarly as the keyword
 documentation string with static libraries implemented with
@@ -1347,7 +1349,7 @@ are completely optional.
 .. sourcecode:: java
 
    public interface RobotFrameworkDynamicAPI {
-   
+
        String[] getKeywordNames();
 
        Object runKeyword(String name, Object[] arguments);
@@ -1493,9 +1495,9 @@ using :code:`set_test_variable`, :code:`set_suite_variable` and
        print '*HTML* Output written to <a href="results.txt">results.txt</a>'
 
 The only catch with using methods from :code:`BuiltIn` is that all
-:code:`run_keyword` method variants must be handled specially. 
+:code:`run_keyword` method variants must be handled specially.
 Methods that use :code:`run_keyword` methods have to be registered
-as *run keywords* themselves using :code:`register_run_keyword` 
+as *run keywords* themselves using :code:`register_run_keyword`
 method in :code:`BuiltIn` module. This method's documentation explains
 why this needs to be done and obviously also how to do it.
 
@@ -1558,7 +1560,7 @@ custom library, but a big problem is that you cannot easily use the
 new library with the original. First of all your new library will have
 same keywords as the original meaning that there is always
 conflict__. Another problem is that the libraries do not share their
-state. 
+state.
 
 This approach works well when you start to use a new library and want
 to add custom enhancements to it from the beginning. Otherwise other
@@ -1602,7 +1604,7 @@ __ `Using Robot Framework's internal modules`_
 .. sourcecode:: python
 
    from robot.libraries.BuiltIn import BuiltIn
-      
+
    def title_should_start_with(expected):
        seleniumlib = BuiltIn().get_library_instance('SeleniumLibrary')
        title = seleniumlib.get_title()
