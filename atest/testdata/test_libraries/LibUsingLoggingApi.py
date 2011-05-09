@@ -17,3 +17,8 @@ def log_html():
     logger.info('<b>info</b>', html=True)
     logger.warn('<b>warn</b>', html=True)
 
+def write_messages_to_console():
+    logger.console('To console only')
+    logger.console('To console ', newline=False)
+    logger.console('in two parts')
+    logger.info('To log and console', also_console=True)
