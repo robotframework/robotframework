@@ -650,11 +650,10 @@ is simple to convert arguments to suitable types inside keywords:
 
 Argument types with Java
 ````````````````````````
-Arguments to Java methods have types, and starting from Robot
-Framework 2.1 all the base types are handled automatically. This
-means that arguments that are normal strings in the test data are
-coerced to correct type at runtime. The types that can be coerced
-are:
+Arguments to Java methods have types, and all the base types are
+handled automatically. This means that arguments that are normal
+strings in the test data are coerced to correct type at runtime. The
+types that can be coerced are:
 
 - integer types (:code:`byte`, :code:`short`, :code:`int`, :code:`long`)
 - floating point types (:code:`float` and :code:`double`)
@@ -790,16 +789,20 @@ Logging information
 
 Exception messages are not the only way to give information to the
 users. In addition to that, methods can also send messages to `log
-files`_ simply by writing to standard output (stdout) or standard
-error (stderr), and they can even use different `log levels`_.
+files`_ simply by writing to the standard output stream (stdout) or to
+the standard error stream (stderr), and they can even use different
+`log levels`_.
 
-By default, everything written by a method into standard output is written
-to the log file as a single entry with the log level
-:msg:`INFO`. Messages written into standard error are handled similarly
-otherwise, but they are echoed back to the original stderr after the
-keyword execution has finished. It is thus possible to use stderr if you need
-some messages to be visible on the console where tests are executed.
+By default, everything written by a method into the standard output is
+written to the log file as a single entry with the log level
+:msg:`INFO`. Messages written into the standard error are handled
+similarly otherwise, but they are echoed back to the original stderr
+after the keyword execution has finished. It is thus possible to use
+stderr if you need some messages to be visible on the console where
+tests are executed.
 
+Using log levels
+````````````````
 To use other log levels than :msg:`INFO`, or to create several
 messages, specify the log level explicitly by embedding the level into
 the message in the format :msg:`*LEVEL* Actual log message`, where
@@ -809,11 +812,10 @@ one of the available logging levels :msg:`TRACE`, :msg:`DEBUG`,
 
 Warnings
 ````````
-Starting from Robot Framework 2.1 messages with :msg:`WARN` level are
-automatically written into `the console and into separate Test Execution
-Errors section`__ in log files. This makes warnings more visible than
-other messages and allows using them for reporting important but
-non-critical problems to users.
+Messages with :msg:`WARN` level are automatically written into `the
+console and into separate Test Execution Errors section`__ in log
+files. This makes warnings more visible than other messages and allows
+using them for reporting important but non-critical problems to users.
 
 __ `Errors and warnings during execution`_
 
@@ -829,6 +831,26 @@ the log with the :msg:`INFO` level, so they can use any HTML syntax
 they want. Notice that this feature needs to be used with care, because
 one badly placed :code:`</table>` tag can ruin the log file quite
 badly.
+
+Logging to console
+``````````````````
+If libraries need to write something to the console they have three
+options.
+
+As already discussed, warnings as well as all messages written to the
+standard error stream are written both to the log file and to the
+console. Both of these options have a limitation that the messages end
+up to the console only after the currently executing keyword finishes.
+A bonus is that these approaches work both with Python and Java based
+libraries.
+
+The third option, that is only available with Python, is writing
+messages to :code:`sys.__stdout__`. Robot Framework only intercepts
+:code:`sys.stdout` and :code:`sys.stderr` and leaves
+:code:`sys.__stdout__` (and :code:`sys.__stderr__`) alone like all
+well behaving Python programs should. When using
+:code:`sys.__stdout__` messages end up to the console immeditely and
+are not written to the log file at all.
 
 Logging example
 ```````````````
