@@ -4,6 +4,7 @@ Library  LibUsingLoggingApi.py
 *** Test Cases ***
 
 Log Levels
+    [Documentation]  FAIL Invalid log level 'INVALID'
     Set log level  TRACE
     Log with all levels
     [Teardown]  Set log level  INFO

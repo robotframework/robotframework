@@ -6,6 +6,7 @@ def log_with_all_levels():
         msg = '%s msg' % level
         logger.write(msg+' 1', level)
         getattr(logger, level)(msg+' 2', html=False)
+    logger.write('whatever', level='invalid')
 
 def log_messages_different_time():
     logger.info('First message')
