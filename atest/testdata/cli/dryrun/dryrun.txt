@@ -23,6 +23,16 @@ Keywords that would fail
 Userkeyword return value
     ${quux}=  Some Return Value  ${foo}  ${bar}
 
+Test Setup And Teardown
+    [Documentation]  FAIL No keyword with name 'Does not exist' found.\n\nAlso teardown failed:\nNo keyword with name 'Does not exist' found.
+    [Setup]  Log  Hello Setup
+    Does not exist
+    [Teardown]  Does not exist
+
+Keyword Teardown
+    [Documentation]  FAIL Keyword teardown failed:\nNo keyword with name 'Does not exist' found.
+    Keyword with Teardown
+
 For Loops
     [Documentation]  FAIL Keyword 'resource.Anarchy in the UK' expected 3 arguments, got 2.
     ::FOR  ${i}  IN RANGE  10
@@ -62,7 +72,7 @@ Multiple Failures
     Should Be Equal  1
     UK with multiple failures
     Does not exist
-    
+
 Arguments given as list variable
     [Documentation]  FAIL Keyword 'BuiltIn.Should Be Equal' expected 2 to 4 arguments, got 1.
     @{list} =  Create List  1  1
@@ -75,6 +85,10 @@ Arguments given as list variable
 
 
 *** Keywords ***
+Keyword with Teardown
+    No Operation
+    [Teardown]  Does not exist
+
 Invalid Syntax UK
     [Arguments]  ${arg
     No Operation
@@ -87,3 +101,4 @@ UK with multiple failures
     Invalid Syntax UK
     Log  too  many  arguments  here
     Yet another non-existing keyword
+
