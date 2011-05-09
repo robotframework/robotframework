@@ -15,3 +15,6 @@ Log HTML
     Set log level  DEBUG
     Log HTML
     [Teardown]  Set log level  INFO
+
+Write messages to console
+    Write messages to console
