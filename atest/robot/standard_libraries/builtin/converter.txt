@@ -39,6 +39,9 @@ Convert To Number With Java Objects
     ${tc}=  Check Test Case  ${TEST NAME}
     Verify argument type message  ${tc.kws[0].kws[0].msgs[0]}  java.lang.String
 
+Convert To Number With Precision
+    Check Test Case  ${TEST NAME}
+
 Convert To String
     ${tc}=  Check Test Case  ${TEST NAME}
     Verify argument type message  ${tc.kws[0].msgs[0]}  unicode

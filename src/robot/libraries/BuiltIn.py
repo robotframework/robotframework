@@ -53,6 +53,8 @@ class _Converter:
         | ${result} = | Convert To Integer | 100   | 2  | # Result is 4     |
         | ${result} = | Convert To Integer | 0b100 |    | # Result is 4     |
         | ${result} = | Convert To Integer | 0x100 |    | # Result is 256   |
+
+        If you need a floating point number, use `Convert To Number` instead.
         """
         self._log_types(item)
         return self._convert_to_integer(item, base)
@@ -86,12 +88,38 @@ class _Converter:
             return item, base
         return item[2:], bases[item[:2]]
 
-    def convert_to_number(self, item):
-        """Converts the given item to a floating point number."""
-        self._log_types(item)
-        return self._convert_to_number(item)
+    def convert_to_number(self, item, precision=None):
+        """Converts the given item to a floating point number.
 
-    def _convert_to_number(self, item):
+        If the optional `precision` is positive or zero, the returned number
+        is rounded to that number of decimal digits. Negative precision means
+        that the number is rounded to the closest multiple of 10 to the power
+        of the absolute precision.
+
+        Examples:
+        | ${result} = | Convert To Number | 42.512 |    | # Result is 42.512 |
+        | ${result} = | Convert To Number | 42.512 | 1  | # Result is 42.5   |
+        | ${result} = | Convert To Number | 42.512 | 0  | # Result is 43.0   |
+        | ${result} = | Convert To Number | 42.512 | -1 | # Result is 40.0   |
+
+        Notice that machines generally cannot store floating point numbers
+        accurately. This may cause surprises with these numbers in general
+        and also when they are rounded. For more information see, for example,
+        this floating point arithmetic tutorial:
+        http://docs.python.org/tutorial/floatingpoint.html
+
+        If you need an integer number, use `Convert To Integer` instead.
+        """
+        self._log_types(item)
+        return self._convert_to_number(item, precision)
+
+    def _convert_to_number(self, item, precision=None):
+        number = self._convert_to_number_without_precision(item)
+        if precision:
+            number = round(number, self._convert_to_integer(precision))
+        return number
+
+    def _convert_to_number_without_precision(self, item):
         try:
             if utils.is_jython:
                 item = self._handle_java_numbers(item)

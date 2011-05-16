@@ -78,6 +78,12 @@ Convert To Number With Java Objects
     ${JAVA_DOUBLE}        1.1
     ${JAVA_STRING_INVALID}  This fails!
 
+Convert To Number With Precision
+    [Documentation]  FAIL STARTS: 'invalid' cannot be converted to an integer: ValueError:
+    ${res} =  Convert to Number  1.01  precision=1
+    Should Be Equal  ${res}  ${1.0}
+    Convert to Number  1  invalid
+
 Convert To String
     ${int42} =  Convert To Integer  42
     Should Not Be Equal  ${int42}  42
