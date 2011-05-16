@@ -63,9 +63,15 @@ Should Not Be Equal As Numbers
     ${tc}=  Check test case  ${TESTNAME}
     Verify argument type message  ${tc.kws[0].msgs[0]}  unicode  unicode
 
+Should Not Be Equal As Numbers With Precision
+    Check test case  ${TESTNAME}
+
 Should Be Equal As Numbers
     ${tc}=  Check test case  ${TESTNAME}
     Verify argument type message  ${tc.kws[0].msgs[0]}  unicode  unicode
+
+Should Be Equal As Numbers With Precision
+    Check test case  ${TESTNAME}
 
 Should Not Be Equal As Strings
     ${tc}=  Check test case  ${TESTNAME}

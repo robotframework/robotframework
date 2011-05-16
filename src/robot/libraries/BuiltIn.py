@@ -94,7 +94,8 @@ class _Converter:
         If the optional `precision` is positive or zero, the returned number
         is rounded to that number of decimal digits. Negative precision means
         that the number is rounded to the closest multiple of 10 to the power
-        of the absolute precision.
+        of the absolute precision. The support for precision was added in
+        Robot Framework 2.6.
 
         Examples:
         | ${result} = | Convert To Number | 42.512 |    | # Result is 42.512 |
@@ -321,30 +322,56 @@ class _Verify:
                               self._convert_to_integer(second, base),
                               msg, values)
 
-    def should_not_be_equal_as_numbers(self, first, second, msg=None, values=True):
+    def should_not_be_equal_as_numbers(self, first, second, msg=None,
+                                       values=True, precision=6):
         """Fails if objects are equal after converting them to real numbers.
 
-        The check for equality is done using six decimal places.
+        The conversion is done with `Convert To Number` keyword using the
+        given `precision`. The support for giving precision was added in
+        Robot Framework 2.6, in earlier versions it was hard-coded to 6.
 
-        See `Should Be Equal` for an explanation on how to override the default
+        See `Should Be Equal As Numbers` for examples on how to use
+        `precision` and why it does not always work as expected. See also
+        `Should Be Equal` for an explanation on how to override the default
         error message with `msg` and `values`.
         """
         self._log_types(first, second)
-        first = round(self._convert_to_number(first), 6)
-        second = round(self._convert_to_number(second), 6)
+        first = self._convert_to_number(first, precision)
+        second = self._convert_to_number(second, precision)
         self._should_not_be_equal(first, second, msg, values)
 
-    def should_be_equal_as_numbers(self, first, second, msg=None, values=True):
+    def should_be_equal_as_numbers(self, first, second, msg=None, values=True,
+                                   precision=6):
         """Fails if objects are unequal after converting them to real numbers.
 
-        The check for equality is done using six decimal places.
+        The conversion is done with `Convert To Number` keyword using the
+        given `precision`. The support for giving precision was added in
+        Robot Framework 2.6, in earlier versions it was hard-coded to 6.
 
-        See `Should Be Equal` for an explanation on how to override the default
-        error message with `msg` and `values`.
+        Examples:
+        | Should Be Equal As Numbers | ${x} | 1.1 | | # Passes if ${x} is 1.1 |
+        | Should Be Equal As Numbers | 1.123 | 1.1 | precision=1  | # Passes |
+        | Should Be Equal As Numbers | 1.123 | 1.4 | precision=0  | # Passes |
+        | Should Be Equal As Numbers | 112.3 | 75  | precision=-2 | # Passes |
+
+        As discussed in the documentation of `Convert To Number`, machines
+        generally cannot store floating point numbers accurately. Because of
+        this limitation, comparing floats for equality is problematic and
+        a correct approach to use depends on the context. This keyword uses
+        a very naive approach of rounding the numbers before comparing them,
+        which is both prone to rounding errors and does not work very well if
+        numbers are really big or small. For more information about comparing
+        floats, and ideas on how to implement your own context specific
+        comparison algorithm, see this great article:
+        http://www.cygnus-software.com/papers/comparingfloats/comparingfloats.htm
+
+        See `Should Not Be Equal As Numbers` for a negative version of this
+        keyword and `Should Be Equal` for an explanation on how to override
+        the default error message with `msg` and `values`.
         """
         self._log_types(first, second)
-        first = round(self._convert_to_number(first), 6)
-        second = round(self._convert_to_number(second), 6)
+        first = self._convert_to_number(first, precision)
+        second = self._convert_to_number(second, precision)
         self._should_be_equal(first, second, msg, values)
 
     def should_not_be_equal_as_strings(self, first, second, msg=None, values=True):

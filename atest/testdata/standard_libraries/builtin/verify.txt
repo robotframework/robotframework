@@ -96,10 +96,30 @@ Should Not Be Equal As Numbers
     Should Not Be Equal As Numbers  ${STR1}.${STR1}  1.2
     Should Not Be Equal As Numbers  ${STR1}.${STR1}  1.1  Fails again
 
+Should Not Be Equal As Numbers With Precision
+    [Documentation]  FAIL  Failing: 1.0 == 1.0
+    [Template]  Should Not Be Equal As Numbers
+    1.123     1.456    precision=1
+    1.123     ${1.1}   precision=2
+    ${1.123}  ${1.12}  precision=3
+    1123      1456     precision=-2
+    112       145      precision=-1
+    1.12      1.45     Failing  precision=0
+
 Should Be Equal As Numbers
     [Documentation]  FAIL Only this message again
     Should Be Equal As Numbers  ${STR1}  ${STR1}.${STR0}${STR0}
     Should Be Equal As Numbers  ${STR1}.000001  ${STR1}.${STR0}${STR0}${STR1}  Only this message again  False
+
+Should Be Equal As Numbers With Precision
+    [Documentation]  FAIL  Failure: 110.0 != 150.0
+    [Template]  Should Be Equal As Numbers
+    1.123     1.456    precision=0
+    1.123     ${1.1}   precision=1
+    ${1.123}  ${1.12}  precision=2
+    1123      1456     precision=-3
+    112       145      precision=-2
+    112       145      Failure  precision=-1
 
 Should Not Be Equal As Strings
     [Documentation]  FAIL These strings most certainly should not be equal
