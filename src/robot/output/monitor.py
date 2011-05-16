@@ -49,6 +49,14 @@ class CommandLineMonitor:
         self._write_message(test.message)
         self._write_separator('-')
 
+    def message(self, msg):
+        if self._is_logged(msg.level):
+            self._write_with_highlighting('[ ', msg.level, ' ] ' + msg.message,
+                                          stream=sys.__stderr__)
+    def output_file(self, name, path):
+        if not self._running_suites:  # ignore split output files
+            self._write('%-8s %s' % (name+':', path))
+
     def _write_info(self, name, doc, start_suite=False):
         maxwidth = self._width
         if not start_suite:
@@ -59,29 +67,18 @@ class CommandLineMonitor:
     def _get_info(self, name, doc, maxwidth):
         if utils.get_console_length(name) > maxwidth:
             return utils.pad_console_length(name, maxwidth, cut_left=True)
-        if doc == '':
-            return utils.pad_console_length(name, maxwidth)
-        info = '%s :: %s' % (name, doc.splitlines()[0])
+        info = name if not doc else '%s :: %s' % (name, doc.splitlines()[0])
         return utils.pad_console_length(info, maxwidth)
 
     def _write_status(self, status):
         self._write_with_highlighting(' | ', status, ' |')
-        self._write('')
+
+    def _write_message(self, message):
+        if message:
+            self._write(message.strip())
 
     def _write_separator(self, sep_char):
         self._write(sep_char * self._width)
-
-    def output_file(self, name, path):
-        # called by LOGGER
-        if not self._running_suites:  # ignore split output files
-            self._write('%s %s' % ((name+':').ljust(8), path))
-
-    def message(self, msg):
-        # called by LOGGER
-        if self._is_logged(msg.level):
-            self._write_with_highlighting('[ ' , msg.level, ' ] ',
-                                          stream=sys.__stderr__)
-            self._write(msg.message, stream=sys.__stderr__)
 
     def _write(self, message, newline=True, stream=sys.__stdout__):
         if newline:
@@ -90,16 +87,12 @@ class CommandLineMonitor:
         stream.flush()
 
     def _write_with_highlighting(self, before, highlighted, after,
-                                 stream=sys.__stdout__):
+                                 newline=True, stream=sys.__stdout__):
         self._write(before, newline=False, stream=stream)
         self._highlighter.start(highlighted, stream)
         self._write(highlighted, newline=False, stream=stream)
         self._highlighter.end()
-        self._write(after, newline=False, stream=stream)
-
-    def _write_message(self, message):
-        if message:
-            self._write(message.strip())
+        self._write(after, newline=newline, stream=stream)
 
 
 class StatusHighlighter:
