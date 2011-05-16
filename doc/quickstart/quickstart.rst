@@ -10,7 +10,6 @@
 
 __ http://creativecommons.org/licenses/by/3.0/
 
-
 .. contents:: Table of Contents
    :depth: 2
 
@@ -21,13 +20,13 @@ Introduction
 Overview
 --------
 
-Robot Framework is a keyword-driven test automation framework.  Test
-cases live in HTML or TSV (tab-separated values) test files and make
-use of keywords implemented in test libraries to drive the software
-under test. Because Robot Framework is flexible and extensible, it is
-ideally suited to testing complex software with a variety of
-interfaces: user interfaces, command line, web services, proprietary
-programming interfaces, etc.
+Robot Framework is a generic keyword-driven test automation framework.
+Test cases live in HTML, plain text or TSV (tab-separated values) test
+files and make use of keywords implemented in test libraries to drive
+the software under test. Because Robot Framework is flexible and
+extensible, it is ideally suited to testing complex software with a
+variety of interfaces: user interfaces, command line, web services,
+proprietary programming interfaces, etc.
 
 Robot Framework is open source software and installation packages,
 source code and further documentation is available through
@@ -44,11 +43,9 @@ In addition, to use test libraries written in Java, Jython_ must be
 installed. To use this Quick Start Guide, Python is enough.
 
 There are three different ways to install Robot Framework, of which
-the most suitable can be chosen. Detailed installation instructions
-can be found from the `project web pages`__.
-
-__ http://code.google.com/p/robotframework/wiki/Installation
-
+the most suitable can be chosen. Detailed `installation instructions`_
+can be found from the project web pages and installation packages
+are available on the `download page`_.
 
 1.  There is a binary installer for Windows platform. It is enough to
     double-click the installer and follow instructions.
@@ -73,15 +70,18 @@ Successful installation can be verified with command :cli:`pybot
 --version` which should output something like::
 
     $ pybot --version
-    Robot Framework 2.0.3 (Python 2.5.2 on linux2)
+    Robot Framework 2.5.7 (Python 2.6.6 on linux2)
 
 
 Running this demo
 -----------------
 
-This Quick Start Guide also acts as an executable demo.  To run it,
-open a command shell, cd to the directory where this file is, and type the 
-following command at the command line::
+This Quick Start Guide also acts as an executable demo. If you are
+reading this guide online, you need to first download the
+:path:`robotframework-quickstart-<date>.zip` file from the `download
+page`_ and extract it somewhere. To run the demo, open a command
+prompt, go to the directory where this file (:path:`quickstart.html`)
+is located, and then type the following command::
 
    pybot quickstart.html
 
@@ -94,8 +94,10 @@ The tests in this file will execute and generate the following reports:
 :path:`output.xml`
    the test results in a portable XML format for integration with other tools
 
-Open `report.html`__ (the link works only after this guide has been executed) in your browser, then click on the links to explore
-the results. The :path:`report.html` file links to the :path:`log.html` file.
+Open `report.html`__ (the link works only after this guide has been
+executed) in your browser, then click on the links to explore the
+results. The :path:`report.html` file links to the :path:`log.html`
+file.
 
 __ report.html
 
@@ -104,7 +106,7 @@ control the test execution and generated outputs. Complete list can be
 viewed by issuing :cli:`pybot --help`. For example the following
 command changes the name of the log file and the name of the top level
 test suite::
-    
+
     pybot --log mylog.html --name My_Fine_Tests quickstart.html
 
 .. Note:: Executing this demo is not possible with :prog:`jybot` start-up script.
@@ -179,7 +181,7 @@ Robot Framework test cases are created using a simple tabular syntax. For exampl
    * User can create an account and log in
    * User cannot log in with bad password
 
-.. table:: 
+.. table::
    :class: example
 
    =====================================  =================================  ==============  ==============
@@ -187,11 +189,11 @@ Robot Framework test cases are created using a simple tabular syntax. For exampl
    =====================================  =================================  ==============  ==============
    User can create an account and log in  Create Valid User                  fred            P4ssw0rd
    \                                      Attempt to Login with Credentials  fred            P4ssw0rd
-   \                                      Status Should Be                   Logged In       \
-   \                                      \                                  \               \
+   \                                      Status Should Be                   Logged In
+   \
    User cannot log in with bad password   Create Valid User                  betty           P4ssw0rd
    \                                      Attempt to Login with Credentials  betty           wrong
-   \                                      Status Should Be                   Access Denied   \    
+   \                                      Status Should Be                   Access Denied
    =====================================  =================================  ==============  ==============
 
 Notice that these tests read almost like manual tests written in
@@ -215,11 +217,11 @@ style for writing test cases, and it is possible to use for example
 
 __ http://en.wikipedia.org/wiki/Behavior_driven_development
 
-.. table:: 
+.. table::
    :class: example
 
    ========================  ===========================================
-           Test Case                           Steps             
+           Test Case                           Steps
    ========================  ===========================================
    User can change password  Given a user has a valid account
    \                         when she changes her password
@@ -241,7 +243,7 @@ slightly different input or output data. In these situations
 *data-driven* test cases, like six tests below, allow varying the test
 data without duplicating the workflow.
 
-.. table:: 
+.. table::
    :class: example
 
    ==================================  ===============================================  =============  ======================
@@ -293,7 +295,7 @@ Screenshot_ library for taking screenshots.  In addition to these
 *standard libraries*, there are other libraries distributed in
 separate open source projects, such as SeleniumLibrary_ for Web
 testing. It is also easy to `implement your own libraries`__ when
-there is no suitable library available. 
+there is no suitable library available.
 
 __ http://code.google.com/p/robotframework/wiki/TestLibraries
 __ `Creating test libraries`_
@@ -305,7 +307,7 @@ custom made LoginLibrary (e.g. :name:`Attempt to login with
 credentials`). Both of these libraries are imported in so called
 *setting table* below.
 
-.. table:: 
+.. table::
    :class: example
 
    ===============  ========================
@@ -326,36 +328,35 @@ keywords* for short, is similar to the syntax that is used for
 creating test cases. All the higher-level keywords needed in previous
 test cases are created in the *keyword table* below.
 
-.. table:: 
+.. table::
    :class: example
 
    ===============================================  =================================  ==============================  ================
                    Keyword                                         Action                          Argument                Argument
    ===============================================  =================================  ==============================  ================
-   Clear login database                             Remove file                        ${DATABASE FILE}                \
-   \                                                \                                  \                               \
+   Clear login database                             Remove file                        ${DATABASE FILE}
+   \
    Create valid user                                [Arguments]                        ${username}                     ${password}
    \                                                Create user                        ${username}                     ${password}
-   \                                                Status should be                   SUCCESS                         \
-   \                                                \                                  \                               \
+   \                                                Status should be                   SUCCESS
+   \
    Creating user with invalid password should fail  [Arguments]                        ${password}                     ${error}
    \                                                Create user                        example                         ${password}
-   \                                                Status should be                   Creating user failed: ${error}  \
-   \                                                \                                  \                               \
+   \                                                Status should be                   Creating user failed: ${error}
+   \
    Login                                            [Arguments]                        ${username}                     ${password}
    \                                                Attempt to login with credentials  ${username}                     ${password}
-   \                                                Status should be                   Logged In                       \
-   \                                                \                                  \                               \
-   *# Used by BDD test cases (this is a comment)*   \                                  \                               \
+   \                                                Status should be                   Logged In
+   \
+   *# Used by BDD test cases (this is a comment)*
    Given a user has a valid account                 Create valid user                  ${USERNAME}                     ${PASSWORD}
    When she changes her password                    Change password                    ${USERNAME}                     ${PASSWORD}
-   \                                                ...                                ${NEW PASSWORD}                 \
-   \                                                Status should be                   SUCCESS                         \
+   \                                                ...                                ${NEW PASSWORD}
+   \                                                Status should be                   SUCCESS
    Then she can log in with the new password        Login                              ${USERNAME}                     ${NEW PASSWORD}
    And she cannot use the old password anymore      Attempt to login with credentials  ${USERNAME}                     ${PASSWORD}
-   \                                                Status should be                   Access Denied                   \
+   \                                                Status should be                   Access Denied
    ===============================================  =================================  ==============================  ================
-
 
 User-defined keywords can include actions defined by other
 user-defined keywords, built-in keywords, or library keywords.  As you
@@ -378,20 +379,20 @@ Variables are an integral part of Robot Framework. Usually any data used in
 tests that is subject to change is best defined as variables. Syntax for
 variable definition is quite simple, as seen in this table:
 
-.. table:: 
+.. table::
    :class: example
 
-   ======================  =============================================================================  
+   ======================  =============================================================================
           Variable                                           Value
-   ======================  ============================================================================= 
+   ======================  =============================================================================
    ${USERNAME}             janedoe
    ${PASSWORD}             J4n3D0e
    ${NEW PASSWORD}         e0D3n4J
-   \                       \
+   \
    ${DATABASE FILE}        ${TEMPDIR}${/}robotframework-quickstart-db.txt
-   \                       \
+   \
    ${PWD INVALID LENGTH}   Password must be 7-12 characters long
-   ${PWD INVALID CONTENT}  Password must be a combination of lowercase and uppercase letters and numbers 
+   ${PWD INVALID CONTENT}  Password must be a combination of lowercase and uppercase letters and numbers
    ======================  =============================================================================
 
 Variables can also be given from the command line which is useful if
@@ -414,31 +415,31 @@ demonstrates.  Return values from keywords can also be assigned to
 variables and used later. For example following :name:`Database Should
 Contain` `user keyword`_ sets database content to :var:`${database}`
 variable and then verifies the content using `built-in keyword`_
-:name:`Should Contain`. Both library and user defined keywords can return  
+:name:`Should Contain`. Both library and user defined keywords can return
 values.
 
-.. table:: 
+.. table::
    :class: example
 
    =================================  =======================  ==============  ==============  ============
                Test Case                       Action             Argument        Argument       Argument
    =================================  =======================  ==============  ==============  ============
-   User status is stored in database  [Tags]                   variables       database        \ 
-   \                                  Create Valid User        ${USERNAME}     ${PASSWORD}     \
-   \                                  Database Should Contain  ${USERNAME}     ${PASSWORD}     Inactive 
-   \                                  Login                    ${USERNAME}     ${PASSWORD}     \
-   \                                  Database Should Contain  ${USERNAME}     ${PASSWORD}     Active  
+   User status is stored in database  [Tags]                   variables       database
+   \                                  Create Valid User        ${USERNAME}     ${PASSWORD}
+   \                                  Database Should Contain  ${USERNAME}     ${PASSWORD}     Inactive
+   \                                  Login                    ${USERNAME}     ${PASSWORD}
+   \                                  Database Should Contain  ${USERNAME}     ${PASSWORD}     Active
    =================================  =======================  ==============  ==============  ============
 
-.. table:: 
+.. table::
    :class: example
 
    =======================  ================  ==============  =====================================  ============
            Keyword               Action          Argument                  Argument                    Argument
    =======================  ================  ==============  =====================================  ============
-   Database Should Contain  [Arguments]       ${username}     ${password}                            ${status}  
-   \                        ${database} =     Get File        ${DATABASE FILE}                       \
-   \                        Should Contain    ${database}     ${username}\\t${password}\\t${status}  \
+   Database Should Contain  [Arguments]       ${username}     ${password}                            ${status}
+   \                        ${database} =     Get File        ${DATABASE FILE}
+   \                        Should Contain    ${database}     ${username}\\t${password}\\t${status}
    =======================  ================  ==============  =====================================  ============
 
 
@@ -474,14 +475,14 @@ If you want a set of actions to occur before and after each test
 executes, use the :name:`Test Setup` and :name:`Test Teardown`
 settings like so:
 
-.. table:: 
+.. table::
    :class: example
 
    ===============  ========================
        Setting                Value
    ===============  ========================
    Test Setup       Clear Login Database
-   Test Teardown    \
+   Test Teardown
    ===============  ========================
 
 Similarly you can use the :name:`Suite Setup` and :name:`Suite
@@ -500,15 +501,15 @@ earlier__ :name:`User status is stored in database` test.
 
 __ `Using variables`_
 
-.. table:: 
+.. table::
    :class: example
 
    ==============  ===========  ===========
        Setting        Value        Value
    ==============  ===========  ===========
-   Force Tags      quickstart   \
+   Force Tags      quickstart
    Default Tags    example      smoke
-   ==============  ===========  =========== 
+   ==============  ===========  ===========
 
 When you look at a report after test execution, you can see that tests
 have specified tags associated with them and there are also statistics
@@ -531,9 +532,9 @@ this guide. You can see, for example, how the keyword :name:`Create
 User` is mapped to actual implementation of method
 :code:`create_user`.
 
-.. sourcecode:: python 
+.. sourcecode:: python
 
-   testlibs/LoginLibrary.py 
+   testlibs/LoginLibrary.py
 
 
 .. footer:: Generated by reStructuredText_. Syntax highlighting by Pygments_.
@@ -547,6 +548,8 @@ User` is mapped to actual implementation of method
 
 .. _User Guide: http://code.google.com/p/robotframework/wiki/UserGuide
 .. _Robot Framework User Guide: `User Guide`_
+.. _installation instructions: http://code.google.com/p/robotframework/wiki/Installation
+.. _download page: http://code.google.com/p/robotframework/downloads/list
 .. _BuiltIn: http://code.google.com/p/robotframework/wiki/BuiltInLibrary
 .. _OperatingSystem: http://code.google.com/p/robotframework/wiki/OperatingSystemLibrary
 .. _Screenshot: http://code.google.com/p/robotframework/wiki/ScreenshotLibrary
