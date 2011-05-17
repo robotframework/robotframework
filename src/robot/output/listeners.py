@@ -202,7 +202,6 @@ class _ListenerProxy(AbstractLoggerProxy):
                      % (method.__name__, self.name, message))
         LOGGER.info("Details:\n%s" % details)
 
-
     def _to_map(self, dictionary):
         map = HashMap()
         for key, value in dictionary.iteritems():
