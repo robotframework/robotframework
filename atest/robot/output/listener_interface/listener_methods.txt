@@ -53,12 +53,14 @@ Java Listener
     Check Listener File  ${JAVA_FILE}  @{expected}
 
 Invalid Args For Listener Method
-    Check Stderr Contains  [ ERROR ]  Calling 'start_suite' method of listener
-    ...  'listeners.InvalidMethods' failed:  TypeError: start_suite() takes
+    Calling listener failed  start_suite  TypeError: start_suite() takes
 
 Listener Method Raising Exception
-    Check Stderr Contains  [ ERROR ]  Calling 'end_suite' method of listener
-    ...  'listeners.InvalidMethods' failed:  Here comes an exception!
+    Calling listener failed  end_suite  Here comes an exception!
+
+Listener Method Failing Continuously
+    [Documentation]  'message' method failing continuously used to cause recursion error: http://code.google.com/p/robotframework/issues/detail?id=832
+    Calling listener failed  message  ValueError: This fails continuously!
 
 Correct Attributes To Listener Methods
     ${status} =  Log File  ${TEMPDIR}/${ATTR_TYPE_FILE}
@@ -137,3 +139,8 @@ Check Listen All File
     ...  2 tests total, 1 passed, 1 failed
     ...  Output: output.xml  Closing...
     Check Listener File  ${filename}  @{expected}
+
+Calling listener failed
+    [Arguments]  ${method}  ${error}
+    Check Stderr Contains  [ ERROR ] Method '${method}' of listener
+    ...  'listeners.InvalidMethods' failed and is disabled: ${error}

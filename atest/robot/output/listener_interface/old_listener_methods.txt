@@ -30,10 +30,10 @@ Java Listener
     Check Listener File  ${JAVA_FILE}  @{expected}
 
 Invalid Args For Listener Method
-    Check Stderr Contains  [ ERROR ]  Calling 'start_suite' method of listener 'old_listeners.InvalidMethods' failed:  TypeError: start_suite() takes
+    Calling listener method failed  start_suite  TypeError: start_suite()
 
 Listener Method Raising Exception
-    Check Stderr Contains  [ ERROR ]  Calling 'end_suite' method of listener 'old_listeners.InvalidMethods' failed:  Here comes an exception!
+    Calling listener method failed  end_suite  Here comes an exception!
 
 *** Keywords ***
 Check Listen All File
@@ -44,4 +44,8 @@ Check Listen All File
     ...  KW END: PASS  KW END: PASS  KW START: BuiltIn.Fail ['msg=Expected failure']  KW END: FAIL  TEST END: FAIL Expected failure  SUITE END: FAIL 2 critical tests, 1 passed, 1 failed  2 tests total, 1 passed, 1 failed
     ...  Output: output.xml  Closing...
     Check Listener File  ${filename}  @{expected}
+
+Calling listener method failed
+    [Arguments]  ${method}  ${error}
+    Check Stderr Contains  [ ERROR ]  Method '${method}' of listener 'old_listeners.InvalidMethods' failed and is disabled:  ${error}
 
