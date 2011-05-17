@@ -41,7 +41,7 @@ if sys.platform.startswith('java') and os.sep == '\\' and sys.version_info < (2,
 
 if 'pythonpathsetter' not in sys.modules:
     import pythonpathsetter
-from output import Output, LOGGER
+from output import Output, LOGGER, pyloggingconf
 from conf import RobotSettings, RebotSettings
 from running import TestSuite, STOP_SIGNAL_MONITOR
 from serializing import RobotTestOutput, RebotTestOutput, SplitIndexTestOutput

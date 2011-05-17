@@ -1,0 +1,22 @@
+*** Settings ***
+Documentation   Tests for logging using Python's `logging` module.
+Library         LibUsingPyLogging.py
+Suite Setup     Set log level  DEBUG
+Suite Teardown  Set log level  INFO
+
+*** Test Cases ***
+
+Log with default levels
+    Log with default levels
+
+Log with custom levels
+    Log with custom levels
+
+Log using custom logger
+    Log using custom logger
+
+Log using non-propagating logger
+    Log using non propagating logger
+
+Timestamps are accurate
+    Log messages different time
