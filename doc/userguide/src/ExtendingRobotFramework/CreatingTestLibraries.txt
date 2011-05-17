@@ -923,13 +923,15 @@ Public logging API
 ``````````````````
 
 Robot Framework 2.6 has a new Python based logging API for writing
-messages to the log file and the console. Test libraries can use this
-API like :code:`logger.info('My message')` instead of logging through
-the standard output like :code:`print '*INFO* My message'`. In
-addition to a programmatic interface being cleaner to use, this API has a
-benefit that the log messages have accurate timestamps.
+messages to the log file and to the console. Test libraries can use
+this API like :code:`logger.info('My message')` instead of logging
+through the standard output like :code:`print '*INFO* My message'`. In
+addition to a programmatic interface being a lot cleaner to use, this
+API has a benefit that the log messages have accurate timestamps. An
+obvious limitation is that test libraries using this logging API have
+a dependency to Robot Framework.
 
-The logging API is documented as part of the API documentation but
+The public logging API is documented as part of the API documentation but
 here is a simple usage example:
 
 .. FIXME: Link to API docs.
@@ -942,6 +944,38 @@ here is a simple usage example:
        logger.debug('Got argument %s' % arg)
        do_something()
        logger.info('<i>This</i> is a boring example', html=True)
+       logger.console('Hello, console!')
+
+Using Python's standard :code:`logging` module
+``````````````````````````````````````````````
+
+In addition to the new `public logging API`_, Robot Framework 2.6 also
+added a built-in support to Python's standard logging__ module. This
+works so that all messages that are received by the root logger of the
+module are automatically propagated to Robot Framework's log
+file. Also this API produces log messages with accurate timestamps,
+but logging HTML messages or writing messages to the console are not
+supported. A big benefit, illustrated also by the simple example
+below, is that using this logging API creates no dependency to Robot
+Framework.
+
+.. sourcecode:: python
+
+   import logging
+
+   def my_keyword(arg):
+       logging.debug('Got argument %s' % arg)
+       do_something()
+       logging.info('This is a boring example')
+
+The :code:`logging` module has slightly different log levels than
+Robot Framework. Its levels :msg:`DEBUG` and :msg:`INFO` are mapped
+directly to the matching Robot Framework log levels and :msg:`WARNING`
+and everything above is mapped to :msg:`WARN`. Custom levels below
+:msg:`DEBUG` are mapped to :msg:`DEBUG` and everything between
+:msg:`DEBUG` and :msg:`WARNING` is mapped to :msg:`INFO`.
+
+__ http://docs.python.org/library/logging.html
 
 Returning values
 ''''''''''''''''
