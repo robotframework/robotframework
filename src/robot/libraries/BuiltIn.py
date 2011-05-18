@@ -670,6 +670,32 @@ class _Variables:
         """Returns a dictionary containing all variables in the current scope."""
         return NAMESPACES.current.variables
 
+    def get_variable_value(self, name, default=None):
+        """Returns variable value or `default` if the variable does not exist.
+
+        The name of the variable can be given either as a normal variable name
+        (e.g. ${NAME}) or in escaped format (e.g. \\${NAME}). Notice that the
+        former has some limitations explained in `Set Suite Variable`.
+
+        Examples:
+        | ${x} = | Get Variable Value | ${a} | default |
+        | ${y} = | Get Variable Value | ${a} | ${b}    |
+        | ${z} = | Get Variable Value | ${z} |         |
+        =>
+        - ${x} gets value of ${a} if ${a} exists and string "default" otherwise
+        - ${y} gets value of ${a} if ${a} exists and value of ${b} otherwise
+        - ${z} is set to Python `None` if it does not exist previously
+
+        This keyword was added in Robot Framework 2.6. See `Set Variable If`
+        for another keyword to set variables dynamically.
+        """
+        name = self._get_var_name(name)
+        variables = self.get_variables()
+        try:
+            return variables[name]
+        except DataError:
+            return variables.replace_scalar(default)
+
     def log_variables(self, level='INFO'):
         """Logs all variables in the current scope with given log level."""
         variables = self.get_variables()
@@ -1121,6 +1147,9 @@ class _RunKeyword:
         | ...      | ${rc} == 2      | two               |
         | ...      | ${rc} > 2       | greater than two  |
         | ...      | ${rc} < 0       | less than zero    |
+
+        Use `Get Variable Value` if you need to set variables
+        dynamically based on whether a variable exist or not.
         """
         values = self._verify_values_for_set_variable_if(list(values))
         if self._is_true(condition):
@@ -1790,6 +1819,7 @@ def register_run_keyword(library, keyword, args_to_process=None):
 for name in [ attr for attr in dir(_RunKeyword) if not attr.startswith('_') ]:
     register_run_keyword('BuiltIn', getattr(_RunKeyword, name))
 for name in ['set_test_variable', 'set_suite_variable', 'set_global_variable',
-             'variable_should_exist', 'variable_should_not_exist', 'comment']:
+             'variable_should_exist', 'variable_should_not_exist', 'comment',
+             'get_variable_value']:
     register_run_keyword('BuiltIn', name, 0)
 del name, attr
