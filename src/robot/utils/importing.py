@@ -26,18 +26,25 @@ def simple_import(path_to_module):
     err_prefix = "Importing '%s' failed: " % path_to_module
     if not os.path.exists(path_to_module):
         raise DataError(err_prefix + 'File does not exist')
-    moddir, modname = _split_path_to_module(path_to_module)
     try:
-        try:
-            module = __import__(modname)
-            if normpath(moddir) != normpath(os.path.dirname(module.__file__)):
-                del sys.modules[modname]
-                module = __import__(modname)
-        except:
-            raise DataError(err_prefix + get_error_message())
+        return _import_module_by_path(path_to_module)
+    except:
+        raise DataError(err_prefix + get_error_message())
+
+def _import_module_by_path(path):
+    moddir, modname = _split_path_to_module(path)
+    if modname in sys.modules:
+        del sys.modules[modname]
+    sys.path.insert(0, moddir)
+    try:
+        return __import__(modname)
     finally:
         sys.path.pop(0)
-    return module
+
+def _split_path_to_module(path):
+    moddir, modfile = os.path.split(abspath(path))
+    modname = os.path.splitext(modfile)[0]
+    return moddir, modname
 
 
 def import_(name, type_='test library'):
@@ -72,12 +79,6 @@ def import_(name, type_='test library'):
     source = _get_module_source(module)
     return code, source
 
-
-def _split_path_to_module(path):
-    moddir, modfile = os.path.split(abspath(path))
-    modname = os.path.splitext(modfile)[0]
-    sys.path.insert(0, moddir)
-    return moddir, modname
 
 def _import(name, type_):
     modname, classname, fromlist = _get_import_params(name)
