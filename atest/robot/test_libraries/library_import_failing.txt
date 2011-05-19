@@ -1,0 +1,25 @@
+*** Settings ***
+Documentation   Tests for checking that failing library imports will produce tracebacks to the log file.
+Suite Setup     Run Tests  ${EMPTY}  test_libraries/library_import_failing.txt
+Force Tags      regression
+Default Tags    pybot  jybot
+Resource        atest_resource.txt
+
+*** Test Cases ***
+Library Import Fails Because Not a Library
+    Check Failure From Output  0  Importing test library 'MyInvalidLibFile' failed: ImportError: I'm not really a library!  raise ImportError("I'm not really a library!")
+
+Library Import Fails Because Initialization Fails
+    Check Failure From Output  2  Creating an instance of the test library 'InitializationFailLibrary' with no arguments failed: Initialization failed!  InitializationFailLibrary.py", line 4, in __init__
+
+Library Import Failing In Java
+    [Tags]  jybot
+    Check Failure From Output  1  Creating an instance of the test library 'InitializationFailJavaLibrary' with no arguments failed: Initialization failed!  at InitializationFailJavaLibrary.<init>(InitializationFailJavaLibrary.java:4)
+
+*** Keywords ***
+Check Failure From Output
+    [Arguments]  ${index}  ${expected message}  ${expected traceback}=
+    ${message} =  Set Variable  ${ERRORS.msgs[${index}].message}
+    Should Contain  ${message}  ${expected message}
+    Should Contain  ${message}  ${expected traceback}
+

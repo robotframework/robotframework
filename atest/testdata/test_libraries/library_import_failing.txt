@@ -1,0 +1,9 @@
+*** Settings ***
+Library         MyInvalidLibFile.py
+Library         InitializationFailJavaLibrary.java
+Library         InitializationFailLibrary.py
+
+*** Test Cases ***
+Test
+    Comment  Tests only failing library imports.
+
