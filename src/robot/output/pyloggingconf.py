@@ -15,7 +15,7 @@
 """Module to configure Python's standard `logging` module.
 
 After this module is imported, messages logged with `logging` module
-are, by defaul, propagated to Robot's log file.
+are, by default, propagated to Robot's log file.
 """
 
 import logging
