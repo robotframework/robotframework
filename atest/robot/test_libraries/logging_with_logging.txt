@@ -1,0 +1,42 @@
+*** Settings ***
+Documentation   Tests for logging using Python's `logging` module.
+Suite Setup     Run Tests  ${EMPTY}  test_libraries/logging_with_logging.txt
+Force Tags      regression  pybot  jybot
+Resource        atest_resource.txt
+
+*** Test Cases ***
+
+Log with default levels
+    ${tc} =  Check test case  ${TEST NAME}
+    Check log message  ${tc.kws[0].msgs[0]}  debug message     DEBUG
+    Check log message  ${tc.kws[0].msgs[1]}  info message      INFO
+    Check log message  ${tc.kws[0].msgs[2]}  warning message   WARN
+    Check log message  ${tc.kws[0].msgs[3]}  error message     WARN
+    Check log message  ${tc.kws[0].msgs[4]}  critical message  WARN
+    Check log message  ${ERRORS.msgs[0]}     warning message   WARN
+    Check log message  ${ERRORS.msgs[1]}     error message     WARN
+    Check log message  ${ERRORS.msgs[2]}     critical message  WARN
+
+Log with custom levels
+    ${tc} =  Check test case  ${TEST NAME}
+    Check log message  ${tc.kws[0].msgs[0]}  below debug               DEBUG
+    Check log message  ${tc.kws[0].msgs[1]}  between debug and info    INFO
+    Check log message  ${tc.kws[0].msgs[2]}  between info and warning  INFO
+    Check log message  ${tc.kws[0].msgs[3]}  above warning             WARN
+
+Log using custom logger
+    ${tc} =  Check test case  ${TEST NAME}
+    Check log message  ${tc.kws[0].msgs[0]}  custom logger
+    Check stdout contains  Custom Logger
+
+Log using non-propagating logger
+    ${tc} =  Check test case  ${TEST NAME}
+    Should be empty  ${tc.kws[0].msgs}
+    Check stdout contains  Nonprop Logger
+
+Timestamps are accurate
+    ${tc} =  Check test case  ${TEST NAME}
+    ${msg1}  ${msg2} =  Set variable  ${tc.kws[0].msgs}
+    Check log message  ${msg1}  First message
+    Check log message  ${msg2}  Second message 0.1 sec later
+    Should be true  '${msg1.timestamp}' < '${msg2.timestamp}'

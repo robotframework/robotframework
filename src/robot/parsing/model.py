@@ -34,7 +34,7 @@ class _TestData(object):
 
     def __init__(self, parent=None, source=None):
         self.parent = parent
-        self.source = os.path.abspath(source) if source else None
+        self.source = utils.abspath(source) if source else None
         self.children = []
         self._tables = None
 
@@ -141,7 +141,8 @@ class ResourceFile(_TestData):
 
     def _valid_table(self, table):
         if table is self.testcase_table:
-            raise DataError('Test case table not allowed in resource file.')
+            raise DataError("Resource file '%s' contains a test case table "
+                            "which is not allowed." % self.source)
         return table
 
     def __iter__(self):
@@ -166,7 +167,8 @@ class TestDataDirectory(_TestData):
 
     def _valid_table(self, table):
         if table is self.testcase_table:
-            LOGGER.error('Test case table not allowed in test suite init file.')
+            LOGGER.error("Test suite init file in '%s' contains a test case "
+                         "table which is not allowed." % self.source)
             return None
         return table
 
@@ -462,7 +464,7 @@ class TestCase(_WithSteps, _WithSettings):
         self.parent.report_invalid_syntax(message, level)
 
     def __iter__(self):
-        for element in [self.doc, self.tags, self.setup, 
+        for element in [self.doc, self.tags, self.setup,
                         self.template, self.timeout] \
                         + self.steps + [self.teardown]:
             yield element
@@ -477,17 +479,19 @@ class UserKeyword(TestCase):
         self.args = Arguments('[Arguments]', self)
         self.return_ = Return('[Return]', self)
         self.timeout = Timeout('[Timeout]', self)
+        self.teardown = Fixture('[Teardown]', self)
         self.steps = []
 
     _setters = {'documentation': lambda s: s.doc.populate,
                 'document': lambda s: s.doc.populate,
                 'arguments': lambda s: s.args.populate,
                 'return': lambda s: s.return_.populate,
-                'timeout': lambda s: s.timeout.populate}
+                'timeout': lambda s: s.timeout.populate,
+                'teardown': lambda s: s.teardown.populate}
 
     def __iter__(self):
         for element in [self.args, self.doc, self.timeout] \
-                        + self.steps + [self.return_]:
+                        + self.steps + [self.teardown, self.return_]:
             yield element
 
 

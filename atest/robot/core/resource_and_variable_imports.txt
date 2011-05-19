@@ -95,6 +95,8 @@ Invalid Setting In Resource File
     ${path} =  Join Path  ${RESDIR}  resources.html
     My Check Stderr Contains  [ ERROR ] Invalid syntax in file '${path}' in table 'Setting': Non-existing setting 'Test Setup'.
     My Check Stderr Contains  [ ERROR ] Invalid syntax in file '${path}' in table 'Setting': Non-existing setting 'Non existing'.
+    ${path2} =  Join Path  ${RESDIR}  resource_with_testcase_table.txt
+    My Check Stderr Contains  [ ERROR ] Invalid syntax in file '${path}' in table 'Setting': Resource file '${path2}' contains a test case table which is not allowed.
     My Check Stderr Does Not Contain  AttributeError:
 
 Invalid Variable File

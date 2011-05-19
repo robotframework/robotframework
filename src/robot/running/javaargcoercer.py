@@ -12,9 +12,7 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-
 import sys
-
 from java.lang import Byte, Short, Integer, Long, Boolean, Float, Double
 
 from robot.errors import DataError
@@ -24,35 +22,31 @@ class ArgumentCoercer:
 
     def __init__(self, signatures):
         types = self._parse_types(signatures)
-        self._coercers = [ _CoercionFunction(t, i+1) for i, t in types ]
+        self._coercers = [_CoercionFunction(t, i+1) for i, t in types]
 
     def _parse_types(self, signatures):
         types = {}
         for sig in signatures:
             for index, arg in enumerate(sig.args):
                 types.setdefault(index, []).append(arg)
-        types = types.items()
-        types.sort()
-        return types
+        return sorted(types.items())
 
     def __call__(self, args):
-        return [ coercer(arg) for coercer, arg in zip(self._coercers, args) ]
+        return [coercer(arg) for coercer, arg in zip(self._coercers, args)]
 
 
 class _CoercionFunction:
-
     _bool_types = [Boolean]
     _int_types = [Byte, Short, Integer, Long]
     _float_types = [Float, Double]
     _bool_primitives = ['boolean']
     _int_primitives = ['byte', 'short', 'int', 'long']
     _float_primitives = ['float', 'double']
-    if sys.version_info[:2] > (2,2):
-        pattern = "<type '%s'>"
-        _bool_primitives =  [ pattern % 'boolean' ]
-        _int_primitives =   [ pattern % p for p in _int_primitives ]
-        _float_primitives = [ pattern % p for p in _float_primitives ]
-        del pattern
+    pattern = "<type '%s'>"
+    _bool_primitives =  [pattern % 'boolean']
+    _int_primitives =   [pattern % p for p in _int_primitives]
+    _float_primitives = [pattern % p for p in _float_primitives]
+    del pattern
 
     def __init__(self, arg_types, position):
         self._position = position
@@ -90,15 +84,14 @@ class _CoercionFunction:
         return False
 
     def _to_bool(self, arg):
-        if arg.lower() == 'false':
-            return False
-        if arg.lower() == 'true':
-            return True
-        self._coercion_failed('boolean')
+        try:
+            return {'false': False, 'true': True}[arg.lower()]
+        except KeyError:
+            self._coercion_failed('boolean')
 
     def _to_int(self, arg):
         try:
-            return long(arg)
+            return int(arg)
         except ValueError:
             self._coercion_failed('integer')
 
@@ -114,4 +107,3 @@ class _CoercionFunction:
     def _coercion_failed(self, arg_type):
         raise DataError('Argument at position %d cannot be coerced to %s'
                         % (self._position, arg_type))
-

@@ -41,7 +41,7 @@ class Template:
             tfile = open(path)
             template = tfile.read()
             tfile.close()
-            self.parent_dir = os.path.dirname(os.path.abspath(os.path.normpath(path)))
+            self.parent_dir = os.path.dirname(utils.abspath(path))
         else:
             self.parent_dir = None
         self._template = template

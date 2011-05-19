@@ -286,7 +286,8 @@ class ErrorSerializer:
         self._writer.end('td')
         self._writer.element('td', msg.level,
                              {'class': '%s level' % msg.level.lower()})
-        self._writer.element('td', msg.message, {'class': 'msg'})
+        self._writer.element('td', msg.message, {'class': 'msg'},
+                             escape=not msg.html)
         self._writer.end('tr')
 
     def _write_timestamp(self, msg):

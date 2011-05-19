@@ -19,7 +19,7 @@ Mandatory And Default Arguments
     ...  u'mandatory'
 
 Multiple Default Values
-    Check Argument Value Trace  \${a1}=u'10' | \${a2}=u'2' | \${a3}=u'30' | \${a4}=4L
+    Check Argument Value Trace  \${a1}=u'10' | \${a2}=u'2' | \${a3}=u'30' | \${a4}=4
     ...  u'10' | a3=u'30'
 
 Named Arguments
@@ -48,8 +48,8 @@ Arguments With Run Keyword
 Non String Object as Argument
     Check Argument Value Trace  \${mand}=True | \${default}=1.0
     ...  True | default=1.0
-    ...  \${mand}=-123L | \@{vargs}=[1.0]
-    ...  -123L | 1.0
+    ...  \${mand}=-123 | \@{vargs}=[1.0]
+    ...  -123 | 1.0
 
 None as Argument
     Check UK Default, Library KW Default, UK Varargs and Library KW Varargs  None

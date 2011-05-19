@@ -16,9 +16,11 @@ import re
 import os
 from UserDict import UserDict
 if os.name == 'java':
+    from java.lang.System import getProperty as getJavaSystemProperty
     from java.util import Map
 else:
     class Map: pass
+    getJavaSystemProperty = lambda name: None
 
 from robot import utils
 from robot.errors import DataError
@@ -106,11 +108,17 @@ class Variables(utils.NormalizedDict):
     def _get_number_var(self, name):
         if name[0] != '$':
             raise ValueError
-        base = self._normalize(name)[2:-1]
+        number = self._normalize(name)[2:-1]
         try:
-            return long(base)
+            return self._get_int_var(number)
         except ValueError:
-            return float(base)
+            return float(number)
+
+    def _get_int_var(self, number):
+        bases = {'0b': 2, '0o': 8, '0x': 16}
+        if number.startswith(tuple(bases)):
+            return int(number[2:], bases[number[:2]])
+        return int(number)
 
     def replace_list(self, items):
         """Replaces variables from a list of items.
@@ -190,17 +198,18 @@ class Variables(utils.NormalizedDict):
                         "escape it like '\\%s'." % (value, value))
             return value
 
-        # 2) Handle environment variables
+        # 2) Handle environment variables and Java system properties
         elif var.identifier == '%':
+            name = var.get_replaced_base(self).strip()
+            if name == '':
+                return '%%{%s}' % var.base
             try:
-                name = var.get_replaced_base(self).strip()
-                if name != '':
-                    return os.environ[name]
-                else:
-                    return '%%{%s}' % var.base
+                return os.environ[name]
             except KeyError:
-                raise DataError("Environment variable '%s' does not exist"
-                                % name)
+                property = getJavaSystemProperty(name)
+                if property:
+                    return property
+                raise DataError("Environment variable '%s' does not exist" % name)
 
         # 3) Handle ${scalar} variables and @{list} variables without index
         elif var.index is None:

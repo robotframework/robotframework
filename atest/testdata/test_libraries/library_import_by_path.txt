@@ -3,6 +3,8 @@ Library         MyLibFile.py
 Library         MyLibDir
 Library         MyLibDir/
 Library         dir_for_libs/MyLibFile2.py
+Library         dir_for_libs/lib1/Lib.py  WITH NAME  lib1
+Library         dir_for_libs/lib2/Lib.py  WITH NAME  lib2
 Library         ${MYVAR}/MyLibDir2/
 Library         MyJavaLib.java
 Library         MyJavaLib2.class
@@ -26,6 +28,12 @@ Importing Python Library In Dir By Path
     Should Be Equal  ${ret}  Executed keyword 'Keyword In My Lib Dir' with args [ ]
     ${ret} =  Keyword In My Lib Dir  a1  a2
     Should Be Equal  ${ret}  Executed keyword 'Keyword In My Lib Dir' with args [ a1 | a2 ]
+
+Importing Library With Same Name
+    lib1.Hello
+    lib2.Hello
+    Kw from lib1
+    Kw from lib2
 
 Importing Python Library By Path With Variables
     ${sum} =  Keyword In My Lib Dir 2  1  2  3  4  5

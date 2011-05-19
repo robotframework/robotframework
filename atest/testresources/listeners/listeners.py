@@ -40,6 +40,9 @@ class InvalidMethods:
     def end_suite(self, *args):
         raise RuntimeError("Here comes an exception!")
 
+    def message(self, msg):
+        raise ValueError("This fails continuously!")
+
 
 class SuiteAndTestCounts(object):
     ROBOT_LISTENER_API_VERSION = '2'

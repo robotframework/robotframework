@@ -10,13 +10,16 @@ except ImportError:
             raise RuntimeError('Requires Python > 2.6')
     BaseManager = Python26Required()
 
-def _create_caching_getter(clazz):
-    objects = {}
-    def get_object(key):
-        if key not in objects:
-            objects[key] = clazz()
-        return objects[key]
-    return get_object
+class _create_caching_getter(object):
+
+    def __init__(self, clazz):
+        self._clazz = clazz
+        self._objects = {}
+
+    def __call__(self, key):
+        if key not in self._objects:
+            self._objects[key] = self._clazz()
+        return self._objects[key]
 
 class Communicate(object):
     """Library for communication between processes.
@@ -131,8 +134,11 @@ class Communicate(object):
             self._connect()
         return self._manager.get_queue(queue_id)
 
-    def wait_for_event(self, event_id):
+    def wait_for_event(self, event_id, timeout=None):
         """Waits until event with `event_id` is signaled.
+        Fails if optional timeout expires.
+
+        `timeout` is the time out in seconds to wait.
 
         Example:
         In one process
@@ -141,7 +147,12 @@ class Communicate(object):
         In another process
         | Signal Event | my event |
         """
-        return self._get_event(event_id).wait()
+        timeout = float(timeout) if timeout is not None else None
+        self._get_event(event_id).wait(timeout=timeout)
+        #NOTE! If Event#clear is ever exposed it has to be secured (for example r/w lock) that none
+        #of the processes can do it while another is at this position.
+        if not self._get_event(event_id).isSet():
+            raise Exception('Timeout')
 
     def signal_event(self, event_id):
         """Signals an event.

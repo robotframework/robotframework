@@ -12,32 +12,41 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-
 import os
 import sys
 import inspect
 
 from robot.errors import DataError
+
 from error import get_error_message, get_error_details
-from normalizing import normpath
+from robotpath import normpath, abspath
 
 
 def simple_import(path_to_module):
     err_prefix = "Importing '%s' failed: " % path_to_module
     if not os.path.exists(path_to_module):
         raise DataError(err_prefix + 'File does not exist')
-    moddir, modname = _split_path_to_module(path_to_module)
     try:
-        try:
+        return _import_module_by_path(path_to_module)
+    except:
+        raise DataError(err_prefix + get_error_message())
+
+def _import_module_by_path(path):
+    moddir, modname = _split_path_to_module(path)
+    sys.path.insert(0, moddir)
+    try:
+        module = __import__(modname)
+        if normpath(os.path.dirname(module.__file__)) != normpath(moddir):
+            del sys.modules[modname]
             module = __import__(modname)
-            if normpath(moddir) != normpath(os.path.dirname(module.__file__)):
-                del sys.modules[modname]
-                module = __import__(modname)
-        except:
-            raise DataError(err_prefix + get_error_message())
+        return module
     finally:
         sys.path.pop(0)
-    return module
+
+def _split_path_to_module(path):
+    moddir, modfile = os.path.split(abspath(path))
+    modname = os.path.splitext(modfile)[0]
+    return moddir, modname
 
 
 def import_(name, type_='test library'):
@@ -61,23 +70,19 @@ def import_(name, type_='test library'):
     name 'MyLibrary'.
     """
     if os.path.exists(name):
-        inserted_to_path, name = _split_path_to_module(name)
+        moddir, name = _split_path_to_module(name)
+        sys.path.insert(0, moddir)
+        pop_sys_path = True
     else:
-        inserted_to_path = None
+        pop_sys_path = False
     try:
         code, module = _import(name, type_)
     finally:
-        if inserted_to_path:
+        if pop_sys_path:
             sys.path.pop(0)
     source = _get_module_source(module)
     return code, source
 
-
-def _split_path_to_module(path):
-    moddir, modfile = os.path.split(os.path.abspath(path))
-    modname = os.path.splitext(modfile)[0]
-    sys.path.insert(0, moddir)
-    return moddir, modname
 
 def _import(name, type_):
     modname, classname, fromlist = _get_import_params(name)
@@ -118,14 +123,10 @@ def _get_import_params(name):
     return modname, classname, fromlist
 
 def _get_module_source(module):
-    try:
-        source = module.__file__
-        if not source:
-            raise AttributeError
-    except AttributeError:
-        # Java classes not packaged in a jar file do not have __file__.
+    source = getattr(module, '__file__', None)
+    if not source:
         return '<unknown>'
-    dirpath, filename = os.path.split(os.path.abspath(source))
+    dirpath, filename = os.path.split(abspath(source))
     return os.path.join(normpath(dirpath), filename)
 
 def _raise_import_failed(type_, name):

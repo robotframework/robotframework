@@ -12,19 +12,11 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-import os
 import re
 from UserDict import UserDict
 
 
 _WHITESPACE_REGEXP = re.compile('\s+')
-if os.sep == '\\':
-    _CASE_INSENSITIVE_FILESYSTEM = True
-else:
-    try:
-        _CASE_INSENSITIVE_FILESYSTEM = os.listdir('/tmp') == os.listdir('/TMP')
-    except OSError:
-        _CASE_INSENSITIVE_FILESYSTEM = False
 
 
 def normalize(string, ignore=[], caseless=True, spaceless=True):
@@ -48,30 +40,6 @@ def normalize_tags(tags):
             dupes[tag] = 1
     ret.sort(lambda x, y: cmp(normalize(x), normalize(y)))
     return ret
-
-
-def normpath(path, normcase=True):
-    """Returns path in normalized and absolute format.
-
-    On case-insensitive file systems the path is also casenormalized
-    (if normcase is True).
-    """
-    path = _abspath(path)
-    if normcase and _CASE_INSENSITIVE_FILESYSTEM:
-        path = path.lower()
-    return path
-
-def _abspath(path):
-    pathlen = len(path)
-    # Return 'x:\' both when the given path is 'x:\' and 'x:'. Notice that
-    # os.path.abspath('x:') returns the current dir (we don't want that) and
-    # with Jython os.path.abspath('x:\') returns 'x:' (don't want that either)
-    if os.sep == '\\' and pathlen > 1 and path[1] == ':':
-        if pathlen == 2:
-            return path + '\\'
-        if pathlen == 3:
-            return path
-    return os.path.abspath(path)
 
 
 class NormalizedDict(UserDict):

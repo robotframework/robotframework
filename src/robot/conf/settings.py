@@ -47,6 +47,7 @@ class _BaseSettings:
                   'TagStatCombine'   : ('tagstatcombine', []),
                   'TagDoc'           : ('tagdoc', []),
                   'TagStatLink'      : ('tagstatlink', []),
+                  'NoStatusRC'       : ('nostatusrc', False),
                   'MonitorWidth'     : ('monitorwidth', 78),
                   'MonitorColors'    : ('monitorcolors', 'AUTO') }
     _deprecated = {}
@@ -56,7 +57,7 @@ class _BaseSettings:
         self._cli_opts.update(self._extra_cli_opts)
         self._process_deprecated_cli_opts(options)
         self._process_cli_opts(options)
-        if log: LOGGER.info('Settings:\n%s' % self)
+        if log: LOGGER.info('Settings:\n%s' % unicode(self))
 
     def _process_cli_opts(self, opts):
         for name, (cli_name, default) in self._cli_opts.items():
@@ -182,7 +183,7 @@ class _BaseSettings:
             name = name + ':' + args.pop(0)
         return name, args
 
-    def __str__(self):
+    def __unicode__(self):
         return '\n'.join('%s: %s' % (name, self._opts[name])
                          for name in sorted(self._opts))
 

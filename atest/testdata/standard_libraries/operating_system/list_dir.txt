@@ -48,7 +48,7 @@ List Directory With Absolute
     Listing Should Have Correct Items  ${items}  ${BASE}${/}${F1}  ${BASE}${/}${F2}
     @{items} =  List Files In Directory  ${BASE}  absolute=yes
     Listing Should Have Correct Items  ${items}  ${BASE}${/}${F1}  ${BASE}${/}${F2}
-    @{items} =  List Directories In Directory  ${BASE}  ${EMPTY}  ${EMPTY}  deprecated absolute
+    @{items} =  List Directories In Directory  ${BASE}  ${EMPTY}  yes
     Listing Should Have Correct Items  ${items}  ${BASE}${/}${DIR}
 
 

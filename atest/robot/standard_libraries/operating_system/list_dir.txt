@@ -15,7 +15,7 @@ ${F2}     ŋöŋ-äßćïï.txt
 List And Count Directory
     ${tc} =  Check Test Case  ${TESTNAME}
     Verify List And Count Messages  ${tc.kws[0]}   3 items  \n${F1}\n${DIR}\n${F2}
-    Verify List And Count Messages  ${tc.kws[-1]}  0 items 
+    Verify List And Count Messages  ${tc.kws[-1]}  0 items
 
 List And Count Files In Directory
     ${tc} =  Check Test Case  ${TESTNAME}
@@ -49,7 +49,6 @@ List Directory With Absolute
     Verify List Message  ${tc.kws[0]}  2 items  \n${BASE}${/}${F1}\n${BASE}${/}${F2}
     Verify List Message  ${tc.kws[2]}  2 files  \n${BASE}${/}${F1}\n${BASE}${/}${F2}
     Verify List Message  ${tc.kws[4]}  1 directory  \n${BASE}${/}${DIR}
-    Check Log Message  ${tc.kws[4].msgs[1]}  Signature of 'List Directory' keywords has changed. Please update how 'absolute' argumemt is given.  WARN
 
 
 *** Keywords ***

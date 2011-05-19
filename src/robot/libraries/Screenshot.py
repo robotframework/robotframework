@@ -14,7 +14,6 @@
 
 import sys
 import os
-import tempfile
 if sys.platform.startswith('java'):
     from java.awt import Toolkit, Robot, Rectangle
     from javax.imageio import ImageIO
@@ -60,7 +59,7 @@ class Screenshot(object):
     - Python Imaging Library (PIL) :: http://www.pythonware.com/products/pil ::
       This module can take screenshots only on Windows.
 
-    Python support was added in Robot Framework 2.5.5. 
+    Python support was added in Robot Framework 2.5.5.
 
     *Where screenshots are saved*
 
@@ -76,7 +75,7 @@ class Screenshot(object):
     Note that prior to Robot Framework 2.5.5 the default screenshot location
     was system's temporary directory.
 
-    *Changes in Robot Framework 2.5.5*
+    *Changes in Robot Framework 2.5.5 and Robot Framework 2.6*
 
     This library was heavily enhanced in Robot Framework 2.5.5 release. The
     changes are listed below and explained more thoroughly in affected places.
@@ -88,12 +87,19 @@ class Screenshot(object):
       the future. Other screenshot taking keywords will be deprecated and
       removed later.
     - `log_file_directory` argument was deprecated everywhere it was used.
+
+    In Robot Framework 2.6, following additional changes were made:
+
+    - `log_file_directory` argument was removed altogether.
+    - `Set Screenshot Directories` keyword was removed.
+    - `Save Screenshot`, `Save Screenshot To` and `Log Screenshot`
+      keywords were deprecated. They will be removed in 2.7 version.
     """
 
     ROBOT_LIBRARY_SCOPE = 'TEST SUITE'
     ROBOT_LIBRARY_VERSION = get_version()
 
-    def __init__(self, screenshot_directory=None, log_file_directory='DEPRECATED'):
+    def __init__(self, screenshot_directory=None):
         """Configure where screenshots are saved.
 
         If `screenshot_directory` is not given, screenshots are saved into
@@ -105,12 +111,7 @@ class Screenshot(object):
         | *Setting* | *Value*  | *Value*    | *Value* |
         | Library | Screenshot |            | # Default location |
         | Library | Screenshot | ${TEMPDIR} | # System temp (this was default prior to 2.5.5) |
-
-        `log_file_directory` has been deprecated in 2.5.5 release and has no
-        effect. The information provided with it earlier is nowadays got
-        automatically. This argument will be removed in the 2.6 release.
         """
-        self._depr_log_file_dir_given_to_init = log_file_directory
         self._given_screenshot_dir = self._norm_path(screenshot_directory)
         self._screenshot_taker = ScreenshotTaker()
 
@@ -137,7 +138,7 @@ class Screenshot(object):
         It is possible to use `/` as a path separator in all operating systems.
         Path to the old directory is returned.
 
-        The directory can also be set in `importing`. 
+        The directory can also be set in `importing`.
         """
         path = self._norm_path(path)
         if not os.path.isdir(path):
@@ -146,46 +147,21 @@ class Screenshot(object):
         self._given_screenshot_dir = path
         return old
 
-    def set_screenshot_directories(self, default_directory=None,
-                                   log_file_directory='DEPRECATED'):
-        """*DEPRECATED* Use `Set Screenshot Directory` keyword instead."""
-        self.set_screenshot_directory(default_directory)
-
     def save_screenshot_to(self, path):
-        """Saves a screenshot to the specified file.
-
-        *This keyword is obsolete.* Use `Take Screenshot` or `Take Screenshot
-        Without Embedding` instead. This keyword will be deprecated in Robot
-        Framework 2.6 and removed later.
-        """
+        """*DEPRECATED* Use `Take Screenshot` or `Take Screenshot Without Embedding` instead."""
         path = self._screenshot_to_file(path)
         self._link_screenshot(path)
         return path
 
     def save_screenshot(self, basename="screenshot", directory=None):
-        """Saves a screenshot with a generated unique name.
-
-        *This keyword is obsolete.* Use `Take Screenshot` or `Take Screenshot
-        Without Embedding` instead. This keyword will be deprecated in Robot
-        Framework 2.6 and removed later.
-        """
+        """*DEPRECATED* Use `Take Screenshot` or `Take Screenshot Without Embedding` instead."""
         path = self._save_screenshot(basename, directory)
         self._link_screenshot(path)
         return path
 
     def log_screenshot(self, basename='screenshot', directory=None,
-                       log_file_directory='DEPRECATED', width='100%'):
-        """Takes a screenshot and logs it to Robot Framework's log file.
-
-        *This keyword is obsolete.* Use `Take Screenshot` or `Take Screenshot
-        Without Embedding` instead. This keyword will be deprecated in Robot
-        Framework 2.6 and removed later.
-
-        `log_file_directory` has been deprecated in 2.5.5 release and has no
-        effect. The information provided with it earlier is nowadays got
-        automatically.
-        """
-        self._warn_if_depr_log_file_dir_given(log_file_directory)
+                       width='100%'):
+        """*DEPRECATED* Use `Take Screenshot` or `Take Screenshot Without Embedding` instead."""
         path = self._save_screenshot(basename, directory)
         self._embed_screenshot(path, width)
         return path
@@ -214,7 +190,7 @@ class Screenshot(object):
         | Take Screenshot | width=550px      |     | # Specify only width. |
 
         Screenshots can be only taken in JPEG format. It is possible to use `/`
-        as a path separator in all operating systems. 
+        as a path separator in all operating systems.
         """
         path = self._save_screenshot(name)
         self._embed_screenshot(path, width)
@@ -236,8 +212,7 @@ class Screenshot(object):
         return self._screenshot_to_file(path)
 
     def _screenshot_to_file(self, path):
-        self._warn_if_depr_log_file_dir_given_to_init()
-        path = os.path.abspath(self._norm_path(path))
+        path = utils.abspath(self._norm_path(path))
         self._validate_screenshot_path(path)
         print '*DEBUG* Using %s modules for taking screenshot.' \
             % self._screenshot_taker.module
@@ -268,16 +243,6 @@ class Screenshot(object):
     def _link_screenshot(self, path):
         link = utils.get_link_path(path, self._log_dir)
         print "*HTML* Screenshot saved to '<a href=\"%s\">%s</a>'." % (link, path)
-
-    def _warn_if_depr_log_file_dir_given_to_init(self):
-        if self._depr_log_file_dir_given_to_init != 'DEPRECATED':
-            print '*WARN* Argument `log_file_directory` given to Screenshot ' \
-                + 'library is deprecated and should not be used.'
-            self._depr_log_file_dir_given_to_init = 'DEPRECATED'
-
-    def _warn_if_depr_log_file_dir_given(self, given_value):
-        if given_value != 'DEPRECATED':
-            print '*WARN* Argument `log_file_directory` is deprecated and should not be used.'
 
 
 class ScreenshotTaker(object):
@@ -346,7 +311,7 @@ if __name__ == "__main__":
     if len(sys.argv) not in [2, 3]:
         print "Usage: %s path [wx|gtk|pil]" % os.path.basename(sys.argv[0])
         sys.exit(1)
-    path = os.path.abspath(sys.argv[1])
+    path = utils.abspath(sys.argv[1])
     module = sys.argv[2] if len(sys.argv) == 3 else None
     shooter = ScreenshotTaker(module)
     print 'Using %s modules' % shooter.module

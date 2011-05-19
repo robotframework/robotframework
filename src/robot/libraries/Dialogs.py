@@ -82,25 +82,26 @@ def _validate_user_input(value):
 
 if not sys.platform.startswith('java'):
 
-    from Tkinter import Tk, Toplevel, Frame, Listbox, Label, Button,\
-                        BOTH, END, LEFT
+    from Tkinter import (Tk, Toplevel, Frame, Listbox, Label, Button,
+                         BOTH, END, LEFT)
     import tkMessageBox
     import tkSimpleDialog
-    from threading import currentThread as _currentThread
+    from threading import currentThread
 
 
-    def _prevent_execution_with_timeouts(method):
-        def _check_timeout(*args):
-            if 'linux' not in sys.platform and _currentThread().getName() != 'MainThread':
-                raise AssertionError("Dialogs library is not supported with timeouts " +
-                                     "on Python on this platform.")
+    def prevent_execution_with_timeouts(method):
+        def check_timeout(*args):
+            if 'linux' not in sys.platform \
+                    and currentThread().getName() != 'MainThread':
+                raise RuntimeError('Dialogs library is not supported with '
+                                   'timeouts on Python on this platform.')
             return method(*args)
-        return _check_timeout
+        return check_timeout
 
 
     class _AbstractTkDialog(Toplevel):
 
-        @_prevent_execution_with_timeouts
+        @prevent_execution_with_timeouts
         def __init__(self, title):
             parent = Tk()
             parent.withdraw()
@@ -158,7 +159,7 @@ if not sys.platform.startswith('java'):
 
     class MessageDialog(object):
 
-        @_prevent_execution_with_timeouts
+        @prevent_execution_with_timeouts
         def __init__(self, message):
             Tk().withdraw()
             tkMessageBox.showinfo(DIALOG_TITLE, message)
@@ -166,7 +167,7 @@ if not sys.platform.startswith('java'):
 
     class InputDialog(object):
 
-        @_prevent_execution_with_timeouts
+        @prevent_execution_with_timeouts
         def __init__(self, message, default):
             Tk().withdraw()
             self.result = tkSimpleDialog.askstring(DIALOG_TITLE, message,

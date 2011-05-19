@@ -14,6 +14,10 @@ Environment Variables In Keyword Argument
     Should Be Equal  %{THIS_ENV_VAR_IS_SET}  Env var value
     Should Be Equal  %{THIS_ENV_VAR_IS_SET} can be catenated. PATH: %{PATH}  Env var value can be catenated. PATH: %{PATH}
 
+Java System Properties Can Be Used
+    Should Be Equal  %{file.separator}  ${/}
+    Should Not Be Empty  %{os.name}
+
 Environment Variable With Backslashes
     Set Environment Variable  ENV_VAR_WITH_BACKSLASHES  c:\\temp\\backslash
     Should Be Equal  %{ENV_VAR_WITH_BACKSLASHES}  c:\\temp\\backslash

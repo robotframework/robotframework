@@ -109,7 +109,7 @@ class TestSettingTable(unittest.TestCase):
         self._verify_import(self.table.add_variables('./v2.py', ['a1', 'a2']),
                             './v2.py', ['a1', 'a2'])
         self._verify_import(self.table.add_library('N2', ['1', '2', '3', '4']),
-                            'N2', ['1', '2', '3', '4']) 
+                            'N2', ['1', '2', '3', '4'])
         assert_equal(len(self.table.imports), 5)
         assert_true(all(isinstance(im, _Import) for im in self.table.imports))
 
@@ -160,7 +160,7 @@ class TestVariableTable(unittest.TestCase):
         self.table.add('not var', 'the value')
         assert_equal(self.table.variables[0].name, 'not var')
         assert_equal(self.table.variables[0].value, ['the value'])
-        
+
 
 class TestTestCaseTable(unittest.TestCase):
 
@@ -221,6 +221,7 @@ class TestKeywordTable(unittest.TestCase):
         assert_true(isinstance(self.kw.args, Arguments))
         assert_true(isinstance(self.kw.return_, Return))
         assert_true(isinstance(self.kw.timeout, Timeout))
+        assert_true(isinstance(self.kw.teardown, Fixture))
 
     def test_set_settings(self):
         self.kw.doc.populate('My coooool doc')
@@ -307,7 +308,7 @@ class TestForLoop(unittest.TestCase):
 
     def test_in_range(self):
         self._test(['${i}', 'IN RANGE', '100'], ['${i}'], ['100'], range=True)
-        self._test(['what', 'ever', 'in range', 'IN', 'whatever'], 
+        self._test(['what', 'ever', 'in range', 'IN', 'whatever'],
                    ['what', 'ever'], ['IN', 'whatever'], range=True)
 
     def test_representation(self):

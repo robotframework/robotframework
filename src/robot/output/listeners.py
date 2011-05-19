@@ -167,6 +167,7 @@ class _ListenerProxy(AbstractLoggerProxy):
         self.name = name
         self.version = self._get_version(listener)
         self.is_java = utils.is_jython and isinstance(listener, Object)
+        self._failed = []
 
     def _import_listener(self, name, args):
         listener, source = utils.import_(name, 'listener')
@@ -185,15 +186,21 @@ class _ListenerProxy(AbstractLoggerProxy):
             return 1
 
     def call_method(self, method, *args):
+        if method in self._failed:
+            return
         if self.is_java:
             args = [self._to_map(a) if isinstance(a, dict) else a for a in args]
         try:
             method(*args)
         except:
-            message, details = utils.get_error_details()
-            LOGGER.error("Calling '%s' method of listener '%s' failed: %s"
-                         % (method.__name__, self.name, message))
-            LOGGER.info("Details:\n%s" % details)
+            self._failed.append(method)
+            self._report_error(method)
+
+    def _report_error(self, method):
+        message, details = utils.get_error_details()
+        LOGGER.error("Method '%s' of listener '%s' failed and is disabled: %s"
+                     % (method.__name__, self.name, message))
+        LOGGER.info("Details:\n%s" % details)
 
     def _to_map(self, dictionary):
         map = HashMap()

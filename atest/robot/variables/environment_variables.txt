@@ -1,11 +1,16 @@
 *** Settings ***
 Suite Setup     Run Tests  ${EMPTY}  variables/environment_variables.txt
-Force Tags      pybot  jybot  regression
+Force Tags      regression
+Default Tags    pybot  jybot
 Resource        atest_resource.txt
 
 *** Test Cases ***
 Environment Variables In Keyword Argument
     Check Test Case  Environment Variables In Keyword Argument
+
+Java System Properties Can Be Used
+    [Tags]  jybot
+    Check Test Case  ${TESTNAME}
 
 Environment Variable With Backslashes
     Check Test Case  Environment Variable With Backslashes

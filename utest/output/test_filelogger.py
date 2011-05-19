@@ -1,4 +1,5 @@
 import unittest
+import os
 from StringIO import StringIO
 
 from robot import utils
@@ -20,26 +21,29 @@ class TestFileLogger(unittest.TestCase):
     def test_write(self):
         self.logger.write('my message', 'INFO')
         expected = '20060613 08:37:42.123 | INFO  | my message\n'
-        assert_equals(self.logger._writer.getvalue(), expected)
+        self._verify_message(expected)
         self.logger.write('my 2nd msg\nwith 2 lines', 'ERROR')
         expected += '20060613 08:37:42.123 | ERROR | my 2nd msg\nwith 2 lines\n'
-        assert_equals(self.logger._writer.getvalue(), expected)
+        self._verify_message(expected)
                         
     def test_write_helpers(self):
         self.logger.info('my message')
         expected = '20060613 08:37:42.123 | INFO  | my message\n'
-        assert_equals(self.logger._writer.getvalue(), expected)
+        self._verify_message(expected)
         self.logger.warn('my 2nd msg\nwith 2 lines')
         expected += '20060613 08:37:42.123 | WARN  | my 2nd msg\nwith 2 lines\n'
-        assert_equals(self.logger._writer.getvalue(), expected)
+        self._verify_message(expected)
 
     def test_set_level(self):
         self.logger.write('msg', 'DEBUG')
-        assert_equals(self.logger._writer.getvalue(), '')
+        self._verify_message('')
         self.logger.set_level('DEBUG')
         self.logger.write('msg', 'DEBUG')
-        assert_equals(self.logger._writer.getvalue(), '20060613 08:37:42.123 | DEBUG | msg\n')
+        self._verify_message('20060613 08:37:42.123 | DEBUG | msg\n')
 
+    def _verify_message(self, expected):
+        expected = expected.replace('\n', os.linesep)
+        assert_equals(self.logger._writer.getvalue(), expected)
 
 if __name__ == "__main__":
     unittest.main()

@@ -82,7 +82,7 @@ __ `Test suite name and documentation`_
    pybot test_cases.html
    pybot path/to/my_tests/
    pybot c:\robot\tests.txt
-   
+
 It is also possible to give paths to several test case files or
 directories at once, separated with spaces. In this case, Robot
 Framework creates the top-level test suite automatically, and
@@ -91,8 +91,8 @@ of the created test suite is got from child suite names by
 catenating them together with an ampersand (&) and spaces. For example,
 the name of the top-level suite in the first example below is
 :name:`My Tests & Your Tests`. These automatically created names are
-often quite long and complicated. In most cases, it is thus better to 
-use the :opt:`--name` option for overriding it, as in the second 
+often quite long and complicated. In most cases, it is thus better to
+use the :opt:`--name` option for overriding it, as in the second
 example below::
 
    pybot my_tests.html your_tests.html
@@ -103,7 +103,7 @@ Using command line options
 
 Robot Framework provides a number of command line options that can be
 used to control how test cases are executed and what outputs are
-generated. This section explains the option syntax, and what 
+generated. This section explains the option syntax, and what
 options actually exist. How they can be used is discussed elsewhere
 in this chapter.
 
@@ -203,7 +203,7 @@ Return codes
 ''''''''''''
 
 Runner scripts communicate the overall test execution status to the
-system running them using return codes. When the execution starts 
+system running them using return codes. When the execution starts
 successfully and no `critical test`_ fail, the return code is zero.
 All possible return codes are explained in the table below.
 
@@ -213,7 +213,7 @@ All possible return codes are explained in the table below.
    ========  ==========================================
       RC                    Explanation
    ========  ==========================================
-   0         All critical tests passed.  
+   0         All critical tests passed.
    1-249     Returned number of critical tests failed.
    250       250 or more critical failures.
    251       Help or version information printed.
@@ -228,6 +228,12 @@ status. For example, in bash shell the return code is in special
 variable :code:`$?`, and in Windows it is in :code:`%ERRORLEVEL%`
 variable. If you use some external tool for running tests, consult its
 documentation for how to get the return code.
+
+Starting from Robot Framework 2.5.7, the return code can be set to 0 even if
+there are critical failures using the :opt:`--NoStatusRC` command line option.
+This might be useful, for example, in continuous integration servers where
+post-processing of results is needed before the overall status of test
+execution can be determined.
 
 Errors and warnings during execution
 ''''''''''''''''''''''''''''''''''''
@@ -303,7 +309,7 @@ be escaped are listed in the table below:
    !          exclam         [          square1
    >          gt             ]          square2
    #          hash           \*         star
-   <          lt             \          \   
+   <          lt             \          \
    =========  =============  =========  =============
 
 The following examples make the syntax more clear. In the
@@ -323,9 +329,9 @@ Argument files
 
 Problematic characters can often be handled easily using *argument files*.
 These files can contain both command line options and paths
-to the test data, one per line. They are taken into use with 
+to the test data, one per line. They are taken into use with
 :opt:`--argumentfile` option (short option :opt:`-A`) along with possible other
-command line options.  Argument files can contain any 
+command line options.  Argument files can contain any
 characters without escaping, but spaces in the beginning and end
 of lines are ignored. Additionally, empty lines and lines starting with
 a hash mark (#) are ignored::

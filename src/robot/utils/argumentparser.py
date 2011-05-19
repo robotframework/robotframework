@@ -26,7 +26,7 @@ from robot.errors import DataError, Information, FrameworkError
 
 from misc import plural_or_not
 from unic import unic
-from encoding import decode_output
+from encoding import decode_output, decode_from_file_system
 
 
 ESCAPES = dict(
@@ -128,7 +128,7 @@ class ArgumentParser:
 
         Possible errors in processing arguments are reported using DataError.
         """
-        args_list = [self._decode_from_file_system(a) for a in args_list]
+        args_list = [decode_from_file_system(a) for a in args_list]
         if argfile:
             args_list = self._add_args_from_file(args_list, argfile)
         opts, args = self._parse_args(args_list)
@@ -143,14 +143,6 @@ class ArgumentParser:
         if check_args:
             self._check_args(args)
         return opts, args
-
-    def _decode_from_file_system(self, arg):
-        encoding = sys.getfilesystemencoding()
-        if sys.platform.startswith('java'):
-            # http://bugs.jython.org/issue1592
-            from java.lang import String
-            arg = String(arg)
-        return unic(arg, encoding) if encoding else unic(arg)
 
     def _parse_args(self, args):
         args = [self._lowercase_long_option(a) for a in args]
@@ -192,8 +184,7 @@ class ArgumentParser:
         for name, value in opts.items():
             if name != escape_opt:
                 opts[name] = self._unescape(value, escapes)
-        args = [self._unescape(arg, escapes) for arg in args]
-        return opts, args
+        return opts, [self._unescape(arg, escapes) for arg in args]
 
     def _add_args_from_file(self, args, argfile_opt):
         argfile_opts = ['--'+argfile_opt]
@@ -354,8 +345,7 @@ class ArgumentParser:
         temp = []
         for path in self._split_pythonpath(paths):
             temp.extend(glob.glob(path))
-        paths = [ os.path.normpath(path) for path in temp if path != '' ]
-        return paths
+        return [os.path.normpath(path) for path in temp if path != '']
 
     def _split_pythonpath(self, paths):
         # paths may already contain ':' as separator

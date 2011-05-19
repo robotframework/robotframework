@@ -1,5 +1,5 @@
 *** Settings ***
-Library         Operating System
+Library         OperatingSystem
 
 *** Variables ***
 ${TEMPDIR}  Cannot be overridden
@@ -10,20 +10,33 @@ ${1234}  Can be overridden
 ${-4.1}  Can be overridden
 
 *** Test Cases ***
-Number Variables
-    ${one} =  Integer  1
-    ${minus_one} =  Integer  -1
-    ${pi} =  Float  3.14
-    ${million} =  Float  1000000
+Integer Variables
+    [Documentation]  FAIL  Non-existing variable '${FF}'.
+    ${one} =  Convert To Integer  1
+    ${minus_two} =  Convert To Integer  -2
     Should Be Equal  ${1}  ${one}
-    Should Be Equal  ${-1}  ${minus_one}
-    Should Be Equal  ${+ 3 . 1 4}  ${pi}
-    Should Be Equal  ${1000000}  ${million}
-    Should Be Equal  ${1E6}  ${million}
-    Should Be Equal  ${1 e 6}  ${million}
+    Should Be Equal  ${ - 2 }  ${minus_two}
+    Should Be True  repr(${12345}) == '12345'
+    Should Be True  repr(${123456789012345678901234567890}).endswith('L')
+    Log  No automatic hex conversion ${FF}
+
+Integer Variables With Base
+    [Documentation]  FAIL  Non-existing variable '${0b123}'.
+    Should Be Equal  ${0xFF}    ${255}
+    Should Be Equal  ${ 0 X A}  ${10}
+    Should Be Equal  ${0b1010}  ${10}
+    Should Be Equal  ${0B0}     ${0O0}
+    Should Be Equal  ${0o10}    ${8}
+    Log  This fails: ${0b123}
+
+Float Variables
+    ${pi} =  Convert To Number  3.14
+    Should Be Equal  ${3.14}  ${pi}
+    Should Be Equal  ${ + 3 . 1 4 }  ${pi}
+    Should Be Equal  ${1E6}  ${1000000}
+    Should Be Equal  ${+1 e 3}  ${1000}
     Should Be True  ${-2.1e3} == ${-2100} == ${-2100.0}
-    ${result} =  Evaluate  ${42} - ${-4.2}
-    Should Be Equal  ${42} minus ${-4.2} equals ${result}  42 minus -4.2 equals 46.2
+    Should Be True  ${123456789012345.67890} < ${1.235e14}
 
 Boolean Variables
     Should Be True  ${TRUE}

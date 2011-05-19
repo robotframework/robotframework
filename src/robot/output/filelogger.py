@@ -12,8 +12,7 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-
-from robot import utils
+import os
 
 from loggerhelper import AbstractLogger
 
@@ -32,7 +31,7 @@ class FileLogger(AbstractLogger):
         if self._is_logged(msg.level):
             entry = '%s | %s | %s\n' % (msg.timestamp, msg.level.ljust(5),
                                         msg.message)
-            self._writer.write(utils.unic(entry).encode('UTF-8'))
+            self._writer.write(entry.replace('\n', os.linesep).encode('UTF-8'))
 
     def start_suite(self, suite):
         self.info("Started test suite '%s'" % suite.name)
@@ -57,4 +56,3 @@ class FileLogger(AbstractLogger):
 
     def close(self):
         self._writer.close()
-

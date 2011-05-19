@@ -2,10 +2,10 @@
 Variables       variables_to_verify.py
 
 *** Variables ***
-${str0}  0
-${str1}  1
-${int0}  ${0}
-${int1}  ${1}
+${STR0}  0
+${STR1}  1
+${INT0}  ${0}
+${INT1}  ${1}
 @{LIST}  a  b  cee  b  ${42}
 
 *** Test Cases ***
@@ -22,7 +22,7 @@ Should Not Be True
     Should Not Be True  0 > 1
     ${empty list} =  Create List
     Should Not Be True  ${empty list}
-    Should Not Be True  ${int0} < ${int1}
+    Should Not Be True  ${INT0} < ${INT1}
 
 Should Not Be True With Message
     [Documentation]  FAIL My message
@@ -34,8 +34,8 @@ Should Not Be True With Invalid Expression
 
 Should Be True
     [Documentation]  FAIL '1 != 1 and True or False' should be true
-    Should Be True  -1 <= ${str1} <= 1
-    Should Be True  -${str1} < ${str0} < ${str1}
+    Should Be True  -1 <= ${STR1} <= 1
+    Should Be True  -${STR1} < ${STR0} < ${STR1}
     ${list} =  Create List  0
     Should Be True  ${list}
     Should Be True  1 != 1 and True or False
@@ -50,71 +50,133 @@ Should Be True With Invalid Expression
 
 Should Not Be Equal
     [Documentation]  FAIL 1 == 1
-    Should Not Be Equal  ${str1}  Not ${str1}
-    Should Not Be Equal  ${str1}  1
+    [Template]  Should Not Be Equal
+    ${STR1}  Not ${STR1}
+    ${STR1}  ${INT1}
+    ${STR1}  1
 
 Should Be Equal
-    [Documentation]  FAIL Error message: 1 != 1
-    Should Be Equal  ${str1}  1
-    Should Be Equal  ${str1}  ${int1}  Error message
+    [Documentation]  FAIL Error message: A != B
+    [Template]  Should Be Equal
+    ${STR1}  1
+    ${INT1}  ${1}
+    A  B  Error message
+
+Should Be Equal When Types Differ But String Representations Are Same
+    [Documentation]  FAIL 1 (string) != 1 (number)
+    Should Be Equal  ${STR1}  ${INT1}
 
 Should Not Be Equal As Integers
     [Documentation]  FAIL This message only
-    Should Not Be Equal As Integers  1  ${str0}
-    Should Not Be Equal As Integers  0  ${int1}
-    Should Not Be Equal As Integers  1  ${int1}  This message only  No values
+    [Template]  Should Not Be Equal As Integers
+    1  ${STR0}
+    0  ${INT1}
+    1  ${INT1}  This message only  No values
+
+Should Not Be Equal As Integers With Base
+    [Documentation]  Conversion functionality tested with `Convert To Integer`
+    [Template]  Should Not Be Equal As Integers
+    ABC   DEF  base=16
+    0b10  10
+    0x10  0o10
 
 Should Be Equal As Integers
     [Documentation]  FAIL -1 != 1
-    Should Be Equal As Integers  ${str1}${str0}${str0}  ${str1}${str0}${str0}
-    Should Be Equal As Integers  -${str1}  ${str1}
+    [Template]  Should Be Equal As Integers
+    ${STR1}${STR0}${STR0}  ${STR1}${STR0}${STR0}
+    ${STR1}${STR0}${STR0}  ${100.0}
+    -${STR1}  ${STR1}
+
+Should Be Equal As Integers With Base
+    [Documentation]  Conversion functionality tested with `Convert To Integer`
+    [Template]  Should Be Equal As Integers
+    ABCD  abcd   base=16
+    0b10  2
+    0xFF  0o377
+    0b0   0
+    0x0   0o0
+    0b1   1
+    0x1   0o1
 
 Should Not Be Equal As Numbers
     [Documentation]  FAIL Fails again: 1.1 == 1.1
-    Should Not Be Equal As Numbers  ${str1}.${str1}  1.2
-    Should Not Be Equal As Numbers  ${str1}.${str1}  1.1  Fails again
+    [Template]  Should Not Be Equal As Numbers
+    ${STR1}.${STR1}  1.2
+    ${STR1}.${STR1}  ${1.2}
+    ${STR1}.${STR1}  1.1  Fails again
+
+Should Not Be Equal As Numbers With Precision
+    [Documentation]  FAIL  Failing: 1.0 == 1.0
+    [Template]  Should Not Be Equal As Numbers
+    1.123     1.456    precision=1
+    1.123     ${1.1}   precision=2
+    ${1.123}  ${1.12}  precision=3
+    1123      1456     precision=-2
+    112       145      precision=-1
+    1.12      1.45     Failing  precision=0
 
 Should Be Equal As Numbers
-    [Documentation]  FAIL Only this message again
-    Should Be Equal As Numbers  ${str1}  ${str1}.${str0}${str0}
-    Should Be Equal As Numbers  ${str1}.000001  ${str1}.${str0}${str0}${str1}  Only this message again  False
+    [Documentation]  FAIL Only this message
+    [Template]  Should Be Equal As Numbers
+    ${STR1}  ${STR1}.${STR0}${STR0}
+    ${STR1}.000001  ${STR1}.${STR0}${STR0}${STR1}  Only this message  False
+
+Should Be Equal As Numbers With Precision
+    [Documentation]  FAIL  Failure: 110.0 != 150.0
+    [Template]  Should Be Equal As Numbers
+    1.123     1.456    precision=0
+    1.123     ${1.1}   precision=1
+    ${1.123}  ${1.12}  precision=2
+    1123      1456     precision=-3
+    112       145      precision=-2
+    112       145      Failure  precision=-1
 
 Should Not Be Equal As Strings
     [Documentation]  FAIL These strings most certainly should not be equal
-    Should Not Be Equal As Strings  1  ${1.1}
-    Should Not Be Equal As Strings  False  ${True}
-    Should Not Be Equal As Strings  bar  bar  These strings most certainly should not be equal  False
+    [Template]  Should Not Be Equal As Strings
+    1  ${1.1}
+    False  ${True}
+    bar  bar  These strings most certainly should not be equal  False
 
 Should Be Equal As Strings
     [Documentation]  FAIL foo != bar
-    Should Be Equal As Strings  ${1}  1
-    Should Be Equal As Strings  ${None}  None
-    Should Be Equal As Strings  foo  bar
+    [Template]  Should Be Equal As Strings
+    ${1}  1
+    ${None}  None
+    foo  bar
 
 Should Not Start With
     [Documentation]  FAIL 'Hello, world!' starts with 'Hello'
-    Should Not Start With  Hello, world!  Hi
-    Should Not Start With  Hello, world!  Hello
+    [Template]  Should Not Start With
+    Hello, world!  Hi
+    Hello, world!  HELLO
+    Hello, world!  Hello
 
 Should Start With
     [Documentation]  FAIL My message: 'This is a big longer sentence and it even has a friend here. This is the friend of the previous sentence -- also this is quite long, actually even longer than its friend.' does not start with 'Whatever'
-    Should Start With  ${str0}${str0}7  00
-    Should Start With  This is a big longer sentence and it even has a friend here. This is the friend of the previous sentence -- also this is quite long, actually even longer than its friend.  Whatever  My message
+    [Template]  Should Start With
+    Hello, world!  Hello
+    Hello, world!  Hello, world!
+    This is a big longer sentence and it even has a friend here. This is the friend of the previous sentence -- also this is quite long, actually even longer than its friend.  Whatever  My message
 
 Should Not End With
     [Documentation]  FAIL Message only
-    Should Not End With  Hello!  Hello
-    Should Not End With  Hillo!  !  Message only  No Values
+    [Template]  Should Not End With
+    Hello!  Hello
+    Hillo!  !  Message only  No Values
 
 Should End With
-    [Documentation]  FAIL '007' does not end with '00'
-    Should End With  ${str0}${str0}7  007
-    Should End With  ${str0}${str0}7  00
+    [Documentation]  FAIL 'Hello, world!' does not end with '?'
+    [Template]  Should End With
+    Hello, world!  !
+    Hello, world!  Hello, world!
+    Hello, world!  ?
 
 Should Not Contain
     [Documentation]  FAIL 'Hello yet again' contains 'yet'
-    Should Not Contain  Hello again  yet
-    Should Not Contain  Hello yet again  yet
+    [Template]  Should Not Contain
+    Hello again  yet
+    Hello yet again  yet
 
 Should Not Contain With Non-String Values
     [Documentation]  FAIL '(1, 2)' contains '1'
@@ -126,8 +188,10 @@ Should Not Contain With Non-String Values
 
 Should Contain
     [Documentation]  FAIL Message: 'abcdefg' does not contain 'ABCDEFG'
-    Should Contain  abcdefg  cd  Massage
-    Should Contain  abcdefg  ABCDEFG  Message
+    [Template]  Should Contain
+    abcdefg  cd
+    abcdefg  abcdefg  Massage
+    abcdefg  ABCDEFG  Message
 
 Should Contain With Non-String Values
     [Documentation]  FAIL '{'a': 1}' does not contain 'c'

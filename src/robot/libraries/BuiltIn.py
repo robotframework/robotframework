@@ -26,59 +26,112 @@ from robot.running.model import ExecutionContext
 from robot.version import get_version
 
 if utils.is_jython:
-    from java.lang import String, Number, Long, Double
+    from java.lang import String, Number
 
 
 class _Converter:
 
-    def convert_to_integer(self, item):
-        """Converts the given item to an integer number."""
+    def convert_to_integer(self, item, base=None):
+        """Converts the given item to an integer number.
+
+        If the given item is a string, it is by default expected to be an
+        integer in base 10. Starting from Robot Framework 2.6 there are two
+        ways to convert from other bases:
+
+        1) Give base explicitly to the keyword as `base` argument.
+
+        2) Prefix the given string with the base so that `0b` means base 2
+        (binary), `0o` means base 8 (octal), and `0x` means base 16 (hex).
+        The prefix is considered only when `base` argument is not given.
+
+        The syntax is case-insensitive and possible spaces are ignored.
+
+        Examples:
+        | ${result} = | Convert To Integer | 100   |    | # Result is 100   |
+        | ${result} = | Convert To Integer | FF AA | 16 | # Result is 65450 |
+        | ${result} = | Convert To Integer | 100   | 8  | # Result is 64    |
+        | ${result} = | Convert To Integer | 100   | 2  | # Result is 4     |
+        | ${result} = | Convert To Integer | 0b100 |    | # Result is 4     |
+        | ${result} = | Convert To Integer | 0x100 |    | # Result is 256   |
+
+        If you need a floating point number, use `Convert To Number` instead.
+        """
+        self._log_types(item)
+        return self._convert_to_integer(item, base)
+
+    def _convert_to_integer(self, orig, base=None):
         try:
-            if utils.is_jython:
-                return self._jython_to_integer(item)
+            item = self._handle_java_numbers(orig)
+            item, base = self._get_base(item, base)
+            if base:
+                return int(item, self._convert_to_integer(base))
             return int(item)
         except:
             raise RuntimeError("'%s' cannot be converted to an integer: %s"
-                            % (item, utils.get_error_message()))
+                               % (orig, utils.get_error_message()))
 
-    def _jython_to_integer(self, item):
-        # This helper handles Java Strings and Numbers as well as Jython
-        # not handling overflow automatically
-        try:
-            return int(item)
-        except ValueError:
-            return long(item)
-        except TypeError:
-            if isinstance(item, String):
-                return Long.parseLong(item)
-            if isinstance(item, Number):
-                return item.longValue()
-            raise
+    def _handle_java_numbers(self, item):
+        if not utils.is_jython:
+            return item
+        if isinstance(item, String):
+            return utils.unic(item)
+        if isinstance(item, Number):
+            return item.doubleValue()
+        return item
 
-    def convert_to_number(self, item):
-        """Converts the given item to a floating point number."""
+    def _get_base(self, item, base):
+        if not isinstance(item, basestring):
+            return item, base
+        item = utils.normalize(item)
+        bases = {'0b': 2, '0o': 8, '0x': 16}
+        if base or not item.startswith(tuple(bases)):
+            return item, base
+        return item[2:], bases[item[:2]]
+
+    def convert_to_number(self, item, precision=None):
+        """Converts the given item to a floating point number.
+
+        If the optional `precision` is positive or zero, the returned number
+        is rounded to that number of decimal digits. Negative precision means
+        that the number is rounded to the closest multiple of 10 to the power
+        of the absolute precision. The support for precision was added in
+        Robot Framework 2.6.
+
+        Examples:
+        | ${result} = | Convert To Number | 42.512 |    | # Result is 42.512 |
+        | ${result} = | Convert To Number | 42.512 | 1  | # Result is 42.5   |
+        | ${result} = | Convert To Number | 42.512 | 0  | # Result is 43.0   |
+        | ${result} = | Convert To Number | 42.512 | -1 | # Result is 40.0   |
+
+        Notice that machines generally cannot store floating point numbers
+        accurately. This may cause surprises with these numbers in general
+        and also when they are rounded. For more information see, for example,
+        this floating point arithmetic tutorial:
+        http://docs.python.org/tutorial/floatingpoint.html
+
+        If you need an integer number, use `Convert To Integer` instead.
+        """
+        self._log_types(item)
+        return self._convert_to_number(item, precision)
+
+    def _convert_to_number(self, item, precision=None):
+        number = self._convert_to_number_without_precision(item)
+        if precision:
+            number = round(number, self._convert_to_integer(precision))
+        return number
+
+    def _convert_to_number_without_precision(self, item):
         try:
             if utils.is_jython:
-                return self._jython_to_number(item)
+                item = self._handle_java_numbers(item)
             return float(item)
         except:
             error = utils.get_error_message()
             try:
-                return float(self.convert_to_integer(item))
+                return float(self._convert_to_integer(item))
             except RuntimeError:
-                raise RuntimeError("'%s' cannot be converted to a floating point "
-                                 "number: %s" % (item, error))
-
-    def _jython_to_number(self, item):
-        # This helper handles Java Strings and Numbers
-        try:
-            return float(item)
-        except (TypeError, AttributeError):
-            if isinstance(item, String):
-                return Double.parseDouble(item)
-            if isinstance(item, Number):
-                return item.doubleValue()
-            raise
+                raise RuntimeError("'%s' cannot be converted to a floating "
+                                   "point number: %s" % (item, error))
 
     def convert_to_string(self, item):
         """Converts the given item to a Unicode string.
@@ -86,6 +139,10 @@ class _Converter:
         Uses '__unicode__' or '__str__' method with Python objects and
         'toString' with Java objects.
         """
+        self._log_types(item)
+        return self._convert_to_string(item)
+
+    def _convert_to_string(self, item):
         return utils.unic(item)
 
     def convert_to_boolean(self, item):
@@ -96,6 +153,7 @@ class _Converter:
         For more information about truth values, see
         http://docs.python.org/lib/truth.html.
         """
+        self._log_types(item)
         if isinstance(item, basestring):
             if utils.eq(item, 'True'):
                 return True
@@ -199,7 +257,16 @@ class _Verify:
           string 'False' or 'No Values', the error message is simply `msg`.
         - Otherwise the error message is '`msg`: `first` != `second`'.
         """
-        asserts.fail_unless_equal(first, second, msg, self._include_values(values))
+        self._log_types(first, second)
+        self._should_be_equal(first, second, msg, values)
+
+    def _should_be_equal(self, first, second, msg, values):
+        asserts.fail_unless_equal(first, second, msg,
+                                  self._include_values(values))
+
+    def _log_types(self, *args):
+        msg = ["Argument types are:"] + [str(type(a)) for a in args]
+        self.log('\n'.join(msg))
 
     def _include_values(self, values):
         if isinstance(values, basestring):
@@ -212,49 +279,100 @@ class _Verify:
         See `Should Be Equal` for an explanation on how to override the default
         error message with `msg` and `values`.
         """
+        self._log_types(first, second)
+        self._should_not_be_equal(first, second, msg, values)
+
+    def _should_not_be_equal(self, first, second, msg, values):
         asserts.fail_if_equal(first, second, msg, self._include_values(values))
 
-    def should_not_be_equal_as_integers(self, first, second, msg=None, values=True):
+    def should_not_be_equal_as_integers(self, first, second, msg=None,
+                                        values=True, base=None):
         """Fails if objects are equal after converting them to integers.
 
+        See `Convert To Integer` for information how to convert integers from
+        other bases than 10 using `base` argument or `0b/0o/0x` prefixes.
+
         See `Should Be Equal` for an explanation on how to override the default
         error message with `msg` and `values`.
-        """
-        first, second = [ self.convert_to_integer(i) for i in first, second ]
-        self.should_not_be_equal(first, second, msg, values)
 
-    def should_be_equal_as_integers(self, first, second, msg=None, values=True):
+        See `Should Be Equal As Integers` for some usage examples.
+        """
+        self._log_types(first, second)
+        self._should_not_be_equal(self._convert_to_integer(first, base),
+                                  self._convert_to_integer(second, base),
+                                  msg, values)
+
+    def should_be_equal_as_integers(self, first, second, msg=None, values=True,
+                                    base=None):
         """Fails if objects are unequal after converting them to integers.
 
+        See `Convert To Integer` for information how to convert integers from
+        other bases than 10 using `base` argument or `0b/0o/0x` prefixes.
+
         See `Should Be Equal` for an explanation on how to override the default
         error message with `msg` and `values`.
-        """
-        first, second = [ self.convert_to_integer(i) for i in first, second ]
-        self.should_be_equal(first, second, msg, values)
 
-    def should_not_be_equal_as_numbers(self, first, second, msg=None, values=True):
+        Examples:
+        | Should Be Equal As Integers | 42   | ${42} | Error message |
+        | Should Be Equal As Integers | ABCD | abcd  | base=16 |
+        | Should Be Equal As Integers | 0b1011 | 11  |
+        """
+        self._log_types(first, second)
+        self._should_be_equal(self._convert_to_integer(first, base),
+                              self._convert_to_integer(second, base),
+                              msg, values)
+
+    def should_not_be_equal_as_numbers(self, first, second, msg=None,
+                                       values=True, precision=6):
         """Fails if objects are equal after converting them to real numbers.
 
-        The check for equality is done using six decimal places.
+        The conversion is done with `Convert To Number` keyword using the
+        given `precision`. The support for giving precision was added in
+        Robot Framework 2.6, in earlier versions it was hard-coded to 6.
 
-        See `Should Be Equal` for an explanation on how to override the default
+        See `Should Be Equal As Numbers` for examples on how to use
+        `precision` and why it does not always work as expected. See also
+        `Should Be Equal` for an explanation on how to override the default
         error message with `msg` and `values`.
         """
-        first = round(self.convert_to_number(first), 6)
-        second = round(self.convert_to_number(second), 6)
-        self.should_not_be_equal(first, second, msg, values)
+        self._log_types(first, second)
+        first = self._convert_to_number(first, precision)
+        second = self._convert_to_number(second, precision)
+        self._should_not_be_equal(first, second, msg, values)
 
-    def should_be_equal_as_numbers(self, first, second, msg=None, values=True):
+    def should_be_equal_as_numbers(self, first, second, msg=None, values=True,
+                                   precision=6):
         """Fails if objects are unequal after converting them to real numbers.
 
-        The check for equality is done using six decimal places.
+        The conversion is done with `Convert To Number` keyword using the
+        given `precision`. The support for giving precision was added in
+        Robot Framework 2.6, in earlier versions it was hard-coded to 6.
 
-        See `Should Be Equal` for an explanation on how to override the default
-        error message with `msg` and `values`.
+        Examples:
+        | Should Be Equal As Numbers | ${x} | 1.1 | | # Passes if ${x} is 1.1 |
+        | Should Be Equal As Numbers | 1.123 | 1.1 | precision=1  | # Passes |
+        | Should Be Equal As Numbers | 1.123 | 1.4 | precision=0  | # Passes |
+        | Should Be Equal As Numbers | 112.3 | 75  | precision=-2 | # Passes |
+
+        As discussed in the documentation of `Convert To Number`, machines
+        generally cannot store floating point numbers accurately. Because of
+        this limitation, comparing floats for equality is problematic and
+        a correct approach to use depends on the context. This keyword uses
+        a very naive approach of rounding the numbers before comparing them,
+        which is both prone to rounding errors and does not work very well if
+        numbers are really big or small. For more information about comparing
+        floats, and ideas on how to implement your own context specific
+        comparison algorithm, see this great article:
+        http://www.cygnus-software.com/papers/comparingfloats/comparingfloats.htm
+
+        See `Should Not Be Equal As Numbers` for a negative version of this
+        keyword and `Should Be Equal` for an explanation on how to override
+        the default error message with `msg` and `values`.
         """
-        first = round(self.convert_to_number(first), 6)
-        second = round(self.convert_to_number(second), 6)
-        self.should_be_equal(first, second, msg, values)
+        self._log_types(first, second)
+        first = self._convert_to_number(first, precision)
+        second = self._convert_to_number(second, precision)
+        self._should_be_equal(first, second, msg, values)
 
     def should_not_be_equal_as_strings(self, first, second, msg=None, values=True):
         """Fails if objects are equal after converting them to strings.
@@ -262,8 +380,9 @@ class _Verify:
         See `Should Be Equal` for an explanation on how to override the default
         error message with `msg` and `values`.
         """
-        first, second = [ self.convert_to_string(i) for i in first, second ]
-        self.should_not_be_equal(first, second, msg, values)
+        self._log_types(first, second)
+        first, second = [ self._convert_to_string(i) for i in first, second ]
+        self._should_not_be_equal(first, second, msg, values)
 
     def should_be_equal_as_strings(self, first, second, msg=None, values=True):
         """Fails if objects are unequal after converting them to strings.
@@ -271,8 +390,9 @@ class _Verify:
         See `Should Be Equal` for an explanation on how to override the default
         error message with `msg` and `values`.
         """
-        first, second = [ self.convert_to_string(i) for i in first, second ]
-        self.should_be_equal(first, second, msg, values)
+        self._log_types(first, second)
+        first, second = [ self._convert_to_string(i) for i in first, second ]
+        self._should_be_equal(first, second, msg, values)
 
     def should_not_start_with(self, str1, str2, msg=None, values=True):
         """Fails if the string `str1` starts with the string `str2`.
@@ -506,7 +626,7 @@ class _Verify:
         The length of the item is got using the `Get Length` keyword. The
         default error message can be overridden with the `msg` argument.
         """
-        length = self.convert_to_integer(length)
+        length = self._convert_to_integer(length)
         if self.get_length(item) != length:
             if msg is None:
                 msg = "Length of '%s' should be %d but it is %d" \
@@ -549,6 +669,32 @@ class _Variables:
     def get_variables(self):
         """Returns a dictionary containing all variables in the current scope."""
         return NAMESPACES.current.variables
+
+    def get_variable_value(self, name, default=None):
+        """Returns variable value or `default` if the variable does not exist.
+
+        The name of the variable can be given either as a normal variable name
+        (e.g. ${NAME}) or in escaped format (e.g. \\${NAME}). Notice that the
+        former has some limitations explained in `Set Suite Variable`.
+
+        Examples:
+        | ${x} = | Get Variable Value | ${a} | default |
+        | ${y} = | Get Variable Value | ${a} | ${b}    |
+        | ${z} = | Get Variable Value | ${z} |         |
+        =>
+        - ${x} gets value of ${a} if ${a} exists and string "default" otherwise
+        - ${y} gets value of ${a} if ${a} exists and value of ${b} otherwise
+        - ${z} is set to Python `None` if it does not exist previously
+
+        This keyword was added in Robot Framework 2.6. See `Set Variable If`
+        for another keyword to set variables dynamically.
+        """
+        name = self._get_var_name(name)
+        variables = self.get_variables()
+        try:
+            return variables[name]
+        except DataError:
+            return variables.replace_scalar(default)
 
     def log_variables(self, level='INFO'):
         """Logs all variables in the current scope with given log level."""
@@ -857,7 +1003,7 @@ class _RunKeyword:
         | Log | This keyword is executed |
 
         This keyword was added in Robot Framework 2.5. The execution is not
-        continued if the failure is caused by invalid syntax, timeout, or 
+        continued if the failure is caused by invalid syntax, timeout, or
         fatal exception.
         """
         try:
@@ -924,7 +1070,7 @@ class _RunKeyword:
             times = times[:-5]
         elif times.endswith('x'):
             times = times[:-1]
-        times = self.convert_to_integer(times)
+        times = self._convert_to_integer(times)
         if times <= 0:
             self.log("Keyword '%s' repeated zero times" % name)
         for i in xrange(times):
@@ -1001,6 +1147,9 @@ class _RunKeyword:
         | ...      | ${rc} == 2      | two               |
         | ...      | ${rc} > 2       | greater than two  |
         | ...      | ${rc} < 0       | less than zero    |
+
+        Use `Get Variable Value` if you need to set variables
+        dynamically based on whether a variable exist or not.
         """
         values = self._verify_values_for_set_variable_if(list(values))
         if self._is_true(condition):
@@ -1285,7 +1434,7 @@ class _Misc:
 
         Resources imported with this keyword are set into the test suite scope
         similarly when importing them in the Setting table using the Resource
-        setting. 
+        setting.
 
         The given path must be absolute. Forward slashes can be used as path
         separator regardless the operating system.
@@ -1354,7 +1503,7 @@ class _Misc:
         argument is only available in Robot Framework 2.1.1 and newer.
 
         1) If `time` is a floating point number, it is interpreted as
-           seconds since the epoch. This documentation is written about 
+           seconds since the epoch. This documentation is written about
            1177654467 seconds after the epoch.
 
         2) If `time` is a valid timestamp, that time will be used. Valid
@@ -1670,6 +1819,7 @@ def register_run_keyword(library, keyword, args_to_process=None):
 for name in [ attr for attr in dir(_RunKeyword) if not attr.startswith('_') ]:
     register_run_keyword('BuiltIn', getattr(_RunKeyword, name))
 for name in ['set_test_variable', 'set_suite_variable', 'set_global_variable',
-             'variable_should_exist', 'variable_should_not_exist', 'comment']:
+             'variable_should_exist', 'variable_should_not_exist', 'comment',
+             'get_variable_value']:
     register_run_keyword('BuiltIn', name, 0)
 del name, attr

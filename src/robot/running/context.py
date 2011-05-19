@@ -21,11 +21,21 @@ class ExecutionContext(object):
         self.namespace = namespace
         self.output = output
         self.dry_run = dry_run
+        self._in_teardown = 0
 
     @property
     def teardown(self):
+        if self._in_teardown:
+            return True
+        # TODO: tests and suites should also call start/end_teardown()
         test_or_suite = self.namespace.test or self.namespace.suite
         return test_or_suite.status != 'RUNNING'
+
+    def start_teardown(self):
+        self._in_teardown += 1
+
+    def end_teardown(self):
+        self._in_teardown -= 1
 
     def get_current_vars(self):
         return self.namespace.variables

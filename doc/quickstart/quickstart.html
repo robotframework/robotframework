@@ -3,7 +3,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<meta name="generator" content="Docutils 0.5: http://docutils.sourceforge.net/" />
+<meta name="generator" content="Docutils 0.7: http://docutils.sourceforge.net/" />
 <title>Robot Framework Quick Start Guide</title>
 <style type="text/css">
 
@@ -313,6 +313,8 @@ table.example caption, table.tsv-example caption, table.tabular caption {
     text-align: left;
     padding-bottom: 0.5em;
     font-style: italic;
+    font-size: 0.9em;
+    width: 100%;
 }
 table.example th, table.example td, table.tsv-example td {
     border: 1px solid #808080;
@@ -331,7 +333,7 @@ table.tabular th, table.tabular td {
     border: 1px solid black;
     padding: 0.1em 0.3em;
     height: 1.2em;
-    font-size: 0.9em;
+    font-size: 0.8em;
 }
 table.messages {
     border: 1px solid gray;
@@ -390,12 +392,26 @@ table.messages td.warn {
 
 /* Overridden and modified styles */
 
+cite {
+    font-size: 0.95em;
+}
 div.admonition, div.attention, div.caution, div.danger, div.error,
 div.hint, div.important, div.note, div.tip, div.warning {
-    border: 2px solid gray;
+    border: 0.1em solid gray;
+    margin: 1em 2em;
+    padding: 0.7em 1em;
+    font-size: 0.9em;
 }
 pre.literal-block, pre.doctest-block {
     background: #f4f4f4;
+}
+li, li p.first {
+    margin-top: 0.3em;
+    margin-bottom: 0.3em;
+}
+div.contents li {
+    margin-top: 0em;
+    margin-bottom: 0em;
 }
 
 
@@ -490,56 +506,56 @@ Processed by unicode2rstsubs.py, part of Docutils:
 - path   file names and paths
 - misc   everything else (synonym to ``text``) -->
 <div class="line-block">
-<div class="line">Copyright © Nokia Siemens Networks 2008-2009</div>
+<div class="line">Copyright © Nokia Siemens Networks 2008-2011</div>
 <div class="line">Licensed under the <a class="reference external" href="http://creativecommons.org/licenses/by/3.0/">Creative Commons Attribution 3.0 Unported</a> license</div>
 </div>
 <div class="contents topic" id="table-of-contents">
 <p class="topic-title first">Table of Contents</p>
 <ul class="simple">
-<li><a class="reference internal" href="#introduction" id="id8">Introduction</a><ul>
-<li><a class="reference internal" href="#overview" id="id9">Overview</a></li>
-<li><a class="reference internal" href="#installation" id="id10">Installation</a></li>
-<li><a class="reference internal" href="#running-this-demo" id="id11">Running this demo</a></li>
-<li><a class="reference internal" href="#introducing-the-sample-application" id="id12">Introducing the sample application</a></li>
+<li><a class="reference internal" href="#introduction" id="id7">Introduction</a><ul>
+<li><a class="reference internal" href="#overview" id="id8">Overview</a></li>
+<li><a class="reference internal" href="#installation" id="id9">Installation</a></li>
+<li><a class="reference internal" href="#running-this-demo" id="id10">Running this demo</a></li>
+<li><a class="reference internal" href="#introducing-the-sample-application" id="id11">Introducing the sample application</a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#test-cases" id="id13">Test cases</a><ul>
-<li><a class="reference internal" href="#first-test-cases" id="id14">First test cases</a></li>
-<li><a class="reference internal" href="#higher-level-test-cases" id="id15">Higher-level test cases</a></li>
-<li><a class="reference internal" href="#data-driven-test-cases" id="id16">Data-driven test cases</a></li>
+<li><a class="reference internal" href="#test-cases" id="id12">Test cases</a><ul>
+<li><a class="reference internal" href="#first-test-cases" id="id13">First test cases</a></li>
+<li><a class="reference internal" href="#higher-level-test-cases" id="id14">Higher-level test cases</a></li>
+<li><a class="reference internal" href="#data-driven-test-cases" id="id15">Data-driven test cases</a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#keywords" id="id17">Keywords</a><ul>
-<li><a class="reference internal" href="#built-in-keywords" id="id18">Built-in keywords</a></li>
-<li><a class="reference internal" href="#library-keywords" id="id19">Library keywords</a></li>
-<li><a class="reference internal" href="#user-defined-keywords" id="id20">User-defined keywords</a></li>
+<li><a class="reference internal" href="#keywords" id="id16">Keywords</a><ul>
+<li><a class="reference internal" href="#built-in-keywords" id="id17">Built-in keywords</a></li>
+<li><a class="reference internal" href="#library-keywords" id="id18">Library keywords</a></li>
+<li><a class="reference internal" href="#user-defined-keywords" id="id19">User-defined keywords</a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#variables" id="id21">Variables</a><ul>
-<li><a class="reference internal" href="#defining-variables" id="id22">Defining Variables</a></li>
-<li><a class="reference internal" href="#using-variables" id="id23">Using variables</a></li>
+<li><a class="reference internal" href="#variables" id="id20">Variables</a><ul>
+<li><a class="reference internal" href="#defining-variables" id="id21">Defining Variables</a></li>
+<li><a class="reference internal" href="#using-variables" id="id22">Using variables</a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#organizing-test-cases" id="id24">Organizing test cases</a><ul>
-<li><a class="reference internal" href="#test-suites" id="id25">Test suites</a></li>
-<li><a class="reference internal" href="#setup-and-teardown" id="id26">Setup and teardown</a></li>
-<li><a class="reference internal" href="#using-tags" id="id27">Using tags</a></li>
+<li><a class="reference internal" href="#organizing-test-cases" id="id23">Organizing test cases</a><ul>
+<li><a class="reference internal" href="#test-suites" id="id24">Test suites</a></li>
+<li><a class="reference internal" href="#setup-and-teardown" id="id25">Setup and teardown</a></li>
+<li><a class="reference internal" href="#using-tags" id="id26">Using tags</a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#creating-test-libraries" id="id28">Creating test libraries</a></li>
+<li><a class="reference internal" href="#creating-test-libraries" id="id27">Creating test libraries</a></li>
 </ul>
 </div>
 <div class="section" id="introduction">
-<h1><a class="toc-backref" href="#id8">Introduction</a></h1>
+<h1><a class="toc-backref" href="#id7">Introduction</a></h1>
 <div class="section" id="overview">
-<h2><a class="toc-backref" href="#id9">Overview</a></h2>
-<p>Robot Framework is a keyword-driven test automation framework.  Test
-cases live in HTML or TSV (tab-separated values) test files and make
-use of keywords implemented in test libraries to drive the software
-under test. Because Robot Framework is flexible and extensible, it is
-ideally suited to testing complex software with a variety of
-interfaces: user interfaces, command line, web services, proprietary
-programming interfaces, etc.</p>
+<h2><a class="toc-backref" href="#id8">Overview</a></h2>
+<p>Robot Framework is a generic keyword-driven test automation framework.
+Test cases live in HTML, plain text or TSV (tab-separated values) test
+files and make use of keywords implemented in test libraries to drive
+the software under test. Because Robot Framework is flexible and
+extensible, it is ideally suited to testing complex software with a
+variety of interfaces: user interfaces, command line, web services,
+proprietary programming interfaces, etc.</p>
 <p>Robot Framework is open source software and installation packages,
 source code and further documentation is available through
 <a class="reference external" href="http://robotframework.org">http://robotframework.org</a>. This guide is designed to introduce the
@@ -547,13 +563,14 @@ basic concepts of Robot Framework.  For a detailed technical
 description, please refer to <a class="reference external" href="http://code.google.com/p/robotframework/wiki/UserGuide">Robot Framework User Guide</a>.</p>
 </div>
 <div class="section" id="installation">
-<h2><a class="toc-backref" href="#id10">Installation</a></h2>
+<h2><a class="toc-backref" href="#id9">Installation</a></h2>
 <p>A precondition for installing Robot Framework is having <a class="reference external" href="http://python.org">Python</a> installed.
 In addition, to use test libraries written in Java, <a class="reference external" href="http://jython.org">Jython</a> must be
 installed. To use this Quick Start Guide, Python is enough.</p>
 <p>There are three different ways to install Robot Framework, of which
-the most suitable can be chosen. Detailed installation instructions
-can be found from the <a class="reference external" href="http://code.google.com/p/robotframework/wiki/Installation">project web pages</a>.</p>
+the most suitable can be chosen. Detailed <a class="reference external" href="http://code.google.com/p/robotframework/wiki/Installation">installation instructions</a>
+can be found from the project web pages and installation packages
+are available on the <a class="reference external" href="http://code.google.com/p/robotframework/downloads/list">download page</a>.</p>
 <ol class="arabic simple">
 <li>There is a binary installer for Windows platform. It is enough to
 double-click the installer and follow instructions.</li>
@@ -568,21 +585,24 @@ run <span class="path">robot_postinstall.py</span> script manually.</li>
 <p>After the framework is installed, it is useful to include the
 directory containing start-up scripts in <span class="var">PATH</span> environment
 variable. On UNIX-like systems this should actually happen
-automatically, but on Windows this must be done from <tt class="docutils literal"><span class="pre">Control</span> <span class="pre">Panel</span> <span class="pre">&gt;</span>
-<span class="pre">System</span> <span class="pre">&gt;</span> <span class="pre">Advanced</span> <span class="pre">&gt;</span> <span class="pre">Environment</span> <span class="pre">Variables</span></tt> by adding e.g.
+automatically, but on Windows this must be done from <tt class="docutils literal">Control Panel &gt;
+System &gt; Advanced &gt; Environment Variables</tt> by adding e.g.
 <span class="path">C:\Python25\Scripts</span> to <span class="var">PATH</span>.</p>
 <p>Successful installation can be verified with command <span class="cli">pybot
 --version</span> which should output something like:</p>
 <pre class="literal-block">
 $ pybot --version
-Robot Framework 2.0.3 (Python 2.5.2 on linux2)
+Robot Framework 2.5.7 (Python 2.6.6 on linux2)
 </pre>
 </div>
 <div class="section" id="running-this-demo">
-<h2><a class="toc-backref" href="#id11">Running this demo</a></h2>
-<p>This Quick Start Guide also acts as an executable demo.  To run it,
-open a command shell, cd to the directory where this file is, and type the
-following command at the command line:</p>
+<h2><a class="toc-backref" href="#id10">Running this demo</a></h2>
+<p>This Quick Start Guide also acts as an executable demo. If you are
+reading this guide online, you need to first download the
+<span class="path">robotframework-quickstart-&lt;date&gt;.zip</span> file from the <a class="reference external" href="http://code.google.com/p/robotframework/downloads/list">download
+page</a> and extract it somewhere. To run the demo, open a command
+prompt, go to the directory where this file (<span class="path">quickstart.html</span>)
+is located, and then type the following command:</p>
 <pre class="literal-block">
 pybot quickstart.html
 </pre>
@@ -595,8 +615,10 @@ pybot quickstart.html
 <dt><span class="path">output.xml</span></dt>
 <dd>the test results in a portable XML format for integration with other tools</dd>
 </dl>
-<p>Open <a class="reference external" href="report.html">report.html</a> (the link works only after this guide has been executed) in your browser, then click on the links to explore
-the results. The <span class="path">report.html</span> file links to the <span class="path">log.html</span> file.</p>
+<p>Open <a class="reference external" href="report.html">report.html</a> (the link works only after this guide has been
+executed) in your browser, then click on the links to explore the
+results. The <span class="path">report.html</span> file links to the <span class="path">log.html</span>
+file.</p>
 <p>There are also a number of command line options that can be used to
 control the test execution and generated outputs. Complete list can be
 viewed by issuing <span class="cli">pybot --help</span>. For example the following
@@ -611,7 +633,7 @@ pybot --log mylog.html --name My_Fine_Tests quickstart.html
 </div>
 </div>
 <div class="section" id="introducing-the-sample-application">
-<h2><a class="toc-backref" href="#id12">Introducing the sample application</a></h2>
+<h2><a class="toc-backref" href="#id11">Introducing the sample application</a></h2>
 <p>The sample application for this guide is a variation on a classic
 login example: it is a command-line based authentication server written
 in Python. At the moment, the sample application allows a user to do
@@ -668,9 +690,9 @@ directory.</p>
 </div>
 </div>
 <div class="section" id="test-cases">
-<h1><a class="toc-backref" href="#id13">Test cases</a></h1>
+<h1><a class="toc-backref" href="#id12">Test cases</a></h1>
 <div class="section" id="first-test-cases">
-<h2><a class="toc-backref" href="#id14">First test cases</a></h2>
+<h2><a class="toc-backref" href="#id13">First test cases</a></h2>
 <p>Robot Framework test cases are created using a simple tabular syntax. For example the following table has two tests:</p>
 <blockquote>
 <ul class="simple">
@@ -706,12 +728,12 @@ directory.</p>
 <tr><td></td>
 <td>Status Should Be</td>
 <td>Logged In</td>
-<td></td>
+<td>&nbsp;</td>
 </tr>
 <tr><td></td>
-<td></td>
-<td></td>
-<td></td>
+<td>&nbsp;</td>
+<td>&nbsp;</td>
+<td>&nbsp;</td>
 </tr>
 <tr><td>User cannot log in with bad password</td>
 <td>Create Valid User</td>
@@ -726,7 +748,7 @@ directory.</p>
 <tr><td></td>
 <td>Status Should Be</td>
 <td>Access Denied</td>
-<td></td>
+<td>&nbsp;</td>
 </tr>
 </tbody>
 </table>
@@ -738,7 +760,7 @@ cases are constructed from keywords (normally in the second column) and
 their possible arguments.</p>
 </div>
 <div class="section" id="higher-level-test-cases">
-<h2><a class="toc-backref" href="#id15">Higher-level test cases</a></h2>
+<h2><a class="toc-backref" href="#id14">Higher-level test cases</a></h2>
 <p>Test cases can also be created using only high-level keywords that
 take no arguments. This style allows using totally free text which is
 suitable for communication even with non-technical customers or
@@ -777,7 +799,7 @@ tests are written before implementing actual product features and they
 act also as requirements.</p>
 </div>
 <div class="section" id="data-driven-test-cases">
-<h2><a class="toc-backref" href="#id16">Data-driven test cases</a></h2>
+<h2><a class="toc-backref" href="#id15">Data-driven test cases</a></h2>
 <p>Quite often several test cases are otherwise similar but they have
 slightly different input or output data. In these situations
 <em>data-driven</em> test cases, like six tests below, allow varying the test
@@ -838,21 +860,21 @@ error messages are specified using <a class="reference internal" href="#variable
 </div>
 </div>
 <div class="section" id="keywords">
-<h1><a class="toc-backref" href="#id17">Keywords</a></h1>
+<h1><a class="toc-backref" href="#id16">Keywords</a></h1>
 <p>Test cases are created from keywords that can come from three sources:
 <a class="reference internal" href="#built-in-keywords">built-in keywords</a> are always available, <a class="reference internal" href="#library-keywords">library keywords</a> come
 from imported test libraries, and so called <a class="reference internal" href="#user-defined-keywords">user keywords</a> can be
 created using the same tabular syntax that is used for creating test
 cases.</p>
 <div class="section" id="built-in-keywords">
-<h2><a class="toc-backref" href="#id18">Built-in keywords</a></h2>
+<h2><a class="toc-backref" href="#id17">Built-in keywords</a></h2>
 <p>Some generally useful keywords such as <span class="name">Get Time</span> and
 <span class="name">Should Be Equal</span> are always available. Technically these
 keywords come from a test library called <a class="reference external" href="http://code.google.com/p/robotframework/wiki/BuiltInLibrary">BuiltIn</a> and you can
 see its documentation for a complete list of available keywords.</p>
 </div>
 <div class="section" id="library-keywords">
-<h2><a class="toc-backref" href="#id19">Library keywords</a></h2>
+<h2><a class="toc-backref" href="#id18">Library keywords</a></h2>
 <p>All lowest level keywords are defined in test libraries which are
 implemented using standard programming languages. Robot Framework
 comes with a <a class="reference external" href="http://code.google.com/p/robotframework/wiki/TestLibraries">handful of libraries</a> including an <a class="reference external" href="http://code.google.com/p/robotframework/wiki/OperatingSystemLibrary">OperatingSystem</a>
@@ -889,7 +911,7 @@ credentials</span>). Both of these libraries are imported in so called
 </table>
 </div>
 <div class="section" id="user-defined-keywords">
-<h2><a class="toc-backref" href="#id20">User-defined keywords</a></h2>
+<h2><a class="toc-backref" href="#id19">User-defined keywords</a></h2>
 <p>One of the most powerful features of Robot Framework is the ability to
 easily create new higher-level keywords from other keywords. The
 syntax for creating these so called <em>user-defined keywords</em>, or <em>user
@@ -914,12 +936,12 @@ test cases are created in the <em>keyword table</em> below.</p>
 <tr><td>Clear login database</td>
 <td>Remove file</td>
 <td>${DATABASE FILE}</td>
-<td></td>
+<td>&nbsp;</td>
 </tr>
 <tr><td></td>
-<td></td>
-<td></td>
-<td></td>
+<td>&nbsp;</td>
+<td>&nbsp;</td>
+<td>&nbsp;</td>
 </tr>
 <tr><td>Create valid user</td>
 <td>[Arguments]</td>
@@ -934,12 +956,12 @@ test cases are created in the <em>keyword table</em> below.</p>
 <tr><td></td>
 <td>Status should be</td>
 <td>SUCCESS</td>
-<td></td>
+<td>&nbsp;</td>
 </tr>
 <tr><td></td>
-<td></td>
-<td></td>
-<td></td>
+<td>&nbsp;</td>
+<td>&nbsp;</td>
+<td>&nbsp;</td>
 </tr>
 <tr><td>Creating user with invalid password should fail</td>
 <td>[Arguments]</td>
@@ -954,12 +976,12 @@ test cases are created in the <em>keyword table</em> below.</p>
 <tr><td></td>
 <td>Status should be</td>
 <td>Creating user failed: ${error}</td>
-<td></td>
+<td>&nbsp;</td>
 </tr>
 <tr><td></td>
-<td></td>
-<td></td>
-<td></td>
+<td>&nbsp;</td>
+<td>&nbsp;</td>
+<td>&nbsp;</td>
 </tr>
 <tr><td>Login</td>
 <td>[Arguments]</td>
@@ -974,17 +996,17 @@ test cases are created in the <em>keyword table</em> below.</p>
 <tr><td></td>
 <td>Status should be</td>
 <td>Logged In</td>
-<td></td>
+<td>&nbsp;</td>
 </tr>
 <tr><td></td>
-<td></td>
-<td></td>
-<td></td>
+<td>&nbsp;</td>
+<td>&nbsp;</td>
+<td>&nbsp;</td>
 </tr>
 <tr><td><em># Used by BDD test cases (this is a comment)</em></td>
-<td></td>
-<td></td>
-<td></td>
+<td>&nbsp;</td>
+<td>&nbsp;</td>
+<td>&nbsp;</td>
 </tr>
 <tr><td>Given a user has a valid account</td>
 <td>Create valid user</td>
@@ -999,12 +1021,12 @@ test cases are created in the <em>keyword table</em> below.</p>
 <tr><td></td>
 <td>...</td>
 <td>${NEW PASSWORD}</td>
-<td></td>
+<td>&nbsp;</td>
 </tr>
 <tr><td></td>
 <td>Status should be</td>
 <td>SUCCESS</td>
-<td></td>
+<td>&nbsp;</td>
 </tr>
 <tr><td>Then she can log in with the new password</td>
 <td>Login</td>
@@ -1019,7 +1041,7 @@ test cases are created in the <em>keyword table</em> below.</p>
 <tr><td></td>
 <td>Status should be</td>
 <td>Access Denied</td>
-<td></td>
+<td>&nbsp;</td>
 </tr>
 </tbody>
 </table>
@@ -1035,9 +1057,9 @@ different situations.</p>
 </div>
 </div>
 <div class="section" id="variables">
-<h1><a class="toc-backref" href="#id21">Variables</a></h1>
+<h1><a class="toc-backref" href="#id20">Variables</a></h1>
 <div class="section" id="defining-variables">
-<h2><a class="toc-backref" href="#id22">Defining Variables</a></h2>
+<h2><a class="toc-backref" href="#id21">Defining Variables</a></h2>
 <p>Variables are an integral part of Robot Framework. Usually any data used in
 tests that is subject to change is best defined as variables. Syntax for
 variable definition is quite simple, as seen in this table:</p>
@@ -1062,13 +1084,13 @@ variable definition is quite simple, as seen in this table:</p>
 <td>e0D3n4J</td>
 </tr>
 <tr><td></td>
-<td></td>
+<td>&nbsp;</td>
 </tr>
 <tr><td>${DATABASE FILE}</td>
 <td>${TEMPDIR}${/}robotframework-quickstart-db.txt</td>
 </tr>
 <tr><td></td>
-<td></td>
+<td>&nbsp;</td>
 </tr>
 <tr><td>${PWD INVALID LENGTH}</td>
 <td>Password must be 7-12 characters long</td>
@@ -1089,7 +1111,7 @@ variables that are always available. These variables include
 <span class="var">${TEMPDIR}</span> and <span class="var">${/}</span> which are used in the above table.</p>
 </div>
 <div class="section" id="using-variables">
-<h2><a class="toc-backref" href="#id23">Using variables</a></h2>
+<h2><a class="toc-backref" href="#id22">Using variables</a></h2>
 <p>Variables can be used in most places in the test data. They are most
 commonly used as arguments to keywords like the following test case
 demonstrates.  Return values from keywords can also be assigned to
@@ -1119,13 +1141,13 @@ values.</p>
 <td>[Tags]</td>
 <td>variables</td>
 <td>database</td>
-<td></td>
+<td>&nbsp;</td>
 </tr>
 <tr><td></td>
 <td>Create Valid User</td>
 <td>${USERNAME}</td>
 <td>${PASSWORD}</td>
-<td></td>
+<td>&nbsp;</td>
 </tr>
 <tr><td></td>
 <td>Database Should Contain</td>
@@ -1137,7 +1159,7 @@ values.</p>
 <td>Login</td>
 <td>${USERNAME}</td>
 <td>${PASSWORD}</td>
-<td></td>
+<td>&nbsp;</td>
 </tr>
 <tr><td></td>
 <td>Database Should Contain</td>
@@ -1174,22 +1196,22 @@ values.</p>
 <td>${database} =</td>
 <td>Get File</td>
 <td>${DATABASE FILE}</td>
-<td></td>
+<td>&nbsp;</td>
 </tr>
 <tr><td></td>
 <td>Should Contain</td>
 <td>${database}</td>
 <td>${username}\t${password}\t${status}</td>
-<td></td>
+<td>&nbsp;</td>
 </tr>
 </tbody>
 </table>
 </div>
 </div>
 <div class="section" id="organizing-test-cases">
-<h1><a class="toc-backref" href="#id24">Organizing test cases</a></h1>
+<h1><a class="toc-backref" href="#id23">Organizing test cases</a></h1>
 <div class="section" id="test-suites">
-<h2><a class="toc-backref" href="#id25">Test suites</a></h2>
+<h2><a class="toc-backref" href="#id24">Test suites</a></h2>
 <p>Collections of test cases are called test suites in Robot
 Framework. Every input file which contains test cases forms a test
 suite. When <a class="reference internal" href="#running-this-demo">running this demo</a>, you see test suite
@@ -1208,7 +1230,7 @@ pybot .
 </pre>
 </div>
 <div class="section" id="setup-and-teardown">
-<h2><a class="toc-backref" href="#id26">Setup and teardown</a></h2>
+<h2><a class="toc-backref" href="#id25">Setup and teardown</a></h2>
 <p>If you want a set of actions to occur before and after each test
 executes, use the <span class="name">Test Setup</span> and <span class="name">Test Teardown</span>
 settings like so:</p>
@@ -1227,7 +1249,7 @@ settings like so:</p>
 <td>Clear Login Database</td>
 </tr>
 <tr><td>Test Teardown</td>
-<td></td>
+<td>&nbsp;</td>
 </tr>
 </tbody>
 </table>
@@ -1236,7 +1258,7 @@ Teardown</span> settings to specify actions to be executed before and after
 an entire test suite executes.</p>
 </div>
 <div class="section" id="using-tags">
-<h2><a class="toc-backref" href="#id27">Using tags</a></h2>
+<h2><a class="toc-backref" href="#id26">Using tags</a></h2>
 <p>Robot Framework allows setting tags for test cases to give them free
 metadata.  Tags can be set for all test cases in a file with
 <span class="name">Default Tags</span> or <span class="name">Force Tags</span> settings like in the table
@@ -1257,7 +1279,7 @@ below. It is also possible to define tags for single test case like in
 <tbody valign="top">
 <tr><td>Force Tags</td>
 <td>quickstart</td>
-<td></td>
+<td>&nbsp;</td>
 </tr>
 <tr><td>Default Tags</td>
 <td>example</td>
@@ -1277,15 +1299,16 @@ pybot --exclude database quickstart.html
 </div>
 </div>
 <div class="section" id="creating-test-libraries">
-<h1><a class="toc-backref" href="#id28">Creating test libraries</a></h1>
+<h1><a class="toc-backref" href="#id27">Creating test libraries</a></h1>
 <p>Robot Framework offers a simple API for creating test libraries, both with
 Python and Java. The <a class="reference external" href="http://code.google.com/p/robotframework/wiki/UserGuide">user guide</a> contains detailed description with examples.</p>
 <p>Below is the source code of <span class="name">LoginLibrary</span> test library used in
 this guide. You can see, for example, how the keyword <span class="name">Create
 User</span> is mapped to actual implementation of method
 <span class="code">create_user</span>.</p>
-<div class="highlight"><pre><span class="k">import</span> <span class="nn">os</span>
-<span class="k">import</span> <span class="nn">sys</span>
+<div class="highlight"><pre><span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">import</span> <span class="nn">subprocess</span>
 
 
 <span class="k">class</span> <span class="nc">LoginLibrary</span><span class="p">:</span>
@@ -1310,10 +1333,12 @@ User</span> is mapped to actual implementation of method
                                   <span class="o">%</span> <span class="p">(</span><span class="n">expected_status</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_status</span><span class="p">))</span>
 
     <span class="k">def</span> <span class="nf">_run_command</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">command</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">):</span>
-        <span class="n">command</span> <span class="o">=</span> <span class="s">&#39;&quot;</span><span class="si">%s</span><span class="s">&quot; </span><span class="si">%s</span><span class="s"> </span><span class="si">%s</span><span class="s">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_sut_path</span><span class="p">,</span> <span class="n">command</span><span class="p">,</span> <span class="s">&#39; &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">args</span><span class="p">))</span>
-        <span class="n">process</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">popen</span><span class="p">(</span><span class="n">command</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_status</span> <span class="o">=</span> <span class="n">process</span><span class="o">.</span><span class="n">read</span><span class="p">()</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
-        <span class="n">process</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">sys</span><span class="o">.</span><span class="n">executable</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s">&quot;Could not find Jython installation&quot;</span><span class="p">)</span>
+        <span class="n">command</span> <span class="o">=</span> <span class="p">[</span><span class="n">sys</span><span class="o">.</span><span class="n">executable</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sut_path</span><span class="p">,</span> <span class="n">command</span><span class="p">]</span> <span class="o">+</span> <span class="nb">list</span><span class="p">(</span><span class="n">args</span><span class="p">)</span>
+        <span class="n">process</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">Popen</span><span class="p">(</span><span class="n">command</span><span class="p">,</span> <span class="n">stdout</span><span class="o">=</span><span class="n">subprocess</span><span class="o">.</span><span class="n">PIPE</span><span class="p">,</span>
+                                   <span class="n">stderr</span><span class="o">=</span><span class="n">subprocess</span><span class="o">.</span><span class="n">STDOUT</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_status</span> <span class="o">=</span> <span class="n">process</span><span class="o">.</span><span class="n">communicate</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
 </pre></div>
 <!-- Link targets: -->
 </div>
@@ -1321,7 +1346,7 @@ User</span> is mapped to actual implementation of method
 <div class="footer">
 <hr class="footer" />
 <p>Generated by <a class="reference external" href="http://docutils.sourceforge.net/rst.html">reStructuredText</a>. Syntax highlighting by <a class="reference external" href="http://pygments.org/">Pygments</a>.</p>
-<p>Generated on: 2009-08-11 11:05 UTC.
+<p>Generated on: 2011-05-16 13:51 UTC.
 </p>
 
 </div>

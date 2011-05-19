@@ -20,6 +20,17 @@ Keywords that would fail
     Should have correct number of keywords  ${tc}  3
     Should have correct number of keywords  ${tc.kws[1]}  2
 
+Test Setup and Teardown
+    ${tc}=  Check Test Case  ${TESTNAME}
+    Should have correct number of keywords  ${tc}  1
+    Should Be Equal  ${tc.setup.name}  BuiltIn.Log
+    Should Be Equal  ${tc.teardown.name}  Does not exist
+
+Keyword Teardown
+    ${tc}=  Check Test Case  ${TESTNAME}
+    Should have correct number of keywords  ${tc}  1
+    Should Be Equal  ${tc.kws[0].kws[1].name}  Does not exist
+
 For Loops
     ${tc}=  Check Test Case  ${TESTNAME}
     Should have correct number of keywords  ${tc}  3
@@ -39,7 +50,7 @@ Too few arguments for UK
 
 Too many arguments
     Check Test Case  ${TESTNAME}
-    
+
 Invalid syntax in UK
     Check Test Case  ${TESTNAME}
 

@@ -3,13 +3,13 @@ Creating user keywords
 
 Keyword tables are used to create new higher-level keywords by combining existing
 keywords together. These keywords are called *user keywords* to differentiate them
-from lowest level *library keywords* that are implemented in test libraries. The 
+from lowest level *library keywords* that are implemented in test libraries. The
 syntax for creating user keywords is very close to the
 syntax for creating test cases, which makes it easy to learn.
 
-.. contents:: 
+.. contents::
    :depth: 2
-   :local: 
+   :local:
 
 User keyword syntax
 ~~~~~~~~~~~~~~~~~~~
@@ -29,13 +29,13 @@ keyword return values, they are in the subsequent columns.
 .. table:: User keyword examples
    :class: example
 
-   =======================  =================  =======================  =========== 
-           Keyword               Action               Argument           Argument 
    =======================  =================  =======================  ===========
-   Open Login Page          Open Browser       \http://host/login.html  
-   \                        Title Should Be    Login Page               
+           Keyword               Action               Argument           Argument
+   =======================  =================  =======================  ===========
+   Open Login Page          Open Browser       \http://host/login.html
+   \                        Title Should Be    Login Page
    \
-   Title Should Start With  [Arguments]        ${expected}              
+   Title Should Start With  [Arguments]        ${expected}
    \                        ${title} =         Get Title
    \                        Should Start With  ${title}                 ${expected}
    =======================  =================  =======================  ===========
@@ -68,6 +68,9 @@ this section.
 
 `[Return]`:opt:
    Specifies `user keyword return values`_.
+
+`[Teardown]`:opt:
+   Specify `keyword teardown`_. Available from Robot Framework 2.6 onwards.
 
 `[Timeout]`:opt:
    Sets the possible `user keyword timeout`_. Timeouts_ are discussed
@@ -113,7 +116,7 @@ Positional arguments
 ''''''''''''''''''''
 
 The simplest way to specify arguments (apart from not having them at all)
-is using only positional arguments. In most cases, this is all 
+is using only positional arguments. In most cases, this is all
 that is needed.
 
 The syntax is such that first the :opt:`[Arguments]` setting is
@@ -132,13 +135,13 @@ to use lower-case letters in variable names, either as
    ===============  ===========  ========================  ==========  ==========
        Keyword        Action             Argument           Argument    Argument
    ===============  ===========  ========================  ==========  ==========
-   One Argument     [Arguments]  ${arg_name}             
+   One Argument     [Arguments]  ${arg_name}
    \                Log          Got argument ${arg_name}
    \
    Three Arguments  [Arguments]  ${arg1}                   ${arg2}     ${arg3}
-   \                Log          1st argument: ${arg1}   
-   \                Log          2nd argument: ${arg2}   
-   \                Log          3rd argument: ${arg3}   
+   \                Log          1st argument: ${arg1}
+   \                Log          2nd argument: ${arg2}
+   \                Log          3rd argument: ${arg3}
    ===============  ===========  ========================  ==========  ==========
 
 Default values
@@ -165,14 +168,14 @@ positional arguments.
    =================================  ===============  =====================  ===================
                  Keyword                   Action             Argument              Argument
    =================================  ===============  =====================  ===================
-   One Argument With Default Value    [Arguments]      ${arg}=default value 
+   One Argument With Default Value    [Arguments]      ${arg}=default value
    \                                  [Documentation]  This keyword takes     0-1 arguments
-   \                                  Log              Got argument ${arg}  
+   \                                  Log              Got argument ${arg}
    \
    Two Arguments With Defaults        [Arguments]      ${arg1}=default 1      ${arg2}=default 2
    \                                  [Documentation]  This keyword takes     0-2 arguments
-   \                                  Log              1st argument ${arg1} 
-   \                                  Log              2nd argument ${arg2} 
+   \                                  Log              1st argument ${arg1}
+   \                                  Log              2nd argument ${arg2}
    \
    One Required And One With Default  [Arguments]      ${required}            ${optional}=default
    \                                  [Documentation]  This keyword takes     1-2 arguments
@@ -203,13 +206,13 @@ function default values.
 Variable number of arguments
 ''''''''''''''''''''''''''''
 
-Sometimes even default values are not enough and there is a need 
-for a keyword accepting any number of arguments. User keywords 
-support also this. All that is needed is having `list variable`__ 
-such as :var:`@{varargs}` as the last argument in the keyword signature. 
-This syntax can be combined with the previously described positional 
-arguments and default values, and at the end the list variable gets all 
-the leftover arguments that do not match other arguments. The list 
+Sometimes even default values are not enough and there is a need
+for a keyword accepting any number of arguments. User keywords
+support also this. All that is needed is having `list variable`__
+such as :var:`@{varargs}` as the last argument in the keyword signature.
+This syntax can be combined with the previously described positional
+arguments and default values, and at the end the list variable gets all
+the leftover arguments that do not match other arguments. The list
 variable can thus have any number of items, even zero.
 
 __ `list variables`_
@@ -220,18 +223,18 @@ __ `list variables`_
    ===========================  ===========  ================  ==========  ==========
               Keyword             Action         Argument       Argument    Argument
    ===========================  ===========  ================  ==========  ==========
-   Any Number Of Arguments      [Arguments]  @{varargs}      
-   \                            Log Many     @{varargs}      
+   Any Number Of Arguments      [Arguments]  @{varargs}
+   \                            Log Many     @{varargs}
    \
-   One Or More Arguments        [Arguments]  ${required}       @{rest}     
-   \                            Log Many     ${required}       @{rest}     
+   One Or More Arguments        [Arguments]  ${required}       @{rest}
+   \                            Log Many     ${required}       @{rest}
    \
    Required, Default, Varargs   [Arguments]  ${req}            ${opt}=42   @{others}
    \                            Log          Required: ${req}
    \                            Log          Optional: ${opt}
-   \                            Log          Others:         
+   \                            Log          Others:
    \                            : FOR        ${item}           IN          @{others}
-   \                                         Log               ${item}     
+   \                                         Log               ${item}
    ===========================  ===========  ================  ==========  ==========
 
 Notice that if the last keyword above is used with more than one
@@ -290,7 +293,7 @@ example the keyword in the example above could be used like
 
 Embedded arguments do not support default values or variable number of
 arguments like traditional arguments do. Using variables when
-calling these keywords is possible but that can reduce readability. 
+calling these keywords is possible but that can reduce readability.
 Notice also that embedded arguments only work with user keywords.
 
 Embedded arguments matching too much
@@ -337,7 +340,7 @@ of the keyword definitions`__.
    \                             Then result should be -1
    ============================  ===============================
 
-.. table:: 
+.. table::
    :class: example
 
    ======================================  ===============  ============  ============
@@ -356,7 +359,7 @@ of the keyword definitions`__.
 
 .. note:: Embedded arguments feature in Robot Framework is inspired by
           how `step definitions` are created in a popular BDD tool
-          called Cucumber__. 
+          called Cucumber__.
 
 __ `Ignoring Given/When/Then/And prefixes`_
 __ http://cukes.info
@@ -386,11 +389,11 @@ specifying those values in different cells after the
    ================  ============  ===================  ===================  ===================
        Test Case        Action         Argument              Argument            Argument
    ================  ============  ===================  ===================  ===================
-   One Return Value  ${ret} =      Return One Value     argument  
-   \                 Some Keyword  ${ret}               
+   One Return Value  ${ret} =      Return One Value     argument
+   \                 Some Keyword  ${ret}
    \
    Multiple Values   ${a}          ${b}                 ${c} =               Return Three Values
-   \                 @{list} =     Return Three Values  
+   \                 @{list} =     Return Three Values
    \                 ${scalar}     @{rest} =            Return Three Values
    ================  ============  ===================  ===================  ===================
 
@@ -400,10 +403,41 @@ specifying those values in different cells after the
    ===================  ============  ==============  ===========  ==========
          Keyword           Action        Argument       Argument    Argument
    ===================  ============  ==============  ===========  ==========
-   Return One Value     [Arguments]   ${arg}         
-   \                    Do Something  ${arg}         
-   \                    ${value} =    Get Some Value 
-   \                    [Return]      ${value}       
-   \                    
+   Return One Value     [Arguments]   ${arg}
+   \                    Do Something  ${arg}
+   \                    ${value} =    Get Some Value
+   \                    [Return]      ${value}
+   \
    Return Three Values  [Return]      foo             bar          zap
    ===================  ============  ==============  ===========  ==========
+
+Keyword teardown
+~~~~~~~~~~~~~~~~
+
+Starting from Robot Framework 2.6, also user keywords may have a teardown.
+It is defined using :opt:`[Teardown]` setting.
+
+Keyword teardown works much in the same way as a `test case
+teardown`__.  Most importantly, the teardown is always a single
+keyword, although it can be another user keyword, and it gets executed
+also when the user keyword fails. In addition, all steps of the
+teardown are executed even if one of them fails. However, a failure in
+keyword teardown will fail the test case and subsequent steps in the
+test are not run. The name of the keyword to be executed as a teardown
+can also be a variable.
+
+.. table::
+   :class: example
+
+   ==================  ===============  ===================  ==================
+     User Keyword           Action            Argument            Argument
+   ==================  ===============  ===================  ==================
+   With Teardown       Do Something
+   \                   [Teardown]       Log                  keyword teardown
+   \
+   Using variables     [Documentation]  Teardown given as    variable
+   \                   Do Something
+   \                   [Teardown]       ${TEARDOWN}
+   ==================  ===============  ===================  ==================
+
+__ `test setup and teardown`_

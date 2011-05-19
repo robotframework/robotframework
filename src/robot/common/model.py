@@ -219,7 +219,7 @@ class BaseTestSuite(_TestAndSuiteHelper):
                         if suite._filter_by_names(suites, tests) ]
         if not suites:
             self.tests = [ test for test in self.tests if tests == [] or
-                           any(utils.matches_any(name, tests, ignore=['_']) 
+                           any(utils.matches_any(name, tests, ignore=['_'])
                                for name in [test.name, test.get_long_name()])]
         else:
             self.tests = []
@@ -305,6 +305,7 @@ class BaseTestSuite(_TestAndSuiteHelper):
         self.set_doc(settings['Doc'])
         self.set_metadata(settings['Metadata'])
         self.set_critical_tags(settings['Critical'], settings['NonCritical'])
+        self._no_status_rc = settings['NoStatusRC']
         try:
             for runmode in settings['RunMode']:
                 self.set_runmode(runmode)
@@ -328,6 +329,11 @@ class BaseTestSuite(_TestAndSuiteHelper):
         for test in self.tests:
             test.serialize(serializer)
         serializer.end_suite(self)
+
+    @property
+    def return_code(self):
+        return min(self.critical_stats.failed, 250) \
+                if not self._no_status_rc else 0
 
 
 class BaseTestCase(_TestAndSuiteHelper):

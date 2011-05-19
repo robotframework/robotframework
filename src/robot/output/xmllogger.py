@@ -88,14 +88,14 @@ class XmlLogger:
         self._writer.end('kw')
 
     def start_test(self, test):
-        attrs = {'name': test.name, 'critical': test.critical,
-                 'timeout': str(test.timeout)}
+        attrs = {'name': test.name, 'timeout': str(test.timeout)}
         self._writer.start('test', attrs)
         self._writer.element('doc', test.doc)
 
     def end_test(self, test):
         self._write_list('tag', test.tags, 'tags')
-        self._write_status(test, test.message)
+        self._write_status(test, test.message,
+                           extra_attrs={'critical': test.critical})
         self._writer.end('test')
 
     def start_suite(self, suite):
@@ -179,16 +179,18 @@ class XmlLogger:
         self._stat(stat, stat.get_long_name(self._split_level))
 
     def tag_stat(self, stat):
-        self._stat(stat, attrs={'info': self._get_tag_stat_info(stat)})
+        self._stat(stat, attrs={'info': self._get_tag_stat_info(stat),
+                                'links': self._get_tag_links(stat)})
+
+    def _get_tag_links(self, stat):
+        return ':::'.join(':'.join([title, url]) for url, title in stat.links)
 
     def _stat(self, stat, name=None, attrs=None):
         name = name or stat.name
         attrs = attrs or {}
         attrs['pass'] = str(stat.passed)
         attrs['fail'] = str(stat.failed)
-        doc = stat.get_doc(self._split_level)
-        if doc:
-            attrs['doc'] = doc
+        attrs['doc'] = stat.get_doc(self._split_level)
         self._writer.element('stat', name, attrs)
 
     def _get_tag_stat_info(self, stat):
@@ -214,7 +216,9 @@ class XmlLogger:
         if container is not None:
             self._writer.end(container)
 
-    def _write_status(self, item, message=None):
-        self._writer.element('status', message, {'status': item.status,
-                                                 'starttime': item.starttime,
-                                                 'endtime': item.endtime})
+    def _write_status(self, item, message=None, extra_attrs=None):
+        attrs = {'status': item.status, 'starttime': item.starttime,
+                 'endtime': item.endtime}
+        if extra_attrs:
+            attrs.update(extra_attrs)
+        self._writer.element('status', message, attrs)

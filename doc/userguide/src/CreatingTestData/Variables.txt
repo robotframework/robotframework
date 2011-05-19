@@ -1,7 +1,7 @@
 Variables
 ---------
 
-.. contents:: 
+.. contents::
    :depth: 2
    :local:
 
@@ -118,7 +118,7 @@ be any object. When a scalar variable is used in a test data cell with
 anything else (constant strings or other variables), its value is
 first converted into a Unicode string and then catenated to whatever is in
 that cell. Converting the value into a string means that the object's
-method :code:`__unicode__` (in Python, with :code:`__str__` as a fallback) 
+method :code:`__unicode__` (in Python, with :code:`__str__` as a fallback)
 or :code:`toString` (in Java) is called.
 
 .. note:: Variable values are used as-is without conversions also when
@@ -145,7 +145,7 @@ With these two variables set, we then have the following test data:
 .. table:: Scalar variables with objects as values
    :class: example
 
-   ===========  ========  =================  ==========   
+   ===========  ========  =================  ==========
     Test Case    Action        Argument       Argument
    ===========  ========  =================  ==========
    Objects      KW 1      ${STR}             \
@@ -162,12 +162,12 @@ the arguments as explained below:
 - :name:`KW 3` gets a string :code:`I said "Hello, world!"`
 - :name:`KW 4` gets a string :code:`You said "Hi, tellus!"`
 
-.. Note:: Converting variables to Unicode obviously fails if the variable 
-          cannot be represented as Unicode. This can happen, for example, 
+.. Note:: Converting variables to Unicode obviously fails if the variable
+          cannot be represented as Unicode. This can happen, for example,
           if you try to use byte sequences as arguments to keywords so that
-          you catenate the values together like :code:`${byte1}${byte2}`. 
+          you catenate the values together like :code:`${byte1}${byte2}`.
           A workaround is creating a variable that contains the whole value
-          and using it alone in the cell (e.g. :code:`${bytes}`) because then 
+          and using it alone in the cell (e.g. :code:`${bytes}`) because then
           the value is used as-is.
 
 List variables
@@ -181,10 +181,10 @@ to assign a name for a larger data set. While list variables normally
 contain only strings, other content is also possible.
 
 When you use a list variable in test data, then the elements of the list
-are inserted as new cells in the test data. Thus, if the list variable 
-contains two elements, the cell containing the list variable is turned 
-into two cells with the content of the list variable. Note that cells 
-with list variables should not contain other content. The list variable 
+are inserted as new cells in the test data. Thus, if the list variable
+contains two elements, the cell containing the list variable is turned
+into two cells with the content of the list variable. Note that cells
+with list variables should not contain other content. The list variable
 syntax, :var:`@{NAME}`, is borrowed from Perl.
 
 Assuming that the list variable :var:`@{USER}` is set to the value
@@ -255,8 +255,8 @@ List variables can be used only with some of the settings__. They can
 be used in arguments to imported libraries and variable files, but
 library and variable file names themselves cannot be list
 variables. Also with setups and teardowns list variable can not be used
-as the name of the keyword, but can be used in arguments. With tag related 
-settings they can be used freely. Using scalar variables is possible in 
+as the name of the keyword, but can be used in arguments. With tag related
+settings they can be used freely. Using scalar variables is possible in
 those places where list variables are not supported.
 
 .. table:: Using list variables with settings
@@ -281,7 +281,7 @@ Environment variables
 
 Robot Framework allows using environment variables in the test
 data using the syntax :var:`%{ENV_VAR_NAME}`. They are limited to string
-values. 
+values.
 
 Environment variables set in the operating system before the test execution are
 available during it, and it is possible to create new ones with the keyword
@@ -298,9 +298,28 @@ not effective after the test execution.
    =============  ========  =====================  ==========
      Test Case     Action          Argument         Argument
    =============  ========  =====================  ==========
-   Env Variables  Log       Current user: %{USER}  \
-   \              Run       %{JAVA_HOME}${/}javac  \
+   Env Variables  Log       Current user: %{USER}
+   \              Run       %{JAVA_HOME}${/}javac
    =============  ========  =====================  ==========
+
+Java system properties
+''''''''''''''''''''''
+
+When running tests with Jython, it is possible to access `Java system properties`__
+using same syntax as `environment variables`_. If an environment variable and a
+system property with same name exist, the environment variable will be used.
+Support for accessing Java system properties was added in Robot Framework 2.6.
+
+.. table:: Using Java system properties
+   :class: example
+
+   =================  ========  ========================================  ==========
+     Test Case         Action          Argument                            Argument
+   =================  ========  ========================================  ==========
+   System Properties   Log      %{user.name} running tests on %{os.name}
+   =================  ========  ========================================  ==========
+
+__ http://download.oracle.com/javase/tutorial/essential/environment/sysprop.html
 
 Creating variables
 ~~~~~~~~~~~~~~~~~~
@@ -405,7 +424,7 @@ set by using this option several times. Only scalar variables can be
 set using this syntax and they can only get string values. Many
 special characters are difficult to represent in the
 command line, but they can be escaped__ with the :opt:`--escape`
-option. 
+option.
 
 __ `Escaping complicated characters`_
 
@@ -592,12 +611,28 @@ string that just looks like a number, as an argument.
    Example 2    Do X      ${3.14}      ${-1e-4}    # Do X gets floating point numbers 3.14 and -0.0001
    ===========  ========  ===========  ==========  ===================================================
 
+Starting from Robot Framework 2.6, it is possible to create integers
+also from binary, octal, and hexadecimal values using :var:`0b`, :var:`0o`
+and :var:`0x` prefixes, respectively. The syntax is case insetive.
+
+.. table:: Using integer variables with base
+   :class: example
+
+   ===========  ===============  ==========  ==========
+    Test Case        Action       Argument    Argument
+   ===========  ===============  ==========  ==========
+   Example      Should Be Equal  ${0b1011}   ${11}
+   \            Should Be Equal  ${0o10}     ${8}
+   \            Should Be Equal  ${0xff}     ${255}
+   \            Should Be Equal  ${0B1010}   ${0XA}
+   ===========  ===============  ==========  ==========
+
 Boolean and None/null variables
 '''''''''''''''''''''''''''''''
 
 Also Boolean values and Python :code:`None` and Java :code:`null` can
 be created using the variable syntax similarly as numbers.
- 
+
 .. table:: Using Boolean and None/null variables
    :class: example
 
@@ -635,7 +670,7 @@ __ Escaping_
    :class: example
 
    =============  =================  ================  ================================
-     Test Case         Action            Argument                Argument 
+     Test Case         Action            Argument                Argument
    =============  =================  ================  ================================
    One Space      Should Be Equal    ${SPACE}          \\ \\
    Four Spaces    Should Be Equal    ${SPACE * 4}      \\ \\ \\ \\ \\
@@ -650,7 +685,7 @@ Automatic variables
 
 Some automatic variables can also be used in the test data. These
 variables can have different values during the test execution and some
-of them are not even available all the time. 
+of them are not even available all the time.
 
 .. table:: Available automatic variables
    :class: tabular
@@ -662,7 +697,7 @@ of them are not even available all the time.
    +-----------------------+-------------------------------------------------------+----------------+
    | @{TEST TAGS}          | Contains the tags of the current test case in         | Test case      |
    |                       | alphabetical order.                                   |                |
-   +-----------------------+-------------------------------------------------------+----------------+    
+   +-----------------------+-------------------------------------------------------+----------------+
    | ${TEST STATUS}        | The status of the current test case, either PASS or   | Test teardown  |
    |                       | FAIL.                                                 |                |
    +-----------------------+-------------------------------------------------------+----------------+
@@ -792,7 +827,7 @@ global, test suite, test case or user keyword scope.
 
    Global variables are available everywhere in the test data. These
    variables are normally `set from the command line`__ with the
-   :opt:`--variable` and :opt:`--variablefile` options, but it is also 
+   :opt:`--variable` and :opt:`--variablefile` options, but it is also
    possible to create new global variables or change the existing ones
    with the `BuiltIn keyword`_ :name:`Set Global Variable` anywhere in
    the test data. Additionally also `built-in variables`_ are global.
@@ -825,7 +860,7 @@ global, test suite, test case or user keyword scope.
 
 *User keyword scope*
 
-   User keywords get their own variables from `arguments passed to them`__ 
+   User keywords get their own variables from `arguments passed to them`__
    and return values from the keywords they use. Also these variables
    are local and should use lower-case letters.
 
@@ -842,7 +877,7 @@ Extended variable syntax can be used with objects set into scalar
 variables. It allows accessing the attributes of the object (for example,
 :var:`${obj.name}` or :var:`${obj.some_attr}`), and even calling
 its methods (for example, :var:`${obj.get_name()}` or
-:var:`${obj.getSomething('arg')}`). 
+:var:`${obj.getSomething('arg')}`).
 
 Extended variable syntax is a powerful feature, but it should
 be used with care. Accessing attributes is normally not a problem, on
@@ -872,7 +907,7 @@ and test case:
    OBJECT = MyObject('Robot')
    DICTIONARY = { 1: 'one', 2: 'two', 3: 'three'}
 
-.. table:: 
+.. table::
    :class: example
 
    ===========  ========  ======================  ==========
@@ -882,7 +917,7 @@ and test case:
    \            KW 2      ${OBJECT.greet('Fit')}  \
    \            KW 3      ${DICTIONARY[2]}        \
    ===========  ========  ======================  ==========
-     
+
 When this test data is executed, the keywords get the arguments as
 explained below:
 
@@ -950,7 +985,7 @@ methods that can be used with the extended variable syntax either
 explicitly or implicitly. Sometimes this can be really useful and
 reduce the need for setting temporary variables, but it is also easy
 to overuse it and create really cryptic test data. Following examples
-show few pretty good usages. 
+show few pretty good usages.
 
 .. table:: Using methods of strings and numbers
    :class: example
@@ -1001,7 +1036,7 @@ or :var:`${JANE_HOME}`, depending on if :name:`Get Name` returns
 
 .. table::
    :class: example
- 
+
    ===========  ============  ========================  ==========
     Test Case      Action             Argument           Argument
    ===========  ============  ========================  ==========

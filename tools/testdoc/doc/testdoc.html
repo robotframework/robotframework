@@ -3,7 +3,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<meta name="generator" content="Docutils 0.5: http://docutils.sourceforge.net/" />
+<meta name="generator" content="Docutils 0.6: http://docutils.sourceforge.net/" />
 <title>testdoc.py</title>
 <style type="text/css">
 
@@ -313,13 +313,14 @@ table.example caption, table.tsv-example caption, table.tabular caption {
     text-align: left;
     padding-bottom: 0.5em;
     font-style: italic;
-    margin: 0.5em 2em;
+    font-size: 0.9em;
+    width: 100%;
 }
 table.example th, table.example td, table.tsv-example td {
     border: 1px solid #808080;
     font-family: arial,helvetica,sans-serif;
     height: 1.2em;
-    font-size: 0.85em;
+    font-size: 0.8em;
 }
 table.example th {
     padding: 0.1em 1em;
@@ -332,7 +333,7 @@ table.tabular th, table.tabular td {
     border: 1px solid black;
     padding: 0.1em 0.3em;
     height: 1.2em;
-    font-size: 0.9em;
+    font-size: 0.8em;
 }
 table.messages {
     border: 1px solid gray;
@@ -391,12 +392,26 @@ table.messages td.warn {
 
 /* Overridden and modified styles */
 
+cite {
+    font-size: 0.95em;
+}
 div.admonition, div.attention, div.caution, div.danger, div.error,
 div.hint, div.important, div.note, div.tip, div.warning {
-    border: 2px solid gray;
+    border: 0.1em solid gray;
+    margin: 1em 2em;
+    padding: 0.7em 1em;
+    font-size: 0.9em;
 }
 pre.literal-block, pre.doctest-block {
     background: #f4f4f4;
+}
+li, li p.first {
+    margin-top: 0.3em;
+    margin-bottom: 0.3em;
+}
+div.contents li {
+    margin-top: 0em;
+    margin-bottom: 0em;
 }
 
 
@@ -589,7 +604,7 @@ $ testdoc.py --name smoke_test_plan --include smoke path/to/my_tests/
 </div>
 <div class="footer">
 <hr class="footer" />
-Generated on: 2008-12-19 20:27 UTC.
+Generated on: 2011-04-21 07:29 UTC.
 
 </div>
 </body>

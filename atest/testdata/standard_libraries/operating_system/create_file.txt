@@ -29,9 +29,6 @@ Create File Fails If Encoding Is Incorrect
     [Documentation]  FAIL REGEXP: Unicode(Encode|)Error: .*
     Create File  ${TESTFILE}  Hyvää yötä!  ASCII
 
-"Create File With Encoding" Keyword Is Deprecated
-    Create File With Encoding  ${TESTFILE}  whatever  ASCII
-
 Append To File
     Append To File  ${TESTFILE}  First line\n
     Append To File  ${TESTFILE}  Second line\n  ASCII

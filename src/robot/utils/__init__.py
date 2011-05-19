@@ -15,7 +15,7 @@
 from argumentparser import ArgumentParser
 from connectioncache import ConnectionCache
 from domwrapper import DomWrapper
-from encoding import decode_output, encode_output
+from encoding import decode_output, encode_output, decode_from_file_system
 from error import (get_error_message, get_error_details, ErrorDetails,
                    RERAISED_EXCEPTIONS)
 from escaping import escape, unescape
@@ -24,8 +24,9 @@ from htmlwriter import HtmlWriter
 from idgenerator import IdGenerator, FileNameGenerator
 from importing import simple_import, import_
 from match import eq, eq_any, matches, matches_any
-from misc import plural_or_not, get_link_path, printable_name, seq2str, seq2str2
-from normalizing import normalize, normalize_tags, normpath, NormalizedDict
+from misc import plural_or_not, printable_name, seq2str, seq2str2
+from normalizing import normalize, normalize_tags, NormalizedDict
+from robotpath import normpath, abspath, get_link_path
 from robottime import (get_timestamp, get_start_timestamp, format_time,
                        get_time, get_elapsed_time, elapsed_time_to_string,
                        timestr_to_secs, secs_to_timestr, secs_to_timestamp,

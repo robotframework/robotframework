@@ -35,6 +35,7 @@ class HandlerDataMock:
         self.doc = Fake()
         self.timeout = Fake()
         self.return_ = Fake()
+        self.teardown = None
 
 def EAT(*args):
     return EmbeddedArgsTemplate(HandlerDataMock(*args), 'resource')

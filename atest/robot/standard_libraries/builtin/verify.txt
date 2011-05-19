@@ -6,91 +6,119 @@ Resource        atest_resource.txt
 
 *** Test Cases ***
 Fail
-    Check testcase  Fail
+    Check test case  ${TESTNAME}
 
 Fail With Message
-    Check testcase  Fail With Message
+    Check test case  ${TESTNAME}
 
 Should Not Be True
-    Check testcase  Should Not Be True
+    Check test case  ${TESTNAME}
 
 Should Not Be True With Message
-    Check testcase  Should Not Be True With Message
+    Check test case  ${TESTNAME}
 
 Should Not Be True With Invalid Expression
-    Check testcase  Should Not Be True With Invalid Expression
+    Check test case  ${TESTNAME}
 
 Should Be True
-    Check testcase  Should Be True
+    Check test case  ${TESTNAME}
 
 Should Be True With Message
-    Check testcase  Should Be True With Message
+    Check test case  ${TESTNAME}
 
 Should Be True With Invalid Expression
-    Check testcase  Should Be True With Invalid Expression
+    Check test case  ${TESTNAME}
 
 Should Not Be Equal
-    Check testcase  Should Not Be Equal
+    ${tc}=  Check test case  ${TESTNAME}
+    Verify argument type message  ${tc.kws[0].msgs[0]}  unicode  unicode
+    Verify argument type message  ${tc.kws[1].msgs[0]}  unicode  int
+    Verify argument type message  ${tc.kws[2].msgs[0]}  unicode  unicode
 
 Should Be Equal
-    Check testcase  Should Be Equal
+    ${tc}=  Check test case  ${TESTNAME}
+    Verify argument type message  ${tc.kws[0].msgs[0]}  unicode  unicode
+    Verify argument type message  ${tc.kws[1].msgs[0]}  int  int
+    Verify argument type message  ${tc.kws[2].msgs[0]}  unicode  unicode
+
+Should Be Equal When Types Differ But String Representations Are Same
+    ${tc}=  Check test case  ${TESTNAME}
+    Verify argument type message  ${tc.kws[0].msgs[0]}  unicode  int
 
 Should Not Be Equal As Integers
-    Check testcase  Should Not Be Equal As Integers
+    ${tc}=  Check test case  ${TESTNAME}
+    Verify argument type message  ${tc.kws[0].msgs[0]}  unicode  unicode
+
+Should Not Be Equal As Integers With Base
+    Check test case  ${TESTNAME}
 
 Should Be Equal As Integers
-    Check testcase  Should Be Equal As Integers
+    ${tc}=  Check test case  ${TESTNAME}
+    Verify argument type message  ${tc.kws[0].msgs[0]}  unicode  unicode
+
+Should Be Equal As Integers With Base
+    Check test case  ${TESTNAME}
 
 Should Not Be Equal As Numbers
-    Check testcase  Should Not Be Equal As Numbers
+    ${tc}=  Check test case  ${TESTNAME}
+    Verify argument type message  ${tc.kws[0].msgs[0]}  unicode  unicode
+
+Should Not Be Equal As Numbers With Precision
+    Check test case  ${TESTNAME}
 
 Should Be Equal As Numbers
-    Check testcase  Should Be Equal As Numbers
+    ${tc}=  Check test case  ${TESTNAME}
+    Verify argument type message  ${tc.kws[0].msgs[0]}  unicode  unicode
+
+Should Be Equal As Numbers With Precision
+    Check test case  ${TESTNAME}
 
 Should Not Be Equal As Strings
-    Check testcase  Should Not Be Equal As Strings
+    ${tc}=  Check test case  ${TESTNAME}
+    Verify argument type message  ${tc.kws[0].msgs[0]}  unicode  float
 
 Should Be Equal As Strings
-    Check testcase  Should Be Equal As Strings
+    ${tc}=  Check test case  ${TESTNAME}
+    Verify argument type message  ${tc.kws[0].msgs[0]}  int  unicode
 
 Should Not Start With
-    Check testcase  Should Not Start With
+    Check test case  ${TESTNAME}
 
 Should Start With
-    Check testcase  Should Start With
+    Check test case  ${TESTNAME}
 
 Should Not End With
-    Check testcase  Should Not End With
+    Check test case  ${TESTNAME}
 
 Should End With
-    Check testcase  Should End With
+    Check test case  ${TESTNAME}
 
 Should Not Contain
-    Check testcase  Should Not Contain
+    Check test case  ${TESTNAME}
 
 Should Not Contain With Non-String Values
-    Check testcase  Should Not Contain With Non-String Values
+    Check test case  ${TESTNAME}
 
 Should Contain
-    Check testcase  Should Contain
+    Check test case  ${TESTNAME}
 
 Should Contain With Non-String Values
-    Check testcase  Should Contain With Non-String Values
+    Check test case  ${TESTNAME}
 
 Should Not Match
-    Check testcase  Should Not Match
+    Check test case  ${TESTNAME}
 
 Should Match
-    Check testcase  Should Match
+    Check test case  ${TESTNAME}
 
 Should Not Match Regexp
-    Check testcase  Should Not Match Regexp
+    Check test case  ${TESTNAME}
 
 Should Match Regexp
-    Check testcase  Should Match Regexp
+    Check test case  ${TESTNAME}
 
 Should Match Regexp Returns Match And Groups
-    Check testcase  Should Match Regexp Returns Match And Groups
+    Check test case  ${TESTNAME}
 
 Get Length
     ${tc} =  Check Test Case  Get Length
@@ -111,68 +139,74 @@ Length Should Be With Invalid Length
     Check Test Case  Length Should Be With Invalid Length
 
 Should Be Empty
-    Check testcase  Should Be Empty
+    Check test case  ${TESTNAME}
 
 Should Be Empty With Non Default Message
-    Check testcase  Should Be Empty With Non Default Message
+    Check test case  ${TESTNAME}
 
 Should Not Be Empty
-    Check testcase  Should Not Be Empty
+    Check test case  ${TESTNAME}
 
 Should Not Be Empty With Non Default Message
-    Check testcase  Should Not Be Empty With Non Default Message
+    Check test case  ${TESTNAME}
 
 Length With Length Method
-    Check testcase  Length With Length Method
+    Check test case  ${TESTNAME}
 
 Length With Size Method
-    Check testcase  Length With Size Method
+    Check test case  ${TESTNAME}
 
 Length With Length Attribute
-    Check testcase  Length With Length Attribute
+    Check test case  ${TESTNAME}
 
 Length Of Java Types
     [Documentation]  Tests that it's possible to get the lenght of String, Vector, Hashtable and array
     [Tags]  jybot
-    Check testcase  Length Of Java Types
+    Check test case  ${TESTNAME}
 
 Should Contain X Times With String
-    ${tc} =  Check testcase  Should Contain X Times With String
+    ${tc} =  Check test case  ${TESTNAME}
     Check Log Message  ${tc.kws[0].msgs[0]}  Item found from the first item 2 times
     Check Log Message  ${tc.kws[1].msgs[0]}  Item found from the first item 1 time
     Check Log Message  ${tc.kws[3].msgs[0]}  Item found from the first item 0 times
 
 Should Contain X Times With List
-    ${tc} =  Check testcase  Should Contain X Times With List
+    ${tc} =  Check test case  ${TESTNAME}
     Check Log Message  ${tc.kws[0].msgs[0]}  Item found from the first item 1 time
     Check Log Message  ${tc.kws[1].msgs[0]}  Item found from the first item 2 times
     Check Log Message  ${tc.kws[3].msgs[0]}  Item found from the first item 0 times
 
 Should Contain X Times With Tuple
-    Check testcase  Should Contain X Times With Tuple
+    Check test case  ${TESTNAME}
 
 Should Contain X With Java Array And Vector
     [Tags]  jybot
-    Check testcase  Should Contain X With Java Array and Vector
+    Check test case  ${TESTNAME}
 
 Should Contain X With Invalid Item
-    Check testcase  Should Contain X With Invalid Item
+    Check test case  ${TESTNAME}
 
 Should Contain X Times With Invalid Count
-    Check testcase  Should Contain X Times With Invalid count
+    Check test case  ${TESTNAME}
 
 Should Contain X Times Failing With Default Message
-    Check testcase  Should Contain X Times Failing With Default Message
+    Check test case  ${TESTNAME}
 
 Should Contain X Times Failing With Defined Message
-    Check testcase  Should Contain X Times Failing With Defined Message
+    Check test case  ${TESTNAME}
 
 Get Count
     [Documentation]  This keyword is also tested by Should (Not) Contain X Times keywords that use this keyword internally
-    ${tc} =  Check testcase  Get Count
+    ${tc} =  Check test case  ${TESTNAME}
     Check Log Message  ${tc.kws[0].kws[0].msgs[0]}  Item found from the first item 2 times
     Check Log Message  ${tc.kws[1].kws[0].msgs[0]}  Item found from the first item 1 time
     Check Log Message  ${tc.kws[2].kws[0].msgs[0]}  Item found from the first item 1 time
     Check Log Message  ${tc.kws[3].kws[0].msgs[0]}  Item found from the first item 50 times
     Check Log Message  ${tc.kws[4].kws[0].msgs[0]}  Item found from the first item 0 times
 
+
+*** Keywords ***
+
+Verify argument type message
+    [Arguments]  ${msg}  ${type1}  ${type2}
+    Check log message  ${msg}  Argument types are:\n<type '${type1}'>\n<type '${type2}'>

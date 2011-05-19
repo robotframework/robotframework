@@ -5,6 +5,8 @@ if sys.platform.startswith('java'):
 
     varz = { 'java_string_int': String('1'),
              'java_string_float': String('1.1'),
+             'java_string_hex': String('F00'),
+             'java_string_embedded_base': String('0xf00'),
              'java_string_invalid': String('foobar'),
              'java_integer': Integer(1),
              'java_long': Long(1),

@@ -156,9 +156,30 @@ class TestRunErrors(object):
         return self._kw_err
 
     def get_teardown_message(self, message):
+        # TODO: This API is really in need of cleanup
         if message == '':
             return 'Teardown failed:\n%s' % self._teardown_err
         return '%s\n\nAlso teardown failed:\n%s' % (message, self._teardown_err)
 
     def parent_or_init_error(self):
         return self._parent_err or self._init_err
+
+
+class KeywordRunErrors(object):
+
+    def __init__(self):
+        self.teardown_error = None
+
+    def get_message(self):
+        if not self._teardown_err:
+            return self._kw_err
+        if not self._kw_err:
+            return 'Keyword teardown failed:\n%s' % self._teardown_err
+        return '%s\n\nAlso keyword teardown failed:\n%s' % (self._kw_err,
+                                                            self._teardown_err)
+
+
+
+    def teardown_err(self, err):
+        self.teardown_error = err
+
