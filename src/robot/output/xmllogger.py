@@ -179,16 +179,18 @@ class XmlLogger:
         self._stat(stat, stat.get_long_name(self._split_level))
 
     def tag_stat(self, stat):
-        self._stat(stat, attrs={'info': self._get_tag_stat_info(stat)})
+        self._stat(stat, attrs={'info': self._get_tag_stat_info(stat),
+                                'links': self._get_tag_links(stat)})
+
+    def _get_tag_links(self, stat):
+        return ':::'.join(':'.join([title, url]) for url, title in stat.links)
 
     def _stat(self, stat, name=None, attrs=None):
         name = name or stat.name
         attrs = attrs or {}
         attrs['pass'] = str(stat.passed)
         attrs['fail'] = str(stat.failed)
-        doc = stat.get_doc(self._split_level)
-        if doc:
-            attrs['doc'] = doc
+        attrs['doc'] = stat.get_doc(self._split_level)
         self._writer.element('stat', name, attrs)
 
     def _get_tag_stat_info(self, stat):
