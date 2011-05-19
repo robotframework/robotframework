@@ -33,9 +33,9 @@ def simple_import(path_to_module):
 
 def _import_module_by_path(path):
     moddir, modname = _split_path_to_module(path)
+    sys.path.insert(0, moddir)
     if modname in sys.modules:
         del sys.modules[modname]
-    sys.path.insert(0, moddir)
     try:
         return __import__(modname)
     finally:
@@ -68,13 +68,15 @@ def import_(name, type_='test library'):
     name 'MyLibrary'.
     """
     if os.path.exists(name):
-        inserted_to_path, name = _split_path_to_module(name)
+        moddir, name = _split_path_to_module(name)
+        sys.path.insert(0, moddir)
+        pop_sys_path = True
     else:
-        inserted_to_path = None
+        pop_sys_path = False
     try:
         code, module = _import(name, type_)
     finally:
-        if inserted_to_path:
+        if pop_sys_path:
             sys.path.pop(0)
     source = _get_module_source(module)
     return code, source
