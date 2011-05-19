@@ -210,7 +210,7 @@ class _Verify:
         |      | Run Keyword If | '${var}' == 'EXIT' | Exit For Loop |
         |      | Do Something   | ${var} |
 
-        New in Robot Framework 2.5.2
+        New in Robot Framework 2.5.2.
         """
         # Error message is shown only if there is no enclosing for loop
         error = AssertionError('Exit for loop without enclosing for loop.')
@@ -223,7 +223,7 @@ class _Verify:
         See `Should Be True` for details about how `condition` is evaluated and
         how `msg` can be used to override the default error message.
         """
-        if msg is None:
+        if not msg:
             msg = "'%s' should not be true" % condition
         asserts.fail_if(self._is_true(condition), msg)
 
@@ -245,7 +245,7 @@ class _Verify:
         | Should Be True | ${number}   | # Passes if ${number} is not zero |
         | Should Be True | ${list}     | # Passes if ${list} is not empty  |
         """
-        if msg is None:
+        if not msg:
             msg = "'%s' should be true" % condition
         asserts.fail_unless(self._is_true(condition), msg)
 
@@ -381,7 +381,7 @@ class _Verify:
         error message with `msg` and `values`.
         """
         self._log_types(first, second)
-        first, second = [ self._convert_to_string(i) for i in first, second ]
+        first, second = [self._convert_to_string(i) for i in first, second]
         self._should_not_be_equal(first, second, msg, values)
 
     def should_be_equal_as_strings(self, first, second, msg=None, values=True):
@@ -391,7 +391,7 @@ class _Verify:
         error message with `msg` and `values`.
         """
         self._log_types(first, second)
-        first, second = [ self._convert_to_string(i) for i in first, second ]
+        first, second = [self._convert_to_string(i) for i in first, second]
         self._should_be_equal(first, second, msg, values)
 
     def should_not_start_with(self, str1, str2, msg=None, values=True):
@@ -595,10 +595,10 @@ class _Verify:
         """Returns and logs the length of the given item.
 
         The keyword first tries to get the length with the Python function
-        'len', which calls the item's '__len__' method internally. If that
-        fails, the keyword tries to call the item's 'length' and 'size' methods
+        `len`, which calls the item's `__len__` method internally. If that
+        fails, the keyword tries to call the item's `length` and `size` methods
         directly. The final attempt is trying to get the value of the item's
-        'length' attribute. If all these attempts are unsuccessful, the keyword
+        `length` attribute. If all these attempts are unsuccessful, the keyword
         fails.
         """
         length = self._get_length(item)
@@ -628,7 +628,7 @@ class _Verify:
         """
         length = self._convert_to_integer(length)
         if self.get_length(item) != length:
-            if msg is None:
+            if not msg:
                 msg = "Length of '%s' should be %d but it is %d" \
                         % (item, length, self.get_length(item))
             raise AssertionError(msg)
@@ -640,9 +640,7 @@ class _Verify:
         default error message can be overridden with the `msg` argument.
         """
         if self.get_length(item) > 0:
-            if msg is None:
-                msg = "'%s' should be empty" % item
-            raise AssertionError(msg)
+            raise AssertionError(msg or "'%s' should be empty" % item)
 
     def should_not_be_empty(self, item, msg=None):
         """Verifies that the given item is not empty.
@@ -651,16 +649,14 @@ class _Verify:
         default error message can be overridden with the `msg` argument.
         """
         if self.get_length(item) == 0:
-            if msg is None:
-                msg = "'%s' should not be empty" % item
-            raise AssertionError(msg)
+            raise AssertionError(msg or "'%s' should not be empty" % item)
 
     def _get_string_msg(self, str1, str2, msg, values, delim):
-        _msg = "'%s' %s '%s'" % (str1, delim, str2)
-        if msg is None:
-            msg = _msg
+        default = "'%s' %s '%s'" % (str1, delim, str2)
+        if not msg:
+            msg = default
         elif values is True:
-            msg = '%s: %s' % (msg, _msg)
+            msg = '%s: %s' % (msg, default)
         return msg
 
 
@@ -699,8 +695,9 @@ class _Variables:
     def log_variables(self, level='INFO'):
         """Logs all variables in the current scope with given log level."""
         variables = self.get_variables()
-        for name in sorted(variables.keys(), key=lambda string: string.lower()):
-            msg = utils.format_assign_message(name, variables[name], cut_long=False)
+        for name in sorted(variables.keys(), key=lambda s: s.lower()):
+            msg = utils.format_assign_message(name, variables[name],
+                                              cut_long=False)
             self.log(msg, level)
 
     def variable_should_exist(self, name, msg=None):
@@ -708,17 +705,14 @@ class _Variables:
 
         The name of the variable can be given either as a normal variable name
         (e.g. ${NAME}) or in escaped format (e.g. \\${NAME}). Notice that the
-        former works only in Robot Framework 2.1 and newer, and it has some
-        limitations explained in `Set Suite Variable`.
+        former has some limitations explained in `Set Suite Variable`.
 
         The default error message can be overridden with the `msg` argument.
         """
         name = self._get_var_name(name)
         variables = self.get_variables()
-        if msg:
-            msg = variables.replace_string(msg)
-        else:
-            msg = "Variable %s does not exist" % name
+        msg = variables.replace_string(msg) if msg \
+            else "Variable %s does not exist" % name
         asserts.fail_unless(variables.has_key(name), msg)
 
     def variable_should_not_exist(self, name, msg=None):
@@ -726,17 +720,14 @@ class _Variables:
 
         The name of the variable can be given either as a normal variable name
         (e.g. ${NAME}) or in escaped format (e.g. \\${NAME}). Notice that the
-        former works only in Robot Framework 2.1 and newer, and it has some
-        limitations explained in `Set Suite Variable`.
+        former has some limitations explained in `Set Suite Variable`.
 
         The default error message can be overridden with the `msg` argument.
         """
         name = self._get_var_name(name)
         variables = self.get_variables()
-        if msg:
-            msg = variables.replace_string(msg)
-        else:
-            msg = "Variable %s exists" % name
+        msg = variables.replace_string(msg) if msg \
+            else "Variable %s exists" % name
         asserts.fail_if(variables.has_key(name), msg)
 
     def replace_variables(self, text):
@@ -813,8 +804,7 @@ class _Variables:
         variables set with this keyword.
 
         The name of the variable can be given either as a normal variable name
-        (e.g. ${NAME}) or in escaped format (e.g. \\${NAME}). Notice that the
-        former works only in Robot Framework 2.1 and newer.
+        (e.g. ${NAME}) or in escaped format (e.g. \\${NAME}).
 
         If a variable already exists within the new scope, its value will be
         overwritten. Otherwise a new variable is created. If a variable already
@@ -1213,10 +1203,10 @@ class _RunKeyword:
 
     def _get_test_in_teardown(self, kwname):
         test = NAMESPACES.current.test
-        if test is not None and test.status != 'RUNNING':
+        if test and test.status != 'RUNNING':
             return test
         raise RuntimeError("Keyword '%s' can only be used in test teardown"
-                        % kwname)
+                           % kwname)
 
     def run_keyword_if_all_critical_tests_passed(self, name, *args):
         """Runs the given keyword with the given arguments, if all critical tests passed.
@@ -1326,7 +1316,7 @@ class _Misc:
         """
         if not items:
             return ''
-        items = [ utils.unic(item) for item in items ]
+        items = [utils.unic(item) for item in items]
         if items[0].startswith('SEPARATOR='):
             sep = items[0][len('SEPARATOR='):]
             items = items[1:]
@@ -1423,8 +1413,7 @@ class _Misc:
         | Import Variables | ${CURDIR}/variables.py   |      |      |
         | Import Variables | ${CURDIR}/../vars/env.py | arg1 | arg2 |
 
-
-        New in Robot Framework 2.5.4
+        New in Robot Framework 2.5.4.
         """
         NAMESPACES.current.import_variables(path.replace('/', os.sep),
                                             args, overwrite=True)
@@ -1499,8 +1488,7 @@ class _Misc:
            timestamp string in the format '2006-02-24 15:08:31'.
 
         By default this keyword returns the current time, but that can be
-        altered using `time` argument as explained below. Notice that this
-        argument is only available in Robot Framework 2.1.1 and newer.
+        altered using `time` argument as explained below.
 
         1) If `time` is a floating point number, it is interpreted as
            seconds since the epoch. This documentation is written about
@@ -1569,12 +1557,12 @@ class _Misc:
         recommended to move the logic into a test library.
         """
         modules = modules.replace(' ','').split(',') if modules else []
-        namespace = dict([ (m, __import__(m)) for m in modules if m != '' ])
+        namespace = dict((m, __import__(m)) for m in modules if m != '')
         try:
             return eval(expression, namespace)
         except:
             raise RuntimeError("Evaluating expression '%s' failed: %s"
-                            % (expression, utils.get_error_message()))
+                               % (expression, utils.get_error_message()))
 
     def call_method(self, object, method_name, *args):
         """Calls the named method of the given object with the provided arguments.
@@ -1614,7 +1602,7 @@ class _Misc:
             return ''
         if len(patterns) == 1:
             return re.escape(patterns[0])
-        return [ re.escape(pattern) for pattern in patterns ]
+        return [re.escape(p) for p in patterns]
 
     def set_test_message(self, message):
         """Sets message for for the current test.
@@ -1626,7 +1614,7 @@ class _Misc:
         This keyword can not be used in suite setup or suite teardown.
         """
         test = NAMESPACES.current.test
-        if test is None:
+        if not test:
             raise RuntimeError("'Set Test Message' keyword cannot be used in "
                                "suite setup or teardown")
         test.message = message
@@ -1664,8 +1652,8 @@ class _Misc:
         | Remove Tags | mytag | something-* | ?ython |
         """
         tags = utils.normalize_tags(tags)
-        handler = lambda test: [ t for t in test.tags
-                                 if not utils.matches_any(t, tags) ]
+        handler = lambda test: [t for t in test.tags
+                                if not utils.matches_any(t, tags)]
         self._set_or_remove_tags(handler)
         self.log('Removed tag%s %s.' % (utils.plural_or_not(tags),
                                         utils.seq2str(tags)))
@@ -1816,7 +1804,7 @@ def register_run_keyword(library, keyword, args_to_process=None):
     RUN_KW_REGISTER.register_run_keyword(library, keyword, args_to_process)
 
 
-for name in [ attr for attr in dir(_RunKeyword) if not attr.startswith('_') ]:
+for name in [attr for attr in dir(_RunKeyword) if not attr.startswith('_')]:
     register_run_keyword('BuiltIn', getattr(_RunKeyword, name))
 for name in ['set_test_variable', 'set_suite_variable', 'set_global_variable',
              'variable_should_exist', 'variable_should_not_exist', 'comment',
