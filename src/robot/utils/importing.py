@@ -36,7 +36,8 @@ def _import_module_by_path(path):
     sys.path.insert(0, moddir)
     try:
         module = __import__(modname)
-        if normpath(os.path.dirname(module.__file__)) != normpath(moddir):
+        if hasattr(module, '__file__') and \
+                normpath(os.path.dirname(module.__file__)) != normpath(moddir):
             del sys.modules[modname]
             module = __import__(modname)
         return module
@@ -69,58 +70,50 @@ def import_(name, type_='test library'):
     the module is also 'MyLibrary' then it is possible to use only
     name 'MyLibrary'.
     """
-    if os.path.exists(name):
-        moddir, name = _split_path_to_module(name)
-        sys.path.insert(0, moddir)
-        pop_sys_path = True
+    if '.' not in name or os.path.exists(name):
+        code, module = _non_dotted_import(name, type_)
     else:
-        pop_sys_path = False
-    try:
-        code, module = _import(name, type_)
-    finally:
-        if pop_sys_path:
-            sys.path.pop(0)
+        code, module = _dotted_import(name, type_)
     source = _get_module_source(module)
     return code, source
 
-
-def _import(name, type_):
-    modname, classname, fromlist = _get_import_params(name)
+def _non_dotted_import(name, type_):
     try:
-        try:
-            # It seems that we get class when importing java class from file system
-            # or from a default package of a jar file. Otherwise we get a module.
-            imported = __import__(modname, {}, {}, fromlist)
-        except ImportError:
-            # Hack to support standalone Jython: 
-            # http://code.google.com/p/robotframework/issues/detail?id=515
-            if not sys.platform.startswith('java'):
-                raise 
-            __import__(name)
-            imported = __import__(modname, {}, {}, fromlist)
+        if os.path.exists(name):
+            module = _import_module_by_path(name)
+        else:
+            module = __import__(name)
     except:
         _raise_import_failed(type_, name)
     try:
-        code = getattr(imported, classname)
+        code = getattr(module, module.__name__)
+        if not inspect.isclass(code):
+            raise AttributeError
     except AttributeError:
-        if fromlist:
-            _raise_no_lib_in_module(type_, modname, fromlist[0])
-        code = imported
-    if not (inspect.ismodule(code) or inspect.isclass(code)):
-        if fromlist:
-            _raise_invalid_type(type_, code)
-        else:
-            code = imported
-    return code, imported
+        code = module
+    return code, module
 
-def _get_import_params(name):
-    if '.' not in name:
-        return name, name, []
-    parts = name.split('.')
-    modname = '.'.join(parts[:-1])
-    classname = parts[-1]
-    fromlist = [str(classname)]  # Unicode not generally accepted
-    return modname, classname, fromlist
+def _dotted_import(name, type_):
+    parentname, libname = name.rsplit('.', 1)
+    try:
+        try:
+            module = __import__(parentname, fromlist=[str(libname)])
+        except ImportError:
+            # Hack to support standalone Jython:
+            # http://code.google.com/p/robotframework/issues/detail?id=515
+            if not sys.platform.startswith('java'):
+                raise
+            __import__(name)
+            module = __import__(parentname, fromlist=[str(libname)])
+    except:
+        _raise_import_failed(type_, name)
+    try:
+        code = getattr(module, libname)
+    except AttributeError:
+        _raise_no_lib_in_module(type_, parentname, libname)
+    if not (inspect.ismodule(code) or inspect.isclass(code)):
+        _raise_invalid_type(type_, code)
+    return code, module
 
 def _get_module_source(module):
     source = getattr(module, '__file__', None)

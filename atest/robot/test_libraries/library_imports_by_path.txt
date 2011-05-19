@@ -39,7 +39,8 @@ Importing By Path Having Spaces
     Check Test Case  Importing By Path Having Spaces
 
 Importing Invalid Python File Fails
-    Check Stderr Contains  Importing test library 'MyInvalidLibFile' failed:  ImportError: I'm not really a library!
+    ${path} =  Normalize Path  ${CURDIR}/../../testdata/test_libraries/MyInvalidLibFile.py
+    Check Stderr Contains  Importing test library '${path}' failed:  ImportError: I'm not really a library!
 
 Inporting Dir Library Without Trailing "/" Fails
     Check Stderr Contains  Importing test library 'MyLibDir' failed:  ImportError: No module named MyLibDir

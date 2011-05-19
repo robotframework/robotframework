@@ -7,7 +7,8 @@ Resource        atest_resource.txt
 
 *** Test Cases ***
 Library Import Fails Because Not a Library
-    Check Failure From Output  0  Importing test library 'MyInvalidLibFile' failed: ImportError: I'm not really a library!  raise ImportError("I'm not really a library!")
+    ${path} =  Normalize Path  ${CURDIR}/../../testdata/test_libraries/MyInvalidLibFile.py
+    Check Failure From Output  0  Importing test library '${path}' failed: ImportError: I'm not really a library!  raise ImportError("I'm not really a library!")
 
 Library Import Fails Because Initialization Fails
     Check Failure From Output  2  Creating an instance of the test library 'InitializationFailLibrary' with no arguments failed: Initialization failed!  InitializationFailLibrary.py", line 4, in __init__
