@@ -38,7 +38,7 @@ class Statistics:
 
 class Stat:
 
-    def __init__(self, name=None, doc=None, link=None):
+    def __init__(self, name='', doc='', link=None):
         self.name = name
         self._doc = doc
         self._link = link
@@ -93,13 +93,13 @@ class TagStat(Stat):
     type = 'tag'
 
     def __init__(self, name, critical=False, non_critical=False, info=None):
-        doc = info and info.get_doc(name) or None
+        doc = info.get_doc(name) if info else ''
         Stat.__init__(self, name, doc, link=name)
         self.critical = critical
         self.non_critical = non_critical
         self.combined = False
         self.tests = []
-        self.links = info and info.get_links(name) or []
+        self.links = info.get_links(name) if info else []
 
     def add_test(self, test):
         Stat.add_test(self, test)
@@ -280,7 +280,7 @@ class TagStatInfo:
         for pattern, doc in self._docs:
             if utils.matches(tag, pattern):
                 docs.append(doc)
-        return docs and ' '.join(docs) or None
+        return ' '.join(docs) if docs else ''
 
     def get_links(self, tag):
         links = [ link.get_link(tag) for link in self._links ]
