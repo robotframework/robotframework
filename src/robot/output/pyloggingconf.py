@@ -26,11 +26,12 @@ from robot.api import logger
 class RobotHandler(logging.Handler):
 
     def emit(self, record):
-        self._get_logger_method(record.levelno)(record.getMessage())
+        method = self._get_logger_method(record.levelno)
+        method(record.getMessage())
 
     def _get_logger_method(self, level):
         if level >= logging.WARNING:
-            return  logger.warn
+            return logger.warn
         if level <= logging.DEBUG:
             return logger.debug
         return logger.info
