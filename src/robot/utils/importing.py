@@ -34,10 +34,12 @@ def simple_import(path_to_module):
 def _import_module_by_path(path):
     moddir, modname = _split_path_to_module(path)
     sys.path.insert(0, moddir)
-    if modname in sys.modules:
-        del sys.modules[modname]
     try:
-        return __import__(modname)
+        module = __import__(modname)
+        if normpath(os.path.dirname(module.__file__)) != normpath(moddir):
+            del sys.modules[modname]
+            module = __import__(modname)
+        return module
     finally:
         sys.path.pop(0)
 
