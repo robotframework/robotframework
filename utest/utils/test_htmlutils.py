@@ -422,9 +422,9 @@ after
 | t | a | b | l | e |  
 ---
 '''[1:-1]
-        exp = '<hr />\n<br />\n' \
+        exp = '<hr />\n' \
             + _format_table([['t','a','b','l','e']]) \
-            + '<br />\n<hr />\n'
+            + '<hr />\n'
         assert_equals(html_escape(inp, True), exp)
 
 

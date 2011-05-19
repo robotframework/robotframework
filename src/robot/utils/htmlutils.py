@@ -48,44 +48,87 @@ _url_re = re.compile('''
 
 
 def html_escape(text, formatting=False, replace_whitespace=True):
-    if not isinstance(text, basestring):
-        text = unic(text)
-    for name, value in [('&', '&amp;'), ('<', '&lt;'), ('>', '&gt;')]:
-        text = text.replace(name, value)
-
-    ret = []
-    table = _Table()
-    hr = None
-
+    text = unic(text)
+    formatter = _HtmlStringFormatter(formatting, replace_whitespace)
     for line in text.splitlines():
-        if formatting and table.is_table_row(line):
-            if hr:
-                ret.append(hr)
-                hr = None
-            table.add_row(line)
-        elif table.is_started():
-            if _hr_re.match(line):
-                hr = '<hr />\n'
-                line = ''
-            else:
-                line = _format_line(line, True)
-            ret.append(table.end() + line)
-        elif formatting and _hr_re.match(line):
-            hr = '<hr />\n'
-        else:
-            line = _format_line(line, formatting, replace_whitespace)
-            if hr:
-                line = hr + line
-                hr = None
-            ret.append(line)
+        formatter.add(line)
+    return formatter.result()
 
-    if table.is_started():
-        ret.append(table.end())
-    if hr:
-        ret.append(hr)
 
-    return '<br />\n'.join(ret) if replace_whitespace else '\n'.join(ret)
+class _HtmlStringFormatter(object):
 
+    def __init__(self, formatting, replace_whitespace):
+        self._formatting = formatting
+        self._replace = replace_whitespace
+        self._result = _Formatted(replace_whitespace)
+        self._table = _Table()
+
+    def add(self, line):
+        line = self._escape_gt_lt_amp(line)
+        if self._add_table_row(line):
+            return
+        if self._table.is_started():
+            self._result.add(self._table.end(), join_after=False)
+        if self._is_hr(line):
+            self._result.add('<hr />\n', join_after=False)
+            return
+        self._result.add(_format_line(line, self._formatting, self._replace))
+
+    def _add_table_row(self, row):
+        if self._formatting and self._table.is_table_row(row):
+            self._table.add_row(row)
+            return True
+        return False
+
+    def _is_hr(self, line):
+        return self._formatting and _hr_re.match(line)
+
+    def result(self):
+        if self._table.is_started():
+            self._result.add(self._table.end())
+        return self._result.result()
+
+    def _escape_gt_lt_amp(self, text):
+        for name, value in [('&', '&amp;'), ('<', '&lt;'), ('>', '&gt;')]:
+            text = text.replace(name, value)
+        return text
+
+
+class _Formatted(object):
+
+    def __init__(self, replace_whitespace):
+        self._newline = '<br />\n' if replace_whitespace else '\n'
+        self._result = ""
+        self._joiner = ""
+
+    def add(self, line, join_after=True):
+        self._result += self._joiner
+        self._joiner = self._newline if join_after else ""
+        self._result += line
+
+    def result(self):
+        return self._result
+
+
+def _format_line(line, formatting=False, replace_whitespace=True):
+    if formatting:
+        line = _bold_re.sub('\\1<b>\\3</b>', line)
+        line = _italic_re.sub('\\1<i>\\3</i>', line)
+    line = _url_re.sub(lambda res: _repl_url(res, formatting), line)
+    return _replace_whitespace(line) if replace_whitespace else line
+
+def _replace_whitespace(line):
+    # Replace a tab with eight "hard" spaces, and two "soft" spaces with one
+    # "hard" and one "soft" space (preserves spaces but allows wrapping)
+    return line.replace('\t', '&nbsp;'*8).replace('  ', ' &nbsp;')
+
+def _repl_url(res, formatting):
+    pre = res.group(1)
+    url = res.group(3).replace('"', '&quot;')
+    if formatting and os.path.splitext(url)[1].lower() \
+           in ['.jpg', '.jpeg', '.png', '.gif', '.bmp']:
+        return '%s<img src="%s" title="%s" style="border: 1px solid gray" />' % (pre, url, url)
+    return '%s<a href="%s">%s</a>' % (pre, url, url)
 
 def html_attr_escape(attr):
     for name, value in [('&', '&amp;'), ('"', '&quot;'),
@@ -131,25 +174,3 @@ class _Table:
             table.append('</tr>')
         table.append('</table>\n')
         return '\n'.join(table)
-
-
-def _format_line(line, formatting=False, replace_whitespace=True):
-    if formatting:
-        line = _bold_re.sub('\\1<b>\\3</b>', line)
-        line = _italic_re.sub('\\1<i>\\3</i>', line)
-    line = _url_re.sub(lambda res: _repl_url(res, formatting), line)
-    return _replace_whitespace(line) if replace_whitespace else line
-
-def _replace_whitespace(line):
-    # Replace a tab with eight "hard" spaces, and two "soft" spaces with one
-    # "hard" and one "soft" space (preserves spaces but allows wrapping)
-    return line.replace('\t', '&nbsp;'*8).replace('  ', ' &nbsp;')
-
-
-def _repl_url(res, formatting):
-    pre = res.group(1)
-    url = res.group(3).replace('"', '&quot;')
-    if formatting and os.path.splitext(url)[1].lower() \
-           in ['.jpg', '.jpeg', '.png', '.gif', '.bmp']:
-        return '%s<img src="%s" title="%s" style="border: 1px solid gray" />' % (pre, url, url)
-    return '%s<a href="%s">%s</a>' % (pre, url, url)

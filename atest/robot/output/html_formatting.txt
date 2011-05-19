@@ -18,13 +18,14 @@ Suite Documentation
     ...  It is possible to format text with <b>bold</b>, <i>italic</i> and <i><b>bold italic</b></i>. Also links like <a href="http://basso.fi/radio">http://basso.fi/radio</a>, <a href="ftp://funet.fi">ftp://funet.fi</a> and <a href="file:///c:/temp">file:///c:/temp</a> are automatically formatted.<br />
     ...  Image links like <img src="http://server/image.jpg" title="http://server/image.jpg" style="border: 1px solid gray" /> even create images.<br />
     ...  Furthermore tables and horizontal rulers are available as seen by examples below.<br />
-    ...  <br />\n<hr />\n<br />
+    ...  <br />
+    ...  <hr />
     ...  <table border="1" class="doc">
     ...  <tr>\n<td><b>a</b></td>\n<td><b>b</b></td>\n<td><b>c</b></td>\n</tr>
     ...  <tr>\n<td><i>1</i></td>\n<td>xx</td>\n<td>yy</td>\n</tr>
     ...  <tr>\n<td><i>2</i></td>\n<td>zz</td>\n<td></td>\n</tr>
     ...  </table>
-    ...  <br />\n<hr />
+    ...  <hr />
     ...  There was a bug handling " in the end of suite doc: "
     Should Contain  ${log}  ${doc}
     Comment  1)  Suite doc in log
