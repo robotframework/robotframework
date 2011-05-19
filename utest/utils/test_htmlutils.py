@@ -504,6 +504,29 @@ class TestHtmlAttrEscape(unittest.TestCase):
             assert_equals(html_attr_escape(inp), exp)
 
 
+class TestHtmlEscapeWhiteSpace(unittest.TestCase):
+
+    def test_escape_spaces(self):
+        for inp, exp in [('  ' , ' &nbsp;'),
+                         ('   ', ' &nbsp; '),
+                         ('\n' , ''),
+                         ('X\n' , 'X'),
+                         ('\nX' , '<br />\nX'),
+                         ('"\n\n"' , '"<br />\n<br />\n"'),
+                         ('"\t"' , '"&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"')]:
+            assert_equals(html_escape(inp), exp)
+
+    def test_dont_escape_spaces(self):
+        for inp      in ['',
+                         '"  "',
+                         '"   "',
+                         '"\n"',
+                         '\nX\nX\nX\nX'
+                         '"\t"',
+                         '"    \t\n\n \n \n   "']:
+            assert_equals(html_escape(inp, replace_whitespace=False), inp)
+
+
 if __name__ == '__main__':
     unittest.main()
 

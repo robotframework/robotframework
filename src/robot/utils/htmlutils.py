@@ -47,7 +47,7 @@ _url_re = re.compile('''
 ''', re.VERBOSE)
 
 
-def html_escape(text, formatting=False):
+def html_escape(text, formatting=False, replace_whitespace=True):
     if not isinstance(text, basestring):
         text = unic(text)
     for name, value in [('&', '&amp;'), ('<', '&lt;'), ('>', '&gt;')]:
@@ -73,7 +73,7 @@ def html_escape(text, formatting=False):
         elif formatting and _hr_re.match(line):
             hr = '<hr />\n'
         else:
-            line = _format_line(line, formatting)
+            line = _format_line(line, formatting, replace_whitespace)
             if hr:
                 line = hr + line
                 hr = None
@@ -84,7 +84,7 @@ def html_escape(text, formatting=False):
     if hr:
         ret.append(hr)
 
-    return '<br />\n'.join(ret)
+    return '<br />\n'.join(ret) if replace_whitespace else '\n'.join(ret)
 
 
 def html_attr_escape(attr):
@@ -133,11 +133,14 @@ class _Table:
         return '\n'.join(table)
 
 
-def _format_line(line, formatting=False):
+def _format_line(line, formatting=False, replace_whitespace=True):
     if formatting:
         line = _bold_re.sub('\\1<b>\\3</b>', line)
         line = _italic_re.sub('\\1<i>\\3</i>', line)
     line = _url_re.sub(lambda res: _repl_url(res, formatting), line)
+    return _replace_whitespace(line) if replace_whitespace else line
+
+def _replace_whitespace(line):
     # Replace a tab with eight "hard" spaces, and two "soft" spaces with one
     # "hard" and one "soft" space (preserves spaces but allows wrapping)
     return line.replace('\t', '&nbsp;'*8).replace('  ', ' &nbsp;')
