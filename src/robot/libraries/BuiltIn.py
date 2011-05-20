@@ -28,6 +28,17 @@ from robot.version import get_version
 if utils.is_jython:
     from java.lang import String, Number
 
+try:
+    bin  # available since Python 2.6
+except NameError:
+    def bin(integer):
+        bins = []
+        while integer > 1:
+            integer, remainder = divmod(integer, 2)
+            bins.append(str(remainder))
+        bins.append(str(integer))
+        return '0b' + ''.join(reversed(bins))
+
 
 class _Converter:
 
@@ -87,6 +98,30 @@ class _Converter:
         if base or not item.startswith(tuple(bases)):
             return item, base
         return item[2:], bases[item[:2]]
+
+    def convert_to_binary(self, item, base=None, prefix=None, length=None):
+        return self._convert_to_bin_oct_hex(bin, item, base, prefix, length)
+
+    def convert_to_octal(self, item, base=None, prefix=None, length=None):
+        return self._convert_to_bin_oct_hex(oct, item, base, prefix, length)
+
+    def convert_to_hexa(self, item, base=None, prefix=None, length=None,
+                        lowercase=False):
+        return self._convert_to_bin_oct_hex(hex, item, base, prefix, length,
+                                            lowercase)
+
+    def _convert_to_bin_oct_hex(self, method, item, base, prefix, length,
+                                lowercase=False):
+        self._log_types(item)
+        ret = method(self._convert_to_integer(item, base)).upper()
+        if len(ret) > 1:  # oct(0) -> '0' (i.e. has no prefix)
+            prefix_length = {bin: 2, oct: 1, hex: 2}[method]
+            ret = ret[prefix_length:]
+        if length:
+            ret = ret.rjust(self._convert_to_integer(length), '0')
+        if lowercase:
+            ret = ret.lower()
+        return (prefix or '') + ret
 
     def convert_to_number(self, item, precision=None):
         """Converts the given item to a floating point number.

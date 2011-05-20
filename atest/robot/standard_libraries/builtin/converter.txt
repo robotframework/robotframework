@@ -30,6 +30,18 @@ Convert To Integer With Base And Java Objects
     [Tags]  jybot
     Check Test Case  ${TEST NAME}
 
+Convert To Binary
+    ${tc}=  Check Test Case  ${TEST NAME}
+    Verify argument type message  ${tc.kws[0].kws[0].msgs[0]}  unicode
+
+Convert To Octal
+    ${tc}=  Check Test Case  ${TEST NAME}
+    Verify argument type message  ${tc.kws[0].kws[0].msgs[0]}  unicode
+
+Convert To Hexa
+    ${tc}=  Check Test Case  ${TEST NAME}
+    Verify argument type message  ${tc.kws[0].kws[0].msgs[0]}  unicode
+
 Convert To Number
     ${tc}=  Check Test Case  ${TEST NAME}
     Verify argument type message  ${tc.kws[0].kws[0].msgs[0]}  unicode
