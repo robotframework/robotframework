@@ -41,14 +41,18 @@ format. Log_, report_, and summary_ files are generated based on
 output files, and output files can also be `combined and otherwise
 post-processed`__ after the test execution.
 
-The command line option :opt:`--output (-o)` determines where
-output files are created. Output files are always created when tests
-are executed, and unless outputs are `splitted`__, only one output file
-is created. The default name for the output file is :path:`output.xml`.
-If outputs are splitted to several output files, they are named by
-postfixing the name of the first output file with sequence numbers. When
-post-processing outputs, new output files are not created unless
+The command line option :opt:`--output (-o)` determines the path where
+the output file is created relative to the `output directory`_. The default
+name for the output file, when tests are run, is :path:`output.xml`. If
+`outputs are split`__ to several output files, they are named by
+postfixing the name of the first output file with sequence numbers.
+
+When post-processing outputs, new output files are not created unless
 :opt:`--output (-o)` option is explicitly used.
+
+Starting from Robot Framework 2.6, it is possible to disable creation of
+the output file also when running tests with special value :opt:`NONE`. In this
+case also other output files, except for the `debug file`_, are disabled.
 
 __ `Post-processing outputs`_
 
