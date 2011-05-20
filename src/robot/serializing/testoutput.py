@@ -80,7 +80,7 @@ class RobotTestOutput:
         outfile = self._get_outfile(path, 'summary')
         if not outfile:
             return
-        self._use_template(outfile, templates.REPORT, 
+        self._use_template(outfile, templates.REPORT,
                            title or '%s Summary Report' % self.suite.name,
                            self._get_background_color(background))
         self.statistics.serialize(SummaryStatSerializer(outfile))
@@ -111,7 +111,7 @@ class RobotTestOutput:
         outfile = self._get_outfile(path, 'report')
         if not outfile:
             return
-        self._use_template(outfile, templates.REPORT, 
+        self._use_template(outfile, templates.REPORT,
                            title or '%s Test Report' % self.suite.name,
                            self._get_background_color(background))
         self.statistics.serialize(ReportStatSerializer(outfile))

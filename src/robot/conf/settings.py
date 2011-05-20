@@ -50,6 +50,7 @@ class _BaseSettings:
                   'NoStatusRC'       : ('nostatusrc', False),
                   'MonitorWidth'     : ('monitorwidth', 78),
                   'MonitorColors'    : ('monitorcolors', 'AUTO') }
+    _output_opts = ['Output', 'Log', 'Report', 'Summary', 'DebugFile', 'XUnitFile']
     _deprecated = {}
 
     def __init__(self, options={}, log=True):
@@ -94,7 +95,7 @@ class _BaseSettings:
             return [v.replace('_', ' ') for v in value]
         if name in ['Include', 'Exclude', 'TagStatCombine']:
             return [item.replace('AND', '&') for item in value]
-        if name in self._optional_outputs and utils.eq(value, 'NONE'):
+        if name in self._output_opts and utils.eq(value, 'NONE'):
             return 'NONE'
         if name == 'OutputDir':
             return utils.normpath(value)
@@ -109,20 +110,21 @@ class _BaseSettings:
         return value
 
     def __getitem__(self, name):
-        if not self._cli_opts.has_key(name):
+        if name not in self._cli_opts:
             raise KeyError("Non-existing setting '%s'" % name)
-        elif name in ['Output', 'Log', 'Report', 'Summary', 'DebugFile', 'XUnitFile']:
+        if name in self._output_opts:
             return self._get_output_file(name)
         return self._opts[name]
 
     def _get_output_file(self, type_):
-        """Returns path of the requested ouput file and creates needed dirs.
+        """Returns path of the requested output file and creates needed dirs.
 
-        Type can be 'Output', 'Log', 'Report', 'Summary', 'DebugFile' or 'XUnitFile'.
+        `type_` can be 'Output', 'Log', 'Report', 'Summary', 'DebugFile'
+        or 'XUnitFile'.
         """
         name = self._opts[type_]
-        if name == 'NONE' and type_ in self._optional_outputs:
-            return name
+        if self._outputfile_disabled(type_, name):
+            return 'NONE'
         name = self._process_output_name(name, type_)
         path = utils.normpath(os.path.join(self['OutputDir'], name), False)
         self._create_output_dir(os.path.dirname(path), type_)
@@ -197,7 +199,6 @@ class RobotSettings(_BaseSettings):
                         'VariableFiles' : ('variablefile', []),
                         'Listeners'     : ('listener', []),
                         'DebugFile'     : ('debugfile', 'NONE'),}
-    _optional_outputs = ['Log', 'Report', 'Summary', 'DebugFile', 'XUnitFile']
 
     def is_rebot_needed(self):
         return not ('NONE' == self['Log'] == self['Report'] == self['Summary'] == self['XUnitFile'])
@@ -217,6 +218,11 @@ class RobotSettings(_BaseSettings):
         settings._opts['LogLevel'] = 'TRACE'
         return datasources, settings
 
+    def _outputfile_disabled(self, type_, name):
+        if name == 'NONE':
+            return True
+        return self._opts['Output'] == 'NONE' and type_ != 'DebugFile'
+
 
 class RebotSettings(_BaseSettings):
     _extra_cli_opts = { 'Output'         : ('output', 'NONE'),
@@ -224,4 +230,6 @@ class RebotSettings(_BaseSettings):
                         'RemoveKeywords' : ('removekeywords', 'NONE'),
                         'StartTime'      : ('starttime', 'N/A'),
                         'EndTime'        : ('endtime', 'N/A')}
-    _optional_outputs = ['Output', 'Log', 'Report', 'Summary', 'XUnitFile']
+
+    def _outputfile_disabled(self, type_, name):
+        return name == 'NONE'
