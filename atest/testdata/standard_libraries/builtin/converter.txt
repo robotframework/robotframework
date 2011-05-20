@@ -59,6 +59,33 @@ Convert To Integer With Base And Java Objects
     ${JAVA_STRING_EMBEDDED_BASE}  3840
     ${JAVA_STRING_HEX}            fails  8
 
+Convert To Binary
+    [Template]  Test Convert To Binary
+    0          0
+    1          ${1}
+    0b10       2     prefix=0b
+    00001000   10    base=8  length=8
+    11111111   0xFF
+    100000000  100   base=16  length=2
+    B0101      101   base=2  prefix=B  length=4
+
+Convert To Octal
+    [Template]  Test Convert To Octal
+    0          0
+    1          ${1}
+    0o10       8     prefix=0o
+    00001000   200   base=16  length=8
+    52746757   0xABCDEF  length=5
+    xXx007     111   base=2  prefix=xXx  length=3
+
+Convert To Hexa
+    [Template]  Test Convert To Hexa
+    0          0
+    1          ${1}
+    0xA        10    prefix=0x  length=0
+    0000abcd   ABCD  base=16  length=8  lowercase=yes
+    0A0a       10    base=10  prefix=0A  length=2  lowercase=please
+
 Convert To Number
     [Documentation]  FAIL REGEXP: ^'MyObject' cannot be converted to a floating point number: (Attribute|Type)Error: .*$
     [Template]  Test Convert To Number
@@ -123,6 +150,24 @@ Test Convert To Integer
     [Arguments]  ${item}  ${exp}=1  ${base}=
     ${act} =  Convert To Integer  ${item}  ${base}
     ${exp} =  Evaluate  ${exp}
+    Should Be Equal  ${act}  ${exp}
+
+Test Convert To Binary
+    [Arguments]  ${exp}  ${item}  ${base}=  ${prefix}=  ${length}=
+    ${act} =  Convert To Binary  ${item}  base=${base}
+    ...  prefix=${prefix}  length=${length}
+    Should Be Equal  ${act}  ${exp}
+
+Test Convert To Octal
+    [Arguments]  ${exp}  ${item}  ${base}=  ${prefix}=  ${length}=
+    ${act} =  Convert To Octal  ${item}  base=${base}
+    ...  prefix=${prefix}  length=${length}
+    Should Be Equal  ${act}  ${exp}
+
+Test Convert To Hexa
+    [Arguments]  ${exp}  ${item}  ${base}=  ${prefix}=  ${length}=  ${lowercase}=
+    ${act} =  Convert To Hexa  ${item}  base=${base}
+    ...  prefix=${prefix}  length=${length}  lowercase=${lowercase}
     Should Be Equal  ${act}  ${exp}
 
 Test Convert To Number
