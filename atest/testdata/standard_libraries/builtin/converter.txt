@@ -78,8 +78,8 @@ Convert To Octal
     52746757   0xABCDEF  length=5
     xXx007     111   base=2  prefix=xXx  length=3
 
-Convert To Hexa
-    [Template]  Test Convert To Hexa
+Convert To Hex
+    [Template]  Test Convert To Hex
     0          0
     1          ${1}
     0xA        10    prefix=0x  length=0
@@ -164,9 +164,9 @@ Test Convert To Octal
     ...  prefix=${prefix}  length=${length}
     Should Be Equal  ${act}  ${exp}
 
-Test Convert To Hexa
+Test Convert To Hex
     [Arguments]  ${exp}  ${item}  ${base}=  ${prefix}=  ${length}=  ${lowercase}=
-    ${act} =  Convert To Hexa  ${item}  base=${base}
+    ${act} =  Convert To Hex  ${item}  base=${base}
     ...  prefix=${prefix}  length=${length}  lowercase=${lowercase}
     Should Be Equal  ${act}  ${exp}
 

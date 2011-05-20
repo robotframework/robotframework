@@ -38,7 +38,7 @@ Convert To Octal
     ${tc}=  Check Test Case  ${TEST NAME}
     Verify argument type message  ${tc.kws[0].kws[0].msgs[0]}  unicode
 
-Convert To Hexa
+Convert To Hex
     ${tc}=  Check Test Case  ${TEST NAME}
     Verify argument type message  ${tc.kws[0].kws[0].msgs[0]}  unicode
 

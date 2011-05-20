@@ -65,7 +65,8 @@ class _Converter:
         | ${result} = | Convert To Integer | 0b100 |    | # Result is 4     |
         | ${result} = | Convert To Integer | 0x100 |    | # Result is 256   |
 
-        If you need a floating point number, use `Convert To Number` instead.
+        See also `Convert To Number`, `Convert To Binary`, `Convert To Octal`
+        and `Convert To Hex`.
         """
         self._log_types(item)
         return self._convert_to_integer(item, base)
@@ -100,13 +101,75 @@ class _Converter:
         return item[2:], bases[item[:2]]
 
     def convert_to_binary(self, item, base=None, prefix=None, length=None):
+        """Converts the given item to a binary string.
+
+        The `item`, with an optional `base`, is first converted to an
+        integer using `Convert To Integer` internally. After that it
+        is converted to a binary (base 2) number represented as a
+        string such as `'1011'`.
+
+        The returned value can contain an optional `prefix` and can be
+        required to be of minimum `length` (excluding the prefix). If
+        the value is initially shorter than the required length, it is
+        padded with zeros.
+
+        Examples:
+        | ${result} = | Convert To Binary | 10  |           |         | # Result is 1010 |
+        | ${result} = | Convert To Binary | 0xF | prefix=0b |         | # Result is 0b1111 |
+        | ${result} = | Convert To Binary | 2   | prefix=B | length=4 | # Result is B0010 |
+
+        This keyword is new in Robot Framework 2.6. See also `Convert
+        To Integer`, `Convert To Octal` and `Convert To Hex`.
+        """
         return self._convert_to_bin_oct_hex(bin, item, base, prefix, length)
 
     def convert_to_octal(self, item, base=None, prefix=None, length=None):
+        """Converts the given item to an octal string.
+
+        The `item`, with an optional `base`, is first converted to an
+        integer using `Convert To Integer` internally. After that it
+        is converted to an octal (base 8) number represented as a
+        string such as `'775'`.
+
+        The returned value can contain an optional `prefix` and can be
+        required to be of minimum `length` (excluding the prefix). If
+        the value is initially shorter than the required length, it is
+        padded with zeros.
+
+        Examples:
+        | ${result} = | Convert To Octal | 10   |            |          | # Result is 12 |
+        | ${result} = | Convert To Octal | 0xFF | prefix=0o  |          | # Result is 0o377 |
+        | ${result} = | Convert To Octal | 16   | prefix=oct | length=4 | # Result is oct0002 |
+
+        This keyword is new in Robot Framework 2.6. See also `Convert
+        To Integer`, `Convert To Binary` and `Convert To Hex`.
+        """
         return self._convert_to_bin_oct_hex(oct, item, base, prefix, length)
 
-    def convert_to_hexa(self, item, base=None, prefix=None, length=None,
-                        lowercase=False):
+    def convert_to_hex(self, item, base=None, prefix=None, length=None,
+                       lowercase=False):
+        """Converts the given item to a hexadecimal string.
+
+        The `item`, with an optional `base`, is first converted to an
+        integer using `Convert To Integer` internally. After that it
+        is converted to a hexadecimal (base 16) number represented as
+        a string such as `'FF0A'`.
+
+        The returned value can contain an optional `prefix` and can be
+        required to be of minimum `length` (excluding the prefix). If
+        the value is initially shorter than the required length, it is
+        padded with zeros.  By default the value is returned as an
+        upper case string, but giving any non-empty value to the
+        `lowercase` argument turns it (but not the prefix) to lower case.
+
+        Examples:
+        | ${result} = | Convert To Hex | 255  |           |               | # Result is FF   |
+        | ${result} = | Convert To Hex | 255  | prefix=0X | lowercase=yes | # Result is 0Xff |
+        | ${result} = | Convert To Hex | 10   | length=2  | lowercase=yes | # Result is 0A   |
+
+        This keyword is new in Robot Framework 2.6. See also `Convert
+        To Integer`, `Convert To Binary` and `Convert To Octal`.
+        """
         return self._convert_to_bin_oct_hex(hex, item, base, prefix, length,
                                             lowercase)
 
