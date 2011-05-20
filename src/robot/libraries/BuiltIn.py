@@ -51,8 +51,8 @@ class _Converter:
 
         1) Give base explicitly to the keyword as `base` argument.
 
-        2) Prefix the given string with the base so that `0b` means base 2
-        (binary), `0o` means base 8 (octal), and `0x` means base 16 (hex).
+        2) Prefix the given string with the base so that `0b` means binary
+        (base 2), `0o` means octal (base 8), and `0x` means hex (base 16).
         The prefix is considered only when `base` argument is not given.
 
         The syntax is case-insensitive and possible spaces are ignored.
@@ -105,7 +105,7 @@ class _Converter:
 
         The `item`, with an optional `base`, is first converted to an
         integer using `Convert To Integer` internally. After that it
-        is converted to a binary (base 2) number represented as a
+        is converted to a binary number (base 2) represented as a
         string such as `'1011'`.
 
         The returned value can contain an optional `prefix` and can be
@@ -114,12 +114,12 @@ class _Converter:
         padded with zeros.
 
         Examples:
-        | ${result} = | Convert To Binary | 10  |           |         | # Result is 1010 |
-        | ${result} = | Convert To Binary | 0xF | prefix=0b |         | # Result is 0b1111 |
-        | ${result} = | Convert To Binary | 2   | prefix=B | length=4 | # Result is B0010 |
+        | ${result} = | Convert To Binary | 10 |         |           | # Result is 1010   |
+        | ${result} = | Convert To Binary | F  | base=16 | prefix=0b | # Result is 0b1111 |
+        | ${result} = | Convert To Binary | 2  | prefix=B | length=4 | # Result is B0010  |
 
-        This keyword is new in Robot Framework 2.6. See also `Convert
-        To Integer`, `Convert To Octal` and `Convert To Hex`.
+        This keyword was added in Robot Framework 2.6. See also
+        `Convert To Integer`, `Convert To Octal` and `Convert To Hex`.
         """
         return self._convert_to_bin_oct_hex(bin, item, base, prefix, length)
 
@@ -128,7 +128,7 @@ class _Converter:
 
         The `item`, with an optional `base`, is first converted to an
         integer using `Convert To Integer` internally. After that it
-        is converted to an octal (base 8) number represented as a
+        is converted to an octal number (base 8) represented as a
         string such as `'775'`.
 
         The returned value can contain an optional `prefix` and can be
@@ -137,12 +137,12 @@ class _Converter:
         padded with zeros.
 
         Examples:
-        | ${result} = | Convert To Octal | 10   |            |          | # Result is 12 |
-        | ${result} = | Convert To Octal | 0xFF | prefix=0o  |          | # Result is 0o377 |
-        | ${result} = | Convert To Octal | 16   | prefix=oct | length=4 | # Result is oct0002 |
+        | ${result} = | Convert To Octal | 10 |            |          | # Result is 12      |
+        | ${result} = | Convert To Octal | FF | base=16    | prefix=0 | # Result is 0377    |
+        | ${result} = | Convert To Octal | 16 | prefix=oct | length=4 | # Result is oct0020 |
 
-        This keyword is new in Robot Framework 2.6. See also `Convert
-        To Integer`, `Convert To Binary` and `Convert To Hex`.
+        This keyword was added in Robot Framework 2.6. See also
+        `Convert To Integer`, `Convert To Binary` and `Convert To Hex`.
         """
         return self._convert_to_bin_oct_hex(oct, item, base, prefix, length)
 
@@ -152,7 +152,7 @@ class _Converter:
 
         The `item`, with an optional `base`, is first converted to an
         integer using `Convert To Integer` internally. After that it
-        is converted to a hexadecimal (base 16) number represented as
+        is converted to a hexadecimal number (base 16) represented as
         a string such as `'FF0A'`.
 
         The returned value can contain an optional `prefix` and can be
@@ -160,15 +160,16 @@ class _Converter:
         the value is initially shorter than the required length, it is
         padded with zeros.  By default the value is returned as an
         upper case string, but giving any non-empty value to the
-        `lowercase` argument turns it (but not the prefix) to lower case.
+        `lowercase` argument turns the value (but not the prefix) to
+        lower case.
 
         Examples:
-        | ${result} = | Convert To Hex | 255  |           |               | # Result is FF   |
-        | ${result} = | Convert To Hex | 255  | prefix=0X | lowercase=yes | # Result is 0Xff |
-        | ${result} = | Convert To Hex | 10   | length=2  | lowercase=yes | # Result is 0A   |
+        | ${result} = | Convert To Hex | 255 |           |              | # Result is FF   |
+        | ${result} = | Convert To Hex | 10  | prefix=0x | length=2     | # Result is 0x0A |
+        | ${result} = | Convert To Hex | 255 | prefix=X | lowercase=yes | # Result is Xff  |
 
-        This keyword is new in Robot Framework 2.6. See also `Convert
-        To Integer`, `Convert To Binary` and `Convert To Octal`.
+        This keyword was added in Robot Framework 2.6. See also
+        `Convert To Integer`, `Convert To Binary` and `Convert To Octal`.
         """
         return self._convert_to_bin_oct_hex(hex, item, base, prefix, length,
                                             lowercase)
