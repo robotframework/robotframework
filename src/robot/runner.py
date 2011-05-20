@@ -135,10 +135,12 @@ Options:
                           as an absolute path. Other output files are created
                           from XML output file after the test execution and XML
                           output can also be further processed with Rebot tool
-                          (e.g. combined with other XML output files).
+                          (e.g. combined with other XML output files). Can be
+                          disabled by giving a special value 'NONE'. In this
+                          case, also log and report are automatically disabled.
                           Default: output.xml
  -l --log file            HTML log file. Can be disabled by giving a special
-                          name 'NONE'. Default: log.html
+                          value 'NONE'. Default: log.html
                           Examples: '--log mylog.html', '-l NONE'
  -r --report file         HTML report file. Can be disabled with 'NONE'
                           similarly as --log. Default: report.html

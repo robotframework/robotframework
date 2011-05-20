@@ -21,7 +21,10 @@ Directory Should Contain  [Arguments]  ${path}  @{expected}
 Output Directory Should Contain  [Arguments]  @{expected}
     Directory Should Contain  ${CLI OUTDIR}  @{expected}
 
-Run Some Tests  [Arguments]  ${options}=-l none -r none 
+Output Directory Should Be Empty
+    Directory Should Be Empty  ${CLI OUTDIR}
+
+Run Some Tests  [Arguments]  ${options}=-l none -r none
     ${path} =  Join Path  ${CURDIR}/../../..  testdata  ${TESTFILE}
     ${output} =  Run Robot Directly  -d ${CLI OUTDIR} ${options} ${path}
     Should Contain  ${output}  Output:  message=Running tests failed for some reason

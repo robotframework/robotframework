@@ -12,10 +12,21 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-
 import os
 
-if os.name == 'java':
-    from jyxmlwriter import XmlWriter
-else:
-    from pyxmlwriter import XmlWriter
+from abstractxmlwriter import AbstractXmlWriter
+
+
+def XmlWriter(path):
+    if path == 'NONE':
+        return FakeXMLWriter()
+    if os.name == 'java':
+        from jyxmlwriter import XmlWriter
+    else:
+        from pyxmlwriter import XmlWriter
+    return XmlWriter(path)
+
+
+class FakeXMLWriter(AbstractXmlWriter):
+    closed = False
+    _start = _content = _end = _close = lambda self, *args: None

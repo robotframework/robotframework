@@ -24,10 +24,11 @@ Output And Summary
 
 Output None
     Run Tests Without Processing Output  --outputdir ${CLI OUTDIR} -o NONE -r None -l none  ${TESTFILE}
-    Output Directory Should Contain  NONE.xml
-    File Should Not Exist  NONE
-    File Should Not Exist  None
-    File Should Not Exist  none
+    Output Directory Should Be Empty
+
+Debugfile Can Be Created When Output Is NONE
+    Run Tests Without Processing Output  --outputdir ${CLI OUTDIR} -o NONE -r report.html -b debug.txt  ${TESTFILE}
+    Output Directory Should Contain  debug.txt
 
 All Outputs
     Run Tests Without Processing Output  --outputdir=${CLI OUTDIR} --output=myoutput.xml --report=myreport.html --log=mylog.html -S mysummary.html  ${TESTFILE}
