@@ -135,7 +135,7 @@ class ArgDocDynamicLibrary:
         self._keywords = dict((name, _KeywordInfo(name, argspec))
                               for name, argspec in kws)
     def get_keyword_names(self):
-        return self._keywords.keys()
+        return sorted(self._keywords.keys())
     def run_keyword(self, name, *args):
         print '*INFO* Executed keyword %s with arguments %s' % (name, args)
     def get_keyword_documentation(self, name):
