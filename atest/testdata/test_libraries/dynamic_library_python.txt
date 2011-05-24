@@ -1,6 +1,6 @@
 *** Settings ***
 Library         RunKeywordLibrary
-Library         RunKeywordButNoGetKeywordNamesLibrary
+Library         RunKeywordLibrary.RunKeywordButNoGetKeywordNamesLibrary
 Library         RunKeywordLibrary.GlobalRunKeywordLibrary
 
 *** Test Cases ***
