@@ -1,5 +1,7 @@
 *** Settings ***
 Library         classes.ArgDocDynamicLibrary
+Library         classes.InvalidGetDocDynamicLibrary
+Library         classes.InvalidGetArgsDynamicLibrary
 Library         ArgDocDynamicJavaLibrary
 
 *** Test Cases ***

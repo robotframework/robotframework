@@ -7,16 +7,32 @@ Resource        atest_resource.txt
 
 *** Test Cases ***
 Documentation And Argument Boundaries Work With No Args
-     Keyword documentation for No Arg
+    Keyword documentation for No Arg
 
 Documentation And Argument Boundaries Work With Mandatory Args
-     Keyword documentation for One Arg
+    Keyword documentation for One Arg
 
 Documentation And Argument Boundaries Work With Default Args
     Keyword documentation for One or Two Args
 
 Documentation And Argument Boundaries Work With Varargs
     Keyword documentation for Many Args
+
+Keyword Not Created And Warning Shown When Getting Documentation Fails
+    [Template]  Check Creating Keyword Failed Due To Invalid Doc Message
+    0  Many Args
+    1  No Arg
+    2  One Arg
+    3  One or Two Args
+    [Teardown]  Check Log Message  ${ERRORS.msgs[4]}   Imported library 'classes.InvalidGetDocDynamicLibrary' contains no keywords  WARN
+
+Keyword Not Created And Warning Shown When Getting Arguments Fails
+    [Template]  Check Creating Keyword Failed Due To Invalid Args Message
+    5  Many Args
+    6  No Arg
+    7  One Arg
+    8  One or Two Args
+    [Teardown]  Check Log Message  ${ERRORS.msgs[9]}   Imported library 'classes.InvalidGetArgsDynamicLibrary' contains no keywords  WARN
 
 Documentation And Argument Boundaries Work With No Args In Java
     [Tags]  jybot
@@ -34,10 +50,37 @@ Documentation And Argument Boundaries Work With Varargs In Java
     [Tags]  jybot
     Keyword documentation for Java Many Args
 
+Keyword Not Created And Warning Shown When Getting Documentation Fails In Java
+    [Tags]  jybot
+    [Template]  NONE
+    Check Log Message  ${ERRORS.msgs[10]}  Adding keyword 'Invalid Java Args' to library 'ArgDocDynamicJavaLibrary' failed: Calling dynamic method 'getKeywordArguments' failed: Get args failure  WARN
+
+Keyword Not Created And Warning Shown When Getting Arguments Fails In Java
+    [Tags]  jybot
+    [Template]  NONE
+    Check Log Message  ${ERRORS.msgs[11]}  Adding keyword 'Invalid Java Doc' to library 'ArgDocDynamicJavaLibrary' failed: Calling dynamic method 'getKeywordDocumentation' failed: Get doc failure  WARN
+
 
 *** Keywords ***
+
 Check test case and its doc
     [Arguments]  ${expected doc}
     ${tc} =  Check Test case  ${TESTNAME}
     Should Be Equal  ${tc.kws[0].doc}  ${expected doc}
 
+Check Creating Keyword Failed Due To Invalid Doc Message
+    [Arguments]  ${index}  ${kw}
+    ${lib} =  Set Variable  classes.InvalidGetDocDynamicLibrary
+    ${err} =  Set Variable  Calling dynamic method 'get_keyword_documentation' failed: TypeError:
+    Check Creating Keyword Failed Message  ${index}  ${kw}  ${lib}  ${err}
+
+Check Creating Keyword Failed Due To Invalid Args Message
+    [Arguments]  ${index}  ${kw}
+    ${lib} =  Set Variable  classes.InvalidGetArgsDynamicLibrary
+    ${err} =  Set Variable  Calling dynamic method 'get_keyword_arguments' failed: ZeroDivisionError:
+    Check Creating Keyword Failed Message  ${index}  ${kw}  ${lib}  ${err}
+
+Check Creating Keyword Failed Message
+    [Arguments]  ${index}  ${kw}  ${lib}  ${error}
+    ${msg} =  Set Variable  Adding keyword '${kw}' to library '${lib}' failed: ${error} *
+    Check Log Message  ${ERRORS.msgs[${index}]}  ${msg}  WARN  pattern=yes
