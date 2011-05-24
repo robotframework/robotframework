@@ -106,10 +106,10 @@ both the example test cases are equivalent.
    ============  ========  ====================  ==========
     Test Case     Action        Argument          Argument
    ============  ========  ====================  ==========
-   Strings       Log       Hello                 \
-   \             Log       Hello, world!!        \
-   Variables     Log       ${GREET}              \
-   \             Log       ${GREET}, ${NAME}!!   \
+   Strings       Log       Hello
+   \             Log       Hello, world!!
+   Variables     Log       ${GREET}
+   \             Log       ${GREET}, ${NAME}!!
    ============  ========  ====================  ==========
 
 When a scalar variable is used as the only value in a test data cell,
@@ -148,10 +148,10 @@ With these two variables set, we then have the following test data:
    ===========  ========  =================  ==========
     Test Case    Action        Argument       Argument
    ===========  ========  =================  ==========
-   Objects      KW 1      ${STR}             \
-   \            KW 2      ${OBJ}             \
-   \            KW 3      I said "${STR}"    \
-   \            KW 4      You said "${OBJ}"  \
+   Objects      KW 1      ${STR}
+   \            KW 2      ${OBJ}
+   \            KW 3      I said "${STR}"
+   \            KW 4      You said "${OBJ}"
    ===========  ========  =================  ==========
 
 Finally, when this test data is executed, different keywords receive
@@ -198,7 +198,7 @@ are equivalent.
      Test Case     Action    User Name    Password
    =============  ========  ===========  ==========
    Strings        Login     robot        secret
-   List Variable  Login     @{USER}      \
+   List Variable  Login     @{USER}
    =============  ========  ===========  ==========
 
 Accessing individual list variable items
@@ -217,9 +217,9 @@ manner can be used similarly as scalar variables:
      Test Case        Action            Argument         Argument
    =============  ===============  ===================  ==========
    Strings        Login            robot                secret
-   \              Title Should Be  Welcome robot!       \
-   List Variable  Login            @{USER}              \
-   \              Title Should Be  Welcome @{USER}[0]!  \
+   \              Title Should Be  Welcome robot!
+   List Variable  Login            @{USER}
+   \              Title Should Be  Welcome @{USER}[0]!
    =============  ===============  ===================  ==========
 
 Using list variables as scalar variables
@@ -228,8 +228,8 @@ Using list variables as scalar variables
 It is possible to use list variables as scalar variables containing
 lists simply by replacing :var:`@` with :var:`$`. This makes it
 possible to use list variables with list related keywords, for
-example, from from BuiltIn_ and Collections_ libraries. This feature
-works only if there is no scalar variable with same basename as the
+example, from BuiltIn_ and Collections_ libraries. This feature
+works only if there is no scalar variable with same base name as the
 list variable has. In these cases the scalar variable has precedence
 and its value is used instead.
 
@@ -240,12 +240,12 @@ and its value is used instead.
      Test Case         Action          Argument      Argument    Argument
    =============  ================  ==============  ==========  ==========
    Example        @{items} =        Create List     first       second
-   \              Length Should Be  ${items}        2           \
-   \              Append To List    ${items}        third       \
-   \              Length Should Be  ${items}        3           \
-   \              Remove From List  ${items}        1           \
-   \              Length Should Be  ${items}        2           \
-   \              Log Many          @{items}        \           \
+   \              Length Should Be  ${items}        2
+   \              Append To List    ${items}        third
+   \              Length Should Be  ${items}        3
+   \              Remove From List  ${items}        1
+   \              Length Should Be  ${items}        2
+   \              Log Many          @{items}
    =============  ================  ==============  ==========  ==========
 
 Using list variables with settings
@@ -353,10 +353,9 @@ as a value. Also an already defined variable can be used in the value.
    ============  ==================  =========
      Variable           Value          Value
    ============  ==================  =========
-   ${NAME}       Robot Framework     \
-   ${VERSION}    2.0                 \
-   ${ROBOT}      ${NAME} ${VERSION}  \
-   ${EMPTY}      \                   \
+   ${NAME}       Robot Framework
+   ${VERSION}    2.0
+   ${ROBOT}      ${NAME} ${VERSION}
    ============  ==================  =========
 
 It is also possible, but not obligatory,
@@ -369,8 +368,8 @@ variables slightly more explicit.
    ============  ===============  =========
      Variable         Value         Value
    ============  ===============  =========
-   ${NAME} =     Robot Framework  \
-   ${VERSION} =  2.0              \
+   ${NAME} =     Robot Framework
+   ${VERSION} =  2.0
    ============  ===============  =========
 
 Creating list variables
@@ -390,12 +389,12 @@ __ `Dividing test data to several rows`_
    ============  =========  =========  =========
      Variable      Value      Value      Value
    ============  =========  =========  =========
-   @{NAMES}      Matti      Teppo      \
-   @{NAMES2}     @{NAMES}   Seppo      \
-   @{NOTHING}    \          \          \
+   @{NAMES}      Matti      Teppo
+   @{NAMES2}     @{NAMES}   Seppo
+   @{NOTHING}
    @{MANY}       one        two        three
    ...           four       five       six
-   ...           seven      \          \
+   ...           seven
    ============  =========  =========  =========
 
 Variable file
@@ -447,8 +446,7 @@ use`_ section has more details. What variables actually are created depends on
 what variables there are in the referenced variable file.
 
 If both variable files and individual variables are given from the command line,
-the latter have `higher priority`__. Additionally, if multiple variable files
-have same variables, the ones in the file specified first are taken into use.
+the latter have `higher priority`__.
 
 __ `Variable priorities and scopes`_
 
@@ -466,7 +464,7 @@ libraries. The syntax for a simple case is illustrated in the example below:
     Test Case     Action      Argument      Argument
    ===========  ==========  ============  ============
    Returning    ${x} =      Get X         an argument
-   \            Log         We got ${x}!  \
+   \            Log         We got ${x}!
    ===========  ==========  ============  ============
 
 In the example above, the value returned by the :name:`Get X` keyword is
@@ -488,10 +486,10 @@ prior to it only Python lists and tuples and Java arrays were supported.
    ===============  ============  ==========  ==========  ==========
       Test Case        Action      Argument    Argument    Argument
    ===============  ============  ==========  ==========  ==========
-   Return Multiple  ${scalar} =   Get 3       \           \
+   Return Multiple  ${scalar} =   Get 3
    \                ${a}          ${b}        ${c} =      Get 3
-   \                ${first}      @{rest} =   Get 3       \
-   \                @{list} =     Get 3       \           \
+   \                ${first}      @{rest} =   Get 3
+   \                @{list} =     Get 3
    ===============  ============  ==========  ==========  ==========
 
 Assuming that the keyword :name:`Get 3` returns a list
@@ -639,11 +637,11 @@ be created using the variable syntax similarly as numbers.
    ===========  ===============  ==========  ==========  =============================================
     Test Case        Action       Argument    Argument                      Comment
    ===========  ===============  ==========  ==========  =============================================
-   Boolean      Set Status       ${true}     \           # Set Status gets Boolean true as an argument
+   Boolean      Set Status       ${true}                 # Set Status gets Boolean true as an argument
    \            Create Y         something   ${false}    # Create Y gets a string and Boolean false
-   None         Do XYZ           ${None}     \           # Do XYZ gets Python None as an argument
+   None         Do XYZ           ${None}                 # Do XYZ gets Python None as an argument
    Null         ${ret} =         Get Value   arg         # Checking that Get Value returns Java null
-   \            Should Be Equal  ${ret}      ${null}     \
+   \            Should Be Equal  ${ret}      ${null}
    ===========  ===============  ==========  ==========  =============================================
 
 These variables are case-insensitive, so for example :var:`${True}` and
@@ -660,7 +658,7 @@ It is possible to create spaces and empty strings using variables
 useful, for example, when there would otherwise be a need to `escape
 spaces or empty cells`__ with a backslash. If more than one space is
 needed, it is possible to use the `extended variable syntax`_ like
-:var:`${SPACE * 5}`.  In the following exmaple, :name:`Should Be
+:var:`${SPACE * 5}`.  In the following example, :name:`Should Be
 Equal` keyword gets identical arguments but those using variables are
 easier to understand than those using backslashes.
 
@@ -761,9 +759,15 @@ Variable priorities
    test data.
 
    Individually set variables (:opt:`--variable` option) override the
-   variables set using `variable files`_ (:opt:`--variablefile`
-   option). Additionally, if multiple variable files have same variables,
-   the ones in the file specified first have the highest priority.
+   variables set using `variable files`_ (:opt:`--variablefile` option).
+   If you specify same individual variable multiple times, the one specified
+   last will override earlier ones. This allows setting default values for
+   variables in a `start-up script`__ and overriding them from the command line.
+   Notice, though, that if multiple variable files have same variables, the
+   ones in the file specified first have the highest priority.
+
+__ `Setting variables in command line`_
+__ `Creating start-up scripts`_
 
 *Variable table in a test case file*
 
@@ -804,6 +808,8 @@ Variable priorities
    have the highest priority, but on the other hand they do not affect
    variables outside the scope they are defined.
 
+__ `Using built-in Set Test/Suite/Global Variable keywords`_
+
 *Built-in variables*
 
    `Built-in variables`_ like :var:`${TEMPDIR}` and :var:`${TEST_NAME}`
@@ -813,9 +819,6 @@ Variable priorities
    are resolved dynamically if no variable is found otherwise. They can thus be
    overridden, but that is generally a bad idea. Additionally :var:`${CURDIR}`
    is special because it is replaced already during the test data processing time.
-
-__ `Setting variables in command line`_
-__ `Using built-in Set Test/Suite/Global Variable keywords`_
 
 Variable scopes
 '''''''''''''''
@@ -913,9 +916,9 @@ and test case:
    ===========  ========  ======================  ==========
     Test Case    Action          Argument          Argument
    ===========  ========  ======================  ==========
-   Example      KW 1      ${OBJECT.name}          \
-   \            KW 2      ${OBJECT.greet('Fit')}  \
-   \            KW 3      ${DICTIONARY[2]}        \
+   Example      KW 1      ${OBJECT.name}
+   \            KW 2      ${OBJECT.greet('Fit')}
+   \            KW 3      ${DICTIONARY[2]}
    ===========  ========  ======================  ==========
 
 When this test data is executed, the keywords get the arguments as
@@ -1019,10 +1022,10 @@ value of the variable :var:`${varname}`. There can be several nested
 variables, but resolving the outermost fails, if any of them does not
 exist.
 
-In the example below, :name:`Do X` gets the value :var:`${JOHN_HOME}`
-or :var:`${JANE_HOME}`, depending on if :name:`Get Name` returns
+In the example below, :name:`Do X` gets the value :var:`${JOHN HOME}`
+or :var:`${JANE HOME}`, depending on if :name:`Get Name` returns
 :code:`john` or :code:`jane`. If it returns something else, resolving
-:var:`${${name}_HOME}` fails.
+:var:`${${name} HOME}` fails.
 
 .. table:: Using a variable inside another variable
    :class: example
@@ -1030,8 +1033,8 @@ or :var:`${JANE_HOME}`, depending on if :name:`Get Name` returns
    ============  ==========  =======  =======
      Variable       Value     Value    Value
    ============  ==========  =======  =======
-   ${JOHN_HOME}  /home/john  \        \
-   ${JANE_HOME}  /home/jane  \        \
+   ${JOHN HOME}  /home/john
+   ${JANE HOME}  /home/jane
    ============  ==========  =======  =======
 
 .. table::
@@ -1040,6 +1043,6 @@ or :var:`${JANE_HOME}`, depending on if :name:`Get Name` returns
    ===========  ============  ========================  ==========
     Test Case      Action             Argument           Argument
    ===========  ============  ========================  ==========
-   Example      ${name} =     Get Name                  \
-   \            Do X          ${${name}_HOME}           \
+   Example      ${name} =     Get Name
+   \            Do X          ${${name} HOME}
    ===========  ============  ========================  ==========
