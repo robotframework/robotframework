@@ -142,10 +142,11 @@ Check KW Arguments
     Lists Should Be Equal  ${kw.args}  ${expected args}
 
 Check Log Message
-    [Arguments]  ${item}  ${msg}  ${level}=INFO  ${html}=${False}
+    [Arguments]  ${item}  ${msg}  ${level}=INFO  ${html}=${False}  ${pattern}=
     ${html} =  Set Variable If  ${html} or '${level}' == 'HTML'  ${True}  ${False}
     ${level} =  Set Variable If  '${level}' == 'HTML'  INFO  ${level}
-    Should Be Equal  ${item.message.rstrip()}  ${msg}  Wrong log message
+    ${checker} =  Set Variable If  '${pattern}'  Should Match  Should Be Equal
+    Run Keyword  ${checker}  ${item.message.rstrip()}  ${msg}  Wrong log message
     Should Be Equal  ${item.level}  ${level}  Wrong log level
     Should Be Equal  ${item.html}  ${html}  Wrong HTML status
 
