@@ -1,43 +1,43 @@
 *** Settings ***
 Suite Setup     Run Tests  ${EMPTY}  test_libraries/dynamic_library_args_and_docs.txt
-Force Tags      regression  jybot
-Default Tags    pybot
+Force Tags      regression
+Default Tags    pybot  jybot
+Test Template   Check test case and its doc
 Resource        atest_resource.txt
 
 *** Test Cases ***
 Documentation And Argument Boundaries Work With No Args
-    ${tc} =  Check Test case  ${TESTNAME}
-    Should Be Equal  ${tc.kws[0].doc}  Keyword documentation for No Arg
+     Keyword documentation for No Arg
 
 Documentation And Argument Boundaries Work With Mandatory Args
-    ${tc} =  Check Test case  ${TESTNAME}
-    Should Be Equal  ${tc.kws[0].doc}  Keyword documentation for One Arg
+     Keyword documentation for One Arg
 
 Documentation And Argument Boundaries Work With Default Args
-    ${tc} =  Check Test case  ${TESTNAME}
-    Should Be Equal  ${tc.kws[0].doc}  Keyword documentation for One or Two Args
+    Keyword documentation for One or Two Args
 
 Documentation And Argument Boundaries Work With Varargs
-    ${tc} =  Check Test case  ${TESTNAME}
-    Should Be Equal  ${tc.kws[0].doc}  Keyword documentation for Many Args
+    Keyword documentation for Many Args
 
 Documentation And Argument Boundaries Work With No Args In Java
-    [Tags]
-    ${tc} =  Check Test case  ${TESTNAME}
-    Should Be Equal  ${tc.kws[0].doc}  Keyword documentation for Java No Arg
+    [Tags]  jybot
+    Keyword documentation for Java No Arg
 
 Documentation And Argument Boundaries Work With Mandatory Args In Java
-    [Tags]
-    ${tc} =  Check Test case  ${TESTNAME}
-    Should Be Equal  ${tc.kws[0].doc}  Keyword documentation for Java One Arg
+    [Tags]  jybot
+    Keyword documentation for Java One Arg
 
 Documentation And Argument Boundaries Work With Default Args In Java
-    [Tags]
-    ${tc} =  Check Test case  ${TESTNAME}
-    Should Be Equal  ${tc.kws[0].doc}  Keyword documentation for Java One or Two Args
+    [Tags]  jybot
+    Keyword documentation for Java One or Two Args
 
 Documentation And Argument Boundaries Work With Varargs In Java
-    [Tags]
+    [Tags]  jybot
+    Keyword documentation for Java Many Args
+
+
+*** Keywords ***
+Check test case and its doc
+    [Arguments]  ${expected doc}
     ${tc} =  Check Test case  ${TESTNAME}
-    Should Be Equal  ${tc.kws[0].doc}  Keyword documentation for Java Many Args
+    Should Be Equal  ${tc.kws[0].doc}  ${expected doc}
 
