@@ -192,8 +192,8 @@ class _BaseTestLibrary(BaseLibrary):
         pre = "Adding keyword '%s' to library '%s' failed: " % (name, self.name)
         try:
             return self._get_handler_method(libcode, name)
-        except TypeError, err:
-            self._log_failure(pre + utils.unic(err))
+        except DataError, err:
+            self._log_failure(pre + unicode(err))
         except:
             msg, details = utils.get_error_details()
             self._log_failure(pre + 'Getting handler method failed: ' + msg)
@@ -201,9 +201,9 @@ class _BaseTestLibrary(BaseLibrary):
 
     def _get_handler_method(self, libcode, name):
         method = getattr(libcode, name)
-        if inspect.isroutine(method):
-            return method
-        raise TypeError('Not a method or function')
+        if not inspect.isroutine(method):
+            raise DataError('Not a method or function')
+        return method
 
     def _try_to_create_handler(self, name, method):
         pre = "Adding keyword '%s' to library '%s' failed: " % (name, self.name)
@@ -241,13 +241,13 @@ class _ClassLibrary(_BaseTestLibrary):
                 continue
             self._validate_handler(item.__dict__[name])
             return getattr(libinst, name)
-        raise TypeError('No non implicit implementation found')
+        raise DataError('No non implicit implementation found')
 
     def _validate_handler(self, handler):
         if not self._is_routine(handler):
-            raise TypeError('Not a method or function')
+            raise DataError('Not a method or function')
         if self._is_implicit_java_or_jython_method(handler):
-            raise TypeError('Implicit methods are ignored')
+            raise DataError('Implicit methods are ignored')
 
     def _is_routine(self, handler):
         # inspect.isroutine doesn't work with methods from Java classes
@@ -280,7 +280,7 @@ class _ModuleLibrary(_BaseTestLibrary):
     def _get_handler_method(self, libcode, name):
         method = _BaseTestLibrary._get_handler_method(self, libcode, name)
         if hasattr(libcode, '__all__') and name not in libcode.__all__:
-            raise TypeError('Not exposed as keyword')
+            raise DataError('Not exposed as keyword')
         return method
 
     def get_instance(self):
