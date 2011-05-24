@@ -56,7 +56,13 @@ class _DynamicMethod(object):
         self._default = default
 
     def __call__(self, *args):
-        return self._method(*args) if self._method else self._default
+        if not self._method:
+            return self._default
+        try:
+            return self._method(*args)
+        except:
+            raise DataError("Calling dynamic method '%s' failed: %s"
+                            % (self._method.__name__, utils.get_error_message()))
 
     def __nonzero__(self):
         return self._method is not None
@@ -66,7 +72,7 @@ class _DynamicMethod(object):
             method = getattr(libcode, name, None)
             if callable(method):
                 return method
-            return None
+        return None
 
     def _getCamelCaseName(self, underscore_name):
         tokens = underscore_name.split('_')
@@ -189,15 +195,17 @@ class _BaseTestLibrary(BaseLibrary):
                 if not name.startswith(('_', 'ROBOT_LIBRARY_'))]
 
     def _try_to_get_handler_method(self, libcode, name):
-        pre = "Adding keyword '%s' to library '%s' failed: " % (name, self.name)
         try:
             return self._get_handler_method(libcode, name)
-        except DataError, err:
-            self._log_failure(pre + unicode(err))
         except:
-            msg, details = utils.get_error_details()
-            self._log_failure(pre + 'Getting handler method failed: ' + msg)
-            self._log_failure_details('Details:\n' + details)
+            self._report_adding_keyword_failed(name)
+
+    def _report_adding_keyword_failed(self, name):
+        msg, details = utils.get_error_details()
+        self._log_failure("Adding keyword '%s' to library '%s' failed: %s"
+                          % (name, self.name, msg))
+        if details:
+            self._log_failure_details('Details:\n%s' % details)
 
     def _get_handler_method(self, libcode, name):
         method = getattr(libcode, name)
@@ -206,13 +214,10 @@ class _BaseTestLibrary(BaseLibrary):
         return method
 
     def _try_to_create_handler(self, name, method):
-        pre = "Adding keyword '%s' to library '%s' failed: " % (name, self.name)
         try:
             return self._create_handler(name, method)
         except:
-            msg, details = utils.get_error_details()
-            self._log_failure(pre + 'Creating keyword failed: ' + msg)
-            self._log_failure_details('Details:\n%s' % details)
+            self._report_adding_keyword_failed(name)
 
     def _create_handler(self, handler_name, handler_method):
         return Handler(self, handler_name, handler_method)
@@ -302,6 +307,7 @@ class _HybridLibrary(_BaseTestLibrary):
 
 
 class _DynamicLibrary(_BaseTestLibrary):
+    _log_failure = LOGGER.warn
 
     def __init__(self, libcode, source, name, args, variables=None):
         _BaseTestLibrary.__init__(self, libcode, source, name, args, variables)
