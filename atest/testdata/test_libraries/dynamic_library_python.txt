@@ -1,0 +1,33 @@
+*** Settings ***
+Library         RunKeywordLibrary
+Library         RunKeywordButNoGetKeywordNamesLibrary
+Library         RunKeywordLibrary.GlobalRunKeywordLibrary
+
+*** Test Cases ***
+Passing, Logging and Returning
+    ${ret} =  RunKeywordLibrary. Run Keyword That Passes  Hi  tellus
+    Should Be Equal  ${ret}  Hi, tellus
+
+Failing
+    [Documentation]  FAIL Failure: Hello world
+    RunKeywordLibrary. Run Keyword That Fails  Hello world
+
+Global Dynamic Library
+    [Documentation]  FAIL Failure
+    ${ret} =  RunKeywordLibrary. GlobalRunKeywordLibrary. RunKeyword That Passes  Hi  tellus  and  Hello  Mars!
+    Should Be Equal  ${ret}  Hi, tellus, and, Hello, Mars!
+    RunKeywordLibrary. GlobalRunKeywordLibrary. RunKeyword That Fails
+
+Run Keyword in Static Library
+    [Documentation]  PASS
+    Run Keyword
+    Some Other Keyword
+    ${ret} =  Run Keyword  return  this
+    Should Be Equal  ${ret}  return this
+    ${ret} =  Some Other Keyword  this is  returned
+    Should Be Equal  ${ret}  this is returned
+
+Not Found Keyword
+    [Documentation]  FAIL No keyword with name 'Get Keyword That Does Not Exist' found.
+    Get Keyword That Does Not Exist
+

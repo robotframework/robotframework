@@ -1,0 +1,23 @@
+*** Settings ***
+Suite Setup     Run Tests  ${EMPTY}  test_libraries/dynamic_library_python.txt
+Force Tags      regression  jybot  pybot
+Resource        atest_resource.txt
+
+*** Test Cases ***
+Passing, Logging and Returning
+    ${tc} =  Check Test Case  ${TESTNAME}
+    Check Log Message  ${tc.kws[0].msgs[0]}  Hi tellus
+
+Failing
+    Check Test Case  ${TESTNAME}
+
+Global Dynamic Library
+    Check Test Case  ${TESTNAME}
+
+Run Keyword in Static Library
+    [Documentation]  Verify that library having run_keyword method but no get_keyword_names method is not considered dynamic
+    Check Test Case  ${TESTNAME}
+
+Not Found Keyword
+    Check Test Case  ${TESTNAME}
+
