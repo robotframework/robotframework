@@ -52,7 +52,7 @@ class ArgInfoLibrary:
         """[], [], None"""
         # Argument inspection had a bug when there was args on function body
         # so better keep some of them around here.
-        a=b=c=1  
+        a=b=c=1
     def required1(self, one):
         """['one',], [], None"""
     def required2(self, one, two):
@@ -100,7 +100,7 @@ class SynonymLibrary:
 class VersionLibrary:
     ROBOT_LIBRARY_VERSION = '0.1'
     kw = lambda x:None
-    
+
 
 class VersionObjectLibrary:
     class _Version:
@@ -123,16 +123,18 @@ class RecordingLibrary:
         self.calls_to_getattr += 1
         if name != 'kw':
             raise AttributeError
-        return self.kw 
+        return self.kw
 
 
 class ArgDocDynamicLibrary:
+    def __init__(self):
+        kws = [('No Arg', []),
+               ('One Arg', ['arg']),
+               ('One or Two Args', ['arg', 'darg=dvalue']),
+               ('Many Args', ['*args'])]
+        self._keywords = dict((name, _KeywordInfo(name, argspec))
+                              for name, argspec in kws)
     def get_keyword_names(self):
-        names = ['No Arg', 'One Arg', 'One or Two Args', 'Many Args']
-        argspecs = [[], ['arg'], ['arg', 'darg=dvalue'], ['*args']]
-        self._keywords = {}
-        for name, argspec in zip(names, argspecs):
-            self._keywords[name] = _KeywordInfo(name, argspec) 
         return self._keywords.keys()
     def run_keyword(self, name, *args):
         print '*INFO* Executed keyword %s with arguments %s' % (name, args)
@@ -142,19 +144,19 @@ class ArgDocDynamicLibrary:
         return self._keywords[name].argspec
 
 class _KeywordInfo:
-    doc_template = 'Keyword documentation for %s' 
+    doc_template = 'Keyword documentation for %s'
     def __init__(self, name, argspec):
         self.doc = self.doc_template % name
         self.argspec = argspec
 
-        
+
 class InvalidGetDocDynamicLibrary(ArgDocDynamicLibrary):
     def get_keyword_documentation(self, name, invalid_arg):
         pass
 
 class InvalidGetArgsDynamicLibrary(ArgDocDynamicLibrary):
     def get_keyword_arguments(self, name):
-        return 1/0
+        1/0
 
 class InvalidAttributeDynamicLibrary(ArgDocDynamicLibrary):
     get_keyword_documentation = True
