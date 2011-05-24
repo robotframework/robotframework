@@ -5,21 +5,21 @@ Resource        atest_resource.txt
 
 *** Test Cases ***
 Passing, Logging And Returning
-    ${tc} =  Check Test Case  Passing, Logging and Returning
+    ${tc} =  Check Test Case  ${TESTNAME}
     Check Log Message  ${tc.kws[0].msgs[0]}  Hello world
 
 Failing
-    Check Test Case  Failing
+    Check Test Case  ${TESTNAME}
 
 Keyword Implemented In Library Class Itself
-    ${tc} =  Check Test Case  Keyword Implemented In Library Class Itself
+    ${tc} =  Check Test Case  ${TESTNAME}
     Check Log Message  ${tc.kws[0].msgs[0]}  No need for __getattr__ here!!
 
 Non Existing Keyword
-    Check Test Case  Non Existing Keyword
-    Check Syslog Contains  | WARN \ |  Adding keyword 'non_existing_kw' to library 'GetKeywordNamesLibrary' failed:  Getting handler method failed: AttributeError: Non-existing keyword 'non_existing_kw'
+    Check Test Case  ${TESTNAME}
+    Check Log Message  ${ERRORS.msgs[0]}  Adding keyword 'non_existing_kw' to library 'GetKeywordNamesLibrary' failed: AttributeError: Non-existing keyword 'non_existing_kw'  WARN
 
 Named Keyword Is Not Method
-    Check Test Case  Named Keyword Is Not Method
-    Check Syslog Contains  | WARN \ |  Adding keyword 'this_is_not_keyword' to library 'GetKeywordNamesLibrary' failed:  Not a method or function
+    Check Test Case  ${TESTNAME}
+    Check Log Message  ${ERRORS.msgs[1]}  Adding keyword 'this_is_not_keyword' to library 'GetKeywordNamesLibrary' failed: Not a method or function  WARN
 
