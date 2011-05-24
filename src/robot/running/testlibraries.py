@@ -41,27 +41,43 @@ def TestLibrary(name, args=None, variables=None, create_handlers=True):
 def _get_lib_class(libcode):
     if inspect.ismodule(libcode):
         return _ModuleLibrary
-    if _get_dynamic_method(libcode, 'get_keyword_names'):
-        if _get_dynamic_method(libcode, 'run_keyword'):
+    if _DynamicMethod(libcode, 'get_keyword_names'):
+        if _DynamicMethod(libcode, 'run_keyword'):
             return _DynamicLibrary
         else:
             return _HybridLibrary
     return _ClassLibrary
 
-def _get_dynamic_method(code, underscore_name):
-    tokens = underscore_name.split('_')
-    tokens = [tokens[0]] + [ t.capitalize() for t in tokens[1:] ]
-    camelCaseName = ''.join(tokens)
-    for name in underscore_name, camelCaseName:
-        if hasattr(code, name):
-            method = getattr(code, name)
+
+class _DynamicMethod(object):
+
+    def __init__(self, libcode, underscore_name, default=None):
+        self._method = self._get_method(libcode, underscore_name)
+        self._default = default
+
+    def __call__(self, *args):
+        return self._method(*args) if self._method else self._default
+
+    def __nonzero__(self):
+        return self._method is not None
+
+    def _get_method(self, libcode, underscore_name):
+        for name in underscore_name, self._getCamelCaseName(underscore_name):
+            method = getattr(libcode, name, None)
             if callable(method):
                 return method
-    return None
+            return None
+
+    def _getCamelCaseName(self, underscore_name):
+        tokens = underscore_name.split('_')
+        return ''.join([tokens[0]] + [t.capitalize() for t in tokens[1:]])
 
 
 class _BaseTestLibrary(BaseLibrary):
     supports_named_arguments = False # this attribute is for libdoc
+    _log_success = LOGGER.debug
+    _log_failure = LOGGER.info
+    _log_failure_details = LOGGER.debug
 
     def __init__(self, libcode, source, name, args, variables):
         if os.path.exists(name):
@@ -144,7 +160,7 @@ class _BaseTestLibrary(BaseLibrary):
             scope = utils.normalize(scope, ignore=['_']).upper()
         except (AttributeError, TypeError):
             scope = 'TESTCASE'
-        return scope in ['GLOBAL','TESTSUITE'] and scope or 'TESTCASE'
+        return scope if scope in ['GLOBAL','TESTSUITE'] else 'TESTCASE'
 
     def get_instance(self):
         if self._libinst is None:
@@ -157,45 +173,46 @@ class _BaseTestLibrary(BaseLibrary):
         except:
             self._raise_creating_instance_failed()
 
-    def _create_handlers(self, libinst):
-        success, failure, details = self._get_reporting_methods()
+    def _create_handlers(self, libcode):
         handlers = utils.NormalizedDict(ignore=['_'])
-        for name in self._get_handler_names(libinst):
-            err_pre = "Adding keyword '%s' to library '%s' failed: " % (name, self.name)
-            try:
-                method = self._get_handler_method(libinst, name)
-                success("Got handler method '%s'" % (name))
-            except TypeError, err:
-                failure(err_pre + utils.unic(err))
-                continue
-            except:
-                err_msg, err_details = utils.get_error_details()
-                failure(err_pre + 'Getting handler method failed: ' + err_msg)
-                details('Details:\n%s' % err_details)
-                continue
-            try:
-                handlers[name] = self._create_handler(name, method)
-                success("Created keyword '%s'" % handlers[name].name)
-            except:
-                err_msg, err_details = utils.get_error_details()
-                failure(err_pre + 'Creating keyword failed: ' + err_msg)
-                details('Details:\n%s' % err_details)
+        for name in self._get_handler_names(libcode):
+            method = self._try_to_get_handler_method(libcode, name)
+            if method:
+                handler = self._try_to_create_handler(name, method)
+                if handler:
+                    handlers[name] = handler
+                    self._log_success("Created keyword '%s'" % handler.name)
         return handlers
 
-    def _get_reporting_methods(self):
-        # success, failure, details
-        return LOGGER.debug, LOGGER.info, LOGGER.debug
-
     def _get_handler_names(self, libcode):
-        return [ name for name in dir(libcode)
-                 if not (name.startswith('_') or
-                         name.startswith('ROBOT_LIBRARY_')) ]
+        return [name for name in dir(libcode)
+                if not name.startswith(('_', 'ROBOT_LIBRARY_'))]
+
+    def _try_to_get_handler_method(self, libcode, name):
+        pre = "Adding keyword '%s' to library '%s' failed: " % (name, self.name)
+        try:
+            return self._get_handler_method(libcode, name)
+        except TypeError, err:
+            self._log_failure(pre + utils.unic(err))
+        except:
+            msg, details = utils.get_error_details()
+            self._log_failure(pre + 'Getting handler method failed: ' + msg)
+            self._log_failure_details('Details:\n' + details)
 
     def _get_handler_method(self, libcode, name):
         method = getattr(libcode, name)
         if inspect.isroutine(method):
             return method
         raise TypeError('Not a method or function')
+
+    def _try_to_create_handler(self, name, method):
+        pre = "Adding keyword '%s' to library '%s' failed: " % (name, self.name)
+        try:
+            return self._create_handler(name, method)
+        except:
+            msg, details = utils.get_error_details()
+            self._log_failure(pre + 'Creating keyword failed: ' + msg)
+            self._log_failure_details('Details:\n%s' % details)
 
     def _create_handler(self, handler_name, handler_method):
         return Handler(self, handler_name, handler_method)
@@ -275,6 +292,7 @@ class _ModuleLibrary(_BaseTestLibrary):
 
 
 class _HybridLibrary(_BaseTestLibrary):
+    _log_failure = LOGGER.warn
 
     def _get_handler_names(self, instance):
         try:
@@ -282,19 +300,15 @@ class _HybridLibrary(_BaseTestLibrary):
         except AttributeError:
             return instance.getKeywordNames()
 
-    def _get_reporting_methods(self):
-        # Use LOGGER.warn for reporting possible failures when creating kws
-        # to make them visible. With hybrid libraries kw names are returned
-        # explicitly so creating them should also pass.
-        return LOGGER.debug, LOGGER.warn, LOGGER.info
-
 
 class _DynamicLibrary(_BaseTestLibrary):
 
     def __init__(self, libcode, source, name, args, variables=None):
-        self._get_kw_doc = _get_dynamic_method(libcode, 'get_keyword_documentation')
-        self._get_kw_args = _get_dynamic_method(libcode, 'get_keyword_arguments')
         _BaseTestLibrary.__init__(self, libcode, source, name, args, variables)
+        self._get_kw_doc = \
+            _DynamicMethod(libcode, 'get_keyword_documentation', default='')
+        self._get_kw_args = \
+            _DynamicMethod(libcode, 'get_keyword_arguments', default=None)
 
     def _get_handler_names(self, instance):
         try:
@@ -309,12 +323,6 @@ class _DynamicLibrary(_BaseTestLibrary):
             return instance.runKeyword
 
     def _create_handler(self, handler_name, handler_method):
-        if self._get_kw_doc:
-            doc = self._get_kw_doc(self._libinst, handler_name)
-        else:
-            doc = ''
-        if self._get_kw_args:
-            argspec = self._get_kw_args(self._libinst, handler_name)
-        else:
-            argspec = None
+        doc = self._get_kw_doc(self._libinst, handler_name)
+        argspec = self._get_kw_args(self._libinst, handler_name)
         return DynamicHandler(self, handler_name, handler_method, doc, argspec)
