@@ -1392,7 +1392,10 @@ class _Misc:
         | Sleep | 2 minutes 10 seconds |
         | Sleep | 10s                  | Wait for a reply |
         """
-        seconds = utils.timestr_to_secs(time_)
+        try:
+            seconds = utils.timestr_to_secs(time_)
+        except DataError, err:
+            raise RuntimeError(unicode(err))
         # Python hangs with negative values
         if seconds < 0:
             seconds = 0

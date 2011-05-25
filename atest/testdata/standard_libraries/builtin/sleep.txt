@@ -19,3 +19,7 @@ Sleep With Negative Time
 
 Sleep With Reason
     Sleep  42 ms  No good reason
+
+Invalid Time Does Not Cause Uncatchable Error
+    Run Keyword And Expect Error  Invalid time string 'invalid time'
+    ...  Sleep  invalid time

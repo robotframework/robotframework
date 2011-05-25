@@ -20,3 +20,6 @@ Sleep With Reason
     ${tc} =  Check Test Case  ${TESTNAME}
     Check Log Message  ${tc.kws[0].msgs[0]}  Slept 42 milliseconds
     Check Log Message  ${tc.kws[0].msgs[1]}  No good reason
+
+Invalid Time Does Not Cause Uncatchable Error
+    Check Test Case  ${TESTNAME}
