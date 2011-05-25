@@ -763,7 +763,7 @@ class _Variables:
 
     def get_variables(self):
         """Returns a dictionary containing all variables in the current scope."""
-        return NAMESPACES.current.variables
+        return self._namespace.variables
 
     def get_variable_value(self, name, default=None):
         """Returns variable value or `default` if the variable does not exist.
@@ -1009,7 +1009,7 @@ class _RunKeyword:
         if not isinstance(name, basestring):
             raise RuntimeError('Keyword name must be a string')
         kw = Keyword(name, list(args))
-        return kw.run(ExecutionContext(NAMESPACES.current, self._output))
+        return kw.run(ExecutionContext(self._namespace, self._output))
 
     def run_keywords(self, *names):
         """Executes all the given keywords in a sequence without arguments.
@@ -1029,7 +1029,7 @@ class _RunKeyword:
                 self.run_keyword(kw)
             except ExecutionFailed, err:
                 errors.extend(err.get_errors())
-                context = ExecutionContext(NAMESPACES.current, self._output)
+                context = ExecutionContext(self._namespace, self._output)
                 if not err.can_continue(context.teardown):
                     break
         if errors:
@@ -1243,10 +1243,10 @@ class _RunKeyword:
         """
         values = self._verify_values_for_set_variable_if(list(values))
         if self._is_true(condition):
-            return NAMESPACES.current.variables.replace_scalar(values[0])
+            return self._namespace.variables.replace_scalar(values[0])
         values = self._verify_values_for_set_variable_if(values[1:], True)
         if len(values) == 1:
-            return NAMESPACES.current.variables.replace_scalar(values[0])
+            return self._namespace.variables.replace_scalar(values[0])
         return self.run_keyword('BuiltIn.Set Variable If', *values[0:])
 
     def _verify_values_for_set_variable_if(self, values, default=False):
@@ -1255,8 +1255,8 @@ class _RunKeyword:
                 return [None]
             raise RuntimeError('At least one value is required')
         if is_list_var(values[0]):
-            values[:1] = [ utils.escape(item) for item in
-                           NAMESPACES.current.variables[values[0]] ]
+            values[:1] = [utils.escape(item) for item in
+                          self._namespace.variables[values[0]]]
             return self._verify_values_for_set_variable_if(values)
         return values
 
@@ -1302,7 +1302,7 @@ class _RunKeyword:
             return self.run_keyword(name, *args)
 
     def _get_test_in_teardown(self, kwname):
-        test = NAMESPACES.current.test
+        test = self._namespace.test
         if test and test.status != 'RUNNING':
             return test
         raise RuntimeError("Keyword '%s' can only be used in test teardown"
@@ -1363,10 +1363,10 @@ class _RunKeyword:
             return self.run_keyword(name, *args)
 
     def _get_suite_in_teardown(self, kwname):
-        if NAMESPACES.current.suite.status == 'RUNNING':
+        if self._namespace.suite.status == 'RUNNING':
             raise RuntimeError("Keyword '%s' can only be used in suite teardown"
-                            % kwname)
-        return NAMESPACES.current.suite
+                               % kwname)
+        return self._namespace.suite
 
 
 class _Misc:
@@ -1499,7 +1499,7 @@ class _Misc:
         | Import Library | ${CURDIR}/../libs/Lib.java | arg | WITH NAME | JavaLib |
         """
         try:
-            NAMESPACES.current.import_library(name.replace('/', os.sep), list(args))
+            self._namespace.import_library(name.replace('/', os.sep), list(args))
         except DataError, err:
             raise RuntimeError(unicode(err))
 
@@ -1522,8 +1522,8 @@ class _Misc:
         New in Robot Framework 2.5.4.
         """
         try:
-            NAMESPACES.current.import_variables(path.replace('/', os.sep),
-                                                list(args), overwrite=True)
+            self._namespace.import_variables(path.replace('/', os.sep),
+                                             list(args), overwrite=True)
         except DataError, err:
             raise RuntimeError(unicode(err))
 
@@ -1542,7 +1542,7 @@ class _Misc:
         | Import Resource | ${CURDIR}/../resources/resource.html |
         """
         try:
-            NAMESPACES.current.import_resource(path.replace('/', os.sep))
+            self._namespace.import_resource(path.replace('/', os.sep))
         except DataError, err:
             raise RuntimeError(unicode(err))
 
@@ -1575,8 +1575,8 @@ class _Misc:
         keyword is used in. The old order is returned and can be used
         to reset the search order later.
         """
-        old_order = NAMESPACES.current.library_search_order
-        NAMESPACES.current.library_search_order = libraries
+        old_order = self._namespace.library_search_order
+        self._namespace.library_search_order = libraries
         return old_order
 
     def get_time(self, format='timestamp', time_='NOW'):
@@ -1725,7 +1725,7 @@ class _Misc:
 
         This keyword can not be used in suite setup or suite teardown.
         """
-        test = NAMESPACES.current.test
+        test = self._namespace.test
         if not test:
             raise RuntimeError("'Set Test Message' keyword cannot be used in "
                                "suite setup or teardown")
@@ -1772,7 +1772,7 @@ class _Misc:
 
     def _set_or_remove_tags(self, handler, suite=None, test=None):
         if not (suite or test):
-            ns = NAMESPACES.current
+            ns = self._namespace
             if ns.test is None:
                 if ns.suite.status != 'RUNNING':
                     raise RuntimeError("'Set Tags' and 'Remove Tags' keywords "
@@ -1813,7 +1813,7 @@ class _Misc:
         name.
         """
         try:
-            return NAMESPACES.current.get_library_instance(name)
+            return self._namespace.get_library_instance(name)
         except DataError, err:
             raise RuntimeError(unicode(err))
 
@@ -1841,6 +1841,10 @@ class BuiltIn(_Verify, _Converter, _Variables, _RunKeyword, _Misc):
         # TODO: Refactor running so that OUTPUT is available via context
         from robot.output import OUTPUT
         return OUTPUT
+
+    @property
+    def _namespace(self):
+        return NAMESPACES.current
 
     def _matches(self, string, pattern):
         # Must use this instead of fnmatch when string may contain newlines.
