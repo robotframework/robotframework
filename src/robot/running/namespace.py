@@ -81,7 +81,7 @@ class Namespace:
             raise FrameworkError("Invalid import setting: %s" % import_setting)
 
     def import_resource(self, name):
-            self._import_resource(Resource(None, name))
+        self._import_resource(Resource(None, name))
 
     def _import_resource(self, import_setting, variables=None):
         path = self._resolve_name(import_setting, variables)
