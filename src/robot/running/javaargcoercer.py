@@ -15,8 +15,6 @@
 import sys
 from java.lang import Byte, Short, Integer, Long, Boolean, Float, Double
 
-from robot.errors import DataError
-
 
 class ArgumentCoercer:
 
@@ -42,11 +40,9 @@ class _CoercionFunction:
     _bool_primitives = ['boolean']
     _int_primitives = ['byte', 'short', 'int', 'long']
     _float_primitives = ['float', 'double']
-    pattern = "<type '%s'>"
-    _bool_primitives =  [pattern % 'boolean']
-    _int_primitives =   [pattern % p for p in _int_primitives]
-    _float_primitives = [pattern % p for p in _float_primitives]
-    del pattern
+    _bool_primitives = ["<type 'boolean'>"]
+    _int_primitives = ["<type '%s'>" % p for p in _int_primitives]
+    _float_primitives = ["<type '%s'>" % p for p in _float_primitives]
 
     def __init__(self, arg_types, position):
         self._position = position
@@ -105,5 +101,5 @@ class _CoercionFunction:
         return arg
 
     def _coercion_failed(self, arg_type):
-        raise DataError('Argument at position %d cannot be coerced to %s'
-                        % (self._position, arg_type))
+        raise ValueError('Argument at position %d cannot be coerced to %s'
+                         % (self._position, arg_type))
