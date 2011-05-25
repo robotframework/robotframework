@@ -1185,8 +1185,11 @@ class _RunKeyword:
         Starting from Robot Framework 2.5 errors caused by invalid syntax,
         timeouts, or fatal exceptions are not caught by this keyword.
         """
-        timeout = utils.timestr_to_secs(timeout)
-        retry_interval = utils.timestr_to_secs(retry_interval)
+        try:
+            timeout = utils.timestr_to_secs(timeout)
+            retry_interval = utils.timestr_to_secs(retry_interval)
+        except DataError, err:
+            raise RuntimeError(unicode(err))
         maxtime = time.time() + timeout
         error = None
         while not error:

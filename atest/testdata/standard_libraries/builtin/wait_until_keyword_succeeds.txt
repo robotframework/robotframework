@@ -1,60 +1,52 @@
 ***Settings***
-Library  ExampleLibrary  
-Library  FailUntilSucceeds  3  
+Library  ExampleLibrary
+Library  FailUntilSucceeds  3
 
 ***Variables***
-${HELLO}  Used to test that variable name, not value, is shown in arguments  
+${HELLO}  Used to test that variable name, not value, is shown in arguments
 
 
 ***Test Cases***
 
 Fail Because Timeout exceeded
-    [Documentation]  FAIL  Timeout 1 second 100 milliseconds exceeded. The last error was: Still 0 times to fail!  
-    Wait Until Keyword Succeeds  1.1 seconds  1 s 1 ms  Fail Until Retried Often Enough  
+    [Documentation]  FAIL  Timeout 1 second 100 milliseconds exceeded. The last error was: Still 0 times to fail!
+    Wait Until Keyword Succeeds  1.1 seconds  1 s 1 ms  Fail Until Retried Often Enough
 
 Pass with first Try
-    Wait Until Keyword Succeeds  2 minutes  30 seconds  Log  ${HELLO}  
+    Wait Until Keyword Succeeds  2 minutes  30 seconds  Log  ${HELLO}
 
 Pass With Some Medium Try
-    Wait Until Keyword Succeeds  ${42}  200 milliseconds  Fail Until Retried Often Enough  
+    Wait Until Keyword Succeeds  ${42}  200 milliseconds  Fail Until Retried Often Enough
 
 Pass With Last Possible Try
-    Wait Until Keyword Succeeds  1.1 seconds  0.3 seconds  Fail Until Retried Often Enough  
+    Wait Until Keyword Succeeds  1.1 seconds  0.3 seconds  Fail Until Retried Often Enough
 
 Pass With Returning Value Correctly
-    ${return value} =  Wait Until Keyword Succeeds  4 seconds  0 min 0 sec 1 ms  Fail Until Retried Often Enough  ${HELLO}  
-    Should Be Equal  ${return value}  ${HELLO}  Returned value should be the one that is given to the keyword.  
+    ${return value} =  Wait Until Keyword Succeeds  4 seconds  0 min 0 sec 1 ms  Fail Until Retried Often Enough  ${HELLO}
+    Should Be Equal  ${return value}  ${HELLO}  Returned value should be the one that is given to the keyword.
 
-Fail With Invalid Timeout Value
-    [Documentation]  FAIL  Invalid time string 'Not Time Value'  
-    Wait Until Keyword Succeeds  Not Time Value  1 seconds  Fail Until Retried Often Enough  
+Invalid Timeout Does Not Cause Uncatchable Failure
+    Run Keyword And Expect Error  Invalid time string 'Not Time Value'
+    ...  Wait Until Keyword Succeeds  Not Time Value  1 seconds  No Operation
 
-Fail With None Timeout Value
-    [Documentation]  FAIL  Invalid time string 'None'  
-    Wait Until Keyword Succeeds  ${NONE}  1 seconds  Fail Until Retried Often Enough  
-
-Fail With Invalid Retry Interval Value
-    [Documentation]  FAIL  Invalid time string 'Not Time Value'  
-    Wait Until Keyword Succeeds  1 seconds  Not Time Value  Fail Until Retried Often Enough  
-
-Fail With None Retry Interval Value
-    [Documentation]  FAIL  Invalid time string 'None'  
-    Wait Until Keyword Succeeds  1 seconds  ${NONE}  Fail Until Retried Often Enough  
+Invalid Retry Interval Does Not Cause Uncatchable Failure
+    Run Keyword And Expect Error  Invalid time string 'invalid'
+    ...  Wait Until Keyword Succeeds  1 seconds  invalid  No Operation
 
 Wait Until In User Keyword
     Wait Until Inside User Keyword  
 
 Failing User Keyword with Wait Until
-    [Documentation]  FAIL  Timeout 200 milliseconds exceeded. The last error was: Still 0 times to fail!  
-    Wait Until Keyword Succeeds  ${0.2}  0.1  User Keyword  
+    [Documentation]  FAIL  Timeout 200 milliseconds exceeded. The last error was: Still 0 times to fail!
+    Wait Until Keyword Succeeds  ${0.2}  0.1  User Keyword
 
 Passing User Keyword with Wait Until
-    ${return value} =  Wait Until Keyword Succeeds  10 minutes  10 milliseconds  User Keyword  
-    Should Be Equal  ${return value}  From User Keyword  Returned value should be the one defined in user keyword.  
+    ${return value} =  Wait Until Keyword Succeeds  10 minutes  10 milliseconds  User Keyword
+    Should Be Equal  ${return value}  From User Keyword  Returned value should be the one defined in user keyword.
 
 Wait Until With Longer Test Timeout
     [Timeout]  10 seconds
-    [Documentation]  FAIL  Timeout 50 milliseconds exceeded. The last error was: My error 
+    [Documentation]  FAIL  Timeout 50 milliseconds exceeded. The last error was: My error
     Wait Until Keyword Succeeds  0.05s  0.01s  Fail  My error
 
 Wait Until With Shorter Test Timeout
@@ -88,11 +80,11 @@ Keyword Not Found Inside Wait Until Keyword Succeeds
 
 ***Keywords***
 User Keyword
-    ${value} =  Fail Until Retried Often Enough  From User Keyword  
-    [Return]  ${value}  
+    ${value} =  Fail Until Retried Often Enough  From User Keyword
+    [Return]  ${value}
 
 Wait Until Inside User Keyword
-    Wait Until Keyword Succeeds  3.99 seconds  0.1  Fail Until Retried Often Enough  
+    Wait Until Keyword Succeeds  3.99 seconds  0.1  Fail Until Retried Often Enough
 
 Timeouted UK with Wait Until KW
     [Timeout]  ${timeout}
