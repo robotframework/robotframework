@@ -769,8 +769,8 @@ class _Variables:
         """Returns variable value or `default` if the variable does not exist.
 
         The name of the variable can be given either as a normal variable name
-        (e.g. ${NAME}) or in escaped format (e.g. \\${NAME}). Notice that the
-        former has some limitations explained in `Set Suite Variable`.
+        (e.g. `${NAME}`) or in escaped format (e.g. `\\${NAME}`). Notice that
+        the former has some limitations explained in `Set Suite Variable`.
 
         Examples:
         | ${x} = | Get Variable Value | ${a} | default |
@@ -803,8 +803,8 @@ class _Variables:
         """Fails unless the given variable exists within the current scope.
 
         The name of the variable can be given either as a normal variable name
-        (e.g. ${NAME}) or in escaped format (e.g. \\${NAME}). Notice that the
-        former has some limitations explained in `Set Suite Variable`.
+        (e.g. `${NAME}`) or in escaped format (e.g. `\\${NAME}`). Notice that
+        the former has some limitations explained in `Set Suite Variable`.
 
         The default error message can be overridden with the `msg` argument.
         """
@@ -818,8 +818,8 @@ class _Variables:
         """Fails if the given variable exists within the current scope.
 
         The name of the variable can be given either as a normal variable name
-        (e.g. ${NAME}) or in escaped format (e.g. \\${NAME}). Notice that the
-        former has some limitations explained in `Set Suite Variable`.
+        (e.g. `${NAME}`) or in escaped format (e.g. `\\${NAME}`). Notice that
+        the former has some limitations explained in `Set Suite Variable`.
 
         The default error message can be overridden with the `msg` argument.
         """
@@ -903,7 +903,7 @@ class _Variables:
         variables set with this keyword.
 
         The name of the variable can be given either as a normal variable name
-        (e.g. ${NAME}) or in escaped format (e.g. \\${NAME}).
+        (e.g. `${NAME}`) or in escaped format as `\\${NAME}` or `$NAME`.
 
         If a variable already exists within the new scope, its value will be
         overwritten. Otherwise a new variable is created. If a variable already
@@ -916,14 +916,15 @@ class _Variables:
         | Set Suite Variable | ${ID}    |
 
         *NOTE:* If the variable has value which itself is a variable (escaped
-        or not), you must always use the escaped format like in the example
-        below. This limitation applies to `Set Test/Suite/Global Variable`
-        and `Variable Should (Not) Exist` keywords.
+        or not), you must always use the escaped format to reset the variable:
 
         Example:
-        | ${NAME} =          | Set Variable | \${variable} |
-        | Set Suite Variable | ${NAME}      | new value    | # Does not work |
-        | Set Suite Variable | \${NAME}     | new value    | # This works    |
+        | ${NAME} =          | Set Variable | \${var} |
+        | Set Suite Variable | ${NAME}      | value | # Sets variable ${var}  |
+        | Set Suite Variable | \${NAME}     | value | # Sets variable ${NAME} |
+
+        This limitation applies also to `Set Test/Suite/Global Variable`,
+        `Variable Should (Not) Exist`, and `Get Variable Value` keywords.
         """
         name = self._get_var_name(name)
         value = self._get_var_value(name, values)
