@@ -54,14 +54,13 @@ class ConnectionCache:
         """Switches to the connection specified by given index or alias.
 
         If alias is given it must be a string. Indexes can be either integers
-        or strings that can be converted into integer. Raises a DataError
+        or strings that can be converted into integer. Raises RuntimeError
         if no connection with given index or alias found.
         """
         try:
             index = self._get_index(index_or_alias)
         except ValueError:
-            # TODO: Should not raise DataError here anymore.
-            raise DataError("Non-existing index or alias '%s'" % index_or_alias)
+            raise RuntimeError("Non-existing index or alias '%s'" % index_or_alias)
         self.current = self._connections[index-1]
         self.current_index = index
         return self.current
@@ -116,7 +115,7 @@ class _NoConnection:
     def __getattr__(self, name):
         if name.startswith('__') and name.endswith('__'):
             raise AttributeError
-        raise DataError(self._msg)
+        raise RuntimeError(self._msg)
 
     def __nonzero__(self):
         return False

@@ -246,7 +246,7 @@ class _ClassLibrary(_BaseTestLibrary):
                 continue
             self._validate_handler(item.__dict__[name])
             return getattr(libinst, name)
-        raise DataError('No non implicit implementation found')
+        raise DataError('No non-implicit implementation found')
 
     def _validate_handler(self, handler):
         if not self._is_routine(handler):
@@ -285,7 +285,7 @@ class _ModuleLibrary(_BaseTestLibrary):
     def _get_handler_method(self, libcode, name):
         method = _BaseTestLibrary._get_handler_method(self, libcode, name)
         if hasattr(libcode, '__all__') and name not in libcode.__all__:
-            raise DataError('Not exposed as keyword')
+            raise DataError('Not exposed as a keyword')
         return method
 
     def get_instance(self):

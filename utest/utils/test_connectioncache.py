@@ -2,7 +2,6 @@ import unittest
 import sys
 
 from robot.utils.asserts import *
-from robot.errors import DataError
 
 from robot.utils import ConnectionCache
 
@@ -27,9 +26,9 @@ class TestConnnectionCache(unittest.TestCase):
         self._verify_initial_state()
 
     def test_no_connection(self):
-        assert_raises_with_msg(DataError, 'No open connection', getattr,
+        assert_raises_with_msg(RuntimeError, 'No open connection', getattr,
                                ConnectionCache().current, 'whatever')
-        assert_raises_with_msg(DataError, 'Custom msg', getattr,
+        assert_raises_with_msg(RuntimeError, 'Custom msg', getattr,
                                ConnectionCache('Custom msg').current, 'xxx')
         
     def test_register_one(self):
@@ -62,9 +61,9 @@ class TestConnnectionCache(unittest.TestCase):
         
     def test_switch_with_non_existing_index(self):
         self._register('a', 'b')
-        assert_raises_with_msg(DataError, "Non-existing index or alias '3'",
+        assert_raises_with_msg(RuntimeError, "Non-existing index or alias '3'",
                                self.cache.switch, 3)
-        assert_raises_with_msg(DataError, "Non-existing index or alias '42'",
+        assert_raises_with_msg(RuntimeError, "Non-existing index or alias '42'",
                                self.cache.switch, 42)
 
     def test_register_with_alias(self):
@@ -96,7 +95,7 @@ class TestConnnectionCache(unittest.TestCase):
         
     def test_switch_with_non_existing_alias(self):
         self._register('a', 'b')
-        assert_raises_with_msg(DataError, "Non-existing index or alias 'whatever'",
+        assert_raises_with_msg(RuntimeError, "Non-existing index or alias 'whatever'",
                                self.cache.switch, 'whatever')
                 
     def test_switch_with_alias_overriding_index(self):
