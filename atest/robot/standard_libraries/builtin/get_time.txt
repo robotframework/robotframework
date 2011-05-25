@@ -1,8 +1,7 @@
 *** Settings ***
 Documentation   Tests for BuiltIn library's keyword Get Time
 Suite Setup     Run Tests  ${EMPTY}  standard_libraries/builtin/get_time.txt
-Force Tags      regression
-Default Tags    jybot  pybot
+Force Tags      regression  jybot  pybot
 Resource        atest_resource.txt
 
 *** Test Cases ***
@@ -30,3 +29,5 @@ When Time Is Now +- something
 Empty Format Is Interpreted As Timestamp When Time Given
     Check Test Case  ${TEST NAME}
 
+Invalid Time Does Not Cause Un-Catchable Failure
+    Check Test Case  ${TEST NAME}

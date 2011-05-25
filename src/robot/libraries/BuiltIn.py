@@ -1645,7 +1645,10 @@ class _Misc:
         - ${day} = '28'
         - @{time} = ['16', '08', '24']
         """
-        return utils.get_time(format, utils.parse_time(time_))
+        try:
+            return utils.get_time(format, utils.parse_time(time_))
+        except DataError, err:
+            raise RuntimeError(unicode(err))
 
     def evaluate(self, expression, modules=None):
         """Evaluates the given expression in Python and returns the results.
