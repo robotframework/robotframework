@@ -282,7 +282,7 @@ class _List:
         """Fails if any element in the `list` is found from it more than once.
 
         The default error message lists all the elements that were found
-        from the `list` multiple times, but it can be overridded by giving
+        from the `list` multiple times, but it can be overridden by giving
         a custom `msg`. All multiple times found items and their counts are
         also logged.
 
