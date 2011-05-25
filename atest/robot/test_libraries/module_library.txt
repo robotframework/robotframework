@@ -71,4 +71,4 @@ Module Library Scope Should Be Global
 
 Keyword should not have been added
     [Arguments]  ${kw}  ${lib}=module_lib_with_all
-    Check Syslog Contains  Adding keyword '${kw}' to library '${lib}' failed: Not exposed as keyword
+    Check Syslog Contains  Adding keyword '${kw}' to library '${lib}' failed: Not exposed as a keyword
