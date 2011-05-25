@@ -33,6 +33,12 @@ class _KeywordArguments(object):
         self._arg_limit_checker = _ArgLimitChecker(self.minargs, self.maxargs,
                                                    kw_or_lib_name, self._type)
 
+    def _determine_args(self, handler_or_argspec):
+        args, defaults, varargs = self._get_arg_spec(handler_or_argspec)
+        minargs = len(args) - len(defaults)
+        maxargs = len(args) if not varargs else sys.maxint
+        return args, defaults, varargs, minargs, maxargs
+
     def resolve(self, args, variables, output=None):
         posargs, namedargs = self._resolve(args, variables, output)
         self.check_arg_limits(posargs, namedargs)
@@ -51,9 +57,9 @@ class _KeywordArguments(object):
     def _tracelog_args(self, logger, posargs, namedargs={}):
         if self._logger_not_available_during_library_init(logger):
             return
-        args = [ utils.safe_repr(a) for a in posargs ] \
-             + [ '%s=%s' % (utils.unic(a), utils.safe_repr(namedargs[a]))
-                 for a in namedargs ]
+        args = [utils.safe_repr(a) for a in posargs] \
+             + ['%s=%s' % (utils.unic(a), utils.safe_repr(namedargs[a]))
+                for a in namedargs]
         logger.trace('Arguments: [ %s ]' % ' | '.join(args))
 
     def _logger_not_available_during_library_init(self, logger):
@@ -64,12 +70,6 @@ class PythonKeywordArguments(_KeywordArguments):
 
     def _get_argument_resolver(self):
         return PythonKeywordArgumentResolver(self)
-
-    def _determine_args(self, handler_method):
-        args, defaults, varargs = self._get_arg_spec(handler_method)
-        minargs = len(args) - len(defaults)
-        maxargs = varargs is not None and sys.maxint or len(args)
-        return args, defaults, varargs, minargs, maxargs
 
     def _get_arg_spec(self, handler):
         """Returns info about args in a tuple (args, defaults, varargs)
@@ -140,12 +140,6 @@ class DynamicKeywordArguments(_KeywordArguments):
     def _get_argument_resolver(self):
         return PythonKeywordArgumentResolver(self)
 
-    def _determine_args(self, argspec):
-        args, defaults, varargs = self._get_arg_spec(argspec)
-        minargs = len(args) - len(defaults)
-        maxargs = varargs is not None and sys.maxint or len(args)
-        return args, defaults, varargs, minargs, maxargs
-
     def _get_arg_spec(self, argspec):
         if argspec is None:
             return [], [], '<unknown>'
@@ -209,7 +203,7 @@ class UserKeywordArguments(object):
     def __init__(self, args, name):
         self.names, self.defaults, self.varargs = self._get_arg_spec(args)
         self.minargs = len(self.names) - len(self.defaults)
-        maxargs = self.varargs is not None and sys.maxint or len(self.names)
+        maxargs = len(self.names) if not self.varargs else sys.maxint
         self._arg_limit_checker = _ArgLimitChecker(self.minargs, maxargs,
                                                    name, 'Keyword')
 
@@ -356,12 +350,11 @@ class _ArgumentResolver(object):
             if name in named:
                 raise DataError('Keyword argument %s repeated.' % name)
             if name in used_names:
-                output.warn("Could not resolve named arguments because value for "
-                            "argument '%s' was given twice." % name)
+                output.warn("Could not resolve named arguments because value "
+                            "for argument '%s' was given twice." % name)
                 return values, {}
-            else:
-                used_names.append(name)
-                named[name] = value
+            used_names.append(name)
+            named[name] = value
         return values[:last_positional], named
 
     def _get_last_positional_idx(self, values):
