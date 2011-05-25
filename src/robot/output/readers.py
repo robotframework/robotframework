@@ -12,7 +12,6 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-
 import os.path
 
 from robot import utils
@@ -49,12 +48,13 @@ def process_output(path, read_level=-1, log_level=None, settings=None):
     try:
         root = utils.etreewrapper.get_root(path)
     except:
-        err = utils.get_error_message()
-        raise DataError("Opening XML file '%s' failed: %s" % (path, err))
-    suite = _get_suite_node(root, path)
-    errors = _get_errors_node(root)
-    return TestSuite(suite, read_level, log_level=log_level, settings=settings),\
-                ExecutionErrors(errors)
+        raise DataError("Opening XML file '%s' failed: %s"
+                        % (path, utils.get_error_message()))
+    suite = TestSuite(_get_suite_node(root, path), read_level,
+                      log_level=log_level, settings=settings)
+    errors = ExecutionErrors(_get_errors_node(root))
+    return suite, errors
+
 
 def _get_suite_node(root, path):
     if root.tag != 'robot':
@@ -201,9 +201,9 @@ class TestSuite(BaseTestSuite, _SuiteReader):
         if not timestamp or utils.eq(timestamp, 'N/A'):
             return 'N/A'
         try:
-            seps = (' ', ':', '.', '-', '_')
-            secs = utils.timestamp_to_secs(timestamp, seps, millis=True)
-        except DataError:
+            secs = utils.timestamp_to_secs(timestamp, seps=list(' :.-_'),
+                                           millis=True)
+        except ValueError:
             return 'N/A'
         return utils.secs_to_timestamp(secs, millis=True)
 
