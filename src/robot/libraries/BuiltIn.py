@@ -1185,11 +1185,8 @@ class _RunKeyword:
         Starting from Robot Framework 2.5 errors caused by invalid syntax,
         timeouts, or fatal exceptions are not caught by this keyword.
         """
-        try:
-            timeout = utils.timestr_to_secs(timeout)
-            retry_interval = utils.timestr_to_secs(retry_interval)
-        except DataError, err:
-            raise RuntimeError(unicode(err))
+        timeout = utils.timestr_to_secs(timeout)
+        retry_interval = utils.timestr_to_secs(retry_interval)
         maxtime = time.time() + timeout
         error = None
         while not error:
@@ -1392,10 +1389,7 @@ class _Misc:
         | Sleep | 2 minutes 10 seconds |
         | Sleep | 10s                  | Wait for a reply |
         """
-        try:
-            seconds = utils.timestr_to_secs(time_)
-        except DataError, err:
-            raise RuntimeError(unicode(err))
+        seconds = utils.timestr_to_secs(time_)
         # Python hangs with negative values
         if seconds < 0:
             seconds = 0
@@ -1651,10 +1645,7 @@ class _Misc:
         - ${day} = '28'
         - @{time} = ['16', '08', '24']
         """
-        try:
-            return utils.get_time(format, utils.parse_time(time_))
-        except DataError, err:
-            raise RuntimeError(unicode(err))
+        return utils.get_time(format, utils.parse_time(time_))
 
     def evaluate(self, expression, modules=None):
         """Evaluates the given expression in Python and returns the results.

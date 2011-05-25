@@ -51,5 +51,5 @@ Empty Format Is Interpreted As Timestamp When Time Given
     Should Be Equal  ${time}  2007-04-27 09:14:27
 
 Invalid Time Does Not Cause Un-Catchable Failure
-    Run Keyword And Expect Error  Invalid time format 'invalid'
+    Run Keyword And Expect Error  ValueError: Invalid time format 'invalid'
     ...  Get Time  timestamp  invalid

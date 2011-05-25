@@ -20,7 +20,6 @@ import fnmatch
 import shutil
 
 try:
-    from robot.errors import DataError
     from robot.output import LOGGER
     from robot.version import get_version
     from robot.utils import (ConnectionCache, seq2str, timestr_to_secs,
@@ -31,7 +30,6 @@ try:
 
 except ImportError:
     from os.path import abspath
-    DataError = RuntimeError
     __version__ = '<unknown>'
     seq2str = lambda items: ', '.join("'%s'" % item for item in items)
     timestr_to_secs = int
@@ -1006,7 +1004,7 @@ class OperatingSystem:
         path = self._absnorm(path)
         if not os.path.exists(path):
             raise RuntimeError("Getting modified time of '%s' failed: "
-                            "Path does not exist" % path)
+                               "Path does not exist" % path)
         mtime = get_time(format, os.stat(path).st_mtime)
         self._link("Last modified time of '%%s' is %s" % mtime, path)
         return mtime
@@ -1043,13 +1041,13 @@ class OperatingSystem:
         path = self._absnorm(path)
         try:
             if not os.path.exists(path):
-                raise DataError('File does not exist')
+                raise ValueError('File does not exist')
             if not os.path.isfile(path):
-                raise DataError('Modified time can only be set to regular files')
+                raise ValueError('Modified time can only be set to regular files')
             mtime = parse_time(mtime)
-        except DataError, err:
+        except ValueError, err:
             raise RuntimeError("Setting modified time of '%s' failed: %s"
-                               % (path, err))
+                               % (path, unicode(err)))
         os.utime(path, (mtime, mtime))
         time.sleep(0.1)  # Give os some time to really set these times
         tstamp = secs_to_timestamp(mtime, ('-',' ',':'))

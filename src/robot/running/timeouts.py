@@ -46,7 +46,7 @@ class _Timeout(object):
             self.secs = utils.timestr_to_secs(self.string)
             self.string = utils.secs_to_timestr(self.secs)
             self.message = variables.replace_string(self.message)
-        except DataError, err:
+        except (DataError, ValueError), err:
             self.secs = 0.000001 # to make timeout active
             self.error = 'Setting %s failed: %s' % (self.type.lower(), unicode(err))
 

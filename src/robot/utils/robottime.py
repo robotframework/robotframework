@@ -12,10 +12,8 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-
 import time
 
-from robot.errors import DataError
 from normalizing import normalize
 from misc import plural_or_not
 
@@ -51,7 +49,7 @@ def timestr_to_secs(timestr):
     try:
         secs = _timestr_to_secs(timestr)
     except (ValueError, TypeError):
-        raise DataError("Invalid time string '%s'" % timestr)
+        raise ValueError("Invalid time string '%s'" % timestr)
     return round(secs, 3)
 
 def _timestr_to_secs(timestr):
@@ -237,14 +235,15 @@ def parse_time(timestr):
     """
     try:
         ret = int(timestr)
-        if ret < 0:
-            raise DataError("Epoch time must be positive (got %s)" % timestr)
-        return ret
     except ValueError:
         pass
+    else:
+        if ret < 0:
+            raise ValueError("Epoch time must be positive (got %s)" % timestr)
+        return ret
     try:
         return timestamp_to_secs(timestr, (' ', ':', '-', '.'))
-    except DataError:
+    except ValueError:
         pass
     normtime = timestr.lower().replace(' ', '')
     now = int(time.time())
@@ -255,7 +254,7 @@ def parse_time(timestr):
             return now + timestr_to_secs(normtime[4:])
         if normtime[3] == '-':
             return now - timestr_to_secs(normtime[4:])
-    raise DataError("Invalid time format '%s'" % timestr)
+    raise ValueError("Invalid time format '%s'" % timestr)
 
 
 def get_timestamp(daysep='', daytimesep=' ', timesep=':', millissep='.'):
@@ -267,7 +266,7 @@ def timestamp_to_secs(timestamp, seps=('', ' ', ':', '.'), millis=False):
     try:
         secs = _timestamp_to_millis(timestamp, seps) / 1000.0
     except (ValueError, OverflowError):
-        raise DataError("Invalid timestamp '%s'" % timestamp)
+        raise ValueError("Invalid timestamp '%s'" % timestamp)
     if millis:
         return round(secs, 3)
     return int(round(secs))
