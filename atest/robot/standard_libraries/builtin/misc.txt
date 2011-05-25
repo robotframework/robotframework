@@ -1,90 +1,20 @@
 *** Settings ***
-Documentation   Tests for BuiltIn library's misc functionality
 Suite Setup     Run Tests  ${EMPTY}  standard_libraries/builtin/misc.txt
-Force Tags      regression
-Default Tags    jybot  pybot
+Force Tags      regression  jybot  pybot
 Resource        atest_resource.txt
 
 *** Test Cases ***
 No Operation
-    Check Test Case  No Operation
-
-Sleep
-    ${tc} =  Check Test Case  Sleep
-    Check Log Message  ${tc.kws[1].msgs[0]}  Slept 1 second 111 milliseconds
-    Check Log Message  ${tc.kws[3].msgs[0]}  Slept 1 second 234 milliseconds
-    Check Log Message  ${tc.kws[5].msgs[0]}  Slept 1 second 112 milliseconds
-
-Sleep With Negative Time
-    ${tc} =  Check Test Case  Sleep With Negative Time
-    Check Log Message  ${tc.kws[1].msgs[0]}  Slept 0 seconds
-    Check Log Message  ${tc.kws[2].msgs[0]}  Slept 0 seconds
-
-Sleep With Reason
-    ${tc} =  Check Test Case  Sleep With Reason
-    Check Log Message  ${tc.kws[0].msgs[0]}  Slept 42 milliseconds
-    Check Log Message  ${tc.kws[0].msgs[1]}  No good reason
+    Check Test Case  ${TEST NAME}
 
 Catenate
-    Check Test Case  Catenate
+    Check Test Case  ${TEST NAME}
 
 Comment
-    ${tc} =  Check Test Case  Comment
-    Should Be Equal As Integers  ${tc.kws[0].msg_count}  0
-    Should Be Equal As Integers  ${tc.kws[1].msg_count}  0
-    Should Be Equal As Integers  ${tc.kws[2].msg_count}  0
-
-Import Library
-    Check Test Case  Import Library 1
-    Check Test Case  Import Library 2
-    Check Test Case  Import Library 3
-
-Import Library With Parameter
-    Check Test Case  Import Library With Parameter
-
-Import Library Using Physical Path
-    Check Test Case  Import Library Using Physical Path
-
-Import Library Using Physical Path, Arguments And WITH NAME
-    Check Test Case  Import Library Using Physical Path, Arguments and WITH NAME
-
-Import Variables
-    Check Test Case  Import Variables 1
-    Check Test Case  Import Variables 2
-
-Import Variables With Parameter
-    Check Test Case  Import Variables With Parameter
-
-Import Variables In User Keyword
-    Check Test Case  Import Variables In User Keyword
-    Check Test Case  Import Variables In User Keyword 2
-
-Evaluate
-    Check Test Case  Evaluate
-
-Evaluate With Modules
-    Check Test Case  Evaluate With Modules
-
-Call Method
-    Check Test Case  Call Method
-
-Call Method Returns
-    Check Test Case  Call Method Returns
-
-Call Method From Module
-    Check Test Case  Call Method From Module
-
-Call Non Existing Method
-    Check Test Case  Call Non Existing Method
-
-Call Java Method
-    [Tags]  jybot
-    Check Test Case  Call Java Method
-
-Call Non Existing Java Method
-    [Tags]  jybot
-    Check Test Case  Call Non Existing Java Method
+    ${tc} =  Check Test Case  ${TEST NAME}
+    Should Be Empty  ${tc.kws[0].msgs}
+    Should Be Empty  ${tc.kws[1].msgs}
+    Should Be Empty  ${tc.kws[2].msgs}
 
 Regexp Escape
-    Check Test Case  Regexp Escape
-
+    Check Test Case  ${TEST NAME}

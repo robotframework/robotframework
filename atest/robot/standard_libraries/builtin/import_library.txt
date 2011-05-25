@@ -1,0 +1,20 @@
+*** Settings ***
+Suite Setup     Run Tests  ${EMPTY}  standard_libraries/builtin/import_library.txt
+Force Tags      regression  jybot  pybot
+Resource        atest_resource.txt
+
+*** Test Cases ***
+
+Import Library
+    Check Test Case  ${TEST NAME} 1
+    Check Test Case  ${TEST NAME} 2
+    Check Test Case  ${TEST NAME} 3
+
+Import Library With Arguments
+    Check Test Case  ${TEST NAME}
+
+Import Library Using Physical Path
+    Check Test Case  ${TEST NAME}
+
+Import Library Using Physical Path, Arguments And WITH NAME
+    Check Test Case  ${TEST NAME}
