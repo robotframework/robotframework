@@ -1007,7 +1007,7 @@ class _RunKeyword:
         another keyword or from the command line.
         """
         if not isinstance(name, basestring):
-            raise DataError('Keyword name must be a string')
+            raise RuntimeError('Keyword name must be a string')
         kw = Keyword(name, list(args))
         return kw.run(ExecutionContext(NAMESPACES.current, self._output))
 
@@ -1469,7 +1469,10 @@ class _Misc:
         The available levels: TRACE, DEBUG, INFO (default), WARN and NONE (no
         logging).
         """
-        old = self._output.set_log_level(level)
+        try:
+            old = self._output.set_log_level(level)
+        except DataError, err:
+            raise RuntimeError(unicode(err))
         self.log('Log level changed from %s to %s' % (old, level.upper()))
         return old
 

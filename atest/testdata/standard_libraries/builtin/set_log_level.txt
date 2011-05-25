@@ -1,10 +1,9 @@
 *** Variables ***
 # Used to make arguments look different from actual printout in html
-${to log} =    to log
+${TO LOG} =    to log
 
 *** Test Cases ***
 Set Log Level
-    [Documentation]  FAIL Invalid log level 'INVALID'
     Set Log Level  TRACE
     Log  This is logged  TRACE
     Log  This is logged  DEBUG
@@ -25,8 +24,10 @@ Set Log Level
     Set Log Level  NONE
     Log  NOT logged
     Log  NOT logged  FAIL
-    Set Log Level  INVALID
     [Teardown]  Set Log Level  INFO
+
+Invalid Log Level Failure Is Catchable
+    Run Keyword And Expect Error  Invalid log level 'INVALID'  Set Log Level  INVALID
 
 Log Level Goes To HTML
     Set Log Level  Trace
