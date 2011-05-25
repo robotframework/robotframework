@@ -40,9 +40,9 @@ Library with alias
     ${lib} =  Get Library Instance  String
     Should Be Equal  ${lib.replace_string('Hello', 'e', 'i')}  Hillo
 
-Non-existing library
-    [Documentation]  FAIL  No library with name 'NonExisting' found.
-    Get Library Instance  NonExisting
+Non-existing library should cause catchable error
+    Run Keyword And Expect Error  No library with name 'NonExisting' found.
+    ...  Get Library Instance  NonExisting
 
 Library scopes 1
     ${test} =  Get Library Instance  libraryscope.Test

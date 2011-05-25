@@ -22,7 +22,7 @@ Library with alias
 `Import Library` keyword
     Check Test Case  ${TESTNAME}
 
-Non-existing library
+Non-existing library should cause catchable error
     Check Test Case  ${TESTNAME}
 
 Library scopes

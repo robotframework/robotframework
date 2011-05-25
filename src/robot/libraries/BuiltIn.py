@@ -1812,7 +1812,10 @@ class _Misc:
         the instance must be that name and not the original library
         name.
         """
-        return NAMESPACES.current.get_library_instance(name)
+        try:
+            return NAMESPACES.current.get_library_instance(name)
+        except DataError, err:
+            raise RuntimeError(unicode(err))
 
 
 class BuiltIn(_Verify, _Converter, _Variables, _RunKeyword, _Misc):
