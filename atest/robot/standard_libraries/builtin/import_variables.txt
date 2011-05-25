@@ -15,3 +15,6 @@ Import Variables With Arguments
 Import Variables In User Keyword
     Check Test Case  ${TESTNAME} 1
     Check Test Case  ${TESTNAME} 2
+
+Import Variables Failure Is Catchable
+    Check Test Case  ${TESTNAME}

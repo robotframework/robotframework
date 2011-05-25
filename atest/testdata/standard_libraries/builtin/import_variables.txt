@@ -38,6 +38,10 @@ Import Variables In User Keyword 2
     Should Be Equal  ${IMPORT_VARIABLES_2_ARGS}  Set again in user keyword
     Imported Variable Should Be Set To  Set again in user keyword
 
+Import Variables Failure Is Catchable
+    Run Keyword And Expect Error  Variable file 'non_existing.py' does not exist.
+    ...  Import Variables  non_existing.py 
+
 *** Keywords ***
 
 Import Variables In User Keyword

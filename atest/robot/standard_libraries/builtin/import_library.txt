@@ -18,3 +18,7 @@ Import Library Using Physical Path
 
 Import Library Using Physical Path, Arguments And WITH NAME
     Check Test Case  ${TEST NAME}
+
+Import Library Failure Is Catchable
+    Check Test Case  ${TESTNAME}
+

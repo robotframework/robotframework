@@ -1495,7 +1495,10 @@ class _Misc:
         | Import Library | ${CURDIR}/Library.py | some | args |
         | Import Library | ${CURDIR}/../libs/Lib.java | arg | WITH NAME | JavaLib |
         """
-        NAMESPACES.current.import_library(name.replace('/', os.sep), list(args))
+        try:
+            NAMESPACES.current.import_library(name.replace('/', os.sep), list(args))
+        except DataError, err:
+            raise RuntimeError(unicode(err))
 
     def import_variables(self, path, *args):
         """Imports a variable file with the given path and optional arguments.
@@ -1515,8 +1518,11 @@ class _Misc:
 
         New in Robot Framework 2.5.4.
         """
-        NAMESPACES.current.import_variables(path.replace('/', os.sep),
-                                            args, overwrite=True)
+        try:
+            NAMESPACES.current.import_variables(path.replace('/', os.sep),
+                                                list(args), overwrite=True)
+        except DataError, err:
+            raise RuntimeError(unicode(err))
 
     def import_resource(self, path):
         """Imports a resource file with the given path.
@@ -1532,7 +1538,10 @@ class _Misc:
         | Import Resource | ${CURDIR}/resource.txt |
         | Import Resource | ${CURDIR}/../resources/resource.html |
         """
-        NAMESPACES.current.import_resource(path.replace('/', os.sep))
+        try:
+            NAMESPACES.current.import_resource(path.replace('/', os.sep))
+        except DataError, err:
+            raise RuntimeError(unicode(err))
 
     def set_library_search_order(self, *libraries):
         """Sets the resolution order to use when a name matches multiple keywords.

@@ -11,6 +11,5 @@ Import Resource
 Import Resource With Sub Resources
     Check Test Case  ${TESTNAME}
 
-Import Non-Existing Resource
+Import Resource Failure Is Catchable
     Check Test Case  ${TESTNAME}
-

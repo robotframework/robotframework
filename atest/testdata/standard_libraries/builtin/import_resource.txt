@@ -10,14 +10,14 @@ Import Resource
 Import Resource With Sub Resources
     Variable Should Exist  ${VAR FROM IMPORT RESOURCE RESOURCE RESOURCE}
     KW From Import Resource Resource Resource
-    Verify Operating System Library Is Imported
+    Verify OperatingSystem Library Is Imported
     Variable Should Exist  ${VAR FROM VARFILE 2}
 
-Import Non-Existing Resource
-    [Documentation]  FAIL Resource file 'non-existing.txt' does not exist.
-    Import Resource  non-existing.txt
-    
+Import Resource Failure Is Catchable
+    Run Keyword And Expect Error  Resource file 'non_existing.txt' does not exist.
+    ...  Import Resource  non_existing.txt
+
 
 *** User Keywords ***
-Verify Operating System Library Is Imported
+Verify OperatingSystem Library Is Imported
     Directory Should Exist  ${CURDIR}

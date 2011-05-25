@@ -30,3 +30,7 @@ Import Library Using Physical Path, Arguments And WITH NAME
     Import Library  ${dir}/ParameterLibrary.py  first param  ${2}  WITH NAME  Params With Path
     ${params} =  Params With Path.Parameters
     Should Be True  ${params} == ('first param', 2)
+
+Import Library Failure Is Catchable
+    Run Keyword And Expect Error  Importing test library 'NonExistingLib' failed: ImportError: *
+    ...  Import Library  NonExistingLib
