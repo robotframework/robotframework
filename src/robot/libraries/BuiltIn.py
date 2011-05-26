@@ -32,12 +32,19 @@ try:
     bin  # available since Python 2.6
 except NameError:
     def bin(integer):
+        if not isinstance(integer, (int, long)):
+            raise TypeError
+        if integer >= 0:
+            prefix = '0b'
+        else:
+            prefix = '-0b'
+            integer = abs(integer)
         bins = []
         while integer > 1:
             integer, remainder = divmod(integer, 2)
             bins.append(str(remainder))
         bins.append(str(integer))
-        return '0b' + ''.join(reversed(bins))
+        return prefix + ''.join(reversed(bins))
 
 
 class _Converter:
