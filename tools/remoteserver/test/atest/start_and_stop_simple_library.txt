@@ -1,0 +1,35 @@
+*** Settings ***
+Documentation   Tests in this suite have two different purposes:\n 1) Starting, importing and stopping remote libraries using 'Start Process', 'Import Library', and 'Stop Remote Server'.\n 2) Using keywords from a library which doesn't have get_kw_args/doc methods and which returns only minimal result dictionary.
+Force Tags      python  ruby
+Library         Operating System
+
+*** Variables ***
+${PORT}  8271
+
+*** Test Cases ***
+Remote keywords do not exist if remote server is not running
+    [Documentation]  FAIL No keyword with name 'KW 1' found.
+    KW 1  Does not work yet
+
+Start And Import Remote Library
+    Start Process  python ${CURDIR}${/}simplelibrary.py ${PORT}
+    Import Library  Remote  localhost:${PORT}
+    Set Suite Variable  $LIBRARY STARTED OK  we actually should not require value here
+    KW 1  Now this works!
+
+Keywords From Simple Library
+    [Documentation]  FAIL My error message
+    ${ret} =  KW 1
+    Should Be Equal  ${ret}  ${EMPTY}
+    ${ret} =  KW 1  Hello  world!
+    Should Be Equal  ${ret}  Hello world!
+    KW 2  My  error  message
+
+Stop Remote Library
+    [Documentation]  FAIL Connection to remote server broken: Connection refused
+    Variable Should Exist  $LIBRARY STARTED OK
+    Stop Remote Server
+    ${out} =  Read Process Output
+    Log  ${out}
+    KW 1  This won't work anymore
+

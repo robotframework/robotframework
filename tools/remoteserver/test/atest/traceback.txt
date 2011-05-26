@@ -1,0 +1,23 @@
+*** Settings ***
+Suite Setup     Set Log Level  DEBUG
+Suite Teardown  Set Log Level  INFO
+Default Tags    python  ruby
+Library         Remote  localhost:${PORT}
+
+*** Variables ***
+${PORT}  8270
+
+*** Test Cases ***
+Remote Traceback Is Shown In Log
+    [Documentation]  FAIL My error message LOG 1:1 FAIL My error message LOG 1:2 DEBUG REGEXP: (Traceback \\(most recent call last\\):\n \\s+File "[\\w /\\\\]+examplelib.py", line .*\n \\s+raise AssertionError\\(message\\)|Traceback:\n.*examplelib.rb:\\d+:in `failing'\n.*)
+    Failing  My error message
+
+Remote Traceback With Multiple Entries
+    [Documentation]  FAIL Finally failing LOG 1:1 FAIL Finally failing LOG 1:2 DEBUG REGEXP: (Traceback \\(most recent call last\\):\n.*\n \\s+raise RuntimeError\\('Finally failing'\\)|Traceback:\n.*examplelib.rb:\\d+:in `failure_deeper'\n.*)
+    Failure Deeper
+
+Local Traceback Is Not Shown In Log
+    [Documentation]  FAIL Yet another error LOG 1:1 FAIL Yet another error LOG 1:2 DEBUG REGEXP: Traceback .* LOG 1:3 NONE
+    [Tags]  python
+    Failing  Yet another error
+
