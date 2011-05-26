@@ -1,9 +1,9 @@
 import unittest
 import sys
-from types import * 
+import inspect
 
-from robot.running.handlers import _RunnableHandler, _PythonHandler, \
-        _JavaHandler, DynamicHandler
+from robot.running.handlers import (_RunnableHandler, _PythonHandler,
+                                    _JavaHandler, DynamicHandler)
 from robot import utils
 from robot.errors import *
 from robot.utils.asserts import *
@@ -16,14 +16,14 @@ if utils.is_jython:
 
 
 def _get_handler_methods(lib):
-    attrs = [ getattr(lib, a) for a in dir(lib) if not a.startswith('_') ]
-    return [ a for a in attrs if type(a) is MethodType ]
+    attrs = [getattr(lib, a) for a in dir(lib) if not a.startswith('_')]
+    return [a for a in attrs if inspect.ismethod(a)]
 
 def _get_java_handler_methods(lib):
     # This hack assumes that all java handlers used start with 'a_' -- easier
     # than excluding 'equals' etc. otherwise
-    return [ a for a in _get_handler_methods(lib) if a.__name__.startswith('a_') ]
-    
+    return [a for a in _get_handler_methods(lib) if a.__name__.startswith('a_') ]
+
 
 class LibraryMock:
     def __init__(self, name='MyLibrary', scope='GLOBAL'):
@@ -89,29 +89,29 @@ class TestDynamicHandlerCreation(unittest.TestCase):
         assert_equals(self._create_handler(doc).doc, str(doc))
 
     def test_with_none_argspec(self):
-        self._assert_arg_specs(self._create_handler(), 0, sys.maxint, 
+        self._assert_arg_specs(self._create_handler(), 0, sys.maxint,
                                vararg='<unknown>')
 
     def test_with_empty_argspec(self):
         self._assert_arg_specs(self._create_handler(argspec=[]), 0, 0)
 
     def test_with_mandatory_args(self):
-        for args in [ ['arg'], ['arg1', 'arg2', 'arg3'] ]:
-            handler = self._create_handler(argspec=args) 
+        for args in [['arg'], ['arg1', 'arg2', 'arg3']]:
+            handler = self._create_handler(argspec=args)
             self._assert_arg_specs(handler, len(args), len(args), args)
 
     def test_with_only_default_args(self):
         argspec = ['defarg1=value', 'defarg2=defvalue']
-        self._assert_arg_specs(self._create_handler(argspec=argspec), 0, 2, 
+        self._assert_arg_specs(self._create_handler(argspec=argspec), 0, 2,
                                ['defarg1', 'defarg2'], ['value', 'defvalue'])
 
     def test_default_value_may_contain_equal_sign(self):
-        self._assert_arg_specs(self._create_handler(argspec=['d=foo=bar']), 0, 1,
-                                                    ['d'], ['foo=bar'])
+        self._assert_arg_specs(self._create_handler(argspec=['d=foo=bar']),
+                               0, 1, ['d'], ['foo=bar'])
 
     def test_with_varargs(self):
-        self._assert_arg_specs(self._create_handler(argspec=['*vararg']), 0, 
-                                                    sys.maxint, vararg='vararg')
+        self._assert_arg_specs(self._create_handler(argspec=['*vararg']),
+                               0, sys.maxint, vararg='vararg')
 
     def test_integration(self):
         handler = self._create_handler(argspec=['arg', 'default=value'])
@@ -120,19 +120,21 @@ class TestDynamicHandlerCreation(unittest.TestCase):
         self._assert_arg_specs(handler, 1, sys.maxint, ['arg', 'default'], ['value'], 'var')
 
     def test_with_string_argspec(self):
-        assert_raises_with_msg(TypeError, self._type_err_msg, self._create_handler, argspec='')
+        assert_raises_with_msg(TypeError, self._type_err_msg,
+                               self._create_handler, argspec='')
 
     def test_with_non_iterable_argspec(self):
-        assert_raises_with_msg(TypeError, self._type_err_msg, self._create_handler, argspec=True)
+        assert_raises_with_msg(TypeError, self._type_err_msg,
+                               self._create_handler, argspec=True)
 
     def test_mandatory_arg_after_default_arg(self):
         for argspec in [['d=v', 'arg'], ['a', 'b', 'c=v', 'd']]:
-            assert_raises_with_msg(TypeError, self._type_err_msg, 
+            assert_raises_with_msg(TypeError, self._type_err_msg,
                                    self._create_handler, argspec=argspec)
 
     def test_vararg_not_last(self):
-        for argspec in [ ['*foo', 'arg'], ['arg', '*var', 'arg'], 
-                         ['a', 'b=d', '*var', 'c'], ['*var', '*vararg'] ]:
+        for argspec in [['*foo', 'arg'], ['arg', '*var', 'arg'],
+                        ['a', 'b=d', '*var', 'c'], ['*var', '*vararg']]:
             assert_raises_with_msg(TypeError, self._type_err_msg,
                                    self._create_handler, argspec=argspec)
 
@@ -149,21 +151,21 @@ class TestDynamicHandlerCreation(unittest.TestCase):
 
 
 if utils.is_jython:
-    
-    handlers = dict([ (method.__name__, method) for method in 
-                       _get_java_handler_methods(ArgumentsJava()) ])
+
+    handlers = dict((method.__name__, method) for method in
+                    _get_java_handler_methods(ArgumentsJava()))
 
     class TestJavaHandler(unittest.TestCase):
 
         def test_arg_limits_no_defaults_or_varargs(self):
-            for count in [ 0, 1, 3 ]:
+            for count in [0, 1, 3]:
                 method = handlers['a_%d' % count]
                 handler = _JavaHandler(LibraryMock(), method.__name__, method)
                 assert_equals(handler.arguments._arg_limit_checker.minargs, count)
                 assert_equals(handler.arguments._arg_limit_checker.maxargs, count)
 
         def test_arg_limits_with_varargs(self):
-            for count in [ 0, 1 ]:
+            for count in [0, 1]:
                 method = handlers['a_%d_n' % count]
                 handler = _JavaHandler(LibraryMock(), method.__name__, method)
                 assert_equals(handler.arguments._arg_limit_checker.minargs, count)
@@ -171,7 +173,7 @@ if utils.is_jython:
 
         def test_arg_limits_with_defaults(self):
             # defaults i.e. multiple signatures
-            for mina, maxa in [ (0,1), (1,3) ]:
+            for mina, maxa in [(0,1), (1,3)]:
                 method = handlers['a_%d_%d' % (mina, maxa)]
                 handler = _JavaHandler(LibraryMock(), method.__name__, method)
                 assert_equals(handler.arguments._arg_limit_checker.minargs, mina)
@@ -199,8 +201,8 @@ if utils.is_jython:
                                 ['-9991.098'], [-9991.098])
 
         def test_coercion_with_compatible_types(self):
-            self._test_coercion(self._handler_named('coercableKeywordWithCompatibleTypes'), 
-                                ['9999', '-42', 'FaLsE', '31.31'], 
+            self._test_coercion(self._handler_named('coercableKeywordWithCompatibleTypes'),
+                                ['9999', '-42', 'FaLsE', '31.31'],
                                 [9999, -42, False, 31.31])
 
         def test_arguments_that_are_not_strings_are_not_coerced(self):
@@ -222,11 +224,11 @@ if utils.is_jython:
             self._test_coercion(self._handler_named('noArgument'), [], [])
 
         def test_coercing_multiple_arguments(self):
-            self._test_coercion(self._handler_named('coercableKeyword'), 
+            self._test_coercion(self._handler_named('coercableKeyword'),
                                 ['10.0', '42', 'tRUe'], [10.0, 42, True])
 
         def test_coercion_is_not_done_with_conflicting_signatures(self):
-            self._test_coercion(self._handler_named('unCoercableKeyword'), 
+            self._test_coercion(self._handler_named('unCoercableKeyword'),
                                 ['True', '42'], ['True', '42'])
 
         def test_coercable_and_uncoercable_args_in_same_kw(self):
@@ -240,7 +242,7 @@ if utils.is_jython:
             assert_equals(handler.arguments.arg_coercer(args), expected)
 
         def _test_coercion_fails(self, handler, expected_message):
-            assert_raises_with_msg(DataError, expected_message,
+            assert_raises_with_msg(ValueError, expected_message,
                                    handler.arguments.arg_coercer, ['invalid'])
 
 
