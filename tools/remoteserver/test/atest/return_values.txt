@@ -1,7 +1,6 @@
 *** Settings ***
 Default Tags    python  ruby
 Library         Remote  localhost:${PORT}  WITH NAME  remote
-Resource        resource.txt
 
 *** Variables ***
 ${PORT}  8270
@@ -15,7 +14,6 @@ Return Empty String
 
 Return Unicode String
     [Tags]  python
-    Run Keyword If Server Or Client Is Jython22  Set Tags  non-critical
     Return Value Should Be  Return Unicode String  u'Hyv\\u00E4\\u00E4 y\\u00F6t\\u00E4. \\u0421\\u043F\\u0430\\u0441\\u0438\\u0431\\u043E!'
 
 Return Symbol
@@ -94,7 +92,6 @@ Return Nested Dictionary
 
 Return Control Char
     [Documentation]  FAIL REGEXP: Processing XML-RPC return value failed. Most often this happens when the return value contains characters that are not valid in XML. Original error was: ExpatError: .*
-    Run Keyword If Server Or Client Is Jython22  Set Tags  non-critical
     Return Control Char
 
 *** Keywords ***

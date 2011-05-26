@@ -4,7 +4,6 @@ Suite Teardown  Reset Log Level
 Default Tags    python  ruby
 Library         Remote  localhost:${PORT}
 Variables       arguments.py
-Resource        resource.txt
 
 *** Variables ***
 ${PORT}  8270
@@ -25,9 +24,8 @@ Multiple Messages With Different Levels
     Multiple Messages With Different Levels
 
 Log Unicode
-    [Documentation]  LOG 2 INFO ${UNICODE}
+    [Documentation]  LOG 1 INFO ${UNICODE}
     [Tags]  python
-    Run Keyword If Server Or Client Is Jython22  Set Tags  non-critical
     Log Unicode
 
 Logging And Failing
@@ -43,7 +41,6 @@ Logging And Returning
 
 Log Control Char
     [Documentation]  FAIL REGEXP: Processing XML-RPC return value failed. Most often this happens when the return value contains characters that are not valid in XML. Original error was: ExpatError: .*
-    Run Keyword If Client Is Jython22  Set Tags  non-critical
     Log Control Char
 
 *** Keywords ***

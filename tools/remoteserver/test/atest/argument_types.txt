@@ -3,7 +3,6 @@ Default Tags    python  ruby
 Library         Remote  localhost:${PORT}  WITH NAME  remote
 Library         Collections
 Variables       arguments.py
-Resource        resource.txt
 
 *** Variables ***
 ${PORT}  8270
@@ -14,8 +13,6 @@ String As Argument
 
 Unicode String As Argument
     [Tags]  python
-    Run Keyword If Client Is Jython22  Set Tags  non-critical
-    Run Keyword If Client Is Jython22  Fail  This test would hang the execution on Jython 2.2
     Unicode String As Argument  ${UNICODE}
 
 Empty String As Argument
@@ -82,7 +79,6 @@ Nested Dictionary As Argument
 
 Control Char As Argument
     [Documentation]  In this situation the received error is not that good FAIL REGEXP: .*ExpatError.*
-    Run Keyword If Server Or Client Is Jython22  Set Tags  non-critical
     ${arg} =  Evaluate  '\\x01'
     String As Argument  ${arg}
 
