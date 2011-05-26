@@ -1,11 +1,10 @@
 #!/usr/bin/env python
 
 import unittest
+from os.path import dirname as parent
 import sys
-import os.path
 
-remotedir = os.path.dirname(os.path.dirname(os.path.dirname((__file__))))
-sys.path.insert(0, remotedir)
+sys.path.insert(0, parent(parent(parent(__file__))))
 
 from robotremoteserver import RobotRemoteServer
 
@@ -26,7 +25,7 @@ class StaticLibrary:
 
 class HybridLibrary:
     def get_keyword_names(self):
-        return [ n for n in dir(StaticLibrary) if n.endswith('_keyword') ] 
+        return [n for n in dir(StaticLibrary) if n.endswith('_keyword')]
     def __getattr__(self, name):
         return getattr(StaticLibrary(), name)
     def not_included(self):
@@ -65,11 +64,11 @@ class TestStaticApi(unittest.TestCase):
             ret = self.server.run_keyword('failing_keyword', [exception, ''])
             self.assertEquals(ret['status'], 'FAIL')
             self.assertEquals(ret['error'], exception.__name__)
-                
+
 
 class TestHybridApi(TestStaticApi):
     library = HybridLibrary()
 
-        
+
 if __name__ == '__main__':
     unittest.main()
