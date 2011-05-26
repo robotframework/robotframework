@@ -43,9 +43,7 @@ class Library:
         stderr = os.path.join(OUTPUTDIR, 'stderr.txt')
         cmd = '%s%s%s 1> %s 2> %s' % (lang, opts, lib, stdout, stderr)
         print 'Starting %s remote library with command:\n%s' % (lang, cmd)
-        stdin, stdouterr = os.popen4(cmd)
-        stdin.close()
-        stdouterr.close()
+        subprocess.Popen(cmd, shell=True)
 
     def _environment_setup(self, lang):
         if lang == 'jython':
