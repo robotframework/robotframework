@@ -1,17 +1,16 @@
 # Copyright 2008-2011 Nokia Siemens Networks Oyj
-# 
+#
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
-# 
+#
 #     http://www.apache.org/licenses/LICENSE-2.0
-# 
+#
 # Unless required by applicable law or agreed to in writing, software
 # distributed under the License is distributed on an "AS IS" BASIS,
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
 
 import sys
 import inspect
@@ -25,7 +24,6 @@ except ImportError:
 
 
 class RobotRemoteServer(SimpleXMLRPCServer):
-  
     allow_reuse_address = True
 
     def __init__(self, library, host='localhost', port=8270):
@@ -59,12 +57,12 @@ class RobotRemoteServer(SimpleXMLRPCServer):
         if inspect.isroutine(get_kw_names):
             names = get_kw_names()
         else:
-            names = [ attr for attr in dir(self._library) if attr[0] != '_'
-                      and inspect.isroutine(getattr(self._library, attr)) ]
+            names = [attr for attr in dir(self._library) if attr[0] != '_'
+                     and inspect.isroutine(getattr(self._library, attr))]
         return names + ['stop_remote_server']
 
     def run_keyword(self, name, args):
-        result = {'status': 'PASS', 'return': '', 'output': '', 
+        result = {'status': 'PASS', 'return': '', 'output': '',
                   'error': '', 'traceback': ''}
         self._intercept_stdout()
         try:
@@ -84,8 +82,7 @@ class RobotRemoteServer(SimpleXMLRPCServer):
             args = args[1:]  # drop 'self'
         if defaults:
             args, names = args[:-len(defaults)], args[-len(defaults):]
-            args += [ '%s=%s' % (name, value)
-                      for name, value in zip(names, defaults) ]
+            args += ['%s=%s' % (n, d) for n, d in zip(names, defaults)]
         if varargs:
             args.append('*%s' % varargs)
         return args
@@ -127,8 +124,8 @@ class RobotRemoteServer(SimpleXMLRPCServer):
         if isinstance(ret, (tuple, list)):
             return [ self._handle_return_value(item) for item in ret ]
         if isinstance(ret, dict):
-            return dict([ (self._str(key), self._handle_return_value(value))
-                          for key, value in ret.items() ])
+            return dict([(self._str(key), self._handle_return_value(value))
+                         for key, value in ret.items()])
         return self._str(ret)
 
     def _str(self, item):
