@@ -6,11 +6,11 @@ Library         ExampleJavaLibrary
 *** Test Cases ***
 Correct Number Of Arguments When No Defaults Or Varargs
     ${ret} =  A 0
-    Equals  ${ret}  a_0
+    Should Be Equal  ${ret}  a_0
     ${ret} =  A 1  my arg
-    Equals  ${ret}  a_1: my arg
+    Should Be Equal  ${ret}  a_1: my arg
     ${ret} =  A 3  a1  a2  a3
-    Equals  ${ret}  a_3: a1 a2 a3
+    Should Be Equal  ${ret}  a_3: a1 a2 a3
 
 Too Few Arguments When No Defaults Or Varargs 1
     [Documentation]  FAIL Keyword 'ArgumentsJava.A 1' expected 1 argument, got 0.
@@ -35,21 +35,21 @@ Too Many Arguments When No Defaults Or Varargs 3
 
 Correct Number Of Arguments With Defaults
     ${ret} =  A 0 1
-    Equals  ${ret}  a_0_1: default
+    Should Be Equal  ${ret}  a_0_1: default
     ${ret} =  A 0 1  This works too
-    Equals  ${ret}  a_0_1: This works too
+    Should Be Equal  ${ret}  a_0_1: This works too
     ${ret} =  A 1 3  My argument
-    Equals  ${ret}  a_1_3: My argument default default
+    Should Be Equal  ${ret}  a_1_3: My argument default default
     ${ret} =  A 1 3  My argument  My argument 2
-    Equals  ${ret}  a_1_3: My argument My argument 2 default
+    Should Be Equal  ${ret}  a_1_3: My argument My argument 2 default
     ${ret} =  A 1 3  My argument  My argument 2  My argument 3
-    Equals  ${ret}  a_1_3: My argument My argument 2 My argument 3
+    Should Be Equal  ${ret}  a_1_3: My argument My argument 2 My argument 3
 
 Java Varargs Should Work
     ${ret} =  Java Varargs  My Argument 1  My Argument 2
-    Equals  ${ret}  javaVarArgs: My Argument 1 My Argument 2
+    Should Be Equal  ${ret}  javaVarArgs: My Argument 1 My Argument 2
     ${ret} =  Java Varargs
-    Equals  ${ret}  javaVarArgs:
+    Should Be Equal  ${ret}  javaVarArgs:
 
 Too Few Arguments With Defaults
     [Documentation]  FAIL Keyword 'ArgumentsJava.A 1 3' expected 1 to 3 arguments, got 0.
@@ -65,18 +65,18 @@ Too Many Arguments With Defaults 2
 
 Correct Number Of Arguments With Varargs
     ${ret} =  A 0 N
-    Equals  ${ret}  a_0_n:
+    Should Be Equal  ${ret}  a_0_n:
     ${ret} =  A 0 N  My arg
-    Equals  ${ret}  a_0_n: My arg
+    Should Be Equal  ${ret}  a_0_n: My arg
     ${ret} =  A 0 N  1  2  3  4
-    Equals  ${ret}  a_0_n: 1 2 3 4
+    Should Be Equal  ${ret}  a_0_n: 1 2 3 4
     ${ret} =  A 1 N  Required arg
-    Equals  ${ret}  a_1_n: Required arg
+    Should Be Equal  ${ret}  a_1_n: Required arg
     ${ret} =  A 1 N  Required arg  plus one
-    Equals  ${ret}  a_1_n: Required arg plus one
+    Should Be Equal  ${ret}  a_1_n: Required arg plus one
     ${ret} =  A 1 N  1 (req)  2  3  4  5  6
     ...  7  8  9
-    Equals  ${ret}  a_1_n: 1 (req) 2 3 4 5 6 7 8 9
+    Should Be Equal  ${ret}  a_1_n: 1 (req) 2 3 4 5 6 7 8 9
 
 Too Few Arguments With Varargs
     [Documentation]  FAIL Keyword 'ArgumentsJava.A 1 N' expected at least 1 argument, got 0.
@@ -87,8 +87,8 @@ Varargs Work Also With Arrays And Lists
     ${array1} =  Get String Array  ${list}
     ${array2} =  Get String Array  ${array1}
     ${array3} =  Get String Array  Hello  string  array  world
-    Equals  ${array1}  ${array2}
-    Equals  ${array2}  ${array3}
+    Should Be Equal  ${array1}  ${array2}
+    Should Be Equal  ${array2}  ${array3}
 
 Valid Arguments For Keyword Expecting Non String Scalar Arguments
     Byte 1  ${1}
@@ -158,7 +158,7 @@ Valid Arguments For Keyword Expecting Non String Array Arguments
     Object Array  ${obj}  ${ht}  hello world  ${42}  ${null}
 
 Invalid Argument Types 1
-    [Documentation]  FAIL Argument at position 1 cannot be coerced to integer
+    [Documentation]  FAIL ValueError: Argument at position 1 cannot be coerced to integer
     Integer 1  this is not an integer
 
 Invalid Argument Types 2
