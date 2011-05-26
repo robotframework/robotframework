@@ -26,21 +26,30 @@ except ImportError:
 class RobotRemoteServer(SimpleXMLRPCServer):
     allow_reuse_address = True
 
-    def __init__(self, library, host='localhost', port=8270):
+    def __init__(self, library, host='localhost', port=8270, allow_stop=True):
         SimpleXMLRPCServer.__init__(self, (host, int(port)), logRequests=False)
         self._library = library
+        self._allow_stop = allow_stop
+        self._register_functions()
+        self._register_signal_handlers()
+        print 'Robot Framework remote server starting at %s:%s' % (host, port)
+        self.serve_forever()
+
+    def _register_functions(self):
         self.register_function(self.get_keyword_names)
         self.register_function(self.run_keyword)
         self.register_function(self.get_keyword_arguments)
         self.register_function(self.get_keyword_documentation)
         self.register_function(self.stop_remote_server)
-        callback = lambda signum, frame: self.stop_remote_server()
+
+    def _register_signal_handlers(self):
+        def stop_with_signal(signum, frame):
+            self._allow_stop = True
+            self.stop_remote_server()
         if hasattr(signal, 'SIGHUP'):
-            signal.signal(signal.SIGHUP, callback)
+            signal.signal(signal.SIGHUP, stop_with_signal)
         if hasattr(signal, 'SIGINT'):
-            signal.signal(signal.SIGINT, callback)
-        print 'Robot Framework remote library started at %s:%s' % (host, port)
-        self.serve_forever()
+            signal.signal(signal.SIGINT, stop_with_signal)
 
     def serve_forever(self):
         self._shutdown = False
@@ -48,7 +57,12 @@ class RobotRemoteServer(SimpleXMLRPCServer):
             self.handle_request()
 
     def stop_remote_server(self):
-        self._shutdown = True
+        prefix = 'Robot Framework remote server at %s:%s ' % self.server_address
+        if self._allow_stop:
+            print prefix + 'stopping'
+            self._shutdown = True
+        else:
+            print '*WARN* ' + prefix + 'does not allow stopping'
         return True
 
     def get_keyword_names(self):
