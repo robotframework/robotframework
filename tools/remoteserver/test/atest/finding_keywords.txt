@@ -1,0 +1,21 @@
+*** Settings ***
+Default Tags    python  ruby
+Library         Remote  localhost:${PORT}
+
+*** Variables ***
+${PORT}  8270
+
+*** Test Cases ***
+Methods Inherited From Base Object Should Be Ignored
+    [Documentation]  FAIL No keyword with name 'To S' found.
+    [Tags]  ruby
+    To S
+
+Private Methods Should Be Ignored
+    [Documentation]  FAIL No keyword with name 'Private Method' found.
+    Private Method
+
+Attributes Should Be Ignored
+    [Documentation]  FAIL No keyword with name 'attribute' found.
+    attribute
+

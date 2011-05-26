@@ -1,0 +1,103 @@
+*** Settings ***
+Default Tags    python  ruby
+Library         Remote  localhost:${PORT}  WITH NAME  remote
+
+*** Variables ***
+${PORT}  8270
+
+*** Test Cases ***
+Return String
+    Return Value Should Be  Return String  'Hello, world!'
+
+Return Empty String
+    Return Value Should Be  Return Empty String  ''
+
+Return Unicode String
+    [Tags]  python
+    Return Value Should Be  Return Unicode String  u'Hyv\\u00E4\\u00E4 y\\u00F6t\\u00E4. \\u0421\\u043F\\u0430\\u0441\\u0438\\u0431\\u043E!'
+
+Return Symbol
+    [Tags]  ruby
+    Return Value Should Be  Return Symbol  'symbol'
+
+Return Integer
+    Return Value Should Be  Return Integer  42
+    Return Value Should Be  Return Negative Integer  -1
+
+Return Float
+    Return Value Should Be  Return Float  3.14
+    Return Value Should Be  Return Negative Float  -0.5
+
+Return Zero
+    Return Value Should Be  Return Zero  0
+
+Return Boolean
+    Return Value Should Be  Return Boolean True  True
+    Return Value Should Be  Return Boolean False  False
+
+Return Nothing
+    [Documentation]  None/nil/null is not supported by all XML-RPC versions and thus it is converted to an empty string
+    Return Value Should Be  Return Nothing  ''
+
+Return Arbitrary Object
+    [Documentation]  Arbitraty objects cannot be transferred over XML-RPC and thus only their string presentation is returned
+    Return Value Should Be  Return Object  '<MyObject>'
+
+Return List
+    Return Value Should Be  Return List  ['One', -2, False]
+    Return Value Should Be  Return Empty List  []
+
+Return List Containing None
+    Return Value Should Be  Return List Containing None  ['']
+
+Return List Containing Arbitrary Objects
+    Return Value Should Be  Return List Containing Objects  ['<MyObject1>', '<MyObject2>']
+
+Return Nested List
+    Return Value Should Be  Return Nested List  [ [True, False], [[1, '', '<MyObject>', {}]] ]
+
+Return Tuple
+    [Documentation]  Tuples are converted to lists
+    [Tags]  python
+    Return Value Should Be  Return Tuple  [1, 'two', True]
+    Return Value Should Be  Return Empty Tuple  []
+    Return Value Should Be  Return Nested Tuple  [ [True, False], [[1, '', '<MyObject>', {}]] ]
+
+Return Dictionary
+    Return Value Should Be  Return Dictionary  {'one': 1, 'spam': 'eggs'}
+    Return Value Should Be  Return Empty Dictionary  {}
+
+Return Dictionary With Non-String Keys
+    [Documentation]  XML-RPC supports only strings as keys so must convert them
+    [Tags]  python
+    Return Value Should Be  Return Dictionary With Non String Keys  {'1': 2, '': 1}
+
+Return Dictionary With Non-String Keys
+    [Tags]  ruby
+    Return Value Should Be  Return Dictionary With Non String Keys  {'1': 2, 'false': True}
+
+Return Dictionary Containing None
+    Return Value Should Be  Return Dictionary Containing None  {'As value': '', '': 'As key'}
+
+Return Dictionary Containing Objects
+    Return Value Should Be  Return Dictionary Containing Objects  {'As value': '<MyObject1>', '<MyObject2>': 'As key'}
+
+Return Nested Dictionary
+    [Tags]  python
+    Return Value Should Be  Return Nested Dictionary  {'1': {'': False}, '2': {'A': {'n': ''}, 'B': {'o': '<MyObject>', 'e': {}}} }
+
+Return Nested Dictionary
+    [Tags]  ruby
+    Return Value Should Be  Return Nested Dictionary  {'1': {'true': False}, '2': {'A': {'n': ''}, 'B': {'o': '<MyObject>', 'e': {}}} }
+
+Return Control Char
+    [Documentation]  FAIL REGEXP: Processing XML-RPC return value failed. Most often this happens when the return value contains characters that are not valid in XML. Original error was: ExpatError: .*
+    Return Control Char
+
+*** Keywords ***
+Return Value Should Be
+    [Arguments]  ${keyword}  ${expected}
+    ${actual} =  Run Keyword  ${keyword}
+    ${expected} =  Evaluate  ${expected}
+    Should Be Equal  ${actual}  ${expected}
+

@@ -1,0 +1,78 @@
+*** Settings ***
+Default Tags    python  ruby
+Library         Remote  localhost:${PORT}
+
+*** Variables ***
+${PORT}  8270
+
+*** Test Cases ***
+No Arguments
+    Arguments Should Be Accepted  no arguments  No Arguments
+
+Required Arguments
+    Arguments Should Be Accepted  some argument  One Argument  some argument
+    Arguments Should Be Accepted  first argument second argument  Two Arguments  first argument  second argument
+    Arguments Should Be Accepted  1 2 3 4 5 6 7  Seven Arguments  1  2  3  4  5
+    ...  6  7
+
+Arguments With Default Values
+    Arguments Should Be Accepted  one two three  Arguments With Default Values  one  two  three
+    Arguments Should Be Accepted  one two 3  Arguments With Default Values  one  two
+    Arguments Should Be Accepted  one 2 3  Arguments With Default Values  one
+
+Variable Number Of Arguments
+    Arguments Should Be Accepted  ${EMPTY}  Variable Number Of Arguments
+    Arguments Should Be Accepted  One argument  Variable Number Of Arguments  One argument
+    Arguments Should Be Accepted  Three arguments now  Variable Number Of Arguments  Three  arguments  now
+    Arguments Should Be Accepted  1 2 3 4 5 6 7 8 9 10  Variable Number Of Arguments  1  2  3  4  5
+    ...  6  7  8  9  10
+
+Required Arguments, Default Values and Varargs
+    Arguments Should Be Accepted  Hello world  Required Defaults And Varargs  Hello
+    Arguments Should Be Accepted  Hi tellus  Required Defaults And Varargs  Hi  tellus
+    Arguments Should Be Accepted  Hello again world  Required Defaults And Varargs  Hello  again  world
+    Arguments Should Be Accepted  Hi for the last time tellus  Required Defaults And Varargs  Hi  for  the  last  time
+    ...  tellus
+
+Using Arguments When No Accepted
+    [Documentation]  FAIL Keyword 'Remote.No Arguments' expected 0 arguments, got 1.
+    No Arguments  not allowed
+
+Too Few Arguments When Using Only Required Args
+    [Documentation]  FAIL Keyword 'Remote.One Argument' expected 1 argument, got 0.
+    One Argument
+
+Too Many Arguments When Using Only Required Args
+    [Documentation]  FAIL Keyword 'Remote.Two Arguments' expected 2 arguments, got 3.
+    Two Arguments  too  many  arguments
+
+Too Few Arguments When Using Default Values
+    [Documentation]  FAIL Keyword 'Remote.Arguments With Default Values' expected 1 to 3 arguments, got 0.
+    [Tags]  python
+    Arguments With Default Values
+
+Too Many Arguments When Using Default Values
+    [Documentation]  FAIL Keyword 'Remote.Arguments With Default Values' expected 1 to 3 arguments, got 5.
+    [Tags]  python
+    Arguments With Default Values  this  is  way  too  much
+
+Too Few Arguments When Using Default Values
+    [Documentation]  With Ruby it is not possible to get maximum argument count when using default values. FAIL Keyword 'Remote.Arguments With Default Values' expected at least 1 argument, got 0.
+    [Tags]  ruby
+    Arguments With Default Values
+
+Too Many Arguments When Using Default Values
+    [Documentation]  With Ruby it is not possible to get maximum argument count when using default values. This error comes from Ruby. FAIL wrong number of arguments (5 for 3)
+    [Tags]  ruby
+    Arguments With Default Values  this  is  way  too  much
+
+Too Few Arguments When Using Varargs
+    [Documentation]  FAIL Keyword 'Remote.Required Defaults And Varargs' expected at least 1 argument, got 0.
+    Required Defaults And Varargs
+
+*** Keywords ***
+Arguments Should Be Accepted
+    [Arguments]  ${expected}  ${keyword}  @{arguments}
+    ${actual} =  Run Keyword  ${keyword}  @{arguments}
+    Should Be Equal  ${actual}  ${expected}
+

@@ -1,0 +1,50 @@
+*** Settings ***
+Default Tags    python  ruby
+Library         Remote  localhost:${PORT}
+
+*** Variables ***
+${PORT}  8270
+
+*** Test Cases ***
+Base Exception
+    [Documentation]  FAIL My message
+    Base Exception
+
+Exception Without Message
+    [Documentation]  FAIL Exception
+    Exception Without Message
+
+Assertion Error
+    [Documentation]  FAIL Failure message
+    [Tags]  python
+    Assertion Error
+
+Runtime Error
+    [Documentation]  FAIL Error message
+    Runtime Error
+
+Name Error
+    [Documentation]  FAIL REGEXP: (NameError: |undefined local variable ).*
+    Name Error
+
+Attribute Error
+    [Documentation]  FAIL REGEXP: (AttributeError: |undefined method).*
+    Attribute Error
+
+Index Error
+    [Documentation]  FAIL REGEXP: (IndexError: ).*
+    [Tags]  python
+    Index Error
+
+Zero Division
+    [Documentation]  FAIL REGEXP: (ZeroDivisionError: ).*|divided by 0
+    Zero Division
+
+Custom Exception
+    [Documentation]  FAIL REGEXP: (MyException: |)My message
+    Custom Exception
+
+Failure Deeper
+    [Documentation]  FAIL Finally failing
+    Failure Deeper
+

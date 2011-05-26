@@ -1,0 +1,90 @@
+*** Settings ***
+Default Tags    python  ruby
+Library         Remote  localhost:${PORT}  WITH NAME  remote
+Library         Collections
+Variables       arguments.py
+
+*** Variables ***
+${PORT}  8270
+
+*** Test Cases ***
+String As Argument
+    Argument Should Accepted  String As Argument  'Hello, world!'
+
+Unicode String As Argument
+    [Tags]  python
+    Unicode String As Argument  ${UNICODE}
+
+Empty String As Argument
+    Argument Should Accepted  Empty String As Argument  ''
+
+Integer As Argument
+    Argument Should Accepted  Integer As Argument  42
+    Argument Should Accepted  Negative Integer As Argument  -1
+
+Float As Argument
+    Argument Should Accepted  Float As Argument  3.14
+    Argument Should Accepted  Negative Float As Argument  -0.5
+
+Zero As Argument
+    Argument Should Accepted  Zero As Argument  0
+
+Boolean As Argument
+    Argument Should Accepted  Boolean True As Argument  True
+    Argument Should Accepted  Boolean False As Argument  False
+
+None As Argument
+    [Documentation]  None/nil/null is not supported by all XML-RPC versions and thus it is converted to a string
+    Argument Should Accepted  None As Argument  None
+
+Arbitrary Object As Argument
+    [Documentation]  Arbitraty objects cannot be transferred over XML-RPC and thus only their string presentation is used
+    Object As Argument  ${MyObject()}
+
+List As Argument
+    Argument Should Accepted  List As Argument  ['One', -2, False]
+    Argument Should Accepted  Empty List As Argument  []
+
+List Containing None As Argument
+    Argument Should Accepted  List Containing None As Argument  [None]
+
+List Containing Arbitrary Objects As Argument
+    List Containing Objects As Argument  ${LIST_WITH_OBJECTS}
+
+Nested List As Argument
+    Nested List As Argument  ${NESTED_LIST}
+
+Tuple As Argument
+    [Documentation]  Tuples are converted to lists
+    Argument Should Accepted  List As Argument  ('One', -2, False)
+    Argument Should Accepted  Empty List As Argument  ()
+    Nested List As Argument  ${NESTED_TUPLE}
+
+Dictionary As Argument
+    Argument Should Accepted  Dictionary As Argument  {'one': 1, 'spam': 'eggs'}
+    Argument Should Accepted  Empty Dictionary As Argument  {}
+
+Dictionary With Non-String Keys As Argument
+    [Documentation]  XML-RPC supports only strings as keys so must convert them
+    Argument Should Accepted  Dictionary With Non String Keys As Argument  {1: 2, None: True}
+
+Dictionary Containing None As Argument
+    Argument Should Accepted  Dictionary Containing None As Argument  {'As value': None, None: 'As key'}
+
+Dictionary Containing Objects As Argument
+    Dictionary Containing Objects As Argument  ${DICT_WITH_OBJECTS}
+
+Nested Dictionary As Argument
+    Nested Dictionary As Argument  ${NESTED_DICT}
+
+Control Char As Argument
+    [Documentation]  In this situation the received error is not that good FAIL REGEXP: .*ExpatError.*
+    ${arg} =  Evaluate  '\\x01'
+    String As Argument  ${arg}
+
+*** Keywords ***
+Argument Should Accepted
+    [Arguments]  ${keyword}  ${argument}
+    ${argument} =  Evaluate  ${argument}
+    Run Keyword  ${keyword}  ${argument}
+
