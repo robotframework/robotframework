@@ -26,12 +26,13 @@ Convert To Integer With Java Objects
 Convert To Integer With Base
     [Documentation]  FAIL STARTS: 'B' cannot be converted to an integer: ValueError:
     [Template]  Test Convert To Integer
-    10         10     10
-    A          10     16
-    10         8      ${8}
-    10         2      2
-    FF 00      65280  16
-    1010 1010  170    2
+    10         10      10
+    A          10      16
+    -10        -8      ${8}
+    +10        8       ${8}
+    10         2       2
+    -FF 00     -65280  16
+    1010 1010  170     2
     B          this fails
 
 Convert To Integer With Invalid Base
@@ -42,13 +43,15 @@ Convert To Integer With Embedded Base
     [Documentation]  FAIL STARTS: '0xXXX' cannot be converted to an integer: ValueError:
     [Template]  Test Convert To Integer
     0xf00         3840
-    0XF00         3840
+    -0XF00        -3840
     0b10          2
-    0B10          2
+    -0B10         -2
+    +0B10         2
     0B10          2832  base=16  # Explicit base wins
     0o101         65
     0O102         66
-    0x FF 00      65280
+    - 0x FF 00    -65280
+    + 0x FF 00    65280
     0b 1010 1010  170
     0xXXX         this fails
 
@@ -61,30 +64,42 @@ Convert To Integer With Base And Java Objects
 
 Convert To Binary
     [Template]  Test Convert To Binary
-    0          0
-    1          ${1}
-    0b10       2     prefix=0b
-    00001000   10    base=8  length=8
-    11111111   0xFF
-    100000000  100   base=16  length=2
-    B0101      101   base=2  prefix=B  length=4
+    0           0
+    1           ${1}
+    -10         ${-2}
+    0b10        2     prefix=0b
+    -0b10       -2    prefix=0b
+    0b10        +2     prefix=0b
+    00001000    10    base=8  length=8
+    11111111    0xFF
+    -11111111   -0xFF
+    11111111    +0xFF
+    -100000000  -100  base=16  length=2
+    B0101       101   base=2  prefix=B  length=4
 
 Convert To Octal
     [Template]  Test Convert To Octal
     0          0
     1          ${1}
+    -2         ${-2}
     0o10       8     prefix=0o
+    -0o10      -8    prefix=0o
+    0o10       +8    prefix=0o
     00001000   200   base=16  length=8
-    52746757   0xABCDEF  length=5
+    52746757   +0xABCDEF  length=5
+    -52746757  -0xABCDEF  length=5
     xXx007     111   base=2  prefix=xXx  length=3
 
 Convert To Hex
     [Template]  Test Convert To Hex
     0          0
     1          ${1}
-    0xA        10    prefix=0x  length=0
-    0000abcd   ABCD  base=16  length=8  lowercase=yes
-    0A0a       10    base=10  prefix=0A  length=2  lowercase=please
+    -2         ${-2}
+    0xA        10     prefix=0x  length=0
+    -0xA       -10    prefix=0x  length=0
+    0xA        +0o12  prefix=0x  length=0
+    0000abcd   ABCD   base=16    length=8   lowercase=yes
+    -0A0a      -10    base=10    prefix=0A  lowercase=please  length=2
 
 Convert To Number
     [Documentation]  FAIL REGEXP: ^'MyObject' cannot be converted to a floating point number: (Attribute|Type)Error: .*$

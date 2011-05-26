@@ -53,17 +53,18 @@ class _Converter:
 
         2) Prefix the given string with the base so that `0b` means binary
         (base 2), `0o` means octal (base 8), and `0x` means hex (base 16).
-        The prefix is considered only when `base` argument is not given.
+        The prefix is considered only when `base` argument is not given and
+        may itself be prefixed with a plus or minus sign.
 
         The syntax is case-insensitive and possible spaces are ignored.
 
         Examples:
-        | ${result} = | Convert To Integer | 100   |    | # Result is 100   |
-        | ${result} = | Convert To Integer | FF AA | 16 | # Result is 65450 |
-        | ${result} = | Convert To Integer | 100   | 8  | # Result is 64    |
-        | ${result} = | Convert To Integer | 100   | 2  | # Result is 4     |
-        | ${result} = | Convert To Integer | 0b100 |    | # Result is 4     |
-        | ${result} = | Convert To Integer | 0x100 |    | # Result is 256   |
+        | ${result} = | Convert To Integer | 100    |    | # Result is 100   |
+        | ${result} = | Convert To Integer | FF AA  | 16 | # Result is 65450 |
+        | ${result} = | Convert To Integer | 100    | 8  | # Result is 64    |
+        | ${result} = | Convert To Integer | -100   | 2  | # Result is -4    |
+        | ${result} = | Convert To Integer | 0b100  |    | # Result is 4     |
+        | ${result} = | Convert To Integer | -0x100 |    | # Result is -256  |
 
         See also `Convert To Number`, `Convert To Binary`, `Convert To Octal`
         and `Convert To Hex`.
@@ -95,10 +96,15 @@ class _Converter:
         if not isinstance(item, basestring):
             return item, base
         item = utils.normalize(item)
+        if item.startswith(('-', '+')):
+            sign = item[0]
+            item = item[1:]
+        else:
+            sign = ''
         bases = {'0b': 2, '0o': 8, '0x': 16}
         if base or not item.startswith(tuple(bases)):
-            return item, base
-        return item[2:], bases[item[:2]]
+            return sign+item, base
+        return sign+item[2:], bases[item[:2]]
 
     def convert_to_binary(self, item, base=None, prefix=None, length=None):
         """Converts the given item to a binary string.
@@ -109,14 +115,14 @@ class _Converter:
         string such as `'1011'`.
 
         The returned value can contain an optional `prefix` and can be
-        required to be of minimum `length` (excluding the prefix). If
-        the value is initially shorter than the required length, it is
-        padded with zeros.
+        required to be of minimum `length` (excluding the prefix and a
+        possible minus sign). If the value is initially shorter than
+        the required length, it is padded with zeros.
 
         Examples:
         | ${result} = | Convert To Binary | 10 |         |           | # Result is 1010   |
         | ${result} = | Convert To Binary | F  | base=16 | prefix=0b | # Result is 0b1111 |
-        | ${result} = | Convert To Binary | 2  | prefix=B | length=4 | # Result is B0010  |
+        | ${result} = | Convert To Binary | -2 | prefix=B | length=4 | # Result is -B0010 |
 
         This keyword was added in Robot Framework 2.6. See also
         `Convert To Integer`, `Convert To Octal` and `Convert To Hex`.
@@ -132,13 +138,13 @@ class _Converter:
         string such as `'775'`.
 
         The returned value can contain an optional `prefix` and can be
-        required to be of minimum `length` (excluding the prefix). If
-        the value is initially shorter than the required length, it is
-        padded with zeros.
+        required to be of minimum `length` (excluding the prefix and a
+        possible minus sign). If the value is initially shorter than
+        the required length, it is padded with zeros.
 
         Examples:
         | ${result} = | Convert To Octal | 10 |            |          | # Result is 12      |
-        | ${result} = | Convert To Octal | FF | base=16    | prefix=0 | # Result is 0377    |
+        | ${result} = | Convert To Octal | -F | base=16    | prefix=0 | # Result is -017    |
         | ${result} = | Convert To Octal | 16 | prefix=oct | length=4 | # Result is oct0020 |
 
         This keyword was added in Robot Framework 2.6. See also
@@ -156,17 +162,18 @@ class _Converter:
         a string such as `'FF0A'`.
 
         The returned value can contain an optional `prefix` and can be
-        required to be of minimum `length` (excluding the prefix). If
-        the value is initially shorter than the required length, it is
-        padded with zeros.  By default the value is returned as an
-        upper case string, but giving any non-empty value to the
-        `lowercase` argument turns the value (but not the prefix) to
-        lower case.
+        required to be of minimum `length` (excluding the prefix and a
+        possible minus sign). If the value is initially shorter than
+        the required length, it is padded with zeros.
+
+        By default the value is returned as an upper case string, but
+        giving any non-empty value to the `lowercase` argument turns
+        the value (but not the prefix) to lower case.
 
         Examples:
-        | ${result} = | Convert To Hex | 255 |           |              | # Result is FF   |
-        | ${result} = | Convert To Hex | 10  | prefix=0x | length=2     | # Result is 0x0A |
-        | ${result} = | Convert To Hex | 255 | prefix=X | lowercase=yes | # Result is Xff  |
+        | ${result} = | Convert To Hex | 255 |           |              | # Result is FF    |
+        | ${result} = | Convert To Hex | -10 | prefix=0x | length=2     | # Result is -0x0A |
+        | ${result} = | Convert To Hex | 255 | prefix=X | lowercase=yes | # Result is Xff   |
 
         This keyword was added in Robot Framework 2.6. See also
         `Convert To Integer`, `Convert To Binary` and `Convert To Octal`.
@@ -178,6 +185,10 @@ class _Converter:
                                 lowercase=False):
         self._log_types(item)
         ret = method(self._convert_to_integer(item, base)).upper()
+        prefix = prefix or ''
+        if ret[0] == '-':
+            prefix = '-' + prefix
+            ret = ret[1:]
         if len(ret) > 1:  # oct(0) -> '0' (i.e. has no prefix)
             prefix_length = {bin: 2, oct: 1, hex: 2}[method]
             ret = ret[prefix_length:]
@@ -185,7 +196,7 @@ class _Converter:
             ret = ret.rjust(self._convert_to_integer(length), '0')
         if lowercase:
             ret = ret.lower()
-        return (prefix or '') + ret
+        return prefix + ret
 
     def convert_to_number(self, item, precision=None):
         """Converts the given item to a floating point number.
