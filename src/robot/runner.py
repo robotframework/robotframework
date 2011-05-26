@@ -323,4 +323,5 @@ import robot
 
 
 if __name__ == '__main__':
-    robot.run_from_cli(sys.argv[1:], __doc__)
+    rc = robot.run_from_cli(sys.argv[1:], __doc__)
+    sys.exit(rc)

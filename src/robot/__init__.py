@@ -57,41 +57,46 @@ __version__ = get_version()
 
 def run_from_cli(args, usage):
     LOGGER.info(get_full_version('Robot Framework'))
-    _run_or_rebot_from_cli(run, args, usage, pythonpath='pythonpath')
+    return _run_or_rebot_from_cli(run, args, usage, pythonpath='pythonpath')
 
 def rebot_from_cli(args, usage):
     LOGGER.info(get_full_version('Rebot'))
-    _run_or_rebot_from_cli(run_rebot, args, usage)
+    return _run_or_rebot_from_cli(run_rebot, args, usage)
 
 def _run_or_rebot_from_cli(method, cliargs, usage, **argparser_config):
     LOGGER.register_file_logger()
-    options, datasources = _parse_arguments(cliargs, usage, **argparser_config)
+    try:
+        options, datasources = _parse_arguments(cliargs, usage,
+                                                **argparser_config)
+    except Information, msg:
+        print utils.encode_output(unicode(msg))
+        return INFO_PRINTED
+    except DataError, err:
+        _report_error(unicode(err), help=True)
+        return DATA_ERROR
     LOGGER.info('Data sources: %s' % utils.seq2str(datasources))
-    _execute(method, datasources, options)
+    return _execute(method, datasources, options)
 
 def _parse_arguments(cliargs, usage, **argparser_config):
     ap = utils.ArgumentParser(usage, get_full_version())
-    try:
-        return ap.parse_args(cliargs, argfile='argumentfile', unescape='escape',
-                             help='help', version='version', check_args=True,
-                             **argparser_config)
-    except Information, msg:
-        _exit(INFO_PRINTED, utils.unic(msg))
-    except DataError, err:
-        _exit(DATA_ERROR, utils.unic(err))
+    return ap.parse_args(cliargs, argfile='argumentfile', unescape='escape',
+                         help='help', version='version', check_args=True,
+                         **argparser_config)
 
 def _execute(method, datasources, options):
     try:
         suite = method(*datasources, **options)
     except DataError, err:
-        _exit(DATA_ERROR, unicode(err))
+        _report_error(unicode(err), help=True)
+        return DATA_ERROR
     except (KeyboardInterrupt, SystemExit):
-        _exit(STOPPED_BY_USER, 'Execution stopped by user.')
+        _report_error('Execution stopped by user.')
+        return STOPPED_BY_USER
     except:
         error, details = utils.get_error_details()
-        _exit(FRAMEWORK_ERROR, 'Unexpected error: %s' % error, details)
+        return _report_error('Unexpected error: %s' % error, details)
     else:
-        _exit(suite.return_code)
+        return suite.return_code
 
 
 def run(*datasources, **options):
@@ -156,24 +161,9 @@ def run_rebot(*datasources, **options):
     return testoutput.suite
 
 
-def _exit(rc, message=None, details=None):
-    """Exits with given rc or rc from given output. Reports possible error.
-
-    Exit code is the number of failed critical tests or error number.
-      0       - Tests executed and all critical tests passed
-      1-250   - Tests executed but returned number of critical tests failed
-                (250 means 250 or more failures)
-      251     - Help or version info was printed
-      252     - Invalid test data or command line arguments
-      253     - Execution stopped by user
-      255     - Internal and unexpected error occurred in the framework itself
-    """
-    if rc == INFO_PRINTED:
-        print utils.encode_output(message)
-    else:
-        if rc == DATA_ERROR:
-            message += '\n\nTry --help for usage information.'
-        LOGGER.error(message)
-        if details:
-            LOGGER.info(details)
-    sys.exit(rc)
+def _report_error(message, details=None, help=False):
+    if help:
+        message += '\n\nTry --help for usage information.'
+    LOGGER.error(message)
+    if details:
+        LOGGER.info(details)
