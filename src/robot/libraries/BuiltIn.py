@@ -711,12 +711,16 @@ class _Verify:
     def get_length(self, item):
         """Returns and logs the length of the given item.
 
-        The keyword first tries to get the length with the Python function
-        `len`, which calls the item's `__len__` method internally. If that
-        fails, the keyword tries to call the item's `length` and `size` methods
-        directly. The final attempt is trying to get the value of the item's
-        `length` attribute. If all these attempts are unsuccessful, the keyword
-        fails.
+        The item can be anything that has a length, for example, a string,
+        a list, or a mapping. The keyword first tries to get the length with
+        the Python function `len`, which calls the  item's `__len__` method
+        internally. If that fails, the keyword tries to call the item's
+        possible `length` and `size` methods directly. The final attempt is
+        trying to get the value of the item's `length` attribute. If all
+        these attempts are unsuccessful, the keyword fails.
+
+        It is possible to use this keyword also with list variables (e.g.
+        `@{LIST}`), but you need to use them as scalars (e.g. `${LIST}`).
         """
         length = self._get_length(item)
         self.log('Length is %d' % length)
