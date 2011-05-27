@@ -45,7 +45,8 @@ from output import Output, LOGGER, pyloggingconf
 from conf import RobotSettings, RebotSettings
 from running import TestSuite, STOP_SIGNAL_MONITOR
 from serializing import RobotTestOutput, RebotTestOutput, SplitIndexTestOutput
-from errors import DataError, Information, INFO_PRINTED, DATA_ERROR, STOPPED_BY_USER
+from errors import (DataError, Information, INFO_PRINTED, DATA_ERROR,
+                    STOPPED_BY_USER, FRAMEWORK_ERROR)
 from variables import init_global_variables
 from version import get_version, get_full_version
 import utils
@@ -93,7 +94,8 @@ def _execute(method, datasources, options):
         return STOPPED_BY_USER
     except:
         error, details = utils.get_error_details()
-        return _report_error('Unexpected error: %s' % error, details)
+        _report_error('Unexpected error: %s' % error, details)
+        return FRAMEWORK_ERROR
     else:
         return suite.return_code
 
