@@ -11,10 +11,9 @@ very close to creating `normal test libraries`__.
 
 __ `Creating test libraries`_
 
-.. contents:: 
+.. contents::
    :depth: 2
-   :local: 
-
+   :local:
 
 Introduction
 ~~~~~~~~~~~~
@@ -43,7 +42,6 @@ illustrated in the picture below:
 .. figure:: src/ExtendingRobotFramework/remote.png
 
    Robot Framework architecture with Remote library
-
 
 Taking Remote library into use
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -99,7 +97,6 @@ Robot Framework:
 
 __ `Using Import Library keyword`_
 
-
 Supported argument and return value types
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -118,7 +115,6 @@ The conversions are done using following rules:
 * Dictionaries/maps are passed so that their values are converted
   to supported types recursively and keys are converted to strings.
 * Other types are converted to strings.
-
 
 Using remote servers
 ~~~~~~~~~~~~~~~~~~~~
@@ -152,9 +148,9 @@ Python remote library example
 
 This example demonstrates how to use the Python version of the
 remote server. The example library implements keywords :name:`Count
-Items In Directory` and :name:`Strings Should Be Equal`. 
+Items In Directory` and :name:`Strings Should Be Equal`.
 
-.. sourcecode:: python 
+.. sourcecode:: python
 
    ../../tools/remoteserver/example/examplelibrary.py
 
@@ -164,7 +160,7 @@ Ruby remote library example
 This example uses the Ruby remote server and provides exactly same
 keywords as the previous Python example:
 
-.. sourcecode:: ruby 
+.. sourcecode:: ruby
 
    ../../tools/remoteserver/example/examplelibrary.rb
 
