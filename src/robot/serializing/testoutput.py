@@ -54,8 +54,7 @@ class RobotTestOutput:
         self.serialize_report(settings['Report'], settings['ReportTitle'],
                               settings['ReportBackground'], settings['Log'],
                               settings['SplitOutputs'])
-        jsparser.parse(output, 'output.js')
-        serialize_log('output.js', settings['Log'], settings['LogTitle'])
+        serialize_log(jsparser.create_datamodel_from(output), settings['Log'], settings['LogTitle'])
         LOGGER.output_file('Log', settings['Log'])
         self.serialize_xunit(settings['XUnitFile'])
 

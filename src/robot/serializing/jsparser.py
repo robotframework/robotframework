@@ -279,29 +279,35 @@ _node_parsers = {
 def _create_from_node(node, context):
     return _node_parsers[node.tag](node, context)
 
-def create_datamodel(xml):
+def create_datamodel_from(input_filename):
     context = Context()
-    robot_data = _create_from_node(xml.getroot(), context)
-    return context.basemillis, robot_data, context.dump_texts()
+    with open(input_filename, 'r') as file:
+        xml = etree.parse(file)
+        robot_data = _create_from_node(xml.getroot(), context)
+        return DataModel(context.basemillis, robot_data, context.dump_texts())
 
-def parse_js(file, output):
-    xml = etree.parse(file)
-    basemillis, robot_data, texts = create_datamodel(xml)
-    _write_js(basemillis, robot_data, texts, output)
+class DataModel(object):
 
-def _write_js(basemillis, robot_data, texts, output):
-    output.write('window.basemillis = '+str(basemillis)+';\n')
-    output.write('window.data = ')
-    json.dump(robot_data, output, separators=(',', ':'))
-    output.write(';\n')
-    output.write('window.strings =')
-    json.dump(texts, output, separators=(',', ':'))
-    output.write(';\n')
+    def __init__(self, basemillis, robot_data, texts):
+        self._basemillis = basemillis
+        self._robot_data = robot_data
+        self._texts = texts
+
+    def write_to(self, output):
+        output.write('window.basemillis = '+str(self._basemillis)+';\n')
+        output.write('window.data = ')
+        json.dump(self._robot_data, output, separators=(',', ':'))
+        output.write(';\n')
+        output.write('window.strings =')
+        json.dump(self._texts, output, separators=(',', ':'))
+        output.write(';\n')
+
+def parse_js(input_filename, output):
+    create_datamodel_from(input_filename).write_to(output)
 
 def parse(input_filename, output_filename):
-    with open(input_filename, 'r') as file:
-        with open(output_filename, 'w') as output:
-            parse_js(file, output)
+    with open(output_filename, 'w') as output:
+        parse_js(input_filename, output)
 
 if __name__ == '__main__':
     import sys

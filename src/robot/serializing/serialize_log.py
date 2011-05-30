@@ -8,23 +8,23 @@ PATH = os.path.dirname(webcontent.__file__)+'/'
 LOG_TEMPLATE = PATH + 'log.html'
 JS_FILE_REGEXP = re.compile('src=\"([^\"]+)\"')
 
-def serialize_log(test_output_js_file, log_path, title=None):
+def serialize_log(test_output_datamodel, log_path, title=None):
     if log_path is None:
         return
-    _build_log_file(log_path, test_output_js_file, title)
+    _build_log_file(log_path, test_output_datamodel, title)
 
-def _build_log_file(log_path, js_file, title):
+def _build_log_file(log_path, test_output_datamodel, title):
     with open(log_path, 'w') as log:
-        populator = _Populator(log, js_file, title)
+        populator = _Populator(log, test_output_datamodel, title)
         with open(LOG_TEMPLATE, 'r') as template:
             for line in template:
                 populator.line(line)
 
 class _Populator(object):
 
-    def __init__(self, log, js_file, title):
+    def __init__(self, log, test_output_datamodel, title):
         self._log = log
-        self._js_file = js_file
+        self._test_output_datamodel = test_output_datamodel
         self._title = title
         self._parsing = self._normal_parsing
 
@@ -67,7 +67,7 @@ class _Populator(object):
         return line.startswith('<!-- OUTPUT JS -->')
 
     def _write_output_js(self):
-        self._write_js(self._js_file)
+        self._test_output_datamodel.write_to(self._log)
 
     def _write_lines_js(self, line):
         self._write_js(self._parse_js_file_name(line))
