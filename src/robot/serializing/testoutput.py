@@ -46,7 +46,7 @@ class RobotTestOutput:
         self.statistics = Statistics(suite, *params)
         self._generator = 'Robot'
 
-    def serialize(self, settings, generator='Robot'):
+    def serialize(self, settings, generator='Robot', output=None):
         self._generator = generator
         self.serialize_output(settings['Output'], settings['SplitOutputs'])
         self.serialize_summary(settings['Summary'], settings['SummaryTitle'],
@@ -54,8 +54,9 @@ class RobotTestOutput:
         self.serialize_report(settings['Report'], settings['ReportTitle'],
                               settings['ReportBackground'], settings['Log'],
                               settings['SplitOutputs'])
-        jsparser.parse('output.xml', 'output.js')
+        jsparser.parse(output, 'output.js')
         serialize_log('output.js', settings['Log'], settings['LogTitle'])
+        LOGGER.output_file('Log', settings['Log'])
         self.serialize_xunit(settings['XUnitFile'])
 
     def serialize_output(self, path, split=-1):
