@@ -1,0 +1,601 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Expires" CONTENT="-1">
+<style media="all" type="text/css">
+  .critical_pass {
+    background: #99FF66;
+  }
+  .critical_fail {
+    background: #FF3333;
+  }
+  /* Generic Table Styles */
+  table {
+    background: white;
+    border: 1px solid black;
+    border-collapse: collapse;
+    empty-cells: show;
+    margin: 0px 1px;
+  }
+  th, td {
+    border: 1px solid black;
+    padding: 1px 5px;
+  }
+  th {
+    background: #C6C6C6;
+    color: black;
+  }
+  /* Test by Suite/Tag Tables */
+  table#tests_by_suite, table#tests_by_tag {
+    width: 100%;
+  }
+  .col_name {
+    min-width: 13em;
+    font-weight: bold;
+  }
+  .col_doc {
+    min-width: 13em;
+  }
+  .col_tags {
+    min-width: 10em;
+  }
+  .col_crit {
+    width: 2em;
+    text-align: center;
+  }
+  .col_status {
+    width: 3.5em;
+    text-align: center;
+  }
+  .col_msg {
+    min-width: 13em;
+  }
+  .col_times {
+    width: 9em;
+    white-space: nowrap;
+  }
+  td.col_times{
+    text-align: right;
+  }
+  .suite_row, .tag_row{
+    background: #E9E9E9;
+  }
+  .meta_name {
+    font-weight: bold;
+  }
+  /* Details Table */
+  table.details {
+    width: 58em;
+    margin-bottom: 1em;
+  }
+  table.details th {
+    background: white;
+    width: 11em;
+    white-space: nowrap;
+    text-align: left;
+    vertical-align: top;
+    padding-right: 1em;
+    border: none;
+    padding: 2px 4px;
+  }
+  table.details td {
+    vertical-align: top;
+    border: none;
+    padding: 2px 4px;
+    white-space: pre-wrap;
+  }
+  .status_fail {
+    color: red;
+    font-weight: bold;
+  }
+  .status_pass {
+    color: #009900;
+  }
+</style>
+<style media="all" type="text/css">
+  /* Generic styles */
+  body {
+    font-family: sans-serif;
+    font-size: 0.8em;
+    color: black;
+    padding: 6px;
+  }
+  h2 {
+    margin-top: 1.2em;
+  }
+  br {
+    mso-data-placement: same-cell;  /* maintain line breaks in Excel */
+  }
+  /* Statistics Table */
+  table.statistics {
+    width: 58em;
+    border: 1px solid black;
+    border-collapse: collapse;
+    empty-cells: show;
+    margin-bottom: 1em;
+  }
+  table.statistics td, table.statistics th {
+    border: 1px solid black;
+    padding: 1px 4px;
+    margin: 0px;
+  }
+  table.statistics th {
+    background: #C6C6C6;
+  }
+  .col_stat_name {
+    width: 40em;
+  }
+  .col_stat {
+    width: 3em;
+    text-align: center;
+  }
+  .stat_name {
+    float: left;
+  }
+  .stat_name a, .stat_name span {
+    font-weight: bold;
+  }
+  .tag_links {
+    font-size: 0.9em;
+    float: right;
+    margin-top: 0.05em;
+  }
+  .tag_links span {
+    margin-left: 0.2em;
+  }
+  /* Statistics Table Graph */
+  .pass_bar {
+    background: #00f000;
+  }
+  .fail_bar {
+    background: red;
+  }
+  .no_tags_bar {
+    background: #E9E9E9;
+  }
+  .graph {
+    position: relative;
+    border: 1px solid black;
+    width: 11em;
+    height: 0.75em;
+    padding: 0px;
+    background: #E9E9E9;
+  }
+  .graph b {
+    display: block;
+    position: relative;
+    height: 100%;
+    float: left;
+    font-size: 4px;  /* to make graphs thin also in IE */
+  }
+  /* Tables in documentation */
+  table.doc {
+    border: 1px solid gray;
+    background: transparent;
+    border-collapse: collapse;
+    empty-cells: show;
+    font-size: 0.9em;
+  }
+  table.doc td {
+    border: 1px solid gray;
+    padding: 0.1em 0.3em;
+    height: 1.2em;
+  }
+  /* Misc Styles */
+  .not_available {
+    color: gray;      /* no grey in IE */
+    font-weight: normal;
+  }
+  .parent_name {
+    font-size: 0.7em;
+    letter-spacing: -0.07em;
+  }
+  a:link, a:visited {
+    text-decoration: none;
+    color: blue;
+  }
+  a:hover, a:active {
+    text-decoration: underline;
+    color: purple;
+  }
+  /* Headers */
+  .header {
+    width: 58em;
+    margin: 6px 0px;
+  }
+  h1 {
+    margin: 0px;
+    width: 70%;
+    float: left;
+  }
+  .times {
+    width: 29%;
+    float: right;
+    text-align: right;
+  }
+  .generated_time, .generated_ago {
+    font-size: 0.9em;
+  }
+  .spacer {
+    font-size: 0.8em;
+    clear: both;
+  }
+  /* Status text colors */
+  .error, .fail {
+    color: red;
+  }
+  .pass {
+    color: #009900;
+  }
+  .warn {
+    color: #FFCC00;
+  }
+  .not_run {
+    color: #663300;
+  }
+</style>
+<style media="print" type="text/css">
+  body {
+    background: white;
+    padding: 0px;
+    font-size: 8pt;
+  }
+  a:link, a:visited {
+    color: black;
+  }
+  .header, table.details, table.statistics {
+    width: 100%;
+  }
+  .generated_ago, .expand {
+    display: none;
+  }
+</style>
+<script type="text/javascript" src="js/jquery-1.6.min.js"></script>
+<script type="text/javascript" src="js/jquery.tmpl.js"></script>
+<script type="text/javascript" src="js/output.js"></script>
+<script type="text/javascript" src="js/jsxcompressor.js"></script>
+<script type="text/javascript" src="js/testmodel.js"></script>
+<script type="text/javascript" src="js/util.js"></script>
+<script type="text/javascript" src="js/testdata.js"></script>
+<script type="text/javascript" src="js/stats.js"></script>
+
+<title>Dynamic Test Report</title>
+</head>
+<body>
+  <h2>Test Statistics</h2>
+  <table class="statistics" id="total_stats">
+    <tr>
+      <th class="col_stat_name">Total Statistics</th>
+      <th class="col_stat">Total</th>
+      <th class="col_stat">Pass</th>
+      <th class="col_stat">Fail</th>
+      <th class="col_graph">Graph</th>
+    </tr>
+  </table>
+  <table class="statistics" id="tag_stats">
+    <tr>
+      <th class="col_stat_name">Statistics by Tag</th>
+      <th class="col_stat">Total</th>
+      <th class="col_stat">Pass</th>
+      <th class="col_stat">Fail</th>
+      <th class="col_graph">Graph</th>
+    </tr>
+  </table>
+  <table class="statistics" id="suite_stats">
+    <tr>
+      <th class="col_stat_name">Statistics by Suite</th>
+      <th class="col_stat">Total</th>
+      <th class="col_stat">Pass</th>
+      <th class="col_stat">Fail</th>
+      <th class="col_graph">Graph</th>
+    </tr>
+  </table>
+  <div id="test_details_by_tag_container"></div>
+
+<script type="text/javascript">
+function addSummary(topsuite) {
+    $.tmpl(window.templates.summaryTable, topsuite).prependTo('body');
+}
+
+function renderTestDetailsByTagHeader() {
+    var tagstats = window.testdata.stats().tag;
+    var suitestats = window.testdata.stats().suite;
+    $.tmpl(window.templates.testDetailsByTagHeader, {tags: tagstats, suites: suitestats}).appendTo('#test_details_by_tag_container');
+}
+
+function renderDetailsByTag(tag) {
+    var tests = testsHavingTag(tag);
+    if (tag) {
+        tag.totalTime = calculateTotalTime(tests);
+    }
+    $.tmpl(window.templates.tagDetails, tag).appendTo('#tag_details_header');
+    $.tmpl(window.templates.testDetailsByTagTable).appendTo('#test_details_by_tag_container');
+    $.tmpl(window.templates.testDetailsRow, tests).appendTo('#tests_by_tag');
+}
+
+function tagDetailSelected(name) {
+    $('#test_details_by_tag_container').empty();
+    var alltags = window.testdata.stats().tag;
+    var tag = findTagByName(name, alltags);
+    renderTestDetailsByTagHeader();
+    renderDetailsByTag(tag);
+    ensureTagDetailsAreVisible(name);
+}
+
+function findTagByName(name, tags) {
+    for (var i=0; i<tags.length; i++) {
+        if (tags[i].label == name)
+            return tags[i];
+    }
+}
+
+function suiteDetailSelected(name) {
+    $('#test_details_by_tag_container').empty();
+    var allSuites = window.testdata.stats().suite;
+    renderTestDetailsByTagHeader();
+    renderDetailsBySuite(name);
+    ensureSuiteDetailsAreVisible(name);
+}
+
+function renderDetailsBySuite(name) {
+    var suite = testdata.suite().findSuiteByName(name);
+    $.tmpl(window.templates.suiteDetails, suite).appendTo('#tag_details_header');
+    $.tmpl(window.templates.testDetailsByTagTable).appendTo('#test_details_by_tag_container');
+    $.tmpl(window.templates.testDetailsRow, suite.allTests()).appendTo('#tests_by_tag');
+}
+
+function testsHavingTag(tag) {
+    if (!tag)
+        return [];
+    var sorter = function (t1, t2) {
+        if (t1.status != t2.status)
+            return t1.status == 'fail' ? -1 : 1;
+        if (t1.isCritical != t2.isCritical)
+            return t1.isCritical ? -1 : 1;
+        return t1.fullname < t2.fullname ? -1 : 1;
+    }
+    return window.testdata.suite().searchTestsByTag(tag).sort(sorter);
+}
+
+function calculateTotalTime(tests) {
+    var totaltime = 0;
+    $.map(tests, function (test) {
+        totaltime += test.times.elapsedMillis;
+    });
+    return window.testdata.formatMillis(totaltime).split('.')[0];
+}
+
+function ensureTagDetailsAreVisible(name) {
+    document.getElementById('tag_detail_selector').value = name;
+    location.hash = '#tag_detail_selector';
+}
+
+function ensureSuiteDetailsAreVisible(name) {
+    document.getElementById('suite_detail_selector').value = name;
+    location.hash = '#suite_detail_selector';
+}
+
+$(document).ready(function(){
+    var topsuite = window.testdata.suite();
+    setBackground(topsuite);
+    window.templates = initTemplates();
+    addSummary(topsuite);
+    addStatistics();
+    renderTestDetailsByTagHeader();
+});
+
+function setBackground(topsuite) {
+    var bodyclass = "critical_pass";
+    if (topsuite.criticalFailed)
+        bodyclass = "critical_fail";
+    $("body").addClass(bodyclass);
+}
+
+function initTemplates() {
+    return {
+        summaryTable: $('#summary_table').template(),
+        totalStatRow: $('#total_statistics_row').template(),
+        tagStatRow: $('#tag_statistics_row').template(),
+        suiteStatRow: $('#suite_statistics_row').template(),
+        noTagsRow: $('#no_tags_row').template(),
+        testDetailsRow: $('#report_test_details_row').template(),
+        testDetailsByTagHeader: $('#test_details_by_tag_header').template(),
+        tagDetails: $('#tag_details').template(),
+        suiteDetails: $('#suite_details').template(),
+        testDetailsByTagTable: $('#test_details_by_tag_table').template(),
+    };
+};
+
+</script>
+<script type="text/html" id="summary_table">
+  <h2>Summary Information</h2>
+  <table class="details">
+    <tr>
+      <th>Status:</th>
+        {{if criticalFailed}}
+            <td class="status_fail">${criticalFailed} critical test{{if criticalFailed != 1}}s{{/if}} failed</td>
+        {{else}}
+            <td class="status_pass">All critical tests passed</td>
+        {{/if}}
+    </tr>
+    {{if documentation}}
+      <tr><th>Documentation:</th><td>{{html documentation}}</td></tr>
+    {{/if}}
+    {{each metadata}}
+      <tr><th>${$index}:</th><td>{{html $value}}</td></tr>
+    {{/each}}
+    <tr><th>Start Time:</th><td>${times.startTime}</td></tr>
+    <tr><th>End Time:</th><td>${times.endTime}</td></tr>
+    <tr><th>Elapsed Time:</th><td>${times.elapsedTime}</td></tr>
+  </table>
+</script>
+
+<script type="text/html" id="total_statistics_row">
+  <tr>
+    <td class="col_stat_name">
+      <div class="stat_name">
+        <span title="${doc}">${label}</span>
+      </div>
+    </td>
+    {{tmpl($data) '#stat_columns'}}
+  </tr>
+</script>
+
+<script type="text/html" id="tag_statistics_row">
+  <tr>
+    <td class="col_stat_name">
+      <div class="stat_name">
+        <a href="#tag_detail_selector" onclick="tagDetailSelected('${label}');" title="${doc}">${label}</a>
+        ${shownInfo}
+      </div>
+    <div class="tag_links">
+      {{each links}}
+        <span>[<a href="${$value.url}" title="${$value.url}">${$value.title}</a>]</span>
+      {{/each}}
+    </div>
+    </td>
+    {{tmpl($data) '#stat_columns'}}
+  </tr>
+</script>
+
+<script type="text/html" id="suite_statistics_row">
+  <tr>
+    <td class="col_stat_name">
+      <div class="stat_name">
+        <a href="#suite_details_selector" onclick="suiteDetailSelected('${fullname}');" title="${doc}"><span class="parent_name">${parentName}</span>${name}</a>
+      </div>
+    </td>
+    {{tmpl($data) '#stat_columns'}}
+  </tr>
+</script>
+
+<script type="text/html" id="stat_columns">
+  <td class="col_stat">${total}</td>
+  <td class="col_stat">${pass}</td>
+  <td class="col_stat">${fail}</td>
+  <td class="col_graph">
+    <div class="graph">
+      <b class="pass_bar" style="width: ${passWidth}%;" title="${passPercent}%"></b>
+      <b class="fail_bar" style="width: ${failWidth}%;" title="${failPercent}%"></b>
+    </div>
+  </td>
+</script>
+
+<script type="text/html" id="no_tags_row">
+  <tr>
+    <td class="col_stat_name">No Tags</td>
+    <td class="col_stat"></td>
+    <td class="col_stat"></td>
+    <td class="col_stat"></td>
+    <td class="col_graph">
+      <div class="graph">
+        <b class="no_tags_bar" style="width: 100%;"></b>
+      </div>
+    </td>
+  </tr>
+</script>
+
+<script type="text/html" id="report_test_details_row">
+  <tr class="test_row">
+    <td class="col_name"><a href="log.html#test_${fullname}" id="test_${fullname}" title="${fullname}"><span class="parent_name">${parentName}</span>${name}</a></td>
+    <td class="col_doc">{{html documentation}}</td>
+    <td class="col_tags">${tags.join(', ')}</td>
+    <td class="col_crit">{{if isCritical}}yes{{else}}no{{/if}}</td>
+    <td class="col_status ${status}">${status.toUpperCase()}</td>
+    <td class="col_msg">${getFailureMessage()}</td>
+    <td class="col_times">${times.startTime(true)}<br />${times.elapsedTime(true)}</td>
+  </tr>
+</script>
+
+<script type="text/html" id="test_details_by_tag_header">
+  <h2>Test Details</h2>
+  <table class="details" id="tag_details_header">
+    <tr>
+      <th>Name:</th>
+      <td>
+        <select id="tag_detail_selector" onchange="tagDetailSelected(this.options[this.selectedIndex].value);">
+          <option>Select tag...</option>
+            {{each tags}}
+              <option value="${$value.label}">${$value.label} ${$value.shownInfo}</option>
+            {{/each}}
+        </select>
+        <select id="suite_detail_selector" onchange="suiteDetailSelected(this.options[this.selectedIndex].value);">
+          <option>Select suite...</option>
+            {{each suites}}
+              <option value="${$value.fullname}">${$value.fullname}</option>
+            {{/each}}
+        </select>
+      </td>
+    </tr>
+  </table>
+</script>
+
+<script type="text/html" id="tag_details">
+    {{if doc}}
+    <tr>
+        <th>Documentation:</th>
+        <td>{{html doc}}</td>
+    </tr>
+    {{/if}}
+    <tr>
+        <th>Message:</th>
+        <td>${total} total, ${pass} passed, {{if fail}}<span class="fail">${fail} failed<span>{{else}}0 failed{{/if}}</td>
+    </tr>
+    {{if links && links.length}}
+    <tr>
+        <th>Links:</th>
+        <td>{{each links}}<a href="${$value.url}" title="${$value.url}">${$value.title}</a>{{/each}} </td>
+    </tr>
+    {{/if}}
+    <tr>
+        <th>Total Time:</th>
+        <td>${totalTime}</td>
+    </tr>
+</script>
+
+<script type="text/html" id="suite_details">
+    {{if documentation}}
+    <tr>
+        <th>Documentation:</th>
+        <td>{{html documentation}}</td>
+    </tr>
+    {{/if}}
+    {{each metadata}}
+    <tr><th>${$index}:</th><td>{{html $value}}</td></tr>
+    {{/each}}
+    <tr>
+        <th>Start / End / Elapsed:</th>
+        <td>${times.startTime} / ${times.endTime} / ${times.elapsedTime}</td>
+    </tr>
+    <tr>
+        <th>Status:</th>
+        <td class="${status}">${statusText}</td>
+    </tr>
+    <tr>
+        <th>Message:</th>
+        <td>${getFailureMessage()}<br/><br/>{{tmpl($data) '#stats_message_partial_template'}}</td>
+     </tr>
+</script>
+
+<script type="text/html" id="stats_message_partial_template">
+${critical} critical test, ${criticalPassed} passed, <span class="${criticalFailureClass}">${criticalFailed} failed</span><br />${total} test total, ${totalPassed} passed, <span class="${totalFailureClass}">${totalFailed} failed</span>
+</script>
+
+<script type="text/html" id="test_details_by_tag_table">
+  <table id="tests_by_tag">
+    <tr>
+      <th class="col_name">Name</th>
+      <th class="col_doc">Documentation</th>
+      <th class="col_tags">Tags</th>
+      <th class="col_crit">Crit.</th>
+      <th class="col_status">Status</th>
+      <th class="col_msg">Message</th>
+      <th class="col_times">Start / Elapsed</th>
+    </tr>
+  </table>
+</script>
+
+</body>
+</html>
