@@ -54,8 +54,11 @@ class RobotTestOutput:
         self.serialize_report(settings['Report'], settings['ReportTitle'],
                               settings['ReportBackground'], settings['Log'],
                               settings['SplitOutputs'])
-        serialize_log(jsparser.create_datamodel_from(output), settings['Log'], settings['LogTitle'])
-        LOGGER.output_file('Log', settings['Log'])
+        self.serialize_log(settings['Log'], settings['LogTitle'],
+                           settings['SplitOutputs'])
+        #FIXME! Integrate
+        #serialize_log(jsparser.create_datamodel_from(output), settings['Log'], settings['LogTitle'])
+        #LOGGER.output_file('Log', settings['Log'])
         self.serialize_xunit(settings['XUnitFile'])
 
     def serialize_output(self, path, split=-1):
