@@ -125,12 +125,12 @@ def run(*datasources, **options):
     suite.run(output)
     LOGGER.info("Tests execution ended. Statistics:\n%s"
                 % suite.get_stat_message())
-    testoutput = RobotTestOutput(suite, settings)
     output.close(suite)
     output_src = settings['Output']
     if settings.is_rebot_needed():
         datasources, settings = settings.get_rebot_datasources_and_settings()
         if settings['SplitOutputs'] > 0:
+            raise Exception('Splitting? No way!')
             testoutput = SplitIndexTestOutput(suite, datasources[0], settings)
         else:
             testoutput = RebotTestOutput(datasources, settings)

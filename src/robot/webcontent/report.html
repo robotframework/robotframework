@@ -5,11 +5,15 @@
 <META HTTP-EQUIV="Pragma" CONTENT="no-cache">
 <META HTTP-EQUIV="Expires" CONTENT="-1">
 <style media="all" type="text/css">
+   
   .critical_pass {
-    background: #99FF66;
+    background: #99FF66; /* BACKGROUND: critical pass */
   }
   .critical_fail {
-    background: #FF3333;
+    background: #FF3333; /* BACKGROUND: critical fail */
+  }
+  .non_critical_fail {
+    background: #FF3333; /* BACKGROUND: non critical fail */
   }
   /* Generic Table Styles */
   table {
@@ -252,18 +256,22 @@
     display: none;
   }
 </style>
+<!-- BEGIN SCRIPTS -->
 <script type="text/javascript" src="js/jquery-1.6.min.js"></script>
 <script type="text/javascript" src="js/jquery.tmpl.js"></script>
-<script type="text/javascript" src="js/output.js"></script>
+<!-- OUTPUT JS --><script type="text/javascript" src="js/output.js"></script>
 <script type="text/javascript" src="js/jsxcompressor.js"></script>
 <script type="text/javascript" src="js/testmodel.js"></script>
 <script type="text/javascript" src="js/util.js"></script>
 <script type="text/javascript" src="js/testdata.js"></script>
 <script type="text/javascript" src="js/stats.js"></script>
-
-<title>Dynamic Test Report</title>
+<script type="text/javascript" src="js/generatedAgo.js"></script>
+<!-- END SCRIPTS -->
+<title>[SUITE_NAME] Test Report</title>
 </head>
 <body>
+  <div class="header" id="header_div">
+  </div>
   <h2>Test Statistics</h2>
   <table class="statistics" id="total_stats">
     <tr>
@@ -296,7 +304,7 @@
 
 <script type="text/javascript">
 function addSummary(topsuite) {
-    $.tmpl(window.templates.summaryTable, topsuite).prependTo('body');
+    $.tmpl(window.templates.summaryTable, topsuite).insertAfter($('#header_div'));
 }
 
 function renderTestDetailsByTagHeader() {
@@ -380,21 +388,40 @@ function ensureSuiteDetailsAreVisible(name) {
 $(document).ready(function(){
     var topsuite = window.testdata.suite();
     setBackground(topsuite);
+    setDocumentTitle(topsuite);
     window.templates = initTemplates();
+    addHeader();
     addSummary(topsuite);
     addStatistics();
     renderTestDetailsByTagHeader();
 });
 
+function setDocumentTitle(suite){
+    document.title = document.title.replace("[SUITE_NAME]", suite.name, "g");
+}
+
+function addHeader() {
+    var header = $.tmpl(window.templates.header, {
+        header: document.title,
+        generated:window.testdata.generated().toString(),
+        prefix:prefix,
+        output:output
+    });
+    header.appendTo($('#header_div'));
+}
+
 function setBackground(topsuite) {
     var bodyclass = "critical_pass";
     if (topsuite.criticalFailed)
         bodyclass = "critical_fail";
+    else if (topsuite.totalFailed)
+        bodyclass = "non_critical_fail";
     $("body").addClass(bodyclass);
 }
 
 function initTemplates() {
     return {
+        header: $('#header_template').template(),
         summaryTable: $('#summary_table').template(),
         totalStatRow: $('#total_statistics_row').template(),
         tagStatRow: $('#tag_statistics_row').template(),
@@ -409,6 +436,19 @@ function initTemplates() {
 };
 
 </script>
+
+<script type="text/html" id="header_template">
+  <h1>${header}</h1>
+  <div class="times">
+    <span class="generated_time">Generated<br />
+        <span id="generated_time">${generated}</span>
+    </span><br />
+    <span class="generated_ago">
+    ${prefix}${output}ago
+    </span>
+  </div>
+</script>
+
 <script type="text/html" id="summary_table">
   <h2>Summary Information</h2>
   <table class="details">

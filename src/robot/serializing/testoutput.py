@@ -28,7 +28,7 @@ from logserializers import LogSerializer, SplitLogSerializer, ErrorSerializer
 from reportserializers import (ReportSerializer, SplitReportSerializer,
                                TagDetailsSerializer)
 from xunitserializers import XUnitSerializer
-from robot.serializing.serialize_log import serialize_log
+from robot.serializing.serialize_log import serialize_log, serialize_report
 from robot.serializing import jsparser
 
 
@@ -51,14 +51,11 @@ class RobotTestOutput:
         self.serialize_output(settings['Output'], settings['SplitOutputs'])
         self.serialize_summary(settings['Summary'], settings['SummaryTitle'],
                                settings['ReportBackground'])
-        self.serialize_report(settings['Report'], settings['ReportTitle'],
-                              settings['ReportBackground'], settings['Log'],
-                              settings['SplitOutputs'])
-        self.serialize_log(settings['Log'], settings['LogTitle'],
-                           settings['SplitOutputs'])
-        #FIXME! Integrate
-        #serialize_log(jsparser.create_datamodel_from(output), settings['Log'], settings['LogTitle'])
-        #LOGGER.output_file('Log', settings['Log'])
+        datamodel = jsparser.create_datamodel_from(output)
+        serialize_report(datamodel, settings['Report'], settings['ReportTitle'], settings['ReportBackground'], settings['Log'])
+        LOGGER.output_file('Report', settings['Report'])
+        serialize_log(datamodel, settings['Log'], settings['LogTitle'])
+        LOGGER.output_file('Log', settings['Log'])
         self.serialize_xunit(settings['XUnitFile'])
 
     def serialize_output(self, path, split=-1):
