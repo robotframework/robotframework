@@ -28,7 +28,7 @@ Topic :: Software Development :: Testing
 PACKAGES = ['robot', 'robot.api', 'robot.common', 'robot.conf',
             'robot.libraries', 'robot.output', 'robot.parsing',
             'robot.serializing', 'robot.running', 'robot.utils',
-            'robot.variables']
+            'robot.variables', 'robot.webcontent', 'robot.webcontent.js']
 SCRIPT_NAMES = ['pybot', 'jybot', 'rebot']
 if os.name == 'java':
     SCRIPT_NAMES.remove('pybot')
@@ -60,6 +60,7 @@ def main():
           platforms    = 'any',
           classifiers  = CLASSIFIERS.splitlines(),
           package_dir  = {'': 'src'},
+          package_data = {'robot': ['webcontent/*.html', 'webcontent/js/*.js']},
           packages     = PACKAGES,
           scripts      = inst_scripts,
     )

@@ -28,6 +28,8 @@ from logserializers import LogSerializer, SplitLogSerializer, ErrorSerializer
 from reportserializers import (ReportSerializer, SplitReportSerializer,
                                TagDetailsSerializer)
 from xunitserializers import XUnitSerializer
+from robot.serializing.serialize_log import serialize_log
+from robot.serializing import jsparser
 
 
 class RobotTestOutput:
@@ -52,8 +54,8 @@ class RobotTestOutput:
         self.serialize_report(settings['Report'], settings['ReportTitle'],
                               settings['ReportBackground'], settings['Log'],
                               settings['SplitOutputs'])
-        self.serialize_log(settings['Log'], settings['LogTitle'],
-                           settings['SplitOutputs'])
+        jsparser.parse('output.xml', 'output.js')
+        serialize_log('output.js', settings['Log'], settings['LogTitle'])
         self.serialize_xunit(settings['XUnitFile'])
 
     def serialize_output(self, path, split=-1):
