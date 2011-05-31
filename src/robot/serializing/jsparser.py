@@ -138,7 +138,7 @@ class TextCache(object):
         return self.texts[text]
 
     def _encode(self, text):
-        encoded = base64.b64encode(zlib.compress(text, 9))
+        encoded = base64.b64encode(zlib.compress(text.encode('utf-8'), 9))
         raw = '*'+text
         return encoded if len(encoded) < len(raw) else raw
 
