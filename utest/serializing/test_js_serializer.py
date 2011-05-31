@@ -13,17 +13,19 @@ class TestJsSerializer(unittest.TestCase):
         self._handler = _RobotOutputHandler(Context())
 
     def test_message_xml_parsing(self):
-        datamodel = self._get_datamodel('<msg timestamp="20110531 12:48:09.088" level="FAIL">AssertionError</msg>')
-        assert_equals(datamodel._basemillis, 1306835289088)
-        assert_equals(datamodel._robot_data, [0, 'F', 1])
-        assert_equals(datamodel._texts, ['*', '*AssertionError'])
+        data_model = self._get_data_model('<msg timestamp="20110531 12:48:09.088" level="FAIL">AssertionError</msg>')
+        assert_equals(data_model._basemillis, 1306835289088)
+        assert_equals(data_model._robot_data, [0, 'F', 1])
+        assert_equals(data_model._texts, ['*', '*AssertionError'])
 
     def test_status_xml_parsing(self):
-        datamodel = self._get_datamodel('<status status="PASS" endtime="20110531 12:48:09.042" starttime="20110531 12:48:09.000"></status>')
-        assert_equals(datamodel._robot_data, ['P',0,42])
+        data_model = self._get_data_model('<status status="PASS" endtime="20110531 12:48:09.042" starttime="20110531 12:48:09.000"></status>')
+        assert_equals(data_model._basemillis, 1306835289000)
+        assert_equals(data_model._robot_data, ['P',0,42])
+        assert_equals(data_model._texts, ['*'])
 
 
-    def _get_datamodel(self, xml_string):
+    def _get_data_model(self, xml_string):
         sax.parseString(xml_string, self._handler)
         return self._handler.datamodel
 
