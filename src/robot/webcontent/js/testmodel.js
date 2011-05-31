@@ -1,4 +1,4 @@
-window.testmodel = function () {
+window.model = function () {
 
     var STATUS = {
         pass:"pass",
@@ -154,7 +154,7 @@ window.testmodel = function () {
     function Status(status, parentSuiteTeardownFailed) {
         return {
             parentSuiteTeardownFailed: parentSuiteTeardownFailed,
-            status: parentSuiteTeardownFailed? testmodel.FAIL : status,
+            status: parentSuiteTeardownFailed? model.FAIL : status,
         };
     }
 

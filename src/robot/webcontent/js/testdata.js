@@ -45,15 +45,15 @@ window.testdata = (function(){
 
     function message(element){
         return addElement(
-                testmodel.Message(LEVEL[element[1]], timestamp(element[0]), get(element[2]), element[3]));
+                model.Message(LEVEL[element[1]], timestamp(element[0]), get(element[2]), element[3]));
     }
 
     function status(stats){
-        return (stats[0] == "P" ? testmodel.PASS : testmodel.FAIL);
+        return (stats[0] == "P" ? model.PASS : model.FAIL);
     }
 
     function statuz(stats, parentSuiteTeardownFailed){
-        return testmodel.Status(status(stats), parentSuiteTeardownFailed);
+        return model.Status(status(stats), parentSuiteTeardownFailed);
     }
 
     function last(items) {
@@ -65,13 +65,13 @@ window.testdata = (function(){
     }
 
     function createKeyword(parent, element, index){
-        var kw = testmodel.Keyword(
+        var kw = model.Keyword(
                 KEYWORD_TYPE[element[0]],
                 get(element[1]),
                 get(element[4]),
                 get(element[3]),
                 statuz(last(element)),
-                testmodel.Times(times(last(element))),
+                model.Times(times(last(element))),
                 parent,
                 index);
         kw.populateKeywords(Populator(element, keywordMatcher, childCreator(kw, createKeyword)));
@@ -96,14 +96,14 @@ window.testdata = (function(){
     }
 
     function createTest(suite, element) {
-        var test = testmodel.Test(
+        var test = model.Test(
                 suite,
                 get(element[1]),
                 get(element[4]),
                 get(element[2]),
                 (element[3] == "Y"),
                 statuz(last(element), suite.hasTeardownFailure()),
-                testmodel.Times(times(last(element))),
+                model.Times(times(last(element))),
                 tags(element[element.length-2])
         );
         test.populateKeywords(Populator(element, keywordMatcher, childCreator(test, createKeyword)));
@@ -111,13 +111,13 @@ window.testdata = (function(){
     }
 
     function createSuite(parent, element) {
-        var suit = testmodel.Suite(
+        var suit = model.Suite(
                 parent,
                 element[2],
                 element[1],
                 get(element[3]),
                 statuz(element[element.length-2], parent && parent.hasTeardownFailure()),
-                testmodel.Times(times(element[element.length-2])),
+                model.Times(times(element[element.length-2])),
                 suiteStats(last(element)),
                 parseMetadata(element[4])
         );
