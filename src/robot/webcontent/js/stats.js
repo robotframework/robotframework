@@ -3,7 +3,7 @@ function addStatistics() {
 }
 
 function addStatTable(tableName) {
-    var stats = window.testdata.stats()[tableName];
+    var stats = window.stats.stats()[tableName];
     if (tableName == 'tag' && stats.length == 0)
        renderStatTable(tableName, window.templates.noTagsRow, undefined);
     else {

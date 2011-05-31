@@ -1,4 +1,4 @@
-window.testdata = (function(){
+window.testdata = (function () {
 
     var elementsById = {};
     var LEVEL = {I:'info', H:'info', T:'trace', W:'warn', E:'error', D:'debug', F:'fail'};
@@ -282,94 +282,6 @@ window.testdata = (function(){
         return message(window.data[4][index]);
     }
 
-    function stats(){
-        var statdata = window.data[3];
-        return {total: util.map(statdata[0], statElem),
-                tag:   util.map(statdata[1], tagStatElem),
-                suite: util.map(statdata[2], suiteStatElem)};
-    }
-
-    function statElem(data) {
-        var stat = {
-            label: data[0],
-            pass:  data[1],
-            fail:  data[2],
-            total: data[1] + data[2],
-            doc:   data[3]
-        };
-        var percents = calculatePercents(stat.total, stat.pass, stat.fail);
-        stat.passPercent = percents[0];
-        stat.failPercent = percents[1];
-        var widths = calculateWidths(stat.passPercent, stat.failPercent);
-        stat.passWidth = widths[0];
-        stat.failWidth = widths[1];
-        return stat;
-    }
-
-    function tagStatElem(data) {
-        var stat = statElem(data);
-        stat.info = data[4];
-        if (stat.info)
-            stat.shownInfo = '(' + stat.info + ')';
-        else
-            stat.shownInfo = '';
-        stat.links = parseLinks(data[5]);
-        return stat;
-    }
-
-    function suiteStatElem(data) {
-        var stat = statElem(data);
-        stat.fullname = function () { return stat.doc; };
-        nameParts = stat.doc.split('.');
-        stat.name = nameParts.pop();
-        if (nameParts)
-            nameParts.push('');
-        stat.parentName = nameParts.join(' . ');
-        return stat;
-    }
-
-    function parseLinks(linksData) {
-        if (!linksData)
-            return [];
-        var items = linksData.split(':::');
-        var links = [];
-        for (var i=0; i<items.length; i++) {
-            parts = items[i].split(':');
-            links[i] = {title: parts[0], url: parts.splice(1).join(':')};
-        }
-        return links;
-    }
-
-    function calculatePercents(total, passed, failed) {
-        if (total == 0)
-            return [0.0, 0.0];
-        pass = 100.0 * passed / total;
-        fail = 100.0 * failed / total;
-        if (pass > 0 && pass < 0.1)
-            return [0.1, 99.9];
-        if (fail > 0 && fail < 0.1)
-            return [99.9, 0.1];
-        return [Math.round(pass*10)/10, Math.round(fail*10)/10];
-    }
-
-    function calculateWidths(num1, num2) {
-        if (num1 + num2 == 0)
-            return [0.0, 0.0];
-        // Make small percentages better visible
-        if (num1 > 0 && num1 < 1)
-            return [1.0, 99.0];
-        if (num2 > 0 && num2 < 1)
-            return [99.0, 1.0];
-        // Handle situation where both are rounded up
-        while (num1 + num2 > 100) {
-            if (num1 > num2)
-                num1 -= 0.1;
-            if (num2 > num1)
-                num2 -= 0.1;
-        }
-        return [num1, num2];
-    }
-
     return {
         suite: suite,
         error: error,
@@ -379,8 +291,8 @@ window.testdata = (function(){
         pathToKeyword: pathToKeyword,
         generated: generated,
         getString: get,
-        shortTime: shortTime,
-        stats: stats
+        shortTime: shortTime
     };
+
 }());
 
