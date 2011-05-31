@@ -1,5 +1,7 @@
 from __future__ import with_statement
 from lxml import etree
+import xml.sax as sax
+from xml.sax.handler import ContentHandler
 import json
 import zlib
 import base64
@@ -286,6 +288,66 @@ def create_datamodel_from(input_filename):
         robot_data = _create_from_node(xml.getroot(), context)
         return DataModel(context.basemillis, robot_data, context.dump_texts())
 
+
+class _MsgHandler(object):
+
+    def __init__(self, context, attrs):
+        self._context = context
+        self._msg = []
+        self._msg += [self._context.timestamp(attrs.getValue('timestamp'))]
+        self._msg += [levels[attrs.getValue('level')]]
+        self._is_html = attrs.get('html')
+
+    def end_element(self, text):
+        if self._is_html:
+            return self._msg + [self._context.get_text_id(text)]
+        else:
+            return self._msg + [self._context.get_text_id(html_escape(text, replace_whitespace=False))]
+
+
+class _StatusHandler(object):
+    def __init__(self, context, attrs):
+        self._context = context
+        self._status = attrs.getValue('status')[0]
+        self._starttime = self._context.timestamp(attrs.getValue('starttime'))
+        self._endtime = self._context.timestamp(attrs.getValue('endtime'))
+
+    def end_element(self, text):
+        return [self._status,
+                self._starttime,
+                self._endtime-self._starttime]
+
+
+class _RobotOutputHandler(ContentHandler):
+
+    _handlers = {
+        'msg' : _MsgHandler,
+        'status' : _StatusHandler
+    }
+
+
+    def __init__(self, context):
+        self._context = context
+        self._handler_stack = []
+        self._data = []
+
+    @property
+    def datamodel(self):
+        return DataModel(self._context.basemillis, self._data, self._context.dump_texts())
+
+    def startElement(self, name, attrs):
+        handler = self._handlers[name](self._context,attrs)
+        self._charbuffer = ''
+        self._handler_stack.append(handler)
+
+    def endElement(self, name):
+        handler = self._handler_stack.pop()
+        self._data = handler.end_element(self._charbuffer)
+
+    def characters(self, content):
+        self._charbuffer += content
+
+
 class DataModel(object):
 
     def __init__(self, basemillis, robot_data, texts):
@@ -304,12 +366,3 @@ class DataModel(object):
 
 def parse_js(input_filename, output):
     create_datamodel_from(input_filename).write_to(output)
-
-def parse(input_filename, output_filename):
-    with open(output_filename, 'w') as output:
-        parse_js(input_filename, output)
-
-if __name__ == '__main__':
-    import sys
-    filename = sys.argv[1]
-    parse(filename, filename+'.js')

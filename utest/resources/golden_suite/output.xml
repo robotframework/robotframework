@@ -1,0 +1,206 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<robot generated="20110531 12:48:09.013" generator="Robot trunk 20110527 (Python 2.6.5 on linux2)">
+<suite source="/tmp/data" name="Data">
+<doc>root docs
+with new line, several spaces "    " and a &lt;b&gt;bold tag&lt;/b&gt;.</doc>
+<metadata>
+<item name="root">rocks</item>
+</metadata>
+<kw type="setup" name="BuiltIn.Log" timeout="">
+<doc>Logs the given message with the given level.</doc>
+<arguments>
+<arg>Rock on</arg>
+</arguments>
+<msg timestamp="20110531 12:48:09.053" level="INFO">Rock on</msg>
+<status status="PASS" endtime="20110531 12:48:09.054" starttime="20110531 12:48:09.053"></status>
+</kw>
+<suite source="/tmp/data/all_settings.txt" name="All Settings">
+<doc>Suite docs
+with new line, several spaces "    " and a &lt;b&gt;bold tag&lt;/b&gt;.</doc>
+<metadata>
+<item name="meta">rulez with &lt;b&gt;escaped&lt;/b&gt;</item>
+<item name="version">alpha</item>
+</metadata>
+<kw type="setup" name="BuiltIn.Log" timeout="">
+<doc>Logs the given message with the given level.</doc>
+<arguments>
+<arg>suite msg</arg>
+</arguments>
+<msg timestamp="20110531 12:48:09.056" level="INFO">suite msg</msg>
+<status status="PASS" endtime="20110531 12:48:09.056" starttime="20110531 12:48:09.056"></status>
+</kw>
+<test name="My test" timeout="1 minute">
+<doc>Test docs
+with new line, several spaces "    " and a &lt;b&gt;bold tag&lt;/b&gt;.</doc>
+<kw type="setup" name="BuiltIn.Log" timeout="">
+<doc>Logs the given message with the given level.</doc>
+<arguments>
+<arg>Test setup msg</arg>
+</arguments>
+<msg timestamp="20110531 12:48:09.058" level="INFO">Test setup msg</msg>
+<status status="PASS" endtime="20110531 12:48:09.059" starttime="20110531 12:48:09.057"></status>
+</kw>
+<kw type="kw" name="My kw" timeout="">
+<doc>Kw docs</doc>
+<arguments>
+<arg>This is my _non html_ message\nwith new line, several spaces " \ \ \ " and a &lt;b&gt;bold tag&lt;/b&gt;.</arg>
+</arguments>
+<kw type="kw" name="BuiltIn.Log" timeout="">
+<doc>Logs the given message with the given level.</doc>
+<arguments>
+<arg>${arg}</arg>
+<arg>${level}</arg>
+</arguments>
+<msg timestamp="20110531 12:48:09.061" level="WARN">This is my _non html_ message
+with new line, several spaces "    " and a &lt;b&gt;bold tag&lt;/b&gt;.</msg>
+<status status="PASS" endtime="20110531 12:48:09.063" starttime="20110531 12:48:09.060"></status>
+</kw>
+<kw type="teardown" name="BuiltIn.Log" timeout="">
+<doc>Logs the given message with the given level.</doc>
+<arguments>
+<arg>keyword teardown</arg>
+</arguments>
+<msg timestamp="20110531 12:48:09.064" level="INFO">keyword teardown</msg>
+<status status="PASS" endtime="20110531 12:48:09.065" starttime="20110531 12:48:09.063"></status>
+</kw>
+<status status="PASS" endtime="20110531 12:48:09.065" starttime="20110531 12:48:09.059"></status>
+</kw>
+<kw type="kw" name="My kw" timeout="">
+<doc>Kw docs</doc>
+<arguments>
+<arg>This is my &lt;blink&gt;HTML&lt;/blink&gt; message\nwith new line, several spaces " \ \ \ " and a &lt;b&gt;bold tag&lt;/b&gt;.</arg>
+<arg>HTML</arg>
+</arguments>
+<kw type="kw" name="BuiltIn.Log" timeout="">
+<doc>Logs the given message with the given level.</doc>
+<arguments>
+<arg>${arg}</arg>
+<arg>${level}</arg>
+</arguments>
+<msg timestamp="20110531 12:48:09.068" html="yes" level="INFO">This is my &lt;blink&gt;HTML&lt;/blink&gt; message
+with new line, several spaces "    " and a &lt;b&gt;bold tag&lt;/b&gt;.</msg>
+<status status="PASS" endtime="20110531 12:48:09.069" starttime="20110531 12:48:09.067"></status>
+</kw>
+<kw type="teardown" name="BuiltIn.Log" timeout="">
+<doc>Logs the given message with the given level.</doc>
+<arguments>
+<arg>keyword teardown</arg>
+</arguments>
+<msg timestamp="20110531 12:48:09.070" level="INFO">keyword teardown</msg>
+<status status="PASS" endtime="20110531 12:48:09.071" starttime="20110531 12:48:09.069"></status>
+</kw>
+<status status="PASS" endtime="20110531 12:48:09.072" starttime="20110531 12:48:09.066"></status>
+</kw>
+<kw type="teardown" name="BuiltIn.Log" timeout="">
+<doc>Logs the given message with the given level.</doc>
+<arguments>
+<arg>Test teardown msg</arg>
+</arguments>
+<msg timestamp="20110531 12:48:09.073" level="INFO">Test teardown msg</msg>
+<status status="PASS" endtime="20110531 12:48:09.073" starttime="20110531 12:48:09.072"></status>
+</kw>
+<tags>
+<tag>someothertag</tag>
+<tag>sometag</tag>
+</tags>
+<status status="PASS" endtime="20110531 12:48:09.073" critical="yes" starttime="20110531 12:48:09.057"></status>
+</test>
+<kw type="teardown" name="BuiltIn.Log" timeout="">
+<doc>Logs the given message with the given level.</doc>
+<arguments>
+<arg>suite teardown msg</arg>
+</arguments>
+<msg timestamp="20110531 12:48:09.075" level="INFO">suite teardown msg</msg>
+<status status="PASS" endtime="20110531 12:48:09.075" starttime="20110531 12:48:09.074"></status>
+</kw>
+<status status="PASS" endtime="20110531 12:48:09.075" starttime="20110531 12:48:09.054"></status>
+</suite>
+<suite source="/tmp/data/failing_suite.txt" name="Failing Suite">
+<doc></doc>
+<metadata>
+</metadata>
+<test name="This fails at test" timeout="">
+<doc></doc>
+<kw type="kw" name="BuiltIn.Fail" timeout="">
+<doc>Fails the test immediately with the given (optional) message.</doc>
+<arguments>
+<arg>Failure msg</arg>
+</arguments>
+<msg timestamp="20110531 12:48:09.081" level="FAIL">Failure msg</msg>
+<status status="FAIL" endtime="20110531 12:48:09.081" starttime="20110531 12:48:09.079"></status>
+</kw>
+<tags>
+</tags>
+<status status="FAIL" endtime="20110531 12:48:09.081" critical="yes" starttime="20110531 12:48:09.079">Failure msg</status>
+</test>
+<test name="This fails at kw" timeout="">
+<doc></doc>
+<kw type="kw" name="Lets fail at keyword" timeout="">
+<doc></doc>
+<arguments>
+</arguments>
+<kw type="kw" name="BuiltIn.Fail" timeout="">
+<doc>Fails the test immediately with the given (optional) message.</doc>
+<arguments>
+<arg>Failure msg</arg>
+</arguments>
+<msg timestamp="20110531 12:48:09.084" level="FAIL">Failure msg</msg>
+<status status="FAIL" endtime="20110531 12:48:09.084" starttime="20110531 12:48:09.083"></status>
+</kw>
+<status status="FAIL" endtime="20110531 12:48:09.084" starttime="20110531 12:48:09.082"></status>
+</kw>
+<tags>
+</tags>
+<status status="FAIL" endtime="20110531 12:48:09.084" critical="yes" starttime="20110531 12:48:09.082">Failure msg</status>
+</test>
+<test name="This Errors" timeout="">
+<doc></doc>
+<kw type="kw" name="This does not exist" timeout="">
+<doc></doc>
+<arguments>
+</arguments>
+<msg timestamp="20110531 12:48:09.086" level="FAIL">No keyword with name 'This does not exist' found.</msg>
+<status status="FAIL" endtime="20110531 12:48:09.086" starttime="20110531 12:48:09.085"></status>
+</kw>
+<tags>
+</tags>
+<status status="FAIL" endtime="20110531 12:48:09.086" critical="yes" starttime="20110531 12:48:09.085">No keyword with name 'This does not exist' found.</status>
+</test>
+<status status="FAIL" endtime="20110531 12:48:09.086" starttime="20110531 12:48:09.076"></status>
+</suite>
+<kw type="teardown" name="BuiltIn.Fail" timeout="">
+<doc>Fails the test immediately with the given (optional) message.</doc>
+<arguments>
+</arguments>
+<msg timestamp="20110531 12:48:09.088" level="FAIL">AssertionError</msg>
+<status status="FAIL" endtime="20110531 12:48:09.088" starttime="20110531 12:48:09.087"></status>
+</kw>
+<status status="FAIL" endtime="20110531 12:48:09.088" starttime="20110531 12:48:09.026">Suite teardown failed:
+AssertionError</status>
+</suite>
+<statistics>
+<total>
+<stat fail="4" doc="" pass="0">Critical Tests</stat>
+<stat fail="4" doc="" pass="0">All Tests</stat>
+</total>
+<tag>
+<stat info="" fail="1" pass="0" links="" doc="">someothertag</stat>
+<stat info="" fail="1" pass="0" links="" doc="">sometag</stat>
+</tag>
+<suite>
+<stat fail="4" doc="Data" pass="0">Data</stat>
+<stat fail="1" doc="Data.All Settings" pass="0">Data.All Settings</stat>
+<stat fail="3" doc="Data.Failing Suite" pass="0">Data.Failing Suite</stat>
+</suite>
+</statistics>
+<errors>
+<msg linkable="yes" timestamp="20110531 12:48:09.061" level="WARN">This is my _non html_ message
+with new line, several spaces "    " and a &lt;b&gt;bold tag&lt;/b&gt;.</msg>
+<msg timestamp="20110531 12:48:09.078" level="ERROR">Invalid syntax in file '/tmp/data/failing_suite.txt' in table 'Settings': Importing test library 'Idontexist' failed: ImportError: No module named Idontexist
+PYTHONPATH: ['/usr/local/lib/python2.6/dist-packages/robot/libraries', '/usr/local/lib/python2.6/dist-packages/autonose-0.1.4-py2.6.egg', '/usr/local/lib/python2.6/dist-packages/termstyle-0.1.5-py2.6.egg', '/usr/local/lib/python2.6/dist-packages/python_nosexml-0.2.dev_r18-py2.6.egg', '/usr/local/lib/python2.6/dist-packages/mock-0.7.0b4-py2.6.egg', '/usr/lib/python2.6', '/usr/lib/python2.6/plat-linux2', '/usr/lib/python2.6/lib-tk', '/usr/lib/python2.6/lib-old', '/usr/lib/python2.6/lib-dynload', '/usr/lib/python2.6/dist-packages', '/usr/lib/python2.6/dist-packages/PIL', '/usr/lib/python2.6/dist-packages/gst-0.10', '/usr/lib/pymodules/python2.6', '/usr/lib/python2.6/dist-packages/gtk-2.0', '/usr/lib/pymodules/python2.6/gtk-2.0', '/usr/lib/python2.6/dist-packages/wx-2.8-gtk2-unicode', '/usr/local/lib/python2.6/dist-packages', '/usr/lib/python2.6/dist-packages', '.']
+Traceback (most recent call last):
+  File "/usr/local/lib/python2.6/dist-packages/robot/utils/importing.py", line 85, in _non_dotted_import
+    module = __import__(name)</msg>
+<msg timestamp="20110531 12:48:09.078" level="ERROR">Invalid syntax in file '/tmp/data/failing_suite.txt' in table 'Settings': Resource file 'And I'm not here' does not exist.</msg>
+</errors>
+</robot>

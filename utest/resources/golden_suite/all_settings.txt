@@ -1,0 +1,27 @@
+*** Settings ***
+Suite setup		Log		suite msg
+Suite teardown	Log		suite teardown msg
+Documentation	Suite docs\nwith new line, several spaces " \ \ \ " and a <b>bold tag</b>.
+Metadata		meta		rulez with <b>escaped</b>
+Metadata		version		alpha
+
+*** Test Cases ***
+My test
+	[tags]	sometag		someothertag
+	[timeout]	1 minute
+	[setup]		Log		Test setup msg
+	[teardown]	Log		Test teardown msg
+	[documentation]		Test docs\nwith new line, several spaces " \ \ \ " and a <b>bold tag</b>.
+	My kw		This is my _non html_ message\nwith new line, several spaces " \ \ \ " and a <b>bold tag</b>.
+	My kw		This is my <blink>HTML</blink> message\nwith new line, several spaces " \ \ \ " and a <b>bold tag</b>.	HTML
+
+
+*** Keywords ***
+My kw
+	[timeout]		1 minute
+	[arguments]		${arg}     ${level}=WARN
+	[documentation]	Kw docs\nwith new line, several spaces " \ \ \ " and a <b>bold tag</b>.
+	Log				${arg}		${level}
+	[return]		foo
+        [teardown]	Log	keyword teardown
+	

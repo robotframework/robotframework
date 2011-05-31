@@ -1,0 +1,5 @@
+*** Settings ***
+documentation	root docs \nwith new line, several spaces " \ \ \ " and a <b>bold tag</b>.
+metadata		root	rocks
+suite setup		Log		Rock on
+Suite teardown		Fail

@@ -1,0 +1,15 @@
+*** Settings ***
+Library		I dont exist
+Resource	And I'm not here
+
+*** Test Cases ***
+This fails at test
+	Fail	Failure msg
+This fails at kw
+	Lets fail at keyword
+This Errors
+	This does not exist
+
+*** Keywords ***
+Lets fail at keyword
+	Fail	Failure msg
