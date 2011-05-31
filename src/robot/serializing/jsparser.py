@@ -288,6 +288,26 @@ def create_datamodel_from(input_filename):
         robot_data = _create_from_node(xml.getroot(), context)
         return DataModel(context.basemillis, robot_data, context.dump_texts())
 
+class _TagHandler(object):
+
+    def __init__(self, context, attrs):
+        self._context = context
+
+    def end_element(self, text):
+        return self._context.get_text_id(text)
+
+
+class _TagsHandler(object):
+
+    def __init__(self, context, attrs):
+        self._context = context
+        self._tags = []
+
+    def add_child(self, child):
+        self._tags += [child]
+
+    def end_element(self, text):
+        return self._tags
 
 class _MsgHandler(object):
 
@@ -318,22 +338,29 @@ class _StatusHandler(object):
                 self._endtime-self._starttime]
 
 
+class _RootHandler(object):
+
+    def add_child(self, child):
+        self.data = child
+
+
 class _RobotOutputHandler(ContentHandler):
 
     _handlers = {
-        'msg' : _MsgHandler,
+        'tag'    : _TagHandler,
+        'tags'   : _TagsHandler,
+        'msg'    : _MsgHandler,
         'status' : _StatusHandler
     }
 
 
     def __init__(self, context):
         self._context = context
-        self._handler_stack = []
-        self._data = []
+        self._handler_stack = [_RootHandler()]
 
     @property
     def datamodel(self):
-        return DataModel(self._context.basemillis, self._data, self._context.dump_texts())
+        return DataModel(self._context.basemillis, self._handler_stack[0].data, self._context.dump_texts())
 
     def startElement(self, name, attrs):
         handler = self._handlers[name](self._context,attrs)
@@ -342,10 +369,12 @@ class _RobotOutputHandler(ContentHandler):
 
     def endElement(self, name):
         handler = self._handler_stack.pop()
-        self._data = handler.end_element(self._charbuffer)
+        parent = self._handler_stack[-1]
+        parent.add_child(handler.end_element(self._charbuffer))
 
     def characters(self, content):
         self._charbuffer += content
+
 
 
 class DataModel(object):
