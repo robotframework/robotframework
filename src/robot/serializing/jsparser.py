@@ -66,7 +66,7 @@ class Context(object):
         self._kw_index += [0]
 
     def end_keyword(self):
-        kw = self._current_place.pop()
+        self._current_place.pop()
         self._kw_index.pop()
 
     def create_link_to_current_location(self, key):
