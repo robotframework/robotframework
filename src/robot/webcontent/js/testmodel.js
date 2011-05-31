@@ -287,6 +287,7 @@ window.testmodel = function () {
         Times: Times,
         PASS: STATUS.pass,
         FAIL: STATUS.fail,
+        formatElapsed: formatElapsed,
         containsTag: containsTag  // Exposed for tests
     };
 }();

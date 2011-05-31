@@ -372,7 +372,7 @@ function calculateTotalTime(tests) {
     $.map(tests, function (test) {
         totaltime += test.times.elapsedMillis;
     });
-    return window.testdata.formatMillis(totaltime).split('.')[0];
+    return testmodel.formatElapsed(totaltime).split('.')[0];
 }
 
 function ensureTagDetailsAreVisible(name) {
