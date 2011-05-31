@@ -288,26 +288,47 @@ def create_datamodel_from(input_filename):
         robot_data = _create_from_node(xml.getroot(), context)
         return DataModel(context.basemillis, robot_data, context.dump_texts())
 
-class _TagHandler(object):
+class _Handler(object):
 
     def __init__(self, context, attrs):
         self._context = context
+        self._children = []
 
-    def end_element(self, text):
-        return self._context.get_text_id(text)
+    @property
+    def context(self):
+        return self._context
 
-
-class _TagsHandler(object):
-
-    def __init__(self, context, attrs):
-        self._context = context
-        self._tags = []
+    @property
+    def children(self):
+        return self._children
 
     def add_child(self, child):
-        self._tags += [child]
+        self._children += [child]
+
+
+class _ArgumentHandler(_Handler):
 
     def end_element(self, text):
-        return self._tags
+        return text
+
+
+class _ArgumentsHandler(_Handler):
+
+    def end_element(self, text):
+        return self._context.get_text_id(', '.join(self.children))
+
+
+class _TagHandler(_Handler):
+
+    def end_element(self, text):
+        return self.context.get_text_id(text)
+
+
+class _TagsHandler(_Handler):
+
+    def end_element(self, text):
+        return self.children
+
 
 class _MsgHandler(object):
 
@@ -347,6 +368,8 @@ class _RootHandler(object):
 class _RobotOutputHandler(ContentHandler):
 
     _handlers = {
+        'arg'    : _ArgumentHandler,
+        'arguments' : _ArgumentsHandler,
         'tag'    : _TagHandler,
         'tags'   : _TagsHandler,
         'msg'    : _MsgHandler,

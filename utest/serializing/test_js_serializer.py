@@ -35,6 +35,17 @@ class TestJsSerializer(unittest.TestCase):
         assert_equals(data_model._robot_data, [1, 2])
         assert_equals(data_model._texts, ['*', '*someothertag', '*sometag'])
 
+    def test_arguments_xml_parsing(self):
+        arguments_xml = """
+        <arguments>
+        <arg>${arg}</arg>
+        <arg>${level}</arg>
+        </arguments>
+        """
+        data_model = self._get_data_model(arguments_xml)
+        assert_equals(data_model._robot_data, 1)
+        assert_equals(data_model._texts, ['*', '*${arg}, ${level}'])
+
     def _get_data_model(self, xml_string):
         sax.parseString(xml_string, self._handler)
         return self._handler.datamodel
