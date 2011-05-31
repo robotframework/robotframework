@@ -306,6 +306,22 @@ class _Handler(object):
         self._children += [child]
 
 
+class _KeywordHandler(_Handler):
+
+    def __init__(self, context, attrs):
+        _Handler.__init__(self, context, attrs)
+        #self.context.start_keyword()
+        self._type = attrs.getValue('type')
+        self._name = self.context.get_text_id(attrs.getValue('name'))
+        self._timeout = self.context.get_text_id(attrs.getValue('timeout'))
+
+    def end_element(self, text):
+        if self._type == 'teardown' and self.children[-1][0] == 'F':
+            self.context.teardown_failed()
+        #self.context.end_keyword()
+        return [self._type, self._name, self._timeout]+self.children
+
+
 class _ArgumentHandler(_Handler):
 
     def end_element(self, text):
@@ -318,7 +334,7 @@ class _ArgumentsHandler(_Handler):
         return self._context.get_text_id(', '.join(self.children))
 
 
-class _TagHandler(_Handler):
+class _TextHandler(_Handler):
 
     def end_element(self, text):
         return self.context.get_text_id(text)
@@ -368,9 +384,11 @@ class _RootHandler(object):
 class _RobotOutputHandler(ContentHandler):
 
     _handlers = {
+        'doc'    : _TextHandler,
+        'kw'     : _KeywordHandler,
         'arg'    : _ArgumentHandler,
         'arguments' : _ArgumentsHandler,
-        'tag'    : _TagHandler,
+        'tag'    : _TextHandler,
         'tags'   : _TagsHandler,
         'msg'    : _MsgHandler,
         'status' : _StatusHandler

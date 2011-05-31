@@ -46,6 +46,22 @@ class TestJsSerializer(unittest.TestCase):
         assert_equals(data_model._robot_data, 1)
         assert_equals(data_model._texts, ['*', '*${arg}, ${level}'])
 
+    def test_keyword_xml_parsing(self):
+        keyword_xml = """
+        <kw type="teardown" name="BuiltIn.Log" timeout="">
+        <doc>Logs the given message with the given level.</doc>
+        <arguments>
+        <arg>keyword teardown</arg>
+        </arguments>
+        <msg timestamp="20110531 12:48:09.070" level="INFO">keyword teardown</msg>
+        <status status="PASS" endtime="20110531 12:48:09.071" starttime="20110531 12:48:09.069"></status>
+        </kw>
+        """
+        data_model = self._get_data_model(keyword_xml)
+        assert_equals(data_model._basemillis, 1306835289070)
+        assert_equals(data_model._robot_data, ['teardown', 1, 0, 2, 3, [0, "I", 3], ["P", -1, 2]])
+        assert_equals(data_model._texts, ['*', '*BuiltIn.Log', '*Logs the given message with the given level.', '*keyword teardown'])
+
     def _get_data_model(self, xml_string):
         sax.parseString(xml_string, self._handler)
         return self._handler.datamodel
