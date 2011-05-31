@@ -3,8 +3,8 @@ window.testdata = (function(){
     var elementsById = {};
     var LEVEL = {I:'info', H:'info', T:'trace', W:'warn', E:'error', D:'debug', F:'fail'};
     var KEYWORD_TYPE = {kw: 'KEYWORD',
-    				    setup:'SETUP',
-    				    teardown:'TEARDOWN'};
+                        setup:'SETUP',
+                        teardown:'TEARDOWN'};
 
     function addElement(elem){
         elem.id = uuid();
@@ -23,12 +23,17 @@ window.testdata = (function(){
         return new Date(window.basemillis + millis);
     }
 
-    function dec(text){
-        return (text[0] == '*' ? text.substring(1) : JXG.decompress(text));
+    function decode(text){
+        return (text[0] == '*' ? text.substring(1) : extract(text));
+    }
+
+    function extract(text) {
+        return JXG.Util.utf8Decode(
+                (new JXG.Util.Unzip(JXG.Util.Base64.decodeAsArray(text))).unzip()[0][0]);
     }
 
     function get(id){
-        return dec(window.strings[id]);
+        return decode(window.strings[id]);
     }
 
     function times(stats){
@@ -164,16 +169,6 @@ window.testdata = (function(){
             if(matcher(fromElement[i]))
                 results.push(fromElement[i]);
         return results;
-    }
-
-    function formatMillis(millis) {
-        hours = Math.floor(millis / (60*60*1000));
-        millis -= hours * 60 * 60 * 1000;
-        minutes = Math.floor(millis / (60*1000));
-        millis -= minutes * 60 * 1000;
-        seconds = Math.floor(millis / 1000);
-        millis -= seconds * 1000;
-        return shortTime(hours, minutes, seconds, millis);
     }
 
     function suite() {
@@ -385,7 +380,6 @@ window.testdata = (function(){
         generated: generated,
         getString: get,
         shortTime: shortTime,
-        formatMillis: formatMillis,
         stats: stats
     };
 }());
