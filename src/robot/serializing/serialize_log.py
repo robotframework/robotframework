@@ -51,10 +51,6 @@ class _Populator(object):
         self._parsing(line)
 
     def _normal_parsing(self, line):
-        for matcher in self._handlers:
-            if matcher(line):
-                self._handlers[matcher]()
-                
         if self._is_begin_scripts(line):
             self._start_script()
         elif self._is_title_line_to_handle(line):
