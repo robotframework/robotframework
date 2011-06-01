@@ -354,6 +354,19 @@ function renderDetailsBySuite(name) {
     $.tmpl(window.templates.testDetailsRow, suite.allTests()).appendTo('#tests_by_tag');
 }
 
+function showByHash() {
+    hash = window.location.hash.substring(1);
+    if(hash.indexOf("suite_")==0){
+        suite = hash.substring("suite_".length);
+        suiteDetailSelected(suite)
+    }
+    else if(hash.indexOf("tag_")==0){
+        tag = hash.substring("tag_".length);
+        tagDetailSelected(tag)
+    }
+    window.location.hash = window.location.hash.substring(1);
+}
+
 function testsHavingTag(tag) {
     if (!tag)
         return [];
@@ -377,12 +390,10 @@ function calculateTotalTime(tests) {
 
 function ensureTagDetailsAreVisible(name) {
     document.getElementById('tag_detail_selector').value = name;
-    location.hash = '#tag_detail_selector';
 }
 
 function ensureSuiteDetailsAreVisible(name) {
     document.getElementById('suite_detail_selector').value = name;
-    location.hash = '#suite_detail_selector';
 }
 
 $(document).ready(function(){
@@ -394,6 +405,9 @@ $(document).ready(function(){
     addSummary(topsuite);
     addStatistics();
     renderTestDetailsByTagHeader();
+    if(window.location.hash !== "") {
+        showByHash();
+    }
 });
 
 function setDocumentTitle(suite){
@@ -487,7 +501,7 @@ function initTemplates() {
   <tr>
     <td class="col_stat_name">
       <div class="stat_name">
-        <a href="#tag_detail_selector" onclick="tagDetailSelected('${label}');" title="${doc}">${label}</a>
+        <a href="#tag_${label}" onclick="tagDetailSelected('${label}');" title="${doc}">${label}</a>
         ${shownInfo}
       </div>
     <div class="tag_links">
@@ -504,7 +518,7 @@ function initTemplates() {
   <tr>
     <td class="col_stat_name">
       <div class="stat_name">
-        <a href="#suite_details_selector" onclick="suiteDetailSelected('${fullname}');" title="${doc}"><span class="parent_name">${parentName}</span>${name}</a>
+        <a href="#suite_${fullname}" onclick="suiteDetailSelected('${fullname}');" title="${doc}"><span class="parent_name">${parentName}</span>${name}</a>
       </div>
     </td>
     {{tmpl($data) '#stat_columns'}}
@@ -573,6 +587,7 @@ function initTemplates() {
 </script>
 
 <script type="text/html" id="tag_details">
+    <div id='tag_${label}'></div>
     {{if doc}}
     <tr>
         <th>Documentation:</th>
@@ -596,6 +611,7 @@ function initTemplates() {
 </script>
 
 <script type="text/html" id="suite_details">
+    <div id='suite_${fullname}'></div>
     {{if documentation}}
     <tr>
         <th>Documentation:</th>
