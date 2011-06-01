@@ -323,8 +323,8 @@ $(document).ready(function(){
     if(window.location.hash !== "") {
         makeElementVisible(window.location.hash.substring(1));
         window.location.hash = window.location.hash.substring(1);
-    } else
-        expandFailed(main);
+    } 
+    expandFailed(main);
 });
 
 function addHeader() {
