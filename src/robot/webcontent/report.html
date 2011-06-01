@@ -308,8 +308,8 @@ function addSummary(topsuite) {
 }
 
 function renderTestDetailsByTagHeader() {
-    var tagstats = window.testdata.stats().tag;
-    var suitestats = window.testdata.stats().suite;
+    var tagstats = window.testdata.statistics().tag;
+    var suitestats = window.testdata.statistics().suite;
     $.tmpl(window.templates.testDetailsByTagHeader, {tags: tagstats, suites: suitestats}).appendTo('#test_details_by_tag_container');
 }
 
@@ -325,7 +325,7 @@ function renderDetailsByTag(tag) {
 
 function tagDetailSelected(name) {
     $('#test_details_by_tag_container').empty();
-    var alltags = window.testdata.stats().tag;
+    var alltags = window.testdata.statistics().tag;
     var tag = findTagByName(name, alltags);
     renderTestDetailsByTagHeader();
     renderDetailsByTag(tag);
@@ -341,7 +341,7 @@ function findTagByName(name, tags) {
 
 function suiteDetailSelected(name) {
     $('#test_details_by_tag_container').empty();
-    var allSuites = window.testdata.stats().suite;
+    var allSuites = window.testdata.statistics().suite;
     renderTestDetailsByTagHeader();
     renderDetailsBySuite(name);
     ensureSuiteDetailsAreVisible(name);
