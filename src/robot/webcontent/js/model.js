@@ -193,7 +193,7 @@ window.model = (function () {
 
     function shortTime(hours, minutes, seconds, milliseconds) {
         var ret = padTo(hours, 2) + ":" + padTo(minutes, 2) + ":" + padTo(seconds, 2);
-        if (milliseconds)
+        if (milliseconds != undefined)
             ret += "." + padTo(milliseconds, 3);
         return ret;
     }
@@ -288,7 +288,8 @@ window.model = (function () {
         PASS: STATUS.pass,
         FAIL: STATUS.fail,
         formatElapsed: formatElapsed,
-        containsTag: containsTag  // Exposed for tests
+        containsTag: containsTag,  // Exposed for tests
+        shortTime: shortTime
     };
 }());
 

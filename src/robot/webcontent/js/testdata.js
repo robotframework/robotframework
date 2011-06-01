@@ -252,17 +252,6 @@ window.testdata = (function () {
         }
     }
 
-    function padTo(number, len){
-        var numString = number + "";
-        while(numString.length < len) numString = "0"+numString;
-        return numString;
-    }
-
-    function shortTime(hours, minutes, seconds, milliseconds){
-        return padTo(hours, 2)+":"+padTo(minutes, 2)+":"+padTo(seconds, 2)+
-                "."+padTo(milliseconds, 3);
-    }
-
     function generated(){
         return timestamp(window.data[0]);
     }
@@ -286,7 +275,6 @@ window.testdata = (function () {
         pathToSuite: pathToSuite,
         pathToKeyword: pathToKeyword,
         generated: generated,
-        shortTime: shortTime,
         statistics: statistics
     };
 

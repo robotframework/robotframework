@@ -172,14 +172,14 @@ describe("Setups and teardowns", function () {
 });
 
 
-describe("Handling short time formatting", function (){
+describe("Short time formatting", function (){
 
     it("should pad 0 values to full length", function () {
-        expect(window.testdata.shortTime(0,0,0,0)).toEqual("00:00:00.000");
+        expect(window.model.shortTime(0,0,0,0)).toEqual("00:00:00.000");
     });
 
     it("should pad non empty number to full length", function () {
-        expect(window.testdata.shortTime(12,5,55,101)).toEqual("12:05:55.101");
+        expect(window.model.shortTime(12,5,55,101)).toEqual("12:05:55.101");
     });
 });
 
