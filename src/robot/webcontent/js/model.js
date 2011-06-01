@@ -154,7 +154,7 @@ window.model = (function () {
     function Status(status, parentSuiteTeardownFailed) {
         return {
             parentSuiteTeardownFailed: parentSuiteTeardownFailed,
-            status: parentSuiteTeardownFailed? model.FAIL : status,
+            status: parentSuiteTeardownFailed? model.FAIL : status
         };
     }
 
@@ -294,11 +294,10 @@ window.model = (function () {
 
 window.stats = (function () {
 
-    function stats(){
-        var statdata = window.data[3];
-        return {total: util.map(statdata[0], statElem),
-                tag:   util.map(statdata[1], tagStatElem),
-                suite: util.map(statdata[2], suiteStatElem)};
+    function Statistics(totalElems, tagElems, suiteElems){
+        return {total: util.map(totalElems, statElem),
+                tag:   util.map(tagElems, tagStatElem),
+                suite: util.map(suiteElems, suiteStatElem)};
     }
 
     function statElem(data) {
@@ -383,7 +382,7 @@ window.stats = (function () {
     }
 
     return {
-        stats: stats
+        Statistics: Statistics
     };
 
 }());

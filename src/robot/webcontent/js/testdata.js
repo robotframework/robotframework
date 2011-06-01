@@ -282,6 +282,11 @@ window.testdata = (function () {
         return message(window.data[4][index]);
     }
 
+    function statistics () {
+        var statData = window.data[3];
+        return stats.Statistics(statData[0], statData[1], statData[2]);
+    }
+
     return {
         suite: suite,
         error: error,
@@ -291,7 +296,8 @@ window.testdata = (function () {
         pathToKeyword: pathToKeyword,
         generated: generated,
         getString: get,
-        shortTime: shortTime
+        shortTime: shortTime,
+        statistics: statistics
     };
 
 }());

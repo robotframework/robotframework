@@ -26,17 +26,17 @@ describe("Statistics", function () {
     }
 
     it("should contain critical stats", function () {
-        var criticalstats = window.testdata.stats().total[0];
+        var criticalstats = window.testdata.statistics().total[0];
         verifyBasicStatAttributes(criticalstats, 'Critical Tests', 1, 1, '');
     });
 
     it("should contain all stats", function () {
-        var allstats = window.testdata.stats().total[1];
+        var allstats = window.testdata.statistics().total[1];
         verifyBasicStatAttributes(allstats, 'All Tests', 2, 3, '');
     });
 
     it("should contain tag statistics", function () {
-        var tagstats = window.testdata.stats().tag;
+        var tagstats = window.testdata.statistics().tag;
         var firstTagStats = tagstats[0];
         verifyBasicStatAttributes(firstTagStats, 'first tag', 3, 0, 'tagdoc');
         expect(firstTagStats.shownInfo).toEqual('(critical)');
@@ -46,22 +46,22 @@ describe("Statistics", function () {
     });
 
     it("should contain tag stat links", function () {
-        var tagWithLink = window.testdata.stats().tag[0];
+        var tagWithLink = window.testdata.statistics().tag[0];
         expect(tagWithLink.links).toEqual([{title: "title", url: "url"},
                                            {title: "t2", url: "u2"}]);
-        var tagWithNoLink = window.testdata.stats().tag[1];
+        var tagWithNoLink = window.testdata.statistics().tag[1];
         expect(tagWithNoLink.links).toEqual([])
     });
 
     it("should contain suite statistics", function () {
-        var suitestats = window.testdata.stats().suite[0];
+        var suitestats = window.testdata.statistics().suite[0];
         verifyBasicStatAttributes(suitestats, 'Suite', 4, 0, 'Suite');
     });
 
     it("should contain names and parent names for suite stats", function () {
-        var statNoParents = window.testdata.stats().suite[0];
+        var statNoParents = window.testdata.statistics().suite[0];
         verifySuiteStatNames(statNoParents, 'Suite', '');
-        var statWithParents = window.testdata.stats().suite[1];
+        var statWithParents = window.testdata.statistics().suite[1];
         verifySuiteStatNames(statWithParents, 'Sub', 'Suite . ');
     });
 
@@ -93,42 +93,42 @@ describe("Statistics percents and widths", function () {
     }
 
     it("should count percentages and widths for zero tests to be zero", function (){
-        var stat = window.testdata.stats().total[0];
+        var stat = window.testdata.statistics().total[0];
         percentagesShouldBe(stat, 0, 0);
         widthsShouldBe(stat, 0, 0);
     });
 
     it("should round floats to one digit in percentages and widths", function (){
-        var stat = window.testdata.stats().total[1];
+        var stat = window.testdata.statistics().total[1];
         percentagesShouldBe(stat, 66.7, 33.3);
         widthsShouldBe(stat, 66.7, 33.3);
     });
 
     it("should guarantee that non-zero percentages are at least 0.1", function (){
-        var stat = window.testdata.stats().tag[0];
+        var stat = window.testdata.statistics().tag[0];
         percentagesShouldBe(stat, 99.9, 0.1);
-        stat = window.testdata.stats().tag[1];
+        stat = window.testdata.statistics().tag[1];
         percentagesShouldBe(stat, 0.1, 99.9);
     });
 
     it("should guarantee that non-zero widths are at least 1", function (){
-        var stat = window.testdata.stats().tag[0];
+        var stat = window.testdata.statistics().tag[0];
         widthsShouldBe(stat, 99, 1);
-        stat = window.testdata.stats().tag[1];
+        stat = window.testdata.statistics().tag[1];
         widthsShouldBe(stat, 1, 99);
     });
 
     it("should handle pass/fail percentages and widths of 0 and 100", function (){
-        var stat = window.testdata.stats().tag[2];
+        var stat = window.testdata.statistics().tag[2];
         percentagesShouldBe(stat, 100, 0);
         widthsShouldBe(stat, 100, 0);
-        stat = window.testdata.stats().tag[3];
+        stat = window.testdata.statistics().tag[3];
         percentagesShouldBe(stat, 0, 100);
         widthsShouldBe(stat, 0, 100);
     });
 
     it("should guarantee that widths do not add up to over 100", function (){
-        var stat = window.testdata.stats().tag[4];
+        var stat = window.testdata.statistics().tag[4];
         percentagesShouldBe(stat, 50.1, 50);
         widthsShouldBe(stat, 50, 50);
     });
