@@ -307,10 +307,10 @@ function addSummary(topsuite) {
     $.tmpl(window.templates.summaryTable, topsuite).insertAfter($('#header_div'));
 }
 
-function renderTestDetailsByTagHeader() {
+function renderDetailsHeader() {
     var tagstats = window.testdata.statistics().tag;
     var suitestats = window.testdata.statistics().suite;
-    $.tmpl(window.templates.testDetailsByTagHeader, {tags: tagstats, suites: suitestats}).appendTo('#test_details_by_tag_container');
+    $.tmpl(window.templates.detailsHeader, {tags: tagstats, suites: suitestats}).appendTo('#test_details_by_tag_container');
 }
 
 function renderDetailsByTag(tag) {
@@ -318,7 +318,7 @@ function renderDetailsByTag(tag) {
     if (tag) {
         tag.totalTime = calculateTotalTime(tests);
     }
-    $.tmpl(window.templates.tagDetails, tag).appendTo('#tag_details_header');
+    $.tmpl(window.templates.tagDetails, tag).appendTo('#details_header');
     $.tmpl(window.templates.testDetailsByTagTable).appendTo('#test_details_by_tag_container');
     $.tmpl(window.templates.testDetailsRow, tests).appendTo('#tests_by_tag');
 }
@@ -327,7 +327,7 @@ function tagDetailSelected(name) {
     $('#test_details_by_tag_container').empty();
     var alltags = window.testdata.statistics().tag;
     var tag = findTagByName(name, alltags);
-    renderTestDetailsByTagHeader();
+    renderDetailsHeader();
     renderDetailsByTag(tag);
     ensureTagDetailsAreVisible(name);
 }
@@ -342,14 +342,14 @@ function findTagByName(name, tags) {
 function suiteDetailSelected(name) {
     $('#test_details_by_tag_container').empty();
     var allSuites = window.testdata.statistics().suite;
-    renderTestDetailsByTagHeader();
+    renderDetailsHeader();
     renderDetailsBySuite(name);
     ensureSuiteDetailsAreVisible(name);
 }
 
 function renderDetailsBySuite(name) {
     var suite = testdata.suite().findSuiteByName(name);
-    $.tmpl(window.templates.suiteDetails, suite).appendTo('#tag_details_header');
+    $.tmpl(window.templates.suiteDetails, suite).appendTo('#details_header');
     $.tmpl(window.templates.testDetailsByTagTable).appendTo('#test_details_by_tag_container');
     $.tmpl(window.templates.testDetailsRow, suite.allTests()).appendTo('#tests_by_tag');
 }
@@ -404,7 +404,7 @@ $(document).ready(function(){
     addHeader();
     addSummary(topsuite);
     addStatistics();
-    renderTestDetailsByTagHeader();
+    renderDetailsHeader();
     if(window.location.hash !== "") {
         showByHash();
     }
@@ -442,7 +442,7 @@ function initTemplates() {
         suiteStatRow: $('#suite_statistics_row').template(),
         noTagsRow: $('#no_tags_row').template(),
         testDetailsRow: $('#report_test_details_row').template(),
-        testDetailsByTagHeader: $('#test_details_by_tag_header').template(),
+        detailsHeader: $('#details_header').template(),
         tagDetails: $('#tag_details').template(),
         suiteDetails: $('#suite_details').template(),
         testDetailsByTagTable: $('#test_details_by_tag_table').template()
@@ -563,9 +563,9 @@ function initTemplates() {
   </tr>
 </script>
 
-<script type="text/html" id="test_details_by_tag_header">
+<script type="text/html" id="details_header">
   <h2>Test Details</h2>
-  <table class="details" id="tag_details_header">
+  <table class="details" id="details_header">
     <tr>
       <th>Name:</th>
       <td>
