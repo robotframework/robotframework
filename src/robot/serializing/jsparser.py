@@ -282,17 +282,36 @@ def _create_from_node(node, context):
     return _node_parsers[node.tag](node, context)
 
 def create_datamodel_from(input_filename):
-    context = Context()
-    with open(input_filename, 'r') as file:
-        xml = etree.parse(file)
-        robot_data = _create_from_node(xml.getroot(), context)
-        return DataModel(context.basemillis, robot_data, context.dump_texts())
+    robot = _RobotOutputHandler(Context())
+    sax.parse(input_filename, robot)
+    return robot.datamodel
 
 class _Handler(object):
 
-    def __init__(self, context, attrs):
+    def __init__(self, context, *args):
         self._context = context
         self._children = []
+        self._handlers = {
+        'robot'   : _RobotHandler,
+        'suite'   : _SuiteHandler,
+        'test'    : _TestHandler,
+        'statistics' : _StatisticsHandler,
+        'stat'    : _StatItemHandler,
+        'errors'  : _Handler,
+        'doc'     : _TextHandler,
+        'kw'      : _KeywordHandler,
+        'arg'     : _ArgumentHandler,
+        'arguments' : _ArgumentsHandler,
+        'tag'     : _TextHandler,
+        'tags'    : _Handler,
+        'msg'     : _MsgHandler,
+        'status'  : _StatusHandler,
+        'metadata': _MetadataHandler,
+        'item'    : _MetadataItemHandler,
+    }
+
+    def get_handler_for(self, name, *args):
+        return self._handlers[name](self.context, *args)
 
     @property
     def context(self):
@@ -304,6 +323,95 @@ class _Handler(object):
 
     def add_child(self, child):
         self._children += [child]
+
+    def end_element(self, text):
+        return self._children
+
+class _RobotHandler(_Handler):
+
+    def __init__(self, context, attrs):
+        _Handler.__init__(self, context, attrs)
+        self._generator = attrs.getValue('generator')
+        self._generated = attrs.getValue('generated')
+
+    def end_element(self, text):
+        if self._generated:
+            self._generated = self.context.timestamp(self._generated)
+        return [self._generated, self._generator] + self.children
+
+class _StatisticsHandler(_Handler):
+
+    def get_handler_for(self, name, *args):
+        return _Handler(self.context, *args)
+
+class _StatItemHandler(_Handler):
+
+    def __init__(self, context, attrs):
+        _Handler.__init__(self, context, attrs)
+        self._pass = int(attrs.getValue('pass'))
+        self._fail = int(attrs.getValue('fail'))
+        self._doc = attrs.get('doc') or ''
+        self._info = attrs.get('info') or ''
+        self._links = attrs.get('links') or ''
+
+    def end_element(self, text):
+        return [text, self._pass, self._fail, self._doc, self._info, self._links]
+
+class _SuiteHandler(_Handler):
+
+    def __init__(self, context, attrs):
+        _Handler.__init__(self, context, attrs)
+        self._name = attrs.getValue('name')
+        self._source = attrs.getValue('source')
+        self.context.start_suite(self._name)
+        self.context.collect_stats()
+
+    def end_element(self, text):
+         try:
+             return ['suite',
+                     self._source,
+                     self._name] + self._children + [self.context.dump_stats()]
+         finally:
+             self.context.end_suite()
+
+            
+class _TestHandler(_Handler):
+
+    def __init__(self, context, attrs):
+        _Handler.__init__(self, context, attrs)
+        name = attrs.getValue('name')
+        self._name_id = self.context.get_text_id(name)
+        self._timeout = self.context.get_text_id(attrs.get('timeout'))
+        self.context.start_test(name)
+
+    def get_handler_for(self, name, *args):
+        if name == 'status':
+            return _TestStatusHandler(self, *args)
+        return _Handler.get_handler_for(self, name, *args)
+
+    def end_element(self, text):
+        result = ['test', self._name_id, self._timeout, self._critical] + self.children
+        self.context.add_test(self._critical == 'Y', result[-1][0] == 'P')
+        self.context.end_test()
+        return result
+
+class _StatusHandler(object):
+    def __init__(self, context, attrs):
+        self._context = context
+        self._status = attrs.getValue('status')[0]
+        self._starttime = self._context.timestamp(attrs.getValue('starttime'))
+        self._endtime = self._context.timestamp(attrs.getValue('endtime'))
+
+    def end_element(self, text):
+        return [self._status,
+                self._starttime,
+                self._endtime-self._starttime]
+
+class _TestStatusHandler(_StatusHandler):
+
+    def __init__(self, test, attrs):
+        _StatusHandler.__init__(self, test.context, attrs)
+        test._critical = 'Y' if attrs.get('critical') == 'yes' else 'N'
 
 
 class _KeywordHandler(_Handler):
@@ -340,10 +448,27 @@ class _TextHandler(_Handler):
         return self.context.get_text_id(text)
 
 
-class _TagsHandler(_Handler):
+class _MetadataHandler(_Handler):
+
+    def __init__(self, context, attrs):
+        _Handler.__init__(self, context, attrs)
+        self._dictionary = {}
+
+    def add_child(self, child):
+        self._dictionary[child[0]] = child[1]
 
     def end_element(self, text):
-        return self.children
+        return self._dictionary
+
+
+class _MetadataItemHandler(_Handler):
+
+    def __init__(self, context, attrs):
+        _Handler.__init__(self, context, attrs)
+        self._name = attrs.getValue('name')
+
+    def end_element(self, text):
+        return (self._name, self.context.get_text_id(text))
 
 
 class _MsgHandler(object):
@@ -374,20 +499,7 @@ class _MsgHandler(object):
             self._msg += [self._context.get_text_id(html_escape(text, replace_whitespace=False))]
 
 
-class _StatusHandler(object):
-    def __init__(self, context, attrs):
-        self._context = context
-        self._status = attrs.getValue('status')[0]
-        self._starttime = self._context.timestamp(attrs.getValue('starttime'))
-        self._endtime = self._context.timestamp(attrs.getValue('endtime'))
-
-    def end_element(self, text):
-        return [self._status,
-                self._starttime,
-                self._endtime-self._starttime]
-
-
-class _RootHandler(object):
+class _RootHandler(_Handler):
 
     def add_child(self, child):
         self.data = child
@@ -395,28 +507,16 @@ class _RootHandler(object):
 
 class _RobotOutputHandler(ContentHandler):
 
-    _handlers = {
-        'doc'    : _TextHandler,
-        'kw'     : _KeywordHandler,
-        'arg'    : _ArgumentHandler,
-        'arguments' : _ArgumentsHandler,
-        'tag'    : _TextHandler,
-        'tags'   : _TagsHandler,
-        'msg'    : _MsgHandler,
-        'status' : _StatusHandler
-    }
-
-
     def __init__(self, context):
         self._context = context
-        self._handler_stack = [_RootHandler()]
+        self._handler_stack = [_RootHandler(context)]
 
     @property
     def datamodel(self):
         return DataModel(self._context.basemillis, self._handler_stack[0].data, self._context.dump_texts())
 
     def startElement(self, name, attrs):
-        handler = self._handlers[name](self._context,attrs)
+        handler = self._handler_stack[-1].get_handler_for(name, attrs)
         self._charbuffer = ''
         self._handler_stack.append(handler)
 
