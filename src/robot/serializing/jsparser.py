@@ -310,7 +310,7 @@ class _KeywordHandler(_Handler):
 
     def __init__(self, context, attrs):
         _Handler.__init__(self, context, attrs)
-        #self.context.start_keyword()
+        self.context.start_keyword()
         self._type = attrs.getValue('type')
         self._name = self.context.get_text_id(attrs.getValue('name'))
         self._timeout = self.context.get_text_id(attrs.getValue('timeout'))
@@ -318,7 +318,7 @@ class _KeywordHandler(_Handler):
     def end_element(self, text):
         if self._type == 'teardown' and self.children[-1][0] == 'F':
             self.context.teardown_failed()
-        #self.context.end_keyword()
+        self.context.end_keyword()
         return [self._type, self._name, self._timeout]+self.children
 
 
@@ -354,12 +354,24 @@ class _MsgHandler(object):
         self._msg += [self._context.timestamp(attrs.getValue('timestamp'))]
         self._msg += [levels[attrs.getValue('level')]]
         self._is_html = attrs.get('html')
+        self._is_linkable = attrs.get("linkable") == "yes"
 
     def end_element(self, text):
+        self._add_text(text)
+        self._handle_warning_linking()
+        return self._msg
+
+    def _handle_warning_linking(self):
+        if self._is_linkable:
+            self._msg += [self._context.link_to(self._msg)]
+        elif self._msg[1] == 'W':
+            self._context.create_link_to_current_location(self._msg)
+
+    def _add_text(self, text):
         if self._is_html:
-            return self._msg + [self._context.get_text_id(text)]
+            self._msg += [self._context.get_text_id(text)]
         else:
-            return self._msg + [self._context.get_text_id(html_escape(text, replace_whitespace=False))]
+            self._msg += [self._context.get_text_id(html_escape(text, replace_whitespace=False))]
 
 
 class _StatusHandler(object):

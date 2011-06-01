@@ -10,7 +10,8 @@ from robot.utils.asserts import assert_equals
 class TestJsSerializer(unittest.TestCase):
 
     def setUp(self):
-        self._handler = _RobotOutputHandler(Context())
+        self._context = Context()
+        self._handler = _RobotOutputHandler(self._context)
 
     def test_message_xml_parsing(self):
         data_model = self._get_data_model('<msg timestamp="20110531 12:48:09.088" level="FAIL">AssertionError</msg>')
@@ -53,14 +54,16 @@ class TestJsSerializer(unittest.TestCase):
         <arguments>
         <arg>keyword teardown</arg>
         </arguments>
-        <msg timestamp="20110531 12:48:09.070" level="INFO">keyword teardown</msg>
+        <msg timestamp="20110531 12:48:09.070" level="WARN">keyword teardown</msg>
         <status status="PASS" endtime="20110531 12:48:09.071" starttime="20110531 12:48:09.069"></status>
         </kw>
         """
+        self._context.start_suite('suite')
         data_model = self._get_data_model(keyword_xml)
         assert_equals(data_model._basemillis, 1306835289070)
-        assert_equals(data_model._robot_data, ['teardown', 1, 0, 2, 3, [0, "I", 3], ["P", -1, 2]])
+        assert_equals(data_model._robot_data, ['teardown', 1, 0, 2, 3, [0, "W", 3], ["P", -1, 2]])
         assert_equals(data_model._texts, ['*', '*BuiltIn.Log', '*Logs the given message with the given level.', '*keyword teardown'])
+        assert_equals(self._context.link_to([0, "W", 3]), "keyword_suite.0")
 
     def _get_data_model(self, xml_string):
         sax.parseString(xml_string, self._handler)
