@@ -370,6 +370,7 @@ function renderDetailsBySuite(name) {
 }
 
 function renderTotalDetails(type) {
+    $.tmpl(window.templates.totalDetails, {type:type}).appendTo('#details_header');
     $.tmpl(window.templates.testDetailsByTagTable).appendTo('#test_details_container');
     $.tmpl(window.templates.testDetailsRow, getTotalTests(type)).appendTo('#tests_by_tag');
 }
@@ -402,6 +403,10 @@ function showDetailsByHash() {
     else if(hash.indexOf("tag_")==0){
         tag = hash.substring("tag_".length);
         tagDetailSelected(tag)
+    }
+    else if(hash.indexOf("total_")==0){
+        type = hash.substring("total_".length);
+        totalDetailSelected(type)
     }
     window.location.hash = window.location.hash.substring(1);
 }
@@ -469,6 +474,7 @@ function initTemplates() {
         detailsHeader: $('#details_header').template(),
         tagDetails: $('#tag_details').template(),
         suiteDetails: $('#suite_details').template(),
+        totalDetails: $('#total_details').template(),
         testDetailsByTagTable: $('#test_details_by_tag_table').template()
     };
 };
@@ -492,9 +498,9 @@ function initTemplates() {
     <tr>
       <th>Status:</th>
         {{if criticalFailed}}
-            <td><a class="status_fail" href="#details_header" onClick="totalDetailSelected('critical')">${criticalFailed} critical test{{if criticalFailed != 1}}s{{/if}} failed</a></td>
+            <td><a class="status_fail" href="#total_Critical Tests" onClick="totalDetailSelected('critical')">${criticalFailed} critical test{{if criticalFailed != 1}}s{{/if}} failed</a></td>
         {{else}}
-            <td><a class="status_pass" href="#details_header" onClick="totalDetailSelected('critical')">All critical tests passed</a></td>
+            <td><a class="status_pass" href="#total_Critical Tests" onClick="totalDetailSelected('critical')">All critical tests passed</a></td>
         {{/if}}
     </tr>
     {{if documentation}}
@@ -513,7 +519,7 @@ function initTemplates() {
   <tr>
     <td class="col_stat_name">
       <div class="stat_name">
-        <span title="${doc}"><a href="#details_header" onClick="totalDetailSelected('${label}')">${label}</a></span>
+        <span title="${doc}"><a href="#total_${label}" onClick="totalDetailSelected('${label}')">${label}</a></span>
       </div>
     </td>
     {{tmpl($data) '#stat_columns'}}
@@ -661,6 +667,10 @@ function initTemplates() {
         <th>Message:</th>
         <td>${getFailureMessage()}<br/><br/>{{tmpl($data) '#stats_message_partial_template'}}</td>
      </tr>
+</script>
+
+<script type="text/html" id="total_details">
+    <div id='total_${type}'></div>
 </script>
 
 <script type="text/html" id="stats_message_partial_template">
