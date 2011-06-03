@@ -574,6 +574,8 @@ def encode_basestring(string):
 def json_dump(data, output):
     if isinstance(data, int):
         output.write(str(data))
+    elif isinstance(data, long):
+        output.write(str(data))
     elif isinstance(data, basestring):
         output.write(encode_basestring(data))
     elif isinstance(data, list):
