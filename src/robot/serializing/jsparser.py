@@ -1,8 +1,6 @@
 from __future__ import with_statement
-from lxml import etree
 import xml.sax as sax
 from xml.sax.handler import ContentHandler
-import json
 import zlib
 import base64
 from datetime import datetime
@@ -292,22 +290,22 @@ class _Handler(object):
         self._context = context
         self._children = []
         self._handlers = {
-        'robot'   : _RobotHandler,
-        'suite'   : _SuiteHandler,
-        'test'    : _TestHandler,
+        'robot'      : _RobotHandler,
+        'suite'      : _SuiteHandler,
+        'test'       : _TestHandler,
         'statistics' : _StatisticsHandler,
-        'stat'    : _StatItemHandler,
-        'errors'  : _Handler,
-        'doc'     : _TextHandler,
-        'kw'      : _KeywordHandler,
-        'arg'     : _ArgumentHandler,
-        'arguments' : _ArgumentsHandler,
-        'tag'     : _TextHandler,
-        'tags'    : _Handler,
-        'msg'     : _MsgHandler,
-        'status'  : _StatusHandler,
-        'metadata': _MetadataHandler,
-        'item'    : _MetadataItemHandler,
+        'stat'       : _StatItemHandler,
+        'errors'     : _Handler,
+        'doc'        : _TextHandler,
+        'kw'         : _KeywordHandler,
+        'arg'        : _ArgumentHandler,
+        'arguments'  : _ArgumentsHandler,
+        'tag'        : _TextHandler,
+        'tags'       : _Handler,
+        'msg'        : _MsgHandler,
+        'status'     : _StatusHandler,
+        'metadata'   : _MetadataHandler,
+        'item'       : _MetadataItemHandler,
     }
 
     def get_handler_for(self, name, *args):
@@ -540,11 +538,60 @@ class DataModel(object):
     def write_to(self, output):
         output.write('window.basemillis = '+str(self._basemillis)+';\n')
         output.write('window.data = ')
-        json.dump(self._robot_data, output, separators=(',', ':'))
+        json_dump(self._robot_data, output)
         output.write(';\n')
         output.write('window.strings =')
-        json.dump(self._texts, output, separators=(',', ':'))
+        json_dump(self._texts, output)
         output.write(';\n')
+
+def encode_basestring(string):
+    def get_matching_char(c):
+        if c == '\\':
+            return '\\\\'
+        if c == '"':
+            return '\\"'
+        if c == '\b':
+            return '\\b'
+        if c == '\f':
+            return '\\f'
+        if c == '\n':
+            return '\\n'
+        if c == '\r':
+            return '\\r'
+        if c == '\t':
+            return '\\t'
+        val = ord(c)
+        if val < 127 and val > 31:
+            return c
+        return '\\u' + hex(val)[2:].rjust(4,'0')
+    result = '"'
+    for c in string:
+        result += get_matching_char(c)
+    return result+'"'
+
+def json_dump(data, output):
+    if isinstance(data, int):
+        output.write(str(data))
+    elif isinstance(data, basestring):
+        output.write(encode_basestring(data))
+    elif isinstance(data, list):
+        output.write('[')
+        for index, item in enumerate(data):
+            json_dump(item, output)
+            if index < len(data)-1:
+                output.write(',')
+        output.write(']')
+    elif type(data) == dict:
+        output.write('{')
+        for index, item in enumerate(data.items()):
+            json_dump(item[0], output)
+            output.write(':')
+            json_dump(item[1], output)
+            if index < len(data)-1:
+                output.write(',')
+        output.write('}')
+    else:
+        raise Exception('Data type (%s) serialization not supported' % type(data))
 
 def parse_js(input_filename, output):
     create_datamodel_from(input_filename).write_to(output)

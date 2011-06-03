@@ -1,10 +1,11 @@
 from __future__ import with_statement
 import StringIO
+import json
 import unittest
 import xml.sax as sax
 
 from resources import GOLDEN_OUTPUT, GOLDEN_JS
-from robot.serializing.jsparser import _RobotOutputHandler, Context, parse_js
+from robot.serializing.jsparser import _RobotOutputHandler, Context, parse_js, json_dump
 from robot.utils.asserts import assert_equals
 
 class TestJsSerializer(unittest.TestCase):
@@ -162,6 +163,31 @@ class TestJsSerializer(unittest.TestCase):
         assert_equals(data_model._basemillis, 1306835289078)
         assert_equals(data_model._robot_data, [[0, 'E', 1]])
         assert_equals(data_model._texts, ['*', "*Invalid syntax in file '/tmp/data/failing_suite.txt' in table 'Settings': Resource file 'nope' does not exist."])
+
+    def test_json_dump_string(self):
+        string = u'string\u00A9\v\\\'\"\r\b\t\0\n\fjee'
+        for i in range(1024):
+            string += unichr(i)
+        buffer = StringIO.StringIO()
+        json_dump(string, buffer)
+        expected = StringIO.StringIO()
+        json.dump(string, expected)
+        self._assert_long_equals(buffer.getvalue(), expected.getvalue())
+
+    def test_json_dump_integer(self):
+        buffer = StringIO.StringIO()
+        json_dump(12, buffer)
+        assert_equals('12', buffer.getvalue())
+
+    def test_json_dump_list(self):
+        buffer = StringIO.StringIO()
+        json_dump([1,2,3, 'hello', 'world'], buffer)
+        assert_equals('[1,2,3,"hello","world"]', buffer.getvalue())
+
+    def test_json_dump_dictionary(self):
+        buffer = StringIO.StringIO()
+        json_dump({'key':1, 'hello':'world'}, buffer)
+        assert_equals('{"hello":"world","key":1}', buffer.getvalue())
 
     def _get_data_model(self, xml_string):
         sax.parseString(xml_string, self._handler)
