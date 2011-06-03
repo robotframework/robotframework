@@ -90,13 +90,6 @@
     padding: 2px 4px;
     white-space: pre-wrap;
   }
-  .status_fail {
-    color: red;
-    font-weight: bold;
-  }
-  .status_pass {
-    color: #009900;
-  }
 </style>
 <style media="all" type="text/css">
   /* Generic styles */
@@ -225,6 +218,13 @@
   .spacer {
     font-size: 0.8em;
     clear: both;
+  }
+  a.status_fail {
+    color: red;
+    font-weight: bold;
+  }
+  a.status_pass {
+    color: #009900;
   }
   /* Status text colors */
   .error, .fail {
@@ -393,7 +393,7 @@ function testsHavingTag(tag) {
 }
 
 function totalTests(type) {
-    if (type == 'critical')
+    if (type == 'Critical Tests')
         return window.testdata.suite().criticalTests().sort(sort_failures_first);
     return window.testdata.suite().allTests().sort(sort_failures_first);
 }
@@ -491,9 +491,9 @@ function initTemplates() {
     <tr>
       <th>Status:</th>
         {{if criticalFailed}}
-            <td class="status_fail">${criticalFailed} critical test{{if criticalFailed != 1}}s{{/if}} failed</td>
+            <td><a class="status_fail" href="#details_header" onClick="totalDetailSelected('critical')">${criticalFailed} critical test{{if criticalFailed != 1}}s{{/if}} failed</a></td>
         {{else}}
-            <td class="status_pass">All critical tests passed</td>
+            <td><a class="status_pass" href="#details_header" onClick="totalDetailSelected('critical')">All critical tests passed</a></td>
         {{/if}}
     </tr>
     {{if documentation}}
@@ -512,7 +512,7 @@ function initTemplates() {
   <tr>
     <td class="col_stat_name">
       <div class="stat_name">
-        <span title="${doc}">${label}</span>
+        <span title="${doc}"><a href="#details_header" onClick="totalDetailSelected('${label}')">${label}</a></span>
       </div>
     </td>
     {{tmpl($data) '#stat_columns'}}
@@ -605,8 +605,8 @@ function initTemplates() {
         </select>
         <select id="total_detail_selector" onchange="totalDetailSelected(this.options[this.selectedIndex].value);">
           <option>Select see to totals...</option>
-              <option value="all">All tests</option>
-              <option value="critical">Critical tests</option>
+              <option value="All Tests">All tests</option>
+              <option value="Critical Tests">Critical tests</option>
         </select>
       </td>
     </tr>
