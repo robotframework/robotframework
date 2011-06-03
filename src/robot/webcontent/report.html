@@ -32,7 +32,7 @@
     color: black;
   }
   /* Test by Suite/Tag Tables */
-  table#tests_by_suite, table#tests_by_tag {
+  table#tests_by_suite, table#tests_detail_table {
     width: 100%;
   }
   .col_name {
@@ -358,21 +358,23 @@ function renderDetailsByTag(tag) {
         tag.totalTime = calculateTotalTime(tests);
     }
     $.tmpl(window.templates.tagDetails, tag).appendTo('#details_header');
-    $.tmpl(window.templates.testDetailsByTagTable).appendTo('#test_details_container');
-    $.tmpl(window.templates.testDetailsRow, tests).appendTo('#tests_by_tag');
+    drawTestDetailsTable(tests);
 }
 
 function renderDetailsBySuite(name) {
     var suite = testdata.suite().findSuiteByName(name);
     $.tmpl(window.templates.suiteDetails, suite).appendTo('#details_header');
-    $.tmpl(window.templates.testDetailsByTagTable).appendTo('#test_details_container');
-    $.tmpl(window.templates.testDetailsRow, suite.allTests()).appendTo('#tests_by_tag');
+    drawTestDetailsTable(suite.allTests())
 }
 
 function renderTotalDetails(type) {
     $.tmpl(window.templates.totalDetails, {type:type}).appendTo('#details_header');
-    $.tmpl(window.templates.testDetailsByTagTable).appendTo('#test_details_container');
-    $.tmpl(window.templates.testDetailsRow, getTotalTests(type)).appendTo('#tests_by_tag');
+    drawTestDetailsTable(getTotalTests(type));
+}
+
+function drawTestDetailsTable(tests) {
+    $.tmpl(window.templates.testDetailsTable).appendTo('#test_details_container');
+    $.tmpl(window.templates.testDetailsRow, tests).appendTo('#tests_detail_table');
 }
 
 function ensureTagDetailsAreVisible(name) {
@@ -475,7 +477,7 @@ function initTemplates() {
         tagDetails: $('#tag_details').template(),
         suiteDetails: $('#suite_details').template(),
         totalDetails: $('#total_details').template(),
-        testDetailsByTagTable: $('#test_details_by_tag_table').template()
+        testDetailsTable: $('#test_details_table').template()
     };
 };
 </script>
@@ -498,9 +500,9 @@ function initTemplates() {
     <tr>
       <th>Status:</th>
         {{if criticalFailed}}
-            <td><a class="status_fail" href="#total_Critical Tests" onClick="totalDetailSelected('critical')">${criticalFailed} critical test{{if criticalFailed != 1}}s{{/if}} failed</a></td>
+            <td><a class="status_fail" href="#total_Critical Tests" onClick="totalDetailSelected('Critical Tests')">${criticalFailed} critical test{{if criticalFailed != 1}}s{{/if}} failed</a></td>
         {{else}}
-            <td><a class="status_pass" href="#total_Critical Tests" onClick="totalDetailSelected('critical')">All critical tests passed</a></td>
+            <td><a class="status_pass" href="#total_Critical Tests" onClick="totalDetailSelected('Critical Tests')">All critical tests passed</a></td>
         {{/if}}
     </tr>
     {{if documentation}}
@@ -677,8 +679,8 @@ function initTemplates() {
 ${critical} critical test, ${criticalPassed} passed, <span class="${criticalFailureClass}">${criticalFailed} failed</span><br />${total} test total, ${totalPassed} passed, <span class="${totalFailureClass}">${totalFailed} failed</span>
 </script>
 
-<script type="text/html" id="test_details_by_tag_table">
-  <table id="tests_by_tag">
+<script type="text/html" id="test_details_table">
+  <table id="tests_detail_table">
     <tr>
       <th class="col_name">Name</th>
       <th class="col_doc">Documentation</th>
