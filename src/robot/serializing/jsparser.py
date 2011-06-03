@@ -1,4 +1,5 @@
 from __future__ import with_statement
+import StringIO
 import xml.sax as sax
 from xml.sax.handler import ContentHandler
 import zlib
@@ -546,7 +547,7 @@ class DataModel(object):
         json_dump(self._texts, output)
         output.write(';\n')
 
-def encode_and_write_basestring(string, output):
+def encode_basestring(string):
     def get_matching_char(c):
         val = ord(c)
         if val < 127 and val > 31:
@@ -559,10 +560,10 @@ def encode_and_write_basestring(string, output):
     string = string.replace('\n', '\\n')
     string = string.replace('\r', '\\r')
     string = string.replace('\t', '\\t')
-    output.write('"')
+    result = StringIO.StringIO()
     for c in string:
-        output.write(get_matching_char(c))
-    output.write('"')
+        result.write(get_matching_char(c))
+    return '"'+result.getvalue()+'"'
 
 def json_dump(data, output):
     if isinstance(data, int):
@@ -570,7 +571,7 @@ def json_dump(data, output):
     elif isinstance(data, long):
         output.write(str(data))
     elif isinstance(data, basestring):
-        encode_and_write_basestring(data, output)
+        output.write(encode_basestring(data))
     elif isinstance(data, list):
         output.write('[')
         for index, item in enumerate(data):
