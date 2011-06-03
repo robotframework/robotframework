@@ -303,6 +303,20 @@
   <div id="test_details_by_tag_container"></div>
 
 <script type="text/javascript">
+$(document).ready(function(){
+    var topsuite = window.testdata.suite();
+    setBackground(topsuite);
+    setDocumentTitle(topsuite);
+    window.templates = initTemplates();
+    addHeader();
+    addSummary(topsuite);
+    addStatistics();
+    renderDetailsHeader();
+    if(window.location.hash !== "") {
+        showByHash();
+    }
+});
+
 function addSummary(topsuite) {
     $.tmpl(window.templates.summaryTable, topsuite).insertAfter($('#header_div'));
 }
@@ -311,21 +325,6 @@ function renderDetailsHeader() {
     var tagstats = window.testdata.statistics().tag;
     var suitestats = window.testdata.statistics().suite;
     $.tmpl(window.templates.detailsHeader, {tags: tagstats, suites: suitestats}).appendTo('#test_details_by_tag_container');
-}
-
-function renderDetailsByTag(tag) {
-    var tests = testsHavingTag(tag);
-    if (tag) {
-        tag.totalTime = calculateTotalTime(tests);
-    }
-    $.tmpl(window.templates.tagDetails, tag).appendTo('#details_header');
-    $.tmpl(window.templates.testDetailsByTagTable).appendTo('#test_details_by_tag_container');
-    $.tmpl(window.templates.testDetailsRow, tests).appendTo('#tests_by_tag');
-}
-
-function renderTotalDetails(type) {
-    $.tmpl(window.templates.testDetailsByTagTable).appendTo('#test_details_by_tag_container');
-    $.tmpl(window.templates.testDetailsRow, totalTests(type)).appendTo('#tests_by_tag');
 }
 
 function tagDetailSelected(name) {
@@ -337,11 +336,11 @@ function tagDetailSelected(name) {
     ensureTagDetailsAreVisible(name);
 }
 
-function findTagByName(name, tags) {
-    for (var i=0; i<tags.length; i++) {
-        if (tags[i].label == name)
-            return tags[i];
-    }
+function suiteDetailSelected(name) {
+    $('#test_details_by_tag_container').empty();
+    renderDetailsHeader();
+    renderDetailsBySuite(name);
+    ensureSuiteDetailsAreVisible(name);
 }
 
 function totalDetailSelected(type) {
@@ -351,11 +350,14 @@ function totalDetailSelected(type) {
     ensureTotalDetailsAreVisible(type);
 }
 
-function suiteDetailSelected(name) {
-    $('#test_details_by_tag_container').empty();
-    renderDetailsHeader();
-    renderDetailsBySuite(name);
-    ensureSuiteDetailsAreVisible(name);
+function renderDetailsByTag(tag) {
+    var tests = getTestsHavingTag(tag);
+    if (tag) {
+        tag.totalTime = calculateTotalTime(tests);
+    }
+    $.tmpl(window.templates.tagDetails, tag).appendTo('#details_header');
+    $.tmpl(window.templates.testDetailsByTagTable).appendTo('#test_details_by_tag_container');
+    $.tmpl(window.templates.testDetailsRow, tests).appendTo('#tests_by_tag');
 }
 
 function renderDetailsBySuite(name) {
@@ -363,6 +365,30 @@ function renderDetailsBySuite(name) {
     $.tmpl(window.templates.suiteDetails, suite).appendTo('#details_header');
     $.tmpl(window.templates.testDetailsByTagTable).appendTo('#test_details_by_tag_container');
     $.tmpl(window.templates.testDetailsRow, suite.allTests()).appendTo('#tests_by_tag');
+}
+
+function renderTotalDetails(type) {
+    $.tmpl(window.templates.testDetailsByTagTable).appendTo('#test_details_by_tag_container');
+    $.tmpl(window.templates.testDetailsRow, getTotalTests(type)).appendTo('#tests_by_tag');
+}
+
+function ensureTagDetailsAreVisible(name) {
+    document.getElementById('tag_detail_selector').value = name;
+}
+
+function ensureSuiteDetailsAreVisible(name) {
+    document.getElementById('suite_detail_selector').value = name;
+}
+
+function ensureTotalDetailsAreVisible(type) {
+    document.getElementById('total_detail_selector').value = type;
+}
+
+function findTagByName(name, tags) {
+    for (var i=0; i<tags.length; i++) {
+        if (tags[i].label == name)
+            return tags[i];
+    }
 }
 
 function showByHash() {
@@ -386,13 +412,13 @@ function sort_failures_first(t1, t2) {
     return t1.fullname < t2.fullname ? -1 : 1;
 }
 
-function testsHavingTag(tag) {
+function getTestsHavingTag(tag) {
     if (!tag)
         return [];
     return window.testdata.suite().searchTestsByTag(tag).sort(sort_failures_first);
 }
 
-function totalTests(type) {
+function getTotalTests(type) {
     if (type == 'Critical Tests')
         return window.testdata.suite().criticalTests().sort(sort_failures_first);
     return window.testdata.suite().allTests().sort(sort_failures_first);
@@ -405,32 +431,6 @@ function calculateTotalTime(tests) {
     });
     return model.formatElapsed(totaltime).split('.')[0];
 }
-
-function ensureTagDetailsAreVisible(name) {
-    document.getElementById('tag_detail_selector').value = name;
-}
-
-function ensureSuiteDetailsAreVisible(name) {
-    document.getElementById('suite_detail_selector').value = name;
-}
-
-function ensureTotalDetailsAreVisible(type) {
-    document.getElementById('total_detail_selector').value = type;
-}
-
-$(document).ready(function(){
-    var topsuite = window.testdata.suite();
-    setBackground(topsuite);
-    setDocumentTitle(topsuite);
-    window.templates = initTemplates();
-    addHeader();
-    addSummary(topsuite);
-    addStatistics();
-    renderDetailsHeader();
-    if(window.location.hash !== "") {
-        showByHash();
-    }
-});
 
 function setDocumentTitle(suite){
     document.title = document.title.replace("[SUITE_NAME]", suite.name, "g");
@@ -470,7 +470,6 @@ function initTemplates() {
         testDetailsByTagTable: $('#test_details_by_tag_table').template()
     };
 };
-
 </script>
 
 <script type="text/html" id="header_template">
