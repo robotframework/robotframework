@@ -328,6 +328,7 @@ function renderDetailsHeader() {
 }
 
 function tagDetailSelected(name) {
+    if (name == "") return;
     refreshDetailsHeader();
     var alltags = window.testdata.statistics().tag;
     var tag = findTagByName(name, alltags);
@@ -336,12 +337,14 @@ function tagDetailSelected(name) {
 }
 
 function suiteDetailSelected(name) {
+    if (name == "") return;
     refreshDetailsHeader();
     renderDetailsBySuite(name);
     ensureSuiteDetailsAreVisible(name);
 }
 
 function totalDetailSelected(type) {
+    if (type == "") return;
     refreshDetailsHeader();
     renderTotalDetails(type);
     ensureTotalDetailsAreVisible(type);
@@ -601,19 +604,19 @@ function initTemplates() {
       <th>Name:</th>
       <td>
         <select id="tag_detail_selector" onchange="tagDetailSelected(this.options[this.selectedIndex].value);">
-          <option>Select tag...</option>
+          <option value="">Select tag...</option>
             {{each tags}}
               <option value="${$value.label}">${$value.label} ${$value.shownInfo}</option>
             {{/each}}
         </select>
         <select id="suite_detail_selector" onchange="suiteDetailSelected(this.options[this.selectedIndex].value);">
-          <option>Select suite...</option>
+          <option value="">Select suite...</option>
             {{each suites}}
               <option value="${$value.fullname}">${$value.fullname}</option>
             {{/each}}
         </select>
         <select id="total_detail_selector" onchange="totalDetailSelected(this.options[this.selectedIndex].value);">
-          <option>Select see to totals...</option>
+          <option value="">Select see to totals...</option>
               <option value="All Tests">All tests</option>
               <option value="Critical Tests">Critical tests</option>
         </select>
