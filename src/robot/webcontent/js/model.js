@@ -47,6 +47,9 @@ window.model = (function () {
         suite.allTests = function () {
             return suite.searchTests(function (test) { return true; });
         };
+        suite.criticalTests = function () {
+            return suite.searchTests(function (test) { return test.isCritical; });
+        };
         return suite;
     }
 

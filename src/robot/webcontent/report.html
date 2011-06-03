@@ -323,6 +323,11 @@ function renderDetailsByTag(tag) {
     $.tmpl(window.templates.testDetailsRow, tests).appendTo('#tests_by_tag');
 }
 
+function renderTotalDetails(type) {
+    $.tmpl(window.templates.testDetailsByTagTable).appendTo('#test_details_by_tag_container');
+    $.tmpl(window.templates.testDetailsRow, totalTests(type)).appendTo('#tests_by_tag');
+}
+
 function tagDetailSelected(name) {
     $('#test_details_by_tag_container').empty();
     var alltags = window.testdata.statistics().tag;
@@ -339,9 +344,15 @@ function findTagByName(name, tags) {
     }
 }
 
+function totalDetailSelected(type) {
+    $('#test_details_by_tag_container').empty();
+    renderDetailsHeader();
+    renderTotalDetails(type);
+    ensureTotalDetailsAreVisible(name);
+}
+
 function suiteDetailSelected(name) {
     $('#test_details_by_tag_container').empty();
-    var allSuites = window.testdata.statistics().suite;
     renderDetailsHeader();
     renderDetailsBySuite(name);
     ensureSuiteDetailsAreVisible(name);
@@ -367,17 +378,24 @@ function showByHash() {
     window.location.hash = window.location.hash.substring(1);
 }
 
+function sort_failures_first(t1, t2) {
+    if (t1.status != t2.status)
+        return t1.status == 'fail' ? -1 : 1;
+    if (t1.isCritical != t2.isCritical)
+        return t1.isCritical ? -1 : 1;
+    return t1.fullname < t2.fullname ? -1 : 1;
+}
+
 function testsHavingTag(tag) {
     if (!tag)
         return [];
-    var sorter = function (t1, t2) {
-        if (t1.status != t2.status)
-            return t1.status == 'fail' ? -1 : 1;
-        if (t1.isCritical != t2.isCritical)
-            return t1.isCritical ? -1 : 1;
-        return t1.fullname < t2.fullname ? -1 : 1;
-    }
-    return window.testdata.suite().searchTestsByTag(tag).sort(sorter);
+    return window.testdata.suite().searchTestsByTag(tag).sort(sort_failures_first);
+}
+
+function totalTests(type) {
+    if (type == 'critical')
+        return window.testdata.suite().criticalTests().sort(sort_failures_first);
+    return window.testdata.suite().allTests().sort(sort_failures_first);
 }
 
 function calculateTotalTime(tests) {
@@ -394,6 +412,10 @@ function ensureTagDetailsAreVisible(name) {
 
 function ensureSuiteDetailsAreVisible(name) {
     document.getElementById('suite_detail_selector').value = name;
+}
+
+function ensureTotalDetailsAreVisible(type) {
+    document.getElementById('total_detail_selector').value = type;
 }
 
 $(document).ready(function(){
@@ -580,6 +602,11 @@ function initTemplates() {
             {{each suites}}
               <option value="${$value.fullname}">${$value.fullname}</option>
             {{/each}}
+        </select>
+        <select id="total_detail_selector" onchange="totalDetailSelected(this.options[this.selectedIndex].value);">
+          <option>Select see to totals...</option>
+              <option value="all">All tests</option>
+              <option value="critical">Critical tests</option>
         </select>
       </td>
     </tr>
