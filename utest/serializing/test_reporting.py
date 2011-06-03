@@ -42,6 +42,8 @@ class TestReporting(unittest.TestCase):
         self._settings = {
             'Report': 'NONE',
             'Log': 'NONE',
+            'XUnitFile': 'NONE',
+            'Output': 'NONE',
             'LogTitle': None,
             'ReportTitle': None,
             'ReportBackground': None,

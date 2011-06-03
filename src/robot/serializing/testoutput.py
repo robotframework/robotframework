@@ -36,6 +36,10 @@ from robot.serializing import jsparser
 
 class Reporter(object):
 
+    def __init__(self):
+        self._robot_test_output_cached = None
+        self._temp_file = None
+
     def _make_report(self, report_path, log_path, data_model, settings):
         if report_path:
             serialize_report(data_model, report_path, settings['ReportTitle'], settings['ReportBackground'], log_path)
@@ -46,18 +50,27 @@ class Reporter(object):
             serialize_log(data_model, log_path, settings['LogTitle'])
             LOGGER.output_file('Log', log_path)
 
+    def _make_xunit(self, xunit_path, data_sources, settings):
+        if xunit_path:
+            self._robot_test_output(data_sources, settings).serialize_xunit(xunit_path)
+
+    def _robot_test_output(self, data_sources, settings):
+        if self._robot_test_output_cached is None:
+            suite, exec_errors = process_outputs(data_sources, settings)
+            suite.set_options(settings)
+            self._robot_test_output_cached = RobotTestOutput(suite, exec_errors, settings)
+        return self._robot_test_output_cached
+
     def _combine_outputs(self, data_sources, settings):
-        suite, exec_errors = process_outputs(data_sources, settings)
-        suite.set_options(settings)
         output_file = self._parse_file(settings['Output'])
         if output_file is None:
             _, output_file = tempfile.mkstemp()
             self._temp_file = output_file
-        RobotTestOutput(suite, exec_errors, settings).serialize_output(output_file)
+        self._robot_test_output(data_sources, settings).serialize_output(output_file)
         return [output_file]
 
+
     def execute(self, settings, *data_sources):
-        self._temp_file = None
         if len(data_sources) > 1:
             data_sources = self._combine_outputs(data_sources, settings)
         data_model = jsparser.create_datamodel_from(data_sources[0])
@@ -65,9 +78,10 @@ class Reporter(object):
         log_path = self._parse_file(settings['Log'])
         self._make_report(report_path, log_path, data_model, settings)
         self._make_log(log_path, data_model, settings)
+        xunit_path = settings['XUnitFile']
+        self._make_xunit(xunit_path, data_sources, settings)
         if self._temp_file:
             os.remove(self._temp_file)
-
 
     def _parse_file(self, string):
         return string if string != 'NONE' else None
