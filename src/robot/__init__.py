@@ -14,6 +14,7 @@
 
 import sys
 import os
+from robot.serializing.testoutput import Reporter
 
 if __name__ == '__main__':
     sys.stderr.write("Use 'runner' or 'rebot' for executing.\n")
@@ -128,13 +129,10 @@ def run(*datasources, **options):
     output.close(suite)
     output_src = settings['Output']
     if settings.is_rebot_needed():
-        datasources, settings = settings.get_rebot_datasources_and_settings()
+        _, settings = settings.get_rebot_datasources_and_settings()
         if settings['SplitOutputs'] > 0:
             raise Exception('Splitting? No way!')
-            testoutput = SplitIndexTestOutput(suite, datasources[0], settings)
-        else:
-            testoutput = RebotTestOutput(datasources, settings)
-        testoutput.serialize(settings, output=output_src)
+        Reporter().execute(settings, output_src)
     LOGGER.close()
     return suite
 
@@ -157,8 +155,7 @@ def run_rebot(*datasources, **options):
     settings = RebotSettings(options)
     LOGGER.register_console_logger(colors=settings['MonitorColors'])
     LOGGER.disable_message_cache()
-    testoutput = RebotTestOutput(datasources, settings)
-    testoutput.serialize(settings, generator='Rebot')
+    Reporter().execute(settings, *datasources)
     LOGGER.close()
     return testoutput.suite
 

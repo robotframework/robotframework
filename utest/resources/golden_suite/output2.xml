@@ -1,0 +1,206 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<robot generated="20110603 11:15:42.552" generator="Robot trunk 20110527 (Python 2.6.5 on linux2)">
+<suite source="/home/mkorpela/workspace/robot/utest/resources/golden_suite" name="Golden Suite">
+<doc>root docs 
+with new line, several spaces "    " and a &lt;b&gt;bold tag&lt;/b&gt;.</doc>
+<metadata>
+<item name="root">rocks</item>
+</metadata>
+<kw type="setup" name="BuiltIn.Log" timeout="">
+<doc>Logs the given message with the given level.</doc>
+<arguments>
+<arg>Rock on</arg>
+</arguments>
+<msg timestamp="20110603 11:15:42.603" level="INFO">Rock on</msg>
+<status status="PASS" endtime="20110603 11:15:42.603" starttime="20110603 11:15:42.603"></status>
+</kw>
+<suite source="/home/mkorpela/workspace/robot/utest/resources/golden_suite/all_settings.txt" name="All Settings">
+<doc>Suite docs
+with new line, several spaces "    " and a &lt;b&gt;bold tag&lt;/b&gt;.</doc>
+<metadata>
+<item name="meta">rulez with &lt;b&gt;escaped&lt;/b&gt;</item>
+<item name="version">alpha</item>
+</metadata>
+<kw type="setup" name="BuiltIn.Log" timeout="">
+<doc>Logs the given message with the given level.</doc>
+<arguments>
+<arg>suite msg</arg>
+</arguments>
+<msg timestamp="20110603 11:15:42.606" level="INFO">suite msg</msg>
+<status status="PASS" endtime="20110603 11:15:42.606" starttime="20110603 11:15:42.605"></status>
+</kw>
+<test name="My test" timeout="1 minute">
+<doc>Test docs
+with new line, several spaces "    " and a &lt;b&gt;bold tag&lt;/b&gt;.</doc>
+<kw type="setup" name="BuiltIn.Log" timeout="">
+<doc>Logs the given message with the given level.</doc>
+<arguments>
+<arg>Test setup msg</arg>
+</arguments>
+<msg timestamp="20110603 11:15:42.607" level="INFO">Test setup msg</msg>
+<status status="PASS" endtime="20110603 11:15:42.608" starttime="20110603 11:15:42.607"></status>
+</kw>
+<kw type="kw" name="My kw" timeout="">
+<doc>Kw docs</doc>
+<arguments>
+<arg>This is my _non html_ message\nwith new line, several spaces " \ \ \ " and a &lt;b&gt;bold tag&lt;/b&gt;.</arg>
+</arguments>
+<kw type="kw" name="BuiltIn.Log" timeout="">
+<doc>Logs the given message with the given level.</doc>
+<arguments>
+<arg>${arg}</arg>
+<arg>${level}</arg>
+</arguments>
+<msg timestamp="20110603 11:15:42.614" level="WARN">This is my _non html_ message
+with new line, several spaces "    " and a &lt;b&gt;bold tag&lt;/b&gt;.</msg>
+<status status="PASS" endtime="20110603 11:15:42.616" starttime="20110603 11:15:42.612"></status>
+</kw>
+<kw type="teardown" name="BuiltIn.Log" timeout="">
+<doc>Logs the given message with the given level.</doc>
+<arguments>
+<arg>keyword teardown</arg>
+</arguments>
+<msg timestamp="20110603 11:15:42.617" level="INFO">keyword teardown</msg>
+<status status="PASS" endtime="20110603 11:15:42.618" starttime="20110603 11:15:42.616"></status>
+</kw>
+<status status="PASS" endtime="20110603 11:15:42.618" starttime="20110603 11:15:42.609"></status>
+</kw>
+<kw type="kw" name="My kw" timeout="">
+<doc>Kw docs</doc>
+<arguments>
+<arg>This is my &lt;blink&gt;HTML&lt;/blink&gt; message\nwith new line, several spaces " \ \ \ " and a &lt;b&gt;bold tag&lt;/b&gt;.</arg>
+<arg>HTML</arg>
+</arguments>
+<kw type="kw" name="BuiltIn.Log" timeout="">
+<doc>Logs the given message with the given level.</doc>
+<arguments>
+<arg>${arg}</arg>
+<arg>${level}</arg>
+</arguments>
+<msg timestamp="20110603 11:15:42.621" html="yes" level="INFO">This is my &lt;blink&gt;HTML&lt;/blink&gt; message
+with new line, several spaces "    " and a &lt;b&gt;bold tag&lt;/b&gt;.</msg>
+<status status="PASS" endtime="20110603 11:15:42.622" starttime="20110603 11:15:42.620"></status>
+</kw>
+<kw type="teardown" name="BuiltIn.Log" timeout="">
+<doc>Logs the given message with the given level.</doc>
+<arguments>
+<arg>keyword teardown</arg>
+</arguments>
+<msg timestamp="20110603 11:15:42.623" level="INFO">keyword teardown</msg>
+<status status="PASS" endtime="20110603 11:15:42.623" starttime="20110603 11:15:42.622"></status>
+</kw>
+<status status="PASS" endtime="20110603 11:15:42.624" starttime="20110603 11:15:42.619"></status>
+</kw>
+<kw type="teardown" name="BuiltIn.Log" timeout="">
+<doc>Logs the given message with the given level.</doc>
+<arguments>
+<arg>Test teardown msg</arg>
+</arguments>
+<msg timestamp="20110603 11:15:42.624" level="INFO">Test teardown msg</msg>
+<status status="PASS" endtime="20110603 11:15:42.624" starttime="20110603 11:15:42.624"></status>
+</kw>
+<tags>
+<tag>someothertag</tag>
+<tag>sometag</tag>
+</tags>
+<status status="PASS" endtime="20110603 11:15:42.625" critical="yes" starttime="20110603 11:15:42.606"></status>
+</test>
+<kw type="teardown" name="BuiltIn.Log" timeout="">
+<doc>Logs the given message with the given level.</doc>
+<arguments>
+<arg>suite teardown msg</arg>
+</arguments>
+<msg timestamp="20110603 11:15:42.625" level="INFO">suite teardown msg</msg>
+<status status="PASS" endtime="20110603 11:15:42.626" starttime="20110603 11:15:42.625"></status>
+</kw>
+<status status="PASS" endtime="20110603 11:15:42.626" starttime="20110603 11:15:42.603"></status>
+</suite>
+<suite source="/home/mkorpela/workspace/robot/utest/resources/golden_suite/failing_suite.txt" name="Failing Suite">
+<doc></doc>
+<metadata>
+</metadata>
+<test name="This fails at test" timeout="">
+<doc></doc>
+<kw type="kw" name="BuiltIn.Fail" timeout="">
+<doc>Fails the test immediately with the given (optional) message.</doc>
+<arguments>
+<arg>Failure msg</arg>
+</arguments>
+<msg timestamp="20110603 11:15:42.633" level="FAIL">Failure msg</msg>
+<status status="FAIL" endtime="20110603 11:15:42.634" starttime="20110603 11:15:42.631"></status>
+</kw>
+<tags>
+</tags>
+<status status="FAIL" endtime="20110603 11:15:42.634" critical="yes" starttime="20110603 11:15:42.630">Failure msg</status>
+</test>
+<test name="This fails at kw" timeout="">
+<doc></doc>
+<kw type="kw" name="Lets fail at keyword" timeout="">
+<doc></doc>
+<arguments>
+</arguments>
+<kw type="kw" name="BuiltIn.Fail" timeout="">
+<doc>Fails the test immediately with the given (optional) message.</doc>
+<arguments>
+<arg>Failure msg</arg>
+</arguments>
+<msg timestamp="20110603 11:15:42.636" level="FAIL">Failure msg</msg>
+<status status="FAIL" endtime="20110603 11:15:42.636" starttime="20110603 11:15:42.635"></status>
+</kw>
+<status status="FAIL" endtime="20110603 11:15:42.636" starttime="20110603 11:15:42.635"></status>
+</kw>
+<tags>
+</tags>
+<status status="FAIL" endtime="20110603 11:15:42.636" critical="yes" starttime="20110603 11:15:42.634">Failure msg</status>
+</test>
+<test name="This Errors" timeout="">
+<doc></doc>
+<kw type="kw" name="This does not exist" timeout="">
+<doc></doc>
+<arguments>
+</arguments>
+<msg timestamp="20110603 11:15:42.638" level="FAIL">No keyword with name 'This does not exist' found.</msg>
+<status status="FAIL" endtime="20110603 11:15:42.638" starttime="20110603 11:15:42.637"></status>
+</kw>
+<tags>
+</tags>
+<status status="FAIL" endtime="20110603 11:15:42.638" critical="yes" starttime="20110603 11:15:42.637">No keyword with name 'This does not exist' found.</status>
+</test>
+<status status="FAIL" endtime="20110603 11:15:42.639" starttime="20110603 11:15:42.626"></status>
+</suite>
+<kw type="teardown" name="BuiltIn.Fail" timeout="">
+<doc>Fails the test immediately with the given (optional) message.</doc>
+<arguments>
+</arguments>
+<msg timestamp="20110603 11:15:42.640" level="FAIL">AssertionError</msg>
+<status status="FAIL" endtime="20110603 11:15:42.640" starttime="20110603 11:15:42.639"></status>
+</kw>
+<status status="FAIL" endtime="20110603 11:15:42.640" starttime="20110603 11:15:42.564">Suite teardown failed:
+AssertionError</status>
+</suite>
+<statistics>
+<total>
+<stat fail="4" doc="" pass="0">Critical Tests</stat>
+<stat fail="4" doc="" pass="0">All Tests</stat>
+</total>
+<tag>
+<stat info="" fail="1" pass="0" links="" doc="">someothertag</stat>
+<stat info="" fail="1" pass="0" links="" doc="">sometag</stat>
+</tag>
+<suite>
+<stat fail="4" doc="Golden Suite" pass="0">Golden Suite</stat>
+<stat fail="1" doc="Golden Suite.All Settings" pass="0">Golden Suite.All Settings</stat>
+<stat fail="3" doc="Golden Suite.Failing Suite" pass="0">Golden Suite.Failing Suite</stat>
+</suite>
+</statistics>
+<errors>
+<msg linkable="yes" timestamp="20110603 11:15:42.614" level="WARN">This is my _non html_ message
+with new line, several spaces "    " and a &lt;b&gt;bold tag&lt;/b&gt;.</msg>
+<msg timestamp="20110603 11:15:42.629" level="ERROR">Invalid syntax in file '/home/mkorpela/workspace/robot/utest/resources/golden_suite/failing_suite.txt' in table 'Settings': Importing test library 'Idontexist' failed: ImportError: No module named Idontexist
+PYTHONPATH: ['/usr/local/lib/python2.6/dist-packages/robot/libraries', '/usr/local/lib/python2.6/dist-packages/docutils-0.7-py2.6.egg', '/usr/local/lib/python2.6/dist-packages/decorator-3.2.0-py2.6.egg', '/usr/local/lib/python2.6/dist-packages/robotframework_seleniumlibrary-2.4-py2.6.egg', '/usr/local/lib/python2.6/dist-packages/mock-0.7.0b4-py2.6.egg', '/usr/local/lib/python2.6/dist-packages/nose-0.11.3-py2.6.egg', '/usr/local/lib/python2.6/dist-packages/guppy-0.1.5-py2.6-linux-x86_64.egg', '/usr/local/lib/python2.6/dist-packages/Pygments-1.4-py2.6.egg', '/usr/lib/python2.6', '/usr/lib/python2.6/plat-linux2', '/usr/lib/python2.6/lib-tk', '/usr/lib/python2.6/lib-old', '/usr/lib/python2.6/lib-dynload', '/usr/lib/python2.6/dist-packages', '/usr/lib/python2.6/dist-packages/PIL', '/usr/lib/python2.6/dist-packages/gst-0.10', '/usr/lib/pymodules/python2.6', '/usr/lib/python2.6/dist-packages/gtk-2.0', '/usr/lib/pymodules/python2.6/gtk-2.0', '/usr/lib/python2.6/dist-packages/wx-2.8-gtk2-unicode', '/usr/local/lib/python2.6/dist-packages', '.']
+Traceback (most recent call last):
+  File "/usr/local/lib/python2.6/dist-packages/robot/utils/importing.py", line 85, in _non_dotted_import
+    module = __import__(name)</msg>
+<msg timestamp="20110603 11:15:42.629" level="ERROR">Invalid syntax in file '/home/mkorpela/workspace/robot/utest/resources/golden_suite/failing_suite.txt' in table 'Settings': Resource file 'And I'm not here' does not exist.</msg>
+</errors>
+</robot>

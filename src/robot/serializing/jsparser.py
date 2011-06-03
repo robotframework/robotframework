@@ -38,6 +38,8 @@ class Context(object):
         return self._texts.dump()
 
     def timestamp(self, time):
+        if time == 'N/A':
+            return -1
         dt = datetime.strptime(time+"000", "%Y%m%d %H:%M:%S.%f")
         millis = int(mktime(dt.timetuple())*1000+dt.microsecond/1000)
         if self.basemillis is None:
@@ -360,7 +362,7 @@ class _SuiteHandler(_Handler):
     def __init__(self, context, attrs):
         _Handler.__init__(self, context, attrs)
         self._name = attrs.getValue('name')
-        self._source = attrs.getValue('source')
+        self._source = attrs.get('source') or ''
         self.context.start_suite(self._name)
         self.context.collect_stats()
 

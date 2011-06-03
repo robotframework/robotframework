@@ -1,5 +1,13 @@
 import robot.serializing.jsparser as jsparser
 
+def test_timestamp():
+    context = jsparser.Context()
+    time = context.timestamp('20110603 12:00:00.000')
+    assert time == 0
+    time = context.timestamp('N/A')
+    assert time == -1
+    time = context.timestamp('20110603 12:00:01.000')
+    assert time == 1000
 
 def test_stats_when_failing_suite_teardown():
     context = jsparser.Context()

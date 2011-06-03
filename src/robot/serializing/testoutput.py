@@ -32,6 +32,28 @@ from robot.serializing.serialize_log import serialize_log, serialize_report
 from robot.serializing import jsparser
 
 
+class Reporter(object):
+
+    def execute(self, settings, *data_sources):
+        if len(data_sources) > 1:
+            suite, exec_errors = process_outputs(data_sources, settings)
+            suite.set_options(settings)
+            RobotTestOutput(suite, exec_errors, settings).serialize_output('foo.xml')
+            data_sources = ['foo.xml']
+        data_model = jsparser.create_datamodel_from(data_sources[0])
+        report_path = self._parse_file(settings['Report'])
+        log_path = self._parse_file(settings['Log'])
+        if report_path:
+            serialize_report(data_model, report_path, settings['ReportTitle'], settings['ReportBackground'], log_path)
+            LOGGER.output_file('Report', report_path)
+        if log_path:
+            serialize_log(data_model, log_path, settings['LogTitle'])
+            LOGGER.output_file('Log', log_path)
+
+    def _parse_file(self, string):
+        return string if string != 'NONE' else None
+
+
 class RobotTestOutput:
 
     def __init__(self, suite, exec_errors, settings=None):
