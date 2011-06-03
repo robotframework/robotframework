@@ -157,7 +157,7 @@ def run_rebot(*datasources, **options):
     LOGGER.disable_message_cache()
     Reporter().execute(settings, *datasources)
     LOGGER.close()
-    return testoutput.suite
+    return 0 #FIXME! Can't identify number of failed suites
 
 
 def _report_error(message, details=None, help=False):
