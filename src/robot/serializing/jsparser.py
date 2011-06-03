@@ -546,30 +546,23 @@ class DataModel(object):
         json_dump(self._texts, output)
         output.write(';\n')
 
-def encode_basestring(string):
+def encode_and_write_basestring(string, output):
     def get_matching_char(c):
-        if c == '\\':
-            return '\\\\'
-        if c == '"':
-            return '\\"'
-        if c == '\b':
-            return '\\b'
-        if c == '\f':
-            return '\\f'
-        if c == '\n':
-            return '\\n'
-        if c == '\r':
-            return '\\r'
-        if c == '\t':
-            return '\\t'
         val = ord(c)
         if val < 127 and val > 31:
             return c
         return '\\u' + hex(val)[2:].rjust(4,'0')
-    result = '"'
+    string = string.replace('\\', '\\\\')
+    string = string.replace('"', '\\"')
+    string = string.replace('\b', '\\b')
+    string = string.replace('\f', '\\f')
+    string = string.replace('\n', '\\n')
+    string = string.replace('\r', '\\r')
+    string = string.replace('\t', '\\t')
+    output.write('"')
     for c in string:
-        result += get_matching_char(c)
-    return result+'"'
+        output.write(get_matching_char(c))
+    output.write('"')
 
 def json_dump(data, output):
     if isinstance(data, int):
@@ -577,7 +570,7 @@ def json_dump(data, output):
     elif isinstance(data, long):
         output.write(str(data))
     elif isinstance(data, basestring):
-        output.write(encode_basestring(data))
+        encode_and_write_basestring(data, output)
     elif isinstance(data, list):
         output.write('[')
         for index, item in enumerate(data):
