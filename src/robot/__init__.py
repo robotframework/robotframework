@@ -157,7 +157,11 @@ def run_rebot(*datasources, **options):
     LOGGER.disable_message_cache()
     Reporter().execute(settings, *datasources)
     LOGGER.close()
-    return 0 #FIXME! Can't identify number of failed suites
+    class RebotSuite(object):
+        @property
+        def return_code(self):
+            return 0
+    return RebotSuite() #TODO identify number of failed suites if needed
 
 
 def _report_error(message, details=None, help=False):
