@@ -78,7 +78,7 @@ class Reporter(object):
         log_path = self._parse_file(settings['Log'])
         self._make_report(report_path, log_path, data_model, settings)
         self._make_log(log_path, data_model, settings)
-        xunit_path = settings['XUnitFile']
+        xunit_path = self._parse_file(settings['XUnitFile'])
         self._make_xunit(xunit_path, data_sources, settings)
         if self._temp_file:
             os.remove(self._temp_file)
