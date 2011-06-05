@@ -518,17 +518,15 @@ class _RobotOutputHandler(ContentHandler):
 
     def startElement(self, name, attrs):
         handler = self._handler_stack[-1].get_handler_for(name, attrs)
-        self._charbuffer = ''
+        self._charbuffer = StringIO.StringIO()
         self._handler_stack.append(handler)
 
     def endElement(self, name):
         handler = self._handler_stack.pop()
-        parent = self._handler_stack[-1]
-        parent.add_child(handler.end_element(self._charbuffer))
+        self._handler_stack[-1].add_child(handler.end_element(self._charbuffer.getvalue()))
 
     def characters(self, content):
-        self._charbuffer += content
-
+        self._charbuffer.write(content)
 
 
 class DataModel(object):
