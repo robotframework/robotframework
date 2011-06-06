@@ -384,6 +384,13 @@ function renderSuiteSelector(linkTarget) {
     $.tmpl(window.templates.suiteDetailsSelector, suitestats).appendTo('#test_details_container');
 }
 
+function totalDetailSelected(type) {
+    if (type == "") return;
+    renderTotalSelector("total_"+type);
+    renderTotalDetails(type);
+    ensureTotalDetailsAreVisible(type);
+}
+
 function tagDetailSelected(name) {
     if (name == "") return;
     renderTagsSelector("tag_"+name);
@@ -400,11 +407,9 @@ function suiteDetailSelected(name) {
     ensureSuiteDetailsAreVisible(name);
 }
 
-function totalDetailSelected(type) {
-    if (type == "") return;
-    renderTotalSelector("total_"+type);
-    renderTotalDetails(type);
-    ensureTotalDetailsAreVisible(type);
+function renderTotalDetails(type) {
+    $.tmpl(window.templates.totalDetails, {type:type}).appendTo('#details_header');
+    drawTestDetailsTable(getTotalTests(type));
 }
 
 function renderDetailsByTag(tag) {
@@ -422,26 +427,24 @@ function renderDetailsBySuite(name) {
     drawTestDetailsTable(suite.allTests())
 }
 
-function renderTotalDetails(type) {
-    $.tmpl(window.templates.totalDetails, {type:type}).appendTo('#details_header');
-    drawTestDetailsTable(getTotalTests(type));
-}
-
 function drawTestDetailsTable(tests) {
     $.tmpl(window.templates.testDetailsTable).appendTo('#test_details_container');
     $.tmpl(window.templates.testDetailsRow, tests).appendTo('#tests_detail_table');
 }
 
+function ensureTotalDetailsAreVisible(type) {
+    document.getElementById('total_detail_selector').value = type;
+    window.location.hash = 'total_'+type
+}
+
 function ensureTagDetailsAreVisible(name) {
     document.getElementById('tag_detail_selector').value = name;
+    window.location.hash = 'tag_'+name;
 }
 
 function ensureSuiteDetailsAreVisible(name) {
     document.getElementById('suite_detail_selector').value = name;
-}
-
-function ensureTotalDetailsAreVisible(type) {
-    document.getElementById('total_detail_selector').value = type;
+    window.location.hash = 'suite_'+name;
 }
 
 function findTagByName(name, tags) {
@@ -453,7 +456,7 @@ function findTagByName(name, tags) {
 
 function showDetailsByHash() {
     // TODO: cleanup
-    hash = window.location.hash.substring(1);
+    hash = decodeURI(window.location.hash.substring(1));
     if(hash.indexOf("suite_")==0){
         suite = hash.substring("suite_".length);
         suiteDetailSelected(suite)
@@ -678,8 +681,8 @@ function initTemplates() {
       <td>
         <select id="total_detail_selector" onchange="totalDetailSelected(this.options[this.selectedIndex].value);">
           <option value="">Select see to totals...</option>
-              <option value="All Tests">All tests</option>
-              <option value="Critical Tests">Critical tests</option>
+              <option value="All Tests">All Tests</option>
+              <option value="Critical Tests">Critical Tests</option>
         </select>
       </td>
     </tr>
