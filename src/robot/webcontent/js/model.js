@@ -97,10 +97,14 @@ window.model = (function () {
         for (var name in stats) {
             suite[name] = stats[name];
         }
-    	if (suite.totalFailed > 0)
-    	    suite.totalFailureClass = 'fail';
-    	if (suite.criticalFailed > 0)
-    	    suite.criticalFailureClass = 'fail';
+        if (suite.totalFailed == 0)
+            suite.totalFailureClass = 'pass';
+        else
+            suite.totalFailureClass = 'fail';
+        if (suite.criticalFailed == 0)
+            suite.criticalFailureClass = 'pass';
+        else
+            suite.criticalFailureClass = 'fail';
     }
 
     function populateCommonAttrs(obj, name, doc, status, times) {
@@ -310,7 +314,8 @@ window.stats = (function () {
             pass:  data[1],
             fail:  data[2],
             total: data[1] + data[2],
-            doc:   data[3]
+            doc:   data[3],
+            links: []
         };
         var percents = calculatePercents(stat.total, stat.pass, stat.fail);
         stat.passPercent = percents[0];

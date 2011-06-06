@@ -421,7 +421,7 @@ function renderTotalDetails(type) {
         var stat = window.testdata.statistics().total[1];
     var tests = getTotalTests(type)
     stat.totalTime = calculateTotalTime(tests);
-    $.tmpl(window.templates.totalDetails, stat).appendTo('#details_header');
+    $.tmpl(window.templates.tagOrTotalDetails, stat).appendTo('#details_header');
     drawTestDetailsTable(tests);
 }
 
@@ -430,7 +430,7 @@ function renderDetailsByTag(tag) {
     if (tag) {
         tag.totalTime = calculateTotalTime(tests);
     }
-    $.tmpl(window.templates.tagDetails, tag).appendTo('#details_header');
+    $.tmpl(window.templates.tagOrTotalDetails, tag).appendTo('#details_header');
     drawTestDetailsTable(tests);
 }
 
@@ -558,9 +558,8 @@ function initTemplates() {
         totalDetailsSelector: $('#total_details_selector').template(),
         tagDetailsSelector: $('#tag_details_selector').template(),
         suiteDetailsSelector: $('#suite_details_selector').template(),
-        tagDetails: $('#tag_details').template(),
+        tagOrTotalDetails: $('#tag_or_total_details').template(),
         suiteDetails: $('#suite_details').template(),
-        totalDetails: $('#total_details').template(),
         testDetailsTable: $('#test_details_table').template()
     };
 };
@@ -733,18 +732,8 @@ function initTemplates() {
   </table>
 </script>
 
-<script type="text/html" id="total_details">
-    <tr>
-        <th>Status:</th>
-        <td>${total} total, ${pass} passed, {{if fail}}<span class="fail">${fail} failed<span>{{else}}0 failed{{/if}}</td>
-    </tr>
-    <tr>
-        <th>Total Time:</th>
-        <td>${totalTime}</td>
-    </tr>
-</script>
 
-<script type="text/html" id="tag_details">
+<script type="text/html" id="tag_or_total_details">
     {{if doc}}
     <tr>
         <th>Documentation:</th>
@@ -753,7 +742,7 @@ function initTemplates() {
     {{/if}}
     <tr>
         <th>Status:</th>
-        <td>${total} total, ${pass} passed, {{if fail}}<span class="fail">${fail} failed<span>{{else}}0 failed{{/if}}</td>
+        <td>${total} total, ${pass} passed, {{if fail}}<span class="fail">${fail} failed</span>{{else}}<span class="pass">0 failed</span>{{/if}}</td>
     </tr>
     {{if links && links.length}}
     <tr>
@@ -777,18 +766,20 @@ function initTemplates() {
     {{each metadata}}
     <tr><th>${$index}:</th><td>{{html $value}}</td></tr>
     {{/each}}
+    {{if getFailureMessage()}}
+    <tr>
+        <th>Message:</th>
+        <td>${getFailureMessage()}</td>
+     </tr>
+    {{/if}}
+    <tr>
+        <th>Status:</th>
+        <td>{{tmpl($data) '#stats_message_partial_template'}}</td>
+    </tr>
     <tr>
         <th>Start / End / Elapsed:</th>
         <td>${times.startTime} / ${times.endTime} / ${times.elapsedTime}</td>
     </tr>
-    <tr>
-        <th>Status:</th>
-        <td class="${status}">${statusText}</td>
-    </tr>
-    <tr>
-        <th>Message:</th>
-        <td>${getFailureMessage()}<br/><br/>{{tmpl($data) '#stats_message_partial_template'}}</td>
-     </tr>
 </script>
 
 <script type="text/html" id="stats_message_partial_template">
