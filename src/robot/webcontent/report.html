@@ -93,6 +93,10 @@
   table.details .normal_whitespace {
     white-space: normal;
   }
+  table.details #selector th, table.details #selector td {
+    padding-top: 0.5em;
+    padding-bottom: 1em;
+  }
   /* Tabs - adapted from http://www.htmldog.com/articles/tabs */
   #detail_tabs {
     list-style: none;
@@ -688,7 +692,7 @@ function initTemplates() {
 
 <script  type="text/html" id="total_details_selector">
   <table class="details" id="details_header">
-    <tr>
+    <tr id="selector">
       <th>Type:</th>
       <td class="normal_whitespace">
         <input id="radio_Critical Tests" type="radio" name="totals_radio" onclick="totalDetailSelected('Critical Tests');">
@@ -702,7 +706,7 @@ function initTemplates() {
 
 <script  type="text/html" id="tag_details_selector">
   <table class="details" id="details_header">
-    <tr>
+    <tr id="selector">
       <th>Name:</th>
       <td class="normal_whitespace">
         <select id="tag_detail_selector" onchange="tagDetailSelected(this.options[this.selectedIndex].value);">
@@ -718,7 +722,7 @@ function initTemplates() {
 
 <script  type="text/html" id="suite_details_selector">
   <table class="details" id="details_header">
-    <tr>
+    <tr id="selector">
       <th>Name:</th>
       <td class="normal_whitespace">
         <select id="suite_detail_selector" onchange="suiteDetailSelected(this.options[this.selectedIndex].value);">
