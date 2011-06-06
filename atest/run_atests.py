@@ -55,7 +55,6 @@ ARGUMENTS = ' '.join('''
 --escape paren1:PAR1
 --escape paren2:PAR2
 --critical regression
---SplitOutputs 2
 --SuiteStatLevel 3
 --TagStatCombine jybotNOTpybot
 --TagStatCombine pybotNOTjybot
