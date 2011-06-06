@@ -415,8 +415,14 @@ function suiteDetailSelected(name) {
 }
 
 function renderTotalDetails(type) {
-    $.tmpl(window.templates.totalDetails, {type:type}).appendTo('#details_header');
-    drawTestDetailsTable(getTotalTests(type));
+    if (type == 'Critical Tests')
+        var stat = window.testdata.statistics().total[0];
+    else
+        var stat = window.testdata.statistics().total[1];
+    var tests = getTotalTests(type)
+    stat.totalTime = calculateTotalTime(tests);
+    $.tmpl(window.templates.totalDetails, stat).appendTo('#details_header');
+    drawTestDetailsTable(tests);
 }
 
 function renderDetailsByTag(tag) {
@@ -684,13 +690,10 @@ function initTemplates() {
 <script  type="text/html" id="total_details_selector">
   <table class="details" id="details_header">
     <tr>
+      <th>Type:</th>
       <td class="normal_whitespace">
         <input id="radio_Critical Tests" type="radio" name="totals_radio" onclick="totalDetailSelected('Critical Tests');">
-        <label for="radio_Critical Tests">Critical Tests</label>
-      </td>
-    </tr>
-    <tr>
-      <td class="normal_whitespace">
+        <label for="radio_Critical Tests">Critical Tests</label><br>
         <input id="radio_All Tests" type="radio" name="totals_radio" onclick="totalDetailSelected('All Tests');">
         <label for="radio_All Tests">All Tests</label>
       </td>
@@ -730,6 +733,17 @@ function initTemplates() {
   </table>
 </script>
 
+<script type="text/html" id="total_details">
+    <tr>
+        <th>Status:</th>
+        <td>${total} total, ${pass} passed, {{if fail}}<span class="fail">${fail} failed<span>{{else}}0 failed{{/if}}</td>
+    </tr>
+    <tr>
+        <th>Total Time:</th>
+        <td>${totalTime}</td>
+    </tr>
+</script>
+
 <script type="text/html" id="tag_details">
     {{if doc}}
     <tr>
@@ -738,7 +752,7 @@ function initTemplates() {
     </tr>
     {{/if}}
     <tr>
-        <th>Message:</th>
+        <th>Status:</th>
         <td>${total} total, ${pass} passed, {{if fail}}<span class="fail">${fail} failed<span>{{else}}0 failed{{/if}}</td>
     </tr>
     {{if links && links.length}}
@@ -775,9 +789,6 @@ function initTemplates() {
         <th>Message:</th>
         <td>${getFailureMessage()}<br/><br/>{{tmpl($data) '#stats_message_partial_template'}}</td>
      </tr>
-</script>
-
-<script type="text/html" id="total_details">
 </script>
 
 <script type="text/html" id="stats_message_partial_template">
