@@ -77,7 +77,7 @@
   }
   table.details th {
     background: white;
-    width: 11em;
+    width: 8em;
     white-space: nowrap;
     text-align: left;
     vertical-align: top;
@@ -782,8 +782,12 @@ function initTemplates() {
         <td>{{tmpl($data) '#stats_message_partial_template'}}</td>
     </tr>
     <tr>
-        <th>Start / End / Elapsed:</th>
-        <td>${times.startTime} / ${times.endTime} / ${times.elapsedTime}</td>
+        <th>Start / End:</th>
+        <td>${times.startTime}  /  ${times.endTime}</td>
+    </tr>
+    <tr>
+        <th>Elapsed:</th>
+        <td>${times.elapsedTime}</td>
     </tr>
 </script>
 

@@ -22,9 +22,12 @@ function populateMetadata(element, childrenElement) {
         addMetadata(meta, key, element.metadata[key], window.templates.metadataElement);
     }
     addMetadata(meta, 'Source', element.source, window.templates.sourceElement);
-    addMetadata(meta, 'Start / End / Elapsed',
-                [element.times.startTime(), element.times.endTime(), element.times.elapsedTime()].join(' / '),
+    addMetadata(meta, 'Start / End',
+                [element.times.startTime(), element.times.endTime()].join('  /  '),
                 window.templates.metadataElement);
+    addMetadata(meta, 'Elapsed',
+            element.times.elapsedTime(),
+            window.templates.metadataElement);
     if (element.statusText) {
         var status = $.tmpl(window.templates.statusElement, element);
         status.appendTo(meta);
