@@ -113,7 +113,7 @@
     font-weight: bold;
     padding: 0 1em;
   }
-  #detail_tabs #detail_tabs_selected {
+  #detail_tabs .tab_selected {
     padding-bottom: 1px;
     background: white;
   }
@@ -338,9 +338,10 @@ $(document).ready(function(){
     addHeader();
     addSummary(topsuite);
     addStatistics();
-    renderDetailsHeader("no_selection");
-    if(window.location.hash !== "") {
+    if (window.location.hash) {
         showDetailsByHash();
+    } else {
+        renderTotalSelector("no_selection");
     }
 });
 
@@ -348,15 +349,44 @@ function addSummary(topsuite) {
     $.tmpl(window.templates.summaryTable, topsuite).insertAfter($('#header_div'));
 }
 
-function renderDetailsHeader(linkTarget) {
-    var tagstats = window.testdata.statistics().tag;
-    var suitestats = window.testdata.statistics().suite;
-    $.tmpl(window.templates.detailsHeader, {tags: tagstats, suites: suitestats, linkTarget: linkTarget}).appendTo('#test_details_container');
+function showTotalsTab() {
+    renderTotalSelector('totals');
+}
+
+function showTagsTab() {
+    renderTagsSelector('tags');
+}
+
+function showSuitesTab() {
+    renderSuiteSelector('suites');
+}
+
+function renderTotalSelector(linkTarget) {
+    $('#test_details_container').empty();
+    var args = {linkTarget: linkTarget, totals_tab_status: 'tab_selected'};
+    $.tmpl(window.templates.detailsHeader, args).appendTo('#test_details_container');
+    $.tmpl(window.templates.totalDetailsSelector).appendTo('#test_details_container');
+}
+
+function renderTagsSelector(linkTarget) {
+    $('#test_details_container').empty();
+    var args = {linkTarget: linkTarget, tags_tab_status: 'tab_selected'};
+    var tagstats = {tags: window.testdata.statistics().tag};
+    $.tmpl(window.templates.detailsHeader, args).appendTo('#test_details_container');
+    $.tmpl(window.templates.tagDetailsSelector, tagstats).appendTo('#test_details_container');
+}
+
+function renderSuiteSelector(linkTarget) {
+    $('#test_details_container').empty();
+    var args = {linkTarget: linkTarget, suites_tab_status: 'tab_selected'};
+    var suitestats = {suites: window.testdata.statistics().suite};
+    $.tmpl(window.templates.detailsHeader, args).appendTo('#test_details_container');
+    $.tmpl(window.templates.suiteDetailsSelector, suitestats).appendTo('#test_details_container');
 }
 
 function tagDetailSelected(name) {
     if (name == "") return;
-    refreshDetailsHeader("tag_"+name);
+    renderTagsSelector("tag_"+name);
     var alltags = window.testdata.statistics().tag;
     var tag = findTagByName(name, alltags);
     renderDetailsByTag(tag);
@@ -365,21 +395,16 @@ function tagDetailSelected(name) {
 
 function suiteDetailSelected(name) {
     if (name == "") return;
-    refreshDetailsHeader("suite_"+name);
+    renderSuiteSelector("suite_"+name);
     renderDetailsBySuite(name);
     ensureSuiteDetailsAreVisible(name);
 }
 
 function totalDetailSelected(type) {
     if (type == "") return;
-    refreshDetailsHeader("total_"+type);
+    renderTotalSelector("total_"+type);
     renderTotalDetails(type);
     ensureTotalDetailsAreVisible(type);
-}
-
-function refreshDetailsHeader(linkTarget) {
-    $('#test_details_container').empty();
-    renderDetailsHeader(linkTarget);
 }
 
 function renderDetailsByTag(tag) {
@@ -427,6 +452,7 @@ function findTagByName(name, tags) {
 }
 
 function showDetailsByHash() {
+    // TODO: cleanup
     hash = window.location.hash.substring(1);
     if(hash.indexOf("suite_")==0){
         suite = hash.substring("suite_".length);
@@ -439,6 +465,15 @@ function showDetailsByHash() {
     else if(hash.indexOf("total_")==0){
         type = hash.substring("total_".length);
         totalDetailSelected(type)
+    }
+    else if(hash=='totals'){
+        showTotalsTab();
+    }
+    else if(hash=='tags'){
+        showTagsTab();
+    }
+    else if(hash=='suites'){
+        showSuitesTab();
     }
     window.location.hash = window.location.hash.substring(1);
 }
@@ -504,6 +539,9 @@ function initTemplates() {
         noTagsRow: $('#no_tags_row').template(),
         testDetailsRow: $('#report_test_details_row').template(),
         detailsHeader: $('#details_header').template(),
+        totalDetailsSelector: $('#total_details_selector').template(),
+        tagDetailsSelector: $('#tag_details_selector').template(),
+        suiteDetailsSelector: $('#suite_details_selector').template(),
         tagDetails: $('#tag_details').template(),
         suiteDetails: $('#suite_details').template(),
         totalDetails: $('#total_details').template(),
@@ -627,10 +665,28 @@ function initTemplates() {
 <script type="text/html" id="details_header">
   <h2 id="${linkTarget}">Test Details</h2>
   <ul id="detail_tabs">
-    <li><a href="#">Totals</a></li>
-    <li id="detail_tabs_selected"><a href="#">Tags</a></li>
-    <li><a href="#">Suites</a></li>
+    <li class="${totals_tab_status}"><a href="#totals" onclick="showTotalsTab();">Totals</a></li>
+    <li class="${tags_tab_status}"><a href="#tags" onclick="showTagsTab();">Tags</a></li>
+    <li class="${suites_tab_status}"><a href="#suites" onclick="showSuitesTab();">Suites</a></li>
   </ul>
+</script>
+
+<script  type="text/html" id="total_details_selector">
+  <table class="details" id="details_header">
+    <tr>
+      <th>Name:</th>
+      <td>
+        <select id="total_detail_selector" onchange="totalDetailSelected(this.options[this.selectedIndex].value);">
+          <option value="">Select see to totals...</option>
+              <option value="All Tests">All tests</option>
+              <option value="Critical Tests">Critical tests</option>
+        </select>
+      </td>
+    </tr>
+  </table>
+</script>
+
+<script  type="text/html" id="tag_details_selector">
   <table class="details" id="details_header">
     <tr>
       <th>Name:</th>
@@ -641,16 +697,21 @@ function initTemplates() {
               <option value="${$value.label}">${$value.label} ${$value.shownInfo}</option>
             {{/each}}
         </select>
+      </td>
+    </tr>
+  </table>
+</script>
+
+<script  type="text/html" id="suite_details_selector">
+  <table class="details" id="details_header">
+    <tr>
+      <th>Name:</th>
+      <td>
         <select id="suite_detail_selector" onchange="suiteDetailSelected(this.options[this.selectedIndex].value);">
           <option value="">Select suite...</option>
             {{each suites}}
               <option value="${$value.fullname}">${$value.fullname}</option>
             {{/each}}
-        </select>
-        <select id="total_detail_selector" onchange="totalDetailSelected(this.options[this.selectedIndex].value);">
-          <option value="">Select see to totals...</option>
-              <option value="All Tests">All tests</option>
-              <option value="Critical Tests">Critical tests</option>
         </select>
       </td>
     </tr>
