@@ -311,7 +311,7 @@ $(document).ready(function(){
     addHeader();
     addSummary(topsuite);
     addStatistics();
-    renderDetailsHeader();
+    renderDetailsHeader("no_selection");
     if(window.location.hash !== "") {
         showDetailsByHash();
     }
@@ -321,15 +321,15 @@ function addSummary(topsuite) {
     $.tmpl(window.templates.summaryTable, topsuite).insertAfter($('#header_div'));
 }
 
-function renderDetailsHeader() {
+function renderDetailsHeader(linkTarget) {
     var tagstats = window.testdata.statistics().tag;
     var suitestats = window.testdata.statistics().suite;
-    $.tmpl(window.templates.detailsHeader, {tags: tagstats, suites: suitestats}).appendTo('#test_details_container');
+    $.tmpl(window.templates.detailsHeader, {tags: tagstats, suites: suitestats, linkTarget: linkTarget}).appendTo('#test_details_container');
 }
 
 function tagDetailSelected(name) {
     if (name == "") return;
-    refreshDetailsHeader();
+    refreshDetailsHeader("tag_"+name);
     var alltags = window.testdata.statistics().tag;
     var tag = findTagByName(name, alltags);
     renderDetailsByTag(tag);
@@ -338,21 +338,21 @@ function tagDetailSelected(name) {
 
 function suiteDetailSelected(name) {
     if (name == "") return;
-    refreshDetailsHeader();
+    refreshDetailsHeader("suite_"+name);
     renderDetailsBySuite(name);
     ensureSuiteDetailsAreVisible(name);
 }
 
 function totalDetailSelected(type) {
     if (type == "") return;
-    refreshDetailsHeader();
+    refreshDetailsHeader("total_"+type);
     renderTotalDetails(type);
     ensureTotalDetailsAreVisible(type);
 }
 
-function refreshDetailsHeader() {
+function refreshDetailsHeader(linkTarget) {
     $('#test_details_container').empty();
-    renderDetailsHeader();
+    renderDetailsHeader(linkTarget);
 }
 
 function renderDetailsByTag(tag) {
@@ -598,7 +598,7 @@ function initTemplates() {
 </script>
 
 <script type="text/html" id="details_header">
-  <h2>Test Details</h2>
+  <h2 id="${linkTarget}">Test Details</h2>
   <table class="details" id="details_header">
     <tr>
       <th>Name:</th>
@@ -626,7 +626,6 @@ function initTemplates() {
 </script>
 
 <script type="text/html" id="tag_details">
-    <div id='tag_${label}'></div>
     {{if doc}}
     <tr>
         <th>Documentation:</th>
@@ -650,7 +649,6 @@ function initTemplates() {
 </script>
 
 <script type="text/html" id="suite_details">
-    <div id='suite_${fullname}'></div>
     {{if documentation}}
     <tr>
         <th>Documentation:</th>
@@ -675,7 +673,6 @@ function initTemplates() {
 </script>
 
 <script type="text/html" id="total_details">
-    <div id='total_${type}'></div>
 </script>
 
 <script type="text/html" id="stats_message_partial_template">
