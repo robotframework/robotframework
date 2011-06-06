@@ -4,9 +4,9 @@ import xml.sax as sax
 from xml.sax.handler import ContentHandler
 import zlib
 import base64
-from datetime import datetime
-from time import mktime
-from robot.utils import html_escape
+
+from robot import utils
+
 
 class Context(object):
 
@@ -41,8 +41,7 @@ class Context(object):
     def timestamp(self, time):
         if time == 'N/A':
             return -1
-        dt = datetime.strptime(time+"000", "%Y%m%d %H:%M:%S.%f")
-        millis = int(mktime(dt.timetuple())*1000+dt.microsecond/1000)
+        millis = int(utils.timestamp_to_secs(time, millis=True) * 1000)
         if self.basemillis is None:
             self._basemillis = millis
         return millis - self.basemillis
@@ -202,7 +201,7 @@ def _get_msg_text_id(node, context):
     if node.get('html'):
         return context.get_text_id(node.text)
     else:
-        return context.get_text_id(html_escape(node.text, replace_whitespace=False))
+        return context.get_text_id(utils.html_escape(node.text, replace_whitespace=False))
 
 def _message_node_parser(node, context):
     msg = [context.timestamp(node.get('timestamp')),
@@ -497,7 +496,7 @@ class _MsgHandler(object):
         if self._is_html:
             self._msg += [self._context.get_text_id(text)]
         else:
-            self._msg += [self._context.get_text_id(html_escape(text, replace_whitespace=False))]
+            self._msg += [self._context.get_text_id(utils.html_escape(text, replace_whitespace=False))]
 
 
 class _RootHandler(_Handler):
