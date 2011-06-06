@@ -90,6 +90,33 @@
     padding: 2px 4px;
     white-space: pre-wrap;
   }
+  /* Tabs - adapted from http://www.htmldog.com/articles/tabs */
+  #detail_tabs {
+    list-style: none;
+    padding: 0;
+    margin: 0px 1px;
+  }
+  #detail_tabs li {
+    display: inline;
+    background: #C6C6C6;
+    border: 1px solid black;
+    border-bottom-width: 0;
+    margin: 0 0.5em 0 0;
+    padding-top: 0.1em;
+  }
+  #detail_tabs li:hover {
+    background: yellow;
+  }
+  #detail_tabs li a {
+    color: black;
+    text-decoration: none;
+    font-weight: bold;
+    padding: 0 1em;
+  }
+  #detail_tabs #detail_tabs_selected {
+    padding-bottom: 1px;
+    background: white;
+  }
 </style>
 <style media="all" type="text/css">
   /* Generic styles */
@@ -599,6 +626,11 @@ function initTemplates() {
 
 <script type="text/html" id="details_header">
   <h2 id="${linkTarget}">Test Details</h2>
+  <ul id="detail_tabs">
+    <li><a href="#">Totals</a></li>
+    <li id="detail_tabs_selected"><a href="#">Tags</a></li>
+    <li><a href="#">Suites</a></li>
+  </ul>
   <table class="details" id="details_header">
     <tr>
       <th>Name:</th>
