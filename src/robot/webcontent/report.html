@@ -94,7 +94,7 @@
   #detail_tabs {
     list-style: none;
     padding: 0;
-    margin: 0px 1px;
+    margin: 0px 1em;
   }
   #detail_tabs li {
     display: inline;
@@ -103,6 +103,7 @@
     border-bottom-width: 0;
     margin: 0 0.5em 0 0;
     padding-top: 0.1em;
+    border-radius: 3px 3px 0 0;
   }
   #detail_tabs li:hover {
     background: yellow;
@@ -113,8 +114,11 @@
     font-weight: bold;
     padding: 0 1em;
   }
-  #detail_tabs .tab_selected {
+  #detail_tabs li.tab_selected {
     padding-bottom: 1px;
+    background: white;
+  }
+  #detail_tabs li.tab_selected:hover {
     background: white;
   }
 </style>
