@@ -33,6 +33,14 @@ window.util = function () {
         return false;
     }
 
+    function contains(elems, e) {
+        for (var i=0; i<elems.length; i++) {
+            if (elems[i] == e)
+                return true;
+        }
+        return false;
+    }
+
     function normalize(string) {
         return string.toLowerCase().replace(' ', '', 'g');
     }
@@ -55,6 +63,7 @@ window.util = function () {
         filter: filter,
         all: all,
         any: any,
+        contains: contains,
         normalize: normalize,
         Matcher: Matcher
     };

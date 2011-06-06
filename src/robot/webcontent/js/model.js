@@ -56,7 +56,7 @@ window.model = (function () {
     function containsTag(testTags, tagname, isCombined) {
         testTags = util.map(testTags, util.normalize);
         if (!isCombined)
-            return testTags.indexOf(util.normalize(tagname)) != -1;
+            return util.contains(testTags, util.normalize(tagname));
         if (tagname.indexOf(' & ') != -1) {
             var tagnames = tagname.split(' & ');
             return util.all(util.map(tagnames, function (name) { return containsTag(testTags, name, true); }));
