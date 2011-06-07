@@ -341,7 +341,7 @@
   <div id="test_details_container"></div>
 
 <script type="text/javascript">
-$(document).ready(function(){
+$(document).ready(function () {
     var topsuite = window.testdata.suite();
     setBackground(topsuite);
     setDocumentTitle(topsuite);
@@ -354,6 +354,7 @@ $(document).ready(function(){
     } else {
         renderTotalSelector("no_selection");
     }
+    $('#test_details_container').css('min-height', $(window).height());
 });
 
 function addSummary(topsuite) {
