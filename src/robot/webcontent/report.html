@@ -5,7 +5,13 @@
 <META HTTP-EQUIV="Pragma" CONTENT="no-cache">
 <META HTTP-EQUIV="Expires" CONTENT="-1">
 <style media="all" type="text/css">
-
+  /* Generic styles */
+  body {
+    font-family: sans-serif;
+    font-size: 0.8em;
+    color: black;
+    padding: 6px;
+  }
   .critical_pass {
     background: #99FF66; /* BACKGROUND: critical pass */
   }
@@ -14,6 +20,74 @@
   }
   .non_critical_fail {
     background: #FF3333; /* BACKGROUND: non critical fail */
+  }
+  h2 {
+    margin-top: 1.2em;
+  }
+  br {
+    mso-data-placement: same-cell;  /* maintain line breaks in Excel */
+  }
+  /* Statistics Table */
+  table.statistics {
+    width: 58em;
+    border: 1px solid black;
+    border-collapse: collapse;
+    empty-cells: show;
+    margin-bottom: 1em;
+  }
+  table.statistics td, table.statistics th {
+    border: 1px solid black;
+    padding: 1px 4px;
+    margin: 0px;
+  }
+  table.statistics th {
+    background: #C6C6C6;
+  }
+  .col_stat_name {
+    width: 40em;
+  }
+  .col_stat {
+    width: 3em;
+    text-align: center;
+  }
+  .stat_name {
+    float: left;
+  }
+  .stat_name a, .stat_name span {
+    font-weight: bold;
+  }
+  .tag_links {
+    font-size: 0.9em;
+    float: right;
+    margin-top: 0.05em;
+  }
+  .tag_links span {
+    margin-left: 0.2em;
+  }
+  /* Statistics Table Graph */
+  .pass_bar {
+    background: #00f000;
+  }
+  .fail_bar {
+    background: red;
+  }
+  .no_tags_bar {
+    background: #E9E9E9;
+  }
+  .graph {
+    position: relative;
+    border: 1px solid black;
+    width: 11em;
+    height: 0.75em;
+    padding: 0px;
+    background: #E9E9E9;
+  }
+  .graph b {
+    display: block;
+    position: relative;
+    height: 100%;
+    float: left;
+    font-size: 4px;  /* to make graphs thin also in IE */
   }
   /* Generic Table Styles */
   table {
@@ -31,7 +105,7 @@
     background: #C6C6C6;
     color: black;
   }
-  /* Test by Suite/Tag Tables */
+  /* Test detail tables */
   table#tests_by_suite, table#tests_detail_table {
     width: 100%;
   }
@@ -129,83 +203,6 @@
   }
   #detail_tabs li.tab_selected:hover {
     background: white;
-  }
-</style>
-<style media="all" type="text/css">
-  /* Generic styles */
-  body {
-    font-family: sans-serif;
-    font-size: 0.8em;
-    color: black;
-    padding: 6px;
-  }
-  h2 {
-    margin-top: 1.2em;
-  }
-  br {
-    mso-data-placement: same-cell;  /* maintain line breaks in Excel */
-  }
-  /* Statistics Table */
-  table.statistics {
-    width: 58em;
-    border: 1px solid black;
-    border-collapse: collapse;
-    empty-cells: show;
-    margin-bottom: 1em;
-  }
-  table.statistics td, table.statistics th {
-    border: 1px solid black;
-    padding: 1px 4px;
-    margin: 0px;
-  }
-  table.statistics th {
-    background: #C6C6C6;
-  }
-  .col_stat_name {
-    width: 40em;
-  }
-  .col_stat {
-    width: 3em;
-    text-align: center;
-  }
-  .stat_name {
-    float: left;
-  }
-  .stat_name a, .stat_name span {
-    font-weight: bold;
-  }
-  .tag_links {
-    font-size: 0.9em;
-    float: right;
-    margin-top: 0.05em;
-  }
-  .tag_links span {
-    margin-left: 0.2em;
-  }
-  /* Statistics Table Graph */
-  .pass_bar {
-    background: #00f000;
-  }
-  .fail_bar {
-    background: red;
-  }
-  .no_tags_bar {
-    background: #E9E9E9;
-  }
-  .graph {
-    position: relative;
-    border: 1px solid black;
-    width: 11em;
-    height: 0.75em;
-    padding: 0px;
-    background: #E9E9E9;
-  }
-  .graph b {
-    display: block;
-    position: relative;
-    height: 100%;
-    float: left;
-    font-size: 4px;  /* to make graphs thin also in IE */
   }
   /* Tables in documentation */
   table.doc {
@@ -396,7 +393,6 @@ function renderSuiteSelector(linkTarget) {
     $.tmpl(window.templates.detailsHeader, args).appendTo('#test_details_container');
     $.tmpl(window.templates.suiteDetailsSelector, suitestats).appendTo('#test_details_container');
 }
-
 
 function emptyDetails(){
     window.tasks = [];
