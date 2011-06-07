@@ -320,19 +320,19 @@ $(document).ready(function(){
     addStatistics();
     addErrors();
     addTestExecutionLog(main);
-    if(window.location.hash !== "") {
+    if (window.location.hash) {
         makeElementVisible(window.location.hash.substring(1));
         window.location.hash = window.location.hash.substring(1);
-    } 
+    };
     expandFailed(main);
 });
 
 function addHeader() {
     var header = $.tmpl(window.templates.header, {
         header: document.title,
-        generated:window.testdata.generated().toString(),
-        prefix:prefix,
-        output:output
+        generated: window.testdata.generated().toString(),
+        prefix: prefix,
+        output: output
     });
     header.appendTo($('#header_div'));
 }
@@ -341,9 +341,9 @@ function addErrors() {
     if(window.testdata.error(0)){
         var errors = $.tmpl(window.templates.errors, {});
         errors.appendTo($('body'));
-        for(var i = 0; window.testdata.error(i) !== undefined; i++){
+        for (var i = 0; window.testdata.error(i) !== undefined; i++) {
             var message = window.testdata.error(i);
-            var err = $.tmpl((message.link === undefined)? window.templates.errorElement : window.templates.linkableErrorElement, message);
+            var err = $.tmpl((message.link === undefined) ? window.templates.errorElement : window.templates.linkableErrorElement, message);
             err.appendTo($('#errors_list'));
         }
     }
@@ -351,19 +351,19 @@ function addErrors() {
 
 function makeElementVisible(element) {
     var uuids = [];
-    if(element.indexOf("suite_")==0){
+    if (element.indexOf("suite_")==0) {
         element = element.substring("suite_".length);
         uuids = window.testdata.pathToSuite(element);
     }
-    if(element.indexOf("test_")==0){
+    if (element.indexOf("test_")==0) {
         element = element.substring("test_".length);
         uuids = window.testdata.pathToTest(element);
     }
-    if(element.indexOf("keyword_")==0){
+    if (element.indexOf("keyword_")==0) {
         element = element.substring("keyword_".length);
         uuids = window.testdata.pathToKeyword(element);
     }
-    for(var i = 0; i < uuids.length; i++){
+    for (var i in uuids) {
         $("#"+uuids[i]+"_unfoldlink").click();
     }
 }
@@ -372,7 +372,7 @@ function addTestExecutionLog(main) {
     $('<h2>Test Execution Log</h2>').appendTo($('body'));
     var root = $.tmpl(window.templates.suite, main);
     root.appendTo($('body'));
-    if(main.status == "pass"){
+    if (main.status == "pass") {
         $("#"+main.id+"_unfoldlink").click();
     }
 }
@@ -383,26 +383,26 @@ function setDocumentTitle(suite){
 
 function initTemplates() {
     return {
-           header: $('#header_template').template(),
-           totalStatRow: $('#total_statistics_row').template(),
-           tagStatRow: $('#tag_statistics_row').template(),
-           suiteStatRow: $('#suite_statistics_row').template(),
-           noTagsRow: $('#no_tags_row').template(),
-           suite: $('#suite_template').template(),
-           metadata: $('#metadata_template').template(),
-           test: $('#test_template').template(),
-           keyword: $('#keyword_template').template(),
-           message: $('#message_template').template(),
-           metadataElement: $('#metadata_element_template').template(),
-           documentationElement: $('#documentation_element_template').template(),
-           failureAndStatsMessageElement: $('#failure_and_stats_message_template').template(),
-           statsMessageElement: $('#stats_message_template').template(),
-           sourceElement: $('#source_element_template').template(),
-           statusElement: $('#status_element_template').template(),
-           errors: $('#errors_template').template(),
-           linkableErrorElement: $('#linkable_error_element_template').template(),
-           errorElement: $('#error_element_template').template()
-           };
+        header: $('#header_template').template(),
+        totalStatRow: $('#total_statistics_row').template(),
+        tagStatRow: $('#tag_statistics_row').template(),
+        suiteStatRow: $('#suite_statistics_row').template(),
+        noTagsRow: $('#no_tags_row').template(),
+        suite: $('#suite_template').template(),
+        metadata: $('#metadata_template').template(),
+        test: $('#test_template').template(),
+        keyword: $('#keyword_template').template(),
+        message: $('#message_template').template(),
+        metadataElement: $('#metadata_element_template').template(),
+        documentationElement: $('#documentation_element_template').template(),
+        failureAndStatsMessageElement: $('#failure_and_stats_message_template').template(),
+        statsMessageElement: $('#stats_message_template').template(),
+        sourceElement: $('#source_element_template').template(),
+        statusElement: $('#status_element_template').template(),
+        errors: $('#errors_template').template(),
+        linkableErrorElement: $('#linkable_error_element_template').template(),
+        errorElement: $('#error_element_template').template()
+    };
 };
 </script>
 
@@ -410,12 +410,10 @@ function initTemplates() {
 <script type="text/html" id="header_template">
   <h1>${header}</h1>
   <div class="times">
-    <span class="generated_time">Generated<br />
-        <span id="generated_time">${generated}</span>
+    <span class="generated_time">Generated
+      <span id="generated_time">${generated}</span>
     </span><br />
-    <span class="generated_ago">
-    ${prefix}${output}ago
-    </span>
+    <span class="generated_ago">${prefix}${output}ago</span>
   </div>
 </script>
 
@@ -437,11 +435,11 @@ function initTemplates() {
         <span title="${doc}">${label}</span>
         ${shownInfo}
       </div>
-    <div class="tag_links">
-      {{each links}}
+      <div class="tag_links">
+        {{each links}}
         <span>[<a href="${$value.url}" title="${$value.url}">${$value.title}</a>]</span>
-      {{/each}}
-    </div>
+        {{/each}}
+      </div>
     </td>
     {{tmpl($data) '#stat_columns'}}
   </tr>
@@ -485,170 +483,163 @@ function initTemplates() {
 </script>
 
 <script type="text/html" id="errors_template">
-    <h2>Test Execution Errors</h2>
-    <table class="errors" id="errors_list">
-    </table>
+  <h2>Test Execution Errors</h2>
+  <table class="errors" id="errors_list"></table>
 </script>
 
 <script type="text/html" id="error_element_template">
-        <tr>
-            <td class="time">${date()}</td>
-            <td class="${level} level">${levelText}</td>
-            <td class="msg">{{html text}}</td>
-        </tr>
+  <tr>
+    <td class="time">${date()}</td>
+    <td class="${level} level">${levelText}</td>
+    <td class="msg">{{html text}}</td>
+  </tr>
 </script>
 
 <script type="text/html" id="linkable_error_element_template">
-        <tr>
-            <td class="time">
-                <a onclick="makeElementVisible('${link}')" href="#${link}" title="Link to details.">
-                ${date}
-                </a>
-            </td>
-            <td class="${level} level">${levelText}</td>
-            <td class="msg">{{html text}}</td>
-        </tr>
+  <tr>
+    <td class="time">
+      <a onclick="makeElementVisible('${link}')"
+         href="#${link}" title="Link to details.">${date}</a>
+    </td>
+    <td class="${level} level">${levelText}</td>
+    <td class="msg">{{html text}}</td>
+  </tr>
 </script>
 
 <script type="text/html" id="suite_template">
-    <table class="suite" id="${id}">
-        <tr>
-            <td><a class="expand"
-                href="javascript:expandAllChildren('${id}')">Expand
-                    All</a>
-                <div class="foldingbutton" id="${id}_unfoldlink"
-                    onclick="openSuite('${id}');"
-                    style="display: block;">+</div>
-                <div class="foldingbutton" id="${id}_foldlink"
-                    onclick="closeElement('${id}');"
-                    style="display: none;">-</div> <span class="${status}">TEST&nbsp;SUITE:
-            </span> <a class="name" name="suite_${fullname}" title="${name}">${name}</a>
-            </td>
-        </tr>
-        <tr>
-            <td class="suite_children">
-                <div class="indent" id="${id}_children" style="display: none;">
-                </div>
-            </td>
-        </tr>
-    </table>
+  <table class="suite" id="${id}">
+    <tr>
+      <td>
+        <a class="expand"
+           href="javascript:expandAllChildren('${id}')">Expand All</a>
+        <div class="foldingbutton" id="${id}_unfoldlink"
+             onclick="openSuite('${id}');"
+             style="display: block;">+</div>
+        <div class="foldingbutton" id="${id}_foldlink"
+             onclick="closeElement('${id}');"
+             style="display: none;">-</div>
+        <span class="${status}">TEST&nbsp;SUITE:</span>
+        <a class="name" name="suite_${fullname}" title="${name}">${name}</a>
+      </td>
+    </tr>
+    <tr>
+      <td class="suite_children">
+        <div class="indent" id="${id}_children" style="display: none;"></div>
+      </td>
+    </tr>
+  </table>
 </script>
+
 <script type="text/html" id="stats_message_template">
-        <tr>
-            <th>Message:</th>
-            <td>{{tmpl($data) '#stats_message_partial_template'}}</td>
-        </tr>
+  <tr>
+    <th>Message:</th>
+    <td>{{tmpl($data) '#stats_message_partial_template'}}</td>
+  </tr>
 </script>
+
 <script type="text/html" id="failure_and_stats_message_template">
-        <tr>
-            <th>Message:</th>
-            <td>${getFailureMessage()}<br/><br/>{{tmpl($data) '#stats_message_partial_template'}}</td>
-        </tr>
+  <tr>
+    <th>Message:</th>
+    <td>${getFailureMessage()}<br/><br/>{{tmpl($data) '#stats_message_partial_template'}}</td>
+  </tr>
 </script>
+
 <script type="text/html" id="stats_message_partial_template">
 ${critical} critical test, ${criticalPassed} passed, <span class="${criticalFailureClass}">${criticalFailed} failed</span><br />${total} test total, ${totalPassed} passed, <span class="${totalFailureClass}">${totalFailed} failed</span>
 </script>
+
 <script type="text/html" id="metadata_element_template">
-        <tr>
-            <th>${key}:</th>
-            <td>{{html value}}</td>
-        </tr>
+  <tr>
+    <th>${key}:</th>
+    <td>{{html value}}</td>
+  </tr>
 </script>
+
 <script type="text/html" id="documentation_element_template">
-        <tr>
-            <th>${key}:</th>
-            <td>{{html value}}</td>
-        </tr>
+  <tr>
+    <th>${key}:</th>
+    <td>{{html value}}</td>
+  </tr>
 </script>
+
 <script type="text/html" id="status_element_template">
-        <tr>
-            <th>Status:</th>
-            <td class="${status}">${statusText}</td>
-        </tr>
+  <tr>
+    <th>Status:</th>
+    <td class="${status}">${statusText}</td>
+  </tr>
 </script>
+
 <script type="text/html" id="source_element_template">
-        <tr>
-            <th>${key}:</th>
-            <td><a href="${value}">${value}</a>
-            </td>
-        </tr>
+  <tr>
+    <th>${key}:</th>
+    <td><a href="${value}">${value}</a>
+    </td>
+  </tr>
 </script>
+
 <script type="text/html" id="test_template">
-                    <table class="test" id="${id}">
-                        <tr>
-                            <td><a class="expand"
-                                href="javascript:expandAllChildren('${id}')">Expand
-                                    All</a>
-                                <div class="foldingbutton"
-                                    id="${id}_unfoldlink"
-                                    onclick="openTest('${id}');"
-                                    style="display: block;">+</div>
-                                <div class="foldingbutton"
-                                    id="${id}_foldlink"
-                                    onclick="closeElement('${id}');"
-                                    style="display: none;">-</div>
-                                <span
-                                class="${status}">TEST&nbsp;CASE: </span> <a
-                                class="name" name="test_${fullname}"
-                                title="${fullname}">${name}</a></td>
-                        </tr>
-                        <tr>
-                            <td>
-                                <div class="indent"
-                                    id="${id}_children"
-                                    style="display: none;">
-                                </div>
-
-
-                                </td>
-                        </tr>
-                    </table>
+  <table class="test" id="${id}">
+    <tr>
+      <td><a class="expand"
+             href="javascript:expandAllChildren('${id}')">Expand All</a>
+        <div class="foldingbutton"
+             id="${id}_unfoldlink"
+             onclick="openTest('${id}');"
+             style="display: block;">+</div>
+        <div class="foldingbutton"
+             id="${id}_foldlink"
+             onclick="closeElement('${id}');"
+             style="display: none;">-</div>
+        <span class="${status}">TEST&nbsp;CASE: </span>
+        <a class="name" name="test_${fullname}"
+           title="${fullname}">${name}</a>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <div class="indent" id="${id}_children" style="display: none;"></div>
+      </td>
+    </tr>
+  </table>
 </script>
+
 <script type="text/html" id="metadata_template">
-                <table class="metadata" id="${id}_metadata">
-                </table>
+  <table class="metadata" id="${id}_metadata"></table>
 </script>
+
 <script type="text/html" id="keyword_template">
-                                <table class="keyword" id="${id}">
-                                        <tr>
-                                            <td>
-                                                <div
-                                                    class="foldingbutton"
-                                                    id="${id}_foldlink"
-                                                    onclick="closeElement('${id}');"
-                                                    style="display: none;">-</div>
-                                                <div
-                                                    class="foldingbutton"
-                                                    id="${id}_unfoldlink"
-                                                    onclick="openKeyword('${id}');"
-                                                    style="display: block;">+</div>
-                                                <span class="${status}">${type}:
-                                            </span> <a class="name" name="keyword_${path}"
-                                                       title="${name}">${name}</a>
-                                            </span> <span class="arg">${arguments}</span>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td>
-                                                <div class="indent"
-                                                    id="${id}_children"
-                                                    style="display: none;">
-                                                </div></td>
-                                        </tr>
-                                </table>
+  <table class="keyword" id="${id}">
+    <tr>
+      <td>
+        <div class="foldingbutton"
+             id="${id}_foldlink"
+             onclick="closeElement('${id}');"
+             style="display: none;">-</div>
+        <div class="foldingbutton"
+             id="${id}_unfoldlink"
+             onclick="openKeyword('${id}');"
+             style="display: block;">+</div>
+        <span class="${status}">${type}: </span>
+        <a class="name" name="keyword_${path}" title="${name}">${name}</a>
+        <span class="arg">${arguments}</span>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <div class="indent" id="${id}_children" style="display: none;"></div>
+      </td>
+    </tr>
+  </table>
 </script>
+
 <script type="text/html" id="message_template">
-                                                    <table
-                                                        class="messages">
-                                                        <tr>
-                                                            <td
-                                                                class="time">${shortTime()}</td>
-                                                            <td
-                                                                class="${level} level">${levelText}</td>
-                                                            <td
-                                                                class="msg">{{html text}}</td>
-                                                        </tr>
-                                                    </table>
+  <table class="messages">
+    <tr>
+      <td class="time">${shortTime()}</td>
+      <td class="${level} level">${levelText}</td>
+      <td class="msg">{{html text}}</td>
+    </tr>
+  </table>
 </script>
 
 </body>
