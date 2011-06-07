@@ -245,7 +245,6 @@ def _suite_node_parser(node, context):
     finally:
         context.end_suite()
 
-
 def _robot_node_parser(node, context):
     generator = node.get('generator')
     children = _children(node, context)
@@ -261,7 +260,6 @@ def _stat_from(node):
     return [[stat.text, int(stat.get('pass')), int(stat.get('fail')),
              stat.get('doc', ''), stat.get('info', ''), stat.get('links', '')]
              for stat in node.getchildren()]
-
 
 _node_parsers = {
 'robot':_robot_node_parser,
@@ -285,6 +283,7 @@ def create_datamodel_from(input_filename):
     robot = _RobotOutputHandler(Context())
     sax.parse(input_filename, robot)
     return robot.datamodel
+
 
 class _Handler(object):
 
@@ -327,6 +326,7 @@ class _Handler(object):
     def end_element(self, text):
         return self._children
 
+
 class _RobotHandler(_Handler):
 
     def __init__(self, context, attrs):
@@ -339,10 +339,12 @@ class _RobotHandler(_Handler):
             self._generated = self.context.timestamp(self._generated)
         return [self._generated, self._generator] + self.children
 
+
 class _StatisticsHandler(_Handler):
 
     def get_handler_for(self, name, *args):
         return _Handler(self.context, *args)
+
 
 class _StatItemHandler(_Handler):
 
@@ -357,6 +359,7 @@ class _StatItemHandler(_Handler):
     def end_element(self, text):
         return [text, self._pass, self._fail, self._doc, self._info, self._links]
 
+
 class _SuiteHandler(_Handler):
 
     def __init__(self, context, attrs):
@@ -367,14 +370,14 @@ class _SuiteHandler(_Handler):
         self.context.collect_stats()
 
     def end_element(self, text):
-         try:
-             return ['suite',
+        try:
+            return ['suite',
                      self._source,
                      self._name] + self._children + [self.context.dump_stats()]
-         finally:
-             self.context.end_suite()
+        finally:
+            self.context.end_suite()
 
-            
+
 class _TestHandler(_Handler):
 
     def __init__(self, context, attrs):
@@ -395,6 +398,7 @@ class _TestHandler(_Handler):
         self.context.end_test()
         return result
 
+
 class _StatusHandler(object):
     def __init__(self, context, attrs):
         self._context = context
@@ -406,6 +410,7 @@ class _StatusHandler(object):
         return [self._status,
                 self._starttime,
                 self._endtime-self._starttime]
+
 
 class _TestStatusHandler(_StatusHandler):
 
