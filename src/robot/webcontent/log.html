@@ -580,8 +580,9 @@ ${critical} critical test, ${criticalPassed} passed, <span class="${criticalFail
 <script type="text/html" id="test_template">
   <table class="test" id="${id}">
     <tr>
-      <td><a class="expand"
-             href="javascript:expandAllChildren('${id}')">Expand All</a>
+      <td>
+        <a class="expand"
+           href="javascript:expandAllChildren('${id}')">Expand All</a>
         <div class="foldingbutton"
              id="${id}_unfoldlink"
              onclick="openTest('${id}');"
