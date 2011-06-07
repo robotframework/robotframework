@@ -14,14 +14,20 @@ def serialize_log(test_output_datamodel, log_path, title=None):
         return
     _build_file(log_path, test_output_datamodel, title, None, LOG_TEMPLATE)
 
-def serialize_report(test_output_datamodel, report_path, title=None, background=None, logpath=None):
+def serialize_report(test_output_datamodel, report_path, title=None, background=None, log_path=None):
     if report_path is None:
         return
-    _build_file(report_path, test_output_datamodel, title, _resolve_background_colors(background), REPORT_TEMPLATE)
+    relative_log_path = _build_relative_log_path(report_path, log_path)
+    _build_file(report_path, test_output_datamodel, title, _resolve_background_colors(background), REPORT_TEMPLATE, relative_log_path)
 
-def _build_file(outpath, test_output_datamodel, title, background, template):
+def _build_relative_log_path(report, log):
+    if not log:
+        return None
+    return os.path.relpath(log, os.path.dirname(report))
+
+def _build_file(outpath, test_output_datamodel, title, background, template, log_path=None):
     with open(outpath, 'w') as outfile:
-        populator = _Populator(outfile, test_output_datamodel, title, background)
+        populator = _Populator(outfile, test_output_datamodel, title, background, log_path)
         with open(template, 'r') as templ:
             for line in templ:
                 populator.line(line)
@@ -38,8 +44,9 @@ def _resolve_background_colors(color_str):
 
 class _Populator(object):
 
-    def __init__(self, log, test_output_datamodel, title, background):
+    def __init__(self, log, test_output_datamodel, title, background, log_path=None):
         self._log = log
+        self._log_path=log_path
         self._test_output_datamodel = test_output_datamodel
         self._title = title
         self._parsing = self._normal_parsing
@@ -57,6 +64,8 @@ class _Populator(object):
             self._write_title()
         elif self._is_background_line_to_handle(line):
             self._write_background(line)
+        elif self._is_log_path_line_to_handle(line):
+            self._replace_log_path(line)
         else:
             self._log.write(line)
 
@@ -68,6 +77,12 @@ class _Populator(object):
 
     def _write_title(self):
         self._log.write('<title>%s</title>\n' % self._title)
+
+    def _is_log_path_line_to_handle(self, line):
+        return self._log_path and 'log.html' in line
+
+    def _replace_log_path(self, line):
+        self._log.write(line.replace('log.html', self._log_path))
 
     def _is_background_line_to_handle(self, line):
         for marker in self._backgrounds:
