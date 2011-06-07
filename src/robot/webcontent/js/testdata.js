@@ -1,70 +1,70 @@
-window.testdata = (function () {
+window.testdata = function () {
 
     var elementsById = {};
     var LEVEL = {I:'info', H:'info', T:'trace', W:'warn', E:'error', D:'debug', F:'fail'};
     var KEYWORD_TYPE = {kw: 'KEYWORD',
-                        setup:'SETUP',
-                        teardown:'TEARDOWN'};
+        setup:'SETUP',
+        teardown:'TEARDOWN'};
 
-    function addElement(elem){
+    function addElement(elem) {
         elem.id = uuid();
         elementsById[elem.id] = elem;
         return elem;
     }
 
-    function uuid(){
+    function uuid() {
         return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
-            var r = Math.random()*16|0, v = c == 'x' ? r : (r&0x3|0x8);
+            var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
             return v.toString(16);
         });
     }
 
-    function timestamp(millis){
+    function timestamp(millis) {
         return new Date(window.basemillis + millis);
     }
 
-    function get(id){
+    function get(id) {
         return texts.get(id)
     }
 
-    function times(stats){
+    function times(stats) {
         var start = timestamp(stats[1]);
         var elapsed = stats[2];
-        var stop = timestamp(stats[1]+elapsed);
+        var stop = timestamp(stats[1] + elapsed);
         return [start, stop, elapsed];
     }
 
-    function message(element){
+    function message(element) {
         return addElement(
                 model.Message(LEVEL[element[1]], timestamp(element[0]), get(element[2]), element[3]));
     }
 
-    function status(stats){
-        return (stats[0] == "P" ? model.PASS : model.FAIL);
-    }
-
-    function statuz(stats, parentSuiteTeardownFailed){
-        return model.Status(status(stats), parentSuiteTeardownFailed);
+    function createStatus(stats, parentSuiteTeardownFailed) {
+        var status = (stats[0] == "P" ? model.PASS : model.FAIL);
+        return model.Status(status, parentSuiteTeardownFailed);
     }
 
     function last(items) {
-        return items[items.length-1];
+        return items[items.length - 1];
     }
 
     function childCreator(parent, childType) {
-        return function (elem, index) { return addElement(childType(parent, elem, index)); };
+        return function (elem, index) {
+            return addElement(childType(parent, elem, index));
+        };
     }
 
-    function createKeyword(parent, element, index){
-        var kw = model.Keyword(
-                KEYWORD_TYPE[element[0]],
-                get(element[1]),
-                get(element[4]),
-                get(element[3]),
-                statuz(last(element)),
-                model.Times(times(last(element))),
-                parent,
-                index);
+    function createKeyword(parent, element, index) {
+        var kw = model.Keyword({
+            type: KEYWORD_TYPE[element[0]],
+            name: get(element[1]),
+            args: get(element[4]),
+            doc: get(element[3]),
+            status: createStatus(last(element)),
+            times: model.Times(times(last(element))),
+            parent: parent,
+            index: index
+        });
         kw.populateKeywords(Populator(element, keywordMatcher, childCreator(kw, createKeyword)));
         kw.populateMessages(Populator(element, messageMatcher, message));
         return kw;
@@ -73,55 +73,52 @@ window.testdata = (function () {
     var keywordMatcher = headerMatcher("kw", "setup", "teardown");
 
     function messageMatcher(elem) {
-        if(elem.length != 3) return false;
-        if(typeof(elem[0]) != "number") return false;
-        if(typeof(elem[1]) != "string") return false;
-        if(typeof(elem[2]) != "number") return false;
-        return true;
+        return (elem.length == 3 &&
+                typeof(elem[0]) == "number" &&
+                typeof(elem[1]) == "string" &&
+                typeof(elem[2]) == "number");
     }
 
-    function tags(taglist){
-        var tgs = [];
-        for(var i in taglist) tgs[i] = get(taglist[i]);
-        return tgs;
+    function tags(taglist) {
+        return util.map(taglist, texts.get);
     }
 
     function createTest(suite, element) {
-        var test = model.Test(
-                suite,
-                get(element[1]),
-                get(element[4]),
-                get(element[2]),
-                (element[3] == "Y"),
-                statuz(last(element), suite.hasTeardownFailure()),
-                model.Times(times(last(element))),
-                tags(element[element.length-2])
-        );
+        var test = model.Test({
+            parent: suite,
+            name: get(element[1]),
+            doc: get(element[4]),
+            timeout: get(element[2]),
+            isCritical: (element[3] == "Y"),
+            status: createStatus(last(element), suite.hasTeardownFailure()),
+            times: model.Times(times(last(element))),
+            tags: tags(element[element.length - 2])
+        });
         test.populateKeywords(Populator(element, keywordMatcher, childCreator(test, createKeyword)));
         return test;
     }
 
     function createSuite(parent, element) {
-        var suit = model.Suite(
-                parent,
-                element[2],
-                element[1],
-                get(element[3]),
-                statuz(element[element.length-2], parent && parent.hasTeardownFailure()),
-                model.Times(times(element[element.length-2])),
-                suiteStats(last(element)),
-                parseMetadata(element[4])
-        );
-        suit.populateKeywords(Populator(element, keywordMatcher, childCreator(suit, createKeyword)));
-        suit.populateTests(Populator(element, headerMatcher("test"), childCreator(suit, createTest)));
-        suit.populateSuites(Populator(element, headerMatcher("suite"), childCreator(suit, createSuite)));
-        return suit;
+        var suite = model.Suite({
+            parent: parent,
+            name: element[2],
+            source: element[1],
+            doc: get(element[3]),
+            status: createStatus(element[element.length - 2], parent && parent.hasTeardownFailure()),
+            times: model.Times(times(element[element.length - 2])),
+            statistics: suiteStats(last(element)),
+            metadata: parseMetadata(element[4])
+        });
+        suite.populateKeywords(Populator(element, keywordMatcher, childCreator(suite, createKeyword)));
+        suite.populateTests(Populator(element, headerMatcher("test"), childCreator(suite, createTest)));
+        suite.populateSuites(Populator(element, headerMatcher("suite"), childCreator(suite, createSuite)));
+        return suite;
     }
 
-    function parseMetadata(data){
+    function parseMetadata(data) {
         var metadata = {};
-        for(var key in data){
-        	metadata[key] = get(data[key]);
+        for (var key in data) {
+            metadata[key] = get(data[key]);
         }
         return metadata;
     }
@@ -137,132 +134,134 @@ window.testdata = (function () {
         };
     }
 
-    function headerMatcher(){
-    	var args = arguments;
-        return function(elem){
-        		for (var i=0; i < args.length; i++)
-        			if (elem[0] == args[i]) return true;
-        		return false;
-        		};
+    function headerMatcher() {
+        var args = arguments;
+        return function(elem) {
+            for (var i = 0; i < args.length; i++)
+                if (elem[0] == args[i]) return true;
+            return false;
+        };
     }
 
     function Populator(element, matcher, creator) {
         var items = findElements(element, matcher);
         return {
             numberOfItems: items.length,
-            creator: function (index) {return creator(items[index], index);}
+            creator: function (index) {
+                return creator(items[index], index);
+            }
         };
     }
 
     function findElements(fromElement, matcher) {
         var results = new Array();
-        for(var i = 0; i < fromElement.length; i++)
-            if(matcher(fromElement[i]))
+        for (var i = 0; i < fromElement.length; i++)
+            if (matcher(fromElement[i]))
                 results.push(fromElement[i]);
         return results;
     }
 
     function suite() {
         var elem = window.data[2];
-        if(elementsById[elem.id])
+        if (elementsById[elem.id])
             return elem;
         var main = addElement(createSuite(undefined, elem));
         window.data[2] = main;
         return main;
     }
 
-    function findById(id){
+    function findById(id) {
         return elementsById[id];
     }
 
-    function pathToKeyword(fullname){
+    function pathToKeyword(fullname) {
         var root = suite();
-        if(fullname.indexOf(root.fullname+".") != 0) return [];
-        return keywordPathTo(fullname+".", root, [root.id]);
+        if (fullname.indexOf(root.fullname + ".") != 0) return [];
+        return keywordPathTo(fullname + ".", root, [root.id]);
     }
 
-    function pathToTest(fullname){
+    function pathToTest(fullname) {
         var root = suite();
-        if(fullname.indexOf(root.fullname+".") != 0) return [];
+        if (fullname.indexOf(root.fullname + ".") != 0) return [];
         return testPathTo(fullname, root, [root.id]);
     }
 
-    function pathToSuite(fullname){
+    function pathToSuite(fullname) {
         var root = suite();
-        if(fullname.indexOf(root.fullname) != 0) return [];
-        if(fullname == root.fullname) return [root.id];
+        if (fullname.indexOf(root.fullname) != 0) return [];
+        if (fullname == root.fullname) return [root.id];
         return suitePathTo(fullname, root, [root.id]);
     }
 
-    function keywordPathTo(fullname, current, result){
-        if(fullname == "") return result;
-        for(var i = 0; i < current.numberOfKeywords; i++){
+    function keywordPathTo(fullname, current, result) {
+        if (fullname == "") return result;
+        for (var i = 0; i < current.numberOfKeywords; i++) {
             var kw = current.keyword(i);
-            if(fullname.indexOf(kw.path+".") == 0){
+            if (fullname.indexOf(kw.path + ".") == 0) {
                 result.push(kw.id);
-                if(fullname == kw.path+".")
+                if (fullname == kw.path + ".")
                     return result;
                 return keywordPathTo(fullname, kw, result);
             }
         }
-        for(var i = 0; i < current.numberOfTests; i++){
+        for (var i = 0; i < current.numberOfTests; i++) {
             var test = current.test(i);
-            if(fullname.indexOf(test.fullname+".") == 0){
+            if (fullname.indexOf(test.fullname + ".") == 0) {
                 result.push(test.id);
                 return keywordPathTo(fullname, test, result);
             }
         }
-        for(var i = 0; i < current.numberOfSuites; i++){
+        for (var i = 0; i < current.numberOfSuites; i++) {
             var suite = current.suite(i);
-            if(fullname.indexOf(suite.fullname+".") == 0){
+            if (fullname.indexOf(suite.fullname + ".") == 0) {
                 result.push(suite.id);
                 return keywordPathTo(fullname, suite, result);
             }
         }
     }
 
-    function testPathTo(fullname, currentSuite, result){
-        for(var i = 0; i < currentSuite.numberOfTests; i++){
+    function testPathTo(fullname, currentSuite, result) {
+        for (var i = 0; i < currentSuite.numberOfTests; i++) {
             var test = currentSuite.test(i);
-            if(fullname == test.fullname){
+            if (fullname == test.fullname) {
                 result.push(test.id);
                 return result;
             }
         }
-        for(var i = 0; i < currentSuite.numberOfSuites; i++){
+        for (var i = 0; i < currentSuite.numberOfSuites; i++) {
             var suite = currentSuite.suite(i);
-            if(fullname.indexOf(suite.fullname+".") == 0){
+            if (fullname.indexOf(suite.fullname + ".") == 0) {
                 result.push(suite.id);
                 return testPathTo(fullname, suite, result);
             }
         }
     }
 
-    function suitePathTo(fullname, currentSuite, result){
-        for(var i = 0; i < currentSuite.numberOfSuites; i++){
+    function suitePathTo(fullname, currentSuite, result) {
+        for (var i = 0; i < currentSuite.numberOfSuites; i++) {
             var suite = currentSuite.suite(i);
-            if(fullname == suite.fullname){
+            if (fullname == suite.fullname) {
                 result.push(suite.id);
                 return result;
             }
-            if(fullname.indexOf(suite.fullname+".") == 0){
+            if (fullname.indexOf(suite.fullname + ".") == 0) {
                 result.push(suite.id);
                 return suitePathTo(fullname, suite, result);
             }
         }
     }
 
-    function generated(){
+    function generated() {
         return timestamp(window.data[0]);
     }
 
-    function error(index){
-        if(window.data[4].length <= index)
+    function error(index) {
+        if (window.data[4].length <= index)
             return undefined;
         return message(window.data[4][index]);
     }
 
-    function statistics () {
+    function statistics() {
         var statData = window.data[3];
         return stats.Statistics(statData[0], statData[1], statData[2]);
     }
@@ -278,7 +277,7 @@ window.testdata = (function () {
         statistics: statistics
     };
 
-}());
+}();
 
 window.texts = (function () {
 
