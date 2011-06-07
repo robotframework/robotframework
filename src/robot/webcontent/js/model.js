@@ -1,4 +1,4 @@
-window.model = (function () {
+window.model = function () {
 
     var STATUS = {
         pass:"pass",
@@ -11,44 +11,52 @@ window.model = (function () {
         teardown:'TEARDOWN'
     };
 
-    function Suite(parent, name, source, doc, status, times, stats, metadata) {
-        var suite = {};
-        populateCommonAttrs(suite, name, doc, status, times);
-        suite.parent = parent;
-        suite.source = source;
-        suite.fullname = parent ? parent.fullname + "." + name : name;
-        suite.statusText = status.status.toUpperCase();
-        setStats(suite, stats);
-        suite.metadata = metadata;
+    function Suite(data) {
+        var suite = createModelObject(data);
+        suite.source = data.source;
+        suite.fullname = data.parent ? data.parent.fullname + "." + data.name : data.name;
+        suite.statusText = data.status.status.toUpperCase();
+        setStats(suite, data.statistics);
+        suite.metadata = data.metadata;
         suite.populateKeywords = createIterablePopulator("Keyword");
         suite.populateTests = createIterablePopulator("Test");
         suite.populateSuites = createIterablePopulator("Suite");
-        suite.children = function () { return suite.keywords().concat(suite.tests()).concat(suite.suites()); };
-        suite.hasTeardownFailure = function () { return suiteTeardownFailed(suite) || status.parentSuiteTeardownFailed; };
+        suite.children = function () {
+            return suite.keywords().concat(suite.tests()).concat(suite.suites());
+        };
+        suite.hasTeardownFailure = function () {
+            return suiteTeardownFailed(suite) || data.status.parentSuiteTeardownFailed;
+        };
         suite.getFailureMessage = function () {
-            if(status.parentSuiteTeardownFailed)
+            if (data.status.parentSuiteTeardownFailed)
                 return "Teardown of the parent suite failed.";
-            if(suite.hasTeardownFailure())
-                return "Suite teardown failed:\n"+
-                    suite.keyword(suite.numberOfKeywords-1).message(0).text;
+            if (suite.hasTeardownFailure())
+                return "Suite teardown failed:\n" +
+                        suite.keyword(suite.numberOfKeywords - 1).message(0).text;
         };
         suite.searchTests = function (predicate) {
             var tests = [];
-            for (var i=0; i<this.numberOfSuites; i++)
+            for (var i = 0; i < this.numberOfSuites; i++)
                 tests = tests.concat(this.suite(i).searchTests(predicate));
             return tests.concat(util.filter(this.tests(), predicate));
         };
         suite.searchTestsByTag = function (tag) {
-            return suite.searchTests(function (test) { return containsTag(test.tags, tag.label, tag.info == 'combined'); });
+            return suite.searchTests(function (test) {
+                return containsTag(test.tags, tag.label, tag.info == 'combined');
+            });
         };
         suite.findSuiteByName = function (name) {
             return findSuiteByName(suite, name);
         };
         suite.allTests = function () {
-            return suite.searchTests(function (test) { return true; });
+            return suite.searchTests(function (test) {
+                return true;
+            });
         };
         suite.criticalTests = function () {
-            return suite.searchTests(function (test) { return test.isCritical; });
+            return suite.searchTests(function (test) {
+                return test.isCritical;
+            });
         };
         return suite;
     }
@@ -59,14 +67,18 @@ window.model = (function () {
             return util.contains(testTags, util.normalize(tagname));
         if (tagname.indexOf(' & ') != -1) {
             var tagnames = tagname.split(' & ');
-            return util.all(util.map(tagnames, function (name) { return containsTag(testTags, name, true); }));
+            return util.all(util.map(tagnames, function (name) {
+                return containsTag(testTags, name, true);
+            }));
         }
         if (tagname.indexOf(' NOT ') != -1) {
             var tagnames = tagname.split(' NOT ');
             var required = tagnames[0];
             var notAllowed = tagnames.slice(1);
             return containsTag(testTags, required, true) &&
-                    util.all(util.map(notAllowed, function (name) { return !containsTag(testTags, name, true); }))
+                    util.all(util.map(notAllowed, function (name) {
+                        return !containsTag(testTags, name, true);
+                    }))
         }
         var matcher = util.Matcher(tagname)
         return util.any(util.map(testTags, matcher.matches));
@@ -76,7 +88,7 @@ window.model = (function () {
         if (suite.fullname == name)
             return suite;
         var subSuites = suite.suites();
-        for (var i=0; i<subSuites.length; i++) {
+        for (var i = 0; i < subSuites.length; i++) {
             var match = findSuiteByName(subSuites[i], name);
             if (match)
                 return match;
@@ -84,9 +96,9 @@ window.model = (function () {
         return null;
     }
 
-    function suiteTeardownFailed(suite){
+    function suiteTeardownFailed(suite) {
         if (suite.numberOfKeywords) {
-            var kw = suite.keyword(suite.numberOfKeywords -1);
+            var kw = suite.keyword(suite.numberOfKeywords - 1);
             if (kw.type == KEYWORD_TYPE.teardown)
                 return kw.status == STATUS.fail;
         }
@@ -97,6 +109,7 @@ window.model = (function () {
         for (var name in stats) {
             suite[name] = stats[name];
         }
+        // TODO: move to templates
         if (suite.totalFailed == 0)
             suite.totalFailureClass = 'pass';
         else
@@ -107,41 +120,49 @@ window.model = (function () {
             suite.criticalFailureClass = 'fail';
     }
 
-    function populateCommonAttrs(obj, name, doc, status, times) {
-        obj.name = name;
-        obj.documentation = doc;
-        obj.status = status.status;
-        obj.times = times;
+    function createModelObject(data) {
+        var obj = {};
+        obj.name = data.name;
+        obj.documentation = data.doc; // TODO: rename documentation -> doc
+        obj.status = data.status.status;
+        obj.times = data.times;
+        return obj
     }
 
-    function Test(parent, name, doc, timeout, isCritical, status, times, tags) {
-        var test = {};
-        populateCommonAttrs(test, name, doc, status, times);
-        test.fullname= parent.fullname + "." + test.name;  // TODO: is this used?, could be function also
+    function Test(data) {
+        var names = ['name', 'doc', 'status', '...']
+        var test = createModelObject(data);
+        test.fullname = data.parent.fullname + "." + test.name;  // TODO: is this used?, could be function also
         test.parentName = function () {
-            return parent.fullname.replace('.', ' . ', 'g') + ' . '; // TODO: duplicate
+            return data.parent.fullname.replace('.', ' . ', 'g') + ' . '; // TODO: duplicate
         };
-        test.timeout = timeout;
+        test.timeout = data.timeout;
         test.populateKeywords = createIterablePopulator("Keyword");
-        test.children = function () { return test.keywords(); };
-        test.isCritical = isCritical;
-        test.statusText = test.status.toUpperCase() + (isCritical ? " (critical)" : "");
-        test.tags = tags;
-        test.parentSuiteTeardownFailed = status.parentSuiteTeardownFailed;
-        test.getFailureMessage = function () { return getTestFailureMessage(test); };
+        test.children = function () {
+            return test.keywords();
+        };
+        test.isCritical = data.isCritical;
+        test.statusText = test.status.toUpperCase() + (test.isCritical ? " (critical)" : ""); // TODO: move to templates
+        test.tags = data.tags;
+        test.parentSuiteTeardownFailed = data.status.parentSuiteTeardownFailed;
+        test.getFailureMessage = function () {
+            return getTestFailureMessage(test);
+        };
         return test;
     }
 
-    function Keyword(type, name, args, doc, status, times, parent, index) {
-        var kw = {};
-        populateCommonAttrs(kw, name, doc, status, times);
-        kw.type = type;
+    function Keyword(data) {
+        var kw = createModelObject(data);
+        kw.type = data.type;
+        var parent = data.parent
         var parentPath = (parent.path === undefined) ? parent.fullname : parent.path;
-        kw.path = parentPath + "." + index;
-        kw.arguments = args;
+        kw.path = parentPath + "." + data.index;
+        kw.arguments = data.args;
         kw.populateKeywords = createIterablePopulator("Keyword");
         kw.populateMessages = createIterablePopulator("Message");
-        kw.children = function () { return kw.keywords(); };
+        kw.children = function () {
+            return kw.keywords();
+        };
         kw.getFailureMessage = getKeywordFailureMessage;
         return kw;
     }
@@ -151,8 +172,12 @@ window.model = (function () {
         message.level = level;
         message.levelText = level.toUpperCase();
         message.time = time;
-        message.shortTime = function () {return timeFromDate(message.time);};
-        message.date = function () {return formatDate(message.time);};
+        message.shortTime = function () {
+            return timeFromDate(message.time);
+        };
+        message.date = function () {
+            return formatDate(message.time);
+        };
         message.text = text;
         message.link = link;
         return message;
@@ -161,7 +186,7 @@ window.model = (function () {
     function Status(status, parentSuiteTeardownFailed) {
         return {
             parentSuiteTeardownFailed: parentSuiteTeardownFailed,
-            status: parentSuiteTeardownFailed? model.FAIL : status
+            status: parentSuiteTeardownFailed ? model.FAIL : status
         };
     }
 
@@ -207,15 +232,15 @@ window.model = (function () {
 
     function formatElapsed(elapsed, excludeMillis) {
         var millis = elapsed;
-            var hours = Math.floor(millis / (60 * 60 * 1000));
-            millis -= hours * 60 * 60 * 1000;
-            var minutes = Math.floor(millis / (60 * 1000));
-            millis -= minutes * 60 * 1000;
-            var seconds = Math.floor(millis / 1000);
-            millis -= seconds * 1000;
-            if (excludeMillis)
-                millis = undefined;
-            return shortTime(hours, minutes, seconds, millis);
+        var hours = Math.floor(millis / (60 * 60 * 1000));
+        millis -= hours * 60 * 60 * 1000;
+        var minutes = Math.floor(millis / (60 * 1000));
+        millis -= minutes * 60 * 1000;
+        var seconds = Math.floor(millis / 1000);
+        millis -= seconds * 1000;
+        if (excludeMillis)
+            millis = undefined;
+        return shortTime(hours, minutes, seconds, millis);
     }
 
     function padTo(number, len) {
@@ -266,10 +291,10 @@ window.model = (function () {
         if (msg)
             return msg;
         if (this.message(0)) return this.message(0).text;
-        }
+    }
 
     function getFailureMessageFromKeywords(obj) {
-        for(var i = 0; i < obj.numberOfKeywords; i++){
+        for (var i = 0; i < obj.numberOfKeywords; i++) {
             var child = obj.keyword(i);
             if (child.status == STATUS.fail)
                 return child.getFailureMessage();
@@ -298,7 +323,7 @@ window.model = (function () {
         containsTag: containsTag,  // Exposed for tests
         shortTime: shortTime
     };
-}());
+}();
 
 window.stats = (function () {
 
