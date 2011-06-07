@@ -27,6 +27,22 @@
   br {
     mso-data-placement: same-cell;  /* maintain line breaks in Excel */
   }
+  /* Generic Table Styles */
+  table {
+    background: white;
+    border: 1px solid black;
+    border-collapse: collapse;
+    empty-cells: show;
+    margin: 0px 1px;
+  }
+  th, td {
+    border: 1px solid black;
+    padding: 1px 5px;
+  }
+  th {
+    background: #C6C6C6;
+    color: black;
+  }
   /* Statistics Table */
   table.statistics {
     width: 58em;
@@ -66,7 +82,7 @@
   }
   /* Statistics Table Graph */
   .pass_bar {
-    background: #00f000;
+    background: #00F000;
   }
   .fail_bar {
     background: red;
@@ -87,23 +103,8 @@
     position: relative;
     height: 100%;
     float: left;
+    /* TODO: Is the hack below still needed w/ IE8? */
     font-size: 4px;  /* to make graphs thin also in IE */
-  }
-  /* Generic Table Styles */
-  table {
-    background: white;
-    border: 1px solid black;
-    border-collapse: collapse;
-    empty-cells: show;
-    margin: 0px 1px;
-  }
-  th, td {
-    border: 1px solid black;
-    padding: 1px 5px;
-  }
-  th {
-    background: #C6C6C6;
-    color: black;
   }
   /* Test detail tables */
   table#tests_by_suite, table#tests_detail_table {
