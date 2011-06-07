@@ -24,6 +24,8 @@ window.model = function () {
         suite.children = function () {
             return suite.keywords().concat(suite.tests()).concat(suite.suites());
         };
+        // TODO: Create message for suite here, not via a function
+        // TODO: It seems failures in suite setup aren't handled at all
         suite.hasTeardownFailure = function () {
             return suiteTeardownFailed(suite) || data.status.parentSuiteTeardownFailed;
         };
@@ -144,10 +146,10 @@ window.model = function () {
         test.isCritical = data.isCritical;
         test.statusText = test.status.toUpperCase() + (test.isCritical ? " (critical)" : ""); // TODO: move to templates
         test.tags = data.tags;
-        test.parentSuiteTeardownFailed = data.status.parentSuiteTeardownFailed;
-        test.getFailureMessage = function () {
-            return getTestFailureMessage(test);
-        };
+        test.message = data.message;
+        // TODO: Handle failures in parent teardowns
+        // data.status.parentSuiteTeardownFailed;
+        // return "Teardown of the parent suite failed.";
         return test;
     }
 
@@ -163,7 +165,6 @@ window.model = function () {
         kw.children = function () {
             return kw.keywords();
         };
-        kw.getFailureMessage = getKeywordFailureMessage;
         return kw;
     }
 
@@ -284,30 +285,6 @@ window.model = function () {
             }
             return cached;
         };
-    }
-
-    function getKeywordFailureMessage() {
-        var msg = getFailureMessageFromKeywords(this);
-        if (msg)
-            return msg;
-        if (this.message(0)) return this.message(0).text;
-    }
-
-    function getFailureMessageFromKeywords(obj) {
-        for (var i = 0; i < obj.numberOfKeywords; i++) {
-            var child = obj.keyword(i);
-            if (child.status == STATUS.fail)
-                return child.getFailureMessage();
-        }
-    }
-
-    function getTestFailureMessage(test) {
-        var msg = getFailureMessageFromKeywords(test);
-        if (msg)
-            return msg;
-        if (test.parentSuiteTeardownFailed)
-            return "Teardown of the parent suite failed.";
-        return '';
     }
 
     return {
