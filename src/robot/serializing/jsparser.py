@@ -409,7 +409,8 @@ class _StatusHandler(object):
     def end_element(self, text):
         return [self._status,
                 self._starttime,
-                self._endtime-self._starttime]
+                self._endtime-self._starttime,
+                self._context.get_text_id(text or '')]
 
 
 class _TestStatusHandler(_StatusHandler):

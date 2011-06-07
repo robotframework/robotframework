@@ -23,6 +23,7 @@ window.testdata = function () {
         return new Date(window.basemillis + millis);
     }
 
+    // TODO: Remove this function and use texts.get everywhere.
     function get(id) {
         return texts.get(id)
     }
@@ -39,13 +40,19 @@ window.testdata = function () {
                 model.Message(LEVEL[element[1]], timestamp(element[0]), get(element[2]), element[3]));
     }
 
+    // TODO: Is separate status object needed? Probably not.
     function createStatus(stats, parentSuiteTeardownFailed) {
         var status = (stats[0] == "P" ? model.PASS : model.FAIL);
         return model.Status(status, parentSuiteTeardownFailed);
     }
 
     function last(items) {
-        return items[items.length - 1];
+        return items[items.length-1];
+    }
+
+    // TODO: Consider better name...
+    function last2(items) {
+        return items[items.length-2];
     }
 
     function childCreator(parent, childType) {
@@ -91,8 +98,9 @@ window.testdata = function () {
             timeout: get(element[2]),
             isCritical: (element[3] == "Y"),
             status: createStatus(last(element), suite.hasTeardownFailure()),
+            message: get(last(last(element))),
             times: model.Times(times(last(element))),
-            tags: tags(element[element.length - 2])
+            tags: tags(last2(element))
         });
         test.populateKeywords(Populator(element, keywordMatcher, childCreator(test, createKeyword)));
         return test;
@@ -104,8 +112,10 @@ window.testdata = function () {
             name: element[2],
             source: element[1],
             doc: get(element[3]),
-            status: createStatus(element[element.length - 2], parent && parent.hasTeardownFailure()),
-            times: model.Times(times(element[element.length - 2])),
+            status: createStatus(last2(element), parent && parent.hasTeardownFailure()),
+            // TODO: Add message to suite. Following ought to work but breaks 40+ specs...
+            // message: get(last(last2(element))),
+            times: model.Times(times(last2(element))),
             statistics: suiteStats(last(element)),
             metadata: parseMetadata(element[4])
         });
