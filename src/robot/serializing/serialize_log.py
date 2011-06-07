@@ -2,7 +2,7 @@ from __future__ import with_statement
 
 import re
 import os
-from robot import webcontent
+from robot import webcontent, utils
 
 PATH = os.path.dirname(webcontent.__file__)+os.path.sep
 LOG_TEMPLATE = PATH + 'log.html'
@@ -23,7 +23,7 @@ def serialize_report(test_output_datamodel, report_path, title=None, background=
 def _build_relative_log_path(report, log):
     if not log:
         return None
-    return os.path.relpath(log, os.path.dirname(report))
+    return utils.get_link_path(log, os.path.dirname(report))
 
 def _build_file(outpath, test_output_datamodel, title, background, template, log_path=None):
     with open(outpath, 'w') as outfile:
