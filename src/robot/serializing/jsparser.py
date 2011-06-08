@@ -143,9 +143,9 @@ class TextCache(object):
             return self.texts[raw]
         text = self._encode(text)
         if text not in self.texts:
-            self.texts[text] = self.index
-            self.index +=1
-        return _TextIndex(self.texts[text])
+            self.texts[text] = _TextIndex(self.index)
+            self.index += 1
+        return self.texts[text]
 
     def _encode(self, text):
         encoded = base64.b64encode(zlib.compress(text.encode('utf-8'), 9))
