@@ -338,14 +338,10 @@ function addHeader() {
 }
 
 function addErrors() {
-    if(window.testdata.error(0)){
-        var errors = $.tmpl(window.templates.errors, {});
-        errors.appendTo($('body'));
-        for (var i = 0; window.testdata.error(i) !== undefined; i++) {
-            var message = window.testdata.error(i);
-            var err = $.tmpl((message.link === undefined) ? window.templates.errorElement : window.templates.linkableErrorElement, message);
-            err.appendTo($('#errors_list'));
-        }
+    var errors = window.testdata.errors();
+    if (errors.length) {
+        $.tmpl(window.templates.errorHeader).appendTo($('body'));
+        $.tmpl(window.templates.error, errors).appendTo($('#error_table'));
     }
 }
 
@@ -388,13 +384,12 @@ function initTemplates() {
         tagStatRow: $('#tag_statistics_row').template(),
         suiteStatRow: $('#suite_statistics_row').template(),
         noTagsRow: $('#no_tags_row').template(),
+        errorHeader: $('#error_header_template').template(),
+        error: $('#error_template').template(),
         suite: $('#suite_template').template(),
         test: $('#test_template').template(),
         keyword: $('#keyword_template').template(),
         message: $('#message_template').template(),
-        errors: $('#errors_template').template(),
-        linkableErrorElement: $('#linkable_error_element_template').template(),
-        errorElement: $('#error_element_template').template()
     };
 };
 </script>
@@ -475,24 +470,20 @@ function initTemplates() {
   </tr>
 </script>
 
-<script type="text/html" id="errors_template">
+<script type="text/html" id="error_header_template">
   <h2>Test Execution Errors</h2>
-  <table class="errors" id="errors_list"></table>
+  <table class="errors" id="error_table"></table>
 </script>
 
-<script type="text/html" id="error_element_template">
-  <tr>
-    <td class="time">${date()}</td>
-    <td class="${level} level">${levelText}</td>
-    <td class="msg">{{html text}}</td>
-  </tr>
-</script>
-
-<script type="text/html" id="linkable_error_element_template">
+<script type="text/html" id="error_template">
   <tr>
     <td class="time">
+      {{if link}}
       <a onclick="makeElementVisible('${link}')"
          href="#${link}" title="Link to details.">${date}</a>
+      {{else}}
+      ${date}
+      {{/if}}
     </td>
     <td class="${level} level">${levelText}</td>
     <td class="msg">{{html text}}</td>
