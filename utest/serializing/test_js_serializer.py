@@ -10,6 +10,23 @@ from robot.utils.asserts import assert_equals
 
 class TestJsSerializer(unittest.TestCase):
 
+    SUITE_XML = """<suite source="/tmp/verysimple.txt" name="Verysimple">
+                    <doc></doc>
+                    <metadata></metadata>
+                    <test name="Test" timeout="">
+                        <doc></doc>
+                        <kw type="kw" name="BuiltIn.Log" timeout="">
+                            <doc>Logs the given message with the given level.</doc>
+                            <arguments><arg>simple</arg></arguments>
+                            <msg timestamp="20110601 12:01:51.353" level="WARN">simple</msg>
+                            <status status="PASS" endtime="20110601 12:01:51.353" starttime="20110601 12:01:51.353"></status>
+                        </kw>
+                        <tags></tags>
+                        <status status="PASS" endtime="20110601 12:01:51.354" critical="yes" starttime="20110601 12:01:51.353"></status>
+                    </test>
+                    <status status="PASS" endtime="20110601 12:01:51.354" starttime="20110601 12:01:51.329"></status>
+                    </suite>"""
+
     def setUp(self):
         self._context = Context()
         self._handler = _RobotOutputHandler(self._context)
@@ -96,23 +113,7 @@ class TestJsSerializer(unittest.TestCase):
         assert_equals(data_model._texts, ['*', '*Test', '*Log', '*Logging', '*simple'])
 
     def test_suite_xml_parsing(self):
-        suite_xml = """<suite source="/tmp/verysimple.txt" name="Verysimple">
-                    <doc></doc>
-                    <metadata></metadata>
-                    <test name="Test" timeout="">
-                        <doc></doc>
-                        <kw type="kw" name="BuiltIn.Log" timeout="">
-                            <doc>Logs the given message with the given level.</doc>
-                            <arguments><arg>simple</arg></arguments>
-                            <msg timestamp="20110601 12:01:51.353" level="WARN">simple</msg>
-                            <status status="PASS" endtime="20110601 12:01:51.353" starttime="20110601 12:01:51.353"></status>
-                        </kw>
-                        <tags></tags>
-                        <status status="PASS" endtime="20110601 12:01:51.354" critical="yes" starttime="20110601 12:01:51.353"></status>
-                    </test>
-                    <status status="PASS" endtime="20110601 12:01:51.354" starttime="20110601 12:01:51.329"></status>
-                    </suite>"""
-        data_model = self._get_data_model(suite_xml)
+        data_model = self._get_data_model(self.SUITE_XML)
         assert_equals(data_model._basemillis, 1306918911353)
         assert_equals(data_model._robot_data, ['suite', '/tmp/verysimple.txt', 'Verysimple',
                                                0, {},
@@ -121,6 +122,17 @@ class TestJsSerializer(unittest.TestCase):
                                                ['P', -24, 25], [1, 1, 1, 1]])
         assert_equals(data_model._texts, ['*', '*Test', '*BuiltIn.Log', '*Logs the given message with the given level.', '*simple'])
         assert_equals(self._context.link_to([0, 'W', 4]), 'keyword_Verysimple.Test.0')
+
+    def test_suite_data_model_keywords_clearing(self):
+        data_model = self._get_data_model(self.SUITE_XML)
+        data_model.remove_keywords()
+        assert_equals(data_model._basemillis, 1306918911353)
+        assert_equals(data_model._robot_data, ['suite', '/tmp/verysimple.txt', 'Verysimple',
+                                               0, {},
+                                                ['test', 1, 0, 'Y', 0, [], ['P', 0, 1]],
+                                               ['P', -24, 25], [1, 1, 1, 1]])
+        assert_equals(data_model._texts, ['*', '*Test', '*BuiltIn.Log', '*Logs the given message with the given level.', '*simple'])
+
 
     def test_metadata_xml_parsing(self):
         meta_xml = """<metadata>

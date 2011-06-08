@@ -76,8 +76,9 @@ class Reporter(object):
         data_model = jsparser.create_datamodel_from(data_sources[0])
         report_path = self._parse_file(settings['Report'])
         log_path = self._parse_file(settings['Log'])
-        self._make_report(report_path, log_path, data_model, settings)
         self._make_log(log_path, data_model, settings)
+        data_model.remove_keywords()
+        self._make_report(report_path, log_path, data_model, settings)
         xunit_path = self._parse_file(settings['XUnitFile'])
         self._make_xunit(xunit_path, data_sources, settings)
         if self._temp_file:

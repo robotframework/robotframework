@@ -558,6 +558,17 @@ class DataModel(object):
         json_dump(self._texts, output)
         output.write(';\n')
 
+    def remove_keywords(self):
+        self._robot_data = self._remove_keywords_from(self._robot_data)
+
+    def _remove_keywords_from(self, data):
+        if not isinstance(data, list):
+            return data
+        return [self._remove_keywords_from(item) for item in data if not self._is_keyword(item)]
+
+    def _is_keyword(self, item):
+        return isinstance(item, list) and item and item[0] in ['kw', 'setup', 'teardown']
+
 def encode_basestring(string):
     def get_matching_char(c):
         val = ord(c)
