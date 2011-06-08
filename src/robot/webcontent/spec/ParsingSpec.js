@@ -280,6 +280,28 @@ describe("Parent Suite Teardown Failure", function (){
 
 });
 
+describe("Parent Suite Teardown and Test failure", function(){
+    beforeEach(function (){
+        window.data = [-25,"Robot",
+            ["suite","/tmp/SuiteTeardown.txt","SuiteTeardown",0,{},
+                ["test",1,0,"Y",0,
+                    ["kw",2,0,3,4,[0,"F",4],["F",-1,1]],[],
+                    ["F",-2,2,4]],
+                ["teardown",2,0,3,5,[1,"F",5],["F",0,1]],
+                ["F",-23,24,6],[1,0,1,0]],
+            [[["Critical Tests",0,1,"","",""],
+                ["All Tests",0,1,"","",""]],[],
+                [["SuiteTeardown",0,1,"SuiteTeardown","",""]]],[]];
+        window.strings =["*","*Failing","*Fail","*Fails","*In test","*in suite teardown",
+            "*Suite teardown failed:\nin suite teardown"];
+    });
+
+    it("should show test message 'In test\n\nAlso teardown of the parent suite failed.'", function (){
+        var test = window.testdata.suite().test(0);
+        expect(test.message).toEqual("In test\n\nAlso teardown of the parent suite failed.");
+    });
+})
+
 describe("Test failure message", function (){
 
     beforeEach(function () {

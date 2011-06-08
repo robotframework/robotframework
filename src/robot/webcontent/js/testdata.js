@@ -108,11 +108,15 @@ window.testdata = function () {
     }
 
     function createMessage(statusElement, hasSuiteTeardownFailed) {
+        var message = '';
         if (statusElement.length == 4)
-            return get(statusElement[3]);
-        if (hasSuiteTeardownFailed)
-            return 'Teardown of the parent suite failed.';
-        return '';
+            message = get(statusElement[3]);
+        if(hasSuiteTeardownFailed)
+            if(message === '')
+                return 'Teardown of the parent suite failed.';
+            else
+                message += '\n\nAlso teardown of the parent suite failed.'
+        return message;
     }
 
     function createSuite(parent, element) {
