@@ -15,6 +15,9 @@ window.model = function () {
         var suite = createModelObject(data);
         suite.source = data.source;
         suite.fullname = data.parent ? data.parent.fullname + "." + data.name : data.name;
+        // TODO: No need to have status and statusText when the difference is just case.
+        // Better to have just status in uppercase and let view do toLowerCase() if needed.
+        // Same changes should be done also with Tests and Keywords.
         suite.statusText = data.status.status.toUpperCase();
         setStats(suite, data.statistics);
         suite.metadata = data.metadata;
