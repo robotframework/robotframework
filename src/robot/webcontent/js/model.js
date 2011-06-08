@@ -21,6 +21,7 @@ window.model = function () {
         suite.populateKeywords = createIterablePopulator("Keyword");
         suite.populateTests = createIterablePopulator("Test");
         suite.populateSuites = createIterablePopulator("Suite");
+        suite.message = data.message;
         suite.children = function () {
             return suite.keywords().concat(suite.tests()).concat(suite.suites());
         };
@@ -28,13 +29,6 @@ window.model = function () {
         // TODO: It seems failures in suite setup aren't handled at all
         suite.hasTeardownFailure = function () {
             return suiteTeardownFailed(suite) || data.status.parentSuiteTeardownFailed;
-        };
-        suite.getFailureMessage = function () {
-            if (data.status.parentSuiteTeardownFailed)
-                return "Teardown of the parent suite failed.";
-            if (suite.hasTeardownFailure())
-                return "Suite teardown failed:\n" +
-                        suite.keyword(suite.numberOfKeywords - 1).message(0).text;
         };
         suite.searchTests = function (predicate) {
             var tests = [];
