@@ -278,10 +278,13 @@ window.testdata = function () {
         return timestamp(window.data[0]);
     }
 
+    function errors() {
+        return util.map(window.data[4], message);
+    }
+
+    // TODO: Is this used anymore?
     function error(index) {
-        if (window.data[4].length <= index)
-            return undefined;
-        return message(window.data[4][index]);
+        return errors()[index];
     }
 
     function statistics() {
@@ -291,6 +294,7 @@ window.testdata = function () {
 
     return {
         suite: suite,
+        errors: errors,
         error: error,
         find: findById,
         pathToTest: pathToTest,
