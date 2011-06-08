@@ -524,57 +524,30 @@ function initTemplates() {
     </tr>
     <tr>
       <td class="suite_children">
-        <div class="indent" id="${id}_children" style="display: none;"></div>
+        <div class="indent" id="${id}_children" style="display: none;">
+          <table class="metadata" id="${id}_metadata">
+            <tr><th>Full Name:</th><td>${fullname}</td></tr>
+            {{if documentation}}
+            <tr><th>Documentation:</th><td>{{html documentation}}</td></tr>
+            {{/if}}
+            {{each metadata}}
+            <tr><th>${$index}:</th><td>{{html $value}}</td></tr>
+            {{/each}}
+            <tr><th>Source:</th><td><a href="TODO: relative path here">${source}</a></td></tr>
+            <tr><th>Start / End / Elapsed:</th><td>${times.startTime}  /  ${times.endTime}  /  ${times.elapsedTime}</td></tr>
+            <tr><th>Status:</th><td>{{tmpl($data) '#stats_message_partial_template'}}</td></tr>
+            {{if message}}
+            <tr><th>Message:</th><td>${message}</td></tr>
+            {{/if}}
+          </table>
+        </div>
       </td>
     </tr>
   </table>
 </script>
 
-<script type="text/html" id="stats_message_template">
-  <tr>
-    <th>Message:</th>
-    <td>{{tmpl($data) '#stats_message_partial_template'}}</td>
-  </tr>
-</script>
-
-<script type="text/html" id="failure_and_stats_message_template">
-  <tr>
-    <th>Message:</th>
-    <td>${getFailureMessage()}<br/><br/>{{tmpl($data) '#stats_message_partial_template'}}</td>
-  </tr>
-</script>
-
 <script type="text/html" id="stats_message_partial_template">
 ${critical} critical test, ${criticalPassed} passed, <span class="${criticalFailureClass}">${criticalFailed} failed</span><br />${total} test total, ${totalPassed} passed, <span class="${totalFailureClass}">${totalFailed} failed</span>
-</script>
-
-<script type="text/html" id="metadata_element_template">
-  <tr>
-    <th>${key}:</th>
-    <td>{{html value}}</td>
-  </tr>
-</script>
-
-<script type="text/html" id="documentation_element_template">
-  <tr>
-    <th>${key}:</th>
-    <td>{{html value}}</td>
-  </tr>
-</script>
-
-<script type="text/html" id="status_element_template">
-  <tr>
-    <th>Status:</th>
-    <td class="${status}">${statusText}</td>
-  </tr>
-</script>
-
-<script type="text/html" id="source_element_template">
-  <tr>
-    <th>${key}:</th>
-    <td><a href="${value}">${value}</a>
-    </td>
-  </tr>
 </script>
 
 <script type="text/html" id="test_template">
@@ -598,14 +571,28 @@ ${critical} critical test, ${criticalPassed} passed, <span class="${criticalFail
     </tr>
     <tr>
       <td>
-        <div class="indent" id="${id}_children" style="display: none;"></div>
+        <div class="indent" id="${id}_children" style="display: none;">
+          <table class="metadata" id="${id}_metadata">
+            <tr><th>Full Name:</th><td>${fullname}</td></tr>
+            {{if documentation}}
+            <tr><th>Documentation:</th><td>{{html documentation}}</td></tr>
+            {{/if}}
+            {{if tags}}
+            <tr><th>Tags:</th><td>${tags.join(', ')}</td></tr>
+            {{/if}}
+            {{if timeout}}
+            <tr><th>Timeout:</th><td>${timeout}</td></tr>
+            {{/if}}
+            <tr><th>Start / End / Elapsed:</th><td>${times.startTime}  /  ${times.endTime}  /  ${times.elapsedTime}</td></tr>
+            <tr><th>Status:</th><td class="${status}">${statusText}</td></tr>
+            {{if message}}
+            <tr><th>Message:</th><td>${message}</td></tr>
+            {{/if}}
+          </table>
+        </div>
       </td>
     </tr>
   </table>
-</script>
-
-<script type="text/html" id="metadata_template">
-  <table class="metadata" id="${id}_metadata"></table>
 </script>
 
 <script type="text/html" id="keyword_template">
@@ -627,7 +614,14 @@ ${critical} critical test, ${criticalPassed} passed, <span class="${criticalFail
     </tr>
     <tr>
       <td>
-        <div class="indent" id="${id}_children" style="display: none;"></div>
+        <div class="indent" id="${id}_children" style="display: none;">
+          <table class="metadata" id="${id}_metadata">
+            {{if documentation}}
+            <tr><th>Documentation:</th><td>{{html documentation}}</td></tr>
+            {{/if}}
+            <tr><th>Start / End / Elapsed:</th><td>${times.startTime}  /  ${times.endTime}  /  ${times.elapsedTime}</td></tr>
+          </table>
+        </div>
       </td>
     </tr>
   </table>
