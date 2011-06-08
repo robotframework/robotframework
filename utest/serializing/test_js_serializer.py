@@ -12,7 +12,9 @@ class TestJsSerializer(unittest.TestCase):
 
     SUITE_XML = """<suite source="/tmp/verysimple.txt" name="Verysimple">
                     <doc></doc>
-                    <metadata></metadata>
+                    <metadata>
+                        <item name="key">val</item>
+                    </metadata>
                     <test name="Test" timeout="">
                         <doc></doc>
                         <kw type="kw" name="BuiltIn.Log" timeout="">
@@ -116,22 +118,22 @@ class TestJsSerializer(unittest.TestCase):
         data_model = self._get_data_model(self.SUITE_XML)
         assert_equals(data_model._basemillis, 1306918911353)
         assert_equals(data_model._robot_data, ['suite', '/tmp/verysimple.txt', 'Verysimple',
-                                               0, {},
-                                                ['test', 1, 0, 'Y', 0,
-                                                    ['kw', 2, 0, 3, 4, [0, 'W', 4], ['P', 0, 0]], [], ['P', 0, 1]],
-                                               ['P', -24, 25], [1, 1, 1, 1]])
-        assert_equals(data_model._texts, ['*', '*Test', '*BuiltIn.Log', '*Logs the given message with the given level.', '*simple'])
-        assert_equals(self._context.link_to([0, 'W', 4]), 'keyword_Verysimple.Test.0')
+                                               0, {'key': 1},
+                                                ['test', 2, 0, 'Y', 0,
+                                                    ['kw', 3, 0, 4, 5, [0, 'W', 5], ['P', 0, 0]], [],
+                                                    ['P', 0, 1]], ['P', -24, 25], [1, 1, 1, 1]])
+        assert_equals(data_model._texts, ['*', '*val', '*Test', '*BuiltIn.Log', '*Logs the given message with the given level.', '*simple'])
+        assert_equals(self._context.link_to([0, 'W', 5]), 'keyword_Verysimple.Test.0')
 
     def test_suite_data_model_keywords_clearing(self):
         data_model = self._get_data_model(self.SUITE_XML)
         data_model.remove_keywords()
         assert_equals(data_model._basemillis, 1306918911353)
         assert_equals(data_model._robot_data, ['suite', '/tmp/verysimple.txt', 'Verysimple',
-                                               0, {},
-                                                ['test', 1, 0, 'Y', 0, [], ['P', 0, 1]],
-                                               ['P', -24, 25], [1, 1, 1, 1]])
-        assert_equals(data_model._texts, ['*', '*Test', '*BuiltIn.Log', '*Logs the given message with the given level.', '*simple'])
+                                               0, {'key': 1},
+                                                ['test', 2, 0, 'Y', 0, [],
+                                                    ['P', 0, 1]], ['P', -24, 25], [1, 1, 1, 1]])
+        assert_equals(data_model._texts, ['*', '*val', '*Test', '', '', ''])
 
 
     def test_metadata_xml_parsing(self):

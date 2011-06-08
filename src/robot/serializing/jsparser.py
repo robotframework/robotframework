@@ -124,7 +124,12 @@ class Stats(object):
             child.fail_all()
 
 
+class _TextIndex(int):
+    pass
+
+
 class TextCache(object):
+    _zero_index = _TextIndex(0)
 
     def __init__(self):
         self.texts = {}
@@ -132,7 +137,7 @@ class TextCache(object):
 
     def add(self, text):
         if not text:
-            return 0
+            return self._zero_index
         raw = self._raw(text)
         if raw in self.texts:
             return self.texts[raw]
@@ -140,7 +145,7 @@ class TextCache(object):
         if text not in self.texts:
             self.texts[text] = self.index
             self.index +=1
-        return self.texts[text]
+        return _TextIndex(self.texts[text])
 
     def _encode(self, text):
         encoded = base64.b64encode(zlib.compress(text.encode('utf-8'), 9))
@@ -560,6 +565,7 @@ class DataModel(object):
 
     def remove_keywords(self):
         self._robot_data = self._remove_keywords_from(self._robot_data)
+        self._prune_unused_texts()
 
     def _remove_keywords_from(self, data):
         if not isinstance(data, list):
@@ -568,6 +574,21 @@ class DataModel(object):
 
     def _is_keyword(self, item):
         return isinstance(item, list) and item and item[0] in ['kw', 'setup', 'teardown']
+
+    def _prune_unused_texts(self):
+        used = self._collect_used_text_indices(self._robot_data, set())
+        self._texts = [text if index in used else '' for index, text in enumerate(self._texts)]
+
+    def _collect_used_text_indices(self, data, result):
+        for item in data:
+            if isinstance(item, _TextIndex):
+                result.add(item)
+            elif isinstance(item, list):
+                self._collect_used_text_indices(item, result)
+            elif isinstance(item, dict):
+                self._collect_used_text_indices(item.values(), result)
+        return result
+
 
 def encode_basestring(string):
     def get_matching_char(c):
