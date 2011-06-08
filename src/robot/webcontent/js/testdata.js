@@ -91,31 +91,40 @@ window.testdata = function () {
     }
 
     function createTest(suite, element) {
+        var statusElement = last(element);
         var test = model.Test({
             parent: suite,
             name: get(element[1]),
             doc: get(element[4]),
             timeout: get(element[2]),
             isCritical: (element[3] == "Y"),
-            status: createStatus(last(element), suite.hasTeardownFailure()),
-            message: get(last(last(element))),
-            times: model.Times(times(last(element))),
+            status: createStatus(statusElement, suite.hasTeardownFailure()),
+            message: createMessage(statusElement, suite.hasTeardownFailure()),
+            times: model.Times(times(statusElement)),
             tags: tags(last2(element))
         });
         test.populateKeywords(Populator(element, keywordMatcher, childCreator(test, createKeyword)));
         return test;
     }
 
+    function createMessage(statusElement, hasSuiteTeardownFailed) {
+        if (statusElement.length == 4)
+            return get(statusElement[3]);
+        if (hasSuiteTeardownFailed)
+            return 'Teardown of the parent suite failed.';
+        return '';
+    }
+
     function createSuite(parent, element) {
+        var statusElement = last2(element);
         var suite = model.Suite({
             parent: parent,
             name: element[2],
             source: element[1],
             doc: get(element[3]),
-            status: createStatus(last2(element), parent && parent.hasTeardownFailure()),
-            // TODO: Add message to suite. Following ought to work but breaks 40+ specs...
-            // message: get(last(last2(element))),
-            times: model.Times(times(last2(element))),
+            status: createStatus(statusElement, parent && parent.hasTeardownFailure()),
+            message: createMessage(statusElement, parent && parent.hasTeardownFailure()),
+            times: model.Times(times(statusElement)),
             statistics: suiteStats(last(element)),
             metadata: parseMetadata(element[4])
         });

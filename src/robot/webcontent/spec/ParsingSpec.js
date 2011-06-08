@@ -247,10 +247,10 @@ describe("Parent Suite Teardown Failure", function (){
                                      ["test",1,0,"Y",0,
                                       ["kw",2,0,3,0,["P",0,1]],[],["P",-1,2]],["P",-2,3],
                                       [1,0,1,0]],
-                                    ["teardown",4,0,5,0,[3,"F",6],["F",2,2]],["F",-37,41],[1,0,1,0]],
+                                    ["teardown",4,0,5,0,[3,"F",6],["F",2,2]],["F",-37,41, 7],[1,0,1,0]],
                                     ,[]];
         window.strings =["*","*Testt","*NoOp","*Does nothing.",
-                         "*Fail","*Fails","*AssertionError"];
+                         "*Fail","*Fails","*AssertionError", "*Suite teardown failed:\nAssertionError"];
     });
 
     it("should show test status as failed", function (){
@@ -265,17 +265,17 @@ describe("Parent Suite Teardown Failure", function (){
 
     it("should show test message 'Teardown of the parent suite failed.'", function (){
         var test = window.testdata.suite().suite(0).test(0);
-        expect(test.getFailureMessage()).toEqual("Teardown of the parent suite failed.");
+        expect(test.message).toEqual("Teardown of the parent suite failed.");
     });
 
     it("should show suite message 'Teardown of the parent suite failed.'", function (){
         var suite = window.testdata.suite().suite(0);
-        expect(suite.getFailureMessage()).toEqual("Teardown of the parent suite failed.");
+        expect(suite.message).toEqual("Teardown of the parent suite failed.");
     });
 
     it("should show root suite message 'Suite teardown failed:\nAssertionError'", function (){
         var root = window.testdata.suite();
-        expect(root.getFailureMessage()).toEqual("Suite teardown failed:\nAssertionError");
+        expect(root.message).toEqual("Suite teardown failed:\nAssertionError");
     });
 
 });
@@ -288,14 +288,14 @@ describe("Test failure message", function (){
                         ["test",1,0,"Y",0,
                          ["kw",2,0,0,0,
                           ["kw",3,0,4,5,[0,"F",5],["F",-1,1]],
-                          ["F",-1,1]],[],["F",-2,3]],
+                          ["F",-1,1]],[],["F",-2,3,5]],
                           ["F",-29,30],[1,0,1,0]]);
         window.strings =["*","*Feilaava","*feilaa","*Fail","*Fails","*FooBar!"];
     });
 
     it("should show test failure message ''", function (){
         var test = window.testdata.suite().test(0);
-        expect(test.getFailureMessage()).toEqual("FooBar!");
+        expect(test.message).toEqual("FooBar!");
     });
 });
 
