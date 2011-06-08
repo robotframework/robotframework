@@ -130,6 +130,9 @@ class _TextIndex(int):
 
 class TextCache(object):
     _zero_index = _TextIndex(0)
+    # TODO: Tune compressing thresholds
+    _compress_threshold = 20
+    _use_compressed_threshold = 1.1
 
     def __init__(self):
         self.texts = {}
@@ -138,9 +141,6 @@ class TextCache(object):
     def add(self, text):
         if not text:
             return self._zero_index
-        raw = self._raw(text)
-        if raw in self.texts:
-            return self.texts[raw]
         text = self._encode(text)
         if text not in self.texts:
             self.texts[text] = _TextIndex(self.index)
@@ -148,9 +148,13 @@ class TextCache(object):
         return self.texts[text]
 
     def _encode(self, text):
-        encoded = base64.b64encode(zlib.compress(text.encode('utf-8'), 9))
         raw = self._raw(text)
-        return encoded if len(encoded) < len(raw) else raw
+        if raw in self.texts or len(raw) < self._compress_threshold:
+            return raw
+        compressed = base64.b64encode(zlib.compress(text.encode('UTF-8'), 9))
+        if len(raw) * self._use_compressed_threshold > len(compressed):
+            return compressed
+        return raw
 
     def _raw(self, text):
         return '*'+text
