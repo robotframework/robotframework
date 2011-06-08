@@ -133,6 +133,9 @@ class TextCache(object):
     def add(self, text):
         if not text:
             return 0
+        raw = self._raw(text)
+        if raw in self.texts:
+            return self.texts[raw]
         text = self._encode(text)
         if text not in self.texts:
             self.texts[text] = self.index
@@ -141,8 +144,11 @@ class TextCache(object):
 
     def _encode(self, text):
         encoded = base64.b64encode(zlib.compress(text.encode('utf-8'), 9))
-        raw = '*'+text
+        raw = self._raw(text)
         return encoded if len(encoded) < len(raw) else raw
+
+    def _raw(self, text):
+        return '*'+text
 
     def dump(self):
         l = range(len(self.texts)+1)
