@@ -413,10 +413,12 @@ class _StatusHandler(object):
         self._endtime = self._context.timestamp(attrs.getValue('endtime'))
 
     def end_element(self, text):
-        return [self._status,
-                self._starttime,
-                self._endtime-self._starttime,
-                self._context.get_text_id(text or '')]
+        result = [self._status,
+                  self._starttime,
+                  self._endtime-self._starttime]
+        if text:
+           result += [self._context.get_text_id(text)]
+        return result
 
 
 class _TestStatusHandler(_StatusHandler):

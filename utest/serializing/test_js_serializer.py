@@ -26,6 +26,12 @@ class TestJsSerializer(unittest.TestCase):
         assert_equals(data_model._robot_data, ['P',0,42])
         assert_equals(data_model._texts, ['*'])
 
+    def test_status_with_message_xml_parsing(self):
+        data_model = self._get_data_model('<status status="PASS" endtime="20110531 12:48:09.042" starttime="20110531 12:48:09.000">Message</status>')
+        assert_equals(data_model._basemillis, 1306835289000)
+        assert_equals(data_model._robot_data, ['P',0,42,1])
+        assert_equals(data_model._texts, ['*', '*Message'])
+
     def test_tags_xml_parsing(self):
         tags_xml = """
         <tags>
