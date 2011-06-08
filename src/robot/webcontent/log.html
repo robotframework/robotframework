@@ -320,11 +320,11 @@ $(document).ready(function(){
     addStatistics();
     addErrors();
     addTestExecutionLog(main);
+    expandFailed(main);
     if (window.location.hash) {
         makeElementVisible(window.location.hash.substring(1));
         window.location.hash = window.location.hash.substring(1);
     };
-    expandFailed(main);
 });
 
 function addHeader() {
