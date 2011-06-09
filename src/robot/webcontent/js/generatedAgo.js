@@ -1,53 +1,38 @@
-function get_end(number) {
-  if (number == 1) { return ' '; }
-  return 's ';
-}
-function get_sec_str(secs) {
-  return secs + ' second' + get_end(secs);
-}
-function get_min_str(mins) {
-  return mins + ' minute' + get_end(mins);
-}
-function get_hour_str(hours) {
-  return hours + ' hour' + get_end(hours);
-}
-function get_day_str(days) {
-  return days + ' day' + get_end(days);
-}
-function get_year_str(years) {
-  return years + ' year' + get_end(years);
-}
-var generated = Math.round(window.testdata.generated().getTime() / 1000);
-current = Math.round(new Date().getTime() / 1000);
-elapsed = current - generated;
-
-if (elapsed < 0) {
-  elapsed = Math.abs(elapsed);
-  prefix = '- ';
-}
-else {
-  prefix = '';
-}
-secs  = elapsed % 60;
-mins  = Math.floor(elapsed / 60) % 60;
-hours = Math.floor(elapsed / (60*60)) % 24;
-days  = Math.floor(elapsed / (60*60*24)) % 365;
-years = Math.floor(elapsed / (60*60*24*365));
-if (years > 0) {
-  // compensate the effect of leap years (not perfect but should be enough)
-  days = days - Math.floor(years / 4);
-  if (days < 0) { days = 0; }
-  output = get_year_str(years) + get_day_str(days);
-}
-else if (days > 0) {
-  output = get_day_str(days) +  get_hour_str(hours);
-}
-else if (hours > 0) {
-  output = get_hour_str(hours) + get_min_str(mins);
-}
-else if (mins > 0) {
-  output = get_min_str(mins) + get_sec_str(secs);
-}
-else {
-  output = get_sec_str(secs);
+function createGeneratedAgoString(generatedAgoMillis) {
+    function timeString(time, shortUnit) {
+        var unit = {'y': 'year', 'd': 'day', 'h': 'hour',
+                    'm': 'minute', 's': 'second'}[shortUnit];
+        var end = time == 1 ? ' ' : 's ';
+        return time + ' ' + unit + end;
+    }
+    function compensateLeapYears(days, years) {
+        // Not a perfect algorithm but ought to be enough
+        return days - Math.floor(years / 4);
+    }
+    var generated = Math.round(generatedAgoMillis / 1000);
+    var current = Math.round(new Date().getTime() / 1000);
+    var elapsed = current - generated;
+    if (elapsed < 0) {
+        elapsed = Math.abs(elapsed);
+        prefix = '- ';
+    } else {
+        prefix = '';
+    }
+    var secs  = elapsed % 60;
+    var mins  = Math.floor(elapsed / 60) % 60;
+    var hours = Math.floor(elapsed / (60*60)) % 24;
+    var days  = Math.floor(elapsed / (60*60*24)) % 365;
+    var years = Math.floor(elapsed / (60*60*24*365));
+    if (years > 0) {
+        days = compensateLeapYears(days, years);
+        return prefix + timeString(years, 'y') + timeString(days, 'd');
+    } else if (days > 0) {
+        return prefix + timeString(days, 'd') + timeString(hours, 'h');
+    } else if (hours > 0) {
+        return prefix + timeString(hours, 'h') + timeString(mins, 'm');
+    } else if (mins > 0) {
+        return prefix + timeString(mins, 'm') + timeString(secs, 's');
+    } else {
+        return prefix + timeString(secs, 's');
+    }
 }

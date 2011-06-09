@@ -12,9 +12,6 @@
     color: black;
     padding: 6px;
   }
-  h2 {
-    margin-top: 1.2em;
-  }
   br {
     mso-data-placement: same-cell;  /* maintain line breaks in Excel */
   }
@@ -95,7 +92,7 @@
   }
   /* Misc Styles */
   .not_available {
-    color: gray;      /* no grey in IE */
+    color: gray;
     font-weight: normal;
   }
   .parent_name {
@@ -118,19 +115,14 @@
   h1 {
     margin: 0px;
     width: 70%;
-    float: left;
   }
-  .times {
-    width: 29%;
+  #generated {
+    // TODO: Add width when timestamp in correct format
+    // width: 29%;
     float: right;
     text-align: right;
-  }
-  .generated_time, .generated_ago {
     font-size: 0.9em;
-  }
-  .spacer {
-    font-size: 0.8em;
-    clear: both;
+    white-space: nowrap;
   }
   /* Status text colors */
   .error, .fail {
@@ -158,7 +150,7 @@
   .header, table.details, table.statistics {
     width: 100%;
   }
-  .generated_ago, .expand {
+  #generated_ago, .expand {
     display: none;
   }
 </style>
@@ -282,7 +274,6 @@
 <body>
 <div class="header" id="header_div">
 </div>
-<div class="spacer">&nbsp;</div>
   <h2>Test Statistics</h2>
   <table class="statistics" id="total_stats">
     <tr>
@@ -327,12 +318,13 @@ $(document).ready(function(){
     };
 });
 
+// TODO: This is duplicated in report.html
 function addHeader() {
+    var generatedAgoMillis = window.testdata.generated().getTime();
     var header = $.tmpl(window.templates.header, {
         header: document.title,
         generated: window.testdata.generated().toString(),
-        prefix: prefix,
-        output: output
+        generatedAgo: createGeneratedAgoString(generatedAgoMillis)
     });
     header.appendTo($('#header_div'));
 }
@@ -394,15 +386,13 @@ function initTemplates() {
 };
 </script>
 
-<!--  BEGIN DYMAGIC CONTENT!!1! -->
+<!-- TODO: This is duplicated in report.html -->
 <script type="text/html" id="header_template">
-  <h1>${header}</h1>
-  <div class="times">
-    <span class="generated_time">Generated
-      <span id="generated_time">${generated}</span>
-    </span><br />
-    <span class="generated_ago">${prefix}${output}ago</span>
+  <div id="generated">
+    <span>Generated<br />${generated}</span><br />
+    <span id="generated_ago">${generatedAgo} ago</span>
   </div>
+  <h1>${header}</h1>
 </script>
 
 <script type="text/html" id="total_statistics_row">

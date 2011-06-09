@@ -21,9 +21,6 @@
   .non_critical_fail {
     background: #FF3333; /* BACKGROUND: non critical fail */
   }
-  h2 {
-    margin-top: 1.2em;
-  }
   br {
     mso-data-placement: same-cell;  /* maintain line breaks in Excel */
   }
@@ -218,7 +215,7 @@
   }
   /* Misc Styles */
   .not_available {
-    color: gray;      /* no grey in IE */
+    color: gray;
     font-weight: normal;
   }
   .parent_name {
@@ -241,19 +238,14 @@
   h1 {
     margin: 0px;
     width: 70%;
-    float: left;
   }
-  .times {
-    width: 29%;
+  #generated {
+    // TODO: Add width when timestamp in correct format
+    // width: 29%;
     float: right;
     text-align: right;
-  }
-  .generated_time, .generated_ago {
     font-size: 0.9em;
-  }
-  .spacer {
-    font-size: 0.8em;
-    clear: both;
+    white-space: nowrap;
   }
   a.status_fail {
     color: red;
@@ -288,7 +280,7 @@
   .header, table.details, table.statistics {
     width: 100%;
   }
-  .generated_ago, .expand {
+  #generated_ago, .expand {
     display: none;
   }
 </style>
@@ -535,12 +527,13 @@ function setDocumentTitle(suite){
     document.title = document.title.replace("[SUITE_NAME]", suite.name, "g");
 }
 
+// TODO: This is duplicated in log.html
 function addHeader() {
+    var generatedAgoMillis = window.testdata.generated().getTime();
     var header = $.tmpl(window.templates.header, {
         header: document.title,
-        generated:window.testdata.generated().toString(),
-        prefix:prefix,
-        output:output
+        generated: window.testdata.generated().toString(),
+        generatedAgo: createGeneratedAgoString(generatedAgoMillis)
     });
     header.appendTo($('#header_div'));
 }
@@ -587,21 +580,17 @@ function initTemplates() {
         suiteDetails: $('#suite_details').template(),
         testDetailsTable: $('#test_details_table').template(),
         testDetailsRow: $('#report_test_details_row').template()
-
     };
 };
 </script>
 
+<!-- TODO: This is duplicated in log.html -->
 <script type="text/html" id="header_template">
-  <h1>${header}</h1>
-  <div class="times">
-    <span class="generated_time">Generated<br />
-        <span id="generated_time">${generated}</span>
-    </span><br />
-    <span class="generated_ago">
-    ${prefix}${output}ago
-    </span>
+  <div id="generated">
+    <span>Generated<br />${generated}</span><br />
+    <span id="generated_ago">${generatedAgo} ago</span>
   </div>
+  <h1>${header}</h1>
 </script>
 
 <script type="text/html" id="summary_table">
