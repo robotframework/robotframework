@@ -16,7 +16,7 @@ run test cases under 'testdata'. It can be simply 'python' or 'jython'
 executed with Python.
 
 Examples:
-$ atest/run_atests.py python --splitoutputs 2 atest/robot
+$ atest/run_atests.py python --test example atest/robot
 $ atest/run_atests.py /usr/bin/jython22 atest/robot/core/variables.html
 """
 
