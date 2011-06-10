@@ -2,11 +2,12 @@ from __future__ import with_statement
 
 import re
 import os
-from robot import webcontent, utils
+import robot
+from robot import utils
 
-PATH = os.path.dirname(webcontent.__file__)+os.path.sep
-LOG_TEMPLATE = PATH + 'log.html'
-REPORT_TEMPLATE = PATH + 'report.html'
+PATH = os.path.join(os.path.dirname(robot.__file__),'webcontent')
+LOG_TEMPLATE = os.path.join(PATH,'log.html')
+REPORT_TEMPLATE = os.path.join(PATH, 'report.html')
 JS_FILE_REGEXP = re.compile('src=\"([^\"]+)\"')
 
 def serialize_log(test_output_datamodel, log_path, title=None):
@@ -124,7 +125,7 @@ class _Populator(object):
         self._parsing = self._in_script
 
     def _parse_js_file_name(self, line):
-        return PATH + JS_FILE_REGEXP.search(line).group(1).replace('/', os.path.sep)
+        return os.path.join(PATH, JS_FILE_REGEXP.search(line).group(1).replace('/', os.path.sep))
 
     def _write_js(self, js_file):
         with open(js_file, 'r') as js:
