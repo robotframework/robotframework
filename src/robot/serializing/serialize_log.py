@@ -13,6 +13,7 @@
 #  limitations under the License.
 
 from __future__ import with_statement
+import codecs
 import os
 import re
 
@@ -41,7 +42,7 @@ def _build_relative_log_path(report, log):
     return utils.get_link_path(log, os.path.dirname(report))
 
 def _build_file(outpath, test_output_datamodel, title, background, template, log_path=None):
-    with open(outpath, 'w') as outfile:
+    with codecs.open(outpath, 'w', encoding='UTF-8') as outfile:
         populator = _Populator(outfile, test_output_datamodel, title, background, log_path)
         with open(template, 'r') as templ:
             for line in templ:
@@ -142,7 +143,7 @@ class _Populator(object):
         return os.path.join(PATH, JS_FILE_REGEXP.search(line).group(1).replace('/', os.path.sep))
 
     def _write_js(self, js_file):
-        with open(js_file, 'r') as js:
+        with codecs.open(js_file, 'r', encoding='UTF-8') as js:
             for jsline in js:
                 self._log.write(jsline)
         self._log.write('\n\n')
