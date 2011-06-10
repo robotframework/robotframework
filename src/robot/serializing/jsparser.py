@@ -42,7 +42,7 @@ class Context(object):
         if time == 'N/A':
             return None
         millis = int(utils.timestamp_to_secs(time, millis=True) * 1000)
-        if self.basemillis is None:
+        if self._basemillis is None:
             self._basemillis = millis
         return millis - self.basemillis
 
@@ -298,12 +298,13 @@ class _StatusHandler(object):
         self._context = context
         self._status = attrs.getValue('status')[0]
         self._starttime = self._context.timestamp(attrs.getValue('starttime'))
-        self._endtime = self._context.timestamp(attrs.getValue('endtime'))
+        endtime = self._context.timestamp(attrs.getValue('endtime'))
+        self._elapsed = endtime-self._starttime if endtime is not None and self._starttime is not None else None
 
     def end_element(self, text):
         result = [self._status,
                   self._starttime,
-                  self._endtime-self._starttime]
+                  self._elapsed]
         if text:
            result += [self._context.get_text_id(text)]
         return result
