@@ -13,7 +13,6 @@
 #  limitations under the License.
 
 from __future__ import with_statement
-import StringIO
 import xml.sax as sax
 from xml.sax.handler import ContentHandler
 import zlib
@@ -435,15 +434,15 @@ class _RobotOutputHandler(ContentHandler):
 
     def startElement(self, name, attrs):
         handler = self._handler_stack[-1].get_handler_for(name, attrs)
-        self._charbuffer = StringIO.StringIO()
+        self._charbuffer = []
         self._handler_stack.append(handler)
 
     def endElement(self, name):
         handler = self._handler_stack.pop()
-        self._handler_stack[-1].add_child(handler.end_element(self._charbuffer.getvalue()))
+        self._handler_stack[-1].add_child(handler.end_element(''.join(self._charbuffer)))
 
     def characters(self, content):
-        self._charbuffer.write(content)
+        self._charbuffer += [content]
 
 
 class DataModel(object):
@@ -502,10 +501,10 @@ def encode_basestring(string):
     string = string.replace('\n', '\\n')
     string = string.replace('\r', '\\r')
     string = string.replace('\t', '\\t')
-    result = StringIO.StringIO()
+    result = []
     for c in string:
-        result.write(get_matching_char(c))
-    return '"'+result.getvalue()+'"'
+        result += [get_matching_char(c)]
+    return '"'+''.join(result)+'"'
 
 def json_dump(data, output):
     if data is None:
