@@ -156,11 +156,8 @@ Options:
                           example '-T -o output.xml -r report.html -l none'
                           creates files like 'output-20070503-154410.xml' and
                           'report-20070503-154410.html'.
-    --splitoutputs level  Split output and log files from specified suite
-                          level. This makes generated files smaller and lower
-                          level files available immediately when a respective
-                          test suite is executed. Top level files have links to
-                          lower level files for easy navigation.
+    --splitoutputs level  Splitting outputs is not supported in version 2.6 or
+                          newer. This option will be removed altogether in 2.7.
     --logtitle title      Title for the generated test log. The default title
                           is '<Name Of The Suite> Test Log'. Underscores in
                           the title are converted into spaces in all titles.
@@ -303,7 +300,7 @@ $ python /path/to/robot/runner.py tests.tsv
 $ runtests.sh --test test1 --test test2 testdir/
 
 # Executing multiple data sources and using case-insensitive long options.
-$ pybot --SplitOutputs 1 /my/tests/*.html /your/tests.html
+$ pybot --SuiteStatLevel 2 /my/tests/*.html /your/tests.html
 
 # Setting syslog file before running tests.
 $ export ROBOT_SYSLOG_FILE=/tmp/syslog.txt

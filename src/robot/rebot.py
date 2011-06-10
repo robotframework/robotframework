@@ -102,9 +102,8 @@ Options:
                           example '-T -o output.xml -r report.html -l none'
                           creates files like 'output-20070503-154410.xml' and
                           'report-20070503-154410.html'.
-    --splitoutputs level  Split output and log files from specified suite
-                          level to make them smaller in size. Top level files
-                          have links to lower level files for easy navigation.
+    --splitoutputs level  Splitting outputs is not supported in version 2.6 or
+                          newer. This option will be removed altogether in 2.7.
     --logtitle title      Title for the generated test log. The default title
                           is '<Name Of The Suite> Test Log'. Underscores in
                           the title are converted into spaces in all titles.
@@ -237,7 +236,7 @@ $ rebot output.xml
 # Using options. Note that this is one long command split into multiple lines.
 $ rebot --log none --report myreport.html --reporttitle My_Report
         --summary mysummary.html --summarytitle My_Summary
-        --SplitOutputs 2 --TagStatCombine smokeANDmytag path/to/myoutput.xml
+        --TagStatCombine smokeANDmytag path/to/myoutput.xml
 
 # Running 'robot/rebot.py' directly and creating combined outputs.
 $ python /path/robot/rebot.py -N Project_X -l x.html -r x.html outputs/*.xml
