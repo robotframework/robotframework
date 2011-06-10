@@ -1,15 +1,15 @@
-jquery
-------
+jquery.min
+----------
 version 1.6.1
 http://docs.jquery.com/Downloading_jQuery#Download_jQuery
 
-jquery.tmpl
------------
-unreleased version updated latest on 8th June 2011 (revision 76c379effa656005e595)
+jquery.tmpl.min
+---------------
+from version control, edited on 10th June 2011 (revision 07d08cb72c7556e95059)
 https://github.com/jquery/jquery-tmpl
 
 
-jsxcompressor.js
------------
+jsxcompressor
+-------------
 from http://jsxgraph.uni-bayreuth.de/distrib/jsxcompressor.zip
 
