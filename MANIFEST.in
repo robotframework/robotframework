@@ -1,4 +1,6 @@
-include src/bin/?ybot src/bin/rebot src/bin/*.bat 
+include src/bin/?ybot src/bin/rebot src/bin/*.bat
+include src/robot/webcontent/*.html src/robot/webcontent/*.js
+include src/robot/webcontent/lib/*.js
 include robot_postinstall.py
 include robot.bmp
 include install.py package.py
