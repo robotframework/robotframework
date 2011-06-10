@@ -51,6 +51,25 @@ class TestJsSerializer(unittest.TestCase):
         assert_equals(data_model._robot_data, ['P',0,42,1])
         assert_equals(data_model._texts, ['*', '*Message'])
 
+    def test_times(self):
+        self._context.start_suite('suite')
+        times = """
+        <kw type="kw" name="KwName" timeout="">
+        <msg timestamp="20110531 12:48:09.020" level="FAIL">AssertionError</msg>
+        <msg timestamp="N/A" level="FAIL">AssertionError</msg>
+        <msg timestamp="20110531 12:48:09.010" level="FAIL">AssertionError</msg>
+        <status status="FAIL" endtime="20110531 12:48:09.010" starttime="20110531 12:48:09.020"></status>
+        </kw>
+        """
+        data_model = self._get_data_model(times)
+        assert_equals(data_model._basemillis, 1306835289020)
+        assert_equals(data_model._robot_data, ['kw', 1, 0,
+            [0, 'F', 2],
+            [None, 'F', 2],
+            [-10, 'F', 2],
+            ['F', 0, -10]])
+
+
     def test_tags_xml_parsing(self):
         tags_xml = """
         <tags>
@@ -216,6 +235,11 @@ class TestJsSerializer(unittest.TestCase):
         buffer = StringIO.StringIO()
         json_dump({'key':1, 'hello':'world'}, buffer)
         assert_equals('{"hello":"world","key":1}', buffer.getvalue())
+
+    def test_json_dump_None(self):
+        buffer = StringIO.StringIO()
+        json_dump(None, buffer)
+        assert_equals('null', buffer.getvalue())
 
     def _get_data_model(self, xml_string):
         sax.parseString(xml_string, self._handler)

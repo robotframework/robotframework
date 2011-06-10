@@ -40,7 +40,7 @@ class Context(object):
 
     def timestamp(self, time):
         if time == 'N/A':
-            return -1
+            return None
         millis = int(utils.timestamp_to_secs(time, millis=True) * 1000)
         if self.basemillis is None:
             self._basemillis = millis
@@ -492,7 +492,9 @@ def encode_basestring(string):
     return '"'+result.getvalue()+'"'
 
 def json_dump(data, output):
-    if isinstance(data, int):
+    if data is None:
+        output.write('null')
+    elif isinstance(data, int):
         output.write(str(data))
     elif isinstance(data, long):
         output.write(str(data))
