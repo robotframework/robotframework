@@ -94,7 +94,7 @@ class _BaseSettings(object):
             return self._process_tag_stat_link(value)
         if name == 'RemoveKeywords':
             return value.upper()
-        if name == 'SplitOutputs':
+        if name == 'SplitOutputs' and value != -1:
             if log:
                 LOGGER.warn('Splitting outputs (--SplitOutputs option) is not '
                             'supported in Robot Framework 2.6 or newer. This '
