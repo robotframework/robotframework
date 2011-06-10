@@ -130,6 +130,8 @@ class _Populator(object):
         with open(js_file, 'r') as js:
             for jsline in js:
                 self._log.write(jsline)
+        self._log.write('\n\n')
+
 
 if __name__ == '__main__':
     import jsparser
