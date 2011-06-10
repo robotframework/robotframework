@@ -19,7 +19,7 @@ from robot.errors import DataError, FrameworkError
 from robot.output import LOGGER
 
 
-class _BaseSettings:
+class _BaseSettings(object):
     _cli_opts = { 'Name'             : ('name', None),
                   'Doc'              : ('doc', None),
                   'Metadata'         : ('metadata', []),
@@ -51,16 +51,14 @@ class _BaseSettings:
                   'MonitorWidth'     : ('monitorwidth', 78),
                   'MonitorColors'    : ('monitorcolors', 'AUTO') }
     _output_opts = ['Output', 'Log', 'Report', 'Summary', 'DebugFile', 'XUnitFile']
-    _deprecated = {}
 
     def __init__(self, options={}, log=True):
         self._opts = {}
         self._cli_opts.update(self._extra_cli_opts)
-        self._process_deprecated_cli_opts(options)
-        self._process_cli_opts(options)
+        self._process_cli_opts(options, log)
         if log: LOGGER.info('Settings:\n%s' % unicode(self))
 
-    def _process_cli_opts(self, opts):
+    def _process_cli_opts(self, opts, log):
         for name, (cli_name, default) in self._cli_opts.items():
             try:
                 value = opts[cli_name]
@@ -68,27 +66,16 @@ class _BaseSettings:
                     raise KeyError
             except KeyError:
                 value = default
-            self[name] = value
-
-    def _process_deprecated_cli_opts(self, opts):
-        for oldname, newname in self._deprecated.items():
-            if oldname not in opts or opts[oldname] in [None, []]:
-                continue
-            if newname:
-                LOGGER.warn("Option '--%s' is deprecated. Use '--%s' instead."
-                            % (oldname, newname))
-                opts[newname] = opts[oldname]
-            else:
-                LOGGER.error("Option '--%s' has been removed." % oldname)
+            self[name] = self._process_value(name, value, log)
 
     def __setitem__(self, name, value):
-        if not self._cli_opts.has_key(name):
+        if name not in self._cli_opts:
             raise KeyError("Non-existing settings '%s'" % name)
-        if value:
-            value = self._process_value(name, value)
         self._opts[name] = value
 
-    def _process_value(self, name, value):
+    def _process_value(self, name, value, log):
+        if value is None:
+            return value
         if name in ['Name', 'Doc', 'LogTitle', 'ReportTitle', 'SummaryTitle']:
             return value.replace('_', ' ')
         if name in ['Metadata', 'TagDoc']:
@@ -99,7 +86,7 @@ class _BaseSettings:
             return 'NONE'
         if name == 'OutputDir':
             return utils.normpath(value)
-        if name in ['SplitOutputs', 'SuiteStatLevel', 'MonitorWidth']:
+        if name in ['SuiteStatLevel', 'MonitorWidth']:
             return self._convert_to_integer(name, value)
         if name in ['Listeners', 'VariableFiles']:
             return [self._split_args_from_name(item) for item in value]
@@ -107,6 +94,12 @@ class _BaseSettings:
             return self._process_tag_stat_link(value)
         if name == 'RemoveKeywords':
             return value.upper()
+        if name == 'SplitOutputs':
+            if log:
+                LOGGER.warn('Splitting outputs (--SplitOutputs option) is not '
+                            'supported in Robot Framework 2.6 or newer. This '
+                            'option will be removed altogether in version 2.7.')
+            return -1
         return value
 
     def __getitem__(self, name):
