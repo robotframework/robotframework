@@ -1,7 +1,22 @@
-from __future__ import with_statement
+#  Copyright 2008-2011 Nokia Siemens Networks Oyj
+#
+#  Licensed under the Apache License, Version 2.0 (the "License");
+#  you may not use this file except in compliance with the License.
+#  You may obtain a copy of the License at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+#  Unless required by applicable law or agreed to in writing, software
+#  distributed under the License is distributed on an "AS IS" BASIS,
+#  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+#  See the License for the specific language governing permissions and
+#  limitations under the License.
 
-import re
+from __future__ import with_statement
+import codecs
 import os
+import re
+
 import robot
 from robot import utils
 
@@ -27,7 +42,7 @@ def _build_relative_log_path(report, log):
     return utils.get_link_path(log, os.path.dirname(report))
 
 def _build_file(outpath, test_output_datamodel, title, background, template, log_path=None):
-    with open(outpath, 'w') as outfile:
+    with codecs.open(outpath, 'w', encoding='UTF-8') as outfile:
         populator = _Populator(outfile, test_output_datamodel, title, background, log_path)
         with open(template, 'r') as templ:
             for line in templ:
@@ -128,7 +143,7 @@ class _Populator(object):
         return os.path.join(PATH, JS_FILE_REGEXP.search(line).group(1).replace('/', os.path.sep))
 
     def _write_js(self, js_file):
-        with open(js_file, 'r') as js:
+        with codecs.open(js_file, 'r', encoding='UTF-8') as js:
             for jsline in js:
                 self._log.write(jsline)
         self._log.write('\n\n')
