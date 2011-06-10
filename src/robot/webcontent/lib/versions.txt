@@ -1,0 +1,9 @@
+jquery
+------
+version 1.6.1
+http://docs.jquery.com/Downloading_jQuery#Download_jQuery
+
+jquery.tmpl
+-----------
+unreleased version updated latest on 8th June 2011
+https://github.com/jquery/jquery-tmpl
