@@ -98,16 +98,16 @@ class _Formatted(object):
 
     def __init__(self, replace_whitespace):
         self._newline = '<br />\n' if replace_whitespace else '\n'
-        self._result = ""
+        self._result = []
         self._joiner = ""
 
     def add(self, line, join_after=True):
-        self._result += self._joiner
+        self._result += [self._joiner]
         self._joiner = self._newline if join_after else ""
-        self._result += line
+        self._result += [line]
 
     def result(self):
-        return self._result
+        return ''.join(self._result)
 
 
 def _format_line(line, formatting=False, replace_whitespace=True):
