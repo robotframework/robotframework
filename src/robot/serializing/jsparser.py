@@ -175,7 +175,8 @@ levels = {'TRACE':'T',
 
 def create_datamodel_from(input_filename):
     robot = _RobotOutputHandler(Context())
-    sax.parse(input_filename, robot)
+    with open(input_filename, 'r') as input:
+        sax.parse(input, robot)
     return robot.datamodel
 
 
