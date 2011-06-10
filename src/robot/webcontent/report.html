@@ -533,7 +533,7 @@ function addHeader() {
     var header = $.tmpl(window.templates.header, {
         header: document.title,
         generated: window.testdata.generated().toString(),
-        generatedAgo: createGeneratedAgoString(generatedAgoMillis)
+        generatedAgo: util.createGeneratedAgoString(generatedAgoMillis)
     });
     header.appendTo($('#header_div'));
 }
