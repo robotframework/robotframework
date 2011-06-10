@@ -29,10 +29,12 @@ window.testdata = function () {
     }
 
     function times(stats) {
-        var start = timestamp(stats[1]);
+        var startMillis = stats[1];
         var elapsed = stats[2];
-        var stop = timestamp(stats[1] + elapsed);
-        return [start, stop, elapsed];
+        if(startMillis == null){
+            return [null, null, elapsed];
+        }
+        return [timestamp(startMillis), timestamp(startMillis + elapsed), elapsed];
     }
 
     function message(element) {

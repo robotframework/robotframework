@@ -207,11 +207,15 @@ window.model = function () {
     }
 
     function timeFromDate(date) {
+        if(date == null)
+            return "N/A"
         return shortTime(date.getHours(), date.getMinutes(),
                 date.getSeconds(), date.getMilliseconds());
     }
 
     function formatDate(date, excludeMillis) {
+        if(date == null)
+            return "N/A"
         var milliseconds = date.getMilliseconds();
         if (excludeMillis)
             milliseconds = undefined
