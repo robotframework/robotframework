@@ -310,11 +310,12 @@ $(document).ready(function(){
     addStatistics();
     addErrors();
     addTestExecutionLog(main);
-    expandFailed(main);
     if (window.location.hash) {
         makeElementVisible(window.location.hash.substring(1));
         window.location.hash = window.location.hash.substring(1);
-    };
+    } else {
+        expandFailed(main);
+    }
 });
 
 // TODO: This is duplicated in report.html
