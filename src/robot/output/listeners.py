@@ -30,6 +30,7 @@ class Listeners:
     _end_attrs = _start_attrs + ['endtime', 'elapsedtime', 'status', 'message']
 
     def __init__(self, listeners):
+        self._running_test = False
         self._listeners = self._import_listeners(listeners)
 
     def __nonzero__(self):
@@ -71,6 +72,7 @@ class Listeners:
                 li.call_method(li.end_suite, suite.name, attrs)
 
     def start_test(self, test):
+        self._running_test = True
         for li in self._listeners:
             if li.version == 1:
                 li.call_method(li.start_test, test.name, test.doc, test.tags)
@@ -79,6 +81,7 @@ class Listeners:
                 li.call_method(li.start_test, test.name, attrs)
 
     def end_test(self, test):
+        self._running_test = False
         for li in self._listeners:
             if li.version == 1:
                 li.call_method(li.end_test, test.status, test.message)
@@ -92,7 +95,13 @@ class Listeners:
                 li.call_method(li.start_keyword, kw.name, kw.args)
             else:
                 attrs = self._get_start_attrs(kw, 'args', '-longname')
+                attrs['type'] = self._get_keyword_type(kw)
                 li.call_method(li.start_keyword, kw.name, attrs)
+
+    def _get_keyword_type(self, kw):
+        if kw.type == 'kw':
+            return 'keyword'
+        return '%s %s' % (('test' if self._running_test else 'suite'), kw.type)
 
     def end_keyword(self, kw):
         for li in self._listeners:
@@ -100,6 +109,7 @@ class Listeners:
                 li.call_method(li.end_keyword, kw.status)
             else:
                 attrs = self._get_end_attrs(kw, 'args', '-longname', '-message')
+                attrs['type'] = self._get_keyword_type(kw)
                 li.call_method(li.end_keyword, kw.name, attrs)
 
     def log_message(self, msg):

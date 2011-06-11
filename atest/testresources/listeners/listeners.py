@@ -62,6 +62,17 @@ class SuiteAndTestCounts(object):
                                (name, self.exp_data[name], data))
 
 
+class KeywordType(object):
+    ROBOT_LISTENER_API_VERSION = '2'
+
+    def start_keyword(self, name, attrs):
+        if attrs['type'] != attrs['args'][0].lower():
+            raise RuntimeError("Wrong keyword type '%s', expected '%s'."
+                               % (attrs['type'], attrs['args'][0].lower()))
+
+    end_keyword = start_keyword
+
+
 class KeywordExecutingListener(object):
     ROBOT_LISTENER_API_VERSION = '2'
 

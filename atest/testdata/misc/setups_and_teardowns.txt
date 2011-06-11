@@ -1,0 +1,11 @@
+***Settings***
+Documentation   This suite was initially created for testing keyword types with
+...             listeners but can be used for other purposes too.
+Suite Setup     Log  Suite Setup
+Suite Teardown  Log  Suite Teardown
+Test Setup      Log  Test Setup
+Test Teardown   Log  Test Teardown
+
+***Test Cases***
+Test with setup and teardown
+    Log  Keyword

@@ -6,7 +6,7 @@ import org.python.core.PyDictionary;
 public class JavaAttributeVerifyingListener {
     public static final String ROBOT_LISTENER_API_VERSION = "2";
     private BufferedWriter outfile;
-    private Map expectedTypes; 
+    private Map expectedTypes;
 
     public JavaAttributeVerifyingListener() throws IOException {
 	createOutputFile();
@@ -31,7 +31,7 @@ public class JavaAttributeVerifyingListener {
 		put("totaltests", Integer.class);
 	    }};
     }
-    
+
     public void startSuite(String name, Map attrs) {
         verifyAttributes("START SUITE", attrs,
 			 new String[] {"doc", "starttime", "longname", "metadata", "tests", "suites", "totaltests"});
@@ -54,12 +54,12 @@ public class JavaAttributeVerifyingListener {
 
     public void startKeyword(String name, Map attrs) {
         verifyAttributes("START KEYWORD", attrs,
-			 new String[] {"doc", "starttime", "args"});
+			 new String[] {"doc", "starttime", "args", "type"});
     }
 
     public void endKeyword(String name, Map attrs) {
         verifyAttributes("END KEYWORD", attrs,
-			 new String[] {"doc", "starttime", "args", "endtime", "elapsedtime", "status"});
+			 new String[] {"doc", "starttime", "args", "type", "endtime", "elapsedtime", "status"});
     }
 
     public void close() throws IOException {

@@ -27,10 +27,10 @@ def end_test(name, attrs):
     _verify_attributes('END TEST', attrs, END_ATTRIBUTES + ['longname', 'tags', 'message'])
 
 def start_keyword(name, attrs):
-    _verify_attributes('START KEYWORD', attrs, START_ATTRIBUTES + ['args'])
+    _verify_attributes('START KEYWORD', attrs, START_ATTRIBUTES + ['args', 'type'])
 
 def end_keyword(name, attrs):
-    _verify_attributes('END KEYWORD', attrs, END_ATTRIBUTES + ['args'])
+    _verify_attributes('END KEYWORD', attrs, END_ATTRIBUTES + ['args', 'type'])
 
 def _verify_attributes(method_name, attrs, names):
     OUTFILE.write(method_name + '\n')
