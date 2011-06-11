@@ -234,10 +234,11 @@ class EmbeddedArgs(UserKeywordHandler):
         self.origname = template.name
         self._copy_attrs_from_template(template)
 
-
     def run(self, context, args):
-        for name, value in self.embedded_args:
-            context.get_current_vars()[name] = context.get_current_vars().replace_scalar(value)
+        if not context.dry_run:
+            for name, value in self.embedded_args:
+                context.get_current_vars()[name] = \
+                    context.get_current_vars().replace_scalar(value)
         return UserKeywordHandler.run(self, context, args)
 
     def _copy_attrs_from_template(self, template):

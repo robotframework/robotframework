@@ -15,12 +15,34 @@ Passing keywords
     ${contents}=  List Directory  .
     Simple UK
 
+Keywords with embedded arguments
+    Embedded arguments here
+    Embedded args rock here
+
 Keywords that would fail
     Fail  Not actually executed so won't fail.
     Fail In Uk
     No Operation
 
-Userkeyword return value
+Scalar variables are not checked in keyword arguments
+    [Documentation]  Variables are too often set somehow dynamically that we cannot expect them to always exist.
+    Log  ${TESTNAME}
+    Log  ${this does not exist}
+
+List variables are not checked in keyword arguments
+    [Documentation]  See the doc of the previous test
+    @{list} =  Create List  1  2  3  4
+    Log  @{list}
+    Anarchy in the UK  @{list}
+    Anarchy in the UK  @{nonex}
+    Fail   @{list}  @{nonex}
+
+Variables are not checked in when arguments are embedded
+    [Documentation]  See the doc of the previous test
+    Embedded ${TESTNAME} here
+    Embedded ${nonex} here
+
+User keyword return value
     ${quux}=  Some Return Value  ${foo}  ${bar}
 
 Test Setup And Teardown
@@ -73,18 +95,11 @@ Multiple Failures
     UK with multiple failures
     Does not exist
 
-Arguments given as list variable
-    [Documentation]  FAIL Keyword 'BuiltIn.Should Be Equal' expected 2 to 4 arguments, got 1.
-    @{list} =  Create List  1  1
-    Should Be Equal  @{list}
-    Anarchy in the UK  @{list}
-    Anarchy in the UK  @{list}  1
-    @{empty list}  Create List
-    Convert to Number   1  @{empty list}  @{empty list}
-    Should Be Equal  @{foo
-
 
 *** Keywords ***
+Embedded ${args} here
+    No Operation
+
 Keyword with Teardown
     No Operation
     [Teardown]  Does not exist
