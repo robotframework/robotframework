@@ -54,6 +54,12 @@ def html_escape(text, formatting=False, replace_whitespace=True):
         formatter.add(line)
     return formatter.result()
 
+def html_escape_no_formatting_no_whitespace_replace(text):
+    text = unic(text)
+    for name, value in [('&', '&amp;'), ('<', '&lt;'), ('>', '&gt;')]:
+        text = text.replace(name, value)
+    return _url_re.sub(lambda res: _repl_url(res, False), text)
+
 
 class _HtmlStringFormatter(object):
 
