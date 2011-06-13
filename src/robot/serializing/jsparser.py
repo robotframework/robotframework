@@ -468,10 +468,13 @@ class DataModel(object):
     def _remove_keywords_from(self, data):
         if not isinstance(data, list):
             return data
-        return [self._remove_keywords_from(item) for item in data if not self._is_keyword(item)]
+        return [self._remove_keywords_from(item) for item in data
+                if not self._is_ignorable_keyword(item)]
 
-    def _is_keyword(self, item):
-        return isinstance(item, list) and item and item[0] in ['kw', 'setup', 'teardown']
+    def _is_ignorable_keyword(self, item):
+        # Top level teardown is kept to make tests fail if suite teardown failed
+        # TODO: Could we store information about failed suite teardown otherwise?
+        return isinstance(item, list) and item and item[0] in ['kw', 'setup']
 
     def _prune_unused_texts(self):
         used = self._collect_used_text_indices(self._robot_data, set())
