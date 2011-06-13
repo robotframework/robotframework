@@ -48,13 +48,15 @@ _url_re = re.compile('''
 
 
 def html_escape(text, formatting=False, replace_whitespace=True):
+    if not formatting and not replace_whitespace:
+        return _html_escape_no_formatting_no_whitespace_replace(text)
     text = unic(text)
     formatter = _HtmlStringFormatter(formatting, replace_whitespace)
     for line in text.splitlines():
         formatter.add(line)
     return formatter.result()
 
-def html_escape_no_formatting_no_whitespace_replace(text):
+def _html_escape_no_formatting_no_whitespace_replace(text):
     text = unic(text)
     for name, value in [('&', '&amp;'), ('<', '&lt;'), ('>', '&gt;')]:
         text = text.replace(name, value)

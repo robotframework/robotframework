@@ -413,7 +413,7 @@ class _MsgHandler(object):
         if self._is_html:
             self._msg += [self._context.get_text_id(text)]
         else:
-            self._msg += [self._context.get_text_id(utils.html_escape_no_formatting_no_whitespace_replace(text))]
+            self._msg += [self._context.get_text_id(utils.html_escape(text, replace_whitespace=False))]
 
 
 class _RootHandler(_Handler):
