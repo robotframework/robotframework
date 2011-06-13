@@ -30,8 +30,9 @@ class Listeners:
     _end_attrs = _start_attrs + ['endtime', 'elapsedtime', 'status', 'message']
 
     def __init__(self, listeners):
-        self._running_test = False
         self._listeners = self._import_listeners(listeners)
+        self._running_test = False
+        self._setup_or_teardown_type = None
 
     def __nonzero__(self):
         return bool(self._listeners)
@@ -95,13 +96,8 @@ class Listeners:
                 li.call_method(li.start_keyword, kw.name, kw.args)
             else:
                 attrs = self._get_start_attrs(kw, 'args', '-longname')
-                attrs['type'] = self._get_keyword_type(kw)
+                attrs['type'] = self._get_keyword_type(kw, start=True)
                 li.call_method(li.start_keyword, kw.name, attrs)
-
-    def _get_keyword_type(self, kw):
-        if kw.type == 'kw':
-            return 'keyword'
-        return '%s %s' % (('test' if self._running_test else 'suite'), kw.type)
 
     def end_keyword(self, kw):
         for li in self._listeners:
@@ -109,8 +105,22 @@ class Listeners:
                 li.call_method(li.end_keyword, kw.status)
             else:
                 attrs = self._get_end_attrs(kw, 'args', '-longname', '-message')
-                attrs['type'] = self._get_keyword_type(kw)
+                attrs['type'] = self._get_keyword_type(kw, start=False)
                 li.call_method(li.end_keyword, kw.name, attrs)
+
+    def _get_keyword_type(self, kw, start=True):
+        # When running setup or teardown, only the top level keyword has type
+        # set to setup/teardown but we want to pass that type also to all
+        # start/end_keyword listener methods called below that keyword.
+        if kw.type == 'kw':
+            return self._setup_or_teardown_type or 'Keyword'
+        kw_type = self._get_setup_or_teardown_type(kw)
+        self._setup_or_teardown_type = kw_type if start else None
+        return kw_type
+
+    def _get_setup_or_teardown_type(self, kw):
+        return '%s %s' % (('Test' if self._running_test else 'Suite'),
+                          kw.type.title())
 
     def log_message(self, msg):
         for li in self._listeners:
