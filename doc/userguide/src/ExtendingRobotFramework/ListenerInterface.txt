@@ -2,16 +2,15 @@ Using listener interface
 ------------------------
 
 Robot Framework has a listener interface that can be used to receive
-notifications about test execution. Listeners are classes with certain special
-methods, and they can be implemented both with Python and Java. Starting from
-version 2.0.2, it is also possible to implement listeners as Python modules.
-Example uses of the listener interface include external test monitors, sending
-a mail message when a test fails, and communicating with other systems.
+notifications about test execution. Listeners are classes or modules
+with certain special methods, and they can be implemented both with
+Python and Java. Example uses of the listener interface include
+external test monitors, sending a mail message when a test fails, and
+communicating with other systems.
 
-.. contents:: 
+.. contents::
    :depth: 2
-   :local: 
-
+   :local:
 
 Taking listeners into use
 ~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -22,14 +21,14 @@ listener name is got from the name of the class or module implementing the
 listener interface, similarly as `test library names`_ are got from classes
 implementing them. The specified listeners must be in the same `module search
 path`_ where test libraries are searched from when they are imported. Other
-option is to give an absolute or a relative path to the listener file 
-`similarly as with test libraries`__. It is possible to take multiple listeners 
+option is to give an absolute or a relative path to the listener file
+`similarly as with test libraries`__. It is possible to take multiple listeners
 into use by using this option several times.
 
 Starting from version 2.0.2, it is also possible to give arguments to listener
-classes from the command line. Arguments are specified after the listener name 
-(or path) using a colon as a separator. This approach provides only string 
-type arguments and arguments obviously cannot contain colons. However, it 
+classes from the command line. Arguments are specified after the listener name
+(or path) using a colon as a separator. This approach provides only string
+type arguments and arguments obviously cannot contain colons. However, it
 should be pretty easy to listeners to go around these limitations.
 
 __ `Using physical path to library`_
@@ -43,7 +42,6 @@ Examples::
    pybot --listener ListenerWithArgs:arg1:arg2
    pybot --listener path/to/MyListener.java:argument tests.html
 
-
 Available listener interface methods
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -55,7 +53,6 @@ the end it calls the :code:`close` method. A listener is not required to
 implement any official interface, and it only needs to have the methods it
 actually needs.
 
-
 Listener interface versions
 '''''''''''''''''''''''''''
 
@@ -65,13 +62,12 @@ to listener interface without breaking existing listeners. The old signatures
 will continue to work, but they will be deprecated in some future version, so
 all new listeners should be implemented with signatures described in the table
 below. The most recent detailed description of the old listener interface can
-be found in User Guide of Robot Framework 2.0.4. 
+be found in User Guide of Robot Framework 2.0.4.
 
-.. note:: A listener must have attribute :code:`ROBOT_LISTENER_API_VERSION` 
+.. note:: A listener must have attribute :code:`ROBOT_LISTENER_API_VERSION`
   defined in order to be recognized as a new style listener. Value of the
   :code:`ROBOT_LISTENER_API_VERSION` attribute must be 2, either as a string or
   as an integer. The examples below are implemented as new style listeners.
-
 
 Listener interface method signatures
 ''''''''''''''''''''''''''''''''''''
@@ -82,8 +78,8 @@ where :code:`attributes` is a dictionary containing details of the event. The
 following table lists all the available methods in the listener interface and
 the contents of the :code:`attributes` dictionary, where applicable. Keys of
 the dictionary are strings. All of these methods have also `camelCase` aliases.
-Thus, for example, :code:`startSuite` is a synonym to :code:`start_suite`. 
- 
+Thus, for example, :code:`startSuite` is a synonym to :code:`start_suite`.
+
 .. table:: Available methods in the listener interface
    :class: tabular
 
@@ -104,7 +100,7 @@ Thus, for example, :code:`startSuite` is a synonym to :code:`start_suite`.
    |               |                  | * totaltests: total number of tests in this suite|
    |               |                  |   and all its sub-suites as an integer           |
    |               |                  |                                                  |
-   |               |                  | The last four were added in Robot Framework 2.5  |
+   |               |                  | The last four were added in Robot Framework 2.5. |
    +---------------+------------------+--------------------------------------------------+
    | end_suite     | name, attributes | Keys in the attributes dictionary:               |
    |               |                  |                                                  |
@@ -144,7 +140,12 @@ Thus, for example, :code:`startSuite` is a synonym to :code:`start_suite`.
    |               |                  |                                                  |
    |               |                  | * doc: keyword documentation                     |
    |               |                  | * starttime: execution start time                |
-   |               |                  | * args: keyword arguments as a list of strings   |
+   |               |                  | * args: keyword's arguments as a list of strings |
+   |               |                  | * type: string :code:`Keyword` for normal        |
+   |               |                  |   keywords and :code:`Test Setup`, :code:`Test   |
+   |               |                  |   Teardown`, :code:`Suite Setup` or :code:`Suite |
+   |               |                  |   Teardown` for keywords used in suite/test      |
+   |               |                  |   setup/teardown. New in Robot Framework 2.6.    |
    +---------------+------------------+--------------------------------------------------+
    | end_keyword   | name, attributes | Keys in the attributes dictionary:               |
    |               |                  |                                                  |
@@ -155,6 +156,7 @@ Thus, for example, :code:`startSuite` is a synonym to :code:`start_suite`.
    |               |                  |   as an integer                                  |
    |               |                  | * args: keyword's arguments as a list of strings |
    |               |                  | * status: either :code:`PASS` or :code:`FAIL`    |
+   |               |                  | * type: Same as with :code:`start_keyword`       |
    +---------------+------------------+--------------------------------------------------+
    | log_message   | message          | Called when an executed keyword writes a log     |
    |               |                  | message. :code:`message` is a dictionary with    |
@@ -229,7 +231,6 @@ to implement any explicit interface or have all these methods.
        void close();
    }
 
-
 Listener examples
 ~~~~~~~~~~~~~~~~~
 
@@ -242,7 +243,7 @@ illustrates that using the listener interface is not very complicated.
 
    def start_test(name, attrs):
        print 'Executing test %s' % name
-       
+
    def start_keyword(name, attrs):
        print 'Executing keyword %s with arguments %s' % (name, attrs['args'])
 
@@ -251,7 +252,6 @@ illustrates that using the listener interface is not very complicated.
 
    def close():
        print 'All tests executed'
-
 
 The second example, which still uses Python, is slightly more complicated. It
 writes all the information it gets into a text file in a temporary directory
@@ -269,30 +269,29 @@ probably more useful than this example.
    class PythonListener:
 
        ROBOT_LISTENER_API_VERSION = 2
-    
+
        def __init__(self, filename='listen.txt'):
            outpath = os.path.join(tempfile.gettempdir(), filename)
            self.outfile = open(outpath, 'w')
-        
+
        def start_suite(self, name, attrs):
            self.outfile.write("%s '%s'\n" % (name, attrs['doc']))
-        
+
        def start_test(self, name, attrs):
            tags = ' '.join(attrs['tags'])
            self.outfile.write("- %s '%s' [ %s ] :: " % (name, attrs['doc'], tags))
-        
+
        def end_test(self, name, attrs):
            if attrs['status'] == 'PASS':
                self.outfile.write('PASS\n')
            else:
                self.outfile.write('FAIL: %s\n' % attrs['message'])
-            
+
         def end_suite(self, name, attrs):
             self.outfile.write('%s\n%s\n' % (attrs['status'], attrs['message']))
-            
+
         def close(self):
             self.outfile.close()
-
 
 The third example implements the same functionality as the previous one, but uses Java instead of Python.
 
@@ -304,7 +303,7 @@ The third example implements the same functionality as the previous one, but use
 
 
    public class JavaListener {
-   
+
        public static final int ROBOT_LISTENER_API_VERSION = 2;
        public static final String DEFAULT_FILENAME = "listen_java.txt";
        private BufferedWriter outfile = null;
@@ -312,14 +311,14 @@ The third example implements the same functionality as the previous one, but use
        public JavaListener() throws IOException {
            this(DEFAULT_FILENAME);
        }
-   
+
        public JavaListener(String filename) throws IOException {
            String tmpdir = System.getProperty("java.io.tmpdir");
            String sep = System.getProperty("file.separator");
-           String outpath = tmpdir + sep + filename; 
+           String outpath = tmpdir + sep + filename;
            outfile = new BufferedWriter(new FileWriter(outpath));
        }
-   
+
        public void startSuite(String name, Map attrs) throws IOException {
            outfile.write(name + " '" + attrs.get("doc") + "'\n");
        }
@@ -332,7 +331,7 @@ The third example implements the same functionality as the previous one, but use
            }
            outfile.write(" ] :: ");
        }
-   
+
        public void endTest(String name, Map attrs) throws IOException {
            String status = attrs.get("status").toString();
            if (status.equals("PASS")) {
@@ -342,11 +341,11 @@ The third example implements the same functionality as the previous one, but use
                outfile.write("FAIL: " + attrs.get("message") + "\n");
            }
        }
-      
+
        public void endSuite(String name, Map attrs) throws IOException {
            outfile.write(attrs.get("status") + "\n" + attrs.get("message") + "\n");
        }
-   
+
        public void close() throws IOException {
            outfile.close();
        }
