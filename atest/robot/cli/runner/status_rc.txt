@@ -4,24 +4,30 @@ Default Tags    regression  pybot  jybot
 Resource        cli_resource.txt
 
 *** Variables ***
-${MISCDIR}  ${CURDIR}${/}..${/}..${/}..${/}testdata${/}misc
-${PASSINGSUITE}  ${MISCDIR}${/}normal.html
-${FAILINGSUITE}  ${MISCDIR}${/}pass_and_fail.html
+${MISCDIR}   ${CURDIR}/../../../testdata/misc
+${PASSING}   ${MISCDIR}/normal.html
+${FAILING}   ${MISCDIR}/pass_and_fail.html
 
 *** Test Cases ***
-Zero Return Code When All Tests Pass
-    Return code can be forced to zero from commandline  ${PASSINGSUITE}
 
-Zero Return Code When Some Tests Fail
-    Return code can be forced to zero from commandline  ${FAILINGSUITE}
+Zero RC when all tests pass
+    Run Tests and Verify RC  ${PASSING}                  rc=0
 
-None Zero Return Code When Some Tests Fail
-    ${rc}=  Run And Return Rc  ${ROBOT} --outputdir ${TEMPDIR} ${FAILINGSUITE}
-    Should Be Equal As Integers  ${rc}  1
+Zero RC when all critical tests pass
+    Run Tests and Verify RC  --critical pass ${FAILING}  rc=0
+
+Non-zero RC when critical tests fail
+    Run Tests and Verify RC  ${FAILING}                  rc=1
+
+Zero RC when all tests pass with --NoStatusRC
+    Run Tests and Verify RC  --NoStatusRC ${PASSING}     rc=0
+
+Zero RC when critical tests fail with --NoStatusRC
+    Run Tests and Verify RC  --nostatusrc ${FAILING}     rc=0
+
 
 *** Keywords ***
-Return code can be forced to zero from commandline
-    [Arguments]  ${datasource}
-    ${rc}=  Run And Return Rc  ${ROBOT} --nostatusrc --outputdir ${TEMPDIR} ${datasource}
-    Should Be Equal As Integers  ${rc}  0
-
+Run Tests and Verify RC
+    [Arguments]  ${options & source}  ${rc}=
+    ${returned}=  Run And Return Rc  ${ROBOT} --output NONE ${options & source}
+    Should Be Equal As Integers  ${returned}  ${rc}
