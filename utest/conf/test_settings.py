@@ -22,7 +22,7 @@ class TestSplitArgsFromName(unittest.TestCase):
     def test_with_args(self):
         assert_equals(self.method('name:arg'), ('name', ['arg']))
         assert_equals(self.method('listener:v1:v2:v3'), ('listener', ['v1', 'v2', 'v3']))
-        assert_equals(self.method('a:b:c'), ('a', ['b', 'c']))
+        assert_equals(self.method('aa:bb:cc'), ('aa', ['bb', 'cc']))
         
     def test_empty_args(self):
         assert_equals(self.method('foo:'), ('foo', ['']))
