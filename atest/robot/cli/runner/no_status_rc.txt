@@ -15,8 +15,13 @@ Zero Return Code When All Tests Pass
 Zero Return Code When Some Tests Fail
     Return code can be forced to zero from commandline  ${FAILINGSUITE}
 
+None Zero Return Code When Some Tests Fail
+    ${rc}=  Run And Return Rc  ${ROBOT} --outputdir ${TEMPDIR} ${FAILINGSUITE}
+    Should Be Equal As Integers  ${rc}  1
+
 *** Keywords ***
 Return code can be forced to zero from commandline
     [Arguments]  ${datasource}
     ${rc}=  Run And Return Rc  ${ROBOT} --nostatusrc --outputdir ${TEMPDIR} ${datasource}
     Should Be Equal As Integers  ${rc}  0
+
