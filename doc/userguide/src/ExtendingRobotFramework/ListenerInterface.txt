@@ -140,7 +140,12 @@ Thus, for example, :code:`startSuite` is a synonym to :code:`start_suite`.
    |               |                  |                                                  |
    |               |                  | * doc: keyword documentation                     |
    |               |                  | * starttime: execution start time                |
-   |               |                  | * args: keyword arguments as a list of strings   |
+   |               |                  | * args: keyword's arguments as a list of strings |
+   |               |                  | * type: string :code:`Keyword` for normal        |
+   |               |                  |   keywords and :code:`Test Setup`, :code:`Test   |
+   |               |                  |   Teardown`, :code:`Suite Setup` or :code:`Suite |
+   |               |                  |   Teardown` for keywords used in suite/test      |
+   |               |                  |   setup/teardown. New in Robot Framework 2.6.    |
    +---------------+------------------+--------------------------------------------------+
    | end_keyword   | name, attributes | Keys in the attributes dictionary:               |
    |               |                  |                                                  |
@@ -151,6 +156,7 @@ Thus, for example, :code:`startSuite` is a synonym to :code:`start_suite`.
    |               |                  |   as an integer                                  |
    |               |                  | * args: keyword's arguments as a list of strings |
    |               |                  | * status: either :code:`PASS` or :code:`FAIL`    |
+   |               |                  | * type: Same as with :code:`start_keyword`       |
    +---------------+------------------+--------------------------------------------------+
    | log_message   | message          | Called when an executed keyword writes a log     |
    |               |                  | message. :code:`message` is a dictionary with    |
