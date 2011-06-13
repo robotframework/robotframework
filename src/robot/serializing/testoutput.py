@@ -39,6 +39,7 @@ class Reporter(object):
     def __init__(self):
         self._robot_test_output_cached = None
         self._temp_file = None
+        self._suite = None
 
     def _make_report(self, report_path, log_path, data_model, settings):
         if report_path:
@@ -56,9 +57,9 @@ class Reporter(object):
 
     def _robot_test_output(self, data_sources, settings):
         if self._robot_test_output_cached is None:
-            suite, exec_errors = process_outputs(data_sources, settings)
-            suite.set_options(settings)
-            self._robot_test_output_cached = RobotTestOutput(suite, exec_errors, settings)
+            self._suite, exec_errors = process_outputs(data_sources, settings)
+            self._suite.set_options(settings)
+            self._robot_test_output_cached = RobotTestOutput(self._suite, exec_errors, settings)
         return self._robot_test_output_cached
 
     def _combine_outputs(self, data_sources, settings):
@@ -75,6 +76,7 @@ class Reporter(object):
         self.execute(settings, *data_sources)
         if self._temp_file:
             os.remove(self._temp_file)
+        return self._suite
 
     def execute(self, settings, *data_sources):
         data_model = jsparser.create_datamodel_from(data_sources[0])
