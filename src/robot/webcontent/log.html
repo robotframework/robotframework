@@ -354,6 +354,9 @@ function makeElementVisible(element) {
     for (var i in uuids) {
         $("#"+uuids[i]+"_unfoldlink").click();
     }
+    if (uuids && uuids.length >= 1) {
+        expandFailed(window.testdata.find(uuids[uuids.length-1]));
+    }
 }
 
 function addTestExecutionLog(main) {
