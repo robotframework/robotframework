@@ -44,7 +44,7 @@ window.testdata = function () {
 
     // TODO: Is separate status object needed? Probably not.
     function createStatus(stats, parentSuiteTeardownFailed) {
-        var status = (stats[0] == "P" ? model.PASS : model.FAIL);
+        var status = {'P': model.PASS , 'F': model.FAIL, 'N': model.NOT_RUN}[stats[0]];
         return model.Status(status, parentSuiteTeardownFailed);
     }
 

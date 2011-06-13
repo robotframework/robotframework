@@ -1,8 +1,9 @@
 window.model = function () {
 
     var STATUS = {
-        pass:"pass",
-        fail:"fail"
+        pass: "pass",
+        fail: "fail",
+        notRun: "not_run"
     };
 
     var KEYWORD_TYPE = {
@@ -28,8 +29,7 @@ window.model = function () {
         suite.children = function () {
             return suite.keywords().concat(suite.tests()).concat(suite.suites());
         };
-        // TODO: Create message for suite here, not via a function
-        // TODO: It seems failures in suite setup aren't handled at all
+        // TODO: Is hasTeardownFailure used anymore?
         suite.hasTeardownFailure = function () {
             return suiteTeardownFailed(suite) || data.status.parentSuiteTeardownFailed;
         };
@@ -297,6 +297,7 @@ window.model = function () {
         Times: Times,
         PASS: STATUS.pass,
         FAIL: STATUS.fail,
+        NOT_RUN: STATUS.notRun,
         formatElapsed: formatElapsed,
         containsTag: containsTag,  // Exposed for tests
         shortTime: shortTime
