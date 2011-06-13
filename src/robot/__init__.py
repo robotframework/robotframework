@@ -155,7 +155,7 @@ def run_rebot(*datasources, **options):
     settings = RebotSettings(options)
     LOGGER.register_console_logger(colors=settings['MonitorColors'])
     LOGGER.disable_message_cache()
-    Reporter().execute(settings, *datasources)
+    Reporter().execute_rebot(settings, *datasources)
     LOGGER.close()
     class RebotSuite(object):
         @property

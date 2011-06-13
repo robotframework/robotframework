@@ -101,7 +101,7 @@ class TestReporting(unittest.TestCase):
     def test_multiple_outputs(self):
         self._settings['Log'] = 'log.html'
         self._settings['Report'] = 'report.html'
-        self._reporter.execute(self._settings, *[resources.GOLDEN_OUTPUT, resources.GOLDEN_OUTPUT2])
+        self._reporter.execute_rebot(self._settings, *[resources.GOLDEN_OUTPUT, resources.GOLDEN_OUTPUT2])
         self._assert_expected_log('log.html')
         self._assert_expected_report('report.html')
 

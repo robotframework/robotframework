@@ -69,10 +69,11 @@ class Reporter(object):
         self._robot_test_output(data_sources, settings).serialize_output(output_file)
         return [output_file]
 
+    def execute_rebot(self, settings, *data_sources):
+        data_sources = self._combine_outputs(data_sources, settings)
+        self.execute(settings, *data_sources)
 
     def execute(self, settings, *data_sources):
-        if len(data_sources) > 1:
-            data_sources = self._combine_outputs(data_sources, settings)
         data_model = jsparser.create_datamodel_from(data_sources[0])
         report_path = self._parse_file(settings['Report'])
         log_path = self._parse_file(settings['Log'])
