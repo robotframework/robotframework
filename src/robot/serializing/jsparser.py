@@ -85,13 +85,13 @@ class Context(object):
         self._kw_index.pop()
 
     def create_link_to_current_location(self, key):
-        self._links[str(key)] = self._create_link()
+        self._links[tuple(key)] = self._create_link()
 
     def _create_link(self):
         return "keyword_"+".".join(str(v) for _, v in self._current_place)
 
     def link_to(self, key):
-        return self._links[str(key)]
+        return self._links[tuple(key)]
 
     def add_test(self, critical, passed):
         self._stats.add_test(critical, passed)
