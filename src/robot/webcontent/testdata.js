@@ -20,7 +20,7 @@ window.testdata = function () {
     }
 
     function timestamp(millis) {
-        return new Date(window.basemillis + millis);
+        return new Date(window.output.baseMillis + millis);
     }
 
     // TODO: Remove this function and use texts.get everywhere.
@@ -187,11 +187,11 @@ window.testdata = function () {
     }
 
     function suite() {
-        var elem = window.data[2];
+        var elem = window.output.suite;
         if (elementsById[elem.id])
             return elem;
         var main = addElement(createSuite(undefined, elem));
-        window.data[2] = main;
+        window.output.suite = main;
         return main;
     }
 
@@ -277,11 +277,11 @@ window.testdata = function () {
     }
 
     function generated() {
-        return timestamp(window.data[0]);
+        return timestamp(window.output.generatedMillis);
     }
 
     function errors() {
-        return util.map(window.data[4], message);
+        return util.map(window.output.errors, message);
     }
 
     // TODO: Is this used anymore?
@@ -290,7 +290,7 @@ window.testdata = function () {
     }
 
     function statistics() {
-        var statData = window.data[3];
+        var statData = window.output.stats;
         return stats.Statistics(statData[0], statData[1], statData[2]);
     }
 
@@ -321,7 +321,7 @@ window.texts = (function () {
     }
 
     return {
-        get: function (id) { return decode(window.strings[id]); }
+        get: function (id) { return decode(window.output.strings[id]); }
     };
 
 })();

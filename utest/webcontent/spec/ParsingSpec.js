@@ -1,15 +1,16 @@
-window.basemillis = 1000000000000;
+window.output = {}
+window.output.baseMillis = 1000000000000;
 
 describe("Text decoder", function () {
 
     it("should have empty string with id 0", function () {
-        window.strings = ["*"];
+        window.output.strings = ["*"];
         var empty = texts.get(0);
         expect(empty).toEqual("");
     });
 
     it("should uncompress", function () {
-        window.strings = ["*", "eNorzk3MySmmLQEASKop9Q=="];
+        window.output.strings = ["*", "eNorzk3MySmmLQEASKop9Q=="];
         var decompressed = texts.get(1);
         var expected = "";
         for(var i = 0; i < 20; i++){
@@ -19,36 +20,41 @@ describe("Text decoder", function () {
     });
 
     it("should handle plain text", function () {
-        window.strings = ["*", "*plain text"];
+        window.output.strings = ["*", "*plain text"];
         var actual = texts.get(1);
         expect(actual).toEqual("plain text");
     });
 });
 
-function createData(suite, errors){
-    if(errors === undefined)
+function populateOutput(suite, strings, errors) {
+    window.output.generatedMillis = -41;
+    window.output.generator = "info";
+    window.output.suite = suite;
+    window.output.stats = [[["Critical Tests",0,1,"","",""],
+                            ["All Tests",0,1,"","",""]],
+                            [],
+                            [["Tmp",0,1,"","Tmp",""],
+                             ["Tmp.Test",0,1,"","Tmp.Test",""]]];
+    window.output.strings = strings;
+    if (errors == undefined)
         errors = [];
-    return [-41,"info", suite, [[["Critical Tests",0,1,"","",""],
-                                 ["All Tests",0,1,"","",""]],
-                                 [],
-                                 [["Tmp",0,1,"","Tmp",""],
-                                  ["Tmp.Test",0,1,"","Tmp.Test",""]]],errors];
+    window.output.errors = errors;
 }
 
 describe("Handling Suite", function () {
 
     function getDate(offset) {
-        return new Date(window.basemillis + offset);
+        return new Date(window.output.basemillis + offset);
     }
 
     beforeEach(function () {
         var keyword = ["kw",2,0,3,4, [0,"I",4], ["P",0,0]];
         var test = ["test",1,10,"Y",6, keyword, [7, 8],["P",-1,2]];
         var suite = ["suite","/tmp/test.txt","Suite",5,{"meta":9}, test, ["P",-38,39], [1,1,1,1]];
-        window.data = createData(suite);
-        window.strings =["*","*Test","*lib.kw","*Kw doc.","*message",
-                         "*suite doc", "*test doc", "*tag1", "*tag2",
-                         "*data", "*1 second"];
+        var strings = ["*","*Test","*lib.kw","*Kw doc.","*message",
+                       "*suite doc", "*test doc", "*tag1", "*tag2",
+                       "*data", "*1 second"];
+        populateOutput(suite, strings);
     });
 
     function expectStats(suite, total, passed, critical, criticalPassed){
@@ -102,7 +108,7 @@ describe("Handling Suite", function () {
 
     it("should parse timestamp", function () {
         var timestamp = window.testdata.generated();
-        expect(timestamp).toEqual(new Date(window.basemillis-41));
+        expect(timestamp).toEqual(new Date(window.output.baseMillis-41));
     });
 
 });
@@ -110,15 +116,15 @@ describe("Handling Suite", function () {
 describe("Setups and teardowns", function () {
 
     beforeEach(function () {
-        window.data = createData(
-                    ["suite","/temp/suite.txt","Suite",0,{},
+        var suite = ["suite","/temp/suite.txt","Suite",0,{},
                      ["setup",1,0,2,3,[0,"I",3],["P",-1,1]],
                      ["test",4,0,"Y",0,
                       ["setup",1,0,2,3,[1,"I",3],["P",1,0]],["kw",1,0,2,3,[2,"I",3],["P",2,0]],
                       ["teardown",1,0,2,5,[3,"I",5],["P",3,0]],[],["P",0,4]],
                      ["teardown",1,0,2,5,[4,"I",5],["P",4,1]],["P",-35,40],
                      [1,1,1,1]]);
-        window.strings =["*","*Lib.Kw","*Blaa.","*sets","*Test","*tears"];
+        var strings = ["*","*Lib.Kw","*Blaa.","*sets","*Test","*tears"];
+        populateOutput(suite, strings);
     });
 
     function checkTypeNameArgs(kw, type, name, args) {
@@ -187,21 +193,21 @@ describe("Short time formatting", function (){
 describe("Handling messages", function (){
 
     beforeEach(function (){
-        window.data = createData(
-                        ["suite","/suite/verysimple.txt","Verysimple",0,{},
-                        ["test",1,0,"Y",0,
-                         ["kw",2,0,3,4,[0,"H",5],["P",0,0]],
-                         ["kw",2,0,3,6,[1,"I",7],["P",1,0]],
-                         ["kw",2,0,3,8,[2,"W",9],["P",2,0]],
-                         ["kw",2,0,3,10,[3,"D",11],["P",3,0]],
-                         ["kw",2,0,3,12,[3,"T",13],["P",3,0]],
-                         [],["P",-1,4]],["P",-28,32],[1,1,1,1]],
-                         [[2,"W",9, "keyword_Verysimple.Test.2"]]);
-        window.strings =["*","*Test","*Log","*Logging","*<h1>html</h1>, HTML",
-                         "*<h1>html</h1>","*infolevelmessage, INFO",
-                         "*infolevelmessage","*warning, WARN","*warning",
-                         "*debugging, DEBUG","*debugging", "*tracing, TRACE",
-                         "*tracing"];
+        var suite = ["suite","/suite/verysimple.txt","Verysimple",0,{},
+                     ["test",1,0,"Y",0,
+                      ["kw",2,0,3,4,[0,"H",5],["P",0,0]],
+                      ["kw",2,0,3,6,[1,"I",7],["P",1,0]],
+                      ["kw",2,0,3,8,[2,"W",9],["P",2,0]],
+                      ["kw",2,0,3,10,[3,"D",11],["P",3,0]],
+                      ["kw",2,0,3,12,[3,"T",13],["P",3,0]],
+                      [],["P",-1,4]],["P",-28,32],[1,1,1,1]];
+        var strings = ["*","*Test","*Log","*Logging","*<h1>html</h1>, HTML",
+                       "*<h1>html</h1>","*infolevelmessage, INFO",
+                       "*infolevelmessage","*warning, WARN","*warning",
+                       "*debugging, DEBUG","*debugging", "*tracing, TRACE",
+                       "*tracing"];
+        var errors = [[2,"W",9, "keyword_Verysimple.Test.2"]];
+        populateOutput(suite, strings, errors);
     });
 
     function expectMessage(message, txt, level) {
@@ -242,15 +248,15 @@ describe("Handling messages", function (){
 
 describe("Parent Suite Teardown Failure", function (){
     beforeEach(function (){
-        window.data = [-57,"Robot",["suite","/tmp","Tmp",0,{},
-                                    ["suite","/tmp/test.txt","Test",0,{},
-                                     ["test",1,0,"Y",0,
-                                      ["kw",2,0,3,0,["P",0,1]],[],["P",-1,2]],["P",-2,3],
-                                      [1,0,1,0]],
-                                    ["teardown",4,0,5,0,[3,"F",6],["F",2,2]],["F",-37,41, 7],[1,0,1,0]],
-                                    ,[]];
-        window.strings =["*","*Testt","*NoOp","*Does nothing.",
-                         "*Fail","*Fails","*AssertionError", "*Suite teardown failed:\nAssertionError"];
+        var suite = ["suite","/tmp","Tmp",0,{},
+                     ["suite","/tmp/test.txt","Test",0,{},
+                      ["test",1,0,"Y",0,
+                       ["kw",2,0,3,0,["P",0,1]],[],["P",-1,2]],["P",-2,3],
+                       [1,0,1,0]],
+                       ["teardown",4,0,5,0,[3,"F",6],["F",2,2]],["F",-37,41, 7],[1,0,1,0]];
+        var strings = ["*","*Testt","*NoOp","*Does nothing.",
+                       "*Fail","*Fails","*AssertionError", "*Suite teardown failed:\nAssertionError"];
+        populateOutput(suite, strings);
     });
 
     it("should show test status as failed", function (){
@@ -282,18 +288,15 @@ describe("Parent Suite Teardown Failure", function (){
 
 describe("Parent Suite Teardown and Test failure", function(){
     beforeEach(function (){
-        window.data = [-25,"Robot",
-            ["suite","/tmp/SuiteTeardown.txt","SuiteTeardown",0,{},
-                ["test",1,0,"Y",0,
-                    ["kw",2,0,3,4,[0,"F",4],["F",-1,1]],[],
-                    ["F",-2,2,4]],
-                ["teardown",2,0,3,5,[1,"F",5],["F",0,1]],
-                ["F",-23,24,6],[1,0,1,0]],
-            [[["Critical Tests",0,1,"","",""],
-                ["All Tests",0,1,"","",""]],[],
-                [["SuiteTeardown",0,1,"SuiteTeardown","",""]]],[]];
-        window.strings =["*","*Failing","*Fail","*Fails","*In test","*in suite teardown",
-            "*Suite teardown failed:\nin suite teardown"];
+        var suite = ["suite","/tmp/SuiteTeardown.txt","SuiteTeardown",0,{},
+                     ["test",1,0,"Y",0,
+                      ["kw",2,0,3,4,[0,"F",4],["F",-1,1]],[],
+                      ["F",-2,2,4]],
+                      ["teardown",2,0,3,5,[1,"F",5],["F",0,1]],
+                      ["F",-23,24,6],[1,0,1,0]];
+        var strings = ["*","*Failing","*Fail","*Fails","*In test","*in suite teardown",
+                       "*Suite teardown failed:\nin suite teardown"];
+        populateOutput(suite, strings);
     });
 
     it("should show test message 'In test\n\nAlso teardown of the parent suite failed.'", function (){
@@ -305,14 +308,14 @@ describe("Parent Suite Teardown and Test failure", function(){
 describe("Test failure message", function (){
 
     beforeEach(function () {
-        window.data = createData(
-                       ["suite","/test.txt","Test",0,{},
-                        ["test",1,0,"Y",0,
-                         ["kw",2,0,0,0,
-                          ["kw",3,0,4,5,[0,"F",5],["F",-1,1]],
-                          ["F",-1,1]],[],["F",-2,3,5]],
-                          ["F",-29,30],[1,0,1,0]]);
-        window.strings =["*","*Feilaava","*feilaa","*Fail","*Fails","*FooBar!"];
+        var suite = ["suite","/test.txt","Test",0,{},
+                     ["test",1,0,"Y",0,
+                      ["kw",2,0,0,0,
+                       ["kw",3,0,4,5,[0,"F",5],["F",-1,1]],
+                       ["F",-1,1]],[],["F",-2,3,5]],
+                       ["F",-29,30],[1,0,1,0]];
+        var strings = ["*","*Feilaava","*feilaa","*Fail","*Fails","*FooBar!"];
+        populateOutput(suite, strings);
     });
 
     it("should show test failure message ''", function (){
@@ -324,17 +327,17 @@ describe("Test failure message", function (){
 describe("Iterating Keywords", function (){
 
     beforeEach(function (){
-        window.data = [-31,"Robot (Python 2.6.5 on linux2)",
-                ["suite","/suite/verysimple.txt","Verysimple",0,{},
-                 ["test",1,0,"Y",0,
-                  ["kw",2,0,0,0,["kw",3,0,4,5,[0,"I",5],["P",-1,1]],["P",-1,1]],
-                  ["kw",6,0,0,0,["kw",3,0,4,7,[1,"I",7],["P",1,0]],["P",0,1]],
-                  ["kw",8,0,0,0,["kw",3,0,4,9,[2,"I",9],["P",2,1]],["P",2,1]],
-                  ["kw",10,0,0,0,["kw",3,0,4,11,[4,"I",11],["P",4,0]],
-                  ["P",3,1]],[],["P",-2,7]],["P",-29,34], [1,1,1,1]],"stat",[]];
-        window.strings =["*","*Test","*kw1","*Printtaa","*Logs things",
-                     "*keyword1","*kw2","*keyword2",
-                     "*kw3","*keyword3","*kw4","*keyword4"];
+        var suite = ["suite","/suite/verysimple.txt","Verysimple",0,{},
+                     ["test",1,0,"Y",0,
+                      ["kw",2,0,0,0,["kw",3,0,4,5,[0,"I",5],["P",-1,1]],["P",-1,1]],
+                      ["kw",6,0,0,0,["kw",3,0,4,7,[1,"I",7],["P",1,0]],["P",0,1]],
+                      ["kw",8,0,0,0,["kw",3,0,4,9,[2,"I",9],["P",2,1]],["P",2,1]],
+                      ["kw",10,0,0,0,["kw",3,0,4,11,[4,"I",11],["P",4,0]],
+                       ["P",3,1]],[],["P",-2,7]],["P",-29,34], [1,1,1,1]];
+        var strings = ["*","*Test","*kw1","*Printtaa","*Logs things",
+                       "*keyword1","*kw2","*keyword2",
+                       "*kw3","*keyword3","*kw4","*keyword4"];
+        populateOutput(suite, strings);
     });
 
     function test(){
@@ -369,18 +372,18 @@ describe("Iterating Keywords", function (){
 describe("Iterating Tests", function (){
 
     beforeEach(function (){
-        window.data = createData(
-                       ["suite","/verysimple.txt","Verysimple",0,{},
-                        ["test",1,0,"Y",0,["kw",2,0,3,4,[0,"I",4],["P",0,0]],[],
-                         ["P",-1,2]],
-                        ["test",5,0,"Y",0,["kw",2,0,3,6,[2,"I",6],["P",2,0]],[],
-                         ["P",1,1]],
-                        ["test",7,0,"Y",0,["kw",2,0,3,8,[3,"I",8],["P",3,0]],[],
-                         ["P",3,1]],
-                        ["P",-28,32],[3,3,3,3]]);
-        window.strings =["*","*Test1","*BuiltIn.Log",
-                         "*Logs the given message with the given level.",
-                         "*simple1","*Test2","*simple2","*Test3","*simple3"];
+        var suite = ["suite","/verysimple.txt","Verysimple",0,{},
+                     ["test",1,0,"Y",0,["kw",2,0,3,4,[0,"I",4],["P",0,0]],[],
+                      ["P",-1,2]],
+                      ["test",5,0,"Y",0,["kw",2,0,3,6,[2,"I",6],["P",2,0]],[],
+                       ["P",1,1]],
+                       ["test",7,0,"Y",0,["kw",2,0,3,8,[3,"I",8],["P",3,0]],[],
+                        ["P",3,1]],
+                        ["P",-28,32],[3,3,3,3]];
+        var strings = ["*","*Test1","*BuiltIn.Log",
+                       "*Logs the given message with the given level.",
+                       "*simple1","*Test2","*simple2","*Test3","*simple3"];
+        populateOutput(suite, strings);
     });
 
     it("should give correct number of tests", function (){
@@ -400,25 +403,25 @@ describe("Iterating Tests", function (){
 describe("Iterating Suites", function (){
 
     beforeEach(function (){
-        window.data = createData(
-                       ["suite","/foo","Foo",0,{},
-                        ["suite","/foo/bar","Bar",0,{},
-                         ["suite","/foo/bar/testii.txt","Testii",0,{},
-                          ["test",1,0,"Y",0,
-                           ["kw",2,0,3,4,[0,"I",4],["P",-1,1]],[],["P",-1,1]],
-                          ["P",-3,3],[1,1,1,1]],
-                         ["P",-4,5],[1,1,1,1]],
-                         ["suite","/foo/foo","Foo",0,{},
-                          ["suite","/foo/foo/tostii.txt","Tostii",0,{},
-                           ["test",5,0,"Y",0,["kw",6,0,7,0,["P",4,0]],[],
-                            ["P",4,1]],
+        var suite = ["suite","/foo","Foo",0,{},
+                     ["suite","/foo/bar","Bar",0,{},
+                      ["suite","/foo/bar/testii.txt","Testii",0,{},
+                       ["test",1,0,"Y",0,
+                        ["kw",2,0,3,4,[0,"I",4],["P",-1,1]],[],["P",-1,1]],
+                        ["P",-3,3],[1,1,1,1]],
+                        ["P",-4,5],[1,1,1,1]],
+                        ["suite","/foo/foo","Foo",0,{},
+                         ["suite","/foo/foo/tostii.txt","Tostii",0,{},
+                          ["test",5,0,"Y",0,["kw",6,0,7,0,["P",4,0]],[],
+                           ["P",4,1]],
                            ["P",2,3],[1,1,1,1]],
-                          ["P",1,5],[1,1,1,1]],
-                         ["P",-30,36],[2,2,2,2]]);
-        window.strings =["*","*FOO BAR","*BuiltIn.Log",
-                         "*Logs the given message with the given level.",
-                         "*foo bar testi","*FOO FOO","*BuiltIn.No Operation",
-                         "*Does absolutely nothing."];
+                           ["P",1,5],[1,1,1,1]],
+                           ["P",-30,36],[2,2,2,2]];
+        var strings = ["*","*FOO BAR","*BuiltIn.Log",
+                       "*Logs the given message with the given level.",
+                       "*foo bar testi","*FOO FOO","*BuiltIn.No Operation",
+                       "*Does absolutely nothing."];
+        populateOutput(suite, strings);
     });
 
     it("should give correct number of suites", function (){
@@ -496,25 +499,25 @@ describe("Iterating Suites", function (){
 describe("Element ids", function (){
 
     beforeEach(function (){
-        window.data = createData(
-                       ["suite","/foo","Foo",0,{},
-                        ["suite","/foo/bar","Bar",0,{},
-                         ["suite","/foo/bar/testii.txt","Testii",0,{},
-                          ["test",1,0,"Y",0,
-                           ["kw",2,0,3,4,[0,"I",4],["P",-1,1]],[],["P",-1,1]],
-                          ["P",-3,3],[1,1,1,1]],
-                         ["P",-4,5],[1,1,1,1]],
-                         ["suite","/foo/foo","Foo",0,{},
-                          ["suite","/foo/foo/tostii.txt","Tostii",0,{},
-                           ["test",5,0,"Y",0,["kw",6,0,7,0,["P",4,0]],[],
-                            ["P",4,1]],
+        var suite = ["suite","/foo","Foo",0,{},
+                     ["suite","/foo/bar","Bar",0,{},
+                      ["suite","/foo/bar/testii.txt","Testii",0,{},
+                       ["test",1,0,"Y",0,
+                        ["kw",2,0,3,4,[0,"I",4],["P",-1,1]],[],["P",-1,1]],
+                        ["P",-3,3],[1,1,1,1]],
+                        ["P",-4,5],[1,1,1,1]],
+                        ["suite","/foo/foo","Foo",0,{},
+                         ["suite","/foo/foo/tostii.txt","Tostii",0,{},
+                          ["test",5,0,"Y",0,["kw",6,0,7,0,["P",4,0]],[],
+                           ["P",4,1]],
                            ["P",2,3],[1,1,1,1]],
-                          ["P",1,5],[1,1,1,1]],
-                         ["P",-30,36],[2,2,2,2]]);
-        window.strings =["*","*FOO BAR","*BuiltIn.Log",
-                         "*Logs the given message with the given level.",
-                         "*foo bar testi","*FOO FOO","*BuiltIn.No Operation",
-                         "*Does absolutely nothing."];
+                           ["P",1,5],[1,1,1,1]],
+                           ["P",-30,36],[2,2,2,2]];
+        var strings = ["*","*FOO BAR","*BuiltIn.Log",
+                       "*Logs the given message with the given level.",
+                       "*foo bar testi","*FOO FOO","*BuiltIn.No Operation",
+                       "*Does absolutely nothing."];
+        populateOutput(suite, strings);
     });
 
     it("should give id for the main suite", function (){
@@ -555,18 +558,18 @@ describe("Element ids", function (){
 describe("Elements are created only once", function (){
 
     beforeEach(function (){
-        window.data = createData(
-                       ["suite","/verysimple.txt","Verysimple",0,{},
-                        ["test",1,0,"Y",0,["kw",2,0,3,4,[0,"I",4],["P",0,0]],[],
-                         ["P",-1,2]],
-                        ["test",5,0,"Y",0,["kw",2,0,3,6,[2,"I",6],["P",2,0]],[],
-                         ["P",1,1]],
-                        ["test",7,0,"Y",0,["kw",2,0,3,8,[3,"I",8],["P",3,0]],[],
-                         ["P",3,1]],
-                        ["P",-28,32],[3,3,3,3]]);
-        window.strings =["*","*Test1","*BuiltIn.Log",
-                         "*Logs the given message with the given level.",
-                         "*simple1","*Test2","*simple2","*Test3","*simple3"];
+        var suite = ["suite","/verysimple.txt","Verysimple",0,{},
+                     ["test",1,0,"Y",0,["kw",2,0,3,4,[0,"I",4],["P",0,0]],[],
+                      ["P",-1,2]],
+                      ["test",5,0,"Y",0,["kw",2,0,3,6,[2,"I",6],["P",2,0]],[],
+                       ["P",1,1]],
+                       ["test",7,0,"Y",0,["kw",2,0,3,8,[3,"I",8],["P",3,0]],[],
+                        ["P",3,1]],
+                        ["P",-28,32],[3,3,3,3]];
+        var strings = ["*","*Test1","*BuiltIn.Log",
+                       "*Logs the given message with the given level.",
+                       "*simple1","*Test2","*simple2","*Test3","*simple3"];
+        populateOutput(suite, strings);
     });
 
     it("should create suite only once", function (){
