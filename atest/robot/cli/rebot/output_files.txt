@@ -6,7 +6,7 @@ Resource       rebot_cli_resource.txt
 
 *** Test Cases ***
 
-Default outputs 
+Default outputs
     ${EMPTY}                                       log.html  report.html
 
 Output Only
@@ -19,17 +19,21 @@ Log Only
     --output None --report NONE --log mylog.html -S none      mylog.html
 
 Summary Only
+    [Tags]    to_be_clarified
     -o none --summary mysummary.html -l none -r NONE      mysummary.html
 
 All Outputs
+    [Tags]    to_be_clarified
     -o myoutput.xml -r myreport.html -l mylog.html -S mysummary.html
     ...  mylog.html  myoutput.xml  myreport.html  mysummary.html
 
 Outputs Without Extensions
+    [Tags]    to_be_clarified
     --output xoutput --report xreport --log xlog --summary xsummary
     ...  xlog.html  xoutput.xml  xreport.html  xsummary.html
 
 Outputs Into Different Directories
+    [Tags]    to_be_clarified
     [Template]
     Set Runners
     Run  ${REBOT} --outputdir ::invalid:: -o ${MYOUTDIR}${/}o${/}o.xml -r ${MYOUTDIR}${/}r${/}r.html -l ${MYOUTDIR}${/}l${/}l.html --summary ${MYOUTDIR}${/}s.htm ${MYINPUT}

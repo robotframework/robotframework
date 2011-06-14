@@ -12,6 +12,7 @@ Timestamped Outputs
     \  Should Match Regexp  ${file}  (log|report)-20\\d{6}-\\d{6}\\.html
 
 Timestamped Outputs With Custom Names
+    [Tags]    to_be_clarified
     @{files} =  Run rebot and return outputs  --timest -l l -r r.html -o o -S s
     Length Should Be  ${files}  4
     :FOR  ${file}  IN  @{files}
