@@ -80,8 +80,8 @@ class Reporter(object):
 
     def execute(self, settings, *data_sources):
         data_model = jsparser.create_datamodel_from(data_sources[0])
-        report_path = self._parse_file(settings['Report'])
         log_path = self._parse_file(settings['Log'])
+        report_path = self._parse_file(settings['Report'])
         self._make_log(log_path, data_model, settings)
         data_model.remove_keywords()
         self._make_report(report_path, log_path, data_model, settings)
