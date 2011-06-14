@@ -58,6 +58,8 @@ Command line options for test execution
   --warnonskippedfiles    Show a warning when `an invalid file is skipped`_.
   --nostatusrc            Sets the `return code`_ to zero regardless of failures
                           in test cases. Error codes are returned normally.
+  --runemptysuite         Executes tests also if the top level `test suite is
+                          empty`_.
   -W, --monitorwidth <chars>  `Sets the width`_ of the console output.
   -C, --monitorcolors <on|off|force>  `Specifies are colors`_ used in the console.
   -P, --pythonpath <path>   Additional locations where to `search test libraries`_ from when they are imported.
@@ -147,6 +149,7 @@ Command line options for post-processing outputs
 
 .. _Sets a listener: `Setting listeners`_
 .. _an invalid file is skipped: `Warning on invalid files`_
+.. _test suite is empty: `When no tests match selection`_
 .. _Sets the width: `Console width`_
 .. _Specifies are colors: `Console colors`_
 .. _search test libraries: `library search path`_
