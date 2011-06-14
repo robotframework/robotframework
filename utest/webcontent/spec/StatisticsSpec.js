@@ -1,15 +1,15 @@
+window.output = {};
+
 describe("Statistics", function () {
 
     beforeEach(function () {
-        window.data =
-            [undefined,undefined,undefined,
+        window.output.stats = 
              [[["Critical Tests", 1,1,"","", ""],
                ["All Tests", 2,3,"","", ""]],
               [["first tag", 3, 0, "tagdoc", "critical", "title:url:::t2:u2"],
                ["second tag", 1, 0, "", "", ""]],
               [["Suite", 4, 0, "Suite", "", ""],
-               ["Suite.Sub", 4, 0, "Suite.Sub", "", ""]]],
-             undefined];
+               ["Suite.Sub", 4, 0, "Suite.Sub", "", ""]]];
     });
 
     function verifyBasicStatAttributes(stat, label, pass, fail, doc) {
@@ -70,7 +70,7 @@ describe("Statistics", function () {
 describe("Statistics percents and widths", function () {
 
     beforeEach(function (){
-        window.data = [undefined,undefined,undefined,
+        window.output.stats = 
                        [[["Critical Tests", 0,0,"","", ""],
                          ["All Tests", 2,1,"","", ""]],
                         [["<0.1% failed", 2000, 1, "", "", ""],
@@ -78,8 +78,7 @@ describe("Statistics percents and widths", function () {
                          ["0% failed", 100, 0, "", "", ""],
                          ["0% passed", 0, 30, "", "", ""],
                          ["0% passed", 5005, 4995, "", "", ""]],
-                        []],
-                       undefined];
+                        []];
     });
 
     function percentagesShouldBe(stat, passPercent, failPercent) {

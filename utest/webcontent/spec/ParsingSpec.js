@@ -1,5 +1,4 @@
-window.output = {}
-window.output.baseMillis = 1000000000000;
+window.output = {};
 
 describe("Text decoder", function () {
 
@@ -28,6 +27,7 @@ describe("Text decoder", function () {
 
 function populateOutput(suite, strings, errors) {
     window.output.generatedMillis = -41;
+    window.output.baseMillis = 1000000000000;
     window.output.generator = "info";
     window.output.suite = suite;
     window.output.stats = [[["Critical Tests",0,1,"","",""],
@@ -44,7 +44,7 @@ function populateOutput(suite, strings, errors) {
 describe("Handling Suite", function () {
 
     function getDate(offset) {
-        return new Date(window.output.basemillis + offset);
+        return new Date(window.output.baseMillis + offset);
     }
 
     beforeEach(function () {
@@ -108,6 +108,8 @@ describe("Handling Suite", function () {
 
     it("should parse timestamp", function () {
         var timestamp = window.testdata.generated();
+        console.log(window.output.baseMillis);
+        console.log(window.output.baseMillis-41);
         expect(timestamp).toEqual(new Date(window.output.baseMillis-41));
     });
 
@@ -122,7 +124,7 @@ describe("Setups and teardowns", function () {
                       ["setup",1,0,2,3,[1,"I",3],["P",1,0]],["kw",1,0,2,3,[2,"I",3],["P",2,0]],
                       ["teardown",1,0,2,5,[3,"I",5],["P",3,0]],[],["P",0,4]],
                      ["teardown",1,0,2,5,[4,"I",5],["P",4,1]],["P",-35,40],
-                     [1,1,1,1]]);
+                     [1,1,1,1]];
         var strings = ["*","*Lib.Kw","*Blaa.","*sets","*Test","*tears"];
         populateOutput(suite, strings);
     });
