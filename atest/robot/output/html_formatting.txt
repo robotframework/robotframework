@@ -1,7 +1,7 @@
 *** Settings ***
 Documentation   NO RIDE because it would mess up formatting.
 Suite Setup     My Setup
-Force Tags      regression  pybot  jybot
+Force Tags      regression  pybot  jybot  static_html_check
 Resource        atest_resource.txt
 
 *** Variables ***
