@@ -20,36 +20,36 @@ from robot.output import LOGGER
 
 
 class _BaseSettings(object):
-    _cli_opts = { 'Name'             : ('name', None),
-                  'Doc'              : ('doc', None),
-                  'Metadata'         : ('metadata', []),
-                  'TestNames'        : ('test', []),
-                  'SuiteNames'       : ('suite', []),
-                  'SetTag'           : ('settag', []),
-                  'Include'          : ('include', []),
-                  'Exclude'          : ('exclude', []),
-                  'Critical'         : ('critical', None),
-                  'NonCritical'      : ('noncritical', None),
-                  'OutputDir'        : ('outputdir', '.'),
-                  'Log'              : ('log', 'log.html'),
-                  'Report'           : ('report', 'report.html'),
-                  'Summary'          : ('summary', 'NONE'),
-                  'XUnitFile'        : ('xunitfile', 'NONE'),
-                  'SplitOutputs'     : ('splitoutputs', -1),
-                  'TimestampOutputs' : ('timestampoutputs', False),
-                  'LogTitle'         : ('logtitle', None),
-                  'ReportTitle'      : ('reporttitle', None),
-                  'SummaryTitle'     : ('summarytitle', None),
-                  'ReportBackground' : ('reportbackground', None),
-                  'SuiteStatLevel'   : ('suitestatlevel', -1),
-                  'TagStatInclude'   : ('tagstatinclude', []),
-                  'TagStatExclude'   : ('tagstatexclude', []),
-                  'TagStatCombine'   : ('tagstatcombine', []),
-                  'TagDoc'           : ('tagdoc', []),
-                  'TagStatLink'      : ('tagstatlink', []),
-                  'NoStatusRC'       : ('nostatusrc', False),
-                  'MonitorWidth'     : ('monitorwidth', 78),
-                  'MonitorColors'    : ('monitorcolors', 'AUTO') }
+    _cli_opts = {'Name'             : ('name', None),
+                 'Doc'              : ('doc', None),
+                 'Metadata'         : ('metadata', []),
+                 'TestNames'        : ('test', []),
+                 'SuiteNames'       : ('suite', []),
+                 'SetTag'           : ('settag', []),
+                 'Include'          : ('include', []),
+                 'Exclude'          : ('exclude', []),
+                 'Critical'         : ('critical', None),
+                 'NonCritical'      : ('noncritical', None),
+                 'OutputDir'        : ('outputdir', '.'),
+                 'Log'              : ('log', 'log.html'),
+                 'Report'           : ('report', 'report.html'),
+                 'Summary'          : ('summary', 'NONE'),
+                 'XUnitFile'        : ('xunitfile', 'NONE'),
+                 'SplitOutputs'     : ('splitoutputs', -1),
+                 'TimestampOutputs' : ('timestampoutputs', False),
+                 'LogTitle'         : ('logtitle', None),
+                 'ReportTitle'      : ('reporttitle', None),
+                 'SummaryTitle'     : ('summarytitle', None),
+                 'ReportBackground' : ('reportbackground', None),
+                 'SuiteStatLevel'   : ('suitestatlevel', -1),
+                 'TagStatInclude'   : ('tagstatinclude', []),
+                 'TagStatExclude'   : ('tagstatexclude', []),
+                 'TagStatCombine'   : ('tagstatcombine', []),
+                 'TagDoc'           : ('tagdoc', []),
+                 'TagStatLink'      : ('tagstatlink', []),
+                 'NoStatusRC'       : ('nostatusrc', False),
+                 'MonitorWidth'     : ('monitorwidth', 78),
+                 'MonitorColors'    : ('monitorcolors', 'AUTO')}
     _output_opts = ['Output', 'Log', 'Report', 'Summary', 'DebugFile', 'XUnitFile']
 
     def __init__(self, options={}, log=True):
@@ -133,7 +133,7 @@ class _BaseSettings(object):
     def _get_output_extension(self, ext, type_):
         if ext != '':
             return ext
-        if type_ in ('Output', 'XUnitFile'):
+        if type_ in ['Output', 'XUnitFile']:
             return '.xml'
         if type_ in ['Log', 'Report', 'Summary']:
             return '.html'
@@ -184,20 +184,20 @@ class _BaseSettings(object):
 
 
 class RobotSettings(_BaseSettings):
-    _extra_cli_opts = { 'Output'        : ('output', 'output.xml'),
-                        'LogLevel'      : ('loglevel', 'INFO'),
-                        'RunMode'       : ('runmode', []),
-                        'WarnOnSkipped' : ('warnonskippedfiles', False),
-                        'Variables'     : ('variable', []),
-                        'VariableFiles' : ('variablefile', []),
-                        'Listeners'     : ('listener', []),
-                        'DebugFile'     : ('debugfile', 'NONE'),}
+    _extra_cli_opts = {'Output'        : ('output', 'output.xml'),
+                       'LogLevel'      : ('loglevel', 'INFO'),
+                       'RunMode'       : ('runmode', []),
+                       'WarnOnSkipped' : ('warnonskippedfiles', False),
+                       'Variables'     : ('variable', []),
+                       'VariableFiles' : ('variablefile', []),
+                       'Listeners'     : ('listener', []),
+                       'DebugFile'     : ('debugfile', 'NONE')}
 
     def is_rebot_needed(self):
         return not ('NONE' == self['Log'] == self['Report'] == self['Summary'] == self['XUnitFile'])
 
     def get_rebot_datasources_and_settings(self):
-        datasources = [ self['Output'] ]
+        datasources = [self['Output']]
         settings = RebotSettings(log=False)
         settings._opts.update(self._opts)
         for name in ['Variables', 'VariableFiles', 'Listeners']:
@@ -218,11 +218,11 @@ class RobotSettings(_BaseSettings):
 
 
 class RebotSettings(_BaseSettings):
-    _extra_cli_opts = { 'Output'         : ('output', 'NONE'),
-                        'LogLevel'       : ('loglevel', 'TRACE'),
-                        'RemoveKeywords' : ('removekeywords', 'NONE'),
-                        'StartTime'      : ('starttime', 'N/A'),
-                        'EndTime'        : ('endtime', 'N/A')}
+    _extra_cli_opts = {'Output'         : ('output', 'NONE'),
+                       'LogLevel'       : ('loglevel', 'TRACE'),
+                       'RemoveKeywords' : ('removekeywords', 'NONE'),
+                       'StartTime'      : ('starttime', 'N/A'),
+                       'EndTime'        : ('endtime', 'N/A')}
 
     def _outputfile_disabled(self, type_, name):
         return name == 'NONE'
