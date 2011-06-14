@@ -310,10 +310,9 @@ class BaseTestSuite(_TestAndSuiteHelper):
         self.set_metadata(settings['Metadata'])
         self.set_critical_tags(settings['Critical'], settings['NonCritical'])
         self._no_status_rc = settings['NoStatusRC']
-        if hasattr(self, 'set_runmode'):
-            for runmode in settings['RunMode']:
-                self.set_runmode(runmode)
-        if hasattr(self, 'remove_keywords'):
+        if 'RunMode' in settings:
+            map(self.set_runmode, settings['RunMode'])
+        if 'RemoveKeywords' in settings:
             self.remove_keywords(settings['RemoveKeywords'])
 
     def serialize(self, serializer):

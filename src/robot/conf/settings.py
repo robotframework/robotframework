@@ -48,6 +48,7 @@ class _BaseSettings(object):
                  'TagDoc'           : ('tagdoc', []),
                  'TagStatLink'      : ('tagstatlink', []),
                  'NoStatusRC'       : ('nostatusrc', False),
+                 'RunEmptySuite'    : ('runemptysuite', False),
                  'MonitorWidth'     : ('monitorwidth', 78),
                  'MonitorColors'    : ('monitorcolors', 'AUTO')}
     _output_opts = ['Output', 'Log', 'Report', 'Summary', 'DebugFile', 'XUnitFile']
@@ -174,9 +175,12 @@ class _BaseSettings(object):
         args = name.split(':')
         name = args.pop(0)
         # Handle absolute Windows paths with arguments
-        if len(name) == 1 and args[0] and args[0][0] in ['/', '\\']:
+        if len(name) == 1 and args[0].startswith(('/', '\\')):
             name = name + ':' + args.pop(0)
         return name, args
+
+    def __contains__(self, setting):
+        return setting in self._cli_opts
 
     def __unicode__(self):
         return '\n'.join('%s: %s' % (name, self._opts[name])
@@ -187,7 +191,6 @@ class RobotSettings(_BaseSettings):
     _extra_cli_opts = {'Output'        : ('output', 'output.xml'),
                        'LogLevel'      : ('loglevel', 'INFO'),
                        'RunMode'       : ('runmode', []),
-                       'RunEmptySuite' : ('runemptysuite', False),
                        'WarnOnSkipped' : ('warnonskippedfiles', False),
                        'Variables'     : ('variable', []),
                        'VariableFiles' : ('variablefile', []),
