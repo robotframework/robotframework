@@ -30,6 +30,7 @@ Failing Test
     Check Stdout Contains  ${SEP_LINE1}\n ${status}\n This test was doomed to fail: YES != NO\n ${SEP_LINE2}\n
 
 Outputs
+    [Tags]    to_be_clarified
     ${stdout} =  Get Stdout
     ${outputs} =  Evaluate  '''${stdout.replace('\\','\\\\')}'''.split('${SEP_LINE1}')[-1]
     Should Match Regexp  ${outputs}  Debug: \ \ .*mydebug.txt\n Output: \ .*output.xml\n Summary: .*mysummary.html\n Report: \ .*myreport.html\n Log: \ \ \ \ .*mylog.html
