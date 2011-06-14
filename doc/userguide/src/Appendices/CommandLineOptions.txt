@@ -24,9 +24,6 @@ Command line options for test execution
   -e, --exclude <tag>     `Selects the test cases`_ by tag.
   -c, --critical <tag>    Tests that have the given tag are `considered critical`_.
   -n, --noncritical <tag>  Tests that have the given tag are `not critical`_.
-  --runmode <mode>        Sets the execution mode for this test run.
-                          Valid modes are `ExitOnFailure`_, `SkipTeardownOnExit`_,
-                          `DryRun`_, and `Random`_:<what>.
   -v, --variable <name:value>   Sets `individual variables`_.
   -V, --variablefile <path:args>  Sets variables using `variable files`_.
   -d, --outputdir <dir>   Defines where to `create output files`_.
@@ -59,6 +56,9 @@ Command line options for test execution
                           in test cases. Error codes are returned normally.
   --runemptysuite         Executes tests also if the top level `test suite is
                           empty`_.
+  --runmode <mode>        Sets the execution mode for this test run.
+                          Valid modes are `ExitOnFailure`_, `SkipTeardownOnExit`_,
+                          `DryRun`_, and `Random`_:<what>.
   -W, --monitorwidth <chars>  `Sets the width`_ of the console output.
   -C, --monitorcolors <on|off|force>  `Specifies are colors`_ used in the console.
   -P, --pythonpath <path>   Additional locations where to `search test libraries`_ from when they are imported.

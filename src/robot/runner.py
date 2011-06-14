@@ -97,15 +97,6 @@ Options:
                           can be given as a pattern like e.g. with --test.
  -n --noncritical tag *   Tests with given tag are not critical even if they
                           have a tag set with --critical. Tag can be a pattern.
-    --runmode mode *      Possible values are 'Random:Test', 'Random:Suite',
-                          'Random:All', 'ExitOnFailure', 'SkipTeardownOnExit',
-                          and 'DryRun' (case-insensitive). First three change
-                          the execution order of tests, suites, or both.
-                          'ExitOnFailure' stops test execution if a critical
-                          test fails. 'SkipTeardownOnExit' causes teardowns to
-                          be skipped if test execution is stopped prematurely.
-                          In the 'DryRun' test data is verified and tests run
-                          so that library keywords are not executed.
  -v --variable name:value *  Set variables in the test data. Only scalar
                           variables are supported and name is given without
                           '${}'. See --escape for how to use special characters
@@ -226,6 +217,15 @@ Options:
     --runemptysuite       Executes tests also if the top level test suite is
                           empty. Useful e.g. with --include/--exclude when it
                           is not an error that no test matches the condition.
+    --runmode mode *      Possible values are 'Random:Test', 'Random:Suite',
+                          'Random:All', 'ExitOnFailure', 'SkipTeardownOnExit',
+                          and 'DryRun' (case-insensitive). First three change
+                          the execution order of tests, suites, or both.
+                          'ExitOnFailure' stops test execution if a critical
+                          test fails. 'SkipTeardownOnExit' causes teardowns to
+                          be skipped if test execution is stopped prematurely.
+                          In the 'DryRun' test data is verified and tests run
+                          so that library keywords are not executed.
  -W --monitorwidth chars  Width of the monitor output. Default is 78.
  -C --monitorcolors auto|on|off  Use colors on console output or not.
                           auto: use colors when output not redirected (default)
