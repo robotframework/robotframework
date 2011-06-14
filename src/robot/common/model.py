@@ -306,17 +306,11 @@ class BaseTestSuite(_TestAndSuiteHelper):
         self.set_metadata(settings['Metadata'])
         self.set_critical_tags(settings['Critical'], settings['NonCritical'])
         self._no_status_rc = settings['NoStatusRC']
-        try:
+        if hasattr(self, 'set_runmode'):
             for runmode in settings['RunMode']:
                 self.set_runmode(runmode)
-        except (KeyError, AttributeError) : # Only applicable when running tcs
-            pass
-        if not self.suites:
-            settings['SplitOutputs'] = -2
-        try:
+        if hasattr(self, 'remove_keywords'):
             self.remove_keywords(settings['RemoveKeywords'])
-        except (KeyError, AttributeError):  # Only applicable with Rebot
-            pass
 
     def serialize(self, serializer):
         serializer.start_suite(self)
