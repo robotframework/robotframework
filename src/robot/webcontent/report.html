@@ -769,16 +769,16 @@ function initTemplates() {
     {{each metadata}}
     <tr><th>${$index}:</th><td>{{html $value}}</td></tr>
     {{/each}}
-    {{if getFailureMessage()}}
-    <tr>
-        <th>Message:</th>
-        <td>${getFailureMessage()}</td>
-     </tr>
-    {{/if}}
     <tr>
         <th>Status:</th>
         <td>{{tmpl($data) '#stats_message_partial_template'}}</td>
     </tr>
+    {{if message}}
+    <tr>
+        <th>Message:</th>
+        <td>${message}</td>
+     </tr>
+    {{/if}}
     <tr>
         <th>Start / End:</th>
         <td>${times.startTime}  /  ${times.endTime}</td>
