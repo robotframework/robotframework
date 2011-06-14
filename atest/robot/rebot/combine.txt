@@ -1,7 +1,7 @@
 *** Settings ***
 Suite Setup     My Setup
 Suite Teardown  Remove FIles  ${TEMP FILE 1}  ${TEMP FILE 2}  ${TEMP FILE 3}  ${REPORT 1}  ${REPORT 2}
-Default Tags    regression  pybot  jybot
+Force Tags    regression  pybot  jybot
 Resource        ../../resources/rebot_resource.html
 
 *** Variables ***
@@ -81,11 +81,13 @@ Suite Metadata
     Should Be Equal  ${SUITE2.metadata['Name']}  value
     Should Be Equal  ${SUITE2.metadata['Other Meta']}  Another value
 
-Critical Tags Can Be Set From Command LIne
+Critical Tags Can Be Set From Command Line
+    [Tags]   static_html_checks
     ${report} =  Get File  ${REPORT 1}
     Should Contain  ${report}  ${REPORT 1 EXP}
 
 Critical Tags From Earlier Combines Should Be Ignored
+    [Tags]   static_html_checks
     ${report} =  Get File  ${REPORT 2}
     Should Contain  ${report}  ${REPORT 2 EXP}
 
@@ -125,6 +127,7 @@ Suite Times In Recombine
     Should Be Equal  ${SUITE4.suites[1].suites[1].elapsedtime}  ${MILLIS2}
 
 Combined Suite Names Are Correct In Statistics Table
+    [Tags]   static_html_checks
     ${report content} =  Get File  ${REPORT 1}
     Should Contain  ${report content}  <div class="stat_name"><a href="#suite_New Name" title="New Name">New Name</a></div>
     Should Contain  ${report content}  <div class="stat_name"><a href="#suite_New Name.Pass And Fail" title="New Name.Pass And Fail"><span class="parent_name">New Name . </span>Pass And Fail</a></div>

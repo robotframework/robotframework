@@ -1,0 +1,61 @@
+*** Settings ***
+Documentation   Setting critical and non-critical tags
+Suite Setup     Run Test To Create Output
+Suite Teardown  Remove File  ${INPUT FILE}
+Default Tags    regression  pybot  jybot  static_html_checks
+Resource        atest_resource.txt
+
+*** Variables ***
+${INPUT_FILE}  ${TEMPDIR}${/}rebot-test-input.xml
+${M_000_211}  0&nbsp;critical&nbsp;tests,&nbsp;0&nbsp;passed,&nbsp;<span>0&nbsp;failed</span><br />2&nbsp;tests&nbsp;total,&nbsp;1&nbsp;passed,&nbsp;<span class="fail">1&nbsp;failed</span>  # 0 critical tests, 0 passed, 0 failed\n 2 tests total, 1 passed, 1 failed
+${M_211_211}  2&nbsp;critical&nbsp;tests,&nbsp;1&nbsp;passed,&nbsp;<span class="fail">1&nbsp;failed</span><br />2&nbsp;tests&nbsp;total,&nbsp;1&nbsp;passed,&nbsp;<span class="fail">1&nbsp;failed</span>  # 2 critical tests, 1 passed, 1 failed\n 2 tests total, 1 passed, 1 failed
+${M_110_211}  1&nbsp;critical&nbsp;test,&nbsp;1&nbsp;passed,&nbsp;<span>0&nbsp;failed</span><br />2&nbsp;tests&nbsp;total,&nbsp;1&nbsp;passed,&nbsp;<span class="fail">1&nbsp;failed</span>  # 1 critical test, 1 passed, 0 failed\n 2 tests total, 1 passed, 1 failed
+${M_101_211}  1&nbsp;critical&nbsp;test,&nbsp;0&nbsp;passed,&nbsp;<span class="fail">1&nbsp;failed</span><br />2&nbsp;tests&nbsp;total,&nbsp;1&nbsp;passed,&nbsp;<span class="fail">1&nbsp;failed</span>  # 1 critical test, 0 passed, 1 failed\n 2 tests total, 1 passed, 1 failed
+
+*** Test Cases ***
+Neither Critical Nor Non-Critical
+    Test Critical  ${EMPTY}  FAIL  ${M_211_211}
+
+Critical
+    Test Critical  --critical pass  PASS  ${M_110_211}
+
+Critical Not Matching
+    Test Critical  -c nomatch  PASS  ${M_000_211}
+
+Critical With Pattern
+    Test Critical  --critical fSTAR -c QUESTaSS  FAIL  ${M_211_211}
+
+Non-Critical
+    Test Critical  --noncritical pass  FAIL  ${M_101_211}
+
+Non-Critical Not Matching
+    Test Critical  -n these -n dont -n match  FAIL  ${M_211_211}
+
+Non-Critical With Pattern
+    Test Critical  --NonCritical fSTAR -n QUESTass  PASS  ${M_000_211}
+
+Critical And Non-Critical Matching Different Test
+    Test Critical  --critical paSTARss --noncritical faiQUEST -c nomatch  PASS  ${M_110_211}
+
+Critical And Non-Critical Matching Same Test
+    Test Critical  --critical force --noncritical fail -c a -c b -c c -n x -n y -n z  PASS  ${M_110_211}
+
+Critical And Non-Critical Matching Same Tag
+    Test Critical  --critical force --noncritical fSTAR  PASS  ${M_000_211}
+
+*** Keywords ***
+Run Test To Create Output
+    Run Tests  --critical pass --noncritical fail  misc${/}pass_and_fail.html
+    Move File  ${OUTFILE}  ${INPUT_FILE}
+
+Test Critical
+    [Arguments]  ${options}  ${suite_status}  ${suite_msg}
+    Run Rebot  ${options} --escape star:STAR --escape quest:QUEST --report rebot-report.html  ${INPUT_FILE}
+    Suite Status And Message Should Be  ${suite_status}  ${suite_msg}
+
+Suite Status And Message Should Be
+    [Arguments]  ${status}  ${message}
+    [Documentation]  Must check status and message from stdout because re-processed suite would not have same criticality as during executiong
+    ${output} =  Get File  ${OUTDIR}/rebot-report.html
+    Should Contain  ${output}  <td class="col_status ${status.lower()}">${status}</td>\n <td class="col_msg">${message}</td>
+

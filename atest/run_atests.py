@@ -56,6 +56,7 @@ ARGUMENTS = ' '.join('''
 --escape paren2:PAR2
 --critical regression
 --noncritical to_be_clarified
+--noncritical static_html_checks
 --SuiteStatLevel 3
 --TagStatCombine jybotNOTpybot
 --TagStatCombine pybotNOTjybot

@@ -5,48 +5,60 @@ Resource        atest_resource.txt
 
 *** Test Cases ***
 Tag Doc In Report Statistics
+    [Tags]   static_html_checks
     Format In Report Statistics Should Be Correct  f1  Some documentation
 
 Tag Doc In Log Statistics
+    [Tags]   static_html_checks
     Format In Log Statistics Should Be Correct  f1  Some documentation
 
 Tag Doc In Report Details
+    [Tags]   static_html_checks
     Format In Report Details Should Be Correct  f1  Some documentation
 
 Tag Doc In Output Statistics
     Format In Output Statistics Should Be Correct  f1  Some documentation
 
 Tag Doc With Formatting In Report Statistics
+    [Tags]   static_html_checks
     Format In Report Statistics Should Be Correct  t1  http://some.url *bold*
 
 Tag Doc With Formatting In Log Statistics
+    [Tags]   static_html_checks
     Format In Log Statistics Should Be Correct  t1  http://some.url *bold*
 
 Tag Doc With Formatting In Report Details
+    [Tags]   static_html_checks
     Format In Report Details Should Be Correct  t1  <a href="http://some.url">http://some.url</a> <b>bold</b>
 
 Tag Doc With Formatting In Output Statistics
     Format In Output Statistics Should Be Correct  t1  http://some.url *bold*
 
 Tag Doc With Pattern In Report Statistics
+    [Tags]   static_html_checks
     Format In Report Statistics Should Be Correct  d1  Doc for many tags
 
 Tag Doc With Pattern In Log Statistics
+    [Tags]   static_html_checks
     Format In Log Statistics Should Be Correct  d1  Doc for many tags
 
 Tag Doc With Pattern In Report Details
+    [Tags]   static_html_checks
     Format In Report Details Should Be Correct  d1  Doc for many tags
 
 Tag Doc With Pattern In Output Statistics
     Format In Output Statistics Should Be Correct  d1  Doc for many tags
 
 Tag Doc With Multiple Matches In Report Statistics
+    [Tags]   static_html_checks
     Format In Report Details Should Be Correct  d2  Doc for many tags More doc
 
 Tag Doc With Multiple Matches In Log Statistics
+    [Tags]   static_html_checks
     Format In Log Statistics Should Be Correct  d2  Doc for many tags More doc
 
 Tag Doc With Multiple Matches In Report Details
+    [Tags]   static_html_checks
     Format In Report Details Should Be Correct  d2  Doc for many tags More doc
 
 Tag Doc With Multiple Matches In Output Statistics

@@ -1,5 +1,5 @@
 *** Settings ***
-Force Tags      regression  pybot  jybot
+Force Tags      regression  pybot  jybot  static_html_checks
 Resource        atest_resource.txt
 
 *** Variables ***

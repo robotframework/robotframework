@@ -26,6 +26,7 @@ Timestamps are accurate
     Should be true  '${msgs[0].timestamp}' < '${msgs[1].timestamp}'
 
 Log HTML
+    [Tags]    static_html_checks
     ${tc} =  Check test case  ${TEST NAME}
     Check log message  ${tc.kws[1].msgs[0]}  <b>debug</b>  DEBUG  html=True
     Check log message  ${tc.kws[1].msgs[1]}  <b>info</b>   INFO   html=True

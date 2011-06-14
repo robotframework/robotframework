@@ -1,0 +1,29 @@
+*** Settings ***
+Force Tags      regression  pybot  jybot  static_html_checks
+Resource        atest_resource.txt
+
+*** Test Cases ***
+Printing Unescaped HTML Should Be possible From Libraries
+    Run Tests  --log mylog.html  output${/}printing_html_from_libs.html
+    ${tc} =  Check Test Case  Printing Unescaped HTML Should Be possible From Libraries
+    Messages Should be Correctly formatted in Output and log  ${tc}
+
+Rebot Should Preserve Formatting
+    Remove File  ${OUTDIR}${/}mylog.html
+    Run Rebot  --log mylog.html  ${OUTFILE}
+    ${tc} =  Check Test Case  Printing Unescaped HTML Should Be possible From Libraries
+    Messages Should be Correctly formatted in Output and log  ${tc}
+
+*** Keywords ***
+Messages Should be Correctly formatted in Output and log
+    [Arguments]  ${tc}
+    Check Log Message  ${tc.kws[0].msgs[0]}  <a href="http://www.google.com">Google</a>  HTML
+    Check Log Message  ${tc.kws[1].msgs[0]}  <table border=1>\n<tr><td>0,0</td><td>0,1</td></tr>\n <tr><td>1,0</td><td>1,1</td></tr>\n</table>  HTML
+    Check Log Message  ${tc.kws[1].msgs[1]}  This is html <hr>  HTML
+    Check Log Message  ${tc.kws[1].msgs[2]}  This is not html <br>  INFO
+    ${LOG} =  Get File  ${OUTDIR}${/}mylog.html
+    Should Contain  ${LOG}  <a href="http://www.google.com">Google</a>
+    Should Contain  ${LOG}  <table border=1>\n<tr><td>0,0</td><td>0,1</td></tr>\n <tr><td>1,0</td><td>1,1</td></tr>\n</table>
+    Should Contain  ${LOG}  This is html <hr>
+    Should Contain  ${LOG}  This is not html &lt;br&gt;
+

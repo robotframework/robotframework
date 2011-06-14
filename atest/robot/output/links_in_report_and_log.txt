@@ -1,6 +1,6 @@
 *** Settings ***
 Suite Setup     Create Report And Log And Read Those Content
-Force Tags      pybot  jybot  regression
+Force Tags      pybot  jybot  regression  static_html_checks
 Resource        atest_resource.txt
 
 *** Variables ***
