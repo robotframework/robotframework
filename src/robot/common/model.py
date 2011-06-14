@@ -208,9 +208,11 @@ class BaseTestSuite(_TestAndSuiteHelper):
         self.filter_by_tags(includes, excludes)
 
     def filter_by_names(self, suites=None, tests=None):
-        suites = [ ([], name.split('.')) for name in suites or [] ]
+        if not (suites or tests):
+            return
+        suites = [([], name.split('.')) for name in suites or []]
         tests = tests or []
-        if (suites or tests) and not self._filter_by_names(suites, tests):
+        if not self._filter_by_names(suites, tests):
             self._raise_no_tests_filtered_by_names(suites, tests)
 
     def _filter_by_names(self, suites, tests):
@@ -253,8 +255,8 @@ class BaseTestSuite(_TestAndSuiteHelper):
     def filter_by_tags(self, includes=None, excludes=None):
         if not (includes or excludes):
             return
-        if not includes: includes = []
-        if not excludes: excludes = []
+        includes = includes or []
+        excludes = excludes or []
         if not self._filter_by_tags(includes, excludes):
             self._raise_no_tests_filtered_by_tags(includes, excludes)
 
