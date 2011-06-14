@@ -1,6 +1,12 @@
 from __future__ import with_statement
 import StringIO
-import json
+try:
+    import json
+except ImportError:
+    try:
+        import simplejson as json
+    except ImportError:
+        json = None
 import unittest
 import xml.sax as sax
 
@@ -203,23 +209,24 @@ class TestJsSerializer(unittest.TestCase):
         assert_equals(data_model._robot_data, [[0, 'E', 1]])
         assert_equals(data_model._texts, ['*', "*Invalid syntax in file '/tmp/data/failing_suite.txt' in table 'Settings': Resource file 'nope' does not exist."])
 
-    def test_json_dump_string(self):
-        from time import time
-        string = u'string\u00A9\v\\\'\"\r\b\t\0\n\fjee'
-        for i in range(1024):
-            string += unichr(i)
-        #string = string * 10
-        buffer = StringIO.StringIO()
-        #s = time()
-        json_dump(string, buffer)
-        #e = time()
-        #print 'json_dump %s' % (e - s)
-        expected = StringIO.StringIO()
-        #s = time()
-        json.dump(string, expected)
-        #e = time()
-        #print 'json.dump %s' % (e - s)
-        self._assert_long_equals(buffer.getvalue(), expected.getvalue())
+    if json:
+        def test_json_dump_string(self):
+            from time import time
+            string = u'string\u00A9\v\\\'\"\r\b\t\0\n\fjee'
+            for i in range(1024):
+                string += unichr(i)
+            #string = string * 10
+            buffer = StringIO.StringIO()
+            #s = time()
+            json_dump(string, buffer)
+            #e = time()
+            #print 'json_dump %s' % (e - s)
+            expected = StringIO.StringIO()
+            #s = time()
+            json.dump(string, expected)
+            #e = time()
+            #print 'json.dump %s' % (e - s)
+            self._assert_long_equals(buffer.getvalue(), expected.getvalue())
 
     def test_json_dump_integer(self):
         buffer = StringIO.StringIO()
