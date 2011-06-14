@@ -1,5 +1,13 @@
 window.output = {};
 
+function multiplyString(string, times) {
+    var result = "";
+    for (var i = 0; i < times; i++){
+        result += string;
+    }
+    return result;
+}
+
 describe("Text decoder", function () {
 
     it("should have empty string with id 0", function () {
@@ -11,11 +19,16 @@ describe("Text decoder", function () {
     it("should uncompress", function () {
         window.output.strings = ["*", "eNorzk3MySmmLQEASKop9Q=="];
         var decompressed = texts.get(1);
-        var expected = "";
-        for(var i = 0; i < 20; i++){
-            expected += "small";
-        }
+        var expected = multiplyString("small", 20);
         expect(decompressed).toEqual(expected);
+    });
+
+    it("should uncompress and replace compressed in memory", function () {
+        window.output.strings = ["*", "eNorzk3MySmmLQEASKop9Q=="];
+        expect(window.output.strings[1]).toEqual("eNorzk3MySmmLQEASKop9Q==");
+        texts.get(1);
+        var expected = multiplyString("small", 20);
+        expect(window.output.strings[1]).toEqual("*"+expected);
     });
 
     it("should handle plain text", function () {

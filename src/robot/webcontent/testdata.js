@@ -310,8 +310,14 @@ window.testdata = function () {
 
 window.texts = (function () {
 
-    function decode(text) {
-        return (text[0] == '*' ? text.substring(1) : extract(text));
+    function decodeAndReplace(id) {
+        var text = window.output.strings[id];
+        if (text[0] == '*') {
+            return text.substring(1)
+        }
+        var extracted = extract(text);
+        window.output.strings[id] = "*"+extracted;
+        return extracted;
     }
 
     function extract(text) {
@@ -321,7 +327,7 @@ window.texts = (function () {
     }
 
     return {
-        get: function (id) { return decode(window.output.strings[id]); }
+        get: function (id) { return decodeAndReplace(id); }
     };
 
 })();
