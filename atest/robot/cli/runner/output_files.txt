@@ -1,6 +1,6 @@
 *** Settings ***
 Test Setup      Create Output Directory
-Default Tags    regression  pybot  jybot
+Force Tags    regression  pybot  jybot
 Resource        cli_resource.txt
 
 
@@ -19,6 +19,7 @@ Output And Log
     Output Directory Should Contain  mylog.html  myoutput.xml
 
 Output And Summary
+    [Tags]    to_be_clarified
     Run Tests Without Processing Output  --outputdir ${CLI OUTDIR} -o myoutput.xml -r NONE -l none --summary mysummary.html  ${TESTFILE}
     Output Directory Should Contain  myoutput.xml  mysummary.html
 
@@ -31,6 +32,7 @@ Debugfile Can Be Created When Output Is NONE
     Output Directory Should Contain  debug.txt
 
 All Outputs
+    [Tags]    to_be_clarified
     Run Tests Without Processing Output  --outputdir=${CLI OUTDIR} --output=myoutput.xml --report=myreport.html --log=mylog.html -S mysummary.html  ${TESTFILE}
     Output Directory Should Contain  mylog.html  myoutput.xml  myreport.html  mysummary.html
 
@@ -40,10 +42,12 @@ All Outputs With Default Names
     Output Directory Should Contain  log.html  output.xml  report.html
 
 All Outputs Without Extensions
+    [Tags]    to_be_clarified
     Run Tests Without Processing Output  --outputdir ${CLI OUTDIR} -o myoutput -r myreport -l mylog -S mysummary  ${TESTFILE}
     Output Directory Should Contain  mylog.html  myoutput.xml  myreport.html  mysummary.html
 
 Outputs Into Different Dirs
+    [Tags]    to_be_clarified
     Run Tests Without Processing Output  --outputdir ::invalid:: -o ${CLI OUTDIR}${/}o${/}o.xml -r ${CLI OUTDIR}${/}r${/}r.html -l ${CLI OUTDIR}${/}l${/}l.html --summary ${CLI OUTDIR}${/}s.htm  ${TESTFILE}
     Directory Should Contain  ${CLI OUTDIR}${/}o  o.xml
     Directory Should Contain  ${CLI OUTDIR}${/}r  r.html
@@ -57,6 +61,7 @@ Invalid Output File
     Check Stderr Matches Regexp  \\[ ERROR \\] Opening output file '.*directory.xml' for writing failed: (IOError|FileNotFoundException): .*${USAGE_TIP}
 
 Invalid Log, Report and Summary
+    [Tags]    to_be_clarified
     [Documentation]  Test error handling when html files cannot be opened for writing
     ${directory} =  Join Path  ${CLI OUTDIR}/dir.html
     Create Directory  ${directory}

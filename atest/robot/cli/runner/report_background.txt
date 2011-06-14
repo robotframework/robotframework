@@ -14,17 +14,21 @@ ${DATA}         misc/pass_and_fail.html
 Default colors          --test pass                              \#99FF66
                         --critical none                          \#99FF66
                         ${EMPTY}                                 \#FF3333
+                        [Tags]    to_be_clarified
 
 Two custom colors       --reportbackground blue:red -t pass      blue
                         --ReportBackGround blue:red -c none      blue
                         --REPORTBACKGROUND blue:red              red
+                        [Tags]    to_be_clarified
 
 Three custom colors     --reportback green:yellow:red -t pass    green
                         --reportback green:yellow:red -c none    yellow
                         --reportback green:yellow:red            red
+                        [Tags]    to_be_clarified
 
 Wrong number of colors  --reportbackground invalid               \#FF3333
                         --reportb too:many:colors:here -c none   \#99FF66
+                        [Tags]    to_be_clarified
 
   [Teardown]  Check stderr contains
   ...  Invalid background color 'too:many:colors:here'.

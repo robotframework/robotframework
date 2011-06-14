@@ -1,5 +1,5 @@
 *** Settings ***
-Default Tags    regression  pybot  jybot
+Force Tags    regression  pybot  jybot
 Resource        rebot_cli_resource.txt
 
 
