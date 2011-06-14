@@ -35,7 +35,6 @@ Command line options for test execution
   -r, --report <file>     Sets the path to the generated `report file`_.
   -S, --summary <file>    Sets the path to the generated `summary file`_.
   -x, --xunitfile <file>  Sets the path to the generated `XUnit compatible result file`_.
-                          New in Robot Framework 2.5.5.
   -b, --debugfile <file>  A `debug file`_ that is written during execution.
   -T, --timestampoutputs  `Adds a timestamp`_ to all output files.
   --splitoutputs <level>  `Splits output and log`_ files.
@@ -87,14 +86,13 @@ Command line options for post-processing outputs
   -r, --report <file>     Sets the path to the generated `report file`_.
   -S, --summary <file>    Sets the path to the generated `summary file`_.
   -x, --xunitfile <file>  Sets the path to the generated `XUnit compatible result file`_.
-                          New in Robot Framework 2.5.5.
   -T, --timestampoutputs  `Adds a timestamp`_ to all output files.
   --splitoutputs <level>  `Splits output and log`_ files.
   --logtitle <title>    `Sets a title`_ for the generated test log.
   --reporttitle <title>  `Sets a title`_ for the generated test report.
   --reportbackground <colors>    `Sets background colors`_ for the generated report and summary.
   --summarytitle <title>  `Sets a title`_ for the generated summary report.
-  -L, --loglevel <level>  `Sets the threshold level`_ to select log messages. New in Robot Framework 2.5.2.
+  -L, --loglevel <level>  `Sets the threshold level`_ to select log messages.
   --suitestatlevel <level>  Defines how many `levels to show`_ in the :name:`Statistics by Suite`
                           table in outputs.
   --tagstatinclude <tag>  `Includes only these tags`_ in the :name:`Statistics by Tag` and
