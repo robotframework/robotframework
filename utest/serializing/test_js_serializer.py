@@ -12,7 +12,7 @@ import xml.sax as sax
 
 from resources import GOLDEN_OUTPUT, GOLDEN_JS
 from robot.serializing.jsparser import _RobotOutputHandler, Context, parse_js, json_dump
-from robot.utils.asserts import assert_equals
+from robot.utils.asserts import assert_equals, assert_true
 
 class TestJsSerializer(unittest.TestCase):
 
@@ -241,7 +241,8 @@ class TestJsSerializer(unittest.TestCase):
     def test_json_dump_dictionary(self):
         buffer = StringIO.StringIO()
         json_dump({'key':1, 'hello':'world'}, buffer)
-        assert_equals('{"hello":"world","key":1}', buffer.getvalue())
+        assert_true(buffer.getvalue() in ('{"hello":"world","key":1}',
+                                          '{"key":1,"hello":"world"}'))
 
     def test_json_dump_None(self):
         buffer = StringIO.StringIO()
@@ -251,13 +252,6 @@ class TestJsSerializer(unittest.TestCase):
     def _get_data_model(self, xml_string):
         sax.parseString(xml_string, self._handler)
         return self._handler.datamodel
-
-
-    def test_golden_js_generation(self):
-        buffer = StringIO.StringIO()
-        parse_js(GOLDEN_OUTPUT, buffer)
-        with open(GOLDEN_JS, 'r') as expected:
-            self._assert_long_equals(buffer.getvalue(), expected.read())
 
     def _assert_long_equals(self, given, expected):
         if (given!=expected):
