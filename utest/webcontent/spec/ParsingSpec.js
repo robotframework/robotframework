@@ -108,8 +108,6 @@ describe("Handling Suite", function () {
 
     it("should parse timestamp", function () {
         var timestamp = window.testdata.generated();
-        console.log(window.output.baseMillis);
-        console.log(window.output.baseMillis-41);
         expect(timestamp).toEqual(new Date(window.output.baseMillis-41));
     });
 
