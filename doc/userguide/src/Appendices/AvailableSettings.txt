@@ -2,8 +2,8 @@ All available settings in test data
 -----------------------------------
 
 .. contents::
-   :depth: 2 
-   :local: 
+   :depth: 2
+   :local:
 
 Setting table
 ~~~~~~~~~~~~~
@@ -82,10 +82,10 @@ default values defined in the Settings table.
    :class: tabular
 
    +-----------------+--------------------------------------------------------+
-   |      Name       |                         Description                    | 
+   |      Name       |                         Description                    |
    +=================+========================================================+
    | [Documentation] | Used for specifying a `test case documentation`_.      |
-   +-----------------+--------------------------------------------------------+ 
+   +-----------------+--------------------------------------------------------+
    | [Tags]          | Used for `tagging test cases`_.                        |
    +-----------------+--------------------------------------------------------+
    | [Setup]         | Used for specifying a `test setup`_.                   |
@@ -111,10 +111,10 @@ which they are defined.
    :class: tabular
 
    +-----------------+--------------------------------------------------------+
-   |      Name       |                         Description                    | 
+   |      Name       |                         Description                    |
    +=================+========================================================+
    | [Documentation] | Used for specifying a `user keyword documentation`_.   |
-   +-----------------+--------------------------------------------------------+ 
+   +-----------------+--------------------------------------------------------+
    | [Arguments]     | Used for specifying `user keyword arguments`_.         |
    +-----------------+--------------------------------------------------------+
    | [Return]        | Used for specifying `user keyword return values`_.     |
