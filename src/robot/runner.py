@@ -220,9 +220,12 @@ Options:
     --warnonskippedfiles  If this option is used, skipped files will cause a
                           warning that is visible to console output and log
                           files. By default skipped files only cause an info
-                          level log message.
+                          level syslog message.
     --nostatusrc          Sets the return code to zero regardless of failures
                           in test cases. Error codes are returned normally.
+    --runemptysuite       Executes tests also if the top level test suite is
+                          empty. Useful e.g. with --include/--exclude when it
+                          is not an error that no test matches the condition.
  -W --monitorwidth chars  Width of the monitor output. Default is 78.
  -C --monitorcolors auto|on|off  Use colors on console output or not.
                           auto: use colors when output not redirected (default)

@@ -203,16 +203,17 @@ class BaseTestSuite(_TestAndSuiteHelper):
             for suite in self.suites:
                 suite.set_tags(tags)
 
-    def filter(self, suites=None, tests=None, includes=None, excludes=None):
-        self.filter_by_names(suites, tests)
-        self.filter_by_tags(includes, excludes)
+    def filter(self, suites=None, tests=None, includes=None, excludes=None,
+               zero_tests_ok=False):
+        self.filter_by_names(suites, tests, zero_tests_ok)
+        self.filter_by_tags(includes, excludes, zero_tests_ok)
 
-    def filter_by_names(self, suites=None, tests=None):
+    def filter_by_names(self, suites=None, tests=None, zero_tests_ok=False):
         if not (suites or tests):
             return
         suites = [([], name.split('.')) for name in suites or []]
         tests = tests or []
-        if not self._filter_by_names(suites, tests):
+        if not self._filter_by_names(suites, tests) and not zero_tests_ok:
             self._raise_no_tests_filtered_by_names(suites, tests)
 
     def _filter_by_names(self, suites, tests):
@@ -252,12 +253,12 @@ class BaseTestSuite(_TestAndSuiteHelper):
             msg = 'test cases %s in suites %s.' % (tests, suites)
         raise DataError("Suite '%s' contains no %s" % (self.name, msg))
 
-    def filter_by_tags(self, includes=None, excludes=None):
+    def filter_by_tags(self, includes=None, excludes=None, zero_tests_ok=False):
         if not (includes or excludes):
             return
         includes = includes or []
         excludes = excludes or []
-        if not self._filter_by_tags(includes, excludes):
+        if not self._filter_by_tags(includes, excludes) and not zero_tests_ok:
             self._raise_no_tests_filtered_by_tags(includes, excludes)
 
     def _filter_by_tags(self, incls, excls):
@@ -302,7 +303,8 @@ class BaseTestSuite(_TestAndSuiteHelper):
     def set_options(self, settings):
         self.set_tags(settings['SetTag'])
         self.filter(settings['SuiteNames'], settings['TestNames'],
-                    settings['Include'], settings['Exclude'])
+                    settings['Include'], settings['Exclude'],
+                    settings['RunEmptySuite'])
         self.set_name(settings['Name'])
         self.set_doc(settings['Doc'])
         self.set_metadata(settings['Metadata'])

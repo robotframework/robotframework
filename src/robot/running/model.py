@@ -35,7 +35,7 @@ def TestSuite(datasources, settings):
     datasources = [ utils.normpath(path) for path in datasources ]
     suite = _get_suite(datasources, settings['SuiteNames'], settings['WarnOnSkipped'])
     suite.set_options(settings)
-    _check_suite_contains_tests(suite)
+    _check_suite_contains_tests(suite, settings['RunEmptySuite'])
     return suite
 
 def _get_suite(datasources, include_suites, warn_on_skipped):
@@ -66,9 +66,9 @@ def _get_multisource_suite(datasources, include_suites, warn_on_skipped):
                         % utils.seq2str(datasources))
     return suite
 
-def _check_suite_contains_tests(suite):
+def _check_suite_contains_tests(suite, run_empty_suites=False):
     suite.filter_empty_suites()
-    if suite.get_test_count() == 0:
+    if not suite.get_test_count() and not run_empty_suites:
         raise DataError("Test suite '%s' contains no test cases." % (suite.source))
 
 
