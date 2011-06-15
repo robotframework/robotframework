@@ -13,10 +13,11 @@
 #  limitations under the License.
 
 from __future__ import with_statement
+from xml import sax
+
 from robot.result.elementhandlers import RootHandler, Context
 from robot.result.jsondatamodel import DataModel
-from xml import sax
-from xml.sax.handler import ContentHandler
+
 
 def create_datamodel_from(input_filename):
     robot = _RobotOutputHandler(Context())
@@ -29,7 +30,7 @@ def parse_js(input_filename, output):
     create_datamodel_from(input_filename).write_to(output)
 
 
-class _RobotOutputHandler(ContentHandler):
+class _RobotOutputHandler(sax.handler.ContentHandler):
 
     def __init__(self, context):
         self._context = context
