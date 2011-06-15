@@ -10,7 +10,9 @@ except ImportError:
 import unittest
 import xml.sax as sax
 
-from robot.serializing.jsparser import _RobotOutputHandler, Context, parse_js, json_dump
+from robot.serializing.jsparser import _RobotOutputHandler
+from robot.serializing.jsondatamodel import json_dump
+from robot.serializing.elementhandlers import Context
 from robot.utils.asserts import assert_equals, assert_true
 
 class TestJsSerializer(unittest.TestCase):
@@ -43,7 +45,7 @@ class TestJsSerializer(unittest.TestCase):
         self.assert_model(data_model, 1306835289088, [0, 'F', 1], ['*', '*AssertionError'])
 
     def assert_model(self, data_model, basemillis, suite, texts):
-        assert_equals(data_model._robot_data['basemillis'], basemillis)
+        assert_equals(data_model._robot_data['baseMillis'], basemillis)
         assert_equals(data_model._robot_data['suite'], suite)
         assert_equals(data_model._robot_data['strings'], texts)
 
