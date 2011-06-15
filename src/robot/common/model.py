@@ -40,19 +40,13 @@ class _TestAndSuiteHelper:
     longname = property(lambda self: self._longname or self.get_long_name(),
                         lambda self, name: setattr(self, '_longname', name))
 
-    def get_long_name(self, split_level=-1, separator='.'):
+    def get_long_name(self, separator='.'):
         """Returns long name. If separator is None, list of names is returned."""
         names = self.parent and self.parent.get_long_name(separator=None) or []
         names.append(self.name)
-        slice_level = self._get_name_slice_index(len(names), split_level)
-        if split_level >= 0 and len(names) > slice_level:
-            names = names[slice_level:]
         if separator:
             return separator.join(names)
         return names
-
-    def _get_name_slice_index(self, name_parts_count, split_level):
-        return split_level
 
     def _set_teardown_fail_msg(self, message):
         if self.message == '':
@@ -434,11 +428,6 @@ class BaseTestCase(_TestAndSuiteHelper):
         if self.teardown is not None:
             self.teardown.serialize(serializer)
         serializer.end_test(self)
-
-    def _get_name_slice_index(self, name_parts_count, split_level):
-        if name_parts_count == split_level + 1:
-            return split_level + 1
-        return split_level
 
 
 class _Critical:

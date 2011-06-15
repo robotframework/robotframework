@@ -45,7 +45,7 @@ if 'pythonpathsetter' not in sys.modules:
 from output import Output, LOGGER, pyloggingconf
 from conf import RobotSettings, RebotSettings
 from running import TestSuite, STOP_SIGNAL_MONITOR
-from serializing import RobotTestOutput, RebotTestOutput, SplitIndexTestOutput
+from serializing import RobotTestOutput, RebotTestOutput
 from errors import (DataError, Information, INFO_PRINTED, DATA_ERROR,
                     STOPPED_BY_USER, FRAMEWORK_ERROR)
 from variables import init_global_variables
@@ -130,8 +130,6 @@ def run(*datasources, **options):
     output_src = settings['Output']
     if settings.is_rebot_needed():
         _, settings = settings.get_rebot_datasources_and_settings()
-        if settings['SplitOutputs'] > 0:
-            raise Exception('Splitting? No way!')
         Reporter().execute(settings, output_src)
     LOGGER.close()
     return suite
