@@ -42,7 +42,7 @@ window.util = function () {
     }
 
     function normalize(string) {
-        return string.toLowerCase().replace(' ', '', 'g');
+        return string.toLowerCase().replace(/ /g, '');
     }
 
     function regexpEscape(string) {
