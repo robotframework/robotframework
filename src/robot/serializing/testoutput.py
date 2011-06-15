@@ -141,7 +141,7 @@ class RobotTestOutput:
 
     def serialize(self, settings, generator='Robot', output=None):
         self._generator = generator
-        self.serialize_output(settings['Output'], settings['SplitOutputs'])
+        self.serialize_output(settings['Output'])
         self.serialize_summary(settings['Summary'], settings['SummaryTitle'],
                                settings['ReportBackground'])
         datamodel = jsparser.create_datamodel_from(output)
@@ -151,10 +151,10 @@ class RobotTestOutput:
         LOGGER.output_file('Log', settings['Log'])
         self.serialize_xunit(settings['XUnitFile'])
 
-    def serialize_output(self, path, split=-1, log=True):
+    def serialize_output(self, path, log=True):
         if path == 'NONE':
             return
-        serializer = OutputSerializer(path, split)
+        serializer = OutputSerializer(path)
         self.suite.serialize(serializer)
         self.statistics.serialize(serializer)
         self.exec_errors.serialize(serializer)

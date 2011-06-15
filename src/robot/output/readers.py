@@ -327,10 +327,10 @@ class ExecutionErrors:
             self.messages = [MessageFromXml(msg) for msg in node.findall('msg')]
 
     def serialize(self, serializer):
-        serializer.start_errors(self)
+        serializer.start_errors()
         for msg in self.messages:
             msg.serialize(serializer)
-        serializer.end_errors(self)
+        serializer.end_errors()
 
 
 class CombinedExecutionErrors(ExecutionErrors):

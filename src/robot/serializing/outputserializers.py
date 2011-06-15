@@ -23,8 +23,3 @@ class OutputSerializer(XmlLogger):
     def message(self, msg):
         self._write_message(msg)
 
-    def start_errors(self, errors):
-        XmlLogger.start_errors(self)
-
-    def end_errors(self, errors):
-        XmlLogger.end_errors(self)
