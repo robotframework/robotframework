@@ -70,7 +70,7 @@ $(document).ready(function () {
 });
 
 function addSummary(topsuite) {
-    $.tmpl(window.templates.summaryTable, topsuite).insertAfter($('#header_div'));
+    $.tmpl(window.templates.summaryTable, topsuite, {logURL:window.settings.logURL}).insertAfter($('#header_div'));
 }
 
 function showTotalsTab() {
@@ -335,6 +335,12 @@ function initTemplates() {
     <tr><th>Start Time:</th><td>${times.startTime}</td></tr>
     <tr><th>End Time:</th><td>${times.endTime}</td></tr>
     <tr><th>Elapsed Time:</th><td>${times.elapsedTime}</td></tr>
+    {{if $item.logURL}}
+    <tr>
+        <th></th>
+        <td><a href="${$item.logURL}">See log</a></td>
+    </tr>
+    {{/if}}
   </table>
 </script>
 
