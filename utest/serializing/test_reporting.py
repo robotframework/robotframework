@@ -39,7 +39,6 @@ def set_process_outputs_mock():
 class TestReporting(unittest.TestCase):
 
     def setUp(self):
-        self._reporter = Reporter()
         self._settings = {
             'Report': 'NONE',
             'Log': 'NONE',
@@ -70,12 +69,12 @@ class TestReporting(unittest.TestCase):
             'EndTime': 0,
             'LogLevel': 'INFO'
         }
+        self._reporter = Reporter(self._settings)
         self._original_logger = robot.serializing.testoutput.LOGGER
         robot.serializing.testoutput.LOGGER = Logger()
         robot.serializing.testoutput.LOGGER.disable_automatic_console_logger()
         self._log_results = set_serialize_log_mock()
         self._report_results = set_serialize_report_mock()
-        #self._process_outputs_results = set_process_outputs_mock()
 
     def tearDown(self):
         robot.serializing.testoutput.LOGGER = self._original_logger
@@ -83,33 +82,31 @@ class TestReporting(unittest.TestCase):
     def test_generate_report_and_log(self):
         self._settings['Log'] = 'log.html'
         self._settings['Report'] = 'report.html'
-        self._reporter.execute(self._settings, resources.GOLDEN_OUTPUT)
+        self._reporter.execute(resources.GOLDEN_OUTPUT)
         self._assert_expected_log('log.html')
         self._assert_expected_report('report.html')
-        self._assert_log_link_in_report('log.html')
 
     def test_no_generation(self):
-        self._reporter.execute(self._settings, resources.GOLDEN_OUTPUT)
+        self._reporter.execute(resources.GOLDEN_OUTPUT)
         self._assert_no_log()
         self._assert_no_report()
 
     def test_only_log(self):
         self._settings['Log'] = 'only-log.html'
-        self._reporter.execute(self._settings, resources.GOLDEN_OUTPUT)
+        self._reporter.execute(resources.GOLDEN_OUTPUT)
         self._assert_expected_log('only-log.html')
         self._assert_no_report()
 
     def test_only_report(self):
         self._settings['Report'] = 'reports-only.html'
-        self._reporter.execute(self._settings, resources.GOLDEN_OUTPUT)
+        self._reporter.execute(resources.GOLDEN_OUTPUT)
         self._assert_no_log()
         self._assert_expected_report('reports-only.html')
-        self._assert_no_log_links_in_report()
 
     def test_multiple_outputs(self):
         self._settings['Log'] = 'log.html'
         self._settings['Report'] = 'report.html'
-        self._reporter.execute_rebot(self._settings, *[resources.GOLDEN_OUTPUT, resources.GOLDEN_OUTPUT2])
+        self._reporter.execute_rebot(*[resources.GOLDEN_OUTPUT, resources.GOLDEN_OUTPUT2])
         self._assert_expected_log('log.html')
         self._assert_expected_report('report.html')
 
@@ -118,12 +115,6 @@ class TestReporting(unittest.TestCase):
 
     def _assert_expected_report(self, expected_file_name):
         self.assertEquals(self._report_results['report_path'], expected_file_name)
-
-    def _assert_log_link_in_report(self, expected_log_link):
-        self.assertEquals(self._report_results['logpath'], expected_log_link)
-
-    def _assert_no_log_links_in_report(self):
-        self._assert_log_link_in_report(None)
 
     def _assert_no_log(self):
         self._assert_expected_log(None)

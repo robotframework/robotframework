@@ -28,25 +28,24 @@ CSS_FILE_REGEXP = re.compile('href=\"([^\"]+)\"')
 CSS_MEDIA_TYPE_REGEXP = re.compile('media=\"([^\"]+)\"')
 
 
-def serialize_log(output, log_path, title=None):
+def serialize_log(output, log_path):
     if log_path is None:
         return
-    _build_file(log_path, output, title, LOG_TEMPLATE)
+    _build_file(log_path, output, LOG_TEMPLATE)
 
-def serialize_report(output, report_path, title=None, log_path=None):
+def serialize_report(output, report_path):
     if report_path is None:
         return
-    _build_file(report_path, output, title, REPORT_TEMPLATE,
-                _relative_log_path(report_path, log_path))
+    _build_file(report_path, output, REPORT_TEMPLATE)
 
 def _relative_log_path(report, log):
     if not log:
         return None
     return utils.get_link_path(log, os.path.dirname(report))
 
-def _build_file(outpath, output, title, template, log_path=None):
+def _build_file(outpath, output, template):
     with codecs.open(outpath, 'w', encoding='UTF-8') as outfile:
-        builder = OutputFileBuilder(outfile, output, title, log_path)
+        builder = OutputFileBuilder(outfile, output)
         with open(template, 'r') as tmpl:
             for line in tmpl:
                 builder.line(line)
@@ -54,18 +53,12 @@ def _build_file(outpath, output, title, template, log_path=None):
 
 class OutputFileBuilder(object):
 
-    def __init__(self, outfile, output, title, log_path=None):
+    def __init__(self, outfile, output):
         self._outfile = outfile
-        self._log_path = log_path
         self._output = output
-        self._title = title
 
     def line(self, line):
-        if self._is_title_line_to_handle(line):
-            self._write_title()
-        elif self._is_log_path_line_to_handle(line):
-            self._replace_log_path(line)
-        elif self._is_output_js(line):
+        if self._is_output_js(line):
             self._write_output_js()
         elif self._is_css_line(line):
             self._write_lines_css(line)
@@ -73,18 +66,6 @@ class OutputFileBuilder(object):
             self._write_lines_js(line)
         else:
             self._outfile.write(line)
-
-    def _is_title_line_to_handle(self, line):
-        return self._title is not None and line.startswith('<title>')
-
-    def _write_title(self):
-        self._outfile.write('<title>%s</title>\n' % self._title)
-
-    def _is_log_path_line_to_handle(self, line):
-        return self._log_path and 'log.html' in line
-
-    def _replace_log_path(self, line):
-        self._outfile.write(line.replace('log.html', self._log_path))
 
     def _is_output_js(self, line):
         return line.startswith('<!-- OUTPUT JS -->')

@@ -132,7 +132,7 @@ def run(*datasources, **options):
         _, settings = settings.get_rebot_datasources_and_settings()
         if settings['SplitOutputs'] > 0:
             raise Exception('Splitting? No way!')
-        Reporter().execute(settings, output_src)
+        Reporter(settings).execute(output_src)
     LOGGER.close()
     return suite
 
@@ -155,7 +155,7 @@ def run_rebot(*datasources, **options):
     settings = RebotSettings(options)
     LOGGER.register_console_logger(colors=settings['MonitorColors'])
     LOGGER.disable_message_cache()
-    suite = Reporter().execute_rebot(settings, *datasources)
+    suite = Reporter(settings).execute_rebot(*datasources)
     LOGGER.close()
     return suite
 

@@ -13,7 +13,7 @@ import unittest
 import xml.sax as sax
 
 from robot.serializing.jsparser import _RobotOutputHandler
-from robot.serializing.jsondatamodel import json_dump
+from robot.serializing.json import json_dump
 from robot.serializing.elementhandlers import Context
 from robot.utils.asserts import assert_equals, assert_true
 
