@@ -67,6 +67,7 @@ class TestReporting(unittest.TestCase):
             'Critical': None,
             'NonCritical': None,
             'NoStatusRC': None,
+            'RunEmptySuite': False,
             'EndTime': 0,
             'LogLevel': 'INFO'
         }
