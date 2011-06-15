@@ -21,7 +21,6 @@ from error import (get_error_message, get_error_details, ErrorDetails,
 from escaping import escape, unescape
 from htmlutils import html_escape, html_attr_escape
 from htmlwriter import HtmlWriter
-from idgenerator import IdGenerator, FileNameGenerator
 from importing import simple_import, import_
 from match import eq, eq_any, matches, matches_any
 from misc import plural_or_not, printable_name, seq2str, seq2str2
