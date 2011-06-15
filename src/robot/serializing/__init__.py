@@ -14,4 +14,3 @@
 
 
 from testoutput import RobotTestOutput
-from templating import Template, Namespace

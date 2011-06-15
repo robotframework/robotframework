@@ -67,7 +67,7 @@ from httplib import HTTPConnection
 from HTMLParser import HTMLParser
 
 from robot.running import TestLibrary, UserLibrary
-from robot.serializing import Template, Namespace
+from robot.utils.templating import Template, Namespace
 from robot.errors import DataError, Information
 from robot.parsing import populators
 from robot import utils

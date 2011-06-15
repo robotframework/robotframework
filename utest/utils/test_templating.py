@@ -1,19 +1,20 @@
-import unittest, sys, StringIO
+import unittest
+import StringIO
 
 from robot.utils.asserts import *
-from robot.serializing.templating import Template, Namespace
+from robot.utils.templating import Template, Namespace
 
 
 class TemplateWithOverridenInit(Template):
     def __init__(self):
         pass
-    
+
 T = TemplateWithOverridenInit
 N = Namespace
 
 
 class TestTemplate(unittest.TestCase):
-    
+
 
     def test_replace_nothing(self):
         t = T()
@@ -67,7 +68,7 @@ class TestTemplate(unittest.TestCase):
         template += '<!-- END FOR -->\n10\n'
         temp = Template(template=template)
         assert_equals(temp.generate(N(x=0, numbers=[])), '0\n10')
-        assert_equals(temp.generate(N(x=0, numbers='1 2 3 4 5 6 7 8 9'.split())), 
+        assert_equals(temp.generate(N(x=0, numbers='1 2 3 4 5 6 7 8 9'.split())),
                       '0\n1\n2\n3\n4\n5\n6\n7\n8\n9\n10')
 
     def test_for_with_if_inside(self):
@@ -78,7 +79,7 @@ class TestTemplate(unittest.TestCase):
         template += '<!-- END FOR -->\n2\n'
         temp = Template(template=template)
         assert_equals(temp.generate(N(x=0, tests=[])), '1\n2')
-        assert_equals(temp.generate(N(x=0, tests=['test1', 'test2'])), 
+        assert_equals(temp.generate(N(x=0, tests=['test1', 'test2'])),
                       '1\nname:test1\nname:test2\n2')
 
     def test_functions(self):
