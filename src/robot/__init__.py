@@ -14,7 +14,6 @@
 
 import sys
 import os
-from robot.serializing.testoutput import Reporter
 
 if __name__ == '__main__':
     sys.stderr.write("Use 'runner' or 'rebot' for executing.\n")
@@ -45,7 +44,7 @@ if 'pythonpathsetter' not in sys.modules:
 from output import Output, LOGGER, pyloggingconf
 from conf import RobotSettings, RebotSettings
 from running import TestSuite, STOP_SIGNAL_MONITOR
-from serializing import RobotTestOutput, RebotTestOutput
+from robot.serializing.testoutput import Reporter
 from errors import (DataError, Information, INFO_PRINTED, DATA_ERROR,
                     STOPPED_BY_USER, FRAMEWORK_ERROR)
 from variables import init_global_variables

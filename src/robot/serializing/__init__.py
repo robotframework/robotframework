@@ -13,5 +13,5 @@
 #  limitations under the License.
 
 
-from testoutput import RobotTestOutput, RebotTestOutput
+from testoutput import RobotTestOutput
 from templating import Template, Namespace
