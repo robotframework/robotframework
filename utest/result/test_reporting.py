@@ -4,15 +4,15 @@ from robot.output.readers import ExecutionErrors
 import resources
 from robot.common.model import BaseTestSuite
 import robot.output
-from robot.serializing.testoutput import Reporter
-import robot.serializing.testoutput
+from robot.result.testoutput import Reporter
+import robot.result.testoutput
 
 def set_serialize_log_mock():
     results = {'log_path':None}
     def serialize_log(test_output_datamodel, log_path, title=None):
         results['log_path'] = log_path
         results['title'] = title
-    robot.serializing.testoutput.serialize_log = serialize_log
+    robot.result.testoutput.serialize_log = serialize_log
     return results
 
 def set_serialize_report_mock():
@@ -21,7 +21,7 @@ def set_serialize_report_mock():
         results['report_path'] = report_path
         results['title'] = title
         results['logpath'] = logpath
-    robot.serializing.testoutput.serialize_report = serialize_report
+    robot.result.testoutput.serialize_report = serialize_report
     return results
 
 def set_process_outputs_mock():
@@ -70,14 +70,14 @@ class TestReporting(unittest.TestCase):
             'LogLevel': 'INFO'
         }
         self._reporter = Reporter(self._settings)
-        self._original_logger = robot.serializing.testoutput.LOGGER
-        robot.serializing.testoutput.LOGGER = Logger()
-        robot.serializing.testoutput.LOGGER.disable_automatic_console_logger()
+        self._original_logger = robot.result.testoutput.LOGGER
+        robot.result.testoutput.LOGGER = Logger()
+        robot.result.testoutput.LOGGER.disable_automatic_console_logger()
         self._log_results = set_serialize_log_mock()
         self._report_results = set_serialize_report_mock()
 
     def tearDown(self):
-        robot.serializing.testoutput.LOGGER = self._original_logger
+        robot.result.testoutput.LOGGER = self._original_logger
 
     def test_generate_report_and_log(self):
         self._settings['Log'] = 'log.html'

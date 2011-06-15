@@ -12,9 +12,9 @@ except ImportError:
 import unittest
 import xml.sax as sax
 
-from robot.serializing.jsparser import _RobotOutputHandler
-from robot.serializing.json import json_dump
-from robot.serializing.elementhandlers import Context
+from robot.result.jsparser import _RobotOutputHandler
+from robot.result.json import json_dump
+from robot.result.elementhandlers import Context
 from robot.utils.asserts import assert_equals, assert_true
 
 class TestJsSerializer(unittest.TestCase):

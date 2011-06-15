@@ -19,7 +19,7 @@ class ImportRobotModuleTestLibrary:
             raise AssertionError, 'Wrong logging module imported!'
         print 'Importing succeeded!'
 
-    def importing_robot_module_directly_fails(self):        
+    def importing_robot_module_directly_fails(self):
         try:
             import serializing
         except ImportError:
@@ -27,10 +27,10 @@ class ImportRobotModuleTestLibrary:
         except:
             raise
         else:
-            msg = "'import serializing' should have failed. Got it from '%s'. sys.path: %s"
+            msg = "'import result' should have failed. Got it from '%s'. sys.path: %s"
             raise AssertionError, msg % (serializing.__file__, sys.path)
 
-    def importing_robot_module_through_robot_succeeds(self):        
+    def importing_robot_module_through_robot_succeeds(self):
         try:
             import robot.running
         except:

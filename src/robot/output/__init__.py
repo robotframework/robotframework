@@ -39,7 +39,7 @@ def TestSuite(outpath):
         If path is not given the suite is written into the same file as it
         originally was read from.
         """
-        from robot.serializing import RobotTestOutput
+        from robot.result import RobotTestOutput
         if path is None:
             path = outpath
         suite.set_status()

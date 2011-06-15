@@ -44,7 +44,7 @@ if 'pythonpathsetter' not in sys.modules:
 from output import Output, LOGGER, pyloggingconf
 from conf import RobotSettings, RebotSettings
 from running import TestSuite, STOP_SIGNAL_MONITOR
-from robot.serializing.testoutput import Reporter
+from robot.result.testoutput import Reporter
 from errors import (DataError, Information, INFO_PRINTED, DATA_ERROR,
                     STOPPED_BY_USER, FRAMEWORK_ERROR)
 from variables import init_global_variables

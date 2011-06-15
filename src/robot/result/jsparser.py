@@ -13,8 +13,8 @@
 #  limitations under the License.
 
 from __future__ import with_statement
-from robot.serializing.elementhandlers import RootHandler, Context
-from robot.serializing.jsondatamodel import DataModel
+from robot.result.elementhandlers import RootHandler, Context
+from robot.result.jsondatamodel import DataModel
 import xml.sax as sax
 from xml.sax.handler import ContentHandler
 

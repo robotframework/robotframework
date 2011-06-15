@@ -22,8 +22,8 @@ from robot.output import LOGGER, process_outputs
 
 from outputserializers import OutputSerializer
 from xunitserializers import XUnitSerializer
-from robot.serializing.serialize_log import serialize_log, serialize_report
-from robot.serializing import jsparser
+from robot.result.serialize_log import serialize_log, serialize_report
+from robot.result import jsparser
 
 
 class Reporter(object):

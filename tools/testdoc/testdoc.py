@@ -54,9 +54,9 @@ from robot import utils, version
 from robot.common import BaseKeyword, BaseTestSuite
 from robot.running import TestSuite, Keyword
 from robot.conf import RobotSettings
-from robot.serializing.logserializers import LogSerializer
-from robot.serializing import templates
-from robot.serializing.templating import Namespace, Template
+from robot.result.logserializers import LogSerializer
+from robot.result import templates
+from robot.result.templating import Namespace, Template
 from robot.errors import DataError, Information
 from robot.parsing import populators
 from robot.variables import Variables

@@ -27,7 +27,7 @@ Topic :: Software Development :: Testing
 """[1:-1]
 PACKAGES = ['robot', 'robot.api', 'robot.common', 'robot.conf',
             'robot.libraries', 'robot.output', 'robot.parsing',
-            'robot.serializing', 'robot.running', 'robot.utils',
+            'robot.result', 'robot.running', 'robot.utils',
             'robot.variables']
 SCRIPT_NAMES = ['pybot', 'jybot', 'rebot']
 if os.name == 'java':
