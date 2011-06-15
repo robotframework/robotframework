@@ -1,5 +1,7 @@
 from __future__ import with_statement
 import StringIO
+import time
+
 try:
     import json
 except ImportError:
@@ -74,6 +76,11 @@ class TestJsSerializer(unittest.TestCase):
             [-10, 'F', 2],
             ['F', 0, -10]], ['*', '*KwName', '*AssertionError'])
 
+    def test_generated_millis(self):
+        self._context.timestamp('19790101 12:00:00.000')
+        data_model = self._get_data_model(self.SUITE_XML)
+        data_model.set_generated(time.localtime(284029200))
+        assert_equals(data_model._robot_data['generatedMillis'], 0)
 
     def test_tags_xml_parsing(self):
         tags_xml = """

@@ -80,6 +80,7 @@ class Reporter(object):
 
     def execute(self, settings, data_source):
         data_model = jsparser.create_datamodel_from(data_source)
+        data_model.set_generated(time.localtime())
         log_path = self._parse_file(settings['Log'])
         report_path = self._parse_file(settings['Report'])
         self._make_log(log_path, data_model, settings)
