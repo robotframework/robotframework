@@ -25,22 +25,20 @@ class CommandLineMonitor:
         self._width = width
         self._highlighter = StatusHighlighter(colors)
         self._is_logged = IsLogged('WARN')
-        # TODO: Could this logic be simplified now that splitting is no more?
-        self._running_suites = 0
+        self._started = False
 
     def start_suite(self, suite):
-        if not self._running_suites:
+        if not self._started:
             self._write_separator('=')
+            self._started = True
         self._write_info(suite.longname, suite.doc, start_suite=True)
         self._write_separator('=')
-        self._running_suites += 1
 
     def end_suite(self, suite):
         self._write_info(suite.longname, suite.doc)
         self._write_status(suite.status)
         self._write_message(suite.get_full_message())
         self._write_separator('=')
-        self._running_suites -= 1
 
     def start_test(self, test):
         self._write_info(test.name, test.doc)
