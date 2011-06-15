@@ -305,7 +305,7 @@ ${critical} critical test, ${criticalPassed} passed, <span class="${criticalFail
             {{if documentation}}
             <tr><th>Documentation:</th><td>{{html documentation}}</td></tr>
             {{/if}}
-            {{if tags}}
+            {{if tags.length}}
             <tr><th>Tags:</th><td>${tags.join(', ')}</td></tr>
             {{/if}}
             {{if timeout}}
