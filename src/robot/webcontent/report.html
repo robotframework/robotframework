@@ -246,7 +246,7 @@ function calculateTotalTime(tests) {
 }
 
 function setDocumentTitle(suite){
-    document.title = document.title.replace("[SUITE_NAME]", suite.name, "g");
+    document.title = document.title.replace("[SUITE_NAME]", window.settings.title, "g");
 }
 
 // TODO: This is duplicated in log.html
