@@ -43,7 +43,7 @@ class Reporter(object):
 
     def _make_report(self, report_path, log_path, data_model, settings):
         if report_path:
-            serialize_report(data_model, report_path, settings['ReportTitle'], settings['ReportBackground'], log_path)
+            serialize_report(data_model, report_path, settings['ReportTitle'],  log_path)
             LOGGER.output_file('Report', report_path)
 
     def _make_log(self, log_path, data_model, settings):
@@ -114,7 +114,7 @@ class RobotTestOutput:
         self.serialize_summary(settings['Summary'], settings['SummaryTitle'],
                                settings['ReportBackground'])
         datamodel = jsparser.create_datamodel_from(output)
-        serialize_report(datamodel, settings['Report'], settings['ReportTitle'], settings['ReportBackground'], settings['Log'])
+        serialize_report(datamodel, settings['Report'], settings['ReportTitle'], settings['Log'])
         LOGGER.output_file('Report', settings['Report'])
         serialize_log(datamodel, settings['Log'], settings['LogTitle'])
         LOGGER.output_file('Log', settings['Log'])
