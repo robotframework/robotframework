@@ -10,7 +10,6 @@ except ImportError:
 import unittest
 import xml.sax as sax
 
-from resources import GOLDEN_OUTPUT, GOLDEN_JS
 from robot.serializing.jsparser import _RobotOutputHandler, Context, parse_js, json_dump
 from robot.utils.asserts import assert_equals, assert_true
 
@@ -41,21 +40,20 @@ class TestJsSerializer(unittest.TestCase):
 
     def test_message_xml_parsing(self):
         data_model = self._get_data_model('<msg timestamp="20110531 12:48:09.088" level="FAIL">AssertionError</msg>')
-        assert_equals(data_model._basemillis, 1306835289088)
-        assert_equals(data_model._robot_data, [0, 'F', 1])
-        assert_equals(data_model._texts, ['*', '*AssertionError'])
+        self.assert_model(data_model, 1306835289088, [0, 'F', 1], ['*', '*AssertionError'])
+
+    def assert_model(self, data_model, basemillis, suite, texts):
+        assert_equals(data_model._robot_data['basemillis'], basemillis)
+        assert_equals(data_model._robot_data['suite'], suite)
+        assert_equals(data_model._robot_data['strings'], texts)
 
     def test_status_xml_parsing(self):
         data_model = self._get_data_model('<status status="PASS" endtime="20110531 12:48:09.042" starttime="20110531 12:48:09.000"></status>')
-        assert_equals(data_model._basemillis, 1306835289000)
-        assert_equals(data_model._robot_data, ['P',0,42])
-        assert_equals(data_model._texts, ['*'])
+        self.assert_model(data_model, 1306835289000, ['P',0,42], ['*'])
 
     def test_status_with_message_xml_parsing(self):
         data_model = self._get_data_model('<status status="PASS" endtime="20110531 12:48:09.042" starttime="20110531 12:48:09.000">Message</status>')
-        assert_equals(data_model._basemillis, 1306835289000)
-        assert_equals(data_model._robot_data, ['P',0,42,1])
-        assert_equals(data_model._texts, ['*', '*Message'])
+        self.assert_model(data_model, 1306835289000, ['P',0,42,1], ['*', '*Message'])
 
     def test_times(self):
         self._context.start_suite('suite')
@@ -68,12 +66,11 @@ class TestJsSerializer(unittest.TestCase):
         </kw>
         """
         data_model = self._get_data_model(times)
-        assert_equals(data_model._basemillis, 1306835289020)
-        assert_equals(data_model._robot_data, ['kw', 1, 0,
+        self.assert_model(data_model, 1306835289020, ['kw', 1, 0,
             [0, 'F', 2],
             [None, 'F', 2],
             [-10, 'F', 2],
-            ['F', 0, -10]])
+            ['F', 0, -10]], ['*', '*KwName', '*AssertionError'])
 
 
     def test_tags_xml_parsing(self):
@@ -84,8 +81,7 @@ class TestJsSerializer(unittest.TestCase):
         </tags>
         """
         data_model = self._get_data_model(tags_xml)
-        assert_equals(data_model._robot_data, [1, 2])
-        assert_equals(data_model._texts, ['*', '*someothertag', '*sometag'])
+        self.assert_model(data_model, None, [1, 2], ['*', '*someothertag', '*sometag'])
 
     def test_arguments_xml_parsing(self):
         arguments_xml = """
@@ -95,8 +91,7 @@ class TestJsSerializer(unittest.TestCase):
         </arguments>
         """
         data_model = self._get_data_model(arguments_xml)
-        assert_equals(data_model._robot_data, 1)
-        assert_equals(data_model._texts, ['*', '*${arg}, ${level}'])
+        self.assert_model(data_model, None, 1, ['*', '*${arg}, ${level}'])
 
     def test_keyword_xml_parsing(self):
         keyword_xml = """
@@ -111,9 +106,7 @@ class TestJsSerializer(unittest.TestCase):
         """
         self._context.start_suite('suite')
         data_model = self._get_data_model(keyword_xml)
-        assert_equals(data_model._basemillis, 1306835289070)
-        assert_equals(data_model._robot_data, ['teardown', 1, 0, 2, 3, [0, "W", 3], ["P", -1, 2]])
-        assert_equals(data_model._texts, ['*', '*BuiltIn.Log', '*Logs the given message with the given level.', '*keyword teardown'])
+        self.assert_model(data_model, 1306835289070, ['teardown', 1, 0, 2, 3, [0, "W", 3], ["P", -1, 2]], ['*', '*BuiltIn.Log', '*Logs the given message with the given level.', '*keyword teardown'])
         assert_equals(self._context.link_to([0, "W", 3]), "keyword_suite.0")
 
     def test_test_xml_parsing(self):
@@ -135,30 +128,25 @@ class TestJsSerializer(unittest.TestCase):
         """
         self._context.start_suite('SuiteName')
         data_model = self._get_data_model(test_xml)
-        assert_equals(data_model._basemillis, 1306918911353)
-        assert_equals(data_model._robot_data, ['test', 1, 0, 'Y', 0, ['kw', 2, 0, 3, 4, [0, 'I', 4], ['P', 0, 0]], [], ['P', 0, 1]])
-        assert_equals(data_model._texts, ['*', '*Test', '*Log', '*Logging', '*simple'])
+        self.assert_model(data_model, 1306918911353, ['test', 1, 0, 'Y', 0, ['kw', 2, 0, 3, 4, [0, 'I', 4], ['P', 0, 0]], [], ['P', 0, 1]], ['*', '*Test', '*Log', '*Logging', '*simple'])
 
     def test_suite_xml_parsing(self):
         data_model = self._get_data_model(self.SUITE_XML)
-        assert_equals(data_model._basemillis, 1306918911353)
-        assert_equals(data_model._robot_data, ['suite', '/tmp/verysimple.txt', 'Verysimple',
+        self.assert_model(data_model, 1306918911353, ['suite', '/tmp/verysimple.txt', 'Verysimple',
                                                0, {'key': 1},
                                                 ['test', 2, 0, 'Y', 0,
                                                     ['kw', 3, 0, 4, 5, [0, 'W', 5], ['P', 0, 0]], [],
-                                                    ['P', 0, 1]], ['P', -24, 25], [1, 1, 1, 1]])
-        assert_equals(data_model._texts, ['*', '*val', '*Test', '*BuiltIn.Log', '*Logs the given message with the given level.', '*simple'])
+                                                    ['P', 0, 1]], ['P', -24, 25], [1, 1, 1, 1]],
+            ['*', '*val', '*Test', '*BuiltIn.Log', '*Logs the given message with the given level.', '*simple'])
         assert_equals(self._context.link_to([0, 'W', 5]), 'keyword_Verysimple.Test.0')
 
     def test_suite_data_model_keywords_clearing(self):
         data_model = self._get_data_model(self.SUITE_XML)
         data_model.remove_keywords()
-        assert_equals(data_model._basemillis, 1306918911353)
-        assert_equals(data_model._robot_data, ['suite', '/tmp/verysimple.txt', 'Verysimple',
+        self.assert_model(data_model, 1306918911353, ['suite', '/tmp/verysimple.txt', 'Verysimple',
                                                0, {'key': 1},
                                                 ['test', 2, 0, 'Y', 0, [],
-                                                    ['P', 0, 1]], ['P', -24, 25], [1, 1, 1, 1]])
-        assert_equals(data_model._texts, ['*', '*val', '*Test', '', '', ''])
+                                                    ['P', 0, 1]], ['P', -24, 25], [1, 1, 1, 1]], ['*', '*val', '*Test', '', '', ''])
 
     def test_metadata_xml_parsing(self):
         meta_xml = """<metadata>
@@ -166,8 +154,7 @@ class TestJsSerializer(unittest.TestCase):
                         <item name="version">alpha</item>
                       </metadata>"""
         data_model = self._get_data_model(meta_xml)
-        assert_equals(data_model._robot_data, {'meta':1, 'version':2})
-        assert_equals(data_model._texts, ['*', '*<b>escaped</b>', '*alpha'])
+        self.assert_model(data_model, None, {'meta':1, 'version':2}, ['*', '*<b>escaped</b>', '*alpha'])
 
     def test_statistics_xml_parsing(self):
         statistics_xml = """
@@ -188,14 +175,14 @@ class TestJsSerializer(unittest.TestCase):
         </statistics>
         """
         data_model = self._get_data_model(statistics_xml)
-        assert_equals(data_model._robot_data, [[['Critical Tests', 0, 4, '', '', ''],
+        self.assert_model(data_model, None,
+            [[['Critical Tests', 0, 4, '', '', ''],
             ['All Tests', 0, 4, '', '', '']],
             [['someothertag', 0, 1, '', '', ''],
                 ['sometag', 0, 1, '', '', '']],
             [['Data', 0, 4, 'Data', '', ''],
                 ['Data.All Settings', 0, 1, 'Data.All Settings', '', ''],
-                ['Data.Failing Suite', 0, 3, 'Data.Failing Suite', '', '']]])
-        assert_equals(data_model._texts, ['*'])
+                ['Data.Failing Suite', 0, 3, 'Data.Failing Suite', '', '']]], ['*'])
 
     def test_errors_xml_parsing(self):
         errors_xml = """
@@ -204,9 +191,10 @@ class TestJsSerializer(unittest.TestCase):
         </errors>
         """
         data_model = self._get_data_model(errors_xml)
-        assert_equals(data_model._basemillis, 1306835289078)
-        assert_equals(data_model._robot_data, [[0, 'E', 1]])
-        assert_equals(data_model._texts, ['*', "*Invalid syntax in file '/tmp/data/failing_suite.txt' in table 'Settings': Resource file 'nope' does not exist."])
+        self.assert_model(data_model,
+                          1306835289078,
+                          [[0, 'E', 1]],
+                          ['*', "*Invalid syntax in file '/tmp/data/failing_suite.txt' in table 'Settings': Resource file 'nope' does not exist."])
 
     if json:
         def test_json_dump_string(self):
@@ -241,7 +229,7 @@ class TestJsSerializer(unittest.TestCase):
         assert_equals('null', buffer.getvalue())
 
     def _get_data_model(self, xml_string):
-        sax.parseString(xml_string, self._handler)
+        sax.parseString('<robot generator="test">%s<statistics/><errors/></robot>' % xml_string, self._handler)
         return self._handler.datamodel
 
     def _assert_long_equals(self, given, expected):
