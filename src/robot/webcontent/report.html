@@ -276,7 +276,7 @@ function iterateDetails(){
         return;
     }
     var elements = pop_upto(window.tasks, 50);
-    $.tmpl(window.templates.testDetailsRow, elements).appendTo('#tests_detail_table');
+    $.tmpl(window.templates.testDetailsRow, elements, {logPath: window.settings.logPath}).appendTo('#tests_detail_table');
     if(window.tasks.length > 0)
         setTimeout("iterateDetails()", 0);
 }
@@ -534,7 +534,11 @@ ${critical} critical test, ${criticalPassed} passed, <span class="${criticalFail
 
 <script type="text/html" id="report_test_details_row">
   <tr class="test_row">
-    <td class="col_name"><a href="log.html#test_${fullname}" id="test_${fullname}" title="${fullname}"><span class="parent_name">${parentName}</span>${name}</a></td>
+    {{if $item.logPath}}
+    <td class="col_name"><a href="${$item.logPath}#test_${fullname}" id="test_${fullname}" title="${fullname}"><span class="parent_name">${parentName}</span>${name}</a></td>
+    {{else}}
+    <td class="col_name"><span class="parent_name">${parentName}</span>${name}</td>
+    {{/if}}
     <td class="col_doc">{{html documentation}}</td>
     <td class="col_tags">${tags.join(', ')}</td>
     <td class="col_crit">{{if isCritical}}yes{{else}}no{{/if}}</td>
