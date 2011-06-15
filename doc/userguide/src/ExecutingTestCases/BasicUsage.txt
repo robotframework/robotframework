@@ -432,7 +432,7 @@ another:
    #!/bin/bash
    pybot --variable BROWSER:Firefox --name Firefox --log none --report none --output out/fx.xml login
    pybot --variable BROWSER:IE --name IE --log none --report none --output out/ie.xml login
-   rebot --name Login --splitoutputs 1 --outputdir out --output login.xml out/fx.xml out/ie.xml
+   rebot --name Login --outputdir out --output login.xml out/fx.xml out/ie.xml
 
 Implementing the above example with Windows batch files is not very
 complicated, either. The most important thing to remember is that
@@ -446,7 +446,7 @@ finished.
    @echo off
    call pybot --variable BROWSER:Firefox --name Firefox --log none --report none --output out\fx.xml login
    call pybot --variable BROWSER:IE --name IE --log none --report none --output out\ie.xml login
-   call rebot --name Login --splitoutputs 1 --outputdir out --output login.xml out\fx.xml out\ie.xml
+   call rebot --name Login --outputdir out --output login.xml out\fx.xml out\ie.xml
 
 In the next examples, JAR files under the :path:`lib` directory are
 put into CLASSPATH before starting the test execution. In these
@@ -465,7 +465,7 @@ script. All this is relatively straight-forward using bash:
    done
    export CLASSPATH=$cp
 
-   jybot --ouputdir /tmp/logs --splitoutputs 2 $*
+   jybot --ouputdir /tmp/logs --suitestatlevel 2 $*
 
 Implementing this using Windows batch files is slightly more complicated. The
 difficult part is setting the variable containing the needed JARs inside a For
@@ -482,7 +482,7 @@ function.
    )
    set CLASSPATH=%CP%
 
-   jybot --ouputdir c:\temp\logs --splitoutputs 2 %*
+   jybot --ouputdir c:\temp\logs --suitestatlevel 2 %*
 
    goto :eof
 
