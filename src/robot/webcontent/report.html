@@ -70,7 +70,8 @@ $(document).ready(function () {
 });
 
 function addSummary(topsuite) {
-    $.tmpl(window.templates.summaryTable, topsuite, {logURL:window.settings.logURL}).insertAfter($('#header_div'));
+    var opts = {logURL: window.settings.logURL};
+    $.tmpl(window.templates.summaryTable, topsuite, opts).insertAfter($('#header_div'));
 }
 
 function showTotalsTab() {
@@ -158,8 +159,9 @@ function renderDetailsByTag(tag) {
 
 function renderDetailsBySuite(name) {
     var suite = testdata.suite().findSuiteByName(name);
-    $.tmpl(window.templates.suiteDetails, suite, {logURL: window.settings.logURL}).appendTo('#details_header');
-    drawTestDetailsTable(suite.allTests())
+    var opts = {logURL: window.settings.logURL};
+    $.tmpl(window.templates.suiteDetails, suite, opts).appendTo('#details_header');
+    drawTestDetailsTable(suite.allTests());
 }
 
 function drawTestDetailsTable(tests) {
@@ -338,8 +340,8 @@ function initTemplates() {
     <tr><th>Elapsed Time:</th><td>${times.elapsedTime}</td></tr>
     {{if $item.logURL}}
     <tr>
-        <th></th>
-        <td><a href="${$item.logURL}">See log</a></td>
+        <th>Log File:</th>
+        <td><a href="${$item.logURL}">${$item.logURL}</a></td>
     </tr>
     {{/if}}
   </table>
@@ -363,11 +365,11 @@ function initTemplates() {
         <a href="#tag_${label}" onclick="tagDetailSelected('${label}');" title="${doc}">${label}</a>
         ${shownInfo}
       </div>
-    <div class="tag_links">
-      {{each links}}
+      <div class="tag_links">
+        {{each links}}
         <span>[<a href="${$value.url}" title="${$value.url}">${$value.title}</a>]</span>
-      {{/each}}
-    </div>
+        {{/each}}
+      </div>
     </td>
     {{tmpl($data) '#stat_columns'}}
   </tr>
@@ -440,9 +442,9 @@ function initTemplates() {
       <td class="normal_whitespace">
         <select id="tag_detail_selector" onchange="tagDetailSelected(this.options[this.selectedIndex].value);">
           <option value="">Select tag...</option>
-            {{each tags}}
-              <option value="${$value.label}">${$value.label} ${$value.shownInfo}</option>
-            {{/each}}
+          {{each tags}}
+          <option value="${$value.label}">${$value.label} ${$value.shownInfo}</option>
+          {{/each}}
         </select>
       </td>
     </tr>
@@ -456,9 +458,9 @@ function initTemplates() {
       <td class="normal_whitespace">
         <select id="suite_detail_selector" onchange="suiteDetailSelected(this.options[this.selectedIndex].value);">
           <option value="">Select suite...</option>
-            {{each suites}}
-              <option value="${$value.fullname}">${$value.fullname}</option>
-            {{/each}}
+          {{each suites}}
+          <option value="${$value.fullname}">${$value.fullname}</option>
+          {{/each}}
         </select>
       </td>
     </tr>
@@ -492,8 +494,8 @@ function initTemplates() {
 <script type="text/html" id="suite_details">
     {{if $item.logURL}}
     <tr>
-        <th></th>
-        <td><a href="${$item.logURL}#suite_${fullname}" id="suite_${fullname}" title="${fullname}">See log</a></td>
+        <th>Log Link:</th>
+        <td><a href="${$item.logURL}#suite_${fullname}" title="${fullname}">${$item.logURL}#suite_${fullname} </a></td>
     </tr>
     {{/if}}
     {{if documentation}}
