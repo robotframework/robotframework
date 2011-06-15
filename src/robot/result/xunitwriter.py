@@ -16,7 +16,7 @@
 from robot import utils
 
 
-class XUnitSerializer:
+class XUnitWriter:
     """Provides an xUnit-compatible result file.
 
     Attempts to adhere to the de facto schema guessed by Peter Reilly, see:
@@ -77,7 +77,7 @@ class _FailedTestSerializer:
 
     def __init__(self, writer, test):
         self._writer = writer
-        self._writer.start('failure', 
+        self._writer.start('failure',
                            {'message': test.message, 'type': 'AssertionError'})
 
     def end_test(self):

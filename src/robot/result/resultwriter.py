@@ -20,10 +20,10 @@ from robot import utils
 from robot.common import Statistics
 from robot.output import LOGGER, process_outputs
 
-from outputserializers import OutputSerializer
-from xunitserializers import XUnitSerializer
-from robot.result.serialize_log import serialize_log, serialize_report
-from robot.result import jsparser
+from outputwriter import OutputWriter
+from xunitwriter import XUnitWriter
+from writer import serialize_log, serialize_report
+import jsparser
 
 
 class ResultWriter(object):
@@ -152,7 +152,7 @@ class RobotTestOutput:
     def serialize_output(self, path, log=True):
         if path == 'NONE':
             return
-        serializer = OutputSerializer(path)
+        serializer = OutputWriter(path)
         self.suite.serialize(serializer)
         self.statistics.serialize(serializer)
         self.exec_errors.serialize(serializer)
@@ -163,7 +163,7 @@ class RobotTestOutput:
     def serialize_xunit(self, path):
         if path == 'NONE':
             return
-        serializer = XUnitSerializer(path)
+        serializer = XUnitWriter(path)
         try:
             self.suite.serialize(serializer)
         finally:

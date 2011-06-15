@@ -15,7 +15,7 @@
 from robot.output import XmlLogger
 
 
-class OutputSerializer(XmlLogger):
+class OutputWriter(XmlLogger):
 
     def __init__(self, path):
         XmlLogger.__init__(self, path, generator='Rebot')
