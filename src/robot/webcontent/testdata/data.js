@@ -9,5 +9,10 @@ window.output = {
         suite: window._data[2],
         stats: window._data[3],
         errors: window._data[4],
-        strings: window._strings
+        strings: window._strings,
+        logPath: 'log.html',
+        reportPath: 'report.html',
+        passBackground: '#99FF66',
+        nonCriticalFailBackground: '#99FF66',
+        criticalFailBackground: '#FF3333'
 }
