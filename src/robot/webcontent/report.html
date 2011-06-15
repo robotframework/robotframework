@@ -261,12 +261,12 @@ function addHeader() {
 }
 
 function setBackground(topsuite) {
-    var bodyclass = "critical_pass";
     if (topsuite.criticalFailed)
-        bodyclass = "critical_fail";
+        $("body").css("background-color",window.settings.background.fail);
     else if (topsuite.totalFailed)
-        bodyclass = "non_critical_fail";
-    $("body").addClass(bodyclass);
+        $("body").css("background-color",window.settings.background.nonCriticalFail);
+    else
+        $("body").css("background-color",window.settings.background.pass);
 }
 
 function iterateDetails(){
@@ -274,7 +274,7 @@ function iterateDetails(){
         return;
     }
     var elements = pop_upto(window.tasks, 50);
-    $.tmpl(window.templates.testDetailsRow, elements, {logPath: window.settings.logPath}).appendTo('#tests_detail_table');
+    $.tmpl(window.templates.testDetailsRow, elements, {logURL: window.settings.logURL}).appendTo('#tests_detail_table');
     if(window.tasks.length > 0)
         setTimeout("iterateDetails()", 0);
 }
@@ -532,8 +532,8 @@ ${critical} critical test, ${criticalPassed} passed, <span class="${criticalFail
 
 <script type="text/html" id="report_test_details_row">
   <tr class="test_row">
-    {{if $item.logPath}}
-    <td class="col_name"><a href="${$item.logPath}#test_${fullname}" id="test_${fullname}" title="${fullname}"><span class="parent_name">${parentName}</span>${name}</a></td>
+    {{if $item.logURL}}
+    <td class="col_name"><a href="${$item.logURL}#test_${fullname}" id="test_${fullname}" title="${fullname}"><span class="parent_name">${parentName}</span>${name}</a></td>
     {{else}}
     <td class="col_name"><span class="parent_name">${parentName}</span>${name}</td>
     {{/if}}

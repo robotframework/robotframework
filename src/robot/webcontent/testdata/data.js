@@ -12,9 +12,8 @@ window.output = {
         strings: window._strings
 }
 window.settings = {
-        logPath: 'log.html',
-        reportPath: 'report.html',
-        passBackground: '#99FF66',
-        nonCriticalFailBackground: '#99FF66',
-        criticalFailBackground: '#FF3333'
+        title: 'Title',
+        logURL: 'log.html',
+        reportURL: 'report.html',
+        background: {pass: '#99FF66',nonCriticalFail: '#99FF66',fail: '#FF3333'}
 }
