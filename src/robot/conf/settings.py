@@ -200,8 +200,8 @@ class RobotSettings(_BaseSettings):
     def is_rebot_needed(self):
         return not ('NONE' == self['Log'] == self['Report'] == self['Summary'] == self['XUnitFile'])
 
-    def get_rebot_datasources_and_settings(self):
-        datasources = [self['Output']]
+    def get_rebot_datasource_and_settings(self):
+        datasource = self['Output']
         settings = RebotSettings(log=False)
         settings._opts.update(self._opts)
         for name in ['Variables', 'VariableFiles', 'Listeners']:
@@ -213,7 +213,7 @@ class RobotSettings(_BaseSettings):
         for name in ['Name', 'Doc']:
             settings._opts[name] = None
         settings._opts['LogLevel'] = 'TRACE'
-        return datasources, settings
+        return datasource, settings
 
     def _outputfile_disabled(self, type_, name):
         if name == 'NONE':

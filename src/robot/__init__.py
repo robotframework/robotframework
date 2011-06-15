@@ -128,8 +128,8 @@ def run(*datasources, **options):
                 % suite.get_stat_message())
     output.close(suite)
     if settings.is_rebot_needed():
-        _, settings = settings.get_rebot_datasources_and_settings()
-        Reporter(settings).execute(settings['Output'])
+        output, settings = settings.get_rebot_datasource_and_settings()
+        Reporter(settings).execute(output)
     LOGGER.close()
     return suite
 
