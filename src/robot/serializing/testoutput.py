@@ -36,24 +36,86 @@ class Reporter(object):
         self._suite = None
         self._settings = settings
 
-    def _make_report(self, report_path, data_model):
-        if report_path:
-            data_model.set_settings(self._get_report_settings())
-            serialize_report(data_model, report_path)
-            LOGGER.output_file('Report', report_path)
+    def execute(self, data_source):
+        data_model = jsparser.create_datamodel_from(data_source)
+        data_model.set_generated(time.localtime())
+        LogBuilder(data_model, self._settings).create()
+        data_model.remove_keywords()
+        ReportBuilder(data_model, self._settings).create()
+        self._make_xunit(data_source)
 
-    def _get_report_settings(self):
-        return {
-            'title': self._settings['ReportTitle'],
-            'background' : self._resolve_background_colors(),
-            'logURL': self._url_from_path(self._parse_file('Report'),
-                                          self._parse_file('Log'))
-        }
+    def _make_xunit(self, data_source):
+        xunit_path = self._settings['XUnitFile']
+        if xunit_path != 'NONE':
+            self._robot_test_output([data_source]).serialize_xunit(xunit_path)
+
+    def _robot_test_output(self, data_sources):
+        if self._robot_test_output_cached is None:
+            self._suite, exec_errors = process_outputs(data_sources, self._settings)
+            self._suite.set_options(self._settings)
+            self._robot_test_output_cached = RobotTestOutput(self._suite, exec_errors, self._settings)
+        return self._robot_test_output_cached
+
+    def execute_rebot(self, *data_sources):
+        combined = self._combine_outputs(data_sources)
+        self.execute(combined)
+        if self._temp_file:
+            os.remove(self._temp_file)
+        return self._suite
+
+    def _combine_outputs(self, data_sources):
+        output_file = self._settings['Output']
+        if output_file == 'NONE':
+            handle, output_file = tempfile.mkstemp(suffix='.xml', prefix='rebot-')
+            os.close(handle)
+            self._temp_file = output_file
+        self._robot_test_output(data_sources).serialize_output(output_file, log=not self._temp_file)
+        return output_file
+
+
+class _Builder(object):
+
+    def __init__(self, data_model, settings):
+        self._settings = settings
+        self._path = self._parse_file(self._type)
+        self._data_model = data_model
+
+    def create(self):
+        if self._path:
+            self._data_model.set_settings(self._get_settings())
+            serialize_report(self._data_model, self._path)
+            LOGGER.output_file(self._type, self._path)
+
+    def _parse_file(self, name):
+        value = self._settings[name]
+        return value if value != 'NONE' else None
 
     def _url_from_path(self, source, dest):
         if not dest:
             return None
         return utils.get_link_path(dest, os.path.dirname(source))
+
+
+class LogBuilder(_Builder):
+    _type = 'Log'
+
+    def _get_settings(self):
+        return {
+            'title': self._settings['LogTitle'],
+            'reportURL': self._url_from_path(self._path,
+                                             self._parse_file('Report'))
+        }
+
+class ReportBuilder(_Builder):
+    _type = 'Report'
+
+    def _get_settings(self):
+        return {
+            'title': self._settings['ReportTitle'],
+            'background' : self._resolve_background_colors(),
+            'logURL': self._url_from_path(self._path,
+                                          self._parse_file('Log'))
+        }
 
     def _resolve_background_colors(self):
         color_str = self._settings['ReportBackground']
@@ -66,61 +128,6 @@ class Reporter(object):
         if len(colors) == 2:
             colors.insert(1, colors[0])
         return {'pass': colors[0], 'nonCriticalFail': colors[1], 'fail': colors[2]}
-
-    def _make_log(self, log_path, data_model):
-        if log_path:
-            data_model.set_settings(self._get_log_settings())
-            serialize_log(data_model, log_path)
-            LOGGER.output_file('Log', log_path)
-
-    def _get_log_settings(self):
-        return {
-            'title': self._settings['ReportTitle'],
-            'reportURL': self._url_from_path(self._parse_file('Log'),
-                                             self._parse_file('Report'))
-        }
-
-    def _make_xunit(self, xunit_path, data_source):
-        if xunit_path:
-            self._robot_test_output([data_source]).serialize_xunit(xunit_path)
-
-    def _robot_test_output(self, data_sources):
-        if self._robot_test_output_cached is None:
-            self._suite, exec_errors = process_outputs(data_sources, self._settings)
-            self._suite.set_options(self._settings)
-            self._robot_test_output_cached = RobotTestOutput(self._suite, exec_errors, self._settings)
-        return self._robot_test_output_cached
-
-    def _combine_outputs(self, data_sources):
-        output_file = self._parse_file('Output')
-        if output_file is None:
-            handle, output_file = tempfile.mkstemp(suffix='.xml', prefix='rebot-')
-            os.close(handle)
-            self._temp_file = output_file
-        self._robot_test_output(data_sources).serialize_output(output_file, log=not self._temp_file)
-        return output_file
-
-    def execute_rebot(self, *data_sources):
-        combined = self._combine_outputs(data_sources)
-        self.execute(combined)
-        if self._temp_file:
-            os.remove(self._temp_file)
-        return self._suite
-
-    def execute(self, data_source):
-        data_model = jsparser.create_datamodel_from(data_source)
-        data_model.set_generated(time.localtime())
-        log_path = self._parse_file('Log')
-        report_path = self._parse_file('Report')
-        self._make_log(log_path, data_model)
-        data_model.remove_keywords()
-        self._make_report(report_path, data_model)
-        xunit_path = self._parse_file('XUnitFile')
-        self._make_xunit(xunit_path, data_source)
-
-    def _parse_file(self, name):
-        value = self._settings[name]
-        return value if value != 'NONE' else None
 
 
 class RobotTestOutput:
