@@ -18,10 +18,8 @@ import time
 
 from robot import utils
 from robot.common import Statistics
-from robot.output import LOGGER, process_outputs, process_output
-from robot.version import get_full_version
+from robot.output import LOGGER, process_outputs
 
-from templating import Namespace, Template
 from outputserializers import OutputSerializer
 from xunitserializers import XUnitSerializer
 from robot.serializing.serialize_log import serialize_log, serialize_report
