@@ -158,7 +158,7 @@ function renderDetailsByTag(tag) {
 
 function renderDetailsBySuite(name) {
     var suite = testdata.suite().findSuiteByName(name);
-    $.tmpl(window.templates.suiteDetails, suite).appendTo('#details_header');
+    $.tmpl(window.templates.suiteDetails, suite, {logURL: window.settings.logURL}).appendTo('#details_header');
     drawTestDetailsTable(suite.allTests())
 }
 
@@ -483,6 +483,12 @@ function initTemplates() {
 </script>
 
 <script type="text/html" id="suite_details">
+    {{if $item.logURL}}
+    <tr>
+        <th></th>
+        <td><a href="${$item.logURL}#suite_${fullname}" id="suite_${fullname}" title="${fullname}">See log</a></td>
+    </tr>
+    {{/if}}
     {{if documentation}}
     <tr>
         <th>Documentation:</th>
