@@ -21,14 +21,8 @@ from robot.common import Statistics
 from robot.output import LOGGER, process_outputs, process_output
 from robot.version import get_full_version
 
-import templates
 from templating import Namespace, Template
 from outputserializers import OutputSerializer
-from statserializers import (LogStatSerializer, SplitLogStatSerializer,
-                             ReportStatSerializer, SummaryStatSerializer)
-from logserializers import LogSerializer, SplitLogSerializer, ErrorSerializer
-from reportserializers import (ReportSerializer, SplitReportSerializer,
-                               TagDetailsSerializer)
 from xunitserializers import XUnitSerializer
 from robot.serializing.serialize_log import serialize_log, serialize_report
 from robot.serializing import jsparser

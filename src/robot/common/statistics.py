@@ -59,10 +59,10 @@ class Stat:
         self.failed += self.passed
         self.passed = 0
 
-    def get_doc(self, split_level=-1):
+    def get_doc(self):
         return self._doc
 
-    def get_link(self, split_level=-1):
+    def get_link(self):
         return self._link
 
     def __cmp__(self, other):
@@ -79,11 +79,11 @@ class SuiteStat(Stat):
         Stat.__init__(self, suite.name)
         self.get_long_name = suite.get_long_name
 
-    def get_doc(self, split_level=-1):
-        return self.get_long_name(split_level)
+    def get_doc(self):
+        return self.get_long_name()
 
-    def get_link(self, split_level=-1):
-        return self.get_long_name(split_level)
+    def get_link(self):
+        return self.get_long_name()
 
     def serialize(self, serializer):
         serializer.suite_stat(self)
