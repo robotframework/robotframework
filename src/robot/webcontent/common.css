@@ -138,7 +138,8 @@ h1 {
 }
 
 #generated {
-/ / TODO : Add width when timestamp in correct format / / width : 29 %;
+    /* TODO : Add width when timestamp in correct format
+    width : 29 %; */
     float: right;
     text-align: right;
     font-size: 0.9em;
