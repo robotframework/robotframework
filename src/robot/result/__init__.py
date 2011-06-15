@@ -13,4 +13,4 @@
 #  limitations under the License.
 
 
-from testoutput import RobotTestOutput
+from resultwriter import ResultWriter

@@ -26,7 +26,7 @@ from robot.result.serialize_log import serialize_log, serialize_report
 from robot.result import jsparser
 
 
-class Reporter(object):
+class ResultWriter(object):
 
     def __init__(self, settings):
         self._robot_test_output_cached = None
