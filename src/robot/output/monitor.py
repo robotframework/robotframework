@@ -24,8 +24,9 @@ class CommandLineMonitor:
     def __init__(self, width=78, colors='AUTO'):
         self._width = width
         self._highlighter = StatusHighlighter(colors)
-        self._running_suites = 0
         self._is_logged = IsLogged('WARN')
+        # TODO: Could this logic be simplified now that splitting is no more?
+        self._running_suites = 0
 
     def start_suite(self, suite):
         if not self._running_suites:
@@ -54,8 +55,7 @@ class CommandLineMonitor:
             self._write_with_highlighting('[ ', msg.level, ' ] ' + msg.message,
                                           stream=sys.__stderr__)
     def output_file(self, name, path):
-        if not self._running_suites:  # ignore split output files
-            self._write('%-8s %s' % (name+':', path))
+        self._write('%-8s %s' % (name+':', path))
 
     def _write_info(self, name, doc, start_suite=False):
         maxwidth = self._width

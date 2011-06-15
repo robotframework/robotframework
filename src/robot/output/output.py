@@ -30,10 +30,8 @@ class Output(AbstractLogger):
 
     def __init__(self, settings):
         AbstractLogger.__init__(self)
-        self._xmllogger = XmlLogger(settings['Output'], settings['LogLevel'],
-                                    settings['SplitOutputs'])
+        self._xmllogger = XmlLogger(settings['Output'], settings['LogLevel'])
         self._register_loggers(settings['Listeners'], settings['DebugFile'])
-        self._namegen = self._get_log_name_generator(settings['Log'])
         self._settings = settings
         robot.output.OUTPUT = self
 
@@ -43,9 +41,6 @@ class Output(AbstractLogger):
             if logger: LOGGER.register_logger(logger)
         LOGGER.disable_message_cache()
 
-    def _get_log_name_generator(self, log):
-        return log != 'NONE' and utils.FileNameGenerator(log) or None
-
     def close(self, suite):
         stats = Statistics(suite, self._settings['SuiteStatLevel'],
                            self._settings['TagStatInclude'],
@@ -54,32 +49,15 @@ class Output(AbstractLogger):
                            self._settings['TagDoc'],
                            self._settings['TagStatLink'])
         stats.serialize(self._xmllogger)
-        self._xmllogger.close(serialize_errors=True)
+        self._xmllogger.close()
         LOGGER.unregister_logger(self._xmllogger)
         LOGGER.output_file('Output', self._settings['Output'])
 
     def start_suite(self, suite):
         LOGGER.start_suite(suite)
-        if self._xmllogger.started_output:
-            suite.context.output_file_changed(self._xmllogger.started_output)
-            if self._namegen:
-                suite.context.log_file_changed(self._namegen.get_name())
 
     def end_suite(self, suite):
         LOGGER.end_suite(suite)
-        if self._xmllogger.ended_output:
-            LOGGER.output_file('Output', self._xmllogger.ended_output)
-            orig_outpath = self._settings['Output']
-            suite.context.output_file_changed(orig_outpath)
-            self._create_split_log(self._xmllogger.ended_output, suite)
-
-    def _create_split_log(self, outpath, suite):
-        if self._namegen is None:
-            return
-        logpath = self._namegen.get_prev()
-        output = robot.serializing.SplitSubTestOutput(outpath, self._settings)
-        output.serialize_log(logpath)
-        suite.context.log_file_changed(self._namegen.get_base())
 
     def start_test(self, test):
         LOGGER.start_test(test)

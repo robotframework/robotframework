@@ -108,7 +108,7 @@ class Logger(AbstractLogger):
         method(Message(msg, 'WARN'))
 
     def output_file(self, name, path):
-        """Finished output, report, log, summary or debug file (incl. split)"""
+        """Finished output, report, log, summary, debug, or xunit file"""
         for logger in self._loggers.all_loggers():
             logger.output_file(name, path)
 

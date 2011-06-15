@@ -36,12 +36,8 @@ def process_outputs(paths, settings):
     return suite, exec_errors
 
 
-def process_output(path, read_level=-1, log_level=None, settings=None):
-    """Process one output file and return TestSuite and ExecutionErrors
-
-    'read_level' can be used to limit how many suite levels are read. This is
-    mainly useful when Robot has split outputs and only want to read index.
-    """
+def process_output(path, log_level=None, settings=None):
+    """Process one output file and return TestSuite and ExecutionErrors"""
     if not os.path.isfile(path):
         raise DataError("Output file '%s' does not exist." % path)
     LOGGER.info("Processing output file '%s'." % path)
@@ -50,8 +46,8 @@ def process_output(path, read_level=-1, log_level=None, settings=None):
     except:
         raise DataError("Opening XML file '%s' failed: %s"
                         % (path, utils.get_error_message()))
-    suite = TestSuite(_get_suite_node(root, path), read_level,
-                      log_level=log_level, settings=settings)
+    suite = TestSuite(_get_suite_node(root, path), log_level=log_level,
+                      settings=settings)
     errors = ExecutionErrors(_get_errors_node(root))
     return suite, errors
 
@@ -153,9 +149,7 @@ class _KeywordReader(_BaseReader):
 
 class TestSuite(BaseTestSuite, _SuiteReader):
 
-    def __init__(self, node, read_level=-1, level=1, parent=None,
-                 log_level=None, settings=None):
-        node = self._get_node(node, read_level, level)
+    def __init__(self, node, parent=None, log_level=None, settings=None):
         BaseTestSuite.__init__(self, node.get('name'),
                                node.get('source', None), parent)
         _SuiteReader.__init__(self, node, log_level=log_level)
@@ -163,25 +157,13 @@ class TestSuite(BaseTestSuite, _SuiteReader):
         for snode in node.findall('suite'):
             snode.set('generator', node.get('generator'))
             snode.set('path', node.get('path'))
-            TestSuite(snode, read_level, level+1, parent=self, log_level=log_level)
+            TestSuite(snode, parent=self, log_level=log_level)
         for tnode in node.findall('test'):
             TestCase(tnode, parent=self, log_level=log_level)
         self.set_status()
         if node.get('generator') == 'robot' and \
-                self.teardown is not None and self.teardown.status == 'FAIL':
+                self.teardown and self.teardown.status == 'FAIL':
             self.suite_teardown_failed()
-
-    def _get_node(self, orignode, read_level, level):
-        if read_level > 0 and level > read_level:
-            return orignode
-        src = orignode.get('src')
-        if src is None:
-            return orignode
-        path = os.path.join(os.path.dirname(orignode.get('path')), src)
-        node = utils.etreewrapper.get_root(path).find('suite')
-        node.set('generator', orignode.get('generator'))
-        node.set('path', path)
-        return node
 
     def _set_times_from_settings(self, settings):
         starttime, endtime = self._times_from_settings(settings)

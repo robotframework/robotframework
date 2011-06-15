@@ -12,17 +12,16 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-
 from robot.output import XmlLogger
 
 
 class OutputSerializer(XmlLogger):
 
-    def __init__(self, outpath, split):
-        XmlLogger.__init__(self, outpath, 'TRACE', split, generator='Rebot')
+    def __init__(self, path):
+        XmlLogger.__init__(self, path, generator='Rebot')
 
     def message(self, msg):
-        self._message(msg)
+        self._write_message(msg)
 
     def start_errors(self, errors):
         XmlLogger.start_errors(self)

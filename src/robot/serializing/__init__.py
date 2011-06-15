@@ -13,6 +13,5 @@
 #  limitations under the License.
 
 
-from testoutput import RobotTestOutput, RebotTestOutput, \
-    SplitSubTestOutput, SplitIndexTestOutput
+from testoutput import RobotTestOutput, RebotTestOutput
 from templating import Template, Namespace
