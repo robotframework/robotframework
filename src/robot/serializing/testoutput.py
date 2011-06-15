@@ -11,9 +11,9 @@
 #  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
+
 import os
 import tempfile
-
 import time
 
 from robot import utils
@@ -51,9 +51,9 @@ class Reporter(object):
             serialize_log(data_model, log_path, settings['LogTitle'])
             LOGGER.output_file('Log', log_path)
 
-    def _make_xunit(self, xunit_path, data_sources, settings):
+    def _make_xunit(self, xunit_path, data_source, settings):
         if xunit_path:
-            self._robot_test_output(data_sources, settings).serialize_xunit(xunit_path)
+            self._robot_test_output([data_source], settings).serialize_xunit(xunit_path)
 
     def _robot_test_output(self, data_sources, settings):
         if self._robot_test_output_cached is None:
@@ -80,6 +80,7 @@ class Reporter(object):
 
     def execute(self, settings, data_source):
         data_model = jsparser.create_datamodel_from(data_source)
+        data_model.set_generated(time.localtime())
         log_path = self._parse_file(settings['Log'])
         report_path = self._parse_file(settings['Report'])
         self._make_log(log_path, data_model, settings)

@@ -15,7 +15,8 @@ No Xunit Option Given
 Xunit Option Given
     Run Tests  -x xunit.xml  ${TESTDATA}
     Check Stdout Contains  XUnit
-    Should Exist  ${OUTDIR}${/}xunit.xml
+    Stderr should be empty
+    Should Exist  ${OUTDIR}/xunit.xml
     ${dom} =  Get Dom
     Check Root Element Is Test Suite  ${dom}
     Check Element Count  ${dom}  testcase  2

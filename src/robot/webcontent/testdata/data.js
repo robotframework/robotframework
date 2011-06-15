@@ -11,3 +11,10 @@ window.output = {
         errors: window._data[4],
         strings: window._strings
 }
+window.settings = {
+        logPath: 'log.html',
+        reportPath: 'report.html',
+        passBackground: '#99FF66',
+        nonCriticalFailBackground: '#99FF66',
+        criticalFailBackground: '#FF3333'
+}
