@@ -43,9 +43,7 @@ post-processed`__ after the test execution.
 
 The command line option :opt:`--output (-o)` determines the path where
 the output file is created relative to the `output directory`_. The default
-name for the output file, when tests are run, is :path:`output.xml`. If
-`outputs are split`__ to several output files, they are named by
-postfixing the name of the first output file with sequence numbers.
+name for the output file, when tests are run, is :path:`output.xml`.
 
 When post-processing outputs, new output files are not created unless
 :opt:`--output (-o)` option is explicitly used.
@@ -55,8 +53,6 @@ the output file also when running tests with special value :opt:`NONE`. In this
 case also other output files, except for the `debug file`_, are disabled.
 
 __ `Post-processing outputs`_
-
-__ `Splitting outputs`_
 
 Log file
 ''''''''
@@ -283,167 +279,12 @@ teardown`_.
 Splitting outputs
 ~~~~~~~~~~~~~~~~~
 
-Benefits
-''''''''
+Splitting outputs functionality has been removed in Robot Framework 2.6.
+Log files are nowadays loaded into browsers dynamically and memory
+consumption should stay reasonable also with larger data sets.
+For more information about this change see `issue 861`__ in the issue tracker.
 
-When executing a large number of test cases, the size of log files can
-increase to the extent that opening them into a browser is
-slow. Additionally, since log files can be created only after output
-files are ready, they are available only after the test
-execution. This is not a problem if the test execution time is short,
-but with long-running tests it is better to be able to investigate
-the first failures while the rest of the tests are still running.
-
-Splitting outputs provides a solution for both of these
-problems. First of all, splitting logs means that individual log files
-are smaller and thus faster to open. If outputs are split while
-executing test cases, the lower-level log files are also created
-immediately when the equivalent output files are ready. Notifications
-about created files can be received through the `listener
-interface`_, and `automatic variables`_ :var:`${LOG_FILE}` and
-:var:`${OUTPUT_FILE}` always contain the path to the current file.
-
-Specifying a split level
-''''''''''''''''''''''''
-
-Outputs are split from a certain test suite level. Suites below this
-level will get their own outputs, and everything above the level will
-be in an index file, which has links to lower-level files. Only
-`output files`_ and `log files`_ are split, and they are always split
-from the same level. Splitting outputs gives the best results when test
-cases are organized into a relatively balanced hierarchical structure.
-
-Splitting can be activated with the command line option
-:opt:`--splitoutputs`, which takes the split level as an
-argument. Index files have the same name as the output and log would have
-without splitting, and lower-level files get a running counter between
-the basename and extension.
-
-Examples
-''''''''
-
-Explaining how splitting outputs actually works is easiest with
-examples, and it is also a good idea to experiment with real test data.
-In these examples we assume that test cases are organized into test
-suites hierarchically in the following way::
-
-   project
-   |-- component_a
-   |   |-- feature_a1
-   |   |   |-- a11.html
-   |   |   `-- a12.html
-   |   `-- feature_a2
-   |       `-- a21.html
-   |-- component_b
-   |   `-- feature_b1
-   |       |-- b11.html
-   |       `-- b21.html
-   `-- component_c
-       |-- c1.html
-       |-- c2.html
-       `-- c3.html
-
-In the first example these test cases are executed so that they are
-split right below the top-level test suite. The command line to use is
-as follows, and the following table lists all the created output files::
-
-   pybot --splitoutputs 1 project
-
-.. table:: All output files created in the first example
-   :class: tabular
-
-   +---------------+-------------------------------------------------------+
-   | Created File  |                       Contents                        |
-   +===============+=======================================================+
-   | output.xml    | Information about the :name:`Project` test suite,     |
-   |               | excluding its child test suites. Lower-level output   |
-   |               | files are referenced.                                 |
-   +---------------+-------------------------------------------------------+
-   | output-001.xml| Information about the whole :name:`Component A` suite.|
-   +---------------+-------------------------------------------------------+
-   | output-002.xml| Information about the whole :name:`Component B` suite.|
-   +---------------+-------------------------------------------------------+
-   | output-003.xml| Information about the whole :name:`Component C` suite.|
-   +---------------+-------------------------------------------------------+
-   | log.html      | A log file created from :path:`output.xml`,           |
-   |               | lower-level log files are linked.                     |
-   +---------------+-------------------------------------------------------+
-   | log-001.html  | A log file created from :path:`output-001.xml`.       |
-   +---------------+-------------------------------------------------------+
-   | log-002.html  | A log file created from :path:`output-002.xml`.       |
-   +---------------+-------------------------------------------------------+
-   | log-003.html  | A log file created from :path:`output-003.xml`.       |
-   +---------------+-------------------------------------------------------+
-   | report.html   | A normal report file.                                 |
-   +---------------+-------------------------------------------------------+
-
-The fact that output files are split is transparent when
-post-processing outputs afterwards, and it is enough to point
-:prog:`rebot` to the index file. Splitting works with :prog:`rebot`
-regardless of whether outputs are split earlier or not. Outputs created by the
-first example could thus by re-split, for example, as::
-
-   rebot --splitoutputs 2 output.xml
-
-In this example, splitting is done from the second level. The table below
-again lists created the files, and because :prog:`rebot` does not create new
-output files by default, they are not listed in the table.
-
-.. table:: All output files created in the second example
-   :class: tabular
-
-   +---------------+-------------------------------------------------------+
-   | Created File  |                       Contents                        |
-   +===============+=======================================================+
-   | log.html      | Information about the :name:`Project` and all the     |
-   |               | :name:`Component ?` suites, but not their child       |
-   |               | suites. Lower-level log files are linked.             |
-   +---------------+-------------------------------------------------------+
-   | log-001.html  | The whole :name:`Feature A1` test suite.              |
-   +---------------+-------------------------------------------------------+
-   | log-002.html  | The whole :name:`Feature A2` test suite.              |
-   +---------------+-------------------------------------------------------+
-   | log-003.html  | The whole :name:`Feature B1` test suite.              |
-   +---------------+-------------------------------------------------------+
-   | log-004.html  | The whole :name:`C1` test suite.                      |
-   +---------------+-------------------------------------------------------+
-   | log-005.html  | The whole :name:`C2` test suite.                      |
-   +---------------+-------------------------------------------------------+
-   | log-006.html  | The whole :name:`C3` test suite.                      |
-   +---------------+-------------------------------------------------------+
-   | report.html   | A normal report file.                                 |
-   +---------------+-------------------------------------------------------+
-
-The last example splits outputs from the third level. It also shows
-how to configure output file names when splitting::
-
-   rebot --splitoutputs 3 --log mylog.html --report none output.xml
-
-.. table:: All output files created in the third example
-   :class: tabular
-
-   +---------------+-------------------------------------------------------+
-   | Created File  |                       Contents                        |
-   +===============+=======================================================+
-   | mylog.html    | Information about the :name:`Project` test suite all  |
-   |               | the way to its second-level child suites. This        |
-   |               | includes test cases in the :name:`C?` suites.         |
-   |               | Lower-level logs are linked.                          |
-   +---------------+-------------------------------------------------------+
-   | mylog-001.html| The whole :name:`A11` test suite.                     |
-   +---------------+-------------------------------------------------------+
-   | mylog-002.html| The whole :name:`A12` test suite.                     |
-   +---------------+-------------------------------------------------------+
-   | mylog-003.html| The whole :name:`A21` test suite.                     |
-   +---------------+-------------------------------------------------------+
-   | mylog-004.html| The whole :name:`B11` test suite.                     |
-   +---------------+-------------------------------------------------------+
-   | mylog-005.html| The whole :name:`B12` test suite.                     |
-   +---------------+-------------------------------------------------------+
-
-If a split level higher than three is used with this test data, all the
-information ends up to index files. The end result is thus exactly the
-same as if outputs were not split at all.
+__ http://code.google.com/p/robotframework/issues/detail?id=861
 
 Configuring statistics
 ~~~~~~~~~~~~~~~~~~~~~~

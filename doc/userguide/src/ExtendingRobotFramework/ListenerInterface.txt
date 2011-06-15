@@ -180,13 +180,11 @@ Thus, for example, :code:`startSuite` is a synonym to :code:`start_suite`.
    +---------------+------------------+--------------------------------------------------+
    | output_file   | path             | Called when writing to an output file is         |
    |               |                  | finished. The path is an absolute path to the    |
-   |               |                  | file. When `outputs are split`_, called for each |
-   |               |                  | finished file.                                   |
+   |               |                  | file.                                            |
    +---------------+------------------+--------------------------------------------------+
    | log_file      | path             | Called when writing to a log file is             |
    |               |                  | finished. The path is an absolute path to the    |
-   |               |                  | file. When `outputs are split`_, called for each |
-   |               |                  | finished file.                                   |
+   |               |                  | file.                                            |
    +---------------+------------------+--------------------------------------------------+
    | report_file   | path             | Called when writing to a report file is          |
    |               |                  | finished. The path is an absolute path to the    |
@@ -203,8 +201,6 @@ Thus, for example, :code:`startSuite` is a synonym to :code:`start_suite`.
    | close         |                  | Called after all test suites, and test cases in  |
    |               |                  | them, have been executed.                        |
    +---------------+------------------+--------------------------------------------------+
-
-.. _outputs are split: `Splitting outputs`_
 
 The available methods and their arguments are also shown in a formal Java
 interface specification below. Contents of the :code:`java.util.Map attributes` are
