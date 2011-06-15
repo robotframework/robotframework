@@ -1,15 +1,3 @@
-.critical_pass {
-    background: #99FF66; /* BACKGROUND: critical pass */
-}
-
-.critical_fail {
-    background: #FF3333; /* BACKGROUND: critical fail */
-}
-
-.non_critical_fail {
-    background: #FF3333; /* BACKGROUND: non critical fail */
-}
-
 /* Generic Table Styles */
 table {
     background: white;
