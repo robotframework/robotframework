@@ -17,7 +17,7 @@
 <script type="text/javascript" src="testdata.js"></script>
 <script type="text/javascript" src="stats.js"></script>
 
-<title>SUITE_NAME Test Report</title>
+<title></title>
 </head>
 <body>
   <div class="header" id="header_div">
@@ -56,7 +56,7 @@
 $(document).ready(function () {
     var topsuite = window.testdata.suite();
     setBackground(topsuite);
-    setDocumentTitle(topsuite);
+    setDocumentTitle(topsuite.name, window.settings.title);
     window.templates = initTemplates();
     addHeader();
     addSummary(topsuite);
@@ -245,15 +245,16 @@ function calculateTotalTime(tests) {
     return model.formatElapsed(totaltime).split('.')[0];
 }
 
-function setDocumentTitle(suite){
-    document.title = document.title.replace("SUITE_NAME", window.settings.title);
+// TODO: Duplicated in log.html
+function setDocumentTitle(suiteName, givenTitle) {
+    document.title = givenTitle ? givenTitle : suiteName + " Test Report";
 }
 
 // TODO: This is duplicated in log.html
 function addHeader() {
     var generatedAgoMillis = window.testdata.generated().getTime();
     var header = $.tmpl(window.templates.header, {
-        header: document.title,
+        title: document.title,
         generated: window.testdata.generated().toString(),
         generatedAgo: util.createGeneratedAgoString(generatedAgoMillis)
     });
@@ -312,7 +313,7 @@ function initTemplates() {
     <span>Generated<br />${generated}</span><br />
     <span id="generated_ago">${generatedAgo} ago</span>
   </div>
-  <h1>${header}</h1>
+  <h1>${title}</h1>
 </script>
 
 <script type="text/html" id="summary_table">

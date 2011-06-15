@@ -18,7 +18,7 @@
 <script type="text/javascript" src="testdata.js"></script>
 <script type="text/javascript" src="stats.js"></script>
 
-<title>SUITE_NAME Test Log</title>
+<title></title>
 </head>
 <body>
 <div class="header" id="header_div">
@@ -53,18 +53,18 @@
   </table>
 <script type="text/javascript">
 $(document).ready(function(){
-    var main = window.testdata.suite();
+    var topsuite = window.testdata.suite();
     window.templates = initTemplates();
-    setDocumentTitle(main);
+    setDocumentTitle(topsuite.name, window.settings.title);
     addHeader();
     addStatistics();
     addErrors();
-    addTestExecutionLog(main);
+    addTestExecutionLog(topsuite);
     if (window.location.hash) {
         makeElementVisible(window.location.hash.substring(1));
         window.location.hash = window.location.hash.substring(1);
     } else {
-        expandFailed(main);
+        expandFailed(topsuite);
     }
 });
 
@@ -72,7 +72,7 @@ $(document).ready(function(){
 function addHeader() {
     var generatedAgoMillis = window.testdata.generated().getTime();
     var header = $.tmpl(window.templates.header, {
-        header: document.title,
+        title: document.title,
         generated: window.output.generatedTimestamp,
         generatedAgo: util.createGeneratedAgoString(generatedAgoMillis)
     });
@@ -118,8 +118,9 @@ function addTestExecutionLog(main) {
     }
 }
 
-function setDocumentTitle(suite){
-    document.title = document.title.replace("SUITE_NAME", window.settings.title);
+// TODO: Duplicated in report.html
+function setDocumentTitle(suiteName, givenTitle) {
+    document.title = givenTitle ? givenTitle : suiteName + " Test Log";
 }
 
 function initTemplates() {
@@ -145,7 +146,7 @@ function initTemplates() {
     <span>Generated<br />${generated}</span><br />
     <span id="generated_ago">${generatedAgo} ago</span>
   </div>
-  <h1>${header}</h1>
+  <h1>${title}</h1>
 </script>
 
 <script type="text/html" id="total_statistics_row">
