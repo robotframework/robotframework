@@ -18,7 +18,7 @@
 <script type="text/javascript" src="testdata.js"></script>
 <script type="text/javascript" src="stats.js"></script>
 
-<title>[SUITE_NAME] Test Log</title>
+<title>SUITE_NAME Test Log</title>
 </head>
 <body>
 <div class="header" id="header_div">
@@ -119,7 +119,7 @@ function addTestExecutionLog(main) {
 }
 
 function setDocumentTitle(suite){
-    document.title = document.title.replace("[SUITE_NAME]", window.settings.title, "g");
+    document.title = document.title.replace("SUITE_NAME", window.settings.title);
 }
 
 function initTemplates() {

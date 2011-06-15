@@ -17,7 +17,7 @@
 <script type="text/javascript" src="testdata.js"></script>
 <script type="text/javascript" src="stats.js"></script>
 
-<title>[SUITE_NAME] Test Report</title>
+<title>SUITE_NAME Test Report</title>
 </head>
 <body>
   <div class="header" id="header_div">
@@ -70,7 +70,7 @@ $(document).ready(function () {
 });
 
 function addSummary(topsuite) {
-    $.tmpl(window.templates.summaryTable, topsuite).insertAfter($('#header_div'));
+    $.tmpl(window.templates.summaryTable, topsuite, {logURL:window.settings.logURL}).insertAfter($('#header_div'));
 }
 
 function showTotalsTab() {
@@ -246,7 +246,7 @@ function calculateTotalTime(tests) {
 }
 
 function setDocumentTitle(suite){
-    document.title = document.title.replace("[SUITE_NAME]", window.settings.title, "g");
+    document.title = document.title.replace("SUITE_NAME", window.settings.title);
 }
 
 // TODO: This is duplicated in log.html
@@ -335,6 +335,12 @@ function initTemplates() {
     <tr><th>Start Time:</th><td>${times.startTime}</td></tr>
     <tr><th>End Time:</th><td>${times.endTime}</td></tr>
     <tr><th>Elapsed Time:</th><td>${times.elapsedTime}</td></tr>
+    {{if $item.logURL}}
+    <tr>
+        <th></th>
+        <td><a href="${$item.logURL}">See log</a></td>
+    </tr>
+    {{/if}}
   </table>
 </script>
 
