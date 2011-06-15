@@ -83,7 +83,7 @@ class _Builder(object):
     def create(self):
         if self._path:
             self._data_model.set_settings(self._get_settings())
-            serialize_report(self._data_model, self._path)
+            self._create()
             LOGGER.output_file(self._type, self._path)
 
     def _parse_file(self, name):
@@ -99,6 +99,9 @@ class _Builder(object):
 class LogBuilder(_Builder):
     _type = 'Log'
 
+    def _create(self):
+        serialize_log(self._data_model, self._path)
+
     def _get_settings(self):
         return {
             'title': self._settings['LogTitle'],
@@ -106,8 +109,12 @@ class LogBuilder(_Builder):
                                              self._parse_file('Report'))
         }
 
+
 class ReportBuilder(_Builder):
     _type = 'Report'
+
+    def _create(self):
+        serialize_report(self._data_model, self._path)
 
     def _get_settings(self):
         return {
