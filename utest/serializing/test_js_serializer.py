@@ -160,7 +160,6 @@ class TestJsSerializer(unittest.TestCase):
                                                     ['P', 0, 1]], ['P', -24, 25], [1, 1, 1, 1]])
         assert_equals(data_model._texts, ['*', '*val', '*Test', '', '', ''])
 
-
     def test_metadata_xml_parsing(self):
         meta_xml = """<metadata>
                         <item name="meta">&lt;b&gt;escaped&lt;/b&gt;</item>
@@ -211,21 +210,13 @@ class TestJsSerializer(unittest.TestCase):
 
     if json:
         def test_json_dump_string(self):
-            from time import time
             string = u'string\u00A9\v\\\'\"\r\b\t\0\n\fjee'
             for i in range(1024):
                 string += unichr(i)
-            #string = string * 10
             buffer = StringIO.StringIO()
-            #s = time()
             json_dump(string, buffer)
-            #e = time()
-            #print 'json_dump %s' % (e - s)
             expected = StringIO.StringIO()
-            #s = time()
             json.dump(string, expected)
-            #e = time()
-            #print 'json.dump %s' % (e - s)
             self._assert_long_equals(buffer.getvalue(), expected.getvalue())
 
     def test_json_dump_integer(self):
@@ -254,7 +245,7 @@ class TestJsSerializer(unittest.TestCase):
         return self._handler.datamodel
 
     def _assert_long_equals(self, given, expected):
-        if (given!=expected):
+        if given != expected:
             for index, char in enumerate(given):
                 if index >= len(expected):
                     raise AssertionError('Expected is shorter than given string. Ending that was missing %s' % given[index:])
