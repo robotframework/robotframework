@@ -133,7 +133,7 @@ window.model = function () {
         var test = createModelObject(data);
         test.fullname = data.parent.fullname + "." + test.name;  // TODO: is this used?, could be function also
         test.parentName = function () {
-            return data.parent.fullname.replace('.', ' . ', 'g') + ' . '; // TODO: duplicate
+            return data.parent.fullname.replace(/./g, ' . ') + ' . '; // TODO: duplicate
         };
         test.timeout = data.timeout;
         test.populateKeywords = createIterablePopulator("Keyword");

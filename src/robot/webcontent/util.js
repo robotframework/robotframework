@@ -51,7 +51,7 @@ window.util = function () {
 
     function Matcher(pattern) {
         pattern = normalize(regexpEscape(pattern));
-        var rePattern = '^' + pattern.replace('\\?', '.', 'g').replace('\\*', '.*', 'g') + '$'
+        var rePattern = '^' + pattern.replace(/\\\?/g, ".").replace(/\\\*/gi, ".*") + '$';
         var regexp = new RegExp(rePattern);
         return {
             matches: function (string) { return regexp.test(string); }
