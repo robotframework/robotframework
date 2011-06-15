@@ -75,7 +75,7 @@ function addHeader() {
     var generatedAgoMillis = window.testdata.generated().getTime();
     var header = $.tmpl(window.templates.header, {
         header: document.title,
-        generated: window.testdata.generated().toString(),
+        generated: window.output.generatedTimestamp,
         generatedAgo: util.createGeneratedAgoString(generatedAgoMillis)
     });
     header.appendTo($('#header_div'));
