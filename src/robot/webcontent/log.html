@@ -91,20 +91,20 @@ function makeElementVisible(element) {
     var uuids = [];
     if (element.indexOf("suite_")==0) {
         element = element.substring("suite_".length);
-        uuids = window.testdata.pathToSuite(element);
+        uuids = window.testdata.pathToSuite(unescape(element));
     }
     if (element.indexOf("test_")==0) {
         element = element.substring("test_".length);
-        uuids = window.testdata.pathToTest(element);
+        uuids = window.testdata.pathToTest(unescape(element));
     }
     if (element.indexOf("keyword_")==0) {
         element = element.substring("keyword_".length);
-        uuids = window.testdata.pathToKeyword(element);
+        uuids = window.testdata.pathToKeyword(unescape(element));
     }
     for (var i in uuids) {
         $("#"+uuids[i]+"_unfoldlink").click();
     }
-    if (uuids && uuids.length >= 1) {
+    if (uuids && uuids.length > 0) {
         expandFailed(window.testdata.find(uuids[uuids.length-1]));
     }
 }
@@ -119,7 +119,7 @@ function addTestExecutionLog(main) {
 }
 
 function setDocumentTitle(suite){
-    document.title = document.title.replace("[SUITE_NAME]", suite.name, "g");
+    document.title = document.title.replace("[SUITE_NAME]", window.settings.title, "g");
 }
 
 function initTemplates() {
