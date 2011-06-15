@@ -25,7 +25,7 @@ from robot.parsing.settings import Library, Variables, Resource
 import robot
 
 from userkeyword import UserLibrary
-from importer import Importer
+from importer import Importer, ImportCache
 from runkwregister import RUN_KW_REGISTER
 from handlers import _XTimesHandler
 
@@ -51,8 +51,8 @@ class Namespace:
         self.library_search_order = []
         self._testlibs = {}
         self._userlibs = []
-        self._imported_resource_files = []
-        self._imported_variable_files = []
+        self._imported_resource_files = ImportCache()
+        self._imported_variable_files = ImportCache()
         self.import_library('BuiltIn')
         self.import_library('Reserved')
         self.import_library('Easter')
@@ -86,7 +86,7 @@ class Namespace:
     def _import_resource(self, import_setting, variables=None):
         path = self._resolve_name(import_setting, variables)
         if path not in self._imported_resource_files:
-            self._imported_resource_files.append(path)
+            self._imported_resource_files.add(path)
             resource = IMPORTER.import_resource(path)
             self.variables.set_from_variable_table(resource.variable_table)
             self._userlibs.append(UserLibrary(resource.keyword_table.keywords,
@@ -103,7 +103,7 @@ class Namespace:
         path = self._resolve_name(import_setting, variables)
         args = self._resolve_args(import_setting, variables)
         if (path, args) not in self._imported_variable_files:
-            self._imported_variable_files.append((path,args))
+            self._imported_variable_files.add((path,args))
             self.variables.set_from_file(path, args, overwrite)
         else:
             msg = "Variable file '%s'" % path

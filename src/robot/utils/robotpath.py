@@ -27,11 +27,11 @@ else:
         _CASE_INSENSITIVE_FILESYSTEM = False
 
 
-def normpath(path, normcase=True):
+def normpath(path, normcase=False):
     """Returns path in normalized and absolute format.
 
-    On case-insensitive file systems the path is also case normalized
-    by default.
+    On case-insensitive file systems the path is also case normalized is
+    `normcase` is True.
     """
     path = abspath(path)
     if normcase and _CASE_INSENSITIVE_FILESYSTEM:

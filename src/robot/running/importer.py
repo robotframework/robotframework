@@ -12,6 +12,7 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+import os.path
 import copy
 
 from robot.output import LOGGER
@@ -24,8 +25,8 @@ from testlibraries import TestLibrary
 class Importer:
 
     def __init__(self):
-        self._library_cache = _Cache()
-        self._resource_cache = _Cache()
+        self._library_cache = ImportCache()
+        self._resource_cache = ImportCache()
 
     def import_library(self, name, args, alias, variables):
         lib = TestLibrary(name, args, variables, create_handlers=False)
@@ -73,7 +74,7 @@ class Importer:
         return libcopy
 
 
-class _Cache:
+class ImportCache:
     """Cache for libraries and resources.
 
      Unlike dicts, this storage accepts mutable values as keys.
@@ -84,13 +85,24 @@ class _Cache:
         self._items = []
 
     def __setitem__(self, key, item):
-        self._keys.append(key)
+        self._keys.append(self._norm_path_key(key))
         self._items.append(item)
 
+    def add(self, key):
+        self.__setitem__(key, None)
+
     def __getitem__(self, key):
+        key = self._norm_path_key(key)
         if key not in self._keys:
             raise KeyError
         return self._items[self._keys.index(key)]
 
     def __contains__(self, key):
-        return key in self._keys
+        return self._norm_path_key(key) in self._keys
+
+    def _norm_path_key(self, key):
+        if isinstance(key, basestring) and os.path.exists(key):
+            return utils.normpath(key, normcase=True)
+        if isinstance(key, (tuple, list)):
+            return [self._norm_path_key(k) for k in key]
+        return key
