@@ -17,10 +17,9 @@ def set_serialize_log_mock():
 
 def set_serialize_report_mock():
     results = {'report_path':None}
-    def serialize_report(test_output_datamodel, report_path, title=None, background=None, logpath=None):
+    def serialize_report(test_output_datamodel, report_path, title=None, logpath=None):
         results['report_path'] = report_path
         results['title'] = title
-        results['background'] = background
         results['logpath'] = logpath
     robot.serializing.testoutput.serialize_report = serialize_report
     return results
