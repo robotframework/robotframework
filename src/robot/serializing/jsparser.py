@@ -179,12 +179,6 @@ class TextCache(object):
             l[v] = k
         return l
 
-levels = {'TRACE':'T',
-          'DEBUG':'D',
-          'INFO':'I',
-          'WARN':'W',
-          'ERROR':'E',
-          'FAIL':'F'}
 
 def create_datamodel_from(input_filename):
     robot = _RobotOutputHandler(Context())
@@ -197,7 +191,7 @@ class _Handler(object):
 
     def __init__(self, context, *args):
         self._context = context
-        self._children = []
+        self._data_from_children = []
         self._handlers = {
         'robot'      : _RobotHandler,
         'suite'      : _SuiteHandler,
@@ -217,22 +211,14 @@ class _Handler(object):
         'item'       : _MetadataItemHandler,
     }
 
-    def get_handler_for(self, name, *args):
-        return self._handlers[name](self.context, *args)
+    def get_handler_for(self, name, attrs):
+        return self._handlers[name](self._context, attrs)
 
-    @property
-    def context(self):
-        return self._context
-
-    @property
-    def children(self):
-        return self._children
-
-    def add_child(self, child):
-        self._children += [child]
+    def add_child_data(self, data):
+        self._data_from_children.append(data)
 
     def end_element(self, text):
-        return self._children
+        return self._data_from_children
 
 
 class _RobotHandler(_Handler):
@@ -240,18 +226,20 @@ class _RobotHandler(_Handler):
     def __init__(self, context, attrs):
         _Handler.__init__(self, context, attrs)
         self._generator = attrs.getValue('generator')
-        self._generated = attrs.getValue('generated')
 
     def end_element(self, text):
-        if self._generated:
-            self._generated = self.context.timestamp(self._generated)
-        return [self._generated, self._generator] + self.children
+        return {'generator': self._generator,
+                'suite': self._data_from_children[0],
+                'stats': self._data_from_children[1],
+                'errors': self._data_from_children[2],
+                'basemillis': self._context.basemillis,
+                'strings': self._context.dump_texts()}
 
 
 class _StatisticsHandler(_Handler):
 
-    def get_handler_for(self, name, *args):
-        return _Handler(self.context, *args)
+    def get_handler_for(self, name, attrs):
+        return _Handler(self._context, attrs)
 
 
 class _StatItemHandler(_Handler):
@@ -274,16 +262,13 @@ class _SuiteHandler(_Handler):
         _Handler.__init__(self, context, attrs)
         self._name = attrs.getValue('name')
         self._source = attrs.get('source') or ''
-        self.context.start_suite(self._name)
-        self.context.collect_stats()
+        self._context.start_suite(self._name)
+        self._context.collect_stats()
 
     def end_element(self, text):
-        try:
-            return ['suite',
-                     self._source,
-                     self._name] + self._children + [self.context.dump_stats()]
-        finally:
-            self.context.end_suite()
+        result = ['suite', self._source, self._name] + self._data_from_children + [self._context.dump_stats()]
+        self._context.end_suite()
+        return result
 
 
 class _TestHandler(_Handler):
@@ -291,19 +276,20 @@ class _TestHandler(_Handler):
     def __init__(self, context, attrs):
         _Handler.__init__(self, context, attrs)
         name = attrs.getValue('name')
-        self._name_id = self.context.get_text_id(name)
-        self._timeout = self.context.get_text_id(attrs.get('timeout'))
-        self.context.start_test(name)
+        self._name_id = self._context.get_text_id(name)
+        self._timeout = self._context.get_text_id(attrs.get('timeout'))
+        self._context.start_test(name)
 
-    def get_handler_for(self, name, *args):
+    def get_handler_for(self, name, attrs):
         if name == 'status':
-            return _TestStatusHandler(self, *args)
-        return _Handler.get_handler_for(self, name, *args)
+            # TODO: Use 1/0 instead of Y/N. Possibly also 1/0/-1 instead of P/F/N.
+            self._critical = 'Y' if attrs.get('critical') == 'yes' else 'N'
+        return _Handler.get_handler_for(self, name, attrs)
 
     def end_element(self, text):
-        result = ['test', self._name_id, self._timeout, self._critical] + self.children
-        self.context.add_test(self._critical == 'Y', result[-1][0] == 'P')
-        self.context.end_test()
+        result = ['test', self._name_id, self._timeout, self._critical] + self._data_from_children
+        self._context.add_test(self._critical == 'Y', result[-1][0] == 'P')
+        self._context.end_test()
         return result
 
 
@@ -313,7 +299,13 @@ class _StatusHandler(object):
         self._status = attrs.getValue('status')[0]
         self._starttime = self._context.timestamp(attrs.getValue('starttime'))
         endtime = self._context.timestamp(attrs.getValue('endtime'))
-        self._elapsed = endtime-self._starttime if endtime is not None and self._starttime is not None else None
+        self._elapsed = self._calculate_elapsed(endtime)
+
+    def _calculate_elapsed(self, endtime):
+        # Both start and end may be 0 so must compare against None
+        if self._starttime is None or endtime is None:
+            return None
+        return endtime - self._starttime
 
     def end_element(self, text):
         result = [self._status,
@@ -324,27 +316,20 @@ class _StatusHandler(object):
         return result
 
 
-class _TestStatusHandler(_StatusHandler):
-
-    def __init__(self, test, attrs):
-        _StatusHandler.__init__(self, test.context, attrs)
-        test._critical = 'Y' if attrs.get('critical') == 'yes' else 'N'
-
-
 class _KeywordHandler(_Handler):
 
     def __init__(self, context, attrs):
         _Handler.__init__(self, context, attrs)
-        self.context.start_keyword()
+        self._context.start_keyword()
         self._type = attrs.getValue('type')
-        self._name = self.context.get_text_id(attrs.getValue('name'))
-        self._timeout = self.context.get_text_id(attrs.getValue('timeout'))
+        self._name = self._context.get_text_id(attrs.getValue('name'))
+        self._timeout = self._context.get_text_id(attrs.getValue('timeout'))
 
     def end_element(self, text):
-        if self._type == 'teardown' and self.children[-1][0] == 'F':
-            self.context.teardown_failed()
-        self.context.end_keyword()
-        return [self._type, self._name, self._timeout]+self.children
+        if self._type == 'teardown' and self._data_from_children[-1][0] == 'F':
+            self._context.teardown_failed()
+        self._context.end_keyword()
+        return [self._type, self._name, self._timeout] + self._data_from_children
 
 
 class _ArgumentHandler(_Handler):
@@ -356,26 +341,26 @@ class _ArgumentHandler(_Handler):
 class _ArgumentsHandler(_Handler):
 
     def end_element(self, text):
-        return self._context.get_text_id(', '.join(self.children))
+        return self._context.get_text_id(', '.join(self._data_from_children))
 
 
 class _TextHandler(_Handler):
 
     def end_element(self, text):
-        return self.context.get_text_id(text)
+        return self._context.get_text_id(text)
 
 
 class _MetadataHandler(_Handler):
 
     def __init__(self, context, attrs):
         _Handler.__init__(self, context, attrs)
-        self._dictionary = {}
+        self._metadata = {}
 
-    def add_child(self, child):
-        self._dictionary[child[0]] = child[1]
+    def add_child_data(self, data):
+        self._metadata[data[0]] = data[1]
 
     def end_element(self, text):
-        return self._dictionary
+        return self._metadata
 
 
 class _MetadataItemHandler(_Handler):
@@ -385,16 +370,15 @@ class _MetadataItemHandler(_Handler):
         self._name = attrs.getValue('name')
 
     def end_element(self, text):
-        return (self._name, self.context.get_text_id(text))
+        return [self._name, self._context.get_text_id(text)]
 
 
 class _MsgHandler(object):
 
     def __init__(self, context, attrs):
         self._context = context
-        self._msg = []
-        self._msg += [self._context.timestamp(attrs.getValue('timestamp'))]
-        self._msg += [levels[attrs.getValue('level')]]
+        self._msg = [self._context.timestamp(attrs.getValue('timestamp')),
+                     attrs.getValue('level')[0]]
         self._is_html = attrs.get('html')
         self._is_linkable = attrs.get("linkable") == "yes"
 
@@ -416,21 +400,24 @@ class _MsgHandler(object):
             self._msg += [self._context.get_text_id(utils.html_escape(text, replace_whitespace=False))]
 
 
+# TODO: Combine _RootHandler and _RobotHandler
 class _RootHandler(_Handler):
 
-    def add_child(self, child):
-        self.data = child
+    @property
+    def data(self):
+        return self._data_from_children[0]
 
 
 class _RobotOutputHandler(ContentHandler):
 
     def __init__(self, context):
         self._context = context
-        self._handler_stack = [_RootHandler(context)]
+        self._root_handler = _RootHandler(context)
+        self._handler_stack = [self._root_handler]
 
     @property
     def datamodel(self):
-        return DataModel(self._context.basemillis, self._handler_stack[0].data, self._context.dump_texts())
+        return DataModel(self._root_handler.data)
 
     def startElement(self, name, attrs):
         handler = self._handler_stack[-1].get_handler_for(name, attrs)
@@ -439,30 +426,28 @@ class _RobotOutputHandler(ContentHandler):
 
     def endElement(self, name):
         handler = self._handler_stack.pop()
-        self._handler_stack[-1].add_child(handler.end_element(''.join(self._charbuffer)))
+        self._handler_stack[-1].add_child_data(handler.end_element(self.text))
 
     def characters(self, content):
         self._charbuffer += [content]
 
+    @property
+    def text(self):
+        return ''.join(self._charbuffer)
+
 
 class DataModel(object):
 
-    def __init__(self, basemillis, robot_data, texts):
-        self._basemillis = basemillis
+    def __init__(self, robot_data):
         self._robot_data = robot_data
-        self._texts = texts
 
     def write_to(self, output):
-        output.write('window.basemillis = '+str(self._basemillis)+';\n')
-        output.write('window.data = ')
+        output.write('window.output = ')
         json_dump(self._robot_data, output)
-        output.write(';\n')
-        output.write('window.strings =')
-        json_dump(self._texts, output)
         output.write(';\n')
 
     def remove_keywords(self):
-        self._robot_data = self._remove_keywords_from(self._robot_data)
+        self._robot_data['suite'] = self._remove_keywords_from(self._robot_data['suite'])
         self._prune_unused_texts()
 
     def _remove_keywords_from(self, data):
@@ -477,8 +462,8 @@ class DataModel(object):
         return isinstance(item, list) and item and item[0] in ['kw', 'setup']
 
     def _prune_unused_texts(self):
-        used = self._collect_used_text_indices(self._robot_data, set())
-        self._texts = [text if index in used else '' for index, text in enumerate(self._texts)]
+        used = self._collect_used_text_indices(self._robot_data['suite'], set())
+        self._robot_data['strings'] = [text if index in used else '' for index, text in enumerate(self._robot_data['strings'])]
 
     def _collect_used_text_indices(self, data, result):
         for item in data:

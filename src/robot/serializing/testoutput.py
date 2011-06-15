@@ -69,29 +69,30 @@ class Reporter(object):
             os.close(handle)
             self._temp_file = output_file
         self._robot_test_output(data_sources, settings).serialize_output(output_file, log=not self._temp_file)
-        return [output_file]
+        return output_file
 
     def execute_rebot(self, settings, *data_sources):
-        data_sources = self._combine_outputs(data_sources, settings)
-        self.execute(settings, *data_sources)
+        combined = self._combine_outputs(data_sources, settings)
+        self.execute(settings, combined)
         if self._temp_file:
             os.remove(self._temp_file)
         return self._suite
 
-    def execute(self, settings, *data_sources):
-        data_model = jsparser.create_datamodel_from(data_sources[0])
+    def execute(self, settings, data_source):
+        data_model = jsparser.create_datamodel_from(data_source)
         log_path = self._parse_file(settings['Log'])
         report_path = self._parse_file(settings['Report'])
         self._make_log(log_path, data_model, settings)
         data_model.remove_keywords()
         self._make_report(report_path, log_path, data_model, settings)
         xunit_path = self._parse_file(settings['XUnitFile'])
-        self._make_xunit(xunit_path, data_sources, settings)
+        self._make_xunit(xunit_path, data_source, settings)
 
     def _parse_file(self, string):
         return string if string != 'NONE' else None
 
 
+# TODO: Most (all?) of this class is dead code
 class RobotTestOutput:
 
     def __init__(self, suite, exec_errors, settings=None):
