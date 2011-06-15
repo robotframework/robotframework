@@ -82,31 +82,31 @@ class TestReporting(unittest.TestCase):
     def test_generate_report_and_log(self):
         self._settings['Log'] = 'log.html'
         self._settings['Report'] = 'report.html'
-        self._reporter.execute(resources.GOLDEN_OUTPUT)
+        self._reporter.write_robot_results(resources.GOLDEN_OUTPUT)
         self._assert_expected_log('log.html')
         self._assert_expected_report('report.html')
 
     def test_no_generation(self):
-        self._reporter.execute(resources.GOLDEN_OUTPUT)
+        self._reporter.write_robot_results(resources.GOLDEN_OUTPUT)
         self._assert_no_log()
         self._assert_no_report()
 
     def test_only_log(self):
         self._settings['Log'] = 'only-log.html'
-        self._reporter.execute(resources.GOLDEN_OUTPUT)
+        self._reporter.write_robot_results(resources.GOLDEN_OUTPUT)
         self._assert_expected_log('only-log.html')
         self._assert_no_report()
 
     def test_only_report(self):
         self._settings['Report'] = 'reports-only.html'
-        self._reporter.execute(resources.GOLDEN_OUTPUT)
+        self._reporter.write_robot_results(resources.GOLDEN_OUTPUT)
         self._assert_no_log()
         self._assert_expected_report('reports-only.html')
 
     def test_multiple_outputs(self):
         self._settings['Log'] = 'log.html'
         self._settings['Report'] = 'report.html'
-        self._reporter.execute_rebot(*[resources.GOLDEN_OUTPUT, resources.GOLDEN_OUTPUT2])
+        self._reporter.write_rebot_results(*[resources.GOLDEN_OUTPUT, resources.GOLDEN_OUTPUT2])
         self._assert_expected_log('log.html')
         self._assert_expected_report('report.html')
 

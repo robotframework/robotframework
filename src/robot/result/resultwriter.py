@@ -34,7 +34,7 @@ class ResultWriter(object):
         self._suite = None
         self._settings = settings
 
-    def execute(self, data_source):
+    def write_robot_results(self, data_source):
         data_model = jsparser.create_datamodel_from(data_source)
         data_model.set_generated(time.localtime())
         LogBuilder(data_model, self._settings).create()
@@ -54,9 +54,9 @@ class ResultWriter(object):
             self._robot_test_output_cached = RobotTestOutput(self._suite, exec_errors, self._settings)
         return self._robot_test_output_cached
 
-    def execute_rebot(self, *data_sources):
+    def write_rebot_results(self, *data_sources):
         combined = self._combine_outputs(data_sources)
-        self.execute(combined)
+        self.write_robot_results(combined)
         if self._temp_file:
             os.remove(self._temp_file)
         return self._suite

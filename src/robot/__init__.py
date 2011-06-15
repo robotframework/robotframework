@@ -128,7 +128,7 @@ def run(*datasources, **options):
     output.close(suite)
     if settings.is_rebot_needed():
         output, settings = settings.get_rebot_datasource_and_settings()
-        ResultWriter(settings).execute(output)
+        ResultWriter(settings).write_robot_results(output)
     LOGGER.close()
     return suite
 
@@ -151,7 +151,7 @@ def run_rebot(*datasources, **options):
     settings = RebotSettings(options)
     LOGGER.register_console_logger(colors=settings['MonitorColors'])
     LOGGER.disable_message_cache()
-    suite = ResultWriter(settings).execute_rebot(*datasources)
+    suite = ResultWriter(settings).write_rebot_results(*datasources)
     LOGGER.close()
     return suite
 
