@@ -34,10 +34,11 @@ Command line options for test execution
   -x, --xunitfile <file>  Sets the path to the generated `XUnit compatible result file`_.
   -b, --debugfile <file>  A `debug file`_ that is written during execution.
   -T, --timestampoutputs  `Adds a timestamp`_ to all output files.
-  --splitoutputs <level>  `Splits output and log`_ files.
+  --splitoutputs <level>  `Splitting outputs`_ is not supported in
+                          Robot Framework 2.6 or newer.
   --logtitle <title>      `Sets a title`_ for the generated test log.
   --reporttitle <title>   `Sets a title`_ for the generated test report.
-  --reportbackground <colors>    `Sets background colors`_ for the generated report and summary.
+  --reportbackground <colors>  `Sets background colors`_ for the generated report and summary.
   --summarytitle <title>  `Sets a title`_ for the generated summary report.
   -L, --loglevel <level>  `Sets the threshold level`_ for logging.
   --suitestatlevel <level>  Defines how many `levels to show`_ in the :name:`Statistics
@@ -47,8 +48,8 @@ Command line options for test execution
   --tagstatexclude <tag>  `Excludes these tags`_ from the :name:`Statistics by Tag` and
                           :name:`Test Details by Tag` tables in outputs.
   --tagstatcombine <tags:title>  Creates `combined statistics based on tags`_.
-  --tagdoc <pattern:doc>   Adds `documentation to the specified tags`_.
-  --tagstatlink <pattern:link:title>   Adds `external links`_ to the :name:`Statistics by
+  --tagdoc <pattern:doc>  Adds `documentation to the specified tags`_.
+  --tagstatlink <pattern:link:title>  Adds `external links`_ to the :name:`Statistics by
                           Tag` table in outputs.
   --listener <name:args>  `Sets a listener`_ for monitoring test execution.
   --warnonskippedfiles    Show a warning when `an invalid file is skipped`_.
@@ -87,10 +88,11 @@ Command line options for post-processing outputs
   -S, --summary <file>    Sets the path to the generated `summary file`_.
   -x, --xunitfile <file>  Sets the path to the generated `XUnit compatible result file`_.
   -T, --timestampoutputs  `Adds a timestamp`_ to all output files.
-  --splitoutputs <level>  `Splits output and log`_ files.
-  --logtitle <title>    `Sets a title`_ for the generated test log.
-  --reporttitle <title>  `Sets a title`_ for the generated test report.
-  --reportbackground <colors>    `Sets background colors`_ for the generated report and summary.
+  --splitoutputs <level>  `Splitting outputs`_ is not supported in
+                          Robot Framework 2.6 or newer.
+  --logtitle <title>      `Sets a title`_ for the generated test log.
+  --reporttitle <title>   `Sets a title`_ for the generated test report.
+  --reportbackground <colors>  `Sets background colors`_ for the generated report and summary.
   --summarytitle <title>  `Sets a title`_ for the generated summary report.
   -L, --loglevel <level>  `Sets the threshold level`_ to select log messages.
   --suitestatlevel <level>  Defines how many `levels to show`_ in the :name:`Statistics by Suite`
@@ -133,7 +135,6 @@ Command line options for post-processing outputs
 
 .. _create output files: `Output directory`_
 .. _Adds a timestamp: `Timestamping output files`_
-.. _Splits output and log: `Splitting outputs`_
 .. _Sets a title: `Setting titles`_
 .. _Sets background colors: `Setting background colors`_
 
