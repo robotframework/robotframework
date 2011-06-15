@@ -1,0 +1,163 @@
+/* Generic styles */
+body {
+    font-family: sans-serif;
+    font-size: 0.8em;
+    color: black;
+    padding: 6px;
+}
+
+br {
+    mso-data-placement: same-cell; /* maintain line breaks in Excel */
+}
+
+
+/* Statistics Table */
+table.statistics {
+    width: 58em;
+    border: 1px solid black;
+    border-collapse: collapse;
+    empty-cells: show;
+    margin-bottom: 1em;
+}
+
+table.statistics td, table.statistics th {
+    border: 1px solid black;
+    padding: 1px 4px;
+    margin: 0px;
+}
+
+table.statistics th {
+    background: #C6C6C6;
+}
+
+.col_stat_name {
+    width: 40em;
+}
+
+.col_stat {
+    width: 3em;
+    text-align: center;
+}
+
+.stat_name {
+    float: left;
+}
+
+.stat_name a, .stat_name span {
+    font-weight: bold;
+}
+
+.tag_links {
+    font-size: 0.9em;
+    float: right;
+    margin-top: 0.05em;
+}
+
+.tag_links span {
+    margin-left: 0.2em;
+}
+
+
+/* Statistics Table Graph */
+.pass_bar {
+    background: #00F000;
+}
+
+.fail_bar {
+    background: red;
+}
+
+.no_tags_bar {
+    background: #E9E9E9;
+}
+
+.graph {
+    position: relative;
+    border: 1px solid black;
+    width: 11em;
+    height: 0.75em;
+    padding: 0px;
+    background: #E9E9E9;
+}
+
+.graph b {
+    display: block;
+    position: relative;
+    height: 100%;
+    float: left;
+    /* TODO: Is the hack below still needed w/ IE8? */
+    font-size: 4px; /* to make graphs thin also in IE */
+}
+
+
+/* Tables in documentation */
+table.doc {
+    border: 1px solid gray;
+    background: transparent;
+    border-collapse: collapse;
+    empty-cells: show;
+    font-size: 0.9em;
+}
+
+table.doc td {
+    border: 1px solid gray;
+    padding: 0.1em 0.3em;
+    height: 1.2em;
+}
+
+/* Misc Styles */
+.not_available {
+    color: gray;
+    font-weight: normal;
+}
+
+.parent_name {
+    font-size: 0.7em;
+    letter-spacing: -0.07em;
+}
+
+a:link, a:visited {
+    text-decoration: none;
+    color: blue;
+}
+
+a:hover, a:active {
+    text-decoration: underline;
+    color: purple;
+}
+
+/* Headers */
+.header {
+    width: 58em;
+    margin: 6px 0px;
+}
+
+h1 {
+    margin: 0px;
+    width: 70%;
+}
+
+#generated {
+/ / TODO : Add width when timestamp in correct format / / width : 29 %;
+    float: right;
+    text-align: right;
+    font-size: 0.9em;
+    white-space: nowrap;
+}
+
+/* Status text colors */
+.error, .fail {
+    color: red;
+}
+
+.pass {
+    color: #009900;
+}
+
+.warn {
+    color: #FFCC00;
+}
+
+.not_run {
+    color: #663300;
+}

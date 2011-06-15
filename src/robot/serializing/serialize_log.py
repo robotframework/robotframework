@@ -24,6 +24,8 @@ PATH = os.path.join(os.path.dirname(robot.__file__),'webcontent')
 LOG_TEMPLATE = os.path.join(PATH,'log.html')
 REPORT_TEMPLATE = os.path.join(PATH, 'report.html')
 JS_FILE_REGEXP = re.compile('src=\"([^\"]+)\"')
+CSS_FILE_REGEXP = re.compile('href=\"([^\"]+)\"')
+CSS_MEDIA_TYPE_REGEXP = re.compile('media=\"([^\"]+)\"')
 
 def serialize_log(test_output_datamodel, log_path, title=None):
     if log_path is None:
@@ -88,17 +90,14 @@ class _Populator(object):
     def _is_begin_scripts(self, line):
         return line == '<!-- BEGIN SCRIPTS -->\n'
 
+    def _start_script(self):
+        self._parsing = self._in_script
+
     def _is_title_line_to_handle(self, line):
         return self._title is not None and line.startswith('<title>')
 
     def _write_title(self):
         self._log.write('<title>%s</title>\n' % self._title)
-
-    def _is_log_path_line_to_handle(self, line):
-        return self._log_path and 'log.html' in line
-
-    def _replace_log_path(self, line):
-        self._log.write(line.replace('log.html', self._log_path))
 
     def _is_background_line_to_handle(self, line):
         for marker in self._backgrounds:
@@ -111,11 +110,19 @@ class _Populator(object):
             if marker in line:
                 self._log.write("    background: %s;\n" % self._backgrounds[marker])
 
+    def _is_log_path_line_to_handle(self, line):
+        return self._log_path and 'log.html' in line
+
+    def _replace_log_path(self, line):
+        self._log.write(line.replace('log.html', self._log_path))
+
     def _in_script(self, line):
         if self._is_end_scripts(line):
             self._end_script()
         elif self._is_output_js(line):
             self._write_output_js()
+        elif self._is_css_line(line):
+            self._write_lines_css(line)
         else:
             self._write_lines_js(line)
 
@@ -123,30 +130,43 @@ class _Populator(object):
         return line == '<!-- END SCRIPTS -->\n'
 
     def _end_script(self):
-        self._log.write('</script>\n')
         self._parsing = self._normal_parsing
 
     def _is_output_js(self, line):
         return line.startswith('<!-- OUTPUT JS -->')
 
+    def _is_css_line(self, line):
+        return line.startswith('<link rel')
+
     def _write_output_js(self):
+        self._log.write('<script type="text/javascript">\n')
         self._test_output_datamodel.write_to(self._log)
+        self._log.write('</script>\n\n')
+
+    def _write_lines_css(self, line):
+        self._log.write('<style type="text/css" media="%s">\n' % self._parse_css_media_type(line))
+        self._write_from_file(self._parse_css_file_name(line))
+        self._log.write('</style>\n\n')
+
+    def _parse_css_media_type(self, line):
+        return CSS_MEDIA_TYPE_REGEXP.search(line).group(1)
 
     def _write_lines_js(self, line):
-        self._write_js(self._parse_js_file_name(line))
-
-    def _start_script(self):
         self._log.write('<script type="text/javascript">\n')
-        self._parsing = self._in_script
+        self._write_from_file(self._parse_js_file_name(line))
+        self._log.write('</script>\n\n')
 
     def _parse_js_file_name(self, line):
         return os.path.join(PATH, JS_FILE_REGEXP.search(line).group(1).replace('/', os.path.sep))
 
-    def _write_js(self, js_file):
-        with codecs.open(js_file, 'r', encoding='UTF-8') as js:
-            for jsline in js:
-                self._log.write(jsline)
-        self._log.write('\n\n')
+    def _parse_css_file_name(self, line):
+        return os.path.join(PATH, CSS_FILE_REGEXP.search(line).group(1).replace('/', os.path.sep))
+
+    def _write_from_file(self, source):
+        with codecs.open(source, 'r', encoding='UTF-8') as content:
+            for line in content:
+                self._log.write(line)
+        self._log.write('\n')
 
 
 if __name__ == '__main__':

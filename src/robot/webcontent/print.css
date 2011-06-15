@@ -1,0 +1,17 @@
+body {
+    background: white;
+    padding: 0px;
+    font-size: 8pt;
+}
+
+a:link, a:visited {
+    color: black;
+}
+
+.header, table.details, table.statistics {
+    width: 100%;
+}
+
+#generated_ago, .expand {
+    display: none;
+}
