@@ -29,8 +29,7 @@ import jsparser
 class ResultWriter(object):
 
     def __init__(self, settings):
-        self._robot_test_output_cached = None
-        self._temp_file = None
+        self._xml_result = None
         self._suite = None
         self._settings = settings
 
@@ -40,35 +39,22 @@ class ResultWriter(object):
         LogBuilder(data_model, self._settings).create()
         data_model.remove_keywords()
         ReportBuilder(data_model, self._settings).create()
-        self._make_xunit(data_source)
+        XUnitBuilder(self._result_from_xml([data_source]),
+                     self._settings).create()
 
-    def _make_xunit(self, data_source):
-        xunit_path = self._settings['XUnitFile']
-        if xunit_path != 'NONE':
-            self._robot_test_output([data_source]).serialize_xunit(xunit_path)
-
-    def _robot_test_output(self, data_sources):
-        if self._robot_test_output_cached is None:
-            self._suite, exec_errors = process_outputs(data_sources, self._settings)
+    def _result_from_xml(self, data_sources):
+        if not self._xml_result:
+            self._suite, errs = process_outputs(data_sources, self._settings)
             self._suite.set_options(self._settings)
-            self._robot_test_output_cached = RobotTestOutput(self._suite, exec_errors, self._settings)
-        return self._robot_test_output_cached
+            self._xml_result = ResultFromXML(self._suite, errs, self._settings)
+        return self._xml_result
 
     def write_rebot_results(self, *data_sources):
-        combined = self._combine_outputs(data_sources)
-        self.write_robot_results(combined)
-        if self._temp_file:
-            os.remove(self._temp_file)
+        builder = OutputBuilder(self._result_from_xml(data_sources),
+                                self._settings)
+        self.write_robot_results(builder.create())
+        builder.finalize()
         return self._suite
-
-    def _combine_outputs(self, data_sources):
-        output_file = self._settings['Output']
-        if output_file == 'NONE':
-            handle, output_file = tempfile.mkstemp(suffix='.xml', prefix='rebot-')
-            os.close(handle)
-            self._temp_file = output_file
-        self._robot_test_output(data_sources).serialize_output(output_file, log=not self._temp_file)
-        return output_file
 
 
 class _Builder(object):
@@ -135,7 +121,37 @@ class ReportBuilder(_Builder):
         return {'pass': colors[0], 'nonCriticalFail': colors[1], 'fail': colors[2]}
 
 
-class RobotTestOutput:
+class OutputBuilder(_Builder):
+    _type = 'Output'
+    _temp_file = None
+
+    def create(self):
+        output_file = self._output_file()
+        self._data_model.serialize_output(output_file, log=not self._temp_file)
+        return output_file
+
+    def _output_file(self):
+        if self._path:
+            return self._path
+        handle, output_file = tempfile.mkstemp(suffix='.xml', prefix='rebot-')
+        os.close(handle)
+        self._temp_file = output_file
+        return output_file
+
+    def finalize(self):
+        if self._temp_file:
+            os.remove(self._temp_file)
+
+
+class XUnitBuilder(_Builder):
+    _type = 'XUnitFile'
+
+    def create(self):
+        if self._path:
+            self._data_model.serialize_xunit(self._path)
+
+
+class ResultFromXML(object):
 
     def __init__(self, suite, exec_errors, settings=None):
         self.suite = suite
