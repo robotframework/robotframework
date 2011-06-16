@@ -27,8 +27,9 @@ class DataModel(object):
         self._set_generated(time.localtime())
 
     def _set_generated(self, timetuple):
-        millis = time.mktime(timetuple) * 1000 - self._robot_data['baseMillis']
-        self._set_attr('generatedMillis', millis)
+        genMillis = long(time.mktime(timetuple) * 1000) -\
+                        self._robot_data['baseMillis']
+        self._set_attr('generatedMillis', genMillis)
         self._set_attr('generatedTimestamp',
                        utils.format_time(timetuple, gmtsep=' '))
 
