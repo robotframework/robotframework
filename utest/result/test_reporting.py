@@ -59,6 +59,10 @@ class TestReporting(unittest.TestCase):
         self._log_results = set_write_log_mock()
         self._report_results = set_write_report_mock()
 
+    def tearDown(self):
+        robot.result.builders.LOGGER.register_console_logger()
+        robot.result.builders.LOGGER._console_logger_disabled = False
+
     def test_generate_report_and_log(self):
         self._settings['Log'] = 'log.html'
         self._settings['Report'] = 'report.html'
