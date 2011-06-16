@@ -41,8 +41,8 @@ window.model = function () {
         };
         suite.searchTestsByTag = function (tag) {
             return suite.searchTests(function (test) {
-                if (tag.pattern)
-                    return containsTagPattern(test.tags, tag.pattern);
+                if (tag.combined)
+                    return containsTagPattern(test.tags, tag.combined);
                 return containsTag(test.tags, tag.label);
             });
         };
@@ -320,7 +320,6 @@ window.stats = (function () {
 
     function statElem(stat) {
         stat.total = stat.pass + stat.fail;
-        stat.links = parseLinks(stat.links);
         var percents = calculatePercents(stat.total, stat.pass, stat.fail);
         stat.passPercent = percents[0];
         stat.failPercent = percents[1];
@@ -332,6 +331,7 @@ window.stats = (function () {
 
     function tagStatElem(data) {
         var stat = statElem(data);
+        stat.links = parseLinks(stat.links);
         // TODO: move to templates.
         if (stat.info)
             stat.shownInfo = '(' + stat.info + ')';
