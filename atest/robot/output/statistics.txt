@@ -42,18 +42,18 @@ Suite statistics should be Correct
 
 *** Keywords ***
 Node Information Should Be Correct
-    [Arguments]  ${node}  ${name}  ${pass}  ${fail}  ${doc}=
+    [Arguments]  ${node}  ${name}  ${pass}  ${fail}
     Should be equal  ${node.text}  ${name}
     Should be equal  ${node.attrs['pass']}  ${pass}
     Should be equal  ${node.attrs['fail']}  ${fail}
-    Should be equal  ${node.attrs['doc']}   ${doc}
 
 Tag Node Information Should Be Correct
     [Arguments]  ${node}  ${name}  ${pass}  ${fail}  ${info}=  ${doc}=  ${links}=
-    Node Information Should Be Correct  ${node}  ${name}  ${pass}  ${fail}  ${doc}
+    Node Information Should Be Correct  ${node}  ${name}  ${pass}  ${fail}
     Should be equal  ${node.attrs['info']}  ${info}
+    Should be equal  ${node.attrs['doc']}   ${doc}
     Should be equal  ${node.attrs['links']}  ${links}
 
 Suite Node Information Should Be Correct
     [Arguments]  ${node}  ${name}  ${pass}  ${fail}
-    Node Information Should Be Correct  ${node}  ${name}  ${pass}  ${fail}  ${name}
+    Node Information Should Be Correct  ${node}  ${name}  ${pass}  ${fail}
