@@ -138,15 +138,11 @@ class _StatItemHandler(_Handler):
 
     def __init__(self, context, attrs):
         _Handler.__init__(self, context)
-        self._attrs = {
-            'pass': int(attrs.get('pass')),
-            'fail': int(attrs.get('fail')),
-            'doc': attrs.get('doc', ''),
-            'info': attrs.get('info', ''),
-            'links': attrs.get('links', ''),
-            'combined': attrs.get('combined', ''),
-            'name': attrs.get('name', '')
-        }
+        self._attrs = dict(attrs)
+        self._attrs['pass'] = int(self._attrs['pass'])
+        self._attrs['fail'] = int(self._attrs['fail'])
+        # TODO: Should we only dump attrs that have value?
+        # Tag stats have many attrs that are normally empty
 
     def end_element(self, text):
         self._attrs.update(label=text)
