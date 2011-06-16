@@ -24,6 +24,26 @@ div.error_box {
     padding: 10px;
 }
 
+
+/* Report/Log links */
+#report_link {
+    position: fixed;
+    top: 0px;
+    right: 0px;
+    background: black;
+    border-radius: 0 0 0 4px;
+}
+#report_link a {
+    margin: 0 1em;
+    color: white;
+    text-decoration: none;
+    font-weight: bold;
+    letter-spacing: 0.1em;
+}
+#report_link a:hover {
+    color: yellow;
+}
+
 /* Statistics Table */
 table.statistics {
     width: 58em;
