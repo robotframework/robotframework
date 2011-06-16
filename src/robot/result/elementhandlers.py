@@ -11,7 +11,6 @@
 #  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
-from time import time
 
 import zlib
 import base64
@@ -21,7 +20,7 @@ from robot import utils
 
 class _Handler(object):
 
-    def __init__(self, context, *args):
+    def __init__(self, context, attrs=None):
         self._context = context
         self._data_from_children = []
         self._handlers = {
@@ -64,8 +63,8 @@ class RootHandler(_Handler):
 class _RobotHandler(_Handler):
 
     def __init__(self, context, attrs):
-        _Handler.__init__(self, context, attrs)
-        self._generator = attrs.getValue('generator')
+        _Handler.__init__(self, context)
+        self._generator = attrs.get('generator')
 
     def end_element(self, text):
         return {'generator': self._generator,
@@ -79,8 +78,8 @@ class _RobotHandler(_Handler):
 class _SuiteHandler(_Handler):
 
     def __init__(self, context, attrs):
-        _Handler.__init__(self, context, attrs)
-        self._name = attrs.getValue('name')
+        _Handler.__init__(self, context)
+        self._name = attrs.get('name')
         self._source = attrs.get('source') or ''
         self._context.start_suite(self._name)
         self._context.collect_stats()
@@ -94,8 +93,8 @@ class _SuiteHandler(_Handler):
 class _TestHandler(_Handler):
 
     def __init__(self, context, attrs):
-        _Handler.__init__(self, context, attrs)
-        name = attrs.getValue('name')
+        _Handler.__init__(self, context)
+        name = attrs.get('name')
         self._name_id = self._context.get_text_id(name)
         self._timeout = self._context.get_text_id(attrs.get('timeout'))
         self._context.start_test(name)
@@ -116,11 +115,11 @@ class _TestHandler(_Handler):
 class _KeywordHandler(_Handler):
 
     def __init__(self, context, attrs):
-        _Handler.__init__(self, context, attrs)
+        _Handler.__init__(self, context)
         self._context.start_keyword()
-        self._type = attrs.getValue('type')
-        self._name = self._context.get_text_id(attrs.getValue('name'))
-        self._timeout = self._context.get_text_id(attrs.getValue('timeout'))
+        self._type = attrs.get('type')
+        self._name = self._context.get_text_id(attrs.get('name'))
+        self._timeout = self._context.get_text_id(attrs.get('timeout'))
 
     def end_element(self, text):
         if self._type == 'teardown' and self._data_from_children[-1][0] == 'F':
@@ -138,16 +137,12 @@ class _StatisticsHandler(_Handler):
 class _StatItemHandler(_Handler):
 
     def __init__(self, context, attrs):
-        _Handler.__init__(self, context, attrs)
-        self._attrs = {
-            'pass': int(attrs.getValue('pass')),
-            'fail': int(attrs.getValue('fail')),
-            'doc': attrs.get('doc', ''),
-            'info': attrs.get('info', ''),
-            'links': attrs.get('links', ''),
-            'combined': attrs.get('combined', ''),
-            'name': attrs.get('name', '')
-        }
+        _Handler.__init__(self, context)
+        self._attrs = dict(attrs)
+        self._attrs['pass'] = int(self._attrs['pass'])
+        self._attrs['fail'] = int(self._attrs['fail'])
+        # TODO: Should we only dump attrs that have value?
+        # Tag stats have many attrs that are normally empty
 
     def end_element(self, text):
         self._attrs.update(label=text)
@@ -157,9 +152,9 @@ class _StatItemHandler(_Handler):
 class _StatusHandler(object):
     def __init__(self, context, attrs):
         self._context = context
-        self._status = attrs.getValue('status')[0]
-        self._starttime = self._context.timestamp(attrs.getValue('starttime'))
-        endtime = self._context.timestamp(attrs.getValue('endtime'))
+        self._status = attrs.get('status')[0]
+        self._starttime = self._context.timestamp(attrs.get('starttime'))
+        endtime = self._context.timestamp(attrs.get('endtime'))
         self._elapsed = self._calculate_elapsed(endtime)
 
     def _calculate_elapsed(self, endtime):
@@ -198,7 +193,7 @@ class _TextHandler(_Handler):
 class _MetadataHandler(_Handler):
 
     def __init__(self, context, attrs):
-        _Handler.__init__(self, context, attrs)
+        _Handler.__init__(self, context)
         self._metadata = {}
 
     def add_child_data(self, data):
@@ -211,19 +206,19 @@ class _MetadataHandler(_Handler):
 class _MetadataItemHandler(_Handler):
 
     def __init__(self, context, attrs):
-        _Handler.__init__(self, context, attrs)
-        self._name = attrs.getValue('name')
+        _Handler.__init__(self, context)
+        self._name = attrs.get('name')
 
     def end_element(self, text):
         return [self._name, self._context.get_text_id(text)]
 
 
-class _MsgHandler(object):
+class _MsgHandler(_Handler):
 
     def __init__(self, context, attrs):
-        self._context = context
-        self._msg = [self._context.timestamp(attrs.getValue('timestamp')),
-                     attrs.getValue('level')[0]]
+        _Handler.__init__(self, context)
+        self._msg = [self._context.timestamp(attrs.get('timestamp')),
+                     attrs.get('level')[0]]
         self._is_html = attrs.get('html')
         self._is_linkable = attrs.get("linkable") == "yes"
 
