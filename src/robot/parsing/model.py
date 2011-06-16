@@ -68,12 +68,15 @@ class _TestData(object):
     def name(self):
         if not self.source:
             return None
-        name = os.path.splitext(os.path.basename(self.source))[0]
+        name = self._get_basename()
         name = name.split('__', 1)[-1]  # Strip possible prefix
         name = name.replace('_', ' ').strip()
         if name.islower():
             name = name.title()
         return name
+
+    def _get_basename(self):
+        return os.path.splitext(os.path.basename(self.source))[0]
 
     @property
     def keywords(self):
@@ -164,6 +167,9 @@ class TestDataDirectory(_TestData):
         if self.source:
             FromDirectoryPopulator().populate(self.source, self, include_suites, warn_on_skipped)
             self.children = [ ch for ch in self.children if ch.has_tests() ]
+
+    def _get_basename(self):
+        return os.path.basename(self.source)
 
     def _valid_table(self, table):
         if table is self.testcase_table:

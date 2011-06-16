@@ -13,13 +13,13 @@ Prefix Is Removed From File Suite Name
     Should Be Equal  ${SUITE.suites[0].name}  Suite First
 
 Prefix Is Removed From Directory Suite Name
-    Should Be Equal  ${SUITE.suites[1].name}  Subsuite1
+    Should Be Equal  ${SUITE.suites[1].name}  Sub.Suite.1
 
 Child File Suite Name
     Should Be Equal  ${SUITE.suites[6].name}  Suite 6
 
 Child Directory Suite Name
-    Should Be Equal  ${SUITE.suites[1].name}  Subsuite1
+    Should Be Equal  ${SUITE.suites[1].name}  Sub.Suite.1
 
 Non-uppercase names are titlecased
     Should Be Equal  ${SUITE.suites[6].name}  Suite 6
