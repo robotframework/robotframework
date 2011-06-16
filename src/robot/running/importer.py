@@ -17,6 +17,7 @@ import copy
 
 from robot.output import LOGGER
 from robot.parsing import ResourceFile
+from robot.errors import FrameworkError
 from robot import utils
 
 from testlibraries import TestLibrary
@@ -75,21 +76,24 @@ class Importer:
 
 
 class ImportCache:
-    """Cache for libraries and resources.
+    """Keeps track on and optionally caches imported items.
 
-     Unlike dicts, this storage accepts mutable values as keys.
-     """
+    Handles paths in keys case-insensitively on case-insensitive OSes.
+    Unlike dicts, this storage accepts mutable values in keys.
+    """
 
     def __init__(self):
         self._keys = []
         self._items = []
 
     def __setitem__(self, key, item):
+        if not isinstance(key, (basestring, tuple)):
+            raise FrameworkError('Invalid key for ImportCache')
         self._keys.append(self._norm_path_key(key))
         self._items.append(item)
 
-    def add(self, key):
-        self.__setitem__(key, None)
+    def add(self, key, item=None):
+        self.__setitem__(key, item)
 
     def __getitem__(self, key):
         key = self._norm_path_key(key)
@@ -101,8 +105,8 @@ class ImportCache:
         return self._norm_path_key(key) in self._keys
 
     def _norm_path_key(self, key):
+        if isinstance(key, tuple):
+            return tuple(self._norm_path_key(k) for k in key)
         if isinstance(key, basestring) and os.path.exists(key):
             return utils.normpath(key)
-        if isinstance(key, (tuple, list)):
-            return [self._norm_path_key(k) for k in key]
         return key
