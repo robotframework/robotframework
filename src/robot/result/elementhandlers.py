@@ -243,7 +243,7 @@ class Context(object):
 
     def __init__(self):
         self._texts = TextCache()
-        self._basemillis = None
+        self._basemillis = 0
         self._stats = Stats()
         self._current_place = []
         self._kw_index = []
@@ -273,7 +273,7 @@ class Context(object):
         if time == 'N/A':
             return None
         millis = int(utils.timestamp_to_secs(time, millis=True) * 1000)
-        if self._basemillis is None:
+        if not self._basemillis:
             self._basemillis = millis
         return millis - self.basemillis
 

@@ -14,7 +14,6 @@
 
 import os
 import tempfile
-import time
 
 from robot import utils
 from robot.common import Statistics
@@ -35,7 +34,6 @@ class ResultWriter(object):
 
     def write_robot_results(self, data_source):
         data_model = jsparser.create_datamodel_from(data_source)
-        data_model.set_generated(time.localtime())
         LogBuilder(data_model, self._settings).create()
         data_model.remove_keywords()
         ReportBuilder(data_model, self._settings).create()

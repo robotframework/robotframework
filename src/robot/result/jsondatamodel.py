@@ -11,21 +11,29 @@
 #  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
+
 import time
 from robot import utils
 
 from elementhandlers import TextIndex
 import json
 
+
 class DataModel(object):
 
     def __init__(self, robot_data):
         self._robot_data = robot_data
         self._settings = None
+        self._set_generated(time.localtime())
 
-    def set_generated(self, timetuple):
-        self._robot_data['generatedMillis'] = long(time.mktime(timetuple))*1000-self._robot_data['baseMillis']
-        self._robot_data['generatedTimestamp'] = utils.format_time(timetuple, daytimesep='&nbsp;', gmtsep='&nbsp;')
+    def _set_generated(self, timetuple):
+        millis = time.mktime(timetuple) * 1000 - self._robot_data['baseMillis']
+        self._set_attr('generatedMillis', millis)
+        self._set_attr('generatedTimestamp',
+                       utils.format_time(timetuple, gmtsep=' '))
+
+    def _set_attr(self, name, value):
+        self._robot_data[name] = value
 
     def set_settings(self, settings):
         self._settings = settings

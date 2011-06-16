@@ -79,7 +79,7 @@ class TestJsSerializer(unittest.TestCase):
     def test_generated_millis(self):
         self._context.timestamp('19790101 12:00:00.000')
         data_model = self._get_data_model(self.SUITE_XML)
-        data_model.set_generated(time.localtime(284029200))
+        data_model._set_generated(time.localtime(284029200))
         assert_equals(data_model._robot_data['generatedMillis'], 0)
 
     def test_tags_xml_parsing(self):
@@ -90,7 +90,7 @@ class TestJsSerializer(unittest.TestCase):
         </tags>
         """
         data_model = self._get_data_model(tags_xml)
-        self.assert_model(data_model, None, [1, 2], ['*', '*someothertag', '*sometag'])
+        self.assert_model(data_model, 0, [1, 2], ['*', '*someothertag', '*sometag'])
 
     def test_arguments_xml_parsing(self):
         arguments_xml = """
@@ -100,7 +100,7 @@ class TestJsSerializer(unittest.TestCase):
         </arguments>
         """
         data_model = self._get_data_model(arguments_xml)
-        self.assert_model(data_model, None, 1, ['*', '*${arg}, ${level}'])
+        self.assert_model(data_model, 0, 1, ['*', '*${arg}, ${level}'])
 
     def test_keyword_xml_parsing(self):
         keyword_xml = """
@@ -163,7 +163,7 @@ class TestJsSerializer(unittest.TestCase):
                         <item name="version">alpha</item>
                       </metadata>"""
         data_model = self._get_data_model(meta_xml)
-        self.assert_model(data_model, None, {'meta':1, 'version':2}, ['*', '*<b>escaped</b>', '*alpha'])
+        self.assert_model(data_model, 0, {'meta':1, 'version':2}, ['*', '*<b>escaped</b>', '*alpha'])
 
     def test_statistics_xml_parsing(self):
         statistics_xml = """
@@ -184,7 +184,7 @@ class TestJsSerializer(unittest.TestCase):
         </statistics>
         """
         data_model = self._get_data_model(statistics_xml)
-        self.assert_model(data_model, None,
+        self.assert_model(data_model, 0,
             [[['Critical Tests', 0, 4, '', '', ''],
             ['All Tests', 0, 4, '', '', '']],
             [['someothertag', 0, 1, '', '', ''],
