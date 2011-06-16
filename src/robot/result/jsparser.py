@@ -18,6 +18,7 @@ from robot.result.jsondatamodel import DataModel
 from xml import sax
 from xml.sax.handler import ContentHandler
 
+
 def create_datamodel_from(input_filename):
     robot = _RobotOutputHandler(Context())
     with open(input_filename, 'r') as input:
