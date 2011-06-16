@@ -169,29 +169,31 @@ class TestJsSerializer(unittest.TestCase):
         statistics_xml = """
         <statistics>
             <total>
-                <stat fail="4" doc="" pass="0">Critical Tests</stat>
-                <stat fail="4" doc="" pass="0">All Tests</stat>
+                <stat fail="4" pass="0">Critical Tests</stat>
+                <stat fail="4" pass="0">All Tests</stat>
             </total>
             <tag>
                 <stat info="" fail="1" pass="0" links="" doc="">someothertag</stat>
                 <stat info="" fail="1" pass="0" links="" doc="">sometag</stat>
             </tag>
             <suite>
-                <stat fail="4" doc="Data" pass="0">Data</stat>
-                <stat fail="1" doc="Data.All Settings" pass="0">Data.All Settings</stat>
-                <stat fail="3" doc="Data.Failing Suite" pass="0">Data.Failing Suite</stat>
+                <stat fail="4" name="Data" pass="0">Data</stat>
+                <stat fail="1" name="All Settings" pass="0">Data.All Settings</stat>
+                <stat fail="3" name="Failing Suite" pass="0">Data.Failing Suite</stat>
             </suite>
         </statistics>
         """
         data_model = self._get_data_model(statistics_xml)
-        self.assert_model(data_model, 0,
-            [[['Critical Tests', 0, 4, '', '', ''],
-            ['All Tests', 0, 4, '', '', '']],
-            [['someothertag', 0, 1, '', '', ''],
-                ['sometag', 0, 1, '', '', '']],
-            [['Data', 0, 4, 'Data', '', ''],
-                ['Data.All Settings', 0, 1, 'Data.All Settings', '', ''],
-                ['Data.Failing Suite', 0, 3, 'Data.Failing Suite', '', '']]], ['*'])
+        expected = [[{'label': 'Critical Tests', 'pass': 0, 'fail': 4},
+                     {'label': 'All Tests', 'pass': 0, 'fail': 4}],
+                    [{'label': 'someothertag', 'pass': 0, 'fail': 1,
+                      'info': '', 'links': '', 'doc': ''},
+                     {'label': 'sometag', 'pass': 0, 'fail': 1,
+                      'info': '', 'links': '', 'doc': ''}],
+                    [{'label': 'Data', 'name': 'Data', 'pass': 0, 'fail': 4},
+                     {'label': 'Data.All Settings', 'name': 'All Settings', 'pass': 0, 'fail': 1},
+                     {'label': 'Data.Failing Suite', 'name': 'Failing Suite', 'pass': 0, 'fail': 3}]]
+        self.assert_model(data_model, 0, expected, ['*'])
 
     def test_errors_xml_parsing(self):
         errors_xml = """
