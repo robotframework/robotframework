@@ -21,38 +21,49 @@
 <title></title>
 </head>
 <body>
-<div class="header" id="header_div">
+<div id="javascript_disabled" class="error_box">
+      <h1>Error when opening log.</h1>
+      <ul>
+          <li>Check that JavaScript is enabled in your browser.</li>
+          <li>Minimum browser requirements: IE8, Firefox +3.5, Chrome xx, Safari zz, Opera yy.</li>
+          <li>Check JavaScript error log if there are errors.</li>
+      </ul>
 </div>
-  <h2>Test Statistics</h2>
-  <table class="statistics" id="total_stats">
-    <tr>
-      <th class="col_stat_name">Total Statistics</th>
-      <th class="col_stat">Total</th>
-      <th class="col_stat">Pass</th>
-      <th class="col_stat">Fail</th>
-      <th class="col_graph">Graph</th>
-    </tr>
-  </table>
-  <table class="statistics" id="tag_stats">
-    <tr>
-      <th class="col_stat_name">Statistics by Tag</th>
-      <th class="col_stat">Total</th>
-      <th class="col_stat">Pass</th>
-      <th class="col_stat">Fail</th>
-      <th class="col_graph">Graph</th>
-    </tr>
-  </table>
-  <table class="statistics" id="suite_stats">
-    <tr>
-      <th class="col_stat_name">Statistics by Suite</th>
-      <th class="col_stat">Total</th>
-      <th class="col_stat">Pass</th>
-      <th class="col_stat">Fail</th>
-      <th class="col_graph">Graph</th>
-    </tr>
-  </table>
+<div id="javascript_enabled" style="visibility: hidden;">
+    <div class="header" id="header_div">
+    </div>
+      <h2>Test Statistics</h2>
+      <table class="statistics" id="total_stats">
+        <tr>
+          <th class="col_stat_name">Total Statistics</th>
+          <th class="col_stat">Total</th>
+          <th class="col_stat">Pass</th>
+          <th class="col_stat">Fail</th>
+          <th class="col_graph">Graph</th>
+        </tr>
+      </table>
+      <table class="statistics" id="tag_stats">
+        <tr>
+          <th class="col_stat_name">Statistics by Tag</th>
+          <th class="col_stat">Total</th>
+          <th class="col_stat">Pass</th>
+          <th class="col_stat">Fail</th>
+          <th class="col_graph">Graph</th>
+        </tr>
+      </table>
+      <table class="statistics" id="suite_stats">
+        <tr>
+          <th class="col_stat_name">Statistics by Suite</th>
+          <th class="col_stat">Total</th>
+          <th class="col_stat">Pass</th>
+          <th class="col_stat">Fail</th>
+          <th class="col_graph">Graph</th>
+        </tr>
+      </table>
+</div>
 <script type="text/javascript">
 $(document).ready(function(){
+    removeJavaScriptDisabledWarning();
     var topsuite = window.testdata.suite();
     window.templates = initTemplates();
     setDocumentTitle(topsuite.name, window.settings.title);
@@ -67,6 +78,11 @@ $(document).ready(function(){
         expandFailed(topsuite);
     }
 });
+
+function removeJavaScriptDisabledWarning() {
+    $('#javascript_disabled').remove();
+    $('#javascript_enabled').css('visibility', 'visible');
+}
 
 // TODO: This is duplicated in report.html
 function addHeader() {

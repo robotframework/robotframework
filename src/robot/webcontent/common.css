@@ -10,6 +10,18 @@ br {
     mso-data-placement: same-cell; /* maintain line breaks in Excel */
 }
 
+/* Error Box */
+div.error_box {
+    display: block;
+    border: 2px solid #000000;
+    width: 40%;
+    min-height: 50px;
+    position: absolute;
+    top: 30%;
+    left: 30%;
+    background: #ffc0cb;
+    padding: 10px;
+}
 
 /* Statistics Table */
 table.statistics {
