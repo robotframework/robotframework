@@ -46,7 +46,7 @@ window.util = function () {
     }
 
     function regexpEscape(string) {
-        return string.replace(/[-[\]{}()+?*.,\\^$|#\s]/g, "\\$&");
+        return string.replace(/[-[\]{}()+?*.,\\^$|#]/g, "\\$&");
     }
 
     function Matcher(pattern) {

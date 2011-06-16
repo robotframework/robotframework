@@ -92,14 +92,15 @@ class SuiteStat(Stat):
 class TagStat(Stat):
     type = 'tag'
 
-    def __init__(self, name, critical=False, non_critical=False, info=None):
+    def __init__(self, name, critical=False, non_critical=False, info=None,
+                 combined=''):
         doc = info.get_doc(name) if info else ''
         Stat.__init__(self, name, doc, link=name)
         self.critical = critical
         self.non_critical = non_critical
-        self.combined = False
         self.tests = []
         self.links = info.get_links(name) if info else []
+        self.combined = combined
 
     def add_test(self, test):
         Stat.add_test(self, test)
@@ -107,22 +108,15 @@ class TagStat(Stat):
 
     def __cmp__(self, other):
         if self.critical != other.critical:
-            return self.critical is True and -1 or 1
+            return cmp(self.critical, other.critical)
         if self.non_critical != other.non_critical:
-            return self.non_critical is True and -1 or 1
-        if self.combined != other.combined:
-            return self.combined is True and -1 or 1
+            return cmp(self.non_critical, other.non_critical)
+        if bool(self.combined) != bool(other.combined):
+            return cmp(bool(self.combined), bool(other.combined))
         return cmp(self.name, other.name)
 
     def serialize(self, serializer):
         serializer.tag_stat(self)
-
-
-class CombinedTagStat(TagStat):
-
-    def __init__(self, name):
-        TagStat.__init__(self, name)
-        self.combined = True
 
 
 class TotalStat(Stat):
@@ -216,7 +210,7 @@ class TagStatistics:
         for tag in test.tags:
             if not self._is_included(tag):
                 continue
-            if not self.stats.has_key(tag):
+            if tag not in self.stats:
                 self.stats[tag] = TagStat(tag, critical.is_critical(tag),
                                           critical.is_non_critical(tag),
                                           self._taginfo)
@@ -229,8 +223,8 @@ class TagStatistics:
 
     def _add_tagstatcombine_statistics(self, test):
         for pattern, name in self._patterns_and_names:
-            if not self.stats.has_key(name):
-                self.stats[name] = CombinedTagStat(name)
+            if name not in self.stats:
+                self.stats[name] = TagStat(name, combined=pattern)
             if test.is_included([pattern], []):
                 self.stats[name].add_test(test)
 

@@ -41,7 +41,9 @@ window.model = function () {
         };
         suite.searchTestsByTag = function (tag) {
             return suite.searchTests(function (test) {
-                return containsTag(test.tags, tag.label, tag.info == 'combined');
+                if (tag.pattern)
+                    return containsTagPattern(test.tags, tag.pattern);
+                return containsTag(test.tags, tag.label);
             });
         };
         suite.findSuiteByName = function (name) {
@@ -60,26 +62,29 @@ window.model = function () {
         return suite;
     }
 
-    function containsTag(testTags, tagname, isCombined) {
+    function containsTag(testTags, tagname) {
         testTags = util.map(testTags, util.normalize);
-        if (!isCombined)
-            return util.contains(testTags, util.normalize(tagname));
-        if (tagname.indexOf(' & ') != -1) {
-            var tagnames = tagname.split(' & ');
+        return util.contains(testTags, util.normalize(tagname));
+    }
+
+    function containsTagPattern(testTags, pattern) {
+        testTags = util.map(testTags, util.normalize);
+        if (pattern.indexOf('&') != -1) {
+            var tagnames = pattern.split('&');
             return util.all(util.map(tagnames, function (name) {
-                return containsTag(testTags, name, true);
+                return containsTagPattern(testTags, name);
             }));
         }
-        if (tagname.indexOf(' NOT ') != -1) {
-            var tagnames = tagname.split(' NOT ');
+        if (pattern.indexOf('NOT') != -1) {
+            var tagnames = pattern.split('NOT');
             var required = tagnames[0];
             var notAllowed = tagnames.slice(1);
-            return containsTag(testTags, required, true) &&
+            return containsTagPattern(testTags, required) &&
                     util.all(util.map(notAllowed, function (name) {
-                        return !containsTag(testTags, name, true);
-                    }))
+                        return !containsTagPattern(testTags, name);
+                    }));
         }
-        var matcher = util.Matcher(tagname)
+        var matcher = util.Matcher(pattern);
         return util.any(util.map(testTags, matcher.matches));
     }
 
@@ -300,6 +305,7 @@ window.model = function () {
         NOT_RUN: STATUS.notRun,
         formatElapsed: formatElapsed,
         containsTag: containsTag,  // Exposed for tests
+        containsTagPattern: containsTagPattern,  // Exposed for tests
         shortTime: shortTime
     };
 }();
@@ -338,6 +344,7 @@ window.stats = (function () {
         else
             stat.shownInfo = '';
         stat.links = parseLinks(data[5]);
+        stat.pattern = data[6];
         return stat;
     }
 
