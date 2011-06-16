@@ -21,13 +21,19 @@ Child File Suite Name
 Child Directory Suite Name
     Should Be Equal  ${SUITE.suites[1].name}  Sub.Suite.1
 
-Non-uppercase names are titlecased
+Dots in suite names
+    Should Be Equal  ${SUITE.suites[1].name}  Sub.Suite.1
+    Should Be Equal  ${SUITE.suites[1].suites[1].name}  .Sui.te.2.
+
+Names without uppercase chars are titlecased
+    Should Be Equal  ${SUITE.suites[1].name}  Sub.Suite.1
     Should Be Equal  ${SUITE.suites[6].name}  Suite 6
     Should Be Equal  ${SUITE.suites[9].name}  Suite 9 Name
 
 Names with uppercase chars are not titlecased
     Should Be Equal  ${SUITE.suites[7].name}  SUite7
     Should Be Equal  ${SUITE.suites[8].name}  suiTe 8
+    Should Be Equal  ${SUITE.suites[1].suites[1].name}  .Sui.te.2.
 
 Underscores are converted to spaces
     Should Be Equal  ${SUITE.suites[8].name}  suiTe 8
