@@ -357,7 +357,7 @@ window.stats = (function () {
         var links = [];
         for (var i=0; i<items.length; i++) {
             parts = items[i].split(':');
-            links[i] = {title: parts[0], url: parts.splice(1,1).join(':')};
+            links[i] = {title: parts[0], url: parts.splice(1).join(':')};
         }
         return links;
     }
