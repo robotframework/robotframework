@@ -38,10 +38,8 @@ class Statistics:
 
 class Stat:
 
-    def __init__(self, name='', doc='', link=None):
+    def __init__(self, name=''):
         self.name = name
-        self._doc = doc
-        self._link = link
         self.passed = 0
         self.failed = 0
 
@@ -59,12 +57,6 @@ class Stat:
         self.failed += self.passed
         self.passed = 0
 
-    def get_doc(self):
-        return self._doc
-
-    def get_link(self):
-        return self._link
-
     def __cmp__(self, other):
         return cmp(self.name, other.name)
 
@@ -77,13 +69,7 @@ class SuiteStat(Stat):
 
     def __init__(self, suite):
         Stat.__init__(self, suite.name)
-        self.get_long_name = suite.get_long_name
-
-    def get_doc(self):
-        return self.get_long_name()
-
-    def get_link(self):
-        return self.get_long_name()
+        self.long_name = suite.get_long_name()
 
     def serialize(self, serializer):
         serializer.suite_stat(self)
@@ -94,8 +80,8 @@ class TagStat(Stat):
 
     def __init__(self, name, critical=False, non_critical=False, info=None,
                  combined=''):
-        doc = info.get_doc(name) if info else ''
-        Stat.__init__(self, name, doc, link=name)
+        Stat.__init__(self, name)
+        self.doc = info.get_doc(name) if info else ''
         self.critical = critical
         self.non_critical = non_critical
         self.tests = []
