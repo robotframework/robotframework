@@ -1,6 +1,5 @@
 import unittest
 
-from robot.output.logger import Logger
 from robot.result import ResultWriter
 import robot.result.builders
 
