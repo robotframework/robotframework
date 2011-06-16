@@ -195,7 +195,7 @@ class TestTagStatistics(unittest.TestCase):
     def test_combine_with_name(self):
         for comb_tags, expected_name in [ 
                 ( [], '' ),
-                ( ['t1&t2:my_name'], 'my name' ),
+                ( ['t1&t2:my name'], 'my name' ),
                 ( ['t1NOTt3:Others'], 'Others' ),
                 ( ['1:2&2:3:nAme'], 'nAme' ),
                 ( ['3*'], '3*' ),
