@@ -144,7 +144,8 @@ class XmlLogger:
 
     def tag_stat(self, stat):
         self._stat(stat, attrs={'info': self._get_tag_stat_info(stat),
-                                'links': self._get_tag_links(stat)})
+                                'links': self._get_tag_links(stat),
+                                'combined': stat.combined})
 
     def _get_tag_links(self, stat):
         return ':::'.join(':'.join([title, url]) for url, title in stat.links)
@@ -158,11 +159,11 @@ class XmlLogger:
         self._writer.element('stat', name, attrs)
 
     def _get_tag_stat_info(self, stat):
-        if stat.critical is True:
+        if stat.critical:
             return 'critical'
-        if stat.non_critical is True:
+        if stat.non_critical:
             return 'non-critical'
-        if stat.combined is True:
+        if stat.combined:
             return 'combined'
         return ''
 
