@@ -34,11 +34,10 @@ class ResultWriter(object):
 
     def write_robot_results(self, data_source):
         data_model = jsparser.create_datamodel_from(data_source)
-        LogBuilder(data_model, self._settings).create()
-        data_model.remove_keywords()
-        ReportBuilder(data_model, self._settings).create()
+        LogBuilder(data_model, self._settings).build()
+        ReportBuilder(data_model, self._settings).build()
         XUnitBuilder(self._result_from_xml([data_source]),
-                     self._settings).create()
+                     self._settings).build()
 
     def _result_from_xml(self, data_sources):
         if not self._xml_result:
@@ -50,22 +49,22 @@ class ResultWriter(object):
     def write_rebot_results(self, *data_sources):
         builder = OutputBuilder(self._result_from_xml(data_sources),
                                 self._settings)
-        self.write_robot_results(builder.create())
+        self.write_robot_results(builder.build())
         builder.finalize()
         return self._suite
 
 
 class _Builder(object):
 
-    def __init__(self, data_model, settings):
+    def __init__(self, data, settings):
         self._settings = settings
+        self._data = data
         self._path = self._parse_file(self._type)
-        self._data_model = data_model
 
-    def create(self):
+    def build(self):
         if self._path:
-            self._data_model.set_settings(self._get_settings())
-            self._create()
+            self._data.set_settings(self._get_settings())
+            self._build()
             LOGGER.output_file(self._type, self._path)
 
     def _parse_file(self, name):
@@ -81,8 +80,8 @@ class _Builder(object):
 class LogBuilder(_Builder):
     _type = 'Log'
 
-    def _create(self):
-        serialize_log(self._data_model, self._path)
+    def _build(self):
+        serialize_log(self._data, self._path)
 
     def _get_settings(self):
         return {
@@ -95,8 +94,9 @@ class LogBuilder(_Builder):
 class ReportBuilder(_Builder):
     _type = 'Report'
 
-    def _create(self):
-        serialize_report(self._data_model, self._path)
+    def _build(self):
+        self._data.remove_keywords()
+        serialize_report(self._data, self._path)
 
     def _get_settings(self):
         return {
@@ -123,9 +123,9 @@ class OutputBuilder(_Builder):
     _type = 'Output'
     _temp_file = None
 
-    def create(self):
+    def build(self):
         output_file = self._output_file()
-        self._data_model.serialize_output(output_file, log=not self._temp_file)
+        self._data.serialize_output(output_file, log=not self._temp_file)
         return output_file
 
     def _output_file(self):
@@ -144,9 +144,9 @@ class OutputBuilder(_Builder):
 class XUnitBuilder(_Builder):
     _type = 'XUnitFile'
 
-    def create(self):
+    def build(self):
         if self._path:
-            self._data_model.serialize_xunit(self._path)
+            self._data.serialize_xunit(self._path)
 
 
 class ResultFromXML(object):
