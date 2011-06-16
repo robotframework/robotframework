@@ -48,17 +48,16 @@ Suite With Two Args
 
 Correct Files Processed With --suite Matches Files
     [Documentation]  Testing that only files matching to --suite are processed Using data from previous test case.
-    ${syslog} =  Get Syslog
     ${suitedir} =  Join Path  ${DATADIR}  ${TESTDATA_SUITES}
     ${subsuitedir} =  Join Path  ${suitedir}  subsuites
-    Contains  ${syslog}  Parsing test data directory '${suitedir}'
-    Contains  ${syslog}  Ignoring file or directory 'fourth.html'
-    Contains  ${syslog}  Ignoring file or directory 'tsuite3.html'
-    Contains  ${syslog}  Parsing test data directory '${subsuitedir}'
-    Contains  ${syslog}  Ignoring file or directory 'sub1.html'
-    Contains  ${syslog}  Ignoring file or directory 'sub2.html'
-    Contains  ${syslog}  Parsing file '${suitedir}${/}tsuite1.html
-    Contains  ${syslog}  Parsing file '${suitedir}${/}tsuite2.html
+    Check syslog contains  Parsing test data directory '${suitedir}'
+    Check Syslog Contains  Ignoring file or directory 'fourth.html'
+    Check Syslog Contains  Ignoring file or directory 'tsuite3.html'
+    Check Syslog Contains  Parsing test data directory '${subsuitedir}'
+    Check Syslog Contains  Ignoring file or directory 'sub1.html'
+    Check Syslog Contains  Ignoring file or directory 'sub2.html'
+    Check Syslog Contains  Parsing file '${suitedir}${/}tsuite1.html
+    Check Syslog Contains  Parsing file '${suitedir}${/}tsuite2.html
 
 Suite With No Matching Args
     Run Failing Test  --suite notexists  ${TESTDATA_SUITES}  ${SUITE_ERROR_MESSAGE}
@@ -74,17 +73,16 @@ Selecting Directory Suite
 
 Correct Files Processed When --suite Matches Directory
     [Documentation]  Testing that only files matching to --suite are processed. This time --suite matches directory so all suites under it should be processed. Using data from previous test case.
-    ${syslog} =  Get Syslog
     ${suitedir} =  Join Path  ${DATADIR}  ${TESTDATA_SUITES}
     ${subsuitedir} =  Join Path  ${suitedir}  subsuites
-    Contains  ${syslog}  Parsing test data directory '${suitedir}'
-    Contains  ${syslog}  Ignoring file or directory 'fourth.html'
-    Contains  ${syslog}  Ignoring file or directory 'tsuite1.html'
-    Contains  ${syslog}  Ignoring file or directory 'tsuite2.html'
-    Contains  ${syslog}  Ignoring file or directory 'tsuite3.html'
-    Contains  ${syslog}  Parsing test data directory '${subsuitedir}'
-    Contains  ${syslog}  Parsing file '${subsuitedir}${/}sub1.html'
-    Contains  ${syslog}  Parsing file '${subsuitedir}${/}sub2.html'
+    Check Syslog Contains  Parsing test data directory '${suitedir}'
+    Check Syslog Contains  Ignoring file or directory 'fourth.html'
+    Check Syslog Contains  Ignoring file or directory 'tsuite1.html'
+    Check Syslog Contains  Ignoring file or directory 'tsuite2.html'
+    Check Syslog Contains  Ignoring file or directory 'tsuite3.html'
+    Check Syslog Contains  Parsing test data directory '${subsuitedir}'
+    Check Syslog Contains  Parsing file '${subsuitedir}${/}sub1.html'
+    Check Syslog Contains  Parsing file '${subsuitedir}${/}sub2.html'
 
 Suite Under Subdirectory Using Pattern
     Run And Check Suites Within Subdirs  --suite subQUEST  ['Sub1', 'Sub2']  SubSuite1 First  SubSuite2 First
@@ -110,9 +108,9 @@ Filter Using Long Suite Name And Other Filters
     Run And Check Suites And Tests  --suite suites.fourth --suite tsuite1 -s Subsuites.Sub1 --test *first* --exclude none  ['Fourth','Subsuites','Tsuite1']  Suite4 First  Suite1 First  SubSuite1 First
 
 Filter Suite When Suites Are Ordered With Prefix
-    Run Suites  --suite Suite2  ${DATADIR}/misc/multiple_suites
+    Run Suites  --suite ?Sui*2?  ${DATADIR}/misc/multiple_suites
     Should Be True  ${SUITE.suites} == ['Sub.Suite.1']
-    Should Be True  ${SUITE.suites[0].suites} == ['Suite2']
+    Should Be True  ${SUITE.suites[0].suites} == ['.Sui.te.2.']
 
 *** Keywords ***
 Run And Check Tests
@@ -135,7 +133,6 @@ Run And Check Suites Within Subdirs
 
 Run Suites
     [Arguments]  ${params}  ${testdata}=${TESTDATA_SUITES}
-    Set Suite Variable  $SUITE  ${None}
     Run Tests  ${params} ${ESCAPES}  ${testdata}
     Stderr Should Be Empty
 
@@ -143,5 +140,5 @@ Run Failing Test
     [Arguments]  ${params}  ${testdata}  ${error_msg}
     Run Tests Without Processing Output  ${params} ${ESCAPES}  ${testdata}
     ${stderr} =  Get Stderr
-    Fail Unless Ends  ${stderr.strip()}  ${error_msg}
+    Should End With  ${stderr.strip()}  ${error_msg}
 
