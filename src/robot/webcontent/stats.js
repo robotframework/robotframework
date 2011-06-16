@@ -5,7 +5,7 @@ function addStatistics() {
 function addStatTable(tableName) {
     var stats = window.testdata.statistics()[tableName];
     if (tableName == 'tag' && stats.length == 0)
-       renderStatTable(tableName, window.templates.noTagsRow, undefined);
+       renderStatTable(tableName, window.templates.noTagsRow);
     else {
         var templateName = tableName + 'StatRow';
         renderStatTable(tableName, window.templates[templateName], stats);

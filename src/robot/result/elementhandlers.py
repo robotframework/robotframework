@@ -139,16 +139,19 @@ class _StatItemHandler(_Handler):
 
     def __init__(self, context, attrs):
         _Handler.__init__(self, context, attrs)
-        self._pass = int(attrs.getValue('pass'))
-        self._fail = int(attrs.getValue('fail'))
-        self._doc = attrs.get('doc', '')
-        self._info = attrs.get('info', '')
-        self._links = attrs.get('links', '')
-        self._pattern = attrs.get('combined', '')
+        self._attrs = {
+            'pass': int(attrs.getValue('pass')),
+            'fail': int(attrs.getValue('fail')),
+            'doc': attrs.get('doc', ''),
+            'info': attrs.get('info', ''),
+            'links': attrs.get('links', ''),
+            'combined': attrs.get('combined', ''),
+            'name': attrs.get('name', '')
+        }
 
     def end_element(self, text):
-        return [text, self._pass, self._fail, self._doc, self._info,
-                self._links, self._pattern]
+        self._attrs.update(label=text)
+        return self._attrs
 
 
 class _StatusHandler(object):

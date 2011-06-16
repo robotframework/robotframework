@@ -5,6 +5,7 @@ window.testdata = function () {
     var KEYWORD_TYPE = {kw: 'KEYWORD',
         setup:'SETUP',
         teardown:'TEARDOWN'};
+    var _statistics = null;
 
     function addElement(elem) {
         elem.id = uuid();
@@ -290,8 +291,11 @@ window.testdata = function () {
     }
 
     function statistics() {
-        var statData = window.output.stats;
-        return stats.Statistics(statData[0], statData[1], statData[2]);
+        if (!_statistics) {
+            var statData = window.output.stats;
+            _statistics = stats.Statistics(statData[0], statData[1], statData[2]);
+        }
+        return _statistics
     }
 
     return {
