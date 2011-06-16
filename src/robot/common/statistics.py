@@ -94,11 +94,11 @@ class TagStat(Stat):
 
     def __cmp__(self, other):
         if self.critical != other.critical:
-            return cmp(self.critical, other.critical)
+            return cmp(other.critical, self.critical)
         if self.non_critical != other.non_critical:
-            return cmp(self.non_critical, other.non_critical)
+            return cmp(other.non_critical, self.non_critical)
         if bool(self.combined) != bool(other.combined):
-            return cmp(bool(self.combined), bool(other.combined))
+            return cmp(bool(other.combined), bool(self.combined))
         return cmp(self.name, other.name)
 
     def serialize(self, serializer):
