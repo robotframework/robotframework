@@ -10,4 +10,4 @@ Suites Are Ordered Based On The Prefixes
     ...  'Suite First', 'Sub.Suite.1', 'Suite3', 'Suite4', 'Suite5', 
     ...  'Suite10', 'Suite 6', 'SUite7', 'suiTe 8', 'Suite 9 Name'
     Should Be Equal As Strings  ${SUITE.suites}  [${exp}]
-    Should Be Equal As Strings  ${SUITE.suites[1].suites}  ['Suite4', 'Suite2']
+    Should Be Equal As Strings  ${SUITE.suites[1].suites}  ['Suite4', '.Sui.te.2.']
