@@ -491,18 +491,18 @@ function initTemplates() {
         <td>{{html doc}}</td>
     </tr>
     {{/if}}
-    {{if pattern}}
+    {{if combined}}
     <tr>
         <th>Combined:</th>
-        <td>${pattern}</td>
+        <td>${combined}</td>
     </tr>
     {{/if}}
-    {{if links && links.length}}
+    {{if links}}{{if links.length}}
     <tr>
         <th>Links:</th>
         <td>{{each links}}<a href="${$value.url}" title="${$value.url}">${$value.title}</a>{{/each}} </td>
     </tr>
-    {{/if}}
+    {{/if}}{{/if}}
     <tr>
         <th>Status:</th>
         <td>${total} total, ${pass} passed, {{if fail}}<span class="fail">${fail} failed</span>{{else}}<span class="pass">0 failed</span>{{/if}}</td>
