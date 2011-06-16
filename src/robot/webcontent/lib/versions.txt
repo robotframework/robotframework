@@ -12,4 +12,5 @@ https://github.com/jquery/jquery-tmpl
 jsxcompressor
 -------------
 from http://jsxgraph.uni-bayreuth.de/distrib/jsxcompressor.zip
+downloaded 16th June 2011.
 
