@@ -93,6 +93,11 @@ class TestParser(unittest.TestCase):
     def test_link_to_suite_teardown(self):
         pkey = [5, 'W', 321]
         skey = [4, 'W', 3214]
+        self._create_data_for_suite_teardown_links(pkey, skey)
+        self.assertEqual(self._context.link_to(skey),'keyword_Suit.Subsuite.0')
+        self.assertEqual(self._context.link_to(pkey), 'keyword_Suit.1')
+
+    def _create_data_for_suite_teardown_links(self, pkey, skey):
         self._context.start_suite('Suit')
         _kw(self._context) #Suite setup
         self._context.start_suite('Subsuite')
@@ -103,5 +108,3 @@ class TestParser(unittest.TestCase):
         self._context.end_suite()
         _kw(self._context, lambda ctx: ctx.create_link_to_current_location(pkey))
         self._context.end_suite()
-        self.assertEqual(self._context.link_to(skey),'keyword_Suit.Subsuite.0')
-        self.assertEqual(self._context.link_to(pkey), 'keyword_Suit.1')
