@@ -345,7 +345,7 @@ class ArgumentParser:
         temp = []
         for path in self._split_pythonpath(paths):
             temp.extend(glob.glob(path))
-        return [os.path.normpath(path) for path in temp if path != '']
+        return [os.path.abspath(path) for path in temp if path]
 
     def _split_pythonpath(self, paths):
         # paths may already contain ':' as separator

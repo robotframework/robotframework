@@ -36,10 +36,11 @@ def _import_module_by_path(path):
     sys.path.insert(0, moddir)
     try:
         module = __import__(modname)
-        if hasattr(module, '__file__') and \
-                normpath(os.path.dirname(module.__file__)) != normpath(moddir):
-            del sys.modules[modname]
-            module = __import__(modname)
+        if hasattr(module, '__file__'):
+            impdir = os.path.dirname(module.__file__)
+            if normpath(impdir) != normpath(moddir):
+                del sys.modules[modname]
+                module = __import__(modname)
         return module
     finally:
         sys.path.pop(0)
@@ -117,10 +118,7 @@ def _dotted_import(name, type_):
 
 def _get_module_source(module):
     source = getattr(module, '__file__', None)
-    if not source:
-        return '<unknown>'
-    dirpath, filename = os.path.split(abspath(source))
-    return os.path.join(normpath(dirpath), filename)
+    return abspath(source) if source else '<unknown>'
 
 def _raise_import_failed(type_, name):
     error_msg, error_details = get_error_details()

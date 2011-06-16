@@ -87,7 +87,7 @@ class _BaseTestLibrary(BaseLibrary):
 
     def __init__(self, libcode, source, name, args, variables):
         if os.path.exists(name):
-            name = os.path.splitext(os.path.basename(os.path.normpath(name)))[0]
+            name = os.path.splitext(os.path.basename(os.path.abspath(name)))[0]
         self.source = source
         self.version = self._get_version(libcode)
         self.name = name

@@ -32,7 +32,7 @@ from defaultvalues import DefaultValues
 
 
 def TestSuite(datasources, settings):
-    datasources = [ utils.normpath(path) for path in datasources ]
+    datasources = [utils.abspath(path) for path in datasources]
     suite = _get_suite(datasources, settings['SuiteNames'], settings['WarnOnSkipped'])
     suite.set_options(settings)
     _check_suite_contains_tests(suite, settings['RunEmptySuite'])

@@ -86,7 +86,7 @@ class _BaseSettings(object):
         if name in self._output_opts and utils.eq(value, 'NONE'):
             return 'NONE'
         if name == 'OutputDir':
-            return utils.normpath(value)
+            return utils.abspath(value)
         if name in ['SuiteStatLevel', 'MonitorWidth']:
             return self._convert_to_integer(name, value)
         if name in ['Listeners', 'VariableFiles']:
@@ -120,7 +120,7 @@ class _BaseSettings(object):
         if self._outputfile_disabled(type_, name):
             return 'NONE'
         name = self._process_output_name(name, type_)
-        path = utils.normpath(os.path.join(self['OutputDir'], name), False)
+        path = utils.abspath(os.path.join(self['OutputDir'], name))
         self._create_output_dir(os.path.dirname(path), type_)
         return path
 

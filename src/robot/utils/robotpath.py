@@ -27,14 +27,14 @@ else:
         _CASE_INSENSITIVE_FILESYSTEM = False
 
 
-def normpath(path, normcase=False):
+def normpath(path):
     """Returns path in normalized and absolute format.
 
-    On case-insensitive file systems the path is also case normalized is
-    `normcase` is True.
+    On case-insensitive file systems the path is also case normalized.
+    If that is not desired, abspath should be used instead.
     """
     path = abspath(path)
-    if normcase and _CASE_INSENSITIVE_FILESYSTEM:
+    if _CASE_INSENSITIVE_FILESYSTEM:
         path = path.lower()
     return path
 
@@ -71,8 +71,8 @@ def get_link_path(target, base):
     return url.replace('%5C', '/').replace('%3A', ':').replace('|', ':')
 
 def _get_pathname(target, base):
-    target = normpath(target, normcase=False)
-    base = normpath(base, normcase=False)
+    target = abspath(target)
+    base = abspath(base)
     if os.path.isfile(base):
         base = os.path.dirname(base)
     if base == target:

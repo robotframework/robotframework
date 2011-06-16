@@ -102,7 +102,7 @@ class ImportCache:
 
     def _norm_path_key(self, key):
         if isinstance(key, basestring) and os.path.exists(key):
-            return utils.normpath(key, normcase=True)
+            return utils.normpath(key)
         if isinstance(key, (tuple, list)):
             return [self._norm_path_key(k) for k in key]
         return key
