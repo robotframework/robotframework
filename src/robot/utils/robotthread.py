@@ -26,18 +26,18 @@ class ThreadedRunner(Runnable):
 
     def __init__(self, runnable, args=None, kwargs=None, notifier=None):
         self._runnable = lambda: runnable(*(args or ()), **(kwargs or {}))
+        self._notifier = Event()
         self._result = None
         self._error = None
         self._traceback = None
         self._thread = None
-        self._exception_occurred = False
 
     def run(self):
         try:
             self._result = self._runnable()
         except:
-            self._exception_occurred = True
             self._error, self._traceback = sys.exc_info()[1:]
+        self._notifier.set()
 
     __call__ = run
 
@@ -45,8 +45,8 @@ class ThreadedRunner(Runnable):
         self._thread = Thread(self)
         self._thread.setDaemon(True)
         self._thread.start()
-        self._thread.join(timeout)
-        return not self._thread.isAlive() and not self._exception_occurred
+        self._notifier.wait(timeout)
+        return self._notifier.isSet()
 
     def get_result(self):
         if self._error:
