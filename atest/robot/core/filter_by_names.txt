@@ -111,7 +111,7 @@ Filter Using Long Suite Name And Other Filters
 
 Filter Suite When Suites Are Ordered With Prefix
     Run Suites  --suite Suite2  ${DATADIR}/misc/multiple_suites
-    Should Be True  ${SUITE.suites} == ['Subsuite1']
+    Should Be True  ${SUITE.suites} == ['Sub.Suite.1']
     Should Be True  ${SUITE.suites[0].suites} == ['Suite2']
 
 *** Keywords ***
