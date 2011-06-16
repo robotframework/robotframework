@@ -11,6 +11,7 @@ br {
 }
 
 /* Error Box */
+/* TODO: Test with old browsers as they are likelier to see this. */
 div.error_box {
     display: block;
     border: 2px solid #000000;
