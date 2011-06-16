@@ -15,33 +15,33 @@ describe("Searching by tags", function () {
     });
 
     it("should find tags combined with &", function() {
-        expect(model.containsTag(['x', 'y'], 'x & y', true)).toBeTruthy();
-        expect(model.containsTag(['xx', 'Yy', 'ZZ'], 'Y Y & X X & zz', true)).toBeTruthy();
-        expect(model.containsTag(['x', 'y'], 'xx & y', true)).not.toBeTruthy();
+        expect(model.containsTagPattern(['x', 'y'], 'x&y')).toBeTruthy();
+        expect(model.containsTagPattern(['xx', 'Yy', 'ZZ'], 'Y Y & X X & zz')).toBeTruthy();
+        expect(model.containsTagPattern(['x', 'y'], 'xx&y')).not.toBeTruthy();
     });
 
     it("should find tags combined with NOT", function() {
-        expect(model.containsTag(['x', 'y'], 'x NOT z', true)).toBeTruthy();
-        expect(model.containsTag(['xx', 'yy'], 'X X NOT y NOT zz', true)).toBeTruthy();
-        expect(model.containsTag(['X X', 'Y Y'], 'xx NOT yy', true)).not.toBeTruthy();
+        expect(model.containsTagPattern(['x', 'y'], 'xNOTz')).toBeTruthy();
+        expect(model.containsTagPattern(['xx', 'yy'], 'X X NOT y NOT zz')).toBeTruthy();
+        expect(model.containsTagPattern(['X X', 'Y Y'], 'xxNOTyy')).not.toBeTruthy();
     });
 
     it("should find tags combined with patterns (* and ?)", function() {
-        expect(model.containsTag(['x', 'y'], 'x*', true)).toBeTruthy();
-        expect(model.containsTag(['xxxyyy'], 'x*', true)).toBeTruthy();
-        expect(model.containsTag(['xyz'], 'x?z', true)).toBeTruthy();
-        expect(model.containsTag(['-x-'], '*x*', true)).toBeTruthy();
-        expect(model.containsTag(['x', 'y'], 'x', true)).toBeTruthy();
+        expect(model.containsTagPattern(['x', 'y'], 'x*')).toBeTruthy();
+        expect(model.containsTagPattern(['xxxyyy'], 'x*')).toBeTruthy();
+        expect(model.containsTagPattern(['xyz'], 'x?z')).toBeTruthy();
+        expect(model.containsTagPattern(['-x-'], '*x*')).toBeTruthy();
+        expect(model.containsTagPattern(['x', 'y'], 'x')).toBeTruthy();
     });
 
     it("should find tags combined with patterns and & and NOT", function() {
-        expect(model.containsTag(['xx', 'yy'], 'x* & y?', true)).toBeTruthy();
-        expect(model.containsTag(['xxxyyy'], 'x* NOT y', true)).toBeTruthy();
-        expect(model.containsTag(['xxxyyy'], 'x* NOT *y', true)).not.toBeTruthy();
+        expect(model.containsTagPattern(['xx', 'yy'], 'x* & y?')).toBeTruthy();
+        expect(model.containsTagPattern(['xxxyyy'], 'x* NOT y')).toBeTruthy();
+        expect(model.containsTagPattern(['xxxyyy'], 'x* NOT *y')).not.toBeTruthy();
     });
 
     it("should esacpe regex metacharacters in patterns", function() {
-        expect(model.containsTag(['xyz'], 'x.*', true)).not.toBeTruthy();
-        expect(model.containsTag(['x.z'], 'x.*', true)).toBeTruthy();
+        expect(model.containsTagPattern(['xyz'], 'x.*')).not.toBeTruthy();
+        expect(model.containsTagPattern(['x.z'], 'x.*')).toBeTruthy();
     });
 });
