@@ -82,7 +82,7 @@ class _BaseSettings(object):
         if name in ['Metadata', 'TagDoc']:
             return [v.replace('_', ' ') for v in value]
         if name in ['Include', 'Exclude', 'TagStatCombine']:
-            return [item.replace('AND', '&') for item in value]
+            return [item.replace('AND', '&').replace('_', ' ') for item in value]
         if name in self._output_opts and utils.eq(value, 'NONE'):
             return 'NONE'
         if name == 'OutputDir':

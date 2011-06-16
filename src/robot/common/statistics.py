@@ -186,21 +186,10 @@ class TagStatistics:
                  for option in tag_stat_combine_options ]
 
     def _parse_name_and_pattern_from(self, option):
-        pattern, name = self._split_pattern_and_name(option)
-        name = self._get_name(pattern, name)
-        return pattern, name
-
-    def _split_pattern_and_name(self, pattern):
-        option_separator = ':'
-        if not option_separator in pattern:
-            return pattern, pattern
-        index = pattern.rfind(option_separator)
-        return pattern[:index], pattern[index+1:]
-
-    def _get_name(self, pattern, name):
-        if pattern != name:
-            return name.replace('_', ' ')
-        return name.replace('&', ' & ').replace('NOT', ' NOT ')
+        pattern = option.replace('&', ' & ').replace('NOT', ' NOT ')
+        if ':' in pattern:
+            return pattern.rsplit(':', 1)
+        return pattern, pattern
 
     def add_test(self, test, critical):
         self._add_tags_statistics(test, critical)
