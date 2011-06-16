@@ -379,7 +379,7 @@ function initTemplates() {
   <tr>
     <td class="col_stat_name">
       <div class="stat_name">
-        <a href="#suite_${fullname}" onclick="suiteDetailSelected('${fullname}');" title="${doc}"><span class="parent_name">${parentName}</span>${name}</a>
+        <a href="#suite_${label}" onclick="suiteDetailSelected('${label}');" title="${label}"><span class="parent_name">${parentName}</span>${name}</a>
       </div>
     </td>
     {{tmpl($data) '#stat_columns'}}
@@ -459,7 +459,7 @@ function initTemplates() {
         <select id="suite_detail_selector" onchange="suiteDetailSelected(this.options[this.selectedIndex].value);">
           <option value="">Select suite...</option>
           {{each suites}}
-          <option value="${$value.fullname}">${$value.fullname}</option>
+          <option value="${$value.label}">${$value.label}</option>
           {{/each}}
         </select>
       </td>

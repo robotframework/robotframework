@@ -318,15 +318,9 @@ window.stats = (function () {
                 suite: util.map(suiteElems, suiteStatElem)};
     }
 
-    function statElem(data) {
-        var stat = {
-            label: data[0],
-            pass:  data[1],
-            fail:  data[2],
-            total: data[1] + data[2],
-            doc:   data[3],
-            links: []
-        };
+    function statElem(stat) {
+        stat.total = stat.pass + stat.fail;
+        stat.links = parseLinks(stat.links);
         var percents = calculatePercents(stat.total, stat.pass, stat.fail);
         stat.passPercent = percents[0];
         stat.failPercent = percents[1];
@@ -338,24 +332,21 @@ window.stats = (function () {
 
     function tagStatElem(data) {
         var stat = statElem(data);
-        stat.info = data[4];
+        // TODO: move to templates.
         if (stat.info)
             stat.shownInfo = '(' + stat.info + ')';
         else
             stat.shownInfo = '';
-        stat.links = parseLinks(data[5]);
-        stat.pattern = data[6];
         return stat;
     }
 
     function suiteStatElem(data) {
         var stat = statElem(data);
-        stat.fullname = function () { return stat.doc; };
-        var nameParts = stat.doc.split('.');
-        stat.name = nameParts.pop();
-        if (nameParts)
-            nameParts.push('');
-        stat.parentName = nameParts.join(' . ');
+        stat.parentName = stat.label.slice(0, stat.label.length-stat.name.length);
+        stat.parentName = stat.parentName.replace(/\./g, ' . ');
+        // compatibility with RF 2.5 outputs
+        if (!stat.name)
+            stat.name = stat.label.split('.').pop();
         return stat;
     }
 
