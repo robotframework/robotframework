@@ -12,12 +12,20 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+
+# TODO: Various tasks
+# - Rename this module so that it is not confused with standard json module
+# - Consider moving under utils
+# - Cleanup
+
+
 def encode_basestring(string):
     def get_matching_char(c):
         val = ord(c)
         if val < 127 and val > 31:
             return c
         return '\\u' + hex(val)[2:].rjust(4,'0')
+    # TODO: Our log doesn't contain all these control chars
     string = string.replace('\\', '\\\\')
     string = string.replace('"', '\\"')
     string = string.replace('\b', '\\b')
@@ -25,17 +33,12 @@ def encode_basestring(string):
     string = string.replace('\n', '\\n')
     string = string.replace('\r', '\\r')
     string = string.replace('\t', '\\t')
-    result = []
-    for c in string:
-        result += [get_matching_char(c)]
-    return '"'+''.join(result)+'"'
+    return '"%s"' % ''.join(get_matching_char(c) for c in string)
 
 def json_dump(data, output):
     if data is None:
         output.write('null')
-    elif isinstance(data, int):
-        output.write(str(data))
-    elif isinstance(data, long):
+    elif isinstance(data, (int, long)):
         output.write(str(data))
     elif isinstance(data, basestring):
         output.write(encode_basestring(data))
@@ -46,7 +49,7 @@ def json_dump(data, output):
             if index < len(data)-1:
                 output.write(',')
         output.write(']')
-    elif type(data) == dict:
+    elif isinstance(data, dict):
         output.write('{')
         for index, item in enumerate(data.items()):
             json_dump(item[0], output)
