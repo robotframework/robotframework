@@ -360,8 +360,12 @@ function initTemplates() {
     {{each metadata}}
       <tr><th>${$index}:</th><td>{{html $value}}</td></tr>
     {{/each}}
+    {{if times.startTime() != 'N/A'}}
     <tr><th>Start Time:</th><td>${times.startTime}</td></tr>
+    {{/if}}
+    {{if times.endTime() != 'N/A'}}
     <tr><th>End Time:</th><td>${times.endTime}</td></tr>
+    {{/if}}
     <tr><th>Elapsed Time:</th><td>${times.elapsedTime}</td></tr>
     {{if $item.logURL}}
     <tr>
