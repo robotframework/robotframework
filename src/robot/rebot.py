@@ -119,44 +119,42 @@ Options:
  -L --loglevel level      Threshold for selecting messages. Available levels:
                           TRACE (default), DEBUG, INFO, WARN, NONE (no msgs)
     --suitestatlevel level  How many levels to show in 'Statistics by Suite'
-                          table in outputs. By default all suite levels are
-                          shown. If zero (0) is given the whole table is
-                          removed. Example: '--suitestatlevel 3'
-    --tagstatinclude tag *  Include only these tags in 'Statistics by Tag' and
-                          and 'Test Details by Tag' tables in outputs. By
-                          default all tags set in test cases are shown. Given
-                          'tag' can also be a simple pattern (see e.g. --test).
-    --tagstatexclude tag *  Exclude these tags from 'Statistics by Tag' and
-                          'Test Details by Tag' tables in outputs. This option
-                          can be used with --tagstatinclude similarly as
-                          --exclude is used with --include.
+                          in log and report. By default all suite levels are
+                          shown. Example:  --suitestatlevel 3
+    --tagstatinclude tag *  Include only matching tags in 'Statistics by Tag'
+                          and 'Test Details' in log and report. By default all
+                          tags set in test cases are shown. Given 'tag' can
+                          also be a simple pattern (see e.g. --test).
+    --tagstatexclude tag *  Exclude matching tags from 'Statistics by Tag' and
+                          'Test Details'. This option can be used with
+                          --tagstatinclude similarly as --exclude is used with
+                          --include.
     --tagstatcombine tags:name *  Create combined statistics based on tags.
                           These statistics are added into 'Statistics by Tag'
-                          table and matching tests into 'Test Details by Tag'
-                          table. Unless the optional 'name' is used, name of
-                          the added combined tag is got from specified tags.
-                          Tags are combined using the rules explained in
-                          --include.
+                          and matching tests into 'Test Details'. If optional
+                          'name' is not given, name of the combined tag is got
+                          from the specified tags. Tags are combined using the
+                          rules explained in --include.
+                          Examples:  --tagstatcombine tag1ANDtag2:My_name
+                                     --tagstatcombine requirement-*
     --tagdoc pattern:doc *  Add documentation to tags matching given pattern.
-                          Documentation is shown in 'Test Details by Tag'
-                          table and also as a tooltip in 'Statistics by Tag'
-                          table. Pattern can contain characters '*' (matches
-                          anything) and '?' (matches any char). In case of
-                          multiple matches, documentations are catenated with
-                          spaces. Documentation can contain formatting as with
-                          --doc option.
+                          Documentation is shown in 'Test Details' and also as
+                          a tooltip in 'Statistics by Tag'. Pattern can contain
+                          characters '*' (matches anything) and '?' (matches
+                          any char). If one tag matches multiple patterns, its
+                          docs are catenated with spaces. Documentation can
+                          contain formatting similarly as with --doc option.
                           Examples:  --tagdoc mytag:My_documentation
                                      --tagdoc regression:*See*_http://info.html
                                      --tagdoc owner-*:Original_author
-    --tagstatlink pattern:link:title *  Adds links into 'Statistics by Tag'
-                          table in outputs. Pattern can contain characters '*'
-                          (matches anything) and '?' (matches any character).
-                          Character(s) matching to wildcard expression(s) can
-                          be used in the resulting link with syntax %N, where N
-                          is the index of the match (starting from 1). In title
+    --tagstatlink pattern:link:title *  Add external links into 'Statistics by
+                          Tag'. Pattern can contain characters '*' (matches
+                          anything) and '?' (matches any char). Characters
+                          matching to wildcard expressions can be used in the
+                          resulting link with syntax %N, where N is the index
+                          of the match (starting from 1). In the 'title'
                           underscores are automatically converted to spaces.
-                          Examples:
-                          --tagstatlink mytag:http://my.domain:Link
+                          Examples: --tagstatlink mytag:http://my.domain:Link
                           --tagstatlink bug-*:http://tracker/id=%1:Bug_Tracker
     --removekeywords all|passed  Remove keyword data from generated outputs.
                           Keyword data is not needed when creating reports and
