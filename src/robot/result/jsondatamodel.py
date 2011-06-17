@@ -40,9 +40,26 @@ class DataModel(object):
         self._settings = settings
 
     def write_to(self, output):
+        # TODO! Clean this method!
+        # TODO! Should find a better solution to script too big problems
+        # This has the initial solution to IE / Firefox script too big problems
+        # It splits suite to smaller script parts
+        strings = self._robot_data['strings']
+        suite = self._robot_data['suite']
+        del self._robot_data['strings']
+        del self._robot_data['suite']
         self._dump_json('window.output = ', self._robot_data, output)
         if self._settings:
             self._dump_json('window.settings = ', self._settings, output)
+        output.write('</script>\n<script type="text/javascript">\n')
+        self._dump_json('window.output["strings"] = ', strings, output)
+        output.write('window.output["suite"] = [];\n')
+        for i, suite_elem in enumerate(suite):
+            output.write('</script>\n<script type="text/javascript">\n')
+            self._dump_json('window.output["suite"]['+str(i)+'] = ', suite_elem, output)
+            output.write('</script>\n<script type="text/javascript">\n')
+        self._robot_data['strings'] = strings
+        self._robot_data['suite'] = suite
 
     def _dump_json(self, name, data, output):
         output.write(name)
