@@ -80,7 +80,7 @@ window.testdata = function () {
         return kw;
     }
 
-    var keywordMatcher = headerMatcher("kw", "setup", "teardown");
+    var keywordMatcher = headerMatcher("kw", "setup", "teardown", "foritem", "for");
 
     function messageMatcher(elem) {
         return (elem.length == 3 &&
