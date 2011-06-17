@@ -1,0 +1,67 @@
+function addHeader(suiteName, type) {
+    var givenTitle = window.settings.title;
+    document.title = givenTitle ? givenTitle : suiteName + " Test " + type;
+    var generatedAgoMillis = window.testdata.generated().getTime();
+    var template =
+        '<div id="generated">' +
+        '<span>Generated<br />${generated}</span><br />' +
+        '<span id="generated_ago">${generatedAgo} ago</span>' +
+        '</div>' +
+        '<h1>${title}</h1>';
+    $.tmpl(template, {
+        title: document.title,
+        generated: window.output.generatedTimestamp,
+        generatedAgo: util.createGeneratedAgoString(generatedAgoMillis)
+    }).appendTo($('#header_div'));
+}
+
+function addReportOrLogLink(url) {
+    if (url) {
+        $('#report_or_log_link a').attr('href', url);
+    } else {
+        $('#report_or_log_link').remove();
+    }
+}
+
+function addStatistics() {
+    $.map(['total', 'tag', 'suite'], addStatTable);
+}
+
+function addStatTable(tableName) {
+    var stats = window.testdata.statistics()[tableName];
+    if (tableName == 'tag' && stats.length == 0)
+       renderStatTable(tableName, 'no_tags_row');
+    else {
+        var templateName = tableName + 'StatRow';
+        renderStatTable(tableName, window.templates[templateName], stats);
+    }
+}
+
+function renderStatTable(tableName, template, stats) {
+    var tableId = "#" + tableName + "_stats";
+    $.tmpl(template, stats).appendTo($(tableId));
+}
+
+$.template("stat_columns",
+    '<td class="col_stat">${total}</td>' +
+    '<td class="col_stat">${pass}</td>' +
+    '<td class="col_stat">${fail}</td>' +
+    '<td class="col_graph">' +
+      '<div class="graph">' +
+        '<b class="pass_bar" style="width: ${passWidth}%;" title="${passPercent}%"></b>' +
+        '<b class="fail_bar" style="width: ${failWidth}%;" title="${failPercent}%"></b>' +
+      '</div>' +
+    '</td>'
+);
+
+$.template('no_tags_row',
+    '<tr>' +
+    '<td class="col_stat_name">No Tags</td>' +
+    '<td class="col_stat"></td>' +
+    '<td class="col_stat"></td>' +
+    '<td class="col_stat"></td>' +
+    '<td class="col_graph">' +
+      '<div class="graph"></div>' +
+    '</td>' +
+    '</tr>'
+);

@@ -16,7 +16,7 @@
 <script type="text/javascript" src="model.js"></script>
 <script type="text/javascript" src="util.js"></script>
 <script type="text/javascript" src="testdata.js"></script>
-<script type="text/javascript" src="stats.js"></script>
+<script type="text/javascript" src="view.js"></script>
 
 <title></title>
 </head>
@@ -67,8 +67,7 @@ removeJavaScriptDisabledWarning();
 $(document).ready(function(){
     var topsuite = window.testdata.suite();
     window.templates = initTemplates();
-    setDocumentTitle(topsuite.name, window.settings.title);
-    addHeader();
+    addHeader(topsuite.name, 'Log');
     addReportOrLogLink(window.settings.reportURL);
     addStatistics();
     addErrors();
@@ -86,24 +85,6 @@ function removeJavaScriptDisabledWarning() {
     $('#javascript_enabled').css('visibility', 'visible');
 }
 
-// TODO: This is duplicated in report.html
-function addHeader() {
-    var generatedAgoMillis = window.testdata.generated().getTime();
-    $.tmpl(window.templates.header, {
-        title: document.title,
-        generated: window.output.generatedTimestamp,
-        generatedAgo: util.createGeneratedAgoString(generatedAgoMillis)
-    }).appendTo($('#header_div'));
-}
-
-// TODO: This is duplicated in report.html
-function addReportOrLogLink(url) {
-    if (url) {
-        $('#report_or_log_link a').attr('href', url);
-    } else {
-        $('#report_or_log_link').remove();
-    }
-}
 
 function addErrors() {
     var errors = window.testdata.errors();
@@ -144,18 +125,11 @@ function addTestExecutionLog(main) {
     }
 }
 
-// TODO: Duplicated in report.html
-function setDocumentTitle(suiteName, givenTitle) {
-    document.title = givenTitle ? givenTitle : suiteName + " Test Log";
-}
-
 function initTemplates() {
     return {
-        header: $('#header_template').template(),
         totalStatRow: $('#total_statistics_row').template(),
         tagStatRow: $('#tag_statistics_row').template(),
         suiteStatRow: $('#suite_statistics_row').template(),
-        noTagsRow: $('#no_tags_row').template(),
         errorHeader: $('#error_header_template').template(),
         error: $('#error_template').template(),
         suite: $('#suite_template').template(),
@@ -164,15 +138,6 @@ function initTemplates() {
         message: $('#message_template').template(),
     };
 };
-</script>
-
-<!-- TODO: This is duplicated in report.html -->
-<script type="text/html" id="header_template">
-  <div id="generated">
-    <span>Generated<br />${generated}</span><br />
-    <span id="generated_ago">${generatedAgo} ago</span>
-  </div>
-  <h1>${title}</h1>
 </script>
 
 <script type="text/html" id="total_statistics_row">
@@ -224,20 +189,6 @@ function initTemplates() {
       <b class="fail_bar" style="width: ${failWidth}%;" title="${failPercent}%"></b>
     </div>
   </td>
-</script>
-
-<script type="text/html" id="no_tags_row">
-  <tr>
-    <td class="col_stat_name">No Tags</td>
-    <td class="col_stat"></td>
-    <td class="col_stat"></td>
-    <td class="col_stat"></td>
-    <td class="col_graph">
-      <div class="graph">
-        <b class="no_tags_bar" style="width: 100%;"></b>
-      </div>
-    </td>
-  </tr>
 </script>
 
 <script type="text/html" id="error_header_template">
