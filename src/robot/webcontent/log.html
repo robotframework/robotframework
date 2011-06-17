@@ -29,46 +29,17 @@
      <li>Minimum browser requirements: IE8, Firefox +3.5, Chrome xx, Safari zz, Opera yy.</li>
      <li>Check JavaScript error log if there are errors.</li>
    </ul>
- </div>
-<div id="javascript_enabled" style="visibility: hidden;">
-  <div class="header" id="header_div"></div>
-  <div id="report_or_log_link"><a href="#">REPORT</a></div>
-  <h2>Test Statistics</h2>
-  <table class="statistics" id="total_stats">
-    <tr>
-      <th class="col_stat_name">Total Statistics</th>
-      <th class="col_stat">Total</th>
-      <th class="col_stat">Pass</th>
-      <th class="col_stat">Fail</th>
-      <th class="col_graph">Graph</th>
-    </tr>
-  </table>
-  <table class="statistics" id="tag_stats">
-    <tr>
-      <th class="col_stat_name">Statistics by Tag</th>
-      <th class="col_stat">Total</th>
-      <th class="col_stat">Pass</th>
-      <th class="col_stat">Fail</th>
-      <th class="col_graph">Graph</th>
-    </tr>
-  </table>
-  <table class="statistics" id="suite_stats">
-    <tr>
-      <th class="col_stat_name">Statistics by Suite</th>
-      <th class="col_stat">Total</th>
-      <th class="col_stat">Pass</th>
-      <th class="col_stat">Fail</th>
-      <th class="col_graph">Graph</th>
-    </tr>
-  </table>
 </div>
+
+<div class="header" id="header_div"></div>
+<div id="statistics_container"></div>
+
 <script type="text/javascript">
 removeJavaScriptDisabledWarning();
 $(document).ready(function(){
     var topsuite = window.testdata.suite();
     window.templates = initTemplates();
     addHeader(topsuite.name, 'Log');
-    addReportOrLogLink(window.settings.reportURL);
     addStatistics();
     addErrors();
     addTestExecutionLog(topsuite);
@@ -79,12 +50,6 @@ $(document).ready(function(){
         expandFailed(topsuite);
     }
 });
-
-function removeJavaScriptDisabledWarning() {
-    $('#javascript_disabled').remove();
-    $('#javascript_enabled').css('visibility', 'visible');
-}
-
 
 function addErrors() {
     var errors = window.testdata.errors();
@@ -147,7 +112,7 @@ function initTemplates() {
         <span title="${doc}">${label}</span>
       </div>
     </td>
-    {{tmpl($data) '#stat_columns'}}
+    {{tmpl($data) 'stat_columns'}}
   </tr>
 </script>
 
@@ -164,7 +129,7 @@ function initTemplates() {
         {{/each}}
       </div>
     </td>
-    {{tmpl($data) '#stat_columns'}}
+    {{tmpl($data) 'stat_columns'}}
   </tr>
 </script>
 
@@ -175,20 +140,8 @@ function initTemplates() {
         <a onclick="makeElementVisible('suite_${label}')" href="#suite_${label}" title="${label}"><span class="parent_name">${parentName}</span>${name}</a>
       </div>
     </td>
-    {{tmpl($data) '#stat_columns'}}
+    {{tmpl($data) 'stat_columns'}}
   </tr>
-</script>
-
-<script type="text/html" id="stat_columns">
-  <td class="col_stat">${total}</td>
-  <td class="col_stat">${pass}</td>
-  <td class="col_stat">${fail}</td>
-  <td class="col_graph">
-    <div class="graph">
-      <b class="pass_bar" style="width: ${passWidth}%;" title="${passPercent}%"></b>
-      <b class="fail_bar" style="width: ${failWidth}%;" title="${failPercent}%"></b>
-    </div>
-  </td>
 </script>
 
 <script type="text/html" id="error_header_template">

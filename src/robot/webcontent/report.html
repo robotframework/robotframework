@@ -28,39 +28,9 @@
           <li>Check JavaScript error log if there are errors.</li>
       </ul>
   </div>
-  <div id="javascript_enabled" style="visibility: hidden;">
-      <div class="header" id="header_div"></div>
-      <div id="report_or_log_link"><a href="#">LOG</a></div>
-      <h2>Test Statistics</h2>
-      <table class="statistics" id="total_stats">
-        <tr>
-          <th class="col_stat_name">Total Statistics</th>
-          <th class="col_stat">Total</th>
-          <th class="col_stat">Pass</th>
-          <th class="col_stat">Fail</th>
-          <th class="col_graph">Graph</th>
-        </tr>
-      </table>
-      <table class="statistics" id="tag_stats">
-        <tr>
-          <th class="col_stat_name">Statistics by Tag</th>
-          <th class="col_stat">Total</th>
-          <th class="col_stat">Pass</th>
-          <th class="col_stat">Fail</th>
-          <th class="col_graph">Graph</th>
-        </tr>
-      </table>
-      <table class="statistics" id="suite_stats">
-        <tr>
-          <th class="col_stat_name">Statistics by Suite</th>
-          <th class="col_stat">Total</th>
-          <th class="col_stat">Pass</th>
-          <th class="col_stat">Fail</th>
-          <th class="col_graph">Graph</th>
-        </tr>
-      </table>
-      <div id="test_details_container"></div>
-  </div>
+  <div class="header" id="header_div"></div>
+  <div id="statistics_container"></div>
+  <div id="test_details_container"></div>
 
 <script type="text/javascript">
 removeJavaScriptDisabledWarning();
@@ -69,7 +39,6 @@ $(document).ready(function () {
     setBackground(topsuite);
     window.templates = initTemplates();
     addHeader(topsuite.name, 'Report');
-    addReportOrLogLink(window.settings.logURL);
     addSummary(topsuite);
     addStatistics();
     if (window.location.hash) {
@@ -79,11 +48,6 @@ $(document).ready(function () {
     }
     $('#test_details_container').css('min-height', $(window).height());
 });
-
-function removeJavaScriptDisabledWarning() {
-    $('#javascript_disabled').remove();
-    $('#javascript_enabled').css('visibility', 'visible');
-}
 
 function addSummary(topsuite) {
     var opts = {logURL: window.settings.logURL};
@@ -131,14 +95,14 @@ function emptyDetails(){
 }
 
 function totalDetailSelected(type) {
-    if (type == "") return;
+    if (!type) return;
     renderTotalSelector("total_"+type);
     renderTotalDetails(type);
     ensureTotalDetailsAreVisible(type);
 }
 
 function tagDetailSelected(name) {
-    if (name == "") return;
+    if (!name) return;
     renderTagsSelector("tag_"+name);
     var alltags = window.testdata.statistics().tag;
     var tag = findTagByName(name, alltags);
@@ -147,7 +111,7 @@ function tagDetailSelected(name) {
 }
 
 function suiteDetailSelected(name) {
-    if (name == "") return;
+    if (!name) return;
     renderSuiteSelector("suite_"+name);
     renderDetailsBySuite(name);
     ensureSuiteDetailsAreVisible(name);
@@ -210,17 +174,17 @@ function findTagByName(name, tags) {
 
 function showDetailsByHash() {
     // TODO: cleanup
-    hash = decodeURI(window.location.hash.substring(1));
+    var hash = decodeURI(window.location.hash.substring(1));
     if(hash.indexOf("suite_")==0){
-        suite = hash.substring("suite_".length);
+        var suite = hash.substring("suite_".length);
         suiteDetailSelected(suite)
     }
     else if(hash.indexOf("tag_")==0){
-        tag = hash.substring("tag_".length);
+        var tag = hash.substring("tag_".length);
         tagDetailSelected(tag)
     }
     else if(hash.indexOf("total_")==0){
-        type = hash.substring("total_".length);
+        var type = hash.substring("total_".length);
         totalDetailSelected(type)
     }
     else if(hash=='totals'){
@@ -283,7 +247,7 @@ function iterateDetails(){
 }
 
 function pop_upto(list, upto) {
-    result = [];
+    var result = [];
     while (list.length > 0 && result.length < upto)
         result.push(list.shift());
     return result;
@@ -304,7 +268,7 @@ function initTemplates() {
         testDetailsTable: $('#test_details_table').template(),
         testDetailsRow: $('#report_test_details_row').template()
     };
-};
+}
 </script>
 
 <script type="text/html" id="summary_table">
@@ -434,7 +398,6 @@ function initTemplates() {
     </tr>
   </table>
 </script>
-
 
 <script type="text/html" id="tag_or_total_details">
     {{if doc}}

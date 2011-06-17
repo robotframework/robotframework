@@ -1,3 +1,7 @@
+function removeJavaScriptDisabledWarning() {
+    $('#javascript_disabled').remove();
+}
+
 function addHeader(suiteName, type) {
     var givenTitle = window.settings.title;
     document.title = givenTitle ? givenTitle : suiteName + " Test " + type;
@@ -7,23 +11,52 @@ function addHeader(suiteName, type) {
         '<span>Generated<br />${generated}</span><br />' +
         '<span id="generated_ago">${generatedAgo} ago</span>' +
         '</div>' +
+        '<div id="report_or_log_link"><a href="#"></a></div>' +
         '<h1>${title}</h1>';
     $.tmpl(template, {
         title: document.title,
         generated: window.output.generatedTimestamp,
         generatedAgo: util.createGeneratedAgoString(generatedAgoMillis)
     }).appendTo($('#header_div'));
+    addReportOrLogLink(type);
 }
 
-function addReportOrLogLink(url) {
+function addReportOrLogLink(myType) {
+    var url;
+    var text;
+    if (myType == 'Report') {
+        url = window.settings.logURL;
+        text = 'LOG';
+    } else {
+        url = window.settings.reportURL;
+        text = 'REPORT';
+    }
     if (url) {
         $('#report_or_log_link a').attr('href', url);
+        $('#report_or_log_link a').text(text);
     } else {
         $('#report_or_log_link').remove();
     }
 }
 
 function addStatistics() {
+    var statHeaders =
+        '<th class="col_stat">Total</th>' +
+        '<th class="col_stat">Pass</th>' +
+        '<th class="col_stat">Fail</th>' +
+        '<th class="col_graph">Graph</th>';
+    var statTable =
+        '<h2>Test Statistics</h2>' +
+        '<table class="statistics" id="total_stats">' +
+        '<tr><th class="col_stat_name">Total Statistics</th>' + statHeaders + '</tr>' +
+        '</table>' +
+        '<table class="statistics" id="tag_stats">' +
+        '<tr><th class="col_stat_name">Statistics by Tag</th>' + statHeaders + '</tr>' +
+        '</table>' +
+        '<table class="statistics" id="suite_stats">' +
+        '<tr><th class="col_stat_name">Statistics by Suite</th>' + statHeaders + '</tr>' +
+        '</table>';
+    $(statTable).appendTo('#statistics_container')
     $.map(['total', 'tag', 'suite'], addStatTable);
 }
 
