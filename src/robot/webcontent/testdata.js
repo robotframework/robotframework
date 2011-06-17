@@ -4,7 +4,10 @@ window.testdata = function () {
     var LEVEL = {I:'info', H:'info', T:'trace', W:'warn', E:'error', D:'debug', F:'fail'};
     var KEYWORD_TYPE = {kw: 'KEYWORD',
         setup:'SETUP',
-        teardown:'TEARDOWN'};
+        teardown:'TEARDOWN',
+        for:'FOR',
+        foritem:'VAR'
+    };
     var _statistics = null;
 
     function addElement(elem) {
@@ -80,7 +83,7 @@ window.testdata = function () {
         return kw;
     }
 
-    var keywordMatcher = headerMatcher("kw", "setup", "teardown");
+    var keywordMatcher = headerMatcher("kw", "setup", "teardown", "foritem", "for");
 
     function messageMatcher(elem) {
         return (elem.length == 3 &&
