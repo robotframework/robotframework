@@ -103,10 +103,6 @@ table.statistics th {
     background: red;
 }
 
-.no_tags_bar {
-    background: #E9E9E9;
-}
-
 .graph {
     position: relative;
     border: 1px solid black;
