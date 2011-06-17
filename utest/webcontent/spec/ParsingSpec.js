@@ -62,11 +62,14 @@ describe("Handling Suite", function () {
 
     beforeEach(function () {
         var keyword = ["kw",2,0,3,4, [0,"I",4], ["P",0,0]];
-        var test = ["test",1,10,"Y",6, keyword, [7, 8],["P",-1,2]];
+        var forloop = ["for",11,0,0,0,
+            ["foritem",12,0,0,0, keyword, ["P", 0, 0]], ["P", 0, 0],
+            ["foritem",13,0,0,0, keyword, ["P", 0, 0]], ["P", 0, 0]]
+        var test = ["test",1,10,"Y",6, keyword, forloop, [7, 8],["P",-1,2]];
         var suite = ["suite","/tmp/test.txt","Suite",5,{"meta":9}, test, ["P",-38,39], [1,1,1,1]];
         var strings = ["*","*Test","*lib.kw","*Kw doc.","*message",
                        "*suite doc", "*test doc", "*tag1", "*tag2",
-                       "*data", "*1 second"];
+                       "*data", "*1 second", "*${i} IN RANGE [ 2 ]", "*${i} = 0", "*${i} = 1"];
         populateOutput(suite, strings);
     });
 
@@ -112,6 +115,19 @@ describe("Handling Suite", function () {
         expect(kw.times).toBeDefined();
         expect(kw.times.elapsedMillis).toEqual(0);
         expect(kw.path).toEqual("Suite.Test.0");
+        expect(kw.type).toEqual("KEYWORD");
+    });
+
+    it("should parse for loop", function() {
+        var forloop = window.testdata.suite().test(0).keyword(1);
+        expect(forloop.name).toEqual("${i} IN RANGE [ 2 ]");
+        expect(forloop.type).toEqual("FOR");
+        var foritem = forloop.keyword(0);
+        expect(foritem.name).toEqual("${i} = 0");
+        expect(foritem.type).toEqual("VAR");
+        foritem = forloop.keyword(1);
+        expect(foritem.name).toEqual("${i} = 1");
+        expect(foritem.type).toEqual("VAR");
     });
 
     it("should parse message", function () {
