@@ -36,6 +36,8 @@ div.error_box {
     text-align: center;
 }
 #report_or_log_link a {
+    display: block;
+    width: 100%;
     color: white;
     text-decoration: none;
     font-weight: bold;
