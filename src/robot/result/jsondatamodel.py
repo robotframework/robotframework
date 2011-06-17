@@ -62,7 +62,7 @@ class DataModel(object):
     def _is_ignorable_keyword(self, item):
         # Top level teardown is kept to make tests fail if suite teardown failed
         # TODO: Could we store information about failed suite teardown otherwise?
-        return isinstance(item, list) and item and item[0] in ['kw', 'setup', 'for', 'foritem']
+        return isinstance(item, list) and item and item[0] in ['kw', 'setup', 'forloop', 'foritem']
 
     def _prune_unused_texts(self):
         used = self._collect_used_text_indices(self._robot_data['suite'], set())

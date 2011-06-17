@@ -169,7 +169,7 @@ class TestJsSerializer(unittest.TestCase):
         self._context.start_suite('suite')
         data_model = self._get_data_model(self.FOR_LOOP_XML)
         self.assert_model(data_model, 1308293764365,
-                          ['for', 1, 0, 0, 0,
+                          ['forloop', 1, 0, 0, 0,
                               ['foritem', 2, 0, 0, 0,
                                   ['kw', 3, 0, 4, 5, [0, 'I', 6], ['P', 0, 0]], ['P', 0, 0]],
                               ['foritem', 7, 0, 0, 0,

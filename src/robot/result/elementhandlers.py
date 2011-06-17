@@ -118,6 +118,7 @@ class _KeywordHandler(_Handler):
         _Handler.__init__(self, context)
         self._context.start_keyword()
         self._type = attrs.get('type')
+        if self._type == 'for': self._type = 'forloop'
         self._name = self._context.get_text_id(attrs.get('name'))
         self._timeout = self._context.get_text_id(attrs.get('timeout'))
 

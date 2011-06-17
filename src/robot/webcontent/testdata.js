@@ -5,7 +5,7 @@ window.testdata = function () {
     var KEYWORD_TYPE = {kw: 'KEYWORD',
         setup:'SETUP',
         teardown:'TEARDOWN',
-        for:'FOR',
+        forloop:'FOR',
         foritem:'VAR'
     };
     var _statistics = null;
@@ -83,7 +83,7 @@ window.testdata = function () {
         return kw;
     }
 
-    var keywordMatcher = headerMatcher("kw", "setup", "teardown", "foritem", "for");
+    var keywordMatcher = headerMatcher("kw", "setup", "teardown", "foritem", "forloop");
 
     function messageMatcher(elem) {
         return (elem.length == 3 &&

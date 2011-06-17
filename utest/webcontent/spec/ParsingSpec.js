@@ -62,7 +62,7 @@ describe("Handling Suite", function () {
 
     beforeEach(function () {
         var keyword = ["kw",2,0,3,4, [0,"I",4], ["P",0,0]];
-        var forloop = ["for",11,0,0,0,
+        var forloop = ["forloop",11,0,0,0,
             ["foritem",12,0,0,0, keyword, ["P", 0, 0]], ["P", 0, 0],
             ["foritem",13,0,0,0, keyword, ["P", 0, 0]], ["P", 0, 0]]
         var test = ["test",1,10,"Y",6, keyword, forloop, [7, 8],["P",-1,2]];
