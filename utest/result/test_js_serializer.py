@@ -38,6 +38,53 @@ class TestJsSerializer(unittest.TestCase):
                     <status status="PASS" endtime="20110601 12:01:51.354" starttime="20110601 12:01:51.329"></status>
                     </suite>"""
 
+    FOR_LOOP_XML = """
+        <kw type="for" name="${i} IN RANGE [ 2 ]" timeout="">
+            <doc></doc>
+            <arguments></arguments>
+            <kw type="foritem" name="${i} = 0" timeout="">
+                <doc></doc>
+                <arguments></arguments>
+                <kw type="kw" name="babba" timeout="">
+                    <doc>Foo bar.</doc>
+                    <arguments>
+                        <arg>${i}</arg>
+                    </arguments>
+                    <msg timestamp="20110617 09:56:04.365" level="INFO">0</msg>
+                    <status status="PASS" endtime="20110617 09:56:04.365" starttime="20110617 09:56:04.365"></status>
+                </kw>
+                <status status="PASS" endtime="20110617 09:56:04.365" starttime="20110617 09:56:04.365"></status>
+            </kw>
+            <kw type="foritem" name="${i} = 1" timeout="">
+                <doc></doc>
+                <arguments></arguments>
+                <kw type="kw" name="babba" timeout="">
+                    <doc>Foo bar.</doc>
+                    <arguments>
+                        <arg>${i}</arg>
+                    </arguments>
+                    <msg timestamp="20110617 09:56:04.366" level="INFO">1</msg>
+                    <status status="PASS" endtime="20110617 09:56:04.366" starttime="20110617 09:56:04.366"></status>
+                </kw>
+                <status status="PASS" endtime="20110617 09:56:04.367" starttime="20110617 09:56:04.366"></status>
+            </kw>
+            <kw type="foritem" name="${i} = 2" timeout="">
+                <doc></doc>
+                <arguments></arguments>
+                <kw type="kw" name="babba" timeout="">
+                    <doc>Foo bar.</doc>
+                    <arguments>
+                        <arg>${i}</arg>
+                    </arguments>
+                    <msg timestamp="20110617 09:56:04.367" level="INFO">2</msg>
+                    <status status="PASS" endtime="20110617 09:56:04.367" starttime="20110617 09:56:04.367"></status>
+                </kw>
+                <status status="PASS" endtime="20110617 09:56:04.368" starttime="20110617 09:56:04.367"></status>
+            </kw>
+            <status status="PASS" endtime="20110617 09:56:04.368" starttime="20110617 09:56:04.364"></status>
+        </kw>
+        """
+
     def setUp(self):
         self._context = Context()
         self._handler = _RobotOutputHandler(self._context)
@@ -117,6 +164,31 @@ class TestJsSerializer(unittest.TestCase):
         data_model = self._get_data_model(keyword_xml)
         self.assert_model(data_model, 1306835289070, ['teardown', 1, 0, 2, 3, [0, "W", 3], ["P", -1, 2]], ['*', '*BuiltIn.Log', '*Logs the given message with the given level.', '*keyword teardown'])
         assert_equals(self._context.link_to([0, "W", 3]), "keyword_suite.0")
+
+    def test_for_loop_xml_parsing(self):
+        self._context.start_suite('suite')
+        data_model = self._get_data_model(self.FOR_LOOP_XML)
+        self.assert_model(data_model, 1308293764365,
+                          ['for', 1, 0, 0, 0,
+                              ['foritem', 2, 0, 0, 0,
+                                  ['kw', 3, 0, 4, 5, [0, 'I', 6], ['P', 0, 0]], ['P', 0, 0]],
+                              ['foritem', 7, 0, 0, 0,
+                                  ['kw', 3, 0, 4, 5, [1, 'I', 8], ['P', 1, 0]], ['P', 1, 1]],
+                              ['foritem', 9, 0, 0, 0,
+                                  ['kw', 3, 0, 4, 5, [2, 'I', 10], ['P', 2, 0]], ['P', 2, 1]],
+                              ['P', -1, 4]],
+            ['*', '*${i} IN RANGE [ 2 ]', '*${i} = 0', '*babba', '*Foo bar.', '*${i}', '*0', '*${i} = 1', '*1', '*${i} = 2', '*2'])
+
+    def test_for_loop_remove_keywords(self):
+        self._context.start_suite('suite')
+        test_xml = '<test name="Test" timeout=""><doc></doc>' + \
+                   self.FOR_LOOP_XML + \
+                   '<tags></tags><status status="PASS" endtime="20110601 12:01:51.354" critical="yes" starttime="20110601 12:01:51.353"></status></test>'
+        data_model = self._get_data_model(test_xml)
+        data_model.remove_keywords()
+        self.assert_model(data_model, 1308293764365,
+            ['test', 1, 0, 'Y', 0, [], ['P', -1374853012, 1]],
+            ['*', '*Test', '', '', '', '', '', '', '', '', '', ''])
 
     def test_test_xml_parsing(self):
         test_xml = """
