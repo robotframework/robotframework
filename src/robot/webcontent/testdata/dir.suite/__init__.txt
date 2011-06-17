@@ -1,0 +1,3 @@
+*** Settings ***
+Suite Setup   Log  higher level suite setup
+Force Tags    i1   i2

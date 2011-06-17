@@ -1,0 +1,8 @@
+*** settings ***
+Library   Collections
+
+*** test cases ***
+Dictionary test
+    ${dict}=  Create Dictionary  key  value
+    Log  ${dict}
+    [Tags]   collections

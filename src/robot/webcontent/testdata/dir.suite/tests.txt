@@ -1,0 +1,36 @@
+*** Settings ***
+Documentation   Some suite docs with links: http://robotframework.org
+Suite Setup     Log  Suite setup
+Suite Teardown  Fail
+Test Setup      Log   Test Setup
+Test Teardown   Log   Test Teardown
+Metadata        home *page*   http://robotframework.org
+Force Tags      force  test
+Default Tags    default
+Library         pölky/myLib.py
+
+
+*** Variables ***
+@{list}  1  2  3  4
+
+*** Test cases ***
+Simple
+    Log  do nothing
+
+Unicode
+    Log  hyvää joulua
+
+Complex
+    [Setup]   Log   in own setup
+    [Teardown]    Log   in own teardown
+    [Documentation]    Test doc
+    [Tags]    t1  owner-kekkonen
+    Log   in test
+    User Kw
+    ::FOR  ${i}  IN  @{list}
+    \    Log   Got ${i}
+
+
+*** Keywords **
+User Kw
+    Log   in User Kw

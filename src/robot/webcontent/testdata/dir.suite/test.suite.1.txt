@@ -1,0 +1,8 @@
+*** settings ***
+Library   Collections
+
+*** test cases ***
+list test
+    ${list}=  Create List  foo  bar  quux
+    Log  ${list}
+    [Tags]   collections
