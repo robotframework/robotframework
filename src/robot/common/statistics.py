@@ -142,8 +142,6 @@ class SuiteStatistics:
             tag_stats.add_test(test, suite.critical)
 
     def serialize(self, serializer):
-        if self._suite_stat_level == 0:
-            return
         serializer.start_suite_stats(self)
         self._serialize(serializer, self._suite_stat_level)
         serializer.end_suite_stats(self)

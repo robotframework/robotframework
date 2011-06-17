@@ -88,7 +88,7 @@ class _BaseSettings(object):
         if name == 'OutputDir':
             return utils.abspath(value)
         if name in ['SuiteStatLevel', 'MonitorWidth']:
-            return self._convert_to_integer(name, value)
+            return self._convert_to_positive_integer(name, value)
         if name in ['Listeners', 'VariableFiles']:
             return [self._split_args_from_name(item) for item in value]
         if name == 'TagStatLink':
@@ -160,6 +160,10 @@ class _BaseSettings(object):
                 LOGGER.error("Invalid format for option '--tagstatlink'. "
                              "Expected 'tag:link:title' but got '%s'." % item)
         return ret
+
+    def _convert_to_positive_integer(self, name, value):
+        value = self._convert_to_integer(name, value)
+        return value if value > 0 else 1
 
     def _convert_to_integer(self, name, value):
         try:
