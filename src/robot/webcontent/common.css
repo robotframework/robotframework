@@ -26,21 +26,22 @@ div.error_box {
 
 
 /* Report/Log links */
-#report_link {
+#report_or_log_link {
     position: fixed;
     top: 0px;
     right: 0px;
     background: black;
     border-radius: 0 0 0 4px;
+    width: 8em;
+    text-align: center;
 }
-#report_link a {
-    margin: 0 1em;
+#report_or_log_link a {
     color: white;
     text-decoration: none;
     font-weight: bold;
     letter-spacing: 0.1em;
 }
-#report_link a:hover {
+#report_or_log_link a:hover {
     color: yellow;
 }
 
