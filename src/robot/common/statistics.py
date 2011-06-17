@@ -204,12 +204,8 @@ class TagStatistics:
                 self.stats[name].add_test(test)
 
     def serialize(self, serializer):
-        if not self.stats and (self._include or self._exclude):
-            return
         serializer.start_tag_stats(self)
-        stats = self.stats.values()
-        stats.sort()
-        for stat in stats:
+        for stat in sorted(self.stats.values()):
             stat.serialize(serializer)
         serializer.end_tag_stats(self)
 
