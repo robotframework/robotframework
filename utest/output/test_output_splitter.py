@@ -1,6 +1,8 @@
 import unittest
+import time
 
-from robot.utils.asserts import *
+from robot.utils.asserts import assert_equals
+from robot.utils import format_time
 
 from robot.output.output import _OutputSplitter
 
@@ -50,11 +52,33 @@ class TestOutputSplitter(unittest.TestCase):
         self._verify_message(splitter, 'bar foo', 'DEBUG', index=1)
         assert_equals(len(list(splitter)), 2)
 
-    def _verify_message(self, splitter, msg, level='INFO', html=False, index=0):
+    def test_timestamp_given_as_integer(self):
+        now = time.time()
+        splitter = _OutputSplitter('*INFO:xxx* No timestamp\n'
+                                   '*INFO:0* Epoch\n'
+                                   '*HTML:%d* X' % (now*1000))
+        self._verify_message(splitter, '*INFO:xxx* No timestamp')
+        self._verify_message(splitter, 'Epoch', timestamp=0, index=1)
+        self._verify_message(splitter, html=True, timestamp=now, index=2)
+        assert_equals(len(list(splitter)), 3)
+
+    def test_timestamp_given_as_float(self):
+        splitter = _OutputSplitter('*INFO:1x2* No timestamp\n'
+                                   '*HTML:1000.1* X\n'
+                                   '*INFO:123456789.12345* X')
+        self._verify_message(splitter, '*INFO:1x2* No timestamp')
+        self._verify_message(splitter, html=True, timestamp=1, index=1)
+        self._verify_message(splitter, timestamp=123457, index=2)
+        assert_equals(len(list(splitter)), 3)
+
+    def _verify_message(self, splitter, msg='X', level='INFO', html=False,
+                        timestamp=None, index=0):
         message = list(splitter)[index]
         assert_equals(message.message, msg)
         assert_equals(message.level, level)
         assert_equals(message.html, html)
+        if timestamp:
+            assert_equals(message.timestamp, format_time(round(timestamp)))
 
 
 if __name__ == '__main__':

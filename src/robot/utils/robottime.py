@@ -155,13 +155,19 @@ class _SecsToTimestrHelper:
         return sign, millis, secs, mins, hours, days
 
 
-def format_time(timetuple, daysep='', daytimesep=' ', timesep=':',
+def format_time(timetuple_or_epochsecs, daysep='', daytimesep=' ', timesep=':',
                 millissep=None, gmtsep=None):
-    """Returns a timestamp formatted from timetuple using separators.
+    """Returns a timestamp formatted from given time using separators.
 
-    timetuple is (year, month, day, hour, min, sec[, millis]), where parts must
+    Time can be given either as a timetuple or seconds after epoch.
+    Timetuple is (year, month, day, hour, min, sec[, millis]), where parts must
     be integers and millis is required only when millissep is not None.
+    Seconds after epoch can be either an integer or a float.
     """
+    if isinstance(timetuple_or_epochsecs, (int, long, float)):
+        timetuple = time.localtime(timetuple_or_epochsecs)
+    else:
+        timetuple = timetuple_or_epochsecs
     daytimeparts = ['%02d' % t for t in timetuple[:6]]
     day = daysep.join(daytimeparts[:3])
     time_ = timesep.join(daytimeparts[3:6])
@@ -207,7 +213,7 @@ def get_time(format='timestamp', time_=None):
         return int(time_)
     timetuple = time.localtime(time_)
     parts = []
-    for i, match in enumerate(['year','month','day','hour','min','sec']):
+    for i, match in enumerate('year month day hour min sec'.split()):
         if match in format:
             parts.append('%.2d' % timetuple[i])
     # 2) Return time as timestamp

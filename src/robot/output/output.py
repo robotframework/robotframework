@@ -84,30 +84,36 @@ class Output(AbstractLogger):
 
 
 class _OutputSplitter:
-    _split_from_levels = re.compile('^(\*(?:%s|HTML)\*)' % '|'.join(LEVELS),
-                                    re.MULTILINE)
+    _split_from_levels = re.compile('^(?:\*'
+                                    '(%s|HTML)'          # Level
+                                    '(:\d+(?:\.\d+)?)?'  # Optional timestamp
+                                    '\*)' % '|'.join(LEVELS), re.MULTILINE)
 
     def __init__(self, output):
-        self._messages = self._get_messages(output.strip())
+        self._messages = list(self._get_messages(output.strip()))
 
     def _get_messages(self, output):
-        if not output:
-            return []
-        return [Message(msg.strip(), level[1:-1])
-                for level, msg in self._split_to_levels_and_messages(output)]
+        for level, timestamp, msg in self._split_output(output):
+            if timestamp:
+                timestamp = self._format_timestamp(timestamp[1:])
+            yield Message(msg.strip(), level, timestamp=timestamp)
 
-    def _split_to_levels_and_messages(self, output):
+    def _split_output(self, output):
         tokens = self._split_from_levels.split(output)
-        tokens = self._add_initial_default_level_if_needed(tokens)
-        return ((tokens[i], tokens[i+1]) for i in xrange(0, len(tokens), 2))
+        tokens = self._add_initial_level_and_time_if_needed(tokens)
+        for i in xrange(0, len(tokens), 3):
+            yield tokens[i:i+3]
 
-    def _add_initial_default_level_if_needed(self, tokens):
+    def _add_initial_level_and_time_if_needed(self, tokens):
         if self._output_started_with_level(tokens):
             return tokens[1:]
-        return ['*INFO*'] + tokens
+        return ['INFO', None] + tokens
 
     def _output_started_with_level(self, tokens):
         return tokens[0] == ''
+
+    def _format_timestamp(self, millis):
+        return utils.format_time(round(float(millis)/1000))
 
     def __iter__(self):
         return iter(self._messages)
