@@ -80,7 +80,9 @@ class TestTime(unittest.TestCase):
         for inp, compact, verbose in [
             (0.001, '1ms', '1 millisecond'),
             (0.002, '2ms', '2 milliseconds'),
+            (0.9999, '1s', '1 second'),
             (1, '1s', '1 second'),
+            (1.9999, '2s', '2 seconds'),
             (2, '2s', '2 seconds'),
             (60, '1min', '1 minute'),
             (120, '2min', '2 minutes'),
@@ -94,12 +96,14 @@ class TestTime(unittest.TestCase):
             (7210.05, '2h 10s 50ms', '2 hours 10 seconds 50 milliseconds') ,
             (11.1111111, '11s 111ms', '11 seconds 111 milliseconds'),
             (0.55555555, '556ms', '556 milliseconds'),
-            (0, '0s', '0 seconds') ,
+            (0, '0s', '0 seconds'),
+            (9999.9999, '2h 46min 40s', '2 hours 46 minutes 40 seconds'),
+            (10000, '2h 46min 40s', '2 hours 46 minutes 40 seconds'),
             (-1, '- 1s', '- 1 second'),
             (-171967.667, '- 1d 23h 46min 7s 667ms',
              '- 1 day 23 hours 46 minutes 7 seconds 667 milliseconds')]:
-            assert_equal(secs_to_timestr(inp), verbose)
-            assert_equal(secs_to_timestr(inp, compact=True), compact)
+            assert_equal(secs_to_timestr(inp, compact=True), compact, inp)
+            assert_equal(secs_to_timestr(inp), verbose, inp)
 
     def test_format_time(self):
         timetuple = (2005, 11, 2, 14, 23, 12, 123)

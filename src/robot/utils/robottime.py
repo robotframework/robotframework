@@ -150,9 +150,7 @@ class _SecsToTimestrHelper:
             float_secs = abs(float_secs)
         else:
             sign = ''
-        int_secs = int(float_secs)
-        millis = (float_secs - int_secs) * 1000
-        millis = int(round(millis))
+        int_secs, millis = _float_secs_to_secs_and_millis(float_secs)
         secs  = int_secs % 60
         mins  = int(int_secs / 60) % 60
         hours = int(int_secs / (60*60)) % 24
