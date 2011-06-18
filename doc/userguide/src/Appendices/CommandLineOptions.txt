@@ -41,16 +41,16 @@ Command line options for test execution
   --reportbackground <colors>  `Sets background colors`_ for the generated report and summary.
   --summarytitle <title>  `Sets a title`_ for the generated summary report.
   -L, --loglevel <level>  `Sets the threshold level`_ for logging.
-  --suitestatlevel <level>  Defines how many `levels to show`_ in the :name:`Statistics
-                            by Suite` table in outputs.
-  --tagstatinclude <tag>  `Includes only these tags`_ in the :name:`Statistics by Tag` and
-                          :name:`Test Details by Tag` tables in outputs.
-  --tagstatexclude <tag>  `Excludes these tags`_ from the :name:`Statistics by Tag` and
-                          :name:`Test Details by Tag` tables in outputs.
+  --suitestatlevel <level>  Defines how many `levels to show`_ in the
+                           :name:`Statistics by Suite` table in outputs.
+  --tagstatinclude <tag>  `Includes only these tags`_ in the :name:`Statistics
+                          by Tag` table.
+  --tagstatexclude <tag>  `Excludes these tags`_ from the :name:`Statistics
+                          by Tag` table.
   --tagstatcombine <tags:title>  Creates `combined statistics based on tags`_.
   --tagdoc <pattern:doc>  Adds `documentation to the specified tags`_.
   --tagstatlink <pattern:link:title>  Adds `external links`_ to the :name:`Statistics by
-                          Tag` table in outputs.
+                          Tag` table.
   --listener <name:args>  `Sets a listener`_ for monitoring test execution.
   --warnonskippedfiles    Show a warning when `an invalid file is skipped`_.
   --nostatusrc            Sets the `return code`_ to zero regardless of failures
@@ -95,15 +95,16 @@ Command line options for post-processing outputs
   --reportbackground <colors>  `Sets background colors`_ for the generated report and summary.
   --summarytitle <title>  `Sets a title`_ for the generated summary report.
   -L, --loglevel <level>  `Sets the threshold level`_ to select log messages.
-  --suitestatlevel <level>  Defines how many `levels to show`_ in the :name:`Statistics by Suite`
-                          table in outputs.
-  --tagstatinclude <tag>  `Includes only these tags`_ in the :name:`Statistics by Tag` and
-                          :name:`Test Details by Tag` tables in outputs.
-  --tagstatexclude <tag>  `Excludes these tags`_ from the :name:`Statistics by Tag` and
-                          :name:`Test Details by Tag` tables in outputs.
+  --suitestatlevel <level>  Defines how many `levels to show`_ in the
+                           :name:`Statistics by Suite` table in outputs.
+  --tagstatinclude <tag>  `Includes only these tags`_ in the :name:`Statistics
+                          by Tag` table.
+  --tagstatexclude <tag>  `Excludes these tags`_ from the :name:`Statistics
+                          by Tag` table.
   --tagstatcombine <tags:title>  Creates `combined statistics based on tags`_.
   --tagdoc <pattern:doc>  Adds `documentation to the specified tags`_.
-  --tagstatlink <pattern:link:title>  Adds `external links`_ into the :name:`Statistics by Tag`
+  --tagstatlink <pattern:link:title>  Adds `external links`_ to the :name:`Statistics by
+                          Tag` table.
                           table in outputs.
   --removekeywords <all|passed>  `Removes keyword data`_ from the generated outputs.
   --starttime <timestamp>  Sets the `starting time`_ of test execution when creating

@@ -300,10 +300,11 @@ Configuring displayed suite statistics
 
 When a deeper suite structure is executed, showing all the test suite
 levels in the :name:`Statistics by Suite` table may make the table
-somewhat difficult to read. You can control the number of levels
-displayed with the command line option :opt:`--suitestatlevel`. It
-takes the required level as an integer, and if :opt:`0` is used,
-the whole table is removed.
+somewhat difficult to read. Bt default all suites are shown, but you can
+control this with the command line option :opt:`--suitestatlevel` which
+takes the level of suites to show as an argument::
+
+    --suitestatlevel 3
 
 Including and excluding tag statistics
 ''''''''''''''''''''''''''''''''''''''
@@ -319,11 +320,6 @@ cases`__::
    --tagstatexclude owner-*
    --tagstatinclude prefix-* --tagstatexclude prefix-13
 
-These settings affect also the :name:`Test Details by Tag` table, so
-that it has details only by the selected tags. This can make the
-report considerably smaller, which is why excluding tags that are not
-interesting can be recommended.
-
 __ `By tag names`_
 
 Generating combined tag statistics
@@ -331,10 +327,8 @@ Generating combined tag statistics
 
 The command line option :opt:`--tagstatcombine` can be used to
 generate aggregate tags that combine statistics from multiple
-tags. These new combined tags are shown in the :name:`Statistics by
-Tag` table, and the matching tests are listed in the :name:`Test
-Details by Tag` table.  There are three somewhat different ways for
-giving arguments for this option:
+tags. There are three somewhat different ways for giving arguments for
+this option:
 
 One tag as a `simple pattern`_
    All tags matching the given pattern are combined together.
@@ -360,12 +354,13 @@ executed with these options::
 
    Examples of combined tag statistics
 
-As the above example shows, the name of the added combined statistic is, by default,
-generated from the given pattern. In certain situations this name can look pretty
-cryptic and, starting from Robot Framework 2.0.2, it is possible to specify a
-more descriptive name. This name is given after the pattern separating it
-with a colon (:code:`:`). Example below generates combined tag so that the name shown
-in reports and logs is :name:`Critical Tests`::
+As the above example shows, the name of the added combined statistic
+is, by default, generated from the given pattern. In certain
+situations this name can look pretty cryptic and it is possible to
+specify a more descriptive name. This name is given after the pattern
+separating it with a colon (:code:`:`). Example below generates
+combined tag so that the name shown in reports and logs is
+:name:`Critical Tests`::
 
     --tagstatcombine *NOTnon-critical:Critical_Tests
 
