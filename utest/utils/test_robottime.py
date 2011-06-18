@@ -2,11 +2,14 @@ import unittest
 import sys
 import re
 import time
-from types import *
 
-from robot.utils.asserts import *
+from robot.utils.asserts import (assert_equal, assert_raises_with_msg,
+                                 assert_true, assert_not_none)
 
-from robot.utils.robottime import *
+from robot.utils.robottime import (timestr_to_secs, secs_to_timestr, get_time,
+                                   parse_time, format_time, get_elapsed_time,
+                                   get_timestamp, get_start_timestamp,
+                                   timestamp_to_secs)
 
 
 EXAMPLE_TIME = time.mktime((2007, 9, 20, 16, 15, 14, 0, 0, -1))
@@ -49,7 +52,7 @@ class TestTime(unittest.TestCase):
                          (0, 0),
                          ('0', 0),
                          ('0day 0hour 0minute 0seconds 0millisecond', 0)]:
-             assert_equals(timestr_to_secs(inp), exp, inp)
+             assert_equal(timestr_to_secs(inp), exp, inp)
 
     def test_timestr_to_secs_invalid(self):
         for inv in ['', 'foo', '1sec 42 millis 3', '1min 2w', None]:
@@ -78,15 +81,15 @@ class TestTime(unittest.TestCase):
             (-1, '- 1s', '- 1 second'),
             (-171967.667, '- 1d 23h 46min 7s 667ms',
              '- 1 day 23 hours 46 minutes 7 seconds 667 milliseconds')]:
-            assert_equals(secs_to_timestr(inp), verbose)
-            assert_equals(secs_to_timestr(inp, compact=True), compact)
+            assert_equal(secs_to_timestr(inp), verbose)
+            assert_equal(secs_to_timestr(inp, compact=True), compact)
 
     def test_format_time(self):
-        tt = (2005, 11, 2, 14, 23, 12, 123)   # timetuple
+        timetuple = (2005, 11, 2, 14, 23, 12, 123)
         for seps, exp in [(('-',' ',':'), '2005-11-02 14:23:12'),
                           (('', '-', ''), '20051102-142312'),
                           (('-',' ',':','.'), '2005-11-02 14:23:12.123')]:
-            assert_equals(format_time(tt, *seps), exp)
+            assert_equal(format_time(timetuple, *seps), exp)
 
     def test_get_timestamp(self):
         for seps, pattern in [((), '^\d{8} \d\d:\d\d:\d\d.\d\d\d$'),
@@ -101,18 +104,18 @@ class TestTime(unittest.TestCase):
     def test_get_start_timestamp(self):
         start = get_start_timestamp(millissep='.')
         time.sleep(0.002)
-        assert_equals(get_start_timestamp(millissep='.'), start)
+        assert_equal(get_start_timestamp(millissep='.'), start)
 
     def test_timestamp_to_secs_with_default(self):
-        assert_equals(timestamp_to_secs('20070920 16:15:14.123'), EXAMPLE_TIME)
+        assert_equal(timestamp_to_secs('20070920 16:15:14.123'), EXAMPLE_TIME)
 
     def test_timestamp_to_secs_with_seps(self):
         result = timestamp_to_secs('2007-09-20#16x15x14M123', ('-','#','x','M'))
-        assert_equals(result, EXAMPLE_TIME)
+        assert_equal(result, EXAMPLE_TIME)
 
     def test_timestamp_to_secs_with_millis(self):
         result = timestamp_to_secs('20070920 16:15:14.123', millis=True)
-        assert_equals(result, EXAMPLE_TIME + 0.123)
+        assert_equal(result, EXAMPLE_TIME + 0.123)
 
     def test_get_elapsed_time_without_millis(self):
         starttime = '20060526 14:01:10'
@@ -140,7 +143,7 @@ class TestTime(unittest.TestCase):
                                   ('20060601 14:01:11', 144*60*60+1),
                                   ('20070526 14:01:10', 8760*60*60)]:
             actual = get_elapsed_time(starttime, endtime, seps)
-            assert_equals(actual, expected*1000, endtime)
+            assert_equal(actual, expected*1000, endtime)
 
     def test_get_elapsed_time_with_millis(self):
         starttime = '20060526 14:01:10.500'
@@ -165,7 +168,7 @@ class TestTime(unittest.TestCase):
                                   ('20070526 14:01:10.499', 31535999999),
                                   ('20070526 14:01:10.500', 31536000000)]:
             actual = get_elapsed_time(starttime, endtime, seps)
-            assert_equals(actual, expected, endtime)
+            assert_equal(actual, expected, endtime)
 
     def test_get_elapsed_time_negative_without_millis(self):
         starttime = '20060526 14:01:10'
@@ -178,7 +181,7 @@ class TestTime(unittest.TestCase):
                                   ('20060521 14:01:10', -432000),
                                   ('20060521 14:01:09', -432000-1)]:
             actual = get_elapsed_time(starttime, endtime, seps)
-            assert_equals(actual, expected*1000, endtime)
+            assert_equal(actual, expected*1000, endtime)
 
     def test_get_elapsed_time_negative_with_millis(self):
         starttime = '20060526 14:01:10.500'
@@ -190,7 +193,7 @@ class TestTime(unittest.TestCase):
                                   ('20060526 14:01:09.500', -1000),
                                   ('20060526 14:01:09.499', -1001)]:
             actual = get_elapsed_time(starttime, endtime, seps)
-            assert_equals(actual, expected, endtime)
+            assert_equal(actual, expected, endtime)
 
     def test_get_elapsed_time_separators(self):
         startday = endday = ('2006','05','26')
@@ -214,7 +217,7 @@ class TestTime(unittest.TestCase):
                 end_stamp += m_sep + endmillis
             seps = (d_sep, dt_sep, t_sep, m_sep)
             actual = get_elapsed_time(start_stamp, end_stamp, seps)
-            assert_equals(actual, 3599000)
+            assert_equal(actual, 3599000)
 
     def test_get_elapsed_time_without_end_timestamp(self):
         seps = ('-', ' ', ':', '.')
@@ -225,7 +228,7 @@ class TestTime(unittest.TestCase):
         for input, expected in [('100', 100),
                                 ('2007-09-20 16:15:14', EXAMPLE_TIME),
                                 ('20070920 161514', EXAMPLE_TIME)]:
-            assert_equals(parse_time(input), expected)
+            assert_equal(parse_time(input), expected)
 
     def test_parse_modified_time_with_now(self):
         for input, adjusted in [('now', 0),
