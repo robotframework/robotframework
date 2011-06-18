@@ -1,10 +1,9 @@
 Advanced features
 -----------------
 
-.. contents:: 
+.. contents::
    :depth: 2
    :local:
-
 
 Handling keywords with same names
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -16,7 +15,6 @@ created in the same file where they are used or then imported from
 `resource files`_. When many keywords are in use, it is quite common
 that some of them have the same name, and this section describes how to
 handle possible conflicts in these situations.
-
 
 Keyword scopes
 ''''''''''''''
@@ -42,7 +40,6 @@ on the basis of how the keyword in question is created:
 4. Created in a standard library. These keywords have the lowest
    priority.
 
-
 Specifying a keyword explicitly
 '''''''''''''''''''''''''''''''
 
@@ -54,13 +51,13 @@ of the keyword*, where the keyword name is prefixed with the name of
 the resource or library and a dot is a delimiter.
 
 With library keywords, the long format means only using the format
-:name:`LibraryName.Keyword Name`. For example, the keyword :name:`Run` from the
-`OperatingSystem library`_ could be used as
-:name:`OperatingSystem.Run`, even if there was another :name:`Run` keyword
-somewhere else. If the library is in a module or package, the full
-module or package name must be used (for example, 
-:name:`com.company.Library.Some Keyword`). If a custom name is given to a
-library using the `WITH NAME syntax`_, the specified name must be
+:name:`LibraryName.Keyword Name`. For example, the keyword :name:`Run`
+from the `OperatingSystem library`_ could be used as
+:name:`OperatingSystem.Run`, even if there was another :name:`Run`
+keyword somewhere else. If the library is in a module or package, the
+full module or package name must be used (for example,
+:name:`com.company.Library.Some Keyword`). If a custom name is given
+to a library using the `WITH NAME syntax`_, the specified name must be
 used also in the full keyword name.
 
 Resource files are specified in the full keyword name, similarly as
@@ -76,22 +73,23 @@ as normal keyword names.
 Specifying library search order
 '''''''''''''''''''''''''''''''
 
-Starting from Robot Framework 2.1 it is possible to use the keyword :name:`Set
-Library Search Order` from `BuiltIn library`_ to specify the priority order
-between test libraries that are in use. 
-If multiple keywords with the same name are found, libraries implementing them 
-are gone through in the library search order. The first library containing the 
-keyword is selected and the keyword from that library is used. If keyword is not 
-found, test execution fails. 
+Starting from Robot Framework 2.1 it is possible to use the keyword
+:name:`Set Library Search Order` from `BuiltIn library`_ to specify
+the priority order between test libraries that are in use. If
+multiple keywords with the same name are found, libraries implementing
+them are gone through in the library search order. The first library
+containing the keyword is selected and the keyword from that library
+is used. If keyword is not found, test execution fails.
 
-There is no need to use the long format :name:`LibraryName.Keyword Name` notation 
-when library search order is set. This makes it easier to to use multiple instances 
-of the same library as :name:`Set Library Search Order` keyword can be used to 
-switch between the libraries. This enables using same user keywords instead of 
+There is no need to use the long format :name:`LibraryName.Keyword
+Name` notation when library search order is set. This makes it easier
+to to use multiple instances of the same library as :name:`Set Library
+Search Order` keyword can be used to switch between the
+libraries. This enables using same user keywords instead of
 duplicating those for all the library instances.
 
-Library search order is valid in the suite level meaning it is available only in 
-the suite where it was set.
+Library search order is valid in the suite level meaning it is
+available only in the suite where it was set.
 
 
 Timeouts
@@ -146,17 +144,16 @@ occurs, because they are normally engaged in important clean-up
 activities. If necessary, it is possible to interrupt also these
 keywords with `user keyword timeouts`_.
 
-
 .. table:: Test timeout examples
    :class: example
 
    ============  =========  =======  =======
      Setting       Value     Value    Value
    ============  =========  =======  =======
-   Test Timeout  2 minutes  \        \
+   Test Timeout  2 minutes
    ============  =========  =======  =======
 
-.. table:: 
+.. table::
    :class: example
 
    ===============  ===============  ========================================  ==========================  ==================
@@ -186,7 +183,6 @@ keywords with `user keyword timeouts`_.
    \                Some Keyword     argument
    ===============  ===============  ========================================  ==========================  ==================
 
-
 User keyword timeout
 ''''''''''''''''''''
 
@@ -204,14 +200,14 @@ message is provided, the default error message :msg:`Keyword timeout
         Keyword             Action                 Argument                           Argument
    =================  =================  ==========================  ===========================================
    Timed Keyword      [Documentation]    Set only the timeout value  and not the custom message.
-   \                  [Timeout]          1 minute 42 seconds         \
-   \                  Do Something       \                           \
-   \                  Do Something Else  \                           \
-   \                  \                  \                           \
-   Timed-out Wrapper  [Arguments]        @{args}                     \
+   \                  [Timeout]          1 minute 42 seconds
+   \                  Do Something
+   \                  Do Something Else
+   \
+   Timed-out Wrapper  [Arguments]        @{args}
    \                  [Documentation]    This keyword is a wrapper   that adds a timeout to another keyword.
    \                  [Timeout]          2 minutes                   Original Keyword didn't finish in 2 minutes
-   \                  Original Keyword   @{args}                     \
+   \                  Original Keyword   @{args}
    =================  =================  ==========================  ===========================================
 
 A user keyword timeout is applicable during the execution of that user
@@ -230,7 +226,6 @@ time left.
 
 __ http://code.google.com/p/robotframework/issues/detail?id=497
 
-
 For loops
 ~~~~~~~~~
 
@@ -246,7 +241,6 @@ really simple cases, user keywords are better, because they hide the
 complexity introduced by for loops. The basic for loop syntax,
 :code:`FOR item IN sequence`, is derived from Python, but similar
 syntax is possible also in shell scripts or Perl.
-
 
 Normal for loop
 '''''''''''''''
@@ -270,14 +264,14 @@ inside a For loop and have another For loop there.
     Test Case    Action     Argument     Argument     Argument    Arguments
    ===========  ========  ============  ===========  ==========  ===========
    Example 1    :FOR      ${animal}     IN           cat         dog
-   \            \         Log           ${animal}    \           \
-   \            \         Log           2nd keyword  \           \
-   \            Log       Outside loop  \            \           \
-   \            \         \             \            \           \
+   \                      Log           ${animal}
+   \                      Log           2nd keyword
+   \            Log       Outside loop
+   \
    Example 2    :FOR      ${var}        IN           one         two
    \            ...       three         four         five        six
-   \            ...       seven         \            \           \
-   \            \         Log           ${var}       \           \   
+   \            ...       seven
+   \                      Log           ${var}
    ===========  ========  ============  ===========  ==========  ===========
 
 
@@ -300,10 +294,9 @@ and keyword :name:`Start Element` is used with all of them.
    ===========  ========  =============  ==========  ===========  ===========
     Test Case    Action     Argument      Argument    Argument     Arguments
    ===========  ========  =============  ==========  ===========  ===========
-   Example      :FOR      ${element}     IN          @{ELEMENTS}  \
-   \            \         Start Element  ${element}  \            \
+   Example      :FOR      ${element}     IN          @{ELEMENTS}
+   \                      Start Element  ${element}
    ===========  ========  =============  ==========  ===========  ===========
-
 
 Using several loop variables
 ''''''''''''''''''''''''''''
@@ -325,15 +318,14 @@ loop variables, as in the first part of the example below:
     Test Case    Action     Argument    Argument    Argument    Arguments
    ===========  ========  ===========  ==========  ==========  ============
    Example      :FOR      ${index}     ${english}  ${finnish}  IN
-   \            ...       1            cat         kissa       \
-   \            ...       2            dog         koira       \
-   \            ...       3            horse       hevonen     \
-   \            \         Do X         ${english}  \           \
-   \            \         Y Should Be  ${finnish}  ${index}    \
+   \            ...       1            cat         kissa
+   \            ...       2            dog         koira
+   \            ...       3            horse       hevonen
+   \                      Do X         ${english}
+   \                      Y Should Be  ${finnish}  ${index}
    \            :FOR      ${name}      ${id}       IN          @{EMPLOYERS}
-   \            \         Create       ${name}     ${id}       \
+   \                      Create       ${name}     ${id}
    ===========  ========  ===========  ==========  ==========  ============
-
 
 For in range
 ''''''''''''
@@ -382,11 +374,11 @@ useful when the limits are specified with variables.
    \
    Negative step     [Documentation]  Loops over   values      13, 3,    and -7
    \                 :FOR             ${index}     IN RANGE    13        -13       -10
-   \                 \                Log          ${index}
+   \                                  Log          ${index}
    \
    Arithmetics       [Documentation]  Arithmetics  with        variable
    \                 :FOR             ${index}     IN RANGE    ${var}+1
-   \                 \                Log          ${index}
+   \                                  Log          ${index}
    ================  ===============  ===========  ==========  ========  ========  ========
 
 Exiting for loop
@@ -413,7 +405,7 @@ for loop. If executed outside of a for loop, the test fails.
    \                        Do Something    ${var}
    =============  ========  ==============  ==================  ===============
 
-Exiting a for loop can also be initiated from a keyword in a test library by 
+Exiting a for loop can also be initiated from a keyword in a test library by
 raising an exception with :code:`ROBOT_EXIT_FOR_LOOP` attribute. Please see
 `Stopping test execution`_ for examples how to do this in Python and Java
 libraries.
@@ -423,10 +415,12 @@ libraries.
 Repeating single keyword
 ''''''''''''''''''''''''
 
-For loops can be excessive in situations where there is only a need to repeat a single keyword. In these cases
-it is often easier to use `BuiltIn keyword`_ :name:`Repeat Keyword` which was added in Robot Framework 2.0.4.
-This keyword takes a keyword and how many times to repeat it as arguments. The times to repeat
-the keyword can have an optional postfix `times` or `x` to make the syntax easier to read.
+For loops can be excessive in situations where there is only a need to
+repeat a single keyword. In these cases it is often easier to use
+`BuiltIn keyword`_ :name:`Repeat Keyword`.  This keyword takes a
+keyword and how many times to repeat it as arguments. The times to
+repeat the keyword can have an optional postfix `times` or `x` to make
+the syntax easier to read.
 
 .. table:: Repeat Keyword examples
    :class: example
@@ -435,15 +429,14 @@ the keyword can have an optional postfix `times` or `x` to make the syntax easie
     Test Case       Action        Argument      Argument    Argument  Argument
    ===========  ==============  ============  ============  ========  ========
    Example      Repeat Keyword  5             Some Keyword  arg1      arg2
-   \            Repeat Keyword  42 times      My Keyword    \         \
-   \            Repeat Keyword  ${var}        Another KW    argument  \
+   \            Repeat Keyword  42 times      My Keyword
+   \            Repeat Keyword  ${var}        Another KW    argument
    ===========  ==============  ============  ============  ========  ========
 
-Robot Framework also had a special syntax for repeating a single keyword. This syntax was
-deprecated in the 2.0.4 version in favor of :name:`Repeat Keyword` and it was removed
-in the 2.5 version.
+Robot Framework also had a special syntax for repeating a single
+keyword. This syntax was deprecated in the 2.0.4 version in favor of
+:name:`Repeat Keyword` and it was removed in the 2.5 version.
 
- 
 Conditional execution
 ~~~~~~~~~~~~~~~~~~~~~
 
@@ -481,18 +474,17 @@ __ `Test setup and teardown`_
 __ `Suite setup and teardown`_
 
 
-
 Parallel execution of keywords
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Prior to the 2.5 version Robot Framework a had special syntax for executing
-keywords in parallel. This functionality was removed because it was rarely 
+keywords in parallel. This functionality was removed because it was rarely
 used and it never worked fully.
 
 When parallel execution is needed, it must be implemented in test library
 level so that the library executes the code on background. Typically this
 means that the library needs a keyword like :name:`Start Something` that
-starts the execution and returns immediately, and another keyword like 
+starts the execution and returns immediately, and another keyword like
 :name:`Get Results From Something` that waits until the result is available
 and returns it. See `OperatingSystem library`_ keywords :name:`Start Process`
 and :name:`Read Process Output` for an example.

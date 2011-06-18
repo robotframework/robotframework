@@ -25,11 +25,11 @@ option is to give an absolute or a relative path to the listener file
 `similarly as with test libraries`__. It is possible to take multiple listeners
 into use by using this option several times.
 
-Starting from version 2.0.2, it is also possible to give arguments to listener
-classes from the command line. Arguments are specified after the listener name
-(or path) using a colon as a separator. This approach provides only string
-type arguments and arguments obviously cannot contain colons. However, it
-should be pretty easy to listeners to go around these limitations.
+It is also possible to give arguments to listener classes from the
+command line. Arguments are specified after the listener name (or
+path) using a colon as a separator. This approach provides only string
+type arguments and arguments obviously cannot contain colons. However,
+it should be pretty easy to listeners to go around these limitations.
 
 __ `Using physical path to library`_
 

@@ -13,9 +13,8 @@ __ `user keyword documentation`_
 __ `Documenting libraries`_
 
 .. contents::
-   :depth: 2 
-   :local: 
-
+   :depth: 2
+   :local:
 
 Representing newlines
 ~~~~~~~~~~~~~~~~~~~~~
@@ -59,10 +58,9 @@ as the above test suite documentation.
       """
       pass
 
-
 Bold and italic
 ~~~~~~~~~~~~~~~
- 
+
 Bold text can be created by having an asterisk before and after the
 selected word or words, for example :code:`\*this is bold*`. Italic
 style works similarly, but the special character to use is an
@@ -105,9 +103,8 @@ started and stopped on every line.
      </tr>
    </table>
 
-
 URLs
-~~~~ 
+~~~~
 
 All strings that look like URLs are automatically converted into
 clickable links. Additionally, URLs that end with extension
@@ -119,12 +116,10 @@ into images.
 
 The automatic conversion of URLs to links is applied to all the data
 in logs and reports, but creating images is done only for test suite,
-test case and keyword documentation. Creating images works starting
-from Robot Framework 2.0.2.
-
+test case and keyword documentation.
 
 Tables
-~~~~~~ 
+~~~~~~
 
 Tables are created using the pipe character with whitespace around it
 as a cell boundary and the newline as a row separator. In library
@@ -141,19 +136,18 @@ left-aligned. Formatting using bold and italic works also in table
 cells, so it is possible to create headers. For example the above
 documentation would be formatted like this:
 
-.. table:: 
+.. table::
    :class: tabular
 
    ========  ========  ========
    **A**     **B**     **C**
    *1*       Hello     world
-   *2*       Hi        \
+   *2*       Hi
    ========  ========  ========
-
 
 Horizontal ruler
 ~~~~~~~~~~~~~~~~
- 
+
 Horizontal rulers (the <hr> tag) make it possible to separate larger
 sections from each others, and they can be created by having three
 hyphens alone in a line. With documentations in the test data literal

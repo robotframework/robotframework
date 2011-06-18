@@ -1225,9 +1225,9 @@ Deprecating keywords
 Sometimes there is a need to replace existing keywords with new ones
 or remove them altogether. Just informing the users about the change
 may not always be enough, and it is more efficient to get warnings at
-runtime. Starting from Robot Framework 2.0.2 this is possible by
-marking these keywords *deprecated*. This makes it easier to find old
-keywords from the test data and remove or replace them.
+runtime. To support that, Robot Framework has a capability to mark
+keywords *deprecated*. This makes it easier to find old keywords from
+the test data and remove or replace them.
 
 Keywords are deprecated by starting their documentation with
 :code:`*DEPRECATED*`. When these keywords are executed, a warning
