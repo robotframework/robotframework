@@ -791,8 +791,8 @@ Exception messages are not the only way to give information to the
 users. In addition to them, methods can also send messages to `log
 files`_ simply by writing to the standard output stream (stdout) or to
 the standard error stream (stderr), and they can even use different
-`log levels`_. Another logging possibility is using the Python based
-`logging API`__ that is explained at the end of this section.
+`log levels`_. Another, and often better, logging possibility is using
+the `programmatic logging APIs`_.
 
 By default, everything written by a method into the standard output is
 written to the log file as a single entry with the log level
@@ -802,14 +802,12 @@ after the keyword execution has finished. It is thus possible to use
 the stderr if you need some messages to be visible on the console where
 tests are executed.
 
-__ `Public logging API`_
-
 Using log levels
 ````````````````
 To use other log levels than :msg:`INFO`, or to create several
 messages, specify the log level explicitly by embedding the level into
-the message in the format :msg:`*LEVEL* Actual log message`, where
-:msg:`*LEVEL*` must be in the beginning of a line and :msg:`LEVEL` is
+the message in the format :code:`*LEVEL* Actual log message`, where
+:code:`*LEVEL*` must be in the beginning of a line and :msg:`LEVEL` is
 one of the available logging levels :msg:`TRACE`, :msg:`DEBUG`,
 :msg:`INFO`, :msg:`WARN` and :msg:`HTML`.
 
@@ -835,6 +833,47 @@ they want. Notice that this feature needs to be used with care, because
 one badly placed :code:`</table>` tag can ruin the log file quite
 badly.
 
+Timestamps
+``````````
+By default messages logged via the standard output or error streams
+get their timestamps when the executed keyword ends. This means that
+the timestamps are not accurate and debugging problems especially with
+longer running keywords can be problematic.
+
+Starting from Robot Framework 2.6 keywords have a possibility to add
+an accurate timestamp to the messages they log if there is a need. The
+timestamp must be given as milliseconds since the `Unix epoch`__ and it
+must be placed after the `log level`__ separated from it with a colon::
+
+   *INFO:1308435758660* Message with timestamp
+   *HTML:1308435758661* <b>HTML</b> message with timestamp
+
+As illustrated by the examples below, adding the timestamp is easy
+both using Python and Java. If you are using Python, it is, however,
+even easier to get accurate timestamps using the `programmatic logging
+APIs`_. A big benefit of this mechanism is that it works also with the
+`remote library interface`_.
+
+Python:
+
+.. sourcecode:: python
+
+    import time
+
+    def example_keyword():
+        print '*INFO:%d* Message with timestamp' % (time.time()*1000)
+
+Java:
+
+.. sourcecode:: java
+
+    public void exampleKeyword() {
+        System.out.println("*INFO:" + System.currentTimeMillis() + "* Message with timestamp");
+    }
+
+__ http://en.wikipedia.org/wiki/Unix_epoch
+__ `Using log levels`_
+
 Logging to console
 ``````````````````
 If libraries need to write something to the console they have three
@@ -852,7 +891,7 @@ messages to :code:`sys.__stdout__`. Robot Framework only intercepts
 :code:`sys.stdout` and :code:`sys.stderr` and leaves
 :code:`sys.__stdout__` (and :code:`sys.__stderr__`) alone like all
 well behaving Python programs should. When using
-:code:`sys.__stdout__` messages end up to the console immeditely and
+:code:`sys.__stdout__` messages end up to the console immediately and
 are not written to the log file at all.
 
 Logging example
@@ -919,6 +958,14 @@ as pseudocode meaning :code:`System.out.println("message");`.
      </tr>
    </table>
 
+
+Programmatic logging APIs
+'''''''''''''''''''''''''
+
+Programmatic APIs provide somewhat cleaner way to log information than
+using the standard output and error streams. Currently these
+interfaces are available only to Python bases test libraries.
+
 Public logging API
 ``````````````````
 
@@ -927,7 +974,7 @@ messages to the log file and to the console. Test libraries can use
 this API like :code:`logger.info('My message')` instead of logging
 through the standard output like :code:`print '*INFO* My message'`. In
 addition to a programmatic interface being a lot cleaner to use, this
-API has a benefit that the log messages have accurate timestamps. An
+API has a benefit that the log messages have accurate timestamps_. An
 obvious limitation is that test libraries using this logging API have
 a dependency to Robot Framework.
 
@@ -953,7 +1000,7 @@ In addition to the new `public logging API`_, Robot Framework 2.6 also
 added a built-in support to Python's standard logging__ module. This
 works so that all messages that are received by the root logger of the
 module are automatically propagated to Robot Framework's log
-file. Also this API produces log messages with accurate timestamps,
+file. Also this API produces log messages with accurate timestamps_,
 but logging HTML messages or writing messages to the console are not
 supported. A big benefit, illustrated also by the simple example
 below, is that using this logging API creates no dependency to Robot
