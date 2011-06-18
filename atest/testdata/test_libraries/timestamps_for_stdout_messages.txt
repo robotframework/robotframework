@@ -1,0 +1,14 @@
+*** Settings ***
+Library  PythonLibUsingTimestamps.py
+#Library  JavaLibUsingTimestamps
+
+
+*** Test Cases ***
+
+Library adds timestamp as integer
+    Timestamp as integer
+
+Library adds timestamp as float
+    Timestamp as float
+
+
