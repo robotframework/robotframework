@@ -18,18 +18,23 @@ from normalizing import normalize
 from misc import plural_or_not
 
 
-def _get_time():
+def _get_timetuple(epoch_secs=None):
     if _CURRENT_TIME:
         return _CURRENT_TIME
-    current = time.time()
-    timetuple = time.localtime(current)[:6]  # from year to secs
-    millis = int((current - int(current)) * 1000)
-    timetuple += (millis,)
-    return timetuple
+    if epoch_secs is None:  # can also be 0 (at least in unit tests)
+        epoch_secs = time.time()
+    secs, millis = _float_secs_to_secs_and_millis(epoch_secs)
+    timetuple = time.localtime(secs)[:6]  # from year to secs
+    return timetuple + (millis,)
+
+def _float_secs_to_secs_and_millis(secs):
+    isecs = int(secs)
+    millis = int(round((secs - isecs) * 1000))
+    return (isecs, millis) if millis < 1000 else (isecs+1, 0)
 
 
 _CURRENT_TIME = None       # Seam for mocking time-dependent tests
-START_TIME = _get_time()
+START_TIME = _get_timetuple()
 
 
 def timestr_to_secs(timestr):
@@ -160,12 +165,16 @@ def format_time(timetuple_or_epochsecs, daysep='', daytimesep=' ', timesep=':',
     """Returns a timestamp formatted from given time using separators.
 
     Time can be given either as a timetuple or seconds after epoch.
+
     Timetuple is (year, month, day, hour, min, sec[, millis]), where parts must
     be integers and millis is required only when millissep is not None.
+    Notice that this is not 100% compatible with standard Python timetuples
+    which do not have millis.
+
     Seconds after epoch can be either an integer or a float.
     """
     if isinstance(timetuple_or_epochsecs, (int, long, float)):
-        timetuple = time.localtime(timetuple_or_epochsecs)
+        timetuple = _get_timetuple(timetuple_or_epochsecs)
     else:
         timetuple = timetuple_or_epochsecs
     daytimeparts = ['%02d' % t for t in timetuple[:6]]
@@ -264,8 +273,7 @@ def parse_time(timestr):
 
 
 def get_timestamp(daysep='', daytimesep=' ', timesep=':', millissep='.'):
-    timetuple = _get_time()
-    return format_time(timetuple, daysep, daytimesep, timesep, millissep)
+    return format_time(_get_timetuple(), daysep, daytimesep, timesep, millissep)
 
 
 def timestamp_to_secs(timestamp, seps=('', ' ', ':', '.'), millis=False):

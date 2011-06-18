@@ -12,7 +12,6 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-
 import re
 
 from robot.common.statistics import Statistics
@@ -113,7 +112,7 @@ class _OutputSplitter:
         return tokens[0] == ''
 
     def _format_timestamp(self, millis):
-        return utils.format_time(round(float(millis)/1000))
+        return utils.format_time(float(millis)/1000, millissep='.')
 
     def __iter__(self):
         return iter(self._messages)

@@ -9,13 +9,30 @@ from robot.utils.asserts import (assert_equal, assert_raises_with_msg,
 from robot.utils.robottime import (timestr_to_secs, secs_to_timestr, get_time,
                                    parse_time, format_time, get_elapsed_time,
                                    get_timestamp, get_start_timestamp,
-                                   timestamp_to_secs)
+                                   timestamp_to_secs, _get_timetuple)
 
 
 EXAMPLE_TIME = time.mktime((2007, 9, 20, 16, 15, 14, 0, 0, -1))
 
 
 class TestTime(unittest.TestCase):
+
+    def test_get_timetuple_excluding_millis(self):
+        assert_equal(_get_timetuple(12345)[:-1], time.localtime(12345)[:6])
+
+    def test_get_current_timetuple_excluding_millis(self):
+        while True:
+            expected = time.localtime()
+            actual = _get_timetuple()
+            if expected == time.localtime():
+                break
+        assert_equal(actual[:-1], expected[:6])
+
+    def test_get_timetuple_millis(self):
+        assert_equal(_get_timetuple(12345)[-2:], (45, 0))
+        assert_equal(_get_timetuple(12345.12345)[-2:], (45, 123))
+        assert_equal(_get_timetuple(12345.67890)[-2:], (45, 679))
+        assert_equal(_get_timetuple(12345.99999)[-2:], (46, 0))
 
     def test_timestr_to_secs(self):
         for inp, exp in [('1', 1),
