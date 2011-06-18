@@ -1,22 +1,28 @@
 *** Settings ***
 Suite Setup     Run Tests  ${EMPTY}  test_libraries/timestamps_for_stdout_messages.txt
-Force Tags      regression  pybot  jybot
+Force Tags      regression
+Default Tags    pybot  jybot
 Resource        atest_resource.txt
 
 *** Test Cases ***
 
 Library adds timestamp as integer
-    ${tc} =  Check Test Case  ${TESTNAME}
-    Known timestamp should be correct  ${tc.kws[0].msgs[0]}
-    Current timestamp should be smaller than kw end time  ${tc.kws[0]}
+    Test's timestamps should be correct
 
 Library adds timestamp as float
-    ${tc} =  Check Test Case  ${TESTNAME}
-    Known timestamp should be correct  ${tc.kws[0].msgs[0]}
-    Current timestamp should be smaller than kw end time  ${tc.kws[0]}
+    Test's timestamps should be correct
+
+Java library adds timestamp
+    [Tags]  jybot
+    Test's timestamps should be correct
 
 
 *** Keywords ***
+
+Test's timestamps should be correct
+    ${tc} =  Check Test Case  ${TESTNAME}
+    Known timestamp should be correct  ${tc.kws[0].msgs[0]}
+    Current timestamp should be smaller than kw end time  ${tc.kws[0]}
 
 Known timestamp should be correct
     [Arguments]  ${msg}

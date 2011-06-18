@@ -1,6 +1,6 @@
 *** Settings ***
 Library  PythonLibUsingTimestamps.py
-#Library  JavaLibUsingTimestamps
+Library  JavaLibUsingTimestamps.java
 
 
 *** Test Cases ***
@@ -11,4 +11,5 @@ Library adds timestamp as integer
 Library adds timestamp as float
     Timestamp as float
 
-
+Java library adds timestamp
+    Java timestamp
