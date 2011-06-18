@@ -98,12 +98,16 @@ class _OutputSplitter:
 
     def _split_to_levels_and_messages(self, output):
         tokens = self._split_from_levels.split(output)
-        # Output started with a level
-        if tokens[0] == '':
-            tokens = tokens[1:]
-        else:
-            tokens.insert(0, '*INFO*')
+        tokens = self._add_initial_default_level_if_needed(tokens)
         return ((tokens[i], tokens[i+1]) for i in xrange(0, len(tokens), 2))
+
+    def _add_initial_default_level_if_needed(self, tokens):
+        if self._output_started_with_level(tokens):
+            return tokens[1:]
+        return ['*INFO*'] + tokens
+
+    def _output_started_with_level(self, tokens):
+        return tokens[0] == ''
 
     def __iter__(self):
         return iter(self._messages)
