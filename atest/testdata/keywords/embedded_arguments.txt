@@ -27,11 +27,25 @@ Non-Existing Variable in Embedded Arguments
     [Documentation]  FAIL Non-existing variable '${non existing}'.
     User ${non existing} Selects ${variables} From Webshop
 
+Custom Embedded Argument Regexp
+    [Documentation]  FAIL No keyword with name 'Result of a + b is fail' found.
+    I execute "foo"
+    I execute "bar" with "zap"
+    Result of 1 + 1 is 2
+    Result of 43 - 1 is 42
+    Result of a + b is fail
+
+Grouping Custom Regexp
+    ${matches} =  Grouping Custom Regexp(erts)
+    Should Be Equal  ${matches}  Custom-Regexp(erts)
+    ${matches} =  Grouping Cuts Regexperts
+    Should Be Equal  ${matches}  Cuts-Regexperts
+
 Escaping Values Given As Embedded Arguments
     ${name}  ${item} =  User \${nonex} Selects \\ From Webshop
     Should Be Equal  ${name}-${item}  \${nonex}-\\
     ${name}  ${item} =  User \ Selects \ \ From Webshop
-    Should Be Equal  ${name}-${item}  -${SPACE}
+    Should Be Equal  ${name}-${item}  ${EMPTY}-${SPACE}
 
 Embedded Arguments Syntax Is Case Insensitive
     x Gets y From The z
@@ -96,10 +110,10 @@ User ${user} Selects ${item} From Webshop
     Log  This is always executed
     [Return]  ${user}  ${item}
 
-${Given/When/Then} this "${item}" ${no good name for this arg ...}
+${prefix:Given|When|Then} this "${item}" ${no good name for this arg ...}
     Log  ${item}-${no good name for this arg ...}
 
-${x} gets ${y} from the ${z}
+${x:x} gets ${y:\w} from the ${z:.}
     Should Be Equal  ${x}-${y}-${z}  x-y-z
 
 Keyword with ${variable} and normal args
@@ -117,3 +131,21 @@ ${a}-tc-${b}
 ${a}+tc+${b}
     Log  ${a}+tc+${b}
 
+I execute "${x:[^"]*}"
+    Should Be Equal  ${x}  foo
+
+I execute "${x}" with "${y}"
+    Should Be Equal  ${x}  bar
+    Should Be Equal  ${y}  zap
+
+Result of ${a:\d+} ${operator:[+-]} ${b:\d+} is ${result}
+    Should Be True  ${a} ${operator} ${b} == ${result}
+
+Grouping ${x:Cu(st|ts)(om)?} ${y:Regexp\(?erts\)?}
+    [Return]  ${x}-${y}
+
+Regexp extensions like ${x:(?x)re} are not supported
+    This is not executed
+
+Invalid ${x:[} Regexp
+    This is not executed

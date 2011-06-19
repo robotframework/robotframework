@@ -26,6 +26,18 @@ Non-Existing Variable in Embedded Arguments
     ${tc} =  Check Test Case  ${TEST NAME}
     Should Be Equal  ${tc.kws[0].name}  User \${non existing} Selects \${variables} From Webshop
 
+Custom Embedded Argument Regexp
+    Check Test Case  ${TEST NAME}
+
+Grouping Custom Regexp
+    Check Test Case  ${TEST NAME}
+
+Regexp Extensions Are Not Supported
+    Check Log Message  ${ERRORS.msgs[0]}  Creating user keyword 'Regexp extensions like \${x:(?x)re} are not supported' failed: Regexp extensions are not allowed in embedded arguments.  ERROR
+
+Invalid Custom Regexp
+    Check Log Message  ${ERRORS.msgs[1]}  Creating user keyword 'Invalid \${x:[} Regexp' failed: Compiling embedded arguments regexp failed: *  ERROR  pattern=yes
+
 Escaping Values Given As Embedded Arguments
     ${tc} =  Check Test Case  ${TEST NAME}
     Should Be Equal  ${tc.kws[0].name}  \${name}, \${item} = User \\\${nonex} Selects \\\\ From Webshop

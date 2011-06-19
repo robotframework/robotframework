@@ -18,6 +18,7 @@ import re
 from robot.common import BaseLibrary, UserErrorHandler
 from robot.errors import DataError, ExecutionFailed, UserKeywordExecutionFailed
 from robot.variables import is_list_var, VariableSplitter
+from robot.output import LOGGER
 from robot import utils
 
 from keywords import Keywords
@@ -34,11 +35,15 @@ class UserLibrary(BaseLibrary):
         self.name = self._get_name_for_resource_file(path)
         self.handlers = utils.NormalizedDict(ignore=['_'])
         self.embedded_arg_handlers = []
-        for user_keyword in user_keywords:
+        for kw in user_keywords:
             try:
-                handler = EmbeddedArgsTemplate(user_keyword, self.name)
+                handler = EmbeddedArgsTemplate(kw, self.name)
+            except DataError, err:
+                LOGGER.error("Creating user keyword '%s' failed: %s"
+                             % (kw.name, unicode(err)))
+                continue
             except TypeError:
-                handler = UserKeywordHandler(user_keyword, self.name)
+                handler = UserKeywordHandler(kw, self.name)
             else:
                 self.embedded_arg_handlers.append(handler)
             if handler.name in self.handlers:
@@ -192,6 +197,8 @@ class UserKeywordHandler(object):
 
 
 class EmbeddedArgsTemplate(UserKeywordHandler):
+    _regexp_group = re.compile(r'(?<!\\)\(')
+    _regexp_extension = re.compile(r'(?<!\\)\(\?')
 
     def __init__(self, keyword, libname):
         if keyword.args.value:
@@ -204,22 +211,39 @@ class EmbeddedArgsTemplate(UserKeywordHandler):
 
     def _read_embedded_args_and_regexp(self, string):
         args = []
-        regexp = ['^']
+        full_regexp = ['^']
         while True:
             before, variable, rest = self._split_from_variable(string)
             if before is None:
                 break
-            args.append(variable)
-            regexp.extend([re.escape(before), '(.*?)'])
+            variable, regexp = self._get_regexp(variable)
+            args.append('${%s}' % variable)
+            full_regexp.extend([re.escape(before), '(%s)' % regexp])
             string = rest
-        regexp.extend([re.escape(rest), '$'])
-        return args, re.compile(''.join(regexp), re.IGNORECASE)
+        full_regexp.extend([re.escape(rest), '$'])
+        return args, self._compile_regexp(''.join(full_regexp))
 
     def _split_from_variable(self, string):
         var = VariableSplitter(string, identifiers=['$'])
         if var.identifier is None:
             return None, None, string
-        return string[:var.start], string[var.start:var.end], string[var.end:]
+        return string[:var.start], var.base, string[var.end:]
+
+    def _get_regexp(self, variable):
+        if ':' not in variable:
+            return variable, '.*?'
+        variable, regexp = variable.split(':', 1)
+        if self._regexp_extension.search(regexp):
+            raise DataError('Regexp extensions are not allowed in embedded '
+                            'arguments.')
+        return variable, self._regexp_group.sub('(?:', regexp)
+
+    def _compile_regexp(self, pattern):
+        try:
+            return re.compile(pattern, re.IGNORECASE)
+        except:
+            raise DataError("Compiling embedded arguments regexp failed: %s"
+                            % utils.get_error_message())
 
 
 class EmbeddedArgs(UserKeywordHandler):
