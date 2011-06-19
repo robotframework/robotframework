@@ -24,7 +24,7 @@ __ http://creativecommons.org/licenses/by/3.0/
 Getting started
 ===============
 
-.. contents:: 
+.. contents::
    :depth: 1
    :local:
 
@@ -36,9 +36,9 @@ Getting started
 Creating test data
 ==================
 
-.. contents:: 
+.. contents::
    :depth: 1
-   :local: 
+   :local:
 
 .. include:: CreatingTestData/TestDataSyntax.txt
 .. include:: CreatingTestData/CreatingTestCases.txt
@@ -52,9 +52,9 @@ Creating test data
 Executing test cases
 ====================
 
-.. contents:: 
+.. contents::
    :depth: 1
-   :local: 
+   :local:
 
 .. include:: ExecutingTestCases/BasicUsage.txt
 .. include:: ExecutingTestCases/TestExecution.txt
@@ -65,9 +65,9 @@ Executing test cases
 Extending Robot Framework
 =========================
 
-.. contents:: 
+.. contents::
    :depth: 1
-   :local: 
+   :local:
 
 .. include:: ExtendingRobotFramework/CreatingTestLibraries.txt
 .. include:: ExtendingRobotFramework/RemoteLibrary.txt
@@ -78,9 +78,9 @@ Extending Robot Framework
 Appendices
 ==========
 
-.. contents:: 
+.. contents::
    :depth: 1
-   :local: 
+   :local:
 
 .. include:: Appendices/AvailableSettings.txt
 .. include:: Appendices/CommandLineOptions.txt
@@ -198,7 +198,7 @@ Appendices
 
 .. _library API: `Creating test libraries`_
 .. _static library API: `Creating static keywords`_
-.. _remote servers: `Using remote servers`_ 
+.. _remote servers: `Using remote servers`_
 .. _listener interface: `Using listener interface`_
 .. _listener: `listener interface`_
 .. _listeners: `listener interface`_
