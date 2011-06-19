@@ -4,49 +4,49 @@ import time
 from robot.utils.asserts import assert_equals
 from robot.utils import format_time
 
-from robot.output.output import _OutputSplitter
+from robot.output.stdoutlogsplitter import StdoutLogSplitter as Splitter
 
 
 class TestOutputSplitter(unittest.TestCase):
 
     def test_empty_output_should_result_in_empty_messages_list(self):
-        splitter = _OutputSplitter('')
+        splitter = Splitter('')
         assert_equals(list(splitter), [])
 
     def test_plain_output_should_have_info_level(self):
-        splitter = _OutputSplitter('this is message\nin many\nlines.')
+        splitter = Splitter('this is message\nin many\nlines.')
         self._verify_message(splitter, 'this is message\nin many\nlines.')
         assert_equals(len(list(splitter)), 1)
 
     def test_leading_and_trailing_space_should_be_stripped(self):
-        splitter = _OutputSplitter('\t  \n My message    \t\r\n')
+        splitter = Splitter('\t  \n My message    \t\r\n')
         self._verify_message(splitter, 'My message')
         assert_equals(len(list(splitter)), 1)
 
     def test_legal_level_is_correctly_read(self):
-        splitter = _OutputSplitter('*DEBUG* My message details')
+        splitter = Splitter('*DEBUG* My message details')
         self._verify_message(splitter, 'My message details', 'DEBUG')
         assert_equals(len(list(splitter)), 1)
 
     def test_space_after_level_is_optional(self):
-        splitter = _OutputSplitter('*WARN*No space!')
+        splitter = Splitter('*WARN*No space!')
         self._verify_message(splitter, 'No space!', 'WARN')
         assert_equals(len(list(splitter)), 1)
 
     def test_it_is_possible_to_define_multiple_levels(self):
-        splitter = _OutputSplitter('*WARN* WARNING!\n'
-                                   '*TRACE*msg')
+        splitter = Splitter('*WARN* WARNING!\n'
+                            '*TRACE*msg')
         self._verify_message(splitter, 'WARNING!', 'WARN')
         self._verify_message(splitter, 'msg', 'TRACE', index=1)
         assert_equals(len(list(splitter)), 2)
 
     def test_html_flag_should_be_parsed_correctly_and_uses_info_level(self):
-        splitter = _OutputSplitter('*HTML* <b>Hello</b>')
+        splitter = Splitter('*HTML* <b>Hello</b>')
         self._verify_message(splitter, '<b>Hello</b>', level='INFO', html=True)
         assert_equals(len(list(splitter)), 1)
 
     def test_default_level_for_first_message_is_info(self):
-        splitter = _OutputSplitter('<img src="foo bar">\n'
+        splitter = Splitter('<img src="foo bar">\n'
                                    '*DEBUG*bar foo')
         self._verify_message(splitter, '<img src="foo bar">')
         self._verify_message(splitter, 'bar foo', 'DEBUG', index=1)
@@ -54,18 +54,18 @@ class TestOutputSplitter(unittest.TestCase):
 
     def test_timestamp_given_as_integer(self):
         now = int(time.time())
-        splitter = _OutputSplitter('*INFO:xxx* No timestamp\n'
-                                   '*INFO:0* Epoch\n'
-                                   '*HTML:%d* X' % (now*1000))
+        splitter = Splitter('*INFO:xxx* No timestamp\n'
+                            '*INFO:0* Epoch\n'
+                            '*HTML:%d*X' % (now*1000))
         self._verify_message(splitter, '*INFO:xxx* No timestamp')
         self._verify_message(splitter, 'Epoch', timestamp=0, index=1)
         self._verify_message(splitter, html=True, timestamp=now, index=2)
         assert_equals(len(list(splitter)), 3)
 
     def test_timestamp_given_as_float(self):
-        splitter = _OutputSplitter('*INFO:1x2* No timestamp\n'
-                                   '*HTML:1000.123456789* X\n'
-                                   '*INFO:12345678.9* X')
+        splitter = Splitter('*INFO:1x2* No timestamp\n'
+                            '*HTML:1000.123456789* X\n'
+                            '*INFO:12345678.9*X')
         self._verify_message(splitter, '*INFO:1x2* No timestamp')
         self._verify_message(splitter, html=True, timestamp=1, index=1)
         self._verify_message(splitter, timestamp=12345.679, index=2)
