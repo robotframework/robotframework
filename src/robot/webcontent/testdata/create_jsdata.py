@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+
 import os
 import robot
 from robot.result.jsparser import create_datamodel_from
