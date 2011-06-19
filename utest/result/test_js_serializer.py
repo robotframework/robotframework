@@ -19,24 +19,29 @@ from robot.utils.asserts import assert_equals, assert_true
 
 class TestJsSerializer(unittest.TestCase):
 
-    SUITE_XML = """<suite source="/tmp/verysimple.txt" name="Verysimple">
-                    <doc></doc>
-                    <metadata>
-                        <item name="key">val</item>
-                    </metadata>
-                    <test name="Test" timeout="">
-                        <doc></doc>
-                        <kw type="kw" name="BuiltIn.Log" timeout="">
-                            <doc>Logs the given message with the given level.</doc>
-                            <arguments><arg>simple</arg></arguments>
-                            <msg timestamp="20110601 12:01:51.353" level="WARN">simple</msg>
-                            <status status="PASS" endtime="20110601 12:01:51.353" starttime="20110601 12:01:51.353"></status>
-                        </kw>
-                        <tags></tags>
-                        <status status="PASS" endtime="20110601 12:01:51.354" critical="yes" starttime="20110601 12:01:51.353"></status>
-                    </test>
-                    <status status="PASS" endtime="20110601 12:01:51.354" starttime="20110601 12:01:51.329"></status>
-                    </suite>"""
+    SUITE_XML = """
+<suite source="/tmp/verysimple.txt" name="Verysimple">
+  <doc>*html* &lt;esc&gt; http://x.y http://x.y/z.jpg</doc>
+  <metadata>
+    <item name="key">val</item>
+    <item name="esc">&lt;</item>
+    <item name="html">http://x.y.x.jpg</item>
+  </metadata>
+  <test name="Test" timeout="">
+    <doc>*html* &lt;esc&gt; http://x.y http://x.y/z.jpg</doc>
+    <kw type="kw" name="Keyword.Example" timeout="1 second">
+      <doc>*html* &lt;esc&gt; http://x.y http://x.y/z.jpg</doc>
+      <arguments><arg>a1</arg><arg>a2</arg></arguments>
+      <msg timestamp="20110601 12:01:51.353" level="WARN">simple</msg>
+      <status status="PASS" endtime="20110601 12:01:51.353" starttime="20110601 12:01:51.353"></status>
+    </kw>
+    <tags><tag>t1</tag><tag>t2</tag></tags>
+    <status status="PASS" endtime="20110601 12:01:51.354" critical="yes" starttime="20110601 12:01:51.353"></status>
+  </test>
+  <status status="PASS" endtime="20110601 12:01:51.354" starttime="20110601 12:01:51.329"></status>
+</suite>"""
+
+    SUITE_STRINGS = ['*', 'eNptyjEOwyAMRuGr/GLIGKtr4voukFCgIgoyHkJPX3Vqh25P+h4HyXZUpiCYqq2xb1OyFeyRNT7uLpu1heiah5NvM3kBlyOh6/Y70Wt+tuRgxWr8B93GB8Kpe9QFt3ahn7XsSOqHA8kbgaQvbw==', '*val', '*&lt;', '*<img src="http://x.y.x.jpg" title="http://x.y.x.jpg" style="border: 1px solid gray" />', '*Test', '*Keyword.Example', '*1 second', '*a1, a2', '*simple', '*t1', '*t2']
 
     FOR_LOOP_XML = """
         <kw type="for" name="${i} IN RANGE [ 2 ]" timeout="">
@@ -129,16 +134,6 @@ class TestJsSerializer(unittest.TestCase):
         data_model._set_generated(time.localtime(284029200))
         assert_equals(data_model._robot_data['generatedMillis'], 0)
 
-    def test_tags_xml_parsing(self):
-        tags_xml = """
-        <tags>
-            <tag>someothertag</tag>
-            <tag>sometag</tag>
-        </tags>
-        """
-        data_model = self._get_data_model(tags_xml)
-        self.assert_model(data_model, 0, [1, 2], ['*', '*someothertag', '*sometag'])
-
     def test_arguments_xml_parsing(self):
         arguments_xml = """
         <arguments>
@@ -149,7 +144,7 @@ class TestJsSerializer(unittest.TestCase):
         data_model = self._get_data_model(arguments_xml)
         self.assert_model(data_model, 0, 1, ['*', '*${arg}, ${level}'])
 
-    def test_keyword_xml_parsing(self):
+    def test_teardown_xml_parsing(self):
         keyword_xml = """
         <kw type="teardown" name="BuiltIn.Log" timeout="">
             <doc>Logs the given message with the given level.</doc>
@@ -190,52 +185,34 @@ class TestJsSerializer(unittest.TestCase):
             ['test', 1, 0, 'Y', 0, [], ['P', -1374853012, 1]],
             ['*', '*Test', '', '', '', '', '', '', '', '', '', ''])
 
-    def test_test_xml_parsing(self):
-        test_xml = """
-        <test name="Test" timeout="">
-            <doc></doc>
-            <kw type="kw" name="Log" timeout="">
-                <doc>Logging</doc>
-                <arguments>
-                    <arg>simple</arg>
-                </arguments>
-                <msg timestamp="20110601 12:01:51.353" level="INFO">simple</msg>
-                <status status="PASS" endtime="20110601 12:01:51.353" starttime="20110601 12:01:51.353"></status>
-            </kw>
-            <tags>
-            </tags>
-            <status status="PASS" endtime="20110601 12:01:51.354" critical="yes" starttime="20110601 12:01:51.353"></status>
-        </test>
-        """
-        self._context.start_suite('SuiteName')
-        data_model = self._get_data_model(test_xml)
-        self.assert_model(data_model, 1306918911353, ['test', 1, 0, 'Y', 0, ['kw', 2, 0, 3, 4, [0, 'I', 4], ['P', 0, 0]], [], ['P', 0, 1]], ['*', '*Test', '*Log', '*Logging', '*simple'])
-
     def test_suite_xml_parsing(self):
+        # Tests parsing the whole suite structure
         data_model = self._get_data_model(self.SUITE_XML)
-        self.assert_model(data_model, 1306918911353, ['suite', '/tmp/verysimple.txt', 'Verysimple',
-                                               0, {'key': 1},
-                                                ['test', 2, 0, 'Y', 0,
-                                                    ['kw', 3, 0, 4, 5, [0, 'W', 5], ['P', 0, 0]], [],
-                                                    ['P', 0, 1]], ['P', -24, 25], [1, 1, 1, 1]],
-            ['*', '*val', '*Test', '*BuiltIn.Log', '*Logs the given message with the given level.', '*simple'])
-        assert_equals(self._context.link_to([0, 'W', 5]), 'keyword_Verysimple.Test.0')
+        self.assert_model(data_model, 1306918911353,
+                          ['suite', '/tmp/verysimple.txt', 'Verysimple', 1,
+                           {'key': 2, 'esc': 3, 'html': 4},
+                           ['test', 5, 0, 'Y', 1,
+                            ['kw', 6, 7, 1, 8, [0, 'W', 9], ['P', 0, 0]],
+                            [10, 11],
+                            ['P', 0, 1]],
+                           ['P', -24, 25],
+                           [1, 1, 1, 1]],
+                           self.SUITE_STRINGS)
+        assert_equals(self._context.link_to([0, 'W', 9]),
+                      'keyword_Verysimple.Test.0')
 
     def test_suite_data_model_keywords_clearing(self):
         data_model = self._get_data_model(self.SUITE_XML)
         data_model.remove_keywords()
-        self.assert_model(data_model, 1306918911353, ['suite', '/tmp/verysimple.txt', 'Verysimple',
-                                               0, {'key': 1},
-                                                ['test', 2, 0, 'Y', 0, [],
-                                                    ['P', 0, 1]], ['P', -24, 25], [1, 1, 1, 1]], ['*', '*val', '*Test', '', '', ''])
-
-    def test_metadata_xml_parsing(self):
-        meta_xml = """<metadata>
-                        <item name="meta">&lt;b&gt;escaped&lt;/b&gt;</item>
-                        <item name="version">alpha</item>
-                      </metadata>"""
-        data_model = self._get_data_model(meta_xml)
-        self.assert_model(data_model, 0, {'meta':1, 'version':2}, ['*', '*<b>escaped</b>', '*alpha'])
+        exp_strings = self.SUITE_STRINGS[:]
+        exp_strings[-6:-2] = ['', '', '', '']
+        self.assert_model(data_model, 1306918911353,
+                          ['suite', '/tmp/verysimple.txt', 'Verysimple', 1,
+                           {'key': 2, 'esc': 3, 'html': 4},
+                           ['test', 5, 0, 'Y', 1, [10, 11], ['P', 0, 1]],
+                           ['P', -24, 25],
+                           [1, 1, 1, 1]],
+                          exp_strings)
 
     def test_statistics_xml_parsing(self):
         statistics_xml = """
@@ -332,3 +309,7 @@ class TestJsSerializer(unittest.TestCase):
         end = min(len(string), index+20)
         end_padding = '' if end==0 else '...'
         return start_padding+string[start:end]+end_padding
+
+
+if __name__ == '__main__':
+    unittest.main()
