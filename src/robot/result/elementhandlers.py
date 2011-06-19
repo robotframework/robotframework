@@ -30,7 +30,7 @@ class _Handler(object):
             'statistics' : _StatisticsHandler,
             'stat'       : _StatItemHandler,
             'errors'     : _Handler,
-            'doc'        : _TextHandler,
+            'doc'        : _HtmlTextHandler,
             'kw'         : _KeywordHandler,
             'arg'        : _ArgumentHandler,
             'arguments'  : _ArgumentsHandler,
@@ -50,6 +50,9 @@ class _Handler(object):
 
     def end_element(self, text):
         return self._data_from_children
+
+    def _html_format(self, text):
+        return utils.html_escape(text, formatting=True)
 
 
 class RootHandler(_Handler):
@@ -151,6 +154,7 @@ class _StatItemHandler(_Handler):
 
 
 class _StatusHandler(object):
+
     def __init__(self, context, attrs):
         self._context = context
         self._status = attrs.get('status')[0]
@@ -191,6 +195,12 @@ class _TextHandler(_Handler):
         return self._context.get_text_id(text)
 
 
+class _HtmlTextHandler(_Handler):
+
+    def end_element(self, text):
+        return self._context.get_text_id(self._html_format(text))
+
+
 class _MetadataHandler(_Handler):
 
     def __init__(self, context, attrs):
@@ -211,7 +221,7 @@ class _MetadataItemHandler(_Handler):
         self._name = attrs.get('name')
 
     def end_element(self, text):
-        return [self._name, self._context.get_text_id(text)]
+        return [self._name, self._context.get_text_id(self._html_format(text))]
 
 
 class _MsgHandler(_Handler):

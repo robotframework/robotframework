@@ -1,3 +1,8 @@
 *** Settings ***
-Suite Setup   Log  higher level suite setup
-Force Tags    i1   i2
+Documentation  *URL:*    http://robotframework.org\n
+...            _Image:_  http://code.google.com/p/robotframework/logo?ext.png
+Metadata       URL       http://robotframework.org
+Metadata       Image     http://code.google.com/p/robotframework/logo?ext.png
+Metadata       Formatting  *Bold* and _italics_
+Suite Setup    Log  higher level suite setup
+Force Tags     i1  i2
