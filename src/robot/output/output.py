@@ -12,17 +12,16 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-import re
-
 from robot.common.statistics import Statistics
 from robot import utils
 import robot
 
-from loggerhelper import AbstractLogger, Message, LEVELS
+from loggerhelper import AbstractLogger
 from logger import LOGGER
 from xmllogger import XmlLogger
 from listeners import Listeners
 from debugfile import DebugFile
+from stdoutlogsplitter import StdoutLogSplitter
 
 
 class Output(AbstractLogger):
@@ -71,8 +70,7 @@ class Output(AbstractLogger):
         LOGGER.end_keyword(kw)
 
     def log_output(self, output):
-        """Splits given output to levels and messages and logs them"""
-        for msg in _OutputSplitter(output):
+        for msg in StdoutLogSplitter(output):
             self.message(msg)
 
     def message(self, msg):
@@ -80,39 +78,3 @@ class Output(AbstractLogger):
 
     def set_log_level(self, level):
         return self._xmllogger.set_log_level(level)
-
-
-class _OutputSplitter:
-    _split_from_levels = re.compile('^(?:\*'
-                                    '(%s|HTML)'          # Level
-                                    '(:\d+(?:\.\d+)?)?'  # Optional timestamp
-                                    '\*)' % '|'.join(LEVELS), re.MULTILINE)
-
-    def __init__(self, output):
-        self._messages = list(self._get_messages(output.strip()))
-
-    def _get_messages(self, output):
-        for level, timestamp, msg in self._split_output(output):
-            if timestamp:
-                timestamp = self._format_timestamp(timestamp[1:])
-            yield Message(msg.strip(), level, timestamp=timestamp)
-
-    def _split_output(self, output):
-        tokens = self._split_from_levels.split(output)
-        tokens = self._add_initial_level_and_time_if_needed(tokens)
-        for i in xrange(0, len(tokens), 3):
-            yield tokens[i:i+3]
-
-    def _add_initial_level_and_time_if_needed(self, tokens):
-        if self._output_started_with_level(tokens):
-            return tokens[1:]
-        return ['INFO', None] + tokens
-
-    def _output_started_with_level(self, tokens):
-        return tokens[0] == ''
-
-    def _format_timestamp(self, millis):
-        return utils.format_time(float(millis)/1000, millissep='.')
-
-    def __iter__(self):
-        return iter(self._messages)
