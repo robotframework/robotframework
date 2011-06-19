@@ -258,12 +258,16 @@ approach to pass arguments to user keywords than specifying them
 in cells after the keyword name as explained in the previous
 section. This method is based on embedding the arguments directly into
 the keyword name, and its main benefit is making it easier to use real
-and clear sentences as keywords. It has always been possible to use
-keywords like :name:`Select dog from list` and :name:`Selects cat from
-list`, but all such keywords must have been implemented
-separately. The idea of embedding arguments into the keyword name is
-that all you need is a keyword with name like :name:`Select ${animal}
-from list`.
+and clear sentences as keywords.
+
+Basic syntax
+''''''''''''
+
+It has always been possible to use keywords like :name:`Select dog
+from list` and :name:`Selects cat from list`, but all such keywords
+must have been implemented separately. The idea of embedding arguments
+into the keyword name is that all you need is a keyword with name like
+:name:`Select ${animal} from list`.
 
 .. table:: An example keyword with arguments embedded into its name
    :class: example
