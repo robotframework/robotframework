@@ -15,6 +15,7 @@
 import re
 
 from robot.output.loggerhelper import Message, LEVELS
+from robot import utils
 
 
 class StdoutLogSplitter(object):
