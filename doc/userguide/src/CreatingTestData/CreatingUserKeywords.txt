@@ -279,7 +279,7 @@ Keywords using embedded arguments cannot take any "normal" arguments
 (specified with :opt:`[Arguments]` setting) but otherwise they are
 created just like other user keywords. The arguments used in the name
 will naturally be available inside the keyword and they have different
-value depending on how the keyword is called. For example
+value depending on how the keyword is called. For example,
 :var:`${animal}` in the previous has value :code:`dog` if the keyword
 is used like :name:`Select dog from list`. Obviously it is not
 mandatory to use all these arguments inside the keyword, and they can
@@ -288,8 +288,8 @@ thus be used as wildcards.
 These kind of keywords are also used the same way as other keywords
 except that spaces and underscores are not ignored in their
 names. They are, however, case-insensitive like other keywords. For
-example the keyword in the example above could be used like
-:name:`select x from list` but not like :name:`Select x fromlist`.
+example, the keyword in the example above could be used like
+:name:`select x from list`, but not like :name:`Select x fromlist`.
 
 Embedded arguments do not support default values or variable number of
 arguments like traditional arguments do. Using variables when
@@ -302,19 +302,119 @@ Embedded arguments matching too much
 One tricky part in using embedded arguments is making sure that the
 values used when calling the keyword match the correct arguments. This
 is a problem especially if there are multiple arguments and characters
-separating them may also appear in the given values. For example
-:name:`Select ${city} ${team}` leads to unexpected results if used
-with city containing too parts like :name:`Select Los Angeles
-Lakers`. One solution to this problem is quoting the arguments like
-:name:`Select "${city}" "${team}"` or separating them from each others
-otherwise, but sometimes it is easiest to just use positional
-arguments instead.
+separating them may also appear in the given values. For example,
+keyword :name:`Select ${city} ${team}` does not work correctly if used
+with city containing too parts like :name:`Select Los Angeles Lakers`.
 
-The same problem occurs often when trying to create keywords `ignoring
-given/when/then/and prefixes`_. For example :name:`${name} goes home`
-matches :name:`Given Janne goes home` so that :var:`${name}` gets
-value :code:`Given Janne`. Quotes around the variable, like
-:name:`"${name}" goes home` resolve also this problem.
+An easy solution to this problem is quoting the arguments (e.g.
+:name:`Select "${city}" "${team}"`) and using the keyword in quoted
+format (e.g. :name:`Select "Los Angeles" "Lakers"`). This approach is
+not enough to resolve all this kind of conflicts, though, but it is
+still highly recommended because it makes arguments stand out from
+rest of the keyword. A more powerful but also more complicated
+solution, `using custom regular expressions`_ when defining variables,
+is explained in the next section. Finally, if things get complicated,
+it might be a better idea to use normal positional arguments instead.
+
+The problem of arguments matching too much occurs often when creating
+keywords that `ignore given/when/then/and prefixes`__ . For example,
+:name:`${name} goes home` matches :name:`Given Janne goes home` so
+that :var:`${name}` gets value :code:`Given Janne`. Quotes around the
+argument, like in :name:`"${name}" goes home`, resolve this problem
+easily.
+
+__ `Ignoring Given/When/Then/And prefixes`_
+
+Using custom regular expressions
+''''''''''''''''''''''''''''''''
+
+Matching keyword with embedded arguments into the keywords that are
+used in the test data is done internally using `regular expressions`__
+(regexps for short). The default logic goes so that every argument in
+the name is replaced with a pattern :code:`.*?` that basically matches
+any string. This logic works fairly well normally, but as just
+discussed above, sometimes keywords `match more than
+intended`__. Quoting or otherwise separating arguments from the other
+text can help but, for example, the test below fails because keyword
+:name:`I execute "ls" with "-lh"` matches both of the defined
+keywords.
+
+.. table:: Embedded arguments match too much
+   :class: example
+
+   ============================  ===============================
+             Test Case                         Step
+   ============================  ===============================
+   Example                       I execute "ls"
+   \                             I execute "ls" with "-lh"
+   ============================  ===============================
+
+.. table::
+   :class: example
+
+   ===================================  =============  ==============  ==========
+                Keyword                     Action        Argument      Argument
+   ===================================  =============  ==============  ==========
+   I execute "${cmd}"                   Run            ${x}
+   I execute "${cmd}" with "${params}"  Run            ${x} ${params}
+   ===================================  =============  ==============  ==========
+
+A solution to this problem is using a custom regular expression that
+makes sure that the keyword matches only what it should in that
+particular context. A custom regexp is defined after the base name of
+the argument so that they are separated with a colon, for example
+:var:`${name:\\d+}`. Using custom regular expressions is illustrated
+by the examples below.
+
+.. table:: Using custom regular expressions with embedded arguments
+   :class: example
+
+   ============================  ===============================
+             Test Case                         Step
+   ============================  ===============================
+   Example                       I execute "ls"
+   \                             I execute "ls" with "-lh"
+   \                             I type 1 + 2
+   \                             I type 53 - 11
+   ============================  ===============================
+
+.. table::
+   :class: example
+
+   =====================================  =============  ================  =====  =====
+                Keyword                       Action         Argument       Arg    Arg
+   =====================================  =============  ================  =====  =====
+   I execute "${cmd:[^"]}"                Run            ${cmd}
+   I execute "${cmd}" with "${params}"    Run            ${cmd} ${params}
+   I type ${a:\\d+} ${op:[+-]} ${b:\\d+}  Calculate      ${a}              ${op}  ${b}
+   =====================================  =============  ================  =====  =====
+
+In the above example keyword :name:`I execute "ls" with "-lh"` matches
+only :name:`I execute "${cmd}" with "${params}"`. That is guaranteed
+because the custom regular expression :code:`[^"]` in :name:`I execute
+"${cmd:[^"]}"` means that a matching argument cannot contain any
+quotes. In this case there is no need to add custom regexps for the
+other :name:`I execute` variant. Other regexps in the example,
+:code:`\\d+` and :code:`[+-]`, match one or more numbers and either +
+or - character, respectively.
+
+.. tip:: If you quote arguments, using regular expression :code:`[^"]`
+         guarantees that the argument matches only until the first
+         closing quote.
+
+Being implemented with Python, Robot Framework naturally uses Python's
+:name:`re` module that has pretty standard `regular expressions
+syntax`__. The syntax is otherwise fully supported with embedded
+arguments, but regexp extensions in format :code:`(?...)` cannot be
+used. Notice also that matching embedded arguments is done
+case-insensitively. If the regular expression syntax is invalid,
+creating the keyword fails with an error visible in `test execution
+errors`__.
+
+__ http://en.wikipedia.org/wiki/Regular_expression
+__ `Embedded arguments matching too much`_
+__ http://docs.python.org/library/re.html
+__ `Errors and warnings during execution`_
 
 Behavior-driven development example
 '''''''''''''''''''''''''''''''''''
