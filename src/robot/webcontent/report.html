@@ -240,7 +240,7 @@ function iterateDetails(){
         return;
     }
     var elements = pop_upto(window.tasks, 50);
-    $.tmpl('testDetailsTableRowTemplate', elements, {logURL: window.settings.logURL}).appendTo('#tests_detail_table');
+    $.tmpl('testDetailsTableRowTemplate', elements, {logURL: window.settings.logURL}).appendTo('#test_details');
     if(window.tasks.length > 0)
         setTimeout("iterateDetails()", 0);
 }
@@ -258,29 +258,44 @@ function pop_upto(list, upto) {
   <table class="details">
     <tr>
       <th>Status:</th>
-        {{if criticalFailed}}
-            <td><a class="status_fail" href="#total_Critical Tests" onClick="totalDetailSelected('Critical Tests')">${criticalFailed} critical test{{if criticalFailed != 1}}s{{/if}} failed</a></td>
-        {{else}}
-            <td><a class="status_pass" href="#total_Critical Tests" onClick="totalDetailSelected('Critical Tests')">All critical tests passed</a></td>
-        {{/if}}
+      {{if criticalFailed}}
+      <td><a class="summary_fail" href="#total_Critical Tests" onClick="totalDetailSelected('Critical Tests')">${criticalFailed} critical test{{if criticalFailed != 1}}s{{/if}} failed</a></td>
+      {{else}}
+      <td><a class="summary_pass" href="#total_Critical Tests" onClick="totalDetailSelected('Critical Tests')">All critical tests passed</a></td>
+      {{/if}}
     </tr>
     {{if documentation}}
-      <tr><th>Documentation:</th><td>{{html documentation}}</td></tr>
+    <tr>
+      <th>Documentation:</th>
+      <td>{{html documentation}}</td>
+    </tr>
     {{/if}}
     {{each metadata}}
-      <tr><th>${$index}:</th><td>{{html $value}}</td></tr>
+    <tr>
+      <th>${$index}:</th>
+      <td>{{html $value}}</td>
+    </tr>
     {{/each}}
     {{if times.startTime() != 'N/A'}}
-      <tr><th>Start Time:</th><td>${times.startTime}</td></tr>
+    <tr>
+      <th>Start Time:</th>
+      <td>${times.startTime}</td>
+    </tr>
     {{/if}}
     {{if times.endTime() != 'N/A'}}
-      <tr><th>End Time:</th><td>${times.endTime}</td></tr>
+    <tr>
+      <th>End Time:</th>
+      <td>${times.endTime}</td>
+    </tr>
     {{/if}}
-      <tr><th>Elapsed Time:</th><td>${times.elapsedTime}</td></tr>
+    <tr>
+      <th>Elapsed Time:</th>
+      <td>${times.elapsedTime}</td>
+    </tr>
     {{if $item.logURL}}
     <tr>
-        <th>Log File:</th>
-        <td><a href="${$item.logURL}">${$item.logURL}</a></td>
+      <th>Log File:</th>
+      <td><a href="${$item.logURL}">${$item.logURL}</a></td>
     </tr>
     {{/if}}
   </table>
@@ -382,72 +397,72 @@ function pop_upto(list, upto) {
 </script>
 
 <script type="text/x-jquery-tmpl" id="tagOrTotalDetailsTemplate">
-    {{if doc}}
-    <tr>
-        <th>Documentation:</th>
-        <td>{{html doc}}</td>
-    </tr>
-    {{/if}}
-    {{if combined}}
-    <tr>
-        <th>Pattern:</th>
-        <td>${combined}</td>
-    </tr>
-    {{/if}}
-    {{if links}}{{if links.length}}
-    <tr>
-        <th>Links:</th>
-        <td>{{each links}}<a href="${$value.url}" title="${$value.url}">${$value.title}</a>{{/each}} </td>
-    </tr>
-    {{/if}}{{/if}}
-    <tr>
-        <th>Status:</th>
-        <td>${total} total, ${pass} passed, {{if fail}}<span class="fail">${fail} failed</span>{{else}}<span class="pass">0 failed</span>{{/if}}</td>
-    </tr>
-    <tr>
-        <th>Total Time:</th>
-        <td>${totalTime}</td>
-    </tr>
+  {{if doc}}
+  <tr>
+    <th>Documentation:</th>
+    <td>{{html doc}}</td>
+  </tr>
+  {{/if}}
+  {{if combined}}
+  <tr>
+    <th>Pattern:</th>
+    <td>${combined}</td>
+  </tr>
+  {{/if}}
+  {{if links}}{{if links.length}}
+  <tr>
+    <th>Links:</th>
+    <td>{{each links}}<a href="${$value.url}" title="${$value.url}">${$value.title}</a>{{/each}} </td>
+  </tr>
+  {{/if}}{{/if}}
+  <tr>
+    <th>Status:</th>
+    <td>${total} total, ${pass} passed, {{if fail}}<span class="fail">${fail} failed</span>{{else}}<span class="pass">0 failed</span>{{/if}}</td>
+  </tr>
+  <tr>
+    <th>Total Time:</th>
+    <td>${totalTime}</td>
+  </tr>
 </script>
 
 <script type="text/x-jquery-tmpl" id="suiteDetailsTemplate">
-    {{if $item.logURL}}
-    <tr>
-        <th>Log Link:</th>
-        <td><a href="${$item.logURL}#suite_${fullname}" title="${fullname}">${$item.logURL}#suite_${fullname} </a></td>
-    </tr>
-    {{/if}}
-    {{if documentation}}
-    <tr>
-        <th>Documentation:</th>
-        <td>{{html documentation}}</td>
-    </tr>
-    {{/if}}
-    {{each metadata}}
-    <tr><th>${$index}:</th><td>{{html $value}}</td></tr>
-    {{/each}}
-    <tr>
-        <th>Status:</th>
-        <td>{{tmpl($data) 'suiteStatusMessageTemplate'}}</td>
-    </tr>
-    {{if message}}
-    <tr>
-        <th>Message:</th>
-        <td>${message}</td>
-     </tr>
-    {{/if}}
-    <tr>
-        <th>Start / End:</th>
-        <td>${times.startTime}  /  ${times.endTime}</td>
-    </tr>
-    <tr>
-        <th>Elapsed:</th>
-        <td>${times.elapsedTime}</td>
-    </tr>
+  {{if $item.logURL}}
+  <tr>
+    <th>Log Link:</th>
+    <td><a href="${$item.logURL}#suite_${fullname}" title="${fullname}">${$item.logURL}#suite_${fullname} </a></td>
+  </tr>
+  {{/if}}
+  {{if documentation}}
+  <tr>
+    <th>Documentation:</th>
+    <td>{{html documentation}}</td>
+  </tr>
+  {{/if}}
+  {{each metadata}}
+  <tr><th>${$index}:</th><td>{{html $value}}</td></tr>
+  {{/each}}
+  <tr>
+    <th>Status:</th>
+    <td>{{tmpl($data) 'suiteStatusMessageTemplate'}}</td>
+  </tr>
+  {{if message}}
+  <tr>
+    <th>Message:</th>
+    <td>${message}</td>
+  </tr>
+  {{/if}}
+  <tr>
+    <th>Start / End:</th>
+    <td>${times.startTime}  /  ${times.endTime}</td>
+  </tr>
+  <tr>
+    <th>Elapsed:</th>
+    <td>${times.elapsedTime}</td>
+  </tr>
 </script>
 
 <script type="text/x-jquery-tmpl" id="testDetailsTableTemplate">
-  <table id="tests_detail_table">
+  <table id="test_details">
     <tr>
       <th class="col_name">Name</th>
       <th class="col_doc">Documentation</th>
