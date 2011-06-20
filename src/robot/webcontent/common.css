@@ -4,6 +4,7 @@ body {
     font-size: 0.8em;
     color: black;
     padding: 6px;
+    background: white;
 }
 br {
     mso-data-placement: same-cell; /* maintain line breaks in Excel */

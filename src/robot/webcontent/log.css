@@ -1,90 +1,70 @@
-body {
-    background: white;
-}
-
 /* Tables */
-
 table.suite, table.errors {
     width: 100%;
-    border: 1px solid gray; /* no grey in IE */
+    border: 1px solid gray;
     margin: 0.2em 0em;
     padding: 0.2em;
 }
-
 table.errors td.level {
     font-weight: bold;
     width: 4em;
     text-align: center;
     vertical-align: top;
 }
-
 table.errors td.time {
     width: 10em;
     vertical-align: top;
     white-space: nowrap;
 }
-
 table.errors td.msg {
     white-space: pre-wrap;
 }
-
 table.test {
     width: 100%;
     border: 1px dashed gray;
     margin: 0.2em 0em;
     padding: 0.2em;
 }
-
 table.metadata, table.keyword, table.messages {
     margin-left: 1.1em;
     width: 100%;
 }
-
 table.metadata, table.messages {
     margin-right: 2em;
 }
-
 table.keyword table.metadata {
     font-size: 0.9em;
     margin-left: 1.4em;
 }
-
 table.messages {
     font-family: monospace;
     font-size: 1.2em;
 }
-
 table.messages td.msg {
     white-space: pre-wrap;
 }
-
 table.metadata th {
     width: 13em;
     text-align: left;
     vertical-align: top;
     white-space: nowrap;
 }
-
 table.metadata td {
     padding-left: 0.5em;
     vertical-align: top;
     white-space: pre-wrap;
 }
-
 table.messages td {
     vertical-align: top;
 }
-
 table.messages td.time {
     width: 6em;
     letter-spacing: -0.05em;
 }
-
 table.messages td.level {
     width: 4em;
     text-align: center;
 }
-
 /* Folding buttons */
 div.foldingbutton {
     text-align: center;
@@ -97,25 +77,20 @@ div.foldingbutton {
     text-decoration: none;
     font-weight: bold;
     border: 1px solid black;
-    border: 1px solid black;
 }
-
 div.foldingbutton:hover {
     background: yellow;
 }
-
 .expand {
     float: right;
     margin-right: 0.5em;
     font-size: 0.8em;
 }
-
 /* Test, suite and kw names */
-.name, .splitname {
+.name {
     font-weight: bold;
     text-decoration: none;
 }
-
 a.name:hover {
     text-decoration: none;
     color: black;
