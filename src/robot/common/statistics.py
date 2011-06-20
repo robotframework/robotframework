@@ -187,6 +187,7 @@ class TagStatistics:
 
     def _add_combined_statistics(self, test):
         for pattern, name in self._combine:
+            name = name or pattern
             if name not in self.stats:
                 self.stats[name] = TagStat(name, self._get_doc(name),
                                            self._get_links(name),

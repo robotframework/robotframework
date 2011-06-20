@@ -164,7 +164,7 @@ class _BaseSettings(object):
             value = value.replace(replwhat, replwith)
         if ':' in value:
             return value.rsplit(':', 1)
-        return value, value
+        return value, ''
 
     def _process_tag_stat_link(self, value):
         tokens = value.split(':')
