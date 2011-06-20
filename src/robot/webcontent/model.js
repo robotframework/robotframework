@@ -111,12 +111,12 @@ window.model = function () {
     }
 
     function createModelObject(data) {
-        var obj = {};
-        obj.name = data.name;
-        obj.documentation = data.doc; // TODO: rename documentation -> doc
-        obj.status = data.status;
-        obj.times = data.times;
-        return obj
+        return {
+            name: data.name,
+            doc: data.doc,
+            status: data.status,
+            times: data.times
+        };
     }
 
     function Test(data) {

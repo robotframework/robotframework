@@ -167,8 +167,8 @@ function addTestExecutionLog(main) {
         <div class="indent" id="${id}_children" style="display: none;">
           <table class="metadata" id="${id}_metadata">
             <tr><th>Full Name:</th><td>${fullname}</td></tr>
-            {{if documentation}}
-            <tr><th>Documentation:</th><td>{{html documentation}}</td></tr>
+            {{if doc}}
+            <tr><th>Documentation:</th><td>{{html doc}}</td></tr>
             {{/if}}
             {{each metadata}}
             <tr><th>${$index}:</th><td>{{html $value}}</td></tr>
@@ -211,8 +211,8 @@ function addTestExecutionLog(main) {
         <div class="indent" id="${id}_children" style="display: none;">
           <table class="metadata" id="${id}_metadata">
             <tr><th>Full Name:</th><td>${fullname}</td></tr>
-            {{if documentation}}
-            <tr><th>Documentation:</th><td>{{html documentation}}</td></tr>
+            {{if doc}}
+            <tr><th>Documentation:</th><td>{{html doc}}</td></tr>
             {{/if}}
             {{if tags.length}}
             <tr><th>Tags:</th><td>${tags.join(', ')}</td></tr>
@@ -253,8 +253,8 @@ function addTestExecutionLog(main) {
       <td>
         <div class="indent" id="${id}_children" style="display: none;">
           <table class="metadata" id="${id}_metadata">
-            {{if documentation}}
-            <tr><th>Documentation:</th><td>{{html documentation}}</td></tr>
+            {{if doc}}
+            <tr><th>Documentation:</th><td>{{html doc}}</td></tr>
             {{/if}}
             <tr><th>Start / End / Elapsed:</th><td>${times.startTime}  /  ${times.endTime}  /  ${times.elapsedTime}</td></tr>
           </table>

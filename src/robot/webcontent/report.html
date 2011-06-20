@@ -267,10 +267,10 @@ function pop_upto(list, upto) {
       <td><a class="summary_pass" href="#total_Critical Tests" onClick="totalDetailSelected('Critical Tests')">All critical tests passed</a></td>
       {{/if}}
     </tr>
-    {{if documentation}}
+    {{if doc}}
     <tr>
       <th>Documentation:</th>
-      <td>{{html documentation}}</td>
+      <td>{{html doc}}</td>
     </tr>
     {{/if}}
     {{each metadata}}
@@ -437,10 +437,10 @@ function pop_upto(list, upto) {
     <td><a href="${$item.logURL}#suite_${fullname}" title="${fullname}">${$item.logURL}#suite_${fullname} </a></td>
   </tr>
   {{/if}}
-  {{if documentation}}
+  {{if doc}}
   <tr>
     <th>Documentation:</th>
-    <td>{{html documentation}}</td>
+    <td>{{html doc}}</td>
   </tr>
   {{/if}}
   {{each metadata}}
@@ -487,7 +487,7 @@ function pop_upto(list, upto) {
     {{else}}
     <td class="col_name"><span class="parent_name">${parentName}</span>${name}</td>
     {{/if}}
-    <td class="col_doc">{{html documentation}}</td>
+    <td class="col_doc">{{html doc}}</td>
     <td class="col_tags">${tags.join(', ')}</td>
     <td class="col_crit">{{if isCritical}}yes{{else}}no{{/if}}</td>
     <td class="col_status ${status.toLowerCase()}">${status}</td>
