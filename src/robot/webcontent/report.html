@@ -151,16 +151,19 @@ function drawTestDetailsTable(tests) {
 
 function ensureTotalDetailsAreVisible(type) {
     document.getElementById('radio_'+type).checked = true;
+    $('#print_selector').text(type);
     window.location.hash = 'total_'+type
 }
 
 function ensureTagDetailsAreVisible(name) {
     document.getElementById('tag_detail_selector').value = name;
+    $('#print_selector').text(name);
     window.location.hash = 'tag_'+name;
 }
 
 function ensureSuiteDetailsAreVisible(name) {
     document.getElementById('suite_detail_selector').value = name;
+    $('#print_selector').text(name);
     window.location.hash = 'suite_'+name;
 }
 
@@ -340,7 +343,6 @@ function pop_upto(list, upto) {
   </tr>
 </script>
 
-
 <script type="text/x-jquery-tmpl" id="detailsHeaderTemplate">
   <h2 id="${linkTarget}">Test Details</h2>
   <ul id="detail_tabs">
@@ -354,12 +356,13 @@ function pop_upto(list, upto) {
   <table class="details" id="details_header">
     <tr id="selector">
       <th>Type:</th>
-      <td class="normal_whitespace">
+      <td id="normal_selector">
         <input id="radio_Critical Tests" type="radio" name="totals_radio" onclick="totalDetailSelected('Critical Tests');">
         <label for="radio_Critical Tests">Critical Tests</label><br>
         <input id="radio_All Tests" type="radio" name="totals_radio" onclick="totalDetailSelected('All Tests');">
         <label for="radio_All Tests">All Tests</label>
       </td>
+      <td id="print_selector"></td>
     </tr>
   </table>
 </script>
@@ -368,7 +371,7 @@ function pop_upto(list, upto) {
   <table class="details" id="details_header">
     <tr id="selector">
       <th>Name:</th>
-      <td class="normal_whitespace">
+      <td id="normal_selector">
         <select id="tag_detail_selector" onchange="tagDetailSelected(this.options[this.selectedIndex].value);">
           <option value="">Select tag...</option>
           {{each tags}}
@@ -376,6 +379,7 @@ function pop_upto(list, upto) {
           {{/each}}
         </select>
       </td>
+      <td id="print_selector"></td>
     </tr>
   </table>
 </script>
@@ -384,7 +388,7 @@ function pop_upto(list, upto) {
   <table class="details" id="details_header">
     <tr id="selector">
       <th>Name:</th>
-      <td class="normal_whitespace">
+      <td id="normal_selector">
         <select id="suite_detail_selector" onchange="suiteDetailSelected(this.options[this.selectedIndex].value);">
           <option value="">Select suite...</option>
           {{each suites}}
@@ -392,6 +396,7 @@ function pop_upto(list, upto) {
           {{/each}}
         </select>
       </td>
+      <td id="print_selector"></td>
     </tr>
   </table>
 </script>

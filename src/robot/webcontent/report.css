@@ -1,10 +1,10 @@
 /* Summary links */
 a.summary_fail {
-    color: red;
+    color: red !important;
     font-weight: bold;
 }
 a.summary_pass {
-    color: #009900;
+    color: #009900 !important;
 }
 /* Generic table styles */
 table {
@@ -36,20 +36,21 @@ table.details th {
     vertical-align: top;
     padding-right: 1em;
     border: none;
-    padding: 2px 4px;
+    padding: 0.2em 0.4em;
 }
 table.details td {
     vertical-align: top;
     border: none;
-    padding: 2px 4px;
+    padding: 0.2em 0.4em;
     white-space: pre-wrap;
 }
-#selector th, #selector td {
+table.details #selector th, table.details #selector td {
     padding-top: 0.5em;
     padding-bottom: 1em;
-}
-.normal_whitespace {
     white-space: normal;
+}
+#print_selector {
+    visibility: hidden;
 }
 /* Tabs - adapted from http://www.htmldog.com/articles/tabs */
 #detail_tabs {

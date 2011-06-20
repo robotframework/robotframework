@@ -1,17 +1,17 @@
 body {
-    background: white;
+    background: white !important;
     padding: 0px;
     font-size: 8pt;
 }
-
 a:link, a:visited {
     color: black;
 }
-
 .header, table.details, table.statistics {
     width: 100%;
 }
-
-#generated_ago, .expand {
+#generated_ago, #report_or_log_link, #normal_selector, .expand {
     display: none;
+}
+#print_selector {
+    visibility: visible;
 }

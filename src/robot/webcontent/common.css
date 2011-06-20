@@ -100,12 +100,12 @@ table.statistics td, table.statistics th {
 table.statistics th {
     background: #C6C6C6;
 }
-.col_stat_name {
-    width: 40em;
-}
 .col_stat {
     width: 3em;
     text-align: center;
+}
+.col_graph {
+   width: 11em;
 }
 .stat_name {
     float: left;
@@ -129,9 +129,8 @@ table.statistics th {
     background: red;
 }
 .graph {
-    position: relative;
     border: 1px solid black;
-    width: 11em;
+    width: 100%;
     height: 0.75em;
     padding: 0px;
     background: #E9E9E9;
