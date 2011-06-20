@@ -339,13 +339,10 @@ window.stats = (function () {
     function parseLinks(linksData) {
         if (!linksData)
             return [];
-        var items = linksData.split(':::');
-        var links = [];
-        for (var i=0; i<items.length; i++) {
-            parts = items[i].split(':');
-            links[i] = {title: parts[0], url: parts.splice(1).join(':')};
-        }
-        return links;
+        return util.map(linksData.split(':::'), function (link) {
+                var index = link.indexOf(':');
+                return {title: link.slice(0, index), url: link.slice(index+1)};
+            });
     }
 
     function calculatePercents(total, passed, failed) {
