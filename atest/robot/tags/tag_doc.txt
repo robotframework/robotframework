@@ -62,11 +62,14 @@ Tag Doc With Multiple Matches In Report Details
     Format In Report Details Should Be Correct  d2  Doc for many tags More doc
 
 Tag Doc With Multiple Matches In Output Statistics
-    Format In Output Statistics Should Be Correct  d2  Doc for many tags More doc
+    Format In Output Statistics Should Be Correct  d2  Doc for many tags &amp; More doc
+
+Tag Doc For Combined Statistics
+    Format In Output Statistics Should Be Correct  DX  Doc for many tags
 
 *** Keywords ***
 Run Tests And Read Outputs
-    Run Tests  --log log.html --report report.html --tagdoc f1:Some_documentation --tagdoc t1:http://some.url_*bold* --tagdoc d?:Doc_for_many_tags --tagdoc D2:More_doc  misc/normal.html
+    Run Tests  --log log.html --report report.html --tagdoc f1:Some_documentation --tagdoc t1:http://some.url_*bold* --tagdoc d?:Doc_for_many_tags --tagdoc D2:More_doc --tagstatcombine d*:DX  misc/normal.html
     ${LOG} =  Get File  ${OUT_DIR}${/}log.html
     ${REPORT} =  Get File  ${OUT_DIR}${/}report.html
     ${OUTPUT} =  Get File  ${OUT_FILE}

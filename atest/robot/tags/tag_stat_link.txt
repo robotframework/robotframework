@@ -41,6 +41,11 @@ Same Tag Matches Multiple Links
     ${expected} =  Set  ${expected}\n</div>\n</td>
     Contains  ${report}  ${expected}
 
+Link For Combined Tag
+    Run Tests  --tagstatcombine d*:DX --tagstatlink d?:http://%1:Title_%1  misc/suites
+    ${stats} =  Get Tag Stat Nodes
+    Should Be Equal  ${stats[0].attrs['links']}  Title X:http://X
+
 *** Keywords ***
 Report Should Contain Taglink
     [Arguments]  ${tag}  ${link}  ${title}
