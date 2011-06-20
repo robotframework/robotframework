@@ -1,64 +1,44 @@
 *** Settings ***
-Suite Setup     My Setup
-Suite Teardown  Remove Temps
-Test Teardown   Empty Dir  ${MYOUTDIR}
-Force Tags      regression  pybot  jybot  static_html_checks
+Suite Setup     Run Tests And Rebot With Tag Stat Links
+Force Tags      regression  pybot  jybot
 Resource        atest_resource.txt
+Test Template   Tag link should be correct in output
 
-*** Variables ***
-${MYOUTDIR}  ${TEMPDIR}${/}robot-test-978675
-${MYINPUT}  ${TEMPDIR}${/}robot-test-978675.xml
 
 *** Test Cases ***
+
 Tag Links Without Patterns
-    Run Rebot Without Processing Output  --tagstatlink SUB3:http://example.com:title --outputdir ${MYOUTDIR} --report report.html  ${MYINPUT}
-    Report Should Contain Taglink  sub3  http://example.com  title
+    6    t2    rebot title:http://example.com
 
 Tag Links With Pattern
-    Run Rebot Without Processing Output  --tagstatlink ?1:http://example.com/%1:Title --outputdir ${MYOUTDIR} --report report.html  ${MYINPUT}
-    Report Should Contain Taglink  d1  http://example.com/d  Title
-    Report Should Contain Taglink  f1  http://example.com/f  Title
-    Report Should Contain Taglink  t1  http://example.com/t  Title
+    3    f1    Rebot:http://example.com/f
+    5    t1    Rebot:http://example.com/t
 
 Tag Links With Many Patterns
-    Run Rebot Without Processing Output  --tagstatlink *?u?*:%2-%3-%2-%1-%4:Title --outputdir ${MYOUTDIR} --report report.html  ${MYINPUT}
-    Report Should Contain Taglink  sub3  s-b-s--3  Title
-
-Tag Link Used Multiple Times
-    ${mail_to} =  Catenate  SEPARATOR=  mailto:  %1@dot.com  # ?subject=%1AMPbody=%1 #This does not work on Jython in Windows
-    Run Rebot Without Processing Output  --tagstatlink ?2:ftp://%1:My_Title --tagstatlink s???:${mail_to}:mail_to --outputdir ${MYOUTDIR} --report report.html --escape amp:AMP  ${MYINPUT}
-    Report Should Contain Taglink  d2  ftp://d  My Title
-    Report Should Contain Taglink  t2  ftp://t  My Title
-    Report Should Contain Taglink  sub3  ${mail_to.replace('%1', 'ub3'). replace('AMP', '&')}  mail to
+    4    sub3  sub title:s-b-s--3
 
 Same Tag Matches Multiple Links
-    Run Rebot Without Processing Output  --tagstatlink sub3:one:First_Link --tagstatlink *3:%1:Second_Link --tagstatlink ??b?:%1-%2:Third --outputdir ${MYOUTDIR} --critical none --report report.html  ${MYINPUT}
-    ${report} =  Get File  ${MYOUTDIR}${/}report.html
-    ${expected} =  Catenate  SEPARATOR=\n  <td class="col_stat_name">  <div class="stat_name"><a href="#tag_sub3">sub3</a></div>  <div class="tag_links">
-    : FOR  ${link}  ${title}  IN  one  First Link  sub  Second Link
-    ...  su-3  Third
-    \  ${exp_link} =  Get Expected Link  ${link}  ${title}
-    \  ${expected} =  Set Variable  ${expected}\n${exp_link}
-    Should Contain  ${report}  ${expected}\n</div>\n</td>
+    1    d1    Rebot:http://example.com/d:::Rebot 1:http://1:::title:1:more:link
+
+Link For Combined Tag
+    0    DX    Rebot X:http://X
+
 
 *** Keywords ***
-My Setup
-    Run Tests Without Processing Output  ${EMPTY}  misc${/}suites
-    Move File  ${OUTFILE}  ${MYINPUT}
-    Create Directory  ${MYOUTDIR}
 
-Remove Temps
-    Remove Directory  ${MYOUTDIR}  recursive
-    Remove File  ${MYINPUT}
+Run Tests And Rebot With Tag Stat Links
+    Run Tests Without Processing Output  ${EMPTY}  misc/suites
+    ${opts} =  Catenate
+    ...  --tagstatlink T2:http://example.com:rebot_title
+    ...  --tagstatlink ?1:http://example.com/%1:Rebot
+    ...  --TagStatL *?u?*:%2-%3-%2-%1-%4:%2u%3_title
+    ...  --tagstatcombine d*:DX
+    ...  --tagstatlink d?:http://%1:Rebot_%1
+    ...  --TAGSTATLINK D1:1:more:link:title
+    Run Rebot  ${opts}  ${OUTFILE}
 
-Report Should Contain Taglink
-    [Arguments]  ${tag}  ${link}  ${title}
-    ${report} =  Get File  ${MYOUTDIR}${/}report.html
-    ${expected} =  Catenate  SEPARATOR=\n  <td class="col_stat_name">  <div class="stat_name"><a href="#tag_${tag}">${tag}</a></div>  <div class="tag_links">  <span>[<a href="${link}">${title}</a>]</span>  </div>
-    ...  </td>
-    Should Contain  ${report}  ${expected}
-
-Get Expected Link
-    [Arguments]  ${link}  ${title}
-    [Return]  <span>[<a href="${link}">${title}</a>]</span>
-
+Tag link should be correct in output
+    [Arguments]  ${index}  ${tag}  ${links}
+    ${stats} =  Get Tag Stat Nodes
+    Should Be Equal  ${stats[${index}].text}  ${tag}
+    Should Be Equal  ${stats[${index}].attrs['links']}  ${links}
