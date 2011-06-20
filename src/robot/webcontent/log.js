@@ -1,39 +1,29 @@
 function openSuite(suiteId) {
-    function populator(suite, childElement){
-        addElements(suite.keyword, window.templates.keyword, childElement);
-        addElements(suite.suite, window.templates.suite, childElement);
-        addElements(suite.test, window.templates.test, childElement);
-    }
-    openElement(suiteId, populator);
+    openElement(suiteId, ['keyword', 'suite', 'test']);
 }
 
 function openTest(testId) {
-    function populator(test, childElement){
-        addElements(test.keyword, window.templates.keyword, childElement);
-    }
-    openElement(testId, populator);
+    openElement(testId, ['keyword']);
 }
 
 function openKeyword(kwId) {
-    function populator(keyword, childElement){
-        addElements(keyword.keyword, window.templates.keyword, childElement);
-        addElements(keyword.message, window.templates.message, childElement);
-    }
-    openElement(kwId, populator);
+    openElement(kwId, ['keyword', 'message']);
 }
 
-function addElements(elems, template, target){
+function addElements(elems, templateName, target){
     for (var i = 0; elems(i); i++) {
-        $.tmpl(template, elems(i)).appendTo(target);
+        $.tmpl(templateName, elems(i)).appendTo(target);
     }
 }
 
-function openElement(elementId, populator){
+function openElement(elementId, childrenNames){
     var childElement = $("#"+elementId+"_children");
     childElement.show();
     if (!childElement.hasClass("populated")) {
-        element = window.testdata.find(elementId);
-        populator(element, childElement);
+        var element = window.testdata.find(elementId);
+        $.map(childrenNames, function (childName) {
+            addElements(element[childName], childName + 'Template', childElement);
+        });
         childElement.addClass("populated");
     }
     $('#'+elementId+'_foldlink').show();

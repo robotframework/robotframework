@@ -1,7 +1,7 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <head>
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta http-equiv="Content-Type" content="text/x-jquery-tmpl; charset=utf-8" />
 <META HTTP-EQUIV="Pragma" CONTENT="no-cache">
 <META HTTP-EQUIV="Expires" CONTENT="-1">
 
@@ -38,8 +38,7 @@
 removeJavaScriptDisabledWarning();
 $(document).ready(function(){
     var topsuite = window.testdata.suite();
-    window.templates = initTemplates();
-    addHeader(topsuite.name, 'Log');
+    initLayout(topsuite.name, 'Log');
     addStatistics();
     addErrors();
     addTestExecutionLog(topsuite);
@@ -54,8 +53,8 @@ $(document).ready(function(){
 function addErrors() {
     var errors = window.testdata.errors();
     if (errors.length) {
-        $.tmpl(window.templates.errorHeader).appendTo($('body'));
-        $.tmpl(window.templates.error, errors).appendTo($('#error_table'));
+        $.tmpl('errorHeaderTemplate').appendTo($('body'));
+        $.tmpl('errorTemplate', errors).appendTo($('#error_table'));
     }
 }
 
@@ -83,29 +82,15 @@ function makeElementVisible(element) {
 
 function addTestExecutionLog(main) {
     $('<h2>Test Execution Log</h2>').appendTo($('body'));
-    var root = $.tmpl(window.templates.suite, main);
+    var root = $.tmpl('suiteTemplate', main);
     root.appendTo($('body'));
     if (main.status == "pass") {
         $("#"+main.id+"_unfoldlink").click();
     }
 }
-
-function initTemplates() {
-    return {
-        totalStatRow: $('#total_statistics_row').template(),
-        tagStatRow: $('#tag_statistics_row').template(),
-        suiteStatRow: $('#suite_statistics_row').template(),
-        errorHeader: $('#error_header_template').template(),
-        error: $('#error_template').template(),
-        suite: $('#suite_template').template(),
-        test: $('#test_template').template(),
-        keyword: $('#keyword_template').template(),
-        message: $('#message_template').template(),
-    };
-};
 </script>
 
-<script type="text/html" id="total_statistics_row">
+<script type="text/x-jquery-tmpl" id="totalStatisticsRowTemplate">
   <tr>
     <td class="col_stat_name">
       <div class="stat_name">
@@ -116,7 +101,7 @@ function initTemplates() {
   </tr>
 </script>
 
-<script type="text/html" id="tag_statistics_row">
+<script type="text/x-jquery-tmpl" id="tagStatisticsRowTemplate">
   <tr>
     <td class="col_stat_name">
       <div class="stat_name">
@@ -133,7 +118,7 @@ function initTemplates() {
   </tr>
 </script>
 
-<script type="text/html" id="suite_statistics_row">
+<script type="text/x-jquery-tmpl" id="suiteStatisticsRowTemplate">
   <tr>
     <td class="col_stat_name">
       <div class="stat_name">
@@ -144,12 +129,12 @@ function initTemplates() {
   </tr>
 </script>
 
-<script type="text/html" id="error_header_template">
+<script type="text/x-jquery-tmpl" id="errorHeaderTemplate">
   <h2>Test Execution Errors</h2>
   <table class="errors" id="error_table"></table>
 </script>
 
-<script type="text/html" id="error_template">
+<script type="text/x-jquery-tmpl" id="errorTemplate">
   <tr>
     <td class="time">
       {{if link}}
@@ -164,7 +149,7 @@ function initTemplates() {
   </tr>
 </script>
 
-<script type="text/html" id="suite_template">
+<script type="text/x-jquery-tmpl" id="suiteTemplate">
   <table class="suite" id="${id}">
     <tr>
       <td>
@@ -194,7 +179,7 @@ function initTemplates() {
             <!-- TODO: Link (href) to source should be relative -->
             <tr><th>Source:</th><td><a href="${source}">${source}</a></td></tr>
             <tr><th>Start / End / Elapsed:</th><td>${times.startTime}  /  ${times.endTime}  /  ${times.elapsedTime}</td></tr>
-            <tr><th>Status:</th><td>{{tmpl($data) '#stats_message_partial_template'}}</td></tr>
+            <tr><th>Status:</th><td>{{tmpl($data) 'suiteStatusMessageTemplate'}}</td></tr>
             {{if message}}
             <tr><th>Message:</th><td>${message}</td></tr>
             {{/if}}
@@ -205,11 +190,7 @@ function initTemplates() {
   </table>
 </script>
 
-<script type="text/html" id="stats_message_partial_template">
-${critical} critical test, ${criticalPassed} passed, <span class="${criticalFailureClass}">${criticalFailed} failed</span><br />${total} test total, ${totalPassed} passed, <span class="${totalFailureClass}">${totalFailed} failed</span>
-</script>
-
-<script type="text/html" id="test_template">
+<script type="text/x-jquery-tmpl" id="testTemplate">
   <table class="test" id="${id}">
     <tr>
       <td>
@@ -254,7 +235,7 @@ ${critical} critical test, ${criticalPassed} passed, <span class="${criticalFail
   </table>
 </script>
 
-<script type="text/html" id="keyword_template">
+<script type="text/x-jquery-tmpl" id="keywordTemplate">
   <table class="keyword" id="${id}">
     <tr>
       <td>
@@ -286,7 +267,7 @@ ${critical} critical test, ${criticalPassed} passed, <span class="${criticalFail
   </table>
 </script>
 
-<script type="text/html" id="message_template">
+<script type="text/x-jquery-tmpl" id="messageTemplate">
   <table class="messages">
     <tr>
       <td class="time">${shortTime()}</td>

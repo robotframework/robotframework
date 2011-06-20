@@ -1,7 +1,7 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <head>
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta http-equiv="Content-Type" content="text/x-jquery-tmpl; charset=utf-8" />
 <META HTTP-EQUIV="Pragma" CONTENT="no-cache">
 <META HTTP-EQUIV="Expires" CONTENT="-1">
 
@@ -37,8 +37,7 @@ removeJavaScriptDisabledWarning();
 $(document).ready(function () {
     var topsuite = window.testdata.suite();
     setBackground(topsuite);
-    window.templates = initTemplates();
-    addHeader(topsuite.name, 'Report');
+    initLayout(topsuite.name, 'Report');
     addSummary(topsuite);
     addStatistics();
     if (window.location.hash) {
@@ -51,7 +50,7 @@ $(document).ready(function () {
 
 function addSummary(topsuite) {
     var opts = {logURL: window.settings.logURL};
-    $.tmpl(window.templates.summaryTable, topsuite, opts).insertAfter($('#header_div'));
+    $.tmpl('summaryTableTemplate', topsuite, opts).insertAfter($('#header_div'));
 }
 
 function showTotalsTab() {
@@ -69,24 +68,24 @@ function showSuitesTab() {
 function renderTotalSelector(linkTarget) {
     emptyDetails();
     var args = {linkTarget: linkTarget, totals_tab_status: 'tab_selected'};
-    $.tmpl(window.templates.detailsHeader, args).appendTo('#test_details_container');
-    $.tmpl(window.templates.totalDetailsSelector).appendTo('#test_details_container');
+    $.tmpl('detailsHeaderTemplate', args).appendTo('#test_details_container');
+    $.tmpl('totalDetailsSelectorTemplate').appendTo('#test_details_container');
 }
 
 function renderTagsSelector(linkTarget) {
     emptyDetails();
     var args = {linkTarget: linkTarget, tags_tab_status: 'tab_selected'};
     var tagstats = {tags: window.testdata.statistics().tag};
-    $.tmpl(window.templates.detailsHeader, args).appendTo('#test_details_container');
-    $.tmpl(window.templates.tagDetailsSelector, tagstats).appendTo('#test_details_container');
+    $.tmpl('detailsHeaderTemplate', args).appendTo('#test_details_container');
+    $.tmpl('tagDetailsSelectorTemplate', tagstats).appendTo('#test_details_container');
 }
 
 function renderSuiteSelector(linkTarget) {
     emptyDetails();
     var args = {linkTarget: linkTarget, suites_tab_status: 'tab_selected'};
     var suitestats = {suites: window.testdata.statistics().suite};
-    $.tmpl(window.templates.detailsHeader, args).appendTo('#test_details_container');
-    $.tmpl(window.templates.suiteDetailsSelector, suitestats).appendTo('#test_details_container');
+    $.tmpl('detailsHeaderTemplate', args).appendTo('#test_details_container');
+    $.tmpl('suiteDetailsSelectorTemplate', suitestats).appendTo('#test_details_container');
 }
 
 function emptyDetails(){
@@ -124,7 +123,7 @@ function renderTotalDetails(type) {
         var stat = window.testdata.statistics().total[1];
     var tests = getTotalTests(type)
     stat.totalTime = calculateTotalTime(tests);
-    $.tmpl(window.templates.tagOrTotalDetails, stat).appendTo('#details_header');
+    $.tmpl('tagOrTotalDetailsTemplate', stat).appendTo('#details_header');
     drawTestDetailsTable(tests);
 }
 
@@ -133,19 +132,19 @@ function renderDetailsByTag(tag) {
     if (tag) {
         tag.totalTime = calculateTotalTime(tests);
     }
-    $.tmpl(window.templates.tagOrTotalDetails, tag).appendTo('#details_header');
+    $.tmpl('tagOrTotalDetailsTemplate', tag).appendTo('#details_header');
     drawTestDetailsTable(tests);
 }
 
 function renderDetailsBySuite(name) {
     var suite = testdata.suite().findSuiteByName(name);
     var opts = {logURL: window.settings.logURL};
-    $.tmpl(window.templates.suiteDetails, suite, opts).appendTo('#details_header');
+    $.tmpl('suiteDetailsTemplate', suite, opts).appendTo('#details_header');
     drawTestDetailsTable(suite.allTests());
 }
 
 function drawTestDetailsTable(tests) {
-    $.tmpl(window.templates.testDetailsTable).appendTo('#test_details_container');
+    $.tmpl('testDetailsTableTemplate').appendTo('#test_details_container');
     window.tasks = tests;
     iterateDetails();
 }
@@ -241,7 +240,7 @@ function iterateDetails(){
         return;
     }
     var elements = pop_upto(window.tasks, 50);
-    $.tmpl(window.templates.testDetailsRow, elements, {logURL: window.settings.logURL}).appendTo('#tests_detail_table');
+    $.tmpl('testDetailsTableRowTemplate', elements, {logURL: window.settings.logURL}).appendTo('#tests_detail_table');
     if(window.tasks.length > 0)
         setTimeout("iterateDetails()", 0);
 }
@@ -252,26 +251,9 @@ function pop_upto(list, upto) {
         result.push(list.shift());
     return result;
 }
-
-function initTemplates() {
-    return {
-        summaryTable: $('#summary_table').template(),
-        totalStatRow: $('#total_statistics_row').template(),
-        tagStatRow: $('#tag_statistics_row').template(),
-        suiteStatRow: $('#suite_statistics_row').template(),
-        detailsHeader: $('#details_header').template(),
-        totalDetailsSelector: $('#total_details_selector').template(),
-        tagDetailsSelector: $('#tag_details_selector').template(),
-        suiteDetailsSelector: $('#suite_details_selector').template(),
-        tagOrTotalDetails: $('#tag_or_total_details').template(),
-        suiteDetails: $('#suite_details').template(),
-        testDetailsTable: $('#test_details_table').template(),
-        testDetailsRow: $('#report_test_details_row').template()
-    };
-}
 </script>
 
-<script type="text/html" id="summary_table">
+<script type="text/x-jquery-tmpl" id="summaryTableTemplate">
   <h2>Summary Information</h2>
   <table class="details">
     <tr>
@@ -289,12 +271,12 @@ function initTemplates() {
       <tr><th>${$index}:</th><td>{{html $value}}</td></tr>
     {{/each}}
     {{if times.startTime() != 'N/A'}}
-    <tr><th>Start Time:</th><td>${times.startTime}</td></tr>
+      <tr><th>Start Time:</th><td>${times.startTime}</td></tr>
     {{/if}}
     {{if times.endTime() != 'N/A'}}
-    <tr><th>End Time:</th><td>${times.endTime}</td></tr>
+      <tr><th>End Time:</th><td>${times.endTime}</td></tr>
     {{/if}}
-    <tr><th>Elapsed Time:</th><td>${times.elapsedTime}</td></tr>
+      <tr><th>Elapsed Time:</th><td>${times.elapsedTime}</td></tr>
     {{if $item.logURL}}
     <tr>
         <th>Log File:</th>
@@ -304,7 +286,7 @@ function initTemplates() {
   </table>
 </script>
 
-<script type="text/html" id="total_statistics_row">
+<script type="text/x-jquery-tmpl" id="totalStatisticsRowTemplate">
   <tr>
     <td class="col_stat_name">
       <div class="stat_name">
@@ -315,7 +297,7 @@ function initTemplates() {
   </tr>
 </script>
 
-<script type="text/html" id="tag_statistics_row">
+<script type="text/x-jquery-tmpl" id="tagStatisticsRowTemplate">
   <tr>
     <td class="col_stat_name">
       <div class="stat_name">
@@ -332,7 +314,7 @@ function initTemplates() {
   </tr>
 </script>
 
-<script type="text/html" id="suite_statistics_row">
+<script type="text/x-jquery-tmpl" id="suiteStatisticsRowTemplate">
   <tr>
     <td class="col_stat_name">
       <div class="stat_name">
@@ -344,7 +326,7 @@ function initTemplates() {
 </script>
 
 
-<script type="text/html" id="details_header">
+<script type="text/x-jquery-tmpl" id="detailsHeaderTemplate">
   <h2 id="${linkTarget}">Test Details</h2>
   <ul id="detail_tabs">
     <li class="${totals_tab_status}"><a href="#totals" onclick="showTotalsTab();">Totals</a></li>
@@ -353,7 +335,7 @@ function initTemplates() {
   </ul>
 </script>
 
-<script  type="text/html" id="total_details_selector">
+<script  type="text/x-jquery-tmpl" id="totalDetailsSelectorTemplate">
   <table class="details" id="details_header">
     <tr id="selector">
       <th>Type:</th>
@@ -367,7 +349,7 @@ function initTemplates() {
   </table>
 </script>
 
-<script  type="text/html" id="tag_details_selector">
+<script  type="text/x-jquery-tmpl" id="tagDetailsSelectorTemplate">
   <table class="details" id="details_header">
     <tr id="selector">
       <th>Name:</th>
@@ -383,7 +365,7 @@ function initTemplates() {
   </table>
 </script>
 
-<script  type="text/html" id="suite_details_selector">
+<script  type="text/x-jquery-tmpl" id="suiteDetailsSelectorTemplate">
   <table class="details" id="details_header">
     <tr id="selector">
       <th>Name:</th>
@@ -399,7 +381,7 @@ function initTemplates() {
   </table>
 </script>
 
-<script type="text/html" id="tag_or_total_details">
+<script type="text/x-jquery-tmpl" id="tagOrTotalDetailsTemplate">
     {{if doc}}
     <tr>
         <th>Documentation:</th>
@@ -428,7 +410,7 @@ function initTemplates() {
     </tr>
 </script>
 
-<script type="text/html" id="suite_details">
+<script type="text/x-jquery-tmpl" id="suiteDetailsTemplate">
     {{if $item.logURL}}
     <tr>
         <th>Log Link:</th>
@@ -446,7 +428,7 @@ function initTemplates() {
     {{/each}}
     <tr>
         <th>Status:</th>
-        <td>{{tmpl($data) '#stats_message_partial_template'}}</td>
+        <td>{{tmpl($data) 'suiteStatusMessageTemplate'}}</td>
     </tr>
     {{if message}}
     <tr>
@@ -464,11 +446,7 @@ function initTemplates() {
     </tr>
 </script>
 
-<script type="text/html" id="stats_message_partial_template">
-${critical} critical test, ${criticalPassed} passed, <span class="${criticalFailureClass}">${criticalFailed} failed</span><br />${total} test total, ${totalPassed} passed, <span class="${totalFailureClass}">${totalFailed} failed</span>
-</script>
-
-<script type="text/html" id="test_details_table">
+<script type="text/x-jquery-tmpl" id="testDetailsTableTemplate">
   <table id="tests_detail_table">
     <tr>
       <th class="col_name">Name</th>
@@ -482,7 +460,7 @@ ${critical} critical test, ${criticalPassed} passed, <span class="${criticalFail
   </table>
 </script>
 
-<script type="text/html" id="report_test_details_row">
+<script type="text/x-jquery-tmpl" id="testDetailsTableRowTemplate">
   <tr class="test_row">
     {{if $item.logURL}}
     <td class="col_name"><a href="${$item.logURL}#test_${fullname}" id="test_${fullname}" title="${fullname}"><span class="parent_name">${parentName}</span>${name}</a></td>

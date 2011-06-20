@@ -2,9 +2,25 @@ function removeJavaScriptDisabledWarning() {
     $('#javascript_disabled').remove();
 }
 
-function addHeader(suiteName, type) {
+function initLayout(suiteName, type) {
+    parseTemplates();
+    setTitle(suiteName, type);
+    addHeader();
+    addReportOrLogLink(type);
+}
+
+function parseTemplates() {
+    $('script[type="text/x-jquery-tmpl"]').map(function (idx, elem) {
+        $.template(elem.id, elem.text);
+    });
+}
+
+function setTitle(suiteName, type) {
     var givenTitle = window.settings.title;
     document.title = givenTitle ? givenTitle : suiteName + " Test " + type;
+}
+
+function addHeader() {
     var generatedAgoMillis = window.testdata.generated().getTime();
     var template =
         '<div id="generated">' +
@@ -18,7 +34,6 @@ function addHeader(suiteName, type) {
         generated: window.output.generatedTimestamp,
         generatedAgo: util.createGeneratedAgoString(generatedAgoMillis)
     }).appendTo($('#header_div'));
-    addReportOrLogLink(type);
 }
 
 function addReportOrLogLink(myType) {
@@ -65,14 +80,14 @@ function addStatTable(tableName) {
     if (tableName == 'tag' && stats.length == 0)
        renderStatTable(tableName, 'no_tags_row');
     else {
-        var templateName = tableName + 'StatRow';
-        renderStatTable(tableName, window.templates[templateName], stats);
+        var templateName = tableName + 'StatisticsRowTemplate';
+        renderStatTable(tableName, templateName, stats);
     }
 }
 
-function renderStatTable(tableName, template, stats) {
+function renderStatTable(tableName, templateName, stats) {
     var tableId = "#" + tableName + "_stats";
-    $.tmpl(template, stats).appendTo($(tableId));
+    $.tmpl(templateName , stats).appendTo($(tableId));
 }
 
 $.template("stat_columns",
@@ -97,4 +112,13 @@ $.template('no_tags_row',
       '<div class="graph"></div>' +
     '</td>' +
     '</tr>'
+);
+
+$.template('suiteStatusMessageTemplate',
+    '${critical} critical test, ' +
+    '${criticalPassed} passed, ' +
+    '<span class="${criticalFailureClass}">${criticalFailed} failed</span><br />' +
+    '${total} test total, ' +
+    '${totalPassed} passed, ' +
+    '<span class="${totalFailureClass}">${totalFailed} failed</span>'
 );
