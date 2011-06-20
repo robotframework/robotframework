@@ -7,7 +7,7 @@ Test Teardown   Log   Test Teardown
 Metadata        home *page*   http://robotframework.org
 Force Tags      force  test
 Default Tags    default
-Library         pölky/myLib.py
+Library         pölkü/myLib.py
 
 
 *** Variables ***
@@ -16,6 +16,9 @@ Library         pölky/myLib.py
 *** Test cases ***
 Simple
     Log  do nothing
+
+Log HTML
+    Log  <blink><b><font face="comic sans ms" size="42" color="red">I CAN HAZ HMTL?!?!??!!?</font></b></blink>  HTML
 
 Unicode
     Log  hyvää joulua
