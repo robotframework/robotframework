@@ -309,11 +309,6 @@ window.stats = (function () {
     function tagStatElem(data) {
         var stat = statElem(data);
         stat.links = parseLinks(stat.links);
-        // TODO: move to templates.
-        if (stat.info)
-            stat.shownInfo = '(' + stat.info + ')';
-        else
-            stat.shownInfo = '';
         return stat;
     }
 

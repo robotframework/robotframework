@@ -320,7 +320,7 @@ function pop_upto(list, upto) {
     <td class="col_stat_name">
       <div class="stat_name">
         <a href="#tag_${label}" onclick="tagDetailSelected('${label}');" title="${doc}">${label}</a>
-        ${shownInfo}
+        {{if info}}(${info}){{/if}}
       </div>
       <div class="tag_links">
         {{each links}}

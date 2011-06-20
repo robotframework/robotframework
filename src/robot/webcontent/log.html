@@ -103,7 +103,7 @@ function addTestExecutionLog(main) {
     <td class="col_stat_name">
       <div class="stat_name">
         <span title="${doc}">${label}</span>
-        ${shownInfo}
+        {{if info}}(${info}){{/if}}
       </div>
       <div class="tag_links">
         {{each links}}
