@@ -96,8 +96,8 @@ $.template("stat_columns",
     '<td class="col_stat">${fail}</td>' +
     '<td class="col_graph">' +
       '<div class="graph">' +
-        '<b class="pass_bar" style="width: ${passWidth}%;" title="${passPercent}%"></b>' +
-        '<b class="fail_bar" style="width: ${failWidth}%;" title="${failPercent}%"></b>' +
+        '<div class="pass_bar" style="width: ${passWidth}%;" title="${passPercent}%"></div>' +
+        '<div class="fail_bar" style="width: ${failWidth}%;" title="${failPercent}%"></div>' +
       '</div>' +
     '</td>'
 );
