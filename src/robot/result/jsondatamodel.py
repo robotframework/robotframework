@@ -15,7 +15,6 @@
 import time
 from robot import utils
 
-from elementhandlers import TextIndex
 import json
 
 
@@ -40,26 +39,9 @@ class DataModel(object):
         self._settings = settings
 
     def write_to(self, output):
-        # TODO! Clean this method!
-        # TODO! Should find a better solution to script too big problems
-        # This has the initial solution to IE / Firefox script too big problems
-        # It splits suite to smaller script parts
-        strings = self._robot_data['strings']
-        suite = self._robot_data['suite']
-        del self._robot_data['strings']
-        del self._robot_data['suite']
         self._dump_json('window.output = ', self._robot_data, output)
         if self._settings:
             self._dump_json('window.settings = ', self._settings, output)
-        output.write('</script>\n<script type="text/javascript">\n')
-        self._dump_json('window.output["strings"] = ', strings, output)
-        output.write('window.output["suite"] = [];\n')
-        for i, suite_elem in enumerate(suite):
-            output.write('</script>\n<script type="text/javascript">\n')
-            self._dump_json('window.output["suite"]['+str(i)+'] = ', suite_elem, output)
-            output.write('</script>\n<script type="text/javascript">\n')
-        self._robot_data['strings'] = strings
-        self._robot_data['suite'] = suite
 
     def _dump_json(self, name, data, output):
         output.write(name)
@@ -79,7 +61,9 @@ class DataModel(object):
     def _is_ignorable_keyword(self, item):
         # Top level teardown is kept to make tests fail if suite teardown failed
         # TODO: Could we store information about failed suite teardown otherwise?
-        return isinstance(item, list) and item and item[0] in ['kw', 'setup', 'forloop', 'foritem']
+        # TODO: Cleanup?
+        return isinstance(item, list) and item and item[0] > 0 \
+            and self._robot_data['strings'][item[0]] in ['*kw', '*setup', '*forloop', '*foritem']
 
     def _prune_unused_texts(self):
         used = self._collect_used_text_indices(self._robot_data['suite'], set())
@@ -87,7 +71,7 @@ class DataModel(object):
 
     def _collect_used_text_indices(self, data, result):
         for item in data:
-            if isinstance(item, TextIndex):
+            if isinstance(item, (int, long)):
                 result.add(item)
             elif isinstance(item, list):
                 self._collect_used_text_indices(item, result)

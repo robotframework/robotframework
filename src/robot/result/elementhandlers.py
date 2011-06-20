@@ -51,6 +51,12 @@ class _Handler(object):
     def end_element(self, text):
         return self._data_from_children
 
+    def _get_ids(self, array):
+        result = []
+        for value in array:
+            result.append(self._context.get_id(value))
+        return result
+
     def _html_format(self, text):
         return utils.html_escape(text, formatting=True)
 
@@ -75,20 +81,22 @@ class _RobotHandler(_Handler):
                 'stats': self._data_from_children[1],
                 'errors': self._data_from_children[2],
                 'baseMillis': self._context.basemillis,
-                'strings': self._context.dump_texts()}
+                'strings': self._context.dump_texts(),
+                'integers': self._context.dump_integers()}
 
 
 class _SuiteHandler(_Handler):
 
     def __init__(self, context, attrs):
         _Handler.__init__(self, context)
-        self._name = context.get_text_id(attrs.get('name'))
-        self._source = context.get_text_id(attrs.get('source') or '')
+        self._name = attrs.get('name')
+        self._source = attrs.get('source') or ''
         self._context.start_suite(self._name)
         self._context.collect_stats()
 
     def end_element(self, text):
-        result = [self._context.get_text_id('suite'), self._source, self._name] + self._data_from_children + [self._context.dump_stats()]
+        result = self._get_ids(['suite', self._source, self._name]) + \
+                 self._data_from_children + [self._get_ids(self._context.dump_stats())]
         self._context.end_suite()
         return result
 
@@ -97,10 +105,9 @@ class _TestHandler(_Handler):
 
     def __init__(self, context, attrs):
         _Handler.__init__(self, context)
-        name = attrs.get('name')
-        self._name_id = self._context.get_text_id(name)
-        self._timeout = self._context.get_text_id(attrs.get('timeout'))
-        self._context.start_test(name)
+        self._name = attrs.get('name')
+        self._timeout = attrs.get('timeout')
+        self._context.start_test(self._name)
 
     def get_handler_for(self, name, attrs):
         if name == 'status':
@@ -109,8 +116,9 @@ class _TestHandler(_Handler):
         return _Handler.get_handler_for(self, name, attrs)
 
     def end_element(self, text):
-        result = [self._context.get_text_id('test'), self._name_id, self._timeout, self._context.get_text_id(self._critical)] + self._data_from_children
-        self._context.add_test(self._critical == 'Y', result[-1][0] == self._context.get_text_id('P'))
+        result = self._get_ids(['test', self._name, self._timeout, self._critical]) + self._data_from_children
+        # TODO: refactor
+        self._context.add_test(self._critical == 'Y', result[-1][0] == self._context.get_id('P'))
         self._context.end_test()
         return result
 
@@ -122,14 +130,14 @@ class _KeywordHandler(_Handler):
         self._context.start_keyword()
         self._type = attrs.get('type')
         if self._type == 'for': self._type = 'forloop'
-        self._name = self._context.get_text_id(attrs.get('name'))
-        self._timeout = self._context.get_text_id(attrs.get('timeout'))
+        self._name = attrs.get('name')
+        self._timeout = attrs.get('timeout')
 
     def end_element(self, text):
-        if self._type == self._context.get_text_id('teardown') and self._data_from_children[-1][0] == self._context.get_text_id('F'):
+        if self._type == 'teardown' and self._data_from_children[-1][0] == self._context.get_id('F'):
             self._context.teardown_failed()
         self._context.end_keyword()
-        return [self._context.get_text_id(self._type), self._name, self._timeout] + self._data_from_children
+        return self._get_ids([self._type, self._name, self._timeout]) + self._data_from_children
 
 
 class _StatisticsHandler(_Handler):
@@ -150,10 +158,10 @@ class _StatItemHandler(_Handler):
 
     def end_element(self, text):
         self._attrs.update(label=text)
-        return self._attrs
+        return self._get_ids(self._attrs)
 
 
-class _StatusHandler(object):
+class _StatusHandler(_Handler):
 
     def __init__(self, context, attrs):
         self._context = context
@@ -169,12 +177,12 @@ class _StatusHandler(object):
         return endtime - self._starttime
 
     def end_element(self, text):
-        result = [self._context.get_text_id(self._status),
+        result = [self._status,
                   self._starttime,
                   self._elapsed]
         if text:
-            result += [self._context.get_text_id(text)]
-        return result
+            result += [text]
+        return self._get_ids(result)
 
 
 class _ArgumentHandler(_Handler):
@@ -186,19 +194,19 @@ class _ArgumentHandler(_Handler):
 class _ArgumentsHandler(_Handler):
 
     def end_element(self, text):
-        return self._context.get_text_id(', '.join(self._data_from_children))
+        return self._context.get_id(', '.join(self._data_from_children))
 
 
 class _TextHandler(_Handler):
 
     def end_element(self, text):
-        return self._context.get_text_id(text)
+        return self._context.get_id(text)
 
 
 class _HtmlTextHandler(_Handler):
 
     def end_element(self, text):
-        return self._context.get_text_id(self._html_format(text))
+        return self._context.get_id(self._html_format(text))
 
 
 class _MetadataHandler(_Handler):
@@ -221,7 +229,7 @@ class _MetadataItemHandler(_Handler):
         self._name = attrs.get('name')
 
     def end_element(self, text):
-        return [self._context.get_text_id(self._name), self._context.get_text_id(self._html_format(text))]
+        return self._get_ids([self._name, self._html_format(text)])
 
 
 class _MsgHandler(_Handler):
@@ -229,26 +237,27 @@ class _MsgHandler(_Handler):
     def __init__(self, context, attrs):
         _Handler.__init__(self, context)
         self._msg = [self._context.timestamp(attrs.get('timestamp')),
-                     self._context.get_text_id(attrs.get('level')[0])]
+                     attrs.get('level')[0]]
         self._is_html = attrs.get('html')
         self._is_linkable = attrs.get("linkable") == "yes"
 
     def end_element(self, text):
         self._add_text(text)
         self._handle_warning_linking()
-        return self._msg
+        return self._get_ids(self._msg)
 
     def _handle_warning_linking(self):
+        # TODO: should perhaps use the id version of this list for indexing?
         if self._is_linkable:
-            self._msg += [self._context.get_text_id(self._context.link_to(self._msg))]
-        elif self._msg[1] == self._context.get_text_id('W'):
+            self._msg += [self._context.link_to(self._msg)]
+        elif self._msg[1] == 'W':
             self._context.create_link_to_current_location(self._msg)
 
     def _add_text(self, text):
         if self._is_html:
-            self._msg += [self._context.get_text_id(text)]
+            self._msg += [text]
         else:
-            self._msg += [self._context.get_text_id(utils.html_escape(text, replace_whitespace=False))]
+            self._msg += [utils.html_escape(text, replace_whitespace=False)]
 
 class Context(object):
 
