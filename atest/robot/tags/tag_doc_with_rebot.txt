@@ -1,5 +1,5 @@
 *** Settings ***
-Suite Setup     Run Tests And Rebot
+Suite Setup     Run Tests And Rebot With Tag Doc
 Force Tags      pybot  jybot  regression
 Resource        atest_resource.txt
 Test Template   Tag doc should be correct in output
@@ -24,9 +24,16 @@ Tag Doc For Combined Statistics
 
 
 *** Keywords ***
-Run Tests And Rebot
+
+Run Tests And Rebot With Tag Doc
     Run Tests Without Processing Output  ${EMPTY}  misc/normal.html
-    Run Rebot  --tagdoc f1:Some_documentation_for_rebot --tagdoc t1:http://some.url_*bold* --tagdoc d?:Doc_for_many_rebot_tags --tagdoc D2:More_doc --tagstatcombine d*:DX  ${OUT_FILE}
+    ${opts} =  Catenate
+    ...  --tagdoc f1:Some_documentation_for_rebot
+    ...  --tagdoc t1:http://some.url_*bold*
+    ...  --tagdoc d?:Doc_for_many_rebot_tags
+    ...  --tagdoc D2:More_doc
+    ...  --tagstatcombine d*:DX
+    Run Rebot  ${opts}  ${OUTFILE}
 
 Tag doc should be correct in output
     [Arguments]  ${index}  ${tag}  ${doc}

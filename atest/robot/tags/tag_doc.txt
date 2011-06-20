@@ -1,5 +1,5 @@
 *** Settings ***
-Suite Setup     Run Tests  --tagdoc f1:Some_documentation --tagdoc t1:http://some.url_*bold* --tagdoc d?:Doc_for_many_tags --tagdoc D2:More_doc --tagstatcombine d*:DX  misc/normal.html
+Suite Setup     Run Tests With Tag Docs
 Force Tags      pybot  jybot  regression
 Resource        atest_resource.txt
 Test Template   Tag doc should be correct in output
@@ -24,6 +24,15 @@ Tag Doc For Combined Statistics
 
 
 *** Keywords ***
+
+Run Tests With Tag Docs
+    ${opts} =  Catenate
+    ...  --tagdoc f1:Some_documentation
+    ...  --tagdoc t1:http://some.url_*bold*
+    ...  --tagdoc d?:Doc_for_many_tags
+    ...  --tagdoc D2:More_doc
+    ...  --tagstatcombine d*:DX
+    Run Tests  ${opts}  misc/normal.html
 
 Tag doc should be correct in output
     [Arguments]  ${index}  ${tag}  ${doc}
