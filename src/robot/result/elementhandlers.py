@@ -82,13 +82,13 @@ class _SuiteHandler(_Handler):
 
     def __init__(self, context, attrs):
         _Handler.__init__(self, context)
-        self._name = attrs.get('name')
-        self._source = attrs.get('source') or ''
+        self._name = context.get_text_id(attrs.get('name'))
+        self._source = context.get_text_id(attrs.get('source') or '')
         self._context.start_suite(self._name)
         self._context.collect_stats()
 
     def end_element(self, text):
-        result = ['suite', self._source, self._name] + self._data_from_children + [self._context.dump_stats()]
+        result = [self._context.get_text_id('suite'), self._source, self._name] + self._data_from_children + [self._context.dump_stats()]
         self._context.end_suite()
         return result
 
@@ -109,8 +109,8 @@ class _TestHandler(_Handler):
         return _Handler.get_handler_for(self, name, attrs)
 
     def end_element(self, text):
-        result = ['test', self._name_id, self._timeout, self._critical] + self._data_from_children
-        self._context.add_test(self._critical == 'Y', result[-1][0] == 'P')
+        result = [self._context.get_text_id('test'), self._name_id, self._timeout, self._context.get_text_id(self._critical)] + self._data_from_children
+        self._context.add_test(self._critical == 'Y', result[-1][0] == self._context.get_text_id('P'))
         self._context.end_test()
         return result
 
@@ -126,10 +126,10 @@ class _KeywordHandler(_Handler):
         self._timeout = self._context.get_text_id(attrs.get('timeout'))
 
     def end_element(self, text):
-        if self._type == 'teardown' and self._data_from_children[-1][0] == 'F':
+        if self._type == self._context.get_text_id('teardown') and self._data_from_children[-1][0] == self._context.get_text_id('F'):
             self._context.teardown_failed()
         self._context.end_keyword()
-        return [self._type, self._name, self._timeout] + self._data_from_children
+        return [self._context.get_text_id(self._type), self._name, self._timeout] + self._data_from_children
 
 
 class _StatisticsHandler(_Handler):
@@ -169,7 +169,7 @@ class _StatusHandler(object):
         return endtime - self._starttime
 
     def end_element(self, text):
-        result = [self._status,
+        result = [self._context.get_text_id(self._status),
                   self._starttime,
                   self._elapsed]
         if text:
@@ -221,7 +221,7 @@ class _MetadataItemHandler(_Handler):
         self._name = attrs.get('name')
 
     def end_element(self, text):
-        return [self._name, self._context.get_text_id(self._html_format(text))]
+        return [self._context.get_text_id(self._name), self._context.get_text_id(self._html_format(text))]
 
 
 class _MsgHandler(_Handler):
@@ -229,7 +229,7 @@ class _MsgHandler(_Handler):
     def __init__(self, context, attrs):
         _Handler.__init__(self, context)
         self._msg = [self._context.timestamp(attrs.get('timestamp')),
-                     attrs.get('level')[0]]
+                     self._context.get_text_id(attrs.get('level')[0])]
         self._is_html = attrs.get('html')
         self._is_linkable = attrs.get("linkable") == "yes"
 
@@ -240,8 +240,8 @@ class _MsgHandler(_Handler):
 
     def _handle_warning_linking(self):
         if self._is_linkable:
-            self._msg += [self._context.link_to(self._msg)]
-        elif self._msg[1] == 'W':
+            self._msg += [self._context.get_text_id(self._context.link_to(self._msg))]
+        elif self._msg[1] == self._context.get_text_id('W'):
             self._context.create_link_to_current_location(self._msg)
 
     def _add_text(self, text):
@@ -254,6 +254,7 @@ class Context(object):
 
     def __init__(self):
         self._texts = TextCache()
+        self._integers = IntegerCache()
         self._basemillis = 0
         self._stats = Stats()
         self._current_place = []
@@ -274,11 +275,24 @@ class Context(object):
         finally:
             self._stats = self._stats.parent
 
-    def get_text_id(self, text):
+    def get_id(self, value):
+        if isinstance(value, basestring):
+            return self._get_text_id(value)
+        if isinstance(value, (int, long)):
+            return self._get_int_id(value)
+
+    def _get_text_id(self, text):
         return self._texts.add(text)
+
+    def _get_int_id(self, integer):
+        id = self._integers.add(integer)
+        return -id-1
 
     def dump_texts(self):
         return self._texts.dump()
+
+    def dump_integers(self):
+        return self._integers.dump()
 
     def timestamp(self, time):
         if time == 'N/A':
@@ -366,13 +380,25 @@ class Stats(object):
             child.fail_all()
 
 
-class TextIndex(int):
-    """
-    Marker class for identifying that the number in question is a text index
-    """
+class IntegerCache(object):
 
-ZERO_INDEX = TextIndex(0)
+    def __init__(self):
+        self.integers = {}
+        self.index = 0
 
+    def add(self, integer):
+        if integer not in self.integers:
+            self.integers[integer] = self.index
+            self.index += 1
+        return self.integers[integer]
+
+    def dump(self):
+        l = range(len(self.integers))
+        for k, v in self.integers.items():
+            l[v] = k
+        return l
+
+ZERO_INDEX = 0
 
 class TextCache(object):
     # TODO: Tune compressing thresholds
@@ -388,7 +414,7 @@ class TextCache(object):
             return ZERO_INDEX
         text = self._encode(text)
         if text not in self.texts:
-            self.texts[text] = TextIndex(self.index)
+            self.texts[text] = self.index
             self.index += 1
         return self.texts[text]
 
