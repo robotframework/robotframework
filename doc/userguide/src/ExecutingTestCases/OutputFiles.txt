@@ -373,10 +373,10 @@ option are given in the format :opt:`tag:link:name`, where :opt:`tag`
 specifies the tags to assign the link to, :opt:`link` is the link to
 be created, and :opt:`name` is the name to give to the link.
 
-:opt:`tag` may be a single tag, but more commonly a `simple
-pattern`_ where :code:`*` matches anything and :code:`?` matches any
-single character. When :opt:`tag` is a pattern, the matches to
-wildcards may be used in :opt:`link` with the syntax :code:`%N`,
+:opt:`tag` may be a single tag, but more commonly a `simple pattern`_
+where :code:`*` matches anything and :code:`?` matches any single
+character. When :opt:`tag` is a pattern, the matches to wildcards may
+be used in :opt:`link` and :opt:`title` with the syntax :code:`%N`,
 where "N" is the index of the match starting from 1.
 
 The following examples illustrate the usage of this option, and the
@@ -397,13 +397,16 @@ Adding documentation to tags
 
 Tags can be given a documentation with the command line option
 :opt:`--tagdoc`, which takes an argument in the format
-:opt:`tag:doc`. "tag" is the name of the tag to assign
-the documentation to, and it can also be a `simple pattern`_ matching
-multiple tags. "doc" is the assigned
-documentation. Underscores in it are converted to spaces automatically,
-and it can also contain `HTML formatting`_. The given documentation is
-shown with matching tags in the :name:`Test Details by Tag` table, and as
-a tool tip for these tags in the :name:`Statistics by Tag` table.
+:opt:`tag:doc`. :opt:`tag` is the name of the tag to assign the
+documentation to, and it can also be a `simple pattern`_ matching
+multiple tags. :opt:`doc` is the assigned documentation. Underscores
+in it the documentation are automatically converted to spaces and it
+can also contain `HTML formatting`_.
+
+The given documentation is shown with matching tags in the :name:`Test
+Details by Tag` table, and as a tool tip for these tags in the
+:name:`Statistics by Tag` table. If one tag gets multiple documentations,
+they are combined together and separated with an ampersand.
 
 Examples::
 
