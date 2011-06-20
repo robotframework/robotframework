@@ -12,21 +12,13 @@ class SuiteMock:
 
     def __init__(self, name='My Name', crit_tags=None):
         self.name = name
-        self.mediumname = self.get_medium_name()
-        self.longname = self.get_long_name()
         self.critical = _Critical(crit_tags)
         self.suites = []
         self.tests = []
         self.message = ''
 
-    def get_long_name(self, separator="."):
-        if separator is None:
-            return self.name.split('.')
-        return self.name.replace('.', separator)
-
-    def get_medium_name(self, separator='.'):
-        parts = self.name.split('.')
-        return '.'.join([i[0].lower() for i in parts[:-1]] + [parts[-1]])
+    def get_long_name(self):
+        return self.name
 
     def add_suite(self, name):
         suite = SuiteMock(name, self.critical.tags)
@@ -191,67 +183,66 @@ class TestTagStatistics(unittest.TestCase):
     def test_combine_with_name(self):
         for comb_tags, expected_name in [
                 ([], '' ),
-                (['t1&t2:my name'], 'my name'),
-                (['t1NOTt3:Others'], 'Others'),
-                (['1:2&2:3:nAme'], 'nAme'),
-                (['3*'], '3*' ),
-                (['4NOT5:Some new name'], 'Some new name')
+                ([('t1&t2', 'my name')], 'my name'),
+                ([('t1NOTt3', 'Others')], 'Others'),
+                ([('1:2&2:3', 'nAme')], 'nAme'),
+                ([('3*', '')], '3*' ),
+                ([('4NOT5', 'Some new name')], 'Some new name')
                ]:
-            stats = TagStatistics(tag_stat_combine=comb_tags)
+            stats = TagStatistics(combine=comb_tags)
             test = TestMock()
-            stats._add_tagstatcombine_statistics(test)
+            stats._add_combined_statistics(test)
             assert_equals(len(stats.stats), expected_name != '')
             if expected_name:
                 assert_equals(stats.stats[expected_name].name, expected_name)
 
     def test_is_combined_with_and_statements(self):
         for comb_tags, test_tags, expected_count in [
-                (['t1'], ['t1'], 1),
-                (['t1'], ['t2'], 0),
-                (['t1&t2'], ['t1'], 0),
-                (['t1&t2'], ['t1','t2'], 1),
-                (['t1&t2'], ['T1','t 2','t3'], 1),
-                (['t*'], ['s','t','u'], 1),
-                (['t*'], ['s','tee','t'], 1),
-                (['t*&s'], ['s','tee','t'], 1),
-                (['t*&s&non'], ['s','tee','t'], 0)
+                ('t1', ['t1'], 1),
+                ('t1', ['t2'], 0),
+                ('t1&t2', ['t1'], 0),
+                ('t1&t2', ['t1','t2'], 1),
+                ('t1&t2', ['T1','t 2','t3'], 1),
+                ('t*', ['s','t','u'], 1),
+                ('t*', ['s','tee','t'], 1),
+                ('t*&s', ['s','tee','t'], 1),
+                ('t*&s&non', ['s','tee','t'], 0)
                ]:
             self._test_combined_statistics(comb_tags, test_tags, expected_count)
 
     def _test_combined_statistics(self, comb_tags, test_tags, expected_count):
-            stats = TagStatistics(tag_stat_combine=['%s:name' % rule for rule in comb_tags])
+            stats = TagStatistics(combine=[(comb_tags, 'name')])
             test = TestMock(tags=test_tags)
-            stats._add_tagstatcombine_statistics(test)
+            stats._add_combined_statistics(test)
             assert_equals(len(stats.stats['Name'].tests), expected_count,
                           'comb: %s, test: %s' % (comb_tags, test_tags))
 
     def test_is_combined_with_not_statements(self):
         stats = TagStatistics()
         for comb_tags, test_tags, expected_count in [
-                (['t1NOTt2'], [], 0),
-                (['t1NOTt2'], ['t1'], 1),
-                (['t1NOTt2'], ['t1','t2'], 0),
-                (['t1NOTt2'], ['t3'], 0),
-                (['t1NOTt2'], ['t3','t2'], 0),
-                (['t*NOTt2'], ['t1'], 1),
-                (['t*NOTt2'], ['t'], 1),
-                (['t*NOTt2'], ['TEE'], 1),
-                (['t*NOTt2'], ['T2'], 0),
-                (['T*NOTT?'], ['t'], 1),
-                (['T*NOTT?'], ['tt'], 0),
-                (['T*NOTT?'], ['ttt'], 1),
-                (['T*NOTT?'], ['tt','t'], 0),
-                (['T*NOTT?'], ['ttt','something'], 1),
-                (['tNOTs*NOTr'], ['t'], 1),
-                (['tNOTs*NOTr'], ['t','s'], 0),
-                (['tNOTs*NOTr'], ['R','T'], 0),
-                (['tNOTs*NOTr'], ['R','T','s'], 0),
+                ('t1NOTt2', [], 0),
+                ('t1NOTt2', ['t1'], 1),
+                ('t1NOTt2', ['t1','t2'], 0),
+                ('t1NOTt2', ['t3'], 0),
+                ('t1NOTt2', ['t3','t2'], 0),
+                ('t*NOTt2', ['t1'], 1),
+                ('t*NOTt2', ['t'], 1),
+                ('t*NOTt2', ['TEE'], 1),
+                ('t*NOTt2', ['T2'], 0),
+                ('T*NOTT?', ['t'], 1),
+                ('T*NOTT?', ['tt'], 0),
+                ('T*NOTT?', ['ttt'], 1),
+                ('T*NOTT?', ['tt','t'], 0),
+                ('T*NOTT?', ['ttt','something'], 1),
+                ('tNOTs*NOTr', ['t'], 1),
+                ('tNOTs*NOTr', ['t','s'], 0),
+                ('tNOTs*NOTr', ['R','T'], 0),
+                ('tNOTs*NOTr', ['R','T','s'], 0),
                ]:
             self._test_combined_statistics(comb_tags, test_tags, expected_count)
 
     def test_combine(self):
-        # This test is more like an acceptance test than a unit test and
-        # is doing too much...
+        # This is more like an acceptance test than a unit test ...
         for comb_tags, comb_matches, tests_tags, crit_tags in [
                 (['t1&t2'], [1], [['t1','t2','t3'],['t1','t3']], []),
                 (['1&2&3'], [2], [['1','2','3'],['1','2','3','4']], ['1','2']),
@@ -265,7 +256,7 @@ class TestTagStatistics(unittest.TestCase):
                 (['nonex'], [0], [['t1'],['t1,t2'],[]], [])
                ]:
             # 1) Create tag stats
-            tagstats = TagStatistics([], [], comb_tags)
+            tagstats = TagStatistics(combine=[(t, '') for t in comb_tags])
             all_tags = []
             for tags in tests_tags:
                 tagstats.add_test(TestMock('PASS', tags), _Critical(crit_tags))
@@ -280,14 +271,12 @@ class TestTagStatistics(unittest.TestCase):
                 else:
                     exp_noncr.append(tag)
             for comb, count in zip(comb_tags, comb_matches):
-                name = comb.replace('&',' & ').replace('NOT',' NOT ')
-                exp_comb.append(name)
+                exp_comb.append(comb)
                 try:
-                    assert_equals(len(tagstats.stats[name].tests), count)
+                    assert_equals(len(tagstats.stats[comb].tests), count)
                 except KeyError:
-                    fail("No key %s. Stats: %s" % (name, tagstats.stats))
-            exp_comb.sort()
-            exp_names = exp_crit + exp_comb + exp_noncr
+                    fail("No key %s. Stats: %s" % (comb, tagstats.stats))
+            exp_names = exp_crit + sorted(exp_comb) + exp_noncr
             # 4) Verify names (match counts were already verified)
             assert_equals(names, exp_names)
 
@@ -295,11 +284,11 @@ class TestTagStatistics(unittest.TestCase):
         suite = generate_default_suite()
         suite.critical_tags = ['smoke']
         statistics = Statistics(suite, -1, ['t*','smoke'], ['t3'],
-                                ['t1&t2','t?&smoke','t1NOTt2','none&t1'])
-        stats = statistics.tags.stats.values()
-        stats.sort()
-        expected = [('smoke', 4), ('none & t1', 0), ('t1 & t2', 3),
-                     ('t1 NOT t2', 2), ('t? & smoke', 4), ('t1', 5), ('t2', 3)]
+                                [('t1 & t2', ''), ('t? & smoke', ''),
+                                 ('t1 NOT t2', ''), ('none & t1', 'a title')])
+        stats = sorted(statistics.tags.stats.values())
+        expected = [('smoke', 4), ('a title', 0), ('t1 & t2', 3),
+                    ('t1 NOT t2', 2), ('t? & smoke', 4), ('t1', 5), ('t2', 3)]
         names = [stat.name for stat in stats]
         exp_names = [name for name, count in expected]
         assert_equals(names, exp_names)
