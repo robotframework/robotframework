@@ -174,25 +174,25 @@ function findTagByName(name, tags) {
 function showDetailsByHash() {
     // TODO: cleanup
     var hash = decodeURI(window.location.hash.substring(1));
-    if(hash.indexOf("suite_")==0){
+    if (hash.indexOf("suite_") == 0) {
         var suite = hash.substring("suite_".length);
         suiteDetailSelected(suite)
     }
-    else if(hash.indexOf("tag_")==0){
+    else if (hash.indexOf("tag_") == 0) {
         var tag = hash.substring("tag_".length);
         tagDetailSelected(tag)
     }
-    else if(hash.indexOf("total_")==0){
+    else if (hash.indexOf("total_") == 0) {
         var type = hash.substring("total_".length);
         totalDetailSelected(type)
     }
-    else if(hash=='totals'){
+    else if (hash == 'totals') {
         showTotalsTab();
     }
-    else if(hash=='tags'){
+    else if (hash == 'tags') {
         showTagsTab();
     }
-    else if(hash=='suites'){
+    else if (hash == 'suites') {
         showSuitesTab();
     }
     window.location.hash = window.location.hash.substring(1);
