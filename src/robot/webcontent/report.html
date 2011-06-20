@@ -200,7 +200,7 @@ function showDetailsByHash() {
 
 function sort_failures_first(t1, t2) {
     if (t1.status != t2.status)
-        return t1.status == 'fail' ? -1 : 1;
+        return t1.status == 'FAIL' ? -1 : 1;
     if (t1.isCritical != t2.isCritical)
         return t1.isCritical ? -1 : 1;
     return t1.fullname < t2.fullname ? -1 : 1;
