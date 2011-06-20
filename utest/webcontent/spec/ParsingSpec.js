@@ -85,8 +85,7 @@ describe("Handling Suite", function () {
     it("should parse suite", function () {
         var suite = window.testdata.suite();
         expect(suite.name).toEqual("Suite");
-        expect(suite.status).toEqual("pass");
-        expect(suite.statusText).toEqual("PASS");
+        expect(suite.status).toEqual("PASS");
         expect(suite.source).toEqual("/tmp/test.txt");
         expect(suite.documentation).toEqual("suite doc");
         expect(suite.times).toBeDefined();
@@ -98,8 +97,7 @@ describe("Handling Suite", function () {
     it("should parse test", function () {
         var test = window.testdata.suite().test(0);
         expect(test.name).toEqual("Test");
-        expect(test.status).toEqual("pass");
-        expect(test.statusText).toEqual("PASS (critical)");
+        expect(test.status).toEqual("PASS");
         expect(test.fullname).toEqual("Suite.Test");
         expect(test.documentation).toEqual("test doc");
         expect(test.tags).toEqual(["tag1", "tag2"]);
@@ -111,7 +109,7 @@ describe("Handling Suite", function () {
     it("should parse keyword", function () {
         var kw = window.testdata.suite().test(0).keyword(0);
         expect(kw.name).toEqual("lib.kw");
-        expect(kw.status).toEqual("pass");
+        expect(kw.status).toEqual("PASS");
         expect(kw.times).toBeDefined();
         expect(kw.times.elapsedMillis).toEqual(0);
         expect(kw.path).toEqual("Suite.Test.0");
@@ -290,12 +288,12 @@ describe("Parent Suite Teardown Failure", function (){
 
     it("should show test status as failed", function (){
         var test = window.testdata.suite().suite(0).test(0);
-        expect(test.status).toEqual("fail");
+        expect(test.status).toEqual("FAIL");
     });
 
     it("should show suite status as failed", function (){
         var suite = window.testdata.suite().suite(0);
-        expect(suite.status).toEqual("fail");
+        expect(suite.status).toEqual("FAIL");
     });
 
     it("should show test message 'Teardown of the parent suite failed.'", function (){

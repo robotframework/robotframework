@@ -46,10 +46,10 @@ window.testdata = function () {
                 model.Message(LEVEL[element[1]], timestamp(element[0]), get(element[2]), element[3]));
     }
 
-    // TODO: Is separate status object needed? Probably not.
-    function createStatus(stats, parentSuiteTeardownFailed) {
-        var status = {'P': model.PASS , 'F': model.FAIL, 'N': model.NOT_RUN}[stats[0]];
-        return model.Status(status, parentSuiteTeardownFailed);
+    function parseStatus(stats, parentSuiteTeardownFailed) {
+        if (parentSuiteTeardownFailed)
+            return model.FAIL;
+        return {'P': model.PASS, 'F': model.FAIL, 'N': model.NOT_RUN}[stats[0]];
     }
 
     function last(items) {
@@ -73,7 +73,7 @@ window.testdata = function () {
             name: get(element[1]),
             args: get(element[4]),
             doc: get(element[3]),
-            status: createStatus(last(element)),
+            status: parseStatus(last(element)),
             times: model.Times(times(last(element))),
             parent: parent,
             index: index
@@ -104,7 +104,7 @@ window.testdata = function () {
             doc: get(element[4]),
             timeout: get(element[2]),
             isCritical: (element[3] == "Y"),
-            status: createStatus(statusElement, suite.hasTeardownFailure()),
+            status: parseStatus(statusElement, suite.hasTeardownFailure()),
             message: createMessage(statusElement, suite.hasTeardownFailure()),
             times: model.Times(times(statusElement)),
             tags: tags(last2(element))
@@ -132,7 +132,8 @@ window.testdata = function () {
             name: element[2],
             source: element[1],
             doc: get(element[3]),
-            status: createStatus(statusElement, parent && parent.hasTeardownFailure()),
+            status: parseStatus(statusElement, parent && parent.hasTeardownFailure()),
+            parentSuiteTeardownFailed: parent && parent.hasTeardownFailure(),
             message: createMessage(statusElement, parent && parent.hasTeardownFailure()),
             times: model.Times(times(statusElement)),
             statistics: suiteStats(last(element)),

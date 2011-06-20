@@ -36,6 +36,7 @@ function closeElement(elementId) {
     $('#'+elementId+'_unfoldlink').show();
 }
 
+// TODO: rename
 function iterateTasks(){
     if (!window.tasks.length)
         return;
@@ -61,14 +62,21 @@ function elementHiddenByUser(elementId) {
 
 function expandAllChildren(elementId) {
     window.tasks = [window.testdata.find(elementId)];
-    window.tasksMatcher = function() {return true;}
+    window.tasksMatcher = function() {return true;};
     iterateTasks();
 }
 
 function expandFailed(element) {
-    if (element.status == "fail") {
+    if (element.status == "FAIL") {
         window.tasks = [element];
-        window.tasksMatcher = function(e) {return e.status == "fail"};
+        window.tasksMatcher = function(e) {return e.status == "FAIL";};
         iterateTasks();
     }
+}
+
+function expandSuite(suite) {
+    if (suite.status == "PASS")
+        $("#"+suite.id+"_unfoldlink").click();
+    else
+        expandFailed(suite);
 }

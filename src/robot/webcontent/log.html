@@ -46,7 +46,7 @@ $(document).ready(function(){
         makeElementVisible(window.location.hash.substring(1));
         window.location.hash = window.location.hash.substring(1);
     } else {
-        expandFailed(topsuite);
+        expandSuite(topsuite);
     }
 });
 
@@ -84,9 +84,6 @@ function addTestExecutionLog(main) {
     $('<h2>Test Execution Log</h2>').appendTo($('body'));
     var root = $.tmpl('suiteTemplate', main);
     root.appendTo($('body'));
-    if (main.status == "pass") {
-        $("#"+main.id+"_unfoldlink").click();
-    }
 }
 </script>
 
@@ -161,7 +158,7 @@ function addTestExecutionLog(main) {
         <div class="foldingbutton" id="${id}_foldlink"
              onclick="closeElement('${id}');"
              style="display: none;">-</div>
-        <span class="${status}">TEST&nbsp;SUITE:</span>
+        <span class="${status.toLowerCase()}">TEST&nbsp;SUITE:</span>
         <a class="name" name="suite_${fullname}" title="${name}">${name}</a>
       </td>
     </tr>
@@ -204,7 +201,7 @@ function addTestExecutionLog(main) {
              id="${id}_foldlink"
              onclick="closeElement('${id}');"
              style="display: none;">-</div>
-        <span class="${status}">TEST&nbsp;CASE: </span>
+        <span class="${status.toLowerCase()}">TEST&nbsp;CASE: </span>
         <a class="name" name="test_${fullname}"
            title="${fullname}">${name}</a>
       </td>
@@ -224,7 +221,7 @@ function addTestExecutionLog(main) {
             <tr><th>Timeout:</th><td>${timeout}</td></tr>
             {{/if}}
             <tr><th>Start / End / Elapsed:</th><td>${times.startTime}  /  ${times.endTime}  /  ${times.elapsedTime}</td></tr>
-            <tr><th>Status:</th><td class="${status}">${statusText}</td></tr>
+            <tr><th>Status:</th><td><span class="${status.toLowerCase()}">${status}</span>{{if isCritical}} (critical){{/if}}</td></tr>
             {{if message}}
             <tr><th>Message:</th><td>${message}</td></tr>
             {{/if}}
@@ -247,7 +244,7 @@ function addTestExecutionLog(main) {
              id="${id}_unfoldlink"
              onclick="openKeyword('${id}');"
              style="display: block;">+</div>
-        <span class="${status}">${type}: </span>
+        <span class="${status.toLowerCase()}">${type}: </span>
         <a class="name" name="keyword_${path}" title="${name}">${name}</a>
         <span class="arg">${arguments}</span>
       </td>

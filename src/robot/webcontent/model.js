@@ -1,9 +1,9 @@
 window.model = function () {
 
     var STATUS = {
-        pass: "pass",
-        fail: "fail",
-        notRun: "not_run"
+        pass: "PASS",
+        fail: "FAIL",
+        notRun: "NOT RUN"
     };
 
     var KEYWORD_TYPE = {
@@ -16,10 +16,6 @@ window.model = function () {
         var suite = createModelObject(data);
         suite.source = data.source;
         suite.fullname = data.parent ? data.parent.fullname + "." + data.name : data.name;
-        // TODO: No need to have status and statusText when the difference is just case.
-        // Better to have just status in uppercase and let view do toLowerCase() if needed.
-        // Same changes should be done also with Tests and Keywords.
-        suite.statusText = data.status.status.toUpperCase();
         setStats(suite, data.statistics);
         suite.metadata = data.metadata;
         suite.populateKeywords = createIterablePopulator("Keyword");
@@ -29,9 +25,8 @@ window.model = function () {
         suite.children = function () {
             return suite.keywords().concat(suite.tests()).concat(suite.suites());
         };
-        // TODO: Is hasTeardownFailure used anymore?
         suite.hasTeardownFailure = function () {
-            return suiteTeardownFailed(suite) || data.status.parentSuiteTeardownFailed;
+            return suiteTeardownFailed(suite) || data.parentSuiteTeardownFailed;
         };
         suite.searchTests = function (predicate) {
             var tests = [];
@@ -128,7 +123,7 @@ window.model = function () {
         var obj = {};
         obj.name = data.name;
         obj.documentation = data.doc; // TODO: rename documentation -> doc
-        obj.status = data.status.status;
+        obj.status = data.status;
         obj.times = data.times;
         return obj
     }
@@ -146,7 +141,6 @@ window.model = function () {
             return test.keywords();
         };
         test.isCritical = data.isCritical;
-        test.statusText = test.status.toUpperCase() + (test.isCritical ? " (critical)" : ""); // TODO: move to templates
         test.tags = data.tags;
         test.message = data.message;
         // TODO: Handle failures in parent teardowns
@@ -184,13 +178,6 @@ window.model = function () {
         message.text = text;
         message.link = link;
         return message;
-    }
-
-    function Status(status, parentSuiteTeardownFailed) {
-        return {
-            parentSuiteTeardownFailed: parentSuiteTeardownFailed,
-            status: parentSuiteTeardownFailed ? model.FAIL : status
-        };
     }
 
     function Times(timedata) {
@@ -298,7 +285,6 @@ window.model = function () {
         Test: Test,
         Keyword: Keyword,
         Message: Message,
-        Status: Status,
         Times: Times,
         PASS: STATUS.pass,
         FAIL: STATUS.fail,
