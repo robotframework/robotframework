@@ -308,7 +308,7 @@ function pop_upto(list, upto) {
   <tr>
     <td class="col_stat_name">
       <div class="stat_name">
-        <span title="${doc}"><a href="#total_${label}" onClick="totalDetailSelected('${label}')">${label}</a></span>
+        <a href="#total_${label}" onClick="totalDetailSelected('${label}')">${label}</a>
       </div>
     </td>
     {{tmpl($data) 'stat_columns'}}
