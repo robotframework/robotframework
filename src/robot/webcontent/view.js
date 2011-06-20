@@ -117,8 +117,8 @@ $.template('no_tags_row',
 $.template('suiteStatusMessageTemplate',
     '${critical} critical test, ' +
     '${criticalPassed} passed, ' +
-    '<span class="${criticalFailureClass}">${criticalFailed} failed</span><br />' +
+    '<span class="{{if criticalFailed}}fail{{else}}pass{{/if}}">${criticalFailed} failed</span><br />' +
     '${total} test total, ' +
     '${totalPassed} passed, ' +
-    '<span class="${totalFailureClass}">${totalFailed} failed</span>'
+    '<span class="{{if totalFailed}}fail{{else}}pass{{/if}}">${totalFailed} failed</span>'
 );

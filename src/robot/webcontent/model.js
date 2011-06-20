@@ -108,15 +108,6 @@ window.model = function () {
         for (var name in stats) {
             suite[name] = stats[name];
         }
-        // TODO: move to templates
-        if (suite.totalFailed == 0)
-            suite.totalFailureClass = 'pass';
-        else
-            suite.totalFailureClass = 'fail';
-        if (suite.criticalFailed == 0)
-            suite.criticalFailureClass = 'pass';
-        else
-            suite.criticalFailureClass = 'fail';
     }
 
     function createModelObject(data) {
