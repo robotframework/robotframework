@@ -159,7 +159,7 @@ class _BaseSettings(object):
         return value, ''
 
     def _process_tag_stat_combine(self, value):
-        for replwhat, replwith in [('_', ' '), ('AND', ' & '),
+        for replwhat, replwith in [('_', ' '), ('AND', '&'),
                                    ('&', ' & '), ('NOT', ' NOT ')]:
             value = value.replace(replwhat, replwith)
         if ':' in value:
