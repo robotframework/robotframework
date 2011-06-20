@@ -78,15 +78,15 @@ class SuiteStat(Stat):
 class TagStat(Stat):
     type = 'tag'
 
-    def __init__(self, name, critical=False, non_critical=False, info=None,
-                 combined=''):
+    def __init__(self, name, doc='', links=[], critical=False,
+                 non_critical=False, combined=''):
         Stat.__init__(self, name)
-        self.doc = info.get_doc(name) if info else ''
+        self.doc = doc
+        self.links = links
         self.critical = critical
         self.non_critical = non_critical
-        self.tests = []
-        self.links = info.get_links(name) if info else []
         self.combined = combined
+        self.tests = []
 
     def add_test(self, test):
         Stat.add_test(self, test)
@@ -155,49 +155,42 @@ class SuiteStatistics:
 
 class TagStatistics:
 
-    def __init__(self, include=None, exclude=None, tag_stat_combine=None,
-                 docs=None, links=None):
+    def __init__(self, include=None, exclude=None, combine=None, docs=None,
+                 links=None):
         self.stats = utils.NormalizedDict()
         self._include = include or []
         self._exclude = exclude or []
-        self._patterns_and_names = self._get_patterns_and_names(tag_stat_combine)
-        self._taginfo = TagStatInfo(docs or [], links or [])
-
-    def _get_patterns_and_names(self, tag_stat_combine_options):
-        if not tag_stat_combine_options:
-            return []
-        return [ self._parse_name_and_pattern_from(option) \
-                 for option in tag_stat_combine_options ]
-
-    def _parse_name_and_pattern_from(self, option):
-        pattern = option.replace('&', ' & ').replace('NOT', ' NOT ')
-        if ':' in pattern:
-            return pattern.rsplit(':', 1)
-        return pattern, pattern
+        self._combine = combine or []
+        info = TagStatInfo(docs or [], links or [])
+        self._get_doc = info.get_doc
+        self._get_links = info.get_links
 
     def add_test(self, test, critical):
         self._add_tags_statistics(test, critical)
-        self._add_tagstatcombine_statistics(test)
+        self._add_combined_statistics(test)
 
     def _add_tags_statistics(self, test, critical):
         for tag in test.tags:
             if not self._is_included(tag):
                 continue
             if tag not in self.stats:
-                self.stats[tag] = TagStat(tag, critical.is_critical(tag),
-                                          critical.is_non_critical(tag),
-                                          self._taginfo)
+                self.stats[tag] = TagStat(tag, self._get_doc(tag),
+                                          self._get_links(tag),
+                                          critical.is_critical(tag),
+                                          critical.is_non_critical(tag))
             self.stats[tag].add_test(test)
 
     def _is_included(self, tag):
-        if self._include != [] and not utils.matches_any(tag, self._include):
+        if self._include and not utils.matches_any(tag, self._include):
             return False
         return not utils.matches_any(tag, self._exclude)
 
-    def _add_tagstatcombine_statistics(self, test):
-        for pattern, name in self._patterns_and_names:
+    def _add_combined_statistics(self, test):
+        for pattern, name in self._combine:
             if name not in self.stats:
-                self.stats[name] = TagStat(name, combined=pattern)
+                self.stats[name] = TagStat(name, self._get_doc(name),
+                                           self._get_links(name),
+                                           combined=pattern)
             if test.is_included([pattern], []):
                 self.stats[name].add_test(test)
 
@@ -228,26 +221,24 @@ class TotalStatistics:
 class TagStatInfo:
 
     def __init__(self, docs, links):
-        self._docs = [ self._parse_doc(doc) for doc in docs ]
-        self._links = [ TagStatLink(*link) for link in links ]
-
-    def _parse_doc(self, cli_item):
-        try:
-            tag, doc = cli_item.split(':', 1)
-        except ValueError:
-            tag, doc = cli_item, ''
-        return tag, doc
+        self._docs = [TagStatDoc(*doc) for doc in docs]
+        self._links = [TagStatLink(*link) for link in links]
 
     def get_doc(self, tag):
-        docs = []
-        for pattern, doc in self._docs:
-            if utils.matches(tag, pattern):
-                docs.append(doc)
-        return ' '.join(docs) if docs else ''
+        return ' & '.join(doc.text for doc in self._docs if doc.matches(tag))
 
     def get_links(self, tag):
-        links = [ link.get_link(tag) for link in self._links ]
-        return [ link for link in links if link is not None ]
+        return [link.get_link(tag) for link in self._links if link.matches(tag)]
+
+
+class TagStatDoc:
+
+    def __init__(self, pattern, doc):
+        self.text = doc
+        self._pattern = pattern
+
+    def matches(self, tag):
+        return utils.matches(tag, self._pattern)
 
 
 class TagStatLink:
@@ -258,18 +249,22 @@ class TagStatLink:
         self._link = link
         self._title = title.replace('_', ' ')
 
+    def matches(self, tag):
+        return self._regexp.match(tag) is not None
+
     def get_link(self, tag):
         match = self._regexp.match(tag)
-        if match is not None:
-            link = self._replace_matches(self._link, match)
-            return link, self._title
-        return None
+        if not match:
+            return None
+        link, title = self._replace_groups(self._link, self._title, match)
+        return link, title
 
-    def _replace_matches(self, url, match):
-        groups = match.groups()
-        for i, group in enumerate(groups):
-            url = url.replace('%%%d' % (i+1), group)
-        return url
+    def _replace_groups(self, link, title, match):
+        for index, group in enumerate(match.groups()):
+            placefolder = '%' + str(index+1)
+            link = link.replace(placefolder, group)
+            title = title.replace(placefolder, group)
+        return link, title
 
     def _get_match_regexp(self, pattern):
         regexp = []
