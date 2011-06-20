@@ -78,8 +78,10 @@ class _BaseSettings(object):
         if value in [None, []]:
             return value
         if name in ['Name', 'Doc', 'LogTitle', 'ReportTitle', 'SummaryTitle']:
+            if name == 'Doc': value = self._escape(value)
             return value.replace('_', ' ')
         if name in ['Metadata', 'TagDoc']:
+            if name == 'Metadata': value = [self._escape(v) for v in value]
             return [self._process_metadata_or_tagdoc(v) for v in value]
         if name in ['Include', 'Exclude']:
             return [v.replace('AND', '&').replace('_', ' ') for v in value]
@@ -237,6 +239,9 @@ class RobotSettings(_BaseSettings):
             return True
         return self._opts['Output'] == 'NONE' and type_ != 'DebugFile'
 
+    def _escape(self, value):
+        return utils.escape(value)
+
 
 class RebotSettings(_BaseSettings):
     _extra_cli_opts = {'Output'         : ('output', 'NONE'),
@@ -247,3 +252,6 @@ class RebotSettings(_BaseSettings):
 
     def _outputfile_disabled(self, type_, name):
         return name == 'NONE'
+
+    def _escape(self, value):
+        return value
