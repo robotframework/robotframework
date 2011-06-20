@@ -99,17 +99,8 @@ class BaseTestSuite(_TestAndSuiteHelper):
             self.doc = doc
 
     def set_metadata(self, metalist):
-        for metastr in metalist:
-            metastr = self._escape_metadata(metastr)
-            try:
-                name, value = metastr.split(':', 1)
-            except ValueError:
-                name, value = metastr, ''
+        for name, value in metalist:
             self.metadata[name] = value
-
-    def _escape_metadata(self, metastr):
-        # Overridden by output.readers.TestSuite
-        return metastr.replace('\\', '\\\\')
 
     def get_metadata(self, html=False):
         names = sorted(self.metadata.keys())

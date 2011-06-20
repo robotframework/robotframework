@@ -75,14 +75,14 @@ class _BaseSettings(object):
         self._opts[name] = value
 
     def _process_value(self, name, value, log):
-        if value is None:
+        if value in [None, []]:
             return value
         if name in ['Name', 'Doc', 'LogTitle', 'ReportTitle', 'SummaryTitle']:
             return value.replace('_', ' ')
         if name in ['Metadata', 'TagDoc']:
-            return [v.replace('_', ' ') for v in value]
-        if name in ['Include', 'Exclude', 'TagStatCombine']:
-            return [item.replace('AND', '&').replace('_', ' ') for item in value]
+            return [self._process_metadata_or_tagdoc(v) for v in value]
+        if name in ['Include', 'Exclude']:
+            return [v.replace('AND', '&').replace('_', ' ') for v in value]
         if name in self._output_opts and utils.eq(value, 'NONE'):
             return 'NONE'
         if name == 'OutputDir':
@@ -91,8 +91,10 @@ class _BaseSettings(object):
             return self._convert_to_positive_integer(name, value)
         if name in ['Listeners', 'VariableFiles']:
             return [self._split_args_from_name(item) for item in value]
+        if name == 'TagStatCombine':
+            return [self._process_tag_stat_combine(v) for v in value]
         if name == 'TagStatLink':
-            return self._process_tag_stat_link(value)
+            return [v for v in [self._process_tag_stat_link(v) for v in value] if v]
         if name == 'RemoveKeywords':
             return value.upper()
         if name == 'SplitOutputs' and value != -1:
@@ -150,16 +152,27 @@ class _BaseSettings(object):
             raise DataError("Can't create %s file's parent directory '%s': %s"
                             % (type_.lower(), path, utils.get_error_message()))
 
+    def _process_metadata_or_tagdoc(self, value):
+        value = value.replace('_', ' ')
+        if ':' in value:
+            return value.split(':', 1)
+        return value, ''
+
+    def _process_tag_stat_combine(self, value):
+        for replwhat, replwith in [('_', ' '), ('AND', ' & '),
+                                   ('&', ' & '), ('NOT', ' NOT ')]:
+            value = value.replace(replwhat, replwith)
+        if ':' in value:
+            return value.rsplit(':', 1)
+        return value, value
+
     def _process_tag_stat_link(self, value):
-        ret = []
-        for item in value:
-            tokens = item.split(':')
-            if len(tokens) >= 3:
-                ret.append((tokens[0], ':'.join(tokens[1:-1]), tokens[-1]))
-            else:
-                LOGGER.error("Invalid format for option '--tagstatlink'. "
-                             "Expected 'tag:link:title' but got '%s'." % item)
-        return ret
+        tokens = value.split(':')
+        if len(tokens) >= 3:
+            return tokens[0], ':'.join(tokens[1:-1]), tokens[-1]
+        LOGGER.error("Invalid format for option '--tagstatlink'. "
+                     "Expected 'tag:link:title' but got '%s'." % value)
+        return None
 
     def _convert_to_positive_integer(self, name, value):
         value = self._convert_to_integer(name, value)
