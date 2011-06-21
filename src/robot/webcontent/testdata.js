@@ -10,6 +10,10 @@ window.testdata = function () {
     };
     var _statistics = null;
 
+    function get(id) {
+        return store.get(id)
+    }
+
     function addElement(elem) {
         elem.id = uuid();
         elementsById[elem.id] = elem;
@@ -27,14 +31,9 @@ window.testdata = function () {
         return new Date(window.output.baseMillis + millis);
     }
 
-    // TODO: Remove this function and use texts.get everywhere.
-    function get(id) {
-        return texts.get(id)
-    }
-
     function times(stats) {
-        var startMillis = stats[1];
-        var elapsed = stats[2];
+        var startMillis = get(stats[1]);
+        var elapsed = get(stats[2]);
         if(startMillis == null){
             return [null, null, elapsed];
         }
@@ -42,14 +41,14 @@ window.testdata = function () {
     }
 
     function message(element) {
-        return addElement(
-                model.Message(LEVEL[element[1]], timestamp(element[0]), get(element[2]), element[3]));
+        return addElement(model.Message(LEVEL[get(element[1])], timestamp(get(element[0])),
+                                        get(element[2]), get(element[3])));
     }
 
     function parseStatus(stats, parentSuiteTeardownFailed) {
         if (parentSuiteTeardownFailed)
             return model.FAIL;
-        return {'P': model.PASS, 'F': model.FAIL, 'N': model.NOT_RUN}[stats[0]];
+        return {'P': model.PASS, 'F': model.FAIL, 'N': model.NOT_RUN}[get(stats[0])];
     }
 
     function last(items) {
@@ -68,7 +67,7 @@ window.testdata = function () {
 
     function createKeyword(parent, element, index) {
         var kw = model.Keyword({
-            type: KEYWORD_TYPE[element[0]],
+            type: KEYWORD_TYPE[get(element[0])],
             name: get(element[1]),
             args: get(element[4]),
             doc: get(element[3]),
@@ -86,13 +85,13 @@ window.testdata = function () {
 
     function messageMatcher(elem) {
         return (elem.length == 3 &&
-                typeof(elem[0]) == "number" &&
-                typeof(elem[1]) == "string" &&
-                typeof(elem[2]) == "number");
+                typeof(get(elem[0])) == "number" &&
+                typeof(get(elem[1])) == "string" &&
+                typeof(get(elem[2])) == "string");
     }
 
     function tags(taglist) {
-        return util.map(taglist, texts.get);
+        return util.map(taglist, get);
     }
 
     function createTest(suite, element) {
@@ -102,7 +101,7 @@ window.testdata = function () {
             name: get(element[1]),
             doc: get(element[4]),
             timeout: get(element[2]),
-            isCritical: (element[3] == "Y"),
+            isCritical: (get(element[3]) == "Y"),
             status: parseStatus(statusElement, suite.hasTeardownFailure()),
             message: createMessage(statusElement, suite.hasTeardownFailure()),
             times: model.Times(times(statusElement)),
@@ -125,8 +124,8 @@ window.testdata = function () {
         var statusElement = secondLast(element);
         var suite = model.Suite({
             parent: parent,
-            name: element[2],
-            source: element[1],
+            name: get(element[2]),
+            source: get(element[1]),
             doc: get(element[3]),
             status: parseStatus(statusElement, parent && parent.hasTeardownFailure()),
             parentSuiteTeardownFailed: parent && parent.hasTeardownFailure(),
@@ -144,12 +143,13 @@ window.testdata = function () {
     function parseMetadata(data) {
         var metadata = {};
         for (var key in data) {
-            metadata[key] = get(data[key]);
+            metadata[get(key)] = get(data[key]);
         }
         return metadata;
     }
 
     function suiteStats(stats) {
+        stats = util.map(stats, get);
         return {
             total: stats[0],
             totalPassed: stats[1],
@@ -164,7 +164,7 @@ window.testdata = function () {
         var args = arguments;
         return function(elem) {
             for (var i = 0; i < args.length; i++)
-                if (elem[0] == args[i]) return true;
+                if (get(elem[0]) == args[i]) return true;
             return false;
         };
     }
@@ -306,9 +306,9 @@ window.testdata = function () {
 
 }();
 
-window.texts = (function () {
+window.store = (function () {
 
-    function decodeAndReplace(id) {
+    function getText(id) {
         var text = window.output.strings[id];
         if (text[0] == '*') {
             return text.substring(1)
@@ -324,8 +324,18 @@ window.texts = (function () {
         return JXG.Util.utf8Decode(extracted);
     }
 
+    function getInteger(id) {
+        return window.output.integers[id];
+    }
+
+    function dispatch(id) {
+        if (id == undefined) return undefined;
+        if (id == null) return null;
+        return id < 0 ? getInteger(-1 - id) : getText(id);
+    }
+
     return {
-        get: function (id) { return decodeAndReplace(id); }
+        get: function (id) { return dispatch(id); }
     };
 
 })();
