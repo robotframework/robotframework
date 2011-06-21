@@ -139,8 +139,6 @@ table.statistics th {
     position: relative;
     float: left;
     height: 100%;
-    /* TODO: Is the hack below still needed w/ IE8? */
-    font-size: 4px; /* to make graphs thin also in IE */
 }
 /* Tables in documentation */
 table.doc {

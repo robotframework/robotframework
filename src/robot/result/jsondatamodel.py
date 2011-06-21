@@ -40,8 +40,7 @@ class DataModel(object):
 
     def write_to(self, output):
         self._dump_json('window.output = ', self._robot_data, output)
-        if self._settings:
-            self._dump_json('window.settings = ', self._settings, output)
+        self._dump_json('window.settings = ', self._settings, output)
 
     def _dump_json(self, name, data, output):
         output.write(name)
