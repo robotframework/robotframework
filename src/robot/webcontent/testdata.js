@@ -285,11 +285,6 @@ window.testdata = function () {
         return util.map(window.output.errors, message);
     }
 
-    // TODO: Is this used anymore?
-    function error(index) {
-        return errors()[index];
-    }
-
     function statistics() {
         if (!_statistics) {
             var statData = window.output.stats;
@@ -301,7 +296,6 @@ window.testdata = function () {
     return {
         suite: suite,
         errors: errors,
-        error: error,
         find: findById,
         pathToTest: pathToTest,
         pathToSuite: pathToSuite,

@@ -267,8 +267,8 @@ describe("Handling messages", function (){
     });
 
     it("should show warning in errors", function () {
-        expectMessage(window.testdata.error(0), "warning", "warn");
-        expect(window.testdata.error(0).link).toEqual("keyword_Verysimple.Test.2");
+        expectMessage(window.testdata.errors()[0], "warning", "warn");
+        expect(window.testdata.errors()[0].link).toEqual("keyword_Verysimple.Test.2");
     });
 });
 
