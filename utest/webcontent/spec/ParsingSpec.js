@@ -87,7 +87,7 @@ describe("Handling Suite", function () {
         expect(suite.name).toEqual("Suite");
         expect(suite.status).toEqual("PASS");
         expect(suite.source).toEqual("/tmp/test.txt");
-        expect(suite.documentation).toEqual("suite doc");
+        expect(suite.doc).toEqual("suite doc");
         expect(suite.times).toBeDefined();
         expect(suite.times.elapsedMillis).toEqual(39);
         expectStats(suite, 1, 1, 1, 1);
@@ -99,7 +99,7 @@ describe("Handling Suite", function () {
         expect(test.name).toEqual("Test");
         expect(test.status).toEqual("PASS");
         expect(test.fullname).toEqual("Suite.Test");
-        expect(test.documentation).toEqual("test doc");
+        expect(test.doc).toEqual("test doc");
         expect(test.tags).toEqual(["tag1", "tag2"]);
         expect(test.times).toBeDefined();
         expect(test.times.elapsedMillis).toEqual(2);
