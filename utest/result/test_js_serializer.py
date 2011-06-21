@@ -33,7 +33,7 @@ class TestJsSerializer(unittest.TestCase):
       <doc>*html* &lt;esc&gt; http://x.y http://x.y/z.jpg</doc>
       <arguments><arg>a1</arg><arg>a2</arg></arguments>
       <msg timestamp="20110601 12:01:51.353" level="WARN">simple</msg>
-      <status status="PASS" endtime="20110601 12:01:51.353" starttime="20110601 12:01:51.353"></status>
+      <status status="PASS" endtime="20110601 12:01:51.353" starttime="20110601 12:01:51.376"></status>
     </kw>
     <tags><tag>t1</tag><tag>t2</tag></tags>
     <status status="PASS" endtime="20110601 12:01:51.354" critical="yes" starttime="20110601 12:01:51.353"></status>
@@ -242,10 +242,15 @@ class TestJsSerializer(unittest.TestCase):
         self._test_remove_keywords(self._get_data_model(test_xml))
 
     def _test_remove_keywords(self, data_model):
-        strings_before = ''.join(data_model._robot_data['strings'])
+        strings_before = self._list_size(data_model._robot_data['strings'])
+        integers_before = self._list_size(data_model._robot_data['integers'])
         data_model.remove_keywords()
         self.assert_model_does_not_contain(data_model, ['kw', 'setup', 'forloop', 'foritem'])
-        assert_true(len(strings_before) > len(''.join(data_model._robot_data['strings'])))
+        assert_true(strings_before > self._list_size(data_model._robot_data['strings']))
+        assert_true(integers_before > self._list_size(data_model._robot_data['integers']))
+
+    def _list_size(self, array):
+        return len(''.join([str(val) for val in array]))
 
     def test_suite_xml_parsing(self):
         # Tests parsing the whole suite structure
@@ -255,7 +260,7 @@ class TestJsSerializer(unittest.TestCase):
                           plain_suite=['*suite', '*/tmp/verysimple.txt', '*Verysimple', doc,
                               ['*test', '*Test', '*', '*Y', doc,
                                   ['*kw', '*Keyword.Example', '*1 second', doc,
-                                   '*a1, a2', [0, '*W', '*simple'], ['*P', 0, 0]],
+                                   '*a1, a2', [0, '*W', '*simple'], ['*P', 23, -23]],
                                   ['*t1', '*t2'], ['*P', 0, 1]],
                               ['*P', -24, 25], [1, 1, 1, 1]])
         assert_equals(self._context.link_to([0, 'W', 'simple']),

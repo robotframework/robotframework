@@ -49,7 +49,7 @@ class DataModel(object):
 
     def remove_keywords(self):
         self._robot_data['suite'] = self._remove_keywords_from(self._robot_data['suite'])
-        self._prune_unused_texts()
+        self._prune_unused_indices()
 
     def _remove_keywords_from(self, data):
         if not isinstance(data, list):
@@ -64,18 +64,19 @@ class DataModel(object):
         return isinstance(item, list) and item and item[0] > 0 \
             and self._robot_data['strings'][item[0]] in ['*kw', '*setup', '*forloop', '*foritem']
 
-    def _prune_unused_texts(self):
-        used = self._collect_used_text_indices(self._robot_data['suite'], set())
+    def _prune_unused_indices(self):
+        used = self._collect_used_indices(self._robot_data['suite'], set())
         self._robot_data['strings'] = [text if index in used else '' for index, text in enumerate(self._robot_data['strings'])]
+        self._robot_data['integers'] = [number if (-1 -index) in used else 0 for index, number in enumerate(self._robot_data['integers'])]
 
-    def _collect_used_text_indices(self, data, result):
+    def _collect_used_indices(self, data, result):
         for item in data:
             if isinstance(item, (int, long)):
                 result.add(item)
             elif isinstance(item, list):
-                self._collect_used_text_indices(item, result)
+                self._collect_used_indices(item, result)
             elif isinstance(item, dict):
-                self._collect_used_text_indices(item.values(), result)
+                self._collect_used_indices(item.values(), result)
         return result
 
 
