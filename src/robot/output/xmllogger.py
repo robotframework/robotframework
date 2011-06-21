@@ -145,8 +145,7 @@ class XmlLogger:
     def tag_stat(self, stat):
         self._stat(stat, attrs={'info': self._get_tag_stat_info(stat),
                                 'links': self._get_tag_links(stat),
-                                'doc': utils.html_escape(stat.doc,
-                                                         formatting=True),
+                                'doc': stat.doc,
                                 'combined': stat.combined})
 
     def _get_tag_links(self, stat):

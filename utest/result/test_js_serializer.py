@@ -223,7 +223,7 @@ class TestJsSerializer(unittest.TestCase):
             </total>
             <tag>
                 <stat info="" fail="1" pass="0" links="" doc="">someothertag</stat>
-                <stat info="" fail="1" pass="0" links="" doc="">sometag</stat>
+                <stat info="" fail="1" pass="0" links="" doc="*bold*">sometag</stat>
             </tag>
             <suite>
                 <stat fail="4" name="Data" pass="0">Data</stat>
@@ -238,7 +238,7 @@ class TestJsSerializer(unittest.TestCase):
                     [{'label': 'someothertag', 'pass': 0, 'fail': 1,
                       'info': '', 'links': '', 'doc': ''},
                      {'label': 'sometag', 'pass': 0, 'fail': 1,
-                      'info': '', 'links': '', 'doc': ''}],
+                      'info': '', 'links': '', 'doc': '<b>bold</b>'}],
                     [{'label': 'Data', 'name': 'Data', 'pass': 0, 'fail': 4},
                      {'label': 'Data.All Settings', 'name': 'All Settings', 'pass': 0, 'fail': 1},
                      {'label': 'Data.Failing Suite', 'name': 'Failing Suite', 'pass': 0, 'fail': 3}]]

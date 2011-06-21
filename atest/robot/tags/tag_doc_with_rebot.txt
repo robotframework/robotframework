@@ -14,10 +14,10 @@ Specify Tag Doc With Pattern
     1    d1    Doc for many rebot tags
 
 Tag Doc With Multiple Matches
-    2    d2    Doc for many rebot tags &amp; More doc
+    2    d2    Doc for many rebot tags & More doc
 
 Tag Doc With Formatting
-    4    t1    <a href="http://some.url">http://some.url</a> <b>bold</b>
+    4    t1    http://some.url *bold*
 
 Tag Doc For Combined Statistics
     0    DX    Doc for many rebot tags
