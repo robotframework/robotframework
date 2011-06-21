@@ -36,23 +36,26 @@ function closeElement(elementId) {
     $('#'+elementId+'_unfoldlink').show();
 }
 
-// TODO: rename
-function iterateTasks(){
-    if (!window.tasks.length)
+function expandRecursively(){
+    if (!window.elementsToExpand.length)
         return;
-    var element = window.tasks.pop();
+    var element = window.elementsToExpand.pop();
     if (element == undefined || elementHiddenByUser(element.id)) {
-        window.tasks = []
+        window.elementsToExpand = [];
         return;
     }
-    $("#"+element.id+"_unfoldlink").click();
+    expandElement(element);
     var children = element.children()
     for (var i = children.length-1; i >= 0; i--) {
-        if (window.tasksMatcher(children[i]))
-            window.tasks.push(children[i]);
+        if (window.expandDecider(children[i]))
+            window.elementsToExpand.push(children[i]);
     }
-    if (window.tasks.length)
-        setTimeout("iterateTasks()", 0);
+    if (window.elementsToExpand.length)
+        setTimeout(expandRecursively, 0);
+}
+
+function expandElement(element) {
+    $("#" + element.id + "_unfoldlink").click();
 }
 
 function elementHiddenByUser(elementId) {
@@ -61,22 +64,22 @@ function elementHiddenByUser(elementId) {
 }
 
 function expandAllChildren(elementId) {
-    window.tasks = [window.testdata.find(elementId)];
-    window.tasksMatcher = function() {return true;};
-    iterateTasks();
+    window.elementsToExpand = [window.testdata.find(elementId)];
+    window.expandDecider = function() {return true;};
+    expandRecursively();
 }
 
 function expandFailed(element) {
     if (element.status == "FAIL") {
-        window.tasks = [element];
-        window.tasksMatcher = function(e) {return e.status == "FAIL";};
-        iterateTasks();
+        window.elementsToExpand = [element];
+        window.expandDecider = function(e) {return e.status == "FAIL";};
+        expandRecursively();
     }
 }
 
 function expandSuite(suite) {
     if (suite.status == "PASS")
-        $("#"+suite.id+"_unfoldlink").click();
+        expandElement(suite);
     else
         expandFailed(suite);
 }

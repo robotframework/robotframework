@@ -1,4 +1,12 @@
-/* Generic Table Styles */
+/* Summary links */
+a.summary_fail {
+    color: red !important;
+    font-weight: bold;
+}
+a.summary_pass {
+    color: #009900 !important;
+}
+/* Generic table styles */
 table {
     background: white;
     border: 1px solid black;
@@ -6,103 +14,50 @@ table {
     empty-cells: show;
     margin: 0px 1px;
 }
-
 th, td {
     border: 1px solid black;
     padding: 1px 5px;
 }
-
 th {
     background: #C6C6C6;
     color: black;
 }
-
-/* Test detail tables */
-table#tests_by_suite, table#tests_detail_table {
-    width: 100%;
-}
-
-.col_name {
-    min-width: 13em;
-    font-weight: bold;
-    white-space: pre-wrap;
-}
-
-.col_doc {
-    min-width: 13em;
-    white-space: pre-wrap;
-}
-
-.col_tags {
-    min-width: 10em;
-    white-space: pre-wrap;
-}
-
-.col_crit {
-    width: 2em;
-    text-align: center;
-}
-
-.col_status {
-    width: 3.5em;
-    text-align: center;
-}
-
-.col_msg {
-    min-width: 13em;
-    white-space: pre-wrap;
-}
-
-.col_times {
-    width: 9em;
-    white-space: nowrap;
-}
-
-td.col_times {
-    text-align: right;
-}
-
-/* Details Table */
+/* Summary and total/tag/suite details */
 table.details {
     clear: both;
     width: 58em;
     margin-bottom: 1em;
 }
-
 table.details th {
     background: white;
-    width: 8em;
+    width: 10em;
     white-space: nowrap;
     text-align: left;
     vertical-align: top;
     padding-right: 1em;
     border: none;
-    padding: 2px 4px;
+    padding: 0.2em 0.4em;
 }
-
 table.details td {
     vertical-align: top;
     border: none;
-    padding: 2px 4px;
+    padding: 0.2em 0.4em;
     white-space: pre-wrap;
 }
-
-table.details .normal_whitespace {
-    white-space: normal;
-}
-
 table.details #selector th, table.details #selector td {
     padding-top: 0.5em;
     padding-bottom: 1em;
+    white-space: normal;
 }
-
+#print_selector {
+    visibility: hidden;
+}
 /* Tabs - adapted from http://www.htmldog.com/articles/tabs */
 #detail_tabs {
     list-style: none;
     padding: 0;
     margin: 0px 1em;
 }
-
 #detail_tabs li {
     float: left;
     background: #C6C6C6;
@@ -112,33 +67,56 @@ table.details #selector th, table.details #selector td {
     padding-top: 0.1em;
     border-radius: 3px 3px 0 0;
 }
-
 #detail_tabs li:hover {
     background: yellow;
 }
-
 #detail_tabs li a {
     color: black;
     text-decoration: none;
     font-weight: bold;
     padding: 0 1em;
 }
-
 #detail_tabs li.tab_selected {
     position: relative;
     top: 1px;
     background: white;
 }
-
 #detail_tabs li.tab_selected:hover {
     background: white;
 }
-
-a.status_fail {
-    color: red;
-    font-weight: bold;
+/* Test details table */
+table#test_details {
+    width: 100%;
 }
-
-a.status_pass {
-    color: #009900;
+.col_name {
+    min-width: 13em;
+    font-weight: bold;
+    white-space: pre-wrap;
+}
+.col_doc {
+    min-width: 13em;
+    white-space: pre-wrap;
+}
+.col_tags {
+    min-width: 10em;
+    white-space: pre-wrap;
+}
+.col_crit {
+    width: 2em;
+    text-align: center;
+}
+.col_status {
+    width: 3.5em;
+    text-align: center;
+}
+.col_msg {
+    min-width: 13em;
+    white-space: pre-wrap;
+}
+.col_times {
+    width: 9em;
+    white-space: nowrap;
+}
+td.col_times {
+    text-align: right;
 }

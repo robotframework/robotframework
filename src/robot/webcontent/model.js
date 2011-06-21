@@ -15,7 +15,7 @@ window.model = function () {
     function Suite(data) {
         var suite = createModelObject(data);
         suite.source = data.source;
-        suite.fullname = data.parent ? data.parent.fullname + "." + data.name : data.name;
+        suite.fullName = data.parent ? data.parent.fullName + "." + data.name : data.name;
         setStats(suite, data.statistics);
         suite.metadata = data.metadata;
         suite.populateKeywords = createIterablePopulator("Keyword");
@@ -84,7 +84,7 @@ window.model = function () {
     }
 
     function findSuiteByName(suite, name) {
-        if (suite.fullname == name)
+        if (suite.fullName == name)
             return suite;
         var subSuites = suite.suites();
         for (var i = 0; i < subSuites.length; i++) {
@@ -108,33 +108,21 @@ window.model = function () {
         for (var name in stats) {
             suite[name] = stats[name];
         }
-        // TODO: move to templates
-        if (suite.totalFailed == 0)
-            suite.totalFailureClass = 'pass';
-        else
-            suite.totalFailureClass = 'fail';
-        if (suite.criticalFailed == 0)
-            suite.criticalFailureClass = 'pass';
-        else
-            suite.criticalFailureClass = 'fail';
     }
 
     function createModelObject(data) {
-        var obj = {};
-        obj.name = data.name;
-        obj.documentation = data.doc; // TODO: rename documentation -> doc
-        obj.status = data.status;
-        obj.times = data.times;
-        return obj
+        return {
+            name: data.name,
+            doc: data.doc,
+            status: data.status,
+            times: data.times
+        };
     }
 
     function Test(data) {
-        var names = ['name', 'doc', 'status', '...']
         var test = createModelObject(data);
-        test.fullname = data.parent.fullname + "." + test.name;  // TODO: is this used?, could be function also
-        test.parentName = function () {
-            return data.parent.fullname.replace(/\./g, ' . ') + ' . '; // TODO: duplicate
-        };
+        test.fullName = data.parent.fullName + "." + test.name;
+        test.formatParentName = function () { return util.formatParentName(test); };
         test.timeout = data.timeout;
         test.populateKeywords = createIterablePopulator("Keyword");
         test.children = function () {
@@ -143,9 +131,6 @@ window.model = function () {
         test.isCritical = data.isCritical;
         test.tags = data.tags;
         test.message = data.message;
-        // TODO: Handle failures in parent teardowns
-        // data.status.parentSuiteTeardownFailed;
-        // return "Teardown of the parent suite failed.";
         return test;
     }
 
@@ -153,7 +138,7 @@ window.model = function () {
         var kw = createModelObject(data);
         kw.type = data.type;
         var parent = data.parent
-        var parentPath = (parent.path === undefined) ? parent.fullname : parent.path;
+        var parentPath = (parent.path === undefined) ? parent.fullName : parent.path;
         kw.path = parentPath + "." + data.index;
         kw.arguments = data.args;
         kw.populateKeywords = createIterablePopulator("Keyword");
@@ -318,18 +303,13 @@ window.stats = (function () {
     function tagStatElem(data) {
         var stat = statElem(data);
         stat.links = parseLinks(stat.links);
-        // TODO: move to templates.
-        if (stat.info)
-            stat.shownInfo = '(' + stat.info + ')';
-        else
-            stat.shownInfo = '';
         return stat;
     }
 
     function suiteStatElem(data) {
         var stat = statElem(data);
-        stat.parentName = stat.label.slice(0, stat.label.length-stat.name.length);
-        stat.parentName = stat.parentName.replace(/\./g, ' . ');
+        stat.fullName = stat.label;
+        stat.formatParentName = function () { return util.formatParentName(stat); };
         // compatibility with RF 2.5 outputs
         if (!stat.name)
             stat.name = stat.label.split('.').pop();

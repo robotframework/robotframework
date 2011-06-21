@@ -96,8 +96,8 @@ $.template("stat_columns",
     '<td class="col_stat">${fail}</td>' +
     '<td class="col_graph">' +
       '<div class="graph">' +
-        '<b class="pass_bar" style="width: ${passWidth}%;" title="${passPercent}%"></b>' +
-        '<b class="fail_bar" style="width: ${failWidth}%;" title="${failPercent}%"></b>' +
+        '<div class="pass_bar" style="width: ${passWidth}%;" title="${passPercent}%"></div>' +
+        '<div class="fail_bar" style="width: ${failWidth}%;" title="${failPercent}%"></div>' +
       '</div>' +
     '</td>'
 );
@@ -117,8 +117,8 @@ $.template('no_tags_row',
 $.template('suiteStatusMessageTemplate',
     '${critical} critical test, ' +
     '${criticalPassed} passed, ' +
-    '<span class="${criticalFailureClass}">${criticalFailed} failed</span><br />' +
+    '<span class="{{if criticalFailed}}fail{{else}}pass{{/if}}">${criticalFailed} failed</span><br />' +
     '${total} test total, ' +
     '${totalPassed} passed, ' +
-    '<span class="${totalFailureClass}">${totalFailed} failed</span>'
+    '<span class="{{if totalFailed}}fail{{else}}pass{{/if}}">${totalFailed} failed</span>'
 );

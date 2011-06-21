@@ -87,7 +87,7 @@ describe("Handling Suite", function () {
         expect(suite.name).toEqual("Suite");
         expect(suite.status).toEqual("PASS");
         expect(suite.source).toEqual("/tmp/test.txt");
-        expect(suite.documentation).toEqual("suite doc");
+        expect(suite.doc).toEqual("suite doc");
         expect(suite.times).toBeDefined();
         expect(suite.times.elapsedMillis).toEqual(39);
         expectStats(suite, 1, 1, 1, 1);
@@ -98,8 +98,8 @@ describe("Handling Suite", function () {
         var test = window.testdata.suite().test(0);
         expect(test.name).toEqual("Test");
         expect(test.status).toEqual("PASS");
-        expect(test.fullname).toEqual("Suite.Test");
-        expect(test.documentation).toEqual("test doc");
+        expect(test.fullName).toEqual("Suite.Test");
+        expect(test.doc).toEqual("test doc");
         expect(test.tags).toEqual(["tag1", "tag2"]);
         expect(test.times).toBeDefined();
         expect(test.times.elapsedMillis).toEqual(2);
@@ -267,8 +267,8 @@ describe("Handling messages", function (){
     });
 
     it("should show warning in errors", function () {
-        expectMessage(window.testdata.error(0), "warning", "warn");
-        expect(window.testdata.error(0).link).toEqual("keyword_Verysimple.Test.2");
+        expectMessage(window.testdata.errors()[0], "warning", "warn");
+        expect(window.testdata.errors()[0].link).toEqual("keyword_Verysimple.Test.2");
     });
 });
 
@@ -474,10 +474,10 @@ describe("Iterating Suites", function (){
 
     it("should show correct full names", function (){
         var root = window.testdata.suite();
-        expect(root.fullname).toEqual("Foo");
-        expect(root.suite(0).fullname).toEqual("Foo.Bar");
-        expect(root.suite(0).suite(0).fullname).toEqual("Foo.Bar.Testii");
-        expect(root.suite(1).suite(0).test(0).fullname).toEqual("Foo.Foo.Tostii.FOO FOO");
+        expect(root.fullName).toEqual("Foo");
+        expect(root.suite(0).fullName).toEqual("Foo.Bar");
+        expect(root.suite(0).suite(0).fullName).toEqual("Foo.Bar.Testii");
+        expect(root.suite(1).suite(0).test(0).fullName).toEqual("Foo.Foo.Tostii.FOO FOO");
     });
 
     it("should give navigation uuid list for a test", function (){

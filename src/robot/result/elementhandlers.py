@@ -152,6 +152,9 @@ class _StatItemHandler(_Handler):
         self._attrs = dict(attrs)
         self._attrs['pass'] = int(self._attrs['pass'])
         self._attrs['fail'] = int(self._attrs['fail'])
+        if 'doc' in self._attrs:
+            self._attrs['doc'] = utils.html_escape(self._attrs['doc'],
+                                                   formatting=True)
         # TODO: Should we only dump attrs that have value?
         # Tag stats have many attrs that are normally empty
 

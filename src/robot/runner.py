@@ -186,19 +186,18 @@ Options:
                           Documentation is shown in 'Test Details' and also as
                           a tooltip in 'Statistics by Tag'. Pattern can contain
                           characters '*' (matches anything) and '?' (matches
-                          any char). If one tag matches multiple patterns, its
-                          docs are catenated with spaces. Documentation can
-                          contain formatting similarly as with --doc option.
+                          any char). Documentation can contain formatting
+                          similarly as with --doc option.
                           Examples:  --tagdoc mytag:My_documentation
                                      --tagdoc regression:*See*_http://info.html
                                      --tagdoc owner-*:Original_author
     --tagstatlink pattern:link:title *  Add external links into 'Statistics by
                           Tag'. Pattern can contain characters '*' (matches
                           anything) and '?' (matches any char). Characters
-                          matching to wildcard expressions can be used in the
-                          resulting link with syntax %N, where N is the index
-                          of the match (starting from 1). In the 'title'
-                          underscores are automatically converted to spaces.
+                          matching to wildcard expressions can be used in link
+                          and title with syntax %N, where N is index of the
+                          match (starting from 1). In title underscores are
+                          automatically converted to spaces.
                           Examples: --tagstatlink mytag:http://my.domain:Link
                           --tagstatlink bug-*:http://tracker/id=%1:Bug_Tracker
     --listener class *    A class for monitoring test execution. Gets

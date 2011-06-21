@@ -272,3 +272,7 @@ Previous test should have passed
     Should be equal  ${PREV TEST NAME}  ${name}
     Should be equal  ${PREV TEST STATUS}  PASS
 
+Get Tag Stat Nodes
+    ${nodes} =  Get Nodes  ${OUTFILE}  statistics/tag/stat
+    [Return]  ${nodes}
+

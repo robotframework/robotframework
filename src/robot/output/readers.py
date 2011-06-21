@@ -212,9 +212,6 @@ class TestSuite(BaseTestSuite, _SuiteReader):
         self.set_status()
         return ret
 
-    def _escape_metadata(self, metastr):
-        return metastr
-
     def remove_keywords(self, how):
         should_remove = ShouldRemoveCallable(how)
         if not should_remove:

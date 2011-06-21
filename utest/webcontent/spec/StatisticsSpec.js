@@ -44,7 +44,7 @@ describe("Statistics", function () {
 
     function verifySuiteStatNames(stat, name, parentName) {
         expect(stat.name).toEqual(name);
-        expect(stat.parentName).toEqual(parentName);
+        expect(stat.formatParentName()).toEqual(parentName);
     }
 
     it("should contain critical stats", function () {
@@ -59,10 +59,8 @@ describe("Statistics", function () {
         var firstTagStats = tagStats[0];
         verifyBasicStatAttributes(firstTagStats, 'first tag', 3, 0);
         expect(firstTagStats.doc).toEqual('tagdoc');
-        expect(firstTagStats.shownInfo).toEqual('(critical)');
         var secondTagStats = tagStats[1];
         verifyBasicStatAttributes(secondTagStats, 'second tag', 1, 0);
-        expect(secondTagStats.shownInfo).toEqual('');
     });
 
     it("should contain tag stat links", function () {

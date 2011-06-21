@@ -40,17 +40,136 @@ $(document).ready(function () {
     initLayout(topsuite.name, 'Report');
     addSummary(topsuite);
     addStatistics();
+    addDetails();
+    window.onhashchange = showDetailsByHash;
+});
+
+function setBackground(topsuite) {
+    if (topsuite.criticalFailed)
+        $("body").css("background-color", window.settings.background.fail);
+    else if (topsuite.totalFailed)
+        $("body").css("background-color", window.settings.background.nonCriticalFail);
+    else
+        $("body").css("background-color", window.settings.background.pass);
+}
+
+function addSummary(topsuite) {
+    var opts = {logURL: window.settings.logURL};
+    $.tmpl('summaryTableTemplate', topsuite, opts).insertAfter($('#header_div'));
+}
+
+function addDetails() {
     if (window.location.hash) {
         showDetailsByHash();
     } else {
         renderTotalSelector("no_selection");
     }
     $('#test_details_container').css('min-height', $(window).height());
-});
+}
 
-function addSummary(topsuite) {
+function showDetailsByHash() {
+    var hashParts = decodeURI(window.location.hash.substring(1)).split('_');
+    var key = hashParts.shift();
+    var arg = hashParts.join('_');
+    var action = {
+        'total': totalDetailSelected,
+        'tag': tagDetailSelected,
+        'suite': suiteDetailSelected,
+        'totals': showTotalsTab,
+        'tags': showTagsTab,
+        'suites': showSuitesTab
+    }[key];
+    if (action) {
+        action(arg);
+    }
+    window.location.hash = window.location.hash.substring(1);
+}
+
+function totalDetailSelected(type) {
+    if (!type) return;
+    renderTotalSelector('total_' + type);
+    renderTotalDetails(type);
+    ensureTotalDetailsAreVisible(type);
+}
+
+function renderTotalDetails(type) {
+    var stat;
+    if (type == 'Critical Tests')
+        stat = window.testdata.statistics().total[0];
+    else
+        stat = window.testdata.statistics().total[1];
+    var tests = getTotalTests(type)
+    stat.totalTime = calculateTotalTime(tests);
+    $.tmpl('tagOrTotalDetailsTemplate', stat).appendTo('#details_header');
+    drawTestDetailsTable(tests);
+}
+
+function renderTotalSelector(linkTarget) {
+    var args = {linkTarget: linkTarget, totals_tab_status: 'tab_selected'};
+    renderSelector(args, 'totalDetailsSelectorTemplate');
+}
+
+function ensureTotalDetailsAreVisible(type) {
+    document.getElementById('radio_'+type).checked = true;
+    $('#print_selector').text(type);
+    window.location.hash = 'total_'+type
+}
+
+function tagDetailSelected(name) {
+    if (!name) return;
+    renderTagsSelector('tag_' + name);
+    var tag = util.filter(window.testdata.statistics().tag, function (tag) {
+        return tag.label == name;
+    })[0];
+    renderTagDetails(tag);
+    ensureTagDetailsAreVisible(name);
+}
+
+function renderTagDetails(tag) {
+    var tests = getTestsHavingTag(tag);
+    if (tag) {
+        tag.totalTime = calculateTotalTime(tests);
+    }
+    $.tmpl('tagOrTotalDetailsTemplate', tag).appendTo('#details_header');
+    drawTestDetailsTable(tests);
+}
+
+function renderTagsSelector(linkTarget) {
+    var args = {linkTarget: linkTarget, tags_tab_status: 'tab_selected'};
+    var tagstats = {tags: window.testdata.statistics().tag};
+    renderSelector(args, 'tagDetailsSelectorTemplate', tagstats);
+}
+
+function ensureTagDetailsAreVisible(name) {
+    document.getElementById('tag_detail_selector').value = name;
+    $('#print_selector').text(name);
+    window.location.hash = 'tag_'+name;
+}
+
+function suiteDetailSelected(name) {
+    if (!name) return;
+    renderSuiteSelector('suite_' + name);
+    renderSuiteDetails(name);
+    ensureSuiteDetailsAreVisible(name);
+}
+
+function ensureSuiteDetailsAreVisible(name) {
+    document.getElementById('suite_detail_selector').value = name;
+    $('#print_selector').text(name);
+    window.location.hash = 'suite_'+name;
+}
+
+function renderSuiteDetails(name) {
+    var suite = testdata.suite().findSuiteByName(name);
     var opts = {logURL: window.settings.logURL};
-    $.tmpl('summaryTableTemplate', topsuite, opts).insertAfter($('#header_div'));
+    $.tmpl('suiteDetailsTemplate', suite, opts).appendTo('#details_header');
+    drawTestDetailsTable(suite.allTests());
+}
+
+function renderSuiteSelector(linkTarget) {
+    var args = {linkTarget: linkTarget, suites_tab_status: 'tab_selected'};
+    var stats = {suites: window.testdata.statistics().suite};
+    renderSelector(args, 'suiteDetailsSelectorTemplate', stats);
 }
 
 function showTotalsTab() {
@@ -65,157 +184,41 @@ function showSuitesTab() {
     renderSuiteSelector('suites');
 }
 
-function renderTotalSelector(linkTarget) {
+function renderSelector(args, template, stats) {
     emptyDetails();
-    var args = {linkTarget: linkTarget, totals_tab_status: 'tab_selected'};
     $.tmpl('detailsHeaderTemplate', args).appendTo('#test_details_container');
-    $.tmpl('totalDetailsSelectorTemplate').appendTo('#test_details_container');
-}
-
-function renderTagsSelector(linkTarget) {
-    emptyDetails();
-    var args = {linkTarget: linkTarget, tags_tab_status: 'tab_selected'};
-    var tagstats = {tags: window.testdata.statistics().tag};
-    $.tmpl('detailsHeaderTemplate', args).appendTo('#test_details_container');
-    $.tmpl('tagDetailsSelectorTemplate', tagstats).appendTo('#test_details_container');
-}
-
-function renderSuiteSelector(linkTarget) {
-    emptyDetails();
-    var args = {linkTarget: linkTarget, suites_tab_status: 'tab_selected'};
-    var suitestats = {suites: window.testdata.statistics().suite};
-    $.tmpl('detailsHeaderTemplate', args).appendTo('#test_details_container');
-    $.tmpl('suiteDetailsSelectorTemplate', suitestats).appendTo('#test_details_container');
+    $.tmpl(template, stats).appendTo('#test_details_container');
 }
 
 function emptyDetails(){
-    window.tasks = [];
+    window.elementsToRender = [];
     $('#test_details_container').empty();
-}
-
-function totalDetailSelected(type) {
-    if (!type) return;
-    renderTotalSelector("total_"+type);
-    renderTotalDetails(type);
-    ensureTotalDetailsAreVisible(type);
-}
-
-function tagDetailSelected(name) {
-    if (!name) return;
-    renderTagsSelector("tag_"+name);
-    var alltags = window.testdata.statistics().tag;
-    var tag = findTagByName(name, alltags);
-    renderDetailsByTag(tag);
-    ensureTagDetailsAreVisible(name);
-}
-
-function suiteDetailSelected(name) {
-    if (!name) return;
-    renderSuiteSelector("suite_"+name);
-    renderDetailsBySuite(name);
-    ensureSuiteDetailsAreVisible(name);
-}
-
-function renderTotalDetails(type) {
-    if (type == 'Critical Tests')
-        var stat = window.testdata.statistics().total[0];
-    else
-        var stat = window.testdata.statistics().total[1];
-    var tests = getTotalTests(type)
-    stat.totalTime = calculateTotalTime(tests);
-    $.tmpl('tagOrTotalDetailsTemplate', stat).appendTo('#details_header');
-    drawTestDetailsTable(tests);
-}
-
-function renderDetailsByTag(tag) {
-    var tests = getTestsHavingTag(tag);
-    if (tag) {
-        tag.totalTime = calculateTotalTime(tests);
-    }
-    $.tmpl('tagOrTotalDetailsTemplate', tag).appendTo('#details_header');
-    drawTestDetailsTable(tests);
-}
-
-function renderDetailsBySuite(name) {
-    var suite = testdata.suite().findSuiteByName(name);
-    var opts = {logURL: window.settings.logURL};
-    $.tmpl('suiteDetailsTemplate', suite, opts).appendTo('#details_header');
-    drawTestDetailsTable(suite.allTests());
 }
 
 function drawTestDetailsTable(tests) {
     $.tmpl('testDetailsTableTemplate').appendTo('#test_details_container');
-    window.tasks = tests;
-    iterateDetails();
+    window.elementsToRender = tests;
+    renderTestDetails();
 }
 
-function ensureTotalDetailsAreVisible(type) {
-    document.getElementById('radio_'+type).checked = true;
-    window.location.hash = 'total_'+type
-}
-
-function ensureTagDetailsAreVisible(name) {
-    document.getElementById('tag_detail_selector').value = name;
-    window.location.hash = 'tag_'+name;
-}
-
-function ensureSuiteDetailsAreVisible(name) {
-    document.getElementById('suite_detail_selector').value = name;
-    window.location.hash = 'suite_'+name;
-}
-
-function findTagByName(name, tags) {
-    for (var i=0; i<tags.length; i++) {
-        if (tags[i].label == name)
-            return tags[i];
-    }
-}
-
-function showDetailsByHash() {
-    // TODO: cleanup
-    var hash = decodeURI(window.location.hash.substring(1));
-    if (hash.indexOf("suite_") == 0) {
-        var suite = hash.substring("suite_".length);
-        suiteDetailSelected(suite)
-    }
-    else if (hash.indexOf("tag_") == 0) {
-        var tag = hash.substring("tag_".length);
-        tagDetailSelected(tag)
-    }
-    else if (hash.indexOf("total_") == 0) {
-        var type = hash.substring("total_".length);
-        totalDetailSelected(type)
-    }
-    else if (hash == 'totals') {
-        showTotalsTab();
-    }
-    else if (hash == 'tags') {
-        showTagsTab();
-    }
-    else if (hash == 'suites') {
-        showSuitesTab();
-    }
-    window.location.hash = window.location.hash.substring(1);
-}
-
-function sort_failures_first(t1, t2) {
+function sortByStatus(t1, t2) {
     if (t1.status != t2.status)
-        return t1.status == 'fail' ? -1 : 1;
+        return t1.status == 'FAIL' ? -1 : 1;
     if (t1.isCritical != t2.isCritical)
         return t1.isCritical ? -1 : 1;
-    return t1.fullname < t2.fullname ? -1 : 1;
+    return t1.fullName < t2.fullName ? -1 : 1;
 }
 
 function getTestsHavingTag(tag) {
     if (!tag)
         return [];
-    return window.testdata.suite().searchTestsByTag(tag).sort(sort_failures_first);
+    return window.testdata.suite().searchTestsByTag(tag).sort(sortByStatus);
 }
 
 function getTotalTests(type) {
     if (type == 'Critical Tests')
-        return window.testdata.suite().criticalTests().sort(sort_failures_first);
-    return window.testdata.suite().allTests().sort(sort_failures_first);
+        return window.testdata.suite().criticalTests().sort(sortByStatus);
+    return window.testdata.suite().allTests().sort(sortByStatus);
 }
 
 function calculateTotalTime(tests) {
@@ -226,28 +229,22 @@ function calculateTotalTime(tests) {
     return model.formatElapsed(totaltime).split('.')[0];
 }
 
-function setBackground(topsuite) {
-    if (topsuite.criticalFailed)
-        $("body").css("background-color",window.settings.background.fail);
-    else if (topsuite.totalFailed)
-        $("body").css("background-color",window.settings.background.nonCriticalFail);
-    else
-        $("body").css("background-color",window.settings.background.pass);
-}
-
-function iterateDetails(){
-    if (window.tasks.length == 0) {
+function renderTestDetails(){
+    if (window.elementsToRender.length == 0) {
         return;
     }
-    var elements = pop_upto(window.tasks, 50);
-    $.tmpl('testDetailsTableRowTemplate', elements, {logURL: window.settings.logURL}).appendTo('#tests_detail_table');
-    if(window.tasks.length > 0)
-        setTimeout("iterateDetails()", 0);
+    var elements = popUpTo(window.elementsToRender, 50);
+    $.tmpl('testDetailsTableRowTemplate',
+            elements,
+            {logURL: window.settings.logURL}
+    ).appendTo('#test_details');
+    if (window.elementsToRender.length > 0)
+        setTimeout(renderTestDetails, 0);
 }
 
-function pop_upto(list, upto) {
+function popUpTo(list, upTo) {
     var result = [];
-    while (list.length > 0 && result.length < upto)
+    while (list.length > 0 && result.length < upTo)
         result.push(list.shift());
     return result;
 }
@@ -258,29 +255,44 @@ function pop_upto(list, upto) {
   <table class="details">
     <tr>
       <th>Status:</th>
-        {{if criticalFailed}}
-            <td><a class="status_fail" href="#total_Critical Tests" onClick="totalDetailSelected('Critical Tests')">${criticalFailed} critical test{{if criticalFailed != 1}}s{{/if}} failed</a></td>
-        {{else}}
-            <td><a class="status_pass" href="#total_Critical Tests" onClick="totalDetailSelected('Critical Tests')">All critical tests passed</a></td>
-        {{/if}}
+      {{if criticalFailed}}
+      <td><a class="summary_fail" href="#total_Critical Tests" onClick="totalDetailSelected('Critical Tests')">${criticalFailed} critical test{{if criticalFailed != 1}}s{{/if}} failed</a></td>
+      {{else}}
+      <td><a class="summary_pass" href="#total_Critical Tests" onClick="totalDetailSelected('Critical Tests')">All critical tests passed</a></td>
+      {{/if}}
     </tr>
-    {{if documentation}}
-      <tr><th>Documentation:</th><td>{{html documentation}}</td></tr>
+    {{if doc}}
+    <tr>
+      <th>Documentation:</th>
+      <td>{{html doc}}</td>
+    </tr>
     {{/if}}
     {{each metadata}}
-      <tr><th>${$index}:</th><td>{{html $value}}</td></tr>
+    <tr>
+      <th>${$index}:</th>
+      <td>{{html $value}}</td>
+    </tr>
     {{/each}}
     {{if times.startTime() != 'N/A'}}
-      <tr><th>Start Time:</th><td>${times.startTime}</td></tr>
+    <tr>
+      <th>Start Time:</th>
+      <td>${times.startTime}</td>
+    </tr>
     {{/if}}
     {{if times.endTime() != 'N/A'}}
-      <tr><th>End Time:</th><td>${times.endTime}</td></tr>
+    <tr>
+      <th>End Time:</th>
+      <td>${times.endTime}</td>
+    </tr>
     {{/if}}
-      <tr><th>Elapsed Time:</th><td>${times.elapsedTime}</td></tr>
+    <tr>
+      <th>Elapsed Time:</th>
+      <td>${times.elapsedTime}</td>
+    </tr>
     {{if $item.logURL}}
     <tr>
-        <th>Log File:</th>
-        <td><a href="${$item.logURL}">${$item.logURL}</a></td>
+      <th>Log File:</th>
+      <td><a href="${$item.logURL}">${$item.logURL}</a></td>
     </tr>
     {{/if}}
   </table>
@@ -290,7 +302,7 @@ function pop_upto(list, upto) {
   <tr>
     <td class="col_stat_name">
       <div class="stat_name">
-        <span title="${doc}"><a href="#total_${label}" onClick="totalDetailSelected('${label}')">${label}</a></span>
+        <a href="#total_${label}" onClick="totalDetailSelected('${label}')">${label}</a>
       </div>
     </td>
     {{tmpl($data) 'stat_columns'}}
@@ -302,7 +314,7 @@ function pop_upto(list, upto) {
     <td class="col_stat_name">
       <div class="stat_name">
         <a href="#tag_${label}" onclick="tagDetailSelected('${label}');" title="${doc}">${label}</a>
-        ${shownInfo}
+        {{if info}}(${info}){{/if}}
       </div>
       <div class="tag_links">
         {{each links}}
@@ -318,13 +330,12 @@ function pop_upto(list, upto) {
   <tr>
     <td class="col_stat_name">
       <div class="stat_name">
-        <a href="#suite_${label}" onclick="suiteDetailSelected('${label}');" title="${label}"><span class="parent_name">${parentName}</span>${name}</a>
+        <a href="#suite_${label}" onclick="suiteDetailSelected('${label}');" title="${label}"><span class="parent_name">${formatParentName}</span>${name}</a>
       </div>
     </td>
     {{tmpl($data) 'stat_columns'}}
   </tr>
 </script>
-
 
 <script type="text/x-jquery-tmpl" id="detailsHeaderTemplate">
   <h2 id="${linkTarget}">Test Details</h2>
@@ -339,12 +350,13 @@ function pop_upto(list, upto) {
   <table class="details" id="details_header">
     <tr id="selector">
       <th>Type:</th>
-      <td class="normal_whitespace">
+      <td id="normal_selector">
         <input id="radio_Critical Tests" type="radio" name="totals_radio" onclick="totalDetailSelected('Critical Tests');">
         <label for="radio_Critical Tests">Critical Tests</label><br>
         <input id="radio_All Tests" type="radio" name="totals_radio" onclick="totalDetailSelected('All Tests');">
         <label for="radio_All Tests">All Tests</label>
       </td>
+      <td id="print_selector"></td>
     </tr>
   </table>
 </script>
@@ -353,7 +365,7 @@ function pop_upto(list, upto) {
   <table class="details" id="details_header">
     <tr id="selector">
       <th>Name:</th>
-      <td class="normal_whitespace">
+      <td id="normal_selector">
         <select id="tag_detail_selector" onchange="tagDetailSelected(this.options[this.selectedIndex].value);">
           <option value="">Select tag...</option>
           {{each tags}}
@@ -361,6 +373,7 @@ function pop_upto(list, upto) {
           {{/each}}
         </select>
       </td>
+      <td id="print_selector"></td>
     </tr>
   </table>
 </script>
@@ -369,7 +382,7 @@ function pop_upto(list, upto) {
   <table class="details" id="details_header">
     <tr id="selector">
       <th>Name:</th>
-      <td class="normal_whitespace">
+      <td id="normal_selector">
         <select id="suite_detail_selector" onchange="suiteDetailSelected(this.options[this.selectedIndex].value);">
           <option value="">Select suite...</option>
           {{each suites}}
@@ -377,77 +390,78 @@ function pop_upto(list, upto) {
           {{/each}}
         </select>
       </td>
+      <td id="print_selector"></td>
     </tr>
   </table>
 </script>
 
 <script type="text/x-jquery-tmpl" id="tagOrTotalDetailsTemplate">
-    {{if doc}}
-    <tr>
-        <th>Documentation:</th>
-        <td>{{html doc}}</td>
-    </tr>
-    {{/if}}
-    {{if combined}}
-    <tr>
-        <th>Combined:</th>
-        <td>${combined}</td>
-    </tr>
-    {{/if}}
-    {{if links}}{{if links.length}}
-    <tr>
-        <th>Links:</th>
-        <td>{{each links}}<a href="${$value.url}" title="${$value.url}">${$value.title}</a>{{/each}} </td>
-    </tr>
-    {{/if}}{{/if}}
-    <tr>
-        <th>Status:</th>
-        <td>${total} total, ${pass} passed, {{if fail}}<span class="fail">${fail} failed</span>{{else}}<span class="pass">0 failed</span>{{/if}}</td>
-    </tr>
-    <tr>
-        <th>Total Time:</th>
-        <td>${totalTime}</td>
-    </tr>
+  {{if doc}}
+  <tr>
+    <th>Documentation:</th>
+    <td>{{html doc}}</td>
+  </tr>
+  {{/if}}
+  {{if combined}}
+  <tr>
+    <th>Pattern:</th>
+    <td>${combined}</td>
+  </tr>
+  {{/if}}
+  {{if links}}{{if links.length}}
+  <tr>
+    <th>Links:</th>
+    <td>{{each links}}<a href="${$value.url}" title="${$value.url}">${$value.title}</a>{{/each}} </td>
+  </tr>
+  {{/if}}{{/if}}
+  <tr>
+    <th>Status:</th>
+    <td>${total} total, ${pass} passed, {{if fail}}<span class="fail">${fail} failed</span>{{else}}<span class="pass">0 failed</span>{{/if}}</td>
+  </tr>
+  <tr>
+    <th>Total Time:</th>
+    <td>${totalTime}</td>
+  </tr>
 </script>
 
 <script type="text/x-jquery-tmpl" id="suiteDetailsTemplate">
-    {{if $item.logURL}}
-    <tr>
-        <th>Log Link:</th>
-        <td><a href="${$item.logURL}#suite_${fullname}" title="${fullname}">${$item.logURL}#suite_${fullname} </a></td>
-    </tr>
-    {{/if}}
-    {{if documentation}}
-    <tr>
-        <th>Documentation:</th>
-        <td>{{html documentation}}</td>
-    </tr>
-    {{/if}}
-    {{each metadata}}
-    <tr><th>${$index}:</th><td>{{html $value}}</td></tr>
-    {{/each}}
-    <tr>
-        <th>Status:</th>
-        <td>{{tmpl($data) 'suiteStatusMessageTemplate'}}</td>
-    </tr>
-    {{if message}}
-    <tr>
-        <th>Message:</th>
-        <td>${message}</td>
-     </tr>
-    {{/if}}
-    <tr>
-        <th>Start / End:</th>
-        <td>${times.startTime}  /  ${times.endTime}</td>
-    </tr>
-    <tr>
-        <th>Elapsed:</th>
-        <td>${times.elapsedTime}</td>
-    </tr>
+  {{if $item.logURL}}
+  <tr>
+    <th>Log Link:</th>
+    <td><a href="${$item.logURL}#suite_${fullName}" title="${fullName}">${$item.logURL}#suite_${fullName} </a></td>
+  </tr>
+  {{/if}}
+  {{if doc}}
+  <tr>
+    <th>Documentation:</th>
+    <td>{{html doc}}</td>
+  </tr>
+  {{/if}}
+  {{each metadata}}
+  <tr><th>${$index}:</th><td>{{html $value}}</td></tr>
+  {{/each}}
+  <tr>
+    <th>Status:</th>
+    <td>{{tmpl($data) 'suiteStatusMessageTemplate'}}</td>
+  </tr>
+  {{if message}}
+  <tr>
+    <th>Message:</th>
+    <td>${message}</td>
+  </tr>
+  {{/if}}
+  <tr>
+    <th>Start / End:</th>
+    <td>${times.startTime}  /  ${times.endTime}</td>
+  </tr>
+  <tr>
+    <th>Elapsed:</th>
+    <td>${times.elapsedTime}</td>
+  </tr>
 </script>
 
 <script type="text/x-jquery-tmpl" id="testDetailsTableTemplate">
-  <table id="tests_detail_table">
+  <table id="test_details">
     <tr>
       <th class="col_name">Name</th>
       <th class="col_doc">Documentation</th>
@@ -463,14 +477,14 @@ function pop_upto(list, upto) {
 <script type="text/x-jquery-tmpl" id="testDetailsTableRowTemplate">
   <tr class="test_row">
     {{if $item.logURL}}
-    <td class="col_name"><a href="${$item.logURL}#test_${fullname}" id="test_${fullname}" title="${fullname}"><span class="parent_name">${parentName}</span>${name}</a></td>
+    <td class="col_name"><a href="${$item.logURL}#test_${fullName}" id="test_${fullName}" title="${fullName}"><span class="parent_name">${formatParentName}</span>${name}</a></td>
     {{else}}
-    <td class="col_name"><span class="parent_name">${parentName}</span>${name}</td>
+    <td class="col_name"><span class="parent_name">${formatParentName}</span>${name}</td>
     {{/if}}
-    <td class="col_doc">{{html documentation}}</td>
+    <td class="col_doc">{{html doc}}</td>
     <td class="col_tags">${tags.join(', ')}</td>
     <td class="col_crit">{{if isCritical}}yes{{else}}no{{/if}}</td>
-    <td class="col_status ${status}">${status.toUpperCase()}</td>
+    <td class="col_status ${status.toLowerCase()}">${status}</td>
     <td class="col_msg">${message}</td>
     <td class="col_times">${times.startTime(true)}<br />${times.elapsedTime(true)}</td>
   </tr>

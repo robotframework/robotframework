@@ -58,6 +58,11 @@ window.util = function () {
         }
     }
 
+    function formatParentName(item) {
+        var parentName = item.fullName.slice(0, item.fullName.length - item.name.length);
+        return parentName.replace(/\./g, ' . ');
+    }
+
     function createGeneratedAgoString(generatedAgoMillis) {
         function timeString(time, shortUnit) {
             var unit = {'y': 'year', 'd': 'day', 'h': 'hour',
@@ -105,6 +110,7 @@ window.util = function () {
         contains: contains,
         normalize: normalize,
         Matcher: Matcher,
+        formatParentName: formatParentName,
         createGeneratedAgoString: createGeneratedAgoString
     };
 }();
