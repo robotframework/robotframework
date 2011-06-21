@@ -18,6 +18,10 @@ from robot.result.json import json_dump
 from robot.result.elementhandlers import Context
 from robot.utils.asserts import assert_equals, assert_true, assert_not_equals, assert_false
 
+
+# TODO: Split this monster test suite.
+# At least json_dump tests should be moved to their own module.
+
 class TestJsSerializer(unittest.TestCase):
 
     SUITE_XML = """
@@ -118,8 +122,10 @@ class TestJsSerializer(unittest.TestCase):
             self._assert_plain_suite(data_model, plain_suite)
 
     def assert_model_does_not_contain(self, data_model, items):
-        self._check_does_not_contain(self._reverse_from_ids(data_model, data_model._robot_data['suite']),
-            ['*'+i for i in items])
+        suite = self._reverse_from_ids(data_model,
+                                       data_model._robot_data['suite'],
+                                       data_model._index_remap)
+        self._check_does_not_contain(suite, ['*'+i for i in items])
 
     def _check_does_not_contain(self, suite, items):
         for item in suite:
@@ -131,18 +137,18 @@ class TestJsSerializer(unittest.TestCase):
         reversed = self._reverse_from_ids(data_model, data_model._robot_data['suite'])
         assert_equals(reversed, plain_suite)
 
-    def _reverse_from_ids(self, data_model, suite):
-        if isinstance(suite, (int, long)):
-            return self._reverse_id(data_model, suite)
-        result = []
-        for entry in suite:
-            if isinstance(entry, list):
-                result += [self._reverse_from_ids(data_model, entry)]
-            elif isinstance(entry, dict):
-                result += [dict((self._reverse_from_ids(data_model, key), self._reverse_from_ids(data_model, value)) for key, value in entry.items())]
-            else:
-                result += [self._reverse_id(data_model, entry)]
-        return result
+    def _reverse_from_ids(self, data, item, remap={}):
+        recurse = self._reverse_from_ids
+        if isinstance(item, (int, long)):
+            if item in remap:
+                item = remap[item]
+            return self._reverse_id(data, item)
+        if isinstance(item, list):
+            return [recurse(data, i, remap) for i in item]
+        if isinstance(item, dict):
+            return dict((recurse(data, k, remap),
+                         recurse(data, item[k], remap)) for k in item)
+        raise AssertionError('Unexpected item %r' % item)
 
     def _reverse_id(self, data_model, id):
         if id is None:
@@ -259,7 +265,7 @@ class TestJsSerializer(unittest.TestCase):
         assert_true(integers_before > self._list_size(data_model._robot_data['integers']))
 
     def _list_size(self, array):
-        return len(''.join(str(val) if val != DataModel.UNUSED_STRING else 'u' for val in array))
+        return len(''.join(str(val) for val in array))
 
     def test_suite_xml_parsing(self):
         # Tests parsing the whole suite structure
@@ -357,8 +363,9 @@ class TestJsSerializer(unittest.TestCase):
         buffer = StringIO.StringIO()
         mapped1 = object()
         mapped2 = object()
-        json_dump([mapped1, [mapped2, {mapped2:mapped1}]], buffer, {mapped1:'1', mapped2:'a'})
-        assert_equals('[1,[a,{a:1}]]', buffer.getvalue())
+        json_dump([mapped1, [mapped2, {mapped2:mapped1}]], buffer,
+                  mapping={mapped1:'1', mapped2:'a'})
+        assert_equals('["1",["a",{"a":"1"}]]', buffer.getvalue())
 
     def _get_data_model(self, xml_string):
         sax.parseString('<robot generator="test">%s<statistics/><errors/></robot>' % xml_string, self._handler)

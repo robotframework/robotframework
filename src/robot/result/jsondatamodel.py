@@ -20,12 +20,11 @@ import json
 
 class DataModel(object):
 
-    UNUSED_STRING = object()
-
     def __init__(self, robot_data):
         self._robot_data = robot_data
         self._settings = None
         self._set_generated(time.localtime())
+        self._index_remap = {}
 
     def _set_generated(self, timetuple):
         genMillis = long(time.mktime(timetuple) * 1000) -\
@@ -40,14 +39,14 @@ class DataModel(object):
     def set_settings(self, settings):
         self._settings = settings
 
-    def write_to(self, output):
-        output.write('var u = "";\n')
-        self._dump_json('window.output = ', self._robot_data, output, {DataModel.UNUSED_STRING:'u'})
+    def write_to(self, output, mapping=None):
+        self._dump_json('window.output = ', self._robot_data, output,
+                        self._index_remap)
         self._dump_json('window.settings = ', self._settings, output)
 
-    def _dump_json(self, name, data, output, mappings=None):
+    def _dump_json(self, name, data, output, mapping=None):
         output.write(name)
-        json.json_dump(data, output, mappings)
+        json.json_dump(data, output, mapping)
         output.write(';\n')
 
     def remove_keywords(self):
@@ -69,8 +68,22 @@ class DataModel(object):
 
     def _prune_unused_indices(self):
         used = self._collect_used_indices(self._robot_data['suite'], set())
-        self._robot_data['strings'] = [text if index in used else DataModel.UNUSED_STRING for index, text in enumerate(self._robot_data['strings'])]
-        self._robot_data['integers'] = [number if (-1 -index) in used else 0 for index, number in enumerate(self._robot_data['integers'])]
+        self._robot_data['strings'] = \
+            list(self._prune(self._robot_data['strings'], used))
+        self._robot_data['integers'] = \
+            list(self._prune(self._robot_data['integers'], used,
+                             map_index=lambda index: -1 - index,
+                             offset_increment=-1))
+
+    def _prune(self, data, used, map_index=None, offset_increment=1):
+        offset = 0
+        for index, text in enumerate(data):
+            index = map_index(index) if map_index else index
+            if index in used:
+                self._index_remap[index] = index - offset
+                yield text
+            else:
+                offset += offset_increment
 
     def _collect_used_indices(self, data, result):
         for item in data:

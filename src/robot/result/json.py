@@ -35,30 +35,30 @@ def encode_basestring(string):
     string = string.replace('\t', '\\t')
     return '"%s"' % ''.join(get_matching_char(c) for c in string)
 
-def json_dump(data, output, mappings=None):
+def json_dump(data, output, mapping=None):
     if data is None:
         output.write('null')
+    elif isinstance(data, dict):
+        output.write('{')
+        for index, key in enumerate(data):
+            json_dump(key, output, mapping)
+            output.write(':')
+            json_dump(data[key], output, mapping)
+            if index < len(data)-1:
+                output.write(',')
+        output.write('}')
+    elif isinstance(data, (list, tuple)):
+        output.write('[')
+        for index, item in enumerate(data):
+            json_dump(item, output, mapping)
+            if index < len(data)-1:
+                output.write(',')
+        output.write(']')
+    elif mapping and data in mapping:
+        json_dump(mapping[data], output)
     elif isinstance(data, (int, long)):
         output.write(str(data))
     elif isinstance(data, basestring):
         output.write(encode_basestring(data))
-    elif isinstance(data, list):
-        output.write('[')
-        for index, item in enumerate(data):
-            json_dump(item, output, mappings)
-            if index < len(data)-1:
-                output.write(',')
-        output.write(']')
-    elif isinstance(data, dict):
-        output.write('{')
-        for index, item in enumerate(data.items()):
-            json_dump(item[0], output, mappings)
-            output.write(':')
-            json_dump(item[1], output, mappings)
-            if index < len(data)-1:
-                output.write(',')
-        output.write('}')
-    elif mappings and data in mappings:
-        output.write(mappings[data])
     else:
         raise Exception('Data type (%s) serialization not supported' % type(data))
