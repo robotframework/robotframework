@@ -121,10 +121,8 @@ window.model = function () {
 
     function Test(data) {
         var test = createModelObject(data);
-        test.fullName = data.parent.fullName + "." + test.name;  // TODO: is this used?, could be function also
-        test.parentName = function () {
-            return data.parent.fullName.replace(/\./g, ' . ') + ' . '; // TODO: duplicate
-        };
+        test.fullName = data.parent.fullName + "." + test.name;
+        test.formatParentName = function () { return util.formatParentName(test); };
         test.timeout = data.timeout;
         test.populateKeywords = createIterablePopulator("Keyword");
         test.children = function () {
@@ -313,8 +311,8 @@ window.stats = (function () {
 
     function suiteStatElem(data) {
         var stat = statElem(data);
-        stat.parentName = stat.label.slice(0, stat.label.length-stat.name.length);
-        stat.parentName = stat.parentName.replace(/\./g, ' . ');
+        stat.fullName = stat.label;
+        stat.formatParentName = function () { return util.formatParentName(stat); };
         // compatibility with RF 2.5 outputs
         if (!stat.name)
             stat.name = stat.label.split('.').pop();

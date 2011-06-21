@@ -330,7 +330,7 @@ function popUpTo(list, upTo) {
   <tr>
     <td class="col_stat_name">
       <div class="stat_name">
-        <a href="#suite_${label}" onclick="suiteDetailSelected('${label}');" title="${label}"><span class="parent_name">${parentName}</span>${name}</a>
+        <a href="#suite_${label}" onclick="suiteDetailSelected('${label}');" title="${label}"><span class="parent_name">${formatParentName}</span>${name}</a>
       </div>
     </td>
     {{tmpl($data) 'stat_columns'}}
@@ -477,9 +477,9 @@ function popUpTo(list, upTo) {
 <script type="text/x-jquery-tmpl" id="testDetailsTableRowTemplate">
   <tr class="test_row">
     {{if $item.logURL}}
-    <td class="col_name"><a href="${$item.logURL}#test_${fullName}" id="test_${fullName}" title="${fullName}"><span class="parent_name">${parentName}</span>${name}</a></td>
+    <td class="col_name"><a href="${$item.logURL}#test_${fullName}" id="test_${fullName}" title="${fullName}"><span class="parent_name">${formatParentName}</span>${name}</a></td>
     {{else}}
-    <td class="col_name"><span class="parent_name">${parentName}</span>${name}</td>
+    <td class="col_name"><span class="parent_name">${formatParentName}</span>${name}</td>
     {{/if}}
     <td class="col_doc">{{html doc}}</td>
     <td class="col_tags">${tags.join(', ')}</td>

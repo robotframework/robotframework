@@ -44,7 +44,7 @@ describe("Statistics", function () {
 
     function verifySuiteStatNames(stat, name, parentName) {
         expect(stat.name).toEqual(name);
-        expect(stat.parentName).toEqual(parentName);
+        expect(stat.formatParentName()).toEqual(parentName);
     }
 
     it("should contain critical stats", function () {
