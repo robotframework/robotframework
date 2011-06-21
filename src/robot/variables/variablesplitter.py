@@ -15,13 +15,14 @@
 
 class VariableSplitter:
 
-    def __init__(self, string, identifiers):
+    def __init__(self, string, identifiers, prefer_matching_curly=False):
         self.identifier = None
         self.base = None
         self.index = None
         self.start = -1
         self.end = -1
         self._identifiers = identifiers
+        self._prefer_matching_curly = prefer_matching_curly
         self._may_have_internal_variables = False
         if self._split(string):
             self._finalize()
@@ -44,20 +45,22 @@ class VariableSplitter:
         if start_index < 0:
             return False
         self.start = start_index
-        self._started_vars = 1
-        self._state_handler = self._variable_state_handler
-        self._variable_chars = [ string[start_index], '{' ]
+        self._open_curly = 1
+        self._state = self._variable_state
+        self._variable_chars = [string[start_index], '{']
         self._index_chars = []
         start_index += 2
         for index, char in enumerate(string[start_index:]):
             try:
-                self._state_handler(char)
+                self._state(char)
             except StopIteration:
                 break
-            if self._state_handler not in [ self._waiting_index_state_handler,
-                  self._index_state_handler ] and start_index+index > max_index:
+            if index + start_index == max_index and not self._scanning_index():
                 break
         return True
+
+    def _scanning_index(self):
+        return self._state in [self._waiting_index_state, self._index_state]
 
     def _find_variable(self, string):
         max_index = string.rfind('}')
@@ -72,51 +75,53 @@ class VariableSplitter:
         index = string.find('{', start, end) - 1
         if index < 0:
             return -1
-        elif self._start_index_is_ok(string, index):
+        if self._start_index_is_ok(string, index):
             return index
-        else:
-            return self._find_start_index(string, index+2, end)
+        return self._find_start_index(string, index+2, end)
 
     def _start_index_is_ok(self, string, index):
-        if string[index] not in self._identifiers:
-            return False
-        backslash_count = 0
-        while index - backslash_count > 0:
-            if string[index - backslash_count - 1] == '\\':
-                backslash_count += 1
-            else:
-                break
-        return backslash_count % 2 == 0
+        return string[index] in self._identifiers \
+            and not self._is_escaped(string, index-1)
 
-    def _variable_state_handler(self, char):
+    def _is_escaped(self, string, index):
+        escaped = False
+        while index >= 0 and string[index] == '\\':
+            index -= 1
+            escaped = not escaped
+        return escaped
+
+    def _variable_state(self, char):
         self._variable_chars.append(char)
         if char == '}':
-            self._started_vars -= 1
-            if self._started_vars == 0:
-                if self._variable_chars[0] == '@':
-                    self._state_handler = self._waiting_index_state_handler
-                else:
+            self._open_curly -= 1
+            if self._open_curly == 0:
+                if not self._is_list_variable():
                     raise StopIteration
+                self._state = self._waiting_index_state
+        elif char == '{' and self._prefer_matching_curly:
+            self._open_curly += 1
         elif char in self._identifiers:
-            self._state_handler = self._internal_variable_start_state_handler
+            self._state = self._internal_variable_start_state
 
-    def _internal_variable_start_state_handler(self, char):
-        self._state_handler = self._variable_state_handler
+    def _is_list_variable(self):
+        return self._variable_chars[0] == '@'
+
+    def _internal_variable_start_state(self, char):
+        self._state = self._variable_state
         if char == '{':
             self._variable_chars.append(char)
-            self._started_vars += 1
+            self._open_curly += 1
             self._may_have_internal_variables = True
         else:
-            self._variable_state_handler(char)
+            self._variable_state(char)
 
-    def _waiting_index_state_handler(self, char):
-        if char == '[':
-            self._index_chars.append(char)
-            self._state_handler = self._index_state_handler
-        else:
+    def _waiting_index_state(self, char):
+        if char != '[':
             raise StopIteration
+        self._index_chars.append(char)
+        self._state = self._index_state
 
-    def _index_state_handler(self, char):
+    def _index_state(self, char):
         self._index_chars.append(char)
         if char == ']':
             raise StopIteration

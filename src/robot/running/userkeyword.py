@@ -224,7 +224,8 @@ class EmbeddedArgsTemplate(UserKeywordHandler):
         return args, self._compile_regexp(''.join(full_regexp))
 
     def _split_from_variable(self, string):
-        var = VariableSplitter(string, identifiers=['$'])
+        var = VariableSplitter(string, identifiers=['$'],
+                               prefer_matching_curly=True)
         if var.identifier is None:
             return None, None, string
         return string[:var.start], var.base, string[var.end:]
