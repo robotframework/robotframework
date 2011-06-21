@@ -35,6 +35,10 @@ Custom Embedded Argument Regexp
     Result of 43 - 1 is 42
     Result of a + b is fail
 
+Custom Embedded Argument Regexp With Curly Braces
+    Today is 2011-06-21
+    Today is Tuesday
+
 Grouping Custom Regexp
     ${matches} =  Grouping Custom Regexp(erts)
     Should Be Equal  ${matches}  Custom-Regexp(erts)
@@ -140,6 +144,12 @@ I execute "${x}" with "${y}"
 
 Result of ${a:\d+} ${operator:[+-]} ${b:\d+} is ${result}
     Should Be True  ${a} ${operator} ${b} == ${result}
+
+Today is ${date:\d{4}-\d{2}-\d{2}}
+    Should Be Equal  ${date}  2011-06-21
+
+Today is ${day:\w{6,9}}
+    Should Be Equal  ${day}  Tuesday
 
 Grouping ${x:Cu(st|ts)(om)?} ${y:Regexp\(?erts\)?}
     [Return]  ${x}-${y}
