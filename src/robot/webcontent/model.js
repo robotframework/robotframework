@@ -120,7 +120,6 @@ window.model = function () {
     }
 
     function Test(data) {
-        var names = ['name', 'doc', 'status', '...']
         var test = createModelObject(data);
         test.fullname = data.parent.fullname + "." + test.name;  // TODO: is this used?, could be function also
         test.parentName = function () {
