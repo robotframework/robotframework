@@ -108,11 +108,15 @@ class TestJsSerializer(unittest.TestCase):
                           1306835289088,
                           [0, '*F', '*AssertionError'])
 
-    def assert_model(self, data_model, basemillis, suite, texts, integers):
-        assert_equals(data_model._robot_data['baseMillis'], basemillis)
-        assert_equals(data_model._robot_data['suite'], suite)
-        assert_equals(data_model._robot_data['strings'], texts)
-        assert_equals(data_model._robot_data['integers'], integers)
+    def assert_model(self, data_model, basemillis=None, suite=None, strings=None, integers=None):
+        if basemillis is not None:
+            assert_equals(data_model._robot_data['baseMillis'], basemillis)
+        if suite is not None:
+            assert_equals(data_model._robot_data['suite'], suite)
+        if strings is not None:
+            assert_equals(data_model._robot_data['strings'], strings)
+        if integers is not None:
+            assert_equals(data_model._robot_data['integers'], integers)
 
     def assert_plain_model(self, data_model, basemillis, plain_suite):
         assert_equals(data_model._robot_data['baseMillis'], basemillis)
@@ -122,8 +126,9 @@ class TestJsSerializer(unittest.TestCase):
         reversed = self._reverse_from_ids(data_model, data_model._robot_data['suite'])
         assert_equals(reversed, plain_suite)
 
-
     def _reverse_from_ids(self, data_model, suite):
+        if isinstance(suite, (int, long)):
+            return self._reverse_id(data_model, suite)
         result = []
         for entry in suite:
             if isinstance(entry, list):
@@ -140,24 +145,6 @@ class TestJsSerializer(unittest.TestCase):
         elif id < 0:
             return data_model._robot_data['integers'][abs(id)-1]
         return data_model._robot_data['strings'][id]
-
-
-
-    def _revert_to_ids(self, data_model, plain_suite):
-        result = []
-        for entry in plain_suite:
-            if isinstance(entry, list):
-                result.append(self._revert_to_ids(data_model, entry))
-            elif isinstance(entry, dict):
-                AssertionError("NYI")
-            else:
-                result.append(self._decode_id(data_model, entry))
-        return result
-
-    def _decode_id(self, data_model, id):
-        if isinstance(id, (int,long)):
-            return -data_model._robot_data['integers'].index(id)-1
-        return data_model._robot_data['strings'].index(id)
 
     def test_status_xml_parsing(self):
         data_model = self._get_data_model('<status status="PASS" endtime="20110531 12:48:09.042" starttime="20110531 12:48:09.000"></status>')
@@ -203,11 +190,9 @@ class TestJsSerializer(unittest.TestCase):
         </arguments>
         """
         data_model = self._get_data_model(arguments_xml)
-        self.assert_model(data_model,
+        self.assert_plain_model(data_model,
                           0,
-                          1,
-                          ['*', '*${arg}, ${level}'],
-                          [])
+                          '*${arg}, ${level}')
 
     def test_teardown_xml_parsing(self):
         keyword_xml = """
@@ -222,32 +207,34 @@ class TestJsSerializer(unittest.TestCase):
         """
         self._context.start_suite('suite')
         data_model = self._get_data_model(keyword_xml)
-        self.assert_model(data_model,
+        self.assert_plain_model(data_model,
                           1306835289070,
-                          [6, 7, 0, 1, 2,
-                           [-1, 3, 2],
-                           [4, -2, -3]],
-                          ['*', '*Logs the given message with the given level.', '*keyword teardown',
-                           '*W', '*P', '*F', '*teardown', '*BuiltIn.Log'],
-                          [0, -1, 2])
+                          ['*teardown', '*BuiltIn.Log', '*', '*Logs the given message with the given level.', '*keyword teardown',
+                           [0, '*W', '*keyword teardown'],
+                           ['*P', -1, 2]])
         assert_equals(self._context.link_to([0, 'W', 'keyword teardown']), "keyword_suite.0")
 
     def test_for_loop_xml_parsing(self):
         self._context.start_suite('suite')
         data_model = self._get_data_model(self.FOR_LOOP_XML)
-        self.assert_model(data_model, 1308293764365,
-                          [14, 15, 0, 0, 0,
-                           [8, 9, 0, 0, 0,
-                            [6, 7, 0, 1, 2, [-1, 3, 4], [5, -1, -1]], [5, -1, -1]],
-                           [8, 11, 0, 0, 0,
-                            [6, 7, 0, 1, 2, [-2, 3, 10], [5, -2, -1]],[5, -2, -2]],
-                           [8, 13, 0, 0, 0,
-                            [6, 7, 0, 1, 2, [-3, 3, 12], [5, -3, -1]],[5, -3, -2]],
-                           [5, -4, -5]],
-                          ['*', '*Foo bar.', '*${i}', '*I', '*0', '*P', '*kw',
-                           '*babba', '*foritem', '*${i} = 0', '*1', '*${i} = 1',
-                           '*2', '*${i} = 2', '*forloop', '*${i} IN RANGE [ 2 ]'],
-                        [0, 1, 2, -1, 4])
+        self.assert_plain_model(data_model, 1308293764365,
+                                ['*forloop', '*${i} IN RANGE [ 2 ]', '*', '*', '*',
+                                 ['*foritem', '*${i} = 0', '*', '*', '*',
+                                  ['*kw', '*babba', '*', '*Foo bar.', '*${i}',
+                                   [0, '*I', '*0'],
+                                   ['*P', 0, 0]],
+                                  ['*P', 0, 0]],
+                                 ['*foritem', '*${i} = 1', '*', '*', '*',
+                                  ['*kw', '*babba', '*', '*Foo bar.', '*${i}',
+                                   [1, '*I', '*1'],
+                                   ['*P', 1, 0]],
+                                  ['*P', 1, 1]],
+                                 ['*foritem', '*${i} = 2', '*', '*', '*',
+                                  ['*kw', '*babba', '*', '*Foo bar.', '*${i}',
+                                   [2, '*I', '*2'],
+                                   ['*P', 2, 0]],
+                                  ['*P', 2, 1]],
+                                 ['*P', -1, 4]])
 
     def test_for_loop_remove_keywords(self):
         self._context.start_suite('suite')
@@ -257,27 +244,34 @@ class TestJsSerializer(unittest.TestCase):
         data_model = self._get_data_model(test_xml)
         data_model.remove_keywords()
         self.assert_model(data_model,
-                        1308293764365,
-                        [16, 17, 0, 18, 0, [], [5, -6, -2]],
-                        ['*', '', '', '', '', u'*P', '', '', '', '', '', '', '', '', '', '', '*test', u'*Test', '*Y'],
-                        [0, 1, 2, -1, 4, -1374853012])
+                          suite=[16, 17, 0, 18, 0, [], [5, -6, -2]],
+                          strings=['*', '', '', '', '', '*P', '', '', '', '', '', '', '', '', '', '', '*test', '*Test', '*Y'])
 
     def test_suite_xml_parsing(self):
         # Tests parsing the whole suite structure
         data_model = self._get_data_model(self.SUITE_XML)
-        self.assert_model(data_model, 1306918911353,
-                          ['suite', '/tmp/verysimple.txt', 'Verysimple', 1,
-                           {'key': 2, 'esc': 3, 'html': 4},
-                           ['test', 5, 0, 'Y', 1,
-                            ['kw', 6, 7, 1, 8, [0, 'W', 9], ['P', 0, 0]],
+        self.assert_plain_model(data_model, 1306918911353,
+                          ['*suite', '*/tmp/verysimple.txt', '*Verysimple', 'eNptyjEOwyAMRuGr/GLIGKtr4voukFCgIgoyHkJPX3Vqh25P+h4HyXZUpiCYqq2xb1OyFeyRNT7uLpu1heiah5NvM3kBlyOh6/Y70Wt+tuRgxWr8B93GB8Kpe9QFt3ahn7XsSOqHA8kbgaQvbw==',
+                           {'*key':  '*val', '*esc': '*&lt;', '*html': '*<img src="http://x.y.x.jpg" title="http://x.y.x.jpg" style="border: 1px solid gray" />'},
+                           ['*test', '*Test', '*', '*Y', 1,
+                            ['*kw', 6, 7, 1, 8, [0, 'W', 9], ['P', 0, 0]],
                             [10, 11],
                             ['P', 0, 1]],
                            ['P', -24, 25],
-                           [1, 1, 1, 1]],
-                           self.SUITE_STRINGS,
-                           [])
+                           [1, 1, 1, 1]])
         assert_equals(self._context.link_to([0, 'W', 9]),
                       'keyword_Verysimple.Test.0')
+
+
+#['*suite',
+# u'*/tmp/verysimple.txt',
+# u'*Verysimple',
+# 'eNptyjEOwyAMRuGr/GLIGKtr4voukFCgIgoyHkJPX3Vqh25P+h4HyXZUpiCYqq2xb1OyFeyRNT7uLpu1heiah5NvM3kBlyOh6/Y70Wt+tuRgxWr8B93GB8Kpe9QFt3ahn7XsSOqHA8kbgaQvbw==',
+# ['*test', u'*Test', '*', '*Y', 'eNptyjEOwyAMRuGr/GLIGKtr4voukFCgIgoyHkJPX3Vqh25P+h4HyXZUpiCYqq2xb1OyFeyRNT7uLpu1heiah5NvM3kBlyOh6/Y70Wt+tuRgxWr8B93GB8Kpe9QFt3ahn7XsSOqHA8kbgaQvbw==',
+#  [u'*kw', u'*Keyword.Example', u'*1 second', 'eNptyjEOwyAMRuGr/GLIGKtr4voukFCgIgoyHkJPX3Vqh25P+h4HyXZUpiCYqq2xb1OyFeyRNT7uLpu1heiah5NvM3kBlyOh6/Y70Wt+tuRgxWr8B93GB8Kpe9QFt3ahn7XsSOqHA8kbgaQvbw==', u'*a1, a2',
+#   [0L, u'*W', u'*simple'], [u'*P', 0L, 0L]], [u'*t1', u'*t2'], [u'*P', 0L, 1L]],
+# [u'*P', -24L, 25L], [1L, 1L, 1L, 1L]]
+
 
     def test_suite_data_model_keywords_clearing(self):
         data_model = self._get_data_model(self.SUITE_XML)
@@ -329,10 +323,10 @@ class TestJsSerializer(unittest.TestCase):
         </errors>
         """
         data_model = self._get_data_model(errors_xml)
-        self.assert_model(data_model,
+        self.assert_plain_model(data_model,
                           1306835289078,
-                          [[0, 'E', 1]],
-                          ['*', "*Invalid syntax in file '/tmp/data/failing_suite.txt' in table 'Settings': Resource file 'nope' does not exist."])
+                          [[0, '*E', "*Invalid syntax in file '/tmp/data/failing_suite.txt' in table 'Settings': Resource file 'nope' does not exist."]],
+                          )
 
     if json:
         def test_json_dump_string(self):

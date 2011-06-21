@@ -52,10 +52,7 @@ class _Handler(object):
         return self._data_from_children
 
     def _get_ids(self, array):
-        result = []
-        for value in array:
-            result.append(self._context.get_id(value))
-        return result
+        return [self._context.get_id(value) for value in array]
 
     def _html_format(self, text):
         return utils.html_escape(text, formatting=True)
@@ -140,6 +137,8 @@ class _KeywordHandler(_Handler):
         return self._get_ids([self._type, self._name, self._timeout]) + self._data_from_children
 
 
+# TODO: StatisticsHandler and StatItemHandler should be separated somehow from suite handlers
+
 class _StatisticsHandler(_Handler):
 
     def get_handler_for(self, name, attrs):
@@ -158,7 +157,7 @@ class _StatItemHandler(_Handler):
 
     def end_element(self, text):
         self._attrs.update(label=text)
-        return self._get_ids(self._attrs)
+        return self._attrs
 
 
 class _StatusHandler(_Handler):
@@ -285,10 +284,13 @@ class Context(object):
             self._stats = self._stats.parent
 
     def get_id(self, value):
+        if value is None:
+            return None
         if isinstance(value, basestring):
             return self._get_text_id(value)
         if isinstance(value, (int, long)):
             return self._get_int_id(value)
+        raise AssertionError('Unsupported type of value '+str(type(value)))
 
     def _get_text_id(self, text):
         return self._texts.add(text)
@@ -431,10 +433,13 @@ class TextCache(object):
         raw = self._raw(text)
         if raw in self.texts or len(raw) < self._compress_threshold:
             return raw
-        compressed = base64.b64encode(zlib.compress(text.encode('UTF-8'), 9))
-        if len(raw) * self._use_compressed_threshold > len(compressed):
+        compressed = self._compress(text)
+        if len(compressed) * self._use_compressed_threshold < len(raw):
             return compressed
         return raw
+
+    def _compress(self, text):
+        return base64.b64encode(zlib.compress(text.encode('UTF-8'), 9))
 
     def _raw(self, text):
         return '*'+text
