@@ -56,8 +56,7 @@ window.testdata = function () {
         return items[items.length-1];
     }
 
-    // TODO: Consider better name...
-    function last2(items) {
+    function secondLast(items) {
         return items[items.length-2];
     }
 
@@ -107,7 +106,7 @@ window.testdata = function () {
             status: parseStatus(statusElement, suite.hasTeardownFailure()),
             message: createMessage(statusElement, suite.hasTeardownFailure()),
             times: model.Times(times(statusElement)),
-            tags: tags(last2(element))
+            tags: tags(secondLast(element))
         });
         test.populateKeywords(Populator(element, keywordMatcher, childCreator(test, createKeyword)));
         return test;
@@ -123,7 +122,7 @@ window.testdata = function () {
     }
 
     function createSuite(parent, element) {
-        var statusElement = last2(element);
+        var statusElement = secondLast(element);
         var suite = model.Suite({
             parent: parent,
             name: element[2],
