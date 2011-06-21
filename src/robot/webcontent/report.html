@@ -206,7 +206,7 @@ function sortByStatus(t1, t2) {
         return t1.status == 'FAIL' ? -1 : 1;
     if (t1.isCritical != t2.isCritical)
         return t1.isCritical ? -1 : 1;
-    return t1.fullname < t2.fullname ? -1 : 1;
+    return t1.fullName < t2.fullName ? -1 : 1;
 }
 
 function getTestsHavingTag(tag) {
@@ -428,7 +428,7 @@ function popUpTo(list, upTo) {
   {{if $item.logURL}}
   <tr>
     <th>Log Link:</th>
-    <td><a href="${$item.logURL}#suite_${fullname}" title="${fullname}">${$item.logURL}#suite_${fullname} </a></td>
+    <td><a href="${$item.logURL}#suite_${fullName}" title="${fullName}">${$item.logURL}#suite_${fullName} </a></td>
   </tr>
   {{/if}}
   {{if doc}}
@@ -477,7 +477,7 @@ function popUpTo(list, upTo) {
 <script type="text/x-jquery-tmpl" id="testDetailsTableRowTemplate">
   <tr class="test_row">
     {{if $item.logURL}}
-    <td class="col_name"><a href="${$item.logURL}#test_${fullname}" id="test_${fullname}" title="${fullname}"><span class="parent_name">${parentName}</span>${name}</a></td>
+    <td class="col_name"><a href="${$item.logURL}#test_${fullName}" id="test_${fullName}" title="${fullName}"><span class="parent_name">${parentName}</span>${name}</a></td>
     {{else}}
     <td class="col_name"><span class="parent_name">${parentName}</span>${name}</td>
     {{/if}}

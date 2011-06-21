@@ -98,7 +98,7 @@ describe("Handling Suite", function () {
         var test = window.testdata.suite().test(0);
         expect(test.name).toEqual("Test");
         expect(test.status).toEqual("PASS");
-        expect(test.fullname).toEqual("Suite.Test");
+        expect(test.fullName).toEqual("Suite.Test");
         expect(test.doc).toEqual("test doc");
         expect(test.tags).toEqual(["tag1", "tag2"]);
         expect(test.times).toBeDefined();
@@ -474,10 +474,10 @@ describe("Iterating Suites", function (){
 
     it("should show correct full names", function (){
         var root = window.testdata.suite();
-        expect(root.fullname).toEqual("Foo");
-        expect(root.suite(0).fullname).toEqual("Foo.Bar");
-        expect(root.suite(0).suite(0).fullname).toEqual("Foo.Bar.Testii");
-        expect(root.suite(1).suite(0).test(0).fullname).toEqual("Foo.Foo.Tostii.FOO FOO");
+        expect(root.fullName).toEqual("Foo");
+        expect(root.suite(0).fullName).toEqual("Foo.Bar");
+        expect(root.suite(0).suite(0).fullName).toEqual("Foo.Bar.Testii");
+        expect(root.suite(1).suite(0).test(0).fullName).toEqual("Foo.Foo.Tostii.FOO FOO");
     });
 
     it("should give navigation uuid list for a test", function (){

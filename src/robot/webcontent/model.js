@@ -15,7 +15,7 @@ window.model = function () {
     function Suite(data) {
         var suite = createModelObject(data);
         suite.source = data.source;
-        suite.fullname = data.parent ? data.parent.fullname + "." + data.name : data.name;
+        suite.fullName = data.parent ? data.parent.fullName + "." + data.name : data.name;
         setStats(suite, data.statistics);
         suite.metadata = data.metadata;
         suite.populateKeywords = createIterablePopulator("Keyword");
@@ -84,7 +84,7 @@ window.model = function () {
     }
 
     function findSuiteByName(suite, name) {
-        if (suite.fullname == name)
+        if (suite.fullName == name)
             return suite;
         var subSuites = suite.suites();
         for (var i = 0; i < subSuites.length; i++) {
@@ -121,9 +121,9 @@ window.model = function () {
 
     function Test(data) {
         var test = createModelObject(data);
-        test.fullname = data.parent.fullname + "." + test.name;  // TODO: is this used?, could be function also
+        test.fullName = data.parent.fullName + "." + test.name;  // TODO: is this used?, could be function also
         test.parentName = function () {
-            return data.parent.fullname.replace(/\./g, ' . ') + ' . '; // TODO: duplicate
+            return data.parent.fullName.replace(/\./g, ' . ') + ' . '; // TODO: duplicate
         };
         test.timeout = data.timeout;
         test.populateKeywords = createIterablePopulator("Keyword");
@@ -143,7 +143,7 @@ window.model = function () {
         var kw = createModelObject(data);
         kw.type = data.type;
         var parent = data.parent
-        var parentPath = (parent.path === undefined) ? parent.fullname : parent.path;
+        var parentPath = (parent.path === undefined) ? parent.fullName : parent.path;
         kw.path = parentPath + "." + data.index;
         kw.arguments = data.args;
         kw.populateKeywords = createIterablePopulator("Keyword");

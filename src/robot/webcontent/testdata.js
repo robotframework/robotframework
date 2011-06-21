@@ -204,79 +204,79 @@ window.testdata = function () {
         return elementsById[id];
     }
 
-    function pathToKeyword(fullname) {
+    function pathToKeyword(fullName) {
         var root = suite();
-        if (fullname.indexOf(root.fullname + ".") != 0) return [];
-        return keywordPathTo(fullname + ".", root, [root.id]);
+        if (fullName.indexOf(root.fullName + ".") != 0) return [];
+        return keywordPathTo(fullName + ".", root, [root.id]);
     }
 
-    function pathToTest(fullname) {
+    function pathToTest(fullName) {
         var root = suite();
-        if (fullname.indexOf(root.fullname + ".") != 0) return [];
-        return testPathTo(fullname, root, [root.id]);
+        if (fullName.indexOf(root.fullName + ".") != 0) return [];
+        return testPathTo(fullName, root, [root.id]);
     }
 
-    function pathToSuite(fullname) {
+    function pathToSuite(fullName) {
         var root = suite();
-        if (fullname.indexOf(root.fullname) != 0) return [];
-        if (fullname == root.fullname) return [root.id];
-        return suitePathTo(fullname, root, [root.id]);
+        if (fullName.indexOf(root.fullName) != 0) return [];
+        if (fullName == root.fullName) return [root.id];
+        return suitePathTo(fullName, root, [root.id]);
     }
 
-    function keywordPathTo(fullname, current, result) {
-        if (fullname == "") return result;
+    function keywordPathTo(fullName, current, result) {
+        if (fullName == "") return result;
         for (var i = 0; i < current.numberOfKeywords; i++) {
             var kw = current.keyword(i);
-            if (fullname.indexOf(kw.path + ".") == 0) {
+            if (fullName.indexOf(kw.path + ".") == 0) {
                 result.push(kw.id);
-                if (fullname == kw.path + ".")
+                if (fullName == kw.path + ".")
                     return result;
-                return keywordPathTo(fullname, kw, result);
+                return keywordPathTo(fullName, kw, result);
             }
         }
         for (var i = 0; i < current.numberOfTests; i++) {
             var test = current.test(i);
-            if (fullname.indexOf(test.fullname + ".") == 0) {
+            if (fullName.indexOf(test.fullName + ".") == 0) {
                 result.push(test.id);
-                return keywordPathTo(fullname, test, result);
+                return keywordPathTo(fullName, test, result);
             }
         }
         for (var i = 0; i < current.numberOfSuites; i++) {
             var suite = current.suite(i);
-            if (fullname.indexOf(suite.fullname + ".") == 0) {
+            if (fullName.indexOf(suite.fullName + ".") == 0) {
                 result.push(suite.id);
-                return keywordPathTo(fullname, suite, result);
+                return keywordPathTo(fullName, suite, result);
             }
         }
     }
 
-    function testPathTo(fullname, currentSuite, result) {
+    function testPathTo(fullName, currentSuite, result) {
         for (var i = 0; i < currentSuite.numberOfTests; i++) {
             var test = currentSuite.test(i);
-            if (fullname == test.fullname) {
+            if (fullName == test.fullName) {
                 result.push(test.id);
                 return result;
             }
         }
         for (var i = 0; i < currentSuite.numberOfSuites; i++) {
             var suite = currentSuite.suite(i);
-            if (fullname.indexOf(suite.fullname + ".") == 0) {
+            if (fullName.indexOf(suite.fullName + ".") == 0) {
                 result.push(suite.id);
-                return testPathTo(fullname, suite, result);
+                return testPathTo(fullName, suite, result);
             }
         }
     }
 
-    function suitePathTo(fullname, currentSuite, result) {
+    function suitePathTo(fullName, currentSuite, result) {
         for (var i = 0; i < currentSuite.numberOfSuites; i++) {
             var suite = currentSuite.suite(i);
-            if (fullname == suite.fullname) {
+            if (fullName == suite.fullName) {
                 result.push(suite.id);
                 return result;
             }
-            if (fullname.indexOf(suite.fullname + ".") == 0) {
+            if (fullName.indexOf(suite.fullName + ".") == 0) {
                 result.push(suite.id);
-                return suitePathTo(fullname, suite, result);
+                return suitePathTo(fullName, suite, result);
             }
         }
     }
