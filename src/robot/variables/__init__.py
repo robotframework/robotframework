@@ -12,14 +12,14 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-
 import os
 import tempfile
 
 from robot import utils
 from robot.output import LOGGER
 
-from variables import Variables, VariableSplitter
+from variables import Variables
+from variablesplitter import VariableSplitter
 from isvar import is_var, is_scalar_var, is_list_var
 
 
