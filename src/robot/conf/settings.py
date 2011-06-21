@@ -90,7 +90,7 @@ class _BaseSettings(object):
         if name == 'OutputDir':
             return utils.abspath(value)
         if name in ['SuiteStatLevel', 'MonitorWidth']:
-            return self._convert_to_positive_integer(name, value)
+            return self._convert_to_positive_integer_or_default(name, value)
         if name in ['Listeners', 'VariableFiles']:
             return [self._split_args_from_name(item) for item in value]
         if name == 'TagStatCombine':
@@ -176,9 +176,9 @@ class _BaseSettings(object):
                      "Expected 'tag:link:title' but got '%s'." % value)
         return None
 
-    def _convert_to_positive_integer(self, name, value):
+    def _convert_to_positive_integer_or_default(self, name, value):
         value = self._convert_to_integer(name, value)
-        return value if value > 0 else 1
+        return value if value > 0 else self._get_default_value(name)
 
     def _convert_to_integer(self, name, value):
         try:
@@ -186,7 +186,10 @@ class _BaseSettings(object):
         except ValueError:
             LOGGER.error("Option '--%s' expected integer value but got '%s'. "
                          "Default value used instead." % (name.lower(), value))
-            return self._cli_opts[name][1]
+            return self._get_default_value(name)
+
+    def _get_default_value(self, name):
+        return self._cli_opts[name][1]
 
     def _split_args_from_name(self, name):
         if ':' not in name or os.path.exists(name):
