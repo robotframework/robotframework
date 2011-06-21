@@ -5,7 +5,7 @@ Suite Teardown  Fail
 Test Setup      Log   Test Setup
 Test Teardown   Log   Test Teardown
 Metadata        home *page*   http://robotframework.org
-Force Tags      force  test
+Force Tags      force  test  < &lt;
 Default Tags    default
 Library         pölkü/myLib.py
 
@@ -18,7 +18,9 @@ Simple
     Log  do nothing
 
 Log HTML
-    Log  <blink><b><font face="comic sans ms" size="42" color="red">I CAN HAZ HMTL?!?!??!!?</font></b></blink>  HTML
+    Log   <blink><b><font face="comic sans ms" size="42" color="red">CAN HAZ HMTL?!?!??!!?</font></b></blink>  HTML
+    Log   escape < &lt; <b>no bold</b>
+    Fail  escape < &lt; <b>no bold</b>
 
 Unicode
     Log  hyvää joulua
