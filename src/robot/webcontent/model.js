@@ -87,7 +87,7 @@ window.model = function () {
         if (suite.fullName == name)
             return suite;
         var subSuites = suite.suites();
-        for (var i = 0; i < subSuites.length; i++) {
+        for (var i in subSuites) {
             var match = findSuiteByName(subSuites[i], name);
             if (match)
                 return match;
@@ -169,47 +169,39 @@ window.model = function () {
         var start = timedata[0];
         var end = timedata[1];
         var elapsed = timedata[2];
-        var times = {}
-        times.elapsedMillis = elapsed;
-        times.elapsedTime = function (excludeMillis) {
-            return formatElapsed(elapsed, excludeMillis);
+        return {
+            elapsedMillis: elapsed,
+            elapsedTime: formatElapsed(elapsed),
+            startTime: formatDate(start),
+            endTime:  formatDate(end)
         };
-        times.startTime = function (excludeMillis) {
-            return formatDate(start, excludeMillis);
-        }
-        times.endTime = function (excludeMillis) {
-            return formatDate(end, excludeMillis);
-        }
-        return times;
     }
 
     function timeFromDate(date) {
-        if(date == null)
+        if (!date)
             return "N/A"
         return shortTime(date.getHours(), date.getMinutes(),
-                date.getSeconds(), date.getMilliseconds());
+                         date.getSeconds(), date.getMilliseconds());
     }
 
-    function formatDate(date, excludeMillis) {
-        if(date == null)
+    function formatDate(date) {
+        if (!date)
             return "N/A"
-        var milliseconds = date.getMilliseconds();
-        if (excludeMillis)
-            milliseconds = undefined
         return padTo(date.getFullYear(), 4) +
-                padTo(date.getMonth() + 1, 2) +
-                padTo(date.getDate(), 2) + " " +
-                shortTime(date.getHours(), date.getMinutes(), date.getSeconds(), milliseconds);
+               padTo(date.getMonth() + 1, 2) +
+               padTo(date.getDate(), 2) + " " +
+               shortTime(date.getHours(), date.getMinutes(),
+                         date.getSeconds(), date.getMilliseconds());
     }
 
     function shortTime(hours, minutes, seconds, milliseconds) {
-        var ret = padTo(hours, 2) + ":" + padTo(minutes, 2) + ":" + padTo(seconds, 2);
-        if (milliseconds != undefined)
-            ret += "." + padTo(milliseconds, 3);
-        return ret;
+        return padTo(hours, 2) + ":" +
+               padTo(minutes, 2) + ":" +
+               padTo(seconds, 2) + "." +
+               padTo(milliseconds, 3);
     }
 
-    function formatElapsed(elapsed, excludeMillis) {
+    function formatElapsed(elapsed) {
         var millis = elapsed;
         var hours = Math.floor(millis / (60 * 60 * 1000));
         millis -= hours * 60 * 60 * 1000;
@@ -217,8 +209,6 @@ window.model = function () {
         millis -= minutes * 60 * 1000;
         var seconds = Math.floor(millis / 1000);
         millis -= seconds * 1000;
-        if (excludeMillis)
-            millis = undefined;
         return shortTime(hours, minutes, seconds, millis);
     }
 

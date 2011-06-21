@@ -226,7 +226,7 @@ function calculateTotalTime(tests) {
     $.map(tests, function (test) {
         totaltime += test.times.elapsedMillis;
     });
-    return model.formatElapsed(totaltime).split('.')[0];
+    return model.formatElapsed(totaltime);
 }
 
 function renderTestDetails(){
@@ -273,13 +273,13 @@ function popUpTo(list, upTo) {
       <td>{{html $value}}</td>
     </tr>
     {{/each}}
-    {{if times.startTime() != 'N/A'}}
+    {{if times.startTime != 'N/A'}}
     <tr>
       <th>Start Time:</th>
       <td>${times.startTime}</td>
     </tr>
     {{/if}}
-    {{if times.endTime() != 'N/A'}}
+    {{if times.endTime != 'N/A'}}
     <tr>
       <th>End Time:</th>
       <td>${times.endTime}</td>
@@ -486,7 +486,7 @@ function popUpTo(list, upTo) {
     <td class="col_crit">{{if isCritical}}yes{{else}}no{{/if}}</td>
     <td class="col_status ${status.toLowerCase()}">${status}</td>
     <td class="col_msg">${message}</td>
-    <td class="col_times">${times.startTime(true)}<br />${times.elapsedTime(true)}</td>
+    <td class="col_times">${times.startTime}<br />${times.elapsedTime}</td>
   </tr>
 </script>
 
