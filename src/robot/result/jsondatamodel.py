@@ -80,6 +80,7 @@ class DataModel(object):
                 self._collect_used_indices(item, result)
             elif isinstance(item, dict):
                 self._collect_used_indices(item.values(), result)
+                self._collect_used_indices(item.keys(), result)
         return result
 
 

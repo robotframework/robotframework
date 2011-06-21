@@ -242,13 +242,16 @@ class TestJsSerializer(unittest.TestCase):
                    '<tags></tags><status status="PASS" endtime="20110601 12:01:51.354" critical="yes" starttime="20110601 12:01:51.353"></status></test>'
         self._test_remove_keywords(self._get_data_model(test_xml))
 
-    def _test_remove_keywords(self, data_model):
+    def _test_remove_keywords(self, data_model, should_contain_strings=None):
         strings_before = self._list_size(data_model._robot_data['strings'])
         integers_before = self._list_size(data_model._robot_data['integers'])
         data_model_json_before = StringIO.StringIO()
         data_model.write_to(data_model_json_before)
         data_model.remove_keywords()
         self.assert_model_does_not_contain(data_model, ['kw', 'setup', 'forloop', 'foritem'])
+        if should_contain_strings:
+            for string in should_contain_strings:
+                assert_true(string in data_model._robot_data['strings'], msg='string "%s" not in strings' % string)
         data_model_json_after = StringIO.StringIO()
         data_model.write_to(data_model_json_after)
         assert_true(len(data_model_json_before.getvalue()) > len(data_model_json_after.getvalue()))
@@ -276,7 +279,7 @@ class TestJsSerializer(unittest.TestCase):
                       'keyword_Verysimple.Test.0')
 
     def test_suite_data_model_keywords_clearing(self):
-        self._test_remove_keywords(self._get_data_model(self.SUITE_XML))
+        self._test_remove_keywords(self._get_data_model(self.SUITE_XML), should_contain_strings=['*key', '*val'])
 
     def test_statistics_xml_parsing(self):
         statistics_xml = """
