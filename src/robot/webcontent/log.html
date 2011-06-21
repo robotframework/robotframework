@@ -174,7 +174,9 @@ function addTestExecutionLog(main) {
             <tr><th>${$index}:</th><td>{{html $value}}</td></tr>
             {{/each}}
             <!-- TODO: Link (href) to source should be relative -->
+            {{if source}}
             <tr><th>Source:</th><td><a href="${source}">${source}</a></td></tr>
+             {{/if}}
             <tr><th>Start / End / Elapsed:</th><td>${times.startTime}  /  ${times.endTime}  /  ${times.elapsedTime}</td></tr>
             <tr><th>Status:</th><td>{{tmpl($data) 'suiteStatusMessageTemplate'}}</td></tr>
             {{if message}}
