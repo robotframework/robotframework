@@ -347,6 +347,13 @@ class TestJsSerializer(unittest.TestCase):
         json_dump(None, buffer)
         assert_equals('null', buffer.getvalue())
 
+    def test_json_dump_mapping(self):
+        buffer = StringIO.StringIO()
+        mapped1 = object()
+        mapped2 = object()
+        json_dump([mapped1, [mapped2, {mapped2:mapped1}]], buffer, {mapped1:'1', mapped2:'a'})
+        assert_equals('[1,[a,{a:1}]]', buffer.getvalue())
+
     def _get_data_model(self, xml_string):
         sax.parseString('<robot generator="test">%s<statistics/><errors/></robot>' % xml_string, self._handler)
         return self._handler.datamodel
