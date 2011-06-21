@@ -41,6 +41,7 @@ $(document).ready(function () {
     addSummary(topsuite);
     addStatistics();
     addDetails();
+    window.onhashchange = showDetailsByHash;
 });
 
 function addSummary(topsuite) {
