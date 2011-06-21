@@ -20,6 +20,8 @@ import json
 
 class DataModel(object):
 
+    UNUSED_STRING = object()
+
     def __init__(self, robot_data):
         self._robot_data = robot_data
         self._settings = None
@@ -39,12 +41,13 @@ class DataModel(object):
         self._settings = settings
 
     def write_to(self, output):
-        self._dump_json('window.output = ', self._robot_data, output)
+        output.write('var u = "";\n')
+        self._dump_json('window.output = ', self._robot_data, output, {DataModel.UNUSED_STRING:'u'})
         self._dump_json('window.settings = ', self._settings, output)
 
-    def _dump_json(self, name, data, output):
+    def _dump_json(self, name, data, output, mappings=None):
         output.write(name)
-        json.json_dump(data, output)
+        json.json_dump(data, output, mappings)
         output.write(';\n')
 
     def remove_keywords(self):
@@ -66,7 +69,7 @@ class DataModel(object):
 
     def _prune_unused_indices(self):
         used = self._collect_used_indices(self._robot_data['suite'], set())
-        self._robot_data['strings'] = [text if index in used else '' for index, text in enumerate(self._robot_data['strings'])]
+        self._robot_data['strings'] = [text if index in used else DataModel.UNUSED_STRING for index, text in enumerate(self._robot_data['strings'])]
         self._robot_data['integers'] = [number if (-1 -index) in used else 0 for index, number in enumerate(self._robot_data['integers'])]
 
     def _collect_used_indices(self, data, result):
