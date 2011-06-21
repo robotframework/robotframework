@@ -8,3 +8,4 @@ atest/results
 .*project
 *.pyc
 *$py.class
+glob:.idea
