@@ -138,11 +138,13 @@ class TestJsSerializer(unittest.TestCase):
         assert_equals(reversed, plain_suite)
 
     def _reverse_from_ids(self, data, item, remap={}):
-        recurse = self._reverse_from_ids
+        if item is None:
+            return None
         if isinstance(item, (int, long)):
             if item in remap:
                 item = remap[item]
             return self._reverse_id(data, item)
+        recurse = self._reverse_from_ids
         if isinstance(item, list):
             return [recurse(data, i, remap) for i in item]
         if isinstance(item, dict):
