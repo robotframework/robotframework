@@ -131,9 +131,6 @@ window.model = function () {
         test.isCritical = data.isCritical;
         test.tags = data.tags;
         test.message = data.message;
-        // TODO: Handle failures in parent teardowns
-        // data.status.parentSuiteTeardownFailed;
-        // return "Teardown of the parent suite failed.";
         return test;
     }
 
