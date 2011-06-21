@@ -37,7 +37,10 @@ Custom Embedded Argument Regexp
 
 Custom Embedded Argument Regexp With Curly Braces
     Today is 2011-06-21
-    Today is Tuesday
+    Today is Tuesday and tomorrow is Wednesday
+
+Custom Embedded Argument Regexp With Unmatching Curly Braces
+    Unmatched { Brace
 
 Grouping Custom Regexp
     ${matches} =  Grouping Custom Regexp(erts)
@@ -148,8 +151,12 @@ Result of ${a:\d+} ${operator:[+-]} ${b:\d+} is ${result}
 Today is ${date:\d{4}-\d{2}-\d{2}}
     Should Be Equal  ${date}  2011-06-21
 
-Today is ${day:\w{6,9}}
-    Should Be Equal  ${day}  Tuesday
+Today is ${day1:\w{6,9}} and tomorrow is ${day2:\w{6,9}}
+    Should Be Equal  ${day1}  Tuesday
+    Should Be Equal  ${day2}  Wednesday
+
+Unmatched ${Curly:{} Brace
+    Should Be Equal  ${Curly}  {
 
 Grouping ${x:Cu(st|ts)(om)?} ${y:Regexp\(?erts\)?}
     [Return]  ${x}-${y}

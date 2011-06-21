@@ -31,6 +31,18 @@ class TestVariableSplitter(unittest.TestCase):
         # variable base is processed again in this special case.
         self._test('%{hi%{u}', '%{hi%{u}', 0, internal=True)
 
+    def test_require_matching_curly_braces(self):
+        self._test('${embed:\d{2}}', '${embed:\d{2}}', matching_curly=True)
+        self._test('{}{${e:\d{4}-\d{2}-\d{2}}}}', '${e:\d{4}-\d{2}-\d{2}}',
+                   start=3, matching_curly=True)
+        self._test('$&{{}}{}', '&{{}}', start=1, matching_curly=True)
+
+    def test_require_matching_curly_but_dont_have_them(self):
+        self._test('${x:{}', '${x:{}', matching_curly=True)
+        self._test('${x:{{}}', '${x:{{}}', matching_curly=True)
+        self._test('xx${x:{}xx', '${x:{}', start=2, matching_curly=True)
+        self._test('{%{{}{{}}{{', '%{{}{{}}', start=1, matching_curly=True)
+
     def test_multiple_vars(self):
         self._test('${hello} ${world}', '${hello}', 0)
         self._test('hi %{u}2 and @{u2} and also *{us3}', '%{u}', 3)
@@ -67,21 +79,26 @@ class TestVariableSplitter(unittest.TestCase):
                 ('${\\${hi${hi}}}', '${\\${hi${hi}}}', 0),
                 ('\\${${hi${hi}}}', '${hi${hi}}', len('\\${')),
                 ('\\${\\${hi\\\\${hi}}}', '${hi}', len('\\${\\${hi\\\\')) ]:
-            internal = var.count('{') > 1
-            self._test(inp, var, start, internal=internal)
+            self._test(inp, var, start, internal=var.count('{') > 1)
 
     def test_index(self):
-        self._test('@{x}[0]', '@{x}', 0, '0')
-        self._test('.@{x}[42]..', '@{x}', 1, '42')
-        self._test('@{x}[${i}] ${xyz}', '@{x}', 0, '${i}')
-        self._test('@{x}[]', '@{x}', 0, '')
-        self._test('@{x}[inv]', '@{x}', 0, 'inv')
-        self._test('@{x}[0', '@{x}', 0, None)
-        self._test('@{x}}[0]', '@{x}', 0, None)
-        self._test('${x}[0]', '${x}', 0, None)
-        self._test('%{x}[0]', '%{x}', 0, None)
-        self._test('*{x}[0]', '*{x}', 0, None)
-        self._test('&{x}[0]', '&{x}', 0, None)
+        self._test('@{x}[0]', '@{x}', index='0')
+        self._test('.@{x}[42]..', '@{x}', start=1, index='42')
+        self._test('@{x}[]', '@{x}', index='')
+        self._test('@{x}[inv]', '@{x}', index='inv')
+        self._test('@{x}[0', '@{x}')
+        self._test('@{x}}[0]', '@{x}')
+        self._test('${x}[0]', '${x}')
+        self._test('%{x}[0]', '%{x}')
+        self._test('*{x}[0]', '*{x}')
+        self._test('&{x}[0]', '&{x}')
+
+    def test_index_with_iternal_vars(self):
+        self._test('@{x}[${i}]', '@{x}', index='${i}')
+        self._test('xx @{x}[${i}] ${xyz}', '@{x}', start=3, index='${i}')
+        self._test('@@@@@{X{X}[${${i}-${${${i}}}}]', '@{X{X}', start=4,
+                   index='${${i}-${${${i}}}}')
+        self._test('@{${i}}[${j{}]', '@{${i}}', index='${j{}', internal=True)
 
     def test_custom_identifiers(self):
         for inp, start in [('@{x}${y}', 4),
@@ -111,7 +128,7 @@ class TestVariableSplitter(unittest.TestCase):
                 self._test('eggs'+var+'spam', var, start=4, internal=True)
 
     def _test(self, inp, variable=None, start=0, index=None,
-              identifiers=_identifiers, internal=False):
+              identifiers=_identifiers, internal=False, matching_curly=False):
         if variable is None:
             identifier = base = None
             start = end = -1
@@ -121,7 +138,7 @@ class TestVariableSplitter(unittest.TestCase):
             end = start + len(variable)
             if index is not None:
                 end += len(index) + 2
-        res = VariableSplitter(inp, identifiers)
+        res = VariableSplitter(inp, identifiers, matching_curly)
         assert_equals(res.base, base, "'%s' base" % inp)
         assert_equals(res.start, start, "'%s' start" % inp)
         assert_equals(res.end, end, "'%s' end" % inp)

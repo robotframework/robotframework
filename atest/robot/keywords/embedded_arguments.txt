@@ -32,6 +32,9 @@ Custom Embedded Argument Regexp
 Custom Embedded Argument Regexp With Curly Braces
     Check Test Case  ${TEST NAME}
 
+Custom Embedded Argument Regexp With Unmatching Curly Braces
+    Check Test Case  ${TEST NAME}
+
 Grouping Custom Regexp
     Check Test Case  ${TEST NAME}
 

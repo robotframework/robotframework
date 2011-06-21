@@ -15,13 +15,14 @@
 
 class VariableSplitter:
 
-    def __init__(self, string, identifiers):
+    def __init__(self, string, identifiers, prefer_matching_curly=False):
         self.identifier = None
         self.base = None
         self.index = None
         self.start = -1
         self.end = -1
         self._identifiers = identifiers
+        self._prefer_matching_curly = prefer_matching_curly
         self._may_have_internal_variables = False
         if self._split(string):
             self._finalize()
@@ -44,7 +45,7 @@ class VariableSplitter:
         if start_index < 0:
             return False
         self.start = start_index
-        self._started_vars = 1
+        self._open_curly = 1
         self._state = self._variable_state
         self._variable_chars = [string[start_index], '{']
         self._index_chars = []
@@ -54,11 +55,12 @@ class VariableSplitter:
                 self._state(char)
             except StopIteration:
                 break
-            if start_index + index > max_index and \
-                    self._state not in [self._waiting_index_state,
-                                        self._index_state]:
+            if index + start_index == max_index and not self._scanning_index():
                 break
         return True
+
+    def _scanning_index(self):
+        return self._state in [self._waiting_index_state, self._index_state]
 
     def _find_variable(self, string):
         max_index = string.rfind('}')
@@ -91,19 +93,24 @@ class VariableSplitter:
     def _variable_state(self, char):
         self._variable_chars.append(char)
         if char == '}':
-            self._started_vars -= 1
-            if self._started_vars == 0:
-                if self._variable_chars[0] != '@':
+            self._open_curly -= 1
+            if self._open_curly == 0:
+                if not self._is_list_variable():
                     raise StopIteration
                 self._state = self._waiting_index_state
+        elif char == '{' and self._prefer_matching_curly:
+            self._open_curly += 1
         elif char in self._identifiers:
             self._state = self._internal_variable_start_state
+
+    def _is_list_variable(self):
+        return self._variable_chars[0] == '@'
 
     def _internal_variable_start_state(self, char):
         self._state = self._variable_state
         if char == '{':
             self._variable_chars.append(char)
-            self._started_vars += 1
+            self._open_curly += 1
             self._may_have_internal_variables = True
         else:
             self._variable_state(char)
