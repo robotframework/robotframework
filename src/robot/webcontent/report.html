@@ -44,6 +44,15 @@ $(document).ready(function () {
     window.onhashchange = showDetailsByHash;
 });
 
+function setBackground(topsuite) {
+    if (topsuite.criticalFailed)
+        $("body").css("background-color", window.settings.background.fail);
+    else if (topsuite.totalFailed)
+        $("body").css("background-color", window.settings.background.nonCriticalFail);
+    else
+        $("body").css("background-color", window.settings.background.pass);
+}
+
 function addSummary(topsuite) {
     var opts = {logURL: window.settings.logURL};
     $.tmpl('summaryTableTemplate', topsuite, opts).insertAfter($('#header_div'));
@@ -109,7 +118,9 @@ function ensureTotalDetailsAreVisible(type) {
 function tagDetailSelected(name) {
     if (!name) return;
     renderTagsSelector('tag_' + name);
-    var tag = findTagByName(name, window.testdata.statistics().tag);
+    var tag = util.filter(window.testdata.statistics().tag, function (tag) {
+        return tag.label == name;
+    })[0];
     renderTagDetails(tag);
     ensureTagDetailsAreVisible(name);
 }
@@ -190,13 +201,6 @@ function drawTestDetailsTable(tests) {
     renderTestDetails();
 }
 
-function findTagByName(name, tags) {
-    for (var i=0; i<tags.length; i++) {
-        if (tags[i].label == name)
-            return tags[i];
-    }
-}
-
 function sortByStatus(t1, t2) {
     if (t1.status != t2.status)
         return t1.status == 'FAIL' ? -1 : 1;
@@ -223,15 +227,6 @@ function calculateTotalTime(tests) {
         totaltime += test.times.elapsedMillis;
     });
     return model.formatElapsed(totaltime).split('.')[0];
-}
-
-function setBackground(topsuite) {
-    if (topsuite.criticalFailed)
-        $("body").css("background-color",window.settings.background.fail);
-    else if (topsuite.totalFailed)
-        $("body").css("background-color",window.settings.background.nonCriticalFail);
-    else
-        $("body").css("background-color",window.settings.background.pass);
 }
 
 function renderTestDetails(){
