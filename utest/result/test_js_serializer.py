@@ -137,11 +137,11 @@ class TestJsSerializer(unittest.TestCase):
         result = []
         for entry in suite:
             if isinstance(entry, list):
-                result.append(self._reverse_from_ids(data_model, entry))
+                result += [self._reverse_from_ids(data_model, entry)]
             elif isinstance(entry, dict):
-                AssertionError("NYI")
+                result += [dict((self._reverse_from_ids(data_model, key), self._reverse_from_ids(data_model, value)) for key, value in entry.items())]
             else:
-                result.append(self._reverse_id(data_model, entry))
+                result += [self._reverse_id(data_model, entry)]
         return result
 
     def _reverse_id(self, data_model, id):
@@ -264,6 +264,9 @@ class TestJsSerializer(unittest.TestCase):
         doc = '*<b>html</b> &lt;esc&gt; <a href="http://x.y">http://x.y</a> <img src="http://x.y/z.jpg" title="http://x.y/z.jpg" style="border: 1px solid gray" />'
         self.assert_model(data_model, basemillis=1306918911353,
                           plain_suite=['*suite', '*/tmp/verysimple.txt', '*Verysimple', doc,
+                                       {'*esc': '*&lt;',
+                                        '*key': '*val',
+                                        '*html': '*<img src="http://x.y.x.jpg" title="http://x.y.x.jpg" style="border: 1px solid gray" />'},
                               ['*test', '*Test', '*', '*Y', doc,
                                   ['*kw', '*Keyword.Example', '*1 second', doc,
                                    '*a1, a2', [0, '*W', '*simple'], ['*P', 23, -23]],
