@@ -146,6 +146,9 @@ class DataModel(object):
         size = 1
         out_data_block = []
         mappings = {}
+        # TODO: Should have no Nones
+        if data_block is None:
+            return None, 1, None
         if isinstance(data_block, (int, long)):
             return data_block, 1, None
         for item in data_block:
