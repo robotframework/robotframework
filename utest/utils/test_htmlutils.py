@@ -103,9 +103,11 @@ class TestLinks(unittest.TestCase):
             _test_escape_and_format(inp.upper(), link % (uprl, uprl),
                                     img % (uprl, uprl))
 
-    def test_link_with_quot(self):
+    def test_link_with_chars_needed_escaping(self):
         assert_equals(html_escape('http://foo"bar'),
                       '<a href="http://foo&quot;bar">http://foo&quot;bar</a>')
+        assert_equals(html_escape('ftp://<&>/'),
+                      '<a href="ftp://&lt;&amp;&gt;/">ftp://&lt;&amp;&gt;/</a>')
 
 
 class TestHtmlFormat(unittest.TestCase):
@@ -185,7 +187,7 @@ class TestHtmlFormat(unittest.TestCase):
         assert_equals(html_format('__'), '__')
 
     def test_not_italiced_many_underlines(self):
-        for text in ['___', '____','_________','__len__']:
+        for text in ['___', '____', '_________', '__len__']:
             assert_equals(html_format(text), text)
 
     def test_underscore_in_the_middle_of_word_is_ignored(self):
