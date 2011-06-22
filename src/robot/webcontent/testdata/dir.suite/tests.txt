@@ -1,11 +1,12 @@
 *** Settings ***
-Documentation   Some suite docs with links: http://robotframework.org
+Documentation   Some suite _docs_ with links: http://robotframework.org
 Suite Setup     Log  Suite setup
 Suite Teardown  Fail
 Test Setup      Log   Test Setup
 Test Teardown   Log   Test Teardown
 Metadata        home *page*   http://robotframework.org
-Force Tags      force  test  < &lt;
+Metadata        < &lt; ä      < &lt; ä
+Force Tags      force  test   < &lt; ä
 Default Tags    default
 Library         pölkü/myLib.py
 

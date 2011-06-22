@@ -11,9 +11,10 @@ TARGET = os.path.join(BASEDIR, 'data.js')
 
 if __name__ == '__main__':
     robot.run(TESTDATA, log='NONE', report='NONE',
-              tagstatlink=['force:http://google.com:kuukkeli',
+              tagstatlink=['force:http://google.com:<kuukkeli&gt;',
                            'i*:http://%1/:Title of i%1'],
-              tagdoc=['test:this_is_*my_bold*_test', 'IX:*Combined* tag doc'],
+              tagdoc=['test:this_is_*my_bold*_test',
+                      'IX:*Combined* & escaped <&lt; tag doc'],
               tagstatcombine=['fooANDi*:zap', 'i?:IX'],
               critical=['i?'], noncritical=['*kek*kone*'], outputdir=BASEDIR)
     model = create_datamodel_from(OUTPUT)
