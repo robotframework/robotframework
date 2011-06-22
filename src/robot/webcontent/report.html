@@ -236,7 +236,7 @@ function renderTestDetails(){
     if (window.elementsToRender.length == 0) {
         return;
     }
-    var elements = popUpTo(window.elementsToRender, 50);
+    var elements = popUpTo(window.elementsToRender, 10);
     $.tmpl('testDetailsTableRowTemplate',
             elements,
             {logURL: window.settings.logURL}
