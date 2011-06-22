@@ -13,25 +13,16 @@
 #  limitations under the License.
 
 import re
-import os.path
 
 from unic import unic
 
 
 def html_escape(text):
-    text = unic(text)
-    for name, value in [('&', '&amp;'), ('<', '&lt;'), ('>', '&gt;')]:
-        text = text.replace(name, value)
-    repl_url = lambda match: _repl_url(match, formatting=False)
-    return '\n'.join(_url_re.sub(repl_url, line) for line in text.splitlines())
+    return _HtmlEscaper().format(text)
 
 
 def html_format(text):
-    text = unic(text)
-    formatter = _HtmlStringFormatter()
-    for line in text.splitlines():
-        formatter.add(line)
-    return formatter.result()
+    return _HtmlFormatter().format(text)
 
 
 def html_attr_escape(attr):
@@ -43,15 +34,42 @@ def html_attr_escape(attr):
     return attr
 
 
-class _HtmlStringFormatter(object):
+class _Formatter(object):
+
+    def format(self, text):
+        text = self._html_escape(unic(text))
+        for line in text.splitlines():
+            self.add_line(line)
+        return self.get_result()
+
+    def _html_escape(self, text):
+        for name, value in [('&', '&amp;'), ('<', '&lt;'), ('>', '&gt;')]:
+            text = text.replace(name, value)
+        return text
+
+
+class _HtmlEscaper(_Formatter):
+
+    def __init__(self):
+        self._lines = []
+        self._line_formatter = _UrlFormatter()
+
+    def add_line(self, line):
+        self._lines.append(self._line_formatter.format(line))
+
+    def get_result(self):
+        return '\n'.join(self._lines)
+
+
+class _HtmlFormatter(_Formatter):
     _hr_re = re.compile('^-{3,} *$')
 
     def __init__(self):
         self._result = _Formatted()
-        self._table = _Table()
+        self._table = _TableFormatter()
+        self._line_formatter = _LineFormatter()
 
-    def add(self, line):
-        line = self._escape_gt_lt_amp(line)
+    def add_line(self, line):
         if self._add_table_row(line):
             return
         if self._table.is_started():
@@ -59,7 +77,7 @@ class _HtmlStringFormatter(object):
         if self._is_hr(line):
             self._result.add('<hr />\n', join_after=False)
             return
-        self._result.add(_format_line(line))
+        self._result.add(self._line_formatter.format(line))
 
     def _add_table_row(self, row):
         if self._table.is_table_row(row):
@@ -68,17 +86,12 @@ class _HtmlStringFormatter(object):
         return False
 
     def _is_hr(self, line):
-        return self._hr_re.match(line) is not None
+        return bool(self._hr_re.match(line))
 
-    def result(self):
+    def get_result(self):
         if self._table.is_started():
             self._result.add(self._table.end())
-        return self._result.result()
-
-    def _escape_gt_lt_amp(self, text):
-        for name, value in [('&', '&amp;'), ('<', '&lt;'), ('>', '&gt;')]:
-            text = text.replace(name, value)
-        return text
+        return self._result.get_result()
 
 
 class _Formatted(object):
@@ -91,16 +104,41 @@ class _Formatted(object):
         self._result.extend([self._joiner, line])
         self._joiner = '\n' if join_after else ''
 
-    def result(self):
+    def get_result(self):
         return ''.join(self._result)
 
 
-_url_re = re.compile('''
+class _UrlFormatter(object):
+    _formatting = False
+    _image_exts = ('.jpg', '.jpeg', '.png', '.gif', '.bmp')
+    _url = re.compile('''
 ( (^|\ ) ["'([]* )         # begin of line or space and opt. any char "'([
 (\w{3,9}://[\S]+?)         # url (protocol is any alphanum 3-9 long string)
 (?= [])"'.,!?:;]* ($|\ ) ) # opt. any char ])"'.,!?:; and end of line or space
 ''', re.VERBOSE)
-_bold_re = re.compile('''
+
+    def format(self, line):
+        return self._format_url(line)
+
+    def _format_url(self, line):
+        return self._url.sub(self._repl_url, line) if ':' in line else line
+
+    def _repl_url(self, match):
+        pre = match.group(1)
+        url = match.group(3).replace('"', '&quot;')
+        if self._format_as_image(url):
+            tmpl = '<img src="%s" title="%s" style="border: 1px solid gray" />'
+        else:
+            tmpl = '<a href="%s">%s</a>'
+        return pre + tmpl % (url, url)
+
+    def _format_as_image(self, url):
+        return self._formatting and url.lower().endswith(self._image_exts)
+
+
+class _LineFormatter(_UrlFormatter):
+    _formatting = True
+    _bold = re.compile('''
 (                         # prefix (group 1)
   (^|\ )                  # begin of line or space
   ["'(]* _?               # optionally any char "'( and optional begin of italic
@@ -113,7 +151,7 @@ _bold_re = re.compile('''
   ($|\ )                  # end of line or space
 )
 ''', re.VERBOSE)
-_italic_re = re.compile('''
+    _italic = re.compile('''
 ( (^|\ ) ["'(]* )          # begin of line or space and opt. any char "'(
 _                          # start of italic
 ([^\ _].*?)                # no space or underline and then anything
@@ -121,34 +159,29 @@ _                          # end of italic
 (?= ["').,!?:;]* ($|\ ) )  # opt. any char "').,!?:; and end of line or space
 ''', re.VERBOSE)
 
+    def format(self, line):
+        return self._format_url(self._format_italic(self._format_bold(line)))
 
-def _format_line(line):
-    line = _bold_re.sub('\\1<b>\\3</b>', line)
-    line = _italic_re.sub('\\1<i>\\3</i>', line)
-    line = _url_re.sub(_repl_url, line)
-    return line
+    def _format_bold(self, line):
+        return self._bold.sub('\\1<b>\\3</b>', line) if '*' in line else line
 
-
-def _repl_url(match, formatting=True):
-    pre = match.group(1)
-    url = match.group(3).replace('"', '&quot;')
-    ext = os.path.splitext(url)[1].lower()
-    if formatting and ext in ['.jpg', '.jpeg', '.png', '.gif', '.bmp']:
-        tmpl = '%s<img src="%s" title="%s" style="border: 1px solid gray" />'
-    else:
-        tmpl = '%s<a href="%s">%s</a>'
-    return tmpl % (pre, url, url)
+    def _format_italic(self, line):
+        return self._italic.sub('\\1<i>\\3</i>', line) if '_' in line else line
 
 
-class _Table:
-    _is_line = re.compile('^\s*\| (.* |)\|\s*$')
+class _TableFormatter(object):
+    _is_table_line = re.compile('^\s*\| (.* |)\|\s*$')
     _line_splitter = re.compile(' \|(?= )')
 
     def __init__(self):
         self._rows = []
+        self._line_formatter = _LineFormatter()
 
     def is_table_row(self, row):
-        return self._is_line.match(row) is not None
+        return bool(self._is_table_line.match(row))
+
+    def is_started(self):
+        return bool(self._rows)
 
     def add_row(self, text):
         text = text.strip()[1:-1]   # remove outer whitespace and pipes
@@ -156,20 +189,18 @@ class _Table:
         self._rows.append(cells)
 
     def end(self):
-        ret = self._format(self._rows)
+        ret = self._format_table(self._rows)
         self._rows = []
         return ret
 
-    def is_started(self):
-        return bool(self._rows)
-
-    def _format(self, rows):
+    def _format_table(self, rows):
         maxlen = max(len(row) for row in rows)
         table = ['<table border="1" class="doc">']
         for row in rows:
             row += [''] * (maxlen - len(row))  # fix ragged tables
             table.append('<tr>')
-            table.extend(['<td>%s</td>' % _format_line(cell) for cell in row])
+            table.extend(['<td>%s</td>' % self._line_formatter.format(cell)
+                          for cell in row])
             table.append('</tr>')
         table.append('</table>\n')
         return '\n'.join(table)
