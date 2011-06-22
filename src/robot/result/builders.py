@@ -165,8 +165,9 @@ class HTMLFileWriter(object):
         return line.startswith('<script type="text/javascript" src=')
 
     def _write_output_js(self):
+        separator = '</script>\n<script type="text/javascript">\n'
         self._write_tag('script', 'type="text/javascript"',
-                        lambda: self._output.write_to(self._outfile))
+                        lambda: self._output.write_to(self._outfile, separator))
 
     def _inline_js_file(self, line):
         self._write_tag('script', 'type="text/javascript"',

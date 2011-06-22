@@ -38,8 +38,12 @@ class DataModel(object):
     def set_settings(self, settings):
         self._settings = settings
 
-    def write_to(self, output, mapping=None):
-        self._dump_json('window.output = ', self._robot_data, output)
+    def write_to(self, output, separator=''):
+        output.write('window.output = {};\n')
+        output.write(separator)
+        for key, value in self._robot_data.items():
+            self._dump_json('window.output["%s"] = ' % key, value, output)
+            output.write(separator)
         self._dump_json('window.settings = ', self._settings, output)
 
     def _dump_json(self, name, data, output):
