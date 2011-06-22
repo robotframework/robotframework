@@ -14,6 +14,7 @@
 
 import zlib
 import base64
+from operator import itemgetter
 
 from robot import utils
 
@@ -51,11 +52,11 @@ class _Handler(object):
     def end_element(self, text):
         return self._data_from_children
 
-    def _get_ids(self, array):
-        return [self._context.get_id(value) for value in array]
+    def _get_id(self, item):
+        return self._context.get_id(item)
 
-    def _html_format(self, text):
-        return utils.html_format(text)
+    def _get_ids(self, items):
+        return [self._context.get_id(i) for i in items]
 
 
 class RootHandler(_Handler):
@@ -115,7 +116,7 @@ class _TestHandler(_Handler):
     def end_element(self, text):
         result = self._get_ids(['test', self._name, self._timeout, self._critical]) + self._data_from_children
         # TODO: refactor
-        self._context.add_test(self._critical == 'Y', result[-1][0] == self._context.get_id('P'))
+        self._context.add_test(self._critical == 'Y', result[-1][0] == self._get_id('P'))
         self._context.end_test()
         return result
 
@@ -131,7 +132,7 @@ class _KeywordHandler(_Handler):
         self._timeout = attrs.get('timeout')
 
     def end_element(self, text):
-        if self._type == 'teardown' and self._data_from_children[-1][0] == self._context.get_id('F'):
+        if self._type == 'teardown' and self._data_from_children[-1][0] == self._get_id('F'):
             self._context.teardown_failed()
         self._context.end_keyword()
         return self._get_ids([self._type, self._name, self._timeout]) + self._data_from_children
@@ -182,7 +183,7 @@ class _StatusHandler(_Handler):
                   self._starttime,
                   self._elapsed]
         if text:
-            result += [text]
+            result.append(text)
         return self._get_ids(result)
 
 
@@ -195,19 +196,19 @@ class _ArgumentHandler(_Handler):
 class _ArgumentsHandler(_Handler):
 
     def end_element(self, text):
-        return self._context.get_id(', '.join(self._data_from_children))
+        return self._get_id(', '.join(self._data_from_children))
 
 
 class _TextHandler(_Handler):
 
     def end_element(self, text):
-        return self._context.get_id(text)
+        return self._get_id(text)
 
 
 class _HtmlTextHandler(_Handler):
 
     def end_element(self, text):
-        return self._context.get_id(self._html_format(text))
+        return self._get_id(utils.html_format(text))
 
 
 class _MetadataHandler(_Handler):
@@ -230,7 +231,7 @@ class _MetadataItemHandler(_Handler):
         self._name = attrs.get('name')
 
     def end_element(self, text):
-        return self._get_ids([self._name, self._html_format(text)])
+        return self._get_ids([self._name, utils.html_format(text)])
 
 
 class _MsgHandler(_Handler):
@@ -243,22 +244,17 @@ class _MsgHandler(_Handler):
         self._is_linkable = attrs.get("linkable") == "yes"
 
     def end_element(self, text):
-        self._add_text(text)
+        self._msg.append(text if self._is_html else utils.html_escape(text))
         self._handle_warning_linking()
         return self._get_ids(self._msg)
 
     def _handle_warning_linking(self):
         # TODO: should perhaps use the id version of this list for indexing?
         if self._is_linkable:
-            self._msg += [self._context.link_to(self._msg)]
+            self._msg.append(self._context.link_to(self._msg))
         elif self._msg[1] == 'W':
             self._context.create_link_to_current_location(self._msg)
 
-    def _add_text(self, text):
-        if self._is_html:
-            self._msg += [text]
-        else:
-            self._msg += [utils.html_escape(text)]
 
 class Context(object):
 
@@ -316,25 +312,25 @@ class Context(object):
         return millis - self.basemillis
 
     def start_suite(self, name):
-        self._current_place += [('suite', name)]
-        self._kw_index += [0]
+        self._current_place.append(('suite', name))
+        self._kw_index.append(0)
 
     def end_suite(self):
         self._current_place.pop()
         self._kw_index.pop()
 
     def start_test(self, name):
-        self._current_place += [('test', name)]
-        self._kw_index += [0]
+        self._current_place.append(('test', name))
+        self._kw_index.append(0)
 
     def end_test(self):
         self._current_place.pop()
         self._kw_index.pop()
 
     def start_keyword(self):
-        self._current_place += [('keyword', self._kw_index[-1])]
+        self._current_place.append(('keyword', self._kw_index[-1]))
         self._kw_index[-1] += 1
-        self._kw_index += [0]
+        self._kw_index.append(0)
 
     def end_keyword(self):
         self._current_place.pop()
@@ -368,7 +364,7 @@ class Stats(object):
         self._children = []
 
     def new_child(self):
-        self._children += [Stats(self)]
+        self._children.append(Stats(self))
         return self._children[-1]
 
     def add_test(self, critical, passed):
@@ -406,12 +402,10 @@ class IntegerCache(object):
         return self.integers[integer]
 
     def dump(self):
-        l = range(len(self.integers))
-        for k, v in self.integers.items():
-            l[v] = k
-        return l
+        # TODO: Could we yield or return an iterator?
+        return [item[0] for item in sorted(self.integers.iteritems(),
+                                           key=itemgetter(1))]
 
-ZERO_INDEX = 0
 
 class TextCache(object):
     # TODO: Tune compressing thresholds
@@ -419,12 +413,12 @@ class TextCache(object):
     _use_compressed_threshold = 1.1
 
     def __init__(self):
-        self.texts = {}
+        self.texts = {'*': 0}
         self.index = 1
 
     def add(self, text):
         if not text:
-            return ZERO_INDEX
+            return 0
         text = self._encode(text)
         if text not in self.texts:
             self.texts[text] = self.index
@@ -447,8 +441,8 @@ class TextCache(object):
         return '*'+text
 
     def dump(self):
-        l = range(len(self.texts)+1)
-        l[0] = '*'
-        for k, v in self.texts.items():
-            l[v] = k
-        return l
+        # TODO: Could we yield or return an iterator?
+        # TODO: Duplicate with IntegerCache.dump
+        return [item[0] for item in sorted(self.texts.iteritems(),
+                                           key=itemgetter(1))]
+
