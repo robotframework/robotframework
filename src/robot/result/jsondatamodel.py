@@ -24,7 +24,6 @@ class DataModel(object):
         self._robot_data = robot_data
         self._settings = None
         self._set_generated(time.localtime())
-        self._index_remap = {}
 
     def _set_generated(self, timetuple):
         genMillis = long(time.mktime(timetuple) * 1000) -\
@@ -40,13 +39,12 @@ class DataModel(object):
         self._settings = settings
 
     def write_to(self, output, mapping=None):
-        self._dump_json('window.output = ', self._robot_data, output,
-                        self._index_remap)
+        self._dump_json('window.output = ', self._robot_data, output)
         self._dump_json('window.settings = ', self._settings, output)
 
-    def _dump_json(self, name, data, output, mapping=None):
+    def _dump_json(self, name, data, output):
         output.write(name)
-        json.json_dump(data, output, mapping)
+        json.json_dump(data, output)
         output.write(';\n')
 
     def remove_keywords(self):
@@ -68,22 +66,36 @@ class DataModel(object):
 
     def _prune_unused_indices(self):
         used = self._collect_used_indices(self._robot_data['suite'], set())
+        remap = {}
         self._robot_data['strings'] = \
-            list(self._prune(self._robot_data['strings'], used))
+            list(self._prune(self._robot_data['strings'], used, remap))
         self._robot_data['integers'] = \
-            list(self._prune(self._robot_data['integers'], used,
+            list(self._prune(self._robot_data['integers'], used, remap,
                              map_index=lambda index: -1 - index,
                              offset_increment=-1))
+        self._remap_indices(self._robot_data['suite'], remap)
 
-    def _prune(self, data, used, map_index=None, offset_increment=1):
+    def _prune(self, data, used, index_remap, map_index=None, offset_increment=1):
         offset = 0
         for index, text in enumerate(data):
             index = map_index(index) if map_index else index
             if index in used:
-                self._index_remap[index] = index - offset
+                index_remap[index] = index - offset
                 yield text
             else:
                 offset += offset_increment
+
+    def _remap_indices(self, data, remap):
+        for i, item in enumerate(data):
+            if isinstance(item, (int, long)):
+                data[i] = remap[item]
+            elif isinstance(item, list):
+                self._remap_indices(item, remap)
+            elif isinstance(item, dict):
+                new_dict = {}
+                for k,v in item.items():
+                    new_dict[remap[k]] = remap[v]
+                data[i] = new_dict
 
     def _collect_used_indices(self, data, result):
         for item in data:

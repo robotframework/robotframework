@@ -123,8 +123,7 @@ class TestJsSerializer(unittest.TestCase):
 
     def assert_model_does_not_contain(self, data_model, items):
         suite = self._reverse_from_ids(data_model,
-                                       data_model._robot_data['suite'],
-                                       data_model._index_remap)
+                                       data_model._robot_data['suite'])
         self._check_does_not_contain(suite, ['*'+i for i in items])
 
     def _check_does_not_contain(self, suite, items):
@@ -137,19 +136,17 @@ class TestJsSerializer(unittest.TestCase):
         reversed = self._reverse_from_ids(data_model, data_model._robot_data['suite'])
         assert_equals(reversed, plain_suite)
 
-    def _reverse_from_ids(self, data, item, remap={}):
+    def _reverse_from_ids(self, data, item):
         if item is None:
             return None
         if isinstance(item, (int, long)):
-            if item in remap:
-                item = remap[item]
             return self._reverse_id(data, item)
         recurse = self._reverse_from_ids
         if isinstance(item, list):
-            return [recurse(data, i, remap) for i in item]
+            return [recurse(data, i) for i in item]
         if isinstance(item, dict):
-            return dict((recurse(data, k, remap),
-                         recurse(data, item[k], remap)) for k in item)
+            return dict((recurse(data, k),
+                         recurse(data, item[k])) for k in item)
         raise AssertionError('Unexpected item %r' % item)
 
     def _reverse_id(self, data_model, id):
@@ -367,7 +364,7 @@ class TestJsSerializer(unittest.TestCase):
         mapped2 = object()
         json_dump([mapped1, [mapped2, {mapped2:mapped1}]], buffer,
                   mapping={mapped1:'1', mapped2:'a'})
-        assert_equals('["1",["a",{"a":"1"}]]', buffer.getvalue())
+        assert_equals('[1,[a,{a:1}]]', buffer.getvalue())
 
     def _get_data_model(self, xml_string):
         sax.parseString('<robot generator="test">%s<statistics/><errors/></robot>' % xml_string, self._handler)

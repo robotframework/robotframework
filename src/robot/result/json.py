@@ -55,7 +55,7 @@ def json_dump(data, output, mapping=None):
                 output.write(',')
         output.write(']')
     elif mapping and data in mapping:
-        json_dump(mapping[data], output)
+        output.write(mapping[data])
     elif isinstance(data, (int, long)):
         output.write(str(data))
     elif isinstance(data, basestring):
