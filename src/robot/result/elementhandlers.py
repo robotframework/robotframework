@@ -215,10 +215,10 @@ class _MetadataHandler(_Handler):
 
     def __init__(self, context, attrs):
         _Handler.__init__(self, context)
-        self._metadata = {}
+        self._metadata = []
 
     def add_child_data(self, data):
-        self._metadata[data[0]] = data[1]
+        self._metadata.extend(data)
 
     def end_element(self, text):
         return self._metadata

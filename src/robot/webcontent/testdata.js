@@ -142,8 +142,8 @@ window.testdata = function () {
 
     function parseMetadata(data) {
         var metadata = {};
-        for (var key in data) {
-            metadata[get(key)] = get(data[key]);
+        for (var i=0; i<data.length; i+=2) {
+            metadata[get(data[i])] = get(data[i+1]);
         }
         return metadata;
     }
