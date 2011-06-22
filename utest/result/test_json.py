@@ -49,7 +49,7 @@ class JsonTestCase(unittest.TestCase):
         mapped1 = object()
         mapped2 = object()
         json_dump([mapped1, [mapped2, {mapped2:mapped1}]], buffer,
-                  mapping={mapped1:'1', mapped2:'a'})
+                  mappings={mapped1:'1', mapped2:'a'})
         assert_equals('[1,[a,{a:1}]]', buffer.getvalue())
 
 

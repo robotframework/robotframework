@@ -35,27 +35,27 @@ def encode_basestring(string):
     string = string.replace('\t', '\\t')
     return '"%s"' % ''.join(get_matching_char(c) for c in string)
 
-def json_dump(data, output, mapping=None):
+def json_dump(data, output, mappings=None):
     if data is None:
         output.write('null')
     elif isinstance(data, dict):
         output.write('{')
         for index, key in enumerate(data):
-            json_dump(key, output, mapping)
+            json_dump(key, output, mappings)
             output.write(':')
-            json_dump(data[key], output, mapping)
+            json_dump(data[key], output, mappings)
             if index < len(data)-1:
                 output.write(',')
         output.write('}')
     elif isinstance(data, (list, tuple)):
         output.write('[')
         for index, item in enumerate(data):
-            json_dump(item, output, mapping)
+            json_dump(item, output, mappings)
             if index < len(data)-1:
                 output.write(',')
         output.write(']')
-    elif mapping and data in mapping:
-        output.write(mapping[data])
+    elif mappings and data in mappings:
+        output.write(mappings[data])
     elif isinstance(data, (int, long)):
         output.write(str(data))
     elif isinstance(data, basestring):
