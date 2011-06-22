@@ -18,7 +18,7 @@ Simple
     Log  do nothing
 
 Log HTML
-    Log   <blink><b><font face="comic sans ms" size="42" color="red">CAN HAZ HMTL?!?!??!!?</font></b></blink>  HTML
+    Log   <blink><b><font face="comic sans ms" size="42" color="red">CAN HAZ HMTL & NO CSS?!?!??!!?</font></b></blink>  HTML
     Log   escape < &lt; <b>no bold</b>
     Fail  escape < &lt; <b>no bold</b>
 
