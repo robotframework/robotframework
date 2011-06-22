@@ -35,6 +35,7 @@
 <script type="text/javascript">
 removeJavaScriptDisabledWarning();
 $(document).ready(function () {
+    window.prevLocationHash = '';
     var topsuite = window.testdata.suite();
     setBackground(topsuite);
     initLayout(topsuite.name, 'Report');
@@ -68,6 +69,8 @@ function addDetails() {
 }
 
 function showDetailsByHash() {
+    if (window.location.hash == window.prevLocationHash) return;
+    window.prevLocationHash = window.location.hash;
     var hashParts = decodeURI(window.location.hash.substring(1)).split('_');
     var key = hashParts.shift();
     var arg = hashParts.join('_');
