@@ -264,10 +264,10 @@ function popUpTo(list, upTo) {
       <td><a class="summary_pass" href="#total_Critical Tests" onClick="totalDetailSelected('Critical Tests')">All critical tests passed</a></td>
       {{/if}}
     </tr>
-    {{if doc}}
+    {{if doc()}}
     <tr>
       <th>Documentation:</th>
-      <td>{{html doc}}</td>
+      <td>{{html doc()}}</td>
     </tr>
     {{/if}}
     {{each metadata}}
@@ -434,10 +434,10 @@ function popUpTo(list, upTo) {
     <td><a href="${$item.logURL}#suite_${fullName}" title="${fullName}">${$item.logURL}#suite_${fullName} </a></td>
   </tr>
   {{/if}}
-  {{if doc}}
+  {{if doc()}}
   <tr>
     <th>Documentation:</th>
-    <td>{{html doc}}</td>
+    <td>{{html doc()}}</td>
   </tr>
   {{/if}}
   {{each metadata}}
@@ -450,10 +450,10 @@ function popUpTo(list, upTo) {
     <th>Status:</th>
     <td>{{tmpl($data) 'suiteStatusMessageTemplate'}}</td>
   </tr>
-  {{if message}}
+  {{if message()}}
   <tr>
     <th>Message:</th>
-    <td>${message}</td>
+    <td>${message()}</td>
   </tr>
   {{/if}}
   <tr>
@@ -487,11 +487,11 @@ function popUpTo(list, upTo) {
     {{else}}
     <td class="col_name"><span class="parent_name">${formatParentName}</span>${name}</td>
     {{/if}}
-    <td class="col_doc">{{html doc}}</td>
+    <td class="col_doc">{{html doc()}}</td>
     <td class="col_tags">${tags.join(', ')}</td>
     <td class="col_crit">{{if isCritical}}yes{{else}}no{{/if}}</td>
     <td class="col_status ${status.toLowerCase()}">${status}</td>
-    <td class="col_msg">${message}</td>
+    <td class="col_msg">${message()}</td>
     <td class="col_times">${times.startTime}<br />${times.elapsedTime}</td>
   </tr>
 </script>
