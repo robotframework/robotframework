@@ -269,8 +269,8 @@ function popUpTo(list, upTo) {
     {{/if}}
     {{each metadata}}
     <tr>
-      <th>${$index}:</th>
-      <td>{{html $value}}</td>
+      <th>${$value[0]}:</th>
+      <td>{{html $value[1]}}</td>
     </tr>
     {{/each}}
     {{if times.startTime != 'N/A'}}
@@ -438,7 +438,10 @@ function popUpTo(list, upTo) {
   </tr>
   {{/if}}
   {{each metadata}}
-  <tr><th>${$index}:</th><td>{{html $value}}</td></tr>
+  <tr>
+    <th>${$value[0]}:</th>
+    <td>{{html $value[1]}}</td>
+  </tr>
   {{/each}}
   <tr>
     <th>Status:</th>

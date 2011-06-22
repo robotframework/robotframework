@@ -178,8 +178,8 @@ function addTestExecutionLog(main) {
             {{/if}}
             {{each metadata}}
             <tr>
-              <th>${$index}:</th>
-              <td>{{html $value}}</td>
+              <th>${$value[0]}:</th>
+              <td>{{html $value[1]}}</td>
             </tr>
             {{/each}}
             <!-- TODO: Link (href) to source should be relative -->
