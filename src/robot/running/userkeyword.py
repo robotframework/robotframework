@@ -197,8 +197,10 @@ class UserKeywordHandler(object):
 
 
 class EmbeddedArgsTemplate(UserKeywordHandler):
-    _regexp_group = re.compile(r'(?<!\\)\(')
-    _regexp_extension = re.compile(r'(?<!\\)\(\?')
+    _regexp_extension = re.compile(r'(?<!\\)\(\?.+\)')
+    _regexp_group_start = re.compile(r'(?<!\\)\((.*?)\)')
+    _regexp_group_escape = '(?:\\1)'
+    _default_pattern = '.*?'
 
     def __init__(self, keyword, libname):
         if keyword.args.value:
@@ -211,17 +213,17 @@ class EmbeddedArgsTemplate(UserKeywordHandler):
 
     def _read_embedded_args_and_regexp(self, string):
         args = []
-        full_regexp = ['^']
+        full_pattern = ['^']
         while True:
             before, variable, rest = self._split_from_variable(string)
             if before is None:
                 break
-            variable, regexp = self._get_regexp(variable)
+            variable, pattern = self._get_regexp_pattern_from(variable)
             args.append('${%s}' % variable)
-            full_regexp.extend([re.escape(before), '(%s)' % regexp])
+            full_pattern.extend([re.escape(before), '(%s)' % pattern])
             string = rest
-        full_regexp.extend([re.escape(rest), '$'])
-        return args, self._compile_regexp(''.join(full_regexp))
+        full_pattern.extend([re.escape(rest), '$'])
+        return args, self._compile_regexp(full_pattern)
 
     def _split_from_variable(self, string):
         var = VariableSplitter(string, identifiers=['$'],
@@ -230,18 +232,24 @@ class EmbeddedArgsTemplate(UserKeywordHandler):
             return None, None, string
         return string[:var.start], var.base, string[var.end:]
 
-    def _get_regexp(self, variable):
+    def _get_regexp_pattern_from(self, variable):
         if ':' not in variable:
-            return variable, '.*?'
-        variable, regexp = variable.split(':', 1)
-        if self._regexp_extension.search(regexp):
+            return variable, self._default_pattern
+        variable, pattern = variable.split(':', 1)
+        self._regexp_extensions_are_not_allowed_in(pattern)
+        return variable, self._make_groups_non_capturing_in(pattern)
+
+    def _regexp_extensions_are_not_allowed_in(self, pattern):
+        if self._regexp_extension.search(pattern):
             raise DataError('Regexp extensions are not allowed in embedded '
                             'arguments.')
-        return variable, self._regexp_group.sub('(?:', regexp)
+
+    def _make_groups_non_capturing_in(self, pattern):
+        return self._regexp_group_start.sub(self._regexp_group_escape, pattern)
 
     def _compile_regexp(self, pattern):
         try:
-            return re.compile(pattern, re.IGNORECASE)
+            return re.compile(''.join(pattern), re.IGNORECASE)
         except:
             raise DataError("Compiling embedded arguments regexp failed: %s"
                             % utils.get_error_message())
