@@ -19,7 +19,7 @@ from encoding import decode_output, encode_output, decode_from_file_system
 from error import (get_error_message, get_error_details, ErrorDetails,
                    RERAISED_EXCEPTIONS)
 from escaping import escape, unescape
-from htmlutils import html_escape, html_attr_escape
+from htmlutils import html_format, html_escape, html_attr_escape
 from htmlwriter import HtmlWriter
 from importing import simple_import, import_
 from match import eq, eq_any, matches, matches_any

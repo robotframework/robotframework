@@ -55,7 +55,7 @@ class _Handler(object):
         return [self._context.get_id(value) for value in array]
 
     def _html_format(self, text):
-        return utils.html_escape(text, formatting=True)
+        return utils.html_format(text)
 
 
 class RootHandler(_Handler):
@@ -153,8 +153,7 @@ class _StatItemHandler(_Handler):
         self._attrs['pass'] = int(self._attrs['pass'])
         self._attrs['fail'] = int(self._attrs['fail'])
         if 'doc' in self._attrs:
-            self._attrs['doc'] = utils.html_escape(self._attrs['doc'],
-                                                   formatting=True)
+            self._attrs['doc'] = utils.html_format(self._attrs['doc'])
         # TODO: Should we only dump attrs that have value?
         # Tag stats have many attrs that are normally empty
 
@@ -259,7 +258,7 @@ class _MsgHandler(_Handler):
         if self._is_html:
             self._msg += [text]
         else:
-            self._msg += [utils.html_escape(text, replace_whitespace=False)]
+            self._msg += [utils.html_escape(text)]
 
 class Context(object):
 
