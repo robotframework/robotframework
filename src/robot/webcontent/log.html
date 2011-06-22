@@ -170,10 +170,10 @@ function addTestExecutionLog(main) {
               <th>Full Name:</th>
               <td>${fullName}</td>
             </tr>
-            {{if doc}}
+            {{if doc()}}
             <tr>
               <th>Documentation:</th>
-              <td>{{html doc}}</td>
+              <td>{{html doc()}}</td>
             </tr>
             {{/if}}
             {{each metadata}}
@@ -196,10 +196,10 @@ function addTestExecutionLog(main) {
               <th>Status:</th>
               <td>{{tmpl($data) 'suiteStatusMessageTemplate'}}</td>
             </tr>
-            {{if message}}
+            {{if message()}}
             <tr>
               <th>Message:</th>
-              <td>${message}</td>
+              <td>${message()}</td>
             </tr>
             {{/if}}
           </table>
@@ -236,10 +236,10 @@ function addTestExecutionLog(main) {
               <th>Full Name:</th>
               <td>${fullName}</td>
             </tr>
-            {{if doc}}
+            {{if doc()}}
             <tr>
               <th>Documentation:</th>
-              <td>{{html doc}}</td>
+              <td>{{html doc()}}</td>
             </tr>
             {{/if}}
             {{if tags.length}}
@@ -262,10 +262,10 @@ function addTestExecutionLog(main) {
               <th>Status:</th>
               <td><span class="${status.toLowerCase()}">${status}</span>{{if isCritical}} (critical){{/if}}</td>
             </tr>
-            {{if message}}
+            {{if message()}}
             <tr>
               <th>Message:</th>
-              <td>${message}</td>
+              <td>${message()}</td>
             </tr>
             {{/if}}
           </table>
@@ -296,10 +296,10 @@ function addTestExecutionLog(main) {
       <td>
         <div class="indent" id="${id}_children" style="display: none;">
           <table class="metadata" id="${id}_metadata">
-            {{if doc}}
+            {{if doc()}}
             <tr>
               <th>Documentation:</th>
-              <td>{{html doc}}</td>
+              <td>{{html doc()}}</td>
             </tr>
             {{/if}}
             <tr>

@@ -71,7 +71,11 @@ window.testdata = function () {
             type: KEYWORD_TYPE[get(element[0])],
             name: get(element[1]),
             args: get(element[4]),
-            doc: get(element[3]),
+            doc: function () {
+                var val = get(element[3]);
+                this.doc = function() {return val;}
+                return val;
+            },
             status: parseStatus(last(element)),
             times: model.Times(times(last(element))),
             parent: parent,
@@ -100,11 +104,19 @@ window.testdata = function () {
         var test = model.Test({
             parent: suite,
             name: get(element[1]),
-            doc: get(element[4]),
+            doc: function () {
+                var val = get(element[4]);
+                this.doc = function() {return val;}
+                return val;
+            },
             timeout: get(element[2]),
             isCritical: (get(element[3]) == "Y"),
             status: parseStatus(statusElement, suite.hasTeardownFailure()),
-            message: createMessage(statusElement, suite.hasTeardownFailure()),
+            message:  function () {
+                var val = createMessage(statusElement, suite.hasTeardownFailure());
+                this.message = function() {return val;}
+                return val;
+            },
             times: model.Times(times(statusElement)),
             tags: tags(secondLast(element))
         });
@@ -127,10 +139,18 @@ window.testdata = function () {
             parent: parent,
             name: get(element[2]),
             source: get(element[1]),
-            doc: get(element[3]),
+            doc: function () {
+                var val = get(element[3]);
+                this.doc = function() {return val;}
+                return val;
+            },
             status: parseStatus(statusElement, parent && parent.hasTeardownFailure()),
             parentSuiteTeardownFailed: parent && parent.hasTeardownFailure(),
-            message: createMessage(statusElement, parent && parent.hasTeardownFailure()),
+            message: function () {
+                var val = createMessage(statusElement, parent && parent.hasTeardownFailure());
+                this.message = function() {return val;}
+                return val;
+            },
             times: model.Times(times(statusElement)),
             statistics: suiteStats(last(element)),
             metadata: parseMetadata(element[4])
