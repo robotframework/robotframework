@@ -140,7 +140,7 @@ table.statistics th {
     float: left;
     height: 100%;
 }
-/* Tables in documentation */
+/* HTML in users' suite documentation etc. */
 table.doc {
     border: 1px solid gray;
     background: transparent;
@@ -152,4 +152,7 @@ table.doc td {
     border: 1px solid gray;
     padding: 0.1em 0.3em;
     height: 1.2em;
+}
+hr {
+    margin-right: 10em;
 }

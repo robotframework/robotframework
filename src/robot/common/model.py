@@ -30,9 +30,10 @@ class _TestAndSuiteHelper:
         self.status = 'NOT_RUN'
         self.message = ''
 
+    # TODO: Is this property and other html stuff here used anymore?
     @property
     def htmldoc(self):
-        return utils.html_escape(self.doc, formatting=True)
+        return utils.html_format(self.doc)
 
     # TODO: Replace with simple @property in 2.6.
     # Cannot do that now because Mabot assigns longname.
@@ -104,9 +105,9 @@ class BaseTestSuite(_TestAndSuiteHelper):
 
     def get_metadata(self, html=False):
         names = sorted(self.metadata.keys())
-        values = [ self.metadata[n] for n in names ]
+        values = [self.metadata[n] for n in names]
         if html:
-            values = [ utils.html_escape(v, formatting=True) for v in values ]
+            values = [utils.html_format(v) for v in values]
         return zip(names, values)
 
     def get_test_count(self):
