@@ -30,8 +30,9 @@ window.model = function () {
         };
         suite.searchTests = function (predicate) {
             var tests = [];
-            for (var i = 0; i < this.numberOfSuites; i++)
-                tests = tests.concat(this.suite(i).searchTests(predicate));
+            var subSuites = this.suites();
+            for (var i in subSuites)
+                tests = tests.concat(subSuites[i].searchTests(predicate));
             return tests.concat(util.filter(this.tests(), predicate));
         };
         suite.searchTestsByTag = function (tag) {
@@ -96,11 +97,10 @@ window.model = function () {
     }
 
     function suiteTeardownFailed(suite) {
-        if (suite.numberOfKeywords) {
-            var kw = suite.keyword(suite.numberOfKeywords - 1);
-            if (kw.type == KEYWORD_TYPE.teardown)
-                return kw.status == STATUS.fail;
-        }
+        var keywords = suite.keywords();
+        var maybeTeardown = keywords[keywords.length - 1];
+        if (maybeTeardown && maybeTeardown.type == KEYWORD_TYPE.teardown)
+            return maybeTeardown.status == STATUS.fail;
         return false;
     }
 
@@ -225,30 +225,17 @@ window.model = function () {
     }
 
     function populateIterable(obj, name, populator) {
-        obj["numberOf" + name + "s"] = populator.numberOfItems;
         var nameInLowerCase = name.toLowerCase();
-        obj[nameInLowerCase] = createGetFunction(populator.numberOfItems, populator.creator);
-        obj[nameInLowerCase + "s"] = createGetAllFunction(populator.numberOfItems, obj[nameInLowerCase]);
+        obj[nameInLowerCase + "s"] = createGetAllFunction(populator.numberOfItems, populator.creator);
     }
 
-    function createGetFunction(numberOfElements, creator) {
-        var cache = new Array();
-        return function (index) {
-            if (numberOfElements <= index)
-                return undefined;
-            if (!cache[index])
-                cache[index] = creator(index);
-            return cache[index];
-        };
-    }
-
-    function createGetAllFunction(numberOfElements, getter) {
+    function createGetAllFunction(numberOfElements, creator) {
         var cached = undefined;
         return function () {
             if (cached === undefined) {
                 cached = [];
                 for (var i = 0; i < numberOfElements; i++) {
-                    cached.push(getter(i));
+                    cached.push(creator(i));
                 }
             }
             return cached;

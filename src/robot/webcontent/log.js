@@ -11,8 +11,8 @@ function openKeyword(kwId) {
 }
 
 function addElements(elems, templateName, target){
-    for (var i = 0; elems(i); i++) {
-        $.tmpl(templateName, elems(i)).appendTo(target);
+    for (var i in elems) {
+        $.tmpl(templateName, elems[i]).appendTo(target);
     }
 }
 
@@ -22,7 +22,7 @@ function openElement(elementId, childrenNames){
     if (!childElement.hasClass("populated")) {
         var element = window.testdata.find(elementId);
         $.map(childrenNames, function (childName) {
-            addElements(element[childName], childName + 'Template', childElement);
+            addElements(element[childName + 's'](), childName + 'Template', childElement);
         });
         childElement.addClass("populated");
     }

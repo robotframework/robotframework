@@ -242,8 +242,9 @@ window.testdata = function () {
 
     function keywordPathTo(fullName, current, result) {
         if (fullName == "") return result;
-        for (var i = 0; i < current.numberOfKeywords; i++) {
-            var kw = current.keyword(i);
+        var keywords = current.keywords();
+        for (var i = 0; i < keywords.length; i++) {
+            var kw = keywords[i];
             if (fullName.indexOf(kw.path + ".") == 0) {
                 result.push(kw.id);
                 if (fullName == kw.path + ".")
@@ -251,15 +252,17 @@ window.testdata = function () {
                 return keywordPathTo(fullName, kw, result);
             }
         }
-        for (var i = 0; i < current.numberOfTests; i++) {
-            var test = current.test(i);
+        var tests = current.tests();
+        for (var i = 0; i < tests.length; i++) {
+            var test = tests[i];
             if (fullName.indexOf(test.fullName + ".") == 0) {
                 result.push(test.id);
                 return keywordPathTo(fullName, test, result);
             }
         }
-        for (var i = 0; i < current.numberOfSuites; i++) {
-            var suite = current.suite(i);
+        var suites = current.suites();
+        for (var i = 0; i < suites.length; i++) {
+            var suite = suites[i];
             if (fullName.indexOf(suite.fullName + ".") == 0) {
                 result.push(suite.id);
                 return keywordPathTo(fullName, suite, result);
@@ -268,15 +271,17 @@ window.testdata = function () {
     }
 
     function testPathTo(fullName, currentSuite, result) {
-        for (var i = 0; i < currentSuite.numberOfTests; i++) {
-            var test = currentSuite.test(i);
+        var tests = currentSuite.tests();
+        for (var i = 0; i < tests.length; i++) {
+            var test = tests[i];
             if (fullName == test.fullName) {
                 result.push(test.id);
                 return result;
             }
         }
-        for (var i = 0; i < currentSuite.numberOfSuites; i++) {
-            var suite = currentSuite.suite(i);
+        var suites = currentSuite.suites();
+        for (var i = 0; i < suites.length; i++) {
+            var suite = suites[i];
             if (fullName.indexOf(suite.fullName + ".") == 0) {
                 result.push(suite.id);
                 return testPathTo(fullName, suite, result);
@@ -285,8 +290,9 @@ window.testdata = function () {
     }
 
     function suitePathTo(fullName, currentSuite, result) {
-        for (var i = 0; i < currentSuite.numberOfSuites; i++) {
-            var suite = currentSuite.suite(i);
+        var suites = currentSuite.suites();
+        for (var i = 0; suites.length; i++) {
+            var suite = suites[i];
             if (fullName == suite.fullName) {
                 result.push(suite.id);
                 return result;

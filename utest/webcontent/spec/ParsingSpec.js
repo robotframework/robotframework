@@ -106,6 +106,20 @@ function addString(strings, text) {
 }
 
 
+function subSuite(index, suite) {
+    if (!suite)
+        suite = window.testdata.suite();
+    return suite.suites()[index];
+}
+
+function firstTest(suite) {
+    return suite.tests()[0];
+}
+
+function nthKeyword(item, n) {
+    return item.keywords()[n];
+}
+
 describe("Handling Suite", function () {
 
     function getDate(offset) {
@@ -144,11 +158,11 @@ describe("Handling Suite", function () {
     });
 
     it("should parse test", function () {
-        var test = window.testdata.suite().test(0);
+        var test = firstTest(window.testdata.suite());
         expect(test.name).toEqual("Test");
         expect(test.status).toEqual("PASS");
         expect(test.fullName).toEqual("Suite.Test");
-        expect(test.doc()).toEqual("test doc");
+        expect(test.doc).toEqual("test doc");
         expect(test.tags).toEqual(["tag1", "tag2"]);
         expect(test.times).toBeDefined();
         expect(test.times.elapsedMillis).toEqual(2);
@@ -156,7 +170,7 @@ describe("Handling Suite", function () {
     });
 
     it("should parse keyword", function () {
-        var kw = window.testdata.suite().test(0).keyword(0);
+        var kw = nthKeyword(firstTest(window.testdata.suite()), 0);
         expect(kw.name).toEqual("lib.kw");
         expect(kw.status).toEqual("PASS");
         expect(kw.times).toBeDefined();
@@ -166,19 +180,19 @@ describe("Handling Suite", function () {
     });
 
     it("should parse for loop", function() {
-        var forloop = window.testdata.suite().test(0).keyword(1);
+        var forloop = nthKeyword(firstTest(window.testdata.suite()), 1);
         expect(forloop.name).toEqual("${i} IN RANGE [ 2 ]");
         expect(forloop.type).toEqual("FOR");
-        var foritem = forloop.keyword(0);
+        var foritem = nthKeyword(forloop, 0);
         expect(foritem.name).toEqual("${i} = 0");
         expect(foritem.type).toEqual("VAR");
-        foritem = forloop.keyword(1);
+        foritem = nthKeyword(forloop, 1);
         expect(foritem.name).toEqual("${i} = 1");
         expect(foritem.type).toEqual("VAR");
     });
 
     it("should parse message", function () {
-        var message = window.testdata.suite().test(0).keyword(0).message(0);
+        var message = nthKeyword(firstTest(window.testdata.suite()), 0).messages()[0];
         expect(message.text).toEqual("message");
     });
 
@@ -211,41 +225,40 @@ describe("Setups and teardowns", function () {
 
     it("should parse suite setup", function () {
     	var suite = window.testdata.suite();
-    	checkTypeNameArgs(suite.keyword(0), "SETUP", "Lib.Kw", "sets");
+    	checkTypeNameArgs(suite.keywords()[0], "SETUP", "Lib.Kw", "sets");
     });
 
     it("should parse suite teardown", function () {
     	var suite = window.testdata.suite();
-    	checkTypeNameArgs(suite.keyword(1), "TEARDOWN", "Lib.Kw", "tears");
+    	checkTypeNameArgs(suite.keywords()[1], "TEARDOWN", "Lib.Kw", "tears");
     });
 
     it("should give navigation uuid list for a suite teardown keyword", function (){
         var uuids = window.testdata.pathToKeyword("Suite.1");
         expect(uuids[0]).toEqual(window.testdata.suite().id);
-        expect(uuids[1]).toEqual(window.testdata.suite().keyword(1).id);
+        expect(uuids[1]).toEqual(nthKeyword(window.testdata.suite(), 1).id);
         expect(uuids.length).toEqual(2);
     });
 
     it("should parse test setup", function () {
-    	var test = window.testdata.suite().test(0);
-    	checkTypeNameArgs(test.keyword(0), "SETUP", "Lib.Kw", "sets");
+        checkTypeNameArgs(nthKeyword(firstTest(window.testdata.suite()), 0), "SETUP", "Lib.Kw", "sets");
     });
 
     it("should parse test teardown", function () {
-    	var test = window.testdata.suite().test(0);
-    	checkTypeNameArgs(test.keyword(2), "TEARDOWN", "Lib.Kw", "tears");
+    	var test = firstTest(window.testdata.suite());
+    	checkTypeNameArgs(nthKeyword(test, 2), "TEARDOWN", "Lib.Kw", "tears");
     });
 
     it("should give suite children in order", function () {
         var suite = window.testdata.suite();
         var children = suite.children();
-        expect(children[0]).toEqual(suite.keyword(0));
-        expect(children[1]).toEqual(suite.keyword(1));
-        expect(children[2]).toEqual(suite.test(0));
+        expect(children[0]).toEqual(nthKeyword(suite, 0));
+        expect(children[1]).toEqual(nthKeyword(suite, 1));
+        expect(children[2]).toEqual(firstTest(suite));
     });
 
     it("should give test children in order", function () {
-        var test = window.testdata.suite().test(0);
+        var test = firstTest(window.testdata.suite());
         var children = test.children();
         checkTypeNameArgs(children[0], "SETUP", "Lib.Kw", "sets");
         checkTypeNameArgs(children[1], "KEYWORD", "Lib.Kw", "sets");
@@ -288,7 +301,7 @@ describe("Handling messages", function (){
     }
 
     function kwMessage(kw) {
-        return window.testdata.suite().test(0).keyword(kw).message(0);
+        return nthKeyword(firstTest(window.testdata.suite()), kw).messages()[0];
     }
 
     it("should handle info level message", function () {
@@ -332,28 +345,28 @@ describe("Parent Suite Teardown Failure", function (){
     });
 
     it("should show test status as failed", function (){
-        var test = window.testdata.suite().suite(0).test(0);
+        var test = firstTest(window.testdata.suite().suites()[0]);
         expect(test.status).toEqual("FAIL");
     });
 
     it("should show suite status as failed", function (){
-        var suite = window.testdata.suite().suite(0);
+        var suite = window.testdata.suite().suites()[0];
         expect(suite.status).toEqual("FAIL");
     });
 
     it("should show test message 'Teardown of the parent suite failed.'", function (){
-        var test = window.testdata.suite().suite(0).test(0);
-        expect(test.message()).toEqual("Teardown of the parent suite failed.");
+        var test = firstTest(window.testdata.suite().suites()[0]);
+        expect(test.message).toEqual("Teardown of the parent suite failed.");
     });
 
     it("should show suite message 'Teardown of the parent suite failed.'", function (){
-        var suite = window.testdata.suite().suite(0);
-        expect(suite.message()).toEqual("Teardown of the parent suite failed.");
+        var suite = window.testdata.suite().suites()[0];
+        expect(suite.message).toEqual("Teardown of the parent suite failed.");
     });
 
     it("should show root suite message 'Suite teardown failed:\nAssertionError'", function (){
         var root = window.testdata.suite();
-        expect(root.message()).toEqual("Suite teardown failed:\nAssertionError");
+        expect(root.message).toEqual("Suite teardown failed:\nAssertionError");
     });
 
 });
@@ -371,8 +384,8 @@ describe("Parent Suite Teardown and Test failure", function(){
     });
 
     it("should show test message 'In test\n\nAlso teardown of the parent suite failed.'", function (){
-        var test = window.testdata.suite().test(0);
-        expect(test.message()).toEqual("In test\n\nAlso teardown of the parent suite failed.");
+        var test = firstTest(window.testdata.suite());
+        expect(test.message).toEqual("In test\n\nAlso teardown of the parent suite failed.");
     });
 })
 
@@ -390,8 +403,8 @@ describe("Test failure message", function (){
     });
 
     it("should show test failure message ''", function (){
-        var test = window.testdata.suite().test(0);
-        expect(test.message()).toEqual("FooBar!");
+        var test = firstTest(window.testdata.suite());
+        expect(test.message).toEqual("FooBar!");
     });
 });
 
@@ -411,7 +424,7 @@ describe("Iterating Keywords", function (){
     });
 
     function test(){
-        return window.testdata.suite().test(0);
+        return firstTest(window.testdata.suite());
     }
 
     function kw(index){
@@ -419,9 +432,9 @@ describe("Iterating Keywords", function (){
     }
 
     it("should give correct number of keywords", function () {
-        expect(test().numberOfKeywords).toEqual(4);
-        expect(test().keyword(0).numberOfKeywords).toEqual(1);
-        expect(test().keyword(0).keyword(0).numberOfKeywords).toEqual(0);
+        expect(test().keywords().length).toEqual(4);
+        expect(nthKeyword(test(), 0).keywords().length).toEqual(1);
+        expect(nthKeyword(nthKeyword(test(), 0), 0).keywords().length).toEqual(0);
     });
 
     it("should be possible to go through all the keywords in order", function () {
@@ -432,9 +445,9 @@ describe("Iterating Keywords", function (){
     });
 
     it("should give keyword children in order", function () {
-        var keyword = window.testdata.suite().test(0).keyword(0);
+        var keyword = nthKeyword(firstTest(window.testdata.suite()), 0);
         var children = keyword.children();
-        expect(children[0]).toEqual(keyword.keyword(0));
+        expect(children[0]).toEqual(nthKeyword(keyword, 0));
     });
 });
 
@@ -455,7 +468,7 @@ describe("Iterating Tests", function (){
     });
 
     it("should give correct number of tests", function (){
-        expect(window.testdata.suite().numberOfTests).toEqual(3);
+        expect(window.testdata.suite().tests().length).toEqual(3);
     });
 
     it("should be possible to go through all the tests in order", function () {
@@ -468,7 +481,7 @@ describe("Iterating Tests", function (){
 });
 
 
-describe("Iterating Suites", function (){
+describe("Iterating Suites", function () {
 
     beforeEach(function (){
         var suite =
@@ -491,20 +504,20 @@ describe("Iterating Suites", function (){
 
     it("should give correct number of suites", function (){
         var suite = window.testdata.suite();
-        expect(suite.numberOfSuites).toEqual(2);
-        expect(suite.suite(0).numberOfSuites).toEqual(1);
-        expect(suite.suite(1).suite(0).numberOfSuites).toEqual(0);
+        var subSuites = suite.suites();
+        expect(subSuites.length).toEqual(2);
+        expect(subSuites[0].suites().length).toEqual(1);
+        expect(subSuites[1].suites()[0].suites().length).toEqual(0);
     });
 
     it("should be possible to iterate suites", function (){
         var tests = 0;
-        var subsuites = window.testdata.suite().suites();
-        for(var i = 0; i < subsuites.length; i++){
-            var subsuite = subsuites[i];
-            for(var j = 0; j < subsuite.numberOfSuites; j++){
-                var testsuite = subsuite.suite(j);
-                tests += testsuite.numberOfTests;
-                expect(testsuite.numberOfTests).toEqual(1);
+        var subSuites = window.testdata.suite().suites();
+        for(var i = 0 in subSuites){
+            for(var j in subSuites[i].suites()){
+                var testsuite = subSuites[i].suites()[j];
+                tests += testsuite.tests().length;
+                expect(testsuite.tests().length).toEqual(1);
             }
         }
         expect(tests).toEqual(2);
@@ -513,18 +526,18 @@ describe("Iterating Suites", function (){
     it("should show correct full names", function (){
         var root = window.testdata.suite();
         expect(root.fullName).toEqual("Foo");
-        expect(root.suite(0).fullName).toEqual("Foo.Bar");
-        expect(root.suite(0).suite(0).fullName).toEqual("Foo.Bar.Testii");
-        expect(root.suite(1).suite(0).test(0).fullName).toEqual("Foo.Foo.Tostii.FOO FOO");
+        expect(root.suites()[0].fullName).toEqual("Foo.Bar");
+        expect(root.suites()[0].suites()[0].fullName).toEqual("Foo.Bar.Testii");
+        expect(root.suites()[1].suites()[0].tests()[0].fullName).toEqual("Foo.Foo.Tostii.FOO FOO");
     });
 
     it("should give navigation uuid list for a test", function (){
         var uuidList = window.testdata.pathToTest("Foo.Foo.Tostii.FOO FOO");
         var root = window.testdata.suite();
         expect(uuidList[0]).toEqual(root.id);
-        expect(uuidList[1]).toEqual(root.suite(1).id);
-        expect(uuidList[2]).toEqual(root.suite(1).suite(0).id);
-        expect(uuidList[3]).toEqual(root.suite(1).suite(0).test(0).id);
+        expect(uuidList[1]).toEqual(subSuite(1).id);
+        expect(uuidList[2]).toEqual(subSuite(1).suites()[0].id);
+        expect(uuidList[3]).toEqual(subSuite(1).suites()[0].tests()[0].id);
         expect(uuidList.length).toEqual(4);
     });
 
@@ -532,10 +545,10 @@ describe("Iterating Suites", function (){
         var uuidList = window.testdata.pathToKeyword("Foo.Foo.Tostii.FOO FOO.0");
         var root = window.testdata.suite();
         expect(uuidList[0]).toEqual(root.id);
-        expect(uuidList[1]).toEqual(root.suite(1).id);
-        expect(uuidList[2]).toEqual(root.suite(1).suite(0).id);
-        expect(uuidList[3]).toEqual(root.suite(1).suite(0).test(0).id);
-        expect(uuidList[4]).toEqual(root.suite(1).suite(0).test(0).keyword(0).id);
+        expect(uuidList[1]).toEqual(subSuite(1).id);
+        expect(uuidList[2]).toEqual(subSuite(1).suites()[0].id);
+        expect(uuidList[3]).toEqual(subSuite(1).suites()[0].tests()[0].id);
+        expect(uuidList[4]).toEqual(subSuite(1).suites()[0].tests()[0].keywords()[0].id);
         expect(uuidList.length).toEqual(5);
     });
 
@@ -543,8 +556,8 @@ describe("Iterating Suites", function (){
         var uuidList = window.testdata.pathToSuite("Foo.Bar.Testii");
         var root = window.testdata.suite();
         expect(uuidList[0]).toEqual(root.id);
-        expect(uuidList[1]).toEqual(root.suite(0).id);
-        expect(uuidList[2]).toEqual(root.suite(0).suite(0).id);
+        expect(uuidList[1]).toEqual(root.suites()[0].id);
+        expect(uuidList[2]).toEqual(root.suites()[0].suites()[0].id);
         expect(uuidList.length).toEqual(3);
     });
 
@@ -588,29 +601,28 @@ describe("Element ids", function (){
     });
 
     it("should give id for a test", function (){
-        var test = window.testdata.suite().suite(0).suite(0).test(0);
+        var test = subSuite(0, subSuite(0)).tests()[0];
         expect(window.testdata.find(test.id)).toEqual(test);
     });
 
     it("should give id for a subsuite", function (){
-        var subsuite = window.testdata.suite().suite(0);
+        var subsuite = subSuite(0);
         expect(window.testdata.find(subsuite.id)).toEqual(subsuite);
     });
 
     it("should give id for a keyword", function (){
-        var kw = window.testdata.suite().suite(1).suite(0).test(0).keyword(0);
+        var kw = subSuite(0, subSuite(0)).tests()[0].keywords()[0];
         expect(window.testdata.find(kw.id)).toEqual(kw);
     });
 
     it("should give id for a message", function (){
-        var msg = window.testdata.suite().suite(0).
-                  suite(0).test(0).keyword(0).message(0);
+        var msg = subSuite(0, subSuite(0)).tests()[0].keywords()[0].messages()[0];
         expect(window.testdata.find(msg.id)).toEqual(msg);
     });
 
     it("should find right elements with right ids", function (){
-        var suite = window.testdata.suite().suite(0);
-        var kw = window.testdata.suite().suite(1).suite(0).test(0).keyword(0);
+        var suite = subSuite(0);
+        var kw = subSuite(0, suite).tests()[0].keywords()[0];
         expect(kw.id).not.toEqual(suite.id);
         expect(window.testdata.find(kw.id)).toEqual(kw);
         expect(window.testdata.find(suite.id)).toEqual(suite);
@@ -639,14 +651,14 @@ describe("Elements are created only once", function (){
     });
 
     it("should create same test only once", function (){
-        var test1 = window.testdata.suite().test(2);
-        var test2 = window.testdata.suite().test(2);
+        var test1 = window.testdata.suite().tests()[2];
+        var test2 = window.testdata.suite().tests()[2];
         expect(test1).toEqual(test2);
     });
 
     it("should create same keyword only once", function (){
-        var kw1 = window.testdata.suite().test(0).keyword(0);
-        var kw2 = window.testdata.suite().test(0).keyword(0);
+        var kw1 = window.testdata.suite().tests()[0].keywords()[0];
+        var kw2 = window.testdata.suite().tests()[0].keywords()[0];
         expect(kw1).toEqual(kw2);
     });
 });
