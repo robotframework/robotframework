@@ -1,6 +1,11 @@
 *** Settings ***
 Documentation  *URL:*    http://robotframework.org\n
-...            _Image:_  http://code.google.com/p/robotframework/logo?ext.png
+...            _Image:_  http://code.google.com/p/robotframework/logo?ext.png\n
+...            ----------------------------\n
+...            | *My* | *Table* |\n
+...            | 1    | 2       |\n
+...            | foo  |\n
+
 Metadata       URL       http://robotframework.org
 Metadata       Image     http://code.google.com/p/robotframework/logo?ext.png
 Metadata       Formatting  *Bold* and _italics_
