@@ -13,5 +13,5 @@ a:link, a:visited {
     display: none;
 }
 #print_selector {
-    visibility: visible;
+    display: table-cell;
 }

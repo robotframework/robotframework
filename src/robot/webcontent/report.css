@@ -50,7 +50,7 @@ table.details #selector th, table.details #selector td {
     white-space: normal;
 }
 #print_selector {
-    visibility: hidden;
+    display: none;
 }
 /* Tabs - adapted from http://www.htmldog.com/articles/tabs */
 #detail_tabs {
