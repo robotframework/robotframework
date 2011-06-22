@@ -166,21 +166,41 @@ function addTestExecutionLog(main) {
       <td class="suite_children">
         <div class="indent" id="${id}_children" style="display: none;">
           <table class="metadata" id="${id}_metadata">
-            <tr><th>Full Name:</th><td>${fullName}</td></tr>
+            <tr>
+              <th>Full Name:</th>
+              <td>${fullName}</td>
+            </tr>
             {{if doc}}
-            <tr><th>Documentation:</th><td>{{html doc}}</td></tr>
+            <tr>
+              <th>Documentation:</th>
+              <td>{{html doc}}</td>
+            </tr>
             {{/if}}
             {{each metadata}}
-            <tr><th>${$index}:</th><td>{{html $value}}</td></tr>
+            <tr>
+              <th>${$index}:</th>
+              <td>{{html $value}}</td>
+            </tr>
             {{/each}}
             <!-- TODO: Link (href) to source should be relative -->
             {{if source}}
-            <tr><th>Source:</th><td><a href="${source}">${source}</a></td></tr>
+            <tr>
+              <th>Source:</th>
+              <td><a href="${source}">${source}</a></td>
+            </tr>
              {{/if}}
-            <tr><th>Start / End / Elapsed:</th><td>${times.startTime}  /  ${times.endTime}  /  ${times.elapsedTime}</td></tr>
-            <tr><th>Status:</th><td>{{tmpl($data) 'suiteStatusMessageTemplate'}}</td></tr>
+            <tr>
+              <th>Start / End / Elapsed:</th><td>${times.startTime}  /  ${times.endTime}  /  ${times.elapsedTime}</td>
+            </tr>
+            <tr>
+              <th>Status:</th>
+              <td>{{tmpl($data) 'suiteStatusMessageTemplate'}}</td>
+            </tr>
             {{if message}}
-            <tr><th>Message:</th><td>${message}</td></tr>
+            <tr>
+              <th>Message:</th>
+              <td>${message}</td>
+            </tr>
             {{/if}}
           </table>
         </div>
@@ -212,20 +232,41 @@ function addTestExecutionLog(main) {
       <td>
         <div class="indent" id="${id}_children" style="display: none;">
           <table class="metadata" id="${id}_metadata">
-            <tr><th>Full Name:</th><td>${fullName}</td></tr>
+            <tr>
+              <th>Full Name:</th>
+              <td>${fullName}</td>
+            </tr>
             {{if doc}}
-            <tr><th>Documentation:</th><td>{{html doc}}</td></tr>
+            <tr>
+              <th>Documentation:</th>
+              <td>{{html doc}}</td>
+            </tr>
             {{/if}}
             {{if tags.length}}
-            <tr><th>Tags:</th><td>${tags.join(', ')}</td></tr>
+            <tr>
+              <th>Tags:</th>
+              <td>${tags.join(', ')}</td>
+            </tr>
             {{/if}}
             {{if timeout}}
-            <tr><th>Timeout:</th><td>${timeout}</td></tr>
+            <tr>
+              <th>Timeout:</th>
+              <td>${timeout}</td>
+            </tr>
             {{/if}}
-            <tr><th>Start / End / Elapsed:</th><td>${times.startTime}  /  ${times.endTime}  /  ${times.elapsedTime}</td></tr>
-            <tr><th>Status:</th><td><span class="${status.toLowerCase()}">${status}</span>{{if isCritical}} (critical){{/if}}</td></tr>
+            <tr>
+              <th>Start / End / Elapsed:</th>
+              <td>${times.startTime}  /  ${times.endTime}  /  ${times.elapsedTime}</td>
+            </tr>
+            <tr>
+              <th>Status:</th>
+              <td><span class="${status.toLowerCase()}">${status}</span>{{if isCritical}} (critical){{/if}}</td>
+            </tr>
             {{if message}}
-            <tr><th>Message:</th><td>${message}</td></tr>
+            <tr>
+              <th>Message:</th>
+              <td>${message}</td>
+            </tr>
             {{/if}}
           </table>
         </div>
@@ -256,9 +297,15 @@ function addTestExecutionLog(main) {
         <div class="indent" id="${id}_children" style="display: none;">
           <table class="metadata" id="${id}_metadata">
             {{if doc}}
-            <tr><th>Documentation:</th><td>{{html doc}}</td></tr>
+            <tr>
+              <th>Documentation:</th>
+              <td>{{html doc}}</td>
+            </tr>
             {{/if}}
-            <tr><th>Start / End / Elapsed:</th><td>${times.startTime}  /  ${times.endTime}  /  ${times.elapsedTime}</td></tr>
+            <tr>
+              <th>Start / End / Elapsed:</th>
+              <td>${times.startTime}  /  ${times.endTime}  /  ${times.elapsedTime}</td>
+            </tr>
           </table>
         </div>
       </td>
