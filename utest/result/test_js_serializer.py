@@ -262,9 +262,8 @@ class TestJsSerializer(unittest.TestCase):
         doc = '*<b>html</b> &lt;esc&gt; <a href="http://x.y">http://x.y</a> <img src="http://x.y/z.jpg" title="http://x.y/z.jpg" style="border: 1px solid gray" />'
         self.assert_model(data_model, basemillis=1306918911353,
                           plain_suite=['*suite', '*/tmp/verysimple.txt', '*Verysimple', doc,
-                                       {'*esc': '*&lt;',
-                                        '*key': '*val',
-                                        '*html': '*<img src="http://x.y.x.jpg" title="http://x.y.x.jpg" style="border: 1px solid gray" />'},
+                                       ['*key', '*val', '*esc', '*&lt;',
+                                        '*html', '*<img src="http://x.y.x.jpg" title="http://x.y.x.jpg" style="border: 1px solid gray" />'],
                               ['*test', '*Test', '*', '*Y', doc,
                                   ['*kw', '*Keyword.Example', '*1 second', doc,
                                    '*a1, a2', [0, '*W', '*simple'], ['*P', 23, -23]],
