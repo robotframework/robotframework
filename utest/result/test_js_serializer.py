@@ -1,26 +1,16 @@
 from __future__ import with_statement
 import StringIO
 import time
-from robot.result.jsondatamodel import DataModel
 
-try:
-    import json
-except ImportError:
-    try:
-        import simplejson as json
-    except ImportError:
-        json = None
 import unittest
 import xml.sax as sax
 
 from robot.result.jsparser import _RobotOutputHandler
-from robot.result.json import json_dump
 from robot.result.elementhandlers import Context
-from robot.utils.asserts import assert_equals, assert_true, assert_not_equals, assert_false
+from robot.utils.asserts import assert_equals, assert_true
 
 
 # TODO: Split this monster test suite.
-# At least json_dump tests should be moved to their own module.
 
 class TestJsSerializer(unittest.TestCase):
 
@@ -325,47 +315,6 @@ class TestJsSerializer(unittest.TestCase):
         data_model = self._get_data_model(errors_xml)
         self.assert_model(data_model, basemillis=1306835289078,
                           plain_suite=[[0, '*E', "*Invalid syntax in file '/tmp/data/failing_suite.txt' in table 'Settings': Resource file 'nope' does not exist."]])
-
-    if json:
-        def test_json_dump_string(self):
-            string = u'string\u00A9\v\\\'\"\r\b\t\0\n\fjee'
-            for i in range(1024):
-                string += unichr(i)
-            buffer = StringIO.StringIO()
-            json_dump(string, buffer)
-            expected = StringIO.StringIO()
-            json.dump(string, expected)
-            self._assert_long_equals(buffer.getvalue(), expected.getvalue())
-
-    def test_json_dump_integer(self):
-        buffer = StringIO.StringIO()
-        json_dump(12, buffer)
-        assert_equals('12', buffer.getvalue())
-
-    def test_json_dump_list(self):
-        buffer = StringIO.StringIO()
-        json_dump([1,2,3, 'hello', 'world'], buffer)
-        assert_equals('[1,2,3,"hello","world"]', buffer.getvalue())
-
-    def test_json_dump_dictionary(self):
-        buffer = StringIO.StringIO()
-        json_dump({'key':1, 'hello':'world'}, buffer)
-        assert_true(buffer.getvalue() in ('{"hello":"world","key":1}',
-                                          '{"key":1,"hello":"world"}'))
-
-    def test_json_dump_None(self):
-        buffer = StringIO.StringIO()
-        json_dump(None, buffer)
-        assert_equals('null', buffer.getvalue())
-
-    def test_json_dump_mapping(self):
-        buffer = StringIO.StringIO()
-        mapped1 = object()
-        mapped2 = object()
-        json_dump([mapped1, [mapped2, {mapped2:mapped1}]], buffer,
-                  mapping={mapped1:'1', mapped2:'a'})
-        assert_equals('[1,[a,{a:1}]]', buffer.getvalue())
-
     def _get_data_model(self, xml_string):
         sax.parseString('<robot generator="test">%s<statistics/><errors/></robot>' % xml_string, self._handler)
         return self._handler.datamodel
