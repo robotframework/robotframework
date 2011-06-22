@@ -38,17 +38,43 @@ class DataModel(object):
     def set_settings(self, settings):
         self._settings = settings
 
-    def write_to(self, output, separator=''):
+    def write_to(self, output, separator='', split_threshold=9500):
+        # TODO: FIXME: krhm
         output.write('window.output = {};\n')
         output.write(separator)
         for key, value in self._robot_data.items():
-            self._dump_json('window.output["%s"] = ' % key, value, output)
-            output.write(separator)
+            if key == 'suite':
+                data, _, mappings = self._calc_and_write(self._robot_data['suite'], output, split_threshold, separator)
+                self._dump_json('window.output["suite"] = ', data, output, mappings)
+                output.write(separator)
+            elif key == 'integers':
+                integers = self._robot_data['integers']
+                output.write('window.output["integers"] = [];\n')
+                output.write(separator)
+                while integers:
+                    output.write('window.output["integers"] = window.output["integers"].concat(')
+                    json.json_dump(integers[:split_threshold], output)
+                    output.write(');\n')
+                    output.write(separator)
+                    integers = integers[split_threshold:]
+            elif key == 'strings':
+                integers = self._robot_data['strings']
+                output.write('window.output["strings"] = [];\n')
+                output.write(separator)
+                while integers:
+                    output.write('window.output["strings"] = window.output["strings"].concat(')
+                    json.json_dump(integers[:split_threshold], output)
+                    output.write(');\n')
+                    output.write(separator)
+                    integers = integers[split_threshold:]
+            else:
+                self._dump_json('window.output["%s"] = ' % key, value, output)
+                output.write(separator)
         self._dump_json('window.settings = ', self._settings, output)
 
-    def _dump_json(self, name, data, output):
+    def _dump_json(self, name, data, output, mappings=None):
         output.write(name)
-        json.json_dump(data, output)
+        json.json_dump(data, output, mappings=mappings)
         output.write(';\n')
 
     def remove_keywords(self):
@@ -112,4 +138,26 @@ class DataModel(object):
                 self._collect_used_indices(item.keys(), result)
         return result
 
+    _index = 0
 
+    def _calc_and_write(self, data_block, output, split_threshold, separator):
+        # TODO: needs some love
+        # FIXME: see above
+        size = 1
+        out_data_block = []
+        mappings = {}
+        if isinstance(data_block, (int, long)):
+            return data_block, 1, None
+        for item in data_block:
+            elem, s, mapping = self._calc_and_write(item, output, split_threshold, separator)
+            size += s
+            out_data_block += [elem]
+            if mapping:
+                mappings.update(mapping)
+        if size > split_threshold:
+            self._dump_json('window.sPart%s = ' % self._index, out_data_block, output, mappings)
+            output.write(separator)
+            key = object()
+            out_data_block, size, mappings = key, 1, {key:'window.sPart%s' % self._index}
+            self._index += 1
+        return out_data_block, size, mappings
