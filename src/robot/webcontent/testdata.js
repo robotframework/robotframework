@@ -15,15 +15,14 @@ window.testdata = function () {
     }
 
     function addElement(elem) {
-        elem.id = uuid();
+        elem.id = uniqueId();
         elementsById[elem.id] = elem;
         return elem;
     }
 
     var idCounter=0;
 
-    // TODO: Rename this function. 
-    function uuid() {
+    function uniqueId() {
         idCounter++;
         return "elementId_"+idCounter;
     }

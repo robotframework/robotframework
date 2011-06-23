@@ -55,24 +55,24 @@ function addErrors() {
 }
 
 function makeElementVisible(element) {
-    var uuids = [];
+    var uniqueIds = [];
     if (element.indexOf("suite_") == 0) {
         element = element.substring("suite_".length);
-        uuids = window.testdata.pathToSuite(unescape(element));
+        uniqueIds = window.testdata.pathToSuite(unescape(element));
     }
     if (element.indexOf("test_") == 0) {
         element = element.substring("test_".length);
-        uuids = window.testdata.pathToTest(unescape(element));
+        uniqueIds = window.testdata.pathToTest(unescape(element));
     }
     if (element.indexOf("keyword_") == 0) {
         element = element.substring("keyword_".length);
-        uuids = window.testdata.pathToKeyword(unescape(element));
+        uniqueIds = window.testdata.pathToKeyword(unescape(element));
     }
-    for (var i in uuids) {
-        $("#" + uuids[i] + "_unfoldlink").click();
+    for (var i in uniqueIds) {
+        $("#" + uniqueIds[i] + "_unfoldlink").click();
     }
-    if (uuids && uuids.length > 0) {
-        expandFailed(window.testdata.find(uuids[uuids.length - 1]));
+    if (uniqueIds && uniqueIds.length > 0) {
+        expandFailed(window.testdata.find(uniqueIds[uniqueIds.length - 1]));
     }
 }
 
