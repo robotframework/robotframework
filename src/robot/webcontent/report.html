@@ -1,12 +1,12 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <head>
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="-1">
-<link rel="stylesheet" type="text/css" href="common.css" media="all"/>
-<link rel="stylesheet" type="text/css" href="report.css" media="all"/>
-<link rel="stylesheet" type="text/css" href="print.css" media="print"/>
+<link rel="stylesheet" type="text/css" href="common.css" media="all">
+<link rel="stylesheet" type="text/css" href="report.css" media="all">
+<link rel="stylesheet" type="text/css" href="print.css" media="print">
 <script type="text/javascript" src="lib/jquery.min.js"></script>
 <script type="text/javascript" src="lib/jquery.tmpl.min.js"></script>
 <!-- OUTPUT JS --><script type="text/javascript" src="testdata/data.js"></script>
@@ -87,7 +87,7 @@ function showDetailsByHash() {
 
 function totalDetailSelected(type) {
     if (!type) return;
-    renderTotalSelector('total_' + type);
+    renderTotalSelector(type);
     renderTotalDetails(type);
     ensureTotalDetailsAreVisible(type);
 }
@@ -104,13 +104,12 @@ function renderTotalDetails(type) {
     drawTestDetailsTable(tests);
 }
 
-function renderTotalSelector(linkTarget) {
-    var args = {linkTarget: linkTarget, totals_tab_status: 'tab_selected'};
-    renderSelector(args, 'totalDetailsSelectorTemplate');
+function renderTotalSelector(type) {
+    var args = {linkTarget: 'total_'+type, totalsTabStatus: 'tab_selected'};
+    renderSelector(args, 'totalDetailsSelectorTemplate', {selected: type});
 }
 
 function ensureTotalDetailsAreVisible(type) {
-    document.getElementById('radio_'+type).checked = true;
     $('#print_selector').text(type);
     scrollToSelector('total_'+type);
 }
@@ -122,7 +121,7 @@ function scrollToSelector(anchor) {
 
 function tagDetailSelected(name) {
     if (!name) return;
-    renderTagSelector('tag_' + name);
+    renderTagSelector(name);
     var tag = util.filter(window.testdata.statistics().tag, function (tag) {
         return tag.label == name;
     })[0];
@@ -139,27 +138,25 @@ function renderTagDetails(tag) {
     drawTestDetailsTable(tests);
 }
 
-function renderTagSelector(linkTarget) {
-    var args = {linkTarget: linkTarget, tags_tab_status: 'tab_selected'};
-    var tagstats = {tags: window.testdata.statistics().tag};
+function renderTagSelector(tagName) {
+    var args = {linkTarget: 'tag_'+tagName, tagsTabStatus: 'tab_selected'};
+    var tagstats = {tags: window.testdata.statistics().tag, selected: tagName};
     renderSelector(args, 'tagDetailsSelectorTemplate', tagstats);
 }
 
 function ensureTagDetailsAreVisible(name) {
-    document.getElementById('tag_detail_selector').value = name;
     $('#print_selector').text(name);
     scrollToSelector('tag_'+name);
 }
 
 function suiteDetailSelected(name) {
     if (!name) return;
-    renderSuiteSelector('suite_' + name);
+    renderSuiteSelector(name);
     renderSuiteDetails(name);
     ensureSuiteDetailsAreVisible(name);
 }
 
 function ensureSuiteDetailsAreVisible(name) {
-    document.getElementById('suite_detail_selector').value = name;
     $('#print_selector').text(name);
     scrollToSelector('suite_'+name);
 }
@@ -171,9 +168,11 @@ function renderSuiteDetails(name) {
     drawTestDetailsTable(suite.allTests());
 }
 
-function renderSuiteSelector(linkTarget) {
-    var args = {linkTarget: linkTarget, suites_tab_status: 'tab_selected'};
-    var stats = {suites: window.testdata.statistics().suite};
+function renderSuiteSelector(suiteName) {
+    var args = {linkTarget: 'suite_'+suiteName,
+                suitesTabStatus: 'tab_selected'};
+    var stats = {suites: window.testdata.statistics().suite,
+                 selected: suiteName};
     renderSelector(args, 'suiteDetailsSelectorTemplate', stats);
 }
 
@@ -333,13 +332,13 @@ function popUpTo(list, upTo) {
 <script type="text/x-jquery-tmpl" id="detailsHeaderTemplate">
   <h2 id="${linkTarget}">Test Details</h2>
   <ul id="detail_tabs">
-    <li class="${totals_tab_status}">
+    <li class="${totalsTabStatus}">
       <a href="#totals" onclick="renderTotalSelector();">Totals</a>
     </li>
-    <li class="${tags_tab_status}">
+    <li class="${tagsTabStatus}">
       <a href="#tags" onclick="renderTagSelector();">Tags</a>
     </li>
-    <li class="${suites_tab_status}">
+    <li class="${suitesTabStatus}">
       <a href="#suites" onclick="renderSuiteSelector();">Suites</a>
     </li>
   </ul>
@@ -351,10 +350,12 @@ function popUpTo(list, upTo) {
       <th>Type:</th>
       <td id="normal_selector">
         <input id="radio_Critical Tests" type="radio" name="totals_radio"
-               onclick="totalDetailSelected('Critical Tests');">
+               onclick="totalDetailSelected('Critical Tests');"
+               {{if selected == 'Critical Tests'}}checked="checked"{{/if}}>
         <label for="radio_Critical Tests">Critical Tests</label><br>
         <input id="radio_All Tests" type="radio" name="totals_radio"
-               onclick="totalDetailSelected('All Tests');">
+               onclick="totalDetailSelected('All Tests');"
+               {{if selected == 'All Tests'}}checked="checked"{{/if}}>
         <label for="radio_All Tests">All Tests</label>
       </td>
       <td id="print_selector"></td>
@@ -371,7 +372,8 @@ function popUpTo(list, upTo) {
                 onchange="tagDetailSelected(this.options[this.selectedIndex].value);">
           <option value="">Select tag...</option>
           {{each tags}}
-          <option value="${$value.label}">
+          <option value="${$value.label}"
+                  {{if $value.label == selected}}selected="selected"{{/if}}>
             ${$value.label} {{if $value.info}}(${$value.info}){{/if}}
           </option>
           {{/each}}
@@ -391,7 +393,10 @@ function popUpTo(list, upTo) {
                 onchange="suiteDetailSelected(this.options[this.selectedIndex].value);">
           <option value="">Select suite...</option>
           {{each suites}}
-          <option value="${$value.label}">${$value.label}</option>
+          <option value="${$value.label}"
+                  {{if $value.label == selected}}selected="selected"{{/if}}>
+            ${$value.label}
+          </option>
           {{/each}}
         </select>
       </td>
@@ -494,7 +499,7 @@ function popUpTo(list, upTo) {
     <td class="col_crit">{{if isCritical}}yes{{else}}no{{/if}}</td>
     <td class="col_status ${status.toLowerCase()}">${status}</td>
     <td class="col_msg">${message()}</td>
-    <td class="col_times">${times.startTime}<br />${times.elapsedTime}</td>
+    <td class="col_times">${times.startTime}<br>${times.elapsedTime}</td>
   </tr>
 </script>
 
