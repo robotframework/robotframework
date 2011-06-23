@@ -162,7 +162,7 @@ describe("Handling Suite", function () {
         expect(test.name).toEqual("Test");
         expect(test.status).toEqual("PASS");
         expect(test.fullName).toEqual("Suite.Test");
-        expect(test.doc).toEqual("test doc");
+        expect(test.doc()).toEqual("test doc");
         expect(test.tags).toEqual(["tag1", "tag2"]);
         expect(test.times).toBeDefined();
         expect(test.times.elapsedMillis).toEqual(2);
@@ -356,17 +356,17 @@ describe("Parent Suite Teardown Failure", function (){
 
     it("should show test message 'Teardown of the parent suite failed.'", function (){
         var test = firstTest(window.testdata.suite().suites()[0]);
-        expect(test.message).toEqual("Teardown of the parent suite failed.");
+        expect(test.message()).toEqual("Teardown of the parent suite failed.");
     });
 
     it("should show suite message 'Teardown of the parent suite failed.'", function (){
         var suite = window.testdata.suite().suites()[0];
-        expect(suite.message).toEqual("Teardown of the parent suite failed.");
+        expect(suite.message()).toEqual("Teardown of the parent suite failed.");
     });
 
     it("should show root suite message 'Suite teardown failed:\nAssertionError'", function (){
         var root = window.testdata.suite();
-        expect(root.message).toEqual("Suite teardown failed:\nAssertionError");
+        expect(root.message()).toEqual("Suite teardown failed:\nAssertionError");
     });
 
 });
@@ -385,7 +385,7 @@ describe("Parent Suite Teardown and Test failure", function(){
 
     it("should show test message 'In test\n\nAlso teardown of the parent suite failed.'", function (){
         var test = firstTest(window.testdata.suite());
-        expect(test.message).toEqual("In test\n\nAlso teardown of the parent suite failed.");
+        expect(test.message()).toEqual("In test\n\nAlso teardown of the parent suite failed.");
     });
 })
 
@@ -404,7 +404,7 @@ describe("Test failure message", function (){
 
     it("should show test failure message ''", function (){
         var test = firstTest(window.testdata.suite());
-        expect(test.message).toEqual("FooBar!");
+        expect(test.message()).toEqual("FooBar!");
     });
 });
 
