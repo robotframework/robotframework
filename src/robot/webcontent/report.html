@@ -63,7 +63,6 @@ function addDetails() {
     } else {
         renderTotalSelector("no_selection");
     }
-    $('#test_details_container').css('min-height', $(window).height());
 }
 
 function showDetailsByHash() {
@@ -113,7 +112,12 @@ function renderTotalSelector(linkTarget) {
 function ensureTotalDetailsAreVisible(type) {
     document.getElementById('radio_'+type).checked = true;
     $('#print_selector').text(type);
-    window.location.hash = 'total_'+type
+    scrollToSelector('total_'+type);
+}
+
+function scrollToSelector(anchor) {
+    $('#test_details_container').css('min-height', $(window).height());
+    window.location.hash = anchor;
 }
 
 function tagDetailSelected(name) {
@@ -144,7 +148,7 @@ function renderTagsSelector(linkTarget) {
 function ensureTagDetailsAreVisible(name) {
     document.getElementById('tag_detail_selector').value = name;
     $('#print_selector').text(name);
-    window.location.hash = 'tag_'+name;
+    scrollToSelector('tag_'+name);
 }
 
 function suiteDetailSelected(name) {
@@ -157,7 +161,7 @@ function suiteDetailSelected(name) {
 function ensureSuiteDetailsAreVisible(name) {
     document.getElementById('suite_detail_selector').value = name;
     $('#print_selector').text(name);
-    window.location.hash = 'suite_'+name;
+    scrollToSelector('suite_'+name);
 }
 
 function renderSuiteDetails(name) {
