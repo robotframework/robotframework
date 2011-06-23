@@ -50,18 +50,26 @@ h1 {
 .not_run {
     color: #663300;
 }
-/* Error Box */
-/* TODO: Test with old browsers as they are likelier to see this. */
-div.error_box {
-    display: block;
-    border: 2px solid #000000;
-    width: 40%;
-    min-height: 50px;
-    position: absolute;
-    top: 30%;
-    left: 30%;
+/* JavaScript disabled box */
+/* TODO: Test with old browsers as they are more likely to see this. */
+#javascript_disabled {
+    width: 600px;
+    margin: 100px auto 0 auto;
+    padding: 20px;
+    border: 2px solid black;
     background: #ffc0cb;
-    padding: 10px;
+}
+#javascript_disabled h1 {
+    width: 100%;
+}
+#javascript_disabled ul {
+    font-size: 1.2em;
+}
+#javascript_disabled li {
+    margin: 0.5em 0;
+}
+#javascript_disabled b {
+    font-style: italic;
 }
 /* Report/log link */
 #report_or_log_link {
