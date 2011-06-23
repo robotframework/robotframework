@@ -89,12 +89,29 @@ class _SuiteHandler(_Handler):
         _Handler.__init__(self, context)
         self._name = attrs.get('name')
         self._source = attrs.get('source') or ''
+        self._suites = []
+        self._tests = []
+        self._keywords = []
+        self._current_children = None
         self._context.start_suite(self._name)
         self._context.collect_stats()
 
+    def get_handler_for(self, name, attrs):
+        self._current_children = {
+            'suite': self._suites,
+            'test': self._tests,
+            'kw': self._keywords
+        }.get(name, self._data_from_children)
+        return _Handler.get_handler_for(self, name, attrs)
+
+    def add_child_data(self, data):
+        self._current_children.append(data)
+
     def end_element(self, text):
-        result = self._get_ids(['suite', self._source, self._name]) + \
-                 self._data_from_children + [self._get_ids(self._context.dump_stats())]
+        result = self._get_ids([self._source, self._name]) + \
+                 self._data_from_children + [self._suites] + \
+                 [self._tests] + [self._keywords] + \
+                 [self._get_ids(self._context.dump_stats())]
         self._context.end_suite()
         return result
 
@@ -105,18 +122,27 @@ class _TestHandler(_Handler):
         _Handler.__init__(self, context)
         self._name = attrs.get('name')
         self._timeout = attrs.get('timeout')
+        self._keywords = []
+        self._current_children = None
         self._context.start_test(self._name)
 
     def get_handler_for(self, name, attrs):
         if name == 'status':
             # TODO: Use 1/0 instead of Y/N. Possibly also 1/0/-1 instead of P/F/N.
             self._critical = 'Y' if attrs.get('critical') == 'yes' else 'N'
+        self._current_children = {
+            'kw': self._keywords
+        }.get(name, self._data_from_children)
         return _Handler.get_handler_for(self, name, attrs)
 
+    def add_child_data(self, data):
+        self._current_children.append(data)
+
     def end_element(self, text):
-        result = self._get_ids(['test', self._name, self._timeout, self._critical]) + self._data_from_children
+        result = self._get_ids([self._name, self._timeout, self._critical]) + \
+                 self._data_from_children + [self._keywords]
         # TODO: refactor
-        self._context.add_test(self._critical == 'Y', result[-1][0] == self._get_id('P'))
+        self._context.add_test(self._critical == 'Y', result[-2][0] == self._get_id('P'))
         self._context.end_test()
         return result
 
@@ -130,12 +156,29 @@ class _KeywordHandler(_Handler):
         if self._type == 'for': self._type = 'forloop'
         self._name = attrs.get('name')
         self._timeout = attrs.get('timeout')
+        self._keywords = []
+        self._messages = []
+        self._current_children = None
+
+    def get_handler_for(self, name, attrs):
+        if name == 'status':
+            # TODO: Use 1/0 instead of Y/N. Possibly also 1/0/-1 instead of P/F/N.
+            self._critical = 'Y' if attrs.get('critical') == 'yes' else 'N'
+        self._current_children = {
+            'kw': self._keywords,
+            'msg': self._messages
+        }.get(name, self._data_from_children)
+        return _Handler.get_handler_for(self, name, attrs)
+
+    def add_child_data(self, data):
+        self._current_children.append(data)
 
     def end_element(self, text):
         if self._type == 'teardown' and self._data_from_children[-1][0] == self._get_id('F'):
             self._context.teardown_failed()
         self._context.end_keyword()
-        return self._get_ids([self._type, self._name, self._timeout]) + self._data_from_children
+        return self._get_ids([self._type, self._name, self._timeout]) + \
+               self._data_from_children + [self._keywords] + [self._messages]
 
 
 # TODO: StatisticsHandler and StatItemHandler should be separated somehow from suite handlers

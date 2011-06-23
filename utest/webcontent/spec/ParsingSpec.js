@@ -127,12 +127,12 @@ describe("Handling Suite", function () {
     }
 
     beforeEach(function () {
-        var keyword = ["*kw","*lib.kw",'*',"*Kw doc.","*message", [0,"*I","*message"], ["*P",0,0]];
-        var forloop = ["*forloop","*${i} IN RANGE [ 2 ]",'*','*','*',
-            ["*foritem","*${i} = 0",'*','*','*', keyword, ["*P", 0, 0]], ["*P", 0, 0],
-            ["*foritem","*${i} = 1",'*','*','*', keyword, ["*P", 0, 0]], ["*P", 0, 0]]
-        var test = ["*test","*Test","*1 second","*Y", "*test doc", keyword, forloop, ["*tag1", "*tag2"],["*P",-1,2]];
-        var suite = ["*suite","*/tmp/test.txt","*Suite","*suite doc",["*meta", "*data"], test, ["*P",-38,39], [1,1,1,1]];
+        var keyword = ["*kw","*lib.kw",'*',"*Kw doc.", '*', ["*P",0,0], [], [[0,"*I","*message"]]];
+        var forloop = ["*forloop","*${i} IN RANGE [ 2 ]",'*','*','*', ["*P", 0, 0], [
+            ["*foritem","*${i} = 0",'*','*','*', ["*P", 0, 0], [keyword], []],
+            ["*foritem","*${i} = 1",'*','*','*', ["*P", 0, 0], [keyword], []]], []]
+        var test = ["*Test","*1 second","*Y", "*test doc", ["*tag1", "*tag2"],["*P",-1,2], [keyword, forloop]];
+        var suite = ["*/tmp/test.txt","*Suite","*suite doc",["*meta", "*data"], ["*P",-38,39], [], [test], [], [1,1,1,1]];
         populate(suite);
     });
 
@@ -207,12 +207,15 @@ describe("Setups and teardowns", function () {
 
     beforeEach(function () {
         var suite =
-            ["*suite","*/temp/suite.txt","*Suite",0,{},
-                ["*setup","*Lib.Kw","*","*Blaa.","*sets",[0,"*I","*sets"],["*P",-1,1]],
-                ["*test","*Test","*","*Y","*",
-                    ["*setup","*Lib.Kw","*","*Blaa.","*sets",[1,"*I","*sets"],["*P",1,0]],["*kw","*Lib.Kw","*","*Blaa.","*sets",[2,"*I","*sets"],["*P",2,0]],
-                    ["*teardown","*Lib.Kw","*","*Blaa.","*tears",[3,"*I","*tears"],["*P",3,0]],[],["*P",0,4]],
-                ["*teardown","*Lib.Kw","*","*Blaa.","*tears",[4,"*I","*tears"],["*P",4,1]],["*P",-35,40],
+            ["*/temp/suite.txt","*Suite",0,[], ["*P",-35,40], [],
+                [["*Test","*","*Y","*", [], ["*P",0,4],
+                 [
+                  ["*setup","*Lib.Kw","*","*Blaa.","*sets", ["*P",1,0], [], [[1,"*I","*sets"]]],
+                  ["*kw","*Lib.Kw","*","*Blaa.","*sets", ["*P",2,0], [], [[2,"*I","*sets"]]],
+                  ["*teardown","*Lib.Kw","*","*Blaa.","*tears",["*P",3,0], [], [[3,"*I","*tears"]]]
+                  ]]],
+                [["*setup","*Lib.Kw","*","*Blaa.","*sets",["*P",-1,1], [], [[0,"*I","*sets"]]],
+                 ["*teardown","*Lib.Kw","*","*Blaa.","*tears",["*P",4,1],[],[[4,"*I","*tears"]]]],
                 [1,1,1,1]];
         populate(suite);
     });
@@ -283,14 +286,18 @@ describe("Handling messages", function (){
 
     beforeEach(function (){
         var suite =
-            ["*suite","*/suite/verysimple.txt","*Verysimple","*",{},
-                ["*test","*Test","*","*Y","*",
-                    ["*kw","*Log","*","*Logging","*<h1>html</h1>, HTML",[0,"*H","*<h1>html</h1>"],["*P",0,0]],
-                    ["*kw","*Log","*","*Logging","*infolevelmessage, INFO",[1,"*I","*infolevelmessage"],["*P",1,0]],
-                    ["*kw","*Log","*","*Logging","*warning, WARN",[2,"*W","*warning"],["*P",2,0]],
-                    ["*kw","*Log","*","*Logging","*debugging, DEBUG",[3,"*D","*debugging"],["*P",3,0]],
-                    ["*kw","*Log","*","*Logging","*tracing, TRACE",[3,"*T","*tracing"],["*P",3,0]],
-                    [],["*P",-1,4]],["*P",-28,32],[1,1,1,1]];
+            ["*/suite/verysimple.txt","*Verysimple","*",[],["*P",-28,32],
+                [],
+                [["*Test","*","*Y","*",[], ["*P",-1,4],
+                    [
+                    ["*kw","*Log","*","*Logging","*<h1>html</h1>, HTML",["*P",0,0],[], [[0,"*H","*<h1>html</h1>"]]],
+                    ["*kw","*Log","*","*Logging","*infolevelmessage, INFO",["*P",1,0],[],[[1,"*I","*infolevelmessage"]]],
+                    ["*kw","*Log","*","*Logging","*warning, WARN",["*P",2,0],[], [[2,"*W","*warning"]]],
+                    ["*kw","*Log","*","*Logging","*debugging, DEBUG",["*P",3,0],[],[[3,"*D","*debugging"]]],
+                    ["*kw","*Log","*","*Logging","*tracing, TRACE",["*P",3,0],[],[[3,"*T","*tracing"]]],
+                    ]]],
+                [],
+                [1,1,1,1]];
         var errors = [[2,"*W","*warning", "*keyword_Verysimple.Test.2"]];
         populate(suite, errors);
     });
@@ -334,13 +341,16 @@ describe("Handling messages", function (){
 describe("Parent Suite Teardown Failure", function (){
     beforeEach(function (){
         var suite =
-            ["*suite","*/tmp","*Tmp","*",{},
-                ["*suite","*/tmp/test.txt","*Test","*",{},
-                    ["*test","*Testt","*","*Y","*",
-                        ["*kw","*NoOp","*","*Does nothing.","*",["*P",0,1]],[],["*P",-1,2]],["*P",-2,3],
-                    [1,0,1,0]],
-                ["*teardown","*Fail","*","*Fails","*",[3,"*F","*AssertionError"],["*F",2,2]],
-                ["*F",-37,41, "*Suite teardown failed:\nAssertionError"],[1,0,1,0]];
+            ["*/tmp","*Tmp","*",[], ["*F",-37,41, "*Suite teardown failed:\nAssertionError"],
+                [["*/tmp/test.txt","*Test","*",[],["*P",-2,3],
+                    [],
+                    [["*test","*Testt","*","*Y","*",[],["*P",-1,2],
+                        [["*kw","*NoOp","*","*Does nothing.","*",["*P",0,1], [], []]]]],
+                    [],
+                    [1,0,1,0]]],
+                [],
+                [["*teardown","*Fail","*","*Fails","*",["*F",2,2],[],[[3,"*F","*AssertionError"]]]]
+                ,[1,0,1,0]];
         populate(suite);
     });
 
@@ -374,12 +384,12 @@ describe("Parent Suite Teardown Failure", function (){
 describe("Parent Suite Teardown and Test failure", function(){
     beforeEach(function (){
         var suite =
-            ["*suite","*/tmp/SuiteTeardown.txt","*SuiteTeardown","*",{},
-                ["*test","*Failing","*","*Y","*",
-                    ["*kw","*Fail","*","*Fails","*In test",[0,"*F","*In test"],["*F",-1,1]],[],
-                    ["*F",-2,2,"*In test"]],
-                ["*teardown","*Fail","*","*Fails","*in suite teardown",[1,"*F","*in suite teardown"],["*F",0,1]],
-                ["*F",-23,24,"*Suite teardown failed:\nin suite teardown"],[1,0,1,0]];
+            ["*/tmp/SuiteTeardown.txt","*SuiteTeardown","*",[],["*F",-23,24,"*Suite teardown failed:\nin suite teardown"],
+                [],
+                [["*Failing","*","*Y","*",[], ["*F",-2,2,"*In test"],
+                    [["*kw","*Fail","*","*Fails","*In test",["*F",-1,1],[],[0,"*F","*In test"]]]]],
+                [["*teardown","*Fail","*","*Fails","*in suite teardown",["*F",0,1],[],[1,"*F","*in suite teardown"]]],
+                [1,0,1,0]];
         populate(suite);
     });
 
@@ -393,12 +403,14 @@ describe("Test failure message", function (){
 
     beforeEach(function () {
         var suite =
-            ["*suite","*/test.txt","*Test","*",{},
-                ["*test","*Feilaava","*","*Y","*",
-                    ["*kw","*feilaa","*","*","*",
-                        ["*kw","*Fail","*","*Fails","*FooBar!",[0,"F","*FooBar!"],["*F",-1,1]],
-                        ["*F",-1,1]],[],["*F",-2,3,"*FooBar!"]],
-                ["*F",-29,30],[1,0,1,0]];
+            ["*/test.txt","*Test","*",[],["*F",-29,30],
+               [],
+               [["*Feilaava","*","*Y","*",[],["*F",-2,3,"*FooBar!"],
+                    [["*kw","*feilaa","*","*","*",["*F",-1,1],
+                        [["*kw","*Fail","*","*Fails","*FooBar!",["*F",-1,1], [], [[0,"F","*FooBar!"]]]],[]
+                        ]]]],
+                    []
+                [1,0,1,0]];
         populate(suite);
     });
 
@@ -412,14 +424,20 @@ describe("Iterating Keywords", function (){
 
     beforeEach(function (){
         var suite =
-            ["*suite","*/suite/verysimple.txt","*Verysimple","*",{},
-                ["*test","*Test","*","*Y","*",
-                    ["*kw","*kw1","*","*","*",["*kw","*Printtaa","*","*Logs things","*keyword1",[0,"*I","*keyword1"],["*P",-1,1]],["*P",-1,1]],
-                    ["*kw","*kw2","*","*","*",["*kw","*Printtaa","*","*Logs things","*keyword2",[1,"*I","*keyword2"],["*P",1,0]],["*P",0,1]],
-                    ["*kw","*kw3","*","*","*",["*kw","*Printtaa","*","*Logs things","*keyword3",[2,"*I","*keyword3"],["*P",2,1]],["*P",2,1]],
-                    ["*kw","*kw4","*","*","*",["*kw","*Printtaa","*","*Logs things","*keyword4",[4,"*I","*keyword4"],["*P",4,0]],["*P",3,1]],
-                    [],["*P",-2,7]],
-                ["*P",-29,34], [1,1,1,1]];
+            ["*/suite/verysimple.txt","*Verysimple","*",[],["*P",-29,34],
+                [],
+                [["*Test","*","*Y","*",[],["*P",-2,7],
+                    [["*kw","*kw1","*","*","*",["*P",-1,1],
+                        [["*kw","*Printtaa","*","*Logs things","*keyword1",["*P",-1,1],[],[0,"*I","*keyword1"]]], []],
+                    ["*kw","*kw2","*","*","*",["*P",0,1],
+                        [["*kw","*Printtaa","*","*Logs things","*keyword2",["*P",1,0],[],[1,"*I","*keyword2"]]], []],
+                    ["*kw","*kw3","*","*","*",["*P",2,1],
+                        [["*kw","*Printtaa","*","*Logs things","*keyword3",["*P",2,1],[],[2,"*I","*keyword3"]]], []],
+                    ["*kw","*kw4","*","*","*",["*P",3,1],
+                        [["*kw","*Printtaa","*","*Logs things","*keyword4",["*P",4,0],[],[4,"*I","*keyword4"]]], []]]
+                    ]],
+                [],
+                [1,1,1,1]];
         populate(suite);
     });
 
@@ -456,14 +474,19 @@ describe("Iterating Tests", function (){
 
     beforeEach(function (){
         var suite =
-            ["*suite","*/verysimple.txt","*Verysimple","*",{},
-                ["*test","*Test1","*","*Y","*",["*kw","*BuiltIn.Log","*","*Logs the given message with the given level.","*simple1",
-                    [0,"*I","*simple1"],["*P",0,0]],[],["*P",-1,2]],
-                ["*test","*Test2","*","*Y","*",["*kw","*BuiltIn.Log","*","*Logs the given message with the given level.","*simple2",
-                    [2,"*I","*simple2"],["*P",2,0]],[],["*P",1,1]],
-                ["*test","*Test3","*","*Y","*",["*kw","*BuiltIn.Log","*","*Logs the given message with the given level.","*simple3",
-                    [3,"*I","*simple3"],["*P",3,0]],[],["*P",3,1]],
-                ["*P",-28,32],[3,3,3,3]];
+            ["*/verysimple.txt","*Verysimple","*",[],["*P",-28,32],
+                [],
+                [["*Test1","*","*Y","*",[],["*P",-1,2],
+                    [["*kw","*BuiltIn.Log","*","*Logs the given message with the given level.","*simple1",["*P",0,0],
+                    [], [[0,"*I","*simple1"]]]]],
+                ["*Test2","*","*Y","*",[],["*P",1,1],
+                    [["*kw","*BuiltIn.Log","*","*Logs the given message with the given level.","*simple2",["*P",2,0],
+                    [], [[2,"*I","*simple2"]]]]],
+                ["*Test3","*","*Y","*",[],["*P",3,1],
+                    [["*kw","*BuiltIn.Log","*","*Logs the given message with the given level.","*simple3",["*P",3,0],
+                    [], [[3,"*I","*simple3"]]]]]],
+                [],
+                [3,3,3,3]];
         populate(suite);
     });
 
@@ -485,20 +508,32 @@ describe("Iterating Suites", function () {
 
     beforeEach(function (){
         var suite =
-            ["*suite","*/foo","*Foo","*",{},
-                ["*suite","*/foo/bar","*Bar","*",{},
-                    ["*suite","*/foo/bar/testii.txt","*Testii","*",{},
-                        ["*test","*FOO BAR","*","*Y","*",
-                            ["*kw","*BuiltIn.Log","*","*Logs the given message with the given level.","*foo bar testi",[0,"*I","*foo bar testi"],["*P",-1,1]],[],["*P",-1,1]],
-                        ["*P",-3,3],[1,1,1,1]],
-                    ["*P",-4,5],[1,1,1,1]],
-                ["*suite","*/foo/foo","*Foo","*",{},
-                    ["*suite","*/foo/foo/tostii.txt","*Tostii","*",{},
-                        ["*test","*FOO FOO","*","*Y","*",["*kw","*BuiltIn.No Operation","*","*Does absolutely nothing.","*",["*P",4,0]],[],
-                            ["*P",4,1]],
-                        ["*P",2,3],[1,1,1,1]],
-                    ["*P",1,5],[1,1,1,1]],
-                ["*P",-30,36],[2,2,2,2]];
+            ["*/foo","*Foo","*",[],["*P",-30,36],
+                [["*/foo/bar","*Bar","*",[],["*P",-4,5],
+                    [["*/foo/bar/testii.txt","*Testii","*",[],["*P",-3,3],
+                        [],
+                        [["*FOO BAR","*","*Y","*",[],["*P",-1,1],
+                            [["*kw","*BuiltIn.Log","*","*Logs the given message with the given level.","*foo bar testi",
+                                ["*P",-1,1], [], [[0,"*I","*foo bar testi"]]]]]],
+                        [],
+                        [1,1,1,1]]],
+                    [],
+                    [],
+                    [1,1,1,1]],
+                ["*/foo/foo","*Foo","*",[],["*P",1,5],
+                    [["*/foo/foo/tostii.txt","*Tostii","*",[],["*P",2,3],
+                        [],
+                        [["*FOO FOO","*","*Y","*",[], ["*P",4,1],
+                            [["*kw","*BuiltIn.No Operation","*","*Does absolutely nothing.","*",
+                                ["*P",4,0], [], []]]]],
+                        [],
+                        [1,1,1,1]]],
+                     [],
+                     []
+                     [1,1,1,1]]],
+                [],
+                [],
+                [2,2,2,2]];
         populate(suite);
     });
 
@@ -577,21 +612,32 @@ describe("Iterating Suites", function () {
 describe("Element ids", function (){
 
     beforeEach(function (){
-        var suite =
-            ["*suite","*/foo","*Foo","*",{},
-                ["*suite","*/foo/bar","*Bar","*",{},
-                    ["*suite","*/foo/bar/testii.txt","*Testii","*",{},
-                        ["*test","*FOO BAR","*","*Y","*",
-                            ["*kw","*BuiltIn.Log","*","*Logs the given message with the given level.","*foo bar testi",[0,"*I","*foo bar testi"],["*P",-1,1]],[],["*P",-1,1]],
-                        ["*P",-3,3],[1,1,1,1]],
-                    ["*P",-4,5],[1,1,1,1]],
-                ["*suite","*/foo/foo","*Foo","*",{},
-                    ["*suite","*/foo/foo/tostii.txt","*Tostii","*",{},
-                        ["*test","*FOO FOO","*","*Y","*",["*kw","*BuiltIn.No Operation","*","*Does absolutely nothing.","*",["*P",4,0]],[],
-                            ["*P",4,1]],
-                        ["*P",2,3],[1,1,1,1]],
-                    ["*P",1,5],[1,1,1,1]],
-                ["*P",-30,36],[2,2,2,2]];
+        var suite =["*/foo","*Foo","*",[],["*P",-30,36],
+                [["*/foo/bar","*Bar","*",[],["*P",-4,5],
+                    [["*/foo/bar/testii.txt","*Testii","*",[],["*P",-3,3],
+                        [],
+                        [["*FOO BAR","*","*Y","*",[],["*P",-1,1],
+                            [["*kw","*BuiltIn.Log","*","*Logs the given message with the given level.","*foo bar testi",
+                                ["*P",-1,1], [], [[0,"*I","*foo bar testi"]]]]]],
+                        [],
+                        [1,1,1,1]]],
+                    [],
+                    [],
+                    [1,1,1,1]],
+                ["*/foo/foo","*Foo","*",[],["*P",1,5],
+                    [["*/foo/foo/tostii.txt","*Tostii","*",[],["*P",2,3],
+                        [],
+                        [["*FOO FOO","*","*Y","*",[], ["*P",4,1],
+                            [["*kw","*BuiltIn.No Operation","*","*Does absolutely nothing.","*",
+                                ["*P",4,0], [], []]]]],
+                        [],
+                        [1,1,1,1]]],
+                     [],
+                     []
+                     [1,1,1,1]]],
+                [],
+                [],
+                [2,2,2,2]];
         populate(suite);
     });
 
@@ -633,14 +679,19 @@ describe("Elements are created only once", function (){
 
     beforeEach(function (){
         var suite =
-            ["*suite","*/verysimple.txt","*Verysimple","*",{},
-                ["*test","*Test1","*","*Y","*",["*kw","*BuiltIn.Log","*","*Logs the given message with the given level.","*simple1",[0,"*I","*simple1"],["*P",0,0]],[],
-                    ["*P",-1,2]],
-                ["*test","*Test2","*","*Y","*",["*kw","*BuiltIn.Log","*","*Logs the given message with the given level.","*simple2",[2,"*I","*simple2"],["*P",2,0]],[],
-                    ["*P",1,1]],
-                ["*test","*Test3","*","*Y","*",["*kw","*BuiltIn.Log","*","*Logs the given message with the given level.","*simple3",[3,"*I","*simple3"],["*P",3,0]],[],
-                    ["*P",3,1]],
-                ["*P",-28,32],[3,3,3,3]];
+                ["*/verysimple.txt","*Verysimple","*",[],["*P",-28,32],
+                [],
+                [["*Test1","*","*Y","*",[],["*P",-1,2],
+                    [["*kw","*BuiltIn.Log","*","*Logs the given message with the given level.","*simple1",["*P",0,0],
+                    [], [[0,"*I","*simple1"]]]]],
+                ["*Test2","*","*Y","*",[],["*P",1,1],
+                    [["*kw","*BuiltIn.Log","*","*Logs the given message with the given level.","*simple2",["*P",2,0],
+                    [], [[2,"*I","*simple2"]]]]],
+                ["*Test3","*","*Y","*",[],["*P",3,1],
+                    [["*kw","*BuiltIn.Log","*","*Logs the given message with the given level.","*simple3",["*P",3,0],
+                    [], [[3,"*I","*simple3"]]]]]],
+                [],
+                [3,3,3,3]];
         populate(suite);
     });
 

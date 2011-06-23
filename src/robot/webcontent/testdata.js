@@ -55,10 +55,6 @@ window.testdata = function () {
         return items[items.length-1];
     }
 
-    function secondLast(items) {
-        return items[items.length-2];
-    }
-
     function childCreator(parent, childType) {
         return function (elem, index) {
             return addElement(childType(parent, elem, index));
@@ -75,23 +71,14 @@ window.testdata = function () {
                 this.doc = function() {return val;}
                 return val;
             },
-            status: parseStatus(last(element)),
-            times: model.Times(times(last(element))),
+            status: parseStatus(element[5]),
+            times: model.Times(times(element[5])),
             parent: parent,
             index: index
         });
-        kw.populateKeywords(Populator(element, keywordMatcher, childCreator(kw, createKeyword)));
-        kw.populateMessages(Populator(element, messageMatcher, message));
+        kw.populateKeywords(Populator(element[6], childCreator(kw, createKeyword)));
+        kw.populateMessages(Populator(element[7], message));
         return kw;
-    }
-
-    var keywordMatcher = headerMatcher("kw", "setup", "teardown", "foritem", "forloop");
-
-    function messageMatcher(elem) {
-        return (elem.length == 3 &&
-                typeof(get(elem[0])) == "number" &&
-                typeof(get(elem[1])) == "string" &&
-                typeof(get(elem[2])) == "string");
     }
 
     function tags(taglist) {
@@ -99,17 +86,17 @@ window.testdata = function () {
     }
 
     function createTest(suite, element) {
-        var statusElement = last(element);
+        var statusElement = element[5];
         var test = model.Test({
             parent: suite,
-            name: get(element[1]),
+            name: get(element[0]),
             doc: function () {
-                var val = get(element[4]);
+                var val = get(element[3]);
                 this.doc = function() {return val;}
                 return val;
             },
-            timeout: get(element[2]),
-            isCritical: (get(element[3]) == "Y"),
+            timeout: get(element[1]),
+            isCritical: (get(element[2]) == "Y"),
             status: parseStatus(statusElement, suite.hasTeardownFailure()),
             message:  function () {
                 var val = createMessage(statusElement, suite.hasTeardownFailure());
@@ -117,9 +104,9 @@ window.testdata = function () {
                 return val;
             },
             times: model.Times(times(statusElement)),
-            tags: tags(secondLast(element))
+            tags: tags(element[4])
         });
-        test.populateKeywords(Populator(element, keywordMatcher, childCreator(test, createKeyword)));
+        test.populateKeywords(Populator(element[6], childCreator(test, createKeyword)));
         return test;
     }
 
@@ -133,13 +120,13 @@ window.testdata = function () {
     }
 
     function createSuite(parent, element) {
-        var statusElement = secondLast(element);
+        var statusElement = element[4];
         var suite = model.Suite({
             parent: parent,
-            name: get(element[2]),
-            source: get(element[1]),
+            name: get(element[1]),
+            source: get(element[0]),
             doc: function () {
-                var val = get(element[3]);
+                var val = get(element[2]);
                 this.doc = function() {return val;}
                 return val;
             },
@@ -152,11 +139,11 @@ window.testdata = function () {
             },
             times: model.Times(times(statusElement)),
             statistics: suiteStats(last(element)),
-            metadata: parseMetadata(element[4])
+            metadata: parseMetadata(element[3])
         });
-        suite.populateKeywords(Populator(element, keywordMatcher, childCreator(suite, createKeyword)));
-        suite.populateTests(Populator(element, headerMatcher("test"), childCreator(suite, createTest)));
-        suite.populateSuites(Populator(element, headerMatcher("suite"), childCreator(suite, createSuite)));
+        suite.populateKeywords(Populator(element[7], childCreator(suite, createKeyword)));
+        suite.populateTests(Populator(element[6], childCreator(suite, createTest)));
+        suite.populateSuites(Populator(element[5], childCreator(suite, createSuite)));
         return suite;
     }
 
@@ -180,31 +167,15 @@ window.testdata = function () {
         };
     }
 
-    function headerMatcher() {
-        var args = arguments;
-        return function(elem) {
-            for (var i = 0; i < args.length; i++)
-                if (get(elem[0]) == args[i]) return true;
-            return false;
-        };
-    }
-
-    function Populator(element, matcher, creator) {
-        var items = findElements(element, matcher);
+    function Populator(items, creator) {
+        if (!items)
+            return function () {};
         return {
             numberOfItems: items.length,
             creator: function (index) {
                 return creator(items[index], index);
             }
         };
-    }
-
-    function findElements(fromElement, matcher) {
-        var results = new Array();
-        for (var i = 0; i < fromElement.length; i++)
-            if (matcher(fromElement[i]))
-                results.push(fromElement[i]);
-        return results;
     }
 
     function suite() {
@@ -336,6 +307,8 @@ window.store = (function () {
 
     function getText(id) {
         var text = window.output.strings[id];
+        if (!text)
+            return ''
         if (text[0] == '*') {
             return text.substring(1)
         }
