@@ -61,15 +61,15 @@ function populate(plainSuite, plainErrors) {
 
 function convertListToIds(output, list) {
     var result = [];
-    for (key in list) {
+    for (var key in list) {
         result[key] = addValue(output, list[key]);
     }
     return result;
 }
 
 function convertDictToIds(output, dict) {
-    result = {};
-    for (key in dict) {
+    var result = {};
+    for (var key in dict) {
         result[addValue(output, key)] = addValue(output, dict[key])
     }
     return result;
@@ -132,7 +132,7 @@ describe("Handling Suite", function () {
             ["*foritem","*${i} = 0",'*','*','*', keyword, ["*P", 0, 0]], ["*P", 0, 0],
             ["*foritem","*${i} = 1",'*','*','*', keyword, ["*P", 0, 0]], ["*P", 0, 0]]
         var test = ["*test","*Test","*1 second","*Y", "*test doc", keyword, forloop, ["*tag1", "*tag2"],["*P",-1,2]];
-        var suite = ["*suite","*/tmp/test.txt","*Suite","*suite doc",{"*meta":"*data"}, test, ["*P",-38,39], [1,1,1,1]];
+        var suite = ["*suite","*/tmp/test.txt","*Suite","*suite doc",["*meta", "*data"], test, ["*P",-38,39], [1,1,1,1]];
         populate(suite);
     });
 
@@ -154,7 +154,7 @@ describe("Handling Suite", function () {
         expect(suite.times).toBeDefined();
         expect(suite.times.elapsedMillis).toEqual(39);
         expectStats(suite, 1, 1, 1, 1);
-        expect(suite.metadata["meta"]).toEqual("data");
+        expect(suite.metadata[0]).toEqual(["meta", "data"]);
     });
 
     it("should parse test", function () {
@@ -162,7 +162,7 @@ describe("Handling Suite", function () {
         expect(test.name).toEqual("Test");
         expect(test.status).toEqual("PASS");
         expect(test.fullName).toEqual("Suite.Test");
-        expect(test.doc).toEqual("test doc");
+        expect(test.doc()).toEqual("test doc");
         expect(test.tags).toEqual(["tag1", "tag2"]);
         expect(test.times).toBeDefined();
         expect(test.times.elapsedMillis).toEqual(2);
@@ -233,11 +233,11 @@ describe("Setups and teardowns", function () {
     	checkTypeNameArgs(suite.keywords()[1], "TEARDOWN", "Lib.Kw", "tears");
     });
 
-    it("should give navigation uuid list for a suite teardown keyword", function (){
-        var uuids = window.testdata.pathToKeyword("Suite.1");
-        expect(uuids[0]).toEqual(window.testdata.suite().id);
-        expect(uuids[1]).toEqual(nthKeyword(window.testdata.suite(), 1).id);
-        expect(uuids.length).toEqual(2);
+    it("should give navigation uniqueId list for a suite teardown keyword", function (){
+        var uniqueIds = window.testdata.pathToKeyword("Suite.1");
+        expect(uniqueIds[0]).toEqual(window.testdata.suite().id);
+        expect(uniqueIds[1]).toEqual(nthKeyword(window.testdata.suite(), 1).id);
+        expect(uniqueIds.length).toEqual(2);
     });
 
     it("should parse test setup", function () {
@@ -356,17 +356,17 @@ describe("Parent Suite Teardown Failure", function (){
 
     it("should show test message 'Teardown of the parent suite failed.'", function (){
         var test = firstTest(window.testdata.suite().suites()[0]);
-        expect(test.message).toEqual("Teardown of the parent suite failed.");
+        expect(test.message()).toEqual("Teardown of the parent suite failed.");
     });
 
     it("should show suite message 'Teardown of the parent suite failed.'", function (){
         var suite = window.testdata.suite().suites()[0];
-        expect(suite.message).toEqual("Teardown of the parent suite failed.");
+        expect(suite.message()).toEqual("Teardown of the parent suite failed.");
     });
 
     it("should show root suite message 'Suite teardown failed:\nAssertionError'", function (){
         var root = window.testdata.suite();
-        expect(root.message).toEqual("Suite teardown failed:\nAssertionError");
+        expect(root.message()).toEqual("Suite teardown failed:\nAssertionError");
     });
 
 });
@@ -385,7 +385,7 @@ describe("Parent Suite Teardown and Test failure", function(){
 
     it("should show test message 'In test\n\nAlso teardown of the parent suite failed.'", function (){
         var test = firstTest(window.testdata.suite());
-        expect(test.message).toEqual("In test\n\nAlso teardown of the parent suite failed.");
+        expect(test.message()).toEqual("In test\n\nAlso teardown of the parent suite failed.");
     });
 })
 
@@ -404,7 +404,7 @@ describe("Test failure message", function (){
 
     it("should show test failure message ''", function (){
         var test = firstTest(window.testdata.suite());
-        expect(test.message).toEqual("FooBar!");
+        expect(test.message()).toEqual("FooBar!");
     });
 });
 
@@ -531,46 +531,46 @@ describe("Iterating Suites", function () {
         expect(root.suites()[1].suites()[0].tests()[0].fullName).toEqual("Foo.Foo.Tostii.FOO FOO");
     });
 
-    it("should give navigation uuid list for a test", function (){
-        var uuidList = window.testdata.pathToTest("Foo.Foo.Tostii.FOO FOO");
+    it("should give navigation uniqueId list for a test", function (){
+        var uniqueIdList = window.testdata.pathToTest("Foo.Foo.Tostii.FOO FOO");
         var root = window.testdata.suite();
-        expect(uuidList[0]).toEqual(root.id);
-        expect(uuidList[1]).toEqual(subSuite(1).id);
-        expect(uuidList[2]).toEqual(subSuite(1).suites()[0].id);
-        expect(uuidList[3]).toEqual(subSuite(1).suites()[0].tests()[0].id);
-        expect(uuidList.length).toEqual(4);
+        expect(uniqueIdList[0]).toEqual(root.id);
+        expect(uniqueIdList[1]).toEqual(subSuite(1).id);
+        expect(uniqueIdList[2]).toEqual(subSuite(1).suites()[0].id);
+        expect(uniqueIdList[3]).toEqual(subSuite(1).suites()[0].tests()[0].id);
+        expect(uniqueIdList.length).toEqual(4);
     });
 
-    it("should give navigation uuid list for a keyword", function (){
-        var uuidList = window.testdata.pathToKeyword("Foo.Foo.Tostii.FOO FOO.0");
+    it("should give navigation uniqueId list for a keyword", function (){
+        var uniqueIdList = window.testdata.pathToKeyword("Foo.Foo.Tostii.FOO FOO.0");
         var root = window.testdata.suite();
-        expect(uuidList[0]).toEqual(root.id);
-        expect(uuidList[1]).toEqual(subSuite(1).id);
-        expect(uuidList[2]).toEqual(subSuite(1).suites()[0].id);
-        expect(uuidList[3]).toEqual(subSuite(1).suites()[0].tests()[0].id);
-        expect(uuidList[4]).toEqual(subSuite(1).suites()[0].tests()[0].keywords()[0].id);
-        expect(uuidList.length).toEqual(5);
+        expect(uniqueIdList[0]).toEqual(root.id);
+        expect(uniqueIdList[1]).toEqual(subSuite(1).id);
+        expect(uniqueIdList[2]).toEqual(subSuite(1).suites()[0].id);
+        expect(uniqueIdList[3]).toEqual(subSuite(1).suites()[0].tests()[0].id);
+        expect(uniqueIdList[4]).toEqual(subSuite(1).suites()[0].tests()[0].keywords()[0].id);
+        expect(uniqueIdList.length).toEqual(5);
     });
 
-    it("should give navigation uuid list for a suite", function (){
-        var uuidList = window.testdata.pathToSuite("Foo.Bar.Testii");
+    it("should give navigation uniqueId list for a suite", function (){
+        var uniqueIdList = window.testdata.pathToSuite("Foo.Bar.Testii");
         var root = window.testdata.suite();
-        expect(uuidList[0]).toEqual(root.id);
-        expect(uuidList[1]).toEqual(root.suites()[0].id);
-        expect(uuidList[2]).toEqual(root.suites()[0].suites()[0].id);
-        expect(uuidList.length).toEqual(3);
+        expect(uniqueIdList[0]).toEqual(root.id);
+        expect(uniqueIdList[1]).toEqual(root.suites()[0].id);
+        expect(uniqueIdList[2]).toEqual(root.suites()[0].suites()[0].id);
+        expect(uniqueIdList.length).toEqual(3);
     });
 
-    it("should give navigation uuid list for the root suite", function (){
-        var uuidList = window.testdata.pathToSuite("Foo");
+    it("should give navigation uniqueId list for the root suite", function (){
+        var uniqueIdList = window.testdata.pathToSuite("Foo");
         var root = window.testdata.suite();
-        expect(uuidList[0]).toEqual(root.id);
-        expect(uuidList.length).toEqual(1);
+        expect(uniqueIdList[0]).toEqual(root.id);
+        expect(uniqueIdList.length).toEqual(1);
     });
 
-    it("should give empty navigation uuid list for unknown element", function (){
-        var uuidList = window.testdata.pathToSuite("unknown");
-        expect(uuidList).toEqual([]);
+    it("should give empty navigation uniqueId list for unknown element", function (){
+        var uniqueIdList = window.testdata.pathToSuite("unknown");
+        expect(uniqueIdList).toEqual([]);
     });
 });
 

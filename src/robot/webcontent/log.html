@@ -2,9 +2,8 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
-<META HTTP-EQUIV="Expires" CONTENT="-1">
-
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="-1">
 <link rel="stylesheet" type="text/css" href="log.css" media="all"/>
 <link rel="stylesheet" type="text/css" href="common.css" media="all"/>
 <link rel="stylesheet" type="text/css" href="print.css" media="print"/>
@@ -17,20 +16,17 @@
 <script type="text/javascript" src="util.js"></script>
 <script type="text/javascript" src="testdata.js"></script>
 <script type="text/javascript" src="view.js"></script>
-
 <title></title>
 </head>
 <body>
-<div id="javascript_disabled" class="error_box">
-   <h1>Error when opening log.</h1>
-   <!-- TODO: Fine tune text. Check minimum browsers. Also report.html. -->
-   <ul>
-     <li>Check that JavaScript is enabled in your browser.</li>
-     <li>Minimum browser requirements: IE8, Firefox +3.5, Chrome xx, Safari zz, Opera yy.</li>
-     <li>Check JavaScript error log if there are errors.</li>
-   </ul>
+<div id="javascript_disabled">
+  <h1>Opening Robot Framework log failed</h1>
+  <ul>
+    <li>Verify that you have <b>JavaScript enabled</b> in your browser.</li>
+    <li>Make sure you are using a <b>modern enough browser</b>. Firefox 3.5, IE 8, or equivalent is required, newer browsers are recommended.</li>
+    <li>Check are there messages in your browser's <b>JavaScript error log</b>. Report the problem if you believe you have encountered a bug.</li>
+  </ul>
 </div>
-
 <div class="header" id="header_div"></div>
 <div id="statistics_container"></div>
 
@@ -59,24 +55,24 @@ function addErrors() {
 }
 
 function makeElementVisible(element) {
-    var uuids = [];
+    var uniqueIds = [];
     if (element.indexOf("suite_") == 0) {
         element = element.substring("suite_".length);
-        uuids = window.testdata.pathToSuite(unescape(element));
+        uniqueIds = window.testdata.pathToSuite(unescape(element));
     }
     if (element.indexOf("test_") == 0) {
         element = element.substring("test_".length);
-        uuids = window.testdata.pathToTest(unescape(element));
+        uniqueIds = window.testdata.pathToTest(unescape(element));
     }
     if (element.indexOf("keyword_") == 0) {
         element = element.substring("keyword_".length);
-        uuids = window.testdata.pathToKeyword(unescape(element));
+        uniqueIds = window.testdata.pathToKeyword(unescape(element));
     }
-    for (var i in uuids) {
-        $("#" + uuids[i] + "_unfoldlink").click();
+    for (var i in uniqueIds) {
+        $("#" + uniqueIds[i] + "_unfoldlink").click();
     }
-    if (uuids && uuids.length > 0) {
-        expandFailed(window.testdata.find(uuids[uuids.length - 1]));
+    if (uniqueIds && uniqueIds.length > 0) {
+        expandFailed(window.testdata.find(uniqueIds[uniqueIds.length - 1]));
     }
 }
 
