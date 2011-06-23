@@ -39,38 +39,32 @@ class DataModel(object):
         self._settings = settings
 
     def write_to(self, output, separator='', split_threshold=9500):
-        # TODO: FIXME: krhm
         output.write('window.output = {};\n')
         output.write(separator)
         for key, value in self._robot_data.items():
-            if key == 'suite':
-                data, _, mappings = self._calc_and_write(self._robot_data['suite'], output, split_threshold, separator)
-                self._dump_json('window.output["suite"] = ', data, output, mappings)
-                output.write(separator)
-            elif key == 'integers':
-                integers = self._robot_data['integers']
-                output.write('window.output["integers"] = [];\n')
-                output.write(separator)
-                while integers:
-                    output.write('window.output["integers"] = window.output["integers"].concat(')
-                    json.json_dump(integers[:split_threshold], output)
-                    output.write(');\n')
-                    output.write(separator)
-                    integers = integers[split_threshold:]
-            elif key == 'strings':
-                integers = self._robot_data['strings']
-                output.write('window.output["strings"] = [];\n')
-                output.write(separator)
-                while integers:
-                    output.write('window.output["strings"] = window.output["strings"].concat(')
-                    json.json_dump(integers[:split_threshold], output)
-                    output.write(');\n')
-                    output.write(separator)
-                    integers = integers[split_threshold:]
-            else:
-                self._dump_json('window.output["%s"] = ' % key, value, output)
-                output.write(separator)
+            self._write_output_element(key, output, separator, split_threshold, value)
+            output.write(separator)
         self._dump_json('window.settings = ', self._settings, output)
+
+    def _write_output_element(self, key, output, separator, split_threshold, value):
+        if key == 'suite':
+            #TODO: Should window.output["suite"] writing be in SplittingSuiteWriter
+            result = SplittingSuiteWriter(self, output, separator, split_threshold).write(self._robot_data['suite'])
+            self._dump_json('window.output["suite"] = ', result.data_block, output, result.mapping)
+        elif key in ['integers', 'strings']:
+            self._dump_and_split_list(key, output, separator, split_threshold)
+        else:
+            self._dump_json('window.output["%s"] = ' % key, value, output)
+
+    def _dump_and_split_list(self, name, output, separator, split_threshold):
+        lst = self._robot_data[name]
+        output.write('window.output["%s"] = [];\n' % name)
+        while lst:
+            output.write(separator)
+            output.write('window.output["%s"] = window.output["%s"].concat(' % (name, name))
+            json.json_dump(lst[:split_threshold], output)
+            output.write(');\n')
+            lst = lst[split_threshold:]
 
     def _dump_json(self, name, data, output, mappings=None):
         output.write(name)
@@ -138,29 +132,52 @@ class DataModel(object):
                 self._collect_used_indices(item.keys(), result)
         return result
 
-    _index = 0
 
-    def _calc_and_write(self, data_block, output, split_threshold, separator):
-        # TODO: needs some love
-        # FIXME: see above
-        size = 1
-        out_data_block = []
-        mappings = {}
-        # TODO: Should have no Nones
-        if data_block is None:
-            return None, 1, None
-        if isinstance(data_block, (int, long)):
-            return data_block, 1, None
+class _SubResult(object):
+
+    def __init__(self, data_block, size, mapping):
+        self.data_block = data_block
+        self.size = size
+        self.mapping = mapping
+
+    def update(self, subresult):
+        self.data_block += [subresult.data_block]
+        self.size += subresult.size
+        if subresult.mapping:
+            self.mapping.update(subresult.mapping)
+
+    def link(self, name):
+        key = object()
+        return _SubResult(key, 1, {key:name})
+
+class SplittingSuiteWriter(object):
+
+    def __init__(self, writer, output, separator, split_threshold):
+        self._index = 0
+        self._output = output
+        self._writer = writer
+        self._separator = separator
+        self._split_threshold = split_threshold
+
+    def write(self, data_block):
+        if not isinstance(data_block, list):
+            return _SubResult(data_block, 1, None)
+        result = _SubResult([], 1, {})
         for item in data_block:
-            elem, s, mapping = self._calc_and_write(item, output, split_threshold, separator)
-            size += s
-            out_data_block += [elem]
-            if mapping:
-                mappings.update(mapping)
-        if size > split_threshold:
-            self._dump_json('window.sPart%s = ' % self._index, out_data_block, output, mappings)
-            output.write(separator)
-            key = object()
-            out_data_block, size, mappings = key, 1, {key:'window.sPart%s' % self._index}
-            self._index += 1
-        return out_data_block, size, mappings
+            result.update(self.write(item))
+        if result.size > self._split_threshold:
+            result = self._dump_suite_part(result)
+        return result
+
+    def _list_name(self):
+        return 'window.sPart%s' % self._index
+
+    def _dump_suite_part(self, result):
+        self._writer._dump_json(self._list_name()+' = ', result.data_block, self._output, result.mapping)
+        self._write_separator()
+        new_result = result.link(self._list_name())
+        self._index += 1
+        return new_result
+
+    def _write_separator(self):
+        self._output.write(self._separator)

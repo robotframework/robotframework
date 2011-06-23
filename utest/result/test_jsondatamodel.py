@@ -33,7 +33,7 @@ class TestDataModelWrite(unittest.TestCase):
         lines = self._get_lines(data={'baseMillis':100, 'suite':suite},
                                 split_threshold=2, separator='foo\n')
         parts = filter(lambda l: l.startswith('window.sPart'), lines)
-        assert_equals(len(parts), 4)
+        assert_equals(parts, ['window.sPart0 = [2,3];', 'window.sPart1 = [6,7];', 'window.sPart2 = [4,[5],window.sPart1];', 'window.sPart3 = [1,window.sPart0,window.sPart2,8];'])
         self._assert_separators_in(lines, 'foo')
 
     def test_splitting_output_integers(self):
