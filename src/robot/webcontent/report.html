@@ -249,9 +249,9 @@ function popUpTo(list, upTo) {
     <tr>
       <th>Status:</th>
       {{if criticalFailed}}
-      <td><a class="summary_fail" href="#total_Critical Tests" onClick="totalDetailSelected('Critical Tests')">${criticalFailed} critical test{{if criticalFailed != 1}}s{{/if}} failed</a></td>
+      <td><a class="summary_fail" href="#total_Critical Tests" onclick="totalDetailSelected('Critical Tests')">${criticalFailed} critical test{{if criticalFailed != 1}}s{{/if}} failed</a></td>
       {{else}}
-      <td><a class="summary_pass" href="#total_Critical Tests" onClick="totalDetailSelected('Critical Tests')">All critical tests passed</a></td>
+      <td><a class="summary_pass" href="#total_Critical Tests" onclick="totalDetailSelected('Critical Tests')">All critical tests passed</a></td>
       {{/if}}
     </tr>
     {{if doc()}}
@@ -295,7 +295,7 @@ function popUpTo(list, upTo) {
   <tr>
     <td class="col_stat_name">
       <div class="stat_name">
-        <a href="#total_${label}" onClick="totalDetailSelected('${label}')">${label}</a>
+        <a href="#total_${label}" onclick="totalDetailSelected('${label}')">${label}</a>
       </div>
     </td>
     {{tmpl($data) 'stat_columns'}}
