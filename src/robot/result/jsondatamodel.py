@@ -48,9 +48,8 @@ class DataModel(object):
 
     def _write_output_element(self, key, output, separator, split_threshold, value):
         if key == 'suite':
-            #TODO: Should window.output["suite"] writing be in SplittingSuiteWriter
-            result = SplittingSuiteWriter(self, output, separator, split_threshold).write(self._robot_data['suite'])
-            self._dump_json('window.output["suite"] = ', result.data_block, output, result.mapping)
+            data, mapping = SplittingSuiteWriter(self, output, separator, split_threshold).write(self._robot_data['suite'])
+            self._dump_json('window.output["suite"] = ', data, output, mapping)
         elif key in ['integers', 'strings']:
             self._dump_and_split_list(key, output, separator, split_threshold)
         else:
@@ -150,6 +149,7 @@ class _SubResult(object):
         key = object()
         return _SubResult(key, 1, {key:name})
 
+
 class SplittingSuiteWriter(object):
 
     def __init__(self, writer, output, separator, split_threshold):
@@ -160,11 +160,15 @@ class SplittingSuiteWriter(object):
         self._split_threshold = split_threshold
 
     def write(self, data_block):
+        result = self._write(data_block)
+        return result.data_block, result.mapping
+
+    def _write(self, data_block):
         if not isinstance(data_block, list):
             return _SubResult(data_block, 1, None)
         result = _SubResult([], 1, {})
         for item in data_block:
-            result.update(self.write(item))
+            result.update(self._write(item))
         if result.size > self._split_threshold:
             result = self._dump_suite_part(result)
         return result
