@@ -40,6 +40,8 @@ $(document).ready(function () {
     addSummary(topsuite);
     addStatistics();
     addDetails();
+    // TODO: Why is this done? It seems to cause details to be selected
+    // twice, because the logic there resets window.location.hash.
     window.onhashchange = showDetailsByHash;
 });
 
