@@ -333,9 +333,15 @@ function popUpTo(list, upTo) {
 <script type="text/x-jquery-tmpl" id="detailsHeaderTemplate">
   <h2 id="${linkTarget}">Test Details</h2>
   <ul id="detail_tabs">
-    <li class="${totals_tab_status}"><a href="#totals" onclick="renderTotalSelector();">Totals</a></li>
-    <li class="${tags_tab_status}"><a href="#tags" onclick="renderTagSelector();">Tags</a></li>
-    <li class="${suites_tab_status}"><a href="#suites" onclick="renderSuiteSelector();">Suites</a></li>
+    <li class="${totals_tab_status}">
+      <a href="#totals" onclick="renderTotalSelector();">Totals</a>
+    </li>
+    <li class="${tags_tab_status}">
+      <a href="#tags" onclick="renderTagSelector();">Tags</a>
+    </li>
+    <li class="${suites_tab_status}">
+      <a href="#suites" onclick="renderSuiteSelector();">Suites</a>
+    </li>
   </ul>
 </script>
 
@@ -344,9 +350,11 @@ function popUpTo(list, upTo) {
     <tr id="selector">
       <th>Type:</th>
       <td id="normal_selector">
-        <input id="radio_Critical Tests" type="radio" name="totals_radio" onclick="totalDetailSelected('Critical Tests');">
+        <input id="radio_Critical Tests" type="radio" name="totals_radio"
+               onclick="totalDetailSelected('Critical Tests');">
         <label for="radio_Critical Tests">Critical Tests</label><br>
-        <input id="radio_All Tests" type="radio" name="totals_radio" onclick="totalDetailSelected('All Tests');">
+        <input id="radio_All Tests" type="radio" name="totals_radio"
+               onclick="totalDetailSelected('All Tests');">
         <label for="radio_All Tests">All Tests</label>
       </td>
       <td id="print_selector"></td>
@@ -359,7 +367,8 @@ function popUpTo(list, upTo) {
     <tr id="selector">
       <th>Name:</th>
       <td id="normal_selector">
-        <select id="tag_detail_selector" onchange="tagDetailSelected(this.options[this.selectedIndex].value);">
+        <select id="tag_detail_selector"
+                onchange="tagDetailSelected(this.options[this.selectedIndex].value);">
           <option value="">Select tag...</option>
           {{each tags}}
           <option value="${$value.label}">${$value.label} ${$value.shownInfo}</option>
@@ -376,7 +385,8 @@ function popUpTo(list, upTo) {
     <tr id="selector">
       <th>Name:</th>
       <td id="normal_selector">
-        <select id="suite_detail_selector" onchange="suiteDetailSelected(this.options[this.selectedIndex].value);">
+        <select id="suite_detail_selector"
+                onchange="suiteDetailSelected(this.options[this.selectedIndex].value);">
           <option value="">Select suite...</option>
           {{each suites}}
           <option value="${$value.label}">${$value.label}</option>
