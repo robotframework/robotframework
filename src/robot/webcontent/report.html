@@ -371,7 +371,9 @@ function popUpTo(list, upTo) {
                 onchange="tagDetailSelected(this.options[this.selectedIndex].value);">
           <option value="">Select tag...</option>
           {{each tags}}
-          <option value="${$value.label}">${$value.label} ${$value.shownInfo}</option>
+          <option value="${$value.label}">
+            ${$value.label} {{if $value.info}}(${$value.info}){{/if}}
+          </option>
           {{/each}}
         </select>
       </td>
