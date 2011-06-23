@@ -74,6 +74,7 @@ h1 {
 /* Report/log link */
 #report_or_log_link {
     position: fixed;
+    z-index: 1000;
     top: 0px;
     right: 0px;
     background: black;
