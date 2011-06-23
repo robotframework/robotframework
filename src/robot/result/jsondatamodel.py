@@ -48,7 +48,9 @@ class DataModel(object):
 
     def _write_output_element(self, key, output, separator, split_threshold, value):
         if key == 'suite':
-            data, mapping = SplittingSuiteWriter(self, output, separator, split_threshold).write(self._robot_data['suite'])
+            splitWriter = SplittingSuiteWriter(self, output, separator,
+                                               split_threshold)
+            data, mapping = splitWriter.write(self._robot_data['suite'])
             self._dump_json('window.output["suite"] = ', data, output, mapping)
         elif key in ['integers', 'strings']:
             self._dump_and_split_list(key, output, separator, split_threshold)
@@ -84,8 +86,12 @@ class DataModel(object):
         # Top level teardown is kept to make tests fail if suite teardown failed
         # TODO: Could we store information about failed suite teardown otherwise?
         # TODO: Cleanup?
-        return isinstance(item, list) and item and item[0] > 0 \
-            and self._robot_data['strings'][item[0]] in ['*kw', '*setup', '*forloop', '*foritem']
+        return item and \
+               isinstance(item, list) and \
+               (not isinstance(item[0], list)) and \
+               item[0] > 0 and \
+               self._robot_data['strings'][item[0]] in \
+                        ['*kw', '*setup', '*forloop', '*foritem']
 
     def _prune_unused_indices(self):
         used = self._collect_used_indices(self._robot_data['suite'], set())
