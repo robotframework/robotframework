@@ -61,15 +61,15 @@ function populate(plainSuite, plainErrors) {
 
 function convertListToIds(output, list) {
     var result = [];
-    for (key in list) {
+    for (var key in list) {
         result[key] = addValue(output, list[key]);
     }
     return result;
 }
 
 function convertDictToIds(output, dict) {
-    result = {};
-    for (key in dict) {
+    var result = {};
+    for (var key in dict) {
         result[addValue(output, key)] = addValue(output, dict[key])
     }
     return result;
@@ -132,7 +132,7 @@ describe("Handling Suite", function () {
             ["*foritem","*${i} = 0",'*','*','*', keyword, ["*P", 0, 0]], ["*P", 0, 0],
             ["*foritem","*${i} = 1",'*','*','*', keyword, ["*P", 0, 0]], ["*P", 0, 0]]
         var test = ["*test","*Test","*1 second","*Y", "*test doc", keyword, forloop, ["*tag1", "*tag2"],["*P",-1,2]];
-        var suite = ["*suite","*/tmp/test.txt","*Suite","*suite doc",{"*meta":"*data"}, test, ["*P",-38,39], [1,1,1,1]];
+        var suite = ["*suite","*/tmp/test.txt","*Suite","*suite doc",["*meta", "*data"], test, ["*P",-38,39], [1,1,1,1]];
         populate(suite);
     });
 
@@ -154,7 +154,7 @@ describe("Handling Suite", function () {
         expect(suite.times).toBeDefined();
         expect(suite.times.elapsedMillis).toEqual(39);
         expectStats(suite, 1, 1, 1, 1);
-        expect(suite.metadata["meta"]).toEqual("data");
+        expect(suite.metadata[0]).toEqual(["meta", "data"]);
     });
 
     it("should parse test", function () {
