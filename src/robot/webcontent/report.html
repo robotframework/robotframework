@@ -1,12 +1,12 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <head>
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="-1">
-<link rel="stylesheet" type="text/css" href="common.css" media="all"/>
-<link rel="stylesheet" type="text/css" href="report.css" media="all"/>
-<link rel="stylesheet" type="text/css" href="print.css" media="print"/>
+<link rel="stylesheet" type="text/css" href="common.css" media="all">
+<link rel="stylesheet" type="text/css" href="report.css" media="all">
+<link rel="stylesheet" type="text/css" href="print.css" media="print">
 <script type="text/javascript" src="lib/jquery.min.js"></script>
 <script type="text/javascript" src="lib/jquery.tmpl.min.js"></script>
 <!-- OUTPUT JS --><script type="text/javascript" src="testdata/data.js"></script>
@@ -40,6 +40,8 @@ $(document).ready(function () {
     addSummary(topsuite);
     addStatistics();
     addDetails();
+    // TODO: Why is this done? It seems to cause details to be selected
+    // twice, because the logic there resets window.location.hash.
     window.onhashchange = showDetailsByHash;
 });
 
@@ -61,9 +63,8 @@ function addDetails() {
     if (window.location.hash) {
         showDetailsByHash();
     } else {
-        renderTotalSelector("no_selection");
+        renderTotalSelector();
     }
-    $('#test_details_container').css('min-height', $(window).height());
 }
 
 function showDetailsByHash() {
@@ -72,25 +73,29 @@ function showDetailsByHash() {
     var hashParts = decodeURI(window.location.hash.substring(1)).split('_');
     var key = hashParts.shift();
     var arg = hashParts.join('_');
-    var action = {
-        'total': totalDetailSelected,
-        'tag': tagDetailSelected,
-        'suite': suiteDetailSelected,
-        'totals': showTotalsTab,
-        'tags': showTagsTab,
-        'suites': showSuitesTab
-    }[key];
+    var action = {'totals': renderTotalSelector,
+                  'tags':   renderTagSelector,
+                  'suites': renderSuiteSelector,
+                  'total':  totalDetailSelected,
+                  'tag':    tagDetailSelected,
+                  'suite':  suiteDetailSelected}[key];
     if (action) {
         action(arg);
     }
+    // TODO: Why is this needed? Isn't the has already set?
     window.location.hash = window.location.hash.substring(1);
 }
 
 function totalDetailSelected(type) {
     if (!type) return;
-    renderTotalSelector('total_' + type);
+    renderTotalSelector(type);
     renderTotalDetails(type);
     ensureTotalDetailsAreVisible(type);
+}
+
+function renderTotalSelector(type) {
+    var args = {linkTarget: 'total_'+type, totalTabStatus: 'tab_selected'};
+    renderSelector(args, 'totalDetailsSelectorTemplate', {selected: type});
 }
 
 function renderTotalDetails(type) {
@@ -105,25 +110,25 @@ function renderTotalDetails(type) {
     drawTestDetailsTable(tests);
 }
 
-function renderTotalSelector(linkTarget) {
-    var args = {linkTarget: linkTarget, totals_tab_status: 'tab_selected'};
-    renderSelector(args, 'totalDetailsSelectorTemplate');
-}
-
 function ensureTotalDetailsAreVisible(type) {
-    document.getElementById('radio_'+type).checked = true;
     $('#print_selector').text(type);
-    window.location.hash = 'total_'+type
+    scrollToSelector('total_'+type);
 }
 
 function tagDetailSelected(name) {
     if (!name) return;
-    renderTagsSelector('tag_' + name);
+    renderTagSelector(name);
     var tag = util.filter(window.testdata.statistics().tag, function (tag) {
         return tag.label == name;
     })[0];
     renderTagDetails(tag);
     ensureTagDetailsAreVisible(name);
+}
+
+function renderTagSelector(tagName) {
+    var args = {linkTarget: 'tag_'+tagName, tagTabStatus: 'tab_selected'};
+    var tagstats = {tags: window.testdata.statistics().tag, selected: tagName};
+    renderSelector(args, 'tagDetailsSelectorTemplate', tagstats);
 }
 
 function renderTagDetails(tag) {
@@ -135,29 +140,23 @@ function renderTagDetails(tag) {
     drawTestDetailsTable(tests);
 }
 
-function renderTagsSelector(linkTarget) {
-    var args = {linkTarget: linkTarget, tags_tab_status: 'tab_selected'};
-    var tagstats = {tags: window.testdata.statistics().tag};
-    renderSelector(args, 'tagDetailsSelectorTemplate', tagstats);
-}
-
 function ensureTagDetailsAreVisible(name) {
-    document.getElementById('tag_detail_selector').value = name;
     $('#print_selector').text(name);
-    window.location.hash = 'tag_'+name;
+    scrollToSelector('tag_'+name);
 }
 
 function suiteDetailSelected(name) {
     if (!name) return;
-    renderSuiteSelector('suite_' + name);
+    renderSuiteSelector(name);
     renderSuiteDetails(name);
     ensureSuiteDetailsAreVisible(name);
 }
 
-function ensureSuiteDetailsAreVisible(name) {
-    document.getElementById('suite_detail_selector').value = name;
-    $('#print_selector').text(name);
-    window.location.hash = 'suite_'+name;
+function renderSuiteSelector(suiteName) {
+    var args = {linkTarget: 'suite_'+suiteName, suiteTabStatus: 'tab_selected'};
+    var stats = {suites: window.testdata.statistics().suite,
+                 selected: suiteName};
+    renderSelector(args, 'suiteDetailsSelectorTemplate', stats);
 }
 
 function renderSuiteDetails(name) {
@@ -167,33 +166,21 @@ function renderSuiteDetails(name) {
     drawTestDetailsTable(suite.allTests());
 }
 
-function renderSuiteSelector(linkTarget) {
-    var args = {linkTarget: linkTarget, suites_tab_status: 'tab_selected'};
-    var stats = {suites: window.testdata.statistics().suite};
-    renderSelector(args, 'suiteDetailsSelectorTemplate', stats);
+function ensureSuiteDetailsAreVisible(name) {
+    $('#print_selector').text(name);
+    scrollToSelector('suite_'+name);
 }
 
-function showTotalsTab() {
-    renderTotalSelector('totals');
-}
-
-function showTagsTab() {
-    renderTagsSelector('tags');
-}
-
-function showSuitesTab() {
-    renderSuiteSelector('suites');
+function scrollToSelector(anchor) {
+    $('#test_details_container').css('min-height', $(window).height());
+    window.location.hash = anchor;
 }
 
 function renderSelector(args, template, stats) {
-    emptyDetails();
-    $.tmpl('detailsHeaderTemplate', args).appendTo('#test_details_container');
-    $.tmpl(template, stats).appendTo('#test_details_container');
-}
-
-function emptyDetails(){
     window.elementsToRender = [];
     $('#test_details_container').empty();
+    $.tmpl('detailsHeaderTemplate', args).appendTo('#test_details_container');
+    $.tmpl(template, stats).appendTo('#test_details_container');
 }
 
 function drawTestDetailsTable(tests) {
@@ -231,15 +218,14 @@ function calculateTotalTime(tests) {
 }
 
 function renderTestDetails(){
-    if (window.elementsToRender.length == 0) {
+    if (!window.elementsToRender.length) {
         return;
     }
     var elements = popUpTo(window.elementsToRender, 10);
-    $.tmpl('testDetailsTableRowTemplate',
-            elements,
+    $.tmpl('testDetailsTableRowTemplate', elements,
             {logURL: window.settings.logURL}
     ).appendTo('#test_details');
-    if (window.elementsToRender.length > 0)
+    if (window.elementsToRender.length)
         setTimeout(renderTestDetails, 0);
 }
 
@@ -257,9 +243,9 @@ function popUpTo(list, upTo) {
     <tr>
       <th>Status:</th>
       {{if criticalFailed}}
-      <td><a class="summary_fail" href="#total_Critical Tests" onClick="totalDetailSelected('Critical Tests')">${criticalFailed} critical test{{if criticalFailed != 1}}s{{/if}} failed</a></td>
+      <td><a class="summary_fail" href="#total_Critical Tests" onclick="totalDetailSelected('Critical Tests')">${criticalFailed} critical test{{if criticalFailed != 1}}s{{/if}} failed</a></td>
       {{else}}
-      <td><a class="summary_pass" href="#total_Critical Tests" onClick="totalDetailSelected('Critical Tests')">All critical tests passed</a></td>
+      <td><a class="summary_pass" href="#total_Critical Tests" onclick="totalDetailSelected('Critical Tests')">All critical tests passed</a></td>
       {{/if}}
     </tr>
     {{if doc()}}
@@ -303,7 +289,7 @@ function popUpTo(list, upTo) {
   <tr>
     <td class="col_stat_name">
       <div class="stat_name">
-        <a href="#total_${label}" onClick="totalDetailSelected('${label}')">${label}</a>
+        <a href="#total_${label}" onclick="totalDetailSelected('${label}')">${label}</a>
       </div>
     </td>
     {{tmpl($data) 'stat_columns'}}
@@ -341,9 +327,15 @@ function popUpTo(list, upTo) {
 <script type="text/x-jquery-tmpl" id="detailsHeaderTemplate">
   <h2 id="${linkTarget}">Test Details</h2>
   <ul id="detail_tabs">
-    <li class="${totals_tab_status}"><a href="#totals" onclick="showTotalsTab();">Totals</a></li>
-    <li class="${tags_tab_status}"><a href="#tags" onclick="showTagsTab();">Tags</a></li>
-    <li class="${suites_tab_status}"><a href="#suites" onclick="showSuitesTab();">Suites</a></li>
+    <li class="${totalTabStatus}">
+      <a href="#totals" onclick="renderTotalSelector();">Totals</a>
+    </li>
+    <li class="${tagTabStatus}">
+      <a href="#tags" onclick="renderTagSelector();">Tags</a>
+    </li>
+    <li class="${suiteTabStatus}">
+      <a href="#suites" onclick="renderSuiteSelector();">Suites</a>
+    </li>
   </ul>
 </script>
 
@@ -352,9 +344,13 @@ function popUpTo(list, upTo) {
     <tr id="selector">
       <th>Type:</th>
       <td id="normal_selector">
-        <input id="radio_Critical Tests" type="radio" name="totals_radio" onclick="totalDetailSelected('Critical Tests');">
+        <input id="radio_Critical Tests" type="radio" name="totals_radio"
+               onclick="totalDetailSelected('Critical Tests');"
+               {{if selected == 'Critical Tests'}}checked="checked"{{/if}}>
         <label for="radio_Critical Tests">Critical Tests</label><br>
-        <input id="radio_All Tests" type="radio" name="totals_radio" onclick="totalDetailSelected('All Tests');">
+        <input id="radio_All Tests" type="radio" name="totals_radio"
+               onclick="totalDetailSelected('All Tests');"
+               {{if selected == 'All Tests'}}checked="checked"{{/if}}>
         <label for="radio_All Tests">All Tests</label>
       </td>
       <td id="print_selector"></td>
@@ -367,10 +363,14 @@ function popUpTo(list, upTo) {
     <tr id="selector">
       <th>Name:</th>
       <td id="normal_selector">
-        <select id="tag_detail_selector" onchange="tagDetailSelected(this.options[this.selectedIndex].value);">
+        <select id="tag_detail_selector"
+                onchange="tagDetailSelected(this.options[this.selectedIndex].value);">
           <option value="">Select tag...</option>
           {{each tags}}
-          <option value="${$value.label}">${$value.label} ${$value.shownInfo}</option>
+          <option value="${$value.label}"
+                  {{if $value.label == selected}}selected="selected"{{/if}}>
+            ${$value.label} {{if $value.info}}(${$value.info}){{/if}}
+          </option>
           {{/each}}
         </select>
       </td>
@@ -384,10 +384,14 @@ function popUpTo(list, upTo) {
     <tr id="selector">
       <th>Name:</th>
       <td id="normal_selector">
-        <select id="suite_detail_selector" onchange="suiteDetailSelected(this.options[this.selectedIndex].value);">
+        <select id="suite_detail_selector"
+                onchange="suiteDetailSelected(this.options[this.selectedIndex].value);">
           <option value="">Select suite...</option>
           {{each suites}}
-          <option value="${$value.label}">${$value.label}</option>
+          <option value="${$value.label}"
+                  {{if $value.label == selected}}selected="selected"{{/if}}>
+            ${$value.label}
+          </option>
           {{/each}}
         </select>
       </td>
@@ -490,7 +494,7 @@ function popUpTo(list, upTo) {
     <td class="col_crit">{{if isCritical}}yes{{else}}no{{/if}}</td>
     <td class="col_status ${status.toLowerCase()}">${status}</td>
     <td class="col_msg">${message()}</td>
-    <td class="col_times">${times.startTime}<br />${times.elapsedTime}</td>
+    <td class="col_times">${times.startTime}<br>${times.elapsedTime}</td>
   </tr>
 </script>
 
