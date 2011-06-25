@@ -86,33 +86,33 @@ function showDetailsByHash() {
     window.location.hash = window.location.hash.substring(1);
 }
 
-function totalDetailSelected(type) {
-    if (!type) return;
-    renderTotalSelector(type);
-    renderTotalDetails(type);
-    ensureTotalDetailsAreVisible(type);
+function totalDetailSelected(name) {
+    if (!name) return;
+    renderTotalSelector(name);
+    renderTotalDetails(name);
+    ensureTotalDetailsAreVisible(name);
 }
 
-function renderTotalSelector(type) {
-    var args = {linkTarget: 'total_'+type, totalTabStatus: 'tab_selected'};
-    renderSelector(args, 'totalDetailsSelectorTemplate', {selected: type});
+function renderTotalSelector(name) {
+    var args = {linkTarget: 'total_'+name, totalTabStatus: 'tab_selected'};
+    renderSelector(args, 'totalDetailsSelectorTemplate', {selected: name});
 }
 
-function renderTotalDetails(type) {
+function renderTotalDetails(name) {
     var stat;
-    if (type == 'Critical Tests')
+    if (name == 'Critical Tests')
         stat = window.testdata.statistics().total[0];
     else
         stat = window.testdata.statistics().total[1];
-    var tests = getTotalTests(type)
+    var tests = getTotalTests(name)
     stat.totalTime = calculateTotalTime(tests);
     $.tmpl('tagOrTotalDetailsTemplate', stat).appendTo('#details_header');
     drawTestDetailsTable(tests);
 }
 
-function ensureTotalDetailsAreVisible(type) {
-    $('#print_selector').text(type);
-    scrollToSelector('total_'+type);
+function ensureTotalDetailsAreVisible(name) {
+    $('#print_selector').text(name);
+    scrollToSelector('total_'+name);
 }
 
 function tagDetailSelected(name) {
@@ -203,8 +203,8 @@ function getTestsHavingTag(tag) {
     return window.testdata.suite().searchTestsByTag(tag).sort(sortByStatus);
 }
 
-function getTotalTests(type) {
-    if (type == 'Critical Tests')
+function getTotalTests(name) {
+    if (name == 'Critical Tests')
         return window.testdata.suite().criticalTests().sort(sortByStatus);
     return window.testdata.suite().allTests().sort(sortByStatus);
 }
