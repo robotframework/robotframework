@@ -73,17 +73,16 @@ function showDetailsByHash() {
     var hashParts = decodeURI(window.location.hash.substring(1)).split('_');
     var key = hashParts.shift();
     var arg = hashParts.join('_');
-    var action = {
-        'total': totalDetailSelected,
-        'tag': tagDetailSelected,
-        'suite': suiteDetailSelected,
-        'totals': renderTotalSelector,
-        'tags': renderTagSelector,
-        'suites': renderSuiteSelector
-    }[key];
+    var action = {'totals': renderTotalSelector,
+                  'tags':   renderTagSelector,
+                  'suites': renderSuiteSelector,
+                  'total':  totalDetailSelected,
+                  'tag':    tagDetailSelected,
+                  'suite':  suiteDetailSelected}[key];
     if (action) {
         action(arg);
     }
+    // TODO: Why is this needed? Isn't the has already set?
     window.location.hash = window.location.hash.substring(1);
 }
 
@@ -92,6 +91,11 @@ function totalDetailSelected(type) {
     renderTotalSelector(type);
     renderTotalDetails(type);
     ensureTotalDetailsAreVisible(type);
+}
+
+function renderTotalSelector(type) {
+    var args = {linkTarget: 'total_'+type, totalTabStatus: 'tab_selected'};
+    renderSelector(args, 'totalDetailsSelectorTemplate', {selected: type});
 }
 
 function renderTotalDetails(type) {
@@ -106,19 +110,9 @@ function renderTotalDetails(type) {
     drawTestDetailsTable(tests);
 }
 
-function renderTotalSelector(type) {
-    var args = {linkTarget: 'total_'+type, totalsTabStatus: 'tab_selected'};
-    renderSelector(args, 'totalDetailsSelectorTemplate', {selected: type});
-}
-
 function ensureTotalDetailsAreVisible(type) {
     $('#print_selector').text(type);
     scrollToSelector('total_'+type);
-}
-
-function scrollToSelector(anchor) {
-    $('#test_details_container').css('min-height', $(window).height());
-    window.location.hash = anchor;
 }
 
 function tagDetailSelected(name) {
@@ -131,6 +125,12 @@ function tagDetailSelected(name) {
     ensureTagDetailsAreVisible(name);
 }
 
+function renderTagSelector(tagName) {
+    var args = {linkTarget: 'tag_'+tagName, tagTabStatus: 'tab_selected'};
+    var tagstats = {tags: window.testdata.statistics().tag, selected: tagName};
+    renderSelector(args, 'tagDetailsSelectorTemplate', tagstats);
+}
+
 function renderTagDetails(tag) {
     var tests = getTestsHavingTag(tag);
     if (tag) {
@@ -138,12 +138,6 @@ function renderTagDetails(tag) {
     }
     $.tmpl('tagOrTotalDetailsTemplate', tag).appendTo('#details_header');
     drawTestDetailsTable(tests);
-}
-
-function renderTagSelector(tagName) {
-    var args = {linkTarget: 'tag_'+tagName, tagsTabStatus: 'tab_selected'};
-    var tagstats = {tags: window.testdata.statistics().tag, selected: tagName};
-    renderSelector(args, 'tagDetailsSelectorTemplate', tagstats);
 }
 
 function ensureTagDetailsAreVisible(name) {
@@ -158,9 +152,11 @@ function suiteDetailSelected(name) {
     ensureSuiteDetailsAreVisible(name);
 }
 
-function ensureSuiteDetailsAreVisible(name) {
-    $('#print_selector').text(name);
-    scrollToSelector('suite_'+name);
+function renderSuiteSelector(suiteName) {
+    var args = {linkTarget: 'suite_'+suiteName, suiteTabStatus: 'tab_selected'};
+    var stats = {suites: window.testdata.statistics().suite,
+                 selected: suiteName};
+    renderSelector(args, 'suiteDetailsSelectorTemplate', stats);
 }
 
 function renderSuiteDetails(name) {
@@ -170,23 +166,21 @@ function renderSuiteDetails(name) {
     drawTestDetailsTable(suite.allTests());
 }
 
-function renderSuiteSelector(suiteName) {
-    var args = {linkTarget: 'suite_'+suiteName,
-                suitesTabStatus: 'tab_selected'};
-    var stats = {suites: window.testdata.statistics().suite,
-                 selected: suiteName};
-    renderSelector(args, 'suiteDetailsSelectorTemplate', stats);
+function ensureSuiteDetailsAreVisible(name) {
+    $('#print_selector').text(name);
+    scrollToSelector('suite_'+name);
+}
+
+function scrollToSelector(anchor) {
+    $('#test_details_container').css('min-height', $(window).height());
+    window.location.hash = anchor;
 }
 
 function renderSelector(args, template, stats) {
-    emptyDetails();
-    $.tmpl('detailsHeaderTemplate', args).appendTo('#test_details_container');
-    $.tmpl(template, stats).appendTo('#test_details_container');
-}
-
-function emptyDetails(){
     window.elementsToRender = [];
     $('#test_details_container').empty();
+    $.tmpl('detailsHeaderTemplate', args).appendTo('#test_details_container');
+    $.tmpl(template, stats).appendTo('#test_details_container');
 }
 
 function drawTestDetailsTable(tests) {
@@ -224,15 +218,14 @@ function calculateTotalTime(tests) {
 }
 
 function renderTestDetails(){
-    if (window.elementsToRender.length == 0) {
+    if (!window.elementsToRender.length) {
         return;
     }
     var elements = popUpTo(window.elementsToRender, 10);
-    $.tmpl('testDetailsTableRowTemplate',
-            elements,
+    $.tmpl('testDetailsTableRowTemplate', elements,
             {logURL: window.settings.logURL}
     ).appendTo('#test_details');
-    if (window.elementsToRender.length > 0)
+    if (window.elementsToRender.length)
         setTimeout(renderTestDetails, 0);
 }
 
@@ -334,13 +327,13 @@ function popUpTo(list, upTo) {
 <script type="text/x-jquery-tmpl" id="detailsHeaderTemplate">
   <h2 id="${linkTarget}">Test Details</h2>
   <ul id="detail_tabs">
-    <li class="${totalsTabStatus}">
+    <li class="${totalTabStatus}">
       <a href="#totals" onclick="renderTotalSelector();">Totals</a>
     </li>
-    <li class="${tagsTabStatus}">
+    <li class="${tagTabStatus}">
       <a href="#tags" onclick="renderTagSelector();">Tags</a>
     </li>
-    <li class="${suitesTabStatus}">
+    <li class="${suiteTabStatus}">
       <a href="#suites" onclick="renderSuiteSelector();">Suites</a>
     </li>
   </ul>
