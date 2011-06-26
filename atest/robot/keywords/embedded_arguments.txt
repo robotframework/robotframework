@@ -29,10 +29,10 @@ Non-Existing Variable in Embedded Arguments
 Custom Embedded Argument Regexp
     Check Test Case  ${TEST NAME}
 
-Custom Embedded Argument Regexp With Curly Braces
+Custom Regexp With Curly Braces
     Check Test Case  ${TEST NAME}
 
-Custom Embedded Argument Regexp With Unmatching Curly Braces
+Custom Regexp With Escape Chars
     Check Test Case  ${TEST NAME}
 
 Grouping Custom Regexp

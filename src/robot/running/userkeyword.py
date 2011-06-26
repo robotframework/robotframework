@@ -226,8 +226,7 @@ class EmbeddedArgsTemplate(UserKeywordHandler):
         return args, self._compile_regexp(full_pattern)
 
     def _split_from_variable(self, string):
-        var = VariableSplitter(string, identifiers=['$'],
-                               prefer_matching_curly=True)
+        var = VariableSplitter(string, identifiers=['$'])
         if var.identifier is None:
             return None, None, string
         return string[:var.start], var.base, string[var.end:]
@@ -236,16 +235,21 @@ class EmbeddedArgsTemplate(UserKeywordHandler):
         if ':' not in variable:
             return variable, self._default_pattern
         variable, pattern = variable.split(':', 1)
-        self._regexp_extensions_are_not_allowed_in(pattern)
-        return variable, self._make_groups_non_capturing_in(pattern)
+        self._regexp_extensions_are_not_allowed(pattern)
+        pattern = self._make_groups_non_capturing(pattern)
+        pattern = self._unescape_closing_curly(pattern)
+        return variable, pattern
 
-    def _regexp_extensions_are_not_allowed_in(self, pattern):
+    def _regexp_extensions_are_not_allowed(self, pattern):
         if self._regexp_extension.search(pattern):
             raise DataError('Regexp extensions are not allowed in embedded '
                             'arguments.')
 
-    def _make_groups_non_capturing_in(self, pattern):
+    def _make_groups_non_capturing(self, pattern):
         return self._regexp_group_start.sub(self._regexp_group_escape, pattern)
+
+    def _unescape_closing_curly(self, pattern):
+        return pattern.replace('\\}', '}')
 
     def _compile_regexp(self, pattern):
         try:

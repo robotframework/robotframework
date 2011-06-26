@@ -35,12 +35,14 @@ Custom Embedded Argument Regexp
     Result of 43 - 1 is 42
     Result of a + b is fail
 
-Custom Embedded Argument Regexp With Curly Braces
+Custom Regexp With Curly Braces
     Today is 2011-06-21
     Today is Tuesday and tomorrow is Wednesday
+    Literal { Brace
+    Literal } Brace
 
-Custom Embedded Argument Regexp With Unmatching Curly Braces
-    Unmatched { Brace
+Custom Regexp With Escape Chars
+    Custom Regexp With Escape Chars e.g. \\, \\\\ and c:\\temp\\test.txt
 
 Grouping Custom Regexp
     ${matches} =  Grouping Custom Regexp(erts)
@@ -148,15 +150,23 @@ I execute "${x}" with "${y}"
 Result of ${a:\d+} ${operator:[+-]} ${b:\d+} is ${result}
     Should Be True  ${a} ${operator} ${b} == ${result}
 
-Today is ${date:\d{4}-\d{2}-\d{2}}
+Today is ${date:\d{4\}-\d{2\}-\d{2\}}
     Should Be Equal  ${date}  2011-06-21
 
-Today is ${day1:\w{6,9}} and tomorrow is ${day2:\w{6,9}}
+Today is ${day1:\w{6,9\}} and tomorrow is ${day2:\w{6,9\}}
     Should Be Equal  ${day1}  Tuesday
     Should Be Equal  ${day2}  Wednesday
 
-Unmatched ${Curly:{} Brace
+Literal ${Curly:{} Brace
     Should Be Equal  ${Curly}  {
+
+Literal ${Curly:\}} Brace
+    Should Be Equal  ${Curly}  }
+
+Custom Regexp With Escape Chars e.g. ${1E:\\\\}, ${2E:\\\\\\\\} and ${PATH:c:\\\\temp\\.*}
+    Should Be Equal  ${1E}    \\
+    Should Be Equal  ${2E}    \\\\
+    Should Be Equal  ${PATH}  c:\\temp\\test.txt
 
 Grouping ${x:Cu(st|ts)(om)?} ${y:Regexp\(?erts\)?}
     [Return]  ${x}-${y}
