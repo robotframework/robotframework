@@ -17,7 +17,7 @@ import re
 from unic import unic
 
 
-def html_escape(text, formatting=True):
+def html_escape(text, formatting=False):
     # TODO: Remove formatting attribute after RIDE does not use it anymore
     if formatting:
         return html_format(text)
