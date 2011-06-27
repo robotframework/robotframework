@@ -1,0 +1,5 @@
+*** Test Cases ***
+Passing
+  No Operation
+Failing
+  Fail  In test

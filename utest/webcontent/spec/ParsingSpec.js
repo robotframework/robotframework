@@ -323,18 +323,7 @@ describe("Handling messages", function (){
 
 describe("Parent Suite Teardown Failure", function (){
     beforeEach(function (){
-        var suite =
-            ["*/tmp","*Tmp","*",[], ["*F",-37,41, "*Suite teardown failed:\nAssertionError"],
-                [["*/tmp/test.txt","*Test","*",[],["*P",-2,3],
-                    [],
-                    [["*test","*Testt","*","*Y","*",[],["*P",-1,2],
-                        [["*kw","*NoOp","*","*Does nothing.","*",["*P",0,1], [], []]]]],
-                    [],
-                    [1,0,1,0]]],
-                [],
-                [["*teardown","*Fail","*","*Fails","*",["*F",2,2],[],[[3,"*F","*AssertionError"]]]]
-                ,[1,0,1,0]];
-        populate(suite);
+        window.output = window.teardownFailureOutput;
     });
 
     it("should show test status as failed", function (){
@@ -366,18 +355,11 @@ describe("Parent Suite Teardown Failure", function (){
 
 describe("Parent Suite Teardown and Test failure", function(){
     beforeEach(function (){
-        var suite =
-            ["*/tmp/SuiteTeardown.txt","*SuiteTeardown","*",[],["*F",-23,24,"*Suite teardown failed:\nin suite teardown"],
-                [],
-                [["*Failing","*","*Y","*",[], ["*F",-2,2,"*In test"],
-                    [["*kw","*Fail","*","*Fails","*In test",["*F",-1,1],[],[0,"*F","*In test"]]]]],
-                [["*teardown","*Fail","*","*Fails","*in suite teardown",["*F",0,1],[],[1,"*F","*in suite teardown"]]],
-                [1,0,1,0]];
-        populate(suite);
+        window.output = window.teardownFailureOutput;
     });
 
     it("should show test message 'In test\n\nAlso teardown of the parent suite failed.'", function (){
-        var test = firstTest(window.testdata.suite());
+        var test = window.testdata.suite().suites()[0].tests()[1];
         expect(test.message()).toEqual("In test\n\nAlso teardown of the parent suite failed.");
     });
 })
@@ -385,43 +367,19 @@ describe("Parent Suite Teardown and Test failure", function(){
 describe("Test failure message", function (){
 
     beforeEach(function () {
-        var suite =
-            ["*/test.txt","*Test","*",[],["*F",-29,30],
-               [],
-               [["*Feilaava","*","*Y","*",[],["*F",-2,3,"*FooBar!"],
-                    [["*kw","*feilaa","*","*","*",["*F",-1,1],
-                        [["*kw","*Fail","*","*Fails","*FooBar!",["*F",-1,1], [], [[0,"F","*FooBar!"]]]],[]
-                        ]]]],
-                    []
-                [1,0,1,0]];
-        populate(suite);
+        window.output = window.passingFailingOutput;
     });
 
     it("should show test failure message ''", function (){
-        var test = firstTest(window.testdata.suite());
-        expect(test.message()).toEqual("FooBar!");
+        var test = window.testdata.suite().tests()[1];
+        expect(test.message()).toEqual("In test");
     });
 });
 
 describe("Iterating Keywords", function (){
 
     beforeEach(function (){
-        var suite =
-            ["*/suite/verysimple.txt","*Verysimple","*",[],["*P",-29,34],
-                [],
-                [["*Test","*","*Y","*",[],["*P",-2,7],
-                    [["*kw","*kw1","*","*","*",["*P",-1,1],
-                        [["*kw","*Printtaa","*","*Logs things","*keyword1",["*P",-1,1],[],[0,"*I","*keyword1"]]], []],
-                    ["*kw","*kw2","*","*","*",["*P",0,1],
-                        [["*kw","*Printtaa","*","*Logs things","*keyword2",["*P",1,0],[],[1,"*I","*keyword2"]]], []],
-                    ["*kw","*kw3","*","*","*",["*P",2,1],
-                        [["*kw","*Printtaa","*","*Logs things","*keyword3",["*P",2,1],[],[2,"*I","*keyword3"]]], []],
-                    ["*kw","*kw4","*","*","*",["*P",3,1],
-                        [["*kw","*Printtaa","*","*Logs things","*keyword4",["*P",4,0],[],[4,"*I","*keyword4"]]], []]]
-                    ]],
-                [],
-                [1,1,1,1]];
-        populate(suite);
+        window.output = window.testsAndKeywordsOutput;
     });
 
     function test(){
@@ -456,29 +414,15 @@ describe("Iterating Keywords", function (){
 describe("Iterating Tests", function (){
 
     beforeEach(function (){
-        var suite =
-            ["*/verysimple.txt","*Verysimple","*",[],["*P",-28,32],
-                [],
-                [["*Test1","*","*Y","*",[],["*P",-1,2],
-                    [["*kw","*BuiltIn.Log","*","*Logs the given message with the given level.","*simple1",["*P",0,0],
-                    [], [[0,"*I","*simple1"]]]]],
-                ["*Test2","*","*Y","*",[],["*P",1,1],
-                    [["*kw","*BuiltIn.Log","*","*Logs the given message with the given level.","*simple2",["*P",2,0],
-                    [], [[2,"*I","*simple2"]]]]],
-                ["*Test3","*","*Y","*",[],["*P",3,1],
-                    [["*kw","*BuiltIn.Log","*","*Logs the given message with the given level.","*simple3",["*P",3,0],
-                    [], [[3,"*I","*simple3"]]]]]],
-                [],
-                [3,3,3,3]];
-        populate(suite);
+        window.output = window.testsAndKeywordsOutput;
     });
 
     it("should give correct number of tests", function (){
-        expect(window.testdata.suite().tests().length).toEqual(3);
+        expect(window.testdata.suite().tests().length).toEqual(4);
     });
 
     it("should be possible to go through all the tests in order", function () {
-        var expectedTests = ["Test1", "Test2", "Test3"];
+        var expectedTests = ["Test 1", "Test 2", "Test 3", "Test 4"];
         var tests = window.testdata.suite().tests();
         for(var i = 0; i <tests.length ; i++){
             expect(tests[i].name).toEqual(expectedTests[i]);
@@ -661,38 +605,27 @@ describe("Element ids", function (){
 describe("Elements are created only once", function (){
 
     beforeEach(function (){
-        var suite =
-                ["*/verysimple.txt","*Verysimple","*",[],["*P",-28,32],
-                [],
-                [["*Test1","*","*Y","*",[],["*P",-1,2],
-                    [["*kw","*BuiltIn.Log","*","*Logs the given message with the given level.","*simple1",["*P",0,0],
-                    [], [[0,"*I","*simple1"]]]]],
-                ["*Test2","*","*Y","*",[],["*P",1,1],
-                    [["*kw","*BuiltIn.Log","*","*Logs the given message with the given level.","*simple2",["*P",2,0],
-                    [], [[2,"*I","*simple2"]]]]],
-                ["*Test3","*","*Y","*",[],["*P",3,1],
-                    [["*kw","*BuiltIn.Log","*","*Logs the given message with the given level.","*simple3",["*P",3,0],
-                    [], [[3,"*I","*simple3"]]]]]],
-                [],
-                [3,3,3,3]];
-        populate(suite);
+        window.output = window.passingFailingOutput;
     });
 
     it("should create suite only once", function (){
         var main1 = window.testdata.suite();
         var main2 = window.testdata.suite();
+        expect(main1).not.toBeUndefined();
         expect(main1).toEqual(main2);
     });
 
     it("should create same test only once", function (){
-        var test1 = window.testdata.suite().tests()[2];
-        var test2 = window.testdata.suite().tests()[2];
+        var test1 = window.testdata.suite().tests()[1];
+        var test2 = window.testdata.suite().tests()[1];
+        expect(test1).not.toBeUndefined();
         expect(test1).toEqual(test2);
     });
 
     it("should create same keyword only once", function (){
         var kw1 = window.testdata.suite().tests()[0].keywords()[0];
         var kw2 = window.testdata.suite().tests()[0].keywords()[0];
+        expect(kw1).not.toBeUndefined();
         expect(kw1).toEqual(kw2);
     });
 });

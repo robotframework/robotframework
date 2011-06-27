@@ -42,4 +42,7 @@ if __name__ == '__main__':
     create('Suite.txt', 'Suite.js', 'suiteOutput')
     create('SetupsAndTeardowns.txt', 'SetupsAndTeardowns.js', 'setupsAndTeardownsOutput')
     create('Messages.txt', 'Messages.js', 'messagesOutput')
+    create('teardownFailure', 'TeardownFailure.js', 'teardownFailureOutput')
+    create(os.path.join('teardownFailure', 'PassingFailing.txt'), 'PassingFailing.js', 'passingFailingOutput')
+    create('TestsAndKeywords.txt', 'TestsAndKeywords.js', 'testsAndKeywordsOutput')
 

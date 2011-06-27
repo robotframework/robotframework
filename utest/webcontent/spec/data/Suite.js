@@ -1,13 +1,13 @@
 window.suiteOutput = {};
 window.suiteOutput["integers"] = [];
-window.suiteOutput["integers"] = window.suiteOutput["integers"].concat([0,-1,2,3,1,6,5,4,8,-26,34]);
+window.suiteOutput["integers"] = window.suiteOutput["integers"].concat([0,1,4,3,2,8,7,6,5,9,-1,12,-27,39]);
 window.suiteOutput["errors"] = [];
 window.suiteOutput["stats"] = [[{"fail":0,"label":"Critical Tests","pass":1},{"fail":0,"label":"All Tests","pass":1}],[{"info":"combined","links":"Title of iX:http://X/","doc":"<b>Combined</b> &amp; escaped &lt;&amp;lt; tag doc","label":"IX","combined":"i?","pass":0,"fail":0},{"info":"combined","links":"","doc":"","label":"zap","combined":"foo & i*","pass":0,"fail":0},{"info":"","links":"","doc":"","label":"tag1","combined":"","pass":1,"fail":0},{"info":"","links":"","doc":"","label":"tag2","combined":"","pass":1,"fail":0}],[{"fail":0,"label":"Suite","name":"Suite","pass":1}]];
-window.suiteOutput["generatedMillis"] = -215;
+window.suiteOutput["generatedMillis"] = -113;
 window.suiteOutput["generator"] = "Robot trunk 20110623 (Python 2.6.5 on linux2)";
-window.suiteOutput["generatedTimestamp"] = "20110627 10:06:50 GMT +03:00";
-window.suiteOutput["baseMillis"] = 1309158410215;
-window.suiteOutput["suite"] = [26,27,1,[2,3],[8,-10,-11],[],[[23,24,25,4,[21,22],[8,-2,-9],[[9,10,0,5,6,[8,-2,-3],[],[[-1,7,6]]],[19,20,0,0,0,[8,-5,-6],[[15,16,0,0,0,[8,-5,-4],[[9,14,0,0,11,[8,-5,-4],[[9,10,0,5,12,[8,-3,-3],[],[[-4,7,13]]]],[]]],[]],[15,18,0,0,0,[8,-8,-4],[[9,14,0,0,11,[8,-7,-3],[[9,10,0,5,12,[8,-7,-5],[],[[-6,7,17]]]],[]]],[]]],[]]]]],[],[-5,-5,-5,-5]];
+window.suiteOutput["generatedTimestamp"] = "20110627 15:44:45 GMT +03:00";
+window.suiteOutput["baseMillis"] = 1309178685113;
+window.suiteOutput["suite"] = [26,27,1,[2,3],[8,-13,-14],[],[[23,24,25,4,[21,22],[8,-11,-12],[[9,10,0,5,6,[8,-1,-2],[],[[-1,7,6]]],[19,20,0,0,0,[8,-5,-10],[[15,16,0,0,0,[8,-5,-3],[[9,14,0,0,11,[8,-5,-3],[[9,10,0,5,12,[8,-4,-5],[],[[-3,7,13]]]],[]]],[]],[15,18,0,0,0,[8,-8,-9],[[9,14,0,0,11,[8,-7,-4],[[9,10,0,5,12,[8,-7,-4],[],[[-6,7,17]]]],[]]],[]]],[]]]]],[],[-2,-2,-2,-2]];
 window.suiteOutput["strings"] = [];
 window.suiteOutput["strings"] = window.suiteOutput["strings"].concat(["*","*suite doc","*meta","*data","*test doc","*Logs the given message with the given level.","*message","*I","*P","*kw","*BuiltIn.Log","*${i}","*index is ${index}","*index is 0","*my keyword","*foritem","*${i} = 0","*index is 1","*${i} = 1","*forloop","*${i} IN RANGE [ 2 ]","*tag1","*tag2","*Test","*1 second","*Y","*/home/mkorpela/workspace/robot/utest/webcontent/spec/data/Suite.txt","*Suite"]);
 window.settings = {"reportURL":"report.html","background":{"fail":"DeepPink"},"logURL":"log.html"};
