@@ -253,7 +253,7 @@ describe("Handling messages", function (){
     });
 
     it("should show warning in errors", function () {
-        var firstError = window.testdata.errors()[0]
+        var firstError = window.testdata.errors().next()
         expectMessage(firstError, "warning", "warn");
         var pathToKeyword = window.testdata.pathToKeyword(firstError.link.substr(8));
         var errorKw = window.testdata.find(pathToKeyword[pathToKeyword.length-1]);

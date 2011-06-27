@@ -279,7 +279,15 @@ window.testdata = function () {
     }
 
     function errors() {
-        return util.map(window.output.errors, message);
+        var iterator = new Object();
+        iterator.counter = 0;
+        iterator.next = function() {
+            return message(window.output.errors[iterator.counter++])
+        };
+        iterator.hasNext = function() {
+            return iterator.counter < window.output.errors.length;
+        }
+        return iterator;
     }
 
     function statistics() {

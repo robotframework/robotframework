@@ -228,6 +228,12 @@ class TestJsSerializer(unittest.TestCase):
                    '<tags></tags><status status="PASS" endtime="20110601 12:01:51.354" critical="yes" starttime="20110601 12:01:51.353"></status></test>'
         self._test_remove_keywords(self._get_data_model(test_xml))
 
+    def test_remove_errors(self):
+        data_model = self._get_data_model(self.SUITE_XML)
+        data_model.remove_errors()
+        if 'errors' in data_model._robot_data:
+            raise AssertionError('Errors still in data')
+
     def _test_remove_keywords(self, data_model, should_contain_strings=None):
         strings_before = self._list_size(data_model._robot_data['strings'])
         integers_before = self._list_size(data_model._robot_data['integers'])
