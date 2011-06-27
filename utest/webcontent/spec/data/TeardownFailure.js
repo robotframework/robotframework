@@ -1,0 +1,13 @@
+window.teardownFailureOutput = {};
+window.teardownFailureOutput["integers"] = [];
+window.teardownFailureOutput["integers"] = window.teardownFailureOutput["integers"].concat([0,-1,2,4,1,3,-2,7,6,5,-4,10]);
+window.teardownFailureOutput["errors"] = [];
+window.teardownFailureOutput["stats"] = [[{"fail":2,"label":"Critical Tests","pass":0},{"fail":2,"label":"All Tests","pass":0}],[{"info":"combined","links":"Title of iX:http://X/","doc":"<b>Combined</b> &amp; escaped &lt;&amp;lt; tag doc","label":"IX","combined":"i?","pass":0,"fail":0},{"info":"combined","links":"","doc":"","label":"zap","combined":"foo & i*","pass":0,"fail":0}],[{"fail":2,"label":"teardownFailure","name":"teardownFailure","pass":0},{"fail":2,"label":"teardownFailure.PassingFailing","name":"PassingFailing","pass":0}]];
+window.teardownFailureOutput["generatedMillis"] = -968;
+window.teardownFailureOutput["generator"] = "Robot trunk 20110623 (Python 2.6.5 on linux2)";
+window.teardownFailureOutput["generatedTimestamp"] = "20110627 16:30:07 GMT +03:00";
+window.teardownFailureOutput["baseMillis"] = 1309181407968;
+window.teardownFailureOutput["suite"] = [19,20,0,[],[11,-11,-12,18],[[14,15,0,[],[11,-7,-8],[],[[7,0,8,0,[],[4,-2,-3],[[5,6,0,1,2,[4,-1,-1],[],[[-1,3,2]]]]],[13,0,8,0,[],[11,-5,-6,10],[[5,12,0,9,10,[11,-3,-3],[],[[-4,11,10]]]]]],[],[-3,-5,-3,-5]]],[],[[17,12,0,9,0,[11,-10,-5],[],[[-9,11,16]]]],[-3,-1,-3,-1]];
+window.teardownFailureOutput["strings"] = [];
+window.teardownFailureOutput["strings"] = window.teardownFailureOutput["strings"].concat(["*","*Logs the given message with the given level.","*passing","*I","*P","*kw","*BuiltIn.Log","*Passing","*Y","*Fails the test immediately with the given (optional) message.","*In test","*F","*BuiltIn.Fail","*Failing","*/home/mkorpela/workspace/robot/utest/webcontent/spec/data/teardownFailure/PassingFailing.txt","*PassingFailing","*AssertionError","*teardown","*Suite teardown failed:\nAssertionError","*/home/mkorpela/workspace/robot/utest/webcontent/spec/data/teardownFailure","*teardownFailure"]);
+window.settings = {"reportURL":"report.html","background":{"fail":"DeepPink"},"logURL":"log.html"};
