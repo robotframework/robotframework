@@ -222,8 +222,12 @@ describe("Handling messages", function (){
         expect(message.level).toEqual(level);
     }
 
+    function kwMessages(kw) {
+        return nthKeyword(firstTest(window.testdata.suite()), kw).messages();
+    }
+
     function kwMessage(kw) {
-        return nthKeyword(firstTest(window.testdata.suite()), kw).messages()[0];
+        return kwMessages(kw)[0];
     }
 
     it("should handle info level message", function () {
@@ -234,14 +238,15 @@ describe("Handling messages", function (){
         expectMessage(kwMessage(2), "warning", "warn");
     });
 
-    //FIXME: Debug and Trace messages
-    /*it("should handle debug level message", function () {
-        expectMessage(kwMessage(3), "debugging", "debug");
+    it("should handle debug level message", function () {
+        var messages = kwMessages(4);
+        expectMessage(messages[messages.length-2], "debugging", "debug");
     });
 
     it("should handle trace level message", function () {
-        expectMessage(kwMessage(4), "tracing", "trace");
-    });*/
+        var messages = kwMessages(5);
+        expectMessage(messages[messages.length-2], "tracing", "trace");
+    });
 
     it("should handle html level message", function () {
         expectMessage(kwMessage(0), "<h1>html</h1>", "info");

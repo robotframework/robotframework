@@ -3,5 +3,7 @@ Test with messages
   Log  <h1>html</h1>  HTML
   Log  infolevelmessage
   Log  warning  WARN
+  Set Log Level  TRACE
   Log  debugging  DEBUG
   Log  tracing  TRACE
+  Set Log Level  INFO
