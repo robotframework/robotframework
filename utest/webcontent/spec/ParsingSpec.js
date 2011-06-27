@@ -191,7 +191,11 @@ describe("Setups and teardowns", function () {
         checkTypeNameArgs(children[2], "TEARDOWN", "BuiltIn.Log", "test teardown");
     });
 
-    //FIXME: Test teardown test
+    it("should parse keyword teardown", function () {
+        var test = firstTest(window.testdata.suite());
+        var children = test.children();
+        checkTypeNameArgs(children[1].children()[1], "TEARDOWN", "BuiltIn.Log", "keyword teardown");
+    });
 });
 
 
