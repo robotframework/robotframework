@@ -8,14 +8,14 @@ from robot.result.jsparser import create_datamodel_from
 
 BASEDIR = os.path.dirname(__file__)
 
-def run_robot(outputdirectory, testdata):
+def run_robot(outputdirectory, testdata, loglevel='INFO'):
     robot.run(testdata, log='NONE', report='NONE',
               tagstatlink=['force:http://google.com:<kuukkeli&gt;',
                            'i*:http://%1/:Title of i%1'],
               tagdoc=['test:this_is_*my_bold*_test',
                       'IX:*Combined* & escaped <&lt; tag doc'],
               tagstatcombine=['fooANDi*:zap', 'i?:IX'],
-              critical=[], noncritical=[], outputdir=outputdirectory)
+              critical=[], noncritical=[], outputdir=outputdirectory, loglevel=loglevel)
 
 
 def create_jsdata(output_xml_file, target):
@@ -33,12 +33,13 @@ def replace_all(file,searchExp,replaceExp):
         sys.stdout.write(line)
 
 
-def create(input, target, targetName):
-    run_robot(BASEDIR, input)
+def create(input, target, targetName, loglevel='INFO'):
+    run_robot(BASEDIR, input, loglevel)
     create_jsdata('output.xml', target)
     replace_all(target, 'window.output', 'window.' + targetName)
 
 if __name__ == '__main__':
     create('Suite.txt', 'Suite.js', 'suiteOutput')
     create('SetupsAndTeardowns.txt', 'SetupsAndTeardowns.js', 'setupsAndTeardownsOutput')
+    create('Messages.txt', 'Messages.js', 'messagesOutput')
 
