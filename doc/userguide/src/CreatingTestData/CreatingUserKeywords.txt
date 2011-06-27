@@ -1,11 +1,12 @@
 Creating user keywords
 ----------------------
 
-Keyword tables are used to create new higher-level keywords by combining existing
-keywords together. These keywords are called *user keywords* to differentiate them
-from lowest level *library keywords* that are implemented in test libraries. The
-syntax for creating user keywords is very close to the
-syntax for creating test cases, which makes it easy to learn.
+Keyword tables are used to create new higher-level keywords by
+combining existing keywords together. These keywords are called *user
+keywords* to differentiate them from lowest level *library keywords*
+that are implemented in test libraries. The syntax for creating user
+keywords is very close to the syntax for creating test cases, which
+makes it easy to learn.
 
 .. contents::
    :depth: 2
@@ -253,12 +254,11 @@ __ `for loops`_
 Embedding arguments into keyword name
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Robot Framework has, starting from 2.1.1 version, also another
-approach to pass arguments to user keywords than specifying them
-in cells after the keyword name as explained in the previous
-section. This method is based on embedding the arguments directly into
-the keyword name, and its main benefit is making it easier to use real
-and clear sentences as keywords.
+Robot Framework has also another approach to pass arguments to user
+keywords than specifying them in cells after the keyword name as
+explained in the previous section. This method is based on embedding
+the arguments directly into the keyword name, and its main benefit is
+making it easier to use real and clear sentences as keywords.
 
 Basic syntax
 ''''''''''''
@@ -296,7 +296,7 @@ example, the keyword in the example above could be used like
 :name:`select x from list`, but not like :name:`Select x fromlist`.
 
 Embedded arguments do not support default values or variable number of
-arguments like traditional arguments do. Using variables when
+arguments like normal arguments do. Using variables when
 calling these keywords is possible but that can reduce readability.
 Notice also that embedded arguments only work with user keywords.
 
@@ -356,19 +356,24 @@ keywords.
 .. table::
    :class: example
 
-   ===================================  =============  ==============  ==========
-                Keyword                     Action        Argument      Argument
-   ===================================  =============  ==============  ==========
-   I execute "${cmd}"                   Run            ${x}
-   I execute "${cmd}" with "${params}"  Run            ${x} ${params}
-   ===================================  =============  ==============  ==========
+   =================================  ==========  ==============  ==========
+                Keyword                  Action      Argument      Argument
+   =================================  ==========  ==============  ==========
+   I execute "${cmd}"                 Run         ${cmd}
+   I execute "${cmd}" with "${opts}"  Run         ${cmd} ${opts}
+   =================================  ==========  ==============  ==========
 
 A solution to this problem is using a custom regular expression that
 makes sure that the keyword matches only what it should in that
-particular context. A custom regexp is defined after the base name of
-the argument so that they are separated with a colon, for example
-:var:`${name:\\d+}`. Using custom regular expressions is illustrated
-by the examples below.
+particular context. To be able to use this feature, and to fully
+understand the examples in this section, you need to understand at
+least the basics of the regular expression syntax.
+
+A custom embedded argument regular expression is defined after the
+base name of the argument so that the argument and the regexp are
+separated with a colon. For example, an argument that should match
+only numbers can be defined like :var:`${arg:\\d+}`. Using custom
+regular expressions is illustrated by the examples below.
 
 .. table:: Using custom regular expressions with embedded arguments
    :class: example
@@ -380,45 +385,106 @@ by the examples below.
    \                             I execute "ls" with "-lh"
    \                             I type 1 + 2
    \                             I type 53 - 11
+   \                             Today is 2011-06-27
    ============================  ===============================
 
 .. table::
    :class: example
 
-   =====================================  =============  ================  =====  =====
-                Keyword                       Action         Argument       Arg    Arg
-   =====================================  =============  ================  =====  =====
-   I execute "${cmd:[^"]}"                Run            ${cmd}
-   I execute "${cmd}" with "${params}"    Run            ${cmd} ${params}
-   I type ${a:\\d+} ${op:[+-]} ${b:\\d+}  Calculate      ${a}              ${op}  ${b}
-   =====================================  =============  ================  =====  =====
+   ===========================================  ============  ==============  ===========  ==========
+                Keyword                            Action        Argument      Argument     Argument
+   ===========================================  ============  ==============  ===========  ==========
+   I execute "${cmd:[^"]+}"                     Run           ${cmd}
+   I execute "${cmd}" with "${opts}"            Run           ${cmd} ${opts}
+   I type ${a:\\d+} ${operator:[+-]} ${b:\\d+}  Calculate     ${a}            ${operator}  ${b}
+   Today is ${date:\\d{4\\}-\\d{2\\}-\\d{2\\}}  Log           ${date}
+   ===========================================  ============  ==============  ===========  ==========
 
 In the above example keyword :name:`I execute "ls" with "-lh"` matches
-only :name:`I execute "${cmd}" with "${params}"`. That is guaranteed
-because the custom regular expression :code:`[^"]` in :name:`I execute
+only :name:`I execute "${cmd}" with "${opts}"`. That is guaranteed
+because the custom regular expression :code:`[^"]+` in :name:`I execute
 "${cmd:[^"]}"` means that a matching argument cannot contain any
-quotes. In this case there is no need to add custom regexps for the
-other :name:`I execute` variant. Other regexps in the example,
-:code:`\\d+` and :code:`[+-]`, match one or more numbers and either +
-or - character, respectively.
+quotes. In this case there is no need to add custom regexps to the
+other :name:`I execute` variant.
 
-.. tip:: If you quote arguments, using regular expression :code:`[^"]`
+.. tip:: If you quote arguments, using regular expression :code:`[^"]+`
          guarantees that the argument matches only until the first
          closing quote.
 
+Supported regular expression syntax
+```````````````````````````````````
+
 Being implemented with Python, Robot Framework naturally uses Python's
 :name:`re` module that has pretty standard `regular expressions
-syntax`__. The syntax is otherwise fully supported with embedded
+syntax`__. This syntax is otherwise fully supported with embedded
 arguments, but regexp extensions in format :code:`(?...)` cannot be
 used. Notice also that matching embedded arguments is done
 case-insensitively. If the regular expression syntax is invalid,
 creating the keyword fails with an error visible in `test execution
 errors`__.
 
+Escaping special characters
+```````````````````````````
+
+There are some special characters that need to be escaped when used in
+the custom embedded arguments regexp. First of all, possible closing
+curly braces (:code:`}`) in the pattern need to be escaped with a
+single backslash (:code:`\\}`) because otherwise the argument would
+end already there. Escaping closing burly braces is illustrated in the
+previous example with keyword :name:`Today is
+${date:\\d{4\\}-\\d{2\\}-\\d{2\\}}`.
+
+Backslash (:code:`\\`) is a special character in Python regular
+expression syntax and thus needs to be escaped if you want to have a
+literal backslash character. The safest escape sequence in this case
+is four backslashes (:code:`\\\\\\\\`) but, depending on the next
+character, also two backslashes may be enough.
+
+Notice also that keyword names and possible embedded arguments in them
+do *not* need to be escaped according to the normal `test data escaping
+rules`__. This means that, for example, backslashes in expressions
+like :var:`${name:\\w+}` do not need to be escaped.
+
+Using variables with custom embedded argument regular expressions
+`````````````````````````````````````````````````````````````````
+
+Whenever custom embedded argument regular expressions are used, Robot
+Framework automatically enhances the specified regexps so that they
+match variables in addition to the text matching the pattern. This
+means that it is always possible to use variables with keywords having
+embedded arguments. For example, the following test case would pass
+using the keywords from the earlier example.
+
+.. table:: Using variables with custom regular expressions
+   :class: example
+
+   =================  =================
+        Variable            Value
+   =================  =================
+   ${DATE}            2011-06-27
+   =================  =================
+
+.. table::
+   :class: example
+
+   ============================  ===============================
+             Test Case                         Step
+   ============================  ===============================
+   Example                       I type ${1} + ${2}
+   \                             Today is ${DATE}
+   ============================  ===============================
+
+A drawback of variables automatically matching custom regular
+expressions is that it is possible that the value the keyword gets
+does not actually match the specified regexp. For example, variable
+:var:`${DATE}` in the above example could contain any value and
+:name:`Today is ${DATE}` would still match the same keyword.
+
 __ http://en.wikipedia.org/wiki/Regular_expression
 __ `Embedded arguments matching too much`_
 __ http://docs.python.org/library/re.html
 __ `Errors and warnings during execution`_
+__ Escaping_
 
 Behavior-driven development example
 '''''''''''''''''''''''''''''''''''
