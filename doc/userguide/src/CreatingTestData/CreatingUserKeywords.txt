@@ -1,11 +1,12 @@
 Creating user keywords
 ----------------------
 
-Keyword tables are used to create new higher-level keywords by combining existing
-keywords together. These keywords are called *user keywords* to differentiate them
-from lowest level *library keywords* that are implemented in test libraries. The
-syntax for creating user keywords is very close to the
-syntax for creating test cases, which makes it easy to learn.
+Keyword tables are used to create new higher-level keywords by
+combining existing keywords together. These keywords are called *user
+keywords* to differentiate them from lowest level *library keywords*
+that are implemented in test libraries. The syntax for creating user
+keywords is very close to the syntax for creating test cases, which
+makes it easy to learn.
 
 .. contents::
    :depth: 2
