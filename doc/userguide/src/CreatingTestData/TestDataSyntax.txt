@@ -5,9 +5,9 @@ This section covers Robot Framework's overall test data
 syntax. The following sections will explain how to actually create test
 cases, test suites and so on.
 
-.. contents:: 
+.. contents::
    :depth: 2
-   :local: 
+   :local:
 
 Files and directories
 ~~~~~~~~~~~~~~~~~~~~~
@@ -26,10 +26,10 @@ The hierarchical structure for arranging test cases is built as follows:
 
 In addition to this, there are:
 
-- `Test libraries`_ containing the lowest-level keywords
-- `Resource files`_ with variables_ and higher-level `user keywords`_
+- `Test libraries`_ containing the lowest-level keywords.
+- `Resource files`_ with variables_ and higher-level `user keywords`_.
 - `Variable files`_ to provide more flexible ways to create variables
-  than resource files 
+  than resource files.
 
 Supported file formats
 ~~~~~~~~~~~~~~~~~~~~~~
@@ -58,7 +58,7 @@ tables is ignored.
    :class: example
 
    ============  ================  =======  =======
-      Setting          Value        Value    Value 
+      Setting          Value        Value    Value
    ============  ================  =======  =======
    Library       OperatingSystem
    \
@@ -78,7 +78,7 @@ tables is ignored.
    :class: example
 
    ============  ===================  ============  =============
-    Test Case           Action          Argument      Argument 
+    Test Case           Action          Argument      Argument
    ============  ===================  ============  =============
    My Test       [Documentation]      Example test
    \             Log                  ${MESSAGE}
@@ -86,7 +86,7 @@ tables is ignored.
    \
    Another Test  Should Be Equal      ${MESSAGE}    Hello, world!
    ============  ===================  ============  =============
-   
+
 .. table::
    :class: example
 
@@ -116,10 +116,10 @@ element as in the example below::
   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 
 XHTML files should use the XML preamble as in this example::
- 
+
   <?xml version="1.0" encoding="Big5"?>
 
-If no encoding is specified, Robot Framework uses ISO-8859-1 by default. 
+If no encoding is specified, Robot Framework uses ISO-8859-1 by default.
 
 TSV format
 ''''''''''
@@ -306,12 +306,12 @@ to use UTF-8 encoding. As a consequence also ASCII files are supported.
 reStructuredText format
 '''''''''''''''''''''''
 
-reStructuredText (reST) is a easy-to-read plaintext markup syntax that is commonly
-used for documentation of Python projects (including Python itself, as well as 
-this user guide). Using reST with Robot Framework allows you to mix richly 
-formatted documents and tables that specify test data in a concise text format that 
-is easy to work with using simple text editors, diff tools, and source control
-systems. The support for reStructuredText was added to Robot Framework in version 2.1.
+reStructuredText (reST) is a easy-to-read plain text markup syntax that
+is commonly used for documentation of Python projects (including
+Python itself, as well as this user guide). Using reST with Robot
+Framework allows you to mix richly formatted documents and tables that
+specify test data in a concise text format that is easy to work with
+using simple text editors, diff tools, and source control systems.
 
 Tools to process reStructuredText are freely available as part of the
 docutils__ project, and there is a `quick reference guide`__ that
@@ -320,44 +320,44 @@ by Robot Framework. Notice that Robot Framework converts test data in
 reST format internally to HTML before starting to actually parse
 it. The data must thus follow reST syntax strictly or otherwise
 processing it will not succeed.
-       
+
 __ reStructuredText_
 __ http://docutils.sourceforge.net/docs/user/rst/quickref.html
 
-.. Note:: Using reST files with Robot Framework requires the Python docutils 
-          module to be installed. 
+.. Note:: Using reST files with Robot Framework requires the Python docutils
+          module to be installed.
 
 In reST files, test data is defined in tables within the document, similar to
-the HTML format. Robot Framework identifies `test data tables`_ based on the 
-text in the first cell and all content outsided of the recognized table types is
+the HTML format. Robot Framework identifies `test data tables`_ based on the
+text in the first cell and all content outside of the recognized table types is
 ignored.
 
 An example of each of the four test data tables is shown below
 using the reST `Simple Tables` syntax. Note that :code:`\\` or
 :code:`..` must be used to indicate an empty cell in the first column
 of the table::
-    
+
     ============  ================  =======  =======
-      Setting          Value         Value    Value 
+      Setting          Value         Value    Value
     ============  ================  =======  =======
-    Library       OperatingSystem   
+    Library       OperatingSystem
     ============  ================  =======  =======
 
 
     ============  ================  =======  =======
       Variable         Value         Value    Value
     ============  ================  =======  =======
-    ${MESSAGE}    Hello, world!    
+    ${MESSAGE}    Hello, world!
     ============  ================  =======  =======
-   
+
 
     ============  ===================  ============  =============
-     Test Case          Action           Argument      Argument 
+     Test Case          Action           Argument      Argument
     ============  ===================  ============  =============
-    My Test       [Documentation]      Example test  
-    \             Log                  ${MESSAGE}    
-    \             My Keyword           /tmp          
-    \ 
+    My Test       [Documentation]      Example test
+    \             Log                  ${MESSAGE}
+    \             My Keyword           /tmp
+    \
     Another Test  Should Be Equal      ${MESSAGE}    Hello, world!
     ============  ===================  ============  =============
 
@@ -365,8 +365,8 @@ of the table::
     ============  ======================  ============  ==========
      Keyword            Action             Argument     Argument
     ============  ======================  ============  ==========
-    My Keyword    [Arguments]             ${path}       
-    \             Directory Should Exist  ${path}       
+    My Keyword    [Arguments]             ${path}
+    \             Directory Should Exist  ${path}
     ============  ======================  ============  ==========
 
 Editing test data
@@ -393,11 +393,11 @@ docutils tools.
 Syntax errors in reST source files
 ``````````````````````````````````
 
-If reST file is not syntactically correct (a malformed table for example), 
-the reST-to-HTML conversion will not take place and no test cases will be
-read from that file. When this occurs, Robot Framework will show the
-docutils error message in it's console output showing the filename,
-line number, source context, and type of error.
+If reST file is not syntactically correct (a malformed table for
+example), the reST-to-HTML conversion will not take place and no test
+cases will be read from that file. When this occurs, Robot Framework
+will show the docutils error message in its console output showing the
+filename, line number, source context, and type of error.
 
 Test data tables
 ~~~~~~~~~~~~~~~~
@@ -413,8 +413,8 @@ used as a table name.
    +--------------+-------------------------------------------+-------------------+
    |  Table name  |                 Used for                  |      Aliases      |
    +==============+===========================================+===================+
-   | Setting      | | 1) Importing `test libraries`_,         | Setting, Settings,| 
-   | table        |   `resource files`_ and `variable files`_ | Metadata          | 
+   | Setting      | | 1) Importing `test libraries`_,         | Setting, Settings,|
+   | table        |   `resource files`_ and `variable files`_ | Metadata          |
    |              | | 2) Defining metadata for `test suites`_ |                   |
    |              |   and `test cases`_                       |                   |
    +--------------+-------------------------------------------+-------------------+
@@ -424,7 +424,7 @@ used as a table name.
    | Test case    | `Creating test cases`_ from available     | Test Case,        |
    | table        | keywords                                  | Test Cases        |
    +--------------+-------------------------------------------+-------------------+
-   | Keyword      | `Creating user keywords`_ from existing   | Keyword, Keywords,| 
+   | Keyword      | `Creating user keywords`_ from existing   | Keyword, Keywords,|
    | table        | lower-level keywords                      | User Keyword,     |
    |              |                                           | User Keywords     |
    +--------------+-------------------------------------------+-------------------+
@@ -437,20 +437,20 @@ Ignored data
 
 When Robot Framework parses the test data, it ignores:
 
-- All tables that do not start with a recognized table name in the first cell
-- Everything else on the first row of a table apart from the first cell
-- Data outside tables in HTML/reST and data before the first table in TSV
+- All tables that do not start with a recognized table name in the first cell.
+- Everything else on the first row of a table apart from the first cell.
+- Data outside tables in HTML/reST and data before the first table in TSV.
 - All empty rows, which means these kinds of rows can be used to make
-  the tables more readable
+  the tables more readable.
 - All empty cells at the end of rows; you must add a backslash (\\) to
-  prevent such cells from being ignored
-- All single backslashes (\\); they are used as an escape character
+  prevent such cells from being ignored.
+- All single backslashes (\\); they are used as an escape character.
 - All characters following a hash mark (#), if it is the first
   character of a cell; this means that hash marks can be used to enter
-  comments in the test data
-- All formatting in the HTML/reST test data
+  comments in the test data.
+- All formatting in the HTML/reST test data.
 
-When Robot Framework ignores some data, this data is not available in 
+When Robot Framework ignores some data, this data is not available in
 any resulting reports and, additionally, most tools used with Robot
 Framework also ignore them. To add information that is visible in
 Robot Framework outputs, or available to, for example, RIDE_,
@@ -461,8 +461,8 @@ from the `BuiltIn library`_.
 Escaping
 ''''''''
 
-The escape character for the Robot Framework parser is the backslash (\\).
-The escape character can be used as follows:
+The escape character for the Robot Framework parser is the backslash
+(:code:`\\`).  The escape character can be used as follows:
 
 - To escape special characters so that their literal values are
   used:
@@ -472,9 +472,9 @@ The escape character can be used as follows:
   * :code:`\\\\` means a single backslash (for example, :code:`C:\\\\Temp`)
   * :code:`\\#` means a literal hash (#) mark, even at the beginning of a cell
 
-- To affect `the parsing of whitespaces`__
+- To affect `the parsing of whitespaces`__.
 
-- To prevent ignoring empty cells at the end of a row (this requires 
+- To prevent ignoring empty cells at the end of a row (this requires
   :code:`\\` to be in the appropriate cell). Another possibility is
   using `built-in variable`__ :var:`${EMPTY}`.
 
@@ -505,11 +505,11 @@ trailing, or consecutive spaces is using `built-in variable`__
 :var:`${SPACE}`. The `extended variable syntax`_ even allows syntax
 like :var:`${SPACE * 8}` which makes handling consecutive spaces very simple.
 
-.. note:: Possible unescaped whitespace character after the :code:`\\n` is
+.. note:: Possible un-escaped whitespace character after the :code:`\\n` is
           ignored to allow wrapping long lines containing newlines. This
           means that :code:`two lines\\nhere` and :code:`two lines\\n here`
           are equivalent. An exception to this rule is that the whitespace
-          character is not ignored inside the `extended variable syntax`_. 
+          character is not ignored inside the `extended variable syntax`_.
 
 __ `Space and empty variables`_
 
@@ -537,12 +537,12 @@ splitting the data to several rows.
    :class: example
 
    ============  =======  =======  =======  =======  =======  =======
-     Setting      Value    Value    Value    Value    Value    Value 
+     Setting      Value    Value    Value    Value    Value    Value
    ============  =======  =======  =======  =======  =======  =======
-   Default Tags  tag-1    tag-2    tag-3    tag-4    tag-5    tag-6  
+   Default Tags  tag-1    tag-2    tag-3    tag-4    tag-5    tag-6
    ============  =======  =======  =======  =======  =======  =======
 
-.. table:: 
+.. table::
    :class: example
 
    ==========  =======  =======  =======  =======  =======  =======
@@ -551,7 +551,7 @@ splitting the data to several rows.
    @{LIST}     this     list     has      quite    many     items
    ==========  =======  =======  =======  =======  =======  =======
 
-.. table:: 
+.. table::
    :class: example
 
    +-----------+-----------------+---------------+------+-------+------+------+-----+-----+
@@ -573,28 +573,28 @@ splitting the data to several rows.
 .. table:: Test data split to several rows
    :class: example
 
-   ============  =======  =======  =======  
-     Setting      Value    Value    Value   
-   ============  =======  =======  =======  
-   Default Tags  tag-1    tag-2    tag-3    
-   ...           tag-4    tag-5    tag-6    
-   ============  =======  =======  =======  
+   ============  =======  =======  =======
+     Setting      Value    Value    Value
+   ============  =======  =======  =======
+   Default Tags  tag-1    tag-2    tag-3
+   ...           tag-4    tag-5    tag-6
+   ============  =======  =======  =======
 
-.. table:: 
+.. table::
    :class: example
 
-   ==========  =======  =======  =======  
-    Variable    Value    Value    Value   
-   ==========  =======  =======  =======  
-   @{LIST}     this     list     has      
+   ==========  =======  =======  =======
+    Variable    Value    Value    Value
+   ==========  =======  =======  =======
+   @{LIST}     this     list     has
    ...         quite    many     items
-   ==========  =======  =======  =======  
+   ==========  =======  =======  =======
 
-.. table:: 
+.. table::
    :class: example
 
    ===========  ================  ==============  ==========  ==========
-    Test Case       Action           Argument      Argument    Argument 
+    Test Case       Action           Argument      Argument    Argument
    ===========  ================  ==============  ==========  ==========
    Example      [Documentation]   Documentation   for this    test case.
    \            ...               This can get    quite       long...
@@ -616,23 +616,23 @@ Splitting test data in reST tables
 
 In the plain text markup for reST tables, there are two types of table
 syntax that can be used to create test data. When using the `Simple
-Tables` syntax, a :code:`\\` or :code:`..` is required in the first cell 
+Tables` syntax, a :code:`\\` or :code:`..` is required in the first cell
 of a continued row in addition to the :code:`...` required by Robot Framework.
 
 Here is an example using reST `Simple Table` format::
 
     ===========  ================  ==============  ==========  ==========
-     Test Case       Action           Argument      Argument    Argument 
+     Test Case       Action           Argument      Argument    Argument
     ===========  ================  ==============  ==========  ==========
     Example      [Documentation]   Documentation   for this    test case.
     \            ...               This can get    quite       long...
     \            [Tags]            t-1             t-2         t-3
-    \            ...               t-4             t-5         
+    \            ...               t-4             t-5
     \            Do X              one             two         three
     \            ...               four            five        six
     \            ${var} =          Get X           1           2
     \            ...               3               4           5
-    \            ...               6                         
+    \            ...               6
     ===========  ================  ==============  ==========  ==========
 
 For `Grid Table` syntax, the first cell in a continued row may be blank,
