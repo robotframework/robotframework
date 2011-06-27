@@ -1,0 +1,7 @@
+*** Test Cases ***
+Test with messages
+  Log  <h1>html</h1>  HTML
+  Log  infolevelmessage
+  Log  warning  WARN
+  Log  debugging  DEBUG
+  Log  tracing  TRACE
