@@ -204,6 +204,14 @@ some specific version::
          tell Easy Install to use it by setting the :var:`http_proxy`
          environment variable.
 
+.. Note:: Easy Install has a "feature" that unless a specific version
+          is given, it installs the latest possible version even if
+          that is an alpha or beta release. For example, if there is
+          2.6 beta 1 available, running :cli:`easy_install robotframework`
+          will install it and not the latest stable version. A
+          workaround is giving the version explicitly like in
+          :cli:`easy_install robotframework==2.5.7`.
+
 On Windows the :prog:`pybot`, :prog:`jybot` and :prog:`rebot` `runner scripts`_
 are not updated when using Easy Install. A workaround is running
 :prog:`robot_postinstall.py` script manually afterwards. The installation
