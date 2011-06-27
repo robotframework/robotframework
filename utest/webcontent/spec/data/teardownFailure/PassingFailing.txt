@@ -1,5 +1,5 @@
 *** Test Cases ***
 Passing
-  No Operation
+  Log  passing
 Failing
   Fail  In test

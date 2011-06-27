@@ -38,74 +38,6 @@ describe("Text decoder", function () {
     });
 });
 
-
-function populate(plainSuite, plainErrors) {
-    var context = {strings: [], integers: []};
-    var suite = convertListToIds(context, plainSuite);
-    if (plainErrors == undefined)
-        plainErrors = [];
-    var errors = convertListToIds(context, plainErrors);
-    window.output.generatedMillis = -41;
-    window.output.baseMillis = 1000000000000;
-    window.output.generator = "info";
-    window.output.suite = suite;
-    window.output.stats = [[["Critical Tests",0,1,"","",""],
-                            ["All Tests",0,1,"","",""]],
-                            [],
-                            [["Tmp",0,1,"","Tmp",""],
-                             ["Tmp.Test",0,1,"","Tmp.Test",""]]];
-    window.output.strings = context.strings;
-    window.output.integers = context.integers;
-    window.output.errors = errors;
-}
-
-function convertListToIds(output, list) {
-    var result = [];
-    for (var key in list) {
-        result[key] = addValue(output, list[key]);
-    }
-    return result;
-}
-
-function convertDictToIds(output, dict) {
-    var result = {};
-    for (var key in dict) {
-        result[addValue(output, key)] = addValue(output, dict[key])
-    }
-    return result;
-}
-
-function addValue(output, value) {
-        if (typeof(value) == 'number') {
-            return addNumber(output.integers, value);
-        } else if (typeof(value) == 'string') {
-            return addString(output.strings, value);
-        } else if (value instanceof Array) {
-            return convertListToIds(output, value);
-        } else {
-            return convertDictToIds(output, value);
-        }
-}
-
-function addNumber(integers, number) {
-    var index = integers.indexOf(number);
-    if (index == -1) {
-        index = integers.length;
-        integers[index] = number;
-    }
-    return -index - 1;
-}
-
-function addString(strings, text) {
-    var index = strings.indexOf(text);
-    if (index == -1) {
-        index = strings.length;
-        strings[index] = text;
-    }
-    return index;
-}
-
-
 function subSuite(index, suite) {
     if (!suite)
         suite = window.testdata.suite();
@@ -434,42 +366,15 @@ describe("Iterating Tests", function (){
 describe("Iterating Suites", function () {
 
     beforeEach(function (){
-        var suite =
-            ["*/foo","*Foo","*",[],["*P",-30,36],
-                [["*/foo/bar","*Bar","*",[],["*P",-4,5],
-                    [["*/foo/bar/testii.txt","*Testii","*",[],["*P",-3,3],
-                        [],
-                        [["*FOO BAR","*","*Y","*",[],["*P",-1,1],
-                            [["*kw","*BuiltIn.Log","*","*Logs the given message with the given level.","*foo bar testi",
-                                ["*P",-1,1], [], [[0,"*I","*foo bar testi"]]]]]],
-                        [],
-                        [1,1,1,1]]],
-                    [],
-                    [],
-                    [1,1,1,1]],
-                ["*/foo/foo","*Foo","*",[],["*P",1,5],
-                    [["*/foo/foo/tostii.txt","*Tostii","*",[],["*P",2,3],
-                        [],
-                        [["*FOO FOO","*","*Y","*",[], ["*P",4,1],
-                            [["*kw","*BuiltIn.No Operation","*","*Does absolutely nothing.","*",
-                                ["*P",4,0], [], []]]]],
-                        [],
-                        [1,1,1,1]]],
-                     [],
-                     []
-                     [1,1,1,1]]],
-                [],
-                [],
-                [2,2,2,2]];
-        populate(suite);
+        window.output = window.allDataOutput;
     });
 
     it("should give correct number of suites", function (){
         var suite = window.testdata.suite();
         var subSuites = suite.suites();
-        expect(subSuites.length).toEqual(2);
-        expect(subSuites[0].suites().length).toEqual(1);
-        expect(subSuites[1].suites()[0].suites().length).toEqual(0);
+        expect(subSuites.length).toEqual(5);
+        expect(subSuites[0].suites().length).toEqual(0);
+        expect(subSuites[3].suites().length).toEqual(1);
     });
 
     it("should be possible to iterate suites", function (){
@@ -479,7 +384,7 @@ describe("Iterating Suites", function () {
             for(var j in subSuites[i].suites()){
                 var testsuite = subSuites[i].suites()[j];
                 tests += testsuite.tests().length;
-                expect(testsuite.tests().length).toEqual(1);
+                expect(testsuite.tests().length).toBeGreaterThan(0);
             }
         }
         expect(tests).toEqual(2);
@@ -487,44 +392,44 @@ describe("Iterating Suites", function () {
 
     it("should show correct full names", function (){
         var root = window.testdata.suite();
-        expect(root.fullName).toEqual("Foo");
-        expect(root.suites()[0].fullName).toEqual("Foo.Bar");
-        expect(root.suites()[0].suites()[0].fullName).toEqual("Foo.Bar.Testii");
-        expect(root.suites()[1].suites()[0].tests()[0].fullName).toEqual("Foo.Foo.Tostii.FOO FOO");
+        expect(root.fullName).toEqual("Data");
+        expect(root.suites()[0].fullName).toEqual("Data.Messages");
+        expect(root.suites()[3].suites()[0].fullName).toEqual("Data.teardownFailure.PassingFailing");
+        expect(root.suites()[3].suites()[0].tests()[0].fullName).toEqual("Data.teardownFailure.PassingFailing.Passing");
     });
 
     it("should give navigation uniqueId list for a test", function (){
-        var uniqueIdList = window.testdata.pathToTest("Foo.Foo.Tostii.FOO FOO");
+        var uniqueIdList = window.testdata.pathToTest("Data.teardownFailure.PassingFailing.Passing");
         var root = window.testdata.suite();
         expect(uniqueIdList[0]).toEqual(root.id);
-        expect(uniqueIdList[1]).toEqual(subSuite(1).id);
-        expect(uniqueIdList[2]).toEqual(subSuite(1).suites()[0].id);
-        expect(uniqueIdList[3]).toEqual(subSuite(1).suites()[0].tests()[0].id);
+        expect(uniqueIdList[1]).toEqual(subSuite(3).id);
+        expect(uniqueIdList[2]).toEqual(subSuite(3).suites()[0].id);
+        expect(uniqueIdList[3]).toEqual(subSuite(3).suites()[0].tests()[0].id);
         expect(uniqueIdList.length).toEqual(4);
     });
 
     it("should give navigation uniqueId list for a keyword", function (){
-        var uniqueIdList = window.testdata.pathToKeyword("Foo.Foo.Tostii.FOO FOO.0");
+        var uniqueIdList = window.testdata.pathToKeyword("Data.teardownFailure.PassingFailing.Passing.0");
         var root = window.testdata.suite();
         expect(uniqueIdList[0]).toEqual(root.id);
-        expect(uniqueIdList[1]).toEqual(subSuite(1).id);
-        expect(uniqueIdList[2]).toEqual(subSuite(1).suites()[0].id);
-        expect(uniqueIdList[3]).toEqual(subSuite(1).suites()[0].tests()[0].id);
-        expect(uniqueIdList[4]).toEqual(subSuite(1).suites()[0].tests()[0].keywords()[0].id);
+        expect(uniqueIdList[1]).toEqual(subSuite(3).id);
+        expect(uniqueIdList[2]).toEqual(subSuite(3).suites()[0].id);
+        expect(uniqueIdList[3]).toEqual(subSuite(3).suites()[0].tests()[0].id);
+        expect(uniqueIdList[4]).toEqual(subSuite(3).suites()[0].tests()[0].keywords()[0].id);
         expect(uniqueIdList.length).toEqual(5);
     });
 
     it("should give navigation uniqueId list for a suite", function (){
-        var uniqueIdList = window.testdata.pathToSuite("Foo.Bar.Testii");
+        var uniqueIdList = window.testdata.pathToSuite("Data.teardownFailure.PassingFailing");
         var root = window.testdata.suite();
         expect(uniqueIdList[0]).toEqual(root.id);
-        expect(uniqueIdList[1]).toEqual(root.suites()[0].id);
-        expect(uniqueIdList[2]).toEqual(root.suites()[0].suites()[0].id);
+        expect(uniqueIdList[1]).toEqual(root.suites()[3].id);
+        expect(uniqueIdList[2]).toEqual(root.suites()[3].suites()[0].id);
         expect(uniqueIdList.length).toEqual(3);
     });
 
     it("should give navigation uniqueId list for the root suite", function (){
-        var uniqueIdList = window.testdata.pathToSuite("Foo");
+        var uniqueIdList = window.testdata.pathToSuite("Data");
         var root = window.testdata.suite();
         expect(uniqueIdList[0]).toEqual(root.id);
         expect(uniqueIdList.length).toEqual(1);
@@ -539,33 +444,7 @@ describe("Iterating Suites", function () {
 describe("Element ids", function (){
 
     beforeEach(function (){
-        var suite =["*/foo","*Foo","*",[],["*P",-30,36],
-                [["*/foo/bar","*Bar","*",[],["*P",-4,5],
-                    [["*/foo/bar/testii.txt","*Testii","*",[],["*P",-3,3],
-                        [],
-                        [["*FOO BAR","*","*Y","*",[],["*P",-1,1],
-                            [["*kw","*BuiltIn.Log","*","*Logs the given message with the given level.","*foo bar testi",
-                                ["*P",-1,1], [], [[0,"*I","*foo bar testi"]]]]]],
-                        [],
-                        [1,1,1,1]]],
-                    [],
-                    [],
-                    [1,1,1,1]],
-                ["*/foo/foo","*Foo","*",[],["*P",1,5],
-                    [["*/foo/foo/tostii.txt","*Tostii","*",[],["*P",2,3],
-                        [],
-                        [["*FOO FOO","*","*Y","*",[], ["*P",4,1],
-                            [["*kw","*BuiltIn.No Operation","*","*Does absolutely nothing.","*",
-                                ["*P",4,0], [], []]]]],
-                        [],
-                        [1,1,1,1]]],
-                     [],
-                     []
-                     [1,1,1,1]]],
-                [],
-                [],
-                [2,2,2,2]];
-        populate(suite);
+        window.output = window.allDataOutput;
     });
 
     it("should give id for the main suite", function (){
@@ -574,27 +453,27 @@ describe("Element ids", function (){
     });
 
     it("should give id for a test", function (){
-        var test = subSuite(0, subSuite(0)).tests()[0];
+        var test = subSuite(0, subSuite(3)).tests()[0];
         expect(window.testdata.find(test.id)).toEqual(test);
     });
 
     it("should give id for a subsuite", function (){
-        var subsuite = subSuite(0);
+        var subsuite = subSuite(3);
         expect(window.testdata.find(subsuite.id)).toEqual(subsuite);
     });
 
     it("should give id for a keyword", function (){
-        var kw = subSuite(0, subSuite(0)).tests()[0].keywords()[0];
+        var kw = subSuite(0, subSuite(3)).tests()[0].keywords()[0];
         expect(window.testdata.find(kw.id)).toEqual(kw);
     });
 
     it("should give id for a message", function (){
-        var msg = subSuite(0, subSuite(0)).tests()[0].keywords()[0].messages()[0];
+        var msg = subSuite(0, subSuite(3)).tests()[0].keywords()[0].messages()[0];
         expect(window.testdata.find(msg.id)).toEqual(msg);
     });
 
     it("should find right elements with right ids", function (){
-        var suite = subSuite(0);
+        var suite = subSuite(3);
         var kw = subSuite(0, suite).tests()[0].keywords()[0];
         expect(kw.id).not.toEqual(suite.id);
         expect(window.testdata.find(kw.id)).toEqual(kw);

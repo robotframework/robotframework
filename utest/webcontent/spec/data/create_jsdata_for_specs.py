@@ -45,4 +45,5 @@ if __name__ == '__main__':
     create('teardownFailure', 'TeardownFailure.js', 'teardownFailureOutput')
     create(os.path.join('teardownFailure', 'PassingFailing.txt'), 'PassingFailing.js', 'passingFailingOutput')
     create('TestsAndKeywords.txt', 'TestsAndKeywords.js', 'testsAndKeywordsOutput')
+    create('.', 'allData.js', 'allDataOutput')
 
