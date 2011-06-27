@@ -154,7 +154,7 @@ class FromDirectoryPopulator(object):
         # os.listdir returns Unicode entries when path is Unicode
         names = os.listdir(utils.unic(path))
         for name in sorted(names, key=unicode.lower):
-            yield name, os.path.join(path, name)
+            yield utils.unic(name), utils.unic(os.path.join(path, name))
 
     def _is_init_file(self, name, path):
         if not os.path.isfile(path):
