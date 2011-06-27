@@ -76,6 +76,11 @@ class DataModel(object):
         self._robot_data['suite'] = self._remove_keywords_from(self._robot_data['suite'])
         self._prune_unused_indices()
 
+    # TODO: this and remove_keywords should be removed
+    # instead there should be a reportify or write_for_report_to method
+    def remove_errors(self):
+        self._robot_data.pop('errors')
+
     def _remove_keywords_from(self, data):
         if not isinstance(data, list):
             return data

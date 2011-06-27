@@ -112,6 +112,7 @@ class ReportBuilder(_HTMLFileBuilder):
     _template = os.path.join(WEBCONTENT_PATH, 'report.html')
 
     def _build(self):
+        self._data.remove_errors()
         self._data.remove_keywords()
         self._write_file()
 
