@@ -364,11 +364,15 @@ keywords.
 
 A solution to this problem is using a custom regular expression that
 makes sure that the keyword matches only what it should in that
-particular context. A custom regexp is defined after the base name of
-the argument so that the argument and the regexp are separated with a
-colon. For example, an argument that should match only numbers can be
-defined like :var:`${arg:\\d+}`. Using custom regular expressions is
-illustrated by the examples below.
+particular context. To be able to use this feature, and to fully
+understand the examples in this section, you need to understand at
+least the basics of the regular expression syntax.
+
+A custom embedded argument regular expression is defined after the
+base name of the argument so that the argument and the regexp are
+separated with a colon. For example, an argument that should match
+only numbers can be defined like :var:`${arg:\\d+}`. Using custom
+regular expressions is illustrated by the examples below.
 
 .. table:: Using custom regular expressions with embedded arguments
    :class: example
@@ -380,6 +384,7 @@ illustrated by the examples below.
    \                             I execute "ls" with "-lh"
    \                             I type 1 + 2
    \                             I type 53 - 11
+   \                             Today is 2011-06-27
    ============================  ===============================
 
 .. table::
@@ -391,6 +396,7 @@ illustrated by the examples below.
    I execute "${cmd:[^"]+}"                     Run           ${cmd}
    I execute "${cmd}" with "${opts}"            Run           ${cmd} ${opts}
    I type ${a:\\d+} ${operator:[+-]} ${b:\\d+}  Calculate     ${a}            ${operator}  ${b}
+   Today is ${date:\\d{4\\}-\\d{2\\}-\\d{2\\}}  Log           ${date}
    ===========================================  ============  ==============  ===========  ==========
 
 In the above example keyword :name:`I execute "ls" with "-lh"` matches
@@ -404,6 +410,9 @@ other :name:`I execute` variant.
          guarantees that the argument matches only until the first
          closing quote.
 
+Supported regular expression syntax
+```````````````````````````````````
+
 Being implemented with Python, Robot Framework naturally uses Python's
 :name:`re` module that has pretty standard `regular expressions
 syntax`__. This syntax is otherwise fully supported with embedded
@@ -413,10 +422,32 @@ case-insensitively. If the regular expression syntax is invalid,
 creating the keyword fails with an error visible in `test execution
 errors`__.
 
+Escaping special characters
+```````````````````````````
+
+There are some special characters that need to be escaped when used in
+the custom embedded arguments regexp. First of all, possible closing
+curly braces (:code:`}`) in the pattern need to be escaped with a
+single backslash (:code:`\\}`) because otherwise the argument would
+end there. This is illustrated in the previous example with keyword
+:name:`Today is ${date:\\d{4\\}-\\d{2\\}-\\d{2\\}}`.
+
+Backslash (:code:`\\`) is a special character in Python regular
+expression syntax and thus needs to be escaped if you want to have a
+literal backslash character. The safest escape sequence in this case
+is using four backslashes (:code:`\\\\\\\\`) but also two may be
+enough depending on the next character.
+
+Notice also that keyword names and possible embedded arguments in them
+do *not* need to be escaped according to the normal `test data escaping
+rules`__. This means that, for example, backslashes in expressions
+like :var:`${name:\\w+}` do not need to be escaped.
+
 __ http://en.wikipedia.org/wiki/Regular_expression
 __ `Embedded arguments matching too much`_
 __ http://docs.python.org/library/re.html
 __ `Errors and warnings during execution`_
+__ Escaping_
 
 Behavior-driven development example
 '''''''''''''''''''''''''''''''''''

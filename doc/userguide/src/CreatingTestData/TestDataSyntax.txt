@@ -481,13 +481,17 @@ The escape character for the Robot Framework parser is the backslash
 __ `Handling whitespace`_
 __ `Space and empty variables`_
 
+.. note:: These escaping rules are applied only to arguments to
+          keywords and values to settings. They are not used, for
+          example, with keyword and test case names.
+
 Handling whitespace
 '''''''''''''''''''
 
 Robot Framework handles whitespace, such as spaces, newlines and tabs,
 the same way as they are handled in HTML. This means that Robot Framework:
 
-- Removes leading and trailing whitespaces in all cells.
+- Removes leading and trailing whitespace in all cells.
 - Changes multiple consecutive spaces into single spaces.
 - Converts all newlines and tabs into spaces.
 
