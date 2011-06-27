@@ -43,6 +43,7 @@ Custom Regexp With Curly Braces
 
 Custom Regexp With Escape Chars
     Custom Regexp With Escape Chars e.g. \\, \\\\ and c:\\temp\\test.txt
+    Custom Regexp With \\}
 
 Grouping Custom Regexp
     ${matches} =  Grouping Custom Regexp(erts)
@@ -184,6 +185,9 @@ Custom Regexp With Escape Chars e.g. ${1E:\\\\}, ${2E:\\\\\\\\} and ${PATH:c:\\\
     Should Be Equal  ${1E}    \\
     Should Be Equal  ${2E}    \\\\
     Should Be Equal  ${PATH}  c:\\temp\\test.txt
+
+Custom Regexp With ${pattern:\\\\\}}
+    Should Be Equal  ${pattern}    \\}
 
 Grouping ${x:Cu(st|ts)(om)?} ${y:Regexp\(?erts\)?}
     [Return]  ${x}-${y}
