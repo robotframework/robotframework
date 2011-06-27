@@ -199,8 +199,9 @@ class UserKeywordHandler(object):
 class EmbeddedArgsTemplate(UserKeywordHandler):
     _regexp_extension = re.compile(r'(?<!\\)\(\?.+\)')
     _regexp_group_start = re.compile(r'(?<!\\)\((.*?)\)')
-    _regexp_group_escape = '(?:\\1)'
+    _regexp_group_escape = r'(?:\1)'
     _default_pattern = '.*?'
+    _variable_pattern = r'\$\{[^\}]+\}'
 
     def __init__(self, keyword, libname):
         if keyword.args.value:
@@ -218,7 +219,7 @@ class EmbeddedArgsTemplate(UserKeywordHandler):
             before, variable, rest = self._split_from_variable(string)
             if before is None:
                 break
-            variable, pattern = self._get_regexp_pattern_from(variable)
+            variable, pattern = self._get_regexp_pattern(variable)
             args.append('${%s}' % variable)
             full_pattern.extend([re.escape(before), '(%s)' % pattern])
             string = rest
@@ -231,13 +232,14 @@ class EmbeddedArgsTemplate(UserKeywordHandler):
             return None, None, string
         return string[:var.start], var.base, string[var.end:]
 
-    def _get_regexp_pattern_from(self, variable):
+    def _get_regexp_pattern(self, variable):
         if ':' not in variable:
             return variable, self._default_pattern
         variable, pattern = variable.split(':', 1)
         self._regexp_extensions_are_not_allowed(pattern)
         pattern = self._make_groups_non_capturing(pattern)
         pattern = self._unescape_closing_curly(pattern)
+        pattern = self._add_automatic_variable_pattern(pattern)
         return variable, pattern
 
     def _regexp_extensions_are_not_allowed(self, pattern):
@@ -250,6 +252,9 @@ class EmbeddedArgsTemplate(UserKeywordHandler):
 
     def _unescape_closing_curly(self, pattern):
         return pattern.replace('\\}', '}')
+
+    def _add_automatic_variable_pattern(self, pattern):
+        return '%s|%s' % (pattern, self._variable_pattern)
 
     def _compile_regexp(self, pattern):
         try:

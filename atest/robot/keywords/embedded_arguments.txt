@@ -41,11 +41,14 @@ Grouping Custom Regexp
 Custom Regexp Matching Variables
     Check Test Case  ${TEST NAME}
 
+Custom Regexp Matching Variables When Regexp Does No Match Them
+    Check Test Case  ${TEST NAME}
+
 Regexp Extensions Are Not Supported
     Check Log Message  ${ERRORS.msgs[0]}  Creating user keyword 'Regexp extensions like \${x:(?x)re} are not supported' failed: Regexp extensions are not allowed in embedded arguments.  ERROR
 
 Invalid Custom Regexp
-    Check Log Message  ${ERRORS.msgs[1]}  Creating user keyword 'Invalid \${x:[} Regexp' failed: Compiling embedded arguments regexp failed: *  ERROR  pattern=yes
+    Check Log Message  ${ERRORS.msgs[1]}  Creating user keyword 'Invalid \${x:(} Regexp' failed: Compiling embedded arguments regexp failed: *  ERROR  pattern=yes
 
 Escaping Values Given As Embedded Arguments
     ${tc} =  Check Test Case  ${TEST NAME}

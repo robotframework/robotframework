@@ -57,6 +57,12 @@ Custom Regexp Matching Variables
     I execute "${bar}" with "${zap}"
     I execute "${42}"
 
+Custom Regexp Matching Variables When Regexp Does No Match Them
+    Result of ${3} + ${-1} is ${2}
+    Result of ${40} - ${-2} is ${42}
+    ${s42} =  Set Variable  42
+    I want ${42} and ${s42} as variables
+
 Escaping Values Given As Embedded Arguments
     ${name}  ${item} =  User \${nonex} Selects \\ From Webshop
     Should Be Equal  ${name}-${item}  \${nonex}-\\
@@ -150,12 +156,16 @@ ${a}+tc+${b}
 I execute "${x:[^"]*}"
     Should Be Equal  ${x}  foo
 
-I execute "${x}" with "${y}"
+I execute "${x:bar}" with "${y:...}"
     Should Be Equal  ${x}  bar
     Should Be Equal  ${y}  zap
 
 Result of ${a:\d+} ${operator:[+-]} ${b:\d+} is ${result}
     Should Be True  ${a} ${operator} ${b} == ${result}
+
+I want ${integer:whatever} and ${string:everwhat} as variables
+    Should Be Equal  ${integer}  ${42}
+    Should Be Equal  ${string}   42
 
 Today is ${date:\d{4\}-\d{2\}-\d{2\}}
     Should Be Equal  ${date}  2011-06-21
@@ -181,5 +191,5 @@ Grouping ${x:Cu(st|ts)(om)?} ${y:Regexp\(?erts\)?}
 Regexp extensions like ${x:(?x)re} are not supported
     This is not executed
 
-Invalid ${x:[} Regexp
+Invalid ${x:(} Regexp
     This is not executed
