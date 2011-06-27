@@ -253,12 +253,11 @@ __ `for loops`_
 Embedding arguments into keyword name
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Robot Framework has, starting from 2.1.1 version, also another
-approach to pass arguments to user keywords than specifying them
-in cells after the keyword name as explained in the previous
-section. This method is based on embedding the arguments directly into
-the keyword name, and its main benefit is making it easier to use real
-and clear sentences as keywords.
+Robot Framework has also another approach to pass arguments to user
+keywords than specifying them in cells after the keyword name as
+explained in the previous section. This method is based on embedding
+the arguments directly into the keyword name, and its main benefit is
+making it easier to use real and clear sentences as keywords.
 
 Basic syntax
 ''''''''''''
@@ -296,7 +295,7 @@ example, the keyword in the example above could be used like
 :name:`select x from list`, but not like :name:`Select x fromlist`.
 
 Embedded arguments do not support default values or variable number of
-arguments like traditional arguments do. Using variables when
+arguments like normal arguments do. Using variables when
 calling these keywords is possible but that can reduce readability.
 Notice also that embedded arguments only work with user keywords.
 
@@ -356,19 +355,20 @@ keywords.
 .. table::
    :class: example
 
-   ===================================  =============  ==============  ==========
-                Keyword                     Action        Argument      Argument
-   ===================================  =============  ==============  ==========
-   I execute "${cmd}"                   Run            ${x}
-   I execute "${cmd}" with "${params}"  Run            ${x} ${params}
-   ===================================  =============  ==============  ==========
+   =================================  ==========  ==============  ==========
+                Keyword                  Action      Argument      Argument
+   =================================  ==========  ==============  ==========
+   I execute "${cmd}"                 Run         ${cmd}
+   I execute "${cmd}" with "${opts}"  Run         ${cmd} ${opts}
+   =================================  ==========  ==============  ==========
 
 A solution to this problem is using a custom regular expression that
 makes sure that the keyword matches only what it should in that
 particular context. A custom regexp is defined after the base name of
-the argument so that they are separated with a colon, for example
-:var:`${name:\\d+}`. Using custom regular expressions is illustrated
-by the examples below.
+the argument so that the argument and the regexp are separated with a
+colon. For example, an argument that should match only numbers can be
+defined like :var:`${arg:\\d+}`. Using custom regular expressions is
+illustrated by the examples below.
 
 .. table:: Using custom regular expressions with embedded arguments
    :class: example
@@ -385,30 +385,28 @@ by the examples below.
 .. table::
    :class: example
 
-   =====================================  =============  ================  =====  =====
-                Keyword                       Action         Argument       Arg    Arg
-   =====================================  =============  ================  =====  =====
-   I execute "${cmd:[^"]}"                Run            ${cmd}
-   I execute "${cmd}" with "${params}"    Run            ${cmd} ${params}
-   I type ${a:\\d+} ${op:[+-]} ${b:\\d+}  Calculate      ${a}              ${op}  ${b}
-   =====================================  =============  ================  =====  =====
+   ===========================================  ============  ==============  ===========  ==========
+                Keyword                            Action        Argument      Argument     Argument
+   ===========================================  ============  ==============  ===========  ==========
+   I execute "${cmd:[^"]+}"                     Run           ${cmd}
+   I execute "${cmd}" with "${opts}"            Run           ${cmd} ${opts}
+   I type ${a:\\d+} ${operator:[+-]} ${b:\\d+}  Calculate     ${a}            ${operator}  ${b}
+   ===========================================  ============  ==============  ===========  ==========
 
 In the above example keyword :name:`I execute "ls" with "-lh"` matches
-only :name:`I execute "${cmd}" with "${params}"`. That is guaranteed
-because the custom regular expression :code:`[^"]` in :name:`I execute
+only :name:`I execute "${cmd}" with "${opts}"`. That is guaranteed
+because the custom regular expression :code:`[^"]+` in :name:`I execute
 "${cmd:[^"]}"` means that a matching argument cannot contain any
-quotes. In this case there is no need to add custom regexps for the
-other :name:`I execute` variant. Other regexps in the example,
-:code:`\\d+` and :code:`[+-]`, match one or more numbers and either +
-or - character, respectively.
+quotes. In this case there is no need to add custom regexps to the
+other :name:`I execute` variant.
 
-.. tip:: If you quote arguments, using regular expression :code:`[^"]`
+.. tip:: If you quote arguments, using regular expression :code:`[^"]+`
          guarantees that the argument matches only until the first
          closing quote.
 
 Being implemented with Python, Robot Framework naturally uses Python's
 :name:`re` module that has pretty standard `regular expressions
-syntax`__. The syntax is otherwise fully supported with embedded
+syntax`__. This syntax is otherwise fully supported with embedded
 arguments, but regexp extensions in format :code:`(?...)` cannot be
 used. Notice also that matching embedded arguments is done
 case-insensitively. If the regular expression syntax is invalid,
