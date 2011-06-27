@@ -48,10 +48,30 @@ $(document).ready(function(){
 
 function addErrors() {
     var errors = window.testdata.errors();
-    if (errors.length) {
+    if (errors.hasNext()) {
         $.tmpl('errorHeaderTemplate').appendTo($('body'));
-        $.tmpl('errorTemplate', errors).appendTo($('#error_table'));
+        window.errorsToRender = errors;
+        drawErrorsRecursively();
     }
+}
+
+function drawErrorsRecursively(){
+    if (!window.errorsToRender.hasNext()) {
+        return;
+    }
+    var elements = popFromIterator(window.errorsToRender, 10);
+    $.tmpl('errorTemplate', elements).appendTo($('#error_table'));
+    if (window.errorsToRender.hasNext())
+        setTimeout(drawErrorsRecursively, 0);
+    else
+        window.location.hash = window.location.hash.substring(1);
+}
+
+function popFromIterator(iterator, upTo) {
+    var result = [];
+    while (iterator.hasNext() > 0 && result.length < upTo)
+        result.push(iterator.next());
+    return result;
 }
 
 function makeElementVisible(element) {
