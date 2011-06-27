@@ -32,9 +32,13 @@ def replace_all(file,searchExp,replaceExp):
             line = line.replace(searchExp,replaceExp)
         sys.stdout.write(line)
 
-if __name__ == '__main__':
-    target = 'Suite.js'
-    run_robot(BASEDIR, 'Suite.txt')
+
+def create(input, target, targetName):
+    run_robot(BASEDIR, input)
     create_jsdata('output.xml', target)
-    replace_all(target, 'window.output', 'window.suiteOutput')
+    replace_all(target, 'window.output', 'window.' + targetName)
+
+if __name__ == '__main__':
+    create('Suite.txt', 'Suite.js', 'suiteOutput')
+    create('SetupsAndTeardowns.txt', 'SetupsAndTeardowns.js', 'setupsAndTeardownsOutput')
 
