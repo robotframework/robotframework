@@ -430,19 +430,55 @@ There are some special characters that need to be escaped when used in
 the custom embedded arguments regexp. First of all, possible closing
 curly braces (:code:`}`) in the pattern need to be escaped with a
 single backslash (:code:`\\}`) because otherwise the argument would
-end there. This is illustrated in the previous example with keyword
-:name:`Today is ${date:\\d{4\\}-\\d{2\\}-\\d{2\\}}`.
+end already there. Escaping closing burly braces is illustrated in the
+previous example with keyword :name:`Today is
+${date:\\d{4\\}-\\d{2\\}-\\d{2\\}}`.
 
 Backslash (:code:`\\`) is a special character in Python regular
 expression syntax and thus needs to be escaped if you want to have a
 literal backslash character. The safest escape sequence in this case
-is using four backslashes (:code:`\\\\\\\\`) but also two may be
-enough depending on the next character.
+is four backslashes (:code:`\\\\\\\\`) but, depending on the next
+character, also two backslashes may be enough.
 
 Notice also that keyword names and possible embedded arguments in them
 do *not* need to be escaped according to the normal `test data escaping
 rules`__. This means that, for example, backslashes in expressions
 like :var:`${name:\\w+}` do not need to be escaped.
+
+Using variables with custom embedded argument regular expressions
+`````````````````````````````````````````````````````````````````
+
+Whenever custom embedded argument regular expressions are used, Robot
+Framework automatically enhances the specified regexps so that they
+match variables in addition to the text matching the pattern. This
+means that it is always possible to use variables with keywords having
+embedded arguments. For example, the following test case would pass
+using the keywords from the earlier example.
+
+.. table:: Using variables with custom regular expressions
+   :class: example
+
+   =================  =================
+        Variable            Value
+   =================  =================
+   ${DATE}            2011-06-27
+   =================  =================
+
+.. table::
+   :class: example
+
+   ============================  ===============================
+             Test Case                         Step
+   ============================  ===============================
+   Example                       I type ${1} + ${2}
+   \                             Today is ${DATE}
+   ============================  ===============================
+
+A drawback of variables automatically matching custom regular
+expressions is that it is possible that the value the keyword gets
+does not actually match the specified regexp. For example, variable
+:var:`${DATE}` in the above example could contain any value and
+:name:`Today is ${DATE}` would still match the same keyword.
 
 __ http://en.wikipedia.org/wiki/Regular_expression
 __ `Embedded arguments matching too much`_
