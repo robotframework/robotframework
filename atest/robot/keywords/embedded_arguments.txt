@@ -38,6 +38,9 @@ Custom Regexp With Escape Chars
 Grouping Custom Regexp
     Check Test Case  ${TEST NAME}
 
+Custom Regexp Matching Variables
+    Check Test Case  ${TEST NAME}
+
 Regexp Extensions Are Not Supported
     Check Log Message  ${ERRORS.msgs[0]}  Creating user keyword 'Regexp extensions like \${x:(?x)re} are not supported' failed: Regexp extensions are not allowed in embedded arguments.  ERROR
 

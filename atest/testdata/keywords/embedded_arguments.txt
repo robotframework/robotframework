@@ -50,6 +50,13 @@ Grouping Custom Regexp
     ${matches} =  Grouping Cuts Regexperts
     Should Be Equal  ${matches}  Cuts-Regexperts
 
+Custom Regexp Matching Variables
+    [Documentation]  FAIL  42 != foo
+    ${foo}  ${bar}  ${zap} =  Create List  foo  bar  zap
+    I execute "${foo}"
+    I execute "${bar}" with "${zap}"
+    I execute "${42}"
+
 Escaping Values Given As Embedded Arguments
     ${name}  ${item} =  User \${nonex} Selects \\ From Webshop
     Should Be Equal  ${name}-${item}  \${nonex}-\\
