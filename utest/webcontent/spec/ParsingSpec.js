@@ -127,13 +127,7 @@ describe("Handling Suite", function () {
     }
 
     beforeEach(function () {
-        var keyword = ["*kw","*lib.kw",'*',"*Kw doc.", '*', ["*P",0,0], [], [[0,"*I","*message"]]];
-        var forloop = ["*forloop","*${i} IN RANGE [ 2 ]",'*','*','*', ["*P", 0, 0], [
-            ["*foritem","*${i} = 0",'*','*','*', ["*P", 0, 0], [keyword], []],
-            ["*foritem","*${i} = 1",'*','*','*', ["*P", 0, 0], [keyword], []]], []]
-        var test = ["*Test","*1 second","*Y", "*test doc", ["*tag1", "*tag2"],["*P",-1,2], [keyword, forloop]];
-        var suite = ["*/tmp/test.txt","*Suite","*suite doc",["*meta", "*data"], ["*P",-38,39], [], [test], [], [1,1,1,1]];
-        populate(suite);
+        window.output = window.suiteOutput;
     });
 
     function expectStats(suite, total, passed, critical, criticalPassed){
@@ -145,14 +139,20 @@ describe("Handling Suite", function () {
         expect(suite.criticalFailed).toEqual(critical-criticalPassed);
     }
 
+    function endsWith(string, ending) {
+        var index = string.lastIndexOf(ending);
+        return string.substring(index) == ending;
+    }
+
     it("should parse suite", function () {
         var suite = window.testdata.suite();
         expect(suite.name).toEqual("Suite");
         expect(suite.status).toEqual("PASS");
-        expect(suite.source).toEqual("/tmp/test.txt");
+        expect(endsWith(suite.source, "/Suite.txt")).toEqual(true);
         expect(suite.doc()).toEqual("suite doc");
         expect(suite.times).toBeDefined();
-        expect(suite.times.elapsedMillis).toEqual(39);
+        expect(suite.times.elapsedMillis).toBeGreaterThan(0);
+        expect(suite.times.elapsedMillis).toBeLessThan(1000);
         expectStats(suite, 1, 1, 1, 1);
         expect(suite.metadata[0]).toEqual(["meta", "data"]);
     });
@@ -165,16 +165,18 @@ describe("Handling Suite", function () {
         expect(test.doc()).toEqual("test doc");
         expect(test.tags).toEqual(["tag1", "tag2"]);
         expect(test.times).toBeDefined();
-        expect(test.times.elapsedMillis).toEqual(2);
+        expect(test.times.elapsedMillis).toBeGreaterThan(0);
+        expect(test.times.elapsedMillis).toBeLessThan(window.testdata.suite().times.elapsedMillis+1);
         expect(test.timeout).toEqual("1 second");
     });
 
     it("should parse keyword", function () {
         var kw = nthKeyword(firstTest(window.testdata.suite()), 0);
-        expect(kw.name).toEqual("lib.kw");
+        expect(kw.name).toEqual("BuiltIn.Log");
         expect(kw.status).toEqual("PASS");
         expect(kw.times).toBeDefined();
-        expect(kw.times.elapsedMillis).toEqual(0);
+        expect(kw.times.elapsedMillis).toBeGreaterThan(0);
+        expect(kw.times.elapsedMillis).toBeLessThan(firstTest(window.testdata.suite()).times.elapsedMillis+1);
         expect(kw.path).toEqual("Suite.Test.0");
         expect(kw.type).toEqual("KEYWORD");
     });
@@ -198,7 +200,7 @@ describe("Handling Suite", function () {
 
     it("should parse timestamp", function () {
         var timestamp = window.testdata.generated();
-        expect(timestamp).toEqual(new Date(window.output.baseMillis-41));
+        expect(timestamp).toEqual(new Date(window.output.baseMillis+window.output.generatedMillis));
     });
 
 });
