@@ -236,16 +236,21 @@ class EmbeddedArgsTemplate(UserKeywordHandler):
         if ':' not in variable:
             return variable, self._default_pattern
         variable, pattern = variable.split(':', 1)
-        self._regexp_extensions_are_not_allowed(pattern)
-        pattern = self._make_groups_non_capturing(pattern)
-        pattern = self._unescape_closing_curly(pattern)
-        pattern = self._add_automatic_variable_pattern(pattern)
-        return variable, pattern
+        return variable, self._format_custom_regexp(pattern)
+
+    def _format_custom_regexp(self, pattern):
+        for formatter in (self._regexp_extensions_are_not_allowed,
+                          self._make_groups_non_capturing,
+                          self._unescape_closing_curly,
+                          self._add_automatic_variable_pattern):
+            pattern = formatter(pattern)
+        return pattern
 
     def _regexp_extensions_are_not_allowed(self, pattern):
-        if self._regexp_extension.search(pattern):
-            raise DataError('Regexp extensions are not allowed in embedded '
-                            'arguments.')
+        if not self._regexp_extension.search(pattern):
+            return pattern
+        raise DataError('Regexp extensions are not allowed in embedded '
+                        'arguments.')
 
     def _make_groups_non_capturing(self, pattern):
         return self._regexp_group_start.sub(self._regexp_group_escape, pattern)
