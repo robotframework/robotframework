@@ -1,0 +1,28 @@
+*** Settings ***
+Force Tags      force
+
+*** Test Cases ***
+Incl-1
+    [Tags]  incl1
+    NOOP
+
+Incl-12
+    [Tags]  incl1  incl2
+    NOOP
+
+Incl-123
+    [Tags]  incl1  incl2  incl3
+    NOOP
+
+excl-1
+    [Tags]  excl1
+    NOOP
+
+Excl-12
+    [Tags]  excl1  excl2
+    NOOP
+
+Excl-123
+    [Tags]  excl1  excl2  excl3
+    NOOP
+
