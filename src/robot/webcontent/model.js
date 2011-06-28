@@ -141,6 +141,7 @@ window.model = function () {
         var parentPath = (parent.path === undefined) ? parent.fullName : parent.path;
         kw.path = parentPath + "." + data.index;
         kw.arguments = data.args;
+        kw.timeout = data.timeout;
         kw.populateKeywords = createIterablePopulator("Keyword");
         kw.populateMessages = createIterablePopulator("Message");
         kw.children = function () {

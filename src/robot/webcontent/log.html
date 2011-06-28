@@ -318,6 +318,12 @@ function addTestExecutionLog(main) {
               <td>{{html doc()}}</td>
             </tr>
             {{/if}}
+            {{if timeout}}
+            <tr>
+              <th>Timeout:</th>
+              <td>${timeout}</td>
+            </tr>
+            {{/if}}
             <tr>
               <th>Start / End / Elapsed:</th>
               <td>${times.startTime}  /  ${times.endTime}  /  ${times.elapsedTime}</td>

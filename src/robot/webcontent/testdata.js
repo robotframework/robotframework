@@ -65,6 +65,7 @@ window.testdata = function () {
         var kw = model.Keyword({
             type: KEYWORD_TYPE[get(element[0])],
             name: get(element[1]),
+            timeout: get(element[2]),
             args: get(element[4]),
             doc: function () {
                 var val = get(element[3]);
