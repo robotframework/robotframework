@@ -402,7 +402,7 @@ class BaseTestCase(_TestAndSuiteHelper):
         tag1&tag2) and then all of them must match some tag from self.tags.
         """
         for item in tag.split('&'):
-            if not any(utils.matches(tag, item) for tag in self.tags):
+            if not any(utils.matches(t, item, ignore=['_']) for t in self.tags):
                 return False
         return True
 

@@ -7,11 +7,11 @@ Incl-1
     NOOP
 
 Incl-12
-    [Tags]  incl1  incl2
+    [Tags]  incl 1  incl 2
     NOOP
 
 Incl-123
-    [Tags]  incl1  incl2  incl3
+    [Tags]  incl_1  incl_2  incl_3
     NOOP
 
 excl-1
@@ -19,10 +19,10 @@ excl-1
     NOOP
 
 Excl-12
-    [Tags]  excl1  excl2
+    [Tags]  excl 1  excl 2
     NOOP
 
 Excl-123
-    [Tags]  excl1  excl2  excl3
+    [Tags]  excl_1  excl_2  excl_3
     NOOP
 
