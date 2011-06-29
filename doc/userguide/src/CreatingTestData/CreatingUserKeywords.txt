@@ -442,7 +442,7 @@ character, also two backslashes may be enough.
 Notice also that keyword names and possible embedded arguments in them
 should *not* be escaped using the normal `test data escaping
 rules`__. This means that, for example, backslashes in expressions
-like :var:`${name:\\w+}` do not need to be escaped.
+like :var:`${name:\\w+}` should not be escaped.
 
 Using variables with custom embedded argument regular expressions
 `````````````````````````````````````````````````````````````````
