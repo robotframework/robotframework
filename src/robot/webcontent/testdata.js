@@ -32,8 +32,8 @@ window.testdata = function () {
     }
 
     function times(stats) {
-        var startMillis = get(stats[1]);
-        var elapsed = get(stats[2]);
+        var startMillis = stats[1];
+        var elapsed = stats[2];
         if(startMillis == null){
             return [null, null, elapsed];
         }
@@ -41,7 +41,7 @@ window.testdata = function () {
     }
 
     function message(element) {
-        return addElement(model.Message(LEVEL[get(element[1])], timestamp(get(element[0])),
+        return addElement(model.Message(LEVEL[get(element[1])], timestamp(element[0]),
                                         get(element[2]), get(element[3])));
     }
 
@@ -157,7 +157,6 @@ window.testdata = function () {
     }
 
     function suiteStats(stats) {
-        stats = util.map(stats, get);
         return {
             total: stats[0],
             totalPassed: stats[1],
@@ -332,14 +331,10 @@ window.store = (function () {
         return JXG.Util.utf8Decode(extracted);
     }
 
-    function getInteger(id) {
-        return window.output.integers[id];
-    }
-
     function dispatch(id) {
         if (id == undefined) return undefined;
         if (id == null) return null;
-        return id < 0 ? getInteger(-1 - id) : getText(id);
+        return getText(id);
     }
 
     return {

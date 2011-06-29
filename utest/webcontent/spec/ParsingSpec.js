@@ -80,7 +80,7 @@ describe("Handling Suite", function () {
         var suite = window.testdata.suite();
         expect(suite.name).toEqual("Suite");
         expect(suite.status).toEqual("PASS");
-        expect(endsWith(suite.source, "/Suite.txt")).toEqual(true);
+        expect(endsWith(suite.source, "Suite.txt")).toEqual(true);
         expect(suite.doc()).toEqual("suite doc");
         expect(suite.times).toBeDefined();
         expect(suite.times.elapsedMillis).toBeGreaterThan(0);
@@ -128,6 +128,7 @@ describe("Handling Suite", function () {
     it("should parse message", function () {
         var message = nthKeyword(firstTest(window.testdata.suite()), 0).messages()[0];
         expect(message.text).toEqual("message");
+        expect(message.time).toBeLessThan(new Date());
     });
 
     it("should parse timestamp", function () {

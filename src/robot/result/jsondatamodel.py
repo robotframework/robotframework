@@ -16,6 +16,7 @@ import time
 from robot import utils
 
 import json
+from robot.result.elementhandlers import TextIndex
 
 
 class DataModel(object):
@@ -93,8 +94,7 @@ class DataModel(object):
         # TODO: Cleanup?
         return item and \
                isinstance(item, list) and \
-               (not isinstance(item[0], list)) and \
-               item[0] > 0 and \
+               (isinstance(item[0], TextIndex)) and \
                self._robot_data['strings'][item[0]] in \
                         ['*kw', '*setup', '*forloop', '*foritem']
 
@@ -103,10 +103,6 @@ class DataModel(object):
         remap = {}
         self._robot_data['strings'] = \
             list(self._prune(self._robot_data['strings'], used, remap))
-        self._robot_data['integers'] = \
-            list(self._prune(self._robot_data['integers'], used, remap,
-                             map_index=lambda index: -1 - index,
-                             offset_increment=-1))
         self._remap_indices(self._robot_data['suite'], remap)
 
     def _prune(self, data, used, index_remap, map_index=None, offset_increment=1):
@@ -121,15 +117,10 @@ class DataModel(object):
 
     def _remap_indices(self, data, remap):
         for i, item in enumerate(data):
-            if isinstance(item, (int, long)):
+            if isinstance(item, TextIndex):
                 data[i] = remap[item]
             elif isinstance(item, list):
                 self._remap_indices(item, remap)
-            elif isinstance(item, dict):
-                new_dict = {}
-                for k,v in item.items():
-                    new_dict[remap[k]] = remap[v]
-                data[i] = new_dict
 
     def _collect_used_indices(self, data, result):
         for item in data:

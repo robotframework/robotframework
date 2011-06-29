@@ -79,8 +79,7 @@ class _RobotHandler(_Handler):
                 'stats': self._data_from_children[1],
                 'errors': self._data_from_children[2],
                 'baseMillis': self._context.basemillis,
-                'strings': self._context.dump_texts(),
-                'integers': self._context.dump_integers()}
+                'strings': self._context.dump_texts()}
 
 
 class _SuiteHandler(_Handler):
@@ -303,7 +302,6 @@ class Context(object):
 
     def __init__(self):
         self._texts = TextCache()
-        self._integers = IntegerCache()
         self._basemillis = 0
         self._stats = Stats()
         self._current_place = []
@@ -330,21 +328,14 @@ class Context(object):
         if isinstance(value, basestring):
             return self._get_text_id(value)
         if isinstance(value, (int, long)):
-            return self._get_int_id(value)
+            return value
         raise AssertionError('Unsupported type of value '+str(type(value)))
 
     def _get_text_id(self, text):
         return self._texts.add(text)
 
-    def _get_int_id(self, integer):
-        id = self._integers.add(integer)
-        return -id-1
-
     def dump_texts(self):
         return self._texts.dump()
-
-    def dump_integers(self):
-        return self._integers.dump()
 
     def timestamp(self, time):
         if time == 'N/A':
@@ -431,24 +422,10 @@ class Stats(object):
         for child in self._children:
             child.fail_all()
 
+class TextIndex(int):
+    pass
 
-class IntegerCache(object):
-
-    def __init__(self):
-        self.integers = {}
-        self.index = 0
-
-    def add(self, integer):
-        if integer not in self.integers:
-            self.integers[integer] = self.index
-            self.index += 1
-        return self.integers[integer]
-
-    def dump(self):
-        # TODO: Could we yield or return an iterator?
-        return [item[0] for item in sorted(self.integers.iteritems(),
-                                           key=itemgetter(1))]
-
+ZERO_TEXT_INDEX = TextIndex(0)
 
 class TextCache(object):
     # TODO: Tune compressing thresholds
@@ -456,7 +433,7 @@ class TextCache(object):
     _use_compressed_threshold = 1.1
 
     def __init__(self):
-        self.texts = {'*': 0}
+        self.texts = {'*': ZERO_TEXT_INDEX}
         self.index = 1
 
     def add(self, text):
@@ -464,7 +441,7 @@ class TextCache(object):
             return 0
         text = self._encode(text)
         if text not in self.texts:
-            self.texts[text] = self.index
+            self.texts[text] = TextIndex(self.index)
             self.index += 1
         return self.texts[text]
 

@@ -34,18 +34,6 @@ class TestTextContext(_ContextTesting):
     def test_add_several_texts(self):
         self._verify_text(['Hello!', '', 'Foo'], [1, 0, 2] , ['*', '*Hello!', '*Foo'])
 
-class TestIntegerContext(_ContextTesting):
-
-    def _verify_integer(self, values, ids):
-        self._verify_ids(values, ids)
-        assert_equals(self._context.dump_integers(), values)
-
-    def test_add_integer(self):
-        self._verify_integer([0], [-1])
-
-    def test_add_several_integers(self):
-        self._verify_integer([1, -234, 700], [-1, -2, -3])
-
 class TestTextCache(unittest.TestCase):
 
     def setUp(self):
@@ -85,5 +73,5 @@ class TestTextCache(unittest.TestCase):
     def _generate_random_string(self, length):
         return ''.join(random.choice(string.digits) for _ in range(length))
 
-            
-            
+
+

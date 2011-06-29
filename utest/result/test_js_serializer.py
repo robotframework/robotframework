@@ -6,7 +6,7 @@ import unittest
 import xml.sax as sax
 
 from robot.result.jsparser import _RobotOutputHandler
-from robot.result.elementhandlers import Context
+from robot.result.elementhandlers import Context, TextIndex
 from robot.utils.asserts import assert_equals, assert_true
 
 
@@ -78,23 +78,20 @@ class TestJsSerializer(unittest.TestCase):
         data_model = self._get_data_model('<msg timestamp="20110531 12:48:09.088" level="FAIL">AssertionError</msg>')
         self.assert_model(data_model,
                           1306835289088,
-                          [-1, 1, 2],
-                          ['*', '*F', '*AssertionError'],
-                          [0])
+                          [0, 1, 2],
+                          ['*', '*F', '*AssertionError'])
 
     def test_plain_message_xml_parsing(self):
         data_model = self._get_data_model('<msg timestamp="20110531 12:48:09.088" level="FAIL">AssertionError</msg>')
         self.assert_model(data_model, basemillis=1306835289088, plain_suite=[0, '*F', '*AssertionError'])
 
-    def assert_model(self, data_model, basemillis=None, suite=None, strings=None, integers=None, plain_suite=None):
+    def assert_model(self, data_model, basemillis=None, suite=None, strings=None, plain_suite=None):
         if basemillis is not None:
             assert_equals(data_model._robot_data['baseMillis'], basemillis)
         if suite is not None:
             assert_equals(data_model._robot_data['suite'], suite)
         if strings is not None:
             assert_equals(data_model._robot_data['strings'], strings)
-        if integers is not None:
-            assert_equals(data_model._robot_data['integers'], integers)
         if plain_suite is not None:
             self._assert_plain_suite(data_model, plain_suite)
 
@@ -110,14 +107,25 @@ class TestJsSerializer(unittest.TestCase):
                 self._check_does_not_contain(item, items)
 
     def _assert_plain_suite(self, data_model, plain_suite):
-        reversed = self._reverse_from_ids(data_model, data_model._robot_data['suite'])
-        assert_equals(reversed, plain_suite)
+        self._assert_plain_suite_item(plain_suite, data_model._robot_data['suite'], data_model)
+
+    def _assert_plain_suite_item(self, expected, actual, data_model):
+        if isinstance(expected, (float, int)):
+            assert_equals(expected, actual)
+        elif isinstance(expected, list):
+            for exp, act in zip(expected, actual):
+                self._assert_plain_suite_item(exp, act, data_model)
+        else:
+            actual = self._reverse_id(data_model, actual)
+            assert_equals(expected, actual)
 
     def _reverse_from_ids(self, data, item):
         if item is None:
             return None
-        if isinstance(item, (int, long)):
+        if isinstance(item, TextIndex):
             return self._reverse_id(data, item)
+        if isinstance(item, (long, int)):
+            return item
         recurse = self._reverse_from_ids
         if isinstance(item, list):
             return [recurse(data, i) for i in item]
@@ -129,8 +137,6 @@ class TestJsSerializer(unittest.TestCase):
     def _reverse_id(self, data_model, id):
         if id is None:
             return None
-        elif id < 0:
-            return data_model._robot_data['integers'][abs(id)-1]
         return data_model._robot_data['strings'][id]
 
     def test_status_xml_parsing(self):
@@ -236,7 +242,6 @@ class TestJsSerializer(unittest.TestCase):
 
     def _test_remove_keywords(self, data_model, should_contain_strings=None):
         strings_before = self._list_size(data_model._robot_data['strings'])
-        integers_before = self._list_size(data_model._robot_data['integers'])
         data_model_json_before = StringIO.StringIO()
         data_model.write_to(data_model_json_before)
         data_model.remove_keywords()
@@ -248,7 +253,6 @@ class TestJsSerializer(unittest.TestCase):
         data_model.write_to(data_model_json_after)
         assert_true(len(data_model_json_before.getvalue()) > len(data_model_json_after.getvalue()))
         assert_true(strings_before > self._list_size(data_model._robot_data['strings']))
-        assert_true(integers_before > self._list_size(data_model._robot_data['integers']))
 
     def _list_size(self, array):
         return len(''.join(str(val) for val in array))
