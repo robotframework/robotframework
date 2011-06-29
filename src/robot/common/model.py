@@ -30,17 +30,18 @@ class _TestAndSuiteHelper:
         self.status = 'NOT_RUN'
         self.message = ''
 
-    # TODO: Is this property and other html stuff here used anymore?
+    # TODO: Is this property and other html/serialize stuff here used anymore?
     @property
     def htmldoc(self):
         return utils.html_format(self.doc)
 
-    # TODO: Replace with simple @property in 2.6.
+    # TODO: Replace with simple @property in 2.7.
     # Cannot do that now because Mabot assigns longname.
     _longname = None
     longname = property(lambda self: self._longname or self.get_long_name(),
                         lambda self, name: setattr(self, '_longname', name))
 
+    # TODO: Is separator still used?
     def get_long_name(self, separator='.'):
         """Returns long name. If separator is None, list of names is returned."""
         names = self.parent and self.parent.get_long_name(separator=None) or []
@@ -96,7 +97,7 @@ class BaseTestSuite(_TestAndSuiteHelper):
             test.set_criticality(critical)
 
     def set_doc(self, doc):
-        if doc is not None:
+        if doc:
             self.doc = doc
 
     def set_metadata(self, metalist):
@@ -119,7 +120,7 @@ class BaseTestSuite(_TestAndSuiteHelper):
     def get_full_message(self, html=False):
         """Returns suite's message including statistics message"""
         stat_msg = self.get_stat_message(html)
-        if self.message == '':
+        if not self.message:
             return stat_msg
         if not html:
             return '%s\n\n%s' % (self.message, stat_msg)
@@ -149,8 +150,7 @@ class BaseTestSuite(_TestAndSuiteHelper):
 
         Can/should be used when statuses have been changed somehow.
         """
-        self._set_stats()
-        self.status = self.critical_stats.failed == 0 and 'PASS' or 'FAIL'
+        self.status = self._set_stats()
 
     def _set_stats(self):
         self.critical_stats = Stat()
@@ -160,6 +160,10 @@ class BaseTestSuite(_TestAndSuiteHelper):
             self._add_suite_to_stats(suite)
         for test in self.tests:
             self._add_test_to_stats(test)
+        return self._get_status()
+
+    def _get_status(self):
+        return 'PASS' if not self.critical_stats.failed else 'FAIL'
 
     def _add_test_to_stats(self, test):
         self.all_stats.add_test(test)
@@ -171,11 +175,11 @@ class BaseTestSuite(_TestAndSuiteHelper):
         self.all_stats.add_stat(suite.all_stats)
 
     def suite_teardown_failed(self, message=None):
-        if message is not None:
+        if message:
             self._set_teardown_fail_msg(message)
         self.critical_stats.fail_all()
         self.all_stats.fail_all()
-        self.status = self.critical_stats.failed == 0 and 'PASS' or 'FAIL'
+        self.status = self._get_status()
         sub_message = 'Teardown of the parent suite failed.'
         for suite in self.suites:
             suite.suite_teardown_failed(sub_message)
@@ -204,19 +208,19 @@ class BaseTestSuite(_TestAndSuiteHelper):
 
     def _filter_by_names(self, suites, tests):
         suites = self._filter_suite_names(suites)
-        self.suites = [ suite for suite in self.suites
-                        if suite._filter_by_names(suites, tests) ]
+        self.suites = [suite for suite in self.suites
+                       if suite._filter_by_names(suites, tests)]
         if not suites:
-            self.tests = [ test for test in self.tests if tests == [] or
-                           any(utils.matches_any(name, tests, ignore=['_'])
-                               for name in [test.name, test.get_long_name()])]
+            self.tests = [test for test in self.tests if tests == [] or
+                          any(utils.matches_any(name, tests, ignore=['_'])
+                              for name in [test.name, test.get_long_name()])]
         else:
             self.tests = []
-        return self.suites or self.tests
+        return bool(self.suites or self.tests)
 
     def _filter_suite_names(self, suites):
         try:
-            return [ self._filter_suite_name(p, s) for p, s in suites ]
+            return [self._filter_suite_name(p, s) for p, s in suites]
         except StopIteration:
             return []
 
@@ -229,7 +233,7 @@ class BaseTestSuite(_TestAndSuiteHelper):
 
     def _raise_no_tests_filtered_by_names(self, suites, tests):
         tests = utils.seq2str(tests, lastsep=' or ')
-        suites = utils.seq2str([ '.'.join(p + s) for p, s in suites ],
+        suites = utils.seq2str(['.'.join(p + s) for p, s in suites],
                                lastsep=' or ')
         if not suites:
             msg = 'test cases named %s.' % tests
@@ -248,11 +252,11 @@ class BaseTestSuite(_TestAndSuiteHelper):
             self._raise_no_tests_filtered_by_tags(includes, excludes)
 
     def _filter_by_tags(self, incls, excls):
-        self.suites = [ suite for suite in self.suites
-                        if suite._filter_by_tags(incls, excls) ]
-        self.tests = [ test for test in self.tests
-                       if test.is_included(incls, excls) ]
-        return len(self.suites) + len(self.tests) > 0
+        self.suites = [suite for suite in self.suites
+                       if suite._filter_by_tags(incls, excls)]
+        self.tests = [test for test in self.tests
+                      if test.is_included(incls, excls)]
+        return bool(self.suites or self.tests)
 
     def _raise_no_tests_filtered_by_tags(self, incls, excls):
         incl = utils.seq2str(incls)
@@ -295,7 +299,7 @@ class BaseTestSuite(_TestAndSuiteHelper):
         self.set_doc(settings['Doc'])
         self.set_metadata(settings['Metadata'])
         self.set_critical_tags(settings['Critical'], settings['NonCritical'])
-        self._no_status_rc = settings['NoStatusRC']
+        self._return_status_rc = not settings['NoStatusRC']
         if 'RunMode' in settings:
             map(self.set_runmode, settings['RunMode'])
         if 'RemoveKeywords' in settings:
@@ -315,8 +319,8 @@ class BaseTestSuite(_TestAndSuiteHelper):
 
     @property
     def return_code(self):
-        return min(self.critical_stats.failed, 250) \
-                if not self._no_status_rc else 0
+        rc = min(self.critical_stats.failed, 250)
+        return rc if self._return_status_rc else 0
 
 
 class BaseTestCase(_TestAndSuiteHelper):
@@ -332,80 +336,50 @@ class BaseTestCase(_TestAndSuiteHelper):
         self._set_teardown_fail_msg(message)
 
     def set_criticality(self, critical):
-        self.critical = critical.are_critical(self.tags) and 'yes' or 'no'
+        self.critical = 'yes' if critical.are_critical(self.tags) else 'no'
 
     def is_included(self, incl_tags, excl_tags):
         """Returns True if this test case is included but not excluded.
 
         If no 'incl_tags' are given all tests are considered to be included.
         """
-        included = not incl_tags or self._matches_any_of_the(incl_tags)
-        excluded = self._matches_any_of_the(excl_tags)
+        included = not incl_tags or self._matches_any_tag_rule(incl_tags)
+        excluded = self._matches_any_tag_rule(excl_tags)
         return included and not excluded
 
-    def _matches_any_of_the(self, tag_rules):
+    def _matches_any_tag_rule(self, tag_rules):
         """Returns True if any of tag_rules matches self.tags
 
         Matching equals supporting AND, & and NOT boolean operators and simple
         pattern matching. NOT is 'or' operation meaning if any of the NOTs is
         matching, False is returned.
         """
-        for rule in tag_rules:
-            if self._matches_tag_rule(rule):
-                return True
-        return False
+        return any(self._matches_tag_rule(rule) for rule in tag_rules)
 
     def _matches_tag_rule(self, tag_rule):
-        that_should_be, that_should_not_be = self._split_boolean_operators(tag_rule)
-        if self._contains_any_tag(that_should_not_be):
-            return False
-        if self._contains_tag(that_should_be):
-            return True
-        return False
+        if 'NOT' not in tag_rule:
+            return self._matches_tag(tag_rule)
+        nots = tag_rule.split('NOT')
+        should_match = nots.pop(0)
+        return self._matches_tag(should_match) \
+            and not any(self._matches_tag(n) for n in nots)
 
-    def _split_boolean_operators(self, tag_rule):
-        if not tag_rule:
-            return self._empty_split()
-        if 'NOT' in tag_rule:
-            return self._split_nots(tag_rule)
-        return tag_rule, []
-
-    def _empty_split(self):
-        return '', []
-
-    def _split_nots(self, tag_rule):
-        parts = tag_rule.split('NOT')
-        if '' not in parts:
-            return parts[0], parts[1:]
-        return self._empty_split()
-
-    def _contains_any_tag(self, tags):
-        """Returns True if any of the given tags matches a tag from self.tags.
-
-        Note that one tag may be ANDed combination of multiple tags (e.g.
-        tag1&tag2) and then all of them must match some tag from selg.tags.
-        """
-        for tag in tags:
-            if self._contains_tag(tag):
-                return True
-        return False
-
-    def _contains_tag(self, tag):
+    def _matches_tag(self, tag):
         """Returns True if given tag matches any tag from self.tags.
 
         Note that given tag may be ANDed combination of multiple tags (e.g.
         tag1&tag2) and then all of them must match some tag from self.tags.
         """
         for item in tag.split('&'):
-            if not any(utils.matches(tag, item) for tag in self.tags):
+            if not any(utils.matches(t, item, ignore=['_']) for t in self.tags):
                 return False
         return True
 
     def __cmp__(self, other):
         if self.status != other.status:
-            return self.status == 'FAIL' and -1 or 1
+            return -1 if self.status == 'FAIL' else 1
         if self.critical != other.critical:
-            return self.critical == 'yes' and -1 or 1
+            return -1 if self.critical == 'yes' else 1
         try:
             return cmp(self.longname, other.longname)
         except AttributeError:
@@ -444,4 +418,4 @@ class _Critical:
         for tag in tags:
             if self.is_critical(tag):
                 return True
-        return len(self.tags) == 0
+        return not self.tags
