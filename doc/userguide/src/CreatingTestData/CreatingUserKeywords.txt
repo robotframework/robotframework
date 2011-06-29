@@ -331,9 +331,8 @@ __ `Ignoring Given/When/Then/And prefixes`_
 
 Using custom regular expressions
 ''''''''''''''''''''''''''''''''
-
-Matching keyword with embedded arguments into the keywords that are
-used in the test data is done internally using `regular expressions`__
+When keywords with embedded arguments are called, the values are
+matched internally using `regular expressions`__
 (regexps for short). The default logic goes so that every argument in
 the name is replaced with a pattern :code:`.*?` that basically matches
 any string. This logic works fairly well normally, but as just
@@ -441,7 +440,7 @@ is four backslashes (:code:`\\\\\\\\`) but, depending on the next
 character, also two backslashes may be enough.
 
 Notice also that keyword names and possible embedded arguments in them
-do *not* need to be escaped according to the normal `test data escaping
+should *not* be escaped using the normal `test data escaping
 rules`__. This means that, for example, backslashes in expressions
 like :var:`${name:\\w+}` do not need to be escaped.
 
