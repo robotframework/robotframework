@@ -95,11 +95,8 @@ function renderTotalSelector(name) {
 }
 
 function renderTotalDetails(name) {
-    var stat;
-    if (name == 'Critical Tests')
-        stat = window.testdata.statistics().total[0];
-    else
-        stat = window.testdata.statistics().total[1];
+    var index = (name == 'Critical Tests') ? 0 : 1;
+    var stat = window.testdata.statistics().total[index];
     var tests = getTotalTests(name)
     stat.totalTime = calculateTotalTime(tests);
     $.tmpl('tagOrTotalDetailsTemplate', stat).appendTo('#details_header');
