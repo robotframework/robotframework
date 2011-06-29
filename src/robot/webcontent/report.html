@@ -40,8 +40,6 @@ $(document).ready(function () {
     addSummary(topsuite);
     addStatistics();
     addDetails();
-    // TODO: Why is this done? It seems to cause details to be selected
-    // twice, because the logic there resets window.location.hash.
     window.onhashchange = showDetailsByHash;
 });
 
@@ -69,7 +67,6 @@ function addDetails() {
 
 function showDetailsByHash() {
     if (window.location.hash == window.prevLocationHash) return;
-    window.prevLocationHash = window.location.hash;
     var hashParts = decodeURI(window.location.hash.substring(1)).split('_');
     var key = hashParts.shift();
     var arg = hashParts.join('_');
@@ -82,8 +79,7 @@ function showDetailsByHash() {
     if (action) {
         action(arg);
     }
-    // TODO: Why is this needed? Isn't the has already set?
-    window.location.hash = window.location.hash.substring(1);
+    scrollToSelector(window.location.hash.substring(1));
 }
 
 function totalDetailSelected(name) {
@@ -173,6 +169,7 @@ function ensureSuiteDetailsAreVisible(name) {
 
 function scrollToSelector(anchor) {
     $('#test_details_container').css('min-height', $(window).height());
+    window.prevLocationHash = "#"+anchor;
     window.location.hash = anchor;
 }
 
