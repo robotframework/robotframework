@@ -343,59 +343,28 @@ class BaseTestCase(_TestAndSuiteHelper):
 
         If no 'incl_tags' are given all tests are considered to be included.
         """
-        included = not incl_tags or self._matches_any_of_the(incl_tags)
-        excluded = self._matches_any_of_the(excl_tags)
+        included = not incl_tags or self._matches_any_tag_rule(incl_tags)
+        excluded = self._matches_any_tag_rule(excl_tags)
         return included and not excluded
 
-    def _matches_any_of_the(self, tag_rules):
+    def _matches_any_tag_rule(self, tag_rules):
         """Returns True if any of tag_rules matches self.tags
 
         Matching equals supporting AND, & and NOT boolean operators and simple
         pattern matching. NOT is 'or' operation meaning if any of the NOTs is
         matching, False is returned.
         """
-        for rule in tag_rules:
-            if self._matches_tag_rule(rule):
-                return True
-        return False
+        return any(self._matches_tag_rule(rule) for rule in tag_rules)
 
     def _matches_tag_rule(self, tag_rule):
-        that_should_be, that_should_not_be \
-            = self._split_boolean_operators(tag_rule)
-        if self._contains_any_tag(that_should_not_be):
-            return False
-        if self._contains_tag(that_should_be):
-            return True
-        return False
+        if 'NOT' not in tag_rule:
+            return self._matches_tag(tag_rule)
+        nots = tag_rule.split('NOT')
+        should_match = nots.pop(0)
+        return self._matches_tag(should_match) \
+            and not any(self._matches_tag(n) for n in nots)
 
-    def _split_boolean_operators(self, tag_rule):
-        if not tag_rule:
-            return self._empty_split()
-        if 'NOT' in tag_rule:
-            return self._split_nots(tag_rule)
-        return tag_rule, []
-
-    def _empty_split(self):
-        return '', []
-
-    def _split_nots(self, tag_rule):
-        parts = tag_rule.split('NOT')
-        if '' not in parts:
-            return parts[0], parts[1:]
-        return self._empty_split()
-
-    def _contains_any_tag(self, tags):
-        """Returns True if any of the given tags matches a tag from self.tags.
-
-        Note that one tag may be ANDed combination of multiple tags (e.g.
-        tag1&tag2) and then all of them must match some tag from selg.tags.
-        """
-        for tag in tags:
-            if self._contains_tag(tag):
-                return True
-        return False
-
-    def _contains_tag(self, tag):
+    def _matches_tag(self, tag):
         """Returns True if given tag matches any tag from self.tags.
 
         Note that given tag may be ANDed combination of multiple tags (e.g.
