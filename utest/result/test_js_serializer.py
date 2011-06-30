@@ -22,22 +22,22 @@ def assert_model(data_model, basemillis=None, suite=None, strings=None, plain_su
 
 
 def _assert_plain_suite(data_model, plain_suite):
-    _assert_plain_suite_item(plain_suite, data_model._robot_data['suite'], data_model)
+    _assert_plain_suite_item(plain_suite, data_model._robot_data['suite'], data_model._robot_data['strings'])
 
-def _assert_plain_suite_item(expected, actual, data_model):
+def _assert_plain_suite_item(expected, actual, strings):
     if isinstance(expected, (float, int)):
         assert_equals(expected, actual)
     elif isinstance(expected, list):
         for exp, act in zip(expected, actual):
-            _assert_plain_suite_item(exp, act, data_model)
+            _assert_plain_suite_item(exp, act, strings)
     else:
-        actual =_reverse_id(data_model, actual)
+        actual =_reverse_id(strings, actual)
         assert_equals(expected, actual)
 
-def _reverse_id(data_model, id):
+def _reverse_id(strings, id):
     if id is None:
         return None
-    return data_model._robot_data['strings'][id]
+    return strings[id]
 
 
 class _JsSerializerTestBase(unittest.TestCase):
@@ -372,8 +372,10 @@ class TestTestSplittingJsSerializer(_JsSerializerTestBase):
                            1
                          ]],
                          [],[1, 1, 1, 1]])
-
-        kw_data = ['*kw', '*Keyword.Example', '*',  ['*P', 0, -23], [], []]
+        expected_data = ['*kw', '*Keyword.Example', '*',  ['*P', 0, -23], [], []]
+        kw_data = self._context.split_results[0]
+        _assert_plain_suite_item(expected_data, kw_data['keywords'][0],
+                                 kw_data['strings'])
 
 
 if __name__ == '__main__':

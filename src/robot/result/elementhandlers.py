@@ -175,9 +175,10 @@ class _KeywordHandler(_Handler):
     def end_element(self, text):
         if self._type == 'teardown' and self._data_from_children[-1][0] == self._get_id('F'):
             self._context.teardown_failed()
-        self._context.end_keyword()
-        return self._get_ids([self._type, self._name, self._timeout]) + \
+        result = self._get_ids([self._type, self._name, self._timeout]) + \
                self._data_from_children + [self._keywords] + [self._messages]
+        self._context.end_keyword()
+        return result
 
 
 # TODO: StatisticsHandler and StatItemHandler should be separated somehow from suite handlers
@@ -381,7 +382,6 @@ class Context(object):
         self._current_place.append(('keyword', self._kw_index[-1]))
         self._kw_index[-1] += 1
         self._kw_index.append(0)
-
 
     def end_keyword(self):
         self._current_place.pop()
