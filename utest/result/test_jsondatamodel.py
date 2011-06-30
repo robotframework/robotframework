@@ -36,14 +36,7 @@ class TestDataModelWrite(unittest.TestCase):
         assert_equals(parts, ['window.sPart0 = [2,3];', 'window.sPart1 = [6,7];', 'window.sPart2 = [4,[5],window.sPart1];', 'window.sPart3 = [1,window.sPart0,window.sPart2,8];'])
         self._assert_separators_in(lines, 'foo')
 
-    def test_splitting_output_integers(self):
-        lines = self._get_lines(data={'baseMillis':100, 'integers':range(900)},
-                                split_threshold=200, separator='\n')
-        parts = [l for l in lines if l.startswith('window.output["int')]
-        assert_equals(len(parts), 6)
-        self._assert_separators_in(lines, '')
-
-    def test_splitting_output_integers(self):
+    def test_splitting_output_strings(self):
         lines = self._get_lines(data={'baseMillis':100, 'strings':['data' for _ in range(100)]},
                                 split_threshold=9, separator='?\n')
         parts = [l for l in lines if l.startswith('window.output["strings')]

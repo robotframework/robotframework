@@ -53,12 +53,13 @@ class DataModel(object):
                                                split_threshold)
             data, mapping = splitWriter.write(self._robot_data['suite'])
             self._dump_json('window.output["suite"] = ', data, output, mapping)
-        elif key in ['integers', 'strings']:
-            self._dump_and_split_list(key, output, separator, split_threshold)
+        elif key == 'strings':
+            self._dump_and_split_strings(output, separator, split_threshold)
         else:
             self._dump_json('window.output["%s"] = ' % key, value, output)
 
-    def _dump_and_split_list(self, name, output, separator, split_threshold):
+    def _dump_and_split_strings(self, output, separator, split_threshold):
+        name = 'strings'
         lst = self._robot_data[name]
         output.write('window.output["%s"] = [];\n' % name)
         while lst:
