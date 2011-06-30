@@ -138,11 +138,11 @@ class _TestHandler(_Handler):
         self._current_children.append(data)
 
     def end_element(self, text):
-        result = self._get_ids([self._name, self._timeout, self._critical]) + \
-                 self._data_from_children + [self._keywords]
         # TODO: refactor
-        self._context.add_test(self._critical == 'Y', result[-2][0] == self._get_id('P'))
-        self._context.end_test()
+        self._context.add_test(self._critical == 'Y', self._data_from_children[-1][0] == self._get_id('P'))
+        kws = self._context.end_test(self._keywords)
+        result = self._get_ids([self._name, self._timeout, self._critical]) + self._data_from_children
+        result.append(kws)
         return result
 
 
@@ -375,18 +375,19 @@ class Context(object):
         return kw_data
 
     def start_keyword(self):
+        if self._split_tests and self._current_place[-1][0] == 'test':
+            self._split_text_caches.append(TextCache())
+            self._current_texts = self._split_text_caches[-1]
         self._current_place.append(('keyword', self._kw_index[-1]))
         self._kw_index[-1] += 1
         self._kw_index.append(0)
-        if self._split_tests and len(self._kw_index) == 2:
-            self._split_text_caches.append(TextCache())
-            self._current_texts = self._split_text_caches[-1]
+
 
     def end_keyword(self):
-        if self._split_tests and len(self._kw_index) == 2:
-            self._current_texts = self._main_text_cache
         self._current_place.pop()
         self._kw_index.pop()
+        if self._split_tests and self._current_place[-1][0] == 'test':
+            self._current_texts = self._main_text_cache
 
     def create_link_to_current_location(self, key):
         self._links[tuple(key)] = self._create_link()

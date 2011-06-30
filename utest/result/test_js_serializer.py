@@ -40,9 +40,33 @@ def _reverse_id(data_model, id):
     return data_model._robot_data['strings'][id]
 
 
+class _JsSerializerTestBase(unittest.TestCase):
+
+    def _get_data_model(self, xml_string):
+        sax.parseString('<robot generator="test">%s<statistics/><errors/></robot>' % xml_string, self._handler)
+        return self._handler.datamodel
+
+    def _assert_long_equals(self, given, expected):
+        if given != expected:
+            for index, char in enumerate(given):
+                if index >= len(expected):
+                    raise AssertionError('Expected is shorter than given string. Ending that was missing %s' % given[index:])
+                if char != expected[index]:
+                    raise AssertionError("Given and expected not equal ('%s' != '%s') at index %s.\n'%s' !=\n'%s'" %
+                                         (char, expected[index], index, self._snippet(index, given), self._snippet(index, expected)))
+            if len(expected) > len(given):
+                raise AssertionError('Expected is longer than given string. Ending that was missing %s' % expected[len(given)-1:])
+
+    def _snippet(self, index, string):
+        start = max(0, index-20)
+        start_padding = '' if start==0 else '...'
+        end = min(len(string), index+20)
+        end_padding = '' if end==0 else '...'
+        return start_padding+string[start:end]+end_padding
+
 # TODO: Split this monster test suite.
 
-class TestJsSerializer(unittest.TestCase):
+class TestJsSerializer(_JsSerializerTestBase):
 
     SUITE_XML = """
 <suite source="/tmp/verysimple.txt" name="Verysimple">
@@ -320,27 +344,36 @@ class TestJsSerializer(unittest.TestCase):
         assert_model(data_model, basemillis=1306835289078,
                      plain_suite=[[0, '*E', "*Invalid syntax in file '/tmp/data/failing_suite.txt' in table 'Settings': Resource file 'nope' does not exist."]])
 
-    def _get_data_model(self, xml_string):
-        sax.parseString('<robot generator="test">%s<statistics/><errors/></robot>' % xml_string, self._handler)
-        return self._handler.datamodel
+class TestTestSplittingJsSerializer(_JsSerializerTestBase):
 
-    def _assert_long_equals(self, given, expected):
-        if given != expected:
-            for index, char in enumerate(given):
-                if index >= len(expected):
-                    raise AssertionError('Expected is shorter than given string. Ending that was missing %s' % given[index:])
-                if char != expected[index]:
-                    raise AssertionError("Given and expected not equal ('%s' != '%s') at index %s.\n'%s' !=\n'%s'" %
-                                         (char, expected[index], index, self._snippet(index, given), self._snippet(index, expected)))
-            if len(expected) > len(given):
-                raise AssertionError('Expected is longer than given string. Ending that was missing %s' % expected[len(given)-1:])
+    SUITE_XML = """
+<suite source="/tmp/supersimple.txt" name="Supersimple">
+  <test name="Test" timeout="">
+    <doc>doc</doc>
+    <kw type="kw" name="Keyword.Example" timeout="">
+      <status status="PASS" endtime="20110601 12:01:51.353" starttime="20110601 12:01:51.376"></status>
+    </kw>
+    <status status="PASS" endtime="20110601 12:01:51.354" critical="yes" starttime="20110601 12:01:51.353"></status>
+  </test>
+  <status status="PASS" endtime="20110601 12:01:51.354" starttime="20110601 12:01:51.329"></status>
+</suite>"""
 
-    def _snippet(self, index, string):
-        start = max(0, index-20)
-        start_padding = '' if start==0 else '...'
-        end = min(len(string), index+20)
-        end_padding = '' if end==0 else '...'
-        return start_padding+string[start:end]+end_padding
+
+    def setUp(self):
+        self._context = Context(split_tests=True)
+        self._handler = _RobotOutputHandler(self._context)
+
+    def test_split_keyword(self):
+        data_model = self._get_data_model(self.SUITE_XML)
+        assert_model(data_model,
+                     plain_suite=
+                     ['*/tmp/supersimple.txt', '*Supersimple',['*P', -47, 25],[],
+                         [['*Test', '*', '*Y', '*doc',['*P', -23, 1],
+                           1
+                         ]],
+                         [],[1, 1, 1, 1]])
+
+        kw_data = ['*kw', '*Keyword.Example', '*',  ['*P', 0, -23], [], []]
 
 
 if __name__ == '__main__':
