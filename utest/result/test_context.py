@@ -5,7 +5,8 @@ import unittest
 from robot.result.elementhandlers import TextCache
 from robot.utils.asserts import assert_equals, assert_true
 
-import robot.result.jsparser as jsparser
+from robot.result import jsparser
+
 
 class _ContextTesting(unittest.TestCase):
 
@@ -33,6 +34,7 @@ class TestTextContext(_ContextTesting):
 
     def test_add_several_texts(self):
         self._verify_text(['Hello!', '', 'Foo'], [1, 0, 2] , ['*', '*Hello!', '*Foo'])
+
 
 class TestTextCache(unittest.TestCase):
 
@@ -74,4 +76,89 @@ class TestTextCache(unittest.TestCase):
         return ''.join(random.choice(string.digits) for _ in range(length))
 
 
+class TestSplittingContext(unittest.TestCase):
 
+    def setUp(self):
+        self._context = jsparser.Context(split_tests=True)
+
+    def test_getting_split_results(self):
+        assert_equals(self._context.split_results, [])
+
+    def test_keyword_data_for_single_test(self):
+        self._context.start_test('my test')
+        self._context.start_keyword()
+        self._context.end_keyword()
+        test_index = self._context.end_test(['my kw data'])
+        assert_equals(self._context.split_results,
+                      [{'keywords': ['my kw data'], 'strings': ['*']}])
+        assert_equals(test_index, 1)
+
+    def test_adding_strings_for_single_keyword(self):
+        self._context.start_test('t')
+        self._context.start_keyword()
+        self._context.get_id('log message')
+        self._context.end_keyword()
+        self._context.end_test(['data'])
+        assert_equals(self._context.split_results, [{'keywords': ['data'],
+                                                     'strings': ['*', '*log message']}])
+
+    def test_adding_strings_before_keyword(self):
+        self._context.start_test('t')
+        self._context.get_id('log message')
+        self._context.start_keyword()
+        self._context.end_keyword()
+        self._context.end_test(['data'])
+        assert_equals(self._context.split_results, [{'keywords': ['data'],
+                                                     'strings': ['*']}])
+
+    def test_recursive_keywords(self):
+        self._context.start_test('my test')
+        self._context.start_keyword()
+        self._context.start_keyword()
+        self._context.end_keyword()
+        self._context.end_keyword()
+        self._context.end_test(['my kw data'])
+        assert_equals(self._context.split_results, [{'keywords': ['my kw data'],
+                                                     'strings': ['*']}])
+
+    def test_several_keywords(self):
+        self._context.start_test('my test')
+        self._context.start_keyword()
+        self._context.end_keyword()
+        self._context.start_keyword()
+        self._context.end_keyword()
+        self._context.end_test(['kw data 1', 'kw data 2'])
+        assert_equals(self._context.split_results,
+                     [{'keywords': ['kw data 1', 'kw data 2'], 'strings': ['*']}])
+
+    def test_several_tests(self):
+        self._context.start_test('my test')
+        self._context.start_keyword()
+        self._context.end_keyword()
+        test_index1 = self._context.end_test(['kw data 1'])
+        self._context.start_test('my test 2')
+        self._context.start_keyword()
+        self._context.end_keyword()
+        test_index2 = self._context.end_test(['kw data 2'])
+        assert_equals(self._context.split_results, [{'keywords': ['kw data 1'],
+                                                     'strings': ['*']},
+                                                    {'keywords': ['kw data 2'],
+                                                     'strings': ['*']}])
+        assert_equals(test_index1, 1)
+        assert_equals(test_index2, 2)
+
+    def test_several_tests_texts(self):
+        self._context.start_test('my test')
+        self._context.start_keyword()
+        self._context.get_id('log message in test 1')
+        self._context.end_keyword()
+        self._context.end_test(['kw data 1'])
+        self._context.start_test('my test 2')
+        self._context.start_keyword()
+        self._context.get_id('log message in test 2')
+        self._context.end_keyword()
+        self._context.end_test(['kw data 2'])
+        assert_equals(self._context.split_results, [{'keywords': ['kw data 1'],
+                                                     'strings': ['*', '*log message in test 1']},
+                                                    {'keywords': ['kw data 2'],
+                                                     'strings': ['*', '*log message in test 2']}])

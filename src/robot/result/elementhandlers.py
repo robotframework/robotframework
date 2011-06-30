@@ -300,17 +300,25 @@ class _MsgHandler(_Handler):
 
 class Context(object):
 
-    def __init__(self):
-        self._texts = TextCache()
+    def __init__(self, split_tests=False):
+        self._main_text_cache = TextCache()
+        self._current_texts = self._main_text_cache
+        self._split_text_caches = []
         self._basemillis = 0
         self._stats = Stats()
         self._current_place = []
         self._kw_index = []
         self._links = {}
+        self._split_tests = split_tests
+        self._split_results = []
 
     @property
     def basemillis(self):
         return self._basemillis
+
+    @property
+    def split_results(self):
+        return self._split_results
 
     def collect_stats(self):
         self._stats = self._stats.new_child()
@@ -332,10 +340,10 @@ class Context(object):
         raise AssertionError('Unsupported type of value '+str(type(value)))
 
     def _get_text_id(self, text):
-        return self._texts.add(text)
+        return self._current_texts.add(text)
 
     def dump_texts(self):
-        return self._texts.dump()
+        return self._current_texts.dump()
 
     def timestamp(self, time):
         if time == 'N/A':
@@ -357,16 +365,26 @@ class Context(object):
         self._current_place.append(('test', name))
         self._kw_index.append(0)
 
-    def end_test(self):
+    def end_test(self, kw_data=None):
         self._current_place.pop()
         self._kw_index.pop()
+        if self._split_tests:
+            self._split_results.append({'keywords': kw_data,
+                                        'strings': self._split_text_caches[-1].dump()})
+            return len(self._split_results)
+        return kw_data
 
     def start_keyword(self):
         self._current_place.append(('keyword', self._kw_index[-1]))
         self._kw_index[-1] += 1
         self._kw_index.append(0)
+        if self._split_tests and len(self._kw_index) == 2:
+            self._split_text_caches.append(TextCache())
+            self._current_texts = self._split_text_caches[-1]
 
     def end_keyword(self):
+        if self._split_tests and len(self._kw_index) == 2:
+            self._current_texts = self._main_text_cache
         self._current_place.pop()
         self._kw_index.pop()
 
