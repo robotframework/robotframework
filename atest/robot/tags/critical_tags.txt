@@ -5,41 +5,41 @@ Resource        atest_resource.txt
 Test Template   Test Criticality
 
 *** Variables ***
-${M_000_211}  0 critical tests, 0 passed, 0 failed\n 2 tests total, 1 passed, 1 failed
-${M_211_211}  2 critical tests, 1 passed, 1 failed\n 2 tests total, 1 passed, 1 failed
-${M_110_211}  1 critical test, 1 passed, 0 failed\n 2 tests total, 1 passed, 1 failed
-${M_101_211}  1 critical test, 0 passed, 1 failed\n 2 tests total, 1 passed, 1 failed
+${MSG 000 211}  0 critical tests, 0 passed, 0 failed\n 2 tests total, 1 passed, 1 failed
+${MSG 211 211}  2 critical tests, 1 passed, 1 failed\n 2 tests total, 1 passed, 1 failed
+${MSG 110 211}  1 critical test, 1 passed, 0 failed\n 2 tests total, 1 passed, 1 failed
+${MSG 101 211}  1 critical test, 0 passed, 1 failed\n 2 tests total, 1 passed, 1 failed
 
 *** Test Cases ***
 Neither Critical Nor Non-Critical
-    ${EMPTY}  FAIL  ${M_211_211}
+    ${EMPTY}  FAIL  ${MSG 211 211}
 
 Critical
-    --critical pass  PASS  ${M_110_211}
+    --critical pass  PASS  ${MSG 110 211}
 
 Critical Not Matching
-    -c nomatch  PASS  ${M_000_211}
+    -c nomatch  PASS  ${MSG 000 211}
 
 Critical With Pattern
-    --critical fSTAR -c QUESTaSS  FAIL  ${M_211_211}
+    --critical fSTAR -c QUESTaSS  FAIL  ${MSG 211 211}
 
 Non-Critical
-    --noncritical pass  FAIL  ${M_101_211}
+    --noncritical pass  FAIL  ${MSG 101 211}
 
 Non-Critical Not Matching
-    -n these -n dont -n match  FAIL  ${M_211_211}
+    -n these -n dont -n match  FAIL  ${MSG 211 211}
 
 Non-Critical With Pattern
-    --NonCritical fSTAR -n QUESTass  PASS  ${M_000_211}
+    --NonCritical fSTAR -n QUESTass  PASS  ${MSG 000 211}
 
 Critical And Non-Critical Matching Different Test
-    --critical paSTARss --noncritical faiQUEST -c nomatch  PASS  ${M_110_211}
+    --critical paSTARss --noncritical faiQUEST -c nomatch  PASS  ${MSG 110 211}
 
 Critical And Non-Critical Matching Same Test
-    --critical force --noncritical fail -c a -c b -c c -n x -n y -n z  PASS  ${M_110_211}
+    --critical force --noncritical fail -c a -c b -c c -n x -n y -n z  PASS  ${MSG 110 211}
 
 Critical And Non-Critical Matching Same Tag
-    --critical force --noncritical fSTAR  PASS  ${M_000_211}
+    --critical force --noncritical fSTAR  PASS  ${MSG 000 211}
 
 *** Keywords ***
 Test Criticality
