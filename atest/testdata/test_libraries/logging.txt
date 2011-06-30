@@ -1,0 +1,22 @@
+*** Settings ***
+Library         ExampleJavaLibrary
+Library         ExampleLibrary
+
+*** Test Cases ***
+Logging From Java Library
+    [Setup]  Log  Hello\nworld\n!!
+    examplejavalibrary.Print  Hello from Java library!
+    Log  Hello world!!
+
+Logging From Python Library
+    ExampleLibrary.Print  Hello from Python Library!
+    Example Library.Print  Hello to stderr from Python Library!  stderr
+    Print to stdout and stderr  Hello!!
+
+Print with Levels From Java
+    examplejavalibrary.Print  This is a warning  WARN
+    examplelibrary.Print  *ERROR* This is an error
+    examplelibrary.Print  *ERROR* This is an error to stderr  stderr
+    examplejavalibrary.Print  First msg\n2nd line of1st msg\n*INFO* 2nd msg *INFO* Still 2nd  # Note that there must not be <br> or anything between \n and *INFO*
+    examplelibrary.Print  *INFO*1st msg\n2nd line\n*WARN* Second msg\n*INVAL* Still 2nd msg\n*ERROR*Now 3rd msg  # See above comment
+
