@@ -14,11 +14,19 @@ public class ExampleJavaLibrary {
     private int counter = 0;
 
     public void print(Object msg) {
-        print(msg, "INFO");
+        System.out.println(msg);
     }
 
     public void print(Object msg, String level) {
         System.out.println("*" + level.toUpperCase() + "*" + msg);
+    }
+
+    public void stderr(Object msg) {
+        System.err.println(msg);
+    }
+
+    public void stderr(Object msg, String level) {
+        System.err.println("*" + level.toUpperCase() + "* " + msg);
     }
 
     public void divByZero() {
