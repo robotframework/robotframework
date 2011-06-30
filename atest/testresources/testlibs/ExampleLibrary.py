@@ -1,4 +1,4 @@
-import sys 
+import sys
 import time
 import exceptions
 
@@ -36,7 +36,7 @@ class ExampleLibrary:
 
     def multi_line_doc(self):
         """Only the first line of a multi line keyword doc should be logged.
-        
+
         Thus for example this text here should not be there
         and neither should this.
         """
@@ -50,12 +50,12 @@ class ExampleLibrary:
     def external_exception(self, name, msg):
         ObjectToReturn('failure').exception(name, msg)
 
-    # TODO: Replace these three return_xxx_from_library keywords from test data
-    # with simple set (from BuiltIn) and remove these
     def return_string_from_library(self,string='This is a string from Library'):
         return string
+
     def return_list_from_library(self, *args):
-        return list(args)    
+        return list(args)
+
     def return_three_strings_from_library(self, one='one', two='two', three='three'):
         return one, two, three
 
@@ -110,7 +110,7 @@ class ExampleLibrary:
         while True:
             i += 1
             time.sleep(1)
-            if not no_print: 
+            if not no_print:
                 print 'Looping forever: %d' % i
 
     def write_to_file_after_sleeping(self, path, sec, msg=None):
