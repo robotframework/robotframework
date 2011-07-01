@@ -41,7 +41,7 @@ class _BaseSettings(object):
                  'LogTitle'         : ('logtitle', None),
                  'ReportTitle'      : ('reporttitle', None),
                  'SummaryTitle'     : ('summarytitle', None),
-                 'ReportBackground' : ('reportbackground', None),
+                 'ReportBackground' : ('reportbackground', '#99FF66:#FF3333'),
                  'SuiteStatLevel'   : ('suitestatlevel', -1),
                  'TagStatInclude'   : ('tagstatinclude', []),
                  'TagStatExclude'   : ('tagstatexclude', []),
@@ -94,6 +94,8 @@ class _BaseSettings(object):
             return self._convert_to_positive_integer_or_default(name, value)
         if name in ['Listeners', 'VariableFiles']:
             return [self._split_args_from_name(item) for item in value]
+        if name == 'ReportBackground':
+            return self._process_report_background(value)
         if name == 'TagStatCombine':
             return [self._process_tag_stat_combine(v) for v in value]
         if name == 'TagStatLink':
@@ -160,6 +162,15 @@ class _BaseSettings(object):
         if ':' in value:
             return value.split(':', 1)
         return value, ''
+
+    def _process_report_background(self, colors):
+        if colors.count(':') not in [1, 2]:
+            LOGGER.error("Invalid report background colors '%s'." % colors)
+            colors = self._get_default_value('ReportBackground')
+        colors = colors.split(':')
+        if len(colors) == 2:
+            return colors[0], colors[0], colors[1]
+        return tuple(colors)
 
     def _process_tag_stat_combine(self, value):
         for replwhat, replwith in [('_', ' '), ('AND', '&'),

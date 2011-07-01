@@ -139,15 +139,7 @@ class ReportBuilder(_HTMLFileBuilder):
         }
 
     def _resolve_background_colors(self):
-        color_str = self._settings['ReportBackground']
-        if color_str and color_str.count(':') not in [1, 2]:
-            LOGGER.error("Invalid background color '%s'." % color_str)
-            color_str = None
-        if not color_str:
-            color_str = '#99FF66:#FF3333'
-        colors = color_str.split(':', 2)
-        if len(colors) == 2:
-            colors.insert(1, colors[0])
+        colors = self._settings['ReportBackground']
         return {'pass': colors[0], 'nonCriticalFail': colors[1], 'fail': colors[2]}
 
 
