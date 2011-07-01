@@ -132,6 +132,16 @@ Suite Times In Recombine
     Is Valid Elapsed Time  ${SUITE4.suites[1].suites[1].elapsedtime}
     Should Be Equal  ${SUITE4.suites[1].suites[1].elapsedtime}  ${MILLIS2}
 
+Elapsed Time Should Be Written To Output When Start And End Time Are Not Known
+    ${combined} =  Get Node  ${COMB OUT 1}  suite/status
+    Should Be Equal  ${combined.attrs['starttime']}  N/A
+    Should Be Equal  ${combined.attrs['endtime']}  N/A
+    Should Be True   ${combined.attrs['elapsedtime']} >= 0
+    ${originals} =  Get Nodes  ${COMB OUT 1}  suite/suite/status
+    Should Not Be Equal  ${originals[0].attrs['starttime']}  N/A
+    Should Not Be Equal  ${originals[0].attrs['endtime']}  N/A
+    Should Not Be True   ${originals[0].attrs.has_key('elapsedtime')}
+
 Combined Suite Names Are Correct In Statistics
     ${suites} =  Get Suite Stat Nodes  ${COMB OUT 1}
     Should Be Equal  ${suites[0].text}  Pass And Fail & Normal

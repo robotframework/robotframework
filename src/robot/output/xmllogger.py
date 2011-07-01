@@ -184,6 +184,8 @@ class XmlLogger:
     def _write_status(self, item, message=None, extra_attrs=None):
         attrs = {'status': item.status, 'starttime': item.starttime,
                  'endtime': item.endtime}
+        if item.starttime == 'N/A' or item.endtime == 'N/A':
+            attrs['elapsedtime'] = item.elapsedtime
         if extra_attrs:
             attrs.update(extra_attrs)
         self._writer.element('status', message, attrs)

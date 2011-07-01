@@ -212,19 +212,18 @@ class _StatusHandler(_Handler):
         self._context = context
         self._status = attrs.get('status')[0]
         self._starttime = self._context.timestamp(attrs.get('starttime'))
-        endtime = self._context.timestamp(attrs.get('endtime'))
-        self._elapsed = self._calculate_elapsed(endtime)
+        self._elapsed = self._calculate_elapsed(attrs)
 
-    def _calculate_elapsed(self, endtime):
-        # Both start and end may be 0 so must compare against None
-        if self._starttime is None or endtime is None:
-            return None
-        return endtime - self._starttime
+    def _calculate_elapsed(self, attrs):
+        endtime = self._context.timestamp(attrs.get('endtime'))
+        # Must compare against None because either start and end may be 0.
+        if self._starttime is not None or endtime is not None:
+            return endtime - self._starttime
+        # Only RF 2.6+ outputs have elapsedtime when start or end is N/A.
+        return int(attrs.get('elapsedtime', 0))
 
     def end_element(self, text):
-        result = [self._status,
-                  self._starttime,
-                  self._elapsed]
+        result = [self._status, self._starttime, self._elapsed]
         if text:
             result.append(text)
         return self._get_ids(result)
@@ -338,7 +337,7 @@ class Context(object):
             return self._get_text_id(value)
         if isinstance(value, (int, long)):
             return value
-        raise AssertionError('Unsupported type of value '+str(type(value)))
+        raise TypeError('Unsupported type %s' % type(value))
 
     def _get_text_id(self, text):
         return self._current_texts.add(text)
