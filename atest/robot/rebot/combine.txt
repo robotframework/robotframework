@@ -200,8 +200,3 @@ Prevent accidental usage of ${SUITE} variable
 
 Remove Temp Files
     Remove Files  ${OUT PATTERN}
-
-Tag Statistics Should Be
-    [Arguments]  ${tag}  ${pass}  ${fail}
-    Should Be Equal As Integers  ${tag.attrs['pass']}  ${pass}
-    Should Be Equal As Integers  ${tag.attrs['fail']}  ${fail}

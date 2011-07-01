@@ -292,3 +292,8 @@ Get Suite Stat Nodes
     [Arguments]  ${output}=
     ${nodes} =  Get Stat Nodes  suite  ${output}
     [Return]  ${nodes}
+
+Tag Statistics Should Be
+    [Arguments]  ${tag}  ${pass}  ${fail}
+    Should Be Equal As Integers  ${tag.attrs['pass']}  ${pass}
+    Should Be Equal As Integers  ${tag.attrs['fail']}  ${fail}
