@@ -8,10 +8,10 @@ from robot.utils.asserts import *
 
 
 class IOMock:
-    
+
     def __init__(self):
         self.texts = []
-    
+
     def write(self, text):
         self.texts.append(text)
 
@@ -28,16 +28,11 @@ class TestHtmlWriter(unittest.TestCase):
         self.out = IOMock()
         self.writer = HtmlWriter(self.out)
 
-    def test_encode_without_illegal_char(self):
-        actual = self.writer._escape_content('\\x09')
-        expected = '\\x09'
-        self._verify(expected, actual)
-        
-    def test_init(self):
+    def test_start(self):
         self.writer.start('r')
         self._verify('<r>\n')
 
-    def test_start(self):
+    def test_start_without_newline(self):
         self.writer.start('robot', newline=False)
         self._verify('<robot>')
 
@@ -49,19 +44,19 @@ class TestHtmlWriter(unittest.TestCase):
     def test_start_with_attribute2(self):
         self.writer.start('test case', {'class': '123'})
         self._verify('<test case class="123">\n')
-        
+
     def test_start_with_attributes(self):
         self.writer.start('test case', {'class': '123', 'x': 'y'})
         self._verify('<test case class="123" x="y">\n')
-        
+
     def test_start_with_non_ascii_attributes(self):
         self.writer.start('test', {'name': u'\u00A7', u'\u00E4': u'\u00A7'})
         self._verify(u'<test name="\u00A7" \u00E4="\u00A7">\n')
-        
+
     def test_start_with_quotes_in_attribute_value(self):
         self.writer.start('x', {'q':'"', 'qs': '""""', 'a': "'"}, False)
         self._verify('<x a="\'" q="&quot;" qs="&quot;&quot;&quot;&quot;">')
-        
+
     def test_start_with_html_in_attribute_values(self):
         self.writer.start('x', {'1':'<', '2': '&', '3': '</html>'}, False)
         self._verify('<x 1="&lt;" 2="&amp;" 3="&lt;/html&gt;">')
@@ -74,6 +69,11 @@ class TestHtmlWriter(unittest.TestCase):
         self.writer.start('robot', newline=False)
         self.writer.end('robot')
         self._verify('<robot></robot>\n')
+
+    def test_end_without_newline(self):
+        self.writer.start('robot', newline=False)
+        self.writer.end('robot', newline=False)
+        self._verify('<robot></robot>')
 
     def test_content(self):
         self.writer.start('robot')
@@ -94,16 +94,15 @@ class TestHtmlWriter(unittest.TestCase):
         self.writer.content('Hi again!')
         self._verify('<robot>\nHello world!Hi again!')
 
-    def test_content_with_entities(self):
-        self.writer.start('robot')
-        self.writer.content('Me, Myself & I')
-        self._verify('<robot>\nMe, Myself &amp; I')
+    def test_content_with_chars_needing_escaping(self):
+        self.writer.content('Me, "Myself" & I > U')
+        self._verify('Me, "Myself" &amp; I &gt; U')
 
     def test_none_content(self):
         self.writer.start('robot')
         self.writer.content(None)
         self._verify('<robot>\n')
-    
+
     def test_content_with_non_strings(self):
         class NonString:
             def __nonzero__(self):
@@ -114,14 +113,13 @@ class TestHtmlWriter(unittest.TestCase):
             self.writer.content(i)
         self.writer.content(NonString())
         self._verify('0123456789nonzero')
-        
+
     def test_close_empty(self):
         self.writer.end('suite', False)
         self._verify('</suite>')
 
-    def _verify(self, expected, actual=None):
-        if actual == None:
-            actual = self.out.getvalue().decode('UTF-8')
+    def _verify(self, expected):
+        actual = self.out.getvalue().decode('UTF-8')
         assert_equals(expected, actual)
 
 
