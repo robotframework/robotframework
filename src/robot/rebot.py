@@ -102,6 +102,7 @@ Options:
                           example '-T -o output.xml -r report.html -l none'
                           creates files like 'output-20070503-154410.xml' and
                           'report-20070503-154410.html'.
+    --splitlog            TODO: doc
     --splitoutputs level  Splitting outputs is not supported in version 2.6 or
                           newer. This option will be removed altogether in 2.7.
     --logtitle title      Title for the generated test log. The default title
