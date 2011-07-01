@@ -38,7 +38,7 @@ class TestReporting(unittest.TestCase):
             'Output': 'NONE',
             'LogTitle': None,
             'ReportTitle': None,
-            'ReportBackground': None,
+            'ReportBackground': ('green', 'pink', 'red'),
             'SuiteStatLevel': None,
             'SplitLog': False,
             'TagStatInclude': None,
