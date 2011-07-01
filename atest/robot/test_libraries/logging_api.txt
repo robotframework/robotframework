@@ -1,5 +1,5 @@
 *** Settings ***
-Suite Setup     Run Tests  -l logging_api.html  test_libraries/logging_api.txt
+Suite Setup     Run Tests  ${EMPTY}  test_libraries/logging_api.txt
 Force Tags      regression  jybot  pybot
 Resource        atest_resource.txt
 
@@ -26,16 +26,11 @@ Timestamps are accurate
     Should be true  '${msgs[0].timestamp}' < '${msgs[1].timestamp}'
 
 Log HTML
-    [Tags]    static_html_checks
     ${tc} =  Check test case  ${TEST NAME}
     Check log message  ${tc.kws[1].msgs[0]}  <b>debug</b>  DEBUG  html=True
     Check log message  ${tc.kws[1].msgs[1]}  <b>info</b>   INFO   html=True
     Check log message  ${tc.kws[1].msgs[2]}  <b>warn</b>   WARN   html=True
     Check log message  ${ERRORS.msgs[2]}     <b>warn</b>   WARN   html=True
-    ${log} =  Get File  ${OUTDIR}/logging_api.html
-    Should contain X times  ${log}  <b>info</b>   1
-    Should contain X times  ${log}  <b>debug</b>  1
-    Should contain X times  ${log}  <b>warn</b>   2
 
 Write messages to console
     ${tc} =  Check test case  ${TEST NAME}
