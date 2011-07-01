@@ -1,48 +1,36 @@
 *** Settings ***
-Documentation   NO RIDE because it would break formatting.
 Force Tags      regression  pybot  jybot
 Resource        atest_resource.txt
-Test Template   Reports should have correct background
+Test Template   Report should have correct background
 
 
-*** Variables ***
-${DATA}         misc/pass_and_fail.html
+*** Test Cases ***
 
+Default colors
+    ${EMPTY}
 
-*** Test Cases ***      *** Options ***                          *** Color ***
+Two custom colors
+    --reportbackground blue:red  blue  blue  red
 
-Default colors          --test pass                              \#99FF66
-                        --critical none                          \#99FF66
-                        ${EMPTY}                                 \#FF3333
-                        [Tags]    to_be_clarified
+Three custom colors
+    --reportback green:yellow:red  green  yellow  red
 
-Two custom colors       --reportbackground blue:red -t pass      blue
-                        --ReportBackGround blue:red -c none      blue
-                        --REPORTBACKGROUND blue:red              red
-                        [Tags]    to_be_clarified
-
-Three custom colors     --reportback green:yellow:red -t pass    green
-                        --reportback green:yellow:red -c none    yellow
-                        --reportback green:yellow:red            red
-                        [Tags]    to_be_clarified
-
-Wrong number of colors  --reportbackground invalid               \#FF3333
-                        --reportb too:many:colors:here -c none   \#99FF66
-                        [Tags]    to_be_clarified
-
-  [Teardown]  Check stderr contains
-  ...  Invalid background color 'too:many:colors:here'.
-
+Invalid colors are ignored with a warning
+   [Template]  Invalid colors should be ignored with a warning
+   invalid
+   too:many:colors:here
 
 
 *** Keywords ***
 
-Reports should have correct background
-    [Arguments]  ${options}  ${expected backgrund}
-    Run Tests  ${options} --report rep.html --summary sum.html  ${DATA}
-    File should have background  rep.html  ${expected backgrund}
-    File should have background  sum.html  ${expected backgrund}
+Report should have correct background
+    [Arguments]  ${opt}  ${pass}=#99FF66  ${noncrit}=#99FF66  ${fail}=#FF3333
+    Run Tests  ${opt} --report rep.html  misc/pass_and_fail.html
+    ${report} =  Get File  ${OUTDIR}/rep.html
+    Should Contain  ${report}  "background":{"fail":"${fail}","nonCriticalFail":"${noncrit}","pass":"${pass}"},
 
-File should have background  [Arguments]  ${file}  ${color}
-    ${content} =  Get File  ${OUTDIR}/${file}
-    Should Contain  ${content}  background: ${color};
+Invalid colors should be ignored with a warning
+    [Arguments]  ${colors}
+    Report should have correct background  --reportb ${colors}
+    Check Log Message  ${ERRORS.msgs[0]}  Invalid report background colors '${colors}'.  ERROR
+
