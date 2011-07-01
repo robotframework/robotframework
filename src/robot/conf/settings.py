@@ -35,6 +35,7 @@ class _BaseSettings(object):
                  'Report'           : ('report', 'report.html'),
                  'Summary'          : ('summary', 'NONE'),
                  'XUnitFile'        : ('xunitfile', 'NONE'),
+                 'SplitLog'         : ('splitlog', False),
                  'SplitOutputs'     : ('splitoutputs', -1),
                  'TimestampOutputs' : ('timestampoutputs', False),
                  'LogTitle'         : ('logtitle', None),

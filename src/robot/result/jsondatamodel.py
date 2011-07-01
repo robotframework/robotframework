@@ -19,10 +19,12 @@ import json
 from robot.result.elementhandlers import TextIndex
 
 
+# TODO: Rename to match the responsibility - this isn't really a model but a class writing model to outputs
 class DataModel(object):
 
-    def __init__(self, robot_data):
+    def __init__(self, robot_data, split_results=None):
         self._robot_data = robot_data
+        self._split_results = split_results
         self._settings = None
         self._set_generated(time.localtime())
 
@@ -45,32 +47,31 @@ class DataModel(object):
         for key, value in self._robot_data.items():
             self._write_output_element(key, output, separator, split_threshold, value)
             output.write(separator)
-        self._dump_json('window.settings = ', self._settings, output)
+        self._dump_json('window.settings', self._settings, output)
 
     def _write_output_element(self, key, output, separator, split_threshold, value):
         if key == 'suite':
             splitWriter = SplittingSuiteWriter(self, output, separator,
                                                split_threshold)
             data, mapping = splitWriter.write(self._robot_data['suite'])
-            self._dump_json('window.output["suite"] = ', data, output, mapping)
+            self._dump_json('window.output["suite"]', data, output, mapping)
         elif key == 'strings':
             self._dump_and_split_strings(output, separator, split_threshold)
         else:
-            self._dump_json('window.output["%s"] = ' % key, value, output)
+            self._dump_json('window.output["%s"]' % key, value, output)
 
     def _dump_and_split_strings(self, output, separator, split_threshold):
-        name = 'strings'
-        lst = self._robot_data[name]
-        output.write('window.output["%s"] = [];\n' % name)
-        while lst:
+        strings = self._robot_data['strings']
+        output.write('window.output["strings"] = [];\n')
+        while strings:
             output.write(separator)
-            output.write('window.output["%s"] = window.output["%s"].concat(' % (name, name))
-            json.json_dump(lst[:split_threshold], output)
+            output.write('window.output["strings"] = window.output["strings"].concat(')
+            json.json_dump(strings[:split_threshold], output)
             output.write(');\n')
-            lst = lst[split_threshold:]
+            strings = strings[split_threshold:]
 
     def _dump_json(self, name, data, output, mappings=None):
-        output.write(name)
+        output.write(name + ' = ')
         json.json_dump(data, output, mappings=mappings)
         output.write(';\n')
 
@@ -180,7 +181,7 @@ class SplittingSuiteWriter(object):
         return 'window.sPart%s' % self._index
 
     def _dump_suite_part(self, result):
-        self._writer._dump_json(self._list_name()+' = ', result.data_block, self._output, result.mapping)
+        self._writer._dump_json(self._list_name(), result.data_block, self._output, result.mapping)
         self._write_separator()
         new_result = result.link(self._list_name())
         self._index += 1

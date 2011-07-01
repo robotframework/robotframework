@@ -373,9 +373,8 @@ class TestTestSplittingJsSerializer(_JsSerializerTestBase):
                          ]],
                          [],[1, 1, 1, 1]])
         expected_data = ['*kw', '*Keyword.Example', '*',  ['*P', 0, -23], [], []]
-        kw_data = self._context.split_results[0]
-        _assert_plain_suite_item(expected_data, kw_data['keywords'][0],
-                                 kw_data['strings'])
+        keywords, strings = self._context.split_results[0]
+        _assert_plain_suite_item(expected_data, keywords[0], strings)
 
 
 if __name__ == '__main__':

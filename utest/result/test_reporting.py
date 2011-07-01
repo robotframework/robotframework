@@ -20,6 +20,13 @@ def set_write_report_mock():
     robot.result.builders.ReportBuilder._write_file = write_report
     return results
 
+def set_write_split_test_mock():
+    results = []
+    def _write_test(self, index, keywords, strings, name):
+        results.append(name)
+    robot.result.builders.LogBuilder._write_test = _write_test
+    return results
+
 
 class TestReporting(unittest.TestCase):
 
@@ -33,6 +40,7 @@ class TestReporting(unittest.TestCase):
             'ReportTitle': None,
             'ReportBackground': None,
             'SuiteStatLevel': None,
+            'SplitLog': False,
             'TagStatInclude': None,
             'TagStatExclude': None,
             'TagStatCombine': None,
@@ -58,6 +66,7 @@ class TestReporting(unittest.TestCase):
         robot.result.builders.LOGGER.disable_automatic_console_logger()
         self._log_results = set_write_log_mock()
         self._report_results = set_write_report_mock()
+        self._split_test_names = set_write_split_test_mock()
 
     def tearDown(self):
         robot.result.builders.LOGGER.register_console_logger()
@@ -94,8 +103,20 @@ class TestReporting(unittest.TestCase):
         self._assert_expected_log('log.html')
         self._assert_expected_report('report.html')
 
+    def test_split_tests(self):
+        self._settings['SplitLog'] = True
+        self._settings['Log'] = '/tmp/foo/log.bar.html'
+        self._reporter.write_robot_results(resources.GOLDEN_OUTPUT)
+        self._assert_expected_split_tests('/tmp/foo/log.bar-1.js',
+                                          '/tmp/foo/log.bar-2.js',
+                                          '/tmp/foo/log.bar-3.js',
+                                          '/tmp/foo/log.bar-4.js')
+
     def _assert_expected_log(self, expected_file_name):
         self.assertEquals(self._log_results['log_path'], expected_file_name)
+
+    def _assert_expected_split_tests(self, *expected_names):
+        self.assertEquals(self._split_test_names, list(expected_names))
 
     def _assert_expected_report(self, expected_file_name):
         self.assertEquals(self._report_results['report_path'], expected_file_name)
