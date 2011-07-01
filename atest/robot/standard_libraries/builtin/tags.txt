@@ -1,5 +1,5 @@
 *** Settings ***
-Suite Setup     Run Tests  --critical *remove* --report report.html  standard_libraries${/}builtin${/}tags
+Suite Setup     Run Tests  --critical *remove*  standard_libraries/builtin/tags
 Force Tags      pybot  jybot  regression
 Resource        atest_resource.txt
 
@@ -59,10 +59,10 @@ Using Set And Remove Tags In Suite Teardown Fails
     Should Be Equal  ${SUITE.suites[1].message}  Suite teardown failed:\n 'Set Tags' and 'Remove Tags' keywords cannot be used in suite teardown.
 
 Set and Removed Tags Should Affect Criticality
-    [Tags]  static_html_checks
-    Check Stdout Contains  0 critical tests, 0 passed, 0 failed\n 14 tests total, 12 passed, 2 failed
-    ${report} =  Get File  ${OUTDIR}/report.html
-    Should Contain  ${report}  <div class="stat_name"><span>Critical Tests</span></div>\n </td>\n <td class="col_stat">0</td>\n <td class="col_stat">0</td>\n <td class="col_stat">0</td>\n
+    ${tags} =  Get Total Stat Nodes
+    Tag Statistics Should Be  ${tags[0]}  0  0
+    Tag Statistics Should Be  ${tags[1]}  12  2
+
 
 *** Keywords ***
 Should Have Only Suite Tags
