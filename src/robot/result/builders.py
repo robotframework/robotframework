@@ -97,7 +97,21 @@ class LogBuilder(_HTMLFileBuilder):
     _template = os.path.join(WEBCONTENT_PATH,'log.html')
 
     def _build(self):
+        if self._data._split_results:
+            self._write_split_tests()
         self._write_file()
+
+    def _write_split_tests(self):
+        basename = os.path.splitext(self._path)[0]
+        for index, (keywords, strings) in enumerate(self._data._split_results):
+            index += 1  # enumerate accepts start index only in Py 2.6+
+            self._write_test(index, keywords, strings, '%s-%d.js' % (basename, index))
+
+    def _write_test(self, index, keywords, strings, path):
+        # TODO: Refactor heavily - ask Jussi or Peke for more details
+        with codecs.open(path, 'w', encoding='UTF-8') as outfile:
+            self._data._dump_json('window.keywords%d' % index, keywords, outfile)
+            self._data._dump_json('window.strings%d' % index, strings, outfile)
 
     def _get_settings(self):
         return {
@@ -196,6 +210,7 @@ class HTMLFileWriter(object):
         self._outfile.write(content)
 
     def _write_tag(self, tag_name, attrs, content_writer):
+        # TODO: Use utils.HtmlWriter instead. It also eases giving attrs here.
         self._write('<%s %s>\n' % (tag_name, attrs))
         content_writer()
         self._write('</%s>\n\n' % tag_name)

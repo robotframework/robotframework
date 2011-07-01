@@ -89,8 +89,7 @@ class TestSplittingContext(unittest.TestCase):
         self._context.start_keyword()
         self._context.end_keyword()
         test_index = self._context.end_test(['my kw data'])
-        assert_equals(self._context.split_results,
-                      [{'keywords': ['my kw data'], 'strings': ['*']}])
+        assert_equals(self._context.split_results, [(['my kw data'], ['*'])])
         assert_equals(test_index, 1)
 
     def test_adding_strings_for_single_keyword(self):
@@ -99,8 +98,7 @@ class TestSplittingContext(unittest.TestCase):
         self._context.get_id('log message')
         self._context.end_keyword()
         self._context.end_test(['data'])
-        assert_equals(self._context.split_results, [{'keywords': ['data'],
-                                                     'strings': ['*', '*log message']}])
+        assert_equals(self._context.split_results, [(['data'], ['*', '*log message'])])
 
     def test_adding_strings_before_keyword(self):
         self._context.start_test('t')
@@ -108,8 +106,7 @@ class TestSplittingContext(unittest.TestCase):
         self._context.start_keyword()
         self._context.end_keyword()
         self._context.end_test(['data'])
-        assert_equals(self._context.split_results, [{'keywords': ['data'],
-                                                     'strings': ['*']}])
+        assert_equals(self._context.split_results, [(['data'], ['*'])])
 
     def test_recursive_keywords(self):
         self._context.start_test('my test')
@@ -118,8 +115,7 @@ class TestSplittingContext(unittest.TestCase):
         self._context.end_keyword()
         self._context.end_keyword()
         self._context.end_test(['my kw data'])
-        assert_equals(self._context.split_results, [{'keywords': ['my kw data'],
-                                                     'strings': ['*']}])
+        assert_equals(self._context.split_results, [(['my kw data'], ['*'])])
 
     def test_several_keywords(self):
         self._context.start_test('my test')
@@ -128,8 +124,7 @@ class TestSplittingContext(unittest.TestCase):
         self._context.start_keyword()
         self._context.end_keyword()
         self._context.end_test(['kw data 1', 'kw data 2'])
-        assert_equals(self._context.split_results,
-                     [{'keywords': ['kw data 1', 'kw data 2'], 'strings': ['*']}])
+        assert_equals(self._context.split_results, [(['kw data 1', 'kw data 2'], ['*'])])
 
     def test_several_tests(self):
         self._context.start_test('my test')
@@ -140,10 +135,8 @@ class TestSplittingContext(unittest.TestCase):
         self._context.start_keyword()
         self._context.end_keyword()
         test_index2 = self._context.end_test(['kw data 2'])
-        assert_equals(self._context.split_results, [{'keywords': ['kw data 1'],
-                                                     'strings': ['*']},
-                                                    {'keywords': ['kw data 2'],
-                                                     'strings': ['*']}])
+        assert_equals(self._context.split_results, [(['kw data 1'], ['*']),
+                                                    (['kw data 2'], ['*'])])
         assert_equals(test_index1, 1)
         assert_equals(test_index2, 2)
 
@@ -158,7 +151,5 @@ class TestSplittingContext(unittest.TestCase):
         self._context.get_id('log message in test 2')
         self._context.end_keyword()
         self._context.end_test(['kw data 2'])
-        assert_equals(self._context.split_results, [{'keywords': ['kw data 1'],
-                                                     'strings': ['*', '*log message in test 1']},
-                                                    {'keywords': ['kw data 2'],
-                                                     'strings': ['*', '*log message in test 2']}])
+        assert_equals(self._context.split_results, [(['kw data 1'], ['*', '*log message in test 1']),
+                                                    (['kw data 2'], ['*', '*log message in test 2'])])

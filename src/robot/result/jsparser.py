@@ -19,8 +19,9 @@ from robot.result.elementhandlers import RootHandler, Context
 from robot.result.jsondatamodel import DataModel
 
 
-def create_datamodel_from(input_filename):
-    robot = _RobotOutputHandler(Context())
+def create_datamodel_from(input_filename, split_log=False):
+    context = Context(split_log)
+    robot = _RobotOutputHandler(context)
     with open(input_filename, 'r') as input:
         sax.parse(input, robot)
     return robot.datamodel
@@ -39,7 +40,7 @@ class _RobotOutputHandler(sax.handler.ContentHandler):
 
     @property
     def datamodel(self):
-        return DataModel(self._root_handler.data)
+        return DataModel(self._root_handler.data, self._context.split_results)
 
     def startElement(self, name, attrs):
         handler = self._handler_stack[-1].get_handler_for(name, attrs)

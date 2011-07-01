@@ -29,7 +29,7 @@ class ResultWriter(object):
         self._settings = settings
 
     def write_robot_results(self, data_source):
-        data_model = jsparser.create_datamodel_from(data_source)
+        data_model = jsparser.create_datamodel_from(data_source, self._settings['SplitLog'])
         LogBuilder(data_model, self._settings).build()
         ReportBuilder(data_model, self._settings).build()
         XUnitBuilder(self._result_from_xml([data_source]),

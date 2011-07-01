@@ -370,8 +370,7 @@ class Context(object):
         self._current_place.pop()
         self._kw_index.pop()
         if self._split_tests:
-            self._split_results.append({'keywords': kw_data,
-                                        'strings': self._split_text_caches[-1].dump()})
+            self._split_results.append((kw_data, self._split_text_caches[-1].dump()))
             return len(self._split_results)
         return kw_data
 
