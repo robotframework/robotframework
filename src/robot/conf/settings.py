@@ -41,7 +41,8 @@ class _BaseSettings(object):
                  'LogTitle'         : ('logtitle', None),
                  'ReportTitle'      : ('reporttitle', None),
                  'SummaryTitle'     : ('summarytitle', None),
-                 'ReportBackground' : ('reportbackground', '#99FF66:#FF3333'),
+                 'ReportBackground' : ('reportbackground',
+                                       ('#99FF66', '#99FF66', '#FF3333')),
                  'SuiteStatLevel'   : ('suitestatlevel', -1),
                  'TagStatInclude'   : ('tagstatinclude', []),
                  'TagStatExclude'   : ('tagstatexclude', []),
@@ -173,7 +174,7 @@ class _BaseSettings(object):
     def _process_report_background(self, colors):
         if colors.count(':') not in [1, 2]:
             LOGGER.error("Invalid report background colors '%s'." % colors)
-            colors = self._get_default_value('ReportBackground')
+            return self._get_default_value('ReportBackground')
         colors = colors.split(':')
         if len(colors) == 2:
             return colors[0], colors[0], colors[1]
