@@ -40,7 +40,7 @@ def json_dump(data, output, mappings=None):
         output.write('null')
     elif isinstance(data, dict):
         output.write('{')
-        for index, key in enumerate(data):
+        for index, key in enumerate(sorted(data)):
             json_dump(key, output, mappings)
             output.write(':')
             json_dump(data[key], output, mappings)

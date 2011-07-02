@@ -35,9 +35,14 @@ class JsonTestCase(unittest.TestCase):
 
     def test_json_dump_dictionary(self):
         buffer = StringIO.StringIO()
-        json_dump({'key':1, 'hello':'world'}, buffer)
-        assert_true(buffer.getvalue() in ('{"hello":"world","key":1}',
-                                          '{"key":1,"hello":"world"}'))
+        json_dump({'key': 1}, buffer)
+        assert_equals(buffer.getvalue(), '{"key":1}')
+
+    def test_json_dictionaries_are_sorted(self):
+        buffer = StringIO.StringIO()
+        json_dump({'key':1, 'hello':['wor','ld'], 'z': 'a', 'a': 'z'}, buffer)
+        assert_equals(buffer.getvalue(),
+                      '{"a":"z","hello":["wor","ld"],"key":1,"z":"a"}')
 
     def test_json_dump_None(self):
         buffer = StringIO.StringIO()
