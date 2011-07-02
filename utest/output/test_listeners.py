@@ -45,9 +45,6 @@ class ListenOutputs(object):
     def output_file(self, path):
         self._out_file('Output', path)
 
-    def summary_file(self, path):
-        self._out_file('Summary', path)
-
     def report_file(self, path):
         self._out_file('Report', path)
 
@@ -164,10 +161,6 @@ class _BaseListenerTest:
     def test_report_file(self):
         self.listeners.output_file('report', 'path/to/report')
         self._assert_output('Report: path/to/report')
-
-    def test_summary_file(self):
-        self.listeners.output_file('summary', 'path/to/summary')
-        self._assert_output('Summary: path/to/summary')
 
     def test_debug_file(self):
         self.listeners.output_file('debug', 'path/to/debug')
