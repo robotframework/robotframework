@@ -178,8 +178,8 @@ class Listeners:
 class _ListenerProxy(AbstractLoggerProxy):
     _methods = ['start_suite', 'end_suite', 'start_test', 'end_test',
                 'start_keyword', 'end_keyword', 'log_message', 'message',
-                'output_file', 'summary_file', 'report_file', 'log_file',
-                'debug_file', 'xunit_file', 'close']
+                'output_file', 'report_file', 'log_file', 'debug_file',
+                'xunit_file', 'close']
 
     def __init__(self, name, args):
         listener = self._import_listener(name, args)

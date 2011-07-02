@@ -52,7 +52,7 @@ class _BaseSettings(object):
                  'RunEmptySuite'    : ('runemptysuite', False),
                  'MonitorWidth'     : ('monitorwidth', 78),
                  'MonitorColors'    : ('monitorcolors', 'AUTO')}
-    _output_opts = ['Output', 'Log', 'Report', 'Summary', 'DebugFile', 'XUnitFile']
+    _output_opts = ['Output', 'Log', 'Report', 'DebugFile', 'XUnitFile']
 
     def __init__(self, options={}, log=True):
         self._opts = {}
@@ -76,9 +76,9 @@ class _BaseSettings(object):
         self._opts[name] = value
 
     def _process_value(self, name, value, log):
-        if value in [None, []]:
+        if value == self._get_default_value(name):
             return value
-        if name in ['Name', 'Doc', 'LogTitle', 'ReportTitle', 'SummaryTitle']:
+        if name in ['Name', 'Doc', 'LogTitle', 'ReportTitle']:
             if name == 'Doc': value = self._escape(value)
             return value.replace('_', ' ')
         if name in ['Metadata', 'TagDoc']:
@@ -102,13 +102,21 @@ class _BaseSettings(object):
             return [v for v in [self._process_tag_stat_link(v) for v in value] if v]
         if name == 'RemoveKeywords':
             return value.upper()
-        if name == 'SplitOutputs' and value != -1:
-            if log:
-                LOGGER.warn('Splitting outputs (--SplitOutputs option) is not '
-                            'supported in Robot Framework 2.6 or newer. This '
-                            'option will be removed altogether in version 2.7.')
-            return -1
+        if name in ['SplitOutputs', 'Summary', 'SummaryTitle']:
+            return self._removed_in_26(name, log)
         return value
+
+    # TODO: Remove --splitoutputs, --summary, and --summarytitle in 2.7
+    def _removed_in_26(self, name, log):
+        start = {'SplitOutputs': 'Splitting outputs is',
+                 'Summary': 'Summary reports are',
+                 'SummaryTitle': 'Summary titles are'}[name]
+        option, default = self._cli_opts[name]
+        if log:
+            LOGGER.warn('%s not supported in Robot Framework 2.6 or newer and '
+                        '--%s option will be removed altogether in version 2.7.'
+                        % (start, option))
+        return default
 
     def __getitem__(self, name):
         if name not in self._cli_opts:
@@ -120,8 +128,7 @@ class _BaseSettings(object):
     def _get_output_file(self, type_):
         """Returns path of the requested output file and creates needed dirs.
 
-        `type_` can be 'Output', 'Log', 'Report', 'Summary', 'DebugFile'
-        or 'XUnitFile'.
+        `type_` can be 'Output', 'Log', 'Report', 'DebugFile' or 'XUnitFile'.
         """
         name = self._opts[type_]
         if self._outputfile_disabled(type_, name):
@@ -143,7 +150,7 @@ class _BaseSettings(object):
             return ext
         if type_ in ['Output', 'XUnitFile']:
             return '.xml'
-        if type_ in ['Log', 'Report', 'Summary']:
+        if type_ in ['Log', 'Report']:
             return '.html'
         if type_ == 'DebugFile':
             return '.txt'
@@ -232,7 +239,7 @@ class RobotSettings(_BaseSettings):
                        'DebugFile'     : ('debugfile', 'NONE')}
 
     def is_rebot_needed(self):
-        return not ('NONE' == self['Log'] == self['Report'] == self['Summary'] == self['XUnitFile'])
+        return not ('NONE' == self['Log'] == self['Report'] == self['XUnitFile'])
 
     def get_rebot_datasource_and_settings(self):
         datasource = self['Output']

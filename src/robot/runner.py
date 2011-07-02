@@ -121,12 +121,11 @@ Options:
                           directory where tests are run from and the given path
                           is considered relative to that unless it is absolute.
  -o --output file         XML output file. Given path, similarly as paths given
-                          to --log, --report, --summary, --debugfile and
-                          --xunitfile, is relative to --outputdir unless given
-                          as an absolute path. Other output files are created
-                          from XML output file after the test execution and XML
-                          output can also be further processed with Rebot tool
-                          (e.g. combined with other XML output files). Can be
+                          to --log, --report, --debugfile and --xunitfile, is
+                          relative to --outputdir unless given as an absolute
+                          path. Other output files are created based on XML
+                          output files after the test execution and XML outputs
+                          can also be further processed with Rebot tool. Can be
                           disabled by giving a special value 'NONE'. In this
                           case, also log and report are automatically disabled.
                           Default: output.xml
@@ -135,8 +134,7 @@ Options:
                           Examples: '--log mylog.html', '-l NONE'
  -r --report file         HTML report file. Can be disabled with 'NONE'
                           similarly as --log. Default: report.html
- -S --summary file        HTML summary report. Not created unless this option
-                          is specified. Example: '--summary summary.html'
+ -S --summary file        Not supported in Robot Framework 2.6 or newer.
  -x --xunitfile file      xUnit compatible result file. Not created unless this
                           option is specified.
  -b --debugfile file      Debug file written during execution. Not created
@@ -148,16 +146,14 @@ Options:
                           creates files like 'output-20070503-154410.xml' and
                           'report-20070503-154410.html'.
     --splitlog            TODO: doc
-    --splitoutputs level  Splitting outputs is not supported in version 2.6 or
-                          newer. This option will be removed altogether in 2.7.
+    --splitoutputs level  Not supported in Robot Framework 2.6 or newer.
     --logtitle title      Title for the generated test log. The default title
                           is '<Name Of The Suite> Test Log'. Underscores in
                           the title are converted into spaces in all titles.
     --reporttitle title   Title for the generated test report. The default
                           title is '<Name Of The Suite> Test Report'.
-    --summarytitle title  Title for the generated summary report. The default
-                          title is '<Name Of The Suite> Summary Report'.
-    --reportbackground colors  Background colors to use in report and summary.
+    --summarytitle title  Not supported in Robot Framework 2.6 or newer.
+    --reportbackground colors  Background colors to use in the report file.
                           Either 'all_passed:critical_passed:failed' or
                           'passed:failed'. Both color names and codes work.
                           Examples:  --reportbackground green:yellow:red
