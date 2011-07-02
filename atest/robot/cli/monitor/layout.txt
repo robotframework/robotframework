@@ -1,5 +1,5 @@
 *** Settings ***
-Suite Setup     Run Tests  --variable FAIL:YES --log mylog.html --report myreport.html --summary mysummary.html --debugfile mydebug.txt  misc/suites/subsuites
+Suite Setup     Run Tests  --variable FAIL:YES --log mylog.html --report myreport.html --debugfile mydebug.txt  misc/suites/subsuites
 Force Tags      regression   pybot  jybot
 Resource        monitor_resource.txt
 
@@ -33,7 +33,7 @@ Outputs
     [Tags]    to_be_clarified
     ${stdout} =  Get Stdout
     ${outputs} =  Evaluate  '''${stdout.replace('\\','\\\\')}'''.split('${SEP_LINE1}')[-1]
-    Should Match Regexp  ${outputs}  Debug: \ \ .*mydebug.txt\n Output: \ .*output.xml\n Summary: .*mysummary.html\n Report: \ .*myreport.html\n Log: \ \ \ \ .*mylog.html
+    Should Match Regexp  ${outputs}  Debug: \ \ .*mydebug.txt\n Output: \ .*output.xml\n Report: \ .*myreport.html\n Log: \ \ \ \ .*mylog.html
 
 Long Document Should Be Cut From End
     ${doc} =  Evaluate  '0123456789' * 10

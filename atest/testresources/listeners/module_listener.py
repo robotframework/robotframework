@@ -45,9 +45,6 @@ def end_suite(name, attrs):
 def output_file(path):
     _out_file('Output', path)
 
-def summary_file(path):
-    _out_file('Summary', path)
-
 def report_file(path):
     _out_file('Report', path)
 

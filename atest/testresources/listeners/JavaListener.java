@@ -95,10 +95,6 @@ public class JavaListener {
         this.writeOutputFile("Output", path);
     }
 
-    public void summaryFile(String path) throws IOException {
-        this.writeOutputFile("Summary", path);
-    }
-
     public void reportFile(String path) throws IOException {
         this.writeOutputFile("Report", path);
     }

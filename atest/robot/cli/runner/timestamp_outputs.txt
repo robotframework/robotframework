@@ -14,9 +14,8 @@ Timestamped Outputs
     \  Should Match Regexp  ${file}  (log|output|report)-20\\d{6}-\\d{6}\\.(html|xml)
 
 Timestamped Outputs With Names
-    [Tags]    to_be_clarified
-    Run Tests Without Processing Output  --outputdir ${CLI OUTDIR} --TimestampOutputs -l l -r r.html -o o -S s  ${TESTFILE}
+    Run Tests Without Processing Output  --outputdir ${CLI OUTDIR} --TimestampOutputs -l l -r r.html -o o  ${TESTFILE}
     @{files} =  List Directory  ${CLI OUTDIR}
-    Should Be True  len(@{files}) == 4
+    Should Be True  len(@{files}) == 3
     :FOR  ${file}  IN  @{files}
-    \  Should Match Regexp  ${file}  (l|o|r|s)-20\\d{6}-\\d{6}\\.(html|xml)
+    \  Should Match Regexp  ${file}  (l|o|r)-20\\d{6}-\\d{6}\\.(html|xml)

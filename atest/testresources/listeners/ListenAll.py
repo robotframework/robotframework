@@ -64,9 +64,6 @@ class ListenAll:
     def output_file(self, path):
         self._out_file('Output', path)
 
-    def summary_file(self, path):
-        self._out_file('Summary', path)
-
     def report_file(self, path):
         self._out_file('Report', path)
 

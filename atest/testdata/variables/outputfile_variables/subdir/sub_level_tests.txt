@@ -1,4 +1,4 @@
 *** Test Cases ***
 Log All Output Files In Sublevel
-    Log Many  ${OUTPUTFILE}  ${LOGFILE}  ${REPORTFILE}  ${SUMMARYFILE}  ${DEBUGFILE}  ${OUTPUTDIR}
+    Log Many  ${OUTPUTFILE}  ${LOGFILE}  ${REPORTFILE}  ${DEBUGFILE}  ${OUTPUTDIR}
 

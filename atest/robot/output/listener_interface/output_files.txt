@@ -12,7 +12,7 @@ ${LISTENERS}  ${CURDIR}${/}..${/}..${/}..${/}testresources${/}listeners
 *** Test Cases ***
 Output Files
     ${file} =  Get Listener File  ${ALL_FILE}
-    ${exp} =  Catenate  SEPARATOR=\n  Debug: mydeb.txt  Output: myout.xml  Summary: mysum.html  Report: myrep.html  Log: mylog.html
+    ${exp} =  Catenate  SEPARATOR=\n  Debug: mydeb.txt  Output: myout.xml  Report: myrep.html  Log: mylog.html
     ...  Closing...\n
     Should End With  ${file}  ${exp}
 
@@ -25,7 +25,7 @@ Output Files With Java
 
 *** Keywords ***
 Run Some Tests
-    Run Tests Without Processing Output  --listener "${LISTENERS}${/}ListenAll.py" --listener "${LISTENERS}${/}JavaListener.java" --log mylog.html --report myrep.html --summary mysum.html --output myout.xml --debugfile mydeb.txt  misc${/}pass_and_fail.html
+    Run Tests Without Processing Output  --listener "${LISTENERS}${/}ListenAll.py" --listener "${LISTENERS}${/}JavaListener.java" --log mylog.html --report myrep.html --output myout.xml --debugfile mydeb.txt  misc${/}pass_and_fail.html
     Process Output  ${OUTDIR}${/}myout.xml
     Should Be Equal  ${SUITE.name}  Pass And Fail
 
