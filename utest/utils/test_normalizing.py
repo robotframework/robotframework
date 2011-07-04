@@ -45,8 +45,12 @@ class TestNormalizeTags(unittest.TestCase):
         for inp in ['lower'], ['MiXeD', 'UPPER'], ['a few', 'spaces here']:
             assert_equals(normalize_tags(inp), inp)
 
+    def test_underscore(self):
+        assert_equals(normalize_tags(['a_tag', 'a tag', 'ATag']), ['a_tag'])
+        assert_equals(normalize_tags(['tag', '_t_a_g_']), ['tag'])
+
     def test_remove_empty_and_none(self):
-        for inp in ['', 'X', '', '  ', '\n'], ['none', 'N O N E', 'X', '']:
+        for inp in ['', 'X', '', '  ', '\n'], ['none', 'N O N E', 'X', '', '_']:
             assert_equals(normalize_tags(inp), ['X'])
 
     def test_remove_dupes(self):
@@ -119,7 +123,7 @@ class TestNormalizedDict(unittest.TestCase):
         assert_equals(nd.keys(), [])
 
     def test_keys_are_sorted(self):
-        nd = NormalizedDict(dict((c, None) for c in 'aBcDeFg123XyZ___'))
+        nd = NormalizedDict((c, None) for c in 'aBcDeFg123XyZ___')
         assert_equals(nd.keys(), list('123_aBcDeFgXyZ'))
 
     def test_keys_values_and_items_are_returned_in_same_order(self):
@@ -149,7 +153,9 @@ class TestNormalizedDict(unittest.TestCase):
         nd['C'] = 1
         cd['b'] = 2
         assert_equals(nd._keys, {'a': 'a', 'b': 'B', 'c': 'C'})
+        assert_equals(nd.data, {'a': 1, 'b': 1, 'c': 1})
         assert_equals(cd._keys, {'a': 'a', 'b': 'B'})
+        assert_equals(cd.data, {'a': 1, 'b': 2})
 
     def test_str(self):
         nd = NormalizedDict({'a': 1, 'B': 1})

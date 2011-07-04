@@ -40,7 +40,7 @@ def normalize_tags(tags):
 
     If duplicate tags have different case/space, the one used first wins.
     """
-    norm = NormalizedDict((t, 1) for t in tags)
+    norm = NormalizedDict(((t, 1) for t in tags), ignore=['_'])
     for removed in '', 'NONE':
         if removed in norm:
             norm.pop(removed)
@@ -53,7 +53,7 @@ class NormalizedDict(UserDict):
     def __init__(self, initial=None, ignore=[], caseless=True, spaceless=True):
         """Initializes with possible initial value and normalizing spec.
 
-        Initial values can be either a dictionary or a list of name value
+        Initial values can be either a dictionary or an iterable of name/value
         pairs. In the latter case items are added in the given order.
 
         Normalizing spec has exact same semantics as with `normalize` method.
