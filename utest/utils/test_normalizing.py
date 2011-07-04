@@ -68,8 +68,14 @@ class TestNormalizedDict(unittest.TestCase):
         assert_equals(nd['foobar'], 'value')
         assert_equals(nd['F  oo\nBar'], 'value')
 
-    def test_initial_values(self):
+    def test_initial_values_as_dict(self):
         nd = NormalizedDict({'key': 'value', 'F O\tO': 'bar'})
+        assert_equals(nd['key'], 'value')
+        assert_equals(nd['K EY'], 'value')
+        assert_equals(nd['foo'], 'bar')
+
+    def test_initial_values_as_name_value_pairs(self):
+        nd = NormalizedDict([('key', 'value'), ('F O\tO', 'bar')])
         assert_equals(nd['key'], 'value')
         assert_equals(nd['K EY'], 'value')
         assert_equals(nd['foo'], 'bar')
