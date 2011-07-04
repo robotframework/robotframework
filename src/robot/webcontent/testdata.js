@@ -102,12 +102,14 @@ window.testdata = function () {
             },
             times: model.Times(times(statusElement)),
             tags: tags(element[4], strings),
-            isChildrenLoaded: typeof(element[6]) !== 'int'
+            isChildrenLoaded: typeof(element[6]) !== 'number'
         });
         if (test.isChildrenLoaded)
             test.populateKeywords(Populator(element[6], strings, childCreator(test, createKeyword)));
-        else
+        else {
+            test.childFileName = 'log-'+element[6]+'.js';
             test.populateKeywords(otherStructurePopulator(element[6], childCreator(test, createKeyword)));
+        }
         return test;
     }
 
@@ -180,7 +182,9 @@ window.testdata = function () {
 
     function otherStructurePopulator(structureIndex, creator) {
         return {
-            numberOfItems: function()  { window['keywords'+structureIndex].length; },
+            numberOfItems: function()  {
+                return window['keywords'+structureIndex].length;
+            },
             creator: function (index) {
                 return creator(window['keywords'+structureIndex][index],
                                window.getStringStore(window['strings'+structureIndex]), index);

@@ -127,18 +127,26 @@ window.model = function () {
         test.timeout = data.timeout;
         test.populateKeywords = createIterablePopulator("Keyword");
         test.isChildrenLoaded = data.isChildrenLoaded;
+        var callables = [];
         test.callWhenChildrenReady = function(callable) {
             if( !test.isChildrenLoaded ) {
-                $.getScript('childScript.js', function () {
-                    test.isChildrenLoaded = true;
-                    callable();
-                });
+                if(callables.length == 0){
+                    $.getScript(test.childFileName, function () {
+                        test.isChildrenLoaded = true;
+                        for(var i = 0; i < callables.length; i++) {
+                            callables[i]();
+                        };
+                    });
+                }
+                callables.push(callable);
             }else{
                 callable();
             }
         };
         test.children = function () {
-            return test.keywords();
+            if (test.isChildrenLoaded)
+                return test.keywords();
+
         };
         test.isCritical = data.isCritical;
         test.tags = data.tags;
