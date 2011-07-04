@@ -42,38 +42,31 @@ class DataModel(object):
         self._settings = settings
 
     def write_to(self, output, separator='', split_threshold=9500):
-        output.write('window.output = {};\n')
-        output.write(separator)
+        writer = _SeparatingWriter(output, separator)
+        writer.write('window.output = {};\n')
+        writer.separator()
         for key, value in self._robot_data.items():
-            self._write_output_element(key, output, separator, split_threshold, value)
-            output.write(separator)
-        self._dump_json('window.settings', self._settings, output)
+            self._write_output_element(key, split_threshold, value, writer)
+            writer.separator()
+        writer.dump_json('window.settings = ', self._settings)
 
-    def _write_output_element(self, key, output, separator, split_threshold, value):
+    def _write_output_element(self, key, split_threshold, value, writer):
         if key == 'suite':
-            splitWriter = SplittingSuiteWriter(self, output, separator,
-                                               split_threshold)
+            splitWriter = SplittingSuiteWriter(writer, split_threshold)
             data, mapping = splitWriter.write(self._robot_data['suite'])
-            self._dump_json('window.output["suite"]', data, output, mapping)
+            writer.dump_json('window.output["suite"] = ', data, mapping=mapping)
         elif key == 'strings':
-            self._dump_and_split_strings(output, separator, split_threshold)
+            self._dump_and_split_strings(split_threshold, writer)
         else:
-            self._dump_json('window.output["%s"]' % key, value, output)
+            writer.dump_json('window.output["%s"] = ' % key, value)
 
-    def _dump_and_split_strings(self, output, separator, split_threshold):
+    def _dump_and_split_strings(self, split_threshold, writer):
         strings = self._robot_data['strings']
-        output.write('window.output["strings"] = [];\n')
+        writer.write('window.output["strings"] = [];\n')
         while strings:
-            output.write(separator)
-            output.write('window.output["strings"] = window.output["strings"].concat(')
-            json.json_dump(strings[:split_threshold], output)
-            output.write(');\n')
+            writer.separator()
+            writer.dump_json('window.output["strings"] = window.output["strings"].concat(', strings[:split_threshold], ');\n')
             strings = strings[split_threshold:]
-
-    def _dump_json(self, name, data, output, mappings=None):
-        output.write(name + ' = ')
-        json.json_dump(data, output, mappings=mappings)
-        output.write(';\n')
 
     def remove_keywords(self):
         self._robot_data['suite'] = self._remove_keywords_from(self._robot_data['suite'])
@@ -135,6 +128,23 @@ class DataModel(object):
                 self._collect_used_indices(item.keys(), result)
         return result
 
+class _SeparatingWriter(object):
+
+    def __init__(self, output, separator):
+        self._output = output
+        self._separator = separator
+
+    def separator(self):
+        self._output.write(self._separator)
+
+    def dump_json(self, prefix, data_block, postfix = ';\n', mapping=None):
+        if prefix:
+            self._output.write(prefix)
+        json.json_dump(data_block, self._output, mappings=mapping)
+        self._output.write(postfix)
+
+    def write(self, string):
+        self._output.write(string)
 
 class _SubResult(object):
 
@@ -156,11 +166,9 @@ class _SubResult(object):
 
 class SplittingSuiteWriter(object):
 
-    def __init__(self, writer, output, separator, split_threshold):
+    def __init__(self, writer, split_threshold):
         self._index = 0
-        self._output = output
         self._writer = writer
-        self._separator = separator
         self._split_threshold = split_threshold
 
     def write(self, data_block):
@@ -181,11 +189,8 @@ class SplittingSuiteWriter(object):
         return 'window.sPart%s' % self._index
 
     def _dump_suite_part(self, result):
-        self._writer._dump_json(self._list_name(), result.data_block, self._output, result.mapping)
-        self._write_separator()
+        self._writer.dump_json(self._list_name()+' = ', result.data_block, mapping=result.mapping)
+        self._writer.separator()
         new_result = result.link(self._list_name())
         self._index += 1
         return new_result
-
-    def _write_separator(self):
-        self._output.write(self._separator)
