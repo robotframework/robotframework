@@ -76,8 +76,9 @@ class _HTMLFileBuilder(_Builder):
     def build(self):
         if self._path:
             self._data.set_settings(self._get_settings())
-            self._build()
-            LOGGER.output_file(self._type, self._path)
+            self._format_data()
+            if self._write_file():
+                LOGGER.output_file(self._type, self._path)
 
     def _url_from_path(self, source, destination):
         if not destination:
@@ -85,21 +86,26 @@ class _HTMLFileBuilder(_Builder):
         return utils.get_link_path(destination, os.path.dirname(source))
 
     def _write_file(self):
-        with codecs.open(self._path, 'w', encoding='UTF-8') as outfile:
-            writer = HTMLFileWriter(outfile, self._data)
-            with open(self._template, 'r') as tmpl:
-                for line in tmpl:
-                    writer.line(line)
+        try:
+            with codecs.open(self._path, 'w', encoding='UTF-8') as outfile:
+                writer = HTMLFileWriter(outfile, self._data)
+                with open(self._template, 'r') as tmpl:
+                    for line in tmpl:
+                        writer.line(line)
+        except EnvironmentError, err:
+            LOGGER.error("Opening '%s' failed: %s"
+                         % (err.filename, err.strerror))
+            return False
+        return True
 
 
 class LogBuilder(_HTMLFileBuilder):
     _type = 'Log'
     _template = os.path.join(WEBCONTENT_PATH,'log.html')
 
-    def _build(self):
+    def _format_data(self):
         if self._data._split_results:
             self._write_split_tests()
-        self._write_file()
 
     def _write_split_tests(self):
         basename = os.path.splitext(self._path)[0]
@@ -125,10 +131,9 @@ class ReportBuilder(_HTMLFileBuilder):
     _type = 'Report'
     _template = os.path.join(WEBCONTENT_PATH, 'report.html')
 
-    def _build(self):
+    def _format_data(self):
         self._data.remove_errors()
         self._data.remove_keywords()
-        self._write_file()
 
     def _get_settings(self):
         return {
