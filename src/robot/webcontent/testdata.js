@@ -105,9 +105,13 @@ window.testdata = function () {
                 return val;
             },
             times: model.Times(times(statusElement)),
-            tags: tags(element[4])
+            tags: tags(element[4]),
+            isChildrenLoaded: typeof(element[6]) !== 'int'
         });
-        test.populateKeywords(Populator(element[6], childCreator(test, createKeyword)));
+        if (test.isChildrenLoaded)
+            test.populateKeywords(Populator(element[6], childCreator(test, createKeyword)));
+        else
+            test.populateKeywords(otherStructurePopulator(element[6], childCreator(test, createKeyword)));
         return test;
     }
 
@@ -176,6 +180,12 @@ window.testdata = function () {
                 return creator(items[index], index);
             }
         };
+    }
+
+    function otherStructurePopulator(index, creator) {
+        window['keywords'+index];
+        window['strings'+index];
+        alert('never gona happen');
     }
 
     function suite() {

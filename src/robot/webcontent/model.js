@@ -115,7 +115,8 @@ window.model = function () {
             name: data.name,
             doc: data.doc,
             status: data.status,
-            times: data.times
+            times: data.times,
+            callWhenChildrenReady: function (callable) { callable(); }
         };
     }
 
@@ -125,6 +126,17 @@ window.model = function () {
         test.formatParentName = function () { return util.formatParentName(test); };
         test.timeout = data.timeout;
         test.populateKeywords = createIterablePopulator("Keyword");
+        test.isChildrenLoaded = data.isChildrenLoaded;
+        test.callWhenChildrenReady = function(callable) {
+            if( !test.isChildrenLoaded ) {
+                $.getScript('childScript.js', function () {
+                    test.isChildrenLoaded = true;
+                    callable();
+                });
+            }else{
+                callable();
+            }
+        };
         test.children = function () {
             return test.keywords();
         };
