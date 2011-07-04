@@ -190,9 +190,8 @@ Thus, for example, :code:`startSuite` is a synonym to :code:`start_suite`.
    |               |                  | finished. The path is an absolute path to the    |
    |               |                  | file.                                            |
    +---------------+------------------+--------------------------------------------------+
-   | summary_file  | path             | Called when writing to a summary file is         |
-   |               |                  | finished. The path is an absolute path to the    |
-   |               |                  | file.                                            |
+   | summary_file  | path             | Not available anymore in Robot Framework 2.6 or  |
+   |               |                  | newer.                                           |
    +---------------+------------------+--------------------------------------------------+
    | debug_file    | path             | Called when writing to a debug file is           |
    |               |                  | finished. The path is an absolute path to the    |
@@ -222,7 +221,6 @@ to implement any explicit interface or have all these methods.
        void outputFile(String path);
        void logFile(String path);
        void reportFile(String path);
-       void summaryFile(String path);
        void debugFile(String path);
        void close();
    }
