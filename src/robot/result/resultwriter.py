@@ -27,24 +27,36 @@ class ResultWriter(object):
         self._xml_result = None
         self._suite = None
         self._settings = settings
+        self._data_sources = None
 
     def write_robot_results(self, data_source):
-        data_model = jsparser.create_datamodel_from(data_source, self._settings['SplitLog'])
-        LogBuilder(data_model, self._settings).build()
-        ReportBuilder(data_model, self._settings).build()
-        XUnitBuilder(self._result_from_xml([data_source]),
-                     self._settings).build()
+        self._data_sources = [data_source]
+        self._data_model = None
+        LogBuilder(self).build()
+        ReportBuilder(self).build()
+        XUnitBuilder(self).build()
 
-    def _result_from_xml(self, data_sources):
-        if not self._xml_result:
-            self._suite, errs = process_outputs(data_sources, self._settings)
+    @property
+    def data_model(self):
+        if self._data_model is None:
+            self._data_model = jsparser.create_datamodel_from(self._data_sources[0], self._settings['SplitLog'])
+        return self._data_model
+
+    @property
+    def settings(self):
+        return self._settings
+
+    @property
+    def result_from_xml(self):
+        if self._xml_result is None:
+            self._suite, errs = process_outputs(self._data_sources, self._settings)
             self._suite.set_options(self._settings)
             self._xml_result = ResultFromXML(self._suite, errs, self._settings)
         return self._xml_result
 
     def write_rebot_results(self, *data_sources):
-        builder = OutputBuilder(self._result_from_xml(data_sources),
-                                self._settings)
+        self._data_sources = data_sources
+        builder = OutputBuilder(self)
         self.write_robot_results(builder.build())
         builder.finalize()
         return self._suite

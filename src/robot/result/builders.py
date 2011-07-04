@@ -21,15 +21,16 @@ import tempfile
 import robot
 from robot.output import LOGGER
 from robot import utils
+from robot.result.jsondatamodel import _SeparatingWriter
 
 WEBCONTENT_PATH = os.path.join(os.path.dirname(robot.__file__), 'webcontent')
 
 
 class _Builder(object):
 
-    def __init__(self, data, settings):
-        self._settings = settings
-        self._data = data
+    def __init__(self, context):
+        self._settings = context.settings
+        self._context = context
         self._path = self._parse_file(self._type)
 
     def build(self):
@@ -46,7 +47,7 @@ class OutputBuilder(_Builder):
 
     def build(self):
         output_file = self._output_file()
-        self._data.serialize_output(output_file, log=not self._temp_file)
+        self._context.result_from_xml.serialize_output(output_file, log=not self._temp_file)
         return output_file
 
     def _output_file(self):
@@ -67,7 +68,7 @@ class XUnitBuilder(_Builder):
 
     def build(self):
         if self._path:
-            self._data.serialize_xunit(self._path)
+            self._context.result_from_xml.serialize_xunit(self._path)
 
 
 class _HTMLFileBuilder(_Builder):
@@ -75,7 +76,7 @@ class _HTMLFileBuilder(_Builder):
 
     def build(self):
         if self._path:
-            self._data.set_settings(self._get_settings())
+            self._context.data_model.set_settings(self._get_settings())
             self._build()
             LOGGER.output_file(self._type, self._path)
 
@@ -86,7 +87,7 @@ class _HTMLFileBuilder(_Builder):
 
     def _write_file(self):
         with codecs.open(self._path, 'w', encoding='UTF-8') as outfile:
-            writer = HTMLFileWriter(outfile, self._data)
+            writer = HTMLFileWriter(outfile, self._context.data_model)
             with open(self._template, 'r') as tmpl:
                 for line in tmpl:
                     writer.line(line)
@@ -97,21 +98,22 @@ class LogBuilder(_HTMLFileBuilder):
     _template = os.path.join(WEBCONTENT_PATH,'log.html')
 
     def _build(self):
-        if self._data._split_results:
+        if self._context.data_model._split_results:
             self._write_split_tests()
         self._write_file()
 
     def _write_split_tests(self):
         basename = os.path.splitext(self._path)[0]
-        for index, (keywords, strings) in enumerate(self._data._split_results):
+        for index, (keywords, strings) in enumerate(self._context.data_model._split_results):
             index += 1  # enumerate accepts start index only in Py 2.6+
             self._write_test(index, keywords, strings, '%s-%d.js' % (basename, index))
 
     def _write_test(self, index, keywords, strings, path):
         # TODO: Refactor heavily - ask Jussi or Peke for more details
         with codecs.open(path, 'w', encoding='UTF-8') as outfile:
-            self._data._dump_json('window.keywords%d' % index, keywords, outfile)
-            self._data._dump_json('window.strings%d' % index, strings, outfile)
+            writer = _SeparatingWriter(outfile, '')
+            writer.dump_json('window.keywords%d = ' % index, keywords)
+            writer.dump_json('window.strings%d = ' % index, strings)
 
     def _get_settings(self):
         return {
@@ -126,8 +128,8 @@ class ReportBuilder(_HTMLFileBuilder):
     _template = os.path.join(WEBCONTENT_PATH, 'report.html')
 
     def _build(self):
-        self._data.remove_errors()
-        self._data.remove_keywords()
+        self._context.data_model.remove_errors()
+        self._context.data_model.remove_keywords()
         self._write_file()
 
     def _get_settings(self):

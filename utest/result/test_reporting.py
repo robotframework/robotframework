@@ -1,6 +1,7 @@
 import unittest
 
 from robot.result import ResultWriter
+import robot.result.jsparser as jsparser
 import robot.result.builders
 
 import resources
@@ -20,6 +21,13 @@ def set_write_report_mock():
     robot.result.builders.ReportBuilder._write_file = write_report
     return results
 
+def set_write_xunit_mock():
+    results = {'xunit_path': None}
+    def build_xunit(self):
+        results['xunit_path'] = self._path
+    robot.result.builders.XUnitBuilder.build = build_xunit
+    return results
+
 def set_write_split_test_mock():
     results = []
     def _write_test(self, index, keywords, strings, name):
@@ -27,6 +35,14 @@ def set_write_split_test_mock():
     robot.result.builders.LogBuilder._write_test = _write_test
     return results
 
+def set_datamodel_generation_spy():
+    generated = []
+    original = jsparser.create_datamodel_from
+    def _create_datamodel_from(*args):
+        generated.append(True)
+        return original(*args)
+    robot.result.resultwriter.jsparser.create_datamodel_from = _create_datamodel_from
+    return generated
 
 class TestReporting(unittest.TestCase):
 
@@ -66,7 +82,9 @@ class TestReporting(unittest.TestCase):
         robot.result.builders.LOGGER.disable_automatic_console_logger()
         self._log_results = set_write_log_mock()
         self._report_results = set_write_report_mock()
+        self._xunit_results = set_write_xunit_mock()
         self._split_test_names = set_write_split_test_mock()
+        self._datamodel_generations = set_datamodel_generation_spy()
 
     def tearDown(self):
         robot.result.builders.LOGGER.register_console_logger()
@@ -78,11 +96,13 @@ class TestReporting(unittest.TestCase):
         self._reporter.write_robot_results(resources.GOLDEN_OUTPUT)
         self._assert_expected_log('log.html')
         self._assert_expected_report('report.html')
+        self._assert_data_model_generated_once()
 
     def test_no_generation(self):
         self._reporter.write_robot_results(resources.GOLDEN_OUTPUT)
         self._assert_no_log()
         self._assert_no_report()
+        self._assert_no_data_model_generation()
 
     def test_only_log(self):
         self._settings['Log'] = 'only-log.html'
@@ -95,6 +115,13 @@ class TestReporting(unittest.TestCase):
         self._reporter.write_robot_results(resources.GOLDEN_OUTPUT)
         self._assert_no_log()
         self._assert_expected_report('reports-only.html')
+
+    def test_only_xunit(self):
+        self._settings['XUnitFile'] = 'xunitfile-only.xml'
+        self._reporter.write_robot_results(resources.GOLDEN_OUTPUT)
+        self._assert_no_log()
+        self._assert_no_report()
+        self._assert_expected_xunit('xunitfile-only.xml')
 
     def test_multiple_outputs(self):
         self._settings['Log'] = 'log.html'
@@ -121,11 +148,20 @@ class TestReporting(unittest.TestCase):
     def _assert_expected_report(self, expected_file_name):
         self.assertEquals(self._report_results['report_path'], expected_file_name)
 
+    def _assert_expected_xunit(self, expected_file_name):
+        self.assertEquals(self._xunit_results['xunit_path'], expected_file_name)
+
     def _assert_no_log(self):
         self._assert_expected_log(None)
 
     def _assert_no_report(self):
         self._assert_expected_report(None)
+
+    def _assert_no_data_model_generation(self):
+        self.assertEquals(len(self._datamodel_generations), 0)
+
+    def _assert_data_model_generated_once(self):
+        self.assertEquals(len(self._datamodel_generations), 1)
 
 
 if __name__ == '__main__':
