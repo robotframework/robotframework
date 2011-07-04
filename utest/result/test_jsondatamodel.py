@@ -7,9 +7,9 @@ class TestDataModelWrite(unittest.TestCase):
 
     def test_writing_datamodel_elements(self):
         lines = self._get_lines()
-        assert_true(lines[0].startswith('window.output = {}'))
-        assert_true(lines[1].startswith('window.output["'))
-        assert_true(lines[-1].startswith('window.settings ='))
+        assert_true(lines[0].startswith('window.output = {}'), lines[0])
+        assert_true(lines[1].startswith('window.output["'), lines[1])
+        assert_true(lines[-1].startswith('window.settings ='), lines[-1])
 
     def _get_lines(self, data=None, separator=None, split_threshold=None):
         output = StringIO()
@@ -41,4 +41,7 @@ class TestDataModelWrite(unittest.TestCase):
                                 split_threshold=9, separator='?\n')
         parts = [l for l in lines if l.startswith('window.output["strings')]
         assert_equals(len(parts), 13)
+        assert_equals(parts[0], 'window.output["strings"] = [];')
+        for line in parts[1:]:
+            assert_true(line.startswith('window.output["strings"] = window.output["strings"].concat(['), line)
         self._assert_separators_in(lines, '?')
