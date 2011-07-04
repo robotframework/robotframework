@@ -24,31 +24,29 @@ class XmlLogger:
     def __init__(self, path, log_level='TRACE', generator='Robot'):
         self._log_message_is_logged = IsLogged(log_level)
         self._error_message_is_logged = IsLogged('WARN')
-        self._writer = None
-        self._writer_args = (path, {'generator': get_full_version(generator),
-                                    'generated': utils.get_timestamp()})
+        self._writer = self._get_writer(path, generator)
         self._errors = []
 
-    def _get_writer(self, path, attrs={}):
+    def _get_writer(self, path, generator):
         try:
             writer = utils.XmlWriter(path)
         except:
             raise DataError("Opening output file '%s' for writing failed: %s"
                             % (path, utils.get_error_message()))
-        writer.start('robot', attrs)
+        writer.start('robot', {'generator': get_full_version(generator),
+                               'generated': utils.get_timestamp()})
         return writer
-
-    def _close_writer(self, writer):
-        if not writer.closed:
-            writer.end('robot')
-            writer.close()
 
     def close(self):
         self.start_errors()
         for msg in self._errors:
             self._write_message(msg)
         self.end_errors()
-        self._close_writer(self._writer)
+        self._writer.end('robot')
+        self._writer.close()
+
+    def set_log_level(self, level):
+        return self._log_message_is_logged.set_level(level)
 
     def message(self, msg):
         if self._error_message_is_logged(msg.level):
@@ -57,9 +55,6 @@ class XmlLogger:
     def log_message(self, msg):
         if self._log_message_is_logged(msg.level):
             self._write_message(msg)
-
-    def set_log_level(self, level):
-        return self._log_message_is_logged.set_level(level)
 
     def _write_message(self, msg):
         attrs = {'timestamp': msg.timestamp, 'level': msg.level}
@@ -70,35 +65,27 @@ class XmlLogger:
         self._writer.element('msg', msg.message, attrs)
 
     def start_keyword(self, kw):
-        attrs = {'name': kw.name, 'type': kw.type, 'timeout': kw.timeout}
-        self._writer.start('kw', attrs)
+        self._writer.start('kw', {'name': kw.name, 'type': kw.type,
+                                  'timeout': kw.timeout})
         self._writer.element('doc', kw.doc)
-        self._write_list('arg', [utils.unic(a) for a in kw.args], 'arguments')
+        self._write_list('arguments', 'arg', kw.args)
 
     def end_keyword(self, kw):
         self._write_status(kw)
         self._writer.end('kw')
 
     def start_test(self, test):
-        attrs = {'name': test.name, 'timeout': str(test.timeout)}
-        self._writer.start('test', attrs)
+        self._writer.start('test', {'name': test.name,
+                                    'timeout': test.timeout})
         self._writer.element('doc', test.doc)
 
     def end_test(self, test):
-        self._write_list('tag', test.tags, 'tags')
-        self._write_status(test, test.message,
-                           extra_attrs={'critical': test.critical})
+        self._write_list('tags', 'tag', test.tags)
+        self._write_status(test, test.message, {'critical': test.critical})
         self._writer.end('test')
 
     def start_suite(self, suite):
-        if not self._writer:
-            self._writer = self._get_writer(*self._writer_args)
-            del self._writer_args
-        self._start_suite(suite)
-
-    def _start_suite(self, suite, extra_attrs=None):
-        attrs = extra_attrs is not None and extra_attrs or {}
-        attrs['name'] = suite.name
+        attrs = {'name': suite.name}
         if suite.source:
             attrs['source'] = suite.source
         self._writer.start('suite', attrs)
@@ -152,11 +139,10 @@ class XmlLogger:
         return ':::'.join(':'.join([title, url]) for url, title in stat.links)
 
     def _stat(self, stat, name=None, attrs=None):
-        name = name or stat.name
         attrs = attrs or {}
         attrs['pass'] = str(stat.passed)
         attrs['fail'] = str(stat.failed)
-        self._writer.element('stat', name, attrs)
+        self._writer.element('stat', name or stat.name, attrs)
 
     def _get_tag_stat_info(self, stat):
         if stat.critical:
@@ -173,13 +159,11 @@ class XmlLogger:
     def end_errors(self):
         self._writer.end('errors')
 
-    def _write_list(self, tag, items, container=None):
-        if container:
-            self._writer.start(container)
+    def _write_list(self, container_tag, item_tag, items):
+        self._writer.start(container_tag)
         for item in items:
-            self._writer.element(tag, item)
-        if container:
-            self._writer.end(container)
+            self._writer.element(item_tag, item)
+        self._writer.end(container_tag)
 
     def _write_status(self, item, message=None, extra_attrs=None):
         attrs = {'status': item.status, 'starttime': item.starttime,

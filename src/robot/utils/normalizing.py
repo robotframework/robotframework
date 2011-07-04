@@ -20,35 +20,54 @@ _WHITESPACE_REGEXP = re.compile('\s+')
 
 
 def normalize(string, ignore=[], caseless=True, spaceless=True):
+    """Normalizes given string according to given spec.
+
+    By default string is turned to lower case and all whitespace is removed.
+    Additional characters can be removed by giving them in `ignore` list.
+    """
     if spaceless:
         string = _WHITESPACE_REGEXP.sub('', string)
     if caseless:
         string = string.lower()
-        ignore = [ ign.lower() for ign in ignore ]
+        ignore = [i.lower() for i in ignore]
     for ign in ignore:
         string = string.replace(ign, '')
     return string
 
 
 def normalize_tags(tags):
-    """Removes duplicates (normalized) and empty tags and sorts tags"""
-    ret = []
-    dupes = NormalizedDict({'': 1})
-    for tag in tags:
-        if not dupes.has_key(tag):
-            ret.append(tag)
-            dupes[tag] = 1
-    ret.sort(lambda x, y: cmp(normalize(x), normalize(y)))
-    return ret
+    """Returns tags sorted and duplicates, empty, and NONE removed.
+
+    If duplicate tags have different case/space, the one used first wins.
+    """
+    norm = NormalizedDict(((t, 1) for t in tags), ignore=['_'])
+    for removed in '', 'NONE':
+        if removed in norm:
+            norm.pop(removed)
+    return norm.keys()
 
 
 class NormalizedDict(UserDict):
+    """Custom dictionary implementation automatically normalizing keys."""
 
-    def __init__(self, initial={}, ignore=[], caseless=True, spaceless=True):
+    def __init__(self, initial=None, ignore=[], caseless=True, spaceless=True):
+        """Initializes with possible initial value and normalizing spec.
+
+        Initial values can be either a dictionary or an iterable of name/value
+        pairs. In the latter case items are added in the given order.
+
+        Normalizing spec has exact same semantics as with `normalize` method.
+        """
         UserDict.__init__(self)
         self._keys = {}
         self._normalize = lambda s: normalize(s, ignore, caseless, spaceless)
-        for key, value in initial.items():
+        if initial:
+            self._add_initial(initial)
+
+    def _add_initial(self, items):
+        if hasattr(items, 'items'):
+            items = items.items()
+        for key, value in items:
             self[key] = value
 
     def update(self, dict=None, **kwargs):
@@ -64,19 +83,11 @@ class NormalizedDict(UserDict):
         self._keys.setdefault(nkey, key)
         return nkey
 
-    def __setitem__(self, key, value):
+    def set(self, key, value):
         nkey = self._add_key(key)
         self.data[nkey] = value
 
-    set = __setitem__
-
-    def __getitem__(self, key):
-        return self.data[self._normalize(key)]
-
-    def __delitem__(self, key):
-        nkey = self._normalize(key)
-        del self.data[nkey]
-        del self._keys[nkey]
+    __setitem__ = set
 
     def get(self, key, default=None):
         try:
@@ -84,19 +95,32 @@ class NormalizedDict(UserDict):
         except KeyError:
             return default
 
+    def __getitem__(self, key):
+        return self.data[self._normalize(key)]
+
+    def pop(self, key):
+        nkey = self._normalize(key)
+        del self._keys[nkey]
+        return self.data.pop(nkey)
+
+    __delitem__ = pop
+
     def has_key(self, key):
         return self.data.has_key(self._normalize(key))
 
     __contains__ = has_key
 
     def keys(self):
-        return self._keys.values()
+        return [self._keys[nkey] for nkey in sorted(self._keys)]
 
     def __iter__(self):
-        return self._keys.itervalues()
+        return iter(self.keys())
+
+    def values(self):
+        return [self[key] for key in self]
 
     def items(self):
-        return [ (key, self[key]) for key in self.keys() ]
+        return [(key, self[key]) for key in self]
 
     def copy(self):
         copy = UserDict.copy(self)
