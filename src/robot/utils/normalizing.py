@@ -31,11 +31,11 @@ def normalize(string, ignore=[], caseless=True, spaceless=True):
 
 
 def normalize_tags(tags):
-    """Removes duplicates (normalized) and empty tags and sorts tags"""
+    """Returns tags sorted and duplicates, empty, and NONE removed."""
     ret = []
-    dupes = NormalizedDict({'': 1})
+    dupes = NormalizedDict({'': 1, 'NONE': 1})
     for tag in tags:
-        if not dupes.has_key(tag):
+        if tag not in dupes:
             ret.append(tag)
             dupes[tag] = 1
     ret.sort(lambda x, y: cmp(normalize(x), normalize(y)))

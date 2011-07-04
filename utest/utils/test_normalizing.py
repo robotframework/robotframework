@@ -35,16 +35,28 @@ class TestNormalizing(unittest.TestCase):
         assert_equals(normalize('Foo_\n bar\n', ignore=['\n'],
                                 spaceless=False), 'foo_ bar')
 
-    def test_normalize_tags(self):
-        for inp, exp in [ ([], []),
-                          (['lower'], ['lower']),
-                          (['UPPER', 'MiXeD'], ['MiXeD', 'UPPER']),
-                          (['Some spaces here'], ['Some spaces here']),
-                          (['remove empty', '', '  ', '\n'], ['remove empty']),
-                          (['dupes', 'DUPES', 'DuPeS', 'd u p e s'],['dupes']),
-                          (['SORT','1','B','2','a'], ['1','2','a','B','SORT']),
-                          (['ALL', 'all', '10', '1', 'A', 'a', '', 'A  L  L'],
-                           ['1', '10', 'A', 'ALL']) ]:
+
+class TestNormalizeTags(unittest.TestCase):
+
+    def test_no_tasg(self):
+        assert_equals(normalize_tags([]), [])
+
+    def test_case_and_space(self):
+        for inp in ['lower'], ['MiXeD', 'UPPER'], ['a few', 'spaces here']:
+            assert_equals(normalize_tags(inp), inp)
+
+    def test_remove_empty_and_none(self):
+        for inp in ['', 'X', '', '  ', '\n'], ['none', 'N O N E', 'X', '']:
+            assert_equals(normalize_tags(inp), ['X'])
+
+    def test_remove_dupes(self):
+        for inp in ['dupe', 'DUPE', ' d u p e '], ['d U', 'du', 'DU', 'Du']:
+            assert_equals(normalize_tags(inp), [inp[0]])
+
+    def test_sorting(self):
+        for inp, exp in [(['SORT','1','B','2','a'], ['1','2','a','B','SORT']),
+                         (['all', 'A L L', 'NONE', '10', '1', 'A', 'a', ''],
+                           ['1', '10', 'A', 'all'])]:
             assert_equals(normalize_tags(inp), exp)
 
 

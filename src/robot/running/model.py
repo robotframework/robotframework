@@ -234,7 +234,7 @@ class RunnableTestCase(BaseTestCase):
         self.setup.replace_variables(context.get_current_vars(), errors)
         self.teardown.replace_variables(context.get_current_vars(), errors)
         tags = context.replace_vars_from_setting('Tags', self.tags, errors)
-        self.tags = utils.normalize_tags(t for t in tags if t.upper() != 'NONE')
+        self.tags = utils.normalize_tags(tags)
         self.timeout.replace_variables(context.get_current_vars())
         if errors:
             return 'Test case initialization failed:\n%s' % '\n'.join(errors)
