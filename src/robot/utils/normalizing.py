@@ -64,19 +64,11 @@ class NormalizedDict(UserDict):
         self._keys.setdefault(nkey, key)
         return nkey
 
-    def __setitem__(self, key, value):
+    def set(self, key, value):
         nkey = self._add_key(key)
         self.data[nkey] = value
 
-    set = __setitem__
-
-    def __getitem__(self, key):
-        return self.data[self._normalize(key)]
-
-    def __delitem__(self, key):
-        nkey = self._normalize(key)
-        del self.data[nkey]
-        del self._keys[nkey]
+    __setitem__ = set
 
     def get(self, key, default=None):
         try:
@@ -84,19 +76,32 @@ class NormalizedDict(UserDict):
         except KeyError:
             return default
 
+    def __getitem__(self, key):
+        return self.data[self._normalize(key)]
+
+    def pop(self, key):
+        nkey = self._normalize(key)
+        del self._keys[nkey]
+        return self.data.pop(nkey)
+
+    __delitem__ = pop
+
     def has_key(self, key):
         return self.data.has_key(self._normalize(key))
 
     __contains__ = has_key
 
     def keys(self):
-        return self._keys.values()
+        return [self._keys[nkey] for nkey in sorted(self._keys)]
 
     def __iter__(self):
-        return self._keys.itervalues()
+        return iter(self.keys())
+
+    def values(self):
+        return [self[key] for key in self]
 
     def items(self):
-        return [ (key, self[key]) for key in self.keys() ]
+        return [(key, self[key]) for key in self]
 
     def copy(self):
         copy = UserDict.copy(self)

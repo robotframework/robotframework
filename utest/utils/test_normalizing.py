@@ -92,38 +92,36 @@ class TestNormalizedDict(unittest.TestCase):
         assert_true(nd.has_key('Foo') and nd.has_key(' f O o '))
         assert_true('Foo' in nd and 'foo' in nd and 'FOO' in nd)
 
-    def test_original_keys_are_kept(self):
-        nd = NormalizedDict()
-        nd['Foo'] = nd['a b c'] = nd['UP'] = 1
-        keys = nd.keys()
-        items = nd.items()
-        keys.sort()
-        items.sort()
-        assert_equals(keys, ['Foo', 'UP', 'a b c'])
-        assert_equals(items, [('Foo', 1), ('UP', 1), ('a b c', 1)])
+    def test_original_keys_are_preserved(self):
+        nd = NormalizedDict({'low': 1, 'UP': 2})
+        nd['up'] = nd['Spa Ce'] = 3
+        assert_equals(nd.keys(), ['low', 'Spa Ce', 'UP'])
+        assert_equals(nd.items(), [('low', 1), ('Spa Ce', 3), ('UP', 3)])
 
-    def test_removing_values(self):
-        nd = NormalizedDict({'A':1, 'b':2})
-        del nd['a']
+    def test_deleting_items(self):
+        nd = NormalizedDict({'A': 1, 'b': 2})
+        del nd['A']
         del nd['B']
         assert_equals(nd.data, {})
-        assert_false(nd.has_key('a') or nd.has_key('b'))
+        assert_equals(nd.keys(), [])
 
-    def test_removing_values_removes_also_original_keys(self):
-        nd = NormalizedDict({'a':1})
-        del nd['a']
+    def test_popping_items(self):
+        nd = NormalizedDict({'A': 1, 'b': 2})
+        assert_equals(nd.pop('A'), 1)
+        assert_equals(nd.pop('B'), 2)
         assert_equals(nd.data, {})
         assert_equals(nd.keys(), [])
+
+    def test_keys_are_sorted(self):
+        nd = NormalizedDict(dict((c, None) for c in 'aBcDeFg123XyZ___'))
+        assert_equals(nd.keys(), list('123_aBcDeFgXyZ'))
 
     def test_keys_values_and_items_are_returned_in_same_order(self):
         nd = NormalizedDict()
         for i, c in enumerate('abcdefghijklmnopqrstuvwxyz'):
             nd[c.upper()] = i
             nd[c+str(i)] = 1
-        items = nd.items()
-        keys = nd.keys()
-        values = nd.values()
-        assert_equals(items, zip(keys, values))
+        assert_equals(nd.items(), zip(nd.keys(), nd.values()))
 
     def test_len(self):
         nd = NormalizedDict()
@@ -131,7 +129,7 @@ class TestNormalizedDict(unittest.TestCase):
         nd['a'] = nd['b'] = nd['c'] = 1
         assert_equals(len(nd), 3)
 
-    def test_true_and_false(self):
+    def test_truth_value(self):
         assert_false(NormalizedDict())
         assert_true(NormalizedDict({'a': 1}))
 
@@ -167,11 +165,11 @@ class TestNormalizedDict(unittest.TestCase):
 
     def test_iter(self):
         nd = NormalizedDict({'a': 0, 'B': 1, 'c': 2})
-        assert_equals(sorted(list(nd)), ['B', 'a', 'c'])
+        assert_equals(list(nd), ['a', 'B', 'c'])
         keys = []
         for key in nd:
             keys.append(key)
-        assert_equals(sorted(keys), ['B', 'a', 'c'])
+        assert_equals(keys, ['a', 'B', 'c'])
 
 
 if __name__ == '__main__':
