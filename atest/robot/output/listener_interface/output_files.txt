@@ -19,8 +19,7 @@ Output Files
 Output Files With Java
     [Tags]  jybot
     ${file} =  Get Listener File  ${JAVA_FILE}
-    ${exp} =  Catenate  SEPARATOR=\n  Debug (java): mydeb.txt  Output (java): myout.xml  Summary (java): mysum.html  Report (java): myrep.html  Log (java): mylog.html
-    ...  The End\n
+    ${exp} =  Catenate  SEPARATOR=\n  Debug (java): mydeb.txt  Output (java): myout.xml  Report (java): myrep.html  Log (java): mylog.html  The End\n
     Should End With  ${file}  ${exp}
 
 *** Keywords ***
