@@ -247,7 +247,7 @@ window.model = function () {
         return function () {
             if (cached === undefined) {
                 cached = [];
-                for (var i = 0; i < numberOfElements; i++) {
+                for (var i = 0; i < numberOfElements(); i++) {
                     cached.push(creator(i));
                 }
             }

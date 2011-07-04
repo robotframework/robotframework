@@ -171,17 +171,21 @@ window.testdata = function () {
         if (!items)
             return function () {};
         return {
-            numberOfItems: items.length,
+            numberOfItems: function() { return items.length; },
             creator: function (index) {
                 return creator(items[index], strings, index);
             }
         };
     }
 
-    function otherStructurePopulator(index, creator) {
-        window['keywords'+index];
-        window['strings'+index];
-        alert('never gona happen');
+    function otherStructurePopulator(structureIndex, creator) {
+        return {
+            numberOfItems: function()  { window['keywords'+structureIndex].length; },
+            creator: function (index) {
+                return creator(window['keywords'+structureIndex][index],
+                               window.getStringStore(window['strings'+structureIndex]), index);
+            }
+        }
     }
 
     function suite() {
