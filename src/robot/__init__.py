@@ -159,6 +159,6 @@ def run_rebot(*datasources, **options):
 def _report_error(message, details=None, help=False):
     if help:
         message += '\n\nTry --help for usage information.'
-    LOGGER.error(message)
     if details:
-        LOGGER.info(details)
+        message += '\n' + details
+    LOGGER.error(message)

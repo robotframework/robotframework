@@ -1,6 +1,6 @@
 *** Settings ***
 Test Setup      Create Output Directory
-Force Tags    regression  pybot  jybot
+Force Tags      regression  pybot  jybot
 Resource        cli_resource.txt
 
 
@@ -40,24 +40,21 @@ All Outputs Without Extensions
     Output Directory Should Contain  mylog.html  myoutput.xml  myreport.html
 
 Outputs Into Different Dirs
-    Run Tests Without Processing Output  --outputdir ::invalid:: -o ${CLI OUTDIR}${/}o${/}o.xml -r ${CLI OUTDIR}${/}r${/}r.html -l ${CLI OUTDIR}${/}l.html  ${TESTFILE}
+    Run Tests Without Processing Output  --outputdir ::invalid:: -o ${CLI OUTDIR}/o/o.xml -r ${CLI OUTDIR}/r/r.html -l ${CLI OUTDIR}/l.html  ${TESTFILE}
     Directory Should Contain  ${CLI OUTDIR}/o  o.xml
     Directory Should Contain  ${CLI OUTDIR}/r  r.html
     Directory Should Contain  ${CLI OUTDIR}  l.html  o  r
 
-Invalid Output File
-    [Documentation]  Test error handling when the xml output file cannot be opened for writing
+Non-writable Output File
     Create Directory  ${CLI OUTDIR}/directory.xml
     Run Tests Without Processing Output  --output ${CLI OUTDIR}/directory.xml  ${TESTFILE}
     Check Stderr Matches Regexp  \\[ ERROR \\] Opening output file '.*directory.xml' for writing failed: (IOError|FileNotFoundException): .*${USAGE_TIP}
 
-Invalid Log, Report and Summary
-    [Documentation]  Test error handling when html files cannot be opened for writing
-    [Tags]    to_be_clarified
+Non-writable Log and Report
     ${directory} =  Join Path  ${CLI OUTDIR}/dir.html
     Create Directory  ${directory}
     Run Tests  --log ${directory} --report ${directory}  ${TESTFILE}
     Should Be Equal  ${SUITE.status}  PASS
     Check Stderr Matches Regexp  SEPARATOR=\n
-    ...  \\[ ERROR \\] Opening report file '.*dir.html' for writing failed: IOError: .*
-    ...  \\[ ERROR \\] Opening log file '.*dir.html' for writing failed: IOError: .*
+    ...  \\[ ERROR \\] Opening '.*dir.html' failed: .*
+    ...  \\[ ERROR \\] Opening '.*dir.html' failed: .*
