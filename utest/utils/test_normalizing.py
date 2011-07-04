@@ -172,16 +172,31 @@ class TestNormalizedDict(unittest.TestCase):
         nd.update({'b': 2, 'c': 3}, b=4, d=5)
         for k, v in [('a', 0), ('b', 4), ('c', 3), ('d', 5)]:
             assert_equals(nd[k], v)
+            assert_equals(nd[k.upper()], v)
             assert_true(k in nd)
+            assert_true(k.upper() in nd)
             assert_true(k in nd.keys())
 
     def test_iter(self):
-        nd = NormalizedDict({'a': 0, 'B': 1, 'c': 2})
-        assert_equals(list(nd), ['a', 'B', 'c'])
-        keys = []
-        for key in nd:
-            keys.append(key)
-        assert_equals(keys, ['a', 'B', 'c'])
+        keys = list('123_aBcDeF')
+        nd = NormalizedDict((k, 1) for k in keys)
+        assert_equals(list(nd), keys)
+        assert_equals([key for key in nd], keys)
+
+    def test_cmp(self):
+        n1 = NormalizedDict()
+        n2 = NormalizedDict()
+        assert_true(n1 == n1 == n2 == n2)
+        n1['a'] = 1
+        assert_true(n1 == n1 != n2 == n2)
+        n2['a'] = 1
+        assert_true(n1 == n1 == n2 == n2)
+        n1['b'] = 1
+        n2['B'] = 1
+        assert_true(n1 == n1 == n2 == n2)
+        n1['C'] = 1
+        n2['C'] = 2
+        assert_true(n1 == n1 != n2 == n2)
 
 
 if __name__ == '__main__':
