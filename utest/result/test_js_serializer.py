@@ -365,7 +365,7 @@ class TestTestSplittingJsSerializer(_JsSerializerTestBase):
     <kw type="kw" name="Keyword.Example" timeout="">
       <status status="PASS" endtime="20110601 12:01:51.353" starttime="20110601 12:01:51.376"></status>
     </kw>
-    <kw type="kw" name="Keyword.Example 2" timeout="">
+    <kw type="kw" name="Second keyword" timeout="">
       <status status="PASS" endtime="20110601 12:01:51.353" starttime="20110601 12:01:51.376"></status>
     </kw>
     <status status="PASS" endtime="20110601 12:01:51.354" critical="yes" starttime="20110601 12:01:51.353"></status>
@@ -399,7 +399,7 @@ class TestTestSplittingJsSerializer(_JsSerializerTestBase):
                            1
                          ]],
                          [],[1, 1, 1, 1]])
-        expected_data = [['*kw', '*Keyword.Example', '*',  ['*P', 0, -23], [], []], ['*kw', '*Keyword.Example 2', '*',  ['*P', 0, -23], [], []]]
+        expected_data = [['*kw', '*Keyword.Example', '*',  ['*P', 0, -23], [], []], ['*kw', '*Second keyword', '*',  ['*P', 0, -23], [], []]]
         keywords, strings = self._context.split_results[0]
         _assert_plain_suite_item(expected_data, keywords, strings)
 
