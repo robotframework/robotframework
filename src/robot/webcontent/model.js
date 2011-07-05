@@ -128,18 +128,18 @@ window.model = function () {
         test.populateKeywords = createIterablePopulator("Keyword");
         test.isChildrenLoaded = data.isChildrenLoaded;
         var callables = [];
-        test.callWhenChildrenReady = function(callable) {
-            if( !test.isChildrenLoaded ) {
-                if(callables.length == 0){
+        test.callWhenChildrenReady = function (callable) {
+            if (!test.isChildrenLoaded) {
+                callables.push(callable);
+                if (callables.length == 1) {
                     $.getScript(test.childFileName, function () {
                         test.isChildrenLoaded = true;
-                        for(var i = 0; i < callables.length; i++) {
+                        for (var i = 0; i < callables.length; i++) {
                             callables[i]();
                         };
                     });
                 }
-                callables.push(callable);
-            }else{
+            } else {
                 callable();
             }
         };

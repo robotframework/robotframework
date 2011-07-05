@@ -16,12 +16,12 @@ function addElements(elems, templateName, target){
     }
 }
 
-function openElement(elementId, childrenNames){
+function openElement(elementId, childrenNames) {
     var childElement = $("#"+elementId+"_children");
     childElement.show();
     if (!childElement.hasClass("populated")) {
         var element = window.testdata.find(elementId);
-        element.callWhenChildrenReady( drawCallback(element, childElement, childrenNames) );
+        element.callWhenChildrenReady(drawCallback(element, childElement, childrenNames));
         childElement.addClass("populated");
     }
     $('#'+elementId+'_foldlink').show();
@@ -29,7 +29,7 @@ function openElement(elementId, childrenNames){
 }
 
 function drawCallback(element, childElement, childrenNames) {
-    return function() {
+    return function () {
         $.map(childrenNames, function (childName) {
             addElements(element[childName + 's'](), childName + 'Template', childElement);
         });
@@ -52,7 +52,7 @@ function expandRecursively(){
     }
     expandElement(element);
     element.callWhenChildrenReady( function () {
-        var children = element.children()
+        var children = element.children();
         for (var i = children.length-1; i >= 0; i--) {
             if (window.expandDecider(children[i]))
                 window.elementsToExpand.push(children[i]);
