@@ -107,7 +107,7 @@ window.testdata = function () {
             test.populateKeywords(Populator(element[6], strings, childCreator(test, createKeyword)));
         } else {
             test.childFileName = 'log-'+element[6]+'.js';
-            test.populateKeywords(otherStructurePopulator(element[6], childCreator(test, createKeyword)));
+            test.populateKeywords(SplitLogPopulator(element[6], childCreator(test, createKeyword)));
         }
         return test;
     }
@@ -181,7 +181,7 @@ window.testdata = function () {
         };
     }
 
-    function otherStructurePopulator(structureIndex, creator) {
+    function SplitLogPopulator(structureIndex, creator) {
         return {
             numberOfItems: function () {
                 return window['keywords'+structureIndex].length;
