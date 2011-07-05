@@ -120,6 +120,7 @@ class LogBuilder(_HTMLFileBuilder):
             writer = _SeparatingWriter(outfile, '')
             writer.dump_json('window.keywords%d = ' % index, keywords)
             writer.dump_json('window.strings%d = ' % index, strings)
+            writer.write('window.model.notifyFileLoaded("%s");\n' % os.path.basename(path))
 
     def _get_settings(self):
         return {
