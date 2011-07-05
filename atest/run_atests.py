@@ -50,6 +50,7 @@ ARGUMENTS = ' '.join('''
 --output output.xml
 --report report.html
 --log log.html
+--splitlog
 --escape space:SP
 --escape star:STAR
 --escape paren1:PAR1
