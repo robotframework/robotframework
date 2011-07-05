@@ -10,10 +10,6 @@ window.testdata = function () {
     };
     var _statistics = null;
 
-    function get(id) {
-        return store.get(id)
-    }
-
     function addElement(elem) {
         elem.id = uniqueId();
         elementsById[elem.id] = elem;
@@ -40,15 +36,15 @@ window.testdata = function () {
         return [timestamp(startMillis), timestamp(startMillis + elapsed), elapsed];
     }
 
-    function message(element) {
-        return addElement(model.Message(LEVEL[get(element[1])], timestamp(element[0]),
-                                        get(element[2]), get(element[3])));
+    function message(element, strings) {
+        return addElement(model.Message(LEVEL[strings.get(element[1])], timestamp(element[0]),
+                                        strings.get(element[2]), strings.get(element[3])));
     }
 
-    function parseStatus(stats, parentSuiteTeardownFailed) {
+    function parseStatus(stats, strings, parentSuiteTeardownFailed) {
         if (parentSuiteTeardownFailed)
             return model.FAIL;
-        return {'P': model.PASS, 'F': model.FAIL, 'N': model.NOT_RUN}[get(stats[0])];
+        return {'P': model.PASS, 'F': model.FAIL, 'N': model.NOT_RUN}[strings.get(stats[0])];
     }
 
     function last(items) {
@@ -56,63 +52,69 @@ window.testdata = function () {
     }
 
     function childCreator(parent, childType) {
-        return function (elem, index) {
-            return addElement(childType(parent, elem, index));
+        return function (elem, strings, index) {
+            return addElement(childType(parent, elem, strings, index));
         };
     }
 
-    function createKeyword(parent, element, index) {
+    function createKeyword(parent, element, strings, index) {
         var kw = model.Keyword({
-            type: KEYWORD_TYPE[get(element[0])],
-            name: get(element[1]),
-            timeout: get(element[2]),
-            args: get(element[4]),
+            type: KEYWORD_TYPE[strings.get(element[0])],
+            name: strings.get(element[1]),
+            timeout: strings.get(element[2]),
+            args: strings.get(element[4]),
             doc: function () {
-                var val = get(element[3]);
+                var val = strings.get(element[3]);
                 this.doc = function() {return val;}
                 return val;
             },
-            status: parseStatus(element[5]),
+            status: parseStatus(element[5], strings),
             times: model.Times(times(element[5])),
             parent: parent,
             index: index
         });
-        kw.populateKeywords(Populator(element[6], childCreator(kw, createKeyword)));
-        kw.populateMessages(Populator(element[7], message));
+        kw.populateKeywords(Populator(element[6], strings, childCreator(kw, createKeyword)));
+        kw.populateMessages(Populator(element[7], strings, message));
         return kw;
     }
 
-    function tags(taglist) {
-        return util.map(taglist, get);
+    function tags(taglist, strings) {
+        return util.map(taglist, strings.get);
     }
 
-    function createTest(suite, element) {
+    function createTest(suite, element, strings) {
         var statusElement = element[5];
         var test = model.Test({
             parent: suite,
-            name: get(element[0]),
+            name: strings.get(element[0]),
             doc: function () {
-                var val = get(element[3]);
+                var val = strings.get(element[3]);
                 this.doc = function() {return val;}
                 return val;
             },
-            timeout: get(element[1]),
-            isCritical: (get(element[2]) == "Y"),
-            status: parseStatus(statusElement, suite.hasTeardownFailure()),
+            timeout: strings.get(element[1]),
+            isCritical: (strings.get(element[2]) == "Y"),
+            status: parseStatus(statusElement, strings, suite.hasTeardownFailure()),
             message:  function () {
-                var val = createMessage(statusElement, suite.hasTeardownFailure());
+                var val = createMessage(statusElement, strings, suite.hasTeardownFailure());
                 this.message = function() {return val;}
                 return val;
             },
             times: model.Times(times(statusElement)),
-            tags: tags(element[4])
+            tags: tags(element[4], strings),
+            isChildrenLoaded: typeof(element[6]) !== 'number'
         });
-        test.populateKeywords(Populator(element[6], childCreator(test, createKeyword)));
+        if (test.isChildrenLoaded)
+            test.populateKeywords(Populator(element[6], strings, childCreator(test, createKeyword)));
+        else {
+            test.childFileName = 'log-'+element[6]+'.js';
+            test.populateKeywords(otherStructurePopulator(element[6], childCreator(test, createKeyword)));
+        }
         return test;
     }
 
-    function createMessage(statusElement, hasSuiteTeardownFailed) {
-        var message = statusElement.length == 4 ? get(statusElement[3]) : '';
+    function createMessage(statusElement, strings, hasSuiteTeardownFailed) {
+        var message = statusElement.length == 4 ? strings.get(statusElement[3]) : '';
         if (!hasSuiteTeardownFailed)
             return message;
         if (message)
@@ -120,38 +122,38 @@ window.testdata = function () {
         return 'Teardown of the parent suite failed.';
     }
 
-    function createSuite(parent, element) {
+    function createSuite(parent, element, strings) {
         var statusElement = element[4];
         var suite = model.Suite({
             parent: parent,
-            name: get(element[1]),
-            source: get(element[0]),
+            name: strings.get(element[1]),
+            source: strings.get(element[0]),
             doc: function () {
-                var val = get(element[2]);
+                var val = strings.get(element[2]);
                 this.doc = function() {return val;}
                 return val;
             },
-            status: parseStatus(statusElement, parent && parent.hasTeardownFailure()),
+            status: parseStatus(statusElement, strings, parent && parent.hasTeardownFailure()),
             parentSuiteTeardownFailed: parent && parent.hasTeardownFailure(),
             message: function () {
-                var val = createMessage(statusElement, parent && parent.hasTeardownFailure());
+                var val = createMessage(statusElement, strings, parent && parent.hasTeardownFailure());
                 this.message = function() {return val;}
                 return val;
             },
             times: model.Times(times(statusElement)),
             statistics: suiteStats(last(element)),
-            metadata: parseMetadata(element[3])
+            metadata: parseMetadata(element[3], strings)
         });
-        suite.populateKeywords(Populator(element[7], childCreator(suite, createKeyword)));
-        suite.populateTests(Populator(element[6], childCreator(suite, createTest)));
-        suite.populateSuites(Populator(element[5], childCreator(suite, createSuite)));
+        suite.populateKeywords(Populator(element[7], strings, childCreator(suite, createKeyword)));
+        suite.populateTests(Populator(element[6], strings, childCreator(suite, createTest)));
+        suite.populateSuites(Populator(element[5], strings, childCreator(suite, createSuite)));
         return suite;
     }
 
-    function parseMetadata(data) {
+    function parseMetadata(data, strings) {
         var metadata = [];
         for (var i=0; i<data.length; i+=2) {
-            metadata.push([get(data[i]), get(data[i+1])]);
+            metadata.push([strings.get(data[i]), strings.get(data[i+1])]);
         }
         return metadata;
     }
@@ -167,22 +169,34 @@ window.testdata = function () {
         };
     }
 
-    function Populator(items, creator) {
+    function Populator(items, strings, creator) {
         if (!items)
             return function () {};
         return {
-            numberOfItems: items.length,
+            numberOfItems: function() { return items.length; },
             creator: function (index) {
-                return creator(items[index], index);
+                return creator(items[index], strings, index);
             }
         };
+    }
+
+    function otherStructurePopulator(structureIndex, creator) {
+        return {
+            numberOfItems: function()  {
+                return window['keywords'+structureIndex].length;
+            },
+            creator: function (index) {
+                return creator(window['keywords'+structureIndex][index],
+                               window.getStringStore(window['strings'+structureIndex]), index);
+            }
+        }
     }
 
     function suite() {
         var elem = window.output.suite;
         if (elementsById[elem.id])
             return elem;
-        var main = addElement(createSuite(undefined, elem));
+        var main = addElement(createSuite(undefined, elem, window.getStringStore(window.output.strings)));
         window.output.suite = main;
         return main;
     }
@@ -282,7 +296,7 @@ window.testdata = function () {
         var iterator = new Object();
         iterator.counter = 0;
         iterator.next = function() {
-            return message(window.output.errors[iterator.counter++])
+            return message(window.output.errors[iterator.counter++], window.getStringStore(window.output.strings))
         };
         iterator.hasNext = function() {
             return iterator.counter < window.output.errors.length;
@@ -311,17 +325,16 @@ window.testdata = function () {
 
 }();
 
-window.store = (function () {
-
-    function getText(id) {
-        var text = window.output.strings[id];
+window.getStringStore = function(strings) {
+        function getText(id) {
+        var text = strings[id];
         if (!text)
             return ''
         if (text[0] == '*') {
             return text.substring(1)
         }
         var extracted = extract(text);
-        window.output.strings[id] = "*"+extracted;
+        strings[id] = "*"+extracted;
         return extracted;
     }
 
@@ -340,5 +353,4 @@ window.store = (function () {
     return {
         get: function (id) { return dispatch(id); }
     };
-
-})();
+}

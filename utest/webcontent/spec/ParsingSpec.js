@@ -11,29 +11,30 @@ function multiplyString(string, times) {
 describe("Text decoder", function () {
 
     it("should have empty string with id 0", function () {
-        window.output.strings = ["*"];
-        var empty = store.get(0);
+        var strings = window.getStringStore(["*"]);
+        var empty = strings.get(0);
         expect(empty).toEqual("");
     });
 
     it("should uncompress", function () {
-        window.output.strings = ["*", "eNorzk3MySmmLQEASKop9Q=="];
-        var decompressed = store.get(1);
+        var strings = window.getStringStore(["*", "eNorzk3MySmmLQEASKop9Q=="]);
+        var decompressed = strings.get(1);
         var expected = multiplyString("small", 20);
         expect(decompressed).toEqual(expected);
     });
 
     it("should uncompress and replace compressed in memory", function () {
-        window.output.strings = ["*", "eNorzk3MySmmLQEASKop9Q=="];
-        expect(window.output.strings[1]).toEqual("eNorzk3MySmmLQEASKop9Q==");
-        store.get(1);
+        var stringArray = ["*", "eNorzk3MySmmLQEASKop9Q=="];
+        var strings = window.getStringStore(stringArray);
+        expect(stringArray[1]).toEqual("eNorzk3MySmmLQEASKop9Q==");
+        strings.get(1);
         var expected = multiplyString("small", 20);
-        expect(window.output.strings[1]).toEqual("*"+expected);
+        expect(stringArray[1]).toEqual("*"+expected);
     });
 
     it("should handle plain text", function () {
-        window.output.strings = ["*", "*plain text"];
-        var actual = store.get(1);
+        var strings = window.getStringStore(["*", "*plain text"]);
+        var actual = strings.get(1);
         expect(actual).toEqual("plain text");
     });
 });

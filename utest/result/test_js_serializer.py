@@ -358,6 +358,20 @@ class TestTestSplittingJsSerializer(_JsSerializerTestBase):
   <status status="PASS" endtime="20110601 12:01:51.354" starttime="20110601 12:01:51.329"></status>
 </suite>"""
 
+    SUITE_XML_WITH_TWO_KEYWORDS = """
+<suite source="/tmp/supersimple.txt" name="Supersimple">
+  <test name="Test" timeout="">
+    <doc>doc</doc>
+    <kw type="kw" name="Keyword.Example" timeout="">
+      <status status="PASS" endtime="20110601 12:01:51.353" starttime="20110601 12:01:51.376"></status>
+    </kw>
+    <kw type="kw" name="Second keyword" timeout="">
+      <status status="PASS" endtime="20110601 12:01:51.353" starttime="20110601 12:01:51.376"></status>
+    </kw>
+    <status status="PASS" endtime="20110601 12:01:51.354" critical="yes" starttime="20110601 12:01:51.353"></status>
+  </test>
+  <status status="PASS" endtime="20110601 12:01:51.354" starttime="20110601 12:01:51.329"></status>
+</suite>"""
 
     def setUp(self):
         self._context = Context(split_tests=True)
@@ -372,9 +386,23 @@ class TestTestSplittingJsSerializer(_JsSerializerTestBase):
                            1
                          ]],
                          [],[1, 1, 1, 1]])
-        expected_data = ['*kw', '*Keyword.Example', '*',  ['*P', 0, -23], [], []]
+        expected_data = [['*kw', '*Keyword.Example', '*',  ['*P', 0, -23], [], []]]
         keywords, strings = self._context.split_results[0]
-        _assert_plain_suite_item(expected_data, keywords[0], strings)
+        _assert_plain_suite_item(expected_data, keywords, strings)
+
+    def test_split_several_keywords(self):
+        data_model = self._get_data_model(self.SUITE_XML_WITH_TWO_KEYWORDS)
+        assert_model(data_model,
+                     plain_suite=
+                     ['*/tmp/supersimple.txt', '*Supersimple',['*P', -47, 25],[],
+                         [['*Test', '*', '*Y', '*doc',['*P', -23, 1],
+                           1
+                         ]],
+                         [],[1, 1, 1, 1]])
+        expected_data = [['*kw', '*Keyword.Example', '*',  ['*P', 0, -23], [], []], ['*kw', '*Second keyword', '*',  ['*P', 0, -23], [], []]]
+        keywords, strings = self._context.split_results[0]
+        _assert_plain_suite_item(expected_data, keywords, strings)
+
 
 
 if __name__ == '__main__':

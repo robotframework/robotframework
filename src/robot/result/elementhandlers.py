@@ -362,6 +362,8 @@ class Context(object):
         self._kw_index.pop()
 
     def start_test(self, name):
+        if self._split_tests:
+            self._split_text_caches.append(TextCache())
         self._current_place.append(('test', name))
         self._kw_index.append(0)
 
@@ -375,7 +377,6 @@ class Context(object):
 
     def start_keyword(self):
         if self._split_tests and self._current_place[-1][0] == 'test':
-            self._split_text_caches.append(TextCache())
             self._current_texts = self._split_text_caches[-1]
         self._current_place.append(('keyword', self._kw_index[-1]))
         self._kw_index[-1] += 1

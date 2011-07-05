@@ -87,7 +87,10 @@ function addStatTable(tableName) {
 
 function renderStatTable(tableName, templateName, stats) {
     var tableId = "#" + tableName + "_stats";
-    $.tmpl(templateName , stats).appendTo($(tableId));
+    // if we pass a list to $.tmpl directly, it will cause a stack overflow on very large lists.
+    for(var i = 0; i < stats.length; i++) {
+        $.tmpl(templateName , stats[i]).appendTo($(tableId));
+    }
 }
 
 $.template("stat_columns",

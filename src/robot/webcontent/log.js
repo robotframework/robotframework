@@ -21,13 +21,19 @@ function openElement(elementId, childrenNames){
     childElement.show();
     if (!childElement.hasClass("populated")) {
         var element = window.testdata.find(elementId);
-        $.map(childrenNames, function (childName) {
-            addElements(element[childName + 's'](), childName + 'Template', childElement);
-        });
+        element.callWhenChildrenReady( drawCallback(element, childElement, childrenNames) );
         childElement.addClass("populated");
     }
     $('#'+elementId+'_foldlink').show();
     $('#'+elementId+'_unfoldlink').hide();
+}
+
+function drawCallback(element, childElement, childrenNames) {
+    return function() {
+        $.map(childrenNames, function (childName) {
+            addElements(element[childName + 's'](), childName + 'Template', childElement);
+        });
+    }
 }
 
 function closeElement(elementId) {
@@ -45,13 +51,15 @@ function expandRecursively(){
         return;
     }
     expandElement(element);
-    var children = element.children()
-    for (var i = children.length-1; i >= 0; i--) {
-        if (window.expandDecider(children[i]))
-            window.elementsToExpand.push(children[i]);
-    }
-    if (window.elementsToExpand.length)
-        setTimeout(expandRecursively, 0);
+    element.callWhenChildrenReady( function () {
+        var children = element.children()
+        for (var i = children.length-1; i >= 0; i--) {
+            if (window.expandDecider(children[i]))
+                window.elementsToExpand.push(children[i]);
+        }
+        if (window.elementsToExpand.length)
+            setTimeout(expandRecursively, 0);
+    });
 }
 
 function expandElement(element) {
