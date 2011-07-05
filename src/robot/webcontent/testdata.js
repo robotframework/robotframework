@@ -1,14 +1,12 @@
 window.testdata = function () {
 
     var elementsById = {};
-    var LEVEL = {I:'info', H:'info', T:'trace', W:'warn', E:'error', D:'debug', F:'fail'};
-    var KEYWORD_TYPE = {kw: 'KEYWORD',
-        setup:'SETUP',
-        teardown:'TEARDOWN',
-        forloop:'FOR',
-        foritem:'VAR'
-    };
+    var idCounter = 0;
     var _statistics = null;
+    var LEVELS = {T: 'trace', D: 'debug', I: 'info', H: 'info',
+                  W: 'warn', E: 'error', F: 'fail'};
+    var KEYWORD_TYPE = {kw: 'KEYWORD', setup: 'SETUP', teardown: 'TEARDOWN',
+                        forloop: 'FOR', foritem: 'VAR'};
 
     function addElement(elem) {
         elem.id = uniqueId();
@@ -16,11 +14,9 @@ window.testdata = function () {
         return elem;
     }
 
-    var idCounter=0;
-
     function uniqueId() {
         idCounter++;
-        return "elementId_"+idCounter;
+        return "elementId_" + idCounter;
     }
 
     function timestamp(millis) {
@@ -30,21 +26,24 @@ window.testdata = function () {
     function times(stats) {
         var startMillis = stats[1];
         var elapsed = stats[2];
-        if(startMillis == null){
+        if (startMillis == null)
             return [null, null, elapsed];
-        }
         return [timestamp(startMillis), timestamp(startMillis + elapsed), elapsed];
     }
 
     function message(element, strings) {
-        return addElement(model.Message(LEVEL[strings.get(element[1])], timestamp(element[0]),
-                                        strings.get(element[2]), strings.get(element[3])));
+        return addElement(model.Message(LEVELS[strings.get(element[1])],
+                                        timestamp(element[0]),
+                                        strings.get(element[2]),
+                                        strings.get(element[3])));
     }
 
     function parseStatus(stats, strings, parentSuiteTeardownFailed) {
         if (parentSuiteTeardownFailed)
             return model.FAIL;
-        return {'P': model.PASS, 'F': model.FAIL, 'N': model.NOT_RUN}[strings.get(stats[0])];
+        return {'P': model.PASS,
+                'F': model.FAIL,
+                'N': model.NOT_RUN}[strings.get(stats[0])];
     }
 
     function last(items) {
@@ -64,9 +63,9 @@ window.testdata = function () {
             timeout: strings.get(element[2]),
             args: strings.get(element[4]),
             doc: function () {
-                var val = strings.get(element[3]);
-                this.doc = function() {return val;}
-                return val;
+                var doc = strings.get(element[3]);
+                this.doc = function () { return doc; };
+                return doc;
             },
             status: parseStatus(element[5], strings),
             times: model.Times(times(element[5])),
@@ -88,25 +87,25 @@ window.testdata = function () {
             parent: suite,
             name: strings.get(element[0]),
             doc: function () {
-                var val = strings.get(element[3]);
-                this.doc = function() {return val;}
-                return val;
+                var doc = strings.get(element[3]);
+                this.doc = function () { return doc; };
+                return doc;
             },
             timeout: strings.get(element[1]),
             isCritical: (strings.get(element[2]) == "Y"),
             status: parseStatus(statusElement, strings, suite.hasTeardownFailure()),
             message:  function () {
-                var val = createMessage(statusElement, strings, suite.hasTeardownFailure());
-                this.message = function() {return val;}
-                return val;
+                var msg = createMessage(statusElement, strings, suite.hasTeardownFailure());
+                this.message = function () { return msg; };
+                return msg;
             },
             times: model.Times(times(statusElement)),
             tags: tags(element[4], strings),
             isChildrenLoaded: typeof(element[6]) !== 'number'
         });
-        if (test.isChildrenLoaded)
+        if (test.isChildrenLoaded) {
             test.populateKeywords(Populator(element[6], strings, childCreator(test, createKeyword)));
-        else {
+        } else {
             test.childFileName = 'log-'+element[6]+'.js';
             test.populateKeywords(otherStructurePopulator(element[6], childCreator(test, createKeyword)));
         }
@@ -129,16 +128,16 @@ window.testdata = function () {
             name: strings.get(element[1]),
             source: strings.get(element[0]),
             doc: function () {
-                var val = strings.get(element[2]);
-                this.doc = function() {return val;}
-                return val;
+                var doc = strings.get(element[2]);
+                this.doc = function () { return doc; };
+                return doc;
             },
             status: parseStatus(statusElement, strings, parent && parent.hasTeardownFailure()),
             parentSuiteTeardownFailed: parent && parent.hasTeardownFailure(),
             message: function () {
-                var val = createMessage(statusElement, strings, parent && parent.hasTeardownFailure());
-                this.message = function() {return val;}
-                return val;
+                var msg = createMessage(statusElement, strings, parent && parent.hasTeardownFailure());
+                this.message = function () { return msg; };
+                return msg;
             },
             times: model.Times(times(statusElement)),
             statistics: suiteStats(last(element)),
@@ -173,7 +172,9 @@ window.testdata = function () {
         if (!items)
             return function () {};
         return {
-            numberOfItems: function() { return items.length; },
+            numberOfItems: function () {
+                return items.length;
+            },
             creator: function (index) {
                 return creator(items[index], strings, index);
             }
@@ -182,14 +183,15 @@ window.testdata = function () {
 
     function otherStructurePopulator(structureIndex, creator) {
         return {
-            numberOfItems: function()  {
+            numberOfItems: function () {
                 return window['keywords'+structureIndex].length;
             },
             creator: function (index) {
                 return creator(window['keywords'+structureIndex][index],
-                               window.getStringStore(window['strings'+structureIndex]), index);
+                               window.getStringStore(window['strings'+structureIndex]),
+                               index);
             }
-        }
+        };
     }
 
     function suite() {
@@ -225,7 +227,7 @@ window.testdata = function () {
     }
 
     function keywordPathTo(fullName, current, result) {
-        if (fullName == "") return result;
+        if (!fullName) return result;
         var keywords = current.keywords();
         for (var i = 0; i < keywords.length; i++) {
             var kw = keywords[i];
@@ -295,12 +297,13 @@ window.testdata = function () {
     function errors() {
         var iterator = new Object();
         iterator.counter = 0;
-        iterator.next = function() {
-            return message(window.output.errors[iterator.counter++], window.getStringStore(window.output.strings))
+        iterator.next = function () {
+            return message(window.output.errors[iterator.counter++],
+                           window.getStringStore(window.output.strings));
         };
-        iterator.hasNext = function() {
+        iterator.hasNext = function () {
             return iterator.counter < window.output.errors.length;
-        }
+        };
         return iterator;
     }
 
@@ -309,7 +312,7 @@ window.testdata = function () {
             var statData = window.output.stats;
             _statistics = stats.Statistics(statData[0], statData[1], statData[2]);
         }
-        return _statistics
+        return _statistics;
     }
 
     return {
@@ -325,14 +328,15 @@ window.testdata = function () {
 
 }();
 
-window.getStringStore = function(strings) {
-        function getText(id) {
+
+window.getStringStore = function (strings) {
+
+    function getText(id) {
         var text = strings[id];
         if (!text)
-            return ''
-        if (text[0] == '*') {
-            return text.substring(1)
-        }
+            return '';
+        if (text[0] == '*')
+            return text.substring(1);
         var extracted = extract(text);
         strings[id] = "*"+extracted;
         return extracted;
