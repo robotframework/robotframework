@@ -188,7 +188,7 @@ window.testdata = function () {
             },
             creator: function (index) {
                 return creator(window['keywords'+structureIndex][index],
-                               window.getStringStore(window['strings'+structureIndex]),
+                               getStringStore(window['strings'+structureIndex]),
                                index);
             }
         };
@@ -198,7 +198,7 @@ window.testdata = function () {
         var elem = window.output.suite;
         if (elementsById[elem.id])
             return elem;
-        var main = addElement(createSuite(undefined, elem, window.getStringStore(window.output.strings)));
+        var main = addElement(createSuite(undefined, elem, getStringStore(window.output.strings)));
         window.output.suite = main;
         return main;
     }
@@ -299,7 +299,7 @@ window.testdata = function () {
         iterator.counter = 0;
         iterator.next = function () {
             return message(window.output.errors[iterator.counter++],
-                           window.getStringStore(window.output.strings));
+                           getStringStore(window.output.strings));
         };
         iterator.hasNext = function () {
             return iterator.counter < window.output.errors.length;
@@ -315,6 +315,34 @@ window.testdata = function () {
         return _statistics;
     }
 
+    function getStringStore(strings) {
+
+        function getText(id) {
+            var text = strings[id];
+            if (!text)
+                return '';
+            if (text[0] == '*')
+                return text.substring(1);
+            var extracted = extract(text);
+            strings[id] = "*"+extracted;
+            return extracted;
+        }
+
+        function extract(text) {
+            var decoded = JXG.Util.Base64.decodeAsArray(text);
+            var extracted = (new JXG.Util.Unzip(decoded)).unzip()[0][0];
+            return JXG.Util.utf8Decode(extracted);
+        }
+
+        function get(id) {
+            if (id == undefined) return undefined;
+            if (id == null) return null;
+            return getText(id);
+        }
+
+        return {get: get};
+    }
+
     return {
         suite: suite,
         errors: errors,
@@ -327,34 +355,3 @@ window.testdata = function () {
     };
 
 }();
-
-
-window.getStringStore = function (strings) {
-
-    function getText(id) {
-        var text = strings[id];
-        if (!text)
-            return '';
-        if (text[0] == '*')
-            return text.substring(1);
-        var extracted = extract(text);
-        strings[id] = "*"+extracted;
-        return extracted;
-    }
-
-    function extract(text) {
-        var decoded = JXG.Util.Base64.decodeAsArray(text);
-        var extracted = (new JXG.Util.Unzip(decoded)).unzip()[0][0];
-        return JXG.Util.utf8Decode(extracted);
-    }
-
-    function dispatch(id) {
-        if (id == undefined) return undefined;
-        if (id == null) return null;
-        return getText(id);
-    }
-
-    return {
-        get: function (id) { return dispatch(id); }
-    };
-}
