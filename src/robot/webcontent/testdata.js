@@ -169,8 +169,6 @@ window.testdata = function () {
     }
 
     function Populator(items, strings, creator) {
-        if (!items)
-            return function () {};
         return {
             numberOfItems: function () {
                 return items.length;
