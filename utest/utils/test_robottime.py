@@ -278,15 +278,13 @@ class TestTime(unittest.TestCase):
             assert_raises_with_msg(ValueError, msg, parse_time, value)
 
     def test_parse_time_and_get_time_must_round_seconds_down(self):
-        for i in range(5):
-            secs_before = int(time.time()) % 60
-            get_time_result = get_time()[-2:]
-            parse_time_result = parse_time('NOW') % 60
-            secs_after = int(time.time()) % 60
-            if secs_after == secs_before: # Check that second has not passed during the measurements
-                assert_equal(get_time_result, '%02d' % secs_before)
-                assert_equal(parse_time_result % 60, secs_after)
-            time.sleep(0.1)
+        secs_before = int(time.time()) % 60
+        get_time_result = get_time()[-2:]
+        parse_time_result = parse_time('NOW') % 60
+        secs_after = int(time.time()) % 60
+        if secs_after == secs_before: # Check that second has not passed during the measurements
+            assert_equal(get_time_result, '%02d' % secs_before)
+            assert_equal(parse_time_result % 60, secs_after)
 
 if __name__ == "__main__":
     unittest.main()
