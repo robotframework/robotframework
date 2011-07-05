@@ -56,9 +56,8 @@ function addErrors() {
 }
 
 function drawErrorsRecursively(){
-    if (!window.errorsToRender.hasNext()) {
+    if (!window.errorsToRender.hasNext())
         return;
-    }
     var elements = popFromIterator(window.errorsToRender, 10);
     $.tmpl('errorTemplate', elements).appendTo($('#error_table'));
     if (window.errorsToRender.hasNext())
