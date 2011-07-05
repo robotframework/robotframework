@@ -63,8 +63,6 @@ function drawErrorsRecursively(){
     $.tmpl('errorTemplate', elements).appendTo($('#error_table'));
     if (window.errorsToRender.hasNext())
         setTimeout(drawErrorsRecursively, 0);
-    else
-        window.location.hash = window.location.hash.substring(1);
 }
 
 function popFromIterator(iterator, upTo) {
