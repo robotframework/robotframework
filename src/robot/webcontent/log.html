@@ -40,7 +40,7 @@ $(document).ready(function(){
     addTestExecutionLog(topsuite);
     if (window.location.hash) {
         makeElementVisible(window.location.hash.substring(1));
-        window.location.hash = window.location.hash.substring(1);
+        scrollToHash();
     } else {
         expandSuite(topsuite);
     }
@@ -62,6 +62,13 @@ function drawErrorsRecursively(){
     $.tmpl('errorTemplate', elements).appendTo($('#error_table'));
     if (window.errorsToRender.hasNext())
         setTimeout(drawErrorsRecursively, 0);
+    else
+        scrollToHash();
+}
+
+function scrollToHash() {
+    if (window.location.hash)
+        window.location.hash = window.location.hash.substring(1);
 }
 
 function popFromIterator(iterator, upTo) {
