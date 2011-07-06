@@ -131,7 +131,7 @@ function addTestExecutionLog(main) {
   <tr>
     <td class="col_stat_name">
       <div class="stat_name">
-        <a onclick="makeElementVisible('suite_${label}')" href="#suite_${label}" title="${label}"><span class="parent_name">${parentName}</span>${name}</a>
+        <a onclick="makeElementVisible('suite_${label}')" href="#suite_${label}" title="${label}"><span class="parent_name">${formatParentName}</span>${name}</a>
       </div>
     </td>
     {{tmpl($data) 'stat_columns'}}
