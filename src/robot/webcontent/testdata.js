@@ -205,10 +205,12 @@ window.testdata = function () {
         return elementsById[id];
     }
 
-    function pathToKeyword(fullName) {
+    function findPathToKeyword(fullName, callback) {
         var root = suite();
-        if (fullName.indexOf(root.fullName + ".") != 0) return [];
-        return keywordPathTo(fullName + ".", root, [root.id]);
+        if (fullName.indexOf(root.fullName + ".") != 0)
+            callback([]);
+        else
+            findKeywordPathTo(fullName + ".", root, [root.id], callback);
     }
 
     function pathToTest(fullName) {
@@ -224,33 +226,42 @@ window.testdata = function () {
         return suitePathTo(fullName, root, [root.id]);
     }
 
-    function keywordPathTo(fullName, current, result) {
-        if (!fullName) return result;
-        var keywords = current.keywords();
-        for (var i = 0; i < keywords.length; i++) {
-            var kw = keywords[i];
-            if (fullName.indexOf(kw.path + ".") == 0) {
-                result.push(kw.id);
-                if (fullName == kw.path + ".")
-                    return result;
-                return keywordPathTo(fullName, kw, result);
-            }
-        }
-        var tests = current.tests();
-        for (var i = 0; i < tests.length; i++) {
-            var test = tests[i];
-            if (fullName.indexOf(test.fullName + ".") == 0) {
-                result.push(test.id);
-                return keywordPathTo(fullName, test, result);
-            }
-        }
-        var suites = current.suites();
-        for (var i = 0; i < suites.length; i++) {
-            var suite = suites[i];
-            if (fullName.indexOf(suite.fullName + ".") == 0) {
-                result.push(suite.id);
-                return keywordPathTo(fullName, suite, result);
-            }
+    function findKeywordPathTo(fullName, current, result, callback) {
+        if (!fullName) {
+            callback(result);
+        }else{
+            current.callWhenChildrenReady(function () {
+                var keywords = current.keywords();
+                for (var i = 0; i < keywords.length; i++) {
+                    var kw = keywords[i];
+                    if (fullName.indexOf(kw.path + ".") == 0) {
+                        result.push(kw.id);
+                        if (fullName == kw.path + ".")
+                            callback(result);
+                        else
+                            findKeywordPathTo(fullName, kw, result, callback);
+                        return;
+                    }
+                }
+                var tests = current.tests();
+                for (var i = 0; i < tests.length; i++) {
+                    var test = tests[i];
+                    if (fullName.indexOf(test.fullName + ".") == 0) {
+                        result.push(test.id);
+                        findKeywordPathTo(fullName, test, result, callback);
+                        return;
+                    }
+                }
+                var suites = current.suites();
+                for (var i = 0; i < suites.length; i++) {
+                    var suite = suites[i];
+                    if (fullName.indexOf(suite.fullName + ".") == 0) {
+                        result.push(suite.id);
+                        findKeywordPathTo(fullName, suite, result, callback);
+                        return;
+                    }
+                }
+            });
         }
     }
 
@@ -347,7 +358,7 @@ window.testdata = function () {
         find: findById,
         pathToTest: pathToTest,
         pathToSuite: pathToSuite,
-        pathToKeyword: pathToKeyword,
+        findPathToKeyword: findPathToKeyword,
         generated: generated,
         statistics: statistics,
         getStringStore: getStringStore
