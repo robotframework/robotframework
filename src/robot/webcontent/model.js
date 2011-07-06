@@ -1,4 +1,4 @@
-window.model = function () {
+window.model = (function () {
 
     var STATUS = {
         pass: "PASS",
@@ -295,7 +295,7 @@ window.model = function () {
         shortTime: shortTime,
         notifyFileLoaded: notifyFileLoaded
     };
-}();
+}());
 
 window.stats = (function () {
 
