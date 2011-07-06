@@ -12,6 +12,7 @@ class SuiteMock:
 
     def __init__(self, name='My Name', crit_tags=None):
         self.name = name
+        self.id = 's0'
         self.critical = _Critical(crit_tags)
         self.suites = []
         self.tests = []
