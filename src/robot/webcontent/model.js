@@ -13,10 +13,9 @@ window.model = (function () {
     };
 
     function Suite(data) {
-        var suite = createModelObject(data);
+        var suite = createModelObject(data, "s");
         suite.source = data.source;
         suite.fullName = data.parent ? data.parent.fullName + "." + data.name : data.name;
-        suite.id2 = data.parent ? data.parent.id2 + ".s" + data.index : "s0";
         setStats(suite, data.statistics);
         suite.metadata = data.metadata;
         suite.populateKeywords = createIterablePopulator("Keyword");
@@ -111,20 +110,20 @@ window.model = (function () {
         }
     }
 
-    function createModelObject(data) {
+    function createModelObject(data, symbol) {
         return {
             name: data.name,
             doc: data.doc,
             status: data.status,
             times: data.times,
+            id2: data.parent ? data.parent.id2 + "." + symbol + data.index : symbol + "0",
             callWhenChildrenReady: function (callable) { callable(); }
         };
     }
 
     function Test(data) {
-        var test = createModelObject(data);
+        var test = createModelObject(data, "t");
         test.fullName = data.parent.fullName + "." + test.name;
-        test.id2 = data.parent.id2 + ".t" + data.index;
         test.formatParentName = function () { return util.formatParentName(test); };
         test.timeout = data.timeout;
         test.populateKeywords = createIterablePopulator("Keyword");
@@ -158,12 +157,11 @@ window.model = (function () {
     }
 
     function Keyword(data) {
-        var kw = createModelObject(data);
+        var kw = createModelObject(data, "k");
         kw.type = data.type;
         var parent = data.parent
         var parentPath = (parent.path === undefined) ? parent.fullName : parent.path;
         kw.path = parentPath + "." + data.index;
-        kw.id2 = parent.id2 + ".k"+data.index;
         kw.arguments = data.args;
         kw.timeout = data.timeout;
         kw.populateKeywords = createIterablePopulator("Keyword");
