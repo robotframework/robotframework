@@ -243,26 +243,22 @@ window.testdata = function () {
                         return;
                     }
                 }
-                var tests = current.tests();
-                for (var i = 0; i < tests.length; i++) {
-                    var test = tests[i];
-                    if (fullName.indexOf(test.fullName + ".") == 0) {
-                        result.push(test.id);
-                        findKeywordPathTo(fullName, test, result, callback);
-                        return;
-                    }
-                }
-                var suites = current.suites();
-                for (var i = 0; i < suites.length; i++) {
-                    var suite = suites[i];
-                    if (fullName.indexOf(suite.fullName + ".") == 0) {
-                        result.push(suite.id);
-                        findKeywordPathTo(fullName, suite, result, callback);
-                        return;
-                    }
-                }
+                if(!findNextKeywordPathPart(fullName, current.tests(), result, callback))
+                    findNextKeywordPathPart(fullName, current.suites(), result, callback);
             });
         }
+    }
+
+    function findNextKeywordPathPart(fullName, items, result, callback) {
+        for (var i = 0; i < items.length; i++) {
+            var item = items[i];
+            if (fullName.indexOf(item.fullName + ".") == 0) {
+                result.push(item.id);
+                findKeywordPathTo(fullName, item, result, callback);
+                return true;
+            }
+        }
+        return false;
     }
 
     function testPathTo(fullName, currentSuite, result) {
