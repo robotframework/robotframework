@@ -9,7 +9,8 @@ window.testdata = function () {
                         forloop: 'FOR', foritem: 'VAR'};
 
     function addElement(elem) {
-        elem.id = uniqueId();
+        if(elem.id == undefined)
+            elem.id = uniqueId();
         elementsById[elem.id] = elem;
         return elem;
     }
@@ -217,7 +218,7 @@ window.testdata = function () {
 
     function findPathTo(pathId, callback) {
         var root = suite();
-        var ids = pathId.split(".");
+        var ids = pathId.split("_");
         ids.shift();
         findPathWithId(ids, root, [root.id], callback);
     }

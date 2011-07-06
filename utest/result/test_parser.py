@@ -39,7 +39,7 @@ class TestParser(unittest.TestCase):
     def test_link_creation(self):
         key = [4,'W',6]
         self._create_data_and_link(key)
-        self.assertEqual(self._context.link_to(key), 's0.s0.t0.k0')
+        self.assertEqual(self._context.link_to(key), 's0_s0_t0_k0')
 
     def _create_data_and_link(self, key):
         self._context.start_suite('Foo')
@@ -56,8 +56,8 @@ class TestParser(unittest.TestCase):
         key1 = [1,'W',2]
         key2 = [2,'W',5]
         self._create_data_for_links(key1, key2)
-        self.assertEqual(self._context.link_to(key1), 's0.k0')
-        self.assertEqual(self._context.link_to(key2), 's0.t0.k0.k1')
+        self.assertEqual(self._context.link_to(key1), 's0_k0')
+        self.assertEqual(self._context.link_to(key2), 's0_t0_k0_k1')
 
     def _create_data_for_links(self, key1, key2):
         self._context.start_suite('Bar')
@@ -73,7 +73,7 @@ class TestParser(unittest.TestCase):
     def test_link_to_subkeyword(self):
         key = [1, 'W', 542]
         self._create_data_for_subkeyword(key)
-        self.assertEqual(self._context.link_to(key), 's0.t0.k2.k1')
+        self.assertEqual(self._context.link_to(key), 's0_t0_k2_k1')
 
     def _create_data_for_subkeyword(self, key):
         self._context.start_suite('Boo') #suite_Boo
@@ -94,8 +94,8 @@ class TestParser(unittest.TestCase):
         pkey = [5, 'W', 321]
         skey = [4, 'W', 3214]
         self._create_data_for_suite_teardown_links(pkey, skey)
-        self.assertEqual(self._context.link_to(skey),'s0.s0.k0')
-        self.assertEqual(self._context.link_to(pkey), 's0.k1')
+        self.assertEqual(self._context.link_to(skey),'s0_s0_k0')
+        self.assertEqual(self._context.link_to(pkey), 's0_k1')
 
     def _create_data_for_suite_teardown_links(self, pkey, skey):
         self._context.start_suite('Suit')

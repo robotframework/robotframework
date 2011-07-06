@@ -402,7 +402,7 @@ class Context(object):
             self._current_texts = self._main_text_cache
 
     def create_link_to_current_location(self, key):
-        self._links[tuple(key)] = ".".join(self._ids)
+        self._links[tuple(key)] = "_".join(self._ids)
 
     def link_to(self, key):
         return self._links[tuple(key)]

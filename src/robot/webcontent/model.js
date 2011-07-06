@@ -116,7 +116,7 @@ window.model = (function () {
             doc: data.doc,
             status: data.status,
             times: data.times,
-            id2: data.parent ? data.parent.id2 + "." + symbol + data.index : symbol + "0",
+            id: data.parent ? data.parent.id + "_" + symbol + data.index : symbol + "0",
             callWhenChildrenReady: function (callable) { callable(); }
         };
     }
@@ -148,7 +148,6 @@ window.model = (function () {
         test.children = function () {
             if (test.isChildrenLoaded)
                 return test.keywords();
-
         };
         test.isCritical = data.isCritical;
         test.tags = data.tags;
