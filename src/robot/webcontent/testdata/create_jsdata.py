@@ -1,13 +1,18 @@
 #!/usr/bin/env python
 
-import os
+from os.path import abspath, dirname, join
+import sys
+
+BASEDIR = dirname(abspath(__file__))
+TESTDATA = join(BASEDIR, 'dir.suite')
+OUTPUT = join(BASEDIR, 'output.xml')
+TARGET = join(BASEDIR, 'data.js')
+
+sys.path.insert(0, join(BASEDIR, '..', '..', '..'))
+
 import robot
 from robot.result.jsparser import create_datamodel_from
 
-BASEDIR = os.path.dirname(__file__)
-TESTDATA = os.path.join(BASEDIR, 'dir.suite')
-OUTPUT = os.path.join(BASEDIR, 'output.xml')
-TARGET = os.path.join(BASEDIR, 'data.js')
 
 def run_robot(outputdirectory, testdata):
     robot.run(testdata, log='NONE', report='NONE',
