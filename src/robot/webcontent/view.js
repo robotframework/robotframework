@@ -71,15 +71,15 @@ function addStatistics() {
         '<table class="statistics" id="suite_stats">' +
         '<tr><th class="col_stat_name">Statistics by Suite</th>' + statHeaders + '</tr>' +
         '</table>';
-    $(statTable).appendTo('#statistics_container')
+    $(statTable).appendTo('#statistics_container');
     $.map(['total', 'tag', 'suite'], addStatTable);
 }
 
 function addStatTable(tableName) {
     var stats = window.testdata.statistics()[tableName];
-    if (tableName == 'tag' && stats.length == 0)
+    if (tableName == 'tag' && stats.length == 0) {
        renderStatTable(tableName, 'no_tags_row');
-    else {
+    } else {
         var templateName = tableName + 'StatisticsRowTemplate';
         renderStatTable(tableName, templateName, stats);
     }
@@ -87,8 +87,8 @@ function addStatTable(tableName) {
 
 function renderStatTable(tableName, templateName, stats) {
     var tableId = "#" + tableName + "_stats";
-    // if we pass a list to $.tmpl directly, it will cause a stack overflow on very large lists.
-    for(var i = 0; i < stats.length; i++) {
+    // Need explicit for loop because $.tmpl() does not handle very large lists
+    for (var i = 0; i < stats.length; i++) {
         $.tmpl(templateName , stats[i]).appendTo($(tableId));
     }
 }
