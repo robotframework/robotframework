@@ -133,7 +133,7 @@ window.model = (function () {
             if (!test.isChildrenLoaded) {
                 callables.push(callable);
                 if (callables.length == 1) {
-                    loadTestKeywordsFile(test.childFileName, function () {
+                    window.fileLoading.load(test.childFileName, function () {
                         test.isChildrenLoaded = true;
                         for (var i = 0; i < callables.length; i++) {
                             callables[i]();
@@ -153,22 +153,6 @@ window.model = (function () {
         test.tags = data.tags;
         test.message = data.message;
         return test;
-    }
-
-    // TODO: Move file loading related code to own module
-
-    var fileLoadingCallbacks = {};
-
-    function loadTestKeywordsFile(filename, callback) {
-        fileLoadingCallbacks[filename] = callback;
-        var script = document.createElement('script');
-        script.type = 'text/javascript';
-        script.src = filename;
-        document.getElementsByTagName("head")[0].appendChild(script);
-    }
-
-    function notifyFileLoaded(filename) {
-        fileLoadingCallbacks[filename]();
     }
 
     function Keyword(data) {
@@ -292,8 +276,7 @@ window.model = (function () {
         formatElapsed: formatElapsed,
         containsTag: containsTag,  // Exposed for tests
         containsTagPattern: containsTagPattern,  // Exposed for tests
-        shortTime: shortTime,
-        notifyFileLoaded: notifyFileLoaded
+        shortTime: shortTime
     };
 }());
 
