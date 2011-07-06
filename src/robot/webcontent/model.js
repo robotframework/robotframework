@@ -16,6 +16,7 @@ window.model = (function () {
         var suite = createModelObject(data);
         suite.source = data.source;
         suite.fullName = data.parent ? data.parent.fullName + "." + data.name : data.name;
+        suite.id2 = data.parent ? data.parent.id2 + ".s" + data.index : "s0";
         setStats(suite, data.statistics);
         suite.metadata = data.metadata;
         suite.populateKeywords = createIterablePopulator("Keyword");
@@ -123,6 +124,7 @@ window.model = (function () {
     function Test(data) {
         var test = createModelObject(data);
         test.fullName = data.parent.fullName + "." + test.name;
+        test.id2 = data.parent.id2 + ".t" + data.index;
         test.formatParentName = function () { return util.formatParentName(test); };
         test.timeout = data.timeout;
         test.populateKeywords = createIterablePopulator("Keyword");
@@ -161,6 +163,7 @@ window.model = (function () {
         var parent = data.parent
         var parentPath = (parent.path === undefined) ? parent.fullName : parent.path;
         kw.path = parentPath + "." + data.index;
+        kw.id2 = parent.id2 + ".k"+data.index;
         kw.arguments = data.args;
         kw.timeout = data.timeout;
         kw.populateKeywords = createIterablePopulator("Keyword");

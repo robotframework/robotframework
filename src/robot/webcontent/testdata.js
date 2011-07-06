@@ -81,11 +81,12 @@ window.testdata = function () {
         return util.map(taglist, strings.get);
     }
 
-    function createTest(suite, element, strings) {
+    function createTest(suite, element, strings, index) {
         var statusElement = element[5];
         var test = model.Test({
             parent: suite,
             name: strings.get(element[0]),
+            index: index,
             doc: function () {
                 var doc = strings.get(element[3]);
                 this.doc = function () { return doc; };
@@ -121,11 +122,12 @@ window.testdata = function () {
         return 'Teardown of the parent suite failed.';
     }
 
-    function createSuite(parent, element, strings) {
+    function createSuite(parent, element, strings, index) {
         var statusElement = element[4];
         var suite = model.Suite({
             parent: parent,
             name: strings.get(element[1]),
+            index: index,
             source: strings.get(element[0]),
             doc: function () {
                 var doc = strings.get(element[2]);

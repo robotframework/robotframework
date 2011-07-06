@@ -473,21 +473,25 @@ describe("Element ids", function (){
     it("should give id for the main suite", function (){
         var suite = window.testdata.suite();
         expect(window.testdata.find(suite.id)).toEqual(suite);
+        expect(suite.id2).toEqual("s0");
     });
 
     it("should give id for a test", function (){
         var test = subSuite(0, subSuite(3)).tests()[0];
         expect(window.testdata.find(test.id)).toEqual(test);
+        expect(test.id2).toEqual("s0.s3.s0.t0");
     });
 
     it("should give id for a subsuite", function (){
         var subsuite = subSuite(3);
         expect(window.testdata.find(subsuite.id)).toEqual(subsuite);
+        expect(subsuite.id2).toEqual("s0.s3");
     });
 
     it("should give id for a keyword", function (){
         var kw = subSuite(0, subSuite(3)).tests()[0].keywords()[0];
         expect(window.testdata.find(kw.id)).toEqual(kw);
+        expect(kw.id2).toEqual("s0.s3.s0.t0.k0");
     });
 
     it("should give id for a message", function (){
