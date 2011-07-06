@@ -7,7 +7,7 @@ Test Teardown   Log   Test Teardown
 Metadata        home *page*   http://robotframework.org
 Metadata        < &lt; ä      < &lt; ä
 Force Tags      force  test   < &lt; ä
-Default Tags    default
+Default Tags    default with percent %
 Library         pölkü/myLib.py
 
 
@@ -18,12 +18,12 @@ Library         pölkü/myLib.py
 Simple
     Log  do nothing
 
-Log HTML
+Log HTML  [tags]   !"#%&/()=
     Log   <blink><b><font face="comic sans ms" size="42" color="red">CAN HAZ HMTL & NO CSS?!?!??!!?</font></b></blink>  HTML
     Log   escape < &lt; <b>no bold</b>
     Fail  escape < &lt; <b>no bold</b>
 
-Unicode
+Unicode  [tags]   with unicode 官话
     Log  hyvää joulua
 
 Complex
