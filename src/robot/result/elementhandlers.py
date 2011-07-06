@@ -308,6 +308,8 @@ class Context(object):
         self._stats = Stats()
         self._current_place = []
         self._kw_index = []
+        self._test_index = []
+        self._suite_index = [0]
         self._links = {}
         self._split_tests = split_tests
         self._split_results = []
@@ -354,22 +356,30 @@ class Context(object):
         return millis - self.basemillis
 
     def start_suite(self, name):
-        self._current_place.append(('suite', name))
+        self._current_place.append(('suite', 's'+str(self._suite_index[-1])))
         self._kw_index.append(0)
+        self._test_index.append(0)
+        self._suite_index[-1] += 1
+        self._suite_index.append(0)
 
     def end_suite(self):
         self._current_place.pop()
         self._kw_index.pop()
+        self._test_index.pop()
+        self._suite_index.pop()
 
     def start_test(self, name):
         if self._split_tests:
             self._split_text_caches.append(TextCache())
-        self._current_place.append(('test', name))
+        self._current_place.append(('test', 't'+str(self._test_index[-1])))
         self._kw_index.append(0)
+        self._test_index[-1] += 1
+        self._test_index.append(0)
 
     def end_test(self, kw_data=None):
         self._current_place.pop()
         self._kw_index.pop()
+        self._test_index.pop()
         if self._split_tests:
             self._split_results.append((kw_data, self._split_text_caches[-1].dump()))
             return len(self._split_results)
@@ -378,7 +388,7 @@ class Context(object):
     def start_keyword(self):
         if self._split_tests and self._current_place[-1][0] == 'test':
             self._current_texts = self._split_text_caches[-1]
-        self._current_place.append(('keyword', self._kw_index[-1]))
+        self._current_place.append(('keyword', 'k'+str(self._kw_index[-1])))
         self._kw_index[-1] += 1
         self._kw_index.append(0)
 
@@ -392,7 +402,7 @@ class Context(object):
         self._links[tuple(key)] = self._create_link()
 
     def _create_link(self):
-        return "keyword_"+".".join(str(v) for _, v in self._current_place)
+        return ".".join(str(v) for _, v in self._current_place)
 
     def link_to(self, key):
         return self._links[tuple(key)]

@@ -12,6 +12,7 @@
 <script type="text/javascript" src="lib/jquery.tmpl.min.js"></script>
 <!-- OUTPUT JS --><script type="text/javascript" src="testdata/data.js"></script>
 <script type="text/javascript" src="lib/jsxcompressor.js"></script>
+<script type="text/javascript" src="fileloading.js"></script>
 <script type="text/javascript" src="model.js"></script>
 <script type="text/javascript" src="util.js"></script>
 <script type="text/javascript" src="testdata.js"></script>
@@ -79,24 +80,26 @@ function popFromIterator(iterator, upTo) {
 }
 
 function makeElementVisible(element) {
-    var uniqueIds = [];
+    function openElements(uniqueIds) {
+        for (var i in uniqueIds) {
+            $("#" + uniqueIds[i] + "_unfoldlink").click();
+        }
+        if (uniqueIds && uniqueIds.length > 0) {
+            expandFailed(window.testdata.find(uniqueIds[uniqueIds.length - 1]));
+            window.location.hash = element;
+        }
+    }
+    if (element.indexOf("s0") == 0) {
+        window.testdata.findPathTo(unescape(element), openElements);
+    }
     if (element.indexOf("suite_") == 0) {
-        element = element.substring("suite_".length);
-        uniqueIds = window.testdata.pathToSuite(unescape(element));
+        openElements(window.testdata.pathToSuite(unescape(element.substring("suite_".length))));
     }
     if (element.indexOf("test_") == 0) {
-        element = element.substring("test_".length);
-        uniqueIds = window.testdata.pathToTest(unescape(element));
+        openElements(window.testdata.pathToTest(unescape(element.substring("test_".length))));
     }
     if (element.indexOf("keyword_") == 0) {
-        element = element.substring("keyword_".length);
-        uniqueIds = window.testdata.pathToKeyword(unescape(element));
-    }
-    for (var i in uniqueIds) {
-        $("#" + uniqueIds[i] + "_unfoldlink").click();
-    }
-    if (uniqueIds && uniqueIds.length > 0) {
-        expandFailed(window.testdata.find(uniqueIds[uniqueIds.length - 1]));
+        window.testdata.findPathToKeyword(unescape(element.substring("keyword_".length)), openElements);
     }
 }
 
@@ -139,7 +142,7 @@ function addTestExecutionLog(main) {
   <tr>
     <td class="col_stat_name">
       <div class="stat_name">
-        <a onclick="makeElementVisible('suite_${label}')" href="#suite_${label}" title="${label}"><span class="parent_name">${parentName}</span>${name}</a>
+        <a onclick="makeElementVisible('suite_${label}')" href="#suite_${label}" title="${label}"><span class="parent_name">${formatParentName}</span>${name}</a>
       </div>
     </td>
     {{tmpl($data) 'stat_columns'}}
