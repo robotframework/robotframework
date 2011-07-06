@@ -68,7 +68,7 @@ class BaseTestSuite(_TestAndSuiteHelper):
 
     def __init__(self, name, source=None, parent=None):
         _TestAndSuiteHelper.__init__(self, name, parent)
-        self.source = source is not None and utils.abspath(source) or None
+        self.source = utils.abspath(source) if source else None
         self.metadata = utils.NormalizedDict()
         self.suites = []
         self.tests = []
@@ -76,13 +76,16 @@ class BaseTestSuite(_TestAndSuiteHelper):
         self.critical_stats = Stat()
         self.all_stats = Stat()
         if parent:
+            self.id = '%s.s%d' % (parent.id, len(parent.suites))
             parent.suites.append(self)
+        else:
+            self.id = 's0'
 
     def set_name(self, name):
         if name:
             self.name = name
         elif not self.parent and self.name == '':  # MultiSourceSuite
-            self.name = ' & '.join([suite.name for suite in self.suites])
+            self.name = ' & '.join(suite.name for suite in self.suites)
 
     def set_critical_tags(self, critical, non_critical):
         if critical is not None or non_critical is not None:

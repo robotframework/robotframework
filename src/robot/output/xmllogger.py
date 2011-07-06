@@ -127,7 +127,8 @@ class XmlLogger:
         self._stat(stat)
 
     def suite_stat(self, stat):
-        self._stat(stat, stat.long_name, attrs={'name': stat.name})
+        self._stat(stat, stat.long_name, attrs={'id': stat.id,
+                                                'name': stat.name})
 
     def tag_stat(self, stat):
         self._stat(stat, attrs={'info': self._get_tag_stat_info(stat),

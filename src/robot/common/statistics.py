@@ -70,6 +70,7 @@ class SuiteStat(Stat):
     def __init__(self, suite):
         Stat.__init__(self, suite.name)
         self.long_name = suite.get_long_name()
+        self.id = suite.id
 
     def serialize(self, serializer):
         serializer.suite_stat(self)
