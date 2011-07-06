@@ -282,7 +282,7 @@ window.model = (function () {
 
 window.stats = (function () {
 
-    function Statistics(totalElems, tagElems, suiteElems){
+    function Statistics(totalElems, tagElems, suiteElems) {
         return {total: util.map(totalElems, statElem),
                 tag:   util.map(tagElems, tagStatElem),
                 suite: util.map(suiteElems, suiteStatElem)};
