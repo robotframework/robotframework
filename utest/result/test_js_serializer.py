@@ -223,7 +223,7 @@ class TestJsSerializer(_JsSerializerTestBase):
                      plain_suite=['*teardown', '*BuiltIn.Log', '*', '*Logs the given message with the given level.', '*keyword teardown',
                                        ['*P', -1, 2], [],
                                         [[0, '*W', '*keyword teardown']]])
-        assert_equals(self._context.link_to([0, 'W', 'keyword teardown']), "keyword_suite.0")
+        assert_equals(self._context.link_to([0, 'W', 'keyword teardown']), "s0.k0")
 
     def test_for_loop_xml_parsing(self):
         self._context.start_suite('suite')
@@ -298,8 +298,7 @@ class TestJsSerializer(_JsSerializerTestBase):
                               ]],
                                        [],
                               [1, 1, 1, 1]])
-        assert_equals(self._context.link_to([0, 'W', 'simple']),
-                      'keyword_Verysimple.Test.0')
+        assert_equals(self._context.link_to([0, 'W', 'simple']),'s0.t0.k0')
 
     def test_suite_data_model_keywords_clearing(self):
         self._test_remove_keywords(self._get_data_model(self.SUITE_XML), should_contain_strings=['*key', '*val'])
