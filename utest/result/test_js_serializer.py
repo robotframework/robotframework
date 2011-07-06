@@ -6,7 +6,7 @@ import unittest
 import xml.sax as sax
 
 from robot.result.jsparser import _RobotOutputHandler
-from robot.result.elementhandlers import Context
+from robot.result.parsingcontext import Context
 from robot.utils.asserts import assert_equals, assert_true
 
 

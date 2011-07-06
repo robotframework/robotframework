@@ -2,10 +2,11 @@ import time
 import random
 import string
 import unittest
-from robot.result.elementhandlers import TextCache
+
+from robot.result.parsingcontext import TextCache
+from robot.result import jsparser
 from robot.utils.asserts import assert_equals, assert_true
 
-from robot.result import jsparser
 
 
 class _ContextTesting(unittest.TestCase):

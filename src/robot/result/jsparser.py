@@ -15,7 +15,8 @@
 from __future__ import with_statement
 from xml import sax
 
-from robot.result.elementhandlers import RootHandler, Context
+from robot.result.elementhandlers import RootHandler
+from robot.result.parsingcontext import Context
 from robot.result.jsondatamodel import DataModel
 
 

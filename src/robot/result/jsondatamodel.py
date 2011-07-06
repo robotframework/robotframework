@@ -15,8 +15,8 @@
 import time
 from robot import utils
 
-import json
-from robot.result.elementhandlers import TextIndex
+from robot.result import json
+from robot.result.parsingcontext import TextIndex
 
 
 # TODO: Rename to match the responsibility - this isn't really a model but a class writing model to outputs
