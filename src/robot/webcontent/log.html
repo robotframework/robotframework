@@ -78,9 +78,12 @@ function makeElementVisible(element) {
         }
         if (uniqueIds && uniqueIds.length > 0) {
             expandFailed(window.testdata.find(uniqueIds[uniqueIds.length - 1]));
-        window.location.hash = element;
+            window.location.hash = element;
+        }
     }
-}
+    if (element.indexOf("s0") == 0) {
+        window.testdata.findPathTo(unescape(element), openElements);
+    }
     if (element.indexOf("suite_") == 0) {
         openElements(window.testdata.pathToSuite(unescape(element.substring("suite_".length))));
     }

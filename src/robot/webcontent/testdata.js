@@ -213,6 +213,13 @@ window.testdata = function () {
             findKeywordPathTo(fullName + ".", root, [root.id], callback);
     }
 
+    function findPathTo(pathId, callback) {
+        var root = suite();
+        var ids = pathId.split(".");
+        ids.shift();
+        findPathWithId(ids, root, [root.id], callback);
+    }
+
     function pathToTest(fullName) {
         var root = suite();
         if (fullName.indexOf(root.fullName + ".") != 0) return [];
@@ -224,6 +231,29 @@ window.testdata = function () {
         if (fullName.indexOf(root.fullName) != 0) return [];
         if (fullName == root.fullName) return [root.id];
         return suitePathTo(fullName, root, [root.id]);
+    }
+
+    function findPathWithId(pathId, current, result, callback) {
+        if(pathId.length == 0){
+            callback(result);
+        } else {
+            current.callWhenChildrenReady(function () {
+                var item = selectFrom(current, pathId[0][0], parseInt(pathId[0].substring(1)));
+                result.push(item.id);
+                pathId.shift();
+                findPathWithId(pathId, item, result, callback);
+            });
+        }
+    }
+
+    function selectFrom(element, selector, index) {
+        if(selector == "k"){
+            return element.keywords()[index];
+        } else if(selector == "t") {
+            return element.tests()[index];
+        } else if(selector == "s") {
+            return element.suites()[index];
+        }
     }
 
     function findKeywordPathTo(fullName, current, result, callback) {
@@ -355,6 +385,7 @@ window.testdata = function () {
         pathToTest: pathToTest,
         pathToSuite: pathToSuite,
         findPathToKeyword: findPathToKeyword,
+        findPathTo: findPathTo,
         generated: generated,
         statistics: statistics,
         getStringStore: getStringStore
