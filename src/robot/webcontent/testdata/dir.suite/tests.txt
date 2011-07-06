@@ -6,7 +6,7 @@ Test Setup      Log   Test Setup
 Test Teardown   Log   Test Teardown
 Metadata        home *page*   http://robotframework.org
 Metadata        < &lt; ä      < &lt; ä
-Force Tags      force  test   < &lt; ä
+Force Tags      force  with space   < &lt; ä
 Default Tags    default with percent %
 Library         pölkü/myLib.py
 
