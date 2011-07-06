@@ -43,7 +43,11 @@ window.model = (function () {
             });
         };
         suite.findSuiteByName = function (name) {
-            return findSuiteByName(suite, name);
+            var path = window.testdata.pathToSuite(name)
+            if(path.length){
+                return window.testdata.find(path[path.length-1]);
+            }
+            return null;
         };
         suite.allTests = function () {
             return suite.searchTests(function (test) {
@@ -82,18 +86,6 @@ window.model = (function () {
         }
         var matcher = util.Matcher(pattern);
         return util.any(util.map(testTags, matcher.matches));
-    }
-
-    function findSuiteByName(suite, name) {
-        if (suite.fullName == name)
-            return suite;
-        var subSuites = suite.suites();
-        for (var i in subSuites) {
-            var match = findSuiteByName(subSuites[i], name);
-            if (match)
-                return match;
-        }
-        return null;
     }
 
     function suiteTeardownFailed(suite) {
