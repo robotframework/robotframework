@@ -171,10 +171,10 @@ class Stats(object):
         for child in self._children:
             child.fail_all()
 
+
 class TextIndex(int):
     pass
 
-ZERO_TEXT_INDEX = TextIndex(0)
 
 class TextCache(object):
     # TODO: Tune compressing thresholds
@@ -182,12 +182,12 @@ class TextCache(object):
     _use_compressed_threshold = 1.1
 
     def __init__(self):
-        self.texts = {'*': ZERO_TEXT_INDEX}
+        self.texts = {'*': TextIndex(0)}
         self.index = 1
 
     def add(self, text):
         if not text:
-            return 0
+            return TextIndex(0)
         text = self._encode(text)
         if text not in self.texts:
             self.texts[text] = TextIndex(self.index)
@@ -211,7 +211,6 @@ class TextCache(object):
 
     def dump(self):
         # TODO: Could we yield or return an iterator?
-        # TODO: Duplicate with IntegerCache.dump
         return [item[0] for item in sorted(self.texts.iteritems(),
                                            key=itemgetter(1))]
 
