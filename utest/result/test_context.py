@@ -3,7 +3,7 @@ import random
 import string
 import unittest
 
-from robot.result.parsingcontext import TextCache
+from robot.result.parsingcontext import TextCache, Location
 from robot.result import jsparser
 from robot.utils.asserts import assert_equals, assert_true
 
@@ -155,3 +155,85 @@ class TestSplittingContext(unittest.TestCase):
         self._context.end_test(['kw data 2'])
         assert_equals(self._context.split_results, [(['kw data 1'], ['*', '*log message in test 1']),
                                                     (['kw data 2'], ['*', '*log message in test 2'])])
+
+
+class TestLocation(unittest.TestCase):
+
+    def setUp(self):
+        self._loc = Location()
+        self._loc.start_suite()
+
+    def _verify_id(self, id):
+        assert_equals(self._loc.current_id, id)
+
+    def test_start_one_suite(self):
+        self._verify_id('s0')
+
+    def test_start_multiple_suites(self):
+        self._loc.start_suite()
+        self._loc.start_suite()
+        self._verify_id('s0_s0_s0')
+
+    def test_start_and_end_suites(self):
+        self._loc.start_suite()
+        self._loc.end_suite()
+        self._verify_id('s0')
+        self._loc.start_suite()
+        self._verify_id('s0_s1')
+        self._loc.end_suite()
+        self._verify_id('s0')
+
+    def test_start_test(self):
+        self._loc.start_test()
+        self._verify_id('s0_t0')
+
+    def test_start_and_end_tests(self):
+        self._loc.start_test()
+        self._loc.end_test()
+        self._loc.start_test()
+        self._verify_id('s0_t1')
+        self._loc.end_test()
+        self._loc.start_suite()
+        self._loc.start_test()
+        self._verify_id('s0_s0_t0')
+        self._loc.end_test()
+        self._loc.end_suite()
+        self._verify_id('s0')
+
+    def test_keywords_in_test(self):
+        self._loc.start_test()
+        self._loc.start_keyword()
+        self._loc.start_keyword()
+        self._verify_id('s0_t0_k0_k0')
+        self._loc.end_keyword()
+        self._verify_id('s0_t0_k0')
+        self._loc.start_keyword()
+        self._verify_id('s0_t0_k0_k1')
+        self._loc.end_keyword()
+        self._verify_id('s0_t0_k0')
+        self._loc.end_keyword()
+        self._verify_id('s0_t0')
+        self._loc.end_test()
+        self._verify_id('s0')
+
+    def test_suite_setup_and_teardown(self):
+        self._loc.start_keyword()
+        self._verify_id('s0_k0')
+        self._loc.end_keyword()
+        self._loc.start_test()
+        self._loc.start_keyword()
+        self._verify_id('s0_t0_k0')
+        self._loc.end_keyword()
+        self._loc.end_test()
+        self._loc.start_keyword()
+        self._verify_id('s0_k1')
+        self._loc.end_keyword()
+        self._loc.start_suite()
+        self._loc.start_keyword()
+        self._verify_id('s0_s0_k0')
+        self._loc.end_keyword()
+        self._verify_id('s0_s0')
+
+
+if __name__ == '__main__':
+    unittest.main()

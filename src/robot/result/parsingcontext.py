@@ -27,10 +27,7 @@ class Context(object):
         self._split_text_caches = []
         self._basemillis = 0
         self._stats = Stats()
-        self._ids = []
-        self._kw_index = []
-        self._test_index = []
-        self._suite_index = [0]
+        self._location = Location()
         self._links = {}
         self._split_tests = split_tests
         self._split_results = []
@@ -77,53 +74,35 @@ class Context(object):
         return millis - self.basemillis
 
     def start_suite(self, name):
-        self._ids.append('s%d' % self._suite_index[-1])
-        self._kw_index.append(0)
-        self._test_index.append(0)
-        self._suite_index[-1] += 1
-        self._suite_index.append(0)
+        self._location.start_suite()
 
     def end_suite(self):
-        self._ids.pop()
-        self._kw_index.pop()
-        self._test_index.pop()
-        self._suite_index.pop()
+        self._location.end_suite()
 
     def start_test(self, name):
         if self._split_tests:
             self._split_text_caches.append(TextCache())
-        self._ids.append('t%d' % self._test_index[-1])
-        self._kw_index.append(0)
-        self._test_index[-1] += 1
-        self._test_index.append(0)
+        self._location.start_test()
 
     def end_test(self, kw_data=None):
-        self._ids.pop()
-        self._kw_index.pop()
-        self._test_index.pop()
+        self._location.end_test()
         if self._split_tests:
             self._split_results.append((kw_data, self._split_text_caches[-1].dump()))
             return len(self._split_results)
         return kw_data
 
     def start_keyword(self):
-        if self._split_tests and self._on_test_level():
+        if self._split_tests and self._location.on_test_level:
             self._current_texts = self._split_text_caches[-1]
-        self._ids.append('k%d' % self._kw_index[-1])
-        self._kw_index[-1] += 1
-        self._kw_index.append(0)
-
-    def _on_test_level(self):
-        return self._ids[-1][0] == 't'
+        self._location.start_keyword()
 
     def end_keyword(self):
-        self._ids.pop()
-        self._kw_index.pop()
-        if self._split_tests and self._on_test_level():
+        self._location.end_keyword()
+        if self._split_tests and self._location.on_test_level:
             self._current_texts = self._main_text_cache
 
     def create_link_to_current_location(self, key):
-        self._links[tuple(key)] = "_".join(self._ids)
+        self._links[tuple(key)] = self._location.current_id
 
     def link_to(self, key):
         return self._links[tuple(key)]
@@ -170,6 +149,54 @@ class Stats(object):
         self._stats[3] = 0
         for child in self._children:
             child.fail_all()
+
+
+class Location(object):
+
+    def __init__(self):
+        self._ids = []
+        self._suite_indices = [0]
+        self._test_indices = []
+        self._kw_indices = []
+
+    def start_suite(self):
+        self._start('s', self._suite_indices, self._test_indices,
+                    self._kw_indices)
+
+    def start_test(self):
+        self._start('t', self._test_indices, self._kw_indices)
+
+    def start_keyword(self):
+        self._start('k', self._kw_indices)
+
+    def _start(self, type, *indices):
+        started = indices[0]
+        self._ids.append('%s%d' % (type, started[-1]))
+        started[-1] += 1
+        for ind in indices:
+            ind.append(0)
+
+    def end_suite(self):
+        self._end(self._suite_indices, self._test_indices, self._kw_indices)
+
+    def end_test(self):
+        self._end(self._test_indices, self._kw_indices)
+
+    def end_keyword(self):
+        self._end(self._kw_indices)
+
+    def _end(self, *indices):
+        self._ids.pop()
+        for ind in indices:
+            ind.pop()
+
+    @property
+    def on_test_level(self):
+        return self._ids[-1][0] == 't'
+
+    @property
+    def current_id(self):
+        return '_'.join(self._ids)
 
 
 class TextIndex(int):
