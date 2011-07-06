@@ -349,7 +349,8 @@ window.testdata = function () {
         pathToSuite: pathToSuite,
         pathToKeyword: pathToKeyword,
         generated: generated,
-        statistics: statistics
+        statistics: statistics,
+        getStringStore: getStringStore
     };
 
 }();
