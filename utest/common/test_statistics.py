@@ -10,9 +10,9 @@ from robot.errors import DataError
 
 class SuiteMock:
 
-    def __init__(self, name='My Name', crit_tags=None):
+    def __init__(self, name='My Name', id='s1', crit_tags=None):
         self.name = name
-        self.id = 's0'
+        self.id = id
         self.critical = _Critical(crit_tags)
         self.suites = []
         self.tests = []
@@ -22,7 +22,7 @@ class SuiteMock:
         return self.name
 
     def add_suite(self, name):
-        suite = SuiteMock(name, self.critical.tags)
+        suite = SuiteMock(name, '%s-s%s' % (self.id, len(self.suites)+1), self.critical.tags)
         self.suites.append(suite)
         return suite
 
@@ -42,7 +42,7 @@ class TestMock(BaseTestCase):
         self.name = ''
 
 
-def verify_stat(stat, name, passed, failed, critical=None, non_crit=None):
+def verify_stat(stat, name, passed, failed, critical=None, non_crit=None, id=None):
     assert_equals(stat.name, name, 'stat.name')
     assert_equals(stat.passed, passed)
     assert_equals(stat.failed, failed)
@@ -50,15 +50,17 @@ def verify_stat(stat, name, passed, failed, critical=None, non_crit=None):
         assert_equals(stat.critical, critical)
     if non_crit is not None:
         assert_equals(stat.non_critical, non_crit)
+    if id:
+        assert_equal(stat.id, id)
 
-def verify_suite(suite, name, crit_pass, crit_fail, all_pass=None, all_fail=None):
-    verify_stat(suite.critical, name, crit_pass, crit_fail)
+def verify_suite(suite, name, id, crit_pass, crit_fail, all_pass=None, all_fail=None):
+    verify_stat(suite.critical, name, crit_pass, crit_fail, id=id)
     if all_pass is None:
         all_pass, all_fail = crit_pass, crit_fail
-    verify_stat(suite.all, name, all_pass, all_fail)
+    verify_stat(suite.all, name, all_pass, all_fail, id=id)
 
 def generate_default_suite():
-    suite = SuiteMock('Root Suite', ['smoke'])
+    suite = SuiteMock('Root Suite', crit_tags=['smoke'])
     s1 = suite.add_suite('Root Suite.First Sub Suite')
     s2 = suite.add_suite('Root Suite.Second Sub Suite')
     s11 = s1.add_suite('Root Suite.First Sub Suite.Sub Suite 1_1')
@@ -87,7 +89,7 @@ class TestStatisticsSimple(unittest.TestCase):
         verify_stat(self.statistics.total.all, 'All Tests', 2, 1)
 
     def test_suite(self):
-        verify_suite(self.statistics.suite, 'Hello', 2, 1)
+        verify_suite(self.statistics.suite, 'Hello', 's1', 2, 1)
 
     def test_tags(self):
         assert_equals(self.statistics.tags.stats, {})
@@ -104,21 +106,21 @@ class TestStatisticsNotSoSimple(unittest.TestCase):
 
     def test_suite(self):
         suite = self.statistics.suite
-        verify_suite(suite, 'Root Suite', 2, 2, 4, 3)
+        verify_suite(suite, 'Root Suite', 's1', 2, 2, 4, 3)
         assert_equals(len(suite.suites), 2)
         s1, s2 = suite.suites
-        verify_suite(s1, 'Root Suite.First Sub Suite', 2, 1, 4, 2)
-        verify_suite(s2, 'Root Suite.Second Sub Suite', 0, 1, 0, 1)
+        verify_suite(s1, 'Root Suite.First Sub Suite', 's1-s1', 2, 1, 4, 2)
+        verify_suite(s2, 'Root Suite.Second Sub Suite', 's1-s2', 0, 1, 0, 1)
         assert_equals(len(s1.suites), 3)
         s11, s12, s13 = s1.suites
         pre  ='Root Suite.First Sub Suite.'
-        verify_suite(s11, pre+'Sub Suite 1_1', 0, 0, 1, 1)
-        verify_suite(s12, pre+'Sub Suite 1_2', 1, 1, 2, 1)
-        verify_suite(s13, pre+'Sub Suite 1_3', 1, 0, 1, 0)
+        verify_suite(s11, pre+'Sub Suite 1_1', 's1-s1-s1', 0, 0, 1, 1)
+        verify_suite(s12, pre+'Sub Suite 1_2', 's1-s1-s2', 1, 1, 2, 1)
+        verify_suite(s13, pre+'Sub Suite 1_3', 's1-s1-s3', 1, 0, 1, 0)
         assert_equals(len(s2.suites), 1)
         s21 = s2.suites[0]
         pre  ='Root Suite.Second Sub Suite.'
-        verify_suite(s21, pre+'Sub Suite 2_1', 0, 1, 0, 1)
+        verify_suite(s21, pre+'Sub Suite 2_1', 's1-s2-s1', 0, 1, 0, 1)
 
     def test_tags(self):
         tags = self.statistics.tags
@@ -291,7 +293,7 @@ class TestTagStatistics(unittest.TestCase):
         expected = [('smoke', 4), ('a title', 0), ('t1 & t2', 3),
                     ('t1 NOT t2', 2), ('t? & smoke', 4), ('t1', 5), ('t2', 3)]
         names = [stat.name for stat in stats]
-        exp_names = [name for name, count in expected]
+        exp_names = [name for name, _ in expected]
         assert_equals(names, exp_names)
         for name, count in expected:
             assert_equals(len(statistics.tags.stats[name].tests), count, name)
