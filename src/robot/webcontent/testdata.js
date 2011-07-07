@@ -217,8 +217,12 @@ window.testdata = function () {
     }
 
     function findPathTo(pathId, callback) {
-        var root = suite();
         var ids = pathId.split("_");
+        if(ids[0] != "s0"){
+            callback([]);
+            return;
+        }
+        var root = suite();
         ids.shift();
         findPathWithId(ids, root, [root.id], callback);
     }
@@ -385,9 +389,6 @@ window.testdata = function () {
         suite: suite,
         errors: errors,
         find: findById,
-        pathToTest: pathToTest,
-        pathToSuite: pathToSuite,
-        findPathToKeyword: findPathToKeyword,
         findPathTo: findPathTo,
         generated: generated,
         statistics: statistics,

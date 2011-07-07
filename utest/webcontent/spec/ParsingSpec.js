@@ -163,7 +163,7 @@ describe("Setups and teardowns", function () {
 
     it("should give navigation uniqueId list for a suite teardown keyword", function () {
         var callbackExecuted = false;
-        window.testdata.findPathToKeyword("SetupsAndTeardowns.1", function (uniqueIds) {
+        window.testdata.findPathTo("s0_k1", function (uniqueIds) {
             expect(uniqueIds[0]).toEqual(window.testdata.suite().id);
             expect(uniqueIds[1]).toEqual(nthKeyword(window.testdata.suite(), 1).id);
             expect(uniqueIds.length).toEqual(2);
@@ -262,7 +262,7 @@ describe("Handling messages", function (){
         var firstError = window.testdata.errors().next()
         expectMessage(firstError, "warning", "warn");
         var callbackExecuted = false;
-        window.testdata.findPathToKeyword(firstError.link.substr(8), function (pathToKeyword) {
+        window.testdata.findPathTo(firstError.link, function (pathToKeyword) {
             var errorKw = window.testdata.find(pathToKeyword[pathToKeyword.length-1]);
             expect(errorKw.messages()[0].level).toEqual("warn");
             callbackExecuted = true;
@@ -417,19 +417,28 @@ describe("Iterating Suites", function () {
         expect(root.suites()[3].suites()[0].tests()[0].fullName).toEqual("Data.teardownFailure.PassingFailing.Passing");
     });
 
+    function testFindPathTo(path, callback) {
+        var callbackExecuted = false;
+        window.testdata.findPathTo(path, function (ids) {
+            callback(ids);
+            callbackExecuted = true;
+        });
+        expect(callbackExecuted).toBeTruthy();
+    }
+
     it("should give navigation uniqueId list for a test", function (){
-        var uniqueIdList = window.testdata.pathToTest("Data.teardownFailure.PassingFailing.Passing");
-        var root = window.testdata.suite();
-        expect(uniqueIdList[0]).toEqual(root.id);
-        expect(uniqueIdList[1]).toEqual(subSuite(3).id);
-        expect(uniqueIdList[2]).toEqual(subSuite(3).suites()[0].id);
-        expect(uniqueIdList[3]).toEqual(subSuite(3).suites()[0].tests()[0].id);
-        expect(uniqueIdList.length).toEqual(4);
+        testFindPathTo("s0_s3_s0_t0", function (uniqueIdList) {
+            var root = window.testdata.suite();
+            expect(uniqueIdList[0]).toEqual(root.id);
+            expect(uniqueIdList[1]).toEqual(subSuite(3).id);
+            expect(uniqueIdList[2]).toEqual(subSuite(3).suites()[0].id);
+            expect(uniqueIdList[3]).toEqual(subSuite(3).suites()[0].tests()[0].id);
+            expect(uniqueIdList.length).toEqual(4);
+        });
     });
 
     it("should give navigation uniqueId list for a keyword", function (){
-        var callbackExecuted = false;
-        window.testdata.findPathToKeyword("Data.teardownFailure.PassingFailing.Passing.0", function (uniqueIdList) {
+        testFindPathTo("s0_s3_s0_t0_k0", function (uniqueIdList) {
             var root = window.testdata.suite();
             expect(uniqueIdList[0]).toEqual(root.id);
             expect(uniqueIdList[1]).toEqual(subSuite(3).id);
@@ -437,30 +446,31 @@ describe("Iterating Suites", function () {
             expect(uniqueIdList[3]).toEqual(subSuite(3).suites()[0].tests()[0].id);
             expect(uniqueIdList[4]).toEqual(subSuite(3).suites()[0].tests()[0].keywords()[0].id);
             expect(uniqueIdList.length).toEqual(5);
-            callbackExecuted = true;
         });
-        expect(callbackExecuted).toBeTruthy();
     });
 
     it("should give navigation uniqueId list for a suite", function (){
-        var uniqueIdList = window.testdata.pathToSuite("Data.teardownFailure.PassingFailing");
-        var root = window.testdata.suite();
-        expect(uniqueIdList[0]).toEqual(root.id);
-        expect(uniqueIdList[1]).toEqual(root.suites()[3].id);
-        expect(uniqueIdList[2]).toEqual(root.suites()[3].suites()[0].id);
-        expect(uniqueIdList.length).toEqual(3);
+        testFindPathTo("s0_s3_s0", function (uniqueIdList) {
+            var root = window.testdata.suite();
+            expect(uniqueIdList[0]).toEqual(root.id);
+            expect(uniqueIdList[1]).toEqual(root.suites()[3].id);
+            expect(uniqueIdList[2]).toEqual(root.suites()[3].suites()[0].id);
+            expect(uniqueIdList.length).toEqual(3);
+        });
     });
 
     it("should give navigation uniqueId list for the root suite", function (){
-        var uniqueIdList = window.testdata.pathToSuite("Data");
-        var root = window.testdata.suite();
-        expect(uniqueIdList[0]).toEqual(root.id);
-        expect(uniqueIdList.length).toEqual(1);
+        testFindPathTo("s0", function (uniqueIdList) {
+            var root = window.testdata.suite();
+            expect(uniqueIdList[0]).toEqual(root.id);
+            expect(uniqueIdList.length).toEqual(1);
+        });
     });
 
     it("should give empty navigation uniqueId list for unknown element", function (){
-        var uniqueIdList = window.testdata.pathToSuite("unknown");
-        expect(uniqueIdList).toEqual([]);
+        testFindPathTo("unknown", function (uniqueIdList) {
+            expect(uniqueIdList).toEqual([]);
+        });
     });
 });
 

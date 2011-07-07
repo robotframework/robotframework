@@ -80,7 +80,7 @@ function popFromIterator(iterator, upTo) {
 }
 
 function makeElementVisible(element) {
-    function openElements(uniqueIds) {
+    window.testdata.findPathTo(unescape(element), function (uniqueIds) {
         for (var i in uniqueIds) {
             $("#" + uniqueIds[i] + "_unfoldlink").click();
         }
@@ -88,19 +88,7 @@ function makeElementVisible(element) {
             expandFailed(window.testdata.find(uniqueIds[uniqueIds.length - 1]));
             window.location.hash = element;
         }
-    }
-    if (element.indexOf("s0") == 0) {
-        window.testdata.findPathTo(unescape(element), openElements);
-    }
-    if (element.indexOf("suite_") == 0) {
-        openElements(window.testdata.pathToSuite(unescape(element.substring("suite_".length))));
-    }
-    if (element.indexOf("test_") == 0) {
-        openElements(window.testdata.pathToTest(unescape(element.substring("test_".length))));
-    }
-    if (element.indexOf("keyword_") == 0) {
-        window.testdata.findPathToKeyword(unescape(element.substring("keyword_".length)), openElements);
-    }
+    });
 }
 
 function addTestExecutionLog(main) {
