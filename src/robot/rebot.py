@@ -100,7 +100,8 @@ Options:
                           example '-T -o output.xml -r report.html -l none'
                           creates files like 'output-20070503-154410.xml' and
                           'report-20070503-154410.html'.
-    --splitlog            TODO: doc
+    --splitlog            Split log file into smaller pieces that open in
+                          browser transparently.
     --splitoutputs level  Not supported in Robot Framework 2.6 or newer.
     --logtitle title      Title for the generated test log. The default title
                           is '<Name Of The Suite> Test Log'. Underscores in

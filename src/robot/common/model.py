@@ -69,6 +69,7 @@ class BaseTestSuite(_TestAndSuiteHelper):
     def __init__(self, name, source=None, parent=None):
         _TestAndSuiteHelper.__init__(self, name, parent)
         self.source = utils.abspath(source) if source else None
+        self._id = None
         self.metadata = utils.NormalizedDict()
         self.suites = []
         self.tests = []
@@ -76,10 +77,7 @@ class BaseTestSuite(_TestAndSuiteHelper):
         self.critical_stats = Stat()
         self.all_stats = Stat()
         if parent:
-            self.id = '%s-s%d' % (parent.id, len(parent.suites)+1)
             parent.suites.append(self)
-        else:
-            self.id = 's1'
 
     def set_name(self, name):
         if name:
@@ -88,10 +86,17 @@ class BaseTestSuite(_TestAndSuiteHelper):
             self.name = ' & '.join(suite.name for suite in self.suites)
             self._set_id()
 
+    @property
+    def id(self):
+        if not self._id:
+            self._id = 's1'
+            self._set_id()
+        return self._id
+
     def _set_id(self):
-        for index, subsuite in enumerate(self.suites):
-            subsuite.id = '%s-s%s' % (self.id, index+1)
-            subsuite._set_id()
+        for index, suite in enumerate(self.suites):
+            suite.id = '%s-s%s' % (self.id, index+1)
+            suite._set_id()
 
     def set_critical_tags(self, critical, non_critical):
         if critical is not None or non_critical is not None:
@@ -204,12 +209,12 @@ class BaseTestSuite(_TestAndSuiteHelper):
 
     def filter(self, suites=None, tests=None, includes=None, excludes=None,
                zero_tests_ok=False):
-        self.filter_by_names(suites, tests, zero_tests_ok)
-        self.filter_by_tags(includes, excludes, zero_tests_ok)
+        if suites or tests:
+            self.filter_by_names(suites, tests, zero_tests_ok)
+        if includes or excludes:
+            self.filter_by_tags(includes, excludes, zero_tests_ok)
 
     def filter_by_names(self, suites=None, tests=None, zero_tests_ok=False):
-        if not (suites or tests):
-            return
         suites = [([], name.split('.')) for name in suites or []]
         tests = tests or []
         if not self._filter_by_names(suites, tests) and not zero_tests_ok:
@@ -253,8 +258,6 @@ class BaseTestSuite(_TestAndSuiteHelper):
         raise DataError("Suite '%s' contains no %s" % (self.name, msg))
 
     def filter_by_tags(self, includes=None, excludes=None, zero_tests_ok=False):
-        if not (includes or excludes):
-            return
         includes = includes or []
         excludes = excludes or []
         if not self._filter_by_tags(includes, excludes) and not zero_tests_ok:
