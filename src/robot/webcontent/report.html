@@ -142,26 +142,28 @@ function renderTagDetails(tag) {
     drawTestDetailsTable(tests);
 }
 
-function suiteDetailSelected(name) {
-    if (!name) return;
-    renderSuiteSelector(name);
-    renderSuiteDetails(name);
-    $('#print_selector').text(name);
-    scrollToSelector('suite_'+name);
+function suiteDetailSelected(id) {
+    if (!id) return;
+    renderSuiteSelector(id);
+    renderSuiteDetails(id);
+    scrollToSelector('suite_'+id);
 }
 
-function renderSuiteSelector(suiteName) {
-    var args = {linkTarget: 'suite_'+suiteName, suiteTabStatus: 'tab_selected'};
+function renderSuiteSelector(id) {
+    var args = {linkTarget: 'suite_'+id, suiteTabStatus: 'tab_selected'};
     var stats = {suites: window.testdata.statistics().suite,
-                 selected: suiteName};
+                 selected: id};
     renderSelector(args, 'suiteDetailsSelectorTemplate', stats);
 }
 
-function renderSuiteDetails(name) {
-    var suite = testdata.suite().findSuiteByName(name);
-    var opts = {logURL: window.settings.logURL};
-    $.tmpl('suiteDetailsTemplate', suite, opts).appendTo('#details_header');
-    drawTestDetailsTable(suite.allTests());
+function renderSuiteDetails(id) {
+    testdata.findPathTo(id, function () {
+        var suite = testdata.find(id);
+        var opts = {logURL: window.settings.logURL};
+        $.tmpl('suiteDetailsTemplate', suite, opts).appendTo('#details_header');
+        drawTestDetailsTable(suite.allTests());
+        $('#print_selector').text(suite.name);
+    });
 }
 function scrollToSelector(anchor) {
     $('#test_details_container').css('min-height', $(window).height());
@@ -309,7 +311,7 @@ function popUpTo(list, upTo) {
   <tr>
     <td class="col_stat_name">
       <div class="stat_name">
-        <a href="#suite_${label}" onclick="suiteDetailSelected('${label}');" title="${label}"><span class="parent_name">${formatParentName}</span>${name}</a>
+        <a href="#suite_${id}" onclick="suiteDetailSelected('${id}');" title="${label}"><span class="parent_name">${formatParentName}</span>${name}</a>
       </div>
     </td>
     {{tmpl($data) 'stat_columns'}}
@@ -380,8 +382,8 @@ function popUpTo(list, upTo) {
                 onchange="suiteDetailSelected(this.options[this.selectedIndex].value);">
           <option value="">Select suite...</option>
           {{each suites}}
-          <option value="${$value.label}"
-                  {{if $value.label == selected}}selected="selected"{{/if}}>
+          <option value="${$value.id}"
+                  {{if $value.id == selected}}selected="selected"{{/if}}>
             ${$value.label}
           </option>
           {{/each}}
