@@ -495,7 +495,7 @@ describe("Element ids", function (){
     it("should give id for a subsuite", function (){
         var subsuite = subSuite(3);
         expect(window.testdata.find(subsuite.id)).toEqual(subsuite);
-        expect(subsuite.id).toEqual("s1-s3");
+        expect(subsuite.id).toEqual("s1-s4");
     });
 
     it("should give id for a keyword", function (){

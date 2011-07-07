@@ -116,7 +116,7 @@ window.model = (function () {
             doc: data.doc,
             status: data.status,
             times: data.times,
-            id: data.parent ? data.parent.id + "_" + symbol + data.index : symbol + "0",
+            id: data.parent ? data.parent.id + "-" + symbol + (data.index + 1) : symbol + "1",
             callWhenChildrenReady: function (callable) { callable(); }
         };
     }
