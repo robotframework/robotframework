@@ -145,16 +145,12 @@ Debug files are not created unless the command line option
 Timestamping output files
 '''''''''''''''''''''''''
 
-All output files listed in this section can be automatically
-timestamped with the option :opt:`--timestampoutputs (-T)`, which
-is one of the rare options taking no value. When this option is used, a
-timestamp in the format :opt:`YYYYMMDD-hhmmss` is placed between
-the extension and the basename of each file. The example below would,
+All output files listed in this section can be automatically timestamped
+with the option :opt:`--timestampoutputs (-T)`. When this option is used,
+a timestamp in the format :opt:`YYYYMMDD-hhmmss` is placed between
+the extension and the base name of each file. The example below would,
 for example, create such output files as
-:path:`output-20080604-163225.xml` and
-:path:`mylog-20080604-163225.html`.
-
-::
+:path:`output-20080604-163225.xml` and :path:`mylog-20080604-163225.html`::
 
    pybot --timestampoutputs --log mylog.html --report NONE tests.html
 
@@ -267,33 +263,31 @@ teardown`_.
 Splitting logs
 ~~~~~~~~~~~~~~
 
-Normally the log file is just a single HTML file. When the amount of test
-cases increases, the size of the log file can grow inconveniently
-large. Starting from Robot Framework 2.6, it is possible to use option
-:opt:`--splitlog` to split the log into smaller files.
+Normally the log file is just a single HTML file. When the amount of he test
+cases increases, the size of the file can grow so large that opening it into
+a browser is inconvenient or even impossible. Starting from Robot Framework
+2.6, it is possible to use the :opt:`--splitlog` option to split parts of
+the log into external files that are loaded transparently into the browser
+when needed.
 
-Technically the log is split into several JavaScript files, which are saved
-into the same folder as the main log file. Files have names such as
-:path:`log-42.js` where :path:`log` is the base name of the normal log file
-and :path:`42` is an incremented index. When the user opens the main log,
-the JavaScript files are loaded on demand. This makes the log splitting
-transparent for the users.
+The main benefit of splitting logs is that individual log parts are so small
+that opening and browsing the log file is possible even if the amount
+of the test data is very large. A small drawback is that the overall size taken
+by the log file increases.
 
-.. note:: When copying the log files, you need to also copy all the 
-          :path:`log-*.js` files or the log will miss some information.
+Technically the test data related to each test case is saved into
+a JavaScript file in the same folder as the main log file. These files have
+names such as :path:`log-42.js` where :path:`log` is the base name of the
+main log file and :path:`42` is an incremented index.
 
-          A small drawback of splitting logs is that the overall size taken
-          by the log increases.
+.. note:: When copying the log files, you need to copy also all the
+          :path:`log-*.js` files or some information will be missing.
 
 Splitting outputs
 ~~~~~~~~~~~~~~~~~
 
 Splitting outputs functionality has been removed in Robot Framework 2.6.
-`Splitting logs`_  replaces this functionality. 
-
-For more information about this change see `issue 861`__ in the issue tracker.
-
-__ http://code.google.com/p/robotframework/issues/detail?id=861
+`Splitting logs`_ works much better and should be used instead.
 
 Configuring statistics
 ~~~~~~~~~~~~~~~~~~~~~~
