@@ -82,8 +82,11 @@ class BaseTestSuite(_TestAndSuiteHelper):
     def set_name(self, name):
         if name:
             self.name = name
-        elif not self.parent and self.name == '':  # MultiSourceSuite
+        elif self._is_multi_source_suite():
             self.name = ' & '.join(suite.name for suite in self.suites)
+
+    def _is_multi_source_suite(self):
+        return self.parent is None and self.name == ''
 
     @property
     def id(self):
