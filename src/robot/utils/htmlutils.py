@@ -78,7 +78,7 @@ class _HtmlFormatter(_Formatter):
         if self._table.is_started():
             self._result.add(self._table.end(), join_after=False)
         if self._is_hr(line):
-            self._result.add('<hr />\n', join_after=False)
+            self._result.add('<hr>\n', join_after=False)
             return
         self._result.add(self._line_formatter.format(line))
 
@@ -130,7 +130,7 @@ class _UrlFormatter(object):
         pre = match.group(1)
         url = match.group(3).replace('"', '&quot;')
         if self._format_as_image(url):
-            tmpl = '<img src="%s" title="%s" style="border: 1px solid gray" />'
+            tmpl = '<img src="%s" title="%s" style="border: 1px solid gray">'
         else:
             tmpl = '<a href="%s">%s</a>'
         return pre + tmpl % (url, url)

@@ -36,7 +36,7 @@ Without Embedding
 *** Keywords ***
 Check Embedding In Log
     [Arguments]  ${message}  ${path}  ${width}=800px
-    Check Log Message  ${message}  <a href="${path}"><img src="${path}" width="${width}" /></a>  HTML
+    Check Log Message  ${message}  <a href="${path}"><img src="${path}" width="${width}"></a>  HTML
 
 Check Linking In Log
     [Arguments]  ${message}  ${file}

@@ -94,7 +94,7 @@ class TestLinks(unittest.TestCase):
 
     def test_image_links(self):
         link = '(<a href="%s">%s</a>)'
-        img = '(<img src="%s" title="%s" style="border: 1px solid gray" />)'
+        img = '(<img src="%s" title="%s" style="border: 1px solid gray">)'
         for ext in ['jpg', 'jpeg', 'png', 'gif', 'bmp']:
             url = 'foo://bar/zap.%s' % ext
             uprl = url.upper()
@@ -393,13 +393,13 @@ after
     def test_hr_is_three_or_more_hyphens(self):
         for i in range(3, 100):
             hr = '-' * i
-            assert_equals(html_format(hr), '<hr />\n')
-            assert_equals(html_format(hr + '  '), '<hr />\n')
+            assert_equals(html_format(hr), '<hr>\n')
+            assert_equals(html_format(hr + '  '), '<hr>\n')
 
     def test_hr_with_other_stuff_around(self):
-        for inp, exp in [('---\n-', '<hr />\n-'),
-                         ('xx\n---\nxx', 'xx\n<hr />\nxx'),
-                         ('xx\n\n------\n\nxx', 'xx\n\n<hr />\n\nxx')]:
+        for inp, exp in [('---\n-', '<hr>\n-'),
+                         ('xx\n---\nxx', 'xx\n<hr>\nxx'),
+                         ('xx\n\n------\n\nxx', 'xx\n\n<hr>\n\nxx')]:
             assert_equals(html_format(inp), exp)
 
     def test_not_hr(self):
@@ -412,9 +412,9 @@ after
 | t | a | b | l | e |
 ---
 '''[1:-1]
-        exp = '<hr />\n' \
+        exp = '<hr>\n' \
             + _format_table([['t','a','b','l','e']]) \
-            + '<hr />\n'
+            + '<hr>\n'
         assert_equals(html_format(inp), exp)
 
 

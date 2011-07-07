@@ -36,15 +36,15 @@ Save Screenshot To With Non Existing Path
 
 Log Screenshot With Defaults
     ${test} =  Check Test Case  ${TESTNAME}
-    Message Should Contain  ${test.kws[0].msgs[1]}  <img src="screenshot_1.jpg" width="100%" />
+    Message Should Contain  ${test.kws[0].msgs[1]}  <img src="screenshot_1.jpg" width="100%">
 
 Log Screenshot With Filename Defined
     ${test} =  Check Test Case  ${TESTNAME}
-    Message Should Contain  ${test.kws[0].msgs[1]}  <img src="image_1.jpg" width="100%" />
+    Message Should Contain  ${test.kws[0].msgs[1]}  <img src="image_1.jpg" width="100%">
 
 Log Screenshot With Filename And Path Defined
     ${test} =  Check Test Case  ${TESTNAME}
-    Message Should Contain  ${test.kws[0].msgs[1]}  <img src="image_1.jpg" width="100%" />
+    Message Should Contain  ${test.kws[0].msgs[1]}  <img src="image_1.jpg" width="100%">
 
 Log Screenshot With Filename, Path And Width Defined
     ${test} =  Check Test Case  ${TESTNAME}
@@ -57,7 +57,7 @@ Log Screenshot With Initializing The Screenshot Library
 *** Keywords ***
 Check Link In Log
     [Arguments]  ${message}  ${path}  ${width}=100%
-    Check Log Message  ${message}  <a href="${path}"><img src="${path}" width="${width}" /></a>  HTML
+    Check Log Message  ${message}  <a href="${path}"><img src="${path}" width="${width}"></a>  HTML
 
 Message Should contain
     [Arguments]  ${message}  ${expected}
