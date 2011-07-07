@@ -237,7 +237,7 @@ class Screenshot(object):
 
     def _embed_screenshot(self, path, width):
         link = utils.get_link_path(path, self._log_dir)
-        print '*HTML* <a href="%s"><img src="%s" width="%s" /></a>' \
+        print '*HTML* <a href="%s"><img src="%s" width="%s"></a>' \
               % (link, link, width)
 
     def _link_screenshot(self, path):

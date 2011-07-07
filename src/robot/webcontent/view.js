@@ -24,7 +24,7 @@ function addHeader() {
     var generatedAgoMillis = window.testdata.generated().getTime();
     var template =
         '<div id="generated">' +
-        '<span>Generated<br />${generated}</span><br />' +
+        '<span>Generated<br>${generated}</span><br>' +
         '<span id="generated_ago">${generatedAgo} ago</span>' +
         '</div>' +
         '<div id="report_or_log_link"><a href="#"></a></div>' +
@@ -120,7 +120,7 @@ $.template('no_tags_row',
 $.template('suiteStatusMessageTemplate',
     '${critical} critical test, ' +
     '${criticalPassed} passed, ' +
-    '<span class="{{if criticalFailed}}fail{{else}}pass{{/if}}">${criticalFailed} failed</span><br />' +
+    '<span class="{{if criticalFailed}}fail{{else}}pass{{/if}}">${criticalFailed} failed</span><br>' +
     '${total} test total, ' +
     '${totalPassed} passed, ' +
     '<span class="{{if totalFailed}}fail{{else}}pass{{/if}}">${totalFailed} failed</span>'

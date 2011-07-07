@@ -282,11 +282,11 @@ class TestJsSerializer(_JsSerializerTestBase):
     def test_suite_xml_parsing(self):
         # Tests parsing the whole suite structure
         data_model = self._get_data_model(self.SUITE_XML)
-        doc = '*<b>html</b> &lt;esc&gt; <a href="http://x.y">http://x.y</a> <img src="http://x.y/z.jpg" title="http://x.y/z.jpg" style="border: 1px solid gray" />'
+        doc = '*<b>html</b> &lt;esc&gt; <a href="http://x.y">http://x.y</a> <img src="http://x.y/z.jpg" title="http://x.y/z.jpg" style="border: 1px solid gray">'
         assert_model(data_model, basemillis=1306918911353,
                           plain_suite=['*/tmp/verysimple.txt', '*Verysimple', doc,
                                        ['*key', '*val', '*esc', '*&lt;',
-                                        '*html', '*<img src="http://x.y.x.jpg" title="http://x.y.x.jpg" style="border: 1px solid gray" />'],
+                                        '*html', '*<img src="http://x.y.x.jpg" title="http://x.y.x.jpg" style="border: 1px solid gray">'],
                                        ['*P', -24, 25],
                                        [],
                               [['*Test', '*', '*Y', doc,
