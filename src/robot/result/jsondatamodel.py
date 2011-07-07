@@ -89,6 +89,7 @@ class DataModel(object):
         # TODO: Cleanup?
         return item and \
                isinstance(item, list) and \
+               len(item) == 8 and \
                (isinstance(item[0], TextIndex)) and \
                self._robot_data['strings'][item[0]] in \
                         ['*kw', '*setup', '*forloop', '*foritem']
