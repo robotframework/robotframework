@@ -109,14 +109,17 @@ class _BaseSettings(object):
 
     # TODO: Remove --splitoutputs, --summary, and --summarytitle in 2.7
     def _removed_in_26(self, name, log):
-        start = {'SplitOutputs': 'Splitting outputs is',
-                 'Summary': 'Summary reports are',
-                 'SummaryTitle': 'Summary titles are'}[name]
+        start, instead = {
+            'SplitOutputs': ('Splitting outputs is',
+                             'The --splitlog option can be used instead. '),
+            'Summary':      ('Summary reports are', ''),
+            'SummaryTitle': ('Summary titles are', '')
+        }[name]
         option, default = self._cli_opts[name]
         if log:
-            LOGGER.warn('%s not supported in Robot Framework 2.6 or newer and '
-                        '--%s option will be removed altogether in version 2.7.'
-                        % (start, option))
+            LOGGER.warn('%s not supported in Robot Framework 2.6 or newer. %s'
+                        'The --%s option will be removed altogether in '
+                        'version 2.7.' % (start, instead, option))
         return default
 
     def __getitem__(self, name):
