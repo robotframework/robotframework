@@ -80,6 +80,8 @@ function popFromIterator(iterator, upTo) {
 }
 
 function makeElementVisible(element) {
+    // findPathTo ensures that all the data for the element has been downloaded from server
+    // before executing the callback function
     window.testdata.findPathTo(unescape(element), function (uniqueIds) {
         for (var i in uniqueIds) {
             $("#" + uniqueIds[i] + "_unfoldlink").click();
