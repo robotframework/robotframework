@@ -208,14 +208,6 @@ window.testdata = function () {
         return elementsById[id];
     }
 
-    function findPathToKeyword(fullName, callback) {
-        var root = suite();
-        if (fullName.indexOf(root.fullName + ".") != 0)
-            callback([]);
-        else
-            findKeywordPathTo(fullName + ".", root, [root.id], callback);
-    }
-
     function findPathTo(pathId, callback) {
         var ids = pathId.split("_");
         if(ids[0] != "s0"){
@@ -225,19 +217,6 @@ window.testdata = function () {
         var root = suite();
         ids.shift();
         findPathWithId(ids, root, [root.id], callback);
-    }
-
-    function pathToTest(fullName) {
-        var root = suite();
-        if (fullName.indexOf(root.fullName + ".") != 0) return [];
-        return testPathTo(fullName, root, [root.id]);
-    }
-
-    function pathToSuite(fullName) {
-        var root = suite();
-        if (fullName.indexOf(root.fullName) != 0) return [];
-        if (fullName == root.fullName) return [root.id];
-        return suitePathTo(fullName, root, [root.id]);
     }
 
     function findPathWithId(pathId, current, result, callback) {
@@ -260,75 +239,6 @@ window.testdata = function () {
             return element.tests()[index];
         } else if(selector == "s") {
             return element.suites()[index];
-        }
-    }
-
-    function findKeywordPathTo(fullName, current, result, callback) {
-        if (!fullName) {
-            callback(result);
-        }else{
-            current.callWhenChildrenReady(function () {
-                var keywords = current.keywords();
-                for (var i = 0; i < keywords.length; i++) {
-                    var kw = keywords[i];
-                    if (fullName.indexOf(kw.path + ".") == 0) {
-                        result.push(kw.id);
-                        if (fullName == kw.path + ".")
-                            callback(result);
-                        else
-                            findKeywordPathTo(fullName, kw, result, callback);
-                        return;
-                    }
-                }
-                if(!findNextKeywordPathPart(fullName, current.tests(), result, callback))
-                    findNextKeywordPathPart(fullName, current.suites(), result, callback);
-            });
-        }
-    }
-
-    function findNextKeywordPathPart(fullName, items, result, callback) {
-        for (var i = 0; i < items.length; i++) {
-            var item = items[i];
-            if (fullName.indexOf(item.fullName + ".") == 0) {
-                result.push(item.id);
-                findKeywordPathTo(fullName, item, result, callback);
-                return true;
-            }
-        }
-        return false;
-    }
-
-    function testPathTo(fullName, currentSuite, result) {
-        var tests = currentSuite.tests();
-        for (var i = 0; i < tests.length; i++) {
-            var test = tests[i];
-            if (fullName == test.fullName) {
-                result.push(test.id);
-                return result;
-            }
-        }
-        var suites = currentSuite.suites();
-        for (var i = 0; i < suites.length; i++) {
-            var suite = suites[i];
-            if (fullName.indexOf(suite.fullName + ".") == 0) {
-                result.push(suite.id);
-                return testPathTo(fullName, suite, result);
-            }
-        }
-    }
-
-    function suitePathTo(fullName, currentSuite, result) {
-        var suites = currentSuite.suites();
-        for (var i = 0; suites.length; i++) {
-            var suite = suites[i];
-            if (fullName == suite.fullName) {
-                result.push(suite.id);
-                return result;
-            }
-            if (fullName.indexOf(suite.fullName + ".") == 0) {
-                result.push(suite.id);
-                return suitePathTo(fullName, suite, result);
-            }
         }
     }
 
