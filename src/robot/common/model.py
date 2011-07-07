@@ -86,6 +86,12 @@ class BaseTestSuite(_TestAndSuiteHelper):
             self.name = name
         elif not self.parent and self.name == '':  # MultiSourceSuite
             self.name = ' & '.join(suite.name for suite in self.suites)
+            self._set_id()
+
+    def _set_id(self):
+        for index, subsuite in enumerate(self.suites):
+            subsuite.id = '%s-s%s' % (self.id, index+1)
+            subsuite._set_id()
 
     def set_critical_tags(self, critical, non_critical):
         if critical is not None or non_critical is not None:
