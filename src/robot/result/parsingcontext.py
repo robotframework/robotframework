@@ -155,7 +155,7 @@ class Location(object):
 
     def __init__(self):
         self._ids = []
-        self._suite_indices = [0]
+        self._suite_indices = [1]
         self._test_indices = []
         self._kw_indices = []
 
@@ -174,7 +174,7 @@ class Location(object):
         self._ids.append('%s%d' % (type, started[-1]))
         started[-1] += 1
         for ind in indices:
-            ind.append(0)
+            ind.append(1)
 
     def end_suite(self):
         self._end(self._suite_indices, self._test_indices, self._kw_indices)
@@ -196,7 +196,7 @@ class Location(object):
 
     @property
     def current_id(self):
-        return '_'.join(self._ids)
+        return '-'.join(self._ids)
 
 
 class TextIndex(int):

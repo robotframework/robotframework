@@ -167,72 +167,72 @@ class TestLocation(unittest.TestCase):
         assert_equals(self._loc.current_id, id)
 
     def test_start_one_suite(self):
-        self._verify_id('s0')
+        self._verify_id('s1')
 
     def test_start_multiple_suites(self):
         self._loc.start_suite()
         self._loc.start_suite()
-        self._verify_id('s0_s0_s0')
+        self._verify_id('s1-s1-s1')
 
     def test_start_and_end_suites(self):
         self._loc.start_suite()
         self._loc.end_suite()
-        self._verify_id('s0')
+        self._verify_id('s1')
         self._loc.start_suite()
-        self._verify_id('s0_s1')
+        self._verify_id('s1-s2')
         self._loc.end_suite()
-        self._verify_id('s0')
+        self._verify_id('s1')
 
     def test_start_test(self):
         self._loc.start_test()
-        self._verify_id('s0_t0')
+        self._verify_id('s1-t1')
 
     def test_start_and_end_tests(self):
         self._loc.start_test()
         self._loc.end_test()
         self._loc.start_test()
-        self._verify_id('s0_t1')
+        self._verify_id('s1-t2')
         self._loc.end_test()
         self._loc.start_suite()
         self._loc.start_test()
-        self._verify_id('s0_s0_t0')
+        self._verify_id('s1-s1-t1')
         self._loc.end_test()
         self._loc.end_suite()
-        self._verify_id('s0')
+        self._verify_id('s1')
 
     def test_keywords_in_test(self):
         self._loc.start_test()
         self._loc.start_keyword()
         self._loc.start_keyword()
-        self._verify_id('s0_t0_k0_k0')
+        self._verify_id('s1-t1-k1-k1')
         self._loc.end_keyword()
-        self._verify_id('s0_t0_k0')
+        self._verify_id('s1-t1-k1')
         self._loc.start_keyword()
-        self._verify_id('s0_t0_k0_k1')
+        self._verify_id('s1-t1-k1-k2')
         self._loc.end_keyword()
-        self._verify_id('s0_t0_k0')
+        self._verify_id('s1-t1-k1')
         self._loc.end_keyword()
-        self._verify_id('s0_t0')
+        self._verify_id('s1-t1')
         self._loc.end_test()
-        self._verify_id('s0')
+        self._verify_id('s1')
 
     def test_suite_setup_and_teardown(self):
         self._loc.start_keyword()
-        self._verify_id('s0_k0')
+        self._verify_id('s1-k1')
         self._loc.end_keyword()
         self._loc.start_test()
         self._loc.start_keyword()
-        self._verify_id('s0_t0_k0')
+        self._verify_id('s1-t1-k1')
         self._loc.end_keyword()
         self._loc.end_test()
         self._loc.start_keyword()
-        self._verify_id('s0_k1')
+        self._verify_id('s1-k2')
         self._loc.end_keyword()
         self._loc.start_suite()
         self._loc.start_keyword()
-        self._verify_id('s0_s0_k0')
+        self._verify_id('s1-s1-k1')
         self._loc.end_keyword()
-        self._verify_id('s0_s0')
+        self._verify_id('s1-s1')
 
 
 if __name__ == '__main__':

@@ -76,10 +76,10 @@ class BaseTestSuite(_TestAndSuiteHelper):
         self.critical_stats = Stat()
         self.all_stats = Stat()
         if parent:
-            self.id = '%s_s%d' % (parent.id, len(parent.suites))
+            self.id = '%s-s%d' % (parent.id, len(parent.suites)+1)
             parent.suites.append(self)
         else:
-            self.id = 's0'
+            self.id = 's1'
 
     def set_name(self, name):
         if name:
