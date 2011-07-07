@@ -88,7 +88,7 @@ function addStatTable(tableName) {
 function renderStatTable(tableName, templateName, stats) {
     var tableId = "#" + tableName + "_stats";
     // Need explicit for loop because $.tmpl() does not handle very large lists
-    for (var i = 0; i < stats.length; i++) {
+    for (var i = 0; stats !== undefined && i < stats.length; i++) {
         $.tmpl(templateName , stats[i]).appendTo($(tableId));
     }
 }
