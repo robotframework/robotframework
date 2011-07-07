@@ -76,6 +76,12 @@ class TestJsSerializer(_JsSerializerTestBase):
     <item name="esc">&lt;</item>
     <item name="html">http://x.y.x.jpg</item>
   </metadata>
+  <kw type="setup" name="Suite Setup" timeout="">
+      <doc>Suite Setup Doc</doc>
+      <arguments></arguments>
+      <msg timestamp="20110601 12:01:51.353" level="INFO">Setup Suite</msg>
+      <status status="PASS" endtime="20110601 12:01:51.353" starttime="20110601 12:01:51.376"></status>
+  </kw>
   <test name="Test" timeout="">
     <doc>*html* &lt;esc&gt; http://x.y http://x.y/z.jpg</doc>
     <kw type="kw" name="Keyword.Example" timeout="1 second">

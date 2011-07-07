@@ -199,7 +199,7 @@ class Location(object):
         return '-'.join(self._ids)
 
 
-class TextIndex(int):
+class TextIndex(long):
     pass
 
 

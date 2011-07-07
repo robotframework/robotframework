@@ -28,6 +28,11 @@ class JsonTestCase(unittest.TestCase):
         json_dump(12, buffer)
         assert_equals('12', buffer.getvalue())
 
+    def test_json_dump_long(self):
+        buffer = StringIO.StringIO()
+        json_dump(12345678901234567890L, buffer)
+        assert_equals('12345678901234567890', buffer.getvalue())
+
     def test_json_dump_list(self):
         buffer = StringIO.StringIO()
         json_dump([1,2,3, 'hello', 'world'], buffer)

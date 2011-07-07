@@ -119,7 +119,7 @@ class DataModel(object):
 
     def _collect_used_indices(self, data, result):
         for item in data:
-            if isinstance(item, (int, long)):
+            if isinstance(item, TextIndex):
                 result.add(item)
             elif isinstance(item, list):
                 self._collect_used_indices(item, result)
