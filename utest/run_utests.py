@@ -4,7 +4,7 @@
 
 usage: run_utest.py [options]
 
-options: 
+options:
     -q, --quiet     Minimal output
     -v, --verbose   Verbose output
     -d, --doc       Show test's doc string instead of name and class
@@ -27,7 +27,7 @@ for path in ["../src", "../src/robot/libraries", "../src/robot",
         sys.path.insert(0, path)
 
 testfile = re.compile("^test_.*\.py$", re.IGNORECASE)
-
+imported = {}
 
 def get_tests(directory=None):
     if directory is None:
@@ -41,13 +41,14 @@ def get_tests(directory=None):
             tests.extend(get_tests(fullname))
         elif testfile.match(name):
             modname = os.path.splitext(name)[0]
-            if modname in sys.modules:
+            if modname in imported:
                 sys.stderr.write("Test module '%s' imported both as '%s' and "
                                  "'%s'.\nRename one or fix test discovery.\n"
-                                 % (modname, sys.modules[modname].__file__,
+                                 % (modname, imported[modname],
                                     os.path.join(directory, name)))
                 sys.exit(1)
             module = __import__(modname)
+            imported[modname] = module.__file__
             tests.append(unittest.defaultTestLoader.loadTestsFromModule(module))
     return tests
 
@@ -56,7 +57,7 @@ def parse_args(argv):
     docs = 0
     verbosity = 1
     try:
-        options, args = getopt.getopt(argv, 'hH?vqd', 
+        options, args = getopt.getopt(argv, 'hH?vqd',
                                       ['help','verbose','quiet','doc'])
         if len(args) != 0:
             raise getopt.error, 'no arguments accepted, got %s' % (args)
