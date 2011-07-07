@@ -109,7 +109,7 @@ function renderTotalSelector(name) {
 }
 
 function renderTotalDetails(name) {
-    var index = (name == 'Critical Tests') ? 0 : 1;
+    var index = (name == 'critical') ? 0 : 1;
     var stat = window.testdata.statistics().total[index];
     var tests = getTotalTests(name)
     stat.totalTime = calculateTotalTime(tests);
@@ -197,7 +197,7 @@ function getTestsHavingTag(tag) {
 }
 
 function getTotalTests(name) {
-    if (name == 'Critical Tests')
+    if (name == 'critical')
         return window.testdata.suite().criticalTests().sort(sortByStatus);
     return window.testdata.suite().allTests().sort(sortByStatus);
 }
@@ -235,9 +235,9 @@ function popUpTo(list, upTo) {
     <tr>
       <th>Status:</th>
       {{if criticalFailed}}
-      <td><a class="summary_fail" href="#total_Critical Tests" onclick="totalDetailSelected('Critical Tests')">${criticalFailed} critical test{{if criticalFailed != 1}}s{{/if}} failed</a></td>
+      <td><a class="summary_fail" href="#total_critical" onclick="totalDetailSelected('critical')">${criticalFailed} critical test{{if criticalFailed != 1}}s{{/if}} failed</a></td>
       {{else}}
-      <td><a class="summary_pass" href="#total_Critical Tests" onclick="totalDetailSelected('Critical Tests')">All critical tests passed</a></td>
+      <td><a class="summary_pass" href="#total_critical" onclick="totalDetailSelected('critical')">All critical tests passed</a></td>
       {{/if}}
     </tr>
     {{if doc()}}
@@ -336,14 +336,14 @@ function popUpTo(list, upTo) {
     <tr id="selector">
       <th>Type:</th>
       <td id="normal_selector">
-        <input id="radio_Critical Tests" type="radio" name="totals_radio"
-               onclick="totalDetailSelected('Critical Tests');"
-               {{if selected == 'Critical Tests'}}checked="checked"{{/if}}>
-        <label for="radio_Critical Tests">Critical Tests</label><br>
-        <input id="radio_All Tests" type="radio" name="totals_radio"
-               onclick="totalDetailSelected('All Tests');"
-               {{if selected == 'All Tests'}}checked="checked"{{/if}}>
-        <label for="radio_All Tests">All Tests</label>
+        <input id="radio_critical" type="radio" name="totals_radio"
+               onclick="totalDetailSelected('critical');"
+               {{if selected == 'critical'}}checked="checked"{{/if}}>
+        <label for="radio_critical">Critical Tests</label><br>
+        <input id="radio_all" type="radio" name="totals_radio"
+               onclick="totalDetailSelected('all');"
+               {{if selected == 'all'}}checked="checked"{{/if}}>
+        <label for="radio_all">All Tests</label>
       </td>
       <td id="print_selector"></td>
     </tr>
