@@ -76,12 +76,6 @@ class TestJsSerializer(_JsSerializerTestBase):
     <item name="esc">&lt;</item>
     <item name="html">http://x.y.x.jpg</item>
   </metadata>
-  <kw type="setup" name="Suite Setup" timeout="">
-      <doc>Suite Setup Doc</doc>
-      <arguments></arguments>
-      <msg timestamp="20110601 12:01:51.353" level="INFO">Setup Suite</msg>
-      <status status="PASS" endtime="20110601 12:01:51.353" starttime="20110601 12:01:51.376"></status>
-  </kw>
   <test name="Test" timeout="">
     <doc>*html* &lt;esc&gt; http://x.y http://x.y/z.jpg</doc>
     <kw type="kw" name="Keyword.Example" timeout="1 second">
@@ -93,7 +87,18 @@ class TestJsSerializer(_JsSerializerTestBase):
     <tags><tag>t1</tag><tag>t2</tag></tags>
     <status status="PASS" endtime="20110601 12:01:51.354" critical="yes" starttime="20110601 12:01:51.353"></status>
   </test>
-  <status status="PASS" endtime="20110601 12:01:51.354" starttime="20110601 12:01:51.329"></status>
+   <test name="setup" timeout="">
+    <doc>docu</doc>
+    <kw type="kw" name="Keyword.Example" timeout="1 second">
+      <doc>*html* &lt;esc&gt; http://x.y http://x.y/z.jpg</doc>
+      <arguments><arg>a1</arg><arg>a2</arg></arguments>
+      <msg timestamp="20110601 12:01:51.353" level="INFO">sample</msg>
+      <status status="PASS" endtime="20110601 12:01:51.453" starttime="20110601 12:01:51.453"></status>
+    </kw>
+    <tags></tags>
+    <status status="PASS" endtime="20110601 12:01:51.454" critical="yes" starttime="20110601 12:01:51.453"></status>
+  </test>
+  <status status="PASS" endtime="20110601 12:01:51.454" starttime="20110601 12:01:51.329"></status>
 </suite>"""
 
     FOR_LOOP_XML = """
@@ -148,7 +153,7 @@ class TestJsSerializer(_JsSerializerTestBase):
     def assert_model_does_not_contain(self, data_model, items):
         suite = self._reverse_from_ids(data_model,
                                        data_model._robot_data['suite'])
-        self._check_does_not_contain(suite, ['*'+i for i in items])
+        self._check_does_not_contain(suite, items)
 
     def _check_does_not_contain(self, suite, items):
         for item in suite:
@@ -268,12 +273,14 @@ class TestJsSerializer(_JsSerializerTestBase):
         if 'errors' in data_model._robot_data:
             raise AssertionError('Errors still in data')
 
-    def _test_remove_keywords(self, data_model, should_contain_strings=None):
+    def _test_remove_keywords(self, data_model, should_contain_strings=None, should_not_contain_strings=None):
         strings_before = self._list_size(data_model._robot_data['strings'])
         data_model_json_before = StringIO.StringIO()
         data_model.write_to(data_model_json_before)
         data_model.remove_keywords()
-        self.assert_model_does_not_contain(data_model, ['kw', 'setup', 'forloop', 'foritem'])
+        if not should_not_contain_strings:
+            should_not_contain_strings = ['*kw', '*setup', '*forloop', '*foritem']
+        self.assert_model_does_not_contain(data_model, should_not_contain_strings)
         if should_contain_strings:
             for string in should_contain_strings:
                 assert_true(string in data_model._robot_data['strings'], msg='string "%s" not in strings' % string)
@@ -293,7 +300,7 @@ class TestJsSerializer(_JsSerializerTestBase):
                           plain_suite=['*/tmp/verysimple.txt', '*Verysimple', doc,
                                        ['*key', '*val', '*esc', '*&lt;',
                                         '*html', '*<img src="http://x.y.x.jpg" title="http://x.y.x.jpg" style="border: 1px solid gray" />'],
-                                       ['*P', -24, 25],
+                                       ['*P', -24, 125],
                                        [],
                               [['*Test', '*', '*Y', doc,
                                   ['*t1', '*t2'], ['*P', 0, 1],
@@ -301,13 +308,21 @@ class TestJsSerializer(_JsSerializerTestBase):
                                       ['*kw', '*Keyword.Example', '*1 second', doc,
                                         '*a1, a2', ['*P', 23, -23], [], [[0, '*W', '*simple']]]
                                   ]
+                              ],['*setup', '*', '*Y', "*docu",
+                                  ['*t1', '*t2'], ['*P', 100, 1],
+                                  [
+                                      ['*kw', '*Keyword.Example', '*1 second', doc,
+                                        '*a1, a2', ['*P', 100, 0], [], [[0, '*I', '*sample']]]
+                                  ]
                               ]],
-                                       [],
-                              [1, 1, 1, 1]])
+                              [],
+                              [2, 2, 2, 2]])
         assert_equals(self._context.link_to([0, 'W', 'simple']),'s1-t1-k1')
 
     def test_suite_data_model_keywords_clearing(self):
-        self._test_remove_keywords(self._get_data_model(self.SUITE_XML), should_contain_strings=['*key', '*val'])
+        self._test_remove_keywords(self._get_data_model(self.SUITE_XML),
+                                   should_contain_strings=['*key', '*val', '*docu'],
+                                   should_not_contain_strings=['*kw', '*Keyword.Example'])
 
     def test_statistics_xml_parsing(self):
         statistics_xml = """
