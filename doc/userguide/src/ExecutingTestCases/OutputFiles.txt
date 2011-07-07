@@ -264,12 +264,33 @@ arguments as the :opt:`--loglevel` option, and it also returns the
 old level so that it can be restored later, for example, in a `test
 teardown`_.
 
+Splitting logs
+~~~~~~~~~~~~~~
+
+Normally the log file is just a single HTML file. When the amount of test
+cases increases, the size of the log file can grow inconveniently
+large. Starting from Robot Framework 2.6, it is possible to use option
+:opt:`--splitlog` to split the log into smaller files.
+
+Technically the log is split into several JavaScript files, which are saved
+into the same folder as the main log file. Files have names such as
+:path:`log-42.js` where :path:`log` is the base name of the normal log file
+and :path:`42` is an incremented index. When the user opens the main log,
+the JavaScript files are loaded on demand. This makes the log splitting
+transparent for the users.
+
+.. note:: When copying the log files, you need to also copy all the 
+          :path:`log-*.js` files or the log will miss some information.
+
+          A small drawback of splitting logs is that the overall size taken
+          by the log increases.
+
 Splitting outputs
 ~~~~~~~~~~~~~~~~~
 
 Splitting outputs functionality has been removed in Robot Framework 2.6.
-Log files are nowadays loaded into browsers dynamically and memory
-consumption should stay reasonable also with larger data sets.
+`Splitting logs`_  replaces this functionality. 
+
 For more information about this change see `issue 861`__ in the issue tracker.
 
 __ http://code.google.com/p/robotframework/issues/detail?id=861
