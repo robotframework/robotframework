@@ -68,6 +68,7 @@ function drawErrorsRecursively(){
 }
 
 function scrollToHash() {
+    // TODO: this does not scroll window in Safari. Should build a workaround for it.
     if (window.location.hash)
         window.location.hash = window.location.hash.substring(1);
 }
