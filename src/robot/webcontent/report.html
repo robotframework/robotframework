@@ -477,7 +477,7 @@ function popUpTo(list, upTo) {
 <script type="text/x-jquery-tmpl" id="testDetailsTableRowTemplate">
   <tr class="test_row">
     {{if $item.logURL}}
-    <td class="col_name"><a href="${$item.logURL}#${id}" id="test_${fullName}" title="${fullName}"><span class="parent_name">${formatParentName}</span>${name}</a></td>
+    <td class="col_name"><a href="${$item.logURL}#${id}" title="${fullName}"><span class="parent_name">${formatParentName}</span>${name}</a></td>
     {{else}}
     <td class="col_name"><span class="parent_name">${formatParentName}</span>${name}</td>
     {{/if}}
