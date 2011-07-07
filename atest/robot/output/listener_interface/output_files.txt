@@ -2,7 +2,7 @@
 Documentation   Testing that listener gets information about different output files. Tests also that the listener can be taken into use with path.
 Suite Setup     Run Some Tests
 Suite Teardown  Remove Listener Files
-Force Tags      regression  to_be_clarified
+Force Tags      regression
 Default Tags    pybot  jybot
 Resource        listener_resource.txt
 
@@ -12,14 +12,14 @@ ${LISTENERS}  ${CURDIR}${/}..${/}..${/}..${/}testresources${/}listeners
 *** Test Cases ***
 Output Files
     ${file} =  Get Listener File  ${ALL_FILE}
-    ${exp} =  Catenate  SEPARATOR=\n  Debug: mydeb.txt  Output: myout.xml  Report: myrep.html  Log: mylog.html
+    ${exp} =  Catenate  SEPARATOR=\n  Debug: mydeb.txt  Output: myout.xml  Log: mylog.html  Report: myrep.html
     ...  Closing...\n
     Should End With  ${file}  ${exp}
 
 Output Files With Java
     [Tags]  jybot
     ${file} =  Get Listener File  ${JAVA_FILE}
-    ${exp} =  Catenate  SEPARATOR=\n  Debug (java): mydeb.txt  Output (java): myout.xml  Report (java): myrep.html  Log (java): mylog.html  The End\n
+    ${exp} =  Catenate  SEPARATOR=\n  Debug (java): mydeb.txt  Output (java): myout.xml  Log (java): mylog.html  Report (java): myrep.html  The End\n
     Should End With  ${file}  ${exp}
 
 *** Keywords ***
