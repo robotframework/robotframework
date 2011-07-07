@@ -1,11 +1,11 @@
 window.passingFailingOutput = {};
 window.passingFailingOutput["errors"] = [];
-window.passingFailingOutput["stats"] = [[{"fail":1,"label":"Critical Tests","pass":1},{"fail":1,"label":"All Tests","pass":1}],[{"combined":"i?","doc":"<b>Combined</b> &amp; escaped &lt;&amp;lt; tag doc","fail":0,"info":"combined","label":"IX","links":"Title of iX:http://X/","pass":0},{"combined":"foo & i*","doc":"","fail":0,"info":"combined","label":"zap","links":"","pass":0}],[{"fail":1,"id":"s0","label":"PassingFailing","name":"PassingFailing","pass":1}]];
-window.passingFailingOutput["generatedMillis"] = -936;
+window.passingFailingOutput["stats"] = [[{"fail":1,"label":"Critical Tests","pass":1},{"fail":1,"label":"All Tests","pass":1}],[{"combined":"i?","doc":"<b>Combined</b> &amp; escaped &lt;&amp;lt; tag doc","fail":0,"info":"combined","label":"IX","links":"Title of iX:http://X/","pass":0},{"combined":"foo & i*","doc":"","fail":0,"info":"combined","label":"zap","links":"","pass":0}],[{"fail":1,"id":"s1","label":"PassingFailing","name":"PassingFailing","pass":1}]];
+window.passingFailingOutput["generatedMillis"] = -25;
 window.passingFailingOutput["generator"] = "Robot trunk 20110629 (Python 2.6.5 on linux2)";
-window.passingFailingOutput["generatedTimestamp"] = "20110707 10:09:39 GMT +03:00";
-window.passingFailingOutput["baseMillis"] = 1310022579936;
-window.passingFailingOutput["suite"] = [14,15,0,[],[11,-4,10],[],[[7,0,8,0,[],[4,-2,3],[[5,6,0,1,2,[4,-1,1],[],[[0,3,2]]]]],[13,0,8,0,[],[11,1,4,10],[[5,12,0,9,10,[11,2,2],[],[[4,11,10]]]]]],[],[2,1,2,1]];
+window.passingFailingOutput["generatedTimestamp"] = "20110707 13:41:38 GMT +03:00";
+window.passingFailingOutput["baseMillis"] = 1310035298025;
+window.passingFailingOutput["suite"] = [14,15,0,[],[11,-4,8],[],[[7,0,8,0,[],[4,-1,2],[[5,6,0,1,2,[4,0,1],[],[[0,3,2]]]]],[13,0,8,0,[],[11,2,2,10],[[5,12,0,9,10,[11,2,1],[],[[3,11,10]]]]]],[],[2,1,2,1]];
 window.passingFailingOutput["strings"] = [];
 window.passingFailingOutput["strings"] = window.passingFailingOutput["strings"].concat(["*","*Logs the given message with the given level.","*passing","*I","*P","*kw","*BuiltIn.Log","*Passing","*Y","*Fails the test immediately with the given (optional) message.","*In test","*F","*BuiltIn.Fail","*Failing","*/home/mkorpela/workspace/robot/utest/webcontent/spec/data/teardownFailure/PassingFailing.txt","*PassingFailing"]);
 window.settings = {"background":{"fail":"DeepPink"},"logURL":"log.html","reportURL":"report.html"};

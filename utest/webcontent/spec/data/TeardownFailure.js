@@ -1,11 +1,11 @@
 window.teardownFailureOutput = {};
 window.teardownFailureOutput["errors"] = [];
-window.teardownFailureOutput["stats"] = [[{"fail":2,"label":"Critical Tests","pass":0},{"fail":2,"label":"All Tests","pass":0}],[{"combined":"i?","doc":"<b>Combined</b> &amp; escaped &lt;&amp;lt; tag doc","fail":0,"info":"combined","label":"IX","links":"Title of iX:http://X/","pass":0},{"combined":"foo & i*","doc":"","fail":0,"info":"combined","label":"zap","links":"","pass":0}],[{"fail":2,"id":"s0","label":"teardownFailure","name":"teardownFailure","pass":0},{"fail":2,"id":"s0_s0","label":"teardownFailure.PassingFailing","name":"PassingFailing","pass":0}]];
-window.teardownFailureOutput["generatedMillis"] = -906;
+window.teardownFailureOutput["stats"] = [[{"fail":2,"label":"Critical Tests","pass":0},{"fail":2,"label":"All Tests","pass":0}],[{"combined":"i?","doc":"<b>Combined</b> &amp; escaped &lt;&amp;lt; tag doc","fail":0,"info":"combined","label":"IX","links":"Title of iX:http://X/","pass":0},{"combined":"foo & i*","doc":"","fail":0,"info":"combined","label":"zap","links":"","pass":0}],[{"fail":2,"id":"s1","label":"teardownFailure","name":"teardownFailure","pass":0},{"fail":2,"id":"s1-s1","label":"teardownFailure.PassingFailing","name":"PassingFailing","pass":0}]];
+window.teardownFailureOutput["generatedMillis"] = 2;
 window.teardownFailureOutput["generator"] = "Robot trunk 20110629 (Python 2.6.5 on linux2)";
-window.teardownFailureOutput["generatedTimestamp"] = "20110707 10:09:39 GMT +03:00";
-window.teardownFailureOutput["baseMillis"] = 1310022579906;
-window.teardownFailureOutput["suite"] = [19,20,0,[],[11,-8,16,18],[[14,15,0,[],[11,-5,11],[],[[7,0,8,0,[],[4,-2,3],[[5,6,0,1,2,[4,-1,1],[],[[0,3,2]]]]],[13,0,8,0,[],[11,1,5,10],[[5,12,0,9,10,[11,2,3],[],[[5,11,10]]]]]],[],[2,1,2,1]]],[],[[17,12,0,9,0,[11,7,1],[],[[8,11,16]]]],[2,0,2,0]];
+window.teardownFailureOutput["generatedTimestamp"] = "20110707 13:41:38 GMT +03:00";
+window.teardownFailureOutput["baseMillis"] = 1310035297998;
+window.teardownFailureOutput["suite"] = [19,20,0,[],[11,-5,15,18],[[14,15,0,[],[11,-3,10],[],[[7,0,8,0,[],[4,-1,2],[[5,6,0,1,2,[4,0,1],[],[[0,3,2]]]]],[13,0,8,0,[],[11,2,4,10],[[5,12,0,9,10,[11,3,2],[],[[5,11,10]]]]]],[],[2,1,2,1]]],[],[[17,12,0,9,0,[11,8,1],[],[[9,11,16]]]],[2,0,2,0]];
 window.teardownFailureOutput["strings"] = [];
 window.teardownFailureOutput["strings"] = window.teardownFailureOutput["strings"].concat(["*","*Logs the given message with the given level.","*passing","*I","*P","*kw","*BuiltIn.Log","*Passing","*Y","*Fails the test immediately with the given (optional) message.","*In test","*F","*BuiltIn.Fail","*Failing","*/home/mkorpela/workspace/robot/utest/webcontent/spec/data/teardownFailure/PassingFailing.txt","*PassingFailing","*AssertionError","*teardown","*Suite teardown failed:\nAssertionError","*/home/mkorpela/workspace/robot/utest/webcontent/spec/data/teardownFailure","*teardownFailure"]);
 window.settings = {"background":{"fail":"DeepPink"},"logURL":"log.html","reportURL":"report.html"};
