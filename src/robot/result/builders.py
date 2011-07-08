@@ -123,7 +123,7 @@ class LogBuilder(_HTMLFileBuilder):
             writer.write('window.fileLoading.notify("%s");\n' % os.path.basename(path))
 
     def _get_settings(self):
-        # logURL is needed to identify splitlog files
+        # logURL is needed by JavaScript side to identify splitlog files
         return {
             'title': self._settings['LogTitle'],
             'reportURL': self._url_from_path(self._path,
