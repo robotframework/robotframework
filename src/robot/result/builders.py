@@ -22,6 +22,7 @@ import robot
 from robot.output import LOGGER
 from robot import utils
 from robot.result.jsondatamodel import _SeparatingWriter
+from robot.version import get_full_version
 
 WEBCONTENT_PATH = os.path.join(os.path.dirname(robot.__file__), 'webcontent')
 
@@ -168,6 +169,8 @@ class HTMLFileWriter(object):
             self._inline_js_file(line)
         elif self._is_css_line(line):
             self._inline_css_file(line)
+        elif self._is_meta_generator_line(line):
+            self._write_meta_generator()
         else:
             self._write(line)
 
@@ -179,6 +182,13 @@ class HTMLFileWriter(object):
 
     def _is_js_line(self, line):
         return line.startswith('<script type="text/javascript" src=')
+
+    def _is_meta_generator_line(self, line):
+        return line.startswith('<meta name="Generator" content=')
+
+    def _write_meta_generator(self):
+        self._write('<meta name="Generator" content="%s">\n'
+                    % get_full_version('Robot Framework'))
 
     def _write_output_js(self):
         separator = '</script>\n<script type="text/javascript">\n'
