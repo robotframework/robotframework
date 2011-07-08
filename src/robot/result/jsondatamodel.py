@@ -129,6 +129,7 @@ class DataModel(object):
                 self._collect_used_indices(item.keys(), result)
         return result
 
+
 class _SeparatingWriter(object):
 
     def __init__(self, output, separator):
@@ -146,6 +147,7 @@ class _SeparatingWriter(object):
 
     def write(self, string):
         self._output.write(string)
+
 
 class _SubResult(object):
 
