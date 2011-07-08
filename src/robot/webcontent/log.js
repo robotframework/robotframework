@@ -17,6 +17,7 @@ function addElements(elems, templateName, target){
 }
 
 function openElement(elementId, childrenNames) {
+    $('#'+elementId+'_unfoldlink').css("background", "yellow");
     var childElement = $("#"+elementId+"_children");
     childElement.show();
     if (!childElement.hasClass("populated")) {
@@ -26,6 +27,7 @@ function openElement(elementId, childrenNames) {
     }
     $('#'+elementId+'_foldlink').show();
     $('#'+elementId+'_unfoldlink').hide();
+    $('#'+elementId+'_unfoldlink').css("background", "white");
 }
 
 function drawCallback(element, childElement, childrenNames) {
