@@ -45,10 +45,9 @@ class Context(object):
         return self
 
     def dump_stats(self):
-        try:
-            return self._stats.dump()
-        finally:
-            self._stats = self._stats.parent
+        stats = self._stats
+        self._stats = self._stats.parent
+        return stats
 
     def get_id(self, value):
         if value is None:
@@ -115,14 +114,13 @@ class Context(object):
 
 
 class Stats(object):
-    TOTAL = 0
-    TOTAL_PASSED = 1
-    CRITICAL = 2
-    CRITICAL_PASSED = 3
 
     def __init__(self, parent=None):
         self.parent = parent
-        self._stats = [0,0,0,0]
+        self.total = 0
+        self.total_passed = 0
+        self.critical = 0
+        self.critical_passed = 0
         self._children = []
 
     def new_child(self):
@@ -130,25 +128,32 @@ class Stats(object):
         return self._children[-1]
 
     def add_test(self, critical, passed):
-        self._stats[Stats.TOTAL] += 1
-        if passed:
-            self._stats[Stats.TOTAL_PASSED] +=1
-        if critical:
-            self._stats[Stats.CRITICAL] += 1
-            if passed:
-                self._stats[Stats.CRITICAL_PASSED] += 1
-
-    def dump(self):
+        self._update_stats(self, critical, passed)
         if self.parent:
-            for i in range(4):
-                self.parent._stats[i] += self._stats[i]
-        return self._stats
+            self._update_stats(self.parent, critical, passed)
+
+    def _update_stats(self, stat, critical, passed):
+        stat.total += 1
+        if passed:
+            stat.total_passed += 1
+        if critical:
+            stat.critical += 1
+        if critical and passed:
+            stat.critical_passed += 1
 
     def fail_all(self):
-        self._stats[1] = 0
-        self._stats[3] = 0
+        self.total_passed = 0
+        self.critical_passed = 0
         for child in self._children:
             child.fail_all()
+
+    def __iter__(self):
+        for stat in (self.total, self.total_passed,
+                     self.critical, self.critical_passed):
+            yield stat
+
+    def __len__(self):
+        return 4
 
 
 class Location(object):

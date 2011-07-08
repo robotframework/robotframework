@@ -166,12 +166,7 @@ class TestJsSerializer(_JsSerializerTestBase):
             return None
         if isinstance(item, (long, int)):
             return item
-        if isinstance(item, list):
-            return [self._reverse_from_ids(data, i) for i in item]
-        if isinstance(item, dict):
-            return dict((self._reverse_from_ids(data, k),
-                         self._reverse_from_ids(data, item[k])) for k in item)
-        raise AssertionError('Unexpected item %r' % item)
+        return [self._reverse_from_ids(data, i) for i in item]
 
     def test_status_xml_parsing(self):
         data_model = self._get_data_model('<status status="PASS" endtime="20110531 12:48:09.042" starttime="20110531 12:48:09.000"></status>')
