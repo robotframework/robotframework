@@ -34,6 +34,7 @@ Examples:
   package.py version trunk
 """
 
+from __future__ import with_statement
 import sys
 import os
 from os.path import abspath, dirname, exists, join
