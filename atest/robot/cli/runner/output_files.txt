@@ -45,6 +45,10 @@ Outputs Into Different Dirs
     Directory Should Contain  ${CLI OUTDIR}/r  r.html
     Directory Should Contain  ${CLI OUTDIR}  l.html  o  r
 
+Split Log
+    Run Tests Without Processing Output  --outputdir ${CLI OUTDIR} --output o.xml --report r.html --log l.html --splitlog  ${TESTFILE}
+    Directory Should Contain  ${CLI OUTDIR}  l-1.js  l-2.js  l.html  o.xml  r.html
+
 Non-writable Output File
     Create Directory  ${CLI OUTDIR}/directory.xml
     Run Tests Without Processing Output  --output ${CLI OUTDIR}/directory.xml  ${TESTFILE}
