@@ -18,6 +18,12 @@ Run User keyword And Continue On Failure
     ${tc}=  Check Test Case  ${TESTNAME}
     Check Log Message  ${tc.kws[1].msgs[0]}  This should be executed
 
+Run Keyword And Continue On Failure With For Loops
+    ${tc}=  Check Test Case  ${TESTNAME}
+
+Nested Run Keyword And Continue On Failure
+    ${tc}=  Check Test Case  ${TESTNAME}
+
 Run Keyword And Continue On Failure With Syntax Error
     Check Test Case  ${TESTNAME}
 

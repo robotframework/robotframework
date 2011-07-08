@@ -85,10 +85,11 @@ class ExecutionFailed(RobotError):
     def dont_cont(self):
         return self.timeout or self.syntax or self.exit
 
-    # Python 2.6 property decorators would have nice `setter` attribute:
-    # http://docs.python.org/library/functions.html#property
     cont = property(lambda self: self._cont and not self.dont_cont,
-                    lambda self, cont: setattr(self, '_cont', cont))
+                    lambda self, cont: self._set_cont(cont))
+
+    def _set_cont(self, cont=True):
+        self._cont = cont
 
     def can_continue(self, teardown=False, templated=False, dry_run=False):
         if dry_run:
@@ -141,6 +142,12 @@ class ExecutionFailures(ExecutionFailed):
 
     def get_errors(self):
         return self._errors
+
+    def _set_cont(self, cont):
+        ExecutionFailed._set_cont(self, cont)
+        if hasattr(self, '_errors'):
+            for err in self._errors:
+                err.cont = cont
 
 
 class UserKeywordExecutionFailed(ExecutionFailures):
