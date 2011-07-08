@@ -106,7 +106,7 @@ class _SuiteHandler(_Handler):
         result = self._get_ids([self._source, self._name]) + \
                  self._data_from_children + [self._suites] + \
                  [self._tests] + [self._keywords] + \
-                 [self._get_ids(self._context.dump_stats())]
+                 [self._context.dump_stats()]
         self._context.end_suite()
         return result
 
