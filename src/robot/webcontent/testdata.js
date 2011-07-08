@@ -108,7 +108,7 @@ window.testdata = function () {
         if (test.isChildrenLoaded) {
             test.populateKeywords(Populator(element[6], strings, childCreator(test, createKeyword)));
         } else {
-            test.childFileName = window.settings['logURL'].replace('.html', '-'+element[6]+'.js');
+            test.childFileName = window.settings['splitLogBase'] + '-'+element[6]+'.js';
             test.populateKeywords(SplitLogPopulator(element[6], childCreator(test, createKeyword)));
         }
         return test;
