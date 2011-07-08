@@ -78,11 +78,15 @@ function addStatistics() {
 function addStatTable(tableName) {
     var stats = window.testdata.statistics()[tableName];
     if (tableName == 'tag' && stats.length == 0) {
-       renderStatTable(tableName, 'no_tags_row');
+        renderNoTagStatTable();
     } else {
         var templateName = tableName + 'StatisticsRowTemplate';
         renderStatTable(tableName, templateName, stats);
     }
+}
+
+function renderNoTagStatTable() {
+    $.tmpl('no_tags_row').appendTo($('#tag_stats'));
 }
 
 function renderStatTable(tableName, templateName, stats) {
