@@ -30,11 +30,11 @@ class TestParser(unittest.TestCase):
         context.collect_stats()
         context.add_test(1,1)
         child_stats = context.dump_stats()
-        self.assertEqual(child_stats, [1, 1, 1, 1])
+        self.assertEqual(list(child_stats), [1, 1, 1, 1])
         context.teardown_failed()
         parent_stats = context.dump_stats()
-        self.assertEqual(child_stats, [1, 0, 1, 0])
-        self.assertEqual(parent_stats, [1, 0, 1, 0])
+        self.assertEqual(list(child_stats), [1, 0, 1, 0])
+        self.assertEqual(list(parent_stats), [1, 0, 1, 0])
 
     def test_link_creation(self):
         key = [4,'W',6]

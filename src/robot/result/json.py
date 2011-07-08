@@ -47,7 +47,7 @@ def json_dump(data, output, mappings=None):
             if index < len(data)-1:
                 output.write(',')
         output.write('}')
-    elif isinstance(data, (list, tuple)):
+    elif _iterable(data):
         output.write('[')
         for index, item in enumerate(data):
             json_dump(item, output, mappings)
@@ -62,3 +62,13 @@ def json_dump(data, output, mappings=None):
         output.write(encode_basestring(data))
     else:
         raise Exception('Data type (%s) serialization not supported' % type(data))
+
+
+def _iterable(item):
+    if isinstance(item, basestring):
+        return False
+    try:
+        iter(item)
+    except TypeError:
+        return False
+    return True
