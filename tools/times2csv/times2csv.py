@@ -14,7 +14,6 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-
 """Robot Framework Start/End/Elapsed Time Reporter
 
 Usage:  times2csv.py input-xml [output-csv] [include-items]
@@ -48,7 +47,8 @@ def process_file(inpath, outpath, items):
     suite = TestSuite(inpath)
     outfile = open(outpath, 'wb')
     writer = csv.writer(outfile)
-    writer.writerow(['TYPE','NAME','STATUS','START','END','ELAPSED','ELAPSED SECS'])
+    writer.writerow(['TYPE', 'NAME', 'STATUS', 'START', 'END', 'ELAPSED',
+                     'ELAPSED SECS'])
     process_suite(suite, writer, items.lower())
     outfile.close()
 
@@ -69,30 +69,21 @@ def process_test(test, writer, items, level):
     if 'keyword' in items:
         for kw in [test.setup] + test.keywords + [test.teardown]:
             process_keyword(kw, writer, level+1)
-    
+
 def process_keyword(kw, writer, level):
     if kw is None:
         return
-    if kw.type in ['kw', 'set', 'repeat']:
-        kw_type = 'Keyword'
-    else:
-        kw_type = kw.type.capitalize()
+    kw_type = kw.type.capitalize()
     process_item(kw, writer, level, kw_type)
     for subkw in kw.keywords:
         process_keyword(subkw, writer, level+1)
-    
+
 def process_item(item, writer, level, item_type, long_name=False):
-    if level == 0:
-        indent = ''
-    else:
-        indent = '|  ' * (level-1) + '|- '
-    if long_name:
-        name = item.longname
-    else:
-        name = item.name
+    indent = '' if level == 0 else ('|  ' * (level-1) + '|- ')
+    name = item.longname if long_name else item.name
+    elapsed = utils.elapsed_time_to_string(item.elapsedtime)
     writer.writerow([indent+item_type, name, item.status, item.starttime,
-                     item.endtime, utils.elapsed_time_to_string(item.elapsedtime), 
-                     item.elapsedtime/1000.0])
+                     item.endtime, elapsed, item.elapsedtime/1000.0])
 
 
 if __name__ == '__main__':
@@ -105,7 +96,7 @@ if __name__ == '__main__':
     except IndexError:
         outcsv = os.path.splitext(inxml)[0] + '.csv'
     try:
-        items = sys.argv[3]            
+        items = sys.argv[3]
     except IndexError:
         items = 'suite-test-keyword'
     process_file(inxml, outcsv, items)
