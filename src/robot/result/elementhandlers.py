@@ -67,7 +67,7 @@ class _RobotHandler(_Handler):
 
     def __init__(self, context, attrs):
         _Handler.__init__(self, context)
-        self._generator = attrs.get('generator')
+        self._generator = attrs.get('generator').split()[0].lower()
 
     def end_element(self, text):
         return {'generator': self._generator,
