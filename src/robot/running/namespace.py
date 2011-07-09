@@ -248,6 +248,8 @@ class Namespace:
         handler = None
         if not name:
             raise DataError('Keyword name cannot be empty.')
+        if not isinstance(name, basestring):
+            raise DataError('Keyword name must be a string.')
         if '.' in name:
             handler = self._get_explicit_handler(name)
         if not handler:

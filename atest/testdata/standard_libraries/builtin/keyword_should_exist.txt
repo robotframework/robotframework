@@ -1,0 +1,82 @@
+***Settings***
+Test Template    Keyword should exist
+Resource         keyword_should_exist_resource_1.txt
+Resource         keyword_should_exist_resource_2.txt
+
+***Variables***
+${LOG}  Log
+
+***Test Cases***
+
+Library keyword exists with short name
+    Log
+    L O G    Message isn't used
+
+Library keyword exists with full name
+    BuiltIn.Log
+    built in . l o g
+
+Local user keyword exists
+    My User Keyword
+    MYUSERKEYWORD
+
+User keyword in resource exists with short name
+    Resource Keyword
+    Re Source Key Word
+
+User keyword in resource exists with full name
+    keyword_should_exist_resource_1.Resource Keyword
+    KEYWORD_SHOULD_EXIST_RESOURCE_1.RESOURCE KEYWORD
+
+Variables in keyword name
+    ${LOG}
+    ${LOG} Many
+
+BDD style keyword exists
+    Given this keyword exists
+    Then this keyword exists
+    ${LOG} this keyword exists
+
+Keyword does not exist
+    [Documentation]  FAIL No keyword with name 'Non Existing' found.
+    Non Existing
+
+Keyword does not exist with custom message
+    [Documentation]  FAIL Custom message
+    Non Existing  Custom message
+
+Duplicate keywords
+    [Documentation]  FAIL Multiple keywords with name 'Duplicated keyword' found.\n
+    ...  Give the full name of the keyword you want to use.\n
+    ...  Found: 'keyword_should_exist_resource_1.Duplicated Keyword' and 'keyword_should_exist_resource_2.Duplicated Keyword'
+    Duplicated keyword
+
+Duplicate keywords in same resourc
+    [Documentation]  FAIL Keyword 'Duplicate keyword in same resource' defined multiple times
+    Duplicate keyword in same resource
+
+Higher priority keyword overrides
+    No Operation
+
+Empty keyword name
+    [Documentation]  FAIL Keyword name cannot be empty.
+    ${EMPTY}
+
+Non-string keyword name
+    [Documentation]  FAIL Keyword name must be a string.
+    ${42}
+
+
+*** Keywords ***
+My User Keyword
+    Fail  This is never executed
+
+Duplicate keyword in same resource
+
+Duplicate keyword in same resource
+
+No Operation
+    [Documentation]  Override keyword from BuiltIn
+
+${Prefix} this ${keyword:keyword} exists
+    Fail  Not executed

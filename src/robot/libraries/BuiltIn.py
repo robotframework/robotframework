@@ -23,6 +23,7 @@ from robot.utils import asserts
 from robot.variables import is_var, is_list_var
 from robot.running import Keyword, NAMESPACES, RUN_KW_REGISTER
 from robot.running.model import ExecutionContext
+from robot.common import UserErrorHandler
 from robot.version import get_version
 
 if utils.is_jython:
@@ -829,6 +830,8 @@ class _Variables:
         the former has some limitations explained in `Set Suite Variable`.
 
         The default error message can be overridden with the `msg` argument.
+
+        See also `Variable Should Not Exist` and `Keyword Should Exist`.
         """
         name = self._get_var_name(name)
         variables = self.get_variables()
@@ -844,6 +847,8 @@ class _Variables:
         the former has some limitations explained in `Set Suite Variable`.
 
         The default error message can be overridden with the `msg` argument.
+
+        See also `Variable Should Exist` and `Keyword Should Exist`.
         """
         name = self._get_var_name(name)
         variables = self.get_variables()
@@ -1028,8 +1033,6 @@ class _RunKeyword:
         can be a variable and thus set dynamically, e.g. from a return value of
         another keyword or from the command line.
         """
-        if not isinstance(name, basestring):
-            raise RuntimeError('Keyword name must be a string')
         kw = Keyword(name, list(args))
         return kw.run(ExecutionContext(self._namespace, self._output))
 
@@ -1600,6 +1603,26 @@ class _Misc:
         old_order = self._namespace.library_search_order
         self._namespace.library_search_order = libraries
         return old_order
+
+    def keyword_should_exist(self, name, msg=None):
+        """Fails unless the given keyword exists in the current scope.
+
+        Fails also if there are more than one keywords with the same name.
+        Works both with the short name (e.g. `Log`) and the full name
+        (e.g. `BuiltIn.Log`).
+
+        The default error message can be overridden with the `msg` argument.
+
+        New in Robot Framework 2.6. See also `Variable Should Exist`.
+        """
+        try:
+            handler = self._namespace._get_handler(name)
+            if not handler:
+                raise DataError("No keyword with name '%s' found." % name)
+            if isinstance(handler, UserErrorHandler):
+                handler.run()
+        except DataError, err:
+            raise AssertionError(msg or unicode(err))
 
     def get_time(self, format='timestamp', time_='NOW'):
         """Returns the given time in the requested format.
