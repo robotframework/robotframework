@@ -1107,9 +1107,6 @@ included in the source code and generated from it. Basically, that
 means using docstrings_ with Python and Javadoc_ with Java, as in
 the examples below.
 
-.. _docstrings: http://www.python.org/dev/peps/pep-0257/
-.. _javadoc: http://java.sun.com/j2se/javadoc/writingdoccomments/index.html
-
 .. sourcecode:: python
 
     class MyLibrary:
@@ -1166,6 +1163,14 @@ tip, by `libdoc.py`_ and also shown in the test logs. However, the latter
 does not work with Java libraries using the static API,
 because their documentations are lost in compilation and not available
 at runtime.
+
+.. note:: If you want to use non-ASCII charactes in the documentation of
+          Python libraries, you must either use UTF-8 as your `source code
+          encoding`__ or create docstrings as Unicode.
+
+.. _docstrings: http://www.python.org/dev/peps/pep-0257
+.. _javadoc: http://java.sun.com/j2se/javadoc/writingdoccomments/index.html
+__ http://www.python.org/dev/peps/pep-0263
 
 Testing libraries
 '''''''''''''''''
