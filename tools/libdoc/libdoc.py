@@ -14,7 +14,6 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-
 """Robot Framework Library and Resource File Documentation Generator
 
 Usage:  libdoc.py [options] library_or_resource
@@ -67,7 +66,10 @@ from httplib import HTTPConnection
 from HTMLParser import HTMLParser
 
 from robot.running import TestLibrary, UserLibrary
-from robot.utils.templating import Template, Namespace
+try:
+    from robot.utils.templating import Template, Namespace
+except ImportError:  # Support for 2.5.x
+    from robot.serializing.templating import Template, Namespace
 from robot.errors import DataError, Information
 from robot.parsing import populators
 from robot import utils
@@ -89,9 +91,8 @@ def create_html_doc(lib, outpath, title=None, styles=None):
     namespace = Namespace(LIB=lib, TITLE=title, STYLES=_get_styles(styles),
                           GENERATED=generated)
     doc = Template(template=HTML_TEMPLATE).generate(namespace) + '\n'
-    outfile = open(outpath, 'w')
-    outfile.write(doc.encode('UTF-8'))
-    outfile.close()
+    with open(outpath, 'w') as outfile:
+        outfile.write(doc.encode('UTF-8'))
 
 def _get_styles(styles):
     if not styles:
