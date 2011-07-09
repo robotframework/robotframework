@@ -12,6 +12,8 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+import inspect
+
 from unic import unic
 
 
@@ -91,3 +93,13 @@ def seq2str2(sequence):
     if not sequence:
         return '[ ]'
     return '[ %s ]' % ' | '.join(unic(item) for item in sequence)
+
+
+def getdoc(item):
+    doc = inspect.getdoc(item) or u''
+    if isinstance(doc, unicode):
+        return doc
+    try:
+        return doc.decode('UTF-8')
+    except UnicodeDecodeError:
+        return unic(doc)

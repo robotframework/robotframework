@@ -97,7 +97,7 @@ class _BaseTestLibrary(BaseLibrary):
         self._instance_cache = []
         self._libinst = None
         if libcode is not None:
-            self.doc = inspect.getdoc(libcode) or ''
+            self.doc = utils.getdoc(libcode)
             self.scope = self._get_scope(libcode)
             self._libcode = libcode
             self.init =  self._create_init_handler(libcode)

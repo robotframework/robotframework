@@ -171,7 +171,7 @@ class _PythonHandler(_RunnableHandler):
 
     def __init__(self, library, handler_name, handler_method):
         _RunnableHandler.__init__(self, library, handler_name, handler_method)
-        self.doc = inspect.getdoc(handler_method) or ''
+        self.doc = utils.getdoc(handler_method)
 
     def _parse_arguments(self, handler_method):
         return PythonKeywordArguments(handler_method, self.longname)

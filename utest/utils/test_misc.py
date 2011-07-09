@@ -48,5 +48,39 @@ class TestMiscUtils(unittest.TestCase):
             assert_equals(printable_name(inp, code_style=True), exp)
 
 
+class TestGetdoc(unittest.TestCase):
+
+    def test_one_line_doc(self):
+        def func():
+            """My documentation."""
+        assert_equals(getdoc(func), 'My documentation.')
+
+    def test_multiline_doc(self):
+        class Class:
+            """My doc.
+
+            In multiple lines.
+            """
+        assert_equals(getdoc(Class), 'My doc.\n\nIn multiple lines.')
+        assert_equals(getdoc(Class), getdoc(Class()))
+
+    def test_non_ascii_doc(self):
+        def func():
+            """Hyv\xc3\xa4 \xc3\xa4iti!"""
+        assert_equals(getdoc(func), u'Hyv\xe4 \xe4iti!')
+
+    def test_non_ascii_doc_not_in_utf8(self):
+        def func():
+            """Hyv\xe4 \xe4iti!"""
+        assert_equals(getdoc(func), 'Hyv\\xe4 \\xe4iti!')
+
+    def test_unicode_doc(self):
+        class Class:
+            def meth(self):
+                u"""Hyv\xe4 \xe4iti!"""
+        assert_equals(getdoc(Class.meth), u'Hyv\xe4 \xe4iti!')
+        assert_equals(getdoc(Class.meth), getdoc(Class().meth))
+
+
 if __name__ == "__main__":
     unittest.main()
