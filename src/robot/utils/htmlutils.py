@@ -78,7 +78,7 @@ class _HtmlFormatter(_Formatter):
         if self._table.is_started():
             self._result.add(self._table.end(), join_after=False)
         if self._is_hr(line):
-            self._result.add('<hr>\n', join_after=False)
+            self._result.add('<hr>', join_after=False)
             return
         self._result.add(self._line_formatter.format(line))
 
@@ -205,5 +205,5 @@ class _TableFormatter(object):
             table.extend(['<td>%s</td>' % self._line_formatter.format(cell)
                           for cell in row])
             table.append('</tr>')
-        table.append('</table>\n')
+        table.append('</table>')
         return '\n'.join(table)

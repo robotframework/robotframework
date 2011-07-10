@@ -393,13 +393,13 @@ after
     def test_hr_is_three_or_more_hyphens(self):
         for i in range(3, 100):
             hr = '-' * i
-            assert_equals(html_format(hr), '<hr>\n')
-            assert_equals(html_format(hr + '  '), '<hr>\n')
+            assert_equals(html_format(hr), '<hr>')
+            assert_equals(html_format(hr + '  '), '<hr>')
 
     def test_hr_with_other_stuff_around(self):
-        for inp, exp in [('---\n-', '<hr>\n-'),
-                         ('xx\n---\nxx', 'xx\n<hr>\nxx'),
-                         ('xx\n\n------\n\nxx', 'xx\n\n<hr>\n\nxx')]:
+        for inp, exp in [('---\n-', '<hr>-'),
+                         ('xx\n---\nxx', 'xx\n<hr>xx'),
+                         ('xx\n\n------\n\nxx', 'xx\n\n<hr>\nxx')]:
             assert_equals(html_format(inp), exp)
 
     def test_not_hr(self):
@@ -412,9 +412,9 @@ after
 | t | a | b | l | e |
 ---
 '''[1:-1]
-        exp = '<hr>\n' \
+        exp = '<hr>' \
             + _format_table([['t','a','b','l','e']]) \
-            + '<hr>\n'
+            + '<hr>'
         assert_equals(html_format(inp), exp)
 
 
@@ -429,8 +429,7 @@ class TestFormatTable(unittest.TestCase):
 <td>2</td>
 <td>3</td>
 </tr>
-</table>
-'''
+</table>'''
         assert_equals(_format_table(inp), exp)
 
     def test_multi_row_table(self):
@@ -448,8 +447,7 @@ class TestFormatTable(unittest.TestCase):
 <td>3.1</td>
 <td>3.2</td>
 </tr>
-</table>
-'''
+</table>'''
         assert_equals(_format_table(inp), exp)
 
     def test_fix_ragged_table(self):
@@ -470,8 +468,7 @@ class TestFormatTable(unittest.TestCase):
 <td>3.2</td>
 <td></td>
 </tr>
-</table>
-'''
+</table>'''
         assert_equals(_format_table(inp), exp)
 
 
