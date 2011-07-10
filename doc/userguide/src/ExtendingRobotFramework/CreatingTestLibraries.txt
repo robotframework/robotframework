@@ -1094,6 +1094,23 @@ __ `List variables`_
    Should Be Equal   @{li}[0] @{li}[1]   of strings
    ================  ==================  ==================  =======================
 
+Communication when using threads
+''''''''''''''''''''''''''''''''
+
+If a library uses threads, it should generally communicate with the
+framework only from the main thread. If a worker thread has, for
+example, a failure to report or something to log, it should pass the
+information first to the main thread, which can then use exceptions or
+other mechanisms explained in this section for communication with the
+framework.
+
+This is especially important when threads are run on background while
+other keywords are running. Results of communicating with the
+framework in that case are undefined and can in works case cause a
+crash or a corrupted output file. If a keyword starts something on
+background, there should be another keyword that checks the status of
+the worker thread and reports gathered information accordingly.
+
 Distributing test libraries
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
