@@ -486,6 +486,9 @@ body {
   font-family: sans-serif;
   padding: 0.1em 0.5em;
 }
+.libdoc {
+  white-space: pre-wrap;
+}
 a.name, span.name {
   font-style: italic;
 }
@@ -584,11 +587,11 @@ not supported
 <!-- END IF -->
 
 <h2 id="introduction">Introduction</h2>
-<p>${LIB.htmldoc}</p>
+<div class="libdoc">${LIB.htmldoc}</div>
 
 <!-- IF ${LIB.inits} -->
 <h2 id="importing">Importing</h2>
-<table border="1" class="keywords">
+<table border="1" class="keywords libdoc">
 <tr>
   <th class="arg">Arguments</th>
   <th class="doc">Documentation</th>
@@ -613,7 +616,7 @@ not supported
 </div>
 
 <h2>Keywords</h2>
-<table border="1" class="keywords">
+<table border="1" class="keywords libdoc">
 <tr>
   <th class="kw">Keyword</th>
   <th class="arg">Arguments</th>
