@@ -80,19 +80,22 @@ class DataModel(object):
     def _remove_keywords_from(self, data):
         if not isinstance(data, list):
             return data
-        return [self._remove_keywords_from(item) for item in data
-                if not self._is_ignorable_keyword(item)]
+        return list(self._remove_keywords_from(item) for item in data
+                    if not self._is_ignorable_keyword(item))
 
     def _is_ignorable_keyword(self, item):
         # Top level teardown is kept to make tests fail if suite teardown failed
         # TODO: Could we store information about failed suite teardown otherwise?
-        # TODO: Cleanup?
-        return item and \
-               isinstance(item, list) and \
-               len(item) == 8 and \
-               (isinstance(item[0], TextIndex)) and \
-               self._robot_data['strings'][item[0]] in \
-                        ['*kw', '*setup', '*forloop', '*foritem']
+        return self._is_keyword(item) and self._is_not_teardown(item[0])
+
+    def _is_keyword(self, item):
+        # FIXME: This is a hack.
+        return isinstance(item, list) and len(item) == 8 and isinstance(item[0], TextIndex)
+
+    def _is_not_teardown(self, type):
+        # It is safer not to use ` == '*teardown'` to make sure possible
+        # non-keyword items are not ignored.
+        return self._robot_data['strings'][type] in ['*kw', '*setup', '*forloop']
 
     def _prune_unused_indices(self):
         used = self._collect_used_indices(self._robot_data['suite'], set())
