@@ -117,8 +117,8 @@ class Stats(object):
 
     def __init__(self, parent=None):
         self.parent = parent
-        self.total = 0
-        self.total_passed = 0
+        self.all = 0
+        self.all_passed = 0
         self.critical = 0
         self.critical_passed = 0
         self._children = []
@@ -128,29 +128,30 @@ class Stats(object):
         return self._children[-1]
 
     def add_test(self, critical, passed):
-        self._update_stats(self, critical, passed)
+        self._update_stats(critical, passed)
         if self.parent:
-            self._update_stats(self.parent, critical, passed)
+            self.parent.add_test(critical, passed)
 
-    def _update_stats(self, stat, critical, passed):
-        stat.total += 1
+    def _update_stats(self, critical, passed):
+        self.all += 1
         if passed:
-            stat.total_passed += 1
+            self.all_passed += 1
         if critical:
-            stat.critical += 1
+            self.critical += 1
         if critical and passed:
-            stat.critical_passed += 1
+            self.critical_passed += 1
 
     def fail_all(self):
-        self.total_passed = 0
+        # FIXME: Parent stats must be updated recursively!!!!!!!!
+        # TODO: See above FIXME!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+        self.all_passed = 0
         self.critical_passed = 0
         for child in self._children:
             child.fail_all()
 
     def __iter__(self):
-        for stat in (self.total, self.total_passed,
-                     self.critical, self.critical_passed):
-            yield stat
+        return iter([self.all, self.all_passed,
+                     self.critical, self.critical_passed])
 
     def __len__(self):
         return 4
