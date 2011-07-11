@@ -110,7 +110,7 @@ class Context(object):
         self._stats.add_test(critical, passed)
 
     def teardown_failed(self):
-        self._stats.fail_all()
+        self._stats.teardown_failed()
 
 
 class Stats(object):
@@ -141,13 +141,22 @@ class Stats(object):
         if critical and passed:
             self.critical_passed += 1
 
-    def fail_all(self):
-        # FIXME: Parent stats must be updated recursively!!!!!!!!
-        # TODO: See above FIXME!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    def teardown_failed(self):
+        if self.parent:
+            self._child_teardown_failed(self.all_passed, self.critical_passed)
+        self._parent_teardown_failed()
+
+    def _child_teardown_failed(self, all_passed, critical_passed):
+        self.all_passed -= all_passed
+        self.critical_passed -= critical_passed
+        if self.parent:
+            self.parent._child_teardown_failed(all_passed, critical_passed)
+
+    def _parent_teardown_failed(self):
         self.all_passed = 0
         self.critical_passed = 0
         for child in self._children:
-            child.fail_all()
+            child._parent_teardown_failed()
 
     def __iter__(self):
         return iter([self.all, self.all_passed,
