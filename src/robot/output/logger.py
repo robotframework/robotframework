@@ -20,6 +20,7 @@ from robot import utils
 from loggerhelper import AbstractLogger, AbstractLoggerProxy, Message
 from filelogger import FileLogger
 from monitor import CommandLineMonitor
+from stdoutlogsplitter import StdoutLogSplitter
 
 
 class Logger(AbstractLogger):
@@ -102,6 +103,10 @@ class Logger(AbstractLogger):
         if msg.level == 'WARN':
             msg.linkable = True
             self.message(msg)
+
+    def log_output(self, output):
+        for msg in StdoutLogSplitter(output):
+            self.log_message(msg)
 
     def warn(self, msg, log=False):
         method = self.log_message if log else self.message

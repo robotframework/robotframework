@@ -72,10 +72,6 @@ class Output(AbstractLogger):
     def end_keyword(self, kw):
         LOGGER.end_keyword(kw)
 
-    def log_output(self, output):
-        for msg in StdoutLogSplitter(output):
-            self.message(msg)
-
     def message(self, msg):
         LOGGER.log_message(msg)
 

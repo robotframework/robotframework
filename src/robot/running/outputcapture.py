@@ -15,6 +15,8 @@
 import sys
 from StringIO import StringIO
 
+from robot.output import LOGGER
+
 
 class OutputCapturer:
 
@@ -24,7 +26,15 @@ class OutputCapturer:
         self._java_out = _JavaCapturer(stdout=True)
         self._java_err = _JavaCapturer(stdout=False)
 
-    def release(self):
+    def release_and_log(self):
+        stdout, stderr = self._release()
+        if stdout:
+            LOGGER.log_output(stdout)
+        if stderr:
+            LOGGER.log_output(stderr)
+            sys.__stderr__.write(stderr+'\n')
+
+    def _release(self):
         py_out = self._python_out.release()
         py_err = self._python_err.release()
         java_out = self._java_out.release()

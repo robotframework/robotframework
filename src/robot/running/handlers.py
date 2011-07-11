@@ -126,11 +126,7 @@ class _RunnableHandler(_BaseHandler):
         try:
             return self._run_with_signal_monitoring(runner, context)
         finally:
-            stdout, stderr = capturer.release()
-            context.output.log_output(stdout)
-            context.output.log_output(stderr)
-            if stderr:
-                sys.__stderr__.write(stderr+'\n')
+            capturer.release_and_log()
 
     def _run_with_signal_monitoring(self, runner, context):
         try:
