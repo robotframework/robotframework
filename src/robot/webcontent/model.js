@@ -283,7 +283,7 @@ window.model = (function () {
 window.stats = (function () {
 
     function Statistics(totalElems, tagElems, suiteElems) {
-        return {total: util.map(totalElems, statElem),
+        return {total: util.map(totalElems, totalStatElem),
                 tag:   util.map(tagElems, tagStatElem),
                 suite: util.map(suiteElems, suiteStatElem)};
     }
@@ -296,6 +296,12 @@ window.stats = (function () {
         var widths = calculateWidths(stat.passPercent, stat.failPercent);
         stat.passWidth = widths[0];
         stat.failWidth = widths[1];
+        return stat;
+    }
+
+    function totalStatElem(data) {
+        var stat = statElem(data);
+        stat.type = stat.label == 'Critical Tests' ? 'critical' : 'all';
         return stat;
     }
 
