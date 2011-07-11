@@ -175,7 +175,7 @@ class _BaseListenerTest:
         self._assert_output('Closing...')
 
     def _assert_output(self, expected):
-        stdout, stderr = self.capturer.release()
+        stdout, stderr = self.capturer._release()
         assert_equals(stderr, '')
         assert_equals(stdout.rstrip(), expected)
 
