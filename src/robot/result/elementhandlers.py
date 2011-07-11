@@ -194,6 +194,9 @@ class _StatItemHandler(_Handler):
         self._attrs['fail'] = int(self._attrs['fail'])
         if 'doc' in self._attrs:
             self._attrs['doc'] = utils.html_format(self._attrs['doc'])
+        # Cannot use 'id' attribute in XML due to http://bugs.jython.org/issue1768
+        if 'idx' in self._attrs:
+            self._attrs['id'] = self._attrs.pop('idx')
         # TODO: Should we only dump attrs that have value?
         # Tag stats have many attrs that are normally empty
 
