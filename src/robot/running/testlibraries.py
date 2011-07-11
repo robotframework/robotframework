@@ -21,6 +21,7 @@ from robot.common import BaseLibrary
 from robot.output import LOGGER
 
 from handlers import Handler, InitHandler, DynamicHandler
+from outputcapture import OutputCapturer
 
 if utils.is_jython:
     from org.python.core import PyReflectedFunction, PyReflectedConstructor
@@ -30,7 +31,11 @@ else:
 
 
 def TestLibrary(name, args=None, variables=None, create_handlers=True):
-    libcode, source = utils.import_(name)
+    capturer = OutputCapturer(library_import=True)
+    try:
+        libcode, source = utils.import_(name)
+    finally:
+        capturer.release_and_log()
     libclass = _get_lib_class(libcode)
     lib = libclass(libcode, source, name, args or [], variables)
     if create_handlers:
@@ -174,10 +179,13 @@ class _BaseTestLibrary(BaseLibrary):
         return self._libinst
 
     def _get_instance(self):
+        capturer = OutputCapturer(library_import=True)
         try:
             return self._libcode(*self.positional_args, **self.named_args)
         except:
             self._raise_creating_instance_failed()
+        finally:
+            capturer.release_and_log()
 
     def _create_handlers(self, libcode):
         handlers = utils.NormalizedDict(ignore=['_'])

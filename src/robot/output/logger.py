@@ -104,9 +104,17 @@ class Logger(AbstractLogger):
             msg.linkable = True
             self.message(msg)
 
+    _orig_log_message = log_message
+
     def log_output(self, output):
         for msg in StdoutLogSplitter(output):
             self.log_message(msg)
+
+    def enable_library_import_logging(self):
+        self.log_message = self.message
+
+    def disable_library_import_logging(self):
+        self.log_message = self._orig_log_message
 
     def warn(self, msg, log=False):
         method = self.log_message if log else self.message
