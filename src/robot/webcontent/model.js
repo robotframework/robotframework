@@ -138,7 +138,7 @@ window.model = (function () {
                         test.isChildrenLoaded = true;
                         for (var i = 0; i < callables.length; i++) {
                             callables[i]();
-                        };
+                        }
                     });
                 }
             } else {
@@ -158,7 +158,7 @@ window.model = (function () {
     function Keyword(data) {
         var kw = createModelObject(data, "k");
         kw.type = data.type;
-        var parent = data.parent
+        var parent = data.parent;
         var parentPath = (parent.path === undefined) ? parent.fullName : parent.path;
         kw.path = parentPath + "." + data.index;
         kw.arguments = data.args;
@@ -201,14 +201,14 @@ window.model = (function () {
 
     function timeFromDate(date) {
         if (!date)
-            return "N/A"
+            return "N/A";
         return shortTime(date.getHours(), date.getMinutes(),
                          date.getSeconds(), date.getMilliseconds());
     }
 
     function formatDate(date) {
         if (!date)
-            return "N/A"
+            return "N/A";
         return padTo(date.getFullYear(), 4) +
                padTo(date.getMonth() + 1, 2) +
                padTo(date.getDate(), 2) + " " +

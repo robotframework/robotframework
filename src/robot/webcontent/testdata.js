@@ -162,6 +162,7 @@ window.testdata = function () {
     }
 
     function suiteStats(stats) {
+        // TODO: Should use 'all' instead of 'total' here for consistency
         return {
             total: stats[0],
             totalPassed: stats[1],
@@ -211,7 +212,7 @@ window.testdata = function () {
 
     function findPathTo(pathId, callback) {
         var ids = pathId.split("-");
-        if(ids[0] != "s1"){
+        if (ids[0] != "s1") {
             callback([]);
             return;
         }
@@ -221,7 +222,7 @@ window.testdata = function () {
     }
 
     function findPathWithId(pathId, current, result, callback) {
-        if(pathId.length == 0){
+        if (pathId.length == 0) {
             callback(result);
         } else {
             current.callWhenChildrenReady(function () {
@@ -234,7 +235,7 @@ window.testdata = function () {
     }
 
     function selectFrom(element, selector, index) {
-        if(selector == "k"){
+        if (selector == "k") {
             return element.keywords()[index];
         } else if(selector == "t") {
             return element.tests()[index];
