@@ -131,6 +131,7 @@ window.testdata = function () {
             name: strings.get(element[0]),
             index: index,
             source: strings.get(element[1]),
+            relativeSource: strings.get(element[2]),
             doc: function () {
                 var doc = strings.get(element[3]);
                 this.doc = function () { return doc; };

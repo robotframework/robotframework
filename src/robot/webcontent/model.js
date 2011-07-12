@@ -15,6 +15,7 @@ window.model = (function () {
     function Suite(data) {
         var suite = createModelObject(data, "s");
         suite.source = data.source;
+        suite.relativeSource = data.relativeSource;
         suite.fullName = data.parent ? data.parent.fullName + "." + data.name : data.name;
         setStats(suite, data.statistics);
         suite.metadata = data.metadata;

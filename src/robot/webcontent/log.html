@@ -197,11 +197,10 @@ function addTestExecutionLog(main) {
               <td>{{html $value[1]}}</td>
             </tr>
             {{/each}}
-            <!-- TODO: Link (href) to source should be relative -->
             {{if source}}
             <tr>
               <th>Source:</th>
-              <td><a href="${source}">${source}</a></td>
+              <td><a href="${relativeSource}">${source}</a></td>
             </tr>
              {{/if}}
             <tr>
