@@ -17,7 +17,7 @@ def start_suite(name, attrs):
 
 def end_suite(name, attrs):
     _verify_attrs('END SUITE', attrs,
-                  END_ATTRS + 'longname statistics message')
+                  END_ATTRS + 'longname metadata statistics message')
 
 def start_test(name, attrs):
     _verify_attrs('START TEST', attrs,

@@ -39,7 +39,7 @@ public class JavaAttributeVerifyingListener {
 
     public void endSuite(String name, Map attrs) {
         verifyAttributes("END SUITE", attrs,
-                         new String[] {"doc", "starttime", "longname", "endtime", "elapsedtime", "status", "message", "statistics"});
+                         new String[] {"doc", "starttime", "longname", "metadata", "endtime", "elapsedtime", "status", "message", "statistics"});
     }
 
     public void startTest(String name, Map attrs) {

@@ -68,7 +68,7 @@ class Listeners:
                 li.call_method(li.end_suite, suite.status,
                                suite.get_full_message())
             else:
-                attrs = self._get_end_attrs(suite)
+                attrs = self._get_end_attrs(suite, 'metadata')
                 attrs.update({'statistics': suite.get_stat_message()})
                 li.call_method(li.end_suite, suite.name, attrs)
 

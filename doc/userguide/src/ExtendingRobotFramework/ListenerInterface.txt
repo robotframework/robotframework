@@ -91,7 +91,7 @@ synonym to :code:`start_suite`.
    |               |                  |                                                  |
    |               |                  | * longname: suite name including parent suites   |
    |               |                  | * doc: test suite documentation                  |
-   |               |                  | * metadata: a dictionary containing `free test   |
+   |               |                  | * metadata: dictionary/map containing `free test |
    |               |                  |   suite metadata`_ (new in 2.5)                  |
    |               |                  | * suites: names of suites directly in this suite |
    |               |                  |   as a list of strings (new in 2.5)              |
@@ -106,6 +106,8 @@ synonym to :code:`start_suite`.
    |               |                  |                                                  |
    |               |                  | * longname: test suite name including parents    |
    |               |                  | * doc: test suite documentation                  |
+   |               |                  | * metadata: dictionary/map containing `free test |
+   |               |                  |   suite metadata`_ (new in 2.6)                  |
    |               |                  | * starttime: execution start time                |
    |               |                  | * endtime: execution end time                    |
    |               |                  | * elapsedtime: execution time in milliseconds    |
