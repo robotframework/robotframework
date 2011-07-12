@@ -9,8 +9,8 @@ public class JavaAttributeVerifyingListener {
     private Map expectedTypes;
 
     public JavaAttributeVerifyingListener() throws IOException {
-	createOutputFile();
-	createExcpectedTypes();
+        createOutputFile();
+        createExcpectedTypes();
     }
 
     public void createOutputFile() throws IOException {
@@ -22,44 +22,44 @@ public class JavaAttributeVerifyingListener {
 
     public void createExcpectedTypes() {
         expectedTypes = new HashMap<String, Class>() {{
-		put("elapsedtime", Integer.class);
-		put("tags", PyList.class);
-		put("args", PyList.class);
-		put("metadata", PyDictionary.class);
-		put("tests", PyList.class);
-		put("suites", PyList.class);
-		put("totaltests", Integer.class);
-	    }};
+                put("elapsedtime", Integer.class);
+                put("tags", PyList.class);
+                put("args", PyList.class);
+                put("metadata", PyDictionary.class);
+                put("tests", PyList.class);
+                put("suites", PyList.class);
+                put("totaltests", Integer.class);
+            }};
     }
 
     public void startSuite(String name, Map attrs) {
         verifyAttributes("START SUITE", attrs,
-			 new String[] {"doc", "starttime", "longname", "metadata", "tests", "suites", "totaltests"});
+                         new String[] {"doc", "starttime", "longname", "metadata", "tests", "suites", "totaltests"});
     }
 
     public void endSuite(String name, Map attrs) {
         verifyAttributes("END SUITE", attrs,
-			 new String[] {"doc", "starttime", "longname", "endtime", "elapsedtime", "status", "message", "statistics"});
+                         new String[] {"doc", "starttime", "longname", "endtime", "elapsedtime", "status", "message", "statistics"});
     }
 
     public void startTest(String name, Map attrs) {
         verifyAttributes("START TEST", attrs,
-			 new String[] {"doc", "starttime", "longname", "tags"});
+                         new String[] {"doc", "starttime", "longname", "tags", "critical"});
     }
 
     public void endTest(String name, Map attrs) {
         verifyAttributes("END TEST", attrs,
-			 new String[] {"doc", "starttime", "longname", "tags", "endtime", "elapsedtime", "status", "message"});
+                         new String[] {"doc", "starttime", "longname", "tags", "endtime", "elapsedtime", "status", "critical", "message"});
     }
 
     public void startKeyword(String name, Map attrs) {
         verifyAttributes("START KEYWORD", attrs,
-			 new String[] {"doc", "starttime", "args", "type"});
+                         new String[] {"doc", "starttime", "args", "type"});
     }
 
     public void endKeyword(String name, Map attrs) {
         verifyAttributes("END KEYWORD", attrs,
-			 new String[] {"doc", "starttime", "args", "type", "endtime", "elapsedtime", "status"});
+                         new String[] {"doc", "starttime", "args", "type", "endtime", "elapsedtime", "status"});
     }
 
     public void close() throws IOException {

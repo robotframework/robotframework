@@ -21,10 +21,10 @@ def end_suite(name, attrs):
     _verify_attributes('END SUITE', attrs, END_ATTRIBUTES+['longname', 'statistics', 'message'])
 
 def start_test(name, attrs):
-    _verify_attributes('START TEST', attrs, START_ATTRIBUTES + ['longname', 'tags'])
+    _verify_attributes('START TEST', attrs, START_ATTRIBUTES + ['longname', 'tags', 'critical'])
 
 def end_test(name, attrs):
-    _verify_attributes('END TEST', attrs, END_ATTRIBUTES + ['longname', 'tags', 'message'])
+    _verify_attributes('END TEST', attrs, END_ATTRIBUTES + ['longname', 'tags', 'critical', 'message'])
 
 def start_keyword(name, attrs):
     _verify_attributes('START KEYWORD', attrs, START_ATTRIBUTES + ['args', 'type'])

@@ -15,17 +15,17 @@ class ListenAll:
         self.outfile = open(path, 'w')
 
     def start_suite(self, name, attrs):
-        metastr = ' '.join(['%s: %s' % (k, v) for k, v
-                            in attrs['metadata'].items()])
+        metastr = ' '.join('%s: %s' % (k, v) for k, v in attrs['metadata'].items())
         self.outfile.write("SUITE START: %s '%s' [%s]\n"
                            % (name, attrs['doc'], metastr))
 
     def start_test(self, name, attrs):
-        tags = [ str(tag) for tag in attrs['tags'] ]
-        self.outfile.write("TEST START: %s '%s' %s\n" % (name, attrs['doc'], tags))
+        tags = [str(tag) for tag in attrs['tags']]
+        self.outfile.write("TEST START: %s '%s' %s crit: %s\n"
+                           % (name, attrs['doc'], tags,  attrs['critical']))
 
     def start_keyword(self, name, attrs):
-        args = [ str(arg) for arg in attrs['args'] ]
+        args = [str(arg) for arg in attrs['args']]
         self.outfile.write("KW START: %s %s\n" % (name, args))
 
     def log_message(self, message):
@@ -52,10 +52,10 @@ class ListenAll:
 
     def end_test(self, name, attrs):
         if attrs['status'] == 'PASS':
-            self.outfile.write('TEST END: PASS\n')
+            self.outfile.write('TEST END: PASS crit: %s\n' % attrs['critical'])
         else:
-            self.outfile.write("TEST END: %s %s\n"
-                               % (attrs['status'], attrs['message']))
+            self.outfile.write("TEST END: %s %s crit: %s\n"
+                               % (attrs['status'], attrs['message'], attrs['critical']))
 
     def end_suite(self, name, attrs):
         self.outfile.write('SUITE END: %s %s\n'

@@ -47,7 +47,7 @@ Java Listener
     ...  START KW: BuiltIn.Fail [msg=Expected failure]
     ...  LOG MESSAGE: [FAIL] Expected failure
     ...  END TEST: FAIL: Expected failure
-    ...  END SUITE: FAIL: 2 critical tests, 1 passed, 1 failed
+    ...  END SUITE: PASS: 1 critical test, 1 passed, 0 failed
     ...  2 tests total, 1 passed, 1 failed
     ...  Output (java): output.xml  The End
     Check Listener File  ${JAVA_FILE}  @{expected}
@@ -66,14 +66,14 @@ Correct Attributes To Listener Methods
     ${status} =  Log File  ${TEMPDIR}/${ATTR_TYPE_FILE}
     Check Stderr Does Not Contain  attributeverifyinglistener
     Should Not Contain  ${status}  FAILED
-    Should Contain X Times  ${status}  PASSED  149
+    Should Contain X Times  ${status}  PASSED  153
 
 Correct Attributes To Java Listener Methods
     [Tags]  jybot
     ${status} =  Log File  ${JAVATEMPDIR}/${JAVA_ATTR_TYPE_FILE}
     Check Stderr Does Not Contain  JavaAttributeVerifyingListener
     Should Not Contain  ${status}  FAILED
-    Should Contain X Times  ${status}  PASSED  149
+    Should Contain X Times  ${status}  PASSED  153
 
 Suite And Test Counts
     Run Tests  --listener listeners.SuiteAndTestCounts  misc/suites/sub*
@@ -102,6 +102,7 @@ Run Tests With Listeners
     ...  --listener module_listener --listener listeners.ListenSome --listener JavaListener
     ...  --listener listeners.InvalidMethods --listener attributeverifyinglistener
     ...  --listener JavaAttributeVerifyingListener --metadata ListenerMeta:Hello
+    ...  --critical pass
     Run Tests  ${args}  misc${/}pass_and_fail.html
 
 Check Listen All File
@@ -116,7 +117,7 @@ Check Listen All File
     ...  LOG MESSAGE: [DEBUG] Debug message
     ...  KW END: PASS
     ...  KW END: PASS
-    ...  TEST START: Pass '' ['force', 'pass']
+    ...  TEST START: Pass '' ['force', 'pass'] crit: yes
     ...  KW START: My Keyword ['Pass']
     ...  KW START: BuiltIn.Log ['Hello says "\${who}"!', '\${LEVEL1}']
     ...  LOG MESSAGE: [INFO] Hello says "Pass"!
@@ -125,8 +126,8 @@ Check Listen All File
     ...  LOG MESSAGE: [DEBUG] Debug message
     ...  KW END: PASS
     ...  KW END: PASS
-    ...  TEST END: PASS
-    ...  TEST START: Fail 'FAIL Expected failure' ['fail', 'force']
+    ...  TEST END: PASS crit: yes
+    ...  TEST START: Fail 'FAIL Expected failure' ['fail', 'force'] crit: no
     ...  KW START: My Keyword ['Fail']
     ...  KW START: BuiltIn.Log ['Hello says "\${who}"!', '\${LEVEL1}']
     ...  LOG MESSAGE: [INFO] Hello says "Fail"!
@@ -138,8 +139,8 @@ Check Listen All File
     ...  KW START: BuiltIn.Fail ['msg=Expected failure']
     ...  LOG MESSAGE: [FAIL] Expected failure
     ...  KW END: FAIL
-    ...  TEST END: FAIL Expected failure
-    ...  SUITE END: FAIL 2 critical tests, 1 passed, 1 failed
+    ...  TEST END: FAIL Expected failure crit: no
+    ...  SUITE END: PASS 1 critical test, 1 passed, 0 failed
     ...  2 tests total, 1 passed, 1 failed
     ...  Output: output.xml  Closing...
     Check Listener File  ${filename}  @{expected}

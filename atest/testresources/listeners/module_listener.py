@@ -7,17 +7,17 @@ ROBOT_LISTENER_API_VERSION = 2
 
 
 def start_suite(name, attrs):
-    metastr = ' '.join(['%s: %s' % (k, v) for k, v
-                        in attrs['metadata'].items()])
+    metastr = ' '.join('%s: %s' % (k, v) for k, v in attrs['metadata'].items())
     OUTFILE.write("SUITE START: %s '%s' [%s]\n"
                   % (name, attrs['doc'], metastr))
 
 def start_test(name, attrs):
-    tags = [ str(tag) for tag in attrs['tags'] ]
-    OUTFILE.write("TEST START: %s '%s' %s\n" % (name, attrs['doc'], tags))
+    tags = [str(tag) for tag in attrs['tags']]
+    OUTFILE.write("TEST START: %s '%s' %s crit: %s\n"
+                  % (name, attrs['doc'], tags,  attrs['critical']))
 
 def start_keyword(name, attrs):
-    args = [ str(arg) for arg in attrs['args'] ]
+    args = [str(arg) for arg in attrs['args']]
     OUTFILE.write("KW START: %s %s\n" % (name, args))
 
 def log_message(message):
@@ -35,9 +35,10 @@ def end_keyword(name, attrs):
 
 def end_test(name, attrs):
     if attrs['status'] == 'PASS':
-        OUTFILE.write('TEST END: PASS\n')
+        OUTFILE.write('TEST END: PASS crit: %s\n' % attrs['critical'])
     else:
-        OUTFILE.write("TEST END: %s %s\n" % (attrs['status'], attrs['message']))
+        OUTFILE.write("TEST END: %s %s crit: %s\n"
+                      % (attrs['status'], attrs['message'], attrs['critical']))
 
 def end_suite(name, attrs):
     OUTFILE.write('SUITE END: %s %s\n' % (attrs['status'], attrs['statistics']))

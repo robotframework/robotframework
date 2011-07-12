@@ -18,7 +18,7 @@ Listen All Module Listener
 
 Listen Some
     [Documentation]  Only listening some methods. Method names with camelCase.
-    @{expected} =  Create List  Pass  Fail  ${SUITE_MSG}
+    @{expected} =  Create List  Pass  Fail  ${SUITE_MSG_2}
     Check Listener File  ${SOME_FILE}  @{expected}
 
 Java Listener
