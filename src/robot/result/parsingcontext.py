@@ -31,7 +31,12 @@ class Context(object):
         self._links = {}
         self._split_tests = split_tests
         self.split_results = []
-        self.log_path = log_path
+        self._log_path = log_path
+
+    def get_rel_log_path(self, path):
+        if self._log_path == 'NONE':
+            return ''
+        return utils.get_link_path(path, self._log_path)
 
     def collect_stats(self):
         self._stats = self._stats.new_child()

@@ -42,9 +42,12 @@ def _reverse_id(strings, id):
 
 class _JsSerializerTestBase(unittest.TestCase):
 
-    def _get_data_model(self, xml_string):
-        sax.parseString('<robot generator="test">%s<statistics/><errors/></robot>' % xml_string, self._handler)
-        return self._handler.datamodel
+    def _get_data_model(self, xml_string, handler=None):
+        if not handler:
+            handler = self._handler
+        sax.parseString('<robot generator="test">%s<statistics/><errors/></robot>' % xml_string,
+                        handler)
+        return handler.datamodel
 
     def _assert_long_equals(self, given, expected):
         if given != expected:
@@ -292,7 +295,7 @@ class TestJsSerializer(_JsSerializerTestBase):
         data_model = self._get_data_model(self.SUITE_XML)
         doc = '*<b>html</b> &lt;esc&gt; <a href="http://x.y">http://x.y</a> <img src="http://x.y/z.jpg" title="http://x.y/z.jpg" style="border: 1px solid gray">'
         assert_model(data_model, basemillis=1306918911353,
-                          plain_suite=['*/tmp/verysimple.txt', '*Verysimple', doc,
+                          plain_suite=['*Verysimple', '*/tmp/verysimple.txt', '*', doc,
                                        ['*key', '*val', '*esc', '*&lt;',
                                         '*html', '*<img src="http://x.y.x.jpg" title="http://x.y.x.jpg" style="border: 1px solid gray">'],
                                        ['*P', -24, 125],
@@ -359,6 +362,7 @@ class TestJsSerializer(_JsSerializerTestBase):
         assert_model(data_model, basemillis=1306835289078,
                      plain_suite=[[0, '*E', "*Invalid syntax in file '/tmp/data/failing_suite.txt' in table 'Settings': Resource file 'nope' does not exist."]])
 
+
 class TestTestSplittingJsSerializer(_JsSerializerTestBase):
 
     SUITE_XML = """
@@ -396,7 +400,7 @@ class TestTestSplittingJsSerializer(_JsSerializerTestBase):
         data_model = self._get_data_model(self.SUITE_XML)
         assert_model(data_model,
                      plain_suite=
-                     ['*/tmp/supersimple.txt', '*Supersimple',['*P', -47, 25],[],
+                     [ '*Supersimple', '*/tmp/supersimple.txt', '*', ['*P', -47, 25],[],
                          [['*Test', '*', '*Y', '*doc',['*P', -23, 1],
                            1
                          ]],
@@ -409,7 +413,7 @@ class TestTestSplittingJsSerializer(_JsSerializerTestBase):
         data_model = self._get_data_model(self.SUITE_XML_WITH_TWO_KEYWORDS)
         assert_model(data_model,
                      plain_suite=
-                     ['*/tmp/supersimple.txt', '*Supersimple',['*P', -47, 25],[],
+                     ['*Supersimple', '*/tmp/supersimple.txt', '*', ['*P', -47, 25],[],
                          [['*Test', '*', '*Y', '*doc',['*P', -23, 1],
                            1
                          ]],
@@ -418,6 +422,24 @@ class TestTestSplittingJsSerializer(_JsSerializerTestBase):
         keywords, strings = self._context.split_results[0]
         _assert_plain_suite_item(expected_data, keywords, strings)
 
+
+class TestRelativeSuiteSource(_JsSerializerTestBase):
+    SUITE_XML = TestTestSplittingJsSerializer.SUITE_XML
+
+    def test_no_log_path(self):
+        self._test_rel_path(log='NONE', expected='')
+
+    def test_log_path(self):
+        self._test_rel_path(log='/tmp', expected='supersimple.txt')
+        self._test_rel_path(log='/tmp/kekko', expected='../supersimple.txt')
+        self._test_rel_path(log='/home', expected='../tmp/supersimple.txt')
+
+    def _test_rel_path(self, log, expected):
+        handler = _RobotOutputHandler(Context(log_path=log))
+        data_model = self._get_data_model(self.SUITE_XML, handler)
+        relpath_id = data_model._robot_data['suite'][2]
+        relpath = _reverse_id(data_model._robot_data['strings'], relpath_id)
+        assert_equals(relpath, '*'+expected)
 
 
 if __name__ == '__main__':

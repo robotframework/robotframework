@@ -84,6 +84,7 @@ class _SuiteHandler(_Handler):
         _Handler.__init__(self, context)
         self._name = attrs.get('name')
         self._source = attrs.get('source', '')
+        self._rel_source = context.get_rel_log_path(self._source)
         self._suites = []
         self._tests = []
         self._keywords = []
@@ -103,7 +104,7 @@ class _SuiteHandler(_Handler):
         self._current_children.append(data)
 
     def end_element(self, text):
-        result = self._get_ids([self._source, self._name]) + \
+        result = self._get_ids([self._name, self._source, self._rel_source]) + \
                  self._data_from_children + [self._suites] + \
                  [self._tests] + [self._keywords] + \
                  [self._context.dump_stats()]
