@@ -29,6 +29,7 @@ def _assert_plain_suite_item(expected, actual, strings):
     if isinstance(expected, (float, int)):
         assert_equals(expected, actual)
     elif isinstance(expected, list):
+        assert_equals(len(expected), len(actual), 'len(%s) != len(%s)' % (expected, actual))
         for exp, act in zip(expected, actual):
             _assert_plain_suite_item(exp, act, strings)
     else:
@@ -91,7 +92,7 @@ class TestJsSerializer(_JsSerializerTestBase):
     <tags><tag>t1</tag><tag>t2</tag></tags>
     <status status="PASS" endtime="20110601 12:01:51.354" critical="yes" starttime="20110601 12:01:51.353"></status>
   </test>
-   <test name="setup" timeout="">
+  <test name="setup" timeout="">
     <doc>docu</doc>
     <kw type="kw" name="Keyword.Example" timeout="1 second">
       <doc>*html* &lt;esc&gt; http://x.y http://x.y/z.jpg</doc>
@@ -216,24 +217,31 @@ class TestJsSerializer(_JsSerializerTestBase):
         data_model = self._get_data_model(arguments_xml)
         assert_model(data_model, plain_suite='*${arg}, ${level}')
 
-    def test_teardown_xml_parsing(self):
-        keyword_xml = """
-        <kw type="teardown" name="BuiltIn.Log" timeout="">
-            <doc>Logs the given message with the given level.</doc>
-            <arguments>
-                <arg>keyword teardown</arg>
-            </arguments>
-            <msg timestamp="20110531 12:48:09.070" level="WARN">keyword teardown</msg>
-            <status status="PASS" endtime="20110531 12:48:09.071" starttime="20110531 12:48:09.069"></status>
-        </kw>
-        """
-        self._context.start_suite('suite')
-        data_model = self._get_data_model(keyword_xml)
+    def test_suite_teardown_parsing(self):
+        data_model = self._get_data_model("""
+        <suite source="/tmp/supersimple.txt" name="Supersimple">
+          <doc>sdoc</doc>
+          <test name="Test" timeout="">
+            <doc>tdoc</doc>
+            <status status="PASS" endtime="20110601 12:01:51.354" critical="yes" starttime="20110601 12:01:51.353"></status>
+          </test>
+          <kw type="teardown" name="Fail" timeout="">
+            <doc>kdoc</doc>
+            <msg timestamp="20110601 12:01:51.353" level="WARN">msg</msg>
+            <status status="FAIL" endtime="20110601 12:01:51.354" starttime="20110601 12:01:51.354"></status>
+          </kw>
+          <status status="FAIL" endtime="20110601 12:01:51.354" starttime="20110601 12:01:51.353"></status>
+        </suite>""")
         assert_model(data_model,
-                     plain_suite=['*teardown', '*BuiltIn.Log', '*', '*Logs the given message with the given level.', '*keyword teardown',
-                                       ['*P', -1, 2], [],
-                                        [[0, '*W', '*keyword teardown']]])
-        assert_equals(self._context.link_to([0, 'W', 'keyword teardown']), "s1-k1")
+                     plain_suite=
+                     ['*Supersimple', '*/tmp/supersimple.txt', '*', '*sdoc',
+                      ['*F', 0, 1], 
+                      [],
+                      [['*Test', '*', '*Y', '*tdoc', ['*P', 0, 1], []]],
+                      [['*teardown', '*Fail', '*', '*kdoc',
+                       ['*F', 1, 0], [], [[0, '*W', '*msg']]]],
+                      [1, 0, 1, 0]])
+        assert_equals(self._context.link_to([0, 'W', 'msg']), "s1-k1")
 
     def test_for_loop_xml_parsing(self):
         self._context.start_suite('suite')
@@ -308,7 +316,7 @@ class TestJsSerializer(_JsSerializerTestBase):
                                         '*a1, a2', ['*P', 23, -23], [], [[0, '*W', '*simple']]]
                                   ]
                               ],['*setup', '*', '*Y', "*docu",
-                                  ['*t1', '*t2'], ['*P', 100, 1],
+                                  [], ['*P', 100, 1],
                                   [
                                       ['*kw', '*Keyword.Example', '*1 second', doc,
                                         '*a1, a2', ['*P', 100, 0], [], [[0, '*I', '*sample']]]
