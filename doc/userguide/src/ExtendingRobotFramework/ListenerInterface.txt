@@ -72,13 +72,14 @@ be found in User Guide of Robot Framework 2.0.4.
 Listener interface method signatures
 ''''''''''''''''''''''''''''''''''''
 
-Starting from Robot Framework 2.1, all listener methods related to test
-execution progress have the same signature :code:`method(name, attributes)`,
-where :code:`attributes` is a dictionary containing details of the event. The
-following table lists all the available methods in the listener interface and
-the contents of the :code:`attributes` dictionary, where applicable. Keys of
-the dictionary are strings. All of these methods have also `camelCase` aliases.
-Thus, for example, :code:`startSuite` is a synonym to :code:`start_suite`.
+All listener methods related to test execution progress have the same
+signature :code:`method(name, attributes)`, where :code:`attributes`
+is a dictionary containing details of the event. The following table
+lists all the available methods in the listener interface and the
+contents of the :code:`attributes` dictionary, where applicable. Keys
+of the dictionary are strings. All of these methods have also
+`camelCase` aliases.  Thus, for example, :code:`startSuite` is a
+synonym to :code:`start_suite`.
 
 .. table:: Available methods in the listener interface
    :class: tabular
@@ -86,26 +87,25 @@ Thus, for example, :code:`startSuite` is a synonym to :code:`start_suite`.
    +---------------+------------------+--------------------------------------------------+
    |    Method     |    Arguments     |             Attributes / Explanation             |
    +===============+==================+==================================================+
-   | start_suite   | name, attributes | Keys in the attributes dictionary:               |
+   | start_suite   | name, attributes | Keys in the attribute dictionary:                |
    |               |                  |                                                  |
-   |               |                  | * doc: test suite documentation                  |
    |               |                  | * longname: suite name including parent suites   |
-   |               |                  | * starttime: execution start time                |
-   |               |                  | * metadata: a dictionary containing `free test   |
-   |               |                  |   suite metadata`_                               |
-   |               |                  | * tests: names of tests directly in this suite   |
-   |               |                  |   as a list of strings                           |
-   |               |                  | * suites: names of suites directly in this suite |
-   |               |                  |   as a list of strings                           |
-   |               |                  | * totaltests: total number of tests in this suite|
-   |               |                  |   and all its sub-suites as an integer           |
-   |               |                  |                                                  |
-   |               |                  | The last four were added in Robot Framework 2.5. |
-   +---------------+------------------+--------------------------------------------------+
-   | end_suite     | name, attributes | Keys in the attributes dictionary:               |
-   |               |                  |                                                  |
    |               |                  | * doc: test suite documentation                  |
+   |               |                  | * metadata: a dictionary containing `free test   |
+   |               |                  |   suite metadata`_ (new in 2.5)                  |
+   |               |                  | * suites: names of suites directly in this suite |
+   |               |                  |   as a list of strings (new in 2.5)              |
+   |               |                  | * tests: names of tests directly in this suite   |
+   |               |                  |   as a list of strings (new in 2.5)              |
+   |               |                  | * totaltests: total number of tests in this suite|
+   |               |                  |   and all its sub-suites as an integer (new in   |
+   |               |                  |   2.5)                                           |
+   |               |                  | * starttime: execution start time                |
+   +---------------+------------------+--------------------------------------------------+
+   | end_suite     | name, attributes | Keys in the attribute dictionary:                |
+   |               |                  |                                                  |
    |               |                  | * longname: test suite name including parents    |
+   |               |                  | * doc: test suite documentation                  |
    |               |                  | * starttime: execution start time                |
    |               |                  | * endtime: execution end time                    |
    |               |                  | * elapsedtime: execution time in milliseconds    |
@@ -113,54 +113,58 @@ Thus, for example, :code:`startSuite` is a synonym to :code:`start_suite`.
    |               |                  | * status: either :code:`PASS` or :code:`FAIL`    |
    |               |                  | * statistics: suite statistics (number of passed |
    |               |                  |   and failed tests in the suite) as a string     |
-   |               |                  | * message: error message, if the suite setup     |
-   |               |                  |   or teardown has failed, empty otherwise        |
+   |               |                  | * message: error message if the suite setup or   |
+   |               |                  |   teardown has failed, empty otherwise           |
    +---------------+------------------+--------------------------------------------------+
-   | start_test    | name, attributes | Keys in the attributes dictionary:               |
+   | start_test    | name, attributes | Keys in the attribute dictionary:                |
    |               |                  |                                                  |
-   |               |                  | * doc: test case documentation                   |
    |               |                  | * longname: test name including parent suites    |
-   |               |                  | * starttime: execution start time                |
+   |               |                  | * doc: test case documentation                   |
    |               |                  | * tags: test case tags as a list of strings      |
+   |               |                  | * critical: :code:`yes` or :code:`no` depending  |
+   |               |                  |   is test considered critical or not (new in 2.6)|
+   |               |                  | * starttime: execution start time                |
    +---------------+------------------+--------------------------------------------------+
-   | end_test      | name, attributes | Keys in the attributes dictionary:               |
+   | end_test      | name, attributes | Keys in the attribute dictionary:                |
    |               |                  |                                                  |
-   |               |                  | * doc: test case documentation                   |
    |               |                  | * longname: test name including parent suites    |
+   |               |                  | * doc: test case documentation                   |
+   |               |                  | * tags: test case tags as a list of strings      |
+   |               |                  | * critical: :code:`yes` or :code:`no` depending  |
+   |               |                  |   is test considered critical or not (new in 2.6)|
    |               |                  | * starttime: execution start time                |
    |               |                  | * endtime: execution end time                    |
    |               |                  | * elapsedtime: execution time in milliseconds    |
    |               |                  |   as an integer                                  |
-   |               |                  | * tags: test case tags as a list of strings      |
    |               |                  | * status: either :code:`PASS` or :code:`FAIL`    |
-   |               |                  | * message: contains an error message if the      |
-   |               |                  |   test has failed and is empty otherwise         |
+   |               |                  | * message: status message, normally an error     |
+   |               |                  |   message or an empty string                     |
    +---------------+------------------+--------------------------------------------------+
-   | start_keyword | name, attributes | Keys in the attributes dictionary:               |
+   | start_keyword | name, attributes | Keys in the attribute dictionary:                |
    |               |                  |                                                  |
-   |               |                  | * doc: keyword documentation                     |
-   |               |                  | * starttime: execution start time                |
-   |               |                  | * args: keyword's arguments as a list of strings |
    |               |                  | * type: string :code:`Keyword` for normal        |
    |               |                  |   keywords and :code:`Test Setup`, :code:`Test   |
    |               |                  |   Teardown`, :code:`Suite Setup` or :code:`Suite |
    |               |                  |   Teardown` for keywords used in suite/test      |
-   |               |                  |   setup/teardown. New in Robot Framework 2.6.    |
-   +---------------+------------------+--------------------------------------------------+
-   | end_keyword   | name, attributes | Keys in the attributes dictionary:               |
-   |               |                  |                                                  |
+   |               |                  |   setup/teardown (new in 2.6)                    |
    |               |                  | * doc: keyword documentation                     |
+   |               |                  | * args: keyword's arguments as a list of strings |
+   |               |                  | * starttime: execution start time                |
+   +---------------+------------------+--------------------------------------------------+
+   | end_keyword   | name, attributes | Keys in the attribute dictionary:                |
+   |               |                  |                                                  |
+   |               |                  | * type: same as with :code:`start_keyword`       |
+   |               |                  | * doc: keyword documentation                     |
+   |               |                  | * args: keyword's arguments as a list of strings |
    |               |                  | * starttime: execution start time                |
    |               |                  | * endtime: execution end time                    |
    |               |                  | * elapsedtime: execution time in milliseconds    |
    |               |                  |   as an integer                                  |
-   |               |                  | * args: keyword's arguments as a list of strings |
    |               |                  | * status: either :code:`PASS` or :code:`FAIL`    |
-   |               |                  | * type: Same as with :code:`start_keyword`       |
    +---------------+------------------+--------------------------------------------------+
    | log_message   | message          | Called when an executed keyword writes a log     |
    |               |                  | message. :code:`message` is a dictionary with    |
-   |               |                  | following keys:                                  |
+   |               |                  | the following keys:                              |
    |               |                  |                                                  |
    |               |                  | * message: the content of the message            |
    |               |                  | * level: `log level`_ used in logging the message|
@@ -169,14 +173,10 @@ Thus, for example, :code:`startSuite` is a synonym to :code:`start_suite`.
    |               |                  | * html: string :code:`yes` or :code:`no` denoting|
    |               |                  |   whether the message should be interpreted as   |
    |               |                  |   HTML or not                                    |
-   |               |                  |                                                  |
-   |               |                  | New in Robot Framework 2.1.3.                    |
    +---------------+------------------+--------------------------------------------------+
    | message       | message          | Called when the framework itself writes a syslog_|
    |               |                  | message. :code:`message` is a dictionary with    |
    |               |                  | same keys as with :code:`log_message` method.    |
-   |               |                  |                                                  |
-   |               |                  | New in Robot Framework 2.1.3.                    |
    +---------------+------------------+--------------------------------------------------+
    | output_file   | path             | Called when writing to an output file is         |
    |               |                  | finished. The path is an absolute path to the    |
