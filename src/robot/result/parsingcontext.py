@@ -108,8 +108,8 @@ class Context(object):
     def add_test(self, critical, passed):
         self._stats.add_test(critical, passed)
 
-    def teardown_failed(self):
-        self._stats.teardown_failed()
+    def suite_teardown_failed(self):
+        self._stats.suite_teardown_failed()
 
 
 class Stats(object):
@@ -140,7 +140,7 @@ class Stats(object):
         if critical and passed:
             self.critical_passed += 1
 
-    def teardown_failed(self):
+    def suite_teardown_failed(self):
         if self.parent:
             self._child_teardown_failed(self.all_passed, self.critical_passed)
         self._parent_teardown_failed()

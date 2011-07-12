@@ -193,7 +193,7 @@ class TestStats(unittest.TestCase):
         self.s12.add_test(True, True)
         self.s121.add_test(True, True)
         self.s1211.add_test(False, True)
-        self.s121.teardown_failed()
+        self.s121.suite_teardown_failed()
         self._test(self.s1211, 1, 0, 0, 0)
         self._test(self.s121, 2, 0, 1, 0)
         self._test(self.s12, 3, 1, 2, 1)

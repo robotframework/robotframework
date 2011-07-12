@@ -13,6 +13,7 @@ def _and(*funcs):
             func(context)
     return and_func
 
+
 class TestParser(unittest.TestCase):
 
     def setUp(self):
@@ -31,7 +32,7 @@ class TestParser(unittest.TestCase):
         context.add_test(1,1)
         child_stats = context.dump_stats()
         self.assertEqual(list(child_stats), [1, 1, 1, 1])
-        context.teardown_failed()
+        context.suite_teardown_failed()
         parent_stats = context.dump_stats()
         self.assertEqual(list(child_stats), [1, 0, 1, 0])
         self.assertEqual(list(parent_stats), [1, 0, 1, 0])

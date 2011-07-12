@@ -243,6 +243,38 @@ class TestJsSerializer(_JsSerializerTestBase):
                       [1, 0, 1, 0]])
         assert_equals(self._context.link_to([0, 'W', 'msg']), "s1-k1")
 
+    def test_test_teardown_parsing(self):
+        data_model = self._get_data_model("""
+        <suite source="/tmp/supersimple.txt" name="Supersimple">
+          <doc>sdoc</doc>
+          <test name="T1" timeout="">
+            <doc>t1doc</doc>
+            <status status="PASS" endtime="20110601 12:01:51.353" critical="yes" starttime="20110601 12:01:51.353"></status>
+          </test>
+          <test name="T2" timeout="">
+            <doc>t2doc</doc>
+            <kw type="teardown" name="Fail" timeout="">
+              <doc>kdoc</doc>
+              <msg timestamp="20110601 12:01:51.353" level="WARN">msg</msg>
+              <status status="FAIL" endtime="20110601 12:01:51.354" starttime="20110601 12:01:51.354"></status>
+            </kw>
+            <status status="FAIL" endtime="20110601 12:01:51.354" critical="yes" starttime="20110601 12:01:51.353"></status>
+          </test>
+          <status status="FAIL" endtime="20110601 12:01:51.354" starttime="20110601 12:01:51.353"></status>
+        </suite>""")
+        assert_model(data_model,
+                     plain_suite=
+                     ['*Supersimple', '*/tmp/supersimple.txt', '*', '*sdoc',
+                      ['*F', 0, 1], 
+                      [],
+                      [['*T1', '*', '*Y', '*t1doc', ['*P', 0, 0], []],
+                       ['*T2', '*', '*Y', '*t2doc', ['*F', 0, 1],
+                        [['*teardown', '*Fail', '*', '*kdoc',
+                         ['*F', 1, 0], [], [[0, '*W', '*msg']]]]]],
+                      [],
+                      [2, 1, 2, 1]])
+        assert_equals(self._context.link_to([0, 'W', 'msg']), "s1-t2-k1")
+
     def test_for_loop_xml_parsing(self):
         self._context.start_suite('suite')
         data_model = self._get_data_model(self.FOR_LOOP_XML)

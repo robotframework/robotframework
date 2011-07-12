@@ -98,6 +98,8 @@ class _SuiteHandler(_Handler):
             'test': self._tests,
             'kw': self._keywords
         }.get(name, self._data_from_children)
+        if name == 'kw':
+            return _SuiteSetupTeardownHandler(self._context, attrs)
         return _Handler.get_handler_for(self, name, attrs)
 
     def add_child_data(self, data):
@@ -170,12 +172,18 @@ class _KeywordHandler(_Handler):
         self._current_children.append(data)
 
     def end_element(self, text):
-        if self._type == 'teardown' and self._data_from_children[-1][0] == self._get_id('F'):
-            self._context.teardown_failed()
         result = self._get_ids([self._type, self._name, self._timeout]) + \
                self._data_from_children + [self._keywords] + [self._messages]
         self._context.end_keyword()
         return result
+
+
+class _SuiteSetupTeardownHandler(_KeywordHandler):
+
+    def end_element(self, text):
+        if self._type == 'teardown' and self._data_from_children[-1][0] == self._get_id('F'):
+            self._context.suite_teardown_failed()
+        return _KeywordHandler.end_element(self, text)
 
 
 # TODO: StatisticsHandler and StatItemHandler should be separated somehow from suite handlers
