@@ -125,14 +125,14 @@ window.testdata = function () {
     }
 
     function createSuite(parent, element, strings, index) {
-        var statusElement = element[4];
+        var statusElement = element[5];
         var suite = model.Suite({
             parent: parent,
-            name: strings.get(element[1]),
+            name: strings.get(element[0]),
             index: index,
-            source: strings.get(element[0]),
+            source: strings.get(element[1]),
             doc: function () {
-                var doc = strings.get(element[2]);
+                var doc = strings.get(element[3]);
                 this.doc = function () { return doc; };
                 return doc;
             },
@@ -145,11 +145,11 @@ window.testdata = function () {
             },
             times: model.Times(times(statusElement)),
             statistics: suiteStats(last(element)),
-            metadata: parseMetadata(element[3], strings)
+            metadata: parseMetadata(element[4], strings)
         });
-        suite.populateKeywords(Populator(element[7], strings, childCreator(suite, createKeyword)));
-        suite.populateTests(Populator(element[6], strings, childCreator(suite, createTest)));
-        suite.populateSuites(Populator(element[5], strings, childCreator(suite, createSuite)));
+        suite.populateKeywords(Populator(element[8], strings, childCreator(suite, createKeyword)));
+        suite.populateTests(Populator(element[7], strings, childCreator(suite, createTest)));
+        suite.populateSuites(Populator(element[6], strings, childCreator(suite, createSuite)));
         return suite;
     }
 
