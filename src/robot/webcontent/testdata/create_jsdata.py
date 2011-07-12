@@ -25,7 +25,7 @@ def run_robot(outputdirectory, testdata):
 
 
 def create_jsdata(output_xml_file, target):
-    model = create_datamodel_from(output_xml_file)
+    model = create_datamodel_from(output_xml_file, log_path=join(BASEDIR,'..','log.html'))
     model.set_settings({'logURL': 'log.html',
                         'reportURL': 'report.html',
                         'background': {'fail': 'DeepPink'}})
