@@ -567,20 +567,20 @@ be combined with other ways of specifying arguments:
 .. table:: Using keywords with a variable number of arguments
    :class: example
 
-   ===========  ==============  =============  ============  ==============
-    Test Case       Action         Argument      Argument       Argument
-   ===========  ==============  =============  ============  ==============
-   Varargs      Any Arguments
-   \            Any Arguments   argument
-   \            Any Arguments   arg 1          arg 2         arg 2
-   \            ...             arg 4          arg 5
-   \            One Required    required arg
-   \            One Required    required arg   another arg   yet another
-   \            Also Defaults   required
-   \            Also Defaults   required       these two     have defaults
-   \            Also Defaults   1              2             3
-   \            ...             4              5             6
-   ===========  ==============  =============  ============  ==============
+   ===============  =============  =============  ============  ==============
+      Test Case         Action       Argument       Argument      Argument
+   ===============  =============  =============  ============  ==============
+   Varargs          Any Arguments
+   \                Any Arguments   argument
+   \                Any Arguments   arg 1          arg 2         arg 2
+   \                ...             arg 4          arg 5
+   \                One Required    required arg
+   \                One Required    required arg   another arg   yet another
+   \                Also Defaults   required
+   \                Also Defaults   required       these two     have defaults
+   \                Also Defaults   1              2             3
+   \                ...             4              5             6
+   ===============  =============  =============  ============  ==============
 
 Variable number of arguments with Java
 ``````````````````````````````````````
@@ -621,7 +621,6 @@ illustrate:
           System.out.println(arg);
       }
   }
-
 
 Argument types
 ''''''''''''''
@@ -958,7 +957,6 @@ as pseudocode meaning :code:`System.out.println("message");`.
      </tr>
    </table>
 
-
 Programmatic logging APIs
 '''''''''''''''''''''''''
 
@@ -1023,6 +1021,55 @@ and everything above is mapped to :msg:`WARN`. Custom levels below
 :msg:`DEBUG` and :msg:`WARNING` is mapped to :msg:`INFO`.
 
 __ http://docs.python.org/library/logging.html
+
+Logging during library initialization
+'''''''''''''''''''''''''''''''''''''
+
+Libraries can also log during the test library import and initialization.
+These messages do not appear in the `log file`_ like the normal log messages,
+but are instead written to the `syslog`_. This allows logging any kind of
+useful debug information about the library initialization. Messages logged
+using the :msg:`WARN` level are also visible in the `test execution errors`_
+section in the log file.
+
+Logging during the import and initialization is possible both using the
+`standard output and error streams`__ and the `programmatic logging APIs`_.
+Both of these are demonstrated below.
+
+Java library logging via stdout during initialization:
+
+.. sourcecode:: java
+
+   public class LoggingDuringInitialization {
+
+       public LoggingDuringInitialization() {
+           System.out.println("*INFO* Initializing library");
+       }
+
+       public void keyword() {
+           // ...
+       }
+   }
+
+Python library logging using the logging API during import:
+
+.. sourcecode:: python
+
+   from robot.api import logger
+
+   logger.debug("Importing library")
+
+   def keyword():
+       # ...
+
+.. note:: If you log something during initialization, i.e. in Python
+          :code:`__init__` or in Java constructor, the messages may be
+          logged multiple times depending on the `test library scope`_.
+
+.. note:: The support for writing log messages to the syslog during the
+          library initialization is a new feature in Robot Framework 2.6.
+
+__ `Logging information`_
 
 Returning values
 ''''''''''''''''

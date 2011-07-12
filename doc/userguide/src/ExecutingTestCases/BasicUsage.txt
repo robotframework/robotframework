@@ -539,7 +539,7 @@ sometimes be hard to debug. If the error message, for example, tells
 that a keyword is used with wrong number of arguments fixing the
 problem is obviously easy, but if a keyword is missing or fails in
 unexpected way finding the root cause can be harder. The first place
-to look for more information is the `execution errors`__ section in
+to look for more information is the `execution errors`_ section in
 the log file. For example, an error about a failed test library import
 may well explain why a test has failed due to a missing keyword.
 
@@ -557,4 +557,3 @@ Variables` are useful. If nothing else works, it is always possible to
 search help from `mailing lists`_ or elsewhere.
 
 __ `Communicating with Robot Framework`_
-__ `Errors and warnings during execution`_

@@ -168,6 +168,8 @@ Appendices
 .. _syslog: `System log`_
 .. _rebot: `Post-processing outputs`_
 .. _test execution: `Starting test execution`_
+.. _execution errors: `Errors and warnings during execution`_
+.. _test execution errors: `execution errors`_
 .. _simple pattern: `Option value as simple pattern`_
 .. _simple patterns: `simple pattern`_
 .. _critical test: `Setting criticality`_
@@ -191,7 +193,7 @@ Appendices
 .. _runner script: `Different runner scripts`_
 .. _runner scripts: `runner script`_
 .. _return code: `return codes`_
-.. _`post-process outputs`: `post-processing outputs`_
+.. _post-process outputs: `post-processing outputs`_
 
 .. 4. Extending
 
