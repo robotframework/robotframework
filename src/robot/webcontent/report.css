@@ -12,11 +12,7 @@ table {
     border: 1px solid black;
     border-collapse: collapse;
     empty-cells: show;
-    margin: 0px 1px;
-}
-th, td {
-    border: 1px solid black;
-    padding: 1px 5px;
+    margin: 0 1px;
 }
 th {
     background: #C6C6C6;
@@ -34,13 +30,10 @@ table.details th {
     white-space: nowrap;
     text-align: left;
     vertical-align: top;
-    padding-right: 1em;
-    border: none;
     padding: 0.2em 0.4em;
 }
 table.details td {
     vertical-align: top;
-    border: none;
     padding: 0.2em 0.4em;
     white-space: pre-wrap;
 }
@@ -56,7 +49,7 @@ table.details #selector th, table.details #selector td {
 #detail_tabs {
     list-style: none;
     padding: 0;
-    margin: 0px 1em;
+    margin: 0 1em;
 }
 #detail_tabs li {
     float: left;
@@ -87,6 +80,10 @@ table.details #selector th, table.details #selector td {
 /* Test details table */
 table#test_details {
     width: 100%;
+}
+table#test_details th, table#test_details td {
+    border: 1px solid black;
+    padding: 0 0.2em;
 }
 .col_name {
     min-width: 13em;
