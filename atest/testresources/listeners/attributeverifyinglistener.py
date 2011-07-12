@@ -1,38 +1,40 @@
 import os
 import tempfile
 
-
 ROBOT_LISTENER_API_VERSION = '2'
-OUTFILE = open(os.path.join(tempfile.gettempdir(), 'listener_attrs.txt'), 'w')
 
-START_ATTRIBUTES = ['doc', 'starttime']
-END_ATTRIBUTES = START_ATTRIBUTES + ['endtime', 'elapsedtime', 'status']
+OUTFILE = open(os.path.join(tempfile.gettempdir(), 'listener_attrs.txt'), 'w')
+START_ATTRS = 'doc starttime '
+END_ATTRS = START_ATTRS + 'endtime elapsedtime status '
 EXPECTED_TYPES = {'elapsedtime': (int, long), 'tags': list, 'args': list,
                   'metadata': dict, 'tests': list, 'suites': list,
                   'totaltests': int}
 
 
 def start_suite(name, attrs):
-    _verify_attributes('START SUITE', attrs,
-                       START_ATTRIBUTES+['longname', 'metadata', 'tests',
-                                         'suites', 'totaltests'])
+    _verify_attrs('START SUITE', attrs,
+                  START_ATTRS + 'longname metadata tests suites totaltests')
 
 def end_suite(name, attrs):
-    _verify_attributes('END SUITE', attrs, END_ATTRIBUTES+['longname', 'statistics', 'message'])
+    _verify_attrs('END SUITE', attrs,
+                  END_ATTRS + 'longname statistics message')
 
 def start_test(name, attrs):
-    _verify_attributes('START TEST', attrs, START_ATTRIBUTES + ['longname', 'tags', 'critical'])
+    _verify_attrs('START TEST', attrs,
+                  START_ATTRS + 'longname tags critical')
 
 def end_test(name, attrs):
-    _verify_attributes('END TEST', attrs, END_ATTRIBUTES + ['longname', 'tags', 'critical', 'message'])
+    _verify_attrs('END TEST', attrs,
+                  END_ATTRS + 'longname tags critical message')
 
 def start_keyword(name, attrs):
-    _verify_attributes('START KEYWORD', attrs, START_ATTRIBUTES + ['args', 'type'])
+    _verify_attrs('START KEYWORD', attrs, START_ATTRS + 'args type')
 
 def end_keyword(name, attrs):
-    _verify_attributes('END KEYWORD', attrs, END_ATTRIBUTES + ['args', 'type'])
+    _verify_attrs('END KEYWORD', attrs, END_ATTRS + 'args type')
 
-def _verify_attributes(method_name, attrs, names):
+def _verify_attrs(method_name, attrs, names):
+    names = names.split()
     OUTFILE.write(method_name + '\n')
     if len(names) != len(attrs):
         OUTFILE.write('FAILED: wrong number of attributes\n')
@@ -44,9 +46,8 @@ def _verify_attributes(method_name, attrs, names):
         if isinstance(value, exp_type):
             OUTFILE.write('PASSED | %s: %s\n' % (name, value))
         else:
-            OUTFILE.write('FAILED | %s: %r, Expected: %s, Actual: %s\n' 
+            OUTFILE.write('FAILED | %s: %r, Expected: %s, Actual: %s\n'
                           % (name, value, type(value), exp_type))
 
 def close():
     OUTFILE.close()
-
