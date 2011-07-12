@@ -200,7 +200,11 @@ function addTestExecutionLog(main) {
             {{if source}}
             <tr>
               <th>Source:</th>
+              {{if relativeSource}}
               <td><a href="${relativeSource}">${source}</a></td>
+              {{else}}
+              <td>${source}</td>
+              {{/if}}
             </tr>
              {{/if}}
             <tr>

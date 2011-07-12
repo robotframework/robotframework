@@ -12,6 +12,7 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+import os.path
 import zlib
 import base64
 from operator import itemgetter
@@ -34,9 +35,9 @@ class Context(object):
         self._log_path = log_path
 
     def get_rel_log_path(self, path):
-        if not path or self._log_path == 'NONE':
-            return ''
-        return utils.get_link_path(path, self._log_path)
+        if path and os.path.exists(path) and self._log_path != 'NONE':
+            return utils.get_link_path(path, self._log_path)
+        return ''
 
     def collect_stats(self):
         self._stats = self._stats.new_child()

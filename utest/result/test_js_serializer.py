@@ -1,6 +1,7 @@
 from __future__ import with_statement
 import StringIO
 import time
+import os
 
 import unittest
 import xml.sax as sax
@@ -426,6 +427,13 @@ class TestTestSplittingJsSerializer(_JsSerializerTestBase):
 class TestRelativeSuiteSource(_JsSerializerTestBase):
     SUITE_XML = TestTestSplittingJsSerializer.SUITE_XML
 
+    def setUp(self):
+        self._original_exists = os.path.exists
+        os.path.exists = lambda path: True
+
+    def tearDown(self):
+        os.path.exists = self._original_exists
+
     def test_no_log_path(self):
         self._test_rel_path(log='NONE', expected='')
 
@@ -433,6 +441,10 @@ class TestRelativeSuiteSource(_JsSerializerTestBase):
         self._test_rel_path(log='/tmp', expected='supersimple.txt')
         self._test_rel_path(log='/tmp/kekko', expected='../supersimple.txt')
         self._test_rel_path(log='/home', expected='../tmp/supersimple.txt')
+
+    def test_no_source(self):
+        os.path.exists = lambda path: False
+        self._test_rel_path(log='/tmp', expected='')
 
     def _test_rel_path(self, log, expected):
         handler = _RobotOutputHandler(Context(log_path=log))
