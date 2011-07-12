@@ -1,21 +1,27 @@
 #!/usr/bin/env python
 
 import fileinput
-import os
+from os.path import join, dirname, abspath
 import sys
+
+BASEDIR = dirname(abspath(__file__))
+print BASEDIR
+
+sys.path.insert(0, join(BASEDIR, '..', '..', '..', '..', 'src'))
+print sys.path[0]
+
 import robot
 from robot.result.jsparser import create_datamodel_from
 
-BASEDIR = os.path.dirname(__file__)
 
-def run_robot(outputdirectory, testdata, loglevel='INFO'):
+def run_robot(testdata, loglevel='INFO'):
     robot.run(testdata, log='NONE', report='NONE',
               tagstatlink=['force:http://google.com:<kuukkeli&gt;',
                            'i*:http://%1/:Title of i%1'],
               tagdoc=['test:this_is_*my_bold*_test',
                       'IX:*Combined* & escaped <&lt; tag doc'],
               tagstatcombine=['fooANDi*:zap', 'i?:IX'],
-              critical=[], noncritical=[], outputdir=outputdirectory, loglevel=loglevel)
+              critical=[], noncritical=[], outputdir=BASEDIR, loglevel=loglevel)
 
 
 def create_jsdata(output_xml_file, target):
@@ -34,8 +40,11 @@ def replace_all(file,searchExp,replaceExp):
 
 
 def create(input, target, targetName, loglevel='INFO'):
-    run_robot(BASEDIR, input, loglevel)
-    create_jsdata('output.xml', target)
+    input = join(BASEDIR, input)
+    target = join(BASEDIR, target)
+    outxml = join(BASEDIR, 'output.xml')
+    run_robot(input, loglevel)
+    create_jsdata(outxml, target)
     replace_all(target, 'window.output', 'window.' + targetName)
 
 if __name__ == '__main__':
@@ -43,7 +52,7 @@ if __name__ == '__main__':
     create('SetupsAndTeardowns.txt', 'SetupsAndTeardowns.js', 'setupsAndTeardownsOutput')
     create('Messages.txt', 'Messages.js', 'messagesOutput')
     create('teardownFailure', 'TeardownFailure.js', 'teardownFailureOutput')
-    create(os.path.join('teardownFailure', 'PassingFailing.txt'), 'PassingFailing.js', 'passingFailingOutput')
+    create(join('teardownFailure', 'PassingFailing.txt'), 'PassingFailing.js', 'passingFailingOutput')
     create('TestsAndKeywords.txt', 'TestsAndKeywords.js', 'testsAndKeywordsOutput')
     create('.', 'allData.js', 'allDataOutput')
 
