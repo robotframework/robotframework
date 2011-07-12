@@ -20,8 +20,8 @@ from robot.result.parsingcontext import Context
 from robot.result.jsondatamodel import DataModel
 
 
-def create_datamodel_from(input_filename, split_log=False):
-    context = Context(split_log)
+def create_datamodel_from(input_filename, log_path='NONE', split_log=False):
+    context = Context(log_path, split_log)
     robot = _RobotOutputHandler(context)
     with open(input_filename, 'r') as input:
         sax.parse(input, robot)

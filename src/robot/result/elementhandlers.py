@@ -83,7 +83,7 @@ class _SuiteHandler(_Handler):
     def __init__(self, context, attrs):
         _Handler.__init__(self, context)
         self._name = attrs.get('name')
-        self._source = attrs.get('source') or ''
+        self._source = attrs.get('source', '')
         self._suites = []
         self._tests = []
         self._keywords = []

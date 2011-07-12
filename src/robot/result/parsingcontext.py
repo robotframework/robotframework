@@ -21,24 +21,17 @@ from robot import utils
 
 class Context(object):
 
-    def __init__(self, split_tests=False):
+    def __init__(self, log_path='NONE', split_tests=False):
         self._main_text_cache = TextCache()
         self._current_texts = self._main_text_cache
         self._split_text_caches = []
-        self._basemillis = 0
+        self.basemillis = 0
         self._stats = Stats()
         self._location = Location()
         self._links = {}
         self._split_tests = split_tests
-        self._split_results = []
-
-    @property
-    def basemillis(self):
-        return self._basemillis
-
-    @property
-    def split_results(self):
-        return self._split_results
+        self.split_results = []
+        self.log_path = log_path
 
     def collect_stats(self):
         self._stats = self._stats.new_child()
@@ -68,8 +61,8 @@ class Context(object):
         if time == 'N/A':
             return None
         millis = int(utils.timestamp_to_secs(time, millis=True) * 1000)
-        if not self._basemillis:
-            self._basemillis = millis
+        if not self.basemillis:
+            self.basemillis = millis
         return millis - self.basemillis
 
     def start_suite(self, name):
@@ -86,8 +79,8 @@ class Context(object):
     def end_test(self, kw_data=None):
         self._location.end_test()
         if self._split_tests:
-            self._split_results.append((kw_data, self._split_text_caches[-1].dump()))
-            return len(self._split_results)
+            self.split_results.append((kw_data, self._split_text_caches[-1].dump()))
+            return len(self.split_results)
         return kw_data
 
     def start_keyword(self):
