@@ -20,6 +20,7 @@ from robot.errors import DataError
 
 
 class _TestAndSuiteHelper:
+    _longname = None
 
     def __init__(self, name, parent=None):
         self.name = name
@@ -29,13 +30,6 @@ class _TestAndSuiteHelper:
         self.teardown = None
         self.status = 'NOT_RUN'
         self.message = ''
-
-    # TODO: Is this property and other html/serialize stuff here used anymore?
-    @property
-    def htmldoc(self):
-        return utils.html_format(self.doc)
-
-    _longname = None
 
     def _get_longname(self, sep='.'):
         if self._longname:
@@ -126,12 +120,8 @@ class BaseTestSuite(_TestAndSuiteHelper):
         for name, value in metalist:
             self.metadata[name] = value
 
-    def get_metadata(self, html=False):
-        names = sorted(self.metadata.keys())
-        values = [self.metadata[n] for n in names]
-        if html:
-            values = [utils.html_format(v) for v in values]
-        return zip(names, values)
+    def get_metadata(self):
+        return self.metadata.items()
 
     def get_test_count(self):
         count = len(self.tests)
@@ -139,33 +129,23 @@ class BaseTestSuite(_TestAndSuiteHelper):
             count += suite.get_test_count()
         return count
 
-    def get_full_message(self, html=False):
+    def get_full_message(self):
         """Returns suite's message including statistics message"""
-        stat_msg = self.get_stat_message(html)
+        stat_msg = self.get_stat_message()
         if not self.message:
             return stat_msg
-        if not html:
-            return '%s\n\n%s' % (self.message, stat_msg)
-        return '%s<br /><br />%s' % (utils.html_escape(self.message), stat_msg)
+        return '%s\n\n%s' % (self.message, stat_msg)
 
-    def get_stat_message(self, html=False):
+    def get_stat_message(self):
         ctotal, cend, cpass, cfail = self._get_counts(self.critical_stats)
         atotal, aend, apass, afail = self._get_counts(self.all_stats)
-        msg = ('%%d critical test%%s, %%d passed, %(cfail)s%%d failed%(end)s\n'
-               '%%d test%%s total, %%d passed, %(afail)s%%d failed%(end)s')
-        if html:
-            msg = msg.replace(' ', '&nbsp;').replace('\n', '<br />')
-            msg = msg % {'cfail': '<span%s>' % (cfail and ' class="fail"' or ''),
-                         'afail': '<span%s>' % (afail and ' class="fail"' or ''),
-                         'end': '</span>'}
-        else:
-            msg = msg % {'cfail': '', 'afail': '', 'end': ''}
-        return msg % (ctotal, cend, cpass, cfail, atotal, aend, apass, afail)
+        return ('%d critical test%s, %d passed, %d failed\n'
+                '%d test%s total, %d passed, %d failed'
+                % (ctotal, cend, cpass, cfail, atotal, aend, apass, afail))
 
     def _get_counts(self, stat):
-        total = stat.passed + stat.failed
-        ending = utils.plural_or_not(total)
-        return total, ending, stat.passed, stat.failed
+        ending = utils.plural_or_not(stat.total)
+        return stat.total, ending, stat.passed, stat.failed
 
     def set_status(self):
         """Sets status and statistics based on subsuite and test statuses.
