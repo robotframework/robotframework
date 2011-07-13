@@ -134,7 +134,7 @@ class TestReporting(unittest.TestCase):
         self._settings['SplitLog'] = True
         self._settings['Log'] = '/tmp/foo/log.bar.html'
         self._reporter.write_robot_results(resources.GOLDEN_OUTPUT)
-        expected = ('/tmp/foo/log.bar-%d.js' % i for i in range(1, 9))
+        expected = ('/tmp/foo/log.bar-%d.js' % i for i in range(1, 5))
         self._assert_expected_split_tests(*expected)
 
     def _assert_expected_log(self, expected_file_name):

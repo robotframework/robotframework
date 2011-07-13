@@ -84,7 +84,7 @@ class Context(object):
 
     def end_test(self, kw_data=None):
         self._location.end_test()
-        if self._split_log:
+        if self._split_log and kw_data:
             self.split_results.append((kw_data, self._split_text_caches[-1].dump()))
             return len(self.split_results)
         return kw_data
@@ -106,7 +106,7 @@ class Context(object):
 
     def end_suite_setup_or_teardown(self, kw_data=None):
         self._location.end_keyword()
-        if self._split_log:
+        if self._split_log and kw_data:
             self.split_results.append((kw_data, self._split_text_caches[-1].dump()))
             return len(self.split_results)
         return kw_data
