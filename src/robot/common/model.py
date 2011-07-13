@@ -35,8 +35,7 @@ class _TestAndSuiteHelper:
     def htmldoc(self):
         return utils.html_format(self.doc)
 
-    # TODO: Replace with simple @property in 2.7.
-    # Cannot do that now because Mabot assigns longname.
+    # Mabot requires longname to be assignable
     _longname = None
     longname = property(lambda self: self._longname or self.get_long_name(),
                         lambda self, name: setattr(self, '_longname', name))
