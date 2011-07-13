@@ -54,6 +54,13 @@ class _Handler(object):
     def _get_ids(self, items):
         return [self._context.get_id(i) for i in items]
 
+    def _last_child_passed(self):
+        return self._last_child_status == self._get_id('P')
+
+    @property
+    def _last_child_status(self):
+        return self._data_from_children[-1][0]
+
 
 class RootHandler(_Handler):
     # TODO: Combine _RootHandler and _RobotHandler
@@ -137,8 +144,7 @@ class _TestHandler(_Handler):
         self._current_children.append(data)
 
     def end_element(self, text):
-        # TODO: refactor
-        self._context.add_test(self._critical == 'Y', self._data_from_children[-1][0] == self._get_id('P'))
+        self._context.add_test(self._critical == 'Y', self._last_child_passed())
         kws = self._context.end_test(self._keywords)
         result = self._get_ids([self._name, self._timeout, self._critical]) + self._data_from_children
         result.append(kws)
@@ -181,7 +187,7 @@ class _KeywordHandler(_Handler):
 class _SuiteSetupTeardownHandler(_KeywordHandler):
 
     def end_element(self, text):
-        if self._type == 'teardown' and self._data_from_children[-1][0] == self._get_id('F'):
+        if self._type == 'teardown' and not self._last_child_passed():
             self._context.suite_teardown_failed()
         return _KeywordHandler.end_element(self, text)
 
