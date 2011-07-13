@@ -71,11 +71,23 @@ window.testdata = function () {
             status: parseStatus(element[5], strings),
             times: model.Times(times(element[5])),
             parent: parent,
-            index: index
+            index: index,
+            isChildrenLoaded: typeof(element[6]) !== 'number'
         });
-        kw.populateKeywords(Populator(element[6], strings, childCreator(kw, createKeyword)));
+        lazyPopulateKeywordsFromFile(kw, element[6], strings);
         kw.populateMessages(Populator(element[7], strings, message));
         return kw;
+    }
+
+    function lazyPopulateKeywordsFromFile(parent, keywordsOrIndex, strings) {
+        if (parent.isChildrenLoaded) {
+            var keywords = keywordsOrIndex;
+            parent.populateKeywords(Populator(keywords, strings, childCreator(parent, createKeyword)));
+        } else {
+            var index = keywordsOrIndex;
+            parent.childFileName = window.settings['splitLogBase'] + '-' + index + '.js';
+            parent.populateKeywords(SplitLogPopulator(keywordsOrIndex, childCreator(parent, createKeyword)));
+        }
     }
 
     function tags(taglist, strings) {
@@ -105,12 +117,7 @@ window.testdata = function () {
             tags: tags(element[4], strings),
             isChildrenLoaded: typeof(element[6]) !== 'number'
         });
-        if (test.isChildrenLoaded) {
-            test.populateKeywords(Populator(element[6], strings, childCreator(test, createKeyword)));
-        } else {
-            test.childFileName = window.settings['splitLogBase'] + '-'+element[6]+'.js';
-            test.populateKeywords(SplitLogPopulator(element[6], childCreator(test, createKeyword)));
-        }
+        lazyPopulateKeywordsFromFile(test, element[6], strings);
         return test;
     }
 

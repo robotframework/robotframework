@@ -129,23 +129,7 @@ window.model = (function () {
         test.timeout = data.timeout;
         test.populateKeywords = createIterablePopulator("Keyword");
         test.isChildrenLoaded = data.isChildrenLoaded;
-        // TODO: Should callable handling be in loadTestKeywordsFile function?
-        var callables = [];
-        test.callWhenChildrenReady = function (callable) {
-            if (!test.isChildrenLoaded) {
-                callables.push(callable);
-                if (callables.length == 1) {
-                    window.fileLoading.load(test.childFileName, function () {
-                        test.isChildrenLoaded = true;
-                        for (var i = 0; i < callables.length; i++) {
-                            callables[i]();
-                        }
-                    });
-                }
-            } else {
-                callable();
-            }
-        };
+        test.callWhenChildrenReady = window.fileLoading.getCallbackHandlerForKeywords(test);
         test.children = function () {
             if (test.isChildrenLoaded)
                 return test.keywords();
@@ -164,10 +148,13 @@ window.model = (function () {
         kw.path = parentPath + "." + data.index;
         kw.arguments = data.args;
         kw.timeout = data.timeout;
-        kw.populateKeywords = createIterablePopulator("Keyword");
         kw.populateMessages = createIterablePopulator("Message");
+        kw.populateKeywords = createIterablePopulator("Keyword");
+        kw.isChildrenLoaded = data.isChildrenLoaded;
+        kw.callWhenChildrenReady = window.fileLoading.getCallbackHandlerForKeywords(kw);
         kw.children = function () {
-            return kw.keywords();
+            if (kw.isChildrenLoaded)
+                return kw.keywords();
         };
         return kw;
     }
