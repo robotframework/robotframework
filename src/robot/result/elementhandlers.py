@@ -63,7 +63,6 @@ class _Handler(object):
 
 
 class RootHandler(_Handler):
-    # TODO: Combine _RootHandler and _RobotHandler
 
     @property
     def data(self):
