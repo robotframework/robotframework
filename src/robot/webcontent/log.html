@@ -278,7 +278,7 @@ function addTestExecutionLog(main) {
             </tr>
             <tr>
               <th>Status:</th>
-              <td><span class="${status.toLowerCase()}">${status}</span>{{if isCritical}} (critical){{/if}}</td>
+              <td><span class="${status.toLowerCase()}">${status}</span> ({{if isCritical}}critical{{else}}non-critical{{/if}})</td>
             </tr>
             {{if message()}}
             <tr>
