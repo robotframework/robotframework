@@ -199,6 +199,7 @@ class TestStats(unittest.TestCase):
         self._test(self.s12, 3, 1, 2, 1)
         self._test(self.s1, 4, 2, 3, 2)
 
+
 class TestLocation(unittest.TestCase):
 
     def setUp(self):
