@@ -309,7 +309,7 @@ class _MsgHandler(_Handler):
         self._msg = [self._context.timestamp(attrs.get('timestamp')),
                      attrs.get('level')[0]]
         self._is_html = attrs.get('html')
-        self._is_linkable = attrs.get("linkable") == "yes"
+        self._linkable_in_error_table = attrs.get("linkable") == "yes"
 
     def end_element(self, text):
         self._msg.append(text if self._is_html else utils.html_escape(text))
@@ -317,8 +317,7 @@ class _MsgHandler(_Handler):
         return self._get_ids(self._msg)
 
     def _handle_warning_linking(self):
-        # TODO: should perhaps use the id version of this list for indexing?
-        if self._is_linkable:
+        if self._linkable_in_error_table:
             self._msg.append(self._context.link_to(self._msg))
         elif self._msg[1] == 'W':
             self._context.create_link_to_current_location(self._msg)
