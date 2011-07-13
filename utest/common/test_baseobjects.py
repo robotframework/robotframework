@@ -24,36 +24,21 @@ def _get_suite():
     return suite
 
 
-class TestGetLongName(unittest.TestCase):
+class TestLongName(unittest.TestCase):
 
     def setUp(self):
         self.suite = _get_suite()
 
-    def test_get_long_name_for_root_suite(self):
-        assert_equals(self.suite.get_long_name(), 'Root')
+    def test_root_suite_longname(self):
+        assert_equals(self.suite.longname, 'Root')
 
-    def test_get_long_name_for_sub_suite(self):
-        assert_equals(self.suite.suites[0].get_long_name(), 'Root.Sub1')
+    def test_sub_suite_long_name(self):
+        assert_equals(self.suite.suites[0].longname, 'Root.Sub1')
+        assert_equals(self.suite.suites[0].suites[1].longname, 'Root.Sub1.Sub')
 
-    def test_get_long_name_for_sub_sub_suite(self):
-        assert_equals(self.suite.suites[0].suites[1].get_long_name(),
-                      'Root.Sub1.Sub')
-
-    def test_get_long_name_for_test(self):
-        assert_equals(self.suite.suites[0].suites[0].tests[0].get_long_name(),
+    def test_test_longname(self):
+        assert_equals(self.suite.suites[0].suites[0].tests[0].longname,
                       'Root.Sub1.Sub11.T11')
-
-    def test_get_long_name_for_test_with_non_default_separator(self):
-        assert_equals(self.suite.suites[0].suites[0].tests[0].get_long_name(separator='|'),
-                      'Root|Sub1|Sub11|T11')
-
-    def test_get_long_name_for_sub_suite_with_parts(self):
-        assert_equals(self.suite.suites[0].get_long_name(separator=None),
-                      ['Root', 'Sub1'])
-
-    def test_get_long_name_for_test_with_parts(self):
-        assert_equals(self.suite.suites[0].suites[0].tests[0].get_long_name(separator=None),
-                      ['Root', 'Sub1', 'Sub11', 'T11'])
 
 
 class TestFilterByNames(unittest.TestCase):

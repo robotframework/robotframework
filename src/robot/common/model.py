@@ -35,19 +35,20 @@ class _TestAndSuiteHelper:
     def htmldoc(self):
         return utils.html_format(self.doc)
 
-    # Mabot requires longname to be assignable
     _longname = None
-    longname = property(lambda self: self._longname or self.get_long_name(),
-                        lambda self, name: setattr(self, '_longname', name))
 
-    # TODO: Is separator still used?
-    def get_long_name(self, separator='.'):
-        """Returns long name. If separator is None, list of names is returned."""
-        names = self.parent and self.parent.get_long_name(separator=None) or []
+    def _get_longname(self, sep='.'):
+        if self._longname:
+            return self._longname
+        names = self.parent._get_longname(sep=None) if self.parent else []
         names.append(self.name)
-        if separator:
-            return separator.join(names)
-        return names
+        return sep.join(names) if sep else names
+
+    def _set_longname(self, name):
+        self._longname = name
+
+    # Mabot requires longname to be assignable
+    longname = property(_get_longname, _set_longname)
 
     def _set_teardown_fail_msg(self, message):
         if self.message == '':
@@ -234,7 +235,7 @@ class BaseTestSuite(_TestAndSuiteHelper):
         if not suites:
             self.tests = [test for test in self.tests if tests == [] or
                           any(utils.matches_any(name, tests, ignore=['_'])
-                              for name in [test.name, test.get_long_name()])]
+                              for name in [test.name, test.longname])]
         else:
             self.tests = []
         return bool(self.suites or self.tests)

@@ -11,12 +11,11 @@ from robot.errors import DataError
 class SuiteMock:
 
     def __init__(self, name='My Name', id='s1', crit_tags=None):
-        self.name = name
+        self.name = self.longname = name
         self.id = id
         self.critical = _Critical(crit_tags)
         self.suites = []
         self.tests = []
-        self.message = ''
 
     def get_long_name(self):
         return self.name

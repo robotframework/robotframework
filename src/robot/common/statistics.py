@@ -43,6 +43,10 @@ class Stat:
         self.passed = 0
         self.failed = 0
 
+    @property
+    def total(self):
+        return self.passed + self.failed
+
     def add_stat(self, other):
         self.passed += other.passed
         self.failed += other.failed
@@ -69,7 +73,7 @@ class SuiteStat(Stat):
 
     def __init__(self, suite):
         Stat.__init__(self, suite.name)
-        self.long_name = suite.get_long_name()
+        self.longname = suite.longname
         self.id = suite.id
 
     def serialize(self, serializer):

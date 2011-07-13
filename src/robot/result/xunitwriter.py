@@ -36,10 +36,10 @@ class XUnitWriter:
             return
         self._root_suite = suite
         attrs = {'name': suite.name,
-                 'tests': str(suite.get_test_count()),
-                 'errors': '0',
-                 'failures': str(suite.all_stats.failed),
-                 'skip': '0'}
+                 'tests': suite.all_stats.total,
+                 'errors': 0,
+                 'failures': suite.all_stats.failed,
+                 'skip': 0}
         self._writer.start('testsuite', attrs)
 
     def end_suite(self, suite):
@@ -47,7 +47,7 @@ class XUnitWriter:
             self._writer.end('testsuite')
 
     def start_test(self, test):
-        attrs = {'classname': test.parent.get_long_name(),
+        attrs = {'classname': test.parent.longname,
                  'name': test.name,
                  'time': self._time_as_seconds(test.elapsedtime)}
         self._writer.start('testcase', attrs)
@@ -55,7 +55,7 @@ class XUnitWriter:
             self._detail_serializer = _FailedTestSerializer(self._writer, test)
 
     def _time_as_seconds(self, millis):
-        return str(int(round(millis, -3) / 1000))
+        return int(round(millis, -3) / 1000)
 
     def end_test(self, test):
         self._detail_serializer.end_test()
