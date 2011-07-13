@@ -24,19 +24,19 @@ class _Handler(object):
             'robot'      : _RobotHandler,
             'suite'      : _SuiteHandler,
             'test'       : _TestHandler,
-            'statistics' : _StatisticsHandler,
-            'stat'       : _StatItemHandler,
-            'errors'     : _Handler,
             'doc'        : _HtmlTextHandler,
             'kw'         : _KeywordHandler,
-            'arg'        : _ArgumentHandler,
-            'arguments'  : _ArgumentsHandler,
-            'tag'        : _TextHandler,
-            'tags'       : _Handler,
-            'msg'        : _MsgHandler,
             'status'     : _StatusHandler,
+            'arguments'  : _ArgumentsHandler,
+            'arg'        : _ArgumentHandler,
+            'tags'       : _Handler,
+            'tag'        : _TextHandler,
             'metadata'   : _MetadataHandler,
             'item'       : _MetadataItemHandler,
+            'msg'        : _MsgHandler,
+            'statistics' : _StatisticsHandler,
+            'stat'       : _StatItemHandler,
+            'errors'     : _Handler
             }
 
     def get_handler_for(self, name, attrs):
@@ -203,35 +203,6 @@ class _SuiteSetupTeardownHandler(_KeywordHandler):
         return self._context.end_suite_setup_or_teardown(self._keywords)
 
 
-
-# TODO: StatisticsHandler and StatItemHandler should be separated somehow from suite handlers
-
-class _StatisticsHandler(_Handler):
-
-    def get_handler_for(self, name, attrs):
-        return _Handler(self._context, attrs)
-
-
-class _StatItemHandler(_Handler):
-
-    def __init__(self, context, attrs):
-        _Handler.__init__(self, context)
-        self._attrs = dict(attrs)
-        self._attrs['pass'] = int(self._attrs['pass'])
-        self._attrs['fail'] = int(self._attrs['fail'])
-        if 'doc' in self._attrs:
-            self._attrs['doc'] = utils.html_format(self._attrs['doc'])
-        # Cannot use 'id' attribute in XML due to http://bugs.jython.org/issue1768
-        if 'idx' in self._attrs:
-            self._attrs['id'] = self._attrs.pop('idx')
-        # TODO: Should we only dump attrs that have value?
-        # Tag stats have many attrs that are normally empty
-
-    def end_element(self, text):
-        self._attrs.update(label=text)
-        return self._attrs
-
-
 class _StatusHandler(_Handler):
 
     def __init__(self, context, attrs):
@@ -255,16 +226,16 @@ class _StatusHandler(_Handler):
         return self._get_ids(result)
 
 
-class _ArgumentHandler(_Handler):
-
-    def end_element(self, text):
-        return text
-
-
 class _ArgumentsHandler(_Handler):
 
     def end_element(self, text):
         return self._get_id(', '.join(self._data_from_children))
+
+
+class _ArgumentHandler(_Handler):
+
+    def end_element(self, text):
+        return text
 
 
 class _TextHandler(_Handler):
@@ -321,3 +292,29 @@ class _MsgHandler(_Handler):
             self._msg.append(self._context.link_to(self._msg))
         elif self._msg[1] == 'W':
             self._context.create_link_to_current_location(self._msg)
+
+
+class _StatisticsHandler(_Handler):
+
+    def get_handler_for(self, name, attrs):
+        return _Handler(self._context, attrs)
+
+
+class _StatItemHandler(_Handler):
+
+    def __init__(self, context, attrs):
+        _Handler.__init__(self, context)
+        self._attrs = dict(attrs)
+        self._attrs['pass'] = int(self._attrs['pass'])
+        self._attrs['fail'] = int(self._attrs['fail'])
+        if 'doc' in self._attrs:
+            self._attrs['doc'] = utils.html_format(self._attrs['doc'])
+        # Cannot use 'id' attribute in XML due to http://bugs.jython.org/issue1768
+        if 'idx' in self._attrs:
+            self._attrs['id'] = self._attrs.pop('idx')
+        # TODO: Should we only dump attrs that have value?
+        # Tag stats have many attrs that are normally empty
+
+    def end_element(self, text):
+        self._attrs.update(label=text)
+        return self._attrs
