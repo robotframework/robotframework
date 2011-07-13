@@ -1,11 +1,11 @@
 window.passingFailingOutput = {};
 window.passingFailingOutput["errors"] = [];
 window.passingFailingOutput["stats"] = [[{"fail":1,"label":"Critical Tests","pass":1},{"fail":1,"label":"All Tests","pass":1}],[{"combined":"i?","doc":"<b>Combined</b> &amp; escaped &lt;&amp;lt; tag doc","fail":0,"info":"combined","label":"IX","links":"Title of iX:http://X/","pass":0},{"combined":"foo & i*","doc":"","fail":0,"info":"combined","label":"zap","links":"","pass":0}],[{"fail":1,"id":"s1","label":"PassingFailing","name":"PassingFailing","pass":1}]];
-window.passingFailingOutput["generatedMillis"] = -778;
+window.passingFailingOutput["generatedMillis"] = -960;
 window.passingFailingOutput["generator"] = "robot";
-window.passingFailingOutput["generatedTimestamp"] = "20110712 16:44:37 GMT +03:00";
-window.passingFailingOutput["baseMillis"] = 1310478277778;
-window.passingFailingOutput["suite"] = [14,15,0,0,[],[11,-4,7],[],[[7,0,8,0,[],[4,-1,1],[[5,6,0,1,2,[4,-1,1],[],[[0,3,2]]]]],[13,0,8,0,[],[11,1,1,10],[[5,12,0,9,10,[11,1,1],[],[[2,11,10]]]]]],[],[2,1,2,1]];
+window.passingFailingOutput["generatedTimestamp"] = "20110713 16:52:04 GMT +03:00";
+window.passingFailingOutput["baseMillis"] = 1310565124960;
+window.passingFailingOutput["suite"] = [13,14,0,0,[],[10,-3,7],[],[[7,0,1,0,[],[4,-1,2],[[5,6,0,1,2,[4,0,1],[],[[0,3,2]]]]],[12,0,1,0,[],[10,2,2,9],[[5,11,0,8,9,[10,3,1],[],[[3,10,9]]]]]],[],[2,1,2,1]];
 window.passingFailingOutput["strings"] = [];
-window.passingFailingOutput["strings"] = window.passingFailingOutput["strings"].concat(["*","*Logs the given message with the given level.","*passing","*I","*P","*kw","*BuiltIn.Log","*Passing","*Y","*Fails the test immediately with the given (optional) message.","*In test","*F","*BuiltIn.Fail","*Failing","*PassingFailing","*/Users/jmalinen/Documents/workspace/robotframework/utest/webcontent/spec/data/teardownFailure/PassingFailing.txt"]);
+window.passingFailingOutput["strings"] = window.passingFailingOutput["strings"].concat(["*","*Logs the given message with the given level.","*passing","*I","*P","*kw","*BuiltIn.Log","*Passing","*Fails the test immediately with the given (optional) message.","*In test","*F","*BuiltIn.Fail","*Failing","*PassingFailing","*/Users/jmalinen/Documents/workspace/robotframework/utest/webcontent/spec/data/teardownFailure/PassingFailing.txt"]);
 window.settings = {"background":{"fail":"DeepPink"},"logURL":"log.html","reportURL":"report.html"};
