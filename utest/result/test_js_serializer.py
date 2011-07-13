@@ -475,6 +475,10 @@ class TestTestSplittingJsSerializer(_JsSerializerTestBase):
   <kw type="teardown" name="Suite Teardown" timeout="">
     <doc>td doc</doc>
     <msg timestamp="20110601 12:01:51.354" level="WARN">td msg</msg>
+    <kw type="kw" name="Td Sub keyword" timeout="">
+      <doc>td sub doc</doc>
+      <status status="PASS" endtime="20110601 12:01:51.354" starttime="20110601 12:01:51.354"></status>
+    </kw>
     <status status="FAIL" endtime="20110601 12:01:51.354" starttime="20110601 12:01:51.354"></status>
   </kw>
   <status status="FAIL" endtime="20110601 12:01:51.354" starttime="20110601 12:01:51.353"></status>
@@ -501,10 +505,51 @@ class TestTestSplittingJsSerializer(_JsSerializerTestBase):
                        ],
                        ['*kw', '*Second keyword', '*', '*2nd doc', ['*P', 0, 0], [], []]]
         _assert_plain_suite_item(split_setup, *self._context.split_results[0])
-        split_teardown = []
+        split_teardown = [['*kw', '*Td Sub keyword', '*', '*td sub doc', ['*P', 1, 0], [], []]]
         _assert_plain_suite_item(split_teardown, *self._context.split_results[2])
         assert_equals(self._context.link_to([0, 'W', 'setup msg']), "s1-k1-k1")
         assert_equals(self._context.link_to([1, 'W', 'td msg']), "s1-k2")
+
+    def test_tests_and_suite_keywords_without_keywords_are_not_split(self):
+        data_model = self._get_data_model("""
+<suite source="/tmp/supersimple.txt" name="Supersimple">
+  <doc>sdoc</doc>
+  <kw type="setup" name="SSetup" timeout="">
+    <doc>setup</doc>
+    <status status="PASS" endtime="20110601 12:01:51.353" starttime="20110601 12:01:51.353"></status>
+  </kw>
+  <test name="Test" timeout="1s">
+    <doc>doc</doc>
+    <kw type="kw" name="Keyword" timeout="">
+      <doc>kd</doc>
+      <status status="PASS" endtime="20110601 12:01:51.354" starttime="20110601 12:01:51.353"></status>
+    </kw>
+    <status status="PASS" endtime="20110601 12:01:51.354" critical="yes" starttime="20110601 12:01:51.353"></status>
+  </test>
+  <test name="Empty" timeout="">
+    <doc>empty</doc>
+    <status status="FAIL" endtime="20110601 12:01:51.354" critical="no" starttime="20110601 12:01:51.354">Err</status>
+  </test>
+  <kw type="teardown" name="STeardown" timeout="">
+    <doc>td</doc>
+    <msg timestamp="20110601 12:01:51.354" level="WARN">msg</msg>
+    <status status="PASS" endtime="20110601 12:01:51.354" starttime="20110601 12:01:51.354"></status>
+  </kw>
+  <status status="PASS" endtime="20110601 12:01:51.354" starttime="20110601 12:01:51.353"></status>
+</suite>""")
+        assert_model(data_model,
+                     plain_suite=
+                     ['*Supersimple', '*/tmp/supersimple.txt', '*', '*sdoc',
+                      ['*P', 0, 1], [],
+                      [['*Test', '*1s', '*Y', '*doc', ['*P', 0, 1], 1],
+                       ['*Empty', '*', '*N', '*empty', ['*F', 1, 0, '*Err'], []]],
+                      [['*setup', '*SSetup', '*', '*setup',
+                        ['*P', 0, 0], [], []],
+                       ['*teardown', '*STeardown', '*', '*td',
+                        ['*P', 1, 0], [], [[1, '*W', '*msg']]]],
+                      [2, 1, 1, 1]])
+        split_test = [['*kw', '*Keyword', '*', '*kd', ['*P', 0, 1], [], []]]
+        _assert_plain_suite_item(split_test, *self._context.split_results[0])
 
 
 class TestRelativeSuiteSource(_JsSerializerTestBase):
