@@ -132,8 +132,7 @@ class _TestHandler(_Handler):
 
     def get_handler_for(self, name, attrs):
         if name == 'status':
-            # TODO: Use 1/0 instead of Y/N. Possibly also 1/0/-1 instead of P/F/N.
-            self._critical = 'Y' if attrs.get('critical') == 'yes' else 'N'
+            self._critical = 1 if attrs.get('critical') == 'yes' else 0
         self._current_children = {
             'kw': self._keywords
         }.get(name, self._data_from_children)
@@ -143,7 +142,7 @@ class _TestHandler(_Handler):
         self._current_children.append(data)
 
     def end_element(self, text):
-        self._context.add_test(self._critical == 'Y', self._last_child_passed())
+        self._context.add_test(self._critical, self._last_child_passed())
         kws = self._context.end_test(self._keywords)
         result = self._get_ids([self._name, self._timeout, self._critical]) + self._data_from_children
         result.append(kws)

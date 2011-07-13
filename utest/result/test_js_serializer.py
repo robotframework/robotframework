@@ -236,7 +236,7 @@ class TestJsSerializer(_JsSerializerTestBase):
                      ['*Supersimple', '*/tmp/supersimple.txt', '*', '*sdoc',
                       ['*F', 0, 1], 
                       [],
-                      [['*Test', '*', '*Y', '*tdoc', ['*P', 0, 1], []]],
+                      [['*Test', '*', 1, '*tdoc', ['*P', 0, 1], []]],
                       [['*teardown', '*Fail', '*', '*kdoc',
                        ['*F', 1, 0], [], [[0, '*W', '*msg']]]],
                       [1, 0, 1, 0]])
@@ -266,8 +266,8 @@ class TestJsSerializer(_JsSerializerTestBase):
                      ['*Supersimple', '*/tmp/supersimple.txt', '*', '*sdoc',
                       ['*F', 0, 1], 
                       [],
-                      [['*T1', '*', '*Y', '*t1doc', ['*P', 0, 0], []],
-                       ['*T2', '*', '*Y', '*t2doc', ['*F', 0, 1],
+                      [['*T1', '*', 1, '*t1doc', ['*P', 0, 0], []],
+                       ['*T2', '*', 1, '*t2doc', ['*F', 0, 1],
                         [['*teardown', '*Fail', '*', '*kdoc',
                          ['*F', 1, 0], [], [[0, '*W', '*msg']]]]]],
                       [],
@@ -340,13 +340,13 @@ class TestJsSerializer(_JsSerializerTestBase):
                                         '*html', '*<img src="http://x.y.x.jpg" title="http://x.y.x.jpg" style="border: 1px solid gray">'],
                                        ['*P', -24, 125],
                                        [],
-                              [['*Test', '*', '*Y', doc,
+                              [['*Test', '*', 1, doc,
                                   ['*t1', '*t2'], ['*P', 0, 1],
                                   [
                                       ['*kw', '*Keyword.Example', '*1 second', doc,
                                         '*a1, a2', ['*P', 23, -23], [], [[0, '*W', '*simple']]]
                                   ]
-                              ],['*setup', '*', '*Y', "*docu",
+                              ],['*setup', '*', 1, "*docu",
                                   [], ['*P', 100, 1],
                                   [
                                       ['*kw', '*Keyword.Example', '*1 second', doc,
@@ -430,7 +430,7 @@ class TestTestSplittingJsSerializer(_JsSerializerTestBase):
                      ['*Supersimple', '*/tmp/supersimple.txt', '*', '*sdoc',
                       ['*P', -47, 25],
                       [],
-                      [['*Test', '*', '*Y', '*doc', ['*P', -23, 1], 1]],
+                      [['*Test', '*', 1, '*doc', ['*P', -23, 1], 1]],
                       [],
                       [1, 1, 1, 1]])
         expected_data = [['*kw', '*Keyword.Example', '*', ['*P', 0, -23], [], []],
@@ -487,7 +487,7 @@ class TestTestSplittingJsSerializer(_JsSerializerTestBase):
                      ['*Supersimple', '*/tmp/supersimple.txt', '*', '*sdoc',
                       ['*F', 0, 1],
                       [],
-                      [['*Test', '*', '*Y', '*doc', ['*P', 0, 1], 2]],
+                      [['*Test', '*', 1, '*doc', ['*P', 0, 1], 2]],
                       [
                        ['*setup', '*Suite Setup', '*1 year', '*setup doc',
                         ['*P', 0, 0], 1, []],
@@ -540,8 +540,8 @@ class TestTestSplittingJsSerializer(_JsSerializerTestBase):
                      plain_suite=
                      ['*Supersimple', '*/tmp/supersimple.txt', '*', '*sdoc',
                       ['*P', 0, 1], [],
-                      [['*Test', '*1s', '*Y', '*doc', ['*P', 0, 1], 1],
-                       ['*Empty', '*', '*N', '*empty', ['*F', 1, 0, '*Err'], []]],
+                      [['*Test', '*1s', 1, '*doc', ['*P', 0, 1], 1],
+                       ['*Empty', '*', 0, '*empty', ['*F', 1, 0, '*Err'], []]],
                       [['*setup', '*SSetup', '*', '*setup',
                         ['*P', 0, 0], [], []],
                        ['*teardown', '*STeardown', '*', '*td',

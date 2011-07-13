@@ -106,7 +106,7 @@ window.testdata = function () {
                 return doc;
             },
             timeout: strings.get(element[1]),
-            isCritical: (strings.get(element[2]) == "Y"),
+            isCritical: element[2],
             status: parseStatus(statusElement, strings, suite.hasTeardownFailure()),
             message:  function () {
                 var msg = createMessage(statusElement, strings, suite.hasTeardownFailure());
