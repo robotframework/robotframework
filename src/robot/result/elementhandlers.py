@@ -167,9 +167,6 @@ class _KeywordHandler(_Handler):
         self._context.start_keyword()
 
     def get_handler_for(self, name, attrs):
-        if name == 'status':
-            # TODO: Use 1/0 instead of Y/N. Possibly also 1/0/-1 instead of P/F/N.
-            self._critical = 'Y' if attrs.get('critical') == 'yes' else 'N'
         self._current_children = {
             'kw': self._keywords,
             'msg': self._messages
