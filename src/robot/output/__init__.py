@@ -12,13 +12,14 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-
 from output import Output
 from logger import LOGGER
 from monitor import CommandLineMonitor
 from xmllogger import XmlLogger
 from loggerhelper import LEVELS, Message
 from readers import process_output, process_outputs
+
+from robot.result.resultwriter import ResultFromXML
 
 
 # Hooks to output. Set by Output.
@@ -39,12 +40,11 @@ def TestSuite(outpath):
         If path is not given the suite is written into the same file as it
         originally was read from.
         """
-        from robot.result import RobotTestOutput
         if path is None:
             path = outpath
         suite.set_status()
-        testoutput = RobotTestOutput(suite, errors)
-        testoutput.serialize_output(path, suite)
+        testoutput = ResultFromXML(suite, errors)
+        testoutput.serialize_output(path)
 
     suite.write_to_file = write_to_file
     return suite
