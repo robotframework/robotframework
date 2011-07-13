@@ -69,7 +69,6 @@ class _JsSerializerTestBase(unittest.TestCase):
         end_padding = '' if end==0 else '...'
         return start_padding+string[start:end]+end_padding
 
-# TODO: Split this monster test suite.
 
 class TestJsSerializer(_JsSerializerTestBase):
 
