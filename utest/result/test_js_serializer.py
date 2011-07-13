@@ -406,20 +406,14 @@ class TestJsSerializer(_JsSerializerTestBase):
 
 class TestTestSplittingJsSerializer(_JsSerializerTestBase):
 
-    SUITE_XML = """
-<suite source="/tmp/supersimple.txt" name="Supersimple">
-  <test name="Test" timeout="">
-    <doc>doc</doc>
-    <kw type="kw" name="Keyword.Example" timeout="">
-      <status status="PASS" endtime="20110601 12:01:51.353" starttime="20110601 12:01:51.376"></status>
-    </kw>
-    <status status="PASS" endtime="20110601 12:01:51.354" critical="yes" starttime="20110601 12:01:51.353"></status>
-  </test>
-  <status status="PASS" endtime="20110601 12:01:51.354" starttime="20110601 12:01:51.329"></status>
-</suite>"""
+    def setUp(self):
+        self._context = Context(split_log=True)
+        self._handler = _RobotOutputHandler(self._context)
 
-    SUITE_XML_WITH_TWO_KEYWORDS = """
+    def test_split_tests(self):
+        data_model = self._get_data_model("""
 <suite source="/tmp/supersimple.txt" name="Supersimple">
+  <doc>sdoc</doc>
   <test name="Test" timeout="">
     <doc>doc</doc>
     <kw type="kw" name="Keyword.Example" timeout="">
@@ -431,41 +425,100 @@ class TestTestSplittingJsSerializer(_JsSerializerTestBase):
     <status status="PASS" endtime="20110601 12:01:51.354" critical="yes" starttime="20110601 12:01:51.353"></status>
   </test>
   <status status="PASS" endtime="20110601 12:01:51.354" starttime="20110601 12:01:51.329"></status>
-</suite>"""
-
-    def setUp(self):
-        self._context = Context(split_tests=True)
-        self._handler = _RobotOutputHandler(self._context)
-
-    def test_split_keyword(self):
-        data_model = self._get_data_model(self.SUITE_XML)
+</suite>""")
         assert_model(data_model,
                      plain_suite=
-                     [ '*Supersimple', '*/tmp/supersimple.txt', '*', ['*P', -47, 25],[],
-                         [['*Test', '*', '*Y', '*doc',['*P', -23, 1],
-                           1
-                         ]],
-                         [],[1, 1, 1, 1]])
-        expected_data = [['*kw', '*Keyword.Example', '*',  ['*P', 0, -23], [], []]]
+                     ['*Supersimple', '*/tmp/supersimple.txt', '*', '*sdoc',
+                      ['*P', -47, 25],
+                      [],
+                      [['*Test', '*', '*Y', '*doc', ['*P', -23, 1], 1]],
+                      [],
+                      [1, 1, 1, 1]])
+        expected_data = [['*kw', '*Keyword.Example', '*', ['*P', 0, -23], [], []],
+                         ['*kw', '*Second keyword', '*', ['*P', 0, -23], [], []]]
         keywords, strings = self._context.split_results[0]
         _assert_plain_suite_item(expected_data, keywords, strings)
 
-    def test_split_several_keywords(self):
-        data_model = self._get_data_model(self.SUITE_XML_WITH_TWO_KEYWORDS)
+    def test_split_tests_and_suite_keywords(self):
+        data_model = self._get_data_model("""
+<suite source="/tmp/supersimple.txt" name="Supersimple">
+  <doc>sdoc</doc>
+  <kw type="setup" name="Suite Setup" timeout="1 year">
+    <doc>setup doc</doc>
+    <kw type="kw" name="First keyword" timeout="">
+      <doc>1st doc</doc>
+      <msg timestamp="20110601 12:01:51.353" level="WARN">setup msg</msg>
+      <status status="PASS" endtime="20110601 12:01:51.353" starttime="20110601 12:01:51.353"></status>
+      <kw type="kw" name="Sub keyword" timeout="">
+        <doc>sub doc</doc>
+        <status status="PASS" endtime="20110601 12:01:51.353" starttime="20110601 12:01:51.353"></status>
+      </kw>
+    </kw>
+    <kw type="kw" name="Second keyword" timeout="">
+      <doc>2nd doc</doc>
+      <status status="PASS" endtime="20110601 12:01:51.353" starttime="20110601 12:01:51.353"></status>
+    </kw>
+    <status status="PASS" endtime="20110601 12:01:51.353" starttime="20110601 12:01:51.353"></status>
+  </kw>
+  <test name="Test" timeout="">
+    <doc>doc</doc>
+    <kw type="kw" name="Keyword.Example" timeout="">
+      <doc>kd</doc>
+      <status status="PASS" endtime="20110601 12:01:51.354" starttime="20110601 12:01:51.353"></status>
+    </kw>
+    <kw type="teardown" name="Pass" timeout="">
+      <doc>ted</doc>
+      <status status="PASS" endtime="20110601 12:01:51.354" starttime="20110601 12:01:51.354"></status>
+    </kw>
+    <status status="PASS" endtime="20110601 12:01:51.354" critical="yes" starttime="20110601 12:01:51.353"></status>
+  </test>
+  <kw type="teardown" name="Suite Teardown" timeout="">
+    <doc>td doc</doc>
+    <msg timestamp="20110601 12:01:51.354" level="WARN">td msg</msg>
+    <status status="FAIL" endtime="20110601 12:01:51.354" starttime="20110601 12:01:51.354"></status>
+  </kw>
+  <status status="FAIL" endtime="20110601 12:01:51.354" starttime="20110601 12:01:51.353"></status>
+</suite>""")
         assert_model(data_model,
                      plain_suite=
-                     ['*Supersimple', '*/tmp/supersimple.txt', '*', ['*P', -47, 25],[],
-                         [['*Test', '*', '*Y', '*doc',['*P', -23, 1],
-                           1
-                         ]],
-                         [],[1, 1, 1, 1]])
-        expected_data = [['*kw', '*Keyword.Example', '*',  ['*P', 0, -23], [], []], ['*kw', '*Second keyword', '*',  ['*P', 0, -23], [], []]]
-        keywords, strings = self._context.split_results[0]
-        _assert_plain_suite_item(expected_data, keywords, strings)
+                     ['*Supersimple', '*/tmp/supersimple.txt', '*', '*sdoc',
+                      ['*F', 0, 1],
+                      [],
+                      [['*Test', '*', '*Y', '*doc', ['*P', 0, 1], 2]],
+                      [
+                       ['*setup', '*Suite Setup', '*1 year', '*setup doc',
+                        ['*P', 0, 0], 1, []],
+                       ['*teardown', '*Suite Teardown', '*', '*td doc',
+                        ['*F', 1, 0], 3, [[1, '*W', '*td msg']]],
+                      ],
+                      [1, 0, 1, 0]])
+        split_test = [['*kw', '*Keyword.Example', '*', '*kd', ['*P', 0, 1], [], []],
+                      ['*teardown', '*Pass', '*', '*ted', ['*P', 1, 0], [], []]]
+        _assert_plain_suite_item(split_test, *self._context.split_results[1])
+        split_setup = [['*kw', '*First keyword', '*', '*1st doc', ['*P', 0, 0],
+                        [['*kw', '*Sub keyword', '*', '*sub doc', ['*P', 0, 0], [], []]],
+                        [[0, '*W', '*setup msg']]
+                       ],
+                       ['*kw', '*Second keyword', '*', '*2nd doc', ['*P', 0, 0], [], []]]
+        _assert_plain_suite_item(split_setup, *self._context.split_results[0])
+        split_teardown = []
+        _assert_plain_suite_item(split_teardown, *self._context.split_results[2])
+        assert_equals(self._context.link_to([0, 'W', 'setup msg']), "s1-k1-k1")
+        assert_equals(self._context.link_to([1, 'W', 'td msg']), "s1-k2")
 
 
 class TestRelativeSuiteSource(_JsSerializerTestBase):
-    SUITE_XML = TestTestSplittingJsSerializer.SUITE_XML
+    SUITE_XML = """
+<suite source="/tmp/supersimple.txt" name="Supersimple">
+  <test name="Test" timeout="">
+    <doc>doc</doc>
+    <kw type="kw" name="Keyword.Example" timeout="">
+      <status status="PASS" endtime="20110601 12:01:51.353" starttime="20110601 12:01:51.376"></status>
+    </kw>
+    <status status="PASS" endtime="20110601 12:01:51.354" critical="yes" starttime="20110601 12:01:51.353"></status>
+  </test>
+  <status status="PASS" endtime="20110601 12:01:51.354" starttime="20110601 12:01:51.329"></status>
+</suite>"""
 
     def setUp(self):
         self._original_exists = os.path.exists

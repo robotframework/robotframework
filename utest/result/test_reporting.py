@@ -134,10 +134,8 @@ class TestReporting(unittest.TestCase):
         self._settings['SplitLog'] = True
         self._settings['Log'] = '/tmp/foo/log.bar.html'
         self._reporter.write_robot_results(resources.GOLDEN_OUTPUT)
-        self._assert_expected_split_tests('/tmp/foo/log.bar-1.js',
-                                          '/tmp/foo/log.bar-2.js',
-                                          '/tmp/foo/log.bar-3.js',
-                                          '/tmp/foo/log.bar-4.js')
+        expected = ('/tmp/foo/log.bar-%d.js' % i for i in range(1, 9))
+        self._assert_expected_split_tests(*expected)
 
     def _assert_expected_log(self, expected_file_name):
         self.assertEquals(self._log_results['log_path'], expected_file_name)

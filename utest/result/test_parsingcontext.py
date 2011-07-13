@@ -80,7 +80,7 @@ class TestTextCache(unittest.TestCase):
 class TestSplittingContext(unittest.TestCase):
 
     def setUp(self):
-        self._context = jsparser.Context(split_tests=True)
+        self._context = jsparser.Context(split_log=True)
         self._context.start_suite('suite')
 
     def test_getting_split_results(self):

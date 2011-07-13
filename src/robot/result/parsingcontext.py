@@ -22,7 +22,7 @@ from robot import utils
 
 class Context(object):
 
-    def __init__(self, log_path='NONE', split_tests=False):
+    def __init__(self, log_path='NONE', split_log=False):
         self._main_text_cache = TextCache()
         self._current_texts = self._main_text_cache
         self._split_text_caches = []
@@ -30,7 +30,7 @@ class Context(object):
         self._stats = Stats()
         self._location = Location()
         self._links = {}
-        self._split_tests = split_tests
+        self._split_log = split_log
         self.split_results = []
         self._log_path = log_path
 
@@ -78,26 +78,38 @@ class Context(object):
         self._location.end_suite()
 
     def start_test(self, name):
-        if self._split_tests:
+        if self._split_log:
             self._split_text_caches.append(TextCache())
         self._location.start_test()
 
     def end_test(self, kw_data=None):
         self._location.end_test()
-        if self._split_tests:
+        if self._split_log:
             self.split_results.append((kw_data, self._split_text_caches[-1].dump()))
             return len(self.split_results)
         return kw_data
 
     def start_keyword(self):
-        if self._split_tests and self._location.on_test_level:
+        if self._split_log:
             self._current_texts = self._split_text_caches[-1]
         self._location.start_keyword()
 
     def end_keyword(self):
         self._location.end_keyword()
-        if self._split_tests and self._location.on_test_level:
+        if self._split_log and self._location.on_split_end_level:
             self._current_texts = self._main_text_cache
+
+    def start_suite_setup_or_teardown(self):
+        if self._split_log:
+            self._split_text_caches.append(TextCache())
+        self._location.start_keyword()
+
+    def end_suite_setup_or_teardown(self, kw_data=None):
+        self._location.end_keyword()
+        if self._split_log:
+            self.split_results.append((kw_data, self._split_text_caches[-1].dump()))
+            return len(self.split_results)
+        return kw_data
 
     def create_link_to_current_location(self, key):
         self._links[tuple(key)] = self._location.current_id
@@ -205,8 +217,14 @@ class Location(object):
             ind.pop()
 
     @property
-    def on_test_level(self):
+    def on_split_end_level(self):
+        return self._on_test_level() or self._on_suite_setup_or_teardown_level()
+
+    def _on_test_level(self):
         return self._ids[-1][0] == 't'
+
+    def _on_suite_setup_or_teardown_level(self):
+        return self._ids[-2][0] == 's'
 
     @property
     def current_id(self):

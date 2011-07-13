@@ -155,7 +155,6 @@ class _KeywordHandler(_Handler):
 
     def __init__(self, context, attrs):
         _Handler.__init__(self, context)
-        self._context.start_keyword()
         self._type = attrs.get('type')
         if self._type == 'for': self._type = 'forloop'
         self._name = attrs.get('name')
@@ -163,6 +162,10 @@ class _KeywordHandler(_Handler):
         self._keywords = []
         self._messages = []
         self._current_children = None
+        self._start()
+
+    def _start(self):
+        self._context.start_keyword()
 
     def get_handler_for(self, name, attrs):
         if name == 'status':
@@ -179,17 +182,27 @@ class _KeywordHandler(_Handler):
 
     def end_element(self, text):
         result = self._get_ids([self._type, self._name, self._timeout]) + \
-               self._data_from_children + [self._keywords] + [self._messages]
-        self._context.end_keyword()
+               self._data_from_children + [self._get_keywords()] + [self._messages]
         return result
+
+    def _get_keywords(self):
+        self._context.end_keyword()
+        return self._keywords
 
 
 class _SuiteSetupTeardownHandler(_KeywordHandler):
+
+    def _start(self):
+        self._context.start_suite_setup_or_teardown()
 
     def end_element(self, text):
         if self._type == 'teardown' and not self._last_child_passed():
             self._context.suite_teardown_failed()
         return _KeywordHandler.end_element(self, text)
+
+    def _get_keywords(self):
+        return self._context.end_suite_setup_or_teardown(self._keywords)
+
 
 
 # TODO: StatisticsHandler and StatItemHandler should be separated somehow from suite handlers
