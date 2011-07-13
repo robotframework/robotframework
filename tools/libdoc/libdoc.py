@@ -151,14 +151,17 @@ class _DocHelper:
     _name_regexp = re.compile("`(.+?)`")
     _list_or_table_regexp = re.compile('^(\d+\.|[-*|]|\[\d+\]) .')
 
-    def __getattr__(self, name):
-        if name == 'htmldoc':
-            return self._get_htmldoc(self.doc)
-        if name == 'htmlshortdoc':
-            return utils.html_attr_escape(self.shortdoc)
-        if name == 'htmlname':
-            return utils.html_attr_escape(self.name)
-        raise AttributeError("Non-existing attribute '%s'" % name)
+    @property
+    def htmldoc(self):
+        return self._get_htmldoc(self.doc)
+
+    @property
+    def htmlshortdoc(self):
+        return utils.html_attr_escape(self.shortdoc)
+
+    @property
+    def htmlname(self):
+        return utils.html_attr_escape(self.name)
 
     def _process_doc(self, doc):
         ret = ['']
@@ -187,10 +190,7 @@ class _DocHelper:
 
     def _link_keywords(self, res):
         name = res.group(1)
-        try:
-            lib = self.lib
-        except AttributeError:
-            lib = self
+        lib = self.lib if hasattr(self, 'lib') else self
         for kw in lib.keywords:
             if utils.eq(name, kw.name):
                 return '<a href="#%s" class="name">%s</a>' % (kw.name, name)
@@ -283,10 +283,9 @@ class _BaseKeywordDoc(_DocHelper):
     def __cmp__(self, other):
         return cmp(self.name.lower(), other.name.lower())
 
-    def __getattr__(self, name):
-        if name == 'argstr':
-            return ', '.join(self.args)
-        return _DocHelper.__getattr__(self, name)
+    @property
+    def argstr(self):
+        return ', '.join(self.args)
 
     def __repr__(self):
         return "'Keyword %s from library %s'" % (self.name, self.lib.name)
