@@ -14,23 +14,21 @@ Test Case File Suite
     Check Normal Suite Defaults  ${SUITE}
     Should Be Equal  ${SUITE.get_full_message()}  2 critical tests, 2 passed, 0 failed\n 2 tests total, 2 passed, 0 failed
     Should Be Equal  ${SUITE.get_stat_message()}  2 critical tests, 2 passed, 0 failed\n 2 tests total, 2 passed, 0 failed
-    ${exp} =  Catenate  SEPARATOR=  2&nbsp;critical&nbsp;tests,&nbsp;  2&nbsp;passed,&nbsp;  <span>0&nbsp;failed</span>  <br />  2&nbsp;tests&nbsp;total,&nbsp;
-    ...  2&nbsp;passed,&nbsp;  <span>0&nbsp;failed</span>
-    Should Be Equal  ${SUITE.get_full_message(html=True)}  ${exp}
     Check Suite Contains Tests  ${SUITE}  First One  Second One
 
 Directory Suite
     [Documentation]  Testing suite created from a test suite directory. Also testing metadata from cli.
-    My Run Robot And Rebot  --metadata x:http://x.fi --name My_Name --doc Something  misc${/}suites
+    My Run Robot And Rebot  --metadata x:y -M a:b --name My_Name --doc Something  misc/suites
     Should Be Equal  ${SUITE.name}  My Name
     Should Be Equal  ${SUITE.doc}  Something
-    Should Be Equal  ${SUITE.metadata['x']}  http://x.fi
-    Should Be True  ${SUITE.get_metadata(html=True)} == [('x', '<a href="http://x.fi">http://x.fi</a>')]
+    Should Be Equal  ${SUITE.metadata['x']}  y
+    Should Be Equal  ${SUITE.metadata['a']}  b
+    Should Be True   ${SUITE.get_metadata()} == [('a', 'b'), ('x', 'y')]
     Check Suite Got From misc/suites/ Directory
 
 Created Minimal
     [Documentation]  Testing absolute minimal hand created suite without even any tests or subsuites
-    Run Rebot  ${EMPTY}  rebot${/}created_minimal.xml
+    Run Rebot  ${EMPTY}  rebot/created_minimal.xml
     Should Be Equal  ${SUITE.name}  My Name
     Should Be Equal  ${SUITE.status}  PASS
     Should Be True  ${SUITE.suites}+${SUITE.tests}==[]
@@ -38,7 +36,7 @@ Created Minimal
 
 Created Normal
     [Documentation]  Testing minimal hand created suite with tests or subsuites
-    Run Rebot  ${EMPTY}  rebot${/}created_normal.xml
+    Run Rebot  ${EMPTY}  rebot/created_normal.xml
     Check Names  ${SUITE}  Root
     Should Be True  ${SUITE.suites} == ['Sub 1','Sub 2']
     Check Names  ${SUITE.suites[0]}  Sub 1  Root.
