@@ -13,44 +13,25 @@
 #  limitations under the License.
 
 
-# TODO: Various tasks
-# - Consider moving under utils
-# - Cleanup
-
-
-def encode_basestring(string):
-    def get_matching_char(c):
-        val = ord(c)
-        if val < 127 and val > 31:
-            return c
-        return '\\u' + hex(val)[2:].rjust(4,'0')
-    # TODO: Our log doesn't contain all these control chars
-    string = string.replace('\\', '\\\\')
-    string = string.replace('"', '\\"')
-    string = string.replace('\b', '\\b')
-    string = string.replace('\f', '\\f')
-    string = string.replace('\n', '\\n')
-    string = string.replace('\r', '\\r')
-    string = string.replace('\t', '\\t')
-    return '"%s"' % ''.join(get_matching_char(c) for c in string)
-
 def json_dump(data, output, mappings=None):
     if data is None:
         output.write('null')
     elif isinstance(data, dict):
         output.write('{')
+        last_index = len(data) - 1
         for index, key in enumerate(sorted(data)):
             json_dump(key, output, mappings)
             output.write(':')
             json_dump(data[key], output, mappings)
-            if index < len(data)-1:
+            if index < last_index:
                 output.write(',')
         output.write('}')
     elif _iterable(data):
         output.write('[')
+        last_index = len(data) - 1
         for index, item in enumerate(data):
             json_dump(item, output, mappings)
-            if index < len(data)-1:
+            if index < last_index:
                 output.write(',')
         output.write(']')
     elif mappings and data in mappings:
@@ -58,10 +39,22 @@ def json_dump(data, output, mappings=None):
     elif isinstance(data, (int, long)):
         output.write(str(data))
     elif isinstance(data, basestring):
-        output.write(encode_basestring(data))
+        output.write(_encode_string(data))
     else:
-        raise Exception('Data type (%s) serialization not supported' % type(data))
+        raise ValueError('jsondumping %s not supported' % type(data))
 
+
+def _encode_string(string):
+    for char, repl in [('\\', '\\\\'), ('"', '\\"'), ('\n', '\\n'),
+                       ('\r', '\\r'), ('\t', '\\t')]:
+        string = string.replace(char, repl)
+    return '"%s"' % ''.join(_encode_char(c) for c in string)
+
+def _encode_char(c):
+    val = ord(c)
+    if 31 < val < 127:
+        return c
+    return '\\u' + hex(val)[2:].rjust(4, '0')
 
 def _iterable(item):
     if isinstance(item, basestring):

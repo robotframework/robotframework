@@ -10,14 +10,17 @@ import unittest
 
 from robot.utils.asserts import assert_equals, assert_true
 from robot.result.jsondump import json_dump
+from robot.utils.abstractxmlwriter import _ILLEGAL_CHARS_IN_XML
 
 class JsonTestCase(unittest.TestCase):
 
     if json:
         def test_json_dump_string(self):
-            string = u'string\u00A9\v\\\'\"\r\b\t\0\n\fjee'
+            string = u'string\u00A9\v\\\'\"\r\t\njee'
             for i in range(1024):
-                string += unichr(i)
+                c = unichr(i)
+                if c not in _ILLEGAL_CHARS_IN_XML:
+                    string += c
             buffer = StringIO.StringIO()
             json_dump(string, buffer)
             expected = StringIO.StringIO()
