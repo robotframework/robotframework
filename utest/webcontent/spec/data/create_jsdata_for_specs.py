@@ -3,16 +3,16 @@
 import fileinput
 from os.path import join, dirname, abspath
 import sys
+import os
 
 BASEDIR = dirname(abspath(__file__))
-print BASEDIR
+OUTPUT = join(BASEDIR, 'output.xml')
 
 sys.path.insert(0, join(BASEDIR, '..', '..', '..', '..', 'src'))
-print sys.path[0]
 
 import robot
-from robot.result.jsparser import create_datamodel_from
-from robot.result.jsondatamodel import _SeparatingWriter
+from robot.result.outputparser import OutputParser
+from robot.result.jsondatamodel import SeparatingWriter
 
 
 def run_robot(testdata, loglevel='INFO'):
@@ -25,15 +25,15 @@ def run_robot(testdata, loglevel='INFO'):
               critical=[], noncritical=[], outputdir=BASEDIR, loglevel=loglevel)
 
 
-def create_jsdata(output_xml_file, target, split_log):
-    model = create_datamodel_from(output_xml_file, split_log=split_log)
+def create_jsdata(outxml, target, split_log):
+    model = OutputParser(split_log=split_log).parse(outxml)
     model.set_settings({'logURL': 'log.html',
                         'reportURL': 'report.html',
                         'background': {'fail': 'DeepPink'}})
     with open(target, 'w') as output:
         model.write_to(output)
         for index, (keywords, strings) in enumerate(model._split_results):
-            writer = _SeparatingWriter(output, '')
+            writer = SeparatingWriter(output, '')
             writer.dump_json('window.outputKeywords%d = ' % index, keywords)
             writer.dump_json('window.outputStrings%d = ' % index, strings)
 
@@ -47,9 +47,8 @@ def replace_all(file,searchExp,replaceExp):
 def create(input, target, targetName, loglevel='INFO', split_log=False):
     input = join(BASEDIR, input)
     target = join(BASEDIR, target)
-    outxml = join(BASEDIR, 'output.xml')
     run_robot(input, loglevel)
-    create_jsdata(outxml, target, split_log)
+    create_jsdata(OUTPUT, target, split_log)
     replace_all(target, 'window.output', 'window.' + targetName)
 
 if __name__ == '__main__':
@@ -61,4 +60,4 @@ if __name__ == '__main__':
     create('TestsAndKeywords.txt', 'TestsAndKeywords.js', 'testsAndKeywordsOutput')
     create('.', 'allData.js', 'allDataOutput')
     create('.', 'splitting.js', 'splittingOutput', split_log=True)
-
+    os.remove(OUTPUT)

@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 from os.path import abspath, dirname, join
+import os
 import sys
 
 BASEDIR = dirname(abspath(__file__))
@@ -11,7 +12,7 @@ TARGET = join(BASEDIR, 'data.js')
 sys.path.insert(0, join(BASEDIR, '..', '..', '..'))
 
 import robot
-from robot.result.jsparser import OutputParser
+from robot.result.outputparser import OutputParser
 
 
 def run_robot(outputdirectory, testdata):
@@ -25,7 +26,7 @@ def run_robot(outputdirectory, testdata):
 
 
 def create_jsdata(outxml, target):
-    model = OutputParser(log_path=join(BASEDIR,'..','log.html').parse(outxml))
+    model = OutputParser(log_path=join(BASEDIR,'..','log.html')).parse(outxml)
     model.set_settings({'logURL': 'log.html',
                         'reportURL': 'report.html',
                         'background': {'fail': 'DeepPink'}})
@@ -35,4 +36,4 @@ def create_jsdata(outxml, target):
 if __name__ == '__main__':
     run_robot(BASEDIR, TESTDATA)
     create_jsdata(OUTPUT, TARGET)
-
+    os.remove(OUTPUT)
