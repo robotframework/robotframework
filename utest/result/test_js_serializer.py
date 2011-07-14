@@ -102,6 +102,12 @@ class TestJsSerializer(_JsSerializerTestBase):
     <tags></tags>
     <status status="PASS" endtime="20110601 12:01:51.454" critical="yes" starttime="20110601 12:01:51.453"></status>
   </test>
+  <kw type="teardown" name="Suite Teardown" timeout="">
+    <doc>std</doc>
+    <arguments><arg>1</arg><arg>2</arg></arguments>
+    <msg timestamp="20110601 12:01:51.453" level="INFO">STD</msg>
+    <status status="PASS" endtime="20110601 12:01:51.454" starttime="20110601 12:01:51.453"></status>
+  </kw>
   <status status="PASS" endtime="20110601 12:01:51.454" starttime="20110601 12:01:51.329"></status>
 </suite>"""
 
@@ -300,9 +306,11 @@ class TestJsSerializer(_JsSerializerTestBase):
 
     def test_for_loop_remove_keywords(self):
         self._context.start_suite('suite')
-        test_xml = '<test name="Test" timeout=""><doc></doc>' + \
+        test_xml = '<suite><doc></doc><metadata></metadata>' + \
+                   '<test name="Test" timeout=""><doc></doc>' + \
                    self.FOR_LOOP_XML + \
-                   '<tags></tags><status status="PASS" endtime="20110601 12:01:51.354" critical="yes" starttime="20110601 12:01:51.353"></status></test>'
+                   '<tags></tags><status status="PASS" endtime="20110601 12:01:51.354" critical="yes" starttime="20110601 12:01:51.353"></status></test>' + \
+                   '<status status="PASS" endtime="20110601 12:01:51.354" critical="yes" starttime="20110601 12:01:51.353"></status></suite>'
         self._test_remove_keywords(self._get_data_model(test_xml),
                                    should_not_contain_strings=['${i} IN RANGE [ 2 ]', 'babba', 'Doc in for'])
 
@@ -325,6 +333,14 @@ class TestJsSerializer(_JsSerializerTestBase):
         data_model.write_to(data_model_json_after)
         assert_true(len(data_model_json_before.getvalue()) > len(data_model_json_after.getvalue()))
         assert_true(strings_before > self._list_size(data_model._robot_data['strings']))
+        self._suite_should_not_have_keywords(data_model._robot_data['suite'])
+
+    def _suite_should_not_have_keywords(self, suite):
+        assert_equals(suite[8], [])
+        for subsuite in suite[6]:
+            self._suite_should_not_have_keywords(subsuite)
+        for test in suite[7]:
+            assert_equals(test[-1], [])
 
     def _list_size(self, array):
         return len(''.join(str(val) for val in array))
@@ -352,7 +368,7 @@ class TestJsSerializer(_JsSerializerTestBase):
                                         '*a1, a2', [1, 100, 0], [], [[0, 2, '*sample']]]
                                   ]
                               ]],
-                              [],
+                              [[2, '*Suite Teardown', '*', '*std', '*1, 2', [1, 100, 1], [], [[100, 2, '*STD']]]],
                               0, [2, 2, 2, 2]])
         assert_equals(self._context.link_to([0, 3, 'simple']),'s1-t1-k1')
 
@@ -360,7 +376,7 @@ class TestJsSerializer(_JsSerializerTestBase):
         self._test_remove_keywords(self._get_data_model(self.SUITE_XML),
                                    should_contain_strings=['*key', '*val', '*docu'],
                                    should_not_contain_strings=['**html* &lt;esc&gt; http://x.y http://x.y/z.jpg',
-                                                               '*Keyword.Example'])
+                                                               '*Keyword.Example', '*Suite Teardown', '*std', '*STD'])
 
     def test_statistics_xml_parsing(self):
         statistics_xml = """
