@@ -3,18 +3,20 @@ window.testdata = function () {
     var elementsById = {};
     var idCounter = 0;
     var _statistics = null;
-    var LEVELS = {T: 'trace', D: 'debug', I: 'info', H: 'info',
-                  W: 'warn', E: 'error', F: 'fail'};
+    var LEVELS = {1: 'trace', 2: 'debug', 3: 'info',
+                  4: 'warn',  5: 'fail', 6: 'error'};
+    var STATUSES = {0: model.FAIL, 1: model.PASS, 2: model.NOT_RUN}
     var KEYWORD_TYPE = {kw: 'KEYWORD', setup: 'SETUP', teardown: 'TEARDOWN',
                         forloop: 'FOR', foritem: 'VAR'};
 
     function addElement(elem) {
-        if(elem.id == undefined)
+        if (elem.id == undefined)
             elem.id = uniqueId();
         elementsById[elem.id] = elem;
         return elem;
     }
 
+    // TODO: DO we still need this?
     function uniqueId() {
         idCounter++;
         return "elementId_" + idCounter;
@@ -33,7 +35,7 @@ window.testdata = function () {
     }
 
     function message(element, strings) {
-        return addElement(model.Message(LEVELS[strings.get(element[1])],
+        return addElement(model.Message(LEVELS[element[1]],
                                         timestamp(element[0]),
                                         strings.get(element[2]),
                                         strings.get(element[3])));
@@ -42,9 +44,7 @@ window.testdata = function () {
     function parseStatus(stats, strings, parentSuiteTeardownFailed) {
         if (parentSuiteTeardownFailed)
             return model.FAIL;
-        return {'P': model.PASS,
-                'F': model.FAIL,
-                'N': model.NOT_RUN}[strings.get(stats[0])];
+        return STATUSES[stats[0]];
     }
 
     function last(items) {

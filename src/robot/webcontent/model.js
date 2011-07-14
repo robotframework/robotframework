@@ -3,7 +3,7 @@ window.model = (function () {
     var STATUS = {
         pass: "PASS",
         fail: "FAIL",
-        notRun: "NOT RUN"
+        notRun: "NOT_RUN"
     };
 
     var KEYWORD_TYPE = {
@@ -161,8 +161,11 @@ window.model = (function () {
 
     function Message(level, time, text, link) {
         var message = {};
+        // TODO: No need to have both level and levelText
         message.level = level;
         message.levelText = level.toUpperCase();
+        // TODO: Do we need time, shortTime, and date?
+        // Also date should be datetime since it contains both date and time.
         message.time = time;
         message.shortTime = function () {
             return timeFromDate(message.time);

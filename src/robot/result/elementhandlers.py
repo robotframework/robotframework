@@ -13,6 +13,7 @@
 #  limitations under the License.
 
 from robot import utils
+from robot.output import LEVELS
 
 
 class _Handler(object):
@@ -55,9 +56,8 @@ class _Handler(object):
         return [self._context.get_id(i) for i in items]
 
     def _last_child_passed(self):
-        return self._last_child_status == self._get_id('P')
+        return self._last_child_status() == 1
 
-    @property
     def _last_child_status(self):
         return self._data_from_children[-1][0]
 
@@ -200,10 +200,11 @@ class _SuiteSetupTeardownHandler(_KeywordHandler):
 
 
 class _StatusHandler(_Handler):
+    _statuses = {'FAIL': 0, 'PASS': 1, 'NOT_RUN': 2}
 
     def __init__(self, context, attrs):
         self._context = context
-        self._status = attrs.get('status')[0]
+        self._status = self._statuses[attrs.get('status')]
         self._starttime = self._context.timestamp(attrs.get('starttime'))
         self._elapsed = self._calculate_elapsed(attrs)
 
@@ -274,9 +275,10 @@ class _MsgHandler(_Handler):
     def __init__(self, context, attrs):
         _Handler.__init__(self, context)
         self._msg = [self._context.timestamp(attrs.get('timestamp')),
-                     attrs.get('level')[0]]
+                     LEVELS[attrs.get('level')]]
         self._is_html = attrs.get('html')
-        self._linkable_in_error_table = attrs.get("linkable") == "yes"
+        self._is_linkable_in_error_table = attrs.get("linkable") == "yes"
+        self._is_warning = attrs.get('level') == 'WARN'
 
     def end_element(self, text):
         self._msg.append(text if self._is_html else utils.html_escape(text))
@@ -284,9 +286,9 @@ class _MsgHandler(_Handler):
         return self._get_ids(self._msg)
 
     def _handle_warning_linking(self):
-        if self._linkable_in_error_table:
+        if self._is_linkable_in_error_table:
             self._msg.append(self._context.link_to(self._msg))
-        elif self._msg[1] == 'W':
+        elif self._is_warning:
             self._context.create_link_to_current_location(self._msg)
 
 
