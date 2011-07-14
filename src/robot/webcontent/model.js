@@ -147,21 +147,14 @@ window.model = (function () {
         return kw;
     }
 
-    function Message(level, time, text, link) {
-        var message = {};
-        message.level = level;
-        // TODO: Do we need time, shortTime, and date?
-        // Also date should be datetime since it contains both date and time.
-        message.time = time;
-        message.shortTime = function () {
-            return timeFromDate(message.time);
+    function Message(level, date, text, link) {
+        return {
+            level: level,
+            time: timeFromDate(date),
+            date: dateFromDate(date),
+            text: text,
+            link: link
         };
-        message.date = function () {
-            return formatDate(message.time);
-        };
-        message.text = text;
-        message.link = link;
-        return message;
     }
 
     function Times(timedata) {
@@ -171,32 +164,36 @@ window.model = (function () {
         return {
             elapsedMillis: elapsed,
             elapsedTime: formatElapsed(elapsed),
-            startTime: formatDate(start),
-            endTime:  formatDate(end)
+            startTime: dateTimeFromDate(start),
+            endTime:  dateTimeFromDate(end)
         };
     }
 
     function timeFromDate(date) {
         if (!date)
-            return "N/A";
-        return shortTime(date.getHours(), date.getMinutes(),
-                         date.getSeconds(), date.getMilliseconds());
+            return 'N/A';
+        return formatTime(date.getHours(), date.getMinutes(),
+                          date.getSeconds(), date.getMilliseconds());
     }
 
-    function formatDate(date) {
+    function dateFromDate(date) {
         if (!date)
-            return "N/A";
+            return 'N/A';
         return padTo(date.getFullYear(), 4) +
                padTo(date.getMonth() + 1, 2) +
-               padTo(date.getDate(), 2) + " " +
-               shortTime(date.getHours(), date.getMinutes(),
-                         date.getSeconds(), date.getMilliseconds());
+               padTo(date.getDate(), 2);
     }
 
-    function shortTime(hours, minutes, seconds, milliseconds) {
-        return padTo(hours, 2) + ":" +
-               padTo(minutes, 2) + ":" +
-               padTo(seconds, 2) + "." +
+    function dateTimeFromDate(date) {
+        if (!date)
+            return 'N/A';
+        return dateFromDate(date) + ' ' + timeFromDate(date);
+    }
+
+    function formatTime(hours, minutes, seconds, milliseconds) {
+        return padTo(hours, 2) + ':' +
+               padTo(minutes, 2) + ':' +
+               padTo(seconds, 2) + '.' +
                padTo(milliseconds, 3);
     }
 
@@ -208,7 +205,7 @@ window.model = (function () {
         millis -= minutes * 60 * 1000;
         var seconds = Math.floor(millis / 1000);
         millis -= seconds * 1000;
-        return shortTime(hours, minutes, seconds, millis);
+        return formatTime(hours, minutes, seconds, millis);
     }
 
     function padTo(number, len) {
@@ -250,7 +247,6 @@ window.model = (function () {
         formatElapsed: formatElapsed,
         containsTag: containsTag,  // Exposed for tests
         containsTagPattern: containsTagPattern,  // Exposed for tests
-        shortTime: shortTime
     };
 }());
 

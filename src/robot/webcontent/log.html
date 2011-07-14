@@ -151,9 +151,9 @@ function addTestExecutionLog(main) {
     <td class="time">
       {{if link}}
       <a onclick="makeElementVisible('${link}')"
-         href="#${link}" title="Link to details.">${date}</a>
+         href="#${link}" title="Link to details.">${date} ${time}</a>
       {{else}}
-      ${date}
+      ${date} ${time}
       {{/if}}
     </td>
     <td class="${level.toLowerCase()} level">${level}</td>
@@ -340,7 +340,7 @@ function addTestExecutionLog(main) {
 <script type="text/x-jquery-tmpl" id="messageTemplate">
   <table class="messages">
     <tr>
-      <td class="time">${shortTime()}</td>
+      <td class="time">${time}</td>
       <td class="${level.toLowerCase()} level">${level}</td>
       <td class="msg">{{html text}}</td>
     </tr>
