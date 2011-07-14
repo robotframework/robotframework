@@ -1,11 +1,11 @@
 window.suiteOutput = {};
 window.suiteOutput["errors"] = [];
 window.suiteOutput["stats"] = [[{"fail":0,"label":"Critical Tests","pass":1},{"fail":0,"label":"All Tests","pass":1}],[{"combined":"i?","doc":"<b>Combined</b> &amp; escaped &lt;&amp;lt; tag doc","fail":0,"info":"combined","label":"IX","links":"Title of iX:http://X/","pass":0},{"combined":"foo & i*","fail":0,"info":"combined","label":"zap","pass":0},{"fail":0,"label":"tag1","pass":1},{"fail":0,"label":"tag2","pass":1}],[{"fail":0,"id":"s1","label":"Suite","name":"Suite","pass":1}]];
-window.suiteOutput["generatedMillis"] = -855;
+window.suiteOutput["generatedMillis"] = -160;
 window.suiteOutput["generator"] = "robot";
-window.suiteOutput["generatedTimestamp"] = "20110714 20:45:52 GMT +03:00";
-window.suiteOutput["baseMillis"] = 1310665552855;
-window.suiteOutput["suite"] = [20,21,0,1,[2,3],[1,-32,42],[],[[18,19,1,4,[16,17],[1,-2,11],[[0,7,0,5,6,[1,-1,2],[],[[0,2,6]]],[3,15,0,0,0,[1,1,8],[[4,12,0,0,0,[1,1,4],[[0,11,0,0,8,[1,2,3],[[0,7,0,5,9,[1,3,1],[],[[3,2,10]]]],[]]],[]],[4,14,0,0,0,[1,5,4],[[0,11,0,0,8,[1,6,3],[[0,7,0,5,9,[1,6,2],[],[[7,2,13]]]],[]]],[]]],[]]]]],[],0,[1,1,1,1]];
+window.suiteOutput["generatedTimestamp"] = "20110715 01:35:06 GMT +03:00";
+window.suiteOutput["baseMillis"] = 1310682906160;
+window.suiteOutput["suite"] = [1,2,0,3,[4,5],[1,-46,64],[],[[20,21,1,6,[18,19],[1,-3,19],[[0,9,0,7,8,[1,-2,3],[],[[0,2,8]]],[3,17,0,0,0,[1,2,14],[[4,14,0,0,0,[1,2,6],[[0,13,0,0,10,[1,3,4],[[0,9,0,7,11,[1,4,3],[],[[5,2,12]]]],[]]],[]],[4,16,0,0,0,[1,8,7],[[0,13,0,0,10,[1,8,7],[[0,9,0,7,11,[1,10,4],[],[[11,2,15]]]],[]]],[]]],[]]]]],[],0,[1,1,1,1]];
 window.suiteOutput["strings"] = [];
-window.suiteOutput["strings"] = window.suiteOutput["strings"].concat(["*","*suite doc","*meta","*data","*test doc","*Logs the given message with the given level.","*message","*BuiltIn.Log","*${i}","*index is ${index}","*index is 0","*my keyword","*${i} = 0","*index is 1","*${i} = 1","*${i} IN RANGE [ 2 ]","*tag1","*tag2","*Test","*1 second","*Suite","*/Users/jmalinen/Documents/workspace/robotframework/utest/webcontent/spec/data/Suite.txt"]);
+window.suiteOutput["strings"] = window.suiteOutput["strings"].concat(["*","*Suite","*/home/peke/Devel/robotframework/utest/webcontent/spec/data/Suite.txt","*suite doc","*meta","*data","*test doc","*Logs the given message with the given level.","*message","*BuiltIn.Log","*${i}","*index is ${index}","*index is 0","*my keyword","*${i} = 0","*index is 1","*${i} = 1","*${i} IN RANGE [ 2 ]","*tag1","*tag2","*Test","*1 second"]);
 window.settings = {"background":{"fail":"DeepPink"},"logURL":"log.html","reportURL":"report.html"};
