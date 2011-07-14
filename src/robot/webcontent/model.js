@@ -150,8 +150,8 @@ window.model = (function () {
     function Message(level, date, text, link) {
         return {
             level: level,
-            time: timeFromDate(date),
-            date: dateFromDate(date),
+            time: util.timeFromDate(date),
+            date: util.dateFromDate(date),
             text: text,
             link: link
         };
@@ -163,55 +163,10 @@ window.model = (function () {
         var elapsed = timedata[2];
         return {
             elapsedMillis: elapsed,
-            elapsedTime: formatElapsed(elapsed),
-            startTime: dateTimeFromDate(start),
-            endTime:  dateTimeFromDate(end)
+            elapsedTime: util.formatElapsed(elapsed),
+            startTime: util.dateTimeFromDate(start),
+            endTime:  util.dateTimeFromDate(end)
         };
-    }
-
-    function timeFromDate(date) {
-        if (!date)
-            return 'N/A';
-        return formatTime(date.getHours(), date.getMinutes(),
-                          date.getSeconds(), date.getMilliseconds());
-    }
-
-    function dateFromDate(date) {
-        if (!date)
-            return 'N/A';
-        return padTo(date.getFullYear(), 4) +
-               padTo(date.getMonth() + 1, 2) +
-               padTo(date.getDate(), 2);
-    }
-
-    function dateTimeFromDate(date) {
-        if (!date)
-            return 'N/A';
-        return dateFromDate(date) + ' ' + timeFromDate(date);
-    }
-
-    function formatTime(hours, minutes, seconds, milliseconds) {
-        return padTo(hours, 2) + ':' +
-               padTo(minutes, 2) + ':' +
-               padTo(seconds, 2) + '.' +
-               padTo(milliseconds, 3);
-    }
-
-    function formatElapsed(elapsed) {
-        var millis = elapsed;
-        var hours = Math.floor(millis / (60 * 60 * 1000));
-        millis -= hours * 60 * 60 * 1000;
-        var minutes = Math.floor(millis / (60 * 1000));
-        millis -= minutes * 60 * 1000;
-        var seconds = Math.floor(millis / 1000);
-        millis -= seconds * 1000;
-        return formatTime(hours, minutes, seconds, millis);
-    }
-
-    function padTo(number, len) {
-        var numString = number + "";
-        while (numString.length < len) numString = "0" + numString;
-        return numString;
     }
 
     function createIterablePopulator(name) {
@@ -244,7 +199,6 @@ window.model = (function () {
         Keyword: Keyword,
         Message: Message,
         Times: Times,
-        formatElapsed: formatElapsed,
         containsTag: containsTag,  // Exposed for tests
         containsTagPattern: containsTagPattern,  // Exposed for tests
     };

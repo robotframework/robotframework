@@ -63,6 +63,51 @@ window.util = function () {
         return parentName.replace(/\./g, ' . ');
     }
 
+    function timeFromDate(date) {
+        if (!date)
+            return 'N/A';
+        return formatTime(date.getHours(), date.getMinutes(),
+                          date.getSeconds(), date.getMilliseconds());
+    }
+
+    function dateFromDate(date) {
+        if (!date)
+            return 'N/A';
+        return padTo(date.getFullYear(), 4) +
+               padTo(date.getMonth() + 1, 2) +
+               padTo(date.getDate(), 2);
+    }
+
+    function dateTimeFromDate(date) {
+        if (!date)
+            return 'N/A';
+        return dateFromDate(date) + ' ' + timeFromDate(date);
+    }
+
+    function formatTime(hours, minutes, seconds, milliseconds) {
+        return padTo(hours, 2) + ':' +
+               padTo(minutes, 2) + ':' +
+               padTo(seconds, 2) + '.' +
+               padTo(milliseconds, 3);
+    }
+
+    function formatElapsed(elapsed) {
+        var millis = elapsed;
+        var hours = Math.floor(millis / (60 * 60 * 1000));
+        millis -= hours * 60 * 60 * 1000;
+        var minutes = Math.floor(millis / (60 * 1000));
+        millis -= minutes * 60 * 1000;
+        var seconds = Math.floor(millis / 1000);
+        millis -= seconds * 1000;
+        return formatTime(hours, minutes, seconds, millis);
+    }
+
+    function padTo(number, len) {
+        var numString = number + "";
+        while (numString.length < len) numString = "0" + numString;
+        return numString;
+    }
+
     function createGeneratedAgoString(generatedAgoMillis) {
         function timeString(time, shortUnit) {
             var unit = {'y': 'year', 'd': 'day', 'h': 'hour',
@@ -111,6 +156,10 @@ window.util = function () {
         normalize: normalize,
         Matcher: Matcher,
         formatParentName: formatParentName,
+        timeFromDate: timeFromDate,
+        dateFromDate: dateFromDate,
+        dateTimeFromDate: dateTimeFromDate,
+        formatElapsed: formatElapsed,
         createGeneratedAgoString: createGeneratedAgoString
     };
 }();

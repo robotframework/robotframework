@@ -211,7 +211,7 @@ function calculateTotalTime(tests) {
     $.map(tests, function (test) {
         totaltime += test.times.elapsedMillis;
     });
-    return model.formatElapsed(totaltime);
+    return util.formatElapsed(totaltime);
 }
 
 function renderTestDetails(){
