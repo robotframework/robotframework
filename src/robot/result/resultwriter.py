@@ -15,10 +15,10 @@
 from robot.common import Statistics
 from robot.output import LOGGER, process_outputs
 
-from outputwriter import OutputWriter
-from xunitwriter import XUnitWriter
-from builders import LogBuilder, ReportBuilder, XUnitBuilder, OutputBuilder
-import jsparser
+from robot.result.outputwriter import OutputWriter
+from robot.result.xunitwriter import XUnitWriter
+from robot.result.builders import LogBuilder, ReportBuilder, XUnitBuilder, OutputBuilder
+from robot.result.outputparser import OutputParser
 
 
 class ResultWriter(object):
@@ -39,9 +39,8 @@ class ResultWriter(object):
     @property
     def data_model(self):
         if self._data_model is None:
-            self._data_model = jsparser.create_datamodel_from(self._data_sources[0],
-                                                              self._settings['Log'],
-                                                              self._settings['SplitLog'])
+            parser = OutputParser(self._settings['Log'], self._settings['SplitLog'])
+            self._data_model = parser.parse(self._data_sources[0])
         return self._data_model
 
     @property

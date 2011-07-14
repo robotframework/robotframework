@@ -13,8 +13,8 @@
 #  limitations under the License.
 
 import time
-from robot import utils
 
+from robot import utils
 from robot.result import jsondump
 from robot.result.parsingcontext import TextIndex
 

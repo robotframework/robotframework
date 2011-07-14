@@ -1,8 +1,8 @@
 import unittest
 
 from robot.result import ResultWriter
-import robot.result.jsparser as jsparser
-import robot.result.builders
+from robot.result.outputparser import OutputParser
+from robot.result.builders import LogBuilder, ReportBuilder, XUnitBuilder
 
 import resources
 
@@ -11,38 +11,39 @@ def set_write_log_mock():
     results = {'log_path': None}
     def write_log(self):
         results['log_path'] = self._path
-    robot.result.builders.LogBuilder._write_file = write_log
+    LogBuilder._write_file = write_log
     return results
 
 def set_write_report_mock():
     results = {'report_path': None}
     def write_report(self):
         results['report_path'] = self._path
-    robot.result.builders.ReportBuilder._write_file = write_report
+    ReportBuilder._write_file = write_report
     return results
 
 def set_write_xunit_mock():
     results = {'xunit_path': None}
     def build_xunit(self):
         results['xunit_path'] = self._path
-    robot.result.builders.XUnitBuilder.build = build_xunit
+    XUnitBuilder.build = build_xunit
     return results
 
 def set_write_split_test_mock():
     results = []
     def _write_test(self, index, keywords, strings, name):
         results.append(name)
-    robot.result.builders.LogBuilder._write_test = _write_test
+    LogBuilder._write_test = _write_test
     return results
 
 def set_datamodel_generation_spy():
     generated = []
-    original = jsparser.create_datamodel_from
-    def _create_datamodel_from(*args):
+    original = OutputParser.parse
+    def parse(*args):
         generated.append(True)
         return original(*args)
-    robot.result.resultwriter.jsparser.create_datamodel_from = _create_datamodel_from
+    OutputParser.parse = parse
     return generated
+
 
 class TestReporting(unittest.TestCase):
 
@@ -79,16 +80,11 @@ class TestReporting(unittest.TestCase):
             'LogLevel': 'INFO'
         }
         self._reporter = ResultWriter(self._settings)
-        robot.result.builders.LOGGER.disable_automatic_console_logger()
         self._log_results = set_write_log_mock()
         self._report_results = set_write_report_mock()
         self._xunit_results = set_write_xunit_mock()
         self._split_test_names = set_write_split_test_mock()
         self._datamodel_generations = set_datamodel_generation_spy()
-
-    def tearDown(self):
-        robot.result.builders.LOGGER.register_console_logger()
-        robot.result.builders.LOGGER._console_logger_disabled = False
 
     def test_generate_report_and_log(self):
         self._settings['Log'] = 'log.html'

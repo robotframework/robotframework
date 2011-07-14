@@ -11,7 +11,7 @@ TARGET = join(BASEDIR, 'data.js')
 sys.path.insert(0, join(BASEDIR, '..', '..', '..'))
 
 import robot
-from robot.result.jsparser import create_datamodel_from
+from robot.result.jsparser import OutputParser
 
 
 def run_robot(outputdirectory, testdata):
@@ -24,8 +24,8 @@ def run_robot(outputdirectory, testdata):
               critical=['i?'], noncritical=['*kek*kone*'], outputdir=outputdirectory)
 
 
-def create_jsdata(output_xml_file, target):
-    model = create_datamodel_from(output_xml_file, log_path=join(BASEDIR,'..','log.html'))
+def create_jsdata(outxml, target):
+    model = OutputParser(log_path=join(BASEDIR,'..','log.html').parse(outxml))
     model.set_settings({'logURL': 'log.html',
                         'reportURL': 'report.html',
                         'background': {'fail': 'DeepPink'}})

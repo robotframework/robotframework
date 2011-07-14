@@ -21,41 +21,34 @@ from robot.result.jsondatamodel import DataModel
 
 
 def create_datamodel_from(input_filename, log_path='NONE', split_log=False):
-    context = Context(log_path, split_log)
-    robot = _RobotOutputHandler(context)
-    with open(input_filename, 'r') as input:
-        sax.parse(input, robot)
-    return robot.datamodel
+    return OutputParser(log_path, split_log).parse(input_filename)
 
 
-def parse_js(input_filename, output):
-    create_datamodel_from(input_filename).write_to(output)
+class OutputParser(sax.handler.ContentHandler):
 
-
-class _RobotOutputHandler(sax.handler.ContentHandler):
-
-    def __init__(self, context):
-        self._context = context
-        self._root_handler = RootHandler(context)
+    def __init__(self, log_path='NONE', split_log=False):
+        self._context = Context(log_path, split_log)
+        self._root_handler = RootHandler(self._context)
         self._handler_stack = [self._root_handler]
+        self._text = []
 
-    @property
-    def datamodel(self):
+    def parse(self, path):
+        with open(path, 'r') as outputfile:
+            return self._parse_fileobj(outputfile)
+
+    def _parse_fileobj(self, outputfile):
+        sax.parse(outputfile, self)
         return DataModel(self._root_handler.data, self._context.split_results)
 
     def startElement(self, name, attrs):
+        self._text = []
         handler = self._handler_stack[-1].get_handler_for(name, attrs)
-        self._charbuffer = []
         self._handler_stack.append(handler)
 
     def endElement(self, name):
+        text = ''.join(self._text)
         handler = self._handler_stack.pop()
-        self._handler_stack[-1].add_child_data(handler.end_element(self.text))
+        self._handler_stack[-1].add_child_data(handler.end_element(text))
 
     def characters(self, content):
-        self._charbuffer += [content]
-
-    @property
-    def text(self):
-        return ''.join(self._charbuffer)
-
+        self._text.append(content)

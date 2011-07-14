@@ -3,16 +3,14 @@ import random
 import string
 import unittest
 
-from robot.result.parsingcontext import TextCache, Stats, Location
-from robot.result import jsparser
+from robot.result.parsingcontext import Context, TextCache, Stats, Location
 from robot.utils.asserts import assert_equals, assert_true
 
 
-
-class _ContextTesting(unittest.TestCase):
+class TestTextContext(unittest.TestCase):
 
     def setUp(self):
-        self._context = jsparser.Context()
+        self._context = Context()
 
     def _verify_ids(self, values, ids):
         results = []
@@ -20,8 +18,6 @@ class _ContextTesting(unittest.TestCase):
             results.append(self._context.get_id(value))
         assert_equals(ids, results)
 
-
-class TestTextContext(_ContextTesting):
 
     def _verify_text(self, values, ids, dump):
         self._verify_ids(values, ids)
@@ -80,7 +76,7 @@ class TestTextCache(unittest.TestCase):
 class TestSplittingContext(unittest.TestCase):
 
     def setUp(self):
-        self._context = jsparser.Context(split_log=True)
+        self._context = Context(split_log=True)
         self._context.start_suite()
 
     def test_getting_split_results(self):
@@ -199,6 +195,18 @@ class TestStats(unittest.TestCase):
         self._test(self.s12, 3, 1, 2, 1)
         self._test(self.s1, 4, 2, 3, 2)
 
+    def test_stats_through_context(self):
+        context = Context()
+        context.start_suite()
+        context.start_suite()
+        context.add_test(1,1)
+        child_stats = context.end_suite()
+        self.assertEqual(list(child_stats), [1, 1, 1, 1])
+        context.suite_teardown_failed()
+        parent_stats = context.end_suite()
+        self.assertEqual(list(child_stats), [1, 0, 1, 0])
+        self.assertEqual(list(parent_stats), [1, 0, 1, 0])
+
 
 class TestLocation(unittest.TestCase):
 
@@ -278,5 +286,105 @@ class TestLocation(unittest.TestCase):
         self._verify_id('s1-s1')
 
 
+class TestTimestamp(unittest.TestCase):
+
+    def setUp(self):
+        self._context = Context()
+
+    def test_timestamp(self):
+        assert_equals(self._context.timestamp('20110603 12:00:00.042'), 0)
+        assert_equals(self._context.timestamp('20110603 12:00:00.043'), 1)
+        assert_equals(self._context.timestamp('20110603 12:00:00.000'), -42)
+        assert_equals(self._context.timestamp('20110603 12:00:01.041'), 999)
+
+    def test_na_timestamp(self):
+        assert_equals(self._context.timestamp('N/A'), None)
+
+
+class TestLinking(unittest.TestCase):
+
+    def setUp(self):
+        self._context = Context()
+
+    def _kw(self, inner_func=None):
+        self._context.start_keyword()
+        if inner_func:
+            inner_func(self._context)
+        self._context.end_keyword()
+
+    def test_link_creation(self):
+        key = [4,'W',6]
+        self._create_data_and_link(key)
+        self.assertEqual(self._context.link_to(key), 's1-s1-t1-k1')
+
+    def _create_data_and_link(self, key):
+        self._context.start_suite()
+        self._context.start_suite()
+        self._context.start_test()
+        self._context.start_keyword()
+        self._context.create_link_to_current_location(key)
+        self._context.end_keyword()
+        self._context.end_test()
+        self._context.end_suite()
+        self._context.end_suite()
+
+    def test_2_links(self):
+        key1 = [1,'W',2]
+        key2 = [2,'W',5]
+        self._create_data_for_links(key1, key2)
+        self.assertEqual(self._context.link_to(key1), 's1-k1')
+        self.assertEqual(self._context.link_to(key2), 's1-t1-k1-k2')
+
+    def _create_data_for_links(self, key1, key2):
+        self._context.start_suite()
+        self._kw(lambda ctx: ctx.create_link_to_current_location(key1))
+        self._context.start_test()
+        self._context.start_keyword()
+        self._kw()
+        self._kw(lambda ctx: ctx.create_link_to_current_location(key2))
+        self._context.end_keyword()
+        self._context.end_test()
+        self._context.end_suite()
+
+    def test_link_to_subkeyword(self):
+        key = [1, 'W', 542]
+        self._create_data_for_subkeyword(key)
+        self.assertEqual(self._context.link_to(key), 's1-t1-k3-k2')
+
+    def _create_data_for_subkeyword(self, key):
+        self._context.start_suite()
+        self._context.start_test()
+        self._kw()
+        self._kw()
+        self._context.start_keyword()
+        self._kw()
+        self._context.start_keyword()
+        self._context.create_link_to_current_location(key)
+        self._kw()
+        self._kw()
+        self._context.end_keyword()
+        self._context.end_test()
+        self._context.end_suite()
+
+    def test_link_to_suite_teardown(self):
+        pkey = [5, 'W', 321]
+        skey = [4, 'W', 3214]
+        self._create_data_for_suite_teardown_links(pkey, skey)
+        self.assertEqual(self._context.link_to(skey),'s1-s1-k1')
+        self.assertEqual(self._context.link_to(pkey), 's1-k2')
+
+    def _create_data_for_suite_teardown_links(self, pkey, skey):
+        self._context.start_suite()
+        self._kw()
+        self._context.start_suite()
+        self._context.start_test()
+        self._kw()
+        self._context.end_test()
+        self._kw(lambda ctx: ctx.create_link_to_current_location(skey))
+        self._context.end_suite()
+        self._kw(lambda ctx: ctx.create_link_to_current_location(pkey))
+        self._context.end_suite()
+
+        
 if __name__ == '__main__':
     unittest.main()

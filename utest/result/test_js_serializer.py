@@ -1,12 +1,11 @@
 from __future__ import with_statement
-import StringIO
+from StringIO import StringIO
 import time
 import os
 
 import unittest
-import xml.sax as sax
 
-from robot.result.jsparser import _RobotOutputHandler
+from robot.result.outputparser import OutputParser
 from robot.result.parsingcontext import Context
 from robot.utils.asserts import assert_equals, assert_true
 
@@ -44,12 +43,11 @@ def _reverse_id(strings, id):
 
 class _JsSerializerTestBase(unittest.TestCase):
 
-    def _get_data_model(self, xml_string, handler=None):
-        if not handler:
-            handler = self._handler
-        sax.parseString('<robot generator="test">%s<statistics/><errors/></robot>' % xml_string,
-                        handler)
-        return handler.datamodel
+    def _get_data_model(self, xml_string, parser=None):
+        if not parser:
+            parser = self._parser
+        outxml = StringIO('<robot generator="test">%s<statistics/><errors/></robot>' % xml_string)
+        return parser._parse_fileobj(outxml)
 
     def _assert_long_equals(self, given, expected):
         if given != expected:
@@ -146,8 +144,8 @@ class TestJsSerializer(_JsSerializerTestBase):
         """
 
     def setUp(self):
-        self._context = Context()
-        self._handler = _RobotOutputHandler(self._context)
+        self._parser = OutputParser()
+        self._context = self._parser._context
 
     def test_message_xml_parsing(self):
         data_model = self._get_data_model('<msg timestamp="20110531 12:48:09.088" level="FAIL">AssertionError</msg>')
@@ -321,14 +319,14 @@ class TestJsSerializer(_JsSerializerTestBase):
 
     def _test_remove_keywords(self, data_model, should_not_contain_strings, should_contain_strings=None):
         strings_before = self._list_size(data_model._robot_data['strings'])
-        data_model_json_before = StringIO.StringIO()
+        data_model_json_before = StringIO()
         data_model.write_to(data_model_json_before)
         data_model.remove_keywords()
         self.assert_model_does_not_contain(data_model, should_not_contain_strings)
         if should_contain_strings:
             for string in should_contain_strings:
                 assert_true(string in data_model._robot_data['strings'], msg='string "%s" not in strings' % string)
-        data_model_json_after = StringIO.StringIO()
+        data_model_json_after = StringIO()
         data_model.write_to(data_model_json_after)
         assert_true(len(data_model_json_before.getvalue()) > len(data_model_json_after.getvalue()))
         assert_true(strings_before > self._list_size(data_model._robot_data['strings']))
@@ -420,8 +418,8 @@ class TestJsSerializer(_JsSerializerTestBase):
 class TestTestSplittingJsSerializer(_JsSerializerTestBase):
 
     def setUp(self):
-        self._context = Context(split_log=True)
-        self._handler = _RobotOutputHandler(self._context)
+        self._parser = OutputParser(split_log=True)
+        self._context = self._parser._context
 
     def test_split_tests(self):
         data_model = self._get_data_model("""
@@ -598,8 +596,8 @@ class TestRelativeSuiteSource(_JsSerializerTestBase):
         self._test_rel_path(log='/tmp', expected='')
 
     def _test_rel_path(self, log, expected):
-        handler = _RobotOutputHandler(Context(log_path=log))
-        data_model = self._get_data_model(self.SUITE_XML, handler)
+        parser = OutputParser(log_path=log)
+        data_model = self._get_data_model(self.SUITE_XML, parser)
         relpath_id = data_model._robot_data['suite'][2]
         relpath = _reverse_id(data_model._robot_data['strings'], relpath_id)
         assert_equals(relpath, '*'+expected)
