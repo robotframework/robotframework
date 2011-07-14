@@ -1,11 +1,11 @@
 window.setupsAndTeardownsOutput = {};
 window.setupsAndTeardownsOutput["errors"] = [];
 window.setupsAndTeardownsOutput["stats"] = [[{"fail":0,"label":"Critical Tests","pass":1},{"fail":0,"label":"All Tests","pass":1}],[{"combined":"i?","doc":"<b>Combined</b> &amp; escaped &lt;&amp;lt; tag doc","fail":0,"info":"combined","label":"IX","links":"Title of iX:http://X/","pass":0},{"combined":"foo & i*","fail":0,"info":"combined","label":"zap","pass":0}],[{"fail":0,"id":"s1","label":"SetupsAndTeardowns","name":"SetupsAndTeardowns","pass":1}]];
-window.setupsAndTeardownsOutput["generatedMillis"] = -551;
+window.setupsAndTeardownsOutput["generatedMillis"] = -895;
 window.setupsAndTeardownsOutput["generator"] = "robot";
-window.setupsAndTeardownsOutput["generatedTimestamp"] = "20110714 17:27:51 GMT +03:00";
-window.setupsAndTeardownsOutput["baseMillis"] = 1310653671551;
-window.setupsAndTeardownsOutput["suite"] = [12,13,0,0,[],[1,-3,11],[],[[10,0,1,0,[],[1,1,5],[[1,3,0,1,4,[1,2,0],[],[[2,2,4]]],[0,8,0,0,0,[1,3,2],[[0,6,0,5,0,[1,4,0],[],[]],[2,3,0,1,7,[1,4,1],[],[[5,2,7]]]],[]],[2,3,0,1,9,[1,6,0],[],[[6,2,9]]]]]],[[1,3,0,1,2,[1,0,1],[],[[0,2,2]]],[2,3,0,1,11,[1,7,1],[],[[7,2,11]]]],0,[1,1,1,1]];
+window.setupsAndTeardownsOutput["generatedTimestamp"] = "20110714 20:45:52 GMT +03:00";
+window.setupsAndTeardownsOutput["baseMillis"] = 1310665552895;
+window.setupsAndTeardownsOutput["suite"] = [12,13,0,0,[],[1,-3,12],[],[[10,0,1,0,[],[1,0,7],[[1,3,0,1,4,[1,1,2],[],[[3,2,4]]],[0,8,0,0,0,[1,4,2],[[0,6,0,5,0,[1,5,0],[],[]],[2,3,0,1,7,[1,5,1],[],[[6,2,7]]]],[]],[2,3,0,1,9,[1,7,0],[],[[7,2,9]]]]]],[[1,3,0,1,2,[1,-1,1],[],[[0,2,2]]],[2,3,0,1,11,[1,8,1],[],[[8,2,11]]]],0,[1,1,1,1]];
 window.setupsAndTeardownsOutput["strings"] = [];
 window.setupsAndTeardownsOutput["strings"] = window.setupsAndTeardownsOutput["strings"].concat(["*","*Logs the given message with the given level.","*suite setup","*BuiltIn.Log","*test setup","*Does absolutely nothing.","*BuiltIn.No Operation","*keyword teardown","*Keyword with teardown","*test teardown","*Test","*suite teardown","*SetupsAndTeardowns","*/Users/jmalinen/Documents/workspace/robotframework/utest/webcontent/spec/data/SetupsAndTeardowns.txt"]);
 window.settings = {"background":{"fail":"DeepPink"},"logURL":"log.html","reportURL":"report.html"};
