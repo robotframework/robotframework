@@ -20,10 +20,6 @@ from robot.result.parsingcontext import Context
 from robot.result.jsondatamodel import DataModel
 
 
-def create_datamodel_from(input_filename, log_path='NONE', split_log=False):
-    return OutputParser(log_path, split_log).parse(input_filename)
-
-
 class OutputParser(sax.handler.ContentHandler):
 
     def __init__(self, log_path='NONE', split_log=False):
