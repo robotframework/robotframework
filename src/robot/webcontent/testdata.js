@@ -3,10 +3,10 @@ window.testdata = function () {
     var elementsById = {};
     var idCounter = 0;
     var _statistics = null;
-    var LEVELS = {1: 'trace', 2: 'debug', 3: 'info',
-                  4: 'warn',  5: 'fail', 6: 'error'};
-    var STATUSES = {0: model.FAIL, 1: model.PASS, 2: model.NOT_RUN}
-    var KEYWORD_TYPE = {kw: 'KEYWORD', setup: 'SETUP', teardown: 'TEARDOWN',
+    var LEVELS = {1: 'TRACE', 2: 'DEBUG', 3: 'INFO',
+                  4: 'WARN',  5: 'FAIL', 6: 'ERROR'};
+    var STATUSES = {0: 'FAIL', 1: 'PASS', 2: 'NOT_RUN'}
+    var KEYWORDS = {kw: 'KEYWORD', setup: 'SETUP', teardown: 'TEARDOWN',
                         forloop: 'FOR', foritem: 'VAR'};
 
     function addElement(elem) {
@@ -43,7 +43,7 @@ window.testdata = function () {
 
     function parseStatus(stats, strings, parentSuiteTeardownFailed) {
         if (parentSuiteTeardownFailed)
-            return model.FAIL;
+            return 'FAIL';
         return STATUSES[stats[0]];
     }
 
@@ -59,7 +59,7 @@ window.testdata = function () {
 
     function createKeyword(parent, element, strings, index) {
         var kw = model.Keyword({
-            type: KEYWORD_TYPE[strings.get(element[0])],
+            type: KEYWORDS[strings.get(element[0])],
             name: strings.get(element[1]),
             timeout: strings.get(element[2]),
             args: strings.get(element[4]),

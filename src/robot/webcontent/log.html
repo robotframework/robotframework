@@ -156,7 +156,7 @@ function addTestExecutionLog(main) {
       ${date}
       {{/if}}
     </td>
-    <td class="${level} level">${levelText}</td>
+    <td class="${level.toLowerCase()} level">${level}</td>
     <td class="msg">{{html text}}</td>
   </tr>
 </script>
@@ -341,7 +341,7 @@ function addTestExecutionLog(main) {
   <table class="messages">
     <tr>
       <td class="time">${shortTime()}</td>
-      <td class="${level} level">${levelText}</td>
+      <td class="${level.toLowerCase()} level">${level}</td>
       <td class="msg">{{html text}}</td>
     </tr>
   </table>

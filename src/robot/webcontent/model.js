@@ -1,17 +1,5 @@
 window.model = (function () {
 
-    var STATUS = {
-        pass: "PASS",
-        fail: "FAIL",
-        notRun: "NOT_RUN"
-    };
-
-    var KEYWORD_TYPE = {
-        kw: 'KEYWORD',
-        setup:'SETUP',
-        teardown:'TEARDOWN'
-    };
-
     function Suite(data) {
         var suite = createModelObject(data, "s");
         suite.source = data.source;
@@ -100,8 +88,8 @@ window.model = (function () {
     function suiteTeardownFailed(suite) {
         var keywords = suite.keywords();
         var maybeTeardown = keywords[keywords.length - 1];
-        if (maybeTeardown && maybeTeardown.type == KEYWORD_TYPE.teardown)
-            return maybeTeardown.status == STATUS.fail;
+        if (maybeTeardown && maybeTeardown.type == 'TEARDOWN')
+            return maybeTeardown.status == 'FAIL';
         return false;
     }
 
@@ -161,9 +149,7 @@ window.model = (function () {
 
     function Message(level, time, text, link) {
         var message = {};
-        // TODO: No need to have both level and levelText
         message.level = level;
-        message.levelText = level.toUpperCase();
         // TODO: Do we need time, shortTime, and date?
         // Also date should be datetime since it contains both date and time.
         message.time = time;
@@ -261,9 +247,6 @@ window.model = (function () {
         Keyword: Keyword,
         Message: Message,
         Times: Times,
-        PASS: STATUS.pass,
-        FAIL: STATUS.fail,
-        NOT_RUN: STATUS.notRun,
         formatElapsed: formatElapsed,
         containsTag: containsTag,  // Exposed for tests
         containsTagPattern: containsTagPattern,  // Exposed for tests
