@@ -24,36 +24,32 @@ from robot.result.outputparser import OutputParser
 class ResultWriter(object):
 
     def __init__(self, settings):
+        self.settings = settings
         self._xml_result = None
         self._suite = None
-        self._settings = settings
-        self._data_sources = None
-
-    def write_robot_results(self, data_source):
-        self._data_sources = [data_source]
         self._data_model = None
-        LogBuilder(self).build()
-        ReportBuilder(self).build()
-        XUnitBuilder(self).build()
+        self._data_sources = []
 
     @property
     def data_model(self):
         if self._data_model is None:
-            parser = OutputParser(self._settings['Log'], self._settings['SplitLog'])
+            parser = OutputParser(self.settings['Log'], self.settings['SplitLog'])
             self._data_model = parser.parse(self._data_sources[0])
         return self._data_model
 
     @property
-    def settings(self):
-        return self._settings
-
-    @property
     def result_from_xml(self):
         if self._xml_result is None:
-            self._suite, errs = process_outputs(self._data_sources, self._settings)
-            self._suite.set_options(self._settings)
-            self._xml_result = ResultFromXML(self._suite, errs, self._settings)
+            self._suite, errs = process_outputs(self._data_sources, self.settings)
+            self._suite.set_options(self.settings)
+            self._xml_result = ResultFromXML(self._suite, errs, self.settings)
         return self._xml_result
+
+    def write_robot_results(self, data_source):
+        self._data_sources = [data_source]
+        LogBuilder(self).build()
+        ReportBuilder(self).build()
+        XUnitBuilder(self).build()
 
     def write_rebot_results(self, *data_sources):
         self._data_sources = data_sources

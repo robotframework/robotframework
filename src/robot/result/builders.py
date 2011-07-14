@@ -14,6 +14,7 @@
 
 from __future__ import with_statement
 import os
+from os.path import abspath, dirname, join
 import re
 import codecs
 import tempfile
@@ -21,10 +22,10 @@ import tempfile
 import robot
 from robot.output import LOGGER
 from robot import utils
-from robot.result.jsondatamodel import _SeparatingWriter
+from robot.result.jsondatamodel import SeparatingWriter
 from robot.version import get_full_version
 
-WEBCONTENT_PATH = os.path.join(os.path.dirname(robot.__file__), 'webcontent')
+WEBCONTENT = join(dirname(abspath(robot.__file__)), 'webcontent')
 
 
 class _Builder(object):
@@ -74,6 +75,7 @@ class XUnitBuilder(_Builder):
 
 class _HTMLFileBuilder(_Builder):
     _type = NotImplemented
+    _template = NotImplemented
 
     def build(self):
         if self._path:
@@ -103,7 +105,7 @@ class _HTMLFileBuilder(_Builder):
 
 class LogBuilder(_HTMLFileBuilder):
     _type = 'Log'
-    _template = os.path.join(WEBCONTENT_PATH,'log.html')
+    _template = os.path.join(WEBCONTENT,'log.html')
 
     def _format_data(self):
         if self._context.data_model._split_results:
@@ -118,7 +120,7 @@ class LogBuilder(_HTMLFileBuilder):
     def _write_test(self, index, keywords, strings, path):
         # TODO: Refactor heavily - ask Jussi or Peke for more details
         with codecs.open(path, 'w', encoding='UTF-8') as outfile:
-            writer = _SeparatingWriter(outfile, '')
+            writer = SeparatingWriter(outfile, '')
             writer.dump_json('window.keywords%d = ' % index, keywords)
             writer.dump_json('window.strings%d = ' % index, strings)
             writer.write('window.fileLoading.notify("%s");\n' % os.path.basename(path))
@@ -134,7 +136,7 @@ class LogBuilder(_HTMLFileBuilder):
 
 class ReportBuilder(_HTMLFileBuilder):
     _type = 'Report'
-    _template = os.path.join(WEBCONTENT_PATH, 'report.html')
+    _template = os.path.join(WEBCONTENT, 'report.html')
 
     def _format_data(self):
         self._context.data_model.remove_errors()
@@ -215,7 +217,7 @@ class HTMLFileWriter(object):
         return self._relative_path(filename_regexp.search(line).group(1))
 
     def _relative_path(self, filename):
-        return os.path.join(WEBCONTENT_PATH, filename.replace('/', os.path.sep))
+        return os.path.join(WEBCONTENT, filename.replace('/', os.path.sep))
 
     def _write(self, content):
         self._outfile.write(content)

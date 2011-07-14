@@ -42,7 +42,7 @@ class DataModel(object):
         self._settings = settings
 
     def write_to(self, output, separator='', split_threshold=9500):
-        writer = _SeparatingWriter(output, separator)
+        writer = SeparatingWriter(output, separator)
         writer.write('window.output = {};\n')
         writer.separator()
         for key, value in self._robot_data.items():
@@ -120,7 +120,7 @@ class DataModel(object):
         return result
 
 
-class _SeparatingWriter(object):
+class SeparatingWriter(object):
 
     def __init__(self, output, separator):
         self._output = output
