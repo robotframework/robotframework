@@ -1,14 +1,12 @@
-window.output = {};
-
-function multiplyString(string, times) {
-    var result = "";
-    for (var i = 0; i < times; i++){
-        result += string;
-    }
-    return result;
-}
-
 describe("Text decoder", function () {
+
+    function multiplyString(string, times) {
+        var result = "";
+        for (var i = 0; i < times; i++){
+            result += string;
+        }
+        return result;
+    }
 
     it("should have empty string with id 0", function () {
         var strings = window.testdata.getStringStore(["*"]);
