@@ -15,7 +15,7 @@ window.model = (function () {
             return suite.keywords().concat(suite.tests()).concat(suite.suites());
         };
         suite.hasTeardownFailure = function () {
-            return suiteTeardownFailed(suite) || data.parentSuiteTeardownFailed;
+            return data.teardownFailed || data.parentSuiteTeardownFailed;
         };
         suite.searchTests = function (predicate) {
             var tests = [];

@@ -239,7 +239,7 @@ class TestJsSerializer(_JsSerializerTestBase):
                       [['*Test', '*', 1, '*tdoc', [1, 0, 1], []]],
                       [[2, '*Fail', '*', '*kdoc',
                        [0, 1, 0], [], [[0, 3, '*msg']]]],
-                      [1, 0, 1, 0]])
+                      1, [1, 0, 1, 0]])
         assert_equals(self._context.link_to([0, 3, 'msg']), "s1-k1")
 
     def test_test_teardown_parsing(self):
@@ -271,7 +271,7 @@ class TestJsSerializer(_JsSerializerTestBase):
                         [[2, '*Fail', '*', '*kdoc',
                          [0, 1, 0], [], [[0, 3, '*msg']]]]]],
                       [],
-                      [2, 1, 2, 1]])
+                      0, [2, 1, 2, 1]])
         assert_equals(self._context.link_to([0, 3, 'msg']), "s1-t2-k1")
 
     def test_for_loop_xml_parsing(self):
@@ -353,7 +353,7 @@ class TestJsSerializer(_JsSerializerTestBase):
                                   ]
                               ]],
                               [],
-                              [2, 2, 2, 2]])
+                              0, [2, 2, 2, 2]])
         assert_equals(self._context.link_to([0, 3, 'simple']),'s1-t1-k1')
 
     def test_suite_data_model_keywords_clearing(self):
@@ -432,7 +432,7 @@ class TestTestSplittingJsSerializer(_JsSerializerTestBase):
                       [],
                       [['*Test', '*', 1, '*doc', [1, -23, 1], 1]],
                       [],
-                      [1, 1, 1, 1]])
+                      0, [1, 1, 1, 1]])
         expected_data = [[0, '*Keyword.Example', '*', [1, 0, -23], [], []],
                          [0, '*Second keyword', '*', [1, 0, -23], [], []]]
         keywords, strings = self._context.split_results[0]
@@ -494,7 +494,7 @@ class TestTestSplittingJsSerializer(_JsSerializerTestBase):
                        [2, '*Suite Teardown', '*', '*td doc',
                         [0, 1, 0], 3, [[1, 3, '*td msg']]],
                       ],
-                      [1, 0, 1, 0]])
+                      1, [1, 0, 1, 0]])
         split_test = [[0, '*Keyword.Example', '*', '*kd', [1, 0, 1], [], []],
                       [2, '*Pass', '*', '*ted', [1, 1, 0], [], []]]
         _assert_plain_suite_item(split_test, *self._context.split_results[1])
@@ -546,7 +546,7 @@ class TestTestSplittingJsSerializer(_JsSerializerTestBase):
                         [1, 0, 0], [], []],
                        [2, '*STeardown', '*', '*td',
                         [1, 1, 0], [], [[1, 3, '*msg']]]],
-                      [2, 1, 1, 1]])
+                      0, [2, 1, 1, 1]])
         split_test = [[0, '*Keyword', '*', '*kd', [1, 0, 1], [], []]]
         _assert_plain_suite_item(split_test, *self._context.split_results[0])
 

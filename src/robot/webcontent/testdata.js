@@ -150,6 +150,7 @@ window.testdata = function () {
                 return msg;
             },
             times: model.Times(times(statusElement)),
+            teardownFailed: element[9],
             statistics: suiteStats(last(element)),
             metadata: parseMetadata(element[4], strings)
         });

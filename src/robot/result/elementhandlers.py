@@ -95,8 +95,12 @@ class _SuiteHandler(_Handler):
         self._tests = []
         self._keywords = []
         self._current_children = None
+        self._teardown_failed = False
         self._context.start_suite(self._name)
         self._context.collect_stats()
+
+    def _set_teardown_failed(self):
+        self._teardown_failed = True
 
     def get_handler_for(self, name, attrs):
         self._current_children = {
@@ -105,7 +109,8 @@ class _SuiteHandler(_Handler):
             'kw': self._keywords
         }.get(name, self._data_from_children)
         if name == 'kw':
-            return _SuiteSetupTeardownHandler(self._context, attrs)
+            return _SuiteSetupTeardownHandler(self._context, attrs,
+                                              self._set_teardown_failed)
         return _Handler.get_handler_for(self, name, attrs)
 
     def add_child_data(self, data):
@@ -115,7 +120,7 @@ class _SuiteHandler(_Handler):
         result = self._get_ids([self._name, self._source, self._rel_source]) + \
                  self._data_from_children + [self._suites] + \
                  [self._tests] + [self._keywords] + \
-                 [self._context.dump_stats()]
+                 [int(self._teardown_failed), self._context.dump_stats()]
         self._context.end_suite()
         return result
 
@@ -187,12 +192,17 @@ class _KeywordHandler(_Handler):
 
 class _SuiteSetupTeardownHandler(_KeywordHandler):
 
+    def __init__(self, context, attrs, teardown_failed_callback):
+        _KeywordHandler.__init__(self, context, attrs)
+        self._set_teardown_failed = teardown_failed_callback
+
     def _start(self):
         self._context.start_suite_setup_or_teardown()
 
     def end_element(self, text):
         if self._is_teardown() and not self._last_child_passed():
             self._context.suite_teardown_failed()
+            self._set_teardown_failed()
         return _KeywordHandler.end_element(self, text)
 
     def _is_teardown(self):
