@@ -1,11 +1,11 @@
 window.passingFailingOutput = {};
 window.passingFailingOutput["errors"] = [];
 window.passingFailingOutput["stats"] = [[{"fail":1,"label":"Critical Tests","pass":1},{"fail":1,"label":"All Tests","pass":1}],[{"combined":"i?","doc":"<b>Combined</b> &amp; escaped &lt;&amp;lt; tag doc","fail":0,"info":"combined","label":"IX","links":"Title of iX:http://X/","pass":0},{"combined":"foo & i*","doc":"","fail":0,"info":"combined","label":"zap","links":"","pass":0}],[{"fail":1,"id":"s1","label":"PassingFailing","name":"PassingFailing","pass":1}]];
-window.passingFailingOutput["generatedMillis"] = -859;
+window.passingFailingOutput["generatedMillis"] = -115;
 window.passingFailingOutput["generator"] = "robot";
-window.passingFailingOutput["generatedTimestamp"] = "20110714 15:45:41 GMT +03:00";
-window.passingFailingOutput["baseMillis"] = 1310647541859;
-window.passingFailingOutput["suite"] = [9,10,0,0,[],[0,-5,8],[],[[4,0,1,0,[],[1,-2,2],[[0,3,0,1,2,[1,-1,1],[],[[0,2,2]]]]],[8,0,1,0,[],[0,1,1,6],[[0,7,0,5,6,[0,1,1],[],[[2,4,6]]]]]],[],0,[2,1,2,1]];
+window.passingFailingOutput["generatedTimestamp"] = "20110714 17:07:01 GMT +03:00";
+window.passingFailingOutput["baseMillis"] = 1310652421115;
+window.passingFailingOutput["suite"] = [9,10,0,0,[],[0,-7,11],[],[[4,0,1,0,[],[1,-2,2],[[0,3,0,1,2,[1,-1,1],[],[[0,2,2]]]]],[8,0,1,0,[],[0,0,3,6],[[0,7,0,5,6,[0,1,2],[],[[3,4,6]]]]]],[],0,[2,1,2,1]];
 window.passingFailingOutput["strings"] = [];
 window.passingFailingOutput["strings"] = window.passingFailingOutput["strings"].concat(["*","*Logs the given message with the given level.","*passing","*BuiltIn.Log","*Passing","*Fails the test immediately with the given (optional) message.","*In test","*BuiltIn.Fail","*Failing","*PassingFailing","*/Users/jmalinen/Documents/workspace/robotframework/utest/webcontent/spec/data/teardownFailure/PassingFailing.txt"]);
 window.settings = {"background":{"fail":"DeepPink"},"logURL":"log.html","reportURL":"report.html"};
