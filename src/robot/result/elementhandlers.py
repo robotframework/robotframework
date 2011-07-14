@@ -52,8 +52,8 @@ class _Handler(object):
     def _get_id(self, item):
         return self._context.get_id(item)
 
-    def _get_ids(self, items):
-        return [self._context.get_id(i) for i in items]
+    def _get_ids(self, *items):
+        return [self._get_id(i) for i in items]
 
     def _last_child_passed(self):
         return self._last_child_status() == 1
@@ -88,16 +88,18 @@ class _SuiteHandler(_Handler):
 
     def __init__(self, context, attrs):
         _Handler.__init__(self, context)
-        self._name = attrs.get('name')
-        self._source = attrs.get('source', '')
-        self._rel_source = context.get_rel_log_path(self._source)
+        self._name_and_sources = self._get_name_and_sources(attrs)
         self._suites = []
         self._tests = []
         self._keywords = []
         self._current_children = None
         self._teardown_failed = False
-        self._context.start_suite(self._name)
-        self._context.collect_stats()
+        self._context.start_suite()
+
+    def _get_name_and_sources(self, attrs):
+        source = attrs.get('source', '')
+        return self._get_ids(attrs.get('name'), source,
+                             self._context.get_rel_log_path(source))
 
     def _set_teardown_failed(self):
         self._teardown_failed = True
@@ -117,12 +119,10 @@ class _SuiteHandler(_Handler):
         self._current_children.append(data)
 
     def end_element(self, text):
-        result = self._get_ids([self._name, self._source, self._rel_source]) + \
-                 self._data_from_children + [self._suites] + \
-                 [self._tests] + [self._keywords] + \
-                 [int(self._teardown_failed), self._context.dump_stats()]
-        self._context.end_suite()
-        return result
+        stats = self._context.end_suite()
+        return self._name_and_sources + self._data_from_children + \
+                 [self._suites, self._tests, self._keywords,
+                  int(self._teardown_failed), stats]
 
 
 class _TestHandler(_Handler):
@@ -133,11 +133,11 @@ class _TestHandler(_Handler):
         self._timeout = attrs.get('timeout')
         self._keywords = []
         self._current_children = None
-        self._context.start_test(self._name)
+        self._context.start_test()
 
     def get_handler_for(self, name, attrs):
         if name == 'status':
-            self._critical = 1 if attrs.get('critical') == 'yes' else 0
+            self._critical = int(attrs.get('critical') == 'yes')
         self._current_children = {
             'kw': self._keywords
         }.get(name, self._data_from_children)
@@ -149,9 +149,8 @@ class _TestHandler(_Handler):
     def end_element(self, text):
         self._context.add_test(self._critical, self._last_child_passed())
         kws = self._context.end_test(self._keywords)
-        result = self._get_ids([self._name, self._timeout, self._critical]) + self._data_from_children
-        result.append(kws)
-        return result
+        return self._get_ids(self._name, self._timeout, self._critical) + \
+                self._data_from_children + [kws]
 
 
 class _KeywordHandler(_Handler):
@@ -181,9 +180,8 @@ class _KeywordHandler(_Handler):
         self._current_children.append(data)
 
     def end_element(self, text):
-        result = self._get_ids([self._type, self._name, self._timeout]) + \
-               self._data_from_children + [self._get_keywords()] + [self._messages]
-        return result
+        return self._get_ids(self._type, self._name, self._timeout) + \
+                self._data_from_children + [self._get_keywords(), self._messages]
 
     def _get_keywords(self):
         self._context.end_keyword()
@@ -233,7 +231,7 @@ class _StatusHandler(_Handler):
         result = [self._status, self._starttime, self._elapsed]
         if text:
             result.append(text)
-        return self._get_ids(result)
+        return self._get_ids(*result)
 
 
 class _ArgumentsHandler(_Handler):
@@ -280,7 +278,7 @@ class _MetadataItemHandler(_Handler):
         self._name = attrs.get('name')
 
     def end_element(self, text):
-        return self._get_ids([self._name, utils.html_format(text)])
+        return self._get_ids(self._name, utils.html_format(text))
 
 
 class _MsgHandler(_Handler):
@@ -296,7 +294,7 @@ class _MsgHandler(_Handler):
     def end_element(self, text):
         self._msg.append(text if self._is_html else utils.html_escape(text))
         self._handle_warning_linking()
-        return self._get_ids(self._msg)
+        return self._get_ids(*self._msg)
 
     def _handle_warning_linking(self):
         if self._is_linkable_in_error_table:
@@ -315,7 +313,7 @@ class _StatItemHandler(_Handler):
 
     def __init__(self, context, attrs):
         _Handler.__init__(self, context)
-        self._attrs = self._prune_empty_strings_from_attrs(attrs)
+        self._attrs = self._prune_empty_strings_from_attrs(dict(attrs))
         self._attrs['pass'] = int(self._attrs['pass'])
         self._attrs['fail'] = int(self._attrs['fail'])
         if 'doc' in self._attrs:
@@ -325,7 +323,7 @@ class _StatItemHandler(_Handler):
             self._attrs['id'] = self._attrs.pop('idx')
 
     def _prune_empty_strings_from_attrs(self, attrs):
-        return dict((a, v) for a, v in dict(attrs).iteritems() if v != '')
+        return dict((n, v) for n, v in attrs.iteritems() if v != '')
 
     def end_element(self, text):
         self._attrs.update(label=text)

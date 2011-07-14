@@ -39,15 +39,6 @@ class Context(object):
             return utils.get_link_path(path, self._log_path)
         return ''
 
-    def collect_stats(self):
-        self._stats = self._stats.new_child()
-        return self
-
-    def dump_stats(self):
-        stats = self._stats
-        self._stats = self._stats.parent
-        return stats
-
     def get_id(self, value):
         if value is None:
             return None
@@ -71,13 +62,17 @@ class Context(object):
             self.basemillis = millis
         return millis - self.basemillis
 
-    def start_suite(self, name):
+    def start_suite(self):
         self._location.start_suite()
+        self._stats = self._stats.new_child()
 
     def end_suite(self):
         self._location.end_suite()
+        stats = self._stats
+        self._stats = self._stats.parent
+        return stats
 
-    def start_test(self, name):
+    def start_test(self):
         if self._split_log:
             self._split_text_caches.append(TextCache())
         self._location.start_test()

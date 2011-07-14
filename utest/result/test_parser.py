@@ -28,12 +28,13 @@ class TestParser(unittest.TestCase):
 
     def test_stats_when_failing_suite_teardown(self):
         context = jsparser.Context()
-        context.collect_stats()
+        context.start_suite()
+        context.start_suite()
         context.add_test(1,1)
-        child_stats = context.dump_stats()
+        child_stats = context.end_suite()
         self.assertEqual(list(child_stats), [1, 1, 1, 1])
         context.suite_teardown_failed()
-        parent_stats = context.dump_stats()
+        parent_stats = context.end_suite()
         self.assertEqual(list(child_stats), [1, 0, 1, 0])
         self.assertEqual(list(parent_stats), [1, 0, 1, 0])
 
@@ -43,9 +44,9 @@ class TestParser(unittest.TestCase):
         self.assertEqual(self._context.link_to(key), 's1-s1-t1-k1')
 
     def _create_data_and_link(self, key):
-        self._context.start_suite('Foo')
-        self._context.start_suite('Bar')
-        self._context.start_test('Zoo')
+        self._context.start_suite()
+        self._context.start_suite()
+        self._context.start_test()
         self._context.start_keyword()
         self._context.create_link_to_current_location(key)
         self._context.end_keyword()
@@ -61,9 +62,9 @@ class TestParser(unittest.TestCase):
         self.assertEqual(self._context.link_to(key2), 's1-t1-k1-k2')
 
     def _create_data_for_links(self, key1, key2):
-        self._context.start_suite('Bar')
+        self._context.start_suite()
         _kw(self._context, lambda ctx: ctx.create_link_to_current_location(key1))
-        self._context.start_test('Test')
+        self._context.start_test()
         self._context.start_keyword()
         _kw(self._context)
         _kw(self._context, lambda ctx: ctx.create_link_to_current_location(key2))
@@ -77,16 +78,16 @@ class TestParser(unittest.TestCase):
         self.assertEqual(self._context.link_to(key), 's1-t1-k3-k2')
 
     def _create_data_for_subkeyword(self, key):
-        self._context.start_suite('Boo') #suite_Boo
-        self._context.start_test('Goo') #test_Boo.Goo
-        _kw(self._context) #keyword_Boo.Goo.0
-        _kw(self._context, _and(_kw, _kw, _kw)) #keyword_Boo.Goo.1.[0,1,2]
-        self._context.start_keyword() #keyword_Boo.Goo.2
-        _kw(self._context) #keyword_Boo.Goo.2.0
-        self._context.start_keyword() #keyword_Boo.Goo.2.1
+        self._context.start_suite()
+        self._context.start_test()
+        _kw(self._context)
+        _kw(self._context, _and(_kw, _kw, _kw))
+        self._context.start_keyword()
+        _kw(self._context)
+        self._context.start_keyword()
         self._context.create_link_to_current_location(key)
-        _kw(self._context)  #keyword_Boo.Goo.2.1
-        _kw(self._context)  #keyword_Boo.Goo.2.2
+        _kw(self._context)
+        _kw(self._context)
         self._context.end_keyword()
         self._context.end_test()
         self._context.end_suite()
@@ -99,10 +100,10 @@ class TestParser(unittest.TestCase):
         self.assertEqual(self._context.link_to(pkey), 's1-k2')
 
     def _create_data_for_suite_teardown_links(self, pkey, skey):
-        self._context.start_suite('Suit')
+        self._context.start_suite()
         _kw(self._context) #Suite setup
-        self._context.start_suite('Subsuite')
-        self._context.start_test('Test1')
+        self._context.start_suite()
+        self._context.start_test()
         _kw(self._context)
         self._context.end_test()
         _kw(self._context, lambda ctx: ctx.create_link_to_current_location(skey))

@@ -187,7 +187,7 @@ class TestJsSerializer(_JsSerializerTestBase):
         assert_model(data_model, plain_suite=[1, 0, 42, '*Message'])
 
     def test_times(self):
-        self._context.start_suite('suite')
+        self._context.start_suite()
         times = """
         <kw type="kw" name="KwName" timeout="">
         <msg timestamp="20110531 12:48:09.020" level="FAIL">AssertionError</msg>
@@ -281,7 +281,7 @@ class TestJsSerializer(_JsSerializerTestBase):
         assert_equals(self._context.link_to([0, 3, 'msg']), "s1-t2-k1")
 
     def test_for_loop_xml_parsing(self):
-        self._context.start_suite('suite')
+        self._context.start_suite()
         data_model = self._get_data_model(self.FOR_LOOP_XML)
         assert_model(data_model,
             plain_suite=[3, '*${i} IN RANGE [ 2 ]', '*', '*', '*',
@@ -305,7 +305,6 @@ class TestJsSerializer(_JsSerializerTestBase):
                         ])
 
     def test_for_loop_remove_keywords(self):
-        self._context.start_suite('suite')
         test_xml = '<suite><doc></doc><metadata></metadata>' + \
                    '<test name="Test" timeout=""><doc></doc>' + \
                    self.FOR_LOOP_XML + \
