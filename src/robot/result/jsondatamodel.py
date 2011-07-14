@@ -15,7 +15,7 @@
 import time
 from robot import utils
 
-from robot.result import json
+from robot.result import jsondump
 from robot.result.parsingcontext import TextIndex
 
 
@@ -132,7 +132,7 @@ class _SeparatingWriter(object):
     def dump_json(self, prefix, data_block, postfix = ';\n', mapping=None):
         if prefix:
             self._output.write(prefix)
-        json.json_dump(data_block, self._output, mappings=mapping)
+        jsondump.json_dump(data_block, self._output, mappings=mapping)
         self._output.write(postfix)
 
     def write(self, string):

@@ -14,7 +14,6 @@
 
 
 # TODO: Various tasks
-# - Rename this module so that it is not confused with standard json module
 # - Consider moving under utils
 # - Cleanup
 

@@ -7,8 +7,9 @@ except ImportError:
     except ImportError:
         json = None
 import unittest
+
 from robot.utils.asserts import assert_equals, assert_true
-from robot.result.json import json_dump
+from robot.result.jsondump import json_dump
 
 class JsonTestCase(unittest.TestCase):
 
