@@ -399,10 +399,9 @@ class TestJsSerializer(_JsSerializerTestBase):
         data_model = self._get_data_model(statistics_xml)
         expected = [[{'label': 'Critical Tests', 'pass': 0, 'fail': 4},
                      {'label': 'All Tests', 'pass': 0, 'fail': 4}],
-                    [{'label': 'someothertag', 'pass': 0, 'fail': 1,
-                      'info': '', 'links': '', 'doc': ''},
+                    [{'label': 'someothertag', 'pass': 0, 'fail': 1},
                      {'label': 'sometag', 'pass': 0, 'fail': 1,
-                      'info': '', 'links': '', 'doc': '<b>bold</b>'}],
+                      'doc': '<b>bold</b>'}],
                     [{'label': 'Data', 'name': 'Data', 'pass': 0, 'fail': 4},
                      {'label': 'Data.All Settings', 'name': 'All Settings', 'pass': 0, 'fail': 1},
                      {'label': 'Data.Failing Suite', 'name': 'Failing Suite', 'pass': 0, 'fail': 3}]]

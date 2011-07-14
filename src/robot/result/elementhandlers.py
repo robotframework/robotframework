@@ -315,7 +315,7 @@ class _StatItemHandler(_Handler):
 
     def __init__(self, context, attrs):
         _Handler.__init__(self, context)
-        self._attrs = dict(attrs)
+        self._attrs = self._prune_empty_strings_from_attrs(attrs)
         self._attrs['pass'] = int(self._attrs['pass'])
         self._attrs['fail'] = int(self._attrs['fail'])
         if 'doc' in self._attrs:
@@ -323,8 +323,9 @@ class _StatItemHandler(_Handler):
         # Cannot use 'id' attribute in XML due to http://bugs.jython.org/issue1768
         if 'idx' in self._attrs:
             self._attrs['id'] = self._attrs.pop('idx')
-        # TODO: Should we only dump attrs that have value?
-        # Tag stats have many attrs that are normally empty
+
+    def _prune_empty_strings_from_attrs(self, attrs):
+        return dict((a, v) for a, v in dict(attrs).iteritems() if v != '')
 
     def end_element(self, text):
         self._attrs.update(label=text)
