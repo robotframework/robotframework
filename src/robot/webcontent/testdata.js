@@ -5,9 +5,9 @@ window.testdata = function () {
     var _statistics = null;
     var LEVELS = {1: 'TRACE', 2: 'DEBUG', 3: 'INFO',
                   4: 'WARN',  5: 'FAIL', 6: 'ERROR'};
-    var STATUSES = {0: 'FAIL', 1: 'PASS', 2: 'NOT_RUN'}
+    var STATUSES = {0: 'FAIL', 1: 'PASS', 2: 'NOT_RUN'};
     var KEYWORDS = {kw: 'KEYWORD', setup: 'SETUP', teardown: 'TEARDOWN',
-                        forloop: 'FOR', foritem: 'VAR'};
+                    forloop: 'FOR', foritem: 'VAR'};
 
     function addElement(elem) {
         if (elem.id == undefined)
