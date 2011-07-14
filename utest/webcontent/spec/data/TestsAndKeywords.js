@@ -1,11 +1,11 @@
 window.testsAndKeywordsOutput = {};
 window.testsAndKeywordsOutput["errors"] = [];
 window.testsAndKeywordsOutput["stats"] = [[{"fail":0,"label":"Critical Tests","pass":4},{"fail":0,"label":"All Tests","pass":4}],[{"combined":"i?","doc":"<b>Combined</b> &amp; escaped &lt;&amp;lt; tag doc","fail":0,"info":"combined","label":"IX","links":"Title of iX:http://X/","pass":0},{"combined":"foo & i*","doc":"","fail":0,"info":"combined","label":"zap","links":"","pass":0}],[{"fail":0,"id":"s1","label":"TestsAndKeywords","name":"TestsAndKeywords","pass":4}]];
-window.testsAndKeywordsOutput["generatedMillis"] = 19;
+window.testsAndKeywordsOutput["generatedMillis"] = -703;
 window.testsAndKeywordsOutput["generator"] = "robot";
-window.testsAndKeywordsOutput["generatedTimestamp"] = "20110713 16:52:05 GMT +03:00";
-window.testsAndKeywordsOutput["baseMillis"] = 1310565124981;
-window.testsAndKeywordsOutput["suite"] = [13,14,0,0,[],[2,-4,16],[],[[9,0,1,0,[],[2,-1,7],[[3,5,0,0,0,[2,0,1],[[3,4,0,1,0,[2,0,1],[],[]]],[]],[3,6,0,0,0,[2,1,2],[[3,4,0,1,0,[2,2,0],[],[]]],[]],[3,7,0,0,0,[2,3,2],[[3,4,0,1,0,[2,4,0],[],[]]],[]],[3,8,0,0,0,[2,5,1],[[3,4,0,1,0,[2,6,0],[],[]]],[]]]],[10,0,1,0,[],[2,7,1],[[3,4,0,1,0,[2,8,0],[],[]]]],[11,0,1,0,[],[2,9,1],[[3,4,0,1,0,[2,9,1],[],[]]]],[12,0,1,0,[],[2,10,2],[[3,4,0,1,0,[2,11,0],[],[]]]]],[],[4,4,4,4]];
+window.testsAndKeywordsOutput["generatedTimestamp"] = "20110714 11:50:01 GMT +03:00";
+window.testsAndKeywordsOutput["baseMillis"] = 1310633401703;
+window.testsAndKeywordsOutput["suite"] = [12,13,0,0,[],[1,0,31],[],[[8,0,1,0,[],[1,0,15],[[2,4,0,0,0,[1,0,0],[[2,3,0,1,0,[1,0,0],[],[]]],[]],[2,5,0,0,0,[1,0,15],[[2,3,0,1,0,[1,0,0],[],[]]],[]],[2,6,0,0,0,[1,15,0],[[2,3,0,1,0,[1,15,0],[],[]]],[]],[2,7,0,0,0,[1,15,0],[[2,3,0,1,0,[1,15,0],[],[]]],[]]]],[9,0,1,0,[],[1,15,0],[[2,3,0,1,0,[1,15,0],[],[]]]],[10,0,1,0,[],[1,15,0],[[2,3,0,1,0,[1,15,0],[],[]]]],[11,0,1,0,[],[1,31,0],[[2,3,0,1,0,[1,31,0],[],[]]]]],[],[4,4,4,4]];
 window.testsAndKeywordsOutput["strings"] = [];
-window.testsAndKeywordsOutput["strings"] = window.testsAndKeywordsOutput["strings"].concat(["*","*Does absolutely nothing.","*P","*kw","*BuiltIn.No Operation","*kw1","*kw2","*kw3","*kw4","*Test 1","*Test 2","*Test 3","*Test 4","*TestsAndKeywords","*/Users/jmalinen/Documents/workspace/robotframework/utest/webcontent/spec/data/TestsAndKeywords.txt"]);
+window.testsAndKeywordsOutput["strings"] = window.testsAndKeywordsOutput["strings"].concat(["*","*Does absolutely nothing.","*kw","*BuiltIn.No Operation","*kw1","*kw2","*kw3","*kw4","*Test 1","*Test 2","*Test 3","*Test 4","*TestsAndKeywords","*C:\\workspace\\robot\\utest\\webcontent\\spec\\data\\TestsAndKeywords.txt"]);
 window.settings = {"background":{"fail":"DeepPink"},"logURL":"log.html","reportURL":"report.html"};

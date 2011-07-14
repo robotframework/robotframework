@@ -1,11 +1,11 @@
 window.messagesOutput = {};
-window.messagesOutput["errors"] = [[2,10,11,32]];
+window.messagesOutput["errors"] = [[0,4,8,27]];
 window.messagesOutput["stats"] = [[{"fail":0,"label":"Critical Tests","pass":1},{"fail":0,"label":"All Tests","pass":1}],[{"combined":"i?","doc":"<b>Combined</b> &amp; escaped &lt;&amp;lt; tag doc","fail":0,"info":"combined","label":"IX","links":"Title of iX:http://X/","pass":0},{"combined":"foo & i*","doc":"","fail":0,"info":"combined","label":"zap","links":"","pass":0}],[{"fail":0,"id":"s1","label":"Messages","name":"Messages","pass":1}]];
-window.messagesOutput["generatedMillis"] = -904;
+window.messagesOutput["generatedMillis"] = -500;
 window.messagesOutput["generator"] = "robot";
-window.messagesOutput["generatedTimestamp"] = "20110713 16:52:04 GMT +03:00";
-window.messagesOutput["baseMillis"] = 1310565124904;
-window.messagesOutput["suite"] = [30,31,0,0,[],[5,-3,12],[],[[29,0,1,0,[],[5,-1,9],[[6,7,0,1,2,[5,0,0],[],[[0,3,4]]],[6,7,0,1,8,[5,1,0],[],[[1,3,8]]],[6,7,0,1,9,[5,2,0],[],[[2,10,11]]],[6,17,0,12,13,[5,3,0],[],[[3,3,14],[4,15,16]]],[6,7,0,1,18,[5,4,1],[],[[4,15,19],[5,20,21],[5,15,22]]],[6,7,0,1,23,[5,5,1],[],[[6,15,24],[6,15,25],[6,15,22]]],[6,17,0,12,26,[5,6,1],[],[[7,15,27],[7,3,28]]]]]],[],[1,1,1,1]];
+window.messagesOutput["generatedTimestamp"] = "20110714 11:50:01 GMT +03:00";
+window.messagesOutput["baseMillis"] = 1310633401500;
+window.messagesOutput["suite"] = [25,26,0,0,[],[1,0,15],[],[[24,0,1,0,[],[1,0,15],[[4,5,0,1,2,[1,0,0],[],[[0,3,3]]],[4,5,0,1,6,[1,0,0],[],[[0,3,6]]],[4,5,0,1,7,[1,0,0],[],[[0,4,8]]],[4,13,0,9,10,[1,0,0],[],[[0,3,11],[0,1,12]]],[4,5,0,1,14,[1,15,0],[],[[15,1,15],[15,2,16],[15,1,17]]],[4,5,0,1,18,[1,15,0],[],[[15,1,19],[15,1,20],[15,1,17]]],[4,13,0,9,21,[1,15,0],[],[[15,1,22],[15,3,23]]]]]],[],[1,1,1,1]];
 window.messagesOutput["strings"] = [];
-window.messagesOutput["strings"] = window.messagesOutput["strings"].concat(["*","*Logs the given message with the given level.","*<h1>html</h1>, HTML","*I","*<h1>html</h1>","*P","*kw","*BuiltIn.Log","*infolevelmessage","*warning, WARN","*W","*warning","*Sets the log threshold to the specified level and returns the old level.","*TRACE","*Log level changed from INFO to TRACE","*T","*Return: 'INFO'","*BuiltIn.Set Log Level","*debugging, DEBUG","*Arguments: [ u'debugging' | u'DEBUG' ]","*D","*debugging","*Return: None","*tracing, TRACE","*Arguments: [ u'tracing' | u'TRACE' ]","*tracing","*INFO","*Arguments: [ u'INFO' ]","*Log level changed from TRACE to INFO","*Test with messages","*Messages","*/Users/jmalinen/Documents/workspace/robotframework/utest/webcontent/spec/data/Messages.txt","*s1-t1-k3"]);
+window.messagesOutput["strings"] = window.messagesOutput["strings"].concat(["*","*Logs the given message with the given level.","*<h1>html</h1>, HTML","*<h1>html</h1>","*kw","*BuiltIn.Log","*infolevelmessage","*warning, WARN","*warning","*Sets the log threshold to the specified level and returns the old level.","*TRACE","*Log level changed from INFO to TRACE","*Return: 'INFO'","*BuiltIn.Set Log Level","*debugging, DEBUG","*Arguments: [ u'debugging' | u'DEBUG' ]","*debugging","*Return: None","*tracing, TRACE","*Arguments: [ u'tracing' | u'TRACE' ]","*tracing","*INFO","*Arguments: [ u'INFO' ]","*Log level changed from TRACE to INFO","*Test with messages","*Messages","*C:\\workspace\\robot\\utest\\webcontent\\spec\\data\\Messages.txt","*s1-t1-k3"]);
 window.settings = {"background":{"fail":"DeepPink"},"logURL":"log.html","reportURL":"report.html"};
