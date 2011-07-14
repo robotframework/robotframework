@@ -113,7 +113,7 @@ class TestJsSerializer(_JsSerializerTestBase):
                 <doc></doc>
                 <arguments></arguments>
                 <kw type="kw" name="babba" timeout="">
-                    <doc>Foo bar.</doc>
+                    <doc>Doc in for</doc>
                     <arguments>
                         <arg>${i}</arg>
                     </arguments>
@@ -126,7 +126,7 @@ class TestJsSerializer(_JsSerializerTestBase):
                 <doc></doc>
                 <arguments></arguments>
                 <kw type="kw" name="babba" timeout="">
-                    <doc>Foo bar.</doc>
+                    <doc>Doc in for</doc>
                     <arguments>
                         <arg>${i}</arg>
                     </arguments>
@@ -147,12 +147,12 @@ class TestJsSerializer(_JsSerializerTestBase):
         data_model = self._get_data_model('<msg timestamp="20110531 12:48:09.088" level="FAIL">AssertionError</msg>')
         assert_model(data_model,
                           1306835289088,
-                          [0, 5, 1],
+                          [0, 4, 1],
                           ['*', '*AssertionError'])
 
     def test_plain_message_xml_parsing(self):
         data_model = self._get_data_model('<msg timestamp="20110531 12:48:09.088" level="FAIL">AssertionError</msg>')
-        assert_model(data_model, basemillis=1306835289088, plain_suite=[0, 5, '*AssertionError'])
+        assert_model(data_model, basemillis=1306835289088, plain_suite=[0, 4, '*AssertionError'])
 
     def assert_model_does_not_contain(self, data_model, items):
         suite = self._reverse_from_ids(data_model,
@@ -192,12 +192,12 @@ class TestJsSerializer(_JsSerializerTestBase):
         """
         data_model = self._get_data_model(times)
         assert_model(data_model,
-            plain_suite=['*kw', '*KwName', '*',
+            plain_suite=[0, '*KwName', '*',
                          [0, 0, -10],
                         [],
-                         [[0, 5, '*AssertionError'],
-                         [None, 5, '*AssertionError'],
-                         [-10, 5, '*AssertionError']]
+                         [[0, 4, '*AssertionError'],
+                         [None, 4, '*AssertionError'],
+                         [-10, 4, '*AssertionError']]
                         ])
 
     def test_generated_millis(self):
@@ -237,10 +237,10 @@ class TestJsSerializer(_JsSerializerTestBase):
                       [0, 0, 1],
                       [],
                       [['*Test', '*', 1, '*tdoc', [1, 0, 1], []]],
-                      [['*teardown', '*Fail', '*', '*kdoc',
-                       [0, 1, 0], [], [[0, 4, '*msg']]]],
+                      [[2, '*Fail', '*', '*kdoc',
+                       [0, 1, 0], [], [[0, 3, '*msg']]]],
                       [1, 0, 1, 0]])
-        assert_equals(self._context.link_to([0, 4, 'msg']), "s1-k1")
+        assert_equals(self._context.link_to([0, 3, 'msg']), "s1-k1")
 
     def test_test_teardown_parsing(self):
         data_model = self._get_data_model("""
@@ -268,30 +268,30 @@ class TestJsSerializer(_JsSerializerTestBase):
                       [],
                       [['*T1', '*', 1, '*t1doc', [1, 0, 0], []],
                        ['*T2', '*', 1, '*t2doc', [0, 0, 1],
-                        [['*teardown', '*Fail', '*', '*kdoc',
-                         [0, 1, 0], [], [[0, 4, '*msg']]]]]],
+                        [[2, '*Fail', '*', '*kdoc',
+                         [0, 1, 0], [], [[0, 3, '*msg']]]]]],
                       [],
                       [2, 1, 2, 1]])
-        assert_equals(self._context.link_to([0, 4, 'msg']), "s1-t2-k1")
+        assert_equals(self._context.link_to([0, 3, 'msg']), "s1-t2-k1")
 
     def test_for_loop_xml_parsing(self):
         self._context.start_suite('suite')
         data_model = self._get_data_model(self.FOR_LOOP_XML)
         assert_model(data_model,
-            plain_suite=['*forloop', '*${i} IN RANGE [ 2 ]', '*', '*', '*',
+            plain_suite=[3, '*${i} IN RANGE [ 2 ]', '*', '*', '*',
                          [1, -1, 4],
-                         [['*foritem', '*${i} = 0', '*', '*', '*',
+                         [[4, '*${i} = 0', '*', '*', '*',
                            [1, 0, 0],
-                          [['*kw', '*babba', '*', '*Foo bar.', '*${i}',
-                           [1, 0, 0], [], [[0, 3, '*0']]]],
+                          [[0, '*babba', '*', '*Doc in for', '*${i}',
+                           [1, 0, 0], [], [[0, 2, '*0']]]],
                             []
                            ],
-                         ['*foritem', '*${i} = 1', '*', '*', '*',
+                         [4, '*${i} = 1', '*', '*', '*',
                           [1, 1, 1],
-                          [['*kw', '*babba', '*', '*Foo bar.', '*${i}',
+                          [[0, '*babba', '*', '*Doc in for', '*${i}',
                             [1, 1, 0],
                             [],
-                           [[1, 3, '*1']]]],
+                           [[1, 2, '*1']]]],
                           [],
                           ],
                          ],
@@ -303,7 +303,8 @@ class TestJsSerializer(_JsSerializerTestBase):
         test_xml = '<test name="Test" timeout=""><doc></doc>' + \
                    self.FOR_LOOP_XML + \
                    '<tags></tags><status status="PASS" endtime="20110601 12:01:51.354" critical="yes" starttime="20110601 12:01:51.353"></status></test>'
-        self._test_remove_keywords(self._get_data_model(test_xml))
+        self._test_remove_keywords(self._get_data_model(test_xml),
+                                   should_not_contain_strings=['${i} IN RANGE [ 2 ]', 'babba', 'Doc in for'])
 
     def test_remove_errors(self):
         data_model = self._get_data_model(self.SUITE_XML)
@@ -311,13 +312,11 @@ class TestJsSerializer(_JsSerializerTestBase):
         if 'errors' in data_model._robot_data:
             raise AssertionError('Errors still in data')
 
-    def _test_remove_keywords(self, data_model, should_contain_strings=None, should_not_contain_strings=None):
+    def _test_remove_keywords(self, data_model, should_not_contain_strings, should_contain_strings=None):
         strings_before = self._list_size(data_model._robot_data['strings'])
         data_model_json_before = StringIO.StringIO()
         data_model.write_to(data_model_json_before)
         data_model.remove_keywords()
-        if not should_not_contain_strings:
-            should_not_contain_strings = ['*kw', '*setup', '*forloop', '*foritem']
         self.assert_model_does_not_contain(data_model, should_not_contain_strings)
         if should_contain_strings:
             for string in should_contain_strings:
@@ -343,24 +342,25 @@ class TestJsSerializer(_JsSerializerTestBase):
                               [['*Test', '*', 1, doc,
                                   ['*t1', '*t2'], [1, 0, 1],
                                   [
-                                      ['*kw', '*Keyword.Example', '*1 second', doc,
-                                        '*a1, a2', [1, 23, -23], [], [[0, 4, '*simple']]]
+                                      [0, '*Keyword.Example', '*1 second', doc,
+                                        '*a1, a2', [1, 23, -23], [], [[0, 3, '*simple']]]
                                   ]
                               ],['*setup', '*', 1, "*docu",
                                   [], [1, 100, 1],
                                   [
-                                      ['*kw', '*Keyword.Example', '*1 second', doc,
-                                        '*a1, a2', [1, 100, 0], [], [[0, 3, '*sample']]]
+                                      [0, '*Keyword.Example', '*1 second', doc,
+                                        '*a1, a2', [1, 100, 0], [], [[0, 2, '*sample']]]
                                   ]
                               ]],
                               [],
                               [2, 2, 2, 2]])
-        assert_equals(self._context.link_to([0, 4, 'simple']),'s1-t1-k1')
+        assert_equals(self._context.link_to([0, 3, 'simple']),'s1-t1-k1')
 
     def test_suite_data_model_keywords_clearing(self):
         self._test_remove_keywords(self._get_data_model(self.SUITE_XML),
                                    should_contain_strings=['*key', '*val', '*docu'],
-                                   should_not_contain_strings=['*kw', '*Keyword.Example'])
+                                   should_not_contain_strings=['**html* &lt;esc&gt; http://x.y http://x.y/z.jpg',
+                                                               '*Keyword.Example'])
 
     def test_statistics_xml_parsing(self):
         statistics_xml = """
@@ -400,7 +400,7 @@ class TestJsSerializer(_JsSerializerTestBase):
         """
         data_model = self._get_data_model(errors_xml)
         assert_model(data_model, basemillis=1306835289078,
-                     plain_suite=[[0, 6, "*Invalid syntax in file '/tmp/data/failing_suite.txt' in table 'Settings': Resource file 'nope' does not exist."]])
+                     plain_suite=[[0, 5, "*Invalid syntax in file '/tmp/data/failing_suite.txt' in table 'Settings': Resource file 'nope' does not exist."]])
 
 
 class TestTestSplittingJsSerializer(_JsSerializerTestBase):
@@ -433,8 +433,8 @@ class TestTestSplittingJsSerializer(_JsSerializerTestBase):
                       [['*Test', '*', 1, '*doc', [1, -23, 1], 1]],
                       [],
                       [1, 1, 1, 1]])
-        expected_data = [['*kw', '*Keyword.Example', '*', [1, 0, -23], [], []],
-                         ['*kw', '*Second keyword', '*', [1, 0, -23], [], []]]
+        expected_data = [[0, '*Keyword.Example', '*', [1, 0, -23], [], []],
+                         [0, '*Second keyword', '*', [1, 0, -23], [], []]]
         keywords, strings = self._context.split_results[0]
         _assert_plain_suite_item(expected_data, keywords, strings)
 
@@ -489,25 +489,25 @@ class TestTestSplittingJsSerializer(_JsSerializerTestBase):
                       [],
                       [['*Test', '*', 1, '*doc', [1, 0, 1], 2]],
                       [
-                       ['*setup', '*Suite Setup', '*1 year', '*setup doc',
+                       [1, '*Suite Setup', '*1 year', '*setup doc',
                         [1, 0, 0], 1, []],
-                       ['*teardown', '*Suite Teardown', '*', '*td doc',
-                        [0, 1, 0], 3, [[1, 4, '*td msg']]],
+                       [2, '*Suite Teardown', '*', '*td doc',
+                        [0, 1, 0], 3, [[1, 3, '*td msg']]],
                       ],
                       [1, 0, 1, 0]])
-        split_test = [['*kw', '*Keyword.Example', '*', '*kd', [1, 0, 1], [], []],
-                      ['*teardown', '*Pass', '*', '*ted', [1, 1, 0], [], []]]
+        split_test = [[0, '*Keyword.Example', '*', '*kd', [1, 0, 1], [], []],
+                      [2, '*Pass', '*', '*ted', [1, 1, 0], [], []]]
         _assert_plain_suite_item(split_test, *self._context.split_results[1])
-        split_setup = [['*kw', '*First keyword', '*', '*1st doc', [1, 0, 0],
-                        [['*kw', '*Sub keyword', '*', '*sub doc', [1, 0, 0], [], []]],
-                        [[0, 4, '*setup msg']]
+        split_setup = [[0, '*First keyword', '*', '*1st doc', [1, 0, 0],
+                        [[0, '*Sub keyword', '*', '*sub doc', [1, 0, 0], [], []]],
+                        [[0, 3, '*setup msg']]
                        ],
-                       ['*kw', '*Second keyword', '*', '*2nd doc', [1, 0, 0], [], []]]
+                       [0, '*Second keyword', '*', '*2nd doc', [1, 0, 0], [], []]]
         _assert_plain_suite_item(split_setup, *self._context.split_results[0])
-        split_teardown = [['*kw', '*Td Sub keyword', '*', '*td sub doc', [1, 1, 0], [], []]]
+        split_teardown = [[0, '*Td Sub keyword', '*', '*td sub doc', [1, 1, 0], [], []]]
         _assert_plain_suite_item(split_teardown, *self._context.split_results[2])
-        assert_equals(self._context.link_to([0, 4, 'setup msg']), "s1-k1-k1")
-        assert_equals(self._context.link_to([1, 4, 'td msg']), "s1-k2")
+        assert_equals(self._context.link_to([0, 3, 'setup msg']), "s1-k1-k1")
+        assert_equals(self._context.link_to([1, 3, 'td msg']), "s1-k2")
 
     def test_tests_and_suite_keywords_without_keywords_are_not_split(self):
         data_model = self._get_data_model("""
@@ -542,12 +542,12 @@ class TestTestSplittingJsSerializer(_JsSerializerTestBase):
                       [1, 0, 1], [],
                       [['*Test', '*1s', 1, '*doc', [1, 0, 1], 1],
                        ['*Empty', '*', 0, '*empty', [0, 1, 0, '*Err'], []]],
-                      [['*setup', '*SSetup', '*', '*setup',
+                      [[1, '*SSetup', '*', '*setup',
                         [1, 0, 0], [], []],
-                       ['*teardown', '*STeardown', '*', '*td',
-                        [1, 1, 0], [], [[1, 4, '*msg']]]],
+                       [2, '*STeardown', '*', '*td',
+                        [1, 1, 0], [], [[1, 3, '*msg']]]],
                       [2, 1, 1, 1]])
-        split_test = [['*kw', '*Keyword', '*', '*kd', [1, 0, 1], [], []]]
+        split_test = [[0, '*Keyword', '*', '*kd', [1, 0, 1], [], []]]
         _assert_plain_suite_item(split_test, *self._context.split_results[0])
 
 

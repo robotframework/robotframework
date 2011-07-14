@@ -90,12 +90,12 @@ class DataModel(object):
 
     def _is_keyword(self, item):
         # FIXME: This is a hack.
-        return isinstance(item, list) and len(item) == 8 and isinstance(item[0], TextIndex)
+        return isinstance(item, list) and len(item) == 8 and not isinstance(item[0], TextIndex)
 
     def _is_not_teardown(self, type):
         # It is safer not to use ` == '*teardown'` to make sure possible
         # non-keyword items are not ignored.
-        return self._robot_data['strings'][type] in ['*kw', '*setup', '*forloop']
+        return type in [0, 1, 3, 4]
 
     def _prune_unused_indices(self):
         used = self._collect_used_indices(self._robot_data['suite'], set())

@@ -18,13 +18,13 @@ from robot.errors import DataError
 
 
 LEVELS = {
-  "NONE"  : 7,
-  "ERROR" : 6,
-  "FAIL"  : 5,
-  "WARN"  : 4,
-  "INFO"  : 3,
-  "DEBUG" : 2,
-  "TRACE" : 1,
+  'NONE'  : 6,
+  'ERROR' : 5,
+  'FAIL'  : 4,
+  'WARN'  : 3,
+  'INFO'  : 2,
+  'DEBUG' : 1,
+  'TRACE' : 0,
 }
 
 

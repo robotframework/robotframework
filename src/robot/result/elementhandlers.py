@@ -150,11 +150,11 @@ class _TestHandler(_Handler):
 
 
 class _KeywordHandler(_Handler):
+    _types = {'kw': 0, 'setup': 1, 'teardown': 2, 'for': 3, 'foritem': 4}
 
     def __init__(self, context, attrs):
         _Handler.__init__(self, context)
-        self._type = attrs.get('type')
-        if self._type == 'for': self._type = 'forloop'
+        self._type = self._types[attrs.get('type')]
         self._name = attrs.get('name')
         self._timeout = attrs.get('timeout')
         self._keywords = []
@@ -191,9 +191,12 @@ class _SuiteSetupTeardownHandler(_KeywordHandler):
         self._context.start_suite_setup_or_teardown()
 
     def end_element(self, text):
-        if self._type == 'teardown' and not self._last_child_passed():
+        if self._is_teardown() and not self._last_child_passed():
             self._context.suite_teardown_failed()
         return _KeywordHandler.end_element(self, text)
+
+    def _is_teardown(self):
+        return self._type == 2
 
     def _get_keywords(self):
         return self._context.end_suite_setup_or_teardown(self._keywords)
