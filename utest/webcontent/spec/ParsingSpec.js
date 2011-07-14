@@ -129,7 +129,7 @@ describe("Handling Suite", function () {
     it("should parse message", function () {
         var message = nthKeyword(firstTest(window.testdata.suite()), 0).messages()[0];
         expect(message.text).toEqual("message");
-        expect(message.time).toBeLessThan(new Date());
+        expect(message.time).toBeLessThan(util.timeFromDate(new Date()));
     });
 
     it("should parse timestamp", function () {
@@ -146,19 +146,19 @@ describe("Setups and teardowns", function () {
     });
 
     function checkTypeNameArgs(kw, type, name, args) {
-    	expect(kw.type).toEqual(type);
-    	expect(kw.name).toEqual(name);
-    	expect(kw.arguments).toEqual(args);
+        expect(kw.type).toEqual(type);
+        expect(kw.name).toEqual(name);
+        expect(kw.arguments).toEqual(args);
     }
 
     it("should parse suite setup", function () {
-    	var suite = window.testdata.suite();
-    	checkTypeNameArgs(suite.keywords()[0], "SETUP", "BuiltIn.Log", "suite setup");
+        var suite = window.testdata.suite();
+        checkTypeNameArgs(suite.keywords()[0], "SETUP", "BuiltIn.Log", "suite setup");
     });
 
     it("should parse suite teardown", function () {
-    	var suite = window.testdata.suite();
-    	checkTypeNameArgs(suite.keywords()[1], "TEARDOWN", "BuiltIn.Log", "suite teardown");
+        var suite = window.testdata.suite();
+        checkTypeNameArgs(suite.keywords()[1], "TEARDOWN", "BuiltIn.Log", "suite teardown");
     });
 
     it("should give navigation uniqueId list for a suite teardown keyword", function () {
@@ -177,8 +177,8 @@ describe("Setups and teardowns", function () {
     });
 
     it("should parse test teardown", function () {
-    	var test = firstTest(window.testdata.suite());
-    	checkTypeNameArgs(nthKeyword(test, 2), "TEARDOWN", "BuiltIn.Log", "test teardown");
+        var test = firstTest(window.testdata.suite());
+        checkTypeNameArgs(nthKeyword(test, 2), "TEARDOWN", "BuiltIn.Log", "test teardown");
     });
 
     it("should give suite children in order", function () {
@@ -205,14 +205,16 @@ describe("Setups and teardowns", function () {
 });
 
 
-describe("Short time formatting", function (){
+describe("Time and date formatting", function (){
 
     it("should pad 0 values to full length", function () {
-        expect(window.model.shortTime(0,0,0,0)).toEqual("00:00:00.000");
+        expect(util.dateTimeFromDate(new Date(2011,7-1,1,0,0,0,0))).toEqual("20110701 00:00:00.000");
+        expect(util.dateFromDate(new Date(2011,7-1,1,0,0,0,0))).toEqual("20110701");
+        expect(util.timeFromDate(new Date(2011,7-1,1,0,0,0,0))).toEqual("00:00:00.000");
     });
 
     it("should pad non empty number to full length", function () {
-        expect(window.model.shortTime(12,5,55,101)).toEqual("12:05:55.101");
+        expect(util.dateTimeFromDate(new Date(2011,7-1,14,12,5,55,101))).toEqual("20110714 12:05:55.101");
     });
 });
 
@@ -237,34 +239,34 @@ describe("Handling messages", function (){
     }
 
     it("should handle info level message", function () {
-        expectMessage(kwMessage(1), "infolevelmessage", "info");
+        expectMessage(kwMessage(1), "infolevelmessage", "INFO");
     });
 
     it("should handle warn level message", function () {
-        expectMessage(kwMessage(2), "warning", "warn");
+        expectMessage(kwMessage(2), "warning", "WARN");
     });
 
     it("should handle debug level message", function () {
         var messages = kwMessages(4);
-        expectMessage(messages[messages.length-2], "debugging", "debug");
+        expectMessage(messages[messages.length-2], "debugging", "DEBUG");
     });
 
     it("should handle trace level message", function () {
         var messages = kwMessages(5);
-        expectMessage(messages[messages.length-2], "tracing", "trace");
+        expectMessage(messages[messages.length-2], "tracing", "TRACE");
     });
 
     it("should handle html level message", function () {
-        expectMessage(kwMessage(0), "<h1>html</h1>", "info");
+        expectMessage(kwMessage(0), "<h1>html</h1>", "INFO");
     });
 
     it("should show warning in errors", function () {
         var firstError = window.testdata.errors().next()
-        expectMessage(firstError, "warning", "warn");
+        expectMessage(firstError, "warning", "WARN");
         var callbackExecuted = false;
         window.testdata.findPathTo(firstError.link, function (pathToKeyword) {
             var errorKw = window.testdata.find(pathToKeyword[pathToKeyword.length-1]);
-            expect(errorKw.messages()[0].level).toEqual("warn");
+            expect(errorKw.messages()[0].level).toEqual("WARN");
             callbackExecuted = true;
         });
         expect(callbackExecuted).toBeTruthy();
