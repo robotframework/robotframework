@@ -174,7 +174,7 @@ function addTestExecutionLog(main) {
              onclick="closeElement('${id}');"
              style="display: none;">-</div>
         <span class="${status.toLowerCase()}">TEST&nbsp;SUITE:</span>
-        <a class="name" name="${id}" title="${name}">${name}</a>
+        <a class="name" title="${name}">${name}</a>
       </td>
     </tr>
     <tr>
@@ -242,7 +242,7 @@ function addTestExecutionLog(main) {
              onclick="closeElement('${id}');"
              style="display: none;">-</div>
         <span class="${status.toLowerCase()}">TEST&nbsp;CASE: </span>
-        <a class="name" name="${id}"
+        <a class="name"
            title="${fullName}">${name}</a>
       </td>
     </tr>
@@ -306,7 +306,7 @@ function addTestExecutionLog(main) {
              onclick="openKeyword('${id}');"
              style="display: block;">+</div>
         <span class="${status.toLowerCase()}">${type}: </span>
-        <a class="name" name="${id}" title="${name}">${name}</a>
+        <a class="name" title="${name}">${name}</a>
         <span class="arg">${arguments}</span>
       </td>
     </tr>

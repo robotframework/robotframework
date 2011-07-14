@@ -1,11 +1,11 @@
 window.teardownFailureOutput = {};
 window.teardownFailureOutput["errors"] = [];
 window.teardownFailureOutput["stats"] = [[{"fail":2,"label":"Critical Tests","pass":0},{"fail":2,"label":"All Tests","pass":0}],[{"combined":"i?","doc":"<b>Combined</b> &amp; escaped &lt;&amp;lt; tag doc","fail":0,"info":"combined","label":"IX","links":"Title of iX:http://X/","pass":0},{"combined":"foo & i*","doc":"","fail":0,"info":"combined","label":"zap","links":"","pass":0}],[{"fail":2,"id":"s1","label":"teardownFailure","name":"teardownFailure","pass":0},{"fail":2,"id":"s1-s1","label":"teardownFailure.PassingFailing","name":"PassingFailing","pass":0}]];
-window.teardownFailureOutput["generatedMillis"] = -938;
+window.teardownFailureOutput["generatedMillis"] = -562;
 window.teardownFailureOutput["generator"] = "robot";
-window.teardownFailureOutput["generatedTimestamp"] = "20110713 16:52:04 GMT +03:00";
-window.teardownFailureOutput["baseMillis"] = 1310565124938;
-window.teardownFailureOutput["suite"] = [18,19,0,0,[],[10,-6,12,17],[[13,14,0,0,[],[10,-4,8],[],[[7,0,1,0,[],[4,-1,1],[[5,6,0,1,2,[4,-1,1],[],[[0,3,2]]]]],[12,0,1,0,[],[10,1,3,9],[[5,11,0,8,9,[10,2,1],[],[[3,10,9]]]]]],[],[2,0,2,0]]],[],[[16,11,0,8,0,[10,5,1],[],[[5,10,15]]]],[2,0,2,0]];
+window.teardownFailureOutput["generatedTimestamp"] = "20110714 11:50:01 GMT +03:00";
+window.teardownFailureOutput["baseMillis"] = 1310633401562;
+window.teardownFailureOutput["suite"] = [15,16,0,0,[],[0,-16,47,14],[[10,11,0,0,[],[0,0,16],[],[[5,0,1,0,[],[1,0,0],[[3,4,0,1,2,[1,0,0],[],[[0,3,2]]]]],[9,0,1,0,[],[0,0,16,7],[[3,8,0,6,7,[0,16,0],[],[[16,5,7]]]]]],[],[2,0,2,0]]],[],[[13,8,0,6,0,[0,31,0],[],[[31,5,12]]]],[2,0,2,0]];
 window.teardownFailureOutput["strings"] = [];
-window.teardownFailureOutput["strings"] = window.teardownFailureOutput["strings"].concat(["*","*Logs the given message with the given level.","*passing","*I","*P","*kw","*BuiltIn.Log","*Passing","*Fails the test immediately with the given (optional) message.","*In test","*F","*BuiltIn.Fail","*Failing","*PassingFailing","*/Users/jmalinen/Documents/workspace/robotframework/utest/webcontent/spec/data/teardownFailure/PassingFailing.txt","*AssertionError","*teardown","*Suite teardown failed:\nAssertionError","*teardownFailure","*/Users/jmalinen/Documents/workspace/robotframework/utest/webcontent/spec/data/teardownFailure"]);
+window.teardownFailureOutput["strings"] = window.teardownFailureOutput["strings"].concat(["*","*Logs the given message with the given level.","*passing","*kw","*BuiltIn.Log","*Passing","*Fails the test immediately with the given (optional) message.","*In test","*BuiltIn.Fail","*Failing","*PassingFailing","*C:\\workspace\\robot\\utest\\webcontent\\spec\\data\\teardownFailure\\PassingFailing.txt","*AssertionError","*teardown","*Suite teardown failed:\nAssertionError","*teardownFailure","*C:\\workspace\\robot\\utest\\webcontent\\spec\\data\\teardownFailure"]);
 window.settings = {"background":{"fail":"DeepPink"},"logURL":"log.html","reportURL":"report.html"};
