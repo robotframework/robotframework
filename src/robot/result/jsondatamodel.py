@@ -69,7 +69,7 @@ class DataModel(object):
             strings = strings[split_threshold:]
 
     def remove_keywords(self):
-        self._robot_data['suite'] = self._remove_keywords_from(self._robot_data['suite'])
+        self._remove_keywords_from_suite(self._robot_data['suite'])
         self._prune_unused_indices()
 
     # TODO: this and remove_keywords should be removed
@@ -77,15 +77,12 @@ class DataModel(object):
     def remove_errors(self):
         self._robot_data.pop('errors')
 
-    def _remove_keywords_from(self, data):
-        if not isinstance(data, list):
-            return data
-        return list(self._remove_keywords_from(item) for item in data
-                    if not self._is_keyword(item))
-
-    def _is_keyword(self, item):
-        # FIXME: This is a hack.
-        return isinstance(item, list) and len(item) == 8 and not isinstance(item[0], TextIndex)
+    def _remove_keywords_from_suite(self, suite):
+        suite[8] = []
+        for subsuite in suite[6]:
+            self._remove_keywords_from_suite(subsuite)
+        for test in suite[7]:
+            test[-1] = []
 
     def _prune_unused_indices(self):
         used = self._collect_used_indices(self._robot_data['suite'], set())
