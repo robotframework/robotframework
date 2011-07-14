@@ -294,9 +294,9 @@ describe("Parent Suite Teardown Failure", function (){
         expect(test.message()).toEqual("Teardown of the parent suite failed.");
     });
 
-    it("should show suite message 'Teardown of the parent suite failed.'", function (){
+    it("should not show suite message 'Teardown of the parent suite failed.'", function (){
         var suite = window.testdata.suite().suites()[0];
-        expect(suite.message()).toEqual("Teardown of the parent suite failed.");
+        expect(suite.message()).toEqual("");
     });
 
     it("should show root suite message 'Suite teardown failed:\nAssertionError'", function (){

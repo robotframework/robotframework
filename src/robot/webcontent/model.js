@@ -14,9 +14,7 @@ window.model = (function () {
         suite.children = function () {
             return suite.keywords().concat(suite.tests()).concat(suite.suites());
         };
-        suite.hasTeardownFailure = function () {
-            return data.teardownFailed || data.parentSuiteTeardownFailed;
-        };
+        suite.teardownFailed = data.teardownFailed;
         suite.searchTests = function (predicate) {
             var tests = [];
             var subSuites = this.suites();
@@ -83,14 +81,6 @@ window.model = (function () {
                 return match;
         }
         return null;
-    }
-
-    function suiteTeardownFailed(suite) {
-        var keywords = suite.keywords();
-        var maybeTeardown = keywords[keywords.length - 1];
-        if (maybeTeardown && maybeTeardown.type == 'TEARDOWN')
-            return maybeTeardown.status == 'FAIL';
-        return false;
     }
 
     function setStats(suite, stats) {
