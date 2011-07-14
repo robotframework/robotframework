@@ -14,7 +14,6 @@ window.testdata = function () {
         return elem;
     }
 
-    // TODO: DO we still need this?
     function uniqueId() {
         idCounter++;
         return "elementId_" + idCounter;
