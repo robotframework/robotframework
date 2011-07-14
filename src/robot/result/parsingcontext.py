@@ -264,7 +264,6 @@ class TextCache(object):
         return '*'+text
 
     def dump(self):
-        # TODO: Could we yield or return an iterator?
         return [item[0] for item in sorted(self.texts.iteritems(),
                                            key=itemgetter(1))]
 

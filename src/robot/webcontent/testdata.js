@@ -168,7 +168,6 @@ window.testdata = function () {
     }
 
     function suiteStats(stats) {
-        // TODO: Should use 'all' instead of 'total' here for consistency
         return {
             total: stats[0],
             totalPassed: stats[1],
