@@ -546,3 +546,35 @@ describe("Elements are created only once", function (){
     });
 });
 
+describe("Should split tests and keywords with --splitlog", function (){
+
+    beforeEach(function (){
+        window.output = window.splittingOutput;
+        var i = 1;
+        while (window['splittingOutputKeywords'+i]) {
+            window['keywords'+i] = window['splittingOutputKeywords'+i]
+            window['strings'+i] = window['splittingOutputStrings'+i]
+            i = i+1;
+        }
+        var originalGetter = window.fileLoading.getCallbackHandlerForKeywords
+        window.fileLoading.getCallbackHandlerForKeywords = function(parent) {
+            var normalResult = originalGetter(parent);
+            var wrapper = function (callable) {
+                parent.isChildrenLoaded = true;
+                normalResult(callable);
+            }
+            return wrapper;
+        }
+    });
+
+    it("should not load children before needed", function (){
+        var suite = window.testdata.suite();
+        var test = firstTest(subSuite(1, suite));
+        expect(test.isChildrenLoaded).not.toBeTruthy();
+        expect(test.children()).toBeUndefined();
+        test.callWhenChildrenReady(function() {return;});
+        expect(test.isChildrenLoaded).toBeTruthy();
+        expect(test.children()).not.toBeUndefined();
+    });
+
+});
