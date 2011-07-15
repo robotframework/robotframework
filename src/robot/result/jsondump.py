@@ -13,54 +13,120 @@
 #  limitations under the License.
 
 
-def json_dump(data, output, mappings=None):
-    if data is None:
-        output.write('null')
-    elif isinstance(data, dict):
-        output.write('{')
+class JsonDumper(object):
+
+    def __init__(self, output):
+        self._output = output
+        self._mapping = {}
+        self._data_dumpers = [_DictDumper(self), _IterableDumper(self),
+                              _MappingDumper(self), _StringDumper(self),
+                              _IntegerDumper(self), _NoneDumper(self)]
+
+    def dump(self, data, mapping=None):
+        for dumper in self._data_dumpers:
+            dumper.add_mapping(mapping)
+            if dumper.handles(data):
+                dumper.dump(data)
+                return
+        raise ValueError('Dumping %s not supported' % type(data))
+
+    def write(self, data):
+        self._output.write(data)
+
+
+class _DataDumper(object):
+
+    def __init__(self, jsondumper):
+        self._jsondumper = jsondumper
+        self._mapping = {}
+
+    def add_mapping(self, mapping):
+        self._mapping = mapping or {}
+
+    def _dump(self, data):
+        self._jsondumper.dump(data, self._mapping)
+
+    def _write(self, data):
+        self._jsondumper.write(data)
+
+
+class _StringDumper(_DataDumper):
+    _replace = [('\\', '\\\\'), ('"', '\\"'), ('\t', '\\t'),
+                ('\n', '\\n'), ('\r', '\\r')]
+
+    def handles(self, data):
+        return isinstance(data, basestring)
+
+    def dump(self, string):
+        for char, repl in self._replace:
+            string = string.replace(char, repl)
+        self._write('"%s"' % ''.join(self._encode_char(c) for c in string))
+
+    def _encode_char(self, char):
+        val = ord(char)
+        if 31 < val < 127:
+            return char
+        return '\\u' + hex(val)[2:].rjust(4, '0')
+
+
+class _IntegerDumper(_DataDumper):
+
+    def handles(self, data):
+        return isinstance(data, (int, long))
+
+    def dump(self, data):
+        self._write(str(data))
+
+
+class _DictDumper(_DataDumper):
+
+    def handles(self, data):
+        return isinstance(data, dict)
+
+    def dump(self, data):
+        self._write('{')
         last_index = len(data) - 1
         for index, key in enumerate(sorted(data)):
-            json_dump(key, output, mappings)
-            output.write(':')
-            json_dump(data[key], output, mappings)
+            self._dump(key)
+            self._write(':')
+            self._dump(data[key])
             if index < last_index:
-                output.write(',')
-        output.write('}')
-    elif _iterable(data):
-        output.write('[')
+                self._write(',')
+        self._write('}')
+
+
+class _IterableDumper(_DataDumper):
+
+    def handles(self, data):
+        try:
+            iter(data)
+        except TypeError:
+            return False
+        return not isinstance(data, (basestring, dict))
+
+    def dump(self, data):
+        self._write('[')
         last_index = len(data) - 1
         for index, item in enumerate(data):
-            json_dump(item, output, mappings)
+            self._dump(item)
             if index < last_index:
-                output.write(',')
-        output.write(']')
-    elif mappings and data in mappings:
-        output.write(mappings[data])
-    elif isinstance(data, (int, long)):
-        output.write(str(data))
-    elif isinstance(data, basestring):
-        output.write(_encode_string(data))
-    else:
-        raise ValueError('jsondumping %s not supported' % type(data))
+                self._write(',')
+        self._write(']')
 
 
-def _encode_string(string):
-    for char, repl in [('\\', '\\\\'), ('"', '\\"'), ('\n', '\\n'),
-                       ('\r', '\\r'), ('\t', '\\t')]:
-        string = string.replace(char, repl)
-    return '"%s"' % ''.join(_encode_char(c) for c in string)
+class _MappingDumper(_DataDumper):
 
-def _encode_char(c):
-    val = ord(c)
-    if 31 < val < 127:
-        return c
-    return '\\u' + hex(val)[2:].rjust(4, '0')
+    def handles(self, data):
+        return data in self._mapping
 
-def _iterable(item):
-    if isinstance(item, basestring):
-        return False
-    try:
-        iter(item)
-    except TypeError:
-        return False
-    return True
+    def dump(self, data):
+        self._write(self._mapping[data])
+
+
+class _NoneDumper(_DataDumper):
+
+    def handles(self, data):
+        return data is None
+
+    def dump(self, data):
+        self._write('null')

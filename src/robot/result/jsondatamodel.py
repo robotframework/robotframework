@@ -15,7 +15,7 @@
 import time
 
 from robot import utils
-from robot.result import jsondump
+from robot.result.jsondump import JsonDumper
 from robot.result.parsingcontext import TextIndex
 
 
@@ -123,20 +123,20 @@ class DataModel(object):
 class SeparatingWriter(object):
 
     def __init__(self, output, separator):
-        self._output = output
+        self._dumper = JsonDumper(output)
         self._separator = separator
 
     def separator(self):
-        self._output.write(self._separator)
+        self._dumper.write(self._separator)
 
-    def dump_json(self, prefix, data_block, postfix = ';\n', mapping=None):
+    def dump_json(self, prefix, data, postfix = ';\n', mapping=None):
         if prefix:
-            self._output.write(prefix)
-        jsondump.json_dump(data_block, self._output, mappings=mapping)
-        self._output.write(postfix)
+            self.write(prefix)
+        self._dumper.dump(data, mapping)
+        self.write(postfix)
 
     def write(self, string):
-        self._output.write(string)
+        self._dumper.write(string)
 
 
 class _SubResult(object):
