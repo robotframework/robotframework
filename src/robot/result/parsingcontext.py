@@ -229,6 +229,10 @@ class Location(object):
 class TextIndex(long):
     pass
 
+    # to prevent Jython from adding L character to the end
+    def __str__(self):
+        return str(long(self))
+
 
 class TextCache(object):
     # TODO: Tune compressing thresholds

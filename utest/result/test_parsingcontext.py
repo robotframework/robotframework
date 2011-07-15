@@ -2,8 +2,9 @@ import time
 import random
 import string
 import unittest
+from sys import maxint
 
-from robot.result.parsingcontext import Context, TextCache, Stats, Location
+from robot.result.parsingcontext import Context, TextCache, Stats, Location, TextIndex
 from robot.utils.asserts import assert_equals, assert_true
 
 
@@ -151,6 +152,18 @@ class TestSplittingContext(unittest.TestCase):
         self._context.end_test(['kw data 2'])
         assert_equals(self._context.split_results, [(['kw data 1'], ['*', '*log message in test 1']),
                                                     (['kw data 2'], ['*', '*log message in test 2'])])
+
+
+class TestTextIndex(unittest.TestCase):
+
+    def test_to_string(self):
+        value = TextIndex(42)
+        assert_equals(str(value), '42')
+
+    def test_long_values(self):
+        target = maxint + 42
+        value = TextIndex(target)
+        assert_equals(str(value), str(target))
 
 
 class TestStats(unittest.TestCase):
