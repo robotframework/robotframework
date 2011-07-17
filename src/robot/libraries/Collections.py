@@ -65,7 +65,7 @@ class _List:
     def combine_lists(self, *lists):
         """Combines the given `lists` together and returns the result.
 
-        The given lists are never altered by this keyword.
+        The given lists are not altered by this keyword.
 
         Example:
         | ${x} = | Combine List | ${L1} | ${L2} |       |
@@ -315,11 +315,12 @@ class _List:
           'False' or 'No Values', the error message is simply `msg`.
         - Otherwise the error message is `msg` + 'new line' + default.
         """
-        len1 = len(list1); len2 = len(list2)
+        len1 = len(list1)
+        len2 = len(list2)
         default = 'Lengths are different: %d != %d' % (len1, len2)
         _verify_condition(len1 == len2, default, msg, values)
-        diffs = [ 'Index %d: %s != %s' % (i, list1[i], list2[i])
-                  for i in range(len1) if list1[i] != list2[i] ]
+        diffs = ['Index %d: %s != %s' % (i, list1[i], list2[i])
+                 for i in range(len1) if list1[i] != list2[i]]
         default = 'Lists are different:\n' + '\n'.join(diffs)
         _verify_condition(diffs == [], default, msg, values)
 
@@ -332,7 +333,8 @@ class _List:
         See the use of `msg` and `values` from the `Lists Should Be Equal`
         keyword.
         """
-        diffs = ', '.join([ utils.unic(item) for item in list2 if item not in list1 ])
+        diffs = ', '.join(utils.unic(item) for item in list2
+                          if item not in list1)
         default = 'Following values were not found from first list: ' + diffs
         _verify_condition(diffs == '', default, msg, values)
 
@@ -351,7 +353,7 @@ class _List:
             print 'List has one item:\n%s' % list_[0]
         else:
             print 'List length is %d and it contains following items:' \
-                  % len(list_)
+                % len(list_)
             for index, item in enumerate(list_):
                 print '%s: %s' % (index, item)
 
@@ -431,7 +433,7 @@ class _Dictionary:
         =>
         - ${D5} = {'b': 2, 'd': 4}
         """
-        remove_keys = [ key for key in dictionary.keys() if not key in keys ]
+        remove_keys = [k for k in dictionary if k not in keys]
         self.remove_from_dictionary(dictionary, *remove_keys)
 
     def copy_dictionary(self, dictionary):
@@ -452,9 +454,7 @@ class _Dictionary:
         =>
         - ${keys} = ['a', 'b', 'c']
         """
-        keys = dictionary.keys()
-        keys.sort()
-        return keys
+        return sorted(dictionary)
 
     def get_dictionary_values(self, dictionary):
         """Returns values of the given dictionary.
@@ -467,12 +467,12 @@ class _Dictionary:
         =>
         - ${values} = [1, 2, 3]
         """
-        return [ dictionary[k] for k in self.get_dictionary_keys(dictionary) ]
+        return [dictionary[k] for k in self.get_dictionary_keys(dictionary)]
 
     def get_dictionary_items(self, dictionary):
         """Returns items of the given `dictionary`.
 
-        Items are returned sorted by keys. The given `dictionary` is never
+        Items are returned sorted by keys. The given `dictionary` is not
         altered by this keyword.
 
         Example:
@@ -592,21 +592,21 @@ class _Dictionary:
     def _keys_should_be_equal(self, dict1, dict2, msg, values):
         keys1 = self.get_dictionary_keys(dict1)
         keys2 = self.get_dictionary_keys(dict2)
-        miss1 = [ utils.unic(k) for k in keys2 if k not in dict1 ]
-        miss2 = [ utils.unic(k) for k in keys1 if k not in dict2 ]
+        miss1 = [utils.unic(k) for k in keys2 if k not in dict1]
+        miss2 = [utils.unic(k) for k in keys1 if k not in dict2]
         error = []
         if miss1:
-            error += [ 'Following keys missing from first dictionary: %s'
-                       % ', '.join(miss1) ]
+            error += ['Following keys missing from first dictionary: %s'
+                      % ', '.join(miss1)]
         if miss2:
-            error += [ 'Following keys missing from second dictionary: %s'
-                       % ', '.join(miss2) ]
+            error += ['Following keys missing from second dictionary: %s'
+                      % ', '.join(miss2)]
         _verify_condition(error == [], '\n'.join(error), msg, values)
         return keys1
 
     def _key_values_should_be_equal(self, keys, dict1, dict2, msg, values):
-        diffs = [ 'Key %s: %s != %s' % (k, dict1[k], dict2[k])
-                  for k in keys if dict1[k] != dict2[k] ]
+        diffs = ['Key %s: %s != %s' % (k, dict1[k], dict2[k])
+                 for k in keys if dict1[k] != dict2[k]]
         default = 'Following keys have different values:\n' + '\n'.join(diffs)
         _verify_condition(diffs == [], default, msg, values)
 
