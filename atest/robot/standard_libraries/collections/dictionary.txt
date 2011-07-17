@@ -1,0 +1,132 @@
+*** Settings ***
+Documentation   Tests for Collections library's dictionary functionality
+Suite Setup     Run Tests  --loglevel debug  standard_libraries/collections/dictionary.txt
+Force Tags      regression
+Default Tags    jybot  pybot
+Resource        atest_resource.txt
+
+*** Test Cases ***
+Create Dictionary
+    Check Test Case  Create Dictionary
+
+Create Dictionary with wrong number of arguments
+    Check Test Case  Create Dictionary with wrong number of arguments
+
+Set To Dictionary
+    Check Test Case  Set To Dictionary
+
+Set To Dictionary With wrong number of arguments
+    Check Test Case  Set To Dictionary With wrong number of arguments
+
+Remove From Dictionary
+    ${test case} =  Check Test Case  Remove From Dictionary
+    Check Log Message  ${test case.kws[0].msgs[0]}  Removed item with key 'b' and value '2'\n Key 'x' not found\n Key '2' not found
+
+Keep In Dictionary
+    Check Test Case  Keep In Dictionary
+
+Copy Dictionary
+    Check Test Case  Copy Dictionary
+
+Get Dictionary Keys
+    Check Test Case  Get Dictionary Keys
+
+Get Dictionary Values
+    Check Test Case  Get Dictionary Values
+
+Get Dictionary Items
+    Check Test Case  Get Dictionary Items
+
+Get From Dictionary
+    Check Test Case  Get From Dictionary
+
+Get From Dictionary With Invalid Key
+    Check Test Case  Get From Dictionary With Invalid Key
+
+Dictionary Should Contain Key
+    Check Test Case  Dictionary Should Contain Key
+
+Dictionary Should Contain Key With Missing Key
+    Check Test Case  Dictionary Should Contain Key With Missing Key
+
+Dictionary Should Not Contain Key
+    Check Test Case  Dictionary Should Not Contain Key
+
+Dictionary Should Not Contain Key With Existing Key
+    Check Test Case  Dictionary Should Not Contain Key With Existing Key
+
+Dictionary Should Contain Value
+    Check Test Case  Dictionary Should Contain Value
+
+Dictionary Should Contain Value With Missing Value
+    Check Test Case  Dictionary Should Contain Value With Missing Value
+
+Dictionary Should Not Contain Value
+    Check Test Case  Dictionary Should Not Contain Value
+
+Dictionary Should Not Contain Value With Existing Value
+    Check Test Case  Dictionary Should Not Contain Value With Existing Value
+
+Dictionaries Should Be Equal
+    Check Test Case  Dictionaries Should Be Equal
+
+Dictionaries Should Equal With First Dictionary Missing Keys
+    Check Test Case  Dictionaries Should Equal With First Dictionary Missing Keys
+
+Dictionaries Should Equal With Second Dictionary Missing Keys
+    Check Test Case  Dictionaries Should Equal With Second Dictionary Missing Keys
+
+Dictionaries Should Equal With Both Dictionaries Missing Keys
+    Check Test Case  Dictionaries Should Equal With Both Dictionaries Missing Keys
+
+Dictionaries Should Be Equal With Different Keys And Own Error Message
+    Check Test Case  Dictionaries Should Be Equal With Different Keys And Own Error Message
+
+Dictionaries Should Be Equal With Different Keys And Own And Default Error Messages
+    Check Test Case  Dictionaries Should Be Equal With Different Keys And Own And Default Error Messages
+
+Dictionaries Should Be Equal With Different Values
+    Check Test Case  Dictionaries Should Be Equal With Different Values
+
+Dictionaries Should Be Equal With Different Values And Own Error Message
+    Check Test Case  Dictionaries Should Be Equal With Different Values And Own Error Message
+
+Dictionaries Should Be Equal With Different Values And Own And Default Error Messages
+    Check Test Case  Dictionaries Should Be Equal With Different Values And Own And Default Error Messages
+
+Dictionary Should Contain Sub Dictionary
+    Check Test Case  Dictionary Should Contain Sub Dictionary
+
+Dictionary Should Contain Sub Dictionary With Missing Keys
+    Check Test Case  Dictionary Should Contain Sub Dictionary With Missing Keys
+
+Dictionary Should Contain Sub Dictionary With Missing Keys And Own Error Message
+    Check Test Case  Dictionary Should Contain Sub Dictionary With Missing Keys And Own Error Message
+
+Dictionary Should Contain Sub Dictionary With Missing Keys And Own And Default Error Message
+    Check Test Case  Dictionary Should Contain Sub Dictionary With Missing Keys And Own And Default Error Message
+
+Dictionary Should Contain Sub Dictionary With Different Value
+    Check Test Case  Dictionary Should Contain Sub Dictionary With Different Value
+
+Dictionary Should Contain Sub Dictionary With Different Value And Own Error Message
+    Check Test Case  Dictionary Should Contain Sub Dictionary With Different Value And Own Error Message
+
+Dictionary Should Contain Sub Dictionary With Different Value And Own And Default Error Message
+    Check Test Case  Dictionary Should Contain Sub Dictionary With Different Value And Own And Default Error Message
+
+Log Dictionary With Different Log Levels
+    ${tc} =  Check Test Case  Log Dictionary With Different Log Levels
+    ${expected} =  Set Variable  Dictionary size is 3 and it contains following items:\n 3: None\n a: 1\n b: 2
+    Check Log Message  ${tc.kws[0].msgs[0]}  ${expected}  INFO
+    Variable Should Not Exist  ${tc.kws[1].msgs[0]}
+    Check Log Message  ${tc.kws[2].msgs[0]}  ${expected}  WARN
+    Check Log Message  ${tc.kws[3].msgs[0]}  ${expected}  DEBUG
+    Check Log Message  ${tc.kws[4].msgs[0]}  ${expected}  INFO
+
+Log Dictionary With Different Dictionaries
+    ${tc} =  Check Test Case  Log Dictionary With Different Dictionaries
+    Check Log Message  ${tc.kws[0].msgs[0]}  Dictionary is empty  INFO
+    Check Log Message  ${tc.kws[1].msgs[0]}  Dictionary has one item:\n a: 1  INFO
+    Check Log Message  ${tc.kws[4].msgs[0]}  Dictionary size is 2 and it contains following items:\n (1, 2, 3): 3.12\n 1: 2  INFO
+
