@@ -243,18 +243,35 @@ Lists Should Be Equal With Different Lengths And Own And Default Error Messages
 
 Lists Should Be Equal With Different Values
     [Documentation]  FAIL Lists are different:\n Index 0: 11 != 10\n Index 1: 12 != 12\n Index 2: 13 != 14
-    ${different values} =  Create List  10  12  14
-    Lists Should Be Equal  ${L3}  ${different values}
+    Lists Should Be Equal  ${L3}  ${L3B}
 
 Lists Should Be Equal With Different Values And Own Error Message
     [Documentation]  FAIL My error message!
-    ${different values} =  Create List  10  12  14
-    Lists Should Be Equal  ${L3}  ${different values}  My error message!  False
+    Lists Should Be Equal  ${L3}  ${L3B}  My error message!  False
 
 Lists Should Be Equal With Different Values And Own And Default Error Messages
     [Documentation]  FAIL My error message!\n Lists are different:\n Index 0: 11 != 10\n Index 1: 12 != 12\n Index 2: 13 != 14
-    ${different values} =  Create List  10  12  14
-    Lists Should Be Equal  ${L3}  ${different values}  My error message!
+    Lists Should Be Equal  ${L3}  ${L3B}  My error message!
+
+Lists Should Be Equal With Named Indices As List
+    [Documentation]  FAIL Lists are different:\n Index 0 (a): 11 != 10\n Index 1 (b): 12 != 12\n Index 2 (c): 13 != 14
+    ${names} =  Create List  a  b  c  ignored
+    Lists Should Be Equal  ${L3}  ${L3B}  names=${names}
+
+Lists Should Be Equal With Named Indices As List With Too Few Values
+    [Documentation]  FAIL My message\nLists are different:\n Index 0 (a): 11 != 10\n Index 1 (b): 12 != 12\n Index 2: 13 != 14
+    ${names} =  Create List  a  b
+    Lists Should Be Equal  ${L3}  ${L3B}  My message  names=${names}
+
+Lists Should Be Equal With Named Indices As Dictionary
+    [Documentation]  FAIL Lists are different:\n Index 0 (a): 11 != 10\n Index 1 (b): 12 != 12\n Index 2 (c): 13 != 14
+    ${names} =  Create Dictionary  0  a  1  b  2  c  42  ignored
+    Lists Should Be Equal  ${L3}  ${L3B}  names=${names}
+
+Lists Should Be Equal With Named Indices As Dictionary With Too Few Values
+    [Documentation]  FAIL Lists are different:\n Index 0 (a): 11 != 10\n Index 1: 12 != 12\n Index 2 (c): 13 != 14
+    ${names} =  Create Dictionary  0  a  2  c
+    Lists Should Be Equal  ${L3}  ${L3B}  names=${names}
 
 List Should Contain Sub List
     List Should Contain Sub List  ${LONG}  ${L4}
@@ -295,6 +312,8 @@ Create Lists For The Tests
     Set Test Variable  \${L2}
     ${L3} =  Create List  11  ${12}  13
     Set Test Variable  \${L3}
+    ${L3B} =  Create List  10  12  14
+    Set Test Variable  \${L3B}
     ${L4} =  Create List  41  ${42}  43  44
     Set Test Variable  \${L4}
     ${LONG} =  Combine Lists  ${L1}  ${L2}  ${L4}  ${L2}
@@ -309,4 +328,3 @@ Get Random Item And Add It To List
     [Arguments]  ${from list}  ${to list}
     ${item} =  Get Item From List  Ran Dom  ${from list}
     Add Item To List  ${to list}  ${item}
-

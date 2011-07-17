@@ -172,6 +172,18 @@ Lists Should Be equal With Different Values And Own Error Message
 Lists Should Be equal With Different Values And Own And Default Error Messages
     Check Test Case  ${TEST NAME}
 
+Lists Should Be Equal With Named Indices As List
+    Check Test Case  ${TEST NAME}
+
+Lists Should Be Equal With Named Indices As List With Too Few Values
+    Check Test Case  ${TEST NAME}
+
+Lists Should Be Equal With Named Indices As Dictionary
+    Check Test Case  ${TEST NAME}
+
+Lists Should Be Equal With Named Indices As Dictionary With Too Few Values
+    Check Test Case  ${TEST NAME}
+
 List Should Contain Sub List
     Check Test Case  ${TEST NAME}
 

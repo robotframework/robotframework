@@ -303,26 +303,60 @@ class _List:
                 msg = '%s found multiple times' % utils.seq2str(dupes)
             raise AssertionError(msg)
 
-    def lists_should_be_equal(self, list1, list2, msg=None, values=True):
+    def lists_should_be_equal(self, list1, list2, msg=None, values=True,
+                              names=None):
         """Fails if given lists are unequal.
 
-        The keyword first verifies that the lists have equal lengths, and
-        then it checks are all the values equal. Possible differences between
-        the values are listed in the default error message.
+        The keyword first verifies that the lists have equal lengths, and then
+        it checks are all their values equal. Possible differences between the
+        values are listed in the default error message like `Index 4: ABC !=
+        Abc`.
 
+        The error message can be configured using `msg` and `values` arguments:
         - If `msg` is not given, the default error message is used.
         - If `msg` is given and `values` is either Boolean False or a string
           'False' or 'No Values', the error message is simply `msg`.
         - Otherwise the error message is `msg` + 'new line' + default.
+
+        Optional `names` argument (new in 2.6) can be used for naming
+        the indices shown in the default error message. It can either
+        be a list of names matching the indices in the lists or a
+        dictionary where keys are indices that need to be named. It is
+        not necessary to name all of the indices.  When using a
+        dictionary, keys can be either integers or strings that can be
+        converted to integers.
+
+        Examples:
+        | ${names} = | Create List | First Name | Family Name | Email |
+        | Lists Should Be Equal | ${people1} | ${people2} | names=${names} |
+        | ${names} = | Create Dictionary | 0 | First Name | 2 | Email |
+        | Lists Should Be Equal | ${people1} | ${people2} | names=${names} |
+
+        If the items in index 2 would differ in the above examples, the error
+        message would contain a row like `Index 2 (email): name@foo.com !=
+        name@bar.com`.
         """
         len1 = len(list1)
         len2 = len(list2)
         default = 'Lengths are different: %d != %d' % (len1, len2)
         _verify_condition(len1 == len2, default, msg, values)
-        diffs = ['Index %d: %s != %s' % (i, list1[i], list2[i])
-                 for i in range(len1) if list1[i] != list2[i]]
+        names = self._get_list_index_name_mapping(names, len1)
+        diffs = list(self._get_diffs(list1, list2, names))
         default = 'Lists are different:\n' + '\n'.join(diffs)
         _verify_condition(diffs == [], default, msg, values)
+
+    def _get_list_index_name_mapping(self, names, list_length):
+        if not names:
+            return {}
+        if isinstance(names, dict):
+            return dict((int(index), names[index]) for index in names)
+        return dict(zip(range(list_length), names))
+
+    def _get_diffs(self, list1, list2, names):
+        for index, (item1, item2) in enumerate(zip(list1, list2)):
+            if item1 != item2:
+                name = ' (%s)' % names[index] if index in names else ''
+                yield 'Index %d%s: %s != %s' % (index, name, item1, item2)
 
     def list_should_contain_sub_list(self, list1, list2, msg=None, values=True):
         """Fails if not all of the elements in `list2` are found in `list1`.
