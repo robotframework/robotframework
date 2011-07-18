@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<robot>
+<suite source="/home/peke/Devel/robotframework/atest/testdata/misc/suites/subsuites/sub1.html" name="Sub1">
+<doc>Normal test cases</doc>
+<metadata>
+<item name="Something">My Value</item>
+</metadata>
+<test critical="yes" name="SubSuite1 First" timeout="">
+<doc></doc>
+<kw type="kw" name="BuiltIn.Log" timeout="">
+<doc>Logs the given message with the given level.</doc>
+<arguments>
+<arg>SubSuite1_First</arg>
+</arguments>
+<msg timestamp="20110718 01:35:35.044" level="INFO">SubSuite1_First</msg>
+<status status="PASS" endtime="20110718 01:35:35.044" starttime="20110718 01:35:35.043"></status>
+</kw>
+<kw type="kw" name="BuiltIn.Sleep" timeout="">
+<doc>Pauses the test executed for the given time.</doc>
+<arguments>
+<arg>${SLEEP}</arg>
+</arguments>
+<msg timestamp="20110718 01:35:35.146" level="INFO">Slept 100 milliseconds</msg>
+<status status="PASS" endtime="20110718 01:35:35.147" starttime="20110718 01:35:35.045"></status>
+</kw>
+<kw type="kw" name="DeprecatedBuiltIn.Equals" timeout="">
+<doc>Fails if the given objects are unequal.</doc>
+<arguments>
+<arg>${FAIL}</arg>
+<arg>NO</arg>
+<arg>This test was doomed to fail</arg>
+</arguments>
+<msg timestamp="20110718 01:35:35.148" level="INFO">Argument types are:
+&lt;type 'unicode'&gt;
+&lt;type 'unicode'&gt;</msg>
+<status status="PASS" endtime="20110718 01:35:35.148" starttime="20110718 01:35:35.147"></status>
+</kw>
+<tags>
+<tag>f1</tag>
+<tag>t1</tag>
+</tags>
+<status status="PASS" endtime="20110718 01:35:35.149" critical="yes" starttime="20110718 01:35:35.042"></status>
+</test>
+<status status="PASS" endtime="20110718 01:35:35.150" starttime="20110718 01:35:35.038"></status>
+</suite>
+</robot>

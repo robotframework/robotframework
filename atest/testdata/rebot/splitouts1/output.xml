@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<robot generated="20110718 01:22:19.163" generator="Robot 2.5.7 (Python 2.6.6 on linux2)">
+<suite source="/home/peke/Devel/robotframework/atest/testdata/misc/suites" name="Suites">
+<doc></doc>
+<metadata>
+</metadata>
+<suite src="output-001.xml" name="Fourth" source="/home/peke/Devel/robotframework/atest/testdata/misc/suites/fourth.html">
+<doc>Normal test cases</doc>
+<metadata>
+<item name="Something">My Value</item>
+</metadata>
+<status status="FAIL" endtime="20110718 01:22:19.543" starttime="20110718 01:22:19.418"></status>
+</suite>
+<suite src="output-002.xml" name="Subsuites" source="/home/peke/Devel/robotframework/atest/testdata/misc/suites/subsuites">
+<doc></doc>
+<metadata>
+</metadata>
+<status status="PASS" endtime="20110718 01:22:19.810" starttime="20110718 01:22:19.579"></status>
+</suite>
+<suite src="output-003.xml" name="Subsuites2" source="/home/peke/Devel/robotframework/atest/testdata/misc/suites/subsuites2">
+<doc></doc>
+<metadata>
+</metadata>
+<status status="PASS" endtime="20110718 01:22:19.971" starttime="20110718 01:22:19.852"></status>
+</suite>
+<suite src="output-004.xml" name="Tsuite1" source="/home/peke/Devel/robotframework/atest/testdata/misc/suites/tsuite1.html">
+<doc>Normal test cases</doc>
+<metadata>
+<item name="Something">My Value</item>
+</metadata>
+<status status="PASS" endtime="20110718 01:22:20.128" starttime="20110718 01:22:20.007"></status>
+</suite>
+<suite src="output-005.xml" name="Tsuite2" source="/home/peke/Devel/robotframework/atest/testdata/misc/suites/tsuite2.html">
+<doc>Normal test cases</doc>
+<metadata>
+<item name="Something">My Value</item>
+</metadata>
+<status status="PASS" endtime="20110718 01:22:20.275" starttime="20110718 01:22:20.164"></status>
+</suite>
+<suite src="output-006.xml" name="Tsuite3" source="/home/peke/Devel/robotframework/atest/testdata/misc/suites/tsuite3.html">
+<doc>Normal test cases</doc>
+<metadata>
+<item name="Something">My Value</item>
+</metadata>
+<status status="PASS" endtime="20110718 01:22:20.421" starttime="20110718 01:22:20.308"></status>
+</suite>
+<kw type="teardown" name="BuiltIn.Log" timeout="">
+<doc>Logs the given message with the given level.</doc>
+<arguments>
+<arg>${SUITE_TEARDOWN_ARG}</arg>
+</arguments>
+<msg timestamp="20110718 01:22:20.456" level="INFO">Default suite teardown</msg>
+<status status="PASS" endtime="20110718 01:22:20.457" starttime="20110718 01:22:20.456"></status>
+</kw>
+<status status="FAIL" endtime="20110718 01:22:20.457" starttime="20110718 01:22:19.343"></status>
+</suite>
+<statistics>
+<total>
+<stat fail="1" pass="9">Critical Tests</stat>
+<stat fail="1" pass="9">All Tests</stat>
+</total>
+<tag>
+<stat info="" fail="0" pass="1">d1</stat>
+<stat info="" fail="0" pass="1">d2</stat>
+<stat info="" fail="1" pass="9">f1</stat>
+<stat info="" fail="0" pass="2">sub3</stat>
+<stat info="" fail="1" pass="5">t1</stat>
+<stat info="" fail="0" pass="2">t2</stat>
+</tag>
+<suite>
+<stat fail="1" doc="Suites" pass="9">Suites</stat>
+<stat fail="1" doc="Fourth" pass="0">Fourth</stat>
+<stat fail="0" doc="Subsuites" pass="2">Subsuites</stat>
+<stat fail="0" doc="Subsuites.Sub1" pass="1">Subsuites.Sub1</stat>
+<stat fail="0" doc="Subsuites.Sub2" pass="1">Subsuites.Sub2</stat>
+<stat fail="0" doc="Subsuites2" pass="2">Subsuites2</stat>
+<stat fail="0" doc="Subsuites2.Subsuite3" pass="2">Subsuites2.Subsuite3</stat>
+<stat fail="0" doc="Tsuite1" pass="3">Tsuite1</stat>
+<stat fail="0" doc="Tsuite2" pass="1">Tsuite2</stat>
+<stat fail="0" doc="Tsuite3" pass="1">Tsuite3</stat>
+</suite>
+</statistics>
+<errors>
+</errors>
+</robot>

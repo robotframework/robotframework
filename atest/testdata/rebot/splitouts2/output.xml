@@ -1,0 +1,270 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<robot generated="20110718 01:35:34.624" generator="Robot 2.5.7 (Python 2.6.6 on linux2)">
+<suite source="/home/peke/Devel/robotframework/atest/testdata/misc/suites" name="Suites">
+<doc></doc>
+<metadata>
+</metadata>
+<suite source="/home/peke/Devel/robotframework/atest/testdata/misc/suites/fourth.html" name="Fourth">
+<doc>Normal test cases</doc>
+<metadata>
+<item name="Something">My Value</item>
+</metadata>
+<test critical="yes" name="Suite4 First" timeout="">
+<doc>FAIL Expected</doc>
+<kw type="kw" name="BuiltIn.Log" timeout="">
+<doc>Logs the given message with the given level.</doc>
+<arguments>
+<arg>Suite4_First</arg>
+</arguments>
+<msg timestamp="20110718 01:35:34.915" level="INFO">Suite4_First</msg>
+<status status="PASS" endtime="20110718 01:35:34.915" starttime="20110718 01:35:34.914"></status>
+</kw>
+<kw type="kw" name="BuiltIn.Sleep" timeout="">
+<doc>Pauses the test executed for the given time.</doc>
+<arguments>
+<arg>0.1</arg>
+</arguments>
+<msg timestamp="20110718 01:35:35.017" level="INFO">Slept 100 milliseconds</msg>
+<status status="PASS" endtime="20110718 01:35:35.018" starttime="20110718 01:35:34.916"></status>
+</kw>
+<kw type="kw" name="BuiltIn.Fail" timeout="">
+<doc>Fails the test immediately with the given (optional) message.</doc>
+<arguments>
+<arg>Expected</arg>
+</arguments>
+<msg timestamp="20110718 01:35:35.023" level="FAIL">Expected</msg>
+<msg timestamp="20110718 01:35:35.024" level="DEBUG">Traceback (most recent call last):
+  File "/home/peke/Devel/robotframework/src/robot/libraries/BuiltIn.py", line 141, in fail
+    raise AssertionError(msg) if msg else AssertionError()</msg>
+<status status="FAIL" endtime="20110718 01:35:35.024" starttime="20110718 01:35:35.019"></status>
+</kw>
+<kw type="teardown" name="BuiltIn.Log" timeout="">
+<doc>Logs the given message with the given level.</doc>
+<arguments>
+<arg>Huhuu</arg>
+</arguments>
+<msg timestamp="20110718 01:35:35.027" level="INFO">Huhuu</msg>
+<status status="PASS" endtime="20110718 01:35:35.027" starttime="20110718 01:35:35.026"></status>
+</kw>
+<tags>
+<tag>f1</tag>
+<tag>t1</tag>
+</tags>
+<status status="FAIL" endtime="20110718 01:35:35.028" critical="yes" starttime="20110718 01:35:34.913">Expected</status>
+</test>
+<kw type="teardown" name="BuiltIn.Log" timeout="">
+<doc>Logs the given message with the given level.</doc>
+<arguments>
+<arg>Suite Teardonw of Fourth</arg>
+</arguments>
+<msg timestamp="20110718 01:35:35.032" level="INFO">Suite Teardonw of Fourth</msg>
+<status status="PASS" endtime="20110718 01:35:35.032" starttime="20110718 01:35:35.030"></status>
+</kw>
+<status status="FAIL" endtime="20110718 01:35:35.033" starttime="20110718 01:35:34.910"></status>
+</suite>
+<suite source="/home/peke/Devel/robotframework/atest/testdata/misc/suites/subsuites" name="Subsuites">
+<doc></doc>
+<metadata>
+</metadata>
+<suite src="output-001.xml" name="Sub1" source="/home/peke/Devel/robotframework/atest/testdata/misc/suites/subsuites/sub1.html">
+<doc>Normal test cases</doc>
+<metadata>
+<item name="Something">My Value</item>
+</metadata>
+<status status="PASS" endtime="20110718 01:35:35.150" starttime="20110718 01:35:35.038"></status>
+</suite>
+<suite src="output-002.xml" name="Sub2" source="/home/peke/Devel/robotframework/atest/testdata/misc/suites/subsuites/sub2.html">
+<doc>Normal test cases</doc>
+<metadata>
+<item name="Something">My Value</item>
+</metadata>
+<status status="PASS" endtime="20110718 01:35:35.292" starttime="20110718 01:35:35.182"></status>
+</suite>
+<status status="PASS" endtime="20110718 01:35:35.322" starttime="20110718 01:35:35.035"></status>
+</suite>
+<suite source="/home/peke/Devel/robotframework/atest/testdata/misc/suites/subsuites2" name="Subsuites2">
+<doc></doc>
+<metadata>
+</metadata>
+<suite src="output-003.xml" name="Subsuite3" source="/home/peke/Devel/robotframework/atest/testdata/misc/suites/subsuites2/subsuite3.html">
+<doc>Normal test cases</doc>
+<metadata>
+<item name="Something">My Value</item>
+</metadata>
+<status status="PASS" endtime="20110718 01:35:35.442" starttime="20110718 01:35:35.326"></status>
+</suite>
+<status status="PASS" endtime="20110718 01:35:35.474" starttime="20110718 01:35:35.323"></status>
+</suite>
+<suite source="/home/peke/Devel/robotframework/atest/testdata/misc/suites/tsuite1.html" name="Tsuite1">
+<doc>Normal test cases</doc>
+<metadata>
+<item name="Something">My Value</item>
+</metadata>
+<test critical="yes" name="Suite1 First" timeout="">
+<doc></doc>
+<kw type="kw" name="BuiltIn.Log" timeout="">
+<doc>Logs the given message with the given level.</doc>
+<arguments>
+<arg>Suite1_First</arg>
+</arguments>
+<msg timestamp="20110718 01:35:35.480" level="INFO">Suite1_First</msg>
+<status status="PASS" endtime="20110718 01:35:35.480" starttime="20110718 01:35:35.480"></status>
+</kw>
+<kw type="kw" name="BuiltIn.Sleep" timeout="">
+<doc>Pauses the test executed for the given time.</doc>
+<arguments>
+<arg>0.1</arg>
+</arguments>
+<msg timestamp="20110718 01:35:35.582" level="INFO">Slept 100 milliseconds</msg>
+<status status="PASS" endtime="20110718 01:35:35.583" starttime="20110718 01:35:35.481"></status>
+</kw>
+<tags>
+<tag>f1</tag>
+<tag>t1</tag>
+</tags>
+<status status="PASS" endtime="20110718 01:35:35.584" critical="yes" starttime="20110718 01:35:35.478"></status>
+</test>
+<test critical="yes" name="Suite1 Second" timeout="">
+<doc></doc>
+<kw type="kw" name="BuiltIn.Log" timeout="">
+<doc>Logs the given message with the given level.</doc>
+<arguments>
+<arg>Suite1_Second</arg>
+</arguments>
+<msg timestamp="20110718 01:35:35.589" level="INFO">Suite1_Second</msg>
+<status status="PASS" endtime="20110718 01:35:35.590" starttime="20110718 01:35:35.588"></status>
+</kw>
+<tags>
+<tag>f1</tag>
+<tag>t2</tag>
+</tags>
+<status status="PASS" endtime="20110718 01:35:35.591" critical="yes" starttime="20110718 01:35:35.586"></status>
+</test>
+<test critical="yes" name="Third In Suite1" timeout="">
+<doc></doc>
+<kw type="kw" name="BuiltIn.Log" timeout="">
+<doc>Logs the given message with the given level.</doc>
+<arguments>
+<arg>Suite2_third</arg>
+</arguments>
+<msg timestamp="20110718 01:35:35.596" level="INFO">Suite2_third</msg>
+<status status="PASS" endtime="20110718 01:35:35.596" starttime="20110718 01:35:35.594"></status>
+</kw>
+<tags>
+<tag>d1</tag>
+<tag>d2</tag>
+<tag>f1</tag>
+</tags>
+<status status="PASS" endtime="20110718 01:35:35.597" critical="yes" starttime="20110718 01:35:35.592"></status>
+</test>
+<status status="PASS" endtime="20110718 01:35:35.599" starttime="20110718 01:35:35.475"></status>
+</suite>
+<suite source="/home/peke/Devel/robotframework/atest/testdata/misc/suites/tsuite2.html" name="Tsuite2">
+<doc>Normal test cases</doc>
+<metadata>
+<item name="Something">My Value</item>
+</metadata>
+<test critical="yes" name="Suite2 First" timeout="">
+<doc></doc>
+<kw type="kw" name="BuiltIn.Log" timeout="">
+<doc>Logs the given message with the given level.</doc>
+<arguments>
+<arg>Suite2_First</arg>
+</arguments>
+<msg timestamp="20110718 01:35:35.606" level="INFO">Suite2_First</msg>
+<status status="PASS" endtime="20110718 01:35:35.606" starttime="20110718 01:35:35.605"></status>
+</kw>
+<kw type="kw" name="BuiltIn.Sleep" timeout="">
+<doc>Pauses the test executed for the given time.</doc>
+<arguments>
+<arg>0.1</arg>
+</arguments>
+<msg timestamp="20110718 01:35:35.708" level="INFO">Slept 100 milliseconds</msg>
+<status status="PASS" endtime="20110718 01:35:35.708" starttime="20110718 01:35:35.607"></status>
+</kw>
+<tags>
+<tag>f1</tag>
+<tag>t1</tag>
+</tags>
+<status status="PASS" endtime="20110718 01:35:35.708" critical="yes" starttime="20110718 01:35:35.604"></status>
+</test>
+<status status="PASS" endtime="20110718 01:35:35.709" starttime="20110718 01:35:35.600"></status>
+</suite>
+<suite source="/home/peke/Devel/robotframework/atest/testdata/misc/suites/tsuite3.html" name="Tsuite3">
+<doc>Normal test cases</doc>
+<metadata>
+<item name="Something">My Value</item>
+</metadata>
+<test critical="yes" name="Suite3 First" timeout="">
+<doc></doc>
+<kw type="kw" name="BuiltIn.Log" timeout="">
+<doc>Logs the given message with the given level.</doc>
+<arguments>
+<arg>Suite3_First</arg>
+</arguments>
+<msg timestamp="20110718 01:35:35.719" level="INFO">Suite3_First</msg>
+<status status="PASS" endtime="20110718 01:35:35.720" starttime="20110718 01:35:35.719"></status>
+</kw>
+<kw type="kw" name="BuiltIn.Sleep" timeout="">
+<doc>Pauses the test executed for the given time.</doc>
+<arguments>
+<arg>0.1</arg>
+</arguments>
+<msg timestamp="20110718 01:35:35.822" level="INFO">Slept 100 milliseconds</msg>
+<status status="PASS" endtime="20110718 01:35:35.822" starttime="20110718 01:35:35.720"></status>
+</kw>
+<tags>
+<tag>f1</tag>
+<tag>t1</tag>
+</tags>
+<status status="PASS" endtime="20110718 01:35:35.823" critical="yes" starttime="20110718 01:35:35.717"></status>
+</test>
+<kw type="teardown" name="BuiltIn.Log" timeout="">
+<doc>Logs the given message with the given level.</doc>
+<arguments>
+<arg>Suite Teardown of Tsuite3</arg>
+</arguments>
+<msg timestamp="20110718 01:35:35.827" level="INFO">Suite Teardown of Tsuite3</msg>
+<status status="PASS" endtime="20110718 01:35:35.827" starttime="20110718 01:35:35.825"></status>
+</kw>
+<status status="PASS" endtime="20110718 01:35:35.827" starttime="20110718 01:35:35.710"></status>
+</suite>
+<kw type="teardown" name="BuiltIn.Log" timeout="">
+<doc>Logs the given message with the given level.</doc>
+<arguments>
+<arg>${SUITE_TEARDOWN_ARG}</arg>
+</arguments>
+<msg timestamp="20110718 01:35:35.829" level="INFO">Default suite teardown</msg>
+<status status="PASS" endtime="20110718 01:35:35.830" starttime="20110718 01:35:35.829"></status>
+</kw>
+<status status="FAIL" endtime="20110718 01:35:35.830" starttime="20110718 01:35:34.807"></status>
+</suite>
+<statistics>
+<total>
+<stat fail="1" pass="9">Critical Tests</stat>
+<stat fail="1" pass="9">All Tests</stat>
+</total>
+<tag>
+<stat info="" fail="0" pass="1">d1</stat>
+<stat info="" fail="0" pass="1">d2</stat>
+<stat info="" fail="1" pass="9">f1</stat>
+<stat info="" fail="0" pass="2">sub3</stat>
+<stat info="" fail="1" pass="5">t1</stat>
+<stat info="" fail="0" pass="2">t2</stat>
+</tag>
+<suite>
+<stat fail="1" doc="Suites" pass="9">Suites</stat>
+<stat fail="1" doc="Suites.Fourth" pass="0">Suites.Fourth</stat>
+<stat fail="0" doc="Suites.Subsuites" pass="2">Suites.Subsuites</stat>
+<stat fail="0" doc="Sub1" pass="1">Sub1</stat>
+<stat fail="0" doc="Sub2" pass="1">Sub2</stat>
+<stat fail="0" doc="Suites.Subsuites2" pass="2">Suites.Subsuites2</stat>
+<stat fail="0" doc="Subsuite3" pass="2">Subsuite3</stat>
+<stat fail="0" doc="Suites.Tsuite1" pass="3">Suites.Tsuite1</stat>
+<stat fail="0" doc="Suites.Tsuite2" pass="1">Suites.Tsuite2</stat>
+<stat fail="0" doc="Suites.Tsuite3" pass="1">Suites.Tsuite3</stat>
+</suite>
+</statistics>
+<errors>
+</errors>
+</robot>

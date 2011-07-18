@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<robot>
+<suite source="/home/peke/Devel/robotframework/atest/testdata/misc/suites/tsuite2.html" name="Tsuite2">
+<doc>Normal test cases</doc>
+<metadata>
+<item name="Something">My Value</item>
+</metadata>
+<test critical="yes" name="Suite2 First" timeout="">
+<doc></doc>
+<kw type="kw" name="BuiltIn.Log" timeout="">
+<doc>Logs the given message with the given level.</doc>
+<arguments>
+<arg>Suite2_First</arg>
+</arguments>
+<msg timestamp="20110718 01:22:20.170" level="INFO">Suite2_First</msg>
+<status status="PASS" endtime="20110718 01:22:20.170" starttime="20110718 01:22:20.169"></status>
+</kw>
+<kw type="kw" name="BuiltIn.Sleep" timeout="">
+<doc>Pauses the test executed for the given time.</doc>
+<arguments>
+<arg>0.1</arg>
+</arguments>
+<msg timestamp="20110718 01:22:20.272" level="INFO">Slept 100 milliseconds</msg>
+<status status="PASS" endtime="20110718 01:22:20.272" starttime="20110718 01:22:20.171"></status>
+</kw>
+<tags>
+<tag>f1</tag>
+<tag>t1</tag>
+</tags>
+<status status="PASS" endtime="20110718 01:22:20.274" critical="yes" starttime="20110718 01:22:20.168"></status>
+</test>
+<status status="PASS" endtime="20110718 01:22:20.275" starttime="20110718 01:22:20.164"></status>
+</suite>
+</robot>

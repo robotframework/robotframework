@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<robot>
+<suite source="/home/peke/Devel/robotframework/atest/testdata/misc/suites/subsuites/sub2.html" name="Sub2">
+<doc>Normal test cases</doc>
+<metadata>
+<item name="Something">My Value</item>
+</metadata>
+<test critical="yes" name="SubSuite2 First" timeout="">
+<doc></doc>
+<kw type="kw" name="BuiltIn.Log" timeout="">
+<doc>Logs the given message with the given level.</doc>
+<arguments>
+<arg>SubSuite2_First</arg>
+</arguments>
+<msg timestamp="20110718 01:35:35.188" level="INFO">SubSuite2_First</msg>
+<status status="PASS" endtime="20110718 01:35:35.189" starttime="20110718 01:35:35.188"></status>
+</kw>
+<kw type="kw" name="BuiltIn.Sleep" timeout="">
+<doc>Pauses the test executed for the given time.</doc>
+<arguments>
+<arg>${SLEEP}</arg>
+</arguments>
+<msg timestamp="20110718 01:35:35.290" level="INFO">Slept 100 milliseconds</msg>
+<status status="PASS" endtime="20110718 01:35:35.291" starttime="20110718 01:35:35.189"></status>
+</kw>
+<tags>
+<tag>f1</tag>
+</tags>
+<status status="PASS" endtime="20110718 01:35:35.291" critical="yes" starttime="20110718 01:35:35.186"></status>
+</test>
+<status status="PASS" endtime="20110718 01:35:35.292" starttime="20110718 01:35:35.182"></status>
+</suite>
+</robot>
