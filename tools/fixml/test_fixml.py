@@ -51,9 +51,8 @@ class TestFixml(unittest.TestCase):
         while len(input) > 250:
             input = input[:-10]
             fixxxed = fixml.Fixxxer(input)
-            suite_node = utils.DomWrapper(string=str(fixxxed)).get_node('suite')
-            suite_node.generator = 'fixml unit test'
-            suite = TestSuiteReader(suite_node)
+            root = utils.etreewrapper.get_root(string=str(fixxxed))
+            suite = TestSuiteReader(root.find('suite'))
             assert_equals(suite.name, 'Suite')
 
     def _fix_xml_and_parse(self, base):
