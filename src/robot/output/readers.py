@@ -67,7 +67,7 @@ def _get_errors_node(root):
 class _MissingStatus:
     """If XML was fixed for example by fixml.py, status tag may be missing"""
     text = 'Could not find status.'
-    get = lambda self, name, default: name == 'status' and 'FAIL' or 'N/A'
+    get = lambda self, name, default: 'FAIL' if name == 'status' else 'N/A'
 
 
 class _BaseReader:
@@ -150,13 +150,13 @@ class _KeywordReader(_BaseReader):
 class TestSuite(BaseTestSuite, _SuiteReader):
 
     def __init__(self, node, parent=None, log_level=None, settings=None):
+        node = self._get_possibly_split_node(node)
         BaseTestSuite.__init__(self, node.get('name'),
                                node.get('source', None), parent)
         _SuiteReader.__init__(self, node, log_level=log_level)
         self._set_times_from_settings(settings)
         for snode in node.findall('suite'):
-            snode.set('generator', node.get('generator'))
-            snode.set('path', node.get('path'))
+            self._set_attrs_from_parent(snode, node)
             TestSuite(snode, parent=self, log_level=log_level)
         for tnode in node.findall('test'):
             TestCase(tnode, parent=self, log_level=log_level)
@@ -164,6 +164,20 @@ class TestSuite(BaseTestSuite, _SuiteReader):
         if node.get('generator') == 'robot' and \
                 self.teardown and self.teardown.status == 'FAIL':
             self.suite_teardown_failed()
+
+    def _get_possibly_split_node(self, orig):
+        src = orig.get('src')
+        if not src:
+            return orig
+        # Support for split outputs generated with 2.5.x.
+        path = os.path.join(os.path.dirname(orig.get('path')), src)
+        node = utils.etreewrapper.get_root(path).find('suite')
+        self._set_attrs_from_parent(node, orig)
+        return node
+
+    def _set_attrs_from_parent(self, child, parent):
+        child.set('generator', parent.get('generator'))
+        child.set('path', parent.get('path'))
 
     def _set_times_from_settings(self, settings):
         starttime, endtime = self._times_from_settings(settings)
