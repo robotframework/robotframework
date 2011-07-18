@@ -14,7 +14,6 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-
 """fixml.py -- A tool to fix broken Robot Framework output files
 
 Usage:  fixml.py inpath outpath
@@ -28,6 +27,7 @@ See http://www.crummy.com/software/BeautifulSoup for more information.
 Additionally, the tool is only compatible with Robot Framework 2.1.3 or newer.
 """
 
+from __future__ import with_statement
 import sys
 import os
 try:
@@ -38,8 +38,7 @@ except ImportError:
 
 
 class Fixxxer(BeautifulStoneSoup):
-    NESTABLE_TAGS = {
-                     'suite': ['robot','suite', 'statistics'],
+    NESTABLE_TAGS = {'suite': ['robot','suite', 'statistics'],
                      'doc': ['suite', 'test', 'kw'],
                      'metadata': ['suite'],
                      'item': ['metadata'],
@@ -52,14 +51,13 @@ class Fixxxer(BeautifulStoneSoup):
                      'arguments': ['kw'],
                      'arg': ['arguments'],
                      'statistics': ['robot'],
-                     'errors': ['robot'],
-                     }
+                     'errors': ['robot']}
     __close_on_open = None
 
     def unknown_starttag(self, name, attrs, selfClosing=0):
         if name == 'robot':
-            attrs = [ (key, key == 'generator' and 'fixml.py' or value)
-                      for key, value in attrs ]
+            attrs = [(key, value if key != 'generator' else 'fixml.py')
+                     for key, value in attrs]
         if name == 'kw' and ('type', 'teardown') in attrs:
             while self.tagStack[-1].name not in ['test', 'suite']:
                 self._popToTag(self.tagStack[-1].name)
@@ -77,9 +75,9 @@ class Fixxxer(BeautifulStoneSoup):
 
 
 def main(inpath, outpath):
-    outfile = open(outpath, 'w')
-    outfile.write(str(Fixxxer(open(inpath))))
-    outfile.close()
+    with open(inpath) as infile:
+        with open(outpath, 'w') as outfile:
+            outfile.write(str(Fixxxer(infile)))
     return outpath
 
 
