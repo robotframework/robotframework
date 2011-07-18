@@ -31,7 +31,7 @@ except ImportError:
                 raise ImportError('No valid ElementTree XML parser module found')
 
 
-def get_root(path, string=None, node=None):
+def get_root(path=None, string=None, node=None):
     # This should NOT be changed to 'if not node:'. See chapter Truth Testing
     # from http://effbot.org/zone/element.htm#the-element-type
     if node is not None:
