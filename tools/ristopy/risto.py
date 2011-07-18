@@ -14,7 +14,6 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-
 """risto.py -- Robot Framework's Historical Reporting Tool
 
 Version: <VERSION>
@@ -36,11 +35,11 @@ the x-axis are, by default, got from the paths to input files.
 Alternatively, names can be got from the metadata of the top level
 test suite (see Robot Framework's '--metadata' option for more details).
 
-Graphs are saved to a file specified with '--output' option, and the output
-format is got from the file extension. Supported formats depend on
-installed Matplotlib back-ends, but at least PNG ought to be always 
-available. If output file is omitted, the graph is opened into Matplotlib's
-image viewer (which requires Matplotlib to be installed with some graphical
+The graph is saved into a file specified with '--output' option, and the
+output format is got from the file extension. Supported formats depend on the
+installed Matplotlib back-ends, but at least PNG ought to be always available.
+If the output file is omitted, the graph is opened into Matplotlib's image
+viewer (which requires Matplotlib to be installed with some graphical
 front-end).
 
 It is possible to draw multiple graphs with different options at once. This
@@ -48,11 +47,11 @@ is done by separating different option groups with three or more hyphens
 ('---'). Note that in this case also paths to input files need to be
 separated from last options similarly.
 
-Instead of giving all options from command line, it is possible to read
+Instead of giving all options from the command line, it is possible to read
 them from a file specified with '--argument' option. In an argument file
 options and their possible argument are listed one per line, and option
 groups are separated with lines of three or more hyphens. Empty lines and
-lines starting with a hash mark ('#') are ignored. 
+lines starting with a hash mark ('#') are ignored.
 
 Options:
   -C --nocritical     Do not plot graphs for critical tests.
@@ -114,7 +113,7 @@ import glob
 try:
     import xml.etree.cElementTree as ET
 except ImportError:
-    try: 
+    try:
         import cElementTree as ET
     except ImportError:
         try:
@@ -150,10 +149,10 @@ class AllStatistics(object):
     def _get_stats(self, paths, namemeta, verbose):
         paths = self._glob_paths(paths)
         if namemeta:
-            return [ Statistics(path, namemeta=namemeta, verbose=verbose)
-                     for path in paths ]
-        return [ Statistics(path, name, verbose=verbose)
-                 for path, name in zip(paths, self._get_names(paths)) ]
+            return [Statistics(path, namemeta=namemeta, verbose=verbose)
+                    for path in paths]
+        return [Statistics(path, name, verbose=verbose)
+                for path, name in zip(paths, self._get_names(paths))]
 
     def _glob_paths(self, orig):
         paths = []
@@ -164,17 +163,17 @@ class AllStatistics(object):
         return paths
 
     def _get_names(self, paths):
-        paths = [ os.path.splitext(os.path.abspath(p))[0] for p in paths ]
-        path_tokens = [ p.replace('\\','/').split('/') for p in paths ]
-        min_tokens = min([ len(t) for t in path_tokens ])
+        paths = [os.path.splitext(os.path.abspath(p))[0] for p in paths]
+        path_tokens = [p.replace('\\','/').split('/') for p in paths]
+        min_tokens = min(len(t) for t in path_tokens)
         index = -1
         while self._tokens_are_same_at_index(path_tokens, index):
             index -= 1
             if abs(index) > min_tokens:
                 index = -1
                 break
-        names = [ tokens[index] for tokens in path_tokens ]
-        return [ utils.printable_name(n, code_style=True) for n in names ]
+        names = [tokens[index] for tokens in path_tokens]
+        return [utils.printable_name(n, code_style=True) for n in names]
 
     def _tokens_are_same_at_index(self, token_list, index):
         first = token_list[0][index]
@@ -187,14 +186,14 @@ class AllStatistics(object):
         stats = {}
         for statistics in self._stats:
             stats.update(statistics.tags)
-        return [ stat.name for stat in sorted(stats.values()) ]
+        return [stat.name for stat in sorted(stats.values())]
 
     def plot(self, plotter):
         plotter.set_axis(self._stats)
-        plotter.critical_tests([ s.critical_tests for s in self._stats ])
-        plotter.all_tests([ s.all_tests for s in self._stats ])
+        plotter.critical_tests([s.critical_tests for s in self._stats])
+        plotter.all_tests([s.all_tests for s in self._stats])
         for tag in self._tags:
-            plotter.tag([ s[tag] for s in self._stats ])
+            plotter.tag([s[tag] for s in self._stats])
 
 
 class Statistics(object):
@@ -208,7 +207,7 @@ class Statistics(object):
         crit_node, all_node = list(stats.find('total'))
         self.critical_tests = Stat(crit_node)
         self.all_tests = Stat(all_node)
-        self.tags = dict([ (n.text, Stat(n)) for n in stats.find('tag') ])
+        self.tags = dict((n.text, Stat(n)) for n in stats.find('tag'))
 
     def _get_name(self, name, namemeta, root):
         if namemeta is None:
@@ -221,7 +220,7 @@ class Statistics(object):
                 if item.get('name','').lower() == namemeta.lower():
                     return item.text
         raise DataError("No metadata matching '%s' found" % namemeta)
-                  
+
     def __getitem__(self, name):
         try:
             return self.tags[name]
@@ -259,7 +258,7 @@ class EmptyStat(Stat):
         self.passed = self.failed = self.total = 0
         self.doc = ''
         self.critical = self.non_critical = self.combined = False
-        
+
 
 class Legend(Line2D):
 
@@ -313,21 +312,21 @@ class Plotter(object):
                     float(width)/self._dpi, float(height)/self._dpi)
         except ValueError:
             raise DataError('Width, height, font and xticks must be numbers.')
-            
+
     def _get_tags(self, tags):
         if tags is None:
             return []
-        return [ t.replace('AND',' & ') for t in tags ]
+        return [t.replace('AND',' & ') for t in tags]
 
     def set_axis(self, stats):
         slen = len(stats)
         self._indexes = range(slen)
         self._xticks = self._get_xticks(slen, self._xtick_limit)
         self._axes.set_xticks(self._xticks)
-        self._axes.set_xticklabels([ stats[i].name for i in self._xticks ],
+        self._axes.set_xticklabels([stats[i].name for i in self._xticks],
                                    rotation=self._xtick_rotation,
                                    size=self._font_size)
-        self._scale = (slen-1, max([ s.all_tests.total for s in stats ]))
+        self._scale = (slen-1, max(s.all_tests.total for s in stats))
 
     def _get_xticks(self, slen, limit):
         if slen <= limit:
@@ -349,7 +348,7 @@ class Plotter(object):
             line =  {'linestyle': '--', 'linewidth': 1}
             self._plot(self._indexes, stats, **line)
             self._legends.append(Legend(label='critical tests', **line))
-            
+
     def all_tests(self, stats):
         if self._all:
             line =  {'linestyle': ':', 'linewidth': 1}
@@ -362,7 +361,7 @@ class Plotter(object):
             mark = {'marker': self._get_marker(),
                     'markersize': self._marker_size}
             self._plot(self._indexes, stats, **line)
-            markers = [ stats[index] for index in self._xticks ]
+            markers = [stats[index] for index in self._xticks]
             self._plot(self._xticks, markers, linestyle='', **mark)
             line.update(mark)
             label = self._get_tag_label(stats)
@@ -383,10 +382,10 @@ class Plotter(object):
             return self._markers.next()
         except StopIteration:
             return ''
-                    
+
     def _plot(self, xaxis, stats, **attrs):
         total, passed, failed \
-               = zip(*[ (s.total, s.passed, s.failed) for s in stats ])
+               = zip(*[(s.total, s.passed, s.failed) for s in stats])
         if self._totals:
             self._axes.plot(xaxis, total, color=self._total_color, **attrs)
         if self._passed:
@@ -427,7 +426,7 @@ class Plotter(object):
             legends.append(Legend(label='passed', color=self._pass_color))
         if self._failed:
             legends.append(Legend(label='failed', color=self._fail_color))
-        labels = [ l.get_label() for l in legends ]
+        labels = [l.get_label() for l in legends]
         self._figure.legend(legends, labels, loc='center right',
                             numpoints=3, borderpad=0.1,
                             prop=FontProperties(size=self._font_size))
@@ -502,7 +501,7 @@ class Ristopy(object):
                 fargs.append(line)
         args[index:index+2] = fargs
         return args
-        
+
     def _split_to_option_groups_and_paths(self, args):
         opt_groups = []
         current = []

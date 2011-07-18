@@ -22,13 +22,13 @@ class TestGetNamesFromPaths(unittest.TestCase):
         self._test(['foo.xml','bar.xml'], ['Foo','Bar'])
 
     def test_from_basename_with_longer_path(self):
-        paths = [ join('my','path',str(i))+'.xml' for i in range(10) ]
-        self._test(paths, [ str(i) for i in range(10) ])
+        paths = [join('my','path',str(i))+'.xml' for i in range(10)]
+        self._test(paths, [str(i) for i in range(10)])
 
     def test_basename_used_if_only_one_path(self):
         self._test(['foo.xml'], ['Foo'])
         self._test([join('what','ever','foo.xml')], ['Foo'])
-        
+
     def test_from_dirname(self):
         paths = [join('foo','out.xml'), join('bar','out.xml')]
         self._test(paths, ['Foo','Bar'])
@@ -75,11 +75,11 @@ class TestGetXTicks(unittest.TestCase):
         self._test(42, 42, range(42))
 
     def test_over_the_limit(self):
-        for slen, exp in [ (20,  [0,  3,  5,  7,  9, 11, 13, 15, 17,  19]),
-                           (91,  [0, 10, 20, 30, 40, 50, 60, 70, 80,  90]),
-                           (90,  [0, 10, 20, 30, 40, 50, 60, 70, 80,  89]),
-                           (100, [0, 11, 22, 33, 44, 55, 66, 77, 88,  99]),
-                           (101, [0, 12, 23, 34, 45, 56, 67, 78, 89, 100]) ]:
+        for slen, exp in [(20,  [0,  3,  5,  7,  9, 11, 13, 15, 17,  19]),
+                          (91,  [0, 10, 20, 30, 40, 50, 60, 70, 80,  90]),
+                          (90,  [0, 10, 20, 30, 40, 50, 60, 70, 80,  89]),
+                          (100, [0, 11, 22, 33, 44, 55, 66, 77, 88,  99]),
+                          (101, [0, 12, 23, 34, 45, 56, 67, 78, 89, 100])]:
             self._test(slen, 10, exp)
 
 
@@ -96,10 +96,10 @@ class TestStatistics(unittest.TestCase):
         self._assert_tag_stat(self.stats.all_tests, 8, 2)
 
     def test_tags(self):
-        data = [ ('t1', 4, 2,  True), 
-                 ('sub3', 2, 0, False, True), 
-                 ('d1 & d2', 1, 0, False, False, True),
-                 ('f1', 8, 2, False, False, False, 'forced') ]
+        data = [('t1', 4, 2,  True),
+                ('sub3', 2, 0, False, True),
+                ('d1 & d2', 1, 0, False, False, True),
+                ('f1', 8, 2, False, False, False, 'forced')]
         for item in data:
             name, exp = item[0], item[1:]
             self._assert_tag_stat(self.stats[name], *exp)
