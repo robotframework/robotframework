@@ -82,7 +82,7 @@ def _process_args(cliargs):
         exit(msg=str(msg))
     except DataError, err:
         exit(error=str(err))
-    return opts, [ utils.normpath(path) for path in paths ]
+    return opts, [utils.normpath(path) for path in paths]
 
 def _get_names(names, paths):
     if not names:
@@ -107,23 +107,18 @@ def exit(rc=0, error=None, msg=None):
 class DiffRobotOutputs:
 
     def __init__(self, outpath=None, title=None):
-        if not outpath:
-            outpath = 'robotdiff.html'
-        if not title:
-            title = 'Diff Report'
-        self._output = open(utils.normpath(outpath), 'w')
+        self.title = title or 'Diff Report'
+        self._output = open(utils.abspath(outpath or 'robotdiff.html'), 'w')
         self._writer = utils.HtmlWriter(self._output)
-        self.title = title
         self.column_names = []
-        self.suites_and_tests = {}
+        self.items = utils.NormalizedDict()
 
     def add_suite(self, path, column_name=None):
         if not column_name:
             column_name = path
         column_name = self._get_new_column_name(column_name)
         self.column_names.append(column_name)
-        suite = TestSuite(path)
-        self._add_suite(suite, column_name)
+        self._add_suite(TestSuite(path), column_name)
 
     def _get_new_column_name(self, column_name):
         if column_name not in self.column_names:
@@ -134,31 +129,20 @@ class DiffRobotOutputs:
                 count += 1
         return column_name + '_%d' % (count)
 
-    def _add_suite(self, suite, column_name):
-        self._add_to_dict(suite, column_name)
+    def _add_suite(self, suite, column):
+        self._add_to_items(suite, column)
         for sub_suite in suite.suites:
-            self._add_suite(sub_suite, column_name)
+            self._add_suite(sub_suite, column)
         for test in suite.tests:
-            self._add_to_dict(test, column_name)
+            self._add_to_items(test, column)
 
-    def _add_to_dict(self, s_or_t, column_name):
-        name = s_or_t.longname.replace('_', ' ')
-        keys = self.suites_and_tests.keys()
-        found = False
-        for key in keys:
-            if utils.normalize(name, caseless=True, spaceless=True) == \
-                utils.normalize(key, caseless=True, spaceless=True):
-                found = True
-                foundkey = key
-        if not found:
-            self.suites_and_tests[name] =  [(column_name, s_or_t)]
-        else:
-            self.suites_and_tests[foundkey].append((column_name, s_or_t))
+    def _add_to_items(self, item, column):
+        self.items.setdefault(item.longname, []).append((column, item))
 
     def serialize(self):
         self._write_start()
         self._write_headers()
-        for name, value in sorted(self.suites_and_tests.items()):
+        for name, value in sorted(self.items.items()):
             self._write_start_of_s_or_t_row(name, value)
             for column_name in self.column_names:
                 #Generates column containg status
