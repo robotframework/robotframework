@@ -85,7 +85,7 @@ def _process_args(cliargs):
     return opts, [ utils.normpath(path) for path in paths ]
 
 def _get_names(names, paths):
-    if len(names) == 0:
+    if not names:
         return [None] * len(paths)
     if len(names) == len(paths):
         return names
@@ -107,9 +107,9 @@ def exit(rc=0, error=None, msg=None):
 class DiffRobotOutputs:
 
     def __init__(self, outpath=None, title=None):
-        if outpath is None:
+        if not outpath:
             outpath = 'robotdiff.html'
-        if title is None:
+        if not title:
             title = 'Diff Report'
         self._output = open(utils.normpath(outpath), 'w')
         self._writer = utils.HtmlWriter(self._output)
@@ -117,8 +117,8 @@ class DiffRobotOutputs:
         self.column_names = []
         self.suites_and_tests = {}
 
-    def add_suite(self, path, column_name):
-        if column_name is None:
+    def add_suite(self, path, column_name=None):
+        if not column_name:
             column_name = path
         column_name = self._get_new_column_name(column_name)
         self.column_names.append(column_name)
@@ -149,7 +149,7 @@ class DiffRobotOutputs:
             test.link = link
 
     def _get_new_column_name(self, column_name):
-        if self.column_names.count(column_name) == 0:
+        if column_name not in self.column_names:
             return column_name
         count = 0
         for name in self.column_names:
@@ -181,12 +181,12 @@ class DiffRobotOutputs:
     def serialize(self):
         self._write_start()
         self._write_headers()
-        for name, value in self._get_sorted_items(self.suites_and_tests):
+        for name, value in sorted(self.suites_and_tests.items()):
             self._write_start_of_s_or_t_row(name, value)
             for column_name in self.column_names:
                 #Generates column containg status
                 s_or_t = self._get_s_or_t_by_column_name(column_name, value)
-                self._write_s_or_t_status(s_or_t)
+                self._write_status(s_or_t)
             self._writer.end('tr', newline=True)
         self._writer.end('table', newline=True)
         self._write_end()
@@ -195,12 +195,12 @@ class DiffRobotOutputs:
         self._output.close()
         return self._output.name
 
-    def _write_s_or_t_status(self, s_or_t):
-        if s_or_t is not None:
-            self._col_status_content(s_or_t)
+    def _write_status(self, item):
+        if item:
+            self._col_status_content(item)
         else:
-            col_status = 'col_status not_available'
-            self._writer.element('td', 'N/A', {'class': col_status})
+            attrs = {'class': 'col_status not_available'}
+            self._writer.element('td', 'N/A', attrs)
 
     def _col_status_content(self, s_or_t):
         status = s_or_t.status
@@ -217,29 +217,20 @@ class DiffRobotOutputs:
         self._writer.end('td')
 
     def _get_type(self, s_or_t):
-        if dir(s_or_t).count('tests') == 1:
-            return 'suite'
-        else:
-            return 'test'
+        return 'suite' if hasattr(s_or_t, 'tests') else 'test'
 
     def _write_start_of_s_or_t_row(self, name, value):
-            row_status = self._get_row_status(value)
-            self._writer.element('th', name, {'class': row_status})
-
-    def _get_sorted_items(self, suites_and_tests):
-        items = suites_and_tests.items()
-        items.sort(lambda x, y: cmp(x[0], y[0]))
-        return items
+        attrs = {'class': '%s col_name' % self._get_row_status(value)}
+        self._writer.element('td', name, attrs)
 
     def _get_row_status(self, items):
-        if len(items) > 0:
-            status = self._get_status(items[0])
-        else:
+        if not items:
             return 'none'
+        status = self._get_status(items[0])
         for item in items:
             if self._get_status(item) != status:
                 return 'diff'
-        return 'all_%s' % (status.lower())
+        return 'all_%s' % status.lower()
 
     def _get_status(self, item):
         return item[1].status
@@ -279,8 +270,8 @@ class DiffRobotOutputs:
 
     def _write_start(self):
         self._output.write(START_HTML)
-        self._output.write("<title>%s</title>" % (self.title))
-        self._output.write("</head>\n<body><h1>%s</h1></br>\n" % (self.title))
+        self._output.write("<title>%s</title>\n</head>\n" % self.title)
+        self._output.write("<body>\n<h1>%s</h1>\n" % self.title)
 
     def _write_end(self):
         self._writer.end('body')
@@ -322,11 +313,11 @@ START_HTML = '''
     background: yellow;
   }
   .col_name {
-    width: 13em;
+    min-width: 20em;
     font-weight: bold;
   }
   .col_status {
-    width: 5em;
+    min-width: 6em;
     text-align: center;
   }
   .pass {
