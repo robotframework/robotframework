@@ -1,7 +1,8 @@
 import unittest
 
 from robot.utils import normalize, normalize_tags, NormalizedDict
-from robot.utils.asserts import assert_equals, assert_true, assert_false
+from robot.utils.asserts import (assert_equals, assert_true, assert_false,
+                                 assert_raises)
 
 
 class TestNormalizing(unittest.TestCase):
@@ -84,6 +85,14 @@ class TestNormalizedDict(unittest.TestCase):
         assert_equals(nd['K EY'], 'value')
         assert_equals(nd['foo'], 'bar')
 
+    def test_setdefault(self):
+        nd = NormalizedDict({'a': NormalizedDict()})
+        nd.setdefault('a', 'whatever').setdefault('B', []).append(1)
+        nd.setdefault('A', 'everwhat').setdefault('b', []).append(2)
+        assert_equals(nd['a']['b'], [1, 2])
+        assert_equals(list(nd), ['a'])
+        assert_equals(list(nd['a']), ['B'])
+
     def test_ignore(self):
         nd = NormalizedDict(ignore=['_'])
         nd['foo_bar'] = 'value'
@@ -91,11 +100,21 @@ class TestNormalizedDict(unittest.TestCase):
         assert_equals(nd['F  oo\nB   ___a r'], 'value')
 
     def test_caseless_and_spaceless(self):
-        nd = NormalizedDict(caseless=False, spaceless=False)
-        nd['F o o B AR'] = 'value'
-        for key in ['foobar', 'f o o b ar', 'FooBAR']:
-            assert_false(nd.has_key(key))
-        assert_equals(nd['F o o B AR'], 'value')
+        nd1 = NormalizedDict({'F o o BAR': 'value'})
+        nd2 = NormalizedDict({'F o o BAR': 'value'}, caseless=False,
+                             spaceless=False)
+        assert_equals(nd1['F o o BAR'], 'value')
+        assert_equals(nd2['F o o BAR'], 'value')
+        nd1['FooBAR'] = 'value 2'
+        nd2['FooBAR'] = 'value 2'
+        assert_equals(nd1['F o o BAR'], 'value 2')
+        assert_equals(nd2['F o o BAR'], 'value')
+        assert_equals(nd1['FooBAR'], 'value 2')
+        assert_equals(nd2['FooBAR'], 'value 2')
+        for key in ['foobar', 'f o o b ar', 'Foo BAR']:
+            assert_equals(nd1[key], 'value 2')
+            assert_raises(KeyError, nd2.__getitem__, key)
+            assert_true(key not in nd2)
 
     def test_has_key_and_contains(self):
         nd = NormalizedDict({'Foo': 'bar'})
