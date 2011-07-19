@@ -123,30 +123,7 @@ class DiffRobotOutputs:
         column_name = self._get_new_column_name(column_name)
         self.column_names.append(column_name)
         suite = TestSuite(path)
-        # Creates links to logs
-        link = self._get_loglink(path, self._output.name)
-        self._set_suite_links(suite, link)
         self._add_suite(suite, column_name)
-
-    def _get_loglink(self, inpath, target):
-        """Finds matching log file and return link to it or None."""
-        indir, infile = os.path.split(inpath)
-        logname = os.path.splitext(infile.lower())[0]
-        if logname.endswith('output'):
-            logname = logname[:-6] + 'log'
-        for item in os.listdir(indir):
-            name, ext = os.path.splitext(item.lower())
-            if name == logname and ext in ['.html','.htm','.xhtml']:
-                logpath = os.path.join(indir, item)
-                return utils.get_link_path(logpath, target)
-        return None
-
-    def _set_suite_links(self, suite, link):
-        suite.link = link
-        for sub_suite in suite.suites:
-            self._set_suite_links(sub_suite, link)
-        for test in suite.tests:
-            test.link = link
 
     def _get_new_column_name(self, column_name):
         if column_name not in self.column_names:
@@ -206,14 +183,7 @@ class DiffRobotOutputs:
         status = s_or_t.status
         col_status = 'col_status %s' % status.lower()
         self._writer.start('td', {'class': col_status})
-        if s_or_t.link is not None:
-            type = self._get_type(s_or_t)
-            link = '%s#%s_%s' % (s_or_t.link, type, s_or_t.longname)
-            self._writer.element('a', status, {'class': status.lower(),
-                                               'href': link,
-                                               'title': s_or_t.longname})
-        else:
-            self._writer.content(status)
+        self._writer.content(status)
         self._writer.end('td')
 
     def _get_type(self, s_or_t):
@@ -328,21 +298,6 @@ START_HTML = '''
   }
   .not_available {
     color: gray;
-  }
-  a:link, a:visited {
-    text-decoration: none;
-  }
-  a:hover {
-    text-decoration: underline;
-    color: purple;
-  }
-</style>
-<style media="print" type="text/css">
-  body {
-    font-size: 9pt;
-  }
-  a:link, a:visited {
-    color: black;
   }
 </style>
 '''[1:]
