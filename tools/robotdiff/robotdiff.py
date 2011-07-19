@@ -14,39 +14,38 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+"""Diff Tool for Robot Framework Outputs
 
-"""Diff Tool for Robot Framework Outputs 
-    
 Usage:  robotdiff.py [options] input_files
 
-This script compares two or more Robot Framework output files and creates a 
-report where possible differences between test case statuses in each file 
+This script compares two or more Robot Framework output files and creates a
+report where possible differences between test case statuses in each file
 are highlighted. Main use case is verifying that results from executing same
 test cases in different environments are same. For example, it is possible to
-test that new Robot Framework version does not affect test results. Another 
+test that new Robot Framework version does not affect test results. Another
 usage is comparing earlier test results with newer ones to find out possible
-status changes and added test cases.   
+status changes and added test cases.
 
 Options:
  -r --report file         HTML report file (created from the input files).
                           Default is 'robotdiff.html'.
  -n --name name *         Name for test run. Different test runs can be named
-                          with this option. However, there must be as many 
+                          with this option. However, there must be as many
                           names as there are input files. By default the name
-                          of the input files are used as names. Input files 
-                          having same file name are distinguished by adding 
+                          of the input files are used as names. Input files
+                          having same file name are distinguished by adding
                           as many parent directories to the names as is needed.
  -t --title title         Title for the generated diff report. The default
                           title is 'Diff Report'.
  -E --escape what:with *  Escape certain characters which are problematic in
-                          console. 'what' is the name of the character to 
+                          console. 'what' is the name of the character to
                           escape and 'with' is the string to escape it with.
                           Available character to escape:
                           <--------------------ESCAPES------------------------>
                           Example:
                           --escape space:_ --title My_Fine_Diff_Report
  -h -? --help             Print this usage instruction.
- 
+
 Options that can be specified multiple times are marked with an asterisk (*).
 
 Examples:
@@ -90,7 +89,7 @@ def _get_names(names, paths):
         return [None] * len(paths)
     if len(names) == len(paths):
         return names
-    exit(error="Different number of names (%d) and inputs (%d)" 
+    exit(error="Different number of names (%d) and inputs (%d)"
          % (len(names), len(paths)))
 
 
@@ -106,7 +105,7 @@ def exit(rc=0, error=None, msg=None):
 
 
 class DiffRobotOutputs:
-    
+
     def __init__(self, outpath=None, title=None):
         if outpath is None:
             outpath = 'robotdiff.html'
@@ -117,7 +116,7 @@ class DiffRobotOutputs:
         self.title = title
         self.column_names = []
         self.suites_and_tests = {}
-        
+
     def add_suite(self, path, column_name):
         if column_name is None:
             column_name = path
@@ -128,7 +127,7 @@ class DiffRobotOutputs:
         link = self._get_loglink(path, self._output.name)
         self._set_suite_links(suite, link)
         self._add_suite(suite, column_name)
-    
+
     def _get_loglink(self, inpath, target):
         """Finds matching log file and return link to it or None."""
         indir, infile = os.path.split(inpath)
@@ -141,30 +140,30 @@ class DiffRobotOutputs:
                 logpath = os.path.join(indir, item)
                 return utils.get_link_path(logpath, target)
         return None
-    
+
     def _set_suite_links(self, suite, link):
         suite.link = link
         for sub_suite in suite.suites:
             self._set_suite_links(sub_suite, link)
         for test in suite.tests:
-            test.link = link        
-        
+            test.link = link
+
     def _get_new_column_name(self, column_name):
         if self.column_names.count(column_name) == 0:
-            return column_name 
+            return column_name
         count = 0
         for name in self.column_names:
             if name.startswith(column_name):
                 count += 1
-        return column_name + '_%d' % (count) 
-        
+        return column_name + '_%d' % (count)
+
     def _add_suite(self, suite, column_name):
         self._add_to_dict(suite, column_name)
         for sub_suite in suite.suites:
             self._add_suite(sub_suite, column_name)
         for test in suite.tests:
             self._add_to_dict(test, column_name)
-    
+
     def _add_to_dict(self, s_or_t, column_name):
         name = s_or_t.longname.replace('_', ' ')
         keys = self.suites_and_tests.keys()
@@ -178,25 +177,25 @@ class DiffRobotOutputs:
             self.suites_and_tests[name] =  [(column_name, s_or_t)]
         else:
             self.suites_and_tests[foundkey].append((column_name, s_or_t))
-        
+
     def serialize(self):
         self._write_start()
         self._write_headers()
         for name, value in self._get_sorted_items(self.suites_and_tests):
             self._write_start_of_s_or_t_row(name, value)
-            for column_name in self.column_names:                
+            for column_name in self.column_names:
                 #Generates column containg status
                 s_or_t = self._get_s_or_t_by_column_name(column_name, value)
                 self._write_s_or_t_status(s_or_t)
             self._writer.end('tr', newline=True)
-        self._writer.end('table', newline=True)        
+        self._writer.end('table', newline=True)
         self._write_end()
-        
+
     def close(self):
         self._output.close()
         return self._output.name
-        
-    def _write_s_or_t_status(self, s_or_t): 
+
+    def _write_s_or_t_status(self, s_or_t):
         if s_or_t is not None:
             self._col_status_content(s_or_t)
         else:
@@ -210,13 +209,13 @@ class DiffRobotOutputs:
         if s_or_t.link is not None:
             type = self._get_type(s_or_t)
             link = '%s#%s_%s' % (s_or_t.link, type, s_or_t.longname)
-            self._writer.element('a', status, {'class': status.lower(), 
-                                                     'href': link, 
-                                                     'title': s_or_t.longname })
+            self._writer.element('a', status, {'class': status.lower(),
+                                               'href': link,
+                                               'title': s_or_t.longname})
         else:
             self._writer.content(status)
         self._writer.end('td')
-            
+
     def _get_type(self, s_or_t):
         if dir(s_or_t).count('tests') == 1:
             return 'suite'
@@ -231,7 +230,7 @@ class DiffRobotOutputs:
         items = suites_and_tests.items()
         items.sort(lambda x, y: cmp(x[0], y[0]))
         return items
-        
+
     def _get_row_status(self, items):
         if len(items) > 0:
             status = self._get_status(items[0])
@@ -261,12 +260,12 @@ class DiffRobotOutputs:
         self._writer.end('tr')
 
     def _get_prefix(self, paths):
-        paths = [os.path.dirname(p) for p in paths ]        
+        paths = [os.path.dirname(p) for p in paths]
         dirs = []
         for path in paths:
-            if path.endswith(os.sep): 
-                dirs.append(path) 
-            else: 
+            if path.endswith(os.sep):
+                dirs.append(path)
+            else:
                 if path != '' and path[-1] != os.sep:
                     dirs.append(path + os.sep)
                 else:
@@ -282,8 +281,7 @@ class DiffRobotOutputs:
         self._output.write(START_HTML)
         self._output.write("<title>%s</title>" % (self.title))
         self._output.write("</head>\n<body><h1>%s</h1></br>\n" % (self.title))
-        self._output.write('<div class="spacer">&nbsp;</div>')
-            
+
     def _write_end(self):
         self._writer.end('body')
         self._writer.end('html')
@@ -295,13 +293,14 @@ START_HTML = '''
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <meta http-equiv="Expires" content="Mon, 20 Jan 2001 20:01:21 GMT" />
-
 <style media="all" type="text/css">
-      
-  /* Generic Table Styles */
-
-  table {
+  body {
     background: white;
+    font-family: sans-serif;
+    font-size: 0.8em;
+    color: black;
+  }
+  table {
     border: 1px solid black;
     border-collapse: collapse;
     empty-cells: show;
@@ -309,30 +308,18 @@ START_HTML = '''
   }
   th, td {
     border: 1px solid black;
-    padding: 1px 5px;
   }
   th {
     background: #C6C6C6;
-    color: black;
   }
-
-  .diff{
+  .diff {
     background: red;
   }
-
-  .all_pass{
+  .all_pass {
     background: #00f000;
   }
-
-  .all_fail{
+  .all_fail {
     background: yellow;
-  }
-
-      
-  /* Test by Suite/Tag Tables */
-
-  table.tests_by_suite, table.tests_by_tag {
-    width: 100%;
   }
   .col_name {
     width: 13em;
@@ -342,87 +329,33 @@ START_HTML = '''
     width: 5em;
     text-align: center;
   }
-  .pass{ 
+  .pass {
     color: #00f000;
   }
-  .fail{
+  .fail {
     color: red;
   }
-</style>
-<style media="all" type="text/css">
-
-  /* Generic styles */ 
-
-  body {
-    font-family: sans-serif;
-    font-size: 0.8em;
-    color: black;
-    padding: 6px; 
-  }      
-  h2 {
-    margin-top: 1.2em;
-  }
-
-
-  /* Misc Styles */
-
   .not_available {
-    color: gray;      /* no grey in IE */
-    font-weight: normal;
+    color: gray;
   }
-
   a:link, a:visited {
     text-decoration: none;
-    
   }
   a:hover {
     text-decoration: underline;
     color: purple;
   }
-  
-  /* Headers */
-
- .header {
-    width: 58em;
-    margin: 6px 0px;
-  }
-  h1 {
-    margin: 0px;
-    width: 73%;
-    float: left;
-  }
-  .times {
-    width: 26%;
-    float: right;
-    text-align: right;
-  }
-  .generated_time, .generated_ago {
-    font-size: 0.9em;
-  }              
-  .spacer {
-    font-size: 0.8em;
-    clear: both;
-  }
 </style>
-      
 <style media="print" type="text/css">
   body {
-    background: white;
-    padding: 0px; 
     font-size: 9pt;
   }
   a:link, a:visited {
     color: black;
   }
-  .header, .failbox, .passbox, table.statistics {
-    width: 100%;
-  }
-  .generated_ago {
-    display: none;
-  }
 </style>
-'''
+'''[1:]
 
-        
+
 if __name__ == '__main__':
     main(sys.argv[1:])
