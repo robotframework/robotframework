@@ -1,4 +1,4 @@
-#  Copyright 2008-2011 Nokia Siemens Networks Oyj
+b#  Copyright 2008-2011 Nokia Siemens Networks Oyj
 #
 #  Licensed under the Apache License, Version 2.0 (the "License");
 #  you may not use this file except in compliance with the License.
@@ -1226,10 +1226,6 @@ class _Process:
         return rc >> 8
 
     def _process_command(self, command):
-        if self._is_jython(2, 2):
-            # os.popen doesn't handle Unicode in Jython 2.2 as explained in
-            # http://jython.org/bugs/1735774.
-            command = str(command)
         if '>' not in command:
             if command.endswith('&'):
                 command = command[:-1] + ' 2>&1 &'
@@ -1245,12 +1241,7 @@ class _Process:
         stdout = stdout.replace('\r\n', '\n') # http://bugs.jython.org/issue1566
         if stdout.endswith('\n'):
             stdout = stdout[:-1]
-        if self._is_jython(2, 2):
-            return stdout
         return decode_output(stdout)
-
-    def _is_jython(self, *version):
-        return sys.platform.startswith('java') and sys.version_info[:2] == version
 
 
 class _Process2(_Process):
