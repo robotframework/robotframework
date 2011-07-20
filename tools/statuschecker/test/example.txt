@@ -27,6 +27,11 @@ Log Messages Deeper
     Logging User Keyword
     Logging User Keyword 2
 
+Expected Failure And Log Message
+    [Documentation]  FAIL Failing now! LOG 1 Failing soon!
+    Log  Failing soon!
+    Fail  Failing now!
+
 FAILURE: Unexpected Pass
     [Documentation]  FAIL Expected failure does not occur
     No Operation
