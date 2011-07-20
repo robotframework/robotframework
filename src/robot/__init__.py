@@ -41,6 +41,7 @@ if sys.platform.startswith('java') and os.sep == '\\' and sys.version_info < (2,
 
 if 'pythonpathsetter' not in sys.modules:
     import pythonpathsetter
+import utils
 from output import Output, LOGGER, pyloggingconf
 from conf import RobotSettings, RebotSettings
 from running import TestSuite, STOP_SIGNAL_MONITOR
@@ -49,7 +50,6 @@ from errors import (DataError, Information, INFO_PRINTED, DATA_ERROR,
                     STOPPED_BY_USER, FRAMEWORK_ERROR)
 from variables import init_global_variables
 from version import get_version, get_full_version
-import utils
 
 
 __version__ = get_version()
