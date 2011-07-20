@@ -14,8 +14,9 @@
 
 from __future__ import with_statement
 import os
-from os.path import abspath, dirname, join
+from os.path import abspath, dirname, join, normpath
 import re
+from sys import platform
 import codecs
 import tempfile
 
@@ -25,7 +26,38 @@ from robot import utils
 from robot.result.jsondatamodel import SeparatingWriter
 from robot.version import get_full_version
 
-WEBCONTENT = join(dirname(abspath(robot.__file__)), 'webcontent')
+
+def _get_webcontent_file(file):
+    path = "robot/webcontent/%s" % file
+    return _get_file_content_from_robot(path)
+
+def _get_file_content_from_robot(path_inside_robot):
+    is_jython  = platform.startswith('java')
+    if not is_jython:
+        return _get_local_robot_file(path_inside_robot)
+    try:
+        return _get_local_robot_file(path_inside_robot)
+    except IOError:
+        return _get_robot_file_from_jar(path_inside_robot)
+
+def _get_local_robot_file(path_inside_robot):
+    file_system_path = join(dirname(abspath(robot.__file__)),
+                            '..',
+                            normpath(path_inside_robot))
+    with codecs.open(file_system_path, 'r', encoding='UTF-8') as file:
+        return file.readlines()
+
+def _get_robot_file_from_jar(path):
+    import org.robotframework.RobotRunner as robot_class
+    import java.io.InputStreamReader as InputStreamReader
+    import java.io.BufferedReader as BufferedReader
+    path_inside_jar = '/Lib/%s' % path
+    res = robot_class.getResource(path_inside_jar)
+    content = BufferedReader(InputStreamReader(res.openStream()))
+    result = []
+    while content.ready():
+        result.append(content.readLine()+'\n')
+    return result
 
 
 class _Builder(object):
@@ -87,15 +119,15 @@ class _HTMLFileBuilder(_Builder):
     def _url_from_path(self, source, destination):
         if not destination:
             return None
-        return utils.get_link_path(destination, os.path.dirname(source))
+        return utils.get_link_path(destination, dirname(source))
 
     def _write_file(self):
         try:
             with codecs.open(self._path, 'w', encoding='UTF-8') as outfile:
                 writer = HTMLFileWriter(outfile, self._context.data_model)
-                with open(self._template, 'r') as tmpl:
-                    for line in tmpl:
-                        writer.line(line)
+                tmpl = _get_webcontent_file(self._template)
+                for line in tmpl:
+                    writer.line(line)
         except EnvironmentError, err:
             LOGGER.error("Opening '%s' failed: %s"
                          % (err.filename, err.strerror))
@@ -105,7 +137,7 @@ class _HTMLFileBuilder(_Builder):
 
 class LogBuilder(_HTMLFileBuilder):
     _type = 'Log'
-    _template = os.path.join(WEBCONTENT,'log.html')
+    _template = 'log.html'
 
     def _format_data(self):
         if self._context.data_model._split_results:
@@ -136,7 +168,7 @@ class LogBuilder(_HTMLFileBuilder):
 
 class ReportBuilder(_HTMLFileBuilder):
     _type = 'Report'
-    _template = os.path.join(WEBCONTENT, 'report.html')
+    _template = 'report.html'
 
     def _format_data(self):
         self._context.data_model.remove_errors()
@@ -210,14 +242,7 @@ class HTMLFileWriter(object):
         return self._css_media_matcher.search(line).group(1)
 
     def _inline_file(self, line, filename_matcher):
-        file_name = self._file_name(line, filename_matcher)
-        self._write_file_content(file_name)
-
-    def _file_name(self, line, filename_regexp):
-        return self._relative_path(filename_regexp.search(line).group(1))
-
-    def _relative_path(self, filename):
-        return os.path.join(WEBCONTENT, filename.replace('/', os.path.sep))
+        self._write_file_content(filename_matcher.search(line).group(1))
 
     def _write(self, content):
         self._outfile.write(content)
@@ -229,7 +254,7 @@ class HTMLFileWriter(object):
         self._write('</%s>\n\n' % tag_name)
 
     def _write_file_content(self, source):
-        with codecs.open(source, 'r', encoding='UTF-8') as content:
-            for line in content:
-                self._write(line)
+        content = _get_webcontent_file(source)
+        for line in content:
+            self._write(line)
         self._write('\n')
