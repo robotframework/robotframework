@@ -16,10 +16,7 @@ import xmlrpclib
 import socket
 import time
 import sys
-try:
-    from xml.parsers.expat import ExpatError
-except ImportError:
-    ExpatError = None   # Support for Jython 2.2(.x)
+from xml.parsers.expat import ExpatError
 
 from robot import utils
 from robot.errors import RemoteError
@@ -54,7 +51,7 @@ class Remote:
             return ''
 
     def run_keyword(self, name, args):
-        args = [ self._handle_argument(arg) for arg in args ]
+        args = [self._handle_argument(arg) for arg in args]
         result = RemoteResult(self._client.run_keyword(name, args))
         sys.stdout.write(result.output)
         if result.status != 'PASS':
@@ -65,10 +62,10 @@ class Remote:
         if isinstance(arg, (basestring, int, long, float)):
             return arg
         if isinstance(arg, (tuple, list)):
-            return [ self._handle_argument(item) for item in arg ]
+            return [self._handle_argument(item) for item in arg]
         if isinstance(arg, dict):
-            return dict([ (self._str(key), self._handle_argument(value))
-                          for key, value in arg.items() ])
+            return dict((self._str(key), self._handle_argument(value))
+                        for key, value in arg.items())
         return self._str(arg)
 
     def _str(self, item):
