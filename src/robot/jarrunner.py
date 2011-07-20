@@ -22,9 +22,9 @@ class JarRunner(RobotRunner):
     def run(self, args):
         try:
             if args and args[0] == 'rebot':
-                rebot_from_cli(args[1:], rebot.__doc__)
+                return rebot_from_cli(args[1:], rebot.__doc__)
             else:
-                run_from_cli(args, runner.__doc__)
+                return run_from_cli(args, runner.__doc__)
         except SystemExit, err:
             return err.code
 
