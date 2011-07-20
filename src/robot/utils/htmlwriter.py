@@ -70,3 +70,6 @@ class HtmlWriter(AbstractXmlWriter):
 
     def _write(self, text):
         self.output.write(text.encode('UTF-8'))
+
+    def close(self):
+        self.output.close()
