@@ -25,7 +25,7 @@ Options
                             files. By default test run names are got from the
                             input file names.
   -t, --title <title>       The title for the generated diff report. The default
-                            title is 'Test Run Diff Report'.
+                            title is :name:`Test Run Diff Report`.
   -E, --escape <what:with>  Escapes certain characters that are problematic in
                             the console. "what" is the name of the character to
                             escape and "with" is the string to escape it with.
