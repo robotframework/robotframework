@@ -20,14 +20,12 @@ Options
 
   -r, --report <file>       The HTML report file (created from the input files).
                             The default is :path:`robotdiff.html`.
-  -n, --name <name>         The name for the test run. Different test runs can
-                            be named with this option. There must be as many
-                            names as there are input files. By default, the name
-                            of the input files are used as names. Input files
-                            with the same file name are distinguished by adding
-                            as many parent directories to the names as needed.
+  -n, --name <name>         Custom names for test runs. If this option is used,
+                            it must be used as many times as there are input
+                            files. By default test run names are got from the
+                            input file names.
   -t, --title <title>       The title for the generated diff report. The default
-                            title is "Diff Report".
+                            title is 'Test Run Diff Report'.
   -E, --escape <what:with>  Escapes certain characters that are problematic in
                             the console. "what" is the name of the character to
                             escape and "with" is the string to escape it with.

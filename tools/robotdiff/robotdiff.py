@@ -29,14 +29,12 @@ status changes and added test cases.
 Options:
  -r --report file         HTML report file (created from the input files).
                           Default is 'robotdiff.html'.
- -n --name name *         Name for test run. Different test runs can be named
-                          with this option. However, there must be as many
-                          names as there are input files. By default the name
-                          of the input files are used as names. Input files
-                          having same file name are distinguished by adding
-                          as many parent directories to the names as is needed.
+ -n --name name *         Custom names for test runs. If this option is used,
+                          it must be used as many times as there are input
+                          files. By default test run names are got from the
+                          input file names.
  -t --title title         Title for the generated diff report. The default
-                          title is 'Diff Report'.
+                          title is 'Test Run Diff Report'.
  -E --escape what:with *  Escape certain characters which are problematic in
                           console. 'what' is the name of the character to
                           escape and 'with' is the string to escape it with.
@@ -63,181 +61,162 @@ from robot.errors import DataError, Information
 
 def main(args):
     opts, paths = _process_args(args)
-    diff = DiffRobotOutputs(opts['report'], opts['title'])
-    names = _get_names(opts['name'], paths)
-    for path, name in zip(paths, names):
+    results = DiffResults()
+    for path, name in zip(paths, _get_names(opts['name'], paths)):
         try:
-            diff.add_suite(path, name)
+            results.add_output(path, name)
         except DataError, err:
-            exit(error=str(err))
-    diff.serialize()
-    print "Report: %s" % diff.close()
+            _exit(err, error=True)
+    reporter = DiffReporter(opts['report'], opts['title'])
+    reporter.report(results)
+    _exit('Report: %s' % reporter.outpath)
 
 def _process_args(cliargs):
     ap = utils.ArgumentParser(__doc__, arg_limits=(2, sys.maxint))
     try:
-        opts, paths = ap.parse_args(cliargs, unescape='escape', help='help',
-                                    check_args=True)
+        return ap.parse_args(cliargs, unescape='escape', help='help',
+                             check_args=True)
     except Information, msg:
-        exit(msg=str(msg))
+        _exit(msg)
     except DataError, err:
-        exit(error=str(err))
-    return opts, [utils.normpath(path) for path in paths]
+        _exit(err, error=True)
 
 def _get_names(names, paths):
     if not names:
         return [None] * len(paths)
     if len(names) == len(paths):
         return names
-    exit(error="Different number of names (%d) and inputs (%d)"
-         % (len(names), len(paths)))
+    _exit('Different number of test run names (%d) and input files (%d).'
+          % (len(names), len(paths)), error=True)
 
-
-def exit(rc=0, error=None, msg=None):
+def _exit(msg, error=False):
+    print unicode(msg)
     if error:
-        print error, "\n\nUse '--help' option to get usage information."
-        if rc == 0:
-            rc = 255
-    if msg:
-        print msg
-        rc = 1
-    sys.exit(rc)
+        print "\nTry --help for usage information."
+    sys.exit(int(error))
 
 
-class DiffRobotOutputs:
+class DiffResults(object):
+
+    def __init__(self):
+        self._stats = utils.NormalizedDict()
+        self.column_names = []
+
+    @property
+    def rows(self):
+        return (RowStatus(name, statuses)
+                for name, statuses in sorted(self._stats.items()))
+
+    def add_output(self, path, column=None):
+        self._add_suite(TestSuite(path))
+        self.column_names.append(column or path)
+        for stats in self._stats.values():
+            self._add_missing_statuses(stats)
+
+    def _add_suite(self, suite):
+        self._add_to_stats(suite)
+        for sub_suite in suite.suites:
+            self._add_suite(sub_suite)
+        for test in suite.tests:
+            self._add_to_stats(test)
+
+    def _add_to_stats(self, item):
+        stats = self._stats.setdefault(item.longname, [])
+        self._add_missing_statuses(stats)
+        stats.append(ItemStatus(item))
+
+    def _add_missing_statuses(self, stats):
+        while len(stats) < len(self.column_names):
+            stats.append(MissingStatus())
+
+
+class MissingStatus(object):
+    name = 'N/A'
+    status = 'not_available'
+
+
+class ItemStatus(object):
+
+    def __init__(self, item):
+        self.name = item.status
+        self.status = item.status.lower()
+
+
+class RowStatus(object):
+
+    def __init__(self, name, statuses):
+        self.name = name
+        self._statuses = statuses
+
+    @property
+    def status(self):
+        passed = any(stat.name == 'PASS' for stat in self)
+        failed = any(stat.name == 'FAIL' for stat in self)
+        missing = any(stat.name == 'N/A' for stat in self)
+        if passed and failed:
+            return 'diff'
+        if missing:
+            return 'missing'
+        return 'all_passed' if passed else 'all_failed'
+
+    @property
+    def explanation(self):
+        return {'all_passed': 'All passed',
+                'all_failed': 'All failed',
+                'missing': 'Missing items',
+                'diff': 'Different statuses'}[self.status]
+
+    def __iter__(self):
+        return iter(self._statuses)
+
+
+class DiffReporter(object):
 
     def __init__(self, outpath=None, title=None):
-        self.title = title or 'Diff Report'
-        self._output = open(utils.abspath(outpath or 'robotdiff.html'), 'w')
-        self._writer = utils.HtmlWriter(self._output)
-        self.column_names = []
-        self.items = utils.NormalizedDict()
+        self.outpath = utils.abspath(outpath or 'robotdiff.html')
+        self._title = title or 'Test Run Diff Report'
+        self._writer = utils.HtmlWriter(open(self.outpath, 'w'))
 
-    def add_suite(self, path, column_name=None):
-        if not column_name:
-            column_name = path
-        column_name = self._get_new_column_name(column_name)
-        self.column_names.append(column_name)
-        self._add_suite(TestSuite(path), column_name)
+    def report(self, results):
+        self._start(results.column_names)
+        for row in results.rows:
+            self._write_row(row)
+        self._end()
 
-    def _get_new_column_name(self, column_name):
-        if column_name not in self.column_names:
-            return column_name
-        count = 0
-        for name in self.column_names:
-            if name.startswith(column_name):
-                count += 1
-        return column_name + '_%d' % (count)
-
-    def _add_suite(self, suite, column):
-        self._add_to_items(suite, column)
-        for sub_suite in suite.suites:
-            self._add_suite(sub_suite, column)
-        for test in suite.tests:
-            self._add_to_items(test, column)
-
-    def _add_to_items(self, item, column):
-        self.items.setdefault(item.longname, []).append((column, item))
-
-    def serialize(self):
-        self._write_start()
-        self._write_headers()
-        for name, value in sorted(self.items.items()):
-            self._write_start_of_s_or_t_row(name, value)
-            for column_name in self.column_names:
-                #Generates column containg status
-                s_or_t = self._get_s_or_t_by_column_name(column_name, value)
-                self._write_status(s_or_t)
-            self._writer.end('tr', newline=True)
-        self._writer.end('table', newline=True)
-        self._write_end()
-
-    def close(self):
-        self._output.close()
-        return self._output.name
-
-    def _write_status(self, item):
-        if item:
-            self._col_status_content(item)
-        else:
-            attrs = {'class': 'col_status not_available'}
-            self._writer.element('td', 'N/A', attrs)
-
-    def _col_status_content(self, s_or_t):
-        status = s_or_t.status
-        col_status = 'col_status %s' % status.lower()
-        self._writer.start('td', {'class': col_status})
-        self._writer.content(status)
-        self._writer.end('td')
-
-    def _get_type(self, s_or_t):
-        return 'suite' if hasattr(s_or_t, 'tests') else 'test'
-
-    def _write_start_of_s_or_t_row(self, name, value):
-        attrs = {'class': '%s col_name' % self._get_row_status(value)}
-        self._writer.element('td', name, attrs)
-
-    def _get_row_status(self, items):
-        if not items:
-            return 'none'
-        status = self._get_status(items[0])
-        for item in items:
-            if self._get_status(item) != status:
-                return 'diff'
-        return 'all_%s' % status.lower()
-
-    def _get_status(self, item):
-        return item[1].status
-
-    def _get_s_or_t_by_column_name(self, column_name, items):
-        for item in items:
-            if column_name == item[0]:
-                return item[1]
-        return None
-
-    def _write_headers(self):
-        self._writer.start('table')
+    def _start(self, columns):
+        self._writer.content(START_HTML % {'TITLE': self._title}, escape=False)
         self._writer.start('tr')
         self._writer.element('th', 'Name', {'class': 'col_name'})
-        for name in self.column_names:
-            name = name.replace(self._get_prefix(self.column_names), '')
+        for name in columns:
             self._writer.element('th', name, {'class': 'col_status'})
         self._writer.end('tr')
 
-    def _get_prefix(self, paths):
-        paths = [os.path.dirname(p) for p in paths]
-        dirs = []
-        for path in paths:
-            if path.endswith(os.sep):
-                dirs.append(path)
-            else:
-                if path != '' and path[-1] != os.sep:
-                    dirs.append(path + os.sep)
-                else:
-                    dirs.append(path)
-        prefix = os.path.commonprefix(dirs)
-        while len(prefix) > 0:
-            if prefix.endswith(os.sep):
-                break
-            prefix = prefix[:-1]
-        return prefix
+    def _write_row(self, row):
+        self._writer.start('tr')
+        self._write_name(row)
+        for item in row:
+            self._write_status(item)
+        self._writer.end('tr')
 
-    def _write_start(self):
-        self._output.write(START_HTML)
-        self._output.write("<title>%s</title>\n</head>\n" % self.title)
-        self._output.write("<body>\n<h1>%s</h1>\n" % self.title)
+    def _write_name(self, row):
+        self._writer.element('td', row.name, {'class': 'col_name ' + row.status,
+                                              'title': row.explanation})
 
-    def _write_end(self):
-        self._writer.end('body')
-        self._writer.end('html')
+    def _write_status(self, item):
+        self._writer.element('td', item.name,
+                             {'class': 'col_status ' + item.status})
+
+    def _end(self):
+        self._writer.end_many(['table', 'body', 'html'])
+        self._writer.close()
 
 
 START_HTML = '''
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <head>
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<meta http-equiv="Expires" content="Mon, 20 Jan 2001 20:01:21 GMT" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<meta http-equiv="Expires" content="Mon, 20 Jan 2001 20:01:21 GMT">
 <style media="all" type="text/css">
   body {
     background: white;
@@ -257,17 +236,8 @@ START_HTML = '''
   th {
     background: #C6C6C6;
   }
-  .diff {
-    background: red;
-  }
-  .all_pass {
-    background: #00f000;
-  }
-  .all_fail {
-    background: yellow;
-  }
   .col_name {
-    min-width: 20em;
+    min-width: 25em;
     font-weight: bold;
   }
   .col_status {
@@ -275,15 +245,29 @@ START_HTML = '''
     text-align: center;
   }
   .pass {
-    color: #00f000;
+    color: #0F0;
   }
   .fail {
-    color: red;
+    color: #F00;
   }
   .not_available {
-    color: gray;
+    color: #777;
+  }
+  .all_passed, .all_failed {
+    background: #0F0;
+  }
+  .missing {
+    background: #FF0;
+  }
+  .diff {
+    background: #F00;
   }
 </style>
+<title>%(TITLE)s</title>
+</head>
+<body>
+<h1>%(TITLE)s</h1>
+<table>
 '''[1:]
 
 
