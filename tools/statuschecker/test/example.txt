@@ -1,0 +1,58 @@
+*** Test Cases ***
+Failure Not Expected Passing
+    No Operation
+
+Failure Not Expected Failing
+    Fail  Error message
+
+Failure Expected Passing
+    [Documentation]  FAIL Expected failure message here. Note that FAIL must be in caps and message can span multiple cells.
+    No Operation
+
+Failure Expected Failing
+    [Documentation]  Texts before fail (in caps) is ignores. FAIL Expected failure
+    Fail  Expected failure
+
+Failure Expected Failing With Wrong Message
+    [Documentation]  FAIL Expected failure
+    User Keyword This Time
+
+Expected Message As Regexp
+    [Documentation]  FAIL REGEXP: Pattern is here .* \\d+
+    Fail  Pattern is here whatever 123
+
+Log Message
+    [Documentation]  LOG 1 Hello world!
+    Log  Hello world!
+
+Invalid Log Message
+    [Documentation]  LOG 1 Hello world!
+    Log  Hi world!
+
+Invalid Log Level
+    [Documentation]  LOG 1 Hello world!
+    Log  Hello world!  WARN
+
+User Keyword Log Message
+    [Documentation]  LOG 2.1 Hello world!
+    No Operation
+    Logging Keyword  Hello world!
+
+Debug Level Message
+    [Documentation]  LOG 1 DEBUG Hello
+    Log  Hello  DEBUG
+
+Multiple messages
+    [Documentation]  LOG 1 Hello LOG 2.1 World
+    Log  Hello
+    Logging Keyword  World
+
+*** Keywords ***
+User Keyword This Time
+    [Timeout]
+    Fail  Not the expected message
+
+Logging Keyword
+    [Arguments]  ${msg}
+    Log  ${msg}
+
