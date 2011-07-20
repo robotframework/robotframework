@@ -171,7 +171,12 @@ class TestSuite(BaseTestSuite, _SuiteReader):
             return orig
         # Support for split outputs generated with 2.5.x.
         path = os.path.join(os.path.dirname(orig.get('path')), src)
-        node = utils.etreewrapper.get_root(path).find('suite')
+        try:
+            node = utils.etreewrapper.get_root(path).find('suite')
+        except:
+            LOGGER.error("Opening split output '%s' failed: %s"
+                         % (path, utils.get_error_message()))
+            return orig
         self._set_attrs_from_parent(node, orig)
         return node
 
