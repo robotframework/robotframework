@@ -16,48 +16,23 @@ from __future__ import with_statement
 import os
 import os.path
 import re
-from sys import platform
-import codecs
+import sys
 import tempfile
+import codecs
 
-import robot
 from robot.output import LOGGER
-from robot import utils
 from robot.result.jsondatamodel import SeparatingWriter
 from robot.version import get_full_version
+from robot import utils
 
-
-def _get_webcontent_file(file):
-    path = "robot/webcontent/%s" % file
-    return _get_file_content_from_robot(path)
-
-def _get_file_content_from_robot(path_inside_robot):
-    is_jython  = platform.startswith('java')
-    if not is_jython:
-        return _get_local_robot_file(path_inside_robot)
-    try:
-        return _get_local_robot_file(path_inside_robot)
-    except IOError:
-        return _get_robot_file_from_jar(path_inside_robot)
-
-def _get_local_robot_file(path_inside_robot):
-    file_system_path = os.path.join(os.path.dirname(os.path.abspath(robot.__file__)),
-                            '..',
-                            os.path.normpath(path_inside_robot))
-    with codecs.open(file_system_path, 'r', encoding='UTF-8') as file:
-        return file.readlines()
-
-def _get_robot_file_from_jar(path):
-    import org.robotframework.RobotRunner as robot_class
-    import java.io.InputStreamReader as InputStreamReader
-    import java.io.BufferedReader as BufferedReader
-    path_inside_jar = '/Lib/%s' % path
-    res = robot_class.getResource(path_inside_jar)
-    content = BufferedReader(InputStreamReader(res.openStream()))
-    result = []
-    while content.ready():
-        result.append(content.readLine()+'\n')
-    return result
+try:
+    from org.robotframework.RobotRunner import getResourceAsStream
+    from java.io import BufferedReader, InputStreamReader
+except ImportError:  # Occurs unless using robotframework.jar
+    JarReader = None
+else:
+    def JarReader(path):
+        return BufferedReader(InputStreamReader(getResourceAsStream(path)))
 
 
 class _Builder(object):
@@ -125,8 +100,7 @@ class _HTMLFileBuilder(_Builder):
         try:
             with codecs.open(self._path, 'w', encoding='UTF-8') as outfile:
                 writer = HTMLFileWriter(outfile, self._context.data_model)
-                tmpl = _get_webcontent_file(self._template)
-                for line in tmpl:
+                for line in _WebContentFile(self._template):
                     writer.line(line)
         except EnvironmentError, err:
             LOGGER.error("Opening '%s' failed: %s"
@@ -254,7 +228,37 @@ class HTMLFileWriter(object):
         self._write('</%s>\n\n' % tag_name)
 
     def _write_file_content(self, source):
-        content = _get_webcontent_file(source)
-        for line in content:
+        for line in _WebContentFile(source):
             self._write(line)
         self._write('\n')
+
+
+class _WebContentFile(object):
+    _basedir = os.path.join(os.path.dirname(os.path.abspath(__file__)),
+                            '..', 'webcontent')
+
+    def __init__(self, filename):
+        self._filename = filename
+
+    def __iter__(self):
+        try:
+            return self._iterate_file_in_filesystem()
+        except IOError:
+            if not JarReader:
+                raise
+            return self._iterate_file_in_jar()
+
+    def _iterate_file_in_filesystem(self):
+        path = os.path.join(self._basedir, self._filename)
+        with codecs.open(path, 'r', encoding='UTF-8') as file:
+            for line in file:
+                yield line
+
+    def _iterate_file_in_jar(self):
+        file = JarReader('/Lib/robot/webcontent/%s' % self._filename)
+        while True:
+            line = file.readLine()
+            if line is None:
+                file.close()
+                break
+            yield line + '\n'
