@@ -14,7 +14,7 @@
 
 from __future__ import with_statement
 import os
-from os.path import abspath, dirname, join, normpath
+import os.path
 import re
 from sys import platform
 import codecs
@@ -41,9 +41,9 @@ def _get_file_content_from_robot(path_inside_robot):
         return _get_robot_file_from_jar(path_inside_robot)
 
 def _get_local_robot_file(path_inside_robot):
-    file_system_path = join(dirname(abspath(robot.__file__)),
+    file_system_path = os.path.join(os.path.dirname(os.path.abspath(robot.__file__)),
                             '..',
-                            normpath(path_inside_robot))
+                            os.path.normpath(path_inside_robot))
     with codecs.open(file_system_path, 'r', encoding='UTF-8') as file:
         return file.readlines()
 
@@ -119,7 +119,7 @@ class _HTMLFileBuilder(_Builder):
     def _url_from_path(self, source, destination):
         if not destination:
             return None
-        return utils.get_link_path(destination, dirname(source))
+        return utils.get_link_path(destination, os.path.dirname(source))
 
     def _write_file(self):
         try:
