@@ -36,5 +36,5 @@ from unic import unic, safe_repr
 from xmlwriter import XmlWriter
 
 import sys
-is_jython  = sys.platform.startswith('java')
+is_jython = sys.platform.startswith('java')
 del sys
