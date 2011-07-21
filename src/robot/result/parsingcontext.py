@@ -227,11 +227,9 @@ class Location(object):
 
 
 class TextIndex(long):
-    pass
 
-    # to prevent Jython from adding L character to the end
     def __str__(self):
-        return str(long(self))
+        return long.__str__(self).rstrip('L')  # Jython adds L at the end
 
 
 class TextCache(object):
