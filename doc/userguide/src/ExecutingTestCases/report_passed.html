@@ -1775,16 +1775,16 @@ function popUpTo(list, upTo) {
 </script>
 
 <script type="text/x-jquery-tmpl" id="suiteDetailsTemplate">
-  {{if $item.logURL}}
-  <tr>
-    <th>Log Link:</th>
-    <td><a href="${$item.logURL}#${id}" title="${fullName}">${$item.logURL}#${id} </a></td>
-  </tr>
-  {{/if}}
   {{if doc()}}
   <tr>
     <th>Documentation:</th>
     <td>{{html doc()}}</td>
+  </tr>
+  {{/if}}
+  {{if $item.logURL}}
+  <tr>
+    <th>Log File:</th>
+    <td><a href="${$item.logURL}#${id}" title="${fullName}">${$item.logURL}#${id} </a></td>
   </tr>
   {{/if}}
   {{each metadata}}
