@@ -27,10 +27,10 @@ from robot import utils
 
 try:
     from org.robotframework.RobotRunner import getResourceAsStream
-    from java.io import BufferedReader, InputStreamReader
 except ImportError:  # Occurs unless using robotframework.jar
     JarReader = None
 else:
+    from java.io import BufferedReader, InputStreamReader
     def JarReader(path):
         return BufferedReader(InputStreamReader(getResourceAsStream(path)))
 
@@ -234,31 +234,27 @@ class HTMLFileWriter(object):
 
 
 class _WebContentFile(object):
-    _basedir = os.path.join(os.path.dirname(os.path.abspath(__file__)),
+    _fs_base = os.path.join(os.path.dirname(os.path.abspath(__file__)),
                             '..', 'webcontent')
+    _jar_base = '/Lib/robot/webcontent/'
 
     def __init__(self, filename):
         self._filename = filename
 
     def __iter__(self):
-        try:
-            return self._iterate_file_in_filesystem()
-        except IOError:
-            if not JarReader:
-                raise
+        if JarReader:
             return self._iterate_file_in_jar()
+        return self._iterate_file_in_filesystem()
 
     def _iterate_file_in_filesystem(self):
-        path = os.path.join(self._basedir, self._filename)
+        path = os.path.join(self._fs_base, self._filename)
         with codecs.open(path, 'r', encoding='UTF-8') as file:
             for line in file:
                 yield line
 
     def _iterate_file_in_jar(self):
-        file = JarReader('/Lib/robot/webcontent/%s' % self._filename)
-        while True:
-            line = file.readLine()
-            if line is None:
-                file.close()
-                break
+        file = JarReader(self._jar_base + self._filename)
+        line = file.readLine()
+        while line is not None:
             yield line + '\n'
+            line = file.readLine()
