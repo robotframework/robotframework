@@ -60,7 +60,7 @@ def main():
           platforms    = 'any',
           classifiers  = CLASSIFIERS.splitlines(),
           package_dir  = {'': 'src'},
-          package_data = {'robot': ['webcontent/*.html', 'webcontent/*.css', 'webcontent/*js', 'webcontent/lib/*.js']},
+          package_data = {'robot': ['webcontent/*.html', 'webcontent/*.css', 'webcontent/*.js', 'webcontent/lib/*.js']},
           packages     = PACKAGES,
           scripts      = inst_scripts,
     )
