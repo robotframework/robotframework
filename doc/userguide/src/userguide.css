@@ -3,7 +3,7 @@
    This stylesheet contains styles from restructuredText's default 
    'html4css1.css' and after that modifications needed for Robot Framework User
    Guide. These styles are added into the same file against suggestions at 
-   reST's stylesheet  howto mentioned below, because we want to be able to 
+   reST's stylesheet HowTo mentioned below, because we want to be able to
    embed all styles into the created HTML file. Everything before 'Robot 
    Framework User Guide Modifications' text is from 'html4css1.css' without 
    any changes so that part can still be changed easily.
@@ -388,7 +388,7 @@ cite {
 }
 div.admonition, div.attention, div.caution, div.danger, div.error,
 div.hint, div.important, div.note, div.tip, div.warning {
-    border: 0.1em solid gray;
+    border: 1px solid gray;
     margin: 1em 2em;
     padding: 0.7em 1em;
     font-size: 0.9em;
@@ -404,7 +404,9 @@ div.contents li {
     margin-top: 0em;
     margin-bottom: 0em;
 }
-
+a img {
+    border: 1px solid blue;
+}
 
 /* Pygments 
 
