@@ -202,7 +202,8 @@ def _unzip_jython_jar(tmpdir):
 def _copy_robot_files(tmpdir):
     # pyc files must be excluded so that compileall works properly.
     todir = join(tmpdir, 'Lib', 'robot')
-    shutil.copytree(ROBOT_PATH, todir, ignore=shutil.ignore_patterns('*.pyc*'))
+    shutil.copytree(ROBOT_PATH, todir, ignore=shutil.ignore_patterns('*.pyc'))
+    shutil.rmtree(join(todir, 'webcontent', 'testdata'))
 
 def _compile_all_py_files(tmpdir):
     subprocess.call(['java', '-jar', JYTHON_JAR, '-m', 'compileall', tmpdir])
