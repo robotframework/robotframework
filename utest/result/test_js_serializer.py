@@ -12,6 +12,7 @@ from robot.utils.asserts import assert_equals, assert_true
 
 def assert_model(data_model, basemillis=None, suite=None, strings=None, plain_suite=None):
     if basemillis is not None:
+        basemillis += time.altzone*1000
         assert_equals(data_model._robot_data['baseMillis'], basemillis)
     if suite is not None:
         assert_equals(data_model._robot_data['suite'], suite)
@@ -149,14 +150,11 @@ class TestJsSerializer(_JsSerializerTestBase):
 
     def test_message_xml_parsing(self):
         data_model = self._get_data_model('<msg timestamp="20110531 12:48:09.088" level="FAIL">AssertionError</msg>')
-        assert_model(data_model,
-                          1306835289088,
-                          [0, 4, 1],
-                          ['*', '*AssertionError'])
+        assert_model(data_model, 1306846089088, [0, 4, 1], ['*', '*AssertionError'])
 
     def test_plain_message_xml_parsing(self):
         data_model = self._get_data_model('<msg timestamp="20110531 12:48:09.088" level="FAIL">AssertionError</msg>')
-        assert_model(data_model, basemillis=1306835289088, plain_suite=[0, 4, '*AssertionError'])
+        assert_model(data_model, basemillis=1306846089088, plain_suite=[0, 4, '*AssertionError'])
 
     def assert_model_does_not_contain(self, data_model, items):
         suite = self._reverse_from_ids(data_model,
@@ -207,7 +205,9 @@ class TestJsSerializer(_JsSerializerTestBase):
     def test_generated_millis(self):
         self._context.timestamp('19790101 12:00:00.000')
         data_model = self._get_data_model(self.SUITE_XML)
-        data_model._set_generated(time.localtime(284029200))
+        basetime = 284040000 + time.altzone
+        data_model._set_generated(time.localtime(basetime))
+        assert_equals(data_model._robot_data['baseMillis'], basetime*1000)
         assert_equals(data_model._robot_data['generatedMillis'], 0)
 
     def test_arguments_xml_parsing(self):
@@ -346,7 +346,7 @@ class TestJsSerializer(_JsSerializerTestBase):
         # Tests parsing the whole suite structure
         data_model = self._get_data_model(self.SUITE_XML)
         doc = '*<b>html</b> &lt;esc&gt; <a href="http://x.y">http://x.y</a> <img src="http://x.y/z.jpg" title="http://x.y/z.jpg" style="border: 1px solid gray">'
-        assert_model(data_model, basemillis=1306918911353,
+        assert_model(data_model, basemillis=1306929711353,
                           plain_suite=['*Verysimple', '*/tmp/verysimple.txt', '*', doc,
                                        ['*key', '*val', '*esc', '*&lt;',
                                         '*html', '*<img src="http://x.y.x.jpg" title="http://x.y.x.jpg" style="border: 1px solid gray">'],
@@ -402,7 +402,7 @@ class TestJsSerializer(_JsSerializerTestBase):
                     [{'label': 'Data', 'name': 'Data', 'pass': 0, 'fail': 4},
                      {'label': 'Data.All Settings', 'name': 'All Settings', 'pass': 0, 'fail': 1},
                      {'label': 'Data.Failing Suite', 'name': 'Failing Suite', 'pass': 0, 'fail': 3}]]
-        assert_model(data_model, 0, expected, ['*'])
+        assert_model(data_model, suite=expected, strings=['*'])
 
     def test_errors_xml_parsing(self):
         errors_xml = """
@@ -411,7 +411,7 @@ class TestJsSerializer(_JsSerializerTestBase):
         </errors>
         """
         data_model = self._get_data_model(errors_xml)
-        assert_model(data_model, basemillis=1306835289078,
+        assert_model(data_model, basemillis=1306846089078,
                      plain_suite=[[0, 5, "*Invalid syntax in file '/tmp/data/failing_suite.txt' in table 'Settings': Resource file 'nope' does not exist."]])
 
 
