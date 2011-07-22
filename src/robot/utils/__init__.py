@@ -13,6 +13,7 @@
 #  limitations under the License.
 
 from argumentparser import ArgumentParser
+from compress import compress_text
 from connectioncache import ConnectionCache
 from domwrapper import DomWrapper
 from encoding import decode_output, encode_output, decode_from_file_system

@@ -13,8 +13,6 @@
 #  limitations under the License.
 
 import os.path
-import zlib
-import base64
 from operator import itemgetter
 
 from robot import utils
@@ -260,7 +258,7 @@ class TextCache(object):
         return raw
 
     def _compress(self, text):
-        return base64.b64encode(zlib.compress(text.encode('UTF-8'), 9))
+        return utils.compress_text(text)
 
     def _raw(self, text):
         return '*'+text
