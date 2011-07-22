@@ -1,6 +1,0 @@
-*** Test Cases ***
-My test case
-    [Documentation]  FAIL Failing
-    Log  Something
-    Fail  Failing
-

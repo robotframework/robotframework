@@ -1,5 +1,0 @@
-*** Test Cases ***
-My second test case
-    [Documentation]  FAIL Failing
-    [Tags]  FOO
-    Fail  Failing
