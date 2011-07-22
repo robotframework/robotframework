@@ -33,9 +33,9 @@
 <div id="statistics_container"></div>
 
 <script type="text/javascript">
-removeJavaScriptDisabledWarning();
 $(document).ready(function(){
     var topsuite = window.testdata.suite();
+    removeJavaScriptDisabledWarning();
     initLayout(topsuite.name, 'Log');
     addStatistics();
     addErrors();
