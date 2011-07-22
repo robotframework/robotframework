@@ -79,7 +79,7 @@ class Listeners:
                 li.call_method(li.start_test, test.name, test.doc, test.tags)
             else:
                 attrs = self._get_start_attrs(test, 'tags', 'critical')
-                attrs.update({'template' : test.template if test.template != None else ""})
+                attrs['template'] = test.template or ''
                 li.call_method(li.start_test, test.name, attrs)
 
     def end_test(self, test):
@@ -89,7 +89,7 @@ class Listeners:
                 li.call_method(li.end_test, test.status, test.message)
             else:
                 attrs = self._get_end_attrs(test, 'tags', 'critical')
-                attrs.update({'template' : test.template if test.template != None else ""})
+                attrs['template'] = test.template or ''
                 li.call_method(li.end_test, test.name, attrs)
 
     def start_keyword(self, kw):
