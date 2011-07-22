@@ -66,14 +66,14 @@ Correct Attributes To Listener Methods
     ${status} =  Log File  ${TEMPDIR}/${ATTR_TYPE_FILE}
     Check Stderr Does Not Contain  attributeverifyinglistener
     Should Not Contain  ${status}  FAILED
-    Should Contain X Times  ${status}  PASSED  154
+    Should Contain X Times  ${status}  PASSED  158
 
 Correct Attributes To Java Listener Methods
     [Tags]  jybot
     ${status} =  Log File  ${JAVATEMPDIR}/${JAVA_ATTR_TYPE_FILE}
     Check Stderr Does Not Contain  JavaAttributeVerifyingListener
     Should Not Contain  ${status}  FAILED
-    Should Contain X Times  ${status}  PASSED  154
+    Should Contain X Times  ${status}  PASSED  158
 
 Suite And Test Counts
     Run Tests  --listener listeners.SuiteAndTestCounts  misc/suites/sub*

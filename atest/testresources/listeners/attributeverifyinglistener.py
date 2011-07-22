@@ -21,11 +21,11 @@ def end_suite(name, attrs):
 
 def start_test(name, attrs):
     _verify_attrs('START TEST', attrs,
-                  START_ATTRS + 'longname tags critical')
+                  START_ATTRS + 'longname tags critical template')
 
 def end_test(name, attrs):
     _verify_attrs('END TEST', attrs,
-                  END_ATTRS + 'longname tags critical message')
+                  END_ATTRS + 'longname tags critical message template')
 
 def start_keyword(name, attrs):
     _verify_attrs('START KEYWORD', attrs, START_ATTRS + 'args type')

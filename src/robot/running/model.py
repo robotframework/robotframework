@@ -208,8 +208,8 @@ class RunnableTestCase(BaseTestCase):
         self.teardown = defaults.get_teardown(tc_data.teardown)
         self.tags = defaults.get_tags(tc_data.tags)
         self.timeout = defaults.get_timeout(tc_data.timeout)
-        template = defaults.get_template(tc_data.template)
-        self.keywords = Keywords(tc_data.steps, template)
+        self.template = defaults.get_template(tc_data.template)
+        self.keywords = Keywords(tc_data.steps, self.template)
 
     def run(self, context, suite_errors):
         self._suite_errors = suite_errors

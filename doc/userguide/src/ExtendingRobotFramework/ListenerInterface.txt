@@ -125,6 +125,9 @@ synonym to :code:`start_suite`.
    |               |                  | * tags: test case tags as a list of strings      |
    |               |                  | * critical: :code:`yes` or :code:`no` depending  |
    |               |                  |   is test considered critical or not (new in 2.6)|
+   |               |                  | * template: contains the name of the template    |
+   |               |                  |   used for the test. If the test is not templated|
+   |               |                  |   it will be an empty string (new in 2.6)        |
    |               |                  | * starttime: execution start time                |
    +---------------+------------------+--------------------------------------------------+
    | end_test      | name, attributes | Keys in the attribute dictionary:                |
@@ -134,6 +137,9 @@ synonym to :code:`start_suite`.
    |               |                  | * tags: test case tags as a list of strings      |
    |               |                  | * critical: :code:`yes` or :code:`no` depending  |
    |               |                  |   is test considered critical or not (new in 2.6)|
+   |               |                  | * template: contains the name of the template    |
+   |               |                  |   used for the test. If the test is not templated|
+   |               |                  |   it will be an empty string (new in 2.6)        |
    |               |                  | * starttime: execution start time                |
    |               |                  | * endtime: execution end time                    |
    |               |                  | * elapsedtime: execution time in milliseconds    |
