@@ -231,8 +231,7 @@ class TextIndex(long):
 
 
 class TextCache(object):
-    # TODO: Tune compressing thresholds
-    _compress_threshold = 20
+    _compress_threshold = 80
     _use_compressed_threshold = 1.1
 
     def __init__(self):
