@@ -41,6 +41,12 @@ Installation packages are available from
 http://downloads.robotframework.org, and source code from
 http://source.robotframework.org.
 
+.. note:: At the momemt it is not possible to install Robot Framework using
+          pip__. For more information see `issue 885`__.
+
+__ http://www.pip-installer.org
+__ http://code.google.com/p/robotframework/issues/detail?id=885
+
 Preconditions
 ~~~~~~~~~~~~~
 
