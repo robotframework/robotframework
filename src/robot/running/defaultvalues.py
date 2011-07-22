@@ -60,4 +60,5 @@ class DefaultValues(object):
         return self._force_tags + self._parent._get_force_tags()
 
     def get_template(self, template):
-        return (template if template.is_set() else self._test_template).value
+        tmpl = (template if template.is_set() else self._test_template).value
+        return tmpl if tmpl and tmpl.upper() != 'NONE' else None

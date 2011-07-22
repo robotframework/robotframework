@@ -23,7 +23,7 @@ class Keywords(object):
 
     def __init__(self, steps, template=None):
         self._keywords = []
-        self._templated = bool(template and template.upper() != 'NONE')
+        self._templated = bool(template)
         if self._templated:
             steps = [s.apply_template(template) for s in steps]
         for s in steps:
