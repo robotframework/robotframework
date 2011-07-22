@@ -33,17 +33,20 @@
 <div id="test_details_container"></div>
 
 <script type="text/javascript">
-
+removeJavaScriptDisabledWarning();
 $(document).ready(function () {
-    window.prevLocationHash = '';
-    var topsuite = window.testdata.suite();
-    removeJavaScriptDisabledWarning();
-    setBackground(topsuite);
-    initLayout(topsuite.name, 'Report');
-    addSummary(topsuite);
-    addStatistics();
-    addDetails();
-    window.onhashchange = showDetailsByHash;
+    try {
+        window.prevLocationHash = '';
+        var topsuite = window.testdata.suite();
+        setBackground(topsuite);
+        initLayout(topsuite.name, 'Report');
+        addSummary(topsuite);
+        addStatistics();
+        addDetails();
+        window.onhashchange = showDetailsByHash;
+    } catch (e) {
+        addJavaScriptDisabledWarning();
+    }
 });
 
 function setBackground(topsuite) {
