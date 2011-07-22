@@ -69,7 +69,7 @@ class Listeners:
                                suite.get_full_message())
             else:
                 attrs = self._get_end_attrs(suite, 'metadata')
-                attrs.update({'statistics': suite.get_stat_message()})
+                attrs['statistics'] = suite.get_stat_message()
                 li.call_method(li.end_suite, suite.name, attrs)
 
     def start_test(self, test):
