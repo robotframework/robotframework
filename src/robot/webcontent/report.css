@@ -15,7 +15,7 @@ table {
     margin: 0 1px;
 }
 th {
-    background: #C6C6C6;
+    background: #DCDCF0;
     color: black;
 }
 /* Summary and total/tag/suite details */
@@ -53,7 +53,7 @@ table.details #selector th, table.details #selector td {
 }
 #detail_tabs li {
     float: left;
-    background: #C6C6C6;
+    background: #DCDCF0;
     border: 1px solid black;
     border-bottom-width: 0;
     margin: 0 0.5em 0 0;
