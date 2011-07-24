@@ -51,7 +51,6 @@ h1 {
     color: #663300;
 }
 /* JavaScript disabled box */
-/* TODO: Test with old browsers as they are more likely to see this. */
 #javascript_disabled {
     width: 600px;
     margin: 100px auto 0 auto;
