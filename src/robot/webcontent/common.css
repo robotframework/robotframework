@@ -24,10 +24,10 @@ a:hover, a:active {
 /* Headers */
 .header {
     width: 58em;
-    margin: 6px 0px;
+    margin: 6px 0;
 }
 h1 {
-    margin: 0px;
+    margin: 0;
     width: 70%;
 }
 #generated {
@@ -56,7 +56,7 @@ h1 {
     margin: 100px auto 0 auto;
     padding: 20px;
     border: 2px solid black;
-    background: #ffc0cb;
+    background: #FFC0CB;
 }
 #javascript_disabled h1 {
     width: 100%;
@@ -74,8 +74,8 @@ h1 {
 #report_or_log_link {
     position: fixed;
     z-index: 1000;
-    top: 0px;
-    right: 0px;
+    top: 0;
+    right: 0;
     background: black;
     border-radius: 0 0 0 4px;
     width: 8em;
@@ -103,7 +103,7 @@ table.statistics {
 table.statistics td, table.statistics th {
     border: 1px solid black;
     padding: 1px 4px;
-    margin: 0px;
+    margin: 0;
 }
 table.statistics th {
     background: #C6C6C6;
@@ -140,7 +140,7 @@ table.statistics th {
     border: 1px solid black;
     width: 100%;
     height: 0.75em;
-    padding: 0px;
+    padding: 0;
     background: #E9E9E9;
 }
 .graph div {
