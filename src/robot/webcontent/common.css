@@ -95,7 +95,6 @@ h1 {
 /* Statistics table */
 table.statistics {
     width: 58em;
-    border: 1px solid black;
     border-collapse: collapse;
     empty-cells: show;
     margin-bottom: 1em;
@@ -153,7 +152,6 @@ table.statistics th {
 }
 /* HTML in users' suite documentation etc. */
 table.doc {
-    border: 1px solid gray;
     background: transparent;
     border-collapse: collapse;
     empty-cells: show;
