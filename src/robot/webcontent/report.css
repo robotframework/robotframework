@@ -81,6 +81,9 @@ table.details #selector th, table.details #selector td {
 table#test_details {
     width: 100%;
 }
+table#test_details tr:hover {
+    background: #F4F4FF;
+}
 table#test_details th, table#test_details td {
     border: 1px solid black;
     padding: 0 0.2em;

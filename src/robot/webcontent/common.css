@@ -100,6 +100,9 @@ table.statistics {
     empty-cells: show;
     margin-bottom: 1em;
 }
+table.statistics tr:hover {
+    background: #F4F4FF;
+}
 table.statistics td, table.statistics th {
     border: 1px solid black;
     padding: 1px 4px;
