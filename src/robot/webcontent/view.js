@@ -1,9 +1,9 @@
 function removeJavaScriptDisabledWarning() {
-    $('#javascript_disabled').hide();
+    $('#javascript_disabled').css('display', 'none');
 }
 
 function addJavaScriptDisabledWarning() {
-    $('#javascript_disabled').show();
+    $('#javascript_disabled').css('display', 'block');
 }
 
 function initLayout(suiteName, type) {
