@@ -38,18 +38,19 @@
 $(document).ready(function(){
     try {
         var topsuite = window.testdata.suite();
-        initLayout(topsuite.name, 'Log');
-        addStatistics();
-        addErrors();
-        addTestExecutionLog(topsuite);
-        if (window.location.hash) {
-            makeElementVisible(window.location.hash.substring(1));
-            scrollToHash();
-        } else {
-            expandSuite(topsuite);
-        }
     } catch (e) {
         addJavaScriptDisabledWarning();
+        return;
+    }
+    initLayout(topsuite.name, 'Log');
+    addStatistics();
+    addErrors();
+    addTestExecutionLog(topsuite);
+    if (window.location.hash) {
+        makeElementVisible(window.location.hash.substring(1));
+        scrollToHash();
+    } else {
+        expandSuite(topsuite);
     }
 });
 

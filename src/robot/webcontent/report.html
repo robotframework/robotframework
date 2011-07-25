@@ -37,17 +37,18 @@
 <script type="text/javascript">
 $(document).ready(function () {
     try {
-        window.prevLocationHash = '';
         var topsuite = window.testdata.suite();
-        setBackground(topsuite);
-        initLayout(topsuite.name, 'Report');
-        addSummary(topsuite);
-        addStatistics();
-        addDetails();
-        window.onhashchange = showDetailsByHash;
     } catch (e) {
         addJavaScriptDisabledWarning();
+        return;
     }
+    setBackground(topsuite);
+    initLayout(topsuite.name, 'Report');
+    addSummary(topsuite);
+    addStatistics();
+    addDetails();
+    window.prevLocationHash = '';
+    window.onhashchange = showDetailsByHash;
 });
 
 function setBackground(topsuite) {
