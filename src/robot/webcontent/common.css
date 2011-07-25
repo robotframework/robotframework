@@ -55,8 +55,9 @@ h1 {
     width: 600px;
     margin: 100px auto 0 auto;
     padding: 20px;
-    border: 2px solid black;
-    background: #FFC0CB;
+    color: #2A2A2E;
+    border: 1px solid #9A9A9E;
+    background: #FAFAFF;
 }
 #javascript_disabled h1 {
     width: 100%;
