@@ -20,7 +20,7 @@ from unic import unic
 def html_escape(text, formatting=False):
     # TODO: Remove formatting attribute after RIDE does not use it anymore
     if formatting:
-        return html_format(text)
+        return html_format(text).replace('\t', '&nbsp;'*8).replace('  ', ' &nbsp;').replace('\n','<br />\n')
     return _HtmlEscaper().format(text)
 
 
