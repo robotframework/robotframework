@@ -29,11 +29,12 @@
     <li>Check are there messages in your browser's <b>JavaScript error log</b>. Report the problem if you believe you have encountered a bug.</li>
   </ul>
 </div>
+<script type="text/javascript">removeJavaScriptDisabledWarning();</script>
+
 <div class="header" id="header_div"></div>
 <div id="statistics_container"></div>
 
 <script type="text/javascript">
-removeJavaScriptDisabledWarning();
 $(document).ready(function(){
     try {
         var topsuite = window.testdata.suite();
