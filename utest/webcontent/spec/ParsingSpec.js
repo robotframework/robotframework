@@ -467,10 +467,16 @@ describe("Iterating Suites", function () {
         });
     });
 
-    it("should give empty navigation uniqueId list for unknown element", function (){
-        testFindPathTo("unknown", function (uniqueIdList) {
-            expect(uniqueIdList).toEqual([]);
+    it("should not execute callback if path is not found", function (){
+        var callbackExecuted = false;
+        window.testdata.findPathTo("s1-foo-bar", function (ids) {
+            callbackExecuted = true;
         });
+        expect(callbackExecuted).toBeFalsy();
+        window.testdata.findPathTo("none-foo-bar", function (ids) {
+            callbackExecuted = true;
+        });
+        expect(callbackExecuted).toBeFalsy();
     });
 });
 

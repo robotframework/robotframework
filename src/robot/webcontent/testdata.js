@@ -218,7 +218,6 @@ window.testdata = function () {
     function findPathTo(pathId, callback) {
         var ids = pathId.split("-");
         if (ids[0] != "s1") {
-            callback([]);
             return;
         }
         var root = suite();
@@ -231,11 +230,18 @@ window.testdata = function () {
             callback(result);
         } else {
             current.callWhenChildrenReady(function () {
-                var item = selectFrom(current, pathId[0][0], parseInt(pathId[0].substring(1))-1);
+                doWithSelected(current, pathId[0][0], parseInt(pathId[0].substring(1))-1, function (item) {
                 result.push(item.id);
                 pathId.shift();
                 findPathWithId(pathId, item, result, callback);
-            });
+            })});
+        }
+    }
+
+    function doWithSelected(element, selector, index, func) {
+        var item = selectFrom(element, selector, index);
+        if (item !== undefined) {
+           func(item);
         }
     }
 
