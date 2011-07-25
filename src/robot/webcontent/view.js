@@ -1,9 +1,10 @@
 function removeJavaScriptDisabledWarning() {
-    $('#javascript_disabled').css('display', 'none');
+    // Not using jQuery here for speed and to support angient browsers.
+    document.getElementById('javascript_disabled').style.display = 'none';
 }
 
 function addJavaScriptDisabledWarning() {
-    $('#javascript_disabled').css('display', 'block');
+    document.getElementById('javascript_disabled').style.display = 'block';
 }
 
 function initLayout(suiteName, type) {
