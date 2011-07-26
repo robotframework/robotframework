@@ -48,5 +48,5 @@ Java library logging in constructor via stdout and stderr
     Check syslog contains  | INFO \ | Info via stderr in constructor 2\n
     Check stderr contains  [ WARN ] Warning via stdout in constructor 1\n
     Check stderr contains  [ WARN ] Warning via stdout in constructor 2\n
-    Check stderr contains  \nInfo via stderr in constructor 1\n
-    Check stderr contains  \nInfo via stderr in constructor 2\n
+    Check stderr contains  \nInfo via stderr in constructor 1
+    Check stderr contains  \nInfo via stderr in constructor 2
