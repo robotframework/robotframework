@@ -66,6 +66,9 @@ class TestGetLinkPath(unittest.TestCase):
             assert_equal(get_link_path(target, basedir).replace('R:', 'r:'),
                          expected, '%s -> %s' % (target, basedir))
 
+    def test_get_link_path_to_non_existing_path(self):
+        assert_equal(get_link_path('/non_existing/foo.txt', '/non_existing/does_not_exist_never.txt'), '../foo.txt')
+
     def test_get_link_path_with_unicode(self):
         assert_equal(get_link_path(u'\xe4\xf6.txt', ''), '%C3%A4%C3%B6.txt')
 

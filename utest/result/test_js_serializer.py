@@ -587,9 +587,9 @@ class TestRelativeSuiteSource(_JsSerializerTestBase):
         self._test_rel_path(log='NONE', expected='')
 
     def test_log_path(self):
-        self._test_rel_path(log='/tmp', expected='supersimple.txt')
-        self._test_rel_path(log='/tmp/kekko', expected='../supersimple.txt')
-        self._test_rel_path(log='/home', expected='../tmp/supersimple.txt')
+        self._test_rel_path(log='/tmp/non_existing_log.html', expected='supersimple.txt')
+        self._test_rel_path(log='/tmp/kekko/non_existing_log.html', expected='../supersimple.txt')
+        self._test_rel_path(log='/home/non_existing_log.html', expected='../tmp/supersimple.txt')
 
     def test_no_source(self):
         os.path.exists = lambda path: False

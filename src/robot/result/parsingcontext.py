@@ -34,7 +34,7 @@ class Context(object):
 
     def get_rel_log_path(self, path):
         if path and os.path.exists(path) and self._log_path != 'NONE':
-            return utils.get_link_path(path, self._log_path)
+            return utils.get_link_path(path, os.path.dirname(self._log_path))
         return ''
 
     def get_id(self, value):
