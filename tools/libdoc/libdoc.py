@@ -185,7 +185,7 @@ class _DocHelper:
         return ' '
 
     def _get_htmldoc(self, doc):
-        doc = utils.html_escape(doc, formatting=True)
+        doc = utils.html_format(doc)
         return self._name_regexp.sub(self._link_keywords, doc)
 
     def _link_keywords(self, res):
