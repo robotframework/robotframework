@@ -169,7 +169,7 @@ class TestDataDirectory(_TestData):
         self.testcase_table = TestCaseTable(self)
         self.keyword_table = KeywordTable(self)
 
-    def populate(self, include_suites, warn_on_skipped):
+    def populate(self, include_suites=[], warn_on_skipped=False):
         FromDirectoryPopulator().populate(self.source, self, include_suites, warn_on_skipped)
         self.children = [ ch for ch in self.children if ch.has_tests() ]
         return self
