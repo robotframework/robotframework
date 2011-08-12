@@ -13,5 +13,5 @@
 #  limitations under the License.
 
 from datarow import DataRow
-from model import (TestCaseFile, TestDataDirectory, ResourceFile,
+from model import (TestData, TestCaseFile, TestDataDirectory, ResourceFile,
                    TestCase, UserKeyword)

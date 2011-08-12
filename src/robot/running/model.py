@@ -16,7 +16,7 @@ import os
 
 from robot import utils
 from robot.common import BaseTestSuite, BaseTestCase
-from robot.parsing import TestCaseFile, TestDataDirectory
+from robot.parsing import TestData
 from robot.errors import ExecutionFailed, DataError
 from robot.variables import GLOBAL_VARIABLES
 from robot.output import LOGGER
@@ -47,9 +47,7 @@ def _get_suite(datasources, include_suites, warn_on_skipped):
 
 def _parse_suite(path, include_suites, warn_on_skipped):
     try:
-        if os.path.isdir(path):
-            return TestDataDirectory(source=path, include_suites=include_suites, warn_on_skipped=warn_on_skipped)
-        return TestCaseFile(source=path)
+        return TestData(source=path, include_suites=include_suites, warn_on_skipped=warn_on_skipped)
     except DataError, err:
         raise DataError("Parsing '%s' failed: %s" % (path, unicode(err)))
 
