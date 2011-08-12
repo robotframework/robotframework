@@ -29,7 +29,7 @@ def UserLibrary(path):
     from arguments import UserKeywordArguments
     from userkeyword import UserLibrary as RuntimeUserLibrary
 
-    resource = ResourceFile(path)
+    resource = ResourceFile(path).populate()
     ret = RuntimeUserLibrary(resource.keyword_table.keywords, path)
     for handler in ret.handlers.values(): # This is done normally only at runtime.
         handler.arguments = UserKeywordArguments(handler._keyword_args,

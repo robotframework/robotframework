@@ -26,8 +26,8 @@ from populators import FromFilePopulator, FromDirectoryPopulator
 
 def TestData(parent=None, source=None, include_suites=[], warn_on_skipped=False):
     if os.path.isdir(source):
-        return TestDataDirectory(parent, source, include_suites, warn_on_skipped)
-    return TestCaseFile(parent, source)
+        return TestDataDirectory(parent, source).populate(include_suites, warn_on_skipped)
+    return TestCaseFile(parent, source).populate()
 
 
 class _TestData(object):
@@ -102,9 +102,11 @@ class TestCaseFile(_TestData):
         self.variable_table = VariableTable(self)
         self.testcase_table = TestCaseTable(self)
         self.keyword_table = KeywordTable(self)
-        if source: # FIXME: model should be decoupled from populating
-            FromFilePopulator(self).populate(source)
-            self._validate()
+
+    def populate(self):
+        FromFilePopulator(self).populate(self.source)
+        self._validate()
+        return self
 
     def _validate(self):
         if not self.testcase_table.is_started():
@@ -131,9 +133,11 @@ class ResourceFile(_TestData):
         self.variable_table = VariableTable(self)
         self.testcase_table = TestCaseTable(self)
         self.keyword_table = KeywordTable(self)
-        if self.source:
-            FromFilePopulator(self).populate(source)
-            self._report_status()
+
+    def populate(self):
+        FromFilePopulator(self).populate(self.source)
+        self._report_status()
+        return self
 
     def _report_status(self):
         if self.setting_table or self.variable_table or self.keyword_table:
@@ -156,7 +160,7 @@ class ResourceFile(_TestData):
 
 class TestDataDirectory(_TestData):
 
-    def __init__(self, parent=None, source=None, include_suites=[], warn_on_skipped=False):
+    def __init__(self, parent=None, source=None):
         _TestData.__init__(self, parent, source)
         self.directory = self.source
         self.initfile = None
@@ -164,9 +168,11 @@ class TestDataDirectory(_TestData):
         self.variable_table = VariableTable(self)
         self.testcase_table = TestCaseTable(self)
         self.keyword_table = KeywordTable(self)
-        if self.source:
-            FromDirectoryPopulator().populate(self.source, self, include_suites, warn_on_skipped)
-            self.children = [ ch for ch in self.children if ch.has_tests() ]
+
+    def populate(self, include_suites, warn_on_skipped):
+        FromDirectoryPopulator().populate(self.source, self, include_suites, warn_on_skipped)
+        self.children = [ ch for ch in self.children if ch.has_tests() ]
+        return self
 
     def _get_basename(self):
         return os.path.basename(self.source)

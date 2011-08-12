@@ -42,7 +42,7 @@ class Importer:
         if path in self._resource_cache:
             LOGGER.info("Found resource file '%s' from cache" % path)
         else:
-            resource = ResourceFile(path)
+            resource = ResourceFile(path).populate()
             self._resource_cache[path] = resource
         return self._resource_cache[path]
 
