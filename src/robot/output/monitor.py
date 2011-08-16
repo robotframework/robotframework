@@ -64,7 +64,7 @@ class CommandLineMonitor:
 
     def _get_info(self, name, doc, maxwidth):
         if utils.get_console_length(name) > maxwidth:
-            return utils.pad_console_length(name, maxwidth, cut_left=True)
+            return utils.pad_console_length(name, maxwidth)
         info = name if not doc else '%s :: %s' % (name, doc.splitlines()[0])
         return utils.pad_console_length(info, maxwidth)
 

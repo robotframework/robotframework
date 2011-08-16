@@ -34,16 +34,16 @@ Outputs
     ${outputs} =  Evaluate  '''${stdout.replace('\\','\\\\')}'''.split('${SEP_LINE1}')[-1]
     Should Match Regexp  ${outputs}  Debug: \ \ .*mydebug.txt\n Output: \ .*output.xml\n Log: \ \ \ \ .*mylog.html\n Report: \ .*myreport.html\n
 
-Long Document Should Be Cut From End
+Long Documentation Should Be Cut
     ${doc} =  Evaluate  '0123456789' * 10
     Run Tests  --name My_Name --doc start${doc}end  misc/normal.html
     ${expbase} =  Evaluate  'My Name :: start' + '0123456789'*5
     Check Stdout Contains  ${SEP_LINE1}\n ${expbase}012345678...\n ${SEP_LINE1}\n
     Check Stdout Contains  ${SEP_LINE2}\n ${expbase}... | PASS |\n
 
-Long Name Should Be Cut From Beginning
+Long Name Should Be Cut
     ${name} =  Evaluate  '0123456789' * 10
     Run Tests  --name start${name}end --doc whatever  misc/normal.html
-    ${expbase} =  Evaluate  '789' + '0123456789'*6+ 'end'
-    Check Stdout Contains  ${SEP_LINE1}\n ...890123456${expbase}\n ${SEP_LINE1}\n
-    Check Stdout Contains  ${SEP_LINE2}\n ...${expbase} | PASS |\n
+    ${expbase} =  Evaluate  'start' + '0123456789'*6
+    Check Stdout Contains  ${SEP_LINE1}\n ${expbase}0123456789...\n ${SEP_LINE1}\n
+    Check Stdout Contains  ${SEP_LINE2}\n ${expbase}0... | PASS |\n
