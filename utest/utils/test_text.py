@@ -156,12 +156,8 @@ class TestConsoleWidth(unittest.TestCase):
         assert_equal(pad_console_length(self.ten_normal, 15), self.ten_normal+' '*5)
         assert_equal(pad_console_length(self.ten_normal, 10), self.ten_normal)
 
-    def test_cut_left(self):
-        assert_equal(pad_console_length(self.ten_normal, 5, cut_left=True), '...90')
-
     def test_cut_east_asian(self):
         assert_equal(pad_console_length(self.len16_asian, 10), u'\u6c49\u5b57\u5e94... ')
-        assert_equal(pad_console_length(self.len16_asian, 10, cut_left=True), u'...\u786e\u5bf9\u9f50 ')
         assert_equal(pad_console_length(self.mixed_26, 11), u'012345\u6c49...')
 
 
