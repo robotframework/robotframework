@@ -189,7 +189,6 @@ class _ListenerProxy(AbstractLoggerProxy):
         self.name = name
         self.version = self._get_version(listener)
         self.is_java = utils.is_jython and isinstance(listener, Object)
-        self._failed = []
 
     def _import_listener(self, name, args):
         listener, source = utils.import_(name, 'listener')
@@ -208,20 +207,27 @@ class _ListenerProxy(AbstractLoggerProxy):
             return 1
 
     def call_method(self, method, *args):
-        if method in self._failed:
-            return
         if self.is_java:
             args = [self._to_map(a) if isinstance(a, dict) else a for a in args]
         try:
             method(*args)
         except:
-            self._failed.append(method)
-            self._report_error(method)
+            disabled = self._disable_message_method_if_it_failed(method.__name__)
+            self._report_error(method.__name__, disabled)
 
-    def _report_error(self, method):
+    def _disable_message_method_if_it_failed(self, name):
+        # This avoids recursion caused by message method failing repeatingly:
+        # http://code.google.com/p/robotframework/issues/detail?id=832
+        if name == 'message':
+            self.message = lambda msg: None
+            return True
+        return False
+
+    def _report_error(self, name, disabled):
         message, details = utils.get_error_details()
-        LOGGER.error("Method '%s' of listener '%s' failed and is disabled: %s"
-                     % (method.__name__, self.name, message))
+        is_disabled = ' and is disabled' if disabled else ''
+        LOGGER.error("Calling listener method '%s' of listener '%s' failed%s: %s"
+                     % (name, self.name, is_disabled, message))
         LOGGER.info("Details:\n%s" % details)
 
     def _to_map(self, dictionary):

@@ -153,5 +153,6 @@ Check Listen All File
 
 Calling listener failed
     [Arguments]  ${method}  ${error}
-    Check Stderr Contains  [ ERROR ] Method '${method}' of listener
-    ...  'listeners.InvalidMethods' failed and is disabled: ${error}
+    ${is_disabled} =  Set Variable If  '${method}'=='message'  ${SPACE}and is disabled  ${EMPTY}
+    Check Stderr Contains  [ ERROR ] Calling listener method '${method}' of
+    ...  listener 'listeners.InvalidMethods' failed${is_disabled}: ${error}
