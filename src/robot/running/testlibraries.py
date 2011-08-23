@@ -323,6 +323,7 @@ class _DynamicLibrary(_BaseTestLibrary):
             _DynamicMethod(libcode, 'get_keyword_documentation', default='')
         self._get_kw_args = \
             _DynamicMethod(libcode, 'get_keyword_arguments', default=None)
+        self.doc = self._get_kw_doc(self.get_instance(), '__intro__')
 
     def _get_handler_names(self, instance):
         try:
