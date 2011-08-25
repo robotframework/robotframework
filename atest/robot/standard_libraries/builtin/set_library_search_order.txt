@@ -13,7 +13,10 @@ Empty Library Order Can Be Set
 One Library Can Be Set As Default Library
     Check Test Case  ${TEST NAME}
 
-Three Libraries Can Be Set As Default Libraries
+More Than One Library Can Be Set As Default Libraries
+    Check Test Case  ${TEST NAME}
+
+Non-Existing Libraries In Search Order Are Ignored
     Check Test Case  ${TEST NAME}
 
 Library Order Should Be Available In The Next Test Case

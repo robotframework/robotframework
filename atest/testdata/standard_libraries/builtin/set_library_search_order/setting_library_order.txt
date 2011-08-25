@@ -18,8 +18,12 @@ One Library Can Be Set As Default Library
     Set Library Search Order  Library3
     Active Library Should Be  Library3
 
-Three Libraries Can Be Set As Default Libraries
+More Than One Library Can Be Set As Default Libraries
     Set Library Search Order  Library2  Library1  Library3
+    Active Library Should Be  Library2
+
+Non-Existing Libraries In Search Order Are Ignored
+    Set Library Search Order  NonEx1  Library2  NonEx2  Library1  Library3
     Active Library Should Be  Library2
 
 Library Order Should Be Available In The Next Test Case
