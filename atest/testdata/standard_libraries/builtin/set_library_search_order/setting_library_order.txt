@@ -13,7 +13,6 @@ Empty Library Order Can Be Set
     [Documentation]  FAIL Multiple keywords with name 'Get Name' found.\n Give the full name of the keyword you want to use.\n Found: 'Library With Space.Get Name', 'Library1.Get Name', 'Library2.Get Name' and 'Library3.Get Name'
     Set Library Search Order
     Get Name
-    Library Order Should Be Empty
 
 One Library Can Be Set As Default Library
     Set Library Search Order  Library3
