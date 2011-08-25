@@ -1604,6 +1604,12 @@ class _Misc:
         self._namespace.library_search_order = libraries
         return old_order
 
+    def set_resource_search_order(self, *resources):
+        """TODO: Doc"""
+        old_order = self._namespace.resource_search_order
+        self._namespace.resource_search_order = resources
+        return old_order
+
     def keyword_should_exist(self, name, msg=None):
         """Fails unless the given keyword exists in the current scope.
 

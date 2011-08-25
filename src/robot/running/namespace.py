@@ -49,6 +49,7 @@ class Namespace:
         self.test = None
         self.uk_handlers = []
         self.library_search_order = []
+        self.resource_search_order = []
         self._testlibs = {}
         self._userlibs = []
         self._imported_resource_files = ImportCache()
@@ -306,6 +307,8 @@ class Namespace:
                  if lib.has_handler(name)]
         if not found:
             return None
+        if len(found) > 1:
+            found = self._get_handler_based_on_resource_search_order(found)
         if len(found) == 1:
             return found[0]
         self._raise_multiple_keywords_found(name, found)
@@ -327,6 +330,13 @@ class Namespace:
         for libname in self.library_search_order:
             for handler in handlers:
                 if utils.eq(libname, handler.library.name, caseless=False):
+                    return [handler]
+        return handlers
+
+    def _get_handler_based_on_resource_search_order(self, handlers):
+        for name in self.resource_search_order:
+            for handler in handlers:
+                if handler._libname == name:
                     return [handler]
         return handlers
 
