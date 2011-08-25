@@ -325,9 +325,8 @@ class Namespace:
 
     def _get_handler_based_on_library_search_order(self, handlers):
         for libname in self.library_search_order:
-            libname = libname.replace(' ', '')
             for handler in handlers:
-                if handler.library.name.replace(' ', '') == libname:
+                if utils.eq(libname, handler.library.name, caseless=False):
                     return [handler]
         return handlers
 
