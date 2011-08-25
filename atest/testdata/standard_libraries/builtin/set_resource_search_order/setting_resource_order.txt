@@ -1,0 +1,48 @@
+*** Settings ***
+Suite Setup     Set Resource Search Order  resource1  resource2
+Resource        resource1.txt
+Resource        resource2.txt
+
+*** Test Cases ***
+Resource Order Set In Suite Setup Should Be Available In Test Cases
+    Active Resource Should Be  resource1
+
+Empty Resource Order Can Be Set
+    [Documentation]  FAIL Multiple keywords with name 'Get Resource Name' found.\n Give the full name of the keyword you want to use.\n Found: 'resource1.Get Resource Name' and 'resource2.Get Resource Name'
+    Set Resource Search Order
+    Get Resource Name
+
+One Resource Can Be Set As Default Resource
+    Set Resource Search Order  resource2
+    Active Resource Should Be  resource2
+
+More Than One Resources Can Be Set As Default Resources
+    Set Resource Search Order  resource1  resource2
+    Active Resource Should Be  resource1
+
+Non-Existing Resources In Search Order Are Ignored
+    Set Resource Search Order  nonex1  resource1  nonex2  resource2
+    Active Resource Should Be  resource1
+
+Resource Order Should Be Available In The Next Test Case
+    Active Resource Should Be  resource1
+
+Setting Resource Order Returns Previous Resource Order
+    Set Resource Search Order  resource2  resource1
+    @{order} =  Set Resource Search Order
+    Should Be Equal  @{order}[0]  resource2
+    Should Be Equal  @{order}[1]  resource1
+
+Resource Search Order Is Space Sensitive
+    Set Resource Search Order  resource 1  resource2
+    Active Resource Should Be  resource2
+
+Resource Search Order Is Case Sensitive
+    Set Resource Search Order  Resource1  resource2
+    Active Resource Should Be  resource2
+
+*** Keywords ***
+Active Resource Should Be
+    [Arguments]  ${expected resource name}
+    ${resource name} =  Get Resource Name
+    Should Be Equal  ${resource name}  ${expected resource name}

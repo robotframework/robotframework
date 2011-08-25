@@ -1,0 +1,3 @@
+***Keywords***
+Get Resource Name
+    [Return]  resource2
