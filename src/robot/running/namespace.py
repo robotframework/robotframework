@@ -307,7 +307,7 @@ class Namespace:
         if not found:
             return None
         if len(found) > 1:
-            found = self._get_handler_based_on_resource_search_order(found)
+            found = self._get_handler_based_on_library_search_order(found)
         if len(found) == 1:
             return found[0]
         self._raise_multiple_keywords_found(name, found)
@@ -328,14 +328,7 @@ class Namespace:
     def _get_handler_based_on_library_search_order(self, handlers):
         for libname in self.library_search_order:
             for handler in handlers:
-                if utils.eq(libname, handler.library.name, caseless=False):
-                    return [handler]
-        return handlers
-
-    def _get_handler_based_on_resource_search_order(self, handlers):
-        for name in self.library_search_order:
-            for handler in handlers:
-                if handler._libname == name:
+                if utils.eq(libname, handler.libname):
                     return [handler]
         return handlers
 

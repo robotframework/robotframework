@@ -1,4 +1,4 @@
 ***Keywords***
-Get Resource Name
+Get Name
     [Return]  resource1
 

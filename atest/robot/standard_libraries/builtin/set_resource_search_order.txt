@@ -25,12 +25,17 @@ Resource Order Should Be Available In The Next Test Case
 Setting Resource Order Returns Previous Resource Order
     Check Test Case  ${TEST NAME}
 
+It Is Possible To Set Both Library And Resource Priorities At The Same Time
+    Check Test Case  ${TEST NAME}
+
+Resources Always Have Higher Priority Than Libraries
+    Check Test Case  ${TEST NAME}
+
+Resource Search Order Is Space Insensitive
+    Check Test Case  ${TEST NAME}
+
+Resource Search Order Is Case Insensitive
+    Check Test Case  ${TEST NAME}
+
 Default Resource Order Should Be Suite Specific
     Check Test Case  ${TEST NAME}
-
-Resource Search Order Is Space Sensitive
-    Check Test Case  ${TEST NAME}
-
-Resource Search Order Is Case Sensitive
-    Check Test Case  ${TEST NAME}
-

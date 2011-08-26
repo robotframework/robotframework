@@ -2,15 +2,17 @@
 Suite Setup     Set Library Search Order  resource1  resource2
 Resource        resource1.txt
 Resource        resource2.txt
+Library         ../set_library_search_order/TestLibrary.py
+Library         ../set_library_search_order/TestLibrary.py  AnotherLibrary  WITH NAME  AnotherLibrary
 
 *** Test Cases ***
 Resource Order Set In Suite Setup Should Be Available In Test Cases
     Active Resource Should Be  resource1
 
 Empty Resource Order Can Be Set
-    [Documentation]  FAIL Multiple keywords with name 'Get Resource Name' found.\n Give the full name of the keyword you want to use.\n Found: 'resource1.Get Resource Name' and 'resource2.Get Resource Name'
+    [Documentation]  FAIL Multiple keywords with name 'Get Name' found.\n Give the full name of the keyword you want to use.\n Found: 'resource1.Get Name' and 'resource2.Get Name'
     Set Library Search Order
-    Get Resource Name
+    Get Name
 
 One Resource Can Be Set As Default Resource
     Set Library Search Order  resource2
@@ -33,16 +35,32 @@ Setting Resource Order Returns Previous Resource Order
     Should Be Equal  @{order}[0]  resource2
     Should Be Equal  @{order}[1]  resource1
 
-Resource Search Order Is Space Sensitive
-    Set Library Search Order  resource 1  resource2
-    Active Resource Should Be  resource2
+It Is Possible To Set Both Library And Resource Priorities At The Same Time
+    Set Library Search Order  resource1  resource2  TestLibrary  AnotherLibrary
+    Active Resource Should Be  resource1
+    Active Library Should be  TestLibrary
 
-Resource Search Order Is Case Sensitive
+Resources Always Have Higher Priority Than Libraries
+    Set Library Search Order  TestLibrary  AnotherLibrary  resource1  resource2
+    Active Resource Should Be  resource1
+    Active Library Should be  TestLibrary
+
+Resource Search Order Is Space Insensitive
+    Set Library Search Order  resource 1  resource2
+    Active Resource Should Be  resource1
+
+Resource Search Order Is Case Insensitive
     Set Library Search Order  Resource1  resource2
-    Active Resource Should Be  resource2
+    Active Resource Should Be  resource1
+
 
 *** Keywords ***
 Active Resource Should Be
-    [Arguments]  ${expected resource name}
-    ${resource name} =  Get Resource Name
-    Should Be Equal  ${resource name}  ${expected resource name}
+    [Arguments]  ${expected}
+    ${name} =  Get Name
+    Should Be Equal  ${name}  ${expected}
+
+Active Library Should Be
+    [Arguments]  ${expected}
+    ${name} =  Get Library Name
+    Should Be Equal  ${name}  ${expected}

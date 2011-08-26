@@ -41,7 +41,7 @@ Setting Library Order Allows Setting BuiltIn Library As Default Library
 
 Setting Library Order Allows Setting Own Library Before BuiltIn Library
     Set Library Search Order  Library1
-    Own Library Should Be Used
+    Own Library Should Be Used  Library1
 
 Library Search Order Is Space Insensitive
     Set Library Search Order  Library With Space  Library1  Library3
@@ -51,17 +51,18 @@ Library Search Order Is Space Insensitive
     Set Library Search Order  Library 3  Library1
     Active Library Should Be  Library3
 
-Library Search Order Is Case Sensitive
+Library Search Order Is Case Insensitive
     Set Library Search Order  library3  Library1
-    Active Library Should Be  Library1
+    Active Library Should Be  Library3
 
 
 *** Keywords ***
 Active Library Should Be
-    [Arguments]  ${expected library name}
-    ${library name} =  Get Name
-    Should Be Equal  ${library name}  ${expected library name}
+    [Arguments]  ${expected}
+    ${name} =  Get Name
+    Should Be Equal  ${name}  ${expected}
 
 Own Library Should Be Used
-    Run Keyword And Expect Error  No operation used in TestLibrary!  No operation
+    [Arguments]  ${name}
+    Run Keyword And Expect Error  No operation used in ${name}!  No operation
 

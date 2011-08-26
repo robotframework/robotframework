@@ -106,14 +106,14 @@ class UserKeywordHandler(object):
         self.keywords = Keywords(keyword.steps)
         self.return_value = keyword.return_.value
         self.teardown = keyword.teardown
-        self._libname = libname
+        self.libname = libname
         self.doc = self._doc = keyword.doc.value
         self._timeout = keyword.timeout
         self._keyword_args = keyword.args.value
 
     @property
     def longname(self):
-        return '%s.%s' % (self._libname, self.name) if self._libname else self.name
+        return '%s.%s' % (self.libname, self.name) if self.libname else self.name
 
     @property
     def shortdoc(self):

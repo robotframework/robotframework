@@ -37,6 +37,6 @@ Default Library Order Should Be Suite Specific
 Library Search Order Is Space Insensitive
     Check Test Case  ${TEST NAME}
 
-Library Search Order Is Case Sensitive
+Library Search Order Is Case Insensitive
     Check Test Case  ${TEST NAME}
 

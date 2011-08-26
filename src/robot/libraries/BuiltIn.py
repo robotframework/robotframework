@@ -1602,11 +1602,13 @@ class _Misc:
 
         | Set Library Search Order | resource | another_resource |
 
-        Notice that keywords in resources always have higher priority than
-        keywords in libraries regardless the search order.
-
-        The search order is valid only in the suite where this keywords is used.
-        The old order is returned and can be used to reset the search order later.
+        NOTE:
+        - The search order is valid only in the suite where this keywords is used.
+        - Keywords in resources always have higher priority than
+          keywords in libraries regardless the search order.
+        - The old order is returned and can be used to reset the search order later.
+        - Starting from RF 2.6.2, library and resource names in the search order
+          are both case and space insensitive.
         """
         old_order = self._namespace.library_search_order
         self._namespace.library_search_order = libraries

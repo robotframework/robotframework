@@ -81,6 +81,10 @@ class _BaseHandler(object):
     def shortdoc(self):
         return self.doc.splitlines()[0] if self.doc else ''
 
+    @property
+    def libname(self):
+        return self.library.name
+
 
 class _RunnableHandler(_BaseHandler):
 
