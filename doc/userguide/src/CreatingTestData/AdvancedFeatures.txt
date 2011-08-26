@@ -70,27 +70,29 @@ cases, either the files or the keywords must be renamed. The full name
 of the keyword is case-, space- and underscore-insensitive, similarly
 as normal keyword names.
 
-Specifying library search order
-'''''''''''''''''''''''''''''''
+Specifying explicit priority between libraries and resources
+''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
 
-Starting from Robot Framework 2.1 it is possible to use the keyword
-:name:`Set Library Search Order` from `BuiltIn library`_ to specify
-the priority order between test libraries that are in use. If
-multiple keywords with the same name are found, libraries implementing
-them are gone through in the library search order. The first library
-containing the keyword is selected and the keyword from that library
-is used. If keyword is not found, test execution fails.
+If there are multiple conflicts between keywords, specifying all the keywords
+in the long format can be quite a lot work. Using the long format also makes it
+impossible to create dynamic test cases or user keywords that work differently
+depending on which libraries or resources are available. A solution to both of
+these problems is specifying the keyword priorities explicitly using the keyword
+:name:`Set Library Search Order` from the `BuiltIn library`_.
 
-There is no need to use the long format :name:`LibraryName.Keyword
-Name` notation when library search order is set. This makes it easier
-to to use multiple instances of the same library as :name:`Set Library
-Search Order` keyword can be used to switch between the
-libraries. This enables using same user keywords instead of
-duplicating those for all the library instances.
+ .. note:: Although the keyword has the word `library` in its name, it works
+           also with resource files starting from Robot Framework 2.6.2.
+           As discussed above, keywords in resources always have higher
+           priority than keywords in libraries, though.
 
-Library search order is valid in the suite level meaning it is
-available only in the suite where it was set.
+The :name:`Set Library Search Order` accepts an ordered list or libraries and
+resources as arguments. When a keyword name in the test data matches multiple
+keywords, the first library or resource containing the keyword is selected and
+that keyword implementation used. If the keyword is not found from any of the
+specified libraries or resources, execution fails for conflict the same way as
+when the search order is not set.
 
+For more information and examples, see the documentation of the keyword.
 
 Timeouts
 ~~~~~~~~
