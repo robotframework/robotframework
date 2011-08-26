@@ -289,7 +289,7 @@ class EmbeddedArgs(UserKeywordHandler):
         return UserKeywordHandler.run(self, context, args)
 
     def _copy_attrs_from_template(self, template):
-        self._libname = template._libname
+        self.libname = template.libname
         self.keywords = template.keywords
         self._keyword_args = template._keyword_args
         self.return_value = template.return_value
