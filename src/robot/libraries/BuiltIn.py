@@ -1574,12 +1574,12 @@ class _Misc:
     def set_library_search_order(self, *libraries):
         """Sets the resolution order to use when a name matches multiple keywords.
 
-        The library search order is used to resolve conflicts when a
-        keyword name in the test data matches multiple keywords. The
-        first library containing the keyword is selected and that
-        keyword implementation used. If keyword is not found from any
-        library, or the library search order is not set, executing the
-        specified keyword fails.
+        The library search order is used to resolve conflicts when a keyword
+        name in the test data matches multiple keywords. The first library
+        (or resource, see below) containing the keyword is selected and that
+        keyword implementation used. If the keyword is not found from any library
+        (or resource), test executing fails the same way as when the search
+        order is not set.
 
         When this keyword is used, there is no need to use the long
         `LibraryName.Keyword Name` notation.  For example, instead of
