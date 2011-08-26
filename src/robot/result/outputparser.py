@@ -48,3 +48,13 @@ class OutputParser(sax.handler.ContentHandler):
 
     def characters(self, content):
         self._text.append(content)
+
+    # startElementNS and endElementNS needed when crimson.jar is in CLASSPATH:
+    # http://code.google.com/p/robotframework/issues/detail?id=937
+
+    def startElementNS(self, name, qname, attrs):
+        attrs = dict((key[1], attrs[key]) for key in attrs.keys())
+        self.startElement(qname, attrs)
+
+    def endElementNS(self, name, qname):
+        self.endElement(qname)
