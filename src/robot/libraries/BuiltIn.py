@@ -1596,18 +1596,20 @@ class _Misc:
         | Another Keyword |
         | Keyword | xxx |
 
-        The library search order is valid only in the suite where this
-        keyword is used in. The old order is returned and can be used
-        to reset the search order later.
+        Starting from Robot Framework 2.6.2 this keyword can be used also to
+        set the order of keywords in different resource files. In this case
+        resource names must be given without paths or extensions like:
+
+        | Set Library Search Order | resource | another_resource |
+
+        Notice that keywords in resources always have higher priority than
+        keywords in libraries regardless the search order.
+
+        The search order is valid only in the suite where this keywords is used.
+        The old order is returned and can be used to reset the search order later.
         """
         old_order = self._namespace.library_search_order
         self._namespace.library_search_order = libraries
-        return old_order
-
-    def set_resource_search_order(self, *resources):
-        """TODO: Doc"""
-        old_order = self._namespace.resource_search_order
-        self._namespace.resource_search_order = resources
         return old_order
 
     def keyword_should_exist(self, name, msg=None):

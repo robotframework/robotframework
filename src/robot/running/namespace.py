@@ -49,7 +49,6 @@ class Namespace:
         self.test = None
         self.uk_handlers = []
         self.library_search_order = []
-        self.resource_search_order = []
         self._testlibs = {}
         self._userlibs = []
         self._imported_resource_files = ImportCache()
@@ -334,7 +333,7 @@ class Namespace:
         return handlers
 
     def _get_handler_based_on_resource_search_order(self, handlers):
-        for name in self.resource_search_order:
+        for name in self.library_search_order:
             for handler in handlers:
                 if handler._libname == name:
                     return [handler]
