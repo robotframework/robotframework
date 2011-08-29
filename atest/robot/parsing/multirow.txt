@@ -60,5 +60,5 @@ Invalid Multirow Usage
 Check Multirow Error From Stderr
     [Arguments]  ${table}  ${err}
     ${path} =  Join Path  ${CURDIR}  ..  ..  testdata  parsing  multirow.txt
-    Check Stderr Contains  [ ERROR ] Invalid syntax in file '${path}' in table '${table}': ${err}
+    Check Stderr Contains  [ ERROR ] Error in file '${path}' in table '${table}': ${err}
 

@@ -54,7 +54,7 @@ Multiple Test Case Metas
 
 Test Case With Invalid Metadata
     Check testcase  Test Case With Invalid Metadata
-    Check Stderr Contains  [ ERROR ] Invalid syntax in file '${PATH}' in table 'Test Case': Invalid syntax in test case 'Test Case With Invalid Metadata': Non-existing setting 'Invalid Test Meta'.
+    Check Stderr Contains  [ ERROR ] Error in file '${PATH}' in table 'Test Case': Invalid syntax in test case 'Test Case With Invalid Metadata': Non-existing setting 'Invalid Test Meta'.
 
 Escaping Metadata In Test Case Table
     ${test} =  Check Test Case  Escaping Metadata in Test Case Table
@@ -114,8 +114,8 @@ User Keyword With Multiple Metas
 
 User Keyword With Invalid Metadata
     Check Test Case  User Keyword With Invalid Metadata
-    Check Stderr Contains  [ ERROR ] Invalid syntax in file '${PATH}' in table 'Keyword': Invalid syntax in keyword 'UK With Invalid Meta Passing': Non-existing setting 'Invalid UK Meta'.
-    Check Stderr Contains  [ ERROR ] Invalid syntax in file '${PATH}' in table 'Keyword': Invalid syntax in keyword 'UK With Invalid Meta Failing': Non-existing setting 'Invalid'.
+    Check Stderr Contains  [ ERROR ] Error in file '${PATH}' in table 'Keyword': Invalid syntax in keyword 'UK With Invalid Meta Passing': Non-existing setting 'Invalid UK Meta'.
+    Check Stderr Contains  [ ERROR ] Error in file '${PATH}' in table 'Keyword': Invalid syntax in keyword 'UK With Invalid Meta Failing': Non-existing setting 'Invalid'.
 
 Non Existing Variable In Suite Setup And Teardown
     Run Tests  ${EMPTY}  core${/}test_and_uk_settings.html

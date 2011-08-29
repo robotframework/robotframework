@@ -80,5 +80,5 @@ My Setup
 
 Verify Error
     [Arguments]  ${error}  ${table}
-    Check Stderr Contains  [ ERROR ] Invalid syntax in file '${PATH}'  in table '${table}': ${error}
+    Check Stderr Contains  [ ERROR ] Error in file '${PATH}'  in table '${table}': ${error}
 

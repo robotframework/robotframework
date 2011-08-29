@@ -34,8 +34,8 @@ Suite Teardown
 
 Invalid Suite Setting
     ${base} =  Normalize Path  ${CURDIR}/../../testdata/core/test_suite_dir_with_init_file
-    Check Log Message  ${ERRORS.msgs[0]}  Invalid syntax in file '${base}${/}__init__.html' in table 'Setting': Non-existing setting 'Invalid'.  ERROR
-    Check Log Message  ${ERRORS.msgs[1]}  Invalid syntax in file '${base}${/}sub_suite_with_init_file${/}__init__.html' in table 'Setting': Non-existing setting 'Invalid In Sub'.  ERROR
+    Check Log Message  ${ERRORS.msgs[0]}  Error in file '${base}${/}__init__.html' in table 'Setting': Non-existing setting 'Invalid'.  ERROR
+    Check Log Message  ${ERRORS.msgs[1]}  Error in file '${base}${/}sub_suite_with_init_file${/}__init__.html' in table 'Setting': Non-existing setting 'Invalid In Sub'.  ERROR
 
 Test Tags
     [Documentation]   Settings tags for tests using Force and Default Tags in different suite levels and also [Tags] in tests

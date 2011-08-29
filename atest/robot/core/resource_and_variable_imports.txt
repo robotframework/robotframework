@@ -31,7 +31,7 @@ Invalid List Variable
     [Documentation]  List variable not containing a list value causes an error
     Check Test Case  Invalid List Variable
     ${path} =  Join Path  ${RESDIR}  invalid_list_variable.py
-    My Check Stderr Contains  [ ERROR ]  Invalid syntax in file '${DATAPATH}' in table 'Setting': Processing variable file '${path}' failed:  List variable '\@{invalid_list}' cannot get a non-list value 'This is not a list and thus importing this file fails'
+    My Check Stderr Contains  [ ERROR ]  Error in file '${DATAPATH}' in table 'Setting': Processing variable file '${path}' failed:  List variable '\@{invalid_list}' cannot get a non-list value 'This is not a list and thus importing this file fails'
 
 Dynamic Variable File
     [Documentation]  Test for getting variables dynamically from a variable file using get_variables or getVariables and arguments.
@@ -43,10 +43,10 @@ Dynamic Variable File With Variables And Backslashes In Args
 
 Invalid Dynamic Variable File Usage
     ${path} =  Join Path  ${RESDIR}  dynamic_variables.py
-    My Check Stderr Contains  [ ERROR ] Invalid syntax in file '${DATAPATH}' in table 'Setting':  Processing variable file '${path}' with arguments [ Two args returns None | which is invalid ] failed: Expected mapping but get_variables returned NoneType.
-    My Check Stderr Contains  [ ERROR ] Invalid syntax in file '${DATAPATH}' in table 'Setting':  Processing variable file '${path}' with arguments [ More args raises an exception | which is invalid | of course ] failed:  Invalid arguments for get_variables
+    My Check Stderr Contains  [ ERROR ] Error in file '${DATAPATH}' in table 'Setting':  Processing variable file '${path}' with arguments [ Two args returns None | which is invalid ] failed: Expected mapping but get_variables returned NoneType.
+    My Check Stderr Contains  [ ERROR ] Error in file '${DATAPATH}' in table 'Setting':  Processing variable file '${path}' with arguments [ More args raises an exception | which is invalid | of course ] failed:  Invalid arguments for get_variables
     ${path} =  Join Path  ${RESDIR}  dynamicVariables.py
-    My Check Stderr Contains  [ ERROR ] Invalid syntax in file '${DATAPATH}' in table 'Setting':  Replacing variables from setting 'Variables' failed:  Non-existing variable '\${non_existing_var_as_arg}'
+    My Check Stderr Contains  [ ERROR ] Error in file '${DATAPATH}' in table 'Setting':  Replacing variables from setting 'Variables' failed:  Non-existing variable '\${non_existing_var_as_arg}'
 
 Resource Importing Resources
     [Documentation]  Test that resource file can import more resources. resources_imported_by_resource.html was imported ok by resources.html
@@ -79,29 +79,29 @@ Re-Import Variable File
     My Check Syslog Contains  | INFO \ |  Variable file '${path}' with arguments [ One arg works ] already imported  by suite 'Resource And Variable Imports'
 
 Non-Existing Resource File
-    My Check Stderr Contains  [ ERROR ] Invalid syntax in file '${DATAPATH}' in table 'Setting':  Resource file 'non_existing.html' does not exist
+    My Check Stderr Contains  [ ERROR ] Error in file '${DATAPATH}' in table 'Setting':  Resource file 'non_existing.html' does not exist
 
 Non-Existing Variable File
-    My Check Stderr Contains  [ ERROR ] Invalid syntax in file '${DATAPATH}' in table 'Setting':  Variable file 'non_existing.py' does not exist
+    My Check Stderr Contains  [ ERROR ] Error in file '${DATAPATH}' in table 'Setting':  Variable file 'non_existing.py' does not exist
 
 Invalid Resource File
     ${path} =  Join Path  ${RESDIR}  invalid_resource.html
     My Check Stderr Contains  [ WARN ] Imported resource file '${path}' is empty
 
 Invalid Resource Import Parameters
-    My Check Stderr Contains  [ ERROR ] Invalid syntax in file '${DATAPATH}' in table 'Setting': Resource file 'resources_and_variables${/}resources.html only one parameter allowed' does not exist
+    My Check Stderr Contains  [ ERROR ] Error in file '${DATAPATH}' in table 'Setting': Resource file 'resources_and_variables${/}resources.html only one parameter allowed' does not exist
 
 Invalid Setting In Resource File
     ${path} =  Join Path  ${RESDIR}  resources.html
-    My Check Stderr Contains  [ ERROR ] Invalid syntax in file '${path}' in table 'Setting': Non-existing setting 'Test Setup'.
-    My Check Stderr Contains  [ ERROR ] Invalid syntax in file '${path}' in table 'Setting': Non-existing setting 'Non existing'.
+    My Check Stderr Contains  [ ERROR ] Error in file '${path}' in table 'Setting': Non-existing setting 'Test Setup'.
+    My Check Stderr Contains  [ ERROR ] Error in file '${path}' in table 'Setting': Non-existing setting 'Non existing'.
     ${path2} =  Join Path  ${RESDIR}  resource_with_testcase_table.txt
-    My Check Stderr Contains  [ ERROR ] Invalid syntax in file '${path}' in table 'Setting': Resource file '${path2}' contains a test case table which is not allowed.
+    My Check Stderr Contains  [ ERROR ] Error in file '${path}' in table 'Setting': Resource file '${path2}' contains a test case table which is not allowed.
     My Check Stderr Does Not Contain  AttributeError:
 
 Invalid Variable File
     ${path} =  Join Path  ${RESDIR}  invalid_variable_file.py
-    My Check Stderr Contains  [ ERROR ] Invalid syntax in file '${DATAPATH}' in table 'Setting': Processing variable file '${path}' failed:  Importing '${path}' failed: This is an invalid variable file
+    My Check Stderr Contains  [ ERROR ] Error in file '${DATAPATH}' in table 'Setting': Processing variable file '${path}' failed:  Importing '${path}' failed: This is an invalid variable file
 
 Resource File In PYTHONPATH
     [Documentation]  Test that resource files can be found if they are in dirs in PYTHONPATH too.
