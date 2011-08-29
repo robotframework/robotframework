@@ -54,6 +54,8 @@ class _TestData(object):
         return self._tables
 
     def start_table(self, header_row):
+        if not header_row:
+            return None
         table_name = header_row[0]
         try:
             table = self._valid_table(self._get_tables()[table_name])
