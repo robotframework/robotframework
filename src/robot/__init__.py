@@ -119,9 +119,9 @@ def run(*datasources, **options):
     settings = RobotSettings(options)
     LOGGER.register_console_logger(settings['MonitorWidth'],
                                    settings['MonitorColors'])
-    output = Output(settings)
     init_global_variables(settings)
     suite = TestSuite(datasources, settings)
+    output = Output(settings)
     suite.run(output)
     LOGGER.info("Tests execution ended. Statistics:\n%s"
                 % suite.get_stat_message())

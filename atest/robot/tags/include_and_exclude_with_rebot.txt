@@ -140,4 +140,4 @@ Run And Check Error
     Run Tests Without Processing Output  ${params} ${ESCAPES}  ${TESTFILE}
     ${stderr} =  Get Stderr
     Should Be Equal  ${stderr.strip()}  [ ERROR ] Suite 'Include And Exclude' with ${filter_msg} contains no test cases.\n\n Try --help for usage information.
-
+    File Should Not Exist  ${OUTFILE}
