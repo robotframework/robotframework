@@ -196,11 +196,11 @@ AssertionError</status>
 <errors>
 <msg linkable="yes" timestamp="20110603 11:15:42.614" level="WARN">This is my _non html_ message
 with new line, several spaces "    " and a &lt;b&gt;bold tag&lt;/b&gt;.</msg>
-<msg timestamp="20110603 11:15:42.629" level="ERROR">Invalid syntax in file '/home/mkorpela/workspace/robot/utest/resources/golden_suite/failing_suite.txt' in table 'Settings': Importing test library 'Idontexist' failed: ImportError: No module named Idontexist
+<msg timestamp="20110603 11:15:42.629" level="ERROR">Error in file '/home/mkorpela/workspace/robot/utest/resources/golden_suite/failing_suite.txt' in table 'Settings': Importing test library 'Idontexist' failed: ImportError: No module named Idontexist
 PYTHONPATH: ['/usr/local/lib/python2.6/dist-packages/robot/libraries', '/usr/local/lib/python2.6/dist-packages/docutils-0.7-py2.6.egg', '/usr/local/lib/python2.6/dist-packages/decorator-3.2.0-py2.6.egg', '/usr/local/lib/python2.6/dist-packages/robotframework_seleniumlibrary-2.4-py2.6.egg', '/usr/local/lib/python2.6/dist-packages/mock-0.7.0b4-py2.6.egg', '/usr/local/lib/python2.6/dist-packages/nose-0.11.3-py2.6.egg', '/usr/local/lib/python2.6/dist-packages/guppy-0.1.5-py2.6-linux-x86_64.egg', '/usr/local/lib/python2.6/dist-packages/Pygments-1.4-py2.6.egg', '/usr/lib/python2.6', '/usr/lib/python2.6/plat-linux2', '/usr/lib/python2.6/lib-tk', '/usr/lib/python2.6/lib-old', '/usr/lib/python2.6/lib-dynload', '/usr/lib/python2.6/dist-packages', '/usr/lib/python2.6/dist-packages/PIL', '/usr/lib/python2.6/dist-packages/gst-0.10', '/usr/lib/pymodules/python2.6', '/usr/lib/python2.6/dist-packages/gtk-2.0', '/usr/lib/pymodules/python2.6/gtk-2.0', '/usr/lib/python2.6/dist-packages/wx-2.8-gtk2-unicode', '/usr/local/lib/python2.6/dist-packages', '.']
 Traceback (most recent call last):
   File "/usr/local/lib/python2.6/dist-packages/robot/utils/importing.py", line 85, in _non_dotted_import
     module = __import__(name)</msg>
-<msg timestamp="20110603 11:15:42.629" level="ERROR">Invalid syntax in file '/home/mkorpela/workspace/robot/utest/resources/golden_suite/failing_suite.txt' in table 'Settings': Resource file 'And I'm not here' does not exist.</msg>
+<msg timestamp="20110603 11:15:42.629" level="ERROR">Error in file '/home/mkorpela/workspace/robot/utest/resources/golden_suite/failing_suite.txt' in table 'Settings': Resource file 'And I'm not here' does not exist.</msg>
 </errors>
 </robot>

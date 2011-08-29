@@ -250,13 +250,13 @@ class SettingTablePopulatingTest(_PopulatorTest):
 
     def test_invalid_settings(self):
         self._create_table('Settings', [['In valid', 'val ue']])
-        assert_equals(self._logger.value(), "Invalid syntax in file 'None' in "
+        assert_equals(self._logger.value(), "Error in file 'None' in "
                                             "table 'Settings': Non-existing "
                                             "setting 'In valid'.")
 
     def test_continuing_in_the_begining_of_the_table(self):
         self._create_table('Settings', [['...']])
-        assert_equals(self._logger.value(), "Invalid syntax in file 'None' in "
+        assert_equals(self._logger.value(), "Error in file 'None' in "
                                             "table 'Settings': Non-existing "
                                             "setting '...'.")
 
@@ -357,7 +357,7 @@ class TestCaseTablePopulatingTest(_PopulatorTest):
     def test_invalid_test_settings(self):
         self._create_table('Test cases', [['My test name'],
                                           ['', '[Aasi]']])
-        assert_equals(self._logger.value(), "Invalid syntax in file 'None' in "
+        assert_equals(self._logger.value(), "Error in file 'None' in "
                                             "table 'Test cases': Invalid syntax "
                                             "in test case 'My test name': "
                                             "Non-existing setting 'Aasi'.")
@@ -393,7 +393,7 @@ class UserKeywordTablePopulatingTest(_PopulatorTest):
     def test_invalid_keyword_settings(self):
         self._create_table('Keywords', [['My User Keyword'],
                                         ['', '[ank ka]']])
-        assert_equals(self._logger.value(), "Invalid syntax in file 'None' in "
+        assert_equals(self._logger.value(), "Error in file 'None' in "
                                             "table 'Keywords': Invalid syntax "
                                             "in keyword 'My User Keyword': "
                                             "Non-existing setting 'ank ka'.")

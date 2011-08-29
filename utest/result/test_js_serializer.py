@@ -407,12 +407,12 @@ class TestJsSerializer(_JsSerializerTestBase):
     def test_errors_xml_parsing(self):
         errors_xml = """
         <errors>
-            <msg timestamp="20110531 12:48:09.078" level="ERROR">Invalid syntax in file '/tmp/data/failing_suite.txt' in table 'Settings': Resource file 'nope' does not exist.</msg>
+            <msg timestamp="20110531 12:48:09.078" level="ERROR">Error in file '/tmp/data/failing_suite.txt' in table 'Settings': Resource file 'nope' does not exist.</msg>
         </errors>
         """
         data_model = self._get_data_model(errors_xml)
         assert_model(data_model, basemillis=1306846089078,
-                     plain_suite=[[0, 5, "*Invalid syntax in file '/tmp/data/failing_suite.txt' in table 'Settings': Resource file 'nope' does not exist."]])
+                     plain_suite=[[0, 5, "*Error in file '/tmp/data/failing_suite.txt' in table 'Settings': Resource file 'nope' does not exist."]])
 
 
 class TestTestSplittingJsSerializer(_JsSerializerTestBase):
