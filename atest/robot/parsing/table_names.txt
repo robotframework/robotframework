@@ -1,18 +1,18 @@
 *** Settings ***
-Suite Setup     Run Tests  ${EMPTY}  parsing/table_names.html
+Suite Setup     Run Tests  ${EMPTY}  parsing/table_names.txt
 Force Tags      regression  pybot  jybot
 Resource        atest_resource.txt
 
 *** Test Cases ***
 Setting Table
     [Documentation]  Check Setting table and its synonyms Settings and Metadata
-    Should Start With  ${SUITE.doc}  Testing that different synonyms for table names work. In general  # The doc is so long that don't want to test it fully...
-    Check Test Tags  Test Case  metadata  settings
+    Should Start With  ${SUITE.doc}  Testing that different synonyms for table names work.
+    Check Test Tags  Test Case  Metadata  Settings
 
 Variable Table
     [Documentation]  Check Variable table and its synonym Variables
-    Check First Log Entry  Test Case  'Variable' name works
-    Check First Log Entry  Test Cases  'Variables' name works
+    Check First Log Entry  Test Case  Variable
+    Check First Log Entry  Test Cases  Variables
 
 Test Case Table
     [Documentation]  Check Test Case table and its synonym Test Cases
