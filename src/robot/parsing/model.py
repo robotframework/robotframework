@@ -66,17 +66,18 @@ class _TestData(object):
 
     @property
     def name(self):
-        if not self.source:
-            return None
-        name = self._get_basename()
-        name = name.split('__', 1)[-1]  # Strip possible prefix
-        name = name.replace('_', ' ').strip()
-        if name.islower():
-            name = name.title()
-        return name
+        return self._format_name(self._get_basename()) if self.source else None
 
     def _get_basename(self):
         return os.path.splitext(os.path.basename(self.source))[0]
+
+    def _format_name(self, name):
+        name = self._strip_possible_prefix_from_name(name)
+        name = name.replace('_', ' ').strip()
+        return name.title() if name.islower() else name
+
+    def _strip_possible_prefix_from_name(self, name):
+        return name.split('__', 1)[-1]
 
     @property
     def keywords(self):
@@ -170,8 +171,9 @@ class TestDataDirectory(_TestData):
         self.keyword_table = KeywordTable(self)
 
     def populate(self, include_suites=[], warn_on_skipped=False):
-        FromDirectoryPopulator().populate(self.source, self, include_suites, warn_on_skipped)
-        self.children = [ ch for ch in self.children if ch.has_tests() ]
+        FromDirectoryPopulator().populate(self.source, self, include_suites,
+                                          warn_on_skipped)
+        self.children = [ch for ch in self.children if ch.has_tests()]
         return self
 
     def _get_basename(self):
@@ -192,8 +194,7 @@ class TestDataDirectory(_TestData):
         return any(ch.has_tests() for ch in self.children)
 
     def __iter__(self):
-        for table in [self.setting_table, self.variable_table,
-                      self.keyword_table]:
+        for table in [self.setting_table, self.variable_table, self.keyword_table]:
             yield table
 
 
@@ -410,7 +411,7 @@ class Variable(object):
         if name.startswith('$') and value == []:
             value = ''
         if isinstance(value, basestring):
-            value = [value]  # Need to support scalar lists until RF 2.6
+            value = [value]  # Must support scalar lists until RF 2.7 (issue 939)
         self.value = value
         self.comment = comment
 
@@ -456,7 +457,6 @@ class TestCase(_WithSteps, _WithSettings):
                 'postcondition': lambda s: s.teardown.populate,
                 'tags': lambda s: s.tags.populate,
                 'timeout': lambda s: s.timeout.populate}
-
 
     @property
     def source(self):
@@ -541,7 +541,7 @@ class ForLoop(_WithSteps):
 class Step(object):
 
     def __init__(self, content, comment=None):
-        self.assign = self._get_assigned_vars(content)
+        self.assign = list(self._get_assigned_vars(content))
         try:
             self.keyword = content[len(self.assign)]
         except IndexError:
@@ -550,12 +550,10 @@ class Step(object):
         self.comment = comment
 
     def _get_assigned_vars(self, content):
-        vars = []
         for item in content:
             if not is_var(item.rstrip('= ')):
-                break
-            vars.append(item)
-        return vars
+                return
+            yield item
 
     def is_comment(self):
         return not (self.assign or self.keyword or self.args)
