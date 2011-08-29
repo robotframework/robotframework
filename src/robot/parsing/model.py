@@ -90,7 +90,7 @@ class _TestData(object):
     def report_invalid_syntax(self, table, message, level='ERROR'):
         initfile = getattr(self, 'initfile', None)
         path = os.path.join(self.source, initfile) if initfile else self.source
-        LOGGER.write("Invalid syntax in file '%s' in table '%s': %s"
+        LOGGER.write("Invalid test data in file '%s' in table '%s': %s"
                      % (path, table, message), level)
 
 
