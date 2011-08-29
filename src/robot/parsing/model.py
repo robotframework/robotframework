@@ -31,40 +31,34 @@ def TestData(parent=None, source=None, include_suites=[], warn_on_skipped=False)
 
 
 class _TestData(object):
+    _setting_table_names = 'Setting', 'Settings', 'Metadata'
+    _variable_table_names = 'Variable', 'Variables'
+    _testcase_table_names = 'Test Case', 'Test Cases'
+    _keyword_table_names = 'Keyword', 'Keywords', 'User Keyword', 'User Keywords'
 
     def __init__(self, parent=None, source=None):
         self.parent = parent
         self.source = utils.abspath(source) if source else None
         self.children = []
-        self._tables = None
+        self._tables = utils.NormalizedDict(self._get_tables())
 
     def _get_tables(self):
-        if not self._tables:
-            self._tables = utils.NormalizedDict({'Setting': self.setting_table,
-                                                 'Settings': self.setting_table,
-                                                 'Metadata': self.setting_table,
-                                                 'Variable': self.variable_table,
-                                                 'Variables': self.variable_table,
-                                                 'Keyword': self.keyword_table,
-                                                 'Keywords': self.keyword_table,
-                                                 'User Keyword': self.keyword_table,
-                                                 'User Keywords': self.keyword_table,
-                                                 'Test Case': self.testcase_table,
-                                                 'Test Cases': self.testcase_table})
-        return self._tables
+        for names, table in [(self._setting_table_names, self.setting_table),
+                             (self._variable_table_names, self.variable_table),
+                             (self._testcase_table_names, self.testcase_table),
+                             (self._keyword_table_names, self.keyword_table)]:
+            for name in names:
+                yield name, table
 
     def start_table(self, header_row):
-        if not header_row:
-            return None
-        table_name = header_row[0]
         try:
-            table = self._valid_table(self._get_tables()[table_name])
-        except KeyError:
+            table = self._tables[header_row[0]]
+        except (KeyError, IndexError):
             return None
-        else:
-            if table is not None:
-                table.set_header(header_row)
-            return table
+        if not self._table_is_allowed(table):
+            return None
+        table.set_header(header_row)
+        return table
 
     @property
     def name(self):
@@ -99,12 +93,12 @@ class _TestData(object):
 class TestCaseFile(_TestData):
 
     def __init__(self, parent=None, source=None):
-        _TestData.__init__(self, parent, source)
-        self.directory = os.path.dirname(self.source) if self.source else None
+        self.directory = os.path.dirname(source) if source else None
         self.setting_table = TestCaseFileSettingTable(self)
         self.variable_table = VariableTable(self)
         self.testcase_table = TestCaseTable(self)
         self.keyword_table = KeywordTable(self)
+        _TestData.__init__(self, parent, source)
 
     def populate(self):
         FromFilePopulator(self).populate(self.source)
@@ -115,8 +109,8 @@ class TestCaseFile(_TestData):
         if not self.testcase_table.is_started():
             raise DataError('File has no test case table.')
 
-    def _valid_table(self, table):
-        return table
+    def _table_is_allowed(self, table):
+        return True
 
     def has_tests(self):
         return True
@@ -130,12 +124,12 @@ class TestCaseFile(_TestData):
 class ResourceFile(_TestData):
 
     def __init__(self, source=None):
-        _TestData.__init__(self, source=source)
-        self.directory = os.path.dirname(self.source) if self.source else None
+        self.directory = os.path.dirname(source) if source else None
         self.setting_table = ResourceFileSettingTable(self)
         self.variable_table = VariableTable(self)
         self.testcase_table = TestCaseTable(self)
         self.keyword_table = KeywordTable(self)
+        _TestData.__init__(self, source=source)
 
     def populate(self):
         FromFilePopulator(self).populate(self.source)
@@ -149,28 +143,27 @@ class ResourceFile(_TestData):
         else:
             LOGGER.warn("Imported resource file '%s' is empty." % self.source)
 
-    def _valid_table(self, table):
+    def _table_is_allowed(self, table):
         if table is self.testcase_table:
             raise DataError("Resource file '%s' contains a test case table "
                             "which is not allowed." % self.source)
-        return table
+        return True
 
     def __iter__(self):
-        for table in [self.setting_table, self.variable_table,
-                      self.keyword_table]:
+        for table in [self.setting_table, self.variable_table, self.keyword_table]:
             yield table
 
 
 class TestDataDirectory(_TestData):
 
     def __init__(self, parent=None, source=None):
-        _TestData.__init__(self, parent, source)
-        self.directory = self.source
+        self.directory = source
         self.initfile = None
         self.setting_table = InitFileSettingTable(self)
         self.variable_table = VariableTable(self)
         self.testcase_table = TestCaseTable(self)
         self.keyword_table = KeywordTable(self)
+        _TestData.__init__(self, parent, source)
 
     def populate(self, include_suites=[], warn_on_skipped=False):
         FromDirectoryPopulator().populate(self.source, self, include_suites,
@@ -181,12 +174,12 @@ class TestDataDirectory(_TestData):
     def _get_basename(self):
         return os.path.basename(self.source)
 
-    def _valid_table(self, table):
+    def _table_is_allowed(self, table):
         if table is self.testcase_table:
             LOGGER.error("Test suite init file in '%s' contains a test case "
                          "table which is not allowed." % self.source)
-            return None
-        return table
+            return False
+        return True
 
     def add_child(self, path, include_suites):
         self.children.append(TestData(parent=self,source=path,
@@ -239,6 +232,7 @@ class _WithSettings(object):
     def normalize(self, setting):
         result = utils.normalize(setting)
         return result[0:-1] if result and result[-1]==':' else result
+
 
 class _SettingTable(_Table, _WithSettings):
     type = 'setting'
