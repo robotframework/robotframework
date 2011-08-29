@@ -57,7 +57,7 @@ Set Multiple Scalars With Too Few Values Using Array
     [Documentation]  FAIL Cannot assign return values: Need more values than 3.
     ${i1}  ${i2}  ${i3}  ${i4} =  Get Array Of Three Ints
 
-Set List To Scalar And List Varibles Using Array
+Set List To Scalar And List Variables Using Array
     ${a}  ${b}  @{c} =  Get Array Of Three Ints
     Should Be Equal  ${a}  ${1}
     Should Be Equal  ${b}  ${2}

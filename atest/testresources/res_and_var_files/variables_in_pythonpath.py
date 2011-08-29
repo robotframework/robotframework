@@ -1,1 +1,1 @@
-PPATH_VARFILE = "Variable from varible file in PYTHONPATH"
+PPATH_VARFILE = "Variable from variable file in PYTHONPATH"

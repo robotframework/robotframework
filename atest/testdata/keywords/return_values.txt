@@ -106,7 +106,7 @@ List When No List Returned
     [Documentation]  FAIL Cannot assign return values: Expected list-like object, got int instead.
     @{list} =  Set Variable  ${42}
 
-List To Scalar And List Varibles
+List To Scalar And List Variables
     ${a}  ${b}  @{c} =  Create List  1  2  c  d  e  f
     Should Be True  ${a} + ${b} == 3
     Should Be True  @{c} == ['c', 'd', 'e', 'f']

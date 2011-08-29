@@ -228,7 +228,7 @@ class Variables(utils.NormalizedDict):
                                 % (var.base, var.index))
 
     def set_from_file(self, path, args, overwrite=False):
-        LOGGER.info("Importing varible file '%s' with args %s" % (path, args))
+        LOGGER.info("Importing variable file '%s' with args %s" % (path, args))
         args = args or []
         try:
             module = utils.simple_import(path)

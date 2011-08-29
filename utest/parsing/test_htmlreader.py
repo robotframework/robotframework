@@ -53,7 +53,7 @@ class TestHtmlReader(unittest.TestCase):
             assert_equals(self.reader.state, self.reader.IGNORE)
 
     def test_process_invalid_table(self):
-        for name in [ "Foo", "VaribleTable" ]:
+        for name in [ "Foo", "VariableTable" ]:
             self.reader.feed('<table>')
             self.reader.feed(ROW_TEMPLATE % (name, 'Value 1', 'Value2'))
             assert_equals(self.reader.state, self.reader.IGNORE)

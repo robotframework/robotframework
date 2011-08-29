@@ -84,7 +84,7 @@ Multiple Scalars When No List Returned
 List When No List Returned
     ${test} =  Check Test Case  ${TEST NAME}
 
-List To Scalar And List Varibles
+List To Scalar And List Variables
     ${test} =  Check Test Case  ${TEST NAME}
     Should Be Equal  ${test.kws[0].name}  \${a}, \${b}, \@{c} = BuiltIn.Create List
     Check Log Message  ${test.kws[0].msgs[0]}  \${a} = 1

@@ -53,8 +53,8 @@ Set Multiple Scalars With Too Few Values Using Array
     ${test} =  Check Test Case  Set Multiple Scalars with too few values Using Array
     Check Log Message  ${test.kws[0].msgs[0]}  Cannot assign return values: Need more values than 3.  FAIL
 
-Set List To Scalar And List Varibles Using Array
-    ${test} =  Check Test Case  Set List to Scalar and list varibles Using Array
+Set List To Scalar And List Variables Using Array
+    ${test} =  Check Test Case  Set List to Scalar and list variables Using Array
     Should Be Equal  ${test.kws[0].name}  \${a}, \${b}, \@{c} = ExampleJavaLibrary.Get Array Of Three Ints
     Check Log Message  ${test.kws[0].msgs[0]}  \${a} = 1
     Check Log Message  ${test.kws[0].msgs[1]}  \${b} = 2
