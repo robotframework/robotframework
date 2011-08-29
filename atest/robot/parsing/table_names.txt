@@ -24,6 +24,16 @@ Keyword Table
     ${tc} =  Check Test Case  Test Case
     Check Log Message  ${tc.kws[1].kws[0].kws[0].kws[0].kws[0].msgs[0]}  'User Keywords' was executed
 
+Invalid Tables
+    [Setup]  Run Tests  ${EMPTY}  parsing/invalid_table_names.txt  parsing/invalid_table_names.html
+    ${tc} =  Check test case  Test in valid plain text table
+    Check log message  ${tc.kws[0].kws[0].msgs[0]}  Keyword in valid plain text table
+    Check log message  ${tc.kws[1].kws[0].msgs[0]}  Keyword in valid plain text table in resource
+    ${tc} =  Check test case  Test in valid HTML table
+    Check log message  ${tc.kws[0].kws[0].msgs[0]}  Keyword in valid HTML table
+    Check log message  ${tc.kws[1].kws[0].msgs[0]}  Keyword in valid HTML table in resource
+    Stderr should be empty
+
 *** Keywords ***
 Check First Log Entry
     [Arguments]  ${test case name}  ${expected}

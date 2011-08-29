@@ -1,0 +1,40 @@
+<html>
+<head>
+<style>table {margin: 1em}</style>
+</head>
+<body>
+
+<table border="1">
+<tr><td>Ignore</td></tr>
+<tr><td>This stuff should be ignored</td></tr>
+</table>
+
+<table border="1">
+<tr><td></td></tr>
+<tr><td>This kind of tables caused
+<a href="http://code.google.com/p/robotframework/issues/detail?id=793">a bug</a>
+</td></tr>
+</table>
+
+<table border="1">
+<tr><td>Keyword</td><td></td></tr>
+<tr><td>Keyword in valid HTML table in resource</td><td></td></tr>
+<tr><td></td><td>Log</td><td>Keyword in valid HTML table in resource</td></tr>
+<tr><td></td><td>Directory Should Exist</td><td>${CURDIR}</td></tr>
+</table>
+
+<table border="1">
+<tr><td># This table caused the same bug as the one above</td></tr>
+</table>
+
+<table border="1">
+</table>
+
+<table border="1">
+<tr><td>Settings</td></tr>
+<tr><td>Documentation</td><td>NO RIDE: Here's invalid data on purpose</td></tr>
+<tr><td>Library</td><td>OperatingSystem</td></tr>
+</table>
+
+</body>
+</html>
