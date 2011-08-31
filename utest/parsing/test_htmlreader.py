@@ -36,48 +36,40 @@ class TestHtmlReader(unittest.TestCase):
 
     def setUp(self):
         self.reader = HtmlReader()
-        self.reader.populator = PopulatorMock()
 
-    def _feed(self, data):
-        self.reader._parser.feed(data)
+    def _read(self, *data):
+        self.reader.read(StringIO('\n'.join(data)), PopulatorMock())
 
     def test_initial_state(self):
         self.reader.state = self.reader.IGNORE
-        self._feed('<table>')
+        self._read('<table>')
         assert_equals(self.reader.state, self.reader.INITIAL)
-        self._feed('</table>')
+
+    def test_empty_table(self):
+        self._read('<table></table>')
         assert_equals(self.reader.state, self.reader.IGNORE)
 
     def test_start_valid_table(self):
         for name in VALID_TABLES:
-            self._feed('<table>')
-            self._feed(ROW_TEMPLATE % (name, 'Value 1', 'Value2'))
+            self._read('<table>', ROW_TEMPLATE % (name, 'Value 1', 'Value2'))
             assert_equals(self.reader.state, self.reader.PROCESS)
             assert_equals(self.reader.populator.current, name)
-            self._feed('</table>')
-            assert_equals(self.reader.state, self.reader.IGNORE)
 
-    def test_process_invalid_table(self):
-        for name in [ "Foo", "VariableTable" ]:
-            self._feed('<table>')
-            self._feed(ROW_TEMPLATE % (name, 'Value 1', 'Value2'))
+    def test_start_invalid_table(self):
+        for name in ["Foo", "VariableTable"]:
+            self._read('<table>', ROW_TEMPLATE % (name, 'Value 1', 'Value2'),
+                       ROW_TEMPLATE % ('This', 'row', 'is ignored'))
             assert_equals(self.reader.state, self.reader.IGNORE)
             assert_equals(self.reader.populator.current, None)
-            self._feed(ROW_TEMPLATE % ('This', 'row', 'is ignored'))
-            assert_equals(self.reader.state, self.reader.IGNORE)
-            assert_equals(len(self.reader.populator.tables.values()), 0)
-            self._feed('</table>')
-            assert_equals(self.reader.state, self.reader.IGNORE)
+            assert_equals(self.reader.populator.tables, {})
 
     def test_br(self):
-        inp = ('x<br>y', '1<br />2', '<br><br>')
+        inp = ['x<br>y', '1<br />2', '<br><br>']
         exp = ['x\ny', '1\n2', '\n\n']
         for name in VALID_TABLES:
-            self._feed('<table>')
-            self._feed(ROW_TEMPLATE % (name, 'Value 1', 'Value2'))
-            self._feed(ROW_TEMPLATE % inp)
-            self._feed('</table>')
-            assert_equals(self.reader.populator.tables[name], [ exp ])
+            self._read('<table>', ROW_TEMPLATE % (name, 'Value 1', 'Value2'),
+                       ROW_TEMPLATE % tuple(inp), '</table>')
+            assert_equals(self.reader.populator.tables[name], [exp])
 
     def test_processing(self):
         self._row_processing(ROW_TEMPLATE)
@@ -96,18 +88,15 @@ class TestHtmlReader(unittest.TestCase):
         self._row_processing('<td>%s<td>%s</td><td>%s</td></tr></tr>')
 
     def _row_processing(self, row_template):
+        row_data = [['Just', 'some', 'data'],
+                    ['here', '', 'for'],
+                    ['', 'these', 'rows']]
         for name in VALID_TABLES:
-            self._feed('<table>')
-            self._feed(row_template % (name, 'Value 1', 'Value2'))
-            row_data = [ ['Just', 'some', 'data'],
-                         ['here', '', 'for'],
-                         ['', 'these', 'rows'] ]
-            for data in row_data:
-                self._feed(row_template % tuple(data))
-            assert_equals(self.reader.state, self.reader.PROCESS)
-            self._feed('</table>')
-            assert_equals(self.reader.state, self.reader.IGNORE)
+            rows = ['<table>', row_template % (name, 'Value 1', 'Value2')] + \
+                [row_template % tuple(row) for row in row_data] + ['</table>']
+            self._read(*rows)
             assert_equals(self.reader.populator.tables[name], row_data)
+            assert_equals(self.reader.state, self.reader.IGNORE)
 
 
 class TestEntityAndCharRefs(unittest.TestCase):
