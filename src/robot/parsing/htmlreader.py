@@ -12,7 +12,6 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-
 import HTMLParser
 import sys
 from htmlentitydefs import entitydefs
@@ -28,16 +27,16 @@ class HtmlReader(HTMLParser.HTMLParser):
     def __init__(self):
         HTMLParser.HTMLParser.__init__(self)
         self._encoding = 'ISO-8859-1'
-        self._handlers = { 'table_start' : self.table_start,
-                           'table_end'   : self.table_end,
-                           'tr_start'    : self.tr_start,
-                           'tr_end'      : self.tr_end,
-                           'td_start'    : self.td_start,
-                           'td_end'      : self.td_end,
-                           'th_start'    : self.td_start,
-                           'th_end'      : self.td_end,
-                           'br_start'    : self.br_start,
-                           'meta_start'  : self.meta_start }
+        self._handlers = {'table_start' : self.table_start,
+                          'table_end'   : self.table_end,
+                          'tr_start'    : self.tr_start,
+                          'tr_end'      : self.tr_end,
+                          'td_start'    : self.td_start,
+                          'td_end'      : self.td_end,
+                          'th_start'    : self.td_start,
+                          'th_end'      : self.td_end,
+                          'br_start'    : self.br_start,
+                          'meta_start'  : self.meta_start}
 
     def read(self, htmlfile, populator):
         self.populator = populator
@@ -125,7 +124,7 @@ class HtmlReader(HTMLParser.HTMLParser):
         if self.current_cell is not None:
             self.td_end()
         if self.state == self.INITIAL:
-            if len(self.current_row) > 0:
+            if self.current_row:
                 if self.populator.start_table(self.current_row):
                     self.state = self.PROCESS
                 else:
@@ -170,7 +169,7 @@ class HtmlReader(HTMLParser.HTMLParser):
                     token = token.strip()
                     if token.lower().startswith('charset='):
                         encoding = token[8:]
-        return valid_http_equiv and encoding or None
+        return encoding if valid_http_equiv else None
 
     def _get_encoding_from_pi(self, data):
         data = data.strip()
