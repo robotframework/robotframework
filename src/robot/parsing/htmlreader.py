@@ -12,31 +12,17 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-import HTMLParser
-import sys
-from htmlentitydefs import entitydefs
-
-extra_entitydefs = {'nbsp': ' ',  'apos': "'", 'tilde': '~'}
+from stdhtmlparser import RobotHtmlParser
 
 
-class HtmlReader(HTMLParser.HTMLParser):
+class HtmlReader(object):
     IGNORE = 0
     INITIAL = 1
     PROCESS = 2
 
     def __init__(self):
-        HTMLParser.HTMLParser.__init__(self)
         self._encoding = 'ISO-8859-1'
-        self._handlers = {'table_start' : self.table_start,
-                          'table_end'   : self.table_end,
-                          'tr_start'    : self.tr_start,
-                          'tr_end'      : self.tr_end,
-                          'td_start'    : self.td_start,
-                          'td_end'      : self.td_end,
-                          'th_start'    : self.td_start,
-                          'th_end'      : self.td_end,
-                          'br_start'    : self.br_start,
-                          'meta_start'  : self.meta_start}
+        self._parser = RobotHtmlParser(self)
 
     def read(self, htmlfile, populator):
         self.populator = populator
@@ -44,64 +30,12 @@ class HtmlReader(HTMLParser.HTMLParser):
         self.current_row = None
         self.current_cell = None
         for line in htmlfile.readlines():
-            self.feed(line)
+            self._parser.feed(line)
         # Calling close is required by the HTMLParser but may cause problems
         # if the same instance of our HtmlParser is reused. Currently it's
         # used only once so there's no problem.
-        self.close()
+        self._parser.close()
         self.populator.eof()
-
-    def handle_starttag(self, tag, attrs):
-        handler = self._handlers.get(tag+'_start')
-        if handler is not None:
-            handler(attrs)
-
-    def handle_endtag(self, tag):
-        handler = self._handlers.get(tag+'_end')
-        if handler is not None:
-            handler()
-
-    def handle_data(self, data, decode=True):
-        if self.state == self.IGNORE or self.current_cell is None:
-            return
-        if decode:
-            data = data.decode(self._encoding)
-        self.current_cell.append(data)
-
-    def handle_entityref(self, name):
-        value = self._handle_entityref(name)
-        self.handle_data(value, decode=False)
-
-    def _handle_entityref(self, name):
-        if extra_entitydefs.has_key(name):
-            return extra_entitydefs[name]
-        try:
-            value = entitydefs[name]
-        except KeyError:
-            return '&'+name+';'
-        if value.startswith('&#'):
-            return unichr(int(value[2:-1]))
-        return value.decode('ISO-8859-1')
-
-    def handle_charref(self, number):
-        value = self._handle_charref(number)
-        self.handle_data(value, decode=False)
-
-    def _handle_charref(self, number):
-        try:
-            return unichr(int(number))
-        except ValueError:
-            return '&#'+number+';'
-
-    def handle_pi(self, data):
-        encoding = self._get_encoding_from_pi(data)
-        if encoding:
-            self._encoding = encoding
-
-    def unknown_decl(self, data):
-        # Ignore everything even if it's invalid. This kind of stuff comes
-        # at least from MS Excel
-        pass
 
     def table_start(self, attrs=None):
         self.state = self.INITIAL
@@ -171,6 +105,18 @@ class HtmlReader(HTMLParser.HTMLParser):
                         encoding = token[8:]
         return encoding if valid_http_equiv else None
 
+    def data(self, data, decode=True):
+        if self.state == self.IGNORE or self.current_cell is None:
+            return
+        if decode:
+            data = data.decode(self._encoding)
+        self.current_cell.append(data)
+
+    def pi(self, data):
+        encoding = self._get_encoding_from_pi(data)
+        if encoding:
+            self._encoding = encoding
+
     def _get_encoding_from_pi(self, data):
         data = data.strip()
         if not data.lower().startswith('xml '):
@@ -184,18 +130,3 @@ class HtmlReader(HTMLParser.HTMLParser):
                     encoding = encoding[1:-1]
                 return encoding
         return None
-
-
-# Workaround for following bug in Python 2.6: http://bugs.python.org/issue3932
-if sys.version_info[:2] > (2, 5):
-    def unescape_from_py25(self, s):
-        if '&' not in s:
-            return s
-        s = s.replace("&lt;", "<")
-        s = s.replace("&gt;", ">")
-        s = s.replace("&apos;", "'")
-        s = s.replace("&quot;", '"')
-        s = s.replace("&amp;", "&") # Must be last
-        return s
-
-    HTMLParser.HTMLParser.unescape = unescape_from_py25
