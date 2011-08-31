@@ -1,8 +1,8 @@
-import sys
 import unittest
-from types import UnicodeType
+from StringIO import StringIO
 
 from robot.parsing.htmlreader import HtmlReader
+from robot.parsing.stdhtmlparser import RobotHtmlParser
 from robot.utils.asserts import *
 
 
@@ -29,6 +29,9 @@ class PopulatorMock:
     def add(self, cells):
         self.tables[self.current].append(cells)
 
+    def eof(self):
+        pass
+
 
 class TestHtmlReader(unittest.TestCase):
 
@@ -36,42 +39,45 @@ class TestHtmlReader(unittest.TestCase):
         self.reader = HtmlReader()
         self.reader.populator = PopulatorMock()
 
+    def _feed(self, data):
+        self.reader._parser.feed(data)
+
     def test_initial_state(self):
         self.reader.state = self.reader.IGNORE
-        self.reader.feed('<table>')
+        self._feed('<table>')
         assert_equals(self.reader.state, self.reader.INITIAL)
-        self.reader.feed('</table>')
+        self._feed('</table>')
         assert_equals(self.reader.state, self.reader.IGNORE)
 
     def test_start_valid_table(self):
         for name in VALID_TABLES:
-            self.reader.feed('<table>')
-            self.reader.feed(ROW_TEMPLATE % (name, 'Value 1', 'Value2'))
+            self._feed('<table>')
+            self._feed(ROW_TEMPLATE % (name, 'Value 1', 'Value2'))
             assert_equals(self.reader.state, self.reader.PROCESS)
             assert_equals(self.reader.populator.current, name)
-            self.reader.feed('</table>')
+            self._feed('</table>')
             assert_equals(self.reader.state, self.reader.IGNORE)
 
     def test_process_invalid_table(self):
         for name in [ "Foo", "VariableTable" ]:
-            self.reader.feed('<table>')
-            self.reader.feed(ROW_TEMPLATE % (name, 'Value 1', 'Value2'))
+            self._feed('<table>')
+            self._feed(ROW_TEMPLATE % (name, 'Value 1', 'Value2'))
             assert_equals(self.reader.state, self.reader.IGNORE)
             assert_none(self.reader.populator.current)
-            self.reader.feed(ROW_TEMPLATE % ('This', 'row', 'is ignored'))
+            self._feed(ROW_TEMPLATE % ('This', 'row', 'is ignored'))
             assert_equals(self.reader.state, self.reader.IGNORE)
             assert_equals(len(self.reader.populator.tables.values()), 0)
-            self.reader.feed('</table>')
+            self._feed('</table>')
             assert_equals(self.reader.state, self.reader.IGNORE)
 
     def test_br(self):
         inp = ('x<br>y', '1<br />2', '<br><br>')
         exp = ['x\ny', '1\n2', '\n\n']
         for name in VALID_TABLES:
-            self.reader.feed('<table>')
-            self.reader.feed(ROW_TEMPLATE % (name, 'Value 1', 'Value2'))
-            self.reader.feed(ROW_TEMPLATE % inp)
-            self.reader.feed('</table>')
+            self._feed('<table>')
+            self._feed(ROW_TEMPLATE % (name, 'Value 1', 'Value2'))
+            self._feed(ROW_TEMPLATE % inp)
+            self._feed('</table>')
             assert_equals(self.reader.populator.tables[name], [ exp ])
 
     def test_processing(self):
@@ -92,15 +98,15 @@ class TestHtmlReader(unittest.TestCase):
 
     def _row_processing(self, row_template):
         for name in VALID_TABLES:
-            self.reader.feed('<table>')
-            self.reader.feed(row_template % (name, 'Value 1', 'Value2'))
+            self._feed('<table>')
+            self._feed(row_template % (name, 'Value 1', 'Value2'))
             row_data = [ ['Just', 'some', 'data'],
                          ['here', '', 'for'],
                          ['', 'these', 'rows'] ]
             for data in row_data:
-                self.reader.feed(row_template % tuple(data))
+                self._feed(row_template % tuple(data))
             assert_equals(self.reader.state, self.reader.PROCESS)
-            self.reader.feed('</table>')
+            self._feed('</table>')
             assert_equals(self.reader.state, self.reader.IGNORE)
             assert_equals(self.reader.populator.tables[name], row_data)
 
@@ -108,8 +114,8 @@ class TestHtmlReader(unittest.TestCase):
 class TestEntityAndCharRefs(unittest.TestCase):
 
     def setUp(self):
-        self.reader = HtmlReader()
-        self.reader.handle_data = self._handle_response
+        self.parser = RobotHtmlParser(reader=None)
+        self.parser.handle_data = self._handle_response
 
     def _handle_response(self, value, decode):
         self.response = value
@@ -135,7 +141,7 @@ class TestEntityAndCharRefs(unittest.TestCase):
                           ('nabla', u'\u2207'),
                           ('ldquo', u'\u201c'),
                           ('invalid', '&invalid;') ]:
-            self.reader.handle_entityref(inp)
+            self.parser.handle_entityref(inp)
             msg = '%s: %r != %r' % (inp,  self.response, exp)
             assert_equals(self.response, exp, msg, False)
 
@@ -143,7 +149,7 @@ class TestEntityAndCharRefs(unittest.TestCase):
         for inp, exp in [ ('82', 'R'),
                           ('228', u'\u00E4'),
                           ('invalid', '&#invalid;') ]:
-            self.reader.handle_charref(inp)
+            self.parser.handle_charref(inp)
             msg = '%s: %r != %r' % (inp,  self.response, exp)
             assert_equals(self.response, exp, msg, False)
 
@@ -154,34 +160,28 @@ class TestEncoding(unittest.TestCase):
         assert_equals(HtmlReader()._encoding, 'ISO-8859-1')
 
     def test_encoding_is_read_from_meta_tag(self):
-        reader = HtmlReader()
-        reader.feed('<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />')
-        assert_equals(reader._encoding, 'utf-8')
-        reader.feed('<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">')
-        assert_equals(reader._encoding, 'UTF-8')
+        self._test_encoding('<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />', 'utf-8')
+        self._test_encoding('<META HTTP-EQUIV="CONTENT-TYPE" CONTENT="TEXT/HTML; CHARSET=UTF-8">', 'UTF-8')
 
-    def test_valid_http_equiv_is_required(self):
+    def _test_encoding(self, data, expected):
         reader = HtmlReader()
-        reader.feed('<meta content="text/html; charset=utf-8" />')
-        assert_equals(reader._encoding, 'ISO-8859-1')
-        reader.feed('<meta http-equiv="Invalid" content="text/html; charset=utf-8" />')
-        assert_equals(reader._encoding, 'ISO-8859-1')
+        reader.read(StringIO(data), PopulatorMock())
+        assert_equals(reader._encoding, expected)
+        return reader
 
-    def test_encoding_is_set_from_xml_preamble(self):
-        reader = HtmlReader()
-        reader.feed('<?xml version="1.0" encoding="UTF-8"?>')
-        assert_equals(reader._encoding, 'UTF-8')
-        reader.feed('<?xml encoding=US-ASCII version="1.0"?>')
-        assert_equals(reader._encoding, 'US-ASCII')
+    def test_valid_http_equiv_is_required_in_meta(self):
+        self._test_encoding('<meta content="text/html; charset=utf-8" />', 'ISO-8859-1')
+        self._test_encoding('<meta http-equiv="Invalid" content="text/html; charset=utf-8" />', 'ISO-8859-1')
+
+    def test_encoding_is_read_from_pi(self):
+        self._test_encoding('<?xml version="1.0" encoding="UTF-8"?>', 'UTF-8')
+        self._test_encoding('<?xml encoding=US-ASCII version="1.0"?>', 'US-ASCII')
 
     def test_encoding_and_entityrefs(self):
-        reader = HtmlReader()
-        reader.populator = PopulatorMock()
-        reader.feed('<meta content="text/html; charset=utf-8" />')
-        reader.feed('<table><tr><td>Setting</td></tr>')
-        reader.feed('<tr><td>&auml;iti')
-        assert_equals(reader.current_cell, [u'\xe4', u'iti'])
-        reader.feed('</tr>')
+        reader = self._test_encoding('''<meta content="text/html; charset=utf-8"
+                                        http-equiv="Content-Type"/>
+                                        <table><tr><td>Setting</td></tr>
+                                        <tr><td>&auml;iti</tr>''', 'utf-8')
         assert_equals(reader.populator.tables['Setting'][0], [u'\xe4iti'])
 
 
