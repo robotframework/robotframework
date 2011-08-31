@@ -12,7 +12,10 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from stdhtmlparser import RobotHtmlParser
+try:
+    from lxmlhtmlparser import RobotHtmlParser
+except ImportError:
+    from stdhtmlparser import RobotHtmlParser
 
 
 class HtmlReader(object):
@@ -20,15 +23,13 @@ class HtmlReader(object):
     INITIAL = 1
     PROCESS = 2
 
-    def __init__(self):
-        self._encoding = 'ISO-8859-1'
-        self._parser = RobotHtmlParser(self)
+    def __init__(self, parser=RobotHtmlParser):
+        self._parser = parser(self)
         self._start_handlers = {'table': self.table_start,
                                 'tr': self.tr_start,
                                 'td': self.td_start,
                                 'th': self.td_start,
-                                'br': self.br_start,
-                                'meta': self.meta_start}
+                                'br': self.br_start}
         self._end_handlers = {'table': self.table_end,
                               'tr': self.tr_end,
                               'td': self.td_end,
@@ -42,17 +43,17 @@ class HtmlReader(object):
         self._parser.parse(htmlfile)
         self.populator.eof()
 
-    def start(self, tag, attrs):
+    def start(self, tag):
         handler = self._start_handlers.get(tag)
         if handler:
-            handler(attrs)
+            handler()
 
     def end(self, tag):
         handler = self._end_handlers.get(tag)
         if handler:
             handler()
 
-    def table_start(self, attrs=None):
+    def table_start(self):
         self.state = self.INITIAL
         self.current_row = None
         self.current_cell = None
@@ -62,7 +63,7 @@ class HtmlReader(object):
             self.tr_end()
         self.state = self.IGNORE
 
-    def tr_start(self, attrs=None):
+    def tr_start(self):
         if self.current_row is not None:
             self.tr_end()
         self.current_row = []
@@ -84,7 +85,7 @@ class HtmlReader(object):
             self.populator.add(self.current_row)
         self.current_row = None
 
-    def td_start(self, attrs=None):
+    def td_start(self):
         if self.current_cell is not None:
             self.td_end()
         if self.current_row is None:
@@ -97,51 +98,10 @@ class HtmlReader(object):
             self.current_row.append(cell)
         self.current_cell = None
 
-    def br_start(self, attrs=None):
+    def br_start(self):
         if self.current_cell is not None and self.state != self.IGNORE:
             self.current_cell.append('\n')
 
-    def meta_start(self, attrs):
-        encoding = self._get_encoding_from_meta(attrs)
-        if encoding:
-            self._encoding = encoding
-
-    def _get_encoding_from_meta(self, attrs):
-        valid_http_equiv = False
-        encoding = None
-        for name, value in attrs:
-            name = name.lower()
-            if name == 'http-equiv' and value.lower() == 'content-type':
-                valid_http_equiv = True
-            if name == 'content':
-                for token in value.split(';'):
-                    token = token.strip()
-                    if token.lower().startswith('charset='):
-                        encoding = token[8:]
-        return encoding if valid_http_equiv else None
-
-    def data(self, data, decode=True):
-        if self.state == self.IGNORE or self.current_cell is None:
-            return
-        if decode:
-            data = data.decode(self._encoding)
-        self.current_cell.append(data)
-
-    def pi(self, data):
-        encoding = self._get_encoding_from_pi(data)
-        if encoding:
-            self._encoding = encoding
-
-    def _get_encoding_from_pi(self, data):
-        data = data.strip()
-        if not data.lower().startswith('xml '):
-            return None
-        if data.endswith('?'):
-            data = data[:-1]
-        for token in data.split():
-            if token.lower().startswith('encoding='):
-                encoding = token[9:]
-                if encoding.startswith("'") or encoding.startswith('"'):
-                    encoding = encoding[1:-1]
-                return encoding
-        return None
+    def data(self, data):
+        if self.current_cell is not None and self.state != self.IGNORE:
+            self.current_cell.append(data)

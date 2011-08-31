@@ -39,20 +39,30 @@ class RobotHtmlParser(HTMLParser.HTMLParser):
     def __init__(self, reader):
         HTMLParser.HTMLParser.__init__(self)
         self._reader = reader
+        self._encoding = 'ISO-8859-1'
 
     def parse(self, htmlfile):
-        for line in htmlfile.readlines():
+        for line in htmlfile:
             self.feed(line)
         self.close()
 
     def handle_starttag(self, tag, attrs):
-        self._reader.start(tag, attrs)
+        if tag == 'meta':
+            self._set_encoding(self._get_encoding_from_meta(attrs))
+        else:
+            self._reader.start(tag)
+
+    def _set_encoding(self, encoding):
+        if encoding:
+            self._encoding = encoding
 
     def handle_endtag(self, tag):
         self._reader.end(tag)
 
     def handle_data(self, data, decode=True):
-        self._reader.data(data, decode)
+        if decode:
+            data = data.decode(self._encoding)
+        self._reader.data(data)
 
     def handle_entityref(self, name):
         value = self._handle_entityref(name)
@@ -80,9 +90,38 @@ class RobotHtmlParser(HTMLParser.HTMLParser):
             return '&#'+number+';'
 
     def handle_pi(self, data):
-        self._reader.pi(data)
+        self._set_encoding(self._get_encoding_from_pi(data))
+
+    def _get_encoding_from_pi(self, data):
+        data = data.strip()
+        if not data.lower().startswith('xml '):
+            return None
+        if data.endswith('?'):
+            data = data[:-1]
+        for token in data.split():
+            if token.lower().startswith('encoding='):
+                encoding = token[9:]
+                if encoding.startswith("'") or encoding.startswith('"'):
+                    encoding = encoding[1:-1]
+                return encoding
+        return None
 
     def unknown_decl(self, data):
         # Ignore everything even if it's invalid. This kind of stuff comes
         # at least from MS Excel
         pass
+
+    def _get_encoding_from_meta(self, attrs):
+        valid_http_equiv = False
+        encoding = None
+        for name, value in attrs:
+            name = name.lower()
+            if name == 'http-equiv' and value.lower() == 'content-type':
+                valid_http_equiv = True
+            if name == 'content':
+                for token in value.split(';'):
+                    token = token.strip()
+                    if token.lower().startswith('charset='):
+                        encoding = token[8:]
+        return encoding if valid_http_equiv else None
+
