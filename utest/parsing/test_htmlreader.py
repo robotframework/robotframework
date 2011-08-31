@@ -2,8 +2,7 @@ import unittest
 from StringIO import StringIO
 
 from robot.parsing.htmlreader import HtmlReader
-from robot.parsing.stdhtmlparser import RobotHtmlParser
-from robot.utils.asserts import *
+from robot.utils.asserts import assert_equals
 
 
 VALID_TABLES = [ "Variable", "Setting", "Test Case", "Test Suite", "Keyword" ]
@@ -63,7 +62,7 @@ class TestHtmlReader(unittest.TestCase):
             self._feed('<table>')
             self._feed(ROW_TEMPLATE % (name, 'Value 1', 'Value2'))
             assert_equals(self.reader.state, self.reader.IGNORE)
-            assert_none(self.reader.populator.current)
+            assert_equals(self.reader.populator.current, None)
             self._feed(ROW_TEMPLATE % ('This', 'row', 'is ignored'))
             assert_equals(self.reader.state, self.reader.IGNORE)
             assert_equals(len(self.reader.populator.tables.values()), 0)
@@ -113,14 +112,7 @@ class TestHtmlReader(unittest.TestCase):
 
 class TestEntityAndCharRefs(unittest.TestCase):
 
-    def setUp(self):
-        self.parser = RobotHtmlParser(reader=None)
-        self.parser.handle_data = self._handle_response
-
-    def _handle_response(self, value, decode):
-        self.response = value
-
-    def test_handle_entiryrefs(self):
+    def test_handle_entityrefs(self):
         for inp, exp in [ ('nbsp', ' '),
                           ('apos', "'"),
                           ('tilde', '~'),
@@ -141,17 +133,22 @@ class TestEntityAndCharRefs(unittest.TestCase):
                           ('nabla', u'\u2207'),
                           ('ldquo', u'\u201c'),
                           ('invalid', '&invalid;') ]:
-            self.parser.handle_entityref(inp)
-            msg = '%s: %r != %r' % (inp,  self.response, exp)
-            assert_equals(self.response, exp, msg, False)
+            self._test('&%s;' % inp, exp)
 
-    def test_handle_charefs(self):
+    def test_handle_charrefs(self):
         for inp, exp in [ ('82', 'R'),
                           ('228', u'\u00E4'),
                           ('invalid', '&#invalid;') ]:
-            self.parser.handle_charref(inp)
-            msg = '%s: %r != %r' % (inp,  self.response, exp)
-            assert_equals(self.response, exp, msg, False)
+            self._test('&#%s;' % inp, exp)
+
+    def _test(self, input, expected):
+        result = []
+        def collect_data(data, decode):
+            result.append(data)
+        reader = HtmlReader()
+        reader.data = collect_data
+        reader.read(StringIO(input), PopulatorMock())
+        assert_equals(''.join(result), expected)
 
 
 class TestEncoding(unittest.TestCase):
