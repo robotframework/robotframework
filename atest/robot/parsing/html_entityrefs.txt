@@ -1,0 +1,23 @@
+*** Settings ***
+Documentation   Tests for HTML entity and character references. Former are escapes like '&auml;' and latter are in format '&#82;'.
+Suite Setup     Run Tests  ${EMPTY}  parsing/html_entityrefs.html
+Force Tags      regression  jybot  pybot
+Resource        atest_resource.txt
+
+*** Test Cases ***
+Scandinavian Letters
+    Check Test Case  Scandinavian Letters
+
+XML Escapes
+    Check Test Case  XML Escapes
+
+Other Escapes
+    Check Test Case  Other Escapes
+
+Numerical Escapes
+    [Documentation]  These are character references
+    Check Test Case  Numerical Escapes
+
+Variables using escapes
+    Check Test Case  Variables using escapes
+
