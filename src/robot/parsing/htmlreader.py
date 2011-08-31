@@ -29,12 +29,7 @@ class HtmlReader(object):
         self.state = self.IGNORE
         self.current_row = None
         self.current_cell = None
-        for line in htmlfile.readlines():
-            self._parser.feed(line)
-        # Calling close is required by the HTMLParser but may cause problems
-        # if the same instance of our HtmlParser is reused. Currently it's
-        # used only once so there's no problem.
-        self._parser.close()
+        self._parser.parse(htmlfile)
         self.populator.eof()
 
     def table_start(self, attrs=None):

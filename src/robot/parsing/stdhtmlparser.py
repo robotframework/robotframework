@@ -50,6 +50,11 @@ class RobotHtmlParser(HTMLParser.HTMLParser):
                           'br_start'    : reader.br_start,
                           'meta_start'  : reader.meta_start}
 
+    def parse(self, htmlfile):
+        for line in htmlfile.readlines():
+            self.feed(line)
+        self.close()
+
     def handle_starttag(self, tag, attrs):
         handler = self._handlers.get(tag+'_start')
         if handler is not None:
