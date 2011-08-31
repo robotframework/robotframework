@@ -2,22 +2,9 @@
 <html>
 <head><title>Malformed HTML</title></head>
 <body>
-<table border="1">
-  <tr>
-    <th>Test Case</th>
-    <th>Action</th>
-    <th>Argument</th>
-    <th>Argument</th>
-    <th>Argument</th>
-  </tr>
-  <tr>
-    <td>Valid Test</td>
-    <td>Log</td>
-    <td>Hello, world!</td>
-  </tr>
-</table>
 <p>
-  Parsing following invalid HTML fails as explained in <a href="http://code.google.com/p/robotframework/issues/detail?id=314">issue 314</a>
+  Parsing following invalid HTML fails using the standard HTMLParser module.
+  This caused <a href="http://code.google.com/p/robotframework/issues/detail?id=314">issue 314</a>.
  <br>
 <a href="http://spam"eggs">spam</a>
 </p>
