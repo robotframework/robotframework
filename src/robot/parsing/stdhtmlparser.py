@@ -39,16 +39,6 @@ class RobotHtmlParser(HTMLParser.HTMLParser):
     def __init__(self, reader):
         HTMLParser.HTMLParser.__init__(self)
         self._reader = reader
-        self._handlers = {'table_start' : reader.table_start,
-                          'table_end'   : reader.table_end,
-                          'tr_start'    : reader.tr_start,
-                          'tr_end'      : reader.tr_end,
-                          'td_start'    : reader.td_start,
-                          'td_end'      : reader.td_end,
-                          'th_start'    : reader.td_start,
-                          'th_end'      : reader.td_end,
-                          'br_start'    : reader.br_start,
-                          'meta_start'  : reader.meta_start}
 
     def parse(self, htmlfile):
         for line in htmlfile.readlines():
@@ -56,14 +46,10 @@ class RobotHtmlParser(HTMLParser.HTMLParser):
         self.close()
 
     def handle_starttag(self, tag, attrs):
-        handler = self._handlers.get(tag+'_start')
-        if handler is not None:
-            handler(attrs)
+        self._reader.start(tag, attrs)
 
     def handle_endtag(self, tag):
-        handler = self._handlers.get(tag+'_end')
-        if handler is not None:
-            handler()
+        self._reader.end(tag)
 
     def handle_data(self, data, decode=True):
         self._reader.data(data, decode)

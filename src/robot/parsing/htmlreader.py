@@ -23,6 +23,16 @@ class HtmlReader(object):
     def __init__(self):
         self._encoding = 'ISO-8859-1'
         self._parser = RobotHtmlParser(self)
+        self._start_handlers = {'table': self.table_start,
+                                'tr': self.tr_start,
+                                'td': self.td_start,
+                                'th': self.td_start,
+                                'br': self.br_start,
+                                'meta': self.meta_start}
+        self._end_handlers = {'table': self.table_end,
+                              'tr': self.tr_end,
+                              'td': self.td_end,
+                              'th': self.td_end}
 
     def read(self, htmlfile, populator):
         self.populator = populator
@@ -31,6 +41,16 @@ class HtmlReader(object):
         self.current_cell = None
         self._parser.parse(htmlfile)
         self.populator.eof()
+
+    def start(self, tag, attrs):
+        handler = self._start_handlers.get(tag)
+        if handler:
+            handler(attrs)
+
+    def end(self, tag):
+        handler = self._end_handlers.get(tag)
+        if handler:
+            handler()
 
     def table_start(self, attrs=None):
         self.state = self.INITIAL
