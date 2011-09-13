@@ -52,6 +52,7 @@ def my_keyword(arg):
 """
 
 import sys
+import threading
 
 from robot.output import LOGGER, Message
 
@@ -63,7 +64,8 @@ def write(msg, level, html=False):
     of using this method, it is generally better to use the level
     specific methods such as `info` and `debug`.
     """
-    LOGGER.log_message(Message(msg, level, html))
+    if threading.currentThread().getName() == 'MainThread':
+        LOGGER.log_message(Message(msg, level, html))
 
 def trace(msg, html=False):
     """Writes the message to the log file with the TRACE level."""
