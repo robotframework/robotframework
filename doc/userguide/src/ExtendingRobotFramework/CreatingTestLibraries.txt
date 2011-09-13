@@ -1158,6 +1158,10 @@ crash or a corrupted output file. If a keyword starts something on
 background, there should be another keyword that checks the status of
 the worker thread and reports gathered information accordingly.
 
+.. note:: Messages logged by non-main threads using the `programmatic
+          logging APIs`_ are silently ignored starting from Robot
+          Framework 2.6.2.
+
 Distributing test libraries
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
