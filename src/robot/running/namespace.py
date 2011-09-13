@@ -441,6 +441,12 @@ class _VariableScopes:
 
     def set_from_variable_table(self, rawvariables):
         self._suite.set_from_variable_table(rawvariables)
+        if self._test is not None:
+            self._test.set_from_variable_table(rawvariables)
+        for varz in self._uk_handlers:
+            varz.set_from_variable_table(rawvariables)
+        if self._uk_handlers:
+            self.current.set_from_variable_table(rawvariables)
 
     # TODO: This should be removed so that these objects themselves had
     # the capability of resolving variables.

@@ -5,10 +5,19 @@ Resource        atest_resource.txt
 
 *** Test Cases ***
 
-Import Resource
+Import Resource In Suite Setup
     Check Test Case  ${TESTNAME}
 
 Import Resource With Sub Resources
+    Check Test Case  ${TESTNAME}
+
+Import Resource In Test Case
+    Check Test Case  ${TESTNAME}
+
+Import Resource In User Keyword
+    Check Test Case  ${TESTNAME}
+
+Variables And Keywords Imported In Test Are Available In Next
     Check Test Case  ${TESTNAME}
 
 Import Resource Failure Is Catchable
