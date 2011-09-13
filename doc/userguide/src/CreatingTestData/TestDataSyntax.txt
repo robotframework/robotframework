@@ -190,21 +190,21 @@ Plain text format
 '''''''''''''''''
 
 The plain text format is technically otherwise similar to the `TSV
-format`_ but the separator between cells is different. The TSV
+format`_ but the separator between the cells is different. The TSV
 format uses tabs, but in the plain text format you can use either two
-or more spaces or a pipe character surrounded with spaces :code:`( | )`. In both
-cases the `test data tables`_ must have one or more asterisk before
-its name similarly as with the TSV format, and everything before the
-first table is ignored.
+or more spaces or a pipe character surrounded with spaces :code:`( | )`.
 
-.. Note:: The plain text format is only supported in Robot Framework 2.1.1
-          and newer.
+The `test data tables`_ must have one or more asterisk before their
+names similarly as in the TSV format. Otherwise asterisks and possible
+spaces in the table header are ignored so, for example, :code:`***
+Settings ***` and :code:`*Settings` work the same way. Also similarly
+as in the TSV format, everything before the first table is ignored.
 
-Starting from Robot Framework 2.1.2 tabs in plain text files are automatically
-converted to two spaces. This allows using a single tab as a separator similarly
-as in the TSV format. Notice, however, that in the plain text format multiple
-tabs are considered to be a single separator whereas in the TSV format every
-tab would be a separator.
+In plain text files tabs are automatically converted to two
+spaces. This allows using a single tab as a separator similarly as in
+the TSV format. Notice, however, that in the plain text format
+multiple tabs are considered to be a single separator whereas in the
+TSV format every tab would be a separator.
 
 Space separated format
 ``````````````````````
@@ -216,13 +216,13 @@ because with TSV the alignment cannot be controlled.
 
 ::
 
-   ***Settings***
+   *** Settings ***
    Library     OperatingSystem
 
-   ***Variables***
+   *** Variables ***
    ${MESSAGE}  Hello, world!
 
-   ***Test Cases***
+   *** Test Cases ***
    My Test  [Documentation]  Example test
        Log         ${MESSAGE}
        My Keyword  /tmp
@@ -230,7 +230,7 @@ because with TSV the alignment cannot be controlled.
    Another Test
        Should Be Equal  ${MESSAGE}  Hello, world!
 
-   ***Keywords***
+   *** Keywords ***
    My Keyword  [Arguments]  ${path}
        Directory Should Exist  ${path}
 
