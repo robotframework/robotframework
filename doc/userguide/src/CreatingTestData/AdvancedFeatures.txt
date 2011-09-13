@@ -283,7 +283,15 @@ the loop variable :var:`${animal}` has the value :code:`cat` and then
 second example, loop values are `split into several rows`__ and the
 loop is run altogether seven times.
 
-__ `Dividing test data to several rows`_
+.. tip:: If you use for loops in the `plain text format`_, remember to
+         escape__ the indented cell using a backslash::
+
+              *** Test Case ***
+              Example 1
+                  :FOR    ${animal}    IN    cat    dog
+                  \    Log    ${animal}
+                  \    Log    2nd keyword
+                  Log    Outside loop
 
 For loops are most useful and also clearest when they are used with
 `list variables`_. This is illustrated by the example below, where
@@ -299,6 +307,9 @@ and keyword :name:`Start Element` is used with all of them.
    Example      :FOR      ${element}     IN          @{ELEMENTS}
    \                      Start Element  ${element}
    ===========  ========  =============  ==========  ===========  ===========
+
+__ `Dividing test data to several rows`_
+__ Escaping_
 
 Using several loop variables
 ''''''''''''''''''''''''''''

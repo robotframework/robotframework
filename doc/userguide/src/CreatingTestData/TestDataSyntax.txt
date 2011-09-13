@@ -478,6 +478,8 @@ The escape character for the Robot Framework parser is the backslash
   :code:`\\` to be in the appropriate cell). Another possibility is
   using `built-in variable`__ :var:`${EMPTY}`.
 
+- To escape indented cells in `for loops`_ when using the `plain text format`_.
+
 __ `Handling whitespace`_
 __ `Space and empty variables`_
 
