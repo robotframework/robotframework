@@ -1,7 +1,9 @@
 import os
 import tempfile
+import logging
 
 from robot.libraries.BuiltIn import BuiltIn
+from robot.api import logger
 
 
 class ListenSome:
@@ -42,6 +44,15 @@ class InvalidMethods:
 
     def message(self, msg):
         raise ValueError("This fails continuously!")
+
+
+class LogMessageLogging:
+    ROBOT_LISTENER_API_VERSION = '2'
+
+    def log_message(self, msg):
+        logging.info('log_message logging 1 (original: "%s %s")'
+                     % (msg['level'], msg['message']))
+        logger.warn('log_message logging 2')
 
 
 class SuiteAndTestCounts(object):
