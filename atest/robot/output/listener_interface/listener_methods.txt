@@ -62,6 +62,11 @@ Listener Method Failing Continuously
     [Documentation]  'message' method failing continuously used to cause recursion error: http://code.google.com/p/robotframework/issues/detail?id=832
     Calling listener failed  message  ValueError: This fails continuously!
 
+Log Message Logging Itself
+    ${tc} =  Check test case  Pass
+    Check log message  ${tc.kws[-1].msgs[-2]}  log_message logging 1 (original: "TRACE Return: None")
+    Check log message  ${tc.kws[-1].msgs[-1]}  log_message logging 2  WARN
+
 Correct Attributes To Listener Methods
     ${status} =  Log File  ${TEMPDIR}/${ATTR_TYPE_FILE}
     Check Stderr Does Not Contain  attributeverifyinglistener
@@ -108,8 +113,9 @@ Run Tests With Listeners
     ...  --listener module_listener --listener listeners.ListenSome --listener JavaListener
     ...  --listener listeners.InvalidMethods --listener attributeverifyinglistener
     ...  --listener JavaAttributeVerifyingListener --metadata ListenerMeta:Hello
+    ...  --listener listeners.LogMessageLogging
     ...  --critical pass
-    Run Tests  ${args}  misc${/}pass_and_fail.html
+    Run Tests  ${args}  misc/pass_and_fail.html
 
 Check Listen All File
     [Arguments]  ${filename}

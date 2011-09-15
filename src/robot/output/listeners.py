@@ -32,6 +32,7 @@ class Listeners:
     def __init__(self, listeners):
         self._listeners = self._import_listeners(listeners)
         self._running_test = False
+        self._calling_log_message =  False
         self._setup_or_teardown_type = None
 
     def __nonzero__(self):
@@ -125,6 +126,12 @@ class Listeners:
                           kw.type.title())
 
     def log_message(self, msg):
+        if not self._calling_log_message:
+            self._calling_log_message = True
+            self._log_message(msg)
+            self._calling_log_message = False
+
+    def _log_message(self, msg):
         for li in self._listeners:
             if li.version == 2:
                 li.call_method(li.log_message, self._create_msg_dict(msg))
