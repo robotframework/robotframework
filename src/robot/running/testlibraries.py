@@ -102,11 +102,15 @@ class _BaseTestLibrary(BaseLibrary):
         self._instance_cache = []
         self._libinst = None
         if libcode is not None:
-            self.doc = utils.getdoc(libcode)
+            self._doc = utils.getdoc(libcode)
             self.scope = self._get_scope(libcode)
             self._libcode = libcode
             self.init =  self._create_init_handler(libcode)
             self.positional_args, self.named_args = self.init.arguments.resolve(args, variables)
+
+    @property
+    def doc(self):
+        return self._doc
 
     def create_handlers(self):
         if self._libcode:
