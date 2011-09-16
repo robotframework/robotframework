@@ -1,5 +1,8 @@
 class dynamic:
 
+    def __init__(self, a=1, b=2):
+        """This doc nor args should not be used."""
+
     def get_keyword_names(self):
         return ['Keyword 1', 'KW 2']
 
@@ -7,7 +10,9 @@ class dynamic:
         print name, args
 
     def get_keyword_arguments(self, name):
-        return [ 'arg%d' % (i+1) for i in range(int(name[-1])) ]
+        if name == '__init__':
+            return ['x=1, y=2']
+        return ['arg%d' % (i+1) for i in range(int(name[-1]))]
 
     def get_keyword_documentation(self, name):
         return '''Dummy documentation for `%s`.

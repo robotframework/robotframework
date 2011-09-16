@@ -11,7 +11,7 @@ class ExampleRemoteLibrary:
     starting from Robot Framework 2.6.2.
     """
 
-    def __init__(self):
+    def __init__(self, a=1):
         """This library takes no arguments."""
 
     def count_items_in_directory(self, path):
