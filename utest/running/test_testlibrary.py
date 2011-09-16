@@ -7,10 +7,11 @@ from robot.utils.asserts import *
 from robot import utils
 from robot.errors import DataError
 
-from classes import (NameLibrary, DocLibrary, ArgInfoLibrary, GetattrLibrary,
-                     SynonymLibrary)
+from classes import (NameLibrary, DocLibrary, ArgInfoLibrary,
+                     GetattrLibrary, SynonymLibrary)
 if utils.is_jython:
-    import ArgumentTypes, Extended, MultipleArguments, MultipleSignatures, NoHandlers
+    import ArgumentTypes, Extended, MultipleArguments, MultipleSignatures, \
+            NoHandlers
 
 
 # Valid keyword names and arguments for some libraries
@@ -479,6 +480,58 @@ class TestDynamicLibrary(unittest.TestCase):
         def _assert_java_handler(self, handler, doc, minargs, maxargs):
             assert_equals(handler.doc, doc)
             self._assert_handler_args(handler, minargs, maxargs)
+
+
+class TestDynamicLibraryIntroDocumentation(unittest.TestCase):
+
+    def test_doc_from_class_definition(self):
+        self._assert_intro_doc('dynlibs.StaticDocsLib',
+                               'This is lib intro.')
+
+    def test_doc_from_dynamic_method(self):
+        self._assert_intro_doc('dynlibs.DynamicDocsLib',
+                               'Dynamic intro doc.')
+
+    def test_dynamic_doc_overrides_class_doc(self):
+        self._assert_intro_doc('dynlibs.StaticAndDynamicDocsLib',
+                                         'dynamic override')
+
+    def test_failure_in_dynamic_resolving_of_doc_ignored(self):
+        self._assert_intro_doc('dynlibs.FailingDynamicDocLib',
+                                         'intro-o-o')
+
+    def _assert_intro_doc(self, library_name, expected_doc):
+        assert_equals(TestLibrary(library_name).doc, expected_doc)
+
+    if utils.is_jython:
+        def test_dynamic_init_doc_from_java_library(self):
+            self._assert_intro_doc('ArgDocDynamicJavaLibrary',
+                                   'Dynamic Java intro doc.')
+
+
+class TestDynamicLibraryInitDocumentation(unittest.TestCase):
+
+    def test_doc_from_class_init(self):
+        self._assert_init_doc('dynlibs.StaticDocsLib', 'Init doc.')
+
+    def test__doc_from_dynamic_method(self):
+        self._assert_init_doc('dynlibs.DynamicDocsLib', 'Dynamic init doc.')
+
+    def test_dynamic_doc_overrides_method_doc(self):
+        self._assert_init_doc('dynlibs.StaticAndDynamicDocsLib',
+                              'dynamic override')
+
+    def test_failure_in_dynamic_resolving_of_doc_ignored(self):
+        self._assert_init_doc('dynlibs.FailingDynamicDocLib',
+                              'initoo-o-o')
+
+    def _assert_init_doc(self, library_name, expected_doc):
+        assert_equals(TestLibrary(library_name).init.doc, expected_doc)
+
+    if utils.is_jython:
+        def test_dynamic_init_doc_from_java_library(self):
+            self._assert_init_doc('ArgDocDynamicJavaLibrary',
+                                  'Dynamic Java init doc.')
 
 
 class _FakeNamespace:

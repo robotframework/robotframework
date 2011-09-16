@@ -54,11 +54,9 @@ def DynamicHandler(library, name, method, doc, argspec):
     return _DynamicHandler(library, name, method, doc, argspec)
 
 
-def InitHandler(library, method):
-    if method is None:
-        method = lambda: None
+def InitHandler(library, method, doc=''):
     Init = _PythonInitHandler if not _is_java_init(method) else _JavaInitHandler
-    return Init(library, '__init__', method)
+    return Init(library, '__init__', method, doc)
 
 
 class _BaseHandler(object):
@@ -252,7 +250,7 @@ class _RunKeywordHandler(_PythonHandler):
     def _variable_syntax_in(self, kw_name, context):
         try:
             resolved = context.namespace.variables.replace_string(kw_name)
-            #Variable can contain value, but it might be wrong, 
+            #Variable can contain value, but it might be wrong,
             #therefore it cannot be returned
             return resolved != kw_name
         except DataError:
@@ -261,7 +259,7 @@ class _RunKeywordHandler(_PythonHandler):
 class _XTimesHandler(_RunKeywordHandler):
 
     def __init__(self, handler, name):
-        _RunKeywordHandler.__init__(self, handler.library, handler.name, 
+        _RunKeywordHandler.__init__(self, handler.library, handler.name,
                                     handler._handler_method)
         self.name = name
         self.doc = "*DEPRECATED* Replace X times syntax with 'Repeat Keyword'."
@@ -282,11 +280,19 @@ class _DynamicRunKeywordHandler(_DynamicHandler, _RunKeywordHandler):
 
 class _PythonInitHandler(_PythonHandler):
 
+    def __init__(self, library, handler_name, handler_method, doc):
+        _PythonHandler.__init__(self, library, handler_name, handler_method)
+        self.doc = doc or self.doc
+
     def _parse_arguments(self, handler_method):
         return PythonInitArguments(handler_method, self.library.name)
 
 
 class _JavaInitHandler(_BaseHandler):
+
+    def __init__(self, library, handler_name, handler_method, doc):
+        _BaseHandler.__init__(self, library, handler_name, handler_method)
+        self.doc = doc or ''
 
     def _parse_arguments(self, handler_method):
         return JavaInitArguments(handler_method, self.library.name)

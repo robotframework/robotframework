@@ -66,8 +66,8 @@ class _DynamicMethod(object):
         try:
             return self._method(*args)
         except:
-            raise DataError("Calling dynamic method '%s' failed: %s"
-                            % (self._method.__name__, utils.get_error_message()))
+            raise DataError("Calling dynamic method '%s' failed: %s" %
+                            (self._method.__name__, utils.get_error_message()))
 
     def __nonzero__(self):
         return self._method is not None
@@ -140,10 +140,11 @@ class _BaseTestLibrary(BaseLibrary):
                 return '<unknown>'
 
     def _create_init_handler(self, libcode):
-        init_method =  getattr(libcode, '__init__', None)
-        if not self._valid_init(init_method):
-            init_method = None
-        return InitHandler(self, init_method)
+        return InitHandler(self, self._resolve_init_method(libcode))
+
+    def _resolve_init_method(self, libcode):
+        init_method = getattr(libcode, '__init__', None)
+        return init_method if self._valid_init(init_method) else lambda: None
 
     def _valid_init(self, init_method):
         if inspect.ismethod(init_method):
@@ -305,7 +306,7 @@ class _ModuleLibrary(_BaseTestLibrary):
         return self._libcode
 
     def _create_init_handler(self, libcode):
-        return InitHandler(self, None)
+        return InitHandler(self, lambda: None)
 
 
 class _HybridLibrary(_BaseTestLibrary):
@@ -322,15 +323,15 @@ class _DynamicLibrary(_BaseTestLibrary):
     _log_failure = LOGGER.warn
 
     def __init__(self, libcode, source, name, args, variables=None):
-        _BaseTestLibrary.__init__(self, libcode, source, name, args, variables)
         self._get_kw_doc = \
             _DynamicMethod(libcode, 'get_keyword_documentation', default='')
         self._get_kw_args = \
             _DynamicMethod(libcode, 'get_keyword_arguments', default=None)
+        _BaseTestLibrary.__init__(self, libcode, source, name, args, variables)
 
     @property
     def doc(self):
-        return self._get_kw_doc(self.get_instance(), '__intro__')
+        return self._get_special_documentation('__intro__') or self._doc
 
     def _get_handler_names(self, instance):
         try:
@@ -348,3 +349,13 @@ class _DynamicLibrary(_BaseTestLibrary):
         doc = self._get_kw_doc(self._libinst, handler_name)
         argspec = self._get_kw_args(self._libinst, handler_name)
         return DynamicHandler(self, handler_name, handler_method, doc, argspec)
+
+    def _create_init_handler(self, libcode):
+        return InitHandler(self, self._resolve_init_method(libcode),
+                           self._get_special_documentation('__init__'))
+
+    def _get_special_documentation(self, doc_type):
+        try:
+            return self._get_kw_doc(self.get_instance(), doc_type)
+        except DataError:
+            return ''

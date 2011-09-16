@@ -1,5 +1,9 @@
 public class ArgDocDynamicJavaLibrary {
 
+    public ArgDocDynamicJavaLibrary() {}
+
+    public ArgDocDynamicJavaLibrary(String name) {}
+
     public String[] getKeywordNames() {
         return new String[] {"Java No Arg",
                              "Java One Arg",
@@ -17,6 +21,10 @@ public class ArgDocDynamicJavaLibrary {
     public String getKeywordDocumentation(String name) {
         if (name.equals("Invalid Java Doc"))
             throw new RuntimeException("Get doc failure");
+        if (name.equals("__intro__"))
+            return "Dynamic Java intro doc.";
+        else if (name.equals("__init__"))
+            return "Dynamic Java init doc.";
         return "Keyword documentation for " + name;
     }
 
