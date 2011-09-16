@@ -32,7 +32,8 @@ class RobotRemoteServer(SimpleXMLRPCServer):
         self._allow_stop = allow_stop
         self._register_functions()
         self._register_signal_handlers()
-        print 'Robot Framework remote server starting at %s:%s' % (host, port)
+        self._log('Robot Framework remote server starting at %s:%s'
+                  % (host, port))
         self.serve_forever()
 
     def _register_functions(self):
@@ -59,10 +60,10 @@ class RobotRemoteServer(SimpleXMLRPCServer):
     def stop_remote_server(self):
         prefix = 'Robot Framework remote server at %s:%s ' % self.server_address
         if self._allow_stop:
-            print prefix + 'stopping'
+            self._log(prefix + 'stopping')
             self._shutdown = True
         else:
-            print '*WARN* ' + prefix + 'does not allow stopping'
+            self._log(prefix + 'does not allow stopping', 'WARN')
         return True
 
     def get_keyword_names(self):
@@ -144,7 +145,7 @@ class RobotRemoteServer(SimpleXMLRPCServer):
         if isinstance(ret, (basestring, int, long, float)):
             return ret
         if isinstance(ret, (tuple, list)):
-            return [ self._handle_return_value(item) for item in ret ]
+            return [self._handle_return_value(item) for item in ret]
         if isinstance(ret, dict):
             return dict([(self._str(key), self._handle_return_value(value))
                          for key, value in ret.items()])
@@ -164,3 +165,8 @@ class RobotRemoteServer(SimpleXMLRPCServer):
         sys.stdout.close()
         sys.stdout = sys.__stdout__
         return output
+
+    def _log(self, msg, level=None):
+        if level:
+            msg = '*%s* %s' % (level.upper(), msg)
+        print msg
