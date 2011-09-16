@@ -92,7 +92,9 @@ class RobotRemoteServer(SimpleXMLRPCServer):
 
     def get_keyword_arguments(self, name):
         kw = self._get_keyword(name)
-        return self._arguments_from_kw(kw) if kw else []
+        if not kw:
+            return []
+        return self._arguments_from_kw(kw)
 
     def _arguments_from_kw(self, kw):
         args, varargs, _, defaults = inspect.getargspec(kw)
@@ -107,7 +109,7 @@ class RobotRemoteServer(SimpleXMLRPCServer):
 
     def get_keyword_documentation(self, name):
         if name == '__intro__':
-            return inspect.getdoc(self._library)
+            return inspect.getdoc(self._library) or ''
         if name == '__init__' and inspect.ismodule(self._library):
             return ''
         return inspect.getdoc(self._get_keyword(name)) or ''
@@ -116,7 +118,9 @@ class RobotRemoteServer(SimpleXMLRPCServer):
         if name == 'stop_remote_server':
             return self.stop_remote_server
         kw = getattr(self._library, name, None)
-        return kw if inspect.isroutine(kw) else None
+        if inspect.isroutine(kw):
+            return kw
+        return None
 
     def _get_error_details(self):
         exc_type, exc_value, exc_tb = sys.exc_info()
