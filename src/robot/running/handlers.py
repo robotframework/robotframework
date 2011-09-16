@@ -54,14 +54,14 @@ def DynamicHandler(library, name, method, doc, argspec):
     return _DynamicHandler(library, name, method, doc, argspec)
 
 
-def InitHandler(library, method, doc=''):
+def InitHandler(library, method, docgetter=None):
     Init = _PythonInitHandler if not _is_java_init(method) else _JavaInitHandler
-    return Init(library, '__init__', method, doc)
+    return Init(library, '__init__', method, docgetter)
 
 
 class _BaseHandler(object):
     type = 'library'
-    doc = ''
+    _doc = ''
 
     def __init__(self, library, handler_name, handler_method):
         self.library = library
@@ -70,6 +70,10 @@ class _BaseHandler(object):
 
     def _parse_arguments(self, handler_method):
         raise NotImplementedError(self.__class__.__name__)
+
+    @property
+    def doc(self):
+        return self._doc
 
     @property
     def longname(self):
@@ -169,7 +173,7 @@ class _PythonHandler(_RunnableHandler):
 
     def __init__(self, library, handler_name, handler_method):
         _RunnableHandler.__init__(self, library, handler_name, handler_method)
-        self.doc = utils.getdoc(handler_method)
+        self._doc = utils.getdoc(handler_method)
 
     def _parse_arguments(self, handler_method):
         return PythonKeywordArguments(handler_method, self.longname)
@@ -188,7 +192,7 @@ class _DynamicHandler(_RunnableHandler):
         self._argspec = argspec
         _RunnableHandler.__init__(self, library, handler_name, handler_method)
         self._run_keyword_method_name = handler_method.__name__
-        self.doc = doc is not None and utils.unic(doc) or ''
+        self._doc = doc is not None and utils.unic(doc) or ''
 
     def _parse_arguments(self, handler_method):
         return DynamicKeywordArguments(self._argspec, self.longname)
@@ -262,7 +266,7 @@ class _XTimesHandler(_RunKeywordHandler):
         _RunKeywordHandler.__init__(self, handler.library, handler.name,
                                     handler._handler_method)
         self.name = name
-        self.doc = "*DEPRECATED* Replace X times syntax with 'Repeat Keyword'."
+        self._doc = "*DEPRECATED* Replace X times syntax with 'Repeat Keyword'."
 
     def run(self, context, args):
         resolved_times = context.namespace.variables.replace_string(self.name)
@@ -280,9 +284,15 @@ class _DynamicRunKeywordHandler(_DynamicHandler, _RunKeywordHandler):
 
 class _PythonInitHandler(_PythonHandler):
 
-    def __init__(self, library, handler_name, handler_method, doc):
+    def __init__(self, library, handler_name, handler_method, docgetter):
         _PythonHandler.__init__(self, library, handler_name, handler_method)
-        self.doc = doc or self.doc
+        self._docgetter = docgetter
+
+    @property
+    def doc(self):
+        if self._docgetter():
+            return self._docgetter() or self._doc
+        return self._doc
 
     def _parse_arguments(self, handler_method):
         return PythonInitArguments(handler_method, self.library.name)
@@ -290,9 +300,15 @@ class _PythonInitHandler(_PythonHandler):
 
 class _JavaInitHandler(_BaseHandler):
 
-    def __init__(self, library, handler_name, handler_method, doc):
+    def __init__(self, library, handler_name, handler_method, docgetter):
         _BaseHandler.__init__(self, library, handler_name, handler_method)
-        self.doc = doc or ''
+        self._docgetter = docgetter
+
+    @property
+    def doc(self):
+        if self._docgetter():
+            return self._docgetter() or self._doc
+        return self._doc
 
     def _parse_arguments(self, handler_method):
         return JavaInitArguments(handler_method, self.library.name)

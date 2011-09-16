@@ -496,9 +496,13 @@ class TestDynamicLibraryIntroDocumentation(unittest.TestCase):
         self._assert_intro_doc('dynlibs.StaticAndDynamicDocsLib',
                                          'dynamic override')
 
-    def test_failure_in_dynamic_resolving_of_doc_ignored(self):
-        self._assert_intro_doc('dynlibs.FailingDynamicDocLib',
-                                         'intro-o-o')
+    def test_failure_in_dynamic_resolving_of_doc(self):
+        try:
+            TestLibrary('dynlibs.FailingDynamicDocLib').doc
+        except DataError:
+            pass
+        else:
+            raise AssertionError()
 
     def _assert_intro_doc(self, library_name, expected_doc):
         assert_equals(TestLibrary(library_name).doc, expected_doc)
@@ -521,9 +525,13 @@ class TestDynamicLibraryInitDocumentation(unittest.TestCase):
         self._assert_init_doc('dynlibs.StaticAndDynamicDocsLib',
                               'dynamic override')
 
-    def test_failure_in_dynamic_resolving_of_doc_ignored(self):
-        self._assert_init_doc('dynlibs.FailingDynamicDocLib',
-                              'initoo-o-o')
+    def test_failure_in_dynamic_resolving_of_doc(self):
+        try:
+            TestLibrary('dynlibs.FailingDynamicDocLib').init.doc
+        except DataError:
+            pass
+        else:
+            raise AssertionError()
 
     def _assert_init_doc(self, library_name, expected_doc):
         assert_equals(TestLibrary(library_name).init.doc, expected_doc)

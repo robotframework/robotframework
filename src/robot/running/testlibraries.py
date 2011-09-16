@@ -323,15 +323,15 @@ class _DynamicLibrary(_BaseTestLibrary):
     _log_failure = LOGGER.warn
 
     def __init__(self, libcode, source, name, args, variables=None):
+        _BaseTestLibrary.__init__(self, libcode, source, name, args, variables)
         self._get_kw_doc = \
             _DynamicMethod(libcode, 'get_keyword_documentation', default='')
         self._get_kw_args = \
             _DynamicMethod(libcode, 'get_keyword_arguments', default=None)
-        _BaseTestLibrary.__init__(self, libcode, source, name, args, variables)
 
     @property
     def doc(self):
-        return self._get_special_documentation('__intro__') or self._doc
+        return self._get_kw_doc(self.get_instance(), '__intro__') or self._doc
 
     def _get_handler_names(self, instance):
         try:
@@ -351,11 +351,5 @@ class _DynamicLibrary(_BaseTestLibrary):
         return DynamicHandler(self, handler_name, handler_method, doc, argspec)
 
     def _create_init_handler(self, libcode):
-        return InitHandler(self, self._resolve_init_method(libcode),
-                           self._get_special_documentation('__init__'))
-
-    def _get_special_documentation(self, doc_type):
-        try:
-            return self._get_kw_doc(self.get_instance(), doc_type)
-        except DataError:
-            return ''
+        docgetter = lambda: self._get_kw_doc(self.get_instance(), '__init__')
+        return InitHandler(self, self._resolve_init_method(libcode), docgetter)
