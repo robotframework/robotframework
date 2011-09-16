@@ -260,6 +260,7 @@ class _RunKeywordHandler(_PythonHandler):
         except DataError:
             return True
 
+
 class _XTimesHandler(_RunKeywordHandler):
 
     def __init__(self, handler, name):
@@ -290,8 +291,9 @@ class _PythonInitHandler(_PythonHandler):
 
     @property
     def doc(self):
-        if self._docgetter():
-            return self._docgetter() or self._doc
+        if self._docgetter:
+            self._doc = self._docgetter() or self._doc
+            self._docgetter = None
         return self._doc
 
     def _parse_arguments(self, handler_method):
@@ -306,8 +308,9 @@ class _JavaInitHandler(_BaseHandler):
 
     @property
     def doc(self):
-        if self._docgetter():
-            return self._docgetter() or self._doc
+        if self._docgetter:
+            self._doc = self._docgetter() or self._doc
+            self._docgetter = None
         return self._doc
 
     def _parse_arguments(self, handler_method):
