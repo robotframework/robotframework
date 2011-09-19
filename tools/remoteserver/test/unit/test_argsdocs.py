@@ -69,25 +69,10 @@ class TestArgs(unittest.TestCase):
     def test_keyword_args_when_no_args(self):
         self._test_args('no_doc_or_args', [])
 
-    def test_init_args(self):
-        self._test_args('__init__',  ['i1', 'i2=1', '*i3'])
-
-    def test_init_args_when_old_style_lib_has_no_init(self):
-        class OldStyleLibraryWithoutInit: pass
-        self._test_args('__init__', [], OldStyleLibraryWithoutInit())
-
-    def test_init_args_when_new_style_lib_has_no_init(self):
-        class NewStyleLibraryWithoutInit(object): pass
-        self._test_args('__init__', [], NewStyleLibraryWithoutInit())
-
-    def test_keyword_doc_from_module_keyword(self):
+    def test_keyword_args_from_module_keyword(self):
         import test_argsdocs
         self._test_args('keyword_in_module', ['m1', 'm2=3', '*m3'],
                         test_argsdocs)
-
-    def test_init_args_from_module(self):
-        import test_argsdocs
-        self._test_args('__init__', [], test_argsdocs)
 
     def _test_args(self, name, expected, library=LibraryWithArgsAndDocs(None)):
         server = NonServingRemoteServer(library)
