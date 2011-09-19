@@ -1,7 +1,8 @@
 class dynamic:
+    """This is overwritten and not shown in docs"""
 
-    def __init__(self, arg="This arg should not be used"):
-        """This doc should not be used."""
+    def __init__(self, arg="This is shown in docs"):
+        """This is overwritten and not shown in docs"""
 
     def get_keyword_names(self):
         return ['Keyword 1', 'KW 2']
@@ -10,8 +11,6 @@ class dynamic:
         print name, args
 
     def get_keyword_arguments(self, name):
-        if name == '__init__':
-            return ['dyn_arg=This arg returned dynamically']
         return ['arg%d' % (i+1) for i in range(int(name[-1]))]
 
     def get_keyword_documentation(self, name):
