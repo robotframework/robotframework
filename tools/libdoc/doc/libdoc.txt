@@ -15,14 +15,12 @@ from http://code.google.com/p/robotframework/wiki/LibraryDocumentationTool.
 
 .. contents:: Table of contents
 
-
 Synopsis
 --------
 
 ::
 
     libdoc.py [options] library_or_resource_file
-
 
 Options
 -------
@@ -33,13 +31,13 @@ Options
                            documentation or a URL where to upload it. If a path
                            pointing to a directory is used, the documentation is
                            written there using a name like `<name>.<format>`. If
-                           a file with that name already exists, an index is added
-                           after the `<name>` part.
+                           a file with that name already exists, an index is
+                           added after the `<name>` part.
                            If the path starts with `http://`, it is assumed to
                            be a URL to RFDoc's upload page and the documentation
                            is uploaded there.
-                           Otherwise the path is used directly as a file name and
-                           possible existing files are overwritten.
+                           Otherwise the path is used directly as a file name
+                           and possible existing files are overwritten.
                            The default value for the path is the directory
                            where the script is executed from.
   -N, --name <newname>     Sets the name of the documented library or resource.
@@ -58,7 +56,6 @@ Options
                            output.
   -h, --help               Prints this help.
 
-
 Description
 -----------
 
@@ -69,7 +66,8 @@ It is even possible to upload the XML documentation to RFDoc systems.
 
 Documentation can be created for:
 
-- Test libraries implemented with Python__ or Java__ using the normal library API
+- Test libraries implemented with Python__ or Java__ using the normal
+  library API
 - Test libraries using the `dynamic API`__
 - `Resource files`_
 
@@ -80,7 +78,6 @@ to RFDoc and generating stand-alone HTML documentation from them.
 __ `Python libraries`_
 __ `Java libraries`_
 __ `Dynamic libraries`_
-
 
 Specifying the library or resource file
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -112,7 +109,6 @@ Resource files must always be specified using a path. If the path does
 not exist, resource files are also searched from all directories in
 PYTHONPATH.
 
-
 Uploading documentation
 ~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -121,7 +117,6 @@ specifying the URL to the RFDoc upload page using :opt:`--output`
 option. This URL must always start with `http://`. It is possible to
 upload all documentations to RFDoc and input can also be an earlier
 created XML documentation.
-
 
 Examples
 ~~~~~~~~
@@ -139,13 +134,11 @@ Examples
    python libdoc.py --output http://rfdoc.mydomain/upload MyLibrary
    python libdoc.py --output http://rfdoc.mydomain/upload specs/Lib.xml
 
-
 Writing documentation
 ---------------------
 
 For more information about how to actually create test libraries and resource
 files see `Robot Framework User Guide`_.
-
 
 Python libraries
 ~~~~~~~~~~~~~~~~
@@ -182,7 +175,6 @@ strings, see `PEP-257`_.
             | Your Keyword | yyy |
             """
             pass
-
 
 .. note:: If you want to use non-ASCII charactes in the documentation of
           Python libraries, you must either use UTF-8 as your `source code
@@ -225,18 +217,19 @@ earlier Python example.
         }
     }
 
-
 Dynamic libraries
 ~~~~~~~~~~~~~~~~~
 
 To be able to generate meaningful documentation for dynamic libraries,
-they must return keyword argument names and documentation using
+the libraries must return keyword argument names and documentation using
 :code:`get_keyword_arguments` and :code:`get_keyword_documentation`
 methods (or using their camelCase variants :code:`getKeywordArguments`
-and :code:`getKeywordDocumentation`). See the `User Guide`_ for more
-information about how to create these methods and the dynamic library
-API in general.
+and :code:`getKeywordDocumentation`). Libraries can also support
+general library documentation via special :code:`__intro__` and
+:code:`__init__` values to the :code:`get_keyword_documentation` method.
 
+See the `User Guide`_ for more information about how to create these
+methods and the dynamic library API in general.
 
 Importing section
 ~~~~~~~~~~~~~~~~~
@@ -258,7 +251,6 @@ arguments, all its constructors and their javadocs are shown.
        def some_keyword(self, arg):
            if self.mode == 'secret':
                 # ...
-
 
 Resource files
 ~~~~~~~~~~~~~~
@@ -306,7 +298,6 @@ Possible variables in resource files are not documented.
    |              | No Operation     |                        |                               |
    +--------------+------------------+------------------------+-------------------------------+
 
-
 Documentation syntax
 --------------------
 
@@ -353,7 +344,6 @@ Messages` to :name:`Log Message`, and :code:`\`message\`` and
        """
        log_message(message1, level)
        log_message(message2, level)
-
 
 Additionally, using :code:`\`introduction\`` or :code:`\`library introduction\``
 (case insensitive) generates a link to the library introduction in the beginning
