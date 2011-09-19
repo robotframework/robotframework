@@ -11,7 +11,7 @@ class ExampleRemoteLibrary:
     starting from Robot Framework 2.6.2.
     """
 
-    def __init__(self, arg="Also args should be shown in docs now"):
+    def __init__(self):
         """Also this doc should be in shown in library doc."""
 
     def count_items_in_directory(self, path):
