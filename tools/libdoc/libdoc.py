@@ -38,6 +38,8 @@ Options:
                           directory where the script is executed from. If
                           a URL is given, it must start with 'http://'.
  -N --name newname        Sets the name of the documented library or resource.
+ -V --version newversion  Sets the version of the documented library or
+                          resource.
  -T --title title         Sets the title of the generated HTML documentation.
                           Underscores in the given title are automatically
                           converted to spaces.
@@ -133,10 +135,12 @@ def upload_xml_doc(outpath, uploadurl):
     RFDocUploader().upload(outpath, uploadurl)
 
 
-def LibraryDoc(libname, arguments=None, newname=None):
+def LibraryDoc(libname, arguments=None, name=None, version=None):
     libdoc = _import_library(libname, arguments)
-    if newname:
-        libdoc.name = newname
+    if name:
+        libdoc.name = name
+    if version:
+        libdoc.version = version
     return libdoc
 
 def _import_library(name, arguments):
@@ -686,7 +690,8 @@ if __name__ == '__main__':
                                           help='help', unescape='escape',
                                           check_args=True)
         libname = args[0]
-        library = LibraryDoc(libname, opts['argument'], opts['name'])
+        library = LibraryDoc(libname, opts['argument'], opts['name'],
+                             opts['version'])
         output = opts['output'] or '.'
         if _uploading(output):
             file_path = os.path.join(tempfile.gettempdir(), 'libdoc_upload.xml')

@@ -41,6 +41,8 @@ Options
                            The default value for the path is the directory
                            where the script is executed from.
   -N, --name <newname>     Sets the name of the documented library or resource.
+  -V, --version <newversion>  Sets the version of the documented library or
+                           resource.
   -T, --title <title>      Sets the title of the generated HTML documentation.
                            Underscores in the given title are automatically
                            converted to spaces.
