@@ -111,16 +111,12 @@ def create_xml_doc(lib, outpath):
                                  'generated': utils.get_timestamp(millissep=None)})
     writer.element('version', lib.version)
     writer.element('scope', lib.scope)
+    writer.element('namedargs', 'yes' if lib.supports_named_arguments else 'no')
     writer.element('doc', lib.doc)
     _write_keywords_to_xml(writer, 'init', lib.inits)
     _write_keywords_to_xml(writer, 'kw', lib.keywords)
     writer.end('keywordspec')
     writer.close()
-
-
-def upload_xml_doc(outpath, uploadurl):
-    RFDocUploader().upload(outpath, uploadurl)
-
 
 def _write_keywords_to_xml(writer, kwtype, keywords):
     for kw in keywords:
@@ -131,6 +127,10 @@ def _write_keywords_to_xml(writer, kwtype, keywords):
             writer.element('arg', arg)
         writer.end('arguments')
         writer.end(kwtype)
+
+
+def upload_xml_doc(outpath, uploadurl):
+    RFDocUploader().upload(outpath, uploadurl)
 
 
 def LibraryDoc(libname, arguments=None, newname=None):
@@ -268,11 +268,20 @@ class XmlLibraryDoc(_DocHelper):
         self.type = dom.get_attr('type')
         self.version = dom.get_node('version').text
         self.scope = dom.get_node('scope').text
+        self.supports_named_arguments = self._supports_named_args(dom)
         self.doc = dom.get_node('doc').text
         self.inits = [XmlKeywordDoc(node, self)
                       for node in dom.get_nodes('init')]
         self.keywords = [XmlKeywordDoc(node, self)
                          for node in dom.get_nodes('kw')]
+
+    def _supports_named_args(self, dom):
+        try:
+            node = dom.get_node('namedargs')
+        except AttributeError:  # Backwards compatiblity with RF < 2.6.2
+            return False
+        else:
+            return node.text == 'yes'
 
 
 class _BaseKeywordDoc(_DocHelper):
