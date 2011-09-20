@@ -134,17 +134,21 @@ def upload_xml_doc(outpath, uploadurl):
 
 
 def LibraryDoc(libname, arguments=None, newname=None):
-    ext = os.path.splitext(libname)[1].lower()
-    if ext in ('.html', '.htm', '.xhtml', '.tsv', '.txt', '.rst', '.rest'):
-        return ResourceDoc(libname, arguments, newname)
-    elif ext == '.xml':
-        return XmlLibraryDoc(libname, newname)
-    elif ext == '.java':
-        if not utils.is_jython:
-            raise DataError('Documenting Java test libraries requires using Jython.')
-        return JavaLibraryDoc(libname, newname)
+    libdoc = _import_library(libname, arguments)
+    if newname:
+        libdoc.name = newname
+    return libdoc
+
+def _import_library(name, arguments):
+    ext = os.path.splitext(name)[1].lower()[1:]
+    if ext in ('html', 'htm', 'xhtml', 'tsv', 'txt', 'rst', 'rest'):
+        return ResourceDoc(name)
+    elif ext == 'xml':
+        return XmlLibraryDoc(name)
+    elif ext == 'java':
+        return JavaLibraryDoc(name)
     else:
-        return PythonLibraryDoc(libname, arguments, newname)
+        return PythonLibraryDoc(name, arguments)
 
 
 class _DocHelper:
@@ -204,10 +208,10 @@ class _DocHelper:
 class PythonLibraryDoc(_DocHelper):
     type = 'library'
 
-    def __init__(self, name, arguments=None, newname=None):
+    def __init__(self, name, arguments=None):
         lib = self._import(name, arguments)
         self.supports_named_arguments = lib.supports_named_arguments
-        self.name = newname or lib.name
+        self.name = lib.name
         self.version = utils.html_escape(getattr(lib, 'version', '<unknown>'))
         self.scope = self._get_scope(lib)
         self.doc = self._process_doc(self._get_doc(lib))
@@ -238,8 +242,6 @@ class ResourceDoc(PythonLibraryDoc):
     supports_named_arguments = True
 
     def _import(self, path, arguments):
-        if arguments:
-            raise DataError("Resource file cannot take arguments.")
         return UserLibrary(self._find_resource_file(path))
 
     def _find_resource_file(self, path):
@@ -262,8 +264,8 @@ class ResourceDoc(PythonLibraryDoc):
 
 class XmlLibraryDoc(_DocHelper):
 
-    def __init__(self, libname, newname):
-        dom = utils.DomWrapper(libname)
+    def __init__(self, path):
+        dom = utils.DomWrapper(path)
         self.name = dom.get_attr('name')
         self.type = dom.get_attr('type')
         self.version = dom.get_node('version').text
@@ -354,15 +356,20 @@ class XmlKeywordDoc(_BaseKeywordDoc):
         self.doc = node.get_node('doc').text
 
 
-if utils.is_jython:
+if not utils.is_jython:
+
+    def JavaLibraryDoc(path):
+        raise DataError('Documenting Java test libraries requires Jython.')
+
+else:
 
     class JavaLibraryDoc(_DocHelper):
         type = 'library'
         supports_named_arguments = False
 
-        def __init__(self, path, newname=None):
+        def __init__(self, path):
             cls = self._get_class(path)
-            self.name = newname or cls.qualifiedName()
+            self.name = cls.qualifiedName()
             self.version = self._get_version(cls)
             self.scope = self._get_scope(cls)
             self.doc = self._process_doc(cls.getRawCommentText())
@@ -689,7 +696,8 @@ if __name__ == '__main__':
         else:
             format = get_format(opts['format'], output)
             if os.path.isdir(output):
-                output = get_unique_path(os.path.join(output, library.name), format.lower())
+                output = get_unique_path(os.path.join(output, library.name),
+                                         format.lower())
             output = os.path.abspath(output)
             if format == 'HTML':
                 create_html_doc(library, output, opts['title'], opts['styles'])
