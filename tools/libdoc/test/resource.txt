@@ -18,7 +18,7 @@ Keyword with some "stuff" to <escape>
     [arguments]  ${a1}   ${a2}
     noop
 kw 3  [arguments]  ${a1}   @{a2}
-kw 4  [arguments]  ${a1}=d @{a2}
+kw 4  [arguments]  ${a1}=d  @{a2}
 kw 5  [ documentation ]   foo bar `kw`.\n baa `${a1}` alskdj alskdjlajd
       ...  askf laskdjf asldkfj alsdkfj alsdkfjasldkfj 
       ...  askf laskdjf _asldkfj_ alsdkfj alsdkfjasldkfj 
