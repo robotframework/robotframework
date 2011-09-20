@@ -107,7 +107,8 @@ def _get_styles(styles):
 
 def create_xml_doc(lib, outpath):
     writer = utils.XmlWriter(outpath)
-    writer.start('keywordspec', {'name': lib.name, 'type': lib.type, 'generated': utils.get_timestamp(millissep=None)})
+    writer.start('keywordspec', {'name': lib.name, 'type': lib.type,
+                                 'generated': utils.get_timestamp(millissep=None)})
     writer.element('version', lib.version)
     writer.element('scope', lib.scope)
     writer.element('doc', lib.doc)
@@ -123,8 +124,7 @@ def upload_xml_doc(outpath, uploadurl):
 
 def _write_keywords_to_xml(writer, kwtype, keywords):
     for kw in keywords:
-        attrs = kwtype == 'kw' and {'name': kw.name} or {}
-        writer.start(kwtype, attrs)
+        writer.start(kwtype, {'name': kw.name} if kwtype == 'kw' else {})
         writer.element('doc', kw.doc)
         writer.start('arguments')
         for arg in kw.args:
@@ -135,7 +135,7 @@ def _write_keywords_to_xml(writer, kwtype, keywords):
 
 def LibraryDoc(libname, arguments=None, newname=None):
     ext = os.path.splitext(libname)[1].lower()
-    if  ext in ('.html', '.htm', '.xhtml', '.tsv', '.txt', '.rst', '.rest'):
+    if ext in ('.html', '.htm', '.xhtml', '.tsv', '.txt', '.rst', '.rest'):
         return ResourceDoc(libname, arguments, newname)
     elif ext == '.xml':
         return XmlLibraryDoc(libname, newname)
@@ -212,9 +212,8 @@ class PythonLibraryDoc(_DocHelper):
         self.scope = self._get_scope(lib)
         self.doc = self._process_doc(self._get_doc(lib))
         self.inits = self._get_initializers(lib)
-        self.keywords = [ KeywordDoc(handler, self)
-                          for handler in lib.handlers.values() ]
-        self.keywords.sort()
+        self.keywords = sorted(KeywordDoc(handler, self)
+                               for handler in lib.handlers.values())
 
     def _import(self, name, args):
         return TestLibrary(name, args)
@@ -246,7 +245,7 @@ class ResourceDoc(PythonLibraryDoc):
     def _find_resource_file(self, path):
         if os.path.isfile(path):
             return path
-        for dire in [ item for item in sys.path if os.path.isdir(item) ]:
+        for dire in [item for item in sys.path if os.path.isdir(item)]:
             if os.path.isfile(os.path.join(dire, path)):
                 return os.path.join(dire, path)
         raise DataError("Resource file '%s' doesn't exist." % path)
@@ -270,8 +269,10 @@ class XmlLibraryDoc(_DocHelper):
         self.version = dom.get_node('version').text
         self.scope = dom.get_node('scope').text
         self.doc = dom.get_node('doc').text
-        self.inits = [ XmlKeywordDoc(node, self) for node in dom.get_nodes('init') ]
-        self.keywords = [ XmlKeywordDoc(node, self) for node in dom.get_nodes('kw') ]
+        self.inits = [XmlKeywordDoc(node, self)
+                      for node in dom.get_nodes('init')]
+        self.keywords = [XmlKeywordDoc(node, self)
+                         for node in dom.get_nodes('kw')]
 
 
 class _BaseKeywordDoc(_DocHelper):
@@ -286,6 +287,10 @@ class _BaseKeywordDoc(_DocHelper):
     @property
     def argstr(self):
         return ', '.join(self.args)
+
+    @property
+    def shortdoc(self):
+        return self.doc.splitlines()[0] if self.doc else ''
 
     def __repr__(self):
         return "'Keyword %s from library %s'" % (self.name, self.lib.name)
@@ -302,28 +307,33 @@ class KeywordDoc(_BaseKeywordDoc):
 
     def _get_args(self, handler):
         required, defaults, varargs = self._parse_args(handler)
-        args = required + [ '%s=%s' % item for item in defaults ]
-        if varargs is not None:
+        args = required + ['%s=%s' % item for item in defaults]
+        if varargs:
             args.append('*%s' % varargs)
         return args
 
     def _parse_args(self, handler):
-        args = [ arg.rstrip('_') for arg in handler.arguments.names ]
-        # strip ${} from user keywords (args look more consistent e.g. in IDE)
-        if handler.type == 'user':
-            args = [ arg[2:-1] for arg in args ]
+        args = [self._normalize_arg(arg, handler.type == 'user')
+                for arg in handler.arguments.names]
         default_count = len(handler.arguments.defaults)
         if default_count == 0:
             required = args[:]
             defaults = []
         else:
             required = args[:-default_count]
-            defaults = zip(args[-default_count:], list(handler.arguments.defaults))
-        varargs = handler.arguments.varargs
-        varargs = varargs is not None and varargs.rstrip('_') or varargs
-        if handler.type == 'user' and varargs is not None:
-            varargs = varargs[2:-1]
+            defaults = zip(args[-default_count:],
+                           list(handler.arguments.defaults))
+        varargs = self._normalize_arg(handler.arguments.varargs,
+                                      handler.type == 'user')
         return required, defaults, varargs
+
+    def _normalize_arg(self, arg, userkeyword=False):
+        if arg is None:
+            return arg
+        arg = arg.rstrip('_')
+        if userkeyword:  # strip ${} to make args look consistent
+            arg = arg[2:-1]
+        return arg
 
 
 class XmlKeywordDoc(_BaseKeywordDoc):
@@ -331,9 +341,8 @@ class XmlKeywordDoc(_BaseKeywordDoc):
     def __init__(self, node, library):
         _BaseKeywordDoc.__init__(self, library)
         self.name = node.get_attr('name', '')
-        self.args = [ arg.text for arg in node.get_nodes('arguments/arg') ]
+        self.args = [arg.text for arg in node.get_nodes('arguments/arg')]
         self.doc = node.get_node('doc').text
-        self.shortdoc = self.doc and self.doc.splitlines()[0] or ''
 
 
 if utils.is_jython:
@@ -348,13 +357,12 @@ if utils.is_jython:
             self.version = self._get_version(cls)
             self.scope = self._get_scope(cls)
             self.doc = self._process_doc(cls.getRawCommentText())
-            self.keywords = [ JavaKeywordDoc(method, self)
-                              for method in cls.methods() ]
-            self.inits = [ JavaKeywordDoc(init, self)
-                           for init in cls.constructors() ]
+            self.keywords = sorted(JavaKeywordDoc(method, self)
+                             for method in cls.methods())
+            self.inits = [JavaKeywordDoc(init, self)
+                          for init in cls.constructors()]
             if len(self.inits) == 1 and not self.inits[0].args:
                 self.inits = []
-            self.keywords.sort()
 
         def _get_class(self, path):
             """Processes the given Java source file and returns ClassDoc.
@@ -404,9 +412,8 @@ if utils.is_jython:
         def __init__(self, method, library):
             _BaseKeywordDoc.__init__(self, library)
             self.name = utils.printable_name(method.name(), True)
-            self.args = [ param.name() for param in method.parameters() ]
+            self.args = [param.name() for param in method.parameters()]
             self.doc = self._process_doc(method.getRawCommentText())
-            self.shortdoc = self.doc and self.doc.splitlines()[0] or ''
 
 
 class RFDocUploader(object):
