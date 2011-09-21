@@ -28,7 +28,7 @@ class FileLogger(AbstractLogger):
         return open(path, 'wb')
 
     def message(self, msg):
-        if self._is_logged(msg.level):
+        if self._is_logged(msg.level) and not self._writer.closed:
             entry = '%s | %s | %s\n' % (msg.timestamp, msg.level.ljust(5),
                                         msg.message)
             self._writer.write(entry.replace('\n', os.linesep).encode('UTF-8'))

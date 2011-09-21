@@ -40,6 +40,7 @@ class Logger(AbstractLogger):
         self._message_cache = []
         self._register_console_logger()
         self._console_logger_disabled = False
+        self._started_keywords = 0
 
     def disable_message_cache(self):
         self._message_cache = None
@@ -96,7 +97,7 @@ class Logger(AbstractLogger):
         if self._message_cache is not None:
             self._message_cache.append(msg)
 
-    def log_message(self, msg):
+    def _log_message(self, msg):
         """Log messages written (mainly) by libraries"""
         for logger in self._loggers.all_loggers():
             logger.log_message(msg)
@@ -104,17 +105,18 @@ class Logger(AbstractLogger):
             msg.linkable = True
             self.message(msg)
 
-    _orig_log_message = log_message
+    log_message = message
 
     def log_output(self, output):
         for msg in StdoutLogSplitter(output):
             self.log_message(msg)
 
     def enable_library_import_logging(self):
+        self._prev_log_message = self.log_message
         self.log_message = self.message
 
     def disable_library_import_logging(self):
-        self.log_message = self._orig_log_message
+        self.log_message = self._prev_log_message
 
     def warn(self, msg, log=False):
         method = self.log_message if log else self.message
@@ -148,12 +150,17 @@ class Logger(AbstractLogger):
             logger.end_test(test)
 
     def start_keyword(self, keyword):
+        self._started_keywords += 1
+        self.log_message = self._log_message
         for logger in self._loggers.starting_loggers():
             logger.start_keyword(keyword)
 
     def end_keyword(self, keyword):
+        self._started_keywords -= 1
         for logger in self._loggers.ending_loggers():
             logger.end_keyword(keyword)
+        if not self._started_keywords:
+            self.log_message = self.message
 
     def __iter__(self):
         return iter(self._loggers)

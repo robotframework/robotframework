@@ -23,6 +23,7 @@ class OutputCapturer:
     def __init__(self, library_import=False):
         if library_import:
             LOGGER.enable_library_import_logging()
+        self._library_import = library_import
         self._python_out = _PythonCapturer(stdout=True)
         self._python_err = _PythonCapturer(stdout=False)
         self._java_out = _JavaCapturer(stdout=True)
@@ -42,7 +43,8 @@ class OutputCapturer:
         if stderr:
             LOGGER.log_output(stderr)
             sys.__stderr__.write(stderr+'\n')
-        LOGGER.disable_library_import_logging()
+        if self._library_import:
+            LOGGER.disable_library_import_logging()
 
     def _release(self):
         py_out = self._python_out.release()
