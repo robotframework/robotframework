@@ -12,6 +12,7 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+from __future__ import with_statement
 import os
 import inspect
 
@@ -31,11 +32,8 @@ else:
 
 
 def TestLibrary(name, args=None, variables=None, create_handlers=True):
-    capturer = OutputCapturer(library_import=True)
-    try:
+    with OutputCapturer(library_import=True):
         libcode, source = utils.import_(name)
-    finally:
-        capturer.release_and_log()
     libclass = _get_lib_class(libcode)
     lib = libclass(libcode, source, name, args or [], variables)
     if create_handlers:

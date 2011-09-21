@@ -28,6 +28,13 @@ class OutputCapturer:
         self._java_out = _JavaCapturer(stdout=True)
         self._java_err = _JavaCapturer(stdout=False)
 
+    def __enter__(self):
+        return self
+
+    def __exit__(self, exc_type, exc_value, exc_trace):
+        self.release_and_log()
+        return False
+
     def release_and_log(self):
         stdout, stderr = self._release()
         if stdout:

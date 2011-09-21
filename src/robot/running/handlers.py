@@ -12,8 +12,7 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-import inspect
-import sys
+from __future__ import with_statement
 
 from robot import utils
 from robot.errors import DataError
@@ -128,11 +127,8 @@ class _RunnableHandler(_BaseHandler):
         return lambda: handler(*positional, **named)
 
     def _run_with_output_captured_and_signal_monitor(self, runner, context):
-        capturer = OutputCapturer()
-        try:
+        with OutputCapturer():
             return self._run_with_signal_monitoring(runner, context)
-        finally:
-            capturer.release_and_log()
 
     def _run_with_signal_monitoring(self, runner, context):
         try:
