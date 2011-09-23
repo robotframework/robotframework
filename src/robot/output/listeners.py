@@ -13,7 +13,6 @@
 #  limitations under the License.
 
 import inspect
-import sys
 
 from robot import utils
 from robot.errors import DataError
@@ -25,17 +24,32 @@ if utils.is_jython:
     from java.util import HashMap
 
 
-def listener_method(method):
-    """Decorator to prevent listeners causing recursion by logging"""
-    def decorated_method(self, *args):
-        if not self._calling_method:
-            self._calling_method = True
-            method(self, *args)
-            self._calling_method = False
-    return decorated_method
+class _RecursionAvoidingMetaclass(type):
+    """Metaclass to wrap listener methods so that they cannot cause recursion.
+
+    Recursion would otherwise happen if one listener logs something and that
+    message is received and logged again by log_message or message method.
+    """
+
+    def __new__(cls, name, bases, dct):
+        for attr, value in dct.items():
+            if not attr.startswith('_') and inspect.isroutine(value):
+                dct[attr] = cls._wrap_listener_method(value)
+        dct['_calling_method'] = False
+        return type.__new__(cls, name, bases, dct)
+
+    @staticmethod
+    def _wrap_listener_method(method):
+        def wrapped(self, *args):
+            if not self._calling_method:
+                self._calling_method = True
+                method(self, *args)
+                self._calling_method = False
+        return wrapped
 
 
-class Listeners:
+class Listeners(object):
+    __metaclass__ = _RecursionAvoidingMetaclass
     _start_attrs = ['doc', 'starttime', 'longname']
     _end_attrs = _start_attrs + ['endtime', 'elapsedtime', 'status', 'message']
 
@@ -43,7 +57,6 @@ class Listeners:
         self._listeners = self._import_listeners(listeners)
         self._running_test = False
         self._setup_or_teardown_type = None
-        self._calling_method = False
 
     def __nonzero__(self):
         return bool(self._listeners)
@@ -62,7 +75,6 @@ class Listeners:
                 LOGGER.info("Details:\n%s" % details)
         return listeners
 
-    @listener_method
     def start_suite(self, suite):
         for li in self._listeners:
             if li.version == 1:
@@ -74,7 +86,6 @@ class Listeners:
                               'totaltests': suite.get_test_count()})
                 li.call_method(li.start_suite, suite.name, attrs)
 
-    @listener_method
     def end_suite(self, suite):
         for li in self._listeners:
             if li.version == 1:
@@ -85,7 +96,6 @@ class Listeners:
                 attrs['statistics'] = suite.get_stat_message()
                 li.call_method(li.end_suite, suite.name, attrs)
 
-    @listener_method
     def start_test(self, test):
         self._running_test = True
         for li in self._listeners:
@@ -96,7 +106,6 @@ class Listeners:
                 attrs['template'] = test.template or ''
                 li.call_method(li.start_test, test.name, attrs)
 
-    @listener_method
     def end_test(self, test):
         self._running_test = False
         for li in self._listeners:
@@ -107,7 +116,6 @@ class Listeners:
                 attrs['template'] = test.template or ''
                 li.call_method(li.end_test, test.name, attrs)
 
-    @listener_method
     def start_keyword(self, kw):
         for li in self._listeners:
             if li.version == 1:
@@ -117,7 +125,6 @@ class Listeners:
                 attrs['type'] = self._get_keyword_type(kw, start=True)
                 li.call_method(li.start_keyword, kw.name, attrs)
 
-    @listener_method
     def end_keyword(self, kw):
         for li in self._listeners:
             if li.version == 1:
@@ -141,13 +148,11 @@ class Listeners:
         return '%s %s' % (('Test' if self._running_test else 'Suite'),
                           kw.type.title())
 
-    @listener_method
     def log_message(self, msg):
         for li in self._listeners:
             if li.version == 2:
                 li.call_method(li.log_message, self._create_msg_dict(msg))
 
-    @listener_method
     def message(self, msg):
         for li in self._listeners:
             if li.version == 2:
@@ -157,12 +162,10 @@ class Listeners:
         return {'timestamp': msg.timestamp, 'message': msg.message,
                 'level': msg.level, 'html': 'yes' if msg.html else 'no'}
 
-    @listener_method
     def output_file(self, name, path):
         for li in self._listeners:
             li.call_method(getattr(li, '%s_file' % name.lower()), path)
 
-    @listener_method
     def close(self):
         for li in self._listeners:
             li.call_method(li.close)
