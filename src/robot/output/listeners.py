@@ -233,23 +233,10 @@ class _ListenerProxy(AbstractLoggerProxy):
         try:
             method(*args)
         except:
-            disabled = self._disable_message_method_if_it_failed(method)
-            self._report_error(method.__name__, disabled)
-
-    def _disable_message_method_if_it_failed(self, method):
-        # This avoids recursion caused by message method failing repeatingly:
-        # http://code.google.com/p/robotframework/issues/detail?id=832
-        if method is self.message:
-            self.message = lambda msg: None
-            return True
-        return False
-
-    def _report_error(self, name, disabled):
-        message, details = utils.get_error_details()
-        is_disabled = ' and is disabled' if disabled else ''
-        LOGGER.error("Calling listener method '%s' of listener '%s' failed%s: %s"
-                     % (name, self.name, is_disabled, message))
-        LOGGER.info("Details:\n%s" % details)
+            message, details = utils.get_error_details()
+            LOGGER.error("Calling listener method '%s' of listener '%s' failed: %s"
+                     % (method.__name__, self.name, message))
+            LOGGER.info("Details:\n%s" % details)
 
     def _to_map(self, dictionary):
         map = HashMap()
