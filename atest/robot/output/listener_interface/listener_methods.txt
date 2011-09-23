@@ -52,21 +52,6 @@ Java Listener
     ...  Output (java): output.xml  The End
     Check Listener File  ${JAVA_FILE}  @{expected}
 
-Invalid Args For Listener Method
-    Calling listener failed  start_suite  TypeError: start_suite() takes
-
-Listener Method Raising Exception
-    Calling listener failed  end_suite  Here comes an exception!
-
-Listener Method Failing Continuously
-    [Documentation]  'message' method failing continuously used to cause recursion error: http://code.google.com/p/robotframework/issues/detail?id=832
-    Calling listener failed  message  ValueError: This fails continuously!
-
-Log Message Logging Itself
-    ${tc} =  Check test case  Pass
-    Check log message  ${tc.kws[-1].msgs[-2]}  log_message logging 1 (original: "TRACE Return: None")
-    Check log message  ${tc.kws[-1].msgs[-1]}  log_message logging 2  WARN
-
 Correct Attributes To Listener Methods
     ${status} =  Log File  ${TEMPDIR}/${ATTR_TYPE_FILE}
     Check Stderr Does Not Contain  attributeverifyinglistener
@@ -111,10 +96,8 @@ Run Tests With Listeners
     ${args}=  Catenate
     ...  --listener ListenAll --listener ListenAll:${TEMPDIR}${/}${ALL_FILE2}
     ...  --listener module_listener --listener listeners.ListenSome --listener JavaListener
-    ...  --listener listeners.InvalidMethods --listener attributeverifyinglistener
-    ...  --listener JavaAttributeVerifyingListener --metadata ListenerMeta:Hello
-    ...  --listener listeners.LogMessageLogging
-    ...  --critical pass
+    ...  --listener attributeverifyinglistener --listener JavaAttributeVerifyingListener
+    ...  --metadata ListenerMeta:Hello --critical pass
     Run Tests  ${args}  misc/pass_and_fail.html
 
 Check Listen All File

@@ -33,28 +33,6 @@ class WithArgs(object):
         outfile.close()
 
 
-class InvalidMethods:
-    ROBOT_LISTENER_API_VERSION = '2'
-
-    def start_suite(self, wrong, number, of, args, here):
-        pass
-
-    def end_suite(self, *args):
-        raise RuntimeError("Here comes an exception!")
-
-    def message(self, msg):
-        raise ValueError("This fails continuously!")
-
-
-class LogMessageLogging:
-    ROBOT_LISTENER_API_VERSION = '2'
-
-    def log_message(self, msg):
-        logging.info('log_message logging 1 (original: "%s %s")'
-                     % (msg['level'], msg['message']))
-        logger.warn('log_message logging 2')
-
-
 class SuiteAndTestCounts(object):
     ROBOT_LISTENER_API_VERSION = '2'
     exp_data = {
