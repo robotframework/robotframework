@@ -61,7 +61,7 @@ class Logger(AbstractLogger):
 
     def _relay_cached_messages_to(self, logger):
         if self._message_cache:
-            for msg in self._message_cache:
+            for msg in self._message_cache[:]:
                 logger.message(msg)
 
     def unregister_logger(self, *loggers):
@@ -118,7 +118,7 @@ class Logger(AbstractLogger):
     def disable_library_import_logging(self):
         self.log_message = self._prev_log_message
 
-    def warn(self, msg, log=False):
+    def warn(self, msg, log=False):  # TODO: Do we still need log=False?
         method = self.log_message if log else self.message
         method(Message(msg, 'WARN'))
 

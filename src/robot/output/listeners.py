@@ -25,6 +25,16 @@ if utils.is_jython:
     from java.util import HashMap
 
 
+def listener_method(method):
+    """Decorator to prevent listeners causing recursion by logging"""
+    def decorated_method(self, *args):
+        if not self._calling_method:
+            self._calling_method = True
+            method(self, *args)
+            self._calling_method = False
+    return decorated_method
+
+
 class Listeners:
     _start_attrs = ['doc', 'starttime', 'longname']
     _end_attrs = _start_attrs + ['endtime', 'elapsedtime', 'status', 'message']
@@ -32,8 +42,8 @@ class Listeners:
     def __init__(self, listeners):
         self._listeners = self._import_listeners(listeners)
         self._running_test = False
-        self._calling_log_message =  False
         self._setup_or_teardown_type = None
+        self._calling_method = False
 
     def __nonzero__(self):
         return bool(self._listeners)
@@ -52,6 +62,7 @@ class Listeners:
                 LOGGER.info("Details:\n%s" % details)
         return listeners
 
+    @listener_method
     def start_suite(self, suite):
         for li in self._listeners:
             if li.version == 1:
@@ -63,6 +74,7 @@ class Listeners:
                               'totaltests': suite.get_test_count()})
                 li.call_method(li.start_suite, suite.name, attrs)
 
+    @listener_method
     def end_suite(self, suite):
         for li in self._listeners:
             if li.version == 1:
@@ -73,6 +85,7 @@ class Listeners:
                 attrs['statistics'] = suite.get_stat_message()
                 li.call_method(li.end_suite, suite.name, attrs)
 
+    @listener_method
     def start_test(self, test):
         self._running_test = True
         for li in self._listeners:
@@ -83,6 +96,7 @@ class Listeners:
                 attrs['template'] = test.template or ''
                 li.call_method(li.start_test, test.name, attrs)
 
+    @listener_method
     def end_test(self, test):
         self._running_test = False
         for li in self._listeners:
@@ -93,6 +107,7 @@ class Listeners:
                 attrs['template'] = test.template or ''
                 li.call_method(li.end_test, test.name, attrs)
 
+    @listener_method
     def start_keyword(self, kw):
         for li in self._listeners:
             if li.version == 1:
@@ -102,6 +117,7 @@ class Listeners:
                 attrs['type'] = self._get_keyword_type(kw, start=True)
                 li.call_method(li.start_keyword, kw.name, attrs)
 
+    @listener_method
     def end_keyword(self, kw):
         for li in self._listeners:
             if li.version == 1:
@@ -125,17 +141,13 @@ class Listeners:
         return '%s %s' % (('Test' if self._running_test else 'Suite'),
                           kw.type.title())
 
+    @listener_method
     def log_message(self, msg):
-        if not self._calling_log_message:
-            self._calling_log_message = True
-            self._log_message(msg)
-            self._calling_log_message = False
-
-    def _log_message(self, msg):
         for li in self._listeners:
             if li.version == 2:
                 li.call_method(li.log_message, self._create_msg_dict(msg))
 
+    @listener_method
     def message(self, msg):
         for li in self._listeners:
             if li.version == 2:
@@ -145,10 +157,12 @@ class Listeners:
         return {'timestamp': msg.timestamp, 'message': msg.message,
                 'level': msg.level, 'html': 'yes' if msg.html else 'no'}
 
+    @listener_method
     def output_file(self, name, path):
         for li in self._listeners:
             li.call_method(getattr(li, '%s_file' % name.lower()), path)
 
+    @listener_method
     def close(self):
         for li in self._listeners:
             li.call_method(li.close)
@@ -219,13 +233,13 @@ class _ListenerProxy(AbstractLoggerProxy):
         try:
             method(*args)
         except:
-            disabled = self._disable_message_method_if_it_failed(method.__name__)
+            disabled = self._disable_message_method_if_it_failed(method)
             self._report_error(method.__name__, disabled)
 
-    def _disable_message_method_if_it_failed(self, name):
+    def _disable_message_method_if_it_failed(self, method):
         # This avoids recursion caused by message method failing repeatingly:
         # http://code.google.com/p/robotframework/issues/detail?id=832
-        if name == 'message':
+        if method is self.message:
             self.message = lambda msg: None
             return True
         return False
