@@ -118,10 +118,6 @@ class Logger(AbstractLogger):
     def disable_library_import_logging(self):
         self.log_message = self._prev_log_message
 
-    def warn(self, msg, log=False):  # TODO: Do we still need log=False?
-        method = self.log_message if log else self.message
-        method(Message(msg, 'WARN'))
-
     def output_file(self, name, path):
         """Finished output, report, log, debug, or xunit file"""
         for logger in self._loggers.all_loggers():
