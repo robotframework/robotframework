@@ -233,6 +233,42 @@ to implement any explicit interface or have all these methods.
        void close();
    }
 
+Listeners logging
+~~~~~~~~~~~~~~~~~
+
+Robot Framework 2.6 introduced new `programmatic logging APIs`_ that
+also listeners can utilize. There are some limitations, however, and
+how different listener methods can log messages is explained in the
+table below.
+
+.. table:: How listener methods can log
+   :class: tabular
+
+   +----------------------+---------------------------------------------------+
+   |         Methods      |                   Explanation                     |
+   +======================+===================================================+
+   | start_keyword,       | Messages are logged to the normal `log file`_     |
+   | end_keyword,         | under the executed keyword.                       |
+   | log_message          |                                                   |
+   +----------------------+---------------------------------------------------+
+   | start_suite,         | Messages are logged to the syslog_. Warnings are  |
+   | end_suite,           | shown also in the `execution errors`_ section of  |
+   | start_test, end_test | the normal log file.                              |
+   +----------------------+---------------------------------------------------+
+   | message              | Messages are normally logged to the syslog. If    |
+   |                      | this method is used while a keyword is executing, |
+   |                      | messages are logged to the normal log file.       |
+   +----------------------+---------------------------------------------------+
+   | Other methods        | Messages are only logged to the syslog.           |
+   +----------------------+---------------------------------------------------+
+
+.. note:: To avoid recursion, messages logged by listeners are not sent to
+          listener methods :code:`log_message` and :code:`message`.
+
+.. warning:: There were severe problems with listeners logging prior
+             to Robot Framework 2.6.2. Using this functionality with
+             earlier versions is thus not recommended.
+
 Listener examples
 ~~~~~~~~~~~~~~~~~
 
