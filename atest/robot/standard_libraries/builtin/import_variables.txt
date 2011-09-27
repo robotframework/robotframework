@@ -4,6 +4,8 @@ Force Tags      regression  jybot  pybot
 Resource        atest_resource.txt
 
 *** Test Cases ***
+Import Variables In Suite Setup
+    Check Test Case  ${TEST_NAME}
 
 Import Variables
     Check Test Case  ${TESTNAME} 1
@@ -18,3 +20,4 @@ Import Variables In User Keyword
 
 Import Variables Failure Is Catchable
     Check Test Case  ${TESTNAME}
+

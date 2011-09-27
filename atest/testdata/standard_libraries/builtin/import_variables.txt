@@ -1,8 +1,10 @@
 *** Settings ***
-Library    OperatingSystem
-
+Suite Setup     Import Variables In Suite Setup
+Library         OperatingSystem
 
 *** Test Cases ***
+Import Variables In Suite Setup
+    Should Be Equal  ${IMPORT_VARIABLES_2_ARGS}  suite setup
 
 Import Variables 1
     Variable Should Not Exist  $IMPORT_VARIABLES_1
@@ -34,16 +36,14 @@ Import Variables In User Keyword 1
 Import Variables In User Keyword 2
     Should Be Equal  ${IMPORT_VARIABLES_2_ARGS}  Set in user keyword
     Imported Variable Should Be Set To  Set in user keyword
-    Import Variables In User Keyword  Set again in  user keyword
+    Import Variables In User Keyword  Set again  user keyword
     Should Be Equal  ${IMPORT_VARIABLES_2_ARGS}  Set again in user keyword
     Imported Variable Should Be Set To  Set again in user keyword
 
 Import Variables Failure Is Catchable
-    Run Keyword And Expect Error  Variable file 'non_existing.py' does not exist.
-    ...  Import Variables  non_existing.py 
+    Run Keyword And Expect Error  Variable file 'non_existing.py' does not exist.  Import Variables  non_existing.py
 
 *** Keywords ***
-
 Import Variables In User Keyword
     [Arguments]  @{value}
     Import Variables  ${CURDIR}${/}variables_to_import_2.py  @{value}
@@ -54,4 +54,8 @@ Import Variables In User Keyword
 Imported Variable Should Be Set To
     [Arguments]  ${value}
     Should Be Equal  ${IMPORT_VARIABLES_2_ARGS}  ${value}
+
+Import Variables In Suite Setup
+    Import Variables In User Keyword  suite  setup
+    Should Be Equal  ${IMPORT_VARIABLES_2_ARGS}  suite setup
 
