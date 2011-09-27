@@ -102,7 +102,7 @@ class Namespace:
     def _import_variables(self, import_setting, variables, overwrite=False):
         path = self._resolve_name(import_setting, variables)
         args = self._resolve_args(import_setting, variables)
-        if (path, args) not in self._imported_variable_files:
+        if overwrite or (path, args) not in self._imported_variable_files:
             self._imported_variable_files.add((path,args))
             self.variables.set_from_file(path, args, overwrite)
         else:
