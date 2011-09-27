@@ -351,7 +351,7 @@ class Namespace:
         return [external]
 
     def _get_explicit_handler(self, name):
-        libname, kwname = self._split_keyword_name(name)
+        libname, kwname = name.rsplit('.', 1)
         # 1) Find matching lib(s)
         libs = [lib for lib in self._userlibs + self._testlibs.values()
                 if utils.eq(lib.name, libname)]
@@ -363,12 +363,6 @@ class Namespace:
         if len(found) > 1:
             self._raise_multiple_keywords_found(name, found, implicit=False)
         return found and found[0] or None
-
-    def _split_keyword_name(self, name):
-        parts = name.split('.')
-        kwname = parts.pop()       # pop last part
-        libname = '.'.join(parts)  # and rejoin rest
-        return libname, kwname
 
     def _raise_multiple_keywords_found(self, name, found, implicit=True):
         error = "Multiple keywords with name '%s' found.\n" % name
