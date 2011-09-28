@@ -1,17 +1,21 @@
 *** Settings ***
-Suite Setup  Import Resource  ${CURDIR}/import_resource_resource.txt
+Suite Setup  Import Resource  ${CURDIR}/import_resource_resource_1.txt
+
+*** Variables ***
+${VAR FROM IMPORT RESOURCE RESOURCE}  this should be overwritten
+${COMMON VAR}  this should be overwritten
 
 *** Test Cases ***
 Import Resource In Suite Setup
-    Variable Should Exist  ${VAR FROM IMPORT RESOURCE RESOURCE}
-    Variable Should Exist  ${VAR FROM VARFILE 1}
+    Should Be Equal  ${VAR FROM IMPORT RESOURCE RESOURCE}  value 1
+    Should Be Equal  ${VAR FROM VARFILE 1}  VALUE FROM VARFILE 1
     KW From Import Resource Resource
 
 Import Resource With Sub Resources
-    Variable Should Exist  ${VAR FROM IMPORT RESOURCE RESOURCE RESOURCE}
+    Should Be Equal   ${VAR FROM IMPORT RESOURCE RESOURCE RESOURCE}  value x
     KW From Import Resource Resource Resource
     Verify OperatingSystem Is Imported
-    Variable Should Exist  ${VAR FROM VARFILE 2}
+    Should Be Equal  ${VAR FROM VARFILE X}  Default varfile value
 
 Import Resource In Test Case
     Import Resource  ${CURDIR}/import_resource_resource_2.txt
@@ -27,6 +31,13 @@ Variables And Keywords Imported In Test Are Available In Next
     Verify Test Case Resource Import
     Verify User Keyword Resource Import
 
+Re-Import Resource
+    Set Test Variable  ${COMMON VAR}  original value
+    Re-Import Resource And Verify Imports  1
+    Re-Import Resource And Verify Imports  2
+    Re-Import Resource And Verify Imports  1  upper
+    Re-Import Resource And Verify Imports  2  upper
+
 Import Resource Failure Is Catchable
     Run Keyword And Expect Error  Resource file 'non_existing.txt' does not exist.
     ...  Import Resource  non_existing.txt
@@ -38,7 +49,7 @@ Import Resource In User Keyword
     Verify User Keyword Resource Import
 
 Verify User Keyword Resource Import
-    Variable Should Exist  ${VAR FROM IMPORT RESOURCE RESOURCE 3}
+    Should Be Equal  ${VAR FROM IMPORT RESOURCE RESOURCE 3}  value 3
     KW From Import Resource Resource 3
     Verify String Is Imported
 
@@ -46,7 +57,7 @@ Verify User Keyword Resource Import In User Keyword
     Verify User Keyword Resource Import
 
 Verify Test Case Resource Import
-    Variable Should Exist  ${VAR FROM IMPORT RESOURCE RESOURCE 2}
+    Should Be Equal  ${VAR FROM IMPORT RESOURCE RESOURCE 2}  value 2
     KW From Import Resource Resource 2
     Verify Collections Is Imported
 
@@ -61,3 +72,11 @@ Verify Collections Is Imported
 
 Verify String Is Imported
     Split To Lines  whatever
+
+Re-Import Resource And Verify Imports
+    [Arguments]  ${num}  ${upper}=
+    ${path} =  Set Variable  ${CURDIR}/import_resource_resource_${num}.txt
+    ${path} =  Evaluate  '${path.upper()}' if os.sep != '/' or '${upper}' == 'upper' else '${path}'  modules=os
+    Import Resource  ${path}
+    Should Be Equal  ${COMMON VAR}  resource ${num}
+    KW From Import Resource Resource
