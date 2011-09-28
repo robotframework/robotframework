@@ -12,7 +12,6 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-
 import os.path
 import sys
 import re
@@ -65,47 +64,37 @@ def ErrorDetails():
     if exc_type in RERAISED_EXCEPTIONS:
         raise exc_value
     if _is_java and isinstance(exc_value, Throwable):
-        return JavaErrorDetails(exc_type, exc_value, exc_traceback)
-    return PythonErrorDetails(exc_type, exc_value, exc_traceback)
+        return _JavaErrorDetails(exc_type, exc_value, exc_traceback)
+    return _PythonErrorDetails(exc_type, exc_value, exc_traceback)
 
 
-class PythonErrorDetails(object):
+class _ErrorDetails(object):
 
     def __init__(self, exc_type, exc_value, exc_traceback):
         self.error = exc_value
-        self.message = self._get_message(exc_type, exc_value)
-        self.traceback = self._get_details(exc_type, exc_value, exc_traceback)
+        self._exc_value = exc_value
+        self._exc_type = exc_type
+        self._exc_traceback = exc_traceback
+        self._message = None
+        self._traceback = None
 
-    def _get_message(self, exc_type, exc_value):
-        # If exception is a "string exception" without a message exc_value is None
-        if exc_value is None:
-            return unic(exc_type)
-        name = self._get_name(exc_type)
-        try:
-            msg = unicode(exc_value)
-        except UnicodeError:  # Happens if message is Unicode and version < 2.6
-            msg = ' '.join(unic(a) for a in exc_value.args)
-        return self._format_message(name, msg)
+    @property
+    def message(self):
+        if self._message is None:
+            self._message = self._get_message()
+        return self._message
+
+    @property
+    def traceback(self):
+        if self._traceback is None:
+            self._traceback = self._get_details()
+        return self._traceback
 
     def _get_name(self, exc_type):
         try:
             return exc_type.__name__
         except AttributeError:
             return unic(exc_type)
-
-    def _get_details(self, _, exc_value, exc_tb):
-        if isinstance(exc_value, (DataError, TimeoutError)):
-            return ''
-        if isinstance(exc_value, RemoteError):
-            return exc_value.traceback
-        tb = traceback.extract_tb(exc_tb)
-        for row, (path, _, func, _) in enumerate(tb):
-            if path.endswith(_ignore_trace_until[0]) and func == _ignore_trace_until[1]:
-                tb = tb[row+1:]
-                break
-        details = 'Traceback (most recent call last):\n' \
-                + ''.join(traceback.format_list(tb))
-        return details.strip()
 
     def _format_message(self, name, message):
         message = unic(message or '')
@@ -121,35 +110,63 @@ class PythonErrorDetails(object):
         return message
 
 
-class JavaErrorDetails(PythonErrorDetails):
+class _PythonErrorDetails(_ErrorDetails):
 
-    def _get_message(self, exc_type, exc_value):
-        exc_name = self._get_name(exc_type)
+    def _get_message(self):
+        # If exception is a "string exception" without a message exc_value is None
+        if self._exc_value is None:
+            return unic(self._exc_type)
+        name = self._get_name(self._exc_type)
+        try:
+            msg = unicode(self._exc_value)
+        except UnicodeError:  # Happens if message is Unicode and version < 2.6
+            msg = ' '.join(unic(a) for a in self._exc_value.args)
+        return self._format_message(name, msg)
+
+    def _get_details(self):
+        if isinstance(self._exc_value, (DataError, TimeoutError)):
+            return ''
+        if isinstance(self._exc_value, RemoteError):
+            return self._exc_value.traceback
+        tb = traceback.extract_tb(self._exc_traceback)
+        for row, (path, _, func, _) in enumerate(tb):
+            if path.endswith(_ignore_trace_until[0]) and func == _ignore_trace_until[1]:
+                tb = tb[row+1:]
+                break
+        details = 'Traceback (most recent call last):\n' \
+                + ''.join(traceback.format_list(tb))
+        return details.strip()
+
+
+class _JavaErrorDetails(_ErrorDetails):
+
+    def _get_message(self):
+        exc_name = self._get_name(self._exc_type)
         # OOME.getMessage and even toString seem to throw NullPointerException
-        if self._is_out_of_memory_error(exc_type):
-            exc_msg = str(exc_value)
+        if not self._is_out_of_memory_error(self._exc_type):
+            exc_msg = self._exc_value.getMessage()
         else:
-            exc_msg = exc_value.getMessage()
+            exc_msg = str(self._exc_value)
         return self._format_message(exc_name, exc_msg)
 
     def _is_out_of_memory_error(self, exc_type):
         return exc_type is OutOfMemoryError
 
-    def _get_details(self, exc_type, exc_value, _):
+    def _get_details(self):
         # OOME.printStackTrace seems to throw NullPointerException
-        if self._is_out_of_memory_error(exc_type):
+        if self._is_out_of_memory_error(self._exc_type):
             return ''
         output = StringWriter()
-        exc_value.printStackTrace(PrintWriter(output))
+        self._exc_value.printStackTrace(PrintWriter(output))
         lines = [ line for line in output.toString().splitlines()
-                  if line and not self._is_ignored_stacktrace_line(line) ]
+                  if line and not self._is_ignored_stack_trace_line(line) ]
         details = '\n'.join(lines)
-        msg = unic(exc_value.getMessage() or '')
+        msg = unic(self._exc_value.getMessage() or '')
         if msg:
             details = details.replace(msg, '', 1)
         return details
 
-    def _is_ignored_stacktrace_line(self, line):
+    def _is_ignored_stack_trace_line(self, line):
         res = _java_trace_re.match(line)
         if res is None:
             return False
@@ -160,16 +177,20 @@ class JavaErrorDetails(PythonErrorDetails):
         return False
 
     def _clean_up_message(self, msg, name):
-        # Remove possible stack trace from messages
+        msg = self._remove_stack_trace_lines(msg)
+        return self._remove_exception_name(msg, name).strip()
+
+    def _remove_stack_trace_lines(self, msg):
         lines = msg.splitlines()
         while lines:
             if _java_trace_re.match(lines[-1]):
                 lines.pop()
             else:
                 break
-        msg = '\n'.join(lines)
-        # Remove possible exception name from the message
+        return '\n'.join(lines)
+
+    def _remove_exception_name(self, msg, name):
         tokens = msg.split(':', 1)
         if len(tokens) == 2 and tokens[0] == name:
             msg = tokens[1]
-        return msg.strip()
+        return msg
