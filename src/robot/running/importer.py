@@ -89,8 +89,12 @@ class ImportCache:
     def __setitem__(self, key, item):
         if not isinstance(key, (basestring, tuple)):
             raise FrameworkError('Invalid key for ImportCache')
-        self._keys.append(self._norm_path_key(key))
-        self._items.append(item)
+        key = self._norm_path_key(key)
+        if key not in self._keys:
+            self._keys.append(key)
+            self._items.append(item)
+        else:
+            self._items[self._keys.index(key)] = item
 
     def add(self, key, item=None):
         self.__setitem__(key, item)
