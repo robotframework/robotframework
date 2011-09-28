@@ -104,6 +104,9 @@ class ImportCache:
     def __contains__(self, key):
         return self._norm_path_key(key) in self._keys
 
+    def values(self):
+        return self._items
+
     def _norm_path_key(self, key):
         if isinstance(key, tuple):
             return tuple(self._norm_path_key(k) for k in key)

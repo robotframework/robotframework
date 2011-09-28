@@ -50,7 +50,6 @@ class Namespace:
         self.uk_handlers = []
         self.library_search_order = []
         self._testlibs = {}
-        self._userlibs = {}
         self._imported_resource_files = ImportCache()
         self._imported_variable_files = ImportCache()
         self.import_library('BuiltIn')
@@ -86,10 +85,10 @@ class Namespace:
     def _import_resource(self, import_setting, variables=None, overwrite=False):
         path = self._resolve_name(import_setting, variables)
         if overwrite or path not in self._imported_resource_files:
-            self._imported_resource_files.add(path)
             resource = IMPORTER.import_resource(path)
-            self.variables.set_from_variable_table(resource.variable_table, overwrite)
-            self._userlibs[utils.normpath(path)] \
+            self.variables.set_from_variable_table(resource.variable_table,
+                                                   overwrite)
+            self._imported_resource_files[path] \
                 = UserLibrary(resource.keyword_table.keywords, resource.source)
             self._handle_imports(resource.setting_table.imports)
         else:
@@ -302,7 +301,8 @@ class Namespace:
             return self.suite.user_keywords.get_handler(name)
 
     def _get_handler_from_resource_file_user_keywords(self, name):
-        found = [lib.get_handler(name) for lib in self._userlibs.values()
+        found = [lib.get_handler(name) for lib
+                 in self._imported_resource_files.values()
                  if lib.has_handler(name)]
         if not found:
             return None
@@ -353,7 +353,8 @@ class Namespace:
     def _get_explicit_handler(self, name):
         libname, kwname = name.rsplit('.', 1)
         # 1) Find matching lib(s)
-        libs = [lib for lib in self._userlibs.values() + self._testlibs.values()
+        libs = [lib for lib
+                in self._imported_resource_files.values() + self._testlibs.values()
                 if utils.eq(lib.name, libname)]
         if not libs:
             return None
