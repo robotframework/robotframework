@@ -259,14 +259,14 @@ class Variables(utils.NormalizedDict):
             if overwrite or not utils.NormalizedDict.has_key(self, name):
                 self.__setitem__(name, value, path)
 
-    def set_from_variable_table(self, variable_table):
+    def set_from_variable_table(self, variable_table, overwrite=False):
         for variable in variable_table:
             try:
                 name, value = self._get_var_table_name_and_value(variable.name,
                                                                  variable.value,
                                                                  variable_table.source)
                 # self.has_key would also match if name matches extended syntax
-                if not utils.NormalizedDict.has_key(self, name):
+                if overwrite or not utils.NormalizedDict.has_key(self, name):
                     self.__setitem__(name, value, variable_table.source)
             except DataError, err:
                 variable_table.report_invalid_syntax("Setting variable '%s' failed: %s"

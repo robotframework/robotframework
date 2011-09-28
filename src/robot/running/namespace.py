@@ -50,7 +50,7 @@ class Namespace:
         self.uk_handlers = []
         self.library_search_order = []
         self._testlibs = {}
-        self._userlibs = []
+        self._userlibs = {}
         self._imported_resource_files = ImportCache()
         self._imported_variable_files = ImportCache()
         self.import_library('BuiltIn')
@@ -80,17 +80,17 @@ class Namespace:
         except KeyError:
             raise FrameworkError("Invalid import setting: %s" % import_setting)
 
-    def import_resource(self, name):
-        self._import_resource(Resource(None, name))
+    def import_resource(self, name, overwrite=True):
+        self._import_resource(Resource(None, name), overwrite=overwrite)
 
-    def _import_resource(self, import_setting, variables=None):
+    def _import_resource(self, import_setting, variables=None, overwrite=False):
         path = self._resolve_name(import_setting, variables)
-        if path not in self._imported_resource_files:
+        if overwrite or path not in self._imported_resource_files:
             self._imported_resource_files.add(path)
             resource = IMPORTER.import_resource(path)
-            self.variables.set_from_variable_table(resource.variable_table)
-            self._userlibs.append(UserLibrary(resource.keyword_table.keywords,
-                                              resource.source))
+            self.variables.set_from_variable_table(resource.variable_table, overwrite)
+            self._userlibs[utils.normpath(path)] \
+                = UserLibrary(resource.keyword_table.keywords, resource.source)
             self._handle_imports(resource.setting_table.imports)
         else:
             LOGGER.info("Resource file '%s' already imported by suite '%s'"
@@ -302,7 +302,7 @@ class Namespace:
             return self.suite.user_keywords.get_handler(name)
 
     def _get_handler_from_resource_file_user_keywords(self, name):
-        found = [lib.get_handler(name) for lib in self._userlibs
+        found = [lib.get_handler(name) for lib in self._userlibs.values()
                  if lib.has_handler(name)]
         if not found:
             return None
@@ -353,7 +353,7 @@ class Namespace:
     def _get_explicit_handler(self, name):
         libname, kwname = name.rsplit('.', 1)
         # 1) Find matching lib(s)
-        libs = [lib for lib in self._userlibs + self._testlibs.values()
+        libs = [lib for lib in self._userlibs.values() + self._testlibs.values()
                 if utils.eq(lib.name, libname)]
         if not libs:
             return None
@@ -433,14 +433,14 @@ class _VariableScopes:
         if self._uk_handlers:
             self.current._set_from_file(variables, overwrite=True, path=path)
 
-    def set_from_variable_table(self, rawvariables):
-        self._suite.set_from_variable_table(rawvariables)
+    def set_from_variable_table(self, rawvariables, overwrite=False):
+        self._suite.set_from_variable_table(rawvariables, overwrite)
         if self._test is not None:
-            self._test.set_from_variable_table(rawvariables)
+            self._test.set_from_variable_table(rawvariables, overwrite)
         for varz in self._uk_handlers:
-            varz.set_from_variable_table(rawvariables)
+            varz.set_from_variable_table(rawvariables, overwrite)
         if self._uk_handlers:
-            self.current.set_from_variable_table(rawvariables)
+            self.current.set_from_variable_table(rawvariables, overwrite)
 
     # TODO: This should be removed so that these objects themselves had
     # the capability of resolving variables.
