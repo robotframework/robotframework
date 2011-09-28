@@ -20,5 +20,8 @@ Import Resource In User Keyword
 Variables And Keywords Imported In Test Are Available In Next
     Check Test Case  ${TESTNAME}
 
+Re-Import Resource
+    Check Test Case  ${TESTNAME}
+
 Import Resource Failure Is Catchable
     Check Test Case  ${TESTNAME}

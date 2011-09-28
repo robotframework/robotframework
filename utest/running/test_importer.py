@@ -16,6 +16,12 @@ class TestImportCache(unittest.TestCase):
         assert_equals(self.cache._keys, [('lib', ['a1', 'a2']), 'res'])
         assert_equals(self.cache._items, ['Library', 'Resource'])
 
+    def test_overwrite_item(self):
+        self.cache['res'] = 'New Resource'
+        assert_equals(self.cache['res'], 'New Resource')
+        assert_equals(self.cache._keys, [('lib', ['a1', 'a2']), 'res'])
+        assert_equals(self.cache._items, ['Library', 'New Resource'])
+
     def test_get_existing_item(self):
         assert_equals(self.cache['res'], 'Resource')
         assert_equals(self.cache[('lib', ['a1', 'a2'])], 'Library')
