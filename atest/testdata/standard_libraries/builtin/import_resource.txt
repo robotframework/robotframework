@@ -76,7 +76,7 @@ Verify String Is Imported
 Re-Import Resource And Verify Imports
     [Arguments]  ${num}  ${upper}=
     ${path} =  Set Variable  ${CURDIR}/import_resource_resource_${num}.txt
-    ${path} =  Evaluate  '${path.upper()}' if os.sep != '/' or '${upper}' == 'upper' else '${path}'  modules=os
+    ${path} =  Evaluate  '${path.upper()}' if os.sep != '/' and '${upper}' == 'upper' else '${path}'  modules=os
     Import Resource  ${path}
     Should Be Equal  ${COMMON VAR}  resource ${num}
     KW From Import Resource Resource
