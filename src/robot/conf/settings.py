@@ -184,12 +184,12 @@ class _BaseSettings(object):
         return tuple(colors)
 
     def _process_tag_stat_combine(self, value):
-        for replwhat, replwith in [('_', ' '), ('AND', '&'),
-                                   ('&', ' & '), ('NOT', ' NOT ')]:
+        for replwhat, replwith in [('AND', '&'), ('&', ' & '), ('NOT', ' NOT ')]:
             value = value.replace(replwhat, replwith)
-        if ':' in value:
-            return value.rsplit(':', 1)
-        return value, ''
+        if ':' not in value:
+            return value, ''
+        pattern, title = value.rsplit(':', 1)
+        return pattern, title.replace('_', ' ')
 
     def _process_tag_stat_link(self, value):
         tokens = value.split(':')

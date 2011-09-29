@@ -42,7 +42,7 @@ window.util = function () {
     }
 
     function normalize(string) {
-        return string.toLowerCase().replace(/ /g, '');
+        return string.toLowerCase().replace(/ /g, '').replace(/_/g, '');
     }
 
     function regexpEscape(string) {
@@ -50,7 +50,7 @@ window.util = function () {
     }
 
     function Matcher(pattern) {
-        pattern = normalize(regexpEscape(pattern));
+        pattern = regexpEscape(normalize(pattern));
         var rePattern = '^' + pattern.replace(/\\\?/g, ".").replace(/\\\*/g, ".*") + '$';
         var regexp = new RegExp(rePattern);
         return {

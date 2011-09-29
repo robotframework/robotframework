@@ -23,7 +23,15 @@ describe("Searching by tags", function () {
     it("should find tags combined with NOT", function() {
         expect(model.containsTagPattern(['x', 'y'], 'xNOTz')).toBeTruthy();
         expect(model.containsTagPattern(['xx', 'yy'], 'X X NOT y NOT zz')).toBeTruthy();
+
         expect(model.containsTagPattern(['X X', 'Y Y'], 'xxNOTyy')).not.toBeTruthy();
+    });
+
+    it("should ignore underscore in patterns and tag names", function() {
+        expect(model.containsTagPattern(['a_a_1', 'x'], '* NOT a_a_*')).not.toBeTruthy();
+        expect(model.containsTagPattern(['a_a_1', 'x'], '* NOT a a *')).not.toBeTruthy();
+        expect(model.containsTagPattern(['a a 1', 'x'], '* NOT a_a_*')).not.toBeTruthy();
+        expect(model.containsTagPattern(['a a 1', 'x'], '* NOT a a *')).not.toBeTruthy();
     });
 
     it("should find tags combined with patterns (* and ?)", function() {
