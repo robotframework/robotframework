@@ -27,7 +27,10 @@ if sys.platform.startswith('java'):
     def unic(item, *args):
         # http://bugs.jython.org/issue1564
         if isinstance(item, Object) and not isinstance(item, Class):
-            item = item.toString()  # http://bugs.jython.org/issue1563
+            try:
+                item = item.toString()  # http://bugs.jython.org/issue1563
+            except:
+                return _unrepresentable_object(item)
         return _unic(item, *args)
 
 elif sys.platform == 'cli':
@@ -47,10 +50,12 @@ def _unic(item, *args):
     except UnicodeError:
         try:
             ascii_text = str(item).encode('string_escape')
-        except UnicodeError:
-            return u"<unrepresentable object '%s'>" % item.__class__.__name__
+        except:
+            return _unrepresentable_object(item)
         else:
             return unicode(ascii_text)
+    except:
+        return _unrepresentable_object(item)
 
 
 def safe_repr(item):
@@ -58,3 +63,12 @@ def safe_repr(item):
         return unic(repr(item))
     except UnicodeError:
         return repr(unic(item))
+    except:
+        return _unrepresentable_object(item)
+
+
+_unrepresentable_msg = u"<Unrepresentable object '%s'. Error: %s>"
+
+def _unrepresentable_object(item):
+    from robot.utils.error import get_error_message
+    return _unrepresentable_msg % (item.__class__.__name__, get_error_message())

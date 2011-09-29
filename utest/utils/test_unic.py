@@ -1,16 +1,17 @@
 import unittest
 import sys
 
-from robot.utils import unic, is_jython
+from robot.utils import unic, is_jython, safe_repr
+from robot.utils.unic import _unrepresentable_msg
 from robot.utils.asserts import assert_equals, assert_true
 is_ironpython = sys.platform == 'cli'
 
 if is_jython:
 
-    from java.lang import String
+    from java.lang import String, Object, RuntimeException
     import JavaObject
     import UnicodeJavaLibrary
-    
+
     class TestJavaUnic(unittest.TestCase):
 
         def test_with_java_object(self):
@@ -29,6 +30,13 @@ if is_jython:
             assert_true('java.util' in unic(iterator))
             assert_true('Circle is 360' in iterator.next())
 
+        def test_failure_in_toString(self):
+            class ToStringFails(Object):
+                def toString(self):
+                    raise RuntimeException('failure in toString')
+
+            unic(ToStringFails())
+
 
 class TestUnic(unittest.TestCase):
 
@@ -38,7 +46,7 @@ class TestUnic(unittest.TestCase):
             text = u'Hyv\xe4'
             assert_equals(unic(unicodedata.normalize('NFC', text)), text)
             # In Mac filesystem umlaut characters are presented in NFD-format.
-            # This is to check that unic normalizes all strings to NFC 
+            # This is to check that unic normalizes all strings to NFC
             assert_equals(unic(unicodedata.normalize('NFD', text)), text)
 
     def test_object_containing_unicode_repr(self):
@@ -51,8 +59,25 @@ class TestUnic(unittest.TestCase):
         elif is_ironpython:
             expected = '[Hyv\xe4, Hyv\xe4]'   # And so is this.
         else:
-            expected = "<unrepresentable object 'list'>"
+            err = ("UnicodeEncodeError: 'ascii' codec can't encode character "
+                   "u'\\xe4' in position 3: ordinal not in range(128)")
+            expected = _unrepresentable_msg % ('list', err)
         assert_equals(unic(objects), expected)
+
+    def test_failure_in_unicode(self):
+        assert_equals(unic(UnicodeFails()),
+                      _unrepresentable_msg % ('UnicodeFails', 'Failure in __unicode__'))
+
+    def test_failure_in_str(self):
+        assert_equals(unic(StrFails()),
+                      _unrepresentable_msg % ('StrFails', 'Failure in __str__'))
+
+
+class TestSafeRepr(unittest.TestCase):
+
+    def test_failure_in_repr(self):
+        assert_equals(safe_repr(ReprFails()),
+                      _unrepresentable_msg % ('ReprFails', 'Failure in __repr__'))
 
 
 class UnicodeRepr:
@@ -60,6 +85,16 @@ class UnicodeRepr:
     def __repr__(self):
         return u'Hyv\xe4'
 
+
+class UnicodeFails(object):
+    def __unicode__(self): raise RuntimeError('Failure in __unicode__')
+
+class StrFails(object):
+    def __unicode__(self): raise UnicodeError()
+    def __str__(self): raise RuntimeError('Failure in __str__')
+
+class ReprFails(object):
+    def __repr__(self): raise RuntimeError('Failure in __repr__')
 
 if __name__ == '__main__':
     unittest.main()
