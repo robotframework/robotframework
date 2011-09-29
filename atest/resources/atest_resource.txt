@@ -5,7 +5,7 @@ Library         Collections
 Library         String
 Library         TestCheckerLibrary
 Library         TestHelper
-Variables       variables.py
+Variables       ./atest_variables.py
 
 *** Variables ***
 ${INTERPRETER}  Set in test_runner.py
@@ -18,7 +18,6 @@ ${STDERR FILE}  -- ;; --
 ${STDOUT FILE}  -- ;; --
 ${SUITE}  Set in Run Helper
 ${ERRORS}  -- ;; --
-${DATADIR}  ${CURDIR}${/}..${/}testdata
 ${LIBPATH1}  ${CURDIR}${/}..${/}testresources${/}testlibs
 ${LIBPATH2}  ${CURDIR}${/}..${/}testresources${/}listeners
 ${USAGE_TIP}  \n\nTry --help for usage information.
