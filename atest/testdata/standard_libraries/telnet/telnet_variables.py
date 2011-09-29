@@ -1,8 +1,10 @@
+import os
+
 HOST = 'localhost'
 USERNAME = 'test'
 PASSWORD = 'test'
-MACHINE = 'jth-lt'
-FULL_PROMPT = '%s@%s:~$' % (USERNAME, MACHINE)
+MACHINE = os.uname()[1]
+FULL_PROMPT = '[%s@%s ~]$' % (USERNAME, MACHINE)
 
 pwd = u'pwd'
 pwd_amp = u'pwd &'
