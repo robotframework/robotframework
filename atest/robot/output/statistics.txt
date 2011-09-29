@@ -1,5 +1,5 @@
 *** Settings ***
-Suite Setup     Run Tests  --critical t1 --tagdoc f1:this_is_tagdoc --tagstatlink t*:http://url.to:my_title --tagstatlink ?1:url:title --tagstatcombine d1ANDd2 --tagstatcombine d1ANDd2:combined_tag_with_new_name --suitestatlevel 2 --tagstatexclude t2  misc${/}suites
+Suite Setup     Run Tests  --critical t1 --tagdoc f1:this_is_tagdoc --tagstatlink t*:http://url.to:my_title --tagstatlink ?1:url:title --tagstatcombine d1ANDd2 --tagstatcombine d1ANDd2:combined_tag_with_new_name --suitestatlevel 2 --tagstatexclude t2 --tagstatcombine f1NOTt1  misc/suites
 Force Tags      regression
 Default Tags    pybot  jybot
 Resource        atest_resource.txt
@@ -21,10 +21,11 @@ Tag statistics should be Correct
     ${stats} =  Get Node  ${OUTFILE}  statistics/tag
     Tag Node Information Should Be Correct  ${stats.children[0]}  t1  5  1  info=critical  links=my title:http://url.to:::title:url
     Tag Node Information Should Be Correct  ${stats.children[2]}  d1 & d2  1  0  info=combined
-    Tag Node Information Should Be Correct  ${stats.children[3]}  d1  1  0  links=title:url
-    Tag Node Information Should Be Correct  ${stats.children[4]}  d2  1  0
-    Tag Node Information Should Be Correct  ${stats.children[5]}  f1  9  1  doc=this is tagdoc  links=title:url
-    Tag Node Information Should Be Correct  ${stats.children[6]}  sub3  2  0
+    Tag Node Information Should Be Correct  ${stats.children[3]}  f1 NOT t1  4  0  info=combined
+    Tag Node Information Should Be Correct  ${stats.children[4]}  d1  1  0  links=title:url
+    Tag Node Information Should Be Correct  ${stats.children[5]}  d2  1  0
+    Tag Node Information Should Be Correct  ${stats.children[6]}  f1  9  1  doc=this is tagdoc  links=title:url
+    Tag Node Information Should Be Correct  ${stats.children[7]}  sub3  2  0
 
 Combined Tag Statistics Name Can Be Given
     ${stats} =  Get Node  ${OUTFILE}  statistics/tag
