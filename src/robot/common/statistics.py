@@ -162,7 +162,7 @@ class TagStatistics:
 
     def __init__(self, include=None, exclude=None, combine=None, docs=None,
                  links=None):
-        self.stats = utils.NormalizedDict()
+        self.stats = utils.NormalizedDict(ignore=['_'])
         self._include = include or []
         self._exclude = exclude or []
         self._combine = combine or []

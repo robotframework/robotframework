@@ -68,11 +68,11 @@ def generate_default_suite():
     s21 = s2.add_suite('Root Suite.Second Sub Suite.Sub Suite 2_1')
     s11.add_test('PASS')
     s11.add_test('FAIL', ['t1'])
-    s12.add_test('PASS', ['t1','t2',])
+    s12.add_test('PASS', ['t_1','t2',])
     s12.add_test('PASS', ['t1','smoke'])
     s12.add_test('FAIL', ['t1','t2','t3','smoke'])
-    s13.add_test('PASS', ['t1','t2','smoke'])
-    s21.add_test('FAIL', ['t3','smoke'])
+    s13.add_test('PASS', ['t1','t 2','smoke'])
+    s21.add_test('FAIL', ['t3','Smoke'])
     return suite
 
 
