@@ -131,6 +131,14 @@ class ExampleLibrary:
     def return_list_subclass(self, *values):
         return _MyList(values)
 
+    def return_unrepresentable_objects(self):
+        class FailiningStr(object):
+            def __str__(self): raise RuntimeError
+            def __unicode__(self): raise UnicodeError()
+        class FailiningUnicode(object):
+            def __unicode__(self): raise RuntimeError
+        return FailiningStr(), FailiningUnicode()
+
 
 class _MyIterable(object):
     def __init__(self, *values):

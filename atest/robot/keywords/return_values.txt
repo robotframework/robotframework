@@ -123,3 +123,7 @@ Failing keyword
 
 Failing keyword and teardown
     Check Test Case  ${TEST NAME}
+
+Return Unrepresentable Objects
+  [Documentation]   See http://code.google.com/p/robotframework/issues/detail?id=967
+  Check Test Case  ${TEST NAME}

@@ -59,7 +59,11 @@ Set List To Scalar And List Variables Using Array
     Check Log Message  ${test.kws[0].msgs[0]}  \${a} = 1
     Check Log Message  ${test.kws[0].msgs[1]}  \${b} = 2
     Check Log Message  ${test.kws[0].msgs[2]}  \@{c} = [ 42 ]
-   
+
+Return Unrepresentable Object
+  [Documentation]   See http://code.google.com/p/robotframework/issues/detail?id=967
+  Check Test Case  ${TEST NAME}
+
 *** Keywords ***
 Verify List Variable Assigment
     [arguments]  ${test}  ${kw name}

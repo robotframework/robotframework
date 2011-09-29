@@ -63,3 +63,5 @@ Set List To Scalar And List Variables Using Array
     Should Be Equal  ${b}  ${2}
     Should Be Equal  @{c}  ${42}
 
+Return Unrepresentable Object
+    ${ret}=  Return Unrepresentable Object

@@ -44,7 +44,7 @@ Optional = Mark With Multiple Variables
     ${v1}  ${v2}  @{list}=  Set Variable  a  b  c
     Should Be Equal  ${v1}  a
     Should Be Equal  ${v2}  b
-    Should Be Equal  @{list}  c    
+    Should Be Equal  @{list}  c
 
 = Can Be Used Only With The Last Variable
     [Documentation]  FAIL Assign mark '=' can be used only with the last variable.
@@ -149,3 +149,5 @@ Failing Keyword And Teardown
     ${ret} =  Fail  Failing, again, instead of returning
     [Teardown]  Fail  Teardown fails but it is executed normally
 
+Return Unrepresentable Objects
+    ${o1}  ${o2}=  Return Unrepresentable Objects

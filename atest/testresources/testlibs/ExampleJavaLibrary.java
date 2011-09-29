@@ -110,7 +110,7 @@ public class ExampleJavaLibrary {
     }
 
     public int[] getArrayOfThreeInts() {
-        int[] ret = { 1, 2, 42 }; 
+        int[] ret = { 1, 2, 42 };
         return ret;
     }
 
@@ -141,4 +141,11 @@ public class ExampleJavaLibrary {
         return list;
     }
 
+    public Object returnUnrepresentableObject() {
+        return new Object() {
+            public String toString() {
+                throw new RuntimeException("failure in toString");
+            }
+        };
+    }
 }
