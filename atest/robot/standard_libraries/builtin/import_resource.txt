@@ -1,5 +1,5 @@
 *** Settings ***
-Suite Setup     Run Tests  ${EMPTY}  standard_libraries/builtin/import_resource.txt
+Suite Setup     Run Tests  --variable WINDOWS:${WINDOWS}  standard_libraries/builtin/import_resource.txt
 Force Tags      regression  pybot  jybot
 Resource        atest_resource.txt
 
