@@ -108,11 +108,11 @@ table#test_details .col_tags {
     white-space: pre-wrap;
 }
 table#test_details .col_crit {
-    width: 4em;
+    width: 2em;
     text-align: center;
 }
 table#test_details .col_status {
-    width: 6em;
+    width: 3em;
     text-align: center;
 }
 table#test_details .col_msg {
