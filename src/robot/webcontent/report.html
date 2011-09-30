@@ -237,7 +237,24 @@ function renderTestDetails(){
     if (window.elementsToRender.length)
         setTimeout(renderTestDetails, 0);
     else
-        $("#test_details").tablesorter();
+        configureTableSorter();
+}
+
+function configureTableSorter() {
+    $.tablesorter.addParser({
+            id: 'criticality',
+            is: function(s) {
+                // return false so this parser is not auto detected
+                return false;
+            },
+            format: function(s) {
+                return s.toLowerCase().replace(/no/,1).replace(/yes/,0);
+            },
+            type: 'numeric'
+        });
+    $("#test_details").tablesorter({
+        headers:{ 3:{ sorter:'criticality' }}
+    });
 }
 
 function popUpTo(list, upTo) {
