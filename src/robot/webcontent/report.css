@@ -91,39 +91,46 @@ table#test_details th, table#test_details td {
 table#test_details th {
     white-space: nowrap;
 }
-.col_name {
+table#test_details th.col_crit, table#test_details th.col_status {
+    text-align: left;
+}
+table#test_details .col_name {
     min-width: 13em;
     font-weight: bold;
     white-space: pre-wrap;
 }
-.col_doc {
+table#test_details .col_doc {
     min-width: 13em;
     white-space: pre-wrap;
 }
-.col_tags {
+table#test_details .col_tags {
     min-width: 10em;
     white-space: pre-wrap;
 }
-.col_crit {
-    width: 2em;
+table#test_details .col_crit {
+    width: 10em;
     text-align: center;
 }
-.col_status {
-    width: 3.5em;
+table#test_details .col_status {
+    width: 12em;
     text-align: center;
 }
-.col_msg {
+table#test_details .col_msg {
     min-width: 13em;
     white-space: pre-wrap;
 }
-.col_times {
+table#test_details .col_times {
     width: 9em;
     white-space: nowrap;
 }
-td.col_times {
+table#test_details td.col_times {
     text-align: right;
 }
+/* Tablesorter - adapted from Blue Skin available at http://tablesorter.com */
 table#test_details thead tr .header {
+    background-image: url(data:imge/gif;base64,R0lGODlhFQAJAIAAACMtMP///yH5BAEAAAEALAAAAAAVAAkAAAIXjI+AywnaYnhUMoqt3gZXPmVg94yJVQAAOw==);
+    background-repeat: no-repeat;
+    background-position: center right;
     cursor: pointer;
 }
 table#test_details thead tr .headerSortUp {
@@ -132,7 +139,12 @@ table#test_details thead tr .headerSortUp {
 table#test_details thead tr .headerSortDown {
     background-color: #8dbdd8;
 }
-.sort {
-    font-size: 0.9em;
-    font-weight: normal;
+table#test_details thead tr .headerSortUp {
+    background-image: url(data:imge/gif;base64,R0lGODlhFQAEAIAAACMtMP///yH5BAEAAAEALAAAAAAVAAQAAAINjB+gC+jP2ptn0WskLQA7);
+}
+table#test_details thead tr .headerSortDown {
+    background-image: url(data:imge/gif;base64,R0lGODlhFQAEAIAAACMtMP///yH5BAEAAAEALAAAAAAVAAQAAAINjI8Bya2wnINUMopZAQA7);
+}
+table#test_details thead tr .headerSortDown, table.tablesorter thead tr .headerSortUp {
+    background-color: #8dbdd8;
 }
