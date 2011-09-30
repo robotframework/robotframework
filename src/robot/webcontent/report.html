@@ -11,6 +11,7 @@
 <link rel="stylesheet" type="text/css" href="print.css" media="print">
 <script type="text/javascript" src="lib/jquery.min.js"></script>
 <script type="text/javascript" src="lib/jquery.tmpl.min.js"></script>
+<script type="text/javascript" src="lib/jquery.tablesorter.min.js"></script>
 <!-- OUTPUT JS --><script type="text/javascript" src="testdata/data.js"></script>
 <script type="text/javascript" src="lib/jsxcompressor.js"></script>
 <script type="text/javascript" src="fileloading.js"></script>
@@ -227,7 +228,8 @@ function renderTestDetails(){
     var elements = popUpTo(window.elementsToRender, 10);
     $.tmpl('testDetailsTableRowTemplate', elements,
            {logURL: window.settings.logURL}
-    ).appendTo('#test_details');
+    ).appendTo('#test_details tbody');
+    $("#test_details").tablesorter();
     if (window.elementsToRender.length)
         setTimeout(renderTestDetails, 0);
 }
@@ -475,15 +477,18 @@ function popUpTo(list, upTo) {
 
 <script type="text/x-jquery-tmpl" id="testDetailsTableTemplate">
   <table id="test_details">
-    <tr>
-      <th class="col_name">Name</th>
-      <th class="col_doc">Documentation</th>
-      <th class="col_tags">Tags</th>
-      <th class="col_crit">Crit.</th>
-      <th class="col_status">Status</th>
-      <th class="col_msg">Message</th>
-      <th class="col_times">Start / Elapsed</th>
-    </tr>
+    <thead>
+        <tr>
+          <th class="col_name">Name <span class="sort">&#x2195;</span></th>
+          <th class="col_doc">Documentation <span class="sort">&#x2195;</span></th>
+          <th class="col_tags">Tags <span class="sort">&#x2195;</span></th>
+          <th class="col_crit">Crit. <span class="sort">&#x2195;</span></th>
+          <th class="col_status">Status <span class="sort">&#x2195;</span></th>
+          <th class="col_msg">Message <span class="sort">&#x2195;</span></th>
+          <th class="col_times">Start / Elapsed <span class="sort">&#x2195;</span></th>
+        </tr>
+    </thead>
+    <tbody></tbody>
   </table>
 </script>
 

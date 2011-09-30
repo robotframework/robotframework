@@ -17,3 +17,8 @@ jsxcompressor
 from http://jsxgraph.uni-bayreuth.de/distrib/jsxcompressor.zip
 downloaded 16th June 2011.
 
+jquery.tablesorter.min
+----------------------
+version 2.0.5
+http://tablesorter.com/docs/
+

@@ -88,6 +88,9 @@ table#test_details th, table#test_details td {
     border: 1px solid black;
     padding: 0 0.2em;
 }
+table#test_details th {
+    white-space: nowrap;
+}
 .col_name {
     min-width: 13em;
     font-weight: bold;
@@ -119,4 +122,17 @@ table#test_details th, table#test_details td {
 }
 td.col_times {
     text-align: right;
+}
+table#test_details thead tr .header {
+    cursor: pointer;
+}
+table#test_details thead tr .headerSortUp {
+    background-color: #8dbdd8;
+}
+table#test_details thead tr .headerSortDown {
+    background-color: #8dbdd8;
+}
+.sort {
+    font-size: 0.9em;
+    font-weight: normal;
 }
