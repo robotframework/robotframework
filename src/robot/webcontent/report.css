@@ -92,7 +92,7 @@ table#test_details th {
     white-space: nowrap;
 }
 table#test_details th.col_crit, table#test_details th.col_status {
-    text-align: left;
+    padding-right: 1.5em;
 }
 table#test_details .col_name {
     min-width: 13em;
@@ -108,11 +108,11 @@ table#test_details .col_tags {
     white-space: pre-wrap;
 }
 table#test_details .col_crit {
-    width: 10em;
+    width: 5em;
     text-align: center;
 }
 table#test_details .col_status {
-    width: 12em;
+    width: 7em;
     text-align: center;
 }
 table#test_details .col_msg {
