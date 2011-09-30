@@ -201,15 +201,14 @@ class UserKeywordPopulator(_TestCaseUserKeywordPopulator):
 class Comments(object):
 
     def __init__(self):
-        self._crows = []
+        self._comments = []
 
     def add(self, row):
         if row.comments:
-            self._crows.append(row.comments)
+            self._comments.extend(c.strip() for c in row.comments if c.strip())
 
     def formatted_value(self):
-        rows = (' '.join(row).strip() for row in self._crows)
-        return '\n'.join(rows)
+        return self._comments
 
 
 class _PropertyPopulator(Populator):

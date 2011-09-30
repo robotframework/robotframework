@@ -194,7 +194,7 @@ function drawTestDetailsTable(tests, sortedColumn) {
     window.elementsToRender = tests;
     renderTestDetails();
     if (sortedColumn) {
-        var locator = "th:contains( " + sortedColumn + ")";
+        var locator = "th:contains(" + sortedColumn + ")";
         $(locator).addClass('headerSortUp');
     }
 }
