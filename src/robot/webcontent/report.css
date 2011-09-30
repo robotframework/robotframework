@@ -134,17 +134,11 @@ table#test_details thead tr .header {
     cursor: pointer;
 }
 table#test_details thead tr .headerSortUp {
-    background-color: #8dbdd8;
-}
-table#test_details thead tr .headerSortDown {
-    background-color: #8dbdd8;
-}
-table#test_details thead tr .headerSortUp {
     background-image: url(data:imge/gif;base64,R0lGODlhFQAEAIAAACMtMP///yH5BAEAAAEALAAAAAAVAAQAAAINjB+gC+jP2ptn0WskLQA7);
+    background-color: #8DBDD8;
 }
 table#test_details thead tr .headerSortDown {
     background-image: url(data:imge/gif;base64,R0lGODlhFQAEAIAAACMtMP///yH5BAEAAAEALAAAAAAVAAQAAAINjI8Bya2wnINUMopZAQA7);
+    background-color: #8DBDD8;
 }
-table#test_details thead tr .headerSortDown, table.tablesorter thead tr .headerSortUp {
-    background-color: #8dbdd8;
-}
+
