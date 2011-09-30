@@ -192,11 +192,7 @@ function renderSelector(args, template, stats) {
 function drawTestDetailsTable(tests, sortedColumn) {
     $.tmpl('testDetailsTableTemplate').appendTo('#test_details_container');
     window.elementsToRender = tests;
-    renderTestDetails();
-    if (sortedColumn) {
-        var locator = 'th:contains(' + sortedColumn + ')';
-        $(locator).addClass('headerSortUp');
-    }
+    renderTestDetails(sortedColumn);
 }
 
 function sortByStatus(t1, t2) {
@@ -227,7 +223,7 @@ function calculateTotalTime(tests) {
     return util.formatElapsed(totaltime);
 }
 
-function renderTestDetails(){
+function renderTestDetails(sortedColumn){
     if (!window.elementsToRender.length)
         return;
     var elements = popUpTo(window.elementsToRender, 10);
@@ -235,9 +231,11 @@ function renderTestDetails(){
            {logURL: window.settings.logURL}
     ).appendTo('#test_details tbody');
     if (window.elementsToRender.length)
-        setTimeout(renderTestDetails, 0);
-    else
+        setTimeout(function () {renderTestDetails(sortedColumn);}, 0);
+    else {
         configureTableSorter();
+        highlightDefaultSortColumn(sortedColumn)
+    }
 }
 
 function configureTableSorter() {
@@ -255,6 +253,13 @@ function configureTableSorter() {
     $("#test_details").tablesorter({
         headers:{ 3:{ sorter:'criticality' }}
     });
+}
+
+function highlightDefaultSortColumn(sortColumn) {
+    if (sortColumn) {
+        var locator = 'th:contains(' + sortColumn + ')';
+        $(locator).addClass('headerSortUp');
+    }
 }
 
 function popUpTo(list, upTo) {
