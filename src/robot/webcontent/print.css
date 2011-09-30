@@ -15,3 +15,7 @@ a:link, a:visited {
 #print_selector {
     display: table-cell;
 }
+table#test_details thead tr .header {
+    background-image: none;
+    background: #DCDCF0 !important;
+}
