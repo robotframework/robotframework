@@ -125,7 +125,7 @@ function renderTotalDetails(name) {
     var tests = getTotalTests(name)
     stat.totalTime = calculateTotalTime(tests);
     $.tmpl('tagOrTotalDetailsTemplate', stat).appendTo('#details_header');
-    drawTestDetailsTable(tests);
+    drawTestDetailsTable(tests, 'Status');
 }
 
 function tagDetailSelected(name) {
@@ -150,7 +150,7 @@ function renderTagDetails(tag) {
     if (tag)
         tag.totalTime = calculateTotalTime(tests);
     $.tmpl('tagOrTotalDetailsTemplate', tag).appendTo('#details_header');
-    drawTestDetailsTable(tests);
+    drawTestDetailsTable(tests, 'Status');
 }
 
 function suiteDetailSelected(id) {
@@ -189,10 +189,14 @@ function renderSelector(args, template, stats) {
     $.tmpl(template, stats).appendTo('#test_details_container');
 }
 
-function drawTestDetailsTable(tests) {
+function drawTestDetailsTable(tests, sortedColumn) {
     $.tmpl('testDetailsTableTemplate').appendTo('#test_details_container');
     window.elementsToRender = tests;
     renderTestDetails();
+    if (sortedColumn) {
+        var locator = "th:contains( " + sortedColumn + ")";
+        $(locator).addClass('headerSortUp');
+    }
 }
 
 function sortByStatus(t1, t2) {
@@ -230,9 +234,10 @@ function renderTestDetails(){
     $.tmpl('testDetailsTableRowTemplate', elements,
            {logURL: window.settings.logURL}
     ).appendTo('#test_details tbody');
-    $("#test_details").tablesorter();
     if (window.elementsToRender.length)
         setTimeout(renderTestDetails, 0);
+    else
+        $("#test_details").tablesorter();
 }
 
 function popUpTo(list, upTo) {
