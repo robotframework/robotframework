@@ -186,7 +186,7 @@ class HTMLFileWriter(object):
         return line.startswith('<!-- OUTPUT JS -->')
 
     def _is_css_line(self, line):
-        return line.startswith('<link rel')
+        return line.startswith('<link rel="stylesheet"')
 
     def _is_js_line(self, line):
         return line.startswith('<script type="text/javascript" src=')
