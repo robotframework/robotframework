@@ -13,27 +13,46 @@
 #  limitations under the License.
 
 from __future__ import with_statement
-from xml import sax
+try:
+  from lxml import etree
+except ImportError:
+  try:
+    # Python 2.5
+    import xml.etree.cElementTree as etree
+  except ImportError:
+    try:
+      # Python 2.5
+      import xml.etree.ElementTree as etree
+    except ImportError:
+      try:
+        # normal cElementTree install
+        import cElementTree as etree
+      except ImportError:
+        # normal ElementTree install
+        import elementtree.ElementTree as etree
 
 from robot.result.elementhandlers import RootHandler
 from robot.result.parsingcontext import Context
 from robot.result.jsondatamodel import DataModel
 
 
-class OutputParser(sax.handler.ContentHandler):
+class OutputParser(object):
 
     def __init__(self, log_path='NONE', split_log=False):
         self._context = Context(log_path, split_log)
         self._root_handler = RootHandler(self._context)
         self._handler_stack = [self._root_handler]
-        self._text = []
 
     def parse(self, path):
         with open(path, 'r') as outputfile:
             return self._parse_fileobj(outputfile)
 
     def _parse_fileobj(self, outputfile):
-        sax.parse(outputfile, self)
+        for action, elem in etree.iterparse(outputfile, events=('start', 'end')):
+            if action == 'start':
+                self.startElement(elem.tag, elem.attrib)
+            elif action == 'end':
+                self.endElement(elem.text or '')
         return DataModel(self._root_handler.data, self._context.split_results)
 
     def startElement(self, name, attrs):
@@ -41,20 +60,6 @@ class OutputParser(sax.handler.ContentHandler):
         handler = self._handler_stack[-1].get_handler_for(name, attrs)
         self._handler_stack.append(handler)
 
-    def endElement(self, name):
-        text = ''.join(self._text)
+    def endElement(self, text):
         handler = self._handler_stack.pop()
         self._handler_stack[-1].add_child_data(handler.end_element(text))
-
-    def characters(self, content):
-        self._text.append(content)
-
-    # startElementNS and endElementNS needed when crimson.jar is in CLASSPATH:
-    # http://code.google.com/p/robotframework/issues/detail?id=937
-
-    def startElementNS(self, name, qname, attrs):
-        attrs = dict((key[1], attrs[key]) for key in attrs.keys())
-        self.startElement(qname, attrs)
-
-    def endElementNS(self, name, qname):
-        self.endElement(qname)
