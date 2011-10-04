@@ -74,7 +74,7 @@ class CombiningOutputParser(OutputParser):
         self._init_combining_suite()
 
     def _init_combining_suite(self):
-        self.startElement('robot', {'generator':'test'})
+        self.startElement('robot', {'generator':'rebot'})
         self.startElement('suite', {'name':'Verysimple & Verysimple'})
         self.startElement('doc', {})
         self.endElement('doc', '')
@@ -101,6 +101,27 @@ class CombiningOutputParser(OutputParser):
         self.endElement('status', '')
         self.endElement('suite', '')
         self.startElement('statistics', {})
+
+        def stat(txt, attr):
+            self.startElement('stat', attr)
+            self.endElement('stat', txt)
+
+        self.startElement('total', {})
+        stat('Critical Tests', {'fail':'0', 'pass':'4'})
+        stat('All Tests', {'fail':'0', 'pass':'4'})
+        self.endElement('total', '')
+
+        self.startElement('tag', {})
+        stat('t1', {'info':'', 'links':'', 'doc':'', 'combined':'', 'pass':'2', 'fail':'0'})
+        stat('t2', {'info':'', 'links':'', 'doc':'', 'combined':'', 'pass':'2', 'fail':'0'})
+        self.endElement('tag', '')
+
+        self.startElement('suite', {})
+        stat('Verysimple & Verysimple', {'fail':'0', 'name':"Verysimple & Verysimple", 'idx':'s1', 'pass':'4'})
+        stat('Verysimple & Verysimple.Verysimple', {'fail':'0', 'name':"Verysimple", 'idx':'s1-s1', 'pass':'2'})
+        stat('Verysimple & Verysimple.Verysimple', {'fail':'0', 'name':"Verysimple", 'idx':'s1-s2', 'pass':'2'})
+        self.endElement('suite', '')
+
         self.endElement('statistics', '')
         self.startElement('errors', {})
         self.endElement('errors', '')
