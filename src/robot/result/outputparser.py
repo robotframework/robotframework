@@ -13,23 +13,7 @@
 #  limitations under the License.
 
 from __future__ import with_statement
-try:
-  from lxml import etree
-except ImportError:
-  try:
-    # Python 2.5
-    import xml.etree.cElementTree as etree
-  except ImportError:
-    try:
-      # Python 2.5
-      import xml.etree.ElementTree as etree
-    except ImportError:
-      try:
-        # normal cElementTree install
-        import cElementTree as etree
-      except ImportError:
-        # normal ElementTree install
-        import elementtree.ElementTree as etree
+from robot.utils.etreewrapper import ET
 
 from robot.result.elementhandlers import RootHandler
 from robot.result.parsingcontext import Context
@@ -48,7 +32,7 @@ class OutputParser(object):
             return self._parse_fileobj(outputfile)
 
     def _parse_fileobj(self, outputfile):
-        for action, elem in etree.iterparse(outputfile, events=('start', 'end')):
+        for action, elem in ET.iterparse(outputfile, events=('start', 'end')):
             if action == 'start':
                 self.startElement(elem.tag, elem.attrib)
             elif action == 'end':
