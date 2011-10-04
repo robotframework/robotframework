@@ -107,6 +107,7 @@ class _SuiteHandler(_Handler):
     def get_handler_for(self, name, attrs):
         self._current_children = {
             'suite': self._suites,
+            'robot': self._suites,
             'test': self._tests,
             'kw': self._keywords
         }.get(name, self._data_from_children)

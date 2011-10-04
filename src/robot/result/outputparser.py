@@ -45,14 +45,17 @@ class OutputParser(object):
 
     def parse(self, path):
         with open(path, 'r') as outputfile:
-            return self._parse_fileobj(outputfile)
+            self._parse_fileobj(outputfile)
+            return self._get_data_model()
 
     def _parse_fileobj(self, outputfile):
         for action, elem in etree.iterparse(outputfile, events=('start', 'end')):
             if action == 'start':
                 self.startElement(elem.tag, elem.attrib)
             elif action == 'end':
-                self.endElement(elem.text or '')
+                self.endElement(elem.tag, elem.text or '')
+
+    def _get_data_model(self):
         return DataModel(self._root_handler.data, self._context.split_results)
 
     def startElement(self, name, attrs):
@@ -60,6 +63,49 @@ class OutputParser(object):
         handler = self._handler_stack[-1].get_handler_for(name, attrs)
         self._handler_stack.append(handler)
 
-    def endElement(self, text):
+    def endElement(self, name, text):
         handler = self._handler_stack.pop()
         self._handler_stack[-1].add_child_data(handler.end_element(text))
+
+
+class CombiningOutputParser(OutputParser):
+
+    def __init__(self,log_path='NONE', split_log=False):
+        OutputParser.__init__(self, log_path, split_log)
+        self._init_combining_suite()
+
+    def _init_combining_suite(self):
+        self.startElement('robot', {'generator':'test'})
+        self.startElement('suite', {'name':'Verysimple & Verysimple'})
+        self.startElement('doc', {})
+        self.endElement('doc', '')
+        self.startElement('metadata', {})
+        self.endElement('metadata', '')
+
+    def startElement(self, name, attrs):
+        OutputParser.startElement(self, name, attrs)
+
+    def endElement(self, name, text):
+        handler = self._handler_stack.pop()
+        if name == 'robot' and len(self._handler_stack) > 1:
+            data = handler._data_from_children[0]
+        else:
+            data = handler.end_element(text)
+        self._handler_stack[-1].add_child_data(data)
+
+    def _get_data_model(self):
+        self._close_combining_suite()
+        return DataModel(self._root_handler.data, self._context.split_results)
+
+    def _close_combining_suite(self):
+        self.startElement('status', {'status':'PASS',
+                                     'elapsedtime':"250",
+                                     'endtime':"N/A",
+                                     'starttime':"N/A"})
+        self.endElement('status', '')
+        self.endElement('suite', '')
+        self.startElement('statistics', {})
+        self.endElement('statistics', '')
+        self.startElement('errors', {})
+        self.endElement('errors', '')
+        self.endElement('robot', '')

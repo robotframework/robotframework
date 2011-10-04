@@ -5,8 +5,7 @@ import os
 
 import unittest
 
-from robot.result.outputparser import OutputParser
-from robot.result.parsingcontext import Context
+from robot.result.outputparser import OutputParser, CombiningOutputParser
 from robot.utils.asserts import assert_equals, assert_true
 
 
@@ -45,10 +44,14 @@ def _reverse_id(strings, id):
 class _JsSerializerTestBase(unittest.TestCase):
 
     def _get_data_model(self, xml_string, parser=None):
+        return self._parse(xml_string, parser)._get_data_model()
+
+    def _parse(self, xml_string, parser=None):
         if not parser:
             parser = self._parser
         outxml = StringIO('<robot generator="test">%s<statistics/><errors/></robot>' % xml_string)
-        return parser._parse_fileobj(outxml)
+        parser._parse_fileobj(outxml)
+        return parser
 
     def _assert_long_equals(self, given, expected):
         if given != expected:
@@ -368,6 +371,127 @@ class TestJsSerializer(_JsSerializerTestBase):
                               [[2, '*Suite Teardown', '*', '*std', '*1, 2', [1, 100, 1], [], [[100, 2, '*STD']]]],
                               0, [2, 2, 2, 2]])
         assert_equals(self._context.link_to([0, 3, 'simple']),'s1-t1-k1')
+
+    def test_combining_two_xmls(self):
+        combined = """
+        <suite name="Verysimple &amp; Verysimple">
+            <doc></doc>
+            <metadata>
+            </metadata>
+            <suite source="/tmp/verysimple.txt" name="Verysimple">
+                <doc>*html* &lt;esc&gt; http://x.y http://x.y/z.jpg</doc>
+                <metadata>
+                    <item name="key">val</item>
+                    <item name="esc">&lt;</item>
+                    <item name="html">http://x.y.x.jpg</item>
+                </metadata>
+                <test name="Test" timeout="">
+                    <doc>*html* &lt;esc&gt; http://x.y http://x.y/z.jpg</doc>
+                    <kw type="kw" name="Keyword.Example" timeout="1 second">
+                    <doc>*html* &lt;esc&gt; http://x.y http://x.y/z.jpg</doc>
+                    <arguments>
+                    <arg>a1</arg>
+                    <arg>a2</arg>
+                    </arguments>
+                    <msg timestamp="20110601 12:01:51.353" level="WARN">simple</msg>
+                    <status status="PASS" endtime="20110601 12:01:51.353" starttime="20110601 12:01:51.376"></status>
+                    </kw>
+                    <tags>
+                    <tag>t1</tag>
+                    <tag>t2</tag>
+                    </tags>
+                    <status status="PASS" endtime="20110601 12:01:51.354" critical="yes" starttime="20110601 12:01:51.353"></status>
+                </test>
+                <test name="setup" timeout="">
+                    <doc>docu</doc>
+                    <kw type="kw" name="Keyword.Example" timeout="1 second">
+                    <doc>*html* &lt;esc&gt; http://x.y http://x.y/z.jpg</doc>
+                    <arguments>
+                    <arg>a1</arg>
+                    <arg>a2</arg>
+                    </arguments>
+                    <msg timestamp="20110601 12:01:51.353" level="INFO">sample</msg>
+                    <status status="PASS" endtime="20110601 12:01:51.453" starttime="20110601 12:01:51.453"></status>
+                    </kw>
+                    <tags>
+                    </tags>
+                    <status status="PASS" endtime="20110601 12:01:51.454" critical="yes" starttime="20110601 12:01:51.453"></status>
+                </test>
+                <kw type="teardown" name="Suite Teardown" timeout="">
+                    <doc>std</doc>
+                    <arguments>
+                    <arg>1</arg>
+                    <arg>2</arg>
+                    </arguments>
+                    <msg timestamp="20110601 12:01:51.453" level="INFO">STD</msg>
+                    <status status="PASS" endtime="20110601 12:01:51.454" starttime="20110601 12:01:51.453"></status>
+                </kw>
+                <status status="PASS" endtime="20110601 12:01:51.454" starttime="20110601 12:01:51.329"></status>
+            </suite>
+            <suite source="/tmp/verysimple.txt" name="Verysimple">
+                <doc>*html* &lt;esc&gt; http://x.y http://x.y/z.jpg</doc>
+                <metadata>
+                    <item name="key">val</item>
+                    <item name="esc">&lt;</item>
+                    <item name="html">http://x.y.x.jpg</item>
+                </metadata>
+                <test name="Test" timeout="">
+                    <doc>*html* &lt;esc&gt; http://x.y http://x.y/z.jpg</doc>
+                    <kw type="kw" name="Keyword.Example" timeout="1 second">
+                    <doc>*html* &lt;esc&gt; http://x.y http://x.y/z.jpg</doc>
+                    <arguments>
+                    <arg>a1</arg>
+                    <arg>a2</arg>
+                    </arguments>
+                    <msg timestamp="20110601 12:01:51.353" level="WARN">simple</msg>
+                    <status status="PASS" endtime="20110601 12:01:51.353" starttime="20110601 12:01:51.376"></status>
+                    </kw>
+                    <tags>
+                    <tag>t1</tag>
+                    <tag>t2</tag>
+                    </tags>
+                    <status status="PASS" endtime="20110601 12:01:51.354" critical="yes" starttime="20110601 12:01:51.353"></status>
+                </test>
+                <test name="setup" timeout="">
+                    <doc>docu</doc>
+                    <kw type="kw" name="Keyword.Example" timeout="1 second">
+                    <doc>*html* &lt;esc&gt; http://x.y http://x.y/z.jpg</doc>
+                    <arguments>
+                    <arg>a1</arg>
+                    <arg>a2</arg>
+                    </arguments>
+                    <msg timestamp="20110601 12:01:51.353" level="INFO">sample</msg>
+                    <status status="PASS" endtime="20110601 12:01:51.453" starttime="20110601 12:01:51.453"></status>
+                    </kw>
+                    <tags>
+                    </tags>
+                    <status status="PASS" endtime="20110601 12:01:51.454" critical="yes" starttime="20110601 12:01:51.453"></status>
+                </test>
+                <kw type="teardown" name="Suite Teardown" timeout="">
+                    <doc>std</doc>
+                    <arguments>
+                    <arg>1</arg>
+                    <arg>2</arg>
+                    </arguments>
+                    <msg timestamp="20110601 12:01:51.453" level="INFO">STD</msg>
+                    <status status="PASS" endtime="20110601 12:01:51.454" starttime="20110601 12:01:51.453"></status>
+                </kw>
+                <status status="PASS" endtime="20110601 12:01:51.454" starttime="20110601 12:01:51.329"></status>
+                </suite>
+                <status status="PASS" elapsedtime="250" endtime="N/A" starttime="N/A"></status>
+            </suite>"""
+        combining_parser = CombiningOutputParser()
+        self._parse(self.SUITE_XML, combining_parser)
+        self._parse(self.SUITE_XML, combining_parser)
+        data_model = combining_parser._get_data_model()
+        expected = self._get_data_model(combined, OutputParser())
+        for key in data_model._robot_data:
+            if key in ['generatedMillis', 'generatedTimestamp']:
+                continue
+            assert_equals(data_model._robot_data[key], expected._robot_data[key],
+                          msg='Values "%s" are different:\nexpected= %r\nactual=   %r\n' %
+                              (key, expected._robot_data[key], data_model._robot_data[key]))
+        assert_equals(len(data_model._robot_data), len(expected._robot_data))
 
     def test_suite_data_model_keywords_clearing(self):
         self._test_remove_keywords(self._get_data_model(self.SUITE_XML),
