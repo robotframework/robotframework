@@ -377,109 +377,11 @@ class TestJsSerializer(_JsSerializerTestBase):
         <suite name="Verysimple &amp; Verysimple">
             <doc></doc>
             <metadata>
-            </metadata>
-            <suite source="/tmp/verysimple.txt" name="Verysimple">
-                <doc>*html* &lt;esc&gt; http://x.y http://x.y/z.jpg</doc>
-                <metadata>
-                    <item name="key">val</item>
-                    <item name="esc">&lt;</item>
-                    <item name="html">http://x.y.x.jpg</item>
-                </metadata>
-                <test name="Test" timeout="">
-                    <doc>*html* &lt;esc&gt; http://x.y http://x.y/z.jpg</doc>
-                    <kw type="kw" name="Keyword.Example" timeout="1 second">
-                    <doc>*html* &lt;esc&gt; http://x.y http://x.y/z.jpg</doc>
-                    <arguments>
-                    <arg>a1</arg>
-                    <arg>a2</arg>
-                    </arguments>
-                    <msg timestamp="20110601 12:01:51.353" level="WARN">simple</msg>
-                    <status status="PASS" endtime="20110601 12:01:51.353" starttime="20110601 12:01:51.376"></status>
-                    </kw>
-                    <tags>
-                    <tag>t1</tag>
-                    <tag>t2</tag>
-                    </tags>
-                    <status status="PASS" endtime="20110601 12:01:51.354" critical="yes" starttime="20110601 12:01:51.353"></status>
-                </test>
-                <test name="setup" timeout="">
-                    <doc>docu</doc>
-                    <kw type="kw" name="Keyword.Example" timeout="1 second">
-                    <doc>*html* &lt;esc&gt; http://x.y http://x.y/z.jpg</doc>
-                    <arguments>
-                    <arg>a1</arg>
-                    <arg>a2</arg>
-                    </arguments>
-                    <msg timestamp="20110601 12:01:51.353" level="INFO">sample</msg>
-                    <status status="PASS" endtime="20110601 12:01:51.453" starttime="20110601 12:01:51.453"></status>
-                    </kw>
-                    <tags>
-                    </tags>
-                    <status status="PASS" endtime="20110601 12:01:51.454" critical="yes" starttime="20110601 12:01:51.453"></status>
-                </test>
-                <kw type="teardown" name="Suite Teardown" timeout="">
-                    <doc>std</doc>
-                    <arguments>
-                    <arg>1</arg>
-                    <arg>2</arg>
-                    </arguments>
-                    <msg timestamp="20110601 12:01:51.453" level="INFO">STD</msg>
-                    <status status="PASS" endtime="20110601 12:01:51.454" starttime="20110601 12:01:51.453"></status>
-                </kw>
-                <status status="PASS" endtime="20110601 12:01:51.454" starttime="20110601 12:01:51.329"></status>
-            </suite>
-            <suite source="/tmp/verysimple.txt" name="Verysimple">
-                <doc>*html* &lt;esc&gt; http://x.y http://x.y/z.jpg</doc>
-                <metadata>
-                    <item name="key">val</item>
-                    <item name="esc">&lt;</item>
-                    <item name="html">http://x.y.x.jpg</item>
-                </metadata>
-                <test name="Test" timeout="">
-                    <doc>*html* &lt;esc&gt; http://x.y http://x.y/z.jpg</doc>
-                    <kw type="kw" name="Keyword.Example" timeout="1 second">
-                    <doc>*html* &lt;esc&gt; http://x.y http://x.y/z.jpg</doc>
-                    <arguments>
-                    <arg>a1</arg>
-                    <arg>a2</arg>
-                    </arguments>
-                    <msg timestamp="20110601 12:01:51.353" level="WARN">simple</msg>
-                    <status status="PASS" endtime="20110601 12:01:51.353" starttime="20110601 12:01:51.376"></status>
-                    </kw>
-                    <tags>
-                    <tag>t1</tag>
-                    <tag>t2</tag>
-                    </tags>
-                    <status status="PASS" endtime="20110601 12:01:51.354" critical="yes" starttime="20110601 12:01:51.353"></status>
-                </test>
-                <test name="setup" timeout="">
-                    <doc>docu</doc>
-                    <kw type="kw" name="Keyword.Example" timeout="1 second">
-                    <doc>*html* &lt;esc&gt; http://x.y http://x.y/z.jpg</doc>
-                    <arguments>
-                    <arg>a1</arg>
-                    <arg>a2</arg>
-                    </arguments>
-                    <msg timestamp="20110601 12:01:51.353" level="INFO">sample</msg>
-                    <status status="PASS" endtime="20110601 12:01:51.453" starttime="20110601 12:01:51.453"></status>
-                    </kw>
-                    <tags>
-                    </tags>
-                    <status status="PASS" endtime="20110601 12:01:51.454" critical="yes" starttime="20110601 12:01:51.453"></status>
-                </test>
-                <kw type="teardown" name="Suite Teardown" timeout="">
-                    <doc>std</doc>
-                    <arguments>
-                    <arg>1</arg>
-                    <arg>2</arg>
-                    </arguments>
-                    <msg timestamp="20110601 12:01:51.453" level="INFO">STD</msg>
-                    <status status="PASS" endtime="20110601 12:01:51.454" starttime="20110601 12:01:51.453"></status>
-                </kw>
-                <status status="PASS" endtime="20110601 12:01:51.454" starttime="20110601 12:01:51.329"></status>
-                </suite>
-                <status status="PASS" elapsedtime="250" endtime="N/A" starttime="N/A"></status>
-            </suite>"""
+            </metadata>"""+\
+        self.SUITE_XML+\
+        self.SUITE_XML+\
+        """ <status status="PASS" elapsedtime="250" endtime="N/A" starttime="N/A"></status>
+        </suite>"""
         combining_parser = CombiningOutputParser()
         self._parse(self.SUITE_XML, combining_parser)
         self._parse(self.SUITE_XML, combining_parser)
