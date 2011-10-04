@@ -375,25 +375,27 @@ class TestJsSerializer(_JsSerializerTestBase):
     def test_combining_two_xmls(self):
         combined = """
         <suite name="Verysimple &amp; Verysimple">
-            <doc></doc>
-            <metadata>
-            </metadata>"""+\
-        self.SUITE_XML+\
-        self.SUITE_XML+\
-        """ <status status="PASS" elapsedtime="250" endtime="N/A" starttime="N/A"></status>
+           <doc></doc>
+           <metadata></metadata>"""+\
+            self.SUITE_XML+\
+            self.SUITE_XML+\
+        """<status status="PASS" elapsedtime="250" endtime="N/A" starttime="N/A"></status>
         </suite>"""
         combining_parser = CombiningOutputParser()
         self._parse(self.SUITE_XML, combining_parser)
         self._parse(self.SUITE_XML, combining_parser)
         data_model = combining_parser._get_data_model()
         expected = self._get_data_model(combined, OutputParser())
-        for key in data_model._robot_data:
+        self._verify_robot_data(expected._robot_data, data_model._robot_data)
+
+    def _verify_robot_data(self, expected, actual):
+        for key in actual:
             if key in ['generatedMillis', 'generatedTimestamp']:
                 continue
-            assert_equals(data_model._robot_data[key], expected._robot_data[key],
+            assert_equals(actual[key], expected[key],
                           msg='Values "%s" are different:\nexpected= %r\nactual=   %r\n' %
-                              (key, expected._robot_data[key], data_model._robot_data[key]))
-        assert_equals(len(data_model._robot_data), len(expected._robot_data))
+                              (key, expected[key], actual[key]))
+        assert_equals(len(actual), len(expected))
 
     def test_suite_data_model_keywords_clearing(self):
         self._test_remove_keywords(self._get_data_model(self.SUITE_XML),

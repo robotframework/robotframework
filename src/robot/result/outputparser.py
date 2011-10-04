@@ -59,7 +59,6 @@ class OutputParser(object):
         return DataModel(self._root_handler.data, self._context.split_results)
 
     def startElement(self, name, attrs):
-        self._text = []
         handler = self._handler_stack[-1].get_handler_for(name, attrs)
         self._handler_stack.append(handler)
 
@@ -81,9 +80,6 @@ class CombiningOutputParser(OutputParser):
         self.endElement('doc', '')
         self.startElement('metadata', {})
         self.endElement('metadata', '')
-
-    def startElement(self, name, attrs):
-        OutputParser.startElement(self, name, attrs)
 
     def endElement(self, name, text):
         handler = self._handler_stack.pop()
