@@ -37,6 +37,7 @@ class OutputParser(object):
                 self.startElement(elem.tag, elem.attrib)
             elif action == 'end':
                 self.endElement(elem.text or '')
+                elem.clear()
         return DataModel(self._root_handler.data, self._context.split_results)
 
     def startElement(self, name, attrs):
