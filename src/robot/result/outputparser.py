@@ -31,7 +31,7 @@ except ImportError:
         # normal ElementTree install
         import elementtree.ElementTree as etree
 
-from robot.result.elementhandlers import RootHandler
+from robot.result.elementhandlers import RootHandler, CombiningRobotHandler
 from robot.result.parsingcontext import Context
 from robot.result.jsondatamodel import DataModel
 
@@ -53,7 +53,7 @@ class OutputParser(object):
             if action == 'start':
                 self.startElement(elem.tag, elem.attrib)
             elif action == 'end':
-                self.endElement(elem.tag, elem.text or '')
+                self.endElement(elem.text or '')
 
     def _get_data_model(self):
         return DataModel(self._root_handler.data, self._context.split_results)
@@ -62,7 +62,7 @@ class OutputParser(object):
         handler = self._handler_stack[-1].get_handler_for(name, attrs)
         self._handler_stack.append(handler)
 
-    def endElement(self, name, text):
+    def endElement(self, text):
         handler = self._handler_stack.pop()
         self._handler_stack[-1].add_child_data(handler.end_element(text))
 
@@ -71,58 +71,8 @@ class CombiningOutputParser(OutputParser):
 
     def __init__(self,log_path='NONE', split_log=False):
         OutputParser.__init__(self, log_path, split_log)
-        self._init_combining_suite()
-
-    def _init_combining_suite(self):
-        self.startElement('robot', {'generator':'rebot'})
-        self.startElement('suite', {'name':'Verysimple & Verysimple'})
-        self.startElement('doc', {})
-        self.endElement('doc', '')
-        self.startElement('metadata', {})
-        self.endElement('metadata', '')
-
-    def endElement(self, name, text):
-        handler = self._handler_stack.pop()
-        if name == 'robot' and len(self._handler_stack) > 1:
-            data = handler._data_from_children[0]
-        else:
-            data = handler.end_element(text)
-        self._handler_stack[-1].add_child_data(data)
+        self._handler_stack.append(CombiningRobotHandler(self._context))
 
     def _get_data_model(self):
-        self._close_combining_suite()
+        self.endElement('')
         return DataModel(self._root_handler.data, self._context.split_results)
-
-    def _close_combining_suite(self):
-        self.startElement('status', {'status':'PASS',
-                                     'elapsedtime':"250",
-                                     'endtime':"N/A",
-                                     'starttime':"N/A"})
-        self.endElement('status', '')
-        self.endElement('suite', '')
-        self.startElement('statistics', {})
-
-        def stat(txt, attr):
-            self.startElement('stat', attr)
-            self.endElement('stat', txt)
-
-        self.startElement('total', {})
-        stat('Critical Tests', {'fail':'0', 'pass':'4'})
-        stat('All Tests', {'fail':'0', 'pass':'4'})
-        self.endElement('total', '')
-
-        self.startElement('tag', {})
-        stat('t1', {'info':'', 'links':'', 'doc':'', 'combined':'', 'pass':'2', 'fail':'0'})
-        stat('t2', {'info':'', 'links':'', 'doc':'', 'combined':'', 'pass':'2', 'fail':'0'})
-        self.endElement('tag', '')
-
-        self.startElement('suite', {})
-        stat('Verysimple & Verysimple', {'fail':'0', 'name':"Verysimple & Verysimple", 'idx':'s1', 'pass':'4'})
-        stat('Verysimple & Verysimple.Verysimple', {'fail':'0', 'name':"Verysimple", 'idx':'s1-s1', 'pass':'2'})
-        stat('Verysimple & Verysimple.Verysimple', {'fail':'0', 'name':"Verysimple", 'idx':'s1-s2', 'pass':'2'})
-        self.endElement('suite', '')
-
-        self.endElement('statistics', '')
-        self.startElement('errors', {})
-        self.endElement('errors', '')
-        self.endElement('robot', '')
