@@ -26,6 +26,7 @@ class JsonTestCase(unittest.TestCase):
     def test_dump_string(self):
         self._test('', '""')
         self._test('xxx', '"xxx"')
+        self._test('123', '"123"')
 
     def test_dump_non_ascii_string(self):
         self._test(u'hyv\xe4', '"hyv\\u00e4"')
