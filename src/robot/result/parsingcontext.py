@@ -55,7 +55,7 @@ class Context(object):
     def timestamp(self, time):
         if time == 'N/A':
             return None
-        millis = int(utils.timestamp_to_secs(time, millis=True) * 1000)
+        millis = long(round(utils.timestamp_to_secs(time, millis=True) * 1000))
         if not self.basemillis:
             self.basemillis = millis
         return millis - self.basemillis
