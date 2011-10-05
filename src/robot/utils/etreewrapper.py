@@ -22,12 +22,15 @@ except ImportError:
     except ImportError:
         try:
             import xml.etree.ElementTree as ET
-            # Raises ImportError due to missing expat on IronPython by default
+            # Raises ImportError due to missing expat on IronPython by default:
+            # http://ironpython.codeplex.com/workitem/21407
             ET.parse(StringIO('<test/>'))
         except ImportError:
             try:
                 import elementtree.ElementTree as ET
-            except ImportError:
+            # Can cause AttributeError on IronPython:
+            # http://ironpython.codeplex.com/workitem/31545
+            except (ImportError, AttributeError):
                 raise ImportError('No valid ElementTree XML parser module found')
 
 
