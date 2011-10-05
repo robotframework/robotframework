@@ -55,6 +55,8 @@ class Context(object):
     def timestamp(self, time):
         if time == 'N/A':
             return None
+        # Must use `long` and not `int` below due to this IronPython bug:
+        # http://ironpython.codeplex.com/workitem/31549
         millis = long(round(utils.timestamp_to_secs(time, millis=True) * 1000))
         if not self.basemillis:
             self.basemillis = millis
