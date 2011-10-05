@@ -57,6 +57,7 @@ class _BaseSettings(object):
 
     def __init__(self, options={}, log=True):
         self._opts = {}
+        self._cli_opts = self._cli_opts.copy()
         self._cli_opts.update(self._extra_cli_opts)
         self._process_cli_opts(options, log)
         if log: LOGGER.info('Settings:\n%s' % unicode(self))
