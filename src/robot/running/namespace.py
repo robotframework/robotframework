@@ -42,9 +42,10 @@ class Namespace:
     """
 
     def __init__(self, suite, parent_vars, skip_imports=False):
+        robot.running.NAMESPACES.start_suite(self)
         if suite is not None:
             LOGGER.info("Initializing namespace for test suite '%s'" % suite.longname)
-        self.variables = _VariableScopes(suite, parent_vars)
+        self.variables = self._create_variables(suite, parent_vars)
         self.suite = suite
         self.test = None
         self.uk_handlers = []
@@ -52,14 +53,19 @@ class Namespace:
         self._testlibs = {}
         self._imported_resource_files = ImportCache()
         self._imported_variable_files = ImportCache()
-        self.import_library('BuiltIn')
-        self.import_library('Reserved')
-        self.import_library('Easter')
+        self._import_default_libraries()
         if suite.source and not skip_imports:
             self._handle_imports(suite.imports)
-        robot.running.NAMESPACES.start_suite(self)
-        self.variables['${SUITE_NAME}'] = suite.longname
-        self.variables['${SUITE_SOURCE}'] = suite.source
+
+    def _create_variables(self, suite, parent_vars):
+        variables = _VariableScopes(suite, parent_vars)
+        variables['${SUITE_NAME}'] = suite.longname
+        variables['${SUITE_SOURCE}'] = suite.source
+        return variables
+
+    def _import_default_libraries(self):
+        for name in 'BuiltIn', 'Reserved', 'Easter':
+            self.import_library(name)
 
     def _handle_imports(self, import_settings):
         for item in import_settings:
