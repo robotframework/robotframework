@@ -43,6 +43,7 @@ def pause_execution(message='Test execution paused. Press OK to continue.'):
     """Pauses the test execution and shows dialog with the text `message`. """
     MessageDialog(message)
 
+
 def execute_manual_step(message, default_error=''):
     """Pauses the test execution until user sets the keyword status.
 
@@ -51,9 +52,10 @@ def execute_manual_step(message, default_error=''):
     opened for defining the error message. `default_error` is the
     possible default value shown in the error message dialog.
     """
-    if not  PassFailDialog(message).result:
+    if not PassFailDialog(message).result:
         msg = get_value_from_user('Give error message:', default_error)
         raise AssertionError(msg)
+
 
 def get_value_from_user(message, default_value=''):
     """Pauses the test execution and asks user to input a value.
@@ -64,6 +66,7 @@ def get_value_from_user(message, default_value=''):
     """
     return _validate_user_input(InputDialog(message, default_value).result)
 
+
 def get_selection_from_user(message, *values):
     """Pauses the test execution and asks user to select value
 
@@ -73,6 +76,7 @@ def get_selection_from_user(message, *values):
     This keyword was added into Robot Framework 2.1.2.
     """
     return _validate_user_input(SelectionDialog(message, values).result)
+
 
 def _validate_user_input(value):
     if value is None:
