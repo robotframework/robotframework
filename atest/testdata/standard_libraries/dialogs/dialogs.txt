@@ -8,24 +8,26 @@ Pause Execution
     Pause Execution  Press OK.\nAnd verify that\nthis text\nis displayed nicely.
 
 Execute Manual Step
-    [Documentation]  FAIL Predefined Error Message
+    [Documentation]  FAIL Predefined error message
     Execute Manual Step  Press PASS.
-    Execute Manual Step  Press FAIL and OK.  Predefined Error Message
+    Execute Manual Step  Press FAIL and OK.  Predefined error message
 
-Get Value From User Passes
-    ${value} =  Get Value From User  Input 'value' and press OK.
+Get Value From User
+    ${value} =  Get Value From User  Type 'value' and press OK.  Overwrite me
     Should Be Equal  ${value}  value
+    ${value} =  Get Value From User  Press OK.
+    Should Be Equal  ${value}  ${EMPTY}
 
-Get Value From User Fails
-    [Documentation]  FAIL ValueError: No value provided by user
+Get Value From User Cancelled
+    [Documentation]  FAIL No value provided by user
     Get Value From User  Press Cancel.
 
-Get Selection From User Passes
+Get Selection From User
     ${value} =  Get Selection From User  Select 'value' and press OK.  zip  zap  foo  value  bar
     Should Be Equal  ${value}  value
 
-Get Selection From User Fails
-    [Documentation]  FAIL ValueError: No value provided by user
+Get Selection From User Cancelled
+    [Documentation]  FAIL No value provided by user
     Get Selection From User  Press Cancel.  zip  zap  foo
 
 Dialog and timeout

@@ -10,16 +10,16 @@ Pause Execution
 Execute Manual Step
     Check Test Case  ${TESTNAME}
 
-Get Value From User Passes
+Get Value From User
     Check Test Case  ${TESTNAME}
 
-Get Value From User Fails
+Get Value From User Cancelled
     Check Test Case  ${TESTNAME}
 
-Get Selection From User Passes
+Get Selection From User
     Check Test Case  ${TESTNAME}
 
-Get Selection From User Fails
+Get Selection From User Cancelled
     Check Test Case  ${TESTNAME}
 
 Dialog and timeout

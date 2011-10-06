@@ -80,7 +80,7 @@ def get_selection_from_user(message, *values):
 
 def _validate_user_input(value):
     if value is None:
-        raise ValueError('No value provided by user')
+        raise RuntimeError('No value provided by user')
     return value
 
 
