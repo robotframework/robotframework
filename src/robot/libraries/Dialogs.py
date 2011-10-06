@@ -145,13 +145,12 @@ if not sys.platform.startswith('java'):
                                 self._right_button_clicked)
             frame.pack()
 
-        def _create_button(self, parent, label, command):
-            button = Button(parent, text=label, width=10, command=command)
+        def _create_button(self, parent, label, callback):
+            button = Button(parent, text=label, width=10, command=callback)
             button.pack(side=LEFT, padx=5, pady=5)
 
         def _left_button_clicked(self, event=None):
             if self._validate_value():
-                self.withdraw()
                 self.result = self._get_value()
                 self.destroy()
 
