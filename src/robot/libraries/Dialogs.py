@@ -82,7 +82,7 @@ def _validate_user_input(value):
 
 if not sys.platform.startswith('java'):
 
-    from Tkinter import (Tk, Toplevel, Frame, Listbox, Label, Button,
+    from Tkinter import (Tk, Toplevel, Frame, Listbox, Label, Button, Entry,
                          BOTH, END, LEFT, W)
     import tkMessageBox
     import tkSimpleDialog
@@ -100,6 +100,8 @@ if not sys.platform.startswith('java'):
 
 
     class _AbstractTkDialog(Toplevel):
+        _left_button = 'OK'
+        _right_button = 'Cancel'
 
         @prevent_execution_with_timeouts
         def __init__(self, message, *args):
@@ -165,18 +167,22 @@ if not sys.platform.startswith('java'):
             tkMessageBox.showinfo(DIALOG_TITLE, message)
 
 
-    class InputDialog(object):
+    class InputDialog(_AbstractTkDialog):
 
-        @prevent_execution_with_timeouts
-        def __init__(self, message, default):
-            Tk().withdraw()
-            self.result = tkSimpleDialog.askstring(DIALOG_TITLE, message,
-                                                   initialvalue=default)
+        def __init__(self, message, default=''):
+            _AbstractTkDialog.__init__(self, message, default)
+
+        def _create_selector(self, parent, default):
+            self._entry = Entry(parent)
+            self._entry.insert(0, default)
+            self._entry.select_range(0, END)
+            return self._entry
+
+        def _get_value(self):
+            return self._entry.get()
 
 
     class SelectionDialog(_AbstractTkDialog):
-        _left_button = 'OK'
-        _right_button = 'Cancel'
 
         def __init__(self, message, values):
             _AbstractTkDialog.__init__(self, message, values)
