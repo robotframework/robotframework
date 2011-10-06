@@ -105,21 +105,28 @@ if not sys.platform.startswith('java'):
 
         @prevent_execution_with_timeouts
         def __init__(self, message, *args):
-            parent = Tk()
-            parent.withdraw()
-            Toplevel.__init__(self, parent)
-            self._init_dialog(parent)
+            Toplevel.__init__(self, self._get_parent())
+            self._init_dialog()
             self._create_body(message, args)
             self._create_buttons()
             self.wait_window(self)
 
-        def _init_dialog(self, parent):
+        def _get_parent(self):
+            parent = Tk()
+            parent.withdraw()
+            return parent
+
+        def _init_dialog(self):
             self.title(DIALOG_TITLE)
             self.grab_set()
             self.protocol("WM_DELETE_WINDOW", self._right_button_clicked)
             self.bind("<Escape>", self._right_button_clicked)
-            self.geometry("+%d+%d" % (parent.winfo_rootx()+150,
-                                      parent.winfo_rooty()+150))
+            self.geometry("+%d+%d" % self._get_center_location())
+
+        def _get_center_location(self):
+            x = (self.winfo_screenwidth() - self.winfo_reqwidth()) / 2
+            y = (self.winfo_screenheight() - self.winfo_reqheight()) / 2
+            return x, y
 
         def _create_body(self, message, args):
             frame = Frame(self)
