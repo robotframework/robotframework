@@ -8,8 +8,8 @@ Library         NamespaceUsingLibrary
 
 *** Test Cases ***
 Normal Library Import
-    Fail If Dir Empty  ${CURDIR}
-    Fail Unless Dir Exists  ${TEMPDIR}
+    Directory Should Not Be Empty  ${CURDIR}
+    Directory Should Exist  ${TEMPDIR}
 
 Library Import With Spaces In Name
     Print  It works!
@@ -25,5 +25,5 @@ Namespace is initialized during library init
     ${importing suite}=   Get Importing Suite
     Should Be Equal   ${importing suite}   ${SUITE NAME}
     ${lib}=   Get Other Library
-    Should Be True   "${lib} is not None"
+    Should Be Equal   ${lib.__name__}    Easter
 
