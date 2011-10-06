@@ -228,68 +228,54 @@ else:
 
     class _AbstractSwingDialog:
 
-        def __init__(self, message):
-            self.result = self._show_dialog(message)
+        def __init__(self, pane):
+            self._show_dialog(pane)
+            self.result = self._get_value(pane)
 
-        def _show_dialog(self, message):
-            self._init_dialog(message)
-            self._show_dialog_and_wait_it_to_be_closed()
-            return self._get_value()
-
-        def _show_dialog_and_wait_it_to_be_closed(self):
-            dialog = self._pane.createDialog(None, DIALOG_TITLE)
-            dialog.setModal(0);
+        def _show_dialog(self, pane):
+            dialog = pane.createDialog(None, DIALOG_TITLE)
+            dialog.setModal(False)
             dialog.show()
             while dialog.isShowing():
                 time.sleep(0.2)
             dialog.dispose()
 
-        def _get_value(self):
-            value = self._pane.getInputValue()
-            if value == UNINITIALIZED_VALUE:
-                return None
-            return value
+        def _get_value(self, pane):
+            value = pane.getInputValue()
+            return value if value != UNINITIALIZED_VALUE else None
 
 
     class MessageDialog(_AbstractSwingDialog):
 
-        def _init_dialog(self, message):
-            self._pane = JOptionPane(message, PLAIN_MESSAGE, DEFAULT_OPTION)
+        def __init__(self, message):
+            pane = JOptionPane(message, PLAIN_MESSAGE, DEFAULT_OPTION)
+            _AbstractSwingDialog.__init__(self, pane)
 
 
     class InputDialog(_AbstractSwingDialog):
 
         def __init__(self, message, default):
-            self._default = default
-            _AbstractSwingDialog.__init__(self, message)
-
-        def _init_dialog(self, message):
-            self._pane = JOptionPane(message, PLAIN_MESSAGE, OK_CANCEL_OPTION)
-            self._pane.setWantsInput(True)
-            self._pane.setInitialSelectionValue(self._default)
+            pane = JOptionPane(message, PLAIN_MESSAGE, OK_CANCEL_OPTION)
+            pane.setWantsInput(True)
+            pane.setInitialSelectionValue(default)
+            _AbstractSwingDialog.__init__(self, pane)
 
 
     class SelectionDialog(_AbstractSwingDialog):
 
         def __init__(self, message, options):
-            self._options = options
-            _AbstractSwingDialog.__init__(self, message)
-
-        def _init_dialog(self, message):
-            self._pane = JOptionPane(message, PLAIN_MESSAGE, OK_CANCEL_OPTION)
-            self._pane.setWantsInput(True)
-            self._pane.setSelectionValues(self._options)
+            pane = JOptionPane(message, PLAIN_MESSAGE, OK_CANCEL_OPTION)
+            pane.setWantsInput(True)
+            pane.setSelectionValues(options)
+            _AbstractSwingDialog.__init__(self, pane)
 
 
     class PassFailDialog(_AbstractSwingDialog):
 
-        def _init_dialog(self, message):
-            self._buttons = ['PASS', 'FAIL']
-            self._pane = JOptionPane(message, PLAIN_MESSAGE, YES_NO_OPTION,
-                                     None, self._buttons, 'PASS')
+        def __init__(self, message):
+            pane = JOptionPane(message, PLAIN_MESSAGE, YES_NO_OPTION,
+                               None, ['PASS', 'FAIL'], 'PASS')
+            _AbstractSwingDialog.__init__(self, pane)
 
-        def _get_value(self):
-            value = self._pane.getValue()
-            if value in self._buttons and self._buttons.index(value) == 0:
-                return True
-            return False
+        def _get_value(self, pane):
+            return pane.getValue() == 'PASS'
