@@ -89,27 +89,23 @@ if not sys.platform.startswith('java'):
     from threading import currentThread
 
 
-    def prevent_execution_with_timeouts(method):
-        def check_timeout(*args):
-            if 'linux' not in sys.platform \
-                    and currentThread().getName() != 'MainThread':
-                raise RuntimeError('Dialogs library is not supported with '
-                                   'timeouts on Python on this platform.')
-            return method(*args)
-        return check_timeout
-
-
     class _AbstractTkDialog(Toplevel):
         _left_button = 'OK'
         _right_button = 'Cancel'
 
-        @prevent_execution_with_timeouts
         def __init__(self, message, *args):
+            self._prevent_execution_with_timeouts()
             Toplevel.__init__(self, self._get_parent())
             self._init_dialog()
             self._create_body(message, args)
             self._create_buttons()
             self.wait_window(self)
+
+        def _prevent_execution_with_timeouts(self):
+            if 'linux' not in sys.platform \
+                    and currentThread().getName() != 'MainThread':
+                raise RuntimeError('Dialogs library is not supported with '
+                                   'timeouts on Python on this platform.')
 
         def _get_parent(self):
             parent = Tk()
@@ -121,6 +117,7 @@ if not sys.platform.startswith('java'):
             self.grab_set()
             self.protocol("WM_DELETE_WINDOW", self._right_button_clicked)
             self.bind("<Escape>", self._right_button_clicked)
+            self.minsize(250, 80)
             self.geometry("+%d+%d" % self._get_center_location())
 
         def _get_center_location(self):
@@ -137,6 +134,9 @@ if not sys.platform.startswith('java'):
                 selector.focus_set()
             frame.pack(padx=5, pady=5, expand=1, fill=BOTH)
 
+        def _create_selector(self, frame):
+            return None
+
         def _create_buttons(self):
             frame = Frame(self)
             self._create_button(frame, self._left_button,
@@ -146,13 +146,17 @@ if not sys.platform.startswith('java'):
             frame.pack()
 
         def _create_button(self, parent, label, callback):
-            button = Button(parent, text=label, width=10, command=callback)
-            button.pack(side=LEFT, padx=5, pady=5)
+            if label:
+                button = Button(parent, text=label, width=10, command=callback)
+                button.pack(side=LEFT, padx=5, pady=5)
 
         def _left_button_clicked(self, event=None):
             if self._validate_value():
                 self.result = self._get_value()
                 self.destroy()
+
+        def _get_value(self):
+            return None
 
         def _validate_value(self):
             return True
@@ -165,12 +169,8 @@ if not sys.platform.startswith('java'):
             return None
 
 
-    class MessageDialog(object):
-
-        @prevent_execution_with_timeouts
-        def __init__(self, message):
-            Tk().withdraw()
-            tkMessageBox.showinfo(DIALOG_TITLE, message)
+    class MessageDialog(_AbstractTkDialog):
+        _right_button = None
 
 
     class InputDialog(_AbstractTkDialog):
@@ -209,12 +209,6 @@ if not sys.platform.startswith('java'):
     class PassFailDialog(_AbstractTkDialog):
         _left_button = 'PASS'
         _right_button = 'FAIL'
-
-        def __init__(self, message):
-            _AbstractTkDialog.__init__(self, message)
-
-        def _create_selector(self, frame):
-            return None
 
         def _get_value(self):
             return True
