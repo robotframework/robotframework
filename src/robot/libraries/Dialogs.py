@@ -83,7 +83,7 @@ def _validate_user_input(value):
 if not sys.platform.startswith('java'):
 
     from Tkinter import (Tk, Toplevel, Frame, Listbox, Label, Button,
-                         BOTH, END, LEFT)
+                         BOTH, END, LEFT, W)
     import tkMessageBox
     import tkSimpleDialog
     from threading import currentThread
@@ -102,59 +102,59 @@ if not sys.platform.startswith('java'):
     class _AbstractTkDialog(Toplevel):
 
         @prevent_execution_with_timeouts
-        def __init__(self, title):
+        def __init__(self, message, *args):
             parent = Tk()
             parent.withdraw()
             Toplevel.__init__(self, parent)
-            self._init_dialog(parent, title)
-            self._create_body()
+            self._init_dialog(parent)
+            self._create_body(message, args)
             self._create_buttons()
-            self.result = None
-            self._initial_focus.focus_set()
             self.wait_window(self)
 
-        def _init_dialog(self, parent, title):
-            self.title(title)
+        def _init_dialog(self, parent):
+            self.title(DIALOG_TITLE)
             self.grab_set()
-            self.protocol("WM_DELETE_WINDOW", self._right_clicked)
+            self.protocol("WM_DELETE_WINDOW", self._right_button_clicked)
+            self.bind("<Escape>", self._right_button_clicked)
             self.geometry("+%d+%d" % (parent.winfo_rootx()+150,
                                       parent.winfo_rooty()+150))
 
-        def _create_body(self):
+        def _create_body(self, message, args):
             frame = Frame(self)
-            self._initial_focus = self.create_components(frame)
+            Label(frame, text=message, anchor=W).pack(fill=BOTH)
+            selector = self._create_selector(frame, *args)
+            if selector:
+                selector.pack(fill=BOTH)
+                selector.focus_set()
             frame.pack(padx=5, pady=5, expand=1, fill=BOTH)
 
         def _create_buttons(self):
             frame = Frame(self)
-            self._create_button(frame, self._left_button, self._left_clicked)
-            self._create_button(frame, self._right_button, self._right_clicked)
-            self.bind("<Escape>", self._right_clicked)
+            self._create_button(frame, self._left_button,
+                                self._left_button_clicked)
+            self._create_button(frame, self._right_button,
+                                self._right_button_clicked)
             frame.pack()
 
         def _create_button(self, parent, label, command):
-            w = Button(parent, text=label, width=10, command=command)
-            w.pack(side=LEFT, padx=5, pady=5)
+            button = Button(parent, text=label, width=10, command=command)
+            button.pack(side=LEFT, padx=5, pady=5)
 
-        def _left_clicked(self, event=None):
-            if not self.validate():
-                self._initial_focus.focus_set()
-                return
-            self.withdraw()
-            self.apply()
+        def _left_button_clicked(self, event=None):
+            if self._validate_value():
+                self.withdraw()
+                self.result = self._get_value()
+                self.destroy()
+
+        def _validate_value(self):
+            return True
+
+        def _right_button_clicked(self, event=None):
+            self.result = self._get_right_button_value()
             self.destroy()
 
-        def _right_clicked(self, event=None):
-            self.destroy()
-
-        def create_components(self, parent):
-            raise NotImplementedError()
-
-        def validate(self):
-            raise NotImplementedError()
-
-        def apply(self):
-            raise NotImplementedError()
+        def _get_right_button_value(self):
+            return None
 
 
     class MessageDialog(object):
@@ -179,23 +179,19 @@ if not sys.platform.startswith('java'):
         _right_button = 'Cancel'
 
         def __init__(self, message, values):
-            self._message = message
-            self._values = values
-            _AbstractTkDialog.__init__(self, "Select one option")
+            _AbstractTkDialog.__init__(self, message, values)
 
-        def create_components(self, parent):
-            Label(parent, text=self._message).pack(fill=BOTH)
+        def _create_selector(self, parent, values):
             self._listbox = Listbox(parent)
-            self._listbox.pack(fill=BOTH)
-            for item in self._values:
+            for item in values:
                 self._listbox.insert(END, item)
             return self._listbox
 
-        def validate(self):
+        def _validate_value(self):
             return bool(self._listbox.curselection())
 
-        def apply(self):
-            self.result = self._listbox.get(self._listbox.curselection())
+        def _get_value(self):
+            return self._listbox.get(self._listbox.curselection())
 
 
     class PassFailDialog(_AbstractTkDialog):
@@ -203,19 +199,16 @@ if not sys.platform.startswith('java'):
         _right_button = 'FAIL'
 
         def __init__(self, message):
-            self._message = message
-            _AbstractTkDialog.__init__(self, DIALOG_TITLE)
+            _AbstractTkDialog.__init__(self, message)
 
-        def create_components(self, parent):
-            label = Label(parent, text=self._message)
-            label.pack(fill=BOTH)
-            return label
+        def _create_selector(self, frame):
+            return None
 
-        def validate(self):
+        def _get_value(self):
             return True
 
-        def apply(self):
-            self.result = True
+        def _get_right_button_value(self):
+            return False
 
 
 else:
