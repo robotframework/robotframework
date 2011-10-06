@@ -29,6 +29,9 @@ Warning Should Be Written To Syslog If Library Contains No Keywords
 Importing Python Class From Module
     Check Test Case  Importing Python Class From Module
 
+Namespace is initialized during library init
+    Check Test Case   ${TEST NAME}
+
 Library Import With Variables
     Run Tests  ${EMPTY}  test_libraries/library_import_with_variable.txt
     Check Test Case  Verify Library Import With Variable In Name
