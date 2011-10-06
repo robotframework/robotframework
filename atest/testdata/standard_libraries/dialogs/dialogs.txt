@@ -4,6 +4,8 @@ Library         Dialogs
 *** Test Cases ***
 Pause Execution
     Pause Execution  Press OK.
+    Pause Execution  Press OK. And verify that this text is displayed nicely.
+    Pause Execution  Press OK.\nAnd verify that\nthis text\nis displayed nicely.
 
 Execute Manual Step
     [Documentation]  FAIL Predefined Error Message

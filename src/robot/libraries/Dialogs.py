@@ -127,7 +127,7 @@ if not sys.platform.startswith('java'):
 
         def _create_body(self, message, args):
             frame = Frame(self)
-            Label(frame, text=message, anchor=W).pack(fill=BOTH)
+            Label(frame, text=message, anchor=W, justify=LEFT).pack(fill=BOTH)
             selector = self._create_selector(frame, *args)
             if selector:
                 selector.pack(fill=BOTH)
