@@ -125,6 +125,64 @@ class _SuiteHandler(_Handler):
                   int(self._teardown_failed), stats]
 
 
+class _CombiningSuiteHandler(_SuiteHandler):
+
+    def __init__(self, context, attrs):
+        self._name = 'Verysimple & Verysimple'
+        _SuiteHandler.__init__(self, context, attrs)
+        self._data_from_children.append(self._get_id(''))
+        self._data_from_children.append([])
+
+    def get_handler_for(self, name, attrs):
+        return _Handler.get_handler_for(self, name, attrs)
+
+    def add_child_data(self, data):
+        self._suites.append(data['suite'])
+
+    def _get_name_and_sources(self, attrs):
+        return self._get_ids(self._name, '', '')
+
+    def end_element(self, text):
+        self._data_from_children.append([1, None, 250])
+        return _SuiteHandler.end_element(self, text)
+
+
+class CombiningRobotHandler(_Handler):
+
+    def __init__(self, context, attrs=None):
+        _Handler.__init__(self, context, attrs)
+        self._combining_suite = _CombiningSuiteHandler(context, {})
+        self._suite_ready = False
+
+    def add_child_data(self, data):
+        if self._suite_ready:
+            _Handler.add_child_data(self, data)
+        else:
+            self._combining_suite.add_child_data(data)
+
+    def get_handler_for(self, name, attrs):
+        if name != 'robot':
+            self._suite_ready = True
+        return _Handler.get_handler_for(self, name, attrs)
+
+    def end_element(self, text):
+        return {'generator': 'rebot',
+                'suite': self._combining_suite.end_element(''),
+                'stats': [[{'label':'Critical Tests', 'fail':0, 'pass':4},
+          {'label': 'All Tests', 'fail':0, 'pass':4}],
+            [{'label':'t1', 'pass':2, 'fail':0},
+             {'label':'t2', 'pass':2, 'fail':0}],
+            [{'label':self._combining_suite._name,
+              'fail':0, 'name':self._combining_suite._name, 'id':'s1', 'pass':4},
+            {'label':'Verysimple & Verysimple.Verysimple',
+             'fail':0, 'name':"Verysimple", 'id':'s1-s1', 'pass':2},
+             {'label':'Verysimple & Verysimple.Verysimple',
+             'fail':0, 'name':"Verysimple", 'id':'s1-s2', 'pass':2}]],
+                'errors': [],
+                'baseMillis': self._context.basemillis,
+                'strings': self._context.dump_texts()}
+
+
 class _TestHandler(_Handler):
 
     def __init__(self, context, attrs):

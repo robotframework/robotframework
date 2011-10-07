@@ -171,6 +171,16 @@ class Stats(object):
     def __len__(self):
         return 4
 
+    def __eq__(self, other):
+        for i,j in zip(self, other):
+            if i != j:
+                return False
+        return True
+
+    def __ne__(self, other):
+        return not (self == other)
+
+
 
 class Location(object):
 

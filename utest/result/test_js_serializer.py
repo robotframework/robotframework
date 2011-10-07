@@ -5,8 +5,7 @@ import os
 
 import unittest
 
-from robot.result.outputparser import OutputParser
-from robot.result.parsingcontext import Context
+from robot.result.outputparser import OutputParser, CombiningOutputParser
 from robot.utils.asserts import assert_equals, assert_true
 
 
@@ -45,10 +44,16 @@ def _reverse_id(strings, id):
 class _JsSerializerTestBase(unittest.TestCase):
 
     def _get_data_model(self, xml_string, parser=None):
-        if not parser:
-            parser = self._parser
-        outxml = StringIO('<robot generator="test">%s<statistics/><errors/></robot>' % xml_string)
-        return parser._parse_fileobj(outxml)
+        return self._parse(xml_string, parser)._get_data_model()
+
+    def _parse(self, xml_string, parser=None):
+        return self._parse_string('<robot generator="test">%s<statistics/><errors/></robot>' % xml_string,
+                                  parser or self._parser)
+
+    def _parse_string(self, xml_string, parser):
+        outxml = StringIO(xml_string)
+        parser._parse_fileobj(outxml)
+        return parser
 
     def _assert_long_equals(self, given, expected):
         if given != expected:
@@ -368,6 +373,56 @@ class TestJsSerializer(_JsSerializerTestBase):
                               [[2, '*Suite Teardown', '*', '*std', '*1, 2', [1, 100, 1], [], [[100, 2, '*STD']]]],
                               0, [2, 2, 2, 2]])
         assert_equals(self._context.link_to([0, 3, 'simple']),'s1-t1-k1')
+
+    def test_combining_two_xmls(self):
+        combined = """<?xml version="1.0" encoding="UTF-8"?>
+        <robot generated="20111004 10:45:37.778" generator="Rebot 2.6.1 (Python 2.6.5 on linux2)">
+        <suite name="Verysimple &amp; Verysimple">
+           <doc></doc>
+           <metadata></metadata>"""+\
+            self.SUITE_XML+\
+            self.SUITE_XML+\
+        """<status status="PASS" elapsedtime="250" endtime="N/A" starttime="N/A"></status>
+        </suite>
+        <statistics>
+        <total>
+        <stat fail="0" pass="4">Critical Tests</stat>
+        <stat fail="0" pass="4">All Tests</stat>
+        </total>
+        <tag>
+        <stat info="" links="" doc="" combined="" pass="2" fail="0">t1</stat>
+        <stat info="" links="" doc="" combined="" pass="2" fail="0">t2</stat>
+        </tag>
+        <suite>
+        <stat fail="0" name="Verysimple &amp; Verysimple" idx="s1" pass="4">Verysimple &amp; Verysimple</stat>
+        <stat fail="0" name="Verysimple" idx="s1-s1" pass="2">Verysimple &amp; Verysimple.Verysimple</stat>
+        <stat fail="0" name="Verysimple" idx="s1-s2" pass="2">Verysimple &amp; Verysimple.Verysimple</stat>
+        </suite>
+        </statistics>
+        <errors>
+        </errors>
+        <errors>
+        </errors>
+        </robot>
+        """
+        actual = self._combine(self.SUITE_XML, self.SUITE_XML)
+        expected = self._parse_string(combined, OutputParser())._get_data_model()
+        self._verify_robot_data(expected._robot_data, actual._robot_data)
+
+    def _combine(self, xml_string1, xml_string2):
+        combining_parser = CombiningOutputParser()
+        self._parse(xml_string1, combining_parser)
+        self._parse(xml_string2, combining_parser)
+        return combining_parser._get_data_model()
+
+    def _verify_robot_data(self, expected, actual):
+        for key in actual:
+            if key in ['generatedMillis', 'generatedTimestamp']:
+                continue
+            assert_equals(actual[key], expected[key],
+                          msg='Values "%s" are different:\nexpected= %r\nactual=   %r\n' %
+                              (key, expected[key], actual[key]))
+        assert_equals(len(actual), len(expected))
 
     def test_suite_data_model_keywords_clearing(self):
         self._test_remove_keywords(self._get_data_model(self.SUITE_XML),
