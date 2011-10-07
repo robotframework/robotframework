@@ -217,11 +217,9 @@ class String:
         """
         count = self._convert_to_integer(count, 'count')
         # re.sub handles 0 and negative counts differently than string.replace
-        if count < 0:
-            count = 0
-        elif count == 0:
-            count = -1
-        return re.sub(pattern, replace_with, string, count)
+        if count == 0:
+            return string
+        return re.sub(pattern, replace_with, string, max(count, 0))
 
     def split_string(self, string, separator=None, max_split=-1):
         """Splits the `string` using `separator` as a delimiter string.
