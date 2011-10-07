@@ -20,7 +20,8 @@ for pausing the test execution and getting input from users. The
 dialogs are slightly different depending on are tests run on Python or
 Jython but they provide the same functionality.
 
-Note: Dialogs library cannot be used with timeouts on Windows with Python.
+Note: Dialogs library is not compatible with IronPython and cannot be used
+with timeouts on Windows with Python.
 """
 
 __all__ = ['execute_manual_step', 'get_value_from_user',
@@ -72,8 +73,6 @@ def get_selection_from_user(message, *values):
 
     `message` is the instruction shown in the dialog. and `values` are
     the options given to the user. Selecting 'Cancel' fails the keyword.
-
-    This keyword was added into Robot Framework 2.1.2.
     """
     return _validate_user_input(SelectionDialog(message, values).result)
 
@@ -88,8 +87,6 @@ if not sys.platform.startswith('java'):
 
     from Tkinter import (Tk, Toplevel, Frame, Listbox, Label, Button, Entry,
                          BOTH, END, LEFT, W)
-    import tkMessageBox
-    import tkSimpleDialog
     from threading import currentThread
 
 
@@ -123,12 +120,16 @@ if not sys.platform.startswith('java'):
             self.bind("<Escape>", self._right_button_clicked)
             self.minsize(250, 80)
             self.geometry("+%d+%d" % self._get_center_location())
-            self.attributes('-topmost', True)
+            self._bring_to_front()
 
         def _get_center_location(self):
             x = (self.winfo_screenwidth() - self.winfo_reqwidth()) / 2
             y = (self.winfo_screenheight() - self.winfo_reqheight()) / 2
             return x, y
+
+        def _bring_to_front(self):
+            self.attributes('-topmost', True)
+            self.attributes('-topmost', False)
 
         def _create_body(self, message, args):
             frame = Frame(self)
