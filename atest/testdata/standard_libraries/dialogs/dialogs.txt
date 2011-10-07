@@ -10,7 +10,7 @@ Pause Execution
 Execute Manual Step
     [Documentation]  FAIL Predefined error message
     Execute Manual Step  Press PASS.
-    Execute Manual Step  Press FAIL and OK.  Predefined error message
+    Execute Manual Step  Press FAIL and then OK on next dialog.  Predefined error message
 
 Get Value From User
     ${value} =  Get Value From User  Type 'value' and press OK.  Overwrite me
