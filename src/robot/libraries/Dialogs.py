@@ -123,6 +123,7 @@ if not sys.platform.startswith('java'):
             self.bind("<Escape>", self._right_button_clicked)
             self.minsize(250, 80)
             self.geometry("+%d+%d" % self._get_center_location())
+            self.attributes('-topmost', True)
 
         def _get_center_location(self):
             x = (self.winfo_screenwidth() - self.winfo_reqwidth()) / 2
