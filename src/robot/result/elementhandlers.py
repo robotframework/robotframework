@@ -129,6 +129,18 @@ class _CombiningSuiteHandler(_SuiteHandler):
 
     def __init__(self, context, attrs):
         self._name = 'Verysimple & Verysimple'
+        self._total_stats = [{'label':'Critical Tests', 'fail':0, 'pass':0},
+                            {'label': 'All Tests', 'fail':0, 'pass':0}]
+        self._tag_stats = []
+        self._tag_stats_by_label = {}
+        self.stats = [self._total_stats,
+            self._tag_stats,
+            [{'label':self._name,
+              'fail':0, 'name':self._name, 'id':'s1', 'pass':4},
+            {'label':self._name+'.Verysimple',
+             'fail':0, 'name':"Verysimple", 'id':'s1-s1', 'pass':2},
+             {'label':self._name+'.Verysimple',
+             'fail':0, 'name':"Verysimple", 'id':'s1-s2', 'pass':2}]]
         _SuiteHandler.__init__(self, context, attrs)
         self._data_from_children.append(self._get_id(''))
         self._data_from_children.append([])
@@ -138,6 +150,28 @@ class _CombiningSuiteHandler(_SuiteHandler):
 
     def add_child_data(self, data):
         self._suites.append(data['suite'])
+        self._merge_stats(data['stats'])
+
+    def _merge_stats(self, stats):
+        self._merge_total_stats(stats[0])
+        self._merge_tag_stat(stats[1])
+
+    def _merge_total_stats(self, total_stats):
+        self._total_stats[0]['fail'] += total_stats[0]['fail']
+        self._total_stats[0]['pass'] += total_stats[0]['pass']
+        self._total_stats[1]['fail'] += total_stats[1]['fail']
+        self._total_stats[1]['pass'] += total_stats[1]['pass']
+
+    def _merge_tag_stat(self, tag_stats):
+        for tag_stat in tag_stats:
+            label = tag_stat['label']
+            if label not in self._tag_stats_by_label:
+                self._tag_stats_by_label[label] = tag_stat
+                self._tag_stats += [tag_stat]
+            else:
+                self._tag_stats_by_label[label]['pass'] += tag_stat['pass']
+                self._tag_stats_by_label[label]['fail'] += tag_stat['fail']
+
 
     def _get_name_and_sources(self, attrs):
         return self._get_ids(self._name, '', '')
@@ -168,16 +202,7 @@ class CombiningRobotHandler(_Handler):
     def end_element(self, text):
         return {'generator': 'rebot',
                 'suite': self._combining_suite.end_element(''),
-                'stats': [[{'label':'Critical Tests', 'fail':0, 'pass':4},
-          {'label': 'All Tests', 'fail':0, 'pass':4}],
-            [{'label':'t1', 'pass':2, 'fail':0},
-             {'label':'t2', 'pass':2, 'fail':0}],
-            [{'label':self._combining_suite._name,
-              'fail':0, 'name':self._combining_suite._name, 'id':'s1', 'pass':4},
-            {'label':'Verysimple & Verysimple.Verysimple',
-             'fail':0, 'name':"Verysimple", 'id':'s1-s1', 'pass':2},
-             {'label':'Verysimple & Verysimple.Verysimple',
-             'fail':0, 'name':"Verysimple", 'id':'s1-s2', 'pass':2}]],
+                'stats': self._combining_suite.stats,
                 'errors': [],
                 'baseMillis': self._context.basemillis,
                 'strings': self._context.dump_texts()}
