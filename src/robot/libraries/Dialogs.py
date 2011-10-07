@@ -87,8 +87,6 @@ if not sys.platform.startswith('java'):
 
     from Tkinter import (Tk, Toplevel, Frame, Listbox, Label, Button, Entry,
                          BOTH, END, LEFT, W)
-    import tkMessageBox
-    import tkSimpleDialog
     from threading import currentThread
 
 
@@ -122,12 +120,16 @@ if not sys.platform.startswith('java'):
             self.bind("<Escape>", self._right_button_clicked)
             self.minsize(250, 80)
             self.geometry("+%d+%d" % self._get_center_location())
-            self.attributes('-topmost', True)
+            self._bring_to_front()
 
         def _get_center_location(self):
             x = (self.winfo_screenwidth() - self.winfo_reqwidth()) / 2
             y = (self.winfo_screenheight() - self.winfo_reqheight()) / 2
             return x, y
+
+        def _bring_to_front(self):
+            self.attributes('-topmost', True)
+            self.attributes('-topmost', False)
 
         def _create_body(self, message, args):
             frame = Frame(self)
