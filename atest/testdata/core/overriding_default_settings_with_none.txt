@@ -8,21 +8,26 @@ Default Tags   d1  d2
 *** Test Cases ***
 Overriding Test Setup
     [Setup]  NONE
+    [Timeout]  NONE
     ${TEST NAME}
 
 Overriding Test Setup from Command Line
     [Setup]  ${CONFIG}
+    [Timeout]  NONE
     ${TEST NAME}
 
 Overriding Test Teardown
     [Teardown]  NONE
+    [Timeout]  NONE
     ${TEST NAME}
 
 Overriding Test Teardown from Command Line
     [Teardown]  ${CONFIG}
+    [Timeout]  NONE
     ${TEST NAME}
 
 Overriding Test Template
+    [Timeout]  NONE
     [Template]  NONE
     No Operation
 
@@ -38,10 +43,12 @@ Overriding Test Timeout from Command Line
 
 Overriding Default Tags
     [Tags]  NONE
+    [Timeout]  NONE
     ${TEST NAME}
 
 Overriding Default Tags from Command Line
     [Tags]  ${CONFIG}
+    [Timeout]  NONE
     ${TEST NAME}
 
 Overriding Is Case Insensitive
@@ -49,4 +56,5 @@ Overriding Is Case Insensitive
     [Teardown]  NoNe
     [Template]  nonE
     [Tags]      NONe
+    [Timeout]   noNE
     No Operation
