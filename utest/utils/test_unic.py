@@ -54,15 +54,16 @@ class TestUnic(unittest.TestCase):
 
     def test_list_with_objects_containing_unicode_repr(self):
         objects = [UnicodeRepr(), UnicodeRepr()]
+        result = unic(objects)
         if is_jython:
-            expected = '[Hyv\\xe4, Hyv\\xe4]' # This is actually wrong behavior
+            # This is actually wrong behavior
+            assert_equals(result, '[Hyv\\xe4, Hyv\\xe4]')
         elif is_ironpython:
-            expected = '[Hyv\xe4, Hyv\xe4]'   # And so is this.
+            # And so is this.
+            assert_equals(result, '[Hyv\xe4, Hyv\xe4]')
         else:
-            err = ("UnicodeEncodeError: 'ascii' codec can't encode character "
-                   "u'\\xe4' in position 3: ordinal not in range(128)")
-            expected = _unrepresentable_msg % ('list', err)
-        assert_equals(unic(objects), expected)
+            expected = _unrepresentable_msg[:-1] % ('list', 'UnicodeEncodeError: ')
+            assert_true(result.startswith(expected))
 
     def test_failure_in_unicode(self):
         assert_equals(unic(UnicodeFails()),
