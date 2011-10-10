@@ -73,7 +73,7 @@ class JsonTestCase(unittest.TestCase):
         assert_raises(ValueError, dumper.dump, [mapped1])
 
     if json:
-        def test_agains_standard_json(self):
+        def test_against_standard_json(self):
             string = u'string\u00A9\v\\\'\"\r\t\njee'
             for i in range(1024):
                 c = unichr(i)
