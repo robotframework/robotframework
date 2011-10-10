@@ -1,4 +1,3 @@
-import os
 import unittest
 import sys
 
@@ -9,6 +8,7 @@ if utils.is_jython:
 
 from robot.utils.misc import *
 
+ipy = sys.platform == 'cli'
 
 class TestMiscUtils(unittest.TestCase):
 
@@ -50,6 +50,11 @@ class TestMiscUtils(unittest.TestCase):
 
 class TestGetdoc(unittest.TestCase):
 
+    def test_no_doc(self):
+        def func():
+            pass
+        assert_equals(getdoc(func), '')
+
     def test_one_line_doc(self):
         def func():
             """My documentation."""
@@ -64,15 +69,17 @@ class TestGetdoc(unittest.TestCase):
         assert_equals(getdoc(Class), 'My doc.\n\nIn multiple lines.')
         assert_equals(getdoc(Class), getdoc(Class()))
 
-    def test_non_ascii_doc(self):
+    def test_non_ascii_doc_in_utf8(self):
         def func():
             """Hyv\xc3\xa4 \xc3\xa4iti!"""
-        assert_equals(getdoc(func), u'Hyv\xe4 \xe4iti!')
+        expected = u'Hyv\xe4 \xe4iti!' if not ipy else u'Hyv\xc3\xa4 \xc3\xa4iti!'
+        assert_equals(getdoc(func), expected)
 
     def test_non_ascii_doc_not_in_utf8(self):
         def func():
             """Hyv\xe4 \xe4iti!"""
-        assert_equals(getdoc(func), 'Hyv\\xe4 \\xe4iti!')
+        expected = 'Hyv\\xe4 \\xe4iti!' if not ipy else u'Hyv\xe4 \xe4iti!'
+        assert_equals(getdoc(func), expected)
 
     def test_unicode_doc(self):
         class Class:
