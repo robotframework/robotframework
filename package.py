@@ -54,6 +54,7 @@ JAVA_SRC = join(ROOT_PATH, 'src', 'java', 'org', 'robotframework')
 JYTHON_JAR = glob(join(ROOT_PATH, 'ext-lib', 'jython-standalone-*.jar'))[0]
 SETUP_PATH = join(ROOT_PATH, 'setup.py')
 VERSION_PATH = join(ROBOT_PATH, 'version.py')
+POM_PATH = join(ROOT_PATH, 'pom.xml')
 VERSIONS = [re.compile('^2\.\d+(\.\d+)?$'), 'trunk', 'keep']
 RELEASES = [re.compile('^alpha\d*$'), re.compile('^beta\d*$'),
             re.compile('^rc\d*$'), 'final']
@@ -128,7 +129,16 @@ def _update_version(version_number, release_tag):
     vfile = open(VERSION_PATH, 'wb')
     vfile.write(VERSION_CONTENT % locals())
     vfile.close()
+    _update_pom_version(version_number, release_tag)
     print 'Updated version to %s %s' % (version_number, release_tag)
+
+def _update_pom_version(version_number, release_tag):
+    version = '%s-%s' % (version_number, release_tag)
+    pom_content = open(POM_PATH).read()
+    with open(POM_PATH, 'w') as pom_file:
+        pom_file.write(re.sub('(<version>).*(</version>)',
+                              '\\1%s\\2' % version, pom_content))
+
 
 def _keep_version():
     sys.path.insert(0, ROBOT_PATH)
