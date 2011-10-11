@@ -201,15 +201,15 @@ class UserKeywordPopulator(_TestCaseUserKeywordPopulator):
 class Comments(object):
 
     def __init__(self):
-        self._crows = []
+        self._comments = []
 
     def add(self, row):
         if row.comments:
-            self._crows.append(row.comments)
+            self._comments.extend(c.strip() for c in row.comments if c.strip())
 
-    def formatted_value(self):
-        rows = (' '.join(row).strip() for row in self._crows)
-        return '\n'.join(rows)
+    @property
+    def value(self):
+        return self._comments
 
 
 class _PropertyPopulator(Populator):
@@ -236,13 +236,13 @@ class VariablePopulator(_PropertyPopulator):
 
     def populate(self):
         self._setter(self._name, self._value,
-                     self._comments.formatted_value())
+                     self._comments.value)
 
 
 class SettingPopulator(_PropertyPopulator):
 
     def populate(self):
-        self._setter(self._value, self._comments.formatted_value())
+        self._setter(self._value, self._comments.value)
 
 
 class StepPopulator(_PropertyPopulator):
@@ -252,7 +252,7 @@ class StepPopulator(_PropertyPopulator):
 
     def populate(self):
         if self._value or self._comments:
-            self._setter(self._value, self._comments.formatted_value())
+            self._setter(self._value, self._comments.value)
 
 
 class NullPopulator(Populator):
