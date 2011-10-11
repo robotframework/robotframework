@@ -14,7 +14,7 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-"""Robot Framework -- A keyword-driven test automation framework
+DOC = """Robot Framework -- A keyword-driven test automation framework
 
 Version: <VERSION>
 
@@ -318,5 +318,6 @@ import robot
 
 
 if __name__ == '__main__':
-    rc = robot.run_from_cli(sys.argv[1:], __doc__)
+    # TODO: run_from_cli should not need DOC
+    rc = robot.run_from_cli(sys.argv[1:], DOC)
     sys.exit(rc)

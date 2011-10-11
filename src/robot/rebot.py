@@ -14,7 +14,7 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-"""Rebot -- Robot Framework Report and Log Generator
+DOC = """Rebot -- Robot Framework Report and Log Generator
 
 Version: <VERSION>
 
@@ -250,5 +250,6 @@ import robot
 
 
 if __name__ == '__main__':
-    rc = robot.rebot_from_cli(sys.argv[1:], __doc__)
+    # TODO: rebot_from_cli should not need DOC
+    rc = robot.rebot_from_cli(sys.argv[1:], DOC)
     sys.exit(rc)
