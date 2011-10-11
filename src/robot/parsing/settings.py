@@ -18,11 +18,16 @@ class _Setting(object):
     def __init__(self, setting_name, parent=None, comment=None):
         self.setting_name = setting_name
         self.parent = parent
-        self.comment = comment
         self.reset()
+        self.comment = comment
 
     def reset(self):
-        self.value = []
+        self.value = self._empty_value
+        self.comment = []
+
+    @property
+    def _empty_value(self):
+        return []
 
     @property
     def source(self):
@@ -72,8 +77,9 @@ class _Setting(object):
 
 class Documentation(_Setting):
 
-    def reset(self):
-        self.value = ''
+    @property
+    def _empty_value(self):
+        return ''
 
     def _populate(self, value):
         self.value = self._concat_string_with_value(self.value, value)
@@ -84,8 +90,9 @@ class Documentation(_Setting):
 
 class Template(_Setting):
 
-    def reset(self):
-        self.value = None
+    @property
+    def _empty_value(self):
+        return None
 
     def _populate(self, value):
         self.value = self._concat_string_with_value(self.value, value)
@@ -105,6 +112,7 @@ class Fixture(_Setting):
     def reset(self):
         self.name = None
         self.args = []
+        self.comment = []
 
     def _populate(self, value):
         if not self.name:
@@ -128,7 +136,8 @@ class Timeout(_Setting):
 
     def reset(self):
         self.value = None
-        self.message = ''
+        self.   message = ''
+        self.comment = []
 
     def _populate(self, value):
         if not self.value:
@@ -150,8 +159,9 @@ class Timeout(_Setting):
 
 class Tags(_Setting):
 
-    def reset(self):
-        self.value = None
+    @property
+    def _empty_value(self):
+        return None
 
     def _populate(self, value):
         self.value = (self.value or []) + value
