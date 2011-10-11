@@ -1,8 +1,6 @@
 include src/bin/*ybot src/bin/*rebot src/bin/*.bat
 include src/robot/webcontent/*.html src/robot/webcontent/*.js src/robot/webcontent/*.css src/robot/webcontent/lib/*.js
-include robot.bmp
-include install.py package.py
-include MANIFEST.in
+include MANIFEST.in install.py package.py robot_postinstall.py robot.bmp
 include LICENSE.txt COPYRIGHT.txt INSTALL.txt PACKAGING.txt
 
 recursive-include tools *.py *.au3 *.rb *.html *.txt *.png

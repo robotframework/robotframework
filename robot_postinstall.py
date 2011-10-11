@@ -8,33 +8,48 @@ http://docs.python.org/distutils/builtdist.html#postinstallation-script
 """
 
 from __future__ import with_statement
-from os.path import join, isdir
+from os.path import join
 import os
 import sys
 
 
 SCRIPT_DIR = join(sys.prefix, 'Scripts')
 ROBOT_DIR = join(sys.prefix, 'Lib', 'site-packages', 'robot')
-JYTHON = 'jython.bat'
-IPY = 'ipy.exe'
-
+INSTRUCTIONS = '''
+Add Python and Script directories to PATH to be able to use 'pybot'
+and 'rebot' start-up scripts from the command line. Also add Jython
+and IronPython installation directories to PATH to be able to use
+'jybot' and 'ipybot' scripts, respectively.
+'''
 
 def windows_install():
     """Generates jybot.bat and ipybot.bat scripts."""
     try:
-        print 'Creating extra start-up scripts...'
-        print 'Installation directory:', ROBOT_DIR
-        _create_script(join(SCRIPT_DIR, 'jybot.bat'), JythonFinder().path)
-        print '\nInstallation was successful. Happy Roboting!'
+        _create_script('jybot.bat', 'jython')
+        _create_script('ipybot.bat', 'ipy')
     except Exception, err:
-        print '\nRunning post-install script failed: %s' % err
+        print 'Running post-install script failed: %s' % err
         print 'Robot Framework start-up scripts may not work correctly.'
+    else:
+        print '''Robot Framework installation was successful!
+
+Add Python and Scripts directories to PATH to be able to use 'pybot'
+and 'rebot' start-up scripts from the command line. Also add Jython
+and IronPython installation directories to PATH to be able to use
+'jybot' and 'ipybot' scripts, respectively.
+
+Python directory: %s
+Scripts directory: %s
+''' % (sys.prefix, SCRIPT_DIR)
 
 
-def _create_script(path, interpreter):
+
+def _create_script(name, interpreter):
+    path = join(SCRIPT_DIR, name)
     runner = join(ROBOT_DIR, 'runner.py')
-    with open(path, 'w') as out:
-        out.write('@echo off\n"%s" "%s" %%*\n' % (interpreter, runner))
+    with open(path, 'w') as script:
+        script.write('@echo off\n%s "%s" %%*\n' % (interpreter, runner))
+    file_created(path)
 
 
 def windows_uninstall():
@@ -53,63 +68,6 @@ def windows_uninstall():
                     pass
 
 
-class JythonFinder:
-    """Tries to find path to Jython executable from system.
-
-    First Jython is searched from PATH, then checked is JYTHON_HOME set, and
-    finally Jython installation directory is searched from the system.
-    """
-
-    _excl_dirs = ['WINNT', 'RECYCLER']
-
-    def __init__(self):
-        self.path = self._find_jython()
-
-    def _find_jython(self):
-        if self._in_path(JYTHON):
-            return JYTHON
-        if self._is_jython_dir(os.environ.get('JYTHON_HOME')):
-            return join(os.environ['JYTHON_HOME'], JYTHON)
-        return self._search_jython_from_system() or JYTHON
-
-    def _in_path(self, executable):
-        with os.popen('%s --version 2>&1' % executable) as process:
-            return process.read().startswith('Jython 2.5')
-
-    def _is_jython_dir(self, path):
-        if not path or not isdir(path):
-            return False
-        try:
-            items = os.listdir(path)
-        except OSError:
-            return False
-        return JYTHON in items and 'jython.jar' in items
-
-    def _search_jython_from_systen(self):
-        return self._search_jython_from_dirs(['C:\\', 'D:\\'])
-
-    def _search_jython_from_dirs(self, paths, recursions=1):
-        for path in paths:
-            jython = self._search_jython_from_dir(path, recursions)
-            if jython:
-                return jython
-        return None
-
-    def _search_jython_from_dir(self, path, recursions):
-        try:
-            dirs = [join(path, name) for name in os.listdir(path)
-                    if name not in self._excl_dirs and isdir(join(path, name))]
-        except OSError:
-            return None
-        matches = [d for d in dirs if self._is_jython_dir(d)]
-        if matches:
-            # if multiple matches, the last one probably the latest version
-            return os.path.join(path, matches[-1], JYTHON)
-        if recursions:
-            self._search_jyhon_from_dirs(dirs, recursions-1)
-        return None
-
-
 if __name__ == '__main__':
     {'-install': windows_install,
-     '-remove': windows_uninstall}[sys.argv[1]]
+     '-remove': windows_uninstall}[sys.argv[1]]()

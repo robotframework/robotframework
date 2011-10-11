@@ -38,6 +38,8 @@ else:
 SCRIPTS = [join('src', 'bin', s) for s in SCRIPTS]
 if os.sep == '\\':
     SCRIPTS = [s+'.bat' for s in SCRIPTS]
+if 'bdist_wininst' in sys.argv:
+    SCRIPTS.append('robot_postinstall.py')
 
 setup(
     name         = 'robotframework',
