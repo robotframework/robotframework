@@ -15,23 +15,7 @@ import sys
 
 SCRIPT_DIR = join(sys.prefix, 'Scripts')
 ROBOT_DIR = join(sys.prefix, 'Lib', 'site-packages', 'robot')
-INSTRUCTIONS = '''
-Add Python and Script directories to PATH to be able to use 'pybot'
-and 'rebot' start-up scripts from the command line. Also add Jython
-and IronPython installation directories to PATH to be able to use
-'jybot' and 'ipybot' scripts, respectively.
-'''
-
-def windows_install():
-    """Generates jybot.bat and ipybot.bat scripts."""
-    try:
-        _create_script('jybot.bat', 'jython')
-        _create_script('ipybot.bat', 'ipy')
-    except Exception, err:
-        print 'Running post-install script failed: %s' % err
-        print 'Robot Framework start-up scripts may not work correctly.'
-    else:
-        print '''Robot Framework installation was successful!
+SUCCESS = '''Robot Framework installation was successful!
 
 Add Python and Scripts directories to PATH to be able to use 'pybot'
 and 'rebot' start-up scripts from the command line. Also add Jython
@@ -42,6 +26,17 @@ Python directory: %s
 Scripts directory: %s
 ''' % (sys.prefix, SCRIPT_DIR)
 
+
+def windows_install():
+    """Generates jybot.bat and ipybot.bat scripts."""
+    try:
+        _create_script('jybot.bat', 'jython')
+        _create_script('ipybot.bat', 'ipy')
+    except Exception, err:
+        print 'Running post-install script failed: %s' % err
+        print 'Robot Framework start-up scripts may not work correctly.'
+    else:
+        print SUCCESS
 
 
 def _create_script(name, interpreter):
