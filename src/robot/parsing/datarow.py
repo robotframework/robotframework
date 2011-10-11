@@ -47,11 +47,11 @@ class DataRow(object):
 
     @property
     def head(self):
-        return self.cells[0] if self.cells else None
+        return self.cells[0] if self.cells else ''
 
     @property
     def _tail(self):
-        return self.cells[1:] if self.cells else None
+        return self.cells[1:]
 
     @property
     def all(self):
@@ -69,9 +69,6 @@ class DataRow(object):
         datarow.cells = self._tail
         datarow.comments = self.comments
         return datarow
-
-    def startswith(self, value):
-        return self.head() == value
 
     def handle_old_style_metadata(self):
         if self._is_metadata_with_olde_prefix(self.head):
