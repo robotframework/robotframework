@@ -88,7 +88,8 @@ class _SuiteHandler(_Handler):
 
     def __init__(self, context, attrs):
         _Handler.__init__(self, context)
-        self._name_and_sources = self._get_name_and_sources(attrs)
+        self._source = attrs.get('source', '')
+        self._name = attrs.get('name')
         self._suites = []
         self._tests = []
         self._keywords = []
@@ -96,10 +97,9 @@ class _SuiteHandler(_Handler):
         self._teardown_failed = False
         self._context.start_suite()
 
-    def _get_name_and_sources(self, attrs):
-        source = attrs.get('source', '')
-        return self._get_ids(attrs.get('name'), source,
-                             self._context.get_rel_log_path(source))
+    def _get_name_and_sources(self):
+        return self._get_ids(self._name, self._source,
+                             self._context.get_rel_log_path(self._source))
 
     def _set_teardown_failed(self):
         self._teardown_failed = True
@@ -120,7 +120,7 @@ class _SuiteHandler(_Handler):
 
     def end_element(self, text):
         stats = self._context.end_suite()
-        return self._name_and_sources + self._data_from_children + \
+        return self._get_name_and_sources() + self._data_from_children + \
                  [self._suites, self._tests, self._keywords,
                   int(self._teardown_failed), stats]
 
@@ -128,20 +128,17 @@ class _SuiteHandler(_Handler):
 class _CombiningSuiteHandler(_SuiteHandler):
 
     def __init__(self, context, attrs):
-        self._name = 'Verysimple & Verysimple'
         self._total_stats = [{'label':'Critical Tests', 'fail':0, 'pass':0},
                             {'label': 'All Tests', 'fail':0, 'pass':0}]
         self._tag_stats = []
         self._tag_stats_by_label = {}
-        self.stats = [self._total_stats,
-            self._tag_stats,
-            [{'label':self._name,
-              'fail':0, 'name':self._name, 'id':'s1', 'pass':4},
-            {'label':self._name+'.Verysimple',
-             'fail':0, 'name':"Verysimple", 'id':'s1-s1', 'pass':2},
-             {'label':self._name+'.Verysimple',
-             'fail':0, 'name':"Verysimple", 'id':'s1-s2', 'pass':2}]]
+        self._suite_stats = []
+        self._partial_suite_stats = []
+        self._status = [1, None, 0]
+        self.stats = [self._total_stats, self._tag_stats, self._suite_stats]
         _SuiteHandler.__init__(self, context, attrs)
+        self._name = ''
+        self._source = ''
         self._data_from_children.append(self._get_id(''))
         self._data_from_children.append([])
 
@@ -149,12 +146,25 @@ class _CombiningSuiteHandler(_SuiteHandler):
         return _Handler.get_handler_for(self, name, attrs)
 
     def add_child_data(self, data):
+        self._update_name(data['stats'][2][0]['label'])
         self._suites.append(data['suite'])
         self._merge_stats(data['stats'])
+        self._merge_status(data['suite'])
+
+    def _update_name(self, new_name):
+        if self._name == '':
+            self._name = new_name
+        else:
+            self._name = self._name+' & '+ new_name
+
+    def _merge_status(self, suite):
+        status = suite[5]
+        self._status = [self._status[0] * status[0], None, self._status[2]+status[2]]
 
     def _merge_stats(self, stats):
         self._merge_total_stats(stats[0])
         self._merge_tag_stat(stats[1])
+        self._partial_suite_stats += [stats[2]]
 
     def _merge_total_stats(self, total_stats):
         self._total_stats[0]['fail'] += total_stats[0]['fail']
@@ -172,13 +182,19 @@ class _CombiningSuiteHandler(_SuiteHandler):
                 self._tag_stats_by_label[label]['pass'] += tag_stat['pass']
                 self._tag_stats_by_label[label]['fail'] += tag_stat['fail']
 
-
-    def _get_name_and_sources(self, attrs):
-        return self._get_ids(self._name, '', '')
-
     def end_element(self, text):
-        self._data_from_children.append([1, None, 250])
+        self._data_from_children.append(self._status)
+        self._build_suite_stats()
         return _SuiteHandler.end_element(self, text)
+
+    def _build_suite_stats(self):
+        self._suite_stats += [{'label':self._name, 'fail':self._total_stats[1]['fail'], 'name':self._name, 'id':'s1', 'pass':self._total_stats[1]['pass']}]
+        for index, stat in enumerate(self._partial_suite_stats):
+            stat = stat[0]
+            stat['label'] = self._name + '.' + stat['label']
+            if 'id' in stat:
+                stat['id'] = 's1-s%d' % (index+1) + stat['id'][2:]
+            self._suite_stats += [stat]
 
 
 class CombiningRobotHandler(_Handler):
@@ -186,18 +202,9 @@ class CombiningRobotHandler(_Handler):
     def __init__(self, context, attrs=None):
         _Handler.__init__(self, context, attrs)
         self._combining_suite = _CombiningSuiteHandler(context, {})
-        self._suite_ready = False
 
     def add_child_data(self, data):
-        if self._suite_ready:
-            _Handler.add_child_data(self, data)
-        else:
-            self._combining_suite.add_child_data(data)
-
-    def get_handler_for(self, name, attrs):
-        if name != 'robot':
-            self._suite_ready = True
-        return _Handler.get_handler_for(self, name, attrs)
+        self._combining_suite.add_child_data(data)
 
     def end_element(self, text):
         return {'generator': 'rebot',

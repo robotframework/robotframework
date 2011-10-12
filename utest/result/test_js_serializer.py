@@ -427,7 +427,7 @@ class TestJsSerializer(_JsSerializerTestBase):
         expected = self._parse_string(combined, OutputParser())._get_data_model()
         self._verify_robot_data(expected._robot_data, actual._robot_data)
 
-    def _test_combining_two_different_xmls(self):
+    def test_combining_two_different_xmls(self):
         test_xml = """<suite source="test.txt" name="Test">
         <doc></doc>
         <metadata>
