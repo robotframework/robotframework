@@ -13,6 +13,7 @@
 #  limitations under the License.
 
 import os
+import copy
 
 from robot.errors import DataError
 from robot.variables import is_var
@@ -430,6 +431,12 @@ class _WithSteps(object):
         self.steps.append(Step(content, comment))
         return self.steps[-1]
 
+    def copy(self, name):
+        new = copy.deepcopy(self)
+        new.name = name
+        self._add_to_parent(new)
+        return new
+
 
 class TestCase(_WithSteps, _WithSettings):
 
@@ -471,6 +478,9 @@ class TestCase(_WithSteps, _WithSettings):
         message = "Invalid syntax in %s '%s': %s" % (type_, self.name, message)
         self.parent.report_invalid_syntax(message, level)
 
+    def _add_to_parent(self, test):
+        self.parent.tests.append(test)
+
     def __iter__(self):
         for element in [self.doc, self.tags, self.setup,
                         self.template, self.timeout] \
@@ -496,6 +506,9 @@ class UserKeyword(TestCase):
                 'return': lambda s: s.return_.populate,
                 'timeout': lambda s: s.timeout.populate,
                 'teardown': lambda s: s.teardown.populate}
+
+    def _add_to_parent(self, test):
+        self.parent.keywords.append(test)
 
     def __iter__(self):
         for element in [self.args, self.doc, self.timeout] \

@@ -360,5 +360,36 @@ class TestSettings(unittest.TestCase):
         assert_equals(template.as_list(),['Template', 'value'])
 
 
+class TestCopy(unittest.TestCase):
+
+    def test_test_case_copy(self):
+        test = self._create_test()
+        copied = test.copy('Copied')
+        assert_equals(copied.name, 'Copied')
+        assert_equals(copied.tags.value, test.tags.value)
+        assert_not_equals(copied.steps[0], test.steps[0])
+        test.add_step(['A new KW'])
+        assert_not_equal(len(test.steps), len(copied.steps))
+
+    def test_keyword_copy(self):
+        kw = self._create_keyword()
+        copied = kw.copy('New KW')
+        assert_equals(copied.name, 'New KW')
+        assert_equals(copied.args.value, kw.args.value)
+
+    def _create_test(self):
+        test = TestCase(TestCaseTable(None), 'Test name')
+        test.tags = Tags('Force Tags')
+        test.tags.value = ['1', '2', '3']
+        test.add_step(['Log', 'Foo'])
+        return test
+
+    def _create_keyword(self):
+        kw = UserKeyword(KeywordTable(None), 'KW')
+        kw.args.value = ['${a1}', '${a2}']
+        kw.add_step(['Some step', '${a1}'])
+        return kw
+
+
 if __name__ == "__main__":
     unittest.main()
