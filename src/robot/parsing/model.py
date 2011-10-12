@@ -481,6 +481,11 @@ class TestCase(_WithSteps, _WithSettings):
     def _add_to_parent(self, test):
         self.parent.tests.append(test)
 
+    @property
+    def settings(self):
+        return [self.doc, self.tags, self.setup, self.template, self.timeout,
+                self.teardown]
+
     def __iter__(self):
         for element in [self.doc, self.tags, self.setup,
                         self.template, self.timeout] \
@@ -509,6 +514,10 @@ class UserKeyword(TestCase):
 
     def _add_to_parent(self, test):
         self.parent.keywords.append(test)
+
+    @property
+    def settings(self):
+        return [self.args, self.doc, self.timeout, self.teardown, self.return_]
 
     def __iter__(self):
         for element in [self.args, self.doc, self.timeout] \
