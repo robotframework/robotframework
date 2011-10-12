@@ -18,16 +18,14 @@ class Setting(object):
     def __init__(self, setting_name, parent=None, comment=None):
         self.setting_name = setting_name
         self.parent = parent
-        self.reset()
-        self.comment = comment
+        self._set_initial_value()
+        self.comment = comment or []
+
+    def _set_initial_value(self):
+        self.value = []
 
     def reset(self):
-        self.value = self._empty_value
-        self.comment = []
-
-    @property
-    def _empty_value(self):
-        return []
+        self.__init__(self, self.setting_name, self.parent)
 
     @property
     def source(self):
@@ -77,9 +75,8 @@ class Setting(object):
 
 class Documentation(Setting):
 
-    @property
-    def _empty_value(self):
-        return ''
+    def _set_initial_value(self):
+        self.value = ''
 
     def _populate(self, value):
         self.value = self._concat_string_with_value(self.value, value)
@@ -90,9 +87,8 @@ class Documentation(Setting):
 
 class Template(Setting):
 
-    @property
-    def _empty_value(self):
-        return None
+    def _set_initial_value(self):
+        self.value = None
 
     def _populate(self, value):
         self.value = self._concat_string_with_value(self.value, value)
@@ -109,10 +105,9 @@ class Template(Setting):
 
 class Fixture(Setting):
 
-    def reset(self):
+    def _set_initial_value(self):
         self.name = None
         self.args = []
-        self.comment = []
 
     def _populate(self, value):
         if not self.name:
@@ -134,10 +129,9 @@ class Fixture(Setting):
 
 class Timeout(Setting):
 
-    def reset(self):
+    def _set_initial_value(self):
         self.value = None
-        self.   message = ''
-        self.comment = []
+        self.message = ''
 
     def _populate(self, value):
         if not self.value:
@@ -159,9 +153,8 @@ class Timeout(Setting):
 
 class Tags(Setting):
 
-    @property
-    def _empty_value(self):
-        return None
+    def _set_initial_value(self):
+        self.value = None
 
     def _populate(self, value):
         self.value = (self.value or []) + value
@@ -194,6 +187,9 @@ class Metadata(Setting):
         self.value = self._string_value(value)
         self.comment = comment
 
+    def reset(self):
+        pass
+
     def is_set(self):
         return True
 
@@ -209,6 +205,9 @@ class _Import(Setting):
         self.args = args or []
         self.alias = alias
         self.comment = comment
+
+    def reset(self):
+        pass
 
     @property
     def type(self):
