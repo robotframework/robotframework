@@ -20,8 +20,9 @@ for pausing the test execution and getting input from users. The
 dialogs are slightly different depending on are tests run on Python or
 Jython but they provide the same functionality.
 
-Note: Dialogs library is not compatible with IronPython and cannot be used
-with timeouts on Windows with Python.
+The library has following two limitations:
+- It is not compatible with IronPython.
+- It cannot be used with timeouts on other operating systems than Linux.
 """
 
 __all__ = ['execute_manual_step', 'get_value_from_user',
@@ -30,18 +31,18 @@ __all__ = ['execute_manual_step', 'get_value_from_user',
 import sys
 
 try:
-    from robot.version import get_version as _get_version
+    from robot.version import get_version
 except ImportError:
     __version__ = 'unknown'
 else:
-    __version__ = _get_version()
+    __version__ = get_version()
 
 
 DIALOG_TITLE = 'Robot Framework'
 
 
 def pause_execution(message='Test execution paused. Press OK to continue.'):
-    """Pauses the test execution and shows dialog with the text `message`. """
+    """Pauses the test execution and shows dialog with the text `message`."""
     MessageDialog(message)
 
 
