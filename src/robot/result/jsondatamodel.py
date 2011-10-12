@@ -21,6 +21,11 @@ from robot.result.parsingcontext import TextIndex
 
 class DataModelWriter(object):
 
+    _OUTPUT = 'window.output'
+    _SETTINGS = 'window.settings'
+    _SUITE_KEY = 'suite'
+    _STRINGS_KEY = 'strings'
+
     def __init__(self, robot_data, split_results=None):
         self._robot_data = robot_data
         self._split_results = split_results
@@ -42,33 +47,36 @@ class DataModelWriter(object):
 
     def write_to(self, output, separator='', split_threshold=9500):
         writer = SeparatingWriter(output, separator)
-        writer.write('window.output = {};\n')
+        writer.write(self._OUTPUT+' = {};\n')
         writer.separator()
         for key, value in self._robot_data.items():
             self._write_output_element(key, split_threshold, value, writer)
             writer.separator()
-        writer.dump_json('window.settings = ', self._settings)
+        writer.dump_json(self._SETTINGS+' = ', self._settings)
 
     def _write_output_element(self, key, split_threshold, value, writer):
-        if key == 'suite':
+        if key == self._SUITE_KEY:
             splitWriter = SplittingSuiteWriter(writer, split_threshold)
-            data, mapping = splitWriter.write(self._robot_data['suite'])
-            writer.dump_json('window.output["suite"] = ', data, mapping=mapping)
-        elif key == 'strings':
+            data, mapping = splitWriter.write(self._robot_data[self._SUITE_KEY])
+            writer.dump_json(self._str_out(self._SUITE_KEY)+' = ', data, mapping=mapping)
+        elif key == self._STRINGS_KEY:
             self._dump_and_split_strings(split_threshold, writer)
         else:
-            writer.dump_json('window.output["%s"] = ' % key, value)
+            writer.dump_json(self._str_out(key)+' = ', value)
+
+    def _str_out(self, key):
+        return self._OUTPUT+'["%s"]' % key
 
     def _dump_and_split_strings(self, split_threshold, writer):
-        strings = self._robot_data['strings']
-        writer.write('window.output["strings"] = [];\n')
+        strings = self._robot_data[self._STRINGS_KEY]
+        writer.write(self._OUTPUT+'["'+self._STRINGS_KEY+'"] = [];\n')
         while strings:
             writer.separator()
-            writer.dump_json('window.output["strings"] = window.output["strings"].concat(', strings[:split_threshold], ');\n')
+            writer.dump_json(self._str_out(self._STRINGS_KEY)+' = '+self._str_out(self._STRINGS_KEY)+'.concat(', strings[:split_threshold], ');\n')
             strings = strings[split_threshold:]
 
     def remove_keywords(self):
-        self._remove_keywords_from_suite(self._robot_data['suite'])
+        self._remove_keywords_from_suite(self._robot_data[self._SUITE_KEY])
         self._prune_unused_indices()
 
     # TODO: this and remove_keywords should be removed
@@ -84,11 +92,11 @@ class DataModelWriter(object):
             test[-1] = []
 
     def _prune_unused_indices(self):
-        used = self._collect_used_indices(self._robot_data['suite'], set())
+        used = self._collect_used_indices(self._robot_data[self._SUITE_KEY], set())
         remap = {}
-        self._robot_data['strings'] = \
-            list(self._prune(self._robot_data['strings'], used, remap))
-        self._remap_indices(self._robot_data['suite'], remap)
+        self._robot_data[self._STRINGS_KEY] = \
+            list(self._prune(self._robot_data[self._STRINGS_KEY], used, remap))
+        self._remap_indices(self._robot_data[self._SUITE_KEY], remap)
 
     def _prune(self, data, used, index_remap, map_index=None, offset_increment=1):
         offset = 0
