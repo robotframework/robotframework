@@ -1,7 +1,7 @@
 from StringIO import StringIO
 import unittest
 from robot.utils.asserts import assert_equals, assert_true
-from robot.result.jsondatamodel import DataModel
+from robot.result.jsondatamodel import DataModelWriter
 
 class TestDataModelWrite(unittest.TestCase):
 
@@ -13,7 +13,7 @@ class TestDataModelWrite(unittest.TestCase):
 
     def _get_lines(self, data=None, separator=None, split_threshold=None):
         output = StringIO()
-        DataModel(data or {'baseMillis':100}).write_to(output, separator=separator, split_threshold=split_threshold)
+        DataModelWriter(data or {'baseMillis':100}).write_to(output, separator=separator, split_threshold=split_threshold)
         return output.getvalue().splitlines()
 
     def test_writing_datamodel_with_separator(self):

@@ -17,7 +17,7 @@ from robot.utils.etreewrapper import ET
 
 from robot.result.elementhandlers import RootHandler, CombiningRobotHandler
 from robot.result.parsingcontext import Context
-from robot.result.jsondatamodel import DataModel
+from robot.result.jsondatamodel import DataModelWriter
 
 
 class OutputParser(object):
@@ -41,7 +41,7 @@ class OutputParser(object):
                 elem.clear()
 
     def _get_data_model(self):
-        return DataModel(self._root_handler.data, self._context.split_results)
+        return DataModelWriter(self._root_handler.data, self._context.split_results)
 
     def startElement(self, name, attrs):
         handler = self._handler_stack[-1].get_handler_for(name, attrs)
@@ -60,4 +60,4 @@ class CombiningOutputParser(OutputParser):
 
     def _get_data_model(self):
         self.endElement('')
-        return DataModel(self._root_handler.data, self._context.split_results)
+        return DataModelWriter(self._root_handler.data, self._context.split_results)

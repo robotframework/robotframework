@@ -19,8 +19,7 @@ from robot.result.jsondump import JsonDumper
 from robot.result.parsingcontext import TextIndex
 
 
-# TODO: Rename to match the responsibility - this isn't really a model but a class writing model to outputs
-class DataModel(object):
+class DataModelWriter(object):
 
     def __init__(self, robot_data, split_results=None):
         self._robot_data = robot_data
