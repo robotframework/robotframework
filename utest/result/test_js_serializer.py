@@ -5,8 +5,7 @@ import os
 
 import unittest
 
-from robot.result.outputparser import OutputParser
-from robot.result.parsingcontext import Context
+from robot.result.outputparser import OutputParser, CombiningOutputParser
 from robot.utils.asserts import assert_equals, assert_true
 
 
@@ -45,10 +44,16 @@ def _reverse_id(strings, id):
 class _JsSerializerTestBase(unittest.TestCase):
 
     def _get_data_model(self, xml_string, parser=None):
-        if not parser:
-            parser = self._parser
-        outxml = StringIO('<robot generator="test">%s<statistics/><errors/></robot>' % xml_string)
-        return parser._parse_fileobj(outxml)
+        return self._parse(xml_string, parser)._get_data_model()
+
+    def _parse(self, xml_string, parser=None):
+        return self._parse_string('<robot generator="test">%s<statistics/><errors/></robot>' % xml_string,
+                                  parser or self._parser)
+
+    def _parse_string(self, xml_string, parser):
+        outxml = StringIO(xml_string)
+        parser._parse_fileobj(outxml)
+        return parser
 
     def _assert_long_equals(self, given, expected):
         if given != expected:
@@ -109,6 +114,24 @@ class TestJsSerializer(_JsSerializerTestBase):
   </kw>
   <status status="PASS" endtime="20110601 12:01:51.454" starttime="20110601 12:01:51.329"></status>
 </suite>"""
+
+    SUITE_XML_STATS = """
+    <statistics>
+    <total>
+    <stat fail="0" pass="2">Critical Tests</stat>
+    <stat fail="0" pass="2">All Tests</stat>
+    </total>
+    <tag>
+    <stat info="" links="" doc="" combined="" pass="1" fail="0">t1</stat>
+    <stat info="" links="" doc="" combined="" pass="1" fail="0">t2</stat>
+    </tag>
+    <suite>
+    <stat fail="0" name="Verysimple" idx="s1" pass="2">Verysimple</stat>
+    </suite>
+    </statistics>
+    <errors>
+    </errors>
+    """
 
     FOR_LOOP_XML = """
         <kw type="for" name="${i} IN RANGE [ 2 ]" timeout="">
@@ -368,6 +391,123 @@ class TestJsSerializer(_JsSerializerTestBase):
                               [[2, '*Suite Teardown', '*', '*std', '*1, 2', [1, 100, 1], [], [[100, 2, '*STD']]]],
                               0, [2, 2, 2, 2]])
         assert_equals(self._context.link_to([0, 3, 'simple']),'s1-t1-k1')
+
+    def test_combining_two_xmls(self):
+        combined = """<?xml version="1.0" encoding="UTF-8"?>
+        <robot generated="20111004 10:45:37.778" generator="Rebot 2.6.1 (Python 2.6.5 on linux2)">
+        <suite name="Verysimple &amp; Verysimple">
+           <doc></doc>
+           <metadata></metadata>"""+\
+            self.SUITE_XML+\
+            self.SUITE_XML+\
+        """<status status="PASS" elapsedtime="250" endtime="N/A" starttime="N/A"></status>
+        </suite>
+        <statistics>
+        <total>
+        <stat fail="0" pass="4">Critical Tests</stat>
+        <stat fail="0" pass="4">All Tests</stat>
+        </total>
+        <tag>
+        <stat info="" links="" doc="" combined="" pass="2" fail="0">t1</stat>
+        <stat info="" links="" doc="" combined="" pass="2" fail="0">t2</stat>
+        </tag>
+        <suite>
+        <stat fail="0" name="Verysimple &amp; Verysimple" idx="s1" pass="4">Verysimple &amp; Verysimple</stat>
+        <stat fail="0" name="Verysimple" idx="s1-s1" pass="2">Verysimple &amp; Verysimple.Verysimple</stat>
+        <stat fail="0" name="Verysimple" idx="s1-s2" pass="2">Verysimple &amp; Verysimple.Verysimple</stat>
+        </suite>
+        </statistics>
+        <errors>
+        </errors>
+        <errors>
+        </errors>
+        </robot>
+        """
+        actual = self._combine(self.SUITE_XML+self.SUITE_XML_STATS, self.SUITE_XML+self.SUITE_XML_STATS)
+        expected = self._parse_string(combined, OutputParser())._get_data_model()
+        self._verify_robot_data(expected._robot_data, actual._robot_data)
+
+    def test_combining_two_different_xmls(self):
+        test_xml = """<suite source="test.txt" name="Test">
+        <doc></doc>
+        <metadata>
+        </metadata>
+        <test name="testii" timeout="">
+        <doc></doc>
+        <kw type="kw" name="BuiltIn.Log" timeout="">
+        <doc>Logs the given message with the given level.</doc>
+        <arguments>
+        <arg>moi</arg>
+        </arguments>
+        <msg timestamp="20111007 09:29:25.934" level="INFO">moi</msg>
+        <status status="PASS" endtime="20111007 09:29:25.934" starttime="20111007 09:29:25.933"></status>
+        </kw>
+        <tags>
+        </tags>
+        <status status="PASS" endtime="20111007 09:29:25.934" critical="yes" starttime="20111007 09:29:25.933"></status>
+        </test>
+        <status status="PASS" endtime="20111007 09:29:25.934" starttime="20111007 09:29:25.909"></status>
+        </suite>
+        """
+        test_xml_stats = """<statistics>
+        <total>
+        <stat fail="0" pass="1">Critical Tests</stat>
+        <stat fail="0" pass="1">All Tests</stat>
+        </total>
+        <tag>
+        </tag>
+        <suite>
+        <stat fail="0" name="Test" idx="s1" pass="1">Test</stat>
+        </suite>
+        </statistics>
+        <errors>
+        </errors>"""
+        combined = """<?xml version="1.0" encoding="UTF-8"?>
+        <robot generated="20111007 09:30:35.073" generator="Rebot 2.6.1 (Python 2.6.5 on linux2)">
+        <suite name="Test &amp; Verysimple">
+        <doc></doc>
+        <metadata>
+        </metadata>"""+\
+        test_xml+self.SUITE_XML+\
+        """<status status="PASS" elapsedtime="150" endtime="N/A" starttime="N/A"></status>
+        </suite>
+        <statistics>
+        <total>
+        <stat fail="0" pass="3">Critical Tests</stat>
+        <stat fail="0" pass="3">All Tests</stat>
+        </total>
+        <tag>
+        <stat info="" links="" doc="" combined="" pass="1" fail="0">t1</stat>
+        <stat info="" links="" doc="" combined="" pass="1" fail="0">t2</stat>
+        </tag>
+        <suite>
+        <stat fail="0" name="Test &amp; Verysimple" idx="s1" pass="3">Test &amp; Verysimple</stat>
+        <stat fail="0" name="Test" idx="s1-s1" pass="1">Test &amp; Verysimple.Test</stat>
+        <stat fail="0" name="Verysimple" idx="s1-s2" pass="2">Test &amp; Verysimple.Verysimple</stat>
+        </suite>
+        </statistics>
+        <errors>
+        </errors>
+        </robot>
+        """
+        actual = self._combine(test_xml+test_xml_stats, self.SUITE_XML+self.SUITE_XML_STATS)
+        expected = self._parse_string(combined, OutputParser())._get_data_model()
+        self._verify_robot_data(expected._robot_data, actual._robot_data)
+
+    def _combine(self, xml_string1, xml_string2):
+        combining_parser = CombiningOutputParser()
+        self._parse_string('<robot generator="test">%s</robot>' % xml_string1, combining_parser)
+        self._parse_string('<robot generator="test">%s</robot>' % xml_string2, combining_parser)
+        return combining_parser._get_data_model()
+
+    def _verify_robot_data(self, expected, actual):
+        for key in actual:
+            if key in ['generatedMillis', 'generatedTimestamp']:
+                continue
+            assert_equals(actual[key], expected[key],
+                          msg='Values "%s" are different:\nexpected= %r\nactual=   %r\n' %
+                              (key, expected[key], actual[key]))
+        assert_equals(len(actual), len(expected))
 
     def test_suite_data_model_keywords_clearing(self):
         self._test_remove_keywords(self._get_data_model(self.SUITE_XML),
