@@ -168,12 +168,12 @@ class Namespace:
             self._report_replacing_vars_failed(import_setting, err)
 
     def _get_path(self, setting_name, path, basedir):
-        if setting_name == 'Library' and not self._is_library_by_path(path, basedir):
+        if setting_name == 'Library' and not self._is_library_by_path(path):
             return path
         path = self._resolve_path(setting_name, path.replace('/', os.sep), basedir)
         return utils.abspath(path)
 
-    def _is_library_by_path(self, path, basedir):
+    def _is_library_by_path(self, path):
         return path.lower().endswith(('.py', '.java', '.class', '/'))
 
     def _resolve_path(self, setting_name, path, basedir):
