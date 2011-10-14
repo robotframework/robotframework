@@ -84,8 +84,7 @@ class _Timeout(object):
 
     try:
 
-        from signal import setitimer
-        import signal
+        from signal import setitimer, signal, SIGALRM, ITIMER_REAL
 
         def _execute_with_timeout(self, timeout, runnable, args, kwargs):
             self._start_timer(timeout)
@@ -95,14 +94,14 @@ class _Timeout(object):
                 self._stop_timer()
 
         def _start_timer(self, timeout):
-            self.signal.signal(self.signal.SIGALRM, self._raise_timeout_error)
-            self.setitimer(self.signal.ITIMER_REAL, timeout)
+            self.signal(self.SIGALRM, self._raise_timeout_error)
+            self.setitimer(self.ITIMER_REAL, timeout)
 
         def _raise_timeout_error(self, *args):
             raise TimeoutError(self._get_timeout_error())
 
         def _stop_timer(self):
-            self.setitimer(self.signal.ITIMER_REAL, 0)
+            self.setitimer(self.ITIMER_REAL, 0)
 
     except ImportError:
 
