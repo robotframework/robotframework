@@ -80,15 +80,42 @@ class _Timeout(object):
         timeout = self.time_left()
         if timeout <= 0:
             raise TimeoutError(self.get_message())
-        runner = ThreadedRunner(runnable, args, kwargs)
-        if runner.run_in_thread(timeout):
-            return runner.get_result()
-        try:
-            runner.stop_thread()
-        except:
-            raise TimeoutError('Stopping keyword after %s failed: %s'
-                               % (self.type.lower(), utils.get_error_message()))
-        raise TimeoutError(self._get_timeout_error())
+        return self._execute_with_timeout(timeout, runnable, args, kwargs)
+
+    try:
+
+        from signal import setitimer
+        import signal
+
+        def _execute_with_timeout(self, timeout, runnable, args, kwargs):
+            self._start_timer(timeout)
+            try:
+                return runnable(*(args or ()), **(kwargs or {}))
+            finally:
+                self._stop_timer()
+
+        def _start_timer(self, timeout):
+            self.signal.signal(self.signal.SIGALRM, self._raise_timeout_error)
+            self.setitimer(self.signal.ITIMER_REAL, timeout)
+
+        def _raise_timeout_error(self, *args):
+            raise TimeoutError(self._get_timeout_error())
+
+        def _stop_timer(self):
+            self.setitimer(self.signal.ITIMER_REAL, 0)
+
+    except ImportError:
+
+        def _execute_with_timeout(self, timeout, runnable, args, kwargs):
+            runner = ThreadedRunner(runnable, args, kwargs)
+            if runner.run_in_thread(timeout):
+                return runner.get_result()
+            try:
+                runner.stop_thread()
+            except:
+                raise TimeoutError('Stopping keyword after %s failed: %s'
+                                   % (self.type.lower(), utils.get_error_message()))
+            raise TimeoutError(self._get_timeout_error())
 
     def get_message(self):
         if not self.active:
