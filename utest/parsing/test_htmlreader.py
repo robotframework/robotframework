@@ -142,6 +142,9 @@ class TestEntityAndCharRefs(unittest.TestCase):
     def test_handle_charefs(self):
         for inp, exp in [ ('82', 'R'),
                           ('228', u'\u00E4'),
+                          ('xe4', u'\u00E4'),
+                          ('XE4', u'\u00E4'),
+                          ('X2603', u'\u2603'),
                           ('invalid', '&#invalid;') ]:
             self.reader.handle_charref(inp)
             msg = '%s: %r != %r' % (inp,  self.response, exp)
