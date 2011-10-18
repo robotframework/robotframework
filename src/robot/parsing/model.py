@@ -21,7 +21,7 @@ from robot.output import LOGGER
 from robot import utils
 
 from settings import (Documentation, Fixture, Timeout, Tags, Metadata,
-                      Library, Resource, Variables, Arguments, Return, Template)
+    Library, Resource, Variables, Arguments, Return, Template, Comment)
 from populators import FromFilePopulator, FromDirectoryPopulator
 
 
@@ -410,13 +410,10 @@ class Variable(object):
         if isinstance(value, basestring):
             value = [value]  # Must support scalar lists until RF 2.7 (issue 939)
         self.value = value
-        self.comment = comment
+        self.comment = Comment(comment)
 
     def as_list(self):
-        ret = [self.name] + self.value
-        if self.comment:
-            ret.append('# %s' % self.comment)
-        return ret
+        return [self.name] + self.value + self.comment.as_list()
 
     def is_set(self):
         return True
@@ -549,7 +546,7 @@ class ForLoop(_WithSteps):
     def apply_template(self, template):
         return self
 
-    def as_list(self):
+    def as_list(self, indent=False, include_comment=False):
         return [': FOR'] + self.vars + ['IN RANGE' if self.range else 'IN'] + self.items
 
     def __iter__(self):
@@ -565,7 +562,7 @@ class Step(object):
         except IndexError:
             self.keyword = None
         self.args = content[len(self.assign)+1:]
-        self.comment = comment
+        self.comment = Comment(comment)
 
     def _get_assigned_vars(self, content):
         for item in content:
@@ -593,5 +590,5 @@ class Step(object):
         if indent:
             ret.insert(0, '')
         if include_comment and self.comment:
-            ret.append('# %s' % self.comment)
+            ret += self.comment.as_list()
         return ret

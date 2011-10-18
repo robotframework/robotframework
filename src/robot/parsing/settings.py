@@ -19,10 +19,13 @@ class Setting(object):
         self.setting_name = setting_name
         self.parent = parent
         self._set_initial_value()
-        self.comment = comment or []
+        self._set_comment(comment)
 
     def _set_initial_value(self):
         self.value = []
+
+    def _set_comment(self, comment):
+        self.comment = Comment(comment)
 
     def reset(self):
         self.__init__(self, self.setting_name, self.parent)
@@ -38,7 +41,7 @@ class Setting(object):
     def populate(self, value, comment=None):
         """Mainly used at parsing time, later attributes can be set directly."""
         self._populate(value)
-        self.comment = comment
+        self._set_comment(comment)
 
     def _populate(self, value):
         self.value = value
@@ -61,10 +64,7 @@ class Setting(object):
         return self._string_value(value)
 
     def as_list(self):
-        ret = self._data_as_list()
-        if self.comment:
-            ret.append('# %s' % self.comment)
-        return ret
+        return self._data_as_list() + self.comment.as_list()
 
     def _data_as_list(self):
         ret = [self.setting_name]
@@ -185,7 +185,7 @@ class Metadata(Setting):
         self.parent = parent
         self.name = name
         self.value = self._string_value(value)
-        self.comment = comment
+        self._set_comment(comment)
 
     def reset(self):
         pass
@@ -204,7 +204,7 @@ class _Import(Setting):
         self.name = name
         self.args = args or []
         self.alias = alias
-        self.comment = comment
+        self._set_comment(comment)
 
     def reset(self):
         pass
@@ -249,3 +249,19 @@ class Variables(_Import):
 
     def __init__(self, parent, name, args=None, comment=None):
         _Import.__init__(self, parent, name, args, comment=comment)
+
+
+class Comment(object):
+
+    def __init__(self, comment_data):
+        if isinstance(comment_data, basestring):
+            comment_data = [comment_data]
+        self._comment = comment_data or []
+
+    def __len__(self):
+        return len(self._comment)
+
+    def as_list(self):
+        if self._comment and self._comment[0][0] != '#':
+            self._comment[0] = '# ' + self._comment[0]
+        return self._comment
