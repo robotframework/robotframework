@@ -4,6 +4,7 @@ import time
 import os
 
 import unittest
+from mock import Mock
 from robot.output.loggerhelper import Message
 from robot.output.xmllogger import XmlLogger
 
@@ -263,8 +264,18 @@ class TestJsSerializer(_JsSerializerTestBase):
         return [self._reverse_from_ids(data, i) for i in item]
 
     def test_status_xml_parsing(self):
-        data_model = self._get_data_model('<status status="PASS" endtime="20110531 12:48:09.042" starttime="20110531 12:48:09.000"></status>')
+        status =  Mock()
+        status.status = 'PASS'
+        status.starttime = '20110531 12:48:09.000'
+        status.endtime = '20110531 12:48:09.042'
+        xml = self._write_status_to_xml(status)
+        data_model = self._get_data_model(xml)
         assert_model(data_model, plain_suite=[1, 0, 42])
+
+    def _write_status_to_xml(self, status):
+        stream = StringIO()
+        StreamXmlLogger(stream)._write_status(status)
+        return stream.getvalue()
 
     def test_status_with_message_xml_parsing(self):
         data_model = self._get_data_model('<status status="PASS" endtime="20110531 12:48:09.042" starttime="20110531 12:48:09.000">Message</status>')
