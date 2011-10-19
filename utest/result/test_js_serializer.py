@@ -5,9 +5,12 @@ import os
 
 import unittest
 from robot.output.loggerhelper import Message
+from robot.output.xmllogger import XmlLogger
 
 from robot.result.outputparser import OutputParser, CombiningOutputParser
+from robot.utils.abstractxmlwriter import AbstractXmlWriter
 from robot.utils.asserts import assert_equals, assert_true
+from robot.utils.xmlwriter import XmlWriter
 
 
 def assert_model(data_model, basemillis=None, suite=None, strings=None, plain_suite=None):
@@ -73,6 +76,29 @@ class _JsSerializerTestBase(unittest.TestCase):
         end = min(len(string), index+20)
         end_padding = '' if end==0 else '...'
         return start_padding+string[start:end]+end_padding
+
+
+class _StreamXmlWriter(AbstractXmlWriter):
+
+    def __init__(self, stream):
+        self._stream = stream
+
+    def _start(self, name, attrs):
+        self._stream.write('<'+name)
+        for attr in attrs:
+            self._stream.write(' %s="%s"' % (attr, attrs[attr]))
+        self._stream.write('>')
+
+    def _content(self, content):
+        self._stream.write(content)
+
+    def _end(self, name):
+        self._stream.write('</%s>' % name)
+
+class StreamXmlLogger(XmlLogger):
+
+    def _get_writer(self, stream, generator):
+        return _StreamXmlWriter(stream)
 
 
 class TestJsSerializer(_JsSerializerTestBase):
@@ -204,16 +230,18 @@ class TestJsSerializer(_JsSerializerTestBase):
         self._context = self._parser._context
 
     def test_message_xml_parsing(self):
-        message = Message('AssertionError', level='FAIL', timestamp='20110531 12:48:09.088')
-        xml = self._write_to_xml(message)
+        xml = self._write_message_to_xml(Message('AssertionError', level='FAIL', timestamp='20110531 12:48:09.088'))
         data_model = self._get_data_model(xml)
         assert_model(data_model, 1306846089088, [0, 4, 1], ['*', '*AssertionError'])
 
-    def _write_to_xml(self, message):
-        return '<msg timestamp="20110531 12:48:09.088" level="FAIL">AssertionError</msg>'
+    def _write_message_to_xml(self, message):
+        stream = StringIO()
+        StreamXmlLogger(stream).log_message(message)
+        return stream.getvalue()
 
     def test_plain_message_xml_parsing(self):
-        data_model = self._get_data_model('<msg timestamp="20110531 12:48:09.088" level="FAIL">AssertionError</msg>')
+        xml = self._write_message_to_xml(Message('AssertionError', level='FAIL', timestamp='20110531 12:48:09.088'))
+        data_model = self._get_data_model(xml)
         assert_model(data_model, basemillis=1306846089088, plain_suite=[0, 4, '*AssertionError'])
 
     def assert_model_does_not_contain(self, data_model, items):
