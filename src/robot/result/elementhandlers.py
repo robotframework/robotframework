@@ -127,7 +127,7 @@ class _SuiteHandler(_Handler):
 
 class _CombiningSuiteHandler(_SuiteHandler):
 
-    def __init__(self, context, suite_name=None):
+    def __init__(self, context, suite_name=None, suite_doc=None):
         self._total_stats = [{'label':'Critical Tests', 'fail':0, 'pass':0},
                             {'label': 'All Tests', 'fail':0, 'pass':0}]
         self._tag_stats = []
@@ -140,7 +140,7 @@ class _CombiningSuiteHandler(_SuiteHandler):
         self._name = suite_name
         self._collect_name = suite_name is None
         self._source = ''
-        self._data_from_children.append(self._get_id(''))
+        self._data_from_children.append(self._get_id(suite_doc or ''))
         self._data_from_children.append([])
 
     def get_handler_for(self, name, attrs):
@@ -201,9 +201,11 @@ class _CombiningSuiteHandler(_SuiteHandler):
 
 class CombiningRobotHandler(_Handler):
 
-    def __init__(self, context, main_suite_name):
+    def __init__(self, context, main_suite_name, main_suite_doc):
         _Handler.__init__(self, context, None)
-        self._combining_suite = _CombiningSuiteHandler(context, main_suite_name)
+        self._combining_suite = _CombiningSuiteHandler(context,
+                                                       main_suite_name,
+                                                       main_suite_doc)
 
     def add_child_data(self, data):
         self._combining_suite.add_child_data(data)

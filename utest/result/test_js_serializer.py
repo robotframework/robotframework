@@ -4,15 +4,12 @@ import time
 import os
 
 import unittest
-from mock import Mock
 from robot.output.loggerhelper import Message
-from robot.output.readers import Keyword
 from robot.output.xmllogger import XmlLogger
 
 from robot.result.outputparser import OutputParser, CombiningOutputParser
 from robot.utils.abstractxmlwriter import AbstractXmlWriter
 from robot.utils.asserts import assert_equals, assert_true
-from robot.utils.xmlwriter import XmlWriter
 
 
 def assert_model(data_model, basemillis=None, suite=None, strings=None, plain_suite=None):
@@ -272,7 +269,9 @@ class TestJsSerializer(_JsSerializerTestBase):
         assert_model(data_model, plain_suite=[1, 0, 42])
 
     def _write_status_to_xml(self, status, starttime, endtime, message=None):
-        stats = Mock()
+        class Stats:
+            pass
+        stats = Stats()
         stats.status = status
         stats.starttime = starttime
         stats.endtime = endtime
@@ -483,8 +482,12 @@ class TestJsSerializer(_JsSerializerTestBase):
     def test_combined_suite_name(self):
         parser = CombiningOutputParser(main_suite_name='MAIN')
         data = self._combine(self.SUITE_XML+self.SUITE_XML_STATS, self.SUITE_XML+self.SUITE_XML_STATS, parser)._robot_data
-        assert_true('*MAIN' in data['strings'])
-        assert_true('*Verysimple & Verysimple' not in data['strings'])
+        assert_equals('*MAIN', data['strings'][data['suite'][0]])
+
+    def test_combined_suite_doc(self):
+        parser = CombiningOutputParser(main_suite_doc='this is my documentation')
+        data = self._combine(self.SUITE_XML+self.SUITE_XML_STATS, self.SUITE_XML+self.SUITE_XML_STATS, parser)._robot_data
+        assert_equals('*this is my documentation', data['strings'][data['suite'][3]])
 
     def test_combining_two_different_xmls(self):
         test_xml = """<suite source="test.txt" name="Test">
