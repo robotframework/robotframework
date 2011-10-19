@@ -4,6 +4,7 @@ import time
 import os
 
 import unittest
+from robot.output.loggerhelper import Message
 
 from robot.result.outputparser import OutputParser, CombiningOutputParser
 from robot.utils.asserts import assert_equals, assert_true
@@ -203,8 +204,13 @@ class TestJsSerializer(_JsSerializerTestBase):
         self._context = self._parser._context
 
     def test_message_xml_parsing(self):
-        data_model = self._get_data_model('<msg timestamp="20110531 12:48:09.088" level="FAIL">AssertionError</msg>')
+        message = Message('AssertionError', level='FAIL', timestamp='20110531 12:48:09.088')
+        xml = self._write_to_xml(message)
+        data_model = self._get_data_model(xml)
         assert_model(data_model, 1306846089088, [0, 4, 1], ['*', '*AssertionError'])
+
+    def _write_to_xml(self, message):
+        return '<msg timestamp="20110531 12:48:09.088" level="FAIL">AssertionError</msg>'
 
     def test_plain_message_xml_parsing(self):
         data_model = self._get_data_model('<msg timestamp="20110531 12:48:09.088" level="FAIL">AssertionError</msg>')
