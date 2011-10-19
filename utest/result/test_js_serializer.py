@@ -133,6 +133,37 @@ class TestJsSerializer(_JsSerializerTestBase):
     </errors>
     """
 
+    SUITE_XML_COMBINED = """<?xml version="1.0" encoding="UTF-8"?>
+    <robot generated="20111004 10:45:37.778" generator="Rebot 2.6.1 (Python 2.6.5 on linux2)">
+    <suite name="Verysimple &amp; Verysimple">
+       <doc></doc>
+       <metadata></metadata>"""+\
+        SUITE_XML+\
+        SUITE_XML+\
+    """<status status="PASS" elapsedtime="250" endtime="N/A" starttime="N/A"></status>
+    </suite>
+    <statistics>
+    <total>
+    <stat fail="0" pass="4">Critical Tests</stat>
+    <stat fail="0" pass="4">All Tests</stat>
+    </total>
+    <tag>
+    <stat info="" links="" doc="" combined="" pass="2" fail="0">t1</stat>
+    <stat info="" links="" doc="" combined="" pass="2" fail="0">t2</stat>
+    </tag>
+    <suite>
+    <stat fail="0" name="Verysimple &amp; Verysimple" idx="s1" pass="4">Verysimple &amp; Verysimple</stat>
+    <stat fail="0" name="Verysimple" idx="s1-s1" pass="2">Verysimple &amp; Verysimple.Verysimple</stat>
+    <stat fail="0" name="Verysimple" idx="s1-s2" pass="2">Verysimple &amp; Verysimple.Verysimple</stat>
+    </suite>
+    </statistics>
+    <errors>
+    </errors>
+    <errors>
+    </errors>
+    </robot>
+    """
+
     FOR_LOOP_XML = """
         <kw type="for" name="${i} IN RANGE [ 2 ]" timeout="">
             <doc></doc>
@@ -393,39 +424,15 @@ class TestJsSerializer(_JsSerializerTestBase):
         assert_equals(self._context.link_to([0, 3, 'simple']),'s1-t1-k1')
 
     def test_combining_two_xmls(self):
-        combined = """<?xml version="1.0" encoding="UTF-8"?>
-        <robot generated="20111004 10:45:37.778" generator="Rebot 2.6.1 (Python 2.6.5 on linux2)">
-        <suite name="Verysimple &amp; Verysimple">
-           <doc></doc>
-           <metadata></metadata>"""+\
-            self.SUITE_XML+\
-            self.SUITE_XML+\
-        """<status status="PASS" elapsedtime="250" endtime="N/A" starttime="N/A"></status>
-        </suite>
-        <statistics>
-        <total>
-        <stat fail="0" pass="4">Critical Tests</stat>
-        <stat fail="0" pass="4">All Tests</stat>
-        </total>
-        <tag>
-        <stat info="" links="" doc="" combined="" pass="2" fail="0">t1</stat>
-        <stat info="" links="" doc="" combined="" pass="2" fail="0">t2</stat>
-        </tag>
-        <suite>
-        <stat fail="0" name="Verysimple &amp; Verysimple" idx="s1" pass="4">Verysimple &amp; Verysimple</stat>
-        <stat fail="0" name="Verysimple" idx="s1-s1" pass="2">Verysimple &amp; Verysimple.Verysimple</stat>
-        <stat fail="0" name="Verysimple" idx="s1-s2" pass="2">Verysimple &amp; Verysimple.Verysimple</stat>
-        </suite>
-        </statistics>
-        <errors>
-        </errors>
-        <errors>
-        </errors>
-        </robot>
-        """
         actual = self._combine(self.SUITE_XML+self.SUITE_XML_STATS, self.SUITE_XML+self.SUITE_XML_STATS)
-        expected = self._parse_string(combined, OutputParser())._get_data_model()
+        expected = self._parse_string(self.SUITE_XML_COMBINED, OutputParser())._get_data_model()
         self._verify_robot_data(expected._robot_data, actual._robot_data)
+
+    def test_combined_suite_name(self):
+        parser = CombiningOutputParser(main_suite_name='MAIN')
+        data = self._combine(self.SUITE_XML+self.SUITE_XML_STATS, self.SUITE_XML+self.SUITE_XML_STATS, parser)._robot_data
+        assert_true('*MAIN' in data['strings'])
+        assert_true('*Verysimple & Verysimple' not in data['strings'])
 
     def test_combining_two_different_xmls(self):
         test_xml = """<suite source="test.txt" name="Test">
@@ -494,8 +501,8 @@ class TestJsSerializer(_JsSerializerTestBase):
         expected = self._parse_string(combined, OutputParser())._get_data_model()
         self._verify_robot_data(expected._robot_data, actual._robot_data)
 
-    def _combine(self, xml_string1, xml_string2):
-        combining_parser = CombiningOutputParser()
+    def _combine(self, xml_string1, xml_string2, combining_parser=None):
+        combining_parser = combining_parser or CombiningOutputParser()
         self._parse_string('<robot generator="test">%s</robot>' % xml_string1, combining_parser)
         self._parse_string('<robot generator="test">%s</robot>' % xml_string2, combining_parser)
         return combining_parser._get_data_model()

@@ -127,7 +127,7 @@ class _SuiteHandler(_Handler):
 
 class _CombiningSuiteHandler(_SuiteHandler):
 
-    def __init__(self, context, attrs):
+    def __init__(self, context, suite_name=None):
         self._total_stats = [{'label':'Critical Tests', 'fail':0, 'pass':0},
                             {'label': 'All Tests', 'fail':0, 'pass':0}]
         self._tag_stats = []
@@ -136,8 +136,9 @@ class _CombiningSuiteHandler(_SuiteHandler):
         self._partial_suite_stats = []
         self._status = [1, None, 0]
         self.stats = [self._total_stats, self._tag_stats, self._suite_stats]
-        _SuiteHandler.__init__(self, context, attrs)
-        self._name = ''
+        _SuiteHandler.__init__(self, context, {})
+        self._name = suite_name
+        self._collect_name = suite_name is None
         self._source = ''
         self._data_from_children.append(self._get_id(''))
         self._data_from_children.append([])
@@ -146,13 +147,14 @@ class _CombiningSuiteHandler(_SuiteHandler):
         return _Handler.get_handler_for(self, name, attrs)
 
     def add_child_data(self, data):
-        self._update_name(data['stats'][2][0]['label'])
+        if self._collect_name:
+            self._update_name(data['stats'][2][0]['label'])
         self._suites.append(data['suite'])
         self._merge_stats(data['stats'])
         self._merge_status(data['suite'])
 
     def _update_name(self, new_name):
-        if self._name == '':
+        if not self._name:
             self._name = new_name
         else:
             self._name = self._name+' & '+ new_name
@@ -199,9 +201,9 @@ class _CombiningSuiteHandler(_SuiteHandler):
 
 class CombiningRobotHandler(_Handler):
 
-    def __init__(self, context, attrs=None):
-        _Handler.__init__(self, context, attrs)
-        self._combining_suite = _CombiningSuiteHandler(context, {})
+    def __init__(self, context, main_suite_name):
+        _Handler.__init__(self, context, None)
+        self._combining_suite = _CombiningSuiteHandler(context, main_suite_name)
 
     def add_child_data(self, data):
         self._combining_suite.add_child_data(data)
