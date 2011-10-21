@@ -133,6 +133,15 @@ th, td {
   height: 1.5em;
   width: 12em;
 }
+td.colspan4, th.colspan4 {
+    width: 48em;
+}
+td.colspan3, th.colspan3 {
+    width: 36em;
+}
+td.colspan2, th.colspan2 {
+    width: 24em;
+}
 th {
   background-color: rgb(192, 192, 192);
   color: black;
@@ -156,7 +165,7 @@ td.name, th.name {
 <table id="settings" border="1">
 <tr>
 <th class="name">Setting</th>
-<th colspan="4">Value</th>
+<th class="colspan4" colspan="4">Value</th>
 </tr>
 <tr>
 <td class="name">Library</td>
@@ -218,7 +227,7 @@ td.name, th.name {
 <table id="variables" border="1">
 <tr>
 <th class="name">Variable</th>
-<th colspan="4">Value</th>
+<th class="colspan4" colspan="4">Value</th>
 </tr>
 <tr>
 <td class="name">MyVar</td>
@@ -253,12 +262,12 @@ td.name, th.name {
 <tr>
 <th class="name">Test Case</th>
 <th>Action</th>
-<th colspan="3">Arguments</th>
+<th class="colspan3" colspan="3">Arguments</th>
 </tr>
 <tr>
 <td class="name"><a name="test_My Test Case">My Test Case</a></td>
 <td>[Documentation]</td>
-<td colspan="3">This is a long comment that spans several columns</td>
+<td class="colspan3" colspan="3">This is a long comment that spans several columns</td>
 </tr>
 <tr>
 <td class="name"></td>
@@ -293,13 +302,13 @@ td.name, th.name {
 <tr>
 <th class="name">Keyword</th>
 <th>Action</th>
-<th colspan="3">Arguments</th>
+<th class="colspan3" colspan="3">Arguments</th>
 </tr>
 <tr>
 <td class="name"><a name="keyword_My Keyword">My Keyword</a></td>
 <td>[Documentation]</td>
 <td>Documentation</td>
-<td colspan="2"># Comment for doc</td>
+<td class="colspan2" colspan="2"># Comment for doc</td>
 </tr>
 <tr>
 <td class="name"></td>

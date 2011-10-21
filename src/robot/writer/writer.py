@@ -326,7 +326,9 @@ class HtmlFileWriter(_FileWriter):
         if index == 0:
             return {'class': 'name'}
         if colspan and index == rowlength-1:
-            return {'colspan': str(self._cols-index)}
+            num_cols = self._cols-index
+            return {'colspan': str(num_cols),
+                    'class': 'colspan%d' % num_cols}
         return {}
 
     def _test_or_keyword_name(self):

@@ -38,6 +38,15 @@ th, td {
   height: 1.5em;
   width: 12em;
 }
+td.colspan4, th.colspan4 {
+    width: 48em;
+}
+td.colspan3, th.colspan3 {
+    width: 36em;
+}
+td.colspan2, th.colspan2 {
+    width: 24em;
+}
 th {
   background-color: rgb(192, 192, 192);
   color: black;
