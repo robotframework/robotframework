@@ -13,24 +13,25 @@
 #  limitations under the License.
 
 import csv
-import os
 import re
 from StringIO import StringIO
 
 from robot.parsing.settings import Documentation
 from robot import utils
+from htmltemplate import TEMPLATE
 
 
-def FileWriter(output, format, name=None, template=None, pipe_separated=False,
-               line_separator=os.linesep):
-    try:
-        Writer = {'tsv': TsvFileWriter, 'txt': TxtFileWriter(pipe_separated)}[format]
-        return Writer(output, line_separator)
-    except KeyError:
-        return HtmlFileWriter(output, name, template)
+def FileWriter(serialization_context):
+    Writer = {
+        'tsv': TsvFileWriter,
+        'txt': TxtFileWriter,
+        'html': HtmlFileWriter
+    }[serialization_context.format]
+    return Writer(serialization_context)
 
-def TxtFileWriter(pipe_separator=False):
-    return PipeSeparatedTxtWriter if pipe_separator else SpaceSeparatedTxtWriter
+def TxtFileWriter(context):
+    Writer = PipeSeparatedTxtWriter if context.pipe_separated else SpaceSeparatedTxtWriter
+    return Writer(context)
 
 
 class _FileWriter(object):
@@ -155,10 +156,10 @@ class TsvFileWriter(_FileWriter):
     _testcase_titles = ['Test Case', 'Action', 'Argument']
     _keyword_titles = ['Keyword', 'Action', 'Argument']
 
-    def __init__(self, output, line_separator):
-        _FileWriter.__init__(self, output, 8)
+    def __init__(self, context):
+        _FileWriter.__init__(self, context.output, 8)
         self._writer = csv.writer(self._output, dialect='excel-tab',
-                                  lineterminator=line_separator)
+                                  lineterminator=context.line_separator)
 
     def _test_or_keyword_name(self):
         name = self._tc_name or self._uk_name
@@ -181,9 +182,9 @@ class SpaceSeparatedTxtWriter(_FileWriter):
     _testcase_titles = 'Test Cases'
     _keyword_titles = 'Keywords'
 
-    def __init__(self, output, line_separator):
-        _FileWriter.__init__(self, output, 8)
-        self._line_separator = line_separator
+    def __init__(self, context):
+        _FileWriter.__init__(self, context.output, 8)
+        self._line_separator = context.line_separator
 
     def start_testcase(self, tc):
         self._write_data([tc.name])
@@ -255,9 +256,9 @@ class HtmlFileWriter(_FileWriter):
     _keyword_titles = ['Keyword', 'Action', 'Arguments']
     compiled_regexp = re.compile(r'(\\+)n ')
 
-    def __init__(self, output, name=None, tmpl=None):
-        self._content = tmpl
-        _FileWriter.__init__(self, output, 5)
+    def __init__(self, context):
+        self._content = TEMPLATE % {'NAME': context.datafile.name}
+        _FileWriter.__init__(self, context.output, 5)
         self._writer = utils.HtmlWriter(StringIO())
         self._table_replacer = HtmlTableReplacer()
 

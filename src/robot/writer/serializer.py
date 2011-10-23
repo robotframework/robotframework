@@ -15,63 +15,49 @@
 import os
 
 from writer import FileWriter
-from htmltemplate import TEMPLATE
 
 
 class SerializationContext(object):
 
-    def __init__(self, output=None, format=None, pipe_separated=False,
+    def __init__(self, datafile, output=None, format=None, pipe_separated=False,
                  line_separator=os.linesep):
+        self.datafile = datafile
+        self.pipe_separated = pipe_separated
+        self.line_separator = line_separator
+        self._given_output = output
         self._output = output
         self._format = format
-        self._pipe_separated = pipe_separated
-        self._line_separator = line_separator
+
+    def finish(self):
+        if self._given_output is None:
+            self._output.close()
 
     @property
-    def pipe_separated(self):
-        return self._pipe_separated
+    def output(self):
+        if not self._output:
+            self._output = open(self._get_source(), 'wb')
+        return self._output
 
     @property
-    def line_separator(self):
-        return self._line_separator
+    def format(self):
+        return self._format or self._format_from_file()
 
-    def create_template(self, datafile):
-        if self.format_for(datafile) in ['html', 'xhtml', 'htm']:
-            return TEMPLATE % {'NAME': datafile.name}
-        return None
+    def _get_source(self):
+        return getattr(self.datafile, 'initfile', self.datafile.source)
 
-    def get_output(self, datafile):
-        return self._output or open(self._get_source(datafile), 'wb')
-
-    def _get_source(self, datafile):
-        return getattr(datafile, 'initfile', datafile.source)
-
-    def format_for(self, datafile):
-        return self._format or self._format_from_file(datafile)
-
-    def _format_from_file(self, datafile):
-        return os.path.splitext(self._get_source(datafile))[1][1:].lower()
+    def _format_from_file(self):
+        return os.path.splitext(self._get_source())[1][1:].lower()
 
 
 class Serializer(object):
 
-    def __init__(self, context=SerializationContext()):
+    def __init__(self, context):
         self._ctx = context
 
-    def serialize(self, datafile):
-        template = self._ctx.create_template(datafile)
-        output = self._ctx.get_output(datafile)
-        self._writer = FileWriter(output,
-                                  self._ctx.format_for(datafile),
-                                  name=datafile.name,
-                                  template=template,
-                                  pipe_separated=self._ctx.pipe_separated,
-                                  line_separator=self._ctx.line_separator)
-        self._serialize(datafile)
-        self._close_output()
-
-    def _close_output(self):
-        self._writer.close(close_output=self._ctx._output is None)
+    def serialize(self):
+        self._writer = FileWriter(self._ctx)
+        self._serialize(self._ctx.datafile)
+        self._ctx.finish()
 
     def _serialize(self, datafile):
         for table in datafile:

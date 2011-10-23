@@ -37,10 +37,10 @@ class _SerializerTest(unittest.TestCase):
                    line_separator=os.linesep):
         datafile.source = '/not/really/here.' + extension
         output = StringIO.StringIO()
-        context = SerializationContext(output=output,
+        context = SerializationContext(datafile, output=output,
                                        pipe_separated=pipe_separated,
                                        line_separator=line_separator)
-        Serializer(context).serialize(datafile)
+        Serializer(context).serialize()
         return output.getvalue()
 
     def _assert_serialization_with_different_line_separators(self, datafile,

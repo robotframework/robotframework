@@ -1,13 +1,16 @@
 import unittest
+from StringIO import StringIO
 
 from robot.utils.asserts import assert_equals
+from robot.writer.serializer import SerializationContext
 from robot.writer.writer import HtmlFileWriter
 
 
 class TestHtmlFileWriter(unittest.TestCase):
 
     def setUp(self):
-        self._writer = HtmlFileWriter(None)
+        context = SerializationContext(FakeDataFile(), output=StringIO())
+        self._writer = HtmlFileWriter(context)
 
     def test_add_br_to_newlines(self):
         original = """This is real new line:
@@ -22,6 +25,11 @@ class TestHtmlFileWriter(unittest.TestCase):
     def test_no_br_to_double_backslashes(self):
         original = r"Here there is double backslash-n: \\n "
         assert_equals(self._writer._add_br_to_newlines(original), original)
+
+
+class FakeDataFile(object):
+    name = 'some name'
+    source = 'somefile.html'
 
 
 if __name__ == "__main__":
