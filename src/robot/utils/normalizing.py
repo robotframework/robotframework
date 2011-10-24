@@ -128,3 +128,8 @@ class NormalizedDict(UserDict):
 
     def __str__(self):
         return str(dict(self.items()))
+
+    def __cmp__(self, other):
+        if not isinstance(other, NormalizedDict):
+            other = NormalizedDict(other)
+        return UserDict.__cmp__(self, other)
