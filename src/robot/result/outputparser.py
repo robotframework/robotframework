@@ -54,9 +54,14 @@ class OutputParser(object):
 
 class CombiningOutputParser(OutputParser):
 
-    def __init__(self,log_path='NONE', split_log=False):
+    def __init__(self,log_path='NONE',
+                 split_log=False,
+                 main_suite_name=None,
+                 main_suite_doc=None):
         OutputParser.__init__(self, log_path, split_log)
-        self._handler_stack.append(CombiningRobotHandler(self._context))
+        self._handler_stack.append(CombiningRobotHandler(self._context,
+                                                         main_suite_name,
+                                                         main_suite_doc))
 
     def _get_data_model(self):
         self.endElement('')
