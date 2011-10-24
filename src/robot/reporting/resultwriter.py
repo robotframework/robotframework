@@ -15,10 +15,10 @@
 from robot.common import Statistics
 from robot.output import LOGGER, process_outputs
 
-from robot.result.outputwriter import OutputWriter
-from robot.result.xunitwriter import XUnitWriter
-from robot.result.builders import LogBuilder, ReportBuilder, XUnitBuilder, OutputBuilder
-from robot.result.outputparser import OutputParser
+from robot.reporting.outputwriter import OutputWriter
+from robot.reporting.xunitwriter import XUnitWriter
+from robot.reporting.builders import LogBuilder, ReportBuilder, XUnitBuilder, OutputBuilder
+from robot.reporting.outputparser import OutputParser
 
 
 class ResultWriter(object):

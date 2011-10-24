@@ -15,8 +15,8 @@
 import time
 
 from robot import utils
-from robot.result.jsondump import JsonDumper
-from robot.result.parsingcontext import TextIndex
+from robot.reporting.jsondump import JsonDumper
+from robot.reporting.parsingcontext import TextIndex
 
 
 class DataModelWriter(object):

@@ -21,7 +21,7 @@ import tempfile
 import codecs
 
 from robot.output import LOGGER
-from robot.result.jsondatamodel import SeparatingWriter
+from robot.reporting.jsondatamodel import SeparatingWriter
 from robot.version import get_full_version
 from robot import utils
 

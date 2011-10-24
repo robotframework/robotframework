@@ -2,7 +2,7 @@
 
 import unittest
 
-from robot.result.builders import _WebContentFile
+from robot.reporting.builders import _WebContentFile
 from robot.utils.asserts import assert_true, assert_raises, assert_equals
 
 

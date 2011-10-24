@@ -15,9 +15,9 @@
 from __future__ import with_statement
 from robot.utils.etreewrapper import ET
 
-from robot.result.elementhandlers import RootHandler, CombiningRobotHandler
-from robot.result.parsingcontext import Context
-from robot.result.jsondatamodel import DataModelWriter
+from robot.reporting.elementhandlers import RootHandler, CombiningRobotHandler
+from robot.reporting.parsingcontext import Context
+from robot.reporting.jsondatamodel import DataModelWriter
 
 
 class OutputParser(object):

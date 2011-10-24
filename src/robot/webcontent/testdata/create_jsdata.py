@@ -12,7 +12,7 @@ TARGET = join(BASEDIR, 'data.js')
 sys.path.insert(0, join(BASEDIR, '..', '..', '..'))
 
 import robot
-from robot.result.outputparser import OutputParser
+from robot.reporting.outputparser import OutputParser
 
 
 def run_robot(outputdirectory, testdata):

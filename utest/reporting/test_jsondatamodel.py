@@ -1,7 +1,7 @@
 from StringIO import StringIO
 import unittest
 from robot.utils.asserts import assert_equals, assert_true
-from robot.result.jsondatamodel import DataModelWriter
+from robot.reporting.jsondatamodel import DataModelWriter
 
 class TestDataModelWrite(unittest.TestCase):
 

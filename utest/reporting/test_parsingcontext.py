@@ -4,7 +4,7 @@ import string
 import unittest
 from sys import maxint
 
-from robot.result.parsingcontext import Context, TextCache, Stats, Location, TextIndex
+from robot.reporting.parsingcontext import Context, TextCache, Stats, Location, TextIndex
 from robot.utils.asserts import assert_equals, assert_true
 
 
@@ -398,6 +398,6 @@ class TestLinking(unittest.TestCase):
         self._kw(lambda ctx: ctx.create_link_to_current_location(pkey))
         self._context.end_suite()
 
-        
+
 if __name__ == '__main__':
     unittest.main()

@@ -1,8 +1,8 @@
 import unittest
 
-from robot.result import ResultWriter
-from robot.result.outputparser import OutputParser
-from robot.result.builders import LogBuilder, ReportBuilder, XUnitBuilder
+from robot.reporting import ResultWriter
+from robot.reporting.outputparser import OutputParser
+from robot.reporting.builders import LogBuilder, ReportBuilder, XUnitBuilder
 
 import resources
 

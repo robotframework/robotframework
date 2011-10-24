@@ -11,8 +11,8 @@ OUTPUT = join(BASEDIR, 'output.xml')
 sys.path.insert(0, join(BASEDIR, '..', '..', '..', '..', 'src'))
 
 import robot
-from robot.result.outputparser import OutputParser
-from robot.result.jsondatamodel import SeparatingWriter
+from robot.reporting.outputparser import OutputParser
+from robot.reporting.jsondatamodel import SeparatingWriter
 
 
 def run_robot(testdata, loglevel='INFO'):

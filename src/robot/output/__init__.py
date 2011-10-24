@@ -19,7 +19,7 @@ from xmllogger import XmlLogger
 from loggerhelper import LEVELS, Message
 from readers import process_output, process_outputs
 
-from robot.result.resultwriter import ResultFromXML
+from robot.reporting.resultwriter import ResultFromXML
 
 
 # Hooks to output. Set by Output.
