@@ -19,6 +19,7 @@ from robot.errors import DataError
 from robot.variables import is_var
 from robot.output import LOGGER
 from robot import utils
+from robot.writer.serializer import Serializer, SerializationContext
 
 from settings import (Documentation, Fixture, Timeout, Tags, Metadata,
     Library, Resource, Variables, Arguments, Return, Template, Comment)
@@ -89,6 +90,14 @@ class _TestData(object):
         path = os.path.join(self.source, initfile) if initfile else self.source
         LOGGER.write("Error in file '%s' in table '%s': %s"
                      % (path, table, message), level)
+
+    def save(self, **options):
+        """Serializes this datafile.
+
+        :param **options: Configuration for serialization. Any optional arguments
+            of robot.writer.serializer.SerializationContext can be given.
+        """
+        Serializer(SerializationContext(self, **options)).serialize()
 
 
 class TestCaseFile(_TestData):
