@@ -21,6 +21,21 @@ class SerializationContext(object):
 
     def __init__(self, datafile, output=None, format=None, pipe_separated=False,
                  line_separator=os.linesep):
+        """The SerializationContext class holds the needed information for
+        serializing test data files. It contains a references to the data file to
+        be serialized and to serialization options.
+
+        :param datafile: The datafile to be serialized.
+        :type datafile: TestCaseFile, ResourceFile, TestDataDirectory
+        :param output: An open, file-like object used in serialization. If not
+            given, value of `source` attribute of the given `datafile` is used
+            to construct a new file object.
+        :param str format: Serialization format. If not given, read from the
+            extension of the `source` attribute of the given `datafile`.
+        :param bool pipe_separated: Whether to use pipes as separator when
+            serialization format is txt.
+        :param str line_separator: Line separator used in serialization.
+        """
         self.datafile = datafile
         self.pipe_separated = pipe_separated
         self.line_separator = line_separator
@@ -52,9 +67,16 @@ class SerializationContext(object):
 class Serializer(object):
 
     def __init__(self, context):
+        """The Serializer class is used to serialize Robot Framework test data files.
+
+        :param SerializationContext context: The context used with this serializer.
+        """
         self._ctx = context
 
     def serialize(self):
+        """Does the actual serialization, based on the context given in
+        :py:meth:`__init__`.
+        """
         self._writer = FileWriter(self._ctx)
         self._serialize(self._ctx.datafile)
         self._ctx.finish()
