@@ -19,6 +19,22 @@ class TestTestSuite(unittest.TestCase):
         self.suite.metadata['A'] = '2'
         assert_equal(dict(self.suite.metadata), {'a': '2', 'b': '1'})
 
+    def test_create_and_add_suite(self):
+        s1 = self.suite.suites.create(name='s1')
+        s2 = TestSuite(name='s2')
+        self.suite.suites.add(s2)
+        assert_true(s1.parent is self.suite)
+        assert_true(s2.parent is self.suite)
+        assert_equal(list(self.suite.suites), [s1, s2])
+
+    def test_reset_suites(self):
+        s1 = TestSuite(name='s1')
+        self.suite.suites = [s1]
+        s2 = self.suite.suites.create(name='s2')
+        assert_true(s1.parent is self.suite)
+        assert_true(s2.parent is self.suite)
+        assert_equal(list(self.suite.suites), [s1, s2])
+
     def test_stats(self):
         suite = self._create_suite_with_tests()
         assert_equal(suite.critical_stats.passed, 2)
@@ -38,11 +54,12 @@ class TestTestSuite(unittest.TestCase):
     def _create_suite_with_tests(self):
         suite = TestSuite()
         suite.tests = [TestCase(status='PASS'),
-                        TestCase(status='PASS'),
-                        TestCase(status='PASS', critical=False),
-                        TestCase(status='FAIL'),
-                        TestCase(status='FAIL', critical=False)]
+                       TestCase(status='PASS'),
+                       TestCase(status='PASS', critical=False),
+                       TestCase(status='FAIL'),
+                       TestCase(status='FAIL', critical=False)]
         return suite
+
 
 class TestTestCase(unittest.TestCase):
 
@@ -92,8 +109,33 @@ class TestItemLists(unittest.TestCase):
     def test_add(self):
         kw = Keyword()
         parent = object()
-        Keywords(parent).add(kw)
+        kws = Keywords(parent)
+        kws.add(kw)
         assert_true(kw.parent is parent)
+        assert_equal(list(kws), [kw])
+
+    def test_initial_values(self):
+        kw1 = Keyword()
+        kw2 = Keyword()
+        parent = object()
+        kws = Keywords(parent, [kw1, kw2])
+        assert_true(kw1.parent is parent)
+        assert_true(kw2.parent is parent)
+        assert_equal(list(kws), [kw1, kw2])
+
+    def test_getitem(self):
+        kw1 = Keyword()
+        kw2 = Keyword()
+        kws = Keywords(None, [kw1, kw2])
+        assert_true(kws[0] is kw1)
+        assert_true(kws[1] is kw2)
+        assert_true(kws[-1] is kw2)
+
+    def test_len(self):
+        kws = Keywords(None)
+        assert_equal(len(kws), 0)
+        kws.create()
+        assert_equal(len(kws), 1)
 
 
 class TestTags(unittest.TestCase):

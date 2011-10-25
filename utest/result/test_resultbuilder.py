@@ -109,7 +109,8 @@ class TestBuildingSuiteExecutionResult(unittest.TestCase):
         assert_equals(self._keyword.status, 'PASS')
         assert_equals(self._keyword.starttime, '20111024 13:41:20.926')
         assert_equals(self._keyword.endtime, '20111024 13:41:20.928')
-        assert_equals(len(self._keyword.children), 1)
+        assert_equals(len(self._keyword.keywords), 0)
+        assert_equals(len(self._keyword.messages), 1)
 
     def test_user_keyword_is_built(self):
         assert_equals(self._user_keyword.name, 'logs on trace')
@@ -118,7 +119,8 @@ class TestBuildingSuiteExecutionResult(unittest.TestCase):
         assert_equals(self._user_keyword.status, 'PASS')
         assert_equals(self._user_keyword.starttime, '20111024 13:41:20.930')
         assert_equals(self._user_keyword.endtime, '20111024 13:41:20.933')
-        assert_equals(len(self._keyword.children), 1)
+        assert_equals(len(self._user_keyword.messages), 0)
+        assert_equals(len(self._user_keyword.keywords), 1)
 
     def test_message_is_built(self):
         assert_equals(self._message.message, 'Test 1')
@@ -126,7 +128,8 @@ class TestBuildingSuiteExecutionResult(unittest.TestCase):
         assert_equals(self._message.timestamp, '20111024 13:41:20.927')
 
     def test_suite_setup_is_build(self):
-        assert_equals(len(self._setup.children), 0)
+        assert_equals(len(self._setup.keywords), 0)
+        assert_equals(len(self._setup.messages), 0)
 
 
 class TestElements(unittest.TestCase):

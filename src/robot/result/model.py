@@ -48,18 +48,23 @@ class TestSuite(object):
         self._metadata = utils.NormalizedDict(metadata, ignore=['_'])
     metadata = property(_get_metadata, _set_metadata)
 
-    def create_keyword(self, name):
-        keyword = Keyword(name=name)
-        self.keywords.append(keyword)
-        return keyword
-    def create_test(self, name):
-        test = TestCase(self, name)
-        self.tests.append(test)
-        return test
-    def create_suite(self):
-        suite = TestSuite()
-        self.suites.append(suite)
-        return suite
+    def _get_suites(self):
+        return self._suites
+    def _set_suites(self, suites):
+        self._suites = TestSuites(self, suites)
+    suites = property(_get_suites, _set_suites)
+
+    def _get_tests(self):
+        return self._tests
+    def _set_tests(self, tests):
+        self._tests = TestCases(self, tests)
+    tests = property(_get_tests, _set_tests)
+
+    def _get_keywords(self):
+        return self._keywords
+    def _set_keywords(self, keywords):
+        self._keywords = Keywords(self, keywords)
+    keywords = property(_get_keywords, _set_keywords)
 
 
 class TestCase(object):
@@ -82,10 +87,11 @@ class TestCase(object):
     tags = property(lambda self: self._tags,
                     lambda self, tags: setattr(self, '_tags', Tags(tags)))
 
-    def create_keyword(self, name):
-        keyword = Keyword(name=name)
-        self.keywords.append(keyword)
-        return keyword
+    def _get_keywords(self):
+        return self._keywords
+    def _set_keywords(self, keywords):
+        self._keywords = Keywords(self, keywords)
+    keywords = property(_get_keywords, _set_keywords)
 
 
 class Tags(object):
@@ -120,35 +126,31 @@ class Tags(object):
 
 class Keyword(object):
 
-    def __init__(self, parent=None, name='', doc='', status='UNDEFINED', type='kw'):
+    def __init__(self, parent=None, name='', doc='', type='kw', status='UNDEFINED'):
         self.parent = parent
         self.name = name
         self.doc = doc
-        self.status = status
-        self.type = type
         self.args = []
+        self.type = type
+        self.status = status
         self.messages = []
         self.keywords = []
-        self.children = []
         self.starttime = ''
         self.endtime = ''
         self.elapsedtime = ''
         self.timeout = ''
 
-    def create_keyword(self, name):
-        keyword = Keyword(self, name=name)
-        self.keywords.append(keyword)
-        self._add_child(keyword)
-        return keyword
+    def _get_keywords(self):
+        return self._keywords
+    def _set_keywords(self, keywords):
+        self._keywords = Keywords(self, keywords)
+    keywords = property(_get_keywords, _set_keywords)
 
-    def create_message(self):
-        msg = Message()
-        self.messages.append(msg)
-        self._add_child(msg)
-        return msg
-
-    def _add_child(self, child):
-        self.children.append(child)
+    def _get_messages(self):
+        return self._messages
+    def _set_messages(self, messages):
+        self._messages = Messages(self, messages)
+    messages = property(_get_messages, _set_messages)
 
 
 class Message(object):
@@ -164,9 +166,11 @@ class Message(object):
 
 class _ItemList(object):
 
-    def __init__(self, parent):
+    def __init__(self, parent, items=None):
         self._parent = parent
         self._items = []
+        for item in items or []:
+            self.add(item)
 
     def create(self, **args):
         self._items.append(self._item_class(self._parent, **args))
@@ -179,6 +183,12 @@ class _ItemList(object):
     def __iter__(self):
         return iter(self._items)
 
+    def __getitem__(self, index):
+        return self._items[index]
+
+    def __len__(self):
+        return len(self._items)
+
 
 class TestSuites(_ItemList):
     _item_class = TestSuite
@@ -188,3 +198,6 @@ class TestCases(_ItemList):
 
 class Keywords(_ItemList):
     _item_class = Keyword
+
+class Messages(_ItemList):
+    _item_class = Message

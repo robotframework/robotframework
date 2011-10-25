@@ -12,20 +12,23 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from model import TestSuite
-from robot.result.model import Message
+from robot.result.model import Message, TestSuites
 from robot.utils.etreewrapper import ET
 
 class ExecutionResult(object):
 
     def __init__(self):
-        self.suite = None
         self.errors = []
         self._statistics = None
 
-    def create_suite(self):
-        self.suite = TestSuite()
-        return self.suite
+    @property
+    def suite(self):
+        return list(self._suites)[0]
+
+    @property
+    def suites(self):
+        self._suites = TestSuites(parent=None)
+        return self._suites
 
 
 class ExecutionResultBuilder(object):
@@ -67,8 +70,8 @@ class _Element(object):
     tag = ''
 
     def __init__(self, result, parent=None):
-        self.parent = parent
         self._result = result
+        self.parent = parent
 
     def start(self, elem):
         pass
@@ -109,7 +112,7 @@ class SuiteElement(_Element):
     tag = 'suite'
 
     def start(self, elem):
-        self._result = self._result.create_suite()
+        self._result = self._result.suites.create()
 
     def end(self, elem):
         self._result.name = self._name_from(elem)
@@ -124,7 +127,7 @@ class TestCaseElement(_Element):
     tag = 'test'
 
     def start(self, elem):
-        self._result = self._result.create_test(self._name_from(elem))
+        self._result = self._result.tests.create(name=self._name_from(elem))
 
     def _children(self):
         return [KeywordElement, TagsElement, DocElement, TestStatusElement]
@@ -134,7 +137,7 @@ class KeywordElement(_Element):
     tag = 'kw'
 
     def start(self, elem):
-        self._result = self._result.create_keyword(self._name_from(elem))
+        self._result = self._result.keywords.create(name=self._name_from(elem))
 
     def _children(self):
         return [DocElement, ArgumentsElement, KeywordElement, MessageElement,
@@ -145,7 +148,7 @@ class MessageElement(_Element):
     tag = 'msg'
 
     def start(self, elem):
-        self._result = self._result.create_message()
+        self._result = self._result.messages.create()
 
     def end(self, elem):
         self._result.message = elem.text or ''
@@ -162,6 +165,7 @@ class StatusElement(_Element):
         self._result.status = self._attribute_from(elem, 'status')
         self._result.starttime = self._attribute_from(elem, 'starttime')
         self._result.endtime = self._attribute_from(elem, 'endtime')
+
 
 class TestStatusElement(StatusElement):
 
@@ -183,6 +187,7 @@ class MetadataElement(_Element):
     def _children(self):
         return [MetadataItemElement]
 
+
 class MetadataItemElement(_Element):
     tag = 'item'
 
@@ -199,6 +204,7 @@ class TagsElement(_Element):
     def _children(self):
         return [TagElement]
 
+
 class TagElement(_Element):
     tag = 'tag'
 
@@ -211,6 +217,7 @@ class ArgumentsElement(_Element):
 
     def _children(self):
         return [ArgumentElement]
+
 
 class ArgumentElement(_Element):
     tag = 'arg'
@@ -226,11 +233,13 @@ class StatisticsElement(_Element):
         return [TotalStatisticsElement, TagStatisticsElement,
                 SuiteStatisticsElement]
 
+
 class TotalStatisticsElement(_Element):
     tag = 'total'
 
     def _children(self):
         return [StatElement]
+
 
 class TagStatisticsElement(_Element):
     tag = 'tag'
@@ -238,11 +247,13 @@ class TagStatisticsElement(_Element):
     def _children(self):
         return [StatElement]
 
+
 class SuiteStatisticsElement(_Element):
     tag = 'suite'
 
     def _children(self):
         return [StatElement]
+
 
 class StatElement(_Element):
     tag = 'stat'
@@ -253,6 +264,7 @@ class ErrorsElement(_Element):
 
     def _children(self):
         return [ErrorMessageElement]
+
 
 class ErrorMessageElement(MessageElement):
 
