@@ -15,7 +15,7 @@
 
 class TestSuite(object):
 
-    def __init__(self, parent=None, source='', name='', doc='', status='PASS'):
+    def __init__(self, parent=None, source='', name='', doc='', status='UNDEFINED'):
         self.parent = parent
         self.source = source
         self.name = name
@@ -30,10 +30,20 @@ class TestSuite(object):
         self.endtime = ''
         self.elapsedtime = ''
 
+    def create_keyword(self, name):
+        keyword = Keyword(name)
+        self.keywords.append(keyword)
+        return keyword
+
+    def create_test(self, name):
+        test = TestCase(self, name)
+        self.tests.append(test)
+        return test
+
 
 class TestCase(object):
 
-    def __init__(self, parent=None, name='', doc='', status='PASS'):
+    def __init__(self, parent=None, name='', doc='', status='UNDEFINED'):
         self.parent = parent
         self.name = name
         self.doc = doc
@@ -47,10 +57,15 @@ class TestCase(object):
         self.endtime = ''
         self.elapsedtime = ''
 
+    def create_keyword(self, name):
+        keyword = Keyword(name)
+        self.keywords.append(keyword)
+        return keyword
+
 
 class Keyword(object):
 
-    def __init__(self, name='', doc='', status='PASS', type='kw'):
+    def __init__(self, name='', doc='', status='UNDEFINED', type='kw'):
         self.name = name
         self.doc = doc
         self.status = status
@@ -63,3 +78,29 @@ class Keyword(object):
         self.endtime = ''
         self.elapsedtime = ''
         self.timeout = ''
+
+    def create_keyword(self, name):
+        keyword = Keyword(self, name)
+        self.keywords.append(keyword)
+        self._add_child(keyword)
+        return keyword
+
+    def create_message(self):
+        msg = Message()
+        self.messages.append(msg)
+        self._add_child(msg)
+        return msg
+
+    def _add_child(self, child):
+        self.children.append(child)
+
+
+class Message(object):
+
+    def __init__(self, message='', level='INFO', html=False, timestamp='',
+                 linkable=False):
+        self.message = message
+        self.level = level
+        self.html = html
+        self.timestamp = timestamp
+        self.linkable = linkable
