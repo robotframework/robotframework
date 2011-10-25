@@ -42,6 +42,11 @@ class TestTestAttributes(unittest.TestCase):
         assert_equal(list(self.suite.tests[0].tags), ['TAG'])
         assert_equal(list(self.suite.suites[0].tests[0].tags), ['tag'])
 
+    def test_remove_negative_tags(self):
+        SuiteConfigurer(set_tags=['n', '-TAG']).configure(self.suite)
+        assert_equal(list(self.suite.tests[0].tags), ['n'])
+        assert_equal(list(self.suite.suites[0].tests[0].tags), ['n'])
+
 
 if __name__ == '__main__':
     unittest.main()

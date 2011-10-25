@@ -36,10 +36,7 @@ class SuiteConfigurer(object):
         if self.metadata:
             suite.metadata.update(self.metadata)
         if self.set_tags:
-            self._set_tags(suite)
+            add = [t for t in self.set_tags if not t.startswith('-')]
+            remove = [t[1:] for t in self.set_tags if t.startswith('-')]
+            suite.set_tags(add, remove)
 
-    def _set_tags(self, suite):
-        for test in suite.tests:
-            test.tags.add(self.set_tags)
-        for sub in suite.suites:
-            self._set_tags(sub)

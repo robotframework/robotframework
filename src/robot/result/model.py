@@ -72,6 +72,13 @@ class TestSuite(object):
         self._keywords = Keywords(self, keywords)
     keywords = property(_get_keywords, _set_keywords)
 
+    def set_tags(self, add=None, remove=None):
+        for test in self.tests:
+            test.tags.add(add)
+            test.tags.remove(remove)
+        for sub in self.suites:
+            sub.set_tags(add, remove)
+
 
 class TestCase(object):
 
