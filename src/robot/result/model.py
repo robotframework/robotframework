@@ -110,7 +110,8 @@ class Tags(object):
 
 class Keyword(object):
 
-    def __init__(self, name='', doc='', status='UNDEFINED', type='kw'):
+    def __init__(self, parent=None, name='', doc='', status='UNDEFINED', type='kw'):
+        self.parent = parent
         self.name = name
         self.doc = doc
         self.status = status
@@ -149,3 +150,31 @@ class Message(object):
         self.html = html
         self.timestamp = timestamp
         self.linkable = linkable
+
+
+class _ItemList(object):
+
+    def __init__(self, parent):
+        self._parent = parent
+        self._items = []
+
+    def create(self, **args):
+        self._items.append(self._item_class(self._parent, **args))
+        return self._items[-1]
+
+    def add(self, item):
+        item.parent = self._parent
+        self._items.append(item)
+
+    def __iter__(self):
+        return iter(self._items)
+
+
+class TestSuites(_ItemList):
+    _item_class = TestSuite
+
+class TestCases(_ItemList):
+    _item_class = TestCase
+
+class Keywords(_ItemList):
+    _item_class = Keyword

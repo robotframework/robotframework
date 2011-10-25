@@ -1,7 +1,7 @@
 import unittest
-from robot.utils.asserts import assert_equal, assert_true, assert_raises
+from robot.utils.asserts import assert_equal, assert_true
 
-from robot.result.model import TestSuite, TestCase, Tags
+from robot.result.model import *
 
 
 class TestTestSuite(unittest.TestCase):
@@ -34,6 +34,42 @@ class TestTestCase(unittest.TestCase):
         self.test.tags = ['s2', 's1']
         self.test.tags.add('s3')
         assert_equal(list(self.test.tags), ['s1', 's2', 's3'])
+
+
+class TestItemLists(unittest.TestCase):
+
+    def test_create_suite(self):
+        parent = object()
+        suites = TestSuites(parent)
+        suite = suites.create(name='New')
+        assert_true(isinstance(suite, TestSuite))
+        assert_true(suite.parent is parent)
+        assert_equal(suite.name, 'New')
+        assert_equal(list(suites), [suite])
+
+    def test_create_test(self):
+        parent = object()
+        tests = TestCases(parent)
+        test = tests.create(tags=['tag'])
+        assert_true(isinstance(test, TestCase))
+        assert_true(test.parent is parent)
+        assert_equal(list(test.tags), ['tag'])
+        assert_equal(list(tests), [test])
+
+    def test_create_keyword(self):
+        parent = object()
+        kws = Keywords(parent)
+        kw = kws.create(name='KW')
+        assert_true(isinstance(kw, Keyword))
+        assert_true(kw.parent is parent)
+        assert_equal(kw.name, 'KW')
+        assert_equal(list(kws), [kw])
+
+    def test_add(self):
+        kw = Keyword()
+        parent = object()
+        Keywords(parent).add(kw)
+        assert_true(kw.parent is parent)
 
 
 class TestTags(unittest.TestCase):
