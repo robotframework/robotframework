@@ -18,7 +18,7 @@ from robot import utils
 class TestSuite(object):
 
     def __init__(self, parent=None, source='', name='', doc='', metadata=None,
-                 status='PASS'):
+                 status='UNDEFINED'):
         self.parent = parent
         self.source = source
         self.name = name
@@ -36,13 +36,22 @@ class TestSuite(object):
     def _get_metadata(self):
         return self._metadata
     def _set_metadata(self, metadata):
-        self._metadata = utils.NormalizedDict(hmetadata, ignore=['_'])
+        self._metadata = utils.NormalizedDict(metadata, ignore=['_'])
     metadata = property(_get_metadata, _set_metadata)
+
+    def create_keyword(self, name):
+        keyword = Keyword(name)
+        self.keywords.append(keyword)
+        return keyword
+    def create_test(self, name):
+        test = TestCase(self, name)
+        self.tests.append(test)
+        return test
 
 
 class TestCase(object):
 
-    def __init__(self, parent=None, name='', doc='', tags=None, status='PASS'):
+    def __init__(self, parent=None, name='', doc='', tags=None, status='UNDEFINED'):
         self.parent = parent
         self.name = name
         self.doc = doc
@@ -58,6 +67,11 @@ class TestCase(object):
 
     tags = property(lambda self: self._tags,
                     lambda self, tags: setattr(self, '_tags', Tags(tags)))
+
+    def create_keyword(self, name):
+        keyword = Keyword(name)
+        self.keywords.append(keyword)
+        return keyword
 
 
 class Tags(object):
@@ -92,7 +106,7 @@ class Tags(object):
 
 class Keyword(object):
 
-    def __init__(self, name='', doc='', status='PASS', type='kw'):
+    def __init__(self, name='', doc='', status='UNDEFINED', type='kw'):
         self.name = name
         self.doc = doc
         self.status = status
@@ -105,3 +119,29 @@ class Keyword(object):
         self.endtime = ''
         self.elapsedtime = ''
         self.timeout = ''
+
+    def create_keyword(self, name):
+        keyword = Keyword(self, name)
+        self.keywords.append(keyword)
+        self._add_child(keyword)
+        return keyword
+
+    def create_message(self):
+        msg = Message()
+        self.messages.append(msg)
+        self._add_child(msg)
+        return msg
+
+    def _add_child(self, child):
+        self.children.append(child)
+
+
+class Message(object):
+
+    def __init__(self, message='', level='INFO', html=False, timestamp='',
+                 linkable=False):
+        self.message = message
+        self.level = level
+        self.html = html
+        self.timestamp = timestamp
+        self.linkable = linkable
