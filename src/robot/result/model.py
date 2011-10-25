@@ -209,11 +209,11 @@ class Tags(object):
         self._tags = utils.normalize_tags(list(self) + list(Tags(tags)))
 
     def remove(self, tags):
-        tags = Tags(tags)
+        tags = TagPatterns(tags)
         self._tags = [t for t in self if t not in tags]
 
     def __contains__(self, tag):
-        return utils.eq_any(tag, list(self), ignore=['_'])
+        return TagPatterns(tag).contains_any(self)
 
     def __len__(self):
         return len(self._tags)
@@ -226,3 +226,15 @@ class Tags(object):
 
     def __str__(self):
         return unicode(self).encode('UTF-8')
+
+
+class TagPatterns(object):
+
+    def __init__(self, patters):
+        self._patterns = list(Tags(patters))
+
+    def __contains__(self, tag):
+        return any(utils.matches(tag, p, ignore=['_']) for p in self._patterns)
+
+    def contains_any(self, tags):
+        return any(t in self for t in tags)

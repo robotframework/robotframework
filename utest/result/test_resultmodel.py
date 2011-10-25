@@ -190,13 +190,32 @@ class TestTags(unittest.TestCase):
 
     def test_remove_iterable(self):
         tags = Tags(['a', 'B B'])
-        tags.remove(['nonex', '', 'A', '_B_B_'])
+        tags.remove(['nonex', '', 'A'])
+        tags.remove(Tags('__B_B__'))
         assert_equal(list(tags), [])
+
+    def test_remove_using_pattern(self):
+        tags = Tags(['t1', 't2', '1', '1more'])
+        tags.remove('?2')
+        assert_equal(list(tags), ['1', '1more', 't1'])
+        tags.remove('*1*')
+        assert_equal(list(tags), [])
+
+    def test_add_and_remove_none(self):
+        tags = Tags(['t'])
+        tags.add(None)
+        tags.remove(None)
+        assert_equal(list(tags), ['t'])
 
     def test_contains(self):
         assert_true('a' in Tags(['a', 'b']))
         assert_true('c' not in Tags(['a', 'b']))
         assert_true('AA' in Tags(['a_a', 'b']))
+
+    def test_contains_pattern(self):
+        assert_true('a*' in Tags(['a', 'b']))
+        assert_true('a*' in Tags(['u2', 'abba']))
+        assert_true('a?' not in Tags(['a', 'abba']))
 
     def test_length(self):
         assert_equal(len(Tags()), 0)
