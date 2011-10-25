@@ -94,36 +94,6 @@ class TestCase(object):
     keywords = property(_get_keywords, _set_keywords)
 
 
-class Tags(object):
-
-    def __init__(self, tags=None):
-        if isinstance(tags, basestring):
-            tags = [tags]
-        self._tags = utils.normalize_tags(tags or [])
-
-    def add(self, tags):
-        self._tags = utils.normalize_tags(list(self) + list(Tags(tags)))
-
-    def remove(self, tags):
-        tags = Tags(tags)
-        self._tags = [t for t in self if t not in tags]
-
-    def __contains__(self, tag):
-        return utils.eq_any(tag, list(self), ignore=['_'])
-
-    def __len__(self):
-        return len(self._tags)
-
-    def __iter__(self):
-        return iter(self._tags)
-
-    def __unicode__(self):
-        return u'[%s]' % ', '.join(self)
-
-    def __str__(self):
-        return unicode(self).encode('UTF-8')
-
-
 class Keyword(object):
 
     def __init__(self, parent=None, name='', doc='', type='kw', status='UNDEFINED'):
@@ -201,3 +171,33 @@ class Keywords(_ItemList):
 
 class Messages(_ItemList):
     _item_class = Message
+
+
+class Tags(object):
+
+    def __init__(self, tags=None):
+        if isinstance(tags, basestring):
+            tags = [tags]
+        self._tags = utils.normalize_tags(tags or [])
+
+    def add(self, tags):
+        self._tags = utils.normalize_tags(list(self) + list(Tags(tags)))
+
+    def remove(self, tags):
+        tags = Tags(tags)
+        self._tags = [t for t in self if t not in tags]
+
+    def __contains__(self, tag):
+        return utils.eq_any(tag, list(self), ignore=['_'])
+
+    def __len__(self):
+        return len(self._tags)
+
+    def __iter__(self):
+        return iter(self._tags)
+
+    def __unicode__(self):
+        return u'[%s]' % ', '.join(self)
+
+    def __str__(self):
+        return unicode(self).encode('UTF-8')
