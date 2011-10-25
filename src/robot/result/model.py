@@ -42,6 +42,12 @@ class TestSuite(object):
     def all_stats(self):
         return AllStats(self)
 
+    @property
+    def longname(self):
+        if self.parent:
+            return self.parent.longname + '.' + self.name
+        return self.name
+
     def _get_metadata(self):
         return self._metadata
     def _set_metadata(self, metadata):
