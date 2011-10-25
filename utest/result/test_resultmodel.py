@@ -138,6 +138,18 @@ class TestItemLists(unittest.TestCase):
         assert_equal(len(kws), 1)
 
 
+class TestMetadata(unittest.TestCase):
+
+    def test_normalizetion(self):
+        md = Metadata([('m1', 1), ('M2', 1), ('m_3', 1), ('M1', 2), ('M 3', 2)])
+        assert_equal(dict(md), {'m1': 2, 'M2': 1, 'm_3': 2})
+
+    def test_unicode(self):
+        assert_equal(unicode(Metadata()), '{}')
+        d = {'a': 1, 'B': 'two', u'\xe4': u'nelj\xe4'}
+        assert_equal(unicode(Metadata(d)), u'{a: 1, B: two, \xe4: nelj\xe4}')
+
+
 class TestTags(unittest.TestCase):
 
     def test_empty_init(self):
@@ -147,12 +159,11 @@ class TestTags(unittest.TestCase):
         assert_equal(list(Tags('string')), ['string'])
 
     def test_init_with_iterable_and_normalization_and_sorting(self):
-        for inp in [['T 1', 't2'],
-                    ('t2', 'T 1'),
-                    ('t2', 'T 2', '__T__2__', 'T 1', 't1', 't_1'),
-                    ('', 'T 1', '', 't2'),
-                    ('NONE', 'T 1', 't2')]:
-            assert_equal(list(Tags(inp)), ['T 1', 't2'])
+        for inp in [['T 1', 't2', 't_3'],
+                    ('t2', 'T 1', 't_3'),
+                    ('t2', 'T 2', '__T__2__', 'T 1', 't1', 't_1', 't_3', 't3'),
+                    ('', 'T 1', '', 't2', 't_3', 'NONE')]:
+            assert_equal(list(Tags(inp)), ['T 1', 't2', 't_3'])
 
     def test_add_string(self):
         tags = Tags(['Y'])

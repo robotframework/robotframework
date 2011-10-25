@@ -45,7 +45,7 @@ class TestSuite(object):
     def _get_metadata(self):
         return self._metadata
     def _set_metadata(self, metadata):
-        self._metadata = utils.NormalizedDict(metadata, ignore=['_'])
+        self._metadata = Metadata(metadata)
     metadata = property(_get_metadata, _set_metadata)
 
     def _get_suites(self):
@@ -171,6 +171,18 @@ class Keywords(_ItemList):
 
 class Messages(_ItemList):
     _item_class = Message
+
+
+class Metadata(utils.NormalizedDict):
+
+    def __init__(self, initial=None):
+        utils.NormalizedDict.__init__(self, initial, ignore=['_'])
+
+    def __unicode__(self):
+        return u'{%s}' % ', '.join('%s: %s' % (k, self[k]) for k in self)
+
+    def __str__(self):
+        return unicode(self).encode('UTF-8')
 
 
 class Tags(object):
