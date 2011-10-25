@@ -13,22 +13,26 @@
 #  limitations under the License.
 
 from model import TestSuite
+from robot.result.model import Message
 from robot.utils.etreewrapper import ET
-
 
 class ExecutionResult(object):
 
-    def __init__(self, source):
-        self.suite = SuiteBuilder(source).build()
+    def __init__(self):
+        self.suite = None
         self.errors = []
         self._statistics = None
 
+    def create_suite(self):
+        self.suite = TestSuite()
+        return self.suite
 
-class SuiteBuilder(object):
+
+class ExecutionResultBuilder(object):
 
     def __init__(self, source):
         self._source = source
-        self._result = TestSuite()
+        self._result = ExecutionResult()
         self._elements = _ElementStack(self._result)
 
     def build(self):
@@ -76,7 +80,7 @@ class _Element(object):
         for child_type in self._children():
             if child_type.tag == tag:
                 return child_type(self._result, self)
-        raise RuntimeError('no child (%s) of mine (%s)', tag, self.tag)
+        raise RuntimeError('no child (%s) of mine (%s)' % (tag, self.tag))
 
     def _children(self):
         return []
@@ -103,6 +107,9 @@ class RobotElement(_Element):
 
 class SuiteElement(_Element):
     tag = 'suite'
+
+    def start(self, elem):
+        self._result = self._result.create_suite()
 
     def end(self, elem):
         self._result.name = self._name_from(elem)
@@ -243,3 +250,11 @@ class StatElement(_Element):
 
 class ErrorsElement(_Element):
     tag = 'errors'
+
+    def _children(self):
+        return [ErrorMessageElement]
+
+class ErrorMessageElement(MessageElement):
+
+    def start(self, elem):
+        self._result = Message()

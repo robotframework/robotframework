@@ -1,6 +1,6 @@
 import unittest
 from StringIO import StringIO
-from robot.result.builders import ExecutionResult
+from robot.result.builders import ExecutionResultBuilder
 from robot.utils.asserts import assert_equals, assert_true
 
 
@@ -61,6 +61,7 @@ XML = """<?xml version="1.0" encoding="UTF-8"?>
 </suite>
 </statistics>
 <errors>
+  <msg timestamp="20111024 13:41:20.873" level="ERROR">Error in file 'normal.html' in table 'Settings': Resource file 'nope' does not exist.</msg>
 </errors>
 </robot>
 """
@@ -68,12 +69,14 @@ XML = """<?xml version="1.0" encoding="UTF-8"?>
 class TestBuildingSuiteExecutionResult(unittest.TestCase):
 
     def setUp(self):
-        self._suite = ExecutionResult(StringIO(XML)).suite
+        result = ExecutionResultBuilder(StringIO(XML)).build()
+        self._suite = result.suite
         self._test = self._suite.tests[0]
         self._keyword = self._test.keywords[0]
         self._user_keyword = self._test.keywords[1]
         self._message = self._keyword.messages[0]
         self._setup = self._suite.keywords[0]
+        self._errors = result.errors
 
     def test_suite_is_built(self):
         assert_equals(self._suite.source, 'normal.html')
@@ -122,6 +125,20 @@ class TestBuildingSuiteExecutionResult(unittest.TestCase):
         assert_equals(len(self._setup.children), 0)
 
 
+class TestElements(unittest.TestCase):
+
+    def test_nested_suites(self):
+        xml = """
+        <robot>
+        <suite name="foo">
+          <suite name="bar">
+          </suite>
+        </suite>
+        </robot>
+        """
+        result = ExecutionResultBuilder(StringIO(xml)).build()
+        assert_equals(result.suite.name, 'foo')
+        assert_equals(result.suite.suites[0].name, 'bar')
 
 if __name__ == '__main__':
     unittest.main()

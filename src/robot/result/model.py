@@ -47,6 +47,10 @@ class TestSuite(object):
         test = TestCase(self, name)
         self.tests.append(test)
         return test
+    def create_suite(self):
+        suite = TestSuite()
+        self.suites.append(suite)
+        return suite
 
 
 class TestCase(object):
