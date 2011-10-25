@@ -53,5 +53,17 @@ class TestTestAttributes(unittest.TestCase):
         assert_equal(list(self.suite.suites[0].tests[0].tags), [])
 
 
+class TestFilteringByTags(unittest.TestCase):
+
+    def setUp(self):
+        self.suite = TestSuite()
+        self.suite.tests = [TestCase(name='t0'),TestCase(name='t1', tags=['t1']),
+                            TestCase(name='t2', tags=['t1', 't2'])]
+
+    def ____test_include(self):
+        SuiteConfigurer(include_tags=['t1', 'none', '', 't2']).configure(self.suite)
+        assert_equal([t.name for t in self.suite.tests], ['t1', 't2'])
+
+
 if __name__ == '__main__':
     unittest.main()
