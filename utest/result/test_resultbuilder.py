@@ -146,6 +146,8 @@ class TestElements(unittest.TestCase):
         result = ExecutionResultBuilder(StringIO(xml)).build()
         assert_equals(result.suite.name, 'foo')
         assert_equals(result.suite.suites[0].name, 'bar')
+        assert_equals(result.suite.longname, 'foo')
+        assert_equals(result.suite.suites[0].longname, 'foo.bar')
 
 
 if __name__ == '__main__':
