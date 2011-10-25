@@ -249,6 +249,11 @@ class TestNormalizedDict(unittest.TestCase):
         d1['D'] = d2['d'] = 1
         assert_true(d1 == d1 == d2 == d2)
 
+    def test_clear(self):
+        nd = NormalizedDict({'a': 1, 'B': 2})
+        nd.clear()
+        assert_equals(nd.data, {})
+        assert_equals(nd._keys, {})
 
 if __name__ == '__main__':
     unittest.main()

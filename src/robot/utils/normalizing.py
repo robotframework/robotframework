@@ -104,6 +104,10 @@ class NormalizedDict(UserDict):
 
     __delitem__ = pop
 
+    def clear(self):
+        UserDict.clear(self)
+        self._keys.clear()
+
     def has_key(self, key):
         return self.data.has_key(self._normalize(key))
 
