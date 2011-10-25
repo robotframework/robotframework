@@ -13,6 +13,7 @@
 #  limitations under the License.
 
 from robot import utils
+from robot.common.statistics import CriticalStats, AllStats
 
 
 class TestSuite(object):
@@ -33,6 +34,14 @@ class TestSuite(object):
         self.endtime = ''
         self.elapsedtime = ''
 
+    @property
+    def critical_stats(self):
+        return CriticalStats(self)
+
+    @property
+    def all_stats(self):
+        return AllStats(self)
+
     def _get_metadata(self):
         return self._metadata
     def _set_metadata(self, metadata):
@@ -40,7 +49,7 @@ class TestSuite(object):
     metadata = property(_get_metadata, _set_metadata)
 
     def create_keyword(self, name):
-        keyword = Keyword(name)
+        keyword = Keyword(name=name)
         self.keywords.append(keyword)
         return keyword
     def create_test(self, name):
@@ -55,7 +64,8 @@ class TestSuite(object):
 
 class TestCase(object):
 
-    def __init__(self, parent=None, name='', doc='', tags=None, status='UNDEFINED'):
+    def __init__(self, parent=None, name='', doc='', tags=None,
+                 status='UNDEFINED', critical=True):
         self.parent = parent
         self.name = name
         self.doc = doc
@@ -63,7 +73,7 @@ class TestCase(object):
         self.status = status
         self.message = ''
         self.timeout = ''
-        self.critical = True
+        self.critical = critical
         self.keywords = []
         self.starttime = ''
         self.endtime = ''
@@ -73,7 +83,7 @@ class TestCase(object):
                     lambda self, tags: setattr(self, '_tags', Tags(tags)))
 
     def create_keyword(self, name):
-        keyword = Keyword(name)
+        keyword = Keyword(name=name)
         self.keywords.append(keyword)
         return keyword
 
@@ -126,7 +136,7 @@ class Keyword(object):
         self.timeout = ''
 
     def create_keyword(self, name):
-        keyword = Keyword(self, name)
+        keyword = Keyword(self, name=name)
         self.keywords.append(keyword)
         self._add_child(keyword)
         return keyword

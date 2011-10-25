@@ -19,6 +19,30 @@ class TestTestSuite(unittest.TestCase):
         self.suite.metadata['A'] = '2'
         assert_equal(dict(self.suite.metadata), {'a': '2', 'b': '1'})
 
+    def test_stats(self):
+        suite = self._create_suite_with_tests()
+        assert_equal(suite.critical_stats.passed, 2)
+        assert_equal(suite.critical_stats.failed, 1)
+        assert_equal(suite.all_stats.passed, 3)
+        assert_equal(suite.all_stats.failed, 2)
+
+    def test_nested_suite_stats(self):
+        suite = TestSuite()
+        suite.suites = [self._create_suite_with_tests(),
+                        self._create_suite_with_tests()]
+        assert_equal(suite.critical_stats.passed, 4)
+        assert_equal(suite.critical_stats.failed, 2)
+        assert_equal(suite.all_stats.passed, 6)
+        assert_equal(suite.all_stats.failed, 4)
+
+    def _create_suite_with_tests(self):
+        suite = TestSuite()
+        suite.tests = [TestCase(status='PASS'),
+                        TestCase(status='PASS'),
+                        TestCase(status='PASS', critical=False),
+                        TestCase(status='FAIL'),
+                        TestCase(status='FAIL', critical=False)]
+        return suite
 
 class TestTestCase(unittest.TestCase):
 

@@ -61,11 +61,43 @@ class Stat:
         self.failed += self.passed
         self.passed = 0
 
+    def add_suite(self, suite):
+        for test in suite.tests:
+            if self._is_included(test):
+                self.add_test(test)
+        for suite in suite.suites:
+            self.add_stat(self._subsuite_stats(suite))
+
+    def _is_included(self, test):
+        return True
+
+    def _subsuite_stats(self, suite):
+        return suite.all_stats
+
     def __cmp__(self, other):
         return cmp(self.name, other.name)
 
     def __nonzero__(self):
         return self.failed == 0
+
+
+class CriticalStats(Stat):
+
+    def __init__(self, suite):
+        Stat.__init__(self)
+        self.add_suite(suite)
+
+    def _is_included(self, test):
+        return test.critical
+
+    def _subsuite_stats(self, suite):
+        return suite.critical_stats
+
+class AllStats(Stat):
+
+    def __init__(self, suite):
+        Stat.__init__(self)
+        self.add_suite(suite)
 
 
 class SuiteStat(Stat):

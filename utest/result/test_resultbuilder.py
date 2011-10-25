@@ -86,6 +86,10 @@ class TestBuildingSuiteExecutionResult(unittest.TestCase):
         assert_equals(self._suite.status, 'PASS')
         assert_equals(self._suite.starttime, '20111024 13:41:20.873')
         assert_equals(self._suite.endtime, '20111024 13:41:20.952')
+        assert_equals(self._suite.critical_stats.passed, 1)
+        assert_equals(self._suite.critical_stats.failed, 0)
+        assert_equals(self._suite.all_stats.passed, 1)
+        assert_equals(self._suite.all_stats.failed, 0)
 
     def test_testcase_is_built(self):
         assert_equals(self._test.name, 'First One')
@@ -139,6 +143,7 @@ class TestElements(unittest.TestCase):
         result = ExecutionResultBuilder(StringIO(xml)).build()
         assert_equals(result.suite.name, 'foo')
         assert_equals(result.suite.suites[0].name, 'bar')
+
 
 if __name__ == '__main__':
     unittest.main()
