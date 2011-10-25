@@ -19,12 +19,12 @@ from robot.utils.etreewrapper import ET
 class ExecutionResult(object):
 
     def __init__(self, source):
-        self.suite = TestSuiteBuilder(source).build()
+        self.suite = SuiteBuilder(source).build()
         self.errors = []
         self._statistics = None
 
 
-class TestSuiteBuilder(object):
+class SuiteBuilder(object):
 
     def __init__(self, source):
         self._source = source
@@ -32,13 +32,17 @@ class TestSuiteBuilder(object):
         self._elements = _ElementStack(self._result)
 
     def build(self):
+        _actions = {'start': self._start, 'end': self._end}
         for action, elem in ET.iterparse(self._source, events=('start', 'end')):
-            if action == 'start':
-                self._elements.start(elem)
-            else:
-                self._elements.end(elem)
-                elem.clear()
+            _actions[action](elem)
         return self._result
+
+    def _start(self, elem):
+        self._elements.start(elem)
+
+    def _end(self, elem):
+        self._elements.end(elem)
+        elem.clear()
 
 
 class _ElementStack(object):
@@ -56,6 +60,7 @@ class _ElementStack(object):
 
 
 class _Element(object):
+    tag = ''
 
     def __init__(self, result, parent=None):
         self.parent = parent
@@ -211,7 +216,8 @@ class StatisticsElement(_Element):
     tag = 'statistics'
 
     def _children(self):
-        return [TotalStatisticsElement, TagStatisticsElement, SuiteStatisticsElement]
+        return [TotalStatisticsElement, TagStatisticsElement,
+                SuiteStatisticsElement]
 
 class TotalStatisticsElement(_Element):
     tag = 'total'
@@ -237,5 +243,3 @@ class StatElement(_Element):
 
 class ErrorsElement(_Element):
     tag = 'errors'
-
-
