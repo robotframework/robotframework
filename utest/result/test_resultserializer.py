@@ -1,7 +1,7 @@
 import unittest
 from StringIO import StringIO
 
-from robot.result.serializing import ResultSerializer
+from robot.result.serializer import ResultSerializer
 from robot.result.model import TestSuite
 from robot.utils.asserts import assert_equals
 
@@ -18,3 +18,5 @@ class TestResultSerializer(unittest.TestCase):
 </suite>
 </robot>
 ''')
+
+
