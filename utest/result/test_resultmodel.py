@@ -62,6 +62,29 @@ class TestTestSuite(unittest.TestCase):
         suite.name = 'new name'
         assert_equal(suite.name, 'new name')
 
+    def test_suite_status_is_passed_by_default(self):
+        assert_equal(TestSuite().status, 'PASS')
+
+    def test_suite_status_is_failed_if_critical_failed_test(self):
+        suite = TestSuite()
+        suite.tests.create(status='PASS')
+        assert_equal(suite.status, 'PASS')
+        suite.tests.create(status='FAIL')
+        assert_equal(suite.status, 'FAIL')
+        suite.tests.create(status='PASS')
+        assert_equal(suite.status, 'FAIL')
+
+    def test_suite_status_is_passed_if_only_passed_tests(self):
+        suite = TestSuite()
+        for i in range(10):
+            suite.tests.create(status='PASS')
+        assert_equal(TestSuite().status, 'PASS')
+
+    def test_suite_status_is_failed_if_failed_subsuite(self):
+        suite = TestSuite()
+        suite.suites.create().tests.create(status='FAIL')
+        assert_equal(suite.status, 'FAIL')
+
     def _create_suite_with_tests(self):
         suite = TestSuite()
         suite.tests = [TestCase(status='PASS'),

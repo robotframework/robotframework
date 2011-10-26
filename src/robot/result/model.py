@@ -58,14 +58,12 @@ class ExecutionErrors(object):
 
 class TestSuite(object):
 
-    def __init__(self, parent=None, source='', name='', doc='', metadata=None,
-                 status='UNDEFINED'):
+    def __init__(self, parent=None, source='', name='', doc='', metadata=None):
         self.parent = parent
         self.source = source
         self.name = name
         self.doc = doc
         self.metadata = metadata
-        self.status = status
         self.message = ''
         self.keywords = []
         self.suites = []
@@ -79,6 +77,11 @@ class TestSuite(object):
     def _set_name(self, name):
         self._name = name
     name = property(_get_name, _set_name)
+
+    def _get_status(self):
+        return 'PASS' if not self.critical_stats.failed else 'FAIL'
+    #TODO: Setter exists but is ignored for builders API compatibility
+    status = property(_get_status, lambda self,_: 0)
 
     #TODO: Remove this asap
     @property
