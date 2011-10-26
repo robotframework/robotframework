@@ -51,6 +51,17 @@ class TestTestSuite(unittest.TestCase):
         assert_equal(suite.all_stats.passed, 6)
         assert_equal(suite.all_stats.failed, 4)
 
+    def test_combined_suite_name(self):
+        suite = TestSuite()
+        assert_equal(suite.name, '')
+        suite.suites.create(name='foo')
+        suite.suites.create(name='bar')
+        assert_equal(suite.name, 'foo & bar')
+        suite.suites.create(name='zap')
+        assert_equal(suite.name, 'foo & bar & zap')
+        suite.name = 'new name'
+        assert_equal(suite.name, 'new name')
+
     def _create_suite_with_tests(self):
         suite = TestSuite()
         suite.tests = [TestCase(status='PASS'),

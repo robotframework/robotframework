@@ -74,6 +74,12 @@ class TestSuite(object):
         self.endtime = ''
         self.elapsedtime = ''
 
+    def _get_name(self):
+        return self._name or ' & '.join(s.name for s in self.suites)
+    def _set_name(self, name):
+        self._name = name
+    name = property(_get_name, _set_name)
+
     #TODO: Remove this asap
     @property
     def critical(self):
