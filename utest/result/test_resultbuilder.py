@@ -127,9 +127,14 @@ class TestBuildingSuiteExecutionResult(unittest.TestCase):
         assert_equals(self._message.level, 'INFO')
         assert_equals(self._message.timestamp, '20111024 13:41:20.927')
 
-    def test_suite_setup_is_build(self):
+    def test_suite_setup_is_built(self):
         assert_equals(len(self._setup.keywords), 0)
         assert_equals(len(self._setup.messages), 0)
+
+    def test_errors_are_built(self):
+        assert_equals(len(self._errors), 1)
+        assert_equals(self._errors[0].message,
+                      "Error in file 'normal.html' in table 'Settings': Resource file 'nope' does not exist.")
 
 
 class TestElements(unittest.TestCase):

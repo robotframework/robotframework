@@ -40,7 +40,7 @@ class ExecutionResultBuilder(object):
 class ElementStack(object):
 
     def __init__(self, initial_result):
-        self._elements =  [RootElement(initial_result)]
+        self._elements = [RootElement(initial_result)]
 
     @property
     def _current(self):
@@ -241,6 +241,9 @@ class StatElement(_Element):
 class ErrorsElement(_Element):
     tag = 'errors'
 
+    def start(self, elem):
+        self._result = self._result.errors
+
     def _children(self):
         return [ErrorMessageElement]
 
@@ -249,7 +252,9 @@ class ErrorMessageElement(MessageElement):
     tag = 'msg'
 
     def start(self, elem):
-        self._result = Message(None)
+        msg = Message(None)
+        self._result.append(msg)
+        self._result = msg
 
 
 class IgnoredElement(_Element): pass
