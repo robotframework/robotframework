@@ -91,12 +91,6 @@ class _Element(object):
     def _children(self):
         return []
 
-    def _attribute_from(self, elem, name, default=''):
-        return elem.attrib.get(name, default)
-
-    def _name_from(self, elem):
-        return self._attribute_from(elem, 'name')
-
 
 class RootElement(_Element):
 
@@ -115,11 +109,8 @@ class SuiteElement(_Element):
     tag = 'suite'
 
     def start(self, elem):
-        self._result = self._result.suites.create()
-
-    def end(self, elem):
-        self._result.name = self._name_from(elem)
-        self._result.source = self._attribute_from(elem, 'source')
+        self._result = self._result.suites.create(name=elem.get('name'),
+                                                  source=elem.get('source'))
 
     def _children(self):
         return [SuiteElement, DocElement, StatusElement,
@@ -130,7 +121,7 @@ class TestCaseElement(_Element):
     tag = 'test'
 
     def start(self, elem):
-        self._result = self._result.tests.create(name=self._name_from(elem))
+        self._result = self._result.tests.create(name=elem.get('name'))
 
     def _children(self):
         return [KeywordElement, TagsElement, DocElement, TestStatusElement]
@@ -140,7 +131,7 @@ class KeywordElement(_Element):
     tag = 'kw'
 
     def start(self, elem):
-        self._result = self._result.keywords.create(name=self._name_from(elem))
+        self._result = self._result.keywords.create(name=elem.get('name'))
 
     def _children(self):
         return [DocElement, ArgumentsElement, KeywordElement, MessageElement,
@@ -151,30 +142,30 @@ class MessageElement(_Element):
     tag = 'msg'
 
     def start(self, elem):
-        self._result = self._result.messages.create()
+        self._result = self._result.messages.create(
+            level=elem.get('level'),
+            timestamp=elem.get('timestamp'),
+            html=elem.get('html', False),
+            linkable=elem.get('linkable', False))
 
     def end(self, elem):
         self._result.message = elem.text or ''
-        self._result.level = self._attribute_from(elem, 'level')
-        self._result.timestamp = self._attribute_from(elem, 'timestamp')
-        self._result.html = self._attribute_from(elem, 'html', False)
-        self._result.linkable = self._attribute_from(elem, 'html', False)
 
 
 class StatusElement(_Element):
     tag = 'status'
 
-    def end(self, elem):
-        self._result.status = self._attribute_from(elem, 'status')
-        self._result.starttime = self._attribute_from(elem, 'starttime')
-        self._result.endtime = self._attribute_from(elem, 'endtime')
+    def start(self, elem):
+        self._result.status = elem.get('status')
+        self._result.starttime = elem.get('starttime')
+        self._result.endtime = elem.get('endtime')
 
 
 class TestStatusElement(StatusElement):
 
-    def end(self, elem):
-        StatusElement.end(self, elem)
-        self._result.critical = self._attribute_from(elem, 'critical') == 'yes'
+    def start(self, elem):
+        StatusElement.start(self, elem)
+        self._result.critical = elem.get('critical') == 'yes'
 
 
 class DocElement(_Element):
@@ -198,7 +189,7 @@ class MetadataItemElement(_Element):
         return [MetadataItemElement]
 
     def end(self, elem):
-        self._result.metadata[self._name_from(elem)] = elem.text
+        self._result.metadata[elem.get('name')] = elem.text
 
 
 class TagsElement(_Element):
