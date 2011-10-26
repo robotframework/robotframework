@@ -132,8 +132,8 @@ class TestBuildingSuiteExecutionResult(unittest.TestCase):
         assert_equals(len(self._setup.messages), 0)
 
     def test_errors_are_built(self):
-        assert_equals(len(self._errors), 1)
-        assert_equals(self._errors[0].message,
+        assert_equals(len(self._errors.messages), 1)
+        assert_equals(self._errors.messages[0].message,
                       "Error in file 'normal.html' in table 'Settings': Resource file 'nope' does not exist.")
 
 
