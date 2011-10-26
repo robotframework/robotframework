@@ -63,16 +63,20 @@ class AbstractLogger:
 
 class Message(object):
 
-    def __init__(self, message, level='INFO', html=False, timestamp=None, linkable=False):
-        self.message = self._get_message(message)
+    def __init__(self, message, level='INFO', html=False, timestamp=None,
+                 linkable=False):
+        self.message = message
         self.level, self.html = self._get_level_and_html(level, html)
         self.timestamp = self._get_timestamp(timestamp)
         self.linkable = linkable
 
-    def _get_message(self, msg):
+    def _get_message(self):
+        return self._message
+    def _set_message(self, msg):
         if not isinstance(msg, basestring):
             msg = utils.unic(msg)
-        return msg.replace('\r\n', '\n')
+        self._message = msg.replace('\r\n', '\n')
+    message = property(_get_message, _set_message)
 
     def _get_level_and_html(self, level, html):
         level = level.upper()
