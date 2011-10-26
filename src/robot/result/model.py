@@ -51,6 +51,22 @@ class TestSuite(object):
         self.endtime = ''
         self.elapsedtime = ''
 
+    @utils.setter
+    def metadata(self, metadata):
+        return Metadata(metadata)
+
+    @utils.setter
+    def suites(self, suites):
+        return TestSuites(self, suites)
+
+    @utils.setter
+    def tests(self, tests):
+        return TestCases(self, tests)
+
+    @utils.setter
+    def keywords(self, keywords):
+        return Keywords(self, keywords)
+
     @property
     def id(self):
         if not self.parent:
@@ -70,30 +86,6 @@ class TestSuite(object):
         if self.parent:
             return self.parent.longname + '.' + self.name
         return self.name
-
-    def _get_metadata(self):
-        return self._metadata
-    def _set_metadata(self, metadata):
-        self._metadata = Metadata(metadata)
-    metadata = property(_get_metadata, _set_metadata)
-
-    def _get_suites(self):
-        return self._suites
-    def _set_suites(self, suites):
-        self._suites = TestSuites(self, suites)
-    suites = property(_get_suites, _set_suites)
-
-    def _get_tests(self):
-        return self._tests
-    def _set_tests(self, tests):
-        self._tests = TestCases(self, tests)
-    tests = property(_get_tests, _set_tests)
-
-    def _get_keywords(self):
-        return self._keywords
-    def _set_keywords(self, keywords):
-        self._keywords = Keywords(self, keywords)
-    keywords = property(_get_keywords, _set_keywords)
 
     def set_tags(self, add=None, remove=None):
         for test in self.tests:
@@ -120,14 +112,13 @@ class TestCase(object):
         self.endtime = ''
         self.elapsedtime = ''
 
-    tags = property(lambda self: self._tags,
-                    lambda self, tags: setattr(self, '_tags', Tags(tags)))
+    @utils.setter
+    def tags(self, tags):
+        return Tags(tags)
 
-    def _get_keywords(self):
-        return self._keywords
-    def _set_keywords(self, keywords):
-        self._keywords = Keywords(self, keywords)
-    keywords = property(_get_keywords, _set_keywords)
+    @utils.setter
+    def keywords(self, keywords):
+        return Keywords(self, keywords)
 
 
 class Keyword(object):
@@ -146,17 +137,13 @@ class Keyword(object):
         self.elapsedtime = ''
         self.timeout = ''
 
-    def _get_keywords(self):
-        return self._keywords
-    def _set_keywords(self, keywords):
-        self._keywords = Keywords(self, keywords)
-    keywords = property(_get_keywords, _set_keywords)
+    @utils.setter
+    def keywords(self, keywords):
+        return Keywords(self, keywords)
 
-    def _get_messages(self):
-        return self._messages
-    def _set_messages(self, messages):
-        self._messages = Messages(self, messages)
-    messages = property(_get_messages, _set_messages)
+    @utils.setter
+    def messages(self, messages):
+        return Messages(self, messages)
 
 
 class Message(BaseMessage):
