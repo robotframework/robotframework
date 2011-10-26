@@ -52,6 +52,12 @@ class TestSuite(object):
         self.elapsedtime = ''
 
     @property
+    def id(self):
+        if not self.parent:
+            return 's1'
+        return self.parent.id + '-s%d' % (list(self.parent.suites).index(self)+1)
+
+    @property
     def critical_stats(self):
         return CriticalStats(self)
 

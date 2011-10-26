@@ -61,6 +61,25 @@ class TestTestSuite(unittest.TestCase):
         return suite
 
 
+class TestSuiteId(unittest.TestCase):
+
+    def test_one_suite(self):
+        assert_equal(TestSuite().id, 's1')
+
+    def test_sub_suites(self):
+        parent = TestSuite()
+        for i in range(10):
+            assert_equal(parent.suites.create().id, 's1-s%s' % (i+1))
+        assert_equal(parent.suites[-1].suites.create().id, 's1-s10-s1')
+
+    def test_removing_suite(self):
+        suite = TestSuite()
+        sub = suite.suites.create().suites.create()
+        assert_equal(sub.id, 's1-s1-s1')
+        suite.suites = [sub]
+        assert_equal(sub.id, 's1-s1')
+
+
 class TestTestCase(unittest.TestCase):
 
     def setUp(self):
