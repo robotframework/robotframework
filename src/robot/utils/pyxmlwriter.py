@@ -23,7 +23,10 @@ class XmlWriter(AbstractXmlWriter):
 
     def __init__(self, path):
         self.path = path
-        self._output = open(path, 'wb')
+        if isinstance(path, basestring):
+            self._output = open(path, 'wb')
+        else:
+            self._output = path
         self._writer = XMLGenerator(self._output, encoding='UTF-8')
         self._writer.startDocument()
         self.closed = False

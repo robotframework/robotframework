@@ -116,7 +116,9 @@ class KeywordElement(_Element):
     tag = 'kw'
 
     def start(self, elem):
-        self._result = self._result.keywords.create(name=elem.get('name'))
+        self._result = self._result.keywords.create(name=elem.get('name'),
+                                                    timeout=elem.get('timeout'),
+                                                    type=elem.get('type'))
 
     def _children(self):
         return [DocElement, ArgumentsElement, KeywordElement, MessageElement,
@@ -150,7 +152,7 @@ class TestStatusElement(StatusElement):
 
     def start(self, elem):
         StatusElement.start(self, elem)
-        self._result.critical = elem.get('critical') == 'yes'
+        self._result.critical = elem.get('critical')
 
 
 class DocElement(_Element):
@@ -245,16 +247,8 @@ class ErrorsElement(_Element):
         self._result = self._result.errors
 
     def _children(self):
-        return [ErrorMessageElement]
+        return [MessageElement]
 
 
-class ErrorMessageElement(MessageElement):
-    tag = 'msg'
-
-    def start(self, elem):
-        msg = Message(None)
-        self._result.append(msg)
-        self._result = msg
-
-
-class IgnoredElement(_Element): pass
+class IgnoredElement(_Element):
+    pass

@@ -11,8 +11,10 @@
 #  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
+from itertools import chain
+from robot.common.model import _Critical
 
-from robot.common.statistics import CriticalStats, AllStats
+from robot.common.statistics import CriticalStats, AllStats, Statistics
 from robot.output.loggerhelper import Message as BaseMessage
 from robot import utils
 
@@ -20,17 +22,37 @@ from robot import utils
 class ExecutionResult(object):
 
     def __init__(self):
-        self.errors = []
-        self._statistics = None
+        self.errors = ExecutionErrors()
 
     @property
     def suite(self):
         return list(self._suites)[0]
 
     @property
+    def statistics(self):
+        return Statistics(self.suite)
+
+    @property
     def suites(self):
         self._suites = TestSuites(parent=None)
         return self._suites
+
+    def visit(self, visitor):
+        self.suite.visit(visitor)
+        self.statistics.visit(visitor)
+        self.errors.visit(visitor)
+
+
+class ExecutionErrors(object):
+
+    def __init__(self):
+        self.messages = Messages(parent=None)
+
+    def visit(self, visitor):
+        visitor.start_errors()
+        for message in self.messages:
+            message.visit(visitor)
+        visitor.end_errors()
 
 
 class TestSuite(object):
@@ -50,6 +72,11 @@ class TestSuite(object):
         self.starttime = ''
         self.endtime = ''
         self.elapsedtime = ''
+
+    #TODO: Remove this asap
+    @property
+    def critical(self):
+        return _Critical()
 
     @utils.setter
     def metadata(self, metadata):
@@ -94,11 +121,24 @@ class TestSuite(object):
         for sub in self.suites:
             sub.set_tags(add, remove)
 
+    def visit(self, visitor):
+        visitor.start_suite(self)
+        for kw in self.keywords:
+            kw.visit(visitor)
+        for suite in self.suites:
+            suite.visit(visitor)
+        for test in self.tests:
+            test.visit(visitor)
+        visitor.end_suite(self)
+
+    def get_metadata(self):
+        return self.metadata.items()
+
 
 class TestCase(object):
 
     def __init__(self, parent=None, name='', doc='', tags=None,
-                 status='UNDEFINED', critical=True):
+                 status='UNDEFINED', critical='yes'):
         self.parent = parent
         self.name = name
         self.doc = doc
@@ -120,10 +160,17 @@ class TestCase(object):
     def keywords(self, keywords):
         return Keywords(self, keywords)
 
+    def visit(self, visitor):
+        visitor.start_test(self)
+        for kw in self.keywords:
+            kw.visit(visitor)
+        visitor.end_test(self)
+
 
 class Keyword(object):
 
-    def __init__(self, parent=None, name='', doc='', type='kw', status='UNDEFINED'):
+    def __init__(self, parent=None, name='', doc='', type='kw',
+                 status='UNDEFINED', timeout=''):
         self.parent = parent
         self.name = name
         self.doc = doc
@@ -135,7 +182,7 @@ class Keyword(object):
         self.starttime = ''
         self.endtime = ''
         self.elapsedtime = ''
-        self.timeout = ''
+        self.timeout = timeout
 
     @utils.setter
     def keywords(self, keywords):
@@ -145,12 +192,21 @@ class Keyword(object):
     def messages(self, messages):
         return Messages(self, messages)
 
+    def visit(self, visitor):
+        visitor.start_keyword(self)
+        for child in chain(self.keywords, self.messages):
+            child.visit(visitor)
+        visitor.end_keyword(self)
+
 
 class Message(BaseMessage):
 
     def __init__(self, parent, message='', level='INFO', html=False,
                  timestamp=None, linkable=False):
         BaseMessage.__init__(self, message, level, html, timestamp, linkable)
+
+    def visit(self, visitor):
+        visitor.log_message(self)
 
 
 class _ItemList(object):
