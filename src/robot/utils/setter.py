@@ -22,6 +22,8 @@ class setter(object):
         self.method = method
 
     def __get__(self, instance, owner):
+        if instance is None:
+            return self
         try:
             return self.values[instance]
         except KeyError:
