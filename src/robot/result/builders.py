@@ -86,7 +86,7 @@ class _Element(object):
         for child_type in self._children():
             if child_type.tag == tag:
                 return child_type(self._result)
-        raise RuntimeError('no child (%s) of mine (%s)' % (tag, self.tag))
+        return IgnoredElement(result=None)
 
     def _children(self):
         return []
@@ -273,3 +273,6 @@ class ErrorMessageElement(MessageElement):
 
     def start(self, elem):
         self._result = Message()
+
+
+class IgnoredElement(_Element): pass

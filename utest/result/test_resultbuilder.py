@@ -1,6 +1,6 @@
 import unittest
 from StringIO import StringIO
-from robot.result.builders import ExecutionResultBuilder
+from robot.result.builders import ExecutionResultBuilder, _Element, IgnoredElement
 from robot.utils.asserts import assert_equals, assert_true
 
 
@@ -149,6 +149,9 @@ class TestElements(unittest.TestCase):
         assert_equals(result.suite.longname, 'foo')
         assert_equals(result.suite.suites[0].longname, 'foo.bar')
 
+    def test_unknown_elements_are_ignored(self):
+        assert_true(isinstance(_Element(None).child_element('some_tag'),
+                               IgnoredElement))
 
 if __name__ == '__main__':
     unittest.main()
