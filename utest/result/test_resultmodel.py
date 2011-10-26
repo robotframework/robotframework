@@ -22,7 +22,7 @@ class TestTestSuite(unittest.TestCase):
     def test_create_and_add_suite(self):
         s1 = self.suite.suites.create(name='s1')
         s2 = TestSuite(name='s2')
-        self.suite.suites.add(s2)
+        self.suite.suites.append(s2)
         assert_true(s1.parent is self.suite)
         assert_true(s2.parent is self.suite)
         assert_equal(list(self.suite.suites), [s1, s2])
@@ -129,7 +129,7 @@ class TestItemLists(unittest.TestCase):
         kw = Keyword()
         parent = object()
         kws = Keywords(parent)
-        kws.add(kw)
+        kws.append(kw)
         assert_true(kw.parent is parent)
         assert_equal(list(kws), [kw])
 

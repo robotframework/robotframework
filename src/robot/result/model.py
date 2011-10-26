@@ -32,6 +32,7 @@ class ExecutionResult(object):
     def statistics(self):
         return Statistics(self.suite)
 
+    #TODO: Remove
     @property
     def suites(self):
         self._suites = TestSuites(parent=None)
@@ -215,13 +216,13 @@ class _ItemList(object):
         self._parent = parent
         self._items = []
         for item in items or []:
-            self.add(item)
+            self.append(item)
 
     def create(self, **args):
         self._items.append(self._item_class(self._parent, **args))
         return self._items[-1]
 
-    def add(self, item):
+    def append(self, item):
         item.parent = self._parent
         self._items.append(item)
 
