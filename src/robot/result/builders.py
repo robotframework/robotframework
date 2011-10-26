@@ -36,7 +36,7 @@ class ExecutionResultBuilder(object):
     def __init__(self, source):
         self._source = source
         self._result = ExecutionResult()
-        self._elements = _ElementStack(self._result)
+        self._elements = ElementStack(self._result)
 
     def build(self):
         _actions = {'start': self._start, 'end': self._end}
@@ -52,26 +52,29 @@ class ExecutionResultBuilder(object):
         elem.clear()
 
 
-class _ElementStack(object):
+class ElementStack(object):
 
     def __init__(self, initial_result):
-        self._current = RootElement(initial_result)
+        self._elements =  [RootElement(initial_result)]
+
+    @property
+    def _current(self):
+        return self._elements[-1]
 
     def start(self, elem):
-        self._current = self._current.child_element(elem.tag)
+        self._elements.append(self._current.child_element(elem.tag))
         self._current.start(elem)
 
     def end(self, elem):
         self._current.end(elem)
-        self._current = self._current.parent
+        self._elements.pop()
 
 
 class _Element(object):
     tag = ''
 
-    def __init__(self, result, parent=None):
+    def __init__(self, result):
         self._result = result
-        self.parent = parent
 
     def start(self, elem):
         pass
@@ -82,7 +85,7 @@ class _Element(object):
     def child_element(self, tag):
         for child_type in self._children():
             if child_type.tag == tag:
-                return child_type(self._result, self)
+                return child_type(self._result)
         raise RuntimeError('no child (%s) of mine (%s)' % (tag, self.tag))
 
     def _children(self):
