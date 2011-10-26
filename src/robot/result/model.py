@@ -17,6 +17,22 @@ from robot.output.loggerhelper import Message as BaseMessage
 from robot import utils
 
 
+class ExecutionResult(object):
+
+    def __init__(self):
+        self.errors = []
+        self._statistics = None
+
+    @property
+    def suite(self):
+        return list(self._suites)[0]
+
+    @property
+    def suites(self):
+        self._suites = TestSuites(parent=None)
+        return self._suites
+
+
 class TestSuite(object):
 
     def __init__(self, parent=None, source='', name='', doc='', metadata=None,

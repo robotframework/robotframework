@@ -12,23 +12,8 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from robot.result.model import TestSuites, Message
+from robot.result.model import ExecutionResult, Message
 from robot.utils.etreewrapper import ET
-
-class ExecutionResult(object):
-
-    def __init__(self):
-        self.errors = []
-        self._statistics = None
-
-    @property
-    def suite(self):
-        return list(self._suites)[0]
-
-    @property
-    def suites(self):
-        self._suites = TestSuites(parent=None)
-        return self._suites
 
 
 class ExecutionResultBuilder(object):
