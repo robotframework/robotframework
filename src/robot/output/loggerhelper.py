@@ -70,13 +70,11 @@ class Message(object):
         self.timestamp = self._get_timestamp(timestamp)
         self.linkable = linkable
 
-    def _get_message(self):
-        return self._message
-    def _set_message(self, msg):
+    @utils.setter
+    def message(self, msg):
         if not isinstance(msg, basestring):
             msg = utils.unic(msg)
-        self._message = msg.replace('\r\n', '\n')
-    message = property(_get_message, _set_message)
+        return msg.replace('\r\n', '\n')
 
     def _get_level_and_html(self, level, html):
         level = level.upper()
