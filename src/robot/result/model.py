@@ -12,8 +12,9 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from robot import utils
 from robot.common.statistics import CriticalStats, AllStats
+from robot.output.loggerhelper import Message as BaseMessage
+from robot import utils
 
 
 class TestSuite(object):
@@ -136,15 +137,11 @@ class Keyword(object):
     messages = property(_get_messages, _set_messages)
 
 
-class Message(object):
+class Message(BaseMessage):
 
-    def __init__(self, message='', level='INFO', html=False, timestamp='',
-                 linkable=False):
-        self.message = message
-        self.level = level
-        self.html = html
-        self.timestamp = timestamp
-        self.linkable = linkable
+    def __init__(self, parent, message='', level='INFO', html=False,
+                 timestamp=None, linkable=False):
+        BaseMessage.__init__(self, message, level, html, timestamp, linkable)
 
 
 class _ItemList(object):

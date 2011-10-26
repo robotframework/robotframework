@@ -12,7 +12,7 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from robot.result.model import Message, TestSuites
+from robot.result.model import TestSuites, Message
 from robot.utils.etreewrapper import ET
 
 class ExecutionResult(object):
@@ -261,9 +261,10 @@ class ErrorsElement(_Element):
 
 
 class ErrorMessageElement(MessageElement):
+    tag = 'msg'
 
     def start(self, elem):
-        self._result = Message()
+        self._result = Message(None)
 
 
 class IgnoredElement(_Element): pass
