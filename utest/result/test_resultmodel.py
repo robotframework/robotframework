@@ -158,8 +158,6 @@ def _visitor_method(expected, calls_before):
 
 class TestModelVisitor(unittest.TestCase):
 
-
-
     def setUp(self):
         class Visitor(object):
             calls = 0
@@ -188,34 +186,34 @@ class TestModelVisitor(unittest.TestCase):
 
     def test_travel_through_test(self):
         test = TestCase()
-        self._visitor_class.start_test = _visitor_method(test, 0)
-        self._visitor_class.end_test = _visitor_method(test, 1)
-        self._visit(test, 2)
+        self._visitor_class.start_test = self._method(test)
+        self._visitor_class.end_test = self._method(test)
+        self._visit(test)
 
     def test_travel_through_keyword(self):
         keyword = Keyword()
-        self._visitor_class.start_keyword = _visitor_method(keyword, 0)
-        self._visitor_class.end_keyword = _visitor_method(keyword, 1)
-        self._visit(keyword, 2)
+        self._visitor_class.start_keyword = self._method(keyword)
+        self._visitor_class.end_keyword = self._method(keyword)
+        self._visit(keyword)
 
     def test_travel_in_message(self):
         message = Message()
-        self._visitor_class.log_message = _visitor_method(message, 0)
-        self._visit(message, 1)
+        self._visitor_class.log_message = self._method(message)
+        self._visit(message)
 
     def test_travel_through_suite_with_test_with_keyword_with_message(self):
         suite = TestSuite()
         test = suite.tests.create()
         keyword = test.keywords.create()
         message = keyword.messages.create()
-        self._visitor_class.start_suite = _visitor_method(suite, 0)
-        self._visitor_class.start_test = _visitor_method(test, 1)
-        self._visitor_class.start_keyword = _visitor_method(keyword, 2)
-        self._visitor_class.log_message = _visitor_method(message, 3)
-        self._visitor_class.end_keyword = _visitor_method(keyword, 4)
-        self._visitor_class.end_test = _visitor_method(test, 5)
-        self._visitor_class.end_suite = _visitor_method(suite, 6)
-        self._visit(suite, 7)
+        self._visitor_class.start_suite = self._method(suite)
+        self._visitor_class.start_test = self._method(test)
+        self._visitor_class.start_keyword = self._method(keyword)
+        self._visitor_class.log_message = self._method(message)
+        self._visitor_class.end_keyword = self._method(keyword)
+        self._visitor_class.end_test = self._method(test)
+        self._visitor_class.end_suite = self._method(suite)
+        self._visit(suite)
 
 
 class TestItemLists(unittest.TestCase):

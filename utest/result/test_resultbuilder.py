@@ -1,12 +1,13 @@
+import os
 import unittest
 from StringIO import StringIO
 from robot.result.builders import ExecutionResultBuilder, _Element, IgnoredElement
 from robot.utils.asserts import assert_equals, assert_true
 
-with open('golden.xml') as f:
+with open(os.path.join(os.path.dirname(__file__), 'golden.xml')) as f:
     XML = f.read()
 
-with open('goldenTwice.xml') as f:
+with open(os.path.join(os.path.dirname(__file__), 'goldenTwice.xml')) as f:
     XML_TWICE = f.read()
 
 class TestBuildingSuiteExecutionResult(unittest.TestCase):
