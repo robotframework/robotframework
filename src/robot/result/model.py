@@ -234,24 +234,24 @@ class Message(BaseMessage):
 
 class ItemList(object):
 
-    def __init__(self, item_class, items=None, **attrs):
+    def __init__(self, item_class, items=None, **common_attrs):
         self._item_class = item_class
-        self._attrs = attrs
+        self._common_attrs = common_attrs
         self._items = []
-        for item in items or []:
-            self.append(item)
+        if items:
+            self.extend(items)
 
-    def create(self, **args):
-        self.append(self._item_class(**args))
+    def create(self, *args, **kwargs):
+        self.append(self._item_class(*args, **kwargs))
         return self._items[-1]
 
     def append(self, item):
-        for attr in self._attrs:
-            setattr(item, attr, self._attrs[attr])
+        for name, value in self._common_attrs.items():
+            setattr(item, name, value)
         self._items.append(item)
 
-    def extend(self, other):
-        for item in other:
+    def extend(self, items):
+        for item in items:
             self.append(item)
 
     def __iter__(self):

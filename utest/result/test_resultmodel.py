@@ -218,30 +218,34 @@ class TestModelVisitor(unittest.TestCase):
 
 class TestItemLists(unittest.TestCase):
 
-    def test_create_items_str(self):
+    def test_create_items(self):
         items = ItemList(str)
         item = items.create(object=1)
         assert_true(isinstance(item, str))
         assert_equal(item, '1')
         assert_equal(list(items), [item])
 
-    def test_create_with_attributes(self):
+    def test_create_with_args_and_kwargs(self):
         class Item(object):
-            def __init__(self, arg):
-                self.arg = arg
-        parent = object()
-        items = ItemList(Item, parent=parent)
-        item = items.create(arg='value')
-        assert_equal(item.arg, 'value')
+            def __init__(self, arg1, arg2):
+                self.arg1 = arg1
+                self.arg2 = arg2
+        items = ItemList(Item)
+        item = items.create('value 1', arg2='value 2')
+        assert_equal(item.arg1, 'value 1')
+        assert_equal(item.arg2, 'value 2')
         assert_equal(list(items), [item])
 
-    def test_initial_values(self):
+    def test_common_attributes(self):
         kw1 = Keyword()
         kw2 = Keyword()
         parent = object()
-        kws = ItemList(Keyword, [kw1, kw2], parent=parent)
+        kws = ItemList(Keyword, [kw1], parent=parent, x=1)
+        kws.append(kw2)
         assert_true(kw1.parent is parent)
         assert_true(kw2.parent is parent)
+        assert_equal(kw1.x, 1)
+        assert_equal(kw2.x, 1)
         assert_equal(list(kws), [kw1, kw2])
 
     def test_getitem(self):
