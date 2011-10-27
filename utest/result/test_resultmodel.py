@@ -218,63 +218,45 @@ class TestModelVisitor(unittest.TestCase):
 
 class TestItemLists(unittest.TestCase):
 
-    def test_create_suite(self):
-        parent = object()
-        suites = TestSuites(parent)
-        suite = suites.create(name='New')
-        assert_true(isinstance(suite, TestSuite))
-        assert_true(suite.parent is parent)
-        assert_equal(suite.name, 'New')
-        assert_equal(list(suites), [suite])
+    def test_create_items_str(self):
+        items = ItemList(str)
+        item = items.create(object=1)
+        assert_true(isinstance(item, str))
+        assert_equal(item, '1')
+        assert_equal(list(items), [item])
 
-    def test_create_test(self):
+    def test_create_with_attributes(self):
+        class Item(object):
+            def __init__(self, arg):
+                self.arg = arg
         parent = object()
-        tests = TestCases(parent)
-        test = tests.create(tags=['tag'])
-        assert_true(isinstance(test, TestCase))
-        assert_true(test.parent is parent)
-        assert_equal(list(test.tags), ['tag'])
-        assert_equal(list(tests), [test])
-
-    def test_create_keyword(self):
-        parent = object()
-        kws = Keywords(parent)
-        kw = kws.create(name='KW')
-        assert_true(isinstance(kw, Keyword))
-        assert_true(kw.parent is parent)
-        assert_equal(kw.name, 'KW')
-        assert_equal(list(kws), [kw])
-
-    def test_add(self):
-        kw = Keyword()
-        parent = object()
-        kws = Keywords(parent)
-        kws.append(kw)
-        assert_true(kw.parent is parent)
-        assert_equal(list(kws), [kw])
+        items = ItemList(Item, parent=parent)
+        item = items.create(arg='value')
+        assert_equal(item.arg, 'value')
+        assert_equal(list(items), [item])
 
     def test_initial_values(self):
         kw1 = Keyword()
         kw2 = Keyword()
         parent = object()
-        kws = Keywords(parent, [kw1, kw2])
+        kws = ItemList(Keyword, [kw1, kw2], parent=parent)
         assert_true(kw1.parent is parent)
         assert_true(kw2.parent is parent)
         assert_equal(list(kws), [kw1, kw2])
 
     def test_getitem(self):
-        kw1 = Keyword()
-        kw2 = Keyword()
-        kws = Keywords(None, [kw1, kw2])
-        assert_true(kws[0] is kw1)
-        assert_true(kws[1] is kw2)
-        assert_true(kws[-1] is kw2)
+        item1 = object()
+        item2 = object()
+        items = ItemList(object, [item1, item2])
+        assert_true(items[0] is item1)
+        assert_true(items[1] is item2)
+        assert_true(items[-1] is item2)
 
     def test_len(self):
-        kws = Keywords(None)
-        assert_equal(len(kws), 0)
-        kws.create()
-        assert_equal(len(kws), 1)
+        items = ItemList(object)
+        assert_equal(len(items), 0)
+        items.create()
+        assert_equal(len(items), 1)
 
 
 class TestMetadata(unittest.TestCase):

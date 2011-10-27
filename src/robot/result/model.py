@@ -11,6 +11,7 @@
 #  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
+
 from itertools import chain
 from robot.common.model import _Critical
 
@@ -35,7 +36,7 @@ class ExecutionResult(object):
     #TODO: Remove
     @property
     def suites(self):
-        self._suites = TestSuites(parent=None)
+        self._suites = ItemList(TestSuite)
         return self._suites
 
     def visit(self, visitor):
@@ -47,7 +48,7 @@ class ExecutionResult(object):
 class ExecutionErrors(object):
 
     def __init__(self):
-        self.messages = Messages(parent=None)
+        self.messages = ItemList(Message)
 
     def visit(self, visitor):
         visitor.start_errors()
@@ -93,15 +94,15 @@ class TestSuite(object):
 
     @utils.setter
     def suites(self, suites):
-        return TestSuites(self, suites)
+        return ItemList(TestSuite, suites, parent=self)
 
     @utils.setter
     def tests(self, tests):
-        return TestCases(self, tests)
+        return ItemList(TestCase, tests, parent=self)
 
     @utils.setter
     def keywords(self, keywords):
-        return Keywords(self, keywords)
+        return ItemList(Keyword, keywords, parent=self)
 
     @property
     def id(self):
@@ -174,7 +175,7 @@ class TestCase(object):
 
     @utils.setter
     def keywords(self, keywords):
-        return Keywords(self, keywords)
+        return ItemList(Keyword, keywords, parent=self)
 
     def visit(self, visitor):
         visitor.start_test(self)
@@ -202,11 +203,11 @@ class Keyword(object):
 
     @utils.setter
     def keywords(self, keywords):
-        return Keywords(self, keywords)
+        return ItemList(Keyword, keywords, parent=self)
 
     @utils.setter
     def messages(self, messages):
-        return Messages(self, messages)
+        return ItemList(Message, messages)
 
     def visit(self, visitor):
         visitor.start_keyword(self)
@@ -217,28 +218,30 @@ class Keyword(object):
 
 class Message(BaseMessage):
 
-    def __init__(self, parent=None, message='', level='INFO', html=False,
-                 timestamp=None, linkable=False):
+    def __init__(self, message='', level='INFO', html=False, timestamp=None,
+                 linkable=False):
         BaseMessage.__init__(self, message, level, html, timestamp, linkable)
 
     def visit(self, visitor):
         visitor.log_message(self)
 
 
-class _ItemList(object):
+class ItemList(object):
 
-    def __init__(self, parent, items=None):
-        self._parent = parent
+    def __init__(self, item_class, items=None, **attrs):
+        self._item_class = item_class
+        self._attrs = attrs
         self._items = []
         for item in items or []:
             self.append(item)
 
     def create(self, **args):
-        self._items.append(self._item_class(self._parent, **args))
+        self.append(self._item_class(**args))
         return self._items[-1]
 
     def append(self, item):
-        item.parent = self._parent
+        for attr in self._attrs:
+            setattr(item, attr, self._attrs[attr])
         self._items.append(item)
 
     def __iter__(self):
@@ -250,19 +253,11 @@ class _ItemList(object):
     def __len__(self):
         return len(self._items)
 
+    def __unicode__(self):
+        return u'[%s]' % ', '.join(self)
 
-class TestSuites(_ItemList):
-    _item_class = TestSuite
-
-
-class TestCases(_ItemList):
-    _item_class = TestCase
-
-class Keywords(_ItemList):
-    _item_class = Keyword
-
-class Messages(_ItemList):
-    _item_class = Message
+    def __str__(self):
+        return unicode(self).encode('UTF-8')
 
 
 class ModelVisitor(object):
