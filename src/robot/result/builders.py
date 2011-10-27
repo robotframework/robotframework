@@ -16,16 +16,20 @@ from robot.result.model import ExecutionResult, Message
 from robot.utils.etreewrapper import ET
 
 
+def ResultFromXML(source):
+    result = ExecutionResult()
+    return ExecutionResultBuilder(result).build_from(source)
+
+
 class ExecutionResultBuilder(object):
 
-    def __init__(self, source):
-        self._source = source
-        self._result = ExecutionResult()
-        self._elements = ElementStack(self._result)
+    def __init__(self, result):
+        self._result = result
+        self._elements = ElementStack(RootElement(self._result))
 
-    def build(self):
+    def build_from(self, source):
         _actions = {'start': self._start, 'end': self._end}
-        for action, elem in ET.iterparse(self._source, events=('start', 'end')):
+        for action, elem in ET.iterparse(source, events=('start', 'end')):
             _actions[action](elem)
         return self._result
 
@@ -39,8 +43,8 @@ class ExecutionResultBuilder(object):
 
 class ElementStack(object):
 
-    def __init__(self, initial_result):
-        self._elements = [RootElement(initial_result)]
+    def __init__(self, root_element):
+        self._elements = [root_element]
 
     @property
     def _current(self):

@@ -2,6 +2,7 @@ import os
 import unittest
 from StringIO import StringIO
 from robot.result.builders import ExecutionResultBuilder, _Element, IgnoredElement
+from robot.result.model import ExecutionResult
 from robot.utils.asserts import assert_equals, assert_true
 
 with open(os.path.join(os.path.dirname(__file__), 'golden.xml')) as f:
@@ -13,7 +14,7 @@ with open(os.path.join(os.path.dirname(__file__), 'goldenTwice.xml')) as f:
 class TestBuildingSuiteExecutionResult(unittest.TestCase):
 
     def setUp(self):
-        result = ExecutionResultBuilder(StringIO(XML)).build()
+        result = ExecutionResultBuilder(ExecutionResult()).build_from(StringIO(XML))
         self._suite = result.suite
         self._test = self._suite.tests[0]
         self._keyword = self._test.keywords[0]
@@ -92,7 +93,7 @@ class TestElements(unittest.TestCase):
         </suite>
         </robot>
         """
-        result = ExecutionResultBuilder(StringIO(xml)).build()
+        result = ExecutionResultBuilder(ExecutionResult()).build_from(StringIO(xml))
         assert_equals(result.suite.name, 'foo')
         assert_equals(result.suite.suites[0].name, 'bar')
         assert_equals(result.suite.longname, 'foo')
