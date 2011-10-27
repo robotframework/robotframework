@@ -21,15 +21,17 @@ from abstractxmlwriter import AbstractXmlWriter
 
 class XmlWriter(AbstractXmlWriter):
 
-    def __init__(self, path):
-        self.path = path
-        if isinstance(path, basestring):
-            self._output = open(path, 'wb')
-        else:
-            self._output = path
+    def __init__(self, output):
+        self.path = output
+        self._output = self._create_output(output)
         self._writer = XMLGenerator(self._output, encoding='UTF-8')
         self._writer.startDocument()
         self.closed = False
+
+    def _create_output(self, output):
+        if isinstance(output, basestring):
+            return open(output, 'wb')
+        return output
 
     def _start(self, name, attrs):
         self._writer.startElement(name, AttributesImpl(attrs))
