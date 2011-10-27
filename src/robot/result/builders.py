@@ -12,33 +12,26 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from robot.result.model import ExecutionResult, Message
+from robot.result.model import ExecutionResult, Message, CombinedExecutionResult
 from robot.utils.etreewrapper import ET
 
 
-def ResultFromXML(source):
-    result = ExecutionResult()
-    return ExecutionResultBuilder(result).build_from(source)
+def ResultsFromXML(*sources):
+    if len(sources) == 1:
+        return ExecutionResultBuilder(sources[0]).build(ExecutionResult())
+    return CombinedExecutionResult(*[ResultsFromXML(src) for src in sources])
 
 
 class ExecutionResultBuilder(object):
 
-    def __init__(self, result):
-        self._result = result
-        self._elements = ElementStack(RootElement(self._result))
+    def __init__(self, source):
+        self._source = source
 
-    def build_from(self, source):
-        _actions = {'start': self._start, 'end': self._end}
-        for action, elem in ET.iterparse(source, events=('start', 'end')):
-            _actions[action](elem)
-        return self._result
-
-    def _start(self, elem):
-        self._elements.start(elem)
-
-    def _end(self, elem):
-        self._elements.end(elem)
-        elem.clear()
+    def build(self, result):
+        elements = ElementStack(RootElement(result))
+        for action, elem in ET.iterparse(self._source, events=('start', 'end')):
+            getattr(elements, action)(elem)
+        return result
 
 
 class ElementStack(object):
@@ -56,6 +49,7 @@ class ElementStack(object):
 
     def end(self, elem):
         self._current.end(elem)
+        elem.clear()
         self._elements.pop()
 
 
@@ -91,7 +85,7 @@ class RobotElement(_Element):
     tag = 'robot'
 
     def _children(self):
-        return [SuiteElement, StatisticsElement, ErrorsElement]
+        return [RootSuiteElement, StatisticsElement, ErrorsElement]
 
 
 class SuiteElement(_Element):
@@ -104,6 +98,14 @@ class SuiteElement(_Element):
     def _children(self):
         return [SuiteElement, DocElement, StatusElement,
                 KeywordElement, TestCaseElement, MetadataElement]
+
+
+class RootSuiteElement(SuiteElement):
+
+    def start(self, elem):
+        self._result = self._result.suite
+        self._result.name = elem.get('name')
+        self._result.source = elem.get('source')
 
 
 class TestCaseElement(_Element):

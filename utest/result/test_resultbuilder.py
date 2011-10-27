@@ -4,7 +4,7 @@ import os
 import unittest
 from StringIO import StringIO
 
-from robot.result.builders import ExecutionResultBuilder, _Element, IgnoredElement
+from robot.result.builders import ExecutionResultBuilder, _Element, IgnoredElement, ResultsFromXML
 from robot.result.model import ExecutionResult
 from robot.utils.asserts import assert_equals, assert_true
 
@@ -19,7 +19,7 @@ with open(os.path.join(os.path.dirname(__file__), 'goldenTwice.xml')) as f:
 class TestBuildingSuiteExecutionResult(unittest.TestCase):
 
     def setUp(self):
-        result = ExecutionResultBuilder(ExecutionResult()).build_from(StringIO(GOLDEN_XML))
+        result = ResultsFromXML(StringIO(GOLDEN_XML))
         self._suite = result.suite
         self._test = self._suite.tests[0]
         self._keyword = self._test.keywords[0]
@@ -86,6 +86,13 @@ class TestBuildingSuiteExecutionResult(unittest.TestCase):
         assert_equals(self._errors.messages[0].message,
                       "Error in file 'normal.html' in table 'Settings': Resource file 'nope' does not exist.")
 
+class TestCombiningSuites(unittest.TestCase):
+
+    def test_(self):
+        result = ResultsFromXML(StringIO(GOLDEN_XML), StringIO(GOLDEN_XML))
+        suite = result.suite
+        assert_equals(suite.name, 'Normal & Normal')
+
 
 class TestElements(unittest.TestCase):
 
@@ -98,7 +105,7 @@ class TestElements(unittest.TestCase):
         </suite>
         </robot>
         """
-        result = ExecutionResultBuilder(ExecutionResult()).build_from(StringIO(xml))
+        result = ResultsFromXML(StringIO(xml))
         assert_equals(result.suite.name, 'foo')
         assert_equals(result.suite.suites[0].name, 'bar')
         assert_equals(result.suite.longname, 'foo')
@@ -107,6 +114,7 @@ class TestElements(unittest.TestCase):
     def test_unknown_elements_are_ignored(self):
         assert_true(isinstance(_Element(None).child_element('some_tag'),
                                IgnoredElement))
+
 
 if __name__ == '__main__':
     unittest.main()

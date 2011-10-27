@@ -24,20 +24,11 @@ class ExecutionResult(object):
 
     def __init__(self):
         self.errors = ExecutionErrors()
-
-    @property
-    def suite(self):
-        return list(self._suites)[0]
+        self.suite = TestSuite()
 
     @property
     def statistics(self):
         return Statistics(self.suite)
-
-    #TODO: Remove
-    @property
-    def suites(self):
-        self._suites = ItemList(TestSuite)
-        return self._suites
 
     def visit(self, visitor):
         self.suite.visit(visitor)
@@ -45,10 +36,25 @@ class ExecutionResult(object):
         self.errors.visit(visitor)
 
 
+class CombinedExecutionResult(ExecutionResult):
+
+    def __init__(self, *others):
+        ExecutionResult.__init__(self)
+        for other in others:
+            self.add_result(other)
+
+    def add_result(self, other):
+        self.suite.suites.append(other.suite)
+        self.errors.add(other.errors)
+
+
 class ExecutionErrors(object):
 
     def __init__(self):
         self.messages = ItemList(Message)
+
+    def add(self, other):
+        self.messages.extend(other.messages)
 
     def visit(self, visitor):
         visitor.start_errors()
@@ -121,7 +127,7 @@ class TestSuite(object):
     @property
     def elapsedtime(self):
         if self.starttime == 'N/A' and self.endtime == 'N/A':
-            return 0
+            return sum(s.elapsedtime for s in self.suites)
         return utils.get_elapsed_time(self.starttime, self.endtime)
 
     @property
@@ -243,6 +249,10 @@ class ItemList(object):
         for attr in self._attrs:
             setattr(item, attr, self._attrs[attr])
         self._items.append(item)
+
+    def extend(self, other):
+        for item in other:
+            self.append(item)
 
     def __iter__(self):
         return iter(self._items)

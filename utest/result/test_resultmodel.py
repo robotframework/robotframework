@@ -263,8 +263,8 @@ class TestItemLists(unittest.TestCase):
         assert_equal(str(items), '[foo, bar, quux]')
 
     def test_unicode(self):
-        items = ItemList(str, [u'hyv\xe4\xe4', u'y\xf6\xe4'])
-        assert_equal(unicode(items), u'[hyv\xe4\xe4, y\xf6\xe4]')
+        items = ItemList(unicode, [u'hyv\xe4\xe4', u'y\xf6t\xe4'])
+        assert_equal(unicode(items), u'[hyv\xe4\xe4, y\xf6t\xe4]')
 
 
 class TestMetadata(unittest.TestCase):
