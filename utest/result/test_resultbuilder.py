@@ -1,20 +1,25 @@
+from __future__ import with_statement
+
 import os
 import unittest
 from StringIO import StringIO
+
 from robot.result.builders import ExecutionResultBuilder, _Element, IgnoredElement
 from robot.result.model import ExecutionResult
 from robot.utils.asserts import assert_equals, assert_true
 
+
 with open(os.path.join(os.path.dirname(__file__), 'golden.xml')) as f:
-    XML = f.read()
+    GOLDEN_XML = f.read()
 
 with open(os.path.join(os.path.dirname(__file__), 'goldenTwice.xml')) as f:
-    XML_TWICE = f.read()
+    GOLDEN_XML_TWICE = f.read()
+
 
 class TestBuildingSuiteExecutionResult(unittest.TestCase):
 
     def setUp(self):
-        result = ExecutionResultBuilder(ExecutionResult()).build_from(StringIO(XML))
+        result = ExecutionResultBuilder(ExecutionResult()).build_from(StringIO(GOLDEN_XML))
         self._suite = result.suite
         self._test = self._suite.tests[0]
         self._keyword = self._test.keywords[0]
