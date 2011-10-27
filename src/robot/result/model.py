@@ -68,9 +68,8 @@ class TestSuite(object):
         self.keywords = []
         self.suites = []
         self.tests = []
-        self.starttime = ''
-        self.endtime = ''
-        self.elapsedtime = ''
+        self.starttime = 'N/A'
+        self.endtime = 'N/A'
 
     def _get_name(self):
         return self._name or ' & '.join(s.name for s in self.suites)
@@ -80,7 +79,7 @@ class TestSuite(object):
 
     def _get_status(self):
         return 'PASS' if not self.critical_stats.failed else 'FAIL'
-    #TODO: Setter exists but is ignored for builders API compatibility
+        #TODO: Setter exists but is ignored for builders API compatibility
     status = property(_get_status, lambda self,_: 0)
 
     #TODO: Remove this asap
@@ -119,6 +118,12 @@ class TestSuite(object):
         return AllStats(self)
 
     @property
+    def elapsedtime(self):
+        if self.starttime == 'N/A' and self.endtime == 'N/A':
+            return 0
+        return utils.get_elapsed_time(self.starttime, self.endtime)
+
+    @property
     def longname(self):
         if self.parent:
             return self.parent.longname + '.' + self.name
@@ -148,7 +153,8 @@ class TestSuite(object):
 class TestCase(object):
 
     def __init__(self, parent=None, name='', doc='', tags=None,
-                 status='UNDEFINED', critical='yes'):
+                 status='UNDEFINED', critical='yes',
+                 starttime='N/A', endtime='N/A'):
         self.parent = parent
         self.name = name
         self.doc = doc
@@ -158,8 +164,8 @@ class TestCase(object):
         self.timeout = ''
         self.critical = critical
         self.keywords = []
-        self.starttime = ''
-        self.endtime = ''
+        self.starttime = starttime
+        self.endtime = endtime
         self.elapsedtime = ''
 
     @utils.setter
@@ -211,7 +217,7 @@ class Keyword(object):
 
 class Message(BaseMessage):
 
-    def __init__(self, parent, message='', level='INFO', html=False,
+    def __init__(self, parent=None, message='', level='INFO', html=False,
                  timestamp=None, linkable=False):
         BaseMessage.__init__(self, message, level, html, timestamp, linkable)
 
@@ -248,6 +254,7 @@ class _ItemList(object):
 class TestSuites(_ItemList):
     _item_class = TestSuite
 
+
 class TestCases(_ItemList):
     _item_class = TestCase
 
@@ -256,6 +263,10 @@ class Keywords(_ItemList):
 
 class Messages(_ItemList):
     _item_class = Message
+
+
+class ModelVisitor(object):
+    pass
 
 
 class Metadata(utils.NormalizedDict):

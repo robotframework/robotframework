@@ -130,6 +130,94 @@ class TestTestCase(unittest.TestCase):
         assert_equal(list(self.test.tags), ['s1', 's2', 's3'])
 
 
+class TestElapsedTime(unittest.TestCase):
+
+    def test_suite_elapsed_time_when_start_and_end_given(self):
+        suite = TestSuite()
+        suite.starttime = '20010101 10:00:00.000'
+        suite.endtime = '20010101 10:00:01.234'
+        assert_equal(suite.elapsedtime, 1234)
+
+    def test_suite_elapsed_time_is_zero_by_default(self):
+        suite = TestSuite()
+        assert_equal(suite.elapsedtime, 0)
+
+    def _test_suite_elapsed_time_is_test_time(self):
+        suite = TestSuite()
+        suite.tests.create(starttime='19991212 12:00:00.010',
+                           endtime='19991212 13:00:01.010')
+        assert_equal(suite.elapsedtime, 3610000)
+
+
+def _visitor_method(expected, calls_before):
+    def method(self, item):
+        assert_equal(expected, item)
+        assert_equal(self.calls, calls_before)
+        self.calls += 1
+    return method
+
+class TestModelVisitor(unittest.TestCase):
+
+
+
+    def setUp(self):
+        class Visitor(object):
+            calls = 0
+        self._visitor_class = Visitor
+        self._call_index = 0
+
+    def test_travel_through_suite(self):
+        suite = TestSuite()
+        self._visitor_class.start_suite = self._method(suite)
+        self._visitor_class.end_suite = self._method(suite)
+        self._visit(suite)
+
+    def _method(self, expected):
+        calls_before = self._call_index
+        self._call_index += 1
+        def method(s, item):
+            assert_equal(expected, item)
+            assert_equal(s.calls, calls_before)
+            s.calls += 1
+        return method
+
+    def _visit(self, model):
+        visitor = self._visitor_class()
+        model.visit(visitor)
+        assert_equal(visitor.calls, self._call_index)
+
+    def test_travel_through_test(self):
+        test = TestCase()
+        self._visitor_class.start_test = _visitor_method(test, 0)
+        self._visitor_class.end_test = _visitor_method(test, 1)
+        self._visit(test, 2)
+
+    def test_travel_through_keyword(self):
+        keyword = Keyword()
+        self._visitor_class.start_keyword = _visitor_method(keyword, 0)
+        self._visitor_class.end_keyword = _visitor_method(keyword, 1)
+        self._visit(keyword, 2)
+
+    def test_travel_in_message(self):
+        message = Message()
+        self._visitor_class.log_message = _visitor_method(message, 0)
+        self._visit(message, 1)
+
+    def test_travel_through_suite_with_test_with_keyword_with_message(self):
+        suite = TestSuite()
+        test = suite.tests.create()
+        keyword = test.keywords.create()
+        message = keyword.messages.create()
+        self._visitor_class.start_suite = _visitor_method(suite, 0)
+        self._visitor_class.start_test = _visitor_method(test, 1)
+        self._visitor_class.start_keyword = _visitor_method(keyword, 2)
+        self._visitor_class.log_message = _visitor_method(message, 3)
+        self._visitor_class.end_keyword = _visitor_method(keyword, 4)
+        self._visitor_class.end_test = _visitor_method(test, 5)
+        self._visitor_class.end_suite = _visitor_method(suite, 6)
+        self._visit(suite, 7)
+
+
 class TestItemLists(unittest.TestCase):
 
     def test_create_suite(self):

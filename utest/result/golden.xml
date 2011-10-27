@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<robot generated="20111024 13:41:20.873" generator="Robot trunk 20111007 (Python 2.7.2 on linux2)">
+<suite source="normal.html" name="Normal">
+<doc>Normal test cases</doc>
+<metadata>
+<item name="Something">My Value</item>
+</metadata>
+<kw type="setup" name="my setup" timeout="1 year">
+<doc></doc>
+<arguments>
+</arguments>
+<status status="PASS" endtime="20111024 13:41:20.888" starttime="20111024 13:41:20.886"></status>
+</kw>
+<test name="First One" timeout="">
+<doc>Test case documentation</doc>
+<kw type="kw" name="BuiltIn.Log" timeout="">
+<doc>Logs the given message with the given level.</doc>
+<arguments>
+<arg>Test 1</arg>
+</arguments>
+<msg timestamp="20111024 13:41:20.927" level="INFO">Test 1</msg>
+<status status="PASS" endtime="20111024 13:41:20.928" starttime="20111024 13:41:20.926"></status>
+</kw>
+<kw type="kw" name="logs on trace" timeout="">
+<doc></doc>
+<arguments>
+</arguments>
+<kw type="kw" name="BuiltIn.Log" timeout="">
+<doc>Logs the given message with the given level.</doc>
+<arguments>
+<arg>Log on ${TEST NAME}</arg>
+<arg>TRACE</arg>
+</arguments>
+<status status="PASS" endtime="20111024 13:41:20.932" starttime="20111024 13:41:20.931"></status>
+</kw>
+<status status="PASS" endtime="20111024 13:41:20.933" starttime="20111024 13:41:20.930"></status>
+</kw>
+<tags>
+<tag>t1</tag>
+</tags>
+<status status="PASS" endtime="20111024 13:41:20.934" critical="yes" starttime="20111024 13:41:20.925"></status>
+</test>
+<status status="PASS" endtime="20111024 13:41:20.952" starttime="20111024 13:41:20.873"></status>
+</suite>
+<statistics>
+<total>
+<stat fail="0" pass="1">Critical Tests</stat>
+<stat fail="0" pass="1">All Tests</stat>
+</total>
+<tag>
+<stat info="" links="" doc="" combined="" pass="1" fail="0">t1</stat>
+</tag>
+<suite>
+<stat fail="0" name="Normal" idx="s1" pass="1">Normal</stat>
+</suite>
+</statistics>
+<errors>
+  <msg timestamp="20111024 13:41:20.873" level="ERROR">Error in file 'normal.html' in table 'Settings': Resource file 'nope' does not exist.</msg>
+</errors>
+</robot>
