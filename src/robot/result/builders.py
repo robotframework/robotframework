@@ -85,7 +85,7 @@ class RobotElement(_Element):
     tag = 'robot'
 
     def _children(self):
-        return [RootSuiteElement, StatisticsElement, ErrorsElement]
+        return [RootSuiteElement, ErrorsElement]
 
 
 class SuiteElement(_Element):
@@ -211,39 +211,6 @@ class ArgumentElement(_Element):
 
     def end(self, elem):
         self._result.args.append(elem.text)
-
-
-class StatisticsElement(_Element):
-    tag = 'statistics'
-
-    def _children(self):
-        return [TotalStatisticsElement, TagStatisticsElement,
-                SuiteStatisticsElement]
-
-
-class TotalStatisticsElement(_Element):
-    tag = 'total'
-
-    def _children(self):
-        return [StatElement]
-
-
-class TagStatisticsElement(_Element):
-    tag = 'tag'
-
-    def _children(self):
-        return [StatElement]
-
-
-class SuiteStatisticsElement(_Element):
-    tag = 'suite'
-
-    def _children(self):
-        return [StatElement]
-
-
-class StatElement(_Element):
-    tag = 'stat'
 
 
 class ErrorsElement(_Element):
