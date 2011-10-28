@@ -126,7 +126,7 @@ class TestSuite(object):
 
     @property
     def elapsedtime(self):
-        if self.starttime == 'N/A' and self.endtime == 'N/A':
+        if self.starttime == 'N/A' or self.endtime == 'N/A':
             return sum(s.elapsedtime for s in self.suites)
         return utils.get_elapsed_time(self.starttime, self.endtime)
 
@@ -266,10 +266,6 @@ class ItemList(object):
 
     def __str__(self):
         return unicode(self).encode('UTF-8')
-
-
-class ModelVisitor(object):
-    pass
 
 
 class Metadata(utils.NormalizedDict):
