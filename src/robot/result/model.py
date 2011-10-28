@@ -160,6 +160,15 @@ class TestSuite(object):
     def get_metadata(self):
         return self.metadata.items()
 
+    def __unicode__(self):
+        return self.name
+
+    def __str__(self):
+        return unicode(self).encode('UTF-8')
+
+    def __repr__(self):
+        return repr(str(self))
+
 
 class TestCase(object):
 
@@ -198,6 +207,15 @@ class TestCase(object):
             kw.visit(visitor)
         visitor.end_test(self)
 
+    def __unicode__(self):
+        return self.name
+
+    def __str__(self):
+        return unicode(self).encode('UTF-8')
+
+    def __repr__(self):
+        return repr(str(self))
+
 
 class Keyword(object):
 
@@ -228,6 +246,15 @@ class Keyword(object):
         for child in chain(self.keywords, self.messages):
             child.visit(visitor)
         visitor.end_keyword(self)
+
+    def __unicode__(self):
+        return self.name
+
+    def __str__(self):
+        return unicode(self).encode('UTF-8')
+
+    def __repr__(self):
+        return repr(str(self))
 
 
 class Message(BaseMessage):
@@ -272,7 +299,7 @@ class ItemList(object):
         return len(self._items)
 
     def __unicode__(self):
-        return u'[%s]' % ', '.join(self)
+        return u'[%s]' % ', '.join(unicode(item) for item in self)
 
     def __str__(self):
         return unicode(self).encode('UTF-8')
