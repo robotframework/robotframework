@@ -147,11 +147,11 @@ class TestSuite(object):
             sub.set_tags(add, remove)
 
     def visit(self, visitor):
-        visitor.start_suite(self)
-        self.keywords.visit(visitor)
-        self.suites.visit(visitor)
-        self.tests.visit(visitor)
-        visitor.end_suite(self)
+        if visitor.start_suite(self) is not False:
+            self.keywords.visit(visitor)
+            self.suites.visit(visitor)
+            self.tests.visit(visitor)
+            visitor.end_suite(self)
 
     def get_metadata(self):
         return self.metadata.items()
@@ -198,9 +198,9 @@ class TestCase(object):
         return self.name
 
     def visit(self, visitor):
-        visitor.start_test(self)
-        self.keywords.visit(visitor)
-        visitor.end_test(self)
+        if visitor.start_test(self) is not False:
+            self.keywords.visit(visitor)
+            visitor.end_test(self)
 
     def __unicode__(self):
         return self.name
@@ -237,10 +237,10 @@ class Keyword(object):
         return ItemList(Message, messages)
 
     def visit(self, visitor):
-        visitor.start_keyword(self)
-        self.keywords.visit(visitor)
-        self.messages.visit(visitor)
-        visitor.end_keyword(self)
+        if visitor.start_keyword(self) is not False:
+            self.keywords.visit(visitor)
+            self.messages.visit(visitor)
+            visitor.end_keyword(self)
 
     def __unicode__(self):
         return self.name
