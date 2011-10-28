@@ -30,6 +30,10 @@ class ExecutionResult(object):
     def statistics(self):
         return Statistics(self.suite)
 
+    @property
+    def return_code(self):
+        return min(self.suite.critical_stats.failed, 250)
+
     def visit(self, visitor):
         self.suite.visit(visitor)
         self.statistics.visit(visitor)
@@ -181,6 +185,12 @@ class TestCase(object):
     @utils.setter
     def keywords(self, keywords):
         return ItemList(Keyword, keywords, parent=self)
+
+    @property
+    def longname(self):
+        if self.parent:
+            return self.parent.longname + '.' + self.name
+        return self.name
 
     def visit(self, visitor):
         visitor.start_test(self)

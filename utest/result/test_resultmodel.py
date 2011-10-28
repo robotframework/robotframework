@@ -117,7 +117,7 @@ class TestSuiteId(unittest.TestCase):
 class TestTestCase(unittest.TestCase):
 
     def setUp(self):
-        self.test = TestCase(tags=['t1', 't2'])
+        self.test = TestCase(tags=['t1', 't2'], name='test')
 
     def test_modify_tags(self):
         self.test.tags.add(['t0', 't3'])
@@ -128,6 +128,11 @@ class TestTestCase(unittest.TestCase):
         self.test.tags = ['s2', 's1']
         self.test.tags.add('s3')
         assert_equal(list(self.test.tags), ['s1', 's2', 's3'])
+
+    def test_longname(self):
+        assert_equal(self.test.longname, 'test')
+        self.test.parent = TestSuite(name='suite')
+        assert_equal(self.test.longname, 'suite.test')
 
 
 class TestElapsedTime(unittest.TestCase):
