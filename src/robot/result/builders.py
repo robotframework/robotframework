@@ -16,10 +16,10 @@ from robot.result.model import ExecutionResult, Message, CombinedExecutionResult
 from robot.utils.etreewrapper import ET
 
 
-def ResultsFromXML(*sources):
+def ResultFromXML(*sources):
     if len(sources) == 1:
         return ExecutionResultBuilder(sources[0]).build(ExecutionResult())
-    return CombinedExecutionResult(*[ResultsFromXML(src) for src in sources])
+    return CombinedExecutionResult(*[ResultFromXML(src) for src in sources])
 
 
 class ExecutionResultBuilder(object):
@@ -28,9 +28,9 @@ class ExecutionResultBuilder(object):
         self._source = source
 
     def build(self, result):
-        elements = ElementStack(RootElement(result))
+        elements = ElementStack(RootElement())
         for action, elem in ET.iterparse(self._source, events=('start', 'end')):
-            getattr(elements, action)(elem)
+            result = getattr(elements, action)(elem, result)
         return result
 
 
@@ -43,36 +43,41 @@ class ElementStack(object):
     def _current(self):
         return self._elements[-1]
 
-    def start(self, elem):
+    def start(self, elem, result):
         self._elements.append(self._current.child_element(elem.tag))
-        self._current.start(elem)
+        return self._current.start(elem, result)
 
-    def end(self, elem):
-        self._current.end(elem)
+    def end(self, elem, result):
+        result = self._current.end(elem, result)
         elem.clear()
         self._elements.pop()
+        return result
 
 
 class _Element(object):
     tag = ''
 
-    def __init__(self, result):
-        self._result = result
+    def start(self, elem, result):
+        return result
 
-    def start(self, elem):
-        pass
-
-    def end(self, elem):
-        pass
+    def end(self, elem, result):
+        return result
 
     def child_element(self, tag):
+        # TODO: replace _children() list with dict
         for child_type in self._children():
             if child_type.tag == tag:
-                return child_type(self._result)
-        return IgnoredElement(result=None)
+                return child_type()
+        return IgnoredElement() # TODO: Should this result in error instead?
 
     def _children(self):
         return []
+
+
+class _CollectionElement(_Element):
+
+    def end(self, elem, result):
+        return result.parent
 
 
 class RootElement(_Element):
@@ -85,15 +90,16 @@ class RobotElement(_Element):
     tag = 'robot'
 
     def _children(self):
+        # TODO: Should <statistics> be explicitly ignored?
         return [RootSuiteElement, ErrorsElement]
 
 
-class SuiteElement(_Element):
+class SuiteElement(_CollectionElement):
     tag = 'suite'
 
-    def start(self, elem):
-        self._result = self._result.suites.create(name=elem.get('name'),
-                                                  source=elem.get('source'))
+    def start(self, elem, result):
+        return result.suites.create(name=elem.get('name'),
+                                    source=elem.get('source'))
 
     def _children(self):
         return [SuiteElement, DocElement, StatusElement,
@@ -102,29 +108,33 @@ class SuiteElement(_Element):
 
 class RootSuiteElement(SuiteElement):
 
-    def start(self, elem):
-        self._result = self._result.suite
-        self._result.name = elem.get('name')
-        self._result.source = elem.get('source')
+    def start(self, elem, result):
+        self._result = result
+        self._result.suite.name = elem.get('name')
+        self._result.suite.source = elem.get('source')
+        return self._result.suite
+
+    def end(self, elem, result):
+        return self._result
 
 
-class TestCaseElement(_Element):
+class TestCaseElement(_CollectionElement):
     tag = 'test'
 
-    def start(self, elem):
-        self._result = self._result.tests.create(name=elem.get('name'))
+    def start(self, elem, result):
+        return result.tests.create(name=elem.get('name'))
 
     def _children(self):
         return [KeywordElement, TagsElement, DocElement, TestStatusElement]
 
 
-class KeywordElement(_Element):
+class KeywordElement(_CollectionElement):
     tag = 'kw'
 
-    def start(self, elem):
-        self._result = self._result.keywords.create(name=elem.get('name'),
-                                                    timeout=elem.get('timeout'),
-                                                    type=elem.get('type'))
+    def start(self, elem, result):
+        return result.keywords.create(name=elem.get('name'),
+                                      timeout=elem.get('timeout'),
+                                      type=elem.get('type'))
 
     def _children(self):
         return [DocElement, ArgumentsElement, KeywordElement, MessageElement,
@@ -134,38 +144,37 @@ class KeywordElement(_Element):
 class MessageElement(_Element):
     tag = 'msg'
 
-    def start(self, elem):
-        self._result = self._result.messages.create(
-            level=elem.get('level'),
-            timestamp=elem.get('timestamp'),
-            html=elem.get('html', False),
-            linkable=elem.get('linkable', False))
-
-    def end(self, elem):
-        self._result.message = elem.text or ''
+    def end(self, elem, result):
+        result.messages.create(elem.text or '', elem.get('level'),
+                               elem.get('html', False), elem.get('timestamp'),
+                               elem.get('linkable', False))
+        return result
 
 
 class StatusElement(_Element):
     tag = 'status'
 
-    def start(self, elem):
-        self._result.status = elem.get('status')
-        self._result.starttime = elem.get('starttime')
-        self._result.endtime = elem.get('endtime')
+    def end(self, elem, result):
+        result.status = elem.get('status')
+        result.starttime = elem.get('starttime')
+        result.endtime = elem.get('endtime')
+        return result
 
 
 class TestStatusElement(StatusElement):
 
-    def start(self, elem):
-        StatusElement.start(self, elem)
-        self._result.critical = elem.get('critical')
+    def end(self, elem, result):
+        StatusElement.end(self, elem, result)
+        result.critical = elem.get('critical')
+        return result
 
 
 class DocElement(_Element):
     tag = 'doc'
 
-    def end(self, elem):
-        self._result.doc = elem.text or ''
+    def end(self, elem, result):
+        result.doc = elem.text or ''
+        return result
 
 
 class MetadataElement(_Element):
@@ -181,8 +190,9 @@ class MetadataItemElement(_Element):
     def _children(self):
         return [MetadataItemElement]
 
-    def end(self, elem):
-        self._result.metadata[elem.get('name')] = elem.text
+    def end(self, elem, result):
+        result.metadata[elem.get('name')] = elem.text
+        return result
 
 
 class TagsElement(_Element):
@@ -195,8 +205,9 @@ class TagsElement(_Element):
 class TagElement(_Element):
     tag = 'tag'
 
-    def end(self, elem):
-        self._result.tags.add(elem.text)
+    def end(self, elem, result):
+        result.tags.add(elem.text)
+        return result
 
 
 class ArgumentsElement(_Element):
@@ -209,15 +220,20 @@ class ArgumentsElement(_Element):
 class ArgumentElement(_Element):
     tag = 'arg'
 
-    def end(self, elem):
-        self._result.args.append(elem.text)
+    def end(self, elem, result):
+        result.args.append(elem.text)
+        return result
 
 
 class ErrorsElement(_Element):
     tag = 'errors'
 
-    def start(self, elem):
-        self._result = self._result.errors
+    def start(self, elem, result):
+        self._result = result
+        return self._result.errors
+
+    def end(self, elem, result):
+        return self._result
 
     def _children(self):
         return [MessageElement]

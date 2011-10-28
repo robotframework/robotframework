@@ -4,7 +4,7 @@ from StringIO import StringIO
 from xml.etree.ElementTree import XML
 from xml.etree.ElementTree import tostring
 
-from robot.result.builders import ResultsFromXML, ExecutionResultBuilder
+from robot.result.builders import ResultFromXML, ExecutionResultBuilder
 from robot.result.serializer import ResultSerializer
 from robot.result.model import ExecutionResult
 from robot.utils.asserts import assert_equals
@@ -16,7 +16,7 @@ class TestResultSerializer(unittest.TestCase):
 
     def test_single_result_serialization(self):
         output = StringIO()
-        ResultSerializer(output).to_xml(ResultsFromXML(StringIO(GOLDEN_XML)))
+        ResultSerializer(output).to_xml(ResultFromXML(StringIO(GOLDEN_XML)))
         self._assert_xml_content(self._xml_lines(output.getvalue()),
                                  self._xml_lines(GOLDEN_XML))
 
@@ -30,7 +30,7 @@ class TestResultSerializer(unittest.TestCase):
 
     def test_combining_results(self):
         output = StringIO()
-        result = ResultsFromXML(StringIO(GOLDEN_XML), StringIO(GOLDEN_XML))
+        result = ResultFromXML(StringIO(GOLDEN_XML), StringIO(GOLDEN_XML))
         ResultSerializer(output).to_xml(result)
         self._assert_xml_content(self._xml_lines(output.getvalue()),
                                  self._xml_lines(GOLDEN_XML_TWICE))
