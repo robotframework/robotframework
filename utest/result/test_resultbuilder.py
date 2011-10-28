@@ -126,6 +126,17 @@ class TestElements(unittest.TestCase):
         assert_equals(test.status, 'FAIL')
         assert_equals(test.longname, 'foo.test')
 
+    def test_suite_message(self):
+        xml = """
+        <robot>
+        <suite name="foo">
+          <status status="FAIL">Setup failed</status>
+        </suite>
+        </robot>
+        """
+        suite = ResultFromXML(StringIO(xml)).suite
+        assert_equals(suite.message, 'Setup failed')
+
     def test_unknown_elements_are_ignored(self):
         assert_true(isinstance(_Element().child_element('some_tag'),
                                IgnoredElement))

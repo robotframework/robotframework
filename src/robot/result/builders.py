@@ -102,7 +102,7 @@ class SuiteElement(_CollectionElement):
                                     source=elem.get('source'))
 
     def _children(self):
-        return [SuiteElement, DocElement, StatusElement,
+        return [SuiteElement, DocElement, SuiteStatusElement,
                 KeywordElement, TestCaseElement, MetadataElement]
 
 
@@ -138,7 +138,7 @@ class KeywordElement(_CollectionElement):
 
     def _children(self):
         return [DocElement, ArgumentsElement, KeywordElement, MessageElement,
-                StatusElement]
+                KeywordStatusElement]
 
 
 class MessageElement(_Element):
@@ -151,7 +151,7 @@ class MessageElement(_Element):
         return result
 
 
-class StatusElement(_Element):
+class _StatusElement(_Element):
     tag = 'status'
 
     def end(self, elem, result):
@@ -161,13 +161,23 @@ class StatusElement(_Element):
         return result
 
 
-class TestStatusElement(StatusElement):
+class KeywordStatusElement(_StatusElement):
+    pass
+
+
+class SuiteStatusElement(_StatusElement):
 
     def end(self, elem, result):
-        StatusElement.end(self, elem, result)
-        result.critical = elem.get('critical')
         result.message = elem.text or ''
-        return result
+        return _StatusElement.end(self, elem, result)
+
+
+class TestStatusElement(_StatusElement):
+
+    def end(self, elem, result):
+        result.message = elem.text or ''
+        result.critical = elem.get('critical')
+        return _StatusElement.end(self, elem, result)
 
 
 class DocElement(_Element):
