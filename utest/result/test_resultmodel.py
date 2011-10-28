@@ -1,5 +1,5 @@
 import unittest
-from robot.utils.asserts import assert_equal, assert_true
+from robot.utils.asserts import assert_equal, assert_true, assert_raises
 
 from robot.result.model import *
 
@@ -241,6 +241,16 @@ class TestItemLists(unittest.TestCase):
         assert_equal(item.arg2, 'value 2')
         assert_equal(list(items), [item])
 
+    def test_append_and_extend(self):
+        items = ItemList(int)
+        items.append(1)
+        items.append(2)
+        items.extend((3, 4))
+        assert_equal(list(items), [1, 2, 3, 4])
+
+    def test_only_matching_types_can_be_added(self):
+        assert_raises(TypeError, ItemList(int).append, 'not integer')
+
     def test_common_attributes(self):
         kw1 = Keyword()
         kw2 = Keyword()
@@ -261,6 +271,13 @@ class TestItemLists(unittest.TestCase):
         assert_true(items[1] is item2)
         assert_true(items[-1] is item2)
 
+    def test_getitem_slice(self):
+        items = ItemList(int, range(10))
+        assert_true(isinstance(items[1:], list))
+        assert_equal(items[:], list(items))
+        assert_equal(items[:-1], range(9))
+        assert_equal(items[-1:1:-2], range(9, 1, -2))
+
     def test_len(self):
         items = ItemList(object)
         assert_equal(len(items), 0)
@@ -272,8 +289,9 @@ class TestItemLists(unittest.TestCase):
         assert_equal(str(items), '[foo, bar, quux]')
 
     def test_unicode(self):
-        items = ItemList(unicode, [u'hyv\xe4\xe4', u'y\xf6t\xe4'])
-        assert_equal(unicode(items), u'[hyv\xe4\xe4, y\xf6t\xe4]')
+        assert_equal(unicode(ItemList(int, [1, 2, 3, 4])), '[1, 2, 3, 4]')
+        assert_equal(unicode(ItemList(unicode, [u'hyv\xe4\xe4', u'y\xf6t\xe4'])),
+                     u'[hyv\xe4\xe4, y\xf6t\xe4]')
 
 
 class TestKeywords(unittest.TestCase):

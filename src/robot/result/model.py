@@ -12,7 +12,6 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from itertools import chain
 from robot.common.model import _Critical
 
 from robot.common.statistics import CriticalStats, AllStats, Statistics
@@ -23,8 +22,8 @@ from robot import utils
 class ExecutionResult(object):
 
     def __init__(self):
-        self.errors = ExecutionErrors()
         self.suite = TestSuite()
+        self.errors = ExecutionErrors()
 
     @property
     def statistics(self):
@@ -149,12 +148,9 @@ class TestSuite(object):
 
     def visit(self, visitor):
         visitor.start_suite(self)
-        for kw in self.keywords:
-            kw.visit(visitor)
-        for suite in self.suites:
-            suite.visit(visitor)
-        for test in self.tests:
-            test.visit(visitor)
+        self.keywords.visit(visitor)
+        self.suites.visit(visitor)
+        self.tests.visit(visitor)
         visitor.end_suite(self)
 
     def get_metadata(self):
@@ -203,8 +199,7 @@ class TestCase(object):
 
     def visit(self, visitor):
         visitor.start_test(self)
-        for kw in self.keywords:
-            kw.visit(visitor)
+        self.keywords.visit(visitor)
         visitor.end_test(self)
 
     def __unicode__(self):
@@ -243,8 +238,8 @@ class Keyword(object):
 
     def visit(self, visitor):
         visitor.start_keyword(self)
-        for child in chain(self.keywords, self.messages):
-            child.visit(visitor)
+        self.keywords.visit(visitor)
+        self.messages.visit(visitor)
         visitor.end_keyword(self)
 
     def __unicode__(self):
@@ -281,6 +276,9 @@ class ItemList(object):
         return self._items[-1]
 
     def append(self, item):
+        if not isinstance(item, self._item_class):
+            raise TypeError("Only '%s' objects accepted, got '%s'"
+                            % (self._item_class.__name__, type(item).__name__))
         for name, value in self._common_attrs.items():
             setattr(item, name, value)
         self._items.append(item)
@@ -288,6 +286,10 @@ class ItemList(object):
     def extend(self, items):
         for item in items:
             self.append(item)
+
+    def visit(self, visitor):
+        for item in self:
+            item.visit(visitor)
 
     def __iter__(self):
         return iter(self._items)
