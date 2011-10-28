@@ -65,8 +65,8 @@ class ExecutionErrors(object):
 
 class TestSuite(object):
 
-    def __init__(self, parent=None, source='', name='', doc='', metadata=None):
-        self.parent = parent
+    def __init__(self, source='', name='', doc='', metadata=None):
+        self.parent = None
         self.source = source
         self.name = name
         self.doc = doc
@@ -159,10 +159,9 @@ class TestSuite(object):
 
 class TestCase(object):
 
-    def __init__(self, parent=None, name='', doc='', tags=None,
-                 status='UNDEFINED', critical='yes',
-                 starttime='N/A', endtime='N/A'):
-        self.parent = parent
+    def __init__(self, name='', doc='', tags=None, status='UNDEFINED',
+                 critical='yes', starttime='N/A', endtime='N/A'):
+        self.parent = None
         self.name = name
         self.doc = doc
         self.tags = tags
@@ -192,9 +191,8 @@ class TestCase(object):
 
 class Keyword(object):
 
-    def __init__(self, parent=None, name='', doc='', type='kw',
-                 status='UNDEFINED', timeout=''):
-        self.parent = parent
+    def __init__(self, name='', doc='', type='kw', status='UNDEFINED', timeout=''):
+        self.parent = None
         self.name = name
         self.doc = doc
         self.args = []
