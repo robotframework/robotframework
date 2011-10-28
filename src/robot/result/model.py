@@ -112,7 +112,7 @@ class TestSuite(object):
 
     @utils.setter
     def keywords(self, keywords):
-        return ItemList(Keyword, keywords, parent=self)
+        return Keywords(keywords, parent=self)
 
     @property
     def id(self):
@@ -184,7 +184,7 @@ class TestCase(object):
 
     @utils.setter
     def keywords(self, keywords):
-        return ItemList(Keyword, keywords, parent=self)
+        return Keywords(keywords, parent=self)
 
     @property
     def longname(self):
@@ -217,7 +217,7 @@ class Keyword(object):
 
     @utils.setter
     def keywords(self, keywords):
-        return ItemList(Keyword, keywords, parent=self)
+        return Keywords(keywords, parent=self)
 
     @utils.setter
     def messages(self, messages):
@@ -276,6 +276,30 @@ class ItemList(object):
 
     def __str__(self):
         return unicode(self).encode('UTF-8')
+
+
+class Keywords(ItemList):
+
+    def __init__(self, items=None, **common_attrs):
+        ItemList.__init__(self, Keyword, items, **common_attrs)
+
+    @property
+    def setup(self):
+        return self[0] if (self and self[0].type == 'setup') else None
+
+    @property
+    def teardown(self):
+        return self[-1] if (self and self[-1].type == 'teardown') else None
+
+    @property
+    def all(self):
+        return self
+
+    @property
+    def normal(self):
+        for kw in self:
+            if kw.type == 'kw':
+                yield kw
 
 
 class Metadata(utils.NormalizedDict):

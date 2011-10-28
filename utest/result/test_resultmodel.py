@@ -276,6 +276,31 @@ class TestItemLists(unittest.TestCase):
         assert_equal(unicode(items), u'[hyv\xe4\xe4, y\xf6t\xe4]')
 
 
+class TestKeywords(unittest.TestCase):
+
+    def test_keywords_is_itemlist(self):
+        assert_true(issubclass(Keywords, ItemList))
+
+    def test_keywords_creates_keywords(self):
+        assert_true(isinstance(Keywords().create(), Keyword))
+
+    def test_setup(self):
+        assert_equal(Keywords().setup, None)
+        setup = Keyword(type='setup')
+        assert_true(Keywords([setup, Keyword(), Keyword()]).setup is setup)
+
+    def test_teardown(self):
+        assert_equal(Keywords().teardown, None)
+        teardown = Keyword(type='teardown')
+        assert_true(Keywords([Keyword(), teardown]).teardown is teardown)
+
+    def test_iteration(self):
+        kws = [Keyword(type='setup'), Keyword(), Keyword(), Keyword(type='teardown')]
+        assert_equal(list(Keywords(kws)), kws)
+        assert_equal(list(Keywords(kws).all), kws)
+        assert_equal(list(Keywords(kws).normal), kws[1:-1])
+
+
 class TestMetadata(unittest.TestCase):
 
     def test_normalizetion(self):
