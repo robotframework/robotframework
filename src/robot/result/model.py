@@ -18,6 +18,8 @@ from robot.common.statistics import CriticalStats, AllStats, Statistics
 from robot.output.loggerhelper import Message as BaseMessage
 from robot import utils
 
+from visitors import TagSetter
+
 
 class ExecutionResult(object):
 
@@ -140,11 +142,8 @@ class TestSuite(object):
         return self.name
 
     def set_tags(self, add=None, remove=None):
-        for test in self.tests:
-            test.tags.add(add)
-            test.tags.remove(remove)
-        for sub in self.suites:
-            sub.set_tags(add, remove)
+        if add or remove:
+            self.visit(TagSetter(add, remove))
 
     def visit(self, visitor):
         if visitor.start_suite(self) is not False:

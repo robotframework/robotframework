@@ -40,3 +40,17 @@ class Visitor(object):
     # TODO: Stats and errors related methods missing.
     # But do we actually need stat methods?
 
+
+class TagSetter(Visitor):
+
+    def __init__(self, add=None, remove=None):
+        self.add = add
+        self.remove = remove
+
+    def start_test(self, test):
+        test.tags.add(self.add)
+        test.tags.remove(self.remove)
+        return False
+
+    def start_keyword(self, keyword):
+        return False
