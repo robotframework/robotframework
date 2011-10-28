@@ -105,11 +105,26 @@ class TestElements(unittest.TestCase):
         </suite>
         </robot>
         """
-        result = ResultFromXML(StringIO(xml))
-        assert_equals(result.suite.name, 'foo')
-        assert_equals(result.suite.suites[0].name, 'bar')
-        assert_equals(result.suite.longname, 'foo')
-        assert_equals(result.suite.suites[0].longname, 'foo.bar')
+        suite = ResultFromXML(StringIO(xml)).suite
+        assert_equals(suite.name, 'foo')
+        assert_equals(suite.suites[0].name, 'bar')
+        assert_equals(suite.longname, 'foo')
+        assert_equals(suite.suites[0].longname, 'foo.bar')
+
+    def test_test_message(self):
+        xml = """
+        <robot>
+        <suite name="foo">
+          <test name="test">
+            <status status="FAIL">Failure message</status>
+          </test>
+        </suite>
+        </robot>
+        """
+        test = ResultFromXML(StringIO(xml)).suite.tests[0]
+        assert_equals(test.message, 'Failure message')
+        assert_equals(test.status, 'FAIL')
+        assert_equals(test.longname, 'foo.test')
 
     def test_unknown_elements_are_ignored(self):
         assert_true(isinstance(_Element().child_element('some_tag'),

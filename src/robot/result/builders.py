@@ -166,6 +166,7 @@ class TestStatusElement(StatusElement):
     def end(self, elem, result):
         StatusElement.end(self, elem, result)
         result.critical = elem.get('critical')
+        result.message = elem.text or ''
         return result
 
 
