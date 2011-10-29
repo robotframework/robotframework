@@ -35,6 +35,20 @@ class TestTestSuite(unittest.TestCase):
         assert_true(s2.parent is self.suite)
         assert_equal(list(self.suite.suites), [s1, s2])
 
+    def test_combined_suite_name(self):
+        suite = TestSuite()
+        assert_equal(suite.name, '')
+        suite.suites.create(name='foo')
+        suite.suites.create(name='bar')
+        assert_equal(suite.name, 'foo & bar')
+        suite.suites.create(name='zap')
+        assert_equal(suite.name, 'foo & bar & zap')
+        suite.name = 'new name'
+        assert_equal(suite.name, 'new name')
+
+
+class TestSuiteStats(unittest.TestCase):
+
     def test_stats(self):
         suite = self._create_suite_with_tests()
         assert_equal(suite.critical_stats.passed, 2)
@@ -51,16 +65,17 @@ class TestTestSuite(unittest.TestCase):
         assert_equal(suite.all_stats.passed, 6)
         assert_equal(suite.all_stats.failed, 4)
 
-    def test_combined_suite_name(self):
+    def _create_suite_with_tests(self):
         suite = TestSuite()
-        assert_equal(suite.name, '')
-        suite.suites.create(name='foo')
-        suite.suites.create(name='bar')
-        assert_equal(suite.name, 'foo & bar')
-        suite.suites.create(name='zap')
-        assert_equal(suite.name, 'foo & bar & zap')
-        suite.name = 'new name'
-        assert_equal(suite.name, 'new name')
+        suite.tests = [TestCase(status='PASS'),
+                       TestCase(status='PASS'),
+                       TestCase(status='PASS', critical=False),
+                       TestCase(status='FAIL'),
+                       TestCase(status='FAIL', critical=False)]
+        return suite
+
+
+class TestSuiteStatus(unittest.TestCase):
 
     def test_suite_status_is_passed_by_default(self):
         assert_equal(TestSuite().status, 'PASS')
@@ -84,15 +99,6 @@ class TestTestSuite(unittest.TestCase):
         suite = TestSuite()
         suite.suites.create().tests.create(status='FAIL')
         assert_equal(suite.status, 'FAIL')
-
-    def _create_suite_with_tests(self):
-        suite = TestSuite()
-        suite.tests = [TestCase(status='PASS'),
-                       TestCase(status='PASS'),
-                       TestCase(status='PASS', critical=False),
-                       TestCase(status='FAIL'),
-                       TestCase(status='FAIL', critical=False)]
-        return suite
 
 
 class TestSuiteId(unittest.TestCase):
