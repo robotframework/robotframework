@@ -141,6 +141,10 @@ class TestSuite(object):
             return self.parent.longname + '.' + self.name
         return self.name
 
+    @property
+    def test_count(self):
+        return self.all_stats.total
+
     def set_tags(self, add=None, remove=None):
         if add or remove:
             self.visit(TagSetter(add, remove))

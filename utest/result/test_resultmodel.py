@@ -57,13 +57,27 @@ class TestSuiteStats(unittest.TestCase):
         assert_equal(suite.all_stats.failed, 2)
 
     def test_nested_suite_stats(self):
-        suite = TestSuite()
-        suite.suites = [self._create_suite_with_tests(),
-                        self._create_suite_with_tests()]
+        suite = self._create_nested_suite_with_tests()
         assert_equal(suite.critical_stats.passed, 4)
         assert_equal(suite.critical_stats.failed, 2)
         assert_equal(suite.all_stats.passed, 6)
         assert_equal(suite.all_stats.failed, 4)
+
+    def test_test_count(self):
+        suite = self._create_nested_suite_with_tests()
+        assert_equal(suite.test_count, 10)
+        assert_equal(suite.suites[0].test_count, 5)
+        suite.suites.append(self._create_suite_with_tests())
+        assert_equal(suite.test_count, 15)
+        suite.suites[-1].tests.create()
+        assert_equal(suite.test_count, 16)
+        assert_equal(suite.suites[-1].test_count, 6)
+
+    def _create_nested_suite_with_tests(self):
+        suite = TestSuite()
+        suite.suites = [self._create_suite_with_tests(),
+                        self._create_suite_with_tests()]
+        return suite
 
     def _create_suite_with_tests(self):
         suite = TestSuite()
