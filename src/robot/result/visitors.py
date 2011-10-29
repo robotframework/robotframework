@@ -14,6 +14,8 @@
 
 from robot import utils
 
+from tags import TagPatterns
+
 
 class Visitor(object):
 
@@ -64,8 +66,8 @@ class Filter(Visitor):
     def __init__(self, include_tags=None, exclude_tags=None,
                  include_tests=None, include_suites=None):
         # TODO: What to do if these are passed as strings? Convert to list? Fail?
-        self.include_tags = include_tags
-        self.exclude_tags = exclude_tags
+        self.include_tags = TagPatterns(include_tags)
+        self.exclude_tags = TagPatterns(exclude_tags)
         self.include_tests = include_tests
         self.include_suites = include_suites
 
@@ -86,8 +88,7 @@ class Filter(Visitor):
                    for name in (test.name, test.longname))
 
     def _test_included_by_tags(self, test):
-        return any(utils.matches_any(tag, self.include_tags, ignore=['_'])
-                   for tag in test.tags)
+        return self.include_tags.match_any(test.tags)
 
     def start_test(self, test):
         return False

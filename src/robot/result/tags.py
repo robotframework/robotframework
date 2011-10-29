@@ -27,10 +27,10 @@ class Tags(object):
 
     def remove(self, tags):
         tags = TagPatterns(tags)
-        self._tags = [t for t in self if t not in tags]
+        self._tags = [t for t in self if not tags.match(t)]
 
     def __contains__(self, tag):
-        return TagPatterns(tag).contains_any(self)
+        return TagPatterns(tag).match_any(self)
 
     def __len__(self):
         return len(self._tags)
@@ -50,8 +50,17 @@ class TagPatterns(object):
     def __init__(self, patters):
         self._patterns = list(Tags(patters))
 
-    def __contains__(self, tag):
+    def match(self, tag):
         return any(utils.matches(tag, p, ignore=['_']) for p in self._patterns)
 
-    def contains_any(self, tags):
-        return any(t in self for t in tags)
+    def match_any(self, tags):
+        return any(self.match(t) for t in tags)
+
+    def __contains__(self, tag):
+        return self.match(tag)
+
+    def __len__(self):
+        return len(self._patterns)
+
+    def __iter__(self):
+        return iter(self._patterns)
