@@ -152,6 +152,7 @@ class TestSuite(object):
             self.tests.visit(visitor)
             visitor.end_suite(self)
 
+    # TODO: Remove and change clients to use metadata.items() directly
     def get_metadata(self):
         return self.metadata.items()
 
