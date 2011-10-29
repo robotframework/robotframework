@@ -12,12 +12,13 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from robot.common.model import _Critical
+from robot.common.model import _Critical  # TODO: Remove
 
 from robot.common.statistics import CriticalStats, AllStats, Statistics
 from robot.output.loggerhelper import Message as BaseMessage
 from robot import utils
 
+from tags import Tags
 from visitors import TagSetter
 
 
@@ -345,45 +346,3 @@ class Metadata(utils.NormalizedDict):
 
     def __str__(self):
         return unicode(self).encode('UTF-8')
-
-
-class Tags(object):
-
-    def __init__(self, tags=None):
-        if isinstance(tags, basestring):
-            tags = [tags]
-        self._tags = utils.normalize_tags(tags or [])
-
-    def add(self, tags):
-        self._tags = utils.normalize_tags(list(self) + list(Tags(tags)))
-
-    def remove(self, tags):
-        tags = TagPatterns(tags)
-        self._tags = [t for t in self if t not in tags]
-
-    def __contains__(self, tag):
-        return TagPatterns(tag).contains_any(self)
-
-    def __len__(self):
-        return len(self._tags)
-
-    def __iter__(self):
-        return iter(self._tags)
-
-    def __unicode__(self):
-        return u'[%s]' % ', '.join(self)
-
-    def __str__(self):
-        return unicode(self).encode('UTF-8')
-
-
-class TagPatterns(object):
-
-    def __init__(self, patters):
-        self._patterns = list(Tags(patters))
-
-    def __contains__(self, tag):
-        return any(utils.matches(tag, p, ignore=['_']) for p in self._patterns)
-
-    def contains_any(self, tags):
-        return any(t in self for t in tags)
