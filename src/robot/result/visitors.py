@@ -12,6 +12,8 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+from robot import utils
+
 
 class Visitor(object):
 
@@ -21,6 +23,7 @@ class Visitor(object):
     def end_suite(self, suite):
         pass
 
+    # TODO: Should start_test and start_keyword return False by default?
     def start_test(self, test):
         pass
 
@@ -50,6 +53,43 @@ class TagSetter(Visitor):
     def start_test(self, test):
         test.tags.add(self.add)
         test.tags.remove(self.remove)
+        return False
+
+    def start_keyword(self, keyword):
+        return False
+
+
+class Filter(Visitor):
+
+    def __init__(self, include_tags=None, exclude_tags=None,
+                 include_tests=None, include_suites=None):
+        # TODO: What to do if these are passed as strings? Convert to list? Fail?
+        self.include_tags = include_tags
+        self.exclude_tags = exclude_tags
+        self.include_tests = include_tests
+        self.include_suites = include_suites
+
+    def start_suite(self, suite):
+        if self.include_tests:
+            suite.tests = list(self._filter(suite, self._test_included_by_name))
+        if self.include_tags:
+            suite.tests = list(self._filter(suite, self._test_included_by_tags))
+        return bool(suite.suites)
+
+    def _filter(self, suite, filter):
+        for test in suite.tests:
+            if filter(test):
+                yield test
+
+    def _test_included_by_name(self, test):
+        return any(utils.matches_any(name, self.include_tests, ignore=['_'])
+                   for name in (test.name, test.longname))
+
+    def _test_included_by_tags(self, test):
+        return any(utils.matches_any(tag, self.include_tags, ignore=['_'])
+                   for tag in test.tags)
+
+    def start_test(self, test):
         return False
 
     def start_keyword(self, keyword):
