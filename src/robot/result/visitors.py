@@ -76,16 +76,15 @@ class Filter(Visitor):
         self.include_tags = include_tags
         self.exclude_tags = exclude_tags
 
-    # TODO:
-    # - include_suites and include_tests should be objects
-
     @utils.setter
     def include_suites(self, suites):
-        return suites if not isinstance(suites, basestring) else [suites]
+        return _SuiteNameFilter(suites) \
+            if not isinstance(suites, _SuiteNameFilter) else suites
 
     @utils.setter
     def include_tests(self, tests):
-        return tests if not isinstance(tests, basestring) else [tests]
+        return _TestNameFilter(tests) \
+            if not isinstance(tests, _TestNameFilter) else tests
 
     @utils.setter
     def include_tags(self, tags):
@@ -109,7 +108,7 @@ class Filter(Visitor):
         return bool(suite.suites)
 
     def _filter_by_suite_name(self, suite):
-        if not self._included_by_suite_name(suite):
+        if not self.include_suites.match(suite):
             suite.tests = []
             return True
         suite.visit(Filter(include_suites=[],
@@ -118,28 +117,13 @@ class Filter(Visitor):
                            exclude_tags=self.exclude_tags))
         return False
 
-    def _included_by_suite_name(self, suite):
-        if self._matches_any(suite.name, self.include_suites):
-            return True
-        return self._included_by_suite_longname(suite.longname)
-
-    def _matches_any(self, string, patterns):
-        return utils.matches_any(string, patterns, ignore=['_'])
-
-    def _included_by_suite_longname(self, name):
-        while '.' in name:
-            if self._matches_any(name, self.include_suites):
-                return True
-            name = name.split('.', 1)[1]
-
     def _filter(self, suite, filter):
         for test in suite.tests:
             if filter(test):
                 yield test
 
     def _included_by_test_name(self, test):
-        return any(self._matches_any(name, self.include_tests)
-                   for name in (test.name, test.longname))
+        return self.include_tests.match(test)
 
     def _included_by_tags(self, test):
         return self.include_tags.match(test.tags)
@@ -159,3 +143,35 @@ class Filter(Visitor):
     def __nonzero__(self):
         return bool(self.include_suites or self.include_tests or
                     self.include_tags or self.exclude_tags)
+
+
+class _NameFilter(object):
+
+    def __init__(self, patterns):
+        if isinstance(patterns, basestring):
+            patterns = [patterns]
+        self._patterns = patterns
+
+    def _match(self, name):
+        return utils.matches_any(name, self._patterns, ignore=['_'])
+
+    def __nonzero__(self):
+        return bool(self._patterns)
+
+
+class _SuiteNameFilter(_NameFilter):
+
+    def match(self, suite):
+        return self._match(suite.name) or self._match_longname_end(suite.longname)
+
+    def _match_longname_end(self, name):
+        while '.' in name:
+            if self._match(name):
+                return True
+            name = name.split('.', 1)[1]
+
+
+class _TestNameFilter(_NameFilter):
+
+    def match(self, test):
+        return self._match(test.name) or self._match(test.longname)
