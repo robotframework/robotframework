@@ -108,14 +108,14 @@ class Filter(Visitor):
         return bool(suite.suites)
 
     def _filter_by_suite_name(self, suite):
-        if not self.include_suites.match(suite):
-            suite.tests = []
-            return True
-        suite.visit(Filter(include_suites=[],
-                           include_tests=self.include_tests,
-                           include_tags=self.include_tags,
-                           exclude_tags=self.exclude_tags))
-        return False
+        if self.include_suites.match(suite):
+            suite.visit(Filter(include_suites=[],
+                               include_tests=self.include_tests,
+                               include_tags=self.include_tags,
+                               exclude_tags=self.exclude_tags))
+            return False
+        suite.tests = []
+        return True
 
     def _filter(self, suite, filter):
         for test in suite.tests:
@@ -152,6 +152,9 @@ class _NameFilter(object):
             patterns = [patterns]
         self._patterns = patterns
 
+    def match(self, item):
+        return self._match(item.name) or self._match_longname(item.longname)
+
     def _match(self, name):
         return utils.matches_any(name, self._patterns, ignore=['_'])
 
@@ -161,10 +164,7 @@ class _NameFilter(object):
 
 class _SuiteNameFilter(_NameFilter):
 
-    def match(self, suite):
-        return self._match(suite.name) or self._match_longname_end(suite.longname)
-
-    def _match_longname_end(self, name):
+    def _match_longname(self, name):
         while '.' in name:
             if self._match(name):
                 return True
@@ -173,5 +173,5 @@ class _SuiteNameFilter(_NameFilter):
 
 class _TestNameFilter(_NameFilter):
 
-    def match(self, test):
-        return self._match(test.name) or self._match(test.longname)
+    def _match_longname(self, name):
+        return self._match(name)
