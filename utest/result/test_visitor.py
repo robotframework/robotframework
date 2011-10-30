@@ -1,11 +1,8 @@
 import unittest
-import inspect
 from os.path import dirname, join
 
-from robot.utils.asserts import assert_equal
 from robot.result.builders import ResultFromXML
-from robot.result.model import TestSuite
-from robot.result.visitors import *
+from robot.result.visitor import Visitor
 
 
 RESULT = ResultFromXML(join(dirname(__file__), 'golden.xml'))

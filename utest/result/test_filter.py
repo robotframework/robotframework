@@ -2,7 +2,7 @@ import unittest
 
 from robot.utils.asserts import assert_equal
 from robot.result.model import TestSuite
-from robot.result.visitors import *
+from robot.result.filter import Filter
 
 
 class FilterBaseTest(unittest.TestCase):

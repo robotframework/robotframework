@@ -19,7 +19,8 @@ from robot.output.loggerhelper import Message as BaseMessage
 from robot import utils
 
 from tags import Tags
-from visitors import TagSetter, Filter
+from tagsetter import TagSetter
+from filter import Filter
 
 
 class ExecutionResult(object):

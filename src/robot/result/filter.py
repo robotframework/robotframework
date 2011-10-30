@@ -14,57 +14,8 @@
 
 from robot import utils
 
+from visitor import Visitor
 from tags import TagPatterns
-
-
-class Visitor(object):
-
-    def start_suite(self, suite):
-        pass
-
-    def end_suite(self, suite):
-        pass
-
-    # TODO: Should start_test and start_keyword return False by default?
-    def start_test(self, test):
-        pass
-
-    def end_test(self, test):
-        pass
-
-    def start_keyword(self, keyword):
-        pass
-
-    def end_keyword(self, keyword):
-        pass
-
-    # TODO: Shouldn't we just have message method?
-    def log_message(self, msg):
-        pass
-
-    # TODO: Stats and errors related methods missing.
-    # But do we actually need stat methods?
-
-
-class TagSetter(Visitor):
-
-    def __init__(self, add=None, remove=None):
-        self.add = add
-        self.remove = remove
-
-    def start_suite(self, suite):
-        return bool(self)
-
-    def start_test(self, test):
-        test.tags.add(self.add)
-        test.tags.remove(self.remove)
-        return False
-
-    def start_keyword(self, keyword):
-        return False
-
-    def __nonzero__(self):
-        return bool(self.add or self.remove)
 
 
 class Filter(Visitor):
