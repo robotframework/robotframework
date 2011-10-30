@@ -30,13 +30,13 @@ class StartSuiteStopping(Visitor):
         return False
 
     def end_suite(self, suite):
-        raise RuntimeError
+        raise AssertionError
 
     def start_test(self, test):
-        raise RuntimeError
+        raise AssertionError
 
     def start_keyword(self, keyword):
-        raise RuntimeError
+        raise AssertionError
 
 
 class StartTestStopping(Visitor):
@@ -49,11 +49,11 @@ class StartTestStopping(Visitor):
         return False
 
     def end_test(self, test):
-        raise RuntimeError
+        raise AssertionError
 
     def start_keyword(self, keyword):
         if self.test_started:
-            raise RuntimeError
+            raise AssertionError
 
 
 class StartKeywordStopping(Visitor):
@@ -62,10 +62,10 @@ class StartKeywordStopping(Visitor):
         return False
 
     def end_keyword(self, test):
-        raise RuntimeError
+        raise AssertionError
 
     def log_message(self, msg):
-        raise RuntimeError
+        raise AssertionError
 
 
 if __name__ == '__main__':
