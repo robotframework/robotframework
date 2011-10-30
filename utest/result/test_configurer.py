@@ -56,13 +56,26 @@ class TestTestAttributes(unittest.TestCase):
 class TestFilteringByTags(unittest.TestCase):
 
     def setUp(self):
-        self.suite = TestSuite()
-        self.suite.tests = [TestCase(name='t0'),TestCase(name='t1', tags=['t1']),
-                            TestCase(name='t2', tags=['t1', 't2'])]
+        self.suite = TestSuite(name='root')
+        self.suite.tests = [TestCase(name='n0'), TestCase(name='n1', tags=['t1']),
+                            TestCase(name='n2', tags=['t1', 't2'])]
+        self.suite.suites.create(name='sub').tests.create(name='n1', tags=['t1'])
 
-    def ____test_include(self):
-        SuiteConfigurer(include_tags=['t1', 'none', '', 't2']).configure(self.suite)
-        assert_equal([t.name for t in self.suite.tests], ['t1', 't2'])
+    def test_include(self):
+        SuiteConfigurer(include_tags=['t1', 'none', '', '?2']).configure(self.suite)
+        assert_equal([t.name for t in self.suite.tests], ['n1', 'n2'])
+        assert_equal([t.name for t in self.suite.suites[0].tests], ['n1'])
+
+    def test_exclude(self):
+        SuiteConfigurer(exclude_tags=['t1', '?1ANDt2']).configure(self.suite)
+        assert_equal([t.name for t in self.suite.tests], ['n0'])
+        assert_equal(list(self.suite.suites), [])
+
+    def test_include_by_names(self):
+        SuiteConfigurer(include_suites=['s?b', 'xxx'],
+                        include_tests=['', '*1', 'xxx']).configure(self.suite)
+        assert_equal(list(self.suite.tests), [])
+        assert_equal([t.name for t in self.suite.suites[0].tests], ['n1'])
 
 
 if __name__ == '__main__':

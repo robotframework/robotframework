@@ -21,22 +21,33 @@ class SuiteConfigurer(object):
         self.name = name
         self.doc = doc
         self.metadata = metadata
-        self.set_tags = set_tags
+        self.set_tags = set_tags or []
         self.include_tags = include_tags
         self.exclude_tags = exclude_tags
         self.include_suites = include_suites
         self.include_tests = include_tests
         self.remove_keywords = remove_keywords
 
+    @property
+    def add_tags(self):
+        return [t for t in self.set_tags if not t.startswith('-')]
+
+    @property
+    def remove_tags(self):
+        return [t[1:] for t in self.set_tags if t.startswith('-')]
+
     def configure(self, suite):
+        self._set_suite_attributes(suite)
+        suite.set_tags(self.add_tags, self.remove_tags)
+        suite.filter(self.include_suites, self.include_tests,
+                     self.include_tags, self.exclude_tags)
+
+    def _set_suite_attributes(self, suite):
         if self.name:
             suite.name = self.name
         if self.doc:
             suite.doc = self.doc
         if self.metadata:
             suite.metadata.update(self.metadata)
-        if self.set_tags:
-            add = [t for t in self.set_tags if not t.startswith('-')]
-            remove = [t[1:] for t in self.set_tags if t.startswith('-')]
-            suite.set_tags(add, remove)
+
 
