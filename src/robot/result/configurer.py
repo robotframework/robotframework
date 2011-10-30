@@ -38,9 +38,9 @@ class SuiteConfigurer(object):
 
     def configure(self, suite):
         self._set_suite_attributes(suite)
-        suite.set_tags(self.add_tags, self.remove_tags)
         suite.filter(self.include_suites, self.include_tests,
                      self.include_tags, self.exclude_tags)
+        suite.set_tags(self.add_tags, self.remove_tags)
 
     def _set_suite_attributes(self, suite):
         if self.name:
