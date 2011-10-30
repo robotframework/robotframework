@@ -1,6 +1,7 @@
 import unittest
 
-from robot.utils.asserts import assert_equal, assert_true
+from robot.utils.asserts import assert_equal, assert_true, assert_false
+from robot.result.model import TestCase
 from robot.result.tags import *
 
 
@@ -81,13 +82,52 @@ class TestTags(unittest.TestCase):
 
     def test_unicode(self):
         assert_equal(unicode(Tags()), '[]')
-        assert_equal(unicode(Tags(['y', "X'X"])), "[X'X, y]")
+        assert_equal(unicode(Tags(['y', "X'X", 'Y'])), "[X'X, y]")
         assert_equal(unicode(Tags([u'\xe4', 'a'])), u'[a, \xe4]')
 
     def test_str(self):
         assert_equal(str(Tags()), '[]')
         assert_equal(str(Tags(['y', "X'X"])), "[X'X, y]")
         assert_equal(str(Tags([u'\xe4', 'a'])), '[a, \xc3\xa4]')
+
+
+class TestTagPatterns(unittest.TestCase):
+
+    def test_match(self):
+        patterns = TagPatterns(['x', 'y', 'z*'])
+        assert_false(patterns.match([]))
+        assert_false(patterns.match(['no', 'match']))
+        assert_true(patterns.match(['x']))
+        assert_true(patterns.match(['xxx', 'zzz']))
+
+    def test_match_with_and(self):
+        patterns = TagPatterns(['xANDy', '???ANDz'])
+        assert_false(patterns.match([]))
+        assert_false(patterns.match(['x']))
+        assert_true(patterns.match(['x', 'y', 'z']))
+        assert_true(patterns.match(['123', 'y', 'z']))
+
+    def test_match_with_not(self):
+        patterns = TagPatterns(['xNOTy', '???NOT?'])
+        assert_false(patterns.match([]))
+        assert_false(patterns.match(['x', 'y']))
+        assert_false(patterns.match(['123', 'y', 'z']))
+        assert_true(patterns.match(['x']))
+        assert_true(patterns.match(['123', 'xx']))
+
+    def test_match_with_not_and_and(self):
+        patterns = TagPatterns(['xNOTyANDz', 'aANDbNOTc', '?AND??NOT???AND????'])
+        assert_false(patterns.match([]))
+        assert_false(patterns.match(['x', 'y', 'z']))
+        assert_false(patterns.match(['a', 'b', 'c']))
+        assert_false(patterns.match(['a']))
+        assert_false(patterns.match(['b']))
+        assert_false(patterns.match(['1', '12', '123', '1234']))
+        assert_true(patterns.match(['x']))
+        assert_true(patterns.match(['x', 'y']))
+        assert_true(patterns.match(['a', 'b']))
+        assert_true(patterns.match(['1', '12', '123']))
+        assert_true(patterns.match(['1', '12', '1234']))
 
 
 if __name__ == '__main__':

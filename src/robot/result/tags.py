@@ -18,19 +18,26 @@ from robot import utils
 class Tags(object):
 
     def __init__(self, tags=None):
+        self._tags = tags
+
+    @utils.setter
+    def _tags(self, tags):
         if isinstance(tags, basestring):
             tags = [tags]
-        self._tags = utils.normalize_tags(tags or [])
+        return utils.normalize_tags(tags or [])
 
     def add(self, tags):
-        self._tags = utils.normalize_tags(list(self) + list(Tags(tags)))
+        self._tags = list(self) + list(Tags(tags))
 
     def remove(self, tags):
         tags = TagPatterns(tags)
         self._tags = [t for t in self if not tags.match(t)]
 
-    def __contains__(self, tag):
-        return TagPatterns(tag).match_any(self)
+    def match(self, tags):
+        return TagPatterns(tags).match(self)
+
+    def __contains__(self, tags):
+        return self.match(tags)
 
     def __len__(self):
         return len(self._tags)
@@ -47,14 +54,12 @@ class Tags(object):
 
 class TagPatterns(object):
 
-    def __init__(self, patters):
-        self._patterns = list(Tags(patters))
+    def __init__(self, patterns):
+        self._patterns = [TagPattern(p) for p in Tags(patterns)]
 
-    def match(self, tag):
-        return any(utils.matches(tag, p, ignore=['_']) for p in self._patterns)
-
-    def match_any(self, tags):
-        return any(self.match(t) for t in tags)
+    def match(self, tags):
+        tags = Tags(tags)
+        return any(p.match(tags) for p in self._patterns)
 
     def __contains__(self, tag):
         return self.match(tag)
@@ -64,3 +69,42 @@ class TagPatterns(object):
 
     def __iter__(self):
         return iter(self._patterns)
+
+
+def TagPattern(pattern):
+    if 'NOT' in pattern:
+        return _NotTagPattern(*pattern.split('NOT', 1))
+    if 'AND' in pattern:
+        return _AndTagPattern(pattern.split('AND'))
+    return _SingleTagPattern(pattern)
+
+
+class _SingleTagPattern(object):
+
+    def __init__(self, pattern):
+        self._pattern = pattern
+
+    def match(self, tags):
+        return any(self._match(tag) for tag in tags)
+
+    def _match(self, tag):
+        return utils.matches(tag, self._pattern, ignore=['_'])
+
+
+class _AndTagPattern(object):
+
+    def __init__(self, patterns):
+        self._patterns = [TagPattern(p) for p in patterns]
+
+    def match(self, tags):
+        return all(p.match(tags) for p in self._patterns)
+
+
+class _NotTagPattern(object):
+
+    def __init__(self, must_match, must_not_match):
+        self._must = TagPattern(must_match)
+        self._not = TagPattern(must_not_match)
+
+    def match(self, tags):
+        return self._must.match(tags) and not self._not.match(tags)
