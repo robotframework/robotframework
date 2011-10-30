@@ -52,6 +52,9 @@ class TagSetter(Visitor):
         self.add = add
         self.remove = remove
 
+    def start_suite(self, suite):
+        return bool(self)
+
     def start_test(self, test):
         test.tags.add(self.add)
         test.tags.remove(self.remove)
@@ -60,38 +63,99 @@ class TagSetter(Visitor):
     def start_keyword(self, keyword):
         return False
 
+    def __nonzero__(self):
+        return bool(self.add or self.remove)
+
 
 class Filter(Visitor):
 
-    def __init__(self, include_tags=None, exclude_tags=None,
-                 include_tests=None, include_suites=None):
-        # TODO: What to do if these are passed as strings? Convert to list? Fail?
-        self.include_tags = TagPatterns(include_tags)
-        self.exclude_tags = TagPatterns(exclude_tags)
-        self.include_tests = include_tests
+    def __init__(self, include_suites=None, include_tests=None,
+                 include_tags=None, exclude_tags=None):
         self.include_suites = include_suites
+        self.include_tests = include_tests
+        self.include_tags = include_tags
+        self.exclude_tags = exclude_tags
+
+    # TODO:
+    # - include_suites and include_tests should be objects
+
+    @utils.setter
+    def include_suites(self, suites):
+        return suites if not isinstance(suites, basestring) else [suites]
+
+    @utils.setter
+    def include_tests(self, tests):
+        return tests if not isinstance(tests, basestring) else [tests]
+
+    @utils.setter
+    def include_tags(self, tags):
+        return TagPatterns(tags) if not isinstance(tags, TagPatterns) else tags
+
+    @utils.setter
+    def exclude_tags(self, tags):
+        return TagPatterns(tags) if not isinstance(tags, TagPatterns) else tags
 
     def start_suite(self, suite):
+        if not self:
+            return False
+        if self.include_suites:
+            return self._filter_by_suite_name(suite)
         if self.include_tests:
-            suite.tests = list(self._filter(suite, self._test_included_by_name))
+            suite.tests = list(self._filter(suite, self._included_by_test_name))
         if self.include_tags:
-            suite.tests = list(self._filter(suite, self._test_included_by_tags))
+            suite.tests = list(self._filter(suite, self._included_by_tags))
+        if self.exclude_tags:
+            suite.tests = list(self._filter(suite, self._not_excluded_by_tags))
         return bool(suite.suites)
+
+    def _filter_by_suite_name(self, suite):
+        if not self._included_by_suite_name(suite):
+            suite.tests = []
+            return True
+        suite.visit(Filter(include_suites=[],
+                           include_tests=self.include_tests,
+                           include_tags=self.include_tags,
+                           exclude_tags=self.exclude_tags))
+        return False
+
+    def _included_by_suite_name(self, suite):
+        if self._matches_any(suite.name, self.include_suites):
+            return True
+        return self._included_by_suite_longname(suite.longname)
+
+    def _matches_any(self, string, patterns):
+        return utils.matches_any(string, patterns, ignore=['_'])
+
+    def _included_by_suite_longname(self, name):
+        while '.' in name:
+            if self._matches_any(name, self.include_suites):
+                return True
+            name = name.split('.', 1)[1]
 
     def _filter(self, suite, filter):
         for test in suite.tests:
             if filter(test):
                 yield test
 
-    def _test_included_by_name(self, test):
-        return any(utils.matches_any(name, self.include_tests, ignore=['_'])
+    def _included_by_test_name(self, test):
+        return any(self._matches_any(name, self.include_tests)
                    for name in (test.name, test.longname))
 
-    def _test_included_by_tags(self, test):
-        return self.include_tags.match_any(test.tags)
+    def _included_by_tags(self, test):
+        return self.include_tags.match(test.tags)
+
+    def _not_excluded_by_tags(self, test):
+        return not self.exclude_tags.match(test.tags)
+
+    def end_suite(self, suite):
+        suite.suites = [s for s in suite.suites if s.test_count]
 
     def start_test(self, test):
         return False
 
     def start_keyword(self, keyword):
         return False
+
+    def __nonzero__(self):
+        return bool(self.include_suites or self.include_tests or
+                    self.include_tags or self.exclude_tags)

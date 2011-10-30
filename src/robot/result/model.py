@@ -19,7 +19,7 @@ from robot.output.loggerhelper import Message as BaseMessage
 from robot import utils
 
 from tags import Tags
-from visitors import TagSetter
+from visitors import TagSetter, Filter
 
 
 class ExecutionResult(object):
@@ -147,8 +147,12 @@ class TestSuite(object):
         return self.all_stats.total
 
     def set_tags(self, add=None, remove=None):
-        if add or remove:
-            self.visit(TagSetter(add, remove))
+        self.visit(TagSetter(add, remove))
+
+    def filter(self, included_suites=None, included_tests=None,
+               included_tags=None, excluded_tags=None):
+        self.visit(Filter(included_suites, included_tests,
+                          included_tags, excluded_tags))
 
     def visit(self, visitor):
         if visitor.start_suite(self) is not False:
