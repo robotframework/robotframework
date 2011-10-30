@@ -169,6 +169,7 @@ class _SuiteNameFilter(_NameFilter):
             if self._match(name):
                 return True
             name = name.split('.', 1)[1]
+        return False
 
 
 class _TestNameFilter(_NameFilter):
