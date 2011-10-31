@@ -14,18 +14,35 @@
 
 class Visitor(object):
 
+    def visit_suite(self, suite):
+        if self.start_suite(suite) is not False:
+            suite.keywords.visit(self)
+            suite.suites.visit(self)
+            suite.tests.visit(self)
+            self.end_suite(suite)
+
     def start_suite(self, suite):
         pass
 
     def end_suite(self, suite):
         pass
 
-    # TODO: Should start_test and start_keyword return False by default?
+    def visit_test(self, test):
+        if self.start_test(test) is not False:
+            test.keywords.visit(self)
+            self.end_test(test)
+
     def start_test(self, test):
         pass
 
     def end_test(self, test):
         pass
+
+    def visit_keyword(self, kw):
+        if self.start_keyword(kw) is not False:
+            kw.keywords.visit(self)
+            kw.messages.visit(self)
+            self.end_keyword(kw)
 
     def start_keyword(self, keyword):
         pass
@@ -33,8 +50,14 @@ class Visitor(object):
     def end_keyword(self, keyword):
         pass
 
-    # TODO: Shouldn't we just have message method?
-    def log_message(self, msg):
+    def visit_message(self, msg):
+        if self.start_message(msg) is not False:
+            self.end_message(msg)
+
+    def start_message(self, msg):
+        pass
+
+    def end_message(self, msg):
         pass
 
     # TODO: Stats and errors related methods missing.

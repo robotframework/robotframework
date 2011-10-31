@@ -14,8 +14,13 @@
 
 from robot.output.xmllogger import XmlLogger
 
+from visitor import Visitor
 
-class ResultWriter(XmlLogger):
+
+class ResultWriter(XmlLogger, Visitor):
+
+    def visit_message(self, msg):
+        self.log_message(msg)
 
     def close(self):
         self._writer.end('robot')
