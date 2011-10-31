@@ -265,6 +265,11 @@ class TestKeywords(unittest.TestCase):
         teardown = Keyword(type='teardown')
         assert_true(Keywords([Keyword(), teardown]).teardown is teardown)
 
+    def test_for_loops_are_included(self):
+        kws = [Keyword(type='for'), Keyword(), Keyword(type='foritem')]
+        assert_equal(list(Keywords(kws).normal), kws)
+        assert_equal(list(Keywords(kws).all), kws)
+
     def test_iteration(self):
         kws = [Keyword(type='setup'), Keyword(), Keyword(), Keyword(type='teardown')]
         assert_equal(list(Keywords(kws)), kws)

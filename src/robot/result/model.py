@@ -337,7 +337,7 @@ class Keywords(ItemList):
     @property
     def normal(self):
         for kw in self:
-            if kw.type == 'kw':
+            if kw.type in ('kw', 'for', 'foritem'):
                 yield kw
 
 
