@@ -1,19 +1,21 @@
 from __future__ import with_statement
 
-import os
+from os.path import join, dirname
 import unittest
 from StringIO import StringIO
 
-from robot.result.builders import ExecutionResultBuilder, _Element, IgnoredElement, ResultFromXML
-from robot.result.model import ExecutionResult
+from robot.result.builders import _Element, IgnoredElement, ResultFromXML
 from robot.utils.asserts import assert_equals, assert_true
 
 
-with open(os.path.join(os.path.dirname(__file__), 'golden.xml')) as f:
+with open(join(dirname(__file__), 'golden.xml')) as f:
     GOLDEN_XML = f.read()
 
-with open(os.path.join(os.path.dirname(__file__), 'goldenTwice.xml')) as f:
+with open(join(dirname(__file__), 'goldenTwice.xml')) as f:
     GOLDEN_XML_TWICE = f.read()
+
+with open(join(dirname(__file__), 'suite_teardown_failed.xml')) as f:
+    SUITE_TEARDOWN_FAILED = f.read()
 
 
 class TestBuildingSuiteExecutionResult(unittest.TestCase):
@@ -142,6 +144,27 @@ class TestElements(unittest.TestCase):
     def test_unknown_elements_are_ignored(self):
         assert_true(isinstance(_Element().child_element('some_tag'),
                                IgnoredElement))
+
+
+class TestSuiteTeardownFailed(unittest.TestCase):
+
+    def test_passed_test(self):
+        tc = ResultFromXML(StringIO(SUITE_TEARDOWN_FAILED)).suite.tests[0]
+        assert_equals(tc.status, 'FAIL')
+        assert_equals(tc.message, 'Teardown of the parent suite failed.')
+
+    def test_failed_test(self):
+        tc = ResultFromXML(StringIO(SUITE_TEARDOWN_FAILED)).suite.tests[1]
+        assert_equals(tc.status, 'FAIL')
+        assert_equals(tc.message, 'Message\n\nAlso teardown of the parent suite failed.')
+
+    def test_already_processed(self):
+        inp = SUITE_TEARDOWN_FAILED.replace('generator="Robot', 'generator="Rebot')
+        tc1, tc2 = ResultFromXML(StringIO(inp)).suite.tests
+        assert_equals(tc1.status, 'PASS')
+        assert_equals(tc1.message, '')
+        assert_equals(tc2.status, 'FAIL')
+        assert_equals(tc2.message, 'Message')
 
 
 if __name__ == '__main__':

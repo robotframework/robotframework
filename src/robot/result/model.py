@@ -28,6 +28,7 @@ class ExecutionResult(object):
     def __init__(self):
         self.suite = TestSuite()
         self.errors = ExecutionErrors()
+        self.generator = None
 
     @property
     def statistics(self):

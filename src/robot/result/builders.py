@@ -12,8 +12,10 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from robot.result.model import ExecutionResult, Message, CombinedExecutionResult
 from robot.utils.etreewrapper import ET
+
+from model import ExecutionResult, CombinedExecutionResult
+from suiteteardownfailed import SuiteTeardownFailureHandler
 
 
 def ResultFromXML(*sources):
@@ -31,6 +33,7 @@ class ExecutionResultBuilder(object):
         elements = ElementStack(RootElement())
         for action, elem in ET.iterparse(self._source, events=('start', 'end')):
             result = getattr(elements, action)(elem, result)
+        SuiteTeardownFailureHandler(result.generator).visit_suite(result.suite)
         return result
 
 
@@ -88,6 +91,10 @@ class RootElement(_Element):
 
 class RobotElement(_Element):
     tag = 'robot'
+
+    def start(self, elem, result):
+        result.generator = elem.get('generator', 'unknown').split()[0].upper()
+        return result
 
     def _children(self):
         # TODO: Should <statistics> be explicitly ignored?
