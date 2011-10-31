@@ -86,12 +86,14 @@ class TestBuildingSuiteExecutionResult(unittest.TestCase):
         assert_equals(self._errors.messages[0].message,
                       "Error in file 'normal.html' in table 'Settings': Resource file 'nope' does not exist.")
 
+
 class TestCombiningSuites(unittest.TestCase):
 
-    def test_(self):
-        result = ResultFromXML(StringIO(GOLDEN_XML), StringIO(GOLDEN_XML))
-        suite = result.suite
-        assert_equals(suite.name, 'Normal & Normal')
+    def setUp(self):
+        self.result = ResultFromXML(StringIO(GOLDEN_XML), StringIO(GOLDEN_XML))
+
+    def test_name(self):
+        assert_equals(self.result.suite.name, 'Normal & Normal')
 
 
 class TestElements(unittest.TestCase):
