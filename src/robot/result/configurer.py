@@ -17,7 +17,7 @@ class SuiteConfigurer(object):
 
     def __init__(self, name=None, doc=None, metadata=None, set_tags=None,
                  include_tags=None, exclude_tags=None, include_suites=None,
-                 include_tests=None, remove_keywords=False):
+                 include_tests=None, remove_keywords=None):
         self.name = name
         self.doc = doc
         self.metadata = metadata
@@ -41,6 +41,7 @@ class SuiteConfigurer(object):
         suite.filter(self.include_suites, self.include_tests,
                      self.include_tags, self.exclude_tags)
         suite.set_tags(self.add_tags, self.remove_tags)
+        suite.remove_keywords(self.remove_keywords)
 
     def _set_suite_attributes(self, suite):
         if self.name:
