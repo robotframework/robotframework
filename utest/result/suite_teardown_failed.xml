@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<robot generated="20111031 13:06:46.922" generator="Robot trunk 20111007 (Python 2.6.6 on linux2)">
+<suite source="/path/suite_teardown_fail.txt" name="Suite Teardown Fail">
+<doc></doc>
+<metadata>
+</metadata>
+<test name="Pass" timeout="">
+<doc></doc>
+<kw type="kw" name="BuiltIn.Log" timeout="">
+<doc>Logs the given message with the given level.</doc>
+<arguments>
+<arg>Nothing to see here</arg>
+</arguments>
+<msg timestamp="20111031 13:06:46.971" level="INFO">Nothing to see here</msg>
+<status status="PASS" endtime="20111031 13:06:46.971" starttime="20111031 13:06:46.970"></status>
+</kw>
+<tags>
+</tags>
+<status status="PASS" endtime="20111031 13:06:46.972" critical="yes" starttime="20111031 13:06:46.969"></status>
+</test>
+<test name="Fail" timeout="">
+<doc></doc>
+<kw type="kw" name="BuiltIn.Fail" timeout="">
+<doc>Fails the test immediately with the given (optional) message.</doc>
+<arguments>
+<arg>Message</arg>
+</arguments>
+<msg timestamp="20111031 13:06:46.976" level="FAIL">Message</msg>
+<msg timestamp="20111031 13:06:46.976" level="DEBUG">Traceback (most recent call last):
+  File "/home/peke/Devel/robotframework/src/robot/libraries/BuiltIn.py", line 304, in fail
+    raise AssertionError(msg) if msg else AssertionError()</msg>
+<status status="FAIL" endtime="20111031 13:06:46.976" starttime="20111031 13:06:46.973"></status>
+</kw>
+<tags>
+</tags>
+<status status="FAIL" endtime="20111031 13:06:46.977" critical="yes" starttime="20111031 13:06:46.972">Message</status>
+</test>
+<kw type="teardown" name="BuiltIn.Fail" timeout="">
+<doc>Fails the test immediately with the given (optional) message.</doc>
+<arguments>
+<arg>XXX</arg>
+</arguments>
+<msg timestamp="20111031 13:06:46.979" level="FAIL">XXX</msg>
+<msg timestamp="20111031 13:06:46.979" level="DEBUG">Traceback (most recent call last):
+  File "/home/peke/Devel/robotframework/src/robot/libraries/BuiltIn.py", line 304, in fail
+    raise AssertionError(msg) if msg else AssertionError()</msg>
+<status status="FAIL" endtime="20111031 13:06:46.980" starttime="20111031 13:06:46.978"></status>
+</kw>
+<status status="FAIL" endtime="20111031 13:06:46.980" starttime="20111031 13:06:46.923">Suite teardown failed:
+XXX</status>
+</suite>
+<statistics>
+<total>
+<stat fail="2" pass="0">Critical Tests</stat>
+<stat fail="2" pass="0">All Tests</stat>
+</total>
+<tag>
+</tag>
+<suite>
+<stat fail="2" name="Suite Teardown Fail" idx="s1" pass="0">Suite Teardown Fail</stat>
+</suite>
+</statistics>
+<errors>
+</errors>
+</robot>
