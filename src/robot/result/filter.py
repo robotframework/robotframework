@@ -85,11 +85,11 @@ class Filter(Visitor):
     def end_suite(self, suite):
         suite.suites = [s for s in suite.suites if s.test_count]
 
-    def start_test(self, test):
-        return False
+    def visit_test(self, test):
+        pass
 
-    def start_keyword(self, keyword):
-        return False
+    def visit_keyword(self, keyword):
+        pass
 
     def __nonzero__(self):
         return bool(self.include_suites or self.include_tests or
