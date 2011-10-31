@@ -17,6 +17,7 @@ from robot.common.model import _Critical  # TODO: Remove
 from robot.common.statistics import CriticalStats, AllStats, Statistics
 from robot.output.loggerhelper import Message as BaseMessage
 from robot import utils
+from robot.result.keywordsremove import RemoveKeywords
 
 from tags import Tags
 from tagsetter import TagSetter
@@ -150,6 +151,9 @@ class TestSuite(object):
 
     def set_tags(self, add=None, remove=None):
         self.visit(TagSetter(add, remove))
+
+    def remove_keywords(self, how):
+        self.visit(RemoveKeywords(how))
 
     def filter(self, included_suites=None, included_tests=None,
                included_tags=None, excluded_tags=None):
