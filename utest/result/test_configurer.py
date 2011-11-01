@@ -105,6 +105,21 @@ class TestRemoveKeywords(unittest.TestCase):
         for keyword in suite.keywords:
             self._should_contain_no_messages_or_keywords(keyword)
 
+    def test_remove_passed_does_not_remove_when_test_failed(self):
+        suite = TestSuite()
+        test = suite.tests.create(status='FAIL')
+        test.keywords.create(status='PASS').keywords.create()
+        test.keywords.create(status='PASS').messages.create('message')
+        failed_keyword = test.keywords.create(status='FAIL')
+        failed_keyword.messages.create('mess')
+        failed_keyword.keywords.create()
+        self._remove('PASSED', suite)
+        assert_equal(len(test.keywords[0].keywords), 1)
+        assert_equal(len(test.keywords[1].messages), 1)
+        assert_equal(len(test.keywords[2].messages), 1)
+        assert_equal(len(test.keywords[2].keywords), 1)
+
+
     def _suite_with_setup_and_teardown_and_test_with_keywords(self):
         suite = TestSuite()
         suite.keywords.create(type='setup').messages.create('setup message')
