@@ -81,82 +81,37 @@ class TestFilteringByTags(unittest.TestCase):
 
 class TestRemoveKeywords(unittest.TestCase):
 
-    def setUp(self):
-        self._main_suite = TestSuite()
-        self._create_pass_and_fail()
-        self._create_setup_fail()
-        self._create_teardown_fail()
+    def test_remove_all_removes_all(self):
+        suite = self._suite_with_setup_and_teardown_and_test_with_keywords()
+        self._remove('ALL', suite)
+        for keyword in chain(suite.keywords, suite.tests[0].keywords):
+            self._should_contain_no_messages_or_keywords(keyword)
 
-    def _create_pass_and_fail(self):
-        self._pass_and_fail = self._main_suite.suites.create()
-        self._keyword(self._pass_and_fail.tests.create(status='PASS'))
-        failing_test = self._pass_and_fail.tests.create(status='FAIL')
-        self._keyword(failing_test, status='PASS')
-        self._keyword(failing_test, status='FAIL')
+    def test_remove_passed_removes_from_passed_test(self):
+        suite = TestSuite()
+        test = suite.tests.create(status='PASS')
+        test.keywords.create(status='PASS').messages.create('keyword message')
+        test.keywords.create(status='PASS').keywords.create(status='PASS')
+        self._remove('PASSED', suite)
+        for keyword in test.keywords:
+            self._should_contain_no_messages_or_keywords(keyword)
 
-    def _keyword(self, parent, status=None):
-        kw = parent.keywords.create(status=status or parent.status)
-        kw.keywords.create(status=status or parent.status)
-        kw.messages.create('something')
-        return kw
+    def _suite_with_setup_and_teardown_and_test_with_keywords(self):
+        suite = TestSuite()
+        suite.keywords.create(type='setup').messages.create('setup message')
+        suite.keywords.create(type='teardown').messages.create(
+            'teardown message')
+        test = suite.tests.create()
+        test.keywords.create().keywords.create()
+        test.keywords.create().messages.create('kw with message')
+        return suite
 
-    def _create_setup_fail(self):
-        self._setup_fail = self._main_suite.suites.create()
-        self._keyword(self._setup_fail, status='FAIL').type = 'setup'
-        self._setup_fail.tests.create(status='FAIL')
+    def _should_contain_no_messages_or_keywords(self, keyword):
+        assert_equal(len(keyword.messages), 0)
+        assert_equal(len(keyword.keywords), 0)
 
-    def _create_teardown_fail(self):
-        self._teardown_fail = self._main_suite.suites.create()
-        self._keyword(self._teardown_fail.tests.create(status='PASS'))
-        self._keyword(self._teardown_fail, status='FAIL').type = 'teardown'
-
-    def test_remove_all_keywords_removes_all_keywords(self):
-        self._remove_all()
-        for keyword in [self._pass_and_fail.tests[0].keywords[0],
-                        self._pass_and_fail.tests[1].keywords[0],
-                        self._pass_and_fail.tests[1].keywords[1],
-                        self._setup_fail.keywords.setup,
-                        self._teardown_fail.tests[0].keywords[0],
-                        self._teardown_fail.keywords.teardown]:
-            self._should_have_no_messages_or_keywords(keyword)
-
-
-    def _should_have_no_messages_or_keywords(self, keyword):
-        assert_equal(list(keyword.messages), [])
-        assert_equal(list(keyword.keywords), [])
-
-    def _remove_all(self):
-        SuiteConfigurer(remove_keywords='ALL').configure(self._main_suite)
-
-    def test_remove_passed_keywords_removes_messages_and_keywords_from_passed(self):
-        self._remove_passed()
-        for keyword in [self._pass_and_fail.tests[0].keywords[0],
-                        self._teardown_fail.tests[0].keywords[0]]:
-            self._should_have_no_messages_or_keywords(keyword)
-        for keyword in [self._pass_and_fail.tests[1].keywords[0],
-                        self._pass_and_fail.tests[1].keywords[1],
-                        self._setup_fail.keywords.setup,
-                        self._teardown_fail.keywords.teardown]:
-            self._should_have_message_and_keyword(keyword)
-
-
-    def _remove_passed(self):
-        SuiteConfigurer(remove_keywords='PASSED').configure(self._main_suite)
-
-    def _should_have_message_and_keyword(self, keyword):
-        assert_equal(len(keyword.messages), 1)
-        assert_equal(len(keyword.keywords), 1)
-
-    def test_remove_nothing_removes_nothing(self):
-        self._remove_nothing()
-        for item in chain(self._pass_and_fail.tests, self._teardown_fail.tests,
-                          [self._setup_fail, self._teardown_fail]):
-            for keyword in item.keywords:
-                self._should_have_message_and_keyword(keyword)
-
-    def _remove_nothing(self):
-        SuiteConfigurer(remove_keywords=None).configure(self._main_suite)
-
+    def _remove(self, option, item):
+        SuiteConfigurer(remove_keywords=option).configure(item)
 
 
 if __name__ == '__main__':
