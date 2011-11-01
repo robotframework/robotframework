@@ -1,3 +1,4 @@
+from itertools import chain
 import unittest
 from robot.utils.asserts import assert_equal, assert_true
 
@@ -89,7 +90,9 @@ class TestRemoveKeywords(unittest.TestCase):
     def _create_pass_and_fail(self):
         self._pass_and_fail = self._main_suite.suites.create()
         self._keyword(self._pass_and_fail.tests.create(status='PASS'))
-        self._keyword(self._pass_and_fail.tests.create(status='FAIL'))
+        failing_test = self._pass_and_fail.tests.create(status='FAIL')
+        self._keyword(failing_test, status='PASS')
+        self._keyword(failing_test, status='FAIL')
 
     def _keyword(self, parent, status=None):
         kw = parent.keywords.create(status=status or parent.status)
@@ -111,6 +114,7 @@ class TestRemoveKeywords(unittest.TestCase):
         self._remove_all()
         for keyword in [self._pass_and_fail.tests[0].keywords[0],
                         self._pass_and_fail.tests[1].keywords[0],
+                        self._pass_and_fail.tests[1].keywords[1],
                         self._setup_fail.keywords.setup,
                         self._teardown_fail.tests[0].keywords[0],
                         self._teardown_fail.keywords.teardown]:
@@ -130,9 +134,11 @@ class TestRemoveKeywords(unittest.TestCase):
                         self._teardown_fail.tests[0].keywords[0]]:
             self._should_have_no_messages_or_keywords(keyword)
         for keyword in [self._pass_and_fail.tests[1].keywords[0],
+                        self._pass_and_fail.tests[1].keywords[1],
                         self._setup_fail.keywords.setup,
                         self._teardown_fail.keywords.teardown]:
             self._should_have_message_and_keyword(keyword)
+
 
     def _remove_passed(self):
         SuiteConfigurer(remove_keywords='PASSED').configure(self._main_suite)
@@ -140,6 +146,16 @@ class TestRemoveKeywords(unittest.TestCase):
     def _should_have_message_and_keyword(self, keyword):
         assert_equal(len(keyword.messages), 1)
         assert_equal(len(keyword.keywords), 1)
+
+    def test_remove_nothing_removes_nothing(self):
+        self._remove_nothing()
+        for item in chain(self._pass_and_fail.tests, self._teardown_fail.tests,
+                          [self._setup_fail, self._teardown_fail]):
+            for keyword in item.keywords:
+                self._should_have_message_and_keyword(keyword)
+
+    def _remove_nothing(self):
+        SuiteConfigurer(remove_keywords=None).configure(self._main_suite)
 
 
 

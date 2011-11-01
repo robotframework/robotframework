@@ -11,12 +11,16 @@
 #  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
-from robot.result.visitor import Visitor
+from robot.result.visitor import Visitor, SkipAllVisitor
 
 def RemoveKeywords(how):
+    how = how and how.upper()
     if how == 'PASSED':
         return PassedKeywords(_remove_messages_and_keywords)
-    return AllKeywords(_remove_messages_and_keywords)
+    elif how == 'ALL':
+        return AllKeywords(_remove_messages_and_keywords)
+    else:
+        return SkipAllVisitor()
 
 def _remove_messages_and_keywords(item):
     item.messages = []
