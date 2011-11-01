@@ -40,10 +40,20 @@ class SuiteTeardownFailed(Visitor):
     _normal_msg = 'Teardown of the parent suite failed.'
     _also_msg = '\n\nAlso teardown of the parent suite failed.'
 
-    def start_test(self, test):
-        test.status = 'FAIL'
-        test.message += self._also_msg if test.message else self._normal_msg
-        return False
+    def __init__(self):
+        self._top_level_visited = False
 
-    def start_keyword(self, keyword):
-        return False
+    def start_suite(self, suite):
+        if self._top_level_visited:
+            self._set_message(suite)
+        self._top_level_visited = True
+
+    def visit_test(self, test):
+        test.status = 'FAIL'
+        self._set_message(test)
+
+    def _set_message(self, item):
+        item.message += self._also_msg if item.message else self._normal_msg
+
+    def visit_keyword(self, keyword):
+        pass
