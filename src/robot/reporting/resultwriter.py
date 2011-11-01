@@ -13,8 +13,7 @@
 #  limitations under the License.
 
 from robot.common import Statistics
-from robot.output import LOGGER
-from robot.result.builders import ResultFromXML as RFX
+from robot.output import LOGGER, process_outputs
 
 from robot.reporting.outputwriter import OutputWriter
 from robot.reporting.xunitwriter import XUnitWriter
@@ -27,7 +26,7 @@ class ResultWriter(object):
     def __init__(self, settings):
         self.settings = settings
         self._xml_result = None
-        self._execution_result = None
+        self._suite = None
         self._data_model = None
         self._data_sources = []
 
@@ -41,9 +40,9 @@ class ResultWriter(object):
     @property
     def result_from_xml(self):
         if self._xml_result is None:
-            self._execution_result = RFX(*self._data_sources)
-            #self._suite.set_options(self.settings)
-            self._xml_result = ResultFromXML(self._execution_result, self.settings)
+            self._suite, errs = process_outputs(self._data_sources, self.settings)
+            self._suite.set_options(self.settings)
+            self._xml_result = ResultFromXML(self._suite, errs, self.settings)
         return self._xml_result
 
     def write_robot_results(self, data_source):
@@ -57,30 +56,30 @@ class ResultWriter(object):
         builder = OutputBuilder(self)
         self.write_robot_results(builder.build())
         builder.finalize()
-        return self._execution_result
+        return self._suite
 
 
 class ResultFromXML(object):
 
-    def __init__(self, execution_result, settings=None):
-        self.suite = execution_result.suite
-        self.exec_errors = execution_result.errors
+    def __init__(self, suite, exec_errors, settings=None):
+        self.suite = suite
+        self.exec_errors = exec_errors
         if settings:
             params = (settings['SuiteStatLevel'], settings['TagStatInclude'],
                       settings['TagStatExclude'], settings['TagStatCombine'],
                       settings['TagDoc'], settings['TagStatLink'])
         else:
             params = ()
-        self.statistics = Statistics(self.suite, *params)
+        self.statistics = Statistics(suite, *params)
         self._generator = 'Robot'
 
     def serialize_output(self, path, log=True):
         if path == 'NONE':
             return
         serializer = OutputWriter(path)
-        self.suite.visit(serializer)
-        self.statistics.visit(serializer)
-        self.exec_errors.visit(serializer)
+        self.suite.serialize(serializer)
+        self.statistics.serialize(serializer)
+        self.exec_errors.serialize(serializer)
         serializer.close()
         if log:
             LOGGER.output_file('Output', path)
