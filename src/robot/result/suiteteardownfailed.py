@@ -20,16 +20,14 @@ class SuiteTeardownFailureHandler(Visitor):
     def __init__(self, suite_generator):
         self._should_handle = suite_generator == 'ROBOT'
 
-    def visit_suite(self, suite):
-        if self._should_handle:
-            self.start_suite(suite)
-
     def start_suite(self, suite):
+        if not self._should_handle:
+            return False
         if self._suite_teardown_failed(suite.keywords.teardown):
             suite.visit(SuiteTeardownFailed())
 
     def _suite_teardown_failed(self, teardown):
-        return teardown and teardown.status == 'FAIL'
+        return bool(teardown and teardown.status == 'FAIL')
 
     def start_test(self, test):
         return False
