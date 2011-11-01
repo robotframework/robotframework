@@ -110,7 +110,7 @@ Check Test Suite
     [Arguments]  ${name}  ${message}  ${status}=${None}
     ${test suite} =  Get Test Suite  ${name}
     Run Keyword If  """${status}""" != "None"  Should Be Equal  ${test suite.status}  ${status}
-    Should Be Equal  ${test suite.get_full_message()}  ${message}
+    Should Be Equal  ${test suite.full_message}  ${message}
     [Return]  ${test suite}
 
 Get Test Case
