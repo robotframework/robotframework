@@ -13,7 +13,7 @@ Failing keyword
     Test Should Have Correct Keywords  Passing  Failing
 
 Continuable failures
-    Test Should Have Correct Keywords  Continuable failure  
+    Test Should Have Correct Keywords  Continuable failure
     ...  Multiple continuables  Failing
 
 Keywords as variables
@@ -38,21 +38,17 @@ In test teardown
 
 In suite setup
     Check Log Message  ${SUITE.setup.kws[0].kws[0].msgs[0]}  Hello, world!
-    Should Have Correct Keywords  ${SUITE.setup}  Passing  BuiltIn.No Operation
+    Should Contain Keywords  ${SUITE.setup}  Passing  BuiltIn.No Operation
 
 In suite teardown
-    Should Have Correct Keywords  ${SUITE.teardown}
+    Should Contain Keywords  ${SUITE.teardown}
     ...  Failing  Passing  BuiltIn.Fail
     Should Be Equal  ${SUITE.message}
     ...  Suite teardown failed:\nSeveral failures occurred:\n\n1) Expected error message\n\n2) AssertionError
 
 
-***Keywords*** 
+***Keywords***
 Test Should Have Correct Keywords  [Arguments]  @{expected}
     ${tc} =  Check Test Case  ${TESTNAME}
-    Should Have Correct Keywords  ${tc.kws[0]}  @{expected}
+    Should Contain Keywords  ${tc.kws[0]}  @{expected}
     [Return]  ${tc}
-
-Should Have Correct Keywords  [Arguments]  ${kw}  @{expected}
-    ${exp} =  Catenate  SEPARATOR=', '  @{expected}
-    Should Be Equal As Strings  ${kw.kws}  ['${exp}']
