@@ -22,19 +22,19 @@ Errors In For Loop In Teardown
 
 Keyword Timeout In Teardown
     ${tc} =  Check Test Case  ${TESTNAME}
-    Should Be True  len(${tc.teardown.kws}) == 1
+    Length Should Be  ${tc.teardown.kws}  1
 
 Syntax Error in Teardown
     ${tc} =  Check Test Case  ${TESTNAME}
-    Should Be True  len(${tc.teardown.kws}) == 3
+    Length Should Be  ${tc.teardown.kws}  3
 
 Syntax Error in For Loop in Teardown
     ${tc} =  Check Test Case  ${TESTNAME}
-    Should Be True  len(${tc.teardown.kws}) == 2
+    Length Should Be  ${tc.teardown.kws}  2
 
 Fatal Error In Teardown
     ${tc} =  Check Test Case  ${TESTNAME}
-    Should Be True  len(${tc.teardown.kws}) == 1
+    Length Should Be  ${tc.teardown.kws}  1
 
 Suite Teardown Is Executed Fully
     ${ts} =  Get Test Suite  errors in test teardown
@@ -53,4 +53,4 @@ Suite Teardown Is Executed Fully
 Suite Teardown Should Stop At Fatal Error
     Run Tests  ${EMPTY}  running/fatal_error_in_suite_teardown.txt
     ${ts} =  Get Test Suite  fatal error in suite teardown
-    Should Be True  len(${ts.teardown.kws}) == 1
+    Length Should Be   ${ts.teardown.kws}   1

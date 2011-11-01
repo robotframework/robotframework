@@ -75,7 +75,7 @@ Multiple Data Sources
 *** Keywords ***
 Verify Directory With Mixed Data With ReST
     Should Be Equal  ${SUITE.name}  Mixed Data
-    Should Be True  ${SUITE.suites} == ['HTML', 'REST', 'TSV', 'TXT']
+    Should Contain Suites  ${SUITE}  HTML  REST  TSV  TXT
     Should Be Equal  ${SUITE.suites[0].doc}  Test suite in HTML file
     Should Be Equal  ${SUITE.suites[1].doc}  Test suite in ReST file
     Should Be Equal  ${SUITE.suites[2].doc}  Test suite in TSV file
@@ -94,7 +94,7 @@ Verify Directory With Mixed Data Without ReST
 
 Verify Multiple Data Sources With ReST
     Should Be Equal  ${SUITE.name}  Sample & Sample & Sample & Sample & Mixed Data
-    Should Be True  ${SUITE.suites} == ['Sample', 'Sample', 'Sample', 'Sample', 'Mixed Data']
+    Should Contain Suites  ${SUITE}  Sample  Sample  Sample  Sample  Mixed Data
     Check Suite Contains Tests  ${SUITE.suites[0]}  @{SAMPLE_TESTS}
     Check Suite Contains Tests  ${SUITE.suites[1]}  @{SAMPLE_TESTS}
     Check Suite Contains Tests  ${SUITE.suites[2]}  @{SAMPLE_TESTS}
@@ -103,7 +103,7 @@ Verify Multiple Data Sources With ReST
 
 Verify Multiple Data Sources Without ReST
     Should Be Equal  ${SUITE.name}  Sample & Sample & Sample & Mixed Data
-    Should Be True  ${SUITE.suites} == ['Sample', 'Sample', 'Sample', 'Mixed Data']
+    Should Contain Suites  ${SUITE}   Sample  Sample  Sample  Mixed Data
     Check Suite Contains Tests  ${SUITE.suites[0]}  @{SAMPLE_TESTS}
     Check Suite Contains Tests  ${SUITE.suites[1]}  @{SAMPLE_TESTS}
     Check Suite Contains Tests  ${SUITE.suites[2]}  @{SAMPLE_TESTS}

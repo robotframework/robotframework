@@ -153,9 +153,10 @@ class MessageElement(_Element):
     tag = 'msg'
 
     def end(self, elem, result):
+        html = elem.get('html', 'no') == 'yes'
+        linkable = elem.get('linkable', 'no') == 'yes'
         result.messages.create(elem.text or '', elem.get('level'),
-                               elem.get('html', False), elem.get('timestamp'),
-                               elem.get('linkable', False))
+                               html, elem.get('timestamp'), linkable)
         return result
 
 

@@ -51,8 +51,8 @@ Run Suite Dir And Check Results
     ${ignore}  ${type} =  Split Path  ${path}
     Should Be Equal  ${SUITE.name}  ${type.capitalize()}
     Should Be Equal  ${SUITE.doc}  ${EMPTY}
-    Should Be True  ${SUITE.suites} == ['Sample', 'With Init']
-    Should Be True  ${SUITE.suites[1].suites} == ['Sub Suite1', 'Sub Suite2']
+    Should Contain Suites  ${SUITE}  Sample  With Init
+    Should Contain Suites  ${SUITE.suites[1]}   Sub Suite1  Sub Suite2
     Check Suite Contains Tests  ${SUITE}  @{SAMPLE_TESTS}  @{SUBSUITE_TESTS}
     ${invalid} =  Join Path  ${DATADIR}  ${path}  invalid.${type}
     Check Syslog Contains  Parsing data source '${invalid}' failed:  File has no test case table.
@@ -65,7 +65,7 @@ Check Suite With Init
     Should Be Equal  ${suite.doc}  Testing suite init file
     Check Log Message  ${suite.setup.kws[0].messages[0]}  Running suite setup
     Should Be Equal  ${suite.teardown}  ${None}
-    Should Be True  ${suite.suites} == [ 'Sub Suite1','Sub Suite2']
+    Should Contain Suites  ${suite}   Sub Suite1  Sub Suite2
     Check Suite Contains Tests  ${suite}  @{SUBSUITE_TESTS}
 
 Check Is Docutils Installed

@@ -6,7 +6,8 @@ Resource        atest_resource.txt
 *** Test Cases ***
 Multirow Settings
     Should Be Equal  ${SUITE.doc}  NO RIDE!! This doc is one long string ! ! ! !
-    Should Be True   ${SUITE.tests[0].tags} == ['t'+str(i) for i in range(1,10)]
+    @{expected}=  Evaluate   ['t'+str(i) for i in range(1,10)]
+    Should Contain Tags   ${SUITE.tests[0]}   @{expected}
 
 Multirow Variables
     Check Test Case  ${TEST NAME}
@@ -38,7 +39,8 @@ Multirow Return Values
 
 Multirow Test Settings
     ${tc} =  Check Test Case  ${TEST NAME}
-    Should Be True   ${tc.tags} == ['my'+str(i) for i in range(1,6)]
+    @{expected}=   Evaluate  ['my'+str(i) for i in range(1,6)]
+    Should Contain Tags   ${tc}  @{expected}
     Should Be Equal  ${tc.doc}  This test doc is one long string
 
 Multirow User Keyword Settings

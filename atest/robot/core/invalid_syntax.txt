@@ -39,12 +39,12 @@ Non-Existing Variable In Test
 Non-Existing Keyword
     ${test} =  Check Test Case  Non-Existing Keyword
     Starts  ${test.doc}  Note that doc and tags
-    Fail Unless  ${test.tags} == ['example','tags']
+    Should Contain Tags  ${test}   example     tags
 
 Non-Existing Keyword In UK
     ${test} =  Check Test Case  Non-Existing Keyword In UK
     Starts  ${test.doc}  Note that doc and tags
-    Fail Unless  ${test.tags} == ['more','tags']
+    Should Contain Tags  ${test}  more  tags
 
 Invalid Keyword Arguments
     ${test} =  Check Test Case  Invalid Keyword Arguments
@@ -54,7 +54,7 @@ Invalid Keyword Arguments
 Invalid Keyword Arguments In UK
     ${test} =  Check Test Case  Invalid Keyword Arguments In UK
     Starts  ${test.doc}  Note that doc and tags
-    Fail Unless  ${test.tags} == ['1', '2', '3']
+    Should Contain Tags  ${test}  1  2  3
 
 Invalid Metadata In Test Case
     ${test} =  Check Test Case  Test Case With Invalid Metadata
@@ -70,7 +70,7 @@ Invalid Metadata In User Keyword
 User Keyword Defined Multiple Times
     ${test} =  Check Test Case  User Keyword Defined Multiple Times
     Starts  ${test.doc}  Note that doc and tags
-    Fail Unless  ${test.tags} == ['mytag']
+    Should Contain Tags  ${test}  mytag
 
 *** Keywords ***
 My Setup

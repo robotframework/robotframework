@@ -46,6 +46,12 @@ class TestTestSuite(unittest.TestCase):
         suite.name = 'new name'
         assert_equal(suite.name, 'new name')
 
+    def test_nested_subsuites(self):
+        suite = TestSuite(name='top')
+        sub1 = suite.suites.create(name='sub1')
+        sub2 = sub1.suites.create(name='sub2')
+        assert_equal(list(suite.suites), [sub1])
+        assert_equal(list(sub1.suites), [sub2])
 
 class TestSuiteStats(unittest.TestCase):
 

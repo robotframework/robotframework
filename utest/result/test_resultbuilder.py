@@ -105,6 +105,8 @@ class TestElements(unittest.TestCase):
         <robot>
         <suite name="foo">
           <suite name="bar">
+            <suite name="quux">
+            </suite>
           </suite>
         </suite>
         </robot>
@@ -114,6 +116,9 @@ class TestElements(unittest.TestCase):
         assert_equals(suite.suites[0].name, 'bar')
         assert_equals(suite.longname, 'foo')
         assert_equals(suite.suites[0].longname, 'foo.bar')
+        assert_equals(suite.suites[0].suites[0].name, 'quux')
+        assert_equals(suite.suites[0].suites[0].longname, 'foo.bar.quux')
+
 
     def test_test_message(self):
         xml = """

@@ -85,7 +85,7 @@ def _parse_arguments(cliargs, usage, **argparser_config):
 
 def _execute(method, datasources, options):
     try:
-        suite = method(*datasources, **options)
+        suite, rc = method(*datasources, **options)
     except DataError, err:
         _report_error(unicode(err), help=True)
         return DATA_ERROR
@@ -97,7 +97,7 @@ def _execute(method, datasources, options):
         _report_error('Unexpected error: %s' % error, details)
         return FRAMEWORK_ERROR
     else:
-        return suite.return_code
+        return rc
 
 
 def run(*datasources, **options):
@@ -130,7 +130,7 @@ def run(*datasources, **options):
         output, settings = settings.get_rebot_datasource_and_settings()
         ResultWriter(settings).write_robot_results(output)
     LOGGER.close()
-    return suite
+    return suite, suite.return_code
 
 
 def run_rebot(*datasources, **options):
@@ -151,9 +151,9 @@ def run_rebot(*datasources, **options):
     settings = RebotSettings(options)
     LOGGER.register_console_logger(colors=settings['MonitorColors'])
     LOGGER.disable_message_cache()
-    suite = ResultWriter(settings).write_rebot_results(*datasources)
+    result = ResultWriter(settings).write_rebot_results(*datasources)
     LOGGER.close()
-    return suite
+    return result.suite, result.return_code
 
 
 def _report_error(message, details=None, help=False):

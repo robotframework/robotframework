@@ -14,7 +14,7 @@ Argument File
     Run Tests Without Processing Output  -M Meta1:Overwritten -A ${ARGFILE} -M Meta2:cli  ${TESTFILE}
     Process Output  ${CLI OUTDIR}/output.xml
     Should Be Equal  ${SUITE.name}  From Argfile
-    Should Be True  ${SUITE.metadata} == {'Meta1': 'From AF', 'Meta2': 'cli', 'Something': 'My Value'}
+    Should Be Equal as Strings  ${SUITE.metadata}  {Meta1: From AF, Meta2: cli, Something: My Value}
 
 Two Argument Files
     Create Argument File  ${ARGFILE}  --metadata A1:Value1  --metadata A2:to be overridden

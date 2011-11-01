@@ -133,7 +133,7 @@ Check Test Doc
 Check Test Tags
     [Arguments]  ${test_name}  @{expected_tags}
     ${test} =  Check Test Case  ${test_name}
-    Should Be Equal  ${test.tags}  ${expected_tags}
+    Should Contain Tags  ${test}  @{expected_tags}
     [Return]  ${test}
 
 Check KW Arguments

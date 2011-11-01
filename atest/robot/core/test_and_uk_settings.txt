@@ -47,8 +47,7 @@ Test Case With Invalid Timeout
 Multiple Test Case Metas
     ${test} =  Check Test Case  Multiple Test Case Metas
     Equal  ${test.doc}  Documentation for this test case
-    ${expected_tags} =  Create List  force-1  test-1  test-2
-    Equal  ${test.tags}  ${expected_tags}
+    Should Contain Tags  ${test}  force-1  test-1  test-2
     Verify Setup  ${test}  BuiltIn.Log  Test case setup
     Verify Teardown  ${test}  BuiltIn.Log  Test case teardown
 

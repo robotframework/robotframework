@@ -2,8 +2,7 @@ import os
 import re
 
 from robot import utils
-from robot.output import readers
-from robot.common import Statistics
+from robot.result.builders import ResultFromXML
 from robot.libraries.BuiltIn import BuiltIn
 
 
@@ -13,14 +12,14 @@ class TestCheckerLibrary:
         path = path.replace('/', os.sep)
         try:
             print "Processing output '%s'" % path
-            suite, errors = readers.process_output(path)
+            result = ResultFromXML(path)
         except:
             raise RuntimeError('Processing output failed: %s'
                                % utils.get_error_message())
         setter = BuiltIn().set_suite_variable
-        setter('$SUITE', process_suite(suite))
-        setter('$STATISTICS', Statistics(suite))
-        setter('$ERRORS', process_errors(errors))
+        setter('$SUITE', process_suite(result.suite))
+        setter('$STATISTICS', result.statistics)
+        setter('$ERRORS', process_errors(result.errors))
 
     def get_test_from_suite(self, suite, name):
         tests = self.get_tests_from_suite(suite, name)
@@ -117,6 +116,21 @@ Actual tests   : %s"""  % (str(list(expected_names)), str(actual_tests))
         if len(expected_names) != 0:
             raise Exception("Bug in test library")
 
+    def should_contain_tests(self, suite, *test_names):
+        self.check_suite_contains_tests(suite, *test_names)
+
+    def should_contain_suites(self, suite, *suite_names):
+        actual_names = [s.name for s in suite.suites]
+        utils.asserts.assert_equals(len(actual_names), len(suite_names), 'Wrong number of subsuites')
+        for expected in suite_names:
+            if not utils.eq_any(expected, actual_names):
+                raise AssertionError('Suite %s not found' % expected)
+
+    def should_contain_tags(self, test, *tag_names):
+        utils.asserts.assert_equals(len(test.tags), len(tag_names), 'Wrong number of tagss')
+        for act, exp in zip(test.tags, tag_names):
+            utils.eq(act, exp)
+
     def get_node(self, file_path, node_path=None):
         dom =  utils.DomWrapper(file_path)
         return dom.get_node(node_path) if node_path else dom
@@ -130,9 +144,11 @@ def process_suite(suite):
         process_suite(subsuite)
     for test in suite.tests:
         process_test(test)
-    suite.test_count = suite.get_test_count()
-    process_keyword(suite.setup)
-    process_keyword(suite.teardown)
+    for kw in suite.keywords:
+        process_keyword(kw)
+    suite.setup = suite.keywords.setup
+    suite.teardown = suite.keywords.teardown
+    #suite.keywords = list(suite.keywords.normal)
     return suite
 
 def process_test(test):
@@ -142,12 +158,12 @@ def process_test(test):
     else:
         test.exp_status = 'PASS'
         test.exp_message = ''
-    test.kws = test.keywords
-    test.keyword_count = test.kw_count = len(test.keywords)
     for kw in test.keywords:
         process_keyword(kw)
-    process_keyword(test.setup)
-    process_keyword(test.teardown)
+    test.setup = test.keywords.setup
+    test.teardown = test.keywords.teardown
+    test.keywords = test.kws = list(test.keywords.normal)
+    test.keyword_count = test.kw_count = len(test.keywords)
 
 def process_keyword(kw):
     if kw is None:
@@ -155,7 +171,7 @@ def process_keyword(kw):
     kw.kws = kw.keywords
     kw.msgs = kw.messages
     kw.message_count = kw.msg_count = len(kw.messages)
-    kw.keyword_count = kw.kw_count = len(kw.keywords)
+    kw.keyword_count = kw.kw_count = len(list(kw.keywords.normal))
     for subkw in kw.keywords:
         process_keyword(subkw)
 
