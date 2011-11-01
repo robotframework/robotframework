@@ -129,7 +129,8 @@ class TestCaseElement(_CollectionElement):
     tag = 'test'
 
     def start(self, elem, result):
-        return result.tests.create(name=elem.get('name'))
+        return result.tests.create(name=elem.get('name'),
+                                   timeout=elem.get('timeout'))
 
     def _children(self):
         return [KeywordElement, TagsElement, DocElement, TestStatusElement]

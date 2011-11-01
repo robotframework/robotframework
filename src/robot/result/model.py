@@ -180,14 +180,14 @@ class TestSuite(object):
 class TestCase(object):
 
     def __init__(self, name='', doc='', tags=None, status='UNDEFINED',
-                 critical='yes', starttime='N/A', endtime='N/A'):
+                 critical='yes', timeout='', starttime='N/A', endtime='N/A'):
         self.parent = None
         self.name = name
         self.doc = doc
         self.tags = tags
         self.status = status
         self.message = ''
-        self.timeout = ''
+        self.timeout = timeout
         self.critical = critical
         self.keywords = []
         self.starttime = starttime
