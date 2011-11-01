@@ -121,13 +121,27 @@ class TestRemoveKeywords(unittest.TestCase):
 
     def test_remove_passed_does_not_remove_when_test_contains_warning(self):
         suite = TestSuite()
-        test = suite.tests.create(status='PASS')
-        test.keywords.create(status='PASS').keywords.create()
-        test.keywords.create(status='PASS').messages.create(message='danger!', level='WARN')
+        test = self._test_with_warning(suite)
         self._remove_passed(suite)
         assert_equal(len(test.keywords[0].keywords), 1)
         assert_equal(len(test.keywords[1].messages), 1)
 
+
+    def _test_with_warning(self, suite):
+        test = suite.tests.create(status='PASS')
+        test.keywords.create(status='PASS').keywords.create()
+        test.keywords.create(status='PASS').messages.create(message='danger!',
+                                                            level='WARN')
+        return test
+
+    def test_remove_passed_does_not_remove_setup_and_teardown_from_failed_suite(self):
+        suite = TestSuite()
+        suite.keywords.create(type='setup').messages.create(message='some')
+        suite.keywords.create(type='teardown').keywords.create()
+        suite.tests.create(status='FAIL')
+        self._remove_passed(suite)
+        assert_equal(len(suite.keywords.setup.messages), 1)
+        assert_equal(len(suite.keywords.teardown.keywords), 1)
 
     def _suite_with_setup_and_teardown_and_test_with_keywords(self):
         suite = TestSuite()
