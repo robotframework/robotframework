@@ -119,6 +119,12 @@ Actual tests   : %s"""  % (str(list(expected_names)), str(actual_tests))
     def should_contain_tests(self, suite, *test_names):
         self.check_suite_contains_tests(suite, *test_names)
 
+    def should_not_contain_tests(self, suite, *test_names):
+        actual_names = [t.name for t in suite.tests]
+        for name in test_names:
+            if name in actual_names:
+                raise AssertionError('Suite should not have contained test "%s"' % name)
+
     def should_contain_suites(self, suite, *suite_names):
         actual_names = [s.name for s in suite.suites]
         utils.asserts.assert_equals(len(actual_names), len(suite_names), 'Wrong number of subsuites')
