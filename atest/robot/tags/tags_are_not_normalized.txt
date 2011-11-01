@@ -24,7 +24,7 @@ Statistics Are Counted In Normalized Manner
 
 Including And Excluding Works in Normalized Manner
     [Documentation]  Including is actually tested using --include when running tests. If all previous tests pass then including works.
-    Should Be True  'Excluded' not in ${SUITE.tests}
+    Should Not Contain Tests  ${SUITE}  Excluded
 
 Criticality Works In Normalized Manner
     Check Stdout Contains  1 critical test, 1 passed, 0 failed\n 10 tests total, 5 passed, 5 failed
