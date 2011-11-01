@@ -24,13 +24,12 @@ class TagSetter(Visitor):
     def start_suite(self, suite):
         return bool(self)
 
-    def start_test(self, test):
+    def visit_test(self, test):
         test.tags.add(self.add)
         test.tags.remove(self.remove)
-        return False
 
-    def start_keyword(self, keyword):
-        return False
+    def visit_keyword(self, keyword):
+        pass
 
     def __nonzero__(self):
         return bool(self.add or self.remove)
