@@ -120,6 +120,29 @@ class TestSuite(object):
         return Keywords(keywords, parent=self)
 
     @property
+    def stat_message(self):
+        return self._stat_message()
+
+    @property
+    def full_message(self):
+        stat_msg = self._stat_message()
+        if not self.message:
+            return stat_msg
+        return '%s\n\n%s' % (self.message, stat_msg)
+
+    def _stat_message(self):
+        # TODO: Should create self.statistics and move this there.
+        ctotal, cend, cpass, cfail = self._get_counts(self.critical_stats)
+        atotal, aend, apass, afail = self._get_counts(self.all_stats)
+        return ('%d critical test%s, %d passed, %d failed\n'
+                '%d test%s total, %d passed, %d failed'
+                % (ctotal, cend, cpass, cfail, atotal, aend, apass, afail))
+
+    def _get_counts(self, stat):
+        ending = utils.plural_or_not(stat.total)
+        return stat.total, ending, stat.passed, stat.failed
+
+    @property
     def id(self):
         if not self.parent:
             return 's1'
