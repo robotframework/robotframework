@@ -42,7 +42,7 @@ class PassedKeywordRemover(Visitor):
             _remove_messages_and_keywords(keyword)
 
     def visit_test(self, test):
-        if test.status == 'PASS':
+        if test.status == 'PASS' and not test.contains_warning:
             for keyword in test.keywords:
                 _remove_messages_and_keywords(keyword)
 
