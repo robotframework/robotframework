@@ -62,3 +62,17 @@ class Visitor(object):
 
     # TODO: Stats and errors related methods missing.
     # But do we actually need stat methods?
+
+class SkipAllVisitor(Visitor):
+
+    def visit_suite(self, suite):
+        pass
+
+    def visit_keyword(self, kw):
+        pass
+
+    def visit_test(self, test):
+        pass
+
+    def visit_message(self, msg):
+        pass
