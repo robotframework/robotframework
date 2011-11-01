@@ -22,8 +22,8 @@ ${SUITE4}  Combined from SUITE2 (recombine) and Times
 
 *** Test Cases ***
 Combining Two
-    Should Be True  ${SUITE1.suites} == ['Pass And Fail', 'Normal']
-    Should Be True  ${SUITE2.suites} == ['Pass And Fail', 'Normal']
+    Should Contain Suites  ${SUITE1}  Pass And Fail  Normal
+    Should Contain Suites  ${SUITE2}  Pass And Fail  Normal
     Check Suite Contains Tests  ${SUITE1}  @{PASS_FAIL_TESTS}  @{NORMAL_TESTS}
     Check Suite Contains Tests  ${SUITE1.suites[0]}  @{PASS_FAIL_TESTS}
     Check Suite Contains Tests  ${SUITE1.suites[1]}  @{NORMAL_TESTS}
@@ -32,15 +32,15 @@ Combining Two
     Check Suite Contains Tests  ${SUITE2.suites[1]}  @{NORMAL_TESTS}
 
 Combining Three
-    Should Be True  ${SUITE3.suites} == ['Pass And Fail', 'Normal', 'Times']
+    Should Contain Suites  ${SUITE3}  Pass And Fail  Normal  Times
     Check Suite Contains Tests  ${SUITE3}  @{PASS_FAIL_TESTS}  @{NORMAL_TESTS}  @{TIMES_TESTS}
     Check Suite Contains Tests  ${SUITE3.suites[0]}  @{PASS_FAIL_TESTS}
     Check Suite Contains Tests  ${SUITE3.suites[1]}  @{NORMAL_TESTS}
     Check Suite Contains Tests  ${SUITE3.suites[2]}  @{TIMES_TESTS}
 
 Recombining
-    Should Be True  ${SUITE4.suites} == ['Times', 'New Name']
-    Should Be True  ${SUITE4.suites[1].suites} == ['Pass And Fail', 'Normal']
+    Should Contain Suites  ${SUITE4}   Times   New Name
+    Should Contain Suites  ${SUITE4.suites[1]}  Pass And Fail  Normal
     Check Suite Contains Tests  ${SUITE4}  @{TIMES_TESTS}  @{PASS_FAIL_TESTS}  @{NORMAL_TESTS}
     Check Suite Contains Tests  ${SUITE4.suites[0]}  @{TIMES_TESTS}
     Check Suite Contains Tests  ${SUITE4.suites[1]}  @{PASS_FAIL_TESTS}  @{NORMAL_TESTS}
@@ -154,7 +154,7 @@ Combined Suite Names Are Correct In Statistics
 
 Wildcards
     Run Rebot  ${EMPTY}  ${OUT PATTERN}
-    Should Be True  ${SUITE.suites} == ['Pass And Fail', 'Normal', 'Pass And Fail & Normal', 'New Name', 'Pass And Fail & Normal & Times', 'Times & New Name']
+    Should Contain Suites  ${SUITE}   Pass And Fail  Normal  Pass And Fail & Normal  New Name  Pass And Fail & Normal & Times  Times & New Name
 
 
 *** Keywords ***
