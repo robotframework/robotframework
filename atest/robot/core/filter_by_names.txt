@@ -99,36 +99,44 @@ Suite Under Subdirectory Using Pattern
     Run And Check Suites Within Subdirs  --suite subQUEST  Sub1  Sub2
     Should Contain Tests   ${SUITE.suites[0]}  SubSuite1 First  SubSuite2 First
 
-Suite And Test Togehter
+Suite And Test Together
     [Documentation]  Testing that only tests matching --test which are under suite matching --suite are run.
-    Run Suites  --suite subsuites --suite tsuite3 --test SubSuite1First --test
-    Log  ${SUITE}
-    Log  ${SUITE.suites}
+    Run Suites  --suite subsuites --suite tsuite3 --test SubSuite1First
     Should Contain Suites  ${SUITE}  Subsuites
     Should Contain Tests   ${SUITE}  SubSuite1First
 
 Suite With Include And Exclude
-    Run And Check Suites  --suite tsuiteQUEST --include tSTAR --exclude t2
+    Run Suites  --suite tsuiteQUEST --include tSTAR --exclude t2
     Should Contain Suites  ${SUITE}  Tsuite1  Tsuite2  Tsuite3
     Should Contain Tests  ${SUITE}  Suite1 First  Suite2 First  Suite3 First
 
 Suite, Test Include And Exclude Together
-    Run And Check Suites And Tests  --suite subSTAR --test STARfirst -s nosuite -t notest --include t1 --exclude sub3  ['Subsuites']  SubSuite1First
+    Run Suites  --suite subSTAR --test STARfirst -s nosuite -t notest --include t1 --exclude sub3
+    Should Contain Suites   ${SUITE}  Subsuites
+    Should Contain Tests    ${SUITE}  SubSuite1 First
 
 Filter Using Suite Long Name
-    Run And Check Suites And Tests  --suite suites.fourth  ['Fourth']  Suite4 First
-    Run And Check Suites And Tests  --suite Subsuites.Sub1  ['Subsuites']  SubSuite1 First
+    Run Suites  --suite suites.fourth
+    Should Contain Suites  ${SUITE}  Fourth
+    Should Contain Tests   ${SUITE}  Suite4 First
+    Run Suites  --suite Subsuites.Sub1
+    Should Contain Suites  ${SUITE}  Subsuites
+    Should Contain Tests   ${SUITE}   SubSuite1 First
 
 Filter Using Long Suite Name WIth Pattern
-    Run And Check Suites And Tests  --suite suites.*.SUB?  ['Subsuites']  SubSuite1 First  SubSuite2 First
+    Run Suites  --suite suites.*.SUB?
+    Should Contain Suites  ${SUITE}   Subsuites
+    Should Contain Tests   ${SUITE}   SubSuite1 First  SubSuite2 First
 
 Filter Using Long Suite Name And Other Filters
-    Run And Check Suites And Tests  --suite suites.fourth --suite tsuite1 -s Subsuites.Sub1 --test *first* --exclude none  ['Fourth','Subsuites','Tsuite1']  Suite4 First  Suite1 First  SubSuite1 First
+    Run Suites  --suite suites.fourth --suite tsuite1 -s Subsuites.Sub1 --test *first* --exclude none
+    Should Contain Suites  ${SUITE}   Fourth  Subsuites  Tsuite1
+    Should Contain Tests   ${SUITE}  Suite4 First  Suite1 First  SubSuite1 First
 
 Filter Suite When Suites Are Ordered With Prefix
     Run Suites  --suite ?Sui*2?  ${DATADIR}/misc/multiple_suites
-    Should Be True  ${SUITE.suites} == ['Sub.Suite.1']
-    Should Be True  ${SUITE.suites[0].suites} == ['.Sui.te.2.']
+    Should Contain Suites   ${SUITE}   Sub.Suite.1
+    Should Contain Suites   ${SUITE.suites[0]}  .Sui.te.2.
 
 *** Keywords ***
 Run And Check Tests
@@ -136,12 +144,6 @@ Run And Check Tests
     Run Tests  ${params} ${ESCAPES}  ${TESTDATA_TEST}
     Stderr Should Be Empty
     Should Contain Tests  ${suite}  @{tests}
-
-Run And Check Suites
-    [Arguments]  ${params}  @{suites}
-    Run Suites  ${params}
-    Stderr Should Be Empty
-    Should Contain Suites  ${SUITE}  @{suites}
 
 Run And Check Suites Within Subdirs
     [Arguments]  ${params}  @{suites}
