@@ -130,5 +130,5 @@ Run Tests And Get Suite
 Check Suite Status
     [Arguments]  ${suite}  ${status}  ${message}
     Equals  ${suite.status}  ${status}  Wrong suite status
-    Equals  ${suite.get_full_message()}  ${message}  Wrong suite message
+    Equals  ${suite.full_message}  ${message}  Wrong suite message
 
