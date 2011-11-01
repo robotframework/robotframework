@@ -11,40 +11,39 @@
 #  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
+
 from robot.result.visitor import Visitor, SkipAllVisitor
 
-def RemoveKeywords(how):
+
+def KeywordRemover(how):
     how = how and how.upper()
     if how == 'PASSED':
-        return PassedKeywords(_remove_messages_and_keywords)
-    elif how == 'ALL':
-        return AllKeywords(_remove_messages_and_keywords)
-    else:
-        return SkipAllVisitor()
+        return PassedKeywordRemover()
+    if how == 'ALL':
+        return AllKeywordsRemover()
+    return SkipAllVisitor()
 
-def _remove_messages_and_keywords(item):
-    item.messages = []
-    item.keywords = []
 
-class AllKeywords(Visitor):
+def _remove_messages_and_keywords(kw):
+    kw.messages = []
+    kw.keywords = []
 
-    def __init__(self, action):
-        self._action = action
 
-    def start_keyword(self, keyword):
-        self._action(keyword)
-        return False
+class AllKeywordsRemover(Visitor):
 
-class PassedKeywords(Visitor):
+    def visit_keyword(self, keyword):
+        _remove_messages_and_keywords(keyword)
 
-    def __init__(self, action):
-        self._action = action
 
-    def start_keyword(self, keyword):
+class PassedKeywordRemover(Visitor):
+
+    def visit_keyword(self, keyword):
         if keyword.status == 'PASS':
-            self._action(keyword)
+            _remove_messages_and_keywords(keyword)
 
-    def start_test(self, test):
-        if test.status == 'FAIL':
-            return False
+    def visit_test(self, test):
+        if test.status == 'PASS' and not test.contains_warning:
+            for keyword in test.keywords:
+                _remove_messages_and_keywords(keyword)
+
 

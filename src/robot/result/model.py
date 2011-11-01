@@ -17,7 +17,7 @@ from robot.common.model import _Critical  # TODO: Remove
 from robot.common.statistics import CriticalStats, AllStats, Statistics
 from robot.output.loggerhelper import Message as BaseMessage
 from robot import utils
-from robot.result.keywordsremove import RemoveKeywords
+from robot.result.keywordremover import KeywordRemover
 
 from tags import Tags
 from tagsetter import TagSetter
@@ -176,7 +176,7 @@ class TestSuite(object):
         self.visit(TagSetter(add, remove))
 
     def remove_keywords(self, how):
-        self.visit(RemoveKeywords(how))
+        self.visit(KeywordRemover(how))
 
     def filter(self, included_suites=None, included_tests=None,
                included_tags=None, excluded_tags=None):
@@ -231,6 +231,13 @@ class TestCase(object):
             return self.parent.longname + '.' + self.name
         return self.name
 
+    @property
+    def contains_warning(self):
+        for keyword in self.keywords:
+            if keyword.contains_warning:
+                return True
+        return False
+
     def visit(self, visitor):
         visitor.visit_test(self)
 
@@ -268,6 +275,16 @@ class Keyword(object):
     def messages(self, messages):
         return ItemList(Message, messages)
 
+    @property
+    def contains_warning(self):
+        for keyword in self.keywords:
+            if keyword.contains_warning:
+                return True
+        for message in self.messages:
+            if message.is_warning:
+                return True
+        return False
+
     def visit(self, visitor):
         visitor.visit_keyword(self)
 
@@ -286,6 +303,10 @@ class Message(BaseMessage):
     def __init__(self, message='', level='INFO', html=False, timestamp=None,
                  linkable=False):
         BaseMessage.__init__(self, message, level, html, timestamp, linkable)
+
+    @property
+    def is_warning(self):
+        return self.level == 'WARN'
 
     def visit(self, visitor):
         visitor.visit_message(self)
