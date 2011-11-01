@@ -96,6 +96,15 @@ class TestRemoveKeywords(unittest.TestCase):
         for keyword in test.keywords:
             self._should_contain_no_messages_or_keywords(keyword)
 
+    def test_remove_passed_removes_setup_and_teardown_from_passed_suite(self):
+        suite = TestSuite()
+        suite.tests.create(status='PASS')
+        suite.keywords.create(status='PASS', type='setup').keywords.create()
+        suite.keywords.create(status='PASS', type='teardown').messages.create('message')
+        self._remove('PASSED', suite)
+        for keyword in suite.keywords:
+            self._should_contain_no_messages_or_keywords(keyword)
+
     def _suite_with_setup_and_teardown_and_test_with_keywords(self):
         suite = TestSuite()
         suite.keywords.create(type='setup').messages.create('setup message')
