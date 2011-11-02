@@ -242,6 +242,10 @@ class TestCase(object):
                 return True
         return False
 
+    @property
+    def is_passed(self):
+        return self.status == 'PASS'
+
     def visit(self, visitor):
         visitor.visit_test(self)
 
@@ -291,6 +295,14 @@ class Keyword(object):
             if message.is_warning:
                 return True
         return False
+
+    @property
+    def is_passed(self):
+        return self.status == 'PASS'
+
+    @property
+    def is_foritem(self):
+        return self.type == 'foritem'
 
     def visit(self, visitor):
         visitor.visit_keyword(self)

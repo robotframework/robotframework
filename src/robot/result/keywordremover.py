@@ -19,6 +19,8 @@ def KeywordRemover(how):
     how = how and how.upper()
     if how == 'PASSED':
         return PassedKeywordRemover()
+    if how == 'FOR':
+        return ForLoopItemsRemover()
     if how == 'ALL':
         return AllKeywordsRemover()
     return SkipAllVisitor()
@@ -38,12 +40,22 @@ class AllKeywordsRemover(Visitor):
 class PassedKeywordRemover(Visitor):
 
     def visit_keyword(self, keyword):
-        if keyword.status == 'PASS':
+        if keyword.is_passed:
             _remove_messages_and_keywords(keyword)
 
     def visit_test(self, test):
-        if test.status == 'PASS' and not test.contains_warning:
+        if test.is_passed and not test.contains_warning:
             for keyword in test.keywords:
                 _remove_messages_and_keywords(keyword)
 
+
+class ForLoopItemsRemover(Visitor):
+
+    def start_keyword(self, keyword):
+        if keyword.is_foritem:
+            _remove_messages_and_keywords(keyword)
+            return False
+
+    def start_test(self, test):
+        return test.is_passed
 
