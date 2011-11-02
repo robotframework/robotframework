@@ -17,6 +17,8 @@ from robot.common.model import _Critical  # TODO: Remove
 from robot.common.statistics import CriticalStats, AllStats, Statistics
 from robot.output.loggerhelper import Message as BaseMessage
 from robot import utils
+from robot.result.configurer import SuiteConfigurer
+from robot.result.filter import MessageFilter
 from robot.result.keywordremover import KeywordRemover
 
 from tags import Tags
@@ -30,6 +32,7 @@ class ExecutionResult(object):
         self.suite = TestSuite()
         self.errors = ExecutionErrors()
         self.generator = None
+        self._should_return_status_rc = True
 
     @property
     def statistics(self):
@@ -37,7 +40,13 @@ class ExecutionResult(object):
 
     @property
     def return_code(self):
-        return min(self.suite.critical_stats.failed, 250)
+        if self._should_return_status_rc:
+            return min(self.suite.critical_stats.failed, 250)
+        return 0
+
+    def configure(self, statusrc=False, **options):
+        self._should_return_status_rc = statusrc
+        SuiteConfigurer(**options).configure(self.suite)
 
     def visit(self, visitor):
         self.suite.visit(visitor)
@@ -86,6 +95,8 @@ class TestSuite(object):
         self.tests = []
         self.starttime = 'N/A'
         self.endtime = 'N/A'
+        self._critical_tags = None
+        self._non_critical_tags = None
 
     def _get_name(self):
         return self._name or ' & '.join(s.name for s in self.suites)
@@ -101,7 +112,7 @@ class TestSuite(object):
     #TODO: Remove this asap
     @property
     def critical(self):
-        return _Critical()
+        return _Critical(self._critical_tags, self._non_critical_tags)
 
     @utils.setter
     def metadata(self, metadata):
@@ -176,6 +187,12 @@ class TestSuite(object):
     def set_tags(self, add=None, remove=None):
         self.visit(TagSetter(add, remove))
 
+    def set_critical_tags(self, critical, non_critical):
+        self._critical_tags = critical
+        self._non_critical_tags = non_critical
+        for s in self.suites:
+            s.set_critical_tags(critical, non_critical)
+
     def remove_keywords(self, how):
         self.visit(KeywordRemover(how))
 
@@ -183,6 +200,9 @@ class TestSuite(object):
                included_tags=None, excluded_tags=None):
         self.visit(Filter(included_suites, included_tests,
                           included_tags, excluded_tags))
+
+    def filter_messages(self, loglevel):
+        self.visit(MessageFilter(loglevel))
 
     def visit(self, visitor):
         visitor.visit_suite(self)
@@ -241,6 +261,12 @@ class TestCase(object):
             if keyword.contains_warning:
                 return True
         return False
+
+    def is_included(self, includes, excludes):
+        #TODO: remove...
+        if not includes:
+            return True
+        return self.tags.match(includes) and not self.tags.match(excludes)
 
     def visit(self, visitor):
         visitor.visit_test(self)
