@@ -22,6 +22,6 @@ class OutputWriter(XmlLogger, Visitor):
     def __init__(self, path):
         XmlLogger.__init__(self, path, generator='Rebot')
 
-    def message(self, msg):
+    def start_message(self, msg):
         self._write_message(msg)
 
