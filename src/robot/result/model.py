@@ -159,7 +159,8 @@ class TestSuite(object):
     @property
     def elapsedtime(self):
         if self.starttime == 'N/A' or self.endtime == 'N/A':
-            return sum(s.elapsedtime for s in self.suites)
+            children = list(self.suites) + list(self.tests) + list(self.keywords)
+            return sum(item.elapsedtime for item in children)
         return utils.get_elapsed_time(self.starttime, self.endtime)
 
     @property
@@ -215,7 +216,6 @@ class TestCase(object):
         self.keywords = []
         self.starttime = starttime
         self.endtime = endtime
-        self.elapsedtime = ''
 
     @utils.setter
     def tags(self, tags):
@@ -224,6 +224,10 @@ class TestCase(object):
     @utils.setter
     def keywords(self, keywords):
         return Keywords(keywords, parent=self)
+
+    @property
+    def elapsedtime(self):
+        return utils.get_elapsed_time(self.starttime, self.endtime)
 
     @property
     def longname(self):
@@ -264,7 +268,6 @@ class Keyword(object):
         self.keywords = []
         self.starttime = ''
         self.endtime = ''
-        self.elapsedtime = ''
         self.timeout = timeout
 
     @utils.setter
@@ -274,6 +277,10 @@ class Keyword(object):
     @utils.setter
     def messages(self, messages):
         return ItemList(Message, messages)
+
+    @property
+    def elapsedtime(self):
+        return utils.get_elapsed_time(self.starttime, self.endtime)
 
     @property
     def contains_warning(self):
