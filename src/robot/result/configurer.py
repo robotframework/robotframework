@@ -17,16 +17,20 @@ class SuiteConfigurer(object):
 
     def __init__(self, name=None, doc=None, metadata=None, set_tags=None,
                  include_tags=None, exclude_tags=None, include_suites=None,
-                 include_tests=None, remove_keywords=None):
+                 include_tests=None, remove_keywords=None, log_level=None,
+                 critical=None, noncritical=None):
         self.name = name
         self.doc = doc
         self.metadata = metadata
         self.set_tags = set_tags or []
+        self.critical_tags = critical
+        self.non_critical_tags = noncritical
         self.include_tags = include_tags
         self.exclude_tags = exclude_tags
         self.include_suites = include_suites
         self.include_tests = include_tests
         self.remove_keywords = remove_keywords
+        self.log_level = log_level
 
     @property
     def add_tags(self):
@@ -42,6 +46,9 @@ class SuiteConfigurer(object):
                      self.include_tags, self.exclude_tags)
         suite.set_tags(self.add_tags, self.remove_tags)
         suite.remove_keywords(self.remove_keywords)
+        suite.filter_messages(self.log_level)
+        suite.set_critical_tags(self.critical_tags, self.non_critical_tags)
+
 
     def _set_suite_attributes(self, suite):
         if self.name:
