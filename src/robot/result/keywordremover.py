@@ -52,6 +52,8 @@ class PassedKeywordRemover(Visitor):
 class ForLoopItemsRemover(Visitor):
 
     def start_keyword(self, keyword):
+        if not keyword.is_passed:
+            return False
         if keyword.is_forloop:
             _remove_messages_and_keywords(keyword)
             return False
