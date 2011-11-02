@@ -301,8 +301,8 @@ class Keyword(object):
         return self.status == 'PASS'
 
     @property
-    def is_foritem(self):
-        return self.type == 'foritem'
+    def is_forloop(self):
+        return self.type == 'for'
 
     def visit(self, visitor):
         visitor.visit_keyword(self)
