@@ -210,16 +210,14 @@ class TestItemLists(unittest.TestCase):
     def test_only_matching_types_can_be_added(self):
         assert_raises(TypeError, ItemList(int).append, 'not integer')
 
-    def test_common_attributes(self):
+    def test_parent(self):
         kw1 = Keyword()
         kw2 = Keyword()
         parent = object()
-        kws = ItemList(Keyword, [kw1], parent=parent, x=1)
+        kws = ItemList(Keyword, [kw1], parent=parent)
         kws.append(kw2)
         assert_true(kw1.parent is parent)
         assert_true(kw2.parent is parent)
-        assert_equal(kw1.x, 1)
-        assert_equal(kw2.x, 1)
         assert_equal(list(kws), [kw1, kw2])
 
     def test_getitem(self):

@@ -333,9 +333,9 @@ class Message(BaseMessage):
 
 class ItemList(object):
 
-    def __init__(self, item_class, items=None, **common_attrs):
+    def __init__(self, item_class, items=None, parent=None):
         self._item_class = item_class
-        self._common_attrs = common_attrs
+        self._parent = parent
         self._items = []
         if items:
             self.extend(items)
@@ -348,8 +348,8 @@ class ItemList(object):
         if not isinstance(item, self._item_class):
             raise TypeError("Only '%s' objects accepted, got '%s'"
                             % (self._item_class.__name__, type(item).__name__))
-        for name, value in self._common_attrs.items():
-            setattr(item, name, value)
+        if self._parent:
+            item.parent = self._parent
         self._items.append(item)
 
     def extend(self, items):
@@ -378,8 +378,8 @@ class ItemList(object):
 
 class Keywords(ItemList):
 
-    def __init__(self, items=None, **common_attrs):
-        ItemList.__init__(self, Keyword, items, **common_attrs)
+    def __init__(self, items=None, parent=None):
+        ItemList.__init__(self, Keyword, items, parent)
 
     @property
     def setup(self):
