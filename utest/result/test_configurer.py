@@ -126,7 +126,6 @@ class TestRemoveKeywords(unittest.TestCase):
         assert_equal(len(test.keywords[0].keywords), 1)
         assert_equal(len(test.keywords[1].messages), 1)
 
-
     def _test_with_warning(self, suite):
         test = suite.tests.create(status='PASS')
         test.keywords.create(status='PASS').keywords.create()
@@ -153,6 +152,27 @@ class TestRemoveKeywords(unittest.TestCase):
         self._remove_passed(suite)
         assert_equal(len(suite.keywords.setup.messages), 1)
         assert_equal(len(suite.keywords.teardown.keywords), 1)
+
+    def test_remove_for_removes_for_loop_items_when_item_is_passed(self):
+        suite = TestSuite()
+        test = suite.tests.create(status='PASS')
+        forloop = test.keywords.create(status='PASS', type='forloop')
+        for i in range(100):
+            forloop.keywords.create(status='PASS', type='foritem').messages.create(message='something')
+        self._remove('FOR', suite)
+        for keyword in forloop.keywords:
+            self._should_contain_no_messages_or_keywords(keyword)
+
+    def test_remove_for_does_not_remove_for_loop_items_when_item_fails(self):
+        suite = TestSuite()
+        test = suite.tests.create(status='FAIL')
+        forloop = test.keywords.create(status='PASS', type='forloop')
+        for i in range(100):
+            forloop.keywords.create(status='PASS', type='foritem').messages.create(message='something')
+        test.keywords.create(status='FAIL')
+        self._remove('FOR', suite)
+        for keyword in forloop.keywords:
+            assert_equal(len(keyword.messages), 1)
 
     def _suite_with_setup_and_teardown_and_test_with_keywords(self):
         suite = TestSuite()
