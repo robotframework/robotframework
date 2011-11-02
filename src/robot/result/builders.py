@@ -12,7 +12,11 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+import os
+
+from robot.errors import DataError
 from robot.utils.etreewrapper import ET
+from robot import utils
 
 from model import ExecutionResult, CombinedExecutionResult
 from suiteteardownfailed import SuiteTeardownFailureHandler
@@ -20,8 +24,19 @@ from suiteteardownfailed import SuiteTeardownFailureHandler
 
 def ResultFromXML(*sources):
     if len(sources) == 1:
-        return ExecutionResultBuilder(sources[0]).build(ExecutionResult())
+        source = sources[0]
+        _validate_source(source)
+        # TODO: can this be cleaned? Is raising DataError in public API ok?
+        try:
+            return ExecutionResultBuilder(source).build(ExecutionResult())
+        except:
+            raise DataError("Opening XML file '%s' failed: %s"
+                            % (source, utils.get_error_message()))
     return CombinedExecutionResult(*[ResultFromXML(src) for src in sources])
+
+def _validate_source(source):
+    if isinstance(source, basestring) and not os.path.isfile(source):
+        raise DataError("Output file '%s' does not exist." % source)
 
 
 class ExecutionResultBuilder(object):
