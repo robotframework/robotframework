@@ -40,11 +40,11 @@ class AllKeywordsRemover(Visitor):
 class PassedKeywordRemover(Visitor):
 
     def visit_keyword(self, keyword):
-        if keyword.status == 'PASS':
+        if keyword.is_passed:
             _remove_messages_and_keywords(keyword)
 
     def visit_test(self, test):
-        if test.status == 'PASS' and not test.contains_warning:
+        if test.is_passed and not test.contains_warning:
             for keyword in test.keywords:
                 _remove_messages_and_keywords(keyword)
 
@@ -57,5 +57,5 @@ class ForLoopItemsRemover(Visitor):
             return False
 
     def start_test(self, test):
-        return test.status == 'PASS'
+        return test.is_passed
 
