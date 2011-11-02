@@ -153,12 +153,14 @@ Options:
                           automatically converted to spaces.
                           Examples: --tagstatlink mytag:http://my.domain:Link
                           --tagstatlink bug-*:http://tracker/id=%1:Bug_Tracker
-    --removekeywords all|passed  Remove keyword data from generated outputs.
+    --removekeywords all|passed|for  Remove keyword data from generated outputs.
                           Keyword data is not needed when creating reports and
                           removing it can make the size of an output file
                           considerably smaller.
                           'all'    - remove data from all keywords
                           'passed' - remove data only from keywords in passed
+                                     test cases and suites
+                          'for'    - remove data only from for loops in passed
                                      test cases and suites
     --starttime timestamp  Set starting time of test execution when creating
                           reports. Timestamp must be given in format
