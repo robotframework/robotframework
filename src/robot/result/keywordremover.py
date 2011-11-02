@@ -52,7 +52,7 @@ class PassedKeywordRemover(Visitor):
 class ForLoopItemsRemover(Visitor):
 
     def start_keyword(self, keyword):
-        if keyword.type == 'foritem':
+        if keyword.is_foritem:
             _remove_messages_and_keywords(keyword)
             return False
 

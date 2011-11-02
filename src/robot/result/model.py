@@ -293,6 +293,10 @@ class Keyword(object):
     def is_passed(self):
         return self.status == 'PASS'
 
+    @property
+    def is_foritem(self):
+        return self.type == 'foritem'
+
     def visit(self, visitor):
         visitor.visit_keyword(self)
 
