@@ -13,7 +13,8 @@
 #  limitations under the License.
 
 from robot.common import Statistics
-from robot.output import LOGGER, process_outputs
+from robot.output import LOGGER
+from robot.result.builders import ResultFromXML as RFX
 
 from robot.reporting.outputwriter import OutputWriter
 from robot.reporting.xunitwriter import XUnitWriter
@@ -26,7 +27,7 @@ class ResultWriter(object):
     def __init__(self, settings):
         self.settings = settings
         self._xml_result = None
-        self._suite = None
+        self._execution_result = None
         self._data_model = None
         self._data_sources = []
 
@@ -40,10 +41,27 @@ class ResultWriter(object):
     @property
     def result_from_xml(self):
         if self._xml_result is None:
-            self._suite, errs = process_outputs(self._data_sources, self.settings)
-            self._suite.set_options(self.settings)
-            self._xml_result = ResultFromXML(self._suite, errs, self.settings)
+            self._execution_result = RFX(*self._data_sources)
+            opts = self._create_opts()
+            self._execution_result.configure(statusrc=self.settings['NoStatusRC'], **opts)
+            self._xml_result = ResultFromXML(self._execution_result, self.settings)
         return self._xml_result
+
+    def _create_opts(self):
+        opts = {}
+        for opt_name, settings_name in [
+            ('name', 'Name'), ('doc', 'Doc'), ('metadata', 'Metadata'),
+            ('set_tags', 'SetTag'), ('include_tags', 'Include'),
+            ('exclude_tags', 'Exclude'), ('include_suites', 'SuiteNames'),
+            ('include_tests', 'TestNames'), ('remove_keywords', 'RemoveKeywords'),
+            ('log_level', 'LogLevel'), ('critical', 'Critical'),
+            ('noncritical', 'NonCritical')
+            ]:
+            opts[opt_name] = self.settings[settings_name]
+
+        opts['metadata'] = dict(opts['metadata'])
+        return opts
+
 
     def write_robot_results(self, data_source):
         self._data_sources = [data_source]
@@ -56,30 +74,30 @@ class ResultWriter(object):
         builder = OutputBuilder(self)
         self.write_robot_results(builder.build())
         builder.finalize()
-        return self._suite
+        return self._execution_result
 
 
 class ResultFromXML(object):
 
-    def __init__(self, suite, exec_errors, settings=None):
-        self.suite = suite
-        self.exec_errors = exec_errors
+    def __init__(self, execution_result, settings=None):
+        self.suite = execution_result.suite
+        self.exec_errors = execution_result.errors
         if settings:
             params = (settings['SuiteStatLevel'], settings['TagStatInclude'],
                       settings['TagStatExclude'], settings['TagStatCombine'],
                       settings['TagDoc'], settings['TagStatLink'])
         else:
             params = ()
-        self.statistics = Statistics(suite, *params)
+        self.statistics = Statistics(self.suite, *params)
         self._generator = 'Robot'
 
     def serialize_output(self, path, log=True):
         if path == 'NONE':
             return
         serializer = OutputWriter(path)
-        self.suite.serialize(serializer)
-        self.statistics.serialize(serializer)
-        self.exec_errors.serialize(serializer)
+        self.suite.visit(serializer)
+        self.statistics.visit(serializer)
+        self.exec_errors.visit(serializer)
         serializer.close()
         if log:
             LOGGER.output_file('Output', path)
