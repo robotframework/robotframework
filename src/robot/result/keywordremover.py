@@ -57,5 +57,5 @@ class ForLoopItemsRemover(Visitor):
             return False
 
     def start_test(self, test):
-        return test.is_passed
+        return test.is_passed and not test.contains_warning
 

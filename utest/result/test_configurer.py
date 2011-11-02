@@ -175,6 +175,12 @@ class TestRemoveKeywords(unittest.TestCase):
         self._remove('FOR', suite)
         assert_equal(len(forloop.keywords), 100)
 
+    def test_remove_for_does_not_remove_for_loop_items_when_warning_message_in_test(self):
+        suite, forloop = self.suite_with_forloop()
+        forloop.keywords[2].messages.create(message='danger!', level='WARN')
+        self._remove('FOR', suite)
+        assert_equal(len(forloop.keywords), 100)
+
     def _suite_with_setup_and_teardown_and_test_with_keywords(self):
         suite = TestSuite()
         suite.keywords.create(type='setup').messages.create('setup message')
