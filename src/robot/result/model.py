@@ -17,6 +17,8 @@ from robot.common.model import _Critical  # TODO: Remove
 from robot.common.statistics import CriticalStats, AllStats, Statistics
 from robot.output.loggerhelper import Message as BaseMessage
 from robot import utils
+from robot.result.configurer import SuiteConfigurer
+from robot.result.filter import MessageFilter
 from robot.result.keywordremover import KeywordRemover
 
 from tags import Tags
@@ -30,6 +32,7 @@ class ExecutionResult(object):
         self.suite = TestSuite()
         self.errors = ExecutionErrors()
         self.generator = None
+        self.should_return_status_rc = True
 
     @property
     def statistics(self):
@@ -37,7 +40,13 @@ class ExecutionResult(object):
 
     @property
     def return_code(self):
-        return min(self.suite.critical_stats.failed, 250)
+        if self.should_return_status_rc:
+            return min(self.suite.critical_stats.failed, 250)
+        return 0
+
+    def configure(self, statusrc=False, **suite_opts):
+        self.should_return_status_rc = statusrc
+        SuiteConfigurer(**suite_opts).configure(self.suite)
 
     def visit(self, visitor):
         self.suite.visit(visitor)
@@ -183,6 +192,9 @@ class TestSuite(object):
                included_tags=None, excluded_tags=None):
         self.visit(Filter(included_suites, included_tests,
                           included_tags, excluded_tags))
+
+    def filter_messages(self, log_level):
+        self.visit(MessageFilter(log_level))
 
     def visit(self, visitor):
         visitor.visit_suite(self)

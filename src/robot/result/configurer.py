@@ -47,8 +47,6 @@ class SuiteConfigurer(object):
         suite.set_tags(self.add_tags, self.remove_tags)
         suite.remove_keywords(self.remove_keywords)
         suite.filter_messages(self.log_level)
-        suite.set_critical_tags(self.critical_tags, self.non_critical_tags)
-
 
     def _set_suite_attributes(self, suite):
         if self.name:
