@@ -469,6 +469,10 @@ of unnecessary keywords. It has two possible values:
    files created after this contain enough information to investigate
    possible failures.
 
+:opt:`FOR`
+   Keywords are removed only from for loops that are in passed test cases or
+   in passed suites.
+
 Removing keywords makes output files considerably smaller and thus
 faster to process further. Even when keywords are removed, names,
 arguments and statuses of top-level keywords are preserved, so it is

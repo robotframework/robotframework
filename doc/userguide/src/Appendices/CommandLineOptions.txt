@@ -114,7 +114,7 @@ Command line options for post-processing outputs
   --tagstatlink <pattern:link:title>  Adds `external links`_ to the :name:`Statistics by
                           Tag` table.
                           table in outputs.
-  --removekeywords <all|passed>  `Removes keyword data`_ from the generated outputs.
+  --removekeywords <all|passed|for>  `Removes keyword data`_ from the generated outputs.
   --starttime <timestamp>  Sets the `starting time`_ of test execution when creating
                           reports.
   --endtime <timestamp>   Sets the `ending time`_ of test execution when creating reports.
