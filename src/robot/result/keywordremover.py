@@ -46,12 +46,15 @@ class AllKeywordsRemover(_KeywordRemover):
 
 class PassedKeywordRemover(_KeywordRemover):
 
+    def _should_be_cleared(self, item):
+        return item.is_passed and not self._contains_warning(item)
+
     def visit_keyword(self, keyword):
-        if keyword.is_passed:
+        if self._should_be_cleared(keyword):
             self._clear_content(keyword)
 
     def visit_test(self, test):
-        if test.is_passed and not self._contains_warning(test):
+        if self._should_be_cleared(test):
             for keyword in test.keywords:
                 self._clear_content(keyword)
 
