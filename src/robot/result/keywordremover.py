@@ -46,17 +46,22 @@ class AllKeywordsRemover(_KeywordRemover):
 
 class PassedKeywordRemover(_KeywordRemover):
 
-    def _should_be_cleared(self, item):
-        return item.is_passed and not self._contains_warning(item)
-
-    def visit_keyword(self, keyword):
-        if self._should_be_cleared(keyword):
-            self._clear_content(keyword)
+    def start_suite(self, suite):
+        if not suite.all_stats.failed:
+            for keyword in suite.keywords:
+                if not self._contains_warning(keyword):
+                    self._clear_content(keyword)
 
     def visit_test(self, test):
         if self._should_be_cleared(test):
             for keyword in test.keywords:
                 self._clear_content(keyword)
+
+    def visit_keyword(self, keyword):
+        pass
+
+    def _should_be_cleared(self, item):
+        return item.is_passed and not self._contains_warning(item)
 
 
 class ForLoopItemsRemover(_KeywordRemover):
