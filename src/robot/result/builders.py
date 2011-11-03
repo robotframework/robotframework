@@ -179,9 +179,10 @@ class _StatusElement(_Element):
     tag = 'status'
 
     def end(self, elem, result):
-        result.status = elem.get('status')
-        result.starttime = elem.get('starttime')
-        result.endtime = elem.get('endtime')
+        # TODO: Could elements handle default values themselves?
+        result.status = elem.get('status', 'FAIL').upper()
+        result.starttime = elem.get('starttime', 'N/A')
+        result.endtime = elem.get('endtime', 'N/A')
         return result
 
 
