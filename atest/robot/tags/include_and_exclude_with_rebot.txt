@@ -137,7 +137,7 @@ Run And Check Include And Exclude
 
 Run And Check Error
     [Arguments]  ${params}  ${filter_msg}
-    Run Tests Without Processing Output  ${params} ${ESCAPES}  ${TESTFILE}
+    Run Rebot Without Processing Output  ${params} ${ESCAPES}  ${INPUT FILE}
     ${stderr} =  Get Stderr
     Should Be Equal  ${stderr.strip()}  [ ERROR ] Suite 'Include And Exclude' with ${filter_msg} contains no test cases.\n\n Try --help for usage information.
     File Should Not Exist  ${OUTFILE}
