@@ -12,13 +12,16 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+from robot import utils
+
 
 class SuiteConfigurer(object):
 
     def __init__(self, name=None, doc=None, metadata=None, set_tags=None,
                  include_tags=None, exclude_tags=None, include_suites=None,
                  include_tests=None, remove_keywords=None, log_level=None,
-                 critical=None, noncritical=None):
+                 critical=None, noncritical=None, starttime=None,
+                 endtime=None):
         self.name = name
         self.doc = doc
         self.metadata = metadata
@@ -31,6 +34,8 @@ class SuiteConfigurer(object):
         self.include_tests = include_tests
         self.remove_keywords = remove_keywords
         self.log_level = log_level
+        self.starttime = self._get_time(starttime)
+        self.endtime = self._get_time(endtime)
 
     @property
     def add_tags(self):
@@ -56,4 +61,18 @@ class SuiteConfigurer(object):
             suite.doc = self.doc
         if self.metadata:
             suite.metadata.update(self.metadata)
+        if self.starttime:
+            suite.starttime = self.starttime
+        if self.endtime:
+            suite.endtime = self.endtime
+
+    def _get_time(self, timestamp):
+        if utils.eq(timestamp, 'N/A'):
+            return None
+        try:
+            secs = utils.timestamp_to_secs(timestamp, seps=list(' :.-_'),
+                                           millis=True)
+        except ValueError:
+            return None
+        return utils.secs_to_timestamp(secs, millis=True)
 

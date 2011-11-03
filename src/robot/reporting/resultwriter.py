@@ -55,7 +55,8 @@ class ResultWriter(object):
             ('exclude_tags', 'Exclude'), ('include_suites', 'SuiteNames'),
             ('include_tests', 'TestNames'), ('remove_keywords', 'RemoveKeywords'),
             ('log_level', 'LogLevel'), ('critical', 'Critical'),
-            ('noncritical', 'NonCritical')
+            ('noncritical', 'NonCritical'), ('starttime', 'StartTime'),
+            ('endtime', 'EndTime')
             ]:
             opts[opt_name] = self.settings[settings_name]
 
