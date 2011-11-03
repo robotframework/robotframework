@@ -57,17 +57,17 @@ Suite and test together
 No Matching tests
     Run Rebot Without Processing Output  --test nonex  ${INPUT FILE}
     ${stderr} =  Get Stderr
-    Should Be Equal  ${stderr.strip()}  [ ERROR ] Suite 'Many Tests & Suites' contains no test cases named 'nonex'.${USAGE_TIP}
+    Should Be Equal  ${stderr.strip()}  [ ERROR ] Suite 'Many Tests & Suites' contains no test named 'nonex'.${USAGE_TIP}
 
 No Matching Suites
     Run Rebot Without Processing Output  --suite nonex -s n2 -s n3  ${INPUT FILE}
     ${stderr} =  Get Stderr
-    Should Be Equal  ${stderr.strip()}  [ ERROR ] Suite 'Many Tests & Suites' contains no test suites named 'nonex', 'n2' or 'n3'.${USAGE_TIP}
+    Should Be Equal  ${stderr.strip()}  [ ERROR ] Suite 'Many Tests & Suites' contains no test in suites 'nonex', 'n2' or 'n3'.${USAGE_TIP}
 
 No Matching Tests In Matching Suites
     Run Rebot Without Processing Output  --suite nonex --suite suites --test first --test nonex --test STARone ${ESCAPES}  ${INPUT FILE}
     ${stderr} =  Get Stderr
-    Should Be Equal  ${stderr.strip()}  [ ERROR ] Suite 'Many Tests & Suites' contains no test cases 'first', 'nonex' or '*one' in suites 'nonex' or 'suites'.${USAGE_TIP}
+    Should Be Equal  ${stderr.strip()}  [ ERROR ] Suite 'Many Tests & Suites' contains no test named 'first', 'nonex' or '*one' in suites 'nonex' or 'suites'.${USAGE_TIP}
 
 Elapsed Time
     [Documentation]  Test setting start, end and elapsed times correctly when filtering by tags

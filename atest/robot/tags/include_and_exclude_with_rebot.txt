@@ -72,16 +72,16 @@ Include and Exclude with NOT
 
 Non Matching Include
     [Template]    Run And Check Error
-    --include nonex  includes 'nonex'
-    --include nonex -i nonex2  includes 'nonex' and 'nonex2'
+    --include nonex  with tag 'nonex'
+    --include nonex -i nonex2  with tags 'nonex' or 'nonex2'
 
 Non Matching Exclude
     --exclude nonexisting -e nonex2 -e nonex3  @{ALL}
 
 Non Matching Include And Exclude
     [Template]    Run And Check Error
-    -i nonex -e nonex2  includes 'nonex' and excludes 'nonex2'
-    --include nonex -i incl? -e STAR1 -e STAR2 -e STAR3  includes 'nonex' and 'incl?' and excludes '*1', '*2' and '*3'
+    -i nonex -e nonex2  with tag 'nonex' and without tag 'nonex2'
+    --include nonex -i incl? -e STAR1 -e STAR2 -e STAR3  with tags 'nonex' or 'incl?' and without tags '*1', '*2' or '*3'
 
 Including With Robot And Including And Excluding With Rebot
     [Setup]  Create Output With Robot  ${INPUT FILE}  --include incl1 --exclude nonexisting  ${TESTFILE}
@@ -137,7 +137,7 @@ Run And Check Include And Exclude
 
 Run And Check Error
     [Arguments]  ${params}  ${filter_msg}
-    Run Tests Without Processing Output  ${params} ${ESCAPES}  ${TESTFILE}
+    Run Rebot Without Processing Output  ${params} ${ESCAPES}  ${INPUT FILE}
     ${stderr} =  Get Stderr
-    Should Be Equal  ${stderr.strip()}  [ ERROR ] Suite 'Include And Exclude' with ${filter_msg} contains no test cases.\n\n Try --help for usage information.
+    Should Be Equal  ${stderr.strip()}  [ ERROR ] Suite 'Include And Exclude' contains no test ${filter_msg}.\n\n Try --help for usage information.
     File Should Not Exist  ${OUTFILE}
