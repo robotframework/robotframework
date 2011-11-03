@@ -26,38 +26,66 @@ def KeywordRemover(how):
     return SkipAllVisitor()
 
 
-def _remove_messages_and_keywords(kw):
-    kw.messages = []
-    kw.keywords = []
+class _KeywordRemover(Visitor):
+
+    def _clear_content(self, keyword):
+        keyword.messages = []
+        keyword.keywords = []
+
+    def _contains_warning(self, item):
+        contains_warning_visitor = ContainsWarningVisitor()
+        item.visit(contains_warning_visitor)
+        return contains_warning_visitor.result
 
 
-class AllKeywordsRemover(Visitor):
+class AllKeywordsRemover(_KeywordRemover):
 
     def visit_keyword(self, keyword):
-        _remove_messages_and_keywords(keyword)
+        self._clear_content(keyword)
 
 
-class PassedKeywordRemover(Visitor):
+class PassedKeywordRemover(_KeywordRemover):
 
     def visit_keyword(self, keyword):
         if keyword.is_passed:
-            _remove_messages_and_keywords(keyword)
+            self._clear_content(keyword)
 
     def visit_test(self, test):
-        if test.is_passed and not test.contains_warning:
+        if test.is_passed and not self._contains_warning(test):
             for keyword in test.keywords:
-                _remove_messages_and_keywords(keyword)
+                self._clear_content(keyword)
 
 
-class ForLoopItemsRemover(Visitor):
+class ForLoopItemsRemover(_KeywordRemover):
 
     def start_keyword(self, keyword):
         if not keyword.is_passed:
             return False
         if keyword.is_forloop:
-            _remove_messages_and_keywords(keyword)
+            self._clear_content(keyword)
             return False
 
     def start_test(self, test):
-        return test.is_passed and not test.contains_warning
+        return test.is_passed and not self._contains_warning(test)
+
+
+def _stop_if_result(method):
+    def wrapped(s, i):
+        if s.result:
+            return
+        method(s, i)
+    return wrapped
+
+
+class ContainsWarningVisitor(Visitor):
+
+    def __init__(self):
+        self.result = False
+
+    def visit_message(self, msg):
+        self.result |= msg.level == 'WARN'
+
+    visit_keyword = _stop_if_result(Visitor.visit_keyword)
+    visit_suite = _stop_if_result(Visitor.visit_suite)
+    visit_test = _stop_if_result(Visitor.visit_test)
 

@@ -248,13 +248,6 @@ class TestCase(object):
         return self.name
 
     @property
-    def contains_warning(self):
-        for keyword in self.keywords:
-            if keyword.contains_warning:
-                return True
-        return False
-
-    @property
     def is_passed(self):
         return self.status == 'PASS'
 
@@ -299,16 +292,6 @@ class Keyword(object):
         return utils.get_elapsed_time(self.starttime, self.endtime)
 
     @property
-    def contains_warning(self):
-        for keyword in self.keywords:
-            if keyword.contains_warning:
-                return True
-        for message in self.messages:
-            if message.is_warning:
-                return True
-        return False
-
-    @property
     def is_passed(self):
         return self.status == 'PASS'
 
@@ -334,10 +317,6 @@ class Message(BaseMessage):
     def __init__(self, message='', level='INFO', html=False, timestamp=None,
                  linkable=False):
         BaseMessage.__init__(self, message, level, html, timestamp, linkable)
-
-    @property
-    def is_warning(self):
-        return self.level == 'WARN'
 
     def visit(self, visitor):
         visitor.visit_message(self)
