@@ -77,7 +77,8 @@ class TestReporting(unittest.TestCase):
             'NoStatusRC': None,
             'RunEmptySuite': False,
             'EndTime': 0,
-            'LogLevel': 'INFO'
+            'LogLevel': 'INFO',
+            'RemoveKeywords': None
         }
         self._reporter = ResultWriter(self._settings)
         self._log_results = set_write_log_mock()
