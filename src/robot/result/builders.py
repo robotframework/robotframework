@@ -178,31 +178,46 @@ class MessageElement(_Element):
 class _StatusElement(_Element):
     tag = 'status'
 
-    def end(self, elem, result):
-        # TODO: Could elements handle default values themselves?
+    # TODO: Could elements handle default values themselves?
+
+    def _set_status(self, elem, result):
         result.status = elem.get('status', 'FAIL').upper()
+
+    def _set_message(self, elem, result):
+        result.message = elem.text or ''
+
+    def _set_times(self, elem, result):
         result.starttime = elem.get('starttime', 'N/A')
         result.endtime = elem.get('endtime', 'N/A')
-        return result
 
 
 class KeywordStatusElement(_StatusElement):
-    pass
+
+    def end(self, elem, result):
+        self._set_status(elem, result)
+        self._set_times(elem, result)
+        return result
 
 
 class SuiteStatusElement(_StatusElement):
 
     def end(self, elem, result):
-        result.message = elem.text or ''
-        return _StatusElement.end(self, elem, result)
+        self._set_message(elem, result)
+        self._set_times(elem, result)
+        return result
 
 
 class TestStatusElement(_StatusElement):
 
     def end(self, elem, result):
-        result.message = elem.text or ''
-        result.critical = elem.get('critical')
-        return _StatusElement.end(self, elem, result)
+        self._set_status(elem, result)
+        self._set_criticality(elem, result)
+        self._set_message(elem, result)
+        self._set_times(elem, result)
+        return result
+
+    def _set_criticality(self, elem, result):
+        result.critical = elem.get('critical', 'yes')
 
 
 class DocElement(_Element):

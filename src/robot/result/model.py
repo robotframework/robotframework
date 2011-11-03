@@ -102,10 +102,9 @@ class TestSuite(object):
         self._name = name
     name = property(_get_name, _set_name)
 
-    def _get_status(self):
+    @property
+    def status(self):
         return 'PASS' if not self.critical_stats.failed else 'FAIL'
-        #TODO: Setter exists but is ignored for builders API compatibility
-    status = property(_get_status, lambda self,_: 0)
 
     #TODO: Remove this asap
     @property
