@@ -419,3 +419,6 @@ class _Critical:
             if self.is_critical(tag):
                 return True
         return not self.tags
+
+    def __nonzero__(self):
+        return bool(self.tags or self.nons)
