@@ -67,7 +67,7 @@ class SuiteConfigurer(object):
             suite.endtime = self.endtime
 
     def _get_time(self, timestamp):
-        if utils.eq(timestamp, 'N/A'):
+        if not timestamp or utils.eq(timestamp, 'N/A'):
             return None
         try:
             secs = utils.timestamp_to_secs(timestamp, seps=list(' :.-_'),
