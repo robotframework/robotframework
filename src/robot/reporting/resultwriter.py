@@ -43,7 +43,7 @@ class ResultWriter(object):
         if self._xml_result is None:
             self._execution_result = RFX(*self._data_sources)
             opts = self._create_opts()
-            self._execution_result.configure(statusrc=self.settings['NoStatusRC'], **opts)
+            self._execution_result.configure(status_rc=not self.settings['NoStatusRC'], **opts)
             self._xml_result = ResultFromXML(self._execution_result, self.settings)
         return self._xml_result
 

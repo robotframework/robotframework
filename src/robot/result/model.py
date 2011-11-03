@@ -44,8 +44,8 @@ class ExecutionResult(object):
             return min(self.suite.critical_stats.failed, 250)
         return 0
 
-    def configure(self, statusrc=False, **suite_opts):
-        self.should_return_status_rc = statusrc
+    def configure(self, status_rc=True, **suite_opts):
+        self.should_return_status_rc = status_rc
         SuiteConfigurer(**suite_opts).configure(self.suite)
 
     def visit(self, visitor):
