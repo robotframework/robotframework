@@ -16,12 +16,6 @@ Times       11:59:59.000  12:00:08.999
 -->
 <robot version="1.6 devel" generator="robot"><suite name="Times"><doc></doc>
 <metadata></metadata>
-<critical></critical>
-<filtered><suites></suites>
-<tests></tests>
-<incls></incls>
-<excls></excls>
-</filtered>
 <test name="Incl-1"><doc></doc>
 <tags><tag>force</tag>
 <tag>incl1</tag>
@@ -80,5 +74,4 @@ Times       11:59:59.000  12:00:08.999
 <suite><stat fail="0" pass="6">Tags From Commandline</stat>
 </suite>
 </statistics>
-<syslog></syslog>
 </robot>
