@@ -13,6 +13,7 @@
 #  limitations under the License.
 
 from robot import utils
+from robot.errors import DataError
 
 
 class SuiteConfigurer(object):
@@ -49,6 +50,8 @@ class SuiteConfigurer(object):
         self._set_suite_attributes(suite)
         suite.filter(self.include_suites, self.include_tests,
                      self.include_tags, self.exclude_tags)
+        if not suite.test_count:
+            self._raise_no_matching_tests_error(suite.name)
         suite.set_tags(self.add_tags, self.remove_tags)
         suite.remove_keywords(self.remove_keywords)
         suite.filter_messages(self.log_level)
@@ -76,3 +79,28 @@ class SuiteConfigurer(object):
             return None
         return utils.secs_to_timestamp(secs, millis=True)
 
+    def _raise_no_matching_tests_error(self, suite):
+        msg = '%s %s' % (self._get_test_selector_msgs(),
+                         self._get_suite_selector_msg())
+        raise DataError("Suite '%s' contains no test %s." % (suite, msg.strip()))
+
+    def _get_test_selector_msgs(self):
+        parts = []
+        for explanation, selector in [('with tags', self.include_tags),
+                                      ('without tags', self.exclude_tags),
+                                      ('named', self.include_tests)]:
+            if selector:
+               parts.append(self._format_selector_msg(explanation, selector))
+        return utils.seq2str(parts, quote='')
+
+    def _format_selector_msg(self, explanation, selector):
+        if isinstance(selector, basestring):
+            selector = [selector]
+        if len(selector) == 1 and explanation[-1] == 's':
+            explanation = explanation[:-1]
+        return '%s %s' % (explanation, utils.seq2str(selector, lastsep=' or '))
+
+    def _get_suite_selector_msg(self):
+        if not self.include_suites:
+            return ''
+        return self._format_selector_msg('in suites', self.include_suites)
