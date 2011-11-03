@@ -12,11 +12,11 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-
+from robot.result.visitor import Visitor
 from robot import utils
 
 
-class XUnitWriter:
+class XUnitWriter(Visitor):
     """Provides an xUnit-compatible result file.
 
     Attempts to adhere to the de facto schema guessed by Peter Reilly, see:

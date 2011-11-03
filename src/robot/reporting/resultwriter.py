@@ -13,8 +13,10 @@
 #  limitations under the License.
 
 from robot.common import Statistics
+from robot.errors import DataError
 from robot.output import LOGGER
 from robot.result.builders import ResultFromXML as RFX
+from robot import utils
 
 from robot.reporting.outputwriter import OutputWriter
 from robot.reporting.xunitwriter import XUnitWriter
@@ -108,7 +110,10 @@ class ResultFromXML(object):
             return
         serializer = XUnitWriter(path)
         try:
-            self.suite.serialize(serializer)
+            self.suite.visit(serializer)
+        except:
+            raise DataError("Writing XUnit result file '%s' failed: %s" %
+                            (path, utils.get_error_message()))
         finally:
             serializer.close()
         LOGGER.output_file('XUnit', path)
