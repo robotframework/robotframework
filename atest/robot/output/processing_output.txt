@@ -26,15 +26,7 @@ Directory Suite
     Should Be True   ${SUITE.get_metadata()} == [('a', 'b'), ('x', 'y')]
     Check Suite Got From misc/suites/ Directory
 
-Created Minimal
-    [Documentation]  Testing absolute minimal hand created suite without even any tests or subsuites
-    Run Rebot  ${EMPTY}  rebot/created_minimal.xml
-    Should Be Equal  ${SUITE.name}  My Name
-    Should Be Equal  ${SUITE.status}  PASS
-    Should Be True  ${SUITE.suites}+${SUITE.tests}==[]
-    Check Minimal Suite Defaults  ${SUITE}
-
-Created Normal
+Minimal hand-created output
     [Documentation]  Testing minimal hand created suite with tests or subsuites
     Run Rebot  ${EMPTY}  rebot/created_normal.xml
     Check Names  ${SUITE}  Root
