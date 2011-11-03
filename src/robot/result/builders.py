@@ -215,13 +215,9 @@ class TestStatusElement(_StatusElement):
 
     def end(self, elem, result):
         self._set_status(elem, result)
-        self._set_criticality(elem, result)
         self._set_message(elem, result)
         self._set_times(elem, result)
         return result
-
-    def _set_criticality(self, elem, result):
-        result._critical = elem.get('critical', 'yes')
 
 
 class DocElement(_Element):

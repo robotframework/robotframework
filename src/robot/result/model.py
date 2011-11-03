@@ -258,10 +258,7 @@ class TestCase(object):
 
     @property
     def critical(self):
-        set_criticality = self.parent.critical
-        if set_criticality:
-            return 'yes' if set_criticality.are_critical(self.tags) else 'no'
-        return self._critical
+        return 'yes' if self.parent.critical.are_critical(self.tags) else 'no'
 
     @property
     def is_passed(self):
