@@ -95,6 +95,7 @@ class TestSuite(object):
         self.tests = []
         self.starttime = 'N/A'
         self.endtime = 'N/A'
+        self._critical = None
 
     def _get_name(self):
         return self._name or ' & '.join(s.name for s in self.suites)
@@ -106,10 +107,19 @@ class TestSuite(object):
     def status(self):
         return 'PASS' if not self.critical_stats.failed else 'FAIL'
 
-    #TODO: Remove this asap
+    def set_criticality(self, critical_tags=None, non_critical_tags=None):
+        # TODO: should settings criticality be prevented for sub suites?
+        self._critical = _Critical(critical_tags, non_critical_tags)
+
     @property
     def critical(self):
-        return _Critical()
+        if self._critical:
+            return self._critical
+        if self.parent:
+            return self.parent.critical
+        if self._critical is None:
+            self._critical = _Critical()
+        return self._critical
 
     @utils.setter
     def metadata(self, metadata):
@@ -215,7 +225,7 @@ class TestSuite(object):
 class TestCase(object):
 
     def __init__(self, name='', doc='', tags=None, status='UNDEFINED',
-                 critical='yes', timeout='', starttime='N/A', endtime='N/A'):
+                timeout='', starttime='N/A', endtime='N/A'):
         self.parent = None
         self.name = name
         self.doc = doc
@@ -223,10 +233,10 @@ class TestCase(object):
         self.status = status
         self.message = ''
         self.timeout = timeout
-        self.critical = critical
         self.keywords = []
         self.starttime = starttime
         self.endtime = endtime
+        self._critical = 'yes'
 
     @utils.setter
     def tags(self, tags):
@@ -247,8 +257,19 @@ class TestCase(object):
         return self.name
 
     @property
+    def critical(self):
+        set_criticality = self.parent.critical
+        if set_criticality:
+            return 'yes' if set_criticality.are_critical(self.tags) else 'no'
+        return self._critical
+
+    @property
     def is_passed(self):
         return self.status == 'PASS'
+
+    # TODO: Remove, move to where statistics are created.
+    def is_included(self, includes, excludes):
+        return self.tags.match(includes) and not self.tags.match(excludes)
 
     def visit(self, visitor):
         visitor.visit_test(self)

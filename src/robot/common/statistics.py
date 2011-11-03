@@ -92,7 +92,7 @@ class CriticalStats(Stat):
         self.add_suite(suite)
 
     def _is_included(self, test):
-        return test.critical
+        return test.critical == 'yes'
 
     def _subsuite_stats(self, suite):
         return suite.critical_stats

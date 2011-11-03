@@ -144,10 +144,10 @@ class TestRemoveKeywords(unittest.TestCase):
 
     def test_remove_passed_does_now_remove_setup_and_teardown_from_suite_with_noncritical_failure(self):
         suite = TestSuite()
+        suite.set_criticality([], ['non'])
         suite.keywords.create(type='setup').messages.create(message='some')
         suite.keywords.create(type='teardown').keywords.create()
-        #FIXME!: Possible bug in test as critical='no' does not work .. and default value is 'yes'
-        suite.tests.create(status='FAIL', critical=False)
+        suite.tests.create(status='FAIL', tags='non')
         assert_equal(suite.status, 'PASS')
         self._remove_passed(suite)
         assert_equal(len(suite.keywords.setup.messages), 1)

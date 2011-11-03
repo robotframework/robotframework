@@ -217,7 +217,7 @@ class TestStatusElement(_StatusElement):
         return result
 
     def _set_criticality(self, elem, result):
-        result.critical = elem.get('critical', 'yes')
+        result._critical = elem.get('critical', 'yes')
 
 
 class DocElement(_Element):

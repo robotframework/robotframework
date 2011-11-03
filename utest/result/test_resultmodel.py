@@ -87,11 +87,12 @@ class TestSuiteStats(unittest.TestCase):
 
     def _create_suite_with_tests(self):
         suite = TestSuite()
+        suite.set_criticality([], ['nc'])
         suite.tests = [TestCase(status='PASS'),
+                       TestCase(status='PASS', tags='nc'),
                        TestCase(status='PASS'),
-                       TestCase(status='PASS', critical=False),
                        TestCase(status='FAIL'),
-                       TestCase(status='FAIL', critical=False)]
+                       TestCase(status='FAIL', tags='nc')]
         return suite
 
 
