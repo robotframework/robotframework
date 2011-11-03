@@ -23,18 +23,23 @@ from suiteteardownfailed import SuiteTeardownFailureHandler
 
 
 def ResultFromXML(*sources):
-    if len(sources) == 1:
-        source = sources[0]
-        _validate_source(source)
-        # TODO: can this be cleaned? Is raising DataError in public API ok?
-        try:
-            return ExecutionResultBuilder(source).build(ExecutionResult())
-        except:
-            raise DataError("Opening XML file '%s' failed: %s"
-                            % (source, utils.get_error_message()))
-    return CombinedExecutionResult(*[ResultFromXML(src) for src in sources])
+    if not sources:
+        raise DataError('One or more data source needed.')
+    if len(sources) > 1:
+        return CombinedExecutionResult(*[ResultFromXML(src) for src in sources])
+    source = sources[0]
+    _validate_source(source)
+    try:
+        return ExecutionResultBuilder(source).build(ExecutionResult())
+    # TODO: handle source in errors messages when it's a file object
+    except DataError:
+        raise DataError("File '%s' is not Robot Framework output file." % source)
+    except:
+        raise DataError("Opening XML file '%s' failed: %s"
+                        % (source, utils.get_error_message()))
 
 def _validate_source(source):
+    # TODO: add support for xml strings.
     if isinstance(source, basestring) and not os.path.isfile(source):
         raise DataError("Output file '%s' does not exist." % source)
 
@@ -86,7 +91,7 @@ class _Element(object):
         for child_type in self._children():
             if child_type.tag == tag:
                 return child_type()
-        return IgnoredElement() # TODO: Should this result in error instead?
+        raise DataError("Unexpected element '%s'" % tag)
 
     def _children(self):
         return []
@@ -112,8 +117,7 @@ class RobotElement(_Element):
         return result
 
     def _children(self):
-        # TODO: Should <statistics> be explicitly ignored?
-        return [RootSuiteElement, ErrorsElement]
+        return [RootSuiteElement, StatisticsElement, ErrorsElement]
 
 
 class SuiteElement(_CollectionElement):
@@ -290,5 +294,8 @@ class ErrorsElement(_Element):
         return [MessageElement]
 
 
-class IgnoredElement(_Element):
-    pass
+class StatisticsElement(_Element):
+    tag = 'statistics'
+
+    def child_element(self, tag):
+        return self

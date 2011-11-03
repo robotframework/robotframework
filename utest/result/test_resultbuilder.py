@@ -3,9 +3,10 @@ from __future__ import with_statement
 from os.path import join, dirname
 import unittest
 from StringIO import StringIO
+from robot import DataError
 
-from robot.result.builders import _Element, IgnoredElement, ResultFromXML
-from robot.utils.asserts import assert_equals, assert_true
+from robot.result.builders import ResultFromXML
+from robot.utils.asserts import assert_equals, assert_true, assert_raises
 
 
 with open(join(dirname(__file__), 'golden.xml')) as f:
@@ -146,9 +147,8 @@ class TestElements(unittest.TestCase):
         suite = ResultFromXML(StringIO(xml)).suite
         assert_equals(suite.message, 'Setup failed')
 
-    def test_unknown_elements_are_ignored(self):
-        assert_true(isinstance(_Element().child_element('some_tag'),
-                               IgnoredElement))
+    def test_unknown_elements_cause_an_error(self):
+        assert_raises(DataError, ResultFromXML, StringIO('<some_tag/>'))
 
 
 class TestSuiteTeardownFailed(unittest.TestCase):
