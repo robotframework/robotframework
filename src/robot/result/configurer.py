@@ -51,7 +51,7 @@ class SuiteConfigurer(object):
         suite.filter(self.include_suites, self.include_tests,
                      self.include_tags, self.exclude_tags)
         if not suite.test_count:
-            self._raise_no_matching_tests_error(suite.name)
+            self._raise_no_tests_error(suite.name)
         suite.set_tags(self.add_tags, self.remove_tags)
         suite.remove_keywords(self.remove_keywords)
         suite.filter_messages(self.log_level)
@@ -79,10 +79,11 @@ class SuiteConfigurer(object):
             return None
         return utils.secs_to_timestamp(secs, millis=True)
 
-    def _raise_no_matching_tests_error(self, suite):
-        msg = '%s %s' % (self._get_test_selector_msgs(),
-                         self._get_suite_selector_msg())
-        raise DataError("Suite '%s' contains no test %s." % (suite, msg.strip()))
+    def _raise_no_tests_error(self, suite):
+        selectors = '%s %s' % (self._get_test_selector_msgs(),
+                               self._get_suite_selector_msg())
+        msg = "Suite '%s' contains no tests %s" % (suite, selectors.strip())
+        raise DataError(msg.strip() + '.')
 
     def _get_test_selector_msgs(self):
         parts = []

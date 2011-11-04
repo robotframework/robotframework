@@ -84,7 +84,7 @@ class TestFiltering(unittest.TestCase):
         configurer = SuiteConfigurer(include_tags='i', exclude_tags='e',
                                      include_suites='s', include_tests='t')
         assert_raises_with_msg(DataError,
-                               "Suite 'root' contains no test with tag 'i', "
+                               "Suite 'root' contains no tests with tag 'i', "
                                "without tag 'e' and named 't' in suite 's'.",
                                configurer.configure, self.suite)
 
@@ -94,10 +94,16 @@ class TestFiltering(unittest.TestCase):
                                      include_suites=['s1', 's2', 's3'],
                                      include_tests=['t1', 't2'])
         assert_raises_with_msg(DataError,
-                               "Suite 'root' contains no test with tags 'i1' or 'i2', "
+                               "Suite 'root' contains no tests with tags 'i1' or 'i2', "
                                "without tags 'e1' or 'e2' and named 't1' or 't2' "
                                "in suites 's1', 's2' or 's3'.",
                                configurer.configure, self.suite)
+
+    def test_empty_suite(self):
+        assert_raises_with_msg(DataError,
+                               "Suite 'x' contains no tests.",
+                               SuiteConfigurer().configure, TestSuite(name='x'))
+
 
 class TestRemoveKeywords(unittest.TestCase):
 

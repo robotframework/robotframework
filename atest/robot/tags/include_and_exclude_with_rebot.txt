@@ -139,5 +139,5 @@ Run And Check Error
     [Arguments]  ${params}  ${filter_msg}
     Run Rebot Without Processing Output  ${params} ${ESCAPES}  ${INPUT FILE}
     ${stderr} =  Get Stderr
-    Should Be Equal  ${stderr.strip()}  [ ERROR ] Suite 'Include And Exclude' contains no test ${filter_msg}.\n\n Try --help for usage information.
+    Should Be Equal  ${stderr.strip()}  [ ERROR ] Suite 'Include And Exclude' contains no tests ${filter_msg}.\n\n Try --help for usage information.
     File Should Not Exist  ${OUTFILE}
