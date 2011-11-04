@@ -4,9 +4,8 @@ from StringIO import StringIO
 from xml.etree.ElementTree import XML
 from xml.etree.ElementTree import tostring
 
-from robot.result.builders import ResultFromXML, ExecutionResultBuilder
+from robot.result.builders import ResultFromXML
 from robot.result.serializer import ResultSerializer
-from robot.result.model import ExecutionResult
 from robot.utils.asserts import assert_equals
 
 from test_resultbuilder import GOLDEN_XML, GOLDEN_XML_TWICE

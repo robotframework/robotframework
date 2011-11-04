@@ -8,15 +8,13 @@ from robot import DataError
 from robot.result.builders import ResultFromXML
 from robot.utils.asserts import assert_equals, assert_true, assert_raises
 
+def _read_file(name):
+    with open(join(dirname(__file__), name)) as f:
+        return f.read()
 
-with open(join(dirname(__file__), 'golden.xml')) as f:
-    GOLDEN_XML = f.read()
-
-with open(join(dirname(__file__), 'goldenTwice.xml')) as f:
-    GOLDEN_XML_TWICE = f.read()
-
-with open(join(dirname(__file__), 'suite_teardown_failed.xml')) as f:
-    SUITE_TEARDOWN_FAILED = f.read()
+GOLDEN_XML = _read_file('golden.xml')
+GOLDEN_XML_TWICE = _read_file('goldenTwice.xml')
+SUITE_TEARDOWN_FAILED = _read_file('suite_teardown_failed.xml')
 
 
 class TestBuildingSuiteExecutionResult(unittest.TestCase):
