@@ -74,8 +74,6 @@ Check Minimal Suite Times
 Check Suite Defaults
     [Arguments]  ${mysuite}  ${message}=  ${tests}=[]  ${teardown}=None
     Should Be Equal  ${mysuite.message}  ${message}
-    Should Be True  ${mysuite.critical.tags} == []
-    Should Be True  ${mysuite.critical.nons} == []
     Should Be Equal  ${mysuite.setup}  ${None}
     ${teardown_name} =  Convert To String  ${mysuite.teardown}
     Should Be Equal  ${teardown_name}  ${teardown}
