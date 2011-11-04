@@ -13,3 +13,4 @@
 #  limitations under the License.
 
 from tags import Tags, TagPatterns
+from critical import Critical
