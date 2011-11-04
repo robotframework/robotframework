@@ -12,11 +12,10 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from robot.common.model import _Critical  # TODO: Remove
 from robot.common.statistics import CriticalStats, AllStats, Statistics
 from robot.output.loggerhelper import Message as BaseMessage
 from robot import utils
-from robot.model.tags import Tags
+from robot.model import Tags, Critical
 
 from tagsetter import TagSetter
 from filter import Filter, MessageFilter
@@ -107,7 +106,7 @@ class TestSuite(object):
 
     def set_criticality(self, critical_tags=None, non_critical_tags=None):
         # TODO: should settings criticality be prevented for sub suites?
-        self._critical = _Critical(critical_tags, non_critical_tags)
+        self._critical = Critical(critical_tags, non_critical_tags)
 
     @property
     def critical(self):
@@ -116,7 +115,7 @@ class TestSuite(object):
         if self.parent:
             return self.parent.critical
         if self._critical is None:
-            self._critical = _Critical()
+            self._critical = Critical()
         return self._critical
 
     @utils.setter
@@ -256,7 +255,7 @@ class TestCase(object):
 
     @property
     def critical(self):
-        return 'yes' if self.parent.critical.are_critical(self.tags) else 'no'
+        return 'yes' if self.parent.critical.test_is_critical(self) else 'no'
 
     @property
     def is_passed(self):

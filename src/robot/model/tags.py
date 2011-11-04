@@ -58,7 +58,7 @@ class TagPatterns(object):
         self._patterns = [TagPattern(p) for p in Tags(patterns)]
 
     def match(self, tags):
-        tags = Tags(tags)
+        tags = tags if isinstance(tags, Tags) else Tags(tags)
         return any(p.match(tags) for p in self._patterns)
 
     def __contains__(self, tag):
@@ -89,6 +89,8 @@ class _SingleTagPattern(object):
         return any(self._match(tag) for tag in tags)
 
     def _match(self, tag):
+        # TODO: We should create utils.Matcher that could normalize patterns
+        # only once and also compile the regexp used internally
         return utils.matches(tag, self._pattern, ignore=['_'])
 
 
@@ -105,7 +107,7 @@ class _NotTagPattern(object):
 
     def __init__(self, must_match, must_not_match):
         self._must = TagPattern(must_match)
-        self._not = TagPattern(must_not_match)
+        self._must_not = TagPattern(must_not_match)
 
     def match(self, tags):
-        return self._must.match(tags) and not self._not.match(tags)
+        return self._must.match(tags) and not self._must_not.match(tags)
