@@ -18,6 +18,8 @@ from weakref import WeakKeyDictionary
 class setter(object):
 
     def __init__(self, method):
+        # TODO: using {} instead of WeakKeyDict.. seems to use less memory
+        # Could we use {} with weakref keys?
         self.values = WeakKeyDictionary()
         self.method = method
 
