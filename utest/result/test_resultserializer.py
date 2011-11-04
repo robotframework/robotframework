@@ -3,8 +3,10 @@ import unittest
 from StringIO import StringIO
 from xml.etree.ElementTree import XML
 from xml.etree.ElementTree import tostring
+from robot.reporting.outputparser import OutputParser
 
 from robot.result.builders import ResultFromXML
+from robot.result.datamodel import DatamodelVisitor
 from robot.result.serializer import ResultSerializer
 from robot.utils.asserts import assert_equals
 
@@ -33,6 +35,32 @@ class TestResultSerializer(unittest.TestCase):
         ResultSerializer(output).to_xml(result)
         self._assert_xml_content(self._xml_lines(output.getvalue()),
                                  self._xml_lines(GOLDEN_XML_TWICE))
+
+class TestResultJSONSerializer(unittest.TestCase):
+
+    def setUp(self):
+        output_parser = OutputParser()
+        output_parser._parse_fileobj(StringIO(GOLDEN_XML))
+        self._expected = output_parser._get_data_model()._robot_data
+        visitor = DatamodelVisitor(ResultFromXML(StringIO(GOLDEN_XML)))
+        self._datamodel = visitor.datamodel
+
+    def test_datamodel_suite(self):
+        self._equals('suite')
+
+    def test_datamodel_basemillis(self):
+        self._equals('baseMillis')
+
+    def test_datamodel_strings(self):
+        self._equals('strings')
+
+    def _equals(self, key):
+        if isinstance(self._expected[key], list):
+            for exp, act in zip(self._expected[key], self._datamodel[key]):
+                assert_equals(exp, act)
+        else:
+            assert_equals(self._expected[key], self._datamodel[key])
+
 
 if __name__ == '__main__':
     unittest.main()
