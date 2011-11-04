@@ -7,9 +7,9 @@ Resource        rebot_cli_resource.txt
 
 *** Test Cases ***
 Argument File
-    Create File  ${MYOUTDIR}${/}a.txt  --name From_Arg_File\n -c c1\n # comment line\n --log none\n -r none\n --output ${MYOUTDIR}${/}output.xml\n ${MYINPUT}
-    ${output} =  Run  ${REBOT} --critical c2 --argumentfile ${MYOUTDIR}${/}a.txt 2>&1
+    Create File  ${MYOUTDIR}${/}a.txt  --name From_Arg_File\n -c xxx\n # comment line\n --log none\n -r none\n --outputdir ${MYOUTDIR}\n -o myout.xml\n ${MYINPUT}
+    ${output} =  Run  ${REBOT} --log disable_me.html --argumentfile ${MYOUTDIR}${/}a.txt 2>&1
     Should Not Contain  ${output}  ERROR
-    Process Output  ${MYOUTDIR}${/}output.xml
+    Directory Should Contain  ${MYOUTDIR}  a.txt  myout.xml
+    Process Output  ${MYOUTDIR}${/}myout.xml
     Should Be Equal  ${SUITE.name}  From Arg File
-    Should Be True  ${SUITE.critical.tags} == []
