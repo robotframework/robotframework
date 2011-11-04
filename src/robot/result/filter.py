@@ -14,9 +14,9 @@
 
 from robot import utils
 from robot.output.loggerhelper import IsLogged
+from robot.model.tags import TagPatterns
 
 from visitor import Visitor
-from tags import TagPatterns
 
 
 class Filter(Visitor):

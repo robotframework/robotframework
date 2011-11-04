@@ -1,8 +1,7 @@
 import unittest
 
 from robot.utils.asserts import assert_equal, assert_true, assert_false
-from robot.result.model import TestCase
-from robot.result.tags import *
+from robot.model.tags import *
 
 
 class TestTags(unittest.TestCase):

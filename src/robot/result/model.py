@@ -13,17 +13,15 @@
 #  limitations under the License.
 
 from robot.common.model import _Critical  # TODO: Remove
-
 from robot.common.statistics import CriticalStats, AllStats, Statistics
 from robot.output.loggerhelper import Message as BaseMessage
 from robot import utils
-from robot.result.configurer import SuiteConfigurer
-from robot.result.filter import MessageFilter
-from robot.result.keywordremover import KeywordRemover
+from robot.model.tags import Tags
 
-from tags import Tags
 from tagsetter import TagSetter
-from filter import Filter
+from filter import Filter, MessageFilter
+from configurer import SuiteConfigurer
+from keywordremover import KeywordRemover
 
 
 class ExecutionResult(object):
