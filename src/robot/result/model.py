@@ -341,6 +341,8 @@ class Message(BaseMessage):
 class ItemList(object):
 
     def __init__(self, item_class, items=None, parent=None):
+        # TODO: This really should accept generic **common_attrs and not
+        # parent. Need to investigate why **common_attrs took so much memory.
         self._item_class = item_class
         self._parent = parent
         self._items = ()
@@ -357,7 +359,7 @@ class ItemList(object):
                             % (self._item_class.__name__, type(item).__name__))
         if self._parent:
             item.parent = self._parent
-        self._items = tuple(list(self._items)+[item])
+        self._items += (item,)
 
     def extend(self, items):
         for item in items:
