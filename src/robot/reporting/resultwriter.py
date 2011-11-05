@@ -84,20 +84,20 @@ class ResultFromXML(object):
 
     def __init__(self, execution_result, settings=None):
         self.result = execution_result
-        self.suite = execution_result.suite
-        self.exec_errors = execution_result.errors
-        if settings:
-            params = (settings['SuiteStatLevel'], settings['TagStatInclude'],
-                      settings['TagStatExclude'], settings['TagStatCombine'],
-                      settings['TagDoc'], settings['TagStatLink'])
-        else:
-            params = ()
-        self.statistics = Statistics(self.suite, *params)
+        self._settings = settings
         self._generator = 'Robot'
 
     def serialize_output(self, path, log=True):
         if path == 'NONE':
             return
+        if self._settings:
+            settings = self._settings
+            params = (settings['SuiteStatLevel'], settings['TagStatInclude'],
+                      settings['TagStatExclude'], settings['TagStatCombine'],
+                      settings['TagDoc'], settings['TagStatLink'])
+        else:
+            params = ()
+        self.result.configure_statistics(*params)
         serializer = RebotXMLWriter(path)
         self.result.visit(serializer)
         if log:
@@ -108,7 +108,7 @@ class ResultFromXML(object):
             return
         serializer = XUnitWriter(path)
         try:
-            self.suite.visit(serializer)
+            self.result.suite.visit(serializer)
         except:
             raise DataError("Writing XUnit result file '%s' failed: %s" %
                             (path, utils.get_error_message()))

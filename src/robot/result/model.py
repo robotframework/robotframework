@@ -30,10 +30,11 @@ class ExecutionResult(object):
         self.errors = ExecutionErrors()
         self.generator = None
         self.should_return_status_rc = True
+        self._stat_opts = ()
 
     @property
     def statistics(self):
-        return Statistics(self.suite)
+        return Statistics(self.suite, *self._stat_opts)
 
     @property
     def return_code(self):
@@ -44,6 +45,9 @@ class ExecutionResult(object):
     def configure(self, status_rc=True, **suite_opts):
         self.should_return_status_rc = status_rc
         SuiteConfigurer(**suite_opts).configure(self.suite)
+
+    def configure_statistics(self, *stat_opts): #TODO: use **kwargs
+        self._stat_opts = stat_opts
 
     def visit(self, visitor):
         visitor.visit_result(self)
