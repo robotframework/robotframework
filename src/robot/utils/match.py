@@ -38,6 +38,7 @@ class Matcher(object):
     _wildcards = {'*': '.*', '?': '.'}
 
     def __init__(self, pattern, ignore=[], caseless=True, spaceless=True):
+        self.pattern = pattern
         self._normalize = partial(normalize, ignore=ignore, caseless=caseless,
                                   spaceless=spaceless)
         self._regexp = self._get_and_compile_regexp(self._normalize(pattern))

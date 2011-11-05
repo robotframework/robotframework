@@ -45,6 +45,13 @@ class TestMatch(unittest.TestCase):
         assert matches_any('abc', ['*','asdf','foo','*b?'])
         assert not matches_any('abc', ['asdf','foo','*c?'])
 
+    def test_matcher(self):
+        matcher = Matcher('F *', ignore=['-'], caseless=False, spaceless=True)
+        assert matcher.pattern == 'F *'
+        assert matcher.match('Foo')
+        assert matcher.match('--Foo')
+        assert not matcher.match('foo')
+
 
 if __name__ == "__main__":
     unittest.main()
