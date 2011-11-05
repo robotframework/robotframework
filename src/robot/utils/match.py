@@ -12,13 +12,10 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-
 import re
+from functools import partial
 
 from normalizing import normalize
-
-
-_match_pattern_tokenizer = re.compile('(\*|\?)')
 
 
 def eq(str1, str2, ignore=[], caseless=True, spaceless=True):
@@ -35,22 +32,33 @@ def eq_any(str_, str_list, ignore=[], caseless=True, spaceless=True):
     return False
 
 
-def matches(string, pattern, ignore=[], caseless=True, spaceless=True):
-    string = normalize(string, ignore, caseless, spaceless)
-    pattern = normalize(pattern, ignore, caseless, spaceless)
-    regexp = _get_match_regexp(pattern)
-    return re.match(regexp, string, re.DOTALL) is not None
 
-def _get_match_regexp(pattern):
-    regexp = []
-    for token in _match_pattern_tokenizer.split(pattern):
-        if token == '*':
-            regexp.append('.*')
-        elif token == '?':
-            regexp.append('.')
-        else:
-            regexp.append(re.escape(token))
-    return '^%s$' % ''.join(regexp)
+class Matcher(object):
+    _match_pattern_tokenizer = re.compile('(\*|\?)')
+    _wildcards = {'*': '.*', '?': '.'}
+
+    def __init__(self, pattern, ignore=[], caseless=True, spaceless=True):
+        self._normalize = partial(normalize, ignore=ignore, caseless=caseless,
+                                  spaceless=spaceless)
+        self._regexp = self._get_and_compile_regexp(self._normalize(pattern))
+
+    def _get_and_compile_regexp(self, pattern):
+        pattern = '^%s$' % ''.join(self._get_regexp(pattern))
+        return re.compile(pattern, re.DOTALL)
+
+    def _get_regexp(self, pattern):
+        for token in self._match_pattern_tokenizer.split(pattern):
+            if token in self._wildcards:
+                yield self._wildcards[token]
+            else:
+                yield re.escape(token)
+
+    def match(self, string):
+        return self._regexp.match(self._normalize(string)) is not None
+
+
+def matches(string, pattern, ignore=[], caseless=True, spaceless=True):
+    return Matcher(pattern, ignore, caseless, spaceless).match(string)
 
 
 def matches_any(string, patterns, ignore=[], caseless=True, spaceless=True):

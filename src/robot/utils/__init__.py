@@ -23,7 +23,7 @@ from escaping import escape, unescape
 from htmlutils import html_format, html_escape, html_attr_escape
 from htmlwriter import HtmlWriter
 from importing import simple_import, import_
-from match import eq, eq_any, matches, matches_any
+from match import eq, eq_any, matches, matches_any, Matcher
 from misc import plural_or_not, printable_name, seq2str, seq2str2, getdoc
 from normalizing import normalize, normalize_tags, NormalizedDict
 from robotpath import normpath, abspath, get_link_path

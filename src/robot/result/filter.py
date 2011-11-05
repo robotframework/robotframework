@@ -101,18 +101,24 @@ class Filter(Visitor):
 class _NameFilter(object):
 
     def __init__(self, patterns):
+        self._matchers = [utils.Matcher(p, ignore=['_'])
+                          for p in self._ensure_list(patterns)]
+
+    def _ensure_list(self, patterns):
+        if patterns is None:
+            return []
         if isinstance(patterns, basestring):
-            patterns = [patterns]
-        self._patterns = patterns
+            return  [patterns]
+        return patterns
 
     def match(self, item):
         return self._match(item.name) or self._match_longname(item.longname)
 
     def _match(self, name):
-        return utils.matches_any(name, self._patterns, ignore=['_'])
+        return any(matcher.match(name) for matcher in self._matchers)
 
     def __nonzero__(self):
-        return bool(self._patterns)
+        return bool(self._matchers)
 
 
 class _SuiteNameFilter(_NameFilter):

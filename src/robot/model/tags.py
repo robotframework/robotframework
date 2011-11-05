@@ -83,15 +83,10 @@ def TagPattern(pattern):
 class _SingleTagPattern(object):
 
     def __init__(self, pattern):
-        self._pattern = pattern
+        self._matcher = utils.Matcher(pattern, ignore=['_'])
 
     def match(self, tags):
-        return any(self._match(tag) for tag in tags)
-
-    def _match(self, tag):
-        # TODO: We should create utils.Matcher that could normalize patterns
-        # only once and also compile the regexp used internally
-        return utils.matches(tag, self._pattern, ignore=['_'])
+        return any(self._matcher.match(tag) for tag in tags)
 
 
 class _AndTagPattern(object):
