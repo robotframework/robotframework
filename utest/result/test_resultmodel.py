@@ -231,10 +231,10 @@ class TestItemLists(unittest.TestCase):
 
     def test_getitem_slice(self):
         items = ItemList(int, range(10))
-        assert_true(isinstance(items[1:], list))
-        assert_equal(items[:], list(items))
-        assert_equal(items[:-1], range(9))
-        assert_equal(items[-1:1:-2], range(9, 1, -2))
+        assert_true(isinstance(items[1:], tuple))
+        assert_equal(items[:], tuple(items))
+        assert_equal(items[:-1], tuple(range(9)))
+        assert_equal(items[-1:1:-2], tuple(range(9, 1, -2)))
 
     def test_len(self):
         items = ItemList(object)

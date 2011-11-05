@@ -343,7 +343,7 @@ class ItemList(object):
     def __init__(self, item_class, items=None, parent=None):
         self._item_class = item_class
         self._parent = parent
-        self._items = []
+        self._items = ()
         if items:
             self.extend(items)
 
@@ -357,7 +357,7 @@ class ItemList(object):
                             % (self._item_class.__name__, type(item).__name__))
         if self._parent:
             item.parent = self._parent
-        self._items.append(item)
+        self._items = tuple(list(self._items)+[item])
 
     def extend(self, items):
         for item in items:
