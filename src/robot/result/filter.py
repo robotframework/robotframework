@@ -16,10 +16,10 @@ from robot import utils
 from robot.output.loggerhelper import IsLogged
 from robot.model import TagPatterns
 
-from visitor import Visitor
+from visitor import SuiteVisitor
 
 
-class Filter(Visitor):
+class Filter(SuiteVisitor):
 
     def __init__(self, include_suites=None, include_tests=None,
                  include_tags=None, exclude_tags=None):
@@ -137,7 +137,7 @@ class _TestNameFilter(_NameFilter):
         return self._match(name)
 
 
-class MessageFilter(Visitor):
+class MessageFilter(SuiteVisitor):
 
     def __init__(self, loglevel):
         loglevel = loglevel or 'trace' #TODO: is this the correct default?

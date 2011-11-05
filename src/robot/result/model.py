@@ -46,9 +46,7 @@ class ExecutionResult(object):
         SuiteConfigurer(**suite_opts).configure(self.suite)
 
     def visit(self, visitor):
-        self.suite.visit(visitor)
-        self.statistics.visit(visitor)
-        self.errors.visit(visitor)
+        visitor.visit_result(self)
 
 
 class CombinedExecutionResult(ExecutionResult):

@@ -11,51 +11,11 @@
 #  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
+
 from robot.reporting.parsingcontext import Context
 from robot.result.jsondatamodelhandlers import ExecutionResultHandler, SuiteHandler, KeywordHandler
 
-from robot.result.visitor import Visitor
-
-class ResultVisitor(Visitor):
-
-    def start_statistics(self, statistics):
-        pass
-
-    def start_total_stats(self, total_stats):
-        pass
-
-    def total_stat(self, total_stat):
-        pass
-
-    def end_total_stats(self, total_stats):
-        pass
-
-    def start_tag_stats(self, tag_stats):
-        pass
-
-    def tag_stat(self, tag_stat):
-        pass
-
-    def end_tag_stats(self, tag_stats):
-        pass
-
-    def start_suite_stats(self, suite_stats):
-        pass
-
-    def suite_stat(self, suite_stat):
-        pass
-
-    def end_suite_stats(self, suite_stats):
-        pass
-
-    def end_statistics(self, statistics):
-        pass
-
-    def start_errors(self):
-        pass
-
-    def end_errors(self):
-        pass
+from robot.result.visitor import ResultVisitor
 
 
 class DatamodelVisitor(ResultVisitor):

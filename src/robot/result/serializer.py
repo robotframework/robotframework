@@ -13,25 +13,25 @@
 #  limitations under the License.
 
 from robot.output.xmllogger import XmlLogger
+from robot.result.visitor import ResultVisitor
 
-from visitor import Visitor
 
+class RebotXMLWriter(XmlLogger, ResultVisitor):
 
-class ResultWriter(XmlLogger, Visitor):
+    def __init__(self, output):
+        XmlLogger.__init__(self, output, generator='Rebot')
 
-    def visit_message(self, msg):
-        self.log_message(msg)
+    def start_message(self, msg):
+        self._write_message(msg)
 
     def close(self):
         self._writer.end('robot')
 
+    def start_errors(self, errors):
+        XmlLogger.start_errors(self)
 
-class ResultSerializer(object):
+    def end_errors(self, errors):
+        XmlLogger.end_errors(self)
 
-    def __init__(self, output):
-        self._output = output
-
-    def to_xml(self, suite):
-        logger = ResultWriter(self._output)
-        suite.visit(logger)
-        logger.close()
+    def end_result(self, result):
+        self.close()

@@ -6,8 +6,8 @@ from xml.etree.ElementTree import tostring
 from robot.reporting.outputparser import OutputParser
 
 from robot.result.builders import ResultFromXML
+from robot.result.serializer import RebotXMLWriter
 from robot.result.datamodel import DatamodelVisitor
-from robot.result.serializer import ResultSerializer
 from robot.utils.asserts import assert_equals
 
 from test_resultbuilder import GOLDEN_XML, GOLDEN_XML_TWICE
@@ -17,7 +17,7 @@ class TestResultSerializer(unittest.TestCase):
 
     def test_single_result_serialization(self):
         output = StringIO()
-        ResultSerializer(output).to_xml(ResultFromXML(StringIO(GOLDEN_XML)))
+        ResultFromXML(StringIO(GOLDEN_XML)).visit(RebotXMLWriter(output))
         self._assert_xml_content(self._xml_lines(output.getvalue()),
                                  self._xml_lines(GOLDEN_XML))
 
@@ -32,7 +32,7 @@ class TestResultSerializer(unittest.TestCase):
     def test_combining_results(self):
         output = StringIO()
         result = ResultFromXML(StringIO(GOLDEN_XML), StringIO(GOLDEN_XML))
-        ResultSerializer(output).to_xml(result)
+        result.visit(RebotXMLWriter(output))
         self._assert_xml_content(self._xml_lines(output.getvalue()),
                                  self._xml_lines(GOLDEN_XML_TWICE))
 

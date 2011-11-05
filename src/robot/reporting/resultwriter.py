@@ -16,9 +16,9 @@ from robot.common import Statistics
 from robot.errors import DataError
 from robot.output import LOGGER
 from robot.result.builders import ResultFromXML as RFX
+from robot.result.serializer import RebotXMLWriter
 from robot import utils
 
-from robot.reporting.outputwriter import OutputWriter
 from robot.reporting.xunitwriter import XUnitWriter
 from robot.reporting.builders import LogBuilder, ReportBuilder, XUnitBuilder, OutputBuilder
 from robot.reporting.outputparser import OutputParser
@@ -83,6 +83,7 @@ class ResultWriter(object):
 class ResultFromXML(object):
 
     def __init__(self, execution_result, settings=None):
+        self.result = execution_result
         self.suite = execution_result.suite
         self.exec_errors = execution_result.errors
         if settings:
@@ -97,11 +98,8 @@ class ResultFromXML(object):
     def serialize_output(self, path, log=True):
         if path == 'NONE':
             return
-        serializer = OutputWriter(path)
-        self.suite.visit(serializer)
-        self.statistics.visit(serializer)
-        self.exec_errors.visit(serializer)
-        serializer.close()
+        serializer = RebotXMLWriter(path)
+        self.result.visit(serializer)
         if log:
             LOGGER.output_file('Output', path)
 

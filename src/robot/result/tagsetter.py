@@ -12,10 +12,10 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from visitor import Visitor
+from visitor import SuiteVisitor
 
 
-class TagSetter(Visitor):
+class TagSetter(SuiteVisitor):
 
     def __init__(self, add=None, remove=None):
         self.add = add

@@ -12,7 +12,7 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from robot.result.visitor import Visitor, SkipAllVisitor
+from robot.result.visitor import SuiteVisitor, SkipAllVisitor
 
 
 def KeywordRemover(how):
@@ -26,7 +26,7 @@ def KeywordRemover(how):
     return SkipAllVisitor()
 
 
-class _KeywordRemover(Visitor):
+class _KeywordRemover(SuiteVisitor):
 
     def _clear_content(self, keyword):
         keyword.messages = []
@@ -85,7 +85,7 @@ def _stop_if_result(method):
     return wrapped
 
 
-class ContainsWarningVisitor(Visitor):
+class ContainsWarningVisitor(SuiteVisitor):
 
     def __init__(self):
         self.result = False
@@ -93,7 +93,7 @@ class ContainsWarningVisitor(Visitor):
     def visit_message(self, msg):
         self.result |= msg.level == 'WARN'
 
-    visit_keyword = _stop_if_result(Visitor.visit_keyword)
-    visit_suite = _stop_if_result(Visitor.visit_suite)
-    visit_test = _stop_if_result(Visitor.visit_test)
+    visit_keyword = _stop_if_result(SuiteVisitor.visit_keyword)
+    visit_suite = _stop_if_result(SuiteVisitor.visit_suite)
+    visit_test = _stop_if_result(SuiteVisitor.visit_test)
 

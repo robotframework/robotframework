@@ -14,10 +14,10 @@
 
 from robot.output import XmlLogger
 
-from robot.result.visitor import Visitor
+from robot.result.visitor import SuiteVisitor
 
 
-class OutputWriter(XmlLogger, Visitor):
+class OutputWriter(XmlLogger, SuiteVisitor):
 
     def __init__(self, path):
         XmlLogger.__init__(self, path, generator='Rebot')

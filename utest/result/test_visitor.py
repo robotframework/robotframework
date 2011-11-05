@@ -2,7 +2,7 @@ import unittest
 from os.path import dirname, join
 
 from robot.result.builders import ResultFromXML
-from robot.result.visitor import Visitor
+from robot.result.visitor import SuiteVisitor
 
 
 RESULT = ResultFromXML(join(dirname(__file__), 'golden.xml'))
@@ -11,8 +11,8 @@ RESULT = ResultFromXML(join(dirname(__file__), 'golden.xml'))
 class TestVisitingSuite(unittest.TestCase):
 
     def test_abstract_visitor(self):
-        RESULT.suite.visit(Visitor())
-        RESULT.suite.visit(Visitor())
+        RESULT.suite.visit(SuiteVisitor())
+        RESULT.suite.visit(SuiteVisitor())
 
     def test_start_suite_can_stop_visiting(self):
         RESULT.suite.visit(StartSuiteStopping())
@@ -24,7 +24,7 @@ class TestVisitingSuite(unittest.TestCase):
         RESULT.suite.visit(StartKeywordStopping())
 
 
-class StartSuiteStopping(Visitor):
+class StartSuiteStopping(SuiteVisitor):
 
     def start_suite(self, suite):
         return False
@@ -39,7 +39,7 @@ class StartSuiteStopping(Visitor):
         raise AssertionError
 
 
-class StartTestStopping(Visitor):
+class StartTestStopping(SuiteVisitor):
 
     def __init__(self):
         self.test_started = False
@@ -56,7 +56,7 @@ class StartTestStopping(Visitor):
             raise AssertionError
 
 
-class StartKeywordStopping(Visitor):
+class StartKeywordStopping(SuiteVisitor):
 
     def start_keyword(self, test):
         return False

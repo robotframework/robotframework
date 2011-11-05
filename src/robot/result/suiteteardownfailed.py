@@ -12,10 +12,10 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from visitor import Visitor
+from visitor import SuiteVisitor
 
 
-class SuiteTeardownFailureHandler(Visitor):
+class SuiteTeardownFailureHandler(SuiteVisitor):
 
     def __init__(self, suite_generator):
         self._should_handle = suite_generator == 'ROBOT'
@@ -36,7 +36,7 @@ class SuiteTeardownFailureHandler(Visitor):
         return False
 
 
-class SuiteTeardownFailed(Visitor):
+class SuiteTeardownFailed(SuiteVisitor):
     _normal_msg = 'Teardown of the parent suite failed.'
     _also_msg = '\n\nAlso teardown of the parent suite failed.'
 
