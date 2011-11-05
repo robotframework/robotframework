@@ -202,9 +202,9 @@ class _DocHelper:
         for kw in lib.keywords:
             if utils.eq(name, kw.name):
                 return '<a href="#%s" class="name">%s</a>' % (kw.name, name)
-        if utils.eq_any(name, ['introduction', 'library introduction']):
+        if name.lower() in ['introduction', 'library introduction']:
             return '<a href="#introduction" class="name">%s</a>' % name
-        if utils.eq_any(name, ['importing', 'library importing']):
+        if name.lower() in ['importing', 'library importing']:
             return '<a href="#importing" class="name">%s</a>' % name
         return '<span class="name">%s</span>' % name
 

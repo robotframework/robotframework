@@ -14,11 +14,6 @@ class TestMatch(unittest.TestCase):
         assert not eq("foo", "FOO", caseless=False)
         assert not eq("foo", "foo ", spaceless=False)
 
-    def test_eq_any(self):
-        assert eq_any("foo", [ "a", "b", " F O O  " ], caseless=True, spaceless=True)
-        assert not eq_any("foo", [ "f o o ", "hii", "hoo", "huu", "FOO" ],
-                          caseless=False, spaceless=False)
-
     def test_matches_with_string(self):
         for pattern in ['abc','ABC','*','a*','*C','a*c','*a*b*c*','AB?','???',
                         '?b*','*abc','abc*','*abc*']:

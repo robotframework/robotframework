@@ -24,13 +24,18 @@ def eq(str1, str2, ignore=[], caseless=True, spaceless=True):
     return str1 == str2
 
 
-def eq_any(str_, str_list, ignore=[], caseless=True, spaceless=True):
-    str_ = normalize(str_, ignore, caseless, spaceless)
-    for s in str_list:
-        if str_ == normalize(s, ignore, caseless, spaceless):
+def matches(string, pattern, ignore=[], caseless=True, spaceless=True):
+    return Matcher(pattern, ignore, caseless, spaceless).match(string)
+
+
+# TODO: matches_any should be removed and any(utils.match(...) for p in patterns)
+# used instead. Currently mainly used in robot.common.model and can be removed
+# after that module is nuked.
+def matches_any(string, patterns, ignore=[], caseless=True, spaceless=True):
+    for pattern in patterns:
+        if matches(string, pattern, ignore, caseless, spaceless):
             return True
     return False
-
 
 
 class Matcher(object):
@@ -56,14 +61,3 @@ class Matcher(object):
 
     def match(self, string):
         return self._regexp.match(self._normalize(string)) is not None
-
-
-def matches(string, pattern, ignore=[], caseless=True, spaceless=True):
-    return Matcher(pattern, ignore, caseless, spaceless).match(string)
-
-
-def matches_any(string, patterns, ignore=[], caseless=True, spaceless=True):
-    for pattern in patterns:
-        if matches(string, pattern, ignore, caseless, spaceless):
-            return True
-    return False

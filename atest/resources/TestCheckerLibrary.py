@@ -106,7 +106,7 @@ Actual tests   : %s"""  % (str(list(expected_names)), str(actual_tests))
         if len(actual_tests) != len(expected_names):
             raise AssertionError("Wrong number of tests." + tests_msg)
         for test in actual_tests:
-            if utils.eq_any(test.name, expected_names):
+            if any(utils.matches(test.name, name) for name in expected_names):
                 print "Verifying test '%s'" % test.name
                 self.check_test_status(test)
                 expected_names.remove(utils.normalize(test.name))
@@ -129,7 +129,7 @@ Actual tests   : %s"""  % (str(list(expected_names)), str(actual_tests))
         actual_names = [s.name for s in suite.suites]
         utils.asserts.assert_equals(len(actual_names), len(suite_names), 'Wrong number of subsuites')
         for expected in suite_names:
-            if not utils.eq_any(expected, actual_names):
+            if not any(utils.matches(expected, name) for name in actual_names):
                 raise AssertionError('Suite %s not found' % expected)
 
     def should_contain_tags(self, test, *tag_names):
