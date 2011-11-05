@@ -70,6 +70,9 @@ class TagPatterns(object):
     def __iter__(self):
         return iter(self._patterns)
 
+    def __getitem__(self, index):
+        return self._patterns[index]
+
 
 def TagPattern(pattern):
     pattern = pattern.replace('&', 'AND') # TODO: where should this be done?
@@ -87,6 +90,9 @@ class _SingleTagPattern(object):
 
     def match(self, tags):
         return any(self._matcher.match(tag) for tag in tags)
+
+    def __unicode__(self):
+        return self._matcher.pattern
 
 
 class _AndTagPattern(object):

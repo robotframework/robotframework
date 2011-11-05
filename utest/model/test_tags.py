@@ -1,6 +1,7 @@
 import unittest
 
 from robot.utils.asserts import assert_equal, assert_true, assert_false
+from robot import utils
 from robot.model.tags import *
 
 
@@ -148,6 +149,10 @@ class TestTagPatterns(unittest.TestCase):
         assert_true(patterns.match(['a', 'b', 'c', 'e']))
         assert_true(patterns.match(['a', 'b', 'c', 'd', 'e', 'f']))
         assert_false(patterns.match(['a', 'b', 'c', 'd', 'e']))
+
+    def test_seq2str(self):
+        patterns = TagPatterns([u'is\xe4', u'\xe4iti'])
+        assert_equal(utils.seq2str(patterns), u"'is\xe4' and '\xe4iti'")
 
 
 if __name__ == '__main__':
