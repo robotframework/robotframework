@@ -14,7 +14,7 @@
 
 from robot import utils
 from robot.output.loggerhelper import IsLogged
-from robot.model import TagPatterns
+from robot.model import TagPatterns, SuiteNamePatterns, TestNamePatterns
 
 from visitor import SuiteVisitor
 
@@ -30,13 +30,13 @@ class Filter(SuiteVisitor):
 
     @utils.setter
     def include_suites(self, suites):
-        return _SuiteNameFilter(suites) \
-            if not isinstance(suites, _SuiteNameFilter) else suites
+        return SuiteNamePatterns(suites) \
+            if not isinstance(suites, SuiteNamePatterns) else suites
 
     @utils.setter
     def include_tests(self, tests):
-        return _TestNameFilter(tests) \
-            if not isinstance(tests, _TestNameFilter) else tests
+        return TestNamePatterns(tests) \
+            if not isinstance(tests, TestNamePatterns) else tests
 
     @utils.setter
     def include_tags(self, tags):
@@ -96,45 +96,6 @@ class Filter(SuiteVisitor):
     def __nonzero__(self):
         return bool(self.include_suites or self.include_tests or
                     self.include_tags or self.exclude_tags)
-
-
-class _NameFilter(object):
-
-    def __init__(self, patterns):
-        self._matchers = [utils.Matcher(p, ignore=['_'])
-                          for p in self._ensure_list(patterns)]
-
-    def _ensure_list(self, patterns):
-        if patterns is None:
-            return []
-        if isinstance(patterns, basestring):
-            return  [patterns]
-        return patterns
-
-    def match(self, item):
-        return self._match(item.name) or self._match_longname(item.longname)
-
-    def _match(self, name):
-        return any(matcher.match(name) for matcher in self._matchers)
-
-    def __nonzero__(self):
-        return bool(self._matchers)
-
-
-class _SuiteNameFilter(_NameFilter):
-
-    def _match_longname(self, name):
-        while '.' in name:
-            if self._match(name):
-                return True
-            name = name.split('.', 1)[1]
-        return False
-
-
-class _TestNameFilter(_NameFilter):
-
-    def _match_longname(self, name):
-        return self._match(name)
 
 
 class MessageFilter(SuiteVisitor):

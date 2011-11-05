@@ -14,3 +14,4 @@
 
 from tags import Tags, TagPatterns
 from critical import Critical
+from namepatterns import SuiteNamePatterns, TestNamePatterns
