@@ -25,6 +25,7 @@ from robot.running import Keyword, NAMESPACES, RUN_KW_REGISTER
 from robot.running.model import ExecutionContext
 from robot.common import UserErrorHandler
 from robot.version import get_version
+from robot.model import TagPatterns
 
 if utils.is_jython:
     from java.lang import String, Number
@@ -1818,9 +1819,8 @@ class _Misc:
         Example:
         | Remove Tags | mytag | something-* | ?ython |
         """
-        tags = utils.normalize_tags(tags)
-        handler = lambda test: [t for t in test.tags
-                                if not utils.matches_any(t, tags)]
+        tags = TagPatterns(tags)
+        handler = lambda test: [t for t in test.tags if not tags.match(t)]
         self._set_or_remove_tags(handler)
         self.log('Removed tag%s %s.' % (utils.plural_or_not(tags),
                                         utils.seq2str(tags)))
