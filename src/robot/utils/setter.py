@@ -18,18 +18,18 @@ from weakref import WeakKeyDictionary
 class setter(object):
 
     def __init__(self, method):
-        # TODO: using {} instead of WeakKeyDict.. seems to use less memory
-        # Could we use {} with weakref keys?
-        self.values = WeakKeyDictionary()
         self.method = method
+        self._method_value_name = '_setter_%s_value' % self.method.__name__
 
     def __get__(self, instance, owner):
         if instance is None:
             return self
         try:
-            return self.values[instance]
+            return getattr(instance, self._method_value_name)
         except KeyError:
             raise AttributeError(self.method.__name__)
 
     def __set__(self, instance, value):
-        self.values[instance] = self.method(instance, value)
+        if instance is None:
+            return
+        setattr(instance, self._method_value_name, self.method(instance, value))
