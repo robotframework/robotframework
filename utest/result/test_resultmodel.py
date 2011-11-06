@@ -229,12 +229,8 @@ class TestItemLists(unittest.TestCase):
         assert_true(items[1] is item2)
         assert_true(items[-1] is item2)
 
-    def test_getitem_slice(self):
-        items = ItemList(int, range(10))
-        assert_true(isinstance(items[1:], tuple))
-        assert_equal(items[:], tuple(items))
-        assert_equal(items[:-1], tuple(range(9)))
-        assert_equal(items[-1:1:-2], tuple(range(9, 1, -2)))
+    def test_getitem_slice_is_not_supported(self):
+        assert_raises(ValueError, ItemList(int).__getitem__, slice(0))
 
     def test_len(self):
         items = ItemList(object)

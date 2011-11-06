@@ -377,6 +377,8 @@ class ItemList(object):
         return iter(self._items)
 
     def __getitem__(self, index):
+        if isinstance(index, slice):
+            raise ValueError("'%s' object does not support slicing" % type(self).__name__)
         return self._items[index]
 
     def __len__(self):
