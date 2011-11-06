@@ -17,6 +17,7 @@ import os
 from robot import utils
 from robot.output import LOGGER
 from robot.errors import DataError
+from robot.model import SuiteNamePatterns
 
 from datarow import DataRow
 from tablepopulators import (SettingTablePopulator, VariableTablePopulator,
@@ -107,8 +108,8 @@ class FromDirectoryPopulator(object):
 
     def populate(self, path, datadir, include_suites, warn_on_skipped):
         LOGGER.info("Parsing test data directory '%s'" % path)
-        include_sub_suites = self._get_include_suites(path, include_suites)
-        initfile, children = self._get_children(path, include_sub_suites)
+        include_suites = self._get_include_suites(path, include_suites)
+        initfile, children = self._get_children(path, include_suites)
         datadir.initfile = initfile
         if initfile:
             try:
@@ -117,7 +118,7 @@ class FromDirectoryPopulator(object):
                 LOGGER.error(unicode(err))
         for child in children:
             try:
-                datadir.add_child(child, include_sub_suites)
+                datadir.add_child(child, include_suites)
             except DataError, err:
                 self._log_failed_parsing("Parsing data source '%s' failed: %s"
                             % (child, unicode(err)), warn_on_skipped)
@@ -128,14 +129,22 @@ class FromDirectoryPopulator(object):
         else:
             LOGGER.info(message)
 
-    def _get_include_suites(self, path, include_suites):
-        # If directory is included also all it children should be included
-        if self._is_in_incl_suites(os.path.basename(os.path.normpath(path)),
-                                   include_suites):
-            return []
-        return include_suites
+    def _get_include_suites(self, path, incl_suites):
+        if not isinstance(incl_suites, SuiteNamePatterns):
+            # Use only the last part of names given like '--suite parent.child'
+            incl_suites = SuiteNamePatterns(i.split('.')[-1] for i in incl_suites)
+        if not incl_suites:
+            return incl_suites
+        # If a directory is included, also all its children should be included.
+        if self._directory_is_included(path, incl_suites):
+            return SuiteNamePatterns()
+        return incl_suites
 
-    def _get_children(self, dirpath, include_suites):
+    def _directory_is_included(self, path, incl_suites):
+        name = os.path.basename(os.path.normpath(path))
+        return self._is_in_included_suites(name, incl_suites)
+
+    def _get_children(self, dirpath, incl_suites):
         initfile = None
         children = []
         for name, path in self._list_dir(dirpath):
@@ -144,7 +153,7 @@ class FromDirectoryPopulator(object):
                     initfile = path
                 else:
                     LOGGER.error("Ignoring second test suite init file '%s'." % path)
-            elif self._is_included(name, path, include_suites):
+            elif self._is_included(name, path, incl_suites):
                 children.append(path)
             else:
                 LOGGER.info("Ignoring file or directory '%s'." % name)
@@ -163,20 +172,17 @@ class FromDirectoryPopulator(object):
         base, extension = os.path.splitext(name.lower())
         return base == '__init__' and extension[1:] in READERS
 
-    def _is_included(self, name, path, include_suites):
+    def _is_included(self, name, path, incl_suites):
         if name.startswith(self.ignored_prefixes):
             return False
         if os.path.isdir(path):
             return name not in self.ignored_dirs
         base, extension = os.path.splitext(name.lower())
         return (extension[1:] in READERS and
-                self._is_in_incl_suites(base, include_suites))
+                self._is_in_included_suites(base, incl_suites))
 
-    def _is_in_incl_suites(self, name, include_suites):
-        if include_suites == []:
-            return True
-        # Match only to the last part of name given like '--suite parent.child'
-        include_suites = [ incl.split('.')[-1] for incl in include_suites ]
-        name = name.split('__', 1)[-1]  # Strip possible prefix
-        return utils.matches_any(name, include_suites, ignore=['_'])
+    def _is_in_included_suites(self, name, incl_suites):
+        return not incl_suites or incl_suites.match(self._split_prefix(name))
 
+    def _split_prefix(self, name):
+        return name.split('__', 1)[-1]
