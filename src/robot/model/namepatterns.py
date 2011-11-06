@@ -17,7 +17,7 @@ from robot import utils
 
 class _NamePatterns(object):
 
-    def __init__(self, patterns):
+    def __init__(self, patterns=None):
         self._matchers = [utils.Matcher(p, ignore=['_'])
                           for p in self._ensure_list(patterns)]
 
@@ -28,8 +28,8 @@ class _NamePatterns(object):
             return  [patterns]
         return patterns
 
-    def match(self, item):
-        return self._match(item.name) or self._match_longname(item.longname)
+    def match(self, name, longname=None):
+        return self._match(name) or longname and self._match_longname(longname)
 
     def _match(self, name):
         return any(matcher.match(name) for matcher in self._matchers)

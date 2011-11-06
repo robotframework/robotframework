@@ -61,7 +61,7 @@ class Filter(SuiteVisitor):
         return bool(suite.suites)
 
     def _filter_by_suite_name(self, suite):
-        if self.include_suites.match(suite):
+        if self.include_suites.match(suite.name, suite.longname):
             suite.visit(Filter(include_suites=[],
                                include_tests=self.include_tests,
                                include_tags=self.include_tags,
@@ -76,7 +76,7 @@ class Filter(SuiteVisitor):
                 yield test
 
     def _included_by_test_name(self, test):
-        return self.include_tests.match(test)
+        return self.include_tests.match(test.name, test.longname)
 
     def _included_by_tags(self, test):
         return self.include_tags.match(test.tags)
