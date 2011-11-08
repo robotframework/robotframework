@@ -21,7 +21,7 @@ Non-XML Input
 
 Non-Compatible XML
     Create File  ${MYOUTDIR}/invalid.xml  <not><our>type</our></not>
-    Rebot should fail  ${MYOUTDIR}${/}invalid.xml  File '.*invalid.xml' is not Robot Framework output file.
+    Rebot should fail  ${MYOUTDIR}${/}invalid.xml  File '.*invalid.xml' is not Robot Framework output file.*
 
 Invalid Output Directory
     [Documentation]  Test error handling when some of the output dirs (where to write output, report, etc.) is invalid (i.e. can't be created). To make sure creating dirs fails their names are non-standard (that's not enough in Linux) parent is made read only.
