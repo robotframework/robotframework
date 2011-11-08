@@ -186,13 +186,10 @@ class KeywordHandler(_Handler):
         self._messages = []
         self._current_children = None
         self._start()
-
-        self._doc = self._get_id(keyword.doc)
+        self._doc = self._get_id(utils.html_format(keyword.doc))
         self._data_from_children.append(self._doc)
-
         self._args = self._get_id(', '.join(keyword.args))
         self._data_from_children.append(self._args)
-
         self._status = _StatusHandler(self._context, keyword).end_element('')
 
     def _start(self):
