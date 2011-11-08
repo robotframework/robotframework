@@ -123,10 +123,10 @@ class SuiteHandler(_Handler):
         self._current_children = None
         self._teardown_failed = False
         self._context.start_suite()
-        self._doc = self._get_id(suite.doc)
+        self._doc = self._get_id(utils.html_format(suite.doc))
         self._data_from_children.append(self._doc)
         self._metadata = []
-        for i in [self._get_ids(key, value) for key, value in suite.metadata.items()]:
+        for i in [self._get_ids(key,  utils.html_format(value)) for key, value in suite.metadata.items()]:
             self._metadata.extend(i)
         self._data_from_children.append(self._metadata)
 
@@ -158,7 +158,7 @@ class TestHandler(_Handler):
         self._current_children = None
         self._context.start_test()
         self._critical = int(test.critical == 'yes')
-        self._doc = self._get_id(test.doc)
+        self._doc = self._get_id(utils.html_format(test.doc))
         self._data_from_children.append(self._doc)
         self._status = _StatusHandler(self._context, test).end_element('')
 
@@ -230,7 +230,7 @@ class _StatusHandler(_Handler):
         if self._starttime is not None or endtime is not None:
             return endtime - self._starttime
         # Only RF 2.6+ outputs have elapsedtime when start or end is N/A.
-        return int(item.elapsed)
+        return int(item.elapsedtime)
 
     def end_element(self, text):
         result = [self._status, self._starttime, self._elapsed]
