@@ -32,8 +32,8 @@ def ResultFromXML(*sources):
     try:
         return ExecutionResultBuilder(source).build(ExecutionResult())
     # TODO: handle source in errors messages when it's a file object
-    except DataError:
-        raise DataError("File '%s' is not Robot Framework output file." % source)
+    except DataError, err:
+        raise DataError("File '%s' is not Robot Framework output file: %s" % (source, err))
     except:
         raise DataError("Opening XML file '%s' failed: %s"
                         % (source, utils.get_error_message()))
