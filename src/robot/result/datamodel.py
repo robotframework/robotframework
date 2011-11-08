@@ -38,6 +38,9 @@ class DatamodelVisitor(ResultVisitor):
     def start_test(self, test):
         self._start(lambda p: p.start_test(test))
 
+    def start_errors(self, errors):
+        self._start(lambda p: p.start_errors(errors))
+
     def visit_statistics(self, stats):
         self._start(lambda p: p.visit_statistics(stats))
         self._end(stats)
@@ -46,7 +49,7 @@ class DatamodelVisitor(ResultVisitor):
         item_datamodel = self._elements.pop().end_element(item)
         self._elements[-1].add_child_data(item_datamodel)
 
-    end_suite = end_keyword = end_test = _end
+    end_suite = end_keyword = end_test = end_errors = _end
 
     def visit_message(self, msg):
         self._elements[-1].message(msg)

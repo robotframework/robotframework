@@ -57,6 +57,9 @@ class TestResultJSONSerializer(unittest.TestCase):
     def test_datamodel_statistics(self):
         self._equals('stats')
 
+    def test_datamodel_errors(self):
+        self._equals('errors')
+
     def _equals(self, key):
         if isinstance(self._expected[key], list):
             assert_equals(len(self._expected[key]), len(self._datamodel[key]))

@@ -43,6 +43,9 @@ class _Handler(object):
         self._current_children = self._tests
         return TestHandler(self._context, test)
 
+    def start_errors(self, errors):
+        return _Handler(self._context)
+
     def message(self, message):
         self._data_from_children.append(_MsgHandler(self._context, message).end_element(message.message))
 
@@ -75,7 +78,7 @@ class ExecutionResultHandler(_Handler):
         return {'generator': self._generator,
                 'suite': self._data_from_children[0],
                 'stats': self._stats,
-                #                'errors': self._data_from_children[2],
+                'errors': self._data_from_children[2],
                 'baseMillis': self._context.basemillis,
                 'strings': self._context.dump_texts()}
 
