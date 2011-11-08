@@ -30,17 +30,17 @@ class _Handler(object):
     def add_child_data(self, data):
         self._data_from_children.append(data)
 
-    def start_child_element(self, child):
-        if isinstance(child, TestSuite):
-            self._current_children = self._suites
-            return SuiteHandler(self._context, child)
-        if isinstance(child, Keyword):
-            self._current_children = self._keywords
-            return KeywordHandler(self._context, child)
-        if isinstance(child, TestCase):
-            self._current_children = self._tests
-            return TestHandler(self._context, child)
-        raise AssertionError('unknown child type %r' % type(child))
+    def start_suite(self, suite):
+        self._current_children = self._suites
+        return SuiteHandler(self._context, suite)
+
+    def start_keyword(self, keyword):
+        self._current_children = self._keywords
+        return KeywordHandler(self._context, keyword)
+
+    def start_test(self, test):
+        self._current_children = self._tests
+        return TestHandler(self._context, test)
 
     def message(self, message):
         self._data_from_children.append(_MsgHandler(self._context, message).end_element(message.message))

@@ -17,7 +17,6 @@ from robot.result.jsondatamodelhandlers import ExecutionResultHandler, SuiteHand
 
 from robot.result.visitor import ResultVisitor
 
-
 class DatamodelVisitor(ResultVisitor):
 
     def __init__(self, result):
@@ -26,15 +25,23 @@ class DatamodelVisitor(ResultVisitor):
         self._elements.append(ExecutionResultHandler(self._context, result))
         result.visit(self)
 
-    def _start(self, item):
-        next = self._elements[-1].start_child_element(item)
+    def _start(self, func):
+        next = func(self._elements[-1])
         self._elements.append(next)
 
-    start_suite = start_keyword = start_test = _start
+    def start_suite(self, suite):
+        self._start(lambda p: p.start_suite(suite))
+
+    def start_keyword(self, keyword):
+        self._start(lambda p: p.start_keyword(keyword))
+
+    def start_test(self, test):
+        self._start(lambda p: p.start_test(test))
 
     def _end(self, item):
         item_datamodel = self._elements.pop().end_element(item)
         self._elements[-1].add_child_data(item_datamodel)
+
     end_suite = end_keyword = end_test = _end
 
     def visit_message(self, msg):
