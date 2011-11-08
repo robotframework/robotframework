@@ -25,6 +25,7 @@ class _Handler(object):
         self._suites = []
         self._keywords = []
         self._tests = []
+        self._stats = []
         self._data_from_children = []
 
     def add_child_data(self, data):
@@ -60,20 +61,51 @@ class _Handler(object):
     def _last_child_status(self):
         return self._data_from_children[-1][0]
 
-
 class ExecutionResultHandler(_Handler):
 
     def __init__(self, context, execution_result):
         _Handler.__init__(self, context)
         self._generator = execution_result.generator
 
+    def visit_statistics(self, stats):
+        self._current_children = self._stats
+        return StatisticsHandler(self._stats, stats)
+
     def end_element(self, text):
         return {'generator': self._generator,
                 'suite': self._data_from_children[0],
-#                'stats': self._data_from_children[1],
-#                'errors': self._data_from_children[2],
+                'stats': self._stats,
+                #                'errors': self._data_from_children[2],
                 'baseMillis': self._context.basemillis,
                 'strings': self._context.dump_texts()}
+
+class StatisticsHandler(object):
+
+    def __init__(self, stats_list, stats):
+        self._result = stats_list
+        self._result.append(self._parse_totals(stats.total))
+        self._result.append(self._parse_tag(stats.tags))
+        self._result.append(self._parse_suite(stats.suite))
+
+    def _parse_totals(self, total):
+        return [self._create_stat(total.critical), self._create_stat(total.all)]
+
+    def _parse_tag(self, tags):
+        return [self._create_stat(tag) for tag in tags.stats.values()]
+
+    def _parse_suite(self, suite):
+        all_stat = self._create_stat(suite.all)
+        all_stat['id'] = suite.all.id
+        all_stat['name'] = suite.all.longname
+        return [all_stat]
+
+    def _create_stat(self, stat_elem):
+        return {'pass':stat_elem.passed,
+                'fail':stat_elem.failed,
+                'label':stat_elem.name}
+
+    def end_element(self, text):
+        return self._result
 
 
 class SuiteHandler(_Handler):

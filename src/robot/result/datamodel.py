@@ -38,6 +38,10 @@ class DatamodelVisitor(ResultVisitor):
     def start_test(self, test):
         self._start(lambda p: p.start_test(test))
 
+    def visit_statistics(self, stats):
+        self._start(lambda p: p.visit_statistics(stats))
+        self._end(stats)
+
     def _end(self, item):
         item_datamodel = self._elements.pop().end_element(item)
         self._elements[-1].add_child_data(item_datamodel)
