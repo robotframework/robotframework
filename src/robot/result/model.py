@@ -224,10 +224,9 @@ class TestSuite(object):
 
 class TestCase(object):
     __slots__ = ['parent', 'name', 'doc', 'status', 'message', 'timeout',
-                 'starttime', 'endtime', '_critical', '_setter__tags',
-                 '_setter__keywords']
+                 'starttime', 'endtime', '_setter__tags', '_setter__keywords']
 
-    def __init__(self, name='', doc='', tags=None, status='UNDEFINED',
+    def __init__(self, name='', doc='', tags=None, status='FAIL',
                 timeout='', starttime='N/A', endtime='N/A'):
         self.parent = None
         self.name = name
@@ -239,7 +238,6 @@ class TestCase(object):
         self.keywords = []
         self.starttime = starttime
         self.endtime = endtime
-        self._critical = 'yes'
 
     @utils.setter
     def tags(self, tags):
