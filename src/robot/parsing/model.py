@@ -19,16 +19,18 @@ from robot.errors import DataError
 from robot.variables import is_var
 from robot.output import LOGGER
 from robot import utils
-from robot.writer.serializer import Serializer, SerializationContext
+from robot.writer.serializer import Serializer
 
 from settings import (Documentation, Fixture, Timeout, Tags, Metadata,
     Library, Resource, Variables, Arguments, Return, Template, Comment)
 from populators import FromFilePopulator, FromDirectoryPopulator
 
 
-def TestData(parent=None, source=None, include_suites=[], warn_on_skipped=False):
+def TestData(parent=None, source=None, include_suites=[],
+             warn_on_skipped=False):
     if os.path.isdir(source):
-        return TestDataDirectory(parent, source).populate(include_suites, warn_on_skipped)
+        return TestDataDirectory(parent, source).populate(include_suites,
+                                                          warn_on_skipped)
     return TestCaseFile(parent, source).populate()
 
 
@@ -94,13 +96,18 @@ class _TestData(object):
     def save(self, **options):
         """Serializes this datafile.
 
-        :param **options: Configuration for serialization. Any optional arguments
-            of robot.writer.serializer.SerializationContext can be given.
+        :param options: Configuration for serialization. These arguments are
+            passed to
+            :py:class:`~robot.writer.serializer.SerializationContext` as
+            keyword arguments.
+
+        See also :py:meth:`robot.writer.serializer.Serializer.serialize`
         """
         Serializer().serialize(self, **options)
 
 
 class TestCaseFile(_TestData):
+    """The parsed test case file object."""
 
     def __init__(self, parent=None, source=None):
         self.directory = os.path.dirname(source) if source else None
@@ -132,6 +139,7 @@ class TestCaseFile(_TestData):
 
 
 class ResourceFile(_TestData):
+    """The parsed resource file object."""
 
     def __init__(self, source=None):
         self.directory = os.path.dirname(source) if source else None
@@ -165,6 +173,10 @@ class ResourceFile(_TestData):
 
 
 class TestDataDirectory(_TestData):
+    """The parsed test data directory object. Contains hiearchical structure
+    of other :py:class:`.TestDataDirectory` and :py:class:`.TestCaseFile`
+    objects.
+    """
 
     def __init__(self, parent=None, source=None):
         self.directory = source
