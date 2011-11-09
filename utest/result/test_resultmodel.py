@@ -146,6 +146,17 @@ class TestTestCase(unittest.TestCase):
     def setUp(self):
         self.test = TestCase(tags=['t1', 't2'], name='test')
 
+    def test_id_without_parent(self):
+        assert_equal(self.test.id, 't1')
+
+    def test_id_with_parent(self):
+        suite = TestSuite()
+        suite.suites.create().tests = [TestCase(), TestCase()]
+        suite.suites.create().tests = [TestCase()]
+        assert_equal(suite.suites[0].tests[0].id, 's1-s1-t1')
+        assert_equal(suite.suites[0].tests[1].id, 's1-s1-t2')
+        assert_equal(suite.suites[1].tests[0].id, 's1-s2-t1')
+
     def test_modify_tags(self):
         self.test.tags.add(['t0', 't3'])
         self.test.tags.remove('T2')
@@ -179,6 +190,26 @@ class TestElapsedTime(unittest.TestCase):
         suite.tests.create(starttime='19991212 12:00:00.010',
                            endtime='19991212 13:00:01.010')
         assert_equal(suite.elapsedtime, 3610000)
+
+
+class TestKeyword(unittest.TestCase):
+
+    def test_id_without_parent(self):
+        assert_equal(Keyword().id, 'k1')
+
+    def test_id_with_suite_parent(self):
+        assert_equal(TestSuite().keywords.create().id, 's1-k1')
+
+    def test_id_with_test_parent(self):
+        assert_equal(TestSuite().tests.create().keywords.create().id, 's1-t1-k1')
+
+    def test_id_with_keyword_parents(self):
+        kw = TestSuite().tests.create().keywords.create()
+        kw.keywords = [Keyword(), Keyword()]
+        kw.keywords[-1].keywords.create()
+        assert_equal(kw.keywords[0].id, 's1-t1-k1-k1')
+        assert_equal(kw.keywords[1].id, 's1-t1-k1-k2')
+        assert_equal(kw.keywords[1].keywords[0].id, 's1-t1-k1-k2-k1')
 
 
 class TestItemLists(unittest.TestCase):

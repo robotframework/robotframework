@@ -169,7 +169,7 @@ class TestSuite(object):
     def id(self):
         if not self.parent:
             return 's1'
-        return self.parent.id + '-s%d' % (list(self.parent.suites).index(self)+1)
+        return '%s-s%d' % (self.parent.id, self.parent.suites.index(self)+1)
 
     @property
     def critical_stats(self):
@@ -252,6 +252,12 @@ class TestCase(object):
         return Keywords(keywords, parent=self)
 
     @property
+    def id(self):
+        if not self.parent:
+            return 't1'
+        return '%s-t%d' % (self.parent.id, self.parent.tests.index(self)+1)
+
+    @property
     def elapsedtime(self):
         return utils.get_elapsed_time(self.starttime, self.endtime)
 
@@ -313,6 +319,12 @@ class Keyword(object):
     @utils.setter
     def messages(self, messages):
         return ItemList(Message, messages)
+
+    @property
+    def id(self):
+        if not self.parent:
+            return 'k1'
+        return '%s-k%d' % (self.parent.id, self.parent.keywords.index(self)+1)
 
     @property
     def elapsedtime(self):
@@ -382,6 +394,9 @@ class ItemList(object):
             self._check_type_and_set_attrs(item)
         self._items.extend(items)
 
+    def index(self, item):
+        return self._items.index(item)
+
     def visit(self, visitor):
         for item in self:
             item.visit(visitor)
@@ -405,7 +420,6 @@ class ItemList(object):
 
 
 class Keywords(ItemList):
-
     __slots__ = []
 
     def __init__(self, items=None, parent=None):
