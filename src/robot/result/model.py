@@ -169,7 +169,7 @@ class TestSuite(object):
     def id(self):
         if not self.parent:
             return 's1'
-        return self.parent.id + '-s%d' % (list(self.parent.suites).index(self)+1)
+        return '%s-s%d' % (self.parent.id, self.parent.suites.index(self)+1)
 
     @property
     def critical_stats(self):
@@ -252,6 +252,12 @@ class TestCase(object):
         return Keywords(keywords, parent=self)
 
     @property
+    def id(self):
+        if not self.parent:
+            return 't1'
+        return '%s-t%d' % (self.parent.id, self.parent.tests.index(self)+1)
+
+    @property
     def elapsedtime(self):
         return utils.get_elapsed_time(self.starttime, self.endtime)
 
@@ -315,6 +321,12 @@ class Keyword(object):
         return ItemList(Message, messages)
 
     @property
+    def id(self):
+        if not self.parent:
+            return 'k1'
+        return '%s-k%d' % (self.parent.id, self.parent.keywords.index(self)+1)
+
+    @property
     def elapsedtime(self):
         return utils.get_elapsed_time(self.starttime, self.endtime)
 
@@ -358,7 +370,7 @@ class ItemList(object):
         # parent. Need to investigate why **common_attrs took so much memory.
         self._item_class = item_class
         self._parent = parent
-        self._items = ()  # Tuples take less memory than lists
+        self._items = []
         if items:
             self.extend(items)
 
@@ -368,7 +380,7 @@ class ItemList(object):
 
     def append(self, item):
         self._check_type_and_set_attrs(item)
-        self._items += (item,)
+        self._items.append(item)
 
     def _check_type_and_set_attrs(self, item):
         if not isinstance(item, self._item_class):
@@ -380,7 +392,10 @@ class ItemList(object):
     def extend(self, items):
         for item in items:
             self._check_type_and_set_attrs(item)
-        self._items += tuple(items)
+        self._items.extend(items)
+
+    def index(self, item):
+        return self._items.index(item)
 
     def visit(self, visitor):
         for item in self:
@@ -405,7 +420,6 @@ class ItemList(object):
 
 
 class Keywords(ItemList):
-
     __slots__ = []
 
     def __init__(self, items=None, parent=None):
