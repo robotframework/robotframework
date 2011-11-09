@@ -1,9 +1,16 @@
 import os
 import re
 
+import robot
 from robot import utils
 from robot.result.builders import ResultFromXML
+from robot.result.model import TestCase, Keyword
+
 from robot.libraries.BuiltIn import BuiltIn
+
+# Override __slots__ so that process_keywords() works
+class MyKeyword(Keyword): pass
+robot.result.model.Keyword = MyKeyword
 
 
 class TestCheckerLibrary:
