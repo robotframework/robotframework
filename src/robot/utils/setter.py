@@ -15,17 +15,9 @@
 
 class setter(object):
 
-    def __init__(self, method_or_attr):
-        if isinstance(method_or_attr, basestring):
-            self.attr_name = method_or_attr
-            self.method = None
-        else:
-            self.attr_name = '___' + method_or_attr.__name__
-            self.method = method_or_attr
-
-    def __call__(self, method):
+    def __init__(self, method):
         self.method = method
-        return self
+        self.attr_name = '_setter__' + method.__name__
 
     def __get__(self, instance, owner):
         if instance is None:
