@@ -15,18 +15,49 @@
 import re
 
 from robot import utils
+from robot.result.visitor import SuiteVisitor
+
+class StatisticsBuilder(SuiteVisitor):
+
+    def __init__(self, stats):
+        self._stats = stats
+        self._parents = []
+        self._first = True
+        self._current_suite_stat = self._stats.suite
+
+    def start_suite(self, suite):
+        if not self._first:
+            new  = SuiteStatistics(suite)
+            self._current_suite_stat.suites.append(new)
+            self._parents.append(self._current_suite_stat)
+            self._current_suite_stat = new
+        self._current_suite = suite
+        self._first = False
+
+    def end_suite(self, suite):
+        if self._parents:
+            self._parents[-1].all.add_stat(self._current_suite_stat.all)
+            self._parents[-1].critical.add_stat(self._current_suite_stat.critical)
+            self._current_suite_stat = self._parents.pop(-1)
+
+    def start_test(self, test):
+        self._current_suite_stat.all.add_test(test)
+        if test.critical == 'yes':
+            self._current_suite_stat.critical.add_test(test)
+        self._stats.tags.add_test(test, self._current_suite.critical)
 
 
-class Statistics:
+class Statistics(object):
 
     def __init__(self, suite, suite_stat_level=-1, tag_stat_include=None,
                  tag_stat_exclude=None, tag_stat_combine=None, tag_doc=None,
                  tag_stat_link=None):
         self.tags = TagStatistics(tag_stat_include, tag_stat_exclude,
                                   tag_stat_combine, tag_doc, tag_stat_link)
-        self.suite = SuiteStatistics(suite, self.tags, suite_stat_level)
-        self.total = TotalStatistics(self.suite)
+        self.suite = SuiteStatistics(suite, suite_stat_level)
+        StatisticsBuilder(self).visit_suite(suite)
         self.tags.sort()
+        self.total = TotalStatistics(self.suite)
 
     #TODO: Replace with visit
     def serialize(self, serializer):
@@ -160,27 +191,11 @@ class TotalStat(Stat):
 
 class SuiteStatistics:
 
-    def __init__(self, suite, tag_stats, suite_stat_level=-1):
+    def __init__(self, suite, suite_stat_level=-1):
         self.all = SuiteStat(suite)
         self.critical = SuiteStat(suite)
         self.suites = []
-        self._process_suites(suite, tag_stats)
-        self._process_tests(suite, tag_stats)
         self._suite_stat_level = suite_stat_level
-
-    def _process_suites(self, suite, tag_stats):
-        for subsuite in suite.suites:
-            substat = SuiteStatistics(subsuite, tag_stats)
-            self.suites.append(substat)
-            self.all.add_stat(substat.all)
-            self.critical.add_stat(substat.critical)
-
-    def _process_tests(self, suite, tag_stats):
-        for test in suite.tests:
-            self.all.add_test(test)
-            if test.critical == 'yes':
-                self.critical.add_test(test)
-            tag_stats.add_test(test, suite.critical)
 
     def serialize(self, serializer):
         serializer.start_suite_stats(self)
@@ -243,6 +258,7 @@ class TagStatistics:
         serializer.end_tag_stats(self)
 
     def sort(self):
+        # TODO: Is this needed?
         for stat in self.stats.values():
             stat.tests.sort()
 
