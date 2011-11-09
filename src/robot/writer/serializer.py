@@ -17,62 +17,16 @@ import os
 from writer import FileWriter
 
 
-class SerializationContext(object):
-
-    def __init__(self, datafile, output=None, format=None, pipe_separated=False,
-                 line_separator=os.linesep):
-        """The SerializationContext class holds the needed information for
-        serializing test data files. It contains a references to the data file to
-        be serialized and to serialization options.
-
-        :param datafile: The datafile to be serialized.
-        :type datafile: TestCaseFile, ResourceFile, TestDataDirectory
-        :param output: An open, file-like object used in serialization. If not
-            given, value of `source` attribute of the given `datafile` is used
-            to construct a new file object.
-        :param str format: Serialization format. If not given, read from the
-            extension of the `source` attribute of the given `datafile`.
-        :param bool pipe_separated: Whether to use pipes as separator when
-            serialization format is txt.
-        :param str line_separator: Line separator used in serialization.
-        """
-        self.datafile = datafile
-        self.pipe_separated = pipe_separated
-        self.line_separator = line_separator
-        self._given_output = output
-        self._output = output
-        self._format = format
-
-    def finish(self):
-        if self._given_output is None:
-            self._output.close()
-
-    @property
-    def output(self):
-        if not self._output:
-            self._output = open(self._get_source(), 'wb')
-        return self._output
-
-    @property
-    def format(self):
-        return self._format or self._format_from_file()
-
-    def _get_source(self):
-        return getattr(self.datafile, 'initfile', self.datafile.source)
-
-    def _format_from_file(self):
-        return os.path.splitext(self._get_source())[1][1:].lower()
-
-
 class Serializer(object):
-    """The Serializer class is used to serialize Robot Framework test data files.
+    """The Serializer object. It is used to serialize Robot Framework test
+    data files.
     """
 
     def serialize(self, datafile, **options):
         """Serializes given `datafile` using `**options`.
 
         :param datafile: A robot.parsing.model.DataFile object to be serialized
-        :param **options: A SerializationContext is initialized based on these
+        :param options: A :py:class:`.SerializationContext` is initialized based on these
         """
         context = SerializationContext(datafile, **options)
         self._writer = FileWriter(context)
@@ -130,3 +84,54 @@ class Serializer(object):
         self._writer.start_testcase(tc)
         self._serialize_elements(tc)
         self._writer.end_testcase()
+
+
+class SerializationContext(object):
+    """The SerializationContext object. It holds needed information for
+    serializing a test data file.
+    """
+
+    def __init__(self, datafile, output=None, format=None, pipe_separated=False,
+                 line_separator=os.linesep):
+        """
+        :param datafile: The datafile to be serialized.
+        :type datafile: :py:class:`~robot.parsing.model.TestCaseFile`,
+            :py:class:`~robot.parsing.model.ResourceFile`,
+            :py:class:`~robot.parsing.model.TestDataDirectory`
+        :param output: An open, file-like object used in serialization. If not
+            given, value of `source` attribute of the given `datafile` is used
+            to construct a new file object.
+        :param str format: Serialization format. If not given, read from the
+            extension of the `source` attribute of the given `datafile`.
+        :param bool pipe_separated: Whether to use pipes as separator when
+            serialization format is txt.
+        :param str line_separator: Line separator used in serialization.
+        """
+        self.datafile = datafile
+        self.pipe_separated = pipe_separated
+        self.line_separator = line_separator
+        self._given_output = output
+        self._output = output
+        self._format = format
+
+    def finish(self):
+        if self._given_output is None:
+            self._output.close()
+
+    @property
+    def output(self):
+        if not self._output:
+            self._output = open(self._get_source(), 'wb')
+        return self._output
+
+    @property
+    def format(self):
+        return self._format or self._format_from_file()
+
+    def _get_source(self):
+        return getattr(self.datafile, 'initfile', self.datafile.source)
+
+    def _format_from_file(self):
+        return os.path.splitext(self._get_source())[1][1:].lower()
+
+

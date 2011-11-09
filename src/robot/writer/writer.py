@@ -22,6 +22,13 @@ from htmltemplate import TEMPLATE
 
 
 def FileWriter(serialization_context):
+    """Creates and returns a FileWriter object.
+
+    :param serialization_context: Type of returned
+        FileWriter is determined based on `serialization_context.format`.
+        Is also passed along to created writer for further configuration.
+    :type serialization_context: :py:class:`SerializationContext`
+    """
     Writer = {
         'tsv': TsvFileWriter,
         'txt': TxtFileWriter,
