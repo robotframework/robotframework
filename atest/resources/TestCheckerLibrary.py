@@ -9,13 +9,17 @@ from robot.result.model import TestSuite, TestCase, Keyword
 from robot.libraries.BuiltIn import BuiltIn
 
 # Override __slots__ so that process_keyword|test|suite() works
-class MyKeyword(Keyword): pass
-robot.result.model.Keyword = MyKeyword
+# TODO: Could we make it easier to use custom TestSuite?
+class NoSlotsKeyword(Keyword):
+    pass
 
-class MyTestCase(TestCase): pass
-robot.result.model.TestCase = MyTestCase
+class NoSlotsTestCase(TestCase):
+    keyword_class = NoSlotsKeyword
 
-class MyTestSuite(TestSuite): pass
+class MyTestSuite(TestSuite):
+    test_class = NoSlotsTestCase
+    keyword_class = NoSlotsKeyword
+
 robot.result.model.TestSuite = MyTestSuite
 
 
