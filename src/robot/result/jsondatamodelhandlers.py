@@ -142,7 +142,10 @@ class SuiteHandler(_Handler):
 
     def end_element(self, suite):
         stats = self._context.end_suite()
-        self._data_from_children.append(_StatusHandler(self._context, suite).end_element(''))
+        status = _StatusHandler(self._context, suite).end_element('')
+        if suite.message != '':
+            status.append(self._get_id(suite.message))
+        self._data_from_children.append(status)
         return self._get_name_and_sources() + self._data_from_children + \
                  [self._suites, self._tests, self._keywords,
                   int(self._teardown_failed), stats]
