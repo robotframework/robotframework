@@ -358,7 +358,7 @@ class ItemList(object):
         # parent. Need to investigate why **common_attrs took so much memory.
         self._item_class = item_class
         self._parent = parent
-        self._items = ()  # Tuples take less memory than lists
+        self._items = []
         if items:
             self.extend(items)
 
@@ -368,7 +368,7 @@ class ItemList(object):
 
     def append(self, item):
         self._check_type_and_set_attrs(item)
-        self._items += (item,)
+        self._items.append(item)
 
     def _check_type_and_set_attrs(self, item):
         if not isinstance(item, self._item_class):
@@ -380,7 +380,7 @@ class ItemList(object):
     def extend(self, items):
         for item in items:
             self._check_type_and_set_attrs(item)
-        self._items += tuple(items)
+        self._items.extend(items)
 
     def visit(self, visitor):
         for item in self:
