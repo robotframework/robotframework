@@ -59,7 +59,7 @@ class Keyword(object):
         return self.name
 
     def __str__(self):
-        return unicode(self).encode('UTF-8')
+        return unicode(self).encode('ASCII', 'replace')
 
     def __repr__(self):
         return repr(str(self))

@@ -36,5 +36,28 @@ class TestTestCase(unittest.TestCase):
         assert_equal(self.test.longname, 'suite.sub suite.test')
 
 
+class TestStringRepresentation(unittest.TestCase):
+
+    def setUp(self):
+        self.empty = TestCase()
+        self.ascii = TestCase(name='Kekkonen')
+        self.non_ascii = TestCase(name=u'hyv\xe4 nimi')
+
+    def test_unicode(self):
+        assert_equal(unicode(self.empty), '')
+        assert_equal(unicode(self.ascii), 'Kekkonen')
+        assert_equal(unicode(self.non_ascii), u'hyv\xe4 nimi')
+
+    def test_str(self):
+        assert_equal(str(self.empty), '')
+        assert_equal(str(self.ascii), 'Kekkonen')
+        assert_equal(str(self.non_ascii), 'hyv? nimi')
+
+    def test_repr(self):
+        assert_equal(repr(self.empty), "''")
+        assert_equal(repr(self.ascii), "'Kekkonen'")
+        assert_equal(repr(self.non_ascii), "'hyv? nimi'")
+
+
 if __name__ == '__main__':
     unittest.main()

@@ -73,5 +73,28 @@ class TestSuiteId(unittest.TestCase):
         assert_equal(sub.id, 's1-s1')
 
 
+class TestStringRepresentation(unittest.TestCase):
+
+    def setUp(self):
+        self.empty = TestSuite()
+        self.ascii = TestSuite(name='Kekkonen')
+        self.non_ascii = TestSuite(name=u'hyv\xe4 nimi')
+
+    def test_unicode(self):
+        assert_equal(unicode(self.empty), '')
+        assert_equal(unicode(self.ascii), 'Kekkonen')
+        assert_equal(unicode(self.non_ascii), u'hyv\xe4 nimi')
+
+    def test_str(self):
+        assert_equal(str(self.empty), '')
+        assert_equal(str(self.ascii), 'Kekkonen')
+        assert_equal(str(self.non_ascii), 'hyv? nimi')
+
+    def test_repr(self):
+        assert_equal(repr(self.empty), "''")
+        assert_equal(repr(self.ascii), "'Kekkonen'")
+        assert_equal(repr(self.non_ascii), "'hyv? nimi'")
+
+
 if __name__ == '__main__':
     unittest.main()
