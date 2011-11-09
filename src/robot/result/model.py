@@ -83,10 +83,10 @@ class ExecutionErrors(object):
 class TestSuite(object):
     __slots__ = ['parent', 'source', '_name', 'doc',
                  'message', 'starttime', 'endtime', '_critical',
-                 '_setter_metadata_value',
-                 '_setter_keywords_value',
-                 '_setter_suites_value',
-                 '_setter_tests_value']
+                 '_metadata',
+                 '_keywords',
+                 '_suites',
+                 '_tests']
 
     def __init__(self, source='', name='', doc='', metadata=None):
         self.parent = None
@@ -126,19 +126,19 @@ class TestSuite(object):
             self._critical = Critical()
         return self._critical
 
-    @utils.setter
+    @utils.setter('_metadata')
     def metadata(self, metadata):
         return Metadata(metadata)
 
-    @utils.setter
+    @utils.setter('_suites')
     def suites(self, suites):
         return ItemList(TestSuite, suites, parent=self)
 
-    @utils.setter
+    @utils.setter('_tests')
     def tests(self, tests):
         return ItemList(TestCase, tests, parent=self)
 
-    @utils.setter
+    @utils.setter('_keywords')
     def keywords(self, keywords):
         return Keywords(keywords, parent=self)
 
@@ -226,8 +226,8 @@ class TestSuite(object):
 class TestCase(object):
     __slots__ = ['parent', 'name', 'doc', 'status', 'message', 'timeout',
                  'starttime', 'endtime', '_critical',
-                 '_setter_tags_value',
-                 '_setter_keywords_value']
+                 '_tags',
+                 '_keywords']
 
     def __init__(self, name='', doc='', tags=None, status='UNDEFINED',
                 timeout='', starttime='N/A', endtime='N/A'):
@@ -243,11 +243,11 @@ class TestCase(object):
         self.endtime = endtime
         self._critical = 'yes'
 
-    @utils.setter
+    @utils.setter('_tags')
     def tags(self, tags):
         return Tags(tags)
 
-    @utils.setter
+    @utils.setter('_keywords')
     def keywords(self, keywords):
         return Keywords(keywords, parent=self)
 
@@ -289,8 +289,8 @@ class TestCase(object):
 class Keyword(object):
     __slots__ = ['parent', 'name', 'doc', 'args', 'type', 'status',
                  'starttime', 'endtime', 'timeout',
-                 '_setter_messages_value',
-                 '_setter_keywords_value']
+                 '_messages',
+                 '_keywords']
 
 
     def __init__(self, name='', doc='', type='kw', status='UNDEFINED', timeout=''):
@@ -306,11 +306,11 @@ class Keyword(object):
         self.endtime = ''
         self.timeout = timeout
 
-    @utils.setter
+    @utils.setter('_keywords')
     def keywords(self, keywords):
         return Keywords(keywords, parent=self)
 
-    @utils.setter
+    @utils.setter('_messages')
     def messages(self, messages):
         return ItemList(Message, messages)
 
