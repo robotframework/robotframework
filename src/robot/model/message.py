@@ -12,10 +12,16 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from testsuite import TestSuite
-from testcase import TestCase
-from keyword import Keyword
-from message import Message
-from tags import Tags, TagPatterns
-from critical import Critical
-from namepatterns import SuiteNamePatterns, TestNamePatterns
+from robot.output.loggerhelper import Message as BaseMessage
+
+
+# TODO: Inheritance should work other way. This should be the base.
+class Message(BaseMessage):
+    __slots__ = []
+
+    def __init__(self, message='', level='INFO', html=False, timestamp=None,
+                 linkable=False):
+        BaseMessage.__init__(self, message, level, html, timestamp, linkable)
+
+    def visit(self, visitor):
+        visitor.visit_message(self)
