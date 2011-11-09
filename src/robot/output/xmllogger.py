@@ -91,7 +91,7 @@ class XmlLogger:
         self._writer.start('suite', attrs)
         self._writer.element('doc', suite.doc)
         self._writer.start('metadata')
-        for name, value in suite.get_metadata():
+        for name, value in suite.metadata.items():
             self._writer.element('item', value, {'name': name})
         self._writer.end('metadata')
 

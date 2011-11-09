@@ -207,10 +207,6 @@ class TestSuite(object):
     def visit(self, visitor):
         visitor.visit_suite(self)
 
-    # TODO: Remove and change clients to use metadata.items() directly
-    def get_metadata(self):
-        return self.metadata.items()
-
     def __unicode__(self):
         return self.name
 

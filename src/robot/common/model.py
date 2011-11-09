@@ -120,9 +120,6 @@ class BaseTestSuite(_TestAndSuiteHelper):
         for name, value in metalist:
             self.metadata[name] = value
 
-    def get_metadata(self):
-        return self.metadata.items()
-
     def get_test_count(self):
         count = len(self.tests)
         for suite in self.suites:
