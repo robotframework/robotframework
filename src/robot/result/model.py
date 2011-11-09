@@ -81,6 +81,12 @@ class ExecutionErrors(object):
 
 
 class TestSuite(object):
+    __slots__ = ['parent', 'source', '_name', 'doc',
+                 'message', 'starttime', 'endtime', '_critical',
+                 '_setter_metadata_value',
+                 '_setter_keywords_value',
+                 '_setter_suites_value',
+                 '_setter_tests_value']
 
     def __init__(self, source='', name='', doc='', metadata=None):
         self.parent = None

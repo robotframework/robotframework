@@ -4,16 +4,19 @@ import re
 import robot
 from robot import utils
 from robot.result.builders import ResultFromXML
-from robot.result.model import TestCase, Keyword
+from robot.result.model import TestSuite, TestCase, Keyword
 
 from robot.libraries.BuiltIn import BuiltIn
 
-# Override __slots__ so that process_keyword|test() works
+# Override __slots__ so that process_keyword|test|suite() works
 class MyKeyword(Keyword): pass
 robot.result.model.Keyword = MyKeyword
 
 class MyTestCase(TestCase): pass
 robot.result.model.TestCase = MyTestCase
+
+class MyTestSuite(TestSuite): pass
+robot.result.model.TestSuite = MyTestSuite
 
 
 class TestCheckerLibrary:
