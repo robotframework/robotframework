@@ -4,6 +4,8 @@ import fileinput
 from os.path import join, dirname, abspath
 import sys
 import os
+from robot.result.datamodel import DatamodelVisitor
+
 
 BASEDIR = dirname(abspath(__file__))
 OUTPUT = join(BASEDIR, 'output.xml')
@@ -12,7 +14,7 @@ sys.path.insert(0, join(BASEDIR, '..', '..', '..', '..', 'src'))
 
 import robot
 from robot.reporting.outputparser import OutputParser
-from robot.reporting.jsondatamodel import SeparatingWriter
+from robot.reporting.jsondatamodel import SeparatingWriter, DataModelWriter
 
 
 def run_robot(testdata, loglevel='INFO'):
@@ -26,7 +28,9 @@ def run_robot(testdata, loglevel='INFO'):
 
 
 def create_jsdata(outxml, target, split_log):
-    model = OutputParser(split_log=split_log).parse(outxml)
+    result = robot.result.builders.ResultFromXML(outxml)
+    visitor = DatamodelVisitor(result, split_log=split_log)
+    model = DataModelWriter(visitor.datamodel, visitor._context.split_results)
     model.set_settings({'logURL': 'log.html',
                         'reportURL': 'report.html',
                         'background': {'fail': 'DeepPink'}})
