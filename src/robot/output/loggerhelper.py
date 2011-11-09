@@ -15,6 +15,7 @@
 
 from robot import utils
 from robot.errors import DataError
+from robot.model import Message as BaseMessage
 
 
 LEVELS = {
@@ -61,21 +62,14 @@ class AbstractLogger:
         raise NotImplementedError(self.__class__)
 
 
-class Message(object):
-    __slots__ = ['level', 'html', 'timestamp', 'linkable', '_setter__message']
+class Message(BaseMessage):
+    __slots__ = []
 
     def __init__(self, message, level='INFO', html=False, timestamp=None,
                  linkable=False):
-        self.message = message
-        self.level, self.html = self._get_level_and_html(level, html)
-        self.timestamp = self._get_timestamp(timestamp)
-        self.linkable = linkable
-
-    @utils.setter
-    def message(self, msg):
-        if not isinstance(msg, basestring):
-            msg = utils.unic(msg)
-        return msg.replace('\r\n', '\n')
+        level, html = self._get_level_and_html(level, html)
+        timestamp = self._get_timestamp(timestamp)
+        BaseMessage.__init__(self, message, level, html, timestamp, linkable)
 
     def _get_level_and_html(self, level, html):
         level = level.upper()

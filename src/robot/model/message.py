@@ -12,16 +12,34 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from robot.output.loggerhelper import Message as BaseMessage
+from robot import utils
 
 
-# TODO: Inheritance should work other way. This should be the base.
-class Message(BaseMessage):
-    __slots__ = []
+class Message(object):
+    __slots__ = ['level', 'html', 'timestamp', 'linkable', '_setter__message']
 
     def __init__(self, message='', level='INFO', html=False, timestamp=None,
                  linkable=False):
-        BaseMessage.__init__(self, message, level, html, timestamp, linkable)
+        self.message = message
+        self.level = level
+        self.html = html
+        self.timestamp = timestamp
+        self.linkable = linkable
+
+    @utils.setter
+    def message(self, msg):
+        if not isinstance(msg, basestring):
+            msg = utils.unic(msg)
+        return msg.replace('\r\n', '\n')
 
     def visit(self, visitor):
         visitor.visit_message(self)
+
+    def __unicode__(self):
+        return self.message
+
+    def __str__(self):
+        return unicode(self).encode('ASCII', 'replace')
+
+    def __repr__(self):
+        return repr(str(self))
