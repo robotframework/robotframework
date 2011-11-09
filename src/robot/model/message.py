@@ -18,7 +18,7 @@ from modelobject import ModelObject
 
 
 class Message(ModelObject):
-    __slots__ = ['level', 'html', 'timestamp', 'linkable', '_setter__message']
+    __slots__ = ['level', 'html', 'timestamp', 'linkable']
 
     def __init__(self, message='', level='INFO', html=False, timestamp=None,
                  linkable=False):

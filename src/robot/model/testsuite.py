@@ -25,9 +25,7 @@ from modelobject import ModelObject
 
 
 class TestSuite(ModelObject):
-    __slots__ = ['parent', 'source', '_name', 'doc', '_setter__metadata',
-                 '_setter__suites', '_setter__tests', '_setter__keywords',
-                 '_critical']
+    __slots__ = ['parent', 'source', '_name', 'doc', '_critical']
     test_class = TestCase
     keyword_class = Keyword
 

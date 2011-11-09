@@ -32,3 +32,13 @@ class setter(object):
             return
         setattr(instance, self.attr_name, self.method(instance, value))
 
+
+class SetterAwareType(type):
+
+    def __new__(cls, name, bases, dct):
+        slots = dct.get('__slots__')
+        if slots is not None:
+            for item in dct.values():
+                if isinstance(item, setter):
+                    slots.append(item.attr_name)
+        return type.__new__(cls, name, bases, dct)

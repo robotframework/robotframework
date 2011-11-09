@@ -20,8 +20,7 @@ from modelobject import ModelObject
 
 
 class Keyword(ModelObject):
-    __slots__ = ['parent', 'name', 'doc', 'args', 'type', 'timeout',
-                 '_setter__messages', '_setter__keywords']
+    __slots__ = ['parent', 'name', 'doc', 'args', 'type', 'timeout']
     message_class = Message
 
     def __init__(self, name='', doc='', args=None, type='kw', timeout=''):

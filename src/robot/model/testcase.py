@@ -20,8 +20,7 @@ from modelobject import ModelObject
 
 
 class TestCase(ModelObject):
-    __slots__ = ['parent', 'name', 'doc', 'timeout', '_setter__tags',
-                 '_setter__keywords']
+    __slots__ = ['parent', 'name', 'doc', 'timeout']
     keyword_class = Keyword
 
     def __init__(self, name='', doc='', tags=None, timeout=''):
