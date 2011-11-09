@@ -7,7 +7,7 @@ import unittest
 from robot.output.xmllogger import XmlLogger
 
 from robot.reporting.outputparser import OutputParser, CombiningOutputParser
-from robot.result.model import Message
+from robot.model import Message
 from robot.utils.abstractxmlwriter import AbstractXmlWriter
 from robot.utils.asserts import assert_equals, assert_true
 
