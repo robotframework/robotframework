@@ -118,7 +118,6 @@ class TestElements(unittest.TestCase):
         assert_equals(suite.suites[0].suites[0].name, 'quux')
         assert_equals(suite.suites[0].suites[0].longname, 'foo.bar.quux')
 
-
     def test_test_message(self):
         xml = """
         <robot>
