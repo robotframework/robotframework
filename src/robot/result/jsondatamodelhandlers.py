@@ -161,6 +161,8 @@ class TestHandler(_Handler):
         self._doc = self._get_id(utils.html_format(test.doc))
         self._data_from_children.append(self._doc)
         self._status = _StatusHandler(self._context, test).end_element('')
+        if test.message != '':
+            self._status.append(self._get_id(test.message))
 
     def add_child_data(self, data):
         self._current_children.append(data)
