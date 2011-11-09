@@ -19,9 +19,9 @@ from robot.result.visitor import ResultVisitor
 
 class DatamodelVisitor(ResultVisitor):
 
-    def __init__(self, result, split_log=False):
+    def __init__(self, result, log_path='NONE', split_log=False):
         self._elements = []
-        self._context = Context(split_log=split_log)
+        self._context = Context(log_path=log_path, split_log=split_log)
         self._elements.append(ExecutionResultHandler(self._context, result))
         result.visit(self)
 

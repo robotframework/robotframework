@@ -77,7 +77,9 @@ class ResultWriter(object):
     def write_rebot_results(self, *data_sources):
         self._data_sources = data_sources
         self.result_from_xml
-        visitor = DatamodelVisitor(self._execution_result)
+        visitor = DatamodelVisitor(self._execution_result,
+                                   log_path=self.settings['Log'],
+                                   split_log=self.settings['SplitLog'])
         self._data_model = DataModelWriter(visitor.datamodel)
         self.write_robot_results(None)
         return self._execution_result
