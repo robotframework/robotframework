@@ -218,6 +218,10 @@ class TestSuite(object):
 
 
 class TestCase(object):
+    __slots__ = ['parent', 'name', 'doc', 'status', 'message', 'timeout',
+                 'starttime', 'endtime', '_critical',
+                 '_setter_tags_value',
+                 '_setter_keywords_value']
 
     def __init__(self, name='', doc='', tags=None, status='UNDEFINED',
                 timeout='', starttime='N/A', endtime='N/A'):

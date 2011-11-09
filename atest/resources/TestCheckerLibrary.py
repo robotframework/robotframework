@@ -8,9 +8,12 @@ from robot.result.model import TestCase, Keyword
 
 from robot.libraries.BuiltIn import BuiltIn
 
-# Override __slots__ so that process_keywords() works
+# Override __slots__ so that process_keyword|test() works
 class MyKeyword(Keyword): pass
 robot.result.model.Keyword = MyKeyword
+
+class MyTestCase(TestCase): pass
+robot.result.model.TestCase = MyTestCase
 
 
 class TestCheckerLibrary:
