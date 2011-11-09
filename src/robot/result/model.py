@@ -277,6 +277,11 @@ class TestCase(object):
 
 
 class Keyword(object):
+    __slots__ = ['parent', 'name', 'doc', 'args', 'type', 'status',
+                 'starttime', 'endtime', 'timeout',
+                 '_setter_messages_value',
+                 '_setter_keywords_value']
+
 
     def __init__(self, name='', doc='', type='kw', status='UNDEFINED', timeout=''):
         self.parent = None
@@ -325,6 +330,7 @@ class Keyword(object):
 
 
 class Message(BaseMessage):
+    __slots__ = []
 
     def __init__(self, message='', level='INFO', html=False, timestamp=None,
                  linkable=False):
@@ -335,6 +341,7 @@ class Message(BaseMessage):
 
 
 class ItemList(object):
+    __slots__ = ['_item_class', '_parent', '_items']
 
     def __init__(self, item_class, items=None, parent=None):
         # TODO: This really should accept generic **common_attrs and not
@@ -388,6 +395,8 @@ class ItemList(object):
 
 
 class Keywords(ItemList):
+
+    __slots__ = []
 
     def __init__(self, items=None, parent=None):
         ItemList.__init__(self, Keyword, items, parent)

@@ -62,6 +62,8 @@ class AbstractLogger:
 
 
 class Message(object):
+    __slots__ = ['level', 'html', 'timestamp', 'linkable',
+                 '_setter_message_value']
 
     def __init__(self, message, level='INFO', html=False, timestamp=None,
                  linkable=False):
