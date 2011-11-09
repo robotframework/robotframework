@@ -13,13 +13,9 @@
 #  limitations under the License.
 
 from robot.common.statistics import CriticalStats, AllStats, Statistics
-from robot.output.loggerhelper import Message as BaseMessage
-from robot import utils
-from robot.model import Tags, Critical
-from robot.model.metadata import Metadata  # TODO: Shouldn't be needed in the long run
+from robot import model, utils
 
-from tagsetter import TagSetter
-from filter import Filter, MessageFilter
+from messagefilter import MessageFilter
 from configurer import SuiteConfigurer
 from keywordremover import KeywordRemover
 
@@ -70,6 +66,9 @@ class CombinedExecutionResult(ExecutionResult):
 class ExecutionErrors(object):
 
     def __init__(self):
+        # TODO: Handle somehow correctly. Probably Messages class is best approach.
+        from robot.model.itemlist import ItemList
+        from robot.model import Message
         self.messages = ItemList(Message)
 
     def add(self, other):
@@ -82,64 +81,18 @@ class ExecutionErrors(object):
         visitor.end_errors()
 
 
-class TestSuite(object):
-    __slots__ = ['parent', 'source', '_name', 'doc', 'message', 'starttime',
-                 'endtime', '_critical', '_setter__metadata', '_setter__suites',
-                 '_setter__tests', '_setter__keywords']
+class TestSuite(model.TestSuite):
+    __slots__ = ['message', 'starttime', 'endtime']
 
     def __init__(self, source='', name='', doc='', metadata=None):
-        self.parent = None
-        self.source = source
-        self.name = name
-        self.doc = doc
-        self.metadata = metadata
+        model.TestSuite.__init__(self, source, name, doc, metadata)
         self.message = ''
-        self.keywords = []
-        self.suites = []
-        self.tests = []
         self.starttime = 'N/A'
         self.endtime = 'N/A'
-        self._critical = None
-
-    def _get_name(self):
-        return self._name or ' & '.join(s.name for s in self.suites)
-    def _set_name(self, name):
-        self._name = name
-    name = property(_get_name, _set_name)
 
     @property
     def status(self):
         return 'PASS' if not self.critical_stats.failed else 'FAIL'
-
-    def set_criticality(self, critical_tags=None, non_critical_tags=None):
-        # TODO: should settings criticality be prevented for sub suites?
-        self._critical = Critical(critical_tags, non_critical_tags)
-
-    @property
-    def critical(self):
-        if self._critical:
-            return self._critical
-        if self.parent:
-            return self.parent.critical
-        if self._critical is None:
-            self._critical = Critical()
-        return self._critical
-
-    @utils.setter
-    def metadata(self, metadata):
-        return Metadata(metadata)
-
-    @utils.setter
-    def suites(self, suites):
-        return ItemList(TestSuite, suites, parent=self)
-
-    @utils.setter
-    def tests(self, tests):
-        return ItemList(TestCase, tests, parent=self)
-
-    @utils.setter
-    def keywords(self, keywords):
-        return Keywords(keywords, parent=self)
 
     @property
     def stat_message(self):
@@ -165,12 +118,6 @@ class TestSuite(object):
         return stat.total, ending, stat.passed, stat.failed
 
     @property
-    def id(self):
-        if not self.parent:
-            return 's1'
-        return '%s-s%d' % (self.parent.id, self.parent.suites.index(self)+1)
-
-    @property
     def critical_stats(self):
         return CriticalStats(self)
 
@@ -185,88 +132,29 @@ class TestSuite(object):
             return sum(item.elapsedtime for item in children)
         return utils.get_elapsed_time(self.starttime, self.endtime)
 
-    @property
-    def longname(self):
-        if self.parent:
-            return self.parent.longname + '.' + self.name
-        return self.name
-
-    @property
-    def test_count(self):
-        return self.all_stats.total
-
-    def set_tags(self, add=None, remove=None):
-        self.visit(TagSetter(add, remove))
-
     def remove_keywords(self, how):
         self.visit(KeywordRemover(how))
-
-    def filter(self, included_suites=None, included_tests=None,
-               included_tags=None, excluded_tags=None):
-        self.visit(Filter(included_suites, included_tests,
-                          included_tags, excluded_tags))
 
     def filter_messages(self, log_level):
         self.visit(MessageFilter(log_level))
 
-    def visit(self, visitor):
-        visitor.visit_suite(self)
 
-    def __unicode__(self):
-        return self.name
+class TestCase(model.TestCase):
+    __slots__ = ['status', 'message', 'starttime', 'endtime']
 
-    def __str__(self):
-        return unicode(self).encode('UTF-8')
-
-    def __repr__(self):
-        return repr(str(self))
-
-
-class TestCase(object):
-    __slots__ = ['parent', 'name', 'doc', 'status', 'message', 'timeout',
-                 'starttime', 'endtime', '_setter__tags', '_setter__keywords']
-
-    def __init__(self, name='', doc='', tags=None, status='FAIL',
-                timeout='', starttime='N/A', endtime='N/A'):
-        self.parent = None
-        self.name = name
-        self.doc = doc
-        self.tags = tags
+    def __init__(self, name='', doc='', tags=None, timeout='', status='FAIL',
+                 message='', starttime='N/A', endtime='N/A'):
+        model.TestCase.__init__(self, name, doc, tags, timeout)
         self.status = status
-        self.message = ''
-        self.timeout = timeout
-        self.keywords = []
+        self.message = message
         self.starttime = starttime
         self.endtime = endtime
-
-    @utils.setter
-    def tags(self, tags):
-        return Tags(tags)
-
-    @utils.setter
-    def keywords(self, keywords):
-        return Keywords(keywords, parent=self)
-
-    @property
-    def id(self):
-        if not self.parent:
-            return 't1'
-        return '%s-t%d' % (self.parent.id, self.parent.tests.index(self)+1)
 
     @property
     def elapsedtime(self):
         return utils.get_elapsed_time(self.starttime, self.endtime)
 
-    @property
-    def longname(self):
-        if self.parent:
-            return self.parent.longname + '.' + self.name
-        return self.name
-
-    @property
-    def critical(self):
-        return 'yes' if self.parent.critical.test_is_critical(self) else 'no'
-
+    # TODO: Rename to passed
     @property
     def is_passed(self):
         return self.status == 'PASS'
@@ -275,49 +163,16 @@ class TestCase(object):
     def is_included(self, includes, excludes):
         return self.tags.match(includes) and not self.tags.match(excludes)
 
-    def visit(self, visitor):
-        visitor.visit_test(self)
 
-    def __unicode__(self):
-        return self.name
+class Keyword(model.Keyword):
+    __slots__ = ['status', 'starttime', 'endtime']
 
-    def __str__(self):
-        return unicode(self).encode('UTF-8')
-
-    def __repr__(self):
-        return repr(str(self))
-
-
-class Keyword(object):
-    __slots__ = ['parent', 'name', 'doc', 'args', 'type', 'status', 'starttime',
-                 'endtime', 'timeout', '_setter__messages', '_setter__keywords']
-
-    def __init__(self, name='', doc='', type='kw', status='FAIL', timeout=''):
-        self.parent = None
-        self.name = name
-        self.doc = doc
-        self.args = []
-        self.type = type
+    def __init__(self, name='', doc='', args=None, type='kw', timeout='',
+                 status='FAIL', starttime='N/A', endtime='N/A'):
+        model.Keyword.__init__(self, name, doc, args, type, timeout)
         self.status = status
-        self.messages = []
-        self.keywords = []
-        self.starttime = ''
-        self.endtime = ''
-        self.timeout = timeout
-
-    @utils.setter
-    def keywords(self, keywords):
-        return Keywords(keywords, parent=self)
-
-    @utils.setter
-    def messages(self, messages):
-        return ItemList(Message, messages)
-
-    @property
-    def id(self):
-        if not self.parent:
-            return 'k1'
-        return '%s-k%d' % (self.parent.id, self.parent.keywords.index(self)+1)
+        self.starttime = starttime
+        self.endtime = endtime
 
     @property
     def elapsedtime(self):
@@ -327,111 +182,8 @@ class Keyword(object):
     def is_passed(self):
         return self.status == 'PASS'
 
-    @property
-    def is_forloop(self):
-        return self.type == 'for'
 
-    def visit(self, visitor):
-        visitor.visit_keyword(self)
-
-    def __unicode__(self):
-        return self.name
-
-    def __str__(self):
-        return unicode(self).encode('UTF-8')
-
-    def __repr__(self):
-        return repr(str(self))
-
-
-class Message(BaseMessage):
-    __slots__ = []
-
-    def __init__(self, message='', level='INFO', html=False, timestamp=None,
-                 linkable=False):
-        BaseMessage.__init__(self, message, level, html, timestamp, linkable)
-
-    def visit(self, visitor):
-        visitor.visit_message(self)
-
-
-class ItemList(object):
-    __slots__ = ['_item_class', '_parent', '_items']
-
-    def __init__(self, item_class, items=None, parent=None):
-        # TODO: This really should accept generic **common_attrs and not
-        # parent. Need to investigate why **common_attrs took so much memory.
-        self._item_class = item_class
-        self._parent = parent
-        self._items = []
-        if items:
-            self.extend(items)
-
-    def create(self, *args, **kwargs):
-        self.append(self._item_class(*args, **kwargs))
-        return self._items[-1]
-
-    def append(self, item):
-        self._check_type_and_set_attrs(item)
-        self._items.append(item)
-
-    def _check_type_and_set_attrs(self, item):
-        if not isinstance(item, self._item_class):
-            raise TypeError("Only '%s' objects accepted, got '%s'"
-                            % (self._item_class.__name__, type(item).__name__))
-        if self._parent:
-            item.parent = self._parent
-
-    def extend(self, items):
-        for item in items:
-            self._check_type_and_set_attrs(item)
-        self._items.extend(items)
-
-    def index(self, item):
-        return self._items.index(item)
-
-    def visit(self, visitor):
-        for item in self:
-            item.visit(visitor)
-
-    def __iter__(self):
-        return iter(self._items)
-
-    def __getitem__(self, index):
-        if isinstance(index, slice):
-            raise ValueError("'%s' object does not support slicing" % type(self).__name__)
-        return self._items[index]
-
-    def __len__(self):
-        return len(self._items)
-
-    def __unicode__(self):
-        return u'[%s]' % ', '.join(unicode(item) for item in self)
-
-    def __str__(self):
-        return unicode(self).encode('UTF-8')
-
-
-class Keywords(ItemList):
-    __slots__ = []
-
-    def __init__(self, items=None, parent=None):
-        ItemList.__init__(self, Keyword, items, parent)
-
-    @property
-    def setup(self):
-        return self[0] if (self and self[0].type == 'setup') else None
-
-    @property
-    def teardown(self):
-        return self[-1] if (self and self[-1].type == 'teardown') else None
-
-    @property
-    def all(self):
-        return self
-
-    @property
-    def normal(self):
-        for kw in self:
-            if kw.type in ('kw', 'for', 'foritem'):
-                yield kw
+# TODO: Split this module so that classes can set attributes themselves
+TestSuite.keyword_class = Keyword
+TestSuite.test_class = TestCase
+TestCase.keyword_class = Keyword

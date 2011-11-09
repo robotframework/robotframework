@@ -18,10 +18,9 @@ from metadata import Metadata
 from testcase import TestCase
 from keyword import Keyword, Keywords
 from itemlist import ItemList
-
-#from tagsetter import TagSetter
-#from filter import Filter, MessageFilter
-#from configurer import SuiteConfigurer
+from critical import Critical
+from tagsetter import TagSetter
+from filter import Filter
 
 
 class TestSuite(object):

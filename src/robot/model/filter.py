@@ -13,9 +13,9 @@
 #  limitations under the License.
 
 from robot import utils
-from robot.output.loggerhelper import IsLogged
-from robot.model import TagPatterns, SuiteNamePatterns, TestNamePatterns
 
+from tags import TagPatterns
+from namepatterns import SuiteNamePatterns, TestNamePatterns
 from visitor import SuiteVisitor
 
 
@@ -49,7 +49,9 @@ class Filter(SuiteVisitor):
     def start_suite(self, suite):
         if not self:
             return False
-        suite.starttime = suite.endtime = 'N/A' # TODO: is this too eager?
+        # TODO: is this too eager? Cleanup at least..
+        if hasattr(suite, 'starttime'):
+            suite.starttime = suite.endtime = 'N/A'
         if self.include_suites:
             return self._filter_by_suite_name(suite)
         if self.include_tests:
@@ -96,14 +98,3 @@ class Filter(SuiteVisitor):
     def __nonzero__(self):
         return bool(self.include_suites or self.include_tests or
                     self.include_tags or self.exclude_tags)
-
-
-class MessageFilter(SuiteVisitor):
-
-    def __init__(self, loglevel):
-        loglevel = loglevel or 'trace' #TODO: is this the correct default?
-        self._is_logged = IsLogged(loglevel)
-
-    def start_keyword(self, keyword):
-        keyword.messages = [msg for msg in keyword.messages
-                            if self._is_logged(msg.level)]

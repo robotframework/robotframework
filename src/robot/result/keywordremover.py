@@ -12,7 +12,7 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from robot.result.visitor import SuiteVisitor, SkipAllVisitor
+from robot.model import SuiteVisitor, SkipAllVisitor
 
 
 def KeywordRemover(how):

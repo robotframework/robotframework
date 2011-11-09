@@ -12,7 +12,7 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from visitor import SuiteVisitor
+from robot.model import SuiteVisitor
 
 
 class SuiteTeardownFailureHandler(SuiteVisitor):

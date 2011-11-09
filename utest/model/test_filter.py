@@ -1,8 +1,8 @@
 import unittest
 
 from robot.utils.asserts import assert_equal
-from robot.result.model import TestSuite
-from robot.result.filter import Filter
+from robot.model import TestSuite
+from robot.model.filter import Filter
 
 
 class FilterBaseTest(unittest.TestCase):
