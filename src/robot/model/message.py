@@ -14,8 +14,10 @@
 
 from robot import utils
 
+from modelobject import ModelObject
 
-class Message(object):
+
+class Message(ModelObject):
     __slots__ = ['level', 'html', 'timestamp', 'linkable', '_setter__message']
 
     def __init__(self, message='', level='INFO', html=False, timestamp=None,
@@ -37,9 +39,3 @@ class Message(object):
 
     def __unicode__(self):
         return self.message
-
-    def __str__(self):
-        return unicode(self).encode('ASCII', 'replace')
-
-    def __repr__(self):
-        return repr(str(self))

@@ -16,9 +16,10 @@ from robot import utils
 
 from itemlist import ItemList
 from message import Message
+from modelobject import ModelObject
 
 
-class Keyword(object):
+class Keyword(ModelObject):
     __slots__ = ['parent', 'name', 'doc', 'args', 'type', 'timeout',
                  '_setter__messages', '_setter__keywords']
     message_class = Message

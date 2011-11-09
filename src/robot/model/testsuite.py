@@ -21,9 +21,10 @@ from itemlist import ItemList
 from critical import Critical
 from tagsetter import TagSetter
 from filter import Filter
+from modelobject import ModelObject
 
 
-class TestSuite(object):
+class TestSuite(ModelObject):
     __slots__ = ['parent', 'source', '_name', 'doc', '_setter__metadata',
                  '_setter__suites', '_setter__tests', '_setter__keywords',
                  '_critical']
@@ -103,12 +104,3 @@ class TestSuite(object):
 
     def visit(self, visitor):
         visitor.visit_suite(self)
-
-    def __unicode__(self):
-        return self.name
-
-    def __str__(self):
-        return unicode(self).encode('ASCII', 'replace')
-
-    def __repr__(self):
-        return repr(str(self))

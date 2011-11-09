@@ -16,9 +16,10 @@ from robot import utils
 
 from tags import Tags
 from keyword import Keyword, Keywords
+from modelobject import ModelObject
 
 
-class TestCase(object):
+class TestCase(ModelObject):
     __slots__ = ['parent', 'name', 'doc', 'timeout', '_setter__tags',
                  '_setter__keywords']
     keyword_class = Keyword
@@ -58,11 +59,3 @@ class TestCase(object):
     def visit(self, visitor):
         visitor.visit_test(self)
 
-    def __unicode__(self):
-        return self.name
-
-    def __str__(self):
-        return unicode(self).encode('ASCII', 'replace')
-
-    def __repr__(self):
-        return repr(str(self))
