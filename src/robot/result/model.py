@@ -16,6 +16,7 @@ from robot.common.statistics import CriticalStats, AllStats, Statistics
 from robot.output.loggerhelper import Message as BaseMessage
 from robot import utils
 from robot.model import Tags, Critical
+from robot.model.metadata import Metadata  # TODO: Shouldn't be needed in the long run
 
 from tagsetter import TagSetter
 from filter import Filter, MessageFilter
@@ -46,7 +47,8 @@ class ExecutionResult(object):
         self.should_return_status_rc = status_rc
         SuiteConfigurer(**suite_opts).configure(self.suite)
 
-    def configure_statistics(self, *stat_opts): #TODO: use **kwargs
+    # TODO: 1) Use **kwargs. 2) Combine with configure?
+    def configure_statistics(self, *stat_opts):
         self._stat_opts = stat_opts
 
     def visit(self, visitor):
@@ -81,12 +83,9 @@ class ExecutionErrors(object):
 
 
 class TestSuite(object):
-    __slots__ = ['parent', 'source', '_name', 'doc',
-                 'message', 'starttime', 'endtime', '_critical',
-                 '_metadata',
-                 '_keywords',
-                 '_suites',
-                 '_tests']
+    __slots__ = ['parent', 'source', '_name', 'doc', 'message', 'starttime',
+                 'endtime', '_critical', '_setter__metadata', '_setter__suites',
+                 '_setter__tests', '_setter__keywords']
 
     def __init__(self, source='', name='', doc='', metadata=None):
         self.parent = None
@@ -126,19 +125,19 @@ class TestSuite(object):
             self._critical = Critical()
         return self._critical
 
-    @utils.setter('_metadata')
+    @utils.setter
     def metadata(self, metadata):
         return Metadata(metadata)
 
-    @utils.setter('_suites')
+    @utils.setter
     def suites(self, suites):
         return ItemList(TestSuite, suites, parent=self)
 
-    @utils.setter('_tests')
+    @utils.setter
     def tests(self, tests):
         return ItemList(TestCase, tests, parent=self)
 
-    @utils.setter('_keywords')
+    @utils.setter
     def keywords(self, keywords):
         return Keywords(keywords, parent=self)
 
@@ -225,11 +224,9 @@ class TestSuite(object):
 
 class TestCase(object):
     __slots__ = ['parent', 'name', 'doc', 'status', 'message', 'timeout',
-                 'starttime', 'endtime', '_critical',
-                 '_tags',
-                 '_keywords']
+                 'starttime', 'endtime', '_setter__tags', '_setter__keywords']
 
-    def __init__(self, name='', doc='', tags=None, status='UNDEFINED',
+    def __init__(self, name='', doc='', tags=None, status='FAIL',
                 timeout='', starttime='N/A', endtime='N/A'):
         self.parent = None
         self.name = name
@@ -241,13 +238,12 @@ class TestCase(object):
         self.keywords = []
         self.starttime = starttime
         self.endtime = endtime
-        self._critical = 'yes'
 
-    @utils.setter('_tags')
+    @utils.setter
     def tags(self, tags):
         return Tags(tags)
 
-    @utils.setter('_keywords')
+    @utils.setter
     def keywords(self, keywords):
         return Keywords(keywords, parent=self)
 
@@ -293,13 +289,10 @@ class TestCase(object):
 
 
 class Keyword(object):
-    __slots__ = ['parent', 'name', 'doc', 'args', 'type', 'status',
-                 'starttime', 'endtime', 'timeout',
-                 '_messages',
-                 '_keywords']
+    __slots__ = ['parent', 'name', 'doc', 'args', 'type', 'status', 'starttime',
+                 'endtime', 'timeout', '_setter__messages', '_setter__keywords']
 
-
-    def __init__(self, name='', doc='', type='kw', status='UNDEFINED', timeout=''):
+    def __init__(self, name='', doc='', type='kw', status='FAIL', timeout=''):
         self.parent = None
         self.name = name
         self.doc = doc
@@ -312,11 +305,11 @@ class Keyword(object):
         self.endtime = ''
         self.timeout = timeout
 
-    @utils.setter('_keywords')
+    @utils.setter
     def keywords(self, keywords):
         return Keywords(keywords, parent=self)
 
-    @utils.setter('_messages')
+    @utils.setter
     def messages(self, messages):
         return ItemList(Message, messages)
 
@@ -442,15 +435,3 @@ class Keywords(ItemList):
         for kw in self:
             if kw.type in ('kw', 'for', 'foritem'):
                 yield kw
-
-
-class Metadata(utils.NormalizedDict):
-
-    def __init__(self, initial=None):
-        utils.NormalizedDict.__init__(self, initial, ignore=['_'])
-
-    def __unicode__(self):
-        return u'{%s}' % ', '.join('%s: %s' % (k, self[k]) for k in self)
-
-    def __str__(self):
-        return unicode(self).encode('UTF-8')

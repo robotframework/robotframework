@@ -12,23 +12,16 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+from robot.utils import NormalizedDict
 
-class setter(object):
 
-    def __init__(self, method):
-        self.method = method
-        self.attr_name = '_setter__' + method.__name__
+class Metadata(NormalizedDict):
 
-    def __get__(self, instance, owner):
-        if instance is None:
-            return self
-        try:
-            return getattr(instance, self.attr_name)
-        except AttributeError:
-            raise AttributeError(self.method.__name__)
+    def __init__(self, initial=None):
+        NormalizedDict.__init__(self, initial, ignore=['_'])
 
-    def __set__(self, instance, value):
-        if instance is None:
-            return
-        setattr(instance, self.attr_name, self.method(instance, value))
+    def __unicode__(self):
+        return u'{%s}' % ', '.join('%s: %s' % (k, self[k]) for k in self)
 
+    def __str__(self):
+        return unicode(self).encode('ASCII', 'replace')

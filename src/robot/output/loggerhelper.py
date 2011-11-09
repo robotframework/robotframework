@@ -62,8 +62,7 @@ class AbstractLogger:
 
 
 class Message(object):
-    __slots__ = ['level', 'html', 'timestamp', 'linkable',
-                 '_message']
+    __slots__ = ['level', 'html', 'timestamp', 'linkable', '_setter__message']
 
     def __init__(self, message, level='INFO', html=False, timestamp=None,
                  linkable=False):
@@ -72,7 +71,7 @@ class Message(object):
         self.timestamp = self._get_timestamp(timestamp)
         self.linkable = linkable
 
-    @utils.setter('_message')
+    @utils.setter
     def message(self, msg):
         if not isinstance(msg, basestring):
             msg = utils.unic(msg)
