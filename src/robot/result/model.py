@@ -47,7 +47,8 @@ class ExecutionResult(object):
         self.should_return_status_rc = status_rc
         SuiteConfigurer(**suite_opts).configure(self.suite)
 
-    def configure_statistics(self, *stat_opts): #TODO: use **kwargs
+    # TODO: 1) Use **kwargs. 2) Combine with configure?
+    def configure_statistics(self, *stat_opts):
         self._stat_opts = stat_opts
 
     def visit(self, visitor):
@@ -82,11 +83,8 @@ class ExecutionErrors(object):
 
 
 class TestSuite(object):
-    __slots__ = ['parent', 'source', '_name', 'doc',
-                 'message', 'starttime', 'endtime', '_critical',
-                 '_metadata',
-                 '_keywords',
-                 '_suites',
+    __slots__ = ['parent', 'source', '_name', 'doc', 'message', 'starttime',
+                 'endtime', '_critical', '_metadata', '_keywords', '_suites',
                  '_tests']
 
     def __init__(self, source='', name='', doc='', metadata=None):
@@ -226,9 +224,7 @@ class TestSuite(object):
 
 class TestCase(object):
     __slots__ = ['parent', 'name', 'doc', 'status', 'message', 'timeout',
-                 'starttime', 'endtime', '_critical',
-                 '_tags',
-                 '_keywords']
+                 'starttime', 'endtime', '_critical', '_tags', '_keywords']
 
     def __init__(self, name='', doc='', tags=None, status='UNDEFINED',
                 timeout='', starttime='N/A', endtime='N/A'):
@@ -295,12 +291,9 @@ class TestCase(object):
 
 class Keyword(object):
     __slots__ = ['parent', 'name', 'doc', 'args', 'type', 'status',
-                 'starttime', 'endtime', 'timeout',
-                 '_messages',
-                 '_keywords']
+                 'starttime', 'endtime', 'timeout', '_messages', '_keywords']
 
-
-    def __init__(self, name='', doc='', type='kw', status='UNDEFINED', timeout=''):
+    def __init__(self, name='', doc='', type='kw', status='FAIL', timeout=''):
         self.parent = None
         self.name = name
         self.doc = doc
