@@ -15,9 +15,7 @@
 from robot.common import Statistics
 from robot.errors import DataError
 from robot.output import LOGGER
-from robot.reporting.jsondatamodel import DataModelWriter
 from robot.result.builders import ResultFromXML as RFX
-from robot.result.datamodel import DatamodelVisitor
 from robot.result.serializer import RebotXMLWriter
 from robot import utils
 
@@ -76,12 +74,9 @@ class ResultWriter(object):
 
     def write_rebot_results(self, *data_sources):
         self._data_sources = data_sources
-        self.result_from_xml
-        visitor = DatamodelVisitor(self._execution_result,
-                                   log_path=self.settings['Log'],
-                                   split_log=self.settings['SplitLog'])
-        self._data_model = DataModelWriter(visitor.datamodel)
-        self.write_robot_results(None)
+        builder = OutputBuilder(self)
+        self.write_robot_results(builder.build())
+        builder.finalize()
         return self._execution_result
 
 
