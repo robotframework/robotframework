@@ -103,11 +103,11 @@ describe("Handling Suite", function () {
 
     it("should parse keyword", function () {
         var kw = nthKeyword(firstTest(window.testdata.suite()), 0);
-        expect(kw.name).toEqual("BuiltIn.Log");
+        expect(kw.name).toEqual("BuiltIn.Sleep");
         expect(kw.status).toEqual("PASS");
         expect(kw.times).toBeDefined();
-        expect(kw.times.elapsedMillis).toBeGreaterThan(0);
-        expect(kw.times.elapsedMillis).toBeLessThan(firstTest(window.testdata.suite()).times.elapsedMillis+1);
+        expect(kw.times.elapsedMillis).toBeGreaterThan(99);
+        expect(kw.times.elapsedMillis).toBeLessThan(200);
         expect(kw.path).toEqual("Suite.Test.0");
         expect(kw.type).toEqual("KEYWORD");
     });
@@ -126,7 +126,7 @@ describe("Handling Suite", function () {
 
     it("should parse message", function () {
         var message = nthKeyword(firstTest(window.testdata.suite()), 0).messages()[0];
-        expect(message.text).toEqual("message");
+        expect(message.text).toEqual("Slept 100 milliseconds");
         expect(message.time).toBeLessThan(util.timeFromDate(new Date()));
     });
 
@@ -292,9 +292,9 @@ describe("Parent Suite Teardown Failure", function (){
         expect(test.message()).toEqual("Teardown of the parent suite failed.");
     });
 
-    it("should not show suite message 'Teardown of the parent suite failed.'", function (){
+    it("should show suite message 'Teardown of the parent suite failed.'", function (){
         var suite = window.testdata.suite().suites()[0];
-        expect(suite.message()).toEqual("");
+        expect(suite.message()).toEqual("Teardown of the parent suite failed.");
     });
 
     it("should show root suite message 'Suite teardown failed:\nAssertionError'", function (){
