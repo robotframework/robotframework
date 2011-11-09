@@ -28,7 +28,6 @@ Known timestamp should be correct
     [Arguments]  ${msg}
     Check log message  ${msg}  Known timestamp
     Should Be Equal  ${msg.timestamp}  20110618 20:43:54.931
-    Should Be Equal  ${msg.time}  20:43:54.931
 
 Current timestamp should be smaller than kw end time
     [Arguments]  ${kw}
