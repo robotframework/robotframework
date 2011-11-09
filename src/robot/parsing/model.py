@@ -97,7 +97,7 @@ class _TestData(object):
         :param **options: Configuration for serialization. Any optional arguments
             of robot.writer.serializer.SerializationContext can be given.
         """
-        Serializer(SerializationContext(self, **options)).serialize()
+        Serializer().serialize(self, **options)
 
 
 class TestCaseFile(_TestData):

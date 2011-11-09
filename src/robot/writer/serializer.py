@@ -65,21 +65,19 @@ class SerializationContext(object):
 
 
 class Serializer(object):
+    """The Serializer class is used to serialize Robot Framework test data files.
+    """
 
-    def __init__(self, context):
-        """The Serializer class is used to serialize Robot Framework test data files.
+    def serialize(self, datafile, **options):
+        """Serializes given `datafile` using `**options`.
 
-        :param SerializationContext context: The context used with this serializer.
+        :param datafile: A robot.parsing.model.DataFile object to be serialized
+        :param **options: A SerializationContext is initialized based on these
         """
-        self._ctx = context
-
-    def serialize(self):
-        """Does the actual serialization, based on the context given in
-        :py:meth:`__init__`.
-        """
-        self._writer = FileWriter(self._ctx)
-        self._serialize(self._ctx.datafile)
-        self._ctx.finish()
+        context = SerializationContext(datafile, **options)
+        self._writer = FileWriter(context)
+        self._serialize(context.datafile)
+        context.finish()
 
     def _serialize(self, datafile):
         for table in datafile:
