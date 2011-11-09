@@ -16,6 +16,7 @@ from robot.common.statistics import CriticalStats, AllStats, Statistics
 from robot.output.loggerhelper import Message as BaseMessage
 from robot import utils
 from robot.model import Tags, Critical
+from robot.model.metadata import Metadata  # TODO: Shouldn't be needed in the long run
 
 from tagsetter import TagSetter
 from filter import Filter, MessageFilter
@@ -442,15 +443,3 @@ class Keywords(ItemList):
         for kw in self:
             if kw.type in ('kw', 'for', 'foritem'):
                 yield kw
-
-
-class Metadata(utils.NormalizedDict):
-
-    def __init__(self, initial=None):
-        utils.NormalizedDict.__init__(self, initial, ignore=['_'])
-
-    def __unicode__(self):
-        return u'{%s}' % ', '.join('%s: %s' % (k, self[k]) for k in self)
-
-    def __str__(self):
-        return unicode(self).encode('UTF-8')
