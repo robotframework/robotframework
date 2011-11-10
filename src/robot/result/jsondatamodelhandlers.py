@@ -14,7 +14,7 @@
 
 from robot import utils
 from robot.output import LEVELS
-from robot.result.model import TestSuite, Keyword, TestCase
+from robot.result import TestSuite, Keyword, TestCase
 
 
 class _Handler(object):

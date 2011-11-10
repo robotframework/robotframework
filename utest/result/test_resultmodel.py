@@ -1,7 +1,7 @@
 import unittest
-from robot.utils.asserts import assert_equal, assert_true, assert_raises
+from robot.utils.asserts import assert_equal
 
-from robot.result.model import *
+from robot.result import TestSuite, TestCase
 
 
 class TestSuiteStats(unittest.TestCase):

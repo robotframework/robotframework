@@ -3,7 +3,7 @@ from robot.model.critical import Critical
 
 from robot.utils.asserts import *
 from robot.model.statistics import *
-from robot.result.model import TestSuite, TestCase
+from robot.result import TestSuite, TestCase
 
 
 def verify_stat(stat, name, passed, failed, critical=None, non_crit=None, id=None):

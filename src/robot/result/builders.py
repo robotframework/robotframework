@@ -18,7 +18,7 @@ from robot.errors import DataError
 from robot.utils.etreewrapper import ET
 from robot import utils
 
-from model import ExecutionResult, CombinedExecutionResult
+from executionresult import ExecutionResult, CombinedExecutionResult
 from suiteteardownfailed import SuiteTeardownFailureHandler
 
 

@@ -12,7 +12,21 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from testsuite import TestSuite
-from testcase import TestCase
-from keyword import Keyword
+from robot.model.itemlist import ItemList
+from robot.model import Message
 
+
+class ExecutionErrors(object):
+
+    def __init__(self):
+        self.messages = ItemList(Message)
+
+    def add(self, other):
+        self.messages.extend(other.messages)
+
+    def visit(self, visitor):
+        # TODO: visiting logic should be moved into visitor
+        visitor.start_errors()
+        for message in self.messages:
+            message.visit(visitor)
+        visitor.end_errors()

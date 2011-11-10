@@ -12,7 +12,23 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from testsuite import TestSuite
-from testcase import TestCase
-from keyword import Keyword
+from robot import model, utils
 
+
+class Keyword(model.Keyword):
+    __slots__ = ['status', 'starttime', 'endtime']
+
+    def __init__(self, name='', doc='', args=None, type='kw', timeout='',
+                 status='FAIL', starttime='N/A', endtime='N/A'):
+        model.Keyword.__init__(self, name, doc, args, type, timeout)
+        self.status = status
+        self.starttime = starttime
+        self.endtime = endtime
+
+    @property
+    def elapsedtime(self):
+        return utils.get_elapsed_time(self.starttime, self.endtime)
+
+    @property
+    def is_passed(self):
+        return self.status == 'PASS'
