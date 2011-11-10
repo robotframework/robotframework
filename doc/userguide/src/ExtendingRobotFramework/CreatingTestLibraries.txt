@@ -1155,7 +1155,7 @@ __ `List variables`_
    Should Be Equal   @{list}[0]          first value
    Should Be Equal   @{list}[1]          second value
    ${s1}             ${s2}               @{li} =             Return Multiple Values
-   Should Be Equal   ${v1} ${v2}         a list
+   Should Be Equal   ${s1} ${s2}         a list
    Should Be Equal   @{li}[0] @{li}[1]   of strings
    ================  ==================  ==================  =======================
 
