@@ -26,11 +26,16 @@ class TestJsoning(unittest.TestCase, DatamodelVisitor):
     def test_non_html_message_to_json(self):
         message = Message(message='This is an html mark --> <html>',
                           level='INFO',
-                          html=False,
                           timestamp='19991211 12:12:12.821')
         message.visit(self)
         message.message = utils.html_escape(message.message)
         self._verify_message(self.datamodel[0], message)
+
+    def test_times(self):
+        for timestamp in ['20110531 12:48:09.020','N/A','20110531 12:48:09.010','20110531 12:48:19.035']:
+            Message(timestamp=timestamp).visit(self)
+        for index, millis in enumerate([0, None, -10, 10015]):
+            assert_equals(self.datamodel[index][0], millis)
 
     def _verify_message(self, message_json, message):
         assert_equals(message_json[0], self._context.timestamp(message.timestamp))
