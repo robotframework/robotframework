@@ -12,7 +12,6 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-
 from robot import utils
 from robot.errors import DataError
 from robot.model import Message as BaseMessage
@@ -109,16 +108,17 @@ class IsLogged:
 
 class AbstractLoggerProxy:
     _methods = NotImplemented
+    _no_method = lambda *args: None
 
     def __init__(self, logger):
         self.logger = logger
-        default = lambda *args: None
         for name in self._methods:
-            try:
-                method = getattr(logger, name)
-            except AttributeError:
-                method = getattr(logger, self._toCamelCase(name), default)
-            setattr(self, name, method)
+            setattr(self, name, self._get_method(logger, name))
+
+    def _get_method(self, logger, name):
+        if hasattr(logger, name):
+            return getattr(logger, name)
+        return getattr(logger, self._toCamelCase(name), self._no_method)
 
     def _toCamelCase(self, name):
         parts = name.split('_')
