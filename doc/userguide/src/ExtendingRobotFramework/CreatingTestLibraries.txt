@@ -828,9 +828,13 @@ not as **foo**. If libraries want to use formatting, links, display
 images and so on, they can use a special pseudo log level
 :msg:`HTML`. Robot Framework will write these messages directly into
 the log with the :msg:`INFO` level, so they can use any HTML syntax
-they want. Notice that this feature needs to be used with care, because
-one badly placed :code:`</table>` tag can ruin the log file quite
-badly.
+they want. Notice that this feature needs to be used with care,
+because, for example, one badly placed :code:`</table>` tag can ruin
+the log file quite badly.
+
+When using the `public logging API`_, various logging methods
+have optional :code:`html` attribute that can be set to :code:`True`
+to enable logging in HTML format.
 
 Timestamps
 ``````````
@@ -850,8 +854,8 @@ must be placed after the `log level`__ separated from it with a colon::
 As illustrated by the examples below, adding the timestamp is easy
 both using Python and Java. If you are using Python, it is, however,
 even easier to get accurate timestamps using the `programmatic logging
-APIs`_. A big benefit of this mechanism is that it works also with the
-`remote library interface`_.
+APIs`_. A big benefit of adding timestamps explicitly is that this
+approach works also with the `remote library interface`_.
 
 Python:
 
@@ -875,23 +879,37 @@ __ `Using log levels`_
 
 Logging to console
 ``````````````````
-If libraries need to write something to the console they have three
-options.
-
-As already discussed, warnings as well as all messages written to the
+If libraries need to write something to the console they have several
+options. As already discussed, warnings and all messages written to the
 standard error stream are written both to the log file and to the
 console. Both of these options have a limitation that the messages end
-up to the console only after the currently executing keyword finishes.
-A bonus is that these approaches work both with Python and Java based
-libraries.
+up to the console only after the currently executing keyword
+finishes. A bonus is that these approaches work both with Python and
+Java based libraries.
 
-The third option, that is only available with Python, is writing
-messages to :code:`sys.__stdout__`. Robot Framework only intercepts
-:code:`sys.stdout` and :code:`sys.stderr` and leaves
-:code:`sys.__stdout__` (and :code:`sys.__stderr__`) alone like all
-well behaving Python programs should. When using
-:code:`sys.__stdout__` messages end up to the console immediately and
-are not written to the log file at all.
+Another option, that is only available with Python, is writing
+messages to :code:`sys.__stdout__` or :code:`sys.__stderr__`. When
+using this approach, messages are written to the console immediately
+and are not written to the log file at all:
+
+.. sourcecode:: python
+
+   import sys
+
+   def my_keyword(arg):
+      sys.__stdout__.write('Got arg %s\n' % arg)
+
+The final option is using the `public logging API`_:
+
+.. sourcecode:: python
+
+   from robot.api import logger
+
+   def log_to_console(arg):
+      logger.console('Got arg %s' % arg)
+
+   def log_to_console_and_log_file(arg)
+      logger.info('Got arg %s' % arg, also_console=True)
 
 Logging example
 ```````````````
