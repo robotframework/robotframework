@@ -15,6 +15,7 @@
 import re
 
 from robot import utils
+from robot.model.tags import TagPatterns
 
 
 class Statistics:
@@ -233,7 +234,7 @@ class TagStatistics:
                 self.stats[name] = TagStat(name, self._get_doc(name),
                                            self._get_links(name),
                                            combined=pattern)
-            if test.is_included([pattern], []):
+            if TagPatterns(pattern).match(test.tags):
                 self.stats[name].add_test(test)
 
     def serialize(self, serializer):
