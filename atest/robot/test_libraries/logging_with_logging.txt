@@ -1,10 +1,15 @@
 *** Settings ***
 Documentation   Tests for logging using Python's `logging` module.
-Suite Setup     Run Tests  -L debug  test_libraries/logging_with_logging.txt
+Suite Setup     Run Tests  -L none  test_libraries/logging_with_logging.txt
 Force Tags      regression  pybot  jybot
 Resource        atest_resource.txt
 
 *** Test Cases ***
+
+All logging is disabled
+    ${tc} =  Check test case  ${TEST NAME}
+    Should be empty  ${tc.kws[0].msgs}
+    Should be empty  ${tc.kws[1].msgs}
 
 Log with default levels
     ${tc} =  Check test case  ${TEST NAME}
@@ -39,6 +44,7 @@ Log using non-propagating logger
 
 Timestamps are accurate
     ${tc} =  Check test case  ${TEST NAME}
+    Length Should Be  ${tc.kws[0].msgs}  2
     ${msg1}  ${msg2} =  Set variable  ${tc.kws[0].msgs}
     Check log message  ${msg1}  First message
     Check log message  ${msg2}  Second message 0.1 sec later
