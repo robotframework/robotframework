@@ -1,9 +1,11 @@
 import unittest
-from robot.model.critical import Critical
 
-from robot.utils.asserts import *
-from robot.model.statistics import *
+from robot.model.critical import Critical
+from robot.utils.asserts import assert_equals, assert_none, fail
+from robot.model.statistics import (Statistics, TagStatistics, TagStatLink,
+                                    TagStatInfo)
 from robot.result import TestSuite, TestCase
+from robot import utils
 
 
 def verify_stat(stat, name, passed, failed, critical=None, non_crit=None, id=None):
@@ -15,7 +17,7 @@ def verify_stat(stat, name, passed, failed, critical=None, non_crit=None, id=Non
     if non_crit is not None:
         assert_equals(stat.non_critical, non_crit)
     if id:
-        assert_equal(stat.id, id)
+        assert_equals(stat.id, id)
 
 def verify_suite(suite, name, id, crit_pass, crit_fail, all_pass=None, all_fail=None):
     verify_stat(suite.critical, name, crit_pass, crit_fail, id=id)
@@ -97,6 +99,10 @@ class TestStatisticsNotSoSimple(unittest.TestCase):
         verify_stat(tags.stats['t3'], 't3', 0, 2, False, False)
 
 
+class TestStatisticsVisitation(unittest.TestCase):
+    pass
+
+
 _incl_excl_data = [
     ([], []),
     ([], ['t1','t2']),
@@ -119,7 +125,7 @@ class TestTagStatistics(unittest.TestCase):
             tagstats.add_test(TestCase(status='PASS', tags=tags), Critical())
             exp_keys = [tag for tag in sorted(tags)
                         if incl == [] or utils.matches_any(tag, incl)]
-            assert_equal(sorted(tagstats.stats.keys()),
+            assert_equals(sorted(tagstats.stats.keys()),
                          exp_keys, "Incls: %s " % incl)
 
     def test_exclude(self):
@@ -128,7 +134,7 @@ class TestTagStatistics(unittest.TestCase):
             tagstats.add_test(TestCase(status='PASS', tags=tags), Critical())
             exp_keys = [tag for tag in sorted(tags)
                         if not utils.matches_any(tag, excl)]
-            assert_equal(sorted(tagstats.stats.keys()),
+            assert_equals(sorted(tagstats.stats.keys()),
                          exp_keys, "Excls: %s" % excl)
 
     def test_include_and_exclude(self):
@@ -143,7 +149,7 @@ class TestTagStatistics(unittest.TestCase):
               ]:
             tagstats = TagStatistics(incl, excl)
             tagstats.add_test(TestCase(status='PASS', tags=tags), Critical())
-            assert_equal(sorted(tagstats.stats.keys()),
+            assert_equals(sorted(tagstats.stats.keys()),
                          exp, "Incls: %s, Excls: %s" % (incl, excl))
 
     def test_combine_with_name(self):
@@ -184,7 +190,6 @@ class TestTagStatistics(unittest.TestCase):
                           'comb: %s, test: %s' % (comb_tags, test_tags))
 
     def test_is_combined_with_not_statements(self):
-        stats = TagStatistics()
         for comb_tags, test_tags, expected_count in [
                 ('t1NOTt2', [], 0),
                 ('t1NOTt2', ['t1'], 1),
@@ -273,9 +278,9 @@ class TestTagStatLink(unittest.TestCase):
                           ('^hello$', 'gopher://hello.world:8090/hello.html',
                            'Hello World'))]:
             link = TagStatLink(*arg)
-            assert_equal(exp[0], link._regexp.pattern)
-            assert_equal(exp[1], link._link)
-            assert_equal(exp[2], link._title)
+            assert_equals(exp[0], link._regexp.pattern)
+            assert_equals(exp[1], link._link)
+            assert_equals(exp[2], link._title)
 
     def test_valid_string_containing_patterns_is_parsed_correctly(self):
         for arg, exp_pattern in [('*', '^(.*)$'), ('f*r', '^f(.*)r$'),
@@ -283,11 +288,11 @@ class TestTagStatLink(unittest.TestCase):
                                  ('??', '^(..)$'), ('f???ar', '^f(...)ar$'),
                                  ('F*B?R*?', '^F(.*)B(.)R(.*)(.)$')]:
             link = TagStatLink(arg, 'some_url', 'some_title')
-            assert_equal(exp_pattern, link._regexp.pattern)
+            assert_equals(exp_pattern, link._regexp.pattern)
 
     def test_underscores_in_title_are_converted_to_spaces(self):
         link = TagStatLink('', '', 'my_name')
-        assert_equal(link._title, 'my name')
+        assert_equals(link._title, 'my name')
 
     def test_get_link_returns_correct_link_when_matches(self):
         for arg, exp in [(('smoke', 'http://tobacco.com', 'Lung_cancer'),
@@ -317,27 +322,27 @@ class TestTagStatLink(unittest.TestCase):
     def test_pattern_match(self):
         link = TagStatLink('f?o*r', 'http://foo/bar.html', 'FooBar')
         for tag in ['foobar', 'foor', 'f_ofoobarfoobar', 'fOoBAr']:
-            assert_equal(link.get_link(tag), ('http://foo/bar.html', 'FooBar'))
+            assert_equals(link.get_link(tag), ('http://foo/bar.html', 'FooBar'))
 
     def test_pattern_substitution_with_one_match(self):
         link = TagStatLink('tag-*', 'http://tracker/?id=%1', 'Tracker')
         for id in ['1', '23', '456']:
             exp = ('http://tracker/?id=%s' % id, 'Tracker')
-            assert_equal(exp, link.get_link('tag-%s' % id))
+            assert_equals(exp, link.get_link('tag-%s' % id))
 
     def test_pattern_substitution_with_multiple_matches(self):
         link = TagStatLink('?-*', 'http://tracker/?id=%1-%2', 'Tracker')
         for id1, id2 in [('1', '2'), ('3', '45'), ('f', 'bar')]:
             exp = ('http://tracker/?id=%s-%s' % (id1, id2), 'Tracker')
-            assert_equal(exp, link.get_link('%s-%s' % (id1, id2)))
+            assert_equals(exp, link.get_link('%s-%s' % (id1, id2)))
 
     def test_pattern_substitution_with_multiple_substitutions(self):
         link = TagStatLink('?-?-*', '%3-%3-%1-%2-%3', 'Tracker')
-        assert_equal(link.get_link('a-b-XXX'), ('XXX-XXX-a-b-XXX', 'Tracker'))
+        assert_equals(link.get_link('a-b-XXX'), ('XXX-XXX-a-b-XXX', 'Tracker'))
 
     def test_matches_are_ignored_in_pattern_substitution(self):
         link = TagStatLink('?-*-*-?', '%4-%2-%2-%4', 'Tracker')
-        assert_equal(link.get_link('A-XXX-ABC-B'), ('B-XXX-XXX-B', 'Tracker'))
+        assert_equals(link.get_link('A-XXX-ABC-B'), ('B-XXX-XXX-B', 'Tracker'))
 
 
 class TestTagStatLinks(unittest.TestCase):
@@ -345,7 +350,7 @@ class TestTagStatLinks(unittest.TestCase):
     def test_tag_stat_links_with_valid_tags(self):
         values = [('1', '2', '3'), ('tag', 'foo.html', 'bar')]
         tag_stat_links = TagStatInfo([], values)
-        assert_equal(len(tag_stat_links._links), 2)
+        assert_equals(len(tag_stat_links._links), 2)
 
 
 if __name__ == "__main__":
