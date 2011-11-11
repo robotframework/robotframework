@@ -219,68 +219,6 @@ class TestTagStatistics(unittest.TestCase):
             assert_equals(len(stats.stats['Name'].tests), expected_count,
                           'comb: %s, test: %s' % (comb_tags, test_tags))
 
-    def test_is_combined_with_not_statements(self):
-        stats = TagStatistics()
-        for comb_tags, test_tags, expected_count in [
-                ('t1NOTt2', [], 0),
-                ('t1NOTt2', ['t1'], 1),
-                ('t1NOTt2', ['t1','t2'], 0),
-                ('t1NOTt2', ['t3'], 0),
-                ('t1NOTt2', ['t3','t2'], 0),
-                ('t*NOTt2', ['t1'], 1),
-                ('t*NOTt2', ['t'], 1),
-                ('t*NOTt2', ['TEE'], 1),
-                ('t*NOTt2', ['T2'], 0),
-                ('T*NOTT?', ['t'], 1),
-                ('T*NOTT?', ['tt'], 0),
-                ('T*NOTT?', ['ttt'], 1),
-                ('T*NOTT?', ['tt','t'], 0),
-                ('T*NOTT?', ['ttt','something'], 1),
-                ('tNOTs*NOTr', ['t'], 1),
-                ('tNOTs*NOTr', ['t','s'], 0),
-                ('tNOTs*NOTr', ['R','T'], 0),
-                ('tNOTs*NOTr', ['R','T','s'], 0),
-               ]:
-            self._test_combined_statistics(comb_tags, test_tags, expected_count)
-
-    def test_combine(self):
-        # This is more like an acceptance test than a unit test ...
-        for comb_tags, comb_matches, tests_tags, crit_tags in [
-                (['t1&t2'], [1], [['t1','t2','t3'],['t1','t3']], []),
-                (['1&2&3'], [2], [['1','2','3'],['1','2','3','4']], ['1','2']),
-                (['1&2','1&3'], [1,2], [['1','2','3'],['1','3'],['1']], ['1']),
-                (['t*'], [3], [['t1','x','y'],['tee','z'],['t']], ['x']),
-                (['t?&s'], [2], [['t1','s'],['tt','s','u'],['tee','s'],['s']], []),
-                (['t*&s','*'], [2,3], [['s','t','u'],['tee','s'],[],['x']], []),
-                (['tNOTs'], [1], [['t','u'],['t','s']], []),
-                (['tNOTs','t&s','tNOTsNOTu', 't&sNOTu'], [3,2,2,1],
-                  [['t','u'],['t','s'],['s','t','u'],['t'],['t','v']], ['t']),
-                (['nonex'], [0], [['t1'],['t1,t2'],[]], [])
-               ]:
-            # 1) Create tag stats
-            tagstats = TagStatistics(combine=[(t, '') for t in comb_tags])
-            all_tags = []
-            for tags in tests_tags:
-                tagstats.add_test(TestMock('PASS', tags), _Critical(crit_tags))
-                all_tags.extend(tags)
-            # 2) Actual values
-            names = [stat.name for stat in sorted(tagstats.stats.values())]
-            # 3) Expected values
-            exp_crit = []; exp_noncr = []; exp_comb = []
-            for tag in utils.normalize_tags(all_tags):
-                if tag in crit_tags:
-                    exp_crit.append(tag)
-                else:
-                    exp_noncr.append(tag)
-            for comb, count in zip(comb_tags, comb_matches):
-                exp_comb.append(comb)
-                try:
-                    assert_equals(len(tagstats.stats[comb].tests), count)
-                except KeyError:
-                    fail("No key %s. Stats: %s" % (comb, tagstats.stats))
-            exp_names = exp_crit + sorted(exp_comb) + exp_noncr
-            # 4) Verify names (match counts were already verified)
-            assert_equals(names, exp_names)
 
     def test_through_suite(self):
         suite = generate_default_suite()
