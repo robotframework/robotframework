@@ -1,11 +1,12 @@
 import unittest
 from robot import utils
+from robot.result.executionresult import ExecutionResult
 from robot.result.keyword import Keyword
 from robot.model.message import Message
 from robot.output.loggerhelper import LEVELS
 from robot.reporting.parsingcontext import Context
 from robot.result.datamodel import DatamodelVisitor
-from robot.result.jsondatamodelhandlers import _Handler, KeywordHandler, _StatusHandler
+from robot.result.jsondatamodelhandlers import _Handler, KeywordHandler, _StatusHandler, ExecutionResultHandler
 from robot.result.testcase import TestCase
 from robot.result.testsuite import TestSuite
 from robot.utils.asserts import assert_equals
@@ -186,7 +187,27 @@ class TestJsoning(unittest.TestCase, DatamodelVisitor):
             self._assert_text(metadata_json[index], value)
 
     def test_execution_result_jsoning(self):
-        pass
+        result = ExecutionResult()
+        result.suite.source = 'kekkonen.html'
+        result.suite.name = 'Kekkonen'
+        result.suite.doc = 'Foo<h1>Bar</h1>'
+        result.generator = 'unit test'
+        result.suite.suites.create(name='Urho').tests.create(status='FAIL', name='moi', tags=['tagi']).keywords.create(name='FAILING', status='FAIL').messages.create(message='FAIL', level='WARN', timestamp='20110101 01:01:01.111')
+        result.errors.messages.create(message='FAIL', level='WARN', timestamp='20110101 01:01:01.111', linkable=True)
+        self._elements[0] = ExecutionResultHandler(self._context, result)
+        result.visit(self)
+        self._verify_message(self.datamodel['errors'][0], result.errors.messages[0])
+        assert_equals(self._context.dump_texts()[self.datamodel['errors'][0][3]], '*s1-s1-t1-k1')
+        self._verify_suite(self.datamodel['suite'], result.suite)
+        assert_equals(self.datamodel['generator'], result.generator)
+        assert_equals(self.datamodel['baseMillis'], self._context.basemillis)
+        assert_equals(len(self.datamodel['strings']), 10)
+        assert_equals(self.datamodel['stats'],
+            [[{'fail': 1, 'label': 'Critical Tests', 'pass': 0},
+              {'fail': 1, 'label': 'All Tests', 'pass': 0}],
+             [{'fail': 1, 'label': 'tagi', 'pass': 0}],
+             [{'fail': 1, 'label': 'Kekkonen', 'id': 's1', 'name': 'Kekkonen', 'pass': 0},
+              {'fail': 1, 'label': 'Kekkonen.Urho', 'id': 's1-s1', 'name': 'Urho', 'pass': 0}]])
 
 
 if __name__ == '__main__':
