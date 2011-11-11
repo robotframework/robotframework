@@ -141,25 +141,6 @@ class Stat(object):
         return self.failed == 0
 
 
-class CriticalStats(Stat):
-
-    def __init__(self, suite):
-        Stat.__init__(self)
-        self.add_suite(suite)
-
-    def _is_included(self, test):
-        return test.critical == 'yes'
-
-    def _subsuite_stats(self, suite):
-        return suite.critical_stats
-
-class AllStats(Stat):
-
-    def __init__(self, suite):
-        Stat.__init__(self)
-        self.add_suite(suite)
-
-
 class SuiteStat(Stat):
     type = 'suite'
 

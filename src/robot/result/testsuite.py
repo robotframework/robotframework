@@ -12,7 +12,7 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from robot.common.statistics import CriticalStats, AllStats
+from robot.model.statistics import Statistics
 from robot import model, utils
 
 from messagefilter import MessageFilter
@@ -61,11 +61,11 @@ class TestSuite(model.TestSuite):
 
     @property
     def critical_stats(self):
-        return CriticalStats(self)
+        return Statistics(self).suite.critical
 
     @property
     def all_stats(self):
-        return AllStats(self)
+        return Statistics(self).suite.all
 
     @property
     def elapsedtime(self):
