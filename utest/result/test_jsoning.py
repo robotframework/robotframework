@@ -6,6 +6,8 @@ from robot.output.loggerhelper import LEVELS
 from robot.reporting.parsingcontext import Context
 from robot.result.datamodel import DatamodelVisitor
 from robot.result.jsondatamodelhandlers import _Handler, KeywordHandler, _StatusHandler
+from robot.result.testcase import TestCase
+from robot.result.testsuite import TestSuite
 from robot.utils.asserts import assert_equals
 
 
@@ -87,6 +89,54 @@ class TestJsoning(unittest.TestCase, DatamodelVisitor):
 
     def _assert_html_text(self, text_index, text):
         self._assert_text(text_index, utils.html_escape(text))
+
+    def test_testcase_jsoning(self):
+        self._context.start_suite()
+        test = TestCase(name='Foo Bar', doc='Test case doc', tags=['foo', 'bar'],
+                        timeout='1000 years',
+                        status='FAIL',
+                        message='iz failz!',
+                        starttime='20000101 01:00:00.000',
+                        endtime='30000101 01:00:00.001')
+        parent = lambda:0
+        parent.critical = parent
+        parent.test_is_critical = lambda *args: True
+        test.parent = parent
+        test.keywords.create(name=':FOR ${i} IN RANGE 123', type='for',
+                             status='FAIL',
+                             starttime='20000101 01:00:01.001',
+                             endtime='30000101 01:00:00.001').\
+                        keywords.create(type='foritem', status='FAIL',
+                                        starttime='20000101 01:00:00.999',
+                                        endtime='30000101 01:00:00.001').\
+                        keywords.create(type='kw', name='Sleep forever',
+                                        status='FAIL',
+                                        starttime='20000101 01:00:01.000',
+                                        endtime='30000101 01:00:00.001')
+        test.visit(self)
+        self._verify_test(self.datamodel[0], test)
+
+    def _verify_test(self, test_json, test):
+        self._assert_text(test_json[0], test.name)
+        self._assert_text(test_json[1], test.timeout)
+        assert_equals(test_json[2], int(test.critical == 'yes'))
+        self._assert_text(test_json[3], test.doc)
+        self._verify_tags(test_json[4], test.tags)
+        self._assert_text(test_json[5][0], _StatusHandler._statuses[test.status])
+        assert_equals(test_json[5][1], self._millis(test.starttime))
+        if test.starttime != 'N/A':
+            assert_equals(test_json[5][2], self._millis(test.endtime)-self._millis(test.starttime))
+        if test.message != '':
+            self._assert_text(test_json[5][3], test.message)
+        for index, keyword in enumerate(test.keywords):
+            self._verify_keyword(test_json[6][index], keyword)
+
+
+    def _verify_tags(self, tags_json, tags):
+        assert_equals(len(tags_json), len(tags))
+        for tag_json, tag in zip(tags_json, tags):
+            self._assert_text(tag_json, tag)
+
 
 
 if __name__ == '__main__':
