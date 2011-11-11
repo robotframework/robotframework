@@ -23,6 +23,11 @@ class TestJsoning(unittest.TestCase, DatamodelVisitor):
         message.visit(self)
         self._verify_message(self.datamodel[0], message)
 
+    def _verify_message(self, message_json, message):
+        assert_equals(message_json[0], self._context.timestamp(message.timestamp))
+        assert_equals(message_json[1], LEVELS[message.level])
+        assert_equals(message_json[2], self._context.get_id(message.message))
+
     def test_non_html_message_to_json(self):
         message = Message(message='This is an html mark --> <html>',
                           level='INFO',
@@ -36,11 +41,6 @@ class TestJsoning(unittest.TestCase, DatamodelVisitor):
             Message(timestamp=timestamp).visit(self)
         for index, millis in enumerate([0, None, -10, 10015]):
             assert_equals(self.datamodel[index][0], millis)
-
-    def _verify_message(self, message_json, message):
-        assert_equals(message_json[0], self._context.timestamp(message.timestamp))
-        assert_equals(message_json[1], LEVELS[message.level])
-        assert_equals(message_json[2], self._context.get_id(message.message))
 
 
 if __name__ == '__main__':
