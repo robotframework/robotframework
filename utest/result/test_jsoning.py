@@ -77,12 +77,10 @@ class TestJsoning(unittest.TestCase, DatamodelVisitor):
         self._assert_html_text(keyword_json[3], keyword.doc)
         assert_equals(keyword_json[-3][0], _StatusHandler._statuses[keyword.status])
         assert_equals(keyword_json[-3][1], self._millis(keyword.starttime))
-        if keyword.starttime != 'N/A':
-            assert_equals(keyword_json[-3][2], self._millis(keyword.endtime)-self._millis(keyword.starttime))
+        self._verify_elapsed(keyword_json[-3][2], keyword)
         for index, message in enumerate(keyword.messages):
             self._verify_message(keyword_json[-1][index], message)
-        for index, kw in enumerate(keyword.keywords):
-            self._verify_keyword(keyword_json[-2][index], kw)
+        self._for_each_verify(keyword_json[-2], keyword.keywords, self._verify_keyword)
 
     def _millis(self, timestamp):
         return self._context.timestamp(timestamp)
@@ -124,12 +122,10 @@ class TestJsoning(unittest.TestCase, DatamodelVisitor):
         self._verify_tags(test_json[4], test.tags)
         self._assert_text(test_json[5][0], _StatusHandler._statuses[test.status])
         assert_equals(test_json[5][1], self._millis(test.starttime))
-        if test.starttime != 'N/A':
-            assert_equals(test_json[5][2], self._millis(test.endtime)-self._millis(test.starttime))
+        self._verify_elapsed(test_json[5][2], test)
         if test.message != '':
             self._assert_text(test_json[5][3], test.message)
-        for index, keyword in enumerate(test.keywords):
-            self._verify_keyword(test_json[6][index], keyword)
+        self._for_each_verify(test_json[6], test.keywords, self._verify_keyword)
 
     def _assert_texts(self, datamodel, index_to_text):
         for index in index_to_text:
@@ -164,16 +160,23 @@ class TestJsoning(unittest.TestCase, DatamodelVisitor):
         self._verify_metadata(suite_json[4], suite.metadata)
         assert_equals(suite_json[5][0], _StatusHandler._statuses[suite.status])
         assert_equals(suite_json[5][1], self._millis(suite.starttime))
-        if suite.starttime != 'N/A':
-            assert_equals(suite_json[5][2], self._millis(suite.endtime)-self._millis(suite.starttime))
+        self._verify_elapsed(suite_json[5][2], suite)
         if suite.message != '':
             self._assert_text(suite_json[5][3], suite.message)
-        for index, suit in enumerate(suite.suites):
-            self._verify_suite(suite_json[6][index], suit)
-        for index, test in enumerate(suite.tests):
-            self._verify_test(suite_json[7][index], test)
-        for index, keyword in enumerate(suite.keywords):
-            self._verify_keyword(suite_json[8][index], keyword)
+        self._for_each_verify(suite_json[6], suite.suites, self._verify_suite)
+        self._for_each_verify(suite_json[7], suite.tests, self._verify_test)
+        self._for_each_verify(suite_json[8], suite.keywords, self._verify_keyword)
+
+    def _for_each_verify(self, json, item_list, method):
+        for index, subitem in enumerate(item_list):
+            method(json[index], subitem)
+        assert_equals(len(json), len(item_list))
+
+    def _verify_elapsed(self, elapsed, item):
+        if item.starttime != 'N/A':
+            assert_equals(elapsed, self._millis(item.endtime)-self._millis(item.starttime))
+        else:
+            assert_equals(elapsed, 0)
 
     def _verify_metadata(self, metadata_json, metadata):
         expected = []
