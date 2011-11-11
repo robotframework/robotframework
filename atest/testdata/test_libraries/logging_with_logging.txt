@@ -6,6 +6,10 @@ Test Teardown   Set Log Level  debug
 
 *** Test Cases ***
 
+All logging is disabled
+    Log with default levels
+    Log invalid message
+
 Log with default levels
     Log with default levels
 
@@ -14,8 +18,8 @@ Log with custom levels
     Log with custom levels
 
 Messages below threshold level are ignored fully
-    [Setup]  Set log level  info
-    Log invalid message using debug
+    [Setup]  Set log level  warn
+    Log invalid message
 
 Log using custom logger
     Log using custom logger

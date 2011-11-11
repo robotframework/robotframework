@@ -44,8 +44,8 @@ def log_with_custom_levels():
     logging.log(logging.INFO+1, 'between info and warning')
     logging.log(logging.WARNING*100, 'above warning')
 
-def log_invalid_message_using_debug():
-    logging.debug(InvalidMessage())
+def log_invalid_message():
+    logging.info(InvalidMessage())
 
 def log_using_custom_logger():
     logging.getLogger('custom').info('custom logger')

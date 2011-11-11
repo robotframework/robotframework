@@ -24,12 +24,16 @@ LEVELS = {'TRACE': logging.NOTSET,
 
 
 def initialize(level):
-    logging.basicConfig(level=LEVELS[level.upper()], stream=NullStream())
     logging.getLogger().addHandler(RobotHandler())
+    set_level(level)
 
 
 def set_level(level):
-    logging.getLogger().setLevel(LEVELS[level.upper()])
+    try:
+        level = LEVELS[level.upper()]
+    except KeyError:
+        return
+    logging.getLogger().setLevel(level)
 
 
 class RobotHandler(logging.Handler):
@@ -46,15 +50,3 @@ class RobotHandler(logging.Handler):
         if level >= logging.DEBUG:
             return logger.debug
         return logger.trace
-
-
-class NullStream(object):
-
-    def write(self, message):
-        pass
-
-    def close(self):
-        pass
-
-    def flush(self):
-        pass
