@@ -71,10 +71,10 @@ class TestJsoning(unittest.TestCase, DatamodelVisitor):
 
     def _verify_keyword(self, keyword_json, keyword):
         assert_equals(keyword_json[0], KeywordHandler._types[keyword.type])
-        self._assert_text(keyword_json[1], keyword.name)
-        self._assert_text(keyword_json[2], keyword.timeout)
+        self._assert_texts(keyword_json, {1:keyword.name,
+                                          2:keyword.timeout,
+                                          4: ', '.join(keyword.args)})
         self._assert_html_text(keyword_json[3], keyword.doc)
-        self._assert_text(keyword_json[4], ', '.join(keyword.args))
         assert_equals(keyword_json[-3][0], _StatusHandler._statuses[keyword.status])
         assert_equals(keyword_json[-3][1], self._millis(keyword.starttime))
         if keyword.starttime != 'N/A':
@@ -120,10 +120,7 @@ class TestJsoning(unittest.TestCase, DatamodelVisitor):
         self._assert_texts(test_json, {0:test.name,
                                        1:test.timeout,
                                        3:test.doc})
-        self._assert_text(test_json[0], test.name)
-        self._assert_text(test_json[1], test.timeout)
         assert_equals(test_json[2], int(test.critical == 'yes'))
-        self._assert_text(test_json[3], test.doc)
         self._verify_tags(test_json[4], test.tags)
         self._assert_text(test_json[5][0], _StatusHandler._statuses[test.status])
         assert_equals(test_json[5][1], self._millis(test.starttime))
@@ -137,7 +134,6 @@ class TestJsoning(unittest.TestCase, DatamodelVisitor):
     def _assert_texts(self, datamodel, index_to_text):
         for index in index_to_text:
             self._assert_text(datamodel[index], index_to_text[index])
-
 
     def _verify_tags(self, tags_json, tags):
         assert_equals(len(tags_json), len(tags))
