@@ -102,7 +102,7 @@ class _BaseSettings(object):
             return [self._process_tag_stat_combine(v) for v in value]
         if name == 'TagStatLink':
             return [v for v in [self._process_tag_stat_link(v) for v in value] if v]
-        if name == 'RemoveKeywords':
+        if name in ['RemoveKeywords', 'LogLevel']:
             return value.upper()
         if name in ['SplitOutputs', 'Summary', 'SummaryTitle']:
             return self._removed_in_26(name, log)
