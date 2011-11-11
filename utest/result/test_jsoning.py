@@ -93,7 +93,7 @@ class TestJsoning(unittest.TestCase, DatamodelVisitor):
     def test_testcase_jsoning(self):
         self._context.start_suite()
         test = TestCase(name='Foo Bar', doc='Test case doc', tags=['foo', 'bar'],
-                        timeout='1000 years',
+                        timeout='35 years',
                         status='FAIL',
                         message='iz failz!',
                         starttime='20000101 01:00:00.000',
@@ -105,18 +105,21 @@ class TestJsoning(unittest.TestCase, DatamodelVisitor):
         test.keywords.create(name=':FOR ${i} IN RANGE 123', type='for',
                              status='FAIL',
                              starttime='20000101 01:00:01.001',
-                             endtime='30000101 01:00:00.001').\
+                             endtime='20350101 01:00:00.001').\
                         keywords.create(type='foritem', status='FAIL',
                                         starttime='20000101 01:00:00.999',
-                                        endtime='30000101 01:00:00.001').\
+                                        endtime='20350101 01:00:00.001').\
                         keywords.create(type='kw', name='Sleep forever',
                                         status='FAIL',
                                         starttime='20000101 01:00:01.000',
-                                        endtime='30000101 01:00:00.001')
+                                        endtime='20350101 01:00:00.001')
         test.visit(self)
         self._verify_test(self.datamodel[0], test)
 
     def _verify_test(self, test_json, test):
+        self._assert_texts(test_json, {0:test.name,
+                                       1:test.timeout,
+                                       3:test.doc})
         self._assert_text(test_json[0], test.name)
         self._assert_text(test_json[1], test.timeout)
         assert_equals(test_json[2], int(test.critical == 'yes'))
@@ -130,6 +133,10 @@ class TestJsoning(unittest.TestCase, DatamodelVisitor):
             self._assert_text(test_json[5][3], test.message)
         for index, keyword in enumerate(test.keywords):
             self._verify_keyword(test_json[6][index], keyword)
+
+    def _assert_texts(self, datamodel, index_to_text):
+        for index in index_to_text:
+            self._assert_text(datamodel[index], index_to_text[index])
 
 
     def _verify_tags(self, tags_json, tags):
