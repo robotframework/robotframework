@@ -21,11 +21,11 @@ from robot.model.tags import TagPatterns
 
 class StatisticsBuilder(SuiteVisitor):
 
-    def __init__(self, stats):
-        self._stats = stats
+    def __init__(self, suite_stats, tag_stats):
+        self._current_suite_stat = suite_stats
+        self._tag_stats = tag_stats
         self._parents = []
         self._first = True
-        self._current_suite_stat = self._stats.suite
 
     def start_suite(self, suite):
         if not self._first:
@@ -44,18 +44,17 @@ class StatisticsBuilder(SuiteVisitor):
 
     def start_test(self, test):
         self._current_suite_stat.add_test(test)
-        self._stats.tags.add_test(test, self._current_suite.critical)
+        self._tag_stats.add_test(test, self._current_suite.critical)
 
 
 class Statistics(object):
 
-    def __init__(self, suite, suite_stat_level=-1, tag_stat_include=None,
-                 tag_stat_exclude=None, tag_stat_combine=None, tag_doc=None,
-                 tag_stat_link=None):
+    def __init__(self, suite, tag_stat_include=None, tag_stat_exclude=None,
+                 tag_stat_combine=None, tag_doc=None, tag_stat_link=None):
+        self.suite = SuiteStatistics(suite)
         self.tags = TagStatistics(tag_stat_include, tag_stat_exclude,
                                   tag_stat_combine, tag_doc, tag_stat_link)
-        self.suite = SuiteStatistics(suite, suite_stat_level)
-        StatisticsBuilder(self).visit_suite(suite)
+        StatisticsBuilder(self.suite, self.tags).visit_suite(suite)
         self.tags.sort()
         self.total = TotalStatistics(self.suite)
 
@@ -71,29 +70,17 @@ class Statistics(object):
         self.serialize(visitor)
 
 
-class SuiteStatistics:
+class SuiteStatistics(object):
 
-    def __init__(self, suite, suite_stat_level=-1):
+    def __init__(self, suite):
         self.all = SuiteStat(suite)
         self.critical = SuiteStat(suite)
         self.suites = []
-        self._suite_stat_level = suite_stat_level
 
     def add_test(self, test):
         self.all.add_test(test)
         if test.critical == 'yes':
             self.critical.add_test(test)
-
-    def serialize(self, serializer):
-        serializer.start_suite_stats(self)
-        self._serialize(serializer, self._suite_stat_level)
-        serializer.end_suite_stats(self)
-
-    def _serialize(self, serializer, max_suite_level, suite_level=1):
-        self.all.serialize(serializer)
-        if max_suite_level < 0 or max_suite_level > suite_level:
-            for suite in self.suites:
-                suite._serialize(serializer, max_suite_level, suite_level+1)
 
 
 class Stat(object):

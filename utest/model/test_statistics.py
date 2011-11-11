@@ -255,7 +255,7 @@ class TestTagStatistics(unittest.TestCase):
     def test_through_suite(self):
         suite = generate_default_suite()
         suite.set_criticality(critical_tags=['smoke'])
-        statistics = Statistics(suite, -1, ['t*','smoke'], ['t3'],
+        statistics = Statistics(suite, ['t*','smoke'], ['t3'],
                                 [('t1 & t2', ''), ('t? & smoke', ''),
                                  ('t1 NOT t2', ''), ('none & t1', 'a title')])
         stats = sorted(statistics.tags.stats.values())
