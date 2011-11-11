@@ -117,6 +117,7 @@ def run(*datasources, **options):
     """
     STOP_SIGNAL_MONITOR.start()
     settings = RobotSettings(options)
+    pyloggingconf.initialize(settings['LogLevel'])
     LOGGER.register_console_logger(settings['MonitorWidth'],
                                    settings['MonitorColors'])
     init_global_variables(settings)
