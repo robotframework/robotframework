@@ -16,6 +16,8 @@ import re
 
 from robot import utils
 from robot.result.visitor import SuiteVisitor
+from robot.model.tags import TagPattern
+
 
 class StatisticsBuilder(SuiteVisitor):
 
@@ -41,9 +43,7 @@ class StatisticsBuilder(SuiteVisitor):
             self._current_suite_stat = self._parents.pop(-1)
 
     def start_test(self, test):
-        self._current_suite_stat.all.add_test(test)
-        if test.critical == 'yes':
-            self._current_suite_stat.critical.add_test(test)
+        self._current_suite_stat.add_test(test)
         self._stats.tags.add_test(test, self._current_suite.critical)
 
 
@@ -71,7 +71,32 @@ class Statistics(object):
         self.serialize(visitor)
 
 
-class Stat:
+class SuiteStatistics:
+
+    def __init__(self, suite, suite_stat_level=-1):
+        self.all = SuiteStat(suite)
+        self.critical = SuiteStat(suite)
+        self.suites = []
+        self._suite_stat_level = suite_stat_level
+
+    def add_test(self, test):
+        self.all.add_test(test)
+        if test.critical == 'yes':
+            self.critical.add_test(test)
+
+    def serialize(self, serializer):
+        serializer.start_suite_stats(self)
+        self._serialize(serializer, self._suite_stat_level)
+        serializer.end_suite_stats(self)
+
+    def _serialize(self, serializer, max_suite_level, suite_level=1):
+        self.all.serialize(serializer)
+        if max_suite_level < 0 or max_suite_level > suite_level:
+            for suite in self.suites:
+                suite._serialize(serializer, max_suite_level, suite_level+1)
+
+
+class Stat(object):
 
     def __init__(self, name=''):
         self.name = name
@@ -189,26 +214,6 @@ class TotalStat(Stat):
         serializer.total_stat(self)
 
 
-class SuiteStatistics:
-
-    def __init__(self, suite, suite_stat_level=-1):
-        self.all = SuiteStat(suite)
-        self.critical = SuiteStat(suite)
-        self.suites = []
-        self._suite_stat_level = suite_stat_level
-
-    def serialize(self, serializer):
-        serializer.start_suite_stats(self)
-        self._serialize(serializer, self._suite_stat_level)
-        serializer.end_suite_stats(self)
-
-    def _serialize(self, serializer, max_suite_level, suite_level=1):
-        self.all.serialize(serializer)
-        if max_suite_level < 0 or max_suite_level > suite_level:
-            for suite in self.suites:
-                suite._serialize(serializer, max_suite_level, suite_level+1)
-
-
 class TagStatistics:
 
     def __init__(self, include=None, exclude=None, combine=None, docs=None,
@@ -248,7 +253,7 @@ class TagStatistics:
                 self.stats[name] = TagStat(name, self._get_doc(name),
                                            self._get_links(name),
                                            combined=pattern)
-            if test.is_included([pattern], []):
+            if TagPattern(pattern).match(test.tags):
                 self.stats[name].add_test(test)
 
     def serialize(self, serializer):

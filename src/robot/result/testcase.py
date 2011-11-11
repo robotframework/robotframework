@@ -37,7 +37,3 @@ class TestCase(model.TestCase):
     @property
     def is_passed(self):
         return self.status == 'PASS'
-
-    # TODO: Remove, move to where statistics are created.
-    def is_included(self, includes, excludes):
-        return self.tags.match(includes) and not self.tags.match(excludes)
