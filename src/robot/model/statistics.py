@@ -21,20 +21,21 @@ from robot.model.tags import TagPatterns
 
 class StatisticsBuilder(SuiteVisitor):
 
-    def __init__(self, suite_stats, tag_stats):
-        self._current_suite_stat = suite_stats
+    def __init__(self, tag_stats):
         self._tag_stats = tag_stats
         self._parents = []
-        self._first = True
 
     def start_suite(self, suite):
-        if not self._first:
-            new  = SuiteStatistics(suite)
-            self._current_suite_stat.suites.append(new)
-            self._parents.append(self._current_suite_stat)
-            self._current_suite_stat = new
+        new  = SuiteStatistics(suite)
+        self._current_suite_stat.suites.append(new)
+        self._parents.append(self._current_suite_stat)
+        self._current_suite_stat = new
         self._current_suite = suite
-        self._first = False
+
+    def build(self, suite):
+        self._current_suite_stat = SuiteStatistics(suite)
+        self.visit_suite(suite)
+        return self._current_suite_stat.suites[0]
 
     def end_suite(self, suite):
         if self._parents:
@@ -42,7 +43,7 @@ class StatisticsBuilder(SuiteVisitor):
             self._parents[-1].critical.add_stat(self._current_suite_stat.critical)
             self._current_suite_stat = self._parents.pop(-1)
 
-    def start_test(self, test):
+    def visit_test(self, test):
         self._current_suite_stat.add_test(test)
         self._tag_stats.add_test(test, self._current_suite.critical)
 
@@ -51,10 +52,9 @@ class Statistics(object):
 
     def __init__(self, suite, tag_stat_include=None, tag_stat_exclude=None,
                  tag_stat_combine=None, tag_doc=None, tag_stat_link=None):
-        self.suite = SuiteStatistics(suite)
         self.tags = TagStatistics(tag_stat_include, tag_stat_exclude,
                                   tag_stat_combine, tag_doc, tag_stat_link)
-        StatisticsBuilder(self.suite, self.tags).visit_suite(suite)
+        self.suite = StatisticsBuilder(self.tags).build(suite)
         self.tags.sort()
         self.total = TotalStatistics(self.suite)
 
