@@ -16,7 +16,7 @@ import re
 
 from robot import utils
 from robot.result.visitor import SuiteVisitor
-from robot.model.tags import TagPattern
+from robot.model.tags import TagPatterns
 
 
 class StatisticsBuilder(SuiteVisitor):
@@ -195,17 +195,35 @@ class TotalStat(Stat):
         serializer.total_stat(self)
 
 
+class CombinedTag(object):
+
+    def __init__(self, pattern, name):
+        self.pattern = pattern
+        self._matcher = TagPatterns(pattern)
+        self.name = name or pattern
+
+    def match(self, tags):
+        return self._matcher.match(tags)
+
+
 class TagStatistics:
 
     def __init__(self, include=None, exclude=None, combine=None, docs=None,
                  links=None):
         self.stats = utils.NormalizedDict(ignore=['_'])
-        self._include = include or []
-        self._exclude = exclude or []
-        self._combine = combine or []
-        info = TagStatInfo(docs or [], links or [])
-        self._get_doc = info.get_doc
-        self._get_links = info.get_links
+        self._include = TagPatterns(include)
+        self._exclude = TagPatterns(exclude)
+        self._info = TagStatInfo(docs or [], links or [])
+        self._combine = self._create_combined(combine or [])
+
+    def _create_combined(self, combines):
+        combines = [CombinedTag(pattern, name) for pattern, name in combines]
+        for comb in combines:
+            self.stats[comb.name] = TagStat(comb.name,
+                                            self._info.get_doc(comb.name),
+                                            self._info.get_links(comb.name),
+                                            combined=comb.pattern)
+        return combines
 
     def add_test(self, test, critical):
         self._add_tags_statistics(test, critical)
@@ -216,26 +234,22 @@ class TagStatistics:
             if not self._is_included(tag):
                 continue
             if tag not in self.stats:
-                self.stats[tag] = TagStat(tag, self._get_doc(tag),
-                                          self._get_links(tag),
+                self.stats[tag] = TagStat(tag,
+                                          self._info.get_doc(tag),
+                                          self._info.get_links(tag),
                                           critical.is_critical(tag),
                                           critical.is_non_critical(tag))
             self.stats[tag].add_test(test)
 
     def _is_included(self, tag):
-        if self._include and not utils.matches_any(tag, self._include):
+        if self._include and not self._include.match(tag):
             return False
-        return not utils.matches_any(tag, self._exclude)
+        return not self._exclude.match(tag)
 
     def _add_combined_statistics(self, test):
-        for pattern, name in self._combine:
-            name = name or pattern
-            if name not in self.stats:
-                self.stats[name] = TagStat(name, self._get_doc(name),
-                                           self._get_links(name),
-                                           combined=pattern)
-            if TagPattern(pattern).match(test.tags):
-                self.stats[name].add_test(test)
+        for comb in self._combine:
+            if comb.match(test.tags):
+                self.stats[comb.name].add_test(test)
 
     def serialize(self, serializer):
         serializer.start_tag_stats(self)
@@ -279,10 +293,10 @@ class TagStatDoc:
 
     def __init__(self, pattern, doc):
         self.text = doc
-        self._pattern = pattern
+        self._pattern = TagPatterns(pattern)
 
     def matches(self, tag):
-        return utils.matches(tag, self._pattern)
+        return self._pattern.match(tag)
 
 
 class TagStatLink:
