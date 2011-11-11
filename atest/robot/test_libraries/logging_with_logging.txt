@@ -1,6 +1,6 @@
 *** Settings ***
 Documentation   Tests for logging using Python's `logging` module.
-Suite Setup     Run Tests  ${EMPTY}  test_libraries/logging_with_logging.txt
+Suite Setup     Run Tests  -L debug  test_libraries/logging_with_logging.txt
 Force Tags      regression  pybot  jybot
 Resource        atest_resource.txt
 
@@ -19,10 +19,13 @@ Log with default levels
 
 Log with custom levels
     ${tc} =  Check test case  ${TEST NAME}
-    Check log message  ${tc.kws[0].msgs[0]}  below debug               DEBUG
-    Check log message  ${tc.kws[0].msgs[1]}  between debug and info    INFO
-    Check log message  ${tc.kws[0].msgs[2]}  between info and warning  INFO
-    Check log message  ${tc.kws[0].msgs[3]}  above warning             WARN
+    Check log message  ${tc.kws[0].msgs[1]}  below debug               TRACE
+    Check log message  ${tc.kws[0].msgs[2]}  between debug and info    DEBUG
+    Check log message  ${tc.kws[0].msgs[3]}  between info and warning  INFO
+    Check log message  ${tc.kws[0].msgs[4]}  above warning             WARN
+
+Messages below threshold level are ignored fully
+    Check test case  ${TEST NAME}
 
 Log using custom logger
     ${tc} =  Check test case  ${TEST NAME}

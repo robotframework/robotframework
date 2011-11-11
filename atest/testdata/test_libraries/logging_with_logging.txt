@@ -1,8 +1,8 @@
 *** Settings ***
 Documentation   Tests for logging using Python's `logging` module.
 Library         LibUsingPyLogging.py
-Suite Setup     Set log level  DEBUG
-Suite Teardown  Set log level  INFO
+Test Teardown   Set Log Level  debug
+
 
 *** Test Cases ***
 
@@ -10,7 +10,12 @@ Log with default levels
     Log with default levels
 
 Log with custom levels
+    [Setup]  Set log level  trace
     Log with custom levels
+
+Messages below threshold level are ignored fully
+    [Setup]  Set log level  info
+    Log invalid message using debug
 
 Log using custom logger
     Log using custom logger
