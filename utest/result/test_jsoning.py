@@ -95,7 +95,7 @@ class TestJsoning(unittest.TestCase, DatamodelVisitor):
                         status='FAIL',
                         message='iz failz!',
                         starttime='20000101 01:00:00.000',
-                        endtime='30000101 01:00:00.001')
+                        endtime='20350101 01:00:00.001')
         parent = lambda:0
         parent.critical = parent
         parent.test_is_critical = lambda *args: True
@@ -184,6 +184,9 @@ class TestJsoning(unittest.TestCase, DatamodelVisitor):
             expected += [k,utils.html_escape(v)]
         for index, value in enumerate(expected):
             self._assert_text(metadata_json[index], value)
+
+    def test_execution_result_jsoning(self):
+        pass
 
 
 if __name__ == '__main__':
