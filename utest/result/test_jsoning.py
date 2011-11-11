@@ -92,7 +92,7 @@ class TestJsoning(unittest.TestCase, DatamodelVisitor):
 
     def test_testcase_jsoning(self):
         self._context.start_suite()
-        test = TestCase(name='Foo Bar', doc='Test case doc', tags=['foo', 'bar'],
+        test = TestCase(name='Foo Bar', doc='Test <p>case</p> doc', tags=['foo', 'bar'],
                         timeout='35 years',
                         status='FAIL',
                         message='iz failz!',
@@ -118,8 +118,8 @@ class TestJsoning(unittest.TestCase, DatamodelVisitor):
 
     def _verify_test(self, test_json, test):
         self._assert_texts(test_json, {0:test.name,
-                                       1:test.timeout,
-                                       3:test.doc})
+                                       1:test.timeout})
+        self._assert_html_text(test_json[3], test.doc)
         assert_equals(test_json[2], int(test.critical == 'yes'))
         self._verify_tags(test_json[4], test.tags)
         self._assert_text(test_json[5][0], _StatusHandler._statuses[test.status])
@@ -140,6 +140,47 @@ class TestJsoning(unittest.TestCase, DatamodelVisitor):
         for tag_json, tag in zip(tags_json, tags):
             self._assert_text(tag_json, tag)
 
+    def test_suite_jsoning(self):
+        suite = TestSuite(source='../somewhere',
+                          name='Somewhere',
+                          doc='suite <b>documentation</b>',
+                          metadata={'key<':'value<!>',
+                                    'key2>':'va>lue2'})
+        suite.starttime = '20000101 02:23:01.821'
+        suite.endtime   = '20011221 11:31:12.371'
+        suite.message   = 'so long and thank you for all the fish!'
+        suite.keywords.create(type='setup')
+        subsuite = suite.suites.create(name='subsuite')
+        subsuite.tests.create(name='test', status='PASS')
+        suite.keywords.create(type='teardown')
+        suite.visit(self)
+        self._verify_suite(self.datamodel[0], suite)
+
+    def _verify_suite(self, suite_json, suite):
+        self._assert_text(suite_json[0], suite.name)
+        self._assert_text(suite_json[1], suite.source)
+        self._assert_text(suite_json[2], '')
+        self._assert_html_text(suite_json[3], suite.doc)
+        self._verify_metadata(suite_json[4], suite.metadata)
+        assert_equals(suite_json[5][0], _StatusHandler._statuses[suite.status])
+        assert_equals(suite_json[5][1], self._millis(suite.starttime))
+        if suite.starttime != 'N/A':
+            assert_equals(suite_json[5][2], self._millis(suite.endtime)-self._millis(suite.starttime))
+        if suite.message != '':
+            self._assert_text(suite_json[5][3], suite.message)
+        for index, suit in enumerate(suite.suites):
+            self._verify_suite(suite_json[6][index], suit)
+        for index, test in enumerate(suite.tests):
+            self._verify_test(suite_json[7][index], test)
+        for index, keyword in enumerate(suite.keywords):
+            self._verify_keyword(suite_json[8][index], keyword)
+
+    def _verify_metadata(self, metadata_json, metadata):
+        expected = []
+        for k,v in metadata.items():
+            expected += [k,utils.html_escape(v)]
+        for index, value in enumerate(expected):
+            self._assert_text(metadata_json[index], value)
 
 
 if __name__ == '__main__':
