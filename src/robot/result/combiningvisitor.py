@@ -27,8 +27,9 @@ def _create_method(method_name):
 
 for method_name in (pre+'_'+post
                     for pre in ('start', 'end') \
-                    for post in ('suite', 'test', 'keyword', 'message')):
+                    for post in ('suite', 'test', 'keyword', 'message', 'errors')):
     _create_method(method_name)
+_create_method('visit_statistics')
 
 
 class RemovingVisitor(ResultVisitor):
