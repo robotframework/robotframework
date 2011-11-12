@@ -1,5 +1,6 @@
 import unittest
 from robot import utils
+from robot.result.combiningvisitor import RemovingVisitor, CombiningVisitor
 from robot.result.executionresult import ExecutionResult
 from robot.result.keyword import Keyword
 from robot.model.message import Message

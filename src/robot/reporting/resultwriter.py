@@ -12,7 +12,6 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from robot.common import Statistics
 from robot.errors import DataError
 from robot.output import LOGGER
 from robot.reporting.jsondatamodel import DataModelWriter
@@ -82,6 +81,7 @@ class ResultWriter(object):
         visitor = DatamodelVisitor(self._execution_result,
                                    log_path=self.settings['Log'],
                                    split_log=self.settings['SplitLog'])
+        self._execution_result.visit(visitor)
         self._data_model = DataModelWriter(visitor.datamodel)
         self.write_robot_results(None)
         return self._execution_result

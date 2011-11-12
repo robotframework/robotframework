@@ -23,7 +23,6 @@ class DatamodelVisitor(ResultVisitor):
         self._elements = []
         self._context = Context(log_path=log_path, split_log=split_log)
         self._elements.append(ExecutionResultHandler(self._context, result))
-        result.visit(self)
 
     def _start(self, func):
         next = func(self._elements[-1])
@@ -51,7 +50,7 @@ class DatamodelVisitor(ResultVisitor):
 
     end_suite = end_keyword = end_test = end_errors = _end
 
-    def visit_message(self, msg):
+    def end_message(self, msg):
         self._elements[-1].message(msg)
 
     @property

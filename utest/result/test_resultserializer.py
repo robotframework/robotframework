@@ -42,7 +42,9 @@ class TestResultJSONSerializer(unittest.TestCase):
         output_parser = OutputParser()
         output_parser._parse_fileobj(StringIO(GOLDEN_XML))
         self._expected = output_parser._get_data_model()._robot_data
-        visitor = DatamodelVisitor(ResultFromXML(StringIO(GOLDEN_XML)))
+        result = ResultFromXML(StringIO(GOLDEN_XML))
+        visitor = DatamodelVisitor(result)
+        result.visit(visitor)
         self._datamodel = visitor.datamodel
 
     def test_datamodel_suite(self):
