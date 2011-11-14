@@ -84,15 +84,14 @@ class ResultWriter(object):
         return self._execution_result
 
     def _create_reporting_datamodel(self):
-        self.result_from_xml # this line is insanely ugly .. only here for the side-effects
-        visitor = DatamodelVisitor(self._execution_result,
+        visitor = DatamodelVisitor(self.result_from_xml.result,
                                    log_path=self.settings['Log'],
                                    split_log=self.settings['SplitLog'])
         # Remove keywords while visiting as JSON datamodel visitor is the last
         # thing that needs keywords from the model
         # this saves memory -- possibly a lot.
-        self._execution_result.visit(CombiningVisitor(visitor,
-                                                      KeywordRemovingVisitor()))
+        self.result_from_xml.result.visit(CombiningVisitor(visitor,
+                                          KeywordRemovingVisitor()))
         self._data_model = DataModelWriter(visitor.datamodel)
 
 
