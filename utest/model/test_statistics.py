@@ -161,6 +161,22 @@ class TestTagStatistics(unittest.TestCase):
             assert_equals(sorted(tagstats.stats.keys()),
                          exp, "Incls: %s, Excls: %s" % (incl, excl))
 
+    def test_len(self):
+        stats = TagStatistics(Criticality())
+        assert_equals(len(stats), 0)
+        stats.add_test(TestCase())
+        assert_equals(len(stats), 0)
+        stats.add_test(TestCase(tags=['a']))
+        assert_equals(len(stats), 1)
+        stats.add_test(TestCase(tags=['A', 'B']))
+        assert_equals(len(stats), 2)
+
+    def test_len_with_combine(self):
+        stats = TagStatistics(Criticality(), combine=[('x*', 'title')])
+        assert_equals(len(stats), 1)
+        stats.add_test(TestCase(tags=['xxx', 'yyy']))
+        assert_equals(len(stats), 3)
+
     def test_combine_with_name(self):
         for comb_tags, expected_name in [
                 ([], '' ),
@@ -173,7 +189,7 @@ class TestTagStatistics(unittest.TestCase):
             stats = TagStatistics(Criticality(), combine=comb_tags)
             test = TestCase()
             stats._add_combined_statistics(test)
-            assert_equals(len(stats.stats), expected_name != '')
+            assert_equals(bool(stats), expected_name != '')
             if expected_name:
                 assert_equals(stats.stats[expected_name].name, expected_name)
 

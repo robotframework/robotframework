@@ -65,6 +65,9 @@ class TagStatistics(object):
     def __iter__(self):
         return iter(sorted(self.stats.values()))
 
+    def __len__(self):
+        return len(self.stats)
+
 
 class TagStatInfo(object):
 
