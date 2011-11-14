@@ -32,16 +32,13 @@ for method_name in (pre+'_'+post
 _create_method('visit_statistics')
 
 
-class RemovingVisitor(ResultVisitor):
+class KeywordRemovingVisitor(ResultVisitor):
 
     def end_keyword(self, keyword):
         keyword.keywords = []
-        keyword.messaged = []
 
     def end_test(self, test):
         test.keywords = []
 
     def end_suite(self, suite):
-        suite.suites = []
         suite.keywords = []
-        suite.tests = []

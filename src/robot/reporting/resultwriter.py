@@ -16,6 +16,7 @@ from robot.errors import DataError
 from robot.output import LOGGER
 from robot.reporting.jsondatamodel import DataModelWriter
 from robot.result.builders import ResultFromXML as RFX
+from robot.result.combiningvisitor import CombiningVisitor, KeywordRemovingVisitor
 from robot.result.datamodel import DatamodelVisitor
 from robot.result.serializer import RebotXMLWriter
 from robot import utils
@@ -74,14 +75,19 @@ class ResultWriter(object):
         XUnitBuilder(self).build()
 
     def write_rebot_results(self, *data_sources):
+        # FIXME: cleanup!!!
         self._data_sources = data_sources
-        self.result_from_xml
+        self.result_from_xml # this line is insanely ugly .. only here for the side-effects
         if self.settings['Output']:
             OutputBuilder(self).build()
         visitor = DatamodelVisitor(self._execution_result,
                                    log_path=self.settings['Log'],
                                    split_log=self.settings['SplitLog'])
-        self._execution_result.visit(visitor)
+        # Remove keywords while visiting as JSON datamodel visitor is the last
+        # thing that needs keywords from the model
+        # this saves memory -- possibly a lot.
+        self._execution_result.visit(CombiningVisitor(visitor,
+                                                      KeywordRemovingVisitor()))
         self._data_model = DataModelWriter(visitor.datamodel)
         self.write_robot_results(None)
         return self._execution_result

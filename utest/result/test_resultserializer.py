@@ -6,6 +6,7 @@ from xml.etree.ElementTree import tostring
 from robot.reporting.outputparser import OutputParser
 
 from robot.result.builders import ResultFromXML
+from robot.result.combiningvisitor import KeywordRemovingVisitor, CombiningVisitor
 from robot.result.serializer import RebotXMLWriter
 from robot.result.datamodel import DatamodelVisitor
 from robot.utils.asserts import assert_equals
@@ -44,7 +45,8 @@ class TestResultJSONSerializer(unittest.TestCase):
         self._expected = output_parser._get_data_model()._robot_data
         result = ResultFromXML(StringIO(GOLDEN_XML))
         visitor = DatamodelVisitor(result)
-        result.visit(visitor)
+        result.visit(CombiningVisitor(visitor,
+                                      KeywordRemovingVisitor()))
         self._datamodel = visitor.datamodel
 
     def test_datamodel_suite(self):
