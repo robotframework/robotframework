@@ -2,8 +2,8 @@ import unittest
 
 from robot.model.critical import Critical
 from robot.utils.asserts import assert_equals, assert_none, fail
-from robot.model.statistics import (Statistics, TagStatistics, TagStatLink,
-                                    TagStatInfo)
+from robot.model.statistics import Statistics
+from robot.model.tagstatistics import TagStatistics, TagStatLink, TagStatInfo
 from robot.result import TestSuite, TestCase
 from robot import utils
 
