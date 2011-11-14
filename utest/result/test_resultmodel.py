@@ -32,6 +32,7 @@ class TestSuiteStats(unittest.TestCase):
 
     def _create_nested_suite_with_tests(self):
         suite = TestSuite()
+        suite.set_criticality([], ['nc'])
         suite.suites = [self._create_suite_with_tests(),
                         self._create_suite_with_tests()]
         return suite

@@ -99,7 +99,7 @@ class TestJsoning(unittest.TestCase, DatamodelVisitor):
                         starttime='20000101 01:00:00.000',
                         endtime='20350101 01:00:00.001')
         parent = lambda:0
-        parent.critical = parent
+        parent.criticality = parent
         parent.test_is_critical = lambda *args: True
         test.parent = parent
         test.keywords.create(name=':FOR ${i} IN RANGE 123', type='for',

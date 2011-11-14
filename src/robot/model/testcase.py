@@ -53,7 +53,7 @@ class TestCase(ModelObject):
 
     @property
     def critical(self):
-        return 'yes' if self.parent.critical.test_is_critical(self) else 'no'
+        return 'yes' if self.parent.criticality.test_is_critical(self) else 'no'
 
     def visit(self, visitor):
         visitor.visit_test(self)

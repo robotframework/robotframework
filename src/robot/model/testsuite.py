@@ -14,14 +14,14 @@
 
 from robot import utils
 
-from metadata import Metadata
-from testcase import TestCase
-from keyword import Keyword, Keywords
-from itemlist import ItemList
-from critical import Critical
-from tagsetter import TagSetter
-from filter import Filter
-from modelobject import ModelObject
+from .metadata import Metadata
+from .testcase import TestCase
+from .keyword import Keyword, Keywords
+from .itemlist import ItemList
+from .criticality import Criticality
+from .tagsetter import TagSetter
+from .filter import Filter
+from .modelobject import ModelObject
 
 
 class TestSuite(ModelObject):
@@ -38,7 +38,7 @@ class TestSuite(ModelObject):
         self.suites = []
         self.tests = []
         self.keywords = []
-        self._critical = None
+        self._criticality = None
 
     def _get_name(self):
         return self._name or ' & '.join(s.name for s in self.suites)
@@ -47,18 +47,17 @@ class TestSuite(ModelObject):
     name = property(_get_name, _set_name)
 
     def set_criticality(self, critical_tags=None, non_critical_tags=None):
-        # TODO: should settings criticality be prevented for sub suites?
-        self._critical = Critical(critical_tags, non_critical_tags)
+        if self.parent:
+            raise TypeError('Criticality can only be set to top level suite')
+        self._criticality = Criticality(critical_tags, non_critical_tags)
 
     @property
-    def critical(self):
-        if self._critical:
-            return self._critical
+    def criticality(self):
         if self.parent:
-            return self.parent.critical
-        if self._critical is None:
-            self._critical = Critical()
-        return self._critical
+            return self.parent.criticality
+        if self._criticality is None:
+            self.set_criticality()
+        return self._criticality
 
     @utils.setter
     def metadata(self, metadata):

@@ -15,7 +15,7 @@
 from tags import TagPatterns
 
 
-class Critical(object):
+class Criticality(object):
 
     def __init__(self, critical_tags=None, non_critical_tags=None):
         self.critical_tags = TagPatterns(critical_tags)

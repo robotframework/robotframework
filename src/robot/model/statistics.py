@@ -61,4 +61,4 @@ class StatisticsBuilder(SuiteVisitor):
 
     def visit_test(self, test):
         self._current_suite_stat.add_test(test)
-        self._tag_stats.add_test(test, self._current_suite.critical)
+        self._tag_stats.add_test(test, self._current_suite.criticality)
