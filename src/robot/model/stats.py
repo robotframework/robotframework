@@ -40,23 +40,6 @@ class Stat(object):
         self.passed += other.passed
         self.failed += other.failed
 
-    def fail_all(self):
-        self.failed += self.passed
-        self.passed = 0
-
-    def add_suite(self, suite):
-        for test in suite.tests:
-            if self._is_included(test):
-                self.add_test(test)
-        for suite in suite.suites:
-            self.add_stat(self._subsuite_stats(suite))
-
-    def _is_included(self, test):
-        return True
-
-    def _subsuite_stats(self, suite):
-        return suite.all_stats
-
     def __cmp__(self, other):
         return cmp(self.name, other.name)
 
@@ -86,6 +69,7 @@ class TagStat(Stat):
     def __init__(self, name, doc='', links=[], critical=False,
                  non_critical=False, combined=''):
         Stat.__init__(self, name)
+        # TODO: Do we need all these attrs or could they me only in self.attrs?
         self.doc = doc
         self.links = links  # TODO: Are both self.links and self._link_str needed?
         self.critical = critical
