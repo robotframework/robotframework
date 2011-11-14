@@ -195,8 +195,7 @@ class TestTagStatistics(unittest.TestCase):
             stats = TagStatistics(Criticality(), combine=[(comb_tags, 'name')])
             test = TestCase(tags=test_tags)
             stats._add_combined_statistics(test)
-            assert_equals(len(stats.stats['Name'].tests), expected_count,
-                          'comb: %s, test: %s' % (comb_tags, test_tags))
+            assert_equals(stats.stats['Name'].total, expected_count)
 
     def test_is_combined_with_not_statements(self):
         for comb_tags, test_tags, expected_count in [
@@ -223,17 +222,17 @@ class TestTagStatistics(unittest.TestCase):
 
     def test_combine(self):
         # This is more like an acceptance test than a unit test ...
-        for comb_tags, comb_matches, tests_tags, crit_tags in [
-                (['t1&t2'], [1], [['t1','t2','t3'],['t1','t3']], []),
-                (['1&2&3'], [2], [['1','2','3'],['1','2','3','4']], ['1','2']),
-                (['1&2','1&3'], [1,2], [['1','2','3'],['1','3'],['1']], ['1']),
-                (['t*'], [3], [['t1','x','y'],['tee','z'],['t']], ['x']),
-                (['t?&s'], [2], [['t1','s'],['tt','s','u'],['tee','s'],['s']], []),
-                (['t*&s','*'], [2,3], [['s','t','u'],['tee','s'],[],['x']], []),
-                (['tNOTs'], [1], [['t','u'],['t','s']], []),
-                (['tNOTs','t&s','tNOTsNOTu', 't&sNOTu'], [3,2,4,1],
+        for comb_tags, tests_tags, crit_tags in [
+                (['t1&t2'], [['t1','t2','t3'],['t1','t3']], []),
+                (['1&2&3'], [['1','2','3'],['1','2','3','4']], ['1','2']),
+                (['1&2','1&3'], [['1','2','3'],['1','3'],['1']], ['1']),
+                (['t*'], [['t1','x','y'],['tee','z'],['t']], ['x']),
+                (['t?&s'], [['t1','s'],['tt','s','u'],['tee','s'],['s']], []),
+                (['t*&s','*'], [['s','t','u'],['tee','s'],[],['x']], []),
+                (['tNOTs'], [['t','u'],['t','s']], []),
+                (['tNOTs','t&s','tNOTsNOTu', 't&sNOTu'],
                   [['t','u'],['t','s'],['s','t','u'],['t'],['t','v']], ['t']),
-                (['nonex'], [0], [['t1'],['t1,t2'],[]], [])
+                (['nonex'], [['t1'],['t1,t2'],[]], [])
                ]:
             # 1) Create tag stats
             tagstats = TagStatistics(Criticality(crit_tags),
@@ -243,21 +242,15 @@ class TestTagStatistics(unittest.TestCase):
                 tagstats.add_test(TestCase(status='PASS', tags=tags),)
                 all_tags.extend(tags)
             # 2) Actual values
-            names = [stat.name for stat in sorted(tagstats.stats.values())]
+            names = [stat.name for stat in tagstats]
             # 3) Expected values
-            exp_crit = []; exp_noncr = []; exp_comb = []
+            exp_crit = []; exp_noncr = []
             for tag in utils.normalize_tags(all_tags):
                 if tag in crit_tags:
                     exp_crit.append(tag)
                 else:
                     exp_noncr.append(tag)
-            for comb, count in zip(comb_tags, comb_matches):
-                exp_comb.append(comb)
-                try:
-                    assert_equals(len(tagstats.stats[comb].tests), count, comb)
-                except KeyError:
-                    fail("No key %s. Stats: %s" % (comb, tagstats.stats))
-            exp_names = exp_crit + sorted(exp_comb) + exp_noncr
+            exp_names = exp_crit + sorted(comb_tags) + exp_noncr
             # 4) Verify names (match counts were already verified)
             assert_equals(names, exp_names)
 
@@ -267,14 +260,12 @@ class TestTagStatistics(unittest.TestCase):
         statistics = Statistics(suite, 1, ['t*','smoke'], ['t3'],
                                 [('t1 & t2', ''), ('t? & smoke', ''),
                                  ('t1 NOT t2', ''), ('none & t1', 'a title')])
-        stats = sorted(statistics.tags.stats.values())
         expected = [('smoke', 4), ('a title', 0), ('t1 & t2', 3),
                     ('t1 NOT t2', 2), ('t? & smoke', 4), ('t1', 5), ('t2', 3)]
-        names = [stat.name for stat in stats]
-        exp_names = [name for name, _ in expected]
-        assert_equals(names, exp_names)
+        assert_equals([stat.name for stat in statistics.tags],
+                      [name for name, _ in expected])
         for name, count in expected:
-            assert_equals(len(statistics.tags.stats[name].tests), count, name)
+            assert_equals(statistics.tags.stats[name].total, count, name)
 
 
 class TestTagStatLink(unittest.TestCase):

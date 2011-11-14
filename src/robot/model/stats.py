@@ -75,7 +75,6 @@ class TagStat(Stat):
         self.critical = critical
         self.non_critical = non_critical
         self.combined = combined
-        self.tests = []
 
     @property
     def attrs(self):
@@ -95,10 +94,6 @@ class TagStat(Stat):
     @property
     def _link_str(self):
         return  ':::'.join(':'.join([title, url]) for url, title in self.links)
-
-    def add_test(self, test):
-        Stat.add_test(self, test)
-        self.tests.append(test)
 
     def __cmp__(self, other):
         return cmp(other.critical, self.critical) \

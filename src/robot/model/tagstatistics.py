@@ -65,11 +65,6 @@ class TagStatistics(object):
     def __iter__(self):
         return iter(sorted(self.stats.values()))
 
-    def sort(self):
-        # TODO: Is this needed?
-        for stat in self.stats.values():
-            stat.tests.sort()
-
 
 class TagStatInfo(object):
 

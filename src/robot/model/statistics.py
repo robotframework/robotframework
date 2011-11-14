@@ -27,7 +27,6 @@ class Statistics(object):
                                   tag_stat_exclude, tag_stat_combine,
                                   tag_doc, tag_stat_link)
         self.suite = StatisticsBuilder(self.tags, suite_stat_level).build(suite)
-        self.tags.sort()
         self.total = TotalStatistics(self.suite)
 
     def visit(self, visitor):
