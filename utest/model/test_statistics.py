@@ -358,8 +358,8 @@ class TestTagStatLinks(unittest.TestCase):
 
     def test_tag_stat_links_with_valid_tags(self):
         values = [('1', '2', '3'), ('tag', 'foo.html', 'bar')]
-        tag_stat_links = TagStatInfo([], values)
-        assert_equals(len(tag_stat_links._links), 2)
+        tag_stat_links = TagStatInfo(Criticality(), links=values)
+        assert_equals(len(tag_stat_links.links), 2)
 
 
 if __name__ == "__main__":
