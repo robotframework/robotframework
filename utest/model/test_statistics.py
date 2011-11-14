@@ -1,6 +1,6 @@
 import unittest
 
-from robot.model.critical import Critical
+from robot.model import Criticality
 from robot.utils.asserts import assert_equals, assert_none, fail
 from robot.model.statistics import Statistics
 from robot.model.tagstatistics import TagStatistics, TagStatLink, TagStatInfo
@@ -130,8 +130,8 @@ class TestTagStatistics(unittest.TestCase):
 
     def test_include(self):
         for incl, tags in _incl_excl_data:
-            tagstats = TagStatistics(incl, [])
-            tagstats.add_test(TestCase(status='PASS', tags=tags), Critical())
+            tagstats = TagStatistics(Criticality(), incl, [])
+            tagstats.add_test(TestCase(status='PASS', tags=tags))
             exp_keys = [tag for tag in sorted(tags)
                         if incl == [] or utils.matches_any(tag, incl)]
             assert_equals(sorted(tagstats.stats.keys()),
@@ -139,8 +139,8 @@ class TestTagStatistics(unittest.TestCase):
 
     def test_exclude(self):
         for excl, tags in _incl_excl_data:
-            tagstats = TagStatistics([], excl)
-            tagstats.add_test(TestCase(status='PASS', tags=tags), Critical())
+            tagstats = TagStatistics(Criticality(), [], excl)
+            tagstats.add_test(TestCase(status='PASS', tags=tags))
             exp_keys = [tag for tag in sorted(tags)
                         if not utils.matches_any(tag, excl)]
             assert_equals(sorted(tagstats.stats.keys()),
@@ -156,8 +156,8 @@ class TestTagStatistics(unittest.TestCase):
                (['t1','t2','t3','not'], ['t2','t0'],
                 ['t0','t1','t2','t3','x'], ['t1','t3'] )
               ]:
-            tagstats = TagStatistics(incl, excl)
-            tagstats.add_test(TestCase(status='PASS', tags=tags), Critical())
+            tagstats = TagStatistics(Criticality(), incl, excl)
+            tagstats.add_test(TestCase(status='PASS', tags=tags))
             assert_equals(sorted(tagstats.stats.keys()),
                          exp, "Incls: %s, Excls: %s" % (incl, excl))
 
@@ -170,7 +170,7 @@ class TestTagStatistics(unittest.TestCase):
                 ([('3*', '')], '3*' ),
                 ([('4NOT5', 'Some new name')], 'Some new name')
                ]:
-            stats = TagStatistics(combine=comb_tags)
+            stats = TagStatistics(Criticality(), combine=comb_tags)
             test = TestCase()
             stats._add_combined_statistics(test)
             assert_equals(len(stats.stats), expected_name != '')
@@ -192,7 +192,7 @@ class TestTagStatistics(unittest.TestCase):
             self._test_combined_statistics(comb_tags, test_tags, expected_count)
 
     def _test_combined_statistics(self, comb_tags, test_tags, expected_count):
-            stats = TagStatistics(combine=[(comb_tags, 'name')])
+            stats = TagStatistics(Criticality(), combine=[(comb_tags, 'name')])
             test = TestCase(tags=test_tags)
             stats._add_combined_statistics(test)
             assert_equals(len(stats.stats['Name'].tests), expected_count,
@@ -236,11 +236,11 @@ class TestTagStatistics(unittest.TestCase):
                 (['nonex'], [0], [['t1'],['t1,t2'],[]], [])
                ]:
             # 1) Create tag stats
-            tagstats = TagStatistics(combine=[(t, '') for t in comb_tags])
+            tagstats = TagStatistics(Criticality(crit_tags),
+                                     combine=[(t, '') for t in comb_tags])
             all_tags = []
             for tags in tests_tags:
-                tagstats.add_test(TestCase(status='PASS', tags=tags),
-                                  Critical(crit_tags))
+                tagstats.add_test(TestCase(status='PASS', tags=tags),)
                 all_tags.extend(tags)
             # 2) Actual values
             names = [stat.name for stat in sorted(tagstats.stats.values())]

@@ -23,8 +23,9 @@ class Statistics(object):
     def __init__(self, suite, suite_stat_level=-1, tag_stat_include=None,
                  tag_stat_exclude=None, tag_stat_combine=None, tag_doc=None,
                  tag_stat_link=None):
-        self.tags = TagStatistics(tag_stat_include, tag_stat_exclude,
-                                  tag_stat_combine, tag_doc, tag_stat_link)
+        self.tags = TagStatistics(suite.criticality, tag_stat_include,
+                                  tag_stat_exclude, tag_stat_combine,
+                                  tag_doc, tag_stat_link)
         self.suite = StatisticsBuilder(self.tags, suite_stat_level).build(suite)
         self.tags.sort()
         self.total = TotalStatistics(self.suite)
@@ -61,4 +62,4 @@ class StatisticsBuilder(SuiteVisitor):
 
     def visit_test(self, test):
         self._current_suite_stat.add_test(test)
-        self._tag_stats.add_test(test, self._current_suite.criticality)
+        self._tag_stats.add_test(test)

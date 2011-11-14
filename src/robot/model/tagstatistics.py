@@ -21,8 +21,9 @@ from robot import utils
 
 class TagStatistics(object):
 
-    def __init__(self, include=None, exclude=None, combine=None, docs=None,
-                 links=None):
+    def __init__(self, criticality, include=None, exclude=None, combine=None,
+                 docs=None, links=None):
+        self._criticality = criticality
         self.stats = utils.NormalizedDict(ignore=['_'])
         self._include = TagPatterns(include)
         self._exclude = TagPatterns(exclude)
@@ -38,11 +39,11 @@ class TagStatistics(object):
                                             combined=comb.pattern)
         return combines
 
-    def add_test(self, test, critical):
-        self._add_tags_statistics(test, critical)
+    def add_test(self, test):
+        self._add_tags_statistics(test)
         self._add_combined_statistics(test)
 
-    def _add_tags_statistics(self, test, critical):
+    def _add_tags_statistics(self, test):
         for tag in test.tags:
             if not self._is_included(tag):
                 continue
@@ -50,8 +51,8 @@ class TagStatistics(object):
                 self.stats[tag] = TagStat(tag,
                                           self._info.get_doc(tag),
                                           self._info.get_links(tag),
-                                          critical.is_critical(tag),
-                                          critical.is_non_critical(tag))
+                                          self._criticality.tag_is_critical(tag),
+                                          self._criticality.tag_is_non_critical(tag))
             self.stats[tag].add_test(test)
 
     def _is_included(self, tag):
