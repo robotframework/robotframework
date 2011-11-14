@@ -35,3 +35,14 @@ class RebotXMLWriter(XmlLogger, ResultVisitor):
 
     def end_result(self, result):
         self.close()
+
+    start_total_statistics = XmlLogger.start_total_stats
+    start_tag_statistics = XmlLogger.start_tag_stats
+    start_suite_statistics = XmlLogger.start_suite_stats
+    end_total_statistics = XmlLogger.end_total_stats
+    end_tag_statistics = XmlLogger.end_tag_stats
+    end_suite_statistics = XmlLogger.end_suite_stats
+
+    def visit_stat(self, stat):
+        self._writer.element('stat', stat.name, stat.attrs)
+

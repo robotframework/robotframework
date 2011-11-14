@@ -76,16 +76,16 @@ class TestStatisticsNotSoSimple(unittest.TestCase):
         verify_suite(suite, 'Root Suite', 's1', 2, 2, 4, 3)
         assert_equals(len(suite.suites), 2)
         s1, s2 = suite.suites
-        verify_suite(s1, 'First Sub Suite', 's1-s1', 2, 1, 4, 2)
-        verify_suite(s2, 'Second Sub Suite', 's1-s2', 0, 1, 0, 1)
+        verify_suite(s1, 'Root Suite.First Sub Suite', 's1-s1', 2, 1, 4, 2)
+        verify_suite(s2, 'Root Suite.Second Sub Suite', 's1-s2', 0, 1, 0, 1)
         assert_equals(len(s1.suites), 3)
         s11, s12, s13 = s1.suites
-        verify_suite(s11, 'Sub Suite 1_1', 's1-s1-s1', 0, 0, 1, 1)
-        verify_suite(s12, 'Sub Suite 1_2', 's1-s1-s2', 1, 1, 2, 1)
-        verify_suite(s13, 'Sub Suite 1_3', 's1-s1-s3', 1, 0, 1, 0)
+        verify_suite(s11, 'Root Suite.First Sub Suite.Sub Suite 1_1', 's1-s1-s1', 0, 0, 1, 1)
+        verify_suite(s12, 'Root Suite.First Sub Suite.Sub Suite 1_2', 's1-s1-s2', 1, 1, 2, 1)
+        verify_suite(s13, 'Root Suite.First Sub Suite.Sub Suite 1_3', 's1-s1-s3', 1, 0, 1, 0)
         assert_equals(len(s2.suites), 1)
         s21 = s2.suites[0]
-        verify_suite(s21, 'Sub Suite 2_1', 's1-s2-s1', 0, 1, 0, 1)
+        verify_suite(s21, 'Root Suite.Second Sub Suite.Sub Suite 2_1', 's1-s2-s1', 0, 1, 0, 1)
 
     def test_tags(self):
         tags = self.statistics.tags
@@ -99,8 +99,17 @@ class TestStatisticsNotSoSimple(unittest.TestCase):
         verify_stat(tags.stats['t3'], 't3', 0, 2, False, False)
 
 
-class TestStatisticsVisitation(unittest.TestCase):
-    pass
+class TestSuiteStatLevel(unittest.TestCase):
+
+    def test_stat_level(self):
+        suite = Statistics(generate_default_suite(), suite_stat_level=2).suite
+        verify_suite(suite, 'Root Suite', 's1', 2, 2, 4, 3)
+        assert_equals(len(suite.suites), 2)
+        s1, s2 = suite.suites
+        verify_suite(s1, 'Root Suite.First Sub Suite', 's1-s1', 2, 1, 4, 2)
+        verify_suite(s2, 'Root Suite.Second Sub Suite', 's1-s2', 0, 1, 0, 1)
+        assert_equals(len(s1.suites), 0)
+        assert_equals(len(s2.suites), 0)
 
 
 _incl_excl_data = [
@@ -255,7 +264,7 @@ class TestTagStatistics(unittest.TestCase):
     def test_through_suite(self):
         suite = generate_default_suite()
         suite.set_criticality(critical_tags=['smoke'])
-        statistics = Statistics(suite, ['t*','smoke'], ['t3'],
+        statistics = Statistics(suite, 1, ['t*','smoke'], ['t3'],
                                 [('t1 & t2', ''), ('t? & smoke', ''),
                                  ('t1 NOT t2', ''), ('none & t1', 'a title')])
         stats = sorted(statistics.tags.stats.values())

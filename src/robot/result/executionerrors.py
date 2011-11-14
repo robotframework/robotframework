@@ -25,8 +25,7 @@ class ExecutionErrors(object):
         self.messages.extend(other.messages)
 
     def visit(self, visitor):
-        # TODO: visiting logic should be moved into visitor
-        visitor.start_errors()
-        for message in self.messages:
-            message.visit(visitor)
-        visitor.end_errors()
+        visitor.visit_errors(self)
+
+    def __iter__(self):
+        return iter(self.messages)
