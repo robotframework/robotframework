@@ -52,7 +52,6 @@ class _Builder(object):
 
 class OutputBuilder(_Builder):
     _type = 'Output'
-    _temp_file = None
 
     def build(self):
         if self._path:
