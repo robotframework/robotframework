@@ -113,7 +113,7 @@ class StatisticsHandler(object):
         return [self._create_stat(total.critical), self._create_stat(total.all)]
 
     def _parse_tag(self, tags):
-        return [self._create_stat(tag) for tag in tags.stats.values()]
+        return [self._create_stat(tag) for tag in tags]
 
     def _parse_suite(self, suite):
         stats = []

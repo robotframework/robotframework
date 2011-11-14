@@ -59,7 +59,7 @@ class TestStatisticsSimple(unittest.TestCase):
         verify_suite(self.statistics.suite, 'Hello', 's1', 2, 1)
 
     def test_tags(self):
-        assert_equals(self.statistics.tags.stats, {})
+        assert_equals(list(self.statistics.tags), [])
 
 
 class TestStatisticsNotSoSimple(unittest.TestCase):
@@ -89,14 +89,13 @@ class TestStatisticsNotSoSimple(unittest.TestCase):
 
     def test_tags(self):
         tags = self.statistics.tags
-        keys = tags.stats.keys()
-        assert_equals(len(keys), 4)
-        keys.sort()
-        assert_equals(keys, 'smoke t1 t2 t3'.split())
-        verify_stat(tags.stats['smoke'], 'smoke', 2, 2, True, False)
-        verify_stat(tags.stats['t1'], 't1', 3, 2, False, False)
-        verify_stat(tags.stats['t2'], 't2', 2, 1, False, False)
-        verify_stat(tags.stats['t3'], 't3', 0, 2, False, False)
+        assert_equals(len(tags), 4)
+        names = [t.name for t in tags]
+        assert_equals(names, 'smoke t1 t2 t3'.split())
+        verify_stat(tags._tags['smoke'], 'smoke', 2, 2, True, False)
+        verify_stat(tags._tags['t1'], 't1', 3, 2, False, False)
+        verify_stat(tags._tags['t2'], 't2', 2, 1, False, False)
+        verify_stat(tags._tags['t3'], 't3', 0, 2, False, False)
 
 
 class TestSuiteStatLevel(unittest.TestCase):
@@ -112,39 +111,33 @@ class TestSuiteStatLevel(unittest.TestCase):
         assert_equals(len(s2.suites), 0)
 
 
-_incl_excl_data = [
-    ([], []),
-    ([], ['t1','t2']),
-    (['t1'], ['t1','t2']),
-    (['t1','t2'], ['t1','t2','t3','t4']),
-    (['UP'], ['t1','t2','up']),
-    (['not','not2'], ['t1','t2','t3']),
-    (['t*'], ['t1','s1','t2','t3','s2','s3']),
-    (['T*','r'], ['t1','t2','r','teeeeeeee']),
-    (['*'], ['t1','t2','s1','tag']),
-    (['t1','t2','t3','not'], ['t1','t2','t3','t4','s1','s2'])
-]
-
-
 class TestTagStatistics(unittest.TestCase):
+    _incl_excl_data = [([], []),
+                       ([], ['t1','t2']),
+                       (['t1'], ['t1','t2']),
+                       (['t1','t2'], ['t1','t2','t3','t4']),
+                       (['UP'], ['t1','t2','up']),
+                       (['not','not2'], ['t1','t2','t3']),
+                       (['t*'], ['t1','s1','t2','t3','s2','s3']),
+                       (['T*','r'], ['t1','t2','r','teeeeeeee']),
+                       (['*'], ['t1','t2','s1','tag']),
+                       (['t1','t2','t3','not'], ['t1','t2','t3','t4','s1','s2'])]
 
     def test_include(self):
-        for incl, tags in _incl_excl_data:
-            tagstats = TagStatistics(Criticality(), incl, [])
-            tagstats.add_test(TestCase(status='PASS', tags=tags))
-            exp_keys = [tag for tag in sorted(tags)
-                        if incl == [] or utils.matches_any(tag, incl)]
-            assert_equals(sorted(tagstats.stats.keys()),
-                         exp_keys, "Incls: %s " % incl)
+        for incl, tags in self._incl_excl_data:
+            stats = TagStatistics(Criticality(), incl, [])
+            stats.add_test(TestCase(status='PASS', tags=tags))
+            expected = [tag for tag in tags
+                        if incl == [] or any(utils.matches(tag, i) for i in incl)]
+            assert_equals([s.name for s in stats], sorted(expected))
 
     def test_exclude(self):
-        for excl, tags in _incl_excl_data:
-            tagstats = TagStatistics(Criticality(), [], excl)
-            tagstats.add_test(TestCase(status='PASS', tags=tags))
-            exp_keys = [tag for tag in sorted(tags)
-                        if not utils.matches_any(tag, excl)]
-            assert_equals(sorted(tagstats.stats.keys()),
-                         exp_keys, "Excls: %s" % excl)
+        for excl, tags in self._incl_excl_data:
+            stats = TagStatistics(Criticality(), [], excl)
+            stats.add_test(TestCase(status='PASS', tags=tags))
+            expected = [tag for tag in tags
+                        if not any(utils.matches(tag, e) for e in excl)]
+            assert_equals([s.name for s in stats], sorted(expected))
 
     def test_include_and_exclude(self):
         for incl, excl, tags, exp in [
@@ -156,10 +149,9 @@ class TestTagStatistics(unittest.TestCase):
                (['t1','t2','t3','not'], ['t2','t0'],
                 ['t0','t1','t2','t3','x'], ['t1','t3'] )
               ]:
-            tagstats = TagStatistics(Criticality(), incl, excl)
-            tagstats.add_test(TestCase(status='PASS', tags=tags))
-            assert_equals(sorted(tagstats.stats.keys()),
-                         exp, "Incls: %s, Excls: %s" % (incl, excl))
+            stats = TagStatistics(Criticality(), incl, excl)
+            stats.add_test(TestCase(status='PASS', tags=tags))
+            assert_equals([s.name for s in stats], exp),
 
     def test_len(self):
         stats = TagStatistics(Criticality())
@@ -187,11 +179,9 @@ class TestTagStatistics(unittest.TestCase):
                 ([('4NOT5', 'Some new name')], 'Some new name')
                ]:
             stats = TagStatistics(Criticality(), combine=comb_tags)
-            test = TestCase()
-            stats._add_combined_statistics(test)
             assert_equals(bool(stats), expected_name != '')
             if expected_name:
-                assert_equals(stats.stats[expected_name].name, expected_name)
+                assert_equals([s.name for s in stats], [expected_name])
 
     def test_is_combined_with_and_statements(self):
         for comb_tags, test_tags, expected_count in [
@@ -205,13 +195,12 @@ class TestTagStatistics(unittest.TestCase):
                 ('t*&s', ['s','tee','t'], 1),
                 ('t*&s&non', ['s','tee','t'], 0)
                ]:
-            self._test_combined_statistics(comb_tags, test_tags, expected_count)
+            self._verify_combined_statistics(comb_tags, test_tags, expected_count)
 
-    def _test_combined_statistics(self, comb_tags, test_tags, expected_count):
-            stats = TagStatistics(Criticality(), combine=[(comb_tags, 'name')])
-            test = TestCase(tags=test_tags)
-            stats._add_combined_statistics(test)
-            assert_equals(stats.stats['Name'].total, expected_count)
+    def _verify_combined_statistics(self, comb_tags, test_tags, expected_count):
+        stats = TagStatistics(Criticality(), combine=[(comb_tags, 'name')])
+        stats._add_to_combined_statistics(TestCase(tags=test_tags))
+        assert_equals([s.total for s in stats if s.combined], [expected_count])
 
     def test_is_combined_with_not_statements(self):
         for comb_tags, test_tags, expected_count in [
@@ -234,7 +223,13 @@ class TestTagStatistics(unittest.TestCase):
                 ('tNOTs*NOTr', ['S','T'], 0),
                 ('tNOTs*NOTr', ['R','T','s'], 1),
                ]:
-            self._test_combined_statistics(comb_tags, test_tags, expected_count)
+            self._verify_combined_statistics(comb_tags, test_tags, expected_count)
+
+    def test_combine_with_same_name_as_existing_tag(self):
+        stats = TagStatistics(Criticality(), combine=[('x*', 'name')])
+        stats.add_test(TestCase(tags=['name', 'another']))
+        assert_equals([(s.name, s.combined) for s in stats],
+                      [('name', 'x*'), ('another', ''), ('name', '')])
 
     def test_combine(self):
         # This is more like an acceptance test than a unit test ...
@@ -278,10 +273,7 @@ class TestTagStatistics(unittest.TestCase):
                                  ('t1 NOT t2', ''), ('none & t1', 'a title')])
         expected = [('smoke', 4), ('a title', 0), ('t1 & t2', 3),
                     ('t1 NOT t2', 2), ('t? & smoke', 4), ('t1', 5), ('t2', 3)]
-        assert_equals([stat.name for stat in statistics.tags],
-                      [name for name, _ in expected])
-        for name, count in expected:
-            assert_equals(statistics.tags.stats[name].total, count, name)
+        assert_equals([(t.name, t.total) for t in statistics.tags], expected)
 
 
 class TestTagStatLink(unittest.TestCase):
@@ -359,14 +351,6 @@ class TestTagStatLink(unittest.TestCase):
     def test_matches_are_ignored_in_pattern_substitution(self):
         link = TagStatLink('?-*-*-?', '%4-%2-%2-%4', 'Tracker')
         assert_equals(link.get_link('A-XXX-ABC-B'), ('B-XXX-XXX-B', 'Tracker'))
-
-
-class TestTagStatLinks(unittest.TestCase):
-
-    def test_tag_stat_links_with_valid_tags(self):
-        values = [('1', '2', '3'), ('tag', 'foo.html', 'bar')]
-        tag_stat_links = TagStatInfo(Criticality(), links=values)
-        assert_equals(len(tag_stat_links.links), 2)
 
 
 if __name__ == "__main__":

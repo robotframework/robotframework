@@ -12,6 +12,8 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+from .tags import TagPatterns
+
 
 class Stat(object):
 
@@ -66,12 +68,12 @@ class SuiteStat(Stat):
 class TagStat(Stat):
     type = 'tag'
 
-    def __init__(self, name, doc='', links=[], critical=False,
+    def __init__(self, name, doc='', links=None, critical=False,
                  non_critical=False, combined=''):
         Stat.__init__(self, name)
         # TODO: Do we need all these attrs or could they me only in self.attrs?
         self.doc = doc
-        self.links = links  # TODO: Are both self.links and self._link_str needed?
+        self.links = links or [] # TODO: Are both self.links and self._link_str needed?
         self.critical = critical
         self.non_critical = non_critical
         self.combined = combined
@@ -100,6 +102,16 @@ class TagStat(Stat):
             or cmp(other.non_critical, self.non_critical) \
             or cmp(bool(other.combined), bool(self.combined)) \
             or cmp(self.name, other.name)
+
+
+class CombinedTagStat(TagStat):
+
+    def __init__(self, pattern, name=None, doc='', links=None):
+        TagStat.__init__(self, name or pattern, doc, links, combined=pattern)
+        self._matcher = TagPatterns(pattern)
+
+    def match(self, tags):
+        return self._matcher.match(tags)
 
 
 class TotalStat(Stat):
