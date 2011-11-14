@@ -12,10 +12,10 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from robot.model.tagstatistics import TagStatistics
-from robot.model.suitestatistics import SuiteStatistics
-from robot.model.totalstatistics import TotalStatistics
-from robot.result.visitor import SuiteVisitor
+from .tagstatistics import TagStatistics
+from .suitestatistics import SuiteStatistics
+from .totalstatistics import TotalStatistics
+from .visitor import SuiteVisitor
 
 
 class Statistics(object):
