@@ -15,6 +15,7 @@
 from robot import utils
 from robot.output import LEVELS
 from robot.result import TestSuite, Keyword, TestCase
+from robot.result.visitor import ResultVisitor
 
 
 class _Handler(object):
@@ -82,6 +83,24 @@ class ExecutionResultHandler(_Handler):
                 'baseMillis': self._context.basemillis,
                 'strings': self._context.dump_texts()}
 
+
+class SuiteStatVisitor(ResultVisitor):
+
+    def __init__(self, collection):
+        self.collection = collection
+
+    def visit_stat(self, stats):
+        stat = self._create_stat(stats)
+        stat['id'] = stats.attrs['idx']
+        stat['name'] = stats.attrs['name']
+        self.collection += [stat]
+
+    def _create_stat(self, stat_elem):
+        return {'pass':stat_elem.passed,
+                'fail':stat_elem.failed,
+                'label':stat_elem.name}
+
+
 class StatisticsHandler(object):
 
     def __init__(self, stats_list, stats):
@@ -97,18 +116,8 @@ class StatisticsHandler(object):
         return [self._create_stat(tag) for tag in tags.stats.values()]
 
     def _parse_suite(self, suite):
-        class SuiteStatVisitor(object):
-            def __init__(self, collection):
-                self.collection = collection
-            start_suite_stats = end_suite_stats = lambda *args:0
-            def suite_stat(s, stats):
-                stat = self._create_stat(stats)
-                stat['id'] = stats.id
-                stat['name'] = stats.name
-                stat['label'] = stats.longname
-                s.collection += [stat]
         stats = []
-        suite.serialize(SuiteStatVisitor(stats))
+        suite.visit(SuiteStatVisitor(stats))
         return stats
 
     def _create_stat(self, stat_elem):

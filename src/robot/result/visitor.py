@@ -18,11 +18,11 @@ from robot.model import SuiteVisitor
 class ResultVisitor(SuiteVisitor):
 
     def visit_result(self, result):
-        self.start_result(result)
-        self.visit_suite(result.suite)
-        self.visit_statistics(result.statistics)
-        self.visit_errors(result.errors)
-        self.end_result(result)
+        if self.start_result(result) is not False:
+            result.suite.visit(self)
+            result.statistics.visit(self)
+            result.errors.visit(self)
+            self.end_result(result)
 
     def start_result(self, result):
         pass
@@ -31,50 +31,68 @@ class ResultVisitor(SuiteVisitor):
         pass
 
     def visit_statistics(self, stats):
-        # TODO: Fix once statistics are rewritten
-        self.start_statistics(stats)
-        stats.total.serialize(self)
-        stats.tags.serialize(self)
-        stats.suite.serialize(self)
-        self.end_statistics(stats)
+        if self.start_statistics(stats) is not False:
+            stats.total.visit(self)
+            stats.tags.visit(self)
+            stats.suite.visit(self)
+            self.end_statistics(stats)
 
     def start_statistics(self, stats):
-        pass
-
-    def start_total_stats(self, total_stats):
-        pass
-
-    def total_stat(self, total_stat):
-        pass
-
-    def end_total_stats(self, total_stats):
-        pass
-
-    def start_tag_stats(self, tag_stats):
-        pass
-
-    def tag_stat(self, tag_stat):
-        pass
-
-    def end_tag_stats(self, tag_stats):
-        pass
-
-    def start_suite_stats(self, suite_stats):
-        pass
-
-    def suite_stat(self, suite_stat):
-        pass
-
-    def end_suite_stats(self, suite_stats):
         pass
 
     def end_statistics(self, stats):
         pass
 
+    def visit_total_statistics(self, stats):
+        if self.start_total_statistics(stats) is not False:
+            for stat in stats:
+                stat.visit(self)
+            self.end_total_statistics(stats)
+
+    def start_total_statistics(self, stats):
+        pass
+
+    def end_total_statistics(self, stats):
+        pass
+
+    def visit_tag_statistics(self, stats):
+        if self.start_tag_statistics(stats) is not False:
+            for stat in stats:
+                stat.visit(self)
+            self.end_tag_statistics(stats)
+
+    def start_tag_statistics(self, stats):
+        pass
+
+    def end_tag_statistics(self, stats):
+        pass
+
+    def visit_suite_statistics(self, stats):
+        if self.start_suite_statistics(stats) is not False:
+            for stat in stats:
+                stat.visit(self)
+            self.end_suite_statistics(stats)
+
+    def start_suite_statistics(self, stats):
+        pass
+
+    def end_suite_statistics(self, suite_stats):
+        pass
+
+    def visit_stat(self, stat):
+        if self.start_stat(stat) is not False:
+            self.end_stat(stat)
+
+    def start_stat(self, stat):
+        pass
+
+    def end_stat(self, stat):
+        pass
+
     def visit_errors(self, errors):
         self.start_errors(errors)
-        for msg in errors.messages: # TODO: should errors itself be iterable?
-            self.visit_message(msg)
+        for msg in errors:
+            msg.visit(self)
         self.end_errors(errors)
 
     def start_errors(self, errors):

@@ -12,7 +12,7 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from robot.common.statistics import Statistics
+from robot.model.statistics import Statistics
 
 from configurer import SuiteConfigurer
 from testsuite import TestSuite

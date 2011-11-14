@@ -19,15 +19,32 @@ from robot.result.visitor import SuiteVisitor
 from robot.model.tags import TagPatterns
 
 
+class Statistics(object):
+
+    def __init__(self, suite, suite_stat_level=-1, tag_stat_include=None,
+                 tag_stat_exclude=None, tag_stat_combine=None, tag_doc=None,
+                 tag_stat_link=None):
+        self.tags = TagStatistics(tag_stat_include, tag_stat_exclude,
+                                  tag_stat_combine, tag_doc, tag_stat_link)
+        self.suite = StatisticsBuilder(self.tags, suite_stat_level).build(suite)
+        self.tags.sort()
+        self.total = TotalStatistics(self.suite)
+
+    def visit(self, visitor):
+        visitor.visit_statistics(self)
+
+
 class StatisticsBuilder(SuiteVisitor):
 
-    def __init__(self, tag_stats):
+    def __init__(self, tag_stats, suite_stat_level):
         self._tag_stats = tag_stats
         self._parents = []
+        self._suite_stat_level = suite_stat_level
 
     def start_suite(self, suite):
         new  = SuiteStatistics(suite)
-        self._current_suite_stat.suites.append(new)
+        if self._suite_stat_level == -1 or len(self._parents) < self._suite_stat_level:
+            self._current_suite_stat.suites.append(new)
         self._parents.append(self._current_suite_stat)
         self._current_suite_stat = new
         self._current_suite = suite
@@ -48,28 +65,6 @@ class StatisticsBuilder(SuiteVisitor):
         self._tag_stats.add_test(test, self._current_suite.critical)
 
 
-class Statistics(object):
-
-    def __init__(self, suite, tag_stat_include=None, tag_stat_exclude=None,
-                 tag_stat_combine=None, tag_doc=None, tag_stat_link=None):
-        self.tags = TagStatistics(tag_stat_include, tag_stat_exclude,
-                                  tag_stat_combine, tag_doc, tag_stat_link)
-        self.suite = StatisticsBuilder(self.tags).build(suite)
-        self.tags.sort()
-        self.total = TotalStatistics(self.suite)
-
-    #TODO: Replace with visit
-    def serialize(self, serializer):
-        serializer.start_statistics(self)
-        self.total.serialize(serializer)
-        self.tags.serialize(serializer)
-        self.suite.serialize(serializer)
-        serializer.end_statistics(self)
-
-    def visit(self, visitor):
-        self.serialize(visitor)
-
-
 class SuiteStatistics(object):
 
     def __init__(self, suite):
@@ -82,6 +77,15 @@ class SuiteStatistics(object):
         if test.critical == 'yes':
             self.critical.add_test(test)
 
+    def visit(self, visitor):
+        visitor.visit_suite_statistics(self)
+
+    def __iter__(self):
+        yield self.all
+        for s in self.suites:
+            for stat in s:
+                yield stat
+
 
 class Stat(object):
 
@@ -89,6 +93,11 @@ class Stat(object):
         self.name = name
         self.passed = 0
         self.failed = 0
+
+    @property
+    def _default_attrs(self):
+        return {'pass': str(self.passed),
+                'fail': str(self.failed)}
 
     @property
     def total(self):
@@ -127,17 +136,21 @@ class Stat(object):
     def __nonzero__(self):
         return self.failed == 0
 
+    def visit(self, visitor):
+        visitor.visit_stat(self)
+
 
 class SuiteStat(Stat):
     type = 'suite'
 
     def __init__(self, suite):
-        Stat.__init__(self, suite.name)
-        self.longname = suite.longname
+        Stat.__init__(self, suite.longname)
         self.id = suite.id
+        self._attrs = {'name': suite.name, 'idx': suite.id}
 
-    def serialize(self, serializer):
-        serializer.suite_stat(self)
+    @property
+    def attrs(self):
+        return dict(self._default_attrs, **self._attrs) # TODO: idx -> id
 
 
 class TagStat(Stat):
@@ -153,6 +166,25 @@ class TagStat(Stat):
         self.combined = combined
         self.tests = []
 
+    @property
+    def attrs(self):
+        return dict(self._default_attrs, info=self._info, links=self._links,
+                    doc=self.doc, combined=self.combined)
+
+    @property
+    def _info(self):
+        if self.critical:
+            return 'critical'
+        if self.non_critical:
+            return 'non-critical'
+        if self.combined:
+            return 'combined'
+        return ''
+
+    @property
+    def _links(self):
+        return  ':::'.join(':'.join([title, url]) for url, title in self.links)
+
     def add_test(self, test):
         Stat.add_test(self, test)
         self.tests.append(test)
@@ -166,9 +198,6 @@ class TagStat(Stat):
             return cmp(bool(other.combined), bool(self.combined))
         return cmp(self.name, other.name)
 
-    def serialize(self, serializer):
-        serializer.tag_stat(self)
-
 
 class TotalStat(Stat):
     type = 'total'
@@ -178,8 +207,9 @@ class TotalStat(Stat):
         self.passed = suite_stat.passed
         self.failed = suite_stat.failed
 
-    def serialize(self, serializer):
-        serializer.total_stat(self)
+    @property
+    def attrs(self):
+        return self._default_attrs
 
 
 class CombinedTag(object):
@@ -238,11 +268,11 @@ class TagStatistics:
             if comb.match(test.tags):
                 self.stats[comb.name].add_test(test)
 
-    def serialize(self, serializer):
-        serializer.start_tag_stats(self)
-        for stat in sorted(self.stats.values()):
-            stat.serialize(serializer)
-        serializer.end_tag_stats(self)
+    def visit(self, visitor):
+        visitor.visit_tag_statistics(self)
+
+    def __iter__(self):
+        return iter(sorted(self.stats.values()))
 
     def sort(self):
         # TODO: Is this needed?
@@ -256,11 +286,11 @@ class TotalStatistics:
         self.critical = TotalStat('Critical Tests', suite.critical)
         self.all = TotalStat('All Tests', suite.all)
 
-    def serialize(self, serializer):
-        serializer.start_total_stats(self)
-        self.critical.serialize(serializer)
-        self.all.serialize(serializer)
-        serializer.end_total_stats(self)
+    def visit(self, visitor):
+        visitor.visit_total_statistics(self)
+
+    def __iter__(self):
+        return iter([self.critical, self.all])
 
 
 class TagStatInfo:
