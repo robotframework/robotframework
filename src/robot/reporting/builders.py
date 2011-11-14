@@ -56,7 +56,7 @@ class OutputBuilder(_Builder):
 
     def build(self):
         if self._path:
-            self._context.result_from_xml.serialize_output(output_file)
+            self._context.result_from_xml.serialize_output(self._path)
 
 
 class XUnitBuilder(_Builder):
