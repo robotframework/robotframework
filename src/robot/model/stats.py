@@ -22,22 +22,23 @@ class Stat(object):
 
     @property
     def _default_attrs(self):
-        return {'pass': str(self.passed),
-                'fail': str(self.failed)}
+        return {'pass': str(self.passed), 'fail': str(self.failed)}
 
     @property
     def total(self):
         return self.passed + self.failed
-
-    def add_stat(self, other):
-        self.passed += other.passed
-        self.failed += other.failed
 
     def add_test(self, test):
         if test.status == 'PASS':
             self.passed += 1
         else:
             self.failed += 1
+
+    # TODO: Are all methods below actually used somewhere??
+
+    def add_stat(self, other):
+        self.passed += other.passed
+        self.failed += other.failed
 
     def fail_all(self):
         self.failed += self.passed
@@ -86,7 +87,7 @@ class TagStat(Stat):
                  non_critical=False, combined=''):
         Stat.__init__(self, name)
         self.doc = doc
-        self.links = links
+        self.links = links  # TODO: Are both self.links and self._link_str needed?
         self.critical = critical
         self.non_critical = non_critical
         self.combined = combined
@@ -94,7 +95,7 @@ class TagStat(Stat):
 
     @property
     def attrs(self):
-        return dict(self._default_attrs, info=self._info, links=self._links,
+        return dict(self._default_attrs, info=self._info, links=self._link_str,
                     doc=self.doc, combined=self.combined)
 
     @property
@@ -108,7 +109,7 @@ class TagStat(Stat):
         return ''
 
     @property
-    def _links(self):
+    def _link_str(self):
         return  ':::'.join(':'.join([title, url]) for url, title in self.links)
 
     def add_test(self, test):
@@ -116,13 +117,10 @@ class TagStat(Stat):
         self.tests.append(test)
 
     def __cmp__(self, other):
-        if self.critical != other.critical:
-            return cmp(other.critical, self.critical)
-        if self.non_critical != other.non_critical:
-            return cmp(other.non_critical, self.non_critical)
-        if bool(self.combined) != bool(other.combined):
-            return cmp(bool(other.combined), bool(self.combined))
-        return cmp(self.name, other.name)
+        return cmp(other.critical, self.critical) \
+            or cmp(other.non_critical, self.non_critical) \
+            or cmp(bool(other.combined), bool(self.combined)) \
+            or cmp(self.name, other.name)
 
 
 class TotalStat(Stat):
