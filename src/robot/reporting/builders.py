@@ -55,21 +55,8 @@ class OutputBuilder(_Builder):
     _temp_file = None
 
     def build(self):
-        output_file = self._output_file()
-        self._context.result_from_xml.serialize_output(output_file, log=not self._temp_file)
-        return output_file
-
-    def _output_file(self):
         if self._path:
-            return self._path
-        handle, output_file = tempfile.mkstemp(suffix='.xml', prefix='rebot-')
-        os.close(handle)
-        self._temp_file = output_file
-        return output_file
-
-    def finalize(self):
-        if self._temp_file:
-            os.remove(self._temp_file)
+            self._context.result_from_xml.serialize_output(output_file)
 
 
 class XUnitBuilder(_Builder):

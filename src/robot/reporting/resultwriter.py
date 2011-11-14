@@ -75,11 +75,16 @@ class ResultWriter(object):
         XUnitBuilder(self).build()
 
     def write_rebot_results(self, *data_sources):
-        # FIXME: cleanup!!!
         self._data_sources = data_sources
+        OutputBuilder(self).build()
+        XUnitBuilder(self).build()
+        self._create_reporting_datamodel()
+        LogBuilder(self).build()
+        ReportBuilder(self).build()
+        return self._execution_result
+
+    def _create_reporting_datamodel(self):
         self.result_from_xml # this line is insanely ugly .. only here for the side-effects
-        if self.settings['Output']:
-            OutputBuilder(self).build()
         visitor = DatamodelVisitor(self._execution_result,
                                    log_path=self.settings['Log'],
                                    split_log=self.settings['SplitLog'])
@@ -89,8 +94,6 @@ class ResultWriter(object):
         self._execution_result.visit(CombiningVisitor(visitor,
                                                       KeywordRemovingVisitor()))
         self._data_model = DataModelWriter(visitor.datamodel)
-        self.write_robot_results(None)
-        return self._execution_result
 
 
 class ResultFromXML(object):
