@@ -271,7 +271,7 @@ class TestTagStatistics(unittest.TestCase):
         stats.add_test(TestCase(tags=['c1', 'c2', 't1']))
         stats.add_test(TestCase(tags=['c1', 'n2', 't2']))
         stats.add_test(TestCase(tags=['n1', 'n2', 't1', 't3']))
-        assert_equals([(s.name, s._info, s.total) for s in stats],
+        assert_equals([(s.name, s.info, s.total) for s in stats],
                        [('c1', 'critical', 2), ('c2', 'critical', 1),
                         ('n1', 'non-critical', 1), ('n2', 'non-critical', 2),
                         ('a title', 'combined', 0), ('c*', 'combined', 2),

@@ -17,14 +17,19 @@ from .tags import TagPatterns
 
 class Stat(object):
 
-    def __init__(self, name=''):
+    def __init__(self, name):
         self.name = name
         self.passed = 0
         self.failed = 0
 
     @property
-    def _default_attrs(self):
-        return {'pass': str(self.passed), 'fail': str(self.failed)}
+    def attrs(self):
+        attrs = {'pass': str(self.passed), 'fail': str(self.failed)}
+        attrs.update(self._get_custom_attrs())
+        return attrs
+
+    def _get_custom_attrs(self):
+        return {}
 
     @property
     def total(self):
@@ -46,7 +51,7 @@ class Stat(object):
         return cmp(self.name, other.name)
 
     def __nonzero__(self):
-        return self.failed == 0
+        return not self.failed
 
     def visit(self, visitor):
         visitor.visit_stat(self)
@@ -58,11 +63,10 @@ class SuiteStat(Stat):
     def __init__(self, suite):
         Stat.__init__(self, suite.longname)
         self.id = suite.id
-        self._attrs = {'name': suite.name, 'idx': suite.id}
+        self._name = suite.name
 
-    @property
-    def attrs(self):
-        return dict(self._default_attrs, **self._attrs) # TODO: idx -> id
+    def _get_custom_attrs(self):
+        return {'idx': self.id, 'name': self._name}  # TODO: isx -> id
 
 
 class TagStat(Stat):
@@ -71,20 +75,14 @@ class TagStat(Stat):
     def __init__(self, name, doc='', links=None, critical=False,
                  non_critical=False, combined=''):
         Stat.__init__(self, name)
-        # TODO: Do we need all these attrs or could they me only in self.attrs?
         self.doc = doc
-        self.links = links or [] # TODO: Are both self.links and self._link_str needed?
+        self.links = links
         self.critical = critical
         self.non_critical = non_critical
         self.combined = combined
 
     @property
-    def attrs(self):
-        return dict(self._default_attrs, info=self._info, links=self._link_str,
-                    doc=self.doc, combined=self.combined)
-
-    @property
-    def _info(self):
+    def info(self):
         if self.critical:
             return 'critical'
         if self.non_critical:
@@ -93,9 +91,12 @@ class TagStat(Stat):
             return 'combined'
         return ''
 
-    @property
-    def _link_str(self):
-        return  ':::'.join(':'.join([title, url]) for url, title in self.links)
+    def _get_custom_attrs(self):
+        return {'doc': self.doc, 'links': self._get_links_as_string(),
+                'info': self.info, 'combined': self.combined}
+
+    def _get_links_as_string(self):
+        return ':::'.join('%s:%s' % (title, url) for url, title in self.links)
 
     def __cmp__(self, other):
         return cmp(other.critical, self.critical) \
@@ -121,7 +122,3 @@ class TotalStat(Stat):
         Stat.__init__(self, name)
         self.passed = suite_stat.passed
         self.failed = suite_stat.failed
-
-    @property
-    def attrs(self):
-        return self._default_attrs
