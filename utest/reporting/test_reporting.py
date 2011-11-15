@@ -1,7 +1,7 @@
 import unittest
 
 from robot.reporting.outputparser import OutputParser
-from robot.reporting.builders import LogBuilder, ReportBuilder, XUnitBuilder
+from robot.reporting.builders import LogBuilder, ReportBuilder, XUnitBuilder, OutputBuilder
 
 import resources
 from robot.reporting.resultwriter import RebotResultWriter, ResultWriter
@@ -26,6 +26,13 @@ def set_write_xunit_mock():
     def build_xunit(self):
         results['xunit_path'] = self._path
     XUnitBuilder.build = build_xunit
+    return results
+
+def set_write_output_mock():
+    results = {'output_path': None}
+    def build_output(self):
+        results['output_path'] = self._path
+    OutputBuilder.build = build_output
     return results
 
 def set_write_split_test_mock():
@@ -154,6 +161,7 @@ class TestRebotReporting(_TestReporting, unittest.TestCase):
 
     def setUp(self):
         _TestReporting.setUp(self)
+        self._output_results = set_write_output_mock()
         self._reporter = RebotResultWriter(self._settings)
 
     def _write_results(self, *sources):
@@ -165,6 +173,14 @@ class TestRebotReporting(_TestReporting, unittest.TestCase):
         self._write_results(resources.GOLDEN_OUTPUT, resources.GOLDEN_OUTPUT2)
         self._assert_expected_log('log.html')
         self._assert_expected_report('report.html')
+
+    def test_output_generation(self):
+        self._settings['Output'] = 'ouz.xml'
+        self._write_results(resources.GOLDEN_OUTPUT, resources.GOLDEN_OUTPUT2)
+        self._assert_expected_output('ouz.xml')
+
+    def _assert_expected_output(self, expected_file_name):
+        self.assertEquals(self._output_results['output_path'], expected_file_name)
 
 
 class TestRobotReporting(_TestReporting, unittest.TestCase):
