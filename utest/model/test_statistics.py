@@ -357,12 +357,12 @@ class TestTagStatLink(unittest.TestCase):
             assert_equals(exp, link.get_link('%s-%s' % (id1, id2)))
 
     def test_pattern_substitution_with_multiple_substitutions(self):
-        link = TagStatLink('?-?-*', '%3-%3-%1-%2-%3', 'Tracker')
-        assert_equals(link.get_link('a-b-XXX'), ('XXX-XXX-a-b-XXX', 'Tracker'))
+        link = TagStatLink('??-?-*', '%3-%3-%1-%2-%3', 'Tracker')
+        assert_equals(link.get_link('aa-b-XXX'), ('XXX-XXX-aa-b-XXX', 'Tracker'))
 
     def test_matches_are_ignored_in_pattern_substitution(self):
-        link = TagStatLink('?-*-*-?', '%4-%2-%2-%4', 'Tracker')
-        assert_equals(link.get_link('A-XXX-ABC-B'), ('B-XXX-XXX-B', 'Tracker'))
+        link = TagStatLink('???-*-*-?', '%4-%2-%2-%4', 'Tracker')
+        assert_equals(link.get_link('AAA-XXX-ABC-B'), ('B-XXX-XXX-B', 'Tracker'))
 
 
 if __name__ == "__main__":

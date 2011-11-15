@@ -97,7 +97,7 @@ class TagStatDoc(object):
 
 
 class TagStatLink(object):
-    _match_pattern_tokenizer = re.compile('(\*|\?)')
+    _match_pattern_tokenizer = re.compile('(\*|\?+)')
 
     def __init__(self, pattern, link, title):
         self._regexp = self._get_match_regexp(pattern)
@@ -116,30 +116,20 @@ class TagStatLink(object):
 
     def _replace_groups(self, link, title, match):
         for index, group in enumerate(match.groups()):
-            placefolder = '%' + str(index+1)
+            placefolder = '%%%d' % (index+1)
             link = link.replace(placefolder, group)
             title = title.replace(placefolder, group)
         return link, title
 
     def _get_match_regexp(self, pattern):
-        regexp = []
-        open_parenthesis = False
+        pattern = '^%s$' % ''.join(self._yield_match_pattern(pattern))
+        return re.compile(pattern, re.IGNORECASE)
+
+    def _yield_match_pattern(self, pattern):
         for token in self._match_pattern_tokenizer.split(pattern):
-            if token == '':
-                continue
-            if token == '?':
-                if not open_parenthesis:
-                    regexp.append('(')
-                    open_parenthesis = True
-                regexp.append('.')
-                continue
-            if open_parenthesis:
-                regexp.append(')')
-                open_parenthesis = False
-            if token == '*':
-                regexp.append('(.*)')
-                continue
-            regexp.append(re.escape(token))
-        if open_parenthesis:
-            regexp.append(')')
-        return re.compile('^%s$' % ''.join(regexp), re.IGNORECASE)
+            if token.startswith('?'):
+                yield '(%s)' % ('.'*len(token))
+            elif token == '*':
+                yield '(.*)'
+            else:
+                yield re.escape(token)
