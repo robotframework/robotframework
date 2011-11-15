@@ -1,4 +1,3 @@
-from itertools import chain
 import unittest
 from StringIO import StringIO
 from xml.etree.ElementTree import XML
