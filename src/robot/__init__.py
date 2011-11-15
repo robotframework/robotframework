@@ -15,6 +15,7 @@
 import sys
 import os
 
+
 if __name__ == '__main__':
     sys.stderr.write("Use 'runner' or 'rebot' for executing.\n")
     sys.exit(252)  # 252 == DATA_ERROR
@@ -45,7 +46,7 @@ import utils
 from output import Output, LOGGER, pyloggingconf
 from conf import RobotSettings, RebotSettings
 from running import TestSuite, STOP_SIGNAL_MONITOR
-from robot.reporting import ResultWriter
+from robot.reporting import ResultWriter, RebotResultWriter
 from errors import (DataError, Information, INFO_PRINTED, DATA_ERROR,
                     STOPPED_BY_USER, FRAMEWORK_ERROR)
 from variables import init_global_variables
@@ -152,7 +153,7 @@ def run_rebot(*datasources, **options):
     settings = RebotSettings(options)
     LOGGER.register_console_logger(colors=settings['MonitorColors'])
     LOGGER.disable_message_cache()
-    result = ResultWriter(settings).write_rebot_results(*datasources)
+    result = RebotResultWriter(settings).write_rebot_results(*datasources)
     LOGGER.close()
     return result.suite, result.return_code
 

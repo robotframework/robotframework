@@ -24,6 +24,10 @@ class DatamodelVisitor(ResultVisitor):
         self._context = Context(log_path=log_path, split_log=split_log)
         self._elements.append(ExecutionResultHandler(self._context, result))
 
+    @property
+    def split_results(self):
+        return self._context.split_results
+
     def _start(self, func):
         next = func(self._elements[-1])
         self._elements.append(next)

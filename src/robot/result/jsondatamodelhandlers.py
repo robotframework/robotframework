@@ -144,6 +144,7 @@ class SuiteHandler(_Handler):
         self._doc = self._get_id(utils.html_format(suite.doc))
         self._data_from_children.append(self._doc)
         self._metadata = []
+        self._in_setup_or_teardown = False
         for i in [self._get_ids(key,  utils.html_format(value)) for key, value in suite.metadata.items()]:
             self._metadata.extend(i)
         self._data_from_children.append(self._metadata)
@@ -157,6 +158,10 @@ class SuiteHandler(_Handler):
 
     def add_child_data(self, data):
         self._current_children.append(data)
+
+    def start_keyword(self, keyword):
+        self._current_children = self._keywords
+        return SuiteSetupAndTeardownHandler(self._context, keyword)
 
     def end_element(self, suite):
         stats = self._context.end_suite()
@@ -231,6 +236,16 @@ class KeywordHandler(_Handler):
 
     def _get_keywords(self):
         self._context.end_keyword()
+        return self._keywords
+
+
+class SuiteSetupAndTeardownHandler(KeywordHandler):
+
+    def _start(self):
+        self._context.start_suite_setup_or_teardown()
+
+    def _get_keywords(self):
+        self._context.end_suite_setup_or_teardown(self._keywords)
         return self._keywords
 
 
