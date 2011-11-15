@@ -63,7 +63,6 @@ class ResultWriter(object):
             ('endtime', 'EndTime')
             ]:
             opts[opt_name] = self.settings[settings_name]
-
         opts['metadata'] = dict(opts['metadata'])
         return opts
 
@@ -74,25 +73,30 @@ class ResultWriter(object):
         ReportBuilder(self).build()
         XUnitBuilder(self).build()
 
+
+class RebotResultWriter(ResultWriter):
+
     def write_rebot_results(self, *data_sources):
         self._data_sources = data_sources
         OutputBuilder(self).build()
         XUnitBuilder(self).build()
-        self._create_reporting_datamodel()
         LogBuilder(self).build()
         ReportBuilder(self).build()
         return self._execution_result
 
-    def _create_reporting_datamodel(self):
-        visitor = DatamodelVisitor(self.result_from_xml.result,
-                                   log_path=self.settings['Log'],
-                                   split_log=self.settings['SplitLog'])
-        # Remove keywords while visiting as JSON datamodel visitor is the last
-        # thing that needs keywords from the model
-        # this saves memory -- possibly a lot.
-        self.result_from_xml.result.visit(CombiningVisitor(visitor,
-                                          KeywordRemovingVisitor()))
-        self._data_model = DataModelWriter(visitor.datamodel)
+    @property
+    def data_model(self):
+        if self._data_model is None:
+            visitor = DatamodelVisitor(self.result_from_xml.result,
+                                       log_path=self.settings['Log'],
+                                       split_log=self.settings['SplitLog'])
+            # Remove keywords while visiting as JSON datamodel visitor is the last
+            # thing that needs keywords from the model
+            # this saves memory -- possibly a lot.
+            self.result_from_xml.result.visit(CombiningVisitor(visitor,
+                                              KeywordRemovingVisitor()))
+            self._data_model = DataModelWriter(visitor.datamodel, visitor.split_results)
+        return self._data_model
 
 
 class ResultFromXML(object):
