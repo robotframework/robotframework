@@ -31,7 +31,6 @@ class ResultWriter(object):
     def __init__(self, settings):
         self.settings = settings
         self._xml_result = None
-        self._execution_result = None
         self._data_model = None
         self._data_sources = []
 
@@ -45,10 +44,10 @@ class ResultWriter(object):
     @property
     def result_from_xml(self):
         if self._xml_result is None:
-            self._execution_result = RFX(*self._data_sources)
-            opts = self._create_opts()
-            self._execution_result.configure(status_rc=not self.settings['NoStatusRC'], **opts)
-            self._xml_result = ResultFromXML(self._execution_result, self.settings)
+            execution_result = RFX(*self._data_sources)
+            execution_result.configure(status_rc=not self.settings['NoStatusRC'],
+                                       **self._create_opts())
+            self._xml_result = ResultFromXML(execution_result, self.settings)
         return self._xml_result
 
     def _create_opts(self):
@@ -82,7 +81,7 @@ class RebotResultWriter(ResultWriter):
         XUnitBuilder(self).build()
         LogBuilder(self).build()
         ReportBuilder(self).build()
-        return self._execution_result
+        return self.result_from_xml.result
 
     @property
     def data_model(self):
