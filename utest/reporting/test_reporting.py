@@ -1,10 +1,10 @@
 import unittest
 
-from robot.reporting import ResultWriter
 from robot.reporting.outputparser import OutputParser
 from robot.reporting.builders import LogBuilder, ReportBuilder, XUnitBuilder
 
 import resources
+from robot.reporting.resultwriter import RebotResultWriter, ResultWriter
 
 
 def set_write_log_mock():
@@ -45,7 +45,7 @@ def set_datamodel_generation_spy():
     return generated
 
 
-class TestReporting(unittest.TestCase):
+class _TestReporting(object):
 
     def setUp(self):
         self._settings = {
@@ -80,7 +80,6 @@ class TestReporting(unittest.TestCase):
             'LogLevel': 'INFO',
             'RemoveKeywords': None
         }
-        self._reporter = ResultWriter(self._settings)
         self._log_results = set_write_log_mock()
         self._report_results = set_write_report_mock()
         self._xunit_results = set_write_xunit_mock()
@@ -93,7 +92,6 @@ class TestReporting(unittest.TestCase):
         self._reporter.write_robot_results(resources.GOLDEN_OUTPUT)
         self._assert_expected_log('log.html')
         self._assert_expected_report('report.html')
-        self._assert_data_model_generated_once()
 
     def test_no_generation(self):
         self._reporter.write_robot_results(resources.GOLDEN_OUTPUT)
@@ -120,17 +118,10 @@ class TestReporting(unittest.TestCase):
         self._assert_no_report()
         self._assert_expected_xunit('xunitfile-only.xml')
 
-    def test_multiple_outputs(self):
-        self._settings['Log'] = 'log.html'
-        self._settings['Report'] = 'report.html'
-        self._reporter.write_rebot_results(*[resources.GOLDEN_OUTPUT, resources.GOLDEN_OUTPUT2])
-        self._assert_expected_log('log.html')
-        self._assert_expected_report('report.html')
-
     def test_split_tests(self):
         self._settings['SplitLog'] = True
         self._settings['Log'] = '/tmp/foo/log.bar.html'
-        self._reporter.write_robot_results(resources.GOLDEN_OUTPUT)
+        self._write_results(resources.GOLDEN_OUTPUT)
         expected = ('/tmp/foo/log.bar-%d.js' % i for i in range(1, 5))
         self._assert_expected_split_tests(*expected)
 
@@ -157,6 +148,33 @@ class TestReporting(unittest.TestCase):
 
     def _assert_data_model_generated_once(self):
         self.assertEquals(len(self._datamodel_generations), 1)
+
+
+class TestRebotReporting(_TestReporting, unittest.TestCase):
+
+    def setUp(self):
+        _TestReporting.setUp(self)
+        self._reporter = RebotResultWriter(self._settings)
+
+    def _write_results(self, *sources):
+        self._reporter.write_rebot_results(*sources)
+
+    def test_multiple_outputs(self):
+        self._settings['Log'] = 'log.html'
+        self._settings['Report'] = 'report.html'
+        self._write_results(resources.GOLDEN_OUTPUT, resources.GOLDEN_OUTPUT2)
+        self._assert_expected_log('log.html')
+        self._assert_expected_report('report.html')
+
+
+class TestRobotReporting(_TestReporting, unittest.TestCase):
+
+    def setUp(self):
+        _TestReporting.setUp(self)
+        self._reporter = ResultWriter(self._settings)
+
+    def _write_results(self, source):
+        self._reporter.write_robot_results(source)
 
 
 if __name__ == '__main__':
