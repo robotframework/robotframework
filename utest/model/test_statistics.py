@@ -265,6 +265,18 @@ class TestTagStatistics(unittest.TestCase):
             # 4) Verify names (match counts were already verified)
             assert_equals(names, exp_names)
 
+    def test_sorting(self):
+        stats = TagStatistics(Criticality(['c2', 'c1'], ['n*']),
+                              combine=[('c*', ''), ('xxx', 'a title')])
+        stats.add_test(TestCase(tags=['c1', 'c2', 't1']))
+        stats.add_test(TestCase(tags=['c1', 'n2', 't2']))
+        stats.add_test(TestCase(tags=['n1', 'n2', 't1', 't3']))
+        assert_equals([(s.name, s._info, s.total) for s in stats],
+                       [('c1', 'critical', 2), ('c2', 'critical', 1),
+                        ('n1', 'non-critical', 1), ('n2', 'non-critical', 2),
+                        ('a title', 'combined', 0), ('c*', 'combined', 2),
+                        ('t1', '', 2), ('t2', '', 1), ('t3', '', 1)])
+
     def test_through_suite(self):
         suite = generate_default_suite()
         suite.set_criticality(critical_tags=['smoke'])
