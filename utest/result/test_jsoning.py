@@ -6,26 +6,37 @@ from robot.model.message import Message
 from robot.output.loggerhelper import LEVELS
 from robot.reporting.parsingcontext import Context
 from robot.result.datamodel import DatamodelVisitor
-from robot.result.jsondatamodelhandlers import _Handler, KeywordHandler, _StatusHandler, ExecutionResultHandler
+from robot.result.jsondatamodelhandlers import _Handler, KeywordHandler, _StatusHandler
 from robot.result.testcase import TestCase
 from robot.result.testsuite import TestSuite
 from robot.utils.asserts import assert_equals
 
 
-class TestJsoning(unittest.TestCase, DatamodelVisitor):
+class _PartialDatamodelVisitor(DatamodelVisitor):
 
-    def setUp(self):
+    def __init__(self):
         self._elements = []
         self._context = Context()
         self._elements.append(_Handler(self._context))
+
+
+class TestJsoning(unittest.TestCase):
+
+    def setUp(self):
+        self._visitor = _PartialDatamodelVisitor()
+        self._context = self._visitor._context
+
+    @property
+    def datamodel(self):
+        return self._visitor.datamodel
 
     def test_html_message_to_json(self):
         message = Message(message='<b>Great danger!</b>',
                           level='WARN',
                           html=True,
                           timestamp='20121212 12:12:12.121')
-        message.visit(self)
-        self._verify_message(self.datamodel[0], message)
+        message.visit(self._visitor)
+        self._verify_message(self._visitor.datamodel[0], message)
 
     def _verify_message(self, message_json, message):
         assert_equals(message_json[0], self._context.timestamp(message.timestamp))
@@ -42,12 +53,12 @@ class TestJsoning(unittest.TestCase, DatamodelVisitor):
         message = Message(message='This is an html mark --> <html>',
                           level='INFO',
                           timestamp='19991211 12:12:12.821')
-        message.visit(self)
+        message.visit(self._visitor)
         self._verify_message(self.datamodel[0], message)
 
     def test_times(self):
         for timestamp in ['20110531 12:48:09.020','N/A','20110531 12:48:09.010','20110531 12:48:19.035']:
-            Message(timestamp=timestamp).visit(self)
+            Message(timestamp=timestamp).visit(self._visitor)
         for index, millis in enumerate([0, None, -10, 10015]):
             assert_equals(self.datamodel[index][0], millis)
 
@@ -67,7 +78,7 @@ class TestJsoning(unittest.TestCase, DatamodelVisitor):
         keyword.keywords.create(name='No Operation',
                                 type='kw',
                                 status='PASS')
-        keyword.visit(self)
+        keyword.visit(self._visitor)
         self._verify_keyword(self.datamodel[0], keyword)
 
     def _verify_keyword(self, keyword_json, keyword):
@@ -112,7 +123,7 @@ class TestJsoning(unittest.TestCase, DatamodelVisitor):
                                         status='FAIL',
                                         starttime='20000101 01:00:01.000',
                                         endtime='20350101 01:00:00.001')
-        test.visit(self)
+        test.visit(self._visitor)
         self._verify_test(self.datamodel[0], test)
 
     def _verify_test(self, test_json, test):
@@ -150,7 +161,7 @@ class TestJsoning(unittest.TestCase, DatamodelVisitor):
         subsuite = suite.suites.create(name='subsuite')
         subsuite.tests.create(name='test', status='PASS')
         suite.keywords.create(type='teardown')
-        suite.visit(self)
+        suite.visit(self._visitor)
         self._verify_suite(self.datamodel[0], suite)
 
     def _verify_suite(self, suite_json, suite):
@@ -194,8 +205,9 @@ class TestJsoning(unittest.TestCase, DatamodelVisitor):
         result.generator = 'unit test'
         result.suite.suites.create(name='Urho').tests.create(status='FAIL', name='moi', tags=['tagi']).keywords.create(name='FAILING', status='FAIL').messages.create(message='FAIL', level='WARN', timestamp='20110101 01:01:01.111')
         result.errors.messages.create(message='FAIL', level='WARN', timestamp='20110101 01:01:01.111', linkable=True)
-        self._elements[0] = ExecutionResultHandler(self._context, result)
-        result.visit(self)
+        self._visitor = DatamodelVisitor(result)
+        self._context = self._visitor._context
+        result.visit(self._visitor)
         self._verify_message(self.datamodel['errors'][0], result.errors.messages[0])
         assert_equals(self._context.dump_texts()[self.datamodel['errors'][0][3]], '*s1-s1-t1-k1')
         self._verify_suite(self.datamodel['suite'], result.suite)
