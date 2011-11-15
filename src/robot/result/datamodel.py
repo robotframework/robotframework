@@ -13,7 +13,7 @@
 #  limitations under the License.
 
 from robot.reporting.parsingcontext import Context
-from robot.result.jsondatamodelhandlers import ExecutionResultHandler, SuiteHandler, KeywordHandler
+from robot.result.jsondatamodelhandlers import ExecutionResultHandler
 
 from robot.result.visitor import ResultVisitor
 
