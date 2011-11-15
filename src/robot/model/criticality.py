@@ -28,15 +28,9 @@ class Criticality(object):
         return self.non_critical_tags.match(tag)
 
     def test_is_critical(self, test):
-        if self.non_critical_tags.match(test.tags):
+        if self.critical_tags and not self.critical_tags.match(test.tags):
             return False
-        if self.critical_tags.match(test.tags):
-            return True
-        return not self.critical_tags
+        return not self.non_critical_tags.match(test.tags)
 
     def __nonzero__(self):
         return bool(self.critical_tags or self.non_critical_tags)
-
-    # TODO: Remove below compatibility code when possible
-    is_critical = tag_is_critical
-    is_non_critical = tag_is_non_critical

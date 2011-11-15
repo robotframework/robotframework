@@ -71,8 +71,8 @@ class TagStatInfo(object):
 
     def get_stat(self, tag):
         return TagStat(tag, self._get_doc(tag), self._get_links(tag),
-                       self._criticality.is_critical(tag),
-                       self._criticality.is_non_critical(tag))
+                       self._criticality.tag_is_critical(tag),
+                       self._criticality.tag_is_non_critical(tag))
 
     def get_combined_stat(self, pattern, name=None):
         name = name or pattern
