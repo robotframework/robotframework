@@ -92,10 +92,10 @@ class TestStatisticsNotSoSimple(unittest.TestCase):
         assert_equals(len(tags), 4)
         names = [t.name for t in tags]
         assert_equals(names, 'smoke t1 t2 t3'.split())
-        verify_stat(tags._tags['smoke'], 'smoke', 2, 2, True, False)
-        verify_stat(tags._tags['t1'], 't1', 3, 2, False, False)
-        verify_stat(tags._tags['t2'], 't2', 2, 1, False, False)
-        verify_stat(tags._tags['t3'], 't3', 0, 2, False, False)
+        verify_stat(tags.tags['smoke'], 'smoke', 2, 2, True, False)
+        verify_stat(tags.tags['t1'], 't1', 3, 2, False, False)
+        verify_stat(tags.tags['t2'], 't2', 2, 1, False, False)
+        verify_stat(tags.tags['t3'], 't3', 0, 2, False, False)
 
 
 class TestSuiteStatLevel(unittest.TestCase):

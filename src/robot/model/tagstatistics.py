@@ -24,12 +24,12 @@ class TagStatistics(object):
     def __init__(self, criticality, include=None, exclude=None, combine=None,
                  docs=None, links=None):
         # TODO: Check argument names
-        self._tags = utils.NormalizedDict(ignore=['_'])
+        self.tags = utils.NormalizedDict(ignore=['_'])
         self._include = TagPatterns(include)
         self._exclude = TagPatterns(exclude)
         self._info = TagStatInfo(criticality, docs, links)
-        self._combined = [self._info.get_combined_stat(pattern, name)
-                          for pattern, name in combine or []]
+        self.combined = [self._info.get_combined_stat(pattern, name)
+                         for pattern, name in combine or []]
 
     def add_test(self, test):
         self._add_tags_to_statistics(test)
@@ -38,9 +38,9 @@ class TagStatistics(object):
     def _add_tags_to_statistics(self, test):
         for tag in test.tags:
             if self._is_included(tag):
-                if tag not in self._tags:
-                    self._tags[tag] = self._info.get_stat(tag)
-                self._tags[tag].add_test(test)
+                if tag not in self.tags:
+                    self.tags[tag] = self._info.get_stat(tag)
+                self.tags[tag].add_test(test)
 
     def _is_included(self, tag):
         if self._include and not self._include.match(tag):
@@ -48,7 +48,7 @@ class TagStatistics(object):
         return not self._exclude.match(tag)
 
     def _add_to_combined_statistics(self, test):
-        for comb in self._combined:
+        for comb in self.combined:
             if comb.match(test.tags):
                 comb.add_test(test)
 
@@ -56,10 +56,10 @@ class TagStatistics(object):
         visitor.visit_tag_statistics(self)
 
     def __iter__(self):
-        return iter(sorted(self._tags.values() + self._combined))
+        return iter(sorted(self.tags.values() + self.combined))
 
     def __len__(self):
-        return len(self._tags) + len(self._combined)
+        return len(self.tags) + len(self.combined)
 
 
 class TagStatInfo(object):
