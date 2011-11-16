@@ -35,6 +35,9 @@ class JSModelCreator(ResultVisitor):
     def _push(self, element):
         self._elements.append(element)
 
+    def _pop(self):
+        return self._elements.pop()
+
     @property
     def split_results(self):
         return self._context.split_results
@@ -57,7 +60,7 @@ class JSModelCreator(ResultVisitor):
 
     #TODO: end_elements should also work in similar as starts
     def _end(self, item):
-        submodel = self._elements.pop().end_element(item)
+        submodel = self._pop().end_element(item)
         self._top.add_child_data(submodel)
 
     end_suite = end_keyword = end_test = end_errors = _end
