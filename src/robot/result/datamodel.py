@@ -32,24 +32,27 @@ class JSModelCreator(ResultVisitor):
     def _top(self):
         return self._elements[-1]
 
+    def _push(self, element):
+        self._elements.append(element)
+
     @property
     def split_results(self):
         return self._context.split_results
 
     def start_suite(self, suite):
-        self._elements.append(self._top.start_suite(suite))
+        self._push(self._top.start_suite(suite))
 
     def start_keyword(self, keyword):
-        self._elements.append(self._top.start_keyword(keyword))
+        self._push(self._top.start_keyword(keyword))
 
     def start_test(self, test):
-        self._elements.append(self._top.start_test(test))
+        self._push(self._top.start_test(test))
 
     def start_errors(self, errors):
-        self._elements.append(self._top.start_errors(errors))
+        self._push(self._top.start_errors(errors))
 
     def visit_statistics(self, stats):
-        self._elements.append(self._top.visit_statistics(stats))
+        self._push(self._top.visit_statistics(stats))
         self._end(stats)
 
     #TODO: end_elements should also work in similar as starts
