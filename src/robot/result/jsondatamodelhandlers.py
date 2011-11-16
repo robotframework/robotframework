@@ -14,13 +14,12 @@
 
 from robot import utils
 from robot.output import LEVELS
-from robot.result import TestSuite, Keyword, TestCase
 from robot.result.visitor import ResultVisitor
 
 
 class _Handler(object):
 
-    def __init__(self, context, attrs=None):
+    def __init__(self, context):
         self._context = context
         self._current_children = None
         self._suites = []
@@ -44,7 +43,7 @@ class _Handler(object):
         self._current_children = self._tests
         return TestHandler(self._context, test)
 
-    def start_errors(self, errors):
+    def start_errors(self, _):
         return _Handler(self._context)
 
     def message(self, message):
@@ -125,7 +124,7 @@ class StatisticsHandler(object):
                 'fail':stat_elem.failed,
                 'label':stat_elem.name}
 
-    def end_element(self, text):
+    def end_element(self, _):
         return self._result
 
 
@@ -135,9 +134,6 @@ class SuiteHandler(_Handler):
         _Handler.__init__(self, context)
         self._source = suite.source
         self._name = suite.name
-        self._suites = []
-        self._tests = []
-        self._keywords = []
         self._current_children = None
         self._teardown_failed = False
         self._context.start_suite()
@@ -207,9 +203,6 @@ class KeywordHandler(_Handler):
 
     def __init__(self, context, keyword):
         _Handler.__init__(self, context)
-        self._type = self._types[keyword.type]
-        self._name = keyword.name
-        self._timeout = keyword.timeout
         self._keywords = []
         self._messages = []
         self._current_children = None
@@ -231,7 +224,9 @@ class KeywordHandler(_Handler):
 
     def end_element(self, keyword):
         self._data_from_children.append(self._status)
-        return self._get_ids(self._type, self._name, self._timeout) + \
+        return self._get_ids(self._types[keyword.type],
+                             keyword.name,
+                             keyword.timeout) + \
                 self._data_from_children + [self._get_keywords(), self._messages]
 
     def _get_keywords(self):
