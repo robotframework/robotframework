@@ -13,4 +13,4 @@
 #  limitations under the License.
 
 
-from resultwriter import ResultWriter, RebotResultWriter
+from resultwriter import RobotResultWriter, RebotResultWriter

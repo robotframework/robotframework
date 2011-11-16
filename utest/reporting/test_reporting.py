@@ -4,7 +4,7 @@ from robot.reporting.outputparser import OutputParser
 from robot.reporting.builders import LogBuilder, ReportBuilder, XUnitBuilder, OutputBuilder
 
 import resources
-from robot.reporting.resultwriter import RebotResultWriter, ResultWriter
+from robot.reporting.resultwriter import RebotResultWriter, RobotResultWriter
 
 
 def set_write_log_mock():
@@ -96,31 +96,31 @@ class _TestReporting(object):
     def test_generate_report_and_log(self):
         self._settings['Log'] = 'log.html'
         self._settings['Report'] = 'report.html'
-        self._reporter.write_robot_results(resources.GOLDEN_OUTPUT)
+        self._reporter.write_results(resources.GOLDEN_OUTPUT)
         self._assert_expected_log('log.html')
         self._assert_expected_report('report.html')
 
     def test_no_generation(self):
-        self._reporter.write_robot_results(resources.GOLDEN_OUTPUT)
+        self._reporter.write_results(resources.GOLDEN_OUTPUT)
         self._assert_no_log()
         self._assert_no_report()
         self._assert_no_data_model_generation()
 
     def test_only_log(self):
         self._settings['Log'] = 'only-log.html'
-        self._reporter.write_robot_results(resources.GOLDEN_OUTPUT)
+        self._reporter.write_results(resources.GOLDEN_OUTPUT)
         self._assert_expected_log('only-log.html')
         self._assert_no_report()
 
     def test_only_report(self):
         self._settings['Report'] = 'reports-only.html'
-        self._reporter.write_robot_results(resources.GOLDEN_OUTPUT)
+        self._reporter.write_results(resources.GOLDEN_OUTPUT)
         self._assert_no_log()
         self._assert_expected_report('reports-only.html')
 
     def test_only_xunit(self):
         self._settings['XUnitFile'] = 'xunitfile-only.xml'
-        self._reporter.write_robot_results(resources.GOLDEN_OUTPUT)
+        self._reporter.write_results(resources.GOLDEN_OUTPUT)
         self._assert_no_log()
         self._assert_no_report()
         self._assert_expected_xunit('xunitfile-only.xml')
@@ -165,7 +165,7 @@ class TestRebotReporting(_TestReporting, unittest.TestCase):
         self._reporter = RebotResultWriter(self._settings)
 
     def _write_results(self, *sources):
-        self._reporter.write_rebot_results(*sources)
+        self._reporter.write_results(*sources)
 
     def test_multiple_outputs(self):
         self._settings['Log'] = 'log.html'
@@ -187,10 +187,10 @@ class TestRobotReporting(_TestReporting, unittest.TestCase):
 
     def setUp(self):
         _TestReporting.setUp(self)
-        self._reporter = ResultWriter(self._settings)
+        self._reporter = RobotResultWriter(self._settings)
 
     def _write_results(self, source):
-        self._reporter.write_robot_results(source)
+        self._reporter.write_results(source)
 
 
 if __name__ == '__main__':
