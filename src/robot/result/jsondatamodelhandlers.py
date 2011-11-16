@@ -64,6 +64,7 @@ class _Handler(object):
     def _last_child_status(self):
         return self._data_from_children[-1][0]
 
+
 class ExecutionResultHandler(_Handler):
 
     def __init__(self, context, execution_result):
@@ -74,7 +75,7 @@ class ExecutionResultHandler(_Handler):
         self._current_children = self._stats
         return StatisticsHandler(self._stats, stats)
 
-    def end_element(self, text):
+    def end_element(self, _):
         return {'generator': self._generator,
                 'suite': self._data_from_children[0],
                 'stats': self._stats,
@@ -133,21 +134,17 @@ class SuiteHandler(_Handler):
     def __init__(self, context, suite):
         _Handler.__init__(self, context)
         self._current_children = None
-        self._teardown_failed = False
         self._context.start_suite()
         self._data_from_children.append(self._get_id(utils.html_format(suite.doc)))
         self._metadata = []
-        self._in_setup_or_teardown = False
-        for i in [self._get_ids(key,  utils.html_format(value)) for key, value in suite.metadata.items()]:
+        for i in [self._get_ids(key, utils.html_format(value))
+                  for key, value in suite.metadata.items()]:
             self._metadata.extend(i)
         self._data_from_children.append(self._metadata)
 
     def _get_name_and_sources(self, suite):
         return self._get_ids(suite.name, suite.source,
                              self._context.get_rel_log_path(suite.source))
-
-    def _set_teardown_failed(self):
-        self._teardown_failed = True
 
     def add_child_data(self, data):
         self._current_children.append(data)
@@ -162,16 +159,15 @@ class SuiteHandler(_Handler):
         if suite.message != '':
             status.append(self._get_id(suite.message))
         self._data_from_children.append(status)
+        # TODO: 0 is Teardown failure. It should be removed from JS
         return self._get_name_and_sources(suite) + self._data_from_children + \
-                 [self._suites, self._tests, self._keywords,
-                  int(self._teardown_failed), stats]
+                 [self._suites, self._tests, self._keywords, 0, stats]
 
 
 class TestHandler(_Handler):
 
     def __init__(self, context, test):
         _Handler.__init__(self, context)
-        self._keywords = []
         self._current_children = None
         self._context.start_test()
         self._data_from_children.append(self._get_id(utils.html_format(test.doc)))
@@ -238,7 +234,6 @@ class SuiteSetupAndTeardownHandler(KeywordHandler):
 
 
 class _StatusHandler(_Handler):
-
     _statuses = {'FAIL': 0, 'PASS': 1, 'NOT_RUN': 2}
 
     def __init__(self, context, item):
