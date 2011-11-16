@@ -26,20 +26,13 @@ from robot.reporting.builders import LogBuilder, ReportBuilder, XUnitBuilder, Ou
 from robot.reporting.outputparser import OutputParser
 
 
-class ResultWriter(object):
+class _ResultWriter(object):
 
     def __init__(self, settings):
         self.settings = settings
         self._xml_result = None
         self._data_model = None
         self._data_sources = []
-
-    @property
-    def data_model(self):
-        if self._data_model is None:
-            parser = OutputParser(self.settings['Log'], self.settings['SplitLog'])
-            self._data_model = parser.parse(self._data_sources[0])
-        return self._data_model
 
     @property
     def result_from_xml(self):
@@ -66,16 +59,25 @@ class ResultWriter(object):
         return opts
 
 
-    def write_robot_results(self, data_source):
+class RobotResultWriter(_ResultWriter):
+
+    @property
+    def data_model(self):
+        if self._data_model is None:
+            parser = OutputParser(self.settings['Log'], self.settings['SplitLog'])
+            self._data_model = parser.parse(self._data_sources[0])
+        return self._data_model
+
+    def write_results(self, data_source):
         self._data_sources = [data_source]
         LogBuilder(self).build()
         ReportBuilder(self).build()
         XUnitBuilder(self).build()
 
 
-class RebotResultWriter(ResultWriter):
+class RebotResultWriter(_ResultWriter):
 
-    def write_rebot_results(self, *data_sources):
+    def write_results(self, *data_sources):
         self._data_sources = data_sources
         OutputBuilder(self).build()
         XUnitBuilder(self).build()

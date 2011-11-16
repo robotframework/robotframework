@@ -14,13 +14,12 @@
 
 from robot import utils
 from robot.output import LEVELS
-from robot.result import TestSuite, Keyword, TestCase
 from robot.result.visitor import ResultVisitor
 
 
 class _Handler(object):
 
-    def __init__(self, context, attrs=None):
+    def __init__(self, context):
         self._context = context
         self._current_children = None
         self._suites = []
@@ -44,7 +43,7 @@ class _Handler(object):
         self._current_children = self._tests
         return TestHandler(self._context, test)
 
-    def start_errors(self, errors):
+    def start_errors(self, _):
         return _Handler(self._context)
 
     def message(self, message):
@@ -125,7 +124,7 @@ class StatisticsHandler(object):
                 'fail':stat_elem.failed,
                 'label':stat_elem.name}
 
-    def end_element(self, text):
+    def end_element(self, _):
         return self._result
 
 
@@ -133,25 +132,19 @@ class SuiteHandler(_Handler):
 
     def __init__(self, context, suite):
         _Handler.__init__(self, context)
-        self._source = suite.source
-        self._name = suite.name
-        self._suites = []
-        self._tests = []
-        self._keywords = []
         self._current_children = None
         self._teardown_failed = False
         self._context.start_suite()
-        self._doc = self._get_id(utils.html_format(suite.doc))
-        self._data_from_children.append(self._doc)
+        self._data_from_children.append(self._get_id(utils.html_format(suite.doc)))
         self._metadata = []
         self._in_setup_or_teardown = False
         for i in [self._get_ids(key,  utils.html_format(value)) for key, value in suite.metadata.items()]:
             self._metadata.extend(i)
         self._data_from_children.append(self._metadata)
 
-    def _get_name_and_sources(self):
-        return self._get_ids(self._name, self._source,
-                             self._context.get_rel_log_path(self._source))
+    def _get_name_and_sources(self, suite):
+        return self._get_ids(suite.name, suite.source,
+                             self._context.get_rel_log_path(suite.source))
 
     def _set_teardown_failed(self):
         self._teardown_failed = True
@@ -169,7 +162,7 @@ class SuiteHandler(_Handler):
         if suite.message != '':
             status.append(self._get_id(suite.message))
         self._data_from_children.append(status)
-        return self._get_name_and_sources() + self._data_from_children + \
+        return self._get_name_and_sources(suite) + self._data_from_children + \
                  [self._suites, self._tests, self._keywords,
                   int(self._teardown_failed), stats]
 
@@ -178,14 +171,10 @@ class TestHandler(_Handler):
 
     def __init__(self, context, test):
         _Handler.__init__(self, context)
-        self._name = test.name
-        self._timeout = test.timeout
         self._keywords = []
         self._current_children = None
         self._context.start_test()
-        self._critical = int(test.critical == 'yes')
-        self._doc = self._get_id(utils.html_format(test.doc))
-        self._data_from_children.append(self._doc)
+        self._data_from_children.append(self._get_id(utils.html_format(test.doc)))
         self._status = _StatusHandler(self._context, test).end_element('')
         if test.message != '':
             self._status.append(self._get_id(test.message))
@@ -194,11 +183,12 @@ class TestHandler(_Handler):
         self._current_children.append(data)
 
     def end_element(self, test):
+        critical = int(test.critical == 'yes')
         self._data_from_children.append([self._get_id(tag) for tag in test.tags])
         self._data_from_children.append(self._status)
-        self._context.add_test(self._critical, self._last_child_passed())
+        self._context.add_test(critical, self._last_child_passed())
         kws = self._context.end_test(self._keywords)
-        return self._get_ids(self._name, self._timeout, self._critical) + \
+        return self._get_ids(test.name, test.timeout, critical) + \
                 self._data_from_children + [kws]
 
 
@@ -207,15 +197,11 @@ class KeywordHandler(_Handler):
 
     def __init__(self, context, keyword):
         _Handler.__init__(self, context)
-        self._type = self._types[keyword.type]
-        self._name = keyword.name
-        self._timeout = keyword.timeout
         self._keywords = []
         self._messages = []
         self._current_children = None
         self._start()
-        self._doc = self._get_id(utils.html_format(keyword.doc))
-        self._data_from_children.append(self._doc)
+        self._data_from_children.append(self._get_id(utils.html_format(keyword.doc)))
         self._args = self._get_id(', '.join(keyword.args))
         self._data_from_children.append(self._args)
         self._status = _StatusHandler(self._context, keyword).end_element('')
@@ -231,7 +217,9 @@ class KeywordHandler(_Handler):
 
     def end_element(self, keyword):
         self._data_from_children.append(self._status)
-        return self._get_ids(self._type, self._name, self._timeout) + \
+        return self._get_ids(self._types[keyword.type],
+                             keyword.name,
+                             keyword.timeout) + \
                 self._data_from_children + [self._get_keywords(), self._messages]
 
     def _get_keywords(self):
@@ -280,17 +268,15 @@ class _MsgHandler(_Handler):
         _Handler.__init__(self, context)
         self._msg = [self._context.timestamp(message.timestamp),
                      LEVELS[message.level]]
-        self._is_html = message.html
-        self._is_linkable_in_error_table = message.linkable
-        self._is_warning = message.level == 'WARN'
+        self._message = message
 
     def end_element(self, text):
-        self._msg.append(text if self._is_html else utils.html_escape(text))
+        self._msg.append(text if self._message.html else utils.html_escape(text))
         self._handle_warning_linking()
         return self._get_ids(*self._msg)
 
     def _handle_warning_linking(self):
-        if self._is_linkable_in_error_table:
+        if self._message.linkable:
             self._msg.append(self._context.link_to(self._msg))
-        elif self._is_warning:
+        elif self._message.level == 'WARN':
             self._context.create_link_to_current_location(self._msg)

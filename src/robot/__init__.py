@@ -46,7 +46,7 @@ import utils
 from output import Output, LOGGER, pyloggingconf
 from conf import RobotSettings, RebotSettings
 from running import TestSuite, STOP_SIGNAL_MONITOR
-from robot.reporting import ResultWriter, RebotResultWriter
+from robot.reporting import RobotResultWriter, RebotResultWriter
 from errors import (DataError, Information, INFO_PRINTED, DATA_ERROR,
                     STOPPED_BY_USER, FRAMEWORK_ERROR)
 from variables import init_global_variables
@@ -130,7 +130,7 @@ def run(*datasources, **options):
     output.close(suite)
     if settings.is_rebot_needed():
         output, settings = settings.get_rebot_datasource_and_settings()
-        ResultWriter(settings).write_robot_results(output)
+        RobotResultWriter(settings).write_results(output)
     LOGGER.close()
     return suite, suite.return_code
 
@@ -153,7 +153,7 @@ def run_rebot(*datasources, **options):
     settings = RebotSettings(options)
     LOGGER.register_console_logger(colors=settings['MonitorColors'])
     LOGGER.disable_message_cache()
-    result = RebotResultWriter(settings).write_rebot_results(*datasources)
+    result = RebotResultWriter(settings).write_results(*datasources)
     LOGGER.close()
     return result.suite, result.return_code
 
