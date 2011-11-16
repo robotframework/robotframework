@@ -21,48 +21,59 @@ class _Handler(object):
 
     def __init__(self, context):
         self._context = context
-        self._current_children = None
         self._suites = []
-        self._keywords = []
         self._tests = []
-        self._stats = []
-        self._data_from_children = []
+        self._keywords = []
+        self._messages = []
+        self._errors = []
 
-    def add_child_data(self, data):
-        self._data_from_children.append(data)
+    def build(self, item):
+        return None
 
-    def start_suite(self, suite):
-        self._current_children = self._suites
-        return SuiteHandler(self._context, suite)
+    def suite_handler(self):
+        return SuiteHandler(self._context)
 
-    def start_keyword(self, keyword):
-        self._current_children = self._keywords
-        return KeywordHandler(self._context, keyword)
+    def test_handler(self):
+        return TestHandler(self._context)
 
-    def start_test(self, test):
-        self._current_children = self._tests
-        return TestHandler(self._context, test)
+    def keyword_handler(self):
+        return KeywordHandler(self._context)
 
-    def start_errors(self, _):
-        return _Handler(self._context)
+    def message_handler(self):
+        return MessageHandler(self._context)
 
-    def message(self, message):
-        self._data_from_children.append(_MsgHandler(self._context, message).end_element(message.message))
+    def errors_handler(self):
+        return ErrorsHandler(self._context)
+
+    def add_suite(self, data):
+        self._suites.append(data)
+
+    def add_test(self, data):
+        self._tests.append(data)
+
+    def add_keyword(self, data):
+        self._keywords.append(data)
+
+    def add_message(self, data):
+        self._messages.append(data)
+
+    def add_errors(self, data):
+        self._errors = data
+
+    def _status(self, item):
+        return StatusHandler(self._context).build(item)
 
     def end_element(self, text):
         return self._data_from_children
 
-    def _get_id(self, item):
+    def _id(self, item):
         return self._context.get_id(item)
+
+    def _timestamp(self, time_string):
+        return self._context.timestamp(time_string)
 
     def _get_ids(self, *items):
         return [self._get_id(i) for i in items]
-
-    def _last_child_passed(self):
-        return self._last_child_status() == 1
-
-    def _last_child_status(self):
-        return self._data_from_children[-1][0]
 
 
 class ExecutionResultHandler(_Handler):
@@ -72,16 +83,22 @@ class ExecutionResultHandler(_Handler):
         self._generator = execution_result.generator
 
     def visit_statistics(self, stats):
-        self._current_children = self._stats
+        self._stats = []
         return StatisticsHandler(self._stats, stats)
 
-    def end_element(self, _):
+    def build(self, _):
         return {'generator': self._generator,
-                'suite': self._data_from_children[0],
+                'suite': self._suites[0],
                 'stats': self._stats,
-                'errors': self._data_from_children[2],
+                'errors': self._errors,
                 'baseMillis': self._context.basemillis,
                 'strings': self._context.dump_texts()}
+
+
+class ErrorsHandler(_Handler):
+
+    def build(self, errors):
+        return self._messages
 
 
 class SuiteStatVisitor(ResultVisitor):
@@ -131,147 +148,124 @@ class StatisticsHandler(object):
 
 class SuiteHandler(_Handler):
 
-    def __init__(self, context, suite):
+    def __init__(self, context):
         _Handler.__init__(self, context)
-        self._current_children = None
         self._context.start_suite()
-        self._data_from_children.append(self._get_id(utils.html_format(suite.doc)))
-        self._metadata = []
-        for i in [self._get_ids(key, utils.html_format(value))
-                  for key, value in suite.metadata.items()]:
-            self._metadata.extend(i)
-        self._data_from_children.append(self._metadata)
 
-    def _get_name_and_sources(self, suite):
-        return self._get_ids(suite.name, suite.source,
-                             self._context.get_rel_log_path(suite.source))
+    def keyword_handler(self):
+        return SuiteKeywordHandler(self._context)
 
-    def add_child_data(self, data):
-        self._current_children.append(data)
-
-    def start_keyword(self, keyword):
-        self._current_children = self._keywords
-        return SuiteSetupAndTeardownHandler(self._context, keyword)
-
-    def end_element(self, suite):
+    def build(self, suite):
         stats = self._context.end_suite()
-        status = _StatusHandler(self._context, suite).end_element('')
-        if suite.message != '':
-            status.append(self._get_id(suite.message))
-        self._data_from_children.append(status)
-        # TODO: 0 is Teardown failure. It should be removed from JS
-        return self._get_name_and_sources(suite) + self._data_from_children + \
-                 [self._suites, self._tests, self._keywords, 0, stats]
+        return [self._id(suite.name),
+                self._id(suite.source),
+                self._id(self._context.get_rel_log_path(suite.source)),
+                self._id(utils.html_format(suite.doc)),
+                self._metadata(suite),
+                self._status(suite),
+                self._suites,
+                self._tests,
+                self._keywords,
+                0, # TODO: 0 is Teardown failure. It should be removed from JS
+                stats]
+
+
+    def _metadata(self, suite):
+        metadata = []
+        for i in [[self._id(key),
+                   self._id(utils.html_format(value))]
+        for key, value in suite.metadata.items()]:
+            metadata.extend(i)
+        return metadata
 
 
 class TestHandler(_Handler):
 
-    def __init__(self, context, test):
+    def __init__(self, context):
         _Handler.__init__(self, context)
-        self._current_children = None
         self._context.start_test()
-        self._data_from_children.append(self._get_id(utils.html_format(test.doc)))
-        self._status = _StatusHandler(self._context, test).end_element('')
-        if test.message != '':
-            self._status.append(self._get_id(test.message))
 
-    def add_child_data(self, data):
-        self._current_children.append(data)
-
-    def end_element(self, test):
+    def build(self, test):
         critical = int(test.critical == 'yes')
-        self._data_from_children.append([self._get_id(tag) for tag in test.tags])
-        self._data_from_children.append(self._status)
-        self._context.add_test(critical, self._last_child_passed())
-        kws = self._context.end_test(self._keywords)
-        return self._get_ids(test.name, test.timeout, critical) + \
-                self._data_from_children + [kws]
+        self._context.add_test(critical, test.status == 'PASS')
+        self._keywords = self._context.end_test(self._keywords)
+        return [self._id(test.name),
+                self._id(test.timeout),
+                critical,
+                self._id(utils.html_format(test.doc)),
+                [self._id(tag) for tag in test.tags],
+                self._status(test),
+                self._keywords]
 
 
 class KeywordHandler(_Handler):
     _types = {'kw': 0, 'setup': 1, 'teardown': 2, 'for': 3, 'foritem': 4}
 
-    def __init__(self, context, keyword):
+    def __init__(self, context):
         _Handler.__init__(self, context)
-        self._keywords = []
-        self._messages = []
-        self._current_children = None
-        self._start()
-        self._data_from_children.append(self._get_id(utils.html_format(keyword.doc)))
-        self._args = self._get_id(', '.join(keyword.args))
-        self._data_from_children.append(self._args)
-        self._status = _StatusHandler(self._context, keyword).end_element('')
+        context.start_keyword()
 
-    def _start(self):
-        self._context.start_keyword()
-
-    def add_child_data(self, data):
-        self._current_children.append(data)
-
-    def message(self, message):
-        self._messages.append(_MsgHandler(self._context, message).end_element(message.message))
-
-    def end_element(self, keyword):
-        self._data_from_children.append(self._status)
-        return self._get_ids(self._types[keyword.type],
-                             keyword.name,
-                             keyword.timeout) + \
-                self._data_from_children + [self._get_keywords(), self._messages]
-
-    def _get_keywords(self):
+    def build(self, keyword):
         self._context.end_keyword()
-        return self._keywords
+        return [self._types[keyword.type],
+                self._id(keyword.name),
+                self._id(keyword.timeout),
+                self._id(utils.html_format(keyword.doc)),
+                self._id(', '.join(keyword.args)),
+                self._status(keyword),
+                self._keywords,
+                self._messages]
 
 
-class SuiteSetupAndTeardownHandler(KeywordHandler):
+class SuiteKeywordHandler(_Handler):
 
-    def _start(self):
+    def __init__(self, context):
+        _Handler.__init__(self, context)
         self._context.start_suite_setup_or_teardown()
 
-    def _get_keywords(self):
+    def build(self, keyword):
         self._context.end_suite_setup_or_teardown(self._keywords)
-        return self._keywords
+        return [KeywordHandler._types[keyword.type],
+                self._id(keyword.name),
+                self._id(keyword.timeout),
+                self._id(utils.html_format(keyword.doc)),
+                self._id(', '.join(keyword.args)),
+                self._status(keyword),
+                self._keywords,
+                self._messages]
 
 
-class _StatusHandler(_Handler):
+class StatusHandler(_Handler):
     _statuses = {'FAIL': 0, 'PASS': 1, 'NOT_RUN': 2}
 
-    def __init__(self, context, item):
-        self._context = context
-        self._status = self._statuses[item.status]
-        self._starttime = self._context.timestamp(item.starttime)
-        self._elapsed = self._calculate_elapsed(item)
-
-    def _calculate_elapsed(self, item):
-        endtime = self._context.timestamp(item.endtime)
-        # Must compare against None because either start and end may be 0.
-        if self._starttime is not None or endtime is not None:
-            return endtime - self._starttime
-        # Only RF 2.6+ outputs have elapsedtime when start or end is N/A.
-        return int(item.elapsedtime)
-
-    def end_element(self, text):
-        result = [self._status, self._starttime, self._elapsed]
-        if text:
-            result.append(text)
-        return self._get_ids(*result)
+    def build(self, item):
+        model = [self._statuses[item.status],
+                 self._timestamp(item.starttime),
+                 int(item.elapsedtime)]
+        msg = getattr(item, 'message', '')
+        if msg:
+            model.append(self._id(msg))
+        return model
 
 
-class _MsgHandler(_Handler):
+class MessageHandler(_Handler):
 
-    def __init__(self, context, message):
-        _Handler.__init__(self, context)
-        self._msg = [self._context.timestamp(message.timestamp),
-                     LEVELS[message.level]]
-        self._message = message
+    def build(self, message):
+        msg = [self._timestamp(message.timestamp),
+               LEVELS[message.level],
+               self._format_message_text(message)]
+        self._handle_warning_linking(msg, message)
+        # FIXME: WTF? linking doesn't work without this late _id thing in
+        # test_reporting . test_split_tests
+        msg[2] = self._id(msg[2])
+        return msg
 
-    def end_element(self, text):
-        self._msg.append(text if self._message.html else utils.html_escape(text))
-        self._handle_warning_linking()
-        return self._get_ids(*self._msg)
+    def _format_message_text(self, message):
+        return message.message if message.html else \
+                    utils.html_escape(message.message)
 
-    def _handle_warning_linking(self):
-        if self._message.linkable:
-            self._msg.append(self._context.link_to(self._msg))
-        elif self._message.level == 'WARN':
-            self._context.create_link_to_current_location(self._msg)
+    def _handle_warning_linking(self, msg, message):
+        if message.linkable:
+            msg.append(self._id(self._context.link_to(msg)))
+        elif message.level == 'WARN':
+            self._context.create_link_to_current_location(msg)

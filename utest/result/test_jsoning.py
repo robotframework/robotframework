@@ -6,18 +6,34 @@ from robot.model.message import Message
 from robot.output.loggerhelper import LEVELS
 from robot.reporting.parsingcontext import Context
 from robot.result.datamodel import JSModelCreator
-from robot.result.jsondatamodelhandlers import _Handler, KeywordHandler, _StatusHandler
+from robot.result.jsondatamodelhandlers import _Handler, KeywordHandler, StatusHandler
 from robot.result.testcase import TestCase
 from robot.result.testsuite import TestSuite
 from robot.utils.asserts import assert_equals
 
 
+class Handler(_Handler):
+
+    def __init__(self, context):
+        _Handler.__init__(self, context)
+        self._all = []
+
+    def _add(self, data):
+        self._all.append(data)
+
+    add_keyword = add_test = add_suite = add_errors = add_message = _add
+
+    def build(self, item):
+        return self._all
+
+
 class _PartialJSModelCreator(JSModelCreator):
 
     def __init__(self):
-        self._elements = []
+        self._datamodel = None
+        self._handlers = []
         self._context = Context()
-        self._elements.append(_Handler(self._context))
+        self._handlers.append(Handler(self._context))
 
 
 class TestJsoning(unittest.TestCase):
@@ -87,7 +103,7 @@ class TestJsoning(unittest.TestCase):
                                           2:keyword.timeout,
                                           4: ', '.join(keyword.args)})
         self._assert_html_text(keyword_json[3], keyword.doc)
-        assert_equals(keyword_json[-3][0], _StatusHandler._statuses[keyword.status])
+        assert_equals(keyword_json[-3][0], StatusHandler._statuses[keyword.status])
         assert_equals(keyword_json[-3][1], self._millis(keyword.starttime))
         self._verify_elapsed(keyword_json[-3][2], keyword)
         for index, message in enumerate(keyword.messages):
@@ -132,7 +148,7 @@ class TestJsoning(unittest.TestCase):
         self._assert_html_text(test_json[3], test.doc)
         assert_equals(test_json[2], int(test.critical == 'yes'))
         self._verify_tags(test_json[4], test.tags)
-        self._assert_text(test_json[5][0], _StatusHandler._statuses[test.status])
+        self._assert_text(test_json[5][0], StatusHandler._statuses[test.status])
         assert_equals(test_json[5][1], self._millis(test.starttime))
         self._verify_elapsed(test_json[5][2], test)
         if test.message != '':
@@ -170,7 +186,7 @@ class TestJsoning(unittest.TestCase):
         self._assert_text(suite_json[2], '')
         self._assert_html_text(suite_json[3], suite.doc)
         self._verify_metadata(suite_json[4], suite.metadata)
-        assert_equals(suite_json[5][0], _StatusHandler._statuses[suite.status])
+        assert_equals(suite_json[5][0], StatusHandler._statuses[suite.status])
         assert_equals(suite_json[5][1], self._millis(suite.starttime))
         self._verify_elapsed(suite_json[5][2], suite)
         if suite.message != '':
@@ -208,7 +224,8 @@ class TestJsoning(unittest.TestCase):
         self._visitor = JSModelCreator(result)
         self._context = self._visitor._context
         result.visit(self._visitor)
-        self._verify_message(self.datamodel['errors'][0], result.errors.messages[0])
+        self._verify_message(self.datamodel['errors'][0],
+                             result.errors.messages[0])
         assert_equals(self._context.dump_texts()[self.datamodel['errors'][0][3]], '*s1-s1-t1-k1')
         self._verify_suite(self.datamodel['suite'], result.suite)
         assert_equals(self.datamodel['generator'], result.generator)
