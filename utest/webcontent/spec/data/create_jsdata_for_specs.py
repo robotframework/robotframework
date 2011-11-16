@@ -4,7 +4,7 @@ import fileinput
 from os.path import join, dirname, abspath
 import sys
 import os
-from robot.result.datamodel import DatamodelVisitor
+from robot.result.datamodel import JSModelCreator
 
 
 BASEDIR = dirname(abspath(__file__))
@@ -29,7 +29,7 @@ def run_robot(testdata, loglevel='INFO'):
 
 def create_jsdata(outxml, target, split_log):
     result = robot.result.builders.ResultFromXML(outxml)
-    visitor = DatamodelVisitor(result, split_log=split_log)
+    visitor = JSModelCreator(result, split_log=split_log)
     model = DataModelWriter(visitor.datamodel, visitor._context.split_results)
     model.set_settings({'logURL': 'log.html',
                         'reportURL': 'report.html',

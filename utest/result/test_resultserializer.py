@@ -7,7 +7,7 @@ from robot.reporting.outputparser import OutputParser
 from robot.result.builders import ResultFromXML
 from robot.result.combiningvisitor import KeywordRemovingVisitor, CombiningVisitor
 from robot.result.serializer import RebotXMLWriter
-from robot.result.datamodel import DatamodelVisitor
+from robot.result.datamodel import JSModelCreator
 from robot.utils.asserts import assert_equals
 
 from test_resultbuilder import GOLDEN_XML, GOLDEN_XML_TWICE
@@ -43,7 +43,7 @@ class TestResultJSONSerializer(unittest.TestCase):
         output_parser._parse_fileobj(StringIO(GOLDEN_XML))
         self._expected = output_parser._get_data_model()._robot_data
         result = ResultFromXML(StringIO(GOLDEN_XML))
-        visitor = DatamodelVisitor(result)
+        visitor = JSModelCreator(result)
         result.visit(CombiningVisitor(visitor,
                                       KeywordRemovingVisitor()))
         self._datamodel = visitor.datamodel

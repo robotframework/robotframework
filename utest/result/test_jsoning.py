@@ -5,14 +5,14 @@ from robot.result.keyword import Keyword
 from robot.model.message import Message
 from robot.output.loggerhelper import LEVELS
 from robot.reporting.parsingcontext import Context
-from robot.result.datamodel import DatamodelVisitor
+from robot.result.datamodel import JSModelCreator
 from robot.result.jsondatamodelhandlers import _Handler, KeywordHandler, _StatusHandler
 from robot.result.testcase import TestCase
 from robot.result.testsuite import TestSuite
 from robot.utils.asserts import assert_equals
 
 
-class _PartialDatamodelVisitor(DatamodelVisitor):
+class _PartialJSModelCreator(JSModelCreator):
 
     def __init__(self):
         self._elements = []
@@ -23,7 +23,7 @@ class _PartialDatamodelVisitor(DatamodelVisitor):
 class TestJsoning(unittest.TestCase):
 
     def setUp(self):
-        self._visitor = _PartialDatamodelVisitor()
+        self._visitor = _PartialJSModelCreator()
         self._context = self._visitor._context
 
     @property
@@ -205,7 +205,7 @@ class TestJsoning(unittest.TestCase):
         result.generator = 'unit test'
         result.suite.suites.create(name='Urho').tests.create(status='FAIL', name='moi', tags=['tagi']).keywords.create(name='FAILING', status='FAIL').messages.create(message='FAIL', level='WARN', timestamp='20110101 01:01:01.111')
         result.errors.messages.create(message='FAIL', level='WARN', timestamp='20110101 01:01:01.111', linkable=True)
-        self._visitor = DatamodelVisitor(result)
+        self._visitor = JSModelCreator(result)
         self._context = self._visitor._context
         result.visit(self._visitor)
         self._verify_message(self.datamodel['errors'][0], result.errors.messages[0])

@@ -13,50 +13,51 @@
 #  limitations under the License.
 
 from robot.reporting.parsingcontext import Context
-from robot.result.jsondatamodelhandlers import ExecutionResultHandler
+from .jsondatamodelhandlers import ExecutionResultHandler
+from .visitor import ResultVisitor
 
-from robot.result.visitor import ResultVisitor
 
-class DatamodelVisitor(ResultVisitor):
+class JSModelCreator(ResultVisitor):
 
     def __init__(self, result, log_path='NONE', split_log=False):
-        self._elements = []
         self._context = Context(log_path=log_path, split_log=split_log)
-        self._elements.append(ExecutionResultHandler(self._context, result))
+        self._elements = [ExecutionResultHandler(self._context, result)]
+
+    @property
+    def datamodel(self):
+        #TODO: End element should not require argument in this case
+        return self._top.end_element(None)
+
+    @property
+    def _top(self):
+        return self._elements[-1]
 
     @property
     def split_results(self):
         return self._context.split_results
 
-    def _start(self, func):
-        next = func(self._elements[-1])
-        self._elements.append(next)
-
     def start_suite(self, suite):
-        self._start(lambda p: p.start_suite(suite))
+        self._elements.append(self._top.start_suite(suite))
 
     def start_keyword(self, keyword):
-        self._start(lambda p: p.start_keyword(keyword))
+        self._elements.append(self._top.start_keyword(keyword))
 
     def start_test(self, test):
-        self._start(lambda p: p.start_test(test))
+        self._elements.append(self._top.start_test(test))
 
     def start_errors(self, errors):
-        self._start(lambda p: p.start_errors(errors))
+        self._elements.append(self._top.start_errors(errors))
 
     def visit_statistics(self, stats):
-        self._start(lambda p: p.visit_statistics(stats))
+        self._elements.append(self._top.visit_statistics(stats))
         self._end(stats)
 
+    #TODO: end_elements should also work in similar as starts
     def _end(self, item):
-        item_datamodel = self._elements.pop().end_element(item)
-        self._elements[-1].add_child_data(item_datamodel)
+        submodel = self._elements.pop().end_element(item)
+        self._top.add_child_data(submodel)
 
     end_suite = end_keyword = end_test = end_errors = _end
 
     def end_message(self, msg):
-        self._elements[-1].message(msg)
-
-    @property
-    def datamodel(self):
-        return self._elements[-1].end_element('')
+        self._top.message(msg)

@@ -17,7 +17,7 @@ from robot.output import LOGGER
 from robot.reporting.jsondatamodel import DataModelWriter
 from robot.result.builders import ResultFromXML as RFX
 from robot.result.combiningvisitor import CombiningVisitor, KeywordRemovingVisitor
-from robot.result.datamodel import DatamodelVisitor
+from robot.result.datamodel import JSModelCreator
 from robot.result.serializer import RebotXMLWriter
 from robot import utils
 
@@ -37,11 +37,16 @@ class _ResultWriter(object):
     @property
     def result_from_xml(self):
         if self._xml_result is None:
+            #TODO: RFX and ResultFromXML name conflict
             execution_result = RFX(*self._data_sources)
             execution_result.configure(status_rc=not self.settings['NoStatusRC'],
                                        **self._create_opts())
             self._xml_result = ResultFromXML(execution_result, self.settings)
         return self._xml_result
+
+    @property
+    def result(self):
+        return self._xml_result.result
 
     def _create_opts(self):
         opts = {}
@@ -88,15 +93,11 @@ class RebotResultWriter(_ResultWriter):
     @property
     def data_model(self):
         if self._data_model is None:
-            visitor = DatamodelVisitor(self.result_from_xml.result,
-                                       log_path=self.settings['Log'],
-                                       split_log=self.settings['SplitLog'])
-            # Remove keywords while visiting as JSON datamodel visitor is the last
-            # thing that needs keywords from the model
-            # this saves memory -- possibly a lot.
-            self.result_from_xml.result.visit(CombiningVisitor(visitor,
-                                              KeywordRemovingVisitor()))
-            self._data_model = DataModelWriter(visitor.datamodel, visitor.split_results)
+            creator = JSModelCreator(self.result_from_xml.result,
+                                     log_path=self.settings['Log'],
+                                     split_log=self.settings['SplitLog'])
+            self.result.visit(CombiningVisitor(creator, KeywordRemovingVisitor()))
+            self._data_model = DataModelWriter(creator.datamodel, creator.split_results)
         return self._data_model
 
 
