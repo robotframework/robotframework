@@ -43,6 +43,10 @@ class _Builder(object):
         self._path = self._parse_file(self._type)
 
     def build(self):
+        if self._path:
+            self._build()
+
+    def _build(self):
         raise NotImplementedError(self.__class__.__name__)
 
     def _parse_file(self, name):
@@ -53,29 +57,26 @@ class _Builder(object):
 class OutputBuilder(_Builder):
     _type = 'Output'
 
-    def build(self):
-        if self._path:
-            self._context.result_from_xml.serialize_output(self._path)
+    def _build(self):
+        self._context.result_from_xml.serialize_output(self._path)
 
 
 class XUnitBuilder(_Builder):
     _type = 'XUnitFile'
 
-    def build(self):
-        if self._path:
-            self._context.result_from_xml.serialize_xunit(self._path)
+    def _build(self):
+        self._context.result_from_xml.serialize_xunit(self._path)
 
 
 class _HTMLFileBuilder(_Builder):
     _type = NotImplemented
     _template = NotImplemented
 
-    def build(self):
-        if self._path:
-            self._context.data_model.set_settings(self._get_settings())
-            self._format_data()
-            if self._write_file():
-                LOGGER.output_file(self._type, self._path)
+    def _build(self):
+        self._context.data_model.set_settings(self._get_settings())
+        self._format_data()
+        if self._write_file():
+            LOGGER.output_file(self._type, self._path)
 
     def _url_from_path(self, source, destination):
         if not destination:
