@@ -13,23 +13,23 @@
 #  limitations under the License.
 from robot.result.visitor import ResultVisitor
 
-
 class CombiningVisitor(ResultVisitor):
 
     def __init__(self, *visitors):
         self._visitors = visitors
+        for name in dir(self):
+            if name.startswith('start') or name.startswith('end'):
+                self._create_delegating_method(name)
+        self._create_delegating_method('visit_statistics')
 
-def _create_method(method_name):
-    def delegate_call(self, item):
-        for visitor in self._visitors:
-            getattr(visitor, method_name)(item)
-    setattr(CombiningVisitor, method_name, delegate_call)
+    def _create_delegating_method(self, method_name):
+        setattr(self, method_name, self._delegate_call(method_name))
 
-for method_name in (pre+'_'+post
-                    for pre in ('start', 'end') \
-                    for post in ('suite', 'test', 'keyword', 'message', 'errors')):
-    _create_method(method_name)
-_create_method('visit_statistics')
+    def _delegate_call(self, method_name):
+        def delegator(item):
+            for visitor in self._visitors:
+                getattr(visitor, method_name)(item)
+        return delegator
 
 
 class KeywordRemovingVisitor(ResultVisitor):
