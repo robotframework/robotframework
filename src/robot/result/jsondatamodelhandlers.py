@@ -63,17 +63,11 @@ class _Handler(object):
     def _status(self, item):
         return StatusHandler(self._context).build(item)
 
-    def end_element(self, text):
-        return self._data_from_children
-
     def _id(self, item):
         return self._context.get_id(item)
 
     def _timestamp(self, time_string):
         return self._context.timestamp(time_string)
-
-    def _get_ids(self, *items):
-        return [self._get_id(i) for i in items]
 
 
 class ExecutionResultHandler(_Handler):
@@ -255,8 +249,10 @@ class MessageHandler(_Handler):
                LEVELS[message.level],
                self._format_message_text(message)]
         self._handle_warning_linking(msg, message)
-        # FIXME: WTF? linking doesn't work without this late _id thing in
-        # test_reporting . test_split_tests
+        # linking doesn't work without this late _id thing
+        # because the text id:s are different in errors
+        # than in the target test
+        # when texts have been split with splitlog option
         msg[2] = self._id(msg[2])
         return msg
 
