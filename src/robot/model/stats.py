@@ -41,8 +41,6 @@ class Stat(object):
         else:
             self.failed += 1
 
-    # TODO: Are all methods below actually used somewhere??
-
     def add_stat(self, other):
         self.passed += other.passed
         self.failed += other.failed

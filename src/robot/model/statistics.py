@@ -13,7 +13,7 @@
 #  limitations under the License.
 
 from .tagstatistics import TagStatistics
-from .suitestatistics import SuiteStatistics
+from .suitestatistics import SuiteStatisticsBuilder
 from .totalstatistics import TotalStatistics
 from .visitor import SuiteVisitor
 
@@ -23,10 +23,12 @@ class Statistics(object):
     def __init__(self, suite, suite_stat_level=-1, tag_stat_include=None,
                  tag_stat_exclude=None, tag_stat_combine=None, tag_doc=None,
                  tag_stat_link=None):
+        suite_builder = SuiteStatisticsBuilder(suite_stat_level)
         self.tags = TagStatistics(suite.criticality, tag_stat_include,
                                   tag_stat_exclude, tag_stat_combine,
                                   tag_doc, tag_stat_link)
-        self.suite = StatisticsBuilder(self.tags, suite_stat_level).build(suite)
+        suite.visit(StatisticsBuilder(suite_builder, self.tags))
+        self.suite = suite_builder.root
         self.total = TotalStatistics(self.suite)
 
     def visit(self, visitor):
@@ -35,30 +37,19 @@ class Statistics(object):
 
 class StatisticsBuilder(SuiteVisitor):
 
-    def __init__(self, tag_stats, suite_stat_level):
-        self._tag_stats = tag_stats
-        self._parents = []
-        self._suite_stat_level = suite_stat_level
+    def __init__(self, suite_builder, tag_builder):
+        self._suite_builder = suite_builder
+        self._tag_builder = tag_builder
 
     def start_suite(self, suite):
-        new  = SuiteStatistics(suite)
-        if self._suite_stat_level == -1 or len(self._parents) < self._suite_stat_level:
-            self._current_suite_stat.suites.append(new)
-        self._parents.append(self._current_suite_stat)
-        self._current_suite_stat = new
-        self._current_suite = suite
-
-    def build(self, suite):
-        self._current_suite_stat = SuiteStatistics(suite)
-        self.visit_suite(suite)
-        return self._current_suite_stat.suites[0]
+        self._suite_builder.start_suite(suite)
 
     def end_suite(self, suite):
-        if self._parents:
-            self._parents[-1].all.add_stat(self._current_suite_stat.all)
-            self._parents[-1].critical.add_stat(self._current_suite_stat.critical)
-            self._current_suite_stat = self._parents.pop(-1)
+        self._suite_builder.end_suite()
 
     def visit_test(self, test):
-        self._current_suite_stat.add_test(test)
-        self._tag_stats.add_test(test)
+        self._suite_builder.add_test(test)
+        self._tag_builder.add_test(test)
+
+    def visit_keyword(self, kw):
+        pass

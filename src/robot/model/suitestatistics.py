@@ -27,6 +27,12 @@ class SuiteStatistics(object):
         if test.critical == 'yes':
             self.critical.add_test(test)
 
+    def add_child_stats(self, stats, add_to_suites=True):
+        self.all.add_stat(stats.all)
+        self.critical.add_stat(stats.critical)
+        if add_to_suites:
+            self.suites.append(stats)
+
     def visit(self, visitor):
         visitor.visit_suite_statistics(self)
 
@@ -35,3 +41,37 @@ class SuiteStatistics(object):
         for s in self.suites:
             for stat in s:
                 yield stat
+
+
+class SuiteStatisticsBuilder(object):
+
+    def __init__(self, suite_stat_level):
+        self._stat_level = suite_stat_level
+        self._stats_stack = []
+        self.root = None
+
+    @property
+    def current(self):
+        return self._stats_stack[-1] if self._stats_stack else None
+
+    def start_suite(self, suite):
+        self._stats_stack.append(SuiteStatistics(suite))
+        if self.root is None:
+            self.root = self.current
+
+    def add_test(self, test):
+        self.current.add_test(test)
+
+    def end_suite(self):
+        stats = self._stats_stack.pop()
+        if self.current:
+            self.current.add_child_stats(stats, self._is_child_included())
+
+    def _is_child_included(self):
+        return self._include_all_levels() or self._level_below_threshold()
+
+    def _include_all_levels(self):
+        return self._stat_level == -1
+
+    def _level_below_threshold(self):
+        return len(self._stats_stack) < self._stat_level
