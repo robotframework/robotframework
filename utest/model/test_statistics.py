@@ -100,6 +100,11 @@ class TestStatisticsNotSoSimple(unittest.TestCase):
 
 class TestSuiteStatLevel(unittest.TestCase):
 
+    def test_only_root_level(self):
+        suite = Statistics(generate_default_suite(), suite_stat_level=1).suite
+        verify_suite(suite, 'Root Suite', 's1', 2, 2, 4, 3)
+        assert_equals(len(suite.suites), 0)
+
     def test_stat_level(self):
         suite = Statistics(generate_default_suite(), suite_stat_level=2).suite
         verify_suite(suite, 'Root Suite', 's1', 2, 2, 4, 3)

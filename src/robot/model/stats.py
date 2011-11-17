@@ -76,7 +76,7 @@ class TagStat(Stat):
                  non_critical=False, combined=''):
         Stat.__init__(self, name)
         self.doc = doc
-        self.links = links
+        self.links = links or []
         self.critical = critical
         self.non_critical = non_critical
         self.combined = combined
