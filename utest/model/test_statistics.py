@@ -169,7 +169,7 @@ class TestTagStatistics(unittest.TestCase):
         assert_equals(len(builder.stats), 2)
 
     def test_len_with_combine(self):
-        builder = TagStatisticsBuilder(Criticality(), combine=[('x*', 'title')])
+        builder = TagStatisticsBuilder(Criticality(), combined=[('x*', 'title')])
         assert_equals(len(builder.stats), 1)
         builder.add_test(TestCase(tags=['xxx', 'yyy']))
         assert_equals(len(builder.stats), 3)
@@ -183,7 +183,7 @@ class TestTagStatistics(unittest.TestCase):
                 ([('3*', '')], '3*' ),
                 ([('4NOT5', 'Some new name')], 'Some new name')
                ]:
-            builder = TagStatisticsBuilder(Criticality(), combine=comb_tags)
+            builder = TagStatisticsBuilder(Criticality(), combined=comb_tags)
             assert_equals(bool(builder.stats), expected_name != '')
             if expected_name:
                 assert_equals([s.name for s in builder.stats], [expected_name])
@@ -203,7 +203,7 @@ class TestTagStatistics(unittest.TestCase):
             self._verify_combined_statistics(comb_tags, test_tags, expected_count)
 
     def _verify_combined_statistics(self, comb_tags, test_tags, expected_count):
-        builder = TagStatisticsBuilder(Criticality(), combine=[(comb_tags, 'name')])
+        builder = TagStatisticsBuilder(Criticality(), combined=[(comb_tags, 'name')])
         builder._add_to_combined_statistics(TestCase(tags=test_tags))
         assert_equals([s.total for s in builder.stats if s.combined], [expected_count])
 
@@ -231,7 +231,7 @@ class TestTagStatistics(unittest.TestCase):
             self._verify_combined_statistics(comb_tags, test_tags, expected_count)
 
     def test_combine_with_same_name_as_existing_tag(self):
-        builder = TagStatisticsBuilder(Criticality(), combine=[('x*', 'name')])
+        builder = TagStatisticsBuilder(Criticality(), combined=[('x*', 'name')])
         builder.add_test(TestCase(tags=['name', 'another']))
         assert_equals([(s.name, s.combined) for s in builder.stats],
                       [('name', 'x*'), ('another', ''), ('name', '')])
@@ -252,7 +252,7 @@ class TestTagStatistics(unittest.TestCase):
                ]:
             # 1) Create tag stats
             builder = TagStatisticsBuilder(Criticality(crit_tags),
-                                           combine=[(t, '') for t in comb_tags])
+                                           combined=[(t, '') for t in comb_tags])
             all_tags = []
             for tags in tests_tags:
                 builder.add_test(TestCase(status='PASS', tags=tags),)
@@ -272,7 +272,7 @@ class TestTagStatistics(unittest.TestCase):
 
     def test_sorting(self):
         builder = TagStatisticsBuilder(Criticality(['c2', 'c1'], ['n*']),
-                                       combine=[('c*', ''), ('xxx', 'a title')])
+                                       combined=[('c*', ''), ('xxx', 'a title')])
         builder.add_test(TestCase(tags=['c1', 'c2', 't1']))
         builder.add_test(TestCase(tags=['c1', 'n2', 't2']))
         builder.add_test(TestCase(tags=['n1', 'n2', 't1', 't3']))

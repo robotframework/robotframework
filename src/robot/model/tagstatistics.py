@@ -37,13 +37,12 @@ class TagStatistics(object):
 
 class TagStatisticsBuilder(object):
 
-    def __init__(self, criticality, include=None, exclude=None, combine=None,
+    def __init__(self, criticality, included=None, excluded=None, combined=None,
                  docs=None, links=None):
-        # TODO: Check argument names
-        self._include = TagPatterns(include)
-        self._exclude = TagPatterns(exclude)
+        self._included = TagPatterns(included)
+        self._excluded = TagPatterns(excluded)
         self._info = TagStatInfo(criticality, docs, links)
-        self.stats = TagStatistics(self._info.get_combined_stats(combine))
+        self.stats = TagStatistics(self._info.get_combined_stats(combined))
 
     def add_test(self, test):
         self._add_tags_to_statistics(test)
@@ -57,9 +56,9 @@ class TagStatisticsBuilder(object):
                 self.stats.tags[tag].add_test(test)
 
     def _is_included(self, tag):
-        if self._include and not self._include.match(tag):
+        if self._included and not self._included.match(tag):
             return False
-        return not self._exclude.match(tag)
+        return not self._excluded.match(tag)
 
     def _add_to_combined_statistics(self, test):
         for comb in self.stats.combined:
@@ -75,7 +74,7 @@ class TagStatInfo(object):
         self._links = [TagStatLink(*link) for link in links or []]
 
     def get_stat(self, tag):
-        return TagStat(tag, self._get_doc(tag), self._get_links(tag),
+        return TagStat(tag, self.get_doc(tag), self.get_links(tag),
                        self._criticality.tag_is_critical(tag),
                        self._criticality.tag_is_non_critical(tag))
 
@@ -84,13 +83,13 @@ class TagStatInfo(object):
 
     def get_combined_stat(self, pattern, name=None):
         name = name or pattern
-        return CombinedTagStat(pattern, name, self._get_doc(name),
-                               self._get_links(name))
+        return CombinedTagStat(pattern, name, self.get_doc(name),
+                               self.get_links(name))
 
-    def _get_doc(self, tag):
+    def get_doc(self, tag):
         return ' & '.join(doc.text for doc in self._docs if doc.match(tag))
 
-    def _get_links(self, tag):
+    def get_links(self, tag):
         return [link.get_link(tag) for link in self._links if link.match(tag)]
 
 

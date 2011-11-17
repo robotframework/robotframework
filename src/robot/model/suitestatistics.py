@@ -46,7 +46,7 @@ class SuiteStatistics(object):
 class SuiteStatisticsBuilder(object):
 
     def __init__(self, suite_stat_level):
-        self._stat_level = suite_stat_level
+        self._suite_stat_level = suite_stat_level
         self._stats_stack = []
         self.root = None
 
@@ -68,10 +68,10 @@ class SuiteStatisticsBuilder(object):
             self.current.add_child_stats(stats, self._is_child_included())
 
     def _is_child_included(self):
-        return self._include_all_levels() or self._level_below_threshold()
+        return self._include_all_levels() or self._below_threshold()
 
     def _include_all_levels(self):
-        return self._stat_level == -1
+        return self._suite_stat_level == -1
 
-    def _level_below_threshold(self):
-        return len(self._stats_stack) < self._stat_level
+    def _below_threshold(self):
+        return len(self._stats_stack) < self._suite_stat_level
