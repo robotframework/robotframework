@@ -63,8 +63,11 @@ class _Handler(object):
     def _status(self, item):
         return StatusHandler(self._context).build(item)
 
-    def _id(self, item):
-        return self._context.get_id(item)
+    def _id(self, text):
+        return self._context.get_id(text)
+
+    def _id_html(self, text):
+        return self._id(utils.html_format(text))
 
     def _timestamp(self, time_string):
         return self._context.timestamp(time_string)
@@ -154,7 +157,7 @@ class SuiteHandler(_Handler):
         return [self._id(suite.name),
                 self._id(suite.source),
                 self._id(self._context.get_rel_log_path(suite.source)),
-                self._id(utils.html_format(suite.doc)),
+                self._id_html(suite.doc),
                 self._metadata(suite),
                 self._status(suite),
                 self._suites,
@@ -186,7 +189,7 @@ class TestHandler(_Handler):
         return [self._id(test.name),
                 self._id(test.timeout),
                 critical,
-                self._id(utils.html_format(test.doc)),
+                self._id_html(test.doc),
                 [self._id(tag) for tag in test.tags],
                 self._status(test),
                 self._keywords]
@@ -204,7 +207,7 @@ class KeywordHandler(_Handler):
         return [self._types[keyword.type],
                 self._id(keyword.name),
                 self._id(keyword.timeout),
-                self._id(utils.html_format(keyword.doc)),
+                self._id_html(keyword.doc),
                 self._id(', '.join(keyword.args)),
                 self._status(keyword),
                 self._keywords,
@@ -222,7 +225,7 @@ class SuiteKeywordHandler(_Handler):
         return [KeywordHandler._types[keyword.type],
                 self._id(keyword.name),
                 self._id(keyword.timeout),
-                self._id(utils.html_format(keyword.doc)),
+                self._id_html(keyword.doc),
                 self._id(', '.join(keyword.args)),
                 self._status(keyword),
                 self._keywords,
