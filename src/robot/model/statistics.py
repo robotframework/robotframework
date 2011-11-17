@@ -12,7 +12,7 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from .tagstatistics import TagStatistics
+from .tagstatistics import TagStatisticsBuilder
 from .suitestatistics import SuiteStatisticsBuilder
 from .totalstatistics import TotalStatistics
 from .visitor import SuiteVisitor
@@ -24,11 +24,12 @@ class Statistics(object):
                  tag_stat_exclude=None, tag_stat_combine=None, tag_doc=None,
                  tag_stat_link=None):
         suite_builder = SuiteStatisticsBuilder(suite_stat_level)
-        self.tags = TagStatistics(suite.criticality, tag_stat_include,
-                                  tag_stat_exclude, tag_stat_combine,
-                                  tag_doc, tag_stat_link)
-        suite.visit(StatisticsBuilder(suite_builder, self.tags))
+        tag_builder = TagStatisticsBuilder(suite.criticality, tag_stat_include,
+                                           tag_stat_exclude, tag_stat_combine,
+                                           tag_doc, tag_stat_link)
+        suite.visit(StatisticsBuilder(suite_builder, tag_builder))
         self.suite = suite_builder.root
+        self.tags = tag_builder.stats
         self.total = TotalStatistics(self.suite)
 
     def visit(self, visitor):
