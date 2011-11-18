@@ -84,7 +84,6 @@ class TestStatisticsNotSoSimple(unittest.TestCase):
     def test_tags(self):
         # Tag stats are tested more thoroughly in their own suite.
         tags = self.statistics.tags
-        assert_equals(len(tags), 5)
         verify_stat(tags.tags['smoke'], 'smoke', 2, 2, True, False)
         verify_stat(tags.tags['t1'], 't1', 3, 2, False, False)
         verify_stat(tags.tags['t2'], 't2', 2, 1, False, False)

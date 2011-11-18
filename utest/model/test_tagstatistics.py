@@ -50,21 +50,21 @@ class TestTagStatistics(unittest.TestCase):
             builder.add_test(TestCase(status='PASS', tags=tags))
             assert_equals([s.name for s in builder.stats], exp),
 
-    def test_len(self):
+    def test_iter(self):
         builder = TagStatisticsBuilder(Criticality())
-        assert_equals(len(builder.stats), 0)
+        assert_equals(list(builder.stats), [])
         builder.add_test(TestCase())
-        assert_equals(len(builder.stats), 0)
+        assert_equals(list(builder.stats), [])
         builder.add_test(TestCase(tags=['a']))
-        assert_equals(len(builder.stats), 1)
+        assert_equals(len(list(builder.stats)), 1)
         builder.add_test(TestCase(tags=['A', 'B']))
-        assert_equals(len(builder.stats), 2)
+        assert_equals(len(list(builder.stats)), 2)
 
-    def test_len_with_combine(self):
+    def test_iter_with_combine(self):
         builder = TagStatisticsBuilder(Criticality(), combined=[('x*', 'title')])
-        assert_equals(len(builder.stats), 1)
+        assert_equals(len(list(builder.stats)), 1)
         builder.add_test(TestCase(tags=['xxx', 'yyy']))
-        assert_equals(len(builder.stats), 3)
+        assert_equals(len(list(builder.stats)), 3)
 
     def test_combine_with_name(self):
         for comb_tags, expected_name in [
@@ -76,7 +76,7 @@ class TestTagStatistics(unittest.TestCase):
                 ([('4NOT5', 'Some new name')], 'Some new name')
                ]:
             builder = TagStatisticsBuilder(Criticality(), combined=comb_tags)
-            assert_equals(bool(builder.stats), expected_name != '')
+            assert_equals(bool(list(builder.stats)), expected_name != '')
             if expected_name:
                 assert_equals([s.name for s in builder.stats], [expected_name])
 
