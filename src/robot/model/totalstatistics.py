@@ -12,7 +12,9 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from robot.model.stats import TotalStat
+from .stats import TotalStat
+from .visitor import SuiteVisitor
+
 
 
 class TotalStatistics(object):
@@ -28,12 +30,20 @@ class TotalStatistics(object):
         return iter([self.critical, self.all])
 
 
-class TotalStatisticsBuilder(object):
+class TotalStatisticsBuilder(SuiteVisitor):
 
-    def __init__(self):
+    def __init__(self, suite=None):
         self.stats = TotalStatistics()
+        if suite:
+            suite.visit(self)
 
     def add_test(self, test):
         self.stats.all.add_test(test)
         if test.critical == 'yes':
             self.stats.critical.add_test(test)
+
+    def visit_test(self, test):
+        self.add_test(test)
+
+    def visit_keyword(self, kw):
+        pass
