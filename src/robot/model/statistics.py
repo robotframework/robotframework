@@ -12,9 +12,9 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from .tagstatistics import TagStatisticsBuilder
+from .totalstatistics import TotalStatisticsBuilder
 from .suitestatistics import SuiteStatisticsBuilder
-from .totalstatistics import TotalStatistics
+from .tagstatistics import TagStatisticsBuilder
 from .visitor import SuiteVisitor
 
 
@@ -23,14 +23,15 @@ class Statistics(object):
     def __init__(self, suite, suite_stat_level=-1, tag_stat_include=None,
                  tag_stat_exclude=None, tag_stat_combine=None, tag_doc=None,
                  tag_stat_link=None):
+        total_builder = TotalStatisticsBuilder()
         suite_builder = SuiteStatisticsBuilder(suite_stat_level)
         tag_builder = TagStatisticsBuilder(suite.criticality, tag_stat_include,
                                            tag_stat_exclude, tag_stat_combine,
                                            tag_doc, tag_stat_link)
-        suite.visit(StatisticsBuilder(suite_builder, tag_builder))
+        suite.visit(StatisticsBuilder(total_builder, suite_builder, tag_builder))
+        self.total = total_builder.stats
         self.suite = suite_builder.root
         self.tags = tag_builder.stats
-        self.total = TotalStatistics(self.suite)
 
     def visit(self, visitor):
         visitor.visit_statistics(self)
@@ -38,7 +39,8 @@ class Statistics(object):
 
 class StatisticsBuilder(SuiteVisitor):
 
-    def __init__(self, suite_builder, tag_builder):
+    def __init__(self, total_builder, suite_builder, tag_builder):
+        self._total_builder = total_builder
         self._suite_builder = suite_builder
         self._tag_builder = tag_builder
 
@@ -49,6 +51,7 @@ class StatisticsBuilder(SuiteVisitor):
         self._suite_builder.end_suite()
 
     def visit_test(self, test):
+        self._total_builder.add_test(test)
         self._suite_builder.add_test(test)
         self._tag_builder.add_test(test)
 

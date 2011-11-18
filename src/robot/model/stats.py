@@ -55,6 +55,10 @@ class Stat(object):
         visitor.visit_stat(self)
 
 
+class TotalStat(Stat):
+    type = 'total'
+
+
 class SuiteStat(Stat):
     type = 'suite'
 
@@ -111,12 +115,3 @@ class CombinedTagStat(TagStat):
 
     def match(self, tags):
         return self._matcher.match(tags)
-
-
-class TotalStat(Stat):
-    type = 'total'
-
-    def __init__(self, name, suite_stat):
-        Stat.__init__(self, name)
-        self.passed = suite_stat.passed
-        self.failed = suite_stat.failed
