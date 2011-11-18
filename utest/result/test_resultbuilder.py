@@ -169,6 +169,21 @@ class TestSuiteTeardownFailed(unittest.TestCase):
         assert_equals(tc2.message, 'Message')
 
 
+class TestBuildingFromXmlString(unittest.TestCase):
+
+    def test_result_is_built(self):
+        xml = """
+<robot>
+    <suite name="foo">
+        <test name="some name">
+            <status status="PASS"></status>
+        </test>
+    <status status="PASS"></status>
+    </suite>
+</robot>
+""".strip()
+        result = ResultFromXML(xml)
+
 if __name__ == '__main__':
     unittest.main()
 

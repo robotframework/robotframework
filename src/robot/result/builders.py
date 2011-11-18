@@ -13,6 +13,7 @@
 #  limitations under the License.
 
 import os
+from StringIO import StringIO
 
 from robot.errors import DataError
 from robot.utils.etreewrapper import ET
@@ -27,8 +28,7 @@ def ResultFromXML(*sources):
         raise DataError('One or more data source needed.')
     if len(sources) > 1:
         return CombinedExecutionResult(*[ResultFromXML(src) for src in sources])
-    source = sources[0]
-    _validate_source(source)
+    source = XmlSource(sources[0])
     try:
         return ExecutionResultBuilder(source).build(ExecutionResult())
     # TODO: handle source in errors messages when it's a file object
@@ -38,10 +38,23 @@ def ResultFromXML(*sources):
         raise DataError("Opening XML file '%s' failed: %s"
                         % (source, utils.get_error_message()))
 
-def _validate_source(source):
-    # TODO: add support for xml strings.
-    if isinstance(source, basestring) and not os.path.isfile(source):
-        raise DataError("Output file '%s' does not exist." % source)
+
+class XmlSource(object):
+
+    def __init__(self, source):
+        self._source = source
+
+    @property
+    def source(self):
+        if not isinstance(self._source, basestring):
+            return self._source
+        if os.path.isfile(self._source):
+            return self._source
+        try:
+            ET.XML(self._source)
+            return StringIO(self._source)
+        except ET.ParseError:
+            raise DataError("Output file '%s' does not exist." % self._source)
 
 
 class ExecutionResultBuilder(object):
@@ -51,7 +64,7 @@ class ExecutionResultBuilder(object):
 
     def build(self, result):
         elements = ElementStack(RootElement())
-        for action, elem in ET.iterparse(self._source, events=('start', 'end')):
+        for action, elem in ET.iterparse(self._source.source, events=('start', 'end')):
             result = getattr(elements, action)(elem, result)
         SuiteTeardownFailureHandler(result.generator).visit_suite(result.suite)
         return result
