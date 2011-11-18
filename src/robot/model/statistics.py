@@ -30,7 +30,7 @@ class Statistics(object):
                                            tag_doc, tag_stat_link)
         suite.visit(StatisticsBuilder(total_builder, suite_builder, tag_builder))
         self.total = total_builder.stats
-        self.suite = suite_builder.root
+        self.suite = suite_builder.stats
         self.tags = tag_builder.stats
 
     def visit(self, visitor):

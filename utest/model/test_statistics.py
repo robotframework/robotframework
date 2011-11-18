@@ -16,11 +16,8 @@ def verify_stat(stat, name, passed, failed, critical=None, non_crit=None, id=Non
     if id:
         assert_equals(stat.id, id)
 
-def verify_suite(suite, name, id, crit_pass, crit_fail, all_pass=None, all_fail=None):
-    verify_stat(suite.critical, name, crit_pass, crit_fail, id=id)
-    if all_pass is None:
-        all_pass, all_fail = crit_pass, crit_fail
-    verify_stat(suite.all, name, all_pass, all_fail, id=id)
+def verify_suite(suite, name, id, passed, failed):
+    verify_stat(suite.stat, name, passed, failed, id=id)
 
 def generate_suite():
     suite = TestSuite(name='Root Suite')
@@ -73,11 +70,10 @@ class TestStatisticsNotSoSimple(unittest.TestCase):
 
     def test_suite(self):
         suite = self.statistics.suite
-        verify_suite(suite, 'Root Suite', 's1', 2, 2, 4, 3)
-        assert_equals(len(suite.suites), 2)
-        s1, s2 = suite.suites
-        verify_suite(s1, 'Root Suite.First Sub Suite', 's1-s1', 2, 1, 4, 2)
-        verify_suite(s2, 'Root Suite.Second Sub Suite', 's1-s2', 0, 1, 0, 1)
+        verify_suite(suite, 'Root Suite', 's1', 4, 3)
+        [s1, s2] = suite.suites
+        verify_suite(s1, 'Root Suite.First Sub Suite', 's1-s1', 4, 2)
+        verify_suite(s2, 'Root Suite.Second Sub Suite', 's1-s2', 0, 1)
         assert_equals(len(s1.suites), 0)
         assert_equals(len(s2.suites), 0)
 
@@ -95,23 +91,20 @@ class TestSuiteStatistics(unittest.TestCase):
 
     def test_all_levels(self):
         suite = Statistics(generate_suite()).suite
-        verify_suite(suite, 'Root Suite', 's1', 2, 2, 4, 3)
-        assert_equals(len(suite.suites), 2)
-        s1, s2 = suite.suites
-        verify_suite(s1, 'Root Suite.First Sub Suite', 's1-s1', 2, 1, 4, 2)
-        verify_suite(s2, 'Root Suite.Second Sub Suite', 's1-s2', 0, 1, 0, 1)
-        assert_equals(len(s1.suites), 3)
-        s11, s12, s13 = s1.suites
-        verify_suite(s11, 'Root Suite.First Sub Suite.Sub Suite 1_1', 's1-s1-s1', 0, 0, 1, 1)
-        verify_suite(s12, 'Root Suite.First Sub Suite.Sub Suite 1_2', 's1-s1-s2', 1, 1, 2, 1)
-        verify_suite(s13, 'Root Suite.First Sub Suite.Sub Suite 1_3', 's1-s1-s3', 1, 0, 1, 0)
-        assert_equals(len(s2.suites), 1)
-        s21 = s2.suites[0]
-        verify_suite(s21, 'Root Suite.Second Sub Suite.Sub Suite 2_1', 's1-s2-s1', 0, 1, 0, 1)
+        verify_suite(suite, 'Root Suite', 's1', 4, 3)
+        [s1, s2] = suite.suites
+        verify_suite(s1, 'Root Suite.First Sub Suite', 's1-s1', 4, 2)
+        verify_suite(s2, 'Root Suite.Second Sub Suite', 's1-s2', 0, 1)
+        [s11, s12, s13] = s1.suites
+        verify_suite(s11, 'Root Suite.First Sub Suite.Sub Suite 1_1', 's1-s1-s1', 1, 1)
+        verify_suite(s12, 'Root Suite.First Sub Suite.Sub Suite 1_2', 's1-s1-s2', 2, 1)
+        verify_suite(s13, 'Root Suite.First Sub Suite.Sub Suite 1_3', 's1-s1-s3', 1, 0)
+        [s21] = s2.suites
+        verify_suite(s21, 'Root Suite.Second Sub Suite.Sub Suite 2_1', 's1-s2-s1', 0, 1)
 
     def test_only_root_level(self):
         suite = Statistics(generate_suite(), suite_stat_level=1).suite
-        verify_suite(suite, 'Root Suite', 's1', 2, 2, 4, 3)
+        verify_suite(suite, 'Root Suite', 's1', 4, 3)
         assert_equals(len(suite.suites), 0)
 
     def test_deeper_level(self):
@@ -138,6 +131,20 @@ class TestSuiteStatistics(unittest.TestCase):
         verify_suite(s121, '1.2.1', 's1-s2-s1', 3, 1)
         verify_suite(s122, '1.2.2', 's1-s2-s2', 2, 2)
         assert_equals(len(s111.suites), 0)
+
+    def test_iter_only_one_level(self):
+        [stat] = list(Statistics(generate_suite(), suite_stat_level=1).suite)
+        verify_stat(stat, 'Root Suite', 4, 3, id='s1')
+
+    def test_iter_also_sub_suites(self):
+        stats = list(Statistics(generate_suite()).suite)
+        verify_stat(stats[0], 'Root Suite', 4, 3, id='s1')
+        verify_stat(stats[1], 'Root Suite.First Sub Suite', 4, 2, id='s1-s1')
+        verify_stat(stats[2], 'Root Suite.First Sub Suite.Sub Suite 1_1', 1, 1, id='s1-s1-s1')
+        verify_stat(stats[3], 'Root Suite.First Sub Suite.Sub Suite 1_2', 2, 1, id='s1-s1-s2')
+        verify_stat(stats[4], 'Root Suite.First Sub Suite.Sub Suite 1_3', 1, 0, id='s1-s1-s3')
+        verify_stat(stats[5], 'Root Suite.Second Sub Suite', 0, 1, id='s1-s2')
+        verify_stat(stats[6], 'Root Suite.Second Sub Suite.Sub Suite 2_1', 0, 1, id='s1-s2-s1')
 
 
 if __name__ == "__main__":
