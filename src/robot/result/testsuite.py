@@ -12,7 +12,7 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from robot.model.statistics import Statistics
+from robot.model import TotalStatisticsBuilder
 from robot import model, utils
 
 from messagefilter import MessageFilter
@@ -37,6 +37,10 @@ class TestSuite(model.TestSuite):
         return 'PASS' if not self.critical_stats.failed else 'FAIL'
 
     @property
+    def statistics(self):
+        return TotalStatisticsBuilder(self).stats
+
+    @property
     def stat_message(self):
         return self._stat_message()
 
@@ -59,13 +63,15 @@ class TestSuite(model.TestSuite):
         ending = utils.plural_or_not(stat.total)
         return stat.total, ending, stat.passed, stat.failed
 
+    # TODO: Remove critical_stats and all_stats in favor of new statistics
+
     @property
     def critical_stats(self):
-        return Statistics(self).suite.critical
+        return self.statistics.critical
 
     @property
     def all_stats(self):
-        return Statistics(self).suite.all
+        return self.statistics.all
 
     @property
     def elapsedtime(self):

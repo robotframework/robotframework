@@ -12,34 +12,22 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from robot.model.stats import SuiteStat
+from .stats import SuiteStat
 
 
 class SuiteStatistics(object):
 
     def __init__(self, suite):
-        self.all = SuiteStat(suite)
-        self.critical = SuiteStat(suite)
+        self.stat = SuiteStat(suite)
         self.suites = []
-
-    def add_test(self, test):
-        self.all.add_test(test)
-        if test.critical == 'yes':
-            self.critical.add_test(test)
-
-    def add_child_stats(self, stats, add_to_suites=True):
-        self.all.add_stat(stats.all)
-        self.critical.add_stat(stats.critical)
-        if add_to_suites:
-            self.suites.append(stats)
 
     def visit(self, visitor):
         visitor.visit_suite_statistics(self)
 
     def __iter__(self):
-        yield self.all
-        for s in self.suites:
-            for stat in s:
+        yield self.stat
+        for child in self.suites:
+            for stat in child:
                 yield stat
 
 
@@ -48,7 +36,7 @@ class SuiteStatisticsBuilder(object):
     def __init__(self, suite_stat_level):
         self._suite_stat_level = suite_stat_level
         self._stats_stack = []
-        self.root = None
+        self.stats = None
 
     @property
     def current(self):
@@ -56,16 +44,18 @@ class SuiteStatisticsBuilder(object):
 
     def start_suite(self, suite):
         self._stats_stack.append(SuiteStatistics(suite))
-        if self.root is None:
-            self.root = self.current
+        if self.stats is None:
+            self.stats = self.current
 
     def add_test(self, test):
-        self.current.add_test(test)
+        self.current.stat.add_test(test)
 
     def end_suite(self):
         stats = self._stats_stack.pop()
         if self.current:
-            self.current.add_child_stats(stats, self._is_child_included())
+            self.current.stat.add_stat(stats.stat)
+            if self._is_child_included():
+                self.current.suites.append(stats)
 
     def _is_child_included(self):
         return self._include_all_levels() or self._below_threshold()

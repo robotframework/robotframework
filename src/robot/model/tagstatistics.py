@@ -31,9 +31,6 @@ class TagStatistics(object):
     def __iter__(self):
         return iter(sorted(self.tags.values() + self.combined))
 
-    def __len__(self):
-        return len(self.tags) + len(self.combined)
-
 
 class TagStatisticsBuilder(object):
 
