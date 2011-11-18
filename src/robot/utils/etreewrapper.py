@@ -14,25 +14,23 @@
 
 import sys
 from StringIO import StringIO
+
 try:
-    import xml.etree.cElementTree as ET
+    from xml.etree import cElementTree as ET
 except ImportError:
     try:
         import cElementTree as ET
     except ImportError:
         try:
-            import xml.etree.ElementTree as ET
-            # Raises ImportError due to missing expat on IronPython by default:
-            # http://ironpython.codeplex.com/workitem/21407
+            from xml.etree import ElementTree as ET
+            # Raises ImportError due to missing expat on IronPython < 2.7.1
+            # by default http://ironpython.codeplex.com/workitem/21407
             ET.parse(StringIO('<test/>'))
         except ImportError:
             try:
-                import elementtree.ElementTree as ET
-            # Can cause AttributeError on IronPython:
-            # http://ironpython.codeplex.com/workitem/31545
-            except (ImportError, AttributeError):
+                from elementtree import ElementTree as ET
+            except ImportError:
                 raise ImportError('No valid ElementTree XML parser module found')
-
 
 def get_root(path=None, string=None, node=None):
     # This should NOT be changed to 'if not node:'. See chapter Truth Testing
