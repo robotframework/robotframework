@@ -16,7 +16,6 @@ from .stats import TotalStat
 from .visitor import SuiteVisitor
 
 
-
 class TotalStatistics(object):
 
     def __init__(self):
@@ -28,6 +27,21 @@ class TotalStatistics(object):
 
     def __iter__(self):
         return iter([self.critical, self.all])
+
+    def __unicode__(self):
+        return unicode(str(self))
+
+    def __str__(self):
+        ctotal, cend, cpass, cfail = self._get_counts(self.critical)
+        atotal, aend, apass, afail = self._get_counts(self.all)
+        return ('%d critical test%s, %d passed, %d failed\n'
+                '%d test%s total, %d passed, %d failed'
+                % (ctotal, cend, cpass, cfail, atotal, aend, apass, afail))
+
+    def _get_counts(self, stat):
+        ending = 's' if stat.total != 1 else ''
+        return stat.total, ending, stat.passed, stat.failed
+
 
 
 class TotalStatisticsBuilder(SuiteVisitor):

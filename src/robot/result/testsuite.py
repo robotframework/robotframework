@@ -40,30 +40,20 @@ class TestSuite(model.TestSuite):
     def statistics(self):
         return TotalStatisticsBuilder(self).stats
 
+    # TODO:
+    # 1) Remove critical_stats and all_stats in favor of new self.statistics.xxx
+    # 2) Consider removing stat_message in favor of unicode(self.statistics)
+
     @property
     def stat_message(self):
-        return self._stat_message()
+        return unicode(self.statistics)
 
     @property
     def full_message(self):
-        stat_msg = self._stat_message()
+        stat_msg = unicode(self.statistics)
         if not self.message:
             return stat_msg
         return '%s\n\n%s' % (self.message, stat_msg)
-
-    def _stat_message(self):
-        # TODO: Should create self.statistics and move this there.
-        ctotal, cend, cpass, cfail = self._get_counts(self.critical_stats)
-        atotal, aend, apass, afail = self._get_counts(self.all_stats)
-        return ('%d critical test%s, %d passed, %d failed\n'
-                '%d test%s total, %d passed, %d failed'
-                % (ctotal, cend, cpass, cfail, atotal, aend, apass, afail))
-
-    def _get_counts(self, stat):
-        ending = utils.plural_or_not(stat.total)
-        return stat.total, ending, stat.passed, stat.failed
-
-    # TODO: Remove critical_stats and all_stats in favor of new statistics
 
     @property
     def critical_stats(self):
