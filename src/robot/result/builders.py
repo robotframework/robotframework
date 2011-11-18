@@ -12,12 +12,10 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-import os
-from StringIO import StringIO
+from __future__ import with_statement
 
 from robot.errors import DataError
-from robot.utils.etreewrapper import ET
-from robot import utils
+from robot.utils import ET, XmlSource
 
 from executionresult import ExecutionResult, CombinedExecutionResult
 from suiteteardownfailed import SuiteTeardownFailureHandler
@@ -31,30 +29,9 @@ def ResultFromXML(*sources):
     source = XmlSource(sources[0])
     try:
         return ExecutionResultBuilder(source).build(ExecutionResult())
-    # TODO: handle source in errors messages when it's a file object
     except DataError, err:
-        raise DataError("File '%s' is not Robot Framework output file: %s" % (source, err))
-    except:
-        raise DataError("Opening XML file '%s' failed: %s"
-                        % (source, utils.get_error_message()))
-
-
-class XmlSource(object):
-
-    def __init__(self, source):
-        self._source = source
-
-    @property
-    def source(self):
-        if not isinstance(self._source, basestring):
-            return self._source
-        if os.path.isfile(self._source):
-            return self._source
-        try:
-            ET.XML(self._source)
-            return StringIO(self._source)
-        except ET.ParseError:
-            raise DataError("Output file '%s' does not exist." % self._source)
+        raise DataError("Reading XML source '%s' failed: %s"
+                        % (source, unicode(err)))
 
 
 class ExecutionResultBuilder(object):
@@ -64,8 +41,9 @@ class ExecutionResultBuilder(object):
 
     def build(self, result):
         elements = ElementStack(RootElement())
-        for action, elem in ET.iterparse(self._source.source, events=('start', 'end')):
-            result = getattr(elements, action)(elem, result)
+        with self._source as source:
+            for action, elem in ET.iterparse(source, events=('start', 'end')):
+               result = getattr(elements, action)(elem, result)
         SuiteTeardownFailureHandler(result.generator).visit_suite(result.suite)
         return result
 
@@ -104,7 +82,7 @@ class _Element(object):
         for child_type in self._children():
             if child_type.tag == tag:
                 return child_type()
-        raise DataError("Unexpected element '%s'" % tag)
+        raise DataError("Incompatible XML element '%s'" % tag)
 
     def _children(self):
         return []

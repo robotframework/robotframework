@@ -17,11 +17,11 @@ Non-Existing Input
 
 Non-XML Input
     Create File  ${MYOUTDIR}/invalid.txt  Hello, world
-    Rebot should fail  ${MYOUTDIR}${/}invalid.txt  (\\[Fatal Error\\] .*: Content is not allowed in prolog.\\n)?Opening XML file '.*invalid.txt' failed: .*
+    Rebot should fail  ${MYOUTDIR}${/}invalid.txt  (\\[Fatal Error\\] .*: Content is not allowed in prolog.\\n)?Reading XML source '.*invalid.txt' failed: .*
 
-Non-Compatible XML
+Incompatible XML
     Create File  ${MYOUTDIR}/invalid.xml  <not><our>type</our></not>
-    Rebot should fail  ${MYOUTDIR}${/}invalid.xml  File '.*invalid.xml' is not Robot Framework output file.*
+    Rebot should fail  ${MYOUTDIR}${/}invalid.xml  Reading XML source '.*invalid.xml' failed: Incompatible XML element 'not'
 
 Invalid Output Directory
     [Documentation]  Test error handling when some of the output dirs (where to write output, report, etc.) is invalid (i.e. can't be created). To make sure creating dirs fails their names are non-standard (that's not enough in Linux) parent is made read only.
@@ -50,6 +50,7 @@ Invalid Argument Values
 Rebot Should Fail  [Arguments]  ${options}  ${exp msg}
     Set Runners
     ${rc}  ${output} =  Run And Return RC and Output  ${REBOT} ${options}
+    Log  ${output}
     Should Be Equal As Integers  ${rc}  252
     Should Match Regexp  ${output}  ^\\[ .*ERROR.* \\] ${exp msg}${USAGETIP}$
 
