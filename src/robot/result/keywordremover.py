@@ -29,13 +29,32 @@ def KeywordRemover(how):
 class _KeywordRemover(SuiteVisitor):
 
     def _clear_content(self, keyword):
-        keyword.messages = []
         keyword.keywords = []
+        keyword.messages = []
 
     def _contains_warning(self, item):
-        contains_warning_visitor = ContainsWarningVisitor()
-        item.visit(contains_warning_visitor)
-        return contains_warning_visitor.result
+        contains_warning = ContainsWarning()
+        item.visit(contains_warning)
+        return contains_warning.result
+
+
+class ContainsWarning(SuiteVisitor):
+
+    def __init__(self):
+        self.result = False
+
+    def start_suite(self, suite):
+        return not self.result
+
+    def start_test(self, test):
+        return not self.result
+
+    def start_keyword(self, keyword):
+        return not self.result
+
+    def visit_message(self, msg):
+        if msg.level == 'WARN':
+            self.result = True
 
 
 class AllKeywordsRemover(_KeywordRemover):
@@ -47,7 +66,7 @@ class AllKeywordsRemover(_KeywordRemover):
 class PassedKeywordRemover(_KeywordRemover):
 
     def start_suite(self, suite):
-        if not suite.all_stats.failed:
+        if not suite.statistics.all.failed:
             for keyword in suite.keywords:
                 if not self._contains_warning(keyword):
                     self._clear_content(keyword)
@@ -57,43 +76,20 @@ class PassedKeywordRemover(_KeywordRemover):
             for keyword in test.keywords:
                 self._clear_content(keyword)
 
-    def visit_keyword(self, keyword):
-        pass
-
     def _should_be_cleared(self, item):
         return item.is_passed and not self._contains_warning(item)
+
+    def visit_keyword(self, keyword):
+        pass
 
 
 class ForLoopItemsRemover(_KeywordRemover):
 
-    def start_keyword(self, keyword):
-        if not keyword.is_passed:
-            return False
-        if keyword.is_forloop:
-            self._clear_content(keyword)
-            return False
-
     def start_test(self, test):
         return test.is_passed and not self._contains_warning(test)
 
-
-def _stop_if_result(method):
-    def wrapped(s, i):
-        if s.result:
-            return
-        method(s, i)
-    return wrapped
-
-
-class ContainsWarningVisitor(SuiteVisitor):
-
-    def __init__(self):
-        self.result = False
-
-    def visit_message(self, msg):
-        self.result |= msg.level == 'WARN'
-
-    visit_keyword = _stop_if_result(SuiteVisitor.visit_keyword)
-    visit_suite = _stop_if_result(SuiteVisitor.visit_suite)
-    visit_test = _stop_if_result(SuiteVisitor.visit_test)
-
+    def start_keyword(self, keyword):
+        if keyword.is_forloop:
+            self._clear_content(keyword)
+            return False
+        return keyword.is_passed
