@@ -25,7 +25,7 @@ Combine With Only Starttime Should Only Affect Starttime
 Combine With Only Endtime Should Only Affect Endtime
     Run Rebot  --endtime 2010_01.01:12-33  ${INPUT1}  ${INPUT2}
     Should Be Equal  ${SUITE.starttime}  ${ORIG_START}
-    Should Be Equal  ${SUITE.endtime}  20100101 11:33:00.000
+    Should Be Equal  ${SUITE.endtime}  20100101 12:33:00.000
     Should Be Equal  ${SUITE.elapsedtime}  ${ORIG_ELAPSED}
 
 Recombining Should Work
