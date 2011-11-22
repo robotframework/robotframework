@@ -4,6 +4,7 @@ import time
 import os
 
 import unittest
+import datetime
 from robot.output.xmllogger import XmlLogger
 
 from robot.reporting.outputparser import OutputParser, CombiningOutputParser
@@ -310,7 +311,7 @@ class TestJsSerializer(_JsSerializerTestBase):
     def test_generated_millis(self):
         self._context.timestamp('19790101 12:00:00.000')
         data_model = self._get_data_model(self.SUITE_XML)
-        basetime = 284040000 + time.altzone
+        basetime = time.mktime(datetime.datetime(1979,1,1,12).timetuple())
         data_model._set_generated(time.localtime(basetime))
         assert_equals(data_model._robot_data['baseMillis'], basetime*1000)
         assert_equals(data_model._robot_data['generatedMillis'], 0)

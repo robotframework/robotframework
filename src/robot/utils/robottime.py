@@ -13,6 +13,7 @@
 #  limitations under the License.
 
 import time
+import datetime
 
 from normalizing import normalize
 from misc import plural_or_not
@@ -334,7 +335,7 @@ def elapsed_time_to_string(elapsed_millis):
 
 def _timestamp_to_millis(timestamp, seps):
     Y, M, D, h, m, s, millis = _split_timestamp(timestamp, seps)
-    secs = time.mktime((Y, M, D, h, m, s, 0, 0, time.daylight))
+    secs = time.mktime(datetime.datetime(Y, M, D, h, m, s).timetuple())
     return int(round(1000*secs + millis))
 
 def _split_timestamp(timestamp, seps):
