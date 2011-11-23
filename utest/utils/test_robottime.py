@@ -2,6 +2,7 @@ import unittest
 import sys
 import re
 import time
+import datetime
 
 from robot.utils.asserts import (assert_equal, assert_raises_with_msg,
                                  assert_true, assert_not_none)
@@ -12,7 +13,7 @@ from robot.utils.robottime import (timestr_to_secs, secs_to_timestr, get_time,
                                    timestamp_to_secs, _get_timetuple)
 
 
-EXAMPLE_TIME = time.mktime((2007, 9, 20, 16, 15, 14, 0, 0, -1))
+EXAMPLE_TIME = time.mktime(datetime.datetime(2007, 9, 20, 16, 15, 14).timetuple())
 
 
 class TestTime(unittest.TestCase):
