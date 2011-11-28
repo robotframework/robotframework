@@ -9,7 +9,7 @@ from robot.result.datamodel import JSModelCreator
 from robot.result.jsondatamodelhandlers import _Handler, KeywordHandler, StatusHandler
 from robot.result.testcase import TestCase
 from robot.result.testsuite import TestSuite
-from robot.utils.asserts import assert_equals
+from robot.utils.asserts import assert_equals, assert_true
 
 
 class Handler(_Handler):
@@ -29,10 +29,10 @@ class Handler(_Handler):
 
 class _PartialJSModelCreator(JSModelCreator):
 
-    def __init__(self):
+    def __init__(self, splitlog=False):
         self._datamodel = None
         self._handlers = []
-        self._context = Context()
+        self._context = Context(split_log=splitlog)
         self._handlers.append(Handler(self._context))
 
 
@@ -165,20 +165,43 @@ class TestJsoning(unittest.TestCase):
             self._assert_text(tag_json, tag)
 
     def test_suite_jsoning(self):
+        suite = self._create_suite()
+        suite.visit(self._visitor)
+        self._verify_suite(self.datamodel[0], suite)
+
+    def test_suite_jsoning_with_splitlog(self):
+        suite = self._create_suite()
+        self._visitor = _PartialJSModelCreator(splitlog=True)
+        self._context = self._visitor._context
+        suite.visit(self._visitor)
+        self._verify_keywords_splitted_from_suite_keywords(self.datamodel[0][8])
+        self._verify_keywords_splitted_from_tests(self.datamodel[0][6][0][7])
+
+    def _verify_keywords_splitted_from_suite_keywords(self, suite_keywords):
+        for kw in suite_keywords:
+            self._verify_empty_list_or_int(kw[-2])
+
+    def _verify_keywords_splitted_from_tests(self, tests):
+        for test in tests:
+            self._verify_empty_list_or_int(test[6])
+
+    def _verify_empty_list_or_int(self, item):
+        assert_true(item == [] or isinstance(item, int))
+
+    def _create_suite(self):
         suite = TestSuite(source='../somewhere',
                           name='Somewhere',
                           doc='suite <b>documentation</b>',
-                          metadata={'key<':'value<!>',
-                                    'key2>':'va>lue2'})
+                          metadata={'key<': 'value<!>',
+                                    'key2>': 'va>lue2'})
         suite.starttime = '20000101 02:23:01.821'
-        suite.endtime   = '20011221 11:31:12.371'
-        suite.message   = 'so long and thank you for all the fish!'
-        suite.keywords.create(type='setup')
+        suite.endtime = '20011221 11:31:12.371'
+        suite.message = 'so long and thank you for all the fish!'
+        suite.keywords.create(type='setup').keywords.create(name='some keyword')
         subsuite = suite.suites.create(name='subsuite')
-        subsuite.tests.create(name='test', status='PASS')
+        subsuite.tests.create(name='test', status='PASS').keywords.create(name='some other keyword')
         suite.keywords.create(type='teardown')
-        suite.visit(self._visitor)
-        self._verify_suite(self.datamodel[0], suite)
+        return suite
 
     def _verify_suite(self, suite_json, suite):
         self._assert_text(suite_json[0], suite.name)
