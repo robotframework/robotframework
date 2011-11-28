@@ -203,18 +203,22 @@ class KeywordHandler(_Handler):
         context.start_keyword()
 
     def build(self, keyword):
+        result = self._create_result(keyword)
         self._context.end_keyword()
+        return result
+
+    def _create_result(self, keyword):
         return [self._types[keyword.type],
-                self._id(keyword.name),
-                self._id(keyword.timeout),
-                self._id_html(keyword.doc),
-                self._id(', '.join(keyword.args)),
-                self._status(keyword),
-                self._keywords,
-                self._messages]
+                  self._id(keyword.name),
+                  self._id(keyword.timeout),
+                  self._id_html(keyword.doc),
+                  self._id(', '.join(keyword.args)),
+                  self._status(keyword),
+                  self._keywords,
+                  self._messages]
 
 
-class SuiteKeywordHandler(_Handler):
+class SuiteKeywordHandler(KeywordHandler):
 
     def __init__(self, context):
         _Handler.__init__(self, context)
@@ -222,14 +226,7 @@ class SuiteKeywordHandler(_Handler):
 
     def build(self, keyword):
         self._context.end_suite_setup_or_teardown(self._keywords)
-        return [KeywordHandler._types[keyword.type],
-                self._id(keyword.name),
-                self._id(keyword.timeout),
-                self._id_html(keyword.doc),
-                self._id(', '.join(keyword.args)),
-                self._status(keyword),
-                self._keywords,
-                self._messages]
+        return self._create_result(keyword)
 
 
 class StatusHandler(_Handler):
