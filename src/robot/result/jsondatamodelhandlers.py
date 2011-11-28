@@ -169,10 +169,8 @@ class SuiteHandler(_Handler):
 
     def _metadata(self, suite):
         metadata = []
-        for i in [[self._id(key),
-                   self._id(utils.html_format(value))]
-        for key, value in suite.metadata.items()]:
-            metadata.extend(i)
+        for name, value in suite.metadata.items():
+            metadata.extend([self._id(name), self._id(utils.html_format(value))])
         return metadata
 
 
