@@ -263,7 +263,7 @@ class ArgumentElement(_Element):
     tag = 'arg'
 
     def end(self, elem, result):
-        result.args.append(elem.text)
+        result.args.append(elem.text or '')
         return result
 
 
