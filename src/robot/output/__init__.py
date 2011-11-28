@@ -32,7 +32,7 @@ def TestSuite(outpath):
 
     If you want statistics get suite first and say Statistics(suite).
     """
-    suite, errors = process_output(outpath)
+    suite, errors = process_output(outpath) # TODO: Use the new API and remove output.readers
 
     def write_to_file(path=None):
         """Write processed suite (incl. statistics and errors) back to xml.
