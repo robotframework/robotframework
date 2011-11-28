@@ -177,6 +177,21 @@ class TestJsoning(unittest.TestCase):
         self._verify_keywords_splitted_from_suite_keywords(self.datamodel[0][8])
         self._verify_keywords_splitted_from_tests(self.datamodel[0][6][0][7])
 
+    def test_splitlog_keywords_with_strings_are_in_separate_json(self):
+        self._visitor = _PartialJSModelCreator(splitlog=True)
+        self._context = self._visitor._context
+        self._context.start_suite()
+        test = TestCase(name='some name')
+        test.keywords.create(name='some other name')
+        parent = lambda:0
+        parent.criticality = parent
+        parent.test_is_critical = lambda *args: True
+        test.parent = parent
+        test.visit(self._visitor)
+        model, strings = self._context.split_results[self.datamodel[0][6]-1]
+        assert_equals(strings[model[0][1]], '*some other name')
+
+
     def _verify_keywords_splitted_from_suite_keywords(self, suite_keywords):
         for kw in suite_keywords:
             self._verify_empty_list_or_int(kw[-2])
