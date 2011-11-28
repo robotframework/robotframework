@@ -225,7 +225,7 @@ class SuiteKeywordHandler(KeywordHandler):
         self._context.start_suite_setup_or_teardown()
 
     def build(self, keyword):
-        self._context.end_suite_setup_or_teardown(self._keywords)
+        self._keywords = self._context.end_suite_setup_or_teardown(self._keywords)
         return self._create_result(keyword)
 
 
