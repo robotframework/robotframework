@@ -233,7 +233,7 @@ class MetadataItemElement(_Element):
         return [MetadataItemElement]
 
     def end(self, elem, result):
-        result.metadata[elem.get('name')] = elem.text
+        result.metadata[elem.get('name')] = elem.text or ''
         return result
 
 
@@ -248,7 +248,7 @@ class TagElement(_Element):
     tag = 'tag'
 
     def end(self, elem, result):
-        result.tags.add(elem.text)
+        result.tags.add(elem.text or '')
         return result
 
 
