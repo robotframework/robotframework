@@ -41,4 +41,4 @@ Tag link should be correct in output
     [Arguments]  ${index}  ${tag}  ${links}
     ${stats} =  Get Tag Stat Nodes
     Should Be Equal  ${stats[${index}].text}  ${tag}
-    Should Be Equal  ${stats[${index}].attrs['links']}  ${links}
+    Should Be Equal  ${stats[${index}].attrib['links']}  ${links}

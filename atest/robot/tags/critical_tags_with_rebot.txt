@@ -54,5 +54,5 @@ Test Criticality
 Test Status And Criticality Should Be
     [Arguments]  ${test}  ${status}  ${criticality}
     [Documentation]  Must check status and criticality directly from XML because re-processed model would not have same criticality
-    Should Be Equal  ${test.children[-1].attrs['status']}  ${status}
-    Should Be Equal  ${test.children[-1].attrs['critical']}  ${criticality}
+    Should Be Equal  ${test.getchildren()[-1].attrib['status']}  ${status}
+    Should Be Equal  ${test.getchildren()[-1].attrib['critical']}  ${criticality}
