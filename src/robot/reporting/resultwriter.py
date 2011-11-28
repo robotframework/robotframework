@@ -49,28 +49,13 @@ class _ResultWriter(object):
             #TODO: RFX and ResultFromXML name conflict
             execution_result = RFX(*self._data_sources)
             execution_result.configure(status_rc=not self.settings['NoStatusRC'],
-                                       **self._create_opts())
+                                       **self.settings.result_configuration())
             self._xml_result = ResultFromXML(execution_result, self.settings)
         return self._xml_result
 
     @property
     def result(self):
         return self._xml_result.result
-
-    def _create_opts(self):
-        opts = {}
-        for opt_name, settings_name in [
-            ('name', 'Name'), ('doc', 'Doc'), ('metadata', 'Metadata'),
-            ('set_tags', 'SetTag'), ('include_tags', 'Include'),
-            ('exclude_tags', 'Exclude'), ('include_suites', 'SuiteNames'),
-            ('include_tests', 'TestNames'), ('remove_keywords', 'RemoveKeywords'),
-            ('log_level', 'LogLevel'), ('critical', 'Critical'),
-            ('noncritical', 'NonCritical'), ('starttime', 'StartTime'),
-            ('endtime', 'EndTime')
-            ]:
-            opts[opt_name] = self.settings[settings_name]
-        opts['metadata'] = dict(opts['metadata'])
-        return opts
 
 
 class RobotResultWriter(_ResultWriter):

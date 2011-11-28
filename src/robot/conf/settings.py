@@ -282,3 +282,22 @@ class RebotSettings(_BaseSettings):
 
     def _escape(self, value):
         return value
+
+    def result_configuration(self):
+        opts = dict((opt, self[setting]) for opt, setting in
+                [('name', 'Name'),
+                 ('doc', 'Doc'),
+                 ('metadata', 'Metadata'),
+                 ('set_tags', 'SetTag'),
+                 ('include_tags', 'Include'),
+                 ('exclude_tags', 'Exclude'),
+                 ('include_suites', 'SuiteNames'),
+                 ('include_tests', 'TestNames'),
+                 ('remove_keywords', 'RemoveKeywords'),
+                 ('log_level', 'LogLevel'),
+                 ('critical', 'Critical'),
+                 ('noncritical', 'NonCritical'),
+                 ('starttime', 'StartTime'),
+                 ('endtime', 'EndTime')])
+        opts['metadata'] = dict(opts['metadata'])
+        return opts
