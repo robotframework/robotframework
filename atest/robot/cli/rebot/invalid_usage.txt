@@ -13,7 +13,7 @@ No Input
     Rebot should fail  ${EMPTY}  Expected at least 1 argument, got 0.
 
 Non-Existing Input
-    Rebot should fail  nonex.xml  Output file 'nonex\\.xml' does not exist.
+    Rebot should fail  nonex.xml  Reading XML source 'nonex\\.xml' failed: Source file 'nonex\\.xml' does not exist.*
 
 Non-XML Input
     Create File  ${MYOUTDIR}/invalid.txt  Hello, world

@@ -22,14 +22,24 @@ class XmlSource(object):
 
     def __init__(self, source):
         self._source = source
-        if isinstance(source, basestring) and not os.path.isfile(source):
-            if source.startswith('<'):
-                self._source = StringIO(source)
-            else:
-                raise DataError("Output file '%s' does not exist." % source)
+
+    def _get_or_create(self):
+        if self._is_filename() and not os.path.isfile(self._source):
+                raise DataError("Source file '%s' does not exist."
+                                % self._source)
+        self._open_if_necessary()
+        return self._source
+
+    def _is_filename(self):
+        return isinstance(self._source, basestring) \
+                and not self._source.startswith('<')
+
+    def _open_if_necessary(self):
+        if isinstance(self._source, basestring) and not self._is_filename():
+            self._source = StringIO(self._source)
 
     def __enter__(self):
-        return self._source
+        return self._get_or_create()
 
     def __exit__(self, exc_type, exc_value, exc_trace):
         if exc_type is None or exc_type is DataError:
@@ -37,5 +47,8 @@ class XmlSource(object):
         raise DataError(exc_value)
 
     def __str__(self):
-        return str(self._source)
-
+        if hasattr(self._source, 'name'):
+            return self._source.name
+        if isinstance(self._source, basestring):
+            return str(self._source)
+        return '<in-memory file>'
