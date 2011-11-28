@@ -12,8 +12,6 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from robot import utils
-
 from modelobject import ModelObject
 
 
@@ -27,12 +25,6 @@ class Message(ModelObject):
         self.html = html
         self.timestamp = timestamp
         self.linkable = linkable
-
-    @utils.setter
-    def message(self, msg):
-        if not isinstance(msg, basestring):
-            msg = utils.unic(msg)
-        return msg.replace('\r\n', '\n')
 
     def visit(self, visitor):
         visitor.visit_message(self)
