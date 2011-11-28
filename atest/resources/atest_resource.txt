@@ -294,5 +294,5 @@ Get Suite Stat Nodes
 
 Tag Statistics Should Be
     [Arguments]  ${tag}  ${pass}  ${fail}
-    Should Be Equal As Integers  ${tag.attrs['pass']}  ${pass}
-    Should Be Equal As Integers  ${tag.attrs['fail']}  ${fail}
+    Should Be Equal As Integers  ${tag.attrib['pass']}  ${pass}
+    Should Be Equal As Integers  ${tag.attrib['fail']}  ${fail}

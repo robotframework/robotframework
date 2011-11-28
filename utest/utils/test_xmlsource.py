@@ -1,3 +1,4 @@
+from __future__ import with_statement
 import os
 import unittest
 
@@ -25,7 +26,7 @@ class TestXmlSource(unittest.TestCase):
         fname = os.path.splitext(__file__)[0] + '.py'
         source = XmlSource(open(fname))
         with source as src:
-            assert_true(src.read().startswith('import'))
+            assert_true(src.read().startswith('from __future__'))
         assert_true(src.closed is False)
         self._verify_string_representation(source, fname)
 

@@ -38,4 +38,4 @@ Tag doc should be correct in output
     [Arguments]  ${index}  ${tag}  ${doc}
     ${stats} =  Get Tag Stat Nodes
     Should Be Equal  ${stats[${index}].text}  ${tag}
-    Should Be Equal  ${stats[${index}].attrs['doc']}  ${doc}
+    Should Be Equal  ${stats[${index}].attrib['doc']}  ${doc}

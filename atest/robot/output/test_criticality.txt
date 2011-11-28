@@ -16,8 +16,8 @@ Run some tests and parse XML
 
 Check Test Criticality in Output
     [Arguments]  ${testindex}  ${expected criticality}
-    ${test}=  Set Variable  ${suite.get_nodes('test')[${testindex}]}
-    Should Be Equal  ${test.get_node('status').get_attr('critical')}
+    ${test}=  Set Variable  ${suite.findall('test')[${testindex}]}
+    Should Be Equal  ${test.find('status').get('critical')}
     ...   ${expected criticality}
 
 

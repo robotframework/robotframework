@@ -1,7 +1,6 @@
 import os
 import re
 
-import robot
 from robot import utils
 from robot.result.builders import ResultFromXML
 from robot.result import testsuite, TestSuite, TestCase, Keyword
@@ -161,11 +160,11 @@ Actual tests   : %s"""  % (str(list(expected_names)), str(actual_tests))
             utils.eq(act, exp)
 
     def get_node(self, file_path, node_path=None):
-        dom =  utils.DomWrapper(file_path)
-        return dom.get_node(node_path) if node_path else dom
+        dom =  utils.ET.parse(file_path)
+        return dom.find(node_path) if node_path else dom
 
     def get_nodes(self, file_path, node_path):
-        return  utils.DomWrapper(file_path).get_nodes(node_path)
+        return utils.ET.parse(file_path).findall(node_path)
 
 
 def process_suite(suite):

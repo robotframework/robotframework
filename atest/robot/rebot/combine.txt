@@ -134,13 +134,13 @@ Suite Times In Recombine
 
 Elapsed Time Should Be Written To Output When Start And End Time Are Not Known
     ${combined} =  Get Node  ${COMB OUT 1}  suite/status
-    Should Be Equal  ${combined.attrs['starttime']}  N/A
-    Should Be Equal  ${combined.attrs['endtime']}  N/A
-    Should Be True   ${combined.attrs['elapsedtime']} >= 0
+    Should Be Equal  ${combined.attrib['starttime']}  N/A
+    Should Be Equal  ${combined.attrib['endtime']}  N/A
+    Should Be True   ${combined.attrib['elapsedtime']} >= 0
     ${originals} =  Get Nodes  ${COMB OUT 1}  suite/suite/status
-    Should Not Be Equal  ${originals[0].attrs['starttime']}  N/A
-    Should Not Be Equal  ${originals[0].attrs['endtime']}  N/A
-    Should Not Be True   ${originals[0].attrs.has_key('elapsedtime')}
+    Should Not Be Equal  ${originals[0].attrib['starttime']}  N/A
+    Should Not Be Equal  ${originals[0].attrib['endtime']}  N/A
+    Should Not Be True   ${originals[0].attrib.has_key('elapsedtime')}
 
 Combined Suite Names Are Correct In Statistics
     ${suites} =  Get Suite Stat Nodes  ${COMB OUT 1}

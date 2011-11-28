@@ -1,0 +1,55 @@
+*** Settings ***
+Suite Setup     My Setup
+Force Tags      regression
+Default Tags    pybot  jybot
+Resource        atest_resource.txt
+
+*** Test Cases ***
+Statistics Should Be Written to XML
+    ${output} =  Get File  ${OUTFILE}
+    ${exp} =  Catenate  SEPARATOR=\n  (?s)  <statistics>  <total>  .*  </total>
+    ...  <tag>  .*  </tag>  <suite>  .*  </suite>  </statistics>
+    Matches Regexp  ${output}  ${exp}
+
+Total statistics should be Correct
+    ${stats} =  Get Node  ${OUTFILE}  statistics/total
+    ${crit}  ${total} =  Call Method  ${stats}  findall  stat
+    Node Information Should Be Correct  ${crit}  Critical Tests  5  1
+    Node Information Should Be Correct  ${total}  All Tests  9  1
+
+Tag statistics should be Correct
+    ${stats} =  Get Node  ${OUTFILE}  statistics/tag
+    Tag Node Information Should Be Correct  ${stats.getchildren()[0]}  t1  5  1  critical
+    Tag Node Information Should Be Correct  ${stats.getchildren()[1]}  d1 & d2  1  0  combined
+    Tag Node Information Should Be Correct  ${stats.getchildren()[2]}  d1  1  0
+    Tag Node Information Should Be Correct  ${stats.getchildren()[3]}  d2  1  0
+    Tag Node Information Should Be Correct  ${stats.getchildren()[4]}  f1  9  1
+    Tag Node Information Should Be Correct  ${stats.getchildren()[5]}  sub3  2  0
+
+Suite statistics should be Correct
+    ${stats} =  Get Node  ${OUTFILE}  statistics/suite
+    Node Information Should Be Correct  ${stats.getchildren()[0]}  Suites  9  1
+    Node Information Should Be Correct  ${stats.getchildren()[1]}  Suites.Fourth  0  1
+    Node Information Should Be Correct  ${stats.getchildren()[2]}  Suites.Subsuites  2  0
+    Node Information Should Be Correct  ${stats.getchildren()[3]}  Suites.Subsuites2  2  0
+    Node Information Should Be Correct  ${stats.getchildren()[4]}  Suites.Tsuite1  3  0
+    Node Information Should Be Correct  ${stats.getchildren()[5]}  Suites.Tsuite2  1  0
+    Node Information Should Be Correct  ${stats.getchildren()[6]}  Suites.Tsuite3  1  0
+
+*** Keywords ***
+My Setup
+    Run Tests  ${EMPTY}  misc${/}suites
+    Move File  ${OUTFILE}  ${OUTDIR}${/}statistics.xml
+    Run Rebot  --critical t1 --tagstatcombine d1ANDd2 --suitestatlevel 2 --tagstatexclude t2  ${OUTDIR}${/}statistics.xml
+
+Node Information Should Be Correct
+    [Arguments]  ${node}  ${name}  ${pass}  ${fail}
+    Should be Equal  ${node.text}  ${name}
+    Should be Equal  ${node.attrib['pass']}  ${pass}
+    Should be Equal  ${node.attrib['fail']}  ${fail}
+
+Tag Node Information Should Be Correct
+    [Arguments]  ${node}  ${name}  ${pass}  ${fail}  ${info}=
+    Node Information Should Be Correct  ${node}  ${name}  ${pass}  ${fail}
+    Should be Equal  ${node.attrib['info']}  ${info}
+
