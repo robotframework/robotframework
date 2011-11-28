@@ -23,7 +23,6 @@ from robot import utils
 
 from robot.reporting.xunitwriter import XUnitWriter
 from robot.reporting.builders import LogBuilder, ReportBuilder, XUnitBuilder, OutputBuilder
-from robot.reporting.outputparser import OutputParser
 
 
 class _ResultWriter(object):
@@ -33,6 +32,16 @@ class _ResultWriter(object):
         self._xml_result = None
         self._data_model = None
         self._data_sources = []
+
+    @property
+    def data_model(self):
+        if self._data_model is None:
+            creator = JSModelCreator(self.result_from_xml.result,
+                                     log_path=self.settings['Log'],
+                                     split_log=self.settings['SplitLog'])
+            self.result.visit(CombiningVisitor(creator, KeywordRemovingVisitor()))
+            self._data_model = DataModelWriter(creator.datamodel, creator.split_results)
+        return self._data_model
 
     @property
     def result_from_xml(self):
@@ -66,13 +75,6 @@ class _ResultWriter(object):
 
 class RobotResultWriter(_ResultWriter):
 
-    @property
-    def data_model(self):
-        if self._data_model is None:
-            parser = OutputParser(self.settings['Log'], self.settings['SplitLog'])
-            self._data_model = parser.parse(self._data_sources[0])
-        return self._data_model
-
     def write_results(self, data_source):
         self._data_sources = [data_source]
         LogBuilder(self).build()
@@ -89,16 +91,6 @@ class RebotResultWriter(_ResultWriter):
         LogBuilder(self).build()
         ReportBuilder(self).build()
         return self.result_from_xml.result
-
-    @property
-    def data_model(self):
-        if self._data_model is None:
-            creator = JSModelCreator(self.result_from_xml.result,
-                                     log_path=self.settings['Log'],
-                                     split_log=self.settings['SplitLog'])
-            self.result.visit(CombiningVisitor(creator, KeywordRemovingVisitor()))
-            self._data_model = DataModelWriter(creator.datamodel, creator.split_results)
-        return self._data_model
 
 
 class ResultFromXML(object):
