@@ -3,7 +3,7 @@ import re
 
 from robot import utils
 from robot.result.builders import ResultFromXML
-from robot.result import testsuite, TestSuite, TestCase, Keyword
+from robot.result import TestSuite, TestCase, Keyword, executionresult
 
 from robot.libraries.BuiltIn import BuiltIn
 
@@ -15,11 +15,11 @@ class NoSlotsKeyword(Keyword):
 class NoSlotsTestCase(TestCase):
     keyword_class = NoSlotsKeyword
 
-class MyTestSuite(TestSuite):
+class NoSlotsTestSuite(TestSuite):
     test_class = NoSlotsTestCase
     keyword_class = NoSlotsKeyword
 
-testsuite.TestSuite = MyTestSuite
+executionresult.TestSuite = NoSlotsTestSuite
 
 
 class TestCheckerLibrary:
