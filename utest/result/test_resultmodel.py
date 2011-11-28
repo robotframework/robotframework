@@ -1,7 +1,7 @@
 import unittest
-from robot.utils.asserts import assert_equal
+from robot.utils.asserts import assert_equal, assert_raises
 
-from robot.result import TestSuite, TestCase
+from robot.result import TestSuite, TestCase, Keyword, Message
 
 
 class TestSuiteStats(unittest.TestCase):
@@ -91,6 +91,24 @@ class TestElapsedTime(unittest.TestCase):
         suite.tests.create(starttime='19991212 12:00:00.010',
                            endtime='19991212 13:00:01.010')
         assert_equal(suite.elapsedtime, 3610000)
+
+
+class TestSlots(unittest.TestCase):
+
+    def test_testsuite(self):
+        self._verify(TestSuite())
+
+    def test_testcase(self):
+        self._verify(TestCase())
+
+    def test_keyword(self):
+        self._verify(Keyword())
+
+    def test_message(self):
+        self._verify(Message())
+
+    def _verify(self, item):
+        assert_raises(AttributeError, setattr, item, 'attr', 'value')
 
 
 if __name__ == '__main__':

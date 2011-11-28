@@ -1,5 +1,5 @@
 import unittest
-from robot.utils.asserts import assert_equal, assert_true
+from robot.utils.asserts import assert_equal, assert_true, assert_raises
 
 from robot.model import TestSuite
 from robot.model.keyword import Keyword, Keywords
@@ -23,6 +23,9 @@ class TestKeyword(unittest.TestCase):
         assert_equal(kw.keywords[0].id, 's1-t1-k1-k1')
         assert_equal(kw.keywords[1].id, 's1-t1-k1-k2')
         assert_equal(kw.keywords[1].keywords[0].id, 's1-t1-k1-k2-k1')
+
+    def test_slots(self):
+        assert_raises(AttributeError, setattr, Keyword(), 'attr', 'value')
 
 
 class TestStringRepresentation(unittest.TestCase):

@@ -1,7 +1,7 @@
 import unittest
 
 from robot.model import Message
-from robot.utils.asserts import assert_equal
+from robot.utils.asserts import assert_equal, assert_raises
 
 
 class TestStringRepresentation(unittest.TestCase):
@@ -25,3 +25,6 @@ class TestStringRepresentation(unittest.TestCase):
         assert_equal(repr(self.empty), "''")
         assert_equal(repr(self.ascii), "'Kekkonen'")
         assert_equal(repr(self.non_ascii), "'hyv? nimi'")
+
+    def test_slots(self):
+        assert_raises(AttributeError, setattr, Message(), 'attr', 'value')

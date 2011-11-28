@@ -14,9 +14,12 @@
 
 from robot import model, utils
 
+from .message import Message
+
 
 class Keyword(model.Keyword):
     __slots__ = ['status', 'starttime', 'endtime']
+    message_class = Message
 
     def __init__(self, name='', doc='', args=None, type='kw', timeout='',
                  status='FAIL', starttime='N/A', endtime='N/A'):

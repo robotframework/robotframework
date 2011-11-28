@@ -16,6 +16,7 @@ from robot.utils.setter import SetterAwareType
 
 
 class ModelObject(object):
+    __slots__ = []
     __metaclass__ = SetterAwareType
 
     def __unicode__(self):

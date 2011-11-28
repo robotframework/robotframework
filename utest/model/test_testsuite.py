@@ -53,6 +53,9 @@ class TestTestSuite(unittest.TestCase):
         assert_equal(list(suite.suites), [sub1])
         assert_equal(list(sub1.suites), [sub2])
 
+    def test_slots(self):
+        assert_raises(AttributeError, setattr, self.suite, 'attr', 'value')
+
 
 class TestCriticality(unittest.TestCase):
 

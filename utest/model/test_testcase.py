@@ -1,5 +1,5 @@
 import unittest
-from robot.utils.asserts import assert_equal
+from robot.utils.asserts import assert_equal, assert_raises
 
 from robot.model import TestCase, TestSuite
 
@@ -34,6 +34,9 @@ class TestTestCase(unittest.TestCase):
         assert_equal(self.test.longname, 'test')
         self.test.parent = TestSuite(name='suite').suites.create(name='sub suite')
         assert_equal(self.test.longname, 'suite.sub suite.test')
+
+    def test_slots(self):
+        assert_raises(AttributeError, setattr, self.test, 'attr', 'value')
 
 
 class TestStringRepresentation(unittest.TestCase):
