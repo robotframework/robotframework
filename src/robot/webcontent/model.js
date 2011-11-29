@@ -14,7 +14,6 @@ window.model = (function () {
         suite.children = function () {
             return suite.keywords().concat(suite.tests()).concat(suite.suites());
         };
-        suite.teardownFailed = data.teardownFailed;
         suite.searchTests = function (predicate) {
             var tests = [];
             var subSuites = this.suites();
