@@ -25,7 +25,6 @@ class Context(object):
         self._current_texts = self._main_text_cache
         self._split_text_caches = []
         self.basemillis = 0
-        self._stats = Stats()
         self._location = Location()
         self._links = {}
         self._split_log = split_log
@@ -64,13 +63,9 @@ class Context(object):
 
     def start_suite(self):
         self._location.start_suite()
-        self._stats = self._stats.new_child()
 
     def end_suite(self):
         self._location.end_suite()
-        stats = self._stats
-        self._stats = self._stats.parent
-        return stats
 
     def start_test(self):
         if self._split_log:
@@ -111,75 +106,6 @@ class Context(object):
 
     def link_to(self, key):
         return self._links[tuple(key)]
-
-    def add_test(self, critical, passed):
-        self._stats.add_test(critical, passed)
-
-    def suite_teardown_failed(self):
-        self._stats.suite_teardown_failed()
-
-
-class Stats(object):
-
-    def __init__(self, parent=None):
-        self.parent = parent
-        self.all = 0
-        self.all_passed = 0
-        self.critical = 0
-        self.critical_passed = 0
-        self._children = []
-
-    def new_child(self):
-        self._children.append(Stats(self))
-        return self._children[-1]
-
-    def add_test(self, critical, passed):
-        self._update_stats(critical, passed)
-        if self.parent:
-            self.parent.add_test(critical, passed)
-
-    def _update_stats(self, critical, passed):
-        self.all += 1
-        if passed:
-            self.all_passed += 1
-        if critical:
-            self.critical += 1
-        if critical and passed:
-            self.critical_passed += 1
-
-    def suite_teardown_failed(self):
-        if self.parent:
-            self._child_teardown_failed(self.all_passed, self.critical_passed)
-        self._parent_teardown_failed()
-
-    def _child_teardown_failed(self, all_passed, critical_passed):
-        self.all_passed -= all_passed
-        self.critical_passed -= critical_passed
-        if self.parent:
-            self.parent._child_teardown_failed(all_passed, critical_passed)
-
-    def _parent_teardown_failed(self):
-        self.all_passed = 0
-        self.critical_passed = 0
-        for child in self._children:
-            child._parent_teardown_failed()
-
-    def __iter__(self):
-        return iter([self.all, self.all_passed,
-                     self.critical, self.critical_passed])
-
-    def __len__(self):
-        return 4
-
-    def __eq__(self, other):
-        for i,j in zip(self, other):
-            if i != j:
-                return False
-        return True
-
-    def __ne__(self, other):
-        return not (self == other)
-
 
 
 class Location(object):

@@ -4,7 +4,7 @@ import string
 import unittest
 from sys import maxint
 
-from robot.reporting.parsingcontext import Context, TextCache, Stats, Location, TextIndex
+from robot.reporting.parsingcontext import Context, TextCache, Location, TextIndex
 from robot.utils.asserts import assert_equals, assert_true
 
 
@@ -164,61 +164,6 @@ class TestTextIndex(unittest.TestCase):
         target = maxint + 42
         value = TextIndex(target)
         assert_equals(str(value), str(target))
-
-
-class TestStats(unittest.TestCase):
-
-    def setUp(self):
-        self.s1 = Stats()
-        self.s11 = self.s1.new_child()
-        self.s12 = self.s1.new_child()
-        self.s121 = self.s12.new_child()
-        self.s1211 = self.s121.new_child()
-
-    def _test(self, stats, all, all_passed, crit=None, crit_passed=None):
-        if crit is None:
-            crit, crit_passed = all, all_passed
-        assert_equals(stats.all, all)
-        assert_equals(stats.all_passed, all_passed)
-        assert_equals(stats.critical, crit)
-        assert_equals(stats.critical_passed, crit_passed)
-        assert_equals(list(stats), [all, all_passed, crit, crit_passed])
-
-    def test_add_test(self):
-        self.s1.add_test(critical=True, passed=True)
-        self._test(self.s1, 1, 1)
-        self.s11.add_test(True, False)
-        self._test(self.s1, 2, 1)
-        self._test(self.s11, 1, 0)
-        self.s1211.add_test(False, True)
-        self._test(self.s1, 3, 2, 2, 1)
-        self._test(self.s11, 1, 0)
-        self._test(self.s12, 1, 1, 0, 0)
-        self._test(self.s121, 1, 1, 0, 0)
-        self._test(self.s1211, 1, 1, 0, 0)
-
-    def test_teardown_failed(self):
-        self.s1.add_test(critical=True, passed=True)
-        self.s12.add_test(True, True)
-        self.s121.add_test(True, True)
-        self.s1211.add_test(False, True)
-        self.s121.suite_teardown_failed()
-        self._test(self.s1211, 1, 0, 0, 0)
-        self._test(self.s121, 2, 0, 1, 0)
-        self._test(self.s12, 3, 1, 2, 1)
-        self._test(self.s1, 4, 2, 3, 2)
-
-    def test_stats_through_context(self):
-        context = Context()
-        context.start_suite()
-        context.start_suite()
-        context.add_test(1,1)
-        child_stats = context.end_suite()
-        self.assertEqual(list(child_stats), [1, 1, 1, 1])
-        context.suite_teardown_failed()
-        parent_stats = context.end_suite()
-        self.assertEqual(list(child_stats), [1, 0, 1, 0])
-        self.assertEqual(list(parent_stats), [1, 0, 1, 0])
 
 
 class TestLocation(unittest.TestCase):
