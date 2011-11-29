@@ -62,9 +62,9 @@ class RobotResultWriter(_ResultWriter):
 
     def write_results(self, data_source):
         self._data_sources = [data_source]
+        XUnitBuilder(self).build()
         LogBuilder(self).build()
         ReportBuilder(self).build()
-        XUnitBuilder(self).build()
 
 
 class RebotResultWriter(_ResultWriter):
