@@ -68,7 +68,7 @@ class XUnitWriter(SuiteVisitor):
     def end_keyword(self, kw):
         pass
 
-    def message(self, msg):
+    def visit_message(self, msg):
         self._detail_serializer.message(msg)
 
 
