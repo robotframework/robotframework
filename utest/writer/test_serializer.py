@@ -53,7 +53,7 @@ class _SerializerTest(unittest.TestCase):
 
     def _assert_result(self, result, expected, linesep=os.linesep):
         for line1, line2 in zip(result.split(linesep), expected.split('\n')):
-            assert_equals(repr(line1), repr(line2))
+            assert_equals(line1, line2)
 
 
 class TestTxtSerialization(_SerializerTest):

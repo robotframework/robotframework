@@ -1,11 +1,12 @@
-import os, sys, unittest, tempfile
-from StringIO import StringIO
+import os
+import unittest
+import tempfile
 
-from robot.errors import *
 from robot import utils
 from robot.utils.asserts import *
 
 PATH = os.path.join(tempfile.gettempdir(), 'test_xmlwriter.xml')
+
 
 class TestXmlWriter(unittest.TestCase):
 
