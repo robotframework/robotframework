@@ -163,7 +163,6 @@ class SuiteHandler(_Handler):
                 self._suites,
                 self._tests,
                 self._keywords,
-                0, # TODO: 0 is Teardown failure. It should be removed from JS
                 stats]
 
 

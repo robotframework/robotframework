@@ -149,7 +149,7 @@ window.testdata = function () {
                 return msg;
             },
             times: model.Times(times(statusElement)),
-            teardownFailed: element[9] || parentTeardownFailed,
+            teardownFailed: 0 || parentTeardownFailed,
             statistics: suiteStats(last(element)),
             metadata: parseMetadata(element[4], strings)
         });
