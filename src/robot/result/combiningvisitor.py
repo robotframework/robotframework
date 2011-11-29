@@ -11,7 +11,14 @@
 #  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
+
 from robot.result.visitor import ResultVisitor
+
+# TODO:
+# 1) Why is visit_statistics handled specially?
+# 2) Why aren't visit_xxx generally handled?
+# 3) CombiningVisitor should probably be moved to robot.result.visitor
+# 4) KeywordRemovingVisitor should be moved somewhere else
 
 class CombiningVisitor(ResultVisitor):
 
