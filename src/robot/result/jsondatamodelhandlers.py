@@ -153,7 +153,6 @@ class SuiteHandler(_Handler):
         return SuiteKeywordHandler(self._context)
 
     def build(self, suite):
-        stats = self._context.end_suite()
         return [self._id(suite.name),
                 self._id(suite.source),
                 self._id(self._context.get_rel_log_path(suite.source)),
@@ -163,14 +162,18 @@ class SuiteHandler(_Handler):
                 self._suites,
                 self._tests,
                 self._keywords,
-                stats]
-
+                self._stats(suite)]
 
     def _metadata(self, suite):
         metadata = []
         for name, value in suite.metadata.items():
             metadata.extend([self._id(name), self._id(utils.html_format(value))])
         return metadata
+
+    def _stats(self, suite):
+        stats = suite.statistics  # Access property only once
+        return [stats.all.total, stats.all.failed,
+                stats.critical.total, stats.critical.failed]
 
 
 class TestHandler(_Handler):
@@ -180,12 +183,10 @@ class TestHandler(_Handler):
         self._context.start_test()
 
     def build(self, test):
-        critical = int(test.critical == 'yes')
-        self._context.add_test(critical, test.status == 'PASS')
         self._keywords = self._context.end_test(self._keywords)
         return [self._id(test.name),
                 self._id(test.timeout),
-                critical,
+                int(test.critical == 'yes'),
                 self._id_html(test.doc),
                 [self._id(tag) for tag in test.tags],
                 self._status(test),
