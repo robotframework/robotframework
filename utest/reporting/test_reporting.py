@@ -2,7 +2,6 @@ import unittest
 from os.path import abspath
 
 from robot.conf import RebotSettings
-from robot.reporting.outputparser import OutputParser
 from robot.reporting.builders import LogBuilder, ReportBuilder, XUnitBuilder, OutputBuilder
 from robot.reporting.resultwriter import RebotResultWriter, RobotResultWriter
 
@@ -43,15 +42,6 @@ def set_write_split_test_mock():
         results.append(name)
     LogBuilder._write_test = _write_test
     return results
-
-def set_datamodel_generation_spy():
-    generated = []
-    original = OutputParser.parse
-    def parse(*args):
-        generated.append(True)
-        return original(*args)
-    OutputParser.parse = parse
-    return generated
 
 
 class _TestReporting(object):
@@ -96,7 +86,6 @@ class _TestReporting(object):
         self._report_results = set_write_report_mock()
         self._xunit_results = set_write_xunit_mock()
         self._split_test_names = set_write_split_test_mock()
-        self._datamodel_generations = set_datamodel_generation_spy()
 
     def test_generate_report_and_log(self):
         self._settings._opts['Log'] = 'log.html'
@@ -109,7 +98,6 @@ class _TestReporting(object):
         self._reporter.write_results(resources.GOLDEN_OUTPUT)
         self._assert_no_log()
         self._assert_no_report()
-        self._assert_no_data_model_generation()
 
     def test_only_log(self):
         self._settings._opts['Log'] = 'only-log.html'
