@@ -23,7 +23,7 @@ class TestXmlSource(unittest.TestCase):
         self._verify_string_representation(source, '<in-memory file>')
 
     def test_opened_file_object_can_be_used(self):
-        fname = os.path.splitext(__file__)[0] + '.py'
+        fname = os.path.join(os.path.dirname(__file__), 'test_xmlsource.py')
         source = XmlSource(open(fname))
         with source as src:
             assert_true(src.read().startswith('from __future__'))
