@@ -1,11 +1,11 @@
 window.teardownFailureOutput = {};
 window.teardownFailureOutput["errors"] = [];
 window.teardownFailureOutput["stats"] = [[{"fail":2,"label":"Critical Tests","pass":0},{"fail":2,"label":"All Tests","pass":0}],[],[{"fail":2,"id":"s1","label":"teardownFailure","name":"teardownFailure","pass":0},{"fail":2,"id":"s1-s1","label":"teardownFailure.PassingFailing","name":"PassingFailing","pass":0}]];
-window.teardownFailureOutput["generatedMillis"] = 3599051;
+window.teardownFailureOutput["generatedMillis"] = -978;
 window.teardownFailureOutput["generator"] = "ROBOT";
-window.teardownFailureOutput["generatedTimestamp"] = "20111109 15:22:36 GMT +03:00";
-window.teardownFailureOutput["baseMillis"] = 1320841356949;
-window.teardownFailureOutput["suite"] = [15,16,0,0,[],[0,-10,11,14],[[12,13,0,0,[],[0,-7,7,4],[],[[8,0,1,0,[],[0,-5,2,4],[[0,7,0,5,6,[1,-4,0],[],[[-4,2,6]]]]],[11,0,1,0,[],[0,-3,3,9],[[0,3,0,1,10,[0,-2,1],[],[[-1,4,10]]]]]],[],0,[2,0,2,0]]],[],[[2,3,0,1,0,[0,0,1],[],[[1,4,2]]]],0,[2,0,2,0]];
+window.teardownFailureOutput["generatedTimestamp"] = "20111129 11:10:06 GMT +03:00";
+window.teardownFailureOutput["baseMillis"] = 1322557806978;
+window.teardownFailureOutput["suite"] = [14,15,0,0,[],[0,-8,9,16],[[12,13,0,0,[],[0,-6,5,8],[],[[7,0,1,0,[],[0,-5,2,8],[[0,5,0,6,4,[1,-4,0],[],[[-4,2,4]]]]],[10,0,1,0,[],[0,-3,2,11],[[0,2,0,3,9,[0,-3,2],[],[[-1,4,9]]]]]],[],[2,0,2,0]]],[],[[2,2,0,3,0,[0,0,0],[],[[0,4,1]]]],[2,0,2,0]];
 window.teardownFailureOutput["strings"] = [];
-window.teardownFailureOutput["strings"] = window.teardownFailureOutput["strings"].concat(["*","*Fails the test immediately with the given (optional) message.","*AssertionError","*BuiltIn.Fail","*Teardown of the parent suite failed.","*Logs the given message with the given level.","*passing","*BuiltIn.Log","*Passing","*In test\n\nAlso teardown of the parent suite failed.","*In test","*Failing","*PassingFailing","*/home/mkorpela/workspace/robot/utest/webcontent/spec/data/teardownFailure/PassingFailing.txt","*Suite teardown failed:\nAssertionError","*teardownFailure","*/home/mkorpela/workspace/robot/utest/webcontent/spec/data/teardownFailure"]);
+window.teardownFailureOutput["strings"] = window.teardownFailureOutput["strings"].concat(["*","*AssertionError","*BuiltIn.Fail","*Fails the test immediately with the given (optional) message.","*passing","*BuiltIn.Log","*Logs the given message with the given level.","*Passing","*Teardown of the parent suite failed.","*In test","*Failing","*In test\n\nAlso teardown of the parent suite failed.","*PassingFailing","*/home/mkorpela/workspace/robot/utest/webcontent/spec/data/teardownFailure/PassingFailing.txt","*teardownFailure","*/home/mkorpela/workspace/robot/utest/webcontent/spec/data/teardownFailure","*Suite teardown failed:\nAssertionError"]);
 window.settings = {"background":{"fail":"DeepPink"},"logURL":"log.html","reportURL":"report.html"};

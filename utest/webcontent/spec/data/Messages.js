@@ -1,11 +1,11 @@
 window.messagesOutput = {};
-window.messagesOutput["errors"] = [[3,3,7,26]];
+window.messagesOutput["errors"] = [[2,3,6,26]];
 window.messagesOutput["stats"] = [[{"fail":0,"label":"Critical Tests","pass":1},{"fail":0,"label":"All Tests","pass":1}],[],[{"fail":0,"id":"s1","label":"Messages","name":"Messages","pass":1}]];
-window.messagesOutput["generatedMillis"] = 3599083;
+window.messagesOutput["generatedMillis"] = -951;
 window.messagesOutput["generator"] = "ROBOT";
-window.messagesOutput["generatedTimestamp"] = "20111109 15:22:36 GMT +03:00";
-window.messagesOutput["baseMillis"] = 1320841356917;
-window.messagesOutput["suite"] = [24,25,0,0,[],[1,-2,11],[],[[23,0,1,0,[],[1,0,8],[[0,4,0,1,2,[1,0,1],[],[[1,2,3]]],[0,4,0,1,5,[1,1,1],[],[[1,2,5]]],[0,4,0,1,6,[1,2,1],[],[[3,3,7]]],[0,12,0,8,9,[1,3,1],[],[[4,2,10],[4,0,11]]],[0,4,0,1,13,[1,4,1],[],[[5,0,14],[5,1,15],[5,0,16]]],[0,4,0,1,17,[1,6,1],[],[[6,0,18],[6,0,19],[7,0,16]]],[0,12,0,8,20,[1,7,1],[],[[8,0,21],[8,2,22]]]]]],[],0,[1,1,1,1]];
+window.messagesOutput["generatedTimestamp"] = "20111129 11:10:06 GMT +03:00";
+window.messagesOutput["baseMillis"] = 1322557806951;
+window.messagesOutput["suite"] = [24,25,0,0,[],[1,-2,9],[],[[23,0,1,0,[],[1,0,6],[[0,2,0,3,4,[1,0,1],[],[[0,2,1]]],[0,2,0,3,5,[1,1,0],[],[[1,2,5]]],[0,2,0,3,7,[1,2,0],[],[[2,3,6]]],[0,10,0,11,12,[1,2,1],[],[[3,2,8],[3,0,9]]],[0,2,0,3,16,[1,3,1],[],[[4,0,13],[4,1,14],[4,0,15]]],[0,2,0,3,19,[1,4,1],[],[[5,0,17],[5,0,18],[5,0,15]]],[0,10,0,11,22,[1,5,1],[],[[5,0,20],[6,2,21]]]]]],[],[1,1,1,1]];
 window.messagesOutput["strings"] = [];
-window.messagesOutput["strings"] = window.messagesOutput["strings"].concat(["*","*Logs the given message with the given level.","*<h1>html</h1>, HTML","*<h1>html</h1>","*BuiltIn.Log","*infolevelmessage","*warning, WARN","*warning","*Sets the log threshold to the specified level and returns the old level.","*TRACE","*Log level changed from INFO to TRACE","*Return: 'INFO'","*BuiltIn.Set Log Level","*debugging, DEBUG","*Arguments: [ u'debugging' | u'DEBUG' ]","*debugging","*Return: None","*tracing, TRACE","*Arguments: [ u'tracing' | u'TRACE' ]","*tracing","*INFO","*Arguments: [ u'INFO' ]","*Log level changed from TRACE to INFO","*Test with messages","*Messages","*/home/mkorpela/workspace/robot/utest/webcontent/spec/data/Messages.txt","*s1-t1-k3"]);
+window.messagesOutput["strings"] = window.messagesOutput["strings"].concat(["*","*<h1>html</h1>","*BuiltIn.Log","*Logs the given message with the given level.","*<h1>html</h1>, HTML","*infolevelmessage","*warning","*warning, WARN","*Log level changed from INFO to TRACE","*Return: 'INFO'","*BuiltIn.Set Log Level","*Sets the log threshold to the specified level and returns the old level.","*TRACE","*Arguments: [ u'debugging' | u'DEBUG' ]","*debugging","*Return: None","*debugging, DEBUG","*Arguments: [ u'tracing' | u'TRACE' ]","*tracing","*tracing, TRACE","*Arguments: [ u'INFO' ]","*Log level changed from TRACE to INFO","*INFO","*Test with messages","*Messages","*/home/mkorpela/workspace/robot/utest/webcontent/spec/data/Messages.txt","*s1-t1-k3"]);
 window.settings = {"background":{"fail":"DeepPink"},"logURL":"log.html","reportURL":"report.html"};
