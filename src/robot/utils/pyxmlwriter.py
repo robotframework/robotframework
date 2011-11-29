@@ -29,9 +29,7 @@ class XmlWriter(AbstractXmlWriter):
         self.closed = False
 
     def _create_output(self, output):
-        if isinstance(output, basestring):
-            return open(output, 'wb')
-        return output
+        return open(output, 'wb')
 
     def _start(self, name, attrs):
         self._writer.startElement(name, AttributesImpl(attrs))
