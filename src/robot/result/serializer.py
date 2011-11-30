@@ -26,6 +26,7 @@ class RebotXMLWriter(XmlLogger, ResultVisitor):
 
     def close(self):
         self._writer.end('robot')
+        self._writer.close()
 
     def start_errors(self, errors):
         XmlLogger.start_errors(self)
