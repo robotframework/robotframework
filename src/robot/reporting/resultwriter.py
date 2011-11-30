@@ -65,4 +65,4 @@ class RebotResultWriter(_ResultWriter):
         XUnitBuilder(self).build()
         LogBuilder(self).build()
         ReportBuilder(self).build()
-        return self.result_from_xml
+        return self.result_from_xml.return_code
