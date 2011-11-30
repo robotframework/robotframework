@@ -36,7 +36,7 @@ class Stat(object):
     def js_attrs(self):
         attrs =  {'label': self.name, 'pass': self.passed, 'fail': self.failed}
         attrs.update(self._get_custom_attrs())
-        return attrs
+        return dict((key, value) for key, value in attrs.items() if value != '')
 
     def _get_custom_attrs(self):
         return {}

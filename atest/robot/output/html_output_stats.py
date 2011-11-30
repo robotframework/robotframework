@@ -1,5 +1,8 @@
 from robot.api import logger
 
+class WrongStat(AssertionError):
+    ROBOT_CONTINUE_ON_FAILURE = True
+
 
 def get_total_stats(path):
     return get_all_stats(path)[0]
@@ -28,8 +31,7 @@ def _get_stats_line(path):
 def verify_stat(stat, *attrs):
     expected = dict(_get_expected_stat(attrs))
     if stat != expected:
-        raise AssertionError('Wrong stat!\nGot:       %s\nExpected:  %s'
-                             % (stat, expected))
+        raise WrongStat('\n%-9s: %s\n%-9s: %s' % ('Got', stat, 'Expected', expected))
 
 def _get_expected_stat(attrs):
     for key, value in (a.split(':', 1) for a in attrs):
