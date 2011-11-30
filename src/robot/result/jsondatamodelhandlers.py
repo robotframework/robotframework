@@ -75,17 +75,12 @@ class _Handler(object):
 
 class ExecutionResultHandler(_Handler):
 
-    def __init__(self, context, execution_result):
-        _Handler.__init__(self, context)
-        self._generator = execution_result.generator
-
     def visit_statistics(self, stats):
         self._stats = []
         return StatisticsHandler(self._stats, stats)
 
     def build(self, _):
-        return {'generator': self._generator,
-                'suite': self._suites[0],
+        return {'suite': self._suites[0],
                 'stats': self._stats,
                 'errors': self._errors,
                 'baseMillis': self._context.basemillis,

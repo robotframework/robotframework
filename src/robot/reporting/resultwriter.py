@@ -36,8 +36,7 @@ class _ResultWriter(object):
     @property
     def data_model(self):
         if self._data_model is None:
-            creator = JSModelCreator(self.result_from_xml.result,
-                                     log_path=self.settings['Log'],
+            creator = JSModelCreator(log_path=self.settings['Log'],
                                      split_log=self.settings['SplitLog'])
             self.result.visit(CombiningVisitor(creator, KeywordRemovingVisitor()))
             self._data_model = DataModelWriter(creator.datamodel, creator.split_results)
@@ -55,7 +54,7 @@ class _ResultWriter(object):
 
     @property
     def result(self):
-        return self._xml_result.result
+        return self.result_from_xml.result
 
 
 class RobotResultWriter(_ResultWriter):

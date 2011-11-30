@@ -182,6 +182,7 @@ class HTMLFileWriter(object):
         return line.startswith('<meta name="Generator" content=')
 
     def _write_meta_generator(self):
+        #TODO: Generating name should be rebot when using rebot
         self._write('<meta name="Generator" content="%s">\n'
                     % get_full_version('Robot Framework'))
 

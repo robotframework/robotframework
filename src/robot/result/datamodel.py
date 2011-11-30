@@ -19,9 +19,9 @@ from .visitor import ResultVisitor
 
 class JSModelCreator(ResultVisitor):
 
-    def __init__(self, result, log_path='NONE', split_log=False):
+    def __init__(self, log_path='NONE', split_log=False):
         self._context = Context(log_path=log_path, split_log=split_log)
-        self._handlers = [ExecutionResultHandler(self._context, result)]
+        self._handlers = [ExecutionResultHandler(self._context)]
         self._datamodel = None
 
     @property
