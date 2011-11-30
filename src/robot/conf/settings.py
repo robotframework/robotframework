@@ -232,6 +232,34 @@ class _BaseSettings(object):
         return '\n'.join('%s: %s' % (name, self._opts[name])
                          for name in sorted(self._opts))
 
+    @property
+    def output(self):
+        return self._get_file('Output')
+
+    @property
+    def log(self):
+        return self._get_file('Log')
+
+    @property
+    def report(self):
+        return self._get_file('Report')
+
+    @property
+    def xunit(self):
+        return self._get_file('XUnitFile')
+
+    def _get_file(self, name):
+        value = self[name]
+        return value if value != 'NONE' else None
+
+    @property
+    def split_log(self):
+        return self['SplitLog']
+
+    @property
+    def status_rc(self):
+        return not self['NoStatusRC']
+
 
 class RobotSettings(_BaseSettings):
     _extra_cli_opts = {'Output'        : ('output', 'output.xml'),
