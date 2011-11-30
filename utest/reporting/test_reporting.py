@@ -38,9 +38,9 @@ def set_write_output_mock():
 
 def set_write_split_test_mock():
     results = []
-    def _write_test(self, index, keywords, strings, name):
+    def _write_split_log(self, index, keywords, strings, name):
         results.append(name)
-    LogBuilder._write_test = _write_test
+    LogBuilder._write_split_log = _write_split_log
     return results
 
 
