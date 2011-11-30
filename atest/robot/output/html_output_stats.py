@@ -1,4 +1,6 @@
+from __future__ import with_statement
 from robot.api import logger
+
 
 class WrongStat(AssertionError):
     ROBOT_CONTINUE_ON_FAILURE = True
