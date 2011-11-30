@@ -1,7 +1,0 @@
-name|test.name| Empty Metadata | Passing test | Failing Test | Test
-longname|test.longname | Testdata.Empty Settings.Empty Metadata | Testdata.Everything.Passing test | Testdata.Everything.Failing Test | Testdata.Minimum.Test
-status | test.status | PASS | PASS | FAIL | PASS
-tags | test.tags | [] | ['force1', 'tag1', 'tag2'] | ['default1', 'force1'] | []
-setup name | test.setup.name | N/A | My Test Setup | N/A | N/A
-teardown name | test.teardown.name | N/A | My Test Teardown | N/A | N/A
-doc |test.doc |  | This is a passing test | |
