@@ -87,7 +87,7 @@ Verify Directory With Mixed Data With ReST
 
 Verify Directory With Mixed Data Without ReST
     Should Be Equal  ${SUITE.name}  Mixed Data
-    Should Be True  ${SUITE.suites} == ['HTML', 'TSV', 'TXT']
+    Should Contain Suites  ${SUITE}    HTML  TSV  TXT
     Should Be Equal  ${SUITE.suites[0].doc}  Test suite in HTML file
     Should Be Equal  ${SUITE.suites[1].doc}  Test suite in TSV file
     Should Be Equal  ${SUITE.suites[2].doc}  Test suite in TXT file
