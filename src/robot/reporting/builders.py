@@ -16,14 +16,16 @@ from __future__ import with_statement
 import os
 import os.path
 import re
-import sys
-import tempfile
 import codecs
 
+from robot.errors import DataError
 from robot.output import LOGGER
-from robot.reporting.jsondatamodel import SeparatingWriter
+from robot.result.serializer import RebotXMLWriter
 from robot.version import get_full_version
 from robot import utils
+
+from .jsondatamodel import SeparatingWriter
+from .xunitwriter import XUnitWriter
 
 try:
     from org.robotframework.RobotRunner import getResourceAsStream
@@ -58,14 +60,30 @@ class OutputBuilder(_Builder):
     _type = 'Output'
 
     def _build(self):
-        self._context.result_from_xml.serialize_output(self._path)
+        path = self._path
+        if path == 'NONE':
+            return
+        writer = RebotXMLWriter(path)
+        self._context.result_from_xml.visit(writer)
+        LOGGER.output_file('Output', path)
 
 
 class XUnitBuilder(_Builder):
     _type = 'XUnitFile'
 
     def _build(self):
-        self._context.result_from_xml.serialize_xunit(self._path)
+        path = self._path
+        if path == 'NONE':
+            return
+        writer = XUnitWriter(path) # TODO: handle (with atests) error in opening output file
+        try:
+            self._context.result_from_xml.visit(writer)
+        except:
+            raise DataError("Writing XUnit result file '%s' failed: %s" %
+                            (path, utils.get_error_message()))
+        finally:
+            writer.close()
+        LOGGER.output_file('XUnit', path)
 
 
 class _HTMLFileBuilder(_Builder):
