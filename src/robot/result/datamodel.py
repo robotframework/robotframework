@@ -79,5 +79,20 @@ class JSModelCreator(ResultVisitor):
         model = self._build(errors)
         self._top.add_errors(model)
 
-    def visit_statistics(self, stats):
-        self._top.visit_statistics(stats)
+    def start_total_statistics(self, stats):
+        self._push(self._top.statistics_handler())
+
+    def end_total_statistics(self, stats):
+        model = self._build(stats)
+        self._top.add_statistics(model)
+
+    start_tag_statistics = start_suite_statistics = start_total_statistics
+    end_tag_statistics = end_suite_statistics = end_total_statistics
+
+    def start_stat(self, stat):
+        self._push(self._top.stat_handler())
+
+    def end_stat(self, stat):
+        model = self._build(stat)
+        self._top.add_stat(model)
+

@@ -25,6 +25,8 @@ class _Handler(object):
         self._keywords = []
         self._messages = []
         self._errors = []
+        self._statistics = []
+        self._stats = []
 
     def build(self, item):
         return None
@@ -44,6 +46,12 @@ class _Handler(object):
     def errors_handler(self):
         return ErrorsHandler(self._context)
 
+    def statistics_handler(self):
+        return StatisticsHandler(self._context)
+
+    def stat_handler(self):
+        return StatHandler(self._context)
+
     def add_suite(self, data):
         self._suites.append(data)
 
@@ -58,6 +66,12 @@ class _Handler(object):
 
     def add_errors(self, data):
         self._errors = data
+
+    def add_statistics(self, data):
+        self._statistics.append(data)
+
+    def add_stat(self, data):
+        self._stats.append(data)
 
     def _status(self, item):
         return StatusHandler(self._context).build(item)
@@ -74,13 +88,9 @@ class _Handler(object):
 
 class ExecutionResultHandler(_Handler):
 
-    def visit_statistics(self, stats):
-        self._stats = []
-        return StatisticsHandler(self._stats, stats)
-
     def build(self, _):
         return {'suite': self._suites[0],
-                'stats': self._stats,
+                'stats': self._statistics,
                 'errors': self._errors,
                 'baseMillis': self._context.basemillis,
                 'strings': self._context.dump_texts()}
@@ -92,16 +102,16 @@ class ErrorsHandler(_Handler):
         return self._messages
 
 
-    # TODO: This should also be Handler
-class StatisticsHandler(object):
+class StatisticsHandler(_Handler):
 
-    def __init__(self, result, stats):
-        result.append(self._get_stats(stats.total))
-        result.append(self._get_stats(stats.tags))
-        result.append(self._get_stats(stats.suite))
+    def build(self, stats):
+        return self._stats
 
-    def _get_stats(self, stats):
-        return [stat.js_attrs for stat in stats]
+
+class StatHandler(_Handler):
+
+    def build(self, stat):
+        return stat.js_attrs
 
 
 class SuiteHandler(_Handler):
@@ -118,20 +128,20 @@ class SuiteHandler(_Handler):
                 self._id(suite.source),
                 self._id(self._context.get_rel_log_path(suite.source)),
                 self._id_html(suite.doc),
-                self._metadata(suite),
+                self._get_metadata(suite),
                 self._status(suite),
                 self._suites,
                 self._tests,
                 self._keywords,
-                self._stats(suite)]
+                self._get_stats(suite)]
 
-    def _metadata(self, suite):
+    def _get_metadata(self, suite):
         metadata = []
         for name, value in suite.metadata.items():
             metadata.extend([self._id(name), self._id(utils.html_format(value))])
         return metadata
 
-    def _stats(self, suite):
+    def _get_stats(self, suite):
         stats = suite.statistics  # Access property only once
         return [stats.all.total, stats.all.passed,
                 stats.critical.total, stats.critical.passed]
