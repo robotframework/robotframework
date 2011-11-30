@@ -14,7 +14,6 @@
 
 from robot import utils
 from robot.output import LEVELS
-from robot.result.visitor import ResultVisitor
 
 
 class _Handler(object):
@@ -98,49 +97,16 @@ class ErrorsHandler(_Handler):
         return self._messages
 
 
-class SuiteStatVisitor(ResultVisitor):
-
-    def __init__(self, collection):
-        self.collection = collection
-
-    def visit_stat(self, stats):
-        stat = self._create_stat(stats)
-        stat['id'] = stats.attrs['idx']
-        stat['name'] = stats.attrs['name']
-        self.collection += [stat]
-
-    def _create_stat(self, stat_elem):
-        return {'pass':stat_elem.passed,
-                'fail':stat_elem.failed,
-                'label':stat_elem.name}
-
-
+    # TODO: This should also be Handler
 class StatisticsHandler(object):
 
-    def __init__(self, stats_list, stats):
-        self._result = stats_list
-        self._result.append(self._parse_totals(stats.total))
-        self._result.append(self._parse_tag(stats.tags))
-        self._result.append(self._parse_suite(stats.suite))
+    def __init__(self, result, stats):
+        result.append(self._get_stats(stats.total))
+        result.append(self._get_stats(stats.tags))
+        result.append(self._get_stats(stats.suite))
 
-    def _parse_totals(self, total):
-        return [self._create_stat(total.critical), self._create_stat(total.all)]
-
-    def _parse_tag(self, tags):
-        return [self._create_stat(tag) for tag in tags]
-
-    def _parse_suite(self, suite):
-        stats = []
-        suite.visit(SuiteStatVisitor(stats))
-        return stats
-
-    def _create_stat(self, stat_elem):
-        return {'pass':stat_elem.passed,
-                'fail':stat_elem.failed,
-                'label':stat_elem.name}
-
-    def end_element(self, _):
-        return self._result
+    def _get_stats(self, stats):
+        return [stat.js_attrs for stat in stats]
 
 
 class SuiteHandler(_Handler):

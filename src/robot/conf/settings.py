@@ -301,3 +301,9 @@ class RebotSettings(_BaseSettings):
                  ('endtime', 'EndTime')])
         opts['metadata'] = dict(opts['metadata'])
         return opts
+
+    def statistics_configuration(self):
+        return (self['SuiteStatLevel'], self['TagStatInclude'],
+                self['TagStatExclude'], self['TagStatCombine'],
+                self['TagDoc'], self['TagStatLink'])
+
