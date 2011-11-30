@@ -28,6 +28,8 @@ class Stat(object):
     def attrs(self):
         attrs = {'pass': str(self.passed), 'fail': str(self.failed)}
         attrs.update(self._get_custom_attrs())
+        if 'id' in attrs:
+            attrs['idx'] = attrs.pop('id') # TODO: Rename idx -> id
         return attrs
 
     @property
@@ -76,7 +78,7 @@ class SuiteStat(Stat):
         self._name = suite.name
 
     def _get_custom_attrs(self):
-        return {'idx': self.id, 'name': self._name}  # TODO: isx -> id
+        return {'id': self.id, 'name': self._name}
 
 
 class TagStat(Stat):

@@ -271,7 +271,7 @@ class TestJsoning(unittest.TestCase):
         assert_equals(self.datamodel['stats'],
             [[{'fail': 1, 'label': 'Critical Tests', 'pass': 0},
               {'fail': 1, 'label': 'All Tests', 'pass': 0}],
-             [{'fail': 1, 'label': 'tagi', 'pass': 0}],
+             [{'info': '', 'combined': '', 'links': '', 'pass': 0, 'fail': 1, 'doc': '', 'label': 'tagi'}],
              [{'fail': 1, 'label': 'Kekkonen', 'id': 's1', 'name': 'Kekkonen', 'pass': 0},
               {'fail': 1, 'label': 'Kekkonen.Urho', 'id': 's1-s1', 'name': 'Urho', 'pass': 0}]])
 
