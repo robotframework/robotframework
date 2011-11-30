@@ -3,36 +3,36 @@ from os.path import abspath
 
 from robot.conf import RebotSettings
 from robot.reporting.builders import LogBuilder, ReportBuilder, XUnitBuilder, OutputBuilder
-from robot.reporting.resultwriter import RebotResultWriter, RobotResultWriter
+from robot.reporting.resultwriter import ResultWriter
 
 import resources
 
 
 def set_write_log_mock():
     results = {'log_path': None}
-    def write_log(self):
-        results['log_path'] = self._path
+    def write_log(self, path, template):
+        results['log_path'] = path
     LogBuilder._write_file = write_log
     return results
 
 def set_write_report_mock():
     results = {'report_path': None}
-    def write_report(self):
-        results['report_path'] = self._path
+    def write_report(self, path, template):
+        results['report_path'] = path
     ReportBuilder._write_file = write_report
     return results
 
 def set_write_xunit_mock():
     results = {'xunit_path': None}
-    def build_xunit(self):
-        results['xunit_path'] = self._path
+    def build_xunit(self, path):
+        results['xunit_path'] = path
     XUnitBuilder.build = build_xunit
     return results
 
 def set_write_output_mock():
     results = {'output_path': None}
-    def build_output(self):
-        results['output_path'] = self._path
+    def build_output(self, path):
+        results['output_path'] = path
     OutputBuilder.build = build_output
     return results
 
@@ -160,7 +160,7 @@ class TestRebotReporting(_TestReporting, unittest.TestCase):
     def setUp(self):
         _TestReporting.setUp(self)
         self._output_results = set_write_output_mock()
-        self._reporter = RebotResultWriter(self._settings)
+        self._reporter = ResultWriter(self._settings)
 
     def _write_results(self, *sources):
         self._reporter.write_results(*sources)
@@ -186,7 +186,7 @@ class TestRobotReporting(_TestReporting, unittest.TestCase):
 
     def setUp(self):
         _TestReporting.setUp(self)
-        self._reporter = RobotResultWriter(self._settings)
+        self._reporter = ResultWriter(self._settings)
 
     def _write_results(self, source):
         self._reporter.write_results(source)
