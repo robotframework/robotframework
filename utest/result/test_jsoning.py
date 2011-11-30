@@ -259,14 +259,13 @@ class TestJsoning(unittest.TestCase):
         result.generator = 'unit test'
         result.suite.suites.create(name='Urho').tests.create(status='FAIL', name='moi', tags=['tagi']).keywords.create(name='FAILING', status='FAIL').messages.create(message='FAIL', level='WARN', timestamp='20110101 01:01:01.111')
         result.errors.messages.create(message='FAIL', level='WARN', timestamp='20110101 01:01:01.111', linkable=True)
-        self._visitor = JSModelCreator(result)
+        self._visitor = JSModelCreator()
         self._context = self._visitor._context
         result.visit(self._visitor)
         self._verify_message(self.datamodel['errors'][0],
                              result.errors.messages[0])
         assert_equals(self._context.dump_texts()[self.datamodel['errors'][0][3]], '*s1-s1-t1-k1')
         self._verify_suite(self.datamodel['suite'], result.suite)
-        assert_equals(self.datamodel['generator'], result.generator)
         assert_equals(self.datamodel['baseMillis'], self._context.basemillis)
         assert_equals(len(self.datamodel['strings']), 10)
         assert_equals(self.datamodel['stats'],
