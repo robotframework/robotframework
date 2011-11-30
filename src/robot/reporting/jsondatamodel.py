@@ -20,7 +20,6 @@ from robot.reporting.parsingcontext import TextIndex
 
 
 class DataModelWriter(object):
-
     _OUTPUT = 'window.output'
     _SETTINGS = 'window.settings'
     _SUITE_KEY = 'suite'
@@ -129,14 +128,14 @@ class DataModelWriter(object):
 
 class SeparatingWriter(object):
 
-    def __init__(self, output, separator):
+    def __init__(self, output, separator=''):
         self._dumper = JsonDumper(output)
         self._separator = separator
 
     def separator(self):
         self._dumper.write(self._separator)
 
-    def dump_json(self, prefix, data, postfix = ';\n', mapping=None):
+    def dump_json(self, prefix, data, postfix=';\n', mapping=None):
         if prefix:
             self.write(prefix)
         self._dumper.dump(data, mapping)
@@ -161,7 +160,7 @@ class _SubResult(object):
 
     def link(self, name):
         key = object()
-        return _SubResult(key, 1, {key:name})
+        return _SubResult(key, 1, {key: name})
 
 
 class SplittingSuiteWriter(object):
@@ -189,7 +188,8 @@ class SplittingSuiteWriter(object):
         return 'window.sPart%s' % self._index
 
     def _dump_suite_part(self, result):
-        self._writer.dump_json(self._list_name()+' = ', result.data_block, mapping=result.mapping)
+        self._writer.dump_json(self._list_name()+' = ', result.data_block,
+                               mapping=result.mapping)
         self._writer.separator()
         new_result = result.link(self._list_name())
         self._index += 1
