@@ -13,7 +13,6 @@ OUTPUT = join(BASEDIR, 'output.xml')
 sys.path.insert(0, join(BASEDIR, '..', '..', '..', '..', 'src'))
 
 import robot
-from robot.reporting.outputparser import OutputParser
 from robot.reporting.jsondatamodel import SeparatingWriter, DataModelWriter
 
 
@@ -29,7 +28,7 @@ def run_robot(testdata, loglevel='INFO'):
 
 def create_jsdata(outxml, target, split_log):
     result = robot.result.builders.ResultFromXML(outxml)
-    visitor = JSModelCreator(result, split_log=split_log)
+    visitor = JSModelCreator(split_log=split_log)
     result.visit(visitor)
     model = DataModelWriter(visitor.datamodel, visitor._context.split_results)
     model.set_settings({'logURL': 'log.html',

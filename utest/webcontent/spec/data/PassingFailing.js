@@ -1,11 +1,10 @@
 window.passingFailingOutput = {};
 window.passingFailingOutput["errors"] = [];
 window.passingFailingOutput["stats"] = [[{"fail":1,"label":"Critical Tests","pass":1},{"fail":1,"label":"All Tests","pass":1}],[],[{"fail":1,"id":"s1","label":"PassingFailing","name":"PassingFailing","pass":1}]];
-window.passingFailingOutput["generatedMillis"] = -991;
-window.passingFailingOutput["generator"] = "ROBOT";
-window.passingFailingOutput["generatedTimestamp"] = "20111129 11:10:06 GMT +03:00";
-window.passingFailingOutput["baseMillis"] = 1322557806991;
-window.passingFailingOutput["suite"] = [9,10,0,0,[],[0,-3,5],[],[[4,0,1,0,[],[1,-1,1],[[0,2,0,3,1,[1,-1,1],[],[[0,2,1]]]]],[8,0,1,0,[],[0,0,2,5],[[0,6,0,7,5,[0,1,0],[],[[1,4,5]]]]]],[],[2,1,2,1]];
+window.passingFailingOutput["generatedMillis"] = -421;
+window.passingFailingOutput["generatedTimestamp"] = "20111130 11:38:08 GMT +03:00";
+window.passingFailingOutput["baseMillis"] = 1322645888421;
+window.passingFailingOutput["suite"] = [9,10,0,0,[],[0,-2,4],[],[[4,0,1,0,[],[1,-1,1],[[0,2,0,3,1,[1,0,0],[],[[0,2,1]]]]],[8,0,1,0,[],[0,1,1,5],[[0,6,0,7,5,[0,1,1],[],[[2,4,5]]]]]],[],[2,1,2,1]];
 window.passingFailingOutput["strings"] = [];
 window.passingFailingOutput["strings"] = window.passingFailingOutput["strings"].concat(["*","*passing","*BuiltIn.Log","*Logs the given message with the given level.","*Passing","*In test","*BuiltIn.Fail","*Fails the test immediately with the given (optional) message.","*Failing","*PassingFailing","*/home/mkorpela/workspace/robot/utest/webcontent/spec/data/teardownFailure/PassingFailing.txt"]);
 window.settings = {"background":{"fail":"DeepPink"},"logURL":"log.html","reportURL":"report.html"};

@@ -1,11 +1,10 @@
 window.suiteOutput = {};
 window.suiteOutput["errors"] = [];
 window.suiteOutput["stats"] = [[{"fail":0,"label":"Critical Tests","pass":1},{"fail":0,"label":"All Tests","pass":1}],[{"fail":0,"label":"tag1","pass":1},{"fail":0,"label":"tag2","pass":1}],[{"fail":0,"id":"s1","label":"Suite","name":"Suite","pass":1}]];
-window.suiteOutput["generatedMillis"] = -902;
-window.suiteOutput["generator"] = "ROBOT";
-window.suiteOutput["generatedTimestamp"] = "20111129 11:10:06 GMT +03:00";
-window.suiteOutput["baseMillis"] = 1322557806902;
-window.suiteOutput["suite"] = [20,21,0,22,[23,24],[1,-126,139],[],[[15,16,1,17,[18,19],[1,-102,114],[[0,2,0,3,4,[1,-101,101],[],[[0,2,1]]],[3,14,0,0,0,[1,0,11],[[4,11,0,0,0,[1,1,5],[[0,9,0,0,10,[1,2,3],[[0,6,0,7,8,[1,3,1],[],[[4,2,5]]]],[]]],[]],[4,13,0,0,0,[1,6,5],[[0,9,0,0,10,[1,7,3],[[0,6,0,7,8,[1,8,2],[],[[10,2,12]]]],[]]],[]]],[]]]]],[],[1,1,1,1]];
+window.suiteOutput["generatedMillis"] = -338;
+window.suiteOutput["generatedTimestamp"] = "20111130 11:38:08 GMT +03:00";
+window.suiteOutput["baseMillis"] = 1322645888338;
+window.suiteOutput["suite"] = [20,21,0,22,[23,24],[1,-126,136],[],[[15,16,1,17,[18,19],[1,-101,111],[[0,2,0,3,4,[1,-101,101],[],[[0,2,1]]],[3,14,0,0,0,[1,1,9],[[4,11,0,0,0,[1,2,4],[[0,9,0,0,10,[1,2,4],[[0,6,0,7,8,[1,4,1],[],[[5,2,5]]]],[]]],[]],[4,13,0,0,0,[1,7,2],[[0,9,0,0,10,[1,7,2],[[0,6,0,7,8,[1,8,1],[],[[9,2,12]]]],[]]],[]]],[]]]]],[],[1,1,1,1]];
 window.suiteOutput["strings"] = [];
 window.suiteOutput["strings"] = window.suiteOutput["strings"].concat(["*","*Slept 100 milliseconds","*BuiltIn.Sleep","*Pauses the test executed for the given time.","*0.1 seconds","*index is 0","*BuiltIn.Log","*Logs the given message with the given level.","*index is ${index}","*my keyword","*${i}","*${i} = 0","*index is 1","*${i} = 1","*${i} IN RANGE [ 2 ]","*Test","*1 second","*test doc","*tag1","*tag2","*Suite","*/home/mkorpela/workspace/robot/utest/webcontent/spec/data/Suite.txt","*suite doc","*meta","*data"]);
 window.settings = {"background":{"fail":"DeepPink"},"logURL":"log.html","reportURL":"report.html"};
