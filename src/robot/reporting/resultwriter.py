@@ -47,9 +47,11 @@ class _ResultWriter(object):
         if self._xml_result is None:
             #TODO: RFX and ResultFromXML name conflict
             execution_result = RFX(*self._data_sources)
+            # TODO: configure and configure_statistics really should be combined somehow
+            execution_result.configure_statistics(*self.settings.statistics_configuration())
             execution_result.configure(status_rc=not self.settings['NoStatusRC'],
                                        **self.settings.result_configuration())
-            self._xml_result = ResultFromXML(execution_result, self.settings)
+            self._xml_result = ResultFromXML(execution_result)
         return self._xml_result
 
     @property
@@ -79,22 +81,14 @@ class RebotResultWriter(_ResultWriter):
 
 class ResultFromXML(object):
 
-    def __init__(self, execution_result, settings=None):
+    def __init__(self, execution_result):
         self.result = execution_result
-        self._settings = settings
         self._generator = 'Robot'
 
     def serialize_output(self, path, log=True):
+        # TODO: Can `log` be False??
         if path == 'NONE':
             return
-        if self._settings:
-            settings = self._settings
-            params = (settings['SuiteStatLevel'], settings['TagStatInclude'],
-                      settings['TagStatExclude'], settings['TagStatCombine'],
-                      settings['TagDoc'], settings['TagStatLink'])
-        else:
-            params = ()
-        self.result.configure_statistics(*params)
         serializer = RebotXMLWriter(path)
         self.result.visit(serializer)
         if log:
