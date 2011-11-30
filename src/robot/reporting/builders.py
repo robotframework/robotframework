@@ -39,45 +39,27 @@ else:
 
 class _Builder(object):
 
-    def __init__(self, context):
-        self._settings = context.settings
-        self._context = context
-        self._path = self._parse_file(self._type)
+    def __init__(self, model):
+        self._model = model
 
-    def build(self):
-        if self._path:
-            self._build()
-
-    def _build(self):
+    def build(self, path):
         raise NotImplementedError(self.__class__.__name__)
-
-    def _parse_file(self, name):
-        value = self._settings[name]
-        return value if value != 'NONE' else None
 
 
 class OutputBuilder(_Builder):
-    _type = 'Output'
 
-    def _build(self):
-        path = self._path
-        if path == 'NONE':
-            return
+    def build(self, path):
         writer = RebotXMLWriter(path)
-        self._context.result_from_xml.visit(writer)
+        self._model.visit(writer)
         LOGGER.output_file('Output', path)
 
 
 class XUnitBuilder(_Builder):
-    _type = 'XUnitFile'
 
-    def _build(self):
-        path = self._path
-        if path == 'NONE':
-            return
+    def build(self, path):
         writer = XUnitWriter(path) # TODO: handle (with atests) error in opening output file
         try:
-            self._context.result_from_xml.visit(writer)
+            self._model.visit(writer)
         except:
             raise DataError("Writing XUnit result file '%s' failed: %s" %
                             (path, utils.get_error_message()))
@@ -87,25 +69,12 @@ class XUnitBuilder(_Builder):
 
 
 class _HTMLFileBuilder(_Builder):
-    _type = NotImplemented
-    _template = NotImplemented
 
-    def _build(self):
-        self._context.data_model.set_settings(self._get_settings())
-        self._format_data()
-        if self._write_file():
-            LOGGER.output_file(self._type, self._path)
-
-    def _url_from_path(self, source, destination):
-        if not destination:
-            return None
-        return utils.get_link_path(destination, os.path.dirname(source))
-
-    def _write_file(self):
+    def _write_file(self, path, template):
         try:
-            with codecs.open(self._path, 'w', encoding='UTF-8') as outfile:
-                writer = HTMLFileWriter(outfile, self._context.data_model)
-                for line in _WebContentFile(self._template):
+            with codecs.open(path, 'w', encoding='UTF-8') as outfile:
+                writer = HTMLFileWriter(outfile, self._model)
+                for line in _WebContentFile(template):
                     writer.line(line)
         except EnvironmentError, err:
             LOGGER.error("Opening '%s' failed: %s"
@@ -115,55 +84,32 @@ class _HTMLFileBuilder(_Builder):
 
 
 class LogBuilder(_HTMLFileBuilder):
-    _type = 'Log'
-    _template = 'log.html'
 
-    def _format_data(self):
-        if self._context.data_model._split_results:
-            self._write_split_tests()
+    def build(self, path):
+        if self._model._split_results:
+            self._write_split_tests(path)
+        if self._write_file(path, 'log.html'):
+            LOGGER.output_file('Log', path)
 
-    def _write_split_tests(self):
-        basename = os.path.splitext(self._path)[0]
-        for index, (keywords, strings) in enumerate(self._context.data_model._split_results):
+    def _write_split_tests(self, path):
+        basename = os.path.splitext(path)[0]
+        for index, (keywords, strings) in enumerate(self._model._split_results):
             index += 1  # enumerate accepts start index only in Py 2.6+
             self._write_test(index, keywords, strings, '%s-%d.js' % (basename, index))
 
     def _write_test(self, index, keywords, strings, path):
-        # TODO: Refactor heavily - ask Jussi or Peke for more details
         with codecs.open(path, 'w', encoding='UTF-8') as outfile:
             writer = SeparatingWriter(outfile, '')
             writer.dump_json('window.keywords%d = ' % index, keywords)
             writer.dump_json('window.strings%d = ' % index, strings)
             writer.write('window.fileLoading.notify("%s");\n' % os.path.basename(path))
 
-    def _get_settings(self):
-        return  {
-            'title': self._settings['LogTitle'],
-            'reportURL': self._url_from_path(self._path,
-                                             self._parse_file('Report')),
-            'splitLogBase': os.path.basename(os.path.splitext(self._path)[0])
-        }
-
 
 class ReportBuilder(_HTMLFileBuilder):
-    _type = 'Report'
-    _template = 'report.html'
 
-    def _format_data(self):
-        self._context.data_model.remove_errors()
-        self._context.data_model.remove_keywords()
-
-    def _get_settings(self):
-        return {
-            'title': self._settings['ReportTitle'],
-            'background' : self._resolve_background_colors(),
-            'logURL': self._url_from_path(self._path,
-                                          self._parse_file('Log'))
-        }
-
-    def _resolve_background_colors(self):
-        colors = self._settings['ReportBackground']
-        return {'pass': colors[0], 'nonCriticalFail': colors[1], 'fail': colors[2]}
+    def build(self, path):
+        if self._write_file(path, 'report.html'):
+            LOGGER.output_file('Report', path)
 
 
 class HTMLFileWriter(object):

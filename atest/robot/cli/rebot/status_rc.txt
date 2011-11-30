@@ -1,7 +1,8 @@
 *** Settings ***
 Suite Setup     Set Runners and generate input files
 Suite Teardown  Remove input files
-Default Tags    regression  pybot  jybot
+Test Template   Run Rebot and Verify RC
+Force Tags      regression  pybot  jybot
 Resource        rebot_cli_resource.txt
 
 *** Variables ***
@@ -10,23 +11,28 @@ ${FAILING}         ${TEMPDIR}/rebot-testing-failing.xml
 ${MISCDIR}         ${CURDIR}/../../../testdata/misc
 ${PASSING TESTS}   ${MISCDIR}/normal.html
 ${FAILING TESTS}   ${MISCDIR}/pass_and_fail.html
+${REPORT}          ${TEMPDIR}${/}robot-testing-report.html
 
 *** Test Cases ***
 
 Zero RC when all tests pass
-    Run Rebot and Verify RC    ${PASSING}                    rc=0
+    ${PASSING}                    rc=0
 
 Zero RC when all critical tests pass
-    Run Rebot and Verify RC    --critical pass ${FAILING}    rc=0
+    --critical pass ${FAILING}    rc=0
 
 Non-zero RC when critical tests fail
-    Run Rebot and Verify RC    ${FAILING}                    rc=1
+    ${FAILING}                    rc=1
 
 Zero RC when all tests pass with --NoStatusRC
-    Run Rebot and Verify RC    --NoStatusRC ${PASSING}       rc=0
+    --NoStatusRC ${PASSING}       rc=0
 
 Zero RC when critical tests fail with --NoStatusRC
-    Run Rebot and Verify RC    --nostatusrc ${FAILING}       rc=0
+    --nostatusrc ${FAILING}       rc=0
+
+DATA_ERROR (252) when no output is created
+    ${PASSING}                    rc=252    report=NONE
+    --nostatusrc ${FAILING}       rc=252    report=NONE
 
 
 *** Keywords ***
@@ -41,6 +47,7 @@ Remove input files
     Remove Files  ${PASSING}  ${FAILING}
 
 Run Rebot and Verify RC
-    [Arguments]  ${options & source}  ${rc}=
-    ${returned}=  Run And Return Rc  ${REBOT} --log NONE --report NONE ${options & source}
+    [Arguments]  ${options & source}  ${rc}=  ${report}=${REPORT}
+    ${returned}  ${output} =  Run And Return RC And Output  ${REBOT} --log NONE --report ${report} ${options & source}
+    Run Keyword If  ${rc} != ${returned}  Log  ${output}
     Should Be Equal As Integers  ${returned}  ${rc}

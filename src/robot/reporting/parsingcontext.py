@@ -20,7 +20,7 @@ from robot import utils
 
 class Context(object):
 
-    def __init__(self, log_path='NONE', split_log=False):
+    def __init__(self, log_path=None, split_log=False):
         self._main_text_cache = TextCache()
         self._current_texts = self._main_text_cache
         self._split_text_caches = []
@@ -32,7 +32,7 @@ class Context(object):
         self._log_path = log_path
 
     def get_rel_log_path(self, path):
-        if path and os.path.exists(path) and self._log_path != 'NONE':
+        if path and os.path.exists(path) and self._log_path:
             return utils.get_link_path(path, os.path.dirname(self._log_path))
         return ''
 
