@@ -172,8 +172,8 @@ class SuiteHandler(_Handler):
 
     def _stats(self, suite):
         stats = suite.statistics  # Access property only once
-        return [stats.all.total, stats.all.failed,
-                stats.critical.total, stats.critical.failed]
+        return [stats.all.total, stats.all.passed,
+                stats.critical.total, stats.critical.passed]
 
 
 class TestHandler(_Handler):
