@@ -10,6 +10,9 @@ from robot.utils.asserts import assert_equal
 from robot.running.signalhandler import _StopSignalMonitor
 
 
+LOGGER.disable_automatic_console_logger()
+
+
 class LoggerStub(AbstractLogger):
     def __init__(self):
         AbstractLogger.__init__(self)
@@ -21,14 +24,12 @@ class LoggerStub(AbstractLogger):
 class TestSignalHandlerRegisteringFaiures(unittest.TestCase):
 
     def setUp(self):
-        self._console_logger = LOGGER._loggers.remove_first_regular_logger()
         self.logger = LoggerStub()
         LOGGER._message_cache = []
         LOGGER.register_logger(self.logger)
         self._orig_signal = signal.signal
 
     def tearDown(self):
-        LOGGER._loggers._regular_loggers.insert(0, self._console_logger)
         LOGGER.unregister_logger(self.logger)
         signal.signal = self._orig_signal
 

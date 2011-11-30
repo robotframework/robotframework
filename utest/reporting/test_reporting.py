@@ -4,8 +4,11 @@ from os.path import abspath
 from robot.conf import RebotSettings
 from robot.reporting.builders import LogBuilder, ReportBuilder, XUnitBuilder, OutputBuilder
 from robot.reporting.resultwriter import ResultWriter
+from robot.output import LOGGER
 
 import resources
+
+LOGGER.disable_automatic_console_logger()
 
 
 def set_write_log_mock():

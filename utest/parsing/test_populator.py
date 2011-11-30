@@ -7,6 +7,8 @@ from robot.utils.asserts import assert_equals, assert_true, assert_false
 
 from robot.output import LOGGER
 
+LOGGER.disable_automatic_console_logger()
+
 
 class _MockLogger(object):
     def __init__(self):
@@ -26,13 +28,11 @@ class _PopulatorTest(unittest.TestCase):
         self._datafile.directory = '/path/to'
         self._populator = FromFilePopulator(self._datafile)
         self._logger = _MockLogger()
-        self._console_logger = LOGGER._loggers.remove_first_regular_logger()
-        LOGGER._message_cache = []
+        LOGGER.disable_message_cache()
         LOGGER.register_logger(self._logger)
 
     def tearDown(self):
         LOGGER.unregister_logger(self._logger)
-        LOGGER._loggers._regular_loggers.insert(0, self._console_logger)
 
     def _assert_no_parsing_errors(self):
         assert_true(self._logger.value() == '', self._logger.value())
