@@ -44,7 +44,7 @@ def set_write_split_test_mock():
     return results
 
 
-class _TestReporting(object):
+class TestReporting(unittest.TestCase):
 
     def setUp(self):
         self._settings = RebotSettings()
@@ -86,6 +86,8 @@ class _TestReporting(object):
         self._report_results = set_write_report_mock()
         self._xunit_results = set_write_xunit_mock()
         self._split_test_names = set_write_split_test_mock()
+        self._output_results = set_write_output_mock()
+        self._reporter = ResultWriter(self._settings)
 
     def test_generate_report_and_log(self):
         self._settings._opts['Log'] = 'log.html'
@@ -122,16 +124,13 @@ class _TestReporting(object):
         self._settings._opts['SplitLog'] = True
         self._settings._opts['Log'] = '/tmp/foo/log.bar.html'
         self._write_results(resources.GOLDEN_OUTPUT)
-        expected = ('/tmp/foo/log.bar-%d.js' % i for i in range(1, 5))
-        self._assert_expected_split_tests(*expected)
+        expected = ['/tmp/foo/log.bar-%d.js' % i for i in range(1, 5)]
+        self.assertEquals(self._split_test_names, expected)
 
     def _assert_expected_log(self, expected_file_name):
         if expected_file_name:
             expected_file_name = abspath(expected_file_name)
         self.assertEquals(self._log_results['log_path'], expected_file_name)
-
-    def _assert_expected_split_tests(self, *expected_names):
-        self.assertEquals(self._split_test_names, list(expected_names))
 
     def _assert_expected_report(self, expected_file_name):
         if expected_file_name:
@@ -154,14 +153,6 @@ class _TestReporting(object):
     def _assert_data_model_generated_once(self):
         self.assertEquals(len(self._datamodel_generations), 1)
 
-
-class TestRebotReporting(_TestReporting, unittest.TestCase):
-
-    def setUp(self):
-        _TestReporting.setUp(self)
-        self._output_results = set_write_output_mock()
-        self._reporter = ResultWriter(self._settings)
-
     def _write_results(self, *sources):
         self._reporter.write_results(*sources)
 
@@ -180,17 +171,6 @@ class TestRebotReporting(_TestReporting, unittest.TestCase):
     def _assert_expected_output(self, expected_file_name):
         self.assertEquals(self._output_results['output_path'],
                           abspath(expected_file_name))
-
-
-class TestRobotReporting(_TestReporting, unittest.TestCase):
-
-    def setUp(self):
-        _TestReporting.setUp(self)
-        self._reporter = ResultWriter(self._settings)
-
-    def _write_results(self, source):
-        self._reporter.write_results(source)
-
 
 if __name__ == '__main__':
     unittest.main()
