@@ -71,35 +71,32 @@ class XUnitBuilder(_Builder):
 class _HTMLFileBuilder(_Builder):
 
     def _write_file(self, path, template):
-        try:
-            with codecs.open(path, 'w', encoding='UTF-8') as outfile:
-                writer = HTMLFileWriter(outfile, self._model)
-                for line in _WebContentFile(template):
-                    writer.line(line)
-        except EnvironmentError, err:
-            LOGGER.error("Opening '%s' failed: %s"
-                         % (err.filename, err.strerror))
-            return False
-        return True
+        with codecs.open(path, 'w', encoding='UTF-8') as outfile:
+            writer = HTMLFileWriter(outfile, self._model)
+            for line in _WebContentFile(template):
+                writer.line(line)
 
 
 class LogBuilder(_HTMLFileBuilder):
 
     def build(self, path):
-        if self._model._split_results:
-            self._write_split_tests(path)
-        if self._write_file(path, 'log.html'):
+        try:
+            self._write_file(path, 'log.html')
+            self._write_split_logs_if_needed(path)
+        except EnvironmentError, err:
+            LOGGER.error("Writing log file '%s' failed: %s" % (err.filename, err.strerror))
+        else:
             LOGGER.output_file('Log', path)
 
-    def _write_split_tests(self, path):
-        basename = os.path.splitext(path)[0]
+    def _write_split_logs_if_needed(self, path):
+        base = os.path.splitext(path)[0]
         for index, (keywords, strings) in enumerate(self._model._split_results):
             index += 1  # enumerate accepts start index only in Py 2.6+
-            self._write_test(index, keywords, strings, '%s-%d.js' % (basename, index))
+            self._write_split_log(index, keywords, strings, '%s-%d.js' % (base, index))
 
-    def _write_test(self, index, keywords, strings, path):
+    def _write_split_log(self, index, keywords, strings, path):
         with codecs.open(path, 'w', encoding='UTF-8') as outfile:
-            writer = SeparatingWriter(outfile, '')
+            writer = SeparatingWriter(outfile)
             writer.dump_json('window.keywords%d = ' % index, keywords)
             writer.dump_json('window.strings%d = ' % index, strings)
             writer.write('window.fileLoading.notify("%s");\n' % os.path.basename(path))
@@ -108,7 +105,11 @@ class LogBuilder(_HTMLFileBuilder):
 class ReportBuilder(_HTMLFileBuilder):
 
     def build(self, path):
-        if self._write_file(path, 'report.html'):
+        try:
+            self._write_file(path, 'report.html')
+        except EnvironmentError, err:
+            LOGGER.error("Writing report file '%s' failed: %s" % (path, err.strerror))
+        else:
             LOGGER.output_file('Report', path)
 
 
