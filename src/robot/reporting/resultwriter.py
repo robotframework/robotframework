@@ -85,14 +85,12 @@ class ResultFromXML(object):
         self.result = execution_result
         self._generator = 'Robot'
 
-    def serialize_output(self, path, log=True):
-        # TODO: Can `log` be False??
+    def serialize_output(self, path):
         if path == 'NONE':
             return
         serializer = RebotXMLWriter(path)
         self.result.visit(serializer)
-        if log:
-            LOGGER.output_file('Output', path)
+        LOGGER.output_file('Output', path)
 
     def serialize_xunit(self, path):
         if path == 'NONE':
