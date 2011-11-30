@@ -19,6 +19,8 @@ from robot.reporting.jsondump import JsonDumper
 from robot.reporting.parsingcontext import TextIndex
 
 
+# TODO: This class (and module) has too much responsibilities
+
 class DataModelWriter(object):
     _OUTPUT = 'window.output'
     _SETTINGS = 'window.settings'
