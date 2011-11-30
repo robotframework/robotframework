@@ -17,6 +17,10 @@ class StreamXmlWriter(XmlWriter):
     def _create_output(self, output):
         return output
 
+    def close(self):
+        pass
+
+
 if os.name == 'java':
     from java.io import Writer
     from array import array
@@ -26,6 +30,9 @@ if os.name == 'java':
 
         def _create_output(self, output):
             return StreamOutputWriter(output)
+
+        def close(self):
+            pass
 
     class StreamOutputWriter(Writer):
 
