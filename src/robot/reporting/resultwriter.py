@@ -29,19 +29,29 @@ class ResultWriter(object):
     def write_results(self, *data_sources):
         settings = self._settings
         result = Result(settings, data_sources)
-        if settings.output:
-            OutputBuilder(result.model).build(settings.output)
-        if settings.xunit:
-            XUnitBuilder(result.model).build(settings.xunit)
-        if settings.log:
-            LogBuilder(result.js_model).build(settings.log,
-                                              settings.log_configuration())
-        if settings.report:
+        self._write_output(result, settings.output)
+        self._write_xunit(result, settings.xunit)
+        self._write_log(result, settings.log, settings.log_configuration())
+        self._write_report(result, settings.report, settings.report_configuration())
+        return result.return_code
+
+    def _write_output(self, result, output):
+        if output:
+            OutputBuilder(result.model).build(output)
+
+    def _write_xunit(self, result, xunit):
+        if xunit:
+            XUnitBuilder(result.model).build(xunit)
+
+    def _write_log(self, result, log, config):
+        if log:
+            LogBuilder(result.js_model).build(log, config)
+
+    def _write_report(self, result, report, config):
+        if report:
             result.js_model.remove_errors()
             result.js_model.remove_keywords()
-            ReportBuilder(result.js_model).build(settings.report,
-                                                 settings.report_configuration())
-        return result.return_code
+            ReportBuilder(result.js_model).build(report, config)
 
 
 class Result(object):
