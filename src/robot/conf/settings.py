@@ -336,6 +336,8 @@ class RebotSettings(_BaseSettings):
                 self['TagDoc'], self['TagStatLink'])
 
     def log_configuration(self):
+        if not self.log:
+            return {}
         return {
             'title': self['LogTitle'],
             'reportURL': self._url_from_path(self.log, self.report),
@@ -343,6 +345,8 @@ class RebotSettings(_BaseSettings):
         }
 
     def report_configuration(self):
+        if not self.report:
+            return {}
         return {
             'title': self['ReportTitle'],
             'logURL': self._url_from_path(self.report, self.log),
@@ -350,7 +354,7 @@ class RebotSettings(_BaseSettings):
         }
 
     def _url_from_path(self, source, destination):
-        if not (source and destination):
+        if not destination:
             return None
         return utils.get_link_path(destination, os.path.dirname(source))
 
