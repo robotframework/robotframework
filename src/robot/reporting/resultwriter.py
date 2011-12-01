@@ -37,8 +37,10 @@ class ResultWriter(object):
             LogBuilder(result.js_model).build(settings.log,
                                               settings.log_configuration())
         if settings.report:
-            ReportBuilder(result.report_model).build(settings.report,
-                                                     settings.report_configuration())
+            result.js_model.remove_errors()
+            result.js_model.remove_keywords()
+            ReportBuilder(result.js_model).build(settings.report,
+                                                 settings.report_configuration())
         return result.return_code
 
 
@@ -72,13 +74,3 @@ class Result(object):
             self.model.visit(CombiningVisitor(creator, KeywordRemovingVisitor()))
             self._js_model = creator.datamodel
         return self._js_model
-
-    @property
-    def log_model(self):
-        return self.js_model
-
-    @property
-    def report_model(self):
-        self.js_model.remove_errors()
-        self.js_model.remove_keywords()
-        return self.js_model
