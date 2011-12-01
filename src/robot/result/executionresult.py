@@ -14,9 +14,9 @@
 
 from robot.model.statistics import Statistics
 
-from configurer import SuiteConfigurer
-from testsuite import TestSuite
-from executionerrors import ExecutionErrors
+from .configurer import SuiteConfigurer
+from .testsuite import TestSuite
+from .executionerrors import ExecutionErrors
 
 
 class ExecutionResult(object):
