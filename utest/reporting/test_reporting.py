@@ -13,14 +13,14 @@ LOGGER.disable_automatic_console_logger()
 
 def set_write_log_mock():
     results = {'log_path': None}
-    def write_log(self, path, template):
+    def write_log(self, path, *args):
         results['log_path'] = path
     LogBuilder._write_file = write_log
     return results
 
 def set_write_report_mock():
     results = {'report_path': None}
-    def write_report(self, path, template):
+    def write_report(self, path, *args):
         results['report_path'] = path
     ReportBuilder._write_file = write_report
     return results
