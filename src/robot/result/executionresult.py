@@ -23,11 +23,11 @@ from .suiteteardownfailed import SuiteTeardownFailureHandler
 from .testsuite import TestSuite
 
 
-def ResultFromXML(*sources):
+def ResultFromXml(*sources):
     if not sources:
         raise DataError('One or more data source needed.')
     if len(sources) > 1:
-        return CombinedExecutionResult(*[ResultFromXML(src) for src in sources])
+        return CombinedExecutionResult(*[ResultFromXml(src) for src in sources])
     source = XmlSource(sources[0])
     try:
         return ExecutionResultBuilder(source).build(ExecutionResult())

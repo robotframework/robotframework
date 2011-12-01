@@ -14,7 +14,7 @@
 
 
 from robot.errors import DATA_ERROR
-from robot.result import ResultFromXML
+from robot.result import ResultFromXml
 from robot.result.combiningvisitor import CombiningVisitor, KeywordRemovingVisitor
 from robot.result.datamodel import JSModelCreator
 
@@ -69,7 +69,7 @@ class Result(object):
     @property
     def model(self):
         if self._model is None:
-            self._model = ResultFromXML(*self._data_sources)
+            self._model = ResultFromXml(*self._data_sources)
             self._model.configure(self._settings.status_rc,
                                   self._settings.suite_config,
                                   self._settings.statistics_config)

@@ -27,7 +27,7 @@ def run_robot(testdata, loglevel='INFO'):
 
 
 def create_jsdata(outxml, target, split_log):
-    result = robot.result.builders.ResultFromXML(outxml)
+    result = robot.result.builders.ResultFromXml(outxml)
     visitor = JSModelCreator(split_log=split_log)
     result.visit(visitor)
     model = DataModelWriter(visitor.datamodel, visitor._context.split_results)

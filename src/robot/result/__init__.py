@@ -16,5 +16,5 @@ from testsuite import TestSuite
 from testcase import TestCase
 from keyword import Keyword
 from message import Message
-from executionresult import ResultFromXML
+from executionresult import ResultFromXml
 

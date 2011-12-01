@@ -41,7 +41,7 @@ def TestSuite(outpath):
         if path is None:
             path = outpath
         suite.set_status()
-        testoutput = ResultFromXML(suite, errors)
+        testoutput = ResultFromXml(suite, errors)
         testoutput.serialize_output(path)
 
     suite.write_to_file = write_to_file

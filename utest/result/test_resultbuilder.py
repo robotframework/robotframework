@@ -5,7 +5,7 @@ import unittest
 from StringIO import StringIO
 from robot import DataError
 
-from robot.result import ResultFromXML
+from robot.result import ResultFromXml
 from robot.utils.asserts import assert_equals, assert_true, assert_raises
 
 def _read_file(name):
@@ -20,7 +20,7 @@ SUITE_TEARDOWN_FAILED = _read_file('suite_teardown_failed.xml')
 class TestBuildingSuiteExecutionResult(unittest.TestCase):
 
     def setUp(self):
-        result = ResultFromXML(StringIO(GOLDEN_XML))
+        result = ResultFromXml(StringIO(GOLDEN_XML))
         self._suite = result.suite
         self._test = self._suite.tests[0]
         self._keyword = self._test.keywords[0]
@@ -91,7 +91,7 @@ class TestBuildingSuiteExecutionResult(unittest.TestCase):
 class TestCombiningSuites(unittest.TestCase):
 
     def setUp(self):
-        self.result = ResultFromXML(StringIO(GOLDEN_XML), StringIO(GOLDEN_XML))
+        self.result = ResultFromXml(StringIO(GOLDEN_XML), StringIO(GOLDEN_XML))
 
     def test_name(self):
         assert_equals(self.result.suite.name, 'Normal & Normal')
@@ -110,7 +110,7 @@ class TestElements(unittest.TestCase):
         </suite>
         </robot>
         """
-        suite = ResultFromXML(StringIO(xml)).suite
+        suite = ResultFromXml(StringIO(xml)).suite
         assert_equals(suite.name, 'foo')
         assert_equals(suite.suites[0].name, 'bar')
         assert_equals(suite.longname, 'foo')
@@ -128,7 +128,7 @@ class TestElements(unittest.TestCase):
         </suite>
         </robot>
         """
-        test = ResultFromXML(StringIO(xml)).suite.tests[0]
+        test = ResultFromXml(StringIO(xml)).suite.tests[0]
         assert_equals(test.message, 'Failure message')
         assert_equals(test.status, 'FAIL')
         assert_equals(test.longname, 'foo.test')
@@ -141,28 +141,28 @@ class TestElements(unittest.TestCase):
         </suite>
         </robot>
         """
-        suite = ResultFromXML(StringIO(xml)).suite
+        suite = ResultFromXml(StringIO(xml)).suite
         assert_equals(suite.message, 'Setup failed')
 
     def test_unknown_elements_cause_an_error(self):
-        assert_raises(DataError, ResultFromXML, StringIO('<some_tag/>'))
+        assert_raises(DataError, ResultFromXml, StringIO('<some_tag/>'))
 
 
 class TestSuiteTeardownFailed(unittest.TestCase):
 
     def test_passed_test(self):
-        tc = ResultFromXML(StringIO(SUITE_TEARDOWN_FAILED)).suite.tests[0]
+        tc = ResultFromXml(StringIO(SUITE_TEARDOWN_FAILED)).suite.tests[0]
         assert_equals(tc.status, 'FAIL')
         assert_equals(tc.message, 'Teardown of the parent suite failed.')
 
     def test_failed_test(self):
-        tc = ResultFromXML(StringIO(SUITE_TEARDOWN_FAILED)).suite.tests[1]
+        tc = ResultFromXml(StringIO(SUITE_TEARDOWN_FAILED)).suite.tests[1]
         assert_equals(tc.status, 'FAIL')
         assert_equals(tc.message, 'Message\n\nAlso teardown of the parent suite failed.')
 
     def test_already_processed(self):
         inp = SUITE_TEARDOWN_FAILED.replace('generator="Robot', 'generator="Rebot')
-        tc1, tc2 = ResultFromXML(StringIO(inp)).suite.tests
+        tc1, tc2 = ResultFromXml(StringIO(inp)).suite.tests
         assert_equals(tc1.status, 'PASS')
         assert_equals(tc1.message, '')
         assert_equals(tc2.status, 'FAIL')
@@ -182,7 +182,7 @@ class TestBuildingFromXmlString(unittest.TestCase):
     </suite>
 </robot>
 """.strip()
-        result = ResultFromXML(xml)
+        result = ResultFromXml(xml)
 
 if __name__ == '__main__':
     unittest.main()
