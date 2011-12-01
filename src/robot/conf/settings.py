@@ -350,7 +350,7 @@ class RebotSettings(_BaseSettings):
         }
 
     def _url_from_path(self, source, destination):
-        if not destination:
+        if not (source and destination):
             return None
         return utils.get_link_path(destination, os.path.dirname(source))
 
