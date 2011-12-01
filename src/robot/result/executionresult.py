@@ -16,7 +16,7 @@ from robot.errors import DataError
 from robot.model.statistics import Statistics
 from robot.utils import ET, XmlSource
 
-from .builders import ElementStack, RootElement
+from .builders import ElementStack
 from .executionerrors import ExecutionErrors
 from .configurer import SuiteConfigurer
 from .suiteteardownfailed import SuiteTeardownFailureHandler
@@ -43,7 +43,7 @@ class ExecutionResultBuilder(object):
             if isinstance(source, XmlSource) else XmlSource(source)
 
     def build(self, result):
-        elements = ElementStack(result, RootElement())
+        elements = ElementStack(result)
         with self._source as source:
             for action, elem in ET.iterparse(source, events=('start', 'end')):
                getattr(elements, action)(elem)

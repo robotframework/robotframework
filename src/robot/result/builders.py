@@ -19,9 +19,9 @@ from robot.errors import DataError
 
 class ElementStack(object):
 
-    def __init__(self, result, root_element):
+    def __init__(self, result, root_element=None):
         self._results = [result]
-        self._elements = [root_element]
+        self._elements = [root_element or RootElement()]
 
     @property
     def _result(self):
