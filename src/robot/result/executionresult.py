@@ -22,7 +22,7 @@ from .executionerrors import ExecutionErrors
 from .configurer import SuiteConfigurer
 from .suiteteardownfailed import SuiteTeardownFailureHandler
 from .testsuite import TestSuite
-from .xmlelementhandlers import XmlHandler
+from .xmlelementhandlers import XmlElementHandler
 
 
 def ResultFromXml(*sources):
@@ -45,7 +45,7 @@ class ExecutionResultBuilder(object):
             if isinstance(source, XmlSource) else XmlSource(source)
 
     def build(self, result):
-        handler = XmlHandler(result)
+        handler = XmlElementHandler(result)
         with self._source as source:
             for action, elem in ET.iterparse(source, events=('start', 'end')):
                getattr(handler, action)(elem)

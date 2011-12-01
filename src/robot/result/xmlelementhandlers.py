@@ -15,7 +15,7 @@
 from robot.errors import DataError
 
 
-class XmlHandler(object):
+class XmlElementHandler(object):
 
     def __init__(self, result, root_handler=None):
         self._results = [result]
@@ -39,7 +39,6 @@ class XmlHandler(object):
 
 
 class _Handler(object):
-    tag = ''
 
     def __init__(self):
         self._children = dict((c.tag, c) for c in self._child_handlers())
@@ -51,17 +50,17 @@ class _Handler(object):
     def _child_classes(self):
         return []
 
-    def start(self, elem, result):
-        return result
-
-    def end(self, elem, result):
-        pass
-
     def child_handler(self, tag):
         try:
             return self._children[tag]
         except KeyError:
             raise DataError("Incompatible XML handler '%s'" % tag)
+
+    def start(self, elem, result):
+        return result
+
+    def end(self, elem, result):
+        pass
 
 
 class RootHandler(_Handler):
@@ -129,10 +128,11 @@ class MessageHandler(_Handler):
     tag = 'msg'
 
     def end(self, elem, result):
-        html = elem.get('html', 'no') == 'yes'
-        linkable = elem.get('linkable', 'no') == 'yes'
-        result.messages.create(elem.text or '', elem.get('level'),
-                               html, elem.get('timestamp'), linkable)
+        result.messages.create(elem.text or '',
+                               elem.get('level'),
+                               elem.get('html', 'no') == 'yes',
+                               elem.get('timestamp'),
+                               elem.get('linkable', 'no') == 'yes')
 
 
 class _StatusHandler(_Handler):
