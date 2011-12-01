@@ -99,9 +99,9 @@
 <stat info="" links="" doc="" combined="" pass="2" fail="0">t1</stat>
 </tag>
 <suite>
-<stat fail="0" name="Normal &amp; Normal" idx="s1" pass="2">Normal &amp; Normal</stat>
-<stat fail="0" name="Normal" idx="s1-s1" pass="1">Normal &amp; Normal.Normal</stat>
-<stat fail="0" name="Normal" idx="s1-s2" pass="1">Normal &amp; Normal.Normal</stat>
+<stat fail="0" name="Normal &amp; Normal" id="s1" pass="2">Normal &amp; Normal</stat>
+<stat fail="0" name="Normal" id="s1-s1" pass="1">Normal &amp; Normal.Normal</stat>
+<stat fail="0" name="Normal" id="s1-s2" pass="1">Normal &amp; Normal.Normal</stat>
 </suite>
 </statistics>
 <errors>

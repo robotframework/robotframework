@@ -57,7 +57,7 @@ XXX</status>
 <tag>
 </tag>
 <suite>
-<stat fail="2" name="Suite Teardown Fail" idx="s1" pass="0">Suite Teardown Fail</stat>
+<stat fail="2" name="Suite Teardown Fail" id="s1" pass="0">Suite Teardown Fail</stat>
 </suite>
 </statistics>
 <errors>

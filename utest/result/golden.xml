@@ -51,7 +51,7 @@
 <stat info="" links="" doc="" combined="" pass="1" fail="0">t1</stat>
 </tag>
 <suite>
-<stat fail="0" name="Normal" idx="s1" pass="1">Normal</stat>
+<stat fail="0" name="Normal" id="s1" pass="1">Normal</stat>
 </suite>
 </statistics>
 <errors>
