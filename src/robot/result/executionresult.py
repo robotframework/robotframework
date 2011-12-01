@@ -35,7 +35,7 @@ class ExecutionResult(object):
     @property
     def return_code(self):
         if self.should_return_status_rc:
-            return min(self.suite.critical_stats.failed, 250)
+            return min(self.suite.statistics.critical.failed, 250)
         return 0
 
     def configure(self, status_rc=True, **suite_opts):

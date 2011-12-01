@@ -8,17 +8,17 @@ class TestSuiteStats(unittest.TestCase):
 
     def test_stats(self):
         suite = self._create_suite_with_tests()
-        assert_equal(suite.critical_stats.passed, 2)
-        assert_equal(suite.critical_stats.failed, 1)
-        assert_equal(suite.all_stats.passed, 3)
-        assert_equal(suite.all_stats.failed, 2)
+        assert_equal(suite.statistics.critical.passed, 2)
+        assert_equal(suite.statistics.critical.failed, 1)
+        assert_equal(suite.statistics.all.passed, 3)
+        assert_equal(suite.statistics.all.failed, 2)
 
     def test_nested_suite_stats(self):
         suite = self._create_nested_suite_with_tests()
-        assert_equal(suite.critical_stats.passed, 4)
-        assert_equal(suite.critical_stats.failed, 2)
-        assert_equal(suite.all_stats.passed, 6)
-        assert_equal(suite.all_stats.failed, 4)
+        assert_equal(suite.statistics.critical.passed, 4)
+        assert_equal(suite.statistics.critical.failed, 2)
+        assert_equal(suite.statistics.all.passed, 6)
+        assert_equal(suite.statistics.all.failed, 4)
 
     def test_test_count(self):
         suite = self._create_nested_suite_with_tests()

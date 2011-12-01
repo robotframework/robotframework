@@ -28,10 +28,8 @@ class TotalStatistics(object):
     def __iter__(self):
         return iter([self.critical, self.all])
 
-    def __unicode__(self):
-        return unicode(str(self))
-
-    def __str__(self):
+    @property
+    def message(self):
         ctotal, cend, cpass, cfail = self._get_counts(self.critical)
         atotal, aend, apass, afail = self._get_counts(self.all)
         return ('%d critical test%s, %d passed, %d failed\n'
@@ -41,7 +39,6 @@ class TotalStatistics(object):
     def _get_counts(self, stat):
         ending = 's' if stat.total != 1 else ''
         return stat.total, ending, stat.passed, stat.failed
-
 
 
 class TotalStatisticsBuilder(SuiteVisitor):
