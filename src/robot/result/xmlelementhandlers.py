@@ -22,9 +22,7 @@ class XmlElementHandler(object):
 
     def start(self, elem):
         handler, result = self._stack[-1]
-        handler = handler.child_handler(elem.tag)
-        result = handler.start(elem, result)
-        self._stack.append((handler, result))
+        self._stack.append(handler.handle_child(elem, result))
 
     def end(self, elem):
         handler, result = self._stack.pop()
@@ -44,11 +42,13 @@ class _Handler(object):
     def _child_classes(self):
         return []
 
-    def child_handler(self, tag):
+    def handle_child(self, elem, result):
         try:
-            return self._children[tag]
+            handler = self._children[elem.tag]
         except KeyError:
-            raise DataError("Incompatible XML handler '%s'" % tag)
+            raise DataError("Incompatible XML element '%s'" % elem.tag)
+        else:
+            return handler, handler.start(elem, result)
 
     def start(self, elem, result):
         return result
@@ -230,5 +230,5 @@ class ErrorsHandler(_Handler):
 class StatisticsHandler(_Handler):
     tag = 'statistics'
 
-    def child_handler(self, tag):
-        return self
+    def handle_child(self, elem, result):
+        return self, result
