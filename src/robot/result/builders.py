@@ -41,32 +41,35 @@ class ExecutionResultBuilder(object):
             if isinstance(source, XmlSource) else XmlSource(source)
 
     def build(self, result):
-        elements = ElementStack(RootElement())
+        elements = ElementStack(result, RootElement())
         with self._source as source:
             for action, elem in ET.iterparse(source, events=('start', 'end')):
-               result = getattr(elements, action)(elem, result)
+               getattr(elements, action)(elem)
         SuiteTeardownFailureHandler(result.generator).visit_suite(result.suite)
         return result
 
 
 class ElementStack(object):
 
-    def __init__(self, root_element):
+    def __init__(self, result, root_element):
+        self._results = [result]
         self._elements = [root_element]
 
     @property
-    def _current(self):
+    def _result(self):
+        return self._results[-1]
+
+    @property
+    def _element(self):
         return self._elements[-1]
 
-    def start(self, elem, result):
-        self._elements.append(self._current.child_element(elem.tag))
-        return self._current.start(elem, result)
+    def start(self, elem):
+        self._elements.append(self._element.child_element(elem.tag))
+        self._results.append(self._element.start(elem, self._result))
 
-    def end(self, elem, result):
-        result = self._current.end(elem, result)
+    def end(self, elem):
+        self._elements.pop().end(elem, self._results.pop())
         elem.clear()
-        self._elements.pop()
-        return result
 
 
 class _Element(object):
@@ -76,7 +79,7 @@ class _Element(object):
         return result
 
     def end(self, elem, result):
-        return result
+        pass
 
     def child_element(self, tag):
         # TODO: replace _children() list with dict
@@ -87,12 +90,6 @@ class _Element(object):
 
     def _children(self):
         return []
-
-
-class _CollectionElement(_Element):
-
-    def end(self, elem, result):
-        return result.parent
 
 
 class RootElement(_Element):
@@ -112,7 +109,7 @@ class RobotElement(_Element):
         return [RootSuiteElement, StatisticsElement, ErrorsElement]
 
 
-class SuiteElement(_CollectionElement):
+class SuiteElement(_Element):
     tag = 'suite'
 
     def start(self, elem, result):
@@ -127,16 +124,12 @@ class SuiteElement(_CollectionElement):
 class RootSuiteElement(SuiteElement):
 
     def start(self, elem, result):
-        self._result = result
-        self._result.suite.name = elem.get('name')
-        self._result.suite.source = elem.get('source')
-        return self._result.suite
-
-    def end(self, elem, result):
-        return self._result
+        result.suite.name = elem.get('name')
+        result.suite.source = elem.get('source')
+        return result.suite
 
 
-class TestCaseElement(_CollectionElement):
+class TestCaseElement(_Element):
     tag = 'test'
 
     def start(self, elem, result):
@@ -147,7 +140,7 @@ class TestCaseElement(_CollectionElement):
         return [KeywordElement, TagsElement, DocElement, TestStatusElement]
 
 
-class KeywordElement(_CollectionElement):
+class KeywordElement(_Element):
     tag = 'kw'
 
     def start(self, elem, result):
@@ -168,7 +161,6 @@ class MessageElement(_Element):
         linkable = elem.get('linkable', 'no') == 'yes'
         result.messages.create(elem.text or '', elem.get('level'),
                                html, elem.get('timestamp'), linkable)
-        return result
 
 
 class _StatusElement(_Element):
@@ -190,7 +182,6 @@ class KeywordStatusElement(_StatusElement):
     def end(self, elem, result):
         self._set_status(elem, result)
         self._set_times(elem, result)
-        return result
 
 
 class SuiteStatusElement(_StatusElement):
@@ -198,7 +189,6 @@ class SuiteStatusElement(_StatusElement):
     def end(self, elem, result):
         self._set_message(elem, result)
         self._set_times(elem, result)
-        return result
 
 
 class TestStatusElement(_StatusElement):
@@ -207,7 +197,6 @@ class TestStatusElement(_StatusElement):
         self._set_status(elem, result)
         self._set_message(elem, result)
         self._set_times(elem, result)
-        return result
 
 
 class DocElement(_Element):
@@ -215,7 +204,6 @@ class DocElement(_Element):
 
     def end(self, elem, result):
         result.doc = elem.text or ''
-        return result
 
 
 class MetadataElement(_Element):
@@ -233,7 +221,6 @@ class MetadataItemElement(_Element):
 
     def end(self, elem, result):
         result.metadata[elem.get('name')] = elem.text or ''
-        return result
 
 
 class TagsElement(_Element):
@@ -248,7 +235,6 @@ class TagElement(_Element):
 
     def end(self, elem, result):
         result.tags.add(elem.text or '')
-        return result
 
 
 class ArgumentsElement(_Element):
@@ -263,18 +249,13 @@ class ArgumentElement(_Element):
 
     def end(self, elem, result):
         result.args.append(elem.text or '')
-        return result
 
 
 class ErrorsElement(_Element):
     tag = 'errors'
 
     def start(self, elem, result):
-        self._result = result
-        return self._result.errors
-
-    def end(self, elem, result):
-        return self._result
+        return result.errors
 
     def _children(self):
         return [MessageElement]
