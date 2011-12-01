@@ -18,23 +18,17 @@ from robot.errors import DataError
 class XmlElementHandler(object):
 
     def __init__(self, result, root_handler=None):
-        self._results = [result]
-        self._handlers = [root_handler or RootHandler()]
-
-    @property
-    def _result(self):
-        return self._results[-1]
-
-    @property
-    def _handler(self):
-        return self._handlers[-1]
+        self._stack = [(root_handler or RootHandler(), result)]
 
     def start(self, elem):
-        self._handlers.append(self._handler.child_handler(elem.tag))
-        self._results.append(self._handler.start(elem, self._result))
+        handler, result = self._stack[-1]
+        handler = handler.child_handler(elem.tag)
+        result = handler.start(elem, result)
+        self._stack.append((handler, result))
 
     def end(self, elem):
-        self._handlers.pop().end(elem, self._results.pop())
+        handler, result = self._stack.pop()
+        handler.end(elem, result)
         elem.clear()
 
 
