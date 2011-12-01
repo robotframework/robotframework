@@ -13,7 +13,7 @@ OUTPUT = join(BASEDIR, 'output.xml')
 sys.path.insert(0, join(BASEDIR, '..', '..', '..', '..', 'src'))
 
 import robot
-from robot.reporting.jsondatamodel import SeparatingWriter, DataModelWriter
+from robot.reporting.jswriter import SeparatingWriter, DataModelWriter
 
 
 def run_robot(testdata, loglevel='INFO'):

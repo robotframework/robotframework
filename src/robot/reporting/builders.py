@@ -20,12 +20,11 @@ import codecs
 
 from robot.errors import DataError
 from robot.output import LOGGER
-from robot.reporting.jsondatamodel import ScriptBlockWriter
 from robot.result.serializer import RebotXMLWriter
 from robot.version import get_full_version
 from robot import utils
 
-from .jsondatamodel import SeparatingWriter
+from .jswriter import SeparatingWriter, ScriptBlockWriter
 from .xunitwriter import XUnitWriter
 
 try:

@@ -2,7 +2,7 @@ from StringIO import StringIO
 import unittest
 from robot.result.jsondatamodelhandlers import JsExecutionResult
 from robot.utils.asserts import assert_equals, assert_true
-from robot.reporting.jsondatamodel import ScriptBlockWriter
+from robot.reporting.jswriter import ScriptBlockWriter
 
 class TestDataModelWrite(unittest.TestCase):
 
