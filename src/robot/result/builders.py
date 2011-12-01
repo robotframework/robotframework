@@ -173,10 +173,8 @@ class MessageElement(_Element):
 class _StatusElement(_Element):
     tag = 'status'
 
-    # TODO: Could elements handle default values themselves?
-
     def _set_status(self, elem, result):
-        result.status = elem.get('status', 'FAIL').upper()
+        result.status = elem.get('status', 'FAIL')
 
     def _set_message(self, elem, result):
         result.message = elem.text or ''
