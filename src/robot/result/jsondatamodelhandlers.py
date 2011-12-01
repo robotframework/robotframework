@@ -111,7 +111,7 @@ class StatisticsHandler(_Handler):
 class StatHandler(_Handler):
 
     def build(self, stat):
-        return stat.js_attrs
+        return stat.get_attributes(include_label=True, exclude_empty=True)
 
 
 class SuiteHandler(_Handler):

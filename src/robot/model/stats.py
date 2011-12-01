@@ -22,19 +22,14 @@ class Stat(object):
         self.passed = 0
         self.failed = 0
 
-    # TODO: Combine attrs and js_attrs propertys into get_attrs method
-
-    @property
-    def attrs(self):
-        attrs = {'pass': str(self.passed), 'fail': str(self.failed)}
+    def get_attributes(self, include_label=False, exclude_empty=False):
+        attrs =  {'pass': self.passed, 'fail': self.failed}
         attrs.update(self._get_custom_attrs())
+        if include_label:
+            attrs['label'] = self.name
+        if exclude_empty:
+            attrs = dict((k, v) for k, v in attrs.items() if v != '')
         return attrs
-
-    @property
-    def js_attrs(self):
-        attrs =  {'label': self.name, 'pass': self.passed, 'fail': self.failed}
-        attrs.update(self._get_custom_attrs())
-        return dict((key, value) for key, value in attrs.items() if value != '')
 
     def _get_custom_attrs(self):
         return {}
