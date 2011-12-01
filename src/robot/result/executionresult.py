@@ -26,11 +26,11 @@ class ExecutionResult(object):
         self.errors = ExecutionErrors()
         self.generator = None
         self.should_return_status_rc = True
-        self._stat_opts = ()
+        self._stat_opts = {}
 
     @property
     def statistics(self):
-        return Statistics(self.suite, *self._stat_opts)
+        return Statistics(self.suite, **self._stat_opts)
 
     @property
     def return_code(self):
@@ -42,8 +42,8 @@ class ExecutionResult(object):
         self.should_return_status_rc = status_rc
         SuiteConfigurer(**suite_opts).configure(self.suite)
 
-    # TODO: 1) Use **kwargs. 2) Combine with configure?
-    def configure_statistics(self, *stat_opts):
+    # TODO: Combine with configure
+    def configure_statistics(self, **stat_opts):
         self._stat_opts = stat_opts
 
     def visit(self, visitor):

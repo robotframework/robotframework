@@ -313,29 +313,33 @@ class RebotSettings(_BaseSettings):
 
     @property
     def result_config(self):
-        opts = dict((opt, self[setting]) for opt, setting in
-                [('name', 'Name'),
-                 ('doc', 'Doc'),
-                 ('metadata', 'Metadata'),
-                 ('set_tags', 'SetTag'),
-                 ('include_tags', 'Include'),
-                 ('exclude_tags', 'Exclude'),
-                 ('include_suites', 'SuiteNames'),
-                 ('include_tests', 'TestNames'),
-                 ('remove_keywords', 'RemoveKeywords'),
-                 ('log_level', 'LogLevel'),
-                 ('critical', 'Critical'),
-                 ('noncritical', 'NonCritical'),
-                 ('starttime', 'StartTime'),
-                 ('endtime', 'EndTime')])
-        opts['metadata'] = dict(opts['metadata'])
-        return opts
+        return {
+            'name': self['Name'],
+            'doc': self['Doc'],
+            'metadata': dict(self['Metadata']),
+            'set_tags': self['SetTag'],
+            'include_tags': self['Include'],
+            'exclude_tags': self['Exclude'],
+            'include_suites': self['SuiteNames'],
+            'include_tests': self['TestNames'],
+            'remove_keywords': self['RemoveKeywords'],
+            'log_level': self['LogLevel'],
+            'critical': self['Critical'],
+            'noncritical': self['NonCritical'],
+            'starttime': self['StartTime'],
+            'endtime': self['EndTime']
+        }
 
     @property
     def statistics_config(self):
-        return (self['SuiteStatLevel'], self['TagStatInclude'],
-                self['TagStatExclude'], self['TagStatCombine'],
-                self['TagDoc'], self['TagStatLink'])
+        return {
+            'suite_stat_level': self['SuiteStatLevel'],
+            'tag_stat_include': self['TagStatInclude'],
+            'tag_stat_include': self['TagStatExclude'],
+            'tag_stat_combine': self['TagStatCombine'],
+            'tag_stat_link': self['TagStatLink'],
+            'tag_doc': self['TagDoc'],
+        }
 
     @property
     def log_config(self):
