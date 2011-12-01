@@ -312,7 +312,7 @@ class RebotSettings(_BaseSettings):
         return value
 
     @property
-    def result_config(self):
+    def suite_config(self):
         return {
             'name': self['Name'],
             'doc': self['Doc'],

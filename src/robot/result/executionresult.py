@@ -25,26 +25,23 @@ class ExecutionResult(object):
         self.suite = TestSuite()
         self.errors = ExecutionErrors()
         self.generator = None
-        self.should_return_status_rc = True
-        self._stat_opts = {}
+        self._status_rc = True
+        self._stat_config = {}
 
     @property
     def statistics(self):
-        return Statistics(self.suite, **self._stat_opts)
+        return Statistics(self.suite, **self._stat_config)
 
     @property
     def return_code(self):
-        if self.should_return_status_rc:
+        if self._status_rc:
             return min(self.suite.statistics.critical.failed, 250)
         return 0
 
-    def configure(self, status_rc=True, **suite_opts):
-        self.should_return_status_rc = status_rc
-        SuiteConfigurer(**suite_opts).configure(self.suite)
-
-    # TODO: Combine with configure
-    def configure_statistics(self, **stat_opts):
-        self._stat_opts = stat_opts
+    def configure(self, status_rc=True, suite_config={}, stat_config={}):
+        SuiteConfigurer(**suite_config).configure(self.suite)
+        self._status_rc = status_rc
+        self._stat_config = stat_config
 
     def visit(self, visitor):
         visitor.visit_result(self)
