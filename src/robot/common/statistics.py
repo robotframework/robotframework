@@ -29,16 +29,12 @@ class Statistics:
         self.total = TotalStatistics(self.suite)
         self.tags.sort()
 
-    #TODO: Replace with visit
     def serialize(self, serializer):
         serializer.start_statistics(self)
         self.total.serialize(serializer)
         self.tags.serialize(serializer)
         self.suite.serialize(serializer)
         serializer.end_statistics(self)
-
-    def visit(self, visitor):
-        self.serialize(visitor)
 
 
 class Stat:
