@@ -41,6 +41,16 @@ class XmlHandler(object):
 class _Handler(object):
     tag = ''
 
+    def __init__(self):
+        self._children = dict((c.tag, c) for c in self._child_handlers())
+
+    def _child_handlers(self):
+        for child_class in self._child_classes():
+            yield child_class() if type(self) is not child_class else self
+
+    def _child_classes(self):
+        return []
+
     def start(self, elem, result):
         return result
 
@@ -48,19 +58,15 @@ class _Handler(object):
         pass
 
     def child_handler(self, tag):
-        # TODO: replace _children() list with dict
-        for child_type in self._children():
-            if child_type.tag == tag:
-                return child_type()
-        raise DataError("Incompatible XML handler '%s'" % tag)
-
-    def _children(self):
-        return []
+        try:
+            return self._children[tag]
+        except KeyError:
+            raise DataError("Incompatible XML handler '%s'" % tag)
 
 
 class RootHandler(_Handler):
 
-    def _children(self):
+    def _child_classes(self):
         return [RobotHandler]
 
 
@@ -71,7 +77,7 @@ class RobotHandler(_Handler):
         result.generator = elem.get('generator', 'unknown').split()[0].upper()
         return result
 
-    def _children(self):
+    def _child_classes(self):
         return [RootSuiteHandler, StatisticsHandler, ErrorsHandler]
 
 
@@ -82,7 +88,7 @@ class SuiteHandler(_Handler):
         return result.suites.create(name=elem.get('name'),
                                     source=elem.get('source'))
 
-    def _children(self):
+    def _child_classes(self):
         return [SuiteHandler, DocHandler, SuiteStatusHandler,
                 KeywordHandler, TestCaseHandler, MetadataHandler]
 
@@ -102,7 +108,7 @@ class TestCaseHandler(_Handler):
         return result.tests.create(name=elem.get('name'),
                                    timeout=elem.get('timeout'))
 
-    def _children(self):
+    def _child_classes(self):
         return [KeywordHandler, TagsHandler, DocHandler, TestStatusHandler]
 
 
@@ -114,7 +120,7 @@ class KeywordHandler(_Handler):
                                       timeout=elem.get('timeout'),
                                       type=elem.get('type'))
 
-    def _children(self):
+    def _child_classes(self):
         return [DocHandler, ArgumentsHandler, KeywordHandler, MessageHandler,
                 KeywordStatusHandler]
 
@@ -175,14 +181,14 @@ class DocHandler(_Handler):
 class MetadataHandler(_Handler):
     tag = 'metadata'
 
-    def _children(self):
+    def _child_classes(self):
         return [MetadataItemHandler]
 
 
 class MetadataItemHandler(_Handler):
     tag = 'item'
 
-    def _children(self):
+    def _child_classes(self):
         return [MetadataItemHandler]
 
     def end(self, elem, result):
@@ -192,7 +198,7 @@ class MetadataItemHandler(_Handler):
 class TagsHandler(_Handler):
     tag = 'tags'
 
-    def _children(self):
+    def _child_classes(self):
         return [TagHandler]
 
 
@@ -206,7 +212,7 @@ class TagHandler(_Handler):
 class ArgumentsHandler(_Handler):
     tag = 'arguments'
 
-    def _children(self):
+    def _child_classes(self):
         return [ArgumentHandler]
 
 
@@ -223,7 +229,7 @@ class ErrorsHandler(_Handler):
     def start(self, elem, result):
         return result.errors
 
-    def _children(self):
+    def _child_classes(self):
         return [MessageHandler]
 
 
