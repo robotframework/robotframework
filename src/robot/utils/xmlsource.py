@@ -50,5 +50,5 @@ class XmlSource(object):
         if hasattr(self._source, 'name'):
             return self._source.name
         if isinstance(self._source, basestring):
-            return str(self._source)
+            return self._source
         return '<in-memory file>'

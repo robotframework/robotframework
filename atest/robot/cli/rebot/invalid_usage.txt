@@ -13,7 +13,7 @@ No Input
     Rebot should fail  ${EMPTY}  Expected at least 1 argument, got 0.
 
 Non-Existing Input
-    Rebot should fail  nonex.xml  Reading XML source 'nonex\\.xml' failed: Source file 'nonex\\.xml' does not exist.*
+    Rebot should fail  nönéx.xml  Reading XML source 'nönéx\\.xml' failed: Source file 'nönéx\\.xml' does not exist.*
 
 Non-XML Input
     Create File  ${MYOUTDIR}/invalid.txt  Hello, world
@@ -34,9 +34,9 @@ Invalid Output Directory
     [Teardown]  Set Read Write  ${MYOUTDIR}${/}x
 
 Invalid Output File
-    Create Directory  ${MYOUTDIR}${/}directory.ext
-    Rebot should fail  -d ${MYOUTDIR} -o directory.ext ${MYINPUT}
-    ...  Opening output file '.*directory.ext' for writing failed: (IOError|FileNotFoundException): .*
+    Create Directory  ${MYOUTDIR}${/}diréctöry.ext
+    Rebot should fail  -d ${MYOUTDIR} -o diréctöry.ext ${MYINPUT}
+    ...  Opening output file '.*diréctöry.ext' for writing failed: (IOError|FileNotFoundException): .*
 
 Invalid Argument Values
     Run Rebot   --suitestatlevel not_int --tagstatlink less_than_3x_:  ${MYINPUT}
