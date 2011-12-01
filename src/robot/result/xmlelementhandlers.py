@@ -15,30 +15,30 @@
 from robot.errors import DataError
 
 
-class ElementStack(object):
+class XmlHandler(object):
 
-    def __init__(self, result, root_element=None):
+    def __init__(self, result, root_handler=None):
         self._results = [result]
-        self._elements = [root_element or RootElement()]
+        self._handlers = [root_handler or RootHandler()]
 
     @property
     def _result(self):
         return self._results[-1]
 
     @property
-    def _element(self):
-        return self._elements[-1]
+    def _handler(self):
+        return self._handlers[-1]
 
     def start(self, elem):
-        self._elements.append(self._element.child_element(elem.tag))
-        self._results.append(self._element.start(elem, self._result))
+        self._handlers.append(self._handler.child_handler(elem.tag))
+        self._results.append(self._handler.start(elem, self._result))
 
     def end(self, elem):
-        self._elements.pop().end(elem, self._results.pop())
+        self._handlers.pop().end(elem, self._results.pop())
         elem.clear()
 
 
-class _Element(object):
+class _Handler(object):
     tag = ''
 
     def start(self, elem, result):
@@ -47,24 +47,24 @@ class _Element(object):
     def end(self, elem, result):
         pass
 
-    def child_element(self, tag):
+    def child_handler(self, tag):
         # TODO: replace _children() list with dict
         for child_type in self._children():
             if child_type.tag == tag:
                 return child_type()
-        raise DataError("Incompatible XML element '%s'" % tag)
+        raise DataError("Incompatible XML handler '%s'" % tag)
 
     def _children(self):
         return []
 
 
-class RootElement(_Element):
+class RootHandler(_Handler):
 
     def _children(self):
-        return [RobotElement]
+        return [RobotHandler]
 
 
-class RobotElement(_Element):
+class RobotHandler(_Handler):
     tag = 'robot'
 
     def start(self, elem, result):
@@ -72,10 +72,10 @@ class RobotElement(_Element):
         return result
 
     def _children(self):
-        return [RootSuiteElement, StatisticsElement, ErrorsElement]
+        return [RootSuiteHandler, StatisticsHandler, ErrorsHandler]
 
 
-class SuiteElement(_Element):
+class SuiteHandler(_Handler):
     tag = 'suite'
 
     def start(self, elem, result):
@@ -83,11 +83,11 @@ class SuiteElement(_Element):
                                     source=elem.get('source'))
 
     def _children(self):
-        return [SuiteElement, DocElement, SuiteStatusElement,
-                KeywordElement, TestCaseElement, MetadataElement]
+        return [SuiteHandler, DocHandler, SuiteStatusHandler,
+                KeywordHandler, TestCaseHandler, MetadataHandler]
 
 
-class RootSuiteElement(SuiteElement):
+class RootSuiteHandler(SuiteHandler):
 
     def start(self, elem, result):
         result.suite.name = elem.get('name')
@@ -95,7 +95,7 @@ class RootSuiteElement(SuiteElement):
         return result.suite
 
 
-class TestCaseElement(_Element):
+class TestCaseHandler(_Handler):
     tag = 'test'
 
     def start(self, elem, result):
@@ -103,10 +103,10 @@ class TestCaseElement(_Element):
                                    timeout=elem.get('timeout'))
 
     def _children(self):
-        return [KeywordElement, TagsElement, DocElement, TestStatusElement]
+        return [KeywordHandler, TagsHandler, DocHandler, TestStatusHandler]
 
 
-class KeywordElement(_Element):
+class KeywordHandler(_Handler):
     tag = 'kw'
 
     def start(self, elem, result):
@@ -115,11 +115,11 @@ class KeywordElement(_Element):
                                       type=elem.get('type'))
 
     def _children(self):
-        return [DocElement, ArgumentsElement, KeywordElement, MessageElement,
-                KeywordStatusElement]
+        return [DocHandler, ArgumentsHandler, KeywordHandler, MessageHandler,
+                KeywordStatusHandler]
 
 
-class MessageElement(_Element):
+class MessageHandler(_Handler):
     tag = 'msg'
 
     def end(self, elem, result):
@@ -129,7 +129,7 @@ class MessageElement(_Element):
                                html, elem.get('timestamp'), linkable)
 
 
-class _StatusElement(_Element):
+class _StatusHandler(_Handler):
     tag = 'status'
 
     def _set_status(self, elem, result):
@@ -143,21 +143,21 @@ class _StatusElement(_Element):
         result.endtime = elem.get('endtime', 'N/A')
 
 
-class KeywordStatusElement(_StatusElement):
+class KeywordStatusHandler(_StatusHandler):
 
     def end(self, elem, result):
         self._set_status(elem, result)
         self._set_times(elem, result)
 
 
-class SuiteStatusElement(_StatusElement):
+class SuiteStatusHandler(_StatusHandler):
 
     def end(self, elem, result):
         self._set_message(elem, result)
         self._set_times(elem, result)
 
 
-class TestStatusElement(_StatusElement):
+class TestStatusHandler(_StatusHandler):
 
     def end(self, elem, result):
         self._set_status(elem, result)
@@ -165,70 +165,70 @@ class TestStatusElement(_StatusElement):
         self._set_times(elem, result)
 
 
-class DocElement(_Element):
+class DocHandler(_Handler):
     tag = 'doc'
 
     def end(self, elem, result):
         result.doc = elem.text or ''
 
 
-class MetadataElement(_Element):
+class MetadataHandler(_Handler):
     tag = 'metadata'
 
     def _children(self):
-        return [MetadataItemElement]
+        return [MetadataItemHandler]
 
 
-class MetadataItemElement(_Element):
+class MetadataItemHandler(_Handler):
     tag = 'item'
 
     def _children(self):
-        return [MetadataItemElement]
+        return [MetadataItemHandler]
 
     def end(self, elem, result):
         result.metadata[elem.get('name')] = elem.text or ''
 
 
-class TagsElement(_Element):
+class TagsHandler(_Handler):
     tag = 'tags'
 
     def _children(self):
-        return [TagElement]
+        return [TagHandler]
 
 
-class TagElement(_Element):
+class TagHandler(_Handler):
     tag = 'tag'
 
     def end(self, elem, result):
         result.tags.add(elem.text or '')
 
 
-class ArgumentsElement(_Element):
+class ArgumentsHandler(_Handler):
     tag = 'arguments'
 
     def _children(self):
-        return [ArgumentElement]
+        return [ArgumentHandler]
 
 
-class ArgumentElement(_Element):
+class ArgumentHandler(_Handler):
     tag = 'arg'
 
     def end(self, elem, result):
         result.args.append(elem.text or '')
 
 
-class ErrorsElement(_Element):
+class ErrorsHandler(_Handler):
     tag = 'errors'
 
     def start(self, elem, result):
         return result.errors
 
     def _children(self):
-        return [MessageElement]
+        return [MessageHandler]
 
 
-class StatisticsElement(_Element):
+class StatisticsHandler(_Handler):
     tag = 'statistics'
 
-    def child_element(self, tag):
+    def child_handler(self, tag):
         return self
