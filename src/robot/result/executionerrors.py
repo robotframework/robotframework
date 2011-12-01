@@ -13,13 +13,15 @@
 #  limitations under the License.
 
 from robot.model.itemlist import ItemList
-from robot.model import Message
+
+from .message import Message
 
 
 class ExecutionErrors(object):
+    message_class = Message
 
     def __init__(self):
-        self.messages = ItemList(Message)
+        self.messages = ItemList(self.message_class)
 
     def add(self, other):
         self.messages.extend(other.messages)

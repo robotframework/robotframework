@@ -21,9 +21,9 @@ from .executionerrors import ExecutionErrors
 
 class ExecutionResult(object):
 
-    def __init__(self):
-        self.suite = TestSuite()
-        self.errors = ExecutionErrors()
+    def __init__(self, root_suite=None, errors=None):
+        self.suite = root_suite or TestSuite()
+        self.errors = errors or ExecutionErrors()
         self.generator = None
         self._status_rc = True
         self._stat_config = {}

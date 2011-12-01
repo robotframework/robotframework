@@ -2,13 +2,11 @@ import os
 import re
 
 from robot import utils
-from robot.result.builders import ResultFromXML
-from robot.result import TestSuite, TestCase, Keyword, executionresult
-
+from robot.result.builders import ExecutionResultBuilder, ExecutionResult
+from robot.result import TestSuite, TestCase, Keyword
 from robot.libraries.BuiltIn import BuiltIn
 
-# Override __slots__ so that process_keyword|test|suite() works
-# TODO: Could we make it easier to use custom TestSuite?
+
 class NoSlotsKeyword(Keyword):
     pass
 
@@ -19,8 +17,6 @@ class NoSlotsTestSuite(TestSuite):
     test_class = NoSlotsTestCase
     keyword_class = NoSlotsKeyword
 
-executionresult.TestSuite = NoSlotsTestSuite
-
 
 class TestCheckerLibrary:
 
@@ -28,7 +24,8 @@ class TestCheckerLibrary:
         path = path.replace('/', os.sep)
         try:
             print "Processing output '%s'" % path
-            result = ResultFromXML(path)
+            result = ExecutionResult(NoSlotsTestSuite())
+            ExecutionResultBuilder(path).build(result)
         except:
             raise RuntimeError('Processing output failed: %s'
                                % utils.get_error_message())

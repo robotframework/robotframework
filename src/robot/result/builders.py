@@ -37,7 +37,8 @@ def ResultFromXML(*sources):
 class ExecutionResultBuilder(object):
 
     def __init__(self, source):
-        self._source = source
+        self._source = source \
+            if isinstance(source, XmlSource) else XmlSource(source)
 
     def build(self, result):
         elements = ElementStack(RootElement())
