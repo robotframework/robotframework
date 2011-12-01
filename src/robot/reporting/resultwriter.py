@@ -31,8 +31,8 @@ class ResultWriter(object):
         result = Result(settings, data_sources)
         self._write_output(result, settings.output)
         self._write_xunit(result, settings.xunit)
-        self._write_log(result, settings.log, settings.log_configuration())
-        self._write_report(result, settings.report, settings.report_configuration())
+        self._write_log(result, settings.log, settings.log_config)
+        self._write_report(result, settings.report, settings.report_config)
         return result.return_code
 
     def _write_output(self, result, output):
@@ -71,9 +71,9 @@ class Result(object):
         if self._model is None:
             self._model = ResultFromXML(*self._data_sources)
             # TODO: configure and configure_statistics really should be combined somehow
-            self._model.configure_statistics(*self._settings.statistics_configuration())
+            self._model.configure_statistics(*self._settings.statistics_config)
             self._model.configure(status_rc=self._settings.status_rc,
-                                  **self._settings.result_configuration())
+                                  **self._settings.result_config)
         return self._model
 
     @property

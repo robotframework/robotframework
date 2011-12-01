@@ -311,7 +311,8 @@ class RebotSettings(_BaseSettings):
     def _escape(self, value):
         return value
 
-    def result_configuration(self):
+    @property
+    def result_config(self):
         opts = dict((opt, self[setting]) for opt, setting in
                 [('name', 'Name'),
                  ('doc', 'Doc'),
@@ -330,12 +331,14 @@ class RebotSettings(_BaseSettings):
         opts['metadata'] = dict(opts['metadata'])
         return opts
 
-    def statistics_configuration(self):
+    @property
+    def statistics_config(self):
         return (self['SuiteStatLevel'], self['TagStatInclude'],
                 self['TagStatExclude'], self['TagStatCombine'],
                 self['TagDoc'], self['TagStatLink'])
 
-    def log_configuration(self):
+    @property
+    def log_config(self):
         if not self.log:
             return {}
         return {
@@ -344,7 +347,8 @@ class RebotSettings(_BaseSettings):
             'splitLogBase': os.path.basename(os.path.splitext(self.log)[0])
         }
 
-    def report_configuration(self):
+    @property
+    def report_config(self):
         if not self.report:
             return {}
         return {
