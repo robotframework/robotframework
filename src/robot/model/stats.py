@@ -28,8 +28,6 @@ class Stat(object):
     def attrs(self):
         attrs = {'pass': str(self.passed), 'fail': str(self.failed)}
         attrs.update(self._get_custom_attrs())
-        if 'id' in attrs:
-            attrs['idx'] = attrs.pop('id') # TODO: Rename idx -> id
         return attrs
 
     @property

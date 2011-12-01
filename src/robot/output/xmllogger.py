@@ -127,8 +127,7 @@ class XmlLogger:
         self._stat(stat)
 
     def suite_stat(self, stat):
-        # Cannot use 'id' attribute in XML due to http://bugs.jython.org/issue1768
-        self._stat(stat, stat.longname, attrs={'idx': stat.id, 'name': stat.name})
+        self._stat(stat, stat.longname, attrs={'id': stat.id, 'name': stat.name})
 
     def tag_stat(self, stat):
         self._stat(stat, attrs={'info': self._get_tag_stat_info(stat),
