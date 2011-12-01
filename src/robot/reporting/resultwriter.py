@@ -70,10 +70,9 @@ class Result(object):
     def model(self):
         if self._model is None:
             self._model = ResultFromXML(*self._data_sources)
-            # TODO: configure and configure_statistics really should be combined somehow
-            self._model.configure_statistics(**self._settings.statistics_config)
-            self._model.configure(status_rc=self._settings.status_rc,
-                                  **self._settings.result_config)
+            self._model.configure(self._settings.status_rc,
+                                  self._settings.suite_config,
+                                  self._settings.statistics_config)
         return self._model
 
     @property
