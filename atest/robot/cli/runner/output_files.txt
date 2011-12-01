@@ -50,18 +50,18 @@ Split Log
     Directory Should Contain  ${CLI OUTDIR}  l-1.js  l-2.js  l.html  o.xml  r.html
 
 Non-writable Output File
-    Create Directory  ${CLI OUTDIR}/directory.xml
-    Run Tests Without Processing Output  --output ${CLI OUTDIR}/directory.xml  ${TESTFILE}
-    Check Stderr Matches Regexp  \\[ ERROR \\] Opening output file '.*directory.xml' for writing failed: (IOError|FileNotFoundException): .*${USAGE_TIP}
+    Create Directory  ${CLI OUTDIR}/diréctöry.xml
+    Run Tests Without Processing Output  --output ${CLI OUTDIR}/diréctöry.xml  ${TESTFILE}
+    Check Stderr Matches Regexp  \\[ ERROR \\] Opening output file '.*diréctöry.xml' for writing failed: (IOError|FileNotFoundException): .*${USAGE_TIP}
 
 Non-writable Log and Report
-    ${directory} =  Join Path  ${CLI OUTDIR}/dir.html
+    ${directory} =  Join Path  ${CLI OUTDIR}/diréctöry.html
     Create Directory  ${directory}
     Run Tests  --log ${directory} --report ${directory}  ${TESTFILE}
     Should Be Equal  ${SUITE.status}  PASS
     Check Stderr Matches Regexp  SEPARATOR=\n
-    ...  \\[ ERROR \\] Writing log file '.*dir.html' failed: .*
-    ...  \\[ ERROR \\] Writing report file '.*dir.html' failed: .*
+    ...  \\[ ERROR \\] Writing log file '.*diréctöry.html' failed: .*
+    ...  \\[ ERROR \\] Writing report file '.*diréctöry.html' failed: .*
     Check Stdout Contains  Output:
     Check Stdout Does Not Contain  Log:
     Check Stdout Does Not Contain  Report:

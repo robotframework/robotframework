@@ -104,11 +104,11 @@ Run and check Tests
     Run Rebot  ${params} ${ESCAPES}  ${INPUT FILE}
     Stderr Should Be Empty
     Check Suite Contains Tests  ${SUITE}  @{tests}
-    Should Be True  ${SUITE.all_stats.passed} == len(@{tests})
+    Should Be True  ${SUITE.statistics.all.passed} == len(@{tests})
     Check Stats
 
 Check Stats
-    Should Be True  ${SUITE.all_stats.failed} == 0
+    Should Be True  ${SUITE.statistics.all.failed} == 0
     Should Be Equal  ${SUITE.starttime}  N/A
     Should Be Equal  ${SUITE.endtime}  N/A
     Is Valid Elapsed Time  ${SUITE.elapsedtime}
@@ -131,7 +131,7 @@ Run And Check Suites and Tests
     Run Suites  ${params}
     Should Contain Suites  ${SUITE.suites[0]}   ${subsuite}
     Check Suite Contains Tests  ${SUITE}  @{tests}
-    Should Be True  ${SUITE.all_stats.passed} == len(@{tests})
+    Should Be True  ${SUITE.statistics.all.passed} == len(@{tests})
     Check Stats
 
 Run Suites

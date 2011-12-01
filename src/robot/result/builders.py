@@ -17,8 +17,8 @@ from __future__ import with_statement
 from robot.errors import DataError
 from robot.utils import ET, XmlSource
 
-from executionresult import ExecutionResult, CombinedExecutionResult
-from suiteteardownfailed import SuiteTeardownFailureHandler
+from .executionresult import ExecutionResult, CombinedExecutionResult
+from .suiteteardownfailed import SuiteTeardownFailureHandler
 
 
 def ResultFromXML(*sources):
@@ -31,7 +31,7 @@ def ResultFromXML(*sources):
         return ExecutionResultBuilder(source).build(ExecutionResult())
     except DataError, err:
         raise DataError("Reading XML source '%s' failed: %s"
-                        % (source, unicode(err)))
+                        % (unicode(source), unicode(err)))
 
 
 class ExecutionResultBuilder(object):

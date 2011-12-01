@@ -36,9 +36,9 @@ class XUnitWriter(ResultVisitor):
             return
         self._root_suite = suite
         attrs = {'name': suite.name,
-                 'tests': suite.all_stats.total,
+                 'tests': suite.statistics.all.total,
                  'errors': 0,
-                 'failures': suite.all_stats.failed,
+                 'failures': suite.statistics.all.failed,
                  'skip': 0}
         self._writer.start('testsuite', attrs)
 

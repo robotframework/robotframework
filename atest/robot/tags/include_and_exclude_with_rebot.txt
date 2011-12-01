@@ -126,8 +126,8 @@ Run And Check Include And Exclude
     Run Rebot  ${params} ${ESCAPES}  ${INPUT FILE}
     Stderr Should Be Empty
     Check Suite Contains Tests  ${SUITE}  @{tests}
-    Should Be True  ${SUITE.all_stats.passed} == len(@{tests})
-    Should Be True  ${SUITE.all_stats.failed} == 0
+    Should Be True  ${SUITE.statistics.all.passed} == len(@{tests})
+    Should Be True  ${SUITE.statistics.all.failed} == 0
     ${exp_start} =  Evaluate  "${params}" == "" and "${ORIG_START}" or "N/A"
     ${exp_end} =  Evaluate  "${params}" == "" and "${ORIG_END}" or "N/A"
     Should Be Equal  ${SUITE.starttime}  ${exp_start}

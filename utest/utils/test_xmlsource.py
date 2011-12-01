@@ -32,9 +32,13 @@ class TestXmlSource(unittest.TestCase):
 
     def test_filename_is_validated(self):
         def use(src):
-            with src as s:
+            with src:
                 pass
         assert_raises(DataError, use, XmlSource('nonex.xml'))
 
+    def test_non_ascii_string_repr(self):
+        self._verify_string_representation(XmlSource(u'\xe4'), u'\xe4')
+
     def _verify_string_representation(self, source, expected):
-        assert_equals(str(source), expected)
+        assert_equals(unicode(source), expected)
+        assert_equals('-%s-' % source, '-%s-' % expected)
