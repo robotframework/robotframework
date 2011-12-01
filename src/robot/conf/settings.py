@@ -335,3 +335,25 @@ class RebotSettings(_BaseSettings):
                 self['TagStatExclude'], self['TagStatCombine'],
                 self['TagDoc'], self['TagStatLink'])
 
+    def log_configuration(self):
+        return {
+            'title': self['LogTitle'],
+            'reportURL': self._url_from_path(self.log, self.report),
+            'splitLogBase': os.path.basename(os.path.splitext(self.log)[0])
+        }
+
+    def report_configuration(self):
+        return {
+            'title': self['ReportTitle'],
+            'logURL': self._url_from_path(self.report, self.log),
+            'background' : self._resolve_background_colors(),
+        }
+
+    def _url_from_path(self, source, destination):
+        if not destination:
+            return None
+        return utils.get_link_path(destination, os.path.dirname(source))
+
+    def _resolve_background_colors(self):
+        colors = self['ReportBackground']
+        return {'pass': colors[0], 'nonCriticalFail': colors[1], 'fail': colors[2]}

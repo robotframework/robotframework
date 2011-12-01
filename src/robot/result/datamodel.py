@@ -31,10 +31,6 @@ class JSModelCreator(ResultVisitor):
         return self._datamodel
 
     @property
-    def split_results(self):
-        return self._context.split_results
-
-    @property
     def _top(self):
         return self._handlers[-1]
 

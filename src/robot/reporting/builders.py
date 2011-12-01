@@ -20,6 +20,7 @@ import codecs
 
 from robot.errors import DataError
 from robot.output import LOGGER
+from robot.reporting.jsondatamodel import ScriptBlockWriter
 from robot.result.serializer import RebotXMLWriter
 from robot.version import get_full_version
 from robot import utils
@@ -70,18 +71,18 @@ class XUnitBuilder(_Builder):
 
 class _HTMLFileBuilder(_Builder):
 
-    def _write_file(self, path, template):
+    def _write_file(self, path, config, template):
         with codecs.open(path, 'w', encoding='UTF-8') as outfile:
-            writer = HTMLFileWriter(outfile, self._model)
+            writer = HTMLFileWriter(outfile, self._model, config)
             for line in _WebContentFile(template):
                 writer.line(line)
 
 
 class LogBuilder(_HTMLFileBuilder):
 
-    def build(self, path):
+    def build(self, path, config):
         try:
-            self._write_file(path, 'log.html')
+            self._write_file(path, config, 'log.html')
             self._write_split_logs_if_needed(path)
         except EnvironmentError, err:
             LOGGER.error("Writing log file '%s' failed: %s" % (err.filename, err.strerror))
@@ -90,7 +91,7 @@ class LogBuilder(_HTMLFileBuilder):
 
     def _write_split_logs_if_needed(self, path):
         base = os.path.splitext(path)[0]
-        for index, (keywords, strings) in enumerate(self._model._split_results):
+        for index, (keywords, strings) in enumerate(self._model.split_results):
             index += 1  # enumerate accepts start index only in Py 2.6+
             self._write_split_log(index, keywords, strings, '%s-%d.js' % (base, index))
 
@@ -104,9 +105,9 @@ class LogBuilder(_HTMLFileBuilder):
 
 class ReportBuilder(_HTMLFileBuilder):
 
-    def build(self, path):
+    def build(self, path, config):
         try:
-            self._write_file(path, 'report.html')
+            self._write_file(path, config, 'report.html')
         except EnvironmentError, err:
             LOGGER.error("Writing report file '%s' failed: %s" % (path, err.strerror))
         else:
@@ -119,9 +120,10 @@ class HTMLFileWriter(object):
     _css_media_matcher = re.compile('media=\"([^\"]+)\"')
 
     #TODO: output js_model_writer
-    def __init__(self, outfile, output):
+    def __init__(self, outfile, model, config):
         self._outfile = outfile
-        self._output = output
+        self._model = model
+        self._config = config
 
     def line(self, line):
         if self._is_output_js(line):
@@ -155,7 +157,7 @@ class HTMLFileWriter(object):
     def _write_output_js(self):
         separator = '</script>\n<script type="text/javascript">\n'
         self._write_tag('script', 'type="text/javascript"',
-                        lambda: self._output.write_to(self._outfile, separator))
+                        lambda: ScriptBlockWriter(separator).write_to(self._outfile, self._model, self._config))
 
     def _inline_js_file(self, line):
         self._write_tag('script', 'type="text/javascript"',

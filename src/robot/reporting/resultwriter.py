@@ -12,16 +12,13 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-import os
 
 from robot.errors import DATA_ERROR
 from robot.result.builders import ResultFromXML
 from robot.result.combiningvisitor import CombiningVisitor, KeywordRemovingVisitor
 from robot.result.datamodel import JSModelCreator
-from robot import utils
 
 from .builders import LogBuilder, ReportBuilder, XUnitBuilder, OutputBuilder
-from .jsondatamodel import DataModelWriter
 
 
 class ResultWriter(object):
@@ -37,9 +34,11 @@ class ResultWriter(object):
         if settings.xunit:
             XUnitBuilder(result.model).build(settings.xunit)
         if settings.log:
-            LogBuilder(result.log_model).build(settings.log)
+            LogBuilder(result.js_model).build(settings.log,
+                                              settings.log_configuration())
         if settings.report:
-            ReportBuilder(result.report_model).build(settings.report)
+            ReportBuilder(result.report_model).build(settings.report,
+                                                     settings.report_configuration())
         return result.return_code
 
 
@@ -71,34 +70,15 @@ class Result(object):
             creator = JSModelCreator(log_path=self._settings.log,
                                      split_log=self._settings.split_log)
             self.model.visit(CombiningVisitor(creator, KeywordRemovingVisitor()))
-            self._js_model = DataModelWriter(creator.datamodel, creator.split_results)
+            self._js_model = creator.datamodel
         return self._js_model
 
     @property
     def log_model(self):
-        self.js_model.set_settings({
-            'title': self._settings['LogTitle'],
-            'reportURL': self._url_from_path(self._settings.log, self._settings.report),
-            'splitLogBase': os.path.basename(os.path.splitext(self._settings.log)[0])
-        })
         return self.js_model
 
     @property
     def report_model(self):
-        self.js_model.set_settings({
-            'title': self._settings['ReportTitle'],
-            'logURL': self._url_from_path(self._settings.report, self._settings.log),
-            'background' : self._resolve_background_colors(),
-        })
         self.js_model.remove_errors()
         self.js_model.remove_keywords()
         return self.js_model
-
-    def _url_from_path(self, source, destination):
-        if not destination:
-            return None
-        return utils.get_link_path(destination, os.path.dirname(source))
-
-    def _resolve_background_colors(self):
-        colors = self._settings['ReportBackground']
-        return {'pass': colors[0], 'nonCriticalFail': colors[1], 'fail': colors[2]}

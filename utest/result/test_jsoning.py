@@ -262,13 +262,13 @@ class TestJsoning(unittest.TestCase):
         self._visitor = JSModelCreator()
         self._context = self._visitor._context
         result.visit(self._visitor)
-        self._verify_message(self.datamodel['errors'][0],
+        self._verify_message(self.datamodel.data['errors'][0],
                              result.errors.messages[0])
-        assert_equals(self._context.dump_texts()[self.datamodel['errors'][0][3]], '*s1-s1-t1-k1')
-        self._verify_suite(self.datamodel['suite'], result.suite)
-        assert_equals(self.datamodel['baseMillis'], self._context.basemillis)
-        assert_equals(len(self.datamodel['strings']), 10)
-        assert_equals(self.datamodel['stats'],
+        assert_equals(self._context.dump_texts()[self.datamodel.data['errors'][0][3]], '*s1-s1-t1-k1')
+        self._verify_suite(self.datamodel.suite, result.suite)
+        assert_equals(self.datamodel.data['baseMillis'], self._context.basemillis)
+        assert_equals(len(self.datamodel.strings), 10)
+        assert_equals(self.datamodel.data['stats'],
             [[{'fail': 1, 'label': 'Critical Tests', 'pass': 0},
               {'fail': 1, 'label': 'All Tests', 'pass': 0}],
              [{'pass': 0, 'fail': 1, 'label': 'tagi'}],
