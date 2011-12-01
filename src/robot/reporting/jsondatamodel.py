@@ -22,8 +22,6 @@ from robot.reporting.parsingcontext import TextIndex
 # TODO: This class (and module) has too much responsibilities
 
 class DataModelWriter(object):
-    _OUTPUT = 'window.output'
-    _SETTINGS = 'window.settings'
     _SUITE_KEY = 'suite'
     _STRINGS_KEY = 'strings'
 
@@ -47,34 +45,7 @@ class DataModelWriter(object):
         self._settings = settings
 
     def write_to(self, output, separator='', split_threshold=9500):
-        writer = SeparatingWriter(output, separator)
-        writer.write(self._OUTPUT+' = {};\n')
-        writer.separator()
-        for key, value in self._robot_data.items():
-            self._write_output_element(key, split_threshold, value, writer)
-            writer.separator()
-        writer.dump_json(self._SETTINGS+' = ', self._settings)
-
-    def _write_output_element(self, key, split_threshold, value, writer):
-        if key == self._SUITE_KEY:
-            splitWriter = SplittingSuiteWriter(writer, split_threshold)
-            data, mapping = splitWriter.write(self._robot_data[self._SUITE_KEY])
-            writer.dump_json(self._str_out(self._SUITE_KEY)+' = ', data, mapping=mapping)
-        elif key == self._STRINGS_KEY:
-            self._dump_and_split_strings(split_threshold, writer)
-        else:
-            writer.dump_json(self._str_out(key)+' = ', value)
-
-    def _str_out(self, key):
-        return self._OUTPUT+'["%s"]' % key
-
-    def _dump_and_split_strings(self, split_threshold, writer):
-        strings = self._robot_data[self._STRINGS_KEY]
-        writer.write(self._OUTPUT+'["'+self._STRINGS_KEY+'"] = [];\n')
-        while strings:
-            writer.separator()
-            writer.dump_json(self._str_out(self._STRINGS_KEY)+' = '+self._str_out(self._STRINGS_KEY)+'.concat(', strings[:split_threshold], ');\n')
-            strings = strings[split_threshold:]
+        ScriptBlockWriter(separator, split_threshold).write_to(output, self)
 
     def remove_keywords(self):
         self._remove_keywords_from_suite(self._robot_data[self._SUITE_KEY])
@@ -126,6 +97,50 @@ class DataModelWriter(object):
                 self._collect_used_indices(item.values(), result)
                 self._collect_used_indices(item.keys(), result)
         return result
+
+
+class ScriptBlockWriter(object):
+    _OUTPUT = 'window.output'
+    _SETTINGS = 'window.settings'
+    _SUITE_KEY = 'suite'
+    _STRINGS_KEY = 'strings'
+
+    def __init__(self, separator, split_threshold):
+        self._separator = separator
+        self._split_threshold = split_threshold
+
+    def write_to(self, output, model):
+        writer = SeparatingWriter(output, self._separator)
+        writer.write(self._OUTPUT+' = {};\n')
+        writer.separator()
+        for key, value in model._robot_data.items():
+            self._write_output_element(model, key, value, writer)
+            writer.separator()
+        writer.dump_json(self._SETTINGS+' = ', model._settings)
+
+    def _write_output_element(self, model ,key, value, writer):
+        if key == self._SUITE_KEY:
+            splitWriter = SplittingSuiteWriter(writer, self._split_threshold)
+            data, mapping = splitWriter.write(model._robot_data[self._SUITE_KEY])
+            writer.dump_json(self._str_out(self._SUITE_KEY)+' = ', data, mapping=mapping)
+        elif key == self._STRINGS_KEY:
+            self._dump_and_split_strings(model, writer)
+        else:
+            writer.dump_json(self._str_out(key)+' = ', value)
+
+    def _str_out(self, key):
+        return self._OUTPUT+'["%s"]' % key
+
+    def _dump_and_split_strings(self, model, writer):
+        strings = model._robot_data[self._STRINGS_KEY]
+        writer.write(self._OUTPUT+'["'+self._STRINGS_KEY+'"] = [];\n')
+        while strings:
+            writer.separator()
+            writer.dump_json(self._str_out(self._STRINGS_KEY)
+                             +' = '+self._str_out(self._STRINGS_KEY)
+                             +'.concat(', strings[:self._split_threshold], ');\n')
+            strings = strings[self._split_threshold:]
+
 
 
 class SeparatingWriter(object):

@@ -118,6 +118,7 @@ class HTMLFileWriter(object):
     _css_file_matcher = re.compile('href=\"([^\"]+)\"')
     _css_media_matcher = re.compile('media=\"([^\"]+)\"')
 
+    #TODO: output js_model_writer
     def __init__(self, outfile, output):
         self._outfile = outfile
         self._output = output
