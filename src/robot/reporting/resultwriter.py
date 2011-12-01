@@ -14,7 +14,7 @@
 
 
 from robot.errors import DATA_ERROR
-from robot.result.builders import ResultFromXML
+from robot.result import ResultFromXML
 from robot.result.combiningvisitor import CombiningVisitor, KeywordRemovingVisitor
 from robot.result.datamodel import JSModelCreator
 

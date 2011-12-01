@@ -12,11 +12,43 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+from robot.errors import DataError
 from robot.model.statistics import Statistics
+from robot.utils import ET, XmlSource
 
-from .configurer import SuiteConfigurer
-from .testsuite import TestSuite
+from .builders import ElementStack, RootElement
 from .executionerrors import ExecutionErrors
+from .configurer import SuiteConfigurer
+from .suiteteardownfailed import SuiteTeardownFailureHandler
+from .testsuite import TestSuite
+
+
+def ResultFromXML(*sources):
+    if not sources:
+        raise DataError('One or more data source needed.')
+    if len(sources) > 1:
+        return CombinedExecutionResult(*[ResultFromXML(src) for src in sources])
+    source = XmlSource(sources[0])
+    try:
+        return ExecutionResultBuilder(source).build(ExecutionResult())
+    except DataError, err:
+        raise DataError("Reading XML source '%s' failed: %s"
+                        % (unicode(source), unicode(err)))
+
+
+class ExecutionResultBuilder(object):
+
+    def __init__(self, source):
+        self._source = source \
+            if isinstance(source, XmlSource) else XmlSource(source)
+
+    def build(self, result):
+        elements = ElementStack(result, RootElement())
+        with self._source as source:
+            for action, elem in ET.iterparse(source, events=('start', 'end')):
+               getattr(elements, action)(elem)
+        SuiteTeardownFailureHandler(result.generator).visit_suite(result.suite)
+        return result
 
 
 class ExecutionResult(object):

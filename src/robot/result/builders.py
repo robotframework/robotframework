@@ -15,38 +15,6 @@
 from __future__ import with_statement
 
 from robot.errors import DataError
-from robot.utils import ET, XmlSource
-
-from .executionresult import ExecutionResult, CombinedExecutionResult
-from .suiteteardownfailed import SuiteTeardownFailureHandler
-
-
-def ResultFromXML(*sources):
-    if not sources:
-        raise DataError('One or more data source needed.')
-    if len(sources) > 1:
-        return CombinedExecutionResult(*[ResultFromXML(src) for src in sources])
-    source = XmlSource(sources[0])
-    try:
-        return ExecutionResultBuilder(source).build(ExecutionResult())
-    except DataError, err:
-        raise DataError("Reading XML source '%s' failed: %s"
-                        % (unicode(source), unicode(err)))
-
-
-class ExecutionResultBuilder(object):
-
-    def __init__(self, source):
-        self._source = source \
-            if isinstance(source, XmlSource) else XmlSource(source)
-
-    def build(self, result):
-        elements = ElementStack(result, RootElement())
-        with self._source as source:
-            for action, elem in ET.iterparse(source, events=('start', 'end')):
-               getattr(elements, action)(elem)
-        SuiteTeardownFailureHandler(result.generator).visit_suite(result.suite)
-        return result
 
 
 class ElementStack(object):

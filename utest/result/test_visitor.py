@@ -1,7 +1,7 @@
 import unittest
 from os.path import dirname, join
 
-from robot.result.builders import ResultFromXML
+from robot.result import ResultFromXML
 from robot.result.visitor import SuiteVisitor
 
 

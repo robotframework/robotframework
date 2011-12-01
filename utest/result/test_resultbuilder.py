@@ -5,7 +5,7 @@ import unittest
 from StringIO import StringIO
 from robot import DataError
 
-from robot.result.builders import ResultFromXML
+from robot.result import ResultFromXML
 from robot.utils.asserts import assert_equals, assert_true, assert_raises
 
 def _read_file(name):

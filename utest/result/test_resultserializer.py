@@ -4,7 +4,7 @@ from StringIO import StringIO
 from xml.etree.ElementTree import XML
 from xml.etree.ElementTree import tostring
 
-from robot.result.builders import ResultFromXML
+from robot.result import ResultFromXML
 from robot.result.serializer import RebotXMLWriter
 from robot.utils.pyxmlwriter import XmlWriter
 from robot.utils.asserts import assert_equals

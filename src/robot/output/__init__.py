@@ -19,8 +19,6 @@ from xmllogger import XmlLogger
 from loggerhelper import LEVELS, Message
 from readers import process_output, process_outputs
 
-from robot.reporting.resultwriter import ResultFromXML
-
 
 # Hooks to output. Set by Output.
 # Use only if no other way available (e.g. from BuiltIn library)

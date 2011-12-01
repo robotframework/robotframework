@@ -2,7 +2,7 @@ import os
 import re
 
 from robot import utils
-from robot.result.builders import ExecutionResultBuilder, ExecutionResult
+from robot.result.executionresult import ExecutionResultBuilder, ExecutionResult
 from robot.result import TestSuite, TestCase, Keyword
 from robot.libraries.BuiltIn import BuiltIn
 
