@@ -16,11 +16,11 @@ from robot.errors import DataError
 from robot.model.statistics import Statistics
 from robot.utils import ET, XmlSource
 
-from .builders import ElementStack
 from .executionerrors import ExecutionErrors
 from .configurer import SuiteConfigurer
 from .suiteteardownfailed import SuiteTeardownFailureHandler
 from .testsuite import TestSuite
+from .xmlelementhandlers import ElementStack
 
 
 def ResultFromXml(*sources):
