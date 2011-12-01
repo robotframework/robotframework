@@ -335,7 +335,7 @@ class RebotSettings(_BaseSettings):
         return {
             'suite_stat_level': self['SuiteStatLevel'],
             'tag_stat_include': self['TagStatInclude'],
-            'tag_stat_include': self['TagStatExclude'],
+            'tag_stat_exclude': self['TagStatExclude'],
             'tag_stat_combine': self['TagStatCombine'],
             'tag_stat_link': self['TagStatLink'],
             'tag_doc': self['TagDoc'],
