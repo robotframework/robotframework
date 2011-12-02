@@ -21,10 +21,9 @@ class TestStringRepresentation(unittest.TestCase):
         assert_equal(str(self.ascii), 'Kekkonen')
         assert_equal(str(self.non_ascii), 'hyv? nimi')
 
-    def test_repr(self):
-        assert_equal(repr(self.empty), "''")
-        assert_equal(repr(self.ascii), "'Kekkonen'")
-        assert_equal(repr(self.non_ascii), "'hyv? nimi'")
-
     def test_slots(self):
         assert_raises(AttributeError, setattr, Message(), 'attr', 'value')
+
+
+if __name__ == '__main__':
+    unittest.main()

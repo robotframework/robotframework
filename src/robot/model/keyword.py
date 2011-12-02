@@ -39,7 +39,7 @@ class Keyword(ModelObject):
 
     @utils.setter
     def messages(self, messages):
-        return ItemList(self.message_class, messages)
+        return ItemList(self.message_class, messages, parent=self)
 
     @property
     def id(self):
@@ -54,15 +54,6 @@ class Keyword(ModelObject):
 
     def visit(self, visitor):
         visitor.visit_keyword(self)
-
-    def __unicode__(self):
-        return self.name
-
-    def __str__(self):
-        return unicode(self).encode('ASCII', 'replace')
-
-    def __repr__(self):
-        return repr(str(self))
 
 
 class Keywords(ItemList):
