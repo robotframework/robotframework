@@ -45,11 +45,6 @@ class TestStringRepresentation(unittest.TestCase):
         assert_equal(str(self.ascii), 'Kekkonen')
         assert_equal(str(self.non_ascii), 'hyv? nimi')
 
-    def test_repr(self):
-        assert_equal(repr(self.empty), "''")
-        assert_equal(repr(self.ascii), "'Kekkonen'")
-        assert_equal(repr(self.non_ascii), "'hyv? nimi'")
-
 
 class TestKeywords(unittest.TestCase):
 

@@ -46,9 +46,11 @@ class ExecutionResultBuilder(object):
 
     def build(self, result):
         handler = XmlElementHandler(result)
+        # Faster attribute lookup inside for loop
+        start, end = handler.start, handler.end
         with self._source as source:
-            for action, elem in ET.iterparse(source, events=('start', 'end')):
-               getattr(handler, action)(elem)
+            for event, elem in ET.iterparse(source, events=('start', 'end')):
+                start(elem) if event == 'start' else end(elem)
         SuiteTeardownFailureHandler(result.generator).visit_suite(result.suite)
         return result
 

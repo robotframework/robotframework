@@ -16,15 +16,16 @@ from modelobject import ModelObject
 
 
 class Message(ModelObject):
-    __slots__ = ['message', 'level', 'html', 'timestamp', 'linkable']
+    __slots__ = ['message', 'level', 'html', 'timestamp', 'linkable', 'parent']
 
     def __init__(self, message='', level='INFO', html=False, timestamp=None,
-                 linkable=False):
+                 linkable=False, parent=None):
         self.message = message
         self.level = level
         self.html = html
         self.timestamp = timestamp
         self.linkable = linkable
+        self.parent = parent
 
     def visit(self, visitor):
         visitor.visit_message(self)
