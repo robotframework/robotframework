@@ -5,6 +5,7 @@ from os.path import join, dirname, abspath
 import sys
 import os
 from robot.result.datamodel import JSModelCreator
+from robot.result.executionresult import ResultFromXml
 
 
 BASEDIR = dirname(abspath(__file__))
@@ -13,7 +14,7 @@ OUTPUT = join(BASEDIR, 'output.xml')
 sys.path.insert(0, join(BASEDIR, '..', '..', '..', '..', 'src'))
 
 import robot
-from robot.reporting.jswriter import SeparatingWriter, DataModelWriter
+from robot.reporting.jswriter import SeparatingWriter, ScriptBlockWriter
 
 
 def run_robot(testdata, loglevel='INFO'):
@@ -27,16 +28,15 @@ def run_robot(testdata, loglevel='INFO'):
 
 
 def create_jsdata(outxml, target, split_log):
-    result = robot.result.builders.ResultFromXml(outxml)
+    result = ResultFromXml(outxml)
     visitor = JSModelCreator(split_log=split_log)
     result.visit(visitor)
-    model = DataModelWriter(visitor.datamodel, visitor._context.split_results)
-    model.set_settings({'logURL': 'log.html',
-                        'reportURL': 'report.html',
-                        'background': {'fail': 'DeepPink'}})
+    model = visitor.datamodel
     with open(target, 'w') as output:
-        model.write_to(output)
-        for index, (keywords, strings) in enumerate(model._split_results):
+        ScriptBlockWriter('\n').write_to(output, model, {'logURL': 'log.html',
+                                                        'reportURL': 'report.html',
+                                                        'background': {'fail': 'DeepPink'}})
+        for index, (keywords, strings) in enumerate(model.split_results):
             writer = SeparatingWriter(output, '')
             writer.dump_json('window.outputKeywords%d = ' % index, keywords)
             writer.dump_json('window.outputStrings%d = ' % index, strings)
