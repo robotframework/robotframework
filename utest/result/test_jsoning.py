@@ -50,7 +50,8 @@ class TestJsoning(unittest.TestCase):
         message = Message(message='<b>Great danger!</b>',
                           level='WARN',
                           html=True,
-                          timestamp='20121212 12:12:12.121')
+                          timestamp='20121212 12:12:12.121',
+                          parent=Keyword())
         message.visit(self._visitor)
         self._verify_message(self._visitor.datamodel[0], message)
 
@@ -79,7 +80,6 @@ class TestJsoning(unittest.TestCase):
             assert_equals(self.datamodel[index][0], millis)
 
     def test_keyword_jsoning(self):
-        self._context.start_suite()
         keyword = Keyword(name='Keyword Name',
                           doc='Documentation for <b>a keyword</b>',
                           args=['${first}', '${second}', '${third}'],
@@ -117,7 +117,6 @@ class TestJsoning(unittest.TestCase):
         self._assert_text(text_index, utils.html_escape(text))
 
     def test_testcase_jsoning(self):
-        self._context.start_suite()
         test = TestCase(name='Foo Bar', doc='Test <p>case</p> doc', tags=['foo', 'bar'],
                         timeout='35 years',
                         status='FAIL',
@@ -180,7 +179,6 @@ class TestJsoning(unittest.TestCase):
     def test_splitlog_keywords_with_strings_are_in_separate_json(self):
         self._visitor = _PartialJSModelCreator(splitlog=True)
         self._context = self._visitor._context
-        self._context.start_suite()
         test = TestCase(name='some name')
         test.keywords.create(name='some other name')
         parent = lambda:0
@@ -257,8 +255,12 @@ class TestJsoning(unittest.TestCase):
         result.suite.name = 'Kekkonen'
         result.suite.doc = 'Foo<h1>Bar</h1>'
         result.generator = 'unit test'
-        result.suite.suites.create(name='Urho').tests.create(status='FAIL', name='moi', tags=['tagi']).keywords.create(name='FAILING', status='FAIL').messages.create(message='FAIL', level='WARN', timestamp='20110101 01:01:01.111')
-        result.errors.messages.create(message='FAIL', level='WARN', timestamp='20110101 01:01:01.111', linkable=True)
+        result.suite.suites.create(name='Urho')\
+            .tests.create(status='FAIL', name='moi', tags=['tagi'])\
+            .keywords.create(name='FAILING', status='FAIL')\
+            .messages.create(message='FAIL', level='WARN', timestamp='20110101 01:01:01.111')
+        result.errors.messages.create(message='FAIL', level='WARN',
+                                      timestamp='20110101 01:01:01.111', linkable=True)
         self._visitor = JSModelCreator()
         self._context = self._visitor._context
         result.visit(self._visitor)

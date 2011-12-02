@@ -119,10 +119,6 @@ class StatHandler(_Handler):
 
 class SuiteHandler(_Handler):
 
-    def __init__(self, context):
-        _Handler.__init__(self, context)
-        self._context.start_suite()
-
     def keyword_handler(self):
         return SuiteKeywordHandler(self._context)
 
@@ -174,9 +170,9 @@ class KeywordHandler(_Handler):
         _Handler.__init__(self, context)
         context.start_keyword()
 
-    def build(self, keyword):
-        result = self._create_result(keyword)
-        self._context.end_keyword()
+    def build(self, kw):
+        result = self._create_result(kw)
+        self._context.end_keyword(type(kw) is type(kw.parent))   # TODO: rm hack
         return result
 
     def _create_result(self, keyword):
@@ -216,24 +212,23 @@ class StatusHandler(_Handler):
 
 class MessageHandler(_Handler):
 
-    def build(self, message):
-        msg = [self._timestamp(message.timestamp),
-               LEVELS[message.level],
-               self._format_message_text(message)]
-        self._handle_warning_linking(msg, message)
+    def build(self, msg):
+        model = [self._timestamp(msg.timestamp),
+                 LEVELS[msg.level],
+                 self._format_message_text(msg)]
+        self._handle_warning_linking(model, msg)
         # linking doesn't work without this late _id thing
         # because the text id:s are different in errors
         # than in the target test
         # when texts have been split with splitlog option
-        msg[2] = self._id(msg[2])
-        return msg
+        model[2] = self._id(model[2])
+        return model
 
-    def _format_message_text(self, message):
-        return message.message if message.html else \
-                    utils.html_escape(message.message)
+    def _format_message_text(self, msg):
+        return msg.message if msg.html else utils.html_escape(msg.message)
 
-    def _handle_warning_linking(self, msg, message):
-        if message.linkable:
-            msg.append(self._id(self._context.link_to(msg)))
-        elif message.level == 'WARN':
+    def _handle_warning_linking(self, model, msg):
+        if msg.linkable:
+            model.append(self._id(self._context.link_to(msg)))
+        elif msg.level == 'WARN':
             self._context.create_link_to_current_location(msg)

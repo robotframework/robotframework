@@ -4,8 +4,9 @@ import string
 import unittest
 from sys import maxint
 
-from robot.reporting.parsingcontext import Context, TextCache, Location, TextIndex
-from robot.utils.asserts import assert_equals, assert_true
+from robot.reporting.parsingcontext import Context, TextCache, TextIndex
+from robot.result import TestSuite, Message
+from robot.utils.asserts import assert_equals, assert_true, assert_raises
 
 
 class TestTextContext(unittest.TestCase):
@@ -78,7 +79,6 @@ class TestSplittingContext(unittest.TestCase):
 
     def setUp(self):
         self._context = Context(split_log=True)
-        self._context.start_suite()
 
     def test_getting_split_results(self):
         assert_equals(self._context.split_results, [])
@@ -166,84 +166,6 @@ class TestTextIndex(unittest.TestCase):
         assert_equals(str(value), str(target))
 
 
-class TestLocation(unittest.TestCase):
-
-    def setUp(self):
-        self._loc = Location()
-        self._loc.start_suite()
-
-    def _verify_id(self, id):
-        assert_equals(self._loc.current_id, id)
-
-    def test_start_one_suite(self):
-        self._verify_id('s1')
-
-    def test_start_multiple_suites(self):
-        self._loc.start_suite()
-        self._loc.start_suite()
-        self._verify_id('s1-s1-s1')
-
-    def test_start_and_end_suites(self):
-        self._loc.start_suite()
-        self._loc.end_suite()
-        self._verify_id('s1')
-        self._loc.start_suite()
-        self._verify_id('s1-s2')
-        self._loc.end_suite()
-        self._verify_id('s1')
-
-    def test_start_test(self):
-        self._loc.start_test()
-        self._verify_id('s1-t1')
-
-    def test_start_and_end_tests(self):
-        self._loc.start_test()
-        self._loc.end_test()
-        self._loc.start_test()
-        self._verify_id('s1-t2')
-        self._loc.end_test()
-        self._loc.start_suite()
-        self._loc.start_test()
-        self._verify_id('s1-s1-t1')
-        self._loc.end_test()
-        self._loc.end_suite()
-        self._verify_id('s1')
-
-    def test_keywords_in_test(self):
-        self._loc.start_test()
-        self._loc.start_keyword()
-        self._loc.start_keyword()
-        self._verify_id('s1-t1-k1-k1')
-        self._loc.end_keyword()
-        self._verify_id('s1-t1-k1')
-        self._loc.start_keyword()
-        self._verify_id('s1-t1-k1-k2')
-        self._loc.end_keyword()
-        self._verify_id('s1-t1-k1')
-        self._loc.end_keyword()
-        self._verify_id('s1-t1')
-        self._loc.end_test()
-        self._verify_id('s1')
-
-    def test_suite_setup_and_teardown(self):
-        self._loc.start_keyword()
-        self._verify_id('s1-k1')
-        self._loc.end_keyword()
-        self._loc.start_test()
-        self._loc.start_keyword()
-        self._verify_id('s1-t1-k1')
-        self._loc.end_keyword()
-        self._loc.end_test()
-        self._loc.start_keyword()
-        self._verify_id('s1-k2')
-        self._loc.end_keyword()
-        self._loc.start_suite()
-        self._loc.start_keyword()
-        self._verify_id('s1-s1-k1')
-        self._loc.end_keyword()
-        self._verify_id('s1-s1')
-
-
 class TestTimestamp(unittest.TestCase):
 
     def setUp(self):
@@ -261,87 +183,29 @@ class TestTimestamp(unittest.TestCase):
 
 class TestLinking(unittest.TestCase):
 
-    def setUp(self):
-        self._context = Context()
+    def test_suite_keyword(self):
+        self._verify_link(TestSuite(), 's1')
+        self._verify_link(TestSuite().suites.create(), 's1-s1')
 
-    def _kw(self, inner_func=None):
-        self._context.start_keyword()
-        if inner_func:
-            inner_func(self._context)
-        self._context.end_keyword()
+    def test_test_keyword(self):
+        self._verify_link(TestSuite().tests.create(), 's1-t1')
 
-    def test_link_creation(self):
-        key = [4,'W',6]
-        self._create_data_and_link(key)
-        self.assertEqual(self._context.link_to(key), 's1-s1-t1-k1')
+    def test_sub_keyword(self):
+        test = TestSuite().suites.create().tests.create()
+        test.keywords.create()
+        test.keywords.create()
+        kw = test.keywords.create().keywords.create().keywords.create()
+        self._verify_link(kw, 's1-s1-t1-k3-k1-k1')
 
-    def _create_data_and_link(self, key):
-        self._context.start_suite()
-        self._context.start_suite()
-        self._context.start_test()
-        self._context.start_keyword()
-        self._context.create_link_to_current_location(key)
-        self._context.end_keyword()
-        self._context.end_test()
-        self._context.end_suite()
-        self._context.end_suite()
-
-    def test_2_links(self):
-        key1 = [1,'W',2]
-        key2 = [2,'W',5]
-        self._create_data_for_links(key1, key2)
-        self.assertEqual(self._context.link_to(key1), 's1-k1')
-        self.assertEqual(self._context.link_to(key2), 's1-t1-k1-k2')
-
-    def _create_data_for_links(self, key1, key2):
-        self._context.start_suite()
-        self._kw(lambda ctx: ctx.create_link_to_current_location(key1))
-        self._context.start_test()
-        self._context.start_keyword()
-        self._kw()
-        self._kw(lambda ctx: ctx.create_link_to_current_location(key2))
-        self._context.end_keyword()
-        self._context.end_test()
-        self._context.end_suite()
-
-    def test_link_to_subkeyword(self):
-        key = [1, 'W', 542]
-        self._create_data_for_subkeyword(key)
-        self.assertEqual(self._context.link_to(key), 's1-t1-k3-k2')
-
-    def _create_data_for_subkeyword(self, key):
-        self._context.start_suite()
-        self._context.start_test()
-        self._kw()
-        self._kw()
-        self._context.start_keyword()
-        self._kw()
-        self._context.start_keyword()
-        self._context.create_link_to_current_location(key)
-        self._kw()
-        self._kw()
-        self._context.end_keyword()
-        self._context.end_test()
-        self._context.end_suite()
-
-    def test_link_to_suite_teardown(self):
-        pkey = [5, 'W', 321]
-        skey = [4, 'W', 3214]
-        self._create_data_for_suite_teardown_links(pkey, skey)
-        self.assertEqual(self._context.link_to(skey),'s1-s1-k1')
-        self.assertEqual(self._context.link_to(pkey), 's1-k2')
-
-    def _create_data_for_suite_teardown_links(self, pkey, skey):
-        self._context.start_suite()
-        self._kw()
-        self._context.start_suite()
-        self._context.start_test()
-        self._kw()
-        self._context.end_test()
-        self._kw(lambda ctx: ctx.create_link_to_current_location(skey))
-        self._context.end_suite()
-        self._kw(lambda ctx: ctx.create_link_to_current_location(pkey))
-        self._context.end_suite()
+    def _verify_link(self, parent, expected):
+        msg1 = Message(message='msg', timestamp='xxx', parent=parent)
+        msg2 = Message(message='msg', timestamp='xxx', parent=parent)
+        msg3 = Message(message='msg', timestamp='yyy', parent=parent)
+        ctx = Context()
+        ctx.create_link_to_current_location(msg1)
+        assert_equals(ctx.link_to(msg1), expected)
+        assert_equals(ctx.link_to(msg2), expected)
+        assert_raises(KeyError, ctx.link_to, msg3)
 
 
 if __name__ == '__main__':

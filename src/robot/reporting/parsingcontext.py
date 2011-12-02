@@ -25,7 +25,6 @@ class Context(object):
         self._current_texts = self._main_text_cache
         self._split_text_caches = []
         self.basemillis = 0
-        self._location = Location()
         self._links = {}
         self._split_log = split_log
         self.split_results = []
@@ -61,19 +60,11 @@ class Context(object):
             self.basemillis = millis
         return millis - self.basemillis
 
-    def start_suite(self):
-        self._location.start_suite()
-
-    def end_suite(self):
-        self._location.end_suite()
-
     def start_test(self):
         if self._split_log:
             self._split_text_caches.append(TextCache())
-        self._location.start_test()
 
     def end_test(self, kw_data=None):
-        self._location.end_test()
         if self._split_log and kw_data:
             self.split_results.append((kw_data, self._split_text_caches[-1].dump()))
             return len(self.split_results)
@@ -82,84 +73,25 @@ class Context(object):
     def start_keyword(self):
         if self._split_log:
             self._current_texts = self._split_text_caches[-1]
-        self._location.start_keyword()
 
-    def end_keyword(self):
-        self._location.end_keyword()
-        if self._split_log and self._location.on_split_end_level:
+    def end_keyword(self, split_level=False):
+        if self._split_log and split_level:
             self._current_texts = self._main_text_cache
 
     def start_suite_setup_or_teardown(self):
-        if self._split_log:
-            self._split_text_caches.append(TextCache())
-        self._location.start_keyword()
+        return self.start_test()
 
     def end_suite_setup_or_teardown(self, kw_data=None):
-        self._location.end_keyword()
-        if self._split_log and kw_data:
-            self.split_results.append((kw_data, self._split_text_caches[-1].dump()))
-            return len(self.split_results)
-        return kw_data
+        return self.end_test(kw_data)
 
-    def create_link_to_current_location(self, key):
-        self._links[tuple(key)] = self._location.current_id
+    def create_link_to_current_location(self, msg):
+        self._links[self._link_key(msg)] = msg.parent.id
 
-    def link_to(self, key):
-        return self._links[tuple(key)]
+    def link_to(self, msg):
+        return self._links[self._link_key(msg)]
 
-
-class Location(object):
-
-    def __init__(self):
-        self._ids = []
-        self._suite_indices = [1]
-        self._test_indices = []
-        self._kw_indices = []
-
-    def start_suite(self):
-        self._start('s', self._suite_indices, self._test_indices,
-                    self._kw_indices)
-
-    def start_test(self):
-        self._start('t', self._test_indices, self._kw_indices)
-
-    def start_keyword(self):
-        self._start('k', self._kw_indices)
-
-    def _start(self, type, *indices):
-        started = indices[0]
-        self._ids.append('%s%d' % (type, started[-1]))
-        started[-1] += 1
-        for ind in indices:
-            ind.append(1)
-
-    def end_suite(self):
-        self._end(self._suite_indices, self._test_indices, self._kw_indices)
-
-    def end_test(self):
-        self._end(self._test_indices, self._kw_indices)
-
-    def end_keyword(self):
-        self._end(self._kw_indices)
-
-    def _end(self, *indices):
-        self._ids.pop()
-        for ind in indices:
-            ind.pop()
-
-    @property
-    def on_split_end_level(self):
-        return self._on_test_level() or self._on_suite_setup_or_teardown_level()
-
-    def _on_test_level(self):
-        return self._ids[-1][0] == 't'
-
-    def _on_suite_setup_or_teardown_level(self):
-        return self._ids[-2][0] == 's'
-
-    @property
-    def current_id(self):
-        return '-'.join(self._ids)
+    def _link_key(self, msg):
+        return (msg.message, msg.level, msg.timestamp)
 
 
 class TextIndex(long):
