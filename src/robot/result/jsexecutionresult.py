@@ -37,6 +37,10 @@ class JsExecutionResult(object):
             'generatedTimestamp': utils.format_time(gentime, gmtsep=' ')
         }
 
+    # TODO: Combine remove_keywords and remove_errors
+    # into remove_data_not_needed_in_report or something similar.
+    # The code related to removing should also be moved into a separate object.
+
     def remove_keywords(self):
         self._remove_keywords_from_suite(self.suite)
         self._prune_unused_indices()
@@ -58,15 +62,14 @@ class JsExecutionResult(object):
             list(self._prune(self.strings, used, remap))
         self._remap_indices(self.suite, remap)
 
-    def _prune(self, data, used, index_remap, map_index=None, offset_increment=1):
+    def _prune(self, data, used, index_remap):
         offset = 0
         for index, text in enumerate(data):
-            index = map_index(index) if map_index else index
             if index in used:
                 index_remap[index] = index - offset
                 yield text
             else:
-                offset += offset_increment
+                offset += 1
 
     def _remap_indices(self, data, remap):
         for i, item in enumerate(data):
@@ -81,7 +84,4 @@ class JsExecutionResult(object):
                 result.add(item)
             elif isinstance(item, list):
                 self._collect_used_indices(item, result)
-            elif isinstance(item, dict):
-                self._collect_used_indices(item.values(), result)
-                self._collect_used_indices(item.keys(), result)
         return result
