@@ -1,8 +1,10 @@
 from StringIO import StringIO
 import unittest
-from robot.result.jsondatamodelhandlers import JsExecutionResult
+
 from robot.utils.asserts import assert_equals, assert_true
+from robot.result.jsexecutionresult import JsExecutionResult
 from robot.reporting.jswriter import ScriptBlockWriter
+
 
 class TestDataModelWrite(unittest.TestCase):
 
@@ -12,10 +14,10 @@ class TestDataModelWrite(unittest.TestCase):
         assert_true(lines[1].startswith('window.output["'), lines[1])
         assert_true(lines[-1].startswith('window.settings ='), lines[-1])
 
-    def _get_lines(self, suite=None, strings=None, data=None, separator=None,
+    def _get_lines(self, suite=None, strings=None, basemillis=100, separator=None,
                    split_threshold=None):
         output = StringIO()
-        data = JsExecutionResult(suite, strings, data or {'baseMillis':100})
+        data = JsExecutionResult(suite, None, None, strings, basemillis)
         ScriptBlockWriter(separator=separator, split_threshold=split_threshold).write_to(output, data, {})
         return output.getvalue().splitlines()
 
@@ -33,16 +35,13 @@ class TestDataModelWrite(unittest.TestCase):
 
     def test_writing_datamodel_with_split_threshold_in_suite(self):
         suite = [1, [2, 3], [4, [5], [6, 7]], 8]
-        lines = self._get_lines(suite=suite,
-                                data={'baseMillis':100},
-                                split_threshold=2, separator='foo\n')
+        lines = self._get_lines(suite=suite, split_threshold=2, separator='foo\n')
         parts = filter(lambda l: l.startswith('window.sPart'), lines)
         assert_equals(parts, ['window.sPart0 = [2,3];', 'window.sPart1 = [6,7];', 'window.sPart2 = [4,[5],window.sPart1];', 'window.sPart3 = [1,window.sPart0,window.sPart2,8];'])
         self._assert_separators_in(lines, 'foo')
 
     def test_splitting_output_strings(self):
         lines = self._get_lines(strings=['data' for _ in range(100)],
-                                data={'baseMillis':100},
                                 split_threshold=9, separator='?\n')
         parts = [l for l in lines if l.startswith('window.output["strings')]
         assert_equals(len(parts), 13)

@@ -91,16 +91,12 @@ class _Handler(object):
 class ExecutionResultHandler(_Handler):
 
     def build(self, _):
-        return JsExecutionResult(
-            suite=self._suites[0],
-            strings=self._context.dump_texts(),
-            data= {
-                'stats': self._statistics,
-                'errors': self._errors,
-                'baseMillis': self._context.basemillis
-            },
-            split_results= self._context.split_results
-        )
+        return JsExecutionResult(self._suites[0],
+                                 self._statistics,
+                                 self._errors,
+                                 self._context.dump_texts(),
+                                 self._context.basemillis,
+                                 self._context.split_results)
 
 
 class ErrorsHandler(_Handler):

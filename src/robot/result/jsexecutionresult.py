@@ -20,17 +20,22 @@ from robot.reporting.parsingcontext import TextIndex
 
 class JsExecutionResult(object):
 
-    def __init__(self, suite, strings, data, split_results=None):
+    def __init__(self, suite, statistics, errors, strings, basemillis,
+                 split_results=None):
         self.suite = suite
         self.strings = strings
-        self.data = data
-        self._set_generated(time.localtime())
+        self.data = self._get_data(statistics, errors, basemillis)
         self.split_results = split_results or []
 
-    def _set_generated(self, timetuple):
-        genMillis = long(time.mktime(timetuple) * 1000) - self.data['baseMillis']
-        self.data['generatedMillis'] = genMillis
-        self.data['generatedTimestamp'] = utils.format_time(timetuple, gmtsep=' ')
+    def _get_data(self, statistics, errors, basemillis):
+        gentime = time.localtime()
+        return {
+            'stats': statistics,
+            'errors': errors,
+            'baseMillis': basemillis,
+            'generatedMillis': long(time.mktime(gentime) * 1000) - basemillis,
+            'generatedTimestamp': utils.format_time(gentime, gmtsep=' ')
+        }
 
     def remove_keywords(self):
         self._remove_keywords_from_suite(self.suite)
