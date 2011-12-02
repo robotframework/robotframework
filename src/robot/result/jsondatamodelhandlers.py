@@ -172,7 +172,7 @@ class KeywordHandler(_Handler):
 
     def build(self, kw):
         result = self._create_result(kw)
-        self._context.end_keyword(type(kw) is type(kw.parent))   # TODO: rm hack
+        self._context.end_keyword(kw.is_top_level_keyword)
         return result
 
     def _create_result(self, keyword):
