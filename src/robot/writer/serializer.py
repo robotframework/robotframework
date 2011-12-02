@@ -14,7 +14,7 @@
 
 import os
 
-from writer import FileWriter
+from .writer import FileWriter
 
 
 class Serializer(object):
@@ -75,7 +75,7 @@ class Serializer(object):
         self._writer.end_keyword()
 
     def _testcase_table_serializer(self, table):
-        self._writer.start_tests()
+        self._writer.start_tests(table)
         for tc in table:
             self._serialize_testcase(tc)
         self._writer.end_tests()
@@ -133,5 +133,3 @@ class SerializationContext(object):
 
     def _format_from_file(self):
         return os.path.splitext(self._get_source())[1][1:].lower()
-
-

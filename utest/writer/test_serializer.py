@@ -6,7 +6,7 @@ from robot.parsing.model import TestCaseFile, ResourceFile
 from robot.parsing.populators import FromFilePopulator
 from robot.parsing.txtreader import TxtReader
 from robot.utils.asserts import assert_equals
-from robot.writer.serializer import Serializer, SerializationContext
+from robot.writer.serializer import Serializer
 
 from golden import (GOLDEN_TXT_RESOURCE, GOLDEN_TXT_TESTCASE_FILE,
                     GOLDEN_TXT_PIPE_RESOURCE, GOLDEN_TXT_PIPE_TESTCASE_FILE,
@@ -53,7 +53,8 @@ class _SerializerTest(unittest.TestCase):
 
     def _assert_result(self, result, expected, linesep=os.linesep):
         for line1, line2 in zip(result.split(linesep), expected.split('\n')):
-            assert_equals(line1, line2)
+            msg = "\n%s\n!=\n%s\n\n%s\n!=\n%s" % (result, expected, repr(line1), repr(line2))
+            assert_equals(line1, line2, msg)
 
 
 class TestTxtSerialization(_SerializerTest):
