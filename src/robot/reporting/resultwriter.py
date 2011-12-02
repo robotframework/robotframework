@@ -49,8 +49,7 @@ class ResultWriter(object):
 
     def _write_report(self, report, config):
         if report:
-            self._result.js_model.remove_errors()
-            self._result.js_model.remove_keywords()
+            self._result.js_model.remove_data_not_needed_in_report()
             ReportBuilder(self._result.js_model).build(report, config)
 
 

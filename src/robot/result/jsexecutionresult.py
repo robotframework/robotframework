@@ -37,16 +37,10 @@ class JsExecutionResult(object):
             'generatedTimestamp': utils.format_time(gentime, gmtsep=' ')
         }
 
-    # TODO: Combine remove_keywords and remove_errors
-    # into remove_data_not_needed_in_report or something similar.
-    # The code related to removing should also be moved into a separate object.
-
-    def remove_keywords(self):
-        self._remove_keywords_from_suite(self.suite)
-        self._prune_unused_indices()
-
-    def remove_errors(self):
+    def remove_data_not_needed_in_report(self):
         self.data.pop('errors')
+        self._remove_keywords_from_suite(self.suite)
+        self._remove_unused_strings()
 
     def _remove_keywords_from_suite(self, suite):
         suite[8] = []
@@ -55,28 +49,11 @@ class JsExecutionResult(object):
         for test in suite[7]:
             test[-1] = []
 
-    def _prune_unused_indices(self):
+    def _remove_unused_strings(self):
         used = self._collect_used_indices(self.suite, set())
         remap = {}
-        self.strings = \
-            list(self._prune(self.strings, used, remap))
-        self._remap_indices(self.suite, remap)
-
-    def _prune(self, data, used, index_remap):
-        offset = 0
-        for index, text in enumerate(data):
-            if index in used:
-                index_remap[index] = index - offset
-                yield text
-            else:
-                offset += 1
-
-    def _remap_indices(self, data, remap):
-        for i, item in enumerate(data):
-            if isinstance(item, TextIndex):
-                data[i] = remap[item]
-            elif isinstance(item, list):
-                self._remap_indices(item, remap)
+        self.strings = list(self._get_used_strings(self.strings, used, remap))
+        self._remap_string_indices(self.suite, remap)
 
     def _collect_used_indices(self, data, result):
         for item in data:
@@ -85,3 +62,19 @@ class JsExecutionResult(object):
             elif isinstance(item, list):
                 self._collect_used_indices(item, result)
         return result
+
+    def _get_used_strings(self, data, used, index_remap):
+        offset = 0
+        for index, text in enumerate(data):
+            if index in used:
+                index_remap[index] = index - offset
+                yield text
+            else:
+                offset += 1
+
+    def _remap_string_indices(self, data, remap):
+        for i, item in enumerate(data):
+            if isinstance(item, TextIndex):
+                data[i] = remap[item]
+            elif isinstance(item, list):
+                self._remap_string_indices(item, remap)
