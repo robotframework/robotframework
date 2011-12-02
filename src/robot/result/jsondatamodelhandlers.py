@@ -137,7 +137,7 @@ class SuiteHandler(_Handler):
     def _get_metadata(self, suite):
         metadata = []
         for name, value in suite.metadata.items():
-            metadata.extend([self._id(name), self._id(utils.html_format(value))])
+            metadata.extend([self._id(name), self._id_html(value)])
         return metadata
 
     def _get_stats(self, suite):
@@ -176,14 +176,14 @@ class KeywordHandler(_Handler):
         return result
 
     def _create_result(self, keyword):
-        return [self._types[keyword.type],
+        return (self._types[keyword.type],
                   self._id(keyword.name),
                   self._id(keyword.timeout),
                   self._id_html(keyword.doc),
                   self._id(', '.join(keyword.args)),
                   self._status(keyword),
                   self._keywords,
-                  self._messages]
+                  self._messages)
 
 
 class SuiteKeywordHandler(KeywordHandler):
