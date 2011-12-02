@@ -111,9 +111,10 @@ class TestReporting(unittest.TestCase, ResultWriter):
     def _verify_output(self):
         assert_true(self._settings.output.getvalue())
 
+    #TODO: Find a way to test split_log
     def _test_split_tests(self):
         self._settings.split_log = True
-        self._settings.log = StringIO()
+        self._settings.log = ClosingOutput()
         self.write_results()
         self._verify_log()
 
