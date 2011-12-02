@@ -228,7 +228,7 @@ class MessageHandler(_Handler):
         return msg.message if msg.html else utils.html_escape(msg.message)
 
     def _handle_warning_linking(self, model, msg):
-        if msg.linkable:
+        if msg.linkable and not msg.parent:
             model.append(self._id(self._context.link_to(msg)))
-        elif msg.level == 'WARN':
+        elif msg.level == 'WARN' and msg.parent:
             self._context.create_link_to_current_location(msg)
