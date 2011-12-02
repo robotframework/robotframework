@@ -70,26 +70,30 @@ class XUnitBuilder(_Builder):
 
 class _HTMLFileBuilder(_Builder):
 
-    def _write_file(self, path, config, template):
-        with codecs.open(path, 'w', encoding='UTF-8') as outfile:
-            writer = HTMLFileWriter(outfile, self._model, config)
-            for line in _WebContentFile(template):
-                writer.line(line)
+    def _write_file(self, output, config, template):
+        outfile = codecs.open(output, 'w', encoding='UTF-8') if isinstance(output, basestring) else output
+        with outfile:
+            self._write_to_output(outfile, config, template)
+
+    def _write_to_output(self, output, config, template):
+        writer = HTMLFileWriter(output, self._model, config)
+        for line in _WebContentFile(template):
+            writer.line(line)
 
 
 class LogBuilder(_HTMLFileBuilder):
 
-    def build(self, path, config):
+    def build(self, output, config):
         try:
-            self._write_file(path, config, 'log.html')
-            self._write_split_logs_if_needed(path)
+            self._write_file(output, config, 'log.html')
+            self._write_split_logs_if_needed(output)
         except EnvironmentError, err:
             LOGGER.error("Writing log file '%s' failed: %s" % (err.filename, err.strerror))
         else:
-            LOGGER.output_file('Log', path)
+            LOGGER.output_file('Log', output)
 
-    def _write_split_logs_if_needed(self, path):
-        base = os.path.splitext(path)[0]
+    def _write_split_logs_if_needed(self, output):
+        base = os.path.splitext(output)[0] if isinstance(output, basestring) else ''
         for index, (keywords, strings) in enumerate(self._model.split_results):
             index += 1  # enumerate accepts start index only in Py 2.6+
             self._write_split_log(index, keywords, strings, '%s-%d.js' % (base, index))

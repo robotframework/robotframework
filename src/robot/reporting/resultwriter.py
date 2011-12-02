@@ -23,35 +23,35 @@ from .builders import LogBuilder, ReportBuilder, XUnitBuilder, OutputBuilder
 
 class ResultWriter(object):
 
-    def __init__(self, settings):
+    def __init__(self, settings, *data_sources):
         self._settings = settings
+        self._result = Result(settings, data_sources)
 
-    def write_results(self, *data_sources):
+    def write_results(self):
         settings = self._settings
-        result = Result(settings, data_sources)
-        self._write_output(result, settings.output)
-        self._write_xunit(result, settings.xunit)
-        self._write_log(result, settings.log, settings.log_config)
-        self._write_report(result, settings.report, settings.report_config)
-        return result.return_code
+        self._write_output(settings.output)
+        self._write_xunit(settings.xunit)
+        self._write_log(settings.log, settings.log_config)
+        self._write_report(settings.report, settings.report_config)
+        return self._result.return_code
 
-    def _write_output(self, result, output):
+    def _write_output(self, output):
         if output:
-            OutputBuilder(result.model).build(output)
+            OutputBuilder(self._result.model).build(output)
 
-    def _write_xunit(self, result, xunit):
+    def _write_xunit(self, xunit):
         if xunit:
-            XUnitBuilder(result.model).build(xunit)
+            XUnitBuilder(self._result.model).build(xunit)
 
-    def _write_log(self, result, log, config):
+    def _write_log(self, log, config):
         if log:
-            LogBuilder(result.js_model).build(log, config)
+            LogBuilder(self._result.js_model).build(log, config)
 
-    def _write_report(self, result, report, config):
+    def _write_report(self, report, config):
         if report:
-            result.js_model.remove_errors()
-            result.js_model.remove_keywords()
-            ReportBuilder(result.js_model).build(report, config)
+            self._result.js_model.remove_errors()
+            self._result.js_model.remove_keywords()
+            ReportBuilder(self._result.js_model).build(report, config)
 
 
 class Result(object):

@@ -130,7 +130,7 @@ def run(*datasources, **options):
     output.close(suite)
     if settings.is_rebot_needed():
         output, settings = settings.get_rebot_datasource_and_settings()
-        ResultWriter(settings).write_results(output)
+        ResultWriter(settings, output).write_results()
     LOGGER.close()
     return suite.return_code
 
@@ -153,7 +153,7 @@ def run_rebot(*datasources, **options):
     settings = RebotSettings(options)
     LOGGER.register_console_logger(colors=settings['MonitorColors'])
     LOGGER.disable_message_cache()
-    rc = ResultWriter(settings).write_results(*datasources)
+    rc = ResultWriter(settings, *datasources).write_results()
     LOGGER.close()
     return rc
 
