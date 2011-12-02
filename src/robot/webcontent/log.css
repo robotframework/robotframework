@@ -80,6 +80,7 @@ div.foldingbutton {
 }
 div.foldingbutton:hover {
     background: yellow;
+    cursor: pointer;
 }
 .expand {
     float: right;

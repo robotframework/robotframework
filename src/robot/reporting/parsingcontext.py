@@ -74,8 +74,8 @@ class Context(object):
         if self._split_log:
             self._current_texts = self._split_text_caches[-1]
 
-    def end_keyword(self, split_level=False):
-        if self._split_log and split_level:
+    def end_keyword(self, is_top_level_keyword=False):
+        if self._split_log and is_top_level_keyword:
             self._current_texts = self._main_text_cache
 
     def start_suite_setup_or_teardown(self):

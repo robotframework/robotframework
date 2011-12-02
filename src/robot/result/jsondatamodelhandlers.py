@@ -172,7 +172,7 @@ class KeywordHandler(_Handler):
 
     def build(self, kw):
         result = self._create_result(kw)
-        self._context.end_keyword(type(kw) is type(kw.parent))   # TODO: rm hack
+        self._context.end_keyword(kw.is_top_level_keyword)
         return result
 
     def _create_result(self, keyword):
@@ -228,7 +228,7 @@ class MessageHandler(_Handler):
         return msg.message if msg.html else utils.html_escape(msg.message)
 
     def _handle_warning_linking(self, model, msg):
-        if msg.linkable:
+        if msg.linkable and not msg.parent:
             model.append(self._id(self._context.link_to(msg)))
-        elif msg.level == 'WARN':
+        elif msg.level == 'WARN' and msg.parent:
             self._context.create_link_to_current_location(msg)
