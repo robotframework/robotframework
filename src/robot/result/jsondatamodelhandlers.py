@@ -249,14 +249,14 @@ class KeywordHandler(_Handler):
         return result
 
     def _create_result(self, keyword):
-        return [self._types[keyword.type],
+        return (self._types[keyword.type],
                   self._id(keyword.name),
                   self._id(keyword.timeout),
                   self._id_html(keyword.doc),
                   self._id(', '.join(keyword.args)),
                   self._status(keyword),
                   self._keywords,
-                  self._messages]
+                  self._messages)
 
 
 class SuiteKeywordHandler(KeywordHandler):
