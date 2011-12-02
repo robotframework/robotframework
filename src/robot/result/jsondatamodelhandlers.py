@@ -210,7 +210,7 @@ class SuiteHandler(_Handler):
     def _get_metadata(self, suite):
         metadata = []
         for name, value in suite.metadata.items():
-            metadata.extend([self._id(name), self._id(utils.html_format(value))])
+            metadata.extend([self._id(name), self._id_html(value)])
         return metadata
 
     def _get_stats(self, suite):
