@@ -12,12 +12,16 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from modelobject import ModelObject
+from robot.utils import html_escape
+
+from .modelobject import ModelObject
 
 
 class Message(ModelObject):
     __slots__ = ['message', 'level', 'html', 'timestamp', 'linkable', 'parent']
 
+    # TODO: What is good default for timestamp? None or 'N/A'?
+    # TODO: What's good format in JS if timestamp is not set?
     def __init__(self, message='', level='INFO', html=False, timestamp=None,
                  linkable=False, parent=None):
         self.message = message
@@ -26,6 +30,10 @@ class Message(ModelObject):
         self.timestamp = timestamp
         self.linkable = linkable
         self.parent = parent
+
+    @property
+    def html_message(self):
+        return self.message if self.html else html_escape(self.message)
 
     def visit(self, visitor):
         visitor.visit_message(self)
