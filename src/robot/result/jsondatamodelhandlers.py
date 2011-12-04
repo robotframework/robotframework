@@ -172,7 +172,7 @@ class KeywordHandler(_Handler):
 
     def build(self, kw):
         result = self._create_result(kw)
-        self._context.end_keyword(kw.is_top_level_keyword)
+        self._context.end_keyword(kw.on_split_log_boundary)
         return result
 
     def _create_result(self, keyword):

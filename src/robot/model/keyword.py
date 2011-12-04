@@ -52,10 +52,6 @@ class Keyword(ModelObject):
     def is_forloop(self):
         return self.type == 'for'
 
-    @property
-    def is_top_level_keyword(self):
-        return type(self.parent) is not type(self)
-
     def visit(self, visitor):
         visitor.visit_keyword(self)
 
