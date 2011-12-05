@@ -12,6 +12,17 @@ CURDIR = dirname(abspath(__file__))
 def get_status(*elements):
     return elements if elements[-1] else elements[:-1]
 
+def remap_model(model, strings):
+    for item in model:
+        if isinstance(item, StringIndex):
+            yield strings[item][1:]
+        elif isinstance(item, (int, long, type(None))):
+            yield item
+        elif isinstance(item, tuple):
+            yield tuple(remap_model(item, strings))
+        else:
+            raise AssertionError("Item '%s' has invalid type '%s'" % (item, type(item)))
+
 
 class TestBuildTestSuite(unittest.TestCase):
 
@@ -139,46 +150,85 @@ class TestBuildTestSuite(unittest.TestCase):
         return expected
 
     def _verify_mapped(self, model, strings, expected):
-        mapped_model = tuple(self._map_strings(model, strings))
+        mapped_model = tuple(remap_model(model, strings))
         assert_equals(mapped_model, expected)
-
-    def _map_strings(self, model, strings):
-        for item in model:
-            if isinstance(item, StringIndex):
-                yield strings[item][1:]
-            elif isinstance(item, (int, long, type(None))):
-                yield item
-            elif isinstance(item, tuple):
-                yield tuple(self._map_strings(item, strings))
-            else:
-                raise AssertionError("Item '%s' has invalid type '%s'" % (item, type(item)))
 
 
 class TestSplitting(unittest.TestCase):
 
     def test_test_keywords(self):
+        suite = self._get_suite_with_tests()
+        expected, _ = self._build_and_remap(suite)
+        expected_split = [expected[-3][0][-1], expected[-3][1][-1]]
+        expected[-3][0][-1], expected[-3][1][-1] = 1, 2
+        model, builder = self._build_and_remap(suite, split_log=True)
+        assert_equals(builder.dump_strings(), ['*', '*suite', '*t1', '*t2'])
+        assert_equals(model, expected)
+        assert_equals([strings for _, strings in builder.split_results],
+                      [['*', '*t1-k1', '*t1-k1-k1', '*t1-k2'], ['*', '*t2-k1']])
+        assert_equals([self._to_list(remap_model(*res)) for res in builder.split_results],
+                      expected_split)
+
+    def _get_suite_with_tests(self):
         suite = TestSuite(name='suite')
         suite.tests = [TestCase('t1'), TestCase('t2')]
         suite.tests[0].keywords = [Keyword('t1-k1'), Keyword('t1-k2')]
         suite.tests[0].keywords[0].keywords = [Keyword('t1-k1-k1')]
         suite.tests[1].keywords = [Keyword('t2-k1')]
-        builder = JsModelBuilder(split_log=True)
-        tests = builder._build_suite(suite)[-3]
-        assert_equals(tests[0][-1], 1)
-        assert_equals(tests[1][-1], 2)
-        assert_equals(builder.dump_strings(), ['*', '*suite', '*t1', '*t2'])
-        #assert_equals(builder.split_results, [])
+        return suite
+
+    def _build_and_remap(self, suite, split_log=False):
+        builder = JsModelBuilder(split_log=split_log)
+        model = remap_model(builder._build_suite(suite), builder.dump_strings())
+        return self._to_list(model), builder
+
+    def _to_list(self, model):
+        return list(self._to_list(item) if isinstance(item, tuple) else item
+                    for item in model)
 
     def test_suite_keywords(self):
-        suite = TestSuite(name='suite')
+        suite = self._get_suite_with_keywords()
+        expected, _ = self._build_and_remap(suite)
+        expected_split = [expected[-2][0][-2], expected[-2][1][-2]]
+        expected[-2][0][-2], expected[-2][1][-2] = 1, 2
+        model, builder = self._build_and_remap(suite, split_log=True)
+        assert_equals(builder.dump_strings(), ['*', '*root', '*k1', '*k2'])
+        assert_equals(model, expected)
+        assert_equals([strings for _, strings in builder.split_results],
+                     [['*', '*k1-k2'], ['*']])
+        assert_equals([self._to_list(remap_model(*res)) for res in builder.split_results],
+                      expected_split)
+
+    def _get_suite_with_keywords(self):
+        suite = TestSuite(name='root')
         suite.keywords = [Keyword('k1', type='setup'), Keyword('k2', type='teardown')]
         suite.keywords[0].keywords = [Keyword('k1-k2')]
-        builder = JsModelBuilder(split_log=True)
-        kws = builder._build_suite(suite)[-2]
-        assert_equals(kws[0][-2], 1)
-        assert_equals(kws[1][-2], 2)
-        assert_equals(builder.dump_strings(), ['*', '*suite', '*k1', '*k2'])
-        #assert_equals(builder.split_results, [])
+        return suite
+
+    def test_nested_suite_and_test_keywords(self):
+        suite = self._get_nested_suite_with_tests_and_keywords()
+        expected, _ = self._build_and_remap(suite)
+        expected_split = [expected[-4][0][-3][0][-1], expected[-4][0][-3][1][-1],
+                          expected[-4][1][-3][0][-1], expected[-4][1][-2][0][-2],
+                          expected[-2][0][-2], expected[-2][1][-2]]
+        (expected[-4][0][-3][0][-1], expected[-4][0][-3][1][-1],
+         expected[-4][1][-3][0][-1], expected[-4][1][-2][0][-2],
+         expected[-2][0][-2], expected[-2][1][-2]) = 1, 2, 3, 4, 5, 6
+        model, builder = self._build_and_remap(suite, split_log=True)
+        assert_equals(model, expected)
+        assert_equals([self._to_list(remap_model(*res)) for res in builder.split_results],
+                      expected_split)
+
+    def _get_nested_suite_with_tests_and_keywords(self):
+        suite = self._get_suite_with_keywords()
+        sub = TestSuite(name='suite2')
+        suite.suites = [self._get_suite_with_tests(), sub]
+        sub.keywords.create('kw', type='setup')
+        sub.keywords[0].keywords.create('skw')
+        sub.keywords[0].keywords[0].messages.create('Message')
+        sub.tests.create('test', doc='tdoc')
+        sub.tests[0].keywords.create('koowee', doc='kdoc')
+        return suite
 
 
 if __name__ == '__main__':
