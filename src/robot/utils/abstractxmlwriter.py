@@ -11,13 +11,14 @@
 #  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
+import re
 
 from unic import unic
 
 
 _ILLEGAL_CHARS_IN_XML = u'\x00\x01\x02\x03\x04\x05\x06\x07\x08\x0b\x0c\x0e' \
     + u'\x0f\x10\x11\x12\x13\x14\x15\x16\x17\x18\x19\x1a\x1b\x1c\x1d\x1e\x1f\ufffe'
-
+_ILLEGAL_CHARS_IN_XML_PATTERN = re.compile('['+_ILLEGAL_CHARS_IN_XML+']')
 
 class AbstractXmlWriter:
 
@@ -34,11 +35,8 @@ class AbstractXmlWriter:
 
     def _escape(self, content):
         content = unic(content)
-        for char in _ILLEGAL_CHARS_IN_XML:
-            # Avoid bug http://ironpython.codeplex.com/workitem/29402
-            if char in content:
-                content = content.replace(char, '')
-        return content
+        # Avoid bug http://ironpython.codeplex.com/workitem/29402
+        return _ILLEGAL_CHARS_IN_XML_PATTERN.sub('', content)
 
     def content(self, content):
         if content is not None:
