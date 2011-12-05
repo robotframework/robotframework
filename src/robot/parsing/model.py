@@ -103,7 +103,7 @@ class _TestData(object):
 
         See also :py:meth:`robot.writer.serializer.Serializer.serialize`
         """
-        Serializer().serialize(self, **options)
+        return Serializer().serialize(self, **options)
 
 
 class TestCaseFile(_TestData):

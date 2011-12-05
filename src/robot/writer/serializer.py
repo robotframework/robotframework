@@ -31,7 +31,8 @@ class Serializer(object):
         context = SerializationContext(datafile, **options)
         self._writer = FileWriter(context)
         self._serialize(context.datafile)
-        context.finish()
+        self._writer.close()
+        return context.finish()
 
     def _serialize(self, datafile):
         for table in datafile:
@@ -91,10 +92,6 @@ class SerializationContext(object):
     serializing a test data file.
     """
 
-    def finish(self):
-        if self._given_output is None:
-            self._output.close()
-
     def __init__(self, datafile, path=None, format=None, output=None,
                  pipe_separated=False, line_separator=os.linesep):
         """
@@ -132,9 +129,19 @@ class SerializationContext(object):
     def format(self):
         return self._format_from_path() or self._format or self._format_from_file()
 
+    def finish(self):
+        if self._given_output is None:
+            self._output.close()
+        return self._get_source()
+
     def _get_source(self):
-        return self._path or \
-               getattr(self.datafile, 'initfile', self.datafile.source)
+        return self._path or '%s.%s' % (self._basename(), self.format)
+
+    def _basename(self):
+        return os.path.splitext(self._source_from_file())[0]
+
+    def _source_from_file(self):
+        return getattr(self.datafile, 'initfile', self.datafile.source)
 
     def _format_from_path(self):
         if not self._path:
@@ -142,7 +149,7 @@ class SerializationContext(object):
         return self._format_from_extension(self._path)
 
     def _format_from_file(self):
-        return self._format_from_extension(self._get_source())
+        return self._format_from_extension(self._source_from_file())
 
     def _format_from_extension(self, path):
         return os.path.splitext(path)[1][1:].lower()

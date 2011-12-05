@@ -17,8 +17,11 @@ class TestOutput(unittest.TestCase):
     def test_given_path_override_source(self):
         self._assert_source(TXT_SOURCE, source=HTML_SOURCE, path=TXT_SOURCE)
 
-    def _assert_source(self, expected, source=None, path=None):
-        ctx = SerializationContext(TestCaseFile(source=source), path=path)
+    def test_given_format_overrides_source_extension(self):
+        self._assert_source(TXT_SOURCE, HTML_SOURCE, format='txt')
+
+    def _assert_source(self, expected, source=None, path=None, format=None):
+        ctx = SerializationContext(TestCaseFile(source=source), path=path, format=format)
         assert_equals(ctx._get_source(), expected)
 
 
