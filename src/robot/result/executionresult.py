@@ -15,7 +15,7 @@
 from __future__ import with_statement
 
 from robot.errors import DataError
-from robot.model.statistics import Statistics
+from robot.model import Statistics
 from robot.utils import ET, XmlSource
 
 from .executionerrors import ExecutionErrors
