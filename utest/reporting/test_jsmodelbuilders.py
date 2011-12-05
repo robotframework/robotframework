@@ -154,5 +154,32 @@ class TestBuildTestSuite(unittest.TestCase):
                 raise AssertionError("Item '%s' has invalid type '%s'" % (item, type(item)))
 
 
+class TestSplitting(unittest.TestCase):
+
+    def test_test_keywords(self):
+        suite = TestSuite(name='suite')
+        suite.tests = [TestCase('t1'), TestCase('t2')]
+        suite.tests[0].keywords = [Keyword('t1-k1'), Keyword('t1-k2')]
+        suite.tests[0].keywords[0].keywords = [Keyword('t1-k1-k1')]
+        suite.tests[1].keywords = [Keyword('t2-k1')]
+        builder = JsModelBuilder(split_log=True)
+        tests = builder._build_suite(suite)[-3]
+        assert_equals(tests[0][-1], 1)
+        assert_equals(tests[1][-1], 2)
+        assert_equals(builder.dump_strings(), ['*', '*suite', '*t1', '*t2'])
+        #assert_equals(builder.split_results, [])
+
+    def test_suite_keywords(self):
+        suite = TestSuite(name='suite')
+        suite.keywords = [Keyword('k1', type='setup'), Keyword('k2', type='teardown')]
+        suite.keywords[0].keywords = [Keyword('k1-k2')]
+        builder = JsModelBuilder(split_log=True)
+        kws = builder._build_suite(suite)[-2]
+        assert_equals(kws[0][-2], 1)
+        assert_equals(kws[1][-2], 2)
+        assert_equals(builder.dump_strings(), ['*', '*suite', '*k1', '*k2'])
+        #assert_equals(builder.split_results, [])
+
+
 if __name__ == '__main__':
     unittest.main()

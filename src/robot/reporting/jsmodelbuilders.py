@@ -22,10 +22,12 @@ from .parsingcontext import TextCache as StringCache
 # TODO: Replace old context with this one
 class NewParsingContext(object):
 
-    def __init__(self, log_path=None):
+    def __init__(self, log_path=None, split_log=False):
         self._log_dir = os.path.dirname(log_path) if log_path else None
-        self._strings = StringCache()
+        self._split = split_log
+        self._strings = self._orig_strings = StringCache()
         self.basemillis = None
+        self.split_results = []
 
     def string(self, string):
         return self._strings.add(string)
@@ -51,6 +53,17 @@ class NewParsingContext(object):
             return get_link_path(source, self._log_dir)
         return ''
 
+    def start_splitting(self):
+        if self._split:
+            self._strings = StringCache()
+
+    def end_splitting(self, data):
+        if not self._split:
+            return data
+        self.split_results.append((data, self._strings.dump()))
+        self._strings = self._orig_strings
+        return len(self.split_results)
+
 
 # TODO: Change order of items in JS model to be more consistent with "normal" model?
 
@@ -58,11 +71,12 @@ class JsModelBuilder(object):
     _statuses = {'FAIL': 0, 'PASS': 1, 'NOT_RUN': 2}
     _kw_types = {'kw': 0, 'setup': 1, 'teardown': 2, 'for': 3, 'foritem': 4}
 
-    def __init__(self, log_path=None):
-        self._context = NewParsingContext(log_path)
+    def __init__(self, log_path=None, split_log=False):
+        self._context = NewParsingContext(log_path, split_log)
         self._string = self._context.string
         self._timestamp = self._context.timestamp
         self._relative_source = self._context.relative_source
+        self.split_results = self._context.split_results
 
     def _html(self, string):
         return self._string(html_format(string))
@@ -82,7 +96,7 @@ class JsModelBuilder(object):
                 self._get_status(suite),
                 tuple(self._build_suite(s) for s in suite.suites),
                 tuple(self._build_test(t) for t in suite.tests),
-                tuple(self._build_keyword(k) for k in suite.keywords),
+                tuple(self._build_keyword(k, split=True) for k in suite.keywords),
                 self._get_statistics(suite))
 
     def _yield_metadata(self, suite):
@@ -111,16 +125,22 @@ class JsModelBuilder(object):
                 self._html(test.doc),
                 tuple(self._string(t) for t in test.tags),
                 self._get_status(test),
-                tuple(self._build_keyword(k) for k in test.keywords))
+                self._build_keywords_with_splitting(test.keywords))
 
-    def _build_keyword(self, kw):
+    def _build_keywords_with_splitting(self, kws, split=True):
+        if split:
+            self._context.start_splitting()
+        ret = tuple(self._build_keyword(k) for k in kws)
+        return self._context.end_splitting(ret) if split else ret
+
+    def _build_keyword(self, kw, split=False):
         return (self._kw_types[kw.type],
                 self._string(kw.name),
                 self._string(kw.timeout),
                 self._html(kw.doc),
                 self._string(', '.join(kw.args)),
                 self._get_status(kw),
-                tuple(self._build_keyword(k) for k in kw.keywords),
+                self._build_keywords_with_splitting(kw.keywords, split),
                 tuple(self._build_message(m) for m in kw.messages))
 
     def _build_message(self, msg):
