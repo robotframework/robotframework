@@ -13,8 +13,9 @@
 #  limitations under the License.
 
 import os.path
+from contextlib import contextmanager
 
-from robot.utils import timestamp_to_secs, get_link_path
+from robot.utils import timestamp_to_secs, get_link_path, html_format
 from robot.output import LEVELS
 
 from .parsingcontext import TextCache as StringCache
@@ -24,7 +25,7 @@ class NewParsingContext(object):
 
     def __init__(self, log_path=None):
         self._log_dir = os.path.dirname(log_path) if log_path else None
-        self._strings = StringCache()
+        self._strings = self._orig_strings = StringCache()
         self.basemillis = None
 
     def string(self, string):
@@ -51,6 +52,13 @@ class NewParsingContext(object):
             return get_link_path(source, self._log_dir)
         return ''
 
+    @property
+    @contextmanager
+    def splitting(self):
+        self._strings = StringCache()
+        yield self
+        self._strings = self._orig_strings
+
 
 # TODO: Change order of items in JS model to be more consistent with "normal" model?
 
@@ -58,11 +66,16 @@ class JsModelBuilder(object):
     _statuses = {'FAIL': 0, 'PASS': 1, 'NOT_RUN': 2}
     _kw_types = {'kw': 0, 'setup': 1, 'teardown': 2, 'for': 3, 'foritem': 4}
 
-    def __init__(self, log_path=None):
+    def __init__(self, log_path=None, split_log=False):
         self._context = NewParsingContext(log_path)
+        self._split_log = split_log
         self._string = self._context.string
         self._timestamp = self._context.timestamp
         self._relative_source = self._context.relative_source
+        self.split_results = []
+
+    def _html(self, string):
+        return self._string(html_format(string))
 
     def dump_strings(self):
         return self._context.dump_strings()
@@ -74,18 +87,18 @@ class JsModelBuilder(object):
         return (self._string(suite.name),
                 self._string(suite.source),
                 self._relative_source(suite.source),
-                self._string(suite.doc),
+                self._html(suite.doc),
                 tuple(self._yield_metadata(suite)),
                 self._get_status(suite),
                 tuple(self._build_suite(s) for s in suite.suites),
                 tuple(self._build_test(t) for t in suite.tests),
-                tuple(self._build_keyword(k) for k in suite.keywords),
+                tuple(self._build_keyword(k, split=True) for k in suite.keywords),
                 self._get_statistics(suite))
 
     def _yield_metadata(self, suite):
         for name, value in suite.metadata.iteritems():
             yield self._string(name)
-            yield self._string(value)
+            yield self._html(value)
 
     def _get_status(self, item):
         model = (self._statuses[item.status],
@@ -105,19 +118,30 @@ class JsModelBuilder(object):
         return (self._string(test.name),
                 self._string(test.timeout),
                 int(test.critical == 'yes'),
-                self._string(test.doc),
+                self._html(test.doc),
                 tuple(self._string(t) for t in test.tags),
                 self._get_status(test),
-                tuple(self._build_keyword(k) for k in test.keywords))
+                self._build_keywords_with_splitting(test.keywords))
 
-    def _build_keyword(self, kw):
+    def _build_keywords_with_splitting(self, kws, split=True):
+        if not (split and self._split_log):
+            return self._build_keywords(kws)
+        with self._context.splitting as ctx:
+            model = self._build_keywords(kws)
+            self.split_results.append((model, ctx.dump_strings()))
+        return len(self.split_results)
+
+    def _build_keywords(self, kws):
+        return tuple(self._build_keyword(k) for k in kws)
+
+    def _build_keyword(self, kw, split=False):
         return (self._kw_types[kw.type],
                 self._string(kw.name),
                 self._string(kw.timeout),
-                self._string(kw.doc),
+                self._html(kw.doc),
                 self._string(', '.join(kw.args)),
                 self._get_status(kw),
-                tuple(self._build_keyword(k) for k in kw.keywords),
+                self._build_keywords_with_splitting(kw.keywords, split),
                 tuple(self._build_message(m) for m in kw.messages))
 
     def _build_message(self, msg):
