@@ -47,7 +47,7 @@ class TestBuildTestSuite(unittest.TestCase):
 
     def test_message_with_values(self):
         msg = Message('Message', 'WARN', timestamp='20111204 22:04:03.210')
-        self._verify_message(msg, 'Message', 'WARN', 0)
+        self._verify_message(msg, 'Message', 3, 0)
 
     def test_message_with_html(self):
         self._verify_message(Message('<img>'), '&lt;img&gt;')
@@ -84,15 +84,15 @@ class TestBuildTestSuite(unittest.TestCase):
     def test_timestamps(self):
         suite = TestSuite(starttime='20111205 00:33:33.333')
         suite.keywords.create(starttime='20111205 00:33:33.334')
-        suite.keywords[0].messages.create(timestamp='20111205 00:33:33.343')
-        suite.keywords[0].messages.create(timestamp='20111205 00:33:33.344')
+        suite.keywords[0].messages.create('Message', timestamp='20111205 00:33:33.343')
+        suite.keywords[0].messages.create(level='DEBUG', timestamp='20111205 00:33:33.344')
         suite.tests.create(starttime='20111205 00:33:34.333')
         builder = JsModelBuilder()
         model = builder._build_suite(suite)
         self._verify_status(model[5], start=0)
         self._verify_status(model[-2][0][5], start=1)
         self._verify_mapped(model[-2][0][-1], builder.dump_strings(),
-                            ((10, 'INFO', ''), (11, 'INFO', '')))
+                            ((10, 2, 'Message'), (11, 1, '')))
         self._verify_status(model[-3][0][5], start=1000)
 
     def _verify_status(self, model, status=0, start=None, elapsed=0):
@@ -118,7 +118,7 @@ class TestBuildTestSuite(unittest.TestCase):
                                       doc, args, (status, start, elapsed),
                                       keywords, messages)
 
-    def _verify_message(self, msg, message='', level='INFO', timestamp=None):
+    def _verify_message(self, msg, message='', level=2, timestamp=None):
         return self._build_and_verify('message', msg, timestamp, level, message)
 
     def _build_and_verify(self, type, item, *expected):
