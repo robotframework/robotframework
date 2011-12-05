@@ -1,0 +1,33 @@
+*** Settings ***
+Suite Setup   Do Some loops   Some logging conten is written here with bad grammar and typoes
+Suite Teardown   Log big message   10000
+
+*** test cases ***
+Some
+    [Setup]    Do Some loops   TEst setupfdfasdfd fdasfdasf  10
+    Do some loops   ${TESTNAME}   100
+    Log Big Message   15000
+
+
+Other
+    Do some loops   ${TESTNAME}   100
+    Log big message
+    :FOR  ${i}  IN RANGE  10
+    \   Log big message   ${i+10000}
+
+Third
+    :For  ${i}  IN RANGE  100
+    \   Do Some Loops   lop
+
+
+*** keywords ***
+Do some loops
+    [Arguments]   ${message}   ${howmany}=100
+    :FOR  ${i}  IN RANGE   ${howmany}
+    \    ${msg}=   Evaluate   "${message} " * ${i}
+    \    Log  ${msg}
+
+Log big message
+    [arguments]   ${howbig?}=100000
+    ${msg}=  Evaluate   "gashfjkghdfak ggsdjkfghsdjkf hgdkfjshg sdfkjhgsdfjkgh sdjfhgjk dfhgsdfhgdjkfhgsdjkfhgsdjkfhg grqwuirouteiryteuirhgklfgdfsghsdfkjghsdfkjhg\\n jhgsdjkfhgsdjkfh\\n gkjfhgsdjkfh gkjfdhsjhkgsdjfh gkjfdhgjksdfhgkjsdfh gkjhgjkdfshgjksdfhgkjsdfhgsdjkfhgjkdfhsjkgsdhfjkgsdfh gfgsdhkgsdfhgkjsdfhgkj\\n fdhgsdjkfhgdjkfshgsdkfjhgdfkhg" * ${howbig?}
+    Log  ${msg}
