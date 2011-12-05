@@ -17,9 +17,12 @@ class JsonDumper(object):
 
     def __init__(self, output):
         self._output = output
-        self._data_dumpers = [_IterableDumper(self), _MappingDumper(self),
-                              _StringDumper(self), _IntegerDumper(self),
-                              _DictDumper(self), _NoneDumper(self)]
+        self._data_dumpers = [_MappingDumper(self),
+                              _IntegerDumper(self),
+                              _StringDumper(self),
+                              _IterableDumper(self), # Checking iterable is expensive
+                              _DictDumper(self),
+                              _NoneDumper(self)]
 
     def dump(self, data, mapping=None):
         for dumper in self._data_dumpers:
