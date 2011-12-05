@@ -56,9 +56,8 @@ class _WriterHelper(object):
     def _write(self, data):
         self._output.write(data)
 
-    def close(self, close_output=True):
-        if close_output:
-            self._output.close()
+    def close(self):
+        pass
 
     def start_settings(self):
         self._write_header(self._setting_titles)
@@ -288,9 +287,8 @@ class HtmlFileWriter(_WriterHelper):
         self._writer = utils.HtmlWriter(StringIO())
         self._table_replacer = HtmlTableReplacer()
 
-    def close(self, close_output=True):
+    def close(self):
         self._output.write(self._content.encode('UTF-8'))
-        _WriterHelper.close(self, close_output)
 
     def end_settings(self):
         _WriterHelper.end_settings(self)
