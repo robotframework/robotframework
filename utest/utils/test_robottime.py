@@ -129,47 +129,20 @@ class TestTime(unittest.TestCase):
         assert_equal(get_start_timestamp(millissep='.'), start)
 
     def test_timestamp_to_secs_with_default(self):
-        assert_equal(timestamp_to_secs('20070920 16:15:14.123'), EXAMPLE_TIME)
+        assert_equal(timestamp_to_secs('20070920 16:15:14.123'), EXAMPLE_TIME+0.123)
 
     def test_timestamp_to_secs_with_seps(self):
         result = timestamp_to_secs('2007-09-20#16x15x14M123', ('-','#','x','M'))
-        assert_equal(result, EXAMPLE_TIME)
+        assert_equal(result, EXAMPLE_TIME+0.123)
 
     def test_timestamp_to_secs_with_millis(self):
-        result = timestamp_to_secs('20070920 16:15:14.123', millis=True)
-        assert_equal(result, EXAMPLE_TIME + 0.123)
+        result = timestamp_to_secs('20070920 16:15:14.123')
+        assert_equal(result, EXAMPLE_TIME+0.123)
 
-    def test_get_elapsed_time_without_millis(self):
-        starttime = '20060526 14:01:10'
-        for endtime, expected in [('20060526 14:01:10', 0),
-                                  ('20060526 14:01:11', 1),
-                                  ('20060526 14:01:21', 11),
-                                  ('20060526 14:02:09', 59),
-                                  ('20060526 14:02:10', 60),
-                                  ('20060526 14:02:11', 61),
-                                  ('20060526 14:27:42', 26*60+32),
-                                  ('20060526 15:01:09', 60*60-1),
-                                  ('20060526 15:01:10', 60*60),
-                                  ('20060526 15:01:11', 60*60+1),
-                                  ('20060526 23:59:59', 35929),
-                                  ('20060527 00:00:00', 35930),
-                                  ('20060527 00:00:01', 35931),
-                                  ('20060527 00:01:10', 36000),
-                                  ('20060527 14:01:10', 24*60*60),
-                                  ('20060530 18:01:09', 100*60*60-1),
-                                  ('20060530 18:01:10', 100*60*60),
-                                  ('20060530 18:01:11', 100*60*60+1),
-                                  ('20060601 14:01:09', 144*60*60-1),
-                                  ('20060601 14:01:10', 144*60*60),
-                                  ('20060601 14:01:11', 144*60*60+1)]:
-            actual = get_elapsed_time(starttime, endtime)
-            assert_equal(actual, expected*1000, endtime)
-
-    def test_get_elapsed_time_with_millis(self):
+    def test_get_elapsed_time(self):
         starttime = '20060526 14:01:10.500'
         for endtime, expected in [('20060526 14:01:10.500', 0),
-                                  ('20060526 14:01:10.5',   0),
-                                  ('20060526 14:01:10.5000',0),
+                                  ('20060526 14:01:10.500',0),
                                   ('20060526 14:01:10.501', 1),
                                   ('20060526 14:01:10.777', 277),
                                   ('20060526 14:01:11.000', 500),
@@ -177,33 +150,21 @@ class TestTime(unittest.TestCase):
                                   ('20060526 14:01:11.499', 999),
                                   ('20060526 14:01:11.500', 1000),
                                   ('20060526 14:01:11.501', 1001),
-                                  ('20060526 14:01:11',     500),
-                                  ('20060526 14:01:11.5',   1000),
-                                  ('20060526 14:01:11.51',  1010),
-                                  ('20060526 14:01:11.5123',1012),
+                                  ('20060526 14:01:11.000', 500),
+                                  ('20060526 14:01:11.500', 1000),
+                                  ('20060526 14:01:11.510', 1010),
+                                  ('20060526 14:01:11.512',1012),
                                   ('20060601 14:01:10.499', 518399999),
                                   ('20060601 14:01:10.500', 518400000),
                                   ('20060601 14:01:10.501', 518400001)]:
             actual = get_elapsed_time(starttime, endtime)
             assert_equal(actual, expected, endtime)
 
-    def test_get_elapsed_time_negative_without_millis(self):
-        starttime = '20060526 14:01:10'
-        for endtime, expected in [('20060526 14:01:09', -1),
-                                  ('20060526 14:00:11', -59),
-                                  ('20060526 14:00:10', -60),
-                                  ('20060526 14:00:09', -61),
-                                  ('20060521 14:01:11', -432000+1),
-                                  ('20060521 14:01:10', -432000),
-                                  ('20060521 14:01:09', -432000-1)]:
-            actual = get_elapsed_time(starttime, endtime)
-            assert_equal(actual, expected*1000, endtime)
-
-    def test_get_elapsed_time_negative_with_millis(self):
+    def test_get_elapsed_time_negative(self):
         starttime = '20060526 14:01:10.500'
         for endtime, expected in [('20060526 14:01:10.499', -1),
-                                  ('20060526 14:01:10',     -500),
-                                  ('20060526 14:01:09.9',   -600),
+                                  ('20060526 14:01:10.000', -500),
+                                  ('20060526 14:01:09.900', -600),
                                   ('20060526 14:01:09.501', -999),
                                   ('20060526 14:01:09.500', -1000),
                                   ('20060526 14:01:09.499', -1001)]:

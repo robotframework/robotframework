@@ -202,7 +202,7 @@ class TestSuite(BaseTestSuite, _SuiteReader):
         if not timestamp or utils.eq(timestamp, 'N/A'):
             return 'N/A'
         try:
-            secs = utils.timestamp_to_secs(timestamp, seps=' :.-_', millis=True)
+            secs = utils.timestamp_to_secs(timestamp, seps=' :.-_')
         except ValueError:
             return 'N/A'
         return utils.secs_to_timestamp(secs, millis=True)

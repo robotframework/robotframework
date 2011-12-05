@@ -73,7 +73,7 @@ class SuiteConfigurer(object):
         if not timestamp or utils.eq(timestamp, 'N/A'):
             return None
         try:
-            secs = utils.timestamp_to_secs(timestamp, seps=' :.-_', millis=True)
+            secs = utils.timestamp_to_secs(timestamp, seps=' :.-_')
         except ValueError:
             return None
         return utils.secs_to_timestamp(secs, millis=True)

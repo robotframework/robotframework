@@ -256,9 +256,11 @@ def parse_time(timestr):
             raise ValueError("Epoch time must be positive (got %s)" % timestr)
         return ret
     try:
-        return timestamp_to_secs(timestr, (' ', ':', '-', '.'))
+        secs = timestamp_to_secs(timestr, (' ', ':', '-', '.'))
     except ValueError:
         pass
+    else:
+        return int(round(secs))
     normtime = timestr.lower().replace(' ', '')
     now = int(time.time())
     if normtime == 'now':
@@ -275,14 +277,13 @@ def get_timestamp(daysep='', daytimesep=' ', timesep=':', millissep='.'):
     return format_time(_get_timetuple(), daysep, daytimesep, timesep, millissep)
 
 
-def timestamp_to_secs(timestamp, seps=' :.', millis=False):
+def timestamp_to_secs(timestamp, seps=None):
     try:
         secs = _timestamp_to_millis(timestamp, seps) / 1000.0
     except (ValueError, OverflowError):
         raise ValueError("Invalid timestamp '%s'" % timestamp)
-    if millis:
+    else:
         return round(secs, 3)
-    return int(round(secs))
 
 
 def secs_to_timestamp(secs, seps=None, millis=False):
@@ -303,8 +304,8 @@ def get_elapsed_time(start_time, end_time):
     """Returns the time between given timestamps in milliseconds."""
     if start_time == 'N/A' or end_time == 'N/A':
         return 0
-    start_millis = _timestamp_to_millis(start_time, seps=' :.')
-    end_millis = _timestamp_to_millis(end_time, seps=' :.')
+    start_millis = _timestamp_to_millis(start_time)
+    end_millis = _timestamp_to_millis(end_time)
     # start/end_millis can be long but we want to return int when possible
     return int(end_millis - start_millis)
 
@@ -324,20 +325,26 @@ def elapsed_time_to_string(elapsed_millis):
     return '%s%02d:%02d:%02d.%03d' % (pre, hours, mins, secs, millis)
 
 
-def _timestamp_to_millis(timestamp, seps):
-    Y, M, D, h, m, s, millis = _split_timestamp(timestamp, seps)
+def _timestamp_to_millis(timestamp, seps=None):
+    if seps:
+        timestamp = _normalize_timestamp(timestamp, seps)
+    Y, M, D, h, m, s, millis = _split_timestamp(timestamp)
     secs = time.mktime(datetime.datetime(Y, M, D, h, m, s).timetuple())
     return int(round(1000*secs + millis))
 
-def _split_timestamp(timestamp, seps):
+def _normalize_timestamp(ts, seps):
     for sep in seps:
-        timestamp = timestamp.replace(sep, '')
-    timestamp = timestamp.ljust(17, '0')
+        ts = ts.replace(sep, '')
+    ts = ts.ljust(17, '0')
+    return '%s%s%s %s:%s:%s.%s' % (ts[:4], ts[4:6], ts[6:8], ts[8:10],
+                                   ts[10:12], ts[12:14], ts[14:17])
+
+def _split_timestamp(timestamp):
     years = int(timestamp[:4])
     mons = int(timestamp[4:6])
     days = int(timestamp[6:8])
-    hours = int(timestamp[8:10])
-    mins = int(timestamp[10:12])
-    secs = int(timestamp[12:14])
-    millis = int(timestamp[14:17])
+    hours = int(timestamp[9:11])
+    mins = int(timestamp[12:14])
+    secs = int(timestamp[15:17])
+    millis = int(timestamp[18:21])
     return years, mons, days, hours, mins, secs, millis
