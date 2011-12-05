@@ -275,7 +275,7 @@ def get_timestamp(daysep='', daytimesep=' ', timesep=':', millissep='.'):
     return format_time(_get_timetuple(), daysep, daytimesep, timesep, millissep)
 
 
-def timestamp_to_secs(timestamp, seps=('', ' ', ':', '.'), millis=False):
+def timestamp_to_secs(timestamp, seps=' :.', millis=False):
     try:
         secs = _timestamp_to_millis(timestamp, seps) / 1000.0
     except (ValueError, OverflowError):
@@ -299,21 +299,12 @@ def get_start_timestamp(daysep='', daytimesep=' ', timesep=':', millissep=None):
     return format_time(START_TIME, daysep, daytimesep, timesep, millissep)
 
 
-def get_elapsed_time(start_time, end_time=None, seps=('', ' ', ':', '.')):
-    """Returns the time between given timestamps in milliseconds.
-
-    If 'end_time' is not given current timestamp is got with
-    get_timestamp using given 'seps'.
-
-    'seps' is a tuple containing 'daysep', 'daytimesep', 'timesep' and
-    'millissep' used in given timestamps.
-    """
+def get_elapsed_time(start_time, end_time):
+    """Returns the time between given timestamps in milliseconds."""
     if start_time == 'N/A' or end_time == 'N/A':
         return 0
-    if not end_time:
-        end_time = get_timestamp(*seps)
-    start_millis = _timestamp_to_millis(start_time, seps)
-    end_millis = _timestamp_to_millis(end_time, seps)
+    start_millis = _timestamp_to_millis(start_time, seps=' :.')
+    end_millis = _timestamp_to_millis(end_time, seps=' :.')
     # start/end_millis can be long but we want to return int when possible
     return int(end_millis - start_millis)
 
@@ -340,8 +331,7 @@ def _timestamp_to_millis(timestamp, seps):
 
 def _split_timestamp(timestamp, seps):
     for sep in seps:
-        if sep:
-            timestamp = timestamp.replace(sep, '')
+        timestamp = timestamp.replace(sep, '')
     timestamp = timestamp.ljust(17, '0')
     years = int(timestamp[:4])
     mons = int(timestamp[4:6])
