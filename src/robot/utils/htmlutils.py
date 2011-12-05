@@ -21,6 +21,7 @@ def html_escape(text, formatting=False):
     # TODO: Remove formatting attribute after RIDE does not use it anymore
     if formatting:
         return html_format(text).replace('\t', '&nbsp;'*8).replace('  ', ' &nbsp;').replace('\n','<br />\n')
+    # TODO: Plenty of low hanging performance enhancements here!
     return _HtmlEscaper().format(text)
 
 
