@@ -13,6 +13,7 @@
 #  limitations under the License.
 
 from robot.utils import timestamp_to_secs
+from robot.output import LEVELS
 
 from .parsingcontext import TextCache as StringCache
 
@@ -110,5 +111,5 @@ class JsModelBuilder(object):
     def _build_message(self, msg):
         # TODO: linking
         return (self._timestamp(msg.timestamp),
-                self._string(msg.level),
+                LEVELS[msg.level],
                 self._string(msg.html_message))
