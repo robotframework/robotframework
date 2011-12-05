@@ -133,7 +133,8 @@ class SerializationContext(object):
         return self._format_from_path() or self._format or self._format_from_file()
 
     def _get_source(self):
-        return getattr(self.datafile, 'initfile', self.datafile.source)
+        return self._path or \
+               getattr(self.datafile, 'initfile', self.datafile.source)
 
     def _format_from_path(self):
         if not self._path:
