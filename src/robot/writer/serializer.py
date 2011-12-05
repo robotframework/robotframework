@@ -91,18 +91,25 @@ class SerializationContext(object):
     serializing a test data file.
     """
 
-    def __init__(self, datafile, output=None, format=None, pipe_separated=False,
-                 line_separator=os.linesep):
+    def finish(self):
+        if self._given_output is None:
+            self._output.close()
+
+    def __init__(self, datafile, path=None, format=None, output=None,
+                 pipe_separated=False, line_separator=os.linesep):
         """
         :param datafile: The datafile to be serialized.
         :type datafile: :py:class:`~robot.parsing.model.TestCaseFile`,
             :py:class:`~robot.parsing.model.ResourceFile`,
             :py:class:`~robot.parsing.model.TestDataDirectory`
-        :param output: An open, file-like object used in serialization. If not
-            given, value of `source` attribute of the given `datafile` is used
-            to construct a new file object.
-        :param str format: Serialization format. If not given, read from the
+        :param str path: Output file name. If omitted, basename of the `source`
+            attribute of the given `datafile` is used. If `path` contains
+            extension, it overrides the value of `format` option.
+        :param str format: Serialization format. If omitted, read from the
             extension of the `source` attribute of the given `datafile`.
+        :param output: An open, file-like object used in serialization. If
+            omitted, value of `source` attribute of the given `datafile` is
+            used to construct a new file object.
         :param bool pipe_separated: Whether to use pipes as separator when
             serialization format is txt.
         :param str line_separator: Line separator used in serialization.
@@ -111,12 +118,9 @@ class SerializationContext(object):
         self.pipe_separated = pipe_separated
         self.line_separator = line_separator
         self._given_output = output
-        self._output = output
+        self._path = path
         self._format = format
-
-    def finish(self):
-        if self._given_output is None:
-            self._output.close()
+        self._output = output
 
     @property
     def output(self):
@@ -126,10 +130,18 @@ class SerializationContext(object):
 
     @property
     def format(self):
-        return self._format or self._format_from_file()
+        return self._format_from_path() or self._format or self._format_from_file()
 
     def _get_source(self):
         return getattr(self.datafile, 'initfile', self.datafile.source)
 
+    def _format_from_path(self):
+        if not self._path:
+            return ''
+        return self._format_from_extension(self._path)
+
     def _format_from_file(self):
-        return os.path.splitext(self._get_source())[1][1:].lower()
+        return self._format_from_extension(self._get_source())
+
+    def _format_from_extension(self, path):
+        return os.path.splitext(path)[1][1:].lower()
