@@ -215,13 +215,8 @@ class MessageHandler(_Handler):
     def build(self, msg):
         model = [self._timestamp(msg.timestamp),
                  LEVELS[msg.level],
-                 self._format_message_text(msg)]
+                 self._id(self._format_message_text(msg))]
         self._handle_warning_linking(model, msg)
-        # linking doesn't work without this late _id thing
-        # because the text id:s are different in errors
-        # than in the target test
-        # when texts have been split with splitlog option
-        model[2] = self._id(model[2])
         return model
 
     def _format_message_text(self, msg):
