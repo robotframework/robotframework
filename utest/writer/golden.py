@@ -165,7 +165,6 @@ td.name, th.name {
 <table id="settings" border="1">
 <tr>
 <th class="name">Setting</th>
-<th class="colspan4" colspan="4">Value</th>
 </tr>
 <tr>
 <td class="name">Library</td>
@@ -227,7 +226,6 @@ td.name, th.name {
 <table id="variables" border="1">
 <tr>
 <th class="name">Variable</th>
-<th class="colspan4" colspan="4">Value</th>
 </tr>
 <tr>
 <td class="name">MyVar</td>
@@ -261,8 +259,6 @@ td.name, th.name {
 <table id="testcases" border="1">
 <tr>
 <th class="name">Test Case</th>
-<th>Action</th>
-<th class="colspan3" colspan="3">Arguments</th>
 </tr>
 <tr>
 <td class="name"><a name="test_My Test Case">My Test Case</a></td>
@@ -301,8 +297,6 @@ td.name, th.name {
 <table id="keywords" border="1">
 <tr>
 <th class="name">Keyword</th>
-<th>Action</th>
-<th class="colspan3" colspan="3">Arguments</th>
 </tr>
 <tr>
 <td class="name"><a name="keyword_My Keyword">My Keyword</a></td>
