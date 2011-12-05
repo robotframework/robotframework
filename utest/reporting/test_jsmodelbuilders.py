@@ -113,7 +113,7 @@ class TestBuildTestSuite(unittest.TestCase):
         model = builder._build_suite(suite)
         self._verify_status(model[5], start=0)
         self._verify_status(model[-2][0][5], start=1)
-        self._verify_mapped(model[-2][0][-1], builder.dump_strings(),
+        self._verify_mapped(model[-2][0][-1], builder.strings,
                             ((10, 2, 'Message'), (11, 1, '')))
         self._verify_status(model[-3][0][5], start=1000)
 
@@ -146,7 +146,7 @@ class TestBuildTestSuite(unittest.TestCase):
     def _build_and_verify(self, type, item, *expected):
         builder = JsModelBuilder(log_path=join(CURDIR, 'log.html'))
         model = getattr(builder, '_build_'+type)(item)
-        self._verify_mapped(model, builder.dump_strings(), expected)
+        self._verify_mapped(model, builder.strings, expected)
         return expected
 
     def _verify_mapped(self, model, strings, expected):
@@ -162,7 +162,7 @@ class TestSplitting(unittest.TestCase):
         expected_split = [expected[-3][0][-1], expected[-3][1][-1]]
         expected[-3][0][-1], expected[-3][1][-1] = 1, 2
         model, builder = self._build_and_remap(suite, split_log=True)
-        assert_equals(builder.dump_strings(), ['*', '*suite', '*t1', '*t2'])
+        assert_equals(builder.strings, ['*', '*suite', '*t1', '*t2'])
         assert_equals(model, expected)
         assert_equals([strings for _, strings in builder.split_results],
                       [['*', '*t1-k1', '*t1-k1-k1', '*t1-k2'], ['*', '*t2-k1']])
@@ -179,7 +179,7 @@ class TestSplitting(unittest.TestCase):
 
     def _build_and_remap(self, suite, split_log=False):
         builder = JsModelBuilder(split_log=split_log)
-        model = remap_model(builder._build_suite(suite), builder.dump_strings())
+        model = remap_model(builder._build_suite(suite), builder.strings)
         return self._to_list(model), builder
 
     def _to_list(self, model):
@@ -192,7 +192,7 @@ class TestSplitting(unittest.TestCase):
         expected_split = [expected[-2][0][-2], expected[-2][1][-2]]
         expected[-2][0][-2], expected[-2][1][-2] = 1, 2
         model, builder = self._build_and_remap(suite, split_log=True)
-        assert_equals(builder.dump_strings(), ['*', '*root', '*k1', '*k2'])
+        assert_equals(builder.strings, ['*', '*root', '*k1', '*k2'])
         assert_equals(model, expected)
         assert_equals([strings for _, strings in builder.split_results],
                      [['*', '*k1-k2'], ['*']])
