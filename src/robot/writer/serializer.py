@@ -13,6 +13,7 @@
 #  limitations under the License.
 
 import os
+from robot.writer.writer import TsvFileWriter, SpaceSeparatedTxtWriter
 
 from .writer import FileWriter
 
@@ -30,7 +31,11 @@ class Serializer(object):
         """
         context = SerializationContext(datafile, **options)
         self._writer = FileWriter(context)
-        self._serialize(context.datafile)
+        if self._writer.__class__ in (TsvFileWriter, SpaceSeparatedTxtWriter):
+            # TODO: still missing the pipes and html
+            self._writer.write(datafile)
+        else:
+            self._serialize(context.datafile)
         self._writer.close()
         return context.finish()
 
@@ -118,7 +123,6 @@ class SerializationContext(object):
         self._path = path
         self._format = format
         self._output = output
-
     @property
     def output(self):
         if not self._output:

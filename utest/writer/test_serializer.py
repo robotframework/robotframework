@@ -11,23 +11,25 @@ from robot.writer.serializer import Serializer
 from golden import (GOLDEN_TXT_RESOURCE, GOLDEN_TXT_TESTCASE_FILE,
                     GOLDEN_TXT_PIPE_RESOURCE, GOLDEN_TXT_PIPE_TESTCASE_FILE,
                     GOLDEN_TSV_RESOURCE, GOLDEN_TSV_TESTCASE_FILE,
-                    GOLDEN_HTML_TESTCASE_FILE)
+                    GOLDEN_HTML_TESTCASE_FILE, GOLDEN_ALIGNED_TXT_TESTCASE_FILE)
+from robot.writer.writer import Formatter, TxtFormatter
 
 
-def _create_testcase_file():
+def _create_testcase_file(data):
     tcf = TestCaseFile()
-    TxtReader().read(StringIO.StringIO(GOLDEN_TXT_TESTCASE_FILE),
+    TxtReader().read(StringIO.StringIO(data),
                      FromFilePopulator(tcf))
     return tcf
 
-def _create_resource_file():
+def _create_resource_file(data):
     res = ResourceFile()
-    TxtReader().read(StringIO.StringIO(GOLDEN_TXT_RESOURCE),
+    TxtReader().read(StringIO.StringIO(data),
                     FromFilePopulator(res))
     return res
 
-TESTCASE_FILE = _create_testcase_file()
-RESOURCE_FILE = _create_resource_file()
+TESTCASE_FILE = _create_testcase_file(GOLDEN_TXT_TESTCASE_FILE)
+ALIGNED_TESTCASE_FILE = _create_testcase_file(GOLDEN_ALIGNED_TXT_TESTCASE_FILE)
+RESOURCE_FILE = _create_resource_file(GOLDEN_TXT_RESOURCE)
 
 
 class _SerializerTest(unittest.TestCase):
@@ -53,8 +55,8 @@ class _SerializerTest(unittest.TestCase):
 
     def _assert_result(self, result, expected, linesep=os.linesep):
         for line1, line2 in zip(result.split(linesep), expected.split('\n')):
-            msg = "\n%s\n!=\n%s\n\n%s\n!=\n%s" % (result, expected, repr(line1), repr(line2))
-            assert_equals(line1, line2, msg)
+            msg = "\n%s\n!=\n%s\n" % (result, expected)
+            assert_equals(repr(unicode(line1)), repr(unicode(line2)), msg)
 
 
 class TestTxtSerialization(_SerializerTest):
@@ -71,6 +73,9 @@ class TestTxtSerialization(_SerializerTest):
     def test_serializing_with_different_line_separators(self):
         files = TESTCASE_FILE, GOLDEN_TXT_TESTCASE_FILE
         self._assert_serialization_with_different_line_separators(*files)
+
+    def test_serializing_aligned_txt_test_case_file(self):
+        self._assert_serialization(ALIGNED_TESTCASE_FILE, GOLDEN_ALIGNED_TXT_TESTCASE_FILE)
 
 
 class TestPipeTxtSerialization(_SerializerTest):
@@ -114,6 +119,19 @@ class TestHTMLSerialization(_SerializerTest):
 
     def test_serializer_with_html_testcase_file(self):
         self._assert_serialization(TESTCASE_FILE, GOLDEN_HTML_TESTCASE_FILE)
+
+
+class TestFormatter(unittest.TestCase):
+
+    def test_escaping_empty_cells_at_eol(self):
+        formatter = Formatter(cols=3)
+        assert_equals(formatter.format(['Some', 'text', '', 'with empty'], 0),
+                                       [['Some', 'text', '${EMPTY}'],
+                                        ['...', 'with empty']])
+
+    def test_escaping(self):
+        formatter = TxtFormatter()
+        assert_equals(formatter.format(['so  me']), [['so \ me']])
 
 
 if __name__ == "__main__":

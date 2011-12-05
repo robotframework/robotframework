@@ -573,6 +573,9 @@ class ForLoop(_WithSteps):
     def __iter__(self):
         return iter(self.steps)
 
+    def is_set(self):
+        return True
+
 
 class Step(object):
 

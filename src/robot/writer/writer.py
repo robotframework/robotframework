@@ -151,32 +151,239 @@ class _WriterHelper(object):
         self._write_data([])
 
 
-class TsvFileWriter(_WriterHelper):
-    _setting_titles = ['Setting']
-    _variable_titles = ['Variable']
-    _testcase_titles = ['Test Case']
-    _keyword_titles = ['Keyword']
+class TsvFileWriter(object):
 
     def __init__(self, context):
-        _WriterHelper.__init__(self, context.output, 8)
-        self._writer = csv.writer(self._output, dialect='excel-tab',
+        self._context = context
+        self._writer = csv.writer(context.output, dialect='excel-tab',
                                   lineterminator=context.line_separator)
+        self._formatter = TsvFormatter(8)
 
-    def _get_tcuk_name(self):
-        name = self._tc_name or self._uk_name
-        self._tc_name = self._uk_name = ''
-        return name
+    def write(self, datafile):
+        for table in datafile:
+            if table:
+                {'setting': self._write_table,
+                 'variable': self._write_table,
+                 'keyword': self._write_indented_table,
+                 'testcase': self._write_indented_table}[table.type](table)
+            self._write([])
 
-    def _write_header(self, row, headers=None):
-        self._writer.writerow(['*%s*' % cell for cell in row])
+    def close(self):
+        pass
 
-    def _write_data(self, data, indent=0):
-        data = self._encode(data)
-        for row in self._split_data(data, indent):
-            self._writer.writerow(self._add_padding(row))
+    def _write_table(self, table):
+        self._write_header(table.header)
+        for setting in table:
+            self._write_item(setting)
+
+    def _write_indented_table(self, table):
+        self._write_header(table.header)
+        for keyword in table:
+            self._write([keyword.name])
+            for item in keyword:
+                self._write_item(item, indent=1)
+                self._write_for_loop(item)
+
+    def _write_header(self, header):
+        self._writer.writerow(['*%s*' % cell for cell in header])
+
+    def _write_item(self, item, indent=0):
+        if item.is_set():
+            self._write(item.as_list(), indent)
+
+    def _write_for_loop(self, item):
+        if item.is_for_loop():
+            for sub_step in item:
+                self._write_item(sub_step, indent=2)
+
+    def _write(self, row, indent=0):
+        for row in self._formatter.format(row, indent):
+            self._writer.writerow(row)
 
 
-class SpaceSeparatedTxtWriter(_WriterHelper):
+class TsvFormatter(object):
+    _padding = ''
+
+    def __init__(self, cols=8):
+        self._cols = cols
+        self._formatter = Formatter(self._padding, self._cols)
+
+    def format(self, row, indent):
+        return [self._pad(row) for row in self._formatter.format(row, indent)]
+
+    def _pad(self, row):
+        return row + [self._padding] * (self._cols - len(row))
+
+
+class TxtFormatter(object):
+    _padding = ''
+
+    def __init__(self, cols=8):
+        self._cols = cols
+        self._formatter = Formatter(self._padding, self._cols)
+
+    def format(self, row, indent=0, justifications=[]):
+        rows = self._formatter.format(row, indent)
+        return self._justify(self._escape(rows), justifications)
+
+    def _escape(self, rows):
+        for index, row in enumerate(rows):
+            if len(row) >= 2 and row[0] == '' and row[1] == '':
+                row[1] = '\\'
+            rows[index] = [re.sub('\s\s+(?=[^\s])', lambda match: '\\'.join(match.group(0)), item) for item in row]
+        return rows
+
+    def _justify(self, rows, justifications):
+        for row in rows:
+            for index, col in enumerate(row[:-1]):
+                if len(justifications) <= index:
+                    continue
+                row[index] = row[index].ljust(justifications[index])
+        return rows
+
+
+class Formatter(object):
+
+    def __init__(self, padding='', cols=8):
+        self._cols = cols
+        self._padding = padding
+
+    def format(self, row, indent):
+        return [self._encode(r) for r in self._split_to_rows(row, indent)]
+
+    def _encode(self, row):
+        return [cell.encode('UTF-8').replace('\n', ' ') for cell in row]
+
+    def _split_to_rows(self, data, indent=0):
+        if not data:
+            return [[]]
+        rows = []
+        while data:
+            current, data = self._split(data, indent)
+            rows.append(self._escape_last_empty_cell(current))
+            data = self._add_line_continuation(data)
+        return rows
+
+    def _split(self, data, indent):
+        data = self._indent(data, indent)
+        return data[:self._cols], data[self._cols:]
+
+    def _escape_last_empty_cell(self, row):
+        if not row[-1].strip():
+            row[-1] = '${EMPTY}'
+        return row
+
+    def _add_line_continuation(self, data):
+        if data:
+            data = ['...'] + data
+        return data
+
+    def _indent(self, row, indent):
+        return [self._padding]*indent + row
+
+
+class SpaceSeparatedTxtWriter(object):
+    _separator = ' '*4
+    _FIRST_ROW_LENGTH = 18
+
+    def __init__(self, context):
+        self._output = context.output
+        self._line_separator = context.line_separator
+        self._formatter = TxtFormatter()
+
+    def close(self):
+        pass
+
+    def write(self, datafile):
+        for table in datafile:
+            if table:
+                {'setting': self._write_settings,
+                 'variable': self._write_table,
+                 'keyword': self._write_indented_table,
+                 'testcase': self._write_indented_table}[table.type](table)
+            self._write([])
+
+    def _write_settings(self, settings):
+        self._write_header(settings.header)
+        for setting in settings:
+            self._write_item(setting, justifications=[14])
+
+    def _write_table(self, table):
+        self._write_header(table.header)
+        for setting in table:
+            self._write_item(setting)
+
+    def _write_indented_table(self, table):
+        if table.header[1:]:
+            self._write_aligned_intended_table(table)
+        else:
+            self._write_unaligned_intended_table(table)
+
+    def _write_aligned_intended_table(self, table):
+        justifications = self._count_justifications(table)
+        self._write_header(table.header, justifications)
+        for keyword in table:
+            self._write_keyword(justifications, keyword)
+
+    def _write_keyword(self, justifications, keyword):
+        # TODO: refactor
+        elements = self._write_name_row(keyword, justifications)
+        for item in elements:
+            self._write_item(item, indent=1, justifications=justifications)
+            self._write_for_loop(item)
+
+    def _write_name_row(self, keyword, justifications):
+        if len(keyword.name) > self._FIRST_ROW_LENGTH:
+            self._write([keyword.name])
+            return list(keyword)
+        else:
+            for index, step in enumerate(keyword):
+                if step.is_set():
+                    self._write([keyword.name]+step.as_list(), justifications=justifications)
+                    return list(keyword)[index+1:]
+            self._write([keyword.name])
+            return []
+
+    def _count_justifications(self, table):
+        result = [self._FIRST_ROW_LENGTH]+[len(header) for header in table.header[1:]]
+        for element in [list(kw) for kw in list(table)]:
+            for step in element:
+                for index, col in enumerate(step.as_list()):
+                    index=index+1
+                    if len(result) <= index:
+                        result.append(0)
+                    result[index] = max(len(col), result[index])
+        return result
+
+    def _write_unaligned_intended_table(self, table):
+        self._write_header(table.header)
+        for keyword in table:
+            self._write([keyword.name])
+            for item in keyword:
+                self._write_item(item, indent=1)
+                self._write_for_loop(item)
+
+    def _write_item(self, item, indent=0, justifications=[]):
+        if item.is_set():
+            self._write(item.as_list(), indent, justifications)
+
+    def _write_header(self, header, justifications=[]):
+        self._write(['*** %s ***' % header[0]] + header[1:], justifications=justifications)
+
+    def _write_for_loop(self, item):
+        if item.is_for_loop():
+            for sub_step in item:
+               self._write_item(sub_step, indent=2)
+
+    def _write(self, row, indent=0, justifications=[]):
+        for row in self._formatter.format(row, indent, justifications):
+            self._write_row(row)
+
+    def _write_row(self, row):
+        self._output.write(self._separator.join(row) + self._line_separator)
+
+
+class _SpaceSeparatedTxtWriter(_WriterHelper):
     _setting_titles = 'Settings'
     _variable_titles = 'Variables'
     _testcase_titles = 'Test Cases'
@@ -255,7 +462,7 @@ class SpaceSeparatedTxtWriter(_WriterHelper):
         return self._separator.join(cells)
 
 
-class PipeSeparatedTxtWriter(SpaceSeparatedTxtWriter):
+class PipeSeparatedTxtWriter(_SpaceSeparatedTxtWriter):
 
     _separator = ' | '
 

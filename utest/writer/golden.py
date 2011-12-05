@@ -1,7 +1,7 @@
 _txt_template = '''*** Settings ***
 Library           MyLibrary    argument    WITH NAME    My Alias    # My library comment
 Variables         MyVariables    args    args 2    args 3    args 4    args 5    args 6
-...    args 7    args 8    args 9    args 10    args 11    args 12
+...               args 7    args 8    args 9    args 10    args 11    args 12
 Resource          MyResource args that are part of the name
 
 *** Variables ***
@@ -13,12 +13,12 @@ My Keyword
     [Documentation]    Documentation    # Comment for doc
     # Comment row
     # Comment row 2
-    My Step 1    args    args 2    args 3    args 4    args 5    args 6    args 7
-    ...    args 8    args 9    # step 1 comment
-    : FOR    ${param1}    ${param2}    IN    ${data 1}    ${data 2}    ${data 3}    ${data 4}
-    ...    ${data 5}    ${data 6}
-    \    Loop Step    args    args 2    args 3    args 4    args 5    args 6
-    ...    args 7    args 8    args 9    # loop step comment
+    My Step 1    args    args 2    args 3    args 4    args 5    args 6
+    ...    args 7    args 8    args 9    # step 1 comment
+    : FOR    ${param1}    ${param2}    IN    ${data 1}    ${data 2}    ${data 3}
+    ...    ${data 4}    ${data 5}    ${data 6}
+    \    Loop Step    args    args 2    args 3    args 4    args 5
+    \    ...    args 6    args 7    args 8    args 9    # loop step comment
     \    Loop Step 2
     My Step 2    my step 2 arg    second arg    # step 2 comment
     [Return]    args 1    args 2
@@ -31,9 +31,17 @@ GOLDEN_TXT_TESTCASE_FILE = _txt_template % '''
 My Test Case
     [Documentation]    This is a long comment that spans several columns
     My TC Step 1    my step arg    # step 1 comment
-    My TC Step 2    my step 2 arg    second arg    # step 2 comment
+    My TC Step 2    my step 2 arg    second \ arg    # step 2 comment
     [Teardown]    1 minute    args
 '''
+GOLDEN_ALIGNED_TXT_TESTCASE_FILE = _txt_template % '''
+*** Test Cases ***    header1            header2
+My Test Case          [Documentation]    This is a long comment that spans several columns
+                      My TC Step 1       my step arg                                          # step 1 comment
+                      My TC Step 2       my step \ 2 arg                                      second arg          # step 2 comment
+                      [Teardown]         1 minute
+'''
+
 
 
 _txt_pipe_template = '''| *** Settings *** |
@@ -69,22 +77,23 @@ GOLDEN_TXT_PIPE_TESTCASE_FILE = _txt_pipe_template % '''
 | My Test Case |
 |    | [Documentation] | This is a long comment that spans several columns |
 |    | My TC Step 1 | my step arg | # step 1 comment |
-|    | My TC Step 2 | my step 2 arg | second arg | # step 2 comment |
+|    | My TC Step 2 | my step 2 arg | second \ arg | # step 2 comment |
 |    | [Teardown] | 1 minute | args |
 '''
 
-_tsv_template = '''*Setting*
+_tsv_template = '''*Settings*
 Library\tMyLibrary\targument\tWITH NAME\tMy Alias\t# My library comment\t\t
 Variables\tMyVariables\targs\targs 2\targs 3\targs 4\targs 5\targs 6
 ...\targs 7\targs 8\targs 9\targs 10\targs 11\targs 12\t
 Resource\tMyResource args that are part of the name\t\t\t\t\t\t
 \t\t\t\t\t\t\t
-*Variable*
+*Variables*
 MyVar\tval1\tval2\tval3\tval4\tval5\tval6\tval6
 ...\tval7\tval8\tval9\t# var comment\t\t\t
 \t\t\t\t\t\t\t%s
-*Keyword*
-My Keyword\t[Documentation]\tDocumentation\t# Comment for doc\t\t\t\t
+*Keywords*
+My Keyword\t\t\t\t\t\t\t
+\t[Documentation]\tDocumentation\t# Comment for doc\t\t\t\t
 \t# Comment row\t\t\t\t\t\t
 \t# Comment row 2\t\t\t\t\t\t
 \tMy Step 1\targs\targs 2\targs 3\targs 4\targs 5\targs 6
@@ -92,7 +101,7 @@ My Keyword\t[Documentation]\tDocumentation\t# Comment for doc\t\t\t\t
 \t: FOR\t${param1}\t${param2}\tIN\t${data 1}\t${data 2}\t${data 3}
 \t...\t${data 4}\t${data 5}\t${data 6}\t\t\t
 \t\tLoop Step\targs\targs 2\targs 3\targs 4\targs 5
-\t...\targs 6\targs 7\targs 8\targs 9\t# loop step comment\t
+\t\t...\targs 6\targs 7\targs 8\targs 9\t# loop step comment
 \t\tLoop Step 2\t\t\t\t\t
 \tMy Step 2\tmy step 2 arg\tsecond arg\t# step 2 comment\t\t\t
 \t[Return]\targs 1\targs 2\t\t\t\t
@@ -101,10 +110,11 @@ My Keyword\t[Documentation]\tDocumentation\t# Comment for doc\t\t\t\t
 
 GOLDEN_TSV_RESOURCE = _tsv_template % ''
 GOLDEN_TSV_TESTCASE_FILE = _tsv_template % '''
-*Test Case*
-My Test Case\t[Documentation]\tThis is a long comment that spans several columns\t\t\t\t\t
+*Test Cases*
+My Test Case\t\t\t\t\t\t\t
+\t[Documentation]\tThis is a long comment that spans several columns\t\t\t\t\t
 \tMy TC Step 1\tmy step arg\t# step 1 comment\t\t\t\t
-\tMy TC Step 2\tmy step 2 arg\tsecond arg\t# step 2 comment\t\t\t
+\tMy TC Step 2\tmy step 2 arg\tsecond \ arg\t# step 2 comment\t\t\t
 \t[Teardown]\t1 minute\targs\t\t\t\t
 \t\t\t\t\t\t\t'''
 
@@ -276,7 +286,7 @@ td.name, th.name {
 <td class="name"></td>
 <td>My TC Step 2</td>
 <td>my step 2 arg</td>
-<td>second arg</td>
+<td>second \ arg</td>
 <td># step 2 comment</td>
 </tr>
 <tr>
