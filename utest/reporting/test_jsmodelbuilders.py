@@ -24,6 +24,11 @@ class TestBuildTestSuite(unittest.TestCase):
         self._verify_suite(suite, 'Name', 'Doc', ('m1', 'v1', 'm2', 'v2'),
                            message='Message', start=0, elapsed=42001)
 
+    def test_relative_source(self):
+        self._verify_suite(TestSuite(source='non-existing'), source='non-existing')
+        self._verify_suite(TestSuite(source=__file__), source=__file__,
+                           relsource=os.path.basename(__file__))
+
     def test_default_test(self):
         self._verify_test(TestCase())
 
@@ -99,7 +104,7 @@ class TestBuildTestSuite(unittest.TestCase):
         assert_equals(model, (status, start, elapsed))
 
     def _verify_suite(self, suite, name='', doc='', metadata=(), source='',
-                      relsource='',status=1, message='', start=None, elapsed=0,
+                      relsource='', status=1, message='', start=None, elapsed=0,
                       suites=(), tests=(), keywords=(), stats=(0, 0, 0, 0)):
         return self._build_and_verify('suite', suite, name, source, relsource,
                                       doc, metadata,
@@ -122,7 +127,7 @@ class TestBuildTestSuite(unittest.TestCase):
         return self._build_and_verify('message', msg, timestamp, level, message)
 
     def _build_and_verify(self, type, item, *expected):
-        builder = JsModelBuilder()
+        builder = JsModelBuilder(log_path=join(CURDIR, 'log.html'))
         model = getattr(builder, '_build_'+type)(item)
         self._verify_mapped(model, builder.dump_strings(), expected)
         return expected

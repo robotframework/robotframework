@@ -12,7 +12,9 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from robot.utils import timestamp_to_secs
+import os.path
+
+from robot.utils import timestamp_to_secs, get_link_path
 from robot.output import LEVELS
 
 from .parsingcontext import TextCache as StringCache
@@ -20,7 +22,8 @@ from .parsingcontext import TextCache as StringCache
 # TODO: Replace old context with this one
 class NewParsingContext(object):
 
-    def __init__(self):
+    def __init__(self, log_path=None):
+        self._log_dir = os.path.dirname(log_path) if log_path else None
         self._strings = StringCache()
         self.basemillis = None
 
@@ -40,6 +43,14 @@ class NewParsingContext(object):
             self.basemillis = millis
         return millis - self.basemillis
 
+    def relative_source(self, source):
+        return self.string(self._relative_source(source))
+
+    def _relative_source(self, source):
+        if self._log_dir and source and os.path.exists(source):
+            return get_link_path(source, self._log_dir)
+        return ''
+
 
 # TODO: Change order of items in JS model to be more consistent with "normal" model?
 
@@ -47,10 +58,11 @@ class JsModelBuilder(object):
     _statuses = {'FAIL': 0, 'PASS': 1, 'NOT_RUN': 2}
     _kw_types = {'kw': 0, 'setup': 1, 'teardown': 2, 'for': 3, 'foritem': 4}
 
-    def __init__(self):
-        self._context = NewParsingContext()
+    def __init__(self, log_path=None):
+        self._context = NewParsingContext(log_path)
         self._string = self._context.string
         self._timestamp = self._context.timestamp
+        self._relative_source = self._context.relative_source
 
     def dump_strings(self):
         return self._context.dump_strings()
@@ -61,7 +73,7 @@ class JsModelBuilder(object):
     def _build_suite(self, suite):
         return (self._string(suite.name),
                 self._string(suite.source),
-                self._string(''),   # TODO: relative source
+                self._relative_source(suite.source),
                 self._string(suite.doc),
                 tuple(self._yield_metadata(suite)),
                 self._get_status(suite),
