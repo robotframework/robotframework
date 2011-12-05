@@ -29,23 +29,29 @@ class TestBuildTestSuite(unittest.TestCase):
         self._verify_suite(TestSuite(source=__file__), source=__file__,
                            relsource=os.path.basename(__file__))
 
+    def test_suite_html_formatting(self):
+        self._verify_suite(TestSuite(name='*xxx*', doc='*bold* <&>',
+                                     metadata={'*x*': '*b*', '<': '>'}),
+                           name='*xxx*', doc='<b>bold</b> &lt;&amp;&gt;',
+                           metadata=('*x*', '<b>b</b>', '<', '&gt;'))
+
     def test_default_test(self):
         self._verify_test(TestCase())
 
     def test_test_with_values(self):
-        test = TestCase('Name', 'Doc', ['t1', 't2'], '1 minute', 'PASS', 'Msg',
+        test = TestCase('Name', '*Doc*', ['t1', 't2'], '1 minute', 'PASS', 'Msg',
                         '20111204 19:22:22.222', '20111204 19:22:22.333')
-        self._verify_test(test, 'Name', 'Doc', ('t1', 't2'), 1, '1 minute', 1,
-                          'Msg', 0, 111)
+        self._verify_test(test, 'Name', '<b>Doc</b>', ('t1', 't2'), 1,
+                          '1 minute', 1, 'Msg', 0, 111)
 
     def test_default_keyword(self):
         self._verify_keyword(Keyword())
 
     def test_keyword_with_values(self):
-        kw = Keyword('Name', 'Doc', ['a1', 'a2'], 'setup', '1 second', 'PASS',
+        kw = Keyword('Name', 'http://doc', ['a1', 'a2'], 'setup', '1 second', 'PASS',
                      '20111204 19:42:42.000', '20111204 19:42:42.042')
-        self._verify_keyword(kw, 1, 'Name', 'Doc', 'a1, a2', '1 second', 1,
-                             0, 42)
+        self._verify_keyword(kw, 1, 'Name', '<a href="http://doc">http://doc</a>',
+                             'a1, a2', '1 second', 1, 0, 42)
 
     def test_default_message(self):
         self._verify_message(Message())

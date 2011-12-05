@@ -14,7 +14,7 @@
 
 import os.path
 
-from robot.utils import timestamp_to_secs, get_link_path
+from robot.utils import timestamp_to_secs, get_link_path, html_format
 from robot.output import LEVELS
 
 from .parsingcontext import TextCache as StringCache
@@ -64,6 +64,9 @@ class JsModelBuilder(object):
         self._timestamp = self._context.timestamp
         self._relative_source = self._context.relative_source
 
+    def _html(self, string):
+        return self._string(html_format(string))
+
     def dump_strings(self):
         return self._context.dump_strings()
 
@@ -74,7 +77,7 @@ class JsModelBuilder(object):
         return (self._string(suite.name),
                 self._string(suite.source),
                 self._relative_source(suite.source),
-                self._string(suite.doc),
+                self._html(suite.doc),
                 tuple(self._yield_metadata(suite)),
                 self._get_status(suite),
                 tuple(self._build_suite(s) for s in suite.suites),
@@ -85,7 +88,7 @@ class JsModelBuilder(object):
     def _yield_metadata(self, suite):
         for name, value in suite.metadata.iteritems():
             yield self._string(name)
-            yield self._string(value)
+            yield self._html(value)
 
     def _get_status(self, item):
         model = (self._statuses[item.status],
@@ -105,7 +108,7 @@ class JsModelBuilder(object):
         return (self._string(test.name),
                 self._string(test.timeout),
                 int(test.critical == 'yes'),
-                self._string(test.doc),
+                self._html(test.doc),
                 tuple(self._string(t) for t in test.tags),
                 self._get_status(test),
                 tuple(self._build_keyword(k) for k in test.keywords))
@@ -114,7 +117,7 @@ class JsModelBuilder(object):
         return (self._kw_types[kw.type],
                 self._string(kw.name),
                 self._string(kw.timeout),
-                self._string(kw.doc),
+                self._html(kw.doc),
                 self._string(', '.join(kw.args)),
                 self._get_status(kw),
                 tuple(self._build_keyword(k) for k in kw.keywords),
