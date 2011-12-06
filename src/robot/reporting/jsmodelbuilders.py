@@ -159,6 +159,7 @@ class JsModelBuilder(object):
 
     def _build_message(self, msg, link=True):
         if msg.level == 'WARN' and link:
+            # TODO: Old builder kept id as string. Indexing is better requires JS changes.
             self._msg_links[self._link_key(msg)] = self._string(msg.parent.id)
         return (self._timestamp(msg.timestamp),
                 LEVELS[msg.level],
