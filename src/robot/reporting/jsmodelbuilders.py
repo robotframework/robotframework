@@ -12,15 +12,17 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-import os.path
+from __future__ import with_statement
 from contextlib import contextmanager
+import os.path
 
 from robot.utils import timestamp_to_secs, get_link_path, html_format
 from robot.output import LEVELS
 
+from robot.result.jsexecutionresult import JsExecutionResult
 from .parsingcontext import TextCache as StringCache
 
-# TODO: Replace old context with this one
+
 class NewParsingContext(object):
 
     def __init__(self, log_path=None):
@@ -31,32 +33,32 @@ class NewParsingContext(object):
     def string(self, string):
         return self._strings.add(string)
 
-    def dump_strings(self):
-        return self._strings.dump()
+    def html(self, string):
+        return self.string(html_format(string))
+
+    def relative_source(self, source):
+        rel_source = get_link_path(source, self._log_dir) \
+            if self._log_dir and source and os.path.exists(source) else ''
+        return self.string(rel_source)
 
     def timestamp(self, time):
-        if time == 'N/A':   # TODO: Should we use None in model?
+        if time == 'N/A':   # TODO: Should definitely use None in model!
             return None
-        # Must use `long` and not `int` below due to this IronPython bug:
-        # http://ironpython.codeplex.com/workitem/31549
+        # Must use `long` due to http://ironpython.codeplex.com/workitem/31549
         millis = long(round(timestamp_to_secs(time) * 1000))
         if self.basemillis is None:
             self.basemillis = millis
         return millis - self.basemillis
 
-    def relative_source(self, source):
-        return self.string(self._relative_source(source))
-
-    def _relative_source(self, source):
-        if self._log_dir and source and os.path.exists(source):
-            return get_link_path(source, self._log_dir)
-        return ''
+    @property
+    def strings(self):
+        return self._strings.dump()
 
     @property
     @contextmanager
     def splitting(self):
         self._strings = StringCache()
-        yield self
+        yield
         self._strings = self._orig_strings
 
 
@@ -67,21 +69,27 @@ class JsModelBuilder(object):
     _kw_types = {'kw': 0, 'setup': 1, 'teardown': 2, 'for': 3, 'foritem': 4}
 
     def __init__(self, log_path=None, split_log=False):
-        self._context = NewParsingContext(log_path)
         self._split_log = split_log
+        self._context = NewParsingContext(log_path)
         self._string = self._context.string
+        self._html = self._context.html
         self._timestamp = self._context.timestamp
         self._relative_source = self._context.relative_source
         self.split_results = []
 
-    def _html(self, string):
-        return self._string(html_format(string))
+    @property
+    def strings(self):
+        return self._context.strings
 
-    def dump_strings(self):
-        return self._context.dump_strings()
-
-    def build_from(self, result_from_xml):
-        return self._build_suite(result_from_xml.suite)
+    def build(self, result_from_xml):
+        return JsExecutionResult(
+            suite=self._build_suite(result_from_xml.suite),
+            statistics=self._build_statistics(result_from_xml.statistics),
+            errors=self._build_errors(result_from_xml.errors),
+            strings=self.strings,
+            basemillis=self._context.basemillis,
+            split_results=self.split_results
+        )
 
     def _build_suite(self, suite):
         return (self._string(suite.name),
@@ -121,18 +129,15 @@ class JsModelBuilder(object):
                 self._html(test.doc),
                 tuple(self._string(t) for t in test.tags),
                 self._get_status(test),
-                self._build_keywords_with_splitting(test.keywords))
+                self._build_keywords(test.keywords, split=True))
 
-    def _build_keywords_with_splitting(self, kws, split=True):
+    def _build_keywords(self, kws, split=False):
         if not (split and self._split_log):
-            return self._build_keywords(kws)
-        with self._context.splitting as ctx:
+            return tuple(self._build_keyword(k) for k in kws)
+        with self._context.splitting:
             model = self._build_keywords(kws)
-            self.split_results.append((model, ctx.dump_strings()))
+            self.split_results.append((model, self.strings))
         return len(self.split_results)
-
-    def _build_keywords(self, kws):
-        return tuple(self._build_keyword(k) for k in kws)
 
     def _build_keyword(self, kw, split=False):
         return (self._kw_types[kw.type],
@@ -141,7 +146,7 @@ class JsModelBuilder(object):
                 self._html(kw.doc),
                 self._string(', '.join(kw.args)),
                 self._get_status(kw),
-                self._build_keywords_with_splitting(kw.keywords, split),
+                self._build_keywords(kw.keywords, split),
                 tuple(self._build_message(m) for m in kw.messages))
 
     def _build_message(self, msg):
@@ -149,3 +154,12 @@ class JsModelBuilder(object):
         return (self._timestamp(msg.timestamp),
                 LEVELS[msg.level],
                 self._string(msg.html_message))
+
+    def _build_statistics(self, statistics):
+        return (self._build_stats(statistics.total),
+                self._build_stats(statistics.tags),
+                self._build_stats(statistics.suite))
+
+    def _build_stats(self, stats):
+        return tuple(stat.get_attributes(include_label=True, exclude_empty=True)
+                     for stat in stats)

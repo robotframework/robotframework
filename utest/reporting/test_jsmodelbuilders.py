@@ -1,8 +1,9 @@
 import unittest
-from os.path import abspath, dirname, join, normpath
+from os.path import abspath, dirname, join
 
 from robot.utils.asserts import assert_equals
-from robot.result import ResultFromXml, TestSuite, TestCase, Keyword, Message
+from robot.result import TestSuite, TestCase, Keyword, Message
+from robot.model import Statistics
 from robot.reporting.jsmodelbuilders import *
 from robot.reporting.parsingcontext import TextIndex as StringIndex
 
@@ -113,7 +114,7 @@ class TestBuildTestSuite(unittest.TestCase):
         model = builder._build_suite(suite)
         self._verify_status(model[5], start=0)
         self._verify_status(model[-2][0][5], start=1)
-        self._verify_mapped(model[-2][0][-1], builder.dump_strings(),
+        self._verify_mapped(model[-2][0][-1], builder.strings,
                             ((10, 2, 'Message'), (11, 1, '')))
         self._verify_status(model[-3][0][5], start=1000)
 
@@ -146,7 +147,7 @@ class TestBuildTestSuite(unittest.TestCase):
     def _build_and_verify(self, type, item, *expected):
         builder = JsModelBuilder(log_path=join(CURDIR, 'log.html'))
         model = getattr(builder, '_build_'+type)(item)
-        self._verify_mapped(model, builder.dump_strings(), expected)
+        self._verify_mapped(model, builder.strings, expected)
         return expected
 
     def _verify_mapped(self, model, strings, expected):
@@ -162,7 +163,7 @@ class TestSplitting(unittest.TestCase):
         expected_split = [expected[-3][0][-1], expected[-3][1][-1]]
         expected[-3][0][-1], expected[-3][1][-1] = 1, 2
         model, builder = self._build_and_remap(suite, split_log=True)
-        assert_equals(builder.dump_strings(), ['*', '*suite', '*t1', '*t2'])
+        assert_equals(builder.strings, ['*', '*suite', '*t1', '*t2'])
         assert_equals(model, expected)
         assert_equals([strings for _, strings in builder.split_results],
                       [['*', '*t1-k1', '*t1-k1-k1', '*t1-k2'], ['*', '*t2-k1']])
@@ -179,7 +180,7 @@ class TestSplitting(unittest.TestCase):
 
     def _build_and_remap(self, suite, split_log=False):
         builder = JsModelBuilder(split_log=split_log)
-        model = remap_model(builder._build_suite(suite), builder.dump_strings())
+        model = remap_model(builder._build_suite(suite), builder.strings)
         return self._to_list(model), builder
 
     def _to_list(self, model):
@@ -192,7 +193,7 @@ class TestSplitting(unittest.TestCase):
         expected_split = [expected[-2][0][-2], expected[-2][1][-2]]
         expected[-2][0][-2], expected[-2][1][-2] = 1, 2
         model, builder = self._build_and_remap(suite, split_log=True)
-        assert_equals(builder.dump_strings(), ['*', '*root', '*k1', '*k2'])
+        assert_equals(builder.strings, ['*', '*root', '*k1', '*k2'])
         assert_equals(model, expected)
         assert_equals([strings for _, strings in builder.split_results],
                      [['*', '*k1-k2'], ['*']])
@@ -229,6 +230,53 @@ class TestSplitting(unittest.TestCase):
         sub.tests.create('test', doc='tdoc')
         sub.tests[0].keywords.create('koowee', doc='kdoc')
         return suite
+
+
+class TestBuildStatistics(unittest.TestCase):
+
+    def test_total_stats(self):
+        critical, all = self._build_statistics()[0]
+        self._verify_stat(critical, 2, 0, 'Critical Tests')
+        self._verify_stat(all, 2, 2, 'All Tests')
+
+    def test_tag_stats(self):
+        t2, comb, t1 = self._build_statistics()[1]
+        self._verify_stat(t2, 2, 0, 't2', info='critical', doc='doc', links='t:url')
+        self._verify_stat(comb, 2, 0, 'name', info='combined', combined='t1&t2')
+        self._verify_stat(t1, 2, 2, 't1')
+
+    def test_suite_stats(self):
+        root, sub1, sub2 = self._build_statistics()[2]
+        self._verify_stat(root, 2, 2, 'root', name='root', id='s1')
+        self._verify_stat(sub1, 1, 1, 'root.sub1', name='sub1', id='s1-s1')
+        self._verify_stat(sub2, 1, 1, 'root.sub2', name='sub2', id='s1-s2')
+
+    def _build_statistics(self):
+        return JsModelBuilder()._build_statistics(self._get_statistics())
+
+    def _get_statistics(self):
+        return Statistics(self._get_suite(),
+                          suite_stat_level=2,
+                          tag_stat_combine=[('t1&t2', 'name')],
+                          tag_doc=[('t2', 'doc')],
+                          tag_stat_link=[('?2', 'url', '%1')])
+
+    def _get_suite(self):
+        suite = TestSuite(name='root')
+        suite.set_criticality(critical_tags=['t2'])
+        sub1 = TestSuite(name='sub1')
+        sub2 = TestSuite(name='sub2')
+        suite.suites = [sub1, sub2]
+        sub1.tests = [TestCase(tags=['t1', 't2'], status='PASS'),
+                      TestCase(tags=['t1'], status='FAIL')]
+        sub2.tests.create(tags=['t1', 't2'], status='PASS')
+        sub2.suites.create(name='below suite stat level')
+        sub2.suites[0].tests.create(tags=['t1'], status='FAIL')
+        return suite
+
+    def _verify_stat(self, stat, pass_, fail, label, **attrs):
+        attrs.update({'pass': pass_, 'fail': fail, 'label': label})
+        assert_equals(stat, attrs)
 
 
 if __name__ == '__main__':
