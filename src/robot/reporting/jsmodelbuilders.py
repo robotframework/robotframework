@@ -184,3 +184,27 @@ class JsModelBuilder(object):
         if not msg.linkable:
             return model
         return model + (self._msg_links[self._link_key(msg)],)
+
+
+# TODO: Remove test code below
+if __name__ == '__main__':
+    import sys
+    from time import time
+    from robot.result import ResultFromXml
+    from robot.result.datamodel import JSModelCreator
+    from robot.reporting.jsmodelbuilders import JsModelBuilder
+
+    path, new_or_old = (sys.argv + ['new'])[1:3]
+
+    start = time()
+    result = ResultFromXml(path)
+    print 'XML RESULT:'.ljust(12), round(time() - start, 3), 's'
+
+    start = time()
+    if new_or_old == 'new':
+        model = JsModelBuilder(prune_input_to_save_memory=True).build_from(result)
+    else:
+        creator = JSModelCreator()
+        result.suite.visit(creator)
+        model = creator.datamodel
+    print (new_or_old.upper()+' JS:').ljust(12), round(time() - start, 3), 's'
