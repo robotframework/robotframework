@@ -241,6 +241,40 @@ class TestSplitting(unittest.TestCase):
         return suite
 
 
+class TestPruneInput(unittest.TestCase):
+
+    def setUp(self):
+        self.suite = TestSuite()
+        self.suite.keywords = [Keyword(), Keyword()]
+        s1 = self.suite.suites.create()
+        s1.keywords.create()
+        tc = s1.tests.create()
+        tc.keywords = [Keyword(), Keyword(), Keyword()]
+        s2 = self.suite.suites.create()
+        t1 = s2.tests.create()
+        t2 = s2.tests.create()
+        t1.keywords = [Keyword()]
+        t2.keywords = [Keyword(), Keyword()]
+
+    def test_prune_input_false(self):
+        JsModelBuilder(prune_input_to_save_memory=False)._build_suite(self.suite)
+        assert_equals(len(self.suite.keywords), 2)
+        assert_equals(len(self.suite.suites[0].keywords), 1)
+        assert_equals(len(self.suite.suites[0].tests[0].keywords), 3)
+        assert_equals(len(self.suite.suites[1].keywords), 0)
+        assert_equals(len(self.suite.suites[1].tests[0].keywords), 1)
+        assert_equals(len(self.suite.suites[1].tests[1].keywords), 2)
+
+    def test_prune_input_true(self):
+        JsModelBuilder(prune_input_to_save_memory=True)._build_suite(self.suite)
+        assert_equals(len(self.suite.keywords), 0)
+        assert_equals(len(self.suite.suites[0].keywords), 0)
+        assert_equals(len(self.suite.suites[0].tests[0].keywords), 0)
+        assert_equals(len(self.suite.suites[1].keywords), 0)
+        assert_equals(len(self.suite.suites[1].tests[0].keywords), 0)
+        assert_equals(len(self.suite.suites[1].tests[1].keywords), 0)
+
+
 class TestBuildStatistics(unittest.TestCase):
 
     def test_total_stats(self):

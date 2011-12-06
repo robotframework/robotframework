@@ -69,8 +69,10 @@ class JsModelBuilder(object):
     _statuses = {'FAIL': 0, 'PASS': 1, 'NOT_RUN': 2}
     _kw_types = {'kw': 0, 'setup': 1, 'teardown': 2, 'for': 3, 'foritem': 4}
 
-    def __init__(self, log_path=None, split_log=False):
+    def __init__(self, log_path=None, split_log=False,
+                 prune_input_to_save_memory=False):
         self._split_log = split_log
+        self._prune_input_to_save_memory = prune_input_to_save_memory
         self._context = NewParsingContext(log_path)
         self._string = self._context.string
         self._html = self._context.html
@@ -90,16 +92,23 @@ class JsModelBuilder(object):
         )
 
     def _build_suite(self, suite):
-        return (self._string(suite.name),
-                self._string(suite.source),
-                self._relative_source(suite.source),
-                self._html(suite.doc),
-                tuple(self._yield_metadata(suite)),
-                self._get_status(suite),
-                tuple(self._build_suite(s) for s in suite.suites),
-                tuple(self._build_test(t) for t in suite.tests),
-                tuple(self._build_keyword(k, split=True) for k in suite.keywords),
-                self._get_statistics(suite))
+        with self._prune_input(suite):
+            return (self._string(suite.name),
+                    self._string(suite.source),
+                    self._relative_source(suite.source),
+                    self._html(suite.doc),
+                    tuple(self._yield_metadata(suite)),
+                    self._get_status(suite),
+                    tuple(self._build_suite(s) for s in suite.suites),
+                    tuple(self._build_test(t) for t in suite.tests),
+                    tuple(self._build_keyword(k, split=True) for k in suite.keywords),
+                    self._get_statistics(suite))
+
+    @contextmanager
+    def _prune_input(self, item):
+        yield
+        if self._prune_input_to_save_memory:
+            item.keywords.clear()
 
     def _yield_metadata(self, suite):
         for name, value in suite.metadata.iteritems():
@@ -121,13 +130,14 @@ class JsModelBuilder(object):
                 stats.critical.passed)
 
     def _build_test(self, test):
-        return (self._string(test.name),
-                self._string(test.timeout),
-                int(test.critical == 'yes'),
-                self._html(test.doc),
-                tuple(self._string(t) for t in test.tags),
-                self._get_status(test),
-                self._build_keywords(test.keywords, split=True))
+        with self._prune_input(test):
+            return (self._string(test.name),
+                    self._string(test.timeout),
+                    int(test.critical == 'yes'),
+                    self._html(test.doc),
+                    tuple(self._string(t) for t in test.tags),
+                    self._get_status(test),
+                    self._build_keywords(test.keywords, split=True))
 
     def _build_keywords(self, kws, split=False):
         if not (split and self._split_log):
