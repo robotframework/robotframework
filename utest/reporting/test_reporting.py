@@ -35,21 +35,21 @@ class TestReporting(unittest.TestCase, ResultWriter):
         self._create_default_suite()
 
     def _create_default_suite(self):
-        root_suite = TestSuite(name=self.EXPECTED_SUITE_NAME)
-        root_suite.tests.create(name=self.EXPECTED_TEST_NAME).\
+        self._root_suite = TestSuite(name=self.EXPECTED_SUITE_NAME)
+        self._root_suite.tests.create(name=self.EXPECTED_TEST_NAME).\
                     keywords.create(name=self.EXPECTED_KEYWORD_NAME,
                                     status='PASS')
-        root_suite.tests.create(name=self.EXPECTED_FAILING_TEST).\
+        self._root_suite.tests.create(name=self.EXPECTED_FAILING_TEST).\
                     keywords.create(name=self.EXPECTED_KEYWORD_NAME).\
                         messages.create(message=self.EXPECTED_DEBUG_MESSAGE,
                                         level='DEBUG',
                                         timestamp='20201212 12:12:12.000')
         self._result = Result(self._settings, None)
-        self._result._model = ExecutionResult(root_suite)
+        self._result._model = ExecutionResult(self._root_suite)
 
     def test_generate_report_and_log(self):
-        self._settings.log = ClosingOutput()
-        self._settings.report = ClosingOutput()
+        self._settings.log = ClosableOutput()
+        self._settings.report = ClosableOutput()
         self.write_results()
         self._verify_log()
         self._verify_report()
@@ -74,35 +74,41 @@ class TestReporting(unittest.TestCase, ResultWriter):
         assert_equals(self._result._model, None)
 
     def test_only_log(self):
-        self._settings.log = ClosingOutput()
+        self._settings.log = ClosableOutput()
         self.write_results()
         self._verify_log()
 
     def test_only_report(self):
-        self._settings.report = ClosingOutput()
+        self._settings.report = ClosableOutput()
         self.write_results()
         self._verify_report()
 
     def test_only_xunit(self):
-        self._settings.xunit = ClosingOutput()
+        self._settings.xunit = ClosableOutput()
         self.write_results()
         self._verify_xunit()
 
     def test_only_output_generation(self):
-        self._settings.output = ClosingOutput()
+        self._settings.output = ClosableOutput()
         self.write_results()
         self._verify_output()
 
     def test_generate_all(self):
-        self._settings.log = ClosingOutput()
-        self._settings.report = ClosingOutput()
-        self._settings.xunit = ClosingOutput()
-        self._settings.output = ClosingOutput()
+        self._settings.log = ClosableOutput()
+        self._settings.report = ClosableOutput()
+        self._settings.xunit = ClosableOutput()
+        self._settings.output = ClosableOutput()
         self.write_results()
         self._verify_log()
         self._verify_report()
         self._verify_xunit()
         self._verify_output()
+
+    def test_log_generation_removes_keywords_from_original_model(self):
+        self._settings.log = ClosableOutput()
+        self.write_results()
+        for test in self._root_suite.tests:
+            assert_equals(len(test.keywords), 0)
 
     def _verify_xunit(self):
         xunit = self._settings.xunit.getvalue()
@@ -114,7 +120,7 @@ class TestReporting(unittest.TestCase, ResultWriter):
     #TODO: Find a way to test split_log
     def _test_split_tests(self):
         self._settings.split_log = True
-        self._settings.log = ClosingOutput()
+        self._settings.log = ClosableOutput()
         self.write_results()
         self._verify_log()
 
@@ -122,7 +128,7 @@ if os.name == 'java':
     import java.io.OutputStream
     import java.lang.String
 
-    class ClosingOutput(java.io.OutputStream):
+    class ClosableOutput(java.io.OutputStream):
         def __init__(self):
             self._output = StringIO()
 
@@ -140,7 +146,7 @@ if os.name == 'java':
             return self.value
 else:
 
-    class ClosingOutput(object):
+    class ClosableOutput(object):
 
         def __init__(self):
             self._output = StringIO()
