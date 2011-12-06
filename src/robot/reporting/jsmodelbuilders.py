@@ -19,6 +19,7 @@ import os.path
 from robot.utils import timestamp_to_secs, get_link_path, html_format
 from robot.output import LEVELS
 
+from robot.result.jsexecutionresult import JsExecutionResult
 from .parsingcontext import TextCache as StringCache
 
 
@@ -80,8 +81,15 @@ class JsModelBuilder(object):
     def strings(self):
         return self._context.strings
 
-    def build_from(self, result_from_xml):
-        return self._build_suite(result_from_xml.suite)
+    def build(self, result_from_xml):
+        return JsExecutionResult(
+            suite=self._build_suite(result_from_xml.suite),
+            statistics=self._build_statistics(result_from_xml.statistics),
+            errors=self._build_errors(result_from_xml.errors),
+            strings=self.strings,
+            basemillis=self._context.basemillis,
+            split_results=self.split_results
+        )
 
     def _build_suite(self, suite):
         return (self._string(suite.name),
@@ -146,3 +154,12 @@ class JsModelBuilder(object):
         return (self._timestamp(msg.timestamp),
                 LEVELS[msg.level],
                 self._string(msg.html_message))
+
+    def _build_statistics(self, statistics):
+        return (self._build_stats(statistics.total),
+                self._build_stats(statistics.tags),
+                self._build_stats(statistics.suite))
+
+    def _build_stats(self, stats):
+        return tuple(stat.get_attributes(include_label=True, exclude_empty=True)
+                     for stat in stats)

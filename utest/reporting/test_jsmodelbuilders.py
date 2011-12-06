@@ -1,8 +1,9 @@
 import unittest
-from os.path import abspath, dirname, join, normpath
+from os.path import abspath, dirname, join
 
 from robot.utils.asserts import assert_equals
-from robot.result import ResultFromXml, TestSuite, TestCase, Keyword, Message
+from robot.result import TestSuite, TestCase, Keyword, Message
+from robot.model import Statistics
 from robot.reporting.jsmodelbuilders import *
 from robot.reporting.parsingcontext import TextIndex as StringIndex
 
@@ -229,6 +230,53 @@ class TestSplitting(unittest.TestCase):
         sub.tests.create('test', doc='tdoc')
         sub.tests[0].keywords.create('koowee', doc='kdoc')
         return suite
+
+
+class TestBuildStatistics(unittest.TestCase):
+
+    def test_total_stats(self):
+        critical, all = self._build_statistics()[0]
+        self._verify_stat(critical, 2, 0, 'Critical Tests')
+        self._verify_stat(all, 2, 2, 'All Tests')
+
+    def test_tag_stats(self):
+        t2, comb, t1 = self._build_statistics()[1]
+        self._verify_stat(t2, 2, 0, 't2', info='critical', doc='doc', links='t:url')
+        self._verify_stat(comb, 2, 0, 'name', info='combined', combined='t1&t2')
+        self._verify_stat(t1, 2, 2, 't1')
+
+    def test_suite_stats(self):
+        root, sub1, sub2 = self._build_statistics()[2]
+        self._verify_stat(root, 2, 2, 'root', name='root', id='s1')
+        self._verify_stat(sub1, 1, 1, 'root.sub1', name='sub1', id='s1-s1')
+        self._verify_stat(sub2, 1, 1, 'root.sub2', name='sub2', id='s1-s2')
+
+    def _build_statistics(self):
+        return JsModelBuilder()._build_statistics(self._get_statistics())
+
+    def _get_statistics(self):
+        return Statistics(self._get_suite(),
+                          suite_stat_level=2,
+                          tag_stat_combine=[('t1&t2', 'name')],
+                          tag_doc=[('t2', 'doc')],
+                          tag_stat_link=[('?2', 'url', '%1')])
+
+    def _get_suite(self):
+        suite = TestSuite(name='root')
+        suite.set_criticality(critical_tags=['t2'])
+        sub1 = TestSuite(name='sub1')
+        sub2 = TestSuite(name='sub2')
+        suite.suites = [sub1, sub2]
+        sub1.tests = [TestCase(tags=['t1', 't2'], status='PASS'),
+                      TestCase(tags=['t1'], status='FAIL')]
+        sub2.tests.create(tags=['t1', 't2'], status='PASS')
+        sub2.suites.create(name='below suite stat level')
+        sub2.suites[0].tests.create(tags=['t1'], status='FAIL')
+        return suite
+
+    def _verify_stat(self, stat, pass_, fail, label, **attrs):
+        attrs.update({'pass': pass_, 'fail': fail, 'label': label})
+        assert_equals(stat, attrs)
 
 
 if __name__ == '__main__':
