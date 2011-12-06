@@ -63,6 +63,7 @@ class NewParsingContext(object):
 
 
 # TODO: Change order of items in JS model to be more consistent with "normal" model?
+# TODO: This class is too long and should be split.
 
 class JsModelBuilder(object):
     _statuses = {'FAIL': 0, 'PASS': 1, 'NOT_RUN': 2}
@@ -76,6 +77,7 @@ class JsModelBuilder(object):
         self._timestamp = self._context.timestamp
         self._relative_source = self._context.relative_source
         self._split_results = []
+        self._msg_links = {}
 
     def build_from(self, result_from_xml):
         return JsExecutionResult(
@@ -145,11 +147,15 @@ class JsModelBuilder(object):
                 self._build_keywords(kw.keywords, split),
                 tuple(self._build_message(m) for m in kw.messages))
 
-    def _build_message(self, msg):
-        # TODO: linking
+    def _build_message(self, msg, link=True):
+        if msg.level == 'WARN' and link:
+            self._msg_links[self._link_key(msg)] = self._string(msg.parent.id)
         return (self._timestamp(msg.timestamp),
                 LEVELS[msg.level],
                 self._string(msg.html_message))
+
+    def _link_key(self, msg):
+        return (msg.message, msg.level, msg.timestamp)
 
     def _build_statistics(self, statistics):
         return (self._build_stats(statistics.total),
@@ -159,3 +165,12 @@ class JsModelBuilder(object):
     def _build_stats(self, stats):
         return tuple(stat.get_attributes(include_label=True, exclude_empty=True)
                      for stat in stats)
+
+    def _build_errors(self, errors):
+        return tuple(self._build_error_message(msg) for msg in errors)
+
+    def _build_error_message(self, msg):
+        model = self._build_message(msg, link=False)
+        if not msg.linkable:
+            return model
+        return model + (self._msg_links[self._link_key(msg)],)

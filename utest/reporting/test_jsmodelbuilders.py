@@ -3,6 +3,7 @@ from os.path import abspath, dirname, join
 
 from robot.utils.asserts import assert_equals
 from robot.result import TestSuite, TestCase, Keyword, Message
+from robot.result.executionerrors import ExecutionErrors
 from robot.model import Statistics
 from robot.reporting.jsmodelbuilders import *
 from robot.reporting.parsingcontext import TextIndex as StringIndex
@@ -13,16 +14,15 @@ CURDIR = dirname(abspath(__file__))
 def get_status(*elements):
     return elements if elements[-1] else elements[:-1]
 
-def remap_model(model, strings):
-    for item in model:
-        if isinstance(item, StringIndex):
-            yield strings[item][1:]
-        elif isinstance(item, (int, long, type(None))):
-            yield item
-        elif isinstance(item, tuple):
-            yield tuple(remap_model(item, strings))
-        else:
-            raise AssertionError("Item '%s' has invalid type '%s'" % (item, type(item)))
+def remap(model, strings):
+    if isinstance(model, StringIndex):
+        return strings[model][1:]
+    elif isinstance(model, (int, long, type(None))):
+        return model
+    elif isinstance(model, tuple):
+        return tuple(remap(item, strings) for item in model)
+    else:
+        raise AssertionError("Item '%s' has invalid type '%s'" % (model, type(model)))
 
 
 class TestBuildTestSuite(unittest.TestCase):
@@ -69,8 +69,17 @@ class TestBuildTestSuite(unittest.TestCase):
         self._verify_message(Message())
 
     def test_message_with_values(self):
-        msg = Message('Message', 'WARN', timestamp='20111204 22:04:03.210')
+        msg = Message('Message', 'DEBUG', timestamp='20111204 22:04:03.210')
+        self._verify_message(msg, 'Message', 1, 0)
+
+    def test_message_linking(self):
+        msg = Message('Message', 'WARN', timestamp='20111204 22:04:03.210',
+                      parent=TestCase().keywords.create())
         self._verify_message(msg, 'Message', 3, 0)
+        links = self.builder._msg_links
+        assert_equals(len(links), 1)
+        key = (msg.message, msg.level, msg.timestamp)
+        assert_equals(remap(links[key], self.builder._context.strings), 't1-k1')
 
     def test_message_with_html(self):
         self._verify_message(Message('<img>'), '&lt;img&gt;')
@@ -145,13 +154,13 @@ class TestBuildTestSuite(unittest.TestCase):
         return self._build_and_verify('message', msg, timestamp, level, message)
 
     def _build_and_verify(self, type, item, *expected):
-        builder = JsModelBuilder(log_path=join(CURDIR, 'log.html'))
-        model = getattr(builder, '_build_'+type)(item)
-        self._verify_mapped(model, builder._context.strings, expected)
+        self.builder = JsModelBuilder(log_path=join(CURDIR, 'log.html'))
+        model = getattr(self.builder, '_build_'+type)(item)
+        self._verify_mapped(model, self.builder._context.strings, expected)
         return expected
 
     def _verify_mapped(self, model, strings, expected):
-        mapped_model = tuple(remap_model(model, strings))
+        mapped_model = tuple(remap(model, strings))
         assert_equals(mapped_model, expected)
 
 
@@ -167,7 +176,7 @@ class TestSplitting(unittest.TestCase):
         assert_equals(model, expected)
         assert_equals([strings for _, strings in builder._split_results],
                       [['*', '*t1-k1', '*t1-k1-k1', '*t1-k2'], ['*', '*t2-k1']])
-        assert_equals([self._to_list(remap_model(*res)) for res in builder._split_results],
+        assert_equals([self._to_list(remap(*res)) for res in builder._split_results],
                       expected_split)
 
     def _get_suite_with_tests(self):
@@ -180,7 +189,7 @@ class TestSplitting(unittest.TestCase):
 
     def _build_and_remap(self, suite, split_log=False):
         builder = JsModelBuilder(split_log=split_log)
-        model = remap_model(builder._build_suite(suite), builder._context.strings)
+        model = remap(builder._build_suite(suite), builder._context.strings)
         return self._to_list(model), builder
 
     def _to_list(self, model):
@@ -197,7 +206,7 @@ class TestSplitting(unittest.TestCase):
         assert_equals(model, expected)
         assert_equals([strings for _, strings in builder._split_results],
                      [['*', '*k1-k2'], ['*']])
-        assert_equals([self._to_list(remap_model(*res)) for res in builder._split_results],
+        assert_equals([self._to_list(remap(*res)) for res in builder._split_results],
                       expected_split)
 
     def _get_suite_with_keywords(self):
@@ -217,7 +226,7 @@ class TestSplitting(unittest.TestCase):
          expected[-2][0][-2], expected[-2][1][-2]) = 1, 2, 3, 4, 5, 6
         model, builder = self._build_and_remap(suite, split_log=True)
         assert_equals(model, expected)
-        assert_equals([self._to_list(remap_model(*res)) for res in builder._split_results],
+        assert_equals([self._to_list(remap(*res)) for res in builder._split_results],
                       expected_split)
 
     def _get_nested_suite_with_tests_and_keywords(self):
@@ -277,6 +286,32 @@ class TestBuildStatistics(unittest.TestCase):
     def _verify_stat(self, stat, pass_, fail, label, **attrs):
         attrs.update({'pass': pass_, 'fail': fail, 'label': label})
         assert_equals(stat, attrs)
+
+
+class TestBuildErrors(unittest.TestCase):
+
+    def setUp(self):
+        msgs = [Message('Error', 'ERROR', timestamp='20111206 14:33:00.000'),
+                Message('Warning', 'WARN', timestamp='20111206 14:33:00.042')]
+        self.errors = ExecutionErrors(msgs)
+
+    def test_errors(self):
+        builder = JsModelBuilder()
+        model = builder._build_errors(self.errors)
+        model = remap(model, builder._context.strings)
+        assert_equals(model, ((0, 5, 'Error'), (42, 3, 'Warning')))
+
+    def test_linking(self):
+        self.errors.messages.create('Linkable', 'WARN', linkable=True,
+                                    timestamp='20111206 14:33:00.001')
+        builder = JsModelBuilder()
+        kw = TestSuite().tests.create().keywords.create()
+        builder._build_message(kw.messages.create('Linkable', 'WARN',
+                                                  timestamp='20111206 14:33:00.001'))
+        model = builder._build_errors(self.errors)
+        model = remap(model, builder._context.strings)
+        assert_equals(model, ((-1, 5, 'Error'), (41, 3, 'Warning'),
+                              (0, 3, 'Linkable', 's1-t1-k1')))
 
 
 if __name__ == '__main__':

@@ -13,6 +13,7 @@
 #  limitations under the License.
 
 from robot.model.itemlist import ItemList
+from robot.utils import setter
 
 from .message import Message
 
@@ -20,8 +21,12 @@ from .message import Message
 class ExecutionErrors(object):
     message_class = Message
 
-    def __init__(self):
-        self.messages = ItemList(self.message_class)
+    def __init__(self, messages=None):
+        self.messages = messages
+
+    @setter
+    def messages(self, msgs):
+        return ItemList(self.message_class, msgs)
 
     def add(self, other):
         self.messages.extend(other.messages)
