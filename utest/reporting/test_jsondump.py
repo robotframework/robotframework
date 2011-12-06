@@ -10,7 +10,6 @@ import unittest
 
 from robot.utils.asserts import assert_equals, assert_raises
 from robot.reporting.jsondump import JsonDumper
-from robot.utils.abstractxmlwriter import _ILLEGAL_CHARS_IN_XML
 
 
 class JsonTestCase(unittest.TestCase):
@@ -74,11 +73,8 @@ class JsonTestCase(unittest.TestCase):
 
     if json:
         def test_agains_standard_json(self):
-            string = u'string\u00A9\v\\\'\"\r\t\njee'
-            for i in range(1024):
-                c = unichr(i)
-                if c not in _ILLEGAL_CHARS_IN_XML:
-                    string += c
+            string = u'string\u00A9\v\\\'\"\r\t\njee' \
+                + u''.join(unichr(i) for i in xrange(32, 1024))
             data = [string, {'A': 1}, None]
             expected = StringIO()
             json.dump(data, expected, separators=(',', ':'))

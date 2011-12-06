@@ -11,16 +11,14 @@
 #  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
+
 import re
 
-from unic import unic
+from .unic import unic
 
-
-_ILLEGAL_CHARS_IN_XML = u'\x00\x01\x02\x03\x04\x05\x06\x07\x08\x0b\x0c\x0e' \
-    + u'\x0f\x10\x11\x12\x13\x14\x15\x16\x17\x18\x19\x1a\x1b\x1c\x1d\x1e\x1f\ufffe'
-_ILLEGAL_CHARS_IN_XML_PATTERN = re.compile('['+_ILLEGAL_CHARS_IN_XML+']')
 
 class AbstractXmlWriter:
+    _illegal_chars = re.compile(u'[\x00-\x08\x0B\x0C\x0E-\x1F\uFFFE\uFFFF]')
 
     def start(self, name, attributes={}, newline=True):
         self._start(name, self._escape_attrs(attributes))
@@ -34,9 +32,9 @@ class AbstractXmlWriter:
         return dict((n, self._escape(v)) for n, v in attrs.items())
 
     def _escape(self, content):
-        content = unic(content)
-        # Avoid bug http://ironpython.codeplex.com/workitem/29402
-        return _ILLEGAL_CHARS_IN_XML_PATTERN.sub('', content)
+        # TODO: Test is the IPY bug below still valid with new implementation:
+        # http://ironpython.codeplex.com/workitem/29402
+        return self._illegal_chars.sub('', unic(content))
 
     def content(self, content):
         if content is not None:
