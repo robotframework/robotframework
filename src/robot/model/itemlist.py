@@ -48,6 +48,9 @@ class ItemList(object):
     def index(self, item):
         return self._items.index(item)
 
+    def clear(self):
+        self._items = []
+
     def visit(self, visitor):
         for item in self:
             item.visit(visitor)

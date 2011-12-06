@@ -62,6 +62,11 @@ class TestItemLists(unittest.TestCase):
         items.create()
         assert_equal(len(items), 1)
 
+    def test_clear(self):
+        items = ItemList(int, range(10))
+        items.clear()
+        assert_equal(len(items), 0)
+
     def test_str(self):
         items = ItemList(str, ['foo', 'bar', 'quux'])
         assert_equal(str(items), '[foo, bar, quux]')
