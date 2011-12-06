@@ -75,20 +75,16 @@ class JsModelBuilder(object):
         self._html = self._context.html
         self._timestamp = self._context.timestamp
         self._relative_source = self._context.relative_source
-        self.split_results = []
+        self._split_results = []
 
-    @property
-    def strings(self):
-        return self._context.strings
-
-    def build(self, result_from_xml):
+    def build_from(self, result_from_xml):
         return JsExecutionResult(
             suite=self._build_suite(result_from_xml.suite),
             statistics=self._build_statistics(result_from_xml.statistics),
             errors=self._build_errors(result_from_xml.errors),
-            strings=self.strings,
+            strings=self._context.strings,
             basemillis=self._context.basemillis,
-            split_results=self.split_results
+            split_results=self._split_results
         )
 
     def _build_suite(self, suite):
@@ -136,8 +132,8 @@ class JsModelBuilder(object):
             return tuple(self._build_keyword(k) for k in kws)
         with self._context.splitting:
             model = self._build_keywords(kws)
-            self.split_results.append((model, self.strings))
-        return len(self.split_results)
+            self._split_results.append((model, self._context.strings))
+        return len(self._split_results)
 
     def _build_keyword(self, kw, split=False):
         return (self._kw_types[kw.type],
