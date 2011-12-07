@@ -23,12 +23,16 @@ from robot.result.jsexecutionresult import JsExecutionResult
 from .parsingcontext import TextCache as StringCache
 
 
-class NewParsingContext(object):
+class JsBuildingContext(object):
 
-    def __init__(self, log_path=None):
+    def __init__(self, log_path=None, split_log=False, prune_input=False):
         self._log_dir = os.path.dirname(log_path) if log_path else None
+        self._split_log = split_log
+        self._prune_input = prune_input
         self._strings = self._orig_strings = StringCache()
         self.basemillis = None
+        self.split_results = []
+        self._msg_links = {}
 
     def string(self, string):
         return self._strings.add(string)
@@ -50,70 +54,66 @@ class NewParsingContext(object):
             self.basemillis = millis
         return millis - self.basemillis
 
+    def create_link_target(self, msg):
+        # TODO: Old builder kept id as string. Indexing is better but requires JS changes.
+        self._msg_links[self._link_key(msg)] = self.string(msg.parent.id)
+
+    def _link_key(self, msg):
+        return (msg.message, msg.level, msg.timestamp)
+
+    def link(self, msg):
+        return self._msg_links[self._link_key(msg)]
+
     @property
     def strings(self):
         return self._strings.dump()
 
-    @property
-    @contextmanager
-    def splitting(self):
-        self._strings = StringCache()
-        yield
+    def start_splitting_if_needed(self, split=False):
+        if self._split_log and split:
+            self._strings = StringCache()
+            return True
+        return False
+
+    def end_splitting(self, model):
+        self.split_results.append((model, self.strings))
         self._strings = self._orig_strings
+        return len(self.split_results)
+
+    @contextmanager
+    def prune_input(self, item):
+        yield
+        if self._prune_input:
+            item.keywords.clear()
 
 
 # TODO: Change order of items in JS model to be more consistent with "normal" model?
-# TODO: This class is too long and should be split.
 
 class JsModelBuilder(object):
-    _statuses = {'FAIL': 0, 'PASS': 1, 'NOT_RUN': 2}
-    _kw_types = {'kw': 0, 'setup': 1, 'teardown': 2, 'for': 3, 'foritem': 4}
 
     def __init__(self, log_path=None, split_log=False,
                  prune_input_to_save_memory=False):
-        self._split_log = split_log
-        self._prune_input_to_save_memory = prune_input_to_save_memory
-        self._context = NewParsingContext(log_path)
-        self._string = self._context.string
-        self._html = self._context.html
-        self._timestamp = self._context.timestamp
-        self._relative_source = self._context.relative_source
-        self._split_results = []
-        self._msg_links = {}
+        self._context = JsBuildingContext(log_path, split_log,
+                                          prune_input_to_save_memory)
 
     def build_from(self, result_from_xml):
         return JsExecutionResult(
-            suite=self._build_suite(result_from_xml.suite),
-            statistics=self._build_statistics(result_from_xml.statistics),
-            errors=self._build_errors(result_from_xml.errors),
+            suite=SuiteBuilder(self._context).build(result_from_xml.suite),
+            statistics=StatisticsBuilder().build(result_from_xml.statistics),
+            errors=ErrorsBuilder(self._context).build(result_from_xml.errors),
             strings=self._context.strings,
             basemillis=self._context.basemillis,
-            split_results=self._split_results
+            split_results=self._context.split_results
         )
 
-    def _build_suite(self, suite):
-        with self._prune_input(suite):
-            return (self._string(suite.name),
-                    self._string(suite.source),
-                    self._relative_source(suite.source),
-                    self._html(suite.doc),
-                    tuple(self._yield_metadata(suite)),
-                    self._get_status(suite),
-                    tuple(self._build_suite(s) for s in suite.suites),
-                    tuple(self._build_test(t) for t in suite.tests),
-                    tuple(self._build_keyword(k, split=True) for k in suite.keywords),
-                    self._get_statistics(suite))
 
-    @contextmanager
-    def _prune_input(self, item):
-        yield
-        if self._prune_input_to_save_memory:
-            item.keywords.clear()
+class _Builder(object):
+    _statuses = {'FAIL': 0, 'PASS': 1, 'NOT_RUN': 2}
 
-    def _yield_metadata(self, suite):
-        for name, value in suite.metadata.iteritems():
-            yield self._string(name)
-            yield self._html(value)
+    def __init__(self, context):
+        self._context = context
+        self._string = self._context.string
+        self._html = self._context.html
+        self._timestamp = self._context.timestamp
 
     def _get_status(self, item):
         model = (self._statuses[item.status],
@@ -122,6 +122,37 @@ class JsModelBuilder(object):
         msg = getattr(item, 'message', '')
         return model if not msg else model + (self._string(msg),)
 
+    def _build_keywords(self, kws, split=False):
+        splitting = self._context.start_splitting_if_needed(split)
+        model = tuple(self._build_keyword(k) for k in kws)
+        return model if not splitting else self._context.end_splitting(model)
+
+
+class SuiteBuilder(_Builder):
+
+    def __init__(self, context):
+        _Builder.__init__(self, context)
+        self._build_test = TestBuilder(context).build
+        self._build_keyword = KeywordBuilder(context).build
+
+    def build(self, suite):
+        with self._context.prune_input(suite):
+            return (self._string(suite.name),
+                    self._string(suite.source),
+                    self._context.relative_source(suite.source),
+                    self._html(suite.doc),
+                    tuple(self._yield_metadata(suite)),
+                    self._get_status(suite),
+                    tuple(self.build(s) for s in suite.suites),
+                    tuple(self._build_test(t) for t in suite.tests),
+                    tuple(self._build_keyword(k, split=True) for k in suite.keywords),
+                    self._get_statistics(suite))
+
+    def _yield_metadata(self, suite):
+        for name, value in suite.metadata.iteritems():
+            yield self._string(name)
+            yield self._html(value)
+
     def _get_statistics(self, suite):
         stats = suite.statistics  # Access property only once
         return (stats.all.total,
@@ -129,8 +160,15 @@ class JsModelBuilder(object):
                 stats.critical.total,
                 stats.critical.passed)
 
-    def _build_test(self, test):
-        with self._prune_input(test):
+
+class TestBuilder(_Builder):
+
+    def __init__(self, context):
+        _Builder.__init__(self, context)
+        self._build_keyword = KeywordBuilder(context).build
+
+    def build(self, test):
+        with self._context.prune_input(test):
             return (self._string(test.name),
                     self._string(test.timeout),
                     int(test.critical == 'yes'),
@@ -139,16 +177,17 @@ class JsModelBuilder(object):
                     self._get_status(test),
                     self._build_keywords(test.keywords, split=True))
 
-    def _build_keywords(self, kws, split=False):
-        if not (split and self._split_log):
-            return tuple(self._build_keyword(k) for k in kws)
-        with self._context.splitting:
-            model = self._build_keywords(kws)
-            self._split_results.append((model, self._context.strings))
-        return len(self._split_results)
 
-    def _build_keyword(self, kw, split=False):
-        return (self._kw_types[kw.type],
+class KeywordBuilder(_Builder):
+    _types = {'kw': 0, 'setup': 1, 'teardown': 2, 'for': 3, 'foritem': 4}
+
+    def __init__(self, context):
+        _Builder.__init__(self, context)
+        self._build_keyword = self.build
+        self._build_message = MessageBuilder(context).build
+
+    def build(self, kw, split=False):
+        return (self._types[kw.type],
                 self._string(kw.name),
                 self._string(kw.timeout),
                 self._html(kw.doc),
@@ -157,18 +196,23 @@ class JsModelBuilder(object):
                 self._build_keywords(kw.keywords, split),
                 tuple(self._build_message(m) for m in kw.messages))
 
-    def _build_message(self, msg, link=True):
-        if msg.level == 'WARN' and link:
-            # TODO: Old builder kept id as string. Indexing is better requires JS changes.
-            self._msg_links[self._link_key(msg)] = self._string(msg.parent.id)
+
+class MessageBuilder(_Builder):
+
+    def build(self, msg):
+        if msg.level == 'WARN':
+            self._context.create_link_target(msg)
+        return self._build(msg)
+
+    def _build(self, msg):
         return (self._timestamp(msg.timestamp),
                 LEVELS[msg.level],
                 self._string(msg.html_message))
 
-    def _link_key(self, msg):
-        return (msg.message, msg.level, msg.timestamp)
 
-    def _build_statistics(self, statistics):
+class StatisticsBuilder(object):
+
+    def build(self, statistics):
         return (self._build_stats(statistics.total),
                 self._build_stats(statistics.tags),
                 self._build_stats(statistics.suite))
@@ -177,14 +221,22 @@ class JsModelBuilder(object):
         return tuple(stat.get_attributes(include_label=True, exclude_empty=True)
                      for stat in stats)
 
-    def _build_errors(self, errors):
-        return tuple(self._build_error_message(msg) for msg in errors)
 
-    def _build_error_message(self, msg):
-        model = self._build_message(msg, link=False)
-        if not msg.linkable:
-            return model
-        return model + (self._msg_links[self._link_key(msg)],)
+class ErrorsBuilder(_Builder):
+
+    def __init__(self, context):
+        _Builder.__init__(self, context)
+        self._build_message = ErrorMessageBuilder(context).build
+
+    def build(self, errors):
+        return tuple(self._build_message(msg) for msg in errors)
+
+
+class ErrorMessageBuilder(MessageBuilder):
+
+    def build(self, msg):
+        model = self._build(msg)
+        return model if not msg.linkable else model + (self._context.link(msg),)
 
 
 # TODO: Remove test code below

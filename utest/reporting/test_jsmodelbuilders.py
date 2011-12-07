@@ -11,9 +11,6 @@ from robot.reporting.parsingcontext import TextIndex as StringIndex
 CURDIR = dirname(abspath(__file__))
 
 
-def get_status(*elements):
-    return elements if elements[-1] else elements[:-1]
-
 def remap(model, strings):
     if isinstance(model, StringIndex):
         return strings[model][1:]
@@ -76,10 +73,10 @@ class TestBuildTestSuite(unittest.TestCase):
         msg = Message('Message', 'WARN', timestamp='20111204 22:04:03.210',
                       parent=TestCase().keywords.create())
         self._verify_message(msg, 'Message', 3, 0)
-        links = self.builder._msg_links
+        links = self.context._msg_links
         assert_equals(len(links), 1)
         key = (msg.message, msg.level, msg.timestamp)
-        assert_equals(remap(links[key], self.builder._context.strings), 't1-k1')
+        assert_equals(remap(links[key], self.context.strings), 't1-k1')
 
     def test_message_with_html(self):
         self._verify_message(Message('<img>'), '&lt;img&gt;')
@@ -119,11 +116,11 @@ class TestBuildTestSuite(unittest.TestCase):
         suite.keywords[0].messages.create('Message', timestamp='20111205 00:33:33.343')
         suite.keywords[0].messages.create(level='DEBUG', timestamp='20111205 00:33:33.344')
         suite.tests.create(starttime='20111205 00:33:34.333')
-        builder = JsModelBuilder()
-        model = builder._build_suite(suite)
+        context = JsBuildingContext()
+        model = SuiteBuilder(context).build(suite)
         self._verify_status(model[5], start=0)
         self._verify_status(model[-2][0][5], start=1)
-        self._verify_mapped(model[-2][0][-1], builder._context.strings,
+        self._verify_mapped(model[-2][0][-1], context.strings,
                             ((10, 2, 'Message'), (11, 1, '')))
         self._verify_status(model[-3][0][5], start=1000)
 
@@ -133,30 +130,35 @@ class TestBuildTestSuite(unittest.TestCase):
     def _verify_suite(self, suite, name='', doc='', metadata=(), source='',
                       relsource='', status=1, message='', start=None, elapsed=0,
                       suites=(), tests=(), keywords=(), stats=(0, 0, 0, 0)):
-        return self._build_and_verify('suite', suite, name, source, relsource,
-                                      doc, metadata,
-                                      get_status(status, start, elapsed, message),
+        status = (status, start, elapsed, message) \
+                if message else (status, start, elapsed)
+        return self._build_and_verify(SuiteBuilder, suite, name, source,
+                                      relsource, doc, metadata, status,
                                       suites, tests, keywords, stats)
+
+    def _get_status(self, *elements):
+        return elements if elements[-1] else elements[:-1]
 
     def _verify_test(self, test, name='', doc='', tags=(), critical=1, timeout='',
                      status=0, message='', start=None, elapsed=0, keywords=()):
-        return self._build_and_verify('test', test, name, timeout, critical, doc, tags,
-                                      get_status(status, start, elapsed, message),
-                                      keywords)
+        status = (status, start, elapsed, message) \
+                if message else (status, start, elapsed)
+        return self._build_and_verify(TestBuilder, test, name, timeout,
+                                      critical, doc, tags, status, keywords)
 
     def _verify_keyword(self, keyword, type=0, name='', doc='', args='',  timeout='',
                         status=0, start=None, elapsed=0, keywords=(), messages=()):
-        return self._build_and_verify('keyword', keyword, type, name, timeout,
-                                      doc, args, (status, start, elapsed),
-                                      keywords, messages)
+        status = (status, start, elapsed)
+        return self._build_and_verify(KeywordBuilder, keyword, type, name, timeout,
+                                      doc, args, status, keywords, messages)
 
     def _verify_message(self, msg, message='', level=2, timestamp=None):
-        return self._build_and_verify('message', msg, timestamp, level, message)
+        return self._build_and_verify(MessageBuilder, msg, timestamp, level, message)
 
-    def _build_and_verify(self, type, item, *expected):
-        self.builder = JsModelBuilder(log_path=join(CURDIR, 'log.html'))
-        model = getattr(self.builder, '_build_'+type)(item)
-        self._verify_mapped(model, self.builder._context.strings, expected)
+    def _build_and_verify(self, builder_class, item, *expected):
+        self.context = JsBuildingContext(log_path=join(CURDIR, 'log.html'))
+        model = builder_class(self.context).build(item)
+        self._verify_mapped(model, self.context.strings, expected)
         return expected
 
     def _verify_mapped(self, model, strings, expected):
@@ -171,12 +173,12 @@ class TestSplitting(unittest.TestCase):
         expected, _ = self._build_and_remap(suite)
         expected_split = [expected[-3][0][-1], expected[-3][1][-1]]
         expected[-3][0][-1], expected[-3][1][-1] = 1, 2
-        model, builder = self._build_and_remap(suite, split_log=True)
-        assert_equals(builder._context.strings, ['*', '*suite', '*t1', '*t2'])
+        model, context = self._build_and_remap(suite, split_log=True)
+        assert_equals(context.strings, ['*', '*suite', '*t1', '*t2'])
         assert_equals(model, expected)
-        assert_equals([strings for _, strings in builder._split_results],
+        assert_equals([strings for _, strings in context.split_results],
                       [['*', '*t1-k1', '*t1-k1-k1', '*t1-k2'], ['*', '*t2-k1']])
-        assert_equals([self._to_list(remap(*res)) for res in builder._split_results],
+        assert_equals([self._to_list(remap(*res)) for res in context.split_results],
                       expected_split)
 
     def _get_suite_with_tests(self):
@@ -188,9 +190,9 @@ class TestSplitting(unittest.TestCase):
         return suite
 
     def _build_and_remap(self, suite, split_log=False):
-        builder = JsModelBuilder(split_log=split_log)
-        model = remap(builder._build_suite(suite), builder._context.strings)
-        return self._to_list(model), builder
+        context = JsBuildingContext(split_log=split_log)
+        model = remap(SuiteBuilder(context).build(suite), context.strings)
+        return self._to_list(model), context
 
     def _to_list(self, model):
         return list(self._to_list(item) if isinstance(item, tuple) else item
@@ -201,12 +203,12 @@ class TestSplitting(unittest.TestCase):
         expected, _ = self._build_and_remap(suite)
         expected_split = [expected[-2][0][-2], expected[-2][1][-2]]
         expected[-2][0][-2], expected[-2][1][-2] = 1, 2
-        model, builder = self._build_and_remap(suite, split_log=True)
-        assert_equals(builder._context.strings, ['*', '*root', '*k1', '*k2'])
+        model, context = self._build_and_remap(suite, split_log=True)
+        assert_equals(context.strings, ['*', '*root', '*k1', '*k2'])
         assert_equals(model, expected)
-        assert_equals([strings for _, strings in builder._split_results],
+        assert_equals([strings for _, strings in context.split_results],
                      [['*', '*k1-k2'], ['*']])
-        assert_equals([self._to_list(remap(*res)) for res in builder._split_results],
+        assert_equals([self._to_list(remap(*res)) for res in context.split_results],
                       expected_split)
 
     def _get_suite_with_keywords(self):
@@ -224,9 +226,9 @@ class TestSplitting(unittest.TestCase):
         (expected[-4][0][-3][0][-1], expected[-4][0][-3][1][-1],
          expected[-4][1][-3][0][-1], expected[-4][1][-2][0][-2],
          expected[-2][0][-2], expected[-2][1][-2]) = 1, 2, 3, 4, 5, 6
-        model, builder = self._build_and_remap(suite, split_log=True)
+        model, context = self._build_and_remap(suite, split_log=True)
         assert_equals(model, expected)
-        assert_equals([self._to_list(remap(*res)) for res in builder._split_results],
+        assert_equals([self._to_list(remap(*res)) for res in context.split_results],
                       expected_split)
 
     def _get_nested_suite_with_tests_and_keywords(self):
@@ -257,7 +259,7 @@ class TestPruneInput(unittest.TestCase):
         t2.keywords = [Keyword(), Keyword()]
 
     def test_prune_input_false(self):
-        JsModelBuilder(prune_input_to_save_memory=False)._build_suite(self.suite)
+        SuiteBuilder(JsBuildingContext(prune_input=False)).build(self.suite)
         assert_equals(len(self.suite.keywords), 2)
         assert_equals(len(self.suite.suites[0].keywords), 1)
         assert_equals(len(self.suite.suites[0].tests[0].keywords), 3)
@@ -266,7 +268,7 @@ class TestPruneInput(unittest.TestCase):
         assert_equals(len(self.suite.suites[1].tests[1].keywords), 2)
 
     def test_prune_input_true(self):
-        JsModelBuilder(prune_input_to_save_memory=True)._build_suite(self.suite)
+        SuiteBuilder(JsBuildingContext(prune_input=True)).build(self.suite)
         assert_equals(len(self.suite.keywords), 0)
         assert_equals(len(self.suite.suites[0].keywords), 0)
         assert_equals(len(self.suite.suites[0].tests[0].keywords), 0)
@@ -295,7 +297,7 @@ class TestBuildStatistics(unittest.TestCase):
         self._verify_stat(sub2, 1, 1, 'root.sub2', name='sub2', id='s1-s2')
 
     def _build_statistics(self):
-        return JsModelBuilder()._build_statistics(self._get_statistics())
+        return StatisticsBuilder().build(self._get_statistics())
 
     def _get_statistics(self):
         return Statistics(self._get_suite(),
@@ -330,20 +332,20 @@ class TestBuildErrors(unittest.TestCase):
         self.errors = ExecutionErrors(msgs)
 
     def test_errors(self):
-        builder = JsModelBuilder()
-        model = builder._build_errors(self.errors)
-        model = remap(model, builder._context.strings)
+        context = JsBuildingContext()
+        model = ErrorsBuilder(context).build(self.errors)
+        model = remap(model, context.strings)
         assert_equals(model, ((0, 5, 'Error'), (42, 3, 'Warning')))
 
     def test_linking(self):
         self.errors.messages.create('Linkable', 'WARN', linkable=True,
                                     timestamp='20111206 14:33:00.001')
-        builder = JsModelBuilder()
+        context = JsBuildingContext()
         kw = TestSuite().tests.create().keywords.create()
-        builder._build_message(kw.messages.create('Linkable', 'WARN',
-                                                  timestamp='20111206 14:33:00.001'))
-        model = builder._build_errors(self.errors)
-        model = remap(model, builder._context.strings)
+        MessageBuilder(context).build(kw.messages.create('Linkable', 'WARN',
+                                      timestamp='20111206 14:33:00.001'))
+        model = ErrorsBuilder(context).build(self.errors)
+        model = remap(model, context.strings)
         assert_equals(model, ((-1, 5, 'Error'), (41, 3, 'Warning'),
                               (0, 3, 'Linkable', 's1-t1-k1')))
 
