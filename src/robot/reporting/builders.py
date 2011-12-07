@@ -42,7 +42,7 @@ class _Builder(object):
     def __init__(self, model):
         self._model = model
 
-    def build(self, path):
+    def build(self, *args):
         raise NotImplementedError(self.__class__.__name__)
 
 
