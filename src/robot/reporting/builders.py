@@ -88,7 +88,9 @@ class LogBuilder(_HTMLFileBuilder):
             self._write_file(output, config, 'log.html')
             self._write_split_logs_if_needed(output)
         except EnvironmentError, err:
-            LOGGER.error("Writing log file '%s' failed: %s" % (err.filename, err.strerror))
+            # TODO: Remove next line that just debugs problem on Jython CI
+            LOGGER.error('Log file::: %r' % err.filename)
+            LOGGER.error(u"Writing log file '%s' failed: %s" % (err.filename, err.strerror))
         else:
             LOGGER.output_file('Log', output)
 
