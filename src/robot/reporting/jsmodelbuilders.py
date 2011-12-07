@@ -26,7 +26,9 @@ from .parsingcontext import TextCache as StringCache
 class JsBuildingContext(object):
 
     def __init__(self, log_path=None, split_log=False, prune_input=False):
-        self._log_dir = os.path.dirname(str(log_path)) if log_path else None
+        # log_path can be a custom object in unit tests
+        self._log_dir = os.path.dirname(log_path) \
+                if isinstance(log_path, basestring) else None
         self._split_log = split_log
         self._prune_input = prune_input
         self._strings = self._orig_strings = StringCache()
