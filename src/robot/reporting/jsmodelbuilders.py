@@ -56,7 +56,6 @@ class JsBuildingContext(object):
         return millis - self.basemillis
 
     def create_link_target(self, msg):
-        # TODO: Old builder kept id as string. Indexing is better but requires JS changes.
         self._msg_links[self._link_key(msg)] = self.string(msg.parent.id)
 
     def _link_key(self, msg):
@@ -135,6 +134,7 @@ class SuiteBuilder(_Builder):
 
     def __init__(self, context):
         _Builder.__init__(self, context)
+        self._build_suite = self.build
         self._build_test = TestBuilder(context).build
         self._build_keyword = KeywordBuilder(context).build
 
@@ -147,7 +147,7 @@ class SuiteBuilder(_Builder):
                     self._html(suite.doc),
                     tuple(self._yield_metadata(suite)),
                     self._get_status(suite),
-                    tuple(self.build(s) for s in suite.suites),
+                    tuple(self._build_suite(s) for s in suite.suites),
                     tuple(self._build_test(t) for t in suite.tests),
                     tuple(self._build_keyword(k, split=True) for k in suite.keywords),
                     stats)
