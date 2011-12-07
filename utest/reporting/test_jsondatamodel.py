@@ -2,7 +2,7 @@ from StringIO import StringIO
 import unittest
 
 from robot.utils.asserts import assert_equals, assert_true
-from robot.result.jsexecutionresult import JsExecutionResult
+from robot.reporting.jsexecutionresult import JsExecutionResult
 from robot.reporting.jswriter import ScriptBlockWriter
 
 
