@@ -11,8 +11,7 @@ from robot.utils.asserts import assert_true, assert_equals
 
 LOGGER.disable_automatic_console_logger()
 
-
-class TestReporting(unittest.TestCase, ResultWriter):
+class TestReporting(unittest.TestCase):
 
     EXPECTED_SUITE_NAME = 'My Suite Name'
     EXPECTED_TEST_NAME  = 'My Test Name'
@@ -32,9 +31,9 @@ class TestReporting(unittest.TestCase, ResultWriter):
         self._settings.status_rc = True
         self._settings.suite_config = {}
         self._settings.statistics_config = {}
-        self._create_default_suite()
+        self._create_suite_and_writer()
 
-    def _create_default_suite(self):
+    def _create_suite_and_writer(self):
         self._root_suite = TestSuite(name=self.EXPECTED_SUITE_NAME)
         self._root_suite.tests.create(name=self.EXPECTED_TEST_NAME).\
                     keywords.create(name=self.EXPECTED_KEYWORD_NAME,
@@ -44,15 +43,18 @@ class TestReporting(unittest.TestCase, ResultWriter):
                         messages.create(message=self.EXPECTED_DEBUG_MESSAGE,
                                         level='DEBUG',
                                         timestamp='20201212 12:12:12.000')
-        self._result = Result(self._settings, None)
-        self._result._model = ExecutionResult(self._root_suite)
+        self._writer = ResultWriter(self._settings)
+        self._writer._result._model = ExecutionResult(self._root_suite)
 
     def test_generate_report_and_log(self):
         self._settings.log = ClosableOutput('log.html')
         self._settings.report = ClosableOutput('report.html')
-        self.write_results()
+        self._write_results()
         self._verify_log()
         self._verify_report()
+
+    def _write_results(self):
+        self._writer.write_results()
 
     def _verify_log(self):
         log = self._settings.log.getvalue()
@@ -69,28 +71,28 @@ class TestReporting(unittest.TestCase, ResultWriter):
         assert_true(self.EXPECTED_FAILING_TEST in report)
 
     def test_no_generation(self):
-        self._result._model = None
-        self.write_results()
-        assert_equals(self._result._model, None)
+        self._writer._result._model = None
+        self._write_results()
+        assert_equals(self._writer._result._model, None)
 
     def test_only_log(self):
         self._settings.log = ClosableOutput('log.html')
-        self.write_results()
+        self._write_results()
         self._verify_log()
 
     def test_only_report(self):
         self._settings.report = ClosableOutput('report.html')
-        self.write_results()
+        self._write_results()
         self._verify_report()
 
     def test_only_xunit(self):
         self._settings.xunit = ClosableOutput('xunit.xml')
-        self.write_results()
+        self._write_results()
         self._verify_xunit()
 
     def test_only_output_generation(self):
         self._settings.output = ClosableOutput('output.xml')
-        self.write_results()
+        self._write_results()
         self._verify_output()
 
     def test_generate_all(self):
@@ -98,7 +100,7 @@ class TestReporting(unittest.TestCase, ResultWriter):
         self._settings.report = ClosableOutput('r.html')
         self._settings.xunit = ClosableOutput('x.xml')
         self._settings.output = ClosableOutput('o.xml')
-        self.write_results()
+        self._write_results()
         self._verify_log()
         self._verify_report()
         self._verify_xunit()
@@ -106,7 +108,7 @@ class TestReporting(unittest.TestCase, ResultWriter):
 
     def test_log_generation_removes_keywords_from_original_model(self):
         self._settings.log = ClosableOutput('log.html')
-        self.write_results()
+        self._write_results()
         for test in self._root_suite.tests:
             assert_equals(len(test.keywords), 0)
 
