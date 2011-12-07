@@ -274,6 +274,13 @@ class TestPruneInput(unittest.TestCase):
         assert_equals(len(self.suite.suites), 0)
         assert_equals(len(self.suite.tests), 0)
 
+    def test_prune_errors(self):
+        errors = ExecutionErrors([Message(), Message()])
+        ErrorsBuilder(JsBuildingContext(prune_input=False)).build(errors)
+        assert_equals(len(errors), 2)
+        ErrorsBuilder(JsBuildingContext(prune_input=True)).build(errors)
+        assert_equals(len(errors), 0)
+
 
 class TestBuildStatistics(unittest.TestCase):
 

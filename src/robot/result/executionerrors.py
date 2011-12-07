@@ -36,3 +36,6 @@ class ExecutionErrors(object):
 
     def __iter__(self):
         return iter(self.messages)
+
+    def __len__(self):
+        return len(self.messages)

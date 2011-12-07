@@ -233,7 +233,8 @@ class ErrorsBuilder(_Builder):
         self._build_message = ErrorMessageBuilder(context).build
 
     def build(self, errors):
-        return tuple(self._build_message(msg) for msg in errors)
+        with self._context.prune_input(errors.messages):
+            return tuple(self._build_message(msg) for msg in errors)
 
 
 class ErrorMessageBuilder(MessageBuilder):
