@@ -141,17 +141,6 @@ class TestNormalizedDict(unittest.TestCase):
         assert_equals(nd.data, {})
         assert_equals(nd.keys(), [])
 
-    def test_keys_are_sorted(self):
-        nd = NormalizedDict((c, None) for c in 'aBcDeFg123XyZ___')
-        assert_equals(nd.keys(), list('123_aBcDeFgXyZ'))
-
-    def test_keys_values_and_items_are_returned_in_same_order(self):
-        nd = NormalizedDict()
-        for i, c in enumerate('abcdefghijklmnopqrstuvwxyz'):
-            nd[c.upper()] = i
-            nd[c+str(i)] = 1
-        assert_equals(nd.items(), zip(nd.keys(), nd.values()))
-
     def test_len(self):
         nd = NormalizedDict()
         assert_equals(len(nd), 0)
@@ -218,6 +207,42 @@ class TestNormalizedDict(unittest.TestCase):
         nd = NormalizedDict((k, 1) for k in keys)
         assert_equals(list(nd), keys)
         assert_equals([key for key in nd], keys)
+
+    def test_keys_are_sorted(self):
+        nd = NormalizedDict((c, None) for c in 'aBcDeFg123XyZ___')
+        assert_equals(nd.keys(), list('123_aBcDeFgXyZ'))
+
+    def test_iterkeys_and_keys(self):
+        nd = NormalizedDict({'A': 1, 'b': 3, 'C': 2})
+        iterator = nd.iterkeys()
+        assert_false(isinstance(iterator, list))
+        assert_equals(list(iterator), ['A', 'b', 'C'])
+        assert_equals(list(iterator), [])
+        assert_equals(list(nd.iterkeys()), nd.keys())
+
+    def test_itervalues_and_values(self):
+        nd = NormalizedDict({'A': 1, 'b': 3, 'C': 2})
+        iterator = nd.itervalues()
+        assert_false(isinstance(iterator, list))
+        assert_equals(list(iterator), [1, 3, 2])
+        assert_equals(list(iterator), [])
+        assert_equals(list(nd.itervalues()), nd.values())
+
+    def test_iteritems_and_items(self):
+        nd = NormalizedDict({'A': 1, 'b': 2, 'C': 3})
+        iterator = nd.iteritems()
+        assert_false(isinstance(iterator, list))
+        assert_equals(list(iterator), [('A', 1), ('b', 2), ('C', 3)])
+        assert_equals(list(iterator), [])
+        assert_equals(list(nd.iteritems()), nd.items())
+
+    def test_keys_values_and_items_are_returned_in_same_order(self):
+        nd = NormalizedDict()
+        for i, c in enumerate('abcdefghijklmnopqrstuvwxyz0123456789!"#%&/()=?'):
+            nd[c.upper()] = i
+            nd[c+str(i)] = 1
+        assert_equals(nd.items(), zip(nd.keys(), nd.values()))
+        assert_equals(list(nd.iteritems()), zip(nd.iterkeys(), nd.itervalues()))
 
     def test_cmp(self):
         n1 = NormalizedDict()

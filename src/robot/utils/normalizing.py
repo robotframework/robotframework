@@ -113,17 +113,26 @@ class NormalizedDict(UserDict):
 
     __contains__ = has_key
 
-    def keys(self):
-        return [self._keys[nkey] for nkey in sorted(self._keys)]
-
     def __iter__(self):
-        return iter(self.keys())
+        return (self._keys[norm_key] for norm_key in sorted(self._keys))
+
+    def keys(self):
+        return list(self)
+
+    def iterkeys(self):
+        return iter(self)
 
     def values(self):
-        return [self[key] for key in self]
+        return list(self.itervalues())
+
+    def itervalues(self):
+        return (self[key] for key in self)
 
     def items(self):
-        return [(key, self[key]) for key in self]
+        return list(self.iteritems())
+
+    def iteritems(self):
+        return ((key, self[key]) for key in self)
 
     def copy(self):
         copy = UserDict.copy(self)

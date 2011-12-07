@@ -28,9 +28,9 @@ class TestBuildTestSuite(unittest.TestCase):
         self._verify_suite(TestSuite())
 
     def test_suite_with_values(self):
-        suite = TestSuite('', 'Name', 'Doc', {'m1': 'v1', 'm2': 'v2'}, 'Message',
+        suite = TestSuite('', 'Name', 'Doc', {'m1': 'v1', 'M2': 'V2'}, 'Message',
                           '20111204 19:00:00.000', '20111204 19:00:42.001')
-        self._verify_suite(suite, 'Name', 'Doc', ('m1', 'v1', 'm2', 'v2'),
+        self._verify_suite(suite, 'Name', 'Doc', ('m1', 'v1', 'M2', 'V2'),
                            message='Message', start=0, elapsed=42001)
 
     def test_relative_source(self):
