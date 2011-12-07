@@ -12,15 +12,11 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-# TODO: Generator below isn't correct when this is used outside RIDE.
-
 TEMPLATE = """
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<meta name="generator" content="RIDE" />
-<meta name="rf-template" content="False" />
 <style type="text/css">
 html {
   font-family: Arial,Helvetica,sans-serif;

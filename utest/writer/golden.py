@@ -43,11 +43,10 @@ My Test Case          [Documentation]    This is a long comment that spans sever
 '''
 
 
-
 _txt_pipe_template = '''| *** Settings *** |
 | Library        | MyLibrary | argument | WITH NAME | My Alias | # My library comment |
 | Variables      | MyVariables | args | args 2 | args 3 | args 4 | args 5 | args 6 |
-| ... | args 7 | args 8 | args 9 | args 10 | args 11 | args 12 |
+| ...            | args 7 | args 8 | args 9 | args 10 | args 11 | args 12 |
 | Resource       | MyResource args that are part of the name |
 
 | *** Variables *** |
@@ -59,13 +58,13 @@ _txt_pipe_template = '''| *** Settings *** |
 |    | [Documentation] | Documentation | # Comment for doc |
 |    | # Comment row |
 |    | # Comment row 2 |
-|    | My Step 1 | args | args 2 | args 3 | args 4 | args 5 | args 6 | args 7 |
-|    | ... | args 8 | args 9 | # step 1 comment |
-|    | : FOR | ${param1} | ${param2} | IN | ${data 1} | ${data 2} | ${data 3} | ${data 4} |
-|    | ... | ${data 5} | ${data 6} |
-|    | \ | Loop Step | args | args 2 | args 3 | args 4 | args 5 | args 6 |
-|    | ... | args 7 | args 8 | args 9 | # loop step comment |
-|    | \ | Loop Step 2 |
+|    | My Step 1 | args | args 2 | args 3 | args 4 | args 5 | args 6 |
+|    | ... | args 7 | args 8 | args 9 | # step 1 comment |
+|    | : FOR | ${param1} | ${param2} | IN | ${data 1} | ${data 2} | ${data 3} |
+|    | ... | ${data 4} | ${data 5} | ${data 6} |
+|    |    | Loop Step | args | args 2 | args 3 | args 4 | args 5 |
+|    |    | ... | args 6 | args 7 | args 8 | args 9 | # loop step comment |
+|    |    | Loop Step 2 |
 |    | My Step 2 | my step 2 arg | second arg | # step 2 comment |
 |    | [Return] | args 1 | args 2 |
 
@@ -123,8 +122,6 @@ GOLDEN_HTML_TESTCASE_FILE = '''
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<meta name="generator" content="RIDE" />
-<meta name="rf-template" content="False" />
 <style type="text/css">
 html {
   font-family: Arial,Helvetica,sans-serif;
@@ -174,7 +171,7 @@ td.name, th.name {
 <h1>Here</h1>
 <table id="settings" border="1">
 <tr>
-<th class="name">Setting</th>
+<th class="name" colspan="5">Settings</th>
 </tr>
 <tr>
 <td class="name">Library</td>
@@ -235,7 +232,7 @@ td.name, th.name {
 </table>
 <table id="variables" border="1">
 <tr>
-<th class="name">Variable</th>
+<th class="name" colspan="5">Variables</th>
 </tr>
 <tr>
 <td class="name">MyVar</td>
@@ -268,7 +265,7 @@ td.name, th.name {
 </table>
 <table id="testcases" border="1">
 <tr>
-<th class="name">Test Case</th>
+<th class="name" colspan="5">Test Cases</th>
 </tr>
 <tr>
 <td class="name"><a name="test_My Test Case">My Test Case</a></td>
@@ -306,7 +303,7 @@ td.name, th.name {
 </table>
 <table id="keywords" border="1">
 <tr>
-<th class="name">Keyword</th>
+<th class="name" colspan="5">Keywords</th>
 </tr>
 <tr>
 <td class="name"><a name="keyword_My Keyword">My Keyword</a></td>
@@ -386,24 +383,31 @@ td.name, th.name {
 </tr>
 <tr>
 <td class="name"></td>
+<td></td>
 <td>...</td>
 <td>args 3</td>
 <td>args 4</td>
-<td>args 5</td>
 </tr>
 <tr>
 <td class="name"></td>
+<td></td>
 <td>...</td>
+<td>args 5</td>
 <td>args 6</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td></td>
+<td>...</td>
 <td>args 7</td>
 <td>args 8</td>
 </tr>
 <tr>
 <td class="name"></td>
+<td></td>
 <td>...</td>
 <td>args 9</td>
 <td># loop step comment</td>
-<td></td>
 </tr>
 <tr>
 <td class="name"></td>
