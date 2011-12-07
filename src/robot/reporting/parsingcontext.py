@@ -14,7 +14,7 @@
 
 from operator import itemgetter
 
-from robot import utils
+from robot.utils import compress_text
 
 
 class TextIndex(long):
@@ -44,13 +44,10 @@ class TextCache(object):
         raw = self._raw(text)
         if raw in self.texts or len(raw) < self._compress_threshold:
             return raw
-        compressed = self._compress(text)
+        compressed = compress_text(text)
         if len(compressed) * self._use_compressed_threshold < len(raw):
             return compressed
         return raw
-
-    def _compress(self, text):
-        return utils.compress_text(text)
 
     def _raw(self, text):
         return '*'+text
