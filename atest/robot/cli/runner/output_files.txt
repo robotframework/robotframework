@@ -70,7 +70,7 @@ Non-writable Split Log
     Create Directory  ${CLI OUTDIR}/dir-1.js
     Run Tests  --splitlog --log ${CLI OUTDIR}/dir.html --report r.html  ${TESTFILE}
     Should Be Equal  ${SUITE.status}  PASS
-    Check Stderr Matches Regexp  \\[ ERROR \\] Writing log file '.*dir-1.js' failed: .*
+    Check Stderr Matches Regexp  \\[ ERROR \\] Writing log file '.*dir.html' failed: .*
     Check Stdout Contains  Output:
     Check Stdout Does Not Contain  Log:
     Check Stdout Contains  Report:
