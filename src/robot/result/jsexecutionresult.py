@@ -15,7 +15,7 @@
 import time
 
 from robot import utils
-from robot.reporting.parsingcontext import TextIndex
+from robot.reporting.parsingcontext import StringIndex
 
 
 class JsExecutionResult(object):
@@ -67,7 +67,7 @@ class JsExecutionResult(object):
 
     def _collect_used_indices(self, data, result):
         for item in data:
-            if isinstance(item, TextIndex):
+            if isinstance(item, StringIndex):
                 result.add(item)
             elif isinstance(item, tuple):
                 self._collect_used_indices(item, result)
@@ -84,7 +84,7 @@ class JsExecutionResult(object):
 
     def _remap_string_indices(self, data, remap):
         for item in data:
-            if isinstance(item, TextIndex):
+            if isinstance(item, StringIndex):
                 yield remap[item]
             elif isinstance(item, tuple):
                 yield tuple(self._remap_string_indices(item, remap))

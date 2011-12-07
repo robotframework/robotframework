@@ -4,7 +4,7 @@ import string
 import unittest
 import sys
 
-from robot.reporting.parsingcontext import TextCache, TextIndex
+from robot.reporting.parsingcontext import StringCache, StringIndex
 from robot.reporting.jsmodelbuilders import JsBuildingContext
 from robot.result import TestSuite, Message
 from robot.utils.asserts import assert_equals, assert_true, assert_false, assert_raises
@@ -34,7 +34,7 @@ class TestTextCache(unittest.TestCase):
         # To make test reproducable log the random seed if test fails
         self._seed = long(time.time() * 256)
         random.seed(self._seed)
-        self._text_cache = TextCache()
+        self._text_cache = StringCache()
 
     def _verify_text(self, string, expected):
         self._text_cache.add(string)
@@ -71,12 +71,12 @@ class TestTextCache(unittest.TestCase):
 class TestTextIndex(unittest.TestCase):
 
     def test_to_string(self):
-        value = TextIndex(42)
+        value = StringIndex(42)
         assert_equals(str(value), '42')
 
     def test_long_values(self):
         target = sys.maxint + 42
-        value = TextIndex(target)
+        value = StringIndex(target)
         assert_equals(str(value), str(target))
         assert_false(str(value).endswith('L'))
 

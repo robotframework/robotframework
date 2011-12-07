@@ -17,32 +17,32 @@ from operator import itemgetter
 from robot.utils import compress_text
 
 
-class TextIndex(long):
+class StringIndex(long):
 
     def __str__(self):
         return long.__str__(self).rstrip('L')  # Jython adds L at the end
 
 
-class TextCache(object):
+class StringCache(object):
     _compress_threshold = 80
     _use_compressed_threshold = 1.1
 
     def __init__(self):
-        self.texts = {'*': TextIndex(0)}
-        self.index = 1
+        self._cache = {'*': StringIndex(0)}
+        self._index = 1
 
     def add(self, text):
         if not text:
-            return TextIndex(0)
+            return StringIndex(0)
         text = self._encode(text)
-        if text not in self.texts:
-            self.texts[text] = TextIndex(self.index)
-            self.index += 1
-        return self.texts[text]
+        if text not in self._cache:
+            self._cache[text] = StringIndex(self._index)
+            self._index += 1
+        return self._cache[text]
 
     def _encode(self, text):
         raw = self._raw(text)
-        if raw in self.texts or len(raw) < self._compress_threshold:
+        if raw in self._cache or len(raw) < self._compress_threshold:
             return raw
         compressed = compress_text(text)
         if len(compressed) * self._use_compressed_threshold < len(raw):
@@ -53,5 +53,5 @@ class TextCache(object):
         return '*'+text
 
     def dump(self):
-        return tuple(item[0] for item in sorted(self.texts.iteritems(),
+        return tuple(item[0] for item in sorted(self._cache.iteritems(),
                                                 key=itemgetter(1)))
