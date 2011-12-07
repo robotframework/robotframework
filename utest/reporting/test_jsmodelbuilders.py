@@ -174,10 +174,10 @@ class TestSplitting(unittest.TestCase):
         expected_split = [expected[-3][0][-1], expected[-3][1][-1]]
         expected[-3][0][-1], expected[-3][1][-1] = 1, 2
         model, context = self._build_and_remap(suite, split_log=True)
-        assert_equals(context.strings, ['*', '*suite', '*t1', '*t2'])
+        assert_equals(context.strings, ('*', '*suite', '*t1', '*t2'))
         assert_equals(model, expected)
         assert_equals([strings for _, strings in context.split_results],
-                      [['*', '*t1-k1', '*t1-k1-k1', '*t1-k2'], ['*', '*t2-k1']])
+                      [('*', '*t1-k1', '*t1-k1-k1', '*t1-k2'), ('*', '*t2-k1')])
         assert_equals([self._to_list(remap(*res)) for res in context.split_results],
                       expected_split)
 
@@ -204,10 +204,10 @@ class TestSplitting(unittest.TestCase):
         expected_split = [expected[-2][0][-2], expected[-2][1][-2]]
         expected[-2][0][-2], expected[-2][1][-2] = 1, 2
         model, context = self._build_and_remap(suite, split_log=True)
-        assert_equals(context.strings, ['*', '*root', '*k1', '*k2'])
+        assert_equals(context.strings, ('*', '*root', '*k1', '*k2'))
         assert_equals(model, expected)
         assert_equals([strings for _, strings in context.split_results],
-                     [['*', '*k1-k2'], ['*']])
+                     [('*', '*k1-k2'), ('*',)])
         assert_equals([self._to_list(remap(*res)) for res in context.split_results],
                       expected_split)
 

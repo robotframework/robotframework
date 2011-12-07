@@ -56,5 +56,5 @@ class TextCache(object):
         return '*'+text
 
     def dump(self):
-        return [item[0] for item in sorted(self.texts.iteritems(),
-                                           key=itemgetter(1))]
+        return tuple(item[0] for item in sorted(self.texts.iteritems(),
+                                                key=itemgetter(1)))

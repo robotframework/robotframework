@@ -13,13 +13,13 @@ from robot.utils.asserts import assert_equals, assert_true, assert_false, assert
 class TestStringContext(unittest.TestCase):
 
     def test_add_empty_string(self):
-        self._verify([''], [0] , ['*'])
+        self._verify([''], [0] , ('*',))
 
     def test_add_text(self):
-        self._verify(['Hello!'], [1] , ['*', '*Hello!'])
+        self._verify(['Hello!'], [1] , ('*', '*Hello!'))
 
     def test_add_several_texts(self):
-        self._verify(['Hello!', '', 'Foo'], [1, 0, 2] , ['*', '*Hello!', '*Foo'])
+        self._verify(['Hello!', '', 'Foo'], [1, 0, 2] , ('*', '*Hello!', '*Foo'))
 
     def _verify(self, strings, exp_ids, exp_strings):
         ctx = JsBuildingContext()
@@ -38,7 +38,7 @@ class TestTextCache(unittest.TestCase):
 
     def _verify_text(self, string, expected):
         self._text_cache.add(string)
-        assert_equals(['*', expected], self._text_cache.dump())
+        assert_equals(('*', expected), self._text_cache.dump())
 
     def _compress(self, text):
         return self._text_cache._compress(text)
