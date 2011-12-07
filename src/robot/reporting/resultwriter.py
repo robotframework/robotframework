@@ -14,9 +14,8 @@
 
 
 from robot.errors import DATA_ERROR
+from robot.reporting.jsmodelbuilders import JsModelBuilder
 from robot.result import ResultFromXml
-from robot.result.combiningvisitor import CombiningVisitor, KeywordRemovingVisitor
-from robot.result.datamodel import JSModelCreator
 
 from .builders import LogBuilder, ReportBuilder, XUnitBuilder, OutputBuilder
 
@@ -77,8 +76,8 @@ class Result(object):
     @property
     def js_model(self):
         if self._js_model is None:
-            creator = JSModelCreator(log_path=self._settings.log,
-                                     split_log=self._settings.split_log)
-            self.model.visit(CombiningVisitor(creator, KeywordRemovingVisitor()))
-            self._js_model = creator.datamodel
+            builder = JsModelBuilder(log_path=self._settings.log,
+                                     split_log=self._settings.split_log,
+                                     prune_input_to_save_memory=True)
+            self._js_model = builder.build_from(self.model)
         return self._js_model

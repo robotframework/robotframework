@@ -34,10 +34,14 @@ class TestDataModelWrite(unittest.TestCase):
                 assert_true(line.startswith('window.'))
 
     def test_writing_datamodel_with_split_threshold_in_suite(self):
-        suite = [1, [2, 3], [4, [5], [6, 7]], 8]
+        suite = (1, (2, 3), (4, (5,), (6, 7)), 8)
         lines = self._get_lines(suite=suite, split_threshold=2, separator='foo\n')
         parts = filter(lambda l: l.startswith('window.sPart'), lines)
-        assert_equals(parts, ['window.sPart0 = [2,3];', 'window.sPart1 = [6,7];', 'window.sPart2 = [4,[5],window.sPart1];', 'window.sPart3 = [1,window.sPart0,window.sPart2,8];'])
+        expected = ['window.sPart0 = [2,3];',
+                    'window.sPart1 = [6,7];',
+                    'window.sPart2 = [4,[5],window.sPart1];',
+                    'window.sPart3 = [1,window.sPart0,window.sPart2,8];']
+        assert_equals(parts, expected)
         self._assert_separators_in(lines, 'foo')
 
     def test_splitting_output_strings(self):
@@ -49,3 +53,7 @@ class TestDataModelWrite(unittest.TestCase):
         for line in parts[1:]:
             assert_true(line.startswith('window.output["strings"] = window.output["strings"].concat(['), line)
         self._assert_separators_in(lines, '?')
+
+
+if __name__ == '__main__':
+    unittest.main()

@@ -39,27 +39,37 @@ class JsExecutionResult(object):
 
     def remove_data_not_needed_in_report(self):
         self.data.pop('errors')
-        self._remove_keywords_from_suite(self.suite)
+
+        # TODO: All code below needs to be moved into separate object and unit tested
+        self.suite = tuple(self._remove_keywords_from_suite(self.suite))
         self._remove_unused_strings()
 
     def _remove_keywords_from_suite(self, suite):
-        suite[8] = []
-        for subsuite in suite[6]:
-            self._remove_keywords_from_suite(subsuite)
-        for test in suite[7]:
-            test[-1] = []
+        for index, item in enumerate(suite):
+            if index == 6:
+                yield tuple(tuple(self._remove_keywords_from_suite(s)) for s in item)
+            elif index == 7:
+                yield tuple(tuple(self._remove_keywords_from_test(t)) for t in item)
+            elif index == 8:
+                yield ()
+            else:
+                yield item
+
+    def _remove_keywords_from_test(self, test):
+        for index, item in enumerate(test):
+            yield item if index != 6 else ()
 
     def _remove_unused_strings(self):
         used = self._collect_used_indices(self.suite, set())
         remap = {}
-        self.strings = list(self._get_used_strings(self.strings, used, remap))
-        self._remap_string_indices(self.suite, remap)
+        self.strings = tuple(self._get_used_strings(self.strings, used, remap))
+        self.suite = tuple(self._remap_string_indices(self.suite, remap))
 
     def _collect_used_indices(self, data, result):
         for item in data:
             if isinstance(item, TextIndex):
                 result.add(item)
-            elif isinstance(item, list):
+            elif isinstance(item, tuple):
                 self._collect_used_indices(item, result)
         return result
 
@@ -73,8 +83,10 @@ class JsExecutionResult(object):
                 offset += 1
 
     def _remap_string_indices(self, data, remap):
-        for i, item in enumerate(data):
+        for item in data:
             if isinstance(item, TextIndex):
-                data[i] = remap[item]
-            elif isinstance(item, list):
-                self._remap_string_indices(item, remap)
+                yield remap[item]
+            elif isinstance(item, tuple):
+                yield tuple(self._remap_string_indices(item, remap))
+            else:
+                yield item

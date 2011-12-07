@@ -83,7 +83,7 @@ class _SubResult(object):
         self.mapping = mapping
 
     def update(self, subresult):
-        self.data_block += [subresult.data_block]
+        self.data_block.append(subresult.data_block)
         self.size += subresult.size
         if subresult.mapping:
             self.mapping.update(subresult.mapping)
@@ -105,7 +105,7 @@ class SplittingSuiteWriter(object):
         return result.data_block, result.mapping
 
     def _write(self, data_block):
-        if not isinstance(data_block, list):
+        if not isinstance(data_block, tuple):
             return _SubResult(data_block, 1, None)
         result = _SubResult([], 1, {})
         for item in data_block:
