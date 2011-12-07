@@ -71,7 +71,8 @@ class XUnitBuilder(_Builder):
 class _HTMLFileBuilder(_Builder):
 
     def _write_file(self, output, config, template):
-        outfile = codecs.open(output, 'w', encoding='UTF-8') if isinstance(output, basestring) else output
+        outfile = codecs.open(output, 'w', encoding='UTF-8') \
+            if isinstance(output, basestring) else output  # isinstance is unit test hook
         with outfile:
             self._write_to_output(outfile, config, template)
 
