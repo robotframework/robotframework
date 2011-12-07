@@ -80,10 +80,11 @@ class JsBuildingContext(object):
         return len(self.split_results)
 
     @contextmanager
-    def prune_input(self, item):
+    def prune_input(self, *items):
         yield
         if self._prune_input:
-            item.keywords.clear()
+            for item in items:
+                item.clear()
 
 
 # TODO: Change order of items in JS model to be more consistent with "normal" model?
@@ -136,7 +137,7 @@ class SuiteBuilder(_Builder):
         self._build_keyword = KeywordBuilder(context).build
 
     def build(self, suite):
-        with self._context.prune_input(suite):
+        with self._context.prune_input(suite.keywords):
             return (self._string(suite.name),
                     self._string(suite.source),
                     self._context.relative_source(suite.source),
@@ -168,7 +169,7 @@ class TestBuilder(_Builder):
         self._build_keyword = KeywordBuilder(context).build
 
     def build(self, test):
-        with self._context.prune_input(test):
+        with self._context.prune_input(test.keywords):
             return (self._string(test.name),
                     self._string(test.timeout),
                     int(test.critical == 'yes'),
