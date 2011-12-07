@@ -1,5 +1,5 @@
 import unittest
-from os.path import abspath, dirname, join, normpath
+from os.path import abspath, basename, dirname, join, normpath
 
 from robot.utils.asserts import assert_equals
 from robot.result import TestSuite, TestCase, Keyword, Message
@@ -37,7 +37,7 @@ class TestBuildTestSuite(unittest.TestCase):
         self._verify_suite(TestSuite(source='non-existing'), source='non-existing')
         source = normpath(__file__)
         self._verify_suite(TestSuite(source=source), source=source,
-                           relsource=os.path.basename(source))
+                           relsource=basename(source))
 
     def test_suite_html_formatting(self):
         self._verify_suite(TestSuite(name='*xxx*', doc='*bold* <&>',
