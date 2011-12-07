@@ -48,8 +48,8 @@ class TestReporting(unittest.TestCase, ResultWriter):
         self._result._model = ExecutionResult(self._root_suite)
 
     def test_generate_report_and_log(self):
-        self._settings.log = ClosableOutput()
-        self._settings.report = ClosableOutput()
+        self._settings.log = ClosableOutput('log.html')
+        self._settings.report = ClosableOutput('report.html')
         self.write_results()
         self._verify_log()
         self._verify_report()
@@ -74,30 +74,30 @@ class TestReporting(unittest.TestCase, ResultWriter):
         assert_equals(self._result._model, None)
 
     def test_only_log(self):
-        self._settings.log = ClosableOutput()
+        self._settings.log = ClosableOutput('log.html')
         self.write_results()
         self._verify_log()
 
     def test_only_report(self):
-        self._settings.report = ClosableOutput()
+        self._settings.report = ClosableOutput('report.html')
         self.write_results()
         self._verify_report()
 
     def test_only_xunit(self):
-        self._settings.xunit = ClosableOutput()
+        self._settings.xunit = ClosableOutput('xunit.xml')
         self.write_results()
         self._verify_xunit()
 
     def test_only_output_generation(self):
-        self._settings.output = ClosableOutput()
+        self._settings.output = ClosableOutput('output.xml')
         self.write_results()
         self._verify_output()
 
     def test_generate_all(self):
-        self._settings.log = ClosableOutput()
-        self._settings.report = ClosableOutput()
-        self._settings.xunit = ClosableOutput()
-        self._settings.output = ClosableOutput()
+        self._settings.log = ClosableOutput('l.html')
+        self._settings.report = ClosableOutput('r.html')
+        self._settings.xunit = ClosableOutput('x.xml')
+        self._settings.output = ClosableOutput('o.xml')
         self.write_results()
         self._verify_log()
         self._verify_report()
@@ -105,7 +105,7 @@ class TestReporting(unittest.TestCase, ResultWriter):
         self._verify_output()
 
     def test_log_generation_removes_keywords_from_original_model(self):
-        self._settings.log = ClosableOutput()
+        self._settings.log = ClosableOutput('log.html')
         self.write_results()
         for test in self._root_suite.tests:
             assert_equals(len(test.keywords), 0)
@@ -117,20 +117,15 @@ class TestReporting(unittest.TestCase, ResultWriter):
     def _verify_output(self):
         assert_true(self._settings.output.getvalue())
 
-    #TODO: Find a way to test split_log
-    def _test_split_tests(self):
-        self._settings.split_log = True
-        self._settings.log = ClosableOutput()
-        self.write_results()
-        self._verify_log()
 
 if os.name == 'java':
     import java.io.OutputStream
     import java.lang.String
 
     class ClosableOutput(java.io.OutputStream):
-        def __init__(self):
+        def __init__(self, path):
             self._output = StringIO()
+            self._path = path
 
         __enter__ = lambda *args: 0
         __exit__ = lambda self, *args: self.close()
@@ -144,12 +139,17 @@ if os.name == 'java':
 
         def getvalue(self):
             return self.value
+
+        def __str__(self):
+            return self._path
+
 else:
 
     class ClosableOutput(object):
 
-        def __init__(self):
+        def __init__(self, path):
             self._output = StringIO()
+            self._path = path
 
         __enter__= lambda *args: 0
         __exit__ = lambda self, *args: self.close()
@@ -163,6 +163,9 @@ else:
 
         def getvalue(self):
             return self.value
+
+        def __str__(self):
+            return self._path
 
 
 if __name__ == '__main__':
