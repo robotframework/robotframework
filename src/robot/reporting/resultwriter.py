@@ -59,10 +59,7 @@ class Result(object):
         self._data_sources = data_sources
         self._model = None
         self._js_model = None
-
-    @property
-    def return_code(self):
-        return self._model.return_code if self._model else DATA_ERROR
+        self.return_code = DATA_ERROR
 
     @property
     def model(self):
@@ -71,6 +68,7 @@ class Result(object):
             self._model.configure(self._settings.status_rc,
                                   self._settings.suite_config,
                                   self._settings.statistics_config)
+            self.return_code = self._model.return_code
         return self._model
 
     @property
@@ -80,4 +78,5 @@ class Result(object):
                                      split_log=self._settings.split_log,
                                      prune_input_to_save_memory=True)
             self._js_model = builder.build_from(self.model)
+            self._model = None
         return self._js_model

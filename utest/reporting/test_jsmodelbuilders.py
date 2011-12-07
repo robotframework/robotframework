@@ -271,11 +271,8 @@ class TestPruneInput(unittest.TestCase):
     def test_prune_input_true(self):
         SuiteBuilder(JsBuildingContext(prune_input=True)).build(self.suite)
         assert_equals(len(self.suite.keywords), 0)
-        assert_equals(len(self.suite.suites[0].keywords), 0)
-        assert_equals(len(self.suite.suites[0].tests[0].keywords), 0)
-        assert_equals(len(self.suite.suites[1].keywords), 0)
-        assert_equals(len(self.suite.suites[1].tests[0].keywords), 0)
-        assert_equals(len(self.suite.suites[1].tests[1].keywords), 0)
+        assert_equals(len(self.suite.suites), 0)
+        assert_equals(len(self.suite.tests), 0)
 
 
 class TestBuildStatistics(unittest.TestCase):

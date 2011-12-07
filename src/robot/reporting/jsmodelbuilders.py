@@ -98,9 +98,10 @@ class JsModelBuilder(object):
                                           prune_input_to_save_memory)
 
     def build_from(self, result_from_xml):
+        # Statistics must be build first because building suite may prune input.
         return JsExecutionResult(
-            suite=SuiteBuilder(self._context).build(result_from_xml.suite),
             statistics=StatisticsBuilder().build(result_from_xml.statistics),
+            suite=SuiteBuilder(self._context).build(result_from_xml.suite),
             errors=ErrorsBuilder(self._context).build(result_from_xml.errors),
             strings=self._context.strings,
             basemillis=self._context.basemillis,
@@ -138,7 +139,8 @@ class SuiteBuilder(_Builder):
         self._build_keyword = KeywordBuilder(context).build
 
     def build(self, suite):
-        with self._context.prune_input(suite.keywords):
+        with self._context.prune_input(suite.suites, suite.tests, suite.keywords):
+            stats = self._get_statistics(suite)  # Must be done before pruning
             return (self._string(suite.name),
                     self._string(suite.source),
                     self._context.relative_source(suite.source),
@@ -148,7 +150,7 @@ class SuiteBuilder(_Builder):
                     tuple(self.build(s) for s in suite.suites),
                     tuple(self._build_test(t) for t in suite.tests),
                     tuple(self._build_keyword(k, split=True) for k in suite.keywords),
-                    self._get_statistics(suite))
+                    stats)
 
     def _yield_metadata(self, suite):
         for name, value in suite.metadata.iteritems():
