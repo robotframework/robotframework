@@ -15,7 +15,8 @@
 import time
 
 from robot import utils
-from robot.reporting.parsingcontext import StringIndex
+
+from .stringcache import StringIndex
 
 
 class JsExecutionResult(object):

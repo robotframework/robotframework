@@ -4,10 +4,9 @@ import string
 import unittest
 import sys
 
-from robot.reporting.parsingcontext import StringCache, StringIndex
+from robot.reporting.stringcache import StringCache, StringIndex
 from robot.reporting.jsmodelbuilders import JsBuildingContext
-from robot.result import TestSuite, Message
-from robot.utils.asserts import assert_equals, assert_true, assert_false, assert_raises
+from robot.utils.asserts import assert_equals, assert_true, assert_false
 
 
 class TestStringContext(unittest.TestCase):

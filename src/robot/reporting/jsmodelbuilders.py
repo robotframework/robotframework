@@ -20,7 +20,7 @@ from robot.utils import timestamp_to_secs, get_link_path, html_format
 from robot.output import LEVELS
 
 from .jsexecutionresult import JsExecutionResult
-from .parsingcontext import StringCache
+from .stringcache import StringCache
 
 
 class JsBuildingContext(object):

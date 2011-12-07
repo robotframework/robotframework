@@ -6,7 +6,7 @@ from robot.result import TestSuite, TestCase, Keyword, Message
 from robot.result.executionerrors import ExecutionErrors
 from robot.model import Statistics
 from robot.reporting.jsmodelbuilders import *
-from robot.reporting.parsingcontext import StringIndex as StringIndex
+from robot.reporting.stringcache import StringIndex
 
 CURDIR = dirname(abspath(__file__))
 
