@@ -36,9 +36,3 @@ class Keyword(model.Keyword):
     @property
     def is_passed(self):
         return self.status == 'PASS'
-
-    @property
-    def on_split_log_boundary(self):
-        return (isinstance(self.parent, model.TestCase) or
-                isinstance(self.parent, model.Keyword) and
-                isinstance(self.parent.parent, model.TestSuite))

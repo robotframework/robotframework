@@ -93,26 +93,6 @@ class TestElapsedTime(unittest.TestCase):
         assert_equal(suite.elapsedtime, 3610000)
 
 
-class TestKeyword(unittest.TestCase):
-
-    def test_test_keyword_on_split_log_boundary(self):
-        kw1 = TestCase().keywords.create()
-        kw2 = kw1.keywords.create()
-        assert_true(kw1.on_split_log_boundary)
-        assert_false(kw2.on_split_log_boundary)
-
-    def test_suite_keyword_on_split_log_boundary(self):
-        kw1 = TestSuite().keywords.create()
-        kw2 = kw1.keywords.create()
-        kw3 = kw2.keywords.create()
-        assert_false(kw1.on_split_log_boundary)
-        assert_true(kw2.on_split_log_boundary)
-        assert_false(kw3.on_split_log_boundary)
-
-    def test_keyword_without_parent_on_split_log_boundary(self):
-        assert_false(Keyword().on_split_log_boundary)
-
-
 class TestSlots(unittest.TestCase):
 
     def test_testsuite(self):

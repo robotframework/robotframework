@@ -12,86 +12,9 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-import os.path
 from operator import itemgetter
 
 from robot import utils
-
-
-class Context(object):
-
-    def __init__(self, log_path=None, split_log=False):
-        self._main_text_cache = TextCache()
-        self._current_texts = self._main_text_cache
-        self._split_text_caches = []
-        self.basemillis = 0
-        self._links = {}
-        self._split_log = split_log
-        self.split_results = []
-        self._log_path = log_path
-
-    def get_rel_log_path(self, path):
-        if path and os.path.exists(path) and self._log_path:
-            return utils.get_link_path(path, os.path.dirname(self._log_path))
-        return ''
-
-    def get_id(self, value):
-        if value is None:
-            return None
-        if isinstance(value, basestring):
-            return self._get_text_id(value)
-        if isinstance(value, (int, long)):
-            return value
-        raise TypeError('Unsupported type %s' % type(value))
-
-    def _get_text_id(self, text):
-        return self._current_texts.add(text)
-
-    def dump_texts(self):
-        return self._current_texts.dump()
-
-    def timestamp(self, time):
-        if time == 'N/A':
-            return None
-        # Must use `long` and not `int` below due to this IronPython bug:
-        # http://ironpython.codeplex.com/workitem/31549
-        millis = long(round(utils.timestamp_to_secs(time) * 1000))
-        if not self.basemillis:
-            self.basemillis = millis
-        return millis - self.basemillis
-
-    def start_test(self):
-        if self._split_log:
-            self._split_text_caches.append(TextCache())
-
-    def end_test(self, kw_data=None):
-        if self._split_log and kw_data:
-            self.split_results.append((kw_data, self._split_text_caches[-1].dump()))
-            return len(self.split_results)
-        return kw_data
-
-    def start_keyword(self):
-        if self._split_log:
-            self._current_texts = self._split_text_caches[-1]
-
-    def end_keyword(self, is_top_level_keyword=False):
-        if self._split_log and is_top_level_keyword:
-            self._current_texts = self._main_text_cache
-
-    def start_suite_setup_or_teardown(self):
-        return self.start_test()
-
-    def end_suite_setup_or_teardown(self, kw_data=None):
-        return self.end_test(kw_data)
-
-    def create_link_to_current_location(self, msg):
-        self._links[self._link_key(msg)] = msg.parent.id
-
-    def link_to(self, msg):
-        return self._links[self._link_key(msg)]
-
-    def _link_key(self, msg):
-        return (msg.message, msg.level, msg.timestamp)
 
 
 class TextIndex(long):
