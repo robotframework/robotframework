@@ -41,7 +41,7 @@ class TestTextCache(unittest.TestCase):
         assert_equals(('*', expected), self._text_cache.dump())
 
     def _compress(self, text):
-        return self._text_cache._compress(text)
+        return self._text_cache._encode(text)
 
     def test_short_test_is_not_compressed(self):
         self._verify_text('short', '*short')
