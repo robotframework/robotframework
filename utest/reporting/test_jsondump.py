@@ -9,7 +9,7 @@ except ImportError:
 import unittest
 
 from robot.utils.asserts import assert_equals, assert_raises
-from robot.reporting.jsondump import JsonDumper
+from robot.reporting.jsonwriter import JsonDumper
 
 
 class JsonTestCase(unittest.TestCase):

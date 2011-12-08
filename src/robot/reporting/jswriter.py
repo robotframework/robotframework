@@ -12,7 +12,7 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from .jsondump import JsonDumper
+from .jsonwriter import JsonWriter
 
 
 class ScriptBlockWriter(object):
@@ -26,7 +26,7 @@ class ScriptBlockWriter(object):
         self._split_threshold = split_threshold
 
     def write_to(self, output, model, config):
-        writer = SeparatingWriter(output, self._separator)
+        writer = JsonWriter(output, self._separator)
         writer.write('%s = {};\n' % self._output)
         writer.separator()
         self._write_suite(writer, model.suite)
@@ -60,23 +60,6 @@ class ScriptBlockWriter(object):
         for index in xrange(0, len(iterable), chunk_size):
             yield iterable[index:index+chunk_size]
 
-
-class SeparatingWriter(object):
-
-    def __init__(self, output, separator=''):
-        self._dumper = JsonDumper(output)
-        self._separator = separator
-
-    def separator(self):
-        self._dumper.write(self._separator)
-
-    def write_json(self, prefix, data, postfix=';\n', mapping=None):
-        self._dumper.write(prefix)
-        self._dumper.dump(data, mapping)
-        self._dumper.write(postfix)
-
-    def write(self, string):
-        self._dumper.write(string)
 
 #TODO: Naming
 class SplittingSuiteWriter(object):

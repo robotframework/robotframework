@@ -13,6 +13,24 @@
 #  limitations under the License.
 
 
+class JsonWriter(object):
+
+    def __init__(self, output, separator=''):
+        self._writer = JsonDumper(output)
+        self._separator = separator
+
+    def write_json(self, prefix, data, postfix=';\n', mapping=None):
+        self._writer.write(prefix)
+        self._writer.dump(data, mapping)
+        self._writer.write(postfix)
+
+    def write(self, string):
+        self._writer.write(string)
+
+    def separator(self):
+        self._writer.write(self._separator)
+
+
 class JsonDumper(object):
 
     def __init__(self, output):
