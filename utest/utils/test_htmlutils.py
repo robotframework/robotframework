@@ -1,4 +1,3 @@
-import sys
 import unittest
 
 from robot.utils.asserts import *
@@ -27,16 +26,6 @@ class TestHtmlEscapeAndFormat(unittest.TestCase):
     def test_no_changes(self):
         for inp in ['', 'nothing to change']:
             _test_escape_and_format(inp)
-
-    def test_non_strings(self):
-        for inp in [1, None, True]:
-            _test_escape_and_format(inp)
-
-    def test_non_string_with_str_needing_escaping(self):
-        class NonString:
-            def __str__(self):
-                return '<hello>'
-        _test_escape_and_format(NonString(), '&lt;hello&gt;')
 
     def test_newlines_and_paragraphs(self):
         for inp in ['Text on first line.\nText on second line.',
