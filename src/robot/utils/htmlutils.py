@@ -14,6 +14,13 @@
 
 import re
 
+# TODO: cleanup!
+
+_html_escape_re = re.compile('([&<>])')
+
+def _html_escape_repl(match):
+    return {'&': '&amp;', '<': '&lt;', '>': '&gt;'}[match.group(1)]
+
 
 def html_escape(text, formatting=False):
     # TODO: Remove formatting attribute after RIDE does not use it anymore
@@ -29,9 +36,7 @@ def _ride_formatting(text):
                 .replace('  ', ' &nbsp;').replace('\n', '<br>\n')
 
 def _html_escape(text):
-    for name, value in [('&', '&amp;'), ('<', '&lt;'), ('>', '&gt;')]:
-        text = text.replace(name, value)
-    return text
+    return _html_escape_re.sub(_html_escape_repl, text)
 
 
 def html_format(text):
