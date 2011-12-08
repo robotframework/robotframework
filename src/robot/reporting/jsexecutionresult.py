@@ -40,51 +40,57 @@ class JsExecutionResult(object):
 
     def remove_data_not_needed_in_report(self):
         self.data.pop('errors')
+        remover = _KeywordRemover()
+        self.suite = remover.remove_keywords(self.suite)
+        self.suite, self.strings \
+                = remover.remove_unused_strings(self.suite, self.strings)
 
-        # TODO: All code below needs to be moved into separate object and unit tested
-        self.suite = tuple(self._remove_keywords_from_suite(self.suite))
-        self._remove_unused_strings()
+
+class _KeywordRemover(object):
+
+    def remove_keywords(self, suite):
+        return self._remove_keywords_from_suite(suite)
 
     def _remove_keywords_from_suite(self, suite):
-        for index, item in enumerate(suite):
-            if index == 6:
-                yield tuple(tuple(self._remove_keywords_from_suite(s)) for s in item)
-            elif index == 7:
-                yield tuple(tuple(self._remove_keywords_from_test(t)) for t in item)
-            elif index == 8:
-                yield ()
-            else:
-                yield item
+        return suite[:6] + (self._remove_keywords_from_suites(suite[6]),
+                            self._remove_keywords_from_tests(suite[7]),
+                            (), suite[9])
+
+    def _remove_keywords_from_suites(self, suites):
+        return tuple(self._remove_keywords_from_suite(s) for s in suites)
+
+    def _remove_keywords_from_tests(self, tests):
+        return tuple(self._remove_keywords_from_test(t) for t in tests)
 
     def _remove_keywords_from_test(self, test):
-        for index, item in enumerate(test):
-            yield item if index != 6 else ()
+        return test[:-1] + ((),)  # TODO: Could we just return test[:-1]?
 
-    def _remove_unused_strings(self):
-        used = self._collect_used_indices(self.suite, set())
+    def remove_unused_strings(self, model, strings):
+        used = set(self._get_used_indices(model))
         remap = {}
-        self.strings = tuple(self._get_used_strings(self.strings, used, remap))
-        self.suite = tuple(self._remap_string_indices(self.suite, remap))
+        strings = tuple(self._get_used_strings(strings, used, remap))
+        model = tuple(self._remap_string_indices(model, remap))
+        return model, strings
 
-    def _collect_used_indices(self, data, result):
-        for item in data:
+    def _get_used_indices(self, model):
+        for item in model:
             if isinstance(item, StringIndex):
-                result.add(item)
+                yield item
             elif isinstance(item, tuple):
-                self._collect_used_indices(item, result)
-        return result
+                for i in self._get_used_indices(item):
+                    yield i
 
-    def _get_used_strings(self, data, used, index_remap):
+    def _get_used_strings(self, strings, used_indices, remap):
         offset = 0
-        for index, text in enumerate(data):
-            if index in used:
-                index_remap[index] = index - offset
-                yield text
+        for index, string in enumerate(strings):
+            if index in used_indices:
+                remap[index] = index - offset
+                yield string
             else:
                 offset += 1
 
-    def _remap_string_indices(self, data, remap):
-        for item in data:
+    def _remap_string_indices(self, model, remap):
+        for item in model:
             if isinstance(item, StringIndex):
                 yield remap[item]
             elif isinstance(item, tuple):
