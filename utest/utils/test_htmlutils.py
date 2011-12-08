@@ -2,8 +2,8 @@ import unittest
 
 from robot.utils.asserts import *
 
-from robot.utils.htmlutils import (html_escape, html_format, html_attr_escape,
-                                   _TableFormatter)
+from robot.utils.htmlutils import html_escape, html_format, html_attr_escape
+from robot.utils.htmlformatters import _TableFormatter
 
 _format_table = _TableFormatter()._format_table
 
@@ -32,7 +32,7 @@ class TestHtmlEscapeAndFormat(unittest.TestCase):
                     '1 line\n2 line\n3 line\n4 line\n5 line\n',
                     'Para 1 line 1\nP1 L2\n\nP2 L1\nP2 L1\n\nP3 L1\nP3 L2',
                      'Multiple empty lines\n\n\n\n\nbetween these lines']:
-            _test_escape_and_format(inp, inp.strip())
+            _test_escape_and_format(inp, inp, inp.rstrip())
 
     def test_entities(self):
         for char, entity in [('<','&lt;'), ('>','&gt;'), ('&','&amp;')]:
