@@ -4,8 +4,6 @@ import fileinput
 from os.path import join, dirname, abspath
 import sys
 import os
-from robot.result.datamodel import JSModelCreator
-from robot.result.executionresult import ResultFromXml
 
 
 BASEDIR = dirname(abspath(__file__))
@@ -14,7 +12,9 @@ OUTPUT = join(BASEDIR, 'output.xml')
 sys.path.insert(0, join(BASEDIR, '..', '..', '..', '..', 'src'))
 
 import robot
-from robot.reporting.jswriter import SeparatingWriter, ScriptBlockWriter
+from robot.result.executionresult import ResultFromXml
+from robot.reporting.jsmodelbuilders import JsModelBuilder
+from robot.reporting.jswriter import ScriptBlockWriter, JsonWriter
 
 
 def run_robot(testdata, loglevel='INFO'):
@@ -28,16 +28,14 @@ def run_robot(testdata, loglevel='INFO'):
 
 
 def create_jsdata(outxml, target, split_log):
-    result = ResultFromXml(outxml)
-    visitor = JSModelCreator(split_log=split_log)
-    result.visit(visitor)
-    model = visitor.datamodel
+    model = JsModelBuilder(split_log=split_log).build_from(ResultFromXml(outxml))
+    config = {'logURL': 'log.html',
+              'reportURL': 'report.html',
+              'background': {'fail': 'DeepPink'}}
     with open(target, 'w') as output:
-        ScriptBlockWriter('\n').write_to(output, model, {'logURL': 'log.html',
-                                                        'reportURL': 'report.html',
-                                                        'background': {'fail': 'DeepPink'}})
+        ScriptBlockWriter('\n').write_to(output, model, config)
+        writer = JsonWriter(output)
         for index, (keywords, strings) in enumerate(model.split_results):
-            writer = SeparatingWriter(output, '')
             writer.write_json('window.outputKeywords%d = ' % index, keywords)
             writer.write_json('window.outputStrings%d = ' % index, strings)
 
@@ -54,6 +52,7 @@ def create(input, target, targetName, loglevel='INFO', split_log=False):
     run_robot(input, loglevel)
     create_jsdata(OUTPUT, target, split_log)
     replace_all(target, 'window.output', 'window.' + targetName)
+
 
 if __name__ == '__main__':
     create('Suite.txt', 'Suite.js', 'suiteOutput')
