@@ -300,7 +300,6 @@ class PipeSeparatedTxtWriter(object):
 
 
 class HtmlFileWriter(object):
-    _backslash_matcher = re.compile(r'(\\+)n ')
 
     def __init__(self, context):
         self._content = TEMPLATE % {'NAME': context.datafile.name}
@@ -317,98 +316,48 @@ class HtmlFileWriter(object):
             if table:
                 {'setting': self._write_settings,
                  'variable': self._write_variables,
-                 'keyword': self._write_keywords,
-                 'testcase': self._write_tests}[table.type](table)
+                 'testcase': self._write_tests,
+                 'keyword': self._write_keywords
+                 }[table.type](table)
 
     def _write_settings(self, settings):
-        self._write_header('Settings')
-        for row in self._formatter.setting_table(settings):
-            self._write_row(row)
-        self._end_table(self._table_replacer.settings_table)
+        self._write_table('Settings', self._formatter.setting_rows(settings),
+                          self._table_replacer.settings_table)
 
     def _write_variables(self, variables):
-        self._write_header('Variables')
-        for v in variables:
-            self.element(v)
-        self._end_table(self._table_replacer.variables_table)
+        self._write_table('Variables', self._formatter.variable_rows(variables),
+                          self._table_replacer.variables_table)
 
     def _write_tests(self, tests):
-        self._write_header('Test Cases')
-        self._write_steps(tests, 'test')
-        self._end_table(self._table_replacer.testcases_table)
+        self._write_table('Test Cases', self._formatter.test_rows(tests),
+                          self._table_replacer.testcases_table)
 
     def _write_keywords(self, keywords):
-        self._write_header('Keywords')
-        self._write_steps(keywords, 'keyword')
-        self._end_table(self._table_replacer.keywords_table)
+        self._write_table('Keywords', self._formatter.keyword_rows(keywords),
+                           self._table_replacer.keywords_table)
 
-    def _write_steps(self, table, type_):
-        for item in table:
-            elems = [e for e in list(item) if e.is_set()]
-            self._write_data([self._link_from_name(item.name, type_)] + elems[0].as_list(),
-                              colspan=isinstance(elems[0], Documentation))
-            for subitem in elems[1:]:
-                self.element(subitem, indent=1)
-                if subitem.is_for_loop():
-                    for sub in subitem:
-                        self._write_data(sub.as_list(), indent=2)
+    def _write_table(self, header, rows, replacer):
+        self._write_header(header)
+        for row in rows:
+            self._write_row(row)
+        self._end_table(replacer)
 
-    def element(self, element, indent=0):
-        if not element.is_set():
-            return
-        colspan = isinstance(element, Documentation)
-        content = element.as_list()
-        self._write_data(content, indent=indent, colspan=colspan)
+    def _write_header(self, header):
+        self._write_row(self._formatter.header_row(header), cell_tag='th')
 
     def _end_table(self, table_replacer):
-        self._write_data([])
+        self._write_row(self._formatter.empty_row())
         table = self._writer.output.getvalue().decode('UTF-8')
         self._content = table_replacer(table, self._content)
         self._writer = utils.HtmlWriter(StringIO())
 
-    def _write_header(self, header):
-        self._writer.start('tr')
-        attrs = {'class': 'name', 'colspan': '5'}
-        self._writer.element('th', header, attrs)
-        self._writer.end('tr')
-
-    def _write_row(self, row):
+    def _write_row(self, row, cell_tag='td'):
         self._writer.start('tr')
         for cell in row:
-            self._writer.element('td', cell.content, cell.attributes)
+            self._writer.element(cell_tag, cell.content, cell.attributes,
+                                 escape=False)
         self._writer.end('tr')
 
-    def _write_data(self, data, indent=0, colspan=False):
-        for row in self._formatter.format(data, indent, colspan):
-            self._writer.start('tr', newline=True)
-            for i, cell in enumerate(row):
-                if i != 0:
-                    cell = utils.html_escape(cell)
-                cell = self._add_br_to_newlines(cell)
-                attrs = self._get_attrs(i, len(row), colspan)
-                self._writer.element('td', cell, attrs, escape=False)
-            self._writer.end('tr')
-
-    def _add_br_to_newlines(self, input):
-        def replacer(match):
-            backslash_count = len(match.group(1))
-            if backslash_count % 2 == 1:
-                return '%sn<br>\n' % match.group(1)
-            return match.group()
-        return self._backslash_matcher.sub(replacer, input)
-
-    def _get_attrs(self, index, rowlength, colspan=True):
-        if index == 0:
-            return {'class': 'name'}
-        if colspan and index == rowlength-1:
-            num_cols = 5-index
-            return {'colspan': str(num_cols),
-                    'class': 'colspan%d' % num_cols}
-        return {}
-
-    def _link_from_name(self, name, type_):
-        return '<a name="%s_%s">%s</a>' % (type_, utils.html_attr_escape(name),
-                                           utils.html_escape(name))
 
 class HtmlTableReplacer(object):
     _table_re = '(<table\s[^>]*id=["\']?%s["\']?[^>]*>).*?(</table>)'
