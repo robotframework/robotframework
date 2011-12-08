@@ -12,7 +12,7 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from robot.reporting.jsondump import JsonDumper
+from .jsondump import JsonDumper
 
 
 class ScriptBlockWriter(object):
@@ -48,12 +48,15 @@ class ScriptBlockWriter(object):
 
     def _write_strings(self, strings, writer):
         writer.write(self._output_var(self._STRINGS_KEY)+' = [];\n')
-        while strings:
+        for chunk in self._chunks(strings, self._split_threshold):
             writer.separator()
             writer.dump_json(self._output_var(self._STRINGS_KEY)
                              +' = '+self._output_var(self._STRINGS_KEY)
-                             +'.concat(', strings[:self._split_threshold], ');\n')
-            strings = strings[self._split_threshold:]
+                             +'.concat(', chunk, ');\n')
+
+    def _chunks(self, iterable, chunk_size):
+        for index in xrange(0, len(iterable), chunk_size):
+            yield iterable[index:index+chunk_size]
 
 
 class SeparatingWriter(object):
