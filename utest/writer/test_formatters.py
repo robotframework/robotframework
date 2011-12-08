@@ -1,13 +1,13 @@
 import unittest
 
-from robot.writer.formatters import Formatter, TxtFormatter, Cell
+from robot.writer.formatters import RowSplitter, TxtFormatter, Cell
 from robot.utils.asserts import assert_equals
 
 
 class TestTxtFormatter(unittest.TestCase):
 
     def test_escaping_empty_cells_at_eol(self):
-        formatter = Formatter(cols=3)
+        formatter = RowSplitter(cols=3)
         assert_equals(formatter.format(['Some', 'text', '', 'with empty'], 0),
                                        [['Some', 'text', '${EMPTY}'],
                                         ['...', 'with empty']])

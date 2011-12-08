@@ -23,7 +23,7 @@ class TsvFormatter(object):
 
     def __init__(self, cols=8):
         self._cols = cols
-        self._formatter = Formatter(self._padding, self._cols)
+        self._formatter = RowSplitter(self._padding, self._cols)
 
     def format(self, row, indent):
         return [self._pad(row) for row in self._formatter.format(row, indent)]
@@ -37,7 +37,7 @@ class TxtFormatter(object):
 
     def __init__(self, cols=8):
         self._cols = cols
-        self._formatter = Formatter(self._padding, self._cols)
+        self._formatter = RowSplitter(self._padding, self._cols)
 
     def format(self, row, indent=0, justifications=[]):
         rows = self._formatter.format(row, indent)
@@ -66,7 +66,7 @@ class PipeFormatter(TxtFormatter):
 class HtmlFormatter(object):
 
     def __init__(self):
-        self._formatter = Formatter(cols=5)
+        self._formatter = RowSplitter(cols=5)
         self._padding = ''
         self._cols = 5
 
@@ -177,13 +177,14 @@ class AnchorNameCell(object):
                                            utils.html_escape(name))
 
 
-class Formatter(object):
+class RowSplitter(object):
 
     def __init__(self, padding='', cols=8):
         self._cols = cols
         self._padding = padding
 
     def format(self, row, indent):
+        # TODO: encoding does not belong here
         return [self._encode(r) for r in self._split_to_rows(row, indent)]
 
     def _encode(self, row):
