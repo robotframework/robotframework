@@ -46,9 +46,9 @@ class JsonTestCase(unittest.TestCase):
         self._test([1,2,3, 'hello', 'world'], '[1,2,3,"hello","world"]')
         self._test(['nested', [1,2,[4]]], '["nested",[1,2,[4]]]')
 
-    def test_dump_other_iterables(self):
+    def test_dump_tuple(self):
+        self._test(('hello', 'world'), '["hello","world"]')
         self._test((1,2,(3,4)), '[1,2,[3,4]]')
-        self._test(xrange(5), '[0,1,2,3,4]')
 
     def test_dump_dictionary(self):
         self._test({'key': 1}, '{"key":1}')

@@ -39,15 +39,15 @@ class JsonDumper(object):
 
     def __init__(self, output):
         self._output = output
-        self._data_dumpers = [_MappingDumper(self),
-                              _IntegerDumper(self),
-                              _StringDumper(self),
-                              _IterableDumper(self), # Checking iterable is expensive
-                              _DictDumper(self),
-                              _NoneDumper(self)]
+        self._dumpers = (_MappingDumper(self),
+                         _IntegerDumper(self),
+                         _TupleListDumper(self),
+                         _NoneDumper(self),
+                         _DictDumper(self),
+                         _StringDumper(self))
 
     def dump(self, data, mapping=None):
-        for dumper in self._data_dumpers:
+        for dumper in self._dumpers:
             dumper.add_mapping(mapping)
             if dumper.handles(data):
                 dumper.dump(data)
@@ -119,14 +119,10 @@ class _DictDumper(_DataDumper):
         self._write('}')
 
 
-class _IterableDumper(_DataDumper):
+class _TupleListDumper(_DataDumper):
 
     def handles(self, data):
-        try:
-            iter(data)
-        except TypeError:
-            return False
-        return not isinstance(data, (basestring, dict))
+        return isinstance(data, (tuple, list))
 
     def dump(self, data):
         self._write('[')
