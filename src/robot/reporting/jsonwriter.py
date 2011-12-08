@@ -73,19 +73,20 @@ class _DataDumper(object):
 
 class _StringDumper(_DataDumper):
     _handled_types = basestring
-    _replace = (('\\', '\\\\'), ('"', '\\"'), ('\t', '\\t'),
-                ('\n', '\\n'), ('\r', '\\r'))
+    _replace = {'\\': '\\\\', '"': '\\"', '\t': '\\t', '\n': '\\n', '\r': '\\r'}
 
     def dump(self, data, mapping):
-        for char, repl in self._replace:
-            data = data.replace(char, repl)
-        self._write('"%s"' % ''.join(self._encode_char(c) for c in data))
+        self._write('"%s"' % ''.join(self._encode_chars(data)))
 
-    def _encode_char(self, char):
-        val = ord(char)
-        if 31 < val < 127:
-            return char
-        return '\\u' + hex(val)[2:].rjust(4, '0')
+    def _encode_chars(self, string):
+        # Performance optimized code..
+        replace = self._replace
+        for char in string:
+            if char in replace:
+                yield replace[char]
+            else:
+                val = ord(char)
+                yield char if 31 < val < 127 else '\\u%04x' % val
 
 
 class _IntegerDumper(_DataDumper):
