@@ -48,9 +48,8 @@ class JsonDumper(object):
 
     def dump(self, data, mapping=None):
         for dumper in self._dumpers:
-            dumper.add_mapping(mapping)
-            if dumper.handles(data):
-                dumper.dump(data)
+            if dumper.handles(data, mapping):
+                dumper.dump(data, mapping)
                 return
         raise ValueError('Dumping %s not supported' % type(data))
 
@@ -59,32 +58,28 @@ class JsonDumper(object):
 
 
 class _DataDumper(object):
+    _handled_types = None
 
     def __init__(self, jsondumper):
-        self._jsondumper = jsondumper
-        self._mapping = {}
+        self._dump = jsondumper.dump
+        self._write = jsondumper.write
 
-    def add_mapping(self, mapping):
-        self._mapping = mapping or {}
+    def handles(self, data, mapping):
+        return isinstance(data, self._handled_types)
 
-    def _dump(self, data):
-        self._jsondumper.dump(data, self._mapping)
-
-    def _write(self, data):
-        self._jsondumper.write(data)
+    def dump(self, data, mapping):
+        raise NotImplementedError
 
 
 class _StringDumper(_DataDumper):
-    _replace = [('\\', '\\\\'), ('"', '\\"'), ('\t', '\\t'),
-                ('\n', '\\n'), ('\r', '\\r')]
+    _handled_types = basestring
+    _replace = (('\\', '\\\\'), ('"', '\\"'), ('\t', '\\t'),
+                ('\n', '\\n'), ('\r', '\\r'))
 
-    def handles(self, data):
-        return isinstance(data, basestring)
-
-    def dump(self, string):
+    def dump(self, data, mapping):
         for char, repl in self._replace:
-            string = string.replace(char, repl)
-        self._write('"%s"' % ''.join(self._encode_char(c) for c in string))
+            data = data.replace(char, repl)
+        self._write('"%s"' % ''.join(self._encode_char(c) for c in data))
 
     def _encode_char(self, char):
         val = ord(char)
@@ -94,41 +89,35 @@ class _StringDumper(_DataDumper):
 
 
 class _IntegerDumper(_DataDumper):
+    _handled_types = (int, long)
 
-    def handles(self, data):
-        return isinstance(data, (int, long))
-
-    def dump(self, data):
+    def dump(self, data, mapping):
         self._write(str(data))
 
 
 class _DictDumper(_DataDumper):
+    _handled_types = dict
 
-    def handles(self, data):
-        return isinstance(data, dict)
-
-    def dump(self, data):
+    def dump(self, data, mapping):
         self._write('{')
         last_index = len(data) - 1
         for index, key in enumerate(sorted(data)):
-            self._dump(key)
+            self._dump(key, mapping)
             self._write(':')
-            self._dump(data[key])
+            self._dump(data[key], mapping)
             if index < last_index:
                 self._write(',')
         self._write('}')
 
 
 class _TupleListDumper(_DataDumper):
+    _handled_types = (tuple, list)
 
-    def handles(self, data):
-        return isinstance(data, (tuple, list))
-
-    def dump(self, data):
+    def dump(self, data, mapping):
         self._write('[')
         last_index = len(data) - 1
         for index, item in enumerate(data):
-            self._dump(item)
+            self._dump(item, mapping)
             if index < last_index:
                 self._write(',')
         self._write(']')
@@ -136,20 +125,20 @@ class _TupleListDumper(_DataDumper):
 
 class _MappingDumper(_DataDumper):
 
-    def handles(self, data):
+    def handles(self, data, mapping):
         try:
-            return data in self._mapping
+            return mapping and data in mapping
         except TypeError:
             return False
 
-    def dump(self, data):
-        self._write(self._mapping[data])
+    def dump(self, data, mapping):
+        self._write(mapping[data])
 
 
 class _NoneDumper(_DataDumper):
 
-    def handles(self, data):
+    def handles(self, data, mapping):
         return data is None
 
-    def dump(self, data):
+    def dump(self, data, mapping):
         self._write('null')
