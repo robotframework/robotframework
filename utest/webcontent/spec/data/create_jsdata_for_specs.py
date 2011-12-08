@@ -38,8 +38,8 @@ def create_jsdata(outxml, target, split_log):
                                                         'background': {'fail': 'DeepPink'}})
         for index, (keywords, strings) in enumerate(model.split_results):
             writer = SeparatingWriter(output, '')
-            writer.dump_json('window.outputKeywords%d = ' % index, keywords)
-            writer.dump_json('window.outputStrings%d = ' % index, strings)
+            writer.write_json('window.outputKeywords%d = ' % index, keywords)
+            writer.write_json('window.outputStrings%d = ' % index, strings)
 
 def replace_all(file,searchExp,replaceExp):
     for line in fileinput.input(file, inplace=1):

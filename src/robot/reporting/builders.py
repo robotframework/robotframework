@@ -104,8 +104,8 @@ class LogBuilder(_HTMLFileBuilder):
     def _write_split_log(self, index, keywords, strings, path):
         with codecs.open(path, 'w', encoding='UTF-8') as outfile:
             writer = SeparatingWriter(outfile)
-            writer.dump_json('window.keywords%d = ' % index, keywords)
-            writer.dump_json('window.strings%d = ' % index, strings)
+            writer.write_json('window.keywords%d = ' % index, keywords)
+            writer.write_json('window.strings%d = ' % index, strings)
             writer.write('window.fileLoading.notify("%s");\n' % os.path.basename(path))
 
 

@@ -34,14 +34,14 @@ class ScriptBlockWriter(object):
         self._write_strings(model.strings, writer)
         writer.separator()
         for key, value in model.data.items():
-            writer.dump_json('%s = ' % self._output_var(key), value)
+            writer.write_json('%s = ' % self._output_var(key), value)
             writer.separator()
-        writer.dump_json('%s = ' % self._settings, config)
+        writer.write_json('%s = ' % self._settings, config)
 
     def _write_suite(self, writer, suite):
         split_writer = SplittingSuiteWriter(writer, self._split_threshold)
         mapping = split_writer.write(suite)
-        writer.dump_json('%s = ' % self._output_var(self._suite_key),
+        writer.write_json('%s = ' % self._output_var(self._suite_key),
                          suite, mapping=mapping)
 
     def _output_var(self, key):
@@ -54,7 +54,7 @@ class ScriptBlockWriter(object):
         postfix = ');\n'
         for chunk in self._chunks(strings, self._split_threshold):
             writer.separator()
-            writer.dump_json(prefix, chunk, postfix)
+            writer.write_json(prefix, chunk, postfix)
 
     def _chunks(self, iterable, chunk_size):
         for index in xrange(0, len(iterable), chunk_size):
@@ -70,7 +70,7 @@ class SeparatingWriter(object):
     def separator(self):
         self._dumper.write(self._separator)
 
-    def dump_json(self, prefix, data, postfix=';\n', mapping=None):
+    def write_json(self, prefix, data, postfix=';\n', mapping=None):
         self._dumper.write(prefix)
         self._dumper.dump(data, mapping)
         self._dumper.write(postfix)
@@ -106,7 +106,7 @@ class SplittingSuiteWriter(object):
         return 'window.sPart%d' % self._index
 
     def _dump_suite_part(self, mapping, data_block):
-        self._writer.dump_json(self._list_name+' = ', data_block,
+        self._writer.write_json(self._list_name+' = ', data_block,
                                mapping=mapping)
         self._writer.separator()
         mapping[data_block] = self._list_name
