@@ -122,14 +122,15 @@ class KeywordBuilder(_Builder):
         self._build_message = MessageBuilder(context).build
 
     def build(self, kw, split=False):
-        return (self._types[kw.type],
-                self._string(kw.name),
-                self._string(kw.timeout),
-                self._html(kw.doc),
-                self._string(', '.join(kw.args)),
-                self._get_status(kw),
-                self._build_keywords(kw.keywords, split),
-                tuple(self._build_message(m) for m in kw.messages))
+        with self._context.prune_input(kw.messages, kw.keywords):
+            return (self._types[kw.type],
+                    self._string(kw.name),
+                    self._string(kw.timeout),
+                    self._html(kw.doc),
+                    self._string(', '.join(kw.args)),
+                    self._get_status(kw),
+                    self._build_keywords(kw.keywords, split),
+                    tuple(self._build_message(m) for m in kw.messages))
 
 
 class MessageBuilder(_Builder):
