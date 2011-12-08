@@ -40,8 +40,8 @@ class ScriptBlockWriter(object):
 
     def _write_suite(self, writer, suite):
         split_writer = SplittingSuiteWriter(writer, self._split_threshold)
-        data, mapping = split_writer.write(suite)
-        writer.dump_json(self._output_var(self._SUITE_KEY)+' = ', data, mapping=mapping)
+        mapping = split_writer.write(suite)
+        writer.dump_json(self._output_var(self._SUITE_KEY)+' = ', suite, mapping=mapping)
 
     def _output_var(self, key):
         return self._OUTPUT+'["%s"]' % key
@@ -74,23 +74,7 @@ class SeparatingWriter(object):
     def write(self, string):
         self._dumper.write(string)
 
-
-class _SubResult(object):
-
-    def __init__(self, data_block, mapping=None):
-        self.data_block = data_block
-        self.size = 1
-        self.mapping = mapping
-
-    def update(self, subresult):
-        self.size += subresult.size
-        if subresult.mapping:
-            self.mapping.update(subresult.mapping)
-
-    def link(self, name):
-        return _SubResult(self.data_block, {self.data_block: name})
-
-
+#TODO: Naming
 class SplittingSuiteWriter(object):
 
     def __init__(self, writer, split_threshold):
@@ -99,26 +83,27 @@ class SplittingSuiteWriter(object):
         self._split_threshold = split_threshold
 
     def write(self, data_block):
-        result = self._write(data_block)
-        return result.data_block, result.mapping
+        mapping = {}
+        self._write(data_block, mapping)
+        return mapping
 
-    def _write(self, data_block):
-        if not isinstance(data_block, tuple):
-            return _SubResult(data_block)
-        result = _SubResult(data_block, mapping={})
-        for item in data_block:
-            result.update(self._write(item))
-        if result.size > self._split_threshold:
-            result = self._dump_suite_part(result)
-        return result
+    def _write(self, data, mapping, size=1):
+        if not isinstance(data, tuple):
+            return size
+        for item in data:
+            size += self._write(item, mapping)
+        if size > self._split_threshold:
+            self._dump_suite_part(mapping, data)
+            return 1
+        return size
 
+    @property
     def _list_name(self):
         return 'window.sPart%s' % self._index
 
-    def _dump_suite_part(self, result):
-        self._writer.dump_json(self._list_name()+' = ', result.data_block,
-                               mapping=result.mapping)
+    def _dump_suite_part(self, mapping, data_block):
+        self._writer.dump_json(self._list_name+' = ', data_block,
+                               mapping=mapping)
         self._writer.separator()
-        new_result = result.link(self._list_name())
+        mapping[data_block] = self._list_name
         self._index += 1
-        return new_result

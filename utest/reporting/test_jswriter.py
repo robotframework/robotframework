@@ -14,8 +14,8 @@ class TestDataModelWrite(unittest.TestCase):
         assert_true(lines[1].startswith('window.output["'), lines[1])
         assert_true(lines[-1].startswith('window.settings ='), lines[-1])
 
-    def _get_lines(self, suite=None, strings=None, basemillis=100, separator=None,
-                   split_threshold=None):
+    def _get_lines(self, suite=(), strings=None, basemillis=100, separator=None,
+                   split_threshold=96000):
         output = StringIO()
         data = JsExecutionResult(suite, None, None, strings, basemillis)
         ScriptBlockWriter(separator=separator, split_threshold=split_threshold).write_to(output, data, {})
