@@ -322,8 +322,8 @@ class HtmlFileWriter(object):
 
     def _write_settings(self, settings):
         self._write_header('Settings')
-        for s in settings:
-            self.element(s)
+        for row in self._formatter.setting_table(settings):
+            self._write_row(row)
         self._end_table(self._table_replacer.settings_table)
 
     def _write_variables(self, variables):
@@ -334,16 +334,7 @@ class HtmlFileWriter(object):
 
     def _write_tests(self, tests):
         self._write_header('Test Cases')
-        for t in tests:
-            elems = [e for e in list(t) if e.is_set()]
-            self._write_data([self._link_from_name(t.name, 'test')] +
-                              elems[0].as_list(),
-                              colspan=isinstance(elems[0], Documentation))
-            for item in elems[1:]:
-                self.element(item, indent=1)
-                if item.is_for_loop():
-                    for sub in item:
-                        self._write_data(sub.as_list(), indent=2)
+        self._write_steps(tests, 'test')
         self._end_table(self._table_replacer.testcases_table)
 
     def _write_keywords(self, keywords):
@@ -359,7 +350,7 @@ class HtmlFileWriter(object):
             for subitem in elems[1:]:
                 self.element(subitem, indent=1)
                 if subitem.is_for_loop():
-                    for sub in item:
+                    for sub in subitem:
                         self._write_data(sub.as_list(), indent=2)
 
     def element(self, element, indent=0):
@@ -379,6 +370,12 @@ class HtmlFileWriter(object):
         self._writer.start('tr')
         attrs = {'class': 'name', 'colspan': '5'}
         self._writer.element('th', header, attrs)
+        self._writer.end('tr')
+
+    def _write_row(self, row):
+        self._writer.start('tr')
+        for cell in row:
+            self._writer.element('td', cell.content, cell.attributes)
         self._writer.end('tr')
 
     def _write_data(self, data, indent=0, colspan=False):

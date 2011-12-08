@@ -13,6 +13,7 @@
 #  limitations under the License.
 
 import re
+from robot.parsing.settings import Documentation
 
 
 class TsvFormatter(object):
@@ -75,6 +76,33 @@ class HtmlFormatter(object):
             return row
         return row + [self._padding] * (self._cols - len(row))
 
+    def setting_table(self, settings):
+        result = []
+        for s in settings:
+            if s.is_set():
+                result.extend(self._create_cell(s))
+        return result
+
+    def _create_cell(self, item):
+        if isinstance(item, Documentation):
+            return [NameCell(item.setting_name, ),
+                    Cell(item.value, {'colspan': '%d' % (self._cols-1)})]
+        rows = self.format(item.as_list(), indent=0, colspan=False)
+        return [([NameCell(row[0])] + [Cell(c) for c in row[1:]]) for row in rows]
+
+
+
+class Cell(object):
+
+    def __init__(self, content, attributes={}):
+        self.content = content
+        self.attributes = attributes
+
+class NameCell(object):
+
+    def __init__(self, name):
+        self.content = name
+        self.attributes = {'class': 'name'}
 
 class Formatter(object):
 
