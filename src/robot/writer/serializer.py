@@ -29,18 +29,8 @@ class Serializer(object):
         :param options: A :py:class:`.SerializationContext` is initialized based on these
         """
         context = SerializationContext(datafile, **options)
-        self._writer = FileWriter(context)
-        self._writer.write(datafile)
-        self._writer.close()
-        return context.finish()
-
-    def _serialize(self, datafile):
-        for table in datafile:
-            if table:
-                {'setting': self._setting_table_serializer,
-                 'variable': self._variable_table_serializer,
-                 'keyword': self._keyword_table_serializer,
-                 'testcase': self._testcase_table_serializer}[table.type](table)
+        FileWriter(context).write(datafile)
+        context.finish()
 
 
 class SerializationContext(object):

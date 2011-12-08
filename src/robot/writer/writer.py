@@ -60,9 +60,6 @@ class TsvFileWriter(object):
                  'testcase': self._write_indented_table}[table.type](table)
             self._write([])
 
-    def close(self):
-        pass
-
     def _write_table(self, table):
         self._write_header(table.header)
         for setting in table:
@@ -101,9 +98,6 @@ class SpaceSeparatedTxtWriter(object):
         self._output = context.output
         self._line_separator = context.line_separator
         self._formatter = TxtFormatter()
-
-    def close(self):
-        pass
 
     def write(self, datafile):
         for table in datafile:
@@ -202,9 +196,6 @@ class PipeSeparatedTxtWriter(object):
         self._output = context.output
         self._line_separator = context.line_separator
         self._formatter = PipeFormatter()
-
-    def close(self):
-        pass
 
     def write(self, datafile):
         for table in datafile:
@@ -308,9 +299,6 @@ class HtmlFileWriter(object):
         self._table_replacer = HtmlTableReplacer()
         self._formatter = HtmlFormatter()
 
-    def close(self):
-        self._output.write(self._content.encode('UTF-8'))
-
     def write(self, datafile):
         for table in datafile:
             if table:
@@ -319,6 +307,7 @@ class HtmlFileWriter(object):
                  'testcase': self._write_tests,
                  'keyword': self._write_keywords
                  }[table.type](table)
+        self._output.write(self._content.encode('UTF-8'))
 
     def _write_settings(self, settings):
         self._write_table('Settings', self._formatter.setting_rows(settings),
