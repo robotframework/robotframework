@@ -33,7 +33,7 @@ def create_jsdata(outxml, target, split_log):
               'reportURL': 'report.html',
               'background': {'fail': 'DeepPink'}}
     with open(target, 'w') as output:
-        ScriptBlockWriter('\n').write_to(output, model, config)
+        ScriptBlockWriter(output, '\n').write(model, config)
         writer = JsonWriter(output)
         for index, (keywords, strings) in enumerate(model.split_results):
             writer.write_json('window.outputKeywords%d = ' % index, keywords)

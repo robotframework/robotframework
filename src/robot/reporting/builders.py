@@ -162,8 +162,9 @@ class HTMLFileWriter(object):
 
     def _write_output_js(self):
         separator = '</script>\n<script type="text/javascript">\n'
+        writer = ScriptBlockWriter(self._outfile, separator)
         self._write_tag('script', 'type="text/javascript"',
-                        lambda: ScriptBlockWriter(separator).write_to(self._outfile, self._model, self._config))
+                        lambda: writer.write(self._model, self._config))
 
     def _inline_js_file(self, line):
         self._write_tag('script', 'type="text/javascript"',

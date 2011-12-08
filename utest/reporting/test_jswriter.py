@@ -18,7 +18,8 @@ class TestDataModelWrite(unittest.TestCase):
                    split_threshold=96000):
         output = StringIO()
         data = JsExecutionResult(suite, None, None, strings, basemillis)
-        ScriptBlockWriter(separator=separator, split_threshold=split_threshold).write_to(output, data, {})
+        writer = ScriptBlockWriter(output, separator, split_threshold)
+        writer.write(data, config={})
         return output.getvalue().splitlines()
 
     def test_writing_datamodel_with_separator(self):
