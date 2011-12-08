@@ -47,12 +47,13 @@ class ScriptBlockWriter(object):
         return self._OUTPUT+'["%s"]' % key
 
     def _write_strings(self, strings, writer):
-        writer.write(self._output_var(self._STRINGS_KEY)+' = [];\n')
+        variable = self._output_var(self._STRINGS_KEY)
+        writer.write('%s = [];\n' % variable)
+        prefix = '%s = %s.concat(' % (variable, variable)
+        postfix = ');\n'
         for chunk in self._chunks(strings, self._split_threshold):
             writer.separator()
-            writer.dump_json(self._output_var(self._STRINGS_KEY)
-                             +' = '+self._output_var(self._STRINGS_KEY)
-                             +'.concat(', chunk, ');\n')
+            writer.dump_json(prefix, chunk, postfix)
 
     def _chunks(self, iterable, chunk_size):
         for index in xrange(0, len(iterable), chunk_size):
