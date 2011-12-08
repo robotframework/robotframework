@@ -13,7 +13,6 @@
 #  limitations under the License.
 
 import os
-from robot.writer.writer import TsvFileWriter, SpaceSeparatedTxtWriter
 
 from .writer import FileWriter
 
@@ -30,66 +29,8 @@ class Serializer(object):
         :param options: A :py:class:`.SerializationContext` is initialized based on these
         """
         context = SerializationContext(datafile, **options)
-        self._writer = FileWriter(context)
-        if self._writer.__class__ in (TsvFileWriter, SpaceSeparatedTxtWriter):
-            # TODO: still missing the pipes and html
-            self._writer.write(datafile)
-        else:
-            self._serialize(context.datafile)
-        self._writer.close()
-        return context.finish()
-
-    def _serialize(self, datafile):
-        for table in datafile:
-            if table:
-                {'setting': self._setting_table_serializer,
-                 'variable': self._variable_table_serializer,
-                 'keyword': self._keyword_table_serializer,
-                 'testcase': self._testcase_table_serializer}[table.type](table)
-
-    def _setting_table_serializer(self, table):
-        self._writer.start_settings()
-        self._serialize_elements(table)
-        self._writer.end_settings()
-
-    def _serialize_elements(self, elements):
-        for element in elements:
-            if element.is_for_loop():
-                self._serialize_for_loop(element)
-            elif element.is_set():
-                self._writer.element(element)
-
-    def _serialize_for_loop(self, loop):
-        self._writer.start_for_loop(loop)
-        self._serialize_elements(loop)
-        self._writer.end_for_loop()
-
-    def _variable_table_serializer(self, table):
-        self._writer.start_variables()
-        self._serialize_elements(table)
-        self._writer.end_variables()
-
-    def _keyword_table_serializer(self, table):
-        self._writer.start_keywords()
-        for kw in table:
-            self._serialize_keyword(kw)
-        self._writer.end_keywords()
-
-    def _serialize_keyword(self, kw):
-        self._writer.start_keyword(kw)
-        self._serialize_elements(kw)
-        self._writer.end_keyword()
-
-    def _testcase_table_serializer(self, table):
-        self._writer.start_tests(table)
-        for tc in table:
-            self._serialize_testcase(tc)
-        self._writer.end_tests()
-
-    def _serialize_testcase(self, tc):
-        self._writer.start_testcase(tc)
-        self._serialize_elements(tc)
-        self._writer.end_testcase()
+        FileWriter(context).write(datafile)
+        context.finish()
 
 
 class SerializationContext(object):
@@ -98,7 +39,8 @@ class SerializationContext(object):
     """
 
     def __init__(self, datafile, path=None, format=None, output=None,
-                 pipe_separated=False, line_separator=os.linesep):
+                 recursive=False, pipe_separated=False,
+                 line_separator=os.linesep):
         """
         :param datafile: The datafile to be serialized.
         :type datafile: :py:class:`~robot.parsing.model.TestCaseFile`,
@@ -117,12 +59,14 @@ class SerializationContext(object):
         :param str line_separator: Line separator used in serialization.
         """
         self.datafile = datafile
+        self.recursive = recursive
         self.pipe_separated = pipe_separated
         self.line_separator = line_separator
         self._given_output = output
         self._path = path
         self._format = format
         self._output = output
+
     @property
     def output(self):
         if not self._output:

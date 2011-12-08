@@ -12,7 +12,6 @@ from golden import (GOLDEN_TXT_RESOURCE, GOLDEN_TXT_TESTCASE_FILE,
                     GOLDEN_TXT_PIPE_RESOURCE, GOLDEN_TXT_PIPE_TESTCASE_FILE,
                     GOLDEN_TSV_RESOURCE, GOLDEN_TSV_TESTCASE_FILE,
                     GOLDEN_HTML_TESTCASE_FILE, GOLDEN_ALIGNED_TXT_TESTCASE_FILE)
-from robot.writer.writer import Formatter, TxtFormatter
 
 
 def _create_testcase_file(data):
@@ -115,23 +114,10 @@ class TestTsvSerialization(_SerializerTest):
 class TestHTMLSerialization(_SerializerTest):
 
     def _serializer(self, datafile):
-            return self._serialize(datafile, 'html')
+        return self._serialize(datafile, 'html')
 
     def test_serializer_with_html_testcase_file(self):
         self._assert_serialization(TESTCASE_FILE, GOLDEN_HTML_TESTCASE_FILE)
-
-
-class TestFormatter(unittest.TestCase):
-
-    def test_escaping_empty_cells_at_eol(self):
-        formatter = Formatter(cols=3)
-        assert_equals(formatter.format(['Some', 'text', '', 'with empty'], 0),
-                                       [['Some', 'text', '${EMPTY}'],
-                                        ['...', 'with empty']])
-
-    def test_escaping(self):
-        formatter = TxtFormatter()
-        assert_equals(formatter.format(['so  me']), [['so \ me']])
 
 
 if __name__ == "__main__":
