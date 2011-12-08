@@ -16,10 +16,10 @@ from .jsondump import JsonDumper
 
 
 class ScriptBlockWriter(object):
-    _OUTPUT = 'window.output'
-    _SETTINGS = 'window.settings'
-    _SUITE_KEY = 'suite'
-    _STRINGS_KEY = 'strings'
+    _output = 'window.output'
+    _settings = 'window.settings'
+    _suite_key = 'suite'
+    _strings_key = 'strings'
 
     def __init__(self, separator, split_threshold=9500):
         self._separator = separator
@@ -27,27 +27,28 @@ class ScriptBlockWriter(object):
 
     def write_to(self, output, model, config):
         writer = SeparatingWriter(output, self._separator)
-        writer.write(self._OUTPUT+' = {};\n')
+        writer.write('%s = {};\n' % self._output)
         writer.separator()
         self._write_suite(writer, model.suite)
         writer.separator()
         self._write_strings(model.strings, writer)
         writer.separator()
         for key, value in model.data.items():
-            writer.dump_json(self._output_var(key)+' = ', value)
+            writer.dump_json('%s = ' % self._output_var(key), value)
             writer.separator()
-        writer.dump_json(self._SETTINGS+' = ', config)
+        writer.dump_json('%s = ' % self._settings, config)
 
     def _write_suite(self, writer, suite):
         split_writer = SplittingSuiteWriter(writer, self._split_threshold)
         mapping = split_writer.write(suite)
-        writer.dump_json(self._output_var(self._SUITE_KEY)+' = ', suite, mapping=mapping)
+        writer.dump_json('%s = ' % self._output_var(self._suite_key),
+                         suite, mapping=mapping)
 
     def _output_var(self, key):
-        return self._OUTPUT+'["%s"]' % key
+        return '%s["%s"]' % (self._output, key)
 
     def _write_strings(self, strings, writer):
-        variable = self._output_var(self._STRINGS_KEY)
+        variable = self._output_var(self._strings_key)
         writer.write('%s = [];\n' % variable)
         prefix = '%s = %s.concat(' % (variable, variable)
         postfix = ');\n'
@@ -70,10 +71,9 @@ class SeparatingWriter(object):
         self._dumper.write(self._separator)
 
     def dump_json(self, prefix, data, postfix=';\n', mapping=None):
-        if prefix:
-            self.write(prefix)
+        self._dumper.write(prefix)
         self._dumper.dump(data, mapping)
-        self.write(postfix)
+        self._dumper.write(postfix)
 
     def write(self, string):
         self._dumper.write(string)
@@ -103,7 +103,7 @@ class SplittingSuiteWriter(object):
 
     @property
     def _list_name(self):
-        return 'window.sPart%s' % self._index
+        return 'window.sPart%d' % self._index
 
     def _dump_suite_part(self, mapping, data_block):
         self._writer.dump_json(self._list_name+' = ', data_block,
