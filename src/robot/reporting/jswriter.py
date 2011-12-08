@@ -39,8 +39,8 @@ class ScriptBlockWriter(object):
         writer.dump_json(self._SETTINGS+' = ', config)
 
     def _write_suite(self, writer, suite):
-        splitWriter = SplittingSuiteWriter(writer, self._split_threshold)
-        data, mapping = splitWriter.write(suite)
+        split_writer = SplittingSuiteWriter(writer, self._split_threshold)
+        data, mapping = split_writer.write(suite)
         writer.dump_json(self._output_var(self._SUITE_KEY)+' = ', data, mapping=mapping)
 
     def _output_var(self, key):
@@ -77,20 +77,18 @@ class SeparatingWriter(object):
 
 class _SubResult(object):
 
-    def __init__(self, data_block, size, mapping):
+    def __init__(self, data_block, mapping=None):
         self.data_block = data_block
-        self.size = size
+        self.size = 1
         self.mapping = mapping
 
     def update(self, subresult):
-        self.data_block.append(subresult.data_block)
         self.size += subresult.size
         if subresult.mapping:
             self.mapping.update(subresult.mapping)
 
     def link(self, name):
-        key = object()
-        return _SubResult(key, 1, {key: name})
+        return _SubResult(self.data_block, {self.data_block: name})
 
 
 class SplittingSuiteWriter(object):
@@ -106,8 +104,8 @@ class SplittingSuiteWriter(object):
 
     def _write(self, data_block):
         if not isinstance(data_block, tuple):
-            return _SubResult(data_block, 1, None)
-        result = _SubResult([], 1, {})
+            return _SubResult(data_block)
+        result = _SubResult(data_block, mapping={})
         for item in data_block:
             result.update(self._write(item))
         if result.size > self._split_threshold:
