@@ -76,7 +76,6 @@ class JsResultWriter(object):
 class SuiteWriter(object):
 
     def __init__(self, writer, split_threshold):
-        self._index = 0
         self._writer = writer
         self._split_threshold = split_threshold
 
@@ -87,22 +86,20 @@ class SuiteWriter(object):
                                 separator=True)
 
     def _write_parts_over_threshold(self, data, mapping):
-        not_written = 1
         if not isinstance(data, tuple):
-            return not_written
-        for item in data:
-            not_written += self._write_parts_over_threshold(item, mapping)
-        if not_written > self._split_threshold:
-            self._write_part(data, mapping)
             return 1
-        return not_written
+        not_written = sum(self._write_parts_over_threshold(item, mapping)
+                          for item in data)
+        if not_written < self._split_threshold:
+            return not_written
+        self._write_part(data, mapping)
+        return 1
 
     def _write_part(self, data, mapping):
-        part_name = 'window.sPart%d' % self._index
+        part_name = 'window.sPart%d' % len(mapping)
         self._writer.write_json('%s = ' % part_name, data, mapping=mapping,
                                 separator=True)
         mapping[data] = part_name
-        self._index += 1
 
 
 class SplitLogWriter(object):
