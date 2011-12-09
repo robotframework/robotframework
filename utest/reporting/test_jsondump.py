@@ -22,16 +22,20 @@ class JsonTestCase(unittest.TestCase):
     def _test(self, data, expected):
         assert_equals(self._dump(data), expected)
 
-    def test_dump_string(self):
+    def test_dump_raw_string(self):
+        self._test('*', '"*"')
+        self._test('*xxx', '"*xxx"')
+        self._test('*123', '"*123"')
+
+    def test_dump_base64_string(self):
         self._test('', '""')
-        self._test('xxx', '"xxx"')
-        self._test('123', '"123"')
+        self._test('cm9ib3Q=', '"cm9ib3Q="')
 
     def test_dump_non_ascii_string(self):
-        self._test(u'hyv\xe4', '"hyv\\u00e4"')
+        self._test(u'*hyv\xe4', '"*hyv\\u00e4"')
 
     def test_escape_string(self):
-        self._test('"-\\-\n-\t-\r', '"\\"-\\\\-\\n-\\t-\\r"')
+        self._test('*"-\\-\n-\t-\r', '"*\\"-\\\\-\\n-\\t-\\r"')
 
     def test_dump_integer(self):
         self._test(12, '12')
@@ -44,10 +48,10 @@ class JsonTestCase(unittest.TestCase):
 
     def test_dump_list(self):
         self._test([1,2,3, 'hello', 'world'], '[1,2,3,"hello","world"]')
-        self._test(['nested', [1,2,[4]]], '["nested",[1,2,[4]]]')
+        self._test(['*nes"ted', [1,2,[4]]], '["*nes\\"ted",[1,2,[4]]]')
 
     def test_dump_tuple(self):
-        self._test(('hello', 'world'), '["hello","world"]')
+        self._test(('hello', '*world'), '["hello","*world"]')
         self._test((1,2,(3,4)), '[1,2,[3,4]]')
 
     def test_dump_dictionary(self):
@@ -73,7 +77,7 @@ class JsonTestCase(unittest.TestCase):
 
     if json:
         def test_agains_standard_json(self):
-            string = u'string\u00A9\v\\\'\"\r\t\njee' \
+            string = u'*string\u00A9\v\\\'\"\r\t\njee' \
                 + u''.join(unichr(i) for i in xrange(32, 1024))
             data = [string, {'A': 1}, None]
             expected = StringIO()

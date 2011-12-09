@@ -42,9 +42,10 @@ class JsonDumper(object):
         self._dumpers = (_MappingDumper(self),
                          _IntegerDumper(self),
                          _TupleListDumper(self),
+                         _RawStringDumper(self),
+                         _Base64StringDumper(self),
                          _NoneDumper(self),
-                         _DictDumper(self),
-                         _StringDumper(self))
+                         _DictDumper(self))
 
     def dump(self, data, mapping=None):
         for dumper in self._dumpers:
@@ -71,9 +72,11 @@ class _DataDumper(object):
         raise NotImplementedError
 
 
-class _StringDumper(_DataDumper):
-    _handled_types = basestring
+class _RawStringDumper(_DataDumper):
     _replace = {'\\': '\\\\', '"': '\\"', '\t': '\\t', '\n': '\\n', '\r': '\\r'}
+
+    def handles(self, data, mapping):
+        return isinstance(data, basestring) and data.startswith('*')
 
     def dump(self, data, mapping):
         self._write('"%s"' % ''.join(self._encode_chars(data)))
@@ -87,6 +90,13 @@ class _StringDumper(_DataDumper):
             else:
                 val = ord(char)
                 yield char if 31 < val < 127 else '\\u%04x' % val
+
+
+class _Base64StringDumper(_DataDumper):
+    _handled_types = basestring
+
+    def dump(self, data, mapping):
+        self._write('"%s"' % data)
 
 
 class _IntegerDumper(_DataDumper):
