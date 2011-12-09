@@ -19,20 +19,19 @@ class JsonWriter(object):
         self._writer = JsonDumper(output)
         self._separator = separator
 
-    def write_json(self, prefix, data, postfix=';\n', mapping=None, separator=False):
+    def write_json(self, prefix, data, postfix=';\n', mapping=None, separator=True):
         self._writer.write(prefix)
         self._writer.dump(data, mapping)
         self._writer.write(postfix)
-        if separator:
-            self.separator()
+        self._write_separator(separator)
 
-    def write(self, string, separator=False):
-        self._writer.write(string)
-        if separator:
-            self.separator()
+    def write(self, string, postfix=';\n', separator=True):
+        self._writer.write(string + postfix)
+        self._write_separator(separator)
 
-    def separator(self):
-        self._writer.write(self._separator)
+    def _write_separator(self, separator):
+        if separator and self._separator:
+            self._writer.write(self._separator)
 
 
 class JsonDumper(object):
