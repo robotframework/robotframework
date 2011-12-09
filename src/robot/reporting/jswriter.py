@@ -15,28 +15,33 @@
 from .jsonwriter import JsonWriter
 
 
-class ScriptBlockWriter(object):
-    _output = 'window.output'
-    _settings = 'window.settings'
+class JsResultWriter(object):
+    start_block = '<script type="text/javascript">\n'
+    end_block = '</script>\n'
+    split_threshold = 9500
+    _output_attr = 'window.output'
+    _settings_attr = 'window.settings'
     _suite_key = 'suite'
     _strings_key = 'strings'
 
-    def __init__(self, output, separator, split_threshold=9500):
-        self._writer = JsonWriter(output, separator)
-        self._split_threshold = split_threshold
+    def __init__(self, output):
+        block_separator = self.end_block + self.start_block
+        self._writer = JsonWriter(output, separator=block_separator)
 
-    def write(self, model, config):
+    def write(self, result, settings):
         self._start_output_block()
-        self._write_suite(model.suite)
-        self._write_strings(model.strings)
-        self._write_data(model.data)
-        self._write_config(config)
+        self._write_suite(result.suite)
+        self._write_strings(result.strings)
+        self._write_data(result.data)
+        self._write_settings(settings)
+        self._end_output_block()
 
     def _start_output_block(self):
-        self._writer.write('%s = {};\n' % self._output, separator=True)
+        self._writer.write(self.start_block)
+        self._writer.write('%s = {};\n' % self._output_attr, separator=True)
 
     def _write_suite(self, suite):
-        split_writer = SplittingSuiteWriter(self._writer, self._split_threshold)
+        split_writer = SplittingSuiteWriter(self._writer, self.split_threshold)
         mapping = split_writer.write(suite)
         self._writer.write_json('%s = ' % self._output_var(self._suite_key),
                                 suite, mapping=mapping, separator=True)
@@ -46,7 +51,7 @@ class ScriptBlockWriter(object):
         self._writer.write('%s = [];\n' % variable, separator=True)
         prefix = '%s = %s.concat(' % (variable, variable)
         postfix = ');\n'
-        for chunk in self._chunks(strings, self._split_threshold):
+        for chunk in self._chunks(strings, self.split_threshold):
             self._writer.write_json(prefix, chunk, postfix, separator=True)
 
     def _write_data(self, data):
@@ -54,16 +59,18 @@ class ScriptBlockWriter(object):
             self._writer.write_json('%s = ' % self._output_var(key), data[key],
                                     separator=True)
 
-    def _write_config(self, config):
-        self._writer.write_json('%s = ' % self._settings, config)
+    def _write_settings(self, settings):
+        self._writer.write_json('%s = ' % self._settings_attr, settings)
+
+    def _end_output_block(self):
+        self._writer.write(self.end_block)
 
     def _output_var(self, key):
-        return '%s["%s"]' % (self._output, key)
+        return '%s["%s"]' % (self._output_attr, key)
 
     def _chunks(self, iterable, chunk_size):
         for index in xrange(0, len(iterable), chunk_size):
             yield iterable[index:index+chunk_size]
-
 
 
 #TODO: Naming

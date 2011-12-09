@@ -24,7 +24,7 @@ from robot.result.serializer import RebotXMLWriter
 from robot.version import get_full_version
 from robot import utils
 
-from .jswriter import ScriptBlockWriter, JsonWriter
+from .jswriter import JsResultWriter, JsonWriter
 from .xunitwriter import XUnitWriter
 
 try:
@@ -161,10 +161,7 @@ class HTMLFileWriter(object):
                     % get_full_version('Robot Framework'))
 
     def _write_output_js(self):
-        separator = '</script>\n<script type="text/javascript">\n'
-        writer = ScriptBlockWriter(self._outfile, separator)
-        self._write_tag('script', 'type="text/javascript"',
-                        lambda: writer.write(self._model, self._config))
+        JsResultWriter(self._outfile).write(self._model, self._config)
 
     def _inline_js_file(self, line):
         self._write_tag('script', 'type="text/javascript"',
