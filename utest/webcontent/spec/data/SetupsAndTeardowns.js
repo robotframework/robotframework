@@ -6,14 +6,15 @@ window.setupsAndTeardownsOutput["strings"] = [];
 
 window.setupsAndTeardownsOutput["strings"] = window.setupsAndTeardownsOutput["strings"].concat(["*","*SetupsAndTeardowns","*/home/peke/Devel/robotframework/utest/webcontent/spec/data/SetupsAndTeardowns.txt","*Test","*BuiltIn.Log","*Logs the given message with the given level.","*test setup","*Keyword with teardown","*BuiltIn.No Operation","*Does absolutely nothing.","*keyword teardown","*test teardown","*suite setup","*suite teardown"]);
 
-window.setupsAndTeardownsOutput["generatedTimestamp"] = "20111208 18:13:29 GMT +03:00";
+window.setupsAndTeardownsOutput["generatedTimestamp"] = "20111209 14:36:32 GMT +03:00";
 
 window.setupsAndTeardownsOutput["errors"] = [];
 
 window.setupsAndTeardownsOutput["stats"] = [[{"fail":0,"label":"Critical Tests","pass":1},{"fail":0,"label":"All Tests","pass":1}],[],[{"fail":0,"id":"s1","label":"SetupsAndTeardowns","name":"SetupsAndTeardowns","pass":1}]];
 
-window.setupsAndTeardownsOutput["generatedMillis"] = 15;
+window.setupsAndTeardownsOutput["generatedMillis"] = -646;
 
-window.setupsAndTeardownsOutput["baseMillis"] = 1323360808985;
+window.setupsAndTeardownsOutput["baseMillis"] = 1323434192646;
 
 window.settings = {"background":{"fail":"DeepPink"},"logURL":"log.html","reportURL":"report.html"};
+
