@@ -24,7 +24,7 @@ from robot.result.serializer import RebotXMLWriter
 from robot.version import get_full_version
 from robot import utils
 
-from .jswriter import JsResultWriter, JsonWriter
+from .jswriter import JsResultWriter, SplitLogWriter
 from .xunitwriter import XUnitWriter
 
 try:
@@ -103,10 +103,8 @@ class LogBuilder(_HTMLFileBuilder):
 
     def _write_split_log(self, index, keywords, strings, path):
         with codecs.open(path, 'w', encoding='UTF-8') as outfile:
-            writer = JsonWriter(outfile)
-            writer.write_json('window.keywords%d = ' % index, keywords)
-            writer.write_json('window.strings%d = ' % index, strings)
-            writer.write('window.fileLoading.notify("%s");\n' % os.path.basename(path))
+            writer = SplitLogWriter(outfile)
+            writer.write(keywords, strings, index, os.path.basename(path))
 
 
 class ReportBuilder(_HTMLFileBuilder):

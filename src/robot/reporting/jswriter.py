@@ -103,3 +103,14 @@ class SuiteWriter(object):
                                 separator=True)
         mapping[data] = part_name
         self._index += 1
+
+
+class SplitLogWriter(object):
+
+    def __init__(self, output):
+        self._writer = JsonWriter(output)
+
+    def write(self, keywords, strings, index, notify):
+        self._writer.write_json('window.keywords%d = ' % index, keywords)
+        self._writer.write_json('window.strings%d = ' % index, strings)
+        self._writer.write('window.fileLoading.notify("%s");\n' % notify)
