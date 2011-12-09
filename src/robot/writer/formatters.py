@@ -25,7 +25,50 @@ class TsvFormatter(object):
         self._cols = cols
         self._formatter = RowSplitter(self._padding, self._cols)
 
-    def format(self, row, indent):
+    def setting_rows(self, settings):
+        return self._rows_from_table(settings)
+
+    def variable_rows(self, variables):
+        return self._rows_from_table(variables)
+
+    def test_rows(self, tests):
+        return self._rows_from_steps(tests)
+
+    def keyword_rows(self, keywords):
+        return self._rows_from_steps(keywords)
+
+    def empty_row(self):
+        return self._pad([])
+
+    def _rows_from_table(self, table):
+        yield self._header_row(table)
+        for row in self._rows_from_items(table):
+            yield row
+        yield self.empty_row()
+
+    def _rows_from_steps(self, table):
+        yield self._header_row(table)
+        for item in table:
+            yield self._pad([item.name])
+            for row in self._rows_from_items(item, 1):
+                yield row
+        yield self.empty_row()
+
+    def _header_row(self, table):
+        return self._pad(['*%s*' % cell for cell in table.header])
+
+    def _name_row(self, name):
+        return self.format([name])
+
+    def _rows_from_items(self, item, indent=0):
+        for ch in (c for c in item if c.is_set()):
+            for row in self.format(ch.as_list(), indent):
+                yield row
+            if ch.is_for_loop():
+                for row in self._rows_from_items(ch, indent+1):
+                    yield row
+
+    def format(self, row, indent=0):
         return [self._pad(row) for row in self._formatter.format(row, indent)]
 
     def _pad(self, row):
@@ -34,14 +77,85 @@ class TsvFormatter(object):
 
 class TxtFormatter(object):
     _padding = ''
+    _FIRST_ROW_LENGTH = 18
 
     def __init__(self, cols=8):
         self._cols = cols
         self._formatter = RowSplitter(self._padding, self._cols)
+        self._justifications = []
 
-    def format(self, row, indent=0, justifications=[]):
+    def setting_rows(self, settings):
+        yield self._header_row(settings)
+        self._justifications = [14]
+        for row in  self._rows_from_items(settings):
+            yield row
+        self._justifications = []
+        yield self.empty_row()
+
+    def variable_rows(self, variables):
+        yield self._header_row(variables)
+        for row in self._rows_from_items(variables):
+            yield row
+        yield self.empty_row()
+
+    def test_rows(self, tests):
+        return self._rows_from_steps(tests)
+
+    def keyword_rows(self, keywords):
+        return self._rows_from_steps(keywords)
+
+    def _header_row(self, table):
+        header = ['*** %s ***' % table.header[0]] + table.header[1:]
+        self._justify_row(header)
+        return header
+
+    def empty_row(self):
+        return []
+
+    def _rows_from_steps(self, table):
+        if table.header[1:]:
+            self._justifications = self._count_justifications(table)
+        yield self._header_row(table)
+        if not table.header[1:]:
+            for item in table:
+                yield [item.name]
+                for row in self._rows_from_items(item, 1):
+                    yield row
+        else:
+            for item in table:
+                rows = list(self._rows_from_items(item, 1))
+                if len(item.name) > self._FIRST_ROW_LENGTH:
+                    yield [item.name]
+                else:
+                    yield [item.name.ljust(self._justifications[0])] + rows[0][1:]
+                    rows = rows[1:]
+                for r in rows:
+                    yield r
+        self._justifications = []
+        yield self.empty_row()
+
+    def _rows_from_items(self, item, indent=0):
+        for ch in (c for c in item if c.is_set()):
+            for row in self.format(ch.as_list(), indent):
+                yield row
+            if ch.is_for_loop():
+                for row in self._rows_from_items(ch, indent+1):
+                    yield row
+
+    def _count_justifications(self, table):
+        result = [self._FIRST_ROW_LENGTH]+[len(header) for header in table.header[1:]]
+        for element in [list(kw) for kw in list(table)]:
+            for step in element:
+                for index, col in enumerate(step.as_list()):
+                    index += 1
+                    if len(result) <= index:
+                        result.append(0)
+                    result[index] = max(len(col), result[index])
+        return result
+
+    def format(self, row, indent=0):
         rows = self._formatter.format(row, indent)
-        return self._justify(self._escape(rows), justifications)
+        return self._justify(self._escape(rows))
 
     def _escape(self, rows):
         for index, row in enumerate(rows):
@@ -50,13 +164,15 @@ class TxtFormatter(object):
             rows[index] = [re.sub('\s\s+(?=[^\s])', lambda match: '\\'.join(match.group(0)), item) for item in row]
         return rows
 
-    def _justify(self, rows, justifications):
-        for row in rows:
-            for index, col in enumerate(row[:-1]):
-                if len(justifications) <= index:
-                    continue
-                row[index] = row[index].ljust(justifications[index])
-        return rows
+    def _justify(self, rows):
+        return [self._justify_row(r) for r in rows]
+
+    def _justify_row(self, row):
+        for index, col in enumerate(row[:-1]):
+            if len(self._justifications) <= index:
+                continue
+            row[index] = row[index].ljust(self._justifications[index])
+        return row
 
 
 class PipeFormatter(TxtFormatter):
@@ -78,9 +194,6 @@ class HtmlFormatter(object):
             return row
         return row + [self._padding] * (self._cols - len(row) - indent)
 
-    def header_row(self, header):
-        return [NameCell(header, {'colspan': '%d' % self._cols})]
-
     def empty_row(self):
         return [NameCell('')] + [Cell('') for _ in range(self._cols-1)]
 
@@ -97,7 +210,7 @@ class HtmlFormatter(object):
         return self._rows_from_steps(keywords, 'keyword')
 
     def _rows_from_steps(self, table, type_):
-        result = []
+        result = [[HeaderCell(table.header[0], self._cols)]]
         for item in table:
             children = [e for e in list(item) if e.is_set()]
             result.extend(self._first_row(item, type_, children[0]))
@@ -106,6 +219,7 @@ class HtmlFormatter(object):
                 if subitem.is_for_loop():
                     for sub in subitem:
                         result.extend(self._rows_from_item(sub, indent=2))
+        result.append(self.empty_row())
         return result
 
     def _first_row(self, item, type_, elem):
@@ -121,10 +235,11 @@ class HtmlFormatter(object):
         return rows
 
     def _rows_from_table(self, table):
-        result = []
+        result = [[HeaderCell(table.header[0], self._cols)]]
         for item in table:
             if item.is_set():
                 result.extend(self._rows_from_item(item))
+        result.append(self.empty_row())
         return result
 
     def _rows_from_item(self, item, indent=0):
@@ -138,9 +253,10 @@ class HtmlFormatter(object):
 class HtmlCell(object):
     _backslash_matcher = re.compile(r'(\\+)n ')
 
-    def __init__(self, content='', attributes=None):
+    def __init__(self, content='', attributes=None, tag='td'):
         self.content = content
         self.attributes = attributes or {}
+        self.tag = tag
 
     def _replace_newlines(self, content):
         def replacer(match):
@@ -166,11 +282,12 @@ class NameCell(HtmlCell):
         self.attributes.update({'class': 'name'})
 
 
-class AnchorNameCell(object):
+class AnchorNameCell(HtmlCell):
 
     def __init__(self, name, type_):
-        self.content = self._link_from_name(name, type_)
-        self.attributes = {'class': 'name'}
+        HtmlCell.__init__(self, self._link_from_name(name, type_),
+                          {'class': 'name'})
+
 
     def _link_from_name(self, name, type_):
         return '<a name="%s_%s">%s</a>' % (type_, utils.html_attr_escape(name),
@@ -183,6 +300,12 @@ class DocumentationCell(HtmlCell):
         HtmlCell.__init__(self, content)
         self.attributes = {'class': 'colspan%d' % span, 'colspan': '%d' % span}
 
+
+class HeaderCell(HtmlCell):
+
+    def __init__(self, name, span):
+        HtmlCell.__init__(self, name, {'class': 'name', 'colspan': '%d' % span},
+                          tag='th')
 
 class RowSplitter(object):
 

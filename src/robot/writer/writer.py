@@ -16,7 +16,6 @@ import csv
 import re
 from StringIO import StringIO
 
-from robot.parsing.settings import Documentation
 from robot import utils
 
 from .formatters import TsvFormatter, TxtFormatter, PipeFormatter, HtmlFormatter
@@ -38,249 +37,55 @@ def FileWriter(serialization_context):
     }[serialization_context.format]
     return Writer(serialization_context)
 
+
 def TxtFileWriter(context):
     Writer = PipeSeparatedTxtWriter if context.pipe_separated else SpaceSeparatedTxtWriter
     return Writer(context)
 
 
-class TsvFileWriter(object):
-
-    def __init__(self, context):
-        self._context = context
-        self._writer = csv.writer(context.output, dialect='excel-tab',
-                                  lineterminator=context.line_separator)
-        self._formatter = TsvFormatter(8)
+class _DataFileWriter(object):
 
     def write(self, datafile):
         for table in datafile:
             if table:
-                {'setting': self._write_table,
-                 'variable': self._write_table,
-                 'keyword': self._write_indented_table,
-                 'testcase': self._write_indented_table}[table.type](table)
-            self._write([])
+                self._write_rows(self._formatted_table(table))
 
-    def _write_table(self, table):
-        self._write_header(table.header)
-        for setting in table:
-            self._write_item(setting)
-
-    def _write_indented_table(self, table):
-        self._write_header(table.header)
-        for keyword in table:
-            self._write([keyword.name])
-            for item in keyword:
-                self._write_item(item, indent=1)
-                self._write_for_loop(item)
-
-    def _write_header(self, header):
-        self._writer.writerow(['*%s*' % cell for cell in header])
-
-    def _write_item(self, item, indent=0):
-        if item.is_set():
-            self._write(item.as_list(), indent)
-
-    def _write_for_loop(self, item):
-        if item.is_for_loop():
-            for sub_step in item:
-                self._write_item(sub_step, indent=2)
-
-    def _write(self, row, indent=0):
-        for row in self._formatter.format(row, indent):
-            self._writer.writerow(row)
+    def _formatted_table(self, table):
+        formatter = {'setting': self._formatter.setting_rows,
+                     'variable': self._formatter.variable_rows,
+                     'testcase': self._formatter.test_rows,
+                     'keyword': self._formatter.keyword_rows
+                    }[table.type]
+        return formatter(table)
 
 
-class SpaceSeparatedTxtWriter(object):
-    _separator = ' '*4
-    _FIRST_ROW_LENGTH = 18
+class _TextFileWriter(_DataFileWriter):
 
-    def __init__(self, context):
+    def __init__(self, context, formatter):
         self._output = context.output
         self._line_separator = context.line_separator
-        self._formatter = TxtFormatter()
+        self._formatter = formatter
 
-    def write(self, datafile):
-        for table in datafile:
-            if table:
-                {'setting': self._write_settings,
-                 'variable': self._write_table,
-                 'keyword': self._write_indented_table,
-                 'testcase': self._write_indented_table}[table.type](table)
-            self._write([])
-
-    def _write_settings(self, settings):
-        self._write_header(settings.header)
-        for setting in settings:
-            self._write_item(setting, justifications=[14])
-
-    def _write_table(self, table):
-        self._write_header(table.header)
-        for setting in table:
-            self._write_item(setting)
-
-    def _write_indented_table(self, table):
-        if table.header[1:]:
-            self._write_aligned_intended_table(table)
-        else:
-            self._write_unaligned_intended_table(table)
-
-    def _write_aligned_intended_table(self, table):
-        justifications = self._count_justifications(table)
-        self._write_header(table.header, justifications)
-        for keyword in table:
-            self._write_keyword(justifications, keyword)
-
-    def _write_keyword(self, justifications, keyword):
-        # TODO: refactor
-        elements = self._write_name_row(keyword, justifications)
-        for item in elements:
-            self._write_item(item, indent=1, justifications=justifications)
-            self._write_for_loop(item)
-
-    def _write_name_row(self, keyword, justifications):
-        if len(keyword.name) > self._FIRST_ROW_LENGTH:
-            self._write([keyword.name])
-            return list(keyword)
-        else:
-            for index, step in enumerate(keyword):
-                if step.is_set():
-                    self._write([keyword.name]+step.as_list(), justifications=justifications)
-                    return list(keyword)[index+1:]
-            self._write([keyword.name])
-            return []
-
-    def _count_justifications(self, table):
-        result = [self._FIRST_ROW_LENGTH]+[len(header) for header in table.header[1:]]
-        for element in [list(kw) for kw in list(table)]:
-            for step in element:
-                for index, col in enumerate(step.as_list()):
-                    index=index+1
-                    if len(result) <= index:
-                        result.append(0)
-                    result[index] = max(len(col), result[index])
-        return result
-
-    def _write_unaligned_intended_table(self, table):
-        self._write_header(table.header)
-        for keyword in table:
-            self._write([keyword.name])
-            for item in keyword:
-                self._write_item(item, indent=1)
-                self._write_for_loop(item)
-
-    def _write_item(self, item, indent=0, justifications=[]):
-        if item.is_set():
-            self._write(item.as_list(), indent, justifications)
-
-    def _write_header(self, header, justifications=[]):
-        self._write(['*** %s ***' % header[0]] + header[1:], justifications=justifications)
-
-    def _write_for_loop(self, item):
-        if item.is_for_loop():
-            for sub_step in item:
-               self._write_item(sub_step, indent=2)
-
-    def _write(self, row, indent=0, justifications=[]):
-        for row in self._formatter.format(row, indent, justifications):
+    def _write_rows(self, rows):
+        for row in rows:
             self._write_row(row)
+
+
+class SpaceSeparatedTxtWriter(_TextFileWriter):
+    _separator = ' '*4
+
+    def __init__(self, context):
+        _TextFileWriter.__init__(self, context, TxtFormatter())
 
     def _write_row(self, row):
         self._output.write(self._separator.join(row) + self._line_separator)
 
 
-class PipeSeparatedTxtWriter(object):
+class PipeSeparatedTxtWriter(_TextFileWriter):
     _separator = ' | '
-    _FIRST_ROW_LENGTH = 18
 
     def __init__(self, context):
-        self._output = context.output
-        self._line_separator = context.line_separator
-        self._formatter = PipeFormatter()
-
-    def write(self, datafile):
-        for table in datafile:
-            if table:
-                {'setting': self._write_settings,
-                 'variable': self._write_table,
-                 'keyword': self._write_indented_table,
-                 'testcase': self._write_indented_table}[table.type](table)
-            self._write([])
-
-    def _write_settings(self, settings):
-        self._write_header(settings.header)
-        for setting in settings:
-            self._write_item(setting, justifications=[14])
-
-    def _write_table(self, table):
-        self._write_header(table.header)
-        for setting in table:
-            self._write_item(setting)
-
-    def _write_indented_table(self, table):
-        if table.header[1:]:
-            self._write_aligned_intended_table(table)
-        else:
-            self._write_unaligned_intended_table(table)
-
-    def _write_aligned_intended_table(self, table):
-        justifications = self._count_justifications(table)
-        self._write_header(table.header, justifications)
-        for keyword in table:
-            self._write_keyword(justifications, keyword)
-
-    def _write_keyword(self, justifications, keyword):
-        # TODO: refactor
-        elements = self._write_name_row(keyword, justifications)
-        for item in elements:
-            self._write_item(item, indent=1, justifications=justifications)
-            self._write_for_loop(item)
-
-    def _write_name_row(self, keyword, justifications):
-        if len(keyword.name) > self._FIRST_ROW_LENGTH:
-            self._write([keyword.name])
-            return list(keyword)
-        else:
-            for index, step in enumerate(keyword):
-                if step.is_set():
-                    self._write([keyword.name]+step.as_list(), justifications=justifications)
-                    return list(keyword)[index+1:]
-            self._write([keyword.name])
-            return []
-
-    def _count_justifications(self, table):
-        result = [self._FIRST_ROW_LENGTH]+[len(header) for header in table.header[1:]]
-        for element in [list(kw) for kw in list(table)]:
-            for step in element:
-                for index, col in enumerate(step.as_list()):
-                    index=index+1
-                    if len(result) <= index:
-                        result.append(0)
-                    result[index] = max(len(col), result[index])
-        return result
-
-    def _write_unaligned_intended_table(self, table):
-        self._write_header(table.header)
-        for keyword in table:
-            self._write([keyword.name])
-            for item in keyword:
-                self._write_item(item, indent=1)
-                self._write_for_loop(item)
-
-    def _write_item(self, item, indent=0, justifications=[]):
-        if item.is_set():
-            self._write(item.as_list(), indent, justifications)
-
-    def _write_header(self, header, justifications=[]):
-        self._write(['*** %s ***' % header[0]] + header[1:], justifications=justifications)
-
-    def _write_for_loop(self, item):
-        if item.is_for_loop():
-            for sub_step in item:
-               self._write_item(sub_step, indent=2)
-
-    def _write(self, row, indent=0, justifications=[]):
-        for row in self._formatter.format(row, indent, justifications):
-            self._write_row(row)
+        _TextFileWriter.__init__(self, context, PipeFormatter())
 
     def _write_row(self, row):
         row = self._separator.join(row)
@@ -289,7 +94,18 @@ class PipeSeparatedTxtWriter(object):
         self._output.write(row + self._line_separator)
 
 
-class HtmlFileWriter(object):
+class TsvFileWriter(_TextFileWriter):
+
+    def __init__(self, context):
+        _TextFileWriter.__init__(self, context, TsvFormatter())
+        self._writer = csv.writer(context.output, dialect='excel-tab',
+                                  lineterminator=context.line_separator)
+
+    def _write_row(self, row):
+        self._writer.writerow(row)
+
+
+class HtmlFileWriter(_DataFileWriter):
 
     def __init__(self, context):
         self._content = TEMPLATE % {'NAME': context.datafile.name}
@@ -309,40 +125,35 @@ class HtmlFileWriter(object):
         self._output.write(self._content.encode('UTF-8'))
 
     def _write_settings(self, settings):
-        self._write_table('Settings', self._formatter.setting_rows(settings),
+        self._write_table(self._formatter.setting_rows(settings),
                           self._table_replacer.settings_table)
 
     def _write_variables(self, variables):
-        self._write_table('Variables', self._formatter.variable_rows(variables),
+        self._write_table(self._formatter.variable_rows(variables),
                           self._table_replacer.variables_table)
 
     def _write_tests(self, tests):
-        self._write_table('Test Cases', self._formatter.test_rows(tests),
+        self._write_table(self._formatter.test_rows(tests),
                           self._table_replacer.testcases_table)
 
     def _write_keywords(self, keywords):
-        self._write_table('Keywords', self._formatter.keyword_rows(keywords),
-                           self._table_replacer.keywords_table)
+        self._write_table(self._formatter.keyword_rows(keywords),
+                          self._table_replacer.keywords_table)
 
-    def _write_table(self, header, rows, replacer):
-        self._write_header(header)
+    def _write_table(self, rows, replacer):
         for row in rows:
             self._write_row(row)
         self._end_table(replacer)
 
-    def _write_header(self, header):
-        self._write_row(self._formatter.header_row(header), cell_tag='th')
-
     def _end_table(self, table_replacer):
-        self._write_row(self._formatter.empty_row())
         table = self._writer.output.getvalue().decode('UTF-8')
         self._content = table_replacer(table, self._content)
         self._writer = utils.HtmlWriter(StringIO())
 
-    def _write_row(self, row, cell_tag='td'):
+    def _write_row(self, row):
         self._writer.start('tr')
         for cell in row:
-            self._writer.element(cell_tag, cell.content, cell.attributes,
+            self._writer.element(cell.tag, cell.content, cell.attributes,
                                  escape=False)
         self._writer.end('tr')
 

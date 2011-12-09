@@ -40,8 +40,12 @@ My Test Case          [Documentation]    This is a long comment that spans sever
                       My TC Step 1       my step arg                                          # step 1 comment
                       My TC Step 2       my step \ 2 arg                                      second arg          # step 2 comment
                       [Teardown]         1 minute
+A very long named test case
+                      My step 1          This is arg
+                      My step 2          This also is arg
+Test with for         : FOR              ${i}                                                 IN RANGE            100
+                      \                  Log                                                  ${i}
 '''
-
 
 _txt_pipe_template = '''| *** Settings *** |
 | Library        | MyLibrary | argument | WITH NAME | My Alias | # My library comment |
@@ -80,17 +84,17 @@ GOLDEN_TXT_PIPE_TESTCASE_FILE = _txt_pipe_template % '''
 |    | [Teardown] | 1 minute | args |
 '''
 
-_tsv_template = '''*Settings*
+_tsv_template = '''*Settings*\t\t\t\t\t\t\t
 Library\tMyLibrary\targument\tWITH NAME\tMy Alias\t# My library comment\t\t
 Variables\tMyVariables\targs\targs 2\targs 3\targs 4\targs 5\targs 6
 ...\targs 7\targs 8\targs 9\targs 10\targs 11\targs 12\t
 Resource\tMyResource args that are part of the name\t\t\t\t\t\t
 \t\t\t\t\t\t\t
-*Variables*
+*Variables*\t\t\t\t\t\t\t
 MyVar\tval1\tval2\tval3\tval4\tval5\tval6\tval6
 ...\tval7\tval8\tval9\t# var comment\t\t\t
 \t\t\t\t\t\t\t%s
-*Keywords*
+*Keywords*\t\t\t\t\t\t\t
 My Keyword\t\t\t\t\t\t\t
 \t[Documentation]\tDocumentation\t# Comment for doc\t\t\t\t
 \t# Comment row\t\t\t\t\t\t
@@ -109,7 +113,7 @@ My Keyword\t\t\t\t\t\t\t
 
 GOLDEN_TSV_RESOURCE = _tsv_template % ''
 GOLDEN_TSV_TESTCASE_FILE = _tsv_template % '''
-*Test Cases*
+*Test Cases*\t\t\t\t\t\t\t
 My Test Case\t\t\t\t\t\t\t
 \t[Documentation]\tThis is a long comment that spans several columns\t\t\t\t\t
 \tMy TC Step 1\tmy step arg\t# step 1 comment\t\t\t\t
