@@ -50,9 +50,15 @@ class JsResultWriter(object):
         variable = self._output_var(self._strings_key)
         self._writer.write('%s = [];\n' % variable, separator=True)
         prefix = '%s = %s.concat(' % (variable, variable)
-        postfix = ');\n'
-        for chunk in self._chunks(strings, self.split_threshold):
-            self._writer.write_json(prefix, chunk, postfix, separator=True)
+        self._write_string_chunks(prefix, strings, postfix=');\n')
+
+    def _write_string_chunks(self, prefix, strings, postfix):
+        # Optimize attribute access inside for loop
+        threshold = self.split_threshold
+        write_json = self._writer.write_json
+        for index in xrange(0, len(strings), threshold):
+            write_json(prefix, strings[index:index+threshold], postfix,
+                       separator=True)
 
     def _write_data(self, data):
         for key in data:
@@ -67,10 +73,6 @@ class JsResultWriter(object):
 
     def _output_var(self, key):
         return '%s["%s"]' % (self._output_attr, key)
-
-    def _chunks(self, iterable, chunk_size):
-        for index in xrange(0, len(iterable), chunk_size):
-            yield iterable[index:index+chunk_size]
 
 
 #TODO: Naming
