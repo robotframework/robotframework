@@ -73,10 +73,10 @@ class HtmlFormatter(object):
     def format(self, row, indent, colspan):
         return [self._pad(row, colspan) for row in self._formatter.format(row, indent)]
 
-    def _pad(self, row, colspan):
+    def _pad(self, row, colspan, indent=0):
         if colspan:
             return row
-        return row + [self._padding] * (self._cols - len(row))
+        return row + [self._padding] * (self._cols - len(row) - indent)
 
     def header_row(self, header):
         return [NameCell(header, {'colspan': '%d' % self._cols})]
@@ -97,49 +97,50 @@ class HtmlFormatter(object):
         return self._rows_from_steps(keywords, 'keyword')
 
     def _rows_from_steps(self, table, type_):
-        # TODO: Cleanup
         result = []
         for item in table:
-            elems = [e for e in list(item) if e.is_set()]
-            result.append(self._firstrow(item, type_, elems[0]))
-            for subitem in elems[1:]:
-                if subitem.is_set():
-                    result.extend(self._create_cell(subitem, indent=1))
+            children = [e for e in list(item) if e.is_set()]
+            result.extend(self._first_row(item, type_, children[0]))
+            for subitem in children[1:]:
+                result.extend(self._rows_from_item(subitem, indent=1))
                 if subitem.is_for_loop():
                     for sub in subitem:
-                        result.extend(self._create_cell(sub, indent=2))
+                        result.extend(self._rows_from_item(sub, indent=2))
         return result
 
-    def _firstrow(self, item, type_, elem):
-        # FIXME: first row is not wrapped properly.
-        result = [AnchorNameCell(item.name, type_)]
+    def _first_row(self, item, type_, elem):
+        name = AnchorNameCell(item.name, type_)
         if isinstance(elem, Documentation):
-            # TODO: remove this ugly hack for doc comments
-            if elem.comment:
-                return result + [Cell(elem.setting_name), Cell(elem.value),
-                          Cell(elem.comment.as_list()[0], {'class': 'colspan2', 'colspan': '%d' % (self._cols - 3)})]
-            return result + [Cell(elem.setting_name),
-                             Cell(elem.value, {'class': 'colspan3',
-                                               'colspan': '%d' % (self._cols-2)})]
-        return result + [Cell(e) for e in elem.as_list()]
+            doc = elem.as_list()
+            if len(doc) == 2:
+                return [[name] + [Cell(elem.setting_name),
+                                  DocumentationCell(elem.value, self._cols-2)]]
+        rows = self.format(elem.as_list(), indent=1, colspan=False)
+        rows = [[Cell(e) for e in row] for row in rows]
+        rows[0][0] = name
+        return rows
 
     def _rows_from_table(self, table):
         result = []
         for item in table:
             if item.is_set():
-                result.extend(self._create_cell(item))
+                result.extend(self._rows_from_item(item))
         return result
 
-    def _create_cell(self, item, indent=0):
+    def _rows_from_item(self, item, indent=0):
         if isinstance(item, Documentation):
-            return [NameCell(item.setting_name, ),
-                    Cell(item.value, {'colspan': '%d' % (self._cols-1)})]
+            return [[NameCell(item.setting_name),
+                    DocumentationCell(item.value, self._cols-1)]]
         rows = self.format(item.as_list(), indent, colspan=False)
         return [[NameCell(row[0])] + [Cell(c) for c in row[1:]] for row in rows]
 
 
 class HtmlCell(object):
     _backslash_matcher = re.compile(r'(\\+)n ')
+
+    def __init__(self, content='', attributes=None):
+        self.content = content
+        self.attributes = attributes or {}
 
     def _replace_newlines(self, content):
         def replacer(match):
@@ -153,17 +154,16 @@ class HtmlCell(object):
 class Cell(HtmlCell):
 
     def __init__(self, content, attributes=None):
-        self.content = self._replace_newlines(utils.html_escape(content))
-        self.attributes = attributes or {}
+        HtmlCell.__init__(self,
+                          self._replace_newlines(utils.html_escape(content)),
+                          attributes)
 
 
 class NameCell(HtmlCell):
 
     def __init__(self, name, attributes=None):
-        self.content = self._replace_newlines(name)
-        self.attributes = {'class': 'name'}
-        if attributes:
-            self.attributes.update(attributes)
+        HtmlCell.__init__(self, self._replace_newlines(name), attributes)
+        self.attributes.update({'class': 'name'})
 
 
 class AnchorNameCell(object):
@@ -175,6 +175,13 @@ class AnchorNameCell(object):
     def _link_from_name(self, name, type_):
         return '<a name="%s_%s">%s</a>' % (type_, utils.html_attr_escape(name),
                                            utils.html_escape(name))
+
+
+class DocumentationCell(HtmlCell):
+
+    def __init__(self, content, span):
+        HtmlCell.__init__(self, content)
+        self.attributes = {'class': 'colspan%d' % span, 'colspan': '%d' % span}
 
 
 class RowSplitter(object):

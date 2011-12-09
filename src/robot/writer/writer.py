@@ -286,7 +286,6 @@ class PipeSeparatedTxtWriter(object):
         row = self._separator.join(row)
         if row:
             row = '| ' + row + ' |'
-
         self._output.write(row + self._line_separator)
 
 

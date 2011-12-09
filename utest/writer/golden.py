@@ -309,7 +309,8 @@ td.name, th.name {
 <td class="name"><a name="keyword_My Keyword">My Keyword</a></td>
 <td>[Documentation]</td>
 <td>Documentation</td>
-<td class="colspan2" colspan="2"># Comment for doc</td>
+<td># Comment for doc</td>
+<td></td>
 </tr>
 <tr>
 <td class="name"></td>
