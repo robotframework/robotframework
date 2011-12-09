@@ -14,7 +14,12 @@ sys.path.insert(0, join(BASEDIR, '..', '..', '..', '..', 'src'))
 import robot
 from robot.result.executionresult import ResultFromXml
 from robot.reporting.jsmodelbuilders import JsModelBuilder
-from robot.reporting.jswriter import ScriptBlockWriter, JsonWriter
+from robot.reporting.jswriter import JsResultWriter, JsonWriter
+
+
+class NonBlockingJsResultWriter(JsResultWriter):
+    start_block = ''
+    end_block = '\n'
 
 
 def run_robot(testdata, loglevel='INFO'):
@@ -33,7 +38,7 @@ def create_jsdata(outxml, target, split_log):
               'reportURL': 'report.html',
               'background': {'fail': 'DeepPink'}}
     with open(target, 'w') as output:
-        ScriptBlockWriter(output, '\n').write(model, config)
+        NonBlockingJsResultWriter(output).write(model, config)
         writer = JsonWriter(output)
         for index, (keywords, strings) in enumerate(model.split_results):
             writer.write_json('window.outputKeywords%d = ' % index, keywords)
