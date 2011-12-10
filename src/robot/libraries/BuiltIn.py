@@ -1419,10 +1419,21 @@ class _Misc:
         # Python hangs with negative values
         if seconds < 0:
             seconds = 0
-        time.sleep(seconds)
+        self._sleep_in_parts(seconds)
         self.log('Slept %s' % utils.secs_to_timestr(seconds))
         if reason:
             self.log(reason)
+
+    def _sleep_in_parts(self, seconds):
+        # time.sleep can't be stopped in windows
+        # to ensure that we can signal stop (with timeout)
+        # split sleeping to small pieces
+        endtime = time.time() + float(seconds)
+        while True:
+            remaining = endtime - time.time()
+            if remaining <= 0:
+                break
+            time.sleep(min(remaining, 0.5))
 
     def catenate(self, *items):
         """Catenates the given items together and returns the resulted string.

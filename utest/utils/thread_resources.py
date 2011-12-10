@@ -8,7 +8,10 @@ def passing(*args):
     pass
 
 def sleeping(s):
-    time.sleep(s)
+    seconds = s
+    while seconds > 0:
+        time.sleep(min(seconds, 0.1))
+        seconds -= 0.1
     os.environ['ROBOT_THREAD_TESTING'] = str(s)
     return s
 
