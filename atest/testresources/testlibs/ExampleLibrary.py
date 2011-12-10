@@ -18,7 +18,7 @@ class ExampleLibrary:
         """Print given message n times"""
         for i in range(int(count)):
             print msg
-            time.sleep(float(delay))
+            self._sleep(delay)
 
     def print_many(self, *msgs):
         """Print given messages"""
@@ -109,13 +109,13 @@ class ExampleLibrary:
         i = 0
         while True:
             i += 1
-            time.sleep(1)
+            self._sleep(1)
             if not no_print:
                 print 'Looping forever: %d' % i
 
     def write_to_file_after_sleeping(self, path, sec, msg=None):
         f = open(path, 'w')
-        time.sleep(int(sec))
+        self._sleep(sec)
         if msg is None:
             msg = 'Slept %s seconds' % sec
         f.write(msg)
@@ -123,7 +123,15 @@ class ExampleLibrary:
 
     def sleep_without_logging(self, timestr):
         seconds = utils.timestr_to_secs(timestr)
-        time.sleep(seconds)
+        self._sleep(seconds)
+
+    def _sleep(self, seconds):
+        endtime = time.time() + float(seconds)
+        while True:
+            remaining = endtime - time.time()
+            if remaining <= 0:
+                break
+            time.sleep(min(remaining, 0.5))
 
     def return_custom_iterable(self, *values):
         return _MyIterable(*values)
