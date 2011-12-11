@@ -22,15 +22,16 @@ class TestHtmlFormatter(unittest.TestCase):
 
     def test_setting_table_doc(self):
         table = TestCaseFileSettingTable(None)
+        table.set_header('Settings')
         table.doc.value = 'Some documentation'
         formatted = HtmlFormatter().setting_rows(table)
         assert_equals(self._rows_to_text(formatted),
                       [['Documentation', 'Some documentation']])
-        assert_equals(formatted[0][1].attributes,
+        assert_equals(formatted[1][1].attributes,
                       {'colspan': '4', 'class': 'colspan4'})
 
     def test_test_name_row_formatting(self):
-        table = TestCaseTable(None)
+        table = self._create_test_table()
         test = table.add('A Test')
         test.tags.value = ['t1', 't2', 't3', 't4']
         formatted = self._rows(table)
@@ -39,28 +40,33 @@ class TestHtmlFormatter(unittest.TestCase):
         assert_equals(formatted[1], ['', '...', 't4', '', ''])
 
     def test_test_documentation_colspan(self):
-        table = TestCaseTable(None)
+        table = self._create_test_table()
         test = table.add('Test')
         test.doc.value = 'Some doc'
         assert_equals(self._rows(table)[0],
             ['<a name="test_Test">Test</a>', '[Documentation]', 'Some doc'])
-        assert_equals(HtmlFormatter().test_rows(table)[0][2].attributes,
+        assert_equals(HtmlFormatter().test_rows(table)[1][2].attributes,
                       {'colspan': '3', 'class': 'colspan3'})
 
     def test_test_documentation_with_comment(self):
-        table = TestCaseTable(None)
+        table = self._create_test_table()
         test = table.add('Test')
         test.doc.value = 'Some doc'
         test.doc._set_comment('a comment')
         assert_equals(self._rows(table)[0],
             ['<a name="test_Test">Test</a>', '[Documentation]', 'Some doc', '# a comment', ''])
-        assert_equals(HtmlFormatter().test_rows(table)[0][2].attributes, {})
+        assert_equals(HtmlFormatter().test_rows(table)[1][2].attributes, {})
 
     def _rows(self, table):
         return self._rows_to_text(HtmlFormatter().test_rows(table))
 
     def _rows_to_text(self, rows):
-        return [[cell.content for cell in row] for row in rows]
+        return [[cell.content for cell in row] for row in rows[1:-1]]
+
+    def _create_test_table(self):
+        table = TestCaseTable(None)
+        table.set_header('Test Cases')
+        return table
 
     def test_add_br_to_newlines(self):
         original = """This is real new line:
