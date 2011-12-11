@@ -11,12 +11,8 @@
 #  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
-import ctypes
 import os
-import threading
-
 import time
-import thread
 
 from robot import utils
 from robot.utils.robotthread import ThreadedRunner
@@ -131,6 +127,10 @@ try:
 except ImportError:
 
     if os.name == 'nt':
+        import ctypes
+        import thread
+        import threading
+
 
         class TimeoutError(TimeoutError):
             global_message = ''
