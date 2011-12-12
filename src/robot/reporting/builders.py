@@ -26,15 +26,7 @@ from robot import utils
 
 from .jswriter import JsResultWriter, SplitLogWriter
 from .xunitwriter import XUnitWriter
-
-try:
-    from org.robotframework.RobotRunner import getResourceAsStream
-except ImportError:  # Occurs unless using robotframework.jar
-    JarReader = None
-else:
-    from java.io import BufferedReader, InputStreamReader
-    def JarReader(path):
-        return BufferedReader(InputStreamReader(getResourceAsStream(path)))
+from .webcontentfile import WebContentFile
 
 
 class _Builder(object):
@@ -74,12 +66,8 @@ class _HTMLFileBuilder(_Builder):
         outfile = codecs.open(output, 'w', encoding='UTF-8') \
             if isinstance(output, basestring) else output  # isinstance is unit test hook
         with outfile:
-            self._write_to_output(outfile, config, template)
-
-    def _write_to_output(self, output, config, template):
-        writer = HTMLFileWriter(output, self._model, config)
-        for line in _WebContentFile(template):
-            writer.line(line)
+            writer = HtmlFileWriter(output, self._model, config)
+            writer.write(template)
 
 
 class LogBuilder(_HTMLFileBuilder):
@@ -118,18 +106,21 @@ class ReportBuilder(_HTMLFileBuilder):
             LOGGER.output_file('Report', path)
 
 
-class HTMLFileWriter(object):
+class HtmlFileWriter(object):
     _js_file_matcher = re.compile('src=\"([^\"]+)\"')
     _css_file_matcher = re.compile('href=\"([^\"]+)\"')
     _css_media_matcher = re.compile('media=\"([^\"]+)\"')
 
-    #TODO: output js_model_writer
     def __init__(self, outfile, model, config):
         self._outfile = outfile
         self._model = model
         self._config = config
 
-    def line(self, line):
+    def write(self, template):
+        for line in WebContentFile(template):
+            self._write_line(line)
+
+    def _write_line(self, line):
         if self._is_output_js(line):
             self._write_output_js()
         elif self._is_js_line(line):
@@ -186,33 +177,6 @@ class HTMLFileWriter(object):
         self._write('</%s>\n\n' % tag_name)
 
     def _write_file_content(self, source):
-        for line in _WebContentFile(source):
+        for line in WebContentFile(source):
             self._write(line)
         self._write('\n')
-
-
-class _WebContentFile(object):
-    _fs_base = os.path.join(os.path.dirname(os.path.abspath(__file__)),
-                            '..', 'webcontent')
-    _jar_base = '/Lib/robot/webcontent/'
-
-    def __init__(self, filename):
-        self._filename = filename
-
-    def __iter__(self):
-        if JarReader:
-            return self._iterate_file_in_jar()
-        return self._iterate_file_in_filesystem()
-
-    def _iterate_file_in_filesystem(self):
-        path = os.path.join(self._fs_base, self._filename)
-        with codecs.open(path, 'r', encoding='UTF-8') as file:
-            for line in file:
-                yield line
-
-    def _iterate_file_in_jar(self):
-        file = JarReader(self._jar_base + self._filename)
-        line = file.readLine()
-        while line is not None:
-            yield line + '\n'
-            line = file.readLine()
