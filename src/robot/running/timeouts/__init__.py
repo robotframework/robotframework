@@ -22,7 +22,11 @@ elif os.name == 'nt':
 elif os.name == 'java':
     from timeoutthread import Timeout
 else:
-    from timeoutsignaling import Timeout
+    try:
+        from timeoutsignaling import Timeout
+    except ImportError:
+        # For old python 2.5 releases where signaling is not available
+        from timeoutthread import Timeout
 
 import time
 
