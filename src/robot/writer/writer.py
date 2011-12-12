@@ -12,9 +12,12 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-import csv
 import re
 from StringIO import StringIO
+try:
+    import csv
+except ImportError:
+    csv = None
 
 from robot import utils
 
@@ -97,6 +100,9 @@ class PipeSeparatedTxtWriter(_TextFileWriter):
 class TsvFileWriter(_TextFileWriter):
 
     def __init__(self, context):
+        if not csv:
+            raise RuntimeError('No csv module found. '
+                               'Writing tab separated format is not possible.')
         _TextFileWriter.__init__(self, context, TsvFormatter())
         self._writer = csv.writer(context.output, dialect='excel-tab',
                                   lineterminator=context.line_separator)
