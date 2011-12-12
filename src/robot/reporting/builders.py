@@ -66,12 +66,8 @@ class _HTMLFileBuilder(_Builder):
         outfile = codecs.open(output, 'w', encoding='UTF-8') \
             if isinstance(output, basestring) else output  # isinstance is unit test hook
         with outfile:
-            self._write_to_output(outfile, config, template)
-
-    def _write_to_output(self, output, config, template):
-        writer = HTMLFileWriter(output, self._model, config)
-        for line in WebContentFile(template):
-            writer.line(line)
+            writer = HtmlFileWriter(output, self._model, config)
+            writer.write(template)
 
 
 class LogBuilder(_HTMLFileBuilder):
@@ -110,18 +106,21 @@ class ReportBuilder(_HTMLFileBuilder):
             LOGGER.output_file('Report', path)
 
 
-class HTMLFileWriter(object):
+class HtmlFileWriter(object):
     _js_file_matcher = re.compile('src=\"([^\"]+)\"')
     _css_file_matcher = re.compile('href=\"([^\"]+)\"')
     _css_media_matcher = re.compile('media=\"([^\"]+)\"')
 
-    #TODO: output js_model_writer
     def __init__(self, outfile, model, config):
         self._outfile = outfile
         self._model = model
         self._config = config
 
-    def line(self, line):
+    def write(self, template):
+        for line in WebContentFile(template):
+            self._write_line(line)
+
+    def _write_line(self, line):
         if self._is_output_js(line):
             self._write_output_js()
         elif self._is_js_line(line):
