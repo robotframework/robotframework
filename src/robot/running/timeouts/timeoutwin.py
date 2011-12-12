@@ -17,7 +17,6 @@ import thread
 import threading
 import time
 from robot.errors import TimeoutError
-from robot.running.timeouts.timeoutbase import _Timeout
 
 class TimeoutSignaler(object):
 
@@ -62,8 +61,13 @@ class TimeoutSignaler(object):
         ctypes.pythonapi.PyThreadState_SetAsyncExc(self._runner_thread_id, None)
 
 
-class TimeoutWithTimerThrowingException(_Timeout):
+class Timeout(object):
 
-    def _execute_with_timeout(self, timeout, runnable, args, kwargs):
-        with TimeoutSignaler(timeout, self._get_timeout_error()):
+    def __init__(self, timeout, error, timeout_type):
+        self._timeout = timeout
+        self._error = error
+
+
+    def execute(self, runnable, args, kwargs):
+        with TimeoutSignaler(self._timeout, self._error):
             return runnable(*(args or ()), **(kwargs or {}))
