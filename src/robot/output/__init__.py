@@ -17,20 +17,19 @@ from logger import LOGGER
 from monitor import CommandLineMonitor
 from xmllogger import XmlLogger
 from loggerhelper import LEVELS, Message
-from readers import process_output, process_outputs
 
 
 # Hooks to output. Set by Output.
 # Use only if no other way available (e.g. from BuiltIn library)
 OUTPUT = None
 
-
+#TODO: Fix Public API
 def TestSuite(outpath):
     """Factory method for getting test suite from an xml output file.
 
     If you want statistics get suite first and say Statistics(suite).
     """
-    suite, errors = process_output(outpath) # TODO: Use the new API and remove output.readers
+    suite, errors = process_output(outpath)
 
     def write_to_file(path=None):
         """Write processed suite (incl. statistics and errors) back to xml.
