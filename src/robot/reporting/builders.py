@@ -26,15 +26,7 @@ from robot import utils
 
 from .jswriter import JsResultWriter, SplitLogWriter
 from .xunitwriter import XUnitWriter
-
-try:
-    from org.robotframework.RobotRunner import getResourceAsStream
-except ImportError:  # Occurs unless using robotframework.jar
-    JarReader = None
-else:
-    from java.io import BufferedReader, InputStreamReader
-    def JarReader(path):
-        return BufferedReader(InputStreamReader(getResourceAsStream(path)))
+from .webcontentfile import WebContentFile
 
 
 class _Builder(object):
@@ -78,7 +70,7 @@ class _HTMLFileBuilder(_Builder):
 
     def _write_to_output(self, output, config, template):
         writer = HTMLFileWriter(output, self._model, config)
-        for line in _WebContentFile(template):
+        for line in WebContentFile(template):
             writer.line(line)
 
 
@@ -186,33 +178,6 @@ class HTMLFileWriter(object):
         self._write('</%s>\n\n' % tag_name)
 
     def _write_file_content(self, source):
-        for line in _WebContentFile(source):
+        for line in WebContentFile(source):
             self._write(line)
         self._write('\n')
-
-
-class _WebContentFile(object):
-    _fs_base = os.path.join(os.path.dirname(os.path.abspath(__file__)),
-                            '..', 'webcontent')
-    _jar_base = '/Lib/robot/webcontent/'
-
-    def __init__(self, filename):
-        self._filename = filename
-
-    def __iter__(self):
-        if JarReader:
-            return self._iterate_file_in_jar()
-        return self._iterate_file_in_filesystem()
-
-    def _iterate_file_in_filesystem(self):
-        path = os.path.join(self._fs_base, self._filename)
-        with codecs.open(path, 'r', encoding='UTF-8') as file:
-            for line in file:
-                yield line
-
-    def _iterate_file_in_jar(self):
-        file = JarReader(self._jar_base + self._filename)
-        line = file.readLine()
-        while line is not None:
-            yield line + '\n'
-            line = file.readLine()
