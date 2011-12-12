@@ -21,16 +21,21 @@ except ImportError:
     try:
         import cElementTree as ET
     except ImportError:
-        try:
-            from xml.etree import ElementTree as ET
-            # Raises ImportError due to missing expat on IronPython < 2.7.1
-            # by default http://ironpython.codeplex.com/workitem/21407
-            ET.parse(StringIO('<test/>'))
-        except ImportError:
+        if sys.platform == 'cli':
+            # See ironpython problems in xml.etree
+            # http://ironpython.codeplex.com/workitem/21407
             try:
                 from elementtree import ElementTree as ET
             except ImportError:
                 raise ImportError('No valid ElementTree XML parser module found')
+        else:
+            try:
+                from xml.etree import ElementTree as ET
+            except ImportError:
+                try:
+                    from elementtree import ElementTree as ET
+                except ImportError:
+                    raise ImportError('No valid ElementTree XML parser module found')
 
 def get_root(path=None, string=None, node=None):
     # This should NOT be changed to 'if not node:'. See chapter Truth Testing
