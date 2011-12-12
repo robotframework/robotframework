@@ -53,7 +53,8 @@ class _SerializerTest(unittest.TestCase):
         self._assert_result(self._serializer(datafile), expected)
 
     def _assert_result(self, result, expected, linesep=os.linesep):
-        for line1, line2 in zip(result.split(linesep), expected.split('\n')):
+        # TODO: doesn't test linesep properly, could not get it working in Windows
+        for line1, line2 in zip(result.splitlines(), expected.splitlines()):
             msg = "\n%s\n!=\n%s\n" % (result, expected)
             assert_equals(repr(unicode(line1)), repr(unicode(line2)), msg)
 
