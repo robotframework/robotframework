@@ -17,6 +17,7 @@ from StringIO import StringIO
 try:
     import csv
 except ImportError:
+    # csv module is missing from IronPython < 2.7.1
     csv = None
 
 from robot import utils
