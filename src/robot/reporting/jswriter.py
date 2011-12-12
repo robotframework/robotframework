@@ -81,12 +81,12 @@ class SuiteWriter(object):
     def _write_parts_over_threshold(self, data, mapping):
         if not isinstance(data, tuple):
             return 1
-        not_written = sum(self._write_parts_over_threshold(item, mapping)
-                          for item in data)
-        if not_written < self._split_threshold:
-            return not_written
-        self._write_part(data, mapping)
-        return 1
+        not_written = 1 + sum(self._write_parts_over_threshold(item, mapping)
+                              for item in data)
+        if not_written > self._split_threshold:
+            self._write_part(data, mapping)
+            return 1
+        return not_written
 
     def _write_part(self, data, mapping):
         part_name = 'window.sPart%d' % len(mapping)

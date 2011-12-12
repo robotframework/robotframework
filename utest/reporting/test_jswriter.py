@@ -52,11 +52,11 @@ class TestDataModelWrite(unittest.TestCase):
 class TestSuiteWriter(unittest.TestCase):
 
     def test_no_splitting(self):
-        suite = (1, (2, 3), (4, (5,), (6, 7)), 8)
-        expected = ['window.output["suite"] = [1,[2,3],[4,[5],[6,7]],8];']
+        suite = (1, (2, 3), (4, (5,), (6, ())), 8)
+        expected = ['window.output["suite"] = [1,[2,3],[4,[5],[6,[]]],8];']
         self._assert_splitting(suite, 100, expected)
 
-    def test_simple_splitting(self):
+    def test_simple_splitting_version_1(self):
         suite = ((1, 2, 3, 4), (5, 6, 7, 8), 9)
         expected = ['window.sPart0 = [1,2,3,4];',
                     'window.sPart1 = [5,6,7,8];',
@@ -76,6 +76,13 @@ class TestSuiteWriter(unittest.TestCase):
         expected = ['window.sPart0 = [1,2,3,4];',
                     'window.sPart1 = [5,6,7,8,9,10];',
                     'window.output["suite"] = [window.sPart0,window.sPart1,11];']
+        self._assert_splitting(suite, 4, expected)
+
+    def test_tuple_itself_has_size_one(self):
+        suite = ((1, (), (), 4), (((((),),),),))
+        expected = ['window.sPart0 = [1,[],[],4];',
+                    'window.sPart1 = [[[[[]]]]];',
+                    'window.output["suite"] = [window.sPart0,window.sPart1];']
         self._assert_splitting(suite, 4, expected)
 
     def test_nested_splitting(self):
