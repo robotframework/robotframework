@@ -14,24 +14,27 @@
 
 from signal import setitimer, signal, SIGALRM, ITIMER_REAL
 from robot.errors import TimeoutError
-from robot.running.timeouts.timeoutbase import _Timeout
 
 
-class TimeoutWithSignaling(_Timeout):
+class Timeout(object):
 
-    def _execute_with_timeout(self, timeout, runnable, args, kwargs):
-        self._start_timer(timeout)
+    def __init__(self, timeout, error, timeout_type):
+        self._timeout = timeout
+        self._error = error
+
+    def execute(self, runnable, args, kwargs):
+        self._start_timer()
         try:
             return runnable(*(args or ()), **(kwargs or {}))
         finally:
             self._stop_timer()
 
-    def _start_timer(self, timeout):
+    def _start_timer(self):
         signal(SIGALRM, self._raise_timeout_error)
-        setitimer(ITIMER_REAL, timeout)
+        setitimer(ITIMER_REAL, self._timeout)
 
     def _raise_timeout_error(self, *args):
-        raise TimeoutError(self._get_timeout_error())
+        raise TimeoutError(self._error)
 
     def _stop_timer(self):
         setitimer(ITIMER_REAL, 0)

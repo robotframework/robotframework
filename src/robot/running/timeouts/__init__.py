@@ -13,14 +13,98 @@
 #  limitations under the License.
 
 try:
-    from timeoutsignaling import TimeoutWithSignaling as _Timeout
+    from timeoutsignaling import Timeout
 except ImportError:
-    import os
-    if os.name == 'nt':
-        from timeoutwin import TimeoutWithTimerThrowingException as _Timeout
+    import sys, os
+    if os.name == 'nt' and sys.platform != 'cli':
+        from timeoutwin import Timeout
     else:
-        from timeoutthread import TimeoutWithThread as _Timeout
+        from timeoutthread import Timeout
 
+import time
+
+from robot import utils
+from robot.errors import TimeoutError, DataError, FrameworkError
+
+class _Timeout(object):
+
+    def __init__(self, timeout=None, message='', variables=None):
+        self.string = timeout or ''
+        self.message = message
+        self.secs = -1
+        self.starttime = -1
+        self.error = None
+        if variables:
+            self.replace_variables(variables)
+
+    @property
+    def type(self):
+        return type(self).__name__.replace('Timeout', ' timeout')
+
+    @property
+    def active(self):
+        return self.starttime > 0
+
+    def replace_variables(self, variables):
+        try:
+            self.string = variables.replace_string(self.string)
+            if not self.string or self.string.upper() == 'NONE':
+                return
+            self.secs = utils.timestr_to_secs(self.string)
+            self.string = utils.secs_to_timestr(self.secs)
+            self.message = variables.replace_string(self.message)
+        except (DataError, ValueError), err:
+            self.secs = 0.000001 # to make timeout active
+            self.error = 'Setting %s failed: %s' % (self.type.lower(), unicode(err))
+
+    def start(self):
+        if self.secs > 0:
+            self.starttime = time.time()
+
+    def time_left(self):
+        if not self.active:
+            return -1
+        elapsed = time.time() - self.starttime
+        # Timeout granularity is 1ms. Without rounding some timeout tests fail
+        # intermittently on Windows, probably due to threading.Event.wait().
+        return round(self.secs - elapsed, 3)
+
+    def timed_out(self):
+        return self.active and self.time_left() <= 0
+
+    def __str__(self):
+        return self.string
+
+    def __cmp__(self, other):
+        return cmp(not self.active, not other.active) \
+            or cmp(self.time_left(), other.time_left())
+
+    def run(self, runnable, args=None, kwargs=None):
+        if self.error:
+            raise DataError(self.error)
+        if not self.active:
+            raise FrameworkError('Timeout is not active')
+        timeout = self.time_left()
+        if timeout <= 0:
+            raise TimeoutError(self.get_message())
+        return Timeout(timeout, self._get_timeout_error(), self.type).\
+                    execute(runnable, args, kwargs)
+
+    def _execute_with_timeout(self, timeout, runnable, args, kwargs):
+        raise NotImplementedError(self.__class__)
+
+    def get_message(self):
+        if not self.active:
+            return '%s not active.' % self.type
+        if not self.timed_out():
+            return '%s %s active. %s seconds left.' % (self.type, self.string,
+                                                       self.time_left())
+        return self._get_timeout_error()
+
+    def _get_timeout_error(self):
+        if self.message:
+            return self.message
+        return '%s %s exceeded.' % (self.type, self.string)
 
 class TestTimeout(_Timeout):
     _keyword_timeouted = False
