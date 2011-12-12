@@ -16,7 +16,7 @@ from __future__ import with_statement
 
 from robot.errors import DataError
 from robot.model import Statistics
-from robot.utils import ET, XmlSource
+from robot.utils import ET, ETSource
 
 from .executionerrors import ExecutionErrors
 from .configurer import SuiteConfigurer
@@ -30,7 +30,7 @@ def ResultFromXml(*sources):
         raise DataError('One or more data source needed.')
     if len(sources) > 1:
         return CombinedExecutionResult(*[ResultFromXml(src) for src in sources])
-    source = XmlSource(sources[0])
+    source = ETSource(sources[0])
     try:
         return ExecutionResultBuilder(source).build(ExecutionResult())
     except DataError, err:
@@ -42,7 +42,7 @@ class ExecutionResultBuilder(object):
 
     def __init__(self, source):
         self._source = source \
-            if isinstance(source, XmlSource) else XmlSource(source)
+            if isinstance(source, ETSource) else ETSource(source)
 
     def build(self, result):
         handler = XmlElementHandler(result)

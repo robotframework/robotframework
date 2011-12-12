@@ -4,16 +4,17 @@ import sys
 import unittest
 
 from robot.utils.asserts import assert_equals, assert_raises, assert_true
-from robot.utils.xmlsource import XmlSource
+from robot.utils.etreewrapper import ETSource
 from robot.errors import DataError
 
 IRONPYTHON = sys.platform == 'cli'
-PATH = os.path.join(os.path.dirname(__file__), 'test_xmlsource.py')
+PATH = os.path.join(os.path.dirname(__file__), 'test_etreesource.py')
 
-class TestXmlSource(unittest.TestCase):
+
+class TestETSource(unittest.TestCase):
 
     def test_path_to_file(self):
-        source = XmlSource(PATH)
+        source = ETSource(PATH)
         with source as src:
             if IRONPYTHON:
                 assert_equals(src, PATH)
@@ -26,7 +27,7 @@ class TestXmlSource(unittest.TestCase):
             assert_true(source._opened.closed)
 
     def test_opened_file_object(self):
-        source = XmlSource(open(PATH))
+        source = ETSource(open(PATH))
         with source as src:
             assert_true(src.read().startswith('from __future__'))
         assert_true(src.closed is False)
@@ -35,7 +36,7 @@ class TestXmlSource(unittest.TestCase):
 
     def test_xml_string(self):
         xml = '<tag>content</tag>'
-        source = XmlSource(xml)
+        source = ETSource(xml)
         with source as src:
             assert_equals(src.read(), xml)
         self._verify_string_representation(source, '<in-memory file>')
@@ -45,10 +46,10 @@ class TestXmlSource(unittest.TestCase):
         def use(src):
             with src:
                 pass
-        assert_raises(DataError, use, XmlSource('nonex.xml'))
+        assert_raises(DataError, use, ETSource('nonex.xml'))
 
     def test_non_ascii_string_repr(self):
-        self._verify_string_representation(XmlSource(u'\xe4'), u'\xe4')
+        self._verify_string_representation(ETSource(u'\xe4'), u'\xe4')
 
     def _verify_string_representation(self, source, expected):
         assert_equals(unicode(source), expected)
