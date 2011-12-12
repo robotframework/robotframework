@@ -1,5 +1,5 @@
 import unittest
-from os.path import abspath, basename, dirname, join, normpath
+from os.path import abspath, basename, dirname, join
 
 from robot.utils.asserts import assert_equals
 from robot.result import TestSuite, TestCase, Keyword, Message
@@ -35,7 +35,7 @@ class TestBuildTestSuite(unittest.TestCase):
 
     def test_relative_source(self):
         self._verify_suite(TestSuite(source='non-existing'), source='non-existing')
-        source = normpath(__file__)
+        source = join(CURDIR, 'test_jsmodelbuilders.py')
         self._verify_suite(TestSuite(source=source), source=source,
                            relsource=basename(source))
 

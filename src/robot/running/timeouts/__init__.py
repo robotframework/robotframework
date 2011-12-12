@@ -12,14 +12,17 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-try:
+import sys
+import os
+
+if sys.platform == 'cli':
+    from timeoutthread import Timeout
+elif os.name == 'nt':
+    from timeoutwin import Timeout
+elif os.name == 'java':
+    from timeoutthread import Timeout
+else:
     from timeoutsignaling import Timeout
-except ImportError:
-    import sys, os
-    if os.name == 'nt' and sys.platform != 'cli':
-        from timeoutwin import Timeout
-    else:
-        from timeoutthread import Timeout
 
 import time
 
