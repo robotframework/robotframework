@@ -30,6 +30,11 @@ class Timeout(object):
         try:
             runner.stop_thread()
         except:
-            raise TimeoutError('Stopping keyword after timeout failed: %s'
-                               % (self._timeout_type, utils.get_error_message()))
+            raise TimeoutError(self._stopping_failed)
         raise TimeoutError(self._error)
+
+    @property
+    def _stopping_failed(self):
+        return 'Stopping keyword after timeout failed: %s' % (self._timeout_type,
+                                                              utils.get_error_message())
+
