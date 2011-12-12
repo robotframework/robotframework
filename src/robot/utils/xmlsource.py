@@ -13,42 +13,60 @@
 #  limitations under the License.
 
 import os
+import sys
 from StringIO import StringIO
 
 from robot.errors import DataError
+
+
+IRONPYTHON = sys.platform == 'cli'
 
 
 class XmlSource(object):
 
     def __init__(self, source):
         self._source = source
-
-    def _get_or_create(self):
-        if self._is_filename() and not os.path.isfile(self._source):
-                raise DataError("Source file '%s' does not exist."
-                                % self._source)
-        self._open_if_necessary()
-        return self._source
-
-    def _is_filename(self):
-        return isinstance(self._source, basestring) \
-                and not self._source.startswith('<')
-
-    def _open_if_necessary(self):
-        if isinstance(self._source, basestring) and not self._is_filename():
-            self._source = StringIO(self._source)
+        self._opened = None
 
     def __enter__(self):
-        return self._get_or_create()
+        if self._source_file_does_not_exist():
+            raise DataError("Source file '%s' does not exist." % self._source)
+        self._opened = self._open_source_if_necessary()
+        return self._opened or self._source
 
     def __exit__(self, exc_type, exc_value, exc_trace):
+        if self._opened:
+            self._opened.close()
         if exc_type is None or exc_type is DataError:
             return False
         raise DataError(exc_value)
 
     def __str__(self):
+        if self._source_is_file_name():
+            return self._source
         if hasattr(self._source, 'name'):
             return self._source.name
-        if isinstance(self._source, basestring):
-            return self._source
         return '<in-memory file>'
+
+    def _source_file_does_not_exist(self):
+        return self._source_is_file_name() and not os.path.isfile(self._source)
+
+    def _source_is_file_name(self):
+        return isinstance(self._source, basestring) \
+                and not self._source.startswith('<')
+
+    def _open_source_if_necessary(self):
+        if self._source_is_file_name():
+            return self._open_source_file()
+        if isinstance(self._source, basestring):
+            return StringIO(self._source)
+        return None
+
+    def _open_source_file(self):
+        # File is opened, and later closed, because ElementTree had a bug that
+        # it didn't close files it had opened. This caused problems with Jython
+        # especially on Windows: http://bugs.jython.org/issue1598
+        # The bug has now been fixed in ET and worked around in Jython 2.5.2.
+        # File cannot be opened on IronPython, though, as on IronPython ET
+        # doesn't handle non-ASCII characters correctly in that case.
+        return open(self._source, 'rb') if not IRONPYTHON else None
