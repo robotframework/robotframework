@@ -32,7 +32,7 @@ except ImportError:  # Occurs unless using standalone robotframework.jar
         def __iter__(self):
             with codecs.open(self._path, encoding='UTF-8') as file:
                 for line in file:
-                    yield line
+                    yield line.rstrip()
 
 else:
 
@@ -51,13 +51,14 @@ else:
             with self._reader as reader:
                 line = reader.readLine()
                 while line is not None:
-                    yield line + '\n'
+                    yield line.rstrip()
                     line = reader.readLine()
 
         @property
         @contextmanager
         def _reader(self):
-            reader = BufferedReader(InputStreamReader(getResourceAsStream(self._path)))
+            stream = getResourceAsStream(self._path)
+            reader = BufferedReader(InputStreamReader(stream, 'UTF-8'))
             try:
                 yield reader
             finally:

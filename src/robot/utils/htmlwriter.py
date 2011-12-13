@@ -12,64 +12,40 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from abstractxmlwriter import AbstractXmlWriter
-from htmlutils import html_escape, html_attr_escape
-from unic import unic
+import os
+
+from .htmlutils import html_escape, html_attr_escape
 
 
-class HtmlWriter(AbstractXmlWriter):
+class HtmlWriter(object):
 
     def __init__(self, output):
-        """'output' is an open file object.
-
-        Given 'output' must have been opened in 'wb' mode to be able to
-        write into it with UTF-8 encoding.
-        """
         self.output = output
 
     def start(self, name, attrs=None, newline=True):
-        self._start(name, attrs, newline=newline)
-
-    def start_and_end(self, name, attrs=None, newline=True):
-        self._start(name, attrs, close=True, newline=newline)
+        self._write('<%s%s>%s' % (name, self._get_attrs(attrs),
+                                 os.linesep if newline else ''))
 
     def content(self, content=None, escape=True):
-        """Given content doesn't need to be a string"""
         if content is not None:
-            if escape:
-                content = html_escape(unic(content))
-            self._write(content)
+            self._write(html_escape(content) if escape else content)
 
     def end(self, name, newline=True):
-        self._write('</%s>%s' % (name, '\n' if newline else ''))
+        self._write('</%s>%s' % (name, os.linesep if newline else ''))
 
-    def element(self, name, content=None, attrs=None, escape=True,
-                newline=True):
+    def element(self, name, content=None, attrs=None, escape=True, newline=True):
         self.start(name, attrs, newline=False)
         self.content(content, escape)
         self.end(name, newline)
 
-    def start_many(self, names, newline=True):
-        for name in names:
-            self.start(name, newline=newline)
+    def close(self):
+        self.output.close()
 
-    def end_many(self, names, newline=True):
-        for name in names:
-            self.end(name, newline)
-
-    def _start(self, name, attrs, close=False, newline=True):
-        self._write('<%s%s%s>%s' % (name, self._get_attrs(attrs),
-                                    ' /' if close else '',
-                                    '\n' if newline else ''))
+    def _write(self, text):
+        self.output.write(text)
 
     def _get_attrs(self, attrs):
         if not attrs:
             return ''
         return ' ' + ' '.join('%s="%s"' % (name, html_attr_escape(attrs[name]))
                               for name in sorted(attrs))
-
-    def _write(self, text):
-        self.output.write(text.encode('UTF-8'))
-
-    def close(self):
-        self.output.close()

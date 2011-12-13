@@ -12,6 +12,7 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+import os
 
 class JsonWriter(object):
 
@@ -19,13 +20,14 @@ class JsonWriter(object):
         self._writer = JsonDumper(output)
         self._separator = separator
 
-    def write_json(self, prefix, data, postfix=';\n', mapping=None, separator=True):
+    def write_json(self, prefix, data, postfix=';'+os.linesep, mapping=None,
+                   separator=True):
         self._writer.write(prefix)
         self._writer.dump(data, mapping)
         self._writer.write(postfix)
         self._write_separator(separator)
 
-    def write(self, string, postfix=';\n', separator=True):
+    def write(self, string, postfix=';'+os.linesep, separator=True):
         self._writer.write(string + postfix)
         self._write_separator(separator)
 

@@ -12,12 +12,14 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+import os
+
 from .jsonwriter import JsonWriter
 
 
 class JsResultWriter(object):
-    start_block = '<script type="text/javascript">\n'
-    end_block = '</script>\n'
+    start_block = '<script type="text/javascript">' + os.linesep
+    end_block = '</script>' + os.linesep
     split_threshold = 9500
     _output_attr = 'window.output'
     _settings_attr = 'window.settings'
@@ -49,7 +51,7 @@ class JsResultWriter(object):
         variable = self._output_var(self._strings_key)
         self._write('%s = []' % variable)
         prefix = '%s = %s.concat(' % (variable, variable)
-        postfix = ');\n'
+        postfix = ');' + os.linesep
         threshold = self.split_threshold
         for index in xrange(0, len(strings), threshold):
             self._write_json(prefix, strings[index:index+threshold], postfix),
