@@ -33,9 +33,13 @@ class OutputBuilder(object):
         self._model = model
 
     def build(self, path):
-        writer = RebotXMLWriter(path)
-        self._model.visit(writer)
-        LOGGER.output_file('Output', path)
+        try:
+            writer = RebotXMLWriter(path)
+        except DataError, err:
+            LOGGER.error(unicode(err))
+        else:
+            self._model.visit(writer)
+            LOGGER.output_file('Output', path)
 
 
 class XUnitBuilder(object):
