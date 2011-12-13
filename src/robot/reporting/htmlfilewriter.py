@@ -13,8 +13,10 @@
 #  limitations under the License.
 
 from __future__ import with_statement
+import os
 import re
 
+from robot.utils import HtmlWriter
 from robot.version import get_full_version
 
 from .jswriter import JsResultWriter
@@ -22,76 +24,95 @@ from .webcontentfile import WebContentFile
 
 
 class HtmlFileWriter(object):
-    _js_file_matcher = re.compile('src=\"([^\"]+)\"')
-    _css_file_matcher = re.compile('href=\"([^\"]+)\"')
-    _css_media_matcher = re.compile('media=\"([^\"]+)\"')
 
-    def __init__(self, outfile, model, config):
-        self._outfile = outfile
-        self._model = model
-        self._config = config
+    def __init__(self, output, model, config):
+        html_writer = HtmlWriter(output)
+        self._writers = (ModelWriter(output, model, config),
+                         JsFileWriter(html_writer),
+                         CssFileWriter(html_writer),
+                         GeneratorWriter(html_writer),
+                         LineWriter(output))
 
     def write(self, template):
         for line in WebContentFile(template):
-            self._write_line(line)
+            for writer in self._writers:
+                if writer.handles(line):
+                    writer.write(line)
+                    break
 
-    def _write_line(self, line):
-        if self._is_output_js(line):
-            self._write_output_js()
-        elif self._is_js_line(line):
-            self._inline_js_file(line)
-        elif self._is_css_line(line):
-            self._inline_css_file(line)
-        elif self._is_meta_generator_line(line):
-            self._write_meta_generator()
-        else:
-            self._write(line)
 
-    def _is_output_js(self, line):
-        return line.startswith('<!-- OUTPUT JS -->')
+class _Writer(object):
+    _handles_line = None
 
-    def _is_css_line(self, line):
-        return line.startswith('<link rel="stylesheet"')
+    def handles(self, line):
+        return line.startswith(self._handles_line)
 
-    def _is_js_line(self, line):
-        return line.startswith('<script type="text/javascript" src=')
+    def write(self, line):
+        raise NotImplementedError
 
-    def _is_meta_generator_line(self, line):
-        return line.startswith('<meta name="Generator" content=')
 
-    def _write_meta_generator(self):
-        #TODO: Generating name should be rebot when using rebot
-        self._write('<meta name="Generator" content="%s">\n'
-                    % get_full_version('Robot Framework'))
+class ModelWriter(_Writer):
+    _handles_line = '<!-- JS MODEL -->'
 
-    def _write_output_js(self):
-        JsResultWriter(self._outfile).write(self._model, self._config)
+    def __init__(self, output, model, config):
+        self._output = output
+        self._model = model
+        self._config = config
 
-    def _inline_js_file(self, line):
-        self._write_tag('script', 'type="text/javascript"',
-                        lambda: self._inline_file(line, self._js_file_matcher))
+    def write(self, line):
+        JsResultWriter(self._output).write(self._model, self._config)
 
-    def _inline_css_file(self, line):
-        attrs = 'type="text/css" media="%s"' % self._parse_css_media_type(line)
-        self._write_tag('style', attrs,
-                        lambda: self._inline_file(line, self._css_file_matcher))
 
-    def _parse_css_media_type(self, line):
-        return self._css_media_matcher.search(line).group(1)
+class LineWriter(_Writer):
 
-    def _inline_file(self, line, filename_matcher):
-        self._write_file_content(filename_matcher.search(line).group(1))
+    def __init__(self, output):
+        self._output = output
 
-    def _write(self, content):
-        self._outfile.write(content)
+    def handles(self, line):
+        return True
 
-    def _write_tag(self, tag_name, attrs, content_writer):
-        # TODO: Use utils.HtmlWriter instead. It also eases giving attrs here.
-        self._write('<%s %s>\n' % (tag_name, attrs))
-        content_writer()
-        self._write('</%s>\n\n' % tag_name)
+    def write(self, line):
+        self._output.write(line + os.linesep)
 
-    def _write_file_content(self, source):
-        for line in WebContentFile(source):
-            self._write(line)
-        self._write('\n')
+
+class GeneratorWriter(_Writer):
+    _handles_line = '<meta name="Generator" content='
+
+    def __init__(self, html_writer):
+        self._html_writer = html_writer
+
+    def write(self, line):
+        version = get_full_version('Robot Framework')
+        self._html_writer.start('meta', {'name': 'Generator', 'content': version})
+
+
+class _InliningWriter(_Writer):
+
+    def __init__(self, html_writer):
+        self._html_writer = html_writer
+
+    def _inline_file(self, filename, tag, attrs):
+        self._html_writer.start(tag, attrs)
+        for line in WebContentFile(filename):
+            self._html_writer.content(line + os.linesep, escape=False)
+        self._html_writer.end(tag)
+
+
+class JsFileWriter(_InliningWriter):
+    _handles_line = '<script type="text/javascript" src='
+    _source_file = re.compile('src=\"([^\"]+)\"')
+
+    def write(self, line):
+        name = self._source_file.search(line).group(1)
+        self._inline_file(name, 'script', {'type': 'text/javascript'})
+
+
+class CssFileWriter(_InliningWriter):
+    _handles_line = '<link rel="stylesheet"'
+    _source_file = re.compile('href=\"([^\"]+)\"')
+    _media_type = re.compile('media=\"([^\"]+)\"')
+
+    def write(self, line):
+        name = self._source_file.search(line).group(1)
+        media = self._media_type.search(line).group(1)
+        self._inline_file(name, 'style', {'type': 'text/css', 'media': media})
