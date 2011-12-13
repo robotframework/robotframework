@@ -12,8 +12,6 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-import re
-from StringIO import StringIO
 try:
     import csv
 except ImportError:
@@ -48,13 +46,21 @@ def TxtFileWriter(context):
 
 
 class _DataFileWriter(object):
+    _formatter = None
+
+    def __init__(self, context):
+        self._output = context.output
+        self._line_separator = context.line_separator
 
     def write(self, datafile):
         for table in datafile:
             if table:
-                self._write_header(table)
-                self._write_rows(self._formatted_table(table))
-                self._write_empty_row()
+                self._write_table(table)
+
+    def _write_table(self, table):
+        self._write_header(table)
+        self._write_rows(self._formatted_table(table))
+        self._write_empty_row()
 
     def _formatted_table(self, table):
         formatter = {'setting': self._formatter.setting_rows,
@@ -70,34 +76,22 @@ class _DataFileWriter(object):
     def _write_empty_row(self):
         self._write_row(self._formatter.empty_row())
 
-
-class _TextFileWriter(_DataFileWriter):
-
-    def __init__(self, context, formatter):
-        self._output = context.output
-        self._line_separator = context.line_separator
-        self._formatter = formatter
-
     def _write_rows(self, rows):
         for row in rows:
             self._write_row(row)
 
 
-class SpaceSeparatedTxtWriter(_TextFileWriter):
+class SpaceSeparatedTxtWriter(_DataFileWriter):
     _separator = ' '*4
-
-    def __init__(self, context):
-        _TextFileWriter.__init__(self, context, TxtFormatter())
+    _formatter = TxtFormatter()
 
     def _write_row(self, row):
         self._output.write(self._separator.join(row) + self._line_separator)
 
 
-class PipeSeparatedTxtWriter(_TextFileWriter):
+class PipeSeparatedTxtWriter(_DataFileWriter):
     _separator = ' | '
-
-    def __init__(self, context):
-        _TextFileWriter.__init__(self, context, PipeFormatter())
+    _formatter = PipeFormatter()
 
     def _write_row(self, row):
         row = self._separator.join(row)
@@ -106,13 +100,14 @@ class PipeSeparatedTxtWriter(_TextFileWriter):
         self._output.write(row + self._line_separator)
 
 
-class TsvFileWriter(_TextFileWriter):
+class TsvFileWriter(_DataFileWriter):
+    _formatter = TsvFormatter()
 
     def __init__(self, context):
         if not csv:
             raise RuntimeError('No csv module found. '
                                'Writing tab separated format is not possible.')
-        _TextFileWriter.__init__(self, context, TsvFormatter())
+        _DataFileWriter.__init__(self, context)
         self._writer = csv.writer(context.output, dialect='excel-tab',
                                   lineterminator=context.line_separator)
 
@@ -121,48 +116,23 @@ class TsvFileWriter(_TextFileWriter):
 
 
 class HtmlFileWriter(_DataFileWriter):
+    _formatter = HtmlFormatter()
 
     def __init__(self, context):
+        _DataFileWriter.__init__(self, context)
         self._name = context.datafile.name
         self._writer = utils.HtmlWriter(context.output)
-        self._formatter = HtmlFormatter()
 
     def write(self, datafile):
-        self._writer.content(TEMPLATE_START % {'NAME': self._name}, escape=False)
-        for table in datafile:
-            if table:
-                self._writer.start('table', {'id': table.type, 'border': '1'})
-                self._write_header(table)
-                {'setting': self._write_settings,
-                 'variable': self._write_variables,
-                 'testcase': self._write_tests,
-                 'keyword': self._write_keywords
-                 }[table.type](table)
-                self._write_empty_row()
-                self._writer.end('table')
+        self._writer.content(TEMPLATE_START % {'NAME': self._name},
+                             escape=False)
+        _DataFileWriter.write(self, datafile)
         self._writer.content(TEMPLATE_END, escape=False)
 
-    def _write_settings(self, settings):
-        self._write_table(self._formatter.setting_rows(settings))
-
-    def _write_variables(self, variables):
-        self._write_table(self._formatter.variable_rows(variables))
-
-    def _write_tests(self, tests):
-        self._write_table(self._formatter.test_rows(tests))
-
-    def _write_keywords(self, keywords):
-        self._write_table(self._formatter.keyword_rows(keywords))
-
-    def _write_table(self, rows):
-        for row in rows:
-            self._write_row(row)
-
-    def _end_table(self, table_replacer):
-        self._write_empty_row()
-        table = self._writer.output.getvalue().decode('UTF-8')
-        self._content = table_replacer(table, self._content)
-        self._writer = utils.HtmlWriter(StringIO())
+    def _write_table(self, table):
+        self._writer.start('table', {'id': table.type, 'border': '1'})
+        _DataFileWriter._write_table(self, table)
+        self._writer.end('table')
 
     def _write_row(self, row):
         self._writer.start('tr')
