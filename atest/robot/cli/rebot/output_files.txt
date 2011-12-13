@@ -40,7 +40,7 @@ Non-writable Output File
     ${output} =  Run  ${REBOT} -d ${MYOUTDIR} -o diréctöry.xml -r r.html -l l.html ${MYINPUT}
     Directory Should Contain  ${MYOUTDIR}  diréctöry.xml  l.html  r.html
     ${error}=  Catenate  SEPARATOR=\n
-    ...  \\[ ERROR \\] Opening output file '.*diréctöry.xml' for writing failed: .*
+    ...  \\[ ERROR \\] Opening output file '.*diréctöry.xml' failed: .*
     ...  Log: .*
     ...  Report: .*
     Should Match Regexp  ${output}  ^${error}$

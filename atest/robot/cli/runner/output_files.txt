@@ -52,7 +52,7 @@ Split Log
 Non-writable Output File
     Create Directory  ${CLI OUTDIR}/diréctöry.xml
     Run Tests Without Processing Output  --output ${CLI OUTDIR}/diréctöry.xml  ${TESTFILE}
-    Check Stderr Matches Regexp  \\[ ERROR \\] Opening output file '.*diréctöry.xml' for writing failed: (IOError|FileNotFoundException): .*${USAGE_TIP}
+    Check Stderr Matches Regexp  \\[ ERROR \\] Opening output file '.*diréctöry.xml' failed: .*${USAGE_TIP}
 
 Non-writable Log and Report
     ${directory} =  Join Path  ${CLI OUTDIR}/diréctöry.html

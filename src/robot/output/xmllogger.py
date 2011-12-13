@@ -30,9 +30,9 @@ class XmlLogger:
     def _get_writer(self, path, generator):
         try:
             writer = utils.XmlWriter(path)
-        except:
-            raise DataError("Opening output file '%s' for writing failed: %s"
-                            % (path, utils.get_error_message()))
+        except EnvironmentError, err:
+            raise DataError("Opening output file '%s' failed: %s"
+                            % (path, err.strerror))
         writer.start('robot', {'generator': get_full_version(generator),
                                'generated': utils.get_timestamp()})
         return writer
