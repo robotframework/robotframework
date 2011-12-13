@@ -18,132 +18,60 @@ from robot.parsing.settings import Documentation
 from robot import utils
 
 
-class TsvFormatter(object):
-    _padding = ''
-
-    def __init__(self, cols=8):
-        self._cols = cols
-        self._formatter = RowSplitter(self._padding, self._cols)
-
-    def setting_rows(self, settings):
-        return self._rows_from_table(settings)
+class _Formatter(object):
 
     def variable_rows(self, variables):
-        return self._rows_from_table(variables)
+        return self._format_simple_table(variables)
 
-    def test_rows(self, tests):
-        return self._rows_from_steps(tests)
+    def setting_rows(self, settings):
+        return self._format_simple_table(settings)
 
-    def keyword_rows(self, keywords):
-        return self._rows_from_steps(keywords)
-
-    def empty_row(self):
-        return self._pad([])
-
-    def _rows_from_table(self, table):
+    def _format_simple_table(self, table):
         yield self._header_row(table)
-        for row in self._rows_from_items(table):
+        for row in self._rows_from_simple_table(table):
             yield row
         yield self.empty_row()
 
-    def _rows_from_steps(self, table):
+    def _rows_from_simple_table(self, item, indent=0):
+        return self._rows_from_item(item, indent)
+
+    def _rows_from_indented_table(self, table):
         yield self._header_row(table)
         for item in table:
-            yield self._pad([item.name])
-            for row in self._rows_from_items(item, 1):
+            yield self._format_row([item.name])
+            for row in self._rows_from_item(item, 1):
                 yield row
         yield self.empty_row()
 
-    def _header_row(self, table):
-        return self._pad(['*%s*' % cell for cell in table.header])
-
-    def _name_row(self, name):
-        return self.format([name])
-
-    def _rows_from_items(self, item, indent=0):
-        for ch in (c for c in item if c.is_set()):
-            for row in self.format(ch.as_list(), indent):
+    def _rows_from_item(self, item, indent=0):
+        for child in (c for c in item if c.is_set()):
+            for row in self._format_model_item(child.as_list(), indent):
                 yield row
-            if ch.is_for_loop():
-                for row in self._rows_from_items(ch, indent+1):
+            if child.is_for_loop():
+                for row in self._rows_from_simple_table(child, indent+1):
                     yield row
 
-    def format(self, row, indent=0):
-        return [self._pad(row) for row in self._formatter.format(row, indent)]
-
-    def _pad(self, row):
-        return row + [self._padding] * (self._cols - len(row))
-
-
-class TxtFormatter(object):
-    _padding = ''
-    _FIRST_ROW_LENGTH = 18
-
-    def __init__(self, cols=8):
-        self._cols = cols
-        self._formatter = RowSplitter(self._padding, self._cols)
-        self._justifications = []
-
-    def setting_rows(self, settings):
-        yield self._header_row(settings)
-        self._justifications = [14]
-        for row in  self._rows_from_items(settings):
-            yield row
-        self._justifications = []
-        yield self.empty_row()
-
-    def variable_rows(self, variables):
-        yield self._header_row(variables)
-        for row in self._rows_from_items(variables):
-            yield row
-        yield self.empty_row()
-
-    def test_rows(self, tests):
-        return self._rows_from_steps(tests)
-
-    def keyword_rows(self, keywords):
-        return self._rows_from_steps(keywords)
-
     def _header_row(self, table):
-        header = ['*** %s ***' % table.header[0]] + table.header[1:]
-        self._justify_row(header)
-        return header
+        return table.headers
 
     def empty_row(self):
-        return []
+        return self._format_row([])
 
-    def _rows_from_steps(self, table):
-        if table.header[1:]:
-            self._justifications = self._count_justifications(table)
-        yield self._header_row(table)
-        if not table.header[1:]:
-            for item in table:
-                yield [item.name]
-                for row in self._rows_from_items(item, 1):
-                    yield row
-        else:
-            for item in table:
-                rows = list(self._rows_from_items(item, 1))
-                if len(item.name) > self._FIRST_ROW_LENGTH:
-                    yield [item.name]
-                else:
-                    yield [item.name.ljust(self._justifications[0])] + rows[0][1:]
-                    rows = rows[1:]
-                for r in rows:
-                    yield r
-        self._justifications = []
-        yield self.empty_row()
+    def _format_model_item(self, row, indent):
+        return [row]
 
-    def _rows_from_items(self, item, indent=0):
-        for ch in (c for c in item if c.is_set()):
-            for row in self.format(ch.as_list(), indent):
-                yield row
-            if ch.is_for_loop():
-                for row in self._rows_from_items(ch, indent+1):
-                    yield row
+    def _format_row(self, row):
+        return row
+
+
+class ColumnAligner(_Formatter):
+
+    def __init__(self, column_widths):
+        self._widths = column_widths if isinstance(column_widths, list) \
+            else self._count_justifications(column_widths)
 
     def _count_justifications(self, table):
-        result = [self._FIRST_ROW_LENGTH]+[len(header) for header in table.header[1:]]
+        result = [18] + [len(header) for header in table.header]
         for element in [list(kw) for kw in list(table)]:
             for step in element:
                 for index, col in enumerate(step.as_list()):
@@ -153,9 +81,93 @@ class TxtFormatter(object):
                     result[index] = max(len(col), result[index])
         return result
 
-    def format(self, row, indent=0):
-        rows = self._formatter.format(row, indent)
-        return self._justify(self._escape(rows))
+    def align_rows(self, rows):
+        return [self.align_row(r) for r in rows]
+
+    def align_row(self, row):
+        for index, col in enumerate(row[:-1]):
+            if len(self._widths) <= index:
+                continue
+            row[index] = row[index].ljust(self._widths[index])
+        return row
+
+
+class TsvFormatter(_Formatter):
+    _padding = ''
+
+    def __init__(self, cols=8):
+        self._cols = cols
+        self._row_splitter = RowSplitter(self._padding, self._cols)
+
+    def test_rows(self, tests):
+        return self._rows_from_indented_table(tests)
+
+    def keyword_rows(self, keywords):
+        return self._rows_from_indented_table(keywords)
+
+    def _header_row(self, table):
+        return self._format_row(['*%s*' % cell for cell in table.header])
+
+    def _name_row(self, name):
+        return self._format_model_item([name])
+
+    def _format_model_item(self, row, indent=0):
+        return [self._format_row(row)
+                for row in self._row_splitter.split(row, indent)]
+
+    def _format_row(self, row):
+        return self._pad(row)
+
+    def _pad(self, row):
+        return row + [self._padding] * (self._cols - len(row))
+
+
+class TxtFormatter(_Formatter):
+    _padding = ''
+    _FIRST_ROW_LENGTH = 18
+
+    def __init__(self, cols=8):
+        self._cols = cols
+        self._row_splitter = RowSplitter(self._padding, self._cols)
+        self._justifications = []
+
+    def setting_rows(self, settings):
+        return ColumnAligner([14]).align_rows(_Formatter.setting_rows(self, settings))
+
+    def test_rows(self, tests):
+        return self._rows_from_steps(tests)
+
+    def keyword_rows(self, keywords):
+        return self._rows_from_steps(keywords)
+
+    def _header_row(self, table):
+        header = ['*** %s ***' % table.header[0]] + table.header[1:]
+        return header
+
+    def _rows_from_steps(self, table):
+        if not table.header[1:]:
+            return self._rows_from_indented_table(table)
+        else:
+            return self._aligned_table(table)
+
+    def _aligned_table(self, table):
+        aligner = ColumnAligner(table)
+        yield aligner.align_row(self._header_row(table))
+        for item in table:
+            rows = list(self._rows_from_item(item, 1))
+            if len(item.name) > self._FIRST_ROW_LENGTH:
+                yield [item.name]
+            else:
+                first_row = [item.name] + rows[0][1:]
+                yield aligner.align_row(first_row)
+                rows = rows[1:]
+            for r in rows:
+                yield aligner.align_row(r)
+        yield self.empty_row()
+
+    def _format_model_item(self, row, indent=0):
+        rows = self._row_splitter.split(row, indent)
+        return self._escape(rows)
 
     def _escape(self, rows):
         for index, row in enumerate(rows):
@@ -163,16 +175,6 @@ class TxtFormatter(object):
                 row[1] = '\\'
             rows[index] = [re.sub('\s\s+(?=[^\s])', lambda match: '\\'.join(match.group(0)), item) for item in row]
         return rows
-
-    def _justify(self, rows):
-        return [self._justify_row(r) for r in rows]
-
-    def _justify_row(self, row):
-        for index, col in enumerate(row[:-1]):
-            if len(self._justifications) <= index:
-                continue
-            row[index] = row[index].ljust(self._justifications[index])
-        return row
 
 
 class PipeFormatter(TxtFormatter):
@@ -187,7 +189,7 @@ class HtmlFormatter(object):
         self._cols = 5
 
     def format(self, row, indent, colspan):
-        return [self._pad(row, colspan) for row in self._formatter.format(row, indent)]
+        return [self._pad(row, colspan) for row in self._formatter.split(row, indent)]
 
     def _pad(self, row, colspan, indent=0):
         if colspan:
@@ -313,7 +315,7 @@ class RowSplitter(object):
         self._cols = cols
         self._padding = padding
 
-    def format(self, row, indent):
+    def split(self, row, indent):
         # TODO: encoding does not belong here
         return [self._encode(r) for r in self._split_to_rows(row, indent)]
 

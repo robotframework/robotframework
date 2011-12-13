@@ -9,13 +9,13 @@ class TestTxtFormatter(unittest.TestCase):
 
     def test_escaping_empty_cells_at_eol(self):
         formatter = RowSplitter(cols=3)
-        assert_equals(formatter.format(['Some', 'text', '', 'with empty'], 0),
+        assert_equals(formatter.split(['Some', 'text', '', 'with empty'], 0),
                                        [['Some', 'text', '${EMPTY}'],
                                         ['...', 'with empty']])
 
     def test_escaping(self):
         formatter = TxtFormatter()
-        assert_equals(formatter.format(['so  me']), [['so \ me']])
+        assert_equals(formatter._format_model_item(['so  me']), [['so \ me']])
 
 
 class TestHtmlFormatter(unittest.TestCase):
