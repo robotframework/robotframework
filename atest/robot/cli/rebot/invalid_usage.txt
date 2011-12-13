@@ -33,11 +33,6 @@ Invalid Output Directory
     ...  Can't create output file's parent directory '.*': (OS|IO|Windows)Error: .*
     [Teardown]  Set Read Write  ${MYOUTDIR}${/}x
 
-Invalid Output File
-    Create Directory  ${MYOUTDIR}${/}diréctöry.ext
-    Rebot should fail  -d ${MYOUTDIR} -o diréctöry.ext ${MYINPUT}
-    ...  Opening output file '.*diréctöry.ext' for writing failed: (IOError|FileNotFoundException): .*
-
 Invalid Argument Values
     Run Rebot   --suitestatlevel not_int --tagstatlink less_than_3x_:  ${MYINPUT}
     Verify Correct Errors in Stderr  Option '--suitestatlevel' expected integer value but got 'not_int'.  Default value used instead.\n
