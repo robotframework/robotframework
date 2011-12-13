@@ -6,18 +6,29 @@ Resource        xunit_resource.txt
 
 *** Variables ***
 ${TESTDATA}  misc/pass_and_fail.html
+${INVALID}   ${TEMPDIR}${/}ïnvälïd-ẍünïẗ.xml
 
 *** Test Cases ***
-No Xunit Option Given
+No XUnit Option Given
     Run Tests  ${EMPTY}  ${TESTDATA}
     Check Stdout Does Not Contain  XUnit
 
-Xunit Option Given
-    Run Tests  -x xunit.xml  ${TESTDATA}
+XUnit Option Given
+    Run Tests  -x xunit.xml -l log.html ${TESTDATA}
     Check Stdout Contains  XUnit
     Stderr should be empty
-    Should Exist  ${OUTDIR}/xunit.xml
+    File Should Exist  ${OUTDIR}/xunit.xml
+    File Should Exist  ${OUTDIR}/log.html
     ${dom} =  Get Dom
     Check Root Element Is Test Suite  ${dom}
     Check Element Count  ${dom}  testcase  2
     Check Element Count  ${dom}  failure  1
+
+Invalid XUnit File
+    Create Directory  ${INVALID}
+    Run Tests  --XUnitFile ${INVALID} -l log.html  ${TESTDATA}
+    File Should Not Exist  ${INVALID}
+    File Should Exist  ${OUTDIR}/log.html
+    Check Stderr Matches Regexp
+    ...  \\[ ERROR \\] Opening XUnit result file '${INVALID}' failed: .*directory.*
+

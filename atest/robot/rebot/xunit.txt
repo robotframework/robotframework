@@ -11,27 +11,39 @@ ${TESTDATA_TEST}    misc${/}many_tests.html
 ${TESTDATA_SUITES}  misc${/}suites
 ${MYOUTDIR}         ${TEMPDIR}${/}robot-test-xunit
 ${INPUT FILE}       ${TEMPDIR}${/}robot-test-xunit-file.xml
+${INVALID}          ${TEMPDIR}${/}ïnvälïd-ẍünïẗ.xml
+
 
 *** Test Cases ***
-No Xunit Option Given
+No XUnit Option Given
     Run Rebot  ${EMPTY}  ${INPUT FILE}
     Stderr Should Be Empty
     Check Stdout Does Not Contain  XUnit
 
-Xunit Option Given
-    Run Rebot  --xunitfile xunit.xml  ${INPUT FILE}
+XUnit Option Given
+    Run Rebot  --xunitfile xunit.xml --log log.html  ${INPUT FILE}
     Stderr Should Be Empty
     Check Stdout Contains  XUnit
-    Should Exist  ${OUTDIR}${/}xunit.xml
+    File Should Exist  ${OUTDIR}${/}xunit.xml
+    File Should Exist  ${OUTDIR}${/}log.html
     ${dom} =  Get Dom
     Check Root Element Is Test Suite  ${dom}
     Check Element Count  ${dom}  testcase  15
     Check Element Count  ${dom}  failure   1
 
+Invalid XUnit File
+    Create Directory  ${INVALID}
+    Run Rebot  -x ${INVALID} -l log.html  ${INPUT FILE}
+    File Should Not Exist  ${INVALID}
+    File Should Exist  ${OUTDIR}/log.html
+    Check Stderr Matches Regexp
+    ...  \\[ ERROR \\] Opening XUnit result file '${INVALID}' failed: .*directory.*
+
 *** Keywords ***
 Create Input File
     Create Output With Robot  ${INPUT FILE}  ${EMPTY}  ${TESTDATA_TEST}  ${TESTDATA_SUITES}
     Create Directory          ${MYOUTDIR}
+
 Remove Temps
     Remove Directory    ${MYOUTDIR}  recursive
     Remove File         ${INPUT FILE}
