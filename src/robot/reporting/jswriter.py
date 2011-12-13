@@ -104,4 +104,4 @@ class SplitLogWriter(object):
     def write(self, keywords, strings, index, notify):
         self._writer.write_json('window.keywords%d = ' % index, keywords)
         self._writer.write_json('window.strings%d = ' % index, strings)
-        self._writer.write('window.fileLoading.notify("%s");' % notify)
+        self._writer.write('window.fileLoading.notify("%s")' % notify)
