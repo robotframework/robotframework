@@ -61,7 +61,7 @@ class _HTMLFileBuilder(object):
         self._js_model = js_model
 
     def _write_file(self, output, config, template):
-        outfile = codecs.open(output, 'w', encoding='UTF-8') \
+        outfile = codecs.open(output, 'wb', encoding='UTF-8') \
             if isinstance(output, basestring) else output  # isinstance is unit test hook
         with outfile:
             writer = HtmlFileWriter(outfile, self._js_model, config)
@@ -88,7 +88,7 @@ class LogBuilder(_HTMLFileBuilder):
             self._write_split_log(index, keywords, strings, '%s-%d.js' % (base, index))
 
     def _write_split_log(self, index, keywords, strings, path):
-        with codecs.open(path, 'w', encoding='UTF-8') as outfile:
+        with codecs.open(path, 'wb', encoding='UTF-8') as outfile:
             writer = SplitLogWriter(outfile)
             writer.write(keywords, strings, index, os.path.basename(path))
 
