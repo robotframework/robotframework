@@ -14,7 +14,7 @@ No XUnit Option Given
     Check Stdout Does Not Contain  XUnit
 
 XUnit Option Given
-    Run Tests  -x xunit.xml -l log.html ${TESTDATA}
+    Run Tests  -x xunit.xml -l log.html  ${TESTDATA}
     Check Stdout Contains  XUnit
     Stderr should be empty
     File Should Exist  ${OUTDIR}/xunit.xml
