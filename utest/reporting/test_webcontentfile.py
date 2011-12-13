@@ -4,15 +4,16 @@ from robot.reporting.webcontentfile import WebContentFile
 from robot.utils.asserts import assert_true, assert_raises, assert_equals
 
 
-class TestRobotFileReading(unittest.TestCase):
+class TestWebContentFile(unittest.TestCase):
 
     def test_get_webcontent_file(self):
-        log = WebContentFile('log.html')
-        assert_true(list(log))
+        log = list(WebContentFile('log.html'))
+        assert_true(log[0].startswith('<!DOCTYPE'))
+        assert_equals(log[-1], '</html>')
 
-    def test_lines_have_line_breaks(self):
+    def test_lines_do_not_have_line_breaks(self):
         for line in WebContentFile('report.html'):
-            assert_equals(line[-1], '\n')
+            assert_true(not line.endswith('\n'))
 
     def test_non_existing(self):
         assert_raises(IOError, list, WebContentFile('nonex.html'))
