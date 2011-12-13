@@ -12,7 +12,7 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from java.io import FileOutputStream
+from java.io import FileOutputStream, FileNotFoundException
 from javax.xml.transform.sax import SAXTransformerFactory
 from javax.xml.transform.stream import StreamResult
 from org.xml.sax.helpers import AttributesImpl
@@ -32,9 +32,12 @@ class XmlWriter(AbstractXmlWriter):
         self.closed = False
 
     def _create_output(self, output):
-        if isinstance(output, basestring):
+        if not isinstance(output, basestring):
+            return output
+        try:
             return FileOutputStream(output)
-        return output
+        except FileNotFoundException, err:
+            raise IOError(None, err.getMessage(), output)
 
     def _start(self, name, attrs):
         self._writer.startElement('', '', name, self._get_attrs_impl(attrs))

@@ -4,6 +4,7 @@ Force Tags      pybot  jybot  regression
 Test Template   Correct outputs should be created
 Resource        rebot_cli_resource.txt
 
+
 *** Test Cases ***
 Default outputs
     ${EMPTY}  log.html  report.html
@@ -24,13 +25,26 @@ Outputs Without Extensions
     --output xoutput --report xreport --log xlog  xlog.html  xoutput.xml  xreport.html
 
 Outputs Into Different Directories
-    [Template]
+    [Template]  NONE
     Set Runners
     Run  ${REBOT} --outputdir ::invalid:: -o ${MYOUTDIR}${/}o${/}o.xml -r ${MYOUTDIR}${/}r${/}r.html -l ${MYOUTDIR}${/}l${/}l.html ${MYINPUT}
     Directory Should Contain  ${MYOUTDIR}${/}o  o.xml
     Directory Should Contain  ${MYOUTDIR}${/}r  r.html
     Directory Should Contain  ${MYOUTDIR}${/}l  l.html
     Directory Should Contain  ${MYOUTDIR}  l  o  r
+
+Non-writable Output File
+    [Template]  NONE
+    Set Runners
+    Create Directory  ${MYOUTDIR}/diréctöry.xml
+    ${output} =  Run  ${REBOT} -d ${MYOUTDIR} -o diréctöry.xml -r r.html -l l.html ${MYINPUT}
+    Directory Should Contain  ${MYOUTDIR}  diréctöry.xml  l.html  r.html
+    ${error}=  Catenate  SEPARATOR=\n
+    ...  \\[ ERROR \\] Opening output file '.*diréctöry.xml' for writing failed: .*
+    ...  Log: .*
+    ...  Report: .*
+    Should Match Regexp  ${output}  ^${error}$
+
 
 *** Keywords ***
 Correct outputs should be created

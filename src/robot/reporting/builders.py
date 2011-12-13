@@ -33,9 +33,13 @@ class OutputBuilder(object):
         self._model = model
 
     def build(self, path):
-        writer = RebotXMLWriter(path)
-        self._model.visit(writer)
-        LOGGER.output_file('Output', path)
+        try:
+            writer = RebotXMLWriter(path)
+        except DataError, err:
+            LOGGER.error(unicode(err))
+        else:
+            self._model.visit(writer)
+            LOGGER.output_file('Output', path)
 
 
 class XUnitBuilder(object):
@@ -44,15 +48,15 @@ class XUnitBuilder(object):
         self._model = model
 
     def build(self, path):
-        writer = XUnitWriter(path) # TODO: handle (with atests) error in opening output file
         try:
+            writer = XUnitWriter(path)
+        except EnvironmentError, err:
+            LOGGER.error("Opening XUnit result file '%s' failed: %s"
+                         % (path, err.strerror))
+        else:
             self._model.visit(writer)
-        except:
-            raise DataError("Writing XUnit result file '%s' failed: %s" %
-                            (path, utils.get_error_message()))
-        finally:
             writer.close()
-        LOGGER.output_file('XUnit', path)
+            LOGGER.output_file('XUnit', path)
 
 
 class _HTMLFileBuilder(object):

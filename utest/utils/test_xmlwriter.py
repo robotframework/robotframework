@@ -18,12 +18,11 @@ class TestXmlWriter(unittest.TestCase):
         os.remove(PATH)
 
     def test_write_element_in_pieces(self):
-        self.writer.start('name', {'attr': 'value'}, True)
+        self.writer.start('name', {'attr': 'value'})
         self.writer.content('Some content here!!')
-        self.writer.end('name', True)
+        self.writer.end('name')
         self.writer.close()
-        self._verify_node(None, 'name', '\nSome content here!!',
-                          {'attr': 'value'})
+        self._verify_node(None, 'name', '\nSome content here!!', {'attr': 'value'})
 
     def test_calling_content_multiple_times(self):
         self.writer.start(u'robot-log', newline=False)
@@ -61,12 +60,10 @@ class TestXmlWriter(unittest.TestCase):
     def test_newline_insertion(self):
         self.writer.start('root')
         self.writer.start('suite', {'type': 'directory_suite'})
-        self.writer.element('test', attributes={'name': 'my_test'},
-                                  newline=False)
+        self.writer.element('test', attributes={'name': 'my_test'}, newline=False)
         self.writer.element('test', attributes={'name': 'my_2nd_test'})
         self.writer.end('suite', False)
-        self.writer.start('suite', {'name': 'another suite'},
-                                  newline=False)
+        self.writer.start('suite', {'name': 'another suite'}, newline=False)
         self.writer.content('Suite 2 content')
         self.writer.end('suite')
         self.writer.end('root')
@@ -102,7 +99,6 @@ class TestXmlWriter(unittest.TestCase):
         self._verify_node(root.find('f'), 'f',
                          u'Hyv\u00E4\u00E4 \u00FC\u00F6t\u00E4')
 
-
     def test_content_with_entities(self):
         self.writer.element(u'robot-log', 'Me, Myself & I > you')
         self.writer.close()
@@ -114,6 +110,9 @@ class TestXmlWriter(unittest.TestCase):
     def test_remove_illegal_chars(self):
         assert_equals(self.writer._escape(u'\x1b[31m'), '[31m')
         assert_equals(self.writer._escape(u'\x00'), '')
+
+    def test_ioerror_when_file_is_invalid(self):
+        assert_raises(IOError, utils.XmlWriter, os.path.dirname(__file__))
 
     def _verify_node(self, node, name, text=None, attrs={}):
         if node is None:
