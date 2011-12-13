@@ -24,14 +24,11 @@ Incompatible XML
     Rebot should fail  ${MYOUTDIR}${/}invalid.xml  Reading XML source '.*invalid.xml' failed: Incompatible XML element 'not'
 
 Invalid Output Directory
-    [Documentation]  Test error handling when some of the output dirs (where to write output, report, etc.) is invalid (i.e. can't be created). To make sure creating dirs fails their names are non-standard (that's not enough in Linux) parent is made read only.
-    Create Directory  ${MYOUTDIR}${/}x
-    Set Read Only  ${MYOUTDIR}${/}x
-    Rebot should fail  -d ${MYOUTDIR}${/}x${/}:i ${MYINPUT}
-    ...  Can't create log file's parent directory '.*': (OS|IO|Windows)Error: .*
-    Rebot should fail  -d ${MYOUTDIR}${/}x${/}:i -o out.xml -l none -r none ${MYINPUT}
-    ...  Can't create output file's parent directory '.*': (OS|IO|Windows)Error: .*
-    [Teardown]  Set Read Write  ${MYOUTDIR}${/}x
+    Create File  ${MYOUTDIR}${/}not-dir
+    Rebot should fail  -d ${MYOUTDIR}${/}not-dir${/}dir ${MYINPUT}
+    ...  Creating log file directory '.*' failed: .*
+    Rebot should fail  -d ${MYOUTDIR}${/}not-dir${/}dir -o out.xml -l none -r none ${MYINPUT}
+    ...  Creating output file directory '.*' failed: .*
 
 Invalid Argument Values
     Run Rebot   --suitestatlevel not_int --tagstatlink less_than_3x_:  ${MYINPUT}

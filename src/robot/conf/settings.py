@@ -165,9 +165,9 @@ class _BaseSettings(object):
         try:
             if not os.path.exists(path):
                 os.makedirs(path)
-        except:
-            raise DataError("Can't create %s file's parent directory '%s': %s"
-                            % (type_.lower(), path, utils.get_error_message()))
+        except EnvironmentError, err:
+            raise DataError("Creating %s file directory '%s' failed: %s"
+                            % (type_.lower(), path, err.strerror))
 
     def _process_metadata_or_tagdoc(self, value):
         value = value.replace('_', ' ')
