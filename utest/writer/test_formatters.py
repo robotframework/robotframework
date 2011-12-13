@@ -15,7 +15,7 @@ class TestTxtFormatter(unittest.TestCase):
 
     def test_escaping(self):
         formatter = TxtFormatter()
-        assert_equals(formatter._format_model_item(['so  me']), [['so \ me']])
+        assert_equals(formatter._escape(['so  me']), ['so \ me'])
 
 
 class TestHtmlFormatter(unittest.TestCase):
@@ -24,10 +24,10 @@ class TestHtmlFormatter(unittest.TestCase):
         table = TestCaseFileSettingTable(None)
         table.set_header('Settings')
         table.doc.value = 'Some documentation'
-        formatted = HtmlFormatter().setting_rows(table)
+        formatted = list(HtmlFormatter().setting_rows(table))
         assert_equals(self._rows_to_text(formatted),
                       [['Documentation', 'Some documentation']])
-        assert_equals(formatted[1][1].attributes,
+        assert_equals(formatted[0][1].attributes,
                       {'colspan': '4', 'class': 'colspan4'})
 
     def test_test_name_row_formatting(self):
@@ -45,7 +45,7 @@ class TestHtmlFormatter(unittest.TestCase):
         test.doc.value = 'Some doc'
         assert_equals(self._rows(table)[0],
             ['<a name="test_Test">Test</a>', '[Documentation]', 'Some doc'])
-        assert_equals(HtmlFormatter().test_rows(table)[1][2].attributes,
+        assert_equals(list(HtmlFormatter().test_rows(table))[0][2].attributes,
                       {'colspan': '3', 'class': 'colspan3'})
 
     def test_test_documentation_with_comment(self):
@@ -55,13 +55,13 @@ class TestHtmlFormatter(unittest.TestCase):
         test.doc._set_comment('a comment')
         assert_equals(self._rows(table)[0],
             ['<a name="test_Test">Test</a>', '[Documentation]', 'Some doc', '# a comment', ''])
-        assert_equals(HtmlFormatter().test_rows(table)[1][2].attributes, {})
+        assert_equals(list(HtmlFormatter().test_rows(table))[0][2].attributes, {})
 
     def _rows(self, table):
         return self._rows_to_text(HtmlFormatter().test_rows(table))
 
     def _rows_to_text(self, rows):
-        return [[cell.content for cell in row] for row in rows[1:-1]]
+        return [[cell.content for cell in row] for row in rows]
 
     def _create_test_table(self):
         table = TestCaseTable(None)

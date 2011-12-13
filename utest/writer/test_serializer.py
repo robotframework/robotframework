@@ -101,6 +101,7 @@ class TestTsvSerialization(_SerializerTest):
         return self._serialize(datafile, 'tsv', pipe_separated=True,
                                line_separator=line_separator)
 
+
     def test_serializing_resource_file(self):
         self._assert_serialization(RESOURCE_FILE, GOLDEN_TSV_RESOURCE)
 
@@ -115,7 +116,10 @@ class TestTsvSerialization(_SerializerTest):
 class TestHTMLSerialization(_SerializerTest):
 
     def _serializer(self, datafile):
-        return self._serialize(datafile, 'html')
+        result= self._serialize(datafile, 'html')
+        with open('foo.html', 'w') as o:
+            o.write(result)
+        return result
 
     def test_serializer_with_html_testcase_file(self):
         self._assert_serialization(TESTCASE_FILE, GOLDEN_HTML_TESTCASE_FILE)

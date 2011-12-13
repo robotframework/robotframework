@@ -52,7 +52,9 @@ class _DataFileWriter(object):
     def write(self, datafile):
         for table in datafile:
             if table:
+                self._write_header(table)
                 self._write_rows(self._formatted_table(table))
+                self._write_empty_row()
 
     def _formatted_table(self, table):
         formatter = {'setting': self._formatter.setting_rows,
@@ -61,6 +63,12 @@ class _DataFileWriter(object):
                      'keyword': self._formatter.keyword_rows
                     }[table.type]
         return formatter(table)
+
+    def _write_header(self, table):
+        self._write_row(self._formatter.header_row(table))
+
+    def _write_empty_row(self):
+        self._write_row(self._formatter.empty_row())
 
 
 class _TextFileWriter(_DataFileWriter):
@@ -124,6 +132,7 @@ class HtmlFileWriter(_DataFileWriter):
     def write(self, datafile):
         for table in datafile:
             if table:
+                self._write_header(table)
                 {'setting': self._write_settings,
                  'variable': self._write_variables,
                  'testcase': self._write_tests,
@@ -153,6 +162,7 @@ class HtmlFileWriter(_DataFileWriter):
         self._end_table(replacer)
 
     def _end_table(self, table_replacer):
+        self._write_empty_row()
         table = self._writer.output.getvalue().decode('UTF-8')
         self._content = table_replacer(table, self._content)
         self._writer = utils.HtmlWriter(StringIO())
