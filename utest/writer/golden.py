@@ -173,7 +173,7 @@ td.name, th.name {
 </head>
 <body>
 <h1>Here</h1>
-<table id="settings" border="1">
+<table border="1" id="setting">
 <tr>
 <th class="name" colspan="5">Settings</th>
 </tr>
@@ -234,7 +234,7 @@ td.name, th.name {
 <td></td>
 </tr>
 </table>
-<table id="variables" border="1">
+<table border="1" id="variable">
 <tr>
 <th class="name" colspan="5">Variables</th>
 </tr>
@@ -267,7 +267,7 @@ td.name, th.name {
 <td></td>
 </tr>
 </table>
-<table id="testcases" border="1">
+<table border="1" id="testcase">
 <tr>
 <th class="name" colspan="5">Test Cases</th>
 </tr>
@@ -305,7 +305,7 @@ td.name, th.name {
 <td></td>
 </tr>
 </table>
-<table id="keywords" border="1">
+<table border="1" id="keyword">
 <tr>
 <th class="name" colspan="5">Keywords</th>
 </tr>

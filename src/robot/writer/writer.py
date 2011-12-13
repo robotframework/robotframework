@@ -23,7 +23,7 @@ except ImportError:
 from robot import utils
 
 from .formatters import TsvFormatter, TxtFormatter, PipeFormatter, HtmlFormatter
-from .htmltemplate import TEMPLATE
+from .htmltemplate import TEMPLATE_START, TEMPLATE_END
 
 
 def FileWriter(serialization_context):
@@ -123,43 +123,40 @@ class TsvFileWriter(_TextFileWriter):
 class HtmlFileWriter(_DataFileWriter):
 
     def __init__(self, context):
-        self._content = TEMPLATE % {'NAME': context.datafile.name}
-        self._writer = utils.HtmlWriter(StringIO())
-        self._output = context.output
-        self._table_replacer = HtmlTableReplacer()
+        self._name = context.datafile.name
+        self._writer = utils.HtmlWriter(context.output)
         self._formatter = HtmlFormatter()
 
     def write(self, datafile):
+        self._writer.content(TEMPLATE_START % {'NAME': self._name}, escape=False)
         for table in datafile:
             if table:
+                self._writer.start('table', {'id': table.type, 'border': '1'})
                 self._write_header(table)
                 {'setting': self._write_settings,
                  'variable': self._write_variables,
                  'testcase': self._write_tests,
                  'keyword': self._write_keywords
                  }[table.type](table)
-        self._output.write(self._content.encode('UTF-8'))
+                self._write_empty_row()
+                self._writer.end('table')
+        self._writer.content(TEMPLATE_END, escape=False)
 
     def _write_settings(self, settings):
-        self._write_table(self._formatter.setting_rows(settings),
-                          self._table_replacer.settings_table)
+        self._write_table(self._formatter.setting_rows(settings))
 
     def _write_variables(self, variables):
-        self._write_table(self._formatter.variable_rows(variables),
-                          self._table_replacer.variables_table)
+        self._write_table(self._formatter.variable_rows(variables))
 
     def _write_tests(self, tests):
-        self._write_table(self._formatter.test_rows(tests),
-                          self._table_replacer.testcases_table)
+        self._write_table(self._formatter.test_rows(tests))
 
     def _write_keywords(self, keywords):
-        self._write_table(self._formatter.keyword_rows(keywords),
-                          self._table_replacer.keywords_table)
+        self._write_table(self._formatter.keyword_rows(keywords))
 
-    def _write_table(self, rows, replacer):
+    def _write_table(self, rows):
         for row in rows:
             self._write_row(row)
-        self._end_table(replacer)
 
     def _end_table(self, table_replacer):
         self._write_empty_row()
@@ -173,35 +170,3 @@ class HtmlFileWriter(_DataFileWriter):
             self._writer.element(cell.tag, cell.content, cell.attributes,
                                  escape=False)
         self._writer.end('tr')
-
-
-class HtmlTableReplacer(object):
-    _table_re = '(<table\s[^>]*id=["\']?%s["\']?[^>]*>).*?(</table>)'
-    _settings_re = re.compile(_table_re % 'settings', re.IGNORECASE | re.DOTALL)
-    _variables_re = re.compile(_table_re % 'variables', re.IGNORECASE | re.DOTALL)
-    _testcases_re = re.compile(_table_re % 'testcases', re.IGNORECASE | re.DOTALL)
-    _keywords_re = re.compile(_table_re % 'keywords', re.IGNORECASE | re.DOTALL)
-
-    def settings_table(self, table, content):
-        return self._table(self._settings_re, table, content)
-
-    def variables_table(self, table, content):
-        return self._table(self._variables_re, table, content)
-
-    def testcases_table(self, table, content):
-        return self._table(self._testcases_re, table, content)
-
-    def keywords_table(self, table, content):
-        return self._table(self._keywords_re, table, content)
-
-    def _table(self, table_re, table, content):
-        replaced = self._table_replacer(table)
-        return table_re.sub(replaced, content)
-
-    def _table_replacer(self, content):
-        content = content.strip()
-        def replace(match):
-            start, end = match.groups()
-            parts = content and [start, content, end] or [start, end]
-            return '\n'.join(parts)
-        return replace
