@@ -1,3 +1,4 @@
+from __future__ import with_statement
 import StringIO
 import unittest
 import os
