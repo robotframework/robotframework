@@ -5,7 +5,7 @@ from xml.etree.ElementTree import XML
 from xml.etree.ElementTree import tostring
 
 from robot.result import ResultFromXml
-from robot.result.serializer import RebotXMLWriter
+from robot.result.outputwriter import OutputWriter
 from robot.utils.pyxmlwriter import XmlWriter
 from robot.utils.asserts import assert_equals
 
@@ -58,7 +58,7 @@ if os.name == 'java':
             return value
 
 
-class TestableRebotXmlWriter(RebotXMLWriter):
+class TestableOutputWriter(OutputWriter):
 
     def _get_writer(self, output, generator):
         writer = StreamXmlWriter(output)
@@ -69,7 +69,7 @@ class TestableRebotXmlWriter(RebotXMLWriter):
 class TestResultSerializer(unittest.TestCase):
 
     def _create_writer(self, output):
-        return TestableRebotXmlWriter(output)
+        return TestableOutputWriter(output)
 
     def test_single_result_serialization(self):
         output = StringIO()

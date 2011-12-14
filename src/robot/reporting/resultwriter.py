@@ -12,7 +12,6 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-
 from robot.errors import DATA_ERROR
 from robot.reporting.jsmodelbuilders import JsModelBuilder
 from robot.result import ResultFromXml

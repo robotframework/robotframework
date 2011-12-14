@@ -16,7 +16,7 @@ from robot.output.xmllogger import XmlLogger
 from robot.result.visitor import ResultVisitor
 
 
-class RebotXMLWriter(XmlLogger, ResultVisitor):
+class OutputWriter(XmlLogger, ResultVisitor):
 
     def __init__(self, output):
         XmlLogger.__init__(self, output, generator='Rebot')

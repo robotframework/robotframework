@@ -19,8 +19,7 @@ import codecs
 
 from robot.errors import DataError
 from robot.output import LOGGER
-from robot.result.serializer import RebotXMLWriter
-from robot import utils
+from robot.result.outputwriter import OutputWriter
 
 from .jswriter import SplitLogWriter
 from .xunitwriter import XUnitWriter
@@ -34,7 +33,7 @@ class OutputBuilder(object):
 
     def build(self, path):
         try:
-            writer = RebotXMLWriter(path)
+            writer = OutputWriter(path)
         except DataError, err:
             LOGGER.error(unicode(err))
         else:
