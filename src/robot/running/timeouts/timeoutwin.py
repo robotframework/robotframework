@@ -11,29 +11,32 @@
 #  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
+
 from __future__ import with_statement
 import ctypes
 import thread
-import threading
 import time
+from threading import Timer
+
 from robot.errors import TimeoutError
+
 
 class Timeout(object):
 
-    def __init__(self, timeout, timeout_error, timeout_type):
+    def __init__(self, timeout, timeout_error):
         self._runner_thread_id = thread.get_ident()
-        self._timeout_error = self._error_with_message(timeout_error)
-        self._timer = threading.Timer(timeout, self)
+        self._timeout_error = self._create_timeout_error_class(timeout_error)
+        self._timer = Timer(timeout, self._raise_timeout_error)
         self._timeout_occurred = False
 
-    def _error_with_message(self, message):
+    def _create_timeout_error_class(self, timeout_error):
         return type(TimeoutError.__name__,
-                    (TimeoutError,),
-                    {'__unicode__': lambda s: message})
+                   (TimeoutError,),
+                   {'__unicode__': lambda s: timeout_error})
 
-    def execute(self, runnable, args, kwargs):
+    def execute(self, runnable):
         with self:
-            return runnable(*(args or ()), **(kwargs or {}))
+            return runnable()
 
     def __enter__(self):
         self._timer.start()
@@ -47,7 +50,7 @@ class Timeout(object):
             self._cancel_exception()
             raise self._timeout_error()
 
-    def __call__(self):
+    def _raise_timeout_error(self):
         self._timeout_occurred = True
         return_code = self._try_to_raise_timeout_error_in_runner_thread()
         # return code tells how many threads have been influenced
