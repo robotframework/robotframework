@@ -33,11 +33,10 @@ class OutputBuilder(object):
 
     def build(self, path):
         try:
-            writer = OutputWriter(path)
+            OutputWriter(self._model).write_to(path)
         except DataError, err:
             LOGGER.error(unicode(err))
         else:
-            self._model.visit(writer)
             LOGGER.output_file('Output', path)
 
 
