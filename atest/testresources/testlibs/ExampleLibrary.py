@@ -131,7 +131,7 @@ class ExampleLibrary:
             remaining = endtime - time.time()
             if remaining <= 0:
                 break
-            time.sleep(min(remaining, 0.5))
+            time.sleep(min(remaining, 0.1))
 
     def return_custom_iterable(self, *values):
         return _MyIterable(*values)
