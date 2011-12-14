@@ -60,6 +60,11 @@ class TestStringIndex(unittest.TestCase):
         assert_equals(str(value), str(target))
         assert_false(str(value).endswith('L'))
 
+    def test_truth(self):
+        assert_true(StringIndex(1))
+        assert_true(StringIndex(-42))
+        assert_false(StringIndex(0))
+
 
 if __name__ == '__main__':
     unittest.main()
