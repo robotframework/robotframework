@@ -19,12 +19,13 @@ from .htmlutils import html_escape, html_attr_escape
 
 class HtmlWriter(object):
 
-    def __init__(self, output):
+    def __init__(self, output, line_separator=os.linesep):
         self.output = output
+        self._line_separator = line_separator
 
     def start(self, name, attrs=None, newline=True):
         self._write('<%s%s>%s' % (name, self._get_attrs(attrs),
-                                 os.linesep if newline else ''))
+                                  self._line_separator if newline else ''))
 
     def content(self, content=None, escape=True):
         if content is not None:

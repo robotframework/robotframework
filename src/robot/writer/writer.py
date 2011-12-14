@@ -118,7 +118,7 @@ class HtmlFileWriter(_DataFileWriter):
     def __init__(self, context):
         _DataFileWriter.__init__(self, context)
         self._name = context.datafile.name
-        self._writer = utils.HtmlWriter(context.output)
+        self._writer = utils.HtmlWriter(context.output, context.line_separator)
 
     def write(self, datafile):
         self._writer.content(TEMPLATE_START % {'NAME': self._name},
@@ -127,7 +127,8 @@ class HtmlFileWriter(_DataFileWriter):
         self._writer.content(TEMPLATE_END, escape=False)
 
     def _write_table(self, table):
-        self._writer.start('table', {'id': table.type, 'border': '1'})
+        self._writer.start('table', {'id': table.type.replace(' ', ''),
+                                     'border': '1'})
         _DataFileWriter._write_table(self, table)
         self._writer.end('table')
 
