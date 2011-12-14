@@ -21,7 +21,7 @@ elif os.name == 'nt':
     from timeoutwin import Timeout
 elif os.name == 'java':
     from timeoutthread import Timeout
-else:
+else: # python in *nix or mac
     try:
         from timeoutsignaling import Timeout
     except ImportError:
