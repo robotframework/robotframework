@@ -13,19 +13,20 @@
 #  limitations under the License.
 
 from signal import setitimer, signal, SIGALRM, ITIMER_REAL
+
 from robot.errors import TimeoutError
 
 
 class Timeout(object):
 
-    def __init__(self, timeout, error, timeout_type):
+    def __init__(self, timeout, error):
         self._timeout = timeout
         self._error = error
 
-    def execute(self, runnable, args, kwargs):
+    def execute(self, runnable):
         self._start_timer()
         try:
-            return runnable(*(args or ()), **(kwargs or {}))
+            return runnable()
         finally:
             self._stop_timer()
 

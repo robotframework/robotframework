@@ -11,30 +11,65 @@
 #  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
-from robot import utils
+
 from robot.errors import TimeoutError
-from .robotthread import ThreadedRunner
+
+import sys
+from threading import Event
+
+if sys.platform.startswith('java'):
+    from java.lang import Thread, Runnable
+else:
+    from stoppablethread import Thread
+    Runnable = object
+
+
+class ThreadedRunner(Runnable):
+
+    def __init__(self, runnable):
+        self._runnable = runnable
+        self._notifier = Event()
+        self._result = None
+        self._error = None
+        self._traceback = None
+        self._thread = None
+
+    def run(self):
+        try:
+            self._result = self._runnable()
+        except:
+            self._error, self._traceback = sys.exc_info()[1:]
+        self._notifier.set()
+
+    __call__ = run
+
+    def run_in_thread(self, timeout):
+        self._thread = Thread(self)
+        self._thread.setDaemon(True)
+        self._thread.start()
+        self._notifier.wait(timeout)
+        return self._notifier.isSet()
+
+    def get_result(self):
+        if self._error:
+            raise self._error, None, self._traceback
+        return self._result
+
+    def stop_thread(self):
+        self._thread.stop()
 
 
 class Timeout(object):
 
-    def __init__(self, timeout, error, timeout_type):
+    def __init__(self, timeout, error):
         self._timeout = timeout
         self._error = error
-        self._timeout_type = timeout_type
 
-    def execute(self, runnable, args, kwargs):
-        runner = ThreadedRunner(runnable, args, kwargs)
+    def execute(self, runnable):
+        runner = ThreadedRunner(runnable)
         if runner.run_in_thread(self._timeout):
             return runner.get_result()
-        try:
-            runner.stop_thread()
-        except:
-            raise TimeoutError(self._stopping_failed)
+        runner.stop_thread()
         raise TimeoutError(self._error)
 
-    @property
-    def _stopping_failed(self):
-        return 'Stopping keyword after timeout failed: %s' % (self._timeout_type,
-                                                              utils.get_error_message())
 

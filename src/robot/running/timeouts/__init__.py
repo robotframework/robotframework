@@ -14,24 +14,23 @@
 
 import sys
 import os
+import time
 
 if sys.platform == 'cli':
     from timeoutthread import Timeout
 elif os.name == 'nt':
     from timeoutwin import Timeout
-elif os.name == 'java':
-    from timeoutthread import Timeout
 else:
     try:
+        # python 2.6 or newer in *nix or mac
         from timeoutsignaling import Timeout
     except ImportError:
-        # For old python 2.5 releases where signaling is not available
+        # python < 2.6 and jython don't have complete signal module
         from timeoutthread import Timeout
-
-import time
 
 from robot import utils
 from robot.errors import TimeoutError, DataError, FrameworkError
+
 
 class _Timeout(object):
 
@@ -43,10 +42,6 @@ class _Timeout(object):
         self.error = None
         if variables:
             self.replace_variables(variables)
-
-    @property
-    def type(self):
-        return type(self).__name__.replace('Timeout', ' timeout')
 
     @property
     def active(self):
@@ -62,7 +57,7 @@ class _Timeout(object):
             self.message = variables.replace_string(self.message)
         except (DataError, ValueError), err:
             self.secs = 0.000001 # to make timeout active
-            self.error = 'Setting %s failed: %s' % (self.type.lower(), unicode(err))
+            self.error = 'Setting %s timeout failed: %s' % (self.type.lower(), unicode(err))
 
     def start(self):
         if self.secs > 0:
@@ -94,27 +89,27 @@ class _Timeout(object):
         timeout = self.time_left()
         if timeout <= 0:
             raise TimeoutError(self.get_message())
-        return Timeout(timeout, self._get_timeout_error(), self.type).\
-                    execute(runnable, args, kwargs)
-
-    def _execute_with_timeout(self, timeout, runnable, args, kwargs):
-        raise NotImplementedError(self.__class__)
+        executable = lambda:runnable(*(args or ()), **(kwargs or {}))
+        return Timeout(timeout, self._timeout_error).execute(executable)
 
     def get_message(self):
         if not self.active:
-            return '%s not active.' % self.type
+            return '%s timeout not active.' % self.type
         if not self.timed_out():
-            return '%s %s active. %s seconds left.' % (self.type, self.string,
+            return '%s timeout %s active. %s seconds left.' % (self.type, self.string,
                                                        self.time_left())
-        return self._get_timeout_error()
+        return self._timeout_error
 
-    def _get_timeout_error(self):
+    @property
+    def _timeout_error(self):
         if self.message:
             return self.message
-        return '%s %s exceeded.' % (self.type, self.string)
+        return '%s timeout %s exceeded.' % (self.type, self.string)
+
 
 class TestTimeout(_Timeout):
     _keyword_timeouted = False
+    type = 'Test'
 
     def set_keyword_timeout(self, timeout_occurred):
         self._keyword_timeouted = self._keyword_timeouted or timeout_occurred
@@ -124,4 +119,4 @@ class TestTimeout(_Timeout):
 
 
 class KeywordTimeout(_Timeout):
-    pass
+    type = 'Keyword'
