@@ -60,7 +60,7 @@ class JsBuildingContext(object):
         return (msg.message, msg.level, msg.timestamp)
 
     def link(self, msg):
-        return self._msg_links[self._link_key(msg)]
+        return self._msg_links.get(self._link_key(msg))
 
     @property
     def strings(self):

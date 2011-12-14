@@ -102,7 +102,6 @@ class Logger(AbstractLogger):
         for logger in self._loggers.all_loggers():
             logger.log_message(msg)
         if msg.level == 'WARN':
-            msg.linkable = True
             self.message(msg)
 
     log_message = message

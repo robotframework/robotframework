@@ -64,12 +64,11 @@ class AbstractLogger:
 class Message(BaseMessage):
     __slots__ = []
 
-    def __init__(self, message, level='INFO', html=False, timestamp=None,
-                 linkable=False):
+    def __init__(self, message, level='INFO', html=False, timestamp=None):
         message = self._normalize_message(message)
         level, html = self._get_level_and_html(level, html)
         timestamp = self._get_timestamp(timestamp)
-        BaseMessage.__init__(self, message, level, html, timestamp, linkable)
+        BaseMessage.__init__(self, message, level, html, timestamp)
 
     def _normalize_message(self, msg):
         if not isinstance(msg, basestring):

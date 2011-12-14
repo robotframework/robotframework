@@ -18,16 +18,15 @@ from .modelobject import ModelObject
 
 
 class Message(ModelObject):
-    __slots__ = ['message', 'level', 'html', 'timestamp', 'linkable', 'parent']
+    __slots__ = ['message', 'level', 'html', 'timestamp', 'parent']
 
     # TODO: Use None instead of N/A with all timestamps in model
     def __init__(self, message='', level='INFO', html=False, timestamp='N/A',
-                 linkable=False, parent=None):
+                 parent=None):
         self.message = message
         self.level = level
         self.html = html
         self.timestamp = timestamp
-        self.linkable = linkable
         self.parent = parent
 
     @property

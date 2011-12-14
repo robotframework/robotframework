@@ -123,8 +123,7 @@ class MessageHandler(_Handler):
         result.messages.create(elem.text or '',
                                elem.get('level'),
                                elem.get('html', 'no') == 'yes',
-                               elem.get('timestamp'),
-                               elem.get('linkable', 'no') == 'yes')
+                               elem.get('timestamp'))
 
 
 class _StatusHandler(_Handler):

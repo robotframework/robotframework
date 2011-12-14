@@ -343,7 +343,7 @@ class TestBuildErrors(unittest.TestCase):
         assert_equals(model, ((0, 5, 'Error'), (42, 3, 'Warning')))
 
     def test_linking(self):
-        self.errors.messages.create('Linkable', 'WARN', linkable=True,
+        self.errors.messages.create('Linkable', 'WARN',
                                     timestamp='20111206 14:33:00.001')
         context = JsBuildingContext()
         kw = TestSuite().tests.create().keywords.create()
