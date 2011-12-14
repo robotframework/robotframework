@@ -174,4 +174,4 @@ class ErrorMessageBuilder(MessageBuilder):
     def build(self, msg):
         model = self._build(msg)
         link = self._context.link(msg)
-        return model if not link else model + (link,)
+        return model if link is None else model + (link,)
