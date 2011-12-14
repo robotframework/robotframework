@@ -11,7 +11,7 @@ ${TESTDATA_TEST}    misc${/}many_tests.html
 ${TESTDATA_SUITES}  misc${/}suites
 ${MYOUTDIR}         ${TEMPDIR}${/}robot-test-xunit
 ${INPUT FILE}       ${TEMPDIR}${/}robot-test-xunit-file.xml
-${INVALID}          ${TEMPDIR}${/}ïnvälïd-ẍünïẗ.xml
+${INVALID}          ${TEMPDIR}${/}ïnvälïd-xünït.xml
 
 
 *** Test Cases ***
@@ -36,8 +36,9 @@ Invalid XUnit File
     Run Rebot  -x ${INVALID} -l log.html  ${INPUT FILE}
     File Should Not Exist  ${INVALID}
     File Should Exist  ${OUTDIR}/log.html
+    ${path} =  Regexp Escape  ${INVALID}
     Check Stderr Matches Regexp
-    ...  \\[ ERROR \\] Opening XUnit result file '${INVALID}' failed: .*directory.*
+    ...  \\[ ERROR \\] Opening XUnit result file '${path}' failed: .*
 
 *** Keywords ***
 Create Input File

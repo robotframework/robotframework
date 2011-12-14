@@ -6,7 +6,7 @@ Resource        xunit_resource.txt
 
 *** Variables ***
 ${TESTDATA}  misc/pass_and_fail.html
-${INVALID}   ${TEMPDIR}${/}ïnvälïd-ẍünïẗ.xml
+${INVALID}   ${TEMPDIR}${/}ïnvälïd-xünït.xml
 
 *** Test Cases ***
 No XUnit Option Given
@@ -29,6 +29,8 @@ Invalid XUnit File
     Run Tests  --XUnitFile ${INVALID} -l log.html  ${TESTDATA}
     File Should Not Exist  ${INVALID}
     File Should Exist  ${OUTDIR}/log.html
+    ${dir}  ${base} =  Split Path  ${INVALID}
+    ${path} =  Regexp Escape  ${INVALID}
     Check Stderr Matches Regexp
-    ...  \\[ ERROR \\] Opening XUnit result file '${INVALID}' failed: .*directory.*
+    ...  \\[ ERROR \\] Opening XUnit result file '${path}' failed: .*
 
