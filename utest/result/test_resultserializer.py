@@ -69,9 +69,9 @@ class TestableOutputWriter(OutputWriter):
 class TestResultSerializer(unittest.TestCase):
 
     def test_single_result_serialization(self):
-        writer = TestableOutputWriter(ResultFromXml(GOLDEN_XML))
         output = StringIO()
-        writer.write_to(output)
+        writer = TestableOutputWriter(output)
+        ResultFromXml(GOLDEN_XML).visit(writer)
         self._assert_xml_content(self._xml_lines(output.getvalue()),
                                  self._xml_lines(GOLDEN_XML))
 
@@ -84,9 +84,9 @@ class TestResultSerializer(unittest.TestCase):
             assert_equals(act, exp.strip(), 'Different values on line %d' % index)
 
     def test_combining_results(self):
-        writer = TestableOutputWriter(ResultFromXml(GOLDEN_XML, GOLDEN_XML))
         output = StringIO()
-        writer.write_to(output)
+        writer = TestableOutputWriter(output)
+        ResultFromXml(GOLDEN_XML, GOLDEN_XML).visit(writer)
         self._assert_xml_content(self._xml_lines(output.getvalue()),
                                  self._xml_lines(GOLDEN_XML_TWICE))
 

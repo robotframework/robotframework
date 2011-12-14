@@ -33,10 +33,11 @@ class OutputBuilder(object):
 
     def build(self, path):
         try:
-            OutputWriter(self._model).write_to(path)
+            writer = OutputWriter(path)
         except DataError, err:
             LOGGER.error(unicode(err))
         else:
+            self._model.visit(writer)
             LOGGER.output_file('Output', path)
 
 
@@ -53,7 +54,6 @@ class XUnitBuilder(object):
                          % (path, err.strerror))
         else:
             self._model.visit(writer)
-            writer.close()
             LOGGER.output_file('XUnit', path)
 
 

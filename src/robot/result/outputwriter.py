@@ -17,16 +17,12 @@ from robot.result.visitor import ResultVisitor
 
 # TODO: Unify XmlLogger and ResultVisitor APIs.
 # Perhaps XmlLogger could be ResultVisitor.
-# TODO: Use delegation instead of multi-inheritance
+
 
 class OutputWriter(XmlLogger, ResultVisitor):
 
-    def __init__(self, model):
-        self._model = model
-
-    def write_to(self, path):
-        XmlLogger.__init__(self, path, generator='Rebot')
-        self._model.visit(self)
+    def __init__(self, output):
+        XmlLogger.__init__(self, output, generator='Rebot')
 
     def start_message(self, msg):
         self._write_message(msg)

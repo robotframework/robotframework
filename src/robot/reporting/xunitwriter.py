@@ -28,9 +28,6 @@ class XUnitWriter(ResultVisitor):
         self._root_suite = None
         self._detail_serializer = _NopSerializer()
 
-    def close(self):
-        self._writer.close()
-
     def start_suite(self, suite):
         if self._root_suite:
             return
@@ -70,6 +67,9 @@ class XUnitWriter(ResultVisitor):
 
     def visit_message(self, msg):
         self._detail_serializer.message(msg)
+
+    def end_result(self, result):
+        self._writer.close()
 
 
 class _FailedTestSerializer:
