@@ -5,7 +5,7 @@ from xml.etree.ElementTree import XML
 from xml.etree.ElementTree import tostring
 
 from robot.result import ResultFromXml
-from robot.result.serializer import RebotXMLWriter
+from robot.result.outputwriter import OutputWriter
 from robot.utils.pyxmlwriter import XmlWriter
 from robot.utils.asserts import assert_equals
 
@@ -58,7 +58,7 @@ if os.name == 'java':
             return value
 
 
-class TestableRebotXmlWriter(RebotXMLWriter):
+class TestableOutputWriter(OutputWriter):
 
     def _get_writer(self, output, generator):
         writer = StreamXmlWriter(output)
@@ -68,12 +68,10 @@ class TestableRebotXmlWriter(RebotXMLWriter):
 
 class TestResultSerializer(unittest.TestCase):
 
-    def _create_writer(self, output):
-        return TestableRebotXmlWriter(output)
-
     def test_single_result_serialization(self):
+        writer = TestableOutputWriter(ResultFromXml(GOLDEN_XML))
         output = StringIO()
-        ResultFromXml(StringIO(GOLDEN_XML)).visit(self._create_writer(output))
+        writer.write_to(output)
         self._assert_xml_content(self._xml_lines(output.getvalue()),
                                  self._xml_lines(GOLDEN_XML))
 
@@ -86,11 +84,12 @@ class TestResultSerializer(unittest.TestCase):
             assert_equals(act, exp.strip(), 'Different values on line %d' % index)
 
     def test_combining_results(self):
+        writer = TestableOutputWriter(ResultFromXml(GOLDEN_XML, GOLDEN_XML))
         output = StringIO()
-        result = ResultFromXml(StringIO(GOLDEN_XML), StringIO(GOLDEN_XML))
-        result.visit(self._create_writer(output))
+        writer.write_to(output)
         self._assert_xml_content(self._xml_lines(output.getvalue()),
                                  self._xml_lines(GOLDEN_XML_TWICE))
+
 
 if __name__ == '__main__':
     unittest.main()

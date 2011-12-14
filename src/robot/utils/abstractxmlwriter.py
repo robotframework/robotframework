@@ -57,8 +57,9 @@ class AbstractXmlWriter:
         self.end(name, newline)
 
     def close(self):
-        self._close()
-        self.closed = True
+        if not self.closed:
+            self._close()
+            self.closed = True
 
     def _close(self):
         self._writer.endDocument()

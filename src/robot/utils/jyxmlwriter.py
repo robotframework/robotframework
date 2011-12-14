@@ -37,7 +37,7 @@ class XmlWriter(AbstractXmlWriter):
         try:
             return FileOutputStream(output)
         except FileNotFoundException, err:
-            raise IOError(None, err.getMessage(), output)
+            raise IOError(-1, err.getMessage(), output)
 
     def _start(self, name, attrs):
         self._writer.startElement('', '', name, self._get_attrs_impl(attrs))

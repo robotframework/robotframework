@@ -1,8 +1,9 @@
+from __future__ import with_statement
 import os
 import unittest
 import tempfile
 
-from robot import utils
+from robot.utils import XmlWriter, ET, ETSource
 from robot.utils.asserts import *
 
 PATH = os.path.join(tempfile.gettempdir(), 'test_xmlwriter.xml')
@@ -11,7 +12,7 @@ PATH = os.path.join(tempfile.gettempdir(), 'test_xmlwriter.xml')
 class TestXmlWriter(unittest.TestCase):
 
     def setUp(self):
-        self.writer = utils.XmlWriter(PATH)
+        self.writer = XmlWriter(PATH)
 
     def tearDown(self):
         self.writer.close()
@@ -49,7 +50,8 @@ class TestXmlWriter(unittest.TestCase):
         self.writer.element('child2', attributes={'class': 'foo'})
         self.writer.end('root')
         self.writer.close()
-        root = utils.ET.parse(PATH).getroot()
+        with ETSource(PATH) as source:
+            root = ET.parse(source).getroot()
         self._verify_node(root, 'root', attrs={'version': 'test'})
         self._verify_node(root.find('child1'), 'child1', attrs={'my-attr': 'my value'})
         self._verify_node(root.find('child1/leaf1.1'), 'leaf1.1',
@@ -68,9 +70,8 @@ class TestXmlWriter(unittest.TestCase):
         self.writer.end('suite')
         self.writer.end('root')
         self.writer.close()
-        f = open(PATH)
-        lines = [ line for line in f.readlines() if line != '\n' ]
-        f.close()
+        with open(PATH) as file:
+            lines = [line for line in file if line != '\n']
         assert_equal(len(lines), 6)
 
     def test_none_content(self):
@@ -94,7 +95,8 @@ class TestXmlWriter(unittest.TestCase):
         self.writer.element(u'f', u'Hyv\u00E4\u00E4 \u00FC\u00F6t\u00E4')
         self.writer.end('root')
         self.writer.close()
-        root = utils.ET.parse(PATH).getroot()
+        with ETSource(PATH) as source:
+            root = ET.parse(source).getroot()
         self._verify_node(root.find('e'), 'e', u'Circle is 360\u00B0')
         self._verify_node(root.find('f'), 'f',
                          u'Hyv\u00E4\u00E4 \u00FC\u00F6t\u00E4')
@@ -102,21 +104,21 @@ class TestXmlWriter(unittest.TestCase):
     def test_content_with_entities(self):
         self.writer.element(u'robot-log', 'Me, Myself & I > you')
         self.writer.close()
-        f = open(PATH)
-        content = f.read()
-        f.close()
-        assert_true(content.count('Me, Myself &amp; I &gt; you') > 0)
+        with open(PATH) as file:
+            content = file.read()
+        assert_true('Me, Myself &amp; I &gt; you' in content)
 
     def test_remove_illegal_chars(self):
         assert_equals(self.writer._escape(u'\x1b[31m'), '[31m')
         assert_equals(self.writer._escape(u'\x00'), '')
 
     def test_ioerror_when_file_is_invalid(self):
-        assert_raises(IOError, utils.XmlWriter, os.path.dirname(__file__))
+        assert_raises(IOError, XmlWriter, os.path.dirname(__file__))
 
     def _verify_node(self, node, name, text=None, attrs={}):
         if node is None:
-            node = utils.ET.parse(PATH).getroot()
+            with ETSource(PATH) as source:
+                node = ET.parse(source).getroot()
         assert_equals(node.tag, name)
         if text is not None:
             assert_equals(node.text, text)
