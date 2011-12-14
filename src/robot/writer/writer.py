@@ -32,11 +32,9 @@ def FileWriter(serialization_context):
         Is also passed along to created writer for further configuration.
     :type serialization_context: :py:class:`SerializationContext`
     """
-    Writer = {
-        'tsv': TsvFileWriter,
-        'txt': TxtFileWriter,
-        'html': HtmlFileWriter
-    }[serialization_context.format]
+    Writer = {'tsv': TsvFileWriter,
+              'txt': TxtFileWriter,
+              'html': HtmlFileWriter}[serialization_context.format]
     return Writer(serialization_context)
 
 
@@ -65,9 +63,8 @@ class _DataFileWriter(object):
     def _formatted_table(self, table):
         formatter = {'setting': self._formatter.setting_rows,
                      'variable': self._formatter.variable_rows,
-                     'testcase': self._formatter.test_rows,
-                     'keyword': self._formatter.keyword_rows
-                    }[table.type]
+                     'test case': self._formatter.test_rows,
+                     'keyword': self._formatter.keyword_rows}[table.type]
         return formatter(table)
 
     def _write_header(self, table):
