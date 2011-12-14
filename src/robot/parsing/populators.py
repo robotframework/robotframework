@@ -44,9 +44,9 @@ PROCESS_CURDIR = True
 
 class FromFilePopulator(object):
     _populators = {'setting': SettingTablePopulator,
-                  'variable': VariableTablePopulator,
-                  'testcase': TestTablePopulator,
-                  'keyword': KeywordTablePopulator}
+                   'variable': VariableTablePopulator,
+                   'test case': TestTablePopulator,
+                   'keyword': KeywordTablePopulator}
 
     def __init__(self, datafile):
         self._datafile = datafile
