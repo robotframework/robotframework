@@ -1,10 +1,10 @@
 import unittest
 import sys
-    
-from robot.utils.asserts import *
+from robot.running.timeouts.robotthread import ThreadedRunner
 
-from robot.utils.robotthread import ThreadedRunner
+from robot.utils.asserts import *
 from thread_resources import *
+
 
 
 class TestRunner(unittest.TestCase):

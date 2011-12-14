@@ -13,7 +13,7 @@
 #  limitations under the License.
 from robot import utils
 from robot.errors import TimeoutError
-from robot.utils.robotthread import ThreadedRunner
+from .robotthread import ThreadedRunner
 
 
 class Timeout(object):
