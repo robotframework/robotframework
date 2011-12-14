@@ -20,7 +20,7 @@ if sys.platform == 'cli':
 elif os.name == 'nt':
     from timeoutwin import Timeout
 elif os.name == 'java':
-    from timeoutthread import Timeout
+    from timeoutjava import Timeout
 else:
     try:
         from timeoutsignaling import Timeout
