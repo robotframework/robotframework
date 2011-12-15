@@ -1,7 +1,8 @@
 import unittest
 from robot.parsing.model import TestCaseTable, TestCaseFileSettingTable
 
-from robot.writer.formatters import RowSplitter, TxtFormatter, Cell, HtmlFormatter
+from robot.writer.formatters import TxtFormatter, Cell, HtmlFormatter
+from robot.writer.tableformatters import RowSplitter
 from robot.utils.asserts import assert_equals
 
 

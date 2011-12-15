@@ -14,11 +14,7 @@
 
 import re
 
-from robot.parsing.settings import Documentation
-from robot import utils
-from robot.writer.tableformatters import SplittingHtmlFormatter
-
-from .tableformatters import (RowSplittingFormatter, RowSplitter,
+from .tableformatters import (RowSplittingFormatter, SplittingHtmlFormatter,
     ColumnAligner, SettingTableAligner, NameCell, HeaderCell, Cell)
 
 
