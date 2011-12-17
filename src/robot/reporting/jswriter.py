@@ -54,7 +54,7 @@ class JsResultWriter(object):
         postfix = ');' + os.linesep
         threshold = self.split_threshold
         for index in xrange(0, len(strings), threshold):
-            self._write_json(prefix, strings[index:index+threshold], postfix),
+            self._write_json(prefix, strings[index:index+threshold], postfix)
 
     def _write_data(self, data):
         for key in data:

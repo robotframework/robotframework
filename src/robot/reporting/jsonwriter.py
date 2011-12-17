@@ -14,6 +14,7 @@
 
 import os
 
+
 class JsonWriter(object):
 
     def __init__(self, output, separator=''):
@@ -40,13 +41,13 @@ class JsonDumper(object):
 
     def __init__(self, output):
         self._output = output
-        self._dumpers = (_MappingDumper(self),
-                         _IntegerDumper(self),
-                         _TupleListDumper(self),
-                         _RawStringDumper(self),
-                         _Base64StringDumper(self),
-                         _NoneDumper(self),
-                         _DictDumper(self))
+        self._dumpers = (MappingDumper(self),
+                         IntegerDumper(self),
+                         TupleListDumper(self),
+                         RawStringDumper(self),
+                         Base64StringDumper(self),
+                         NoneDumper(self),
+                         DictDumper(self))
 
     def dump(self, data, mapping=None):
         for dumper in self._dumpers:
@@ -59,7 +60,7 @@ class JsonDumper(object):
         self._output.write(data)
 
 
-class _DataDumper(object):
+class _Dumper(object):
     _handled_types = None
 
     def __init__(self, jsondumper):
@@ -73,7 +74,7 @@ class _DataDumper(object):
         raise NotImplementedError
 
 
-class _RawStringDumper(_DataDumper):
+class RawStringDumper(_Dumper):
     _replace = {'\\': '\\\\', '"': '\\"', '\t': '\\t', '\n': '\\n', '\r': '\\r'}
 
     def handles(self, data, mapping):
@@ -93,21 +94,21 @@ class _RawStringDumper(_DataDumper):
                 yield char if 31 < val < 127 else '\\u%04x' % val
 
 
-class _Base64StringDumper(_DataDumper):
+class Base64StringDumper(_Dumper):
     _handled_types = basestring
 
     def dump(self, data, mapping):
         self._write('"%s"' % data)
 
 
-class _IntegerDumper(_DataDumper):
+class IntegerDumper(_Dumper):
     _handled_types = (int, long)
 
     def dump(self, data, mapping):
         self._write(str(data))
 
 
-class _DictDumper(_DataDumper):
+class DictDumper(_Dumper):
     _handled_types = dict
 
     def dump(self, data, mapping):
@@ -122,7 +123,7 @@ class _DictDumper(_DataDumper):
         self._write('}')
 
 
-class _TupleListDumper(_DataDumper):
+class TupleListDumper(_Dumper):
     _handled_types = (tuple, list)
 
     def dump(self, data, mapping):
@@ -135,7 +136,7 @@ class _TupleListDumper(_DataDumper):
         self._write(']')
 
 
-class _MappingDumper(_DataDumper):
+class MappingDumper(_Dumper):
 
     def handles(self, data, mapping):
         try:
@@ -147,7 +148,7 @@ class _MappingDumper(_DataDumper):
         self._write(mapping[data])
 
 
-class _NoneDumper(_DataDumper):
+class NoneDumper(_Dumper):
 
     def handles(self, data, mapping):
         return data is None
