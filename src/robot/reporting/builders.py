@@ -13,17 +13,14 @@
 #  limitations under the License.
 
 from __future__ import with_statement
-import os
-import os.path
-import codecs
+
 
 from robot.errors import DataError
 from robot.output import LOGGER
 from robot.result.outputwriter import OutputWriter
 
-from .jswriter import SplitLogWriter
 from .xunitwriter import XUnitWriter
-from .htmlfilewriter import HtmlFileWriter
+from .logreportwriters import LogWriter, ReportWriter
 
 
 class OutputBuilder(object):
@@ -57,49 +54,32 @@ class XUnitBuilder(object):
             LOGGER.output_file('XUnit', path)
 
 
-class _HTMLFileBuilder(object):
+
+class LogBuilder(object):
 
     def __init__(self, js_model):
         self._js_model = js_model
 
-    def _write_file(self, output, config, template):
-        outfile = codecs.open(output, 'wb', encoding='UTF-8') \
-            if isinstance(output, basestring) else output  # isinstance is unit test hook
-        with outfile:
-            writer = HtmlFileWriter(outfile, self._js_model, config)
-            writer.write(template)
-
-
-class LogBuilder(_HTMLFileBuilder):
-
-    def build(self, output, config):
+    def build(self, path, config):
         try:
-            self._write_file(output, config, 'log.html')
-            self._write_split_logs_if_needed(output)
+            LogWriter(self._js_model).write(path, config)
         except EnvironmentError, err:
             # Cannot use err.filename due to http://bugs.jython.org/issue1825
             # and thus error has wrong file name if writing split log fails.
-            LOGGER.error("Writing log file '%s' failed: %s" % (output, err.strerror))
+            LOGGER.error("Writing log file '%s' failed: %s" % (path, err.strerror))
         else:
-            LOGGER.output_file('Log', output)
-
-    def _write_split_logs_if_needed(self, output):
-        base = os.path.splitext(output)[0] if isinstance(output, basestring) else ''
-        for index, (keywords, strings) in enumerate(self._js_model.split_results):
-            index += 1  # enumerate accepts start index only in Py 2.6+
-            self._write_split_log(index, keywords, strings, '%s-%d.js' % (base, index))
-
-    def _write_split_log(self, index, keywords, strings, path):
-        with codecs.open(path, 'wb', encoding='UTF-8') as outfile:
-            writer = SplitLogWriter(outfile)
-            writer.write(keywords, strings, index, os.path.basename(path))
+            LOGGER.output_file('Log', path)
 
 
-class ReportBuilder(_HTMLFileBuilder):
+
+class ReportBuilder(object):
+
+    def __init__(self, js_model):
+        self._js_model = js_model
 
     def build(self, path, config):
         try:
-            self._write_file(path, config, 'report.html')
+            ReportWriter(self._js_model).write(path, config)
         except EnvironmentError, err:
             LOGGER.error("Writing report file '%s' failed: %s" % (path, err.strerror))
         else:
