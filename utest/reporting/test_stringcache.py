@@ -47,6 +47,13 @@ class TestStringCache(unittest.TestCase):
     def _generate_random_string(self, length):
         return ''.join(random.choice(string.digits) for _ in range(length))
 
+    def test_indices_reused_instances(self):
+        strings = ['', 'short', 'long'*1000, '']
+        indices1 = [self.cache.add(s) for s in strings]
+        indices2 = [self.cache.add(s) for s in strings]
+        for i1, i2 in zip(indices1, indices2):
+            assert_true(i1 is i2, 'not same: %s and %s' % (i1, i2))
+
 
 class TestStringIndex(unittest.TestCase):
 

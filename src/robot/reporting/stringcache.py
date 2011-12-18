@@ -30,14 +30,15 @@ class StringIndex(long):
 class StringCache(object):
     _compress_threshold = 80
     _use_compressed_threshold = 1.1
+    _zero_index = StringIndex(0)
 
     def __init__(self):
-        self._cache = {'*': StringIndex(0)}
+        self._cache = {'*': self._zero_index}
         self._index = 1
 
     def add(self, text):
         if not text:
-            return StringIndex(0)
+            return self._zero_index
         text = self._encode(text)
         if text not in self._cache:
             self._cache[text] = StringIndex(self._index)
