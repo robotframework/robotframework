@@ -34,15 +34,13 @@ class StringCache(object):
 
     def __init__(self):
         self._cache = {'*': self._zero_index}
-        self._index = 1
 
     def add(self, text):
         if not text:
             return self._zero_index
         text = self._encode(text)
         if text not in self._cache:
-            self._cache[text] = StringIndex(self._index)
-            self._index += 1
+            self._cache[text] = StringIndex(len(self._cache))
         return self._cache[text]
 
     def _encode(self, text):
