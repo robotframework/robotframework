@@ -14,14 +14,14 @@ class TestStringCache(unittest.TestCase):
         # To make test reproducable log the random seed if test fails
         self._seed = long(time.time() * 256)
         random.seed(self._seed)
-        self._text_cache = StringCache()
+        self.cache = StringCache()
 
     def _verify_text(self, string, expected):
-        self._text_cache.add(string)
-        assert_equals(('*', expected), self._text_cache.dump())
+        self.cache.add(string)
+        assert_equals(('*', expected), self.cache.dump())
 
     def _compress(self, text):
-        return self._text_cache._encode(text)
+        return self.cache._encode(text)
 
     def test_short_test_is_not_compressed(self):
         self._verify_text('short', '*short')
@@ -32,16 +32,16 @@ class TestStringCache(unittest.TestCase):
 
     def test_coded_string_is_at_most_1_characters_longer_than_raw(self):
         for i in range(300):
-            id = self._text_cache.add(self._generate_random_string(i))
-            assert_true(i+1 >= len(self._text_cache.dump()[id]),
-                        msg='len(self._text_cache.dump()[id]) (%s) > i+1 (%s) [test seed = %s]'  % \
-                            (len(self._text_cache.dump()[id]), i+1, self._seed))
+            id = self.cache.add(self._generate_random_string(i))
+            assert_true(i+1 >= len(self.cache.dump()[id]),
+                        'len(self._text_cache.dump()[id]) (%s) > i+1 (%s) [test seed = %s]'
+                        % (len(self.cache.dump()[id]), i+1, self._seed))
 
     def test_long_random_strings_are_compressed(self):
         for i in range(30):
             value = self._generate_random_string(300)
-            id = self._text_cache.add(value)
-            assert_equals(self._compress(value), self._text_cache.dump()[id],\
+            id = self.cache.add(value)
+            assert_equals(self._compress(value), self.cache.dump()[id],
                           msg='Did not compress [test seed = %s]' % self._seed)
 
     def _generate_random_string(self, length):
