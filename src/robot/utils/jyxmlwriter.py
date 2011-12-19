@@ -17,7 +17,7 @@ from javax.xml.transform.sax import SAXTransformerFactory
 from javax.xml.transform.stream import StreamResult
 from org.xml.sax.helpers import AttributesImpl
 
-from abstractxmlwriter import AbstractXmlWriter
+from .abstractxmlwriter import AbstractXmlWriter
 
 
 class XmlWriter(AbstractXmlWriter):
