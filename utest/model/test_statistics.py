@@ -78,7 +78,7 @@ class TestStatisticsNotSoSimple(unittest.TestCase):
         assert_equals(len(s2.suites), 0)
 
     def test_tags(self):
-        # Tag stats are tested more thoroughly in their own suite.
+        # Tag stats are tested more thoroughly in test_tagstatistics.py
         tags = self.statistics.tags
         verify_stat(tags.tags['smoke'], 'smoke', 2, 2, True, False)
         verify_stat(tags.tags['t1'], 't1', 3, 2, False, False)
