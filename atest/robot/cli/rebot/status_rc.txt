@@ -12,6 +12,7 @@ ${MISCDIR}         ${CURDIR}/../../../testdata/misc
 ${PASSING TESTS}   ${MISCDIR}/normal.html
 ${FAILING TESTS}   ${MISCDIR}/pass_and_fail.html
 ${REPORT}          ${TEMPDIR}${/}robot-testing-report.html
+${NO OUTPUTS}      [ ERROR ] No outputs created.\n\nTry --help for usage information.
 
 *** Test Cases ***
 
@@ -30,9 +31,9 @@ Zero RC when all tests pass with --NoStatusRC
 Zero RC when critical tests fail with --NoStatusRC
     --nostatusrc ${FAILING}       rc=0
 
-DATA_ERROR (252) when no output is created
-    ${PASSING}                    rc=252    report=NONE
-    --nostatusrc ${FAILING}       rc=252    report=NONE
+Error when no output is created
+    ${PASSING}                    rc=252    output=${NO OUTPUTS}  report=NONE
+    --nostatusrc ${FAILING}       rc=252    output=${NO OUTPUTS}  report=NONE
 
 
 *** Keywords ***
@@ -47,7 +48,9 @@ Remove input files
     Remove Files  ${PASSING}  ${FAILING}
 
 Run Rebot and Verify RC
-    [Arguments]  ${options & source}  ${rc}=  ${report}=${REPORT}
-    ${returned}  ${output} =  Run And Return RC And Output  ${REBOT} --log NONE --report ${report} ${options & source}
-    Run Keyword If  ${rc} != ${returned}  Log  ${output}
-    Should Be Equal As Integers  ${returned}  ${rc}
+    [Arguments]  ${options & source}  ${rc}=  ${output}=  ${report}=${REPORT}
+    ${returned rc}  ${returned output} =  Run And Return RC And Output
+    ...  ${REBOT} --log NONE --report ${report} ${options & source}
+    Run Keyword If  ${rc} != ${returned rc}  Log  ${output}
+    Should Be Equal As Integers  ${returned rc}  ${rc}
+    Run Keyword If  """${output}"""  Should Be Equal  ${returned output}  ${output}
