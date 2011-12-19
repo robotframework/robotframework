@@ -13,6 +13,11 @@ Outputs generated at runtime should have correct line separators
     Outputs Should Have Correct Line Separators
     ...    output.xml    log.html    report.html    xunit.xml    debug.txt
 
+Split logs generated at runtime should have correct line separators
+    Run Tests    -l log --splitlog -L DEBUG    misc/pass_and_fail.html
+    Outputs Should Have Correct Line Separators
+    ...    output.xml    log.html    log-1.js    log-2.js    log-3.js
+
 Outputs generated with rebot should have correct line separators
     Copy File    ${OUTFILE}    ${REBOT INFILE}
     Run Rebot    -l log -r report -x xunit -L DEBUG    ${REBOT INFILE}
