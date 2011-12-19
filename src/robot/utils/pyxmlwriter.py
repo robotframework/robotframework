@@ -16,7 +16,7 @@ import sys
 from xml.sax.saxutils import XMLGenerator
 from xml.sax.xmlreader import AttributesImpl
 
-from abstractxmlwriter import AbstractXmlWriter
+from .abstractxmlwriter import AbstractXmlWriter
 
 
 class XmlWriter(AbstractXmlWriter):
@@ -29,9 +29,8 @@ class XmlWriter(AbstractXmlWriter):
         self.closed = False
 
     def _create_output(self, output):
-        if isinstance(output, basestring):
-            return open(output, 'wb')
-        return output
+        return open(output, 'w') \
+            if isinstance(output, basestring) else output
 
     def _start(self, name, attrs):
         self._writer.startElement(name, AttributesImpl(attrs))

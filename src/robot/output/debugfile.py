@@ -12,11 +12,10 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-
 from robot import utils
 
-from logger import LOGGER
-from loggerhelper import IsLogged
+from .logger import LOGGER
+from .loggerhelper import IsLogged
 
 
 def DebugFile(path):
@@ -24,23 +23,25 @@ def DebugFile(path):
         LOGGER.info('No debug file')
         return None
     try:
-        LOGGER.info('Debug file: %s' % path)
-        return _DebugFileWriter(path)
-    except:
+        outfile = open(path, 'w')
+    except EnvironmentError, err:
         LOGGER.error("Opening debug file '%s' failed and writing to debug file "
-                     "is disabled. Error: %s" % (path, utils.get_error_message()))
+                     "is disabled. Error: %s" % (path, err.strerror))
         return None
+    else:
+        LOGGER.info('Debug file: %s' % path)
+        return _DebugFileWriter(outfile)
 
 
 class _DebugFileWriter:
-
     _separators = {'SUITE': '=', 'TEST': '-', 'KW': '~'}
+    _setup_or_teardown = ('setup', 'teardown')
 
-    def __init__(self, path):
+    def __init__(self, outfile):
         self._indent = 0
         self._kw_level = 0
         self._separator_written_last = False
-        self._file = open(path, 'wb')
+        self._outfile = outfile
         self._is_logged = IsLogged('DEBUG')
 
     def start_suite(self, suite):
@@ -53,7 +54,7 @@ class _DebugFileWriter:
         self._end('SUITE', suite.longname, suite.elapsedtime)
         self._separator('SUITE')
         if self._indent == 0:
-            LOGGER.output_file('Debug', self._file.name)
+            LOGGER.output_file('Debug', self._outfile.name)
             self.close()
 
     def start_test(self, test):
@@ -81,11 +82,11 @@ class _DebugFileWriter:
             self._write(msg.message)
 
     def close(self):
-        if not self._file.closed:
-            self._file.close()
+        if not self._outfile.closed:
+            self._outfile.close()
 
     def _get_kw_type(self, kw):
-        if kw.type in ['setup','teardown']:
+        if kw.type in self._setup_or_teardown:
             return kw.type.upper()
         return 'KW'
 
@@ -99,11 +100,10 @@ class _DebugFileWriter:
         self._write('+%s END %s: %s (%s)' % ('-'*self._indent, type_, name, elapsed))
 
     def _separator(self, type_):
-        self._write(self._separators[type_] * 78, True)
+        self._write(self._separators[type_] * 78, separator=True)
 
     def _write(self, text, separator=False):
-        if self._separator_written_last and separator:
-            return
-        self._file.write(utils.unic(text).encode('UTF-8').rstrip() + '\n')
-        self._file.flush()
-        self._separator_written_last = separator
+        if not (separator and self._separator_written_last):
+            self._outfile.write(text.encode('UTF-8').rstrip() + '\n')
+            self._outfile.flush()
+            self._separator_written_last = separator
