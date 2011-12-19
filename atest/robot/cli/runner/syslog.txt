@@ -29,7 +29,7 @@ Syslog file set to NONE
 Invalid syslog file
     Set Environment Variable  ROBOT_SYSLOG_FILE  ${CLI OUTDIR}
     ${output} =  Run Some Tests
-    Should Contain  ${output}  Opening syslog file '${CLI OUTDIR}' failed: IOError:
+    Should Start With  ${output}  [ ERROR ] Opening syslog file '${CLI OUTDIR}' failed:
 
 Setting syslog Level
     Set Environment Variable  ROBOT_SYSLOG_FILE  ${CLI OUTDIR}${/}syslog.txt
@@ -48,5 +48,5 @@ Setting syslog Level
 Invalid syslog level
     Set Environment Variable  ROBOT_SYSLOG_LEVEL  invalid
     ${output} =  Run Some Tests
-    Should Contain  ${output}  Opening syslog file '${CLI OUTDIR}${/}syslog.txt' failed: Invalid log level 'invalid'
+    Should Start With  ${output}  [ ERROR ] Opening syslog file '${CLI OUTDIR}${/}syslog.txt' failed: Invalid log level 'invalid'
     [Teardown]  Delete Environment Variable  ROBOT_SYSLOG_LEVEL

@@ -14,7 +14,7 @@
 
 import os
 
-from robot import utils
+from robot.errors import DataError
 
 from .filelogger import FileLogger
 from .loggerhelper import AbstractLogger, AbstractLoggerProxy
@@ -83,8 +83,8 @@ class Logger(AbstractLogger):
             return
         try:
             logger = FileLogger(path, level)
-        except EnvironmentError, err:
-            self.error("Opening syslog file '%s' failed: %s" % (path, err.strerror))
+        except DataError, err:
+            self.error("Opening syslog file '%s' failed: %s" % (path, unicode(err)))
         else:
             self.register_logger(logger)
 

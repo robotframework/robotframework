@@ -1,5 +1,4 @@
 import unittest
-import os
 from StringIO import StringIO
 
 from robot import utils
@@ -42,7 +41,6 @@ class TestFileLogger(unittest.TestCase):
         self._verify_message('20060613 08:37:42.123 | DEBUG | msg\n')
 
     def _verify_message(self, expected):
-        expected = expected.replace('\n', os.linesep)
         assert_equals(self.logger._writer.getvalue(), expected)
 
 if __name__ == "__main__":

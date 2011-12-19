@@ -12,8 +12,7 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-import os
-import codecs
+from robot.errors import DataError
 
 from .loggerhelper import AbstractLogger
 
@@ -25,13 +24,16 @@ class FileLogger(AbstractLogger):
         self._writer = self._get_writer(path)  # unit test hook
 
     def _get_writer(self, path):
-        return codecs.open(path, 'wb', encoding='UTF-8')
+        try:
+            return open(path, 'w')
+        except EnvironmentError, err:
+            raise DataError(err.strerror)
 
     def message(self, msg):
         if self._is_logged(msg.level) and not self._writer.closed:
             entry = '%s | %s | %s\n' % (msg.timestamp, msg.level.ljust(5),
                                         msg.message)
-            self._writer.write(entry.replace('\n', os.linesep))
+            self._writer.write(entry.encode('UTF-8'))
 
     def start_suite(self, suite):
         self.info("Started test suite '%s'" % suite.name)
