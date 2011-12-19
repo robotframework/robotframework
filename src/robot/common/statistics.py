@@ -277,7 +277,7 @@ class TagStatDoc:
         self._pattern = pattern
 
     def matches(self, tag):
-        return utils.matches(tag, self._pattern)
+        return utils.matches(tag, self._pattern, ignore=['_'])
 
 
 class TagStatLink:

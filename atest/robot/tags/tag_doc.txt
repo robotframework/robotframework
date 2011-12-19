@@ -14,7 +14,7 @@ Specify Tag Doc With Pattern
     1    d1    Doc for many tags
 
 Tag Doc With Multiple Matches
-    2    d2    Doc for many tags & More doc
+    2    d_2    Doc for many tags & More doc
 
 Tag Doc With Formatting
     4    t1    http://some.url *bold*
@@ -28,8 +28,8 @@ Tag Doc For Combined Statistics
 Run Tests With Tag Docs
     ${opts} =  Catenate
     ...  --tagdoc f1:Some_documentation
-    ...  --tagdoc t1:http://some.url_*bold*
-    ...  --tagdoc d?:Doc_for_many_tags
+    ...  --tagdoc t_1:http://some.url_*bold*
+    ...  --tagdoc _d_?_:Doc_for_many_tags
     ...  --tagdoc D2:More_doc
     ...  --tagstatcombine d*:DX
     Run Tests  ${opts}  misc/normal.html

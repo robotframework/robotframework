@@ -174,6 +174,35 @@ class TestTagStatistics(unittest.TestCase):
                         ('t1', '', 2), ('t2', '', 1), ('t3', '', 1)])
 
 
+class TestTagStatDoc(unittest.TestCase):
+
+    def test_simple(self):
+        builder = TagStatisticsBuilder(docs=[('t1', 'doc')])
+        builder.add_test(TestCase(tags=['t1', 't2']))
+        builder.add_test(TestCase(tags=['T 1']))
+        builder.add_test(TestCase(tags=['T_1'], status='PASS'))
+        self._verify_stats(builder.stats.tags['t1'], 'doc', 2, 1)
+
+    def test_pattern(self):
+        builder = TagStatisticsBuilder(docs=[('t?', '*doc*')])
+        builder.add_test(TestCase(tags=['t1', 'T2']))
+        builder.add_test(TestCase(tags=['_t__1_', 'T 3']))
+        self._verify_stats(builder.stats.tags['t1'], '*doc*', 2)
+        self._verify_stats(builder.stats.tags['t2'], '*doc*', 1)
+        self._verify_stats(builder.stats.tags['t3'], '*doc*', 1)
+
+    def test_multiple_matches(self):
+        builder = TagStatisticsBuilder(docs=[('t_1', 'd1'), ('t?', 'd2')])
+        builder.add_test(TestCase(tags=['t1', 't_2']))
+        self._verify_stats(builder.stats.tags['t1'], 'd1 & d2', 1)
+        self._verify_stats(builder.stats.tags['t2'], 'd2', 1)
+
+    def _verify_stats(self, stat, doc, failed, passed=0):
+        assert_equals(stat.doc, doc)
+        assert_equals(stat.failed, failed)
+        assert_equals(stat.passed, passed)
+
+
 class TestTagStatLink(unittest.TestCase):
 
     def test_valid_string_is_parsed_correctly(self):

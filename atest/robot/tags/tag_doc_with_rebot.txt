@@ -14,7 +14,7 @@ Specify Tag Doc With Pattern
     1    d1    Doc for many rebot tags
 
 Tag Doc With Multiple Matches
-    2    d2    Doc for many rebot tags & More doc
+    2    d_2    Doc for many rebot tags & More doc
 
 Tag Doc With Formatting
     4    t1    http://some.url *bold*
@@ -29,8 +29,8 @@ Run Tests And Rebot With Tag Doc
     Run Tests Without Processing Output  ${EMPTY}  misc/normal.html
     ${opts} =  Catenate
     ...  --tagdoc f1:Some_documentation_for_rebot
-    ...  --tagdoc t1:http://some.url_*bold*
-    ...  --tagdoc d?:Doc_for_many_rebot_tags
+    ...  --tagdoc t_1:http://some.url_*bold*
+    ...  --tagdoc _d_?_:Doc_for_many_rebot_tags
     ...  --tagdoc D2:More_doc
     ...  --tagstatcombine d*:DX
     Run Rebot  ${opts}  ${OUTFILE}
