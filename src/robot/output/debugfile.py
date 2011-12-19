@@ -25,8 +25,7 @@ def DebugFile(path):
     try:
         outfile = open(path, 'w')
     except EnvironmentError, err:
-        LOGGER.error("Opening debug file '%s' failed and writing to debug file "
-                     "is disabled. Error: %s" % (path, err.strerror))
+        LOGGER.error("Opening debug file '%s' failed: %s" % (path, err.strerror))
         return None
     else:
         LOGGER.info('Debug file: %s' % path)
