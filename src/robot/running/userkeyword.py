@@ -21,11 +21,11 @@ from robot.variables import is_list_var, VariableSplitter
 from robot.output import LOGGER
 from robot import utils
 
-from keywords import Keywords
-from fixture import Teardown, KeywordTeardownListener
-from timeouts import KeywordTimeout
-from arguments import UserKeywordArguments
-from runerrors import  KeywordRunErrors
+from .keywords import Keywords
+from .fixture import Teardown, KeywordTeardownListener
+from .timeouts import KeywordTimeout
+from .arguments import UserKeywordArguments
+from .runerrors import  KeywordRunErrors
 
 
 class UserLibrary(BaseLibrary):
