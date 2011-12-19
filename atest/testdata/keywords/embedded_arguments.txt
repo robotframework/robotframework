@@ -14,6 +14,11 @@ Complex Embedded Arguments
     When this "test case" is *executed*
     Then this "issue" is about to be done!
 
+Argument Namespaces with Embedded Arguments
+    ${var}=  Set Variable  hello
+    My embedded warrior
+    Should be equal  ${var}  hello
+
 Embedded Arguments as Variables
     ${name}  ${item} =  User ${42} Selects ${EMPTY} From Webshop
     Should Be Equal  ${name}-${item}  42-
@@ -135,6 +140,9 @@ User ${user} Selects ${item} From Webshop
 
 ${prefix:Given|When|Then} this "${item}" ${no good name for this arg ...}
     Log  ${item}-${no good name for this arg ...}
+
+My embedded ${var}
+    Should be equal  ${var}  warrior
 
 ${x:x} gets ${y:\w} from the ${z:.}
     Should Be Equal  ${x}-${y}-${z}  x-y-z

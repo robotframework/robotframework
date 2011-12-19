@@ -17,6 +17,9 @@ Complex Embedded Arguments
     Check Log Message  ${tc.kws[1].kws[0].msgs[0]}  test case-is *executed*
     Check Log Message  ${tc.kws[2].kws[0].msgs[0]}  issue-is about to be done!
 
+Argument Namespaces with Embedded Arguments
+    Check Test Case  ${TEST NAME}
+
 Embedded Arguments as Variables
     ${tc} =  Check Test Case  ${TEST NAME}
     Should Be Equal  ${tc.kws[0].name}  \${name}, \${item} = User \${42} Selects \${EMPTY} From Webshop
