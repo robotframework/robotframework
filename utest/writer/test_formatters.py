@@ -6,7 +6,7 @@ from robot.writer.tableformatters import RowSplitter
 from robot.utils.asserts import assert_equals
 
 
-class TestTxtFormatter(unittest.TestCase):
+class TestRowSplitter(unittest.TestCase):
 
     def test_escaping_empty_cells_at_eol(self):
         formatter = RowSplitter(cols=3)
@@ -14,7 +14,15 @@ class TestTxtFormatter(unittest.TestCase):
                                        [['Some', 'text', '${EMPTY}'],
                                         ['...', 'with empty']])
 
-    def test_escaping(self):
+    def test_splitting_inside_comment(self):
+        formatter = RowSplitter(cols=3)
+        assert_equals(formatter.split(['Kw', 'Arg', '#Comment in', 'many cells'], 0),
+                      [['Kw', 'Arg', '#Comment in'], ['...', '#many cells']])
+
+
+class TestTxtFormatter(unittest.TestCase):
+
+   def test_escaping(self):
         formatter = TxtFormatter()
         assert_equals(formatter._escape(['so  me']), ['so \ me'])
 

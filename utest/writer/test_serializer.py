@@ -118,8 +118,6 @@ class TestHTMLSerialization(_SerializerTest):
 
     def _serializer(self, datafile):
         result= self._serialize(datafile, 'html')
-        with open('foo.html', 'w') as o:
-            o.write(result)
         return result
 
     def test_serializer_with_html_testcase_file(self):
