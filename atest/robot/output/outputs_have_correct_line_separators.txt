@@ -1,0 +1,28 @@
+*** Settings ***
+Default Tags    regression  pybot  jybot
+Resource        atest_resource.txt
+Library         OutputVerifierLibrary.py
+
+*** Variables ***
+${REBOT INFILE}    ${TEMPDIR}/robot-rebot-infile.xml
+
+*** Test Cases ***
+
+Outputs generated at runtime should have correct line separators
+    Run Tests    -l log -r report -x xunit -b debug -L DEBUG    misc/pass_and_fail.html
+    Outputs Should Have Correct Line Separators
+    ...    output.xml    log.html    report.html    xunit.xml    debug.txt
+
+Outputs generated with rebot should have correct line separators
+    Copy File    ${OUTFILE}    ${REBOT INFILE}
+    Run Rebot    -l log -r report -x xunit -L DEBUG    ${REBOT INFILE}
+    Outputs Should Have Correct Line Separators
+    ...    output.xml    log.html    report.html    xunit.xml
+    [Teardown]    Remove File    ${REBOT INFILE}
+
+*** Keywords ***
+
+Outputs Should Have Correct Line Separators
+    [Arguments]    @{outputs}
+    :FOR    ${name}    IN    @{outputs}
+    \    Output Should Have Correct Line Separators    ${OUTDIR}${/}${name}
