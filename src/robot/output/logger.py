@@ -12,15 +12,14 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-
 import os
 
 from robot import utils
 
-from loggerhelper import AbstractLogger, AbstractLoggerProxy, Message
-from filelogger import FileLogger
-from monitor import CommandLineMonitor
-from stdoutlogsplitter import StdoutLogSplitter
+from .filelogger import FileLogger
+from .loggerhelper import AbstractLogger, AbstractLoggerProxy
+from .monitor import CommandLineMonitor
+from .stdoutlogsplitter import StdoutLogSplitter
 
 
 class Logger(AbstractLogger):
@@ -84,9 +83,8 @@ class Logger(AbstractLogger):
             return
         try:
             logger = FileLogger(path, level)
-        except:
-            self.error("Opening syslog file '%s' failed: %s"
-                       % (path, utils.get_error_message()))
+        except EnvironmentError, err:
+            self.error("Opening syslog file '%s' failed: %s" % (path, err.strerror))
         else:
             self.register_logger(logger)
 

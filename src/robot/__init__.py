@@ -42,15 +42,15 @@ if sys.platform.startswith('java') and os.sep == '\\' and sys.version_info < (2,
 
 if 'pythonpathsetter' not in sys.modules:
     import pythonpathsetter
-import utils
-from output import Output, LOGGER, pyloggingconf
-from conf import RobotSettings, RebotSettings
-from running import TestSuite, STOP_SIGNAL_MONITOR
+from robot.conf import RobotSettings, RebotSettings
+from robot.errors import (DataError, Information, INFO_PRINTED, DATA_ERROR,
+                          STOPPED_BY_USER, FRAMEWORK_ERROR)
 from robot.reporting import ResultWriter
-from errors import (DataError, Information, INFO_PRINTED, DATA_ERROR,
-                    STOPPED_BY_USER, FRAMEWORK_ERROR)
-from variables import init_global_variables
-from version import get_version, get_full_version
+from robot.running import TestSuite, STOP_SIGNAL_MONITOR
+from robot.output import Output, LOGGER, pyloggingconf
+from robot.variables import init_global_variables
+from robot.version import get_version, get_full_version
+from robot import utils
 
 
 __version__ = get_version()
@@ -99,6 +99,8 @@ def _execute(method, datasources, options):
         return FRAMEWORK_ERROR
     else:
         return rc
+    finally:
+        LOGGER.close()
 
 
 def run(*datasources, **options):
@@ -131,7 +133,6 @@ def run(*datasources, **options):
     if settings.is_rebot_needed():
         output, settings = settings.get_rebot_datasource_and_settings()
         ResultWriter(output).write_results(settings)
-    LOGGER.close()
     return suite.return_code
 
 
@@ -156,7 +157,6 @@ def run_rebot(*datasources, **options):
     rc = ResultWriter(*datasources).write_results(settings)
     if rc < 0:
         raise DataError('No outputs created.')
-    LOGGER.close()
     return rc
 
 

@@ -66,16 +66,17 @@ class TestReporting(unittest.TestCase):
         self._verify_report(report.value)
 
     def test_log_generation_removes_keywords_from_execution_result(self):
-        self._write_results(log=ClosableOutput('log.html'))
-        for test in self.execution_result.suite.tests:
+        execution_result = self._write_results(log=ClosableOutput('log.html'))
+        for test in execution_result.suite.tests:
             assert_equals(len(test.keywords), 0)
 
     def _write_results(self, **settings):
-        self.execution_result = self._get_execution_result()
+        execution_result = self._get_execution_result()
         settings = StubSettings(**settings)
-        results = StubResults(self.execution_result, settings)
+        results = StubResults(execution_result, settings)
         rc = ResultWriter().write_results(settings, results)
         assert_equals(rc, 1)
+        return execution_result
 
     def _get_execution_result(self):
         suite = TestSuite(name=self.EXPECTED_SUITE_NAME)
