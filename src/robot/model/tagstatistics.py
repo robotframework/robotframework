@@ -15,8 +15,10 @@
 import re
 
 from robot import utils
+
 from .tags import TagPatterns
 from .stats import TagStat, CombinedTagStat
+from .criticality import Criticality
 
 
 class TagStatistics(object):
@@ -34,8 +36,8 @@ class TagStatistics(object):
 
 class TagStatisticsBuilder(object):
 
-    def __init__(self, criticality, included=None, excluded=None, combined=None,
-                 docs=None, links=None):
+    def __init__(self, criticality=None, included=None, excluded=None,
+                 combined=None, docs=None, links=None):
         self._included = TagPatterns(included)
         self._excluded = TagPatterns(excluded)
         self._info = TagStatInfo(criticality, docs, links)
@@ -65,8 +67,8 @@ class TagStatisticsBuilder(object):
 
 class TagStatInfo(object):
 
-    def __init__(self, criticality, docs=None, links=None):
-        self._criticality = criticality
+    def __init__(self, criticality=None, docs=None, links=None):
+        self._criticality = criticality or Criticality()
         self._docs = [TagStatDoc(*doc) for doc in docs or []]
         self._links = [TagStatLink(*link) for link in links or []]
 
