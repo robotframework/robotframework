@@ -143,6 +143,12 @@ class StubResults(Results):
         if result:
             self.return_code = result.return_code
 
+    @property
+    def result(self):
+        if self._result is None:
+            raise AssertionError('Result should not be regenerated')
+        return self._result
+
 
 class ClosableOutput(object):
 
