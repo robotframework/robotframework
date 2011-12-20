@@ -260,6 +260,14 @@ class String:
         reversed = self.split_string(string[::-1], separator, max_split)
         return [ r[::-1] for r in reversed ][::-1]
 
+    def split_string_to_characters(self, string):
+        """Splits the string` to characters.
+
+        Example:
+        | @{characters} = | Split String To Characters | ${string} |
+        """
+        return list(string)
+
     def fetch_from_left(self, string, marker):
         """Returns contents of the `string` before the first occurrence of `marker`.
 

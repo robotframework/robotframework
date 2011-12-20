@@ -1,374 +1,339 @@
+
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
-<html><head>
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-<meta name="generator" content="RobotIDE">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="RIDE" /> 
+<meta name="rf-template" content="False" /> 
 <style type="text/css">
 html {
-font-family: Arial,Helvetica,sans-serif;
-background-color: white;
-color: black;
-}
-p {
-max-width: 60em;
+  font-family: Arial,Helvetica,sans-serif;
+  background-color: white;
+  color: black;
 }
 table {
-border-collapse: collapse;
-empty-cells: show;
-margin: 1em 0em;
-border: 0.1em solid black;
+  border-collapse: collapse;
+  empty-cells: show;
+  margin: 1em 0em;
+  border: 1px solid black;
 }
 th, td {
-border-style: solid;
-border-width: 0.05em 0.1em;
-border-color: black;
-padding: 0.1em 0.2em;
-height: 1.5em;
+  border: 1px solid black;
+  padding: 0.1em 0.2em;
+  height: 1.5em;
+  width: 12em;
 }
 th {
-background-color: rgb(192, 192, 192);
-color: black;
-border-width: 0.1em;
-font-weight: bold;
-text-align: center;
-text-transform: capitalize;
-letter-spacing: 0.1em;
+  background-color: rgb(192, 192, 192);
+  color: black;
+  height: 1.7em;
+  font-weight: bold;
+  text-align: center;
+  letter-spacing: 0.1em;
 }
-/* Widths of named columns */
-col.name {
-width: 10em;
+td.name {
+  background-color: rgb(240, 240, 240);
+  letter-spacing: 0.1em;
 }
-.action, .value, .arg {
-width: 15em;
+td.name, th.name {
+  width: 10em;
 }
-/* Properties for the name column - td:first-child should work in CSS 2.1 avare browsers (tested in Firefox)
-- col.name is against specs but works in IE
-*/
-td:first-child, col.name {
-background-color: rgb(240, 240, 240);
-text-transform: capitalize;
-letter-spacing: 0.1em;
-}
-/* required for IE */
-th {
-font-style: normal;
-}
-</style><title>String</title>
-
+</style>
+<title>Split String</title>
 </head>
 <body>
-<h1>Split String (from Right)</h1>
-<table border="1">
-<colgroup span="99"><col class="name"><col class="value" span="4"></colgroup>
-<tbody>
+<h1>Split String</h1>
+<table id="settings" border="1">
 <tr>
-<th>Setting</th>
-<th>Value</th>
-<th>Value</th>
-<th>Value</th>
-<th>Value</th>
+<th class="name">Setting</th>
 </tr>
 <tr>
-<td>Force Tags</td>
-<td>pybot</td>
-<td>jybot</td>
-<td>regression</td>
-<td></td>
-</tr>
-<tr>
-<td>Suite Setup</td>
+<td class="name">Suite Setup</td>
 <td>Run Tests</td>
 <td></td>
 <td>standard_libraries${/}string${/}split_string.html</td>
 <td></td>
 </tr>
 <tr>
-<td>Resource</td>
+<td class="name">Force Tags</td>
+<td>pybot</td>
+<td>jybot</td>
+<td>regression</td>
+<td></td>
+</tr>
+<tr>
+<td class="name">Resource</td>
 <td>atest_resource.txt</td>
 <td></td>
 <td></td>
 <td></td>
 </tr>
 <tr>
-<td></td>
+<td class="name"></td>
 <td></td>
 <td></td>
 <td></td>
 <td></td>
 </tr>
-</tbody>
 </table>
-<table border="1">
-<colgroup span="99"><col class="name"><col class="value" span="4"></colgroup>
-<tbody>
+<table id="variables" border="1"></table>
+<table id="testcases" border="1">
 <tr>
-<th>Variable</th>
-<th>Value</th>
-<th>Value</th>
-<th>Value</th>
-<th>Value</th>
+<th class="name">Test Case</th>
 </tr>
 <tr>
-<td></td>
-<td></td>
-<td></td>
+<td class="name"><a name="test_Split String">Split String</a></td>
+<td>Check Test Case</td>
+<td>${TESTNAME}</td>
 <td></td>
 <td></td>
 </tr>
-</tbody>
+<tr>
+<td class="name"></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"><a name="test_Split String With Whitespaces and Separator Is None">Split String With Whitespaces and Separator Is None</a></td>
+<td>Check Test Case</td>
+<td>${TESTNAME}</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"><a name="test_Split String With Max Split 0">Split String With Max Split 0</a></td>
+<td>Check Test Case</td>
+<td>${TESTNAME}</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"><a name="test_Split String With Max Split 1">Split String With Max Split 1</a></td>
+<td>Check Test Case</td>
+<td>${TESTNAME}</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"><a name="test_Split String With Empty Separator">Split String With Empty Separator</a></td>
+<td>Check Test Case</td>
+<td>${TESTNAME}</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"><a name="test_Split String With Empty String">Split String With Empty String</a></td>
+<td>Check Test Case</td>
+<td>${TESTNAME}</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"><a name="test_Split String Separator not Found">Split String Separator not Found</a></td>
+<td>Check Test Case</td>
+<td>${TESTNAME}</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"><a name="test_Split String With Invalid Max Split">Split String With Invalid Max Split</a></td>
+<td>Check Test Case</td>
+<td>${TESTNAME}</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"><a name="test_Split String From Right">Split String From Right</a></td>
+<td>Check Test Case</td>
+<td>${TESTNAME}</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"><a name="test_Split String From Right With Whitespaces and Separator Is None">Split String From Right With Whitespaces and Separator Is None</a></td>
+<td>Check Test Case</td>
+<td>${TESTNAME}</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"><a name="test_Split String From Right With Max Split 0">Split String From Right With Max Split 0</a></td>
+<td>Check Test Case</td>
+<td>${TESTNAME}</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"><a name="test_Split String From Right With Max Split 1">Split String From Right With Max Split 1</a></td>
+<td>Check Test Case</td>
+<td>${TESTNAME}</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"><a name="test_Split String From Right With Empty Separator">Split String From Right With Empty Separator</a></td>
+<td>Check Test Case</td>
+<td>${TESTNAME}</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"><a name="test_Split String From Right With Empty String">Split String From Right With Empty String</a></td>
+<td>Check Test Case</td>
+<td>${TESTNAME}</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"><a name="test_Split String From Right Separator not Found">Split String From Right Separator not Found</a></td>
+<td>Check Test Case</td>
+<td>${TESTNAME}</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"><a name="test_Split String From Right With Invalid Max Split">Split String From Right With Invalid Max Split</a></td>
+<td>Check Test Case</td>
+<td>${TESTNAME}</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"><a name="test_Split String To Characters">Split String To Characters</a></td>
+<td>Check Test Case</td>
+<td>${TESTNAME}</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"><a name="test_Split Empty String To Characters">Split Empty String To Characters</a></td>
+<td>Check Test Case</td>
+<td>${TESTNAME}</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
 </table>
-<table border="1">
-<colgroup span="99"><col class="name"><col class="action"><col class="arg" span="3"></colgroup>
-<tbody>
-<tr>
-<th>Test Case</th>
-<th>Action</th>
-<th>Argument</th>
-<th>Argument</th>
-<th>Argument</th>
-</tr>
-<tr>
-<td>Split String</td>
-<td>Check Test Case</td>
-<td>${TESTNAME}</td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td>Split String With Whitespaces and Separator Is None</td>
-<td>Check Test Case</td>
-<td>${TESTNAME}</td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td>Split String With Max Split 0</td>
-<td>Check Test Case</td>
-<td>${TESTNAME}</td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td>Split String With Max Split 1</td>
-<td>Check Test Case</td>
-<td>${TESTNAME}</td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td>Split String With Empty Separator</td>
-<td>Check Test Case</td>
-<td>${TESTNAME}</td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td>Split String With Empty String</td>
-<td>Check Test Case</td>
-<td>${TESTNAME}</td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td>Split String Separator not Found</td>
-<td>Check Test Case</td>
-<td>${TESTNAME}</td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td>Split String&nbsp;With Invalid Max Split</td>
-<td>Check Test Case</td>
-<td>${TESTNAME}</td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td>Split String From Right</td>
-<td>Check Test Case</td>
-<td>${TESTNAME}</td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td>Split String From Right With Whitespaces and Separator Is None</td>
-<td>Check Test Case</td>
-<td>${TESTNAME}</td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td>Split String From Right With Max Split 0</td>
-<td>Check Test Case</td>
-<td>${TESTNAME}</td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td>Split String&nbsp;From Right With Max Split 1</td>
-<td>Check Test Case</td>
-<td>${TESTNAME}</td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td>Split String&nbsp;From Right With Empty Separator</td>
-<td>Check Test Case</td>
-<td>${TESTNAME}</td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td>Split String&nbsp;From Right With Empty String</td>
-<td>Check Test Case</td>
-<td>${TESTNAME}</td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td>Split String&nbsp;From Right Separator not Found</td>
-<td>Check Test Case</td>
-<td>${TESTNAME}</td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td>Split String&nbsp;From Right With Invalid Max Split</td>
-<td>Check Test Case</td>
-<td>${TESTNAME}</td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-</tbody>
-</table>
-<table border="1">
-<colgroup span="99"><col class="name"><col class="action"><col class="arg" span="3"></colgroup>
-<tbody>
-<tr>
-<th>Keyword</th>
-<th>Action</th>
-<th>Argument</th>
-<th>Argument</th>
-<th>Argument</th>
-</tr>
-<tr>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-</tbody>
-</table>
-</body></html>
+<table id="keywords" border="1"></table>
+</body>
+</html>
