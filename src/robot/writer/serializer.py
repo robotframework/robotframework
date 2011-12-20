@@ -13,6 +13,7 @@
 #  limitations under the License.
 
 import os
+import codecs
 
 from .writer import FileWriter
 
@@ -70,7 +71,7 @@ class SerializationContext(object):
     @property
     def output(self):
         if not self._output:
-            self._output = open(self._get_source(), 'wb')
+            self._output = codecs.open(self._get_source(), 'wb', 'UTF-8')
         return self._output
 
     @property
