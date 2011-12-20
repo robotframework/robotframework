@@ -41,7 +41,7 @@ class Namespace:
     A new instance of this class is created for each test suite.
     """
 
-    def __init__(self, suite, parent_vars, skip_imports=False):
+    def __init__(self, suite, parent_vars):
         if suite is not None:
             LOGGER.info("Initializing namespace for test suite '%s'" % suite.longname)
         self.variables = self._create_variables(suite, parent_vars)
@@ -52,9 +52,11 @@ class Namespace:
         self._testlibs = {}
         self._imported_resource_files = ImportCache()
         self._imported_variable_files = ImportCache()
+
+    def handle_imports(self):
         self._import_default_libraries()
-        if suite.source and not skip_imports:
-            self._handle_imports(suite.imports)
+        if self.suite.source:
+            self._handle_imports(self.suite.imports)
 
     def _create_variables(self, suite, parent_vars):
         variables = _VariableScopes(suite, parent_vars)
