@@ -44,11 +44,10 @@ class _TestDataFileFormatter(object):
 
 
 class TsvFormatter(_TestDataFileFormatter):
-    _padding = ''
 
     def __init__(self, cols=8):
         self._cols = cols
-        self._formatter = RowSplittingFormatter(self._padding, self._cols)
+        self._formatter = RowSplittingFormatter(self._cols)
 
     def _variable_table_formatter(self):
         return self._formatter
@@ -70,11 +69,10 @@ class TsvFormatter(_TestDataFileFormatter):
 
     def _pad(self, row):
         row = [cell.replace('\n', ' ') for cell in row]
-        return row + [self._padding] * (self._cols - len(row))
+        return row + [''] * (self._cols - len(row))
 
 
 class TxtFormatter(_TestDataFileFormatter):
-    _padding = ''
     _FIRST_ROW_LENGTH = 18
     _SETTING_NAME_WIDTH = 14
 
@@ -82,11 +80,10 @@ class TxtFormatter(_TestDataFileFormatter):
         self._cols = cols
 
     def _variable_table_formatter(self):
-        return RowSplittingFormatter(self._padding, self._cols)
+        return RowSplittingFormatter(self._cols)
 
     def _setting_table_formatter(self):
-        return SettingTableAligner(self._padding, self._cols,
-                                   self._SETTING_NAME_WIDTH)
+        return SettingTableAligner(self._cols, self._SETTING_NAME_WIDTH)
 
     def _test_table_formatter(self, tests):
         return self._indented_table_formatter(tests)
@@ -103,7 +100,7 @@ class TxtFormatter(_TestDataFileFormatter):
     def _indented_table_formatter(self, table):
         if self._should_align_columns(table):
             return ColumnAligner(self._FIRST_ROW_LENGTH, table)
-        return RowSplittingFormatter(self._padding, self._cols)
+        return RowSplittingFormatter(self._cols)
 
     def _should_align_columns(self, table):
         return bool(table.header[1:])
@@ -112,21 +109,45 @@ class TxtFormatter(_TestDataFileFormatter):
         return self._escape(row)
 
     def _escape(self, row):
+        return self._escape_consecutive_whitespace(
+            self._escape_empty_cell_from_start(row))
+
+    def _escape_empty_cell_from_start(self, row):
         if len(row) >= 2 and row[0] == '' and row[1] == '':
             row[1] = '\\'
+        return row
+
+    def _escape_consecutive_whitespace(self, row):
         return [re.sub('\s\s+(?=[^\s])',
                 lambda match: '\\'.join(match.group(0)), item.replace('\n', ' ')) for item in row]
 
 
 class PipeFormatter(TxtFormatter):
-    _padding = '  '
+
+    def _escape(self, row):
+        row = self._format_empty_cells(row)
+        return self._escape_consecutive_whitespace(self._escape_pipes(row))
+
+    def _format_empty_cells(self, row):
+        return ['  ' if not cell else cell for cell in row]
+
+    def _escape_pipes(self, row):
+        return [self._escape_pipes_from_cell(cell) for cell in row]
+
+    def _escape_pipes_from_cell(self, cell):
+        cell = cell.replace(' | ', ' \\| ')
+        if cell.startswith('| '):
+            cell = '\\' + cell
+        if cell.endswith(' |'):
+            cell = cell[:-1] + '\\|'
+        return cell
 
 
 class HtmlFormatter(_TestDataFileFormatter):
 
     def __init__(self):
         self._cols = 5
-        self._formatter = SplittingHtmlFormatter('', self._cols)
+        self._formatter = SplittingHtmlFormatter(self._cols)
 
     def empty_row(self):
         return [NameCell('')] + [HtmlCell('') for _ in range(self._cols-1)]

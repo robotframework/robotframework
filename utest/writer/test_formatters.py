@@ -1,7 +1,7 @@
 import unittest
 from robot.parsing.model import TestCaseTable, TestCaseFileSettingTable
 
-from robot.writer.formatters import TxtFormatter, HtmlFormatter, TsvFormatter
+from robot.writer.formatters import TxtFormatter, HtmlFormatter, TsvFormatter, PipeFormatter
 from robot.writer.tableformatters import RowSplitter, HtmlCell
 from robot.utils.asserts import assert_equals
 
@@ -27,6 +27,21 @@ class TestTxtFormatter(unittest.TestCase):
 
     def test_replacing_newlines(self):
         assert_equals(TxtFormatter()._escape(['so\nme']), ['so me'])
+
+
+class TestPipeFormatter(unittest.TestCase):
+
+    def test_escaping_pipes(self):
+        assert_equals(PipeFormatter()._escape(['so | me']), ['so \\| me'])
+        assert_equals(PipeFormatter()._escape(['|so|me|']), ['|so|me|'])
+        assert_equals(PipeFormatter()._escape(['so |']), ['so \\|'])
+        assert_equals(PipeFormatter()._escape(['| so']), ['\\| so'])
+
+    def test_empty_cell(self):
+        settings = TestCaseFileSettingTable(None)
+        settings.force_tags.value = ['f1', '', 'f3']
+        assert_equals(list(PipeFormatter().setting_rows(settings))[0],
+                      ['Force Tags    ', 'f1', '  ', 'f3'])
 
 
 class TestTsvFormatter(unittest.TestCase):

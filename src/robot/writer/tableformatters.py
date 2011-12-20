@@ -46,10 +46,9 @@ class _Formatter(object):
 
 class RowSplittingFormatter(_Formatter):
 
-    def __init__(self, padding, cols):
+    def __init__(self, cols):
         self._cols = cols
-        self._padding = padding
-        self._row_splitter = RowSplitter(padding, cols)
+        self._row_splitter = RowSplitter(cols)
 
     def format_simple_table(self, table):
         for row in self._rows_from_simple_table(table):
@@ -77,8 +76,8 @@ class _Aligner(_Formatter):
 
 class SettingTableAligner(_Aligner):
 
-    def __init__(self, padding, cols, first_column_width):
-        self._row_splitter = RowSplitter(padding, cols)
+    def __init__(self, cols, first_column_width):
+        self._row_splitter = RowSplitter(cols)
         self._widths = [first_column_width]
 
     def format_simple_table(self, table):
@@ -151,7 +150,7 @@ class SplittingHtmlFormatter(RowSplittingFormatter):
 
     def _format_documentation(self, doc, indent):
         if indent:
-            start = [NameCell(self._padding), HtmlCell(doc.setting_name)]
+            start = [NameCell(), HtmlCell(doc.setting_name)]
             value = doc.as_list()[1:]
             if len(value) == 1:
                 return [start + [DocumentationCell(doc.value, self._cols-1-indent)]]
@@ -162,12 +161,12 @@ class SplittingHtmlFormatter(RowSplittingFormatter):
     def _format_row(self, row):
         if row and not isinstance(row[0], basestring):
             return row
-        return self._pad([NameCell(row[0])] + [Cell(c) for c in row[1:]])
+        return self._pad([NameCell(row[0])] + [HtmlCell(c) for c in row[1:]])
 
     def _pad(self, row, colspan=False, indent=0):
         if colspan:
             return row
-        return row + [HtmlCell(self._padding)] * (self._cols - len(row) - indent)
+        return row + [HtmlCell()] * (self._cols - len(row) - indent)
 
 
 class HtmlCell(object):
@@ -191,7 +190,7 @@ class HtmlCell(object):
 
 class NameCell(HtmlCell):
 
-    def __init__(self, name, attributes=None):
+    def __init__(self, name='', attributes=None):
         HtmlCell.__init__(self, name, attributes)
         self.attributes.update({'class': 'name'})
 
@@ -226,9 +225,8 @@ class RowSplitter(object):
     _empty_cell_escape = '${EMPTY}'
     _line_continuation = '...'
 
-    def __init__(self, padding='', cols=8):
+    def __init__(self, cols=8):
         self._cols = cols
-        self._padding = padding
 
     def split(self, row, indent):
         self._in_comment = False
@@ -263,4 +261,4 @@ class RowSplitter(object):
         return data
 
     def _indent(self, row, indent):
-        return [self._padding]*indent + row
+        return [''] * indent + row
