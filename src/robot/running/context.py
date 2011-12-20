@@ -12,6 +12,7 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+from robot.errors import DataError
 from robot.variables import GLOBAL_VARIABLES
 
 
@@ -44,12 +45,14 @@ EXECUTION_CONTEXTS = ExecutionContexts()
 
 
 class _ExecutionContext(object):
+    _started_keywords_threshold = 100
 
     def __init__(self, namespace, output, dry_run=False):
         self.namespace = namespace
         self.output = output
         self.dry_run = dry_run
         self._in_teardown = 0
+        self._started_keywords = 0
 
     @property
     def teardown(self):
@@ -119,10 +122,14 @@ class _ExecutionContext(object):
         return self.namespace.get_handler(name)
 
     def start_keyword(self, keyword):
+        self._started_keywords += 1
+        if self._started_keywords > self._started_keywords_threshold:
+            raise DataError('Maximum limit of started keywords exceeded.')
         self.output.start_keyword(keyword)
 
     def end_keyword(self, keyword):
         self.output.end_keyword(keyword)
+        self._started_keywords -= 1
 
     def start_user_keyword(self, kw):
         self.namespace.start_user_keyword(kw)

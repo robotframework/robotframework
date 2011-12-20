@@ -1,0 +1,53 @@
+*** Settings ***
+Suite Teardown    Recursion With Run Keyword
+
+*** Variables ***
+${PTD FAILED}        \n\nAlso teardown of the parent suite failed.
+${LIMIT EXCEEDED}    Maximum limit of started keywords exceeded.${PTD FAILED}
+
+
+*** Test Cases ***
+
+Infinite recursion
+    [Documentation]    FAIL ${LIMIT EXCEEDED}
+    Recursion
+
+Infinite cyclic recursion
+    [Documentation]    FAIL ${LIMIT EXCEEDED}
+    Cyclic recursion
+
+Infinite recursion with Run Keyword
+    [Documentation]    FAIL ${LIMIT EXCEEDED}
+    Recursion with Run Keyword
+
+Recursion below the recursion limit is ok
+    [Documentation]    FAIL Still below limit!${PTD FAILED}
+    Limited recursion 1
+    Limited recursion 2
+
+
+*** Keywords ***
+
+Recursion
+    Recursion
+
+Limited recursion 1
+    [Arguments]    ${limit}=${45}
+    Run Keyword If    ${limit} > 0    Limited recursion 1   ${limit - 1}
+
+Limited recursion 2
+    [Arguments]    ${limit}=${90}
+    Run Keyword If    ${limit} < 0    Fail    Still below limit!
+    Limited recursion 2     ${limit - 1}
+
+Cyclic recursion
+    Cyclic recursion 2
+
+Cyclic recursion 2
+    Cyclic recursion 3
+
+Cyclic recursion 3
+    Cyclic recursion
+
+Recursion With Run Keyword
+    Run Keyword    Recursion With Run Keyword
