@@ -15,7 +15,7 @@
 import re
 
 from .tableformatters import (RowSplittingFormatter, SplittingHtmlFormatter,
-    ColumnAligner, SettingTableAligner, NameCell, HeaderCell, Cell)
+    ColumnAligner, SettingTableAligner, NameCell, HeaderCell, HtmlCell)
 
 
 class _TestDataFileFormatter(object):
@@ -69,6 +69,7 @@ class TsvFormatter(_TestDataFileFormatter):
         return self._pad(row)
 
     def _pad(self, row):
+        row = [cell.replace('\n', ' ') for cell in row]
         return row + [self._padding] * (self._cols - len(row))
 
 
@@ -113,7 +114,8 @@ class TxtFormatter(_TestDataFileFormatter):
     def _escape(self, row):
         if len(row) >= 2 and row[0] == '' and row[1] == '':
             row[1] = '\\'
-        return [re.sub('\s\s+(?=[^\s])', lambda match: '\\'.join(match.group(0)), item) for item in row]
+        return [re.sub('\s\s+(?=[^\s])',
+                lambda match: '\\'.join(match.group(0)), item.replace('\n', ' ')) for item in row]
 
 
 class PipeFormatter(TxtFormatter):
@@ -127,7 +129,7 @@ class HtmlFormatter(_TestDataFileFormatter):
         self._formatter = SplittingHtmlFormatter('', self._cols)
 
     def empty_row(self):
-        return [NameCell('')] + [Cell('') for _ in range(self._cols-1)]
+        return [NameCell('')] + [HtmlCell('') for _ in range(self._cols-1)]
 
     def _setting_table_formatter(self):
         return self._formatter

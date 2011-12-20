@@ -147,7 +147,7 @@ class SplittingHtmlFormatter(RowSplittingFormatter):
         if isinstance(item, Documentation):
             return self._format_documentation(item, indent)
         rows = self._row_splitter.split(item.as_list(), indent)
-        return [self._pad([NameCell(row[0])] + [Cell(c) for c in row[1:]]) for row in rows]
+        return [self._pad([NameCell(row[0])] + [HtmlCell(c) for c in row[1:]]) for row in rows]
 
     def _format_documentation(self, doc, indent):
         if indent:
@@ -155,7 +155,7 @@ class SplittingHtmlFormatter(RowSplittingFormatter):
             value = doc.as_list()[1:]
             if len(value) == 1:
                 return [start + [DocumentationCell(doc.value, self._cols-1-indent)]]
-            return [self._pad(start + [Cell(v) for v in value])]
+            return [self._pad(start + [HtmlCell(v) for v in value])]
         return [[NameCell(doc.setting_name),
                 DocumentationCell(doc.value, self._cols-1)]]
 
@@ -167,14 +167,16 @@ class SplittingHtmlFormatter(RowSplittingFormatter):
     def _pad(self, row, colspan=False, indent=0):
         if colspan:
             return row
-        return row + [Cell(self._padding)] * (self._cols - len(row) - indent)
+        return row + [HtmlCell(self._padding)] * (self._cols - len(row) - indent)
 
 
 class HtmlCell(object):
     _backslash_matcher = re.compile(r'(\\+)n ')
 
-    def __init__(self, content='', attributes=None, tag='td'):
-        self.content = content
+    def __init__(self, content='', attributes=None, tag='td', escape=True):
+        if escape:
+            content = utils.html_escape(content)
+        self.content = self._replace_newlines(content)
         self.attributes = attributes or {}
         self.tag = tag
 
@@ -187,18 +189,10 @@ class HtmlCell(object):
         return self._backslash_matcher.sub(replacer, content)
 
 
-class Cell(HtmlCell):
-
-    def __init__(self, content, attributes=None):
-        HtmlCell.__init__(self,
-                          self._replace_newlines(utils.html_escape(content)),
-                          attributes)
-
-
 class NameCell(HtmlCell):
 
     def __init__(self, name, attributes=None):
-        HtmlCell.__init__(self, self._replace_newlines(name), attributes)
+        HtmlCell.__init__(self, name, attributes)
         self.attributes.update({'class': 'name'})
 
 
@@ -206,12 +200,12 @@ class AnchorNameCell(HtmlCell):
 
     def __init__(self, name, type_):
         HtmlCell.__init__(self, self._link_from_name(name, type_),
-                          {'class': 'name'})
-
+                          {'class': 'name'}, escape=False)
 
     def _link_from_name(self, name, type_):
         return '<a name="%s_%s">%s</a>' % (type_, utils.html_attr_escape(name),
                                            utils.html_escape(name))
+
 
 class DocumentationCell(HtmlCell):
 
@@ -238,11 +232,7 @@ class RowSplitter(object):
 
     def split(self, row, indent):
         self._in_comment = False
-        # TODO: encoding does not belong here
-        return [self._encode(r) for r in self._split_to_rows(row, indent)]
-
-    def _encode(self, row):
-        return [cell.encode('UTF-8').replace('\n', ' ') for cell in row]
+        return self._split_to_rows(row, indent)
 
     def _split_to_rows(self, data, indent=0):
         if not data:

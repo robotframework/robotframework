@@ -1,8 +1,8 @@
 import unittest
 from robot.parsing.model import TestCaseTable, TestCaseFileSettingTable
 
-from robot.writer.formatters import TxtFormatter, Cell, HtmlFormatter
-from robot.writer.tableformatters import RowSplitter
+from robot.writer.formatters import TxtFormatter, HtmlFormatter, TsvFormatter
+from robot.writer.tableformatters import RowSplitter, HtmlCell
 from robot.utils.asserts import assert_equals
 
 
@@ -22,9 +22,17 @@ class TestRowSplitter(unittest.TestCase):
 
 class TestTxtFormatter(unittest.TestCase):
 
-   def test_escaping(self):
-        formatter = TxtFormatter()
-        assert_equals(formatter._escape(['so  me']), ['so \ me'])
+    def test_escaping_whitespace(self):
+        assert_equals(TxtFormatter()._escape(['so  me']), ['so \ me'])
+
+    def test_replacing_newlines(self):
+        assert_equals(TxtFormatter()._escape(['so\nme']), ['so me'])
+
+
+class TestTsvFormatter(unittest.TestCase):
+
+    def test_replacing_newlines(self):
+        assert_equals(TsvFormatter()._format_row(['so\nme'])[0], 'so me')
 
 
 class TestHtmlFormatter(unittest.TestCase):
@@ -81,15 +89,15 @@ class TestHtmlFormatter(unittest.TestCase):
         original = """This is real new line:
         here we have a single backslash n: \\n and here backslash + newline: \\\n and here bslash blash n \\\\n and bslash x 3 n \\\\\\n """
         expected = 'This is real new line:\n        here we have a single backslash n: \\n<br>\nand here backslash + newline: \\\n and here bslash blash n \\\\n and bslash x 3 n \\\\\\n<br>\n'
-        assert_equals(Cell(original).content, expected)
+        assert_equals(HtmlCell(original).content, expected)
 
     def test_no_br_to_newlines_without_whitespace(self):
         original = r"Here there is no space after backslash-n: '\n'"
-        assert_equals(Cell(original).content, original)
+        assert_equals(HtmlCell(original).content, original)
 
     def test_no_br_to_double_backslashes(self):
         original = r"Here there is double backslash-n: \\n "
-        assert_equals(Cell(original).content, original)
+        assert_equals(HtmlCell(original).content, original)
 
 
 if __name__ == "__main__":
