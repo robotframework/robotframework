@@ -1,0 +1,88 @@
+*** Settings ***
+Suite Setup       Run Tests    ${EMPTY}    standard_libraries/string/string.txt
+Force Tags        pybot    jybot    regression
+Resource          atest_resource.txt
+
+*** Test Cases ***
+Fetch From Left
+    Check Test Case    ${TESTNAME}
+
+Fetch From Right
+    Check Test Case    ${TESTNAME}
+
+Get Line
+    Check Test Case    ${TESTNAME}
+
+Get Line Count
+    Check Test Case    ${TESTNAME}
+
+Split To Lines
+    ${tc} =    Check Test Case    ${TESTNAME}
+    Check Log Message    ${tc.kws[0].msgs[0]}    2 lines returned
+
+Split To Lines With Start Only
+    Check Test Case    ${TESTNAME}
+
+Split To Lines With Start And End
+    Check Test Case    ${TESTNAME}
+
+Split To Lines With End Only
+    Check Test Case    ${TESTNAME}
+
+Split To Lines With Negative Values
+    Check Test Case    ${TESTNAME}
+
+Split To Lines With Invalid Start
+    Check Test Case    ${TESTNAME}
+
+Split To Lines With Invalid End
+    Check Test Case    ${TESTNAME}
+
+Get Substring
+    Check Test Case    ${TESTNAME}
+
+Get Substring With Negative Values
+    Check Test Case    ${TESTNAME}
+
+Get Substring With Start Only
+    Check Test Case    ${TESTNAME}
+
+Get Substring With Invalid Start
+    Check Test Case    ${TESTNAME}
+
+Get Substring With Invalid End
+    Check Test Case    ${TESTNAME}
+
+Should Be String Positive
+    Check Test Case    ${TESTNAME}
+
+Should Be String Negative For Number
+    Check Test Case    ${TESTNAME}
+
+Should Be String Negative For Boolean
+    Check Test Case    ${TESTNAME}
+
+Should Not Be String Positive
+    Check Test Case    ${TESTNAME}
+
+Should Not Be String Negative
+    Check Test Case    ${TESTNAME}
+
+Should Be Lowercase Positive
+    Check Test Case    ${TESTNAME}
+
+Should Be Lowercase Negative
+    Check Test Case    ${TESTNAME}
+
+Should Be Uppercase Positive
+    Check Test Case    ${TESTNAME}
+
+Should Be Uppercase Negative
+    Check Test Case    ${TESTNAME}
+
+Should Be Titlecase Positive
+    Check Test Case    ${TESTNAME}
+
+Should Be Titlecase Negative
+    Check Test Case    ${TESTNAME}
+
