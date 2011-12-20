@@ -15,7 +15,35 @@
 from robot.variables import GLOBAL_VARIABLES
 
 
-class ExecutionContext(object):
+class ExecutionContexts(object):
+
+    def __init__(self):
+        self._contexts = []
+
+    @property
+    def current(self):
+        return self._contexts[-1] if self._contexts else None
+
+    def __iter__(self):
+        return iter(self._contexts)
+
+    @property
+    def namespaces(self):
+        return (context.namespace for context in self)
+
+    def start_suite(self, namespace, output, dry_run=False):
+        self._contexts.append(_ExecutionContext(namespace, output, dry_run))
+        return self.current
+
+    def end_suite(self):
+        self._contexts.pop()
+
+
+# This is ugly but currently needed e.g. by BuiltIn
+EXECUTION_CONTEXTS = ExecutionContexts()
+
+
+class _ExecutionContext(object):
 
     def __init__(self, namespace, output, dry_run=False):
         self.namespace = namespace
@@ -47,6 +75,7 @@ class ExecutionContext(object):
     def end_suite(self, suite):
         self.output.end_suite(suite)
         self.namespace.end_suite()
+        EXECUTION_CONTEXTS.end_suite()
 
     def output_file_changed(self, filename):
         self._set_global_variable('${OUTPUT_FILE}', filename)
@@ -94,6 +123,12 @@ class ExecutionContext(object):
 
     def end_keyword(self, keyword):
         self.output.end_keyword(keyword)
+
+    def start_user_keyword(self, kw):
+        self.namespace.start_user_keyword(kw)
+
+    def end_user_keyword(self):
+        self.namespace.end_user_keyword()
 
     def warn(self, message):
         self.output.warn(message)

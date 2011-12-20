@@ -126,11 +126,11 @@ class UserKeywordHandler(object):
         self.timeout.replace_variables(varz)
 
     def run(self, context, arguments):
-        context.namespace.start_user_keyword(self)
+        context.start_user_keyword(self)
         try:
             return self._run(context, arguments)
         finally:
-            context.namespace.end_user_keyword()
+            context.end_user_keyword()
 
     def _run(self, context, argument_values):
         args_spec = UserKeywordArguments(self._keyword_args, self.longname)

@@ -21,8 +21,8 @@ from robot.errors import DataError, ExecutionFailed, ExecutionFailures
 from robot import utils
 from robot.utils import asserts
 from robot.variables import is_var, is_list_var
-from robot.running import Keyword, NAMESPACES, RUN_KW_REGISTER
-from robot.running.model import ExecutionContext
+from robot.running import Keyword, RUN_KW_REGISTER
+from robot.running.context import EXECUTION_CONTEXTS
 from robot.common import UserErrorHandler
 from robot.version import get_version
 from robot.model import TagPatterns
@@ -787,7 +787,7 @@ class _Variables:
 
     def get_variables(self):
         """Returns a dictionary containing all variables in the current scope."""
-        return self._namespace.variables
+        return self._variables
 
     def get_variable_value(self, name, default=None):
         """Returns variable value or `default` if the variable does not exist.
@@ -1035,7 +1035,7 @@ class _RunKeyword:
         another keyword or from the command line.
         """
         kw = Keyword(name, list(args))
-        return kw.run(ExecutionContext(self._namespace, self._output))
+        return kw.run(self._execution_context)
 
     def run_keywords(self, *names):
         """Executes all the given keywords in a sequence without arguments.
@@ -1055,8 +1055,7 @@ class _RunKeyword:
                 self.run_keyword(kw)
             except ExecutionFailed, err:
                 errors.extend(err.get_errors())
-                context = ExecutionContext(self._namespace, self._output)
-                if not err.can_continue(context.teardown):
+                if not err.can_continue(self._execution_context.teardown):
                     break
         if errors:
             raise ExecutionFailures(errors)
@@ -1269,10 +1268,10 @@ class _RunKeyword:
         """
         values = self._verify_values_for_set_variable_if(list(values))
         if self._is_true(condition):
-            return self._namespace.variables.replace_scalar(values[0])
+            return self._variables.replace_scalar(values[0])
         values = self._verify_values_for_set_variable_if(values[1:], True)
         if len(values) == 1:
-            return self._namespace.variables.replace_scalar(values[0])
+            return self._variables.replace_scalar(values[0])
         return self.run_keyword('BuiltIn.Set Variable If', *values[0:])
 
     def _verify_values_for_set_variable_if(self, values, default=False):
@@ -1282,7 +1281,7 @@ class _RunKeyword:
             raise RuntimeError('At least one value is required')
         if is_list_var(values[0]):
             values[:1] = [utils.escape(item) for item in
-                          self._namespace.variables[values[0]]]
+                          self._variables[values[0]]]
             return self._verify_values_for_set_variable_if(values)
         return values
 
@@ -1507,7 +1506,7 @@ class _Misc:
         logging).
         """
         try:
-            old = self._output.set_log_level(level)
+            old = self._execution_context.output.set_log_level(level)
         except DataError, err:
             raise RuntimeError(unicode(err))
         self.log('Log level changed from %s to %s' % (old, level.upper()))
@@ -1899,18 +1898,16 @@ class BuiltIn(_Verify, _Converter, _Variables, _RunKeyword, _Misc):
     ROBOT_LIBRARY_VERSION = get_version()
 
     @property
-    def _output(self):
-        # OUTPUT is initially set to None and gets real value only when actual
-        # execution starts. If BuiltIn is used externally before that, OUTPUT
-        # gets None value. For more information see this bug report:
-        # http://code.google.com/p/robotframework/issues/detail?id=654
-        # TODO: Refactor running so that OUTPUT is available via context
-        from robot.output import OUTPUT
-        return OUTPUT
+    def _execution_context(self):
+        return EXECUTION_CONTEXTS.current
 
     @property
     def _namespace(self):
-        return NAMESPACES.current
+        return self._execution_context.namespace
+
+    @property
+    def _variables(self):
+        return self._namespace.variables
 
     def _matches(self, string, pattern):
         # Must use this instead of fnmatch when string may contain newlines.

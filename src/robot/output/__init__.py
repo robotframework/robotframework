@@ -19,10 +19,6 @@ from xmllogger import XmlLogger
 from loggerhelper import LEVELS, Message
 
 
-# Hooks to output. Set by Output.
-# Use only if no other way available (e.g. from BuiltIn library)
-OUTPUT = None
-
 #TODO: Fix Public API
 def TestSuite(outpath):
     """Factory method for getting test suite from an xml output file.
