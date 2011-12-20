@@ -121,7 +121,7 @@ $.template('no_tags_row',
     '<td class="col_stat"></td>' +
     '<td class="col_stat"></td>' +
     '<td class="col_graph">' +
-      '<div class="graph"></div>' +
+      '<div class="empty_graph"></div>' +
     '</td>' +
     '</tr>'
 );

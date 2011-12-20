@@ -137,13 +137,15 @@ table.statistics th {
     background: #00F000;
 }
 .fail_bar {
-    background: red;
 }
-.graph {
+.graph, .empty_graph {
     border: 1px solid black;
     width: 100%;
     height: 0.75em;
     padding: 0;
+    background: red;
+}
+.empty_graph {
     background: #E9E9E9;
 }
 .graph div {
