@@ -186,8 +186,8 @@ function addTestExecutionLog(main) {
       </td>
     </tr>
     <tr>
-      <td class="suite_children">
-        <div class="indent" id="${id}_children" style="display: none;">
+      <td>
+        <div id="${id}_children" style="display: none;">
           <table class="metadata" id="${id}_metadata">
             <tr>
               <th>Full Name:</th>
@@ -250,13 +250,12 @@ function addTestExecutionLog(main) {
              onclick="closeElement('${id}');"
              style="display: none;">-</div>
         <span class="${status.toLowerCase()}">TEST&nbsp;CASE: </span>
-        <a class="name"
-           title="${fullName}">${name}</a>
+        <a class="name" title="${fullName}">${name}</a>
       </td>
     </tr>
     <tr>
       <td>
-        <div class="indent" id="${id}_children" style="display: none;">
+        <div id="${id}_children" style="display: none;">
           <table class="metadata" id="${id}_metadata">
             <tr>
               <th>Full Name:</th>
@@ -320,7 +319,7 @@ function addTestExecutionLog(main) {
     </tr>
     <tr>
       <td>
-        <div class="indent" id="${id}_children" style="display: none;">
+        <div id="${id}_children" style="display: none;">
           <table class="metadata" id="${id}_metadata">
             {{if doc()}}
             <tr>
