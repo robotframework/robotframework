@@ -121,7 +121,7 @@ My Test Case\t\t\t\t\t\t\t
 \t[Teardown]\t1 minute\targs\t\t\t\t
 \t\t\t\t\t\t\t'''
 
-GOLDEN_HTML_TESTCASE_FILE = '''
+GOLDEN_HTML_TESTCASE_FILE = '''\
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html>
 <head>
