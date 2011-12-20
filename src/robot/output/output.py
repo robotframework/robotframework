@@ -28,18 +28,12 @@ class Output(AbstractLogger):
         self._xmllogger = XmlLogger(settings['Output'], settings['LogLevel'])
         self._register_loggers(settings['Listeners'], settings['DebugFile'])
         self._settings = settings
-        self._set_global_output()
 
     def _register_loggers(self, listeners, debugfile):
         LOGGER.register_context_changing_logger(self._xmllogger)
         for logger in Listeners(listeners), DebugFile(debugfile):
             if logger: LOGGER.register_logger(logger)
         LOGGER.disable_message_cache()
-
-    def _set_global_output(self):
-        # This is a hack. Hopefully we get rid of it at some point.
-        from robot import output
-        output.OUTPUT = self
 
     def close(self, suite):
         stats = Statistics(suite, self._settings['SuiteStatLevel'],

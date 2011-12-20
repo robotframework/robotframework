@@ -22,12 +22,12 @@ from robot.variables import GLOBAL_VARIABLES, is_scalar_var
 from robot.common import UserErrorHandler
 from robot.output import LOGGER
 from robot.parsing.settings import Library, Variables, Resource
-import robot
 
-from userkeyword import UserLibrary
-from importer import Importer, ImportCache
-from runkwregister import RUN_KW_REGISTER
-from handlers import _XTimesHandler
+from .userkeyword import UserLibrary
+from .importer import Importer, ImportCache
+from .runkwregister import RUN_KW_REGISTER
+from .handlers import _XTimesHandler
+from .context import EXECUTION_CONTEXTS
 
 
 STDLIB_NAMES = ['BuiltIn', 'Collections', 'Dialogs', 'Easter', 'OperatingSystem',
@@ -42,7 +42,6 @@ class Namespace:
     """
 
     def __init__(self, suite, parent_vars, skip_imports=False):
-        robot.running.NAMESPACES.start_suite(self)
         if suite is not None:
             LOGGER.info("Initializing namespace for test suite '%s'" % suite.longname)
         self.variables = self._create_variables(suite, parent_vars)
@@ -218,7 +217,6 @@ class Namespace:
         self.variables.end_suite()
         for lib in self._testlibs.values():
             lib.end_suite()
-        robot.running.NAMESPACES.end_suite()
 
     def start_user_keyword(self, handler):
         self.variables.start_uk(handler)
@@ -490,7 +488,7 @@ class _VariableScopes:
 
     def set_global(self, name, value):
         GLOBAL_VARIABLES.__setitem__(name, value)
-        for ns in robot.running.NAMESPACES:
+        for ns in EXECUTION_CONTEXTS.namespaces:
             ns.variables.set_suite(name, value)
 
     def set_suite(self, name, value):

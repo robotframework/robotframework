@@ -12,12 +12,12 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-
-from model import TestSuite
-from keywords import Keyword
-from testlibraries import TestLibrary
-from runkwregister import RUN_KW_REGISTER
-from signalhandler import STOP_SIGNAL_MONITOR
+from .model import TestSuite
+from .keywords import Keyword
+from .testlibraries import TestLibrary
+from .runkwregister import RUN_KW_REGISTER
+from .signalhandler import STOP_SIGNAL_MONITOR
+from .context import EXECUTION_CONTEXTS
 
 
 def UserLibrary(path):
@@ -38,24 +38,3 @@ def UserLibrary(path):
     ret.doc = resource.setting_table.doc.value
     return ret
 
-
-class _Namespaces:
-
-    def __init__(self):
-        self._namespaces = []
-        self.current = None
-
-    def start_suite(self, namespace):
-        self._namespaces.append(self.current)
-        self.current = namespace
-
-    def end_suite(self):
-        self.current = self._namespaces.pop()
-
-    def __iter__(self):
-        namespaces = self._namespaces + [self.current]
-        return iter([ns for ns in namespaces if ns is not None])
-
-
-# Hook to namespaces
-NAMESPACES = _Namespaces()
