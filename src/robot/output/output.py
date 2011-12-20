@@ -14,12 +14,11 @@
 
 from robot.common.statistics import Statistics
 
-from loggerhelper import AbstractLogger
-from logger import LOGGER
-from xmllogger import XmlLogger
-from listeners import Listeners
-from debugfile import DebugFile
-from stdoutlogsplitter import StdoutLogSplitter
+from .listeners import Listeners
+from .logger import LOGGER
+from .loggerhelper import AbstractLogger
+from .debugfile import DebugFile
+from .xmllogger import XmlLogger
 
 
 class Output(AbstractLogger):
