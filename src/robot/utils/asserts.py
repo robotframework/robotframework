@@ -12,10 +12,6 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-
-from unic import unic
-
-
 """Convenience functions for testing both in unit and higher levels.
 
 Benefits:
@@ -103,6 +99,9 @@ Ran 2 tests in 0.000s
 FAILED (failures=2)
 """
 
+from unic import unic
+
+
 def fail(msg=None):
     """Fail test immediately with the given message."""
     _report_failure(msg)
@@ -146,11 +145,14 @@ def fail_unless_raises(exc_class, callable_obj, *args, **kwargs):
     kwargs. If a different type of exception is thrown, it will not be
     caught, and the test case will be deemed to have suffered an
     error, exactly as for an unexpected exception.
+
+    If a correct exception is raised, the exception instance is returned
+    by this method.
     """
     try:
         callable_obj(*args, **kwargs)
-    except exc_class:
-        return
+    except exc_class, err:
+        return err
     else:
         if hasattr(exc_class,'__name__'):
             exc_name = exc_class.__name__
