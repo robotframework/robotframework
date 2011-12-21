@@ -20,10 +20,10 @@ from robot.parsing import ResourceFile
 from robot.errors import FrameworkError
 from robot import utils
 
-from testlibraries import TestLibrary
+from .testlibraries import TestLibrary
 
 
-class Importer:
+class Importer(object):
 
     def __init__(self):
         self._library_cache = ImportCache()
@@ -59,7 +59,7 @@ class Importer:
                     "%s type, %s scope, %d keywords, source %s)"
                     % (name, utils.seq2str2(positional), lib.version, libtype,
                        lib.scope.lower(), len(lib), lib.source))
-        if len(lib) == 0:
+        if not lib:
             LOGGER.warn("Imported library '%s' contains no keywords" % name)
         return lib
 

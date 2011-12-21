@@ -18,8 +18,8 @@ import inspect
 
 from robot.errors import DataError
 
-from error import get_error_message, get_error_details
-from robotpath import normpath, abspath
+from .error import get_error_message, get_error_details
+from .robotpath import normpath, abspath
 
 
 def simple_import(path_to_module):
