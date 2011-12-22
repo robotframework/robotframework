@@ -4,37 +4,44 @@ Force Tags      regression  jybot  pybot
 Resource        atest_resource.txt
 
 *** Variables ***
-${RESDIR}  ${CURDIR}${/}..${/}..${/}testdata${/}core${/}resources_and_variables
-${PPATH_RESDIR}  ${CURDIR}${/}..${/}..${/}testresources${/}res_and_var_files
+${RESDIR}        ${CURDIR}/../../testdata/core/resources_and_variables
+${PPATH_RESDIR}  ${CURDIR}/../../testresources/res_and_var_files
 
 *** Test Cases ***
 Normal Resource Import
-    [Documentation]  Test that path given in resource import is relative to the current directory and that '/' is converted to correct path separator depending on os.
+    [Documentation]  Test that path given in resource import is relative to the current
+    ...  directory and that '/' is converted to correct path separator depending on os.
     Check Test Case  Normal Resource Import
 
 Resource Import With Variables
-    [Documentation]  Test that variables can be used in resource import path. Also test that path can be absolute.
+    [Documentation]  Test that variables can be used in resource import path.
+    ...  Also test that path can be absolute.
     Check Test Case  Resource Import With Variables
 
 Normal Variable Import
-    [Documentation]  Test that path given in variable import is relative to the current directory and that '/' is converted to correct path separator depending on os.
+    [Documentation]  Test that path given in variable import is relative to the current
+    ...  directory and that '/' is converted to correct path separator depending on os.
     Check Test Case  Normal Variable Import
 
 Not Included In __all__
     Check Test Case  Not Included in __all__
 
 Variable Import With Variables
-    [Documentation]  Test that variables can be used in variable import path. Also test that path can be absolute.
+    [Documentation]  Test that variables can be used in variable import path.
+    ...  Also test that path can be absolute.
     Check Test Case  Variable Import With Variables
 
 Invalid List Variable
     [Documentation]  List variable not containing a list value causes an error
     Check Test Case  Invalid List Variable
-    ${path} =  Join Path  ${RESDIR}  invalid_list_variable.py
-    My Check Stderr Contains  [ ERROR ]  Error in file '${DATAPATH}' in table 'Setting': Processing variable file '${path}' failed:  List variable '\@{invalid_list}' cannot get a non-list value 'This is not a list and thus importing this file fails'
+    ${path} =  Normalize Path  ${RESDIR}/invalid_list_variable.py
+    My Check Stderr Contains  [ ERROR ]  Error in file '${DATAPATH}' in table 'Setting':
+    ...  Processing variable file '${path}' failed:  List variable '\@{invalid_list}'
+    ...  cannot get a non-list value 'This is not a list and thus importing this file fails'
 
 Dynamic Variable File
-    [Documentation]  Test for getting variables dynamically from a variable file using get_variables or getVariables and arguments.
+    [Documentation]  Test for getting variables dynamically from a variable file
+    ...  using get_variables or getVariables and arguments.
     Check Test Case  Dynamic Variable File No Args
     Check Test Case  Dynamic Variable File One Arg
 
@@ -42,14 +49,20 @@ Dynamic Variable File With Variables And Backslashes In Args
     Check Test Case  Dynamic Variable File With Variables And Backslashes In Args
 
 Invalid Dynamic Variable File Usage
-    ${path} =  Join Path  ${RESDIR}  dynamic_variables.py
-    My Check Stderr Contains  [ ERROR ] Error in file '${DATAPATH}' in table 'Setting':  Processing variable file '${path}' with arguments [ Two args returns None | which is invalid ] failed: Expected mapping but get_variables returned NoneType.
-    My Check Stderr Contains  [ ERROR ] Error in file '${DATAPATH}' in table 'Setting':  Processing variable file '${path}' with arguments [ More args raises an exception | which is invalid | of course ] failed:  Invalid arguments for get_variables
-    ${path} =  Join Path  ${RESDIR}  dynamicVariables.py
-    My Check Stderr Contains  [ ERROR ] Error in file '${DATAPATH}' in table 'Setting':  Replacing variables from setting 'Variables' failed:  Non-existing variable '\${non_existing_var_as_arg}'
+    ${path} =  Normalize Path  ${RESDIR}/dynamic_variables.py
+    My Check Stderr Contains  [ ERROR ] Error in file '${DATAPATH}' in table 'Setting':
+    ...  Processing variable file '${path}' with arguments [ Two args returns None | which is invalid ] failed:
+    ...  Expected mapping but get_variables returned NoneType.
+    My Check Stderr Contains  [ ERROR ] Error in file '${DATAPATH}' in table 'Setting':
+    ...  Processing variable file '${path}' with arguments [ More args raises an exception | which is invalid | of course ] failed:
+    ...  Invalid arguments for get_variables
+    ${path} =  Normalize Path  ${RESDIR}/dynamicVariables.py
+    My Check Stderr Contains  [ ERROR ] Error in file '${DATAPATH}' in table 'Setting':
+    ...  Replacing variables from setting 'Variables' failed:
+    ...  Non-existing variable '\${non_existing_var_as_arg}'
 
 Resource Importing Resources
-    [Documentation]  Test that resource file can import more resources. resources_imported_by_resource.html was imported ok by resources.html
+    [Documentation]  Test that resource file can import more resources.
     Check Test Case  Resource Importing Resources
 
 Resource Importing Variables
@@ -61,47 +74,57 @@ Resource Importing Library
     Check Test Case  Resource Importing Library
 
 Re-Import Resource File
-    ${path} =  Join Path  ${RESDIR}  resources.html
-    My Check Syslog Contains  | INFO \ |  Resource file '${path}' already imported  by suite 'Resource And Variable Imports'
-    ${path} =  Join Path  ${RESDIR}  resources2.html
-    My Check Syslog Contains  | INFO \ |  Resource file '${path}' already imported  by suite 'Resource And Variable Imports'
-    ${path} =  Join Path  ${RESDIR}  resources_imported_by_resource.html
-    My Check Syslog Contains  | INFO \ |  Resource file '${path}' already imported  by suite 'Resource And Variable Imports'
+    ${path} =  Normalize Path  ${RESDIR}/resources.html
+    My Check Syslog Contains  | INFO \ |  Resource file '${path}' already
+    ...  imported  by suite 'Resource And Variable Imports'
+    ${path} =  Normalize Path  ${RESDIR}/resources2.html
+    My Check Syslog Contains  | INFO \ |  Resource file '${path}' already
+    ...  imported  by suite 'Resource And Variable Imports'
+    ${path} =  Normalize Path  ${RESDIR}/resources_imported_by_resource.html
+    My Check Syslog Contains  | INFO \ |  Resource file '${path}' already
+    ...  imported  by suite 'Resource And Variable Imports'
 
 Re-Import Variable File
-    ${path} =  Join Path  ${RESDIR}  variables.py
+    ${path} =  Normalize Path  ${RESDIR}/variables.py
     My Check Syslog Contains  | INFO \ |  Variable file '${path}' already imported  by suite 'Resource And Variable Imports'
-    ${path} =  Join Path  ${RESDIR}  variables2.py
+    ${path} =  Normalize Path  ${RESDIR}/variables2.py
     My Check Syslog Contains  | INFO \ |  Variable file '${path}' already imported  by suite 'Resource And Variable Imports'
-    ${path} =  Join Path  ${RESDIR}  variables_imported_by_resource.py
+    ${path} =  Normalize Path  ${RESDIR}/variables_imported_by_resource.py
     My Check Syslog Contains  | INFO \ |  Variable file '${path}' already imported  by suite 'Resource And Variable Imports'
-    ${path} =  Join Path  ${RESDIR}  dynamic_variables.py
+    ${path} =  Normalize Path  ${RESDIR}/dynamic_variables.py
     My Check Syslog Contains  | INFO \ |  Variable file '${path}' with arguments [ One arg works ] already imported  by suite 'Resource And Variable Imports'
 
 Non-Existing Resource File
-    My Check Stderr Contains  [ ERROR ] Error in file '${DATAPATH}' in table 'Setting':  Resource file 'non_existing.html' does not exist
+    My Check Stderr Contains  [ ERROR ] Error in file '${DATAPATH}' in table 'Setting':
+    ...  Resource file 'non_existing.html' does not exist
 
 Non-Existing Variable File
-    My Check Stderr Contains  [ ERROR ] Error in file '${DATAPATH}' in table 'Setting':  Variable file 'non_existing.py' does not exist
+    My Check Stderr Contains  [ ERROR ] Error in file '${DATAPATH}' in table 'Setting':
+    ...  Variable file 'non_existing.py' does not exist
 
 Invalid Resource File
-    ${path} =  Join Path  ${RESDIR}  invalid_resource.html
+    ${path} =  Normalize Path  ${RESDIR}/invalid_resource.html
     My Check Stderr Contains  [ WARN ] Imported resource file '${path}' is empty
 
 Invalid Resource Import Parameters
-    My Check Stderr Contains  [ ERROR ] Error in file '${DATAPATH}' in table 'Setting': Resource file 'resources_and_variables${/}resources.html only one parameter allowed' does not exist
+    My Check Stderr Contains  [ ERROR ] Error in file '${DATAPATH}' in table 'Setting':
+    ...  Resource file 'resources_and_variables${/}resources.html only one parameter allowed' does not exist
 
 Invalid Setting In Resource File
-    ${path} =  Join Path  ${RESDIR}  resources.html
-    My Check Stderr Contains  [ ERROR ] Error in file '${path}' in table 'Setting': Non-existing setting 'Test Setup'.
-    My Check Stderr Contains  [ ERROR ] Error in file '${path}' in table 'Setting': Non-existing setting 'Non existing'.
-    ${path2} =  Join Path  ${RESDIR}  resource_with_testcase_table.txt
-    My Check Stderr Contains  [ ERROR ] Error in file '${path}' in table 'Setting': Resource file '${path2}' contains a test case table which is not allowed.
+    ${path} =  Normalize Path  ${RESDIR}/resources.html
+    My Check Stderr Contains  [ ERROR ] Error in file '${path}' in table 'Setting':
+    ...  Non-existing setting 'Test Setup'.
+    My Check Stderr Contains  [ ERROR ] Error in file '${path}' in table 'Setting':
+    ...  Non-existing setting 'Non existing'.
+    ${path2} =  Normalize Path  ${RESDIR}/resource_with_testcase_table.txt
+    My Check Stderr Contains  [ ERROR ] Error in file '${path}' in table 'Setting':
+    ...  Resource file '${path2}' contains a test case table which is not allowed.
     My Check Stderr Does Not Contain  AttributeError:
 
 Invalid Variable File
-    ${path} =  Join Path  ${RESDIR}  invalid_variable_file.py
-    My Check Stderr Contains  [ ERROR ] Error in file '${DATAPATH}' in table 'Setting': Processing variable file '${path}' failed:  Importing '${path}' failed: This is an invalid variable file
+    ${path} =  Normalize Path  ${RESDIR}/invalid_variable_file.py
+    My Check Stderr Contains  [ ERROR ] Error in file '${DATAPATH}' in table 'Setting':
+    ...    Importing variable file '${path}' failed: This is an invalid variable file
 
 Resource File In PYTHONPATH
     [Documentation]  Test that resource files can be found if they are in dirs in PYTHONPATH too.
@@ -113,10 +136,10 @@ Variable File In PYTHONPATH
 
 *** Keywords ***
 My Setup
-    Run Tests  --pythonpath ${PPATH_RESDIR}  core${/}resource_and_variable_imports.html
+    Run Tests  --pythonpath ${PPATH_RESDIR}  core/resource_and_variable_imports.html
     ${STDERR} =  Get Stderr
     ${SYSLOG} =  Get Syslog
-    ${DATAPATH} =  Join Path  ${DATADIR}  core${/}resource_and_variable_imports.html
+    ${DATAPATH} =  Normalize Path  ${DATADIR}/core/resource_and_variable_imports.html
     Set Suite Variable  $STDERR
     Set Suite Variable  $SYSLOG
     Set Suite Variable  $DATAPATH
