@@ -24,10 +24,13 @@ class _Formatter(object):
         return self._rows_from_item(item, indent)
 
     def _rows_from_indented_table(self, table):
-        for item in table:
+        items = list(table)
+        for index, item in enumerate(items):
             yield self._format_name(item)
             for row in self._rows_from_item(item, 1):
                 yield row
+            if index < len(items) -1:
+                yield []
 
     def _rows_from_item(self, item, indent=0):
         for child in (c for c in item if c.is_set()):
@@ -105,7 +108,8 @@ class ColumnAligner(_Aligner):
         return result
 
     def format_indented_table(self, table):
-        for item in table:
+        items = list(table)
+        for i, item in enumerate(items):
             rows = list(self._rows_from_item(item, 1))
             if len(item.name) > self._max_name_length:
                 yield [item.name]
@@ -115,6 +119,8 @@ class ColumnAligner(_Aligner):
                 rows = rows[1:]
             for r in rows:
                 yield self.align_row(r)
+            if i < len(items) - 1:
+                yield []
 
     def _format_model_item(self, item, indent):
         return [self._escape(['']*indent + item.as_list())]
@@ -128,11 +134,14 @@ class ColumnAligner(_Aligner):
 class SplittingHtmlFormatter(RowSplittingFormatter):
 
     def format_indented_table(self, table):
-        for item in table:
+        items = list(table)
+        for i, item in enumerate(items):
             rows = list(self._rows_from_item(item, 1))
             yield self._first_row(item, rows[0])
             for row in rows[1:]:
                 yield row
+            if i < len(items) - 1:
+                yield self._pad([NameCell()])
 
     def _first_row(self, item, row):
         return [self._format_name(item)] + row[1:]

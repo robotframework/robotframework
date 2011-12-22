@@ -33,6 +33,9 @@ My Test Case
     My TC Step 1    my step arg    # step 1 comment
     My TC Step 2    my step 2 arg    second \ arg    # step 2 comment
     [Teardown]    1 minute    args
+
+Another Test
+    No Operation
 '''
 GOLDEN_ALIGNED_TXT_TESTCASE_FILE = _txt_template % '''
 *** Test Cases ***    header1            header2
@@ -40,9 +43,11 @@ My Test Case          [Documentation]    This is a long comment that spans sever
                       My TC Step 1       my step arg                                          # step 1 comment
                       My TC Step 2       my step \ 2 arg                                      second arg          # step 2 comment
                       [Teardown]         1 minute
+
 A very long named test case
                       My step 1          This is arg
                       My step 2          This also is arg
+
 Test with for         : FOR              ${i}                                                 IN RANGE            100
                       \                  Log                                                  ${i}
 '''
@@ -82,6 +87,9 @@ GOLDEN_TXT_PIPE_TESTCASE_FILE = _txt_pipe_template % '''
 |    | My TC Step 1 | my step arg | # step 1 comment |
 |    | My TC Step 2 | my step 2 arg | second \ arg | # step 2 comment |
 |    | [Teardown] | 1 minute | args |
+
+| Another Test |
+|    | No Operation |
 '''
 
 _tsv_template = '''*Settings*\t\t\t\t\t\t\t
@@ -119,6 +127,9 @@ My Test Case\t\t\t\t\t\t\t
 \tMy TC Step 1\tmy step arg\t# step 1 comment\t\t\t\t
 \tMy TC Step 2\tmy step 2 arg\tsecond \ arg\t# step 2 comment\t\t\t
 \t[Teardown]\t1 minute\targs\t\t\t\t
+\t\t\t\t\t\t\t
+Another Test\t\t\t\t\t\t\t
+\tNo Operation\t\t\t\t\t\t
 \t\t\t\t\t\t\t'''
 
 GOLDEN_HTML_TESTCASE_FILE = '''\
@@ -295,6 +306,20 @@ td.name, th.name {
 <td>[Teardown]</td>
 <td>1 minute</td>
 <td>args</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"><a name="test_Another Test">Another Test</a></td>
+<td>No Operation</td>
+<td></td>
+<td></td>
 <td></td>
 </tr>
 <tr>
