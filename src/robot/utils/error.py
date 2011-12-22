@@ -134,7 +134,7 @@ class PythonErrorDetails(_ErrorDetails):
             if self._include_rest_traceback(path, func):
                 tb = tb[row+1:]
                 break
-        return ''.join(traceback.format_list(tb)).strip()
+        return ''.join(traceback.format_list(tb))
 
     def _include_rest_traceback(self, path, func):
         return (path.endswith(self._ignore_trace_until[0]) and
