@@ -19,8 +19,8 @@ if os.name == 'java':
     from java.lang.System import getProperty as getJavaSystemProperty
     from java.util import Map
 else:
-    class Map: pass
     getJavaSystemProperty = lambda name: None
+    class Map: pass
 
 from robot import utils
 from robot.errors import DataError
@@ -45,12 +45,12 @@ class Variables(utils.NormalizedDict):
     }$           # "}" and end of the string
     ''', re.VERBOSE)
 
-    def __init__(self, identifiers=['$','@','%','&','*']):
+    def __init__(self, identifiers=('$','@','%','&','*')):
         utils.NormalizedDict.__init__(self, ignore=['_'])
         self._identifiers = identifiers
         self._importer = utils.Importer('variable file')
 
-    def __setitem__(self, name, value, path=None):
+    def __setitem__(self, name, value):
         self._validate_var_name(name)
         utils.NormalizedDict.__setitem__(self, name, value)
 
@@ -139,8 +139,8 @@ class Variables(utils.NormalizedDict):
         return results
 
     def _replace_variables_inside_possible_list_var(self, item):
-        if not (isinstance(item, basestring)
-                and item.startswith('@{') and item.endswith('}')):
+        if not (isinstance(item, basestring) and
+                item.startswith('@{') and item.endswith('}')):
             return None
         var = VariableSplitter(item, self._identifiers)
         if var.start != 0 or var.end != len(item):
@@ -157,8 +157,7 @@ class Variables(utils.NormalizedDict):
         if self._cannot_have_variables(item):
             return utils.unescape(item)
         var = VariableSplitter(item, self._identifiers)
-        if var.identifier and var.base and \
-               var.start == 0 and var.end == len(item):
+        if var.identifier and var.base and var.start == 0 and var.end == len(item):
             return self._get_variable(var)
         return self.replace_string(item, var)
 
@@ -236,7 +235,7 @@ class Variables(utils.NormalizedDict):
             variables = self._get_variables_from_module(module, args)
             self._set_from_file(variables, overwrite, path)
         except:
-            amsg = args and 'with arguments %s ' % utils.seq2str2(args) or ''
+            amsg = 'with arguments %s ' % utils.seq2str2(args) if args else ''
             raise DataError("Processing variable file '%s' %sfailed: %s"
                             % (path, amsg, utils.get_error_message()))
         return variables
@@ -258,24 +257,23 @@ class Variables(utils.NormalizedDict):
             else:
                 name = '${%s}' % name
             if overwrite or not utils.NormalizedDict.has_key(self, name):
-                self.__setitem__(name, value, path)
+                self.set(name, value)
 
     def set_from_variable_table(self, variable_table, overwrite=False):
         for variable in variable_table:
             try:
-                name, value = self._get_var_table_name_and_value(variable.name,
-                                                                 variable.value,
-                                                                 variable_table.source)
+                name, value = self._get_var_table_name_and_value(
+                    variable.name, variable.value, variable_table.source)
                 # self.has_key would also match if name matches extended syntax
                 if overwrite or not utils.NormalizedDict.has_key(self, name):
-                    self.__setitem__(name, value, variable_table.source)
+                    self.set(name, value)
             except DataError, err:
                 variable_table.report_invalid_syntax("Setting variable '%s' failed: %s"
                                                      % (variable.name, unicode(err)))
 
     def _get_var_table_name_and_value(self, name, value, path=None):
         self._validate_var_name(name)
-        value = [ self._unescape_leading_trailing_spaces(cell) for cell in value ]
+        value = [self._unescape_leading_trailing_spaces(cell) for cell in value]
         if name[0] == '@':
             return name, self.replace_list(value)
         return name, self._get_var_table_scalar_value(name, value, path)
@@ -303,20 +301,16 @@ class Variables(utils.NormalizedDict):
         variables = self._get_dynamical_variables(module, args)
         if variables is not None:
             return variables
-        names = [ attr for attr in dir(module) if not attr.startswith('_') ]
-        try:
-            names = [ name for name in names if name in module.__all__ ]
-        except AttributeError:
-            pass
-        return [ (name, getattr(module, name)) for name in names ]
+        names = [attr for attr in dir(module) if not attr.startswith('_')]
+        if hasattr(module, '__all__'):
+            names = [name for name in names if name in module.__all__]
+        return [(name, getattr(module, name)) for name in names]
 
     def _get_dynamical_variables(self, module, args):
-        try:
-            try:
-                get_variables = getattr(module, 'get_variables')
-            except AttributeError:
-                get_variables = getattr(module, 'getVariables')
-        except AttributeError:
+        get_variables = getattr(module, 'get_variables', None)
+        if not get_variables:
+            get_variables = getattr(module, 'getVariables', None)
+        if not get_variables:
             return None
         variables = get_variables(*args)
         if isinstance(variables, (dict, UserDict)):
