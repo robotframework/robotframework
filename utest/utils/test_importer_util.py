@@ -44,14 +44,6 @@ class TestImportByPath(unittest.TestCase):
         path3 = self._create_file(join(path2, 'test.py'), attr=3)
         self._import_and_verify(path3, attr=3, directory=path2)
 
-    def test_importing_same_file_reloads_module(self):
-        path = self._create_file('test.py', attr=1)
-        self._import_and_verify(path, attr=1)
-        # apparently old pyc file is read if file is recreated immediately
-        import time; time.sleep(0.5)
-        path = self._create_file('test.py', attr=2)
-        self._import_and_verify(path, attr=2)
-
     def test_invalid_python_file(self):
         path = self._create_file('test.py', extra_content='invalid content')
         err = assert_raises(DataError, self._import_and_verify, path)
