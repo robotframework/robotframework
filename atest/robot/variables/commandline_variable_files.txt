@@ -1,0 +1,36 @@
+*** Settings ***
+Documentation   How variables from CLI override other variables is tested in variable_priorities.html
+Suite Setup     Run Test Data
+Force Tags      pybot  jybot  regression
+Resource        atest_resource.txt
+
+*** Variables ***
+${VARFILEDIR}  ${CURDIR}/../../testdata/variables/resvarfiles
+
+*** Test Cases ***
+Variables From Variable File
+    Check Test Case  Variables From Variable File
+
+Arguments To Variable Files
+    Check Test Case  Arguments To Variable Files
+
+Non-Existing Variable File
+    Check Stderr Contains  [ ERROR ]  Processing variable file 'non_existing.py' failed:  Importing 'non_existing.py' failed: File does not exist
+
+Too Few Arguments To Variable File
+    Check Stderr Contains  [ ERROR ]  Processing variable file '${VARFILE2}' failed:  TypeError: get_variables()
+
+Too Many Arguments To Variable File
+    Check Stderr Contains  [ ERROR ]  Processing variable file '${VARFILE2}' with arguments [ too | many | args ] failed:  TypeError: get_variables()
+
+Invalid Variable File
+    Check Stderr Contains  [ ERROR ]  Processing variable file '${VARFILE2}' with arguments [ FAIL ] failed:  ZeroDivisionError:
+
+*** Keywords ***
+Run Test Data
+    ${varfile} =  Normalize Path  ${VARFILEDIR}/cli_vars.py
+    ${varfile2} =  Normalize Path  ${VARFILEDIR}/cli_vars_2.py
+    ${varfile3} =  Normalize Path  ${VARFILEDIR}/cli_vars_invalid.py
+    Run Tests  --variablefile ${varfile} -V ${varfile2}:arg -V ${varfile2}:arg2:given --variablefile non_existing.py --variablefile ${varfile2} -V ${varfile2}:too:many:args -V ${varfile2}:FAIL  variables/commandline_variable_files.txt
+    Set Suite Variable  $VARFILE2
+
