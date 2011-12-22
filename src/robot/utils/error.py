@@ -131,12 +131,12 @@ class PythonErrorDetails(_ErrorDetails):
     def _get_traceback(self):
         tb = traceback.extract_tb(self._exc_traceback)
         for row, (path, _, func, _) in enumerate(tb):
-            if self._is_excluded_traceback_entry(path, func):
+            if self._include_rest_traceback(path, func):
                 tb = tb[row+1:]
                 break
         return ''.join(traceback.format_list(tb)).strip()
 
-    def _is_excluded_traceback_entry(self, path, func):
+    def _include_rest_traceback(self, path, func):
         return (path.endswith(self._ignore_trace_until[0]) and
                 func == self._ignore_trace_until[1])
 
