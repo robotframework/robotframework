@@ -172,10 +172,11 @@ class Namespace:
         if setting_name == 'Library' and not self._is_library_by_path(path):
             return path
         path = self._resolve_path(setting_name, path.replace('/', os.sep), basedir)
-        return utils.abspath(path)
+        ending = os.sep if path.endswith(os.sep) else ''
+        return utils.abspath(path) + ending
 
     def _is_library_by_path(self, path):
-        return path.lower().endswith(('.py', '.java', '.class', '/'))
+        return path.lower().endswith(('.py', '.java', '.class', '/', os.sep))
 
     def _resolve_path(self, setting_name, path, basedir):
         for base in [basedir] + sys.path:

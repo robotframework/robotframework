@@ -1,0 +1,16 @@
+*** Variables ***
+@{EXPECTED LIST}  List  variable  value
+
+*** Test Cases ***
+Variables From Variable File
+    Should Be Equal  ${SCALAR}  Scalar from variable file from CLI
+    Should Be Equal  ${SCALAR WITH ESCAPES}  1 \\ 2\\\\ \${inv}
+    Should Be Equal  ${SCALAR LIST}  ${EXPECTED LIST}
+    Should Be True  @{LIST} == ${EXPECTED LIST}
+
+Arguments To Variable Files
+    Should Be Equal  ${ANOTHER SCALAR}  Variable from CLI var file with get_variables
+    Should Be True  @{ANOTHER LIST} == ['List variable from CLI var file', 'with get_variables']
+    Should Be Equal  ${ARG}  default value
+    Should Be Equal  ${ARG 2}  given
+

@@ -48,6 +48,7 @@ class Variables(utils.NormalizedDict):
     def __init__(self, identifiers=['$','@','%','&','*']):
         utils.NormalizedDict.__init__(self, ignore=['_'])
         self._identifiers = identifiers
+        self._importer = utils.Importer('variable file')
 
     def __setitem__(self, name, value, path=None):
         self._validate_var_name(name)
@@ -227,11 +228,11 @@ class Variables(utils.NormalizedDict):
                 raise DataError("Non-existing variable '@{%s}[%s]'"
                                 % (var.base, var.index))
 
-    def set_from_file(self, path, args, overwrite=False):
+    def set_from_file(self, path, args=None, overwrite=False):
         LOGGER.info("Importing variable file '%s' with args %s" % (path, args))
         args = args or []
+        module = self._importer.import_module_by_path(path)
         try:
-            module = utils.simple_import(path)
             variables = self._get_variables_from_module(module, args)
             self._set_from_file(variables, overwrite, path)
         except:

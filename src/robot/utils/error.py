@@ -12,28 +12,22 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-import os.path
-import sys
 import re
+import sys
+import os.path
 import traceback
 
-from unic import unic
 from robot.errors import DataError, TimeoutError, RemoteError
 
-_is_java = sys.platform.startswith('java')
+from .unic import unic
+
 RERAISED_EXCEPTIONS = (KeyboardInterrupt, SystemExit, MemoryError)
-if _is_java:
+if sys.platform.startswith('java'):
     from java.io import StringWriter, PrintWriter
     from java.lang import Throwable, OutOfMemoryError
     RERAISED_EXCEPTIONS += (OutOfMemoryError,)
-
-_java_trace_re = re.compile('^\s+at (\w.+)')
-_ignored_java_trace = ('org.python.', 'robot.running.', 'robot$py.',
-                       'sun.reflect.', 'java.lang.reflect.')
-_ignore_trace_until = (os.path.join('robot','running','handlers.py'), '<lambda>')
-_generic_exceptions = ('AssertionError', 'AssertionFailedError', 'Exception',
-                       'Error', 'RuntimeError', 'RuntimeException',
-                       'DataError', 'TimeoutError', 'RemoteError')
+else:
+    Throwable = ()
 
 
 def get_error_message():
@@ -63,12 +57,15 @@ def ErrorDetails():
     exc_type, exc_value, exc_traceback = sys.exc_info()
     if exc_type in RERAISED_EXCEPTIONS:
         raise exc_value
-    if _is_java and isinstance(exc_value, Throwable):
-        return _JavaErrorDetails(exc_type, exc_value, exc_traceback)
-    return _PythonErrorDetails(exc_type, exc_value, exc_traceback)
+    details = PythonErrorDetails \
+            if not isinstance(exc_value, Throwable) else JavaErrorDetails
+    return details(exc_type, exc_value, exc_traceback)
 
 
 class _ErrorDetails(object):
+    _generic_exceptions = ('AssertionError', 'AssertionFailedError', 'Exception',
+                           'Error', 'RuntimeError', 'RuntimeException',
+                           'DataError', 'TimeoutError', 'RemoteError')
 
     def __init__(self, exc_type, exc_value, exc_traceback):
         self.error = exc_value
@@ -100,9 +97,9 @@ class _ErrorDetails(object):
         message = unic(message or '')
         message = self._clean_up_message(message, name)
         name = name.split('.')[-1]  # Use only last part of the name
-        if message == '':
+        if not message:
             return name
-        if name in _generic_exceptions:
+        if name in self._generic_exceptions:
             return message
         return '%s: %s' % (name, message)
 
@@ -110,7 +107,8 @@ class _ErrorDetails(object):
         return message
 
 
-class _PythonErrorDetails(_ErrorDetails):
+class PythonErrorDetails(_ErrorDetails):
+    _ignore_trace_until = (os.path.join('robot','running','handlers.py'), '<lambda>')
 
     def _get_message(self):
         # If exception is a "string exception" without a message exc_value is None
@@ -128,17 +126,25 @@ class _PythonErrorDetails(_ErrorDetails):
             return ''
         if isinstance(self._exc_value, RemoteError):
             return self._exc_value.traceback
+        return 'Traceback (most recent call last):\n' + self._get_traceback()
+
+    def _get_traceback(self):
         tb = traceback.extract_tb(self._exc_traceback)
         for row, (path, _, func, _) in enumerate(tb):
-            if path.endswith(_ignore_trace_until[0]) and func == _ignore_trace_until[1]:
+            if self._include_rest_traceback(path, func):
                 tb = tb[row+1:]
                 break
-        details = 'Traceback (most recent call last):\n' \
-                + ''.join(traceback.format_list(tb))
-        return details.strip()
+        return ''.join(traceback.format_list(tb)).strip()
+
+    def _include_rest_traceback(self, path, func):
+        return (path.endswith(self._ignore_trace_until[0]) and
+                func == self._ignore_trace_until[1])
 
 
-class _JavaErrorDetails(_ErrorDetails):
+class JavaErrorDetails(_ErrorDetails):
+    _java_trace_re = re.compile('^\s+at (\w.+)')
+    _ignored_java_trace = ('org.python.', 'robot.running.', 'robot$py.',
+                           'sun.reflect.', 'java.lang.reflect.')
 
     def _get_message(self):
         exc_name = self._get_name(self._exc_type)
@@ -158,20 +164,21 @@ class _JavaErrorDetails(_ErrorDetails):
             return ''
         output = StringWriter()
         self._exc_value.printStackTrace(PrintWriter(output))
-        lines = [ line for line in output.toString().splitlines()
-                  if line and not self._is_ignored_stack_trace_line(line) ]
-        details = '\n'.join(lines)
+        details = '\n'.join(line for line in output.toString().splitlines()
+                            if not self._is_ignored_stack_trace_line(line))
         msg = unic(self._exc_value.getMessage() or '')
         if msg:
             details = details.replace(msg, '', 1)
         return details
 
     def _is_ignored_stack_trace_line(self, line):
-        res = _java_trace_re.match(line)
+        if not line:
+            return True
+        res = self._java_trace_re.match(line)
         if res is None:
             return False
         location = res.group(1)
-        for entry in _ignored_java_trace:
+        for entry in self._ignored_java_trace:
             if location.startswith(entry):
                 return True
         return False
@@ -183,7 +190,7 @@ class _JavaErrorDetails(_ErrorDetails):
     def _remove_stack_trace_lines(self, msg):
         lines = msg.splitlines()
         while lines:
-            if _java_trace_re.match(lines[-1]):
+            if self._java_trace_re.match(lines[-1]):
                 lines.pop()
             else:
                 break

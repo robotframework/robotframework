@@ -12,43 +12,65 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+from __future__ import with_statement
 import os
 import sys
 import inspect
 
 from robot.errors import DataError
 
-from error import get_error_message, get_error_details
-from robotpath import normpath, abspath
+from .error import get_error_message, get_error_details
+from .robotpath import abspath
 
 
-def simple_import(path_to_module):
-    err_prefix = "Importing '%s' failed: " % path_to_module
-    if not os.path.exists(path_to_module):
-        raise DataError(err_prefix + 'File does not exist')
-    try:
-        return _import_module_by_path(path_to_module)
-    except:
-        raise DataError(err_prefix + get_error_message())
+class Importer(object):
+    _valid_to_import_by_path = ('.py', '.java', '.class', '/', os.sep)
 
-def _import_module_by_path(path):
-    moddir, modname = _split_path_to_module(path)
-    sys.path.insert(0, moddir)
-    try:
-        module = __import__(modname)
-        if hasattr(module, '__file__'):
-            impdir = os.path.dirname(module.__file__)
-            if normpath(impdir) != normpath(moddir):
-                del sys.modules[modname]
-                module = __import__(modname)
-        return module
-    finally:
-        sys.path.pop(0)
+    def __init__(self, type=None):
+        type = ' %s ' % type if type else ' '
+        self._error_template = 'Importing' + type + "'%s' failed: %s"
 
-def _split_path_to_module(path):
-    moddir, modfile = os.path.split(abspath(path))
-    modname = os.path.splitext(modfile)[0]
-    return moddir, modname
+    def import_module_by_path(self, path):
+        try:
+            self._verify_import_path(path)
+            module = self._import_by_path(path)
+            if inspect.isclass(module):
+                return self._instantiate_java_class(module)
+            return module
+        except DataError, err:
+            raise DataError(self._error_template % (path, unicode(err)))
+
+    def _verify_import_path(self, path):
+        if not os.path.exists(path):
+            raise DataError('File or directory does not exist.')
+        if not path.endswith(self._valid_to_import_by_path):
+            raise DataError('Not a valid file or directory to import.')
+
+    def _import_by_path(self, path):
+        module_dir, module_name = self._split_path_to_module(path)
+        sys.path.insert(0, module_dir)
+        if module_name in sys.modules:
+            del sys.modules[module_name]
+        try:
+            return __import__(module_name)
+        except:
+            raise DataError('%s\n%s' % get_error_details())
+        finally:
+            sys.path.pop(0)
+
+    def _split_path_to_module(self, path):
+        module_dir, module_file = os.path.split(abspath(path))
+        module_name = os.path.splitext(module_file)[0]
+        return module_dir, module_name
+
+    def _instantiate_java_class(self, jclass):
+        try:
+            return jclass()
+        except:
+            raise DataError(get_error_message())
+
+    def import_class_or_module(self):
+        pass
 
 
 def import_(name, type_='test library'):
@@ -81,7 +103,7 @@ def import_(name, type_='test library'):
 def _non_dotted_import(name, type_):
     try:
         if os.path.exists(name):
-            module = _import_module_by_path(name)
+            module = Importer(type_).import_module_by_path(name)
         else:
             module = __import__(name)
     except:
