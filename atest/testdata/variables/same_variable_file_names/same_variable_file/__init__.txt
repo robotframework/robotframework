@@ -1,3 +1,0 @@
-*** Settings ***
-Documentation   These tests are used to verify that same variable file is not imported multiple times, because this could cause performance problems in case the import takes long time.
-

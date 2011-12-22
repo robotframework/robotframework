@@ -3,16 +3,19 @@ Suite Setup     Run Tests  ${EMPTY}  variables/same_variable_file_names
 Force Tags      regression  jybot  pybot  smoke
 Resource        atest_resource.txt
 
+*** Variables ***
+${6 TESTS}    6 critical tests, 6 passed, 0 failed\n6 tests total, 6 passed, 0 failed
+
+
 *** Test Cases ***
 Different Variable Files
-    [Documentation]  Verifies that it is possible to import different variable
-    ...  files even when they have the same name. Verifies that new variables
-    ...  are imported, existing overridden, and old ones not visible anymore.
-    Check Test Suite  Different Variable Files  6 critical tests, 6 passed, 0 failed\n 6 tests total, 6 passed, 0 failed  PASS
+    [Documentation]    Verifies that it is possible to import different variable
+    ...    files even when they have the same name. Verifies that new variables
+    ...    are imported, existing overridden, and old ones not visible anymore.
+    Check Test Suite    Different Variable Files    ${6 TESTS}
 
 Same Variable File
-    [Documentation]  Verifies that if the same variable file is re-imported, the module itself is not reloaded. This is done for performance reasons.
-    FAIL  Outdated test! Peke will fix this.
-    ${suite} =  Check Test Suite  Same Variable File  6 critical tests, 6 passed, 0 failed\n 6 tests total, 6 passed, 0 failed
-    Should Be True  ${suite.elapsedtime} < 6000  The same variable file is imported multiple times even it should be imported only once!!
+    [Documentation]    Verifies that module is re-imported even if same variable
+    ...    file is imported multiple times.
+    Check Test Case   Importing Same Variable File Always Re-Imports Module
 

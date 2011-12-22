@@ -1,0 +1,21 @@
+*** Settings ***
+Library    OperatingSystem
+
+*** Variables ***
+${VARFILE}    ${TEMPDIR}/robot_variable_test.py
+
+*** Test Cases ***
+
+Importing Same Variable File Always Re-Imports Module
+    Test Import    initial value
+    Sleep    1 second    Make sure py and pyc files get different timestamps
+    Test Import    new value
+
+*** Keywords ***
+
+Test Import
+    [Arguments]    ${value}
+    Create File    ${VARFILE}    VAR = '${value}'
+    Import Variables    ${VARFILE}
+    Should Be Equal    ${VAR}    ${value}
+
