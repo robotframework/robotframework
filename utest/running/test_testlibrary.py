@@ -71,7 +71,7 @@ class TestImports(unittest.TestCase):
     def test_import_python_module(self):
         lib = TestLibrary("module_library")
         kws = ["passing", "two arguments from class", "lambdakeyword", "argument"]
-        self._verify_lib(lib, "module_library", [ (kw, None) for kw in kws ])
+        self._verify_lib(lib, "module_library", [(kw, None) for kw in kws])
 
     def test_import_python_module_from_module(self):
         lib = TestLibrary("pythonmodule.library")
@@ -79,27 +79,25 @@ class TestImports(unittest.TestCase):
                          [("keyword from submodule", None)])
 
     def test_import_non_existing_module(self):
-        exp = ("Importing test library '%s' failed: "
-               "ImportError: No module named %s\nPYTHONPATH:")
+        msg = "Importing test library '%s' failed: ImportError: No module named %s"
         for name in 'nonexisting', 'nonexi.sting':
-            try:
-                TestLibrary(name)
-            except DataError, err:
-                module = name.split('.')[0]
-                assert_true(str(err).startswith(exp % (name, module)), err)
-            else:
-                raise AssertionError("DataError not raised")
+            error = assert_raises(DataError, TestLibrary, name)
+            assert_equals(unicode(error).splitlines()[0],
+                          msg % (name, name.split('.')[0]))
 
     def test_import_non_existing_class_from_existing_module(self):
-        msg = "Test library module 'pythonmodule' does not contain 'NonExisting'."
-        assert_raises_with_msg(DataError, msg,
+        assert_raises_with_msg(DataError,
+                               "Importing test library 'pythonmodule.NonExisting' failed: "
+                               "Module 'pythonmodule' does not contain 'NonExisting'.",
                                TestLibrary, 'pythonmodule.NonExisting')
 
     def test_import_invalid_type(self):
-        msg = 'Imported test library should be a class or module, got %s.'
-        assert_raises_with_msg(DataError, msg % 'str',
+        msg = "Importing test library '%s' failed: Expected class or module, got <%s>."
+        assert_raises_with_msg(DataError,
+                               msg % ('pythonmodule.some_string', 'str'),
                                TestLibrary, 'pythonmodule.some_string')
-        assert_raises_with_msg(DataError, msg % 'instance',
+        assert_raises_with_msg(DataError,
+                               msg % ('pythonmodule.some_object', 'instance'),
                                TestLibrary, 'pythonmodule.some_object')
 
     def test_import_with_unicode_name(self):
@@ -360,8 +358,7 @@ class TestCaseScope(_TestScopes):
 class TestHandlers(unittest.TestCase):
 
     def test_get_handlers(self):
-        for lib in [ NameLibrary, DocLibrary, ArgInfoLibrary, GetattrLibrary,
-                     SynonymLibrary ]:
+        for lib in [NameLibrary, DocLibrary, ArgInfoLibrary, GetattrLibrary, SynonymLibrary]:
             testlib = TestLibrary('classes.%s' % lib.__name__)
             handlers = testlib.handlers.values()
             assert_equals(lib.handler_count, len(handlers), lib.__name__)
@@ -388,7 +385,7 @@ class TestHandlers(unittest.TestCase):
 
     def test_synonym_handlers(self):
         testlib = TestLibrary('classes.SynonymLibrary')
-        names = [ 'handler', 'synonym_handler', 'another_synonym' ]
+        names = ['handler', 'synonym_handler', 'another_synonym']
         for handler in testlib.handlers.values():
             # test 'handler_name' -- raises ValueError if it isn't in 'names'
             names.remove(handler._handler_name)
@@ -404,11 +401,8 @@ class TestHandlers(unittest.TestCase):
     if utils.is_jython:
 
         def test_get_java_handlers(self):
-            for lib in [ ArgumentTypes,
-                         MultipleArguments,
-                         MultipleSignatures,
-                         NoHandlers,
-                         Extended ]:
+            for lib in [ArgumentTypes, MultipleArguments, MultipleSignatures,
+                        NoHandlers, Extended]:
                 testlib = TestLibrary(lib.__name__)
                 handlers = testlib.handlers.values()
                 assert_equals(len(handlers), lib().handler_count, lib.__name__)
@@ -449,9 +443,9 @@ class TestDynamicLibrary(unittest.TestCase):
 
     def test_get_keyword_arguments_is_used_if_present(self):
         lib = TestLibrary('classes.ArgDocDynamicLibrary')
-        for name, exp in [ ('No Arg', ()) , ('One Arg', (1,1)),
-                           ('One or Two Args', (1, 2)),
-                           ('Many Args', (0, sys.maxint))]:
+        for name, exp in [('No Arg', ()), ('One Arg', (1,1)),
+                          ('One or Two Args', (1, 2)),
+                          ('Many Args', (0, sys.maxint))]:
             self._assert_handler_args(lib.handlers[name], *exp)
 
     def _assert_handler_args(self, handler, minargs=0, maxargs=0):
@@ -461,9 +455,10 @@ class TestDynamicLibrary(unittest.TestCase):
     if utils.is_jython:
         def test_dynamic_java_handlers(self):
             lib = TestLibrary('ArgDocDynamicJavaLibrary')
-            for name, min, max in [ ('Java No Arg', 0, 0), ('Java One Arg', 1, 1),
-                                    ('Java One or Two Args', 1, 2),
-                                    ('Java Many Args', 0, sys.maxint) ]:
+            for name, min, max in [('Java No Arg', 0, 0),
+                                   ('Java One Arg', 1, 1),
+                                   ('Java One or Two Args', 1, 2),
+                                   ('Java Many Args', 0, sys.maxint)]:
                 self._assert_java_handler(lib.handlers[name],
                                           'Keyword documentation for %s' % name,
                                           min, max)
@@ -497,12 +492,8 @@ class TestDynamicLibraryIntroDocumentation(unittest.TestCase):
                                          'dynamic override')
 
     def test_failure_in_dynamic_resolving_of_doc(self):
-        try:
-            TestLibrary('dynlibs.FailingDynamicDocLib').doc
-        except DataError:
-            pass
-        else:
-            raise AssertionError()
+        lib = TestLibrary('dynlibs.FailingDynamicDocLib')
+        assert_raises(DataError, getattr, lib, 'doc')
 
     def _assert_intro_doc(self, library_name, expected_doc):
         assert_equals(TestLibrary(library_name).doc, expected_doc)
@@ -526,12 +517,8 @@ class TestDynamicLibraryInitDocumentation(unittest.TestCase):
                               'dynamic override')
 
     def test_failure_in_dynamic_resolving_of_doc(self):
-        try:
-            TestLibrary('dynlibs.FailingDynamicDocLib').init.doc
-        except DataError:
-            pass
-        else:
-            raise AssertionError()
+        init = TestLibrary('dynlibs.FailingDynamicDocLib').init
+        assert_raises(DataError, getattr, init, 'doc')
 
     def _assert_init_doc(self, library_name, expected_doc):
         assert_equals(TestLibrary(library_name).init.doc, expected_doc)

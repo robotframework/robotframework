@@ -33,7 +33,8 @@ else:
 
 def TestLibrary(name, args=None, variables=None, create_handlers=True):
     with OutputCapturer(library_import=True):
-        libcode, source = utils.import_(name)
+        importer = utils.Importer('test library')
+        libcode, source = importer.import_class_or_module(name)
     libclass = _get_lib_class(libcode)
     lib = libclass(libcode, source, name, args or [], variables)
     if create_handlers:

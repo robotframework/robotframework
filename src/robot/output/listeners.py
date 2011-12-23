@@ -215,7 +215,8 @@ class _ListenerProxy(AbstractLoggerProxy):
         self.is_java = utils.is_jython and isinstance(listener, Object)
 
     def _import_listener(self, name, args):
-        listener, source = utils.import_(name, 'listener')
+        importer = utils.Importer('listener')
+        listener, source = importer.import_class_or_module(name)
         if not inspect.ismodule(listener):
             listener = listener(*args)
         elif args:

@@ -16,34 +16,55 @@ from __future__ import with_statement
 import os
 import sys
 import inspect
+if sys.platform.startswith('java'):
+    from java.lang.System import getProperty
 
 from robot.errors import DataError
 
-from .error import get_error_message, get_error_details
+from .error import get_error_details
 from .robotpath import abspath
 
 
+# TODO:
+# - rename module
+# - test and possibly prune tracebacks
+# - test PYTHONPATH and CLASSPATH
+# - split logic related to different import types to helper classes
+# - acceptance tests for issue 979
+# - test can variable files be implemented with java/python classes nowadays
+#   (possibly returning class when importing by path is bwic anyway)
+
+
 class Importer(object):
-    _valid_to_import_by_path = ('.py', '.java', '.class', '/', os.sep)
+    _import_path_endings = ('.py', '.java', '.class', '/', os.sep)
 
     def __init__(self, type=None):
-        type = ' %s ' % type if type else ' '
-        self._error_template = 'Importing' + type + "'%s' failed: %s"
+        self._type = type or ''
 
     def import_module_by_path(self, path):
+        """Import a Python module or Java class using a file system path.
+
+        When importing a Python file, the path must end with '.py' and the
+        actual file must also exist. When importing a Python module implemented
+        as a directory, the path must end with '/' or, on Windows, with '\\'.
+
+        When importing Java classes, the path must end with '.java' or '.class'.
+        The class file must exist in both cases and in the former case also
+        the source file must exist.
+        """
         try:
             self._verify_import_path(path)
-            module = self._import_by_path(path)
-            if inspect.isclass(module):
-                return self._instantiate_java_class(module)
-            return module
+            item = self._import_by_path(path)
+            self._verify_type(item)
         except DataError, err:
-            raise DataError(self._error_template % (path, unicode(err)))
+            self._raise_import_failed(path, err)
+        else:
+            return item
 
     def _verify_import_path(self, path):
         if not os.path.exists(path):
             raise DataError('File or directory does not exist.')
-        if not path.endswith(self._valid_to_import_by_path):
+        if not path.endswith(self._import_path_endings):
             raise DataError('Not a valid file or directory to import.')
 
     def _import_by_path(self, path):
@@ -52,109 +73,104 @@ class Importer(object):
         if module_name in sys.modules:
             del sys.modules[module_name]
         try:
-            return __import__(module_name)
-        except:
-            raise DataError('%s\n%s' % get_error_details())
+            module = self._import(module_name)
         finally:
             sys.path.pop(0)
+        return self._get_class_from_module(module) or module
 
     def _split_path_to_module(self, path):
         module_dir, module_file = os.path.split(abspath(path))
         module_name = os.path.splitext(module_file)[0]
         return module_dir, module_name
 
-    def _instantiate_java_class(self, jclass):
+    def _raise_import_failed(self, name, error):
+        type = '%s ' % self._type if self._type else ''
+        msg = "Importing %s'%s' failed: %s" % (type, name, error.message)
+        if not error.details:
+            raise DataError(msg)
+        msg = [msg, '', error.details]
+        msg.extend(self._get_items_in('PYTHONPATH', sys.path))
+        if sys.platform.startswith('java'):
+            classpath = getProperty('java.class.path').split(os.path.pathsep)
+            msg.extend(self._get_items_in('CLASSPATH', classpath))
+        raise DataError('\n'.join(msg))
+
+    def _get_items_in(self, type, items):
+        yield '\n%s:' % type
+        for item in items:
+            yield '  %s' % item
+
+    def import_class_or_module(self, name):
+        """Imports Python class/module or Java class with given name.
+
+        Class can either live in a module/package or be standalone Java class.
+        In the former case the name is something like 'MyClass' and in the
+        latter it could be 'your.package.YourLibrary'. Python classes always
+        live in a module, but if the module name is exactly same as the class
+        name then simple 'MyLibrary' will import a class.
+
+        Python modules can be imported both using format 'MyModule' and
+        'mymodule.submodule'.
+
+        `name` can also be a path to the imported file/directory. In that case
+        importing is done using `import_module_by_path` method.
+        """
         try:
-            return jclass()
-        except:
-            raise DataError(get_error_message())
-
-    def import_class_or_module(self):
-        pass
-
-
-def import_(name, type_='test library'):
-    """Imports Python class/module or Java class with given name.
-
-    'name' can also be a path to the library and in that case the directory
-    containing the lib is automatically put into sys.path and removed there
-    afterwards.
-
-    'type_' is used in error message if importing fails.
-
-    Class can either live in a module/package or be 'standalone'. In the former
-    case tha name is something like 'MyClass' and in the latter it could be
-    'your.package.YourLibrary'). Python classes always live in a module but if
-    the module name is exactly same as the class name the former also works in
-    Python.
-
-    Example: If you have a Python class 'MyLibrary' in a module 'mymodule'
-    it must be imported with name 'mymodule.MyLibrary'. If the name of
-    the module is also 'MyLibrary' then it is possible to use only
-    name 'MyLibrary'.
-    """
-    if '.' not in name or os.path.exists(name):
-        code, module = _non_dotted_import(name, type_)
-    else:
-        code, module = _dotted_import(name, type_)
-    source = _get_module_source(module)
-    return code, source
-
-def _non_dotted_import(name, type_):
-    try:
-        if os.path.exists(name):
-            module = Importer(type_).import_module_by_path(name)
+            imported, source = self._import_class_or_module(name)
+            self._verify_type(imported)
+        except DataError, err:
+            self._raise_import_failed(name, err)
         else:
-            module = __import__(name)
-    except:
-        _raise_import_failed(type_, name)
-    try:
-        code = getattr(module, module.__name__)
-        if not inspect.isclass(code):
-            raise AttributeError
-    except AttributeError:
-        code = module
-    return code, module
+            return imported, source
 
-def _dotted_import(name, type_):
-    parentname, libname = name.rsplit('.', 1)
-    try:
+    def _import_class_or_module(self, name):
+        if self._is_valid_import_path(name):
+            return self._import_by_path(name), name
+        elif '.' not in name:
+            return self._non_dotted_import(name)
+        else:
+            return self._dotted_import(name)
+
+    def _is_valid_import_path(self, path):
+        return os.path.exists(path) and path.endswith(self._import_path_endings)
+
+    def _non_dotted_import(self, name):
+        module = self._import(name)
+        source = self._get_source(module)
+        return self._get_class_from_module(module) or module, source
+
+    def _get_source(self, module):
+        source = getattr(module, '__file__', None)
+        return abspath(source) if source else None
+
+    def _get_class_from_module(self, module):
+        klass = getattr(module, module.__name__, None)
+        return klass if inspect.isclass(klass) else None
+
+    def _dotted_import(self, name):
+        parentname, libname = name.rsplit('.', 1)
+        parent = self._import(parentname, [str(libname)])
         try:
-            module = __import__(parentname, fromlist=[str(libname)])
-        except ImportError:
-            # Hack to support standalone Jython:
-            # http://code.google.com/p/robotframework/issues/detail?id=515
-            if not sys.platform.startswith('java'):
+            item = getattr(parent, libname)
+        except  AttributeError:
+            raise DataError("Module '%s' does not contain '%s'." % (parentname, libname))
+        return item, self._get_source(parent)
+
+    def _import(self, name, fromlist=None, retry=True):
+        try:
+            try:
+                return __import__(name, fromlist=fromlist)
+            except ImportError:
+                # Hack to support standalone Jython:
+                # http://code.google.com/p/robotframework/issues/detail?id=515
+                if fromlist and retry and sys.platform.startswith('java'):
+                    __import__(name)
+                    return self._import(name, fromlist, retry=False)
                 raise
-            __import__(name)
-            module = __import__(parentname, fromlist=[str(libname)])
-    except:
-        _raise_import_failed(type_, name)
-    try:
-        code = getattr(module, libname)
-    except AttributeError:
-        _raise_no_lib_in_module(type_, parentname, libname)
-    if not (inspect.ismodule(code) or inspect.isclass(code)):
-        _raise_invalid_type(type_, code)
-    return code, module
+        except:
+            raise DataError(*get_error_details())
 
-def _get_module_source(module):
-    source = getattr(module, '__file__', None)
-    return abspath(source) if source else '<unknown>'
-
-def _raise_import_failed(type_, name):
-    error_msg, error_details = get_error_details()
-    msg = ["Importing %s '%s' failed: %s" % (type_, name, error_msg),
-           "PYTHONPATH: %s" % sys.path, error_details]
-    if sys.platform.startswith('java'):
-        from java.lang import System
-        msg.insert(-1, 'CLASSPATH: %s' % System.getProperty('java.class.path'))
-    raise DataError('\n'.join(msg))
-
-def _raise_no_lib_in_module(type_, modname, libname):
-    raise DataError("%s module '%s' does not contain '%s'."
-                    % (type_.capitalize(), modname, libname))
-
-def _raise_invalid_type(type_, code):
-    raise DataError("Imported %s should be a class or module, got %s."
-                    % (type_, type(code).__name__))
+    def _verify_type(self, item):
+        if inspect.isclass(item) or inspect.ismodule(item):
+            return item
+        raise DataError('Expected class or module, got <%s>.' % type(item).__name__)
