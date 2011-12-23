@@ -8,7 +8,7 @@ import os
 from os.path import abspath, dirname, exists, isabs, join, normpath
 
 from robot.errors import DataError
-from robot.utils.importing import Importer
+from robot.utils.importer import Importer
 from robot.utils.asserts import (assert_equals, assert_true, assert_raises,
                                  assert_raises_with_msg)
 
