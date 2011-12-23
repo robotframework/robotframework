@@ -181,7 +181,8 @@ class TestImportClassOrModule(unittest.TestCase):
         import bytelib as expected
         module = self._import_module(join(LIBDIR, 'bytelib.py'))
         assert_equals(module.__name__, expected.__name__)
-        assert_equals(normpath(module.__file__), normpath(expected.__file__))
+        assert_equals(dirname(normpath(module.__file__)),
+                      dirname(normpath(expected.__file__)))
         assert_equals(dir(module), dir(expected))
 
     def test_import_class_from_file_by_path(self):
