@@ -13,11 +13,13 @@
 #  limitations under the License.
 
 import inspect
+import os.path
 
 from robot import utils
 from robot.errors import DataError
-from loggerhelper import AbstractLoggerProxy
-from logger import LOGGER
+
+from .loggerhelper import AbstractLoggerProxy
+from .logger import LOGGER
 
 if utils.is_jython:
     from java.lang import Object
@@ -216,7 +218,7 @@ class _ListenerProxy(AbstractLoggerProxy):
 
     def _import_listener(self, name, args):
         importer = utils.Importer('listener')
-        listener, source = importer.import_class_or_module(name)
+        listener, source = importer.import_class_or_module(os.path.normpath(name))
         if not inspect.ismodule(listener):
             listener = listener(*args)
         elif args:
