@@ -29,8 +29,13 @@ class RobotError(Exception):
 
     Do not raise this method but use more specific errors instead.
     """
-    def __init__(self, message=''):
+    def __init__(self, message='', details=''):
         Exception.__init__(self, message)
+        self.details = details
+
+    @property
+    def message(self):
+        return self.__unicode__()
 
     def __unicode__(self):
         # Needed to handle exceptions w/ Unicode correctly on Python 2.5
@@ -172,7 +177,3 @@ class UserKeywordExecutionFailed(ExecutionFailures):
 
 class RemoteError(RobotError):
     """Used by Remote library to report remote errors."""
-
-    def __init__(self, message, traceback):
-        RobotError.__init__(self, message)
-        self.traceback = traceback

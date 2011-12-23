@@ -17,7 +17,7 @@ import sys
 import os.path
 import traceback
 
-from robot.errors import DataError, TimeoutError, RemoteError
+from robot.errors import RobotError
 
 from .unic import unic
 
@@ -122,10 +122,8 @@ class PythonErrorDetails(_ErrorDetails):
         return self._format_message(name, msg)
 
     def _get_details(self):
-        if isinstance(self._exc_value, (DataError, TimeoutError)):
-            return ''
-        if isinstance(self._exc_value, RemoteError):
-            return self._exc_value.traceback
+        if isinstance(self._exc_value, RobotError):
+            return self._exc_value.details
         return 'Traceback (most recent call last):\n' + self._get_traceback()
 
     def _get_traceback(self):
@@ -134,7 +132,7 @@ class PythonErrorDetails(_ErrorDetails):
             if self._include_rest_traceback(path, func):
                 tb = tb[row+1:]
                 break
-        return ''.join(traceback.format_list(tb))
+        return ''.join(traceback.format_list(tb)).rstrip()
 
     def _include_rest_traceback(self, path, func):
         return (path.endswith(self._ignore_trace_until[0]) and
