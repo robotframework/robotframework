@@ -26,7 +26,6 @@ from .robotpath import abspath
 
 
 # TODO:
-# - rename module
 # - test and possibly prune tracebacks
 # - test PYTHONPATH and CLASSPATH
 # - split logic related to different import types to helper classes
@@ -42,7 +41,7 @@ class Importer(object):
         self._type = type or ''
         self._logger = logger
 
-    def import_module_by_path(self, path):
+    def import_class_or_module_by_path(self, path):
         """Import a Python module or Java class using a file system path.
 
         When importing a Python file, the path must end with '.py' and the

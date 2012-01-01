@@ -230,7 +230,7 @@ class Variables(utils.NormalizedDict):
     def set_from_file(self, path, args=None, overwrite=False):
         LOGGER.info("Importing variable file '%s' with args %s" % (path, args))
         args = args or []
-        module = self._importer.import_module_by_path(path)
+        module = self._importer.import_class_or_module_by_path(path)
         try:
             variables = self._get_variables_from_module(module, args)
             self._set_from_file(variables, overwrite, path)

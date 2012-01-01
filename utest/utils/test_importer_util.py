@@ -70,7 +70,7 @@ class TestImportByPath(unittest.TestCase):
 
     def test_import_class_from_file(self):
         path = self._create_file('test.py', extra_content='class test:\n def m(s): return 1')
-        klass = Importer().import_module_by_path(path)
+        klass = Importer().import_class_or_module_by_path(path)
         assert_true(inspect.isclass(klass))
         assert_equals(klass.__name__, 'test')
         assert_equals(klass().m(), 1)
@@ -83,13 +83,13 @@ class TestImportByPath(unittest.TestCase):
     def test_logging_when_importing_module(self):
         logger = LoggerStub()
         path = join(LIBDIR, 'classes.py')
-        Importer('test library', logger).import_module_by_path(path)
+        Importer('test library', logger).import_class_or_module_by_path(path)
         logger.assert_message("Imported test library module 'classes' from '%s'." % path)
 
     def test_logging_when_importing_python_class(self):
         logger = LoggerStub()
         path = join(LIBDIR, 'ExampleLibrary.py')
-        Importer(logger=logger).import_module_by_path(path)
+        Importer(logger=logger).import_class_or_module_by_path(path)
         logger.assert_message("Imported class 'ExampleLibrary' from '%s'." % path)
 
     if sys.platform.startswith('java'):
@@ -108,7 +108,7 @@ class TestImportByPath(unittest.TestCase):
         def test_logging_when_importing_java_class(self):
             logger = LoggerStub()
             path = join(CURDIR, 'ImportByPath.java')
-            Importer('java', logger).import_module_by_path(path)
+            Importer('java', logger).import_class_or_module_by_path(path)
             logger.assert_message("Imported java class 'ImportByPath' from '%s'." % path)
 
     def _create_file(self, name, attr=42, extra_content=''):
@@ -129,7 +129,7 @@ class TestImportByPath(unittest.TestCase):
     def _import(self, path):
         sys_path_before = sys.path[:]
         try:
-            return Importer().import_module_by_path(path)
+            return Importer().import_class_or_module_by_path(path)
         finally:
             assert_equals(sys.path, sys_path_before)
 
@@ -139,18 +139,18 @@ class TestInvalidImportPath(unittest.TestCase):
     def test_non_existing(self):
         assert_raises_with_msg(DataError,
             "Importing 'non-existing.py' failed: File or directory does not exist.",
-            Importer().import_module_by_path, 'non-existing.py')
+            Importer().import_class_or_module_by_path, 'non-existing.py')
         assert_raises_with_msg(DataError,
             "Importing test file 'non-existing.py' failed: File or directory does not exist.",
-            Importer('test file').import_module_by_path, 'non-existing.py')
+            Importer('test file').import_class_or_module_by_path, 'non-existing.py')
 
     def test_invalid_format(self):
         assert_raises_with_msg(DataError,
             "Importing '%s' failed: Not a valid file or directory to import." % CURDIR,
-            Importer().import_module_by_path, CURDIR)
+            Importer().import_class_or_module_by_path, CURDIR)
         assert_raises_with_msg(DataError,
             "Importing xxx '%s' failed: Not a valid file or directory to import." % CURDIR,
-            Importer('xxx').import_module_by_path, CURDIR)
+            Importer('xxx').import_class_or_module_by_path, CURDIR)
 
 
 class TestImportClassOrModule(unittest.TestCase):
