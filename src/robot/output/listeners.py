@@ -217,14 +217,12 @@ class _ListenerProxy(AbstractLoggerProxy):
         self.is_java = utils.is_jython and isinstance(listener, Object)
 
     def _import_listener(self, name, args):
-        importer = utils.Importer('listener')
-        listener, source = importer.import_class_or_module(os.path.normpath(name))
+        importer = utils.Importer('listener', logger=LOGGER)
+        listener = importer.import_class_or_module(os.path.normpath(name))
         if not inspect.ismodule(listener):
             listener = listener(*args)
         elif args:
             raise DataError("Listeners implemented as modules do not take arguments")
-        LOGGER.info("Imported listener '%s' with arguments %s (source %s)"
-                    % (name, utils.seq2str2(args), source))
         return listener
 
     def _get_version(self, listener):

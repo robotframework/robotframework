@@ -33,10 +33,10 @@ else:
 
 def TestLibrary(name, args=None, variables=None, create_handlers=True):
     with OutputCapturer(library_import=True):
-        importer = utils.Importer('test library')
-        libcode, source = importer.import_class_or_module(name)
+        importer = utils.Importer('test library', logger=LOGGER)
+        libcode = importer.import_class_or_module(name)
     libclass = _get_lib_class(libcode)
-    lib = libclass(libcode, source, name, args or [], variables)
+    lib = libclass(libcode, name, args or [], variables)
     if create_handlers:
         lib.create_handlers()
     return lib
@@ -89,10 +89,9 @@ class _BaseTestLibrary(BaseLibrary):
     _log_failure = LOGGER.info
     _log_failure_details = LOGGER.debug
 
-    def __init__(self, libcode, source, name, args, variables):
+    def __init__(self, libcode, name, args, variables):
         if os.path.exists(name):
             name = os.path.splitext(os.path.basename(os.path.abspath(name)))[0]
-        self.source = source
         self.version = self._get_version(libcode)
         self.name = name
         self.orig_name = name # Stores original name also after copying
@@ -321,8 +320,8 @@ class _HybridLibrary(_BaseTestLibrary):
 class _DynamicLibrary(_BaseTestLibrary):
     _log_failure = LOGGER.warn
 
-    def __init__(self, libcode, source, name, args, variables=None):
-        _BaseTestLibrary.__init__(self, libcode, source, name, args, variables)
+    def __init__(self, libcode, name, args, variables=None):
+        _BaseTestLibrary.__init__(self, libcode, name, args, variables)
         self._get_kw_doc = \
             _DynamicMethod(libcode, 'get_keyword_documentation', default='')
         self._get_kw_args = \

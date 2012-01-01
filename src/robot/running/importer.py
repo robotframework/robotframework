@@ -55,10 +55,10 @@ class Importer(object):
         lib.create_handlers()
         self._library_cache[key] = lib
         libtype = lib.__class__.__name__.replace('Library', '').lower()[1:]
-        LOGGER.info("Imported library '%s' with arguments %s (version %s, "
-                    "%s type, %s scope, %d keywords, source %s)"
-                    % (name, utils.seq2str2(positional), lib.version, libtype,
-                       lib.scope.lower(), len(lib), lib.source))
+        LOGGER.info("Imported library '%s' with arguments %s "
+                    "(version %s, %s type, %s scope, %d keywords)"
+                    % (name, utils.seq2str2(positional), lib.version,
+                       libtype, lib.scope.lower(), len(lib)))
         if not lib:
             LOGGER.warn("Imported library '%s' contains no keywords" % name)
         return lib
