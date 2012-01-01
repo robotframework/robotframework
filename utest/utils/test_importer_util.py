@@ -24,6 +24,22 @@ def assert_prefix(error, expected):
     assert_equals(prefix, expected)
 
 
+class LoggerStub(object):
+
+    def __init__(self, remove_extension=False):
+        self.messages = []
+        self.remove_extension = remove_extension
+
+    def info(self, msg):
+        if self.remove_extension:
+            for ext in '$py.class', '.pyc', '.py':
+                msg = msg.replace(ext, '')
+        self.messages.append(msg)
+
+    def assert_message(self, msg):
+        assert_equals(self.messages, [msg])
+
+
 class TestImportByPath(unittest.TestCase):
 
     def setUp(self):
@@ -64,6 +80,18 @@ class TestImportByPath(unittest.TestCase):
         error = assert_raises(DataError, self._import_and_verify, path)
         assert_prefix(error, "Importing '%s' failed: SyntaxError:" % path)
 
+    def test_logging_when_importing_module(self):
+        logger = LoggerStub()
+        path = join(LIBDIR, 'classes.py')
+        Importer('test library', logger).import_module_by_path(path)
+        logger.assert_message("Imported test library module 'classes' from '%s'." % path)
+
+    def test_logging_when_importing_python_class(self):
+        logger = LoggerStub()
+        path = join(LIBDIR, 'ExampleLibrary.py')
+        Importer(logger=logger).import_module_by_path(path)
+        logger.assert_message("Imported class 'ExampleLibrary' from '%s'." % path)
+
     if sys.platform.startswith('java'):
 
         def test_java_class(self):
@@ -76,6 +104,12 @@ class TestImportByPath(unittest.TestCase):
                                    "Importing '%s' failed: Expected class or "
                                    "module, got <javapackage>." % path,
                                    self._import, path)
+
+        def test_logging_when_importing_java_class(self):
+            logger = LoggerStub()
+            path = join(CURDIR, 'ImportByPath.java')
+            Importer('java', logger).import_module_by_path(path)
+            logger.assert_message("Imported java class 'ImportByPath' from '%s'." % path)
 
     def _create_file(self, name, attr=42, extra_content=''):
         path = join(TESTDIR, name)
@@ -199,14 +233,26 @@ class TestImportClassOrModule(unittest.TestCase):
         finally:
             os.remove(path)
 
+    def test_logging_when_importing_module(self):
+        logger = LoggerStub(remove_extension=True)
+        self._import_module('classes', 'test library', logger)
+        logger.assert_message("Imported test library module 'classes' from '%s'."
+                              % join(LIBDIR, 'classes'))
+
+    def test_logging_when_importing_python_class(self):
+        logger = LoggerStub(remove_extension=True)
+        self._import_class('ExampleLibrary', logger=logger)
+        logger.assert_message("Imported class 'ExampleLibrary' from '%s'."
+                              % join(LIBDIR, 'ExampleLibrary'))
+
     if sys.platform.startswith('java'):
 
         def test_import_java_class(self):
-            klass = self._import_class('ExampleJavaLibrary', has_source=False)
+            klass = self._import_class('ExampleJavaLibrary')
             assert_equals(klass().getCount(), 1)
 
         def test_import_java_class_in_package(self):
-            klass = self._import_class('javapkg.JavaPackageExample', has_source=False)
+            klass = self._import_class('javapkg.JavaPackageExample')
             assert_equals(klass().returnValue('xmas'), 'xmas')
 
         def test_import_java_file_by_path(self):
@@ -222,23 +268,24 @@ class TestImportClassOrModule(unittest.TestCase):
                                    "Expected class or module, got <javapackage>.",
                                    self._import, 'javapkg', 'test library')
 
-    def _import_module(self, name, type=None, has_source=True):
-        module = self._import(name, type, has_source)
+        def test_logging_when_importing_java_class(self):
+            logger = LoggerStub()
+            self._import_class('ExampleJavaLibrary', 'java', logger)
+            logger.assert_message("Imported java class 'ExampleJavaLibrary' "
+                                  "from unknown location.")
+
+    def _import_module(self, name, type=None, logger=None):
+        module = self._import(name, type, logger)
         assert_true(inspect.ismodule(module))
         return module
 
-    def _import_class(self, name, type=None, has_source=True):
-        klass = self._import(name, type, has_source)
+    def _import_class(self, name, type=None, logger=None):
+        klass = self._import(name, type, logger)
         assert_true(inspect.isclass(klass))
         return klass
 
-    def _import(self, name, type=None, has_source=True):
-        item, source = Importer(type).import_class_or_module(name)
-        if has_source:
-            assert_true(isabs(source))
-        else:
-            assert_true(source is None)
-        return item
+    def _import(self, name, type=None, logger=None):
+        return Importer(type, logger).import_class_or_module(name)
 
 
 if __name__ == '__main__':

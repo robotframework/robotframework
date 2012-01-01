@@ -38,8 +38,9 @@ from .robotpath import abspath
 class Importer(object):
     _import_path_endings = ('.py', '.java', '.class', '/', os.sep)
 
-    def __init__(self, type=None):
+    def __init__(self, type=None, logger=None):
         self._type = type or ''
+        self._logger = logger
 
     def import_module_by_path(self, path):
         """Import a Python module or Java class using a file system path.
@@ -59,6 +60,7 @@ class Importer(object):
         except DataError, err:
             self._raise_import_failed(path, err)
         else:
+            self._log_import_succeeded(item, item.__name__, path)
             return item
 
     def _verify_import_path(self, path):
@@ -84,8 +86,8 @@ class Importer(object):
         return module_dir, module_name
 
     def _raise_import_failed(self, name, error):
-        type = '%s ' % self._type if self._type else ''
-        msg = "Importing %s'%s' failed: %s" % (type, name, error.message)
+        import_type = '%s ' % self._type if self._type else ''
+        msg = "Importing %s'%s' failed: %s" % (import_type, name, error.message)
         if not error.details:
             raise DataError(msg)
         msg = [msg, '', error.details]
@@ -94,6 +96,14 @@ class Importer(object):
             classpath = getProperty('java.class.path').split(os.path.pathsep)
             msg.extend(self._get_items_in('CLASSPATH', classpath))
         raise DataError('\n'.join(msg))
+
+    def _log_import_succeeded(self, item, name, source):
+        if self._logger:
+            import_type = '%s ' % self._type if self._type else ''
+            item_type = 'module' if inspect.ismodule(item) else 'class'
+            location = ("'%s'" % source) if source else 'unknown location'
+            self._logger.info("Imported %s%s '%s' from %s."
+                              % (import_type, item_type, name, location))
 
     def _get_items_in(self, type, items):
         yield '\n%s:' % type
@@ -121,7 +131,8 @@ class Importer(object):
         except DataError, err:
             self._raise_import_failed(name, err)
         else:
-            return imported, source
+            self._log_import_succeeded(imported, name, source)
+            return imported
 
     def _import_class_or_module(self, name):
         if self._is_valid_import_path(name):
