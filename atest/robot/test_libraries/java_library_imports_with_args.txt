@@ -40,6 +40,7 @@ Library import should have been successful
     [Arguments]  ${lib}  @{params}
     Check Test Case  ${TEST NAME}
     ${par} =  Catenate  SEPARATOR=${SPACE}|${SPACE}  @{params}
+    Check Syslog Contains  Imported test library class  '${lib}' from unknown location.
     Check Syslog Contains  Imported library '${lib}' with arguments [ ${par} ]
 
 Library import should have failed

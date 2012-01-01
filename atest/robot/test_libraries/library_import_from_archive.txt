@@ -7,13 +7,12 @@ Resource        atest_resource.txt
 *** Test Cases ***
 Python Library From A Zip File
     Check Test Case  Python Library From a Zip File
-    Check Syslog Contains  Imported library 'ZipLib' with arguments [ ] (version <unknown>, class type, testcase scope, 1 keywords, source ${TESTLIBPATH}${/}ziplib.zip${/}ZipLib.py)
+    Check Syslog Contains  Imported library 'ZipLib' with arguments [ ] (version <unknown>, class type, testcase scope, 1 keywords)
 
 Java Library From A Jar File
     [Tags]  jybot
     Check Test Case  Java Library From a Jar File
-    ${expected path} =  Set Variable If  "${STANDALONE JYTHON}" == "NO"  ${TESTLIBPATH}${/}JarLib.jar  <unknown>
-    Check Syslog Contains  Imported library 'org.robotframework.JarLib' with arguments [ ] (version <unknown>, class type, testcase scope, 1 keywords, source ${expected path})
+    Check Syslog Contains  Imported library 'org.robotframework.JarLib' with arguments [ ] (version <unknown>, class type, testcase scope, 1 keywords)
 
 *** Keywords ***
 My Setup

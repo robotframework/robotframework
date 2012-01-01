@@ -3,10 +3,11 @@ Documentation   Importing test libraries normally, using variable in library nam
 Force Tags      regression
 Default Tags    pybot  jybot
 Resource        atest_resource.txt
+Suite Setup     Run Tests  ${EMPTY}  test_libraries/library_import_normal.txt
+
 
 *** Test Cases ***
 Normal Library Import
-    Run Tests  ${EMPTY}  test_libraries/library_import_normal.txt
     Check Test Case  ${TESTNAME}
 
 Library Import With Spaces In Name
@@ -14,16 +15,20 @@ Library Import With Spaces In Name
     Check Log Message  ${test.kws[0].messages[0]}  It works!
     Check Log Message  ${test.kws[1].messages[0]}  It really workz!!
 
+Importing Library Class Should Have Been Syslogged
+    ${base} =  Normalize Path  ${CURDIR}/../../testresources/testlibs
+    Check Syslog Contains  Imported test library class 'ExampleLibrary'
+    ...    from '${base}${/}ExampleLibrary
+    ${path} =  Normalize Path  ${CURDIR}/../../testresources/testlibs/libmodule
+    Check Syslog Contains  Imported test library module 'libmodule'
+    ...    from '${base}${/}libmodule
+
 Number Of Keywords In Imported Library Is Reported In Syslog
-    ${testlibs path} =  Normalize Path  ${CURDIR}/../../testresources/testlibs/
-    ${ex lib module} =  Normalize Path  ${testlibs path}/ExampleLibrary
-    Check Syslog Contains  | INFO \ |  Imported library 'ExampleLibrary' with arguments [ ] (version <unknown>, class type, testcase scope, 28 keywords, source ${ex lib module}
-    ${lib class module} =  Join Path  ${testlibs path}  libmodule
-    Check Syslog Contains  | INFO \ |  Imported library 'libmodule.LibClass1' with arguments [ ] (version <unknown>, class type, testcase scope, 1 keywords, source ${lib class module}
+    Check Syslog Contains  | INFO \ |  Imported library 'ExampleLibrary' with arguments [ ] (version <unknown>, class type, testcase scope, 28 keywords)
+    Check Syslog Contains  | INFO \ |  Imported library 'libmodule.LibClass1' with arguments [ ] (version <unknown>, class type, testcase scope, 1 keywords)
 
 Warning Should Be Written To Syslog If Library Contains No Keywords
-    ${lib module path} =  Join Path  ${CURDIR}/../../  testresources/testlibs/libmodule
-    Check Syslog Contains  | INFO \ |  Imported library 'libmodule' with arguments [ ] (version <unknown>, module type, global scope, 0 keywords, source ${lib module path}
+    Check Syslog Contains  | INFO \ |  Imported library 'libmodule' with arguments [ ] (version <unknown>, module type, global scope, 0 keywords)
     Check Syslog Contains  | WARN \ |  Imported library 'libmodule' contains no keywords
 
 Importing Python Class From Module

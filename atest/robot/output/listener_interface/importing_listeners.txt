@@ -1,55 +1,72 @@
 *** Settings ***
-Suite Setup     Run Tests  --listener ListenAll --listener listeners.ListenSome --listener module_listener --listener listeners.WithArgs:value --listener listeners.WithArgs:a1:a2 --listener ${LISTENERS}${/}ListenAll.py:${TEMPDIR}${/}${ALL_FILE2} --listener listeners.WithArgs --listener listeners.WithArgs:1:2:3 --listener JavaListener --listener JavaListenerWithArgs:Hello:world --listener JavaListenerWithArgs --listener JavaListenerWithArgs:b:a:r --listener NonExistingListener  misc${/}pass_and_fail.html
+Suite Setup     Run Tests With Listeners
 Suite Teardown  Remove Listener Files
 Force Tags      regression
 Default Tags    pybot  jybot
 Resource        listener_resource.txt
+Test Template   Listener Import Message Should Be In Syslog
 
 *** Test Cases ***
 Python Class Listener From Module With Same Name
-    Listener Import Message Should Be In Syslog  ListenAll  [ ]  ListenAll
+    class    ListenAll    ListenAll
 
 Python Class Listener From A Module With Different Name
-    Listener Import Message Should Be In Syslog  listeners.ListenSome  [ ]  listeners
+    class    listeners.ListenSome    listeners
 
 Python Module Listener
-    Listener Import Message Should Be In Syslog  module_listener  [ ]  module_listener
+    module    module_listener    module_listener
 
 Listener With Arguments
-    Listener Import Message Should Be In Syslog  listeners.WithArgs  [ value ]  listeners
-    Listener Import Message Should Be In Syslog  listeners.WithArgs  [ a1 | a2 ]  listeners
-    Check Listener File  ${ARGS_FILE}  I got arguments 'value' and 'default'  I got arguments 'a1' and 'a2'
+    class    listeners.WithArgs    listeners    4
+    [Teardown]    Check Listener File    ${ARGS_FILE}
+    ...    I got arguments 'value' and 'default'    I got arguments 'a1' and 'a2'
 
 Listener With Path
-    ${expected args} =  Set Variable If  ${TEMPDIR.count(':')}  ${TEMPDIR[0]} | ${TEMPDIR[2:]}${/}${ALL_FILE2}  ${TEMPDIR}${/}${ALL_FILE2}
-    Listener Import Message Should Be In Syslog  ${LISTENERS}${/}ListenAll.py  [ ${expected args} ]  ListenAll
-    File Should Exist  ${TEMPDIR}${/}${ALL_FILE2}
+    class    ${LISTENERS}${/}ListenAll.py   ListenAll
+    [Teardown]    File Should Exist  ${TEMPDIR}${/}${ALL_FILE2}
 
 Listener With Wrong Number Of Arguments
-    Check Syslog contains  Taking listener 'listeners.WithArgs' into use failed: TypeError: __init__() takes at least 2 arguments (1 given)
-    Check Syslog contains  Taking listener 'listeners.WithArgs:1:2:3' into use failed: TypeError: __init__()
+    [Template]    Check Syslog Contains
+    Taking listener 'listeners.WithArgs' into use failed: TypeError: __init__() takes at least 2 arguments (1 given)
+    Taking listener 'listeners.WithArgs:1:2:3' into use failed: TypeError: __init__()
 
 Non Existing Listener
-    Check Syslog contains  Taking listener 'NonExistingListener' into use failed: Importing listener 'NonExistingListener' failed: ImportError:
+    [Template]    Check Syslog Contains
+    Taking listener 'NonExistingListener' into use failed: Importing listener 'NonExistingListener' failed: ImportError:
 
 Java Listener
     [Tags]  jybot
-    Listener Import Message Should Be In Syslog  JavaListener  [ ]
+    class    JavaListener
 
 Java Listener With Arguments
     [Tags]  jybot
-    Listener Import Message Should Be In Syslog  JavaListenerWithArgs  [ Hello | world ]
-    Check Listener File  ${JAVA_ARGS_FILE}  I got arguments 'Hello' and 'world'
+    class    JavaListenerWithArgs    count=3
+    [Teardown]    Check Listener File      ${JAVA_ARGS_FILE}
+    ...    I got arguments 'Hello' and 'world'
 
 Java Listener With Wrong Number Of Arguments
     [Tags]  jybot
-    Check Syslog contains  Taking listener 'JavaListenerWithArgs' into use failed: TypeError: JavaListenerWithArgs(): expected 2 args; got 0
-    Check Syslog contains  Taking listener 'JavaListenerWithArgs:b:a:r' into use failed: TypeError: JavaListenerWithArgs(): expected 2 args; got 3
+    [Template]    Check Syslog Contains
+    Taking listener 'JavaListenerWithArgs' into use failed: TypeError: JavaListenerWithArgs(): expected 2 args; got 0
+    Taking listener 'JavaListenerWithArgs:b:a:r' into use failed: TypeError: JavaListenerWithArgs(): expected 2 args; got 3
+
 
 *** Keywords ***
-Listener Import Message Should Be In Syslog
-    [Arguments]  ${name}  ${args}  ${source}=<unknown>
-    ${module_path} =  Join Path  ${LISTENERS}  ${source}
-    ${source} =  Set Variable If  '${source}' != '<unknown>'  ${module_path}  <unknown>
-    Check Syslog Contains  Imported listener '${name}' with arguments ${args} (source ${source}
+
+Run Tests With Listeners
+    ${listeners} =    Catenate
+    ...    --listener ListenAll
+    ...    --listener listeners.ListenSome
+    ...    --listener module_listener
+    ...    --listener listeners.WithArgs:value
+    ...    --listener listeners.WithArgs:a1:a2
+    ...    --listener ${LISTENERS}${/}ListenAll.py:${TEMPDIR}${/}${ALL_FILE2}
+    ...    --listener listeners.WithArgs
+    ...    --listener listeners.WithArgs:1:2:3
+    ...    --listener JavaListener
+    ...    --listener JavaListenerWithArgs:Hello:world
+    ...    --listener JavaListenerWithArgs
+    ...    --listener JavaListenerWithArgs:b:a:r
+    ...    --listener NonExistingListener
+    Run Tests    ${listeners}    misc/pass_and_fail.html
 
