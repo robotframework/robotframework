@@ -95,7 +95,7 @@ class _BaseSettings(object):
         if name in ['SuiteStatLevel', 'MonitorWidth']:
             return self._convert_to_positive_integer_or_default(name, value)
         if name in ['Listeners', 'VariableFiles']:
-            return [self._split_args_from_name(item) for item in value]
+            return [self._split_args_from_name_or_path(item) for item in value]
         if name == 'ReportBackground':
             return self._process_report_background(value)
         if name == 'TagStatCombine':
@@ -215,14 +215,17 @@ class _BaseSettings(object):
     def _get_default_value(self, name):
         return self._cli_opts[name][1]
 
-    def _split_args_from_name(self, name):
+    def _split_args_from_name_or_path(self, name):
         if ':' not in name or os.path.exists(name):
-            return name, []
-        args = name.split(':')
-        name = args.pop(0)
-        # Handle absolute Windows paths with arguments
-        if len(name) == 1 and args[0].startswith(('/', '\\')):
-            name = name + ':' + args.pop(0)
+            args = []
+        else:
+            args = name.split(':')
+            name = args.pop(0)
+            # Handle absolute Windows paths with arguments
+            if len(name) == 1 and args[0].startswith(('/', '\\')):
+                name = name + ':' + args.pop(0)
+        if os.path.exists(name):
+            name = os.path.abspath(name)
         return name, args
 
     def __contains__(self, setting):

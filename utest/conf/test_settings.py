@@ -1,5 +1,6 @@
 import unittest
 import os
+from os.path import abspath
 
 from robot.conf.settings import _BaseSettings, RobotSettings, RebotSettings
 from robot.utils.asserts import assert_equals, assert_false
@@ -11,10 +12,10 @@ class SettingWrapper(_BaseSettings):
         pass
 
 
-class TestSplitArgsFromName(unittest.TestCase):
+class TestSplitArgsFromNameOrPath(unittest.TestCase):
 
     def setUp(self):
-        self.method = SettingWrapper()._split_args_from_name
+        self.method = SettingWrapper()._split_args_from_name_or_path
 
     def test_with_no_args(self):
         assert_equals(self.method('name'), ('name', []))
@@ -40,14 +41,23 @@ class TestSplitArgsFromName(unittest.TestCase):
                       ('D:\\APPS\\listener', ['v1', 'b2', 'z3']))
         assert_equals(self.method('C:/varz.py:arg'), ('C:/varz.py', ['arg']))
 
+    def test_existing_paths_are_made_absolute(self):
+        path = 'robot-framework-unit-test-file-12q3405909qasf'
+        open(path, 'w').close()
+        try:
+            assert_equals(self.method(path), (abspath(path), []))
+            assert_equals(self.method(path+':arg'), (abspath(path), ['arg']))
+        finally:
+            os.remove(path)
+
     def test_existing_path_with_colons(self):
         # Colons aren't allowed in Windows paths (other than in "c:")
         if os.sep == '\\':
             return
         path = 'robot:framework:test:1:2:42'
+        os.mkdir(path)
         try:
-            os.mkdir(path)
-            assert_equals(self.method(path), (path, []))
+            assert_equals(self.method(path), (abspath(path), []))
         finally:
             os.rmdir(path)
 
