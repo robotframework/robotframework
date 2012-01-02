@@ -108,7 +108,6 @@ class _ErrorDetails(object):
 
 
 class PythonErrorDetails(_ErrorDetails):
-    _ignore_trace_until = (os.path.join('robot','running','handlers.py'), '<lambda>')
 
     def _get_message(self):
         # If exception is a "string exception" without a message exc_value is None
@@ -127,16 +126,14 @@ class PythonErrorDetails(_ErrorDetails):
         return 'Traceback (most recent call last):\n' + self._get_traceback()
 
     def _get_traceback(self):
-        tb = traceback.extract_tb(self._exc_traceback)
-        for row, (path, _, func, _) in enumerate(tb):
-            if self._include_rest_traceback(path, func):
-                tb = tb[row+1:]
-                break
-        return ''.join(traceback.format_list(tb)).rstrip()
+        tb = self._exc_traceback
+        while tb and self._is_excluded_traceback(tb):
+            tb = tb.tb_next
+        return ''.join(traceback.format_tb(tb)).rstrip() or '  None'
 
-    def _include_rest_traceback(self, path, func):
-        return (path.endswith(self._ignore_trace_until[0]) and
-                func == self._ignore_trace_until[1])
+    def _is_excluded_traceback(self, traceback):
+        module = traceback.tb_frame.f_globals['__name__']
+        return module.startswith('robot.')
 
 
 class JavaErrorDetails(_ErrorDetails):
