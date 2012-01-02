@@ -17,7 +17,7 @@ import sys
 import copy
 
 from robot import utils
-from robot.errors import FrameworkError, DataError
+from robot.errors import DataError
 from robot.variables import GLOBAL_VARIABLES, is_scalar_var
 from robot.common import UserErrorHandler
 from robot.output import LOGGER
@@ -30,16 +30,17 @@ from .handlers import _XTimesHandler
 from .context import EXECUTION_CONTEXTS
 
 
-STDLIB_NAMES = ['BuiltIn', 'Collections', 'Dialogs', 'Easter', 'OperatingSystem',
-                'Remote', 'Reserved', 'Screenshot', 'String', 'Telnet']
+STDLIB_NAMES = set(('BuiltIn', 'Collections', 'Dialogs', 'Easter',
+                    'OperatingSystem', 'Remote', 'Reserved',
+                    'Screenshot', 'String', 'Telnet'))
 IMPORTER = Importer()
 
 
 class Namespace:
-    """A database for keywords and variables.
-
-    A new instance of this class is created for each test suite.
-    """
+    _default_libraries = ('BuiltIn', 'Reserved', 'Easter')
+    _deprecated_libraries = {'BuiltIn': 'DeprecatedBuiltIn',
+                             'OperatingSystem': 'DeprecatedOperatingSystem'}
+    _library_import_by_path_endings = ('.py', '.java', '.class', '/', os.sep)
 
     def __init__(self, suite, parent_vars):
         if suite is not None:
@@ -65,7 +66,7 @@ class Namespace:
         return variables
 
     def _import_default_libraries(self):
-        for name in 'BuiltIn', 'Reserved', 'Easter':
+        for name in self._default_libraries:
             self.import_library(name)
 
     def _handle_imports(self, import_settings):
@@ -74,17 +75,14 @@ class Namespace:
                 if not item.name:
                     raise DataError('%s setting requires a name' % item.type)
                 self._import(item)
-            except:
-                item.report_invalid_syntax(utils.get_error_message())
+            except DataError, err:
+                item.report_invalid_syntax(unicode(err))
 
     def _import(self, import_setting):
-        try:
-            action = {'Library': self._import_library,
-                      'Resource': self._import_resource,
-                      'Variables': self._import_variables}[import_setting.type]
-            action(import_setting, self.variables.current)
-        except KeyError:
-            raise FrameworkError("Invalid import setting: %s" % import_setting)
+        action = {'Library': self._import_library,
+                  'Resource': self._import_resource,
+                  'Variables': self._import_variables}[import_setting.type]
+        action(import_setting, self.variables.current)
 
     def import_resource(self, name, overwrite=True):
         self._import_resource(Resource(None, name), overwrite=overwrite)
@@ -122,7 +120,7 @@ class Namespace:
         self._import_library(Library(None, name, args=args, alias=alias), variables)
 
     def _import_library(self, import_setting, variables):
-        name = self._get_library_name(import_setting, variables)
+        name = self._resolve_name(import_setting, variables)
         lib = IMPORTER.import_library(name, import_setting.args,
                                       import_setting.alias, variables)
         if lib.name in self._testlibs:
@@ -135,30 +133,46 @@ class Namespace:
             lib.start_test()
         self._import_deprecated_standard_libs(lib.name)
 
-    def _get_library_name(self, import_setting, variables):
-        name = self._resolve_name(import_setting, variables)
-        if os.path.exists(name):
-            return name
-        return name.replace(' ', '')
-
     def _resolve_name(self, import_setting, variables):
-        """Resolves variables from the import_setting name
-
-        Returns absolute path to file if it exists or resolved import_setting name.
-        """
+        name = import_setting.name
         if variables:
             try:
-                name = variables.replace_string(import_setting.name)
+                name = variables.replace_string(name)
             except DataError, err:
-                self._report_replacing_vars_failed(import_setting, err)
-        else:
-            name = import_setting.name
-        basedir = import_setting.directory or ''
-        return self._get_path(import_setting.type, name, basedir)
+                self._raise_replacing_vars_failed(import_setting, err)
+        return self._get_path(name, import_setting.directory, import_setting.type)
 
-    def _report_replacing_vars_failed(self, import_setting, err):
+    def _raise_replacing_vars_failed(self, import_setting, err):
         raise DataError("Replacing variables from setting '%s' failed: %s"
                         % (import_setting.type, unicode(err)))
+
+    def _get_path(self, name, basedir, type):
+        if type == 'Library' and not self._is_library_by_path(name):
+            return name.replace(' ', '')
+        try:
+            return self._resolve_path(name.replace('/', os.sep), basedir)
+        except DataError:
+            self._raise_imported_does_not_exist(type, name)
+
+    def _is_library_by_path(self, path):
+        return path.lower().endswith(self._library_import_by_path_endings)
+
+    def _resolve_path(self, path, basedir):
+        for base in [basedir] + sys.path:
+            if not (base and os.path.isdir(base)):
+                continue
+            ret = os.path.join(base, path)
+            if os.path.isfile(ret):
+                return ret
+            if os.path.isdir(ret) and os.path.isfile(os.path.join(ret, '__init__.py')):
+                return ret
+        raise DataError
+
+    def _raise_imported_does_not_exist(self, type, path):
+        type = {'Library': 'Test library',
+                'Variables': 'Variable file',
+                'Resource': 'Resource file'}[type]
+        raise DataError("%s '%s' does not exist." % (type, path))
 
     def _resolve_args(self, import_setting, variables):
         if not variables:
@@ -166,35 +180,11 @@ class Namespace:
         try:
             return variables.replace_list(import_setting.args)
         except DataError, err:
-            self._report_replacing_vars_failed(import_setting, err)
-
-    def _get_path(self, setting_name, path, basedir):
-        if setting_name == 'Library' and not self._is_library_by_path(path):
-            return path
-        path = self._resolve_path(setting_name, path.replace('/', os.sep), basedir)
-        ending = os.sep if path.endswith(os.sep) else ''
-        return utils.abspath(path) + ending
-
-    def _is_library_by_path(self, path):
-        return path.lower().endswith(('.py', '.java', '.class', '/', os.sep))
-
-    def _resolve_path(self, setting_name, path, basedir):
-        for base in [basedir] + sys.path:
-            if not os.path.isdir(base):
-                continue
-            ret = os.path.join(base, path)
-            if os.path.isfile(ret):
-                return ret
-            if os.path.isdir(ret) and os.path.isfile(os.path.join(ret, '__init__.py')):
-                return ret
-        name = {'Library': 'Test library',
-                'Variables': 'Variable file',
-                'Resource': 'Resource file'}[setting_name]
-        raise DataError("%s '%s' does not exist." % (name, path))
+            self._raise_replacing_vars_failed(import_setting, err)
 
     def _import_deprecated_standard_libs(self, name):
-        if name in ['BuiltIn', 'OperatingSystem']:
-            self.import_library('Deprecated' + name)
+        if name in self._deprecated_libraries:
+            self.import_library(self._deprecated_libraries[name])
 
     def start_test(self, test):
         self.variables.start_test(test)
@@ -240,9 +230,8 @@ class Namespace:
             handler = self._get_handler(name)
             if handler is None:
                 raise DataError("No keyword with name '%s' found." % name)
-        except:
-            error = utils.get_error_message()
-            handler = UserErrorHandler(name, error)
+        except DataError, err:
+            handler = UserErrorHandler(name, unicode(err))
         self._replace_variables_from_user_handlers(handler)
         return handler
 
