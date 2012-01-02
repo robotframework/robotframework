@@ -81,7 +81,6 @@ class SerializationContext(object):
     def finish(self):
         if self._given_output is None:
             self._output.close()
-        return self._get_source()
 
     def _get_source(self):
         return self._path or '%s.%s' % (self._basename(), self.format)
