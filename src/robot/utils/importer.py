@@ -26,7 +26,6 @@ from .robotpath import abspath
 
 
 # TODO:
-# - test and possibly prune tracebacks
 # - test PYTHONPATH and CLASSPATH
 # - acceptance tests for issue 979
 # - test can variable files be implemented with java/python classes nowadays
@@ -100,6 +99,11 @@ class Importer(object):
             msg.extend(self._get_items_in('CLASSPATH', classpath))
         raise DataError('\n'.join(msg))
 
+    def _get_items_in(self, type, items):
+        yield '%s:' % type
+        for item in items:
+            yield '  %s' % item
+
     def _log_import_succeeded(self, item, name, source):
         if self._logger:
             import_type = '%s ' % self._type if self._type else ''
@@ -107,11 +111,6 @@ class Importer(object):
             location = ("'%s'" % source) if source else 'unknown location'
             self._logger.info("Imported %s%s '%s' from %s."
                               % (import_type, item_type, name, location))
-
-    def _get_items_in(self, type, items):
-        yield '%s:' % type
-        for item in items:
-            yield '  %s' % item
 
 
 class _Importer(object):

@@ -23,6 +23,15 @@ def assert_prefix(error, expected):
     prefix = ':'.join(unicode(error).split(':')[:2]) + ':'
     assert_equals(prefix, expected)
 
+def create_temp_file(name, attr=42, extra_content=''):
+    if not exists(TESTDIR):
+        os.mkdir(TESTDIR)
+    path = join(TESTDIR, name)
+    with open(path, 'w') as file:
+        file.write('attr = %r\n' % attr)
+        file.write('def func():\n  return attr\n')
+        file.write(extra_content)
+    return path
 
 class LoggerStub(object):
 
@@ -44,39 +53,38 @@ class TestImportByPath(unittest.TestCase):
 
     def setUp(self):
         self.tearDown()
-        os.mkdir(TESTDIR)
 
     def tearDown(self):
         if exists(TESTDIR):
             shutil.rmtree(TESTDIR)
 
     def test_python_file(self):
-        path = self._create_file('test.py')
+        path = create_temp_file('test.py')
         self._import_and_verify(path)
 
     def test_python_directory(self):
-        self._create_file('__init__.py')
+        create_temp_file('__init__.py')
         self._import_and_verify(TESTDIR + os.sep)
 
     def test_import_different_file_with_same_name(self):
-        path1 = self._create_file('test.py', attr=1)
+        path1 = create_temp_file('test.py', attr=1)
         self._import_and_verify(path1, attr=1)
         path2 = join(TESTDIR, 'test')
         os.mkdir(path2)
-        self._create_file(join(path2, '__init__.py'), attr=2)
+        create_temp_file(join(path2, '__init__.py'), attr=2)
         self._import_and_verify(path2 + '/', attr=2, directory=path2)
-        path3 = self._create_file(join(path2, 'test.py'), attr=3)
+        path3 = create_temp_file(join(path2, 'test.py'), attr=3)
         self._import_and_verify(path3, attr=3, directory=path2)
 
     def test_import_class_from_file(self):
-        path = self._create_file('test.py', extra_content='class test:\n def m(s): return 1')
+        path = create_temp_file('test.py', extra_content='class test:\n def m(s): return 1')
         klass = Importer().import_class_or_module_by_path(path)
         assert_true(inspect.isclass(klass))
         assert_equals(klass.__name__, 'test')
         assert_equals(klass().m(), 1)
 
     def test_invalid_python_file(self):
-        path = self._create_file('test.py', extra_content='invalid content')
+        path = create_temp_file('test.py', extra_content='invalid content')
         error = assert_raises(DataError, self._import_and_verify, path)
         assert_prefix(error, "Importing '%s' failed: SyntaxError:" % path)
 
@@ -110,14 +118,6 @@ class TestImportByPath(unittest.TestCase):
             path = join(CURDIR, 'ImportByPath.java')
             Importer('java', logger).import_class_or_module_by_path(path)
             logger.assert_message("Imported java class 'ImportByPath' from '%s'." % path)
-
-    def _create_file(self, name, attr=42, extra_content=''):
-        path = join(TESTDIR, name)
-        with open(path, 'w') as file:
-            file.write('attr = %r\n' % attr)
-            file.write('def func():\n  return attr\n')
-            file.write(extra_content)
-        return path
 
     def _import_and_verify(self, path, attr=42, directory=TESTDIR):
         module = self._import(path)
@@ -286,6 +286,39 @@ class TestImportClassOrModule(unittest.TestCase):
 
     def _import(self, name, type=None, logger=None):
         return Importer(type, logger).import_class_or_module(name)
+
+
+class TestTraceback(unittest.TestCase):
+
+    def test_no_traceback(self):
+        error = self._failing_import('NoneExisting')
+        traceback = '\n'.join(self._yield_traceback_lines(unicode(error)))
+        assert_equals(traceback, 'Traceback (most recent call last):\n  None')
+
+    def test_traceback(self):
+        path = create_temp_file('tb.py', extra_content='import nonex')
+        try:
+            error = self._failing_import(path)
+        finally:
+            shutil.rmtree(TESTDIR)
+        traceback = '\n'.join(self._yield_traceback_lines(unicode(error)))
+        assert_equals(traceback, 'Traceback (most recent call last):\n'
+                                 '  File "%s", line 4, in <module>\n'
+                                 '    import nonex' % path)
+
+    def _failing_import(self, name):
+        importer = Importer().import_class_or_module
+        return assert_raises(DataError, importer, name)
+
+    def _yield_traceback_lines(self, message):
+        include = False
+        for line in message.splitlines():
+            if line == 'PYTHONPATH:':
+                return
+            if line == 'Traceback (most recent call last):':
+                include = True
+            if include:
+                yield line
 
 
 if __name__ == '__main__':
