@@ -136,21 +136,31 @@ class TestImportByPath(unittest.TestCase):
 
 class TestInvalidImportPath(unittest.TestCase):
 
+    def test_non_absolute(self):
+        assert_raises_with_msg(DataError,
+            "Importing 'non.existing.py' failed: Import path must be absolute.",
+            Importer().import_class_or_module_by_path, 'non.existing.py')
+        assert_raises_with_msg(DataError,
+            "Importing file 'nonex.py' failed: Import path must be absolute.",
+            Importer('file').import_class_or_module_by_path, 'nonex.py')
+
     def test_non_existing(self):
+        path = abspath('non-existing.py')
         assert_raises_with_msg(DataError,
-            "Importing 'non-existing.py' failed: File or directory does not exist.",
-            Importer().import_class_or_module_by_path, 'non-existing.py')
+            "Importing '%s' failed: File or directory does not exist." % path,
+            Importer().import_class_or_module_by_path, path)
         assert_raises_with_msg(DataError,
-            "Importing test file 'non-existing.py' failed: File or directory does not exist.",
-            Importer('test file').import_class_or_module_by_path, 'non-existing.py')
+            "Importing test file '%s' failed: File or directory does not exist." % path,
+            Importer('test file').import_class_or_module_by_path, path)
 
     def test_invalid_format(self):
+        path = join(CURDIR, '..', '..', 'README.txt')
         assert_raises_with_msg(DataError,
-            "Importing '%s' failed: Not a valid file or directory to import." % CURDIR,
-            Importer().import_class_or_module_by_path, CURDIR)
+            "Importing '%s' failed: Not a valid file or directory to import." % path,
+            Importer().import_class_or_module_by_path, path)
         assert_raises_with_msg(DataError,
-            "Importing xxx '%s' failed: Not a valid file or directory to import." % CURDIR,
-            Importer('xxx').import_class_or_module_by_path, CURDIR)
+            "Importing xxx '%s' failed: Not a valid file or directory to import." % path,
+            Importer('xxx').import_class_or_module_by_path, path)
 
 
 class TestImportClassOrModule(unittest.TestCase):

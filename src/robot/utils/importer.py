@@ -144,10 +144,10 @@ class _Importer(object):
 
 
 class ByPathImporter(_Importer):
-    _import_path_endings = ('.py', '.java', '.class', '/', os.sep)
+    _valid_import_extensions = ('.py', '.java', '.class', '')
 
     def handles(self, path):
-        return os.path.exists(path) and path.endswith(self._import_path_endings)
+        return os.path.isabs(path)
 
     def import_(self, path):
         self._verify_import_path(path)
@@ -155,21 +155,23 @@ class ByPathImporter(_Importer):
         imported = self._get_class_from_module(module) or module
         return self._verify_type(imported), path
 
+    def _verify_import_path(self, path):
+        if not os.path.isabs(path):
+            raise DataError('Import path must be absolute.')
+        if not os.path.exists(path):
+            raise DataError('File or directory does not exist.')
+        if not os.path.splitext(path)[1] in self._valid_import_extensions:
+            raise DataError('Not a valid file or directory to import.')
+
     def _import_by_path(self, path):
         module_dir, module_name = self._split_path_to_module(path)
-        sys.path.insert(0, module_dir)
         if module_name in sys.modules:
             del sys.modules[module_name]
+        sys.path.insert(0, module_dir)
         try:
             return self._import(module_name)
         finally:
             sys.path.pop(0)
-
-    def _verify_import_path(self, path):
-        if not os.path.exists(path):
-            raise DataError('File or directory does not exist.')
-        if not path.endswith(self._import_path_endings):
-            raise DataError('Not a valid file or directory to import.')
 
     def _split_path_to_module(self, path):
         module_dir, module_file = os.path.split(abspath(path))
