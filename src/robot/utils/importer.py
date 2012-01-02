@@ -93,7 +93,7 @@ class Importer(object):
         msg = "Importing %s'%s' failed: %s" % (import_type, name, error.message)
         if not error.details:
             raise DataError(msg)
-        msg = [msg, '', error.details]
+        msg = [msg, error.details]
         msg.extend(self._get_items_in('PYTHONPATH', sys.path))
         if sys.platform.startswith('java'):
             classpath = getProperty('java.class.path').split(os.path.pathsep)
@@ -109,7 +109,7 @@ class Importer(object):
                               % (import_type, item_type, name, location))
 
     def _get_items_in(self, type, items):
-        yield '\n%s:' % type
+        yield '%s:' % type
         for item in items:
             yield '  %s' % item
 
