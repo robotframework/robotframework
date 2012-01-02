@@ -15,22 +15,34 @@ Arguments To Variable Files
     Check Test Case  Arguments To Variable Files
 
 Non-Existing Variable File
-    Check Stderr Contains  [ ERROR ]  Importing variable file 'non_existing.py' failed: File or directory does not exist.
+    Check Stderr Contains  [ ERROR ] Importing variable file '${VF3}' failed: File or directory does not exist.
+    Check Stderr Contains  [ ERROR ] Importing variable file '${VF4}' failed: File or directory does not exist.
 
 Too Few Arguments To Variable File
-    Check Stderr Contains  [ ERROR ]  Processing variable file '${VARFILE2}' failed:  TypeError: get_variables()
+    Check Stderr Contains  [ ERROR ] Processing variable file '${VF2}' failed: TypeError: get_variables()
 
 Too Many Arguments To Variable File
-    Check Stderr Contains  [ ERROR ]  Processing variable file '${VARFILE2}' with arguments [ too | many | args ] failed:  TypeError: get_variables()
+    Check Stderr Contains  [ ERROR ] Processing variable file '${VF2}' with arguments [ too | many | args ] failed: TypeError: get_variables()
 
 Invalid Variable File
-    Check Stderr Contains  [ ERROR ]  Processing variable file '${VARFILE2}' with arguments [ FAIL ] failed:  ZeroDivisionError:
+    Check Stderr Contains  [ ERROR ] Processing variable file '${VF2}' with arguments [ FAIL ] failed: ZeroDivisionError:
 
 *** Keywords ***
 Run Test Data
-    ${varfile} =  Normalize Path  ${VARFILEDIR}/cli_vars.py
-    ${varfile2} =  Normalize Path  ${VARFILEDIR}/cli_vars_2.py
-    ${varfile3} =  Normalize Path  ${VARFILEDIR}/cli_vars_invalid.py
-    Run Tests  --variablefile ${varfile} -V ${varfile2}:arg -V ${varfile2}:arg2:given --variablefile non_existing.py --variablefile ${varfile2} -V ${varfile2}:too:many:args -V ${varfile2}:FAIL  variables/commandline_variable_files.txt
-    Set Suite Variable  $VARFILE2
-
+    ${vf1} =  Normalize Path  ${VARFILEDIR}/cli_vars.py
+    ${vf2} =  Normalize Path  ${VARFILEDIR}/cli_vars_2.py
+    ${vf3} =  Normalize Path  ${VARFILEDIR}/non_existing.py
+    ${vf4} =  Set Variable  non_absolute_non_existing.py
+    ${varfiles} =  Catenate
+    ...  --variablefile ${vf1}
+    ...  -V ${vf2}:arg
+    ...  -V ${vf2}:arg2:given
+    ...  --variablefile ${vf2}
+    ...  -V ${vf2}:FAIL
+    ...  -V ${vf2}:too:many:args
+    ...  --variablefile ${vf3}
+    ...  --variablefile ${vf4}
+    Run Tests  ${varfiles}  variables/commandline_variable_files.txt
+    Set Suite Variable  $VF2
+    Set Suite Variable  $VF3
+    Set Suite Variable  $VF4
