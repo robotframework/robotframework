@@ -288,12 +288,12 @@ class TestImportClassOrModule(unittest.TestCase):
         return Importer(type, logger).import_class_or_module(name)
 
 
-class TestTraceback(unittest.TestCase):
+class TestErrorDetails(unittest.TestCase):
 
     def test_no_traceback(self):
         error = self._failing_import('NoneExisting')
-        traceback = '\n'.join(self._yield_traceback_lines(unicode(error)))
-        assert_equals(traceback, 'Traceback (most recent call last):\n  None')
+        assert_equals(self._get_traceback(error),
+                      'Traceback (most recent call last):\n  None')
 
     def test_traceback(self):
         path = create_temp_file('tb.py', extra_content='import nonex')
@@ -301,21 +301,54 @@ class TestTraceback(unittest.TestCase):
             error = self._failing_import(path)
         finally:
             shutil.rmtree(TESTDIR)
-        traceback = '\n'.join(self._yield_traceback_lines(unicode(error)))
-        assert_equals(traceback, 'Traceback (most recent call last):\n'
-                                 '  File "%s", line 4, in <module>\n'
-                                 '    import nonex' % path)
+        assert_equals(self._get_traceback(error),
+                      'Traceback (most recent call last):\n'
+                      '  File "%s", line 4, in <module>\n'
+                      '    import nonex' % path)
+
+    def test_pythonpath(self):
+        error = self._failing_import('NoneExisting')
+        lines = self._get_pythonpath(error).splitlines()
+        assert_equals(lines[0], 'PYTHONPATH:')
+        for line in lines[1:]:
+            assert_true(line.startswith('  '))
+
+    if sys.platform.startswith('java'):
+
+        def test_classpath(self):
+            error = self._failing_import('NoneExisting')
+            lines = self._get_classpath(error).splitlines()
+            assert_equals(lines[0], 'CLASSPATH:')
+            for line in lines[1:]:
+                assert_true(line.startswith('  '))
+
+    def test_structure(self):
+        error = self._failing_import('NoneExisting')
+        message = "Importing 'NoneExisting' failed: ImportError: No module named NoneExisting"
+        expected = (message, self._get_traceback(error),
+                    self._get_pythonpath(error), self._get_classpath(error))
+        assert_equals(unicode(error), '\n'.join(expected).strip())
 
     def _failing_import(self, name):
         importer = Importer().import_class_or_module
         return assert_raises(DataError, importer, name)
 
-    def _yield_traceback_lines(self, message):
+    def _get_traceback(self, error):
+        return '\n'.join(self._block(error, 'Traceback (most recent call last):',
+                                     'PYTHONPATH:'))
+
+    def _get_pythonpath(self, error):
+        return '\n'.join(self._block(error, 'PYTHONPATH:', 'CLASSPATH:'))
+
+    def _get_classpath(self, error):
+        return '\n'.join(self._block(error, 'CLASSPATH:'))
+
+    def _block(self, error, start, end=None):
         include = False
-        for line in message.splitlines():
-            if line == 'PYTHONPATH:':
+        for line in unicode(error).splitlines():
+            if line == end:
                 return
-            if line == 'Traceback (most recent call last):':
+            if line == start:
                 include = True
             if include:
                 yield line
