@@ -156,10 +156,10 @@ class ByPathImporter(_Importer):
         return self._verify_type(imported), path
 
     def _verify_import_path(self, path):
-        if not os.path.isabs(path):
-            raise DataError('Import path must be absolute.')
         if not os.path.exists(path):
             raise DataError('File or directory does not exist.')
+        if not os.path.isabs(path):
+            raise DataError('Import path must be absolute.')
         if not os.path.splitext(path)[1] in self._valid_import_extensions:
             raise DataError('Not a valid file or directory to import.')
 
