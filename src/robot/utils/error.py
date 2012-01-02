@@ -132,8 +132,8 @@ class PythonErrorDetails(_ErrorDetails):
         return ''.join(traceback.format_tb(tb)).rstrip() or '  None'
 
     def _is_excluded_traceback(self, traceback):
-        module = traceback.tb_frame.f_globals['__name__']
-        return module.startswith('robot.')
+        module = traceback.tb_frame.f_globals.get('__name__')
+        return module and module.startswith('robot.')
 
 
 class JavaErrorDetails(_ErrorDetails):
