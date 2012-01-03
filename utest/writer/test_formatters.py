@@ -3,7 +3,7 @@ from robot.parsing.model import TestCaseTable, TestCaseFileSettingTable
 
 from robot.writer.formatters import TxtFormatter, HtmlFormatter, TsvFormatter, PipeFormatter
 from robot.writer.tableformatters import RowSplitter, HtmlCell
-from robot.utils.asserts import assert_equals
+from robot.utils.asserts import assert_equals, assert_true
 
 
 class TestRowSplitter(unittest.TestCase):
@@ -52,11 +52,14 @@ class TestTsvFormatter(unittest.TestCase):
 
 class TestHtmlFormatter(unittest.TestCase):
 
+    def setUp(self):
+        self._formatter = HtmlFormatter()
+
     def test_setting_table_doc(self):
         table = TestCaseFileSettingTable(None)
         table.set_header('Settings')
         table.doc.value = 'Some documentation'
-        formatted = list(HtmlFormatter().setting_rows(table))
+        formatted = list(self._formatter.setting_rows(table))
         assert_equals(self._rows_to_text(formatted),
                       [['Documentation', 'Some documentation']])
         assert_equals(formatted[0][1].attributes,
@@ -77,7 +80,7 @@ class TestHtmlFormatter(unittest.TestCase):
         test.doc.value = 'Some doc'
         assert_equals(self._rows(table)[0],
             ['<a name="test_Test">Test</a>', '[Documentation]', 'Some doc'])
-        assert_equals(list(HtmlFormatter().test_rows(table))[0][2].attributes,
+        assert_equals(list(self._formatter.test_rows(table))[0][2].attributes,
                       {'colspan': '3', 'class': 'colspan3'})
 
     def test_test_documentation_with_comment(self):
@@ -87,17 +90,58 @@ class TestHtmlFormatter(unittest.TestCase):
         test.doc._set_comment('a comment')
         assert_equals(self._rows(table)[0],
             ['<a name="test_Test">Test</a>', '[Documentation]', 'Some doc', '# a comment', ''])
-        assert_equals(list(HtmlFormatter().test_rows(table))[0][2].attributes, {})
+        assert_equals(list(self._formatter.test_rows(table))[0][2].attributes, {})
+
+    def test_testcase_table_custom_headers(self):
+        self._check_header_length([], 1)
+        self._check_header_length(['a', 'b', 'ceee dee'], 4)
+        self._check_header_length(['akjsakjskjd kjsda kdjs'], 2)
+        self._check_header_length([str(i) for i in range(1000)], 1001)
+
+    def test_header_width_matches_widest_row(self):
+        table = self._create_test_table(['h', 'e'])
+        test = table.add('Some test')
+        test.add_step(['kw', 'arg1', 'arg2', 'arg3'])
+        assert_equals(len(self._formatter.header_row(table)), 5)
+
+    def _check_header_length(self, headers, expected_length):
+        table = self._create_test_table(headers)
+        assert_equals(len(self._formatter.header_row(table)), expected_length)
+
+    def test_testcase_table_header_colspan(self):
+        self._assert_header_colspan([], 5)
+        self._assert_header_colspan(['a', 'b'], 1)
+
+    def _assert_header_colspan(self, header, expected_colspan):
+        table = self._create_test_table(header)
+        assert_equals(self._formatter.header_row(table)[0].attributes['colspan'],
+                      str(expected_colspan))
+
+    def test_number_of_columns_is_max_of_header_and_row_widths(self):
+        table = self._create_test_table(['a', 'b'])
+        test = table.add('Test')
+        test.add_step(['Log Many', 'kukka', 'nen'])
+        self._check_row_lengths(table, 4)
+        table = self._create_test_table(['a', 'b', 'c'])
+        test = table.add('Test')
+        test.add_step(['No Operation'])
+        self._check_row_lengths(table, 4)
+
+    def _check_row_lengths(self, table, expected_length):
+        rows = list(self._formatter.test_rows(table))
+        assert_true(len(rows) > 0)
+        for row in rows:
+            assert_equals(len(row), expected_length)
 
     def _rows(self, table):
-        return self._rows_to_text(HtmlFormatter().test_rows(table))
+        return self._rows_to_text(self._formatter.test_rows(table))
 
     def _rows_to_text(self, rows):
         return [[cell.content for cell in row] for row in rows]
 
-    def _create_test_table(self):
+    def _create_test_table(self, additional_headers=[]):
         table = TestCaseTable(None)
-        table.set_header('Test Cases')
+        table.set_header(['Test Cases'] + additional_headers)
         return table
 
     def test_add_br_to_newlines(self):
