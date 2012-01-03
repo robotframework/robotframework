@@ -49,8 +49,8 @@ class LoggerStub(object):
                 msg = msg.replace(ext, '')
         self.messages.append(msg)
 
-    def assert_message(self, msg):
-        assert_equals(self.messages, [msg])
+    def assert_message(self, msg, index=0):
+        assert_equals(self.messages[index], msg)
 
 
 class TestImportByPath(unittest.TestCase):
@@ -71,14 +71,21 @@ class TestImportByPath(unittest.TestCase):
         self._import_and_verify(TESTDIR + os.sep)
 
     def test_import_different_file_and_directory_with_same_name(self):
+        removed = "Removed module 'test' from sys.modules to import fresh module."
+        imported = "Imported module 'test' from '%s'."
         path1 = create_temp_file('test.py', attr=1)
         self._import_and_verify(path1, attr=1)
+        self.logger.assert_message(imported % path1, index=-1)
         path2 = join(TESTDIR, 'test')
         os.mkdir(path2)
         create_temp_file(join(path2, '__init__.py'), attr=2)
         self._import_and_verify(path2, attr=2, directory=path2)
+        self.logger.assert_message(removed)
+        self.logger.assert_message(imported % path2, index=1)
         path3 = create_temp_file(join(path2, 'test.py'), attr=3)
         self._import_and_verify(path3, attr=3, directory=path2)
+        self.logger.assert_message(removed)
+        self.logger.assert_message(imported % path3, index=1)
 
     def test_import_class_from_file(self):
         path = create_temp_file('test.py', extra_content='class test:\n def m(s): return 1')
