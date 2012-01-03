@@ -255,7 +255,7 @@ class Comment(object):
 
     def __init__(self, comment_data):
         if isinstance(comment_data, basestring):
-            comment_data = [comment_data]
+            comment_data = [comment_data] if comment_data else []
         self._comment = comment_data or []
 
     def __len__(self):
