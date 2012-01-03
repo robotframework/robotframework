@@ -109,12 +109,11 @@ class Importer(object):
                 yield '  %s' % item
 
     def _log_import_succeeded(self, item, name, source):
-        if self._logger:
-            import_type = '%s ' % self._type if self._type else ''
-            item_type = 'module' if inspect.ismodule(item) else 'class'
-            location = ("'%s'" % source) if source else 'unknown location'
-            self._logger.info("Imported %s%s '%s' from %s."
-                              % (import_type, item_type, name, location))
+        import_type = '%s ' % self._type if self._type else ''
+        item_type = 'module' if inspect.ismodule(item) else 'class'
+        location = ("'%s'" % source) if source else 'unknown location'
+        self._logger.info("Imported %s%s '%s' from %s."
+                          % (import_type, item_type, name, location))
 
 
 class _Importer(object):
