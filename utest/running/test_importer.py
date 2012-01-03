@@ -1,8 +1,10 @@
 import unittest
+import os
+from os.path import abspath, join, normpath, normcase
 
 from robot.running.importer import ImportCache
 from robot.errors import FrameworkError
-from robot.utils.asserts import *
+from robot.utils.asserts import assert_equals, assert_true, assert_raises
 
 
 class TestImportCache(unittest.TestCase):
@@ -31,8 +33,8 @@ class TestImportCache(unittest.TestCase):
     def test_contains_item(self):
         assert_true(('lib', ['a1', 'a2']) in self.cache)
         assert_true('res' in self.cache)
-        assert_false(('lib', ['a1', 'a2', 'wrong']) in self.cache)
-        assert_false('nonex' in self.cache)
+        assert_true(('lib', ['a1', 'a2', 'wrong']) not in self.cache)
+        assert_true('nonex' not in self.cache)
 
     def test_get_non_existing_item(self):
         assert_raises(KeyError, self.cache.__getitem__, 'nonex')
@@ -41,6 +43,29 @@ class TestImportCache(unittest.TestCase):
     def test_invalid_key(self):
         assert_raises(FrameworkError, self.cache.__setitem__, ['inv'], None)
 
+    def test_existing_absolute_paths_are_normalized(self):
+        cache = ImportCache()
+        path = join(abspath('.'), '.', os.listdir('.')[0])
+        value = object()
+        cache[path] = value
+        assert_equals(cache[path], value)
+        assert_equals(cache._keys[0], normcase(normpath(path)))
+
+    def test_existing_non_absolute_paths_are_not_normalized(self):
+        cache = ImportCache()
+        path = os.listdir('.')[0]
+        value = object()
+        cache[path] = value
+        assert_equals(cache[path], value)
+        assert_equals(cache._keys[0], path)
+
+    def test_non_existing_absolute_paths_are_not_normalized(self):
+        cache = ImportCache()
+        path = join(abspath('.'), '.', 'NonExisting.file')
+        value = object()
+        cache[path] = value
+        assert_equals(cache[path], value)
+        assert_equals(cache._keys[0], path)
 
 if __name__ == '__main__':
     unittest.main()
