@@ -6,10 +6,10 @@ import shutil
 import sys
 import os
 import re
-from os.path import abspath, dirname, exists, isabs, join, normpath
+from os.path import abspath, basename, dirname, exists, join, normpath
 
 from robot.errors import DataError
-from robot.utils.importer import Importer
+from robot.utils.importer import Importer, ByPathImporter
 from robot.utils.asserts import (assert_equals, assert_true, assert_raises,
                                  assert_raises_with_msg)
 
@@ -49,7 +49,7 @@ class LoggerStub(object):
                 msg = msg.replace(ext, '')
         self.messages.append(msg)
 
-    def assert_message(self, msg, index=-1):
+    def assert_message(self, msg, index=0):
         assert_equals(self.messages[index], msg)
 
 
@@ -64,77 +64,90 @@ class TestImportByPath(unittest.TestCase):
 
     def test_python_file(self):
         path = create_temp_file('test.py')
-        self._import_and_verify(path)
+        self._import_and_verify(path, remove='test')
+        self._assert_imported_message('test', path)
 
     def test_python_directory(self):
         create_temp_file('__init__.py')
-        self._import_and_verify(TESTDIR + os.sep)
+        module_name = basename(TESTDIR)
+        self._import_and_verify(TESTDIR, remove=module_name)
+        self._assert_imported_message(module_name, TESTDIR)
+
+    def test_import_same_file_multiple_times(self):
+        path = create_temp_file('test.py')
+        self._import_and_verify(path, remove='test')
+        self._assert_imported_message('test', path)
+        self._import_and_verify(path)
+        self._assert_imported_message('test', path)
+        self._import_and_verify(path, name='library')
+        self._assert_imported_message('test', path, type='library module')
 
     def test_import_different_file_and_directory_with_same_name(self):
-        removed = "Removed module 'test' from sys.modules to import fresh module."
-        imported = "Imported module 'test' from '%s'."
         path1 = create_temp_file('test.py', attr=1)
-        self._import_and_verify(path1, attr=1)
-        self.logger.assert_message(imported % path1)
+        self._import_and_verify(path1, attr=1, remove='test')
+        self._assert_imported_message('test', path1)
         path2 = join(TESTDIR, 'test')
         os.mkdir(path2)
         create_temp_file(join(path2, '__init__.py'), attr=2)
         self._import_and_verify(path2, attr=2, directory=path2)
-        self.logger.assert_message(removed, index=0)
-        self.logger.assert_message(imported % path2, index=1)
+        self._assert_removed_message('test')
+        self._assert_imported_message('test', path2, index=1)
         path3 = create_temp_file(join(path2, 'test.py'), attr=3)
         self._import_and_verify(path3, attr=3, directory=path2)
-        self.logger.assert_message(removed, index=0)
-        self.logger.assert_message(imported % path3, index=1)
+        self._assert_removed_message('test')
+        self._assert_imported_message('test', path3, index=1)
 
     def test_import_class_from_file(self):
         path = create_temp_file('test.py', extra_content='class test:\n def m(s): return 1')
-        klass = Importer().import_class_or_module_by_path(path)
+        klass = self._import(path, remove='test')
+        self._assert_imported_message('test', path, type='class')
         assert_true(inspect.isclass(klass))
         assert_equals(klass.__name__, 'test')
         assert_equals(klass().m(), 1)
 
     def test_invalid_python_file(self):
         path = create_temp_file('test.py', extra_content='invalid content')
-        error = assert_raises(DataError, self._import_and_verify, path)
+        error = assert_raises(DataError, self._import_and_verify, path, remove='test')
         assert_prefix(error, "Importing '%s' failed: SyntaxError:" % path)
-
-    def test_logging_when_importing_module(self):
-        path = join(LIBDIR, 'classes.py')
-        self._import(path, name='lib')
-        self.logger.assert_message("Imported lib module 'classes' from '%s'." % path)
-
-    def test_logging_when_importing_python_class(self):
-        path = join(LIBDIR, 'ExampleLibrary.py')
-        self._import(path)
-        self.logger.assert_message("Imported class 'ExampleLibrary' from '%s'." % path)
 
     if sys.platform.startswith('java'):
 
-        def test_java_class(self):
-            self._import_and_verify(join(CURDIR, 'ImportByPath.java'))
-            self._import_and_verify(join(CURDIR, 'ImportByPath.class'))
+        def test_java_class_with_java_extension(self):
+            path = join(CURDIR, 'ImportByPath.java')
+            self._import_and_verify(path, remove='ImportByPath')
+            self._assert_imported_message('ImportByPath', path, type='class')
+
+        def test_java_class_with_class_extension(self):
+            path = join(CURDIR, 'ImportByPath.class')
+            self._import_and_verify(path, remove='ImportByPath', name='java')
+            self._assert_imported_message('ImportByPath', path, type='java class')
 
         def test_importing_java_package_fails(self):
-            path = join(LIBDIR, 'javapkg') + os.sep
+            path = join(LIBDIR, 'javapkg')
             assert_raises_with_msg(DataError,
                                    "Importing '%s' failed: Expected class or "
                                    "module, got <javapackage>." % path,
-                                   self._import, path)
+                                   self._import, path, remove='javapkg')
 
-        def test_logging_when_importing_java_class(self):
+        def test_removing_from_sys_modules_when_importing_multiple_times(self):
             path = join(CURDIR, 'ImportByPath.java')
-            self._import(path, name='java')
-            self.logger.assert_message("Imported java class 'ImportByPath' from '%s'." % path)
+            self._import(path, name='java', remove='ImportByPath')
+            self._assert_imported_message('ImportByPath', path, 'java class')
+            self._import(path)
+            self._assert_removed_message('ImportByPath')
+            self._assert_imported_message('ImportByPath', path, 'class', index=1)
 
-    def _import_and_verify(self, path, attr=42, directory=TESTDIR):
-        module = self._import(path)
+    def _import_and_verify(self, path, attr=42, directory=TESTDIR,
+                           name=None, remove=None):
+        module = self._import(path, name, remove)
         assert_equals(module.attr, attr)
         assert_equals(module.func(), attr)
         if hasattr(module, '__file__'):
             assert_equals(dirname(abspath(module.__file__)), directory)
 
-    def _import(self, path, name=None):
+    def _import(self, path, name=None, remove=None):
+        if remove and remove in sys.modules:
+            del sys.modules[remove]
         self.logger = LoggerStub()
         importer = Importer(name, self.logger)
         sys_path_before = sys.path[:]
@@ -142,6 +155,14 @@ class TestImportByPath(unittest.TestCase):
             return importer.import_class_or_module_by_path(path)
         finally:
             assert_equals(sys.path, sys_path_before)
+
+    def _assert_imported_message(self, name, source, type='module', index=0):
+        msg = "Imported %s '%s' from '%s'." % (type, name, source)
+        self.logger.assert_message(msg, index=index)
+
+    def _assert_removed_message(self, name, index=0):
+        msg = "Removed module '%s' from sys.modules to import fresh module." % name
+        self.logger.assert_message(msg, index=index)
 
 
 class TestInvalidImportPath(unittest.TestCase):
@@ -307,7 +328,7 @@ class TestImportClassOrModule(unittest.TestCase):
         return klass
 
     def _import(self, name, type=None, logger=None):
-        return Importer(type, logger).import_class_or_module(name)
+        return Importer(type, logger or LoggerStub()).import_class_or_module(name)
 
 
 class TestErrorDetails(unittest.TestCase):
@@ -374,6 +395,27 @@ class TestErrorDetails(unittest.TestCase):
                 include = True
             if include:
                 yield line
+
+
+class TestSplitPathToModule(unittest.TestCase):
+
+    def _verify(self, file_name, expected_name):
+        path = abspath(file_name)
+        actual = ByPathImporter(None)._split_path_to_module(path)
+        assert_equals(actual, (dirname(path), expected_name))
+
+    def test_normal_file(self):
+        self._verify('hello.py', 'hello')
+        self._verify('hello.class', 'hello')
+        self._verify('hello.world.java', 'hello.world')
+
+    def test_jython_class_file(self):
+        self._verify('hello$py.class', 'hello')
+        self._verify('__init__$py.class', '__init__')
+
+    def test_directory(self):
+        self._verify('hello', 'hello')
+        self._verify('hello'+os.sep, 'hello')
 
 
 if __name__ == '__main__':

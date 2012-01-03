@@ -22,11 +22,10 @@ if sys.platform.startswith('java'):
 from robot.errors import DataError
 
 from .error import get_error_details
-from .robotpath import abspath
+from .robotpath import abspath, normpath
 
 
 # TODO:
-# - acceptance tests for issue 979
 # - test can variable files be implemented with java/python classes nowadays
 #   (possibly returning class when importing by path is bwic anyway)
 
@@ -157,6 +156,7 @@ class ByPathImporter(_Importer):
 
     def import_(self, path):
         self._verify_import_path(path)
+        self._remove_wrong_module_from_sys_modules(path)
         module = self._import_by_path(path)
         imported = self._get_class_from_module(module) or module
         return self._verify_type(imported), path
@@ -169,25 +169,42 @@ class ByPathImporter(_Importer):
         if not os.path.splitext(path)[1] in self._valid_import_extensions:
             raise DataError('Not a valid file or directory to import.')
 
-    def _import_by_path(self, path):
-        module_dir, module_name = self._split_path_to_module(path)
-        sys.path.insert(0, module_dir)
-        try:
-            return self._import_fresh_module(module_name)
-        finally:
-            sys.path.pop(0)
+    def _remove_wrong_module_from_sys_modules(self, path):
+        importing_from, name = self._split_path_to_module(path)
+        importing_package = os.path.splitext(path)[1] == ''
+        if self._wrong_module_imported(name, importing_from, importing_package):
+            del sys.modules[name]
+            self._logger.info("Removed module '%s' from sys.modules to import "
+                              "fresh module." % name)
 
     def _split_path_to_module(self, path):
         module_dir, module_file = os.path.split(abspath(path))
         module_name = os.path.splitext(module_file)[0]
+        if module_name.endswith('$py'):
+            module_name = module_name[:-3]
         return module_dir, module_name
 
-    def _import_fresh_module(self, name):
-        if name in sys.modules:
-            del sys.modules[name]
-            self._logger.info("Removed module '%s' from sys.modules to import "
-                              "fresh module." % name)
-        return self._import(name)
+    def _wrong_module_imported(self, name, importing_from, importing_package):
+        module = sys.modules.get(name)
+        if not module:
+            return False
+        source = getattr(module, '__file__', None)
+        if not source:  # play safe (occurs at least with java based modules)
+            return True
+        imported_from, imported_file = self._split_path_to_module(source)
+        imported_package = imported_file == '__init__'
+        if importing_package:
+            imported_from = os.path.dirname(imported_from)
+        return (normpath(importing_from) != normpath(imported_from) or
+                importing_package != imported_package)
+
+    def _import_by_path(self, path):
+        module_dir, module_name = self._split_path_to_module(path)
+        sys.path.insert(0, module_dir)
+        try:
+            return self._import(module_name)
+        finally:
+            sys.path.pop(0)
 
 
 class NonDottedImporter(_Importer):
