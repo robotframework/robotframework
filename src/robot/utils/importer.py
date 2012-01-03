@@ -26,6 +26,7 @@ from .robotpath import abspath, normpath
 
 
 # TODO:
+# - don't import test library modules if library is in cache
 # - test can variable files be implemented with java/python classes nowadays
 #   (possibly returning class when importing by path is bwic anyway)
 
@@ -191,12 +192,16 @@ class ByPathImporter(_Importer):
         source = getattr(module, '__file__', None)
         if not source:  # play safe (occurs at least with java based modules)
             return True
+        imported_from, imported_package = self._get_import_information(source)
+        return ((normpath(importing_from), importing_package) !=
+                (normpath(imported_from), imported_package))
+
+    def _get_import_information(self, source):
         imported_from, imported_file = self._split_path_to_module(source)
         imported_package = imported_file == '__init__'
-        if importing_package:
+        if imported_package:
             imported_from = os.path.dirname(imported_from)
-        return (normpath(importing_from) != normpath(imported_from) or
-                importing_package != imported_package)
+        return imported_from, imported_package
 
     def _import_by_path(self, path):
         module_dir, module_name = self._split_path_to_module(path)
