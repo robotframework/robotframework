@@ -178,6 +178,48 @@ class SplittingHtmlFormatter(RowSplittingFormatter):
         return row + [HtmlCell()] * (self._cols - len(row) - indent)
 
 
+class SingleLineHtmlFormatter(_Formatter):
+
+    def __init__(self, cols):
+        self._cols = cols
+
+    def format_indented_table(self, table):
+        items = list(table)
+        for i, item in enumerate(items):
+            rows = list(self._rows_from_item(item, 1))
+            yield self._pad(self._first_row(item, rows[0]))
+            for row in rows[1:]:
+                yield self._pad(row)
+            if i < len(items) - 1:
+                yield self._pad([NameCell()])
+
+    def _pad(self, row):
+        return row + [HtmlCell()] * (self._cols - len(row))
+
+    def _first_row(self, item, row):
+        return [self._format_name(item)] + row[1:]
+
+    def _format_name(self, item):
+        from robot.parsing.model import UserKeyword
+        type_ = 'keyword' if isinstance(item, UserKeyword) else 'test'
+        return AnchorNameCell(item.name, type_)
+
+    def _format_model_item(self, item, indent):
+        if isinstance(item, Documentation):
+            return self._format_documentation(item, indent)
+        data = [''] * indent + item.as_list()
+        return [[NameCell(data[0])] + [HtmlCell(c) for c in data[1:]]]
+
+    def _format_documentation(self, doc, indent):
+        if indent:
+            start = [NameCell(), HtmlCell(doc.setting_name)]
+            value = doc.as_list()[1:]
+            if len(value) == 1:
+                return [start + [DocumentationCell(doc.value, 1)]]
+            return [start + [HtmlCell(v) for v in value]]
+        return [[NameCell(doc.setting_name), DocumentationCell(doc.value, 1)]]
+
+
 class HtmlCell(object):
     _backslash_matcher = re.compile(r'(\\+)n ')
 
@@ -224,7 +266,7 @@ class DocumentationCell(HtmlCell):
 
 class HeaderCell(HtmlCell):
 
-    def __init__(self, name, span):
+    def __init__(self, name, span=1):
         HtmlCell.__init__(self, name, {'class': 'name', 'colspan': '%d' % span},
                           tag='th')
 
