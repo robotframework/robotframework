@@ -81,7 +81,7 @@ class TxtFormatter(_TestDataFileFormatter):
         self._cols = cols
 
     def _variable_table_formatter(self):
-        return RowSplittingFormatter(self._cols)
+        return SettingTableAligner(self._cols, self._SETTING_NAME_WIDTH)
 
     def _setting_table_formatter(self):
         return SettingTableAligner(self._cols, self._SETTING_NAME_WIDTH)

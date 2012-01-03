@@ -5,8 +5,8 @@ Variables         MyVariables    args    args 2    args 3    args 4    args 5   
 Resource          MyResource args that are part of the name
 
 *** Variables ***
-MyVar    val1    val2    val3    val4    val5    val6    val6
-...    val7    val8    val9    # var comment
+MyVar             val1    val2    val3    val4    val5    val6    val6
+...               val7    val8    val9    # var comment
 %s
 *** Keywords ***
 My Keyword
@@ -59,8 +59,8 @@ _txt_pipe_template = '''| *** Settings *** |
 | Resource       | MyResource args that are part of the name |
 
 | *** Variables *** |
-| MyVar | val1 | val2 | val3 | val4 | val5 | val6 | val6 |
-| ... | val7 | val8 | val9 | # var comment |
+| MyVar          | val1 | val2 | val3 | val4 | val5 | val6 | val6 |
+| ...            | val7 | val8 | val9 | # var comment |
 %s
 | *** Keywords *** |
 | My Keyword |
