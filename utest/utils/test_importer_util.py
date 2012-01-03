@@ -93,16 +93,14 @@ class TestImportByPath(unittest.TestCase):
         assert_prefix(error, "Importing '%s' failed: SyntaxError:" % path)
 
     def test_logging_when_importing_module(self):
-        logger = LoggerStub()
         path = join(LIBDIR, 'classes.py')
-        Importer('test library', logger).import_class_or_module_by_path(path)
-        logger.assert_message("Imported test library module 'classes' from '%s'." % path)
+        self._import(path, name='lib')
+        self.logger.assert_message("Imported lib module 'classes' from '%s'." % path)
 
     def test_logging_when_importing_python_class(self):
-        logger = LoggerStub()
         path = join(LIBDIR, 'ExampleLibrary.py')
-        Importer(logger=logger).import_class_or_module_by_path(path)
-        logger.assert_message("Imported class 'ExampleLibrary' from '%s'." % path)
+        self._import(path)
+        self.logger.assert_message("Imported class 'ExampleLibrary' from '%s'." % path)
 
     if sys.platform.startswith('java'):
 
@@ -118,10 +116,9 @@ class TestImportByPath(unittest.TestCase):
                                    self._import, path)
 
         def test_logging_when_importing_java_class(self):
-            logger = LoggerStub()
             path = join(CURDIR, 'ImportByPath.java')
-            Importer('java', logger).import_class_or_module_by_path(path)
-            logger.assert_message("Imported java class 'ImportByPath' from '%s'." % path)
+            self._import(path, name='java')
+            self.logger.assert_message("Imported java class 'ImportByPath' from '%s'." % path)
 
     def _import_and_verify(self, path, attr=42, directory=TESTDIR):
         module = self._import(path)
@@ -130,10 +127,12 @@ class TestImportByPath(unittest.TestCase):
         if hasattr(module, '__file__'):
             assert_equals(dirname(abspath(module.__file__)), directory)
 
-    def _import(self, path):
+    def _import(self, path, name=None):
+        self.logger = LoggerStub()
+        importer = Importer(name, self.logger)
         sys_path_before = sys.path[:]
         try:
-            return Importer().import_class_or_module_by_path(path)
+            return importer.import_class_or_module_by_path(path)
         finally:
             assert_equals(sys.path, sys_path_before)
 
