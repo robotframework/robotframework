@@ -14,6 +14,7 @@ ${JAVA_ATTR_TYPE_FILE}  listener_attrs_java.txt
 ${SUITE_MSG}  1 critical test, 1 passed, 0 failed\n 2 tests total, 1 passed, 1 failed
 ${SUITE_MSG_2}  2 critical tests, 1 passed, 1 failed\n 2 tests total, 1 passed, 1 failed
 ${LISTENERS}  ${CURDIR}${/}..${/}..${/}..${/}testresources${/}listeners
+${EMPTY TB}     \nTraceback (most recent call last):\n${SPACE*2}None\n
 
 *** Keywords ***
 

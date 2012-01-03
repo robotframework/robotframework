@@ -27,12 +27,18 @@ Listener With Path
 
 Listener With Wrong Number Of Arguments
     [Template]    Check Syslog Contains
-    Taking listener 'listeners.WithArgs' into use failed: TypeError: __init__() takes at least 2 arguments (1 given)
-    Taking listener 'listeners.WithArgs:1:2:3' into use failed: TypeError: __init__()
+    Taking listener 'listeners.WithArgs' into use failed:
+    ...    Creating instance failed:
+    ...    TypeError: __init__() takes at least 2 arguments (1 given)${EMPTY TB}
+    Taking listener 'listeners.WithArgs:1:2:3' into use failed:
+    ...    Creating instance failed:
+    ...    TypeError: __init__() takes at most 3 arguments (4 given)${EMPTY TB}
 
 Non Existing Listener
     [Template]    Check Syslog Contains
-    Taking listener 'NonExistingListener' into use failed: Importing listener 'NonExistingListener' failed: ImportError:
+    Taking listener 'NonExistingListener' into use failed:
+    ...    Importing listener 'NonExistingListener' failed:
+    ...    ImportError: No module named NonExistingListener${EMPTY TB}
 
 Java Listener
     [Tags]  jybot
@@ -47,8 +53,12 @@ Java Listener With Arguments
 Java Listener With Wrong Number Of Arguments
     [Tags]  jybot
     [Template]    Check Syslog Contains
-    Taking listener 'JavaListenerWithArgs' into use failed: TypeError: JavaListenerWithArgs(): expected 2 args; got 0
-    Taking listener 'JavaListenerWithArgs:b:a:r' into use failed: TypeError: JavaListenerWithArgs(): expected 2 args; got 3
+    Taking listener 'JavaListenerWithArgs' into use failed:
+    ...    Creating instance failed:
+    ...    TypeError: JavaListenerWithArgs(): expected 2 args; got 0${EMPTY TB}
+    Taking listener 'JavaListenerWithArgs:b:a:r' into use failed:
+    ...    Creating instance failed:
+    ...    TypeError: JavaListenerWithArgs(): expected 2 args; got 3${EMPTY TB}
 
 
 *** Keywords ***

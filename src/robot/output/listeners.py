@@ -68,13 +68,11 @@ class Listeners(object):
         for name, args in listener_data:
             try:
                 listeners.append(_ListenerProxy(name, args))
-            except:
-                message, details = utils.get_error_details()
+            except DataError, err:
                 if args:
                     name += ':' + ':'.join(args)
                 LOGGER.error("Taking listener '%s' into use failed: %s"
-                             % (name, message))
-                LOGGER.info("Details:\n%s" % details)
+                             % (name, unicode(err)))
         return listeners
 
     def start_suite(self, suite):
@@ -219,11 +217,18 @@ class _ListenerProxy(AbstractLoggerProxy):
     def _import_listener(self, name, args):
         importer = utils.Importer('listener')
         listener = importer.import_class_or_module(os.path.normpath(name))
-        if not inspect.ismodule(listener):
-            listener = listener(*args)
-        elif args:
-            raise DataError("Listeners implemented as modules do not take arguments")
-        return listener
+        if inspect.isclass(listener):
+            return self._instantiate_listener_class(listener, args)
+        if not args:
+            return listener
+        raise DataError("Listeners implemented as modules do not take arguments")
+
+    def _instantiate_listener_class(self, listener, args):
+        try:
+            return listener(*args)
+        except:
+            raise DataError('Creating instance failed: %s\n%s'
+                            % utils.get_error_details())
 
     def _get_version(self, listener):
         try:
