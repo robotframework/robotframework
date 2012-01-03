@@ -5,6 +5,7 @@ import inspect
 import shutil
 import sys
 import os
+import re
 from os.path import abspath, dirname, exists, isabs, join, normpath
 
 from robot.errors import DataError
@@ -17,10 +18,13 @@ CURDIR = dirname(abspath(__file__))
 LIBDIR = normpath(join(CURDIR, '..', '..', 'atest', 'testresources', 'testlibs'))
 TEMPDIR = tempfile.gettempdir()
 TESTDIR = join(TEMPDIR, 'robot-importer-testing')
+WINDOWS_PATH_IN_ERROR = re.compile(r"'\w:\\")
 
 
 def assert_prefix(error, expected):
-    prefix = ':'.join(unicode(error).split(':')[:2]) + ':'
+    message = unicode(error)
+    count = 3 if WINDOWS_PATH_IN_ERROR.search(message) else 2
+    prefix = ':'.join(message.split(':')[:count]) + ':'
     assert_equals(prefix, expected)
 
 def create_temp_file(name, attr=42, extra_content=''):
