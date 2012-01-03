@@ -167,11 +167,9 @@ class ByPathImporter(_Importer):
 
     def _import_by_path(self, path):
         module_dir, module_name = self._split_path_to_module(path)
-        if module_name in sys.modules:
-            del sys.modules[module_name]
         sys.path.insert(0, module_dir)
         try:
-            return self._import(module_name)
+            return self._import_fresh_module(module_name)
         finally:
             sys.path.pop(0)
 
@@ -179,6 +177,11 @@ class ByPathImporter(_Importer):
         module_dir, module_file = os.path.split(abspath(path))
         module_name = os.path.splitext(module_file)[0]
         return module_dir, module_name
+
+    def _import_fresh_module(self, name):
+        if name in sys.modules:
+            del sys.modules[name]
+        return self._import(name)
 
 
 class NonDottedImporter(_Importer):

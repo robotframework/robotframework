@@ -70,13 +70,13 @@ class TestImportByPath(unittest.TestCase):
         create_temp_file('__init__.py')
         self._import_and_verify(TESTDIR + os.sep)
 
-    def test_import_different_file_with_same_name(self):
+    def test_import_different_file_and_directory_with_same_name(self):
         path1 = create_temp_file('test.py', attr=1)
         self._import_and_verify(path1, attr=1)
         path2 = join(TESTDIR, 'test')
         os.mkdir(path2)
         create_temp_file(join(path2, '__init__.py'), attr=2)
-        self._import_and_verify(path2 + '/', attr=2, directory=path2)
+        self._import_and_verify(path2, attr=2, directory=path2)
         path3 = create_temp_file(join(path2, 'test.py'), attr=3)
         self._import_and_verify(path3, attr=3, directory=path2)
 
