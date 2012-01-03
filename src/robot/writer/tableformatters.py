@@ -66,22 +66,31 @@ class RowSplittingFormatter(_Formatter):
 
 
 class _Aligner(_Formatter):
+
+    def __init__(self, widths, align_last_column=False):
+        self._widths = widths
+        self._align_last_column = align_last_column
+
     def align_rows(self, rows):
         return [self.align_row(r) for r in rows]
 
     def align_row(self, row):
-        for index, col in enumerate(row[:-1]):
+        for index, col in enumerate(row[:self._last_aligned_column(row)]):
             if len(self._widths) <= index:
                 continue
             row[index] = row[index].ljust(self._widths[index])
         return row
 
 
+    def _last_aligned_column(self, row):
+        return len(row) if self._align_last_column else -1
+
+
 class SettingTableAligner(_Aligner):
 
     def __init__(self, cols, first_column_width):
         self._row_splitter = RowSplitter(cols)
-        self._widths = [first_column_width]
+        _Aligner.__init__(self, [first_column_width])
 
     def format_simple_table(self, table):
         return self.align_rows(self._rows_from_simple_table(table))
@@ -92,12 +101,13 @@ class SettingTableAligner(_Aligner):
 
 class ColumnAligner(_Aligner):
 
-    def __init__(self, max_name_length, table):
+    def __init__(self, max_name_length, table, align_last_column):
         self._max_name_length = max_name_length
-        self._widths = self._count_justifications(table)
+        _Aligner.__init__(self, self._count_justifications(table),
+                          align_last_column)
 
     def _count_justifications(self, table):
-        result = [18] + [len(header) for header in table.header]
+        result = [self._max_name_length] + [len(header) for header in table.header]
         for element in [list(kw) for kw in list(table)]:
             for step in element:
                 for index, col in enumerate(step.as_list()):

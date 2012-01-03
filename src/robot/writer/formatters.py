@@ -76,6 +76,7 @@ class TsvFormatter(_TestDataFileFormatter):
 class TxtFormatter(_TestDataFileFormatter):
     _FIRST_ROW_LENGTH = 18
     _SETTING_NAME_WIDTH = 14
+    _align_last_column = False
 
     def __init__(self, cols=8):
         self._cols = cols
@@ -95,12 +96,12 @@ class TxtFormatter(_TestDataFileFormatter):
     def header_row(self, table):
         header = ['*** %s ***' % table.header[0]] + table.header[1:]
         if self._should_align_columns(table):
-            return ColumnAligner(self._FIRST_ROW_LENGTH, table).align_row(header)
+            return ColumnAligner(self._FIRST_ROW_LENGTH, table, self._align_last_column).align_row(header)
         return header
 
     def _indented_table_formatter(self, table):
         if self._should_align_columns(table):
-            return ColumnAligner(self._FIRST_ROW_LENGTH, table)
+            return ColumnAligner(self._FIRST_ROW_LENGTH, table, self._align_last_column)
         return RowSplittingFormatter(self._cols)
 
     def _should_align_columns(self, table):
@@ -124,6 +125,7 @@ class TxtFormatter(_TestDataFileFormatter):
 
 
 class PipeFormatter(TxtFormatter):
+    _align_last_column = True
 
     def _escape(self, row):
         row = self._format_empty_cells(row)
