@@ -38,7 +38,9 @@ class Importer(object):
             from robot.output import LOGGER as logger
         self._type = type or ''
         self._logger = logger
-        self._importers = [ByPathImporter(), NonDottedImporter(), DottedImporter()]
+        self._importers = (ByPathImporter(logger),
+                           NonDottedImporter(logger),
+                           DottedImporter(logger))
         self._by_path_importer = self._importers[0]
 
     def import_class_or_module(self, name):
@@ -117,6 +119,9 @@ class Importer(object):
 
 class _Importer(object):
 
+    def __init__(self, logger):
+        self._logger = logger
+
     def _import(self, name, fromlist=None, retry=True):
         try:
             try:
@@ -167,11 +172,9 @@ class ByPathImporter(_Importer):
 
     def _import_by_path(self, path):
         module_dir, module_name = self._split_path_to_module(path)
-        if module_name in sys.modules:
-            del sys.modules[module_name]
         sys.path.insert(0, module_dir)
         try:
-            return self._import(module_name)
+            return self._import_fresh_module(module_name)
         finally:
             sys.path.pop(0)
 
@@ -179,6 +182,13 @@ class ByPathImporter(_Importer):
         module_dir, module_file = os.path.split(abspath(path))
         module_name = os.path.splitext(module_file)[0]
         return module_dir, module_name
+
+    def _import_fresh_module(self, name):
+        if name in sys.modules:
+            del sys.modules[name]
+            self._logger.info("Removed module '%s' from sys.modules to import "
+                              "fresh module." % name)
+        return self._import(name)
 
 
 class NonDottedImporter(_Importer):
