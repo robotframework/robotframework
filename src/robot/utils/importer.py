@@ -34,6 +34,8 @@ from .robotpath import abspath
 class Importer(object):
 
     def __init__(self, type=None, logger=None):
+        if not logger:
+            from robot.output import LOGGER as logger
         self._type = type or ''
         self._logger = logger
         self._importers = [ByPathImporter(), NonDottedImporter(), DottedImporter()]
