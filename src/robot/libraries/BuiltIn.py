@@ -1791,7 +1791,7 @@ class _Misc:
 
         This keyword can not be used in suite setup or suite teardown.
         """
-        if not isinstance(message, basestring):
+        if not isinstance(message, unicode):
             message = utils.unic(message)
         test = self._namespace.test
         if not test:
