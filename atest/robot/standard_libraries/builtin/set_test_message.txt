@@ -5,13 +5,19 @@ Resource    atest_resource.txt
 
 *** Test Cases ***
 Set Message To Successful Test
-    Check Test Case  ${TEST NAME}  PASS  My Test Message
+    ${tc} =  Check Test Case  ${TEST NAME}  PASS  My Test Message
+    Check Log Message  ${tc.kws[0].msgs[0]}  Set test message to:\nMy Test Message
 
 Reset Message
     Check Test Case  ${TEST NAME}  PASS  My Real Test Message
 
 Set Non-ASCII Message
-    Check Test Case  ${TEST NAME}  PASS  Hyvää yötä
+    ${tc} =  Check Test Case  ${TEST NAME}  PASS  Hyvää yötä
+    Check Log Message  ${tc.kws[0].msgs[0]}  Set test message to:\nHyvää yötä
+
+Set Multiline Message
+    ${tc} =  Check Test Case  ${TEST NAME}  PASS  1\n2\n3
+    Check Log Message  ${tc.kws[0].msgs[0]}  Set test message to:\n1\n2\n3
 
 Set Non-String Message
     Check Test Case  ${TEST NAME}  PASS  42

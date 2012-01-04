@@ -9,6 +9,9 @@ Reset Message
 Set Non-ASCII Message
     Set Test Message  Hyvää yötä
 
+Set Multiline Message
+    Set Test Message  1\n2\n3
+
 Set Non-String Message
     Set Test Message  ${42}
 
