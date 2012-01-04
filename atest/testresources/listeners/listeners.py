@@ -86,3 +86,33 @@ class KeywordExecutingListener(object):
 
     def _run_keyword(self, arg):
         BuiltIn().run_keyword('Log', arg)
+
+
+class SuiteSource(object):
+    ROBOT_LISTENER_API_VERSION = '2'
+
+    def __init__(self):
+        self._started = 0
+        self._ended = 0
+
+    def start_suite(self, name, attrs):
+        self._started += 1
+        self._test_source(name, attrs['source'])
+
+    def end_suite(self, name, attrs):
+        self._ended += 1
+        self._test_source(name, attrs['source'])
+
+    def _test_source(self, suite, source):
+        default = os.path.isfile
+        verifier = {'Root': lambda source: source == '',
+                    'Subsuites': os.path.isdir}.get(suite, default)
+        if (source and not os.path.isabs(source)) or not verifier(source):
+            raise AssertionError("Suite '%s' has wrong source '%s'"
+                                 % (suite, source, verifier))
+
+    def close(self):
+        if not (self._started == self._ended == 5):
+            raise AssertionError("Wrong number of started (%d) or ended (%d) "
+                                 "suites. Expected 5."
+                                 % (self._started, self._ended))

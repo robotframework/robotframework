@@ -84,7 +84,7 @@ class Listeners(object):
                 attrs.update({'tests' : [t.name for t in suite.tests],
                               'suites': [s.name for s in suite.suites],
                               'totaltests': suite.get_test_count(),
-                              'source': suite.source})
+                              'source': suite.source or ''})
                 li.call_method(li.start_suite, suite.name, attrs)
 
     def end_suite(self, suite):
@@ -94,8 +94,8 @@ class Listeners(object):
                                suite.get_full_message())
             else:
                 attrs = self._get_end_attrs(suite, 'metadata')
-                attrs['statistics'] = suite.get_stat_message()
-                attrs['source'] = suite.source
+                attrs.update({'statistics': suite.get_stat_message(),
+                              'source': suite.source or ''})
                 li.call_method(li.end_suite, suite.name, attrs)
 
     def start_test(self, test):

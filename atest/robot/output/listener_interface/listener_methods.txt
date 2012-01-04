@@ -69,6 +69,10 @@ Suite And Test Counts
     Run Tests  --listener listeners.SuiteAndTestCounts  misc/suites/sub*
     Stderr Should Be Empty
 
+Suite Source
+    Run Tests  --listener listeners.SuiteSource --name Root  misc/suites/subsuites  misc/pass_and_fail.html
+    Stderr Should Be Empty
+
 Keyword Type
     Run Tests  --listener listeners.KeywordType  misc/setups_and_teardowns.txt
     Stderr Should Be Empty
