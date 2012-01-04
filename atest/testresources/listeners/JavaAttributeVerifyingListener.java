@@ -34,12 +34,12 @@ public class JavaAttributeVerifyingListener {
 
     public void startSuite(String name, Map attrs) {
         verifyAttributes("START SUITE", attrs,
-                         new String[] {"doc", "starttime", "longname", "metadata", "tests", "suites", "totaltests"});
+                         new String[] {"doc", "starttime", "longname",  "source", "metadata", "tests", "suites", "totaltests"});
     }
 
     public void endSuite(String name, Map attrs) {
         verifyAttributes("END SUITE", attrs,
-                         new String[] {"doc", "starttime", "longname", "metadata", "endtime", "elapsedtime", "status", "message", "statistics"});
+                         new String[] {"doc", "starttime", "longname",  "source", "metadata", "endtime", "elapsedtime", "status", "message", "statistics"});
     }
 
     public void startTest(String name, Map attrs) {
