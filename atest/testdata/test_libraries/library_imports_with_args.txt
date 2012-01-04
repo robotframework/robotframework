@@ -1,9 +1,11 @@
 *** Settings ***
 Library    libswithargs.Mandatory  first arg       another arg
 
-Library    libswithargs.Defaults   m1              WITH NAME  D1
-Library    libswithargs.Defaults   m2  d1          WITH NAME  D2
-Library    libswithargs.Defaults   m3  ${1}  ${2}  WITH NAME  D3
+Library    libswithargs.Defaults   m1                       WITH NAME  D1
+Library    libswithargs.Defaults   m2  d1                   WITH NAME  D2
+Library    libswithargs.Defaults   m3  ${1}  default2=${2}  WITH NAME  D3
+Library    libswithargs.Defaults   m4  default2=d2          WITH NAME  D4
+Library    libswithargs.Defaults   m5  ${NOT NAMED}         WITH NAME  D5
 
 Library    libswithargs.Varargs    m1              WITH NAME  V1
 Library    libswithargs.Varargs    m2  v1          WITH NAME  V2
@@ -11,8 +13,9 @@ Library    libswithargs.Varargs    m3  ${1}  ${2}  WITH NAME  V3
 
 Library    libswithargs.Mixed      m1              WITH NAME  M1
 Library    libswithargs.Mixed      m2  d1          WITH NAME  M2
-Library    libswithargs.Mixed      m3  d2  v       WITH NAME  M3
-Library    libswithargs.Mixed      m4  d3  v1  v2  WITH NAME  M4
+Library    libswithargs.Mixed      m3  default=d1  WITH NAME  M3
+Library    libswithargs.Mixed      m4  d2  v       WITH NAME  M4
+Library    libswithargs.Mixed      m5  d3  v1  v2  WITH NAME  M5
 
 Variables  ../../testresources/res_and_var_files/different_variables.py
 Library    libswithargs.Mixed      ${LIST1}  ${DICTIONARY1}  ${None}  ${42}
@@ -29,35 +32,40 @@ Library    libswithargs.Mandatory  ${NONEX}
 
 Library    Collections
 
+Test Template    Verify Arguments
+
 
 ***Variables***
-@{LIST WITH OBJECTS}  ${None}  ${1.0}  ${True}
-
+@{LIST WITH OBJECTS}  ${None}  ${1.0}  default2=not named
+${NOT NAMED}    default2=d1
 
 *** Test Cases ***
 
 Mandatory arguments
-    Verify arguments  libswithargs.Mandatory  first arg  another arg
+    libswithargs.Mandatory  first arg  another arg
 
 Default values
-    Verify arguments  D1  m1  value  ${None}
-    Verify arguments  D2  m2  d1     ${None}
-    Verify arguments  D3  m3  ${1}   ${2}
+    D1  m1  value  ${None}
+    D2  m2  d1     ${None}
+    D3  m3  ${1}   ${2}
+    D4  m4  value  d2
+    D5  m5  default2=d1  ${None}
 
 Varargs
-    Verify arguments  V1  m1  ${EMPTY}
-    Verify arguments  V2  m2  v1
-    Verify arguments  V3  m3  1 2
+    V1  m1  ${EMPTY}
+    V2  m2  v1
+    V3  m3  1 2
 
 Mixed
-    Verify arguments  M1  m1  ${42}  ${EMPTY}
-    Verify arguments  M2  m2  d1     ${EMPTY}
-    Verify arguments  M3  m3  d2     v
-    Verify arguments  M4  m4  d3     v1 v2
+    M1  m1  ${42}  ${EMPTY}
+    M2  m2  d1     ${EMPTY}
+    M3  m3  d1     ${EMPTY}
+    M4  m4  d2     v
+    M5  m5  d3     v1 v2
 
 Variables containing objects
-    Verify arguments  libswithargs.Mixed  ${LIST1}  ${DICTIONARY1}  None 42
-    Verify arguments  libswithargs.Defaults  ${None}  ${1.0}  ${True}
+    libswithargs.Mixed  ${LIST1}  ${DICTIONARY1}  None 42
+    libswithargs.Defaults  ${None}  ${1.0}  default2=not named
 
 
 ***Keywords***

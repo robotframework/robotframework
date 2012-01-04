@@ -14,7 +14,9 @@ Mandatory arguments
 Default values
     libswithargs.Defaults  m1
     libswithargs.Defaults  m2  d1
-    libswithargs.Defaults  m3  1  2
+    libswithargs.Defaults  m3  1  default2=2
+    libswithargs.Defaults  m4  default2=d2
+    libswithargs.Defaults  m5  default2=d1
 
 Varargs
     libswithargs.Varargs  m1
@@ -24,12 +26,13 @@ Varargs
 Mixed
     libswithargs.Mixed  m1
     libswithargs.Mixed  m2  d1
-    libswithargs.Mixed  m3  d2  v
-    libswithargs.Mixed  m4  d3  v1  v2
+    libswithargs.Mixed  m3  default=d1
+    libswithargs.Mixed  m4  d2  v
+    libswithargs.Mixed  m5  d3  v1  v2
 
 Variables containing objects
     libswithargs.Mixed  [1, 2, 3, 4, 'foo', 'bar']  {'a': 1}  None  42
-    libswithargs.Defaults  None  1.0  True
+    libswithargs.Defaults  None  1.0  default2=not named
 
 Too Few Arguments
     [Template]  Library import should have failed
