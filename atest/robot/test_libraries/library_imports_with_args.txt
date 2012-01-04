@@ -15,8 +15,8 @@ Default values
     libswithargs.Defaults  m1
     libswithargs.Defaults  m2  d1
     libswithargs.Defaults  m3  1  default2=2
-    libswithargs.Defaults  m4  default2=d2
-    libswithargs.Defaults  m5  default2=d1
+    libswithargs.Defaults  mx  default2=xxx
+    libswithargs.Defaults  mx  default2=xxx
 
 Varargs
     libswithargs.Varargs  m1

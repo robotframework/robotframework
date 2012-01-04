@@ -4,8 +4,8 @@ Library    libswithargs.Mandatory  first arg       another arg
 Library    libswithargs.Defaults   m1                       WITH NAME  D1
 Library    libswithargs.Defaults   m2  d1                   WITH NAME  D2
 Library    libswithargs.Defaults   m3  ${1}  default2=${2}  WITH NAME  D3
-Library    libswithargs.Defaults   m4  default2=d2          WITH NAME  D4
-Library    libswithargs.Defaults   m5  ${NOT NAMED}         WITH NAME  D5
+Library    libswithargs.Defaults   mx  default2=xxx         WITH NAME  D4
+Library    libswithargs.Defaults   mx  ${NOT NAMED}         WITH NAME  D5
 
 Library    libswithargs.Varargs    m1              WITH NAME  V1
 Library    libswithargs.Varargs    m2  v1          WITH NAME  V2
@@ -37,7 +37,7 @@ Test Template    Verify Arguments
 
 ***Variables***
 @{LIST WITH OBJECTS}  ${None}  ${1.0}  default2=not named
-${NOT NAMED}    default2=d1
+${NOT NAMED}    default2=xxx
 
 *** Test Cases ***
 
@@ -48,8 +48,8 @@ Default values
     D1  m1  value  ${None}
     D2  m2  d1     ${None}
     D3  m3  ${1}   ${2}
-    D4  m4  value  d2
-    D5  m5  default2=d1  ${None}
+    D4  mx  value  xxx
+    D5  mx  default2=xxx  ${None}
 
 Varargs
     V1  m1  ${EMPTY}
