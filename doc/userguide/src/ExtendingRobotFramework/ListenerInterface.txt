@@ -93,6 +93,8 @@ synonym to :code:`start_suite`.
    |               |                  | * doc: test suite documentation                  |
    |               |                  | * metadata: dictionary/map containing `free test |
    |               |                  |   suite metadata`_ (new in 2.5)                  |
+   |               |                  | * source: absolute path of the file/directory    |
+   |               |                  |   test suite was created from (new in 2.7)       |
    |               |                  | * suites: names of suites directly in this suite |
    |               |                  |   as a list of strings (new in 2.5)              |
    |               |                  | * tests: names of tests directly in this suite   |
@@ -108,6 +110,8 @@ synonym to :code:`start_suite`.
    |               |                  | * doc: test suite documentation                  |
    |               |                  | * metadata: dictionary/map containing `free test |
    |               |                  |   suite metadata`_ (new in 2.6)                  |
+   |               |                  | * source: absolute path of the file/directory    |
+   |               |                  |   test suite was created from (new in 2.7)       |
    |               |                  | * starttime: execution start time                |
    |               |                  | * endtime: execution end time                    |
    |               |                  | * elapsedtime: execution time in milliseconds    |
