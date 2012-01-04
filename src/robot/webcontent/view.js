@@ -1,5 +1,5 @@
 function removeJavaScriptDisabledWarning() {
-    // Not using jQuery here for speed and to support angient browsers.
+    // Not using jQuery here for speed and to support ancient browsers.
     document.getElementById('javascript_disabled').style.display = 'none';
 }
 
@@ -107,10 +107,14 @@ $.template("stat_columns",
     '<td class="col_stat">${pass}</td>' +
     '<td class="col_stat">${fail}</td>' +
     '<td class="col_graph">' +
+      '{{if total}}' +
       '<div class="graph">' +
         '<div class="pass_bar" style="width: ${passWidth}%;" title="${passPercent}%"></div>' +
         '<div class="fail_bar" style="width: ${failWidth}%;" title="${failPercent}%"></div>' +
       '</div>' +
+      '{{else}}' +
+      '<div class="empty_graph"></div>' +
+      '{{/if}}' +
     '</td>'
 );
 
