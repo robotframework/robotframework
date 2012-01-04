@@ -25,12 +25,6 @@ from .error import get_error_details
 from .robotpath import abspath, normpath
 
 
-# TODO:
-# - don't import test library modules if library is in cache
-# - test can variable files be implemented with java/python classes nowadays
-#   (possibly returning class when importing by path is bwic anyway)
-
-
 class Importer(object):
 
     def __init__(self, type=None, logger=None):
