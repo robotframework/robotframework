@@ -13,6 +13,9 @@ Reset Message
 Set Non-ASCII Message
     Check Test Case  ${TEST NAME}  PASS  Hyvää yötä
 
+Set Non-String Message
+    Check Test Case  ${TEST NAME}  PASS  42
+
 Failure Resets Set Message
     Check Test Case  ${TEST NAME}
 

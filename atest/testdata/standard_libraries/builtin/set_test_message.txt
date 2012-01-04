@@ -9,6 +9,9 @@ Reset Message
 Set Non-ASCII Message
     Set Test Message  Hyvää yötä
 
+Set Non-String Message
+    Set Test Message  ${42}
+
 Failure Resets Set Message
     [Documentation]  FAIL  Fail Message
     Set Test Message  Message That Will Be Ignored

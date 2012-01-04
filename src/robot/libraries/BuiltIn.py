@@ -1791,6 +1791,8 @@ class _Misc:
 
         This keyword can not be used in suite setup or suite teardown.
         """
+        if not isinstance(message, basestring):
+            message = utils.unic(message)
         test = self._namespace.test
         if not test:
             raise RuntimeError("'Set Test Message' keyword cannot be used in "
