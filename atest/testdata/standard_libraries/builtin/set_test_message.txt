@@ -1,32 +1,45 @@
 *** Test cases ***
 Set Message To Successful Test
     Set Test Message  My Test Message
-    No Operation
 
-Set Message To Test That Failed
-    [documentation]  FAIL  Fail Message
+Reset Message
+    Set Test Message  My Test Message
+    Set Test Message  My Real Test Message
+
+Set Non-ASCII Message
+    Set Test Message  Hyvää yötä
+
+Failure Resets Set Message
+    [Documentation]  FAIL  Fail Message
     Set Test Message  Message That Will Be Ignored
     Fail  Fail Message
 
 Set Message To Failed Test On Teardown
-    [documentation]  FAIL  Teardown Message
+    [Documentation]  FAIL  Teardown Message
     Fail  Message That Will Be Ignored
-    [teardown]  Set Test Message  Teardown Message
+    [Teardown]  Set Test Message  Teardown Message
+
+Setting Message In Test Body After Continuable Failure Has No Effect
+    [Documentation]  FAIL  Failure Message
+    Run Keyword And Continue On Failure  Fail  Failure Message
+    Set Test Message   Ignored Message
+
+Setting Message In Teardown After Continuable Failure Works
+    [Documentation]  FAIL  Set Message
+    Run Keyword And Continue On Failure  Fail  Failure Message
+    [Teardown]  Set Test Message   Set Message
 
 Set Message and Fail On Teardown
-    [documentation]  FAIL  Message Before Teardown\n\nAlso teardown failed:\nFailing Teardown Message
+    [Documentation]  FAIL  Message Before Teardown\n\nAlso teardown failed:\n
+    ...  Failing Teardown Message
     Set Test Message  Message Before Teardown
-    [teardown]  Fail  Failing Teardown Message
+    [Teardown]  Fail  Failing Teardown Message
 
 Set Message On Setup
-    [setup]  Set Test Message  Setup Message
-    No Operation
-
-Set Message On Setup And Check Its Value
-    [setup]  Set Test Message  Message To Be Checked
+    [Setup]  Set Test Message  Message set in setup
     Variable Should Not Exist  ${TEST MESSAGE}
-    [teardown]  Should Be Equal  ${TEST MESSAGE}  Message To Be Checked
+    [Teardown]  Should Be Equal  ${TEST MESSAGE}  Message set in setup
 
 Check Message From Previous Test
-    Should Be Equal  ${PREV TEST MESSAGE}  Message To Be Checked
+    Should Be Equal  ${PREV TEST MESSAGE}  Message set in setup
 

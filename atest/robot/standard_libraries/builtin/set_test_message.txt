@@ -7,20 +7,29 @@ Resource    atest_resource.txt
 Set Message To Successful Test
     Check Test Case  ${TEST NAME}  PASS  My Test Message
 
-Set Message To Test That Failed
+Reset Message
+    Check Test Case  ${TEST NAME}  PASS  My Real Test Message
+
+Set Non-ASCII Message
+    Check Test Case  ${TEST NAME}  PASS  Hyvää yötä
+
+Failure Resets Set Message
     Check Test Case  ${TEST NAME}
 
 Set Message To Failed Test On Teardown
+    Check Test Case  ${TEST NAME}
+
+Setting Message In Test Body After Continuable Failure Has No Effect
+    Check Test Case  ${TEST NAME}
+
+Setting Message In Teardown After Continuable Failure Works
     Check Test Case  ${TEST NAME}
 
 Set Message and Fail On Teardown
     Check Test Case  ${TEST NAME}
 
 Set Message On Setup
-    Check Test Case  ${TEST NAME}  PASS  Setup Message
-
-Set Message On Setup And Check Its Value
-    Check Test Case  ${TEST NAME}  PASS  Message To Be Checked
+    Check Test Case  ${TEST NAME}  PASS  Message set in setup
 
 Check Message From Previous Test
     Check Test Case  ${TEST NAME}
