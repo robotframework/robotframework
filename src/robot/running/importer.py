@@ -47,21 +47,25 @@ class Importer(object):
         return self._resource_cache[path]
 
     def _import_library(self, name, positional, named, lib):
+        args = positional + ['%s=%s' % arg for arg in sorted(named.items())]
         key = (name, positional, named)
         if key in self._library_cache:
             LOGGER.info("Found test library '%s' with arguments %s from cache"
-                        % (name, utils.seq2str2(positional)))
+                        % (name, utils.seq2str2(args)))
             return self._library_cache[key]
         lib.create_handlers()
         self._library_cache[key] = lib
-        libtype = lib.__class__.__name__.replace('Library', '').lower()[1:]
+        self._log_imported_library(name, args, lib)
+        return lib
+
+    def _log_imported_library(self, name, args, lib):
+        type = lib.__class__.__name__.replace('Library', '').lower()[1:]
         LOGGER.info("Imported library '%s' with arguments %s "
                     "(version %s, %s type, %s scope, %d keywords)"
-                    % (name, utils.seq2str2(positional), lib.version,
-                       libtype, lib.scope.lower(), len(lib)))
+                    % (name, utils.seq2str2(args), lib.version,
+                       type, lib.scope.lower(), len(lib)))
         if not lib:
             LOGGER.warn("Imported library '%s' contains no keywords" % name)
-        return lib
 
     def _copy_library(self, lib, newname):
         libcopy = copy.copy(lib)
