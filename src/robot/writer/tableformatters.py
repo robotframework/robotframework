@@ -101,13 +101,13 @@ class SettingTableAligner(_Aligner):
 
 class ColumnAligner(_Aligner):
 
-    def __init__(self, max_name_length, table, align_last_column):
-        self._max_name_length = max_name_length
+    def __init__(self, first_column_width, table, align_last_column):
+        self._first_column_width = first_column_width
         _Aligner.__init__(self, self._count_justifications(table),
                           align_last_column)
 
     def _count_justifications(self, table):
-        result = [self._max_name_length] + [len(header) for header in table.header]
+        result = [self._first_column_width] + [len(h) for h in table.header[1:]]
         for element in [list(kw) for kw in list(table)]:
             for step in element:
                 for index, col in enumerate(step.as_list()):
@@ -121,7 +121,7 @@ class ColumnAligner(_Aligner):
         items = list(table)
         for i, item in enumerate(items):
             rows = list(self._rows_from_item(item, 1))
-            if len(item.name) > self._max_name_length:
+            if len(item.name) > self._first_column_width:
                 yield [item.name]
             else:
                 first_row = [item.name] + rows[0][1:]
