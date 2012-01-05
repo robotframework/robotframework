@@ -17,11 +17,6 @@ from robot.reporting.jsmodelbuilders import JsModelBuilder
 from robot.reporting.jswriter import JsResultWriter, JsonWriter
 
 
-class NonBlockingJsResultWriter(JsResultWriter):
-    start_block = ''
-    end_block = '\n'
-
-
 def run_robot(testdata, loglevel='INFO'):
     robot.run(testdata, log='NONE', report='NONE',
               tagstatlink=['force:http://google.com:<kuukkeli&gt;',
@@ -38,7 +33,7 @@ def create_jsdata(outxml, target, split_log):
               'reportURL': 'report.html',
               'background': {'fail': 'DeepPink'}}
     with open(target, 'w') as output:
-        NonBlockingJsResultWriter(output).write(model, config)
+        JsResultWriter(output, start_block='', end_block='\n').write(model, config)
         writer = JsonWriter(output)
         for index, (keywords, strings) in enumerate(model.split_results):
             writer.write_json('window.outputKeywords%d = ' % index, keywords)

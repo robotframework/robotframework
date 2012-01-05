@@ -10,9 +10,7 @@ def get_lines(suite=(), strings=(), basemillis=100, start_block='',
               end_block='', split_threshold=9999):
     output = StringIO()
     data = JsExecutionResult(suite, None, None, strings, basemillis)
-    attrs = {'start_block': start_block, 'end_block': end_block,
-             'split_threshold': split_threshold}
-    writer = type('CustomWriter', (JsResultWriter,), attrs)(output)
+    writer = JsResultWriter(output, start_block, end_block, split_threshold)
     writer.write(data, settings={})
     return output.getvalue().splitlines()
 

@@ -18,19 +18,21 @@ from .jsonwriter import JsonWriter
 
 
 class JsResultWriter(object):
-    start_block = '<script type="text/javascript">' + os.linesep
-    end_block = '</script>' + os.linesep
-    split_threshold = 9500
     _output_attr = 'window.output'
     _settings_attr = 'window.settings'
     _suite_key = 'suite'
     _strings_key = 'strings'
 
-    def __init__(self, output):
-        block_separator = self.end_block + self.start_block
-        writer = JsonWriter(output, separator=block_separator)
+    def __init__(self, output,
+                 start_block='<script type="text/javascript">' + os.linesep,
+                 end_block='</script>' + os.linesep,
+                 split_threshold=9500):
+        writer = JsonWriter(output, separator=end_block+start_block)
         self._write = writer.write
         self._write_json = writer.write_json
+        self._start_block = start_block
+        self._end_block = end_block
+        self._split_threshold = split_threshold
 
     def write(self, result, settings):
         self._start_output_block()
@@ -40,11 +42,11 @@ class JsResultWriter(object):
         self._write_settings_and_end_output_block(settings)
 
     def _start_output_block(self):
-        self._write(self.start_block, postfix='', separator=False)
+        self._write(self._start_block, postfix='', separator=False)
         self._write('%s = {}' % self._output_attr)
 
     def _write_suite(self, suite):
-        writer = SuiteWriter(self._write_json, self.split_threshold)
+        writer = SuiteWriter(self._write_json, self._split_threshold)
         writer.write(suite, self._output_var(self._suite_key))
 
     def _write_strings(self, strings):
@@ -52,7 +54,7 @@ class JsResultWriter(object):
         self._write('%s = []' % variable)
         prefix = '%s = %s.concat(' % (variable, variable)
         postfix = ');' + os.linesep
-        threshold = self.split_threshold
+        threshold = self._split_threshold
         for index in xrange(0, len(strings), threshold):
             self._write_json(prefix, strings[index:index+threshold], postfix)
 
@@ -62,8 +64,8 @@ class JsResultWriter(object):
 
     def _write_settings_and_end_output_block(self, settings):
         self._write_json('%s = ' % self._settings_attr, settings,
-                                separator=False)
-        self._write(self.end_block, postfix='', separator=False)
+                         separator=False)
+        self._write(self._end_block, postfix='', separator=False)
 
     def _output_var(self, key):
         return '%s["%s"]' % (self._output_attr, key)

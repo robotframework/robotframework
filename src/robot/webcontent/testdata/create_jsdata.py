@@ -20,11 +20,6 @@ from robot.reporting.resultwriter import Results
 from robot.reporting.jswriter import JsResultWriter
 
 
-class ResultWriter(JsResultWriter):
-    start_block = ''
-    end_block = ''
-
-
 def run_robot(testdata, outxml):
     robot.run(testdata, log='NONE', report='NONE', output=outxml)
 
@@ -39,11 +34,12 @@ def create_jsdata(outxml, target):
              tagstatcombine=['fooANDi*:No Match', 'i?:IX'],
              critical=['i?'], noncritical=['*kek*kone*']))
     result = Results([outxml], settings).js_result
-    config = dict(logURL='log.html',
-                  reportURL='report.html',
-                  background={'fail': 'DeepPink'})
+    config = {'logURL': 'log.html',
+              'reportURL': 'report.html',
+              'background': {'fail': 'DeepPink'}}
     with codecs.open(target, 'w', 'UTF-8') as output:
-        ResultWriter(output).write(result, config)
+        writer = JsResultWriter(output, start_block='', end_block='')
+        writer.write(result, config)
 
 
 if __name__ == '__main__':
