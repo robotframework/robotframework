@@ -4,6 +4,7 @@ Force Tags      regression  jybot  pybot
 Resource        atest_resource.txt
 
 *** Variables ***
+${DATAFILE}      core/resource_and_variable_imports.txt
 ${RESDIR}        ${CURDIR}/../../testdata/core/resources_and_variables
 ${PPATH_RESDIR}  ${CURDIR}/../../testresources/res_and_var_files
 
@@ -136,10 +137,10 @@ Variable File In PYTHONPATH
 
 *** Keywords ***
 My Setup
-    Run Tests  --pythonpath ${PPATH_RESDIR}  core/resource_and_variable_imports.html
+    Run Tests  --pythonpath ${PPATH_RESDIR}  ${DATAFILE}
     ${STDERR} =  Get Stderr
     ${SYSLOG} =  Get Syslog
-    ${DATAPATH} =  Normalize Path  ${DATADIR}/core/resource_and_variable_imports.html
+    ${DATAPATH} =  Normalize Path  ${DATADIR}/${DATAFILE}
     Set Suite Variable  $STDERR
     Set Suite Variable  $SYSLOG
     Set Suite Variable  $DATAPATH
