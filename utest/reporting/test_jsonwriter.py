@@ -12,7 +12,7 @@ from robot.utils.asserts import assert_equals, assert_raises
 from robot.reporting.jsonwriter import JsonDumper
 
 
-class JsonTestCase(unittest.TestCase):
+class TestJsonDumper(unittest.TestCase):
 
     def _dump(self, data):
         output = StringIO()
