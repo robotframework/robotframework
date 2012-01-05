@@ -11,9 +11,9 @@ Variables    ${variables2_file}
 Variables    resources_and_variables/dynamic_variables.py    # No args works
 Variables    resources_and_variables/dynamic_variables.py    One arg works
 Variables    resources_and_variables/dynamic_variables.py
-...          Two args returns None    which is invalid
+...          Two args   returns invalid
 Variables    resources_and_variables/dynamic_variables.py
-...          More args raises an exception    which is invalid    of course
+...          More   args   raises    exception
 Variables    resources_and_variables/dynamicVariables.py
 ...          This    ${1}    ${works}    back \\ slash    \${escaped}    ${CURDIR}
 
@@ -76,7 +76,7 @@ Invalid List Variable
     Variable Should Not Exist  \@{invalid_list}
     Variable Should Not Exist  \${var_in_invalid_list_variable_file}
 
-Dynamic Variable File No Args
+Dynamic Variable File With No Args
     Variable Should Not Exist  $no_args_vars
     Variable Should Not Exist  $one_arg_vars
     Variable Should Not Exist  $get_variables
@@ -86,7 +86,7 @@ Dynamic Variable File No Args
     Should Be Equal  @{dyn_no_args_get_var}[0]  one
     Should Be Equal  @{dyn_no_args_get_var}[1]  ${2}
 
-Dynamic Variable File One Arg
+Dynamic Variable File With One Arg
     Should Be Equal  ${dyn_one_arg_get_var}  Dyn var got with one arg from get_variables
     Should Be Equal  ${dyn_one_arg_get_var_False}  ${False}
     Should Be Equal  @{dyn_one_arg_get_var}[0]  one
