@@ -5,62 +5,53 @@ from os.path import join, dirname, abspath
 import sys
 import os
 
-
 BASEDIR = dirname(abspath(__file__))
 OUTPUT = join(BASEDIR, 'output.xml')
 
 sys.path.insert(0, join(BASEDIR, '..', '..', '..', '..', 'src'))
 
 import robot
-from robot.result.executionresult import ResultFromXml
-from robot.reporting.jsmodelbuilders import JsModelBuilder
+from robot.conf.settings import RebotSettings
+from robot.reporting.resultwriter import Results
 from robot.reporting.jswriter import JsResultWriter, JsonWriter
 
 
-def run_robot(testdata, loglevel='INFO'):
-    robot.run(testdata, log='NONE', report='NONE',
-              tagstatlink=['force:http://google.com:<kuukkeli&gt;',
-                           'i*:http://%1/:Title of i%1'],
-              tagdoc=['test:this_is_*my_bold*_test',
-                      'IX:*Combined* & escaped <&lt; tag doc'],
-              tagstatcombine=['fooANDi*:zap', 'i?:IX'],
-              critical=[], noncritical=[], outputdir=BASEDIR, loglevel=loglevel)
+def create(testdata, target, split_log=False):
+    testdata = join(BASEDIR, testdata)
+    output_name = target[0].lower() + target[1:-3] + 'Output'
+    target = join(BASEDIR, target)
+    run_robot(testdata)
+    create_jsdata(target, split_log)
+    inplace_replace_all(target, 'window.output', 'window.' + output_name)
 
 
-def create_jsdata(outxml, target, split_log):
-    model = JsModelBuilder(split_log=split_log).build_from(ResultFromXml(outxml))
-    config = {'logURL': 'log.html',
-              'reportURL': 'report.html',
-              'background': {'fail': 'DeepPink'}}
+def run_robot(testdata, output=OUTPUT):
+    robot.run(testdata, log='NONE', report='NONE', output=output)
+
+
+def create_jsdata(target, split_log, outxml=OUTPUT):
+    result = Results(outxml, RebotSettings({'splitlog': split_log})).js_result
+    config = {'logURL': 'log.html', 'reportURL': 'report.html', 'background': {'fail': 'DeepPink'}}
     with open(target, 'w') as output:
-        JsResultWriter(output, start_block='', end_block='\n').write(model, config)
+        JsResultWriter(output, start_block='', end_block='\n').write(result, config)
         writer = JsonWriter(output)
-        for index, (keywords, strings) in enumerate(model.split_results):
+        for index, (keywords, strings) in enumerate(result.split_results):
             writer.write_json('window.outputKeywords%d = ' % index, keywords)
             writer.write_json('window.outputStrings%d = ' % index, strings)
 
-def replace_all(file,searchExp,replaceExp):
+
+def inplace_replace_all(file, search, replace):
     for line in fileinput.input(file, inplace=1):
-        if searchExp in line:
-            line = line.replace(searchExp,replaceExp)
-        sys.stdout.write(line)
-
-
-def create(input, target, targetName, loglevel='INFO', split_log=False):
-    input = join(BASEDIR, input)
-    target = join(BASEDIR, target)
-    run_robot(input, loglevel)
-    create_jsdata(OUTPUT, target, split_log)
-    replace_all(target, 'window.output', 'window.' + targetName)
+        sys.stdout.write(line.replace(search, replace))
 
 
 if __name__ == '__main__':
-    create('Suite.txt', 'Suite.js', 'suiteOutput')
-    create('SetupsAndTeardowns.txt', 'SetupsAndTeardowns.js', 'setupsAndTeardownsOutput')
-    create('Messages.txt', 'Messages.js', 'messagesOutput')
-    create('teardownFailure', 'TeardownFailure.js', 'teardownFailureOutput')
-    create(join('teardownFailure', 'PassingFailing.txt'), 'PassingFailing.js', 'passingFailingOutput')
-    create('TestsAndKeywords.txt', 'TestsAndKeywords.js', 'testsAndKeywordsOutput')
-    create('.', 'allData.js', 'allDataOutput')
-    create('.', 'splitting.js', 'splittingOutput', split_log=True)
+    create('Suite.txt', 'Suite.js')
+    create('SetupsAndTeardowns.txt', 'SetupsAndTeardowns.js')
+    create('Messages.txt', 'Messages.js')
+    create('teardownFailure', 'TeardownFailure.js')
+    create(join('teardownFailure', 'PassingFailing.txt'), 'PassingFailing.js')
+    create('TestsAndKeywords.txt', 'TestsAndKeywords.js')
+    create('.', 'allData.js')
+    create('.', 'splitting.js', split_log=True)
     os.remove(OUTPUT)
