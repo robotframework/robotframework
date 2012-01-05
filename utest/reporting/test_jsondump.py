@@ -22,20 +22,16 @@ class JsonTestCase(unittest.TestCase):
     def _test(self, data, expected):
         assert_equals(self._dump(data), expected)
 
-    def test_dump_raw_string(self):
-        self._test('*', '"*"')
-        self._test('*xxx', '"*xxx"')
-        self._test('*123', '"*123"')
-
-    def test_dump_base64_string(self):
+    def test_dump_string(self):
         self._test('', '""')
-        self._test('cm9ib3Q=', '"cm9ib3Q="')
+        self._test('hello world', '"hello world"')
+        self._test('123', '"123"')
 
     def test_dump_non_ascii_string(self):
-        self._test(u'*hyv\xe4', '"*hyv\\u00e4"')
+        self._test(u'hyv\xe4', '"hyv\\u00e4"')
 
     def test_escape_string(self):
-        self._test('*"-\\-\n-\t-\r', '"*\\"-\\\\-\\n-\\t-\\r"')
+        self._test('"-\\-\n-\t-\r', '"\\"-\\\\-\\n-\\t-\\r"')
 
     def test_dump_integer(self):
         self._test(12, '12')
