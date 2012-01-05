@@ -28,7 +28,7 @@ class Setting(object):
         self.comment = Comment(comment)
 
     def reset(self):
-        self.__init__(self, self.setting_name, self.parent)
+        self.__init__(self.setting_name, self.parent)
 
     @property
     def source(self):
