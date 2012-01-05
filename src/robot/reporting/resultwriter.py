@@ -81,7 +81,8 @@ class ResultWriter(object):
 class Results(object):
 
     def __init__(self, data_sources, settings):
-        self._data_sources = data_sources
+        self._data_sources = data_sources \
+            if not isinstance(data_sources, basestring) else [data_sources]
         self._settings = settings
         self._result = None
         self._js_result = None
