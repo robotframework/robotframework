@@ -25,21 +25,24 @@ def run_robot(testdata, outxml):
 
 
 def create_jsdata(outxml, target):
-    print outxml
-    settings = RebotSettings(
-        dict(tagstatlink=['force:http://google.com:<kuukkeli&gt;',
-                          'i*:http://%1/:Title of i%1'],
-             tagdoc=['test:this_is_*my_bold*_test',
-                     'IX:*Combined* & escaped <&lt; tag doc'],
-             tagstatcombine=['fooANDi*:No Match', 'i?:IX'],
-             critical=['i?'], noncritical=['*kek*kone*']))
-    result = Results([outxml], settings).js_result
+    settings = RebotSettings({
+        'critical': ['i?'],
+        'noncritical': ['*kek*kone*'],
+        'tagstatlink': ['force:http://google.com:<kuukkeli&gt;',
+                        'i*:http://%1/:Title of i%1'],
+        'tagdoc': ['test:this_is_*my_bold*_test',
+                   'IX:*Combined* & escaped <&lt; tag doc'],
+        'tagstatcombine': ['fooANDi*:No Match', 'i?:IX']
+    })
+    result = Results(outxml, settings).js_result
     config = {'logURL': 'log.html',
               'reportURL': 'report.html',
               'background': {'fail': 'DeepPink'}}
     with codecs.open(target, 'w', 'UTF-8') as output:
         writer = JsResultWriter(output, start_block='', end_block='')
         writer.write(result, config)
+    print 'Log:    ', normpath(join(BASEDIR, '..', 'log.html'))
+    print 'Report: ', normpath(join(BASEDIR, '..', 'report.html'))
 
 
 if __name__ == '__main__':
