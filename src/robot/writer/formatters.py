@@ -107,7 +107,7 @@ class TxtFormatter(_TestDataFileFormatter):
         return RowSplittingFormatter(self._cols)
 
     def _should_align_columns(self, table):
-        return bool(table.header[1:])
+        return table.type in ['test case', 'keyword'] and bool(table.header[1:])
 
     def _format_row(self, row):
         return self._escape(row)
