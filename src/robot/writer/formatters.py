@@ -43,6 +43,9 @@ class _TestDataFileFormatter(object):
     def _format_row(self, row):
         return row
 
+    def _should_align_columns(self, table):
+        return table.type in ['test case', 'keyword'] and bool(table.header[1:])
+
 
 class TsvFormatter(_TestDataFileFormatter):
 
@@ -105,9 +108,6 @@ class TxtFormatter(_TestDataFileFormatter):
             return ColumnAligner(self._FIRST_COL_WIDTH, table,
                                  self._align_last_column)
         return RowSplittingFormatter(self._cols)
-
-    def _should_align_columns(self, table):
-        return table.type in ['test case', 'keyword'] and bool(table.header[1:])
 
     def _format_row(self, row):
         return self._escape(row)
@@ -180,7 +180,7 @@ class HtmlFormatter(_TestDataFileFormatter):
         return SingleLineHtmlFormatter(self._cols)
 
     def header_row(self, table):
-        if len(table.header) == 1:
+        if not self._should_align_columns(table) or len(table.header) == 1:
             return [HeaderCell(table.header[0], self._default_cols)]
         headers = self._pad_header(table)
         return [HeaderCell(hdr) for hdr in headers]
