@@ -28,8 +28,8 @@ class Thread(threading.Thread):
     in Python because in Jython we can use java.lang.Thread.
     """
 
-    def __init__(self, runner):
-        threading.Thread.__init__(self, target=runner)
+    def __init__(self, runner, name=None):
+        threading.Thread.__init__(self, target=runner, name=name)
         self._stopped = False
 
     def start(self):

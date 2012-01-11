@@ -57,3 +57,6 @@ def log_messages_different_time():
     logging.info('First message')
     time.sleep(0.1)
     logging.info('Second message 0.1 sec later')
+
+def log_something():
+    logging.info('something')

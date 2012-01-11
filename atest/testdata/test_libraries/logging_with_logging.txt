@@ -29,3 +29,7 @@ Log using non-propagating logger
 
 Timestamps are accurate
     Log messages different time
+
+Logging when timeout is in use
+    [Timeout]  5 seconds
+    Log something

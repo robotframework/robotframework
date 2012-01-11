@@ -55,6 +55,10 @@ import sys
 import threading
 
 from robot.output import LOGGER, Message
+from robot.running.timeouts import timeoutthread
+
+
+LOGGING_THREADS = ('MainThread', timeoutthread.TIMEOUT_THREAD_NAME)
 
 
 def write(msg, level, html=False):
@@ -64,7 +68,7 @@ def write(msg, level, html=False):
     of using this method, it is generally better to use the level
     specific methods such as `info` and `debug`.
     """
-    if threading.currentThread().getName() == 'MainThread':
+    if threading.currentThread().getName() in LOGGING_THREADS:
         LOGGER.log_message(Message(msg, level, html))
 
 def trace(msg, html=False):

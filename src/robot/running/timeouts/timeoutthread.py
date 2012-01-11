@@ -23,6 +23,7 @@ else:
     from stoppablethread import Thread
     Runnable = object
 
+TIMEOUT_THREAD_NAME = 'RobotFrameworkTimeoutThread'
 
 class ThreadedRunner(Runnable):
 
@@ -44,7 +45,7 @@ class ThreadedRunner(Runnable):
     __call__ = run
 
     def run_in_thread(self, timeout):
-        self._thread = Thread(self)
+        self._thread = Thread(self, name=TIMEOUT_THREAD_NAME)
         self._thread.setDaemon(True)
         self._thread.start()
         self._notifier.wait(timeout)

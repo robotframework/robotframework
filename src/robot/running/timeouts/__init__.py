@@ -31,7 +31,6 @@ else:
 from robot import utils
 from robot.errors import TimeoutError, DataError, FrameworkError
 
-
 class _Timeout(object):
 
     def __init__(self, timeout=None, message='', variables=None):

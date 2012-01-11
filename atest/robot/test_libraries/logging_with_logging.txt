@@ -49,3 +49,8 @@ Timestamps are accurate
     Check log message  ${msg1}  First message
     Check log message  ${msg2}  Second message 0.1 sec later
     Should be true  '${msg1.timestamp}' < '${msg2.timestamp}'
+
+Logging when timeout is in use
+    ${tc} =  Check test case  ${TEST NAME}
+    Check log message  ${tc.kws[0].msgs[0]}  Test timeout 5 seconds active. * seconds left.  DEBUG  pattern=yep
+    Check log message  ${tc.kws[0].msgs[1]}  something
