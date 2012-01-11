@@ -34,7 +34,7 @@ class Timeout(object):
         signal(SIGALRM, self._raise_timeout_error)
         setitimer(ITIMER_REAL, self._timeout)
 
-    def _raise_timeout_error(self, *args):
+    def _raise_timeout_error(self, signum, frame):
         raise TimeoutError(self._error)
 
     def _stop_timer(self):

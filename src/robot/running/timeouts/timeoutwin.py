@@ -12,7 +12,6 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from __future__ import with_statement
 import ctypes
 import thread
 import time
@@ -32,16 +31,19 @@ class Timeout(object):
     def _create_timeout_error_class(self, timeout_error):
         return type(TimeoutError.__name__,
                    (TimeoutError,),
-                   {'__unicode__': lambda s: timeout_error})
+                   {'__unicode__': lambda self: timeout_error})
 
     def execute(self, runnable):
-        with self:
+        self._start_timer()
+        try:
             return runnable()
+        finally:
+            self._stop_timer()
 
-    def __enter__(self):
+    def _start_timer(self):
         self._timer.start()
 
-    def __exit__(self, *args):
+    def _stop_timer(self):
         self._timer.cancel()
         # In case timeout has occurred but the exception has not yet been
         # thrown we need to do this to ensure that the exception

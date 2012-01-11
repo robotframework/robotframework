@@ -12,18 +12,20 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from robot.errors import TimeoutError
-
 import sys
 from threading import Event
+
+from robot.errors import TimeoutError
 
 if sys.platform.startswith('java'):
     from java.lang import Thread, Runnable
 else:
-    from stoppablethread import Thread
+    from .stoppablethread import Thread
     Runnable = object
 
+
 TIMEOUT_THREAD_NAME = 'RobotFrameworkTimeoutThread'
+
 
 class ThreadedRunner(Runnable):
 

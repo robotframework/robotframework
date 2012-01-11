@@ -16,20 +16,21 @@ import sys
 import os
 import time
 
+from robot import utils
+from robot.errors import TimeoutError, DataError, FrameworkError
+
 if sys.platform == 'cli':
-    from timeoutthread import Timeout
+    from .timeoutthread import Timeout
 elif os.name == 'nt':
-    from timeoutwin import Timeout
+    from .timeoutwin import Timeout
 else:
     try:
         # python 2.6 or newer in *nix or mac
-        from timeoutsignaling import Timeout
+        from .timeoutsignaling import Timeout
     except ImportError:
         # python < 2.6 and jython don't have complete signal module
-        from timeoutthread import Timeout
+        from .timeoutthread import Timeout
 
-from robot import utils
-from robot.errors import TimeoutError, DataError, FrameworkError
 
 class _Timeout(object):
 
