@@ -222,11 +222,9 @@ If both the test case and some of its keywords (or several nested
 keywords) have a timeout, the active timeout is the one with the least
 time left.
 
-.. warning:: Using timeouts might cause test to be executed slower if the Python
-             interpreter is used. The slowing down is caused by Python's
-             threading implementation. For more information see `issue 497`__.
-
-__ http://code.google.com/p/robotframework/issues/detail?id=497
+.. warning:: Using timeouts might slow down test execution when using Python 2.5
+             elsewhere than on Windows. Prior to Robot Framework 2.7 timeouts
+             slowed down execution with all Python versions on all platforms.
 
 For loops
 ~~~~~~~~~
