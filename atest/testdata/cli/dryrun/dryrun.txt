@@ -8,6 +8,9 @@ Variables  wrong_path.py
 Resource  NonExisting.tsv
 
 
+*** Variables ***
+${value}    value
+
 *** Test Cases ***
 
 Passing keywords
@@ -94,6 +97,12 @@ Multiple Failures
     Should Be Equal  1
     UK with multiple failures
     Does not exist
+
+Import Library Keyword is Called
+    Import Library   String
+    Get Line Count   foo
+    Import Library   ParameterLibrary   ${value}    ${42}
+    Parameters
 
 
 *** Keywords ***

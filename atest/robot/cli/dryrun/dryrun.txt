@@ -96,6 +96,11 @@ Invalid imports
 Test from other suite
     Check Test Case  Some Other Test
 
+Import Library Keyword is Called
+    Check Test Case    ${TESTNAME}
+    Check Syslog Contains  Imported library 'String' with arguments [ ]
+    Check Syslog Contains  Imported library 'ParameterLibrary' with arguments [ value | 42 ]
+
 *** Keywords ***
 Should have correct number of keywords
     [Arguments]  ${test or uk}  ${exp number of kws}

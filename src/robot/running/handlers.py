@@ -109,6 +109,8 @@ class _RunnableHandler(_BaseHandler):
         return self._run(context, args)
 
     def _dry_run(self, context, args):
+        if self.longname == 'BuiltIn.Import Library':
+            return self._run(context, args)
         self.arguments.check_arg_limits_for_dry_run(args)
         return None
 
