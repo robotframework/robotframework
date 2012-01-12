@@ -117,7 +117,7 @@ def version(version_number, release_tag=None):
         _update_version(version_number, _verify_version(release_tag, RELEASES))
     sys.path.insert(0, ROBOT_PATH)
     from version import get_version
-    return get_version(sep='-')
+    return get_version(sep='')
 
 def _verify_version(given, valid):
     for item in valid:
@@ -130,6 +130,7 @@ def _update_version(version_number, release_tag):
     vfile = open(VERSION_PATH, 'wb')
     vfile.write(VERSION_CONTENT % locals())
     vfile.close()
+    # TODO: Fix before next final release
     #_update_pom_version(version_number, release_tag)
     print 'Updated version to %s %s' % (version_number, release_tag)
 
