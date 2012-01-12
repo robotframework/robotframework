@@ -79,10 +79,10 @@ function expandAllChildren(elementId) {
     expandRecursively();
 }
 
-function expandFailed(element) {
+function expandCriticalFailed(element) {
     if (element.status == "FAIL") {
         window.elementsToExpand = [element];
-        window.expandDecider = function(e) {return e.status == "FAIL";};
+        window.expandDecider = function(e) {return e.status == "FAIL" && (e.isCritical === undefined || e.isCritical);};
         expandRecursively();
     }
 }
@@ -91,5 +91,5 @@ function expandSuite(suite) {
     if (suite.status == "PASS")
         expandElement(suite);
     else
-        expandFailed(suite);
+        expandCriticalFailed(suite);
 }
