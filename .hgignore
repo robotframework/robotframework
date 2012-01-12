@@ -10,3 +10,4 @@ atest/results
 *.pyc
 *$py.class
 ext-lib
+*.iml
