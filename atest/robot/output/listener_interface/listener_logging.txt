@@ -114,7 +114,7 @@ Correct messages should be logged to normal log
     Check Log Message  ${kw.msgs[10]}  end_keyword  WARN
 
 Correct messages should be logged to syslog
-    :FOR  ${msg}  IN  message: INFO Robot Framework trunk  start_suite
+    :FOR  ${msg}  IN  message: INFO Robot Framework  start_suite
     ...  end_suite  start_test  end_test  output_file  log_file  report_file
     \  Check syslog contains  | INFO \ | ${msg}
     \  Check syslog contains  | WARN \ | ${msg}
