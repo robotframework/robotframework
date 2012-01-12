@@ -50,7 +50,7 @@ def main():
     # Let distutils take care of most of the setup
     dist = setup(
           name         = 'robotframework',
-          version      = get_version(sep='-'),
+          version      = get_version(sep=''),
           author       = 'Robot Framework Developers',
           author_email = 'robotframework-devel@googlegroups.com',
           url          = 'http://robotframework.org',
