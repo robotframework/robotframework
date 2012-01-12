@@ -262,6 +262,5 @@ if __name__ == '__main__':
     try:
         globals()[sys.argv[1]](*sys.argv[2:])
     except (KeyError, IndexError, TypeError, ValueError):
-        raise
         print __doc__
 
