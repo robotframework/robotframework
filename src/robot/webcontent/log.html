@@ -97,7 +97,7 @@ function makeElementVisible(element) {
             $("#" + uniqueIds[i] + "_unfoldlink").click();
         }
         if (uniqueIds && uniqueIds.length > 0) {
-            expandFailed(window.testdata.find(uniqueIds[uniqueIds.length - 1]));
+            expandCriticalFailed(window.testdata.find(uniqueIds[uniqueIds.length - 1]));
             window.location.hash = element;
         }
     });
