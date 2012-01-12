@@ -44,6 +44,7 @@ import time
 import subprocess
 import zipfile
 from glob import glob
+import urllib
 
 
 ROOT_PATH = abspath(dirname(__file__))
@@ -51,7 +52,7 @@ DIST_PATH = join(ROOT_PATH, 'dist')
 BUILD_PATH = join(ROOT_PATH, 'build')
 ROBOT_PATH = join(ROOT_PATH, 'src', 'robot')
 JAVA_SRC = join(ROOT_PATH, 'src', 'java', 'org', 'robotframework')
-JYTHON_JAR = glob(join(ROOT_PATH, 'ext-lib', 'jython-standalone-*.jar'))[0]
+JYTHON_VERSION = '2.5.2'
 SETUP_PATH = join(ROOT_PATH, 'setup.py')
 VERSION_PATH = join(ROBOT_PATH, 'version.py')
 POM_PATH = join(ROOT_PATH, 'pom.xml')
@@ -181,22 +182,37 @@ def _announce():
         print abspath(join(DIST_PATH, path))
 
 def jar(*version_info):
+    jython_jar = _get_jython_jar()
+    print 'Using Jython %s' % jython_jar
     ver = version(*version_info)
     tmpdir = _create_tmpdir()
-    _compile_java_classes(tmpdir)
-    _unzip_jython_jar(tmpdir)
+    _compile_java_classes(tmpdir, jython_jar)
+    _unzip_jython_jar(tmpdir, jython_jar)
     _copy_robot_files(tmpdir)
-    _compile_all_py_files(tmpdir)
+    _compile_all_py_files(tmpdir, jython_jar)
     _overwrite_manifest(tmpdir, ver)
     jar_path = _create_jar_file(tmpdir, ver)
     shutil.rmtree(tmpdir)
-    print 'Created %s based on %s' % (jar_path, JYTHON_JAR)
+    print 'Created %s based on %s' % (jar_path, jython_jar)
 
-def _compile_java_classes(tmpdir):
+def _get_jython_jar():
+    lib_dir = join(ROOT_PATH, 'ext-lib')
+    jar_path = join(lib_dir, 'jython-standalone-%s.jar' % JYTHON_VERSION)
+    if os.path.exists(jar_path):
+        return jar_path
+    if not os.path.exists(lib_dir):
+        os.mkdir(lib_dir)
+    dl_url = "http://search.maven.org/remotecontent?filepath=org/python/jython-standalone/%s/jython-standalone-%s.jar" \
+            % (JYTHON_VERSION, JYTHON_VERSION)
+    print 'Jython not found, goind to download from %s' % dl_url
+    urllib.urlretrieve(dl_url, jar_path)
+    return jar_path
+
+def _compile_java_classes(tmpdir, jython_jar):
     source_files = [join(JAVA_SRC, f)
                     for f in os.listdir(JAVA_SRC) if f.endswith('.java')]
     print 'Compiling %d source files' % len(source_files)
-    subprocess.call(['javac', '-d', tmpdir, '-target', '1.5', '-cp', JYTHON_JAR]
+    subprocess.call(['javac', '-d', tmpdir, '-target', '1.5', '-cp', jython_jar]
                     + source_files)
 
 def _create_tmpdir():
@@ -206,8 +222,8 @@ def _create_tmpdir():
     os.mkdir(tmpdir)
     return tmpdir
 
-def _unzip_jython_jar(tmpdir):
-    zipfile.ZipFile(JYTHON_JAR).extractall(tmpdir)
+def _unzip_jython_jar(tmpdir, jython_jar):
+    zipfile.ZipFile(jython_jar).extractall(tmpdir)
 
 def _copy_robot_files(tmpdir):
     # pyc files must be excluded so that compileall works properly.
@@ -215,8 +231,8 @@ def _copy_robot_files(tmpdir):
     shutil.copytree(ROBOT_PATH, todir, ignore=shutil.ignore_patterns('*.pyc'))
     shutil.rmtree(join(todir, 'webcontent', 'testdata'))
 
-def _compile_all_py_files(tmpdir):
-    subprocess.call(['java', '-jar', JYTHON_JAR, '-m', 'compileall', tmpdir])
+def _compile_all_py_files(tmpdir, jython_jar):
+    subprocess.call(['java', '-jar', jython_jar, '-m', 'compileall', tmpdir])
     # Jython will not work without its py-files, but robot will
     for root, _, files in os.walk(join(tmpdir,'Lib','robot')):
         for f in files:
@@ -246,5 +262,6 @@ if __name__ == '__main__':
     try:
         globals()[sys.argv[1]](*sys.argv[2:])
     except (KeyError, IndexError, TypeError, ValueError):
+        raise
         print __doc__
 
