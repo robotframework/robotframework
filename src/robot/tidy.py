@@ -23,12 +23,14 @@ Options:
 
  python -m robot.tidy -f txt mytests.html  # Creates mytets.txt
 """
-
+import os
 import sys
 from StringIO import StringIO
 
-from robot import utils, DataError
-from robot.parsing import TestData
+from robot import utils
+from robot.errors import DataError
+from robot.parsing import TestCaseFile, ResourceFile, TestDataDirectory
+from robot.parsing.populators import FromFilePopulator
 
 def _exit(message, status):
     print message
@@ -44,10 +46,18 @@ def _parse_args():
         _exit(unicode(err), 1)
 
 def _create_datafile(source):
+    if os.path.splitext(os.path.basename(source))[0] == '__init__':
+        data = TestDataDirectory()
+        data.initfile = source
+        FromFilePopulator(data).populate(source)
+        return data
     try:
-        return TestData(source=source)
+        return TestCaseFile(source=source).populate()
     except DataError, err:
-        _exit("Invalid data source '%s': %s" % (source, unicode(err)), 1)
+        try:
+            return ResourceFile(source=source).populate()
+        except DataError:
+            _exit("Invalid data source '%s': %s" % (source, unicode(err)), 1)
 
 
 if __name__ == '__main__':
