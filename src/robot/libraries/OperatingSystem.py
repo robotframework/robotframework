@@ -1114,13 +1114,13 @@ class OperatingSystem:
         return count
 
     def count_files_in_directory(self, path, pattern=None):
-        """A wrapper for `Count Items In Directory` returning onlyt directory count."""
+        """A wrapper for `Count Items In Directory` returning only file count."""
         count = len(self._list_files_in_dir(path, pattern))
         self._info("%s file%s." % (count, plural_or_not(count)))
         return count
 
     def count_directories_in_directory(self, path, pattern=None):
-        """A wrapper for `Count Items In Directory` returning only file count."""
+        """A wrapper for `Count Items In Directory` returning only directory count."""
         count = len(self._list_dirs_in_dir(path, pattern))
         self._info("%s director%s." % (count, 'y' if count == 1 else 'ies'))
         return count
