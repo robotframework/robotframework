@@ -1,15 +1,23 @@
 """robot.tidy: Clean up and change format of Robot Framework test data files.
 
-Usage: python -m robot.tidy [options] input
+Usage: python -m robot.tidy [options] inputfile
+   or: python -m robot.tidy --inplace [options] inputfile [more input files]
+   or: python -m robot.tidy --recursive [options] directory
 
 Options:
- -f --format TXT|HTML|TSV  Output file format. If omitted, format of the input
-                           file is used.
- -o --output path          Output file. If omitted, basename of the input file
-                           is used. If extension is included,
-                           overrides format given with --format option.
- -P --use-pipes            Use pipe (`|`) as cell separator in txt format.
- -h --help                 Show this help.
+ -i --inplace    Tidy given file(s) so that original file(s) are overwritten
+                 (or removed, if the format is changed) When this option is
+                 used, it is possible to give multiple input files. Examples:
+                 robotidy.py --inplace tests.html
+                 robotidy.py --inplace --format txt *.html
+ -r --recursive  Process given directory recursively. Files in the directory
+                 are processed in place similarly as when '--inplace'
+                 option is used.
+ -f --format txt|html|tsv
+                 Output file format. If omitted, format of the input
+                 file is used.
+ -p --use-pipes  Use pipe (`|`) as cell separator in txt format.
+ -h --help       Show this help.
 
  Examples:
 
@@ -17,6 +25,7 @@ Options:
 """
 
 import sys
+from StringIO import StringIO
 
 from robot import utils, DataError
 from robot.parsing import TestData
@@ -44,6 +53,9 @@ def _create_datafile(source):
 if __name__ == '__main__':
     opts, args = _parse_args()
     datafile = _create_datafile(args[0])
-    outpath = datafile.save(path=opts['output'], format=opts['format'],
-                            pipe_separated=opts['use-pipes'])
-    _exit("%s -> %s" % (args[0], outpath), 0)
+    if not opts['inplace'] or not opts['recursive']:
+        output = StringIO()
+        datafile.save(output=output, format=opts['format'],
+                      pipe_separated=opts['use-pipes'])
+        print output.getvalue()
+    _exit("", 0)
