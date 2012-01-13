@@ -1,10 +1,11 @@
 import unittest
 import os
-from os.path import abspath, join, normpath, normcase
+from os.path import abspath, join
 
 from robot.running.importer import ImportCache
 from robot.errors import FrameworkError
 from robot.utils.asserts import assert_equals, assert_true, assert_raises
+from robot.utils import normpath
 
 
 class TestImportCache(unittest.TestCase):
@@ -49,7 +50,7 @@ class TestImportCache(unittest.TestCase):
         value = object()
         cache[path] = value
         assert_equals(cache[path], value)
-        assert_equals(cache._keys[0], normcase(normpath(path)))
+        assert_equals(cache._keys[0], normpath(path))
 
     def test_existing_non_absolute_paths_are_not_normalized(self):
         cache = ImportCache()
