@@ -1,0 +1,35 @@
+*** Settings ***
+Force Tags        pybot    jybot
+Library           TidyLib.py    ${INTERPRETER}
+Library           OperatingSystem
+
+*** Variables ***
+${DATADIR}        ${CURDIR}/../../testdata/tidy
+
+*** Test cases ***
+Tidying single test case file
+    [Template]    Run tidy with golden file and check result
+    ${EMPTY}    ${DATADIR}/golden.txt
+    --use-pipes    ${DATADIR}/golden_pipes.txt
+    --format tsv    ${DATADIR}/golden.tsv
+    --format html    ${DATADIR}/golden.html
+
+Tidying single resource case file
+    [Template]    Run tidy with golden resource file and check result
+    ${EMPTY}    ${DATADIR}/golden_resource.txt
+    --use-pipes    ${DATADIR}/golden_pipes_resource.txt
+    --format tsv    ${DATADIR}/golden_resource.tsv
+    --format html    ${DATADIR}/golden_resource.html
+
+Tidying single init file
+    Run tidy and check result    ${DATADIR}/__init__.txt    ${EMPTY}    ${DATADIR}/__init__.txt
+
+*** Keywords ***
+Run tidy with golden file and check result
+    [Arguments]    ${options}    ${expected_result_file}
+    Run tidy and check result    ${DATADIR}/golden.txt    ${options}    ${expected_result_file}
+
+Run tidy with golden resource file and check result
+    [Arguments]    ${options}    ${expected_result_file}
+    Run tidy and check result    ${DATADIR}/golden_resource.txt    ${options}    ${expected_result_file}
+
