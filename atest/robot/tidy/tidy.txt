@@ -2,6 +2,7 @@
 Force Tags        pybot    jybot
 Library           TidyLib.py    ${INTERPRETER}
 Library           OperatingSystem
+Resource          atest_resource.txt
 
 *** Variables ***
 ${DATADIR}        ${CURDIR}/../../testdata/tidy
@@ -24,6 +25,16 @@ Tidying single resource case file
 Tidying single init file
     Run tidy and check result    ${DATADIR}/__init__.txt    ${EMPTY}    ${DATADIR}/__init__.txt
 
+Tidying directory
+    [Setup]    Copy Directory    ${DATADIR}/tests    ${TEMPDIR}/tests
+    ${output_before}=    Run Robot Directly    ${DATADIR}/tests
+    Run Tidy    ${TEMPDIR}/tests    --recursive --format tsv
+    Check file count    ${TEMPDIR}/tests    *.tsv    2
+    Check file count    ${TEMPDIR}/tests    *.txt    0
+    ${output_after}=    Run Robot Directly    ${TEMPDIR}/tests
+    Should Be Equal    ${output_before}    ${output_after}
+    [Teardown]    Remove Directory    ${TEMPDIR}/tests    recurisive=True
+
 *** Keywords ***
 Run tidy with golden file and check result
     [Arguments]    ${options}    ${expected_result_file}
@@ -32,4 +43,9 @@ Run tidy with golden file and check result
 Run tidy with golden resource file and check result
     [Arguments]    ${options}    ${expected_result_file}
     Run tidy and check result    ${DATADIR}/golden_resource.txt    ${options}    ${expected_result_file}
+
+Check file count
+    [Arguments]    ${directory}    ${pattern}    ${expected count}
+    ${files}=    Count Files In Directory    ${directory}    ${pattern}
+    Should Be Equal As Numbers    ${files}    ${expected count}
 

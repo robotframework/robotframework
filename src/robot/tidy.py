@@ -29,7 +29,7 @@ from StringIO import StringIO
 
 from robot import utils
 from robot.errors import DataError
-from robot.parsing import TestCaseFile, ResourceFile, TestDataDirectory
+from robot.parsing import TestData, ResourceFile, TestDataDirectory
 from robot.parsing.populators import FromFilePopulator
 
 def _exit(message, status):
@@ -52,13 +52,23 @@ def _create_datafile(source):
         FromFilePopulator(data).populate(source)
         return data
     try:
-        return TestCaseFile(source=source).populate()
+        return TestData(source=source)
     except DataError, err:
         try:
             return ResourceFile(source=source).populate()
         except DataError:
             _exit("Invalid data source '%s': %s" % (source, unicode(err)), 1)
 
+def _save_recursively(data, **options):
+    init_file = getattr(data, 'initfile', None)
+    if init_file or not hasattr(data, 'initfile'):
+        data.save(**options)
+    if os.path.isfile(data.source):
+        os.remove(data.source)
+    if init_file:
+        os.remove(init_file)
+    for child in data.children:
+        _save_recursively(child, **options)
 
 if __name__ == '__main__':
     opts, args = _parse_args()
@@ -68,4 +78,7 @@ if __name__ == '__main__':
         datafile.save(output=output, format=opts['format'],
                       pipe_separated=opts['use-pipes'])
         print output.getvalue()
+    if opts['recursive']:
+        _save_recursively(datafile, format=opts['format'],
+                          pipe_separated=opts['use-pipes'])
     _exit("", 0)

@@ -1,0 +1,3 @@
+*** Test Cases ***
+A Failing test
+    Fail    some failure
