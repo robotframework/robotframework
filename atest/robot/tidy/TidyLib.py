@@ -13,7 +13,7 @@ class TidyLib(object):
     def __init__(self, interpreter):
         self._cmd = [interpreter, '-m', 'robot.tidy']
 
-    def run_tidy_and_return_output(self, input, options):
+    def run_tidy(self, input, options):
         options = options.split(' ') if options else []
         with tempfile.TemporaryFile() as output:
             rc = call(self._cmd + options + [self._path(input)],
@@ -25,12 +25,12 @@ class TidyLib(object):
                 raise RuntimeError(content)
             return content
 
+    def run_tidy_and_check_result(self, input, options, expected):
+        result = self.run_tidy(input, options)
+        self._assert_result(result, open(self._path(expected)).read())
+
     def _path(self, path):
         return path.replace('/', os.sep)
-
-    def run_tidy_and_check_result(self, input, options, expected):
-        result = self.run_tidy_and_return_output(input, options)
-        self._assert_result(result, open(self._path(expected)).read())
 
     def _assert_result(self, result, expected):
         for line1, line2 in zip(result.split(), expected.split()):
