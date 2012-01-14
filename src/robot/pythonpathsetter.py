@@ -14,24 +14,37 @@
 
 """Module that adds directories needed by Robot to sys.path when imported."""
 
+import os
 import sys
 import fnmatch
 from os.path import abspath, dirname, join
 
 ROBOTDIR = dirname(abspath(__file__))
-PARENTDIR = dirname(ROBOTDIR)
 
 def add_path(path, end=False):
     if not end:
+        remove_path(path)
         sys.path.insert(0, path)
-    else:
+    elif not any(fnmatch.fnmatch(p, path) for p in sys.path):
         sys.path.append(path)
 
 def remove_path(path):
     sys.path = [p for p in sys.path if not fnmatch.fnmatch(p, path)]
 
 
-add_path(PARENTDIR)
+# When, for example, runner.py is executed as a script, the directory
+# containing robot module is not added to sys.path automatically but
+# the robot directory itself is. Former is added to allow importing
+# the module and the latter removed to prevent accidentally importing
+# internal modules directly.
+add_path(dirname(ROBOTDIR))
+remove_path(ROBOTDIR)
+
+# Default library search locations.
 add_path(join(ROBOTDIR, 'libraries'))
-add_path('.', end=True)  # Jython adds this automatically so let's be consistent
-remove_path(ROBOTDIR)    # Prevent importing internal modules directly
+add_path('.', end=True)
+
+# Support libraries/resources in PYTHONPATH also with Jython and IronPython.
+for item in os.getenv('PYTHONPATH', '').split(os.pathsep):
+    add_path(abspath(item), end=True)
+
