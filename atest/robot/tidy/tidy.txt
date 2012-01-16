@@ -3,9 +3,12 @@ Force Tags        pybot    jybot   regression
 Library           TidyLib.py    ${INTERPRETER}
 Library           OperatingSystem
 Resource          atest_resource.txt
+Suite Setup       Create Directory     ${TIDYDIR}
+Suite Teardown    Remove Directory     ${TIDYDIR}    recursive=True
 
 *** Variables ***
 ${DATADIR}        ${CURDIR}/../../testdata/tidy
+${TIDYDIR}        ${TEMPDIR}/tidy-test
 
 *** Test cases ***
 Tidying single test case file
@@ -24,6 +27,29 @@ Tidying single resource case file
 
 Tidying single init file
     Run tidy and check result    ${DATADIR}/__init__.txt    ${EMPTY}    ${DATADIR}/__init__.txt
+
+Tidying single file in place
+    [Setup]    Copy File    ${DATADIR}/golden.txt    ${TIDYDIR}/golden.txt
+    Run tidy and check result    ${TIDYDIR}/golden.txt    --inplace --use-pipes    ${DATADIR}/golden_pipes.txt
+    Check file count    ${TIDYDIR}    *.txt    1
+    [Teardown]    Empty Directory     ${TIDYDIR}
+
+Tidying single file in place and change format
+    [Setup]    Copy File    ${DATADIR}/golden.txt    ${TIDYDIR}/golden.txt
+    Run tidy and check result    ${TIDYDIR}/golden.txt    --inplace --format html    ${DATADIR}/golden.html
+    Check file count    ${TIDYDIR}    *.html    1
+    Check file count    ${TIDYDIR}    *.txt    0
+    [Teardown]    Empty Directory     ${TIDYDIR}
+
+Tidying many files in place
+    [Setup]    Copy Golden Files
+    List Directory      ${TIDYDIR}
+    Run tidy    ${TIDYDIR}/golden*    --inplace --format html
+    List Directory      ${TIDYDIR}
+    Check file count    ${TIDYDIR}    *.html    2
+    Check file count    ${TIDYDIR}    *.txt    0
+    Check file count    ${TIDYDIR}    *.tsv    0
+    [Teardown]    Empty Directory     ${TIDYDIR}
 
 Tidying directory
     [Setup]    Copy Directory    ${DATADIR}/tests    ${TEMPDIR}/tests
@@ -49,3 +75,6 @@ Check file count
     ${files}=    Count Files In Directory    ${directory}    ${pattern}
     Should Be Equal As Numbers    ${files}    ${expected count}
 
+Copy Golden Files
+     Copy File    ${DATADIR}/golden_pipes.txt    ${TIDYDIR}/
+     Copy File    ${DATADIR}/golden.tsv    ${TIDYDIR}/

@@ -27,9 +27,9 @@ import os
 import sys
 from StringIO import StringIO
 
-from robot import utils
+from robot.utils import ArgumentParser
 from robot.errors import DataError
-from robot.parsing import TestData, ResourceFile, TestDataDirectory
+from robot.parsing import ResourceFile, TestDataDirectory, TestCaseFile
 from robot.parsing.populators import FromFilePopulator
 
 
@@ -38,18 +38,22 @@ class Tidy(object):
     def __init__(self, **options):
         self._options = options
 
-    def files(self, files):
-        for f in files:
-            yield self._save_file(f)
-
-    def _save_file(self, path):
+    def file(self, path):
         data = self._create_datafile(path)
         output = StringIO()
         data.save(output=output, **self._options)
         return output.getvalue()
 
     def directory(self, path):
-        self._save_recursively(self._create_datafile(path))
+        self._save_recursively(self._create_data_directory(path))
+
+    def inplace(self, path):
+        data = self._create_datafile(path)
+        os.remove(data.source)
+        data.save(**self._options)
+
+    def _create_data_directory(self, path):
+        return TestDataDirectory(source=path).populate()
 
     def _save_recursively(self, data):
         init_file = getattr(data, 'initfile', None)
@@ -69,7 +73,7 @@ class Tidy(object):
             FromFilePopulator(data).populate(source)
             return data
         try:
-            return TestData(source=source)
+            return TestCaseFile(source=source).populate()
         except DataError:
             try:
                 return ResourceFile(source=source).populate()
@@ -77,24 +81,36 @@ class Tidy(object):
                 raise DataError("Invalid data source '%s'" % source)
 
 
-def _parse_args():
-    parser = utils.ArgumentParser(__doc__)
-    return parser.parse_args(sys.argv[1:], help='help', check_args=True)
+class TidyCommandLine(object):
 
-def main():
-    opts, args = _parse_args()
-    tidy = Tidy(format=opts['format'], pipe_separated=opts['use-pipes'])
-    if not opts['inplace'] or not opts['recursive']:
-        for output in tidy.files(args):
-            print output
-    if opts['recursive']:
-        tidy.directory(args[0])
+    def __init__(self, usage):
+        self._parser = ArgumentParser(usage)
+
+    def run(self, args):
+        options, inputs = self._parse_args(args)
+        tidy = Tidy(format=options['format'],
+                    pipe_separated=options['use-pipes'])
+        if options['recursive']:
+            tidy.directory(inputs[0])
+        elif options['inplace']:
+            for source in inputs:
+                tidy.inplace(source)
+        else:
+            return tidy.file(inputs[0])
+
+    def _parse_args(self, args):
+        options, sources = self._parser.parse_args(args, help='help')
+        if not options['inplace'] and len(sources) > 1:
+            raise DataError('Wrong number of input files')
+        return options, sources
 
 
 if __name__ == '__main__':
     try:
-        main()
+        output = TidyCommandLine(__doc__).run(sys.argv[1:])
+        if output:
+            print output
     except DataError, err:
         print __doc__
-        sys.exit(unicode(err), 1)
+        sys.exit(unicode(err))
     sys.exit(0)

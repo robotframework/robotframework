@@ -15,8 +15,8 @@
 |    | My TC Step 2 | my step 2 arg | second \ arg | # step 2 comment |
 |    | [Teardown] | 1 minute | args |
 
- | Another Test |
- |    | No Operation |
+| Another Test |
+|    | No Operation |
 
 | *** Keywords *** |
 | My Keyword |
