@@ -1,5 +1,5 @@
 *** Settings ***
-Force Tags        pybot    jybot
+Force Tags        pybot    jybot   regression
 Library           TidyLib.py    ${INTERPRETER}
 Library           OperatingSystem
 Resource          atest_resource.txt
