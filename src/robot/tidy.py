@@ -32,53 +32,69 @@ from robot.errors import DataError
 from robot.parsing import TestData, ResourceFile, TestDataDirectory
 from robot.parsing.populators import FromFilePopulator
 
-def _exit(message, status):
-    print message
-    if status:
-        print __doc__
-    sys.exit(status)
+
+class Tidy(object):
+
+    def __init__(self, **options):
+        self._options = options
+
+    def files(self, files):
+        for f in files:
+            yield self._save_file(f)
+
+    def _save_file(self, path):
+        data = self._create_datafile(path)
+        output = StringIO()
+        data.save(output=output, **self._options)
+        return output.getvalue()
+
+    def directory(self, path):
+        self._save_recursively(self._create_datafile(path))
+
+    def _save_recursively(self, data):
+        init_file = getattr(data, 'initfile', None)
+        if init_file or not hasattr(data, 'initfile'):
+            data.save(**self._options)
+        if os.path.isfile(data.source):
+            os.remove(data.source)
+        if init_file:
+            os.remove(init_file)
+        for child in data.children:
+            self._save_recursively(child)
+
+    def _create_datafile(self, source):
+        if os.path.splitext(os.path.basename(source))[0] == '__init__':
+            data = TestDataDirectory()
+            data.initfile = source
+            FromFilePopulator(data).populate(source)
+            return data
+        try:
+            return TestData(source=source)
+        except DataError:
+            try:
+                return ResourceFile(source=source).populate()
+            except DataError:
+                raise DataError("Invalid data source '%s'" % source)
+
 
 def _parse_args():
     parser = utils.ArgumentParser(__doc__)
-    try:
-        return parser.parse_args(sys.argv[1:], help='help', check_args=True)
-    except DataError, err:
-        _exit(unicode(err), 1)
+    return parser.parse_args(sys.argv[1:], help='help', check_args=True)
 
-def _create_datafile(source):
-    if os.path.splitext(os.path.basename(source))[0] == '__init__':
-        data = TestDataDirectory()
-        data.initfile = source
-        FromFilePopulator(data).populate(source)
-        return data
-    try:
-        return TestData(source=source)
-    except DataError, err:
-        try:
-            return ResourceFile(source=source).populate()
-        except DataError:
-            _exit("Invalid data source '%s': %s" % (source, unicode(err)), 1)
+def main():
+    opts, args = _parse_args()
+    tidy = Tidy(format=opts['format'], pipe_separated=opts['use-pipes'])
+    if not opts['inplace'] or not opts['recursive']:
+        for output in tidy.files(args):
+            print output
+    if opts['recursive']:
+        tidy.directory(args[0])
 
-def _save_recursively(data, **options):
-    init_file = getattr(data, 'initfile', None)
-    if init_file or not hasattr(data, 'initfile'):
-        data.save(**options)
-    if os.path.isfile(data.source):
-        os.remove(data.source)
-    if init_file:
-        os.remove(init_file)
-    for child in data.children:
-        _save_recursively(child, **options)
 
 if __name__ == '__main__':
-    opts, args = _parse_args()
-    datafile = _create_datafile(args[0])
-    if not opts['inplace'] or not opts['recursive']:
-        output = StringIO()
-        datafile.save(output=output, format=opts['format'],
-                      pipe_separated=opts['use-pipes'])
-        print output.getvalue()
-    if opts['recursive']:
-        _save_recursively(datafile, format=opts['format'],
-                          pipe_separated=opts['use-pipes'])
-    _exit("", 0)
+    try:
+        main()
+    except DataError, err:
+        print __doc__
+        sys.exit(unicode(err), 1)
+    sys.exit(0)
