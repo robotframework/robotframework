@@ -122,7 +122,8 @@ class TestHtmlWriter(unittest.TestCase):
         self._verify(u'<p name="hyv\xe4\xe4">y\xf6<i>t\xe4</i></p>'.encode(encoding))
 
     def _verify(self, expected):
-        assert_equals(self.output.getvalue(), expected.replace('\n', os.linesep))
+        actual = self.output.getvalue()
+        assert_equals(actual, expected.replace('\n', os.linesep))
 
 
 if __name__ == '__main__':
