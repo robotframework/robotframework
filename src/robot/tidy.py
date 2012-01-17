@@ -100,8 +100,14 @@ class TidyCommandLine(object):
 
     def _parse_args(self, args):
         options, sources = self._parser.parse_args(args, help='help')
+        if options['inplace'] and options['recursive']:
+            raise DataError('--recursive and --inplace can not be used together')
         if not options['inplace'] and len(sources) > 1:
-            raise DataError('Wrong number of input files')
+            raise DataError('Expected exactly 1 input file')
+        if not sources:
+            raise DataError('Expected at least 1 input file')
+        if options['recursive'] and not os.path.isdir(sources[0]):
+            raise DataError("Invalid data source '%s'" % sources[0])
         return options, sources
 
 
