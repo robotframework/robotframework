@@ -71,7 +71,7 @@ class SerializationContext(object):
     @property
     def output(self):
         if not self._output:
-            self._output = open(self._get_source(), 'wb')
+            self._output = open(self._get_source(), 'w')
         return self._output
 
     @property
