@@ -16,7 +16,8 @@ My Test Case
 	[Teardown]	1 minute	args				
 							
 Another Test							
-	No Operation						
+	Log	ääöö§§
+						
 *Keywords*							
 My Keyword							
 	[Documentation]	Documentation	# Comment for doc				
