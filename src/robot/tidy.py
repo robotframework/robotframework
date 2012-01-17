@@ -1,3 +1,19 @@
+#!/usr/bin/env python
+
+#  Copyright 2008-2012 Nokia Siemens Networks Oyj
+#
+#  Licensed under the Apache License, Version 2.0 (the "License");
+#  you may not use this file except in compliance with the License.
+#  You may obtain a copy of the License at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+#  Unless required by applicable law or agreed to in writing, software
+#  distributed under the License is distributed on an "AS IS" BASIS,
+#  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+#  See the License for the specific language governing permissions and
+#  limitations under the License.
+
 """robot.tidy: Clean up and change format of Robot Framework test data files.
 
 Usage: python -m robot.tidy [options] inputfile
@@ -16,12 +32,35 @@ Options:
  -f --format txt|html|tsv
                  Output file format. If omitted, format of the input
                  file is used.
- -p --use-pipes  Use pipe (`|`) as cell separator in txt format.
+ -p --use-pipes  Use pipe (`|`) as a cell separator in txt format.
  -h --help       Show this help.
 
- Examples:
 
- python -m robot.tidy -f txt mytests.html  # Creates mytets.txt
+This tool has two main usages:
+
+1) Clean up the test data.
+
+Old test cases created with HTML editors or hand-written text files can
+be normalized using tidy. Tidy always writes consistent headers, consistent
+order for settings, and consistent amount of whitespace between cells and
+tables.
+
+Examples:
+  robotidy.py messed_up_tests.html > cleaned_tests.html
+  robotidy.py --inplace tests.txt
+
+2) Change format between HTML, TSV and TXT.
+
+Robot Framework supports test data in HTML, TSV and TXT formats and this tools
+makes changing between formats trivial. Input format is always determined from
+the extension of the input file. Output format can be set with '--format'
+option.
+
+Examples:
+  robotidy.py --format tsv tests_in_html.html > tests_in_tsv.tsv
+  robotidy.py --format txt --recursive mytests
+
+All output is written using UTF-8 encoding.
 """
 import os
 import sys
