@@ -61,6 +61,10 @@ Tidying directory
     Should Be Equal    ${output_before}    ${output_after}
     [Teardown]    Remove Directory    ${TEMPDIR}/tests    recurisive=True
 
+Custom headers are preserved and tables aligned accordingly
+    Run tidy and check result    ${EMPTY}     ${DATADIR}/golden_with_headers.txt    ${DATADIR}/golden_with_headers.txt
+
+
 *** Keywords ***
 Run tidy with golden file and check result
     [Arguments]    ${options}    ${expected_result_file}
