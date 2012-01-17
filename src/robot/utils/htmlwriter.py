@@ -33,7 +33,7 @@ class HtmlWriter(object):
             self._write(html_escape(content) if escape else content)
 
     def end(self, name, newline=True):
-        self._write('</%s>%s' % (name, os.linesep if newline else ''))
+        self._write('</%s>%s' % (name, self._line_separator if newline else ''))
 
     def element(self, name, content=None, attrs=None, escape=True, newline=True):
         self.start(name, attrs, newline=False)
