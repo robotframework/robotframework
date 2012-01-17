@@ -123,8 +123,8 @@ class TestHtmlWriter(unittest.TestCase):
 
     def _verify(self, expected):
         actual = self.output.getvalue()
-        expected = expected.replace('\n', os.linesep)
-        assert_equals(repr(actual), repr(expected))
+        if '\n' in expected:
+            expected = expected.replace('\n', os.linesep)
         assert_equals(actual, expected)
 
 
