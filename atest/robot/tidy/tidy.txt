@@ -26,17 +26,17 @@ Tidying single resource case file
     --format html    ${DATADIR}/golden_resource.html
 
 Tidying single init file
-    Run tidy and check result    ${DATADIR}/__init__.txt    ${EMPTY}    ${DATADIR}/__init__.txt
+    Run tidy and check result    ${EMPTY}    ${DATADIR}/__init__.txt    ${DATADIR}/__init__.txt
 
 Tidying single file in place
     [Setup]    Copy File    ${DATADIR}/golden.txt    ${TIDYDIR}/golden.txt
-    Run tidy and check result    ${TIDYDIR}/golden.txt    --inplace --use-pipes    ${DATADIR}/golden_pipes.txt
+    Run tidy and check result    --inplace --use-pipes    ${TIDYDIR}/golden.txt    ${DATADIR}/golden_pipes.txt
     Check file count    ${TIDYDIR}    *.txt    1
     [Teardown]    Empty Directory     ${TIDYDIR}
 
 Tidying single file in place and change format
     [Setup]    Copy File    ${DATADIR}/golden.txt    ${TIDYDIR}/golden.txt
-    Run tidy and check result    ${TIDYDIR}/golden.txt    --inplace --format html    ${DATADIR}/golden.html
+    Run tidy and check result    --inplace --format html    ${TIDYDIR}/golden.txt    ${DATADIR}/golden.html
     Check file count    ${TIDYDIR}    *.html    1
     Check file count    ${TIDYDIR}    *.txt    0
     [Teardown]    Empty Directory     ${TIDYDIR}
@@ -44,7 +44,7 @@ Tidying single file in place and change format
 Tidying many files in place
     [Setup]    Copy Golden Files
     List Directory      ${TIDYDIR}
-    Run tidy and return output   ${TIDYDIR}/golden*    --inplace --format html
+    Run tidy and return output    --inplace --format html   ${TIDYDIR}/golden*
     List Directory      ${TIDYDIR}
     Check file count    ${TIDYDIR}    *.html    2
     Check file count    ${TIDYDIR}    *.txt    0
@@ -54,7 +54,7 @@ Tidying many files in place
 Tidying directory
     [Setup]    Copy Directory    ${DATADIR}/tests    ${TEMPDIR}/tests
     ${output_before}=    Run Robot Directly    ${DATADIR}/tests
-    Run Tidy and return output    ${TEMPDIR}/tests    --recursive --format tsv
+    Run Tidy and return output    --recursive --format tsv    ${TEMPDIR}/tests
     Check file count    ${TEMPDIR}/tests    *.tsv    2
     Check file count    ${TEMPDIR}/tests    *.txt    0
     ${output_after}=    Run Robot Directly    ${TEMPDIR}/tests
@@ -64,11 +64,11 @@ Tidying directory
 *** Keywords ***
 Run tidy with golden file and check result
     [Arguments]    ${options}    ${expected_result_file}
-    Run tidy and check result    ${DATADIR}/golden.txt    ${options}    ${expected_result_file}
+    Run tidy and check result    ${options}    ${DATADIR}/golden.txt    ${expected_result_file}
 
 Run tidy with golden resource file and check result
     [Arguments]    ${options}    ${expected_result_file}
-    Run tidy and check result    ${DATADIR}/golden_resource.txt    ${options}    ${expected_result_file}
+    Run tidy and check result    ${options}    ${DATADIR}/golden_resource.txt    ${expected_result_file}
 
 Check file count
     [Arguments]    ${directory}    ${pattern}    ${expected count}
