@@ -222,7 +222,14 @@ class _Table(object):
         self._header = None
 
     def set_header(self, header):
-        self._header = header
+        self._header = self._prune_old_style_headers(header)
+
+    def _prune_old_style_headers(self, header):
+        if len(header) < 3:
+            return header
+        if self._old_header_matcher.match(header):
+            return [header[0]]
+        return header
 
     @property
     def header(self):
@@ -282,6 +289,10 @@ class _SettingTable(_Table, _WithSettings):
             name = value[0] if value else ''
             adder_method(name, value[1:], comment)
         return adder
+
+    @property
+    def _old_header_matcher(self):
+        return OldStyleSettingAndVariableTableHeaderMatcher()
 
     def add_metadata(self, name, value='', comment=None):
         self.metadata.append(Metadata('Metadata', self, name, value, comment))
@@ -377,6 +388,10 @@ class VariableTable(_Table):
         _Table.__init__(self, parent)
         self.variables = []
 
+    @property
+    def _old_header_matcher(self):
+        return OldStyleSettingAndVariableTableHeaderMatcher()
+
     def add(self, name, value, comment=None):
         self.variables.append(Variable(name, value, comment))
 
@@ -393,6 +408,10 @@ class TestCaseTable(_Table):
     def __init__(self, parent):
         _Table.__init__(self, parent)
         self.tests = []
+
+    @property
+    def _old_header_matcher(self):
+        return OldStyleTestAndKeywordTableHeaderMatcher()
 
     def add(self, name):
         self.tests.append(TestCase(self, name))
@@ -414,6 +433,10 @@ class KeywordTable(_Table):
     def __init__(self, parent):
         _Table.__init__(self, parent)
         self.keywords = []
+
+    @property
+    def _old_header_matcher(self):
+        return OldStyleTestAndKeywordTableHeaderMatcher()
 
     def add(self, name):
         self.keywords.append(UserKeyword(self, name))
@@ -620,3 +643,21 @@ class Step(object):
         if include_comment and self.comment:
             ret += self.comment.as_list()
         return ret
+
+
+class OldStyleSettingAndVariableTableHeaderMatcher(object):
+
+    def match(self, header):
+        return all((True if e.lower() == 'value' else False)
+                    for e in header[1:])
+
+
+class OldStyleTestAndKeywordTableHeaderMatcher(object):
+
+    def match(self, header):
+        if header[1].lower() != 'action':
+            return False
+        for h in header[2:]:
+            if not h.lower().startswith('arg'):
+                return False
+        return True

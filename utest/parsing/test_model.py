@@ -129,6 +129,10 @@ class TestSettingTable(unittest.TestCase):
         assert_equal(imp.alias, alias)
         assert_equal(imp.type, type(imp).__name__)
 
+    def test_old_style_headers_are_ignored(self):
+        self.table.set_header(['Settings', 'Value', 'value', 'Value'])
+        assert_equals(self.table.header, ['Settings'])
+
 
 class TestVariableTable(unittest.TestCase):
 
@@ -160,6 +164,10 @@ class TestVariableTable(unittest.TestCase):
         self.table.add('not var', 'the value')
         assert_equal(self.table.variables[0].name, 'not var')
         assert_equal(self.table.variables[0].value, ['the value'])
+
+    def test_old_style_headers_are_ignored(self):
+        self.table.set_header(['Variable', 'value', 'Value'])
+        assert_equals(self.table.header, ['Variable'])
 
 
 class TestTestCaseTable(unittest.TestCase):
@@ -200,6 +208,10 @@ class TestTestCaseTable(unittest.TestCase):
         loop = self.test.add_for_loop(['${var}', 'IN', 'value'])
         assert_equal(self.test.steps, [loop])
 
+    def test_old_style_headers_are_ignored(self):
+        self.table.set_header(['test case', 'Action', 'Arg', 'Argument'])
+        assert_equals(self.table.header, ['test case'])
+
 
 class TestKeywordTable(unittest.TestCase):
 
@@ -238,6 +250,10 @@ class TestKeywordTable(unittest.TestCase):
     def test_add_for_loop(self):
         loop = self.kw.add_for_loop(['${var}', 'IN', 'value'])
         assert_equal(self.kw.steps, [loop])
+
+    def test_old_style_headers_are_ignored(self):
+        self.table.set_header(['keywords', 'Action', 'Arg', 'Argument'])
+        assert_equals(self.table.header, ['keywords'])
 
 
 class TestStep(unittest.TestCase):
