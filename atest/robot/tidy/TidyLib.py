@@ -12,13 +12,17 @@ class TidyLib(object):
 
     def __init__(self, interpreter):
         self._cmd = [interpreter, '-m', 'robot.tidy']
+        path_var = 'PYTHONPATH' if 'python' in interpreter else 'JYTHONPATH'
+        self._env = {path_var: ROBOT_SRC}
+        self._env.update(os.environ)
+
 
     def run_tidy_and_return_output(self, input, options):
         options = options.split(' ') if options else []
         with tempfile.TemporaryFile() as output:
             rc = call(self._cmd + options + [self._path(input)],
                       stdout=output, stderr=STDOUT,
-                      env={'PYTHONPATH': ROBOT_SRC})
+                      env=self._env)
             output.seek(0)
             content = output.read()
             if rc:
