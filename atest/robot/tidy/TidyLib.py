@@ -13,8 +13,8 @@ class TidyLib(object):
     def __init__(self, interpreter):
         self._cmd = [interpreter, '-m', 'robot.tidy']
         path_var = 'PYTHONPATH' if 'python' in interpreter else 'JYTHONPATH'
-        self._env = {path_var: ROBOT_SRC}
-        self._env.update(os.environ)
+        self._env = os.environ
+        self._env.update({path_var: ROBOT_SRC})
 
 
     def run_tidy_and_return_output(self, input, options):
