@@ -77,13 +77,17 @@ class _DataFileWriter(object):
         for row in rows:
             self._write_row(row)
 
+    def _encode(self, row):
+        return row.encode('UTF-8')
+
 
 class SpaceSeparatedTxtWriter(_DataFileWriter):
     _separator = ' '*4
     _formatter = TxtFormatter()
 
     def _write_row(self, row):
-        self._output.write(self._separator.join(row) + self._line_separator)
+        line = self._separator.join(row) + self._line_separator
+        self._output.write(self._encode(line))
 
 
 class PipeSeparatedTxtWriter(_DataFileWriter):
@@ -94,7 +98,7 @@ class PipeSeparatedTxtWriter(_DataFileWriter):
         row = self._separator.join(row)
         if row:
             row = '| ' + row + ' |'
-        self._output.write(row + self._line_separator)
+        self._output.write(self._encode(row + self._line_separator))
 
 
 class TsvFileWriter(_DataFileWriter):
@@ -109,7 +113,10 @@ class TsvFileWriter(_DataFileWriter):
                                   lineterminator=context.line_separator)
 
     def _write_row(self, row):
-        self._writer.writerow(row)
+        self._writer.writerow(self._encode(row))
+
+    def _encode(self, row):
+        return [c.encode('UTF-8') for c in row]
 
 
 class HtmlFileWriter(_DataFileWriter):
@@ -118,7 +125,8 @@ class HtmlFileWriter(_DataFileWriter):
     def __init__(self, context):
         _DataFileWriter.__init__(self, context)
         self._name = context.datafile.name
-        self._writer = utils.HtmlWriter(context.output, context.line_separator)
+        self._writer = utils.HtmlWriter(context.output, context.line_separator,
+                                        encoding='UTF-8')
 
     def write(self, datafile):
         self._writer.content(TEMPLATE_START % {'NAME': self._name},

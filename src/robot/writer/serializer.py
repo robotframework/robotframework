@@ -71,7 +71,7 @@ class SerializationContext(object):
     @property
     def output(self):
         if not self._output:
-            self._output = codecs.open(self._get_source(), 'wb', 'UTF-8')
+            self._output = open(self._get_source(), 'wb')
         return self._output
 
     @property
