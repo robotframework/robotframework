@@ -1,16 +1,5 @@
-Supporting tools
-----------------
-
-The available supporting tools for Robot Framework are described in
-this appendix.
-
-.. contents::
-   :depth: 2
-   :local:
-
-
 Test data editing tool (RIDE)
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+-----------------------------
 
 RIDE is a standalone tool for editing test data. It helps in
 creating, editing and maintaining of Robot Framework test data.
@@ -18,7 +7,7 @@ The project pages are at https://github.com/robotframework/RIDE/.
 
 
 Library documentation tool
-~~~~~~~~~~~~~~~~~~~~~~~~~~
+--------------------------
 
 `libdoc.py`_ is tool for generating HTML or XML documentation from keywords of
 a test library or a resource file. It is included in the source distribution
@@ -27,23 +16,23 @@ http://code.google.com/p/robotframework/wiki/SupportingTools.
 
 
 Test data tidying tool
-~~~~~~~~~~~~~~~~~~~~~~
+----------------------
 
 :prog:`robot.tidy` is a tool for cleaning up test data files and for changing
 format of data files between HTML, TSV and TXT. This tool is installed with
 Robot Framework, and can be invoked from the commandline with::
 
-    python -m robot.tidy
+    python -m robot.tidy [options] input_file[s]
 
 Run `python -m robot.tidy --help` for more information.
 
 
 Other tools
-~~~~~~~~~~~
+-----------
 
 
 Test data documentation tool
-''''''''''''''''''''''''''''
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 `testdoc.py`_ is tool for generating high level documentation of a given test
 suite, including the names of suites and tests as well as top-level keywords.
@@ -52,7 +41,7 @@ http://code.google.com/p/robotframework/wiki/SupportingTools.
 
 
 Historical reporting tool
-'''''''''''''''''''''''''
+~~~~~~~~~~~~~~~~~~~~~~~~~
 
 `risto.py`_ is a tool for generating graphs about historical statistics
 of test executions. It is available through
@@ -60,7 +49,7 @@ http://code.google.com/p/robotframework/wiki/SupportingTools.
 
 
 Test result diffing tool
-''''''''''''''''''''''''
+~~~~~~~~~~~~~~~~~~~~~~~~
 
 `robotdiff.py`_ is a tool for generating diff reports from Robot
 Framework output files. It is available through
@@ -68,7 +57,7 @@ http://code.google.com/p/robotframework/wiki/SupportingTools.
 
 
 Execution time reporting tool
-'''''''''''''''''''''''''''''
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 `times2csv.py`_ is a tool for generating start, end and elapsed
 time information about suites, tests and keywords in CSV format.
@@ -76,7 +65,7 @@ It is available through
 http://code.google.com/p/robotframework/wiki/SupportingTools.
 
 File viewing tool
-'''''''''''''''''
+~~~~~~~~~~~~~~~~~
 
 `fileviewer.py`_ is a graphical tool implementing UNIX :prog:`tail` -like
 functionality. It is especially designed to view `debug files`__.
@@ -86,14 +75,14 @@ http://code.google.com/p/robotframework/wiki/SupportingTools.
 __ `Debug file`_
 
 One click installer
-'''''''''''''''''''
+~~~~~~~~~~~~~~~~~~~
 
 `One click installer`_ is an `AutoIT`_ script that installs Robot
 Framework and its dependencies.  It is available through
 http://code.google.com/p/robotframework/wiki/SupportingTools.
 
 Test status checker tool
-''''''''''''''''''''''''
+~~~~~~~~~~~~~~~~~~~~~~~~
 
 `statuschecker.py`_ is a tool for verifying that test case statuses
 and messages and also keyword log messages are as expected.  It is available
@@ -101,7 +90,7 @@ through http://code.google.com/p/robotframework/wiki/SupportingTools.
 
 
 Manual test execution tool (mabot)
-''''''''''''''''''''''''''''''''''
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 :prog:`mabot` is a standalone tool for reporting manual test execution
 results.  It enables storing and reporting manual test cases along
@@ -109,7 +98,7 @@ with automated Robot Framework test cases. The project pages are at
 http://code.google.com/p/robotframework-mabot/.
 
 Base classes for Java libraries (JavalibCore)
-'''''''''''''''''''''''''''''''''''''''''''''
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 :prog:`JavalibCore` provides a collection base classes helpful in
 creation of larger Java test libraries by offering several dynamic
@@ -117,7 +106,7 @@ ways of resolving available keywords at runtime. For more information,
 see https://github.com/robotframework/JavalibCore/.
 
 RemoteApplications
-''''''''''''''''''
+~~~~~~~~~~~~~~~~~~
 
 RemoteApplications is a test library that enables testing applications
 running on different JVM as Robot Framework, including Java Webstart

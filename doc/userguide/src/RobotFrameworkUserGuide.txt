@@ -75,6 +75,15 @@ Extending Robot Framework
 .. include:: ExtendingRobotFramework/InternalAPI.txt
 .. include:: ExtendingRobotFramework/JavaIntegration.txt
 
+Supporting Tools
+================
+
+.. contents::
+   :depth: 1
+   :local:
+
+.. include:: SupportingTools/SupportingTools.txt
+
 Appendices
 ==========
 
@@ -85,7 +94,6 @@ Appendices
 .. include:: Appendices/AvailableSettings.txt
 .. include:: Appendices/CommandLineOptions.txt
 .. include:: Appendices/Templates.txt
-.. include:: Appendices/SupportingTools.txt
 .. include:: Appendices/DocumentationFormatting.txt
 .. include:: Appendices/TimeFormat.txt
 
@@ -220,7 +228,7 @@ Appendices
 .. _statuschecker.py: ../../tools/statuschecker/doc/statuschecker.html
 .. _RIDE: `Test data editing tool (RIDE)`_
 .. _mabot: `Manual test execution tool (mabot)`_
-.. _javatools: `Tools for creating Java test libraries`_
+.. _javatools: `Base classes for Java libraries (JavalibCore)`_
 
 .. 6. Misc
 
@@ -231,9 +239,9 @@ Appendices
 
 .. External link targets
 
-.. _Python: http://www.python.org/ 
+.. _Python: http://www.python.org/
 .. _Python Homepage: Python_
-.. _Jython: http://www.jython.org/ 
+.. _Jython: http://www.jython.org/
 .. _Jython Homepage: Jython_
 .. _Java: http://java.sun.com/
 .. _reStructuredText: http://docutils.sourceforge.net/rst.html
