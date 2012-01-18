@@ -147,6 +147,9 @@ class TidyCommandLine(object):
             raise DataError('Expected at least 1 input file')
         if options['recursive'] and not os.path.isdir(sources[0]):
             raise DataError("Invalid data source '%s'" % sources[0])
+        format = options['format']
+        if format and format not in ['txt', 'tsv', 'html']:
+            raise DataError("Invalid value for format option: %s" % format)
         return options, sources
 
 
