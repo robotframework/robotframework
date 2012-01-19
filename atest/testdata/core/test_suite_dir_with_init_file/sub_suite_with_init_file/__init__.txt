@@ -2,6 +2,7 @@
 Suite Teardown    My Teardown    Teardown of    sub test suite directory
 Test Setup        Log    Default setup from sub suite file
 Force Tags        sub suite force
+Test Timeout      1 minute 52 seconds
 Library           OperatingSystem
 Invalid In Sub
 

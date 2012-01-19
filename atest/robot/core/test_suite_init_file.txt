@@ -34,8 +34,8 @@ Suite Teardown
 
 Invalid Suite Setting
     ${base} =  Normalize Path  ${CURDIR}/../../testdata/core/test_suite_dir_with_init_file
-    Check Log Message  ${ERRORS.msgs[0]}  Error in file '${base}${/}__init__.html' in table 'Setting': Non-existing setting 'Invalid'.  ERROR
-    Check Log Message  ${ERRORS.msgs[1]}  Error in file '${base}${/}sub_suite_with_init_file${/}__init__.html' in table 'Setting': Non-existing setting 'Invalid In Sub'.  ERROR
+    Check Log Message  ${ERRORS.msgs[0]}  Error in file '${base}${/}__init__.txt' in table 'Setting': Non-existing setting 'Invalid'.  ERROR
+    Check Log Message  ${ERRORS.msgs[1]}  Error in file '${base}${/}sub_suite_with_init_file${/}__init__.txt' in table 'Setting': Non-existing setting 'Invalid In Sub'.  ERROR
 
 Test Tags
     [Documentation]   Settings tags for tests using Force and Default Tags in different suite levels and also [Tags] in tests
@@ -72,6 +72,23 @@ Test Fixture
     Check Test Fixture   S1TC2 Fixture   Setup defined in test   Teardown defined in test
     Check Test Fixture   S2TC2 No Metadata   Default setup from suite file   Default teardown from suite file
     Check Test Fixture   S2TC2 Fixture   Setup defined in test   Teardown defined in test
+
+Test Timeout
+    [Documentation]   Setting timeout for tests using Test Timeout in different suite levels and also [Timeout] in tests
+    Check Test Timeout   TC1 No Metadata   1 hour 2 minutes 3 seconds
+    Check Test Timeout   TC1 Timeout   1 second
+    Check Test Timeout   TC2 No Metadata   13 days 6 hours 50 minutes
+    Check Test Timeout   TC2 Timeout   1 hour
+    Check Test Timeout   S1TC1 No Metadata   4 hours 5 minutes 6 seconds
+    Check Test Timeout   S1TC1 Timeout   1 second
+    Check Test Timeout   S1TC2 No Metadata   1 minute 52 seconds
+    Comment   Following step is for issue 152
+    Check Test Timeout   S1TC2 Tags   1 minute 52 seconds
+    Check Test Timeout   S1TC2 Timeout   1 day
+    Check Test Timeout   S2TC1 No Metadata   7 hours 8 minutes 9 seconds
+    Check Test Timeout   S2TC1 Timeout   1 second
+    Check Test Timeout   S2TC2 No Metadata   13 days 6 hours 50 minutes
+    Check Test Timeout   S2TC2 Timeout   1 day
 
 *** Keywords ***
 My Setup

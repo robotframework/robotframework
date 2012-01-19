@@ -5,6 +5,7 @@ Suite Teardown    My Teardown    Teardown of    test suite directory
 Test Setup        Log    Default setup from suite file    # Keywords and variables used    here should exist in namespace
 Test Teardown     Log    Default teardown from suite file    # where setup/teardown are    used
 Force Tags        suite force
+Test Timeout      13 days 6 hours 50 minutes
 Library           OperatingSystem
 Invalid
 
