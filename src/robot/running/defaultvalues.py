@@ -47,8 +47,13 @@ class DefaultValues(object):
         return self._parent._get_default_teardown()
 
     def get_timeout(self, tc_timeout):
-        timeout = tc_timeout if tc_timeout.is_set() else self._timeout
+        timeout = tc_timeout if tc_timeout.is_set() else self._get_default_timeout()
         return TestTimeout(timeout.value, timeout.message)
+
+    def _get_default_timeout(self):
+        if self._timeout.is_set() or not self._parent:
+            return self._timeout
+        return self._parent._get_default_timeout()
 
     def get_tags(self, tc_tags):
         tags = tc_tags if tc_tags.is_set() else self._default_tags

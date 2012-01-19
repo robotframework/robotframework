@@ -368,6 +368,7 @@ class InitFileSettingTable(_SettingTable):
                 'testprecondition': lambda s: s.test_setup.populate,
                 'testteardown': lambda s: s.test_teardown.populate,
                 'testpostcondition': lambda s: s.test_teardown.populate,
+                'testtimeout': lambda s: s.test_timeout.populate,
                 'forcetags': lambda s: s.force_tags.populate,
                 'library': lambda s: s._get_adder(s.add_library),
                 'resource': lambda s: s._get_adder(s.add_resource),
@@ -376,8 +377,8 @@ class InitFileSettingTable(_SettingTable):
 
     def __iter__(self):
         for setting in [self.doc, self.suite_setup, self.suite_teardown,
-                        self.test_setup, self.test_teardown, self.force_tags] \
-                        + self.metadata + self.imports:
+                        self.test_setup, self.test_teardown, self.force_tags,
+                        self.test_timeout] + self.metadata + self.imports:
             yield setting
 
 
