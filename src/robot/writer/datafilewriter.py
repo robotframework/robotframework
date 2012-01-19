@@ -13,51 +13,50 @@
 #  limitations under the License.
 
 import os
-import codecs
 
-from .writer import FileWriter
+from .filewriters import FileWriter
 
 
-class Serializer(object):
-    """The Serializer object. It is used to serialize Robot Framework test
-    data files.
+class DataFileWriter(object):
+    """The DataFileWriter object. It is used to write parsed Robot Framework
+    test data file objects back to disk.
     """
 
-    def serialize(self, datafile, **options):
-        """Serializes given `datafile` using `**options`.
+    def write(self, datafile, **options):
+        """Writes given `datafile` using `**options`.
 
-        :param datafile: A robot.parsing.model.DataFile object to be serialized
-        :param options: A :py:class:`.SerializationContext` is initialized based on these
+        :param datafile: A robot.parsing.model.DataFile object to be written
+        :param options: A :py:class:`.WriteConfiguration` is created with these
         """
-        context = SerializationContext(datafile, **options)
+        context = WriteConfiguration(datafile, **options)
         FileWriter(context).write(datafile)
         context.finish()
 
 
-class SerializationContext(object):
-    """The SerializationContext object. It holds needed information for
-    serializing a test data file.
+class WriteConfiguration(object):
+    """The WriteConfiguration object. It contains configuration used in
+    writing a test data file to disk.
     """
 
     def __init__(self, datafile, path=None, format=None, output=None,
                  recursive=False, pipe_separated=False,
                  line_separator=os.linesep):
         """
-        :param datafile: The datafile to be serialized.
+        :param datafile: The datafile to be written.
         :type datafile: :py:class:`~robot.parsing.model.TestCaseFile`,
             :py:class:`~robot.parsing.model.ResourceFile`,
             :py:class:`~robot.parsing.model.TestDataDirectory`
         :param str path: Output file name. If omitted, basename of the `source`
             attribute of the given `datafile` is used. If `path` contains
             extension, it overrides the value of `format` option.
-        :param str format: Serialization format. If omitted, read from the
+        :param str format: Output file format. If omitted, read from the
             extension of the `source` attribute of the given `datafile`.
-        :param output: An open, file-like object used in serialization. If
+        :param output: An open, file-like object used in writing. If
             omitted, value of `source` attribute of the given `datafile` is
             used to construct a new file object.
         :param bool pipe_separated: Whether to use pipes as separator when
-            serialization format is txt.
-        :param str line_separator: Line separator used in serialization.
+            output file format is txt.
+        :param str line_separator: Line separator used in output files.
         """
         self.datafile = datafile
         self.recursive = recursive

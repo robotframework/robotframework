@@ -24,31 +24,32 @@ from .formatters import TsvFormatter, TxtFormatter, PipeFormatter, HtmlFormatter
 from .htmltemplate import TEMPLATE_START, TEMPLATE_END
 
 
-def FileWriter(serialization_context):
+def FileWriter(configuration):
     """Creates and returns a FileWriter object.
 
-    :param serialization_context: Type of returned
-        FileWriter is determined based on `serialization_context.format`.
-        Is also passed along to created writer for further configuration.
-    :type serialization_context: :py:class:`SerializationContext`
+    :param configuration: Type of returned FileWriter is determined based on
+        `configuration.format`. `configuration` is also passed to created
+        writer.
+    :type configuration: :py:class:`WriteConfiguration`
     """
-    Writer = {'tsv': TsvFileWriter,
-              'txt': TxtFileWriter,
-              'html': HtmlFileWriter}[serialization_context.format]
-    return Writer(serialization_context)
+    writer_class = {'tsv': TsvFileWriter,
+                    'txt': TxtFileWriter,
+                    'html': HtmlFileWriter}[configuration.format]
+    return writer_class(configuration)
 
 
-def TxtFileWriter(context):
-    Writer = PipeSeparatedTxtWriter if context.pipe_separated else SpaceSeparatedTxtWriter
-    return Writer(context)
+def TxtFileWriter(configuration):
+    writer_class = PipeSeparatedTxtWriter if configuration.pipe_separated \
+            else SpaceSeparatedTxtWriter
+    return writer_class(configuration)
 
 
 class _DataFileWriter(object):
     _formatter = None
 
-    def __init__(self, context):
-        self._output = context.output
-        self._line_separator = context.line_separator
+    def __init__(self, configuration):
+        self._output = configuration.output
+        self._line_separator = configuration.line_separator
 
     def write(self, datafile):
         for table in datafile:
@@ -60,15 +61,15 @@ class _DataFileWriter(object):
         self._write_rows(self._formatted_table(table))
         self._write_empty_row()
 
+    def _write_header(self, table):
+        self._write_row(self._formatter.header_row(table))
+
     def _formatted_table(self, table):
         formatter = {'setting': self._formatter.setting_rows,
                      'variable': self._formatter.variable_rows,
                      'test case': self._formatter.test_rows,
                      'keyword': self._formatter.keyword_rows}[table.type]
         return formatter(table)
-
-    def _write_header(self, table):
-        self._write_row(self._formatter.header_row(table))
 
     def _write_empty_row(self):
         self._write_row(self._formatter.empty_row())
@@ -104,13 +105,13 @@ class PipeSeparatedTxtWriter(_DataFileWriter):
 class TsvFileWriter(_DataFileWriter):
     _formatter = TsvFormatter()
 
-    def __init__(self, context):
+    def __init__(self, configuration):
         if not csv:
             raise RuntimeError('No csv module found. '
                                'Writing tab separated format is not possible.')
-        _DataFileWriter.__init__(self, context)
-        self._writer = csv.writer(context.output, dialect='excel-tab',
-                                  lineterminator=context.line_separator)
+        _DataFileWriter.__init__(self, configuration)
+        self._writer = csv.writer(configuration.output, dialect='excel-tab',
+                                  lineterminator=configuration.line_separator)
 
     def _write_row(self, row):
         self._writer.writerow(self._encode(row))
@@ -122,10 +123,11 @@ class TsvFileWriter(_DataFileWriter):
 class HtmlFileWriter(_DataFileWriter):
     _formatter = HtmlFormatter()
 
-    def __init__(self, context):
-        _DataFileWriter.__init__(self, context)
-        self._name = context.datafile.name
-        self._writer = utils.HtmlWriter(context.output, context.line_separator,
+    def __init__(self, configuration):
+        _DataFileWriter.__init__(self, configuration)
+        self._name = configuration.datafile.name
+        self._writer = utils.HtmlWriter(configuration.output,
+                                        configuration.line_separator,
                                         encoding='UTF-8')
 
     def write(self, datafile):

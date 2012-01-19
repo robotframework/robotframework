@@ -19,7 +19,7 @@ from robot.errors import DataError
 from robot.variables import is_var
 from robot.output import LOGGER
 from robot import utils
-from robot.writer.serializer import Serializer
+from robot.writer import DataFileWriter
 
 from settings import (Documentation, Fixture, Timeout, Tags, Metadata,
     Library, Resource, Variables, Arguments, Return, Template, Comment)
@@ -94,16 +94,15 @@ class _TestData(object):
                      % (path, table, message), level)
 
     def save(self, **options):
-        """Serializes this datafile.
+        """Writes this datafile to disk.
 
-        :param options: Configuration for serialization. These arguments are
-            passed to
-            :py:class:`~robot.writer.serializer.SerializationContext` as
+        :param options: Configuration for writing. These are passed to
+            :py:class:`~robot.writer.datafilewriter.WriteConfiguration` as
             keyword arguments.
 
-        See also :py:meth:`robot.writer.serializer.Serializer.serialize`
+        See also :py:meth:`robot.writer.datafilewriter.DataFileWriter.write`
         """
-        return Serializer().serialize(self, **options)
+        return DataFileWriter().write(self, **options)
 
 
 class TestCaseFile(_TestData):

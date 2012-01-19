@@ -1,7 +1,7 @@
 import unittest
 import os
 
-from robot.writer.serializer import SerializationContext
+from robot.writer.datafilewriter import WriteConfiguration
 from robot.parsing.model import TestCaseFile
 from robot.utils.asserts import assert_equals
 
@@ -21,7 +21,7 @@ class TestOutput(unittest.TestCase):
         self._assert_source(TXT_SOURCE, HTML_SOURCE, format='txt')
 
     def _assert_source(self, expected, source=None, path=None, format=None):
-        ctx = SerializationContext(TestCaseFile(source=source), path=path, format=format)
+        ctx = WriteConfiguration(TestCaseFile(source=source), path=path, format=format)
         assert_equals(ctx._get_source(), expected)
 
 
@@ -38,5 +38,5 @@ class TestFormat(unittest.TestCase):
 
     def _assert_format(self, expected, source=None, format=None, path=None):
         data = TestCaseFile(source=source)
-        ctx = SerializationContext(data, format=format, path=path)
+        ctx = WriteConfiguration(data, format=format, path=path)
         assert_equals(ctx.format, expected)
