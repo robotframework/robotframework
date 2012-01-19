@@ -88,11 +88,16 @@ class Tidy(object):
 
     def inplace(self, path):
         data = self._create_datafile(path)
-        os.remove(data.source)
+        self._remove_original(data)
         data.save(**self._options)
 
     def _create_data_directory(self, path):
         return TestDataDirectory(source=path).populate()
+
+    def _remove_original(self, data):
+        initfile = getattr(data, 'initfile', None)
+        source = initfile or data.source
+        os.remove(source)
 
     def _save_recursively(self, data):
         init_file = getattr(data, 'initfile', None)
@@ -108,6 +113,7 @@ class Tidy(object):
     def _create_datafile(self, source):
         if os.path.splitext(os.path.basename(source))[0] == '__init__':
             data = TestDataDirectory()
+            data.source = os.path.dirname(source)
             data.initfile = source
             FromFilePopulator(data).populate(source)
             return data
