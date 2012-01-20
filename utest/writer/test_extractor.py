@@ -46,4 +46,4 @@ class DataExtractorTest(unittest.TestCase):
         t.add_step(['No op'])
         extractor = DataExtractor(want_name_on_first_content_row=True)
         assert_equals(list(extractor.rows_from_indented_table(table)),
-                      [['Test', 'No op'], []])
+                      [['Test', 'No op']])
