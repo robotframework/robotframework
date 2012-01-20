@@ -22,18 +22,12 @@ from .formatters import _DataFileFormatter
 class HtmlFormatter(_DataFileFormatter):
     _want_names_on_first_content_row = True
 
-    def __init__(self):
-        _DataFileFormatter.__init__(self, 5)
-
-    def empty_row(self):
-        return [NameCell('')] + [HtmlCell('') for _ in range(self._cols-1)]
-
-    def _format_row(self, row):
-        row = self._pad(row)
+    def _format_row(self, row, table=None):
+        row = self._pad(row, table)
         if self._is_documentation_row(row):
             return self._create_documentation_row(row)
-        first_cell = self._create_first_cell(row[0])
-        if self._is_indented_documentation_row(row[1:]):
+        first_cell = self._create_first_cell(row[0], table)
+        if self._is_indented_documentation_row(row[1:], table):
             return self._create_indented_documentation_row(first_cell, row[1:])
         return [first_cell] + [HtmlCell(c) for c in row[1:]]
 
@@ -43,8 +37,8 @@ class HtmlFormatter(_DataFileFormatter):
     def _create_documentation_row(self, row):
         return [NameCell(row[0]), DocumentationCell(row[1], span=self._cols-1)]
 
-    def _is_indented_documentation_row(self, cells):
-        return self._is_indented_table(self._current_table) and cells and \
+    def _is_indented_documentation_row(self, cells, table):
+        return self._is_indented_table(table) and cells and \
                     cells[0] == '[Documentation]'
 
     def _create_indented_documentation_row(self, first_cell, cells):
@@ -53,9 +47,10 @@ class HtmlFormatter(_DataFileFormatter):
             return start + [HtmlCell(c) for c in cells[1:]]
         return start + [DocumentationCell(cells[1], self._cols-2)]
 
-    def _create_first_cell(self, cell):
-        if self._is_indented_table(self._current_table) and cell:
-            return AnchorNameCell(cell, 'keyword' if self._current_table.type == 'keyword' else 'test')
+    def _create_first_cell(self, cell, table):
+        if self._is_indented_table(table) and cell:
+            return AnchorNameCell(cell, 'keyword' if table.type == 'keyword'
+                                                  else 'test')
         return NameCell(cell)
 
     def header_row(self, table):
@@ -65,7 +60,17 @@ class HtmlFormatter(_DataFileFormatter):
         return [HeaderCell(hdr) for hdr in headers]
 
     def _pad_header(self, table):
-        return table.header + [''] * (self._max_column_count(table) - len(table.header))
+        header = table.header
+        return header + [''] * (self._column_count(table) - len(header))
+
+    def _pad(self, row, table):
+        return row + [''] * (self._column_count(table) - len(row))
+
+    def _column_count(self, table):
+        if table is None or len(table.header) == 1 \
+                or not self._is_indented_table(table):
+            return self._cols
+        return max(self._max_column_count(table), len(table.header))
 
     def _max_column_count(self, table):
         count = 0
@@ -74,13 +79,7 @@ class HtmlFormatter(_DataFileFormatter):
                 count = max(count, len(child.as_list()) + 1)
         return count
 
-    def _pad(self, row):
-        if len(self._current_table.header) == 1 or not self._is_indented_table(self._current_table):
-            cols = self._cols
-        else:
-            cols = max(self._max_column_count(self._current_table),
-                       len(self._current_table.header))
-        return row + [''] * (cols - len(row))
+
 class HtmlCell(object):
     _backslash_matcher = re.compile(r'(\\+)n ')
 
@@ -103,15 +102,14 @@ class HtmlCell(object):
 class NameCell(HtmlCell):
 
     def __init__(self, name='', attributes=None):
-        HtmlCell.__init__(self, name, attributes)
-        self.attributes.update({'class': 'name'})
+        HtmlCell.__init__(self, name, {'class': 'name'})
 
 
 class AnchorNameCell(HtmlCell):
 
     def __init__(self, name, type_):
         HtmlCell.__init__(self, self._link_from_name(name, type_),
-                {'class': 'name'}, escape=False)
+                          {'class': 'name'}, escape=False)
 
     def _link_from_name(self, name, type_):
         return '<a name="%s_%s">%s</a>' % (type_, utils.html_attr_escape(name),
@@ -130,5 +128,3 @@ class HeaderCell(HtmlCell):
     def __init__(self, name, span=1):
         HtmlCell.__init__(self, name, {'class': 'name', 'colspan': '%d' % span},
             tag='th')
-
-

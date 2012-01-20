@@ -20,6 +20,11 @@ class DataExtractor(object):
     def __init__(self, want_name_on_first_content_row=False):
         self._want_names_on_first_content_row = want_name_on_first_content_row
 
+    def rows_from_table(self, table):
+        if table.type in ['setting', 'variable']:
+            return self.rows_from_simple_table(table)
+        return self.rows_from_indented_table(table)
+
     def rows_from_simple_table(self, table):
         """Return list of rows from a setting or variable table"""
         return self._rows_from_item(table)

@@ -85,7 +85,7 @@ class _DataFileWriter(object):
 
 class SpaceSeparatedTxtWriter(_DataFileWriter):
     _separator = ' '*4
-    _formatter = TxtFormatter()
+    _formatter = TxtFormatter(cols=8)
 
     def _write_row(self, row):
         line = self._separator.join(row) + self._line_separator
@@ -94,7 +94,7 @@ class SpaceSeparatedTxtWriter(_DataFileWriter):
 
 class PipeSeparatedTxtWriter(_DataFileWriter):
     _separator = ' | '
-    _formatter = PipeFormatter()
+    _formatter = PipeFormatter(cols=8)
 
     def _write_row(self, row):
         row = self._separator.join(row)
@@ -104,7 +104,7 @@ class PipeSeparatedTxtWriter(_DataFileWriter):
 
 
 class TsvFileWriter(_DataFileWriter):
-    _formatter = TsvFormatter()
+    _formatter = TsvFormatter(cols=8)
 
     def __init__(self, configuration):
         if not csv:
@@ -122,7 +122,7 @@ class TsvFileWriter(_DataFileWriter):
 
 
 class HtmlFileWriter(_DataFileWriter):
-    _formatter = HtmlFormatter()
+    _formatter = HtmlFormatter(cols=5)
 
     def __init__(self, configuration):
         _DataFileWriter.__init__(self, configuration)

@@ -22,38 +22,42 @@ class TestRowSplitter(unittest.TestCase):
 
 class TestTxtFormatter(unittest.TestCase):
 
+    def setUp(self):
+        self._formatter = TxtFormatter(6)
+
     def test_escaping_whitespace(self):
-        assert_equals(TxtFormatter()._escape(['so  me']), ['so \ me'])
+        assert_equals(self._formatter._escape(['so  me']), ['so \ me'])
 
     def test_replacing_newlines(self):
-        assert_equals(TxtFormatter()._escape(['so\nme']), ['so me'])
+        assert_equals(self._formatter._escape(['so\nme']), ['so me'])
 
 
 class TestPipeFormatter(unittest.TestCase):
 
     def test_escaping_pipes(self):
-        assert_equals(PipeFormatter()._escape(['so | me']), ['so \\| me'])
-        assert_equals(PipeFormatter()._escape(['|so|me|']), ['|so|me|'])
-        assert_equals(PipeFormatter()._escape(['so |']), ['so \\|'])
-        assert_equals(PipeFormatter()._escape(['| so']), ['\\| so'])
+        formatter = PipeFormatter(7)
+        assert_equals(formatter._escape(['so | me']), ['so \\| me'])
+        assert_equals(formatter._escape(['|so|me|']), ['|so|me|'])
+        assert_equals(formatter._escape(['so |']), ['so \\|'])
+        assert_equals(formatter._escape(['| so']), ['\\| so'])
 
     def test_empty_cell(self):
         settings = TestCaseFileSettingTable(None)
         settings.force_tags.value = ['f1', '', 'f3']
-        assert_equals(list(PipeFormatter().setting_table(settings))[0],
+        assert_equals(list(PipeFormatter(4).setting_table(settings))[0],
                       ['Force Tags    ', 'f1', '  ', 'f3'])
 
 
 class TestTsvFormatter(unittest.TestCase):
 
     def test_replacing_newlines(self):
-        assert_equals(TsvFormatter()._format_row(['so\nme'])[0], 'so me')
+        assert_equals(TsvFormatter(6)._format_row(['so\nme'])[0], 'so me')
 
 
 class TestHtmlFormatter(unittest.TestCase):
 
     def setUp(self):
-        self._formatter = HtmlFormatter()
+        self._formatter = HtmlFormatter(5)
 
     def test_setting_table_doc(self):
         table = TestCaseFileSettingTable(None)
@@ -114,8 +118,8 @@ class TestHtmlFormatter(unittest.TestCase):
 
     def _assert_header_colspan(self, header, expected_colspan):
         table = self._create_test_table(header)
-        assert_equals(self._formatter.header_row(table)[0].attributes['colspan'],
-                      str(expected_colspan))
+        row = self._formatter.header_row(table)
+        assert_equals(row[0].attributes['colspan'], str(expected_colspan))
 
     def test_number_of_columns_is_max_of_header_and_row_widths(self):
         table = self._create_test_table(['a', 'b'])
