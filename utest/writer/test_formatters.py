@@ -1,8 +1,8 @@
 import unittest
 from robot.parsing.model import TestCaseTable, TestCaseFileSettingTable
 
-from robot.writer.formatters import TxtFormatter, HtmlFormatter, TsvFormatter, PipeFormatter
-from robot.writer.tableformatters import RowSplitter, HtmlCell
+from robot.writer.formatters import TxtFormatter, TsvFormatter, PipeFormatter, RowSplitter
+from robot.writer.htmlformatter import HtmlFormatter, HtmlCell
 from robot.utils.asserts import assert_equals, assert_true
 
 
@@ -40,7 +40,7 @@ class TestPipeFormatter(unittest.TestCase):
     def test_empty_cell(self):
         settings = TestCaseFileSettingTable(None)
         settings.force_tags.value = ['f1', '', 'f3']
-        assert_equals(list(PipeFormatter().setting_rows(settings))[0],
+        assert_equals(list(PipeFormatter().setting_table(settings))[0],
                       ['Force Tags    ', 'f1', '  ', 'f3'])
 
 
@@ -59,7 +59,7 @@ class TestHtmlFormatter(unittest.TestCase):
         table = TestCaseFileSettingTable(None)
         table.set_header('Settings')
         table.doc.value = 'Some documentation'
-        formatted = list(self._formatter.setting_rows(table))
+        formatted = list(self._formatter.setting_table(table))
         assert_equals(self._rows_to_text(formatted),
                       [['Documentation', 'Some documentation']])
         assert_equals(formatted[0][1].attributes,
@@ -70,7 +70,7 @@ class TestHtmlFormatter(unittest.TestCase):
         test = table.add('A Test')
         test.tags.value = ['t1', 't2', 't3', 't4']
         formatted = self._rows(table)
-        assert_equals(len(formatted), 2)
+        assert_equals(len(formatted), 2, formatted)
         assert_equals(formatted[0], ['<a name="test_A Test">A Test</a>', '[Tags]', 't1', 't2', 't3'])
         assert_equals(formatted[1], ['', '...', 't4', '', ''])
 
@@ -80,7 +80,7 @@ class TestHtmlFormatter(unittest.TestCase):
         test.doc.value = 'Some doc'
         assert_equals(self._rows(table)[0],
             ['<a name="test_Test">Test</a>', '[Documentation]', 'Some doc'])
-        assert_equals(list(self._formatter.test_rows(table))[0][2].attributes,
+        assert_equals(list(self._formatter.test_table(table))[0][2].attributes,
                       {'colspan': '3', 'class': 'colspan3'})
 
     def test_test_documentation_with_comment(self):
@@ -90,7 +90,7 @@ class TestHtmlFormatter(unittest.TestCase):
         test.doc._set_comment('a comment')
         assert_equals(self._rows(table)[0],
             ['<a name="test_Test">Test</a>', '[Documentation]', 'Some doc', '# a comment', ''])
-        assert_equals(list(self._formatter.test_rows(table))[0][2].attributes, {})
+        assert_equals(list(self._formatter.test_table(table))[0][2].attributes, {})
 
     def test_testcase_table_custom_headers(self):
         self._check_header_length([], 1)
@@ -128,13 +128,13 @@ class TestHtmlFormatter(unittest.TestCase):
         self._check_row_lengths(table, 4)
 
     def _check_row_lengths(self, table, expected_length):
-        rows = list(self._formatter.test_rows(table))
+        rows = list(self._formatter.test_table(table))
         assert_true(len(rows) > 0)
         for row in rows:
             assert_equals(len(row), expected_length)
 
     def _rows(self, table):
-        return self._rows_to_text(self._formatter.test_rows(table))
+        return self._rows_to_text(self._formatter.test_table(table))
 
     def _rows_to_text(self, rows):
         return [[cell.content for cell in row] for row in rows]

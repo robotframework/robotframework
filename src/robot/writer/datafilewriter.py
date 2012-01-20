@@ -28,9 +28,9 @@ class DataFileWriter(object):
         :param datafile: A robot.parsing.model.DataFile object to be written
         :param options: A :py:class:`.WriteConfiguration` is created with these
         """
-        context = WriteConfiguration(datafile, **options)
-        FileWriter(context).write(datafile)
-        context.finish()
+        configuration = WriteConfiguration(datafile, **options)
+        FileWriter(configuration).write(datafile)
+        configuration.finish()
 
 
 class WriteConfiguration(object):

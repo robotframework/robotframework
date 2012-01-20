@@ -13,57 +13,74 @@
 #  limitations under the License.
 
 import re
-from robot.writer.tableformatters import SingleLineHtmlFormatter
 
-from .tableformatters import (RowSplittingFormatter, SplittingHtmlFormatter,
-    ColumnAligner, SettingTableAligner, NameCell, HeaderCell, HtmlCell)
+from .aligners import FirstColumnAligner, ColumnAligner
+from .dataextractor import DataExtractor
+from .rowsplitter import RowSplitter
 
 
-class _TestDataFileFormatter(object):
+class _DataFileFormatter(object):
+    _want_names_on_first_content_row = False
 
-    def variable_rows(self, variables):
-        for row in self._variable_table_formatter().format_simple_table(variables):
-            yield self._format_row(row)
-
-    def setting_rows(self, settings):
-        for row in self._setting_table_formatter().format_simple_table(settings):
-            yield self._format_row(row)
-
-    def test_rows(self, tests):
-        for row in self._test_table_formatter(tests).format_indented_table(tests):
-            yield self._format_row(row)
-
-    def keyword_rows(self, keywords):
-        for row in self._keyword_table_formatter(keywords).format_indented_table(keywords):
-            yield self._format_row(row)
+    def __init__(self, cols):
+        self._splitter = RowSplitter(cols)
+        self._cols = cols
+        self._current_table = None
+        self._extractor = DataExtractor(self._want_names_on_first_content_row)
 
     def empty_row(self):
         return self._format_row([])
 
+    def setting_table(self, settings):
+        self._current_table = settings
+        return self._simple_table()
+
+    def variable_table(self, variables):
+        self._current_table = variables
+        return self._simple_table()
+
+    def _simple_table(self):
+        return self._format_rows(self._extractor.rows_from_simple_table(self._current_table))
+
+    def test_table(self, tests):
+        self._current_table = tests
+        return self._indented_table()
+
+    def keyword_table(self, keywords):
+        self._current_table = keywords
+        return self._indented_table()
+
+    def _indented_table(self):
+        return self._format_rows(self._extractor.rows_from_indented_table(self._current_table))
+
+    def _format_rows(self, rows):
+        if self._should_split_rows():
+            return self._split_rows(rows)
+        return [self._format_row(r) for r in rows]
+
+    def _should_split_rows(self):
+        return True
+
+    def _split_rows(self, rows):
+        for row in rows:
+            for r in self._splitter.split(row, self._is_indented_table(self._current_table)):
+                yield self._format_row(r)
+
+    def _should_align_columns(self, table):
+        return self._is_indented_table(table) and bool(table.header[1:])
+
+    def _is_indented_table(self, table):
+        return table.type in ['test case', 'keyword']
+
     def _format_row(self, row):
         return row
 
-    def _should_align_columns(self, table):
-        return table.type in ['test case', 'keyword'] and bool(table.header[1:])
 
-
-class TsvFormatter(_TestDataFileFormatter):
+class TsvFormatter(_DataFileFormatter):
 
     def __init__(self, cols=8):
+        _DataFileFormatter.__init__(self, cols)
         self._cols = cols
-        self._formatter = RowSplittingFormatter(self._cols)
-
-    def _variable_table_formatter(self):
-        return self._formatter
-
-    def _setting_table_formatter(self):
-        return self._formatter
-
-    def _test_table_formatter(self, tests):
-        return self._formatter
-
-    def _keyword_table_formatter(self, keywords):
-        return self._formatter
 
     def header_row(self, table):
         return self._format_row(['*%s*' % cell for cell in table.header])
@@ -76,41 +93,41 @@ class TsvFormatter(_TestDataFileFormatter):
         return row + [''] * (self._cols - len(row))
 
 
-class TxtFormatter(_TestDataFileFormatter):
-    _FIRST_COL_WIDTH = 18
-    _SETTING_NAME_WIDTH = 14
+class TxtFormatter(_DataFileFormatter):
+    _test_or_keyword_name_width = 18
+    _setting_and_variable_name_width = 14
     _align_last_column = False
 
     def __init__(self, cols=8):
-        self._cols = cols
+        _DataFileFormatter.__init__(self, cols)
+        self._simple_aligner = FirstColumnAligner(cols,
+            self._setting_and_variable_name_width)
+        self._aligner = None
 
-    def _variable_table_formatter(self):
-        return SettingTableAligner(self._cols, self._SETTING_NAME_WIDTH)
-
-    def _setting_table_formatter(self):
-        return SettingTableAligner(self._cols, self._SETTING_NAME_WIDTH)
-
-    def _test_table_formatter(self, tests):
-        return self._indented_table_formatter(tests)
-
-    def _keyword_table_formatter(self, keywords):
-        return self._indented_table_formatter(keywords)
+    def _format_row(self, row):
+        row = self._escape(row)
+        if self._aligner:
+            return self._aligner.align_row(row)
+        return row
 
     def header_row(self, table):
         header = ['*** %s ***' % table.header[0]] + table.header[1:]
         if self._should_align_columns(table):
-            return ColumnAligner(self._FIRST_COL_WIDTH, table,
-                                 self._align_last_column).align_row(header)
+            aligner = ColumnAligner(self._test_or_keyword_name_width, table,
+                self._align_last_column)
+            return aligner.align_row(header)
         return header
 
-    def _indented_table_formatter(self, table):
-        if self._should_align_columns(table):
-            return ColumnAligner(self._FIRST_COL_WIDTH, table,
-                                 self._align_last_column)
-        return RowSplittingFormatter(self._cols)
-
-    def _format_row(self, row):
-        return self._escape(row)
+    def _should_split_rows(self):
+        if self._should_align_columns(self._current_table):
+            self._aligner = ColumnAligner(self._test_or_keyword_name_width,
+                                          self._current_table, self._align_last_column)
+            return False
+        elif self._is_indented_table(self._current_table):
+            self._aligner = None
+            return True
+        self._aligner = self._simple_aligner
+        return True
 
     def _escape(self, row):
         return self._escape_consecutive_whitespace(
@@ -147,50 +164,3 @@ class PipeFormatter(TxtFormatter):
             cell = cell[:-1] + '\\|'
         return cell
 
-
-class HtmlFormatter(_TestDataFileFormatter):
-
-    def __init__(self):
-        self._default_cols = 5
-        self._cols = self._default_cols
-        self._formatter = SplittingHtmlFormatter(self._default_cols)
-
-    def empty_row(self):
-        return [NameCell('')] + [HtmlCell('') for _ in range(self._cols-1)]
-
-    def _setting_table_formatter(self):
-        self._cols = self._default_cols
-        return self._formatter
-
-    def _variable_table_formatter(self):
-        self._cols = self._default_cols
-        return self._formatter
-
-    def _test_table_formatter(self, tests):
-        return self._dynamic_width_formatter(tests)
-
-    def _keyword_table_formatter(self, keywords):
-        return self._dynamic_width_formatter(keywords)
-
-    def _dynamic_width_formatter(self, table):
-        if len(table.header) == 1:
-            self._cols = self._default_cols
-            return SplittingHtmlFormatter(self._cols)
-        self._cols = max(self._max_column_count(table), len(table.header))
-        return SingleLineHtmlFormatter(self._cols)
-
-    def header_row(self, table):
-        if not self._should_align_columns(table) or len(table.header) == 1:
-            return [HeaderCell(table.header[0], self._default_cols)]
-        headers = self._pad_header(table)
-        return [HeaderCell(hdr) for hdr in headers]
-
-    def _pad_header(self, table):
-        return table.header + [''] * (self._max_column_count(table) - len(table.header))
-
-    def _max_column_count(self, table):
-        count = 0
-        for item in table:
-            for child in item:
-                count = max(count, len(child.as_list()) + 1)
-        return count

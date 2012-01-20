@@ -11,6 +11,7 @@
 #  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
+from robot.writer.htmlformatter import HtmlFormatter
 
 try:
     import csv
@@ -20,7 +21,7 @@ except ImportError:
 
 from robot import utils
 
-from .formatters import TsvFormatter, TxtFormatter, PipeFormatter, HtmlFormatter
+from .formatters import TsvFormatter, TxtFormatter, PipeFormatter
 from .htmltemplate import TEMPLATE_START, TEMPLATE_END
 
 
@@ -65,10 +66,10 @@ class _DataFileWriter(object):
         self._write_row(self._formatter.header_row(table))
 
     def _formatted_table(self, table):
-        formatter = {'setting': self._formatter.setting_rows,
-                     'variable': self._formatter.variable_rows,
-                     'test case': self._formatter.test_rows,
-                     'keyword': self._formatter.keyword_rows}[table.type]
+        formatter = {'setting': self._formatter.setting_table,
+                     'variable': self._formatter.variable_table,
+                     'test case': self._formatter.test_table,
+                     'keyword': self._formatter.keyword_table}[table.type]
         return formatter(table)
 
     def _write_empty_row(self):
