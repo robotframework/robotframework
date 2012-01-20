@@ -251,6 +251,7 @@ function addTestExecutionLog(main) {
              style="display: none;">-</div>
         <span class="${status.toLowerCase()}">TEST&nbsp;CASE: </span>
         <a class="name" title="${fullName}">${name}</a>
+        {{if !isCritical}}<span>  (non-critical)</span>{{/if}}
       </td>
     </tr>
     <tr>
