@@ -61,18 +61,22 @@ Changing test data format
 Robot Framework supports test data in HTML, TSV and TXT formats and this tool
 makes changing between the formats trivial. Input format is always determined
 based on the extension of the input file. Output format can be set using
---format option.
+the --format option.
 
 Examples:
   python -m robot.tidy --format tsv tests_in_html.html > tests_in_tsv.tsv
   python -m robot.tidy --format txt --recursive mytests
 """
+
 import os
 import sys
 from StringIO import StringIO
 
+if 'robot' not in sys.modules:
+    import pythonpathsetter   # running tidy.py as script
+
 from robot.utils import ArgumentParser
-from robot.errors import DataError
+from robot.errors import DataError, Information
 from robot.parsing import ResourceFile, TestDataDirectory, TestCaseFile
 from robot.parsing.populators import FromFilePopulator
 
@@ -83,52 +87,55 @@ class Tidy(object):
         self._options = options
 
     def file(self, path):
-        data = self._create_datafile(path)
         output = StringIO()
+        data = self._create_datafile(path)
         data.save(output=output, **self._options)
         return output.getvalue()
 
     def directory(self, path):
-        self._save_recursively(self._create_data_directory(path))
+        self._save_directory(TestDataDirectory(source=path).populate())
 
     def inplace(self, path):
-        data = self._create_datafile(path)
-        self._remove_original(data)
+        self._save_file(self._create_datafile(path))
+
+    def _save_file(self, data):
+        source = data.initfile if self._is_directory(data) else data.source
+        if source:
+            os.remove(source)
         data.save(**self._options)
 
-    def _create_data_directory(self, path):
-        return TestDataDirectory(source=path).populate()
-
-    def _remove_original(self, data):
-        initfile = getattr(data, 'initfile', None)
-        source = initfile or data.source
-        os.remove(source)
-
-    def _save_recursively(self, data):
-        init_file = getattr(data, 'initfile', None)
-        if init_file or not hasattr(data, 'initfile'):
-            data.save(**self._options)
-        if os.path.isfile(data.source):
-            os.remove(data.source)
-        if init_file:
-            os.remove(init_file)
+    def _save_directory(self, data):
+        if not self._is_directory(data):
+            self._save_file(data)
+            return
+        if data.initfile:
+            self._save_file(data)
         for child in data.children:
-            self._save_recursively(child)
+            self._save_directory(child)
+
+    def _is_directory(self, data):
+        return hasattr(data, 'initfile')
 
     def _create_datafile(self, source):
-        if os.path.splitext(os.path.basename(source))[0] == '__init__':
-            data = TestDataDirectory()
-            data.source = os.path.dirname(source)
-            data.initfile = source
-            FromFilePopulator(data).populate(source)
-            return data
+        if self._is_init_file(source):
+            return self._create_init_file(source)
         try:
             return TestCaseFile(source=source).populate()
         except DataError:
             try:
                 return ResourceFile(source=source).populate()
             except DataError:
-                raise DataError("Invalid data source '%s'" % source)
+                raise DataError("Invalid data source '%s'." % source)
+
+    def _is_init_file(self, source):
+        return os.path.splitext(os.path.basename(source))[0] == '__init__'
+
+    def _create_init_file(self, source):
+        data = TestDataDirectory()
+        data.source = os.path.dirname(source)
+        data.initfile = source
+        FromFilePopulator(data).populate(source)
+        return data
 
 
 class TidyCommandLine(object):
@@ -151,25 +158,31 @@ class TidyCommandLine(object):
     def _parse_args(self, args):
         options, sources = self._parser.parse_args(args, help='help')
         if options['inplace'] and options['recursive']:
-            raise DataError('--recursive and --inplace can not be used together')
+            raise DataError('--recursive and --inplace can not be used together.')
         if not options['inplace'] and len(sources) > 1:
-            raise DataError('Expected exactly 1 input file')
+            raise DataError('Expected exactly 1 input file.')
         if not sources:
-            raise DataError('Expected at least 1 input file')
+            raise DataError('Expected at least 1 input file.')
         if options['recursive'] and not os.path.isdir(sources[0]):
-            raise DataError("Invalid data source '%s'" % sources[0])
+            raise DataError('--recursive requires input to be a directory.')
         format = options['format']
         if format and format not in ['txt', 'tsv', 'html']:
-            raise DataError("Invalid value for format option: %s" % format)
+            raise DataError("Invalid format: %s." % format)
         return options, sources
+
+
+def console(msg):
+    print msg
 
 
 if __name__ == '__main__':
     try:
         output = TidyCommandLine(__doc__).run(sys.argv[1:])
         if output:
-            print output
+            console(output)
     except DataError, err:
-        print __doc__
-        sys.exit(unicode(err))
+        console('%s\n\n%sUse --help for usage.' % unicode(err))
+        sys.exit(1)
+    except Information, msg:
+        console(unicode(msg))
     sys.exit(0)
