@@ -14,53 +14,58 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-"""robot.tidy: Clean up and change format of Robot Framework test data files.
+"""robot.tidy -- Robot Framework test data clean-up tool.
 
 Usage: python -m robot.tidy [options] inputfile
+   or: python -m robot.tidy [options] inputfile > outputfile
    or: python -m robot.tidy --inplace [options] inputfile [more input files]
    or: python -m robot.tidy --recursive [options] directory
 
+This tool can be used to clean up and change format of Robot Framework test
+data files. By default, the output is written to the standard output stream,
+but it can be redirected to a file. Alternatively, files can be modified
+in-place using --inplace or --recursive options.
+
+All output files are written using UTF-8 encoding. Outputs written to the
+console use the current console encoding.
+
 Options:
  -i --inplace    Tidy given file(s) so that original file(s) are overwritten
-                 (or removed, if the format is changed) When this option is
+                 (or removed, if the format is changed). When this option is
                  used, it is possible to give multiple input files. Examples:
-                 robotidy.py --inplace tests.html
-                 robotidy.py --inplace --format txt *.html
+                 python -m robot.tidy --inplace tests.html
+                 python -m robot.tidy --inplace --format txt *.html
  -r --recursive  Process given directory recursively. Files in the directory
-                 are processed in place similarly as when '--inplace'
-                 option is used.
+                 are processed in place similarly as when --inplace option is
+                 used.
  -f --format txt|html|tsv
-                 Output file format. If omitted, format of the input
+                 Output file format. If omitted, the format of the input
                  file is used.
- -p --use-pipes  Use pipe (`|`) as a cell separator in txt format.
+ -p --use-pipes  Use pipe (`|`) as a cell separator in the txt format.
  -h --help       Show this help.
 
+Cleaning up the test data
+=========================
 
-This tool has two main usages:
-
-1) Clean up the test data.
-
-Old test cases created with HTML editors or hand-written text files can
-be normalized using tidy. Tidy always writes consistent headers, consistent
-order for settings, and consistent amount of whitespace between cells and
-tables.
+Test case files created with HTML editors or written by hand can be normalized
+using tidy. Tidy always writes consistent headers, consistent order for
+settings, and consistent amount of whitespace between cells and tables.
 
 Examples:
-  robotidy.py messed_up_tests.html > cleaned_tests.html
-  robotidy.py --inplace tests.txt
+  python -m robot.tidy messed_up_tests.html > cleaned_tests.html
+  python -m robot.tidy --inplace tests.txt
 
-2) Change format between HTML, TSV and TXT.
+Changing test data format
+=========================
 
-Robot Framework supports test data in HTML, TSV and TXT formats and this tools
-makes changing between formats trivial. Input format is always determined from
-the extension of the input file. Output format can be set with '--format'
-option.
+Robot Framework supports test data in HTML, TSV and TXT formats and this tool
+makes changing between the formats trivial. Input format is always determined
+based on the extension of the input file. Output format can be set using
+--format option.
 
 Examples:
-  robotidy.py --format tsv tests_in_html.html > tests_in_tsv.tsv
-  robotidy.py --format txt --recursive mytests
-
-All output is written using UTF-8 encoding.
+  python -m robot.tidy --format tsv tests_in_html.html > tests_in_tsv.tsv
+  python -m robot.tidy --format txt --recursive mytests
 """
 import os
 import sys
