@@ -1,11 +1,3 @@
-Test data editing tool (RIDE)
------------------------------
-
-RIDE is a standalone tool for editing test data. It helps in
-creating, editing and maintaining of Robot Framework test data.
-The project pages are at https://github.com/robotframework/RIDE/.
-
-
 Library documentation tool
 --------------------------
 
@@ -18,13 +10,78 @@ http://code.google.com/p/robotframework/wiki/SupportingTools.
 Test data tidying tool
 ----------------------
 
-:prog:`robot.tidy` is a tool for cleaning up test data files and for changing
-format of data files between HTML, TSV and TXT. This tool is installed with
-Robot Framework, and can be invoked from the commandline with::
+This tool can be used to clean up and change format of Robot Framework test
+data files. By default, the output is written to the standard output stream,
+but it can be redirected to a file. Alternatively, files can be modified
+in-place using :opt:`--inplace` or :opt:`--recursive` options.
 
-    python -m robot.tidy [options] input_file[s]
+Synopsis
+~~~~~~~~
 
-Run `python -m robot.tidy --help` for more information.
+::
+
+    python -m robot.tidy [options] inputfile
+    python -m robot.tidy [options] inputfile > outputfile
+    python -m robot.tidy --inplace [options] inputfile [more input files]
+    python -m robot.tidy --recursive [options] directory
+
+Options
+~~~~~~~
+
+ -i, --inplace    Tidy given file(s) so that original file(s) are overwritten
+                  (or removed, if the format is changed). When this option is
+                  used, it is possible to give multiple input files. Examples::
+
+                      python -m robot.tidy --inplace tests.html
+                      python -m robot.tidy --inplace --format txt *.html
+
+ -r, --recursive  Process given directory recursively. Files in the directory
+                  are processed in place similarly as when :opt:`--inplace`
+                  option is used.
+ -f, --format <txt|html|tsv>
+                  Output file format. If omitted, the format of the input
+                  file is used.
+ -p, --use-pipes  Use a pipe character (|) as a cell separator in the txt format.
+ -h, --help       Show this help.
+
+Cleaning up the test data
+~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Test case files created with HTML editors or written by hand can be normalized
+using tidy. Tidy always writes consistent headers, consistent order for
+settings, and consistent amount of whitespace between cells and tables.
+
+Examples::
+
+  python -m robot.tidy messed_up_tests.html > cleaned_tests.html
+  python -m robot.tidy --inplace tests.txt
+
+Changing test data format
+~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Robot Framework supports test data in HTML, TSV and TXT formats and this tool
+makes changing between the formats trivial. Input format is always determined
+based on the extension of the input file. Output format can be set using
+the :opt:`--format` option.
+
+Examples::
+
+  python -m robot.tidy --format tsv tests_in_html.html > tests_in_tsv.tsv
+  python -m robot.tidy --format txt --recursive mytests
+
+Output encoding
+~~~~~~~~~~~~~~~
+
+All output files are written using UTF-8 encoding. Outputs written to the
+console use the current console encoding.
+
+
+Test data editing tool (RIDE)
+-----------------------------
+
+RIDE is a standalone tool for editing test data. It helps in
+creating, editing and maintaining of Robot Framework test data.
+The project pages are at https://github.com/robotframework/RIDE/.
 
 
 Other tools
