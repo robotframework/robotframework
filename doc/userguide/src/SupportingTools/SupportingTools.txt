@@ -9,8 +9,11 @@ http://code.google.com/p/robotframework/wiki/SupportingTools.
 Test data clean-up tool (:prog:`tidy`)
 --------------------------------------
 
-:prog:`tidy` is a tool for cleaning up and changing the format of Robot Framework
-test data files. By default, the output is written to the standard output
+:prog:`tidy` is a tool for cleaning up and changing the format of Robot
+Framework test data files. It is built-in into Robot Framework and
+automatically included in the installation starting from version 2.7.
+
+By default, the output of the tool is written into the standard output
 stream, but it can also be redirected to a file. Alternatively, files can be
 modified in-place using :opt:`--inplace` or :opt:`--recursive` options.
 
@@ -88,6 +91,7 @@ it is possible to execute it as a script::
 This is useful if you have done a `manual installation`_ of the framework
 and just have the :path:`robot` directory with the source code somewhere
 in your system.
+
 
 Test data editing tool (RIDE)
 -----------------------------

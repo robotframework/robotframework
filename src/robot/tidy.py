@@ -26,15 +26,13 @@ data files. By default, the output is written to the standard output stream,
 but it can be redirected to a file. Alternatively, files can be modified
 in-place using --inplace or --recursive options.
 
-All output files are written using UTF-8 encoding. Outputs written to the
-console use the current console encoding.
-
 Options:
  -i --inplace    Tidy given file(s) so that original file(s) are overwritten
                  (or removed, if the format is changed). When this option is
-                 used, it is possible to give multiple input files. Examples:
-                 python -m robot.tidy --inplace tests.html
-                 python -m robot.tidy --inplace --format txt *.html
+                 used, it is possible to give multiple input files.
+                 Examples:
+                   python -m robot.tidy --inplace tests.html
+                   python -m robot.tidy --inplace --format txt *.html
  -r --recursive  Process given directory recursively. Files in the directory
                  are processed in place similarly as when --inplace option is
                  used.
@@ -55,8 +53,8 @@ Examples:
   python -m robot.tidy messed_up_tests.html > cleaned_tests.html
   python -m robot.tidy --inplace tests.txt
 
-Changing test data format
-=========================
+Changing the test data format
+=============================
 
 Robot Framework supports test data in HTML, TSV and TXT formats and this tool
 makes changing between the formats trivial. Input format is always determined
@@ -66,6 +64,19 @@ the --format option.
 Examples:
   python -m robot.tidy --format tsv tests_in_html.html > tests_in_tsv.tsv
   python -m robot.tidy --format txt --recursive mytests
+
+Output encoding
+===============
+
+All output files are written using UTF-8 encoding. Outputs written to the
+console use the current console encoding.
+
+Alternative execution
+=====================
+
+In the above examples tidy is used only with Python, but it works also with
+Jython and IronPython. Above tidy is executed as an installed module, but
+it can also be executed as a script like `python path/robot/tidy.py`.
 """
 
 import os
@@ -181,7 +192,7 @@ if __name__ == '__main__':
         if output:
             console(output)
     except DataError, err:
-        console('%s\n\n%sUse --help for usage.' % unicode(err))
+        console('%s\n\nUse --help for usage.' % unicode(err))
         sys.exit(1)
     except Information, msg:
         console(unicode(msg))
