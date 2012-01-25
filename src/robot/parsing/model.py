@@ -186,9 +186,9 @@ class TestDataDirectory(_TestData):
         self.keyword_table = KeywordTable(self)
         _TestData.__init__(self, parent, source)
 
-    def populate(self, include_suites=[], warn_on_skipped=False):
+    def populate(self, include_suites=[], warn_on_skipped=False, recurse=True):
         FromDirectoryPopulator().populate(self.source, self, include_suites,
-                                          warn_on_skipped)
+                                          warn_on_skipped, recurse)
         self.children = [ch for ch in self.children if ch.has_tests()]
         return self
 

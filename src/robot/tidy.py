@@ -129,7 +129,8 @@ class Tidy(object):
 
     def _create_datafile(self, source):
         if self._is_init_file(source):
-            return self._create_init_file(source)
+            dir_ = os.path.dirname(source)
+            return TestDataDirectory(source=dir_).populate(recurse=False)
         try:
             return TestCaseFile(source=source).populate()
         except DataError:
@@ -140,13 +141,6 @@ class Tidy(object):
 
     def _is_init_file(self, source):
         return os.path.splitext(os.path.basename(source))[0] == '__init__'
-
-    def _create_init_file(self, source):
-        data = TestDataDirectory()
-        data.source = os.path.dirname(source)
-        data.initfile = source
-        FromFilePopulator(data).populate(source)
-        return data
 
 
 class TidyCommandLine(object):

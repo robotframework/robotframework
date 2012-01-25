@@ -106,16 +106,25 @@ class FromDirectoryPopulator(object):
     ignored_prefixes = ('_', '.')
     ignored_dirs = ('CVS',)
 
-    def populate(self, path, datadir, include_suites, warn_on_skipped):
+    def populate(self, path, datadir, include_suites, warn_on_skipped,
+                 recurse=True):
         LOGGER.info("Parsing test data directory '%s'" % path)
         include_suites = self._get_include_suites(path, include_suites)
-        initfile, children = self._get_children(path, include_suites)
-        datadir.initfile = initfile
-        if initfile:
-            try:
-                FromFilePopulator(datadir).populate(initfile)
-            except DataError, err:
-                LOGGER.error(unicode(err))
+        init_file, children = self._get_children(path, include_suites)
+        if init_file:
+            self._populate_init_file(datadir, init_file)
+        if recurse:
+            self._populate_chidren(datadir, children, include_suites,
+                                   warn_on_skipped)
+
+    def _populate_init_file(self, datadir, init_file):
+        datadir.initfile = init_file
+        try:
+            FromFilePopulator(datadir).populate(init_file)
+        except DataError, err:
+            LOGGER.error(unicode(err))
+
+    def _populate_chidren(self, datadir, children, include_suites, warn_on_skipped):
         for child in children:
             try:
                 datadir.add_child(child, include_suites)
@@ -145,19 +154,19 @@ class FromDirectoryPopulator(object):
         return self._is_in_included_suites(name, incl_suites)
 
     def _get_children(self, dirpath, incl_suites):
-        initfile = None
+        init_file = None
         children = []
         for name, path in self._list_dir(dirpath):
             if self._is_init_file(name, path):
-                if not initfile:
-                    initfile = path
+                if not init_file:
+                    init_file = path
                 else:
                     LOGGER.error("Ignoring second test suite init file '%s'." % path)
             elif self._is_included(name, path, incl_suites):
                 children.append(path)
             else:
                 LOGGER.info("Ignoring file or directory '%s'." % name)
-        return initfile, children
+        return init_file, children
 
     def _list_dir(self, path):
         # os.listdir returns Unicode entries when path is Unicode
