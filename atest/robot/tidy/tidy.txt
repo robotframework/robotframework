@@ -64,6 +64,9 @@ Tidying directory
 Custom headers are preserved and tables aligned accordingly
     Run tidy and check result    ${EMPTY}     ${DATADIR}/golden_with_headers.txt    ${DATADIR}/golden_with_headers.txt
 
+Running Tidy as a script
+    Run tidy as a script and check result    ${EMPTY}    ${DATADIR}/golden.txt    ${DATADIR}/golden.txt
+
 
 *** Keywords ***
 Run tidy with golden file and check result

@@ -17,13 +17,15 @@ class TidyLib(object):
 
     def __init__(self, interpreter):
         self._cmd = [interpreter, '-m', 'robot.tidy']
+        self._interpreter = interpreter
         path_var = 'PYTHONPATH' if 'python' in interpreter else 'JYTHONPATH'
         self._env = os.environ
         self._env.update({path_var: ROBOT_SRC})
 
-    def run_tidy_and_return_output(self, options, input):
+    def run_tidy_and_return_output(self, options, input, command=None):
         """Runs tidy in the operating system and returns output."""
         options = options.split(' ') if options else []
+        command = command or self._cmd
         with tempfile.TemporaryFile() as output:
             rc = call(self._cmd + options + [self._path(input)],
                       stdout=output, stderr=STDOUT,
@@ -37,6 +39,12 @@ class TidyLib(object):
     def run_tidy_and_check_result(self, options, input, expected):
         """Runs tidy and checks that output matches content of file `expected`."""
         result = self.run_tidy_and_return_output(options, input)
+        self._assert_result(result, open(self._path(expected)).read())
+
+    def run_tidy_as_a_script_and_check_result(self, options, input, expected):
+        """Runs tidy and checks that output matches content of file `expected`."""
+        cmd = [self._interpreter, join(ROBOT_SRC, 'robot', 'tidy.py')]
+        result = self.run_tidy_and_return_output(options, input, cmd)
         self._assert_result(result, open(self._path(expected)).read())
 
     def _path(self, path):
