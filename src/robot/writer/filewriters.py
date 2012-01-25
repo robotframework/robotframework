@@ -11,7 +11,6 @@
 #  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
-from robot.writer.htmlformatter import HtmlFormatter
 
 try:
     import csv
@@ -22,35 +21,34 @@ except ImportError:
 from robot import utils
 
 from .formatters import TsvFormatter, TxtFormatter, PipeFormatter
+from .htmlformatter import HtmlFormatter
 from .htmltemplate import TEMPLATE_START, TEMPLATE_END
 
 
-def FileWriter(configuration):
+def FileWriter(context):
     """Creates and returns a FileWriter object.
 
-    :param configuration: Type of returned FileWriter is determined based on
-        `configuration.format`. `configuration` is also passed to created
-        writer.
-    :type configuration: :py:class:`WriteConfiguration`
+    :param context: Type of returned FileWriter is determined based on
+        `context.format`. `context` is also passed to created writer.
+    :type context: :py:class:`WritingContext`
     """
-    writer_class = {'tsv': TsvFileWriter,
-                    'txt': TxtFileWriter,
-                    'html': HtmlFileWriter}[configuration.format]
-    return writer_class(configuration)
-
-
-def TxtFileWriter(configuration):
-    writer_class = PipeSeparatedTxtWriter if configuration.pipe_separated \
-            else SpaceSeparatedTxtWriter
-    return writer_class(configuration)
+    if context.format == context.html_format:
+        return HtmlFileWriter(context)
+    if context.format == context.tsv_format:
+        return TsvFileWriter(context)
+    if context.pipe_separated:
+        return PipeSeparatedTxtWriter(context)
+    return SpaceSeparatedTxtWriter(context)
 
 
 class _DataFileWriter(object):
     _formatter = None
+    _write_row = NotImplemented
 
     def __init__(self, configuration):
         self._output = configuration.output
         self._line_separator = configuration.line_separator
+        self._encoding = configuration.encoding
 
     def write(self, datafile):
         for table in datafile:
@@ -80,7 +78,7 @@ class _DataFileWriter(object):
             self._write_row(row)
 
     def _encode(self, row):
-        return row.encode('UTF-8')
+        return row.encode(self._encoding)
 
 
 class SpaceSeparatedTxtWriter(_DataFileWriter):
@@ -115,10 +113,7 @@ class TsvFileWriter(_DataFileWriter):
                                   lineterminator=configuration.line_separator)
 
     def _write_row(self, row):
-        self._writer.writerow(self._encode(row))
-
-    def _encode(self, row):
-        return [c.encode('UTF-8') for c in row]
+        self._writer.writerow([self._encode(c) for c in row])
 
 
 class HtmlFileWriter(_DataFileWriter):
@@ -129,7 +124,7 @@ class HtmlFileWriter(_DataFileWriter):
         self._name = configuration.datafile.name
         self._writer = utils.HtmlWriter(configuration.output,
                                         configuration.line_separator,
-                                        encoding='UTF-8')
+                                        encoding=self._encoding)
 
     def write(self, datafile):
         self._writer.content(TEMPLATE_START % {'NAME': self._name},
