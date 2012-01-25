@@ -86,7 +86,7 @@ class WritingContext(object):
             self.output.close()
 
     def _validate_format(self, format):
-        format = format.lower()
+        format = format.lower() if format else ''
         if format and format not in self._formats:
             raise DataError('Invalid format: %s' % format)
         return format
