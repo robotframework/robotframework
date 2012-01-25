@@ -102,7 +102,7 @@ class _TestData(object):
 
         See also :py:meth:`robot.writer.datafilewriter.DataFileWriter.write`
         """
-        return DataFileWriter().write(self, **options)
+        return DataFileWriter(**options).write(self)
 
 
 class TestCaseFile(_TestData):

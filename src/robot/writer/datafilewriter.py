@@ -12,43 +12,44 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+from __future__ import with_statement
 import os
 
+from robot.errors import DataError
 from .filewriters import FileWriter
 
 
 class DataFileWriter(object):
-    """The DataFileWriter object. It is used to write parsed Robot Framework
-    test data file objects back to disk.
-    """
+    """Writes parsed Robot Framework test data file objects back to disk."""
 
-    def write(self, datafile, **options):
+    def __init__(self, **options):
+        """:param options: used to create a :py:class:`.WriteConfiguration`."""
+        self._options = options
+
+    def write(self, datafile):
         """Writes given `datafile` using `**options`.
 
         :param datafile: A robot.parsing.model.DataFile object to be written
-        :param options: A :py:class:`.WriteConfiguration` is created with these
         """
-        configuration = WriteConfiguration(datafile, **options)
-        FileWriter(configuration).write(datafile)
-        configuration.finish()
+        with WritingContext(datafile, **self._options) as ctx:
+            FileWriter(ctx).write(datafile)
 
 
-class WriteConfiguration(object):
-    """The WriteConfiguration object. It contains configuration used in
-    writing a test data file to disk.
-    """
+class WritingContext(object):
+    """Contains configuration used in writing a test data file to disk."""
+    encoding = 'UTF-8'
+    txt_format = 'txt'
+    html_format = 'html'
+    tsv_format = 'tsv'
+    _formats = [txt_format, html_format, tsv_format]
 
-    def __init__(self, datafile, path=None, format=None, output=None,
-                 recursive=False, pipe_separated=False,
-                 line_separator=os.linesep):
+    def __init__(self, datafile, format='', output=None,
+                 pipe_separated=False, line_separator=os.linesep):
         """
         :param datafile: The datafile to be written.
         :type datafile: :py:class:`~robot.parsing.model.TestCaseFile`,
             :py:class:`~robot.parsing.model.ResourceFile`,
             :py:class:`~robot.parsing.model.TestDataDirectory`
-        :param str path: Output file name. If omitted, basename of the `source`
-            attribute of the given `datafile` is used. If `path` contains
-            extension, it overrides the value of `format` option.
         :param str format: Output file format. If omitted, read from the
             extension of the `source` attribute of the given `datafile`.
         :param output: An open, file-like object used in writing. If
@@ -57,46 +58,50 @@ class WriteConfiguration(object):
         :param bool pipe_separated: Whether to use pipes as separator when
             output file format is txt.
         :param str line_separator: Line separator used in output files.
+
+        If `output` is not given, an output file is created based on the source
+        of the given datafile and value of `format`. Examples:
+
+            WriteConfiguration(datafile, output=StringIO) ->
+               Output written in the StringIO instance using format of
+              `datafile.source`
+            WriteConfiguration(datafile, format='html') ->
+               Output file is created from `datafile.source` by stripping
+               extension and replacing it with `html`.
         """
         self.datafile = datafile
-        self.recursive = recursive
         self.pipe_separated = pipe_separated
         self.line_separator = line_separator
         self._given_output = output
-        self._path = path
-        self._format = format
-        self._output = output
+        self.format = self._validate_format(format) or self._format_from_file()
+        self.output = output
 
-    @property
-    def output(self):
-        if not self._output:
-            self._output = open(self._get_source(), 'wb')
-        return self._output
+    def __enter__(self):
+        if not self.output:
+            self.output = open(self._output_path(), 'wb')
+        return self
 
-    @property
-    def format(self):
-        return self._format_from_path() or self._format or self._format_from_file()
-
-    def finish(self):
+    def __exit__(self, *exc_info):
         if self._given_output is None:
-            self._output.close()
+            self.output.close()
 
-    def _get_source(self):
-        return self._path or '%s.%s' % (self._basename(), self.format)
-
-    def _basename(self):
-        return os.path.splitext(self._source_from_file())[0]
-
-    def _source_from_file(self):
-        return getattr(self.datafile, 'initfile', self.datafile.source)
-
-    def _format_from_path(self):
-        if not self._path:
-            return ''
-        return self._format_from_extension(self._path)
+    def _validate_format(self, format):
+        format = format.lower()
+        if format and format not in self._formats:
+            raise DataError('Invalid format: %s' % format)
+        return format
 
     def _format_from_file(self):
         return self._format_from_extension(self._source_from_file())
 
     def _format_from_extension(self, path):
         return os.path.splitext(path)[1][1:].lower()
+
+    def _output_path(self):
+        return  '%s.%s' % (self._base_name(), self.format)
+
+    def _base_name(self):
+        return os.path.splitext(self._source_from_file())[0]
+
+    def _source_from_file(self):
+        return getattr(self.datafile, 'initfile', self.datafile.source)

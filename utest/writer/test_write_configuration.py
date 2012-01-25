@@ -1,28 +1,26 @@
 import unittest
 import os
 
-from robot.writer.datafilewriter import WriteConfiguration
+from robot import DataError
+from robot.writer.datafilewriter import WritingContext
 from robot.parsing.model import TestCaseFile
-from robot.utils.asserts import assert_equals
+from robot.utils.asserts import assert_equals, assert_raises
 
 HTML_SOURCE = os.path.abspath('foo.html')
 TXT_SOURCE= os.path.abspath('foo.txt')
 
 
-class TestOutput(unittest.TestCase):
+class TestOutputFile(unittest.TestCase):
 
     def test_source_file_is_used_by_default(self):
-        self._assert_source(HTML_SOURCE, source=HTML_SOURCE)
-
-    def test_given_path_override_source(self):
-        self._assert_source(TXT_SOURCE, source=HTML_SOURCE, path=TXT_SOURCE)
+        self._assert_output_file(HTML_SOURCE, source=HTML_SOURCE)
 
     def test_given_format_overrides_source_extension(self):
-        self._assert_source(TXT_SOURCE, HTML_SOURCE, format='txt')
+        self._assert_output_file(TXT_SOURCE, HTML_SOURCE, format='txt')
 
-    def _assert_source(self, expected, source=None, path=None, format=None):
-        ctx = WriteConfiguration(TestCaseFile(source=source), path=path, format=format)
-        assert_equals(ctx._get_source(), expected)
+    def _assert_output_file(self, expected, source=None, format=''):
+        ctx = WritingContext(TestCaseFile(source=source), format=format)
+        assert_equals(ctx._output_path()  , expected)
 
 
 class TestFormat(unittest.TestCase):
@@ -30,13 +28,13 @@ class TestFormat(unittest.TestCase):
     def test_format_from_source_file_is_used_by_default(self):
         self._assert_format('html', source=HTML_SOURCE)
 
-    def test_extension_in_path_override_format(self):
-        self._assert_format('txt', format='html', path=TXT_SOURCE)
+    def test_explicit_format_overrides_default(self):
+        self._assert_format('txt', source=HTML_SOURCE, format='txt')
 
-    def test_extension_in_given_path_override_extension_in_source(self):
-        self._assert_format('txt', source=HTML_SOURCE, path=TXT_SOURCE)
+    def test_creating_with_invalid_format_fails(self):
+        assert_raises(DataError, WritingContext, datafile=None, format='inv')
 
-    def _assert_format(self, expected, source=None, format=None, path=None):
+    def _assert_format(self, expected, source, format=''):
         data = TestCaseFile(source=source)
-        ctx = WriteConfiguration(data, format=format, path=path)
+        ctx = WritingContext(data, format=format)
         assert_equals(ctx.format, expected)
