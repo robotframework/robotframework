@@ -101,12 +101,13 @@ class TestHtmlWriter(unittest.TestCase):
         self._test_line_separator('LINESEP')
 
     def _test_line_separator(self, linesep):
-        self.output = StringIO()
-        writer = HtmlWriter(self.output, line_separator=linesep)
+        output = StringIO()
+        writer = HtmlWriter(output, line_separator=linesep)
         writer.start('b')
         writer.end('b')
         writer.element('i')
-        self._verify('<b>%(LS)s</b>%(LS)s<i></i>%(LS)s' % {'LS': linesep})
+        expected = '<b>%(LS)s</b>%(LS)s<i></i>%(LS)s' % {'LS': linesep}
+        assert_equals(repr(output.getvalue()), repr(expected))
 
     def test_encoding(self):
         self._test_encoding('UTF-8')
