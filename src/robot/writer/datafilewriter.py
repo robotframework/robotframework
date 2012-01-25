@@ -98,7 +98,7 @@ class WritingContext(object):
         return os.path.splitext(path)[1][1:].lower()
 
     def _output_path(self):
-        return  '%s.%s' % (self._base_name(), self.format)
+        return '%s.%s' % (self._base_name(), self.format)
 
     def _base_name(self):
         return os.path.splitext(self._source_from_file())[0]

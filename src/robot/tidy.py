@@ -86,7 +86,7 @@ from StringIO import StringIO
 if 'robot' not in sys.modules:
     import pythonpathsetter   # running tidy.py as script
 
-from robot.utils import ArgumentParser
+from robot import utils
 from robot.errors import DataError, Information
 from robot.parsing import ResourceFile, TestDataDirectory, TestCaseFile
 from robot.parsing.populators import FromFilePopulator
@@ -101,7 +101,7 @@ class Tidy(object):
         output = StringIO()
         data = self._create_datafile(path)
         data.save(output=output, **self._options)
-        return output.getvalue()
+        return output.getvalue().decode('UTF-8')
 
     def directory(self, path):
         self._save_directory(TestDataDirectory(source=path).populate())
@@ -152,7 +152,7 @@ class Tidy(object):
 class TidyCommandLine(object):
 
     def __init__(self, usage):
-        self._parser = ArgumentParser(usage)
+        self._parser = utils.ArgumentParser(usage)
 
     def run(self, args):
         options, inputs = self._parse_args(args)
@@ -183,7 +183,13 @@ class TidyCommandLine(object):
 
 
 def console(msg):
-    print msg
+    if sys.stdout.isatty():
+        msg = utils.encode_output(msg)
+    else:
+        # In Windows, output redirection causes '\r\n' -> '\r\r\n'
+        msg = msg.replace('\r', '')
+        msg = msg.encode('UTF-8')
+    sys.stdout.write(msg)
 
 
 if __name__ == '__main__':
