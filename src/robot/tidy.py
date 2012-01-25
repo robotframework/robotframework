@@ -180,8 +180,8 @@ def console(msg):
     if sys.stdout.isatty():
         msg = utils.encode_output(msg)
     else:
-        # In Windows, output redirection causes '\r\n' -> '\r\r\n'
-        msg = msg.replace('\r', '')
+        if os.sep == '\\' and 'b' not in sys.stdout.mode:
+            msg = msg.replace('\r\n', '\n')
         msg = msg.encode('UTF-8')
     sys.stdout.write(msg)
 
