@@ -21,7 +21,7 @@ Jython but they provide the same functionality.
 
 The library has following two limitations:
 - It is not compatible with IronPython.
-- It cannot be used with timeouts.
+- It cannot be used with timeouts in Python.
 """
 
 import sys
