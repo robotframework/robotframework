@@ -32,4 +32,5 @@ Get Selection From User Cancelled
 
 Dialog and timeout
     [Timeout]  1s
+    [Tags]     jybot_only
     Execute Manual Step  Wait for timeout
