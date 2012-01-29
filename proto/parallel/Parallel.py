@@ -28,31 +28,31 @@ from robot.version import get_version
 class Parallel(object):
     """
     Library for executing tests in parallel from inside of a robot test case.
-    Tests are executed in subprocesses. 
-    
+    Tests are executed in subprocesses.
+
     You can add arguments to all parallel test runs from `library importing`,
     for a set of parallel tests with `Add Arguments For Parallel Tests` and
     for an individual parallel test by passing the arguments in `Start Parallel Test`.
-     
-    The following command line arguments (also from argument files) are automatically 
+
+    The following command line arguments (also from argument files) are automatically
     passed to parallel tests:
     --loglevel, --runmode, --pythonpath, --variable, --variablefile
-    
+
     Example:
     | *Settings* |
     | Library | Parallel | pybot |
-    
-    
+
+
     | *Test Cases* |
     | Runner |
-    |        | Run Parallel Tests | Hello | World |  
+    |        | Run Parallel Tests | Hello | World |
     | Hello |
     |       | [Tags] | parallel |
     |       | Log    | Hello ${WORLD} |
     | World |
     |       | [Tags] | parallel |
     |       | Log    | ${HELLO} World |
-    
+
     `pybot --exclude parallel --variable HELLO:Hello --variable WORLD:World .`
     """
 
@@ -86,14 +86,14 @@ class Parallel(object):
                 value = [value]
             for var in value:
                 args += ['--%s' % key, var]
-        return args  
+        return args
 
     def add_arguments_for_parallel_tests(self, *arguments):
         """Adds `arguments` to be used when parallel test is started.
 
         `arguments` is a list of arguments to pass to parallel executions.
 
-        In the following example variable my_var is used in both of the tests 
+        In the following example variable my_var is used in both of the tests
         started with the keyword `Run Parallel Tests`:
         | Add Arguments For Parallel Tests | --variable | my_var:value |
         | Run Parallel Tests | Test | Another Test |
@@ -115,20 +115,20 @@ class Parallel(object):
         | Set Data Source For Parallel Tests | ${CURDIR}${/}my_parallel_suite.txt |
         | Start Parallel Test | My Parallel Test |
         | Wait All Parallel Tests |
-        """   
+        """
         self._data_source = data_source
 
     def start_parallel_test(self, test_name, *arguments):
         """Starts executing test with given `test_name` and `arguments`.
 
-        `arguments` is a list of Robot Framework command line arguments passed to 
+        `arguments` is a list of Robot Framework command line arguments passed to
         the started test execution. It should not include data source. Use
         `Set Data Source For Parallel Tests` keyword for setting the data
         source. Additional arguments can also be set in library import and with
         `Add Arguments For Parallel Tests` keyword.
 
         Returns a process object that represents this execution.
-        
+
         Example:
         | Set Data Source For Parallel Tests | MySuite.txt |
         | Start Parallel Test | Test From My Suite |
@@ -138,7 +138,7 @@ class Parallel(object):
         """
         if self._data_source is None:
             self._data_source = BuiltIn.BuiltIn().replace_variables('${SUITE_SOURCE}')
-        process = _ParaRobo(test_name, self._data_source, 
+        process = _ParaRobo(test_name, self._data_source,
                             self._arguments+list(arguments))
         process.run(self._script)
         self._processes.append(process)
@@ -148,13 +148,13 @@ class Parallel(object):
         """Executes all given tests parallel and wait those to be ready.
 
         Arguments can be set with keyword `Add Arguments For Parallel Tests`
-        and data source with keyword `Set Data Source For Parallel Tests`. 
-        
+        and data source with keyword `Set Data Source For Parallel Tests`.
+
         Example:
         | Add Arguments For Parallel Tests | --variable | SOME_VARIABLE:someValue |
         | Set Data Source For Parallel Tests | MySuite.txt |
         | Run Parallel Tests | My Parallel Test | My Another Parallel Test |
-        
+
         When the parallel tests are from different data sources see the example in `Start Parallel Test`.
         """
         processes = []
@@ -165,9 +165,9 @@ class Parallel(object):
     def wait_parallel_tests(self, *processes):
         """Waits given `processes` to be ready and fails if any of the tests failed.
 
-        `Processes` are list of test execution processes returned from keyword 
+        `Processes` are list of test execution processes returned from keyword
         `Start Parallel Test`.
-        
+
         Example
         | ${test 1}= | Start Parallel Test | First Test |
         | ${test 2}= | Start Parallel Test | Test That Runs All The Time |
@@ -190,7 +190,7 @@ class Parallel(object):
 
     def stop_all_parallel_tests(self):
         """Forcefully stops all the test executions.
-        
+
         NOTE: Requires Python 2.6 or later.
         """
         for process in self._processes:
@@ -237,7 +237,7 @@ class _ParaRobo(object):
         print "Starting test execution: %s" % " ".join(cmd)
         self._process = subprocess.Popen(cmd,
                                           shell=os.sep == '\\',
-                                          stdout=self._monitor_file, 
+                                          stdout=self._monitor_file,
                                           stderr=self._monitor_file,
                                           env=self._get_environment_variables())
 
