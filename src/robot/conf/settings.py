@@ -52,7 +52,9 @@ class _BaseSettings(object):
                  'NoStatusRC'       : ('nostatusrc', False),
                  'RunEmptySuite'    : ('runemptysuite', False),
                  'MonitorWidth'     : ('monitorwidth', 78),
-                 'MonitorColors'    : ('monitorcolors', 'AUTO')}
+                 'MonitorColors'    : ('monitorcolors', 'AUTO'),
+                 'StdOut'           : ('stdout', None),
+                 'StdErr'           : ('stderr', None)}
     _output_opts = ['Output', 'Log', 'Report', 'DebugFile', 'XUnitFile']
 
     def __init__(self, options={}, log=True):

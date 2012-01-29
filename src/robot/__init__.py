@@ -90,15 +90,19 @@ def run(*datasources, **options):
     pybot/jybot from command line. Options are given as keywords arguments and
     their names are same as long command line options without hyphens.
 
-    Returns a return code similarly as when running on the command line.
+    To capture stdout and/or stderr streams, pass open file objects in as
+    keyword arguments `stdout` and `stderr`, respectively.
+
+    A return code is returned similarly as when running on the command line.
 
     Examples:
-    run('/path/to/tests.html')
-    run('/path/to/tests.html', '/path/to/tests2.html', log='mylog.html')
+    run('path/to/tests.html')
+    with open('stdout.txt', 'w') as stdout:
+        run('t1.txt', 't2.txt', report='r.html', log='NONE', stdout=stdout)
 
     Equivalent command line usage:
-    pybot /path/to/tests.html
-    pybot --log mylog.html /path/to/tests.html /path/to/tests2.html
+    pybot path/to/tests.html
+    pybot --report r.html --log NONE t1.txt t2.txt > stdout.txt
     """
     return _execute(_run, datasources, options)
 
@@ -106,8 +110,10 @@ def _run(datasources, options):
     STOP_SIGNAL_MONITOR.start()
     settings = RobotSettings(options)
     pyloggingconf.initialize(settings['LogLevel'])
-    LOGGER.register_console_logger(settings['MonitorWidth'],
-                                   settings['MonitorColors'])
+    LOGGER.register_console_logger(width=settings['MonitorWidth'],
+                                   colors=settings['MonitorColors'],
+                                   stdout=settings['StdOut'],
+                                   stderr=settings['StdErr'])
     init_global_variables(settings)
     suite = TestSuite(datasources, settings)
     output = Output(settings)
@@ -128,21 +134,27 @@ def rebot(*datasources, **options):
     rebot from command line. Options are given as keywords arguments and
     their names are same as long command line options without hyphens.
 
-    Returns a return code similarly as when running on the command line.
+    To capture stdout and/or stderr streams, pass open file objects in as
+    keyword arguments `stdout` and `stderr`, respectively.
+
+    A return code is returned similarly as when running on the command line.
 
     Examples:
-    rebot('/path/to/output.xml')
-    rebot('/path/out1.xml', '/path/out2.xml', report='myrep.html', log='NONE')
+    rebot('path/to/output.xml')
+    with open('stdout.txt', 'w') as stdout:
+        rebot('o1.xml', 'o2.xml', report='r.html', log='NONE', stdout=stdout)
 
     Equivalent command line usage:
-    rebot /path/to/output.xml
-    rebot --report myrep.html --log NONE /path/out1.xml /path/out2.xml
+    rebot path/to/output.xml
+    rebot --report r.html --log NONE o1.xml o2.xml > stdout.txt
     """
     return _execute(_rebot, datasources, options)
 
 def _rebot(datasources, options):
     settings = RebotSettings(options)
-    LOGGER.register_console_logger(colors=settings['MonitorColors'])
+    LOGGER.register_console_logger(colors=settings['MonitorColors'],
+                                   stdout=settings['StdOut'],
+                                   stderr=settings['StdErr'])
     LOGGER.disable_message_cache()
     rc = ResultWriter(*datasources).write_results(settings)
     if rc < 0:

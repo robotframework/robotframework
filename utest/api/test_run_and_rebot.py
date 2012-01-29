@@ -79,6 +79,21 @@ class TestRun(Base):
         self._assert_outputs(stdout=[('Pass And Fail', 2), (LOG, 1)],
                              stderr=[('[ ERROR ]', 1), (self.nonex, 1), ('--help', 1)])
 
+    def test_custom_stdout(self):
+        stdout = StringIO()
+        assert_equals(run(self.data, output='NONE', stdout=stdout), 1)
+        self._assert_output(stdout, [('Pass And Fail', 2), ('Output:', 1),
+                                     ('Log:', 0), ('Report:', 0)])
+        self._assert_outputs()
+
+    def test_custom_stderr(self):
+        stderr = StringIO()
+        assert_equals(run(self.nonex, stderr=stderr), 252)
+        assert_equals(run(self.data, output='NONE', stderr=stderr), 1)
+        self._assert_output(stderr, [('[ ERROR ]', 1), (self.nonex, 1), ('--help', 1)])
+        self._assert_outputs([('Pass And Fail', 2), ('Output:', 1),
+                              ('Log:', 0), ('Report:', 0)])
+
 
 class TestRebot(Base):
     data = join(ROOT, 'atest', 'testdata', 'rebot', 'created_normal.xml')
@@ -99,6 +114,22 @@ class TestRebot(Base):
         assert_equals(rebot(self.data, outputdir=TEMP), 1)
         self._assert_outputs(stdout=[(LOG, 1)],
                              stderr=[('[ ERROR ]', 1), (self.nonex, 2), ('--help', 1)])
+
+    def test_custom_stdout(self):
+        stdout = StringIO()
+        assert_equals(rebot(self.data, report='None', stdout=stdout), 1)
+        self._assert_output(stdout, [('Log:', 1), ('Report:', 0)])
+        self._assert_outputs()
+
+    def test_custom_stdout_and_stderr(self):
+        output = StringIO()
+        assert_equals(rebot(self.data, log='NONE', report='NONE', stdout=output,
+                            stderr=output), 252)
+        assert_equals(rebot(self.data, report='NONE', stdout=output,
+                            stderr=output), 1)
+        self._assert_output(output, [('[ ERROR ] No outputs created', 1),
+                                     ('--help', 1), ('Log:', 1), ('Report:', 0)])
+        self._assert_outputs()
 
 
 if __name__ == '__main__':
