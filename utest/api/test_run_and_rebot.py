@@ -10,7 +10,8 @@ from robot import run, run_rebot
 
 ROOT = dirname(dirname(dirname(abspath(__file__))))
 TEMP = tempfile.gettempdir()
-LOG = 'Log:     %s' % join(TEMP, 'log.html')
+LOG_PATH = join(TEMP, 'log.html')
+LOG = 'Log:     %s' % LOG_PATH
 
 
 class Base(unittest.TestCase):
@@ -24,8 +25,8 @@ class Base(unittest.TestCase):
         sys.__stderr__ = StringIO()
         sys.stdout = StringIO()
         sys.stderr = StringIO()
-        if exists(LOG):
-            remove(LOG)
+        if exists(LOG_PATH):
+            remove(LOG_PATH)
 
     def tearDown(self):
         sys.__stdout__ = self.orig__stdout__
@@ -65,7 +66,7 @@ class TestRun(Base):
     def test_run_once(self):
         assert_equals(run(self.data, outputdir=TEMP, report='none'), 1)
         self._assert_outputs([('Pass And Fail', 2), (LOG, 1), ('Report:', 0)])
-        assert exists(LOG)
+        assert exists(LOG_PATH)
 
     def test_run_multiple_times(self):
         assert_equals(run(self.data, output='NONE', critical='nomatch'), 0)
@@ -85,8 +86,8 @@ class TestRebot(Base):
 
     def test_run_once(self):
         assert_equals(run_rebot(self.data, outputdir=TEMP, report='NONE'), 1)
-        self._assert_outputs([(LOG, 1, ('Report:', 0))])
-        assert exists(LOG)
+        self._assert_outputs([(LOG, 1), ('Report:', 0)])
+        assert exists(LOG_PATH)
 
     def test_run_multiple_times(self):
         assert_equals(run_rebot(self.data, outputdir=TEMP, critical='nomatch'), 0)
