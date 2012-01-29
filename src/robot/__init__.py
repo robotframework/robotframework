@@ -56,7 +56,7 @@ def _run_or_rebot_from_cli(method, cliargs, usage, **argparser_config):
         _report_error(unicode(err), help=True)
         return DATA_ERROR
     LOGGER.info('Data sources: %s' % utils.seq2str(datasources))
-    return _execute(method, datasources, options)
+    return method(*datasources, **options)
 
 def _parse_arguments(cliargs, usage, **argparser_config):
     ap = utils.ArgumentParser(usage, get_full_version())
@@ -66,7 +66,7 @@ def _parse_arguments(cliargs, usage, **argparser_config):
 
 def _execute(method, datasources, options):
     try:
-        rc = method(*datasources, **options)
+        rc = method(datasources, options)
     except DataError, err:
         _report_error(unicode(err), help=True)
         return DATA_ERROR
@@ -90,6 +90,8 @@ def run(*datasources, **options):
     pybot/jybot from command line. Options are given as keywords arguments and
     their names are same as long command line options without hyphens.
 
+    Returns a return code similarly as when running on the command line.
+
     Examples:
     run('/path/to/tests.html')
     run('/path/to/tests.html', '/path/to/tests2.html', log='mylog.html')
@@ -98,6 +100,9 @@ def run(*datasources, **options):
     pybot /path/to/tests.html
     pybot --log mylog.html /path/to/tests.html /path/to/tests2.html
     """
+    return _execute(_run, datasources, options)
+
+def _run(datasources, options):
     STOP_SIGNAL_MONITOR.start()
     settings = RobotSettings(options)
     pyloggingconf.initialize(settings['LogLevel'])
@@ -123,6 +128,8 @@ def run_rebot(*datasources, **options):
     rebot from command line. Options are given as keywords arguments and
     their names are same as long command line options without hyphens.
 
+    Returns a return code similarly as when running on the command line.
+
     Examples:
     run_rebot('/path/to/output.xml')
     run_rebot('/path/out1.xml', '/path/out2.xml', report='myrep.html', log='NONE')
@@ -131,6 +138,9 @@ def run_rebot(*datasources, **options):
     rebot /path/to/output.xml
     rebot --report myrep.html --log NONE /path/out1.xml /path/out2.xml
     """
+    return _execute(_rebot, datasources, options)
+
+def _rebot(datasources, options):
     settings = RebotSettings(options)
     LOGGER.register_console_logger(colors=settings['MonitorColors'])
     LOGGER.disable_message_cache()
