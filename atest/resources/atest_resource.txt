@@ -5,22 +5,22 @@ Library         Collections
 Library         String
 Library         TestCheckerLibrary
 Library         TestHelper
-Variables       ./atest_variables.py
+Variables       atest_variables.py
 
 *** Variables ***
-${INTERPRETER}  Set in test_runner.py
-${ROBOT}  Set in Set Variables
-${REBOT}  -- ;; --
-${OUTDIR}  -- ;; --
-${OUTFILE}  -- ;; --
+${INTERPRETER}  Set in run_atests.py
+${ROBOT}        Set in Set Variables
+${REBOT}        -- ;; --
+${OUTDIR}       -- ;; --
+${OUTFILE}      -- ;; --
 ${SYSLOG FILE}  -- ;; --
 ${STDERR FILE}  -- ;; --
 ${STDOUT FILE}  -- ;; --
-${SUITE}  Set in Run Helper
-${ERRORS}  -- ;; --
-${LIBPATH1}  ${CURDIR}${/}..${/}testresources${/}testlibs
-${LIBPATH2}  ${CURDIR}${/}..${/}testresources${/}listeners
-${USAGE_TIP}  \n\nTry --help for usage information.
+${SUITE}        Set in Run Helper
+${ERRORS}       -- ;; --
+${LIBPATH1}     ${CURDIR}${/}..${/}testresources${/}testlibs
+${LIBPATH2}     ${CURDIR}${/}..${/}testresources${/}listeners
+${USAGE_TIP}    \n\nTry --help for usage information.
 
 *** Keywords ***
 Run Robot Directly
