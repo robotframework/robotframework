@@ -111,7 +111,7 @@ Start Run
     [arguments]  ${runner}  ${test signal file}  ${datasource}  ${teardown sleep}  ${runmode}
     Set Runners
     ${path to datasource} =  Set Variables And Get Datasources  ${datasource}
-    ${path to runner} =  Join Path  ${ROBOTPATH}  runner.py
+    ${path to runner} =  Join Path  ${ROBOTPATH}  run.py
     @{command} =  Create List  ${runner}  ${path to runner}  --variable  TESTSIGNALFILE:${test signal file}  --output  ${OUTFILE}  --report  None  --log  None  --debugfile  ${TEST DEBUG FILE}  --variable  TEARDOWNSLEEP:${teardown sleep}  --runmode  ${runmode}  ${path to datasource}
     Log Many  @{command}
     ProcessManager.start process  @{command}

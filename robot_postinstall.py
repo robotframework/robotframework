@@ -41,7 +41,7 @@ def windows_install():
 
 def _create_script(name, interpreter):
     path = join(SCRIPT_DIR, name)
-    runner = join(ROBOT_DIR, 'runner.py')
+    runner = join(ROBOT_DIR, 'run.py')
     with open(path, 'w') as script:
         script.write('@echo off\n%s "%s" %%*\n' % (interpreter, runner))
     file_created(path)

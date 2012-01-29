@@ -288,7 +288,7 @@ class _ParaRobo(object):
 def _get_cmd_arguments():
     import robot
     runner_path = os.path.join(os.path.dirname(os.path.abspath(robot.__file__)),
-                               'runner.py')
+                               'run.py')
     with open(runner_path, 'r') as runner_file:
         runner_content = runner_file.read()
     return re.search('"""(.+)"""', runner_content, re.DOTALL).groups()[0]

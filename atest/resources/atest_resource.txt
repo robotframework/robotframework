@@ -90,7 +90,7 @@ Set Variables
     Set Runners
 
 Set Runners
-    ${robot} =  Join Path  ${ROBOTPATH}  runner.py
+    ${robot} =  Join Path  ${ROBOTPATH}  run.py
     ${INTERPRETER} =  Get Coverage Runner
     Set Suite Variable  $ROBOT  ${INTERPRETER} ${robot}
     ${rebot} =  Join Path  ${ROBOTPATH}  rebot.py

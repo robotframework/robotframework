@@ -80,7 +80,7 @@ def atests(interpreter, *params):
         args += ' --exclude nonwindows'
     if sys.platform == 'darwin' and runner == 'pybot':
         args += ' --exclude nonmacpython'
-    runner = os.path.join(os.path.dirname(robot.__file__), 'runner.py')
+    runner = os.path.join(os.path.dirname(robot.__file__), 'run.py')
     command = '%s %s %s %s' % (sys.executable, runner, args, ' '.join(params))
     print 'Running command\n%s\n' % command
     sys.stdout.flush()
