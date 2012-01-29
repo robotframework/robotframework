@@ -1,10 +1,10 @@
 Using internal APIs
 -------------------
 
-Robot Framework has some public APIs which are intended to help in developing 
+Robot Framework has some public APIs which are intended to help in developing
 supporting tools or extending the processing of input or output data. These
-APIs are implemented as Python modules, and as such can only be used from 
-Python and Jython scripts and programs. 
+APIs are implemented as Python modules, and as such can only be used from
+Python and Jython scripts and programs.
 
 Unfortunately, these APIs are not particularly well documented, and
 are subject to change and refinement in the future. The plan is to
@@ -13,10 +13,9 @@ more information are asking help from Robot Framework developers,
 investigating existing `supporting tools`_ that use these APIs, or
 just taking a look at the source code of Robot Framework.
 
-.. contents:: 
+.. contents::
    :depth: 2
-   :local: 
-
+   :local:
 
 Executed test data
 ~~~~~~~~~~~~~~~~~~
@@ -29,37 +28,67 @@ Signature of method is :code:`TestSuite(outpath)`, where
 :code:`TestSuite` object can be used to process the results of the
 test run.
 
-Here is an example that reads a given output file and marks each test case whose 
-execution time is longer than three minutes failed. The :code:`TestSuite` object 
-is then serialized and normal log and report files could be generated with 
+Here is an example that reads a given output file and marks each test case whose
+execution time is longer than three minutes failed. The :code:`TestSuite` object
+is then serialized and normal log and report files could be generated with
 :prog:`rebot`.
 
-.. sourcecode:: python 
-   
-   src/ExtendingRobotFramework/check_test_times.py
+.. sourcecode:: python
 
+   src/ExtendingRobotFramework/check_test_times.py
 
 Test execution
 ~~~~~~~~~~~~~~
 
-This API consists of :code:`run` method, which can be used for starting the 
-test execution. Signature of the method is :code:`run(*datasources, **options)`, 
+This API consists of :code:`robot.run` method, which can be used for starting the
+test execution. Signature of the method is :code:`run(*datasources, **options)`,
 where :code:`datasources` are paths to files and directories to be executed and
 :code:`options` are same as normal `command line options`_ without hyphens.
+Options that allow multiple values must be passed in as lists.
+
+Starting from Robot Framework 2.7, the :code:`run` method allows capturing
+the standard output and error streams by passing open file objects to it
+as keyword arguments `stdout` and `stderr`, respectively. When the method is
+executed, it returns a `return code`_ similarly as when tests are run on
+the command line.
+
+Example:
 
 .. sourcecode:: python
 
     from robot import run
 
-    run('tests.html', log='mylog.html', include=['tag1', 'tag2'])
+    run('path/to/tests.html', report='custom.html', include=['tag1', 'tag2'])
+    with open('output.txt', 'w') as output:
+        run('tests1.txt', 'tests2.txt', log='NONE', stdout=output, stderr=output)
 
-Equivalent command line usage would be::
+Equivalent command line usage::
 
-   pybot --log mylog.html --include tag1 --include tag2 tests.html
+   pybot --report custom.html --include tag1 --include tag2 path/to/tests.html
+   pybot --log NONE tests1.txt tests2.txt 2>&1 > output.txt
 
-.. warning:: This method can be used only once in a given context. 
-             This problem will be fixed in future releases.
+:prog:`rebot` execution
+~~~~~~~~~~~~~~~~~~~~~~~
 
+In addition to executing tests with :code:`robot.run` method, it is also
+possible to execute :prog:`rebot` with :code:`robot.rebot` method. As the
+example below illustrates, it has the same signature and works the same was
+as :code:`run` method:
+
+.. sourcecode:: python
+
+    from robot import rebot
+
+    rebot('path/to/output.xml', report='custom.html', include=['tag1', 'tag2'])
+    with open('stdout.txt', 'w') as stdout:
+        rebot('out1.xml', 'out2.xml', log='NONE', stdout=stdout)
+
+Equivalent command line usage::
+
+   rebot --report custom.html --include tag1 --include tag2 path/to/output.xml
+   pybot --log NONE out1.xml out2.xml > stdout.txt
+
+.. note:: Prior to Robot Framework 2.7 this method was named :code:`run_rebot`.
 
 Parsed test data
 ~~~~~~~~~~~~~~~~
@@ -67,7 +96,7 @@ Parsed test data
 Package :code:`robot.parsing` contains tools for parsing and handling test data.
 :code:`TestCaseFile` and :code:`TestDataDirectory` classes can be instantiated
 with named argument :code:`source` to start parsing existing test data. Example
-below shows how to parse names of tests from a test file. For more details please 
+below shows how to parse names of tests from a test file. For more details please
 see the source code of Robot Framework directly.
 
 .. sourcecode:: python
@@ -88,7 +117,6 @@ into a runnable :code:`TestSuite` object. The signature of this
 :code:`TestSuite(datasources, settings)`, where data sources are paths
 to files and directories similarly as when executing tests from the
 command line.
-
 
 Configuring logging
 ~~~~~~~~~~~~~~~~~~~
