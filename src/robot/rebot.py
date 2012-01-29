@@ -250,12 +250,8 @@ $ jython path/robot/rebot.py -N Project_X -l none -r x.html output.xml
 
 import sys
 
-try:
-    import pythonpathsetter
-except ImportError:
-    # Get here when run as 'python -m robot.rebot' and then importing robot
-    # works without this and pythonpathsetter is imported again later.
-    pass
+if 'robot' not in sys.modules:
+    import pythonpathsetter  # running robot/rebot.py as a script
 
 import robot
 

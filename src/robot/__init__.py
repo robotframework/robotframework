@@ -15,7 +15,7 @@
 import sys
 
 if 'pythonpathsetter' not in sys.modules:
-    import pythonpathsetter
+    from robot import pythonpathsetter
 if sys.platform.startswith('java'):
     from robot import jythonworkarounds
 from robot.conf import RobotSettings, RebotSettings
