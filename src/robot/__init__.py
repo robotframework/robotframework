@@ -14,10 +14,6 @@
 
 import sys
 
-if __name__ == '__main__':
-    sys.stderr.write("Use 'runner' or 'rebot' for executing.\n")
-    sys.exit(252)  # 252 == DATA_ERROR
-
 if 'pythonpathsetter' not in sys.modules:
     import pythonpathsetter
 if sys.platform.startswith('java'):
