@@ -89,7 +89,6 @@ if 'robot' not in sys.modules:
 from robot import utils
 from robot.errors import DataError, Information
 from robot.parsing import ResourceFile, TestDataDirectory, TestCaseFile
-from robot.parsing.populators import FromFilePopulator
 
 
 class Tidy(object):
@@ -192,7 +191,7 @@ if __name__ == '__main__':
         if output:
             console(output)
     except DataError, err:
-        console('%s\n\nUse --help for usage.' % unicode(err))
+        console('%s\n\nUse --help for usage.\n' % unicode(err))
         sys.exit(1)
     except Information, msg:
         console(unicode(msg))
