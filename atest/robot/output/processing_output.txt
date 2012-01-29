@@ -28,7 +28,8 @@ Directory Suite
 
 Minimal hand-created output
     [Documentation]  Testing minimal hand created suite with tests or subsuites
-    Run Rebot  ${EMPTY}  rebot/created_normal.xml
+    Run Rebot  --log log_from_created_output.html  rebot/created_normal.xml
+    File Should Not Be Empty    ${OUTDIR}/log_from_created_output.html
     Check Names  ${SUITE}  Root
     Should Contain Suites  ${SUITE}  Sub 1  Sub 2
     Check Names  ${SUITE.suites[0]}  Sub 1  Root.
