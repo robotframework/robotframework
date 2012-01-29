@@ -32,8 +32,8 @@ def remove_path(path):
     sys.path = [p for p in sys.path if not fnmatch.fnmatch(p, path)]
 
 
-# When, for example, runner.py is executed as a script, the directory
-# containing robot module is not added to sys.path automatically but
+# When, for example, robot/run.py is executed as a script, the directory
+# containing the robot module is not added to sys.path automatically but
 # the robot directory itself is. Former is added to allow importing
 # the module and the latter removed to prevent accidentally importing
 # internal modules directly.

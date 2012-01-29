@@ -13,7 +13,7 @@
 #  limitations under the License.
 
 from __future__ import with_statement
-import getopt     # optparse not supported by Jython 2.2
+import getopt     # optparse was not supported by Jython 2.2
 import os
 import re
 import sys
@@ -25,7 +25,6 @@ import textwrap
 from robot.errors import DataError, Information, FrameworkError
 
 from misc import plural_or_not
-from unic import unic
 from encoding import decode_output, decode_from_file_system
 
 
@@ -58,8 +57,6 @@ class ArgumentParser:
 
         Tool name is got from the first row of the usage. It is either the
         whole row or anything before first ' -- '.
-
-        See for example 'runner.py' and 'rebot.py' for examples.
         """
         if not usage:
             raise FrameworkError('Usage cannot be empty')
