@@ -42,7 +42,7 @@ def run_from_cli(args, usage):
 
 def rebot_from_cli(args, usage):
     LOGGER.info(get_full_version('Rebot'))
-    return _run_or_rebot_from_cli(run_rebot, args, usage)
+    return _run_or_rebot_from_cli(rebot, args, usage)
 
 def _run_or_rebot_from_cli(method, cliargs, usage, **argparser_config):
     LOGGER.register_file_logger()
@@ -121,7 +121,7 @@ def _run(datasources, options):
     return suite.return_code
 
 
-def run_rebot(*datasources, **options):
+def rebot(*datasources, **options):
     """Creates reports/logs from given Robot output files with given options.
 
     Given input files are paths to Robot output files similarly as when running
@@ -131,8 +131,8 @@ def run_rebot(*datasources, **options):
     Returns a return code similarly as when running on the command line.
 
     Examples:
-    run_rebot('/path/to/output.xml')
-    run_rebot('/path/out1.xml', '/path/out2.xml', report='myrep.html', log='NONE')
+    rebot('/path/to/output.xml')
+    rebot('/path/out1.xml', '/path/out2.xml', report='myrep.html', log='NONE')
 
     Equivalent command line usage:
     rebot /path/to/output.xml

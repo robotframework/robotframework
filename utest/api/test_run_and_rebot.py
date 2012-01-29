@@ -6,7 +6,7 @@ from os import remove
 from StringIO import StringIO
 
 from robot.utils.asserts import assert_equals
-from robot import run, run_rebot
+from robot import run, rebot
 
 ROOT = dirname(dirname(dirname(abspath(__file__))))
 TEMP = tempfile.gettempdir()
@@ -85,18 +85,18 @@ class TestRebot(Base):
     nonex = join(TEMP, 'non-existing-file-this-is.xml')
 
     def test_run_once(self):
-        assert_equals(run_rebot(self.data, outputdir=TEMP, report='NONE'), 1)
+        assert_equals(rebot(self.data, outputdir=TEMP, report='NONE'), 1)
         self._assert_outputs([(LOG, 1), ('Report:', 0)])
         assert exists(LOG_PATH)
 
     def test_run_multiple_times(self):
-        assert_equals(run_rebot(self.data, outputdir=TEMP, critical='nomatch'), 0)
-        assert_equals(run_rebot(self.data, outputdir=TEMP, name='New Name'), 1)
+        assert_equals(rebot(self.data, outputdir=TEMP, critical='nomatch'), 0)
+        assert_equals(rebot(self.data, outputdir=TEMP, name='New Name'), 1)
         self._assert_outputs([(LOG, 2)])
 
     def test_run_fails(self):
-        assert_equals(run_rebot(self.nonex), 252)
-        assert_equals(run_rebot(self.data, outputdir=TEMP), 1)
+        assert_equals(rebot(self.nonex), 252)
+        assert_equals(rebot(self.data, outputdir=TEMP), 1)
         self._assert_outputs(stdout=[(LOG, 1)],
                              stderr=[('[ ERROR ]', 1), (self.nonex, 2), ('--help', 1)])
 
