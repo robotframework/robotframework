@@ -21,9 +21,11 @@ from loggerhelper import IsLogged
 
 class CommandLineMonitor:
 
-    def __init__(self, width=78, colors='AUTO'):
+    def __init__(self, width=78, colors='AUTO', stdout=None, stderr=None):
         self._width = width
-        self._highlighter = StatusHighlighter(colors)
+        self._stdout = stdout or sys.__stdout__
+        self._stderr = stderr or sys.__stderr__
+        self._highlighter = StatusHighlighter(colors, self._stdout, self._stderr)
         self._is_logged = IsLogged('WARN')
         self._started = False
 
@@ -51,7 +53,7 @@ class CommandLineMonitor:
     def message(self, msg):
         if self._is_logged(msg.level):
             self._write_with_highlighting('[ ', msg.level, ' ] ' + msg.message,
-                                          stream=sys.__stderr__)
+                                          error=True)
     def output_file(self, name, path):
         self._write('%-8s %s' % (name+':', path))
 
@@ -78,31 +80,32 @@ class CommandLineMonitor:
     def _write_separator(self, sep_char):
         self._write(sep_char * self._width)
 
-    def _write(self, message, newline=True, stream=sys.__stdout__):
+    def _write(self, message, newline=True, error=False):
+        stream = self._stdout if not error else self._stderr
         if newline:
             message += '\n'
         stream.write(utils.encode_output(message).replace('\t', ' '*8))
         stream.flush()
 
     def _write_with_highlighting(self, before, highlighted, after,
-                                 newline=True, stream=sys.__stdout__):
-        self._write(before, newline=False, stream=stream)
+                                 newline=True, error=False):
+        stream = self._stdout if not error else self._stderr
+        self._write(before, newline=False, error=error)
         self._highlighter.start(highlighted, stream)
-        self._write(highlighted, newline=False, stream=stream)
+        self._write(highlighted, newline=False, error=error)
         self._highlighter.end()
-        self._write(after, newline=newline, stream=stream)
+        self._write(after, newline=newline, error=error)
 
 
 class StatusHighlighter:
 
-    def __init__(self, colors):
+    def __init__(self, colors, *streams):
         self._current = None
-        self._highlighters = {
-            sys.__stdout__: self._get_highlighter(sys.__stdout__, colors),
-            sys.__stderr__: self._get_highlighter(sys.__stderr__, colors)
-        }
+        self._colors = colors.upper()
+        self._highlighters = dict((stream, self._get_highlighter(stream))
+                                  for stream in streams)
 
-    def start(self, message, stream=sys.__stdout__):
+    def start(self, message, stream):
         self._current = self._highlighters[stream]
         {'PASS': self._current.green,
          'FAIL': self._current.red,
@@ -112,10 +115,10 @@ class StatusHighlighter:
     def end(self):
         self._current.reset()
 
-    def _get_highlighter(self, stream, colors):
+    def _get_highlighter(self, stream):
         auto = hasattr(stream, 'isatty') and stream.isatty()
         enable = {'AUTO': auto,
                   'ON': True,
                   'FORCE': True,   # compatibility with 2.5.5 and earlier
-                  'OFF': False}.get(colors.upper(), auto)
+                  'OFF': False}.get(self._colors, auto)
         return Highlighter(stream) if enable else NoHighlighting(stream)
