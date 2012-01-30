@@ -12,6 +12,8 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+from robot.writer.dataextractor import DataExtractor
+
 
 class _Aligner(object):
 
@@ -42,14 +44,10 @@ class ColumnAligner(_Aligner):
 
     def _count_widths(self, first_column_width, table):
         result = [first_column_width] + [len(h) for h in table.header[1:]]
-        for element in table:
-            for step in element:
-                if not step.is_set():
-                    continue
-                for index, col in enumerate(step.as_list()):
-                    index += 1
-                    if len(result) <= index:
-                        result.append(len(col))
-                    else:
-                        result[index] = max(len(col), result[index])
+        for row in DataExtractor().rows_from_table(table):
+            for index, col in enumerate(row):
+                if len(result) <= index:
+                    result.append(len(col))
+                else:
+                    result[index] = max(len(col), result[index])
         return result
