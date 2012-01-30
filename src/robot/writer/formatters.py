@@ -70,7 +70,14 @@ class TsvFormatter(_DataFileFormatter):
         return ['*%s*' % cell for cell in table.header]
 
     def _format_row(self, row, table=None):
-        return self._pad(self._escape_consecutive_whitespace(row))
+        return self._pad(self._escape(row))
+
+    def _escape(self, row):
+        return self._escape_consecutive_whitespace(
+            self._escape_tabs(row))
+
+    def _escape_tabs(self, row):
+        return [c.replace('\t', '\\t') for c in row]
 
     def _pad(self, row):
         row = [cell.replace('\n', ' ') for cell in row]

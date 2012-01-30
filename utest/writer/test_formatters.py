@@ -45,8 +45,12 @@ class TestTsvFormatter(unittest.TestCase):
 
     def setUp(self):
         self._formatter = TsvFormatter(6)
+
     def test_replacing_newlines(self):
         assert_equals(self._formatter._format_row(['so\nme'])[0], 'so me')
+
+    def test_escaping_tabs(self):
+        assert_equals(self._formatter._format_row(['so\tme'])[0], 'so\\tme')
 
     def test_escaping_consecutive_spaces(self):
         assert_equals(self._formatter._format_row(['so  me'])[0], 'so \ me')
