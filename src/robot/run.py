@@ -319,20 +319,44 @@ from robot.utils import Application
 from robot.variables import init_global_variables
 
 
+class RobotFramework(Application):
 
-def run_cli(cli_args):
-    app = Application(USAGE)
-    opts, args = app.parse_arguments(cli_args)
-    rc = app.execute(_run, opts, args)
-    app.exit(rc)
+    def _main(self, *datasources, **options):
+        STOP_SIGNAL_MONITOR.start()
+        settings = RobotSettings(options)
+        pyloggingconf.initialize(settings['LogLevel'])
+        LOGGER.register_console_logger(width=settings['MonitorWidth'],
+                                       colors=settings['MonitorColors'],
+                                       stdout=settings['StdOut'],
+                                       stderr=settings['StdErr'])
+        init_global_variables(settings)
+        suite = TestSuite(datasources, settings)
+        output = Output(settings)
+        suite.run(output)
+        LOGGER.info("Tests execution ended. Statistics:\n%s"
+        % suite.get_stat_message())
+        output.close(suite)
+        if settings.is_rebot_needed():
+            output, settings = settings.get_rebot_datasource_and_settings()
+            ResultWriter(output).write_results(settings)
+        return suite.return_code
+
+
+def run_cli(arguments):
+    """Command line execution entry point for running tests.
+
+    For programmatic usage the `run` method is typically better. It has
+    better API for that usage and does not use sys.exit like this method.
+    """
+    RobotFramework(USAGE).cli(arguments)
 
 
 def run(*datasources, **options):
-    """Executes given Robot data sources with given options.
+    """Executes given Robot Framework data sources with given options.
 
     Data sources are paths to files and directories, similarly as when running
-    pybot/jybot from command line. Options are given as keywords arguments and
-    their names are same as long command line options without hyphens.
+    pybot/jybot from the command line. Options are given as keywords arguments
+    and their names are same as long command line options without hyphens.
 
     To capture stdout and/or stderr streams, pass open file objects in as
     keyword arguments `stdout` and `stderr`, respectively.
@@ -348,29 +372,7 @@ def run(*datasources, **options):
     pybot path/to/tests.html
     pybot --report r.html --log NONE t1.txt t2.txt > stdout.txt
     """
-    app = Application('xxx', exit=False)
-    rc = app.execute(_run, options, datasources)
-    return app.exit(rc)
-
-def _run(*datasources, **options):
-    STOP_SIGNAL_MONITOR.start()
-    settings = RobotSettings(options)
-    pyloggingconf.initialize(settings['LogLevel'])
-    LOGGER.register_console_logger(width=settings['MonitorWidth'],
-                                   colors=settings['MonitorColors'],
-                                   stdout=settings['StdOut'],
-                                   stderr=settings['StdErr'])
-    init_global_variables(settings)
-    suite = TestSuite(datasources, settings)
-    output = Output(settings)
-    suite.run(output)
-    LOGGER.info("Tests execution ended. Statistics:\n%s"
-    % suite.get_stat_message())
-    output.close(suite)
-    if settings.is_rebot_needed():
-        output, settings = settings.get_rebot_datasource_and_settings()
-        ResultWriter(output).write_results(settings)
-    return suite.return_code
+    return RobotFramework(USAGE).api(*datasources, **options)
 
 
 if __name__ == '__main__':

@@ -24,30 +24,44 @@ from .error import get_error_details
 
 class Application(object):
 
-    def __init__(self, usage, name=None, version=None, arg_limits=None, exit=True,
+    def __init__(self, usage, name=None, version=None, arg_limits=None,
                  logger=None):
         self._ap = ArgumentParser(usage, name, version, arg_limits)
         self._exit = exit
         if not logger:
             from robot.output import LOGGER as logger  # Hack
         self._logger = logger
+
+    def cli(self, cli_arguments):
+        self._init_logging()
+        options, arguments = self._parse_arguments(cli_arguments)
+        rc = self._execute(arguments, options)
+        self._exit(rc)
+
+    def _init_logging(self):
         self._logger.register_file_logger()
         self._logger.info('%s %s' % (self._ap.name, self._ap.version))
 
-    def parse_arguments(self, cli_args, check_args=True):
+    def _parse_arguments(self, cli_args):
         try:
-            options, arguments = self._ap.parse_args(cli_args, check_args)
+            options, arguments = self._ap.parse_args(cli_args)
         except Information, msg:
-            return self._report_info(unicode(msg))
+            self._report_info(unicode(msg))
         except DataError, err:
-            return self._report_error(unicode(err), help=True)
+            self._report_error(unicode(err), help=True, exit=True)
         else:
             self._logger.info('Arguments: %s' % ','.join(arguments))
             return options, arguments
 
-    def execute(self, method, options, arguments):
+    def api(self, *arguments, **options):
+        self._init_logging()
+        rc = self._execute(arguments, options)
+        self._logger.close()
+        return rc
+
+    def _execute(self, arguments, options):
         try:
-            rc = method(*arguments, **options)
+            rc = self._main(*arguments, **options)
         except DataError, err:
             return self._report_error(unicode(err), help=True)
         except (KeyboardInterrupt, SystemExit):
@@ -60,20 +74,24 @@ class Application(object):
         else:
             return rc
 
+    def _main(self, *arguments, **options):
+        raise NotImplementedError
+
     def _report_info(self, msg):
         print encode_output(unicode(msg))
-        return self.exit(INFO_PRINTED)
+        self._exit(INFO_PRINTED)
 
-    def _report_error(self, message, details=None, help=False, rc=DATA_ERROR):
+    def _report_error(self, message, details=None, help=False, rc=DATA_ERROR,
+                      exit=False):
         if help:
             message += '\n\nTry --help for usage information.'
         if details:
             message += '\n' + details
         self._logger.error(message)
-        return self.exit(rc)
-
-    def exit(self, rc):
-        self._logger.close()
-        if self._exit:
-            sys.exit(rc)
+        if exit:
+            self._exit(rc)
         return rc
+
+    def _exit(self, rc):
+        self._logger.close()
+        sys.exit(rc)

@@ -260,19 +260,35 @@ from robot.output import LOGGER
 from robot.utils import Application
 
 
-def rebot_cli(cli_args):
-    app = Application(USAGE)
-    opts, args = app.parse_arguments(cli_args)
-    rc = app.execute(_rebot, opts, args)
-    app.exit(rc)
+class Rebot(Application):
 
+    def _main(self, *datasources, **options):
+        settings = RebotSettings(options)
+        LOGGER.register_console_logger(colors=settings['MonitorColors'],
+                                       stdout=settings['StdOut'],
+                                       stderr=settings['StdErr'])
+        LOGGER.disable_message_cache()
+        rc = ResultWriter(*datasources).write_results(settings)
+        if rc < 0:
+            raise DataError('No outputs created.')
+        return rc
+
+
+
+def rebot_cli(arguments):
+    """Command line execution entry point for running rebot.
+
+    For programmatic usage the `rebot` method is typically better. It has
+    better API for that usage and does not use sys.exit like this method.
+    """
+    Rebot(USAGE).cli(arguments)
 
 
 def rebot(*datasources, **options):
     """Creates reports/logs from given Robot output files with given options.
 
     Given input files are paths to Robot output files similarly as when running
-    rebot from command line. Options are given as keywords arguments and
+    rebot from the command line. Options are given as keywords arguments and
     their names are same as long command line options without hyphens.
 
     To capture stdout and/or stderr streams, pass open file objects in as
@@ -289,20 +305,7 @@ def rebot(*datasources, **options):
     rebot path/to/output.xml
     rebot --report r.html --log NONE o1.xml o2.xml > stdout.txt
     """
-    app = Application('xxx', exit=False)
-    rc = app.execute(_rebot, options, datasources)
-    return app.exit(rc)
-
-def _rebot(*datasources, **options):
-    settings = RebotSettings(options)
-    LOGGER.register_console_logger(colors=settings['MonitorColors'],
-                                   stdout=settings['StdOut'],
-                                   stderr=settings['StdErr'])
-    LOGGER.disable_message_cache()
-    rc = ResultWriter(*datasources).write_results(settings)
-    if rc < 0:
-        raise DataError('No outputs created.')
-    return rc
+    return Rebot(USAGE).api(*datasources, **options)
 
 
 if __name__ == '__main__':
