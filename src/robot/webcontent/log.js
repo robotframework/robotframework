@@ -17,15 +17,19 @@ function addElements(elems, templateName, target){
 }
 
 function toggleElement(elementId, childrenNames) {
-    var foldingButton = $('#'+elementId+'_foldingbutton');
     var childElement = $("#"+elementId+"_children");
     childElement.toggle(100);
+    populateChildren(elementId, childElement, childrenNames);
+    var foldingButton = $('#'+elementId+'_foldingbutton');
+    foldingButton.text(foldingButton.text() == '+' ? '-' : '+');
+}
+
+function populateChildren(elementId, childElement, childrenNames) {
     if (!childElement.hasClass("populated")) {
         var element = window.testdata.find(elementId);
         element.callWhenChildrenReady(drawCallback(element, childElement, childrenNames));
         childElement.addClass("populated");
     }
-    foldingButton.text(foldingButton.text() == '+' ? '-' : '+');
 }
 
 function drawCallback(element, childElement, childrenNames) {
@@ -57,9 +61,10 @@ function expandRecursively(){
 }
 
 function expandElement(element) {
-    if (!$("#" + element.id + "_children").is(":visible")) {
-        $("#" + element.id + " .elementheader").click();
-    }
+    var childElement = $("#" + element.id + "_children");
+    childElement.show(100);
+    populateChildren(element.id, childElement, element.childrenNames);
+    $('#'+element.id+'_foldingbutton').text('-');
 }
 
 function elementHiddenByUser(elementId) {

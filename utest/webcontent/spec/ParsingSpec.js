@@ -86,6 +86,7 @@ describe("Handling Suite", function () {
         expect(suite.times.elapsedMillis).toBeLessThan(1000);
         expectStats(suite, 1, 1, 1, 1);
         expect(suite.metadata[0]).toEqual(["meta", "data"]);
+        expect(suite.childrenNames).toEqual(['keyword', 'suite', 'test']);
     });
 
     it("should parse test", function () {
@@ -99,6 +100,7 @@ describe("Handling Suite", function () {
         expect(test.times.elapsedMillis).toBeGreaterThan(0);
         expect(test.times.elapsedMillis).toBeLessThan(window.testdata.suite().times.elapsedMillis+1);
         expect(test.timeout).toEqual("1 second");
+        expect(test.childrenNames).toEqual(['keyword']);
     });
 
     it("should parse keyword", function () {
@@ -110,6 +112,7 @@ describe("Handling Suite", function () {
         expect(kw.times.elapsedMillis).toBeLessThan(200);
         expect(kw.path).toEqual("Suite.Test.0");
         expect(kw.type).toEqual("KEYWORD");
+        expect(kw.childrenNames).toEqual(['keyword', 'message'])
     });
 
     it("should parse for loop", function() {
