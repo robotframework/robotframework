@@ -94,7 +94,7 @@ function makeElementVisible(element) {
     // before executing the callback function
     window.testdata.findPathTo(unescape(element), function (uniqueIds) {
         for (var i in uniqueIds) {
-            $("#" + uniqueIds[i] + "_foldingbutton").click();
+            $("#" + uniqueIds[i] + "_elementheader").click();
         }
         if (uniqueIds && uniqueIds.length > 0) {
             expandCriticalFailed(window.testdata.find(uniqueIds[uniqueIds.length - 1]));
@@ -175,7 +175,7 @@ function addTestExecutionLog(main) {
       <td>
         <a class="expand"
            href="javascript:expandAllChildren('${id}')">Expand All</a>
-        <div onclick="toggleSuite('${id}');" class="elementheader">
+        <div id="${id}_elementheader" onclick="toggleSuite('${id}');" class="elementheader">
             <div id="${id}_foldingbutton" class="foldingbutton">+</div>
             <span class="${status.toLowerCase()}">TEST&nbsp;SUITE:</span>
             <a class="name" title="${name}">${name}</a>
@@ -238,7 +238,7 @@ function addTestExecutionLog(main) {
       <td>
         <a class="expand"
            href="javascript:expandAllChildren('${id}')">Expand All</a>
-        <div onclick="toggleTest('${id}');" class="elementheader">
+        <div id="${id}_elementheader" onclick="toggleTest('${id}');" class="elementheader">
             <div id="${id}_foldingbutton" class="foldingbutton">+</div>
             <span class="${status.toLowerCase()}">TEST&nbsp;CASE: </span>
             <a class="name" title="${fullName}">${name}</a>
@@ -297,7 +297,7 @@ function addTestExecutionLog(main) {
   <table class="keyword" id="${id}">
     <tr>
       <td>
-          <div onclick="toggleKeyword('${id}');" class="elementheader">
+          <div id="${id}_elementheader" onclick="toggleKeyword('${id}');" class="elementheader">
               <div id="${id}_foldingbutton" class="foldingbutton">+</div>
               <span class="${status.toLowerCase()}">${type}: </span>
               <a class="name" title="${name}">${name}</a>
