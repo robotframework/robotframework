@@ -22,8 +22,9 @@ from robot.errors import (INFO_PRINTED, DATA_ERROR, STOPPED_BY_USER,
 
 class CommandLineApplication(object):
 
-    def __init__(self, usage, name=None, version=None, arg_limits=None):
+    def __init__(self, usage, name=None, version=None, arg_limits=None, exit=True):
         self._ap = utils.ArgumentParser(usage, name, version, arg_limits)
+        self._exit = exit
         LOGGER.register_file_logger()
         LOGGER.info('%s %s' % (self.name, self.version))
 
@@ -39,9 +40,9 @@ class CommandLineApplication(object):
         try:
             options, arguments = self._ap.parse_args(cli_args, check_args)
         except Information, msg:
-            self._report_info_and_exit(unicode(msg))
+            return self._report_info(unicode(msg))
         except DataError, err:
-            self._report_error_and_exit(unicode(err), help=True)
+            return self._report_error(unicode(err), help=True)
         else:
             LOGGER.info('Arguments: %s' % utils.seq2str(arguments))
             return options, arguments
@@ -50,30 +51,31 @@ class CommandLineApplication(object):
         try:
             rc = method(*arguments, **options)
         except DataError, err:
-            self._report_error_and_exit(unicode(err), help=True)
+            return self._report_error(unicode(err), help=True)
         except (KeyboardInterrupt, SystemExit):
-            self._report_error_and_exit('Execution stopped by user.',
-                                        rc=STOPPED_BY_USER)
+            return self._report_error('Execution stopped by user.',
+                                      rc=STOPPED_BY_USER)
         except:
             error, details = utils.get_error_details()
-            self._report_error_and_exit('Unexpected error: %s' % error,
-                                        details, rc=FRAMEWORK_ERROR)
+            return self._report_error('Unexpected error: %s' % error,
+                                      details, rc=FRAMEWORK_ERROR)
         else:
             return rc
 
-    def _report_info_and_exit(self, msg):
+    def _report_info(self, msg):
         print utils.encode_output(unicode(msg))
-        self.exit(INFO_PRINTED)
+        return self.exit(INFO_PRINTED)
 
-    def _report_error_and_exit(self, message, details=None, help=False,
-                               rc=DATA_ERROR):
+    def _report_error(self, message, details=None, help=False, rc=DATA_ERROR):
         if help:
             message += '\n\nTry --help for usage information.'
         if details:
             message += '\n' + details
         LOGGER.error(message)
-        self.exit(rc)
+        return self.exit(rc)
 
     def exit(self, rc):
         LOGGER.close()
-        sys.exit(rc)
+        if self._exit:
+            sys.exit(rc)
+        return rc

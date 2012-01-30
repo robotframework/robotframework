@@ -27,54 +27,23 @@ from robot.output import Output, LOGGER, pyloggingconf
 from robot.variables import init_global_variables
 from robot.version import get_version, get_full_version
 from robot import utils
+from robot.cliapp import CommandLineApplication
 
 
 __version__ = get_version()
 
 
-def run_from_cli(args, usage):
-    LOGGER.info(get_full_version('Robot Framework'))
-    return _run_or_rebot_from_cli(run, args, usage)
+def run_from_cli(cli_args, usage):
+    app = CommandLineApplication(usage)
+    opts, args = app.parse_arguments(cli_args)
+    rc = app.execute(_run, opts, args)
+    app.exit(rc)
 
-def rebot_from_cli(args, usage):
-    LOGGER.info(get_full_version('Rebot'))
-    return _run_or_rebot_from_cli(rebot, args, usage)
-
-def _run_or_rebot_from_cli(method, cliargs, usage):
-    LOGGER.register_file_logger()
-    try:
-        options, datasources = _parse_arguments(cliargs, usage)
-    except Information, msg:
-        print utils.encode_output(unicode(msg))
-        return INFO_PRINTED
-    except DataError, err:
-        _report_error(unicode(err), help=True)
-        return DATA_ERROR
-    LOGGER.info('Data sources: %s' % utils.seq2str(datasources))
-    return method(*datasources, **options)
-
-def _parse_arguments(cliargs, usage):
-    ap = utils.ArgumentParser(usage, get_full_version())
-    return ap.parse_args(cliargs, check_args=True)
-
-def _execute(method, datasources, options):
-    try:
-        rc = method(datasources, options)
-    except DataError, err:
-        _report_error(unicode(err), help=True)
-        return DATA_ERROR
-    except (KeyboardInterrupt, SystemExit):
-        _report_error('Execution stopped by user.')
-        return STOPPED_BY_USER
-    except:
-        error, details = utils.get_error_details()
-        _report_error('Unexpected error: %s' % error, details)
-        return FRAMEWORK_ERROR
-    else:
-        return rc
-    finally:
-        LOGGER.close()
-
+def rebot_from_cli(cli_args, usage):
+    app = CommandLineApplication(usage)
+    opts, args = app.parse_arguments(cli_args)
+    rc = app.execute(_rebot, opts, args)
+    app.exit(rc)
 
 def run(*datasources, **options):
     """Executes given Robot data sources with given options.
@@ -97,9 +66,11 @@ def run(*datasources, **options):
     pybot path/to/tests.html
     pybot --report r.html --log NONE t1.txt t2.txt > stdout.txt
     """
-    return _execute(_run, datasources, options)
+    app = CommandLineApplication('xxx', exit=False)
+    rc = app.execute(_run, options, datasources)
+    return app.exit(rc)
 
-def _run(datasources, options):
+def _run(*datasources, **options):
     STOP_SIGNAL_MONITOR.start()
     settings = RobotSettings(options)
     pyloggingconf.initialize(settings['LogLevel'])
@@ -141,9 +112,11 @@ def rebot(*datasources, **options):
     rebot path/to/output.xml
     rebot --report r.html --log NONE o1.xml o2.xml > stdout.txt
     """
-    return _execute(_rebot, datasources, options)
+    app = CommandLineApplication('xxx', exit=False)
+    rc = app.execute(_rebot, options, datasources)
+    return app.exit(rc)
 
-def _rebot(datasources, options):
+def _rebot(*datasources, **options):
     settings = RebotSettings(options)
     LOGGER.register_console_logger(colors=settings['MonitorColors'],
                                    stdout=settings['StdOut'],
