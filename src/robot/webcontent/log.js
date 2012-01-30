@@ -18,7 +18,7 @@ function addElements(elems, templateName, target){
 
 function toggleElement(elementId, childrenNames) {
     var childElement = $("#"+elementId+"_children");
-    childElement.toggle();
+    childElement.toggle(100);
     populateChildren(elementId, childElement, childrenNames);
     var foldingButton = $('#'+elementId+'_foldingbutton');
     foldingButton.text(foldingButton.text() == '+' ? '-' : '+');
@@ -62,7 +62,7 @@ function expandRecursively(){
 
 function expandElement(element) {
     var childElement = $("#" + element.id + "_children");
-    childElement.show();
+    childElement.show(100);
     populateChildren(element.id, childElement, element.childrenNames);
     $('#'+element.id+'_foldingbutton').text('-');
 }
