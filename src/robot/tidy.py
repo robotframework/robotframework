@@ -160,7 +160,7 @@ class TidyCommandLine(object):
             return tidy.file(inputs[0])
 
     def _parse_args(self, args):
-        options, sources = self._parser.parse_args(args, help='help')
+        options, sources = self._parser.parse_args(args)
         if options['inplace'] and options['recursive']:
             raise DataError('--recursive and --inplace can not be used together.')
         if not options['inplace'] and len(sources) > 1:
