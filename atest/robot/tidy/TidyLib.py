@@ -5,7 +5,7 @@ from os.path import abspath, dirname, join
 from subprocess import call, STDOUT
 import tempfile
 
-from robot import DataError
+from robot.errors import DataError
 from robot.utils.asserts import assert_equals
 from robot.tidy import TidyCommandLine
 import robot.tidy
