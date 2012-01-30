@@ -43,7 +43,6 @@ def FileWriter(context):
 
 class _DataFileWriter(object):
     _formatter = None
-    _write_row = NotImplemented
 
     def __init__(self, configuration):
         self._output = configuration.output
@@ -57,33 +56,29 @@ class _DataFileWriter(object):
 
     def _write_table(self, table):
         self._write_header(table)
-        self._write_rows(self._formatted_table(table))
+        self._write_rows(self._formatter.format_table(table))
         self._write_empty_row()
 
     def _write_header(self, table):
-        self._write_row(self._formatter.header_row(table))
-
-    def _formatted_table(self, table):
-        formatter = {'setting': self._formatter.setting_table,
-                     'variable': self._formatter.variable_table,
-                     'test case': self._formatter.test_table,
-                     'keyword': self._formatter.keyword_table}[table.type]
-        return formatter(table)
-
-    def _write_empty_row(self):
-        self._write_row(self._formatter.empty_row())
+        self._write_row(self._formatter.format_header(table))
 
     def _write_rows(self, rows):
         for row in rows:
             self._write_row(row)
 
+    def _write_empty_row(self):
+        self._write_row(self._formatter.empty_row())
+
     def _encode(self, row):
         return row.encode(self._encoding)
+
+    def _write_row(self):
+        raise NotImplementedError
 
 
 class SpaceSeparatedTxtWriter(_DataFileWriter):
     _separator = ' '*4
-    _formatter = TxtFormatter(cols=8)
+    _formatter = TxtFormatter(column_count=8)
 
     def _write_row(self, row):
         line = self._separator.join(row) + self._line_separator
@@ -92,7 +87,7 @@ class SpaceSeparatedTxtWriter(_DataFileWriter):
 
 class PipeSeparatedTxtWriter(_DataFileWriter):
     _separator = ' | '
-    _formatter = PipeFormatter(cols=8)
+    _formatter = PipeFormatter(column_count=8)
 
     def _write_row(self, row):
         row = self._separator.join(row)
@@ -102,7 +97,7 @@ class PipeSeparatedTxtWriter(_DataFileWriter):
 
 
 class TsvFileWriter(_DataFileWriter):
-    _formatter = TsvFormatter(cols=8)
+    _formatter = TsvFormatter(column_count=8)
 
     def __init__(self, configuration):
         if not csv:
@@ -117,7 +112,7 @@ class TsvFileWriter(_DataFileWriter):
 
 
 class HtmlFileWriter(_DataFileWriter):
-    _formatter = HtmlFormatter(cols=5)
+    _formatter = HtmlFormatter(column_count=5)
 
     def __init__(self, configuration):
         _DataFileWriter.__init__(self, configuration)

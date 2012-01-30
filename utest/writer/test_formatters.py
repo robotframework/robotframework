@@ -6,20 +6,6 @@ from robot.writer.htmlformatter import HtmlFormatter, HtmlCell
 from robot.utils.asserts import assert_equals, assert_true
 
 
-class TestRowSplitter(unittest.TestCase):
-
-    def test_escaping_empty_cells_at_eol(self):
-        formatter = RowSplitter(cols=3)
-        assert_equals(formatter.split(['Some', 'text', '', 'with empty'], 0),
-                                       [['Some', 'text', '${EMPTY}'],
-                                        ['...', 'with empty']])
-
-    def test_splitting_inside_comment(self):
-        formatter = RowSplitter(cols=3)
-        assert_equals(formatter.split(['Kw', 'Arg', '#Comment in', 'many cells'], 0),
-                      [['Kw', 'Arg', '#Comment in'], ['...', '#many cells']])
-
-
 class TestTxtFormatter(unittest.TestCase):
 
     def setUp(self):
@@ -30,6 +16,13 @@ class TestTxtFormatter(unittest.TestCase):
 
     def test_replacing_newlines(self):
         assert_equals(self._formatter._escape(['so\nme']), ['so me'])
+
+    def test_escaping_consecutive_spaces(self):
+        settings = TestCaseFileSettingTable(None)
+        settings.force_tags.value = ['f  1']
+        assert_equals(list(self._formatter.format_table(settings))[0],
+            ['Force Tags    ', 'f \\ 1'])
+
 
 
 class TestPipeFormatter(unittest.TestCase):
@@ -44,14 +37,19 @@ class TestPipeFormatter(unittest.TestCase):
     def test_empty_cell(self):
         settings = TestCaseFileSettingTable(None)
         settings.force_tags.value = ['f1', '', 'f3']
-        assert_equals(list(PipeFormatter(4).setting_table(settings))[0],
+        assert_equals(list(PipeFormatter(4).format_table(settings))[0],
                       ['Force Tags    ', 'f1', '  ', 'f3'])
 
 
 class TestTsvFormatter(unittest.TestCase):
 
+    def setUp(self):
+        self._formatter = TsvFormatter(6)
     def test_replacing_newlines(self):
-        assert_equals(TsvFormatter(6)._format_row(['so\nme'])[0], 'so me')
+        assert_equals(self._formatter._format_row(['so\nme'])[0], 'so me')
+
+    def test_escaping_consecutive_spaces(self):
+        assert_equals(self._formatter._format_row(['so  me'])[0], 'so \ me')
 
 
 class TestHtmlFormatter(unittest.TestCase):
@@ -63,7 +61,7 @@ class TestHtmlFormatter(unittest.TestCase):
         table = TestCaseFileSettingTable(None)
         table.set_header('Settings')
         table.doc.value = 'Some documentation'
-        formatted = list(self._formatter.setting_table(table))
+        formatted = list(self._formatter.format_table(table))
         assert_equals(self._rows_to_text(formatted),
                       [['Documentation', 'Some documentation']])
         assert_equals(formatted[0][1].attributes,
@@ -84,7 +82,7 @@ class TestHtmlFormatter(unittest.TestCase):
         test.doc.value = 'Some doc'
         assert_equals(self._rows(table)[0],
             ['<a name="test_Test">Test</a>', '[Documentation]', 'Some doc'])
-        assert_equals(list(self._formatter.test_table(table))[0][2].attributes,
+        assert_equals(list(self._formatter.format_table(table))[0][2].attributes,
                       {'colspan': '3', 'class': 'colspan3'})
 
     def test_test_documentation_with_comment(self):
@@ -94,7 +92,7 @@ class TestHtmlFormatter(unittest.TestCase):
         test.doc._set_comment('a comment')
         assert_equals(self._rows(table)[0],
             ['<a name="test_Test">Test</a>', '[Documentation]', 'Some doc', '# a comment', ''])
-        assert_equals(list(self._formatter.test_table(table))[0][2].attributes, {})
+        assert_equals(list(self._formatter.format_table(table))[0][2].attributes, {})
 
     def test_testcase_table_custom_headers(self):
         self._check_header_length([], 1)
@@ -106,11 +104,11 @@ class TestHtmlFormatter(unittest.TestCase):
         table = self._create_test_table(['h', 'e'])
         test = table.add('Some test')
         test.add_step(['kw', 'arg1', 'arg2', 'arg3'])
-        assert_equals(len(self._formatter.header_row(table)), 5)
+        assert_equals(len(self._formatter.format_header(table)), 5)
 
     def _check_header_length(self, headers, expected_length):
         table = self._create_test_table(headers)
-        assert_equals(len(self._formatter.header_row(table)), expected_length)
+        assert_equals(len(self._formatter.format_header(table)), expected_length)
 
     def test_testcase_table_header_colspan(self):
         self._assert_header_colspan([], 5)
@@ -118,8 +116,11 @@ class TestHtmlFormatter(unittest.TestCase):
 
     def _assert_header_colspan(self, header, expected_colspan):
         table = self._create_test_table(header)
-        row = self._formatter.header_row(table)
+        row = self._formatter.format_header(table)
         assert_equals(row[0].attributes['colspan'], str(expected_colspan))
+
+    def test_escaping_consecutive_spaces(self):
+        assert_equals(self._formatter._format_row(['so  me'])[0].content, 'so \ me')
 
     def test_number_of_columns_is_max_of_header_and_row_widths(self):
         table = self._create_test_table(['a', 'b'])
@@ -132,20 +133,20 @@ class TestHtmlFormatter(unittest.TestCase):
         self._check_row_lengths(table, 4)
 
     def _check_row_lengths(self, table, expected_length):
-        rows = list(self._formatter.test_table(table))
+        rows = list(self._formatter.format_table(table))
         assert_true(len(rows) > 0)
         for row in rows:
             assert_equals(len(row), expected_length)
 
     def _rows(self, table):
-        return self._rows_to_text(self._formatter.test_table(table))
+        return self._rows_to_text(self._formatter.format_table(table))
 
     def _rows_to_text(self, rows):
         return [[cell.content for cell in row] for row in rows]
 
-    def _create_test_table(self, additional_headers=[]):
+    def _create_test_table(self, additional_headers=()):
         table = TestCaseTable(None)
-        table.set_header(['Test Cases'] + additional_headers)
+        table.set_header(['Test Cases'] + list(additional_headers))
         return table
 
     def test_add_br_to_newlines(self):

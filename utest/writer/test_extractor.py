@@ -33,11 +33,11 @@ test_table_rows = [['A test case'],
 class DataExtractorTest(unittest.TestCase):
 
     def test_extracting_from_simple_table(self):
-        assert_equals(list(DataExtractor().rows_from_simple_table(var_table)),
+        assert_equals(list(DataExtractor().rows_from_table(var_table)),
                       var_table_rows)
 
     def test_extracting_from_indented_table(self):
-        for idx, row in enumerate(DataExtractor().rows_from_indented_table(test_table)):
+        for idx, row in enumerate(DataExtractor()._rows_from_indented_table(test_table)):
             assert_equals(row, test_table_rows[idx])
 
     def test_names_on_first_content_row(self):
@@ -45,5 +45,5 @@ class DataExtractorTest(unittest.TestCase):
         t = table.add('Test')
         t.add_step(['No op'])
         extractor = DataExtractor(want_name_on_first_content_row=True)
-        assert_equals(list(extractor.rows_from_indented_table(table)),
+        assert_equals(list(extractor._rows_from_indented_table(table)),
                       [['Test', 'No op']])

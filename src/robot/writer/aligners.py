@@ -25,7 +25,7 @@ class _Aligner(object):
     def align_row(self, row):
         for index, col in enumerate(row[:self._last_aligned_column(row)]):
             if len(self._widths) <= index:
-                continue
+                break
             row[index] = row[index].ljust(self._widths[index])
         return row
 
@@ -35,7 +35,7 @@ class _Aligner(object):
 
 class FirstColumnAligner(_Aligner):
 
-    def __init__(self, cols, first_column_width):
+    def __init__(self, first_column_width):
         _Aligner.__init__(self, [first_column_width])
 
 
@@ -48,11 +48,12 @@ class ColumnAligner(_Aligner):
 
     def _count_justifications(self, table):
         result = [self._first_column_width] + [len(h) for h in table.header[1:]]
-        for element in [list(kw) for kw in list(table)]:
+        for element in table:
             for step in element:
                 for index, col in enumerate(step.as_list()):
                     index += 1
                     if len(result) <= index:
-                        result.append(0)
-                    result[index] = max(len(col), result[index])
+                        result.append(len(col))
+                    else:
+                        result[index] = max(len(col), result[index])
         return result

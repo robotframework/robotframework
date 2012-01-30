@@ -23,7 +23,7 @@ class HtmlFormatter(_DataFileFormatter):
     _want_names_on_first_content_row = True
 
     def _format_row(self, row, table=None):
-        row = self._pad(row, table)
+        row = self._pad(self._escape_consecutive_whitespace(row), table)
         if self._is_documentation_row(row):
             return self._create_documentation_row(row)
         first_cell = self._create_first_cell(row[0], table)
@@ -35,7 +35,7 @@ class HtmlFormatter(_DataFileFormatter):
         return row[0] == 'Documentation'
 
     def _create_documentation_row(self, row):
-        return [NameCell(row[0]), DocumentationCell(row[1], span=self._cols-1)]
+        return [NameCell(row[0]), DocumentationCell(row[1], span=self._column_count-1)]
 
     def _is_indented_documentation_row(self, cells, table):
         return self._is_indented_table(table) and cells and \
@@ -45,7 +45,7 @@ class HtmlFormatter(_DataFileFormatter):
         start = [first_cell, HtmlCell(cells[0])]
         if any(c.startswith('#') for c in cells):
             return start + [HtmlCell(c) for c in cells[1:]]
-        return start + [DocumentationCell(cells[1], self._cols-2)]
+        return start + [DocumentationCell(cells[1], self._column_count-2)]
 
     def _create_first_cell(self, cell, table):
         if self._is_indented_table(table) and cell:
@@ -53,23 +53,23 @@ class HtmlFormatter(_DataFileFormatter):
                                                   else 'test')
         return NameCell(cell)
 
-    def header_row(self, table):
+    def format_header(self, table):
         if not self._should_align_columns(table) or len(table.header) == 1:
-            return [HeaderCell(table.header[0], self._cols)]
+            return [HeaderCell(table.header[0], self._column_count)]
         headers = self._pad_header(table)
         return [HeaderCell(hdr) for hdr in headers]
 
     def _pad_header(self, table):
         header = table.header
-        return header + [''] * (self._column_count(table) - len(header))
+        return header + [''] * (self._get_column_count(table) - len(header))
 
     def _pad(self, row, table):
-        return row + [''] * (self._column_count(table) - len(row))
+        return row + [''] * (self._get_column_count(table) - len(row))
 
-    def _column_count(self, table):
+    def _get_column_count(self, table):
         if table is None or len(table.header) == 1 \
                 or not self._is_indented_table(table):
-            return self._cols
+            return self._column_count
         return max(self._max_column_count(table), len(table.header))
 
     def _max_column_count(self, table):
