@@ -39,7 +39,7 @@ ESCAPES = dict(
 
 class ArgumentParser:
     _opt_line_re = re.compile('''
-    ^\s{,4}       # max 4 spaces in the beginning of the line
+    ^\s{1,4}      # 1-4 spaces in the beginning of the line
     ((-\S\s)*)    # all possible short options incl. spaces (group 1)
     --(\S{2,})    # required long option (group 3)
     (\s\S+)?      # optional value (group 4)
