@@ -250,7 +250,7 @@ class _Table(object):
         self.parent.report_invalid_syntax(self.name, message, level)
 
     def __len__(self):
-        return len(list(self))
+        return sum(1 for item in self)
 
 
 class _WithSettings(object):
