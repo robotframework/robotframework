@@ -1,7 +1,7 @@
 import unittest
 import os
 
-from robot import DataError
+from robot.errors import DataError
 from robot.writer.datafilewriter import WritingContext
 from robot.parsing.model import TestCaseFile
 from robot.utils.asserts import assert_equals, assert_raises
