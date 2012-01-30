@@ -27,7 +27,6 @@ class Application(object):
     def __init__(self, usage, name=None, version=None, arg_limits=None,
                  logger=None):
         self._ap = ArgumentParser(usage, name, version, arg_limits)
-        self._exit = exit
         if not logger:
             from robot.output import LOGGER as logger  # Hack
         self._logger = logger
@@ -44,7 +43,7 @@ class Application(object):
 
     def _parse_arguments(self, cli_args):
         try:
-            options, arguments = self._ap.parse_args(cli_args)
+            options, arguments = self._ap.parse_args(cli_args, check_args=True)
         except Information, msg:
             self._report_info(unicode(msg))
         except DataError, err:
