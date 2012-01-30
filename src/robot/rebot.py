@@ -14,7 +14,7 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-DOC = """Rebot -- Robot Framework Report and Log Generator
+USAGE = """Rebot -- Robot Framework Report and Log Generator
 
 Version: <VERSION>
 
@@ -253,10 +253,58 @@ import sys
 if 'robot' not in sys.modules:
     import pythonpathsetter  # running robot/rebot.py as a script
 
-import robot
+from robot.conf import RebotSettings
+from robot.errors import DataError
+from robot.reporting import ResultWriter
+from robot.output import LOGGER
+from robot.utils import Application
+
+
+def rebot_cli(cli_args):
+    app = Application(USAGE)
+    opts, args = app.parse_arguments(cli_args)
+    rc = app.execute(_rebot, opts, args)
+    app.exit(rc)
+
+
+
+def rebot(*datasources, **options):
+    """Creates reports/logs from given Robot output files with given options.
+
+    Given input files are paths to Robot output files similarly as when running
+    rebot from command line. Options are given as keywords arguments and
+    their names are same as long command line options without hyphens.
+
+    To capture stdout and/or stderr streams, pass open file objects in as
+    keyword arguments `stdout` and `stderr`, respectively.
+
+    A return code is returned similarly as when running on the command line.
+
+    Examples:
+    rebot('path/to/output.xml')
+    with open('stdout.txt', 'w') as stdout:
+        rebot('o1.xml', 'o2.xml', report='r.html', log='NONE', stdout=stdout)
+
+    Equivalent command line usage:
+    rebot path/to/output.xml
+    rebot --report r.html --log NONE o1.xml o2.xml > stdout.txt
+    """
+    app = Application('xxx', exit=False)
+    rc = app.execute(_rebot, options, datasources)
+    return app.exit(rc)
+
+def _rebot(*datasources, **options):
+    settings = RebotSettings(options)
+    LOGGER.register_console_logger(colors=settings['MonitorColors'],
+                                   stdout=settings['StdOut'],
+                                   stderr=settings['StdErr'])
+    LOGGER.disable_message_cache()
+    rc = ResultWriter(*datasources).write_results(settings)
+    if rc < 0:
+        raise DataError('No outputs created.')
+    return rc
 
 
 if __name__ == '__main__':
-    # TODO: rebot_from_cli should not need DOC
-    rc = robot.rebot_from_cli(sys.argv[1:], DOC)
-    sys.exit(rc)
+    rebot_cli(sys.argv[1:])
+
