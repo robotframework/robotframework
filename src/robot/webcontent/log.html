@@ -175,14 +175,11 @@ function addTestExecutionLog(main) {
       <td>
         <a class="expand"
            href="javascript:expandAllChildren('${id}')">Expand All</a>
-        <div class="foldingbutton" id="${id}_unfoldlink"
-             onclick="openSuite('${id}');"
-             style="display: block;">+</div>
-        <div class="foldingbutton" id="${id}_foldlink"
-             onclick="closeElement('${id}');"
-             style="display: none;">-</div>
-        <span class="${status.toLowerCase()}">TEST&nbsp;SUITE:</span>
-        <a class="name" title="${name}">${name}</a>
+        <div onclick="toggleSuite('${id}');" class="elementheader">
+            <div id="${id}_foldingbutton" class="foldingbutton">+</div>
+            <span class="${status.toLowerCase()}">TEST&nbsp;SUITE:</span>
+            <a class="name" title="${name}">${name}</a>
+        </div>
       </td>
     </tr>
     <tr>
@@ -241,17 +238,12 @@ function addTestExecutionLog(main) {
       <td>
         <a class="expand"
            href="javascript:expandAllChildren('${id}')">Expand All</a>
-        <div class="foldingbutton"
-             id="${id}_unfoldlink"
-             onclick="openTest('${id}');"
-             style="display: block;">+</div>
-        <div class="foldingbutton"
-             id="${id}_foldlink"
-             onclick="closeElement('${id}');"
-             style="display: none;">-</div>
-        <span class="${status.toLowerCase()}">TEST&nbsp;CASE: </span>
-        <a class="name" title="${fullName}">${name}</a>
-        {{if !isCritical}}<span>  (non-critical)</span>{{/if}}
+        <div onclick="toggleTest('${id}');" class="elementheader">
+            <div id="${id}_foldingbutton" class="foldingbutton">+</div>
+            <span class="${status.toLowerCase()}">TEST&nbsp;CASE: </span>
+            <a class="name" title="${fullName}">${name}</a>
+            {{if !isCritical}}<span>  (non-critical)</span>{{/if}}
+        </div>
       </td>
     </tr>
     <tr>
@@ -305,17 +297,12 @@ function addTestExecutionLog(main) {
   <table class="keyword" id="${id}">
     <tr>
       <td>
-        <div class="foldingbutton"
-             id="${id}_foldlink"
-             onclick="closeElement('${id}');"
-             style="display: none;">-</div>
-        <div class="foldingbutton"
-             id="${id}_unfoldlink"
-             onclick="openKeyword('${id}');"
-             style="display: block;">+</div>
-        <span class="${status.toLowerCase()}">${type}: </span>
-        <a class="name" title="${name}">${name}</a>
-        <span class="arg">${arguments}</span>
+          <div onclick="toggleKeyword('${id}');" class="elementheader">
+              <div id="${id}_foldingbutton" class="foldingbutton">+</div>
+              <span class="${status.toLowerCase()}">${type}: </span>
+              <a class="name" title="${name}">${name}</a>
+              <span class="arg">${arguments}</span>
+          </div>
       </td>
     </tr>
     <tr>

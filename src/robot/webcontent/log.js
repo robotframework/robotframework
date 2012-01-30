@@ -1,13 +1,13 @@
-function openSuite(suiteId) {
-    openElement(suiteId, ['keyword', 'suite', 'test']);
+function toggleSuite(suiteId) {
+    toggleElement(suiteId, ['keyword', 'suite', 'test']);
 }
 
-function openTest(testId) {
-    openElement(testId, ['keyword']);
+function toggleTest(testId) {
+    toggleElement(testId, ['keyword']);
 }
 
-function openKeyword(kwId) {
-    openElement(kwId, ['keyword', 'message']);
+function toggleKeyword(kwId) {
+    toggleElement(kwId, ['keyword', 'message']);
 }
 
 function addElements(elems, templateName, target){
@@ -16,18 +16,16 @@ function addElements(elems, templateName, target){
     }
 }
 
-function openElement(elementId, childrenNames) {
-    $('#'+elementId+'_unfoldlink').css("background", "yellow");
+function toggleElement(elementId, childrenNames) {
+    var foldingButton = $('#'+elementId+'_foldingbutton');
     var childElement = $("#"+elementId+"_children");
-    childElement.show();
+    childElement.toggle(100);
     if (!childElement.hasClass("populated")) {
         var element = window.testdata.find(elementId);
         element.callWhenChildrenReady(drawCallback(element, childElement, childrenNames));
         childElement.addClass("populated");
     }
-    $('#'+elementId+'_foldlink').show();
-    $('#'+elementId+'_unfoldlink').hide();
-    $('#'+elementId+'_unfoldlink').css("background", "white");
+    foldingButton.text(foldingButton.text() == '+' ? '-' : '+');
 }
 
 function drawCallback(element, childElement, childrenNames) {
@@ -36,12 +34,6 @@ function drawCallback(element, childElement, childrenNames) {
             addElements(element[childName + 's'](), childName + 'Template', childElement);
         });
     }
-}
-
-function closeElement(elementId) {
-    $("#"+elementId+"_children").hide();
-    $('#'+elementId+'_foldlink').hide();
-    $('#'+elementId+'_unfoldlink').show();
 }
 
 function expandRecursively(){
@@ -65,7 +57,9 @@ function expandRecursively(){
 }
 
 function expandElement(element) {
-    $("#" + element.id + "_unfoldlink").click();
+    if (!$("#" + element.id + "_children").is(":visible")) {
+        $("#" + element.id + " .elementheader").click();
+    }
 }
 
 function elementHiddenByUser(elementId) {

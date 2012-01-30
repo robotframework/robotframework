@@ -65,7 +65,7 @@ table.messages td.level {
     width: 4em;
     text-align: center;
 }
-/* Folding buttons */
+/* Folding */
 div.foldingbutton {
     text-align: center;
     line-height: 0.8em;
@@ -80,12 +80,15 @@ div.foldingbutton {
 }
 div.foldingbutton:hover {
     background: yellow;
-    cursor: pointer;
 }
 .expand {
     float: right;
     margin-right: 0.5em;
     font-size: 0.8em;
+}
+div.elementheader:hover {
+    cursor: pointer;
+    background: #F4F4FF;
 }
 /* Test, suite and kw names */
 .name {
