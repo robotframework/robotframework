@@ -3,7 +3,7 @@ from __future__ import with_statement
 from os.path import join, dirname
 import unittest
 from StringIO import StringIO
-from robot import DataError
+from robot.errors import DataError
 
 from robot.result import ResultFromXml
 from robot.utils.asserts import assert_equals, assert_true, assert_raises

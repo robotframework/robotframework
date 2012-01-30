@@ -14,27 +14,25 @@
 
 import sys
 
-from robot.output import LOGGER
-from robot import utils
 from robot.errors import (INFO_PRINTED, DATA_ERROR, STOPPED_BY_USER,
                           FRAMEWORK_ERROR, Information, DataError)
 
+from .argumentparser import ArgumentParser
+from .encoding import encode_output
+from .error import get_error_details
 
-class CommandLineApplication(object):
 
-    def __init__(self, usage, name=None, version=None, arg_limits=None, exit=True):
-        self._ap = utils.ArgumentParser(usage, name, version, arg_limits)
+class Application(object):
+
+    def __init__(self, usage, name=None, version=None, arg_limits=None, exit=True,
+                 logger=None):
+        self._ap = ArgumentParser(usage, name, version, arg_limits)
         self._exit = exit
-        LOGGER.register_file_logger()
-        LOGGER.info('%s %s' % (self.name, self.version))
-
-    @property
-    def name(self):
-        return self._ap.name
-
-    @property
-    def version(self):
-        return self._ap.version
+        if not logger:
+            from robot.output import LOGGER as logger  # Hack
+        self._logger = logger
+        self._logger.register_file_logger()
+        self._logger.info('%s %s' % (self._ap.name, self._ap.version))
 
     def parse_arguments(self, cli_args, check_args=True):
         try:
@@ -44,7 +42,7 @@ class CommandLineApplication(object):
         except DataError, err:
             return self._report_error(unicode(err), help=True)
         else:
-            LOGGER.info('Arguments: %s' % utils.seq2str(arguments))
+            self._logger.info('Arguments: %s' % ','.join(arguments))
             return options, arguments
 
     def execute(self, method, options, arguments):
@@ -56,14 +54,14 @@ class CommandLineApplication(object):
             return self._report_error('Execution stopped by user.',
                                       rc=STOPPED_BY_USER)
         except:
-            error, details = utils.get_error_details()
+            error, details = get_error_details()
             return self._report_error('Unexpected error: %s' % error,
                                       details, rc=FRAMEWORK_ERROR)
         else:
             return rc
 
     def _report_info(self, msg):
-        print utils.encode_output(unicode(msg))
+        print encode_output(unicode(msg))
         return self.exit(INFO_PRINTED)
 
     def _report_error(self, message, details=None, help=False, rc=DATA_ERROR):
@@ -71,11 +69,11 @@ class CommandLineApplication(object):
             message += '\n\nTry --help for usage information.'
         if details:
             message += '\n' + details
-        LOGGER.error(message)
+        self._logger.error(message)
         return self.exit(rc)
 
     def exit(self, rc):
-        LOGGER.close()
+        self._logger.close()
         if self._exit:
             sys.exit(rc)
         return rc

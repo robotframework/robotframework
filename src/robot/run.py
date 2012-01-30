@@ -14,7 +14,7 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-DOC = """Robot Framework -- A keyword-driven test automation framework
+USAGE = """Robot Framework -- A keyword-driven test automation framework
 
 Version: <VERSION>
 
@@ -311,10 +311,68 @@ import sys
 if 'robot' not in sys.modules:
     import pythonpathsetter  # running robot/run.py as a script
 
-import robot
+from robot.conf import RobotSettings
+from robot.output import LOGGER, Output, pyloggingconf
+from robot.reporting import ResultWriter
+from robot.running import TestSuite, STOP_SIGNAL_MONITOR
+from robot.utils import Application
+from robot.variables import init_global_variables
+
+
+
+def run_cli(cli_args):
+    app = Application(USAGE)
+    opts, args = app.parse_arguments(cli_args)
+    rc = app.execute(_run, opts, args)
+    app.exit(rc)
+
+
+def run(*datasources, **options):
+    """Executes given Robot data sources with given options.
+
+    Data sources are paths to files and directories, similarly as when running
+    pybot/jybot from command line. Options are given as keywords arguments and
+    their names are same as long command line options without hyphens.
+
+    To capture stdout and/or stderr streams, pass open file objects in as
+    keyword arguments `stdout` and `stderr`, respectively.
+
+    A return code is returned similarly as when running on the command line.
+
+    Examples:
+    run('path/to/tests.html')
+    with open('stdout.txt', 'w') as stdout:
+        run('t1.txt', 't2.txt', report='r.html', log='NONE', stdout=stdout)
+
+    Equivalent command line usage:
+    pybot path/to/tests.html
+    pybot --report r.html --log NONE t1.txt t2.txt > stdout.txt
+    """
+    app = Application('xxx', exit=False)
+    rc = app.execute(_run, options, datasources)
+    return app.exit(rc)
+
+def _run(*datasources, **options):
+    STOP_SIGNAL_MONITOR.start()
+    settings = RobotSettings(options)
+    pyloggingconf.initialize(settings['LogLevel'])
+    LOGGER.register_console_logger(width=settings['MonitorWidth'],
+                                   colors=settings['MonitorColors'],
+                                   stdout=settings['StdOut'],
+                                   stderr=settings['StdErr'])
+    init_global_variables(settings)
+    suite = TestSuite(datasources, settings)
+    output = Output(settings)
+    suite.run(output)
+    LOGGER.info("Tests execution ended. Statistics:\n%s"
+    % suite.get_stat_message())
+    output.close(suite)
+    if settings.is_rebot_needed():
+        output, settings = settings.get_rebot_datasource_and_settings()
+        ResultWriter(output).write_results(settings)
+    return suite.return_code
 
 
 if __name__ == '__main__':
-    # TODO: run_from_cli should not need DOC
-    rc = robot.run_from_cli(sys.argv[1:], DOC)
-    sys.exit(rc)
+    run_cli(sys.argv[1:])
+
