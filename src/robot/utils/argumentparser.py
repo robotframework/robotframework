@@ -23,6 +23,7 @@ import codecs
 import textwrap
 
 from robot.errors import DataError, Information, FrameworkError
+from robot.version import get_full_version
 
 from misc import plural_or_not
 from encoding import decode_output, decode_from_file_system
@@ -52,7 +53,7 @@ class ArgumentParser:
     \s*$
     ''', re.VERBOSE | re.IGNORECASE)
 
-    def __init__(self, usage, version=None, arg_limits=None):
+    def __init__(self, usage, name=None, version=None, arg_limits=None):
         """Available options and tool name are read from the usage.
 
         Tool name is got from the first row of the usage. It is either the
@@ -60,9 +61,9 @@ class ArgumentParser:
         """
         if not usage:
             raise FrameworkError('Usage cannot be empty')
+        self.name = name or usage.splitlines()[0].split(' -- ')[0].strip()
+        self.version = version or get_full_version()
         self._usage = usage
-        self._name = usage.splitlines()[0].split(' -- ')[0].strip()
-        self._version = version
         self._arg_limits = arg_limits
         self._short_opts = ''
         self._long_opts = []
@@ -367,8 +368,8 @@ class ArgumentParser:
 
     def _raise_help(self):
         msg = self._usage
-        if self._version:
-            msg = msg.replace('<VERSION>', self._version)
+        if self.version:
+            msg = msg.replace('<VERSION>', self.version)
         def replace_escapes(res):
             escapes = 'Available escapes: ' + self._get_available_escapes()
             lines = textwrap.wrap(escapes, width=len(res.group(2)))
@@ -378,9 +379,7 @@ class ArgumentParser:
         raise Information(msg)
 
     def _raise_version(self):
-        if not self._version:
-            raise FrameworkError('Version not set')
-        raise Information('%s %s' % (self._name, self._version))
+        raise Information('%s %s' % (self.name, self.version))
 
     def _raise_option_multiple_times_in_usage(self, opt):
         raise FrameworkError("Option '%s' multiple times in usage" % opt)

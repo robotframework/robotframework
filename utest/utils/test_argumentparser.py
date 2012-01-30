@@ -4,6 +4,7 @@ import os
 from robot.utils.argumentparser import ArgumentParser
 from robot.utils.asserts import *
 from robot.errors import Information, DataError, FrameworkError
+from robot.version import get_full_version
 
 
 USAGE = """Example Tool -- Stuff before hyphens is considered name
@@ -235,16 +236,22 @@ class TestPrintHelpAndVersion(unittest.TestCase):
                                self.ap2.parse_args, ['--help'])
 
     def test_name_is_got_from_first_line_of_the_usage(self):
-        assert_equals(self.ap._name, 'Example Tool')
-        assert_equals(self.ap2._name, 'Just Name Here')
+        assert_equals(self.ap.name, 'Example Tool')
+        assert_equals(self.ap2.name, 'Just Name Here')
+
+    def test_name_and_version_can_be_given(self):
+        ap = ArgumentParser(USAGE, name='Kakkonen', version='2')
+        assert_equals(ap.name, 'Kakkonen')
+        assert_equals(ap.version, '2')
 
     def test_print_version(self):
         assert_raises_with_msg(Information, 'Example Tool 1.0 alpha',
                                self.ap.parse_args, ['--version'])
 
     def test_print_version_when_version_not_set(self):
-        ap = ArgumentParser(' --version')
-        assert_raises(FrameworkError, ap.parse_args, ['--version'])
+        ap = ArgumentParser(' --version', name='Kekkonen')
+        msg = assert_raises(Information, ap.parse_args, ['--version'])
+        assert_equals(unicode(msg), 'Kekkonen %s' % get_full_version())
 
     def test_version_is_replaced_in_help(self):
         assert_raises_with_msg(Information, USAGE.replace('<VERSION>', '1.0 alpha'),
