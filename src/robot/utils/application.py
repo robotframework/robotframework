@@ -32,15 +32,7 @@ class Application(object):
             from robot.output import LOGGER as logger  # Hack
         self._logger = logger
         self._logger.register_file_logger()
-        self._logger.info('%s %s' % (self.name, self.version))
-
-    @property
-    def name(self):
-        return self._ap.name
-
-    @property
-    def version(self):
-        return self._ap.version
+        self._logger.info('%s %s' % (self._ap.name, self._ap.version))
 
     def parse_arguments(self, cli_args, check_args=True):
         try:
