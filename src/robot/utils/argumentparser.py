@@ -300,7 +300,7 @@ class ArgumentParser:
             if not args:
                 self._arg_limits = (0, 0)
             else:
-                maxargs = args[-1].endswith('s') and sys.maxint or len(args)
+                maxargs = sys.maxint if args[-1].endswith('s') else len(args)
                 self._arg_limits = (len(args), maxargs)
 
     def _parse_opt_line(self, line):
@@ -311,7 +311,7 @@ class ArgumentParser:
         if long_opt in self._names:
             self._raise_option_multiple_times_in_usage('--' + long_opt)
         self._names.append(long_opt)
-        short_opts = [ opt[1] for opt in res.group(1).split() ]
+        short_opts = [opt[1] for opt in res.group(1).split()]
         for sopt in short_opts:
             if self._short_to_long.has_key(sopt):
                 self._raise_option_multiple_times_in_usage('-' + sopt)
@@ -322,7 +322,7 @@ class ArgumentParser:
         # options with arguments
         if res.group(4):
             long_opt += '='
-            short_opts = [ sopt + ':' for sopt in short_opts ]
+            short_opts = [sopt+':' for sopt in short_opts]
         else:
             self._toggle_opts.append(long_opt)
         self._long_opts.append(long_opt)
