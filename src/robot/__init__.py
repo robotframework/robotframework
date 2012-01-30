@@ -27,20 +27,19 @@ from robot.output import Output, LOGGER, pyloggingconf
 from robot.variables import init_global_variables
 from robot.version import get_version, get_full_version
 from robot import utils
-from robot.cliapp import CommandLineApplication
 
 
 __version__ = get_version()
 
 
 def run_from_cli(cli_args, usage):
-    app = CommandLineApplication(usage)
+    app = utils.Application(usage)
     opts, args = app.parse_arguments(cli_args)
     rc = app.execute(_run, opts, args)
     app.exit(rc)
 
 def rebot_from_cli(cli_args, usage):
-    app = CommandLineApplication(usage)
+    app = utils.Application(usage)
     opts, args = app.parse_arguments(cli_args)
     rc = app.execute(_rebot, opts, args)
     app.exit(rc)
@@ -66,7 +65,7 @@ def run(*datasources, **options):
     pybot path/to/tests.html
     pybot --report r.html --log NONE t1.txt t2.txt > stdout.txt
     """
-    app = CommandLineApplication('xxx', exit=False)
+    app = utils.Application('xxx', exit=False)
     rc = app.execute(_run, options, datasources)
     return app.exit(rc)
 
@@ -112,7 +111,7 @@ def rebot(*datasources, **options):
     rebot path/to/output.xml
     rebot --report r.html --log NONE o1.xml o2.xml > stdout.txt
     """
-    app = CommandLineApplication('xxx', exit=False)
+    app = utils.Application('xxx', exit=False)
     rc = app.execute(_rebot, options, datasources)
     return app.exit(rc)
 
