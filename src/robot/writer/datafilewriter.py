@@ -41,6 +41,9 @@ class WritingContext(object):
     txt_format = 'txt'
     html_format = 'html'
     tsv_format = 'tsv'
+    txt_column_count = 8
+    html_column_count = 5
+    tsv_column_count = 8
     _formats = [txt_format, html_format, tsv_format]
 
     def __init__(self, datafile, format='', output=None,

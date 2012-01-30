@@ -42,9 +42,9 @@ def FileWriter(context):
 
 
 class _DataFileWriter(object):
-    _formatter = None
 
-    def __init__(self, configuration):
+    def __init__(self, formatter, configuration):
+        self._formatter = formatter
         self._output = configuration.output
         self._line_separator = configuration.line_separator
         self._encoding = configuration.encoding
@@ -78,7 +78,10 @@ class _DataFileWriter(object):
 
 class SpaceSeparatedTxtWriter(_DataFileWriter):
     _separator = ' '*4
-    _formatter = TxtFormatter(column_count=8)
+
+    def __init__(self, configuration):
+        formatter = TxtFormatter(configuration.txt_column_count)
+        _DataFileWriter.__init__(self, formatter, configuration)
 
     def _write_row(self, row):
         line = self._separator.join(row).rstrip() + self._line_separator
@@ -87,7 +90,10 @@ class SpaceSeparatedTxtWriter(_DataFileWriter):
 
 class PipeSeparatedTxtWriter(_DataFileWriter):
     _separator = ' | '
-    _formatter = PipeFormatter(column_count=8)
+
+    def __init__(self, configuration):
+        formatter = PipeFormatter(configuration.txt_column_count)
+        _DataFileWriter.__init__(self, formatter, configuration)
 
     def _write_row(self, row):
         row = self._separator.join(row)
@@ -97,13 +103,13 @@ class PipeSeparatedTxtWriter(_DataFileWriter):
 
 
 class TsvFileWriter(_DataFileWriter):
-    _formatter = TsvFormatter(column_count=8)
 
     def __init__(self, configuration):
         if not csv:
             raise RuntimeError('No csv module found. '
                                'Writing tab separated format is not possible.')
-        _DataFileWriter.__init__(self, configuration)
+        formatter = TsvFormatter(configuration.tsv_column_count)
+        _DataFileWriter.__init__(self, formatter, configuration)
         self._writer = csv.writer(configuration.output, dialect='excel-tab',
                                   lineterminator=configuration.line_separator)
 
@@ -112,10 +118,10 @@ class TsvFileWriter(_DataFileWriter):
 
 
 class HtmlFileWriter(_DataFileWriter):
-    _formatter = HtmlFormatter(column_count=5)
 
     def __init__(self, configuration):
-        _DataFileWriter.__init__(self, configuration)
+        formatter = HtmlFormatter(configuration.html_column_count)
+        _DataFileWriter.__init__(self, formatter, configuration)
         self._name = configuration.datafile.name
         self._writer = utils.HtmlWriter(configuration.output,
                                         configuration.line_separator,
