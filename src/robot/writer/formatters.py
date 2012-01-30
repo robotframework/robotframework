@@ -27,8 +27,8 @@ class _DataFileFormatter(object):
         self._column_count = column_count
         self._extractor = DataExtractor(self._want_names_on_first_content_row)
 
-    def empty_row(self):
-        return self._format_row([])
+    def empty_row_after(self, table):
+        return self._format_row([], table)
 
     def format_header(self, table):
         return self._format_row(self._header_for(table))
@@ -40,6 +40,8 @@ class _DataFileFormatter(object):
         return [self._format_row(r, table) for r in rows]
 
     def _should_split_rows(self, table):
+        if self._should_align_columns(table):
+            return False
         return True
 
     def _split_rows(self, rows, table):
@@ -108,11 +110,6 @@ class TxtFormatter(_DataFileFormatter):
         if aligner:
             return aligner.align_row(header)
         return header
-
-    def _should_split_rows(self, table):
-        if self._should_align_columns(table):
-            return False
-        return True
 
     def _escape(self, row):
         return self._escape_consecutive_whitespace(

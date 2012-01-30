@@ -57,7 +57,7 @@ class _DataFileWriter(object):
     def _write_table(self, table):
         self._write_header(table)
         self._write_rows(self._formatter.format_table(table))
-        self._write_empty_row()
+        self._write_empty_row(table)
 
     def _write_header(self, table):
         self._write_row(self._formatter.format_header(table))
@@ -66,8 +66,8 @@ class _DataFileWriter(object):
         for row in rows:
             self._write_row(row)
 
-    def _write_empty_row(self):
-        self._write_row(self._formatter.empty_row())
+    def _write_empty_row(self, table):
+        self._write_row(self._formatter.empty_row_after(table))
 
     def _encode(self, row):
         return row.encode(self._encoding)
