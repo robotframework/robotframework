@@ -101,8 +101,7 @@ class StatusHighlighter:
 
     def __init__(self, colors, *streams):
         self._current = None
-        self._colors = colors.upper()
-        self._highlighters = dict((stream, self._get_highlighter(stream))
+        self._highlighters = dict((stream, self._get_highlighter(stream, colors))
                                   for stream in streams)
 
     def start(self, message, stream):
@@ -115,10 +114,10 @@ class StatusHighlighter:
     def end(self):
         self._current.reset()
 
-    def _get_highlighter(self, stream):
+    def _get_highlighter(self, stream, colors):
         auto = hasattr(stream, 'isatty') and stream.isatty()
         enable = {'AUTO': auto,
                   'ON': True,
                   'FORCE': True,   # compatibility with 2.5.5 and earlier
-                  'OFF': False}.get(self._colors, auto)
+                  'OFF': False}.get(colors.upper(), auto)
         return Highlighter(stream) if enable else NoHighlighting(stream)
