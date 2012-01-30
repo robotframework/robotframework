@@ -249,6 +249,9 @@ class _Table(object):
     def report_invalid_syntax(self, message, level='ERROR'):
         self.parent.report_invalid_syntax(self.name, message, level)
 
+    def __len__(self):
+        return len(list(self))
+
 
 class _WithSettings(object):
 
@@ -309,8 +312,8 @@ class _SettingTable(_Table, _WithSettings):
         self.imports.append(Variables(self, name, args, comment=comment))
         return self.imports[-1]
 
-    def __nonzero__(self):
-        return any(setting.is_set() for setting in self)
+    def __len__(self):
+        return sum(1 for setting in self if setting.is_set())
 
 
 class TestCaseFileSettingTable(_SettingTable):
@@ -398,9 +401,6 @@ class VariableTable(_Table):
     def __iter__(self):
         return iter(self.variables)
 
-    def __nonzero__(self):
-        return bool(self.variables)
-
 
 class TestCaseTable(_Table):
     type = 'test case'
@@ -419,9 +419,6 @@ class TestCaseTable(_Table):
 
     def __iter__(self):
         return iter(self.tests)
-
-    def __nonzero__(self):
-        return bool(self.tests)
 
     def is_started(self):
         return bool(self._header)
@@ -444,9 +441,6 @@ class KeywordTable(_Table):
 
     def __iter__(self):
         return iter(self.keywords)
-
-    def __nonzero__(self):
-        return bool(self.keywords)
 
 
 class Variable(object):

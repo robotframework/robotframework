@@ -133,6 +133,14 @@ class TestSettingTable(unittest.TestCase):
         self.table.set_header(['Settings', 'Value', 'value', 'Value'])
         assert_equals(self.table.header, ['Settings'])
 
+    def test_len(self):
+        assert_equals(len(self.table), 0)
+        self.table.add_library('SomeLib')
+        assert_equals(len(self.table), 1)
+        self.table.doc.value = 'Some doc'
+        self.table.add_metadata('meta name', 'content')
+        assert_equals(len(self.table), 3)
+
 
 class TestVariableTable(unittest.TestCase):
 
@@ -168,6 +176,13 @@ class TestVariableTable(unittest.TestCase):
     def test_old_style_headers_are_ignored(self):
         self.table.set_header(['Variable', 'value', 'Value'])
         assert_equals(self.table.header, ['Variable'])
+
+    def test_len(self):
+        self.table.set_header(['Variable', 'value', 'Value'])
+        assert_equals(len(self.table), 0)
+        self.table.add('${a var}', 'some')
+        self.table.add('@{b var}', 's', 'ome')
+        assert_equals(len(self.table), 2)
 
 
 class TestTestCaseTable(unittest.TestCase):
@@ -212,6 +227,13 @@ class TestTestCaseTable(unittest.TestCase):
         self.table.set_header(['test case', 'Action', 'Arg', 'Argument'])
         assert_equals(self.table.header, ['test case'])
 
+    def test_len(self):
+        self.table.set_header(['Test Case'])
+        assert_equals(len(self.table), 0)
+        self.table.add('A test')
+        self.table.add('B test')
+        assert_equals(len(self.table), 2)
+
 
 class TestKeywordTable(unittest.TestCase):
 
@@ -254,6 +276,13 @@ class TestKeywordTable(unittest.TestCase):
     def test_old_style_headers_are_ignored(self):
         self.table.set_header(['keywords', 'Action', 'Arg', 'Argument'])
         assert_equals(self.table.header, ['keywords'])
+
+    def test_len(self):
+        self.table.set_header(['Keywords'])
+        assert_equals(len(self.table), 0)
+        self.table.add('A kw')
+        self.table.add('B keyword')
+        assert_equals(len(self.table), 2)
 
 
 class TestStep(unittest.TestCase):
@@ -342,24 +371,24 @@ class TestForLoop(unittest.TestCase):
 
 class TestSettings(unittest.TestCase):
 
-    def test_timeout_patch(self):
+    def test_timeout(self):
         timeout = Timeout('Timeout')
-        assert_equals(timeout.as_list(),['Timeout'])
+        assert_equals(timeout.as_list(), ['Timeout'])
         timeout.message='boo'
-        assert_equals(timeout.as_list(),['Timeout', '', 'boo'])
+        assert_equals(timeout.as_list(), ['Timeout', '', 'boo'])
         timeout.message=''
         timeout.value='1 second'
-        assert_equals(timeout.as_list(),['Timeout', '1 second'])
+        assert_equals(timeout.as_list(), ['Timeout', '1 second'])
         timeout.message='boo'
-        assert_equals(timeout.as_list(),['Timeout', '1 second', 'boo'])
+        assert_equals(timeout.as_list(), ['Timeout', '1 second', 'boo'])
 
-    def test_settings_patch(self):
+    def test_tags(self):
         tags = Tags('Tags')
-        assert_equals(tags.as_list(),['Tags'])
+        assert_equals(tags.as_list(), ['Tags'])
         tags.value = ['tag1','tag2']
-        assert_equals(tags.as_list(),['Tags', 'tag1', 'tag2'])
+        assert_equals(tags.as_list(), ['Tags', 'tag1', 'tag2'])
 
-    def test_fixture_patch(self):
+    def test_fixtures(self):
         fixture = Fixture('Teardown')
         assert_equals(fixture.as_list(), ['Teardown'])
         fixture.name = 'Keyword'
@@ -369,11 +398,11 @@ class TestSettings(unittest.TestCase):
         fixture.name = ''
         assert_equals(fixture.as_list(), ['Teardown', '', 'arg1', 'arg2'])
 
-    def test_template_patch(self):
+    def test_template(self):
         template = Template('Template')
-        assert_equals(template.as_list(),['Template'])
+        assert_equals(template.as_list(), ['Template'])
         template.value = 'value'
-        assert_equals(template.as_list(),['Template', 'value'])
+        assert_equals(template.as_list(), ['Template', 'value'])
 
 
 class TestCopy(unittest.TestCase):
