@@ -11,3 +11,4 @@ atest/results
 *$py.class
 ext-lib
 *.iml
+.DS_Store
