@@ -94,7 +94,7 @@ function makeElementVisible(element) {
     // before executing the callback function
     window.testdata.findPathTo(unescape(element), function (uniqueIds) {
         for (var i in uniqueIds) {
-            $("#" + uniqueIds[i] + "_unfoldlink").click();
+            $("#" + uniqueIds[i] + "_foldingbutton").click();
         }
         if (uniqueIds && uniqueIds.length > 0) {
             expandCriticalFailed(window.testdata.find(uniqueIds[uniqueIds.length - 1]));
