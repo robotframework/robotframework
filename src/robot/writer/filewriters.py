@@ -81,7 +81,7 @@ class SpaceSeparatedTxtWriter(_DataFileWriter):
     _formatter = TxtFormatter(column_count=8)
 
     def _write_row(self, row):
-        line = self._separator.join(row) + self._line_separator
+        line = self._separator.join(row).rstrip() + self._line_separator
         self._output.write(self._encode(line))
 
 

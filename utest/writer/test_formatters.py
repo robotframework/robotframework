@@ -24,7 +24,6 @@ class TestTxtFormatter(unittest.TestCase):
             ['Force Tags    ', 'f \\ 1'])
 
 
-
 class TestPipeFormatter(unittest.TestCase):
 
     def test_escaping_pipes(self):

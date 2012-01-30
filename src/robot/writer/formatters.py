@@ -87,7 +87,6 @@ class TsvFormatter(_DataFileFormatter):
 class TxtFormatter(_DataFileFormatter):
     _test_or_keyword_name_width = 18
     _setting_and_variable_name_width = 14
-    _align_last_column = False
 
     def _format_row(self, row, table=None):
         row = self._escape(row)
@@ -100,12 +99,15 @@ class TxtFormatter(_DataFileFormatter):
         if table and table.type in ['setting', 'variable']:
             return FirstColumnAligner(self._setting_and_variable_name_width)
         if self._should_align_columns(table):
-            return ColumnAligner(self._test_or_keyword_name_width, table,
-                                 self._align_last_column)
+            return ColumnAligner(self._test_or_keyword_name_width, table)
         return None
 
     def _header_for(self, table):
-        return ['*** %s ***' % table.header[0]] + table.header[1:]
+        header = ['*** %s ***' % table.header[0]] + table.header[1:]
+        aligner = self._aligner_for(table)
+        if aligner:
+            return aligner.align_row(header)
+        return header
 
     def _should_split_rows(self, table):
         if self._should_align_columns(table):
@@ -123,7 +125,6 @@ class TxtFormatter(_DataFileFormatter):
 
 
 class PipeFormatter(TxtFormatter):
-    _align_last_column = True
 
     def _escape(self, row):
         row = self._format_empty_cells(row)
