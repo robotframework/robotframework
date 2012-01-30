@@ -17,7 +17,7 @@ import sys
 if 'pythonpathsetter' not in sys.modules:
     from robot import pythonpathsetter
 if sys.platform.startswith('java'):
-    from robot import jythonworkarounds
+   from robot import jythonworkarounds
 from robot.conf import RobotSettings, RebotSettings
 from robot.errors import (DataError, Information, INFO_PRINTED, DATA_ERROR,
                           STOPPED_BY_USER, FRAMEWORK_ERROR)
@@ -34,17 +34,16 @@ __version__ = get_version()
 
 def run_from_cli(args, usage):
     LOGGER.info(get_full_version('Robot Framework'))
-    return _run_or_rebot_from_cli(run, args, usage, pythonpath='pythonpath')
+    return _run_or_rebot_from_cli(run, args, usage)
 
 def rebot_from_cli(args, usage):
     LOGGER.info(get_full_version('Rebot'))
     return _run_or_rebot_from_cli(rebot, args, usage)
 
-def _run_or_rebot_from_cli(method, cliargs, usage, **argparser_config):
+def _run_or_rebot_from_cli(method, cliargs, usage):
     LOGGER.register_file_logger()
     try:
-        options, datasources = _parse_arguments(cliargs, usage,
-                                                **argparser_config)
+        options, datasources = _parse_arguments(cliargs, usage)
     except Information, msg:
         print utils.encode_output(unicode(msg))
         return INFO_PRINTED
@@ -54,11 +53,9 @@ def _run_or_rebot_from_cli(method, cliargs, usage, **argparser_config):
     LOGGER.info('Data sources: %s' % utils.seq2str(datasources))
     return method(*datasources, **options)
 
-def _parse_arguments(cliargs, usage, **argparser_config):
+def _parse_arguments(cliargs, usage):
     ap = utils.ArgumentParser(usage, get_full_version())
-    return ap.parse_args(cliargs, argfile='argumentfile', unescape='escape',
-                         help='help', version='version', check_args=True,
-                         **argparser_config)
+    return ap.parse_args(cliargs, check_args=True)
 
 def _execute(method, datasources, options):
     try:

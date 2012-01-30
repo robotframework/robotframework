@@ -22,6 +22,7 @@ Options:
           nothing after value and next nothing after option name
   -v --variable name:value *
   -N --name name
+  -t -T --toggle   Something
   -h -? --help
   --version  Explanation
 
@@ -43,6 +44,7 @@ options:
   -v --variable name=value
   -x --var-able name=v1,v2   Explanation
   -3 --42
+  --help
 """
 
 
@@ -52,18 +54,18 @@ class TestArgumentParserInit(unittest.TestCase):
         self.ap = ArgumentParser(USAGE)
 
     def test_short_options(self):
-        assert_equals(self.ap._short_opts, 'd:r:E:v:N:h?')
+        assert_equals(self.ap._short_opts, 'd:r:E:v:N:tTh?')
 
     def test_long_options(self):
         expected = ['reportdir=', 'reportfile=', 'escape=', 'variable=',
-                    'name=', 'help', 'version']
+                    'name=', 'toggle', 'help', 'version']
         assert_equals(self.ap._long_opts, expected)
 
     def test_multi_options(self):
         assert_equals(self.ap._multi_opts, ['escape', 'variable'])
 
     def test_toggle_options(self):
-        assert_equals(self.ap._toggle_opts, ['help', 'version'])
+        assert_equals(self.ap._toggle_opts, ['toggle', 'help', 'version'])
 
     def test_options_must_be_indented_by_1_to_four_spaces(self):
         ap = ArgumentParser('''Name
@@ -101,49 +103,49 @@ class TestArgumentParserParseArgs(unittest.TestCase):
 
     def test_missing_argument_file_throws_data_error(self):
         inargs = '--argumentfile missing_argument_file_that_really_is_not_there.txt'.split()
-        self.assertRaises(DataError, self.ap.parse_args, inargs, argfile='argumentfile')
+        self.assertRaises(DataError, self.ap.parse_args, inargs)
 
     def test_single_options(self):
-        inargs = '-d reports --reportfile report.html -? arg'.split()
+        inargs = '-d reports --reportfile report.html -T arg'.split()
         opts, args = self.ap.parse_args(inargs)
         assert_equals(opts, {'reportdir':'reports', 'reportfile':'report.html',
-                             'variable':[], 'name':None, 'escape' : [],
-                             'help':True, 'version':False})
+                             'variable':[], 'name':None, 'escape':[],
+                             'toggle':True, 'help':False, 'version':False})
 
     def test_multi_options(self):
         inargs = '-v a:1 -v b:2 --name my_name --variable c:3 arg'.split()
         opts, args = self.ap.parse_args(inargs)
         assert_equals(opts, {'variable':['a:1','b:2','c:3'], 'name':'my_name',
-                             'reportdir':None, 'reportfile':None, 'escape' : [],
-                             'help':False, 'version':False})
+                             'reportdir':None, 'reportfile':None, 'escape':[],
+                             'toggle':False, 'help':False, 'version':False})
         assert_equals(args, ['arg'])
 
     def test_toggle_options(self):
         for inargs, exp in [('arg', False),
-                            ('--help arg', True),
-                            ('--help --name whatever -h arg', False),
-                            ('-? -h --help arg', True)]:
+                            ('--toggle arg', True),
+                            ('--toggle --name whatever -t arg', False),
+                            ('-t -T --toggle arg', True)]:
             opts, args = self.ap.parse_args(inargs.split())
-            assert_equals(opts['help'], exp)
+            assert_equals(opts['toggle'], exp)
             assert_equals(args, ['arg'])
 
     def test_single_option_multiple_times(self):
         for inargs in ['--name Foo -N Bar arg',
                        '-N Zap --name Foo --name Bar arg',
-                       '-N 1 -N 2 -N 3 -h --variable foo -N 4 --name Bar arg']:
+                       '-N 1 -N 2 -N 3 -t --variable foo -N 4 --name Bar arg']:
             opts, args = self.ap.parse_args(inargs.split())
             assert_equals(opts['name'], 'Bar')
             assert_equals(args, ['arg'])
 
     def test_case_insensitive_long_options(self):
-        opts, args = self.ap.parse_args('--EsCape X:y --HELP arg'.split())
-        assert_equals(opts['escape'], ['X:y'])
-        assert_equals(opts['help'], True)
+        opts, args = self.ap.parse_args('--VarIable X:y --TOGGLE arg'.split())
+        assert_equals(opts['variable'], ['X:y'])
+        assert_equals(opts['toggle'], True)
         assert_equals(args, ['arg'])
 
     def test_case_insensitive_long_options_with_equal_sign(self):
-        opts, args = self.ap.parse_args('--EsCape=X:y --escAPE=ZZ'.split())
-        assert_equals(opts['escape'], ['X:y', 'ZZ'])
+        opts, args = self.ap.parse_args('--VariAble=X:y --VARIABLE=ZzZ'.split())
+        assert_equals(opts['variable'], ['X:y', 'ZzZ'])
         assert_equals(args, [])
 
     def test_check_args_with_correct_args(self):
@@ -180,7 +182,7 @@ class TestArgumentParserParseArgs(unittest.TestCase):
     def test_unescape_options(self):
         cli = '--escape quot:Q -E space:SP -E lt:LT -E gt:GT ' \
                 + '-N QQQLTmySPfineSPnameGTQQQ sourceSPwithSPspaces'
-        opts, args = self.ap.parse_args(cli.split(), unescape='escape');
+        opts, args = self.ap.parse_args(cli.split())
         assert_equals(opts['name'], '"""<my fine name>"""')
         assert_equals(opts['escape'], ['quot:Q','space:SP','lt:LT','gt:GT'])
         assert_equals(args, ['source with spaces'])
@@ -230,7 +232,7 @@ class TestPrintHelpAndVersion(unittest.TestCase):
 
     def test_print_help(self):
         assert_raises_with_msg(Information, USAGE2,
-                               self.ap2.parse_args, ['--42'], help='42')
+                               self.ap2.parse_args, ['--help'])
 
     def test_name_is_got_from_first_line_of_the_usage(self):
         assert_equals(self.ap._name, 'Example Tool')
@@ -238,21 +240,22 @@ class TestPrintHelpAndVersion(unittest.TestCase):
 
     def test_print_version(self):
         assert_raises_with_msg(Information, 'Example Tool 1.0 alpha',
-                               self.ap.parse_args, ['--version'], version='version')
+                               self.ap.parse_args, ['--version'])
 
     def test_print_version_when_version_not_set(self):
-        assert_raises(FrameworkError, self.ap2.parse_args, ['--42', '-x a'], version='42')
+        ap = ArgumentParser(' --version')
+        assert_raises(FrameworkError, ap.parse_args, ['--version'])
 
     def test_version_is_replaced_in_help(self):
         assert_raises_with_msg(Information, USAGE.replace('<VERSION>', '1.0 alpha'),
-                               self.ap.parse_args, ['--help'], help='help')
+                               self.ap.parse_args, ['--help'])
 
     def test_escapes_are_replaced_in_help(self):
         usage = """Name
  --escape x:y      blaa blaa .............................................. end
                    <-----------------------ESCAPES---------------------------->
                    -- next line --
- --he"""
+ --help"""
         expected = """Name
  --escape x:y      blaa blaa .............................................. end
                    Available escapes: amp (&), apos ('), at (@), bslash (\),
@@ -261,9 +264,9 @@ class TestPrintHelpAndVersion(unittest.TestCase):
                    ()), percent (%), pipe (|), quest (?), quot ("), semic (;),
                    slash (/), space ( ), square1 ([), square2 (]), star (*)
                    -- next line --
- --he"""
+ --help"""
         assert_raises_with_msg(Information, expected,
-                               ArgumentParser(usage).parse_args, ['--he'], help='he')
+                               ArgumentParser(usage).parse_args, ['--help'])
 
 
 if __name__ == "__main__":
