@@ -30,7 +30,7 @@ class _BaseSettings(object):
                  'Exclude'          : ('exclude', []),
                  'Critical'         : ('critical', None),
                  'NonCritical'      : ('noncritical', None),
-                 'OutputDir'        : ('outputdir', '.'),
+                 'OutputDir'        : ('outputdir', utils.abspath('.')),
                  'Log'              : ('log', 'log.html'),
                  'Report'           : ('report', 'report.html'),
                  'Summary'          : ('summary', 'NONE'),
