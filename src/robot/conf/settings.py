@@ -66,11 +66,8 @@ class _BaseSettings(object):
 
     def _process_cli_opts(self, opts, log):
         for name, (cli_name, default) in self._cli_opts.items():
-            try:
-                value = opts[cli_name]
-                if value in [None, []]:
-                    raise KeyError
-            except KeyError:
+            value = opts.get(cli_name, default)
+            if value in [None, []]:
                 value = default
             self[name] = self._process_value(name, value, log)
 
