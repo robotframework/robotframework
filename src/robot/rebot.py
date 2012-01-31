@@ -262,7 +262,7 @@ from robot.utils import Application
 
 class Rebot(Application):
 
-    def main(self, *datasources, **options):
+    def main(self, datasources, **options):
         settings = RebotSettings(options)
         LOGGER.register_console_logger(colors=settings['MonitorColors'],
                                        stdout=settings['StdOut'],

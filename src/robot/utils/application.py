@@ -28,8 +28,15 @@ class Application(object):
 
     def __init__(self, usage, name=None, version=None, arg_limits=(1,),
                  logger=None):
-        self._ap = ArgumentParser(usage, name, version, arg_limits)
-        self._logger = logger or _NoLogging()
+        self._ap = ArgumentParser(usage, name, version, arg_limits,
+                                  self.validate)
+        self._logger = logger or DefaultLogger()
+
+    def main(self, arguments, **options):
+        raise NotImplementedError
+
+    def validate(self, options, arguments):
+        return options, arguments
 
     def execute_cli(self, cli_arguments):
         with self._logging():
@@ -63,7 +70,7 @@ class Application(object):
 
     def _execute(self, arguments, options):
         try:
-            rc = self.main(*arguments, **options)
+            rc = self.main(arguments, **options)
         except DataError, err:
             return self._report_error(unicode(err), help=True)
         except (KeyboardInterrupt, SystemExit):
@@ -75,9 +82,6 @@ class Application(object):
                                       details, rc=FRAMEWORK_ERROR)
         else:
             return rc
-
-    def main(self, *arguments, **options):
-        raise NotImplementedError
 
     def _report_info(self, msg):
         print encode_output(unicode(msg))
@@ -98,7 +102,7 @@ class Application(object):
         sys.exit(rc)
 
 
-class _NoLogging(object):
+class DefaultLogger(object):
 
     def register_file_logger(self):
         pass
@@ -107,7 +111,7 @@ class _NoLogging(object):
         pass
 
     def error(self, message):
-        pass
+        print encode_output(message)
 
     def close(self):
         pass

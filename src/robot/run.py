@@ -321,7 +321,7 @@ from robot.variables import init_global_variables
 
 class RobotFramework(Application):
 
-    def main(self, *datasources, **options):
+    def main(self, datasources, **options):
         STOP_SIGNAL_MONITOR.start()
         settings = RobotSettings(options)
         pyloggingconf.initialize(settings['LogLevel'])
