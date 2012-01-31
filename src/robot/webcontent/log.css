@@ -75,8 +75,8 @@ div.foldingbutton {
     width: 0.9em;
     float: left;
     text-decoration: none;
-    font-weight: bold;
     border: 1px solid black;
+    border-radius: 2px;
 }
 div.foldingbutton:hover {
     background: yellow;
