@@ -17,26 +17,42 @@ from robot import run_cli, rebot_cli
 from robot.tidy import tidy_cli
 
 
+USAGE = """robotframework.jar - Robot Framework runner.
+
+Usage: java -jar robotframework.jar [command] [options] [input(s)]
+
+Available commands:
+  run   - Run Robot Framework tests. The default, if no command is given.
+  rebot - Post process Robot Framework output files.
+  tidy  - Clean-up and changed format of test data files.
+
+Run `java -jar robotframework.jar command --help` for more information about
+an individual command.
+
+Examples:
+  java -jar robotframework.jar mytests.txt
+  java -jar robotframework.jar run mytests.txt
+  java -jar robotframework.jar rebot --log mylog.html out.xml
+  java -jar robotframework.jar tidy --format txt mytests.html
+"""
+
+
 class JarRunner(RobotRunner):
     """Used for Java-Jython interop when RF is executed from .jar file"""
-    _progs = {
-        'run': run_cli,
-        'rebot': rebot_cli,
-        'tidy': tidy_cli
-    }
+    _commands = {'run': run_cli, 'rebot': rebot_cli, 'tidy': tidy_cli}
 
     def run(self, args):
         try:
-            prog, args = self._parse_prog_and_args(args)
-            return prog(args)
+            command, args = self._parse_command_line(args)
+            return command(args)
         except SystemExit, err:
             return err.code
 
-    def _parse_prog_and_args(self, args):
+    def _parse_command_line(self, args):
+        if not args or args[0] in ('-h', '--help'):
+            print USAGE
+            raise SystemExit(0)
         try:
-            return self._progs[args[0]], args[1:]
-        except (KeyError, IndexError):
-            pass
-        return run_cli, args
-
-
+            return self._commands[args[0]], args[1:]
+        except KeyError:
+            return run_cli, args
