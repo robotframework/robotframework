@@ -118,6 +118,13 @@ class ArgumentParser:
         args_list = [decode_from_file_system(a) for a in args_list]
         args_list = self._process_possible_argfile(args_list)
         opts, args = self._parse_args(args_list)
+        opts, args = self._handle_special_options(opts, args)
+        self._arg_limit_validator(args)
+        if self._validator:
+            opts, args = self._validator(opts, args)
+        return opts, args
+
+    def _handle_special_options(self, opts, args):
         if opts.get('escape'):
             opts, args = self._unescape_opts_and_args(opts, args)
         if opts.get('help'):
@@ -126,9 +133,9 @@ class ArgumentParser:
             self._raise_version()
         if opts.get('pythonpath'):
             sys.path = self._get_pythonpath(opts['pythonpath']) + sys.path
-        self._arg_limit_validator(args)
-        if self._validator:
-            opts, args = self._validator(opts, args)
+        for opt in ['escape', 'help', 'version', 'pythonpath', 'argumentfile']:
+            if opt in opts:
+                opts.pop(opt)
         return opts, args
 
     def _parse_args(self, args):

@@ -111,15 +111,14 @@ class TestArgumentParserParseArgs(unittest.TestCase):
         inargs = '-d reports --reportfile report.html -T arg'.split()
         opts, args = self.ap.parse_args(inargs)
         assert_equals(opts, {'reportdir':'reports', 'reportfile':'report.html',
-                             'variable':[], 'name':None, 'escape':[],
-                             'toggle':True, 'help':False, 'version':False})
+                             'variable':[], 'name':None, 'toggle': True})
 
     def test_multi_options(self):
         inargs = '-v a:1 -v b:2 --name my_name --variable c:3 arg'.split()
         opts, args = self.ap.parse_args(inargs)
         assert_equals(opts, {'variable':['a:1','b:2','c:3'], 'name':'my_name',
-                             'reportdir':None, 'reportfile':None, 'escape':[],
-                             'toggle':False, 'help':False, 'version':False})
+                             'reportdir':None, 'reportfile':None,
+                             'toggle': False})
         assert_equals(args, ['arg'])
 
     def test_toggle_options(self):
@@ -155,8 +154,8 @@ class TestArgumentParserParseArgs(unittest.TestCase):
                 + '-N QQQLTmySPfineSPnameGTQQQ sourceSPwithSPspaces'
         opts, args = self.ap.parse_args(cli.split())
         assert_equals(opts['name'], '"""<my fine name>"""')
-        assert_equals(opts['escape'], ['quot:Q','space:SP','lt:LT','gt:GT'])
         assert_equals(args, ['source with spaces'])
+        assert_true('escape' not in opts)
 
     def test_split_pythonpath(self):
         ap = ArgumentParser('ignored')
@@ -193,6 +192,18 @@ class TestArgumentParserParseArgs(unittest.TestCase):
     def test_arguments_with_glob_patterns_arent_removed_if_they_dont_match(self):
         _, args = self.ap.parse_args(['*.non.existing', 'non.ex.??'])
         assert_equals(args, ['*.non.existing', 'non.ex.??'])
+
+    def test_special_options_are_removed(self):
+        ap = ArgumentParser('''Usage:
+ -h --help
+ -v --version
+ --pythonpath path
+ --escape x:y *
+ --argumentfile path
+ --option
+''')
+        opts, args = ap.parse_args(['--option'])
+        assert_equals(opts, {'option': True})
 
 
 class TestArgumentValidation(unittest.TestCase):
