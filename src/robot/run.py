@@ -321,7 +321,7 @@ from robot.variables import init_global_variables
 
 class RobotFramework(Application):
 
-    def _main(self, *datasources, **options):
+    def main(self, *datasources, **options):
         STOP_SIGNAL_MONITOR.start()
         settings = RobotSettings(options)
         pyloggingconf.initialize(settings['LogLevel'])
@@ -333,8 +333,7 @@ class RobotFramework(Application):
         suite = TestSuite(datasources, settings)
         output = Output(settings)
         suite.run(output)
-        LOGGER.info("Tests execution ended. Statistics:\n%s"
-        % suite.get_stat_message())
+        LOGGER.info("Tests execution ended. Statistics:\n%s" % suite.get_stat_message())
         output.close(suite)
         if settings.is_rebot_needed():
             output, settings = settings.get_rebot_datasource_and_settings()
@@ -348,7 +347,7 @@ def run_cli(arguments):
     For programmatic usage the `run` method is typically better. It has
     better API for that usage and does not use sys.exit like this method.
     """
-    RobotFramework(USAGE).cli(arguments)
+    RobotFramework(USAGE, logger=LOGGER).execute_cli(arguments)
 
 
 def run(*datasources, **options):
@@ -372,7 +371,7 @@ def run(*datasources, **options):
     pybot path/to/tests.html
     pybot --report r.html --log NONE t1.txt t2.txt > stdout.txt
     """
-    return RobotFramework(USAGE).api(*datasources, **options)
+    return RobotFramework(USAGE, logger=LOGGER).execute(*datasources, **options)
 
 
 if __name__ == '__main__':
