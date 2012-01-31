@@ -16,7 +16,7 @@ Report Only
     --output none --report myreport.html --log NONE  myreport.html
 
 Log Only
-    --output None --report NONE --log mylog.html -S none  mylog.html
+    --output None --report NONE --log mylog.html mylog.html
 
 All Outputs
     -o myoutput.xml -r myreport.html -l mylog.html  mylog.html  myoutput.xml  myreport.html

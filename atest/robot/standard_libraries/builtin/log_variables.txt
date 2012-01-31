@@ -8,155 +8,151 @@ Resource        atest_resource.txt
 Log Variables In Suite Setup
     ${kw} =  Set Variable  ${SUITE.setup.keywords[7]}
     Log  ${kw.messages}
-    Should Start With  ${kw.messages[0].message}  \${/} =
+    Check Log Message  ${kw.messages[0]}  \${/} = *  pattern=yes
     Check Log Message  ${kw.messages[1]}  \${:} = ${:}
     Check Log Message  ${kw.messages[2]}  \${cli_var_1} = CLI1
     Check Log Message  ${kw.messages[3]}  \${cli_var_2} = CLI2
     Check Log Message  ${kw.messages[4]}  \${cli_var_3} = CLI3
     Check Log Message  ${kw.messages[5]}  \${DEBUG_FILE} = NONE
     Check Log Message  ${kw.messages[6]}  \${EMPTY} =
-    Should Start With  ${kw.messages[7].message}  \${EXECDIR} =
-    Should Start With  ${kw.messages[8].message}  \${False} =
-    Should Start With  ${kw.messages[9].message}  \${interpreter} =
+    Check Log Message  ${kw.messages[7]}  \${EXECDIR} = *  pattern=yes
+    Check Log Message  ${kw.messages[8]}  \${False} = *  pattern=yes
+    Check Log Message  ${kw.messages[9]}  \${interpreter} = *  pattern=yes
     Check Log Message  ${kw.messages[10]}  \${LOG_FILE} = NONE
     Check Log Message  ${kw.messages[11]}  \${None} = None
     Check Log Message  ${kw.messages[12]}  \${null} = None
-    Should Start With  ${kw.messages[13].message}  \${OUTPUT_DIR} =
-    Should Start With  ${kw.messages[14].message}  \${OUTPUT_FILE} =
+    Check Log Message  ${kw.messages[13]}  \${OUTPUT_DIR} = *  pattern=yes
+    Check Log Message  ${kw.messages[14]}  \${OUTPUT_FILE} = *  pattern=yes
     Check Log Message  ${kw.messages[15]}  \${PREV_TEST_MESSAGE} =
     Check Log Message  ${kw.messages[16]}  \${PREV_TEST_NAME} =
     Check Log Message  ${kw.messages[17]}  \${PREV_TEST_STATUS} =
     Check Log Message  ${kw.messages[18]}  \${REPORT_FILE} = NONE
     Check Log Message  ${kw.messages[19]}  \${SCALAR} = Hi tellus
     Check Log Message  ${kw.messages[20]}  \${SPACE} =
-    Should Start With  ${kw.messages[21].message}  \${SUITE_NAME} =
+    Check Log Message  ${kw.messages[21]}  \${SUITE_NAME} = *  pattern=yes
     Check Log Message  ${kw.messages[22]}  \${suite_setup_global_var} = Global var set in suite setup
     Check Log Message  ${kw.messages[23]}  \${suite_setup_local_var} = [u'Variable available only locally', u'in suite setup']
     Check Log Message  ${kw.messages[24]}  \${suite_setup_suite_var} = Suite var set in suite setup
-    Should Start With  ${kw.messages[25].message}  \${SUITE_SOURCE} =
-    Check Log Message  ${kw.messages[26]}  \${SUMMARY_FILE} = NONE
-    Should Start With  ${kw.messages[27].message}  \${TEMPDIR} =
-    Should Start With  ${kw.messages[28].message}  \${True} =
-    Check Log Message  ${kw.messages[29]}  \@{LIST} = [ Hello | world ]
-    Check Log Message  ${kw.messages[30]}  \@{suite_setup_global_var} = [ Global var set in | suite setup ]
-    Check Log Message  ${kw.messages[31]}  \@{suite_setup_suite_var} = [ Suite var set in | suite setup ]
-    Should Be Equal As Integers  ${kw.message_count}  32  Wrong total message count
+    Check Log Message  ${kw.messages[25]}  \${SUITE_SOURCE} = *  pattern=yes
+    Check Log Message  ${kw.messages[26]}  \${TEMPDIR} = *  pattern=yes
+    Check Log Message  ${kw.messages[27]}  \${True} = *  pattern=yes
+    Check Log Message  ${kw.messages[28]}  \@{LIST} = [ Hello | world ]
+    Check Log Message  ${kw.messages[29]}  \@{suite_setup_global_var} = [ Global var set in | suite setup ]
+    Check Log Message  ${kw.messages[30]}  \@{suite_setup_suite_var} = [ Suite var set in | suite setup ]
+    Should Be Equal As Integers  ${kw.message_count}  31  Wrong total message count
 
 Log Variables In Test
     ${test} =  Check Test Case  Log Variables
     ${kw} =  Set  ${test.keywords[0]}
-    Should Start With  ${kw.messages[1].message}  \${/} =
+    Check Log Message  ${kw.messages[1]}  \${/} = *  pattern=yes
     Check Log Message  ${kw.messages[2]}  \${:} = ${:}
     Check Log Message  ${kw.messages[3]}  \${cli_var_1} = CLI1
     Check Log Message  ${kw.messages[4]}  \${cli_var_2} = CLI2
     Check Log Message  ${kw.messages[5]}  \${cli_var_3} = CLI3
     Check Log Message  ${kw.messages[6]}  \${DEBUG_FILE} = NONE
     Check Log Message  ${kw.messages[7]}  \${EMPTY} =
-    Should Start With  ${kw.messages[8].message}  \${EXECDIR} =
-    Should Start With  ${kw.messages[9].message}  \${False} =
-    Should Start With  ${kw.messages[10].message}  \${interpreter} =
+    Check Log Message  ${kw.messages[8]}  \${EXECDIR} = *  pattern=yes
+    Check Log Message  ${kw.messages[9]}  \${False} = *  pattern=yes
+    Check Log Message  ${kw.messages[10]}  \${interpreter} = *  pattern=yes
     Check Log Message  ${kw.messages[11]}  \${LOG_FILE} = NONE
     Check Log Message  ${kw.messages[12]}  \${None} = None
     Check Log Message  ${kw.messages[13]}  \${null} = None
-    Should Start With  ${kw.messages[14].message}  \${OUTPUT_DIR} =
-    Should Start With  ${kw.messages[15].message}  \${OUTPUT_FILE} =
+    Check Log Message  ${kw.messages[14]}  \${OUTPUT_DIR} = *  pattern=yes
+    Check Log Message  ${kw.messages[15]}  \${OUTPUT_FILE} = *  pattern=yes
     Check Log Message  ${kw.messages[16]}  \${PREV_TEST_MESSAGE} =
     Check Log Message  ${kw.messages[17]}  \${PREV_TEST_NAME} = Previous Test
     Check Log Message  ${kw.messages[18]}  \${PREV_TEST_STATUS} = PASS
     Check Log Message  ${kw.messages[19]}  \${REPORT_FILE} = NONE
     Check Log Message  ${kw.messages[20]}  \${SCALAR} = Hi tellus
     Check Log Message  ${kw.messages[21]}  \${SPACE} =
-    Should Start With  ${kw.messages[22].message}  \${SUITE_NAME} =
+    Check Log Message  ${kw.messages[22]}  \${SUITE_NAME} = *  pattern=yes
     Check Log Message  ${kw.messages[23]}  \${suite_setup_global_var} = Global var set in suite setup
     Check Log Message  ${kw.messages[24]}  \${suite_setup_suite_var} = Suite var set in suite setup
-    Should Start With  ${kw.messages[25].message}  \${SUITE_SOURCE} =
-    Check Log Message  ${kw.messages[26]}  \${SUMMARY_FILE} = NONE
-    Should Start With  ${kw.messages[27].message}  \${TEMPDIR} =
-    Check Log Message  ${kw.messages[28]}  \${TEST_NAME} = Log Variables
-    Should Start With  ${kw.messages[29].message}  \${True} =
-    Check Log Message  ${kw.messages[30]}  \@{LIST} = [ Hello | world ]
-    Check Log Message  ${kw.messages[31]}  \@{suite_setup_global_var} = [ Global var set in | suite setup ]
-    Check Log Message  ${kw.messages[32]}  \@{suite_setup_suite_var} = [ Suite var set in | suite setup ]
-    Should Be Equal As Integers  ${kw.message_count}  35  Wrong total message count
+    Check Log Message  ${kw.messages[25]}  \${SUITE_SOURCE} = *  pattern=yes
+    Check Log Message  ${kw.messages[26]}  \${TEMPDIR} = *  pattern=yes
+    Check Log Message  ${kw.messages[27]}  \${TEST_NAME} = Log Variables
+    Check Log Message  ${kw.messages[28]}  \${True} = *  pattern=yes
+    Check Log Message  ${kw.messages[29]}  \@{LIST} = [ Hello | world ]
+    Check Log Message  ${kw.messages[30]}  \@{suite_setup_global_var} = [ Global var set in | suite setup ]
+    Check Log Message  ${kw.messages[31]}  \@{suite_setup_suite_var} = [ Suite var set in | suite setup ]
+    Should Be Equal As Integers  ${kw.message_count}  34  Wrong total message count
 
 Log Variables After Setting New Variables
     ${test} =  Check Test Case  Log Variables
     ${kw} =  Set  ${test.keywords[4]}
-    Should Start With  ${kw.messages[1].message}  \${/} =
+    Check Log Message  ${kw.messages[1]}  \${/} = *  DEBUG  pattern=yes
     Check Log Message  ${kw.messages[2]}  \${:} = ${:}  DEBUG
     Check Log Message  ${kw.messages[3]}  \${cli_var_1} = CLI1  DEBUG
     Check Log Message  ${kw.messages[4]}  \${cli_var_2} = CLI2  DEBUG
     Check Log Message  ${kw.messages[5]}  \${cli_var_3} = CLI3  DEBUG
     Check Log Message  ${kw.messages[6]}  \${DEBUG_FILE} = NONE  DEBUG
     Check Log Message  ${kw.messages[7]}  \${EMPTY} =  DEBUG
-    Should Start With  ${kw.messages[8].message}  \${EXECDIR} =
-    Should Start With  ${kw.messages[9].message}  \${False} =
+    Check Log Message  ${kw.messages[8]}  \${EXECDIR} = *  DEBUG  pattern=yes
+    Check Log Message  ${kw.messages[9]}  \${False} = *  DEBUG  pattern=yes
     Check Log Message  ${kw.messages[10]}  \${int_list} = [0, 1, 2, 3]  DEBUG
-    Should Start With  ${kw.messages[11].message}  \${interpreter} =
+    Check Log Message  ${kw.messages[11]}  \${interpreter} = *  DEBUG  pattern=yes
     Check Log Message  ${kw.messages[12]}  \${LOG_FILE} = NONE  DEBUG
     Check Log Message  ${kw.messages[13]}  \${None} = None  DEBUG
     Check Log Message  ${kw.messages[14]}  \${null} = None  DEBUG
-    Should Start With  ${kw.messages[15].message}  \${OUTPUT_DIR} =
-    Should Start With  ${kw.messages[16].message}  \${OUTPUT_FILE} =
+    Check Log Message  ${kw.messages[15]}  \${OUTPUT_DIR} = *  DEBUG  pattern=yes
+    Check Log Message  ${kw.messages[16]}  \${OUTPUT_FILE} = *  DEBUG  pattern=yes
     Check Log Message  ${kw.messages[17]}  \${PREV_TEST_MESSAGE} =  DEBUG
     Check Log Message  ${kw.messages[18]}  \${PREV_TEST_NAME} = Previous Test  DEBUG
     Check Log Message  ${kw.messages[19]}  \${PREV_TEST_STATUS} = PASS  DEBUG
     Check Log Message  ${kw.messages[20]}  \${REPORT_FILE} = NONE  DEBUG
     Check Log Message  ${kw.messages[21]}  \${SCALAR} = Hi tellus  DEBUG
     Check Log Message  ${kw.messages[22]}  \${SPACE} =  DEBUG
-    Should Start With  ${kw.messages[23].message}  \${SUITE_NAME} =
+    Check Log Message  ${kw.messages[23]}  \${SUITE_NAME} = *  DEBUG  pattern=yes
     Check Log Message  ${kw.messages[24]}  \${suite_setup_global_var} = Global var set in suite setup  DEBUG
     Check Log Message  ${kw.messages[25]}  \${suite_setup_suite_var} = Suite var set in suite setup  DEBUG
-    Should Start With  ${kw.messages[26].message}  \${SUITE_SOURCE} =
-    Check Log Message  ${kw.messages[27]}  \${SUMMARY_FILE} = NONE  DEBUG
-    Should Start With  ${kw.messages[28].message}  \${TEMPDIR} =
-    Check Log Message  ${kw.messages[29]}  \${TEST_NAME} = Log Variables  DEBUG
-    Should Start With  ${kw.messages[30].message}  \${True} =
-    Check Log Message  ${kw.messages[31]}  \${var} = Hello  DEBUG
-    Check Log Message  ${kw.messages[32]}  \@{int_list} = [ 0 | 1 | 2 | 3 ]  DEBUG
-    Check Log Message  ${kw.messages[33]}  \@{LIST} = [ Hello | world ]  DEBUG
-    Check Log Message  ${kw.messages[34]}  \@{suite_setup_global_var} = [ Global var set in | suite setup ]  DEBUG
-    Check Log Message  ${kw.messages[35]}  \@{suite_setup_suite_var} = [ Suite var set in | suite setup ]  DEBUG
-    Should Be Equal As Integers  ${kw.message_count}  38  Wrong total message count
+    Check Log Message  ${kw.messages[26]}  \${SUITE_SOURCE} = *  DEBUG  pattern=yes
+    Check Log Message  ${kw.messages[27]}  \${TEMPDIR} = *  DEBUG  pattern=yes
+    Check Log Message  ${kw.messages[28]}  \${TEST_NAME} = Log Variables  DEBUG
+    Check Log Message  ${kw.messages[29]}  \${True} = *  DEBUG  pattern=yes
+    Check Log Message  ${kw.messages[30]}  \${var} = Hello  DEBUG
+    Check Log Message  ${kw.messages[31]}  \@{int_list} = [ 0 | 1 | 2 | 3 ]  DEBUG
+    Check Log Message  ${kw.messages[32]}  \@{LIST} = [ Hello | world ]  DEBUG
+    Check Log Message  ${kw.messages[33]}  \@{suite_setup_global_var} = [ Global var set in | suite setup ]  DEBUG
+    Check Log Message  ${kw.messages[34]}  \@{suite_setup_suite_var} = [ Suite var set in | suite setup ]  DEBUG
+    Should Be Equal As Integers  ${kw.message_count}  37  Wrong total message count
 
 Log Variables In User Keyword
     ${test} =  Check Test Case  Log Variables
     ${kw} =  Set  ${test.keywords[5].keywords[1]}
-    Should Start With  ${kw.messages[1].message}  \${/} =
+    Check Log Message  ${kw.messages[1]}  \${/} = *  pattern=yes
     Check Log Message  ${kw.messages[2]}  \${:} = ${:}
     Check Log Message  ${kw.messages[3]}  \${cli_var_1} = CLI1
     Check Log Message  ${kw.messages[4]}  \${cli_var_2} = CLI2
     Check Log Message  ${kw.messages[5]}  \${cli_var_3} = CLI3
     Check Log Message  ${kw.messages[6]}  \${DEBUG_FILE} = NONE
     Check Log Message  ${kw.messages[7]}  \${EMPTY} =
-    Should Start With  ${kw.messages[8].message}  \${EXECDIR} =
-    Should Start With  ${kw.messages[9].message}  \${False} =
+    Check Log Message  ${kw.messages[8]}  \${EXECDIR} = *  pattern=yes
+    Check Log Message  ${kw.messages[9]}  \${False} = *  pattern=yes
     Check Log Message  ${kw.messages[10]}  \${int_list} = [0, 1, 2, 3]
-    Should Start With  ${kw.messages[11].message}  \${interpreter} =
+    Check Log Message  ${kw.messages[11]}  \${interpreter} = *  pattern=yes
     Check Log Message  ${kw.messages[12]}  \${LOG_FILE} = NONE
     Check Log Message  ${kw.messages[13]}  \${None} = None
     Check Log Message  ${kw.messages[14]}  \${null} = None
-    Should Start With  ${kw.messages[15].message}  \${OUTPUT_DIR} =
-    Should Start With  ${kw.messages[16].message}  \${OUTPUT_FILE} =
+    Check Log Message  ${kw.messages[15]}  \${OUTPUT_DIR} = *  pattern=yes
+    Check Log Message  ${kw.messages[16]}  \${OUTPUT_FILE} = *  pattern=yes
     Check Log Message  ${kw.messages[17]}  \${PREV_TEST_MESSAGE} =
     Check Log Message  ${kw.messages[18]}  \${PREV_TEST_NAME} = Previous Test
     Check Log Message  ${kw.messages[19]}  \${PREV_TEST_STATUS} = PASS
     Check Log Message  ${kw.messages[20]}  \${REPORT_FILE} = NONE
     Check Log Message  ${kw.messages[21]}  \${SCALAR} = Hi tellus
     Check Log Message  ${kw.messages[22]}  \${SPACE} =
-    Should Start With  ${kw.messages[23].message}  \${SUITE_NAME} =
+    Check Log Message  ${kw.messages[23]}  \${SUITE_NAME} = *  pattern=yes
     Check Log Message  ${kw.messages[24]}  \${suite_setup_global_var} = Global var set in suite setup
     Check Log Message  ${kw.messages[25]}  \${suite_setup_suite_var} = Suite var set in suite setup
-    Should Start With  ${kw.messages[26].message}  \${SUITE_SOURCE} =
-    Check Log Message  ${kw.messages[27]}  \${SUMMARY_FILE} = NONE
-    Should Start With  ${kw.messages[28].message}  \${TEMPDIR} =
-    Check Log Message  ${kw.messages[29]}  \${TEST_NAME} = Log Variables
-    Should Start With  ${kw.messages[30].message}  \${True} =
-    Check Log Message  ${kw.messages[31]}  \${ukvar} = Value of an uk variable
-    Check Log Message  ${kw.messages[32]}  \${var} = Hello
-    Check Log Message  ${kw.messages[33]}  \@{int_list} = [ 0 | 1 | 2 | 3 ]
-    Check Log Message  ${kw.messages[34]}  \@{LIST} = [ Hello | world ]
-    Check Log Message  ${kw.messages[35]}  \@{suite_setup_global_var} = [ Global var set in | suite setup ]
-    Check Log Message  ${kw.messages[36]}  \@{suite_setup_suite_var} = [ Suite var set in | suite setup ]
-    Should Be Equal As Integers  ${kw.message_count}  39  Wrong total message count
+    Check Log Message  ${kw.messages[26]}  \${SUITE_SOURCE} = *  pattern=yes
+    Check Log Message  ${kw.messages[27]}  \${TEMPDIR} = *  pattern=yes
+    Check Log Message  ${kw.messages[28]}  \${TEST_NAME} = Log Variables
+    Check Log Message  ${kw.messages[29]}  \${True} = *  pattern=yes
+    Check Log Message  ${kw.messages[30]}  \${ukvar} = Value of an uk variable
+    Check Log Message  ${kw.messages[31]}  \${var} = Hello
+    Check Log Message  ${kw.messages[32]}  \@{int_list} = [ 0 | 1 | 2 | 3 ]
+    Check Log Message  ${kw.messages[33]}  \@{LIST} = [ Hello | world ]
+    Check Log Message  ${kw.messages[34]}  \@{suite_setup_global_var} = [ Global var set in | suite setup ]
+    Check Log Message  ${kw.messages[35]}  \@{suite_setup_suite_var} = [ Suite var set in | suite setup ]
+    Should Be Equal As Integers  ${kw.message_count}  38  Wrong total message count
 

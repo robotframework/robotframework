@@ -1,15 +1,14 @@
-* Settings *
+*** Settings ***
 Library  Collections
 Resource  resource_for_get_variables.txt
 Variables  vars_for_get_variables.py
 Suite Setup  Set Some Variables
 
-
-* Variables *
+*** Variables ***
 ${MY VARIABLE}  dhrfad
 
 
-* Test cases *
+*** Test cases ***
 Automatic and Command Line Variables
   Variables Should Contain  \${/}  \${cmd line}
 
@@ -48,7 +47,7 @@ Set Variable in User Keyword
 Get Length Of Variables
     ${variables}=   Get Variables
     ${var_count}  get length  ${variables}
-    Should Be Equal As Integers  ${var_count}  33
+    Should Be Equal As Integers  ${var_count}  32
 
 * Keywords *
 Set Some Variables
