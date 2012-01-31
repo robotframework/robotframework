@@ -1,2 +1,2 @@
 @echo off
-jython -m robot.runner %*
+jython -m robot.run %*

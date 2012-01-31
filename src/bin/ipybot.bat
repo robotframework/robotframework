@@ -1,2 +1,2 @@
 @echo off
-ipy -m robot.runner %*
+ipy -m robot.run %*

@@ -1,2 +1,2 @@
 #!/bin/sh
-jython -m robot.runner "$@"
+jython -m robot.run "$@"

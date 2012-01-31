@@ -1,2 +1,2 @@
 #!/bin/sh
-ipy -m robot.runner "$@"
+ipy -m robot.run "$@"
