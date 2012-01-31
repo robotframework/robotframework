@@ -26,7 +26,7 @@ from .error import get_error_details
 
 class Application(object):
 
-    def __init__(self, usage, name=None, version=None, arg_limits=(1,),
+    def __init__(self, usage, name=None, version=None, arg_limits=None,
                  logger=None):
         self._ap = ArgumentParser(usage, name, version, arg_limits,
                                   self.validate)

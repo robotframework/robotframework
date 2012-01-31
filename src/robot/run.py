@@ -321,6 +321,9 @@ from robot.variables import init_global_variables
 
 class RobotFramework(Application):
 
+    def __init__(self):
+        Application.__init__(self, USAGE, arg_limits=(1,), logger=LOGGER)
+
     def main(self, datasources, **options):
         STOP_SIGNAL_MONITOR.start()
         settings = RobotSettings(options)
@@ -347,7 +350,7 @@ def run_cli(arguments):
     For programmatic usage the `run` method is typically better. It has
     better API for that usage and does not use sys.exit like this method.
     """
-    RobotFramework(USAGE, logger=LOGGER).execute_cli(arguments)
+    RobotFramework().execute_cli(arguments)
 
 
 def run(*datasources, **options):
@@ -371,7 +374,7 @@ def run(*datasources, **options):
     pybot path/to/tests.html
     pybot --report r.html --log NONE t1.txt t2.txt > stdout.txt
     """
-    return RobotFramework(USAGE, logger=LOGGER).execute(*datasources, **options)
+    return RobotFramework().execute(*datasources, **options)
 
 
 if __name__ == '__main__':

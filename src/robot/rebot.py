@@ -262,6 +262,9 @@ from robot.utils import Application
 
 class Rebot(Application):
 
+    def __init__(self):
+        Application.__init__(self, USAGE, arg_limits=(1,), logger=LOGGER)
+
     def main(self, datasources, **options):
         settings = RebotSettings(options)
         LOGGER.register_console_logger(colors=settings['MonitorColors'],
@@ -280,7 +283,7 @@ def rebot_cli(arguments):
     For programmatic usage the `rebot` method is typically better. It has
     better API for that usage and does not use sys.exit like this method.
     """
-    Rebot(USAGE, logger=LOGGER).execute_cli(arguments)
+    Rebot().execute_cli(arguments)
 
 
 def rebot(*datasources, **options):
@@ -304,7 +307,7 @@ def rebot(*datasources, **options):
     rebot path/to/output.xml
     rebot --report r.html --log NONE o1.xml o2.xml > stdout.txt
     """
-    return Rebot(USAGE, logger=LOGGER).execute(*datasources, **options)
+    return Rebot().execute(*datasources, **options)
 
 
 if __name__ == '__main__':

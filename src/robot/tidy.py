@@ -86,9 +86,9 @@ from StringIO import StringIO
 if 'robot' not in sys.modules:
     import pythonpathsetter   # running tidy.py as script
 
-from robot import utils
-from robot.errors import DataError, Information
+from robot.errors import DataError
 from robot.parsing import ResourceFile, TestDataDirectory, TestCaseFile
+from robot.utils import Application, encode_output
 
 
 class Tidy(object):
@@ -142,10 +142,10 @@ class Tidy(object):
         return os.path.splitext(os.path.basename(source))[0] == '__init__'
 
 
-class TidyCommandLine(utils.Application):
+class TidyCommandLine(Application):
 
     def __init__(self):
-        utils.Application.__init__(self, USAGE, arg_limits=None)
+        Application.__init__(self, USAGE)
 
     def main(self, inputs, recursive=False, inplace=False, format='txt',
              usepipes=False):
@@ -160,7 +160,7 @@ class TidyCommandLine(utils.Application):
 
     def _print(self, msg):
         if sys.stdout.isatty():
-            msg = utils.encode_output(msg)
+            msg = encode_output(msg)
         else:
             if os.sep == '\\' and 'b' not in sys.stdout.mode:
                 msg = msg.replace('\r\n', '\n')
