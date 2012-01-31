@@ -33,14 +33,11 @@ class _BaseSettings(object):
                  'OutputDir'        : ('outputdir', utils.abspath('.')),
                  'Log'              : ('log', 'log.html'),
                  'Report'           : ('report', 'report.html'),
-                 'Summary'          : ('summary', 'NONE'),
                  'XUnitFile'        : ('xunitfile', 'NONE'),
                  'SplitLog'         : ('splitlog', False),
-                 'SplitOutputs'     : ('splitoutputs', -1),
                  'TimestampOutputs' : ('timestampoutputs', False),
                  'LogTitle'         : ('logtitle', None),
                  'ReportTitle'      : ('reporttitle', None),
-                 'SummaryTitle'     : ('summarytitle', None),
                  'ReportBackground' : ('reportbackground',
                                        ('#99FF66', '#99FF66', '#FF3333')),
                  'SuiteStatLevel'   : ('suitestatlevel', -1),
@@ -103,24 +100,7 @@ class _BaseSettings(object):
             return [v for v in [self._process_tag_stat_link(v) for v in value] if v]
         if name in ['RemoveKeywords', 'LogLevel']:
             return value.upper()
-        if name in ['SplitOutputs', 'Summary', 'SummaryTitle']:
-            return self._removed_in_26(name, log)
         return value
-
-    # TODO: Remove --splitoutputs, --summary, and --summarytitle in 2.7
-    def _removed_in_26(self, name, log):
-        start, instead = {
-            'SplitOutputs': ('Splitting outputs is',
-                             'The --splitlog option can be used instead. '),
-            'Summary':      ('Summary reports are', ''),
-            'SummaryTitle': ('Summary titles are', '')
-        }[name]
-        option, default = self._cli_opts[name]
-        if log:
-            LOGGER.warn('%s not supported in Robot Framework 2.6 or newer. %s'
-                        'The --%s option will be removed altogether in '
-                        'version 2.7.' % (start, instead, option))
-        return default
 
     def __getitem__(self, name):
         if name not in self._cli_opts:

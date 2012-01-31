@@ -729,10 +729,6 @@ of them are not even available all the time.
    | ${REPORT FILE}        | An absolute path to the `report file`_ or string NONE | Everywhere     |
    |                       | when no report is created.                            |                |
    +-----------------------+-------------------------------------------------------+----------------+
-   | ${SUMMARY FILE}       | `Summary files`_ were removed in Robot Framework 2.6  | Everywhere     |
-   |                       | and this variable always has value NONE. It will be   |                |
-   |                       | removed altogether in version 2.7.                    |                |
-   +-----------------------+-------------------------------------------------------+----------------+
    | ${DEBUG FILE}         | An absolute path to the `debug file`_ or string NONE  | Everywhere     |
    |                       | when no debug file is created.                        |                |
    +-----------------------+-------------------------------------------------------+----------------+

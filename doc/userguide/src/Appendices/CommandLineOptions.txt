@@ -30,20 +30,14 @@ Command line options for test execution
   -o, --output <file>     Sets the path to the generated `output file`_.
   -l, --log <file>        Sets the path to the generated `log file`_.
   -r, --report <file>     Sets the path to the generated `report file`_.
-  -S, --summary <file>    `Summary files`_ are not supported in
-                          Robot Framework 2.6 or newer.
   -x, --xunitfile <file>  Sets the path to the generated `XUnit compatible result file`_.
   -b, --debugfile <file>  A `debug file`_ that is written during execution.
   -T, --timestampoutputs  `Adds a timestamp`_ to all output files.
   --splitlog              `Split log file`_ into smaller pieces that open in
                           browser transparently.
-  --splitoutputs <level>  `Splitting outputs`_ is not supported in
-                          Robot Framework 2.6 or newer.
   --logtitle <title>      `Sets a title`_ for the generated test log.
   --reporttitle <title>   `Sets a title`_ for the generated test report.
   --reportbackground <colors>  `Sets background colors`_ of the generated report.
-  --summarytitle <title>  `Summary files`_ are not supported in
-                          Robot Framework 2.6 or newer.
   -L, --loglevel <level>  `Sets the threshold level`_ for logging.
   --suitestatlevel <level>  Defines how many `levels to show`_ in the
                            :name:`Statistics by Suite` table in outputs.
@@ -89,19 +83,13 @@ Command line options for post-processing outputs
   -o, --output <file>     Sets the path to the generated `output file`_.
   -l, --log <file>        Sets the path to the generated `log file`_.
   -r, --report <file>     Sets the path to the generated `report file`_.
-  -S, --summary <file>    `Summary files`_ are not supported in
-                          Robot Framework 2.6 or newer.
   -x, --xunitfile <file>  Sets the path to the generated `XUnit compatible result file`_.
   -T, --timestampoutputs  `Adds a timestamp`_ to all output files.
   --splitlog              `Split log file`_ into smaller pieces that open in
                           browser transparently.
-  --splitoutputs <level>  `Splitting outputs`_ is not supported in
-                          Robot Framework 2.6 or newer.
   --logtitle <title>      `Sets a title`_ for the generated test log.
   --reporttitle <title>   `Sets a title`_ for the generated test report.
   --reportbackground <colors>  `Sets background colors`_ of the generated report.
-  --summarytitle <title>  `Summary files`_ are not supported in
-                          Robot Framework 2.6 or newer.
   -L, --loglevel <level>  `Sets the threshold level`_ to select log messages.
   --suitestatlevel <level>  Defines how many `levels to show`_ in the
                            :name:`Statistics by Suite` table in outputs.
@@ -145,7 +133,6 @@ Command line options for post-processing outputs
 .. _create output files: `Output directory`_
 .. _Adds a timestamp: `Timestamping output files`_
 .. _Split log file: `Splitting logs`_
-.. _Summary files: `Summary file`_
 .. _Sets a title: `Setting titles`_
 .. _Sets background colors: `Setting background colors`_
 

@@ -110,14 +110,6 @@ name is :path:`report.html`.
 
    An example report file of failed test execution
 
-Summary file
-''''''''''''
-
-Summary files are not supported in Robot Framework 2.6 or newer. Their
-original purpose was providing a report that has small size even when
-the number of test cases increases. This need disappeared because
-reports in 2.6 and newer are orders of magnitude smaller than earlier.
-
 XUnit compatible result file
 ''''''''''''''''''''''''''''
 XUnit result files contain the test run summary in XUnit compatible XML format.
@@ -282,12 +274,6 @@ main log file and :path:`42` is an incremented index.
 
 .. note:: When copying the log files, you need to copy also all the
           :path:`log-*.js` files or some information will be missing.
-
-Splitting outputs
-~~~~~~~~~~~~~~~~~
-
-Splitting outputs functionality has been removed in Robot Framework 2.6.
-`Splitting logs`_ works much better and should be used instead.
 
 Configuring statistics
 ~~~~~~~~~~~~~~~~~~~~~~

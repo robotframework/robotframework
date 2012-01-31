@@ -40,7 +40,6 @@ def init_global_variables(settings):
                          ('${null}', None),
                          ('${OUTPUT_DIR}', settings['OutputDir']),
                          ('${OUTPUT_FILE}', settings['Output']),
-                         ('${SUMMARY_FILE}', settings['Summary']),
                          ('${REPORT_FILE}', settings['Report']),
                          ('${LOG_FILE}', settings['Log']),
                          ('${DEBUG_FILE}', settings['DebugFile']),

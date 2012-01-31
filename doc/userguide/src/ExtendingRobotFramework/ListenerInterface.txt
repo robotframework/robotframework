@@ -202,9 +202,6 @@ synonym to :code:`start_suite`.
    |               |                  | finished. The path is an absolute path to the    |
    |               |                  | file.                                            |
    +---------------+------------------+--------------------------------------------------+
-   | summary_file  | path             | Not available anymore in Robot Framework 2.6 or  |
-   |               |                  | newer.                                           |
-   +---------------+------------------+--------------------------------------------------+
    | debug_file    | path             | Called when writing to a debug file is           |
    |               |                  | finished. The path is an absolute path to the    |
    |               |                  | file.                                            |

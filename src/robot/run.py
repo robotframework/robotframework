@@ -135,7 +135,6 @@ Options:
                           Examples: `--log mylog.html`, `-l NONE`
  -r --report file         HTML report file. Can be disabled with `NONE`
                           similarly as --log. Default: report.html
- -S --summary file        Not supported in Robot Framework 2.6 or newer.
  -x --xunitfile file      xUnit compatible result file. Not created unless this
                           option is specified.
  -b --debugfile file      Debug file written during execution. Not created
@@ -148,13 +147,11 @@ Options:
                           `report-20070503-154410.html`.
     --splitlog            Split log file into smaller pieces that open in
                           browser transparently.
-    --splitoutputs level  Not supported in Robot Framework 2.6 or newer.
     --logtitle title      Title for the generated test log. The default title
                           is `<Name Of The Suite> Test Log`. Underscores in
                           the title are converted into spaces in all titles.
     --reporttitle title   Title for the generated test report. The default
                           title is `<Name Of The Suite> Test Report`.
-    --summarytitle title  Not supported in Robot Framework 2.6 or newer.
     --reportbackground colors  Background colors to use in the report file.
                           Either `all_passed:critical_passed:failed` or
                           `passed:failed`. Both color names and codes work.
