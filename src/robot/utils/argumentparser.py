@@ -46,12 +46,6 @@ class ArgumentParser:
     (\s\S+)?      # optional value (group 4)
     (\s\*)?       # optional '*' telling option allowed multiple times (group 5)
     ''', re.VERBOSE)
-    _usage_line_re = re.compile('''
-    ^usage:.*
-    \[options\]\s*
-    (.*?)         # arguments (group 1)
-    \s*$
-    ''', re.VERBOSE | re.IGNORECASE)
 
     def __init__(self, usage, name=None, version=None, arg_limits=None,
                  validator=None):
@@ -65,7 +59,7 @@ class ArgumentParser:
         self.name = name or usage.splitlines()[0].split(' -- ')[0].strip()
         self.version = version or get_full_version()
         self._usage = usage
-        self._arg_limits = arg_limits
+        self._arg_limit_validator = ArgLimitValidator(arg_limits)
         self._validator = validator
         self._short_opts = ''
         self._long_opts = []
@@ -74,9 +68,9 @@ class ArgumentParser:
         self._names = []
         self._short_to_long = {}
         self._expected_args = ()
-        self._parse_usage(usage)
+        self._create_options(usage)
 
-    def parse_args(self, args_list, check_args=False):
+    def parse_args(self, args_list):
         """Parse given arguments and return options and positional arguments.
 
         Arguments must be given as a list and are typically sys.argv[1:].
@@ -132,8 +126,7 @@ class ArgumentParser:
             self._raise_version()
         if opts.get('pythonpath'):
             sys.path = self._get_pythonpath(opts['pythonpath']) + sys.path
-        if check_args:
-            self._check_args(args)
+        self._arg_limit_validator(args)
         if self._validator:
             opts, args = self._validator(opts, args)
         return opts, args
@@ -153,21 +146,6 @@ class ArgumentParser:
             return opt.lower()
         opt, value = opt.split('=', 1)
         return '%s=%s' % (opt.lower(), value)
-
-    def _check_args(self, args):
-        if not self._arg_limits:
-            raise FrameworkError('No argument information specified.')
-        minargs, maxargs = self._arg_limits
-        if minargs <= len(args) <= maxargs:
-            return
-        minend = plural_or_not(minargs)
-        if minargs == maxargs:
-            exptxt = "%d argument%s" % (minargs, minend)
-        elif maxargs != sys.maxint:
-            exptxt = "%d to %d arguments" % (minargs, maxargs)
-        else:
-            exptxt = "at least %d argument%s" % (minargs, minend)
-        raise DataError("Expected %s, got %d." % (exptxt, len(args)))
 
     def _unescape_opts_and_args(self, opts, args):
         try:
@@ -292,46 +270,32 @@ class ArgumentParser:
         except KeyError:
             return name
 
-    def _parse_usage(self, usage):
+    def _create_options(self, usage):
         for line in usage.splitlines():
-            if not self._parse_opt_line(line) and not self._arg_limits:
-                self._parse_usage_line(line)
+            res = self._opt_line_re.match(line)
+            if res:
+                self._create_option(short_opts=[o[1] for o in res.group(1).split()],
+                                    long_opt=res.group(3).lower(),
+                                    takes_arg=bool(res.group(4)),
+                                    is_multi=bool(res.group(5)))
 
-    def _parse_usage_line(self, line):
-        res = self._usage_line_re.match(line)
-        if res:
-            args = res.group(1).split()
-            if not args:
-                self._arg_limits = (0, 0)
-            else:
-                maxargs = sys.maxint if args[-1].endswith('s') else len(args)
-                self._arg_limits = (len(args), maxargs)
-
-    def _parse_opt_line(self, line):
-        res = self._opt_line_re.match(line)
-        if not res:
-            return False
-        long_opt = res.group(3).lower()
+    def _create_option(self, short_opts, long_opt, takes_arg, is_multi):
         if long_opt in self._names:
             self._raise_option_multiple_times_in_usage('--' + long_opt)
         self._names.append(long_opt)
-        short_opts = [opt[1] for opt in res.group(1).split()]
         for sopt in short_opts:
             if self._short_to_long.has_key(sopt):
                 self._raise_option_multiple_times_in_usage('-' + sopt)
             self._short_to_long[sopt] = long_opt
-        # options allowed multiple times
-        if res.group(5):
+        if is_multi:
             self._multi_opts.append(long_opt)
-        # options with arguments
-        if res.group(4):
+        if takes_arg:
             long_opt += '='
             short_opts = [sopt+':' for sopt in short_opts]
         else:
             self._toggle_opts.append(long_opt)
         self._long_opts.append(long_opt)
         self._short_opts += (''.join(short_opts))
-        return True
 
     def _get_pythonpath(self, paths):
         if isinstance(paths, basestring):
@@ -387,3 +351,32 @@ class ArgumentParser:
 
     def _raise_option_multiple_times_in_usage(self, opt):
         raise FrameworkError("Option '%s' multiple times in usage" % opt)
+
+
+class ArgLimitValidator(object):
+
+    def __init__(self, arg_limits):
+        self._min_args, self._max_args = self._parse_arg_limits(arg_limits)
+
+    def _parse_arg_limits(self, arg_limits):
+        if arg_limits is None:
+            return 0, sys.maxint
+        if isinstance(arg_limits, int):
+            return arg_limits, arg_limits
+        if len(arg_limits) == 1:
+            return arg_limits[0], sys.maxint
+        return arg_limits[0], arg_limits[1]
+
+    def __call__(self, args):
+        if not (self._min_args <= len(args) <= self._max_args):
+            self._raise_invalid_args(self._min_args, self._max_args, len(args))
+
+    def _raise_invalid_args(self, min_args, max_args, arg_count):
+        min_end = plural_or_not(min_args)
+        if min_args == max_args:
+            expectation = "%d argument%s" % (min_args, min_end)
+        elif max_args != sys.maxint:
+            expectation = "%d to %d arguments" % (min_args, max_args)
+        else:
+            expectation = "at least %d argument%s" % (min_args, min_end)
+        raise DataError("Expected %s, got %d." % (expectation, arg_count))

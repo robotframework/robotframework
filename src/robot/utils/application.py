@@ -26,7 +26,7 @@ from .error import get_error_details
 
 class Application(object):
 
-    def __init__(self, usage, name=None, version=None, arg_limits=None,
+    def __init__(self, usage, name=None, version=None, arg_limits=(1,),
                  logger=None):
         self._ap = ArgumentParser(usage, name, version, arg_limits)
         self._logger = logger or _NoLogging()
@@ -48,7 +48,7 @@ class Application(object):
 
     def _parse_arguments(self, cli_args):
         try:
-            options, arguments = self._ap.parse_args(cli_args, check_args=True)
+            options, arguments = self._ap.parse_args(cli_args)
         except Information, msg:
             self._report_info(unicode(msg))
         except DataError, err:

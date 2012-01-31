@@ -1,5 +1,6 @@
 import unittest
 import os
+import sys
 
 from robot.utils.argumentparser import ArgumentParser
 from robot.utils.asserts import *
@@ -197,37 +198,41 @@ class TestArgumentParserParseArgs(unittest.TestCase):
 class TestArgumentValidation(unittest.TestCase):
 
     def test_check_args_with_correct_args(self):
+        for arg_limits in [None, (1, 1), 1, (1,)]:
+            ap = ArgumentParser(USAGE, arg_limits=arg_limits)
+            assert_equals(ap.parse_args(['hello'])[1], ['hello'])
+
+    def test_default_validation(self):
         ap = ArgumentParser(USAGE)
-        for arg in ['hello', 'hello world']:
-            ap.parse_args([arg], check_args=True)
+        for args in [(), ('1',), ('m', 'a', 'n', 'y')]:
+            assert_equals(ap.parse_args(args)[1], list(args))
 
     def test_check_args_with_wrong_number_of_args(self):
-        ap = ArgumentParser(USAGE)
-        for args in [(), ('arg1', 'arg2', 'arg3')]:
-            assert_raises(DataError, ap._check_args, args)
+        for limits in [1, (1, 1), (1, 2)]:
+            ap = ArgumentParser('usage', arg_limits=limits)
+            for args in [(), ('arg1', 'arg2', 'arg3')]:
+                assert_raises(DataError, ap.parse_args, args)
 
     def test_check_variable_number_of_args(self):
-        ap = ArgumentParser('usage:  robot.py [options] args')
-        ap.parse_args(['one_is_ok'], check_args=True)
-        ap.parse_args(['two', 'ok'], check_args=True)
-        ap.parse_args(['this', 'should', 'also', 'work', '!'], check_args=True)
+        ap = ArgumentParser('usage:  robot.py [options] args', arg_limits=(1,))
+        ap.parse_args(['one_is_ok'])
+        ap.parse_args(['two', 'ok'])
+        ap.parse_args(['this', 'should', 'also', 'work', '!'])
         assert_raises_with_msg(DataError, "Expected at least 1 argument, got 0.",
-                               ap._check_args, [])
+                               ap.parse_args, [])
 
-    def test_arg_limits_to_constructor(self):
+    def test_argument_range(self):
         ap = ArgumentParser('usage:  test.py [options] args', arg_limits=(2,4))
+        ap.parse_args(['1', '2'])
+        ap.parse_args(['1', '2', '3', '4'])
         assert_raises_with_msg(DataError, "Expected 2 to 4 arguments, got 1.",
-                               ap._check_args, ['one is not enough'])
+                               ap.parse_args, ['one is not enough'])
 
-    def test_reading_args_from_usage_when_it_has_just_options(self):
-        ap = ArgumentParser('usage:  test.py [options]')
-        ap.parse_args([], check_args=True)
+    def test_no_arguments(self):
+        ap = ArgumentParser('usage:  test.py [options]', arg_limits=(0, 0))
+        ap.parse_args([])
         assert_raises_with_msg(DataError, "Expected 0 arguments, got 2.",
-                               ap._check_args, ['1', '2'])
-
-    def test_check_args_fails_when_no_args_specified(self):
-        assert_raises(FrameworkError, ArgumentParser('test').parse_args,
-                      [], check_args=True)
+                               ap.parse_args, ['1', '2'])
 
     def test_custom_validator_fails(self):
         def validate(options, args):
