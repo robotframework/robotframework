@@ -22,15 +22,17 @@ class TsvReader:
         for index, row in enumerate(tsvfile.readlines()):
             if index == 0 and row.startswith(BOM_UTF8):
                 row = row[len(BOM_UTF8):]
-            cells = [ self._process(cell) for cell in self._split_row(row) ]
+            cells = [self._process(cell) for cell in self.split_row(row)]
             name = cells and cells[0].strip() or ''
-            if name.startswith('*') and populator.start_table([ c.replace('*','') for c in cells ]):
+            if name.startswith('*') and \
+                    populator.start_table([c.replace('*','') for c in cells]):
                 process = True
             elif process:
                 populator.add(cells)
         populator.eof()
 
-    def _split_row(self, row):
+    @classmethod
+    def split_row(cls, row):
         return row.rstrip().split('\t')
 
     def _process(self, cell):

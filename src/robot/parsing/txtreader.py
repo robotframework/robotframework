@@ -18,19 +18,16 @@ from tsvreader import TsvReader
 
 
 class TxtReader(TsvReader):
-
     _space_splitter = re.compile(' {2,}')
     _pipe_splitter = re.compile(' \|(?= )')
 
-    def _split_row(self, row):
+    @classmethod
+    def split_row(cls, row):
         row = row.rstrip().replace('\t', '  ')
         if not row.startswith('| '):
-            return self._space_splitter.split(row)
-        if row.endswith(' |'):
-            row = row[1:-1]
-        else:
-            row = row[1:]
-        return self._pipe_splitter.split(row)
+            return cls._space_splitter.split(row)
+        row = row[1:-1] if row.endswith(' |') else row[1:]
+        return [cell.strip() for cell in cls._pipe_splitter.split(row)]
 
     def _process(self, cell):
         return cell.decode('UTF-8')
