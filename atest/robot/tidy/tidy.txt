@@ -14,29 +14,29 @@ ${TIDYDIR}        ${TEMPDIR}/tidy-test
 Tidying single test case file
     [Template]    Run tidy with golden file and check result
     ${EMPTY}    ${DATADIR}/golden.txt
-    --use-pipes    ${DATADIR}/golden_pipes.txt
+    --usepipes    ${DATADIR}/golden_pipes.txt
     --format tsv    ${DATADIR}/golden.tsv
     --format html    ${DATADIR}/golden.html
 
 Tidying single resource case file
     [Template]    Run tidy with golden resource file and check result
     ${EMPTY}    ${DATADIR}/golden_resource.txt
-    --use-pipes    ${DATADIR}/golden_pipes_resource.txt
-    --format tsv    ${DATADIR}/golden_resource.tsv
-    --format html    ${DATADIR}/golden_resource.html
+    -p    ${DATADIR}/golden_pipes_resource.txt
+    -f tsv    ${DATADIR}/golden_resource.tsv
+    --FORMAT html    ${DATADIR}/golden_resource.html
 
 Tidying single init file
     Run tidy and check result    ${EMPTY}    ${DATADIR}/__init__.txt    ${DATADIR}/__init__.txt
 
 Tidying single file in place
     [Setup]    Copy File    ${DATADIR}/golden.txt    ${TIDYDIR}/golden.txt
-    Run tidy and check result    --inplace --use-pipes    ${TIDYDIR}/golden.txt    ${DATADIR}/golden_pipes.txt
+    Run tidy and check result    --inplace --usepipes    ${TIDYDIR}/golden.txt    ${DATADIR}/golden_pipes.txt
     Check file count    ${TIDYDIR}    *.txt    1
     [Teardown]    Empty Directory     ${TIDYDIR}
 
 Tidying single file in place and change format
     [Setup]    Copy File    ${DATADIR}/golden.txt    ${TIDYDIR}/golden.txt
-    Run tidy and check result    --inplace --format html    ${TIDYDIR}/golden.txt    ${DATADIR}/golden.html
+    Run tidy and check result    -i -f html    ${TIDYDIR}/golden.txt    ${DATADIR}/golden.html
     Check file count    ${TIDYDIR}    *.html    1
     Check file count    ${TIDYDIR}    *.txt    0
     [Teardown]    Empty Directory     ${TIDYDIR}
@@ -44,7 +44,7 @@ Tidying single file in place and change format
 Tidying many files in place
     [Setup]    Copy Golden Files
     List Directory      ${TIDYDIR}
-    Run tidy and return output    --inplace --format html   ${TIDYDIR}/golden*
+    Run tidy and return output    --InPlace --ForMat html   ${TIDYDIR}/golden*
     List Directory      ${TIDYDIR}
     Check file count    ${TIDYDIR}    *.html    2
     Check file count    ${TIDYDIR}    *.txt    0

@@ -39,7 +39,7 @@ Options:
  -f --format txt|html|tsv
                  Output file format. If omitted, the format of the input
                  file is used.
- -p --use-pipes  Use pipe (`|`) as a cell separator in the txt format.
+ -p --usepipes   Use pipe (`|`) as a cell separator in the txt format.
  -h --help       Show this help.
 
 Cleaning up the test data
@@ -142,63 +142,49 @@ class Tidy(object):
         return os.path.splitext(os.path.basename(source))[0] == '__init__'
 
 
-class TidyCommandLine(object):
+class TidyCommandLine(utils.Application):
 
-    def __init__(self, usage):
-        self._parser = utils.ArgumentParser(usage)
+    def __init__(self):
+        utils.Application.__init__(self, USAGE, arg_limits=None)
 
-    def run(self, args):
-        options, inputs = self._parse_args(args)
-        tidy = Tidy(format=options['format'],
-                    pipe_separated=options['use-pipes'])
-        if options['recursive']:
+    def main(self, inputs, recursive=False, inplace=False, format='txt',
+             usepipes=False):
+        tidy = Tidy(format=format, pipe_separated=usepipes)
+        if recursive:
             tidy.directory(inputs[0])
-        elif options['inplace']:
+        elif inplace:
             for source in inputs:
                 tidy.inplace(source)
         else:
-            return tidy.file(inputs[0])
+            self._print(tidy.file(inputs[0]))
 
-    def _parse_args(self, args):
-        options, sources = self._parser.parse_args(args)
+    def _print(self, msg):
+        if sys.stdout.isatty():
+            msg = utils.encode_output(msg)
+        else:
+            if os.sep == '\\' and 'b' not in sys.stdout.mode:
+                msg = msg.replace('\r\n', '\n')
+            msg = msg.encode('UTF-8')
+        sys.stdout.write(msg)
+
+    def validate(self, options, arguments):
         if options['inplace'] and options['recursive']:
             raise DataError('--recursive and --inplace can not be used together.')
-        if not options['inplace'] and len(sources) > 1:
+        if not options['inplace'] and len(arguments) > 1:
             raise DataError('Expected exactly 1 input file.')
-        if not sources:
+        if not arguments:
             raise DataError('Expected at least 1 input file.')
-        if options['recursive'] and not os.path.isdir(sources[0]):
+        if options['recursive'] and not os.path.isdir(arguments[0]):
             raise DataError('--recursive requires input to be a directory.')
         format = options['format']
         if format and format not in ['txt', 'tsv', 'html']:
             raise DataError("Invalid format: %s." % format)
-        return options, sources
-
-
-def console(msg):
-    if sys.stdout.isatty():
-        msg = utils.encode_output(msg)
-    else:
-        if os.sep == '\\' and 'b' not in sys.stdout.mode:
-            msg = msg.replace('\r\n', '\n')
-        msg = msg.encode('UTF-8')
-    sys.stdout.write(msg)
+        return options, arguments
 
 
 def tidy_cli(args):
-    try:
-        output = TidyCommandLine(USAGE).run(args)
-        if output:
-            console(output)
-    except DataError, err:
-        console('%s\n\nUse --help for usage.\n' % unicode(err))
-        return 1
-    except Information, msg:
-        console(unicode(msg))
-        return 1
-    else:
-        return 0
+    TidyCommandLine().execute_cli(args)
 
 
 if __name__ == '__main__':
-    sys.exit(tidy_cli(sys.argv[1:]))
+    tidy_cli(sys.argv[1:])
