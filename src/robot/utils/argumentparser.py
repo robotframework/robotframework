@@ -53,7 +53,8 @@ class ArgumentParser:
     \s*$
     ''', re.VERBOSE | re.IGNORECASE)
 
-    def __init__(self, usage, name=None, version=None, arg_limits=None):
+    def __init__(self, usage, name=None, version=None, arg_limits=None,
+                 validator=None):
         """Available options and tool name are read from the usage.
 
         Tool name is got from the first row of the usage. It is either the
@@ -65,6 +66,7 @@ class ArgumentParser:
         self.version = version or get_full_version()
         self._usage = usage
         self._arg_limits = arg_limits
+        self._validator = validator
         self._short_opts = ''
         self._long_opts = []
         self._multi_opts = []
@@ -132,6 +134,8 @@ class ArgumentParser:
             sys.path = self._get_pythonpath(opts['pythonpath']) + sys.path
         if check_args:
             self._check_args(args)
+        if self._validator:
+            opts, args = self._validator(opts, args)
         return opts, args
 
     def _parse_args(self, args):

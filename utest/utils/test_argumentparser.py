@@ -229,6 +229,20 @@ class TestArgumentValidation(unittest.TestCase):
         assert_raises(FrameworkError, ArgumentParser('test').parse_args,
                       [], check_args=True)
 
+    def test_custom_validator_fails(self):
+        def validate(options, args):
+            raise AssertionError
+        ap = ArgumentParser(USAGE2, validator=validate)
+        assert_raises(AssertionError, ap.parse_args, [])
+
+    def test_custom_validator_return_value(self):
+        def validate(options, args):
+            return options, [a.upper() for a in args]
+        ap = ArgumentParser(USAGE2, validator=validate)
+        opts, args = ap.parse_args(['-v', 'value', 'inp1', 'inp2'])
+        assert_equals(opts['variable'], 'value')
+        assert_equals(args, ['INP1', 'INP2'])
+
 
 class TestPrintHelpAndVersion(unittest.TestCase):
 
