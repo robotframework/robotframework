@@ -14,7 +14,7 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-"""robot.tidy -- Robot Framework test data clean-up tool.
+USAGE = """robot.tidy -- Robot Framework test data clean-up tool.
 
 Usage: python -m robot.tidy [options] inputfile
    or: python -m robot.tidy [options] inputfile > outputfile
@@ -185,14 +185,20 @@ def console(msg):
     sys.stdout.write(msg)
 
 
-if __name__ == '__main__':
+def tidy_cli(args):
     try:
-        output = TidyCommandLine(__doc__).run(sys.argv[1:])
+        output = TidyCommandLine(USAGE).run(args)
         if output:
             console(output)
     except DataError, err:
         console('%s\n\nUse --help for usage.\n' % unicode(err))
-        sys.exit(1)
+        return 1
     except Information, msg:
         console(unicode(msg))
-    sys.exit(0)
+        return 1
+    else:
+        return 0
+
+
+if __name__ == '__main__':
+    sys.exit(tidy_cli(sys.argv[1:]))
