@@ -40,7 +40,7 @@ Options:
                  Output file format. If omitted, the format of the input
                  file is used.
  -p --usepipes   Use pipe (`|`) as a cell separator in the txt format.
- -h --help       Show this help.
+ -h -? --help    Show this help.
 
 Cleaning up the test data
 =========================
