@@ -18,10 +18,11 @@ function addElements(elems, templateName, target){
 
 function toggleElement(elementId, childrenNames) {
     var childElement = $("#"+elementId+"_children");
-    childElement.toggle(100);
+    childElement.toggle(100, function () {
+        var foldingButton = $('#'+elementId+'_foldingbutton');
+        foldingButton.text(foldingButton.text() == '+' ? '-' : '+');
+    });
     populateChildren(elementId, childElement, childrenNames);
-    var foldingButton = $('#'+elementId+'_foldingbutton');
-    foldingButton.text(foldingButton.text() == '+' ? '-' : '+');
 }
 
 function populateChildren(elementId, childElement, childrenNames) {
