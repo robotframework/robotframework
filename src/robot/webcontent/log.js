@@ -62,7 +62,7 @@ function expandRecursively(){
 
 function expandElement(element) {
     var childElement = $("#" + element.id + "_children");
-    childElement.show(100);
+    childElement.show();
     populateChildren(element.id, childElement, element.childrenNames);
     $('#'+element.id+'_foldingbutton').text('-');
 }
