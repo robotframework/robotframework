@@ -67,6 +67,10 @@ function expandElement(element) {
     $('#'+element.id+'_foldingbutton').text('-');
 }
 
+function expandElementWithId(elementid) {
+    expandElement(window.testdata.find(elementid));
+}
+
 function elementHiddenByUser(elementId) {
     var domElement = $("#"+elementId);
     return !domElement.is(":visible");
