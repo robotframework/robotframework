@@ -8,6 +8,12 @@ Installation and uninstallation
 Introduction
 ~~~~~~~~~~~~
 
+.. note:: The installation system was changed quite a bit for
+          Robot Framework 2.7. The instructions below are correct
+          only for version 2.6 and older. The new installation procedure
+          is described in the project `Wiki pages`__. The user guide
+          will be updated before the final release.
+
 There are several ways to install Robot Framework:
 
 `Installing from source`_
@@ -44,6 +50,7 @@ http://source.robotframework.org.
 .. note:: At the momemt it is not possible to install Robot Framework using
           pip__. For more information see `issue 885`__.
 
+__ http://code.google.com/p/robotframework/wiki/NewInstallation
 __ http://www.pip-installer.org
 __ http://code.google.com/p/robotframework/issues/detail?id=885
 
