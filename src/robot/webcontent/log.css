@@ -86,9 +86,15 @@ div.foldingbutton:hover {
     margin-right: 0.5em;
     font-size: 0.8em;
 }
+div.elementheader {
+    border: 1px solid white;
+    padding: 2px;
+}
+
 div.elementheader:hover {
     cursor: pointer;
     background: #F4F4FF;
+    border: 1px solid gray;
 }
 /* Test, suite and kw names */
 .name {
