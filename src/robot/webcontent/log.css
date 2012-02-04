@@ -1,47 +1,20 @@
 /* Tables */
-table.suite, table.errors {
+table, tr, td {
+    margin: 0;
+    padding: 0;
+}
+table.suite, table.test, table.errors {
     width: 100%;
     border: 1px solid gray;
-    margin: 0.2em 0em;
+    margin: 0.2em 0;
     padding: 0.2em;
-}
-table.errors td.level {
-    font-weight: bold;
-    width: 4em;
-    text-align: center;
-    vertical-align: top;
-}
-table.errors td.time {
-    width: 10em;
-    vertical-align: top;
-    white-space: nowrap;
-}
-table.errors td.msg {
-    white-space: pre-wrap;
 }
 table.test {
-    width: 100%;
     border: 1px dashed gray;
-    margin: 0.2em 0em;
-    padding: 0.2em;
 }
 table.metadata, table.keyword, table.messages {
-    padding-left: 1.1em;
     width: 100%;
-}
-table.metadata, table.messages {
-    margin-right: 2em;
-}
-table.keyword table.metadata {
-    font-size: 0.9em;
-    margin-left: 1.4em;
-}
-table.messages {
-    font-family: monospace;
-    font-size: 1.2em;
-}
-table.messages td.msg {
-    white-space: pre-wrap;
+    padding-left: 1.1em;
 }
 table.metadata th {
     width: 13em;
@@ -54,53 +27,62 @@ table.metadata td {
     vertical-align: top;
     white-space: pre-wrap;
 }
-table.messages td {
-    vertical-align: top;
+table.keyword table.metadata {
+    font-size: 0.9em;
 }
-table.messages td.time {
-    width: 6em;
-    letter-spacing: -0.05em;
+/* Test, suite and kw headers */
+td.elementheader {
+    border: 1px solid white;
+    border-radius: 2px;
+    padding: 0.2em 0;
 }
-table.messages td.level {
-    width: 4em;
-    text-align: center;
+td.elementheader:hover {
+    cursor: pointer;
+    background: #F4F4FF;
+    border: 1px solid #D3D3D3;
 }
-/* Folding */
 div.foldingbutton {
-    text-align: center;
-    line-height: 0.8em;
-    font-size: 0.8em;
-    margin: 0.2em 0.4em 0em 0.1em;
+    float: left;
     height: 0.9em;
     width: 0.9em;
-    float: left;
-    text-decoration: none;
+    line-height: 0.9em;
+    text-align: center;
+    font-size: 0.7em;
+    margin: 0.3em 0.5em;
     border: 1px solid black;
     border-radius: 2px;
 }
 div.foldingbutton:hover {
     background: yellow;
 }
-.expand {
+span.name {
+    font-weight: bold;
+}
+a.expandall {
     float: right;
-    margin-right: 0.5em;
+    margin: 0.2em 0.5em;
     font-size: 0.8em;
 }
-div.elementheader {
-    border: 1px solid white;
+/* Messages and errors */
+table.messages {
+    font-family: monospace;
+    font-size: 1.2em;
 }
-
-div.elementheader:hover {
-    cursor: pointer;
-    background: #F4F4FF;
-    border: 1px solid gray;
+table.messages td, table.errors.td {
+    vertical-align: top;
 }
-/* Test, suite and kw names */
-.name {
+table.messages td.time {
+    width: 6em;
+}
+table.errors td.time {
+    width: 10em;
+    white-space: nowrap;
+}
+td.level {
+    width: 5em;
     font-weight: bold;
-    text-decoration: none;
+    text-align: center;
 }
-a.name:hover {
-    text-decoration: none;
-    color: black;
+td.msg {
+    white-space: pre-wrap;
 }
