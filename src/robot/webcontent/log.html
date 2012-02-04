@@ -77,7 +77,7 @@ function drawErrorsRecursively(){
 }
 
 function scrollToHash() {
-    // TODO: this does not scroll window in Safari. Should build a workaround for it.
+    // TODO: This does not scroll window in Safari.
     if (window.location.hash)
         window.location.hash = window.location.hash.substring(1);
 }
@@ -90,8 +90,8 @@ function popFromIterator(iterator, upTo) {
 }
 
 function makeElementVisible(element) {
-    // findPathTo ensures that all the data for the element has been downloaded from server
-    // before executing the callback function
+    // findPathTo ensures that all the data for the element has been downloaded
+    // from server before executing the callback function
     window.testdata.findPathTo(unescape(element), function (uniqueIds) {
         for (var i in uniqueIds) {
             expandElementWithId(uniqueIds[i]);
@@ -170,22 +170,21 @@ function addTestExecutionLog(main) {
 </script>
 
 <script type="text/x-jquery-tmpl" id="suiteTemplate">
-  <table class="suite" id="${id}">
+  <table id="${id}" class="suite">
     <tr>
-      <td>
-        <a class="expand"
-           href="javascript:expandAllChildren('${id}')">Expand All</a>
-        <div id="${id}_elementheader" onclick="toggleSuite('${id}');" class="elementheader">
-            <div id="${id}_foldingbutton" class="foldingbutton">+</div>
-            <span class="${status.toLowerCase()}">TEST&nbsp;SUITE:</span>
-            <a class="name" title="${name}">${name}</a>
-        </div>
+      <td id="${id}_elementheader" class="elementheader"
+          onclick="toggleSuite('${id}');" title="${fullName}">
+        <div id="${id}_foldingbutton" class="foldingbutton">+</div>
+        <span class="${status.toLowerCase()}">TEST&nbsp;SUITE:</span>
+        <span class="name">${name}</span>
+        <a href="javascript:expandAllChildren('${id}')"
+           class="expandall">Expand All</a>
       </td>
     </tr>
     <tr>
       <td>
         <div id="${id}_children" style="display: none;">
-          <table class="metadata" id="${id}_metadata">
+          <table class="metadata">
             <tr>
               <th>Full Name:</th>
               <td>${fullName}</td>
@@ -211,7 +210,7 @@ function addTestExecutionLog(main) {
               <td>${source}</td>
               {{/if}}
             </tr>
-             {{/if}}
+            {{/if}}
             <tr>
               <th>Start / End / Elapsed:</th><td>${times.startTime}  /  ${times.endTime}  /  ${times.elapsedTime}</td>
             </tr>
@@ -233,23 +232,22 @@ function addTestExecutionLog(main) {
 </script>
 
 <script type="text/x-jquery-tmpl" id="testTemplate">
-  <table class="test" id="${id}">
+  <table id="${id}" class="test">
     <tr>
-      <td>
-        <a class="expand"
-           href="javascript:expandAllChildren('${id}')">Expand All</a>
-        <div id="${id}_elementheader" onclick="toggleTest('${id}');" class="elementheader">
-            <div id="${id}_foldingbutton" class="foldingbutton">+</div>
-            <span class="${status.toLowerCase()}">TEST&nbsp;CASE: </span>
-            <a class="name" title="${fullName}">${name}</a>
-            {{if !isCritical}}<span>  (non-critical)</span>{{/if}}
-        </div>
+      <td id="${id}_elementheader" onclick="toggleTest('${id}');"
+          class="elementheader" title="${fullName}">
+        <div id="${id}_foldingbutton" class="foldingbutton">+</div>
+        <span class="${status.toLowerCase()}">TEST&nbsp;CASE: </span>
+        <span class="name">${name}</span>
+        {{if !isCritical}}<span>  (non-critical)</span>{{/if}}
+        <a href="javascript:expandAllChildren('${id}')"
+           class="expandall">Expand All</a>
       </td>
     </tr>
     <tr>
       <td>
         <div id="${id}_children" style="display: none;">
-          <table class="metadata" id="${id}_metadata">
+          <table class="metadata">
             <tr>
               <th>Full Name:</th>
               <td>${fullName}</td>
@@ -294,21 +292,22 @@ function addTestExecutionLog(main) {
 </script>
 
 <script type="text/x-jquery-tmpl" id="keywordTemplate">
-  <table class="keyword" id="${id}">
+  <table id="${id}" class="keyword">
     <tr>
-      <td>
-          <div id="${id}_elementheader" onclick="toggleKeyword('${id}');" class="elementheader">
-              <div id="${id}_foldingbutton" class="foldingbutton">+</div>
-              <span class="${status.toLowerCase()}">${type}: </span>
-              <a class="name" title="${name}">${name}</a>
-              <span class="arg">${arguments}</span>
-          </div>
+      <td id="${id}_elementheader" class="elementheader"
+          onclick="toggleKeyword('${id}');" title="${name}">
+        <div id="${id}_foldingbutton" class="foldingbutton">+</div>
+        <span class="${status.toLowerCase()}">${type}: </span>
+        <span class="name">${name}</span>
+        <span class="arg">${arguments}</span>
+        <a href="javascript:expandAllChildren('${id}')"
+           class="expandall">Expand All</a>
       </td>
     </tr>
     <tr>
       <td>
         <div id="${id}_children" style="display: none;">
-          <table class="metadata" id="${id}_metadata">
+          <table class="metadata">
             {{if doc()}}
             <tr>
               <th>Documentation:</th>
