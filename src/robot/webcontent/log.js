@@ -28,7 +28,8 @@ function toggleElement(elementId, childrenNames) {
 function populateChildren(elementId, childElement, childrenNames) {
     if (!childElement.hasClass("populated")) {
         var element = window.testdata.find(elementId);
-        element.callWhenChildrenReady(drawCallback(element, childElement, childrenNames));
+        var callback = drawCallback(element, childElement, childrenNames);
+        element.callWhenChildrenReady(callback);
         childElement.addClass("populated");
     }
 }
@@ -36,7 +37,9 @@ function populateChildren(elementId, childElement, childrenNames) {
 function drawCallback(element, childElement, childrenNames) {
     return function () {
         $.map(childrenNames, function (childName) {
-            addElements(element[childName + 's'](), childName + 'Template', childElement);
+            addElements(element[childName + 's'](),
+                        childName + 'Template',
+                        childElement);
         });
     }
 }
@@ -73,20 +76,22 @@ function expandElementWithId(elementid) {
 }
 
 function elementHiddenByUser(elementId) {
-    var domElement = $("#"+elementId);
-    return !domElement.is(":visible");
+    var element = $("#"+elementId);
+    return !element.is(":visible");
 }
 
 function expandAllChildren(elementId) {
     window.elementsToExpand = [window.testdata.find(elementId)];
-    window.expandDecider = function() {return true;};
+    window.expandDecider = function() { return true; };
     expandRecursively();
 }
 
 function expandCriticalFailed(element) {
     if (element.status == "FAIL") {
         window.elementsToExpand = [element];
-        window.expandDecider = function(e) {return e.status == "FAIL" && (e.isCritical === undefined || e.isCritical);};
+        window.expandDecider = function(e) {
+            return e.status == "FAIL" && (e.isCritical === undefined || e.isCritical);
+        };
         expandRecursively();
     }
 }
