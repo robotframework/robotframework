@@ -1,42 +1,25 @@
-/* Tables */
-table, tr, td {
-    margin: 0;
-    padding: 0;
-}
-table.suite, table.test, table.errors {
-    width: 100%;
+/* Containers */
+div.suite, div.test, table.errors {
     border: 1px solid gray;
+    padding: 0.3em;
     margin: 0.2em 0;
-    padding: 0.2em;
 }
-table.test {
-    border: 1px dashed gray;
+div.test {
+    border-style: dashed;
 }
-table.metadata, table.keyword, table.messages {
+table.errors, table.metadata, table.messages {
     width: 100%;
-    padding-left: 1.1em;
 }
-table.metadata th {
-    width: 13em;
-    text-align: left;
-    vertical-align: top;
-    white-space: nowrap;
+div.keyword, table.metadata, table.messages {
+    padding-left: 1.2em;
 }
-table.metadata td {
-    padding-left: 0.5em;
-    vertical-align: top;
-    white-space: pre-wrap;
-}
-table.keyword table.metadata {
-    font-size: 0.9em;
-}
-/* Test, suite and kw headers */
-td.elementheader {
+/* Suite, test and kw headers */
+div.elementheader {
     border: 1px solid white;
     border-radius: 2px;
     padding: 0.2em 0;
 }
-td.elementheader:hover {
+div.elementheader:hover {
     cursor: pointer;
     background: #F4F4FF;
     border: 1px solid #D3D3D3;
@@ -85,4 +68,19 @@ td.level {
 }
 td.msg {
     white-space: pre-wrap;
+}
+/* Metadata */
+table.metadata th {
+    width: 13em;
+    text-align: left;
+    vertical-align: top;
+    white-space: nowrap;
+}
+table.metadata td {
+    padding-left: 0.5em;
+    vertical-align: top;
+    white-space: pre-wrap;
+}
+div.keyword table.metadata {
+    font-size: 0.9em;
 }

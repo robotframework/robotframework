@@ -170,165 +170,147 @@ function addTestExecutionLog(main) {
 </script>
 
 <script type="text/x-jquery-tmpl" id="suiteTemplate">
-  <table id="${id}" class="suite">
-    <tr>
-      <td id="${id}_elementheader" class="elementheader"
-          onclick="toggleSuite('${id}');" title="${fullName}">
-        <div id="${id}_foldingbutton" class="foldingbutton">+</div>
-        <span class="${status.toLowerCase()}">TEST&nbsp;SUITE:</span>
-        <span class="name">${name}</span>
-        <a href="javascript:expandAllChildren('${id}')"
-           class="expandall">Expand All</a>
-      </td>
-    </tr>
-    <tr>
-      <td>
-        <div id="${id}_children" style="display: none;">
-          <table class="metadata">
-            <tr>
-              <th>Full Name:</th>
-              <td>${fullName}</td>
-            </tr>
-            {{if doc()}}
-            <tr>
-              <th>Documentation:</th>
-              <td>{{html doc()}}</td>
-            </tr>
-            {{/if}}
-            {{each metadata}}
-            <tr>
-              <th>${$value[0]}:</th>
-              <td>{{html $value[1]}}</td>
-            </tr>
-            {{/each}}
-            {{if source}}
-            <tr>
-              <th>Source:</th>
-              {{if relativeSource}}
-              <td><a href="${relativeSource}">${source}</a></td>
-              {{else}}
-              <td>${source}</td>
-              {{/if}}
-            </tr>
-            {{/if}}
-            <tr>
-              <th>Start / End / Elapsed:</th><td>${times.startTime}  /  ${times.endTime}  /  ${times.elapsedTime}</td>
-            </tr>
-            <tr>
-              <th>Status:</th>
-              <td>{{tmpl($data) 'suiteStatusMessageTemplate'}}</td>
-            </tr>
-            {{if message()}}
-            <tr>
-              <th>Message:</th>
-              <td>${message()}</td>
-            </tr>
-            {{/if}}
-          </table>
-        </div>
-      </td>
-    </tr>
-  </table>
+  <div id="${id}" class="suite">
+    <div id="${id}_elementheader" class="elementheader"
+         onclick="toggleSuite('${id}');" title="${fullName}">
+      <div id="${id}_foldingbutton" class="foldingbutton">+</div>
+      <span class="${status.toLowerCase()}">TEST&nbsp;SUITE:</span>
+      <span class="name">${name}</span>
+      <a href="javascript:expandAllChildren('${id}')"
+         class="expandall">Expand All</a>
+    </div>
+    <div id="${id}_children" style="display: none;">
+      <table class="metadata">
+        <tr>
+          <th>Full Name:</th>
+          <td>${fullName}</td>
+        </tr>
+        {{if doc()}}
+        <tr>
+          <th>Documentation:</th>
+          <td>{{html doc()}}</td>
+        </tr>
+        {{/if}}
+        {{each metadata}}
+        <tr>
+          <th>${$value[0]}:</th>
+          <td>{{html $value[1]}}</td>
+        </tr>
+        {{/each}}
+        {{if source}}
+        <tr>
+          <th>Source:</th>
+          {{if relativeSource}}
+          <td><a href="${relativeSource}">${source}</a></td>
+          {{else}}
+          <td>${source}</td>
+          {{/if}}
+        </tr>
+        {{/if}}
+        <tr>
+          <th>Start / End / Elapsed:</th><td>${times.startTime}  /  ${times.endTime}  /  ${times.elapsedTime}</td>
+        </tr>
+        <tr>
+          <th>Status:</th>
+          <td>{{tmpl($data) 'suiteStatusMessageTemplate'}}</td>
+        </tr>
+        {{if message()}}
+        <tr>
+          <th>Message:</th>
+          <td>${message()}</td>
+        </tr>
+        {{/if}}
+      </table>
+    </div>
+  </div>
 </script>
 
 <script type="text/x-jquery-tmpl" id="testTemplate">
-  <table id="${id}" class="test">
-    <tr>
-      <td id="${id}_elementheader" onclick="toggleTest('${id}');"
-          class="elementheader" title="${fullName}">
-        <div id="${id}_foldingbutton" class="foldingbutton">+</div>
-        <span class="${status.toLowerCase()}">TEST&nbsp;CASE: </span>
-        <span class="name">${name}</span>
-        {{if !isCritical}}<span>  (non-critical)</span>{{/if}}
-        <a href="javascript:expandAllChildren('${id}')"
-           class="expandall">Expand All</a>
-      </td>
-    </tr>
-    <tr>
-      <td>
-        <div id="${id}_children" style="display: none;">
-          <table class="metadata">
-            <tr>
-              <th>Full Name:</th>
-              <td>${fullName}</td>
-            </tr>
-            {{if doc()}}
-            <tr>
-              <th>Documentation:</th>
-              <td>{{html doc()}}</td>
-            </tr>
-            {{/if}}
-            {{if tags.length}}
-            <tr>
-              <th>Tags:</th>
-              <td>${tags.join(', ')}</td>
-            </tr>
-            {{/if}}
-            {{if timeout}}
-            <tr>
-              <th>Timeout:</th>
-              <td>${timeout}</td>
-            </tr>
-            {{/if}}
-            <tr>
-              <th>Start / End / Elapsed:</th>
-              <td>${times.startTime}  /  ${times.endTime}  /  ${times.elapsedTime}</td>
-            </tr>
-            <tr>
-              <th>Status:</th>
-              <td><span class="${status.toLowerCase()}">${status}</span> ({{if isCritical}}critical{{else}}non-critical{{/if}})</td>
-            </tr>
-            {{if message()}}
-            <tr>
-              <th>Message:</th>
-              <td>${message()}</td>
-            </tr>
-            {{/if}}
-          </table>
-        </div>
-      </td>
-    </tr>
-  </table>
+  <div id="${id}" class="test">
+    <div id="${id}_elementheader" onclick="toggleTest('${id}');"
+         class="elementheader" title="${fullName}">
+      <div id="${id}_foldingbutton" class="foldingbutton">+</div>
+      <span class="${status.toLowerCase()}">TEST&nbsp;CASE: </span>
+      <span class="name">${name}</span>
+      {{if !isCritical}}<span>  (non-critical)</span>{{/if}}
+      <a href="javascript:expandAllChildren('${id}')"
+         class="expandall">Expand All</a>
+    </div>
+    <div id="${id}_children" style="display: none;">
+      <table class="metadata">
+        <tr>
+          <th>Full Name:</th>
+          <td>${fullName}</td>
+        </tr>
+        {{if doc()}}
+        <tr>
+          <th>Documentation:</th>
+          <td>{{html doc()}}</td>
+        </tr>
+        {{/if}}
+        {{if tags.length}}
+        <tr>
+          <th>Tags:</th>
+          <td>${tags.join(', ')}</td>
+        </tr>
+        {{/if}}
+        {{if timeout}}
+        <tr>
+          <th>Timeout:</th>
+          <td>${timeout}</td>
+        </tr>
+        {{/if}}
+        <tr>
+          <th>Start / End / Elapsed:</th>
+          <td>${times.startTime}  /  ${times.endTime}  /  ${times.elapsedTime}</td>
+        </tr>
+        <tr>
+          <th>Status:</th>
+          <td><span class="${status.toLowerCase()}">${status}</span> ({{if isCritical}}critical{{else}}non-critical{{/if}})</td>
+        </tr>
+        {{if message()}}
+        <tr>
+          <th>Message:</th>
+          <td>${message()}</td>
+        </tr>
+        {{/if}}
+      </table>
+    </div>
+  </div>
 </script>
 
 <script type="text/x-jquery-tmpl" id="keywordTemplate">
-  <table id="${id}" class="keyword">
-    <tr>
-      <td id="${id}_elementheader" class="elementheader"
-          onclick="toggleKeyword('${id}');" title="${name}">
-        <div id="${id}_foldingbutton" class="foldingbutton">+</div>
-        <span class="${status.toLowerCase()}">${type}: </span>
-        <span class="name">${name}</span>
-        <span class="arg">${arguments}</span>
-        <a href="javascript:expandAllChildren('${id}')"
-           class="expandall">Expand All</a>
-      </td>
-    </tr>
-    <tr>
-      <td>
-        <div id="${id}_children" style="display: none;">
-          <table class="metadata">
-            {{if doc()}}
-            <tr>
-              <th>Documentation:</th>
-              <td>{{html doc()}}</td>
-            </tr>
-            {{/if}}
-            {{if timeout}}
-            <tr>
-              <th>Timeout:</th>
-              <td>${timeout}</td>
-            </tr>
-            {{/if}}
-            <tr>
-              <th>Start / End / Elapsed:</th>
-              <td>${times.startTime}  /  ${times.endTime}  /  ${times.elapsedTime}</td>
-            </tr>
-          </table>
-        </div>
-      </td>
-    </tr>
-  </table>
+  <div id="${id}" class="keyword">
+    <div id="${id}_elementheader" class="elementheader"
+         onclick="toggleKeyword('${id}');" title="${name}">
+      <div id="${id}_foldingbutton" class="foldingbutton">+</div>
+      <span class="${status.toLowerCase()}">${type}: </span>
+      <span class="name">${name}</span>
+      <span class="arg">${arguments}</span>
+      <a href="javascript:expandAllChildren('${id}')"
+         class="expandall">Expand All</a>
+    </div>
+    <div id="${id}_children" style="display: none;">
+      <table class="metadata">
+        {{if doc()}}
+        <tr>
+          <th>Documentation:</th>
+          <td>{{html doc()}}</td>
+        </tr>
+        {{/if}}
+        {{if timeout}}
+        <tr>
+          <th>Timeout:</th>
+          <td>${timeout}</td>
+        </tr>
+        {{/if}}
+        <tr>
+          <th>Start / End / Elapsed:</th>
+          <td>${times.startTime}  /  ${times.endTime}  /  ${times.elapsedTime}</td>
+        </tr>
+      </table>
+    </div>
+  </div>
 </script>
 
 <script type="text/x-jquery-tmpl" id="messageTemplate">
