@@ -6,34 +6,28 @@ Resource          remove_keywords_resource.txt
 Library           String
 
 *** Test Cases ***          rem1      rem2      etc.
-Using only one              FOR
-                            WUKS
-                            PASSED
-                            ALL
 
 Rational                    FOR       WUKS
                             PASSED    FOR
                             PASSED    WUKS
                             PASSED    WUKS      FOR
 
-Irrationals                 ALL       WUKS
-                            ALL       FOR
+Irrational                  ALL       WUKS
+                            ALL       FOR       PASSED
+                            WUKS      FOR       FOR       WUKS
 
-Testing Permutations
-                            ALL       WUKS      FOR       PASSED
-                            FOR       PASSED    WUKS      ALL
-                            FOR       WUKS      ALL       PASSED
 
 *** Keywords ***
 Run Rebot With RemoveKeywords
-    [Arguments]    @{remove options}
-    ${opts}=    Catenate    SEPARATOR= --removekeywords=    @{remove options}
-    Run Rebot    --removekeywords ${opts} --log log.html   ${INPUTFILE}
-    Validate Log
+    [Arguments]    @{options}
+    ${rmkws}=    Catenate    SEPARATOR= --RemoveKeywords=    ${EMPTY}    @{options}
+    Run Rebot    ${rmkws} --log log.html   ${INPUTFILE}
+    Validate Log    @{options}
 
 Validate Log
+    [Arguments]    @{options}
     ${LOG}=   Get File  ${OUTDIR}/log.html
-    : FOR   ${item}  in  @{remove options}
+    : FOR   ${item}  in  @{options}
     \   Should Not Contain  ${LOG}  -${item}
 
 Create Output
