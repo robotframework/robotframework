@@ -1,0 +1,23 @@
+*** Test Case ***
+
+Passing
+    Log    Pass message
+
+Failing
+    Fail    Fail message
+
+For loop
+    :FOR    ${i}    IN    one    two    three
+    \    Log    For message ${i}
+    Fail    Cannot pass
+
+Wait until keyword succeeds
+     Set Test Variable    $COUNTER    ${0}
+     Wait Until Keyword Succeeds    1s    0.01s    My Keyword
+     Fail    Cannot pass
+
+*** Keywords ***
+
+My Keyword
+    Set Test Variable    $COUNTER    ${COUNTER + 1}
+    Run Keyword If    ${COUNTER} < 10    Fail    WUKS message
