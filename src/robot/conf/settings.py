@@ -46,7 +46,7 @@ class _BaseSettings(object):
                  'TagStatCombine'   : ('tagstatcombine', []),
                  'TagDoc'           : ('tagdoc', []),
                  'TagStatLink'      : ('tagstatlink', []),
-                 'RemoveKeywords'   : ('removekeywords', 'NONE'),
+                 'RemoveKeywords'   : ('removekeywords', []),
                  'NoStatusRC'       : ('nostatusrc', False),
                  'RunEmptySuite'    : ('runemptysuite', False),
                  'MonitorWidth'     : ('monitorwidth', 78),
@@ -99,8 +99,10 @@ class _BaseSettings(object):
             return [self._process_tag_stat_combine(v) for v in value]
         if name == 'TagStatLink':
             return [v for v in [self._process_tag_stat_link(v) for v in value] if v]
-        if name in ['RemoveKeywords', 'LogLevel']:
+        if name == 'LogLevel':
             return value.upper()
+        if name == 'RemoveKeywords':
+            return [v.upper() for v in value]
         return value
 
     def __getitem__(self, name):
