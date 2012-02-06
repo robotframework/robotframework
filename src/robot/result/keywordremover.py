@@ -92,7 +92,7 @@ class ForLoopItemsRemover(_KeywordRemover):
 class WaitUntilKeywordSucceedsRemover(_KeywordRemover):
 
     def start_keyword(self, kw):
-        if kw.name == 'BuiltIn.Wait Until Keyword Succeeds':
+        if kw.name == 'BuiltIn.Wait Until Keyword Succeeds' and kw.keywords:
             keywords = list(kw.keywords)
             last_included = 2 if kw.keywords[-1].is_passed else 1
             kw.keywords = self._kws_with_warnings(keywords[:-last_included]) + \
