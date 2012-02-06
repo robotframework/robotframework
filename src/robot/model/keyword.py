@@ -22,6 +22,11 @@ from modelobject import ModelObject
 class Keyword(ModelObject):
     __slots__ = ['parent', 'name', 'doc', 'args', 'type', 'timeout']
     message_class = Message
+    KEYWORD_TYPE = 'kw'
+    SETUP_TYPE = 'setup'
+    TEARDOWN_TYPE = 'teardown'
+    FOR_LOOP_TYPE = 'for'
+    FOR_ITEM_TYPE = 'foritem'
 
     def __init__(self, name='', doc='', args=None, type='kw', timeout=''):
         self.parent = None
@@ -46,11 +51,6 @@ class Keyword(ModelObject):
         if not self.parent:
             return 'k1'
         return '%s-k%d' % (self.parent.id, self.parent.keywords.index(self)+1)
-
-    # TODO: Is this generally needed? If yes, do we also need is_setup etc?
-    @property
-    def is_forloop(self):
-        return self.type == 'for'
 
     def visit(self, visitor):
         visitor.visit_keyword(self)

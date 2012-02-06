@@ -1,0 +1,35 @@
+*** Settings ***
+Suite Setup       Remove For Loop Keywords With Rebot
+Suite Teardown    Remove File    ${INPUTFILE}
+Force Tags        pybot    jybot    regression
+Resource          remove_keywords_resource.txt
+
+*** Test Cases ***
+Passed Steps Are Removed
+    ${tc}=    Check Test Case    Simple For
+    Keyword Should Be Empty    ${tc.kws[1]}    \${var} IN [ one | two ]    []
+
+Failed Steps Are Not Removed
+    ${tc}=    Check Test Case    For Failing 2
+    Length Should Be    ${tc.kws[0].kws}    1
+    Should Be Equal    ${tc.kws[0].kws[0].name}    \${num} = 4
+    Length Should Be    ${tc.kws[0].kws[0].kws}    2
+    Should Be Equal    ${tc.kws[0].kws[0].kws[1].status}    FAIL
+
+Steps With Warning Are Not Removed
+    ${tc}=    Check Test Case    Simple For 2
+    Log    ${tc.kws[0].kws[0].kws[-1]}
+    Check Log Message    ${tc.kws[0].kws[0].kws[-1].kws[0].msgs[0]}    Presidential Candidate!    WARN
+    Check Log Message    ${tc.kws[0].kws[1].kws[-1].kws[0].msgs[0]}    Presidential Candidate!    WARN
+
+Steps From Nested Loops Are Removed
+    ${tc}=    Check Test Case    Nested For In User Keywords
+    Length Should Be    ${tc.kws[0].kws[0].kws[0].kws}    2
+    Keyword Should Be Empty    ${tc.kws[0].kws[0].kws[0].kws[0].kws[1]}    \${x} IN [ 1 | 2 ]    []
+    Keyword Should Be Empty    ${tc.kws[0].kws[0].kws[0].kws[1].kws[0]}    \${arg} IN [ \@{args} ]    []
+
+*** Keywords ***
+Remove For Loop Keywords With Rebot
+    Create Output With Robot    ${INPUTFILE}    ${EMPTY}    running/for.txt
+    Run Rebot    --removekeywords fOr    ${INPUTFILE}
+

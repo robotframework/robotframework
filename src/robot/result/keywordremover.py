@@ -85,11 +85,7 @@ class PassedKeywordRemover(_KeywordRemover):
 
 class ForLoopItemsRemover(_KeywordRemover):
 
-    def start_test(self, test):
-        return test.is_passed and not self._contains_warning(test)
-
-    def start_keyword(self, keyword):
-        if keyword.is_forloop:
-            self._clear_content(keyword)
-            return False
-        return keyword.is_passed
+    def start_keyword(self, kw):
+        if kw.type == kw.FOR_LOOP_TYPE:
+            kw.keywords = [item for item in kw.keywords
+                           if not item.is_passed or self._contains_warning(item)]
