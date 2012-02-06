@@ -1,0 +1,41 @@
+*** Settings ***
+Suite Setup       Create Output
+Force Tags        regression    pybot    jybot
+Test Template     Run Rebot With RemoveKeywords
+Resource          remove_keywords_resource.txt
+Library           String
+
+*** Test Cases ***          rem1      rem2      etc.
+Using only one              FOR
+                            WUKS
+                            PASSED
+                            ALL
+
+Rational                    FOR       WUKS
+                            PASSED    FOR
+                            PASSED    WUKS
+                            PASSED    WUKS      FOR
+
+Irrationals                 ALL       WUKS
+                            ALL       FOR
+
+Testing Permutations
+                            ALL       WUKS      FOR       PASSED
+                            FOR       PASSED    WUKS      ALL
+                            FOR       WUKS      ALL       PASSED
+
+*** Keywords ***
+Run Rebot With RemoveKeywords
+    [Arguments]    @{remove options}
+    ${opts}=    Catenate    SEPARATOR= --removekeywords=    @{remove options}
+    Run Rebot    --removekeywords ${opts} --log log.html   ${INPUTFILE}
+    Validate Log
+
+Validate Log
+    ${LOG}=   Get File  ${OUTDIR}/log.html
+    : FOR   ${item}  in  @{remove options}
+    \   Should Not Contain  ${LOG}  -${item}
+
+Create Output
+    Create Output With Robot    ${INPUTFILE}    ${EMPTY}    cli/remove_keywords/all_combinations.txt
+
