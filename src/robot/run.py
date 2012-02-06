@@ -196,6 +196,7 @@ Options:
                           automatically converted to spaces.
                           Examples: --tagstatlink mytag:http://my.domain:Link
                           --tagstatlink bug-*:http://tracker/id=%1:Bug_Tracker
+    --removekeywords xxx  TODO
     --listener class *    A class for monitoring test execution. Gets
                           notifications e.g. when a test case starts and ends.
                           Arguments to listener class can be given after class
