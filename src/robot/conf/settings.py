@@ -46,6 +46,7 @@ class _BaseSettings(object):
                  'TagStatCombine'   : ('tagstatcombine', []),
                  'TagDoc'           : ('tagdoc', []),
                  'TagStatLink'      : ('tagstatlink', []),
+                 'RemoveKeywords'   : ('removekeywords', 'NONE'),
                  'NoStatusRC'       : ('nostatusrc', False),
                  'RunEmptySuite'    : ('runemptysuite', False),
                  'MonitorWidth'     : ('monitorwidth', 78),
@@ -264,10 +265,9 @@ class RobotSettings(_BaseSettings):
             del(settings._opts[name])
         for name in ['Include', 'Exclude', 'TestNames', 'SuiteNames', 'Metadata']:
             settings._opts[name] = []
-        for name in ['Output', 'RemoveKeywords']:
-            settings._opts[name] = 'NONE'
         for name in ['Name', 'Doc']:
             settings._opts[name] = None
+        settings._opts['Output'] = 'NONE'
         settings._opts['LogLevel'] = 'TRACE'
         return datasource, settings
 
@@ -283,7 +283,6 @@ class RobotSettings(_BaseSettings):
 class RebotSettings(_BaseSettings):
     _extra_cli_opts = {'Output'         : ('output', 'NONE'),
                        'LogLevel'       : ('loglevel', 'TRACE'),
-                       'RemoveKeywords' : ('removekeywords', 'NONE'),
                        'StartTime'      : ('starttime', 'N/A'),
                        'EndTime'        : ('endtime', 'N/A')}
 

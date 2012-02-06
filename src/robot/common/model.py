@@ -299,8 +299,6 @@ class BaseTestSuite(_TestAndSuiteHelper):
         self._return_status_rc = not settings['NoStatusRC']
         if 'RunMode' in settings:
             map(self.set_runmode, settings['RunMode'])
-        if 'RemoveKeywords' in settings:
-            self.remove_keywords(settings['RemoveKeywords'])
 
     def serialize(self, serializer):
         serializer.start_suite(self)
