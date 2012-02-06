@@ -20,9 +20,10 @@ Simple For 2
     \  Log  ${num}
     \  Log  Hello from for loop
     \  No Operation
+    \  Run Keyword If    ${num} in [2,6]    Log    Presidential Candidate!   WARN
 
 Empty For
-    [Documentation]  ${NO KEYWORDS} 
+    [Documentation]  ${NO KEYWORDS}
     :FOR  ${var}  IN  one  two
     Fail  Should not executed
 
@@ -47,7 +48,7 @@ For Failing 2
     [Documentation]  FAIL Failure with 4
     :FOR  ${num}  IN  @{NUMS}
     \  Log  Before Check
-    \  Fail If  ${num} == 4  Failure with ${num}
+    \  Should Not Be True  ${num} == 4  Failure with ${num}
     \  Log  After Check
 
 For With User Keywords
@@ -92,9 +93,11 @@ For In User Keywords
     For In UK with Args  one  two  three  four
 
 Nested For In User Keywords
+    [Documentation]  FAIL This ought to be enough
     Nested for In UK  foo  bar
 
 For In Test And User Keywords
+    [Documentation]  FAIL This ought to be enough
     @{list} =  List  one  two
     :FOR  ${item}  IN  @{list}
     \  For In UK
@@ -308,6 +311,7 @@ For word can have many colons
     Should Be Equal  ${result}  0123456789
 
 
+
 *** Keywords ***
 My UK
     No Operation
@@ -350,5 +354,5 @@ Nested For In UK 2
     :FOR  ${arg}  IN  @{args}
     \  For In UK
     \  Log  Got arg: ${arg}
-    Log  This ought to be enough
+    Fail  This ought to be enough
 

@@ -103,17 +103,14 @@ For In User Keywords
 
 Nested For In User Keywords
     ${test} =  Check Test Case  Nested For In User Keywords
-    Check KW "Nested For In UK"  ${test.kws[0]}  2  foo
+    Check KW "Nested For In UK"  ${test.kws[0]}  foo
 
 For In Test And User Keywords
     ${test} =  Check Test Case  For in Test And user Keywords
-    Should Be For Keyword  ${test.kws[1]}  2
+    Should Be For Keyword  ${test.kws[1]}  1
     Check KW "For In UK"  ${test.kws[1].kws[0].kws[0]}
     Check KW "For In UK with Args"  ${test.kws[1].kws[0].kws[1]}  2  one
-    Check KW "Nested For In UK"  ${test.kws[1].kws[0].kws[2]}  2  one
-    Check KW "For In UK"  ${test.kws[1].kws[1].kws[0]}
-    Check KW "For In UK with Args"  ${test.kws[1].kws[1].kws[1]}  2  one
-    Check KW "Nested For In UK"  ${test.kws[1].kws[1].kws[2]}  2  one
+    Check KW "Nested For In UK"  ${test.kws[1].kws[0].kws[2]}  one
 
 For Variable Scope
     Check Test Case  For Variable Scope
@@ -327,13 +324,13 @@ Check KW "For In UK With Args"
     Check Log Message  ${kw.kws[1].kws[0].kws[0].msgs[0]}  This for loop is executed only once
 
 Check KW "Nested For In UK"
-    [Arguments]  ${kw}  ${arg_count}  ${first_arg}
-    Should Be For Keyword  ${kw.kws[0]}  ${arg_count}
+    [Arguments]  ${kw}  ${first_arg}
+    Should Be For Keyword  ${kw.kws[0]}  1
     Check KW "For In UK"  ${kw.kws[0].kws[0].kws[0]}
     ${nested2} =  Set  ${kw.kws[0].kws[0].kws[1]}
     Equals  ${nested2.name}  Nested For In UK 2
-    Should Be For Keyword  ${nested2.kws[0]}  ${arg_count}
+    Should Be For Keyword  ${nested2.kws[0]}  2
     Check KW "For In UK"  ${nested2.kws[0].kws[0].kws[0]}
     Check Log Message  ${nested2.kws[0].kws[0].kws[1].msgs[0]}  Got arg: ${first_arg}
-    Check Log Message  ${nested2.kws[1].msgs[0]}  This ought to be enough
+    Check Log Message  ${nested2.kws[1].msgs[0]}  This ought to be enough    FAIL
 
