@@ -1,10 +1,10 @@
 *** Variables ***
 ${COUNTER}         ${0}
-${PASS MESSAGE}    Pass message
-${FAIL MESSAGE}    Fail message
-${FOR MESSAGE}     For message
-${REMOVED WUKS MESSAGE}    Removed WUKS message
-${KEPT WUKS MESSAGE}       Kept WUKS message
+${PASS MESSAGE}    -PASSED -ALL
+${FAIL MESSAGE}    -ALL +PASSED
+${FOR MESSAGE}     -FOR -ALL
+${REMOVED WUKS MESSAGE}    -WUKS -ALL
+${KEPT WUKS MESSAGE}       +WUKS -ALL
 
 
 *** Test Case ***
@@ -13,7 +13,8 @@ Passing
     Log    ${PASS MESSAGE}
 
 Failing
-    Fail    ${FAIL MESSAGE}
+    Log     ${FAIL MESSAGE}
+    Fail
 
 For loop
     :FOR    ${num}    IN    one    two    three
