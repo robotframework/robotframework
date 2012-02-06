@@ -17,13 +17,12 @@ from robot.model import SuiteVisitor, SkipAllVisitor
 
 def KeywordRemover(how):
     how = how and how.upper()
-    if how == 'PASSED':
-        return PassedKeywordRemover()
-    if how == 'FOR':
-        return ForLoopItemsRemover()
-    if how == 'ALL':
-        return AllKeywordsRemover()
-    return SkipAllVisitor()
+    return {
+         'PASSED':PassedKeywordRemover,
+         'FOR':ForLoopItemsRemover,
+         'ALL':AllKeywordsRemover,
+         'WUKS':WaitUntilKeywordSucceedsRemover,
+    }.get(how, SkipAllVisitor)()
 
 
 class _KeywordRemover(SuiteVisitor):
@@ -89,3 +88,16 @@ class ForLoopItemsRemover(_KeywordRemover):
         if kw.type == kw.FOR_LOOP_TYPE:
             kw.keywords = [item for item in kw.keywords
                            if not item.is_passed or self._contains_warning(item)]
+
+class WaitUntilKeywordSucceedsRemover(_KeywordRemover):
+
+    def start_keyword(self, kw):
+        if kw.name == 'BuiltIn.Wait Until Keyword Succeeds':
+            keywords = list(kw.keywords)
+            last_included = 2 if kw.keywords[-1].is_passed else 1
+            kw.keywords = self._kws_with_warnings(keywords[:-last_included]) + \
+                          keywords[-last_included:]
+
+    def _kws_with_warnings(self, keywords):
+        return [k for k in keywords if self._contains_warning(k)]
+
