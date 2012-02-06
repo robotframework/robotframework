@@ -13,19 +13,26 @@ Passing
     Log    ${PASS MESSAGE}
 
 Failing
+    [Documentation]    FAIL Message
     Log     ${FAIL MESSAGE}
-    Fail
+    Fail    Message
 
-For loop
+For when test fails
+    [Documentation]    FAIL Cannot pass
     :FOR    ${num}    IN    one    two    three
     \    Log    ${FOR MESSAGE} ${num}
     Fail    Cannot pass
 
-Wait until keyword succeeds when test fails
-     Wait Until Keyword Succeeds    1s    0.01s    My Keyword
-     Fail    Cannot pass
+For when test passes
+    :FOR    ${num}    IN    one    two    three
+    \    Log    ${FOR MESSAGE} ${num}
 
-Wait until keyword succeeds when test passes
+WUKS when test fails
+    [Documentation]    FAIL Cannot pass
+    Wait Until Keyword Succeeds    1s    0.01s    My Keyword
+    Fail    Cannot pass
+
+WUKS when test passes
      Wait Until Keyword Succeeds    1s    0.01s    My Keyword
 
 *** Keywords ***
