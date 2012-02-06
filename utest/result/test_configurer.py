@@ -207,6 +207,18 @@ class TestRemoveKeywords(unittest.TestCase):
         self._remove_for_loop(suite)
         assert_equal(len(forloop.keywords), 1)
 
+    def test_remove_based_on_multiple_condition(self):
+        suite = TestSuite()
+        t1 = suite.tests.create(status='PASS')
+        t1.keywords.create().messages.create()
+        t2 = suite.tests.create(status='FAIL')
+        t2.keywords.create().messages.create()
+        t2.keywords.create(type='for').keywords.create(type='foritem', status='PASS')
+        self._remove(['passed', 'for'], suite)
+        assert_equal(len(suite.tests[0].keywords[0].messages), 0)
+        assert_equal(len(suite.tests[1].keywords[0].messages), 1)
+        assert_equal(len(suite.tests[1].keywords[1].keywords), 0)
+
     def _suite_with_setup_and_teardown_and_test_with_keywords(self):
         suite = TestSuite()
         suite.keywords.create(type='setup').messages.create('setup message')

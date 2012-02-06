@@ -33,10 +33,17 @@ class SuiteConfigurer(object):
         self.exclude_tags = exclude_tags
         self.include_suites = include_suites
         self.include_tests = include_tests
-        self.remove_keywords = remove_keywords
+        self.remove_keywords = self._get_remove_keywords(remove_keywords)
         self.log_level = log_level
         self.starttime = self._get_time(starttime)
         self.endtime = self._get_time(endtime)
+
+    def _get_remove_keywords(self, value):
+        if value is None:
+            return []
+        if isinstance(value, basestring):
+            return [value]
+        return value
 
     @property
     def add_tags(self):
@@ -53,7 +60,8 @@ class SuiteConfigurer(object):
         if not suite.test_count:
             self._raise_no_tests_error(suite.name)
         suite.set_tags(self.add_tags, self.remove_tags)
-        suite.remove_keywords(self.remove_keywords)
+        for how in self.remove_keywords:
+            suite.remove_keywords(how)
         suite.filter_messages(self.log_level)
         suite.set_criticality(self.critical_tags, self.non_critical_tags)
 
