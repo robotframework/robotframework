@@ -1,23 +1,35 @@
+*** Variables ***
+${COUNTER}         ${0}
+${PASS MESSAGE}    Pass message
+${FAIL MESSAGE}    Fail message
+${FOR MESSAGE}     For message
+${REMOVED WUKS MESSAGE}    Removed WUKS message
+${KEPT WUKS MESSAGE}       Kept WUKS message
+
+
 *** Test Case ***
 
 Passing
-    Log    Pass message
+    Log    ${PASS MESSAGE}
 
 Failing
-    Fail    Fail message
+    Fail    ${FAIL MESSAGE}
 
 For loop
-    :FOR    ${i}    IN    one    two    three
-    \    Log    For message ${i}
+    :FOR    ${num}    IN    one    two    three
+    \    Log    ${FOR MESSAGE} ${num}
     Fail    Cannot pass
 
-Wait until keyword succeeds
-     Set Test Variable    $COUNTER    ${0}
+Wait until keyword succeeds when test fails
      Wait Until Keyword Succeeds    1s    0.01s    My Keyword
      Fail    Cannot pass
+
+Wait until keyword succeeds when test passes
+     Wait Until Keyword Succeeds    1s    0.01s    My Keyword
 
 *** Keywords ***
 
 My Keyword
     Set Test Variable    $COUNTER    ${COUNTER + 1}
-    Run Keyword If    ${COUNTER} < 10    Fail    WUKS message
+    Run Keyword If    ${COUNTER} < 10    Fail    ${REMOVED WUKS MESSAGE}
+    Run Keyword If    ${COUNTER} == 10    Fail    ${KEPT WUKS MESSAGE}
