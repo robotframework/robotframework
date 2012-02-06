@@ -1,0 +1,81 @@
+*** Settings ***
+Suite Setup      Run Tests And Remove Keywords
+Default Tags    regression  pybot  jybot
+Resource        atest_resource.txt
+
+*** Variables ***
+${PASS MESSAGE}    -PASSED -ALL
+${FAIL MESSAGE}    -ALL +PASSED
+${FOR MESSAGE}     -FOR -ALL
+${REMOVED WUKS MESSAGE}    -WUKS -ALL
+${KEPT WUKS MESSAGE}       +WUKS -ALL
+
+*** Test Cases ***
+
+PASSED option when test passes
+    Log should not contain    ${PASS MESSAGE}
+    Output should contain pass message
+
+PASSED option when test fails
+    Log should contain    ${FAIL MESSAGE}
+    Output should contain fail message
+
+FOR option
+    Log should not contain    ${FOR MESSAGE}
+    Output should contain for messages
+
+WUKS option
+    Log should not contain    ${REMOVED WUKS MESSAGE}
+    Log should contain    ${KEPT WUKS MESSAGE}
+    Output should contain WUKS messages
+
+
+*** Keywords ***
+
+Run tests and remove keywords
+    ${opts} =    Catenate
+    ...    --removekeywords passed
+    ...    --RemoveKeywords FoR
+    ...    --removek WUKS
+    ...    --log log.html
+    Run tests    ${opts}    cli/remove_keywords/all_combinations.txt
+    ${LOG} =    Get file    ${OUTDIR}/log.html
+    Set suite variable    $LOG
+
+Log should not contain
+    [Arguments]    ${msg}
+    Should not contain    ${LOG}    ${msg}
+
+Log should contain
+    [Arguments]    ${msg}
+    Should contain    ${LOG}    ${msg}
+
+Output should contain pass message
+    ${tc} =   Check test case    Passing
+    Check Log Message    ${tc.kws[0].msgs[0]}    ${PASS MESSAGE}
+
+Output should contain fail message
+    ${tc} =   Check test case    Failing
+    Check Log Message    ${tc.kws[0].msgs[0]}    ${FAIL MESSAGE}
+
+Output should contain for messages
+    Test should contain for messages    For when test passes
+    Test should contain for messages    For when test fails
+
+Test should contain for messages
+    [Arguments]    ${name}
+    ${tc} =    Check test case    ${name}
+    Check log message    ${tc.kws[0].kws[0].kws[0].msgs[0]}    ${FOR MESSAGE} one
+    Check log message    ${tc.kws[0].kws[1].kws[0].msgs[0]}    ${FOR MESSAGE} two
+    Check log message    ${tc.kws[0].kws[2].kws[0].msgs[0]}    ${FOR MESSAGE} three
+
+Output should contain WUKS messages
+    Test should contain WUKS messages    WUKS when test passes
+    Test should contain WUKS messages    WUKS when test fails
+
+Test should contain WUKS messages
+    [Arguments]    ${name}
+    ${tc} =    Check test case    ${name}
+    Check log message    ${tc.kws[0].kws[0].kws[1].kws[0].msgs[0]}   ${REMOVED WUKS MESSAGE}    FAIL
+    Check log message    ${tc.kws[0].kws[8].kws[1].kws[0].msgs[0]}   ${REMOVED WUKS MESSAGE}    FAIL
+    Check log message    ${tc.kws[0].kws[9].kws[2].kws[0].msgs[0]}   ${KEPT WUKS MESSAGE}    FAIL
