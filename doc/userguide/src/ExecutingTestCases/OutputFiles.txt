@@ -403,21 +403,57 @@ Examples::
     --tagdoc regression:*See*_http://info.html
     --tagdoc owner-*:Original_author
 
-Additional options for post-processing outputs
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Removing keywords from outputs
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-These options are available only when `post-processing outputs`_ with
-:prog:`rebot`.
+Most of the content of `output files`_ comes from keywords and especially their
+log messages. When creating higher level reports, log files are not necessarily
+needed at all, and then keywords and their messages just take space
+unnecessarily. Log files themselves can also grow overly large if they contain
+`for loops`_ or other constructs that repeat certain keywords multiple times.
+
+In these situations, the command line option :opt:`--removekeywords` can be
+used to dispose of unnecessary keywords. It can be used both when executing
+tests and with :prog:`rebot`, but in the former case keywords are not removed
+from the output file. Keywords that contain warnings are not removed except
+in :opt:`ALL` mode.
+
+The option has the following modes of operation:
+
+:opt:`ALL`
+   Remove data from all keywords unconditionally.
+
+:opt:`PASSED`
+   Remove keyword data from test cases that have passed and do not
+   contain warnings_. In most cases, log files created after this contain
+   enough information to investigate possible failures.
+
+:opt:`FOR`
+   Remove all passed iterations from `for loops`_.
+
+:opt:`WUKS`
+   Remove all but last failing keyword inside BuiltIn_ keyword
+   :name:`Wait Until Keyword Succeeds`.
+
+Examples::
+
+   rebot --removekeywords all output.xml
+   pybot --removekeywords passed --removekeywords for tests.txt
+
+
+.. Note::
+   The support for using :opt:`--removekeywords` when executing tests as well
+   as :opt:`FOR` and :opt:`WUKS` modes were added in Robot Framework 2.7.
 
 Setting start and end time of execution
-'''''''''''''''''''''''''''''''''''''''
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-When `combining outputs`_, it is possible to set the start and end time of the
-combined test suite using the options :opt:`--starttime` and :opt:`--endtime`,
-respectively. This is convenient, because by default, combined suites do not
-have these values. When both the start and end time are given, the elapsed time
-is also calculated based on them. Otherwise the elapsed time is got by adding
-the elapsed times of the child test suites together.
+When `combining outputs`_ using :prog:`rebot`, it is possible to set the start
+and end time of the combined test suite using the options :opt:`--starttime`
+and :opt:`--endtime`, respectively. This is convenient, because by default,
+combined suites do not have these values. When both the start and end time are
+given, the elapsed time is also calculated based on them. Otherwise the elapsed
+time is got by adding the elapsed times of the child test suites together.
 
 Starting from Robot Framework 2.5.6, it is also possible to use the above
 mentioned options to set start and end times for a single suite when using
@@ -435,35 +471,6 @@ Examples::
    rebot --starttime 20080611-17:59:20.495 output1.xml output2.xml
    rebot --starttime 20080611-175920 --endtime 20080611-180242 *.xml
    rebot --starttime 20110302-1317 --endtime 20110302-11418 myoutput.xml
-
-Removing keywords from outputs
-''''''''''''''''''''''''''''''
-
-Most of the content of `output files`_ comes from keywords and
-especially their log messages. When creating higher level reports, log
-files are not necessarily needed at all, and then keywords and their
-messages just take space unnecessarily. In these situations, the
-command line option :opt:`--removekeywords` can be used to dispose
-of unnecessary keywords. It has two possible values:
-
-:opt:`ALL`
-   All keywords are unconditionally removed.
-
-:opt:`PASSED`
-   Keywords are removed only from test cases that have passed and do not contain
-   messages written with loglevel :msg:`WARN`. In most cases, log
-   files created after this contain enough information to investigate
-   possible failures.
-
-:opt:`FOR`
-   Keywords are removed only from for loops that are in passed test cases or
-   in passed suites.
-
-Removing keywords makes output files considerably smaller and thus
-faster to process further. Even when keywords are removed, names,
-arguments and statuses of top-level keywords are preserved, so it is
-still possible to create log files and see the high-level structure of
-each test case.
 
 System log
 ~~~~~~~~~~
