@@ -5,13 +5,16 @@ Resource          remove_keywords_resource.txt
 
 *** Test Cases ***
 Last failing Step is not removed
-    Check Number Of Keywords     Fail Until The End    1
+    ${tc}=    Check Number Of Keywords     Fail Until The End    1
+    Should End With    ${tc.kws[0].doc}    failing steps removed using --RemoveKeywords option._
 
 Last passing Step is not removed
-    Check Number Of Keywords    Passes before timeout    2
+    ${tc}=    Check Number Of Keywords    Passes before timeout    2
+    Should Be Equal    ${tc.kws[0].doc}    Waits until the specified keyword succeeds or the given timeout expires.\n\n_1 failing step removed using --RemoveKeywords option._
 
 Steps containing warnings are not removed
-    Check Number Of Keywords    Warnings    3
+    ${tc}=   Check Number Of Keywords    Warnings    3
+    Should be Equal    ${tc.kws[0].doc}    Waits until the specified keyword succeeds or the given timeout expires.
     Check Number Of Keywords    One Warning    2
 
 Nested Wait Until keywords are removed
@@ -28,4 +31,5 @@ Check Number Of Keywords
     [Arguments]    ${test name}    ${expected number}
     ${tc}=    Check Test Case    ${test name}
     Length Should Be    ${tc.kws[0].kws}    ${expected number}
+    [Return]    ${tc}
 

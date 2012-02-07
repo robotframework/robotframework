@@ -8,10 +8,12 @@ Resource          remove_keywords_resource.txt
 Passed Steps Are Removed
     ${tc}=    Check Test Case    Simple For
     Keyword Should Be Empty    ${tc.kws[1]}    \${var} IN [ one | two ]    []
+    Should Be Equal   ${tc.kws[1].doc}    _2 passing steps removed using --RemoveKeywords option._
 
 Failed Steps Are Not Removed
     ${tc}=    Check Test Case    For Failing 2
     Length Should Be    ${tc.kws[0].kws}    1
+    Should Be Equal   ${tc.kws[0].doc}    _3 passing steps removed using --RemoveKeywords option._
     Should Be Equal    ${tc.kws[0].kws[0].name}    \${num} = 4
     Length Should Be    ${tc.kws[0].kws[0].kws}    2
     Should Be Equal    ${tc.kws[0].kws[0].kws[1].status}    FAIL
@@ -27,6 +29,12 @@ Steps From Nested Loops Are Removed
     Length Should Be    ${tc.kws[0].kws[0].kws[0].kws}    2
     Keyword Should Be Empty    ${tc.kws[0].kws[0].kws[0].kws[0].kws[1]}    \${x} IN [ 1 | 2 ]    []
     Keyword Should Be Empty    ${tc.kws[0].kws[0].kws[0].kws[1].kws[0]}    \${arg} IN [ \@{args} ]    []
+
+Check Removal Message
+    ${tc}=    Check Test Case    For With Failures In User Keywords
+    Should Be Equal   ${tc.kws[0].doc}    _1 passing step removed using --RemoveKeywords option._
+    ${tc}=    Check Test Case    For Failing
+    Should Be Equal   ${tc.kws[0].doc}    ${EMPTY}
 
 *** Keywords ***
 Remove For Loop Keywords With Rebot

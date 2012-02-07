@@ -12,48 +12,35 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+from robot import utils
+
 from robot.model import SuiteVisitor, SkipAllVisitor
 
 
 def KeywordRemover(how):
-    how = how and how.upper()
     return {
-         'PASSED':PassedKeywordRemover,
-         'FOR':ForLoopItemsRemover,
-         'ALL':AllKeywordsRemover,
-         'WUKS':WaitUntilKeywordSucceedsRemover,
-    }.get(how, SkipAllVisitor)()
+        'PASSED': PassedKeywordRemover,
+        'FOR': ForLoopItemsRemover,
+        'ALL': AllKeywordsRemover,
+        'WUKS': WaitUntilKeywordSucceedsRemover,
+    }.get(how.upper(), SkipAllVisitor)()
 
 
 class _KeywordRemover(SuiteVisitor):
+    _message = 'Keyword data removed using --RemoveKeywords option.'
 
-    def _clear_content(self, keyword):
-        keyword.keywords = []
-        keyword.messages = []
+    def __init__(self):
+        self._removal_message = RemovalMessage(self._message)
+
+    def _clear_content(self, kw):
+        kw.keywords = []
+        kw.messages = []
+        self._removal_message.set(kw)
 
     def _contains_warning(self, item):
         contains_warning = ContainsWarning()
         item.visit(contains_warning)
         return contains_warning.result
-
-
-class ContainsWarning(SuiteVisitor):
-
-    def __init__(self):
-        self.result = False
-
-    def start_suite(self, suite):
-        return not self.result
-
-    def start_test(self, test):
-        return not self.result
-
-    def start_keyword(self, keyword):
-        return not self.result
-
-    def visit_message(self, msg):
-        if msg.level == 'WARN':
-            self.result = True
 
 
 class AllKeywordsRemover(_KeywordRemover):
@@ -83,13 +70,18 @@ class PassedKeywordRemover(_KeywordRemover):
 
 
 class ForLoopItemsRemover(_KeywordRemover):
+    _message = '%d passing step%s removed using --RemoveKeywords option.'
 
     def start_keyword(self, kw):
         if kw.type == kw.FOR_LOOP_TYPE:
+            before = len(kw.keywords)
             kw.keywords = [item for item in kw.keywords
                            if not item.is_passed or self._contains_warning(item)]
+            self._removal_message.set_if_removed(kw, before)
+
 
 class WaitUntilKeywordSucceedsRemover(_KeywordRemover):
+    _message = '%d failing step%s removed using --RemoveKeywords option.'
 
     def start_keyword(self, kw):
         if kw.name == 'BuiltIn.Wait Until Keyword Succeeds' and kw.keywords:
@@ -97,7 +89,43 @@ class WaitUntilKeywordSucceedsRemover(_KeywordRemover):
             last_included = 2 if kw.keywords[-1].is_passed else 1
             kw.keywords = self._kws_with_warnings(keywords[:-last_included]) + \
                           keywords[-last_included:]
+            self._removal_message.set_if_removed(kw, len(keywords))
 
     def _kws_with_warnings(self, keywords):
         return [k for k in keywords if self._contains_warning(k)]
 
+
+class ContainsWarning(SuiteVisitor):
+
+    def __init__(self):
+        self.result = False
+
+    def start_suite(self, suite):
+        return not self.result
+
+    def start_test(self, test):
+        return not self.result
+
+    def start_keyword(self, keyword):
+        return not self.result
+
+    def visit_message(self, msg):
+        if msg.level == 'WARN':
+            self.result = True
+
+
+class RemovalMessage(object):
+
+    def __init__(self, message):
+        self._message = message
+
+    def set_if_removed(self, kw, len_before):
+        removed = len_before - len(kw.keywords)
+        if removed:
+            self._set(kw, self._message % (removed, utils.plural_or_not(removed)))
+
+    def set(self, kw):
+        self._set(kw, self._message)
+
+    def _set(self, kw, message):
+        kw.doc = ('%s\n\n_%s_' % (kw.doc, message)).strip()

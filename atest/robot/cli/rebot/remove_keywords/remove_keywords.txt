@@ -9,12 +9,14 @@ Resource          remove_keywords_resource.txt
 Remove All
     [Setup]    Run Rebot and Set My Suite    --RemoveKeywords ALL    0
     Keyword Should Be Empty    ${MY SUITE.setup}    My Keyword    ['Suite Setup']
+    Keyword Should Contain Removal Message    ${MY SUITE.setup}
     ${tc1}    ${tc2} =    Set Variable    ${MY SUITE.tests}
     Length Should Be    ${tc1.keywords}    1
     Keyword Should Be Empty    ${tc1.keywords[0]}    My Keyword    ['Pass']
     Length Should Be    ${tc2.keywords}    2
     Keyword Should Be Empty    ${tc2.keywords[0]}    My Keyword    ['Fail']
     Keyword Should Be Empty    ${tc2.keywords[1]}    BuiltIn.Fail    ['msg=Expected failure']
+    Keyword Should Contain Removal Message    ${tc2.keywords[1]}   Fails the test immediately with the given (optional) message.\n\n
 
 Remove Passed
     [Setup]    Run Rebot and Set My Suite    --removekeywords passed    0
@@ -22,6 +24,7 @@ Remove Passed
     ${tc1}    ${tc2} =    Set Variable    ${MY SUITE.tests}
     Length Should Be    ${tc1.keywords}    1
     Keyword Should Be Empty    ${tc1.keywords[0]}    My Keyword    ['Pass']
+    Keyword Should Contain Removal Message     ${tc1.keywords[0]}
     Length Should Be    ${tc2.keywords}    2
     Keyword Should Not Be Empty    ${tc2.keywords[0]}    My Keyword    ['Fail']
     Keyword Should Not Be Empty    ${tc2.keywords[1]}    BuiltIn.Fail    ['msg=Expected failure']
@@ -58,4 +61,8 @@ Run Rebot And Set My Suite
     Run Rebot    ${rebot params}    ${INPUTFILE}
     Should Not Be Equal    ${SUITE}    ${None}    Errors in test execution
     Set Test Variable    ${MY SUITE}    ${SUITE.suites[${suite index}]}
+
+Keyword Should Contain Removal Message
+    [Arguments]    ${keyword}    ${doc}=${EMPTY}
+    Should Be Equal  ${keyword.doc}  ${doc}_Keyword data removed using --RemoveKeywords option._
 
