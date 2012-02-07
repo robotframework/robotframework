@@ -143,7 +143,7 @@ class ArgumentParser:
         try:
             opts, args = getopt.getopt(args, self._short_opts, self._long_opts)
         except getopt.GetoptError, err:
-            raise DataError(err.args[0])
+            raise DataError(err.msg)
         return self._process_opts(opts), self._glob_args(args)
 
     def _lowercase_long_option(self, opt):
