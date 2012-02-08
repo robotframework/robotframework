@@ -1,6 +1,5 @@
 import unittest
 import os
-import sys
 
 from robot.utils.argumentparser import ArgumentParser
 from robot.utils.asserts import *
@@ -204,6 +203,19 @@ class TestArgumentParserParseArgs(unittest.TestCase):
 ''')
         opts, args = ap.parse_args(['--option'])
         assert_equals(opts, {'option': True})
+
+    def test_special_options_can_be_turned_to_normal_optios(self):
+        ap = ArgumentParser('''Usage:
+ -h --help
+ -v --version
+ --pythonpath path
+ --escape x:y
+ --argumentfile path
+''', auto_help=False, auto_version=False, auto_escape=False,
+     auto_pythonpath=False, auto_argumentfile=False)
+        opts, args = ap.parse_args(['--help', '-v', '--escape', 'xxx'])
+        assert_equals(opts, {'help': True, 'version': True, 'pythonpath': None,
+                             'escape': 'xxx', 'argumentfile': None})
 
 
 class TestArgumentValidation(unittest.TestCase):

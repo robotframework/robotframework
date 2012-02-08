@@ -27,9 +27,9 @@ from .error import get_error_details
 class Application(object):
 
     def __init__(self, usage, name=None, version=None, arg_limits=None,
-                 logger=None):
+                 logger=None, **auto_options):
         self._ap = ArgumentParser(usage, name, version, arg_limits,
-                                  self.validate)
+                                  self.validate, **auto_options)
         self._logger = logger or DefaultLogger()
 
     def main(self, arguments, **options):
