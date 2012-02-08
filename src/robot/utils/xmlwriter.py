@@ -19,7 +19,7 @@ from abstractxmlwriter import AbstractXmlWriter
 
 def XmlWriter(path):
     if path == 'NONE':
-        return FakeXMLWriter()
+        return FakeXmlWriter()
     if os.name == 'java':
         from jyxmlwriter import XmlWriter
     else:
@@ -27,6 +27,7 @@ def XmlWriter(path):
     return XmlWriter(path)
 
 
-class FakeXMLWriter(AbstractXmlWriter):
+class FakeXmlWriter(AbstractXmlWriter):
     closed = False
-    _start = _content = _end = _close = lambda self, *args: None
+    _start = _content = _end = close = lambda self, *args: None
+
