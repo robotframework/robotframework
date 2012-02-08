@@ -103,10 +103,11 @@ function expandSuite(suite) {
         expandCriticalFailed(suite);
 }
 
-// For a complete cross-browser experience..
+// For complete cross-browser experience..
 // http://www.quirksmode.org/js/events_order.html
-function stopPropagation(e) {
-    var e = e || window.event;
-    e.cancelBubble = true;
-    if (e.stopPropagation) e.stopPropagation();
+function stopPropagation(event) {
+    var event = event || window.event;
+    event.cancelBubble = true;
+    if (event.stopPropagation)
+        event.stopPropagation();
 }

@@ -176,8 +176,8 @@ function addTestExecutionLog(main) {
       <div id="${id}_foldingbutton" class="foldingbutton">+</div>
       <span class="${status.toLowerCase()}">TEST&nbsp;SUITE:</span>
       <span class="name">${name}</span>
-      <a href="javascript:expandAllChildren('${id}')" onclick="stopPropagation(event);"
-         class="expandall">Expand All</a>
+        <a class="expandall" href="javascript:expandAllChildren('${id}')"
+           onclick="stopPropagation(event);">Expand All</a>
     </div>
     <div id="${id}_children" style="display: none;">
       <table class="metadata">
@@ -233,8 +233,8 @@ function addTestExecutionLog(main) {
       <span class="${status.toLowerCase()}">TEST&nbsp;CASE: </span>
       <span class="name">${name}</span>
       {{if !isCritical}}<span>  (non-critical)</span>{{/if}}
-      <a href="javascript:expandAllChildren('${id}')" onclick="stopPropagation(event);"
-         class="expandall">Expand All</a>
+        <a class="expandall" href="javascript:expandAllChildren('${id}')"
+           onclick="stopPropagation(event);">Expand All</a>
     </div>
     <div id="${id}_children" style="display: none;">
       <table class="metadata">
@@ -287,8 +287,8 @@ function addTestExecutionLog(main) {
       <span class="${status.toLowerCase()}">${type}: </span>
       <span class="name">${name}</span>
       <span class="arg">${arguments}</span>
-      <a href="javascript:expandAllChildren('${id}')" onclick="stopPropagation(event);"
-         class="expandall">Expand All</a>
+      <a class="expandall" href="javascript:expandAllChildren('${id}')"
+         onclick="stopPropagation(event);">Expand All</a>
     </div>
     <div id="${id}_children" style="display: none;">
       <table class="metadata">
