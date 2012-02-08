@@ -1,0 +1,45 @@
+*** Settings ***
+Force Tags     regression    jybot
+Suite Setup    Run Libdoc And Parse Output  ${EMPTY}   ${TESTDATADIR}/Example.java
+Resource       libdoc_resource.txt
+
+
+*** Test Cases ***
+Name
+    Attribute Should Be    name    Example
+
+Type
+    Attribute Should Be    type    library
+
+Generated
+    Attribute Should Be    generated    *
+
+Scope
+    Element Should Be    scope   global
+
+Version
+    Element Should Be    version   1.0
+
+Named Args
+    Element Should Be    namedargs   no
+
+Doc
+    Element Should Be    doc   Library for `libdoc.py` testing purposes.\n*
+
+Init Doc
+    Element Should Be    init[1]/doc   Creates new Example test library 1
+    Element Should Be    init[2]/doc   Creates new Example test library 2
+    Element Should Be    init[3]/doc   Creates new Example test library 3
+
+Init Args
+    Element Should Not Contain Children    init[1]/arguments/arg
+    Element Should Be    init[2]/arguments/arg[1]   arg
+    Element Should Be    init[3]/arguments/arg[1]   i
+
+Keyword Name
+    Attribute Should Be   name    My Keyword   kw[1]
+    Attribute Should Be   name    Your Keyword   kw[2]
+
+Keyword Arguments
+    Element Should Not Contain Children   kw[1]/arguments/arg
+    Element Should Be    kw[2]/arguments/arg[1]   arg

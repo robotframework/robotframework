@@ -1,6 +1,9 @@
 *** Settings ***
 Library    LibDocLib.py    ${INTERPRETER}
 
+*** Variables ***
+${TESTDATADIR}   ${CURDIR}/../../testdata/libdoc
+
 *** Keywords ***
 Run Libdoc And Parse Output
     [Arguments]    ${options}   ${libname}

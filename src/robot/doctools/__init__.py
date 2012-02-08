@@ -12,16 +12,27 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+import sys
+
+from robot.errors import DataError
 from robot.running import TestLibrary
 
+if sys.platform.startswith('java'):
+    from .javalibdocbuilder import JavaDocBuilder
+else:
+    def JavaDocBuilder():
+        raise DataError('Documenting Java test libraries requires Jython.')
 from .librarydocoutput import LibraryDocOutput
 from .robotlibdoc import LibraryDocBuilder
 from .xmlwriter import LibdocXmlWriter
 
 
 def LibraryDoc(library_or_resource, arguments=None, name=None, version=None):
-    lib = TestLibrary(library_or_resource, arguments or ())
-    libdoc = LibraryDocBuilder().build(lib)
+    if library_or_resource.endswith('.java'):
+        libdoc = JavaDocBuilder().build(library_or_resource)
+    else:
+        lib = TestLibrary(library_or_resource, arguments or ())
+        libdoc = LibraryDocBuilder().build(lib)
     if name:
         libdoc.name = name
     if version:
