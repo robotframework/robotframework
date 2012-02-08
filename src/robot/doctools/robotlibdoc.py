@@ -24,8 +24,8 @@ class LibraryDocBuilder(object):
                             scope=self._get_scope(lib),
                             named_args=lib.supports_named_arguments)
         libdoc.inits = self._get_initializers(lib)
-        libdoc.keywords = sorted(KeywordDocBuilder().build(handler)
-                                 for handler in lib.handlers.values())
+        libdoc.keywords = [KeywordDocBuilder().build(handler)
+                           for handler in lib.handlers.values()]
         return libdoc
 
     def _get_doc(self, lib):

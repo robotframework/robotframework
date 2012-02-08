@@ -12,6 +12,10 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+import operator
+
+from robot.utils import setter
+
 
 class LibraryDoc(object):
 
@@ -25,6 +29,10 @@ class LibraryDoc(object):
         self.named_args = named_args
         self.inits = []
         self.keywords = []
+
+    @setter
+    def keywords(self, kws):
+        return sorted(kws, key=operator.attrgetter('name'))
 
 
 class KeywordDoc(object):

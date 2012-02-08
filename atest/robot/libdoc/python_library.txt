@@ -36,9 +36,9 @@ Init Args
     Element Should Be    init/arguments/arg[4]   prompt_is_regexp=False
 
 Keyword Name
-    Attribute Should Be   name    Close Connection   kw[1]
-    Attribute Should Be   name    Close All Connections   kw[2]
+    Attribute Should Be   name    Close All Connections   kw[1]
+    Attribute Should Be   name    Close Connection   kw[2]
 
 Keyword Arguments
-    Element Should Be    kw[1]/arguments/arg[1]   loglevel=None
-    Element Should Not Contain Children   kw[2]/arguments/arg
+    Element Should Not Contain Children   kw[1]/arguments/arg
+    Element Should Be    kw[2]/arguments/arg[1]   loglevel=None
