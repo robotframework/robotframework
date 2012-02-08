@@ -4,6 +4,7 @@ from os.path import join, dirname, abspath
 from subprocess import call, STDOUT
 from xml.etree import cElementTree as ET
 
+from robot.api import logger
 
 ROBOT_SRC = join(dirname(abspath(__file__)), '..', '..', '..', 'src')
 
@@ -16,15 +17,17 @@ class LibDocLib(object):
         self._env = os.environ.copy()
         self._env.update({path_var: ROBOT_SRC})
         self._last_output = ''
-        #self._env = {path_var: ROBOT_SRC, 'PATH': os.environ['PATH']}
 
     def run_libdoc(self, options, library):
         options = options.split(' ') if options else []
         output = tempfile.TemporaryFile()
-        rc = call(self._cmd + options + [library], env=self._env, stdout=output,
-                  stderr=STDOUT)
+        cmd = self._cmd + options + [library.replace('/', os.sep)]
+        logger.info(' '.join(cmd))
+        rc = call(cmd, env=self._env, stdout=output,
+                  stderr=STDOUT, shell=os.sep=='\\')
         output.seek(0)
         self._last_output = output.read()
+        logger.debug(self._last_output)
         return rc
 
     def parse_libdoc_output(self, path=None):
