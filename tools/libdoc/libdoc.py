@@ -685,10 +685,8 @@ if __name__ == '__main__':
 
 
     try:
-        argparser = utils.ArgumentParser(__doc__)
-        opts, args = argparser.parse_args(sys.argv[1:], pythonpath='pythonpath',
-                                          help='help', unescape='escape',
-                                          check_args=True)
+        argparser = utils.ArgumentParser(__doc__, auto_version=False)
+        opts, args = argparser.parse_args(sys.argv[1:])
         libname = args[0]
         library = LibraryDoc(libname, opts['argument'], opts['name'],
                              opts['version'])
