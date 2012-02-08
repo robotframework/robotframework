@@ -1,0 +1,10 @@
+*** Settings ***
+Force Tags     regression    pybot    jybot
+Resource       libdoc_resource.txt
+
+
+*** Test Cases ***
+Name and Version
+    Run Libdoc And Parse Output  --name MyName --version 42   Telnet
+    Attribute Should Be    name    MyName
+    Element Should Be    version    42

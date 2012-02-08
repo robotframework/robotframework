@@ -1,0 +1,21 @@
+*** Settings ***
+Library    LibDocLib.py    ${INTERPRETER}
+
+*** Keywords ***
+Run Libdoc And Parse Output
+    [Arguments]    ${options}   ${libname}
+    Run Libdoc    ${options}   ${libname}
+    ${LIBDOC}=    Parse Libdoc Output
+    Set Suite Variable    ${LIBDOC}
+
+Attribute Should Be
+    [Arguments]   ${attr}    ${value}   ${path}=.
+    Should Match   ${LIBDOC.find('${path}').get('${attr}')}    ${value}
+
+Element Should Be
+    [Arguments]   ${element}    ${value}
+    Should Match   ${LIBDOC.find('${element}').text}    ${value}
+
+Element Should Not Contain Children
+    [Arguments]   ${element}
+    Should Be Empty    ${LIBDOC.findall('${element}')}
