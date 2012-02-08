@@ -19,13 +19,12 @@ class TidyLib(object):
         self._cmd = [interpreter, '-m', 'robot.tidy']
         self._interpreter = interpreter
         path_var = 'PYTHONPATH' if 'python' in interpreter else 'JYTHONPATH'
-        self._env = os.environ
+        self._env = os.environ.copy()
         self._env.update({path_var: ROBOT_SRC})
 
     def run_tidy_and_return_output(self, options, input, command=None):
         """Runs tidy in the operating system and returns output."""
         options = options.split(' ') if options else []
-        command = command or self._cmd
         with tempfile.TemporaryFile() as output:
             rc = call(self._cmd + options + [self._path(input)],
                       stdout=output, stderr=STDOUT,
