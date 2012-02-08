@@ -1,0 +1,44 @@
+*** Settings ***
+Force Tags     regression    pybot    jybot
+Suite Setup    Run Libdoc And Parse Output  ${EMPTY}   Telnet
+Resource       libdoc_resource.txt
+
+
+*** Test Cases ***
+Name
+    Attribute Should Be    name    Telnet
+
+Type
+    Attribute Should Be    type    library
+
+Generated
+    Attribute Should Be    generated    *
+
+Scope
+    Element Should Be    scope   test suite
+
+Version
+    Element Should Be    version   *
+
+Named Args
+    Element Should Be    namedargs   yes
+
+Doc
+    Element Should Be    doc   A test library providing communication *
+
+Init Doc
+    Element Should Be    init/doc   Telnet library can be imported *
+
+Init Args
+    Element Should Be    init/arguments/arg[1]   timeout=3.0
+    Element Should Be    init/arguments/arg[2]   newline=CRLF
+    Element Should Be    init/arguments/arg[3]   prompt=None
+    Element Should Be    init/arguments/arg[4]   prompt_is_regexp=False
+
+Keyword Name
+    Attribute Should Be   name    Close Connection   kw[1]
+    Attribute Should Be   name    Close All Connections   kw[2]
+
+Keyword Arguments
+    Element Should Be    kw[1]/arguments/arg[1]   loglevel=None
+    Element Should Not Contain Children   kw[2]/arguments/arg
