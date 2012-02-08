@@ -84,7 +84,7 @@ class _DynamicMethod(object):
 
 
 class _BaseTestLibrary(BaseLibrary):
-    supports_named_arguments = False # this attribute is for libdoc
+    supports_named_arguments = True # this attribute is for libdoc
     _log_success = LOGGER.debug
     _log_failure = LOGGER.info
     _log_failure_details = LOGGER.debug
@@ -245,7 +245,6 @@ class _BaseTestLibrary(BaseLibrary):
 
 
 class _ClassLibrary(_BaseTestLibrary):
-    supports_named_arguments = True # this attribute is for libdoc
 
     def _get_handler_method(self, libinst, name):
         # Type is checked before using getattr to avoid calling properties,
@@ -288,7 +287,6 @@ class _ClassLibrary(_BaseTestLibrary):
 
 
 class _ModuleLibrary(_BaseTestLibrary):
-    supports_named_arguments = True # this attribute is for libdoc
 
     def _get_scope(self, libcode):
         return 'GLOBAL'
@@ -318,6 +316,7 @@ class _HybridLibrary(_BaseTestLibrary):
 
 
 class _DynamicLibrary(_BaseTestLibrary):
+    supports_named_arguments = False # this attribute is for libdoc
     _log_failure = LOGGER.warn
 
     def __init__(self, libcode, name, args, variables=None):
