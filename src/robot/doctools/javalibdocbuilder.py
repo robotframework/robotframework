@@ -20,7 +20,7 @@ from .librarydoc import LibraryDoc, KeywordDoc
 
 class JavaDocBuilder(object):
 
-    def build(self, path):
+    def build(self, path, arguments=None):
         cls = self._get_class(path)
         libdoc = LibraryDoc(name=cls.qualifiedName(),
                             doc=self._get_doc(cls),

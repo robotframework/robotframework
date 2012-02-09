@@ -1,0 +1,48 @@
+*** Settings ***
+Suite Setup       Run Libdoc And Parse Output    ${EMPTY}    ${TESTDATADIR}/ExampleSpec.xml
+Force Tags        regression    pybot    jybot
+Resource          libdoc_resource.txt
+
+*** Test Cases ***
+Name
+    Name Should Be    Example
+
+Documentation
+    Doc Should Start With    Library for `libdoc.py` testing purposes.\n
+
+Version
+    Version Should Match    1.0
+
+Type
+    Type Should Be    library
+
+Generated
+    Generated Should Be Defined
+
+Scope
+    Scope Should Be    global
+
+Named Args
+    Named Args Should Be    no
+
+Init Documentation
+    Init Doc Should Start With    0   Creates new Example test library 1
+    Init Doc Should Start With    1   Creates new Example test library 2
+    Init Doc Should Start With    2   Creates new Example test library 3
+
+Init Arguments
+    Init Should Not Have Arguments    0
+    Init Argument Should Be    1    0    arg
+    Init Argument Should Be    2    0    i
+
+Keyword Names
+    Keyword Name Should Be    0    My Keyword
+    Keyword Name Should Be    1    Your Keyword
+
+Keyword Arguments
+    Keyword Should Not Have Arguments   0
+    Keyword Argument Should Be     1    0    arg
+
+Keyword Documentation
+    Keyword Doc Should Start With    0   Does nothing & <doc> has "stuff" to 'escape'!!
+    Keyword Doc Should Start With    1   Takes one `arg` and *does nothing* with it.

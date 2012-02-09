@@ -53,7 +53,7 @@ class LibraryDocBuilder(object):
 
 class ResourceDocBuilder(object):
 
-    def build(self, path):
+    def build(self, path, arguments=None):
         res = self._import_resource(path)
         libdoc = LibraryDoc(name=res.name,
                             doc=self._get_doc(res),

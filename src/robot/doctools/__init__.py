@@ -15,6 +15,7 @@
 import sys
 import os
 
+
 from robot.errors import DataError
 from robot.parsing import VALID_EXTENSIONS
 
@@ -25,23 +26,30 @@ else:
         raise DataError('Documenting Java test libraries requires Jython.')
 from .librarydocoutput import LibraryDocOutput
 from .robotlibdoc import LibraryDocBuilder, ResourceDocBuilder
+from .speclibdocbuilder import SpecLibraryDocBuilder
 from .xmlwriter import LibdocXmlWriter
 from .libdochtmlwriter import LibdocHtmlWriter
 
 
 def LibraryDoc(library_or_resource, arguments=None, name=None, version=None):
-    extension = os.path.splitext(library_or_resource)[1][1:].lower()
-    if extension == 'java':
-        libdoc = JavaDocBuilder().build(library_or_resource)
-    elif extension in VALID_EXTENSIONS:
-        libdoc = ResourceDocBuilder().build(library_or_resource)
-    else:
-        libdoc = LibraryDocBuilder().build(library_or_resource, arguments)
+    builder = BuilderFactory(arguments, library_or_resource)
+    libdoc = builder.build(library_or_resource, arguments)
     if name:
         libdoc.name = name
     if version:
         libdoc.version = version
     return libdoc
+
+
+def BuilderFactory(arguments, library_or_resource):
+    extension = os.path.splitext(library_or_resource)[1][1:].lower()
+    if extension in VALID_EXTENSIONS:
+        return ResourceDocBuilder()
+    if extension == 'xml':
+        return SpecLibraryDocBuilder()
+    if extension == 'java':
+        return JavaDocBuilder()
+    return LibraryDocBuilder()
 
 
 def LibraryDocWriter(format=None, title=None, style=None):

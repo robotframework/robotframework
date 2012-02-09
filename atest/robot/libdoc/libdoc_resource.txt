@@ -9,7 +9,7 @@ ${TESTDATADIR}    ${CURDIR}/../../testdata/libdoc
 Run Libdoc And Parse Output
     [Arguments]    ${options}    ${libname}
     ${output}=    Run Libdoc     --format xml ${options}    ${libname}
-    ${LIBDOC}=    Parse Xml Text    ${output}
+    ${LIBDOC}=    Parse Xml    ${output}
     Set Suite Variable    ${LIBDOC}
 
 Name Should Be
