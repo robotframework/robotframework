@@ -1,0 +1,42 @@
+*** Settings ***
+Suite Setup       Run Libdoc And Parse Output    ${EMPTY}    ${TESTDATADIR}/resource.txt
+Force Tags        regression    pybot    jybot
+Resource          libdoc_resource.txt
+
+*** Test Cases ***
+Name
+    Name Should Be    resource
+
+Documentation
+    Doc Should Start With    This resource file has documentation.
+
+Version
+    Version Should Be    ${EMPTY}
+
+Type
+    Type Should Be    resource
+
+Generated
+    Generated Should Be Defined
+
+Scope
+    Scope Should Be    ${EMPTY}
+
+Named Args
+    Named Args Should Be    yes
+
+
+Keyword Names
+    Keyword Name Should Be     0    curdir
+    Keyword Name Should Be     1    Keyword with some "stuff" to <escape>
+
+Keyword Arguments
+    Keyword Should Not Have Arguments   0
+    Keyword Argument Should Be     1    0     a1
+    Keyword Argument Should Be     1    1     a2
+    Keyword Argument Should Be     4    0     a1=d
+    Keyword Argument Should Be     4    1     *a2
+
+Keyword Documentation
+    Keyword Doc Should Be    0   $\{CURDIR}
+    Keyword Doc Should Be    1   foo bar `kw` & some "stuff" to <escape> .\n baa `\${a1}`

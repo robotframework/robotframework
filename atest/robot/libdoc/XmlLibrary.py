@@ -24,7 +24,7 @@ class XmlLibrary(object):
         return node.findall(path)
 
     def get_element_text(self, node, path):
-        return self.get_element(node, path).text
+        return self.get_element(node, path).text or ''
 
     def element_text_should_be(self, node, expected, path=None):
         should_be_equal(self.get_element_text(node, path), expected)

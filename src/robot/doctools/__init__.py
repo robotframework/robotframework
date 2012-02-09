@@ -13,9 +13,10 @@
 #  limitations under the License.
 
 import sys
+import os
 
 from robot.errors import DataError
-from robot.running import TestLibrary
+from robot.parsing import VALID_EXTENSIONS
 
 if sys.platform.startswith('java'):
     from .javalibdocbuilder import JavaDocBuilder
@@ -23,17 +24,19 @@ else:
     def JavaDocBuilder():
         raise DataError('Documenting Java test libraries requires Jython.')
 from .librarydocoutput import LibraryDocOutput
-from .robotlibdoc import LibraryDocBuilder
+from .robotlibdoc import LibraryDocBuilder, ResourceDocBuilder
 from .xmlwriter import LibdocXmlWriter
 from .libdochtmlwriter import LibdocHtmlWriter
 
 
 def LibraryDoc(library_or_resource, arguments=None, name=None, version=None):
-    if library_or_resource.endswith('.java'):
+    extension = os.path.splitext(library_or_resource)[1][1:].lower()
+    if extension == 'java':
         libdoc = JavaDocBuilder().build(library_or_resource)
+    elif extension in VALID_EXTENSIONS:
+        libdoc = ResourceDocBuilder().build(library_or_resource)
     else:
-        lib = TestLibrary(library_or_resource, arguments or ())
-        libdoc = LibraryDocBuilder().build(lib)
+        libdoc = LibraryDocBuilder().build(library_or_resource, arguments)
     if name:
         libdoc.name = name
     if version:

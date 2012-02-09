@@ -24,6 +24,10 @@ Version Should Match
     [Arguments]    ${version}
     Element Text Should Match    ${LIBDOC}    ${version}    version
 
+Version Should Be
+    [Arguments]    ${version}
+    Element Text Should Be    ${LIBDOC}    ${version}    version
+
 Type Should Be
     [Arguments]    ${type}
     Attribute Should Be    ${LIBDOC}    type    ${type}
@@ -70,6 +74,11 @@ Keyword Doc Should Start With
     [Arguments]    ${index}    ${doc}    ${type}=kw
     ${kws}=   Get Elements    ${LIBDOC}   ${type}
     Element Text Should Match    ${kws[${index}]}    ${doc}*    doc
+
+Keyword Doc Should Be
+    [Arguments]    ${index}    ${doc}    ${type}=kw
+    ${kws}=   Get Elements    ${LIBDOC}   ${type}
+    Element Text Should Be    ${kws[${index}]}    ${doc}    doc
 
 Get Keyword Arguments
     [Arguments]    ${index}   ${type}=kw

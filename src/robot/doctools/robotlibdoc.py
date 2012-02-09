@@ -12,27 +12,32 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+import os
+import sys
+
+from robot.errors import DataError
+from robot.running import TestLibrary, UserLibrary
+from robot.parsing import populators
+from robot import utils
+
 from .librarydoc import LibraryDoc, KeywordDoc
 
 
 class LibraryDocBuilder(object):
 
-    def build(self, lib):
+    def build(self, library, arguments=None):
+        lib = TestLibrary(library, arguments)
         libdoc = LibraryDoc(name=lib.name,
                             doc=self._get_doc(lib),
-                            version=self._get_version(lib),
+                            version=lib.version,
                             scope=self._get_scope(lib),
                             named_args=lib.supports_named_arguments)
         libdoc.inits = self._get_initializers(lib)
-        libdoc.keywords = [KeywordDocBuilder().build(handler)
-                           for handler in lib.handlers.values()]
+        libdoc.keywords = KeywordDocBuilder().build_keywords(lib)
         return libdoc
 
     def _get_doc(self, lib):
         return lib.doc or "Documentation for test library `%s`." % lib.name
-
-    def _get_version(self, lib):
-        return getattr(lib, 'version', '<unknown>')
 
     def _get_scope(self, lib):
         if hasattr(lib, 'scope'):
@@ -41,12 +46,48 @@ class LibraryDocBuilder(object):
         return ''
 
     def _get_initializers(self, lib):
-        return [KeywordDocBuilder().build(lib.init)] if lib.init.arguments.maxargs else []
+        if lib.init.arguments.maxargs:
+            return [KeywordDocBuilder().build_keyword(lib.init)]
+        return []
+
+
+class ResourceDocBuilder(object):
+
+    def build(self, path):
+        res = self._import_resource(path)
+        libdoc = LibraryDoc(name=res.name,
+                            doc=self._get_doc(res),
+                            type='resource',
+                            named_args=True)
+        libdoc.keywords = KeywordDocBuilder().build_keywords(res)
+        return libdoc
+
+    def _import_resource(self, path):
+        populators.PROCESS_CURDIR = False
+        try:
+            return UserLibrary(self._find_resource_file(path))
+        finally:
+            populators.PROCESS_CURDIR = True
+
+    def _find_resource_file(self, path):
+        if os.path.isfile(path):
+            return path
+        for dire in [item for item in sys.path if os.path.isdir(item)]:
+            if os.path.isfile(os.path.join(dire, path)):
+                return os.path.join(dire, path)
+        raise DataError("Resource file '%s' does not exist." % path)
+
+    def _get_doc(self, res):
+        doc = res.doc or "Documentation for resource file `%s`." % res.name
+        return utils.unescape(doc)
 
 
 class KeywordDocBuilder(object):
 
-    def build(self, kw):
+    def build_keywords(self, lib):
+        return [self.build_keyword(kw) for kw in lib.handlers.values()]
+
+    def build_keyword(self, kw):
         return KeywordDoc(name=kw.name, args=self._get_args(kw), doc=kw.doc)
 
     def _get_args(self, kw):
