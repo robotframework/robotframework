@@ -1,44 +1,47 @@
 *** Settings ***
-Force Tags     regression    pybot    jybot
-Suite Setup    Run Libdoc And Parse Output  ${EMPTY}   Telnet
-Resource       libdoc_resource.txt
-
+Suite Setup       Run Libdoc And Parse Output    ${EMPTY}    Telnet
+Force Tags        regression    pybot    jybot
+Resource          libdoc_resource.txt
 
 *** Test Cases ***
 Name
-    Attribute Should Be    name    Telnet
+    Name Should Be    Telnet
 
-Type
-    Attribute Should Be    type    library
-
-Generated
-    Attribute Should Be    generated    *
-
-Scope
-    Element Should Be    scope   test suite
+Documentation
+    Doc Should Start With    A test library providing communication
 
 Version
-    Element Should Be    version   *
+    Version Should Match    *
+
+Type
+    Type Should Be    library
+
+Generated
+    Generated Should Be Defined
+
+Scope
+    Scope Should Be    test suite
 
 Named Args
-    Element Should Be    namedargs   yes
+    Named Args Should Be    yes
 
-Doc
-    Element Should Be    doc   A test library providing communication *
+Init Documentation
+    Init Doc Should Start With    0   Telnet library can be imported
 
-Init Doc
-    Element Should Be    init/doc   Telnet library can be imported *
+Init Arguments
+    Init Argument Should Be    0    0    timeout=3.0
+    Init Argument Should Be    0    1    newline=CRLF
+    Init Argument Should Be    0    2    prompt=None
+    Init Argument Should Be    0    3    prompt_is_regexp=False
 
-Init Args
-    Element Should Be    init/arguments/arg[1]   timeout=3.0
-    Element Should Be    init/arguments/arg[2]   newline=CRLF
-    Element Should Be    init/arguments/arg[3]   prompt=None
-    Element Should Be    init/arguments/arg[4]   prompt_is_regexp=False
-
-Keyword Name
-    Attribute Should Be   name    Close All Connections   kw[1]
-    Attribute Should Be   name    Close Connection   kw[2]
+Keyword Names
+    Keyword Name Should Be     0    Close All Connections
+    Keyword Name Should Be     1    Close Connection
 
 Keyword Arguments
-    Element Should Not Contain Children   kw[1]/arguments/arg
-    Element Should Be    kw[2]/arguments/arg[1]   loglevel=None
+    Keyword Should Not Have Arguments   0
+    Keyword Argument Should Be     1    0     loglevel=None
+
+Keyword Documentation
+    Keyword Doc Should Start With    0   Closes all open connections
+    Keyword Doc Should Start With    1   Closes the current

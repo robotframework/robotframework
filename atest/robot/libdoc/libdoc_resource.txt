@@ -1,24 +1,78 @@
 *** Settings ***
-Library    LibDocLib.py    ${INTERPRETER}
+Library           LibDocLib.py    ${INTERPRETER}
+Library           XmlLibrary.py
 
 *** Variables ***
-${TESTDATADIR}   ${CURDIR}/../../testdata/libdoc
+${TESTDATADIR}    ${CURDIR}/../../testdata/libdoc
 
 *** Keywords ***
 Run Libdoc And Parse Output
-    [Arguments]    ${options}   ${libname}
-    Run Libdoc    ${options}   ${libname}
-    ${LIBDOC}=    Parse Libdoc Output
+    [Arguments]    ${options}    ${libname}
+    ${output}=    Run Libdoc     --format xml ${options}    ${libname}
+    ${LIBDOC}=    Parse Xml Text    ${output}
     Set Suite Variable    ${LIBDOC}
 
-Attribute Should Be
-    [Arguments]   ${attr}    ${value}   ${path}=.
-    Should Match   ${LIBDOC.find('${path}').get('${attr}')}    ${value}
+Name Should Be
+    [Arguments]    ${name}
+    Attribute Should Be    ${LIBDOC}    name    ${name}
 
-Element Should Be
-    [Arguments]   ${element}    ${value}
-    Should Match   ${LIBDOC.find('${element}').text}    ${value}
+Doc Should Start With
+    [Arguments]    ${doc}
+    Element Text Should Match    ${LIBDOC}    ${doc}*    doc
 
-Element Should Not Contain Children
-    [Arguments]   ${element}
-    Should Be Empty    ${LIBDOC.findall('${element}')}
+Version Should Match
+    [Arguments]    ${version}
+    Element Text Should Match    ${LIBDOC}    ${version}    version
+
+Type Should Be
+    [Arguments]    ${type}
+    Attribute Should Be    ${LIBDOC}    type    ${type}
+
+Scope Should Be
+    [Arguments]    ${scope}
+    Element Text Should Be    ${LIBDOC}    ${scope}    scope
+
+Named Args Should Be
+    [Arguments]    ${namedargs}
+    Element Text Should Be    ${LIBDOC}    ${namedargs}    namedargs
+
+Generated Should Be Defined
+    Attribute Should Match    ${LIBDOC}    generated    *
+
+Init Doc Should Start With
+    [Arguments]    ${index}    ${doc}
+    Keyword Doc Should Start With    ${index}    ${doc}    type=init
+
+Init Should Not Have Arguments
+    [Arguments]    ${index}
+    Keyword Should Not Have Arguments    ${index}    type=init
+
+Init Argument Should Be
+    [Arguments]    ${kwindex}   ${argindex}    ${value}
+    Keyword Argument Should Be    ${kwindex}   ${argindex}    ${value}    type=init
+
+Keyword Name Should Be
+    [Arguments]    ${index}   ${name}
+    ${elements}=   Get Elements    ${LIBDOC}    kw
+    Attribute Should Be    ${elements[${index}]}    name    ${name}
+
+Keyword Should Not Have Arguments
+    [Arguments]    ${index}    ${type}=kw
+    ${args} =   Get Keyword Arguments    ${index}    ${type}
+    Should Be Empty    ${args}
+
+Keyword Argument Should Be
+    [Arguments]    ${kwindex}    ${argindex}    ${value}    ${type}=kw
+    ${args} =   Get Keyword Arguments    ${kwindex}    ${type}
+    Element Text Should Be    ${args[${argindex}]}    ${value}
+
+Keyword Doc Should Start With
+    [Arguments]    ${index}    ${doc}    ${type}=kw
+    ${kws}=   Get Elements    ${LIBDOC}   ${type}
+    Element Text Should Match    ${kws[${index}]}    ${doc}*    doc
+
+Get Keyword Arguments
+    [Arguments]    ${index}   ${type}=kw
+    ${kws} =    Get Elements    ${LIBDOC}    ${type}
+    ${args} =   Get Elements    ${kws[${index}]}    arguments/arg
+    [Return]    ${args}
