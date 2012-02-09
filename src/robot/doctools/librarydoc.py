@@ -12,15 +12,13 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-import operator
-
 from robot.utils import setter
 
 
 class LibraryDoc(object):
 
-    def __init__(self, name='', doc='', version='<unknown>', type='library',
-                 scope='TEST CASE', named_args=False):
+    def __init__(self, name='', doc='', version='', type='library',
+                 scope='', named_args=False):
         self.name = name
         self.doc = doc
         self.version = version
@@ -32,7 +30,7 @@ class LibraryDoc(object):
 
     @setter
     def keywords(self, kws):
-        return sorted(kws, key=operator.attrgetter('name'))
+        return sorted(kws)
 
 
 class KeywordDoc(object):
@@ -45,3 +43,6 @@ class KeywordDoc(object):
     @property
     def shortdoc(self):
         return self.doc.splitlines()[0] if self.doc else ''
+
+    def __cmp__(self, other):
+        return cmp(self.name.lower(), other.name.lower())
