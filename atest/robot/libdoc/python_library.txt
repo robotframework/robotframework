@@ -1,5 +1,5 @@
 *** Settings ***
-Suite Setup       Run Libdoc And Parse Output    ${EMPTY}    Telnet
+Suite Setup       Run Libdoc And Parse Output    Telnet
 Force Tags        regression    pybot    jybot
 Resource          libdoc_resource.txt
 

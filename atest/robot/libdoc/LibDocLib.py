@@ -16,11 +16,11 @@ class LibDocLib(object):
         self._env = os.environ.copy()
         self._env.update({path_var: ROBOT_SRC})
 
-    def run_libdoc(self, options, library):
-        options = [o for o in options.split(' ') if o] if options else []
-        stdout = tempfile.TemporaryFile()
-        cmd = self._cmd + options + [library.replace('/', os.sep)]
+    def run_libdoc(self, args):
+        cmd = self._cmd + [a for a in args.split(' ') if a]
+        cmd[-1] = cmd[-1].replace('/', os.sep)
         logger.info(' '.join(cmd))
+        stdout = tempfile.TemporaryFile()
         call(cmd, env=self._env, stdout=stdout, stderr=STDOUT, shell=os.sep=='\\')
         stdout.seek(0)
         output = stdout.read()

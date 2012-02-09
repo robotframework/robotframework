@@ -7,8 +7,8 @@ ${TESTDATADIR}    ${CURDIR}/../../testdata/libdoc
 
 *** Keywords ***
 Run Libdoc And Parse Output
-    [Arguments]    ${options}    ${libname}
-    ${output}=    Run Libdoc     --format xml ${options}    ${libname}
+    [Arguments]    ${arguments}
+    ${output}=    Run Libdoc     --format XmL ${arguments}
     ${LIBDOC}=    Parse Xml    ${output}
     Set Suite Variable    ${LIBDOC}
 
