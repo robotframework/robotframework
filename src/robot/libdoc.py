@@ -47,10 +47,6 @@ Options:
  -T --title title         Sets the title of the generated HTML documentation.
                           Underscores in the given title are automatically
                           converted to spaces.
- -S --styles styles       Overrides the default styles. If the given 'styles'
-                          is a path to an existing file, styles will be read
-                          from it. If it is string a 'NONE', no styles will be
-                          used. Otherwise the given text is used as-is.
  -P --pythonpath path *   Additional path(s) to insert into PYTHONPATH.
  -E --escape what:with *  Escapes characters which are problematic in console.
                           'what' is the name of the character to escape and
@@ -84,7 +80,7 @@ class LibDoc(Application):
              format='HTML', output=None, title='', styles=None):
         libdoc = LibraryDoc(library_or_resource[0], argument, name, version)
         with LibraryDocOutput(output) as outfile:
-            LibraryDocWriter(format, title, styles).write(libdoc, outfile)
+            LibraryDocWriter(format, title).write(libdoc, outfile)
 
 
 def libdoc_cli(args):

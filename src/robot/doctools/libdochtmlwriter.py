@@ -15,7 +15,7 @@
 
 class LibdocHtmlWriter(object):
 
-    def __init__(self, title=None, styles=None):
+    def __init__(self, title=None):
         pass
 
     def write(self, libdoc, outfile):
