@@ -20,6 +20,8 @@ USAGE = """Robot Framework Library and Resource File Documentation Generator
 
 TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO
 
+Version:  <VERSION>
+
 Usage:  libdoc.py [options] library_or_resource
 
 This script can generate keyword documentation in HTML and XML formats. The
@@ -30,7 +32,9 @@ Documentation can be created for both test libraries and resource files. All
 library and resource file types are supported, and also earlier generated
 documentation in XML format can be used as input.
 
-Options:
+Options
+=======
+
  -a --argument value *    Possible arguments that a library needs.
  -f --format HTML|XML     Specifies whether to generate HTML or XML output.
                           The default value is got from the output file

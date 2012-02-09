@@ -16,7 +16,7 @@
 
 USAGE = """Rebot -- Robot Framework Report and Log Generator
 
-Version: <VERSION>
+Version:  <VERSION>
 
 Usage:  rebot|jyrebot|ipyrebot [options] robot_outputs
    or:  python|jython|ipy -m robot.rebot [options] robot_outputs
@@ -40,7 +40,8 @@ selected interpreter.
 For more information about Robot Framework run, for example, `pybot --help` or
 go to http://robotframework.org.
 
-Options:
+Options
+=======
 
  -N --name name           Set the name of the top level test suite. Underscores
                           in the name are converted to spaces. Default name is
@@ -219,7 +220,8 @@ also be shortened as long as they are unique. For example, `--logti Title`
 works while `--lo log.html` does not because the former matches only --logtitle
 but the latter matches both --log and --logtitle.
 
-Environment Variables:
+Environment Variables
+=====================
 
 ROBOT_SYSLOG_FILE         Path to the syslog file. If not specified, or set to
                           special value `NONE`, writing to syslog file is
@@ -228,7 +230,8 @@ ROBOT_SYSLOG_LEVEL        Log level to use when writing to the syslog file.
                           Available levels are the same as for --loglevel
                           option to Robot and the default is INFO.
 
-Examples:
+Examples
+========
 
 # Simple Rebot run that creates log and report with default names.
 $ rebot output.xml

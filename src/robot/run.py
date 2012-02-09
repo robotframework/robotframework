@@ -16,7 +16,7 @@
 
 USAGE = """Robot Framework -- A keyword-driven test automation framework
 
-Version: <VERSION>
+Version:  <VERSION>
 
 Usage:  pybot|jybot|ipybot [options] data_sources
    or:  python|jython|ipy -m robot.run [options] data_sources
@@ -52,7 +52,8 @@ Robot Framework is open source software released under Apache License 2.0.
 Its copyrights are owned and development supported by Nokia Siemens Networks.
 For more information about the framework see http://robotframework.org.
 
-Options:
+Options
+=======
 
  -N --name name           Set the name of the top level test suite. Underscores
                           in the name are converted to spaces. Default name is
@@ -281,7 +282,8 @@ also be shortened as long as they are unique. For example, `--logti Title`
 works while `--lo log.html` does not because the former matches only --logtitle
 but the latter matches --log, --loglevel and --logtitle.
 
-Environment Variables:
+Environment Variables
+=====================
 
 ROBOT_SYSLOG_FILE         Path to the syslog file. If not specified, or set to
                           special value `NONE`, writing to syslog file is
@@ -290,7 +292,8 @@ ROBOT_SYSLOG_LEVEL        Log level to use when writing to the syslog file.
                           Available levels are the same as for --loglevel
                           option and the default is INFO.
 
-Examples:
+Examples
+========
 
 # Simple test run with `pybot` without options.
 $ pybot tests.html
