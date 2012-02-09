@@ -47,28 +47,20 @@ Init Doc Should Start With
     [Arguments]    ${index}    ${doc}
     Keyword Doc Should Start With    ${index}    ${doc}    type=init
 
-Init Should Not Have Arguments
-    [Arguments]    ${index}
-    Keyword Should Not Have Arguments    ${index}    type=init
-
-Init Argument Should Be
-    [Arguments]    ${kwindex}   ${argindex}    ${value}
-    Keyword Argument Should Be    ${kwindex}   ${argindex}    ${value}    type=init
+Init Arguments Should Be
+    [Arguments]    ${index}   @{expected}
+    ${args}=    Get Keyword Arguments    ${index}    type=init
+    Should Be Equal    ${args}    ${expected}
 
 Keyword Name Should Be
     [Arguments]    ${index}   ${name}
     ${elements}=   Get Elements    ${LIBDOC}    kw
     Attribute Should Be    ${elements[${index}]}    name    ${name}
 
-Keyword Should Not Have Arguments
-    [Arguments]    ${index}    ${type}=kw
-    ${args} =   Get Keyword Arguments    ${index}    ${type}
-    Should Be Empty    ${args}
-
-Keyword Argument Should Be
-    [Arguments]    ${kwindex}    ${argindex}    ${value}    ${type}=kw
-    ${args} =   Get Keyword Arguments    ${kwindex}    ${type}
-    Element Text Should Be    ${args[${argindex}]}    ${value}
+Keyword Arguments Should Be
+    [Arguments]    ${index}    @{expected}
+    ${args}=    Get Keyword Arguments    ${index}
+    Should Be Equal    ${args}    ${expected}
 
 Keyword Doc Should Start With
     [Arguments]    ${index}    ${doc}    ${type}=kw
@@ -82,6 +74,6 @@ Keyword Doc Should Be
 
 Get Keyword Arguments
     [Arguments]    ${index}   ${type}=kw
-    ${kws} =    Get Elements    ${LIBDOC}    ${type}
-    ${args} =   Get Elements    ${kws[${index}]}    arguments/arg
+    ${kws}=    Get Elements    ${LIBDOC}    ${type}
+    ${args}=    Get Elements Texts   ${kws[${index}]}    arguments/arg
     [Return]    ${args}

@@ -40,6 +40,9 @@ class XmlLibrary(object):
     def get_element_text(self, node, path):
         return self.get_element(node, path).text or ''
 
+    def get_elements_texts(self, node, path):
+        return [elem.text or '' for elem in self.get_elements(node, path)]
+
     def element_text_should_be(self, node, expected, path=None):
         should_be_equal(self.get_element_text(node, path), expected)
 

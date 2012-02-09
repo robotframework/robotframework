@@ -29,8 +29,7 @@ Init Documentation
     Init Doc Should Start With    0   Dummy documentation for `__init__`.
 
 Init Arguments
-    Init Argument Should Be    0    0    arg1
-    Init Argument Should Be    0    1    arg2=This is shown in docs
+    Init Arguments Should Be    0    arg1    arg2=This is shown in docs
 
 Keyword Names
     Keyword Name Should Be     0    0
@@ -38,10 +37,9 @@ Keyword Names
     Keyword Name Should Be     2    KW 2
 
 Keyword Arguments
-    Keyword Should Not Have Arguments   0
-    Keyword Argument Should Be     1    0     arg1
-    Keyword Argument Should Be     2    0     arg1
-    Keyword Argument Should Be     2    1     arg2
+    Keyword Arguments Should Be     0
+    Keyword Arguments Should Be     1    arg1
+    Keyword Arguments Should Be     2    arg1    arg2
 
 Keyword Documentation
     Keyword Doc Should Start With    0   Dummy documentation for `0`.

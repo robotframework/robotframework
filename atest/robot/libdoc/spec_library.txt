@@ -31,17 +31,17 @@ Init Documentation
     Init Doc Should Start With    2   Creates new Example test library 3
 
 Init Arguments
-    Init Should Not Have Arguments    0
-    Init Argument Should Be    1    0    arg
-    Init Argument Should Be    2    0    i
+    Init Arguments Should Be    0
+    Init Arguments Should Be    1    arg
+    Init Arguments Should Be    2    i
 
 Keyword Names
     Keyword Name Should Be    0    My Keyword
     Keyword Name Should Be    1    Your Keyword
 
 Keyword Arguments
-    Keyword Should Not Have Arguments   0
-    Keyword Argument Should Be     1    0    arg
+    Keyword Arguments Should Be   0
+    Keyword Arguments Should Be   1    arg
 
 Keyword Documentation
     Keyword Doc Should Start With    0   Does nothing & <doc> has "stuff" to 'escape'!!
