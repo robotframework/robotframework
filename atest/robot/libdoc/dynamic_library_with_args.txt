@@ -1,0 +1,49 @@
+*** Settings ***
+Suite Setup       Run Libdoc And Parse Output    --argument required ${TESTDATADIR}/DynamicLibrary.py
+Force Tags        regression    pybot    jybot
+Resource          libdoc_resource.txt
+
+*** Test Cases ***
+Name
+    Name Should Be    DynamicLibrary
+
+Documentation
+    Doc Should Start With    Dummy documentation for `__intro__`.
+
+Version
+    Version Should Match    0.1
+
+Type
+    Type Should Be    library
+
+Generated
+    Generated Should Be Defined
+
+Scope
+    Scope Should Be    test case
+
+Named Args
+    Named Args Should Be    no
+
+Init Documentation
+    Init Doc Should Start With    0   Dummy documentation for `__init__`.
+
+Init Arguments
+    Init Argument Should Be    0    0    arg1
+    Init Argument Should Be    0    1    arg2=This is shown in docs
+
+Keyword Names
+    Keyword Name Should Be     0    0
+    Keyword Name Should Be     1    Keyword 1
+    Keyword Name Should Be     2    KW 2
+
+Keyword Arguments
+    Keyword Should Not Have Arguments   0
+    Keyword Argument Should Be     1    0     arg1
+    Keyword Argument Should Be     2    0     arg1
+    Keyword Argument Should Be     2    1     arg2
+
+Keyword Documentation
+    Keyword Doc Should Start With    0   Dummy documentation for `0`.
+    Keyword Doc Should Start With    1   Dummy documentation for `Keyword 1`.
+    Keyword Doc Should Start With    2   Dummy documentation for `KW2`.
