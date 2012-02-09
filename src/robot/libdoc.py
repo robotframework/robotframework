@@ -58,7 +58,7 @@ Options
                           'what' is the name of the character to escape and
                           'with' is the string to escape it with.
                           <-------------------ESCAPES------------------------>
- -h --help                Print this help.
+ -h -? --help             Print this help.
 
 For more information see either the tool's wiki page at
 http://code.google.com/p/robotframework/wiki/LibraryDocumentationTool
@@ -80,7 +80,7 @@ from robot.doctools import LibraryDoc, LibraryDocOutput, LibraryDocWriter
 class LibDoc(Application):
 
     def __init__(self):
-        Application.__init__(self, USAGE, auto_version=False)
+        Application.__init__(self, USAGE, arg_limits=1, auto_version=False)
 
     def main(self, library_or_resource, argument=None, name='', version='',
              format='HTML', output=None, title='', styles=None):
