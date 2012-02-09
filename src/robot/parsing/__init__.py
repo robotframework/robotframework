@@ -15,3 +15,6 @@
 from datarow import DataRow
 from model import (TestData, TestCaseFile, TestDataDirectory, ResourceFile,
                    TestCase, UserKeyword)
+from populators import READERS
+VALID_EXTENSIONS = tuple(READERS)
+del READERS
