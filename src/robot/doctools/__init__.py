@@ -25,6 +25,7 @@ else:
 from .librarydocoutput import LibraryDocOutput
 from .robotlibdoc import LibraryDocBuilder
 from .xmlwriter import LibdocXmlWriter
+from .libdochtmlwriter import LibdocHtmlWriter
 
 
 def LibraryDoc(library_or_resource, arguments=None, name=None, version=None):
@@ -41,4 +42,9 @@ def LibraryDoc(library_or_resource, arguments=None, name=None, version=None):
 
 
 def LibraryDocWriter(format=None, title=None, style=None):
-    return LibdocXmlWriter()
+    format = (format or 'HTML').upper()
+    if format == 'HTML':
+        return LibdocHtmlWriter(title, style)
+    if format == 'XML':
+        return LibdocXmlWriter()
+    raise DataError("Format must be either 'HTML' or 'XML', got '%s'." % format)
