@@ -809,11 +809,14 @@ class OperatingSystem:
         Does nothing if the environment variable is not set.
         """
         encoded = self._encode_env_var(name)
-        if encoded in os.environ:
-            os.environ.pop(encoded)
-            self._info("Environment variable '%s' deleted" % name)
-        else:
+        self._info('Orig   : %r' % name)
+        self._info('Encoded: %r' % encoded)
+        try:
+            del os.environ[encoded]
+        except KeyError:
             self._info("Environment variable '%s' does not exist" % name)
+        else:
+            self._info("Environment variable '%s' deleted" % name)
 
     def environment_variable_should_be_set(self, name, msg=None):
         """Fails if the specified environment variable is not set.
