@@ -326,6 +326,12 @@ class BaseTestCase(_TestAndSuiteHelper):
         if parent:
             parent.tests.append(self)
 
+    @property
+    def id(self):
+        if not self.parent:
+            return 't1'
+        return '%s-t%d' % (self.parent.id, self.parent.tests.index(self)+1)
+
     def suite_teardown_failed(self, message):
         self.status = 'FAIL'
         self._set_teardown_fail_msg(message)

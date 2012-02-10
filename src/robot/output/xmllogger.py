@@ -73,7 +73,7 @@ class XmlLogger:
         self._writer.end('kw')
 
     def start_test(self, test):
-        self._writer.start('test', {'name': test.name,
+        self._writer.start('test', {'id': test.id, 'name': test.name,
                                     'timeout': test.timeout})
         self._writer.element('doc', test.doc)
 
@@ -83,7 +83,7 @@ class XmlLogger:
         self._writer.end('test')
 
     def start_suite(self, suite):
-        attrs = {'name': suite.name}
+        attrs = {'id': suite.id, 'name': suite.name}
         if suite.source:
             attrs['source'] = suite.source
         self._writer.start('suite', attrs)
