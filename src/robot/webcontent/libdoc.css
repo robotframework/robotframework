@@ -1,0 +1,97 @@
+body {
+    background: white;
+    color: black;
+    font-size: small;
+    font-family: sans-serif;
+    padding: 0.1em 0.5em;
+}
+.metadata th {
+    text-align: left;
+    padding-right: 1em;
+}
+.libdoc {
+    white-space: pre-wrap;
+}
+a.name, span.name {
+    font-style: italic;
+}
+a, a:link, a:visited {
+    color: #c30;
+}
+a:hover, a:active {
+    text-decoration: underline;
+    color: black;
+}
+div.shortcuts {
+    margin: 1em 0em;
+    font-size: 0.9em;
+}
+div.shortcuts a {
+    text-decoration: none;
+    white-space: nowrap;
+    color: black;
+}
+div.shortcuts a:hover {
+    text-decoration: underline;
+}
+table.keywords {
+    border: 2px solid black;
+    border-collapse: collapse;
+    empty-cells: show;
+    margin: 0.3em 0em;
+    width: 100%;
+}
+table.keywords th, table.keywords td {
+    border: 2px solid black;
+    padding: 0.2em;
+    vertical-align: top;
+}
+table.keywords th {
+    background: #bbb;
+    color: black;
+}
+table.keywords td.kw {
+    width: 150px;
+    font-weight: bold;
+}
+table.keywords td.arg {
+    width: 300px;
+    font-style: italic;
+}
+table.doc {
+    border: 1px solid black;
+    background: transparent;
+    border-collapse: collapse;
+    empty-cells: show;
+    font-size: 0.85em;
+}
+table.doc td {
+    border: 1px solid black;
+    padding: 0.1em 0.3em;
+    height: 1.2em;
+
+}
+.footer {
+    font-size: 0.9em;
+}
+/* JavaScript disabled box */
+#javascript_disabled {
+    width: 600px;
+    margin: 100px auto 0 auto;
+    padding: 20px;
+    color: #2A2A2E;
+    border: 1px solid #9A9A9E;
+    background: #FAFAFF;
+}
+#javascript_disabled h1 {
+    width: 100%;
+}
+#javascript_disabled ul {
+    font-size: 1.2em;
+}
+#javascript_disabled li {
+    margin: 0.5em 0;
+}
+#javascript_disabled b {
+    font-style: italic;
+}

@@ -12,11 +12,61 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+import os
+
+from robot.reporting.htmlfilewriter import HtmlFileWriter, ModelWriter
+from robot.reporting.jsonwriter import JsonWriter
+from robot import utils
+
 
 class LibdocHtmlWriter(object):
 
     def __init__(self, title=None):
         pass
 
-    def write(self, libdoc, outfile):
-        raise NotImplementedError
+    def write(self, libdoc, output):
+        model_writer = LibdocModelWriter(output, libdoc)
+        writer = HtmlFileWriter(output, model_writer)
+        writer.write('libdoc.html')
+
+
+class LibdocModelWriter(ModelWriter):
+
+    def __init__(self, output, libdoc):
+        self._output = output
+        self._libdoc = libdoc
+
+    def write(self, line):
+        self._output.write('<script type="text/javascript">' + os.linesep)
+        self._write_data()
+        self._output.write('</script>' + os.linesep)
+
+    def _write_data(self):
+        libdoc = LibdocJsonConverter().convert(self._libdoc)
+        JsonWriter(self._output).write_json('libdoc = ', libdoc)
+
+
+class LibdocJsonConverter(object):
+
+    def convert(self, libdoc):
+        return {
+            'name': libdoc.name,
+            'doc': libdoc.doc,
+            'version': libdoc.version,
+            'named_args': libdoc.named_args,
+            'scope': libdoc.scope,
+            'generated': utils.get_timestamp(daysep='-', millissep=None),
+            'inits': self._get_keywords(libdoc.inits),
+            'keywords': self._get_keywords(libdoc.keywords)
+        }
+
+    def _get_keywords(self, keywords):
+        return [self._convert_keyword(kw) for kw in keywords]
+
+    def _convert_keyword(self, kw):
+        return {
+            'name': kw.name,
+            'args': kw.args,
+            'doc': kw.doc,
+            'shortdoc': kw.shortdoc
+        }

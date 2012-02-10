@@ -14,6 +14,7 @@
 
 import sys
 import os.path
+import codecs
 
 
 class LibraryDocOutput(object):
@@ -25,7 +26,7 @@ class LibraryDocOutput(object):
     def __enter__(self):
         if not self._output_path:
             return sys.stdout
-        self._output_file = open(self._output_path, 'w')
+        self._output_file = codecs.open(self._output_path, 'w', 'UTF-8')
         return self._output_file
 
     def __exit__(self, *exc_info):
