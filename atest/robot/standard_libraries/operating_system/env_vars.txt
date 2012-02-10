@@ -5,30 +5,29 @@ Resource          atest_resource.txt
 
 *** Test Case ***
 Get Environment Variable
-    Check testcase    Get Environment Variable
+    Check test case    ${TEST NAME}
 
 Set Environment Variable
-    Check testcase    Set Environment Variable
+    Check test case    ${TEST NAME}
 
 Remove Environment Variable
-    Check testcase    Remove Environment Variable
+    Check test case    ${TEST NAME}
 
 Environment Variable Should Be Set
-    Check testcase    Environment Variable Should Be Set
+    Check test case    ${TEST NAME}
 
 Environment Variable Should Be Set With Non Default Error
-    Check testcase    Environment Variable Should Be Set With Non Default Error
+    Check test case    ${TEST NAME}
 
 Environment Variable Should Not Be Set
-    Check testcase    Environment Variable Should Not Be Set
+    Check test case    ${TEST NAME}
 
 Environment Variable Should Not Be Set With Non Default Error
-    Check testcase    Environment Variable Should Not Be Set With Non Default Error
+    Check test case    ${TEST NAME}
 
 Set Environment Variable In One Test And Use In Another
-    Check testcase    Set Environment Variable In One Test And Use In Another, Part 1
-    Check testcase    Set Environment Variable In One Test And Use In Another, Part 2
+    Check test case    ${TEST NAME}, Part 1
+    Check test case    ${TEST NAME}, Part 2
 
 Values are converted to strings automatically
-    Check testcase    Values are converted to strings automatically
-
+    Check test case    ${TEST NAME}

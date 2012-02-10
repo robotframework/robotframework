@@ -8,12 +8,12 @@ ${NAME}           EXAMPLE_ENV_VAR_32FDHT
 
 *** Test Case ***
 Get Environment Variable
-    [Documentation]    FAIL Environment variable '${NAME}' does not exist
+    [Documentation]    FAIL Environment variable 'non_existing_2' does not exist
     ${var} =    Get Environment Variable    PATH
     Should Contain    ${var}    ${:}
-    ${var} =    Get Environment Variable    ${NAME}    this is default
-    Should Be Equal    ${var}    this is default
-    ${var} =    Get Environment Variable    ${NAME}    # this keyword fails
+    ${var} =    Get Environment Variable    non_existing    default value
+    Should Be Equal    ${var}    default value
+    ${var} =    Get Environment Variable    non_existing_2
 
 Set Environment Variable
     Set Environment Variable    ${NAME}    Hello
@@ -22,19 +22,17 @@ Set Environment Variable
     Should Be Equal    %{${NAME}}    Moi
 
 Remove Environment Variable
-    [Documentation]    FAIL Environment variable '${NAME}' does not exist
     Set Environment Variable    ${NAME}    Hello
     Remove Environment Variable    ${NAME}
     Environment Variable Should Not Be Set    ${NAME}
-    Remove Environment Variable    ${NAME}    # should not fail
-    Get Environment Variable    ${NAME}
+    Remove Environment Variable    ${NAME}
+    Environment Variable Should Not Be Set    ${NAME}
 
 Environment Variable Should Be Set
-    [Documentation]    FAIL Environment variable '${NAME}' is not set
+    [Documentation]    FAIL Environment variable 'not_set_var' is not set
     Set Environment Variable    ${NAME}    Hello
     Environment Variable Should Be Set    ${NAME}
-    Remove Environment Variable    ${NAME}
-    Environment Variable Should Be Set    ${NAME}
+    Environment Variable Should Be Set    not_set_var
 
 Environment Variable Should Be Set With Non Default Error
     [Documentation]    FAIL My error message
@@ -55,12 +53,12 @@ Environment Variable Should Not Be Set With Non Default Error
     Environment Variable Should Not Be Set    ${NAME}    My error message
 
 Set Environment Variable In One Test And Use In Another, Part 1
-    [Documentation]    Environment variable is set in this test case and used in Part 2
     Set Environment Variable    ${NAME}    Hello another test case!
-    [Teardown]
+    [Teardown]  NONE
 
 Set Environment Variable In One Test And Use In Another, Part 2
-    [Documentation]    Environment variable was set in Part 1 and used here
+    ${value}=    Get Environment Variable    ${NAME}
+    Should Be Equal    ${value}      Hello another test case!
     Should Be Equal    %{${NAME}}    Hello another test case!
 
 Values are converted to strings automatically
