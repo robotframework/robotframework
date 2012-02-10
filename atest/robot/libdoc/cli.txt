@@ -1,17 +1,44 @@
 *** Settings ***
 Force Tags       regression    pybot    jybot
 Resource         libdoc_resource.txt
+Test Template    Run Libdoc And Verify Created Output File
+Suite Setup      Remove File    ${FILE}
+Suite Teardown   Remove File    ${FILE}
+
+*** Variables ***
+${FILE}          ${TEMPDIR}${/}robot-libdoc-test-file.xxx
 
 *** Test Cases ***
-Override name and version
-    Run Libdoc And Parse Output    --name MyName --version 42 String
-    Name Should Be    MyName
-    Version Should Match    42
 
+HTML output file
+    --format hTmL -o ${FILE} BuiltIn                HTML    BuiltIn
+
+HTML is default output file format
+    --output ${FILE} String                         HTML    String
+
+XML output file
+    -f XmL --output ${FILE} BuiltIn                 XML     BuiltIn
+
+Override name and version
+    --name MyName --version 42 -o ${FILE} String    HTML    MyName    42
+    -n MyName -v 42 -o ${FILE} -f xml BuiltIn       XML     MyName    42
 
 *** Keywords ***
-Run libdoc and verify output
-    [Arguments]    ${args}    @{error}
-    ${output}=    Run Libdoc    ${args}
-    ${error}=    Catenate    SEPARATOR=\n    @{error}
-    Should Match    ${output}   ${error}${USAGE TIP}
+Run Libdoc And Verify Created Output File
+    [Arguments]    ${args}   ${format}    ${name}    ${version}=
+    Run Libdoc And Verify Output    ${args}    ${FILE}
+    Run Keyword    ${format} Doc Should Have Been Created    ${name}    ${version}
+
+HTML Doc Should Have Been Created
+    [Arguments]    ${name}    ${version}
+    ${libdoc}=    Get File    ${FILE}
+    Should Start With    ${libdoc}    <!DOCTYPE
+    Should Contain    ${libdoc}    ${name}
+    Should Contain    ${libdoc}    ${version}
+
+XML Doc Should Have Been Created
+    [Arguments]    ${name}    ${version}
+    ${libdoc}=    Parse Xml    ${FILE}
+    Set Test Variable   ${libdoc}
+    Name Should Be    ${name}
+    Run Keyword If    "${version}"    Version Should Match    ${version}

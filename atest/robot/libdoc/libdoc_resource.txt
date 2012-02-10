@@ -1,6 +1,7 @@
 *** Settings ***
 Library           LibDocLib.py    ${INTERPRETER}
 Library           XmlLibrary.py
+Library           OperatingSystem
 
 *** Variables ***
 ${TESTDATADIR}    ${CURDIR}/../../testdata/libdoc

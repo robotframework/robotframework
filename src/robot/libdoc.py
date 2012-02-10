@@ -45,8 +45,8 @@ Options
                           RFDoc system's upload page. The default value is the
                           directory where the script is executed from. If
                           a URL is given, it must start with 'http://'.
- -N --name newname        Sets the name of the documented library or resource.
- -V --version newversion  Sets the version of the documented library or
+ -n --name newname        Sets the name of the documented library or resource.
+ -v --version newversion  Sets the version of the documented library or
                           resource.
  -P --pythonpath path *   Additional path(s) to insert into PYTHONPATH.
  -E --escape what:with *  Escapes characters which are problematic in console.
