@@ -12,6 +12,12 @@ Run Libdoc And Parse Output
     ${LIBDOC}=    Parse Xml    ${output}
     Set Suite Variable    ${LIBDOC}
 
+Run Libdoc And Verify Output
+    [Arguments]    ${args}    @{expected}
+    ${output}=    Run Libdoc    ${args}
+    ${expected}=    Catenate    SEPARATOR=\n    @{expected}
+    Should Match    ${output}   ${expected}
+
 Name Should Be
     [Arguments]    ${name}
     Attribute Should Be    ${LIBDOC}    name    ${name}
