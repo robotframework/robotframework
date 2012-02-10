@@ -92,10 +92,10 @@ class StringDumper(_Dumper):
 
 
 class IntegerDumper(_Dumper):
-    _handled_types = (int, long)
+    _handled_types = (int, long, bool)
 
     def dump(self, data, mapping):
-        self._write(str(data))
+        self._write(str(data).lower())
 
 
 class DictDumper(_Dumper):

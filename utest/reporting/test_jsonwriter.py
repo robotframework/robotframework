@@ -33,17 +33,22 @@ class TestJsonDumper(unittest.TestCase):
     def test_escape_string(self):
         self._test('"-\\-\n-\t-\r', '"\\"-\\\\-\\n-\\t-\\r"')
 
+    def test_dump_boolean(self):
+        self._test(True, 'true')
+        self._test(False, 'false')
+
     def test_dump_integer(self):
         self._test(12, '12')
         self._test(-12312, '-12312')
         self._test(0, '0')
+        self._test(1, '1')
 
     def test_dump_long(self):
         self._test(12345678901234567890L, '12345678901234567890')
         self._test(0L, '0')
 
     def test_dump_list(self):
-        self._test([1,2,3, 'hello', 'world'], '[1,2,3,"hello","world"]')
+        self._test([1,2,True, 'hello', 'world'], '[1,2,true,"hello","world"]')
         self._test(['*nes"ted', [1,2,[4]]], '["*nes\\"ted",[1,2,[4]]]')
 
     def test_dump_tuple(self):
