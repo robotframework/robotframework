@@ -19,15 +19,14 @@ import re
 from robot.utils import HtmlWriter
 from robot.version import get_full_version
 
-from .jswriter import JsResultWriter
 from .webcontentfile import WebContentFile
 
 
 class HtmlFileWriter(object):
 
-    def __init__(self, output, model, config):
+    def __init__(self, output, model_writer):
         html_writer = HtmlWriter(output)
-        self._writers = (ModelWriter(output, model, config),
+        self._writers = (model_writer,
                          JsFileWriter(html_writer),
                          CssFileWriter(html_writer),
                          GeneratorWriter(html_writer),
@@ -53,14 +52,6 @@ class _Writer(object):
 
 class ModelWriter(_Writer):
     _handles_line = '<!-- JS MODEL -->'
-
-    def __init__(self, output, model, config):
-        self._output = output
-        self._model = model
-        self._config = config
-
-    def write(self, line):
-        JsResultWriter(self._output).write(self._model, self._config)
 
 
 class LineWriter(_Writer):

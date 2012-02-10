@@ -17,8 +17,8 @@ import os
 import os.path
 import codecs
 
-from .jswriter import SplitLogWriter
-from .htmlfilewriter import HtmlFileWriter
+from .jswriter import JsResultWriter, SplitLogWriter
+from .htmlfilewriter import HtmlFileWriter, ModelWriter
 
 
 class _LogReportWriter(object):
@@ -30,8 +30,20 @@ class _LogReportWriter(object):
         outfile = codecs.open(path, 'wb', encoding='UTF-8') \
             if isinstance(path, basestring) else path  # unit test hook
         with outfile:
-            writer = HtmlFileWriter(outfile, self._js_model, config)
+            model_writer = RobotModelWriter(outfile, self._js_model, config)
+            writer = HtmlFileWriter(outfile, model_writer)
             writer.write(template)
+
+
+class RobotModelWriter(ModelWriter):
+
+    def __init__(self, output, model, config):
+        self._output = output
+        self._model = model
+        self._config = config
+
+    def write(self, line):
+        JsResultWriter(self._output).write(self._model, self._config)
 
 
 class LogWriter(_LogReportWriter):
