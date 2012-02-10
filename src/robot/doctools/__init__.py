@@ -52,10 +52,10 @@ def BuilderFactory(arguments, library_or_resource):
     return LibraryDocBuilder()
 
 
-def LibraryDocWriter(format=None, title=None):
+def LibraryDocWriter(format=None):
     format = (format or 'HTML').upper()
     if format == 'HTML':
-        return LibdocHtmlWriter(title)
+        return LibdocHtmlWriter()
     if format == 'XML':
         return LibdocXmlWriter()
     raise DataError("Format must be either 'HTML' or 'XML', got '%s'." % format)

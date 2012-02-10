@@ -21,13 +21,9 @@ from robot import utils
 
 class LibdocHtmlWriter(object):
 
-    def __init__(self, title=None):
-        pass
-
     def write(self, libdoc, output):
         model_writer = LibdocModelWriter(output, libdoc)
-        writer = HtmlFileWriter(output, model_writer)
-        writer.write('libdoc.html')
+        HtmlFileWriter(output, model_writer).write('libdoc.html')
 
 
 class LibdocModelWriter(ModelWriter):

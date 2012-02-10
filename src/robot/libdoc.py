@@ -48,11 +48,6 @@ Options
  -N --name newname        Sets the name of the documented library or resource.
  -V --version newversion  Sets the version of the documented library or
                           resource.
-                          TODO: ArgumentParser has special handling for this.
-                                That needs to be somehow configurable.
- -T --title title         Sets the title of the generated HTML documentation.
-                          Underscores in the given title are automatically
-                          converted to spaces.
  -P --pythonpath path *   Additional path(s) to insert into PYTHONPATH.
  -E --escape what:with *  Escapes characters which are problematic in console.
                           'what' is the name of the character to escape and
@@ -83,10 +78,10 @@ class LibDoc(Application):
         Application.__init__(self, USAGE, arg_limits=1, auto_version=False)
 
     def main(self, library_or_resource, argument=None, name='', version='',
-             format='HTML', output=None, title='', styles=None):
+             format='HTML', output=None, styles=None):
         libdoc = LibraryDoc(library_or_resource[0], argument, name, version)
         with LibraryDocOutput(output) as outfile:
-            LibraryDocWriter(format, title).write(libdoc, outfile)
+            LibraryDocWriter(format).write(libdoc, outfile)
 
 
 def libdoc_cli(args):
