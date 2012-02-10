@@ -808,11 +808,8 @@ class OperatingSystem:
 
         Does nothing if the environment variable is not set.
         """
-        encoded = self._encode_env_var(name)
-        self._info('Orig   : %r' % name)
-        self._info('Encoded: %r' % encoded)
         try:
-            del os.environ[encoded]
+            del os.environ[self._encode_env_var(name)]
         except KeyError:
             self._info("Environment variable '%s' does not exist" % name)
         else:
