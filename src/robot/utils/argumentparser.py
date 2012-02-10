@@ -26,7 +26,7 @@ from robot.errors import DataError, Information, FrameworkError
 from robot.version import get_full_version
 
 from misc import plural_or_not
-from encoding import decode_output, decode_from_file_system
+from encoding import decode_output, decode_from_system
 
 
 ESCAPES = dict(
@@ -121,7 +121,7 @@ class ArgumentParser:
         amount of horizontal space as <---ESCAPES--->. Both help and version
         are wrapped to Information exception.
         """
-        args_list = [decode_from_file_system(a) for a in args_list]
+        args_list = [decode_from_system(a) for a in args_list]
         if self._auto_argumentfile:
             args_list = self._process_possible_argfile(args_list)
         opts, args = self._parse_args(args_list)

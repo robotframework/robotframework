@@ -16,7 +16,8 @@ from .argumentparser import ArgumentParser
 from .application import Application
 from .compress import compress_text
 from .connectioncache import ConnectionCache
-from .encoding import decode_output, encode_output, decode_from_file_system
+from .encoding import (decode_output, encode_output,
+                       decode_from_system, encode_to_system)
 from .error import (get_error_message, get_error_details, ErrorDetails,
                     RERAISED_EXCEPTIONS)
 from .escaping import escape, unescape

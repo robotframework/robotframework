@@ -13,62 +13,34 @@
 #  limitations under the License.
 
 import sys
-import os
 
-from unic import unic
+from .encodingsniffer import get_output_encoding, get_system_encoding
+from .unic import unic
+
+
+OUTPUT_ENCODING = get_output_encoding()
+SYSTEM_ENCODING = get_system_encoding()
 
 
 def decode_output(string):
-    """Decodes string from console encoding to Unicode."""
-    if _output_encoding:
-        return unic(string, _output_encoding)
-    return string
+    """Decodes bytes from console encoding to Unicode."""
+    return unic(string, OUTPUT_ENCODING)
 
 def encode_output(string, errors='replace'):
-    """Encodes string from Unicode to console encoding."""
+    """Encodes Unicode to bytes in console encoding."""
     # http://ironpython.codeplex.com/workitem/29487
     if sys.platform == 'cli':
         return string
-    return string.encode(_output_encoding, errors)
+    return string.encode(OUTPUT_ENCODING, errors)
 
-def decode_from_file_system(string):
-    """Decodes path from file system to Unicode."""
-    encoding = sys.getfilesystemencoding()
+def decode_from_system(string):
+    """Decodes bytes from system (e.g. cli args or env vars) to Unicode."""
     if sys.platform.startswith('java'):
         # http://bugs.jython.org/issue1592
         from java.lang import String
         string = String(string)
-    return unic(string, encoding) if encoding else unic(string)
+    return unic(string, SYSTEM_ENCODING)
 
-
-def _get_output_encoding():
-    # Jython is buggy on Windows: http://bugs.jython.org/issue1568
-    if os.sep == '\\' and sys.platform.startswith('java'):
-        return 'cp437'  # Default DOS encoding
-    encoding = _get_encoding_from_std_streams()
-    if encoding:
-        return encoding
-    if os.sep == '/':
-        return _read_encoding_from_unix_env()
-    return 'cp437'  # Default DOS encoding
-
-def _get_encoding_from_std_streams():
-    # Stream may not have encoding attribute if it is intercepted outside RF
-    # in Python. Encoding is None if process's outputs are redirected.
-    return getattr(sys.__stdout__, 'encoding', None) \
-        or getattr(sys.__stderr__, 'encoding', None) \
-        or getattr(sys.__stdin__, 'encoding', None)
-
-def _read_encoding_from_unix_env():
-    for name in 'LANG', 'LC_CTYPE', 'LANGUAGE', 'LC_ALL':
-        try:
-            # Encoding can be in format like `UTF-8` or `en_US.UTF-8`
-            encoding = os.environ[name].split('.')[-1]
-            'testing that encoding is valid'.encode(encoding)
-        except (KeyError, LookupError):
-            pass
-        else:
-            return encoding
-    return 'ascii'
-
-_output_encoding = _get_output_encoding()
+def encode_to_system(string):
+    """Encodes Unicode to system encoding (e.g. cli args and env vars)."""
+    return string.encode(SYSTEM_ENCODING)
