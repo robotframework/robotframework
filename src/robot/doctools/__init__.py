@@ -15,9 +15,8 @@
 import sys
 import os
 
-
 from robot.errors import DataError
-from robot.parsing import VALID_EXTENSIONS
+from robot.parsing import VALID_EXTENSIONS as RESOURCE_EXTENSIONS
 
 if sys.platform.startswith('java'):
     from .javalibdocbuilder import JavaDocBuilder
@@ -32,7 +31,7 @@ from .libdochtmlwriter import LibdocHtmlWriter
 
 
 def LibraryDoc(library_or_resource, arguments=None, name=None, version=None):
-    builder = BuilderFactory(arguments, library_or_resource)
+    builder = BuilderFactory(library_or_resource)
     libdoc = builder.build(library_or_resource, arguments)
     if name:
         libdoc.name = name
@@ -41,9 +40,9 @@ def LibraryDoc(library_or_resource, arguments=None, name=None, version=None):
     return libdoc
 
 
-def BuilderFactory(arguments, library_or_resource):
+def BuilderFactory(library_or_resource):
     extension = os.path.splitext(library_or_resource)[1][1:].lower()
-    if extension in VALID_EXTENSIONS:
+    if extension in RESOURCE_EXTENSIONS:
         return ResourceDocBuilder()
     if extension == 'xml':
         return SpecLibraryDocBuilder()
