@@ -1,0 +1,34 @@
+*** Setting ***
+Suite Setup       Run Tests    ${EMPTY}    standard_libraries/operating_system/env_vars.txt
+Force Tags        regression    jybot    pybot
+Resource          atest_resource.txt
+
+*** Test Case ***
+Get Environment Variable
+    Check testcase    Get Environment Variable
+
+Set Environment Variable
+    Check testcase    Set Environment Variable
+
+Remove Environment Variable
+    Check testcase    Remove Environment Variable
+
+Environment Variable Should Be Set
+    Check testcase    Environment Variable Should Be Set
+
+Environment Variable Should Be Set With Non Default Error
+    Check testcase    Environment Variable Should Be Set With Non Default Error
+
+Environment Variable Should Not Be Set
+    Check testcase    Environment Variable Should Not Be Set
+
+Environment Variable Should Not Be Set With Non Default Error
+    Check testcase    Environment Variable Should Not Be Set With Non Default Error
+
+Set Environment Variable In One Test And Use In Another
+    Check testcase    Set Environment Variable In One Test And Use In Another, Part 1
+    Check testcase    Set Environment Variable In One Test And Use In Another, Part 2
+
+Values are converted to strings automatically
+    Check testcase    Values are converted to strings automatically
+
