@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <robot generated="20111024 13:41:20.873" generator="Robot trunk 20111007 (Python 2.7.2 on linux2)">
-<suite source="normal.html" name="Normal">
+<suite id="s1" source="normal.html" name="Normal">
 <doc>Normal test cases</doc>
 <metadata>
 <item name="Something">My Value</item>
@@ -11,7 +11,7 @@
 </arguments>
 <status status="PASS" endtime="20111024 13:41:20.888" starttime="20111024 13:41:20.886"></status>
 </kw>
-<test name="First One" timeout="">
+<test id="s1-t1" name="First One" timeout="">
 <doc>Test case documentation</doc>
 <kw type="kw" name="BuiltIn.Log" timeout="">
 <doc>Logs the given message with the given level.</doc>
