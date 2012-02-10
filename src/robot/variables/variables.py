@@ -205,12 +205,14 @@ class Variables(utils.NormalizedDict):
             if name == '':
                 return '%%{%s}' % var.base
             try:
-                return os.environ[name]
+                value = os.environ[utils.encode_to_system(name)]
             except KeyError:
                 property = getJavaSystemProperty(name)
                 if property:
                     return property
                 raise DataError("Environment variable '%s' does not exist" % name)
+            else:
+                return utils.decode_from_system(value)
 
         # 3) Handle ${scalar} variables and @{list} variables without index
         elif var.index is None:

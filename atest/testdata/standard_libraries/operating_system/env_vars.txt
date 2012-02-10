@@ -5,6 +5,8 @@ Library           OperatingSystem
 
 *** Variable ***
 ${NAME}           EXAMPLE_ENV_VAR_32FDHT
+${NON STRING}     ${2138791}
+${NON ASCII}      HYVÄÄ_YÖTÄ
 
 *** Test Case ***
 Get Environment Variable
@@ -61,9 +63,18 @@ Set Environment Variable In One Test And Use In Another, Part 2
     Should Be Equal    ${value}      Hello another test case!
     Should Be Equal    %{${NAME}}    Hello another test case!
 
-Values are converted to strings automatically
-    Set Environment Variable    ${NAME}    ${42}
-    Should Be Equal    %{${NAME}}    42
-    Set Environment Variable    ${NAME}    ${None}
-    Should Be Equal    %{${NAME}}    None
+Non-string names and values are converted to strings automatically
+    Set Environment Variable    ${NON STRING}    ${NON STRING}
+    ${value} =    Get Environment Variable    ${NON STRING}
+    Should Be Equal As Strings    ${value}    ${NON STRING}
+    Environment Variable Should Be Set     ${NON STRING}
+    Remove Environment Variable    ${NON STRING}
+    Environment Variable Should Not Be Set     ${NON STRING}
 
+Non-ASCII names and values are encoded automatically
+    Set Environment Variable    ${NON ASCII}    ${NON ASCII}
+    ${value} =    Get Environment Variable    ${NON ASCII}
+    Should Be Equal    ${value}    ${NON ASCII}
+    Environment Variable Should Be Set     ${NON ASCII}
+    Remove Environment Variable    ${NON ASCII}
+    Environment Variable Should Not Be Set     ${NON ASCII}

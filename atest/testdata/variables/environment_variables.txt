@@ -18,6 +18,11 @@ Java System Properties Can Be Used
     Should Be Equal  %{file.separator}  ${/}
     Should Not Be Empty  %{os.name}
 
+Non-ASCII Environment Variable
+    Set Environment Variable  nön_äsĉïï   äëïöüÿ
+    Should Be Equal  %{nön_äsĉïï}  äëïöüÿ
+    [Teardown]  Remove Environment Variable  nön_äsĉïï
+
 Environment Variable With Backslashes
     Set Environment Variable  ENV_VAR_WITH_BACKSLASHES  c:\\temp\\backslash
     Should Be Equal  %{ENV_VAR_WITH_BACKSLASHES}  c:\\temp\\backslash

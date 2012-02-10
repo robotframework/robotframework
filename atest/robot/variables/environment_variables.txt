@@ -12,6 +12,9 @@ Java System Properties Can Be Used
     [Tags]  jybot
     Check Test Case  ${TESTNAME}
 
+Non-ASCII Environment Variable
+    Check Test Case  ${TESTNAME}
+
 Environment Variable With Backslashes
     Check Test Case  ${TESTNAME}
 
