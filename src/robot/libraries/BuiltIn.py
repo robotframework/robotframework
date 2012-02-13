@@ -589,7 +589,8 @@ class _Verify:
         | Should Contain X Times | ${some list} | value  | 3 |
         """
         if not msg:
-            msg = "'%s' does not contain '%s' %s times" % (item1, item2, count)
+            msg = "'%s' does not contain '%s' %s times" \
+                    % (utils.unic(item1), utils.unic(item2), count)
         self.should_be_equal_as_integers(self.get_count(item1, item2),
                                          count, msg, values=False)
 
@@ -775,7 +776,7 @@ class _Verify:
             raise AssertionError(msg or "'%s' should not be empty" % item)
 
     def _get_string_msg(self, str1, str2, msg, values, delim):
-        default = "'%s' %s '%s'" % (str1, delim, str2)
+        default = "'%s' %s '%s'" % (utils.unic(str1), delim, utils.unic(str2))
         if not msg:
             msg = default
         elif values is True:

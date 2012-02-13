@@ -36,7 +36,7 @@ def _create_hashtable(dictionary):
     return ht
 
 bytes_without_non_ascii = 'hyva'
-bytes_with_non_ascii = 'hyv\xe4'
+bytes_with_non_ascii = '\xe4'
 tuple0 = ()
 tuple1 = ('a',)
 tuple2 = ('a', 'b')
