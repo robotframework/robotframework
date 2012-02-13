@@ -128,11 +128,17 @@ Should Not Match
 Should Match
     Check test case  ${TESTNAME}
 
+Should Match with bytes containing non-ascii characters
+        Check test case  ${TESTNAME}
+
 Should Not Match Regexp
     Check test case  ${TESTNAME}
 
 Should Match Regexp
     Check test case  ${TESTNAME}
+
+Should Match Regexp with bytes containing non-ascii characters
+    Check test case   ${TESTNAME}
 
 Should Match Regexp Returns Match And Groups
     Check test case  ${TESTNAME}
