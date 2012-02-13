@@ -46,15 +46,18 @@ class JarRunner(RobotRunner):
 
     def run(self, args):
         try:
-            command, args = self._parse_command_line(args)
-            return command(args) or 0
+            self._run(args)
         except SystemExit, err:
-            return err.code or 0
+            return err.code
 
-    def _parse_command_line(self, args):
+    def _run(self, args):
         if not args or args[0] in ('-h', '--help'):
             print USAGE
             raise SystemExit(0)
+        command, args = self._parse_command_line(args)
+        command(args) # Always calls sys.exit()
+
+    def _parse_command_line(self, args):
         try:
             return self._commands[args[0]], args[1:]
         except KeyError:
