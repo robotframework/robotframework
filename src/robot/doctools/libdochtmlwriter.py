@@ -13,6 +13,7 @@
 #  limitations under the License.
 
 import os
+import re
 
 from robot.reporting.htmlfilewriter import HtmlFileWriter, ModelWriter
 from robot.reporting.jsonwriter import JsonWriter
@@ -38,16 +39,20 @@ class LibdocModelWriter(ModelWriter):
         self._output.write('</script>' + os.linesep)
 
     def _write_data(self):
-        libdoc = LibdocJsonConverter().convert(self._libdoc)
+        formatter = HtmlDocFormatter(self._libdoc.keywords)
+        libdoc = LibdocJsonConverter(formatter).convert(self._libdoc)
         JsonWriter(self._output).write_json('libdoc = ', libdoc)
 
 
 class LibdocJsonConverter(object):
 
+    def __init__(self, doc_formatter):
+        self._doc_formatter = doc_formatter
+
     def convert(self, libdoc):
         return {
             'name': libdoc.name,
-            'doc': libdoc.doc,
+            'doc': self._doc_formatter.html(libdoc.doc),
             'version': libdoc.version,
             'named_args': libdoc.named_args,
             'scope': libdoc.scope,
@@ -62,7 +67,31 @@ class LibdocJsonConverter(object):
     def _convert_keyword(self, kw):
         return {
             'name': kw.name,
-            'args': kw.args,
-            'doc': kw.doc,
+            'args': ', '.join(kw.args),
+            'doc': self._doc_formatter.html(kw.doc),
             'shortdoc': kw.shortdoc
         }
+
+
+class HtmlDocFormatter(object):
+    _name_regexp = re.compile('`(.+?)`')
+
+    def __init__(self, keywords):
+        self._targets = utils.NormalizedDict({
+            'introduction': 'introduction',
+            'library introduction': 'introduction',
+            'importing': 'importing',
+            'library importing': 'importing'
+        })
+        for kw in keywords:
+            self._targets[kw.name] = kw.name
+
+    def html(self, doc):
+        doc = utils.html_format(doc)
+        return self._name_regexp.sub(self._link_keywords, doc)
+
+    def _link_keywords(self, res):
+        name = res.group(1)
+        if name in self._targets:
+            return '<a href="#%s" class="name">%s</a>' % (self._targets[name], name)
+        return '<span class="name">%s</span>' % name
