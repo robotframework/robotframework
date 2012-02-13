@@ -56,7 +56,7 @@ Should Not Be Equal
     ${STR1}  1
 
 Should Not Be Equal with bytes containing non-ascii characters
-    [Documentation]  FAIL   hyv\\xe4 == hyv\\   xe4
+    [Documentation]  FAIL   hyv\\xe4 == hyv\\xe4
     Should Not Be Equal  ${BYTES WITH NON ASCII}   ${BYTES WITHOUT NON ASCII}
     Should Not Be Equal  ${BYTES WITH NON ASCII}   unicode
     Should Not Be Equal  ${BYTES WITH NON ASCII}   ${BYTES WITH NON ASCII}
