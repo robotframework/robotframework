@@ -55,12 +55,29 @@ Should Not Be Equal
     ${STR1}  ${INT1}
     ${STR1}  1
 
+Should Not Be Equal with bytes containing non-ascii characters
+    [Documentation]  FAIL   hyv\\xe4 == hyv\\   xe4
+    Should Not Be Equal  ${BYTES WITH NON ASCII}   ${BYTES WITHOUT NON ASCII}
+    Should Not Be Equal  ${BYTES WITH NON ASCII}   unicode
+    Should Not Be Equal  ${BYTES WITH NON ASCII}   ${BYTES WITH NON ASCII}
+
 Should Be Equal
     [Documentation]  FAIL Error message: A != B
     [Template]  Should Be Equal
     ${STR1}  1
     ${INT1}  ${1}
+    ${BYTES WITHOUT NON ASCII}  ${BYTES WITHOUT NON ASCII}
     A  B  Error message
+
+Should Be Equal with bytes containing non-ascii characters
+    [Documentation]  FAIL   hyv\\xe4 != hyva
+    Should be equal  ${BYTES WITH NON ASCII}  ${BYTES WITH NON ASCII}
+    Should be equal  ${BYTES WITH NON ASCII}  ${BYTES WITHOUT NON ASCII}
+
+Should Be Equal with unicode and bytes with non-ascii characters
+    [Documentation]  FAIL   hyv\\xe4 != this fails
+    Should be equal  ${BYTES WITHOUT NON ASCII}  hyva
+    Should be equal  ${BYTES WITH NON ASCII}  this fails
 
 Should Be Equal When Types Differ But String Representations Are Same
     [Documentation]  FAIL 1 (string) != 1 (number)
