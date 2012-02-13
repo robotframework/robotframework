@@ -1,5 +1,5 @@
 *** Setting ***
-Suite Setup       Run Tests    ${EMPTY}    standard_libraries/operating_system/env_vars.txt
+Suite Setup       Run Tests With Environment Variables
 Force Tags        regression    jybot    pybot
 Resource          atest_resource.txt
 
@@ -34,3 +34,16 @@ Non-string names and values are converted to strings automatically
 
 Non-ASCII names and values are encoded automatically
     Check test case    ${TEST NAME}
+
+Non-ASCII variable set before execution
+    Check test case    ${TEST NAME}
+
+Use NON-ASCII variable in child process
+    Check test case    ${TEST NAME}
+
+
+*** Keywords ***
+Run Tests With Environment Variables
+    Set Environment Variable    NON_ASCII_BY_RUNNER    I can häs åäö?!??!¿¿¡¡
+    Run Tests    ${EMPTY}    standard_libraries/operating_system/env_vars.txt
+    [Teardown]    Remove Environment Variable    NON_ASCII_BY_RUNNER

@@ -2,6 +2,7 @@
 Suite Setup       Remove Environment Variable    ${NAME}
 Test Teardown     Remove Environment Variable    ${NAME}
 Library           OperatingSystem
+Library           files/HelperLib.py
 
 *** Variable ***
 ${NAME}           EXAMPLE_ENV_VAR_32FDHT
@@ -70,6 +71,7 @@ Non-string names and values are converted to strings automatically
     Environment Variable Should Be Set     ${NON STRING}
     Remove Environment Variable    ${NON STRING}
     Environment Variable Should Not Be Set     ${NON STRING}
+    [Teardown]    Remove Environment Variable    ${NON STRING}
 
 Non-ASCII names and values are encoded automatically
     Set Environment Variable    ${NON ASCII}    ${NON ASCII}
@@ -78,3 +80,13 @@ Non-ASCII names and values are encoded automatically
     Environment Variable Should Be Set     ${NON ASCII}
     Remove Environment Variable    ${NON ASCII}
     Environment Variable Should Not Be Set     ${NON ASCII}
+    [Teardown]    Remove Environment Variable    ${NON ASCII}
+
+Non-ASCII variable set before execution
+    ${value} =    Get Environment Variable    NON_ASCII_BY_RUNNER
+    Should Be Equal    ${value}    I can häs åäö?!??!¿¿¡¡
+
+Use NON-ASCII variable in child process
+    Set Environment Variable    ${NAME}    ${NON ASCII}
+    Test Env Var In Child Process    ${NAME}
+
