@@ -23,7 +23,8 @@ kw 3  [Arguments]  ${a1}   @{a2}
 
 kw 4  [Arguments]  ${a1}=d  @{a2}
 
-kw 5  [Documentation]   foo bar `kw`.\n baa `${a1}` alskdj alskdjlajd
+kw 5  [Documentation]   foo bar `kw`.\n
+      ...  baa `${a1}` alskdj alskdjlajd
       ...  askf laskdjf asldkfj alsdkfj alsdkfjasldkfj
       ...  askf laskdjf _asldkfj_ alsdkfj alsdkfjasldkfj
       ...  askf *laskdjf* asldkfj `introduction` alsdkfj

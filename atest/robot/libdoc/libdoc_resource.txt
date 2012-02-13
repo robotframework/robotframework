@@ -24,7 +24,8 @@ Name Should Be
     Attribute Should Be    ${LIBDOC}    name    ${name}
 
 Doc Should Start With
-    [Arguments]    ${doc}
+    [Arguments]    @{doc}
+    ${doc}=    Catenate     SEPARATOR=    @{doc}
     Element Text Should Match    ${LIBDOC}    ${doc}*    doc
 
 Version Should Match
@@ -51,8 +52,8 @@ Generated Should Be Defined
     Attribute Should Match    ${LIBDOC}    generated    *
 
 Init Doc Should Start With
-    [Arguments]    ${index}    ${doc}
-    Keyword Doc Should Start With    ${index}    ${doc}    type=init
+    [Arguments]    ${index}    @{doc}
+    Init or Keyword Doc Should Start With    ${index}    init    @{doc}
 
 Init Arguments Should Be
     [Arguments]    ${index}   @{expected}
@@ -70,13 +71,19 @@ Keyword Arguments Should Be
     Should Be Equal    ${args}    ${expected}
 
 Keyword Doc Should Start With
-    [Arguments]    ${index}    ${doc}    ${type}=kw
+    [Arguments]    ${index}    @{doc}
+    Init or Keyword Doc Should Start With    ${index}    kw    @{doc}
+
+Init or Keyword Doc Should Start With
+    [Arguments]    ${index}    ${type}    @{doc}
     ${kws}=   Get Elements    ${LIBDOC}   ${type}
+    ${doc}=    Catenate     SEPARATOR=    @{doc}
     Element Text Should Match    ${kws[${index}]}    ${doc}*    doc
 
 Keyword Doc Should Be
-    [Arguments]    ${index}    ${doc}    ${type}=kw
-    ${kws}=   Get Elements    ${LIBDOC}   ${type}
+    [Arguments]    ${index}    @{doc}
+    ${kws}=   Get Elements    ${LIBDOC}    kw
+    ${doc}=    Catenate     SEPARATOR=    @{doc}
     Element Text Should Be    ${kws[${index}]}    ${doc}    doc
 
 Get Keyword Arguments

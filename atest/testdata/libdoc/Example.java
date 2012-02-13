@@ -1,7 +1,8 @@
-/** 
+/**
  * Library for `libdoc.py` testing purposes.
  *
- * This library is only used in an example and it does't do anything useful.
+ * This library is only used in an example and it doesn't do anything useful.
+ *
  */
 public class Example {
     public static final String ROBOT_LIBRARY_VERSION = "1.0";
@@ -31,13 +32,14 @@ public class Example {
     private Example(String[] args) {
     }
 
-    /** 
+    /**
      * Does nothing & <doc> has "stuff" to 'escape'!!
+     *     and ignored indentation
      */
     public void myKeyword() {
     }
-    
-    /** 
+
+    /**
      * Takes one `arg` and *does nothing* with it.
      *
      * Example:
