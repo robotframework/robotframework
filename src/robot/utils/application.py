@@ -81,7 +81,7 @@ class Application(object):
             return self._report_error('Unexpected error: %s' % error,
                                       details, rc=FRAMEWORK_ERROR)
         else:
-            return rc
+            return rc or 0
 
     def _report_info(self, msg):
         print encode_output(unicode(msg))
