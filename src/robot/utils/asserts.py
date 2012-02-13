@@ -99,7 +99,7 @@ Ran 2 tests in 0.000s
 FAILED (failures=2)
 """
 
-from unic import unic
+from .unic import unic
 
 
 def fail(msg=None):
@@ -244,10 +244,12 @@ def _report_unequality_failure(obj1, obj2, msg, values, delim, extra=None):
     _report_failure(msg)
 
 def _get_default_message(obj1, obj2, delim):
-    if delim == '!=' and unicode(obj1) == unicode(obj2):
-        return '%s (%s) != %s (%s)' % (obj1, _type_name(obj1),
-                                       obj2, _type_name(obj2))
-    return '%s %s %s' % (obj1, delim, obj2)
+    str1 = unic(obj1)
+    str2 = unic(obj2)
+    if delim == '!=' and str1 == str2:
+        return '%s (%s) != %s (%s)' % (str1, _type_name(obj1),
+                                       str2, _type_name(obj2))
+    return '%s %s %s' % (str1, delim, str2)
 
 def _type_name(val):
     known_types = {int: 'number', long: 'number', float: 'number',
