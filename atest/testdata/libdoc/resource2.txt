@@ -1,8 +1,0 @@
-*** Settings ***
-Documentation   No inits here!
-
-
-*** Keywords ***
-Keyword
-    [Arguments]    ${arg1}    ${arg2}
-    [Documentation]    The only lonely keyword.

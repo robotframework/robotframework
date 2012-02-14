@@ -31,6 +31,9 @@ Scope
 Named Args
     Named Args Should Be    yes
 
+Resource Has No Inits
+    Should Have No Init
+
 Keyword Names
     Keyword Name Should Be     0    curdir
     Keyword Name Should Be     1    Keyword with some "stuff" to <escape>

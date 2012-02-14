@@ -56,7 +56,7 @@ Named Args Should Be
 Generated Should Be Defined
     Attribute Should Match    ${LIBDOC}    generated    *
 
-Library Should Have No Init
+Should Have No Init
     ${inits} =    Get Elements    ${LIBDOC}    init
     Should Be Empty    ${inits}
 
