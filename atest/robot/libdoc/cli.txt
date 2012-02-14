@@ -6,17 +6,17 @@ Suite Setup      Remove File    ${FILE}
 Suite Teardown   Remove File    ${FILE}
 
 *** Variables ***
-${FILE}          ${TEMPDIR}${/}robot-libdoc-test-file.xxx
+${FILE}          ${TEMPDIR}${/}robot-libdoc-test-file.html
 
 *** Test Cases ***
 
 HTML output file
     --format hTmL -o ${FILE} BuiltIn                HTML    BuiltIn
 
-HTML is default output file format
+Default is gotten from output extension
     --output ${FILE} String                         HTML    String
 
-XML output file
+Using --format overrides output file extension
     -f XmL --output ${FILE} BuiltIn                 XML     BuiltIn
 
 Override name and version
