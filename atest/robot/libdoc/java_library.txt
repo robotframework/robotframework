@@ -38,20 +38,22 @@ Init Arguments
     Init Arguments Should Be    2    i
 
 Keyword Names
-    Keyword Name Should Be    0    My Keyword
-    Keyword Name Should Be    1    Your Keyword
+    Keyword Name Should Be    0    Keyword
+    Keyword Name Should Be    1    My Keyword
 
 Keyword Arguments
-    Keyword Arguments Should Be     0
-    Keyword Arguments Should Be     1    arg
+    Keyword Arguments Should Be     0    arg
+    Keyword Arguments Should Be     1
 
 Keyword Documentation
     Keyword Doc Should Start With    0
-    ...    Does nothing & <doc> has "stuff" to 'escape'!! and ignored indentation
-    Keyword Doc Should Start With    1
     ...    Takes one `arg` and *does nothing* with it.\n\n
     ...    Example:\n
     ...    | Your Keyword | xxx |\n
     ...    | Your Keyword | yyy |\n\n
     ...    See `My Keyword` for no more information.
+    Keyword Doc Should Start With    1
+    ...    Does nothing & <doc> has "stuff" to 'escape'!! and ignored indentation
 
+Non ASCII
+    Keyword Doc Should Be    2    Hyvää yötä.\n\nСпасибо!

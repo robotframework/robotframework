@@ -58,3 +58,7 @@ Keyword Documentation
     ...    \n
     ...    | *1* | *2* |\n
     ...    | foo | bar |
+
+
+Non ASCII
+    Keyword Doc Should Be    6    Hyvää yötä.\n\nСпасибо!

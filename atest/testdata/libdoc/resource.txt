@@ -38,3 +38,6 @@ kw 5  [Documentation]   foo bar `kw`.\n
       ...  | foo | bar |\n
 
 curdir  [Documentation]  ${CURDIR}
+
+non ascii doc
+    [Documentation]    Hyvää yötä.\nСпасибо!

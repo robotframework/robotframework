@@ -1,12 +1,14 @@
+# coding=UTF-8
+
 class DynamicLibrary(object):
-    ROBOT_LIBRARY_VERSION = 0.1
     """This is overwritten and not shown in docs"""
+    ROBOT_LIBRARY_VERSION = 0.1
 
     def __init__(self, arg1, arg2="This is shown in docs"):
         """This is overwritten and not shown in docs"""
 
     def get_keyword_names(self):
-        return ['0', 'Keyword 1', 'KW2']
+        return ['0', 'Keyword 1', 'KW2', 'non ascii doc 42']
 
     def run_keyword(self, name, args):
         print name, args
@@ -15,6 +17,8 @@ class DynamicLibrary(object):
         return ['arg%d' % (i+1) for i in range(int(name[-1]))]
 
     def get_keyword_documentation(self, name):
+        if name == 'non ascii doc 42':
+            return 'Hyvää yötä.\n\nСпасибо!'
         short = 'Dummy documentation for `%s`.' % name
         if name.startswith('__'):
             return short

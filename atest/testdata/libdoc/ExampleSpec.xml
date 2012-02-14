@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<keywordspec generated="20120213 14:17:57" type="library" name="Example">
+<keywordspec generated="20120214 13:36:44" type="library" name="Example">
 <version>1.0</version>
 <scope>global</scope>
 <namedargs>no</namedargs>
@@ -23,12 +23,7 @@ This library is only used in an example and it doesn't do anything useful.</doc>
 </arguments>
 <doc>Creates new Example test library 3</doc>
 </init>
-<kw name="My Keyword">
-<arguments>
-</arguments>
-<doc>Does nothing &amp; &lt;doc&gt; has "stuff" to 'escape'!! and ignored indentation</doc>
-</kw>
-<kw name="Your Keyword">
+<kw name="Keyword">
 <arguments>
 <arg>arg</arg>
 </arguments>
@@ -39,5 +34,17 @@ Example:
 | Your Keyword | yyy |
 
 See `My Keyword` for no more information.</doc>
+</kw>
+<kw name="My Keyword">
+<arguments>
+</arguments>
+<doc>Does nothing &amp; &lt;doc&gt; has "stuff" to 'escape'!! and ignored indentation</doc>
+</kw>
+<kw name="Non Ascii Doc">
+<arguments>
+</arguments>
+<doc>Hyvää yötä.
+
+Спасибо!</doc>
 </kw>
 </keywordspec>

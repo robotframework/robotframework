@@ -45,3 +45,6 @@ Keyword Documentation
     Keyword Doc Should Start With    0   Dummy documentation for `0`.
     Keyword Doc Should Start With    1   Dummy documentation for `Keyword 1`.
     Keyword Doc Should Start With    2   Dummy documentation for `KW2`.
+
+Non ASCII
+    Keyword Doc Should Be    3    Hyvää yötä.\n\nСпасибо!

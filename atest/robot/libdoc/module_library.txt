@@ -8,10 +8,7 @@ Name
     Name Should Be    module
 
 Documentation
-    Doc Should Start With
-    ...    Module test library.\n\n
-    ...    With some non-ascii stuff:\n\n
-    ...    Hyvää yötä
+    Doc Should Be    Module test library.
 
 Version
     Version Should Be    0.1-alpha
@@ -42,3 +39,8 @@ Keyword Arguments
 Keyword Documentation
     Keyword Doc Should Start With    0   Get the intialization variables
     Keyword Doc Should Be    1   A keyword\n\nSee `get hello` for details
+
+Non ASCII
+    Keyword Doc Should Be    2    Hyvää yötä.\n\nСпасибо!
+    Keyword Doc Should Be    3    Hyv\\xe4\\xe4 y\\xf6t\\xe4.
+    Keyword Doc Should Be    4    Hyvää yötä.

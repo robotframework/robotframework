@@ -48,7 +48,15 @@ public class Example {
      *
      * See `My Keyword` for no more information.
      */
-    public void yourKeyword(String arg) {
+    public void keyword(String arg) {
+    }
+
+    /**
+     * Hyvää yötä.
+     *
+     * Спасибо!
+     */
+    public void nonAsciiDoc() {
     }
 
     /**
