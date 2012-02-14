@@ -11,9 +11,6 @@ New Style Python Class With No Init
 Old Style Python Class With No Argument Init
     no_arg_init.py
 
-Module Library
-    module.py
-
 Java Class With No Constructor
     [Tags]    jybot
     NoConstructor.java
@@ -21,7 +18,6 @@ Java Class With No Constructor
 Java Class With Default and Private Constructors
     [Tags]    jybot
     NoArgConstructor.java
-
 
 
 *** Keywords ***
