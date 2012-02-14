@@ -22,7 +22,7 @@ if utils.is_jython:
     from java.io import FileOutputStream, OutputStreamWriter
 
 
-class LibraryDocOutput(object):
+class LibdocOutput(object):
 
     def __init__(self, output_path=None):
         self._output_path = output_path
@@ -43,4 +43,5 @@ class LibraryDocOutput(object):
     def __exit__(self, *exc_info):
         if self._output_file:
             self._output_file.close()
-            print os.path.abspath(self._output_path)
+            if not any(exc_info):
+                print os.path.abspath(self._output_path)

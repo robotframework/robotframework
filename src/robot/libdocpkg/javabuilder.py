@@ -15,13 +15,13 @@
 from robot.errors import DataError
 from robot import utils
 
-from .librarydoc import LibraryDoc, KeywordDoc
+from .model import LibraryDoc, KeywordDoc
 
 
 class JavaDocBuilder(object):
 
     def build(self, path, arguments=None):
-        cls = self._get_class(path)
+        cls = ClassDoc(path)
         libdoc = LibraryDoc(name=cls.qualifiedName(),
                             doc=self._get_doc(cls),
                             version=self._get_version(cls),
@@ -49,9 +49,11 @@ class JavaDocBuilder(object):
         return default
 
     def _keyword_doc(self, method):
-        return KeywordDoc(name=utils.printable_name(method.name(), code_style=True),
-                          args=[param.name() for param in method.parameters()],
-                          doc=self._get_doc(method))
+        return KeywordDoc(
+            name=utils.printable_name(method.name(), code_style=True),
+            args=[param.name() for param in method.parameters()],
+            doc=self._get_doc(method)
+        )
 
     def _intializers(self, cls):
         inits = [self._keyword_doc(init) for init in cls.constructors()]
@@ -59,29 +61,31 @@ class JavaDocBuilder(object):
             return []
         return inits
 
-    def _get_class(self, path):
-        """Processes the given Java source file and returns ClassDoc.
 
-        Processing is done using com.sun.tools.javadoc APIs. The usage has
-        been figured out from sources at
-        http://www.java2s.com/Open-Source/Java-Document/JDK-Modules-com.sun/tools/com.sun.tools.javadoc.htm
+def ClassDoc(path):
+    """Process the given Java source file and return ClassDoc instance.
 
-        Returned object implements com.sun.javadoc.ClassDoc interface, see
-        http://java.sun.com/j2se/1.4.2/docs/tooldocs/javadoc/doclet/
-        """
-        try:
-            from com.sun.tools.javadoc import JavadocTool, Messager, ModifierFilter
-            from com.sun.tools.javac.util import List, Context
-            from com.sun.tools.javac.code.Flags import PUBLIC
-        except ImportError:
-            raise DataError("Creating documentation from Java source files "
-                            "requires 'tools.jar' to be in CLASSPATH.")
-        context = Context()
-        Messager.preRegister(context, 'libdoc.py')
-        jdoctool = JavadocTool.make0(context)
-        filter =  ModifierFilter(PUBLIC)
-        java_names = List.of(path)
-        root = jdoctool.getRootDocImpl('en', 'utf-8', filter, java_names,
-                                       List.nil(), False, List.nil(),
-                                       List.nil(), False, False, True)
-        return root.classes()[0]
+    Processing is done using com.sun.tools.javadoc APIs. The usage has
+    been figured out from sources at
+    http://www.java2s.com/Open-Source/Java-Document/JDK-Modules-com.sun/tools/com.sun.tools.javadoc.htm
+
+    Returned object implements com.sun.javadoc.ClassDoc interface, see
+    http://java.sun.com/j2se/1.4.2/docs/tooldocs/javadoc/doclet/
+    """
+    try:
+        from com.sun.tools.javadoc import JavadocTool, Messager, ModifierFilter
+        from com.sun.tools.javac.util import List, Context
+        from com.sun.tools.javac.code.Flags import PUBLIC
+    except ImportError:
+        raise DataError("Creating documentation from Java source files "
+                        "requires 'tools.jar' to be in CLASSPATH.")
+    context = Context()
+    Messager.preRegister(context, 'libdoc')
+    jdoctool = JavadocTool.make0(context)
+    filter =  ModifierFilter(PUBLIC)
+    java_names = List.of(path)
+    root = jdoctool.getRootDocImpl('en', 'utf-8', filter, java_names,
+                                   List.nil(), False, List.nil(),
+                                   List.nil(), False, False, True)
+    return root.classes()[0]
+

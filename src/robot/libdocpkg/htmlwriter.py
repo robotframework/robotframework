@@ -39,12 +39,12 @@ class LibdocModelWriter(ModelWriter):
         self._output.write('</script>' + os.linesep)
 
     def _write_data(self):
-        formatter = HtmlDocFormatter(self._libdoc.keywords)
-        libdoc = LibdocJsonConverter(formatter).convert(self._libdoc)
+        formatter = DocFormatter(self._libdoc.keywords)
+        libdoc = JsonConverter(formatter).convert(self._libdoc)
         JsonWriter(self._output).write_json('libdoc = ', libdoc)
 
 
-class LibdocJsonConverter(object):
+class JsonConverter(object):
 
     def __init__(self, doc_formatter):
         self._doc_formatter = doc_formatter
@@ -73,7 +73,7 @@ class LibdocJsonConverter(object):
         }
 
 
-class HtmlDocFormatter(object):
+class DocFormatter(object):
     _name_regexp = re.compile('`(.+?)`')
 
     def __init__(self, keywords):

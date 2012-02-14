@@ -20,7 +20,7 @@ from robot.running import TestLibrary, UserLibrary
 from robot.parsing import populators
 from robot import utils
 
-from .librarydoc import LibraryDoc, KeywordDoc
+from .model import LibraryDoc, KeywordDoc
 
 
 class LibraryDocBuilder(object):
@@ -55,10 +55,8 @@ class ResourceDocBuilder(object):
 
     def build(self, path, arguments=None):
         res = self._import_resource(path)
-        libdoc = LibraryDoc(name=res.name,
-                            doc=self._get_doc(res),
-                            type='resource',
-                            named_args=True)
+        libdoc = LibraryDoc(name=res.name, doc=self._get_doc(res),
+                            type='resource', named_args=True)
         libdoc.keywords = KeywordDocBuilder(is_library=False).build_keywords(res)
         return libdoc
 

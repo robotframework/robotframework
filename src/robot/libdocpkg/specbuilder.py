@@ -13,12 +13,13 @@
 #  limitations under the License.
 
 from __future__ import with_statement
+
 from robot.utils import ET, ETSource
 
-from .librarydoc import LibraryDoc, KeywordDoc
+from .model import LibraryDoc, KeywordDoc
 
 
-class SpecLibraryDocBuilder(object):
+class SpecDocBuilder(object):
 
     def build(self, path, arguments=None):
         spec = self._parse_spec(path)

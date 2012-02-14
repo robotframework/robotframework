@@ -14,8 +14,6 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from __future__ import with_statement
-
 USAGE = """Robot Framework Library and Resource File Documentation Generator
 
 TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO
@@ -69,7 +67,7 @@ if 'robot' not in sys.modules:
 
 from robot.utils import Application
 
-from robot.doctools import LibraryDoc, LibraryDocOutput, LibraryDocWriter
+from robot.libdocpkg import LibraryDocumentation
 
 
 class LibDoc(Application):
@@ -79,9 +77,9 @@ class LibDoc(Application):
 
     def main(self, library_or_resource, argument=None, name='', version='',
              format='HTML', output=None):
-        libdoc = LibraryDoc(library_or_resource[0], argument, name, version)
-        with LibraryDocOutput(output) as outfile:
-            LibraryDocWriter(format).write(libdoc, outfile)
+        libdoc = LibraryDocumentation(library_or_resource[0], argument,
+                                      name, version)
+        libdoc.save(output, format)
 
 
 def libdoc_cli(args):

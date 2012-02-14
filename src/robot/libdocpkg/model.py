@@ -12,9 +12,13 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+from __future__ import with_statement
 import re
 
 from robot.utils import setter
+
+from .writer import LibdocWriter
+from .output import LibdocOutput
 
 
 class LibraryDoc(object):
@@ -39,6 +43,10 @@ class LibraryDoc(object):
     @setter
     def keywords(self, kws):
         return sorted(kws)
+
+    def save(self, output=None, format='HTML'):
+        with LibdocOutput(output) as outfile:
+            LibdocWriter(format).write(self, outfile)
 
 
 class KeywordDoc(object):

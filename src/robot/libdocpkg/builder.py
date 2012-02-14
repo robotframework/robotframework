@@ -15,46 +15,24 @@
 import sys
 import os
 
-from robot.errors import DataError
 from robot.parsing import VALID_EXTENSIONS as RESOURCE_EXTENSIONS
+from robot.errors import DataError
 
+from .robotbuilder import LibraryDocBuilder, ResourceDocBuilder
+from .specbuilder import SpecDocBuilder
 if sys.platform.startswith('java'):
-    from .javalibdocbuilder import JavaDocBuilder
+    from .javabuilder import JavaDocBuilder
 else:
     def JavaDocBuilder():
         raise DataError('Documenting Java test libraries requires Jython.')
-from .librarydocoutput import LibraryDocOutput
-from .robotlibdoc import LibraryDocBuilder, ResourceDocBuilder
-from .speclibdocbuilder import SpecLibraryDocBuilder
-from .xmlwriter import LibdocXmlWriter
-from .libdochtmlwriter import LibdocHtmlWriter
 
 
-def LibraryDoc(library_or_resource, arguments=None, name=None, version=None):
-    builder = BuilderFactory(library_or_resource)
-    libdoc = builder.build(library_or_resource, arguments)
-    if name:
-        libdoc.name = name
-    if version:
-        libdoc.version = version
-    return libdoc
-
-
-def BuilderFactory(library_or_resource):
+def DocumentationBuilder(library_or_resource):
     extension = os.path.splitext(library_or_resource)[1][1:].lower()
     if extension in RESOURCE_EXTENSIONS:
         return ResourceDocBuilder()
     if extension == 'xml':
-        return SpecLibraryDocBuilder()
+        return SpecDocBuilder()
     if extension == 'java':
         return JavaDocBuilder()
     return LibraryDocBuilder()
-
-
-def LibraryDocWriter(format=None):
-    format = (format or 'HTML').upper()
-    if format == 'HTML':
-        return LibdocHtmlWriter()
-    if format == 'XML':
-        return LibdocXmlWriter()
-    raise DataError("Format must be either 'HTML' or 'XML', got '%s'." % format)
