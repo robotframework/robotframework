@@ -16,6 +16,11 @@ import sys
 import os.path
 import codecs
 
+from robot import utils
+
+if utils.is_jython:
+    from java.io import FileOutputStream, OutputStreamWriter
+
 
 class LibraryDocOutput(object):
 
@@ -26,8 +31,14 @@ class LibraryDocOutput(object):
     def __enter__(self):
         if not self._output_path:
             return sys.stdout
-        self._output_file = codecs.open(self._output_path, 'w', 'UTF-8')
+        self._output_file = self._create_output_file()
         return self._output_file
+
+    def _create_output_file(self):
+        if not utils.is_jython:
+            return codecs.open(self._output_path, 'w', 'UTF-8')
+        # Java XML APIs cannot handle file opened using codecs.open
+        return OutputStreamWriter(FileOutputStream(self._output_path), 'UTF-8')
 
     def __exit__(self, *exc_info):
         if self._output_file:
