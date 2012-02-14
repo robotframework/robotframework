@@ -28,6 +28,11 @@ Doc Should Start With
     ${doc}=    Catenate     SEPARATOR=    @{doc}
     Element Text Should Match    ${LIBDOC}    ${doc}*    doc
 
+Doc Should Be
+    [Arguments]    @{doc}
+    ${doc}=    Catenate     SEPARATOR=    @{doc}
+    Element Text Should Be    ${LIBDOC}    ${doc}    doc
+
 Version Should Match
     [Arguments]    ${version}
     Element Text Should Match    ${LIBDOC}    ${version}    version
@@ -50,6 +55,10 @@ Named Args Should Be
 
 Generated Should Be Defined
     Attribute Should Match    ${LIBDOC}    generated    *
+
+Library Should Have No Init
+    ${inits} =    Get Elements    ${LIBDOC}    init
+    Should Be Empty    ${inits}
 
 Init Doc Should Start With
     [Arguments]    ${index}    @{doc}
