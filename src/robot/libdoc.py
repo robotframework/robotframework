@@ -78,7 +78,7 @@ class LibDoc(Application):
         Application.__init__(self, USAGE, arg_limits=1, auto_version=False)
 
     def main(self, library_or_resource, argument=None, name='', version='',
-             format='HTML', output=None, styles=None):
+             format='HTML', output=None):
         libdoc = LibraryDoc(library_or_resource[0], argument, name, version)
         with LibraryDocOutput(output) as outfile:
             LibraryDocWriter(format).write(libdoc, outfile)
@@ -86,6 +86,11 @@ class LibDoc(Application):
 
 def libdoc_cli(args):
     LibDoc().execute_cli(args)
+
+def libdoc(library_or_resource, arguments=None, name='', version='',
+           format='HTML', output=None):
+    LibDoc().execute(library_or_resource, argument=arguments, name=name,
+                     version=version, format=format, output=output)
 
 
 if __name__ == '__main__':
