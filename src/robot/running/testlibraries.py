@@ -71,9 +71,11 @@ class _DynamicMethod(object):
             return self._to_unicode(value)
 
     def _to_unicode(self, value):
-        if isinstance(value, (list, tuple)):
-            return [self._to_unicode(v) for v in value]
-        return value if isinstance(value, unicode) else utils.unic(value, 'UTF-8')
+        if isinstance(value, unicode):
+            return value
+        if isinstance(value, str):
+            return utils.unic(value, 'UTF-8')
+        return [self._to_unicode(v) for v in value]
 
     def __nonzero__(self):
         return self._method is not None
