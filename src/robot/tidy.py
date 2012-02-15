@@ -187,6 +187,13 @@ class TidyCommandLine(Application):
 
 
 def tidy_cli(args):
+    """Executes tidy similarly as from the command line.
+
+    :param args: command line arguments as a list of strings.
+
+    Example:
+        tidy_cli(['--format', 'txt', 'mytests.html'])
+    """
     TidyCommandLine().execute_cli(args)
 
 
