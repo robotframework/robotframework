@@ -25,7 +25,7 @@ try:
     from robot.utils import (ConnectionCache, seq2str, timestr_to_secs,
                              secs_to_timestr, plural_or_not, get_time, abspath,
                              secs_to_timestamp, parse_time, unic, decode_output,
-                             decode_from_system, encode_to_system)
+                             get_env_var, set_env_var, del_env_var)
     __version__ = get_version()
     PROCESSES = ConnectionCache('No active processes')
     del ConnectionCache, get_version
@@ -33,6 +33,7 @@ try:
 # Support for using this library without installed Robot Framework
 except ImportError:
     from os.path import abspath
+    from os import getenv as get_env_var, putenv as set_env_var, unsetenv as del_env_var
     __version__ = '<unknown>'
     logger = None
     seq2str = lambda items: ', '.join("'%s'" % item for item in items)
@@ -40,7 +41,7 @@ except ImportError:
     plural_or_not = lambda count: count != 1 and 's' or ''
     secs_to_timestr = lambda secs: '%d second%s' % (secs, plural_or_not(secs))
     unic = unicode
-    decode_output = decode_from_system = encode_to_system = lambda string: string
+    decode_output = lambda string: string
     class _NotImplemented:
         def __getattr__(self, name):
             raise NotImplementedError('This usage requires Robot Framework '
@@ -785,14 +786,10 @@ class OperatingSystem:
         Note that you can also access environment variables directly using
         the variable syntax `%{ENV_VAR_NAME}`.
         """
-        try:
-            value = os.environ[self._encode_env_var(name)]
-        except KeyError:
-            if default is not None:
-                return default
+        value = get_env_var(name, default)
+        if value is None:
             raise RuntimeError("Environment variable '%s' does not exist" % name)
-        else:
-            return self._decode_env_var(value)
+        return value
 
     def set_environment_variable(self, name, value):
         """Sets an environment variable to a specified value.
@@ -800,7 +797,7 @@ class OperatingSystem:
         Starting from Robot Framework 2.1.1, values are converted to strings
         automatically.
         """
-        os.environ[self._encode_env_var(name)] = self._encode_env_var(value)
+        set_env_var(name, value)
         self._info("Environment variable '%s' set to value '%s'" % (name, value))
 
     def remove_environment_variable(self, name):
@@ -808,46 +805,31 @@ class OperatingSystem:
 
         Does nothing if the environment variable is not set.
         """
-        try:
-            del os.environ[self._encode_env_var(name)]
-        except KeyError:
-            self._info("Environment variable '%s' does not exist" % name)
-        else:
+        value = del_env_var(name)
+        if value:
             self._info("Environment variable '%s' deleted" % name)
+        else:
+            self._info("Environment variable '%s' does not exist" % name)
 
     def environment_variable_should_be_set(self, name, msg=None):
         """Fails if the specified environment variable is not set.
 
         The default error message can be overridden with the `msg` argument.
         """
-        try:
-            value = self.get_environment_variable(name)
-        except RuntimeError:
+        value = get_env_var(name)
+        if not value:
             self._fail(msg, "Environment variable '%s' is not set" % name)
-        else:
-            self._info("Environment variable '%s' is set to '%s'" % (name, value))
+        self._info("Environment variable '%s' is set to '%s'" % (name, value))
 
     def environment_variable_should_not_be_set(self, name, msg=None):
         """Fails if the specified environment variable is set.
 
         The default error message can be overridden with the `msg` argument.
         """
-        try:
-            value = self.get_environment_variable(name)
-        except RuntimeError:
-            self._info("Environment variable '%s' is not set" % name)
-        else:
+        value = get_env_var(name)
+        if value:
             self._fail(msg, "Environment variable '%s' is set to '%s'" % (name, value))
-
-    def _encode_env_var(self, var):
-        if isinstance(var, str):
-            return var
-        if isinstance(var, unicode):
-            return encode_to_system(var)
-        return str(var)
-
-    def _decode_env_var(self, var):
-        return decode_from_system(var)
+        self._info("Environment variable '%s' is not set" % name)
 
     # Path
 
