@@ -23,6 +23,6 @@ class LibDocLib(object):
         stdout = tempfile.TemporaryFile()
         call(cmd, env=self._env, stdout=stdout, stderr=STDOUT, shell=os.sep=='\\')
         stdout.seek(0)
-        output = stdout.read()
+        output = stdout.read().replace('\r\n', '\n')
         logger.debug(output)
         return output
