@@ -835,8 +835,8 @@ class OperatingSystem:
     def log_environment_variables(self, level='INFO'):
         """Logs all environment variables with given log level."""
         for name in sorted(os.environ, key=lambda s: s.lower()):
-            value = decode_from_system(os.environ[name])
-            self._log('%s = %s' % (decode_from_system(name), value), level)
+            name = decode_from_system(name)
+            self._log('%s = %s' % (name, get_env_var(name)), level)
 
     # Path
 
