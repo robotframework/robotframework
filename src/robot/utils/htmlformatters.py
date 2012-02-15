@@ -33,7 +33,7 @@ class UrlFormatter(object):
         pre = match.group(1)
         url = match.group(3).replace('"', '&quot;')
         if self._format_as_image(url):
-            tmpl = '<img src="%s" title="%s" style="border: 1px solid gray">'
+            tmpl = '<img src="%s" title="%s" class="robotdoc">'
         else:
             tmpl = '<a href="%s">%s</a>'
         return pre + tmpl % (url, url)
@@ -155,7 +155,7 @@ class _TableFormatter(object):
 
     def _format_table(self, rows):
         maxlen = max(len(row) for row in rows)
-        table = ['<table border="1" class="doc">']
+        table = ['<table class="robotdoc">']
         for row in rows:
             row += [''] * (maxlen - len(row))  # fix ragged tables
             table.append('<tr>')

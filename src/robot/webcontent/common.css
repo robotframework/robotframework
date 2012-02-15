@@ -154,16 +154,20 @@ table.statistics th {
     height: 100%;
 }
 /* HTML in users' suite documentation etc. */
-table.doc {
+table.robotdoc {
+    border: 1px solid gray;
     background: transparent;
     border-collapse: collapse;
     empty-cells: show;
     font-size: 0.9em;
 }
-table.doc td {
+table.robotdoc td {
     border: 1px solid gray;
     padding: 0.1em 0.3em;
     height: 1.2em;
+}
+img.robotdoc {
+    border: 1px solid gray;
 }
 hr {
     margin-right: 10em;

@@ -83,7 +83,7 @@ class TestLinks(unittest.TestCase):
 
     def test_image_links(self):
         link = '(<a href="%s">%s</a>)'
-        img = '(<img src="%s" title="%s" style="border: 1px solid gray">)'
+        img = '(<img src="%s" title="%s" class="robotdoc">)'
         for ext in ['jpg', 'jpeg', 'png', 'gif', 'bmp']:
             url = 'foo://bar/zap.%s' % ext
             uprl = url.upper()
@@ -408,7 +408,7 @@ after
 
 
 class TestFormatTable(unittest.TestCase):
-    _table_start = '<table border="1" class="doc">'
+    _table_start = '<table class="robotdoc">'
 
     def test_one_row_table(self):
         inp = [['1','2','3']]
