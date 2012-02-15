@@ -202,17 +202,15 @@ class Variables(utils.NormalizedDict):
         # 2) Handle environment variables and Java system properties
         elif var.identifier == '%':
             name = var.get_replaced_base(self).strip()
-            if name == '':
+            if not name:
                 return '%%{%s}' % var.base
-            try:
-                value = os.environ[utils.encode_to_system(name)]
-            except KeyError:
-                property = getJavaSystemProperty(name)
-                if property:
-                    return property
-                raise DataError("Environment variable '%s' does not exist" % name)
-            else:
-                return utils.decode_from_system(value)
+            value = utils.get_env_var(name)
+            if value is not None:
+                return value
+            value = getJavaSystemProperty(name)
+            if value is not None:
+                return value
+            raise DataError("Environment variable '%s' does not exist" % name)
 
         # 3) Handle ${scalar} variables and @{list} variables without index
         elif var.index is None:
