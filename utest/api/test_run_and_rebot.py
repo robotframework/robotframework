@@ -117,7 +117,8 @@ class TestRebot(Base):
 
     def test_custom_stdout(self):
         stdout = StringIO()
-        assert_equals(rebot(self.data, report='None', stdout=stdout), 1)
+        assert_equals(rebot(self.data, report='None', stdout=stdout,
+                            outputdir=TEMP), 1)
         self._assert_output(stdout, [('Log:', 1), ('Report:', 0)])
         self._assert_outputs()
 
@@ -126,7 +127,7 @@ class TestRebot(Base):
         assert_equals(rebot(self.data, log='NONE', report='NONE', stdout=output,
                             stderr=output), 252)
         assert_equals(rebot(self.data, report='NONE', stdout=output,
-                            stderr=output), 1)
+                            stderr=output, outputdir=TEMP), 1)
         self._assert_output(output, [('[ ERROR ] No outputs created', 1),
                                      ('--help', 1), ('Log:', 1), ('Report:', 0)])
         self._assert_outputs()
