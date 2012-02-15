@@ -20,11 +20,9 @@ from .unic import unic
 
 
 def get_env_var(name, default=None):
-    if sys.platform.startswith('java'):
-        from java.lang import System
-        value = System.getenv(unic(name))
-        if value is not None:
-            return value
+    value = _get_env_var_from_java(name)
+    if value is not None:
+        return value
     try:
         value = os.environ[_encode(name)]
     except KeyError:
@@ -36,11 +34,20 @@ def set_env_var(name, value):
     os.environ[_encode(name)] = _encode(value)
 
 def del_env_var(name):
+    # cannot use os.environ.pop() due to http://bugs.python.org/issue1287
     value = get_env_var(name)
     if value is not None:
-        # cannot use pop() due to http://bugs.python.org/issue1287
         del os.environ[_encode(name)]
     return value
+
+
+if sys.platform.startswith('java'):
+    from java.lang import System
+    def _get_env_var_from_java(name):
+        return System.getenv(unic(name))
+else:
+    def _get_env_var_from_java(name):
+        return None
 
 def _encode(var):
     if isinstance(var, str):
