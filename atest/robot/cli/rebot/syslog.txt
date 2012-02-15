@@ -12,6 +12,7 @@ Setting Syslog File
     File Should Not Be Empty  ${MYOUTDIR}${/}syslog.txt
     Remove File  ${MYOUTDIR}${/}syslog.txt
     Delete Environment Variable  ROBOT_SYSLOG_FILE
+    Log Environment Variables
     Rebot Something
     File Should Not Exist  ${MYOUTDIR}${/}syslog.txt
     Set Environment Variable  ROBOT_SYSLOG_FILE  none

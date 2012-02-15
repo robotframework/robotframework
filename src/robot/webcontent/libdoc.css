@@ -58,18 +58,21 @@ table.keywords td.arg {
     width: 300px;
     font-style: italic;
 }
-table.doc {
-    border: 1px solid black;
+table.robotdoc {
+    border: 1px solid gray;
     background: transparent;
     border-collapse: collapse;
     empty-cells: show;
     font-size: 0.85em;
 }
-table.doc td {
-    border: 1px solid black;
+table.robotdoc td {
+    border: 1px solid gray;
     padding: 0.1em 0.3em;
     height: 1.2em;
 
+}
+img.robotdoc {
+    border: 1px solid gray;
 }
 .footer {
     font-size: 0.9em;

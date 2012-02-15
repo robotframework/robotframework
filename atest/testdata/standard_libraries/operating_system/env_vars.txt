@@ -90,3 +90,13 @@ Use NON-ASCII variable in child process
     Set Environment Variable    ${NAME}    ${NON ASCII}
     Test Env Var In Child Process    ${NAME}
 
+Log Environment Variables
+    Set Environment Variable     0   value
+    Set Environment Variable     1   äiti
+    Set Environment Variable     isä   äiti
+    Log Environment Variables
+    Remove Environment Variable     0
+    Remove Environment Variable     1
+    Remove Environment Variable     isä
+    Log Environment Variables
+

@@ -21,32 +21,35 @@ from .model import LibraryDoc, KeywordDoc
 class JavaDocBuilder(object):
 
     def build(self, path, arguments=None):
-        cls = ClassDoc(path)
-        libdoc = LibraryDoc(name=cls.qualifiedName(),
-                            doc=self._get_doc(cls),
-                            version=self._get_version(cls),
-                            scope=self._get_scope(cls))
-        libdoc.keywords = [self._keyword_doc(m) for m in cls.methods()]
-        libdoc.inits = self._intializers(cls)
+        doc = ClassDoc(path)
+        libdoc = LibraryDoc(name=doc.qualifiedName(),
+                            doc=self._get_doc(doc),
+                            version=self._get_version(doc),
+                            scope=self._get_scope(doc))
+        libdoc.keywords = self._keywords(doc)
+        libdoc.inits = self._intializers(doc)
         return libdoc
 
     def _get_doc(self, code_object):
         return code_object.getRawCommentText().strip()
 
-    def _get_version(self, cls):
-        version = self._get_attr(cls, 'VERSION', '<unknown>')
+    def _get_version(self, doc):
+        version = self._get_attr(doc, 'VERSION', '<unknown>')
         return utils.html_escape(version)
 
-    def _get_scope(self, cls):
-        scope = self._get_attr(cls, 'SCOPE', 'TEST CASE')
+    def _get_scope(self, doc):
+        scope = self._get_attr(doc, 'SCOPE', 'TEST CASE')
         return scope.replace('_', ' ').lower()
 
-    def _get_attr(self, cls, name, default):
-        for field in cls.fields():
+    def _get_attr(self, doc, name, default):
+        for field in doc.fields():
             if field.name() == 'ROBOT_LIBRARY_' + name \
                and field.isPublic() and field.constantValue():
                 return field.constantValue()
         return default
+
+    def _keywords(self, doc):
+        return [self._keyword_doc(m) for m in doc.methods()]
 
     def _keyword_doc(self, method):
         return KeywordDoc(
@@ -55,8 +58,8 @@ class JavaDocBuilder(object):
             doc=self._get_doc(method)
         )
 
-    def _intializers(self, cls):
-        inits = [self._keyword_doc(init) for init in cls.constructors()]
+    def _intializers(self, doc):
+        inits = [self._keyword_doc(init) for init in doc.constructors()]
         if len(inits) == 1 and not inits[0].args:
             return []
         return inits
