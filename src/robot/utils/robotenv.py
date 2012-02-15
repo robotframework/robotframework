@@ -31,6 +31,7 @@ def set_env_var(name, value):
 def del_env_var(name):
     value = get_env_var(name)
     if value is not None:
+        # cannot use pop() due to http://bugs.python.org/issue1287
         del os.environ[_encode(name)]
     return value
 
