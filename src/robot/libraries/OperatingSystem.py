@@ -25,7 +25,8 @@ try:
     from robot.utils import (ConnectionCache, seq2str, timestr_to_secs,
                              secs_to_timestr, plural_or_not, get_time, abspath,
                              secs_to_timestamp, parse_time, unic, decode_output,
-                             get_env_var, set_env_var, del_env_var)
+                             get_env_var, set_env_var, del_env_var,
+                             decode_from_system)
     __version__ = get_version()
     PROCESSES = ConnectionCache('No active processes')
     del ConnectionCache, get_version
@@ -41,7 +42,7 @@ except ImportError:
     plural_or_not = lambda count: count != 1 and 's' or ''
     secs_to_timestr = lambda secs: '%d second%s' % (secs, plural_or_not(secs))
     unic = unicode
-    decode_output = lambda string: string
+    decode_output = decode_from_system = lambda string: string
     class _NotImplemented:
         def __getattr__(self, name):
             raise NotImplementedError('This usage requires Robot Framework '
@@ -831,9 +832,11 @@ class OperatingSystem:
             self._fail(msg, "Environment variable '%s' is set to '%s'" % (name, value))
         self._info("Environment variable '%s' is not set" % name)
 
-    def log_environment_variables(self):
+    def log_environment_variables(self, level='INFO'):
+        """Logs all environment variables with given log level."""
         for name in sorted(os.environ, key=lambda s: s.lower()):
-            self._info('%s = %s' % (name, os.environ[name]))
+            value = decode_from_system(os.environ[name])
+            self._log('%s = %s' % (decode_from_system(name), value), level)
 
     # Path
 
