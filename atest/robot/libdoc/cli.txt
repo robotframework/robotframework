@@ -2,43 +2,56 @@
 Force Tags       regression    pybot    jybot
 Resource         libdoc_resource.txt
 Test Template    Run Libdoc And Verify Created Output File
-Suite Setup      Remove File    ${FILE}
-Suite Teardown   Remove File    ${FILE}
+Suite Setup      Remove File    ${FILE}*
+Suite Teardown   Remove File    ${FILE}*
 
 *** Variables ***
 ${FILE}          ${TEMPDIR}${/}robot-libdoc-test-file.html
 
 *** Test Cases ***
 
-HTML output file
-    --format hTmL -o ${FILE} BuiltIn                HTML    BuiltIn
-
-Default is gotten from output extension
+Default format is got from output file extension
     --output ${FILE} String                         HTML    String
+    --output ${FILE}.xml String                     XML     String    path=${FILE}.xml
 
 Using --format overrides output file extension
-    -f XmL --output ${FILE} BuiltIn                 XML     BuiltIn
+    -f XmL -o ${FILE} ${TESTDATADIR}/resource.txt   XML     Resource
+    --format hTmL -o ${FILE}.xxx BuiltIn            HTML    BuiltIn   path=${FILE}.xxx
+
+Default format is HTML
+    [Template]    NONE
+    Run Libdoc And Verify Output    BuiltIn    <!DOCTYPE*BuiltIn</html>
 
 Override name and version
     --name MyName --version 42 -o ${FILE} String    HTML    MyName    42
     -n MyName -v 42 -o ${FILE} -f xml BuiltIn       XML     MyName    42
 
+Relative path with Python libraries
+    [Template]    NONE
+    [Setup]    Directory Should Not Exist    TempDirInExecDir
+    Create Directory    TempDirInExecDir
+    Create File    TempDirInExecDir/MyLibrary.py    def my_keyword(): pass
+    Run Libdoc And Parse Output    TempDirInExecDir/MyLibrary.py
+    Name Should Be    MyLibrary
+    Keyword Name Should Be    0    My Keyword
+    [Teardown]    Remove Directory    TempDirInExecDir    recursively
+
 *** Keywords ***
 Run Libdoc And Verify Created Output File
-    [Arguments]    ${args}   ${format}    ${name}    ${version}=
-    Run Libdoc And Verify Output    ${args}    ${FILE}
-    Run Keyword    ${format} Doc Should Have Been Created    ${name}    ${version}
+    [Arguments]    ${args}   ${format}    ${name}    ${version}=    ${path}=${FILE}
+    Run Libdoc And Verify Output    ${args}    ${path}
+    Run Keyword    ${format} Doc Should Have Been Created    ${path}    ${name}    ${version}
 
 HTML Doc Should Have Been Created
-    [Arguments]    ${name}    ${version}
-    ${libdoc}=    Get File    ${FILE}
+    [Arguments]    ${path}    ${name}    ${version}
+    ${libdoc}=    Get File    ${path}
     Should Start With    ${libdoc}    <!DOCTYPE
     Should Contain    ${libdoc}    ${name}
     Should Contain    ${libdoc}    ${version}
 
 XML Doc Should Have Been Created
-    [Arguments]    ${name}    ${version}
-    ${libdoc}=    Parse Xml    ${FILE}
+    [Arguments]    ${path}    ${name}    ${version}
+    ${libdoc}=    Parse Xml    ${path}
     Set Test Variable   ${libdoc}
     Name Should Be    ${name}
     Run Keyword If    "${version}"    Version Should Match    ${version}

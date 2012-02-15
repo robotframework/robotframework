@@ -26,7 +26,7 @@ from .model import LibraryDoc, KeywordDoc
 class LibraryDocBuilder(object):
 
     def build(self, library, arguments=None):
-        lib = TestLibrary(library, arguments)
+        lib = TestLibrary(self._normalize_library_path(library), arguments)
         libdoc = LibraryDoc(name=lib.name,
                             doc=self._get_doc(lib),
                             version=lib.version,
@@ -35,6 +35,12 @@ class LibraryDocBuilder(object):
         libdoc.inits = self._get_initializers(lib)
         libdoc.keywords = KeywordDocBuilder().build_keywords(lib)
         return libdoc
+
+    def _normalize_library_path(self, library):
+        path = library.replace('/', os.sep)
+        if os.path.exists(path):
+            return os.path.abspath(path)
+        return library
 
     def _get_doc(self, lib):
         return lib.doc or "Documentation for test library `%s`." % lib.name
