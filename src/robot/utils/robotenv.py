@@ -29,10 +29,10 @@ def set_env_var(name, value):
     os.environ[_encode(name)] = _encode(value)
 
 def del_env_var(name):
-    try:
-        return os.environ.pop(_encode(name))
-    except KeyError:
-        return None
+    value = get_env_var(name)
+    if value is not None:
+        del os.environ[_encode(name)]
+    return value
 
 def _encode(var):
     if isinstance(var, str):
