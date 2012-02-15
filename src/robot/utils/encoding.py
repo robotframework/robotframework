@@ -41,6 +41,6 @@ def decode_from_system(string, can_be_from_java=True):
         string = String(string)
     return unic(string, SYSTEM_ENCODING)
 
-def encode_to_system(string):
+def encode_to_system(string, errors='replace'):
     """Encodes Unicode to system encoding (e.g. cli args and env vars)."""
-    return string.encode(SYSTEM_ENCODING)
+    return string.encode(SYSTEM_ENCODING, errors)
