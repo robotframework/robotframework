@@ -82,7 +82,10 @@ Supporting Tools
    :depth: 1
    :local:
 
-.. include:: SupportingTools/SupportingTools.txt
+.. include:: SupportingTools/Libdoc.txt
+.. include:: SupportingTools/Tidy.txt
+.. include:: SupportingTools/Ride.txt
+.. include:: SupportingTools/OtherTools.txt
 
 Appendices
 ==========
