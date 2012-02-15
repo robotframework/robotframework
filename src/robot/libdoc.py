@@ -84,7 +84,7 @@ class LibDoc(Application):
         Application.__init__(self, USAGE, arg_limits=1, auto_version=False)
 
     def main(self, library_or_resource, argument=None, name='', version='',
-             format='HTML', output=None):
+             format=None, output=None):
         libdoc = LibraryDocumentation(library_or_resource[0], argument,
                                       name, version)
         libdoc.save(output, self._get_format(format, output))
@@ -103,15 +103,19 @@ def libdoc_cli(args):
     :param args: command line arguments as a list of strings.
 
     Example:
-        libdoc_cli(['--output', 'doc.html', 'myLibrary.py'])
+        libdoc_cli(['--output', 'doc.html', 'MyLibrary.py'])
     """
     LibDoc().execute_cli(args)
 
 def libdoc(library_or_resource, arguments=None, name='', version='',
-           format='HTML', output=None):
+           format=None, output=None):
     """Executes libdoc.
 
-    Arguments are same as command line options to libdoc.py."""
+    Arguments are same as command line options to libdoc.py.
+
+    Example:
+        libdoc('MyLibrary.py', arguments=['1st', '2nd'], format='XML')
+    """
     LibDoc().execute(library_or_resource, argument=arguments, name=name,
                      version=version, format=format, output=output)
 
