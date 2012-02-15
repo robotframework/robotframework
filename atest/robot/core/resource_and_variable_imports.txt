@@ -102,9 +102,8 @@ Empty Resource File
     Check Stderr Contains  [ WARN ] Imported resource file '${path}' is empty
 
 Invalid Resource Import Parameters
-    ${path} =  Normalize Path  resources_and_variables/resources.html
     Stderr Should Contain Error    ${DATAFILE}
-    ...  Resource file '${path} only one parameter allowed' does not exist
+    ...  Resource file 'resources_and_variables/resources.html only one parameter allowed' does not exist
 
 Invalid Setting In Resource File
     Stderr Should Contain Error    ${RESDIR}/resources.html
