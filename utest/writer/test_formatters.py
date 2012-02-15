@@ -1,7 +1,7 @@
 import unittest
 from robot.parsing.model import TestCaseTable, TestCaseFileSettingTable
 
-from robot.writer.formatters import TxtFormatter, TsvFormatter, PipeFormatter, RowSplitter
+from robot.writer.formatters import TxtFormatter, TsvFormatter, PipeFormatter
 from robot.writer.htmlformatter import HtmlFormatter, HtmlCell
 from robot.utils.asserts import assert_equals, assert_true
 
@@ -21,7 +21,14 @@ class TestTxtFormatter(unittest.TestCase):
         settings = TestCaseFileSettingTable(None)
         settings.force_tags.value = ['f  1']
         assert_equals(list(self._formatter.format_table(settings))[0],
-            ['Force Tags    ', 'f \\ 1'])
+                      ['Force Tags    ', 'f \\ 1'])
+
+    def test_escaping_empty_intermediate_cells(self):
+        settings = TestCaseFileSettingTable(None)
+        settings.suite_setup.name = 'Run'
+        settings.suite_setup.args = ['', 'baby']
+        assert_equals(list(self._formatter.format_table(settings))[0][1:],
+                      ['Run', '\\', 'baby'])
 
 
 class TestPipeFormatter(unittest.TestCase):
