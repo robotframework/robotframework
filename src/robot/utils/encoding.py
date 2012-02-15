@@ -33,9 +33,9 @@ def encode_output(string, errors='replace'):
         return string
     return string.encode(OUTPUT_ENCODING, errors)
 
-def decode_from_system(string):
+def decode_from_system(string, can_be_from_java=True):
     """Decodes bytes from system (e.g. cli args or env vars) to Unicode."""
-    if sys.platform.startswith('java'):
+    if sys.platform.startswith('java') and can_be_from_java:
         # http://bugs.jython.org/issue1592
         from java.lang import String
         string = String(string)

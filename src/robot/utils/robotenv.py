@@ -13,11 +13,18 @@
 #  limitations under the License.
 
 import os
+import sys
 
 from .encoding import decode_from_system, encode_to_system
+from .unic import unic
 
 
 def get_env_var(name, default=None):
+    if sys.platform.startswith('java'):
+        from java.lang import System
+        value = System.getenv(unic(name))
+        if value is not None:
+            return value
     try:
         value = os.environ[_encode(name)]
     except KeyError:
@@ -42,4 +49,4 @@ def _encode(var):
     return str(var)
 
 def _decode(var):
-    return decode_from_system(var)
+    return decode_from_system(var, can_be_from_java=False)
