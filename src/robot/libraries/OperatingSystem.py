@@ -831,6 +831,10 @@ class OperatingSystem:
             self._fail(msg, "Environment variable '%s' is set to '%s'" % (name, value))
         self._info("Environment variable '%s' is not set" % name)
 
+    def log_environment_variables(self):
+        for name in sorted(os.environ, key=lambda s: s.lower()):
+            self._info('%s = %s' % (name, os.environ[name]))
+
     # Path
 
     def join_path(self, base, *parts):
