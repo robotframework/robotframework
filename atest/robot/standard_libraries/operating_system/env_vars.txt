@@ -13,6 +13,9 @@ Set Environment Variable
 Remove Environment Variable
     Check test case    ${TEST NAME}
 
+Remove Multiple Environment Variables
+    Check test case    ${TEST NAME}
+
 Environment Variable Should Be Set
     Check test case    ${TEST NAME}
 

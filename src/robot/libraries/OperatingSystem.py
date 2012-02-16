@@ -326,8 +326,7 @@ class OperatingSystem:
         A line matches if it contains the `pattern` anywhere in it and
         it *does not need to match the pattern fully*. The pattern
         matching syntax is explained in `introduction`, and in this
-        case matching is case-sensitive. Support for different pattern types
-        were removed in Robot Framework 2.5.
+        case matching is case-sensitive.
 
         Examples:
         | ${errors} = | Grep File | /var/log/myapp.log | ERROR |
@@ -801,10 +800,13 @@ class OperatingSystem:
         set_env_var(name, value)
         self._info("Environment variable '%s' set to value '%s'" % (name, value))
 
-    def remove_environment_variable(self, name):
+    def remove_environment_variable(self, *names):
         """Deletes the specified environment variable.
 
         Does nothing if the environment variable is not set.
+
+        Starting from Robot Framework 2.7, it is possible to remove multiple
+        variables by passing them to this keyword as separate arguments.
         """
         value = del_env_var(name)
         if value:

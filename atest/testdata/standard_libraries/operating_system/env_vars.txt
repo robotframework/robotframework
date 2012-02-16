@@ -31,6 +31,16 @@ Remove Environment Variable
     Remove Environment Variable    ${NAME}
     Environment Variable Should Not Be Set    ${NAME}
 
+Remove Multiple Environment Variables
+    Remove Environment Variable
+    Set Environment Variable    ${NAME}_1    a
+    Set Environment Variable    ${NAME}_2    b
+    Set Environment Variable    ${NAME}_3    c
+    Remove Environment Variable    ${NAME}_1    ${NAME}_2    ${NAME}_3
+    Environment Variable Should Not Be Set    ${NAME}_1
+    Environment Variable Should Not Be Set    ${NAME}_2
+    Environment Variable Should Not Be Set    ${NAME}_3
+
 Environment Variable Should Be Set
     [Documentation]    FAIL Environment variable 'not_set_var' is not set
     Set Environment Variable    ${NAME}    Hello
