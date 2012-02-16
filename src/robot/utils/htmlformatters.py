@@ -43,58 +43,41 @@ class UrlFormatter(object):
 
 
 class HtmlFormatter(object):
-    _hr_re = re.compile('^-{3,} *$')
 
     def __init__(self):
-        self._result = _Formatted()
-        self._table = _TableFormatter()
-        self._line_formatter = _LineFormatter()
+        self._rows = []
+        self._formatters = (_TableFormatter(), _RulerFormatter(),
+                            _LineFormatter())
+        self._current = None
 
     def format(self, text):
         for line in text.splitlines():
-            self.add_line(line)
+            self._process_line(line)
+        self._end_current()
         return self.get_result()
 
-    def add_line(self, line):
-        if self._add_table_row(line):
+    def _process_line(self, line):
+        if self._current and self._current.add(line):
             return
-        if self._table.is_started():
-            self._result.add(self._table.end(), join_after=False)
-        if self._is_hr(line):
-            self._result.add('<hr>', join_after=False)
-            return
-        self._result.add(self._line_formatter.format(line))
+        self._end_current()
+        self._current = self._get_next(line)
 
-    def _add_table_row(self, row):
-        if self._table.is_table_row(row):
-            self._table.add_row(row)
-            return True
-        return False
+    def _end_current(self):
+        if self._current:
+            self._rows.append(self._current.end())
 
-    def _is_hr(self, line):
-        return bool(self._hr_re.match(line))
+    def _get_next(self, line):
+        for formatter in self._formatters:
+            if formatter.matcher(line):
+                formatter.add(line)
+                return formatter
 
     def get_result(self):
-        if self._table.is_started():
-            self._result.add(self._table.end())
-        return self._result.get_result()
-
-
-class _Formatted(object):
-
-    def __init__(self):
-        self._result = []
-        self._joiner = ''
-
-    def add(self, line, join_after=True):
-        self._result.extend([self._joiner, line])
-        self._joiner = '\n' if join_after else ''
-
-    def get_result(self):
-        return ''.join(self._result)
+        return ''.join(self._rows).rstrip('\n')
 
 
 class _LineFormatter(object):
+    matcher = lambda self, line: True
     _bold = re.compile('''
 (                         # prefix (group 1)
   (^|\ )                  # begin of line or space
@@ -118,6 +101,18 @@ _                          # end of italic
 
     def __init__(self):
         self._format_url = UrlFormatter(formatting=True).format
+        self._result = None
+
+    def add(self, line):
+        if self._result is None:
+            self._result = self.format(line)
+            return True
+        return False
+
+    def end(self):
+        result = self._result
+        self._result = None
+        return result + '\n'
 
     def format(self, line):
         return self._format_url(self._format_italic(self._format_bold(line)))
@@ -129,24 +124,31 @@ _                          # end of italic
         return self._italic.sub('\\1<i>\\3</i>', line) if '_' in line else line
 
 
+class _RulerFormatter(object):
+    matcher = re.compile('^-{3,} *$').match
+
+    def add(self, line):
+        return False
+
+    def end(self):
+        return '<hr>'
+
+
 class _TableFormatter(object):
-    _is_table_line = re.compile('^\s*\| (.* |)\|\s*$')
+    matcher = re.compile('^\s*\| (.* |)\|\s*$').match
     _line_splitter = re.compile(' \|(?= )')
 
     def __init__(self):
         self._rows = []
         self._line_formatter = _LineFormatter()
 
-    def is_table_row(self, row):
-        return bool(self._is_table_line.match(row))
-
-    def is_started(self):
-        return bool(self._rows)
-
-    def add_row(self, text):
-        text = text.strip()[1:-1]   # remove outer whitespace and pipes
-        cells = [cell.strip() for cell in self._line_splitter.split(text)]
-        self._rows.append(cells)
+    def add(self, line):
+        if self.matcher(line):
+            text = line.strip()[1:-1]   # remove outer whitespace and pipes
+            cells = [cell.strip() for cell in self._line_splitter.split(text)]
+            self._rows.append(cells)
+            return True
+        return False
 
     def end(self):
         ret = self._format_table(self._rows)
