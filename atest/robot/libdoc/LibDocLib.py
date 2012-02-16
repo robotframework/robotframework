@@ -24,5 +24,5 @@ class LibDocLib(object):
         call(cmd, env=self._env, stdout=stdout, stderr=STDOUT, shell=os.sep=='\\')
         stdout.seek(0)
         output = stdout.read().replace('\r\n', '\n')
-        logger.debug(output)
+        logger.info(output)
         return output

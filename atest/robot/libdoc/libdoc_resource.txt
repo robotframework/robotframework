@@ -5,12 +5,16 @@ Library           OperatingSystem
 
 *** Variables ***
 ${TESTDATADIR}    ${CURDIR}/../../testdata/libdoc
+${OUTPREFIX}      ${TEMPDIR}${/}robot-libdoc-test-file
+${OUTXML}         ${OUTPREFIX}.xml
+${OUTHTML}        ${OUTPREFIX}.html
 
 *** Keywords ***
 Run Libdoc And Parse Output
     [Arguments]    ${arguments}
-    ${output}=    Run Libdoc     --format XmL ${arguments}
-    ${LIBDOC}=    Parse Xml    ${output}
+    Run Libdoc     ${arguments} ${OUTXML}
+    Log File    ${OUTXML}
+    ${LIBDOC}=    Parse Xml    ${OUTXML}
     Set Suite Variable    ${LIBDOC}
 
 Run Libdoc And Verify Output

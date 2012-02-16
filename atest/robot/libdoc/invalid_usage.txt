@@ -10,22 +10,22 @@ ${USAGE TIP}    \nTry --help for usage information.\n
 *** Test Cases ***
 
 No arguments
-    ${EMPTY}          Expected 1 argument, got 0.
+    ${EMPTY}          Expected 2 arguments, got 0.
 
 Too many arguments
-    arg1 arg2 arg3    Expected 1 argument, got 3.
+    arg1 arg2 arg3    Expected 2 arguments, got 3.
 
 Invalid option
     --invalid         option --invalid not recognized
 
 Invalid format
-    --format XXX BuiltIn    Format must be either 'HTML' or 'XML', got 'XXX'.
+    --format XXX BuiltIn ${OUTHTML}   Format must be either 'HTML' or 'XML', got 'XXX'.
 
 Non-existing library
-    NonExistingLib    Importing test library 'NonExistingLib' failed: *
+    NonExistingLib ${OUTHTML}   Importing test library 'NonExistingLib' failed: *
 
 Invalid resource
-    ${CURDIR}/invalid_usage.txt
+    ${CURDIR}/invalid_usage.txt ${OUTHTML}
     ...   [ ERROR ] *: Non-existing setting 'Force Tags'.
     ...   [ ERROR ] *: Non-existing setting 'Test Template'.
     ...   Resource file '*' contains a test case table which is not allowed.

@@ -45,7 +45,7 @@ class LibraryDoc(object):
         return sorted(kws)
 
     def save(self, output=None, format='HTML'):
-        with LibdocOutput(output) as outfile:
+        with LibdocOutput(output, format) as outfile:
             LibdocWriter(format).write(self, outfile)
 
 

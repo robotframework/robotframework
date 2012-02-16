@@ -2,29 +2,21 @@
 Force Tags       regression    pybot    jybot
 Resource         libdoc_resource.txt
 Test Template    Run Libdoc And Verify Created Output File
-Suite Setup      Remove File    ${FILE}*
-Suite Teardown   Remove File    ${FILE}*
 
-*** Variables ***
-${FILE}          ${TEMPDIR}${/}robot-libdoc-test-file.html
 
 *** Test Cases ***
 
 Default format is got from output file extension
-    --output ${FILE} String                         HTML    String
-    --output ${FILE}.xml String                     XML     String    path=${FILE}.xml
+    String ${OUTHTML}                     HTML    String
+    String ${OUTXML}                      XML     String    path=${OUTXML}
 
 Using --format overrides output file extension
-    -f XmL -o ${FILE} ${TESTDATADIR}/resource.txt   XML     Resource
-    --format hTmL -o ${FILE}.xxx BuiltIn            HTML    BuiltIn   path=${FILE}.xxx
-
-Default format is HTML
-    [Template]    NONE
-    Run Libdoc And Verify Output    BuiltIn    <!DOCTYPE*BuiltIn</html>
+    -f XmL ${TESTDATADIR}/resource.txt ${OUTHTML}   XML     resource
+    --format hTmL BuiltIn ${OUTPREFIX}.xxx          HTML    BuiltIn   path=${OUTPREFIX}.xxx
 
 Override name and version
-    --name MyName --version 42 -o ${FILE} String    HTML    MyName    42
-    -n MyName -v 42 -o ${FILE} -f xml BuiltIn       XML     MyName    42
+    --name MyName --version 42 String ${OUTHTML}    HTML    MyName    42
+    -n MyName -v 42 -f xml BuiltIn ${OUTHTML}       XML     MyName    42
 
 Relative path with Python libraries
     [Template]    NONE
@@ -38,7 +30,7 @@ Relative path with Python libraries
 
 *** Keywords ***
 Run Libdoc And Verify Created Output File
-    [Arguments]    ${args}   ${format}    ${name}    ${version}=    ${path}=${FILE}
+    [Arguments]    ${args}   ${format}    ${name}    ${version}=    ${path}=${OUTHTML}
     Run Libdoc And Verify Output    ${args}    ${path}
     Run Keyword    ${format} Doc Should Have Been Created    ${path}    ${name}    ${version}
 

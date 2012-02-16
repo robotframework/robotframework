@@ -14,11 +14,14 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+
+import sys
+import os
 USAGE = """robot.libdoc -- Robot Framework library documentation generator
 
 Version:  <VERSION>
 
-Usage:  libdoc.py [options] library_or_resource
+Usage:  libdoc.py [options] library_or_resource output_file
 
 This tool can generate keyword documentation in HTML and XML formats. The
 former is suitable for humans and the latter for RIDE and other tools.
@@ -32,11 +35,7 @@ Options
 
  -f --format HTML|XML     Specifies whether to generate HTML or XML output.
                           If this options is not used, the format is got
-                          from the extension of output, if given. Otherwise
-                          the default is HTML.
- -o --output path         File to write the generated documentation to. If
-                          not given, documentation is written to the standard
-                          output.
+                          from the extension of the output file.
  -n --name newname        Sets the name of the documented library or resource.
  -v --version newversion  Sets the version of the documented library or
                           resource.
@@ -52,9 +51,10 @@ Options
 Examples
 ========
 
-  python -m robot.libdoc --output doc/MyLib.html src/MyLib.py
-  python -m robot.libdoc --format xml test/resource.html
-  jython -m robot.libdoc --output MyJavaLibrary.xml MyJavaLibrary.java
+  python -m robot.libdoc src/MyLib.py doc/MyLib.html
+  python -m robot.libdoc BuiltIn spec.xml
+  jython -m robot.libdoc  MyJavaLibrary.java MyJavaLibrary.html
+  python -m robot.libdoc --format xml test/resource.html myoutfile
 
 Alternative execution
 =====================
@@ -68,9 +68,6 @@ For more information see the Robot Framework user guide at
 http://code.google.com/p/robotframework/wiki/UserGuide
 """
 
-import sys
-import os
-
 if 'robot' not in sys.modules:
     import pythonpathsetter   # running libdoc.py as script
 
@@ -81,20 +78,19 @@ from robot.libdocpkg import LibraryDocumentation
 class LibDoc(Application):
 
     def __init__(self):
-        Application.__init__(self, USAGE, arg_limits=1, auto_version=False)
+        Application.__init__(self, USAGE, arg_limits=2, auto_version=False)
 
-    def main(self, library_or_resource, argument=None, name='', version='',
-             format=None, output=None):
-        libdoc = LibraryDocumentation(library_or_resource[0], argument,
-                                      name, version)
-        libdoc.save(output, self._get_format(format, output))
+    def main(self, args, argument=None, name='', version='', format=None):
+        lib_or_resource = args[0]
+        outfile = args[1]
+        libdoc = LibraryDocumentation(lib_or_resource, argument, name, version)
+        libdoc.save(outfile, self._get_format(format, outfile))
+        print os.path.abspath(outfile)
 
     def _get_format(self, format, output):
         if format:
             return format
-        if output:
-            return os.path.splitext(output)[1][1:]
-        return 'HTML'
+        return os.path.splitext(output)[1][1:]
 
 
 def libdoc_cli(args):
