@@ -163,7 +163,7 @@ class TestHtmlFormat(unittest.TestCase):
                          ('_italic_ ', '<i>italic</i> '),
                          ('xx _italic_', 'xx <i>italic</i>'),
                          ('_italic_ xx', '<i>italic</i> xx')]:
-            assert_equals(html_format(inp), exp, "'%s'" % inp)
+            assert_equals(repr(html_format(inp)), repr(exp), "'%s'" % inp)
 
     def test_multiple_word_italic(self):
         for inp, exp in [('_italic_ _i_ not italic _i3_ not',
@@ -275,7 +275,7 @@ class TestHtmlFormat(unittest.TestCase):
 '''
         exp = 'before table\n' \
             + _format_table([['in','table'],['still','in']]) \
-            + '\n after table'
+            + '\n\n after table'
         assert_equals(html_format(inp), exp)
 
     def test_multiple_tables(self):
@@ -298,15 +298,16 @@ after
 '''
         exp = 'before tables\n' \
             + _format_table([['table','1'],['still','1']]) \
-            + '\nbetween\n\n' \
+            + '\n\nbetween\n\n' \
             + _format_table([['table','2']]) \
-            + 'between\n' \
+            + '\nbetween\n' \
             + _format_table([['3.1.1','3.1.2','3.1.3'],
                              ['3.2.1','3.2.2','3.2.3'],
                              ['3.3.1','3.3.2','3.3.3']]) \
-            + '\n' \
+            + '\n\n' \
             + _format_table([['t','4'],['','']]) \
-            + '\nafter'
+            + '\n\nafter'
+        print len(html_format(inp)), len(exp)
         assert_equals(html_format(inp), exp)
 
     def test_ragged_table(self):
@@ -334,7 +335,7 @@ after
             + _format_table([['<b>a</b>','<b>b</b>','<b>c</b>'],
                              ['<b>b</b>','x','y'],
                              ['<b>c</b>','z','']]) \
-            + '\n' \
+            + '\n\n' \
             + _format_table([['a','x <b>b</b> y','<b>b</b> <b>c</b>'],
                              ['*a','b*','']])
         assert_equals(html_format(inp), exp)
@@ -352,7 +353,7 @@ after
             + _format_table([['<i>a</i>','<i>b</i>','<i>c</i>'],
                              ['<i>b</i>','x','y'],
                              ['<i>c</i>','z','']]) \
-            + '\n' \
+            + '\n\n' \
             +  _format_table([['a','x <i>b</i> y','<i>b</i> <i>c</i>'],
                               ['_a','b_','']])
         assert_equals(html_format(inp), exp)
@@ -386,9 +387,9 @@ after
             assert_equals(html_format(hr + '  '), '<hr>')
 
     def test_hr_with_other_stuff_around(self):
-        for inp, exp in [('---\n-', '<hr>-'),
-                         ('xx\n---\nxx', 'xx\n<hr>xx'),
-                         ('xx\n\n------\n\nxx', 'xx\n\n<hr>\nxx')]:
+        for inp, exp in [('---\n-', '<hr>\n-'),
+                         ('xx\n---\nxx', 'xx\n<hr>\nxx'),
+                         ('xx\n\n------\n\nxx', 'xx\n\n<hr>\n\nxx')]:
             assert_equals(html_format(inp), exp)
 
     def test_not_hr(self):
@@ -401,10 +402,33 @@ after
 | t | a | b | l | e |
 ---
 '''[1:-1]
-        exp = '<hr>' \
+        exp = '<hr>\n' \
             + _format_table([['t','a','b','l','e']]) \
-            + '<hr>'
+            + '\n<hr>'
         assert_equals(html_format(inp), exp)
+
+
+class TestPreformattedBlock(unittest.TestCase):
+
+    def test_single_line_block(self):
+        assert_equals(html_format('| some'), '<pre>\nsome\n</pre>')
+
+    def test_multi_line_block(self):
+        assert_equals(html_format('| some\n| quote'),
+                                  '<pre>\nsome\nquote\n</pre>')
+
+    def test_additional_whitespace_is_preserved(self):
+        assert_equals(html_format('|   some\t '), '<pre>\n  some\t \n</pre>')
+
+    def test_spaces_before_leading_pipe_cause_no_formatting(self):
+        assert_equals(html_format(' | some'), ' | some')
+
+    def test_block_mixed_with_other_content(self):
+        assert_equals(html_format('before block:\n| some\n| quote\nafter block'),
+                'before block:\n<pre>\nsome\nquote\n</pre>\nafter block')
+
+    def test_block_line_with_other_formatting(self):
+        assert_equals(html_format('| _some_'), '<pre>\n<i>some</i>\n</pre>')
 
 
 class TestFormatTable(unittest.TestCase):

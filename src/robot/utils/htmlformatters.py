@@ -46,7 +46,7 @@ class HtmlFormatter(object):
 
     def __init__(self):
         self._rows = []
-        self._formatters = (_TableFormatter(), _RulerFormatter(),
+        self._formatters = (_TableFormatter(), _PreformattedBlockFormatter(),
                             _LineFormatter())
         self._current = None
 
@@ -64,7 +64,7 @@ class HtmlFormatter(object):
 
     def _end_current(self):
         if self._current:
-            self._rows.append(self._current.end())
+            self._rows.append(self._current.end() + '\n')
 
     def _get_next(self, line):
         for formatter in self._formatters:
@@ -98,6 +98,8 @@ _                          # start of italic
 _                          # end of italic
 (?= ["').,!?:;]* ($|\ ) )  # opt. any char "').,!?:; and end of line or space
 ''', re.VERBOSE)
+    _ruler = re.compile('^-{3,} *$')
+
 
     def __init__(self):
         self._format_url = UrlFormatter(formatting=True).format
@@ -112,9 +114,11 @@ _                          # end of italic
     def end(self):
         result = self._result
         self._result = None
-        return result + '\n'
+        return result
 
     def format(self, line):
+        if self._ruler.match(line):
+            return '<hr>'
         return self._format_url(self._format_italic(self._format_bold(line)))
 
     def _format_bold(self, line):
@@ -122,16 +126,6 @@ _                          # end of italic
 
     def _format_italic(self, line):
         return self._italic.sub('\\1<i>\\3</i>', line) if '_' in line else line
-
-
-class _RulerFormatter(object):
-    matcher = re.compile('^-{3,} *$').match
-
-    def add(self, line):
-        return False
-
-    def end(self):
-        return '<hr>'
 
 
 class _TableFormatter(object):
@@ -166,3 +160,20 @@ class _TableFormatter(object):
             table.append('</tr>')
         table.append('</table>')
         return '\n'.join(table)
+
+
+class _PreformattedBlockFormatter(object):
+    matcher = re.compile('\| .*').match
+
+    def __init__(self):
+        self._rows = []
+        self._line_formatter = _LineFormatter()
+
+    def add(self, line):
+        if self.matcher(line):
+            self._rows.append(self._line_formatter.format(line[2:]))
+            return True
+        return False
+
+    def end(self):
+        return '\n'.join(['<pre>'] + self._rows + ['</pre>'])
