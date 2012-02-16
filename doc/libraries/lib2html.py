@@ -32,7 +32,7 @@ for line in __doc__.splitlines():
 def create_libdoc(name):
     ipath = os.path.join(ROOT,'src','robot','libraries',name+'.py')
     opath = os.path.join(ROOT,'doc','libraries',name+'.html')
-    libdoc(ipath, output=opath)
+    libdoc(ipath, opath)
 
 
 if __name__ == '__main__':
