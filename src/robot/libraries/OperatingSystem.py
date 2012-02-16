@@ -808,11 +808,12 @@ class OperatingSystem:
         Starting from Robot Framework 2.7, it is possible to remove multiple
         variables by passing them to this keyword as separate arguments.
         """
-        value = del_env_var(name)
-        if value:
-            self._info("Environment variable '%s' deleted" % name)
-        else:
-            self._info("Environment variable '%s' does not exist" % name)
+        for name in names:
+            value = del_env_var(name)
+            if value:
+                self._info("Environment variable '%s' deleted" % name)
+            else:
+                self._info("Environment variable '%s' does not exist" % name)
 
     def environment_variable_should_be_set(self, name, msg=None):
         """Fails if the specified environment variable is not set.
