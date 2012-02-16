@@ -84,7 +84,7 @@ class LibDoc(Application):
         lib_or_res, outfile = args
         libdoc = LibraryDocumentation(lib_or_res, argument, name, version)
         libdoc.save(outfile, self._get_format(format, outfile))
-        print os.path.abspath(outfile)
+        self.console(os.path.abspath(outfile))
 
     def _get_format(self, format, output):
         return format if format else os.path.splitext(output)[1][1:]

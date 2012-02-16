@@ -44,6 +44,9 @@ class Application(object):
             rc = self._execute(arguments, options)
         self._exit(rc)
 
+    def console(self, msg):
+        print encode_output(msg)
+
     @contextmanager
     def _logging(self):
         self._logger.register_file_logger()
@@ -83,8 +86,8 @@ class Application(object):
         else:
             return rc or 0
 
-    def _report_info(self, msg):
-        print encode_output(unicode(msg))
+    def _report_info(self, err):
+        self.console(unicode(err))
         self._exit(INFO_PRINTED)
 
     def _report_error(self, message, details=None, help=False, rc=DATA_ERROR,
