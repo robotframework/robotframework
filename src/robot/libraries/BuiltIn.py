@@ -688,13 +688,12 @@ class _Verify:
         | ${match} | ${group1} | ${group2} = |
         | ...      | Should Match Regexp | Bar: 43 | (Foo|Bar): (\\\\d+) |
         =>
-        - ${ret} = 'Foo: 42'
-        - ${match} = 'Bar: 43'
-        - ${group1} = 'Bar'
-        - ${group2} = '43'
+        | ${ret} = 'Foo: 42'
+        | ${match} = 'Bar: 43'
+        | ${group1} = 'Bar'
+        | ${group2} = '43'
         """
-        msg = self._get_string_msg(string, pattern, msg, values,
-                                   'does not match')
+        msg = self._get_string_msg(string, pattern, msg, values, 'does not match')
         res = re.search(pattern, string)
         asserts.fail_if_none(res, msg, False)
         match = res.group(0)
@@ -802,9 +801,9 @@ class _Variables:
         | ${y} = | Get Variable Value | ${a} | ${b}    |
         | ${z} = | Get Variable Value | ${z} |         |
         =>
-        - ${x} gets value of ${a} if ${a} exists and string "default" otherwise
-        - ${y} gets value of ${a} if ${a} exists and value of ${b} otherwise
-        - ${z} is set to Python `None` if it does not exist previously
+        | ${x} gets value of ${a} if ${a} exists and string "default" otherwise
+        | ${y} gets value of ${a} if ${a} exists and value of ${b} otherwise
+        | ${z} is set to Python `None` if it does not exist previously
 
         This keyword was added in Robot Framework 2.6. See `Set Variable If`
         for another keyword to set variables dynamically.
@@ -862,6 +861,9 @@ class _Variables:
         """Replaces variables in the given text with their current values.
 
         If the text contains undefined variables, this keyword fails.
+        If the given `text` contains only a single variable, its value is
+        returned as-is and it can be any object. Otherwise this keyword
+        always returns a string.
 
         Example:
 
@@ -871,10 +873,6 @@ class _Variables:
         | ${template} =   | Get File          | ${CURDIR}/template.txt |
         | ${message} =    | Replace Variables | ${template}            |
         | Should Be Equal | ${message}        | Hello Robot!           |
-
-        If the given `text` contains only a single variable, its value is
-        returned as-is and it can be any object. Otherwise this keyword
-        always returns a string.
         """
         return self.get_variables().replace_scalar(text)
 
@@ -1243,9 +1241,9 @@ class _RunKeyword:
         | ${var2} = | Set Variable If | ${rc} > 0  | value1   | value2  |
         | ${var3} = | Set Variable If | ${rc} > 0  | whatever |         |
         =>
-        - ${var1} = 'zero'
-        - ${var2} = 'value2'
-        - ${var3} = None
+        | ${var1} = 'zero'
+        | ${var2} = 'value2'
+        | ${var3} = None
 
         It is also possible to have 'Else If' support by replacing the
         second value with another condition, and having two new values
@@ -1447,9 +1445,9 @@ class _Misc:
         | ${str2} = | Catenate | SEPARATOR=--- | Hello | world |
         | ${str3} = | Catenate | SEPARATOR=    | Hello | world |
         =>
-        - ${str1} = 'Hello world'
-        - ${str2} = 'Hello---world'
-        - ${str3} = 'Helloworld'
+        | ${str1} = 'Hello world'
+        | ${str2} = 'Hello---world'
+        | ${str3} = 'Helloworld'
         """
         if not items:
             return ''
@@ -1614,7 +1612,7 @@ class _Misc:
 
         | Set Library Search Order | resource | another_resource |
 
-        NOTE:
+        *NOTE:*
         - The search order is valid only in the suite where this keywords is used.
         - Keywords in resources always have higher priority than
           keywords in libraries regardless the search order.
@@ -1692,13 +1690,13 @@ class _Misc:
         | @{time} = | Get Time | year month day hour min sec |  |  |
         | ${y}      | ${s} =   | Get Time    | seconds and year |  |
         =>
-        - ${time} = '2006-03-29 15:06:21'
-        - ${secs} = 1143637581
-        - ${year} = '2006'
-        - ${yyyy} = '2006', ${mm} = '03', ${dd} = '29'
-        - @{time} = ['2006', '03', '29', '15', '06', '21']
-        - ${y} = '2006'
-        - ${s} = '21'
+        | ${time} = '2006-03-29 15:06:21'
+        | ${secs} = 1143637581
+        | ${year} = '2006'
+        | ${yyyy} = '2006', ${mm} = '03', ${dd} = '29'
+        | @{time} = ['2006', '03', '29', '15', '06', '21']
+        | ${y} = '2006'
+        | ${s} = '21'
 
         | ${time} = | Get Time |      | 1177654467 |
         | ${secs} = | Get Time | sec  | 2007-04-27 09:14:27 |
@@ -1706,11 +1704,11 @@ class _Misc:
         | ${day} =  | Get Time | day  | NOW - 1d | # 1 day subtraced from NOW |
         | @{time} = | Get Time | hour min sec | NOW + 1h 2min 3s | # 1h 2min 3s added to NOW |
         =>
-        - ${time} = '2007-04-27 09:14:27'
-        - ${secs} = 27
-        - ${year} = '2006'
-        - ${day} = '28'
-        - @{time} = ['16', '08', '24']
+        | ${time} = '2007-04-27 09:14:27'
+        | ${secs} = 27
+        | ${year} = '2006'
+        | ${day} = '28'
+        | @{time} = ['16', '08', '24']
         """
         return utils.get_time(format, utils.parse_time(time_))
 
@@ -1727,10 +1725,10 @@ class _Misc:
         | ${up}     = | Evaluate | math.ceil(${result})  | math |
         | ${random} = | Evaluate | random.randint(0, sys.maxint) | random,sys |
         =>
-        - ${status} = True
-        - ${down} = 3
-        - ${up} = 4.0
-        - ${random} = <random integer>
+        | ${status} = True
+        | ${down} = 3
+        | ${up} = 4.0
+        | ${random} = <random integer>
 
         Notice that instead of creating complicated expressions, it is
         recommended to move the logic into a test library.
@@ -1877,8 +1875,7 @@ class _Misc:
         It is also possible to use this keyword in the test data and
         pass the returned library instance to another keyword. If a
         library is imported with a custom name, the `name` used to get
-        the instance must be that name and not the original library
-        name.
+        the instance must be that name and not the original library name.
         """
         try:
             return self._namespace.get_library_instance(name)
