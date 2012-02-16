@@ -12,18 +12,14 @@ Synopsis
 
 ::
 
-    libdoc.py [options] library_or_resource
+    libdoc.py [options] library_or_resource output_file
 
 Options
 ~~~~~~~
 
   -f, --format <html|xml>  Specifies whether to generate HTML or XML output.
                            If this options is not used, the format is got
-                           from the extension of output, if given. Otherwise
-                           the default is HTML.
-  -o, --output <path>      File to write the generated documentation to. If
-                           not given, documentation is written to the standard
-                           output.
+                           from the extension of the output file.
   -N, --name <newname>     Sets the name of the documented library or resource.
   -V, --version <newversion>  Sets the version of the documented library or
                            resource.
@@ -93,14 +89,12 @@ Examples
 
 ::
 
-   python -m robot.libdoc OperatingSystem
-   python -m robot.libdoc --output doc/MyLib.html src/MyLib.py
-   python -m robot.libdoc --argument arg1 --argument arg2 LibraryWithArgs.py
-   python -m robot.libdoc --name MyLibrary --argument 10.0.0.42:8270 Remote.py
-   python -m robot.libdoc test/resource.html
-   python -m robot.libdoc --format xml OperatingSystem
-   python -m robot.libdoc --format xml --output doc test/resource.html
-   jython -m robot.libdoc --output MyJavaLibrary.xml MyJavaLibrary.java
+   python -m robot.libdoc OperatingSystem OperatingSystem.html
+   python -m robot.libdoc --argument arg1 --argument arg2 LibraryWithArgs.py spec.xml
+   python -m robot.libdoc --name MyLibrary --argument 10.0.0.42:8270 Remote.py Remote.html
+   python -m robot.libdoc test/resource.html doc/resource_doc.html
+   python -m robot.libdoc --format xml src/MyLib.py output.txt
+   jython -m robot.libdoc MyJavaLibrary.java MyJavaLibrary.xml
 
 Writing documentation
 ~~~~~~~~~~~~~~~~~~~~~
