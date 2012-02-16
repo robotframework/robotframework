@@ -25,7 +25,7 @@ try:
     from robot.utils import (ConnectionCache, seq2str, timestr_to_secs,
                              secs_to_timestr, plural_or_not, get_time, abspath,
                              secs_to_timestamp, parse_time, unic, decode_output,
-                             get_env_var, set_env_var, del_env_var,
+                             get_env_var, set_env_var, del_env_var, get_env_vars,
                              decode_from_system)
     __version__ = get_version()
     PROCESSES = ConnectionCache('No active processes')
@@ -34,7 +34,9 @@ try:
 # Support for using this library without installed Robot Framework
 except ImportError:
     from os.path import abspath
-    from os import getenv as get_env_var, putenv as set_env_var, unsetenv as del_env_var
+    from os import (getenv as get_env_var, putenv as set_env_var,
+                    unsetenv as del_env_var, environ)
+    get_env_vars = lambda: environ.copy()
     __version__ = '<unknown>'
     logger = None
     seq2str = lambda items: ', '.join("'%s'" % item for item in items)
@@ -783,6 +785,9 @@ class OperatingSystem:
         If no such environment variable is set, returns the default value, if
         given. Otherwise fails the test case.
 
+        Starting from Robot Framework 2.7, returned variables are automatically
+        decoded to Unicode using the system encoding.
+
         Note that you can also access environment variables directly using
         the variable syntax `%{ENV_VAR_NAME}`.
         """
@@ -794,8 +799,9 @@ class OperatingSystem:
     def set_environment_variable(self, name, value):
         """Sets an environment variable to a specified value.
 
-        Starting from Robot Framework 2.1.1, values are converted to strings
-        automatically.
+        Values are converted to strings automatically. Starting from Robot
+        Framework 2.7, set variables are automatically encoded using the system
+        encoding.
         """
         set_env_var(name, value)
         self._info("Environment variable '%s' set to value '%s'" % (name, value))
@@ -835,11 +841,29 @@ class OperatingSystem:
             self._fail(msg, "Environment variable '%s' is set to '%s'" % (name, value))
         self._info("Environment variable '%s' is not set" % name)
 
+    def get_environment_variables(self):
+        """Returns currently available environment variables as a dictionary.
+
+        Both keys and values are decoded to Unicode using the system encoding.
+        Altering the returned dictionary has no effect on the actual environment
+        variables.
+
+        New in Robot Framework 2.7.
+        """
+        return get_env_vars()
+
     def log_environment_variables(self, level='INFO'):
-        """Logs all environment variables with given log level."""
-        for name in sorted(os.environ, key=lambda s: s.lower()):
-            name = decode_from_system(name)
-            self._log('%s = %s' % (name, get_env_var(name)), level)
+        """Logs all environment variables using the given log level.
+
+        Environment variables are also returned the same way as with
+        `Get Environment Variables` keyword.
+
+        New in Robot Framework 2.7.
+        """
+        vars = get_env_vars()
+        for name, value in sorted(vars.items(), key=lambda item: item[0].lower()):
+            self._log('%s = %s' % (name, value), level)
+        return vars
 
     # Path
 

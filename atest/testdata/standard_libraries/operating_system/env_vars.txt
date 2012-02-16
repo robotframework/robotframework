@@ -100,13 +100,16 @@ Use NON-ASCII variable in child process
     Set Environment Variable    ${NAME}    ${NON ASCII}
     Test Env Var In Child Process    ${NAME}
 
-Log Environment Variables
+Get And Log Environment Variables
     Set Environment Variable     0   value
     Set Environment Variable     1   äiti
     Set Environment Variable     isä   äiti
-    Log Environment Variables
-    Remove Environment Variable     0
-    Remove Environment Variable     1
-    Remove Environment Variable     isä
-    Log Environment Variables
+    ${vars} =    Get Environment Variables
+    Should Contain    ${vars}    PATH
+    Should Be Equal    ${vars['0']}    value
+    Should Be Equal    ${vars[u'is\xe4']}    äiti
+    Should Be Equal    ${vars['NON_ASCII_BY_RUNNER']}    I can häs åäö?!??!¿¿¡¡
+    ${v2} =    Log Environment Variables
+    Should Be Equal    ${vars}    ${v2}
+    [Teardown]    Remove Environment Variable    0    1    isä
 
