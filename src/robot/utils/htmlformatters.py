@@ -176,4 +176,4 @@ class _PreformattedBlockFormatter(object):
         return False
 
     def end(self):
-        return '\n'.join(['<pre>'] + self._rows + ['</pre>'])
+        return '\n'.join(['<pre class="robotdoc">'] + self._rows + ['</pre>'])

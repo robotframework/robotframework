@@ -411,24 +411,27 @@ after
 class TestPreformattedBlock(unittest.TestCase):
 
     def test_single_line_block(self):
-        assert_equals(html_format('| some'), '<pre>\nsome\n</pre>')
+        self._assert_preformatted('| some', 'some')
 
     def test_multi_line_block(self):
-        assert_equals(html_format('| some\n| quote'),
-                                  '<pre>\nsome\nquote\n</pre>')
+        self._assert_preformatted('| some\n| quote', 'some\nquote')
 
     def test_additional_whitespace_is_preserved(self):
-        assert_equals(html_format('|   some\t '), '<pre>\n  some\t \n</pre>')
+        self._assert_preformatted('|   some\t ', '  some\t ')
 
     def test_spaces_before_leading_pipe_cause_no_formatting(self):
         assert_equals(html_format(' | some'), ' | some')
 
     def test_block_mixed_with_other_content(self):
         assert_equals(html_format('before block:\n| some\n| quote\nafter block'),
-                'before block:\n<pre>\nsome\nquote\n</pre>\nafter block')
+                'before block:\n<pre class="robotdoc">\nsome\nquote\n</pre>\nafter block')
 
     def test_block_line_with_other_formatting(self):
-        assert_equals(html_format('| _some_'), '<pre>\n<i>some</i>\n</pre>')
+        self._assert_preformatted('| _some_', '<i>some</i>')
+
+    def _assert_preformatted(self, input, expected):
+        expected = '<pre class="robotdoc">\n' + expected + '\n</pre>'
+        assert_equals(html_format(input), expected)
 
 
 class TestFormatTable(unittest.TestCase):
