@@ -28,7 +28,7 @@ class LibdocXmlWriter(object):
         self._write_keywords('init', libdoc.inits, writer)
         self._write_keywords('kw', libdoc.keywords, writer)
         writer.end('keywordspec')
-        writer.close(close_output=False)
+        writer.close()
 
     def _write_keywords(self, type, keywords, writer):
         for kw in keywords:

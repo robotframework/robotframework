@@ -19,11 +19,11 @@ class LibdocOutput(object):
 
     def __init__(self, output_path, format):
         self._output_path = output_path
-        self._format = format
+        self._format = format.upper()
         self._output_file = None
 
     def __enter__(self):
-        if self._format.upper() == 'HTML':
+        if self._format == 'HTML':
             self._output_file = codecs.open(self._output_path, 'w', 'UTF-8')
             return self._output_file
         return self._output_path

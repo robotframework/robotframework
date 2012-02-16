@@ -14,9 +14,6 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-
-import sys
-import os
 USAGE = """robot.libdoc -- Robot Framework library documentation generator
 
 Version:  <VERSION>
@@ -68,6 +65,9 @@ For more information see the Robot Framework user guide at
 http://code.google.com/p/robotframework/wiki/UserGuide
 """
 
+import sys
+import os
+
 if 'robot' not in sys.modules:
     import pythonpathsetter   # running libdoc.py as script
 
@@ -81,16 +81,13 @@ class LibDoc(Application):
         Application.__init__(self, USAGE, arg_limits=2, auto_version=False)
 
     def main(self, args, argument=None, name='', version='', format=None):
-        lib_or_resource = args[0]
-        outfile = args[1]
-        libdoc = LibraryDocumentation(lib_or_resource, argument, name, version)
+        lib_or_res, outfile = args
+        libdoc = LibraryDocumentation(lib_or_res, argument, name, version)
         libdoc.save(outfile, self._get_format(format, outfile))
         print os.path.abspath(outfile)
 
     def _get_format(self, format, output):
-        if format:
-            return format
-        return os.path.splitext(output)[1][1:]
+        return format if format else os.path.splitext(output)[1][1:]
 
 
 def libdoc_cli(args):
@@ -99,21 +96,21 @@ def libdoc_cli(args):
     :param args: command line arguments as a list of strings.
 
     Example:
-        libdoc_cli(['--output', 'doc.html', 'MyLibrary.py'])
+        libdoc_cli(['--name', 'Something', 'MyLibrary.py', 'doc.html'])
     """
     LibDoc().execute_cli(args)
 
-def libdoc(library_or_resource, arguments=None, name='', version='',
-           format=None, output=None):
+def libdoc(library_or_resource, output, arguments=None, name='', version='',
+           format=None):
     """Executes libdoc.
 
     Arguments are same as command line options to libdoc.py.
 
     Example:
-        libdoc('MyLibrary.py', arguments=['1st', '2nd'], format='XML')
+        libdoc('MyLibrary.py', 'MyLibrary.html', arguments=['1st', '2nd'])
     """
-    LibDoc().execute(library_or_resource, argument=arguments, name=name,
-                     version=version, format=format, output=output)
+    LibDoc().execute(library_or_resource, output, argument=arguments,
+                     name=name, version=version, format=format)
 
 
 if __name__ == '__main__':
