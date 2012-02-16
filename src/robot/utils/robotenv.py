@@ -40,6 +40,13 @@ def del_env_var(name):
         del os.environ[_encode(name)]
     return value
 
+def get_env_vars():
+    ret = {}
+    for var in os.environ:
+        var = _decode(var)
+        ret[var] = get_env_var(var)
+    return ret
+
 
 if sys.platform.startswith('java'):
     from java.lang import System

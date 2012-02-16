@@ -28,7 +28,7 @@ from .importer import Importer
 from .match import eq, matches, matches_any, Matcher
 from .misc import plural_or_not, printable_name, seq2str, seq2str2, getdoc
 from .normalizing import normalize, normalize_tags, NormalizedDict
-from .robotenv import get_env_var, set_env_var, del_env_var
+from .robotenv import get_env_var, set_env_var, del_env_var, get_env_vars
 from .robotpath import normpath, abspath, get_link_path
 from .robottime import (get_timestamp, get_start_timestamp, format_time,
                         get_time, get_elapsed_time, elapsed_time_to_string,
