@@ -307,7 +307,6 @@ after
             + '\n\n' \
             + _format_table([['t','4'],['','']]) \
             + '\n\nafter'
-        print len(html_format(inp)), len(exp)
         assert_equals(html_format(inp), exp)
 
     def test_ragged_table(self):
