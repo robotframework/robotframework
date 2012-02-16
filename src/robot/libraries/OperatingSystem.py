@@ -36,12 +36,12 @@ except ImportError:
     from os.path import abspath
     from os import (getenv as get_env_var, putenv as set_env_var,
                     unsetenv as del_env_var, environ)
-    get_env_vars = lambda: environ.copy()
     __version__ = '<unknown>'
+    get_env_vars = environ.copy
     logger = None
     seq2str = lambda items: ', '.join("'%s'" % item for item in items)
     timestr_to_secs = int
-    plural_or_not = lambda count: count != 1 and 's' or ''
+    plural_or_not = lambda count: '' if count == 1 else 's'
     secs_to_timestr = lambda secs: '%d second%s' % (secs, plural_or_not(secs))
     unic = unicode
     decode_output = decode_from_system = lambda string: string
@@ -340,7 +340,7 @@ class OperatingSystem:
         """
         pattern = '*%s*' % pattern
         orig = self.get_file(path, encoding).splitlines()
-        lines = [ line for line in orig if fnmatch.fnmatchcase(line, pattern) ]
+        lines = [line for line in orig if fnmatch.fnmatchcase(line, pattern)]
         self._info('%d out of %d lines matched' % (len(lines), len(orig)))
         return '\n'.join(lines)
 
@@ -397,7 +397,7 @@ class OperatingSystem:
         The default error message can be overridden with the `msg` argument.
         """
         path = self._absnorm(path)
-        matches = [ p for p in glob.glob(path) if os.path.isfile(p) ]
+        matches = [p for p in glob.glob(path) if os.path.isfile(p)]
         if not matches:
             self._fail(msg, "Path '%s' does not match any file" % path)
         self._link("File '%s' exists", path)
@@ -410,7 +410,7 @@ class OperatingSystem:
         The default error message can be overridden with the `msg` argument.
         """
         path = self._absnorm(path)
-        matches = [ p for p in glob.glob(path) if os.path.isfile(p) ]
+        matches = [p for p in glob.glob(path) if os.path.isfile(p)]
         if not matches:
             self._link("File '%s' does not exist", path)
             return
@@ -431,7 +431,7 @@ class OperatingSystem:
         The default error message can be overridden with the `msg` argument.
         """
         path = self._absnorm(path)
-        matches = [ p for p in glob.glob(path) if os.path.isdir(p) ]
+        matches = [p for p in glob.glob(path) if os.path.isdir(p)]
         if not matches:
             self._fail(msg, "Path '%s' does not match any directory" % path)
         self._link("Directory '%s' exists", path)
@@ -444,7 +444,7 @@ class OperatingSystem:
         The default error message can be overridden with the `msg` argument.
         """
         path = self._absnorm(path)
-        matches = [ p for p in glob.glob(path) if os.path.isdir(p) ]
+        matches = [p for p in glob.glob(path) if os.path.isdir(p)]
         if not matches:
             self._link("Directory '%s' does not exist", path)
             return
@@ -637,7 +637,7 @@ class OperatingSystem:
     def empty_directory(self, path):
         """Deletes all the content (incl. subdirectories) from the given directory."""
         path = self._absnorm(path)
-        items = [ os.path.join(path, item) for item in self._list_dir(path) ]
+        items = [os.path.join(path, item) for item in self._list_dir(path)]
         for item in items:
             if os.path.isdir(item):
                 shutil.rmtree(item)
@@ -888,7 +888,7 @@ class OperatingSystem:
         - ${p5} = '/my/path2'
         """
         base = base.replace('/', os.sep)
-        parts = [ p.replace('/', os.sep) for p in parts ]
+        parts = [p.replace('/', os.sep) for p in parts]
         return self.normalize_path(os.path.join(base, *parts))
 
     def join_paths(self, base, *paths):
@@ -905,7 +905,7 @@ class OperatingSystem:
         - @{p2} = ['/example', '/my/base/other']
         - @{p3} = ['my/base/example/path', 'my/base/other', 'my/base/one/more']
         """
-        return [ self.join_path(base, path) for path in paths ]
+        return [self.join_path(base, path) for path in paths]
 
     def normalize_path(self, path):
         """Normalizes the given path.
@@ -923,9 +923,7 @@ class OperatingSystem:
         - ${p4} = 'abc/def'
         - ${p5} = 'abc/def'
         """
-        ret = os.path.normpath(path.replace('/', os.sep))
-        if ret == '': return '.'
-        return ret
+        return os.path.normpath(path.replace('/', os.sep)) or '.'
 
     def split_path(self, path):
         """Splits the given path from the last path separator ('/' or '\\').
