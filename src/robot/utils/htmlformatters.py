@@ -100,7 +100,6 @@ _                          # end of italic
 ''', re.VERBOSE)
     _ruler = re.compile('^-{3,} *$')
 
-
     def __init__(self):
         self._format_url = UrlFormatter(formatting=True).format
         self._result = None
@@ -114,13 +113,13 @@ _                          # end of italic
     def end(self):
         result = self._result
         self._result = None
-        if result != '<hr>':
+        if not result.startswith('<hr'):
             result += '\n'
         return result
 
     def format(self, line):
         if self._ruler.match(line):
-            return '<hr>'
+            return '<hr class="robotdoc">'
         return self._format_url(self._format_italic(self._format_bold(line)))
 
     def _format_bold(self, line):
@@ -165,7 +164,7 @@ class _TableFormatter(object):
 
 
 class _PreformattedBlockFormatter(object):
-    matcher = re.compile('\s*\| (.*)').match
+    matcher = re.compile('\s*\|( |$)').match
 
     def __init__(self):
         self._rows = []
@@ -173,7 +172,7 @@ class _PreformattedBlockFormatter(object):
 
     def add(self, line):
         if self.matcher(line):
-            text = self.matcher(line).group(1)
+            text = line.strip()[2:]
             self._rows.append(self._line_formatter.format(text))
             return True
         return False

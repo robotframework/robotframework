@@ -412,15 +412,17 @@ class TestPreformattedBlock(unittest.TestCase):
     def test_single_line_block(self):
         self._assert_preformatted('| some', 'some')
 
-    def test_multi_line_block(self):
-        self._assert_preformatted('| some\n| quote', 'some\nquote')
+    def test_block_without_any_content(self):
+        self._assert_preformatted('|', '')
 
-    def test_additional_whitespace_is_preserved(self):
-        self._assert_preformatted('|   some\t ', '  some\t ')
+    def test_multi_line_block(self):
+        self._assert_preformatted('| some\n|\n| quote', 'some\n\nquote')
+
+    def test_internal_whitespace_is_preserved(self):
+        self._assert_preformatted('|   so\t\tme  ', '  so\t\tme')
 
     def test_spaces_before_leading_pipe_are_ignored(self):
         self._assert_preformatted(' | some', 'some')
-
 
     def test_block_mixed_with_other_content(self):
         assert_equals(html_format('before block:\n| some\n| quote\nafter block'),
