@@ -3,9 +3,9 @@ import unittest
 from robot.utils.asserts import *
 
 from robot.utils.htmlutils import html_escape, html_format, html_attr_escape
-from robot.utils.htmlformatters import _TableFormatter
+from robot.utils.htmlformatters import TableFormatter
 
-_format_table = _TableFormatter()._format_table
+_format_table = TableFormatter().format
 
 
 def _test_escape_and_format(inp, exp_escape=None, exp_format=None):
