@@ -1,18 +1,34 @@
 Library documentation tool (:prog:`libdoc`)
 -------------------------------------------
 
-:prog:`libdoc.py` is a tool for generating keyword documentation for test
-libraries and resource files in HTML and XML formats. Documentation can be
-created for both test libraries and resource files. It is built-in into Robot
-Framework and automatically included in the installation starting from
-version 2.7.
+:prog:`libdoc` is a tool for generating keyword documentation for test
+libraries and resource files in HTML and XML formats.The former format is
+suitable for humans and the latter for RIDE_ and other tools.
+
+Documentation can be created for:
+
+- Test libraries implemented with Python__ or Java__ using the normal
+  library API
+- Test libraries using the `dynamic API`__
+- `Resource files`_
+
+Additionally it is possible to use XML documentation created earlier by
+`libdoc.py` or other tools as input.
+
+__ `Python libraries`_
+__ `Java libraries`_
+__ `Dynamic libraries`_
+
+:prog:`libdoc` is built-in into Robot Framework and automatically included
+in the installation starting from version 2.7.
+
 
 Synopsis
 ~~~~~~~~
 
 ::
 
-    libdoc.py [options] library_or_resource output_file
+    python -m robot.libdoc [options] library_or_resource output_file
 
 Options
 ~~~~~~~
@@ -33,29 +49,9 @@ Options
                            output.
   -h, --help               Prints this help.
 
-Description
-~~~~~~~~~~~
-
-:prog:`libdoc.py` is a tool for generating keyword documentation for test
-libraries and resource files in HTML and XML formats. The former format is
-suitable for humans and the latter for RIDE_ and other tools.
-
-Documentation can be created for:
-
-- Test libraries implemented with Python__ or Java__ using the normal
-  library API
-- Test libraries using the `dynamic API`__
-- `Resource files`_
-
-Additionally it is possible to use XML documentation created earlier by
-`libdoc.py` or other tools as input.
-
-__ `Python libraries`_
-__ `Java libraries`_
-__ `Dynamic libraries`_
 
 Specifying the library or resource file
-'''''''''''''''''''''''''''''''''''''''
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 It is possible to specify a Python test library by giving either the
 path to the source or only the library name. If the library name is
@@ -86,7 +82,6 @@ PYTHONPATH.
 
 Examples
 ~~~~~~~~
-
 ::
 
    python -m robot.libdoc OperatingSystem OperatingSystem.html
@@ -95,6 +90,22 @@ Examples
    python -m robot.libdoc test/resource.html doc/resource_doc.html
    python -m robot.libdoc --format xml src/MyLib.py output.txt
    jython -m robot.libdoc MyJavaLibrary.java MyJavaLibrary.xml
+
+Alternative execution
+~~~~~~~~~~~~~~~~~~~~~
+
+:prog:`libdoc` works with all supported interpreters, although creating
+documentation from java source files requires running :prog:`libdoc` with
+:prog:`jython`.
+
+In addition to executing :prog:`libdoc` as a module
+(:cli:`python -m robot.libdoc`), it is possible to execute it as a script::
+
+    python path/robot/libdoc.py [options] inputfile
+
+This is useful if you have done a `manual installation`_ of the framework
+and just have the :path:`robot` directory with the source code somewhere
+in your system.
 
 Writing documentation
 ~~~~~~~~~~~~~~~~~~~~~
@@ -145,7 +156,7 @@ strings, see `PEP-257`_.
 __ http://www.python.org/dev/peps/pep-0263
 
 Java libraries
-~~~~~~~~~~~~~~
+''''''''''''''
 
 When writing documentation for a normal Java library, conventions for
 writing Javadoc should be used. The documentation is generated based
@@ -266,13 +277,10 @@ Documentation syntax
 Generic formatting rules
 ''''''''''''''''''''''''
 
-Most important features of `documentation formatting` are formatting using
+Most important features of `documentation formatting`_ are formatting using
 :code:`*bold*` and :code:`_italic_`, automatic conversion of URLs to
-clickable links, and the possibility to create tables (useful for
-examples) simply with pipe character::
-
-   | Some Keyword    | arg |
-   | Another Keyword |     |
+clickable links, and the possibility to create tables and blocks (useful for
+examples) simply with pipe character.
 
 Special formatting and internal linking
 '''''''''''''''''''''''''''''''''''''''
