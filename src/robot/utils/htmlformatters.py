@@ -64,7 +64,7 @@ class HtmlFormatter(object):
 
     def _end_current(self):
         if self._current:
-            self._rows.append(self._current.end() + '\n')
+            self._rows.append(self._current.end())
 
     def _get_next(self, line):
         for formatter in self._formatters:
@@ -114,6 +114,8 @@ _                          # end of italic
     def end(self):
         result = self._result
         self._result = None
+        if result != '<hr>':
+            result += '\n'
         return result
 
     def format(self, line):
@@ -176,4 +178,4 @@ class _PreformattedBlockFormatter(object):
         return False
 
     def end(self):
-        return '\n'.join(['<pre class="robotdoc">'] + self._rows + ['</pre>'])
+        return '\n'.join(['<pre class="robotdoc">'] + self._rows + ['</pre>']) + '\n'

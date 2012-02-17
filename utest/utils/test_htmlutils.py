@@ -275,7 +275,7 @@ class TestHtmlFormat(unittest.TestCase):
 '''
         exp = 'before table\n' \
             + _format_table([['in','table'],['still','in']]) \
-            + '\n\n after table'
+            + '\n after table'
         assert_equals(html_format(inp), exp)
 
     def test_multiple_tables(self):
@@ -298,15 +298,15 @@ after
 '''
         exp = 'before tables\n' \
             + _format_table([['table','1'],['still','1']]) \
-            + '\n\nbetween\n\n' \
+            + '\nbetween\n\n' \
             + _format_table([['table','2']]) \
-            + '\nbetween\n' \
+            + 'between\n' \
             + _format_table([['3.1.1','3.1.2','3.1.3'],
                              ['3.2.1','3.2.2','3.2.3'],
                              ['3.3.1','3.3.2','3.3.3']]) \
-            + '\n\n' \
+            + '\n' \
             + _format_table([['t','4'],['','']]) \
-            + '\n\nafter'
+            + '\nafter'
         assert_equals(html_format(inp), exp)
 
     def test_ragged_table(self):
@@ -334,7 +334,7 @@ after
             + _format_table([['<b>a</b>','<b>b</b>','<b>c</b>'],
                              ['<b>b</b>','x','y'],
                              ['<b>c</b>','z','']]) \
-            + '\n\n' \
+            + '\n' \
             + _format_table([['a','x <b>b</b> y','<b>b</b> <b>c</b>'],
                              ['*a','b*','']])
         assert_equals(html_format(inp), exp)
@@ -352,7 +352,7 @@ after
             + _format_table([['<i>a</i>','<i>b</i>','<i>c</i>'],
                              ['<i>b</i>','x','y'],
                              ['<i>c</i>','z','']]) \
-            + '\n\n' \
+            + '\n' \
             +  _format_table([['a','x <i>b</i> y','<i>b</i> <i>c</i>'],
                               ['_a','b_','']])
         assert_equals(html_format(inp), exp)
@@ -386,9 +386,9 @@ after
             assert_equals(html_format(hr + '  '), '<hr>')
 
     def test_hr_with_other_stuff_around(self):
-        for inp, exp in [('---\n-', '<hr>\n-'),
-                         ('xx\n---\nxx', 'xx\n<hr>\nxx'),
-                         ('xx\n\n------\n\nxx', 'xx\n\n<hr>\n\nxx')]:
+        for inp, exp in [('---\n-', '<hr>-'),
+                         ('xx\n---\nxx', 'xx\n<hr>xx'),
+                         ('xx\n\n------\n\nxx', 'xx\n\n<hr>\nxx')]:
             assert_equals(html_format(inp), exp)
 
     def test_not_hr(self):
@@ -401,9 +401,9 @@ after
 | t | a | b | l | e |
 ---
 '''[1:-1]
-        exp = '<hr>\n' \
+        exp = '<hr>' \
             + _format_table([['t','a','b','l','e']]) \
-            + '\n<hr>'
+            + '<hr>'
         assert_equals(html_format(inp), exp)
 
 
