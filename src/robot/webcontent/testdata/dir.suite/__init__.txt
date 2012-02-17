@@ -5,7 +5,9 @@ Documentation  *URL:*    http://robotframework.org\n
 ...            | *My* | *Table* |\n
 ...            | 1    | 2       |\n
 ...            | foo  |\n
-
+...            regular line\n
+...            | block formatted\n
+...            | \ \ content\t\tand whitespaces
 Metadata       URL       http://robotframework.org
 Metadata       Image     http://code.google.com/p/robotframework/logo?ext.png
 Metadata       Formatting  *Bold* and _italics_
