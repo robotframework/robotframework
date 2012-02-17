@@ -74,6 +74,19 @@ Set Environment Variable In One Test And Use In Another, Part 2
     Should Be Equal    ${value}      Hello another test case!
     Should Be Equal    %{${NAME}}    Hello another test case!
 
+Get And Log Environment Variables
+    Set Environment Variable     0   value
+    Set Environment Variable     1   äiti
+    Set Environment Variable     isä   äiti
+    ${vars} =    Get Environment Variables
+    Should Contain    ${vars}    PATH
+    Should Be Equal    ${vars['0']}    value
+    Should Be Equal    ${vars[u'is\xe4']}    äiti
+    Should Be Equal    ${vars['NON_ASCII_BY_RUNNER']}    I can häs åäö?!??!¿¿¡¡
+    ${v2} =    Log Environment Variables
+    Should Be Equal    ${vars}    ${v2}
+    [Teardown]    Remove Environment Variable    0    1    isä
+
 Non-string names and values are converted to strings automatically
     Set Environment Variable    ${NON STRING}    ${NON STRING}
     ${value} =    Get Environment Variable    ${NON STRING}
@@ -95,21 +108,11 @@ Non-ASCII names and values are encoded automatically
 Non-ASCII variable set before execution
     ${value} =    Get Environment Variable    NON_ASCII_BY_RUNNER
     Should Be Equal    ${value}    I can häs åäö?!??!¿¿¡¡
+    Set Environment Variable    NON_ASCII_BY_RUNNER    I cän överwrite?!?!?!
+    ${value} =    Get Environment Variable    NON_ASCII_BY_RUNNER
+    Should Be Equal    ${value}    I cän överwrite?!?!?!
 
 Use NON-ASCII variable in child process
     Set Environment Variable    ${NAME}    ${NON ASCII}
     Test Env Var In Child Process    ${NAME}
-
-Get And Log Environment Variables
-    Set Environment Variable     0   value
-    Set Environment Variable     1   äiti
-    Set Environment Variable     isä   äiti
-    ${vars} =    Get Environment Variables
-    Should Contain    ${vars}    PATH
-    Should Be Equal    ${vars['0']}    value
-    Should Be Equal    ${vars[u'is\xe4']}    äiti
-    Should Be Equal    ${vars['NON_ASCII_BY_RUNNER']}    I can häs åäö?!??!¿¿¡¡
-    ${v2} =    Log Environment Variables
-    Should Be Equal    ${vars}    ${v2}
-    [Teardown]    Remove Environment Variable    0    1    isä
 

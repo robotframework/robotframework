@@ -32,6 +32,11 @@ Set Environment Variable In One Test And Use In Another
     Check test case    ${TEST NAME}, Part 1
     Check test case    ${TEST NAME}, Part 2
 
+Get And Log Environment Variables
+    ${tc}=    Check test case    ${TEST NAME}
+    Check log message     ${tc.kws[8].msgs[0]}    0 = value
+    Check log message     ${tc.kws[8].msgs[1]}    1 = äiti
+
 Non-string names and values are converted to strings automatically
     Check test case    ${TEST NAME}
 
@@ -43,11 +48,6 @@ Non-ASCII variable set before execution
 
 Use NON-ASCII variable in child process
     Check test case    ${TEST NAME}
-
-Get And Log Environment Variables
-    ${tc}=    Check test case    ${TEST NAME}
-    Check log message     ${tc.kws[8].msgs[0]}    0 = value
-    Check log message     ${tc.kws[8].msgs[1]}    1 = äiti
 
 *** Keywords ***
 Run Tests With Environment Variables

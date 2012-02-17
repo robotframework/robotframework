@@ -48,14 +48,6 @@ def get_env_vars():
     return ret
 
 
-if sys.platform.startswith('java'):
-    from java.lang import System
-    def _get_env_var_from_java(name):
-        return System.getenv(unic(name))
-else:
-    def _get_env_var_from_java(name):
-        return None
-
 def _encode(var):
     if isinstance(var, str):
         return var
@@ -65,3 +57,21 @@ def _encode(var):
 
 def _decode(var):
     return decode_from_system(var, can_be_from_java=False)
+
+# Jython hack below needed due to http://bugs.jython.org/issue1841
+if not sys.platform.startswith('java'):
+    def _get_env_var_from_java(name):
+        return None
+
+else:
+    from java.lang import String, System
+
+    def _get_env_var_from_java(name):
+        name = name if isinstance(name, basestring) else unic(name)
+        value_set_before_execution = System.getenv(name)
+        if value_set_before_execution is None:
+            return None
+        current_value = String(os.environ[name]).toString()
+        if value_set_before_execution != current_value:
+            return None
+        return value_set_before_execution
