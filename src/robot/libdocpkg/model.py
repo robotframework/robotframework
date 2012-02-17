@@ -89,7 +89,7 @@ class DocFormatter(object):
             return ''
         if line == '':
             return '\n\n'
-        if self._list_or_table_regexp.search(line):
+        if self._list_or_table_regexp.search(line) or line == '|':
             return '\n'
         if prev.startswith('| ') and prev.endswith(' |'):
             return '\n'
