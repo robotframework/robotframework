@@ -1203,11 +1203,17 @@ class _RunKeyword:
         Both `timeout` and `retry_interval` must be given in Robot Framework's
         time format (e.g. '1 minute', '2 min 3 s', '4.5').
 
+        Errors caused by invalid syntax, test or keyword timeouts, or fatal
+        exceptions are not caught by this keyword.
+
         Example:
         | Wait Until Keyword Succeeds | 2 min | 5 sec | My keyword | arg1 | arg2 |
 
-        Starting from Robot Framework 2.5 errors caused by invalid syntax,
-        timeouts, or fatal exceptions are not caught by this keyword.
+        Running the same keyword multiple times inside this keyword can create
+        lots of output and considerably increase the size of the generated
+        output files. Starting from Robot Framework 2.7, it is possible to
+        remove unnecessary keywords from the outputs using
+        `--RemoveKeywords WUKS` command line option.
         """
         timeout = utils.timestr_to_secs(timeout)
         retry_interval = utils.timestr_to_secs(retry_interval)

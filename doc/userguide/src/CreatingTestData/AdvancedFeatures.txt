@@ -423,6 +423,17 @@ libraries.
 
 .. note:: Exit for loop functionality is new in Robot Framework 2.5.2.
 
+Removing unnecessary keywords from outputs
+''''''''''''''''''''''''''''''''''''''''''
+
+For loops with multiple iterations often create lots of output and
+considerably increase the size of the generated output_ and log_ files.
+Starting from Robot Framework 2.7, it is possible to `remove unnecessary
+keywords`__ from the outputs using :opt:`--RemoveKeywords FOR` command line
+option.
+
+__ `Removing keywords from outputs`_
+
 Repeating single keyword
 ''''''''''''''''''''''''
 
