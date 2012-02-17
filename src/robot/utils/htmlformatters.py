@@ -184,4 +184,4 @@ class _PreformattedBlockFormatter(object):
         return ret
 
     def _format_block(self):
-        return '\n'.join(['<pre class="robotdoc">'] + self._rows + ['</pre>\n'])
+        return '\n'.join(['<pre class="robotdoc">'] + self._rows + ['</pre>'])
