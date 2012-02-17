@@ -165,7 +165,7 @@ class _TableFormatter(object):
 
 
 class _PreformattedBlockFormatter(object):
-    matcher = re.compile('\| .*').match
+    matcher = re.compile('\s*\| (.*)').match
 
     def __init__(self):
         self._rows = []
@@ -173,7 +173,8 @@ class _PreformattedBlockFormatter(object):
 
     def add(self, line):
         if self.matcher(line):
-            self._rows.append(self._line_formatter.format(line[2:]))
+            text = self.matcher(line).group(1)
+            self._rows.append(self._line_formatter.format(text))
             return True
         return False
 

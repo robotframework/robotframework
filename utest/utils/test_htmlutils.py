@@ -418,8 +418,8 @@ class TestPreformattedBlock(unittest.TestCase):
     def test_additional_whitespace_is_preserved(self):
         self._assert_preformatted('|   some\t ', '  some\t ')
 
-    def test_spaces_before_leading_pipe_cause_no_formatting(self):
-        assert_equals(html_format(' | some'), ' | some')
+    def test_spaces_before_leading_pipe_are_ignored(self):
+        self._assert_preformatted(' | some', 'some')
 
     def test_multiple_blocks(self):
         assert_equals(html_format('| some\n| quote\nbetween\n| other block\n\nafter'),
