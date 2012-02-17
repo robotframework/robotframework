@@ -421,6 +421,20 @@ class TestPreformattedBlock(unittest.TestCase):
     def test_spaces_before_leading_pipe_cause_no_formatting(self):
         assert_equals(html_format(' | some'), ' | some')
 
+    def test_multiple_blocks(self):
+        assert_equals(html_format('| some\n| quote\nbetween\n| other block\n\nafter'),
+                '''\
+<pre class="robotdoc">
+some
+quote
+</pre>
+between
+<pre class="robotdoc">
+other block
+</pre>
+
+after''')
+
     def test_block_mixed_with_other_content(self):
         assert_equals(html_format('before block:\n| some\n| quote\nafter block'),
                 'before block:\n<pre class="robotdoc">\nsome\nquote\n</pre>\nafter block')
