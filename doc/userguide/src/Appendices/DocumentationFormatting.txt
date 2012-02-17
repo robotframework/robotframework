@@ -145,6 +145,24 @@ documentation would be formatted like this:
    *2*       Hi
    ========  ========  ========
 
+Preformatted text
+~~~~~~~~~~~~~~~~~
+
+Starting from Robot Framework 2.7, it is also possible to embed blocks of
+preformatted text in the documentation. Preformatted block is created by
+starting lines with '| ', one space being mandatory after the pipe character.
+The sequence '| ' will be removed from the resulting HTML, but all other
+whitespace is preserved.
+
+In the following documentation, the two middle lines form a preformatted
+block when converted to HTML::
+
+  Doc before block:\n
+  | inside block\n
+  |    some   additional whitespace\n
+  After block
+
+
 Horizontal ruler
 ~~~~~~~~~~~~~~~~
 
