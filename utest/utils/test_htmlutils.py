@@ -380,15 +380,15 @@ after
         assert_equals(html_format(inp), exp)
 
     def test_hr_is_three_or_more_hyphens(self):
-        for i in range(3, 100):
+        for i in range(3, 10):
             hr = '-' * i
-            assert_equals(html_format(hr), '<hr>')
-            assert_equals(html_format(hr + '  '), '<hr>')
+            assert_equals(html_format(hr), '<hr class="robotdoc">')
+            assert_equals(html_format(hr + '  '), '<hr class="robotdoc">')
 
     def test_hr_with_other_stuff_around(self):
-        for inp, exp in [('---\n-', '<hr>-'),
-                         ('xx\n---\nxx', 'xx\n<hr>xx'),
-                         ('xx\n\n------\n\nxx', 'xx\n\n<hr>\nxx')]:
+        for inp, exp in [('---\n-', '<hr class="robotdoc">-'),
+                         ('xx\n---\nxx', 'xx\n<hr class="robotdoc">xx'),
+                         ('xx\n\n------\n\nxx', 'xx\n\n<hr class="robotdoc">\nxx')]:
             assert_equals(html_format(inp), exp)
 
     def test_not_hr(self):
@@ -401,9 +401,9 @@ after
 | t | a | b | l | e |
 ---
 '''[1:-1]
-        exp = '<hr>' \
+        exp = '<hr class="robotdoc">' \
             + _format_table([['t','a','b','l','e']]) \
-            + '<hr>'
+            + '<hr class="robotdoc">'
         assert_equals(html_format(inp), exp)
 
 
