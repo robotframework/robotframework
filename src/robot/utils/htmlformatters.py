@@ -82,7 +82,7 @@ class _Collector(object):
     def __init__(self, result, formatter):
         self._result = result
         self._formatter = formatter
-        self.handles = re.compile(formatter.pattern).match
+        self.handles = formatter.handles
 
 
 class LineCollector(_Collector):
@@ -109,7 +109,7 @@ class BlockCollector(_Collector):
 
 
 class LineFormatter(object):
-    pattern = '.*'
+    handles = lambda self, line: True
     newline = '\n'
     _bold = re.compile('''
 (                         # prefix (group 1)
@@ -146,7 +146,7 @@ _                          # end of italic
 
 
 class RulerFormatter(object):
-    pattern = '^-{3,} *$'
+    handles = re.compile('^-{3,} *$').match
     newline = ''
 
     def format(self, line):
@@ -154,7 +154,7 @@ class RulerFormatter(object):
 
 
 class TableFormatter(object):
-    pattern = '^\s*\| (.* |)\|\s*$'
+    handles = re.compile('^\s*\| (.* |)\|\s*$').match
     _line_splitter = re.compile(' \|(?= )')
     _format_cell = LineFormatter().format
 
@@ -176,7 +176,7 @@ class TableFormatter(object):
 
 
 class PreformattedFormatter(object):
-    pattern = '\s*\|( |$)'
+    handles = re.compile('\s*\|( |$)').match
     _format_line = LineFormatter().format
 
     def pre_format(self, line):
