@@ -1,2 +1,6 @@
-#!/bin/sh
-python -m robot.rebot "$@"
+#!/usr/bin/env python
+
+import sys
+from robot import rebot_cli
+
+rebot_cli(sys.argv[1:])

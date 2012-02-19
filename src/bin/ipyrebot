@@ -1,2 +1,6 @@
-#!/bin/sh
-ipy -m robot.rebot "$@"
+#!/usr/bin/env ipy
+
+import sys
+from robot import rebot_cli
+
+rebot_cli(sys.argv[1:])

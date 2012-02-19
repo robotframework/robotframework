@@ -1,2 +1,6 @@
-#!/bin/sh
-jython -m robot.rebot "$@"
+#!/usr/bin/env jython
+
+import sys
+from robot import rebot_cli
+
+rebot_cli(sys.argv[1:])

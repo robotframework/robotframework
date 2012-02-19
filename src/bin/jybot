@@ -1,2 +1,6 @@
-#!/bin/sh
-jython -m robot.run "$@"
+#!/usr/bin/env jython
+
+import sys
+from robot import run_cli
+
+run_cli(sys.argv[1:])
