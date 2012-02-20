@@ -12,7 +12,7 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from robot import utils
+from robot.utils import normalize_tags, setter, Matcher
 
 
 class Tags(object):
@@ -20,11 +20,11 @@ class Tags(object):
     def __init__(self, tags=None):
         self._tags = tags
 
-    @utils.setter
+    @setter
     def _tags(self, tags):
         if isinstance(tags, basestring):
             tags = [tags]
-        return utils.normalize_tags(tags or [])
+        return normalize_tags(tags or [])
 
     def add(self, tags):
         self._tags = list(self) + list(Tags(tags))
@@ -86,7 +86,7 @@ def TagPattern(pattern):
 class _SingleTagPattern(object):
 
     def __init__(self, pattern):
-        self._matcher = utils.Matcher(pattern, ignore=['_'])
+        self._matcher = Matcher(pattern, ignore=['_'])
 
     def match(self, tags):
         return any(self._matcher.match(tag) for tag in tags)

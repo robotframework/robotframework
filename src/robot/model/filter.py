@@ -12,11 +12,11 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from robot import utils
+from robot.utils import setter
 
-from tags import TagPatterns
-from namepatterns import SuiteNamePatterns, TestNamePatterns
-from visitor import SuiteVisitor
+from .tags import TagPatterns
+from .namepatterns import SuiteNamePatterns, TestNamePatterns
+from .visitor import SuiteVisitor
 
 
 class Filter(SuiteVisitor):
@@ -28,21 +28,21 @@ class Filter(SuiteVisitor):
         self.include_tags = include_tags
         self.exclude_tags = exclude_tags
 
-    @utils.setter
+    @setter
     def include_suites(self, suites):
         return SuiteNamePatterns(suites) \
             if not isinstance(suites, SuiteNamePatterns) else suites
 
-    @utils.setter
+    @setter
     def include_tests(self, tests):
         return TestNamePatterns(tests) \
             if not isinstance(tests, TestNamePatterns) else tests
 
-    @utils.setter
+    @setter
     def include_tags(self, tags):
         return TagPatterns(tags) if not isinstance(tags, TagPatterns) else tags
 
-    @utils.setter
+    @setter
     def exclude_tags(self, tags):
         return TagPatterns(tags) if not isinstance(tags, TagPatterns) else tags
 
