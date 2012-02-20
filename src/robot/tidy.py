@@ -23,7 +23,7 @@ Usage:  python -m robot.tidy [options] inputfile
    or:  python -m robot.tidy --inplace [options] inputfile [more input files]
    or:  python -m robot.tidy --recursive [options] directory
 
-This tool can be used to clean up and change format of Robot Framework test
+Tidy tool can be used to clean up and change format of Robot Framework test
 data files. By default, the output is written to the standard output stream,
 but it can be redirected to a file. Alternatively, files can be modified
 in-place using --inplace or --recursive options.
