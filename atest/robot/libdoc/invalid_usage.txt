@@ -10,22 +10,26 @@ ${USAGE TIP}    \nTry --help for usage information.\n
 *** Test Cases ***
 
 No arguments
-    ${EMPTY}          Expected 2 arguments, got 0.
+    ${EMPTY}          Expected at least 2 arguments, got 0.
 
-Too many arguments
-    arg1 arg2 arg3    Expected 2 arguments, got 3.
+Too many arguments when creating output
+    MyLib out.xml extra      Only two arguments allowed when writing output.
+
+Too many arguments with version
+    Dialogs version extra    Wrong number of arguments to view 'version'.
 
 Invalid option
     --invalid         option --invalid not recognized
 
 Invalid format
-    --format XXX BuiltIn ${OUTHTML}   Format must be either 'HTML' or 'XML', got 'XXX'.
+    -f XXX BuiltIn out.html    Format must be either 'HTML' or 'XML', got 'XXX'.
+    BuiltIn out.ext            Format must be either 'HTML' or 'XML', got 'EXT'.
 
 Non-existing library
-    NonExistingLib ${OUTHTML}   Importing test library 'NonExistingLib' failed: *
+    NonExistingLib out.html   Importing test library 'NonExistingLib' failed: *
 
 Invalid resource
-    ${CURDIR}/invalid_usage.txt ${OUTHTML}
+    ${CURDIR}/invalid_usage.txt out.html
     ...   [ ERROR ] *: Non-existing setting 'Force Tags'.
     ...   [ ERROR ] *: Non-existing setting 'Test Template'.
     ...   Resource file '*' contains a test case table which is not allowed.

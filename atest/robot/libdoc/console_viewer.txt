@@ -1,0 +1,51 @@
+*** Settings ***
+Force Tags        regression    pybot    jybot
+Resource          libdoc_resource.txt
+
+*** Test Cases ***
+List all keywords
+    Run Libdoc And Verify Output    Dialogs list
+    ...   Execute Manual Step
+    ...   Get Selection From User
+    ...   Get Value From User
+    ...   Pause Execution
+
+List some keywords
+    Run Libdoc And Verify Output    ${TESTDATADIR}/resource.txt LIST KW? CURDIR
+    ...   curdir
+    ...   kw 3
+    ...   kw 4
+    ...   kw 5
+
+Show whole library
+    ${output}=    Run Libdoc    Dialogs show
+    Should Start With    ${output}    Dialogs\n=======\nVersion:
+    Should Contain    ${output}    Execute Manual Step\n----
+    Should Contain    ${output}    Get Selection From User\n----
+    Should Contain    ${output}    Get Value From User\n----
+    Should Contain    ${output}    Pause Execution\n----
+
+Show intro only
+    ${output}=    Run Libdoc    Dialogs SHOW intro
+    Should Start With    ${output}    Dialogs\n=======\nVersion:
+    Should Not Contain    ${output}    Execute Manual Step\n----
+    Should Not Contain    ${output}    Get Selection From User\n----
+    Should Not Contain    ${output}    Get Value From User\n----
+    Should Not Contain    ${output}    Pause Execution\n----
+
+Show intro and keywords
+    ${output}=    Run Libdoc    ${TESTDATADIR}/resource.txt SHOW NONASC* INTRO
+    Should Start With    ${output}    resource\n========\nNamed arguments:
+    ${expected} =    Catenate    SEPARATOR=\n
+    ...    non ascii doc
+    ...    -------------
+    ...    Arguments:${SPACE * 2}[]
+    ...    ${EMPTY}
+    ...    Hyvää yötä.
+    ...    ${EMPTY}
+    ...    Спасибо!
+    Should Contain    ${output}    ${expected}
+
+Show version
+    Run Libdoc And Verify Output    ${TESTDATADIR}/module.py version    0.1-alpha
+    Run Libdoc And Verify Output    ${TESTDATADIR}/resource.txt version    N/A

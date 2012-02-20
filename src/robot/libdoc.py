@@ -72,22 +72,34 @@ if 'robot' not in sys.modules:
     import pythonpathsetter   # running libdoc.py as script
 
 from robot.utils import Application
-from robot.libdocpkg import LibraryDocumentation
+from robot.errors import DataError
+from robot.libdocpkg import LibraryDocumentation, ConsoleViewer
 
 
 class LibDoc(Application):
 
     def __init__(self):
-        Application.__init__(self, USAGE, arg_limits=2, auto_version=False)
+        Application.__init__(self, USAGE, arg_limits=(2,), auto_version=False)
+
+    def validate(self, options, arguments):
+        if len(arguments) > 2 and not ConsoleViewer.handles(arguments[1]):
+            raise DataError('Only two arguments allowed when writing output.')
+        return options, arguments
 
     def main(self, args, argument=None, name='', version='', format=None):
-        lib_or_res, outfile = args
+        lib_or_res, output = args[:2]
         libdoc = LibraryDocumentation(lib_or_res, argument, name, version)
-        libdoc.save(outfile, self._get_format(format, outfile))
-        self.console(os.path.abspath(outfile))
+        if ConsoleViewer.handles(output):
+            ConsoleViewer(libdoc).view(output, *args[2:])
+        else:
+            libdoc.save(output, self._get_format(format, output))
+            self.console(os.path.abspath(output))
 
     def _get_format(self, format, output):
-        return format if format else os.path.splitext(output)[1][1:]
+        format = (format if format else os.path.splitext(output)[1][1:]).upper()
+        if format in ['HTML', 'XML']:
+            return format
+        raise DataError("Format must be either 'HTML' or 'XML', got '%s'." % format)
 
 
 def libdoc_cli(args):

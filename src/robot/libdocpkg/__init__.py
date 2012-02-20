@@ -13,6 +13,7 @@
 #  limitations under the License.
 
 from .builder import DocumentationBuilder
+from .consoleviewer import ConsoleViewer
 
 
 def LibraryDocumentation(library_or_resource, arguments=None, name=None,

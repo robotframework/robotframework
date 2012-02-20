@@ -4,6 +4,7 @@ from os.path import join, dirname, abspath
 from subprocess import call, STDOUT
 
 from robot.api import logger
+from robot.utils import decode_output
 
 ROBOT_SRC = join(dirname(abspath(__file__)), '..', '..', '..', 'src')
 
@@ -25,4 +26,4 @@ class LibDocLib(object):
         stdout.seek(0)
         output = stdout.read().replace('\r\n', '\n')
         logger.info(output)
-        return output
+        return decode_output(output)
