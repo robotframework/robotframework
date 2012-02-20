@@ -1,3 +1,5 @@
+.. _tidy:
+
 Test data clean-up tool (:prog:`tidy`)
 --------------------------------------
 
