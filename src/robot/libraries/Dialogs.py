@@ -45,17 +45,22 @@ __all__ = ['execute_manual_step', 'get_value_from_user',
 
 
 def pause_execution(message='Test execution paused. Press OK to continue.'):
-    """Pauses the test execution and shows dialog with the text `message`."""
+    """Pauses test execution until user clicks `Ok` button.
+
+    `message` is the message shown in the dialog.
+    """
     MessageDialog(message)
 
 
 def execute_manual_step(message, default_error=''):
-    """Pauses the test execution until user sets the keyword status.
+    """Pauses test execution until user sets the keyword status.
 
-    `message` is the instruction shown in the dialog. User can select
-    PASS or FAIL, and in the latter case an additional dialog is
-    opened for defining the error message. `default_error` is the
-    possible default value shown in the error message dialog.
+    User can select 'PASS' or 'FAIL', and in the latter case an additional
+    dialog is opened for defining the error message.
+
+    `message` is the instruction shown in the initial dialog and
+    `default_error` is the default value shown in the possible error message
+    dialog.
     """
     if not PassFailDialog(message).result:
         msg = get_value_from_user('Give error message:', default_error)
@@ -63,19 +68,19 @@ def execute_manual_step(message, default_error=''):
 
 
 def get_value_from_user(message, default_value=''):
-    """Pauses the test execution and asks user to input a value.
+    """Pauses test execution and asks user to input a value.
 
-    `message` is the instruction shown in the dialog. `default_value` is the
-    possible default value shown in the input field. Selecting 'Cancel' fails
-    the keyword.
+    `message` is the instruction shown in the dialog and `default_value` is
+    the possible default value shown in the input field. Selecting 'Cancel'
+    fails the keyword.
     """
     return _validate_user_input(InputDialog(message, default_value).result)
 
 
 def get_selection_from_user(message, *values):
-    """Pauses the test execution and asks user to select value
+    """Pauses test execution and asks user to select a value.
 
-    `message` is the instruction shown in the dialog. and `values` are
+    `message` is the instruction shown in the dialog and `values` are
     the options given to the user. Selecting 'Cancel' fails the keyword.
     """
     return _validate_user_input(SelectionDialog(message, values).result)
