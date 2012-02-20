@@ -61,3 +61,17 @@ class Matcher(object):
 
     def match(self, string):
         return self._regexp.match(self._normalize(string)) is not None
+
+
+class MultiMatcher(object):
+
+    def __init__(self, patterns=None, ignore=(), caseless=True, spaceless=True,
+                 match_if_no_patterns=True):
+        self._matchers = [Matcher(p, ignore, caseless, spaceless)
+                          for p in patterns or []]
+        self._match_if_no_patterns = match_if_no_patterns
+
+    def match(self, string):
+        if not self._matchers and self._match_if_no_patterns:
+            return True
+        return any(m.match(string) for m in self._matchers)

@@ -25,7 +25,7 @@ from .etreewrapper import ET, ETSource
 from .htmlutils import html_format, html_escape, html_attr_escape
 from .htmlwriter import HtmlWriter
 from .importer import Importer
-from .match import eq, matches, matches_any, Matcher
+from .match import eq, matches, matches_any, Matcher, MultiMatcher
 from .misc import plural_or_not, printable_name, seq2str, seq2str2, getdoc
 from .normalizing import normalize, normalize_tags, NormalizedDict
 from .robotenv import get_env_var, set_env_var, del_env_var, get_env_vars

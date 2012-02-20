@@ -1,5 +1,4 @@
 import unittest
-import sys
 
 from robot.utils.match import *
 
@@ -46,6 +45,24 @@ class TestMatch(unittest.TestCase):
         assert matcher.match('Foo')
         assert matcher.match('--Foo')
         assert not matcher.match('foo')
+
+
+class TestMultiMatcher(unittest.TestCase):
+
+    def test_match_pattern(self):
+        matcher = MultiMatcher(['xxx', 'f*'], ignore=['.', ':'])
+        assert matcher.match('xxx')
+        assert matcher.match('foo')
+        assert matcher.match('..::FOO::..')
+        assert not matcher.match('bar')
+
+    def test_match_when_no_patterns_by_default(self):
+        matcher = MultiMatcher([])
+        assert matcher.match('xxx')
+
+    def test_configure_no_match_when_no_patterns(self):
+        matcher = MultiMatcher(None, match_if_no_patterns=False)
+        assert not matcher.match('xxx')
 
 
 if __name__ == "__main__":
