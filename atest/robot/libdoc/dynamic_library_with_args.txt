@@ -1,5 +1,5 @@
 *** Settings ***
-Suite Setup       Run Libdoc And Parse Output    --argument required ${TESTDATADIR}/DynamicLibrary.py
+Suite Setup       Run Libdoc And Parse Output    ${TESTDATADIR}/DynamicLibrary.py::required
 Force Tags        regression    pybot    jybot
 Resource          libdoc_resource.txt
 

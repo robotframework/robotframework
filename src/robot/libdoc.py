@@ -25,7 +25,9 @@ The former is suitable for humans and the latter for RIDE and other tools.
 
 Documentation can be generated for both test libraries and resource files.
 All library and resource file types are supported, and also earlier generated
-XML documentation can be used as input.
+XML documentation can be used as input. If a library needs arguments, they
+must be given as part of the library name and separated by two colons, for
+example, like `LibraryName::arg1::arg2`.
 
 Options
 =======
@@ -48,8 +50,8 @@ Examples
 ========
 
   python -m robot.libdoc src/MyLib.py doc/MyLib.html
-  python -m robot.libdoc BuiltIn spec.xml
-  jython -m robot.libdoc --version 1.0 MyJavaLibrary.java MyJavaLibrary.html
+  jython -m robot.libdoc MyJavaLibrary.java MyJavaLibrary.html
+  python -m robot.libdoc --name MyLib Remote::10.0.0.42:8270 MyLib.xml
 
 Alternative execution
 =====================
@@ -84,9 +86,9 @@ class LibDoc(Application):
             raise DataError('Only two arguments allowed when writing output.')
         return options, arguments
 
-    def main(self, args, argument=None, name='', version='', format=None):
+    def main(self, args, name='', version='', format=None):
         lib_or_res, output = args[:2]
-        libdoc = LibraryDocumentation(lib_or_res, argument, name, version)
+        libdoc = LibraryDocumentation(lib_or_res, name, version)
         if ConsoleViewer.handles(output):
             ConsoleViewer(libdoc).view(output, *args[2:])
         else:
@@ -110,14 +112,14 @@ def libdoc_cli(args):
     """
     LibDoc().execute_cli(args)
 
-def libdoc(library_or_resource, output, arguments=None, name='', version='',
-           format=None):
+
+def libdoc(library_or_resource, output, name='', version='', format=None):
     """Executes libdoc.
 
     Arguments are same as command line options to libdoc.py.
 
     Example:
-        libdoc('MyLibrary.py', 'MyLibrary.html', arguments=['1st', '2nd'])
+        libdoc('MyLibrary.py', 'MyLibrary.html', version='1.0')
     """
     LibDoc().execute(library_or_resource, output, argument=arguments,
                      name=name, version=version, format=format)

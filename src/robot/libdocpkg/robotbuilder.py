@@ -24,9 +24,11 @@ from .model import LibraryDoc, KeywordDoc
 
 
 class LibraryDocBuilder(object):
+    _argument_separator = '::'
 
-    def build(self, library, arguments=None):
-        lib = TestLibrary(self._normalize_library_path(library), arguments)
+    def build(self, library):
+        name, args = self._split_library_name_and_args(library)
+        lib = TestLibrary(name, args)
         libdoc = LibraryDoc(name=lib.name,
                             doc=self._get_doc(lib),
                             version=lib.version,
@@ -35,6 +37,11 @@ class LibraryDocBuilder(object):
         libdoc.inits = self._get_initializers(lib)
         libdoc.keywords = KeywordDocBuilder().build_keywords(lib)
         return libdoc
+
+    def _split_library_name_and_args(self, library):
+        args = library.split(self._argument_separator)
+        name = args.pop(0)
+        return self._normalize_library_path(name), args
 
     def _normalize_library_path(self, library):
         path = library.replace('/', os.sep)
@@ -59,7 +66,7 @@ class LibraryDocBuilder(object):
 
 class ResourceDocBuilder(object):
 
-    def build(self, path, arguments=None):
+    def build(self, path):
         res = self._import_resource(path)
         libdoc = LibraryDoc(name=res.name, doc=self._get_doc(res),
                             type='resource', named_args=True)

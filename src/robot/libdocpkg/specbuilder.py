@@ -21,7 +21,7 @@ from .model import LibraryDoc, KeywordDoc
 
 class SpecDocBuilder(object):
 
-    def build(self, path, arguments=None):
+    def build(self, path):
         spec = self._parse_spec(path)
         libdoc = LibraryDoc(name=spec.get('name'),
                             type=spec.get('type'),
