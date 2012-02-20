@@ -11,7 +11,10 @@ List all keywords
     ...   Pause Execution
 
 List some keywords
-    Run Libdoc And Verify Output    ${TESTDATADIR}/resource.txt LIST KW? CURDIR
+    Run Libdoc And Verify Output    ${TESTDATADIR}/resource.txt list o
+    ...   Keyword with some "stuff" to <escape>
+    ...   non ascii doc
+    Run Libdoc And Verify Output    ${TESTDATADIR}/resource.txt LIST KW? C*R
     ...   curdir
     ...   kw 3
     ...   kw 4

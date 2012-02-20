@@ -16,7 +16,7 @@
 
 import textwrap
 
-from robot import utils
+from robot.utils import MultiMatcher, encode_output
 from robot.errors import DataError
 
 
@@ -24,6 +24,7 @@ class ConsoleViewer(object):
 
     def __init__(self, libdoc):
         self._libdoc = libdoc
+        self._keywords = KeywordMatcher(libdoc)
 
     @classmethod
     def handles(cls, method):
@@ -37,27 +38,23 @@ class ConsoleViewer(object):
         except TypeError:
             raise DataError("Wrong number of arguments to view '%s'." % method)
 
-    def list(self, *included):
-        for kw in KeywordMatcher(self._libdoc).list(included):
+    def list(self, *patterns):
+        for kw in self._keywords.search('*%s*' % p for p in patterns):
             self._console(kw.name)
 
-    def show(self, *included):
-        if not included or any(utils.eq('intro', inc) for inc in included):
+    def show(self, *names):
+        if MultiMatcher(names).match('intro'):
             self._show_intro(self._libdoc)
             if self._libdoc.inits:
                 self._show_inits(self._libdoc)
-        for kw in KeywordMatcher(self._libdoc).list(included):
+        for kw in self._keywords.search(names):
             self._show_keyword(kw)
-
-    def search(self, *patterns):
-        for kw in KeywordMatcher(self._libdoc).search(patterns):
-            self._console(kw.name)
 
     def version(self):
         self._console(self._libdoc.version or 'N/A')
 
     def _console(self, msg):
-        print utils.encode_output(msg)
+        print encode_output(msg)
 
     def _show_intro(self, lib):
         self._header(lib.name, underline='=')
@@ -103,16 +100,8 @@ class KeywordMatcher(object):
     def __init__(self, libdoc):
         self._keywords = libdoc.keywords
 
-    def list(self, patterns):
-        for kw in self._keywords:
-            if not patterns or self._matches(kw.name, patterns):
-                yield kw
-
-    def _matches(self, item, patterns):
-        return any(utils.matches(item, p) for p in patterns)
-
     def search(self, patterns):
-        patterns = ['*%s*' % p for p in patterns]
+        matcher = MultiMatcher(patterns)
         for kw in self._keywords:
-            if self._matches(kw.name, patterns) or self._matches(kw.doc, patterns):
+            if matcher.match(kw.name):
                 yield kw
