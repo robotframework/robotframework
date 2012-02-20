@@ -17,7 +17,9 @@ Run Libdoc And Set Output
 
 Run Libdoc And Parse Output
     [Arguments]    ${arguments}
-    Run Libdoc     ${arguments} ${OUTXML}
+    Remove File    ${OUTXML}
+    ${output}=    Run Libdoc     ${arguments} ${OUTXML}
+    Should Not Contain    ${output}    --help    Execution failed:\n\n${output}    no values
     Log File    ${OUTXML}
     ${LIBDOC}=    Parse Xml    ${OUTXML}
     Set Suite Variable    ${LIBDOC}
