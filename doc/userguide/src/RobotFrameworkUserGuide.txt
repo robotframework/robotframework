@@ -219,8 +219,6 @@ Appendices
 
 .. _HTML formatting: `Documentation formatting`_
 .. _command line options: `All command line options`_
-.. _libdoc.py: ../../tools/libdoc/doc/libdoc.html
-.. _libdoc: `libdoc.py`_
 .. _testdoc.py: ../../tools/testdoc/doc/testdoc.html
 .. _risto.py: ../../tools/ristopy/doc/ristopy.html
 .. _robotidy.py: ../../tools/robotidy/doc/robotidy.html
