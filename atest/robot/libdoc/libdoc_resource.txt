@@ -10,6 +10,11 @@ ${OUTXML}         ${OUTPREFIX}.xml
 ${OUTHTML}        ${OUTPREFIX}.html
 
 *** Keywords ***
+Run Libdoc And Set Output
+    [Arguments]    ${arguments}
+    ${OUTPUT}=    Run Libdoc    ${arguments}
+    Set Suite Variable    ${OUTPUT}
+
 Run Libdoc And Parse Output
     [Arguments]    ${arguments}
     Run Libdoc     ${arguments} ${OUTXML}

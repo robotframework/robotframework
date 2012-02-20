@@ -21,34 +21,69 @@ List some keywords
     ...   kw 5
 
 Show whole library
-    ${output}=    Run Libdoc    Dialogs show
-    Should Start With    ${output}    Dialogs\n=======\nVersion:
-    Should Contain    ${output}    Execute Manual Step\n----
-    Should Contain    ${output}    Get Selection From User\n----
-    Should Contain    ${output}    Get Value From User\n----
-    Should Contain    ${output}    Pause Execution\n----
+    Run Libdoc And Set Output    Dialogs show
+    Should Contain Intro    Dialogs    Version:
+    Should Contain Keyword    Execute Manual Step    message, default_error=
+    ...    Pauses test execution until user sets the keyword status.
+    Should Contain Keyword    Get Selection From User    message, *values
+    ...    Pauses test execution and asks user to select a value.
+    Should Contain Keyword    Get Value From User    message, default_value=
+    ...    Pauses test execution and asks user to input a value.
+    Should Contain Keyword    Pause Execution    message=Test execution paused. Press OK to continue.
+    ...   Pauses test execution until user clicks `Ok` button.
+    ...   ${EMPTY}
+    ...   `message` is the message shown in the dialog.
 
 Show intro only
-    ${output}=    Run Libdoc    Dialogs SHOW intro
-    Should Start With    ${output}    Dialogs\n=======\nVersion:
-    Should Not Contain    ${output}    Execute Manual Step\n----
-    Should Not Contain    ${output}    Get Selection From User\n----
-    Should Not Contain    ${output}    Get Value From User\n----
-    Should Not Contain    ${output}    Pause Execution\n----
+    ${output}=    Run Libdoc    Telnet SHOW intro
+    Should Contain Intro    Telnet    Version:
+    Should Contain Importing
+    ...    timeout=3.0, newline=CRLF, prompt=None, prompt_is_regexp=False
+    ...    Telnet library can be imported with optional arguments.
+    Should Not Contain Keyword    Open Connection
+    Should Not Contain Keyword    Write
 
 Show intro and keywords
     ${output}=    Run Libdoc    ${TESTDATADIR}/resource.txt SHOW NONASC* INTRO
-    Should Start With    ${output}    resource\n========\nNamed arguments:
-    ${expected} =    Catenate    SEPARATOR=\n
-    ...    non ascii doc
-    ...    -------------
-    ...    Arguments:${SPACE * 2}[]
-    ...    ${EMPTY}
+    Should Contain Intro    resource    Named arguments:${SPACE*2}supported
+    Should Contain Keyword    non ascii doc    ${EMPTY}
     ...    Hyvää yötä.
     ...    ${EMPTY}
     ...    Спасибо!
-    Should Contain    ${output}    ${expected}
 
 Show version
     Run Libdoc And Verify Output    ${TESTDATADIR}/module.py version    0.1-alpha
     Run Libdoc And Verify Output    ${TESTDATADIR}/resource.txt version    N/A
+
+*** Keywords ***
+Should Contain Intro
+    [Arguments]    ${name}    @{meta}
+    ${underline} =    Evaluate    '='*len('${name}')
+    ${expected} =    Catenate    SEPARATOR=\n
+    ...    ${name}
+    ...    ${underline}
+    ...    @{meta}
+    Should Contain    ${OUTPUT}    ${expected}
+
+Should Contain Keyword
+    [Arguments]    ${name}    ${args}    @{doc}
+    ${underline} =    Evaluate    '-'*len('${name}')
+    ${expected} =    Catenate    SEPARATOR=\n
+    ...    ${name}
+    ...    ${underline}
+    ...    Arguments:${SPACE * 2}[${args}]
+    ...    ${EMPTY}
+    ...    @{doc}
+    Should Contain    ${OUTPUT}    ${expected}
+
+Should Contain Importing
+    [Arguments]    ${args}    @{doc}
+    Should Contain Keyword    Importing    ${args}    @{doc}
+
+Should Not Contain Keyword
+    [Arguments]    ${name}
+    ${underline} =    Evaluate    '-'*len('${name}')
+    ${expected} =    Catenate    SEPARATOR=\n
+    ...    ${name}
+    ...    ${underline}
+    Should Not Contain    ${OUTPUT}    ${expected}
