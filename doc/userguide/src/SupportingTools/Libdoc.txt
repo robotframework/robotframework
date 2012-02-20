@@ -1,3 +1,5 @@
+.. _libdoc:
+
 Library documentation tool (:prog:`libdoc`)
 -------------------------------------------
 
@@ -7,31 +9,37 @@ suitable for humans and the latter for RIDE_ and other tools.
 
 Documentation can be created for:
 
-- Test libraries implemented with Python__ or Java__ using the normal
-  library API
-- Test libraries using the `dynamic API`__
-- `Resource files`_
+- test libraries implemented with Python__ or Java__ using the normal
+  static library API,
+- test libraries using the `dynamic API`__, including remote libraries, and
+- `resource files`_.
 
-Additionally it is possible to use XML documentation created earlier by
-`libdoc.py` or other tools as input.
+Additionally it is possible to use XML spec created by :prog:`libdoc`
+earlier as an input.
+
+:prog:`libdoc` is built-in into Robot Framework and automatically included
+in the installation starting from version 2.7. With earlier versions you
+need to download `libdoc.py script`__ separately. The command line usage
+has changed slightly between these versions but the documentation syntax
+is still the same.
 
 __ `Python libraries`_
 __ `Java libraries`_
 __ `Dynamic libraries`_
+__ http://code.google.com/p/robotframework/wiki/LibraryDocumentationTool
 
-:prog:`libdoc` is built-in into Robot Framework and automatically included
-in the installation starting from version 2.7.
-
+General usage
+~~~~~~~~~~~~~
 
 Synopsis
-~~~~~~~~
+''''''''
 
 ::
 
     python -m robot.libdoc [options] library_or_resource output_file
 
 Options
-~~~~~~~
+'''''''
 
   -f, --format <html|xml>  Specifies whether to generate HTML or XML output.
                            If this options is not used, the format is got
@@ -39,9 +47,8 @@ Options
   -N, --name <newname>     Sets the name of the documented library or resource.
   -V, --version <newversion>  Sets the version of the documented library or
                            resource.
-  -a, --argument <value>   Possible argument(s) that the documented library
-                           needs for initialization.
-  -P, --pythonpath <path>  Additional path(s) to insert into PYTHONPATH.
+  -P, --pythonpath <path>  Additional locations where to search for libraries
+                           and resources similarly as when `running tests`__.
   -E, --escape <what:with>  Escapes characters which are problematic in console.
                            :opt:`what` is the name of the character to escape
                            and :opt:`with` is the string to escape it with.
@@ -50,53 +57,58 @@ Options
   -h, --help               Prints this help.
 
 
-Specifying the library or resource file
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+__ `Using --pythonpath option`_
 
-It is possible to specify a Python test library by giving either the
-path to the source or only the library name. If the library name is
-used, it must be in the same format as in the Robot Framework test
-data when importing libraries. In this case, the library is searched
-from PYTHONPATH (and from CLASSPATH, if on Jython).
+Specifying library or resource file
+'''''''''''''''''''''''''''''''''''
+
+Python libraries and dynamic libraries with name or path
+````````````````````````````````````````````````````````
+
+When documenting libraries implemented with Python or that use the
+dynamic library API, it is possible to specify the library either by
+using just the library name or path to the library source code.
+In the former case the library is searched using the `library search path`_
+and its name must be in the same format as in Robot Framework test data.
+
+If these libraries require arguments when they are imported, the arguments
+must be catenated with the library name or path using two colons like
+:cli:`MyLibrary::arg1::arg2`. If arguments change what keywords the library
+provides or otherwise alter its documentation, it might be a good idea to use
+:opt:`--name` option to also change the library name accordingly.
+
+Java libraries with path
+````````````````````````
 
 A Java test library implemented with a normal library API can be
 specified by giving the path to the source code file containing the
 library implementation. Additionally, :path:`tools.jar`, which is part
-of the Sun JDK distribution, must be found from CLASSPATH when
-:prog:`libdoc.py` is executed. When generating documentation for Java
-libraries, :prog:`libdoc.py` must be executed using Jython.
+of the Java JDK distribution, must be found from CLASSPATH when
+:prog:`libdoc` is executed. Notice that generating documentation for Java
+libraries works only with Jython.
 
-Libraries using the dynamic library API are handled in the same way as
-Python libraries.
-
-Some libraries require arguments when they are imported and they can
-be given using :opt:`--argument` option. It can be used multiple times
-to specify multiple arguments. Libraries always get these arguments as
-strings. If arguments change what keywords the library provides or
-otherwise change its behavior, it might be a good idea to use
-:opt:`--name` option to also change the library name accordingly.
+Resource files with path
+````````````````````````
 
 Resource files must always be specified using a path. If the path does
 not exist, resource files are also searched from all directories in
-PYTHONPATH.
+PYTHONPATH similarly as when executing test cases.
 
 Examples
-~~~~~~~~
+''''''''
 ::
 
    python -m robot.libdoc OperatingSystem OperatingSystem.html
-   python -m robot.libdoc --argument arg1 --argument arg2 LibraryWithArgs.py spec.xml
-   python -m robot.libdoc --name MyLibrary --argument 10.0.0.42:8270 Remote.py Remote.html
+   python -m robot.libdoc --name MyLibrary Remote::http://10.0.0.42:8270 MyLibrary.html
    python -m robot.libdoc test/resource.html doc/resource_doc.html
-   python -m robot.libdoc --format xml src/MyLib.py output.txt
-   jython -m robot.libdoc MyJavaLibrary.java MyJavaLibrary.xml
+   jython -m robot.libdoc --version 1.0 MyJavaLibrary.java MyJavaLibrary.xml
 
 Alternative execution
-~~~~~~~~~~~~~~~~~~~~~
+'''''''''''''''''''''
 
 :prog:`libdoc` works with all supported interpreters, although creating
-documentation from java source files requires running :prog:`libdoc` with
-:prog:`jython`.
+documentation from Java source files requires running :prog:`libdoc` with
+Jython.
 
 In addition to executing :prog:`libdoc` as a module
 (:cli:`python -m robot.libdoc`), it is possible to execute it as a script::
@@ -126,14 +138,14 @@ describing as possible, but not too long.
 The simple example below illustrates how to write the documentation,
 and for example `standard libraries`_ give more
 realistic examples. For more information on Python documentation
-strings, see `PEP-257`_.
+strings, see `PEP-257`__.
 
 .. sourcecode:: python
 
     class ExampleLib:
         """Library for demo purposes.
 
-        This library is only used in an example and it does't do anything useful.
+        This library is only used in an example and it doesn't do anything useful.
         """
 
         def my_keyword(self):
@@ -153,6 +165,7 @@ strings, see `PEP-257`_.
           Python libraries, you must either use UTF-8 as your `source code
           encoding`__ or create docstrings as Unicode.
 
+__ http://www.python.org/dev/peps/pep-0257
 __ http://www.python.org/dev/peps/pep-0263
 
 Java libraries
@@ -160,7 +173,7 @@ Java libraries
 
 When writing documentation for a normal Java library, conventions for
 writing Javadoc should be used. The documentation is generated based
-on the Javadocs in the source files. For example following simple
+on the Javadocs in the source files. For example, the following simple
 example has exactly same documentation (and functionality) than the
 earlier Python example.
 
@@ -169,12 +182,12 @@ earlier Python example.
     /**
      * Library for demo purposes.
      *
-     * This library is only used in an example and it does't do anything useful.
+     * This library is only used in an example and it doesn't do anything useful.
      */
     public class ExampleLib {
 
         /**
-         * Does nothing
+         * Does nothing.
          */
         public void myKeyword() {
         }
@@ -209,9 +222,9 @@ Importing section
 
 A separate section about how the library is imported is created based on its
 initialization methods. For a Python library, if it has an  :code:`__init__`
-method that takes arguments in addition to :code:`self`, the documentation of
-that method is shown. For a Java library, if it has a constructor that accepts
-arguments, all its constructors and their javadocs are shown.
+method that takes arguments in addition to :code:`self`, its documentation and
+arguments are shown. For a Java library, if it has a public constructor that
+accepts arguments, all its public constructors are shown.
 
 .. sourcecode:: python
 
@@ -230,7 +243,7 @@ Resource file documentation
 
 Keywords in resource files can have documentation using
 :opt:`[Documentation]` setting, and this documentation is also used by
-:prog:`libdoc.py`. First line of the documentation (until the first
+:prog:`libdoc`. First line of the documentation (until the first
 :code:`\\n`) is considered to be the short documentation similarly as
 with test libraries.
 
@@ -242,13 +255,13 @@ Possible variables in resource files are not documented.
 .. table:: An example resource file
    :class: example
 
-   +---------------+-----------------------------------------+----------------------------------+
-   |    Setting    |                  Value                  |               Value              |
-   +===============+=========================================+==================================+
-   | Documentation | Resource file for demo purposes.\\n     |                                  |
-   +---------------+-----------------------------------------+----------------------------------+
-   | ...           | This resource is only used in an example| and it does't do anything useful.|
-   +---------------+-----------------------------------------+----------------------------------+
+   +---------------+-----------------------------------------+-----------------------------------+
+   |    Setting    |                  Value                  |               Value               |
+   +===============+=========================================+===================================+
+   | Documentation | Resource file for demo purposes.\\n     |                                   |
+   +---------------+-----------------------------------------+-----------------------------------+
+   | ...           | This resource is only used in an example| and it doesn't do anything useful.|
+   +---------------+-----------------------------------------+-----------------------------------+
 
 .. table::
    :class: example
@@ -272,24 +285,24 @@ Possible variables in resource files are not documented.
    +--------------+------------------+------------------------+-------------------------------+
 
 Documentation syntax
-~~~~~~~~~~~~~~~~~~~~
+''''''''''''''''''''
 
 Generic formatting rules
-''''''''''''''''''''''''
+````````````````````````
 
-Most important features of `documentation formatting`_ are formatting using
+The documentation is generated according to Robot Framework's `documentation
+formatting`_ rules. Most important features of are formatting using
 :code:`*bold*` and :code:`_italic_`, automatic conversion of URLs to
-clickable links, and the possibility to create tables and blocks (useful for
-examples) simply with pipe character.
+clickable links, and the possibility to create tables and pre-formatted blocks
+(useful for examples) simply with pipe character.
 
 Special formatting and internal linking
-'''''''''''''''''''''''''''''''''''''''
+```````````````````````````````````````
 
-In addition to the formatting explained in the specific section,
-:prog:`libdoc.py` supports also special formatting of keyword names
+:prog:`libdoc` supports also special formatting of keyword names
 and arguments with backtick character :code:`\``. Even more
 importantly, this syntax also automatically creates internal links to
-other keywords in the library. For example documentation of the
+other keywords in the library. For example, documentation of the
 following simple Python library would have link from :name:`Log
 Messages` to :name:`Log Message`, and :code:`\`message\`` and
 :code:`\`level\`` would be formatted specially.
@@ -313,8 +326,8 @@ Messages` to :name:`Log Message`, and :code:`\`message\`` and
        log_message(message1, level)
        log_message(message2, level)
 
-Additionally, using :code:`\`introduction\`` or :code:`\`library introduction\``
-(case insensitive) generates a link to the library introduction in the beginning
+Additionally, using :code:`\`introduction\`` or :code:`\`library introduction\``,
+case insensitively, generates a link to the library introduction in the beginning
 of the generated documentation. Similarly :code:`\`importing\``
 or :code:`\`library importing\`` generates a link to the `importing section`_.
 
@@ -323,16 +336,10 @@ libraries`_, so their documentation (and source) acts as a more
 realistic example.
 
 Keywords' arguments
-'''''''''''''''''''
+```````````````````
 
-:prog:`libdoc.py` handles keywords' arguments automatically so that
+:prog:`libdoc` handles keywords' arguments automatically so that
 arguments specified for methods in libraries or user keywords in
-resource files are listed in a separate column. Possible trailing
-underscores in argument names are stripped to make it possible to use
-arguments like :code:`list_` in the code and still have :code:`list`
-in documentation. Additionally, user keyword arguments are shown
-without :var:`${}` or :var:`@{}` to make arguments look the same
-regardless where keywords originated from.
-
-
-.. _PEP-257: http://www.python.org/dev/peps/pep-0257
+resource files are listed in a separate column. User keyword arguments
+are shown without :var:`${}` or :var:`@{}` to make arguments look
+the same regardless where keywords originated from.
