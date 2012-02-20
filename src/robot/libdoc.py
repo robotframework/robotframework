@@ -18,14 +18,14 @@ USAGE = """robot.libdoc -- Robot Framework library documentation generator
 
 Version:  <VERSION>
 
-Usage:  libdoc.py [options] library_or_resource output_file
+Usage:  python -m robot.libdoc [options] library_or_resource output_file
 
-This tool can generate keyword documentation in HTML and XML formats. The
-former is suitable for humans and the latter for RIDE and other tools.
+Libdoc tool can generate keyword documentation in HTML and XML formats.
+The former is suitable for humans and the latter for RIDE and other tools.
 
 Documentation can be generated for both test libraries and resource files.
-All library and resource file types are supported, and also documentation
-generated earlier in XML format can be used as input.
+All library and resource file types are supported, and also earlier generated
+XML documentation can be used as input.
 
 Options
 =======
@@ -36,9 +36,8 @@ Options
  -n --name newname        Sets the name of the documented library or resource.
  -v --version newversion  Sets the version of the documented library or
                           resource.
- -a --argument value *    Possible argument(s) that the documented library
-                          needs for initialization.
- -P --pythonpath path *   Additional path(s) to insert into PYTHONPATH.
+ -P --pythonpath path *   Additional locations where to search for libraries
+                          and resources.
  -E --escape what:with *  Escapes characters which are problematic in console.
                           'what' is the name of the character to escape and
                           'with' is the string to escape it with.
@@ -50,18 +49,17 @@ Examples
 
   python -m robot.libdoc src/MyLib.py doc/MyLib.html
   python -m robot.libdoc BuiltIn spec.xml
-  jython -m robot.libdoc  MyJavaLibrary.java MyJavaLibrary.html
-  python -m robot.libdoc --format xml test/resource.html myoutfile
+  jython -m robot.libdoc --version 1.0 MyJavaLibrary.java MyJavaLibrary.html
 
 Alternative execution
 =====================
 
-Libdoc works with all interpretes supported by Robot Framework (Python,
+Libdoc works with all interpreters supported by Robot Framework (Python,
 Jython and IronPython). In the examples above libdoc is executed as an
 installed module, but it can also be executed as a script like
 `python path/robot/libdoc.py`.
 
-For more information see the Robot Framework user guide at
+For more information see libdoc section in Robot Framework User Guide at
 http://code.google.com/p/robotframework/wiki/UserGuide
 """
 
