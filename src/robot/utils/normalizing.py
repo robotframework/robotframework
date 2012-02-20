@@ -19,7 +19,7 @@ from UserDict import UserDict
 _WHITESPACE_REGEXP = re.compile('\s+')
 
 
-def normalize(string, ignore=[], caseless=True, spaceless=True):
+def normalize(string, ignore=(), caseless=True, spaceless=True):
     """Normalizes given string according to given spec.
 
     By default string is turned to lower case and all whitespace is removed.

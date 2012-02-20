@@ -15,23 +15,23 @@
 import re
 from functools import partial
 
-from normalizing import normalize
+from .normalizing import normalize
 
 
-def eq(str1, str2, ignore=[], caseless=True, spaceless=True):
+def eq(str1, str2, ignore=(), caseless=True, spaceless=True):
     str1 = normalize(str1, ignore, caseless, spaceless)
     str2 = normalize(str2, ignore, caseless, spaceless)
     return str1 == str2
 
 
-def matches(string, pattern, ignore=[], caseless=True, spaceless=True):
+def matches(string, pattern, ignore=(), caseless=True, spaceless=True):
     return Matcher(pattern, ignore, caseless, spaceless).match(string)
 
 
 # TODO: matches_any should be removed and any(utils.match(...) for p in patterns)
 # used instead. Currently mainly used in robot.common.model and can be removed
 # after that module is nuked.
-def matches_any(string, patterns, ignore=[], caseless=True, spaceless=True):
+def matches_any(string, patterns, ignore=(), caseless=True, spaceless=True):
     for pattern in patterns:
         if matches(string, pattern, ignore, caseless, spaceless):
             return True
@@ -42,7 +42,7 @@ class Matcher(object):
     _match_pattern_tokenizer = re.compile('(\*|\?)')
     _wildcards = {'*': '.*', '?': '.'}
 
-    def __init__(self, pattern, ignore=[], caseless=True, spaceless=True):
+    def __init__(self, pattern, ignore=(), caseless=True, spaceless=True):
         self.pattern = pattern
         self._normalize = partial(normalize, ignore=ignore, caseless=caseless,
                                   spaceless=spaceless)
