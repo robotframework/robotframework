@@ -18,16 +18,18 @@ USAGE = """robot.libdoc -- Robot Framework library documentation generator
 
 Version:  <VERSION>
 
-Usage:  python -m robot.libdoc [options] library_or_resource output_file
+Usage:  python -m robot.libdoc [options] library output_file
+   or:  python -m robot.libdoc [options] library list|show|version [names]
 
-Libdoc tool can generate keyword documentation in HTML and XML formats.
-The former is suitable for humans and the latter for RIDE and other tools.
+Libdoc tool can generate keyword documentation in HTML and XML formats both
+for test libraries and resource files. HTML format is suitable for humans and
+XML specs for RIDE and other tools. Libdoc also has few special commands to
+show library or resource information on the console.
 
-Documentation can be generated for both test libraries and resource files.
-All library and resource file types are supported, and also earlier generated
-XML documentation can be used as input. If a library needs arguments, they
-must be given as part of the library name and separated by two colons, for
-example, like `LibraryName::arg1::arg2`.
+Libdoc supports all library and resource types and also earlier generated XML
+specs can be used as input. If a library needs arguments, they must be given
+as part of the library name and separated by two colons, for example, like
+`LibraryName::arg1::arg2`.
 
 Options
 =======
@@ -46,12 +48,47 @@ Options
                           <-------------------ESCAPES------------------------>
  -h -? --help             Print this help.
 
-Examples
-========
+Creating documentation
+======================
+
+When creating documentation in HTML or XML format, the output file must
+be specified as a second argument after the library/resource name or path.
+Output format is got automatically from the extension but can also be set
+with `--format` option.
+
+Examples:
 
   python -m robot.libdoc src/MyLib.py doc/MyLib.html
   jython -m robot.libdoc MyJavaLibrary.java MyJavaLibrary.html
   python -m robot.libdoc --name MyLib Remote::10.0.0.42:8270 MyLib.xml
+
+Viewing information on console
+==============================
+
+Libdoc has three special commands to show information on the console. These
+commands are used instead of the name of the output file, and they can also
+take additional arguments.
+
+list:    List names of the keywords the library/resource contains. Can be
+         limited to show only certain keywords by passing optional patterns
+         as arguments. Keyword is listed if its name contains any pattern.
+show:    Show library/resource documentation. Can be limited to show only
+         certain keywords by passing names as arguments. Keyword is shown if
+         its name matches any given name. Special argument `intro` will show
+         only the library introduction and importing sections.
+version: Show library version
+
+Optional patterns given to `list` and `show` are case and space insensitive.
+Both also accept `*` and `?` wildcards.
+
+Examples:
+
+  python -m robot.libdoc Dialogs list
+  python -m robot.libdoc Selenium2Library list browser
+  python -m robot.libdoc Remote::10.0.0.42:8270 show
+  python -m robot.libdoc Dialogs show PauseExecution execute*
+  python -m robot.libdoc Selenium2Library show intro
+  python -m robot.libdoc Selenium2Library version
 
 Alternative execution
 =====================
