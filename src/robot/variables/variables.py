@@ -13,12 +13,13 @@
 #  limitations under the License.
 
 import re
-import os
+import inspect
+from functools import partial
 from UserDict import UserDict
-if os.name == 'java':
+try:
     from java.lang.System import getProperty as getJavaSystemProperty
     from java.util import Map
-else:
+except ImportError:
     getJavaSystemProperty = lambda name: None
     class Map: pass
 
@@ -26,8 +27,8 @@ from robot import utils
 from robot.errors import DataError
 from robot.output import LOGGER
 
-from isvar import is_var, is_scalar_var
-from variablesplitter import VariableSplitter
+from .isvar import is_var, is_scalar_var
+from .variablesplitter import VariableSplitter
 
 
 class Variables(utils.NormalizedDict):
@@ -48,7 +49,8 @@ class Variables(utils.NormalizedDict):
     def __init__(self, identifiers=('$','@','%','&','*')):
         utils.NormalizedDict.__init__(self, ignore=['_'])
         self._identifiers = identifiers
-        self._importer = utils.Importer('variable file')
+        importer = utils.Importer('variable file').import_class_or_module_by_path
+        self._import_variable_file = partial(importer, instantiate_with_args=())
 
     def __setitem__(self, name, value):
         self._validate_var_name(name)
@@ -229,10 +231,9 @@ class Variables(utils.NormalizedDict):
 
     def set_from_file(self, path, args=None, overwrite=False):
         LOGGER.info("Importing variable file '%s' with args %s" % (path, args))
-        args = args or []
-        module = self._importer.import_class_or_module_by_path(path)
+        var_file = self._import_variable_file(path)
         try:
-            variables = self._get_variables_from_module(module, args)
+            variables = self._get_variables_from_var_file(var_file, args)
             self._set_from_file(variables, overwrite, path)
         except:
             amsg = 'with arguments %s ' % utils.seq2str2(args) if args else ''
@@ -297,19 +298,17 @@ class Variables(utils.NormalizedDict):
         LOGGER.warn(msg + '.')
         return self.replace_list(value)
 
-    def _get_variables_from_module(self, module, args):
-        variables = self._get_dynamical_variables(module, args)
+    def _get_variables_from_var_file(self, var_file, args):
+        variables = self._get_dynamical_variables(var_file, args or ())
         if variables is not None:
             return variables
-        names = [attr for attr in dir(module) if not attr.startswith('_')]
-        if hasattr(module, '__all__'):
-            names = [name for name in names if name in module.__all__]
-        return [(name, getattr(module, name)) for name in names]
+        names = self._get_static_variable_names(var_file)
+        return self._get_static_variables(var_file, names)
 
-    def _get_dynamical_variables(self, module, args):
-        get_variables = getattr(module, 'get_variables', None)
+    def _get_dynamical_variables(self, var_file, args):
+        get_variables = getattr(var_file, 'get_variables', None)
         if not get_variables:
-            get_variables = getattr(module, 'getVariables', None)
+            get_variables = getattr(var_file, 'getVariables', None)
         if not get_variables:
             return None
         variables = get_variables(*args)
@@ -319,6 +318,18 @@ class Variables(utils.NormalizedDict):
             return [(entry.key, entry.value) for entry in variables.entrySet()]
         raise DataError("Expected mapping but %s returned %s."
                          % (get_variables.__name__, type(variables).__name__))
+
+    def _get_static_variable_names(self, var_file):
+        names = [attr for attr in dir(var_file) if not attr.startswith('_')]
+        if hasattr(var_file, '__all__'):
+            names = [name for name in names if name in var_file.__all__]
+        return names
+
+    def _get_static_variables(self, var_file, names):
+        variables = [(name, getattr(var_file, name)) for name in names]
+        if not inspect.ismodule(var_file):
+            variables = [var for var in variables if not callable(var[1])]
+        return variables
 
     def has_key(self, key):
         try:
