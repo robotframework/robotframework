@@ -63,7 +63,6 @@ table.errors td.time {
 }
 td.level {
     width: 5em;
-    font-weight: bold;
     text-align: center;
 }
 td.msg {
