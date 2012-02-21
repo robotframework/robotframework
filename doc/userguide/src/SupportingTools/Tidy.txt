@@ -46,24 +46,22 @@ Options
 Alternative execution
 '''''''''''''''''''''
 
-:prog:`tidy` is used only with Python in the synopsis and examples above,
-but it works also with Jython and IronPython.
+Although :prog:`tidy` is used only with Python in the synopsis above, it works
+also with Jython and IronPython. In the synopsis :prog:`tidy` is executed as
+an installed module (:cli:`python -m robot.tidy`), but it can be run also as
+a script::
 
-In addition to executing :prog:`tidy` as a module (:cli:`python -m robot.tidy`),
-it is possible to execute it as a script::
+    python path/robot/tidy.py [options] arguments
 
-    python path/robot/tidy.py [options] inputfile
-
-This is useful if you have done a `manual installation`_ of the framework
-and just have the :path:`robot` directory with the source code somewhere
-in your system.
+Executing as a script can be useful if you have done `manual installation`_
+or otherwise just have the :path:`robot` directory with the source code
+somewhere in your system.
 
 Output encoding
 '''''''''''''''
 
 All output files are written using UTF-8 encoding. Outputs written to the
 console use the current console encoding.
-
 
 Cleaning up the test data
 ~~~~~~~~~~~~~~~~~~~~~~~~~
