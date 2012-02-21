@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-
 #  Copyright 2008-2012 Nokia Siemens Networks Oyj
 #
 #  Licensed under the Apache License, Version 2.0 (the "License");
