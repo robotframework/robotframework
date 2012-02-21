@@ -120,10 +120,11 @@ class _Importer(object):
             try:
                 return __import__(name, fromlist=fromlist)
             except ImportError:
-                # Hack to support standalone Jython:
+                # Hack to support standalone Jython. For more information, see:
                 # http://code.google.com/p/robotframework/issues/detail?id=515
+                # http://bugs.jython.org/issue1778514
                 if fromlist and retry and sys.platform.startswith('java'):
-                    __import__(name)
+                    __import__('%s.%s' % (name, fromlist[0]))
                     return self._import(name, fromlist, retry=False)
                 raise
         except:
@@ -224,7 +225,7 @@ class DottedImporter(_Importer):
 
     def import_(self, name):
         parent_name, lib_name = name.rsplit('.', 1)
-        parent = self._import(parent_name, [str(lib_name)])
+        parent = self._import(parent_name, fromlist=[str(lib_name)])
         try:
             imported = getattr(parent, lib_name)
         except AttributeError:
