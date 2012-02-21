@@ -70,16 +70,16 @@ commands are used instead of the name of the output file, and they can also
 take additional arguments.
 
 list:    List names of the keywords the library/resource contains. Can be
-         limited to show only certain keywords by passing optional patterns
-         as arguments. Keyword is listed if its name contains any pattern.
+         limited to show only certain keywords by passing optional patterns as
+         arguments. Keyword is listed if its name contains any given pattern.
 show:    Show library/resource documentation. Can be limited to show only
          certain keywords by passing names as arguments. Keyword is shown if
          its name matches any given name. Special argument `intro` will show
-         only the library introduction and importing sections.
+         the library introduction and importing sections.
 version: Show library version
 
 Optional patterns given to `list` and `show` are case and space insensitive.
-Both also accept `*` and `?` wildcards.
+Both also accept `*` and `?` as wildcards.
 
 Examples:
 

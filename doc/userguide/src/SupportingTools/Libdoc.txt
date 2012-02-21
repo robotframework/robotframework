@@ -4,8 +4,9 @@ Library documentation tool (:prog:`libdoc`)
 -------------------------------------------
 
 :prog:`libdoc` is a tool for generating keyword documentation for test
-libraries and resource files in HTML and XML formats.The former format is
-suitable for humans and the latter for RIDE_ and other tools.
+libraries and resource files in HTML and XML formats. The former format is
+suitable for humans and the latter for RIDE_ and other tools. Libdoc also
+has few special commands to show library or resource information on the console.
 
 Documentation can be created for:
 
@@ -37,6 +38,7 @@ Synopsis
 ::
 
     python -m robot.libdoc [options] library_or_resource output_file
+    python -m robot.libdoc [options] library_or_resource list|show|version [names]
 
 Options
 '''''''
@@ -94,30 +96,66 @@ Resource files must always be specified using a path. If the path does
 not exist, resource files are also searched from all directories in
 PYTHONPATH similarly as when executing test cases.
 
-Examples
-''''''''
-::
+
+Creating documentation
+''''''''''''''''''''''
+
+When creating documentation in HTML or XML format, the output file must
+be specified as a second argument after the library/resource name or path.
+Output format is got automatically from the extension but can also be set
+with :opt:`--format` option.
+
+Examples::
 
    python -m robot.libdoc OperatingSystem OperatingSystem.html
    python -m robot.libdoc --name MyLibrary Remote::http://10.0.0.42:8270 MyLibrary.html
    python -m robot.libdoc test/resource.html doc/resource_doc.html
    jython -m robot.libdoc --version 1.0 MyJavaLibrary.java MyJavaLibrary.xml
 
+Viewing information on console
+''''''''''''''''''''''''''''''
+
+:prog:`libdoc` has three special commands to show information on the console.
+These commands are used instead of the name of the output file, and they can
+also take additional arguments.
+
+:opt:`list`
+    List names of the keywords the library/resource contains. Can be
+    limited to show only certain keywords by passing optional patterns
+    as arguments. Keyword is listed if its name contains given pattern.
+:opt:`show`
+    Show library/resource documentation. Can be limited to show only
+    certain keywords by passing names as arguments. Keyword is shown if
+    its name matches any given name. Special argument :opt:`intro` will show
+    only the library introduction and importing sections.
+:opt:`version`
+    Show library version
+
+Optional patterns given to :opt:`list` and :opt:`show` are case and space
+insensitive. Both also accept :opt:`*` and :opt:`?` as wildcards.
+
+Examples::
+
+  python -m robot.libdoc Dialogs list
+  python -m robot.libdoc Selenium2Library list browser
+  python -m robot.libdoc Remote::10.0.0.42:8270 show
+  python -m robot.libdoc Dialogs show PauseExecution execute*
+  python -m robot.libdoc Selenium2Library show intro
+  python -m robot.libdoc Selenium2Library version
+
 Alternative execution
 '''''''''''''''''''''
 
-:prog:`libdoc` works with all supported interpreters, although creating
-documentation from Java source files requires running :prog:`libdoc` with
-Jython.
+Although :prog:`libdoc` is used only with Python in the synopsis above, it works
+also with Jython and IronPython. When documenting Java libraries, Jython is
+actually required. In the synopsis :prog:`libdoc` is executed as an installed
+module (:cli:`python -m robot.libdoc`), but it can be run also as a script::
 
-In addition to executing :prog:`libdoc` as a module
-(:cli:`python -m robot.libdoc`), it is possible to execute it as a script::
+    python path/robot/libdoc.py [options] arguments
 
-    python path/robot/libdoc.py [options] inputfile
-
-This is useful if you have done a `manual installation`_ of the framework
-and just have the :path:`robot` directory with the source code somewhere
-in your system.
+Executing as a script can be useful if you have done `manual installation`_
+or otherwise just have the :path:`robot` directory with the source code
+somewhere in your system.
 
 Writing documentation
 ~~~~~~~~~~~~~~~~~~~~~
