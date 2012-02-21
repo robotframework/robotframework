@@ -13,9 +13,9 @@ enable creating variables dynamically. Their flexibility comes from
 the fact that they are created using Python code, which also makes
 them somewhat more complicated than `Variable tables`_.
 
-.. contents:: 
+.. contents::
    :depth: 2
-   :local: 
+   :local:
 
 Resource files
 ~~~~~~~~~~~~~~
@@ -78,7 +78,7 @@ Documenting resource files
 Keywords created in a resource file can be documented__ using
 :opt:`[Documentation]` setting. Starting from Robot Framework 2.1 also
 the resource file itself can have :opt:`Documentation` in the Setting
-table similarly as `test suites`__. 
+table similarly as `test suites`__.
 
 Both `libdoc`_ and `RIDE`_ use these documentations, and they
 are naturally available for anyone opening resource files.  The
@@ -92,7 +92,7 @@ __ `Test suite name and documentation`_
 Example resource file
 '''''''''''''''''''''
 
-.. table:: 
+.. table::
    :class: example
 
    =============  ========================  =======  =======
@@ -115,7 +115,7 @@ Example resource file
    ${BROWSER}      Firefox
    ==============  ============================  =======  =======
 
-.. table:: 
+.. table::
    :class: example
 
    ===============  ===============  ==============  ==============  ========
@@ -135,14 +135,13 @@ Example resource file
 Variable files
 ~~~~~~~~~~~~~~
 
-Variable files contain variables_ that can be used in test
+Variable files contain variables_ that can be used in the test
 data. Variables can also be created using variable tables or set from
 the command line, but variable files allow creating them dynamically
 and their variables can contain any objects.
 
-Variable files are created using the Python_ code, and technically they are
-Python modules. There are two different possibilities for creating
-variables:
+Variable files are typically implemented as Python modules and there are
+two different approaches for creating variables:
 
 `Creating variables directly`_
    Variables are specified as module attributes. In simple cases, the
@@ -151,10 +150,15 @@ variables:
    :var:`${MY_VAR}` with the specified text as the value.
 
 `Getting variables from a special function`_
-   Alternatively, variable files can have a special :code:`get_variables`
-   (or :code:`getVariables`) method that returns variables as either a Python dictionary or a Java Map. 
-   This method can even take arguments, which makes this
-   approach quite flexible.
+   Variable files can have a special :code:`get_variables`
+   (or :code:`getVariables`) method that returns variables as a mapping.
+   Because the method can take arguments this approach is very flexible.
+
+Alternatively variable files can be implemented as `Python or Java classes`__
+that the framework will instantiate. Also in this case it is possible to create
+variables as attributes or get them from a special method.
+
+__ `Implementing variable file as Python or Java class`_
 
 Taking variable files into use
 ''''''''''''''''''''''''''''''
@@ -237,7 +241,7 @@ variables and attributes.
    NUMBERS = [1, INTEGER, 3.14]
 
 In the example above, variables :var:`${VARIABLE}`,
-:var:`${ANOTHER_VARIABLE}`, and so on, are created. The first two
+:var:`${ANOTHER VARIABLE}`, and so on, are created. The first two
 variables are strings, the third one is an integer and the last two are lists.
 All these variables are `scalar variables`_, even the ones containing
 lists as values. To create `list variables`_, the variable name must
@@ -272,7 +276,7 @@ Using objects as values
 Variables in variable files are not limited to having only strings or
 other base types as values like variable tables. Instead, their
 variables can contain any objects. In the example below, the variable
-:var:`${MAPPING}` contains a Java hashtable with two values (this
+:var:`${MAPPING}` contains a Java Hashtable with two values (this
 example works only when running tests on Jython).
 
 .. sourcecode:: python
@@ -290,7 +294,7 @@ the same file.
 .. sourcecode:: python
 
     MAPPING = {'one': 1, 'two': 2}
-    
+
     class MyObject:
         def __init__(self, name):
             self.name = name
@@ -390,27 +394,26 @@ as variables.
 Getting variables from a special function
 '''''''''''''''''''''''''''''''''''''''''
 
-An alternative syntax for getting variables is having a special
+An alternative approach for getting variables is having a special
 :code:`get_variables` function (also camelCase syntax
-:code:`getVariables` is possible) in the variable file. In this case,
-Robot Framework calls that function and it returns variables as a
-Python dictionary or its subclass or a Java :code:`Map`, with variable names as keys
-and variable values as values. (Note: Prior to Robot Framework 2.5 only 
-Python dictionaries were supported.) Variables are considered to be scalars,
+:code:`getVariables` is possible) in a variable file. If such a function
+exists, Robot Framework calls it and expects to receive variables as
+a Python dictionary or a Java :code:`Map` with variable names as keys
+and variable values as values. Variables are considered to be scalars,
 unless prefixed with :code:`LIST__`, and values can contain
-anything. The example below is identical to the first examples of
-`creating variables directly`_.
+anything. The example below is functionally identical to the first examples of
+`creating variables directly`_ above.
 
-.. sourcecode:: python 
+.. sourcecode:: python
 
     def get_variables():
-        variables = { "VARIABLE ": "An example string",
-                      "ANOTHER_VARIABLE": "This is pretty easy!",
-                      "INTEGER": 42,
-                      "STRINGS": ["one", "two", "kolme", "four"],
-                      "NUMBERS": [1, 42, 3.14],
-                      "LIST__STRINGS": ["list", "of", "strings"],
-                      "LIST__MIXED": ["first value", -1.1, None, True] }
+        variables = {"VARIABLE ": "An example string",
+                     "ANOTHER_VARIABLE": "This is pretty easy!",
+                     "INTEGER": 42,
+                     "STRINGS": ["one", "two", "kolme", "four"],
+                     "NUMBERS": [1, 42, 3.14],
+                     "LIST__STRINGS": ["list", "of", "strings"],
+                     "LIST__MIXED": ["first value", -1.1, None, True]}
         return variables
 
 
@@ -425,13 +428,13 @@ The dummy example below shows how to use arguments with variable files. In a
 more realistic example, the argument could be a path to an external text file
 or database where to read variables from.
 
-.. sourcecode:: python 
+.. sourcecode:: python
 
-    variables1 = { 'scalar': 'Scalar variable', 
-                   'LIST__list': ['List','variable'] }
-    variables2 = { 'scalar' : 'Some other value',
-                   'LIST__list': ['Some','other','value'],
-                   'extra': 'variables1 does not have this at all' }
+    variables1 = {'scalar': 'Scalar variable',
+                  'LIST__list': ['List','variable']}
+    variables2 = {'scalar' : 'Some other value',
+                  'LIST__list': ['Some','other','value'],
+                  'extra': 'variables1 does not have this at all'}
 
     def get_variables(arg):
         if arg == 'one':
@@ -439,7 +442,84 @@ or database where to read variables from.
         else:
             return variables2
 
-The most notable benefit of using :code:`get_variables` instead of
-defining variables directly as global attributes of the variable file
-is the ability to use arguments. On the other hand, the main drawback
-is that this approach always requires some actual programming.
+Implementing variable file as Python or Java class
+''''''''''''''''''''''''''''''''''''''''''''''''''
+
+Starting from Robot Framework 2.7, it is possible to implement variables files
+as Python or Java classes.
+
+Implementation
+``````````````
+
+Because variable files are always imported using a file system path, creating
+them as classes has some restrictions:
+
+  - Python classes must have the same name as the module they are located.
+  - Java classes must live in the default package.
+  - Paths to Java classes must end with either :path:`.java` or :path:`.class`.
+    The class file must exists in both cases.
+
+Regardless the implementation language, the framework will create an instance
+of the class using no arguments and variables will be get from the instance.
+Similarly as with modules, variables can be defined as attributes directly
+in the instance or got from a special :code:`get_variables`
+(or :code:`getVariables`) method.
+
+When variables are defined directly in an instance, all attributes containing
+callable values are ignored to avoid creating variables from possible methods
+the instance has. If you would actually need callable variables, you need
+to use other approaches to create variable files.
+
+Examples
+````````
+
+The first examples create variables from attributes using both Python and Java.
+Both of them create variables :var:`${VARIABLE}` and :var:`@{LIST}` from class
+attributes and :var:`${ANOTHER VARIABLE}` from an instance attribute.
+
+.. sourcecode:: python
+
+    class StaticPythonExample(object):
+        variable = 'value'
+        LIST__list = [1, 2, 3]
+        _not_variable = 'starts with an underscore'
+
+        def __init__(self):
+            self.another_variable = 'another value'
+
+.. sourcecode:: java
+
+    public class StaticJavaExample {
+        public static String variable = "value";
+        public static String[] LIST__list = {1, 2, 3};
+        private String notVariable = "is private";
+        public String anotherVariable;
+
+        public StaticJavaExample(String arg1, String arg2) {
+            anotherVariable = "another value";
+        }
+    }
+
+The second examples utilize dynamic approach for getting variables. Both of
+them create only one variable :var:`${DYNAMIC VARIABLE}`.
+
+.. sourcecode:: python
+
+    class DynamicPythonExample(object):
+
+        def get_variables(self, *args):
+            return {'dynamic variable': ' '.join(args)}
+
+.. sourcecode:: java
+
+    import java.util.Map;
+    import java.util.HashMap;
+
+    public class DynamicJavaExample {
+
+        public Map<String, String> getVariables(String arg1, String arg2) {
+            HashMap<String, String> variables = new HashMap<String, String>();
+            variables.put("dynamic variable", arg1 + " " + arg2);
+            return variables;
+        }
+    }
