@@ -418,5 +418,46 @@ class TestSplitPathToModule(unittest.TestCase):
         self._verify('hello'+os.sep, 'hello')
 
 
+class TestInstantiation(unittest.TestCase):
+
+    def setUp(self):
+        self.tearDown()
+
+    def tearDown(self):
+        if exists(TESTDIR):
+            shutil.rmtree(TESTDIR)
+
+    def test_when_importing_by_name(self):
+        from ExampleLibrary import ExampleLibrary
+        lib = Importer().import_class_or_module('ExampleLibrary',
+                                                instantiate_with_args=())
+        assert_true(not inspect.isclass(lib))
+        assert_true(isinstance(lib, ExampleLibrary))
+
+    def test_with_arguments(self):
+        lib = Importer().import_class_or_module('libswithargs.Mixed', range(5))
+        assert_equals(lib.get_args(), (0, 1, '2 3 4'))
+
+    def test_when_importing_by_path(self):
+        path = create_temp_file('args.py', extra_content='class args: a=1')
+        lib = Importer().import_class_or_module_by_path(path, ())
+        assert_true(not inspect.isclass(lib))
+        assert_equals(lib.__class__.__name__, 'args')
+        assert_equals(lib.a, 1)
+
+    def test_instantiate_failure(self):
+        err = assert_raises(DataError, Importer().import_class_or_module,
+                            'ExampleLibrary', ['accepts', 'no', 'args'])
+        assert_true(unicode(err).startswith("Importing 'ExampleLibrary' failed: "
+                                            "Creating instance failed: TypeError:"))
+
+    def test_modules_do_not_take_arguments(self):
+        path = create_temp_file('no_args_allowed.py')
+        assert_raises_with_msg(DataError,
+                               "Importing '%s' failed: Modules do not take arguments." % path,
+                               Importer().import_class_or_module_by_path,
+                               path, ['invalid'])
+
+
 if __name__ == '__main__':
     unittest.main()
