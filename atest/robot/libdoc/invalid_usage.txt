@@ -16,7 +16,7 @@ Too many arguments when creating output
     MyLib out.xml extra      Only two arguments allowed when writing output.
 
 Too many arguments with version
-    Dialogs version extra    Wrong number of arguments to view 'version'.
+    Dialogs version extra    Command 'version' does not take arguments.
 
 Invalid option
     --invalid         option --invalid not recognized

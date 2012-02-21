@@ -82,7 +82,9 @@ class LibDoc(Application):
         Application.__init__(self, USAGE, arg_limits=(2,), auto_version=False)
 
     def validate(self, options, arguments):
-        if len(arguments) > 2 and not ConsoleViewer.handles(arguments[1]):
+        if ConsoleViewer.handles(arguments[1]):
+            ConsoleViewer.validate_command(arguments[1], arguments[2:])
+        elif len(arguments) > 2:
             raise DataError('Only two arguments allowed when writing output.')
         return options, arguments
 

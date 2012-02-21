@@ -25,16 +25,19 @@ class ConsoleViewer(object):
         self._keywords = KeywordMatcher(libdoc)
 
     @classmethod
-    def handles(cls, method):
-        return hasattr(cls, method.lower())
+    def handles(cls, command):
+        return command.lower() in ['list', 'show', 'version']
 
-    def view(self, method, *args):
-        try:
-            getattr(self, method.lower())(*args)
-        except AttributeError:
-            raise DataError("Cannot view '%s'." % method)
-        except TypeError:
-            raise DataError("Wrong number of arguments to view '%s'." % method)
+    @classmethod
+    def validate_command(cls, command, args):
+        if not cls.handles(command):
+            raise DataError("Unknown command '%s'." % command)
+        if command.lower() == 'version' and args:
+            raise DataError("Command 'version' does not take arguments.")
+
+    def view(self, command, *args):
+        self.validate_command(command, args)
+        getattr(self, command.lower())(*args)
 
     def list(self, *patterns):
         for kw in self._keywords.search('*%s*' % p for p in patterns):
