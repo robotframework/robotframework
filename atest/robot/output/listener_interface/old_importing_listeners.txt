@@ -28,9 +28,11 @@ Listener With Path
 Listener With Wrong Number Of Arguments
     [Template]    Check Syslog contains
     Taking listener 'old_listeners.WithArgs' into use failed:
+    ...    Importing listener 'old_listeners.WithArgs' failed:
     ...    Creating instance failed:
     ...    TypeError: __init__() takes at least 2 arguments (1 given)${EMPTY TB}
     Taking listener 'old_listeners.WithArgs:1:2:3' into use failed:
+    ...    Importing listener 'old_listeners.WithArgs' failed:
     ...    Creating instance failed:
     ...    TypeError: __init__() takes at most 3 arguments (4 given)${EMPTY TB}
 
@@ -54,9 +56,11 @@ Java Listener With Wrong Number Of Arguments
     [Tags]  jybot
     [Template]    Check Syslog contains
     Taking listener 'OldJavaListenerWithArgs' into use failed:
+    ...    Importing listener 'OldJavaListenerWithArgs' failed:
     ...    Creating instance failed:
     ...    TypeError: OldJavaListenerWithArgs(): expected 2 args; got 0${EMPTY TB}
     Taking listener 'OldJavaListenerWithArgs:b:a:r' into use failed:
+    ...    Importing listener 'OldJavaListenerWithArgs' failed:
     ...    Creating instance failed:
     ...    TypeError: OldJavaListenerWithArgs(): expected 2 args; got 3${EMPTY TB}
 

@@ -218,19 +218,8 @@ class _ListenerProxy(AbstractLoggerProxy):
 
     def _import_listener(self, name, args):
         importer = utils.Importer('listener')
-        listener = importer.import_class_or_module(os.path.normpath(name))
-        if inspect.isclass(listener):
-            return self._instantiate_listener_class(listener, args)
-        if not args:
-            return listener
-        raise DataError("Listeners implemented as modules do not take arguments")
-
-    def _instantiate_listener_class(self, listener, args):
-        try:
-            return listener(*args)
-        except:
-            raise DataError('Creating instance failed: %s\n%s'
-                            % utils.get_error_details())
+        return importer.import_class_or_module(os.path.normpath(name),
+                                               instantiate_with_args=args)
 
     def _get_version(self, listener):
         try:
