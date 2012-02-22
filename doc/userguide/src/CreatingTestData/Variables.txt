@@ -722,6 +722,12 @@ of them are not even available all the time.
    | ${SUITE MESSAGE}      | The full message of the current test suite, including | `Suite     |
    |                       | statistics.                                           | teardown`_ |
    +-----------------------+-------------------------------------------------------+------------+
+   | ${KEYWORD STATUS}     | The status of the current keyword, either PASS or     | `Keyword   |
+   |                       | FAIL. New in Robot Framework 2.7                      | teardown`_ |
+   +-----------------------+-------------------------------------------------------+------------+
+   | ${KEYWORD MESSAGE}    | The possible error message of the current keyword.    | `Keyword   |
+   |                       | New in Robot Framework 2.7                            | teardown`_ |
+   +-----------------------+-------------------------------------------------------+------------+
    | ${OUTPUT FILE}        | An absolute path to the `output file`_.               | Everywhere |
    +-----------------------+-------------------------------------------------------+------------+
    | ${LOG FILE}           | An absolute path to the `log file`_ or string NONE    | Everywhere |
