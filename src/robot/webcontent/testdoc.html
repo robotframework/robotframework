@@ -1,0 +1,176 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="-1">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="Generator" content="">
+<link rel="icon" type="image/x-icon" href="data:image/x-icon;base64,AAABAAEAEBAQAAEABAAoAQAAFgAAACgAAAAQAAAAIAAAAAEABAAAAAAAAAIAAAAAAAAAAAAAEAAAAAAAAAAAAAAAJEBoACtnfgA5cYYAERsiAEx2lAAbKkQAcazBACZCVwAcM1cAK0ucAAMDBQAnQncASG+FABkoVQAyWmgA6f8SgvH/Ij99+GLyIinyJfn/Yi//KSLzUy9iZogpIld3/4JVVTkid7vyUjNVNVJEAGOZ6Z7pXwAABpmZkRiLAAAGiJZpmGAAAEEt3SXdxAAATC7o/u3EAAC8MRZpjasAAAY1VVVTYAAABKqqqqpAAAAADKqq4AAAAAAAv4sAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAMADAADgAwAA4AcAAOAHAADgBwAAwAcAAOAHAADgDwAA8A8AAPg/AAD+fwAA">
+<link rel="stylesheet" type="text/css" href="log.css" media="all">
+<link rel="stylesheet" type="text/css" href="common.css" media="all">
+<link rel="stylesheet" type="text/css" href="print.css" media="print">
+<script type="text/javascript" src="lib/jquery.min.js"></script>
+<script type="text/javascript" src="lib/jquery.tmpl.min.js"></script>
+<script type="text/javascript" src="lib/jsxcompressor.js"></script>
+<script type="text/javascript" src="view.js"></script>
+<script type="text/javascript" src="log.js"></script>
+<!-- JS MODEL --><script type="text/javascript" src="testdata/testdoc.js"></script>
+<title></title>
+</head>
+<body>
+<div id="javascript_disabled">
+  <h1>Opening test suite documentation failed</h1>
+  <ul>
+    <li>Verify that you have <b>JavaScript enabled</b> in your browser.</li>
+    <li>Make sure you are using a <b>modern enough browser</b>. Firefox 3.5, IE 8, or equivalent is required, newer browsers are recommended.</li>
+    <li>Check are there messages in your browser's <b>JavaScript error log</b>. Please report the problem if you suspect you have encountered a bug.</li>
+  </ul>
+</div>
+<script type="text/javascript">
+    // Not using jQuery here for speed and to support ancient browsers.
+    document.getElementById('javascript_disabled').style.display = 'none';
+</script>
+
+<div class="header" id="header_div"></div>
+<div id="statistics_container"></div>
+
+<script type="text/javascript">
+$(document).ready(function(){
+    setTitle(window.suite);
+    parseTemplates();
+    addSuite(window.suite);
+    expandSuite(window.suite);
+});
+
+function setTitle(suite) {
+    var givenTitle = suite.title;
+    document.title = givenTitle ? givenTitle : 'Documentation for ' + suite.name;
+    $.tmpl('<h1>' + document.title + '</h1>').appendTo($('body'))
+}
+
+function addSuite(suite) {
+    var root = $.tmpl('suiteTemplate', suite);
+    root.appendTo($('body'));
+    addKeywords(suite);
+    addSuites(suite);
+    addTests(suite);
+}
+
+function addSuites(suite) {
+    $.map(suite.suites, function (s, _) {
+        $.tmpl('suiteTemplate', s).appendTo($('#' + suite.id + '_children'));
+        addKeywords(s);
+        addSuites(s);
+        addTests(s);
+        });
+}
+function addTests(suite) {
+    $.map(suite.tests, function (test, _) {
+        $.tmpl('testTemplate', test).appendTo($('#' + suite.id + '_children'));
+        addKeywords(test);
+        });
+}
+
+function addKeywords(parent) {
+    $.map(parent.keywords, function (kw, _) {
+            $.tmpl('keywordTemplate', kw).appendTo($('#' + parent.id + '_children'));
+    });
+}
+</script>
+
+<script type="text/x-jquery-tmpl" id="suiteTemplate">
+  <div id="${id}" class="suite">
+    <div id="${id}_elementheader" class="elementheader"
+         onclick="toggleSuite('${id}');" title="${fullName}">
+      <div id="${id}_foldingbutton" class="foldingbutton">+</div>
+      <span class="not_run">TEST&nbsp;SUITE:</span>
+      <span class="name">${name}</span>
+        <a class="expandall" href="javascript:expandAllChildren('${id}')"
+           onclick="stopPropagation(event);">Expand All</a>
+    </div>
+    <div id="${id}_children" style="display: none;">
+      <table class="metadata">
+        <tr>
+          <th>Full Name:</th>
+          <td>${fullName}</td>
+        </tr>
+        {{if doc}}
+        <tr>
+          <th>Documentation:</th>
+          <td>{{html doc}}</td>
+        </tr>
+        {{/if}}
+        {{each metadata}}
+        <tr>
+          <th>${$value[0]}:</th>
+          <td>{{html $value[1]}}</td>
+        </tr>
+        {{/each}}
+        {{if source}}
+        <tr>
+          <th>Source:</th>
+          {{if relativeSource}}
+          <td><a href="${relativeSource}">${source}</a></td>
+          {{else}}
+          <td>${source}</td>
+          {{/if}}
+        </tr>
+        {{/if}}
+        <tr>
+          <th>Number of Tests:</th>
+          <td>${numberOfTests}</td>
+        </tr>
+      </table>
+    </div>
+  </div>
+</script>
+
+<script type="text/x-jquery-tmpl" id="testTemplate">
+  <div id="${id}" class="test">
+    <div id="${id}_elementheader" onclick="toggleTest('${id}');"
+         class="elementheader" title="${fullName}">
+      <div id="${id}_foldingbutton" class="foldingbutton">+</div>
+      <span class="not_run">TEST&nbsp;CASE: </span>
+      <span class="name">${name}</span>
+        <a class="expandall" href="javascript:expandAllChildren('${id}')"
+           onclick="stopPropagation(event);">Expand All</a>
+    </div>
+    <div id="${id}_children" style="display: none;">
+      <table class="metadata">
+        <tr>
+          <th>Full Name:</th>
+          <td>${fullName}</td>
+        </tr>
+        {{if doc}}
+        <tr>
+          <th>Documentation:</th>
+          <td>{{html doc}}</td>
+        </tr>
+        {{/if}}
+        <tr>
+            <th>Tags:</th>
+            <td>${tags}</td>
+        </tr>
+        {{if timeout}}
+        <tr>
+          <th>Timeout:</th>
+          <td>${timeout}</td>
+        </tr>
+        {{/if}}
+      </table>
+    </div>
+  </div>
+</script>
+
+<script type="text/x-jquery-tmpl" id="keywordTemplate">
+  <div id="${id}" class="keyword">
+      <span class="not_run">${type}: </span>
+      <span class="name">${name}</span>
+      <span class="arg">${arguments}</span>
+  </div>
+</script>
+
+
+</body>
+</html>
