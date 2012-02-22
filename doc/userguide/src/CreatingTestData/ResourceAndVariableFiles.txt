@@ -460,9 +460,9 @@ them as classes has some restrictions:
     The class file must exists in both cases.
 
 Regardless the implementation language, the framework will create an instance
-of the class using no arguments and variables will be get from the instance.
+of the class using no arguments and variables will be gotten from the instance.
 Similarly as with modules, variables can be defined as attributes directly
-in the instance or got from a special :code:`get_variables`
+in the instance or gotten from a special :code:`get_variables`
 (or :code:`getVariables`) method.
 
 When variables are defined directly in an instance, all attributes containing
@@ -500,7 +500,7 @@ attributes and :var:`${ANOTHER VARIABLE}` from an instance attribute.
         }
     }
 
-The second examples utilize dynamic approach for getting variables. Both of
+The second examples utilizes dynamic approach for getting variables. Both of
 them create only one variable :var:`${DYNAMIC VARIABLE}`.
 
 .. sourcecode:: python
