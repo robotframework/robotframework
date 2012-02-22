@@ -62,10 +62,12 @@ class _ExecutionContext(object):
         test_or_suite = self.namespace.test or self.namespace.suite
         return test_or_suite.status != 'RUNNING'
 
-    def start_teardown(self):
+    def start_keyword_teardown(self, error):
+        self.namespace.variables['${KEYWORD_STATUS}'] = 'FAIL' if error else 'PASS'
+        self.namespace.variables['${KEYWORD_MESSAGE}'] = unicode(error or '')
         self._in_teardown += 1
 
-    def end_teardown(self):
+    def end_keyword_teardown(self):
         self._in_teardown -= 1
 
     def get_current_vars(self):

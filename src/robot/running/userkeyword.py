@@ -160,19 +160,19 @@ class UserKeywordHandler(object):
             pass
         else:
             error = None
-        td_error = self._run_teardown(context)
+        td_error = self._run_teardown(context, error)
         if error or td_error:
             raise UserKeywordExecutionFailed(error, td_error)
 
-    def _run_teardown(self, context):
+    def _run_teardown(self, context, error):
         if not self.teardown:
-            return
+            return None
         teardown = Teardown(self.teardown.name, self.teardown.args)
         teardown.replace_variables(context.get_current_vars(), [])
-        context.start_teardown()
+        context.start_keyword_teardown(error)
         run_errors = KeywordRunErrors()
         teardown.run(context, KeywordTeardownListener(run_errors))
-        context.end_teardown()
+        context.end_keyword_teardown()
         return run_errors.teardown_error
 
     def _verify_keyword_is_valid(self):
