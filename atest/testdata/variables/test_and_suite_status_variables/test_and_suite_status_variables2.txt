@@ -1,0 +1,14 @@
+*** Setting ***
+Suite Setup       Check All Variables In Suite Setup    Test And Suite Status Variables.Test And Suite Status Variables2    @{PREV_TEST}
+Suite Teardown    Check All Variables In Suite Teardown    Test And Suite Status Variables.Test And Suite Status Variables2    FAIL    1 critical test, 0 passed, 1 failed\n 1 test total, 0 passed, 1 failed    Previous Test Variables Should Have Default Values From Previous Suite    FAIL    Expected failure
+Resource          resource.txt
+
+*** Variable ***
+@{PREV_TEST}      Previous Test Variables Should Have Correct Values When That Test Fails    PASS
+
+*** Test Case ***
+Previous Test Variables Should Have Default Values From Previous Suite
+    [Documentation]    FAIL Expected failure
+    Check Previous Test Variables    @{PREV_TEST}
+    Fail    Expected failure
+
