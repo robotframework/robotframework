@@ -1,0 +1,47 @@
+*** Setting ***
+Suite Setup       Run Tests    ${EMPTY}    variables/test_and_suite_status_variables
+Force Tags        regression    jybot    pybot
+Resource          atest_resource.txt
+
+*** Test Case ***
+Previous Test Variables Should Have Default Values
+    Check test case    ${TEST NAME}
+
+Test Name In Test
+    Check test case    ${TEST NAME}
+
+Test Name In Setup
+    Check test case    ${TEST NAME}
+
+Test Tags
+    Check Test Case    Test Tags
+
+Test Status Should Not Exist Outside Teardown
+    Check test case    ${TEST NAME}
+
+Test Message Should Not Exist Outside Teardown
+    Check test case    ${TEST NAME}
+
+Test Status When Test Fails
+    Check test case    ${TEST NAME}
+
+Test Status When Setup Fails
+    Check test case    ${TEST NAME}
+
+Previous Test Variables Should Have Correct Values When That Test Fails
+    Check test case    ${TEST NAME}
+
+Previous Test Variables Should Have Default Values From Previous Suite
+    Check test case    ${TEST NAME}
+
+Suite And Prev Test Variables Work Correctly In Setup
+    Should Be Equal    ${SUITE.suites[0].setup.status}    PASS
+    Should Be Equal    ${SUITE.suites[1].setup.status}    PASS
+
+Suite And Prev Test Variables Work Correctly In Teardown
+    Should Be Equal    ${SUITE.suites[0].teardown.status}    PASS
+    Should Be Equal    ${SUITE.suites[1].teardown.status}    PASS
+
+Suite Variables In Test
+    Check test case    ${TEST NAME}
+

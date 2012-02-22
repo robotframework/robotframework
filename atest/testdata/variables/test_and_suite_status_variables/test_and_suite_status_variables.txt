@@ -1,0 +1,59 @@
+*** Setting ***
+Suite Setup       Check All Variables In Suite Setup    ${EXP_SUITE_NAME}
+Suite Teardown    Check All Variables In Suite Teardown    ${EXP_SUITE_NAME}    FAIL    10 critical tests, 8 passed, 2 failed\n 10 tests total, 8 passed, 2 failed    Previous Test Variables Should Have Correct Values When That Test Fails    PASS
+Force Tags        Force 1
+Resource          resource.txt
+
+*** Variable ***
+${EXP_SUITE_NAME}    Test And Suite Status Variables.Test And Suite Status Variables
+
+*** Test Case ***
+Previous Test Variables Should Have Default Values
+    Check Previous Test Variables
+
+Test Tags
+    [Tags]    id-8899    Hello, world!
+    [Setup]    Check Test Tags    Force 1    Hello, world!    id-8899
+    Check Test Tags    Force 1    Hello, world!    id-8899
+    [Teardown]    Check Test Tags    Force 1    Hello, world!    id-8899
+
+Suite Variables In Test
+    Equals    ${SUITE_NAME}    ${EXP_SUITE_NAME}
+    Fail If Variable Exists    $SUITE_STATUS
+    Fail If Variable Exists    $SUITE_MESSAGE
+
+Test Name In Test
+    Equals    ${TEST_NAME}    Test Name In Test
+    Check Previous Test variables    Suite Variables In Test    PASS
+
+Test Name In Setup
+    [Setup]    Equals    ${TEST_NAME}    Test Name In Setup
+    Check Previous Test variables    Test Name In Test    PASS
+
+Test Status Should Not Exist Outside Teardown
+    [Setup]    Fail If variable Exists    $TEST_STATUS
+    Fail If variable Exists    $TEST_STATUS
+    Check Previous Test variables    Test Name In Setup    PASS
+
+Test Message Should Not Exist Outside Teardown
+    [Setup]    Fail If variable Exists    $TEST_MESSAGE
+    Fail If variable Exists    $TEST_MESSAGE
+    Check Previous Test variables    Test Status Should Not Exist Outside Teardown    PASS
+
+Test Status When Test Fails
+    [Documentation]    FAIL Expected failure in test
+    Check Previous Test variables    Test Message Should Not Exist Outside Teardown    PASS
+    Fail    Expected failure in test
+    [Teardown]    Check Test Variables    Test Status When Test Fails    FAIL    Expected failure in test
+
+Test Status When Setup Fails
+    [Documentation]    FAIL Setup failed:\nExpected failure in setup
+    [Setup]    Fail    Expected failure in setup
+    Fail    Should not be executed
+    [Teardown]    Check Test Variables    Test Status When Setup Fails    FAIL    Setup failed:\nExpected failure in setup
+
+Previous Test Variables Should Have Correct Values When That Test Fails
+    [Setup]    Check Previous Test variables    Test Status When Setup Fails    FAIL    Setup failed:\nExpected failure in setup
+    Check Previous Test variables    Test Status When Setup Fails    FAIL    Setup failed:\nExpected failure in setup
+    [Teardown]    Check Previous Test variables    Test Status When Setup Fails    FAIL    Setup failed:\nExpected failure in setup
+
