@@ -99,18 +99,19 @@ class JsonConverter(object):
         return self._convert_suite(suite, 's-0')
 
     def _convert_suite(self, suite, suite_id, index=None):
-        suite_id = suite_id + '-s-%d' % index if index is not None else suite_id
-        return {'name': suite.name,
-                'fullName': suite.longname,
-                'source': suite.source,
-                'doc': suite.doc,
-                'id': suite_id,
-                'metadata': dict(suite.metadata),
-                'numberOfTests': suite.get_test_count(),
-                'suites': self._convert_suites(suite, suite_id),
-                'tests': self._convert_tests(suite, suite_id),
-                'keywords': self._get_suite_keywords(suite, suite_id)
-                }
+        suite_id = self._get_id(suite_id, 's', index) if index is not None else suite_id
+        return {
+            'name': suite.name,
+            'fullName': suite.longname,
+            'source': suite.source,
+            'doc': suite.doc,
+            'id': suite_id,
+            'metadata': dict(suite.metadata),
+            'numberOfTests': suite.get_test_count(),
+            'suites': self._convert_suites(suite, suite_id),
+            'tests': self._convert_tests(suite, suite_id),
+            'keywords': self._get_suite_keywords(suite, suite_id)
+        }
 
     def _get_suite_keywords(self, suite, suite_id):
         kws = []
@@ -129,13 +130,16 @@ class JsonConverter(object):
                 for index, test in enumerate(suite.tests)]
 
     def _convert_test(self, test, suite_id, index):
-        test_id = suite_id + '-t-%d' % index
-        return {'name': test.name,
-                'fullName': test.longname,
-                'id': test_id,
-                'doc': test.doc,
-                'tags': test.tags,
-                'keywords': self._convert_keywords(test, test_id)}
+        test_id = self._get_id(suite_id, 't', index)
+        return {
+            'name': test.name,
+            'fullName': test.longname,
+            'id': test_id,
+            'doc': test.doc,
+            'tags': test.tags,
+            'timeout': self._get_timeout(test.timeout),
+            'keywords': self._convert_keywords(test, test_id)
+        }
 
     def _convert_keywords(self, test, test_id):
         types = {'kw': 'KEYWORD', 'for': 'FOR'}
@@ -143,11 +147,24 @@ class JsonConverter(object):
                 for index, k in enumerate(test.keywords)]
 
     def _convert_keyword(self, kw, test_id, index, type):
-        return {'name': kw._get_name(kw.name) if isinstance(kw, Keyword) else kw.name,
-                'id': test_id + '-k-%d' % index,
-                'arguments': ', '.join(kw.args),
-                'type': type
-                }
+        return {
+            'name': kw._get_name(kw.name) if isinstance(kw, Keyword) else kw.name,
+            'id': test_id + '-k-%d' % index,
+            'arguments': ', '.join(kw.args),
+            'type': type
+        }
+
+    def _get_timeout(self, timeout):
+        try:
+            tout = utils.secs_to_timestr(utils.timestr_to_secs(timeout.string))
+        except ValueError:
+            tout = timeout.string
+        if timeout.message:
+            tout += ' | ' + timeout.message
+        return tout
+
+    def _get_id(self, parent_id, type, index):
+        return parent_id + '-%s-%d' % (type, index)
 
 
 def testdoc_cli(args):
