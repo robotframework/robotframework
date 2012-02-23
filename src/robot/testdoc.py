@@ -66,7 +66,7 @@ from robot.reporting.jsonwriter import JsonWriter
 class TestDoc(utils.Application):
 
     def __init__(self):
-        utils.Application.__init__(self, USAGE, arg_limits=(2,), auto_version=False)
+        utils.Application.__init__(self, USAGE, arg_limits=(2,))
 
     def main(self, args, title=None, **options):
         datasources = args[0:-1]
