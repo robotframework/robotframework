@@ -1,4 +1,5 @@
 import unittest
+import os
 from os.path import abspath, dirname, join, normpath
 
 from robot.utils.asserts import assert_equals
@@ -13,11 +14,13 @@ class TestJsonConverter(unittest.TestCase):
     def setUp(self):
         if not self.suite:
             suite = TestSuiteFactory(DATADIR, doc='My doc', metadata=['a:b'])
-            TestJsonConverter.suite = JsonConverter().convert(suite)
+            output = join(DATADIR, '..', 'output.html')
+            TestJsonConverter.suite = JsonConverter(output).convert(suite)
 
     def test_suite(self):
         self._verify(self.suite,
                      source=normpath(DATADIR),
+                     relativeSource='misc',
                      id='s1',
                      name='Misc',
                      fullName='Misc',
@@ -28,23 +31,62 @@ class TestJsonConverter(unittest.TestCase):
                      keywords=[])
         self._verify(self.suite['suites'][0],
                      source=join(normpath(DATADIR), 'dummy_lib_test.html'),
+                     relativeSource=join('misc', 'dummy_lib_test.html'),
                      id='s1-s1',
                      name='Dummy Lib Test',
                      fullName='Misc.Dummy Lib Test',
                      doc='',
+                     metadata={},
                      numberOfTests=1,
                      suites=[],
                      keywords=[])
         self._verify(self.suite['suites'][3]['suites'][1]['suites'][-1],
                      source=join(normpath(DATADIR), 'multiple_suites',
                                  '02__sub.suite.1', 'second__.Sui.te.2..html'),
+                     relativeSource=join('misc', 'multiple_suites',
+                                         '02__sub.suite.1', 'second__.Sui.te.2..html'),
                      id='s1-s4-s2-s2',
                      name='.Sui.te.2.',
                      fullName='Misc.Multiple Suites.Sub.Suite.1..Sui.te.2.',
                      doc='',
+                     metadata={},
                      numberOfTests=12,
                      suites=[],
                      keywords=[])
+
+    def test_multi_suite(self):
+        data = TestSuiteFactory([join(DATADIR, 'normal.html'),
+                                 join(DATADIR, 'pass_and_fail.html')])
+        suite = JsonConverter().convert(data)
+        self._verify(suite,
+                     source='',
+                     relativeSource='',
+                     id='s1',
+                     name='Normal & Pass And Fail',
+                     fullName='Normal & Pass And Fail',
+                     doc='',
+                     metadata={},
+                     numberOfTests=4,
+                     keywords=[],
+                     tests=[])
+        self._verify(suite['suites'][0],
+                     source=normpath(join(DATADIR, 'normal.html')),
+                     relativeSource='',
+                     id='s1-s1',
+                     name='Normal',
+                     fullName='Normal & Pass And Fail.Normal',
+                     doc='Normal test cases',
+                     metadata={'Something': 'My Value'},
+                     numberOfTests=2)
+        self._verify(suite['suites'][1],
+                     source=normpath(join(DATADIR, 'pass_and_fail.html')),
+                     relativeSource='',
+                     id='s1-s2',
+                     name='Pass And Fail',
+                     fullName='Normal & Pass And Fail.Pass And Fail',
+                     doc='Some tests here',
+                     metadata={},
+                     numberOfTests=2)
 
     def test_test(self):
         self._verify(self.suite['suites'][0]['tests'][0],

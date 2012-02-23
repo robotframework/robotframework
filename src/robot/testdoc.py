@@ -96,6 +96,7 @@ class TestdocModelWriter(ModelWriter):
 
     def __init__(self, output, suite, title=None):
         self._output = output
+        self._output_path = getattr(output, 'name', None)
         self._suite = suite
         self._title = title.replace('_', ' ') if title else ''
 
@@ -106,7 +107,7 @@ class TestdocModelWriter(ModelWriter):
 
     def write_data(self):
         model = {
-            'suite': JsonConverter().convert(self._suite),
+            'suite': JsonConverter(self._output_path).convert(self._suite),
             'title': self._title
         }
         JsonWriter(self._output).write_json('testdoc = ', model)
@@ -114,12 +115,16 @@ class TestdocModelWriter(ModelWriter):
 
 class JsonConverter(object):
 
+    def __init__(self, output_path=None):
+        self._output_path = output_path
+
     def convert(self, suite):
         return self._convert_suite(suite)
 
     def _convert_suite(self, suite):
         return {
-            'source': suite.source,
+            'source': suite.source or '',
+            'relativeSource': self._get_relative_source(suite.source),
             'id': suite.id,
             'name': suite.name,
             'fullName': suite.longname,
@@ -130,6 +135,11 @@ class JsonConverter(object):
             'tests': self._convert_tests(suite),
             'keywords': list(self._convert_keywords(suite))
         }
+
+    def _get_relative_source(self, source):
+        if not source or not self._output_path:
+            return ''
+        return utils.get_link_path(source, os.path.dirname(self._output_path))
 
     def _convert_suites(self, suite):
         return [self._convert_suite(s) for s in suite.suites]
