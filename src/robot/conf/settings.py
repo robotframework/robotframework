@@ -55,11 +55,11 @@ class _BaseSettings(object):
                  'StdErr'           : ('stderr', None)}
     _output_opts = ['Output', 'Log', 'Report', 'DebugFile', 'XUnitFile']
 
-    def __init__(self, options={}, log=True):
+    def __init__(self, options=None, log=True):
         self._opts = {}
         self._cli_opts = self._cli_opts.copy()
         self._cli_opts.update(self._extra_cli_opts)
-        self._process_cli_opts(options, log)
+        self._process_cli_opts(options or {}, log)
         if log: LOGGER.info('Settings:\n%s' % unicode(self))
 
     def _process_cli_opts(self, opts, log):
