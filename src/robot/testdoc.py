@@ -41,6 +41,7 @@ Examples:
   $ testdoc.py mytestcases.html testdoc.html
   $ testdoc.py --name smoke_test_plan --include smoke path/to/my_tests/ doc.html
 """
+
 import sys
 import os
 import codecs
@@ -57,22 +58,30 @@ from robot.reporting.jsonwriter import JsonWriter
 
 populators.PROCESS_CURDIR = False
 
+
 class TestDoc(utils.Application):
 
     def __init__(self):
         utils.Application.__init__(self, USAGE, arg_limits=(2,), auto_version=False)
 
-    def main(self, args, title=None, **opts):
+    def main(self, args, title=None, **options):
         datasources = args[0:-1]
-        outfile = args[-1]
-        suite = TestSuite(datasources, RobotSettings(opts))
+        outfile = os.path.abspath(args[-1])
+        suite = TestSuiteFactory(datasources, options)
         self._write_test_doc(suite, outfile, title)
+        self.console(outfile)
 
     def _write_test_doc(self, suite, outfile, title):
         output = codecs.open(outfile, 'w', 'UTF-8')
         model_writer = TestdocModelWriter(output, suite, title)
         HtmlFileWriter(output, model_writer).write('testdoc.html')
         output.close()
+
+
+def TestSuiteFactory(datasources, options=None):
+    if isinstance(datasources, basestring):
+        datasources = [datasources]
+    return TestSuite(datasources, RobotSettings(options))
 
 
 class TestdocModelWriter(ModelWriter):
