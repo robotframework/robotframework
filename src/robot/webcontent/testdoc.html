@@ -35,9 +35,9 @@
 <script type="text/javascript">
 $(document).ready(function(){
     parseTemplates();
-    setTitle(window.suite);
-    addSuite(window.suite, 'body');
-    expandElement(suite);
+    setTitle(window.testdoc);
+    addSuite(window.testdoc, 'body');
+    expandElement(window.testdoc);
 });
 
 function parseTemplates() {
@@ -91,7 +91,6 @@ function expandElement(element) {
     childElement.show();
     $('#'+element.id+'_foldingbutton').text('-');
 }
-
 </script>
 
 <script type="text/x-jquery-tmpl" id="suiteTemplate">

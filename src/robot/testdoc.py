@@ -70,16 +70,17 @@ class TestDoc(utils.Application):
 
     def _write_test_doc(self, suite, outfile, title):
         output = codecs.open(outfile, 'w', 'UTF-8')
-        model_writer = TestdocModelWriter(output, suite)
+        model_writer = TestdocModelWriter(output, suite, title)
         HtmlFileWriter(output, model_writer).write('testdoc.html')
         output.close()
 
 
 class TestdocModelWriter(ModelWriter):
 
-    def __init__(self, output, suite):
+    def __init__(self, output, suite, title):
         self._output = output
         self._suite = suite
+        self._title = title.replace('_', ' ') if title else ''
 
     def write(self, line):
         self._output.write('<script type="text/javascript">' + os.linesep)
@@ -88,7 +89,8 @@ class TestdocModelWriter(ModelWriter):
 
     def _write_data(self):
         json = JsonConverter().convert(self._suite)
-        JsonWriter(self._output).write_json('suite = ', json)
+        json['title'] = self._title
+        JsonWriter(self._output).write_json('testdoc = ', json)
 
 
 class JsonConverter(object):
