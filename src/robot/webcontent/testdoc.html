@@ -180,10 +180,12 @@ function stopPropagation(event) {
           <td>{{html doc}}</td>
         </tr>
         {{/if}}
+        {{if tags.length}}
         <tr>
-            <th>Tags:</th>
-            <td>${tags}</td>
+          <th>Tags:</th>
+          <td>${tags.join(', ')}</td>
         </tr>
+        {{/if}}
         {{if timeout}}
         <tr>
           <th>Timeout:</th>
