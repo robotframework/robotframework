@@ -67,7 +67,7 @@ class TestDoc(utils.Application):
     def main(self, args, title=None, **options):
         datasources = args[0:-1]
         outfile = os.path.abspath(args[-1])
-        suite = TestSuiteFactory(datasources, options)
+        suite = TestSuiteFactory(datasources, **options)
         self._write_test_doc(suite, outfile, title)
         self.console(outfile)
 
@@ -78,7 +78,7 @@ class TestDoc(utils.Application):
         output.close()
 
 
-def TestSuiteFactory(datasources, options=None):
+def TestSuiteFactory(datasources, **options):
     if isinstance(datasources, basestring):
         datasources = [datasources]
     return TestSuite(datasources, RobotSettings(options))
@@ -105,62 +105,52 @@ class TestdocModelWriter(ModelWriter):
 class JsonConverter(object):
 
     def convert(self, suite):
-        return self._convert_suite(suite, 's-0')
+        return self._convert_suite(suite)
 
-    def _convert_suite(self, suite, suite_id, index=None):
-        suite_id = self._get_id(suite_id, 's', index) if index is not None else suite_id
+    def _convert_suite(self, suite):
         return {
+            'source': suite.source,
+            'id': suite.id,
             'name': suite.name,
             'fullName': suite.longname,
-            'source': suite.source,
             'doc': suite.doc,
-            'id': suite_id,
             'metadata': dict(suite.metadata),
             'numberOfTests': suite.get_test_count(),
-            'suites': self._convert_suites(suite, suite_id),
-            'tests': self._convert_tests(suite, suite_id),
-            'keywords': self._get_suite_keywords(suite, suite_id)
+            'suites': self._convert_suites(suite),
+            'tests': self._convert_tests(suite),
+            'keywords': list(self._convert_keywords(suite))
         }
 
-    def _get_suite_keywords(self, suite, suite_id):
-        kws = []
-        if suite.setup.name:
-            kws.append(self._convert_keyword(suite.setup, suite_id, 0, 'SETUP'))
-        if suite.teardown.name:
-            kws.append(self._convert_keyword(suite.teardown, suite_id, 1, 'TEARDOWN'))
-        return kws
+    def _convert_suites(self, suite):
+        return [self._convert_suite(s) for s in suite.suites]
 
-    def _convert_suites(self, suite, suite_id):
-        return [self._convert_suite(suite, suite_id, index)
-                for index, suite in enumerate(suite.suites)]
+    def _convert_tests(self, suite):
+        return [self._convert_test(t) for t in suite.tests]
 
-    def _convert_tests(self, suite, suite_id):
-        return [self._convert_test(test, suite_id, index)
-                for index, test in enumerate(suite.tests)]
-
-    def _convert_test(self, test, suite_id, index):
-        test_id = self._get_id(suite_id, 't', index)
+    def _convert_test(self, test):
         return {
             'name': test.name,
             'fullName': test.longname,
-            'id': test_id,
+            'id': test.id,
             'doc': test.doc,
             'tags': utils.normalize_tags(test.tags),
             'timeout': self._get_timeout(test.timeout),
-            'keywords': self._convert_keywords(test, test_id)
+            'keywords': list(self._convert_keywords(test))
         }
 
-    def _convert_keywords(self, test, test_id):
-        types = {'kw': 'KEYWORD', 'for': 'FOR'}
-        return [self._convert_keyword(k, test_id, index, types[k.type])
-                for index, k in enumerate(test.keywords)]
+    def _convert_keywords(self, item):
+        if item.setup.name:
+            yield self._convert_keyword(item.setup, type='SETUP')
+        for kw in getattr(item, 'keywords', []):
+            yield self._convert_keyword(kw)
+        if item.teardown.name:
+            yield self._convert_keyword(item.teardown, type='TEARDOWN')
 
-    def _convert_keyword(self, kw, test_id, index, type):
+    def _convert_keyword(self, kw, type=None):
         return {
             'name': kw._get_name(kw.name) if isinstance(kw, Keyword) else kw.name,
-            'id': test_id + '-k-%d' % index,
             'arguments': ', '.join(kw.args),
-            'type': type
+            'type': type or {'kw': 'KEYWORD', 'for': 'FOR'}[kw.type]
         }
 
     def _get_timeout(self, timeout):
@@ -169,15 +159,13 @@ class JsonConverter(object):
         except ValueError:
             tout = timeout.string
         if timeout.message:
-            tout += ' | ' + timeout.message
+            tout += ' :: ' + timeout.message
         return tout
-
-    def _get_id(self, parent_id, type, index):
-        return parent_id + '-%s-%d' % (type, index)
 
 
 def testdoc_cli(args):
     TestDoc().execute_cli(args)
+
 
 if __name__ == '__main__':
     testdoc_cli(sys.argv[1:])
