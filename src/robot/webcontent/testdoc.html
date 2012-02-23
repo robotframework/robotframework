@@ -37,7 +37,7 @@ $(document).ready(function(){
     parseTemplates();
     setTitle(window.testdoc);
     addSuite(window.testdoc, 'body');
-    expandElement(window.testdoc);
+    expandElement(window.testdoc.id);
 });
 
 function parseTemplates() {
@@ -86,10 +86,28 @@ function toggleElement(elementId) {
     });
 }
 
-function expandElement(element) {
-    var childElement = $("#" + element.id + "_children");
+function expandElement(elementId) {
+    var childElement = $("#" + elementId + "_children");
     childElement.show();
-    $('#'+element.id+'_foldingbutton').text('-');
+    $('#'+elementId+'_foldingbutton').text('-');
+    return childElement;
+}
+
+function expandAllChildren(elementId) {
+    var elem = expandElement(elementId);
+    var childrenToClick = elem.find('[class="expandall"]');
+    for (var i = 0; i < childrenToClick.length; i++) {
+        childrenToClick[i].click();
+    }
+}
+
+// For complete cross-browser experience..
+// http://www.quirksmode.org/js/events_order.html
+function stopPropagation(event) {
+    var event = event || window.event;
+    event.cancelBubble = true;
+    if (event.stopPropagation)
+        event.stopPropagation();
 }
 </script>
 
