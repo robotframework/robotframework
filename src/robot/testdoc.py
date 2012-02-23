@@ -138,11 +138,12 @@ class JsonConverter(object):
                 'keywords': self._convert_keywords(test, test_id)}
 
     def _convert_keywords(self, test, test_id):
-            return [self._convert_keyword(k, test_id, index, 'KEYWORD')
-                    for index, k in enumerate(test.keywords)]
+        types = {'kw': 'KEYWORD', 'for': 'FOR'}
+        return [self._convert_keyword(k, test_id, index, types[k.type])
+                for index, k in enumerate(test.keywords)]
 
     def _convert_keyword(self, kw, test_id, index, type):
-        return {'name': kw.name,
+        return {'name': kw._get_name(kw.name) if isinstance(kw, Keyword) else kw.name,
                 'id': test_id + '-k-%d' % index,
                 'arguments': ', '.join(kw.args),
                 'type': type
