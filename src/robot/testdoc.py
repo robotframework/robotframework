@@ -14,9 +14,11 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-USAGE = """Robot Framework Test Data Documentation Tool
+USAGE = """robot.testdoc -- Robot Framework test data documentation tool
 
-Usage:  testdoc.py [options] data_sources
+Version:  <VERSION>
+
+Usage:  python -m robot.testdoc [options] data_sources output_file
 
 This tool generates a high level test documentation from a given test data.
 Generated documentation includes the names, documentations and other metadata
@@ -24,22 +26,26 @@ of each test suite and test case, as well as the top-level keywords and their
 arguments. Most of the options accepted by this tool have exactly same
 semantics as same options have when executing test cases.
 
-Options:
+Options
+=======
+
   -T --title title       Set the title of the generated documentation.
                          Underscores in the title are converted to spaces.
   -N --name name         Set the name of the top level test suite.
-  -D --doc document      Set the document of the top level test suite.
+  -D --doc document      Set the documentation of the top level test suite.
   -M --metadata name:value *  Set metadata of the top level test suite.
   -G --settag tag *      Set given tag(s) to all test cases.
   -t --test name *       Include test cases by name.
   -s --suite name *      Include test suites by name.
   -i --include tag *     Include test cases by tags.
   -e --exclude tag *     Exclude test cases by tags.
-  -h --help              Print this help.
+  -h -? --help           Print this help.
 
-Examples:
-  $ testdoc.py mytestcases.html testdoc.html
-  $ testdoc.py --name smoke_test_plan --include smoke path/to/my_tests/ doc.html
+Examples
+========
+
+  python .m robot.testdoc mytestcases.html testdoc.html
+  python .m robot.testdoc --name smoke_test_plan -i smoke path/to/my_tests/ doc.html
 """
 
 import sys
@@ -164,6 +170,13 @@ class JsonConverter(object):
 
 
 def testdoc_cli(args):
+    """Executes testdoc similarly as from the command line.
+
+    :param args: command line arguments as a list of strings.
+
+    Example:
+       testdoc_cli(['--title', 'Test Plan', 'mytests', 'plan.html'])
+    """
     TestDoc().execute_cli(args)
 
 
