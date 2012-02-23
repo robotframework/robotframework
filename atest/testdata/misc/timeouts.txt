@@ -1,0 +1,17 @@
+*** Settings ***
+Documentation    Initially created for testing timeouts with testdoc but
+...              can be used also for other purposes and extended as needed.
+Test Timeout     1min 42s
+
+*** Test Cases ***
+Default Test Timeout
+    [Documentation]    I have a timeout
+    No Operation
+
+Test Timeout With Message
+    [Timeout]    1d2h    The message
+    No Operation
+
+Test Timeout With Variable
+    [Timeout]    ${100}
+    No Operation
