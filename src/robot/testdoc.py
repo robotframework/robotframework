@@ -48,7 +48,7 @@ import codecs
 if 'robot' not in sys.modules:
     import pythonpathsetter   # running testdoc.py as script
 
-from robot import utils, version
+from robot import utils
 from robot.running import TestSuite, Keyword
 from robot.conf import RobotSettings
 from robot.parsing import populators
@@ -136,7 +136,7 @@ class JsonConverter(object):
             'fullName': test.longname,
             'id': test_id,
             'doc': test.doc,
-            'tags': test.tags,
+            'tags': utils.normalize_tags(test.tags),
             'timeout': self._get_timeout(test.timeout),
             'keywords': self._convert_keywords(test, test_id)
         }
@@ -172,4 +172,3 @@ def testdoc_cli(args):
 
 if __name__ == '__main__':
     testdoc_cli(sys.argv[1:])
-
