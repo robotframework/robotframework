@@ -1,0 +1,9 @@
+
+
+Test data documentation tool
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+`testdoc.py`_ is tool for generating high level documentation of a given test
+suite, including the names of suites and tests as well as top-level keywords.
+It is available through
+http://code.google.com/p/robotframework/wiki/SupportingTools.

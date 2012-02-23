@@ -84,6 +84,7 @@ Supporting Tools
 
 .. include:: SupportingTools/Libdoc.txt
 .. include:: SupportingTools/Tidy.txt
+.. include:: SupportingTools/Testdoc.txt
 .. include:: SupportingTools/Ride.txt
 .. include:: SupportingTools/OtherTools.txt
 
