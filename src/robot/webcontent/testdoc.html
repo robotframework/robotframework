@@ -12,9 +12,6 @@
 <link rel="stylesheet" type="text/css" href="print.css" media="print">
 <script type="text/javascript" src="lib/jquery.min.js"></script>
 <script type="text/javascript" src="lib/jquery.tmpl.min.js"></script>
-<script type="text/javascript" src="lib/jsxcompressor.js"></script>
-<script type="text/javascript" src="view.js"></script>
-<script type="text/javascript" src="log.js"></script>
 <!-- JS MODEL --><script type="text/javascript" src="testdata/testdoc.js"></script>
 <title></title>
 </head>
@@ -37,11 +34,17 @@
 
 <script type="text/javascript">
 $(document).ready(function(){
-    setTitle(window.suite);
     parseTemplates();
-    addSuite(window.suite);
-    expandSuite(window.suite);
+    setTitle(window.suite);
+    addSuite(window.suite, 'body');
+    expandElement(suite);
 });
+
+function parseTemplates() {
+    $('script[type="text/x-jquery-tmpl"]').map(function (idx, elem) {
+        $.template(elem.id, elem.text);
+    });
+}
 
 function setTitle(suite) {
     var givenTitle = suite.title;
@@ -49,9 +52,8 @@ function setTitle(suite) {
     $.tmpl('<h1>' + document.title + '</h1>').appendTo($('body'))
 }
 
-function addSuite(suite) {
-    var root = $.tmpl('suiteTemplate', suite);
-    root.appendTo($('body'));
+function addSuite(suite, parent_locator) {
+    $.tmpl('suiteTemplate', suite).appendTo($(parent_locator));
     addKeywords(suite);
     addSuites(suite);
     addTests(suite);
@@ -59,12 +61,10 @@ function addSuite(suite) {
 
 function addSuites(suite) {
     $.map(suite.suites, function (s, _) {
-        $.tmpl('suiteTemplate', s).appendTo($('#' + suite.id + '_children'));
-        addKeywords(s);
-        addSuites(s);
-        addTests(s);
+        addSuite(s, '#' + suite.id + '_children')
         });
 }
+
 function addTests(suite) {
     $.map(suite.tests, function (test, _) {
         $.tmpl('testTemplate', test).appendTo($('#' + suite.id + '_children'));
@@ -77,12 +77,27 @@ function addKeywords(parent) {
             $.tmpl('keywordTemplate', kw).appendTo($('#' + parent.id + '_children'));
     });
 }
+
+function toggleElement(elementId) {
+    var childElement = $("#"+elementId+"_children");
+    childElement.toggle(100, function () {
+        var foldingButton = $('#'+elementId+'_foldingbutton');
+        foldingButton.text(foldingButton.text() == '+' ? '-' : '+');
+    });
+}
+
+function expandElement(element) {
+    var childElement = $("#" + element.id + "_children");
+    childElement.show();
+    $('#'+element.id+'_foldingbutton').text('-');
+}
+
 </script>
 
 <script type="text/x-jquery-tmpl" id="suiteTemplate">
   <div id="${id}" class="suite">
     <div id="${id}_elementheader" class="elementheader"
-         onclick="toggleSuite('${id}');" title="${fullName}">
+         onclick="toggleElement('${id}');" title="${fullName}">
       <div id="${id}_foldingbutton" class="foldingbutton">+</div>
       <span class="not_run">TEST&nbsp;SUITE:</span>
       <span class="name">${name}</span>
@@ -128,7 +143,7 @@ function addKeywords(parent) {
 
 <script type="text/x-jquery-tmpl" id="testTemplate">
   <div id="${id}" class="test">
-    <div id="${id}_elementheader" onclick="toggleTest('${id}');"
+    <div id="${id}_elementheader" onclick="toggleElement('${id}');"
          class="elementheader" title="${fullName}">
       <div id="${id}_foldingbutton" class="foldingbutton">+</div>
       <span class="not_run">TEST&nbsp;CASE: </span>
@@ -170,7 +185,6 @@ function addKeywords(parent) {
       <span class="arg">${arguments}</span>
   </div>
 </script>
-
 
 </body>
 </html>
