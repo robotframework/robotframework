@@ -105,9 +105,11 @@ class TestdocModelWriter(ModelWriter):
         self._output.write('</script>' + os.linesep)
 
     def write_data(self):
-        json = JsonConverter().convert(self._suite)
-        json['title'] = self._title
-        JsonWriter(self._output).write_json('testdoc = ', json)
+        model = {
+            'suite': JsonConverter().convert(self._suite),
+            'title': self._title
+        }
+        JsonWriter(self._output).write_json('testdoc = ', model)
 
 
 class JsonConverter(object):

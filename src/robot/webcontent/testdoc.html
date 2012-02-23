@@ -35,9 +35,9 @@
 <script type="text/javascript">
 $(document).ready(function(){
     parseTemplates();
-    setTitle(window.testdoc);
-    addSuite(window.testdoc, 'body');
-    expandElement(window.testdoc.id);
+    setTitle(window.testdoc.title, window.testdoc.suite.name);
+    addSuite(window.testdoc.suite, 'body');
+    expandElement(window.testdoc.suite.id);
 });
 
 function parseTemplates() {
@@ -46,10 +46,9 @@ function parseTemplates() {
     });
 }
 
-function setTitle(suite) {
-    var givenTitle = suite.title;
-    document.title = givenTitle ? givenTitle : 'Documentation for ' + suite.name;
-    $.tmpl('<h1>' + document.title + '</h1>').appendTo($('body'))
+function setTitle(givenTitle, suiteName) {
+    document.title = givenTitle ? givenTitle : 'Documentation for ' + suiteName;
+    $.tmpl('<h1>' + document.title + '</h1>').appendTo($('body'));
 }
 
 function addSuite(suite, parent_locator) {
