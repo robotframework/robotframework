@@ -60,15 +60,15 @@ function addSuite(suite, parent_locator) {
 
 function addSuites(suite) {
     $.map(suite.suites, function (s, _) {
-        addSuite(s, '#' + suite.id + '_children')
-        });
+        addSuite(s, '#' + suite.id + '_children');
+    });
 }
 
 function addTests(suite) {
     $.map(suite.tests, function (test, _) {
         $.tmpl('testTemplate', test).appendTo($('#' + suite.id + '_children'));
         addKeywords(test);
-        });
+    });
 }
 
 function addKeywords(parent) {
