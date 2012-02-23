@@ -92,7 +92,7 @@ def TestSuiteFactory(datasources, **options):
 
 class TestdocModelWriter(ModelWriter):
 
-    def __init__(self, output, suite, title):
+    def __init__(self, output, suite, title=None):
         self._output = output
         self._suite = suite
         self._title = title.replace('_', ' ') if title else ''
@@ -102,7 +102,7 @@ class TestdocModelWriter(ModelWriter):
         self._write_data()
         self._output.write('</script>' + os.linesep)
 
-    def _write_data(self):
+    def write_data(self):
         json = JsonConverter().convert(self._suite)
         json['title'] = self._title
         JsonWriter(self._output).write_json('testdoc = ', json)
