@@ -62,8 +62,6 @@ from robot.parsing import populators
 from robot.reporting.htmlfilewriter import HtmlFileWriter, ModelWriter
 from robot.reporting.jsonwriter import JsonWriter
 
-populators.PROCESS_CURDIR = False
-
 
 class TestDoc(utils.Application):
 
@@ -87,7 +85,11 @@ class TestDoc(utils.Application):
 def TestSuiteFactory(datasources, **options):
     if isinstance(datasources, basestring):
         datasources = [datasources]
-    return TestSuite(datasources, RobotSettings(options))
+    populators.PROCESS_CURDIR = False
+    try:
+        return TestSuite(datasources, RobotSettings(options))
+    finally:
+        populators.PROCESS_CURDIR = True
 
 
 class TestdocModelWriter(ModelWriter):
