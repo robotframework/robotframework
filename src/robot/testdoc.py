@@ -99,7 +99,7 @@ class TestdocModelWriter(ModelWriter):
 
     def write(self, line):
         self._output.write('<script type="text/javascript">' + os.linesep)
-        self._write_data()
+        self.write_data()
         self._output.write('</script>' + os.linesep)
 
     def write_data(self):
