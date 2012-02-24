@@ -70,7 +70,6 @@ class CommandLineMonitor(object):
 
 class CommandLineWriter(object):
     _status_length = len('| PASS |')
-    _keyword_marker = '.'
 
     def __init__(self, width=78, colors='AUTO', stdout=None, stderr=None):
         self._width = width
@@ -116,11 +115,9 @@ class CommandLineWriter(object):
         if self._stdout.isatty():
             self._write('\r' + text, newline=False)
 
-    def _rewrite_info(self, markers=False):
-        info = self._info
-        if markers:
-            info += self._keyword_marker * self._keyword_marker_count
-        self._write(info, newline=False)
+    def _rewrite_info(self):
+        self._write(self._info, newline=False)
+        self._keyword_marker_count = 0
 
     def message(self, message):
         if message:
@@ -130,18 +127,18 @@ class CommandLineWriter(object):
         if not self._stdout.isatty():
             return
         if self._keyword_marker_count < self._status_length:
-            self._write(self._keyword_marker, newline=False)
+            text, color = ('.', 'green') if kw.status == 'PASS' else ('F', 'red')
+            self._highlighter.highlight(text, color, self._stdout)
             self._keyword_marker_count += 1
         else:
             self._clear_status()
-            self._keyword_marker_count = 0
 
     def error(self, message, level, running_tests=False):
         if running_tests:
             self._clear_line()
         self._highlight('[ ', level, ' ] ' + message, error=True)
         if running_tests:
-            self._rewrite_info(markers=True)
+            self._rewrite_info()
 
     def output(self, name, path):
         self._write('%-8s %s' % (name+':', path))
@@ -156,7 +153,7 @@ class CommandLineWriter(object):
     def _highlight(self, before, status, after, newline=True, error=False):
         stream = self._stdout if not error else self._stderr
         self._write(before, newline=False, error=error)
-        self._highlighter.write_status(status, stream)
+        self._highlighter.highlight_status(status, stream)
         self._write(after, newline=newline, error=error)
 
 
@@ -174,7 +171,7 @@ class StatusHighlighter(object):
                   'OFF': False}.get(colors.upper(), auto)
         return Highlighter(stream) if enable else NoHighlighting(stream)
 
-    def write_status(self, status, stream):
+    def highlight_status(self, status, stream):
         highlighter = self._start_status_highlighting(status, stream)
         stream.write(status)
         highlighter.reset()
@@ -186,3 +183,10 @@ class StatusHighlighter(object):
          'ERROR': highlighter.red,
          'WARN': highlighter.yellow}[status]()
         return highlighter
+
+    def highlight(self, text, color, stream):
+        highlighter = self._highlighters[stream]
+        getattr(highlighter, color)()
+        stream.write(text)
+        stream.flush()
+        highlighter.reset()
