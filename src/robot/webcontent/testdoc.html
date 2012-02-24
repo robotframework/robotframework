@@ -14,6 +14,12 @@
 <script type="text/javascript" src="lib/jquery.tmpl.min.js"></script>
 <script type="text/javascript" src="view.js"></script>
 <script type="text/javascript" src="util.js"></script>
+<style type="text/css">
+    #header_div {
+        height: 4em;
+        width: auto;
+    }
+</style>
 <!-- JS MODEL --><script type="text/javascript" src="testdata/testdoc.js"></script>
 <title></title>
 </head>
@@ -51,7 +57,6 @@ function parseTemplates() {
 function setTitle(givenTitle, suiteName) {
     document.title = givenTitle ? givenTitle : 'Documentation for ' + suiteName;
     $.tmpl('<h1>' + document.title + '</h1>').appendTo($('#header_div'));
-    $.tmpl('<h2></h2>').appendTo($('#header_div'));
 }
 
 function addSuite(suite, parent_locator) {
