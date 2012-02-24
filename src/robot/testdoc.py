@@ -21,20 +21,20 @@ Version:  <VERSION>
 
 Usage:  python -m robot.testdoc [options] data_sources output_file
 
-This tool generates a high level test documentation from a given test data.
-Generated documentation includes the names, documentations and other metadata
-of each test suite and test case, as well as the top-level keywords and their
-arguments. Most of the options accepted by this tool have exactly same
-semantics as same options have when executing test cases.
+Testdoc generates a high level test documentation based on Robot Framework
+test data. Generated documentation includes name, documentation and other
+metadata of each test suite and test case, as well as the top-level keywords
+and their arguments.
 
 Options
 =======
 
   -T --title title       Set the title of the generated documentation.
                          Underscores in the title are converted to spaces.
+                         The default title is 'Documentation for <SuiteName>'.
   -N --name name         Set the name of the top level test suite.
   -D --doc document      Set the documentation of the top level test suite.
-  -M --metadata name:value *  Set metadata of the top level test suite.
+  -M --metadata name:value *  Set free metadata of the top level test suite.
   -G --settag tag *      Set given tag(s) to all test cases.
   -t --test name *       Include test cases by name.
   -s --suite name *      Include test suites by name.
@@ -42,11 +42,25 @@ Options
   -e --exclude tag *     Exclude test cases by tags.
   -h -? --help           Print this help.
 
-Examples
-========
+All options except --title have exactly same semantics as same options have
+when executing test cases.
 
-  python -m robot.testdoc mytestcases.html testdoc.html
-  python -m robot.testdoc --name smoke_test_plan -i smoke path/to/my_tests/ doc.html
+Execution
+=========
+
+Data can be given as a single file, directory, or as multiple files and
+directories. In all these cases, the last argument must be the file where
+to write the output. The output is always created in HTML format.
+
+Testdoc works with all interpreters supported by Robot Framework (Python,
+Jython and IronPython). It can be executed as an installed module like
+`python -m robot.testdoc` or as a script like `python path/robot/testdoc.py`.
+
+Examples:
+
+  python -m robot.testdoc my_test.html testdoc.html
+  jython -m robot.testdoc -N smoke_tests -i smoke path/to/my_tests smoke.html
+  ipy path/to/robot/testdoc.py first_suite.txt second_suite.txt output.html
 """
 
 import sys
