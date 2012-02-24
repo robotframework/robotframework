@@ -47,8 +47,7 @@ class CommandLineMonitor(object):
         self._running_test = True
 
     def end_test(self, test):
-        self._writer.redraw_info()
-        self._writer.status(test.status)
+        self._writer.status(test.status, clear=True)
         self._writer.message(test.message)
         self._writer.separator('-')
         self._running_test = False
@@ -86,14 +85,6 @@ class CommandLineWriter(object):
         self._write(self._info, newline=False)
         self._keyword_marker_count = 0
 
-    def redraw_info(self, clear_status=False):
-        if not self._stdout.isatty():
-            return
-        if clear_status:
-            self.redraw_info()
-            self._write(' ' * self._status_length, newline=False)
-        self._write('\r' + self._info, newline=False)
-
     def _get_info_width_and_separator(self, start_suite):
         if start_suite:
             return self._width, '\n'
@@ -108,8 +99,19 @@ class CommandLineWriter(object):
     def separator(self, char):
         self._write(char * self._width)
 
-    def status(self, status):
+    def status(self, status, clear=False):
+        if clear:
+            self._clear_status(overwrite=False)
         self._highlight('| ', status, ' |')
+
+    def _clear_status(self, overwrite=True):
+        if overwrite:
+            self._overwrite(' ' * self._width)
+        self._overwrite(self._info)
+
+    def _overwrite(self, text):
+        if self._stdout.isatty():
+            self._write('\r' + text, newline=False)
 
     def message(self, message):
         if message:
@@ -122,7 +124,7 @@ class CommandLineWriter(object):
             self._write(self._keyword_marker, newline=False)
             self._keyword_marker_count += 1
         else:
-            self.redraw_info(clear_status=True)
+            self._clear_status()
             self._keyword_marker_count = 0
 
     def error(self, message, level):
@@ -131,11 +133,11 @@ class CommandLineWriter(object):
     def output(self, name, path):
         self._write('%-8s %s' % (name+':', path))
 
-    def _write(self, message, newline=True, error=False):
+    def _write(self, text, newline=True, error=False):
         stream = self._stdout if not error else self._stderr
         if newline:
-            message += '\n'
-        stream.write(utils.encode_output(message).replace('\t', ' '*8))
+            text += '\n'
+        stream.write(utils.encode_output(text).replace('\t', ' '*8))
         stream.flush()
 
     def _highlight(self, before, highlighted, after, newline=True, error=False):
