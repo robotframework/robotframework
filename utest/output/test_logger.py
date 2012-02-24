@@ -169,7 +169,7 @@ class TestLogger(unittest.TestCase):
         logger = Logger()
         logger.register_console_logger(width=42)
         self._number_of_registered_loggers_should_be(1, logger)
-        assert_equals(logger._loggers.all_loggers()[0].start_suite.im_self._width, 42)
+        assert_equals(logger._loggers.all_loggers()[0].start_suite.im_self._writer._width, 42)
 
     def test_unregister_logger(self):
         logger1, logger2, logger3 = LoggerMock(), LoggerMock(), LoggerMock()
