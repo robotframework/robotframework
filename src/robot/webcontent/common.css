@@ -24,15 +24,17 @@ a:hover, a:active {
 /* Headers */
 .header {
     width: 58em;
+    height: 3em;
     margin: 6px 0;
 }
 h1 {
-    margin: 0;
+    float: left;
     width: 70%;
+    margin: 0;
 }
 #generated {
-    width : 29%;
     float: right;
+    width : 29%;
     text-align: right;
     font-size: 0.9em;
     white-space: nowrap;
