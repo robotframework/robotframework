@@ -31,15 +31,15 @@ Options
 
   -T --title title       Set the title of the generated documentation.
                          Underscores in the title are converted to spaces.
-                         The default title is 'Documentation for <SuiteName>'.
-  -N --name name         Set the name of the top level test suite.
-  -D --doc document      Set the documentation of the top level test suite.
-  -M --metadata name:value *  Set free metadata of the top level test suite.
+                         The default title is the name of the top level suite.
+  -N --name name         Override the name of the top level suite.
+  -D --doc document      Override the documentation of the top level suite.
+  -M --metadata name:value *  Set/override metadata of the top level suite.
   -G --settag tag *      Set given tag(s) to all test cases.
-  -t --test name *       Include test cases by name.
-  -s --suite name *      Include test suites by name.
-  -i --include tag *     Include test cases by tags.
-  -e --exclude tag *     Exclude test cases by tags.
+  -t --test name *       Include tests by name.
+  -s --suite name *      Include suites by name.
+  -i --include tag *     Include tests by tags.
+  -e --exclude tag *     Exclude tests by tags.
   -h -? --help           Print this help.
 
 All options except --title have exactly same semantics as same options have
@@ -114,8 +114,7 @@ class TestdocModelWriter(ModelWriter):
         self._output = output
         self._output_path = getattr(output, 'name', None)
         self._suite = suite
-        self._title = title.replace('_', ' ') \
-                if title else 'Documentation for %s' % suite.name
+        self._title = title.replace('_', ' ') if title else suite.name
 
     def write(self, line):
         self._output.write('<script type="text/javascript">' + os.linesep)
