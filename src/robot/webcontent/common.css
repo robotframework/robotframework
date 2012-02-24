@@ -22,7 +22,7 @@ a:hover, a:active {
     letter-spacing: -0.07em;
 }
 /* Headers */
-.header {
+#header {
     width: 58em;
     height: 3em;
     margin: 6px 0;

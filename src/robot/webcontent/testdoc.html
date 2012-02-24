@@ -15,7 +15,7 @@
 <script type="text/javascript" src="view.js"></script>
 <script type="text/javascript" src="util.js"></script>
 <style type="text/css" media="all">
-#header_div {
+#header {
   height: 4em;
   width: auto;
 }
@@ -33,11 +33,11 @@
   </ul>
 </div>
 <script type="text/javascript">
-    // Not using jQuery here for speed and to support ancient browsers.
+    // Not using jQuery here for maximum speed
     document.getElementById('javascript_disabled').style.display = 'none';
 </script>
 
-<div class="header" id="header_div"><h1></h1></div>
+<div id="header"><h1></h1></div>
 
 <script type="text/javascript">
 $(document).ready(function(){
@@ -60,7 +60,7 @@ function addTitle(title) {
 }
 
 function addGenerated(timestamp, millis) {
-    createGenerated(timestamp, millis).appendTo($('#header_div'));
+    createGenerated(timestamp, millis).appendTo($('#header'));
 }
 
 function addSuite(suite, parent_locator) {

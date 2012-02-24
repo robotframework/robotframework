@@ -1,5 +1,5 @@
 function removeJavaScriptDisabledWarning() {
-    // Not using jQuery here for speed and to support ancient browsers.
+    // Not using jQuery here for maximum speed
     document.getElementById('javascript_disabled').style.display = 'none';
 }
 
@@ -28,11 +28,11 @@ function setTitle(suiteName, type) {
 function addHeader() {
     createGenerated(window.output.generatedTimestamp,
                     window.testdata.generated().getTime()
-    ).appendTo($('#header_div'));
+    ).appendTo($('#header'));
     $.tmpl('<div id="report_or_log_link"><a href="#"></a></div>' +
             '<h1>${title}</h1>', {
         title: document.title
-    }).appendTo($('#header_div'));
+    }).appendTo($('#header'));
 }
 
 function createGenerated(generated, generatedMillis) {

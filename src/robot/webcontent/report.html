@@ -33,7 +33,7 @@
 </div>
 <script type="text/javascript">removeJavaScriptDisabledWarning();</script>
 
-<div class="header" id="header_div"></div>
+<div id="header"></div>
 <div id="statistics_container"></div>
 <div id="test_details_container"></div>
 
@@ -65,7 +65,7 @@ function setBackground(topsuite) {
 
 function addSummary(topsuite) {
     var opts = {logURL: window.settings.logURL};
-    $.tmpl('summaryTableTemplate', topsuite, opts).insertAfter($('#header_div'));
+    $.tmpl('summaryTableTemplate', topsuite, opts).insertAfter($('#header'));
 }
 
 function addDetails() {

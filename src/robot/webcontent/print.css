@@ -1,12 +1,15 @@
 body {
     background: white !important;
-    padding: 0px;
+    padding: 0;
     font-size: 8pt;
 }
 a:link, a:visited {
     color: black;
 }
-.header, table.details, table.statistics {
+#header {
+    width: auto;
+}
+table.details, table.statistics {
     width: 100%;
 }
 #generated_ago, #report_or_log_link, #normal_selector, .expand {
