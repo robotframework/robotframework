@@ -15,70 +15,87 @@
 import sys
 
 from robot import utils
-from highlighting import Highlighter, NoHighlighting
-from loggerhelper import IsLogged
+
+from .highlighting import Highlighter, NoHighlighting
+from .loggerhelper import IsLogged
 
 
-class CommandLineMonitor:
+class CommandLineMonitor(object):
+
+    def __init__(self, width=78, colors='AUTO', stdout=None, stderr=None):
+        self._writer = CommandLineWriter(width, colors, stdout, stderr)
+        self._is_logged = IsLogged('WARN')
+        self._started = False
+
+    def start_suite(self, suite):
+        if not self._started:
+            self._writer.separator('=')
+            self._started = True
+        self._writer.info(suite.longname, suite.doc, start_suite=True)
+        self._writer.separator('=')
+
+    def end_suite(self, suite):
+        self._writer.info(suite.longname, suite.doc)
+        self._writer.status(suite.status)
+        self._writer.message(suite.get_full_message())
+        self._writer.separator('=')
+
+    def start_test(self, test):
+        self._writer.info(test.name, test.doc)
+
+    def end_test(self, test):
+        self._writer.status(test.status)
+        self._writer.message(test.message)
+        self._writer.separator('-')
+
+    def message(self, msg):
+        if self._is_logged(msg.level):
+            self._writer.error(msg.message, msg.level)
+
+    def output_file(self, name, path):
+        self._writer.output(name, path)
+
+
+class CommandLineWriter(object):
+    _status_length = len('| PASS |')
 
     def __init__(self, width=78, colors='AUTO', stdout=None, stderr=None):
         self._width = width
         self._stdout = stdout or sys.__stdout__
         self._stderr = stderr or sys.__stderr__
         self._highlighter = StatusHighlighter(colors, self._stdout, self._stderr)
-        self._is_logged = IsLogged('WARN')
-        self._started = False
 
-    def start_suite(self, suite):
-        if not self._started:
-            self._write_separator('=')
-            self._started = True
-        self._write_info(suite.longname, suite.doc, start_suite=True)
-        self._write_separator('=')
-
-    def end_suite(self, suite):
-        self._write_info(suite.longname, suite.doc)
-        self._write_status(suite.status)
-        self._write_message(suite.get_full_message())
-        self._write_separator('=')
-
-    def start_test(self, test):
-        self._write_info(test.name, test.doc)
-
-    def end_test(self, test):
-        self._write_status(test.status)
-        self._write_message(test.message)
-        self._write_separator('-')
-
-    def message(self, msg):
-        if self._is_logged(msg.level):
-            self._write_with_highlighting('[ ', msg.level, ' ] ' + msg.message,
-                                          error=True)
-    def output_file(self, name, path):
-        self._write('%-8s %s' % (name+':', path))
-
-    def _write_info(self, name, doc, start_suite=False):
-        maxwidth = self._width
-        if not start_suite:
-            maxwidth -= len(' | PASS |')
-        info = self._get_info(name, doc, maxwidth)
+    def info(self, name, doc, start_suite=False):
+        width, padding = self._get_info_width_and_padding(start_suite)
+        info = self._get_info(name, doc, width) + padding
         self._write(info, newline=start_suite)
 
-    def _get_info(self, name, doc, maxwidth):
-        if utils.get_console_length(name) > maxwidth:
-            return utils.pad_console_length(name, maxwidth)
+    def _get_info_width_and_padding(self, start_suite):
+        if start_suite:
+            return self._width, ''
+        return self._width - self._status_length - 1, ' '
+
+    def _get_info(self, name, doc, width):
+        if utils.get_console_length(name) > width:
+            return utils.pad_console_length(name, width)
         info = name if not doc else '%s :: %s' % (name, doc.splitlines()[0])
-        return utils.pad_console_length(info, maxwidth)
+        return utils.pad_console_length(info, width)
 
-    def _write_status(self, status):
-        self._write_with_highlighting(' | ', status, ' |')
+    def separator(self, char):
+        self._write(char * self._width)
 
-    def _write_message(self, message):
+    def status(self, status):
+        self._highlight('| ', status, ' |')
+
+    def message(self, message):
         if message:
             self._write(message.strip())
 
-    def _write_separator(self, sep_char):
-        self._write(sep_char * self._width)
+    def error(self, message, level):
+        self._highlight('[ ', level, ' ] ' + message, error=True)
+
+    def output(self, name, path):
+        self._write('%-8s %s' % (name+':', path))
 
     def _write(self, message, newline=True, error=False):
         stream = self._stdout if not error else self._stderr
@@ -87,8 +104,7 @@ class CommandLineMonitor:
         stream.write(utils.encode_output(message).replace('\t', ' '*8))
         stream.flush()
 
-    def _write_with_highlighting(self, before, highlighted, after,
-                                 newline=True, error=False):
+    def _highlight(self, before, highlighted, after, newline=True, error=False):
         stream = self._stdout if not error else self._stderr
         self._write(before, newline=False, error=error)
         self._highlighter.start(highlighted, stream)
@@ -97,7 +113,7 @@ class CommandLineMonitor:
         self._write(after, newline=newline, error=error)
 
 
-class StatusHighlighter:
+class StatusHighlighter(object):
 
     def __init__(self, colors, *streams):
         self._current = None
