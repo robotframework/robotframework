@@ -1,9 +1,66 @@
 
 
-Test data documentation tool
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Test data documentation tool (:prog:`testdoc`)
+----------------------------------------------
 
-`testdoc.py`_ is tool for generating high level documentation of a given test
+:prog:`testdoc` is tool for generating high level documentation of a given test
 suite, including the names of suites and tests as well as top-level keywords.
-It is available through
-http://code.google.com/p/robotframework/wiki/SupportingTools.
+
+:prog:`testdoc` is built-in into Robot Framework and automatically included
+in the installation starting from version 2.7. With earlier versions you
+need to download `testdoc.py script`__ separately. The command line usage
+has changed slightly between these versions.
+
+__ http://code.google.com/p/robotframework/wiki/SupportingTools
+
+Synopsis
+~~~~~~~~
+
+::
+
+    python -m robot.testdoc [options] data_sources output_file
+
+Options
+~~~~~~~
+
+ -T, --title <title>           Set the title of the generated documentation.
+                               Underscores in the title are converted to
+                               spaces.
+ -N, --name <name>             Set the name of the top level test suite.
+ -D, --doc <doc>               Set the documentation of the top level test suite.
+ -M, --metadata <name:value>   Set metadata of the top level test suite. See
+ -G, --settag <tag>            Set given tag(s) to all test cases.
+ -t, --test <name>             Include test cases by name.
+ -s, --suite <name>            Include test suites by name.
+ -i, --include <tag>           Include test cases by tags.
+ -e, --exclude <tag>           Exclude test cases by tags.
+ -h, --help                    Print this help in the console.
+
+All options except :opt:`--title` accepted by this tool have exactly the same
+semantics as same options have when `executing test cases`__.
+
+__ `Configuring execution`_
+
+Description
+~~~~~~~~~~~
+
+:prog:`testdoc` generates a high level test documentation from a given Robot
+Framework test data. The generated documentation includes the names,
+documentations and other metadata of all test suites and test cases,
+as well as the names and arguments of the top-level keywords. The
+tool also writes down the total number of test cases per suite. The
+documentation format is based on the normal test execution logs.
+
+It is possible to select suites and tests to be included in the
+documentation similarly as when choosing the test cases to be executed
+with Robot Framework. The test data is parsed otherwise normally, but used
+variables are not resolved.
+
+Examples
+~~~~~~~~
+
+::
+
+  python -m robot.testdoc mytestcases.html testdoc.html
+  python -m robot.testdoc --name smoke_test_plan -i smoke path/to/my_tests/ doc.html
+
