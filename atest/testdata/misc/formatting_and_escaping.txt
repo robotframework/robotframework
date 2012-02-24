@@ -8,6 +8,16 @@ Metadata    Escape   this is <b>not bold</b>
 Metadata    Format   this is *bold*
 
 *** Test Cases ***
-Example
-    [Documentation]    *I* can haz _formatting_!!
+Formatting
+    [Documentation]    *I* can haz _formatting_ & <escaping>!!
     No Operation
+
+<Escaping>
+    [Tags]    *not bold*    <b>not bold either</b>
+    <blink>NO</blink>    <&>
+
+
+*** Keywords ***
+<blink>NO</blink>
+    [Arguments]    ${arg}
+    Log    ${arg}

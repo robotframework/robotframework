@@ -31,13 +31,13 @@ class TestJsonConverter(unittest.TestCase):
                      fullName='Misc',
                      doc='My doc',
                      metadata=[('1', '2'), ('abc', '123')],
-                     numberOfTests=162,
+                     numberOfTests=163,
                      tests=[],
                      keywords=[])
-        test_convert(self.suite['suites'][1],
+        test_convert(self.suite['suites'][0],
                      source=join(normpath(DATADIR), 'dummy_lib_test.html'),
                      relativeSource=join('misc', 'dummy_lib_test.html'),
-                     id='s1-s2',
+                     id='s1-s1',
                      name='Dummy Lib Test',
                      fullName='Misc.Dummy Lib Test',
                      doc='',
@@ -94,8 +94,8 @@ class TestJsonConverter(unittest.TestCase):
                      numberOfTests=2)
 
     def test_test(self):
-        test_convert(self.suite['suites'][1]['tests'][0],
-                     id='s1-s2-t1',
+        test_convert(self.suite['suites'][0]['tests'][0],
+                     id='s1-s1-t1',
                      name='Dummy Test',
                      fullName='Misc.Dummy Lib Test.Dummy Test',
                      doc='',
@@ -128,7 +128,7 @@ class TestJsonConverter(unittest.TestCase):
                      timeout='${100}')
 
     def test_keyword(self):
-        test_convert(self.suite['suites'][1]['tests'][0]['keywords'][0],
+        test_convert(self.suite['suites'][0]['tests'][0]['keywords'][0],
                      name='dummykw',
                      arguments='',
                      type='KEYWORD')
@@ -158,11 +158,11 @@ class TestJsonConverter(unittest.TestCase):
                      type='TEARDOWN')
 
     def test_for_loops(self):
-        test_convert(self.suite['suites'][2]['tests'][0]['keywords'][0],
+        test_convert(self.suite['suites'][1]['tests'][0]['keywords'][0],
                      name='${pet} IN [ cat | dog | horse ]',
                      arguments='',
                      type='FOR')
-        test_convert(self.suite['suites'][2]['tests'][1]['keywords'][0],
+        test_convert(self.suite['suites'][1]['tests'][1]['keywords'][0],
                      name='${i} IN RANGE [ 10 ]',
                      arguments='',
                      type='FOR')
@@ -179,7 +179,7 @@ class TestDocumentationFormatting(unittest.TestCase):
 
     def setUp(self):
         if not self.suite:
-            suite = TestSuiteFactory(join(DATADIR, 'documentation_formatting.txt'),
+            suite = TestSuiteFactory(join(DATADIR, 'formatting_and_escaping.txt'),
                                      metadata=['CLI:*bold*'])
             self.__class__.suite = JsonConverter().convert(suite)
 
@@ -207,7 +207,16 @@ We have <i>formatting</i> and &lt;escaping&gt;.
 
     def test_test_documentation(self):
         test_convert(self.suite['tests'][0],
-                     doc='<b>I</b> can haz <i>formatting</i>!!')
+                     doc='<b>I</b> can haz <i>formatting</i> &amp; &lt;escaping&gt;!!')
+
+    def test_no_extra_escaping(self):
+        # jQuery handles escaping by default so we should not do it
+        test_convert(self.suite['tests'][1],
+                     name='<Escaping>',
+                     tags=['*not bold*', '<b>not bold either</b>'],
+                     keywords=[{'type': 'KEYWORD',
+                                'name': '<blink>NO</blink>',
+                                'arguments': '<&>'}])
 
 
 if __name__ == '__main__':
