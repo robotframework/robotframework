@@ -174,5 +174,41 @@ class TestJsonConverter(unittest.TestCase):
                      type='KEYWORD')
 
 
+class TestDocumentationFormatting(unittest.TestCase):
+    suite = None
+
+    def setUp(self):
+        if not self.suite:
+            suite = TestSuiteFactory(join(DATADIR, 'documentation_formatting.txt'),
+                                     metadata=['CLI:*bold*'])
+            self.__class__.suite = JsonConverter().convert(suite)
+
+    def test_suite_documentation(self):
+        test_convert(self.suite,
+                     doc='''\
+We have <i>formatting</i> and &lt;escaping&gt;.
+
+<table class="robotdoc">
+<tr>
+<td><b>Name</b></td>
+<td><b>URL</b></td>
+</tr>
+<tr>
+<td>Robot</td>
+<td><a href="http://robotframework.org">http://robotframework.org</a></td>
+</tr>
+</table>''')
+
+    def test_suite_metadata(self):
+        test_convert(self.suite,
+                     metadata=[('CLI', '<b>bold</b>'),
+                               ('Escape', 'this is &lt;b&gt;not bold&lt;/b&gt;'),
+                               ('Format', 'this is <b>bold</b>')])
+
+    def test_test_documentation(self):
+        test_convert(self.suite['tests'][0],
+                     doc='<b>I</b> can haz <i>formatting</i>!!')
+
+
 if __name__ == '__main__':
     unittest.main()

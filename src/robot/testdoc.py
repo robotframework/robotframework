@@ -148,8 +148,8 @@ class JsonConverter(object):
             'id': suite.id,
             'name': suite.name,
             'fullName': suite.longname,
-            'doc': suite.doc,
-            'metadata': suite.metadata.items(),
+            'doc': self._html(suite.doc),
+            'metadata': [(n, self._html(v)) for n, v in suite.metadata.items()],
             'numberOfTests': suite.get_test_count(),
             'suites': self._convert_suites(suite),
             'tests': self._convert_tests(suite),
@@ -160,6 +160,9 @@ class JsonConverter(object):
         if not source or not self._output_path:
             return ''
         return utils.get_link_path(source, os.path.dirname(self._output_path))
+
+    def _html(self, item):
+        return utils.html_format(utils.unescape(item))
 
     def _convert_suites(self, suite):
         return [self._convert_suite(s) for s in suite.suites]
@@ -172,7 +175,7 @@ class JsonConverter(object):
             'name': test.name,
             'fullName': test.longname,
             'id': test.id,
-            'doc': test.doc,
+            'doc': self._html(test.doc),
             'tags': utils.normalize_tags(test.tags),
             'timeout': self._get_timeout(test.timeout),
             'keywords': list(self._convert_keywords(test))
