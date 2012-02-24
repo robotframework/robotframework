@@ -1,11 +1,3 @@
-/* Summary links */
-a.summary_fail {
-    color: red !important;
-    font-weight: bold;
-}
-a.summary_pass {
-    color: #009900 !important;
-}
 /* Generic table styles */
 table {
     background: white;

@@ -39,20 +39,20 @@ h1 {
     font-size: 0.9em;
     white-space: nowrap;
 }
-/* Status text colors */
+/* Status text colors -- !important allows using them in links */
 .error, .fail {
-    color: red;
+    color: red !important;;
     font-weight: bold;
 }
 .pass {
-    color: #009900;
+    color: #009900 !important;;
 }
 .warn {
-    color: #FFCC00;
+    color: #FFCC00 !important;;
     font-weight: bold;
 }
 .not_run {
-    color: #444444;
+    color: #444444 !important;
 }
 /* JavaScript disabled box */
 #javascript_disabled {
