@@ -62,7 +62,7 @@ class CommandLineMonitor(object):
 
     def message(self, msg):
         if self._is_logged(msg.level):
-            self._writer.error(msg.message, msg.level)
+            self._writer.error(msg.message, msg.level, self._started)
 
     def output_file(self, name, path):
         self._writer.output(name, path)
@@ -101,17 +101,26 @@ class CommandLineWriter(object):
 
     def status(self, status, clear=False):
         if clear:
-            self._clear_status(overwrite=False)
+            self._clear_status()
         self._highlight('| ', status, ' |')
 
-    def _clear_status(self, overwrite=True):
-        if overwrite:
-            self._overwrite(' ' * self._width)
-        self._overwrite(self._info)
+    def _clear_status(self):
+        self._clear_line()
+        self._rewrite_info()
+
+    def _clear_line(self):
+        self._overwrite(' ' * self._width)
+        self._overwrite('')
 
     def _overwrite(self, text):
         if self._stdout.isatty():
             self._write('\r' + text, newline=False)
+
+    def _rewrite_info(self, markers=False):
+        info = self._info
+        if markers:
+            info += self._keyword_marker * self._keyword_marker_count
+        self._write(info, newline=False)
 
     def message(self, message):
         if message:
@@ -127,8 +136,12 @@ class CommandLineWriter(object):
             self._clear_status()
             self._keyword_marker_count = 0
 
-    def error(self, message, level):
+    def error(self, message, level, running_tests=False):
+        if running_tests:
+            self._clear_line()
         self._highlight('[ ', level, ' ] ' + message, error=True)
+        if running_tests:
+            self._rewrite_info(markers=True)
 
     def output(self, name, path):
         self._write('%-8s %s' % (name+':', path))
