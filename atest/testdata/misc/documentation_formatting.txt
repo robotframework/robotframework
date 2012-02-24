@@ -1,0 +1,13 @@
+*** Settings ***
+Documentation
+...  We have _formatting_ and <escaping>.\n
+...  \n
+...  | *Name* | *URL* |\n
+...  | Robot  | http://robotframework.org |
+Metadata    Escape   this is <b>not bold</b>
+Metadata    Format   this is *bold*
+
+*** Test Cases ***
+Example
+    [Documentation]    *I* can haz _formatting_!!
+    No Operation
