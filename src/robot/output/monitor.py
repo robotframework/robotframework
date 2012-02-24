@@ -26,6 +26,7 @@ class CommandLineMonitor(object):
         self._writer = CommandLineWriter(width, colors, stdout, stderr)
         self._is_logged = IsLogged('WARN')
         self._started = False
+        self._started_keywords = 0
 
     def start_suite(self, suite):
         if not self._started:
@@ -44,9 +45,18 @@ class CommandLineMonitor(object):
         self._writer.info(test.name, test.doc)
 
     def end_test(self, test):
+        self._writer.redraw_info()
         self._writer.status(test.status)
         self._writer.message(test.message)
         self._writer.separator('-')
+
+    def start_keyword(self, kw):
+        self._started_keywords += 1
+
+    def end_keyword(self, kw):
+        self._started_keywords -= 1
+        if not self._started_keywords:
+            self._writer.keyword_marker(kw)
 
     def message(self, msg):
         if self._is_logged(msg.level):
@@ -58,21 +68,30 @@ class CommandLineMonitor(object):
 
 class CommandLineWriter(object):
     _status_length = len('| PASS |')
+    _keyword_marker = '.'
 
     def __init__(self, width=78, colors='AUTO', stdout=None, stderr=None):
         self._width = width
         self._stdout = stdout or sys.__stdout__
         self._stderr = stderr or sys.__stderr__
         self._highlighter = StatusHighlighter(colors, self._stdout, self._stderr)
+        self._keyword_marker_count = 0
 
     def info(self, name, doc, start_suite=False):
-        width, padding = self._get_info_width_and_padding(start_suite)
-        info = self._get_info(name, doc, width) + padding
-        self._write(info, newline=start_suite)
+        width, separator = self._get_info_width_and_separator(start_suite)
+        self._info = '\r' + self._get_info(name, doc, width) + separator
+        self._write(self._info, newline=False)
+        self._keyword_marker_count = 0
 
-    def _get_info_width_and_padding(self, start_suite):
+    def redraw_info(self, clear_status=False):
+        if clear_status:
+            self.redraw_info()
+            self._write(' ' * self._status_length, newline=False)
+        self._write(self._info, newline=False)
+
+    def _get_info_width_and_separator(self, start_suite):
         if start_suite:
-            return self._width, ''
+            return self._width, '\n'
         return self._width - self._status_length - 1, ' '
 
     def _get_info(self, name, doc, width):
@@ -90,6 +109,14 @@ class CommandLineWriter(object):
     def message(self, message):
         if message:
             self._write(message.strip())
+
+    def keyword_marker(self, kw):
+        if self._keyword_marker_count < self._status_length:
+            self._write(self._keyword_marker, newline=False)
+            self._keyword_marker_count += 1
+        else:
+            self.redraw_info(clear_status=True)
+            self._keyword_marker_count = 0
 
     def error(self, message, level):
         self._highlight('[ ', level, ' ] ' + message, error=True)
