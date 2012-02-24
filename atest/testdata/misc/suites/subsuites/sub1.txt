@@ -3,7 +3,7 @@ Documentation     Normal test cases
 Force Tags        f1
 Default Tags      d1    d2
 Metadata          Something    My Value
-Suite Setup       No Operation
+Suite Setup       Log  Hello, world!
 Suite Teardown    No Operation
 
 *** Variable ***

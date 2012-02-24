@@ -49,9 +49,9 @@ My Run Robot And Rebot
     Run Rebot  ${EMPTY}  ${OUTFILE}
 
 Check Normal Suite Defaults
-    [Arguments]  ${mysuite}  ${message}=  ${tests}=[]  ${teardown}=None
+    [Arguments]  ${mysuite}  ${message}=  ${tests}=[]  ${setup}=${None}  ${teardown}=${None}
     Log  ${mysuite.name}
-    Check Suite Defaults  ${mysuite}  ${message}  ${tests}  ${teardown}
+    Check Suite Defaults  ${mysuite}  ${message}  ${tests}  ${setup}  ${teardown}
     Check Normal Suite Times  ${mysuite}
 
 Check Minimal Suite Defaults
@@ -73,24 +73,28 @@ Check Minimal Suite Times
     Should Be Equal  ${mysuite.elapsedtime}  ${0}
 
 Check Suite Defaults
-    [Arguments]  ${mysuite}  ${message}=  ${tests}=[]  ${teardown}=None
+    [Arguments]  ${mysuite}  ${message}=  ${tests}=[]  ${setup}=${None}  ${teardown}=${None}
     Should Be Equal  ${mysuite.message}  ${message}
-    Should Be Equal  ${mysuite.setup}  ${None}
-    ${teardown_name} =  Convert To String  ${mysuite.teardown}
-    Should Be Equal  ${teardown_name}  ${teardown}
+    Check Setup Or Teardown  ${mysuite.setup}  ${setup}
+    Check Setup Or Teardown  ${mysuite.teardown}  ${teardown}
+
+Check Setup Or Teardown
+    [Arguments]    ${item}    ${expected}
+    ${actual} =  Set Variable If  "${expected}" == "None"  ${item}  ${item.name}
+    Should Be Equal    ${actual}    ${expected}
 
 Check Suite Got From Misc/suites/ Directory
-    Check Normal Suite Defaults  ${SUITE}  ${EMPTY}  []  BuiltIn.Log
+    Check Normal Suite Defaults  ${SUITE}  teardown=BuiltIn.Log
     Should Be Equal  ${SUITE.status}  FAIL
     Should Contain Suites  ${SUITE}  Fourth  Subsuites  Subsuites2  Tsuite1  Tsuite2  Tsuite3
-    Should Be True  ${SUITE.tests} == []
+    Should Be Empty  ${SUITE.tests}
     Should Contain Suites  ${SUITE.suites[1]}  Sub1  Sub2
     Should Be True  ${SUITE.suites[0].suites} + ${SUITE.suites[1].suites[0].suites}+ ${SUITE.suites[1].suites[1].suites}+ ${SUITE.suites[2].suites[0].suites}+ ${SUITE.suites[3].suites} + ${SUITE.suites[4].suites} + ${SUITE.suites[5].suites}== []
     Check Suite Contains Tests  ${SUITE}  SubSuite1 First  SubSuite2 First  SubSuite3 First  SubSuite3 Second  Suite1 First  Suite1 Second
     ...  Third In Suite1  Suite2 First  Suite3 First  Suite4 First
-    Check Normal Suite Defaults  ${SUITE.suites[0]}  ${EMPTY}  []  BuiltIn.Log
+    Check Normal Suite Defaults  ${SUITE.suites[0]}  ${EMPTY}  []  teardown=BuiltIn.Log
     Check Normal Suite Defaults  ${SUITE.suites[1]}
-    Check Normal Suite Defaults  ${SUITE.suites[1].suites[0]}
+    Check Normal Suite Defaults  ${SUITE.suites[1].suites[0]}  setup=BuiltIn.Log  teardown=BuiltIn.No Operation
     Check Normal Suite Defaults  ${SUITE.suites[1].suites[1]}
     Check Normal Suite Defaults  ${SUITE.suites[2].suites[0]}
     Check Normal Suite Defaults  ${SUITE.suites[3]}
