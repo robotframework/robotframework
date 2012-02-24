@@ -14,11 +14,11 @@
 <script type="text/javascript" src="lib/jquery.tmpl.min.js"></script>
 <script type="text/javascript" src="view.js"></script>
 <script type="text/javascript" src="util.js"></script>
-<style type="text/css">
-    #header_div {
-        height: 4em;
-        width: auto;
-    }
+<style type="text/css" media="all">
+#header_div {
+  height: 4em;
+  width: auto;
+}
 </style>
 <!-- JS MODEL --><script type="text/javascript" src="testdata/testdoc.js"></script>
 <title></title>
@@ -81,7 +81,7 @@ function addTests(suite) {
 
 function addKeywords(parent) {
     $.map(parent.keywords, function (kw, _) {
-            $.tmpl('keywordTemplate', kw).appendTo($('#' + parent.id + '_children'));
+        $.tmpl('keywordTemplate', kw).appendTo($('#' + parent.id + '_children'));
     });
 }
 
