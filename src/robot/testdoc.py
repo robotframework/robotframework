@@ -45,8 +45,8 @@ Options
 Examples
 ========
 
-  python .m robot.testdoc mytestcases.html testdoc.html
-  python .m robot.testdoc --name smoke_test_plan -i smoke path/to/my_tests/ doc.html
+  python -m robot.testdoc mytestcases.html testdoc.html
+  python -m robot.testdoc --name smoke_test_plan -i smoke path/to/my_tests/ doc.html
 """
 
 import sys
