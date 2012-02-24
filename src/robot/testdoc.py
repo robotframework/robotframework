@@ -149,7 +149,7 @@ class JsonConverter(object):
             'name': suite.name,
             'fullName': suite.longname,
             'doc': suite.doc,
-            'metadata': dict(suite.metadata),
+            'metadata': suite.metadata.items(),
             'numberOfTests': suite.get_test_count(),
             'suites': self._convert_suites(suite),
             'tests': self._convert_tests(suite),

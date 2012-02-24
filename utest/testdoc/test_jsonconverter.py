@@ -18,7 +18,7 @@ class TestJsonConverter(unittest.TestCase):
 
     def setUp(self):
         if not self.suite:
-            suite = TestSuiteFactory(DATADIR, doc='My doc', metadata=['abc:123'])
+            suite = TestSuiteFactory(DATADIR, doc='My doc', metadata=['abc:123', '1:2'])
             output = join(DATADIR, '..', 'output.html')
             self.__class__.suite = JsonConverter(output).convert(suite)
 
@@ -30,7 +30,7 @@ class TestJsonConverter(unittest.TestCase):
                      name='Misc',
                      fullName='Misc',
                      doc='My doc',
-                     metadata={'abc': '123'},
+                     metadata=[('1', '2'), ('abc', '123')],
                      numberOfTests=162,
                      tests=[],
                      keywords=[])
@@ -41,7 +41,7 @@ class TestJsonConverter(unittest.TestCase):
                      name='Dummy Lib Test',
                      fullName='Misc.Dummy Lib Test',
                      doc='',
-                     metadata={},
+                     metadata=[],
                      numberOfTests=1,
                      suites=[],
                      keywords=[])
@@ -54,7 +54,7 @@ class TestJsonConverter(unittest.TestCase):
                      name='.Sui.te.2.',
                      fullName='Misc.Multiple Suites.Sub.Suite.1..Sui.te.2.',
                      doc='',
-                     metadata={},
+                     metadata=[],
                      numberOfTests=12,
                      suites=[],
                      keywords=[])
@@ -70,7 +70,7 @@ class TestJsonConverter(unittest.TestCase):
                      name='Normal & Pass And Fail',
                      fullName='Normal & Pass And Fail',
                      doc='',
-                     metadata={},
+                     metadata=[],
                      numberOfTests=4,
                      keywords=[],
                      tests=[])
@@ -81,7 +81,7 @@ class TestJsonConverter(unittest.TestCase):
                      name='Normal',
                      fullName='Normal & Pass And Fail.Normal',
                      doc='Normal test cases',
-                     metadata={'Something': 'My Value'},
+                     metadata=[('Something', 'My Value')],
                      numberOfTests=2)
         test_convert(suite['suites'][1],
                      source=normpath(join(DATADIR, 'pass_and_fail.html')),
@@ -90,7 +90,7 @@ class TestJsonConverter(unittest.TestCase):
                      name='Pass And Fail',
                      fullName='Normal & Pass And Fail.Pass And Fail',
                      doc='Some tests here',
-                     metadata={},
+                     metadata=[],
                      numberOfTests=2)
 
     def test_test(self):
