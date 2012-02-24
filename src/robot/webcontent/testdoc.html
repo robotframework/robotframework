@@ -37,13 +37,13 @@
     document.getElementById('javascript_disabled').style.display = 'none';
 </script>
 
-<div class="header" id="header_div"></div>
+<div class="header" id="header_div"><h1></h1></div>
 
 <script type="text/javascript">
 $(document).ready(function(){
     parseTemplates();
-    createGenerated(window.testdoc.generated, window.testdoc.generatedMillis).appendTo($('#header_div'))
-    setTitle(window.testdoc.title, window.testdoc.suite.name);
+    addTitle(window.testdoc.title);
+    addGenerated(window.testdoc.generated, window.testdoc.generatedMillis);
     addSuite(window.testdoc.suite, 'body');
     expandElement(window.testdoc.suite.id);
 });
@@ -54,9 +54,13 @@ function parseTemplates() {
     });
 }
 
-function setTitle(givenTitle, suiteName) {
-    document.title = givenTitle ? givenTitle : 'Documentation for ' + suiteName;
-    $.tmpl('<h1>' + document.title + '</h1>').appendTo($('#header_div'));
+function addTitle(title) {
+    document.title = title;
+    $('h1').text(title);
+}
+
+function addGenerated(timestamp, millis) {
+    createGenerated(timestamp, millis).appendTo($('#header_div'));
 }
 
 function addSuite(suite, parent_locator) {

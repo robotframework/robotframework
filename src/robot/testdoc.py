@@ -100,7 +100,8 @@ class TestdocModelWriter(ModelWriter):
         self._output = output
         self._output_path = getattr(output, 'name', None)
         self._suite = suite
-        self._title = title.replace('_', ' ') if title else ''
+        self._title = title.replace('_', ' ') \
+                if title else 'Documentation for %s' % suite.name
 
     def write(self, line):
         self._output.write('<script type="text/javascript">' + os.linesep)
