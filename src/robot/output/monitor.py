@@ -140,31 +140,18 @@ class CommandLineWriter(object):
         stream.write(utils.encode_output(text).replace('\t', ' '*8))
         stream.flush()
 
-    def _highlight(self, before, highlighted, after, newline=True, error=False):
+    def _highlight(self, before, status, after, newline=True, error=False):
         stream = self._stdout if not error else self._stderr
         self._write(before, newline=False, error=error)
-        self._highlighter.start(highlighted, stream)
-        self._write(highlighted, newline=False, error=error)
-        self._highlighter.end()
+        self._highlighter.write_status(status, stream)
         self._write(after, newline=newline, error=error)
 
 
 class StatusHighlighter(object):
 
     def __init__(self, colors, *streams):
-        self._current = None
         self._highlighters = dict((stream, self._get_highlighter(stream, colors))
                                   for stream in streams)
-
-    def start(self, message, stream):
-        self._current = self._highlighters[stream]
-        {'PASS': self._current.green,
-         'FAIL': self._current.red,
-         'ERROR': self._current.red,
-         'WARN': self._current.yellow}[message]()
-
-    def end(self):
-        self._current.reset()
 
     def _get_highlighter(self, stream, colors):
         auto = hasattr(stream, 'isatty') and stream.isatty()
@@ -173,3 +160,16 @@ class StatusHighlighter(object):
                   'FORCE': True,   # compatibility with 2.5.5 and earlier
                   'OFF': False}.get(colors.upper(), auto)
         return Highlighter(stream) if enable else NoHighlighting(stream)
+
+    def write_status(self, status, stream):
+        highlighter = self._start_status_highlighting(status, stream)
+        stream.write(status)
+        highlighter.reset()
+
+    def _start_status_highlighting(self, status, stream):
+        highlighter = self._highlighters[stream]
+        {'PASS': highlighter.green,
+         'FAIL': highlighter.red,
+         'ERROR': highlighter.red,
+         'WARN': highlighter.yellow}[status]()
+        return highlighter
