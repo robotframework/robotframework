@@ -108,7 +108,7 @@ window.util = function () {
         return numString;
     }
 
-    function createGeneratedAgoString(generatedAgoMillis) {
+    function createGeneratedAgoString(generatedMillis) {
         function timeString(time, shortUnit) {
             var unit = {'y': 'year', 'd': 'day', 'h': 'hour',
                         'm': 'minute', 's': 'second'}[shortUnit];
@@ -119,7 +119,7 @@ window.util = function () {
             // Not a perfect algorithm but ought to be enough
             return days - Math.floor(years / 4);
         }
-        var generated = Math.round(generatedAgoMillis / 1000);
+        var generated = Math.round(generatedMillis / 1000);
         var current = Math.round(new Date().getTime() / 1000);
         var elapsed = current - generated;
         if (elapsed < 0) {

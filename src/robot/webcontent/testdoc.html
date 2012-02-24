@@ -12,6 +12,8 @@
 <link rel="stylesheet" type="text/css" href="print.css" media="print">
 <script type="text/javascript" src="lib/jquery.min.js"></script>
 <script type="text/javascript" src="lib/jquery.tmpl.min.js"></script>
+<script type="text/javascript" src="view.js"></script>
+<script type="text/javascript" src="util.js"></script>
 <!-- JS MODEL --><script type="text/javascript" src="testdata/testdoc.js"></script>
 <title></title>
 </head>
@@ -30,11 +32,11 @@
 </script>
 
 <div class="header" id="header_div"></div>
-<div id="statistics_container"></div>
 
 <script type="text/javascript">
 $(document).ready(function(){
     parseTemplates();
+    createGenerated(window.testdoc.generated, window.testdoc.generatedMillis).appendTo($('#header_div'))
     setTitle(window.testdoc.title, window.testdoc.suite.name);
     addSuite(window.testdoc.suite, 'body');
     expandElement(window.testdoc.suite.id);
@@ -48,7 +50,8 @@ function parseTemplates() {
 
 function setTitle(givenTitle, suiteName) {
     document.title = givenTitle ? givenTitle : 'Documentation for ' + suiteName;
-    $.tmpl('<h1>' + document.title + '</h1>').appendTo($('body'));
+    $.tmpl('<h1>' + document.title + '</h1>').appendTo($('#header_div'));
+    $.tmpl('<h2></h2>').appendTo($('#header_div'));
 }
 
 function addSuite(suite, parent_locator) {

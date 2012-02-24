@@ -26,19 +26,23 @@ function setTitle(suiteName, type) {
 }
 
 function addHeader() {
-    var generatedAgoMillis = window.testdata.generated().getTime();
-    var template =
-        '<div id="generated">' +
-        '<span>Generated<br>${generated}</span><br>' +
-        '<span id="generated_ago">${generatedAgo} ago</span>' +
-        '</div>' +
-        '<div id="report_or_log_link"><a href="#"></a></div>' +
-        '<h1>${title}</h1>';
-    $.tmpl(template, {
-        title: document.title,
-        generated: window.output.generatedTimestamp,
-        generatedAgo: util.createGeneratedAgoString(generatedAgoMillis)
+    createGenerated(window.output.generatedTimestamp,
+                    window.testdata.generated().getTime()
+    ).appendTo($('#header_div'));
+    $.tmpl('<div id="report_or_log_link"><a href="#"></a></div>' +
+            '<h1>${title}</h1>', {
+        title: document.title
     }).appendTo($('#header_div'));
+}
+
+function createGenerated(generated, generatedMillis) {
+    return $.tmpl('<div id="generated">' +
+    '<span>Generated<br>${generated}</span><br>' +
+    '<span id="generated_ago">${generatedAgo} ago</span>' +
+    '</div>', {
+        generated: generated,
+        generatedAgo: util.createGeneratedAgoString(generatedMillis)
+    });
 }
 
 function addReportOrLogLink(myType) {

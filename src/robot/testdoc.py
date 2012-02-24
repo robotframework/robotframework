@@ -13,6 +13,8 @@
 #  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
+import time
+
 
 USAGE = """robot.testdoc -- Robot Framework test data documentation tool
 
@@ -106,9 +108,12 @@ class TestdocModelWriter(ModelWriter):
         self._output.write('</script>' + os.linesep)
 
     def write_data(self):
+        timestamp = utils.get_timestamp()
         model = {
             'suite': JsonConverter(self._output_path).convert(self._suite),
-            'title': self._title
+            'title': self._title,
+            'generated': timestamp,
+            'generatedMillis': long(utils.timestamp_to_secs(timestamp) * 1000),
         }
         JsonWriter(self._output).write_json('testdoc = ', model)
 
