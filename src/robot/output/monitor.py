@@ -27,6 +27,7 @@ class CommandLineMonitor(object):
         self._is_logged = IsLogged('WARN')
         self._started = False
         self._started_keywords = 0
+        self._running_test = False
 
     def start_suite(self, suite):
         if not self._started:
@@ -43,19 +44,21 @@ class CommandLineMonitor(object):
 
     def start_test(self, test):
         self._writer.info(test.name, test.doc)
+        self._running_test = True
 
     def end_test(self, test):
         self._writer.redraw_info()
         self._writer.status(test.status)
         self._writer.message(test.message)
         self._writer.separator('-')
+        self._running_test = False
 
     def start_keyword(self, kw):
         self._started_keywords += 1
 
     def end_keyword(self, kw):
         self._started_keywords -= 1
-        if not self._started_keywords:
+        if self._running_test and not self._started_keywords:
             self._writer.keyword_marker(kw)
 
     def message(self, msg):
@@ -79,15 +82,17 @@ class CommandLineWriter(object):
 
     def info(self, name, doc, start_suite=False):
         width, separator = self._get_info_width_and_separator(start_suite)
-        self._info = '\r' + self._get_info(name, doc, width) + separator
+        self._info = self._get_info(name, doc, width) + separator
         self._write(self._info, newline=False)
         self._keyword_marker_count = 0
 
     def redraw_info(self, clear_status=False):
+        if not self._stdout.isatty():
+            return
         if clear_status:
             self.redraw_info()
             self._write(' ' * self._status_length, newline=False)
-        self._write(self._info, newline=False)
+        self._write('\r' + self._info, newline=False)
 
     def _get_info_width_and_separator(self, start_suite):
         if start_suite:
@@ -111,6 +116,8 @@ class CommandLineWriter(object):
             self._write(message.strip())
 
     def keyword_marker(self, kw):
+        if not self._stdout.isatty():
+            return
         if self._keyword_marker_count < self._status_length:
             self._write(self._keyword_marker, newline=False)
             self._keyword_marker_count += 1
