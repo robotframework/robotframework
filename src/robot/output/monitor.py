@@ -104,16 +104,16 @@ class CommandLineWriter(object):
         self._highlight('| ', status, ' |')
 
     def _clear_status(self):
-        self._clear_line()
-        self._rewrite_info()
+        if self._stdout.isatty():   # FIXME: stram may not always have isatty!!!
+            self._clear_line()
+            self._rewrite_info()
 
     def _clear_line(self):
         self._overwrite(' ' * self._width)
         self._overwrite('')
 
     def _overwrite(self, text):
-        if self._stdout.isatty():
-            self._write('\r' + text, newline=False)
+        self._write('\r' + text, newline=False)
 
     def _rewrite_info(self):
         self._write(self._info, newline=False)
@@ -133,7 +133,7 @@ class CommandLineWriter(object):
         self._keyword_marker_count += 1
 
     def error(self, message, level, running_tests=False):
-        if running_tests:
+        if running_tests and self._stdout.isatty():
             self._clear_line()
         self._highlight('[ ', level, ' ] ' + message, error=True)
         if running_tests:
