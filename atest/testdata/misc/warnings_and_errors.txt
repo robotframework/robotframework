@@ -9,7 +9,7 @@ Warning in test case
 
 Warning in test case
     [Documentation]    Duplicate name causes warning
-    No Operation
+    Log    No warnings here
 
 *** Keywords ***
 Warning in

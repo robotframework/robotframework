@@ -1,5 +1,5 @@
 *** Settings ***
-Documentation     Testing --RemoveKeywords option
+Documentation     Testing ALL and PASSED modes with --RemoveKeywords option.
 Suite Setup       Run Some Tests
 Suite Teardown    Remove File    ${INPUTFILE}
 Force Tags        regression    pybot    jybot
@@ -31,30 +31,28 @@ Remove Passed
 
 Keywords With Warnings Are Not Removed When Passed are Removed
     [Setup]    Run Rebot and Set My Suite    --removekeywords Passed    1
-    Keyword Should Not Be Empty    ${MY SUITE.setup}    Warning Keyword    ['In Setup']
-    Keyword Should Not Be Empty    ${MY SUITE.teardown}    Warning Keyword    ['In Teardown']
+    Keyword Should Not Be Empty    ${MY SUITE.setup}    Warning in    ['suite setup']
+    Keyword Should Not Be Empty    ${MY SUITE.teardown}    Warning in    ['suite teardown']
     ${tc1}    ${tc2}=    Set Variable    ${MY SUITE.tests}
-    Length Should Be    ${tc1.keywords}    1
-    Length Should Be    ${tc2.keywords}    2
-    Keyword Should Not Be Empty    ${tc1.keywords[0]}    BuiltIn.Log    ['dangerous', 'WARN']
-    Keyword Should Not Be Empty    ${tc2.keywords[0]}    BuiltIn.Log    ['No warnings here']
-    Keyword Should Not Be Empty    ${tc2.keywords[1]}    Warning Keyword    ['In Test Case']
-    Keyword Should Not Be Empty    ${tc2.keywords[1].keywords[0]}    BuiltIn.Log    ['Dangerous \${where}', 'WARN']
+    Length Should Be    ${tc1.kws}    1
+    Length Should Be    ${tc2.kws}    1
+    Keyword Should Not Be Empty    ${tc1.kws[0]}    Warning in    ['test case']
+    Keyword Should Not Be Empty    ${tc1.kws[0].kws[0]}    BuiltIn.Log    ['Warning in \${where}', 'WARN']
+    Keyword Should Be Empty    ${tc2.kws[0]}    BuiltIn.Log    ['No warnings here']
 
 Keywords With Warnings Are Removed When All are Removed
     [Setup]    Run Rebot and Set My Suite    --removekeywords All    1
-    Keyword Should Be Empty    ${MY SUITE.setup}    Warning Keyword    ['In Setup']
-    Keyword Should Be Empty    ${MY SUITE.teardown}    Warning Keyword    ['In Teardown']
+    Keyword Should Be Empty    ${MY SUITE.setup}    Warning in    ['suite setup']
+    Keyword Should Be Empty    ${MY SUITE.teardown}    Warning in    ['suite teardown']
     ${tc1}    ${tc2}=    Set Variable    ${MY SUITE.tests}
-    Length Should Be    ${tc1.keywords}    1
-    Length Should Be    ${tc2.keywords}    2
-    Keyword Should Be Empty    ${tc1.keywords[0]}    BuiltIn.Log    ['dangerous', 'WARN']
-    Keyword Should Be Empty    ${tc2.keywords[0]}    BuiltIn.Log    ['No warnings here']
-    Keyword Should Be Empty    ${tc2.keywords[1]}    Warning Keyword    ['In Test Case']
+    Length Should Be    ${tc1.kws}    1
+    Length Should Be    ${tc2.kws}    1
+    Keyword Should Be Empty    ${tc1.kws[0]}    Warning in    ['test case']
+    Keyword Should Be Empty    ${tc2.kws[0]}    BuiltIn.Log    ['No warnings here']
 
 *** Keywords ***
 Run Some Tests
-    Create Output With Robot    ${INPUTFILE}    ${EMPTY}    misc${/}pass_and_fail.html    misc${/}warnings.txt
+    Create Output With Robot    ${INPUTFILE}    ${EMPTY}    misc${/}pass_and_fail.html    misc${/}warnings_and_errors.txt
 
 Run Rebot And Set My Suite
     [Arguments]    ${rebot params}    ${suite index}
