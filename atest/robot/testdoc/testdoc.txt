@@ -1,0 +1,44 @@
+*** Settings ***
+Force Tags    regression   pybot   jybot
+Resource      atest_resource.txt
+
+*** Variables ***
+${CMD}    ${INTERPRETER} ${CURDIR}${/}..${/}..${/}..${/}src${/}robot${/}testdoc.py
+${INPUT 1}    ${CURDIR}${/}..${/}..${/}testdata${/}misc${/}pass_and_fail.html
+${INPUT 2}    ${CURDIR}${/}..${/}..${/}testdata${/}misc${/}suites
+${OUTFILE}    ${TEMPDIR}${/}testdoc-output.html
+
+
+*** Test Cases ***
+One input
+    Run Testdoc And Verify Result    ${INPUT 1}    ${OUTFILE}
+    Testdoc Should Contain    "name":"Pass And Fail"    "title":"Pass And Fail"    "numberOfTests":2
+
+
+Many inputs
+    Run Testdoc And Verify Result    --exclude t1 --title MyDoc ${INPUT 1} ${INPUT2}    ${OUTFILE}
+    Testdoc Should Contain    "name":"Pass And Fail & Suites"    "title":"MyDoc"    "numberOfTests":6
+    Testdoc Should Not Contain    "name":"Suite4 First"
+
+Invalid usage
+    Run Testdoc And Verify Result    ${EMPTY}    Expected at least 2 arguments, got 1.\n\nTry --help for usage information.    252
+
+
+*** Keyword ***
+Run Testdoc And Verify Result
+    [Arguments]    ${args}    ${expected output}    ${expected rc}=0
+    ${rc}    ${output}=   Run And Return Rc And Output  ${CMD} ${args} ${OUTFILE}
+    Should Be Equal    ${output}    ${expected output}
+    Should Be Equal As Numbers   ${rc}    ${expected rc}
+
+Testdoc Should Contain
+    [Arguments]    @{expected}
+    ${testdoc}=    Get File    ${OUTFILE}
+    : FOR     ${exp}    IN   @{expected}
+    \    Should Contain    ${testdoc}   ${exp}
+
+Testdoc Should Not Contain
+    [Arguments]    @{expected}
+    ${testdoc}=    Get File    ${OUTFILE}
+    : FOR     ${exp}    IN   @{expected}
+    \    Should Not Contain    ${testdoc}   ${exp}
