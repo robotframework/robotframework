@@ -31,16 +31,16 @@ class CommandLineMonitor(object):
 
     def start_suite(self, suite):
         if not self._started:
-            self._writer.separator('=')
+            self._writer.suite_separator()
             self._started = True
         self._writer.info(suite.longname, suite.doc, start_suite=True)
-        self._writer.separator('=')
+        self._writer.suite_separator()
 
     def end_suite(self, suite):
         self._writer.info(suite.longname, suite.doc)
         self._writer.status(suite.status)
         self._writer.message(suite.get_full_message())
-        self._writer.separator('=')
+        self._writer.suite_separator()
 
     def start_test(self, test):
         self._writer.info(test.name, test.doc)
@@ -49,7 +49,7 @@ class CommandLineMonitor(object):
     def end_test(self, test):
         self._writer.status(test.status, clear=True)
         self._writer.message(test.message)
-        self._writer.separator('-')
+        self._writer.test_separator()
         self._running_test = False
 
     def start_keyword(self, kw):
@@ -77,11 +77,12 @@ class CommandLineWriter(object):
         self._stderr = stderr or sys.__stderr__
         self._highlighter = StatusHighlighter(colors, self._stdout, self._stderr)
         self._keyword_marker_count = 0
+        self._last_info = None
 
     def info(self, name, doc, start_suite=False):
         width, separator = self._get_info_width_and_separator(start_suite)
-        self._info = self._get_info(name, doc, width) + separator
-        self._write(self._info, newline=False)
+        self._last_info = self._get_info(name, doc, width) + separator
+        self._write(self._last_info, newline=False)
         self._keyword_marker_count = 0
 
     def _get_info_width_and_separator(self, start_suite):
@@ -95,7 +96,13 @@ class CommandLineWriter(object):
         info = name if not doc else '%s :: %s' % (name, doc.splitlines()[0])
         return utils.pad_console_length(info, width)
 
-    def separator(self, char):
+    def suite_separator(self):
+        self._fill('=')
+
+    def test_separator(self):
+        self._fill('-')
+
+    def _fill(self, char):
         self._write(char * self._width)
 
     def status(self, status, clear=False):
@@ -108,15 +115,11 @@ class CommandLineWriter(object):
         self._rewrite_info()
 
     def _clear_info_line(self):
-        self._overwrite(' ' * self._width)
-        self._overwrite('')
-
-    def _overwrite(self, text):
-        self._write('\r' + text, newline=False)
+        self._write('\r' + ' ' * self._width + '\r', newline=False)
+        self._keyword_marker_count = 0
 
     def _rewrite_info(self):
-        self._write(self._info, newline=False)
-        self._keyword_marker_count = 0
+        self._write(self._last_info, newline=False)
 
     def message(self, message):
         if message:
