@@ -47,8 +47,8 @@ class TestSettingTable(unittest.TestCase):
         assert_true(isinstance(self.table.test_timeout, Timeout))
         assert_true(isinstance(self.table.force_tags, Tags))
         assert_true(isinstance(self.table.default_tags, Tags))
-        assert_equal(self.table.metadata, [])
-        assert_equal(self.table.imports, [])
+        assert_equal(self.table.metadata.data, [])
+        assert_equal(self.table.imports.data, [])
 
     def test_doc_default(self):
         assert_equal(self.table.doc.value, '')

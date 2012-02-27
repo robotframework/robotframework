@@ -179,9 +179,9 @@ class Return(Setting):
 
 
 class Metadata(Setting):
+    setting_name = 'Metadata'
 
-    def __init__(self, setting_name, parent, name, value, comment=None):
-        self.setting_name = setting_name
+    def __init__(self, parent, name, value, comment=None):
         self.parent = parent
         self.name = name
         self.value = self._string_value(value)
@@ -268,3 +268,49 @@ class Comment(object):
 
     def _has_comment(self):
         return self._comment and self._comment[0] and self._comment[0][0] != '#'
+
+
+class _DataList(object):
+
+    def __init__(self, parent):
+        self._parent = parent
+        self.data = []
+
+    def add(self, meta):
+        self._add(meta)
+
+    def _add(self, meta):
+        self.data.append(meta)
+
+    def _parse_name_and_value(self, value):
+        name = value[0] if value else ''
+        return name, value[1:]
+
+    def __getitem__(self, index):
+        return self.data[index]
+
+    def __len__(self):
+        return len(self.data)
+
+
+class ImportList(_DataList):
+
+    def populate_library(self, data, comment):
+        self._populate(Library, data, comment)
+
+    def populate_resource(self, data, comment):
+        self._populate(Resource, data, comment)
+
+    def populate_variables(self, data, comment):
+        self._populate(Variables, data, comment)
+
+    def _populate(self, item_class, data, comment):
+        name, value = self._parse_name_and_value(data)
+        self._add(item_class(self._parent, name, value, comment=comment))
+
+
+class MetadataList(_DataList):
+
+    def populate(self, value, comment):
+        name = value[0] if value else ''
+        self._add(Metadata(self._parent, name, value[1:], comment))

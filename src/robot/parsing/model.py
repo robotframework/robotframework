@@ -22,7 +22,8 @@ from robot import utils
 from robot.writer import DataFileWriter
 
 from settings import (Documentation, Fixture, Timeout, Tags, Metadata,
-    Library, Resource, Variables, Arguments, Return, Template, Comment)
+    Library, Resource, Variables, Arguments, Return, Template, Comment,
+    MetadataList, ImportList)
 from populators import FromFilePopulator, FromDirectoryPopulator
 
 
@@ -283,33 +284,27 @@ class _SettingTable(_Table, _WithSettings):
         self.default_tags = Tags('Default Tags', self)
         self.test_template = Template('Test Template', self)
         self.test_timeout = Timeout('Test Timeout', self)
-        self.metadata = []
-        self.imports = []
-
-    def _get_adder(self, adder_method):
-        def adder(value, comment):
-            name = value[0] if value else ''
-            adder_method(name, value[1:], comment)
-        return adder
+        self.metadata = MetadataList(self)
+        self.imports = ImportList(self)
 
     @property
     def _old_header_matcher(self):
         return OldStyleSettingAndVariableTableHeaderMatcher()
 
     def add_metadata(self, name, value='', comment=None):
-        self.metadata.append(Metadata('Metadata', self, name, value, comment))
+        self.metadata.add(Metadata(self, name, value, comment))
         return self.metadata[-1]
 
     def add_library(self, name, args=None, comment=None):
-        self.imports.append(Library(self, name, args, comment=comment))
+        self.imports.add(Library(self, name, args, comment=comment))
         return self.imports[-1]
 
     def add_resource(self, name, invalid_args=None, comment=None):
-        self.imports.append(Resource(self, name, invalid_args, comment=comment))
+        self.imports.add(Resource(self, name, invalid_args, comment=comment))
         return self.imports[-1]
 
     def add_variables(self, name, args=None, comment=None):
-        self.imports.append(Variables(self, name, args, comment=comment))
+        self.imports.add(Variables(self, name, args, comment=comment))
         return self.imports[-1]
 
     def __len__(self):
@@ -332,16 +327,16 @@ class TestCaseFileSettingTable(_SettingTable):
                 'defaulttags': lambda s: s.default_tags.populate,
                 'testtemplate': lambda s: s.test_template.populate,
                 'testtimeout': lambda s: s.test_timeout.populate,
-                'library': lambda s: s._get_adder(s.add_library),
-                'resource': lambda s: s._get_adder(s.add_resource),
-                'variables': lambda s: s._get_adder(s.add_variables),
-                'metadata': lambda s: s._get_adder(s.add_metadata)}
+                'library': lambda s: s.imports.populate_library,
+                'resource': lambda s: s.imports.populate_resource,
+                'variables': lambda s: s.imports.populate_variables,
+                'metadata': lambda s: s.metadata.populate}
 
     def __iter__(self):
         for setting in [self.doc, self.suite_setup, self.suite_teardown,
                         self.test_setup, self.test_teardown, self.force_tags,
                         self.default_tags, self.test_template, self.test_timeout] \
-                        + self.metadata + self.imports:
+                        + self.metadata.data + self.imports.data:
             yield setting
 
 
@@ -349,12 +344,12 @@ class ResourceFileSettingTable(_SettingTable):
 
     _setters = {'documentation': lambda s: s.doc.populate,
                 'document': lambda s: s.doc.populate,
-                'library': lambda s: s._get_adder(s.add_library),
-                'resource': lambda s: s._get_adder(s.add_resource),
-                'variables': lambda s: s._get_adder(s.add_variables)}
+                'library': lambda s: s.imports.populate_library,
+                'resource': lambda s: s.imports.populate_resource,
+                'variables': lambda s: s.imports.populate_variables}
 
     def __iter__(self):
-        for setting in [self.doc] + self.imports:
+        for setting in [self.doc] + self.imports.data:
             yield setting
 
 
@@ -372,15 +367,15 @@ class InitFileSettingTable(_SettingTable):
                 'testpostcondition': lambda s: s.test_teardown.populate,
                 'testtimeout': lambda s: s.test_timeout.populate,
                 'forcetags': lambda s: s.force_tags.populate,
-                'library': lambda s: s._get_adder(s.add_library),
-                'resource': lambda s: s._get_adder(s.add_resource),
-                'variables': lambda s: s._get_adder(s.add_variables),
-                'metadata': lambda s: s._get_adder(s.add_metadata)}
+                'library': lambda s: s.imports.populate_library,
+                'resource': lambda s: s.imports.populate_resource,
+                'variables': lambda s: s.imports.populate_variables,
+                'metadata': lambda s: s.metadata.populate}
 
     def __iter__(self):
         for setting in [self.doc, self.suite_setup, self.suite_teardown,
                         self.test_setup, self.test_teardown, self.force_tags,
-                        self.test_timeout] + self.metadata + self.imports:
+                        self.test_timeout] + self.metadata.data + self.imports.data:
             yield setting
 
 
