@@ -62,7 +62,7 @@ class CommandLineMonitor(object):
 
     def message(self, msg):
         if self._is_logged(msg.level):
-            self._writer.error(msg.message, msg.level, self._started)
+            self._writer.error(msg.message, msg.level, clear=self._running_test)
 
     def output_file(self, name, path):
         self._writer.output(name, path)
@@ -99,16 +99,15 @@ class CommandLineWriter(object):
         self._write(char * self._width)
 
     def status(self, status, clear=False):
-        if clear:
+        if clear and isatty(self._stdout):
             self._clear_status()
         self._highlight('| ', status, ' |')
 
     def _clear_status(self):
-        if self._stdout.isatty():   # FIXME: stram may not always have isatty!!!
-            self._clear_line()
-            self._rewrite_info()
+        self._clear_info_line()
+        self._rewrite_info()
 
-    def _clear_line(self):
+    def _clear_info_line(self):
         self._overwrite(' ' * self._width)
         self._overwrite('')
 
@@ -124,7 +123,7 @@ class CommandLineWriter(object):
             self._write(message.strip())
 
     def keyword_marker(self, kw):
-        if not self._stdout.isatty():
+        if not isatty(self._stdout):
             return
         if self._keyword_marker_count == self._status_length:
             self._clear_status()
@@ -132,11 +131,11 @@ class CommandLineWriter(object):
         self._highlighter.highlight(marker, color, self._stdout)
         self._keyword_marker_count += 1
 
-    def error(self, message, level, running_tests=False):
-        if running_tests and self._stdout.isatty():
-            self._clear_line()
+    def error(self, message, level, clear=False):
+        if clear and isatty(self._stdout):
+            self._clear_info_line()
         self._highlight('[ ', level, ' ] ' + message, error=True)
-        if running_tests:
+        if clear and isatty(self._stdout):
             self._rewrite_info()
 
     def output(self, name, path):
@@ -163,7 +162,7 @@ class StatusHighlighter(object):
                                   for stream in streams)
 
     def _get_highlighter(self, stream, colors):
-        auto = hasattr(stream, 'isatty') and stream.isatty()
+        auto = isatty(stream)
         enable = {'AUTO': auto,
                   'ON': True,
                   'FORCE': True,   # compatibility with 2.5.5 and earlier
@@ -189,3 +188,7 @@ class StatusHighlighter(object):
         stream.write(text)
         stream.flush()
         highlighter.reset()
+
+
+def isatty(stream):
+    return hasattr(stream, 'isatty') and stream.isatty()
