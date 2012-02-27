@@ -61,6 +61,7 @@ class Base(unittest.TestCase):
 
 class TestRun(Base):
     data = join(ROOT, 'atest', 'testdata', 'misc', 'pass_and_fail.html')
+    warn = join(ROOT, 'atest', 'testdata', 'misc', 'warnings_and_errors.txt')
     nonex = join(TEMP, 'non-existing-file-this-is.txt')
 
     def test_run_once(self):
@@ -88,11 +89,17 @@ class TestRun(Base):
 
     def test_custom_stderr(self):
         stderr = StringIO()
-        assert_equals(run(self.nonex, stderr=stderr), 252)
-        assert_equals(run(self.data, output='NONE', stderr=stderr), 1)
-        self._assert_output(stderr, [('[ ERROR ]', 1), (self.nonex, 1), ('--help', 1)])
-        self._assert_outputs([('Pass And Fail', 2), ('Output:', 1),
+        assert_equals(run(self.warn, output='NONE', stderr=stderr), 0)
+        self._assert_output(stderr, [('[ WARN ]', 4), ('[ ERROR ]', 1)])
+        self._assert_outputs([('Warnings And Errors', 2), ('Output:', 1),
                               ('Log:', 0), ('Report:', 0)])
+
+    def test_custom_stdout_and_stderr_with_minimal_implementation(self):
+        output = StreamWithOnlyWriteAndFlush()
+        assert_equals(run(self.warn, output='NONE', stdout=output, stderr=output), 0)
+        self._assert_output(output, [('[ WARN ]', 4), ('[ ERROR ]', 1),
+                                     ('Warnings And Errors', 3), ('Output:', 1),
+                                     ('Log:', 0), ('Report:', 0)])
 
 
 class TestRebot(Base):
@@ -122,8 +129,8 @@ class TestRebot(Base):
         self._assert_output(stdout, [('Log:', 1), ('Report:', 0)])
         self._assert_outputs()
 
-    def test_custom_stdout_and_stderr(self):
-        output = StringIO()
+    def test_custom_stdout_and_stderr_with_minumal_implementation(self):
+        output = StreamWithOnlyWriteAndFlush()
         assert_equals(rebot(self.data, log='NONE', report='NONE', stdout=output,
                             stderr=output), 252)
         assert_equals(rebot(self.data, report='NONE', stdout=output,
@@ -131,6 +138,21 @@ class TestRebot(Base):
         self._assert_output(output, [('[ ERROR ] No outputs created', 1),
                                      ('--help', 1), ('Log:', 1), ('Report:', 0)])
         self._assert_outputs()
+
+
+class StreamWithOnlyWriteAndFlush(object):
+
+    def __init__(self):
+        self._buffer = []
+
+    def write(self, msg):
+        self._buffer.append(msg)
+
+    def flush(self):
+        pass
+
+    def getvalue(self):
+        return ''.join(self._buffer)
 
 
 if __name__ == '__main__':

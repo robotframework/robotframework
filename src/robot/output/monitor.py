@@ -31,16 +31,16 @@ class CommandLineMonitor(object):
 
     def start_suite(self, suite):
         if not self._started:
-            self._writer.separator('=')
+            self._writer.suite_separator()
             self._started = True
         self._writer.info(suite.longname, suite.doc, start_suite=True)
-        self._writer.separator('=')
+        self._writer.suite_separator()
 
     def end_suite(self, suite):
         self._writer.info(suite.longname, suite.doc)
         self._writer.status(suite.status)
         self._writer.message(suite.get_full_message())
-        self._writer.separator('=')
+        self._writer.suite_separator()
 
     def start_test(self, test):
         self._writer.info(test.name, test.doc)
@@ -49,7 +49,7 @@ class CommandLineMonitor(object):
     def end_test(self, test):
         self._writer.status(test.status, clear=True)
         self._writer.message(test.message)
-        self._writer.separator('-')
+        self._writer.test_separator()
         self._running_test = False
 
     def start_keyword(self, kw):
@@ -62,7 +62,7 @@ class CommandLineMonitor(object):
 
     def message(self, msg):
         if self._is_logged(msg.level):
-            self._writer.error(msg.message, msg.level, self._started)
+            self._writer.error(msg.message, msg.level, clear=self._running_test)
 
     def output_file(self, name, path):
         self._writer.output(name, path)
@@ -77,11 +77,12 @@ class CommandLineWriter(object):
         self._stderr = stderr or sys.__stderr__
         self._highlighter = StatusHighlighter(colors, self._stdout, self._stderr)
         self._keyword_marker_count = 0
+        self._last_info = None
 
     def info(self, name, doc, start_suite=False):
         width, separator = self._get_info_width_and_separator(start_suite)
-        self._info = self._get_info(name, doc, width) + separator
-        self._write(self._info, newline=False)
+        self._last_info = self._get_info(name, doc, width) + separator
+        self._write(self._last_info, newline=False)
         self._keyword_marker_count = 0
 
     def _get_info_width_and_separator(self, start_suite):
@@ -95,36 +96,37 @@ class CommandLineWriter(object):
         info = name if not doc else '%s :: %s' % (name, doc.splitlines()[0])
         return utils.pad_console_length(info, width)
 
-    def separator(self, char):
+    def suite_separator(self):
+        self._fill('=')
+
+    def test_separator(self):
+        self._fill('-')
+
+    def _fill(self, char):
         self._write(char * self._width)
 
     def status(self, status, clear=False):
-        if clear:
+        if clear and isatty(self._stdout):
             self._clear_status()
         self._highlight('| ', status, ' |')
 
     def _clear_status(self):
-        if self._stdout.isatty():   # FIXME: stram may not always have isatty!!!
-            self._clear_line()
-            self._rewrite_info()
+        self._clear_info_line()
+        self._rewrite_info()
 
-    def _clear_line(self):
-        self._overwrite(' ' * self._width)
-        self._overwrite('')
-
-    def _overwrite(self, text):
-        self._write('\r' + text, newline=False)
+    def _clear_info_line(self):
+        self._write('\r' + ' ' * self._width + '\r', newline=False)
+        self._keyword_marker_count = 0
 
     def _rewrite_info(self):
-        self._write(self._info, newline=False)
-        self._keyword_marker_count = 0
+        self._write(self._last_info, newline=False)
 
     def message(self, message):
         if message:
             self._write(message.strip())
 
     def keyword_marker(self, kw):
-        if not self._stdout.isatty():
+        if not isatty(self._stdout):
             return
         if self._keyword_marker_count == self._status_length:
             self._clear_status()
@@ -132,11 +134,11 @@ class CommandLineWriter(object):
         self._highlighter.highlight(marker, color, self._stdout)
         self._keyword_marker_count += 1
 
-    def error(self, message, level, running_tests=False):
-        if running_tests and self._stdout.isatty():
-            self._clear_line()
+    def error(self, message, level, clear=False):
+        if clear and isatty(self._stdout):
+            self._clear_info_line()
         self._highlight('[ ', level, ' ] ' + message, error=True)
-        if running_tests:
+        if clear and isatty(self._stdout):
             self._rewrite_info()
 
     def output(self, name, path):
@@ -146,7 +148,7 @@ class CommandLineWriter(object):
         stream = self._stdout if not error else self._stderr
         if newline:
             text += '\n'
-        stream.write(utils.encode_output(text).replace('\t', ' '*8))
+        stream.write(utils.encode_output(text))
         stream.flush()
 
     def _highlight(self, before, status, after, newline=True, error=False):
@@ -163,7 +165,7 @@ class StatusHighlighter(object):
                                   for stream in streams)
 
     def _get_highlighter(self, stream, colors):
-        auto = hasattr(stream, 'isatty') and stream.isatty()
+        auto = isatty(stream)
         enable = {'AUTO': auto,
                   'ON': True,
                   'FORCE': True,   # compatibility with 2.5.5 and earlier
@@ -189,3 +191,7 @@ class StatusHighlighter(object):
         stream.write(text)
         stream.flush()
         highlighter.reset()
+
+
+def isatty(stream):
+    return hasattr(stream, 'isatty') and stream.isatty()
