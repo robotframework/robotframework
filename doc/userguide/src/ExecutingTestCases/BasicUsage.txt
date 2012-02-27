@@ -188,6 +188,12 @@ output from executing a simple test suite with only two test cases::
    Report:  /path/to/report.html
    Log:     /path/to/log.html
 
+Starting from Robot Framework 2.7, there is also a notification on the console
+whenever a top-level keyword in a test case ends. A green dot is used if
+a keyword passes and a red F if it fails. These markers are written to the end
+of line and they are overwritten by the test status when the test itself ends.
+Writing the markers is disabled if console output is redirected to a file.
+
 Generated output files
 ''''''''''''''''''''''
 
