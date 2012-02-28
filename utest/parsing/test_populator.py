@@ -241,11 +241,13 @@ class SettingTablePopulatingTest(_PopulatorTest):
 
     def test_line_continuation(self):
          self._create_table('Settings', [['Documentation', 'doc'],
-                                         ['...', 'in two lines'],
+                                         ['...'],
+                                         ['...', 'in multiple lines'],
                                          ['Force Tags', 'one', 'two'],
+                                         ['...'],
                                          ['', '...', 'three']
                                         ])
-         self._assert_setting('doc', 'doc in two lines')
+         self._assert_setting('doc', 'doc\\n\\nin multiple lines')
          self._assert_setting('force_tags', ['one', 'two', 'three'])
 
     def test_invalid_settings(self):
@@ -259,6 +261,60 @@ class SettingTablePopulatingTest(_PopulatorTest):
         assert_equals(self._logger.value(), "Error in file 'None' in "
                                             "table 'Settings': Non-existing "
                                             "setting '...'.")
+
+
+class DocumentationCatenationTest(_PopulatorTest):
+
+    def test_multiple_cells_are_catenated_with_space(self):
+        self._assert_doc([['doc', 'in two cells']],
+                           'doc in two cells')
+
+    def test_multiple_rows_are_catenated_with_newline(self):
+        self._assert_doc([['doc'], ['...', 'in two lines']],
+                         'doc\\nin two lines')
+
+    def test_newline_is_not_added_if_it_already_exists(self):
+        self._assert_doc([['doc\\n'], ['in two lines']],
+                         'doc\\nin two lines')
+
+    def test_newline_is_not_added_if_it_already_exists2(self):
+        self._assert_doc([['doc\\\\n'], ['in multiple\\\\\\n'], ['lines']],
+                         'doc\\\\n\\nin multiple\\\\\\nlines')
+
+    def test_backslash_escapes_newline_adding(self):
+        self._assert_doc([['doc\\'], ['in two lines']],
+                         'doc\\ in two lines')
+
+    def test_backslash_escapes_newline_adding2(self):
+        self._assert_doc([['doc\\\\'], ['in multiple\\\\\\', 'lines']],
+                          'doc\\\\\\nin multiple\\\\\\ lines')
+
+    def test_documentation_defined_multiple_times(self):
+        self._create_table('Settings', [['Documentation', 'some doc'],
+                                        ['Documentation', 'other doc'],
+                                         ['...', 'third line']])
+        self._assert_setting('doc', 'some doc other doc\\nthird line')
+
+    def _assert_doc(self, doc_lines, expected):
+        doc_lines = [['...'] + line for line in doc_lines]
+        self._create_table('Settings', [['Documentation']] + doc_lines)
+        self._assert_setting('doc', expected)
+
+
+class MetadataCatenationTest(_PopulatorTest):
+
+    def test_value_on_many_cells_is_catenated_with_spaces(self):
+        self._assert_metadata_value([['value', 'in', 'cells']],
+                                      'value in cells')
+
+    def test_value_on_many_lines_is_catenated_with_newlines(self):
+        self._assert_metadata_value([['value'], ['in'], ['lines']],
+                                      'value\\nin\\nlines')
+
+    def _assert_metadata_value(self, doc_lines, expected):
+        value_lines = [['...'] + line for line in doc_lines]
+        self._create_table('Settings', [['Metadata', 'metaname']] + value_lines)
+        self._assert_meta(0, 'metaname', expected)
 
 
 class VariableTablePopulatingTest(_PopulatorTest):

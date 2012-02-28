@@ -1,6 +1,6 @@
 *** Settings ***
 ...  # Invalid usage
-Documentation   NO RIDE!! 
+Documentation   NO RIDE!!\
 ...  This  doc  is  one  long  string
 ...  !
 \  ...  !
@@ -8,7 +8,7 @@ Documentation   NO RIDE!!
 ...  !
 Default Tags  t1  t2  t3  t4
 ...           t4  t5  \   t6
-...  
+...
 \  ...           \   t7  t8
 ...           t9
 Library
@@ -22,7 +22,7 @@ ${scalarlist}  1  2  3  4
 ...  8
 ...
 ...  9  10
-${string} 
+${string}
 ...  some text
 ...
 @{list}  Hello  my
@@ -67,14 +67,14 @@ Multirow Args For User Keyword
     ...  ${5}
 
 Multirow Return Values
-    ${x} =  Create List  0  1 
+    ${x} =  Create List  0  1
     ...  2  3  4  5
     ...  6  7  8
     ...
     \  ...  9
     Should Be True  ${x} == [str(i) for i in range(10)]
     ${a}  ${b}  ${c}  ${d} =  Create List  1
-    ...     2     3     
+    ...     2     3
     \   \  ...  4
     Should Be Equal  ${a}  1
     Should Be Equal  ${b}  2
@@ -85,11 +85,11 @@ Multirow In User Keyword
     Multirow In User Keyword
 
 Multirow Test Settings
-    [Documentation]  This  test  doc 
-    ...  is
-    ...  one
+    [Documentation]  This  test  doc\
+    ...  is\
+    \   ...  one\
     ...
-    \  ...  long  string
+    ...  long  string
     [Tags]
     ...  my1  my2  my3
     ...  my4
@@ -126,7 +126,7 @@ Multirow With For Loop Declaration
     ...  2
     \  ${result} =  Set Variable  ${result}${item}
     Should Be Equal  ${result}  a1
-    :FOR  ${i1}  ${i2}  IN  
+    :FOR  ${i1}  ${i2}  IN
     ...   b      2
     ...   c      3
     \  ${result} =  Set Variable  ${result}${i1}${i2}
@@ -155,10 +155,10 @@ Multirow With For Loop Keywords
     \  \  ...        ${item.lower()}
     Should Be Equal  ${result}  ABC
     Should Be Equal  ${x}  1 2 3 a b c
-    
 
-  
-   
+
+
+
 *** Keywords ***
 \    # Invalid usage
 

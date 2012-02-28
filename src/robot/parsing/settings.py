@@ -73,6 +73,22 @@ class Setting(object):
         return ret
 
 
+class StringValueJoiner(object):
+
+    def __init__(self, separator):
+        self._separator = separator
+
+    def join_string_with_value(self, string, value):
+        if string:
+            return string + self._separator + self.string_value(value)
+        return self.string_value(value)
+
+    def string_value(self, value):
+        if isinstance(value, basestring):
+            return value
+        return self._separator.join(value)
+
+
 class Documentation(Setting):
 
     def _set_initial_value(self):
@@ -80,6 +96,9 @@ class Documentation(Setting):
 
     def _populate(self, value):
         self.value = self._concat_string_with_value(self.value, value)
+
+    def _string_value(self, value):
+        return value if isinstance(value, basestring) else ''.join(value)
 
     def _data_as_list(self):
         return [self.setting_name, self.value]
@@ -181,10 +200,11 @@ class Return(Setting):
 class Metadata(Setting):
     setting_name = 'Metadata'
 
-    def __init__(self, parent, name, value, comment=None):
+    def __init__(self, parent, name, value, comment=None, joined=False):
         self.parent = parent
         self.name = name
-        self.value = self._string_value(value)
+        joiner = StringValueJoiner('' if joined else ' ')
+        self.value = joiner.join_string_with_value('', value)
         self._set_comment(comment)
 
     def reset(self):
@@ -311,6 +331,5 @@ class ImportList(_DataList):
 
 class MetadataList(_DataList):
 
-    def populate(self, value, comment):
-        name = value[0] if value else ''
-        self._add(Metadata(self._parent, name, value[1:], comment))
+    def populate(self, name, value, comment):
+        self._add(Metadata(self._parent, name, value, comment, joined=True))

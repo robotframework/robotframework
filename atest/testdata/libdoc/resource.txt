@@ -1,12 +1,12 @@
 *** Settings ***
-Documentation   This resource file has documentation.
+Documentation   This resource file has documentation.\
 ...  And it is even set in multiple cells with _formatting_.
-...  \n
-...  -------------\n
-...  \n
-...  | *TABLE* |\n
-...  | ${NONEX} | ${CURDIR} | ${TEMPDIR} |\n
-...  \n
+...
+...  -------------
+...
+...  | *TABLE* |
+...  | ${NONEX} | ${CURDIR} | ${TEMPDIR} |
+...
 ...  tabs \t\t\t here
 
 
@@ -23,19 +23,19 @@ kw 3  [Arguments]  ${a1}   @{a2}
 
 kw 4  [Arguments]  ${a1}=d  @{a2}
 
-kw 5  [Documentation]   foo bar `kw`.\n
-      ...  baa `${a1}` alskdj alskdjlajd
-      ...  askf laskdjf asldkfj alsdkfj alsdkfjasldkfj
-      ...  askf laskdjf _asldkfj_ alsdkfj alsdkfjasldkfj
-      ...  askf *laskdjf* asldkfj `introduction` alsdkfj
-      ...  http://foo.bar\n
-      ...  - aaa\n
-      ...  - bbb\n
-      ...  \n
-      ...  -------------\n
-      ...  \n
-      ...  | *1* | *2* |\n
-      ...  | foo | bar |\n
+kw 5  [Documentation]   foo bar `kw`.
+      ...  baa `${a1}` alskdj alskdjlajd\
+      ...  askf laskdjf asldkfj alsdkfj alsdkfjasldkfj\
+      ...  askf laskdjf _asldkfj_ alsdkfj alsdkfjasldkfj\
+      ...  askf *laskdjf* asldkfj `introduction` alsdkfj\
+      ...  http://foo.bar
+      ...  - aaa
+      ...  - bbb
+      ...
+      ...  -------------
+      ...
+      ...  | *1* | *2* |
+      ...  | foo | bar |
 
 curdir  [Documentation]  ${CURDIR}
 

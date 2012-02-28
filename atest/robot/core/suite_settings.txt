@@ -9,7 +9,7 @@ Suite Name
 
 Suite Documentation
     [Documentation]  Checks that suite document can be set in metadata. Also checks that backslashes are escaped correctly.
-    Should Be Equal  ${suite.doc}  Test cases for metadata in Setting table (incl. imports) and within Test Case and Keyword tables. Text from multiple columns and lines is catenated with spaces. Real newlines need to be added with 'backslash+n' (e.g. '\n'). Also variables work since Robot 1.2, and they work from commandline too: Hello. Starting from RF 2.1 \${nonexisting} variables are just left unchanged. Of course escaping (e.g. '\${non-existing-in-suite-doc}' and '\\') works too.
+    Should Be Equal  ${suite.doc}  Test cases for metadata in Setting table (incl. imports) and within Test Case and Keyword tables. Text from multiple columns is catenated with spaces, and line continuation creates a new line. Real newlines can be added with 'backslash+n' (e.g. '\n'). Also variables work since Robot 1.2, and they work from commandline too: Hello.\nStarting from RF 2.1 \${nonexisting} variables are just left unchanged.\nOf course escaping (e.g. '\${non-existing-in-suite-doc}' and '\\') works too.
 
 Suite Test Setup
     ${test} =  Check Test Case  Test Case

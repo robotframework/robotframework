@@ -59,7 +59,7 @@ class TestSettingTable(unittest.TestCase):
 
     def test_set_doc_with_list(self):
         self.table.doc.populate(['hello', 'world'])
-        assert_equal(self.table.doc.value, 'hello world')
+        assert_equal(self.table.doc.value, 'helloworld')
 
     def test_fixture_default(self):
         assert_equal(self.table.suite_setup.name, None)

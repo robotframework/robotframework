@@ -5,7 +5,7 @@ Resource        atest_resource.txt
 
 *** Test Cases ***
 Multirow Settings
-    Should Be Equal  ${SUITE.doc}  NO RIDE!! This doc is one long string ! ! ! !
+    Should Be Equal  ${SUITE.doc}  NO RIDE!! This doc is one long string\n!\n!\n!\n!
     @{expected}=  Evaluate   ['t'+str(i) for i in range(1,10)]
     Should Contain Tags   ${SUITE.tests[0]}   @{expected}
 
@@ -41,7 +41,7 @@ Multirow Test Settings
     ${tc} =  Check Test Case  ${TEST NAME}
     @{expected}=   Evaluate  ['my'+str(i) for i in range(1,6)]
     Should Contain Tags   ${tc}  @{expected}
-    Should Be Equal  ${tc.doc}  This test doc is one long string
+    Should Be Equal  ${tc.doc}  This test doc is one \nlong string
 
 Multirow User Keyword Settings
     Check Test Case  ${TEST NAME}
@@ -63,4 +63,3 @@ Check Multirow Error From Stderr
     [Arguments]  ${table}  ${err}
     ${path} =  Join Path  ${CURDIR}  ..  ..  testdata  parsing  multirow.txt
     Check Stderr Contains  [ ERROR ] Error in file '${path}' in table '${table}': ${err}
-

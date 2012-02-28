@@ -14,7 +14,7 @@ Metadata In Multiple Columns
     Should be Equal  ${suite.metadata['Multiple columns']}  Value in multiple columns
 
 Metadata In Multiple Lines
-    Should be Equal  ${suite.metadata['multiple lines']}  Value in multiple lines '\n\n' and with real newlines
+    Should be Equal  ${suite.metadata['multiple lines']}  Value in multiple lines '\n\n' and with\nreal newlines
 
 Metadata With Variables
     Should be Equal  ${suite.metadata['variables']}  Version: 1.2

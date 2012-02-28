@@ -12,6 +12,10 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+import re
+
+from robot.parsing.settings import Documentation, MetadataList
+
 
 class Populator(object):
     """Explicit interface for all populators."""
@@ -72,7 +76,13 @@ class SettingTablePopulator(_TablePopulator):
     def _get_populator(self, row):
         row.handle_old_style_metadata()
         setter = self._table.get_setter(row.head)
-        return SettingPopulator(setter) if setter else NullPopulator()
+        if not setter:
+            return NullPopulator()
+        if setter.im_class is Documentation:
+            return DocumentationPopulator(setter)
+        if setter.im_class is MetadataList:
+            return MetadataPopulator(setter)
+        return SettingPopulator(setter)
 
 
 class VariableTablePopulator(_TablePopulator):
@@ -176,7 +186,11 @@ class _TestCaseUserKeywordPopulator(Populator):
     def _get_populator(self, row):
         if row.starts_test_or_user_keyword_setting():
             setter = self._setting_setter(row)
-            return SettingPopulator(setter) if setter else NullPopulator()
+            if not setter:
+                return NullPopulator()
+            if setter.im_class is Documentation:
+                return DocumentationPopulator(setter)
+            return SettingPopulator(setter)
         if row.starts_for_loop():
             return ForLoopPopulator(self._test_or_uk.add_for_loop)
         return StepPopulator(self._test_or_uk.add_step)
@@ -243,6 +257,56 @@ class SettingPopulator(_PropertyPopulator):
 
     def populate(self):
         self._setter(self._value, self._comments.value)
+
+
+class DocumentationPopulator(_PropertyPopulator):
+    _end_of_line_escapes = re.compile(r'(\\+)n?$')
+
+    def populate(self):
+        self._setter(self._value, self._comments.value)
+
+    def _add(self, row):
+        self._add_to_value(row.dedent().data)
+
+    def _add_to_value(self, data):
+        joiner = self._row_joiner()
+        if joiner:
+            self._value.append(joiner)
+        self._value.append(' '.join(data))
+
+    def _row_joiner(self):
+        if self._is_empty():
+            return None
+        return self._joiner_based_on_eol_escapes()
+
+    def _is_empty(self):
+        return not self._value or \
+               (len(self._value) == 1 and self._value[0] == '')
+
+    def _joiner_based_on_eol_escapes(self):
+        match = self._end_of_line_escapes.search(self._value[-1])
+        if not match or len(match.group(1)) % 2 == 0:
+            return '\\n'
+        if not match.group(0).endswith('n'):
+            return ' '
+        return None
+
+
+class MetadataPopulator(DocumentationPopulator):
+
+    def __init__(self, setter):
+        _PropertyPopulator.__init__(self, setter)
+        self._name = None
+
+    def populate(self):
+        self._setter(self._name, self._value, self._comments.value)
+
+    def _add(self, row):
+        data = row.dedent().data
+        if self._name is None:
+            self._name = data[0] if data else ''
+            data = data[1:]
+        self._add_to_value(data)
 
 
 class StepPopulator(_PropertyPopulator):
