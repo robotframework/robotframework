@@ -2,7 +2,7 @@
 Suite Setup     Run Tests  --variable FAIL:YES --log mylog.html --report myreport.html --debugfile mydebug.txt  misc/suites/subsuites
 Force Tags      regression   pybot  jybot
 Resource        monitor_resource.txt
-
+Library         expected_output/ExpectedOutputLibrary.py
 
 
 *** Test Cases ***
@@ -47,3 +47,8 @@ Long Name Should Be Cut
     ${expbase} =  Evaluate  'start' + '0123456789'*6
     Check Stdout Contains  ${SEP_LINE1}\n ${expbase}0123456789...\n ${SEP_LINE1}\n
     Check Stdout Contains  ${SEP_LINE2}\n ${expbase}0... | PASS |\n
+
+Layout Is Not Broken When There Are Warnings
+    Run Tests    ${EMPTY}    misc/warnings_and_errors.txt
+    Verify Output    ${STDOUT FILE}    warnings_and_errors_stdout.txt
+    Verify Output    ${STDERR FILE}    warnings_and_errors_stderr.txt
