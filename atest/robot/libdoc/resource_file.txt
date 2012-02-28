@@ -8,8 +8,8 @@ Name
     Name Should Be    resource
 
 Documentation
-    Doc Should Start With    This resource file has documentation. \
-    ...  And it is even set in multiple cells with _formatting_.\n\n
+    Doc Should Start With    This resource file has documentation.\n\n
+    ...  And it is even set in multiple cells with _formatting_. This should be te same paragraph as the sentence above\n\n
     ...  -------------\n\n
     ...  | *TABLE* |\n
     ...  | \${NONEX} | $\{CURDIR} | \${TEMPDIR} |\n
@@ -47,7 +47,7 @@ Keyword Documentation
     Keyword Doc Should Be    0   $\{CURDIR}
     Keyword Doc Should Be    1   foo bar `kw` & some "stuff" to <escape> .\n\n baa `\${a1}`
     Keyword Doc Should Be    5
-    ...    foo bar `kw`.\n\n
+    ...    foo bar `kw`. \
     ...    baa `\${a1}` alskdj alskdjlajd askf laskdjf asldkfj alsdkfj \
     ...    alsdkfjasldkfj askf laskdjf _asldkfj_ alsdkfj alsdkfjasldkfj \
     ...    askf *laskdjf* asldkfj `introduction` alsdkfj http://foo.bar\n

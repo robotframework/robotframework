@@ -25,8 +25,7 @@ class LibraryDoc(object):
 
     def __init__(self, name='', doc='', version='', type='library',
                  scope='', named_args=False):
-        joiner = ' ' if type == 'library' else '\n\n'
-        self._doc_formatter = DocFormatter(default_line_joiner=joiner)
+        self._doc_formatter = DocFormatter()
         self.name = name
         self.doc = doc
         self.version = version
@@ -51,9 +50,8 @@ class LibraryDoc(object):
 
 class KeywordDoc(object):
 
-    def __init__(self, name='', args=None, doc='', is_library=True):
-        joiner = ' ' if is_library else '\n\n'
-        self._doc_formatter = DocFormatter(default_line_joiner=joiner)
+    def __init__(self, name='', args=None, doc=''):
+        self._doc_formatter = DocFormatter()
         self.name = name
         self.args = args or []
         self.doc = doc
@@ -73,9 +71,6 @@ class KeywordDoc(object):
 class DocFormatter(object):
     _list_or_table_regexp = re.compile('^(\d+\.|[-*|]|\[\d+\]) .')
 
-    def __init__(self, default_line_joiner=' '):
-        self._default_line_joiner = default_line_joiner
-
     def format(self, doc):
         ret = ['']
         for line in doc.splitlines():
@@ -93,4 +88,4 @@ class DocFormatter(object):
             return '\n'
         if prev.startswith('| ') and prev.endswith(' |'):
             return '\n'
-        return self._default_line_joiner
+        return ' '

@@ -1,6 +1,8 @@
 *** Settings ***
-Documentation   This resource file has documentation.\
+Documentation   This resource file has documentation.
+...
 ...  And it is even set in multiple cells with _formatting_.
+...  This should be te same paragraph as the sentence above
 ...
 ...  -------------
 ...
@@ -15,7 +17,7 @@ kw  [Documentation]  foo bar `kw 2`.
     No Operation
 
 Keyword with some "stuff" to <escape>
-    [Documentation]   foo bar `kw` & some "stuff" to <escape> .\n baa `${a1}`
+    [Documentation]   foo bar `kw` & some "stuff" to <escape> .\n\n baa `${a1}`
     [Arguments]  ${a1}   ${a2}
     No Operation
 
@@ -24,10 +26,10 @@ kw 3  [Arguments]  ${a1}   @{a2}
 kw 4  [Arguments]  ${a1}=d  @{a2}
 
 kw 5  [Documentation]   foo bar `kw`.
-      ...  baa `${a1}` alskdj alskdjlajd\
-      ...  askf laskdjf asldkfj alsdkfj alsdkfjasldkfj\
-      ...  askf laskdjf _asldkfj_ alsdkfj alsdkfjasldkfj\
-      ...  askf *laskdjf* asldkfj `introduction` alsdkfj\
+      ...  baa `${a1}` alskdj alskdjlajd
+      ...  askf laskdjf asldkfj alsdkfj alsdkfjasldkfj
+      ...  askf laskdjf _asldkfj_ alsdkfj alsdkfjasldkfj
+      ...  askf *laskdjf* asldkfj `introduction` alsdkfj
       ...  http://foo.bar
       ...  - aaa
       ...  - bbb
@@ -40,4 +42,4 @@ kw 5  [Documentation]   foo bar `kw`.
 curdir  [Documentation]  ${CURDIR}
 
 non ascii doc
-    [Documentation]    Hyvää yötä.\nСпасибо!
+    [Documentation]    Hyvää yötä.\n\nСпасибо!
