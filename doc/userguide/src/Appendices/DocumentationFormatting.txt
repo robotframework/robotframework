@@ -44,6 +44,15 @@ __ `Handling whitespace`_
      </tr>
    </table>
 
+Starting from Robot Framework 2.7, a newline is inserted automatically
+between continued documentation lines, so the above example could be written
+in plain text format like this::
+
+  | Documentation | First line.                 |
+  | ...           |                             |
+  | ...           | Second paragraph, this time |
+  | ...           | with multiple line.         |
+
 With library documentations normal newlines are enough, and for
 example the following keyword documentation would create same end result
 as the above test suite documentation.

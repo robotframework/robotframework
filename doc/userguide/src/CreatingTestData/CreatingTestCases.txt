@@ -5,9 +5,9 @@ This section describes the overall test case syntax. Organizing test
 cases into `test suites`_ using `test case files`_ and `test suite
 directories`_ is discussed in the next section.
 
-.. contents:: 
+.. contents::
    :depth: 2
-   :local: 
+   :local:
 
 Test case syntax
 ~~~~~~~~~~~~~~~~
@@ -105,7 +105,7 @@ test case specific settings listed earlier.
    The forced and default values for tags_.
 
 `Test Setup`:opt:, `Test Teardown`:opt:
-   The default values for `test setup and teardown`_. Have also synonyms 
+   The default values for `test setup and teardown`_. Have also synonyms
    :opt:`Test Precondition` and :opt:`Test Postcondition`,
    respectively.
 
@@ -163,7 +163,7 @@ that they take one and two arguments, respectively. The last keyword,
    =============  ================  ==================  ==================
    Example        Create Directory  ${TEMPDIR}/stuff
    \              Copy File         ${CURDIR}/file.txt  ${TEMPDIR}/stuff
-   \              No Operation      
+   \              No Operation
    =============  ================  ==================  ==================
 
 Default values
@@ -191,9 +191,9 @@ three arguments would not work.
    =============  ================  =========================  ====================  ============
      Test Case         Action               Argument                 Argument          Argument
    =============  ================  =========================  ====================  ============
-   Example        Create File       ${TEMPDIR}/empty.txt  
-   \              Create File       ${TEMPDIR}/utf-8.txt       Hyvä esimerkki
-   \              Create File       ${TEMPDIR}/iso-8859-1.txt  Hyvä esimerkki        ISO-8859-1
+   Example        Create File       ${TEMPDIR}/empty.txt
+   \              Create File       ${TEMPDIR}/utf-8.txt       Hyvï¿½ esimerkki
+   \              Create File       ${TEMPDIR}/iso-8859-1.txt  Hyvï¿½ esimerkki        ISO-8859-1
    =============  ================  =========================  ====================  ============
 
 Variable number of arguments
@@ -312,9 +312,9 @@ __ `Taking test libraries into use`_
    =============  ===========  ===========  ===========
       Setting        Value        Value        Value
    =============  ===========  ===========  ===========
-   Library        Telnet       prompt=$      
+   Library        Telnet       prompt=$
    =============  ===========  ===========  ===========
-   
+
 .. table::
    :class: example
 
@@ -362,8 +362,8 @@ output, as well as the resulting test logs and test reports. If the
 documentation is long, it can be `split into several cells`__ that are
 catenated together with spaces. It is possible to use simple `HTML
 formatting`_ and variables_ can be used to make the documentation
-dynamic. Possible non-existing variables in documentation are
-just left unchanged starting from Robot Framework 2.1 version.
+dynamic. Starting from Robot Framework 2.7, if documentation is split in
+multiple lines, the lines themselves are catenated using newlines.
 
 __ `Dividing test data to several rows`_
 
@@ -379,6 +379,12 @@ __ `Dividing test data to several rows`_
    +--------------+-----------------+----------------------+----------------------------+
    | Splitting    | [Documentation] | This documentation   | it has been split into     |
    |              |                 | is a bit longer and  | several columns.           |
+   +--------------+-----------------+----------------------+----------------------------+
+   |              | No Operation    |                      |                            |
+   +--------------+-----------------+----------------------+----------------------------+
+   | Many lines   | [Documentation] | This documentation   |                            |
+   +--------------+-----------------+----------------------+----------------------------+
+   |              | ...             | contains a newline   |                            |
    +--------------+-----------------+----------------------+----------------------------+
    |              | No Operation    |                      |                            |
    +--------------+-----------------+----------------------+----------------------------+
@@ -399,7 +405,7 @@ of the test case needs documenting, it is often a sign that keywords
 in the test case need better names and they are to be enhanced,
 instead of adding extra documentation. Finally, metadata, such as the
 environment and user information in the last example above, is often
-better specified using tags_. 
+better specified using tags_.
 
 Tagging test cases
 ~~~~~~~~~~~~~~~~~~
@@ -410,7 +416,7 @@ least for the following purposes:
 
 - Tags are shown in test reports_, logs_ and, of course, in the test
   data, so they provide metadata to test cases.
-- Statistics__ about test cases (total, passed, failed  are 
+- Statistics__ about test cases (total, passed, failed  are
   automatically collected based on tags).
 - With tags, you can `include or exclude`__ test cases to be executed.
 - With tags, you can specify which test cases are considered `critical`_.
@@ -422,7 +428,7 @@ In this section it is only explained how to set tags for test
 cases, and different ways to do it are listed below. These
 approaches can naturally be used together.
 
-`Force Tags`:opt: in the Setting table 
+`Force Tags`:opt: in the Setting table
    All test cases in a test case file with this setting always get
    specified tags. If it is used in the `test suite initialization file`,
    all test cases in sub test suites get these tags.
@@ -436,14 +442,14 @@ approaches can naturally be used together.
    A test case always gets these tags. Additionally, it does not get the
    possible tags specified with :opt:`Default Tags`, so it is possible
    to override the :opt:`Default Tags` by using empty value. Starting
-   from Robot Framework 2.5.6, is also possible to use value :misc:`NONE` 
+   from Robot Framework 2.5.6, is also possible to use value :misc:`NONE`
    to override default tags.
 
 `--settag`:opt: command line option
    All executed test cases get tags set with this option in addition
    to tags they got elsewhere.
 
-`Set Tags`:name: and `Remove Tags`:name: keywords 
+`Set Tags`:name: and `Remove Tags`:name: keywords
    These `BuiltIn keywords`_ can be used to modify tags during the
    test execution.
 
@@ -462,7 +468,7 @@ can be created using variables, assuming that those variables exist.
    Default Tags  owner-john  smoke
    ============  ==========  =======  =======
 
-.. table:: 
+.. table::
    :class: example
 
    ==========  =========  =======  =======
@@ -471,7 +477,7 @@ can be created using variables, assuming that those variables exist.
    ${HOST}     10.0.1.42
    ==========  =========  =======  =======
 
-.. table:: 
+.. table::
    :class: example
 
    +---------------+-----------------+---------------------+------------------------+
@@ -530,7 +536,7 @@ normal keywords with possible arguments.
 
 Setup and teardown are always a single keyword. If they need to take care
 of multiple separate tasks, it is possible to create higher-level `user
-keywords`_ for that purpose. An alternative solution is executing multiple 
+keywords`_ for that purpose. An alternative solution is executing multiple
 keywords using the `BuiltIn keyword`_ :name:`Run Keywords` that was added
 in Robot Framework 2.5.
 
@@ -555,14 +561,14 @@ to use value :misc:`NONE` to indicate that a test has no setup/teardown.
 .. table:: Test setup and teardown examples
    :class: example
 
-   =============  =================  =======  =======  
-      Setting            Value        Value    Value  
-   =============  =================  =======  =======  
+   =============  =================  =======  =======
+      Setting            Value        Value    Value
+   =============  =================  =======  =======
    Test Setup     Open Application   App A
-   Test Teardown  Close Application  
-   =============  =================  =======  =======  
+   Test Teardown  Close Application
+   =============  =================  =======  =======
 
-.. table:: 
+.. table::
    :class: example
 
    ==================  ===============  ===================  ==================
@@ -588,7 +594,7 @@ to use value :misc:`NONE` to indicate that a test has no setup/teardown.
    \                   Do Something
    \                   [Teardown]       ${TEARDOWN}
    ==================  ===============  ===================  ==================
-  
+
 Often when creating use-case-like test cases, the terms *precondition*
 and *postcondition* are preferred over the terms setup and
 teardown. Robot Framework supports also this terminology, so that a
@@ -741,7 +747,7 @@ allows specifying the keyword to use only once.
    |                   | credentials should fail |         |         |
    +-------------------+-------------------------+---------+---------+
 
-.. table:: 
+.. table::
    :class: example
 
    +-------------------+-----------+-----------+---------+
