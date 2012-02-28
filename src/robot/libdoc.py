@@ -152,7 +152,7 @@ def libdoc_cli(args):
     LibDoc().execute_cli(args)
 
 
-def libdoc(library_or_resource, output, name='', version='', format=None):
+def libdoc(library_or_resource, outfile, name='', version='', format=None):
     """Executes libdoc.
 
     Arguments are same as command line options to libdoc.py.
@@ -160,8 +160,9 @@ def libdoc(library_or_resource, output, name='', version='', format=None):
     Example:
         libdoc('MyLibrary.py', 'MyLibrary.html', version='1.0')
     """
-    LibDoc().execute(library_or_resource, output, argument=arguments,
-                     name=name, version=version, format=format)
+
+    LibDoc().execute(library_or_resource, outfile, name=name, version=version,
+                     format=format)
 
 
 if __name__ == '__main__':
