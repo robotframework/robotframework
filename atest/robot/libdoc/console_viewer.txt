@@ -49,7 +49,8 @@ Show intro and keywords
     Should Contain Keyword    non ascii doc    ${EMPTY}
     ...    Hyvää yötä.
     ...    ${EMPTY}
-    ...    Спасибо!
+    # Cannot test does output contain `Спасибо!` because consoles may not be able to show it.
+    # Actually all consoles cannot show `Hyvää yötä` either but we expect western config.
 
 Show version
     Run Libdoc And Verify Output    ${TESTDATADIR}/module.py version    0.1-alpha

@@ -81,7 +81,8 @@ Get And Log Environment Variables
     ${vars} =    Get Environment Variables
     Should Contain    ${vars}    PATH
     Should Be Equal    ${vars['0']}    value
-    Should Be Equal    ${vars[u'is\xe4']}    äiti
+    Run Keyword If    "${:}" == ":"    Should Be Equal    ${vars[u'is\xe4']}    äiti
+    Run Keyword If    "${:}" != ";"    Should Be Equal    ${vars[u'IS\xe4']}    äiti
     Should Be Equal    ${vars['NON_ASCII_BY_RUNNER']}    I can häs åäö?!??!¿¿¡¡
     ${v2} =    Log Environment Variables
     Should Be Equal    ${vars}    ${v2}
