@@ -2,7 +2,8 @@ import unittest
 import os
 
 from robot.utils.asserts import assert_equals, assert_not_none, assert_none, assert_true
-from robot.utils import get_env_var, set_env_var, del_env_var, get_env_vars
+from robot.utils import (get_env_var, set_env_var, del_env_var, get_env_vars,
+                         decode_from_system, encode_to_system)
 
 TEST_VAR = 'TeST_EnV_vAR'
 TEST_VAL = 'original value'
@@ -47,10 +48,16 @@ class TestRobotEnv(unittest.TestCase):
         set_env_var(NON_ASCII_VAR, NON_ASCII_VAL)
         vars = get_env_vars()
         assert_true('PATH' in vars)
-        assert_equals(vars[TEST_VAR], TEST_VAL)
-        assert_equals(vars[NON_ASCII_VAR], NON_ASCII_VAL)
+        assert_equals(vars[self._upper_on_windows(TEST_VAR)], TEST_VAL)
+        assert_equals(vars[self._upper_on_windows(NON_ASCII_VAR)], NON_ASCII_VAL)
         for k, v in vars.items():
             assert_true(isinstance(k, unicode) and isinstance(v, unicode))
+
+    def _upper_on_windows(self, name):
+        if os.sep == '/':
+            return name
+        # Upper-case only ASCII characters like, at least, WinXP does...
+        return decode_from_system(encode_to_system(name).upper())
 
 
 if __name__ == '__main__':
