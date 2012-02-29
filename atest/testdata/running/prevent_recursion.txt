@@ -32,11 +32,11 @@ Recursion
     Recursion
 
 Limited recursion 1
-    [Arguments]    ${limit}=${45}
+    [Arguments]    ${limit}=${15}
     Run Keyword If    ${limit} > 0    Limited recursion 1   ${limit - 1}
 
 Limited recursion 2
-    [Arguments]    ${limit}=${90}
+    [Arguments]    ${limit}=${30}
     Run Keyword If    ${limit} < 0    Fail    Still below limit!
     Limited recursion 2     ${limit - 1}
 

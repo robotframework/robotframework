@@ -45,7 +45,7 @@ EXECUTION_CONTEXTS = ExecutionContexts()
 
 
 class _ExecutionContext(object):
-    _started_keywords_threshold = 100
+    _started_keywords_threshold = 42  # Jython on Windows don't work with higher
 
     def __init__(self, namespace, output, dry_run=False):
         self.namespace = namespace
