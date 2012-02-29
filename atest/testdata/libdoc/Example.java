@@ -52,9 +52,9 @@ public class Example {
     }
 
     /**
-     * Hyvää yötä.
+     * Hyv\u00e4\u00e4 y\u00f6t\u00e4.
      *
-     * Спасибо!
+     * \u0421\u043f\u0430\u0441\u0438\u0431\u043e!
      */
     public void nonAsciiDoc() {
     }
