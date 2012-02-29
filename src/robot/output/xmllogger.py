@@ -12,14 +12,14 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from robot import utils
+from robot.utils import XmlWriter, get_timestamp
 from robot.errors import DataError
 from robot.version import get_full_version
 
-from loggerhelper import IsLogged
+from .loggerhelper import IsLogged
 
 
-class XmlLogger:
+class XmlLogger(object):
 
     def __init__(self, path, log_level='TRACE', generator='Robot'):
         self._log_message_is_logged = IsLogged(log_level)
@@ -29,12 +29,12 @@ class XmlLogger:
 
     def _get_writer(self, path, generator):
         try:
-            writer = utils.XmlWriter(path)
+            writer = XmlWriter(path)
         except EnvironmentError, err:
             raise DataError("Opening output file '%s' failed: %s"
                             % (path, err.strerror))
         writer.start('robot', {'generator': get_full_version(generator),
-                               'generated': utils.get_timestamp()})
+                               'generated': get_timestamp()})
         return writer
 
     def close(self):

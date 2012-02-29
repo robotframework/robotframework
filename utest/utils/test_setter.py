@@ -1,5 +1,5 @@
 import unittest
-from robot.utils.asserts import assert_equal, assert_raises_with_msg
+from robot.utils.asserts import assert_equal, assert_raises
 
 from robot.utils.setter import setter, SetterAwareType
 
@@ -27,14 +27,20 @@ class TestSetter(unittest.TestCase):
         assert_equal(self.item.attr, 2)
 
     def test_notset(self):
-        assert_raises_with_msg(AttributeError, 'attr',
-                               getattr, self.item, 'attr')
+        assert_raises(AttributeError, getattr, self.item, 'attr')
+
+    def test_set_other_attr(self):
+        self.item.other_attr = 1
+        assert_equal(self.item.other_attr, 1)
 
 
-class TestSetterAwareType(TestSetter):
+class TestSetterWithSlotsAndSetterAwareType(TestSetter):
 
     def setUp(self):
         self.item = ExampleWithSlots()
+
+    def test_set_other_attr(self):
+        assert_raises(AttributeError, setattr, self.item, 'other_attr', 1)
 
 
 if __name__ == '__main__':

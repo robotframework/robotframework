@@ -68,5 +68,6 @@ class TestImportCache(unittest.TestCase):
         assert_equals(cache[path], value)
         assert_equals(cache._keys[0], path)
 
+
 if __name__ == '__main__':
     unittest.main()

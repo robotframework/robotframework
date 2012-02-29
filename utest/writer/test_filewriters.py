@@ -1,10 +1,11 @@
+from __future__ import with_statement
 import unittest
 from StringIO import StringIO
-from xml.etree.ElementTree import XML
 
 from robot.parsing import TestCaseFile
 from robot.parsing.model import TestCaseTable
 from robot.utils.asserts import assert_equals
+from robot.utils import ET, ETSource
 
 
 def create_test_case_file():
@@ -50,17 +51,26 @@ A test
 class TestTsvWriter(_WriterTestCase):
 
     def test_rows_are_not_split_if_there_are_headers(self):
-        self._test_rows_are_not_split_if_there_are_headers('tsv')
+        try:
+            import csv
+        except ImportError:
+            pass   # csv not available on IronPython 2.7
+        else:
+            self._test_rows_are_not_split_if_there_are_headers('tsv')
 
 
 class TestHtmlWriter(_WriterTestCase):
 
     def test_rows_are_not_split_if_there_are_headers(self):
         output = self._add_long_step_and_save('html')
-        tree = XML('\n'.join(output.splitlines()[1:]))
+        with ETSource('\n'.join(output.splitlines()[1:])) as source:
+            tree = ET.parse(source)
         lines = tree.findall('body/table/tr')
         assert_equals(len(lines), 4)
         for l in lines:
             cols = l.findall('td') or l.findall('th')
             assert_equals(len(cols), 9)
 
+
+if __name__ == '__main__':
+    unittest.main()

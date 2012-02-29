@@ -1,13 +1,13 @@
+from __future__ import with_statement
 import unittest
 import os
 from StringIO import StringIO
-from xml.etree.ElementTree import XML
-from xml.etree.ElementTree import tostring
 
 from robot.result import ResultFromXml
 from robot.result.outputwriter import OutputWriter
 from robot.utils.pyxmlwriter import XmlWriter
 from robot.utils.asserts import assert_equals
+from robot.utils import ET, ETSource
 
 from test_resultbuilder import GOLDEN_XML, GOLDEN_XML_TWICE
 
@@ -76,7 +76,11 @@ class TestResultSerializer(unittest.TestCase):
                                  self._xml_lines(GOLDEN_XML))
 
     def _xml_lines(self, text):
-        return tostring(XML(text)).splitlines()
+        with ETSource(text) as source:
+            tree = ET.parse(source)
+        output = StringIO()
+        tree.write(output)
+        return output.getvalue().splitlines()
 
     def _assert_xml_content(self, actual, expected):
         assert_equals(len(actual), len(expected))

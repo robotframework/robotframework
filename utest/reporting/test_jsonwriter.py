@@ -77,12 +77,15 @@ class TestJsonDumper(unittest.TestCase):
         assert_raises(ValueError, dumper.dump, [mapped1])
 
     if json:
-        def test_agains_standard_json(self):
+        def test_against_standard_json(self):
             string = u'*string\u00A9\v\\\'\"\r\t\njee' \
                 + u''.join(unichr(i) for i in xrange(32, 1024))
             data = [string, {'A': 1}, None]
             expected = StringIO()
-            json.dump(data, expected, separators=(',', ':'))
+            try:
+                json.dump(data, expected, separators=(',', ':'))
+            except UnicodeError:
+                return  # http://ironpython.codeplex.com/workitem/32331
             self._test(data, expected.getvalue())
 
 

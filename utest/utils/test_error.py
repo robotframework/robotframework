@@ -11,7 +11,6 @@ if utils.is_jython:
 from robot.utils.error import get_error_details, get_error_message, PythonErrorDetails
 
 
-
 class TestGetErrorDetails(unittest.TestCase):
 
     def test_get_error_details_python(self):
@@ -76,8 +75,8 @@ class TestRemoveRobotEntriesFromTraceback(unittest.TestCase):
     def test_both_robot_and_non_robot_entries(self):
         def raises():
             raise Exception
-        self._verify_traceback('Traceback (most recent call last):\n'
-                               '  File "PATH", line X, in raises\n'
+        self._verify_traceback('Traceback \(most recent call last\):\n'
+                               '  File ".*", line \d+, in raises\n'
                                '    raise Exception',
                                assert_raises, AssertionError, raises)
 
@@ -85,15 +84,15 @@ class TestRemoveRobotEntriesFromTraceback(unittest.TestCase):
         def raises():
             1/0
         raising_lambda = lambda: raises()
-        self._verify_traceback('Traceback (most recent call last):\n'
-                               '  File "PATH", line X, in <lambda>\n'
-                               '    raising_lambda = lambda: raises()\n'
-                               '  File "PATH", line X, in raises\n'
+        self._verify_traceback('Traceback \(most recent call last\):\n'
+                               '  File ".*", line \d+, in <lambda.*>\n'
+                               '    raising_lambda = lambda: raises\(\)\n'
+                               '  File ".*", line \d+, in raises\n'
                                '    1/0',
                                assert_raises, AssertionError, raising_lambda)
 
     def test_only_robot_entries(self):
-        self._verify_traceback('Traceback (most recent call last):\n'
+        self._verify_traceback('Traceback \(most recent call last\):\n'
                                '  None',
                                assert_equals, 1, 2)
 
@@ -103,12 +102,11 @@ class TestRemoveRobotEntriesFromTraceback(unittest.TestCase):
         except Exception:
             type, value, tb = sys.exc_info()
             # first tb entry originates from this file and must be excluded
-            details = PythonErrorDetails(type, value, tb.tb_next)
+            traceback = PythonErrorDetails(type, value, tb.tb_next).traceback
         else:
             raise AssertionError
-        traceback = re.sub('File ".*", line \d+', 'File "PATH", line X',
-                           details.traceback)
-        assert_equals(traceback, expected)
+        if not re.match(expected, traceback):
+            raise AssertionError('\nExpected:\n%s\n\nActual:\n%s' % (expected, traceback))
 
 
 if __name__ == "__main__":
