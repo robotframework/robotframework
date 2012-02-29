@@ -27,11 +27,3 @@ if sys.version_info[:3] < (2, 5, 2):
             items = [unicode(String(i).toString()) for i in items]
         return items
     os.listdir = listdir
-
-
-# Global workaround for os.stat bug on Windows http://bugs.jython.org/issue1658
-# The bug still exists in Jython 2.5.2 but the workaround doesn't work anymore.
-if os.sep == '\\' and sys.version_info[:3] < (2, 5, 2):
-    os._posix = os.JavaPOSIX(os.PythonPOSIXHandler())
-    os._native_posix = False
-
