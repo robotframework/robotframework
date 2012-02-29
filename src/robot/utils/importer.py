@@ -142,10 +142,12 @@ class _Importer(object):
                 # Hack to support standalone Jython. For more information, see:
                 # http://code.google.com/p/robotframework/issues/detail?id=515
                 # http://bugs.jython.org/issue1778514
-                if fromlist and retry and sys.platform.startswith('java'):
+                if sys.platform.startswith('java') and fromlist and retry:
                     __import__('%s.%s' % (name, fromlist[0]))
                     return self._import(name, fromlist, retry=False)
-                raise
+                # Cannot use plain raise due to
+                # http://ironpython.codeplex.com/workitem/32332
+                raise sys.exc_type, sys.exc_value, sys.exc_traceback
         except:
             raise DataError(*get_error_details())
 
