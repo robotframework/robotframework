@@ -27,8 +27,7 @@ class TidyLib(object):
         options = options.split(' ') if options else []
         with tempfile.TemporaryFile() as output:
             rc = call(self._cmd + options + [self._path(input)],
-                      stdout=output, stderr=STDOUT,
-                      env=self._env)
+                      stdout=output, stderr=STDOUT, env=self._env, shell=True)
             output.seek(0)
             content = output.read()
             if rc:
