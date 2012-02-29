@@ -2,10 +2,11 @@ Documentation formatting
 ------------------------
 
 It is possible to use simple HTML formatting with `test suite`__,
-`test case`__ and `user keyword`__ documentation in the test data, as well
-as when `documenting test libraries`__.  The formatting is similar to
-the style used in most wikis, and it is designed to be understandable
-both as plain text and after the HTML transformation.
+`test case`__ and `user keyword`__ documentation and `free test suite
+metadata`_ in the test data, as well as when `documenting test
+libraries`__.  The formatting is similar to the style used in most
+wikis, and it is designed to be understandable both as plain text and
+after the HTML transformation.
 
 __ `test suite documentation`_
 __ `test case documentation`_
@@ -19,11 +20,15 @@ __ `Documenting libraries`_
 Representing newlines
 ~~~~~~~~~~~~~~~~~~~~~
 
-The documentation used for test suites, test cases and keywords is
-subject to `general parsing rules`__ of the test data. This means that
-normal newlines are not preserved, and dividing documentation into lines
-and paragraphs requires using a `literal newline character sequence`__
-(:code:`\\n`), as illustrated in the example below.
+Adding newlines manually in test data
+'''''''''''''''''''''''''''''''''''''
+
+The documentation of test suites, test cases and keywords as well as
+the test suite metadata are subject to `general parsing rules`__ of the
+test data. This means that normal newlines are not preserved and
+dividing documentation into lines and paragraphs generally requires
+using a `literal newline character sequence`__ (:code:`\\n`). This is
+shown in the example below.
 
 __ `Test data syntax`_
 __ `Handling whitespace`_
@@ -31,8 +36,10 @@ __ `Handling whitespace`_
 .. raw:: html
 
    <table class="example docutils">
+     <caption>Adding newlines manually</caption>
      <tr>
        <th>Setting</th>
+       <th>Value</th>
        <th>Value</th>
      </tr>
      <tr>
@@ -41,21 +48,87 @@ __ `Handling whitespace`_
          First line.\n<br>\n<br>
          Second paragraph, this time\n<br>with multiple lines.
        </td>
+       <td>&nbsp;</td>
+     </tr>
+     <tr>
+       <td>Metadata</td>
+       <td>Example</td>
+       <td>Value\n<br>in two lines</td>
      </tr>
    </table>
 
-Starting from Robot Framework 2.7, a newline is inserted automatically
-between continued documentation lines, so the above example could be written
-in plain text format like this::
+Automatic newlines in test data
+'''''''''''''''''''''''''''''''
 
-  | Documentation | First line.                 |
-  | ...           |                             |
-  | ...           | Second paragraph, this time |
-  | ...           | with multiple line.         |
+Adding newlines manually to a long documentation takes some effort and
+extra characters also make the documentation in the test data slightly
+harder to read. Starting from Robot Framework 2.7, this is not always
+required as newlines are inserted automatically between `continued
+documentation and metadata lines`__. In practice this means that the
+above example could be written also as follows.
+
+.. table:: Automatic newlines
+   :class: example
+
+   =============  ===========================
+      Setting                Value
+   =============  ===========================
+   Documentation  First line.
+   ...
+   ...            Second paragraph, this time
+   ...            with multiple lines.
+   Metadata       Example
+   ...            Value
+   ...            in two lines
+   =============  ===========================
+
+This style works especially well in the `plain text format`_ where the
+same example could be written like this::
+
+  *** Settings ***
+  Documentation
+  ...    First line.
+  ...
+  ...    Second paragraph, this time
+  ...    with multiple lines.
+  Metadata
+  ...    Example
+  ...    Value
+  ...    in two lines
+
+No automatic newline is added if a line already ends with a newline or
+if it ends with and an `escaping backslash`__. Notice also that if
+documentation or metadata is defined in multiple cells in a same row,
+these cells are catenated together with spaces. All these cases are
+illustrated in the examples below where all test cases end up having
+the same two line documentation.
+
+__ `Dividing test data to several rows`_
+__ Escaping_
+
+.. table:: Multiline documentation examples
+   :class: example
+
+   =========  ===============  ================  ==============  ==============
+   Test Case      Action           Argument         Argument       Argument
+   =========  ===============  ================  ==============  ==============
+   Example 1  [Documentation]  First line\\n     Second line in  multiple parts
+   \          No Operation
+   Example 2  [Documentation]  First line
+   \          ...              Second line in    multiple parts
+   \          No Operation
+   Example 3  [Documentation]  First line\\n
+   \          ...              Second line in\\
+   \          ...              multiple parts
+   \          No Operation
+   =========  ===============  ================  ==============  ==============
+
+Documentation in test libraries
+'''''''''''''''''''''''''''''''
 
 With library documentations normal newlines are enough, and for
 example the following keyword documentation would create same end result
-as the above test suite documentation.
+as the test suite documentation in the previous section.
 
 .. sourcecode:: python
 
@@ -131,14 +204,11 @@ Tables
 ~~~~~~
 
 Tables are created using the pipe character with whitespace around it
-as a cell boundary and the newline as a row separator. In library
-documentations normal newlines are enough, but in test suite, test
-case and keyword documentations the explicit newline character
-sequence (:code:`\\n`) is needed::
+as a cell boundary and the newline character as a row separator::
 
-   | *A*  | *B*   | *C*   |\n
-   | _1_  | Hello | world |\n
-   | _2_  | Hi    |       |\n
+   | *A*  | *B*   | *C*   |
+   | _1_  | Hello | world |
+   | _2_  | Hi    |       |
 
 The created table always has a thin border and the text is
 left-aligned. Formatting using bold and italic works also in table
@@ -166,22 +236,20 @@ whitespace is preserved.
 In the following documentation, the two middle lines form a preformatted
 block when converted to HTML::
 
-  Doc before block:\n
-  | inside block\n
-  |    some   additional whitespace\n
+  Doc before block:
+  | inside block
+  |    some   additional whitespace
   After block
-
 
 Horizontal ruler
 ~~~~~~~~~~~~~~~~
 
 Horizontal rulers (the <hr> tag) make it possible to separate larger
 sections from each others, and they can be created by having three
-hyphens alone in a line. With documentations in the test data literal
-newlines are, again, required::
+hyphens alone in a line::
 
-   Some text here.\n
-   \n
-   ---\n
-   \n
+   Some text here.
+
+   ---
+
    More text...

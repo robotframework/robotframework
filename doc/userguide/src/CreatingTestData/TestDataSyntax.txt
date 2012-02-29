@@ -294,8 +294,7 @@ One of the biggest benefit of the plain text format over HTML and TSV
 is that editing it using normal text editors is very easy. For Emacs__
 there is even a special `robot-mode.el`__ that provides syntax
 highlighting and keyword completion. The plain text format is also
-supported by RIDE_, although it only supports the space separated
-variant.
+supported by RIDE_.
 
 __ http://www.gnu.org/software/emacs/
 __ http://code.google.com/p/robot-mode/
@@ -474,14 +473,20 @@ The escape character for the Robot Framework parser is the backslash
 
 - To affect `the parsing of whitespaces`__.
 
-- To prevent ignoring empty cells at the end of a row (this requires
-  :code:`\\` to be in the appropriate cell). Another possibility is
-  using `built-in variable`__ :var:`${EMPTY}`.
+- To prevent ignoring empty cells at the end of a row in general and
+  everywhere when using the `plain text format`_. Another, and often
+  clearer, possibility is using `built-in variable`__ :var:`${EMPTY}`.
+
+- To escape pipe character when using the `pipe and space separated format`_.
 
 - To escape indented cells in `for loops`_ when using the `plain text format`_.
 
+- To prevent catenating documentation split into multiple rows `with
+  newlines`__.
+
 __ `Handling whitespace`_
 __ `Space and empty variables`_
+__ `Automatic newlines in test data`_
 
 .. note:: These escaping rules are applied only to arguments to
           keywords and values to settings. They are not used, for
@@ -530,14 +535,18 @@ variable tables, it can be placed directly under the setting or variable name.
 In all tables, all empty cells before the ellipsis are ignored.
 
 Additionally, values of settings that take only one value (mainly
-documentations) can be split to several columns. These values
-will be then catenated together with spaces when the test data is
-parsed.
+documentations) can be split to several columns. These values will be
+then catenated together with spaces when the test data is
+parsed. Starting from Robot Framework 2.7, documentation and test
+suite metadata split into multiple rows will be `catenated together
+with newlines`__.
 
 All these syntaxes are illustrated in the following examples. In the
 first three tables test data has not been split, and
 the following three illustrate how fewer columns are needed after
 splitting the data to several rows.
+
+__ `Automatic newlines in test data`_
 
 .. table:: Test data that has not been split
    :class: example
@@ -565,7 +574,7 @@ splitting the data to several rows.
    +===========+=================+===============+======+=======+======+======+=====+=====+
    | Example   | [Documentation] | Documentation |      |       |      |      |     |     |
    |           |                 | for this test |      |       |      |      |     |     |
-   |           |                 | case. This    |      |       |      |      |     |     |
+   |           |                 | case.\\n This |      |       |      |      |     |     |
    |           |                 | can get quite |      |       |      |      |     |     |
    |           |                 | long...       |      |       |      |      |     |     |
    +-----------+-----------------+---------------+------+-------+------+------+-----+-----+
@@ -609,8 +618,8 @@ splitting the data to several rows.
    \            Do X              one             two         three
    \            ...               four            five        six
    \            ${var} =          Get X           1           2
-   \            ...               3               4           5
-   \            ...               ...             6
+   \                              ...             3           4
+   \                              ...             5           6
    ===========  ================  ==============  ==========  ==========
 
 .. Note:: Empty cells before ellipsis are allowed generally only in Robot

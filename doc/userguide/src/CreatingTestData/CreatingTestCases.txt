@@ -192,8 +192,8 @@ three arguments would not work.
      Test Case         Action               Argument                 Argument          Argument
    =============  ================  =========================  ====================  ============
    Example        Create File       ${TEMPDIR}/empty.txt
-   \              Create File       ${TEMPDIR}/utf-8.txt       Hyv� esimerkki
-   \              Create File       ${TEMPDIR}/iso-8859-1.txt  Hyv� esimerkki        ISO-8859-1
+   \              Create File       ${TEMPDIR}/utf-8.txt       Hyvä esimerkki
+   \              Create File       ${TEMPDIR}/iso-8859-1.txt  Hyvä esimerkki        ISO-8859-1
    =============  ================  =========================  ====================  ============
 
 Variable number of arguments
@@ -358,14 +358,19 @@ and the test teardown.
 
 The :opt:`[Documentation]` setting allows you to set a free
 documentation for a test case. That text is shown in the command line
-output, as well as the resulting test logs and test reports. If the
-documentation is long, it can be `split into several cells`__ that are
-catenated together with spaces. It is possible to use simple `HTML
-formatting`_ and variables_ can be used to make the documentation
-dynamic. Starting from Robot Framework 2.7, if documentation is split in
-multiple lines, the lines themselves are catenated using newlines.
+output, as well as the resulting test logs and test reports.
+
+If the documentation is long, it can be `split into several cells`__
+that are catenated together with spaces. It is possible to use simple
+`HTML formatting`_ and variables_ can be used to make the
+documentation dynamic. Starting from Robot Framework 2.7, if
+documentation is split in multiple lines, the lines themselves are
+`catenated using newlines`__. Newlines are not added if the line already ends
+with a newline or it ends with an `escaping backslash`__.
 
 __ `Dividing test data to several rows`_
+__ `Automatic newlines in test data`_
+__ `Escaping`_
 
 .. table:: Test case documentation examples
    :class: example
@@ -382,9 +387,9 @@ __ `Dividing test data to several rows`_
    +--------------+-----------------+----------------------+----------------------------+
    |              | No Operation    |                      |                            |
    +--------------+-----------------+----------------------+----------------------------+
-   | Many lines   | [Documentation] | This documentation   |                            |
+   | Many lines   | [Documentation] | Here we have         |                            |
    +--------------+-----------------+----------------------+----------------------------+
-   |              | ...             | contains a newline   |                            |
+   |              | ...             | an automatic newline |                            |
    +--------------+-----------------+----------------------+----------------------------+
    |              | No Operation    |                      |                            |
    +--------------+-----------------+----------------------+----------------------------+

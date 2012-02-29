@@ -62,7 +62,7 @@ names. All available settings are listed below and explained later in
 this section.
 
 `[Documentation]`:opt:
-   Used for setting a `user keyword documentation`__.
+   Used for setting a `user keyword documentation`_.
 
 `[Arguments]`:opt:
    Specifies `user keyword arguments`_.
@@ -78,7 +78,8 @@ this section.
    in a section of their own.
 
 __ `Settings in the test case table`_
-__ `User keyword name and documentation`_
+
+.. _User keyword documentation:
 
 User keyword name and documentation
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -94,8 +95,8 @@ User keywords can have a documentation that is set with the
 documentation`_. This setting documents the user keyword in the test
 data. It is also shown in a more formal keyword documentation, which
 the `libdoc`_ tool can create from `resource files`_. Finally, the
-first line of the documentation, everything until the first :code:`\\n`
-sequence, is shown as a keyword documentation in test logs.
+first row of the documentation is shown as a keyword documentation in
+`test logs`_.
 
 Sometimes keywords need to be removed, replaced with new ones, or
 deprecated for other reasons.  User keywords can be marked deprecated

@@ -197,11 +197,13 @@ is defined in the Setting table using the :opt:`Metadata` setting. Metadata
 set in this manner is shown in test reports and logs.
 
 The name and value for the metadata are located in the columns following
-:opt:`Metadata`. The value is handled similarly as documentations, which means
-that it can be `split into several cells`__ (joined together with spaces),
+:opt:`Metadata`. The value is handled similarly as documentation, which means
+that it can be split `into several cells`__ (joined together with spaces)
+or `into several rows`__ (joined together with newlines),
 simple `HTML formatting`_ works and even variables_ can be used.
 
 __ `Dividing test data to several rows`_
+__ `Automatic newlines in test data`_
 
 .. table:: Metadata examples
    :class: example
