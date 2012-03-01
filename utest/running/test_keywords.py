@@ -2,8 +2,8 @@ import unittest
 
 from robot.errors import DataError, ExecutionFailed
 from robot.running.timeouts import KeywordTimeout
-from robot.running.keywords import Keyword, _VariableAssigner
-from robot.utils.asserts import *
+from robot.running.keywords import Keyword
+from robot.utils.asserts import assert_equals, assert_raises
 from test_testlibrary import _FakeNamespace
 
 
@@ -99,47 +99,6 @@ class TestKeyword(unittest.TestCase):
         assert_equals(kw.handler_name, 'handler_name')
 
 
-class TestResolveAssignment(unittest.TestCase):
-
-    def test_one_scalar(self):
-        self._verify(['${var}'])
-
-    def test_multiple_scalars(self):
-        self._verify('${v1} ${v2} ${v3}'.split())
-
-    def test_list(self):
-        self._verify(['@{list}'])
-
-    def test_scalars_and_list(self):
-        self._verify('${v1} ${v2} @{list}'.split())
-
-    def test_equal_sign(self):
-        self._verify(['${var} ='])
-        self._verify('${v1} ${v2} @{list}='.split())
-
-    def test_equal_sign_in_wrong_place(self):
-        msg = "Assign mark '=' can be used only with the last variable."
-        assert_raises_with_msg(DataError, msg,
-                               _VariableAssigner, ['${v1}=','${v2}'])
-        assert_raises_with_msg(DataError, msg,
-                               _VariableAssigner, ['${v1} =','@{v2} ='])
-
-    def test_init_list_in_wrong_place_raises(self):
-        msg = 'Only the last variable to assign can be a list variable.'
-        assert_raises_with_msg(DataError, msg,
-                               _VariableAssigner, ['@{list}','${str}'])
-
-    def _verify(self, assign):
-        assigner = _VariableAssigner(assign)
-        assign[-1] = assign[-1].rstrip('= ')
-        if assign[-1][0] == '$':
-            exp_list = None
-        else:
-            exp_list = assign.pop()
-        assert_equal(assigner.scalar_vars, assign)
-        assert_equal(assigner.list_var, exp_list)
-
-
 class TestSettingVariables(unittest.TestCase):
 
     def test_set_string_to_scalar(self):
@@ -171,19 +130,19 @@ class TestSettingVariables(unittest.TestCase):
 
     def test_set_objects_to_two_scalars_and_list(self):
         variables = self._run_kw(['${v1}','${v2}','@{v3}'], ['a',None,'x','y',{}])
-        assert_equal(variables['${v1}'], 'a')
-        assert_equal(variables['${v2}'], None)
-        assert_equal(variables['@{v3}'], ['x','y',{}])
+        assert_equals(variables['${v1}'], 'a')
+        assert_equals(variables['${v2}'], None)
+        assert_equals(variables['@{v3}'], ['x','y',{}])
 
     def test_set_scalars_and_list_so_that_list_is_empty(self):
         variables = self._run_kw(['${scal}','@{list}'], ['a'])
-        assert_equal(variables['${scal}'], 'a')
-        assert_equal(variables['@{list}'], [])
+        assert_equals(variables['${scal}'], 'a')
+        assert_equals(variables['@{list}'], [])
 
     def test_set_more_values_than_variables(self):
         variables = self._run_kw(['${v1}','${v2}'], ['x','y','z'])
-        assert_equal(variables['${v1}'], 'x')
-        assert_equal(variables['${v2}'], ['y','z'])
+        assert_equals(variables['${v1}'], 'x')
+        assert_equals(variables['${v2}'], ['y','z'])
 
     def test_set_too_few_scalars_raises(self):
         assert_raises(ExecutionFailed, self._run_kw, ['${v1}','${v2}'], ['x'])
@@ -196,17 +155,17 @@ class TestSettingVariables(unittest.TestCase):
 
     def _verify_scalar(self, return_value):
         variables = self._run_kw(['${var}'], return_value)
-        assert_equal(variables['${var}'], return_value)
+        assert_equals(variables['${var}'], return_value)
 
     def _verify_list(self, return_value):
         variables = self._run_kw(['@{var}'], return_value)
-        assert_equal(variables['@{var}'], return_value)
+        assert_equals(variables['@{var}'], return_value)
 
     def _verify_three_scalars(self, ret1, ret2, ret3):
         variables = self._run_kw(['${v1}','${v2}','${v3}'], [ret1, ret2, ret3])
-        assert_equal(variables['${v1}'], ret1)
-        assert_equal(variables['${v2}'], ret2)
-        assert_equal(variables['${v3}'], ret3)
+        assert_equals(variables['${v1}'], ret1)
+        assert_equals(variables['${v2}'], ret2)
+        assert_equals(variables['${v3}'], ret3)
 
     def _run_kw(self, assign, return_value):
         kw = Keyword('Name', ['Return', return_value], assign)
