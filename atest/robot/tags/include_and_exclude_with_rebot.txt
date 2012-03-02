@@ -1,15 +1,13 @@
 *** Settings ***
 Documentation   Testing rebot's include/exclude functionality. Tests also include/excludeg first during test execution and then with rebot.
-Suite Setup     Create Input
-Suite Teardown  Remove Temps
-Test Setup      Empty Directory  ${MYOUTDIR}
+Suite Setup     Create Output With Robot  ${INPUT FILE}  ${EMPTY}  ${TESTFILE}
+Suite Teardown  Remove File  ${INPUT FILE}
 Default Tags    regression  pybot  jybot
 Resource        rebot_resource.html
 Test Template   Run And Check Include And Exclude
 
 *** Variables ***
 ${TESTFILE}     tags/include_and_exclude.txt
-${MYOUTDIR}     ${TEMPDIR}${/}robot-test-145435
 ${INPUT FILE}   ${TEMPDIR}${/}robot-test-145435.xml
 ${ESCAPES}      --escape star:STAR --escape quest:QUEST --escape amp:AMP
 @{INCL_ALL}     Incl-1  Incl-12  Incl-123
@@ -113,13 +111,6 @@ Elapsed Time
     Should Be Equal As Numbers  ${SUITE.test_count}  3
 
 *** Keywords ***
-Create Input
-    Create Output With Robot  ${INPUT FILE}  ${EMPTY}  ${TESTFILE}
-    Create Directory  ${MYOUTDIR}
-
-Remove Temps
-    Remove Directory  ${MYOUTDIR}  recursive
-    Remove File  ${INPUT FILE}
 
 Run And Check Include And Exclude
     [Arguments]  ${params}  @{tests}
