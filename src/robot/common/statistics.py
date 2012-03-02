@@ -219,9 +219,9 @@ class TagStatistics:
             self.stats[tag].add_test(test)
 
     def _is_included(self, tag):
-        if self._include and not utils.matches_any(tag, self._include):
+        if self._include and not utils.matches_any(tag, self._include, ignore=['_']):
             return False
-        return not utils.matches_any(tag, self._exclude)
+        return not utils.matches_any(tag, self._exclude, ignore=['_'])
 
     def _add_combined_statistics(self, test):
         for pattern, name in self._combine:
