@@ -27,69 +27,15 @@ class VariableAssigner(object):
     def assign(self, context, return_value):
         context.trace('Return: %s' % safe_repr(return_value))
         if self.scalar_vars or self.list_var:
-            self._assign(context, return_value)
+            self._assign(context, ReturnValue(self.scalar_vars, self.list_var,
+                                              return_value))
 
     def _assign(self, context, return_value):
         variables = context.get_current_vars()
-        for name, value in self._get_vars_to_set(return_value):
+        for name, value in return_value.get_variables_to_set():
             if not self._extended_assign(name, value, variables):
                 self._normal_assign(name, value, variables)
             context.output.info(format_assign_message(name, value))
-
-    def _get_vars_to_set(self, ret):
-        if ret is None:
-            return self._get_vars_to_set_when_ret_is_none()
-        if not self.list_var:
-            return self._get_vars_to_set_with_only_scalars(ret)
-        if self._is_non_string_iterable(ret):
-            return self._get_vars_to_set_with_scalars_and_list(list(ret))
-        self._raise_invalid_return_value(ret, wrong_type=True)
-
-    def _is_non_string_iterable(self, value):
-        if isinstance(value, basestring):
-            return False
-        try:
-            iter(value)
-        except TypeError:
-            return False
-        else:
-            return True
-
-    def _get_vars_to_set_when_ret_is_none(self):
-        ret = [(var, None) for var in self.scalar_vars]
-        if self.list_var:
-            ret.append((self.list_var, []))
-        return ret
-
-    def _get_vars_to_set_with_only_scalars(self, ret):
-        needed = len(self.scalar_vars)
-        if needed == 1:
-            return [(self.scalar_vars[0], ret)]
-        if not self._is_non_string_iterable(ret):
-            self._raise_invalid_return_value(ret, wrong_type=True)
-        ret = list(ret)
-        if len(ret) < needed:
-            self._raise_invalid_return_value(ret)
-        if len(ret) == needed:
-            return zip(self.scalar_vars, ret)
-        return zip(self.scalar_vars[:-1], ret) \
-                    + [(self.scalar_vars[-1], ret[needed-1:])]
-
-    def _get_vars_to_set_with_scalars_and_list(self, ret):
-        needed_scalars = len(self.scalar_vars)
-        if not needed_scalars:
-            return [(self.list_var, ret)]
-        if len(ret) < needed_scalars:
-            self._raise_invalid_return_value(ret)
-        return zip(self.scalar_vars, ret) \
-                    + [(self.list_var, ret[needed_scalars:])]
-
-    def _raise_invalid_return_value(self, ret, wrong_type=False):
-        if wrong_type:
-            err = 'Expected list-like object, got %s instead' % type(ret).__name__
-        else:
-            err = 'Need more values than %d' % len(ret)
-        raise DataError("Cannot assign return values: %s." % err)
 
     def _extended_assign(self, name, value, variables):
         if '.' not in name or variables.contains(name, extended=False):
@@ -145,3 +91,61 @@ class AssignParser(object):
             self.list_var = variable
         else:
             raise DataError('Invalid variable to assign: %s' % variable)
+
+
+class ReturnValue(object):
+
+    def __init__(self, scalar_vars, list_var, return_value):
+        self._scalars = scalar_vars
+        self._list = list_var
+        self._return = return_value
+
+    def get_variables_to_set(self):
+        if self._return is None:
+            return self._return_value_is_none(self._scalars, self._list)
+        if len(self._scalars) == 1 and not self._list:
+            return self._only_one_variable(self._scalars[0], self._return)
+        ret = self._convert_to_list(self._return)
+        if not self._list:
+            return self._only_scalars(self._scalars, ret)
+        if not self._scalars:
+            return self._only_one_variable(self._list, ret)
+        return self._scalars_and_list(self._scalars, self._list, ret)
+
+    def _return_value_is_none(self, scalars, list_):
+        ret = [(var, None) for var in scalars]
+        if self._list:
+            ret.append((list_, []))
+        return ret
+
+    def _only_one_variable(self, variable, ret):
+        return [(variable, ret)]
+
+    def _convert_to_list(self, ret):
+        if isinstance(ret, basestring):
+            self._raise_expected_list(ret)
+        try:
+            return list(ret)
+        except TypeError:
+            self._raise_expected_list(ret)
+
+    def _only_scalars(self, scalars, ret):
+        needed = len(scalars)
+        if len(ret) < needed:
+            self._raise_too_few_arguments(ret)
+        if len(ret) == needed:
+            return zip(scalars, ret)
+        return zip(scalars[:-1], ret) + [(scalars[-1], ret[needed-1:])]
+
+    def _scalars_and_list(self, scalars, list_, ret):
+        if len(ret) < len(scalars):
+            self._raise_too_few_arguments(ret)
+        return zip(scalars, ret) + [(list_, ret[len(scalars):])]
+
+    def _raise_expected_list(self, ret):
+        raise DataError('Cannot assign return values: Expected list-like '
+                        'object, got %s instead.' % type(ret).__name__)
+
+    def _raise_too_few_arguments(self, ret):
+        raise DataError('Cannot assign return values: Need more value than %d.'
+                        % len(ret))
