@@ -44,7 +44,7 @@ class VariableAssigner(object):
         if not variables.contains(base, extended=True):
             return False
         var = variables[base]
-        if isinstance(var, (basestring, int, long, float)):
+        if not self._variable_supports_extended_assign(var):
             return False
         try:
             setattr(var, attr, value)
@@ -56,6 +56,9 @@ class VariableAssigner(object):
     def _split_extended_assign(self, name):
         base, attr = name.rsplit('.', 1)
         return base.strip() + '}', attr[:-1].strip()
+
+    def _variable_supports_extended_assign(self, var):
+        return not isinstance(var, (basestring, int, long, float))
 
     def _normal_assign(self, name, value, variables):
         variables[name] = value
