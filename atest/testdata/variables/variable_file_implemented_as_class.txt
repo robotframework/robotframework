@@ -14,6 +14,9 @@ Python Class
 Methods in Python Class Do Not Create Variables
     Variable Should Not Exist    ${python_method}
 
+Properties in Python Class
+    Should Be Equal    ${PYTHON PROPERTY}    value
+
 Dynamic Python Class
     Should Be Equal    ${DYNAMIC PYTHON STRING}    hello world
     Should Be True    ${DYNAMIC PYTHON LIST} == ['hello', 'world']
@@ -28,6 +31,9 @@ Methods in Java Class Do Not Create Variables
     Variable Should Not Exist    ${equals}
     Variable Should Not Exist    ${toString}
     Variable Should Not Exist    ${class}
+
+Properties in Java Class
+    Should Be Equal    ${JAVA PROPERTY}    default
 
 Dynamic Java Class
     Should Be Equal    ${DYNAMIC JAVA STRING}    hi tellus

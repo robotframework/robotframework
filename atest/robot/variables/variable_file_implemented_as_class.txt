@@ -12,6 +12,9 @@ Python Class
 Methods in Python Class Do Not Create Variables
     Check Test Case    ${TESTNAME}
 
+Properties in Python Class
+    Check Test Case    ${TESTNAME}
+
 Dynamic Python Class
     Check Test Case    ${TESTNAME}
 
@@ -20,6 +23,10 @@ Java Class
     Check Test Case    ${TESTNAME}
 
 Methods in Java Class Do Not Create Variables
+    [Tags]    jybot
+    Check Test Case    ${TESTNAME}
+
+Properties in Java Class
     [Tags]    jybot
     Check Test Case    ${TESTNAME}
 

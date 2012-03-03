@@ -8,3 +8,7 @@ class PythonClass:
 
     def python_method(self):
         pass
+
+    @property
+    def python_property(self):
+        return 'value'
