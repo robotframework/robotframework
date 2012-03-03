@@ -150,5 +150,5 @@ class ReturnValue(object):
                         'object, got %s instead.' % type(ret).__name__)
 
     def _raise_too_few_arguments(self, ret):
-        raise DataError('Cannot assign return values: Need more value than %d.'
+        raise DataError('Cannot assign return values: Need more values than %d.'
                         % len(ret))
