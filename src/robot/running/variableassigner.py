@@ -100,8 +100,8 @@ class VariableAssigner(object):
         try:
             setattr(variables[base], attr, value)
         except:
-            raise DataError("Assigning variable '%s' failed: %s"
-                            % (name, get_error_message()))
+            raise DataError("Setting attribute '%s' to variable '%s' failed: %s"
+                            % (attr, base, get_error_message()))
         return True
 
     def _split_extended_assign(self, name):

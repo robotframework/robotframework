@@ -22,7 +22,7 @@ Set attribute not directly in base
     Should Be Equal    ${VAR.demeter.hates}    THIS
 
 Trying to set un-settable attribute
-    [Documentation]    FAIL STARTS: Assigning variable '\${VAR.not_settable}' failed: AttributeError:
+    [Documentation]    FAIL STARTS: Setting attribute 'not_settable' to variable '\${VAR}' failed: AttributeError:
     ${VAR.not_settable} =    Set Variable    whatever
 
 Using extended syntax when base variable does not exists creates new variable
