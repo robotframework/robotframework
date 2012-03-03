@@ -115,12 +115,23 @@ class TestVariables(unittest.TestCase):
         assert self.varz.has_key('${k.upper()}')
         assert not self.varz.has_key('${non-existing}')
 
-    def test_contains(self):
+    def test__contains__(self):
         self.varz['${k}'] = 'v'
         assert '${k}' in self.varz
         assert '${-3}' in self.varz
         assert '${k.upper()}' in self.varz
         assert '${nok}' not in self.varz
+
+    def test_contains_(self):
+        self.varz['${k}'] = 'v'
+        assert self.varz.contains('${k}')
+        assert self.varz.contains('${ K }')
+        assert not self.varz.contains('${-3}')
+        assert self.varz.contains('${-3}', extended=True)
+        assert not self.varz.contains('${k.upper()}')
+        assert self.varz.contains('${k.upper()}', extended=True)
+        assert not self.varz.contains('${nok}')
+        assert not self.varz.contains('${nok)}', extended=True)
 
     def test_replace_scalar(self):
         self.varz['${foo}'] = 'bar'

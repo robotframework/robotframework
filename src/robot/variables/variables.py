@@ -257,7 +257,7 @@ class Variables(utils.NormalizedDict):
                                     "value '%s'" % (name, utils.unic(value)))
             else:
                 name = '${%s}' % name
-            if overwrite or not utils.NormalizedDict.has_key(self, name):
+            if overwrite or not self.contains(name):
                 self.set(name, value)
 
     def set_from_variable_table(self, variable_table, overwrite=False):
@@ -265,8 +265,7 @@ class Variables(utils.NormalizedDict):
             try:
                 name, value = self._get_var_table_name_and_value(
                     variable.name, variable.value, variable_table.source)
-                # self.has_key would also match if name matches extended syntax
-                if overwrite or not utils.NormalizedDict.has_key(self, name):
+                if overwrite or not self.contains(name):
                     self.set(name, value)
             except DataError, err:
                 variable_table.report_invalid_syntax("Setting variable '%s' failed: %s"
@@ -331,12 +330,17 @@ class Variables(utils.NormalizedDict):
             variables = [var for var in variables if not callable(var[1])]
         return variables
 
-    def has_key(self, key):
+    def has_key(self, variable):
         try:
-            self[key]
+            self[variable]
         except DataError:
             return False
         else:
             return True
 
     __contains__ = has_key
+
+    def contains(self, variable, extended=False):
+        if extended:
+            return self.has_key(variable)
+        return utils.NormalizedDict.has_key(self, variable)
