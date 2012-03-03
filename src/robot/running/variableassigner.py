@@ -14,7 +14,7 @@
 
 from robot.errors import DataError
 from robot.variables import is_list_var, is_scalar_var
-from robot.utils import safe_repr, format_assign_message
+from robot.utils import safe_repr, format_assign_message, get_error_message
 
 
 class VariableAssigner(object):
@@ -26,10 +26,14 @@ class VariableAssigner(object):
 
     def assign(self, context, return_value):
         context.trace('Return: %s' % safe_repr(return_value))
-        if not (self.scalar_vars or self.list_var):
-            return
+        if self.scalar_vars or self.list_var:
+            self._assign(context, return_value)
+
+    def _assign(self, context, return_value):
+        variables = context.get_current_vars()
         for name, value in self._get_vars_to_set(return_value):
-            context.get_current_vars()[name] = value
+            if not self._extended_assign(name, value, variables):
+                self._normal_assign(name, value, variables)
             context.output.info(format_assign_message(name, value))
 
     def _get_vars_to_set(self, ret):
@@ -82,11 +86,30 @@ class VariableAssigner(object):
 
     def _raise_invalid_return_value(self, ret, wrong_type=False):
         if wrong_type:
-            err = 'Expected list-like object, got %s instead' \
-                    % type(ret).__name__
+            err = 'Expected list-like object, got %s instead' % type(ret).__name__
         else:
             err = 'Need more values than %d' % len(ret)
         raise DataError("Cannot assign return values: %s." % err)
+
+    def _extended_assign(self, name, value, variables):
+        if '.' not in name or variables.contains(name, extended=False):
+            return False
+        base, attr = self._split_extended_assign(name)
+        if not variables.contains(base, extended=True):
+            return False
+        try:
+            setattr(variables[base], attr, value)
+        except:
+            raise DataError("Assigning variable '%s' failed: %s"
+                            % (name, get_error_message()))
+        return True
+
+    def _split_extended_assign(self, name):
+        base, attr = name.rsplit('.', 1)
+        return base.strip() + '}', attr[:-1].strip()
+
+    def _normal_assign(self, name, value, variables):
+        variables[name] = value
 
 
 class AssignParser(object):
