@@ -902,8 +902,8 @@ and test case:
        def __init__(self, name):
            self.name = name
 
-       def greet(self, who):
-           return '%s says hello to %s' % (self.name, who)
+       def eat(self, what):
+           return '%s eats %s' % (self.name, what)
 
        def __str__(self):
            return self.name
@@ -914,19 +914,19 @@ and test case:
 .. table::
    :class: example
 
-   ===========  ========  ======================  ==========
-    Test Case    Action          Argument          Argument
-   ===========  ========  ======================  ==========
+   ===========  ========  =========================  ==========
+    Test Case    Action          Argument             Argument
+   ===========  ========  =========================  ==========
    Example      KW 1      ${OBJECT.name}
-   \            KW 2      ${OBJECT.greet('Fit')}
+   \            KW 2      ${OBJECT.eat('Cucumber')}
    \            KW 3      ${DICTIONARY[2]}
-   ===========  ========  ======================  ==========
+   ===========  ========  =========================  ==========
 
 When this test data is executed, the keywords get the arguments as
 explained below:
 
 - :name:`KW 1` gets string :code:`Robot`
-- :name:`KW 2` gets string :code:`Robot says hello to Fit`
+- :name:`KW 2` gets string :code:`Robot eats Cucumber`
 - :name:`KW 3` gets string :code:`two`
 
 The extended variable syntax is evaluated in the following order:
@@ -957,9 +957,9 @@ If the object that is used is implemented with Java, the extended
 variable syntax allows you to access attributes using so-called bean
 properties. In essence, this means that if you have an object with the
 :code:`getName`  method set into a variable :var:`${OBJ}`, then the
-syntax :var:`${OBJ.name}` is equivalent to, but clearer than
-:var:`${OBJ.getName()}`. Thus the Python object used in the previous
-example could be replaced with the following Java implementation:
+syntax :var:`${OBJ.name}` is equivalent to but clearer than
+:var:`${OBJ.getName()}`. The Python object used in the previous example
+could thus be replaced with the following Java implementation:
 
 .. sourcecode:: java
 
@@ -975,8 +975,8 @@ example could be replaced with the following Java implementation:
          return name;
      }
 
-     public String greet(String who) {
-         return name + " says hello to " + who;
+     public String eat(String what) {
+         return name + " eats " + what;
      }
 
      public String toString() {
