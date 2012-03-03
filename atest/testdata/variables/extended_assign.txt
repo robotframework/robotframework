@@ -37,13 +37,13 @@ Overriding variable that has dot it its name is possible
     Variable Should Not Exist    ${new}
 
 Strings and integers do not support extended assign
-    [Template]    Extended assignement is disabled
+    [Template]    Extended assignment is disabled
     string
     ${42}
     ${1.0}
 
 *** Keywords ***
-Extended assignement is disabled
+Extended assignment is disabled
     [Arguments]   ${value}
     ${var} =    Set Variable    ${value}
     ${var.xxx} =    Set Variable    creates new variable
