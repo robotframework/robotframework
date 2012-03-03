@@ -27,3 +27,5 @@ Using extended syntax when base variable does not exists creates new variable
 Overriding variable that has dot it its name is possible
     Check Test Case    ${TESTNAME}
 
+Strings and integers do not support extended assign
+    Check Test Case    ${TESTNAME}

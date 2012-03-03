@@ -35,3 +35,17 @@ Overriding variable that has dot it its name is possible
     ${new.var} =    Set Variable    new value
     Should Be Equal    ${new.var}    new value
     Variable Should Not Exist    ${new}
+
+Strings and integers do not support extended assign
+    [Template]    Extended assignement is disabled
+    string
+    ${42}
+    ${1.0}
+
+*** Keywords ***
+Extended assignement is disabled
+    [Arguments]   ${value}
+    ${var} =    Set Variable    ${value}
+    ${var.xxx} =    Set Variable    creates new variable
+    Should Be Equal    ${var.xxx}    creates new variable
+

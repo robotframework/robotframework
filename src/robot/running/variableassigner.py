@@ -97,8 +97,11 @@ class VariableAssigner(object):
         base, attr = self._split_extended_assign(name)
         if not variables.contains(base, extended=True):
             return False
+        var = variables[base]
+        if isinstance(var, (basestring, int, long, float)):
+            return False
         try:
-            setattr(variables[base], attr, value)
+            setattr(var, attr, value)
         except:
             raise DataError("Setting attribute '%s' to variable '%s' failed: %s"
                             % (attr, base, get_error_message()))
