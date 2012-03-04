@@ -42,6 +42,20 @@ Strings and integers do not support extended assign
     ${42}
     ${1.0}
 
+Attribute name must be valid
+    ${VAR.} =    Set Variable    empty
+    ${VAR.2nd} =    Set Variable    starts with number
+    ${VAR.foo-bar} =    Set Variable    invalid char
+    Should Be Equal    ${VAR.}    empty
+    Should Be Equal    ${VAR.2nd}    starts with number
+    Should Be Equal    ${VAR.foo-bar}    invalid char
+
+Extended syntax is ignored with list variables
+    @{list} =    Create List    1    2    3
+    @{list.new} =    Create List    1    2    3
+    Should Be Equal    ${list}    ${list.new}
+
+
 *** Keywords ***
 Extended assignment is disabled
     [Arguments]   ${value}

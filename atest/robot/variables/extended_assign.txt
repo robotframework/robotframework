@@ -29,3 +29,9 @@ Overriding variable that has dot it its name is possible
 
 Strings and integers do not support extended assign
     Check Test Case    ${TESTNAME}
+
+Attribute name must be valid
+    Check Test Case    ${TESTNAME}
+
+Extended syntax is ignored with list variables
+    Check Test Case    ${TESTNAME}

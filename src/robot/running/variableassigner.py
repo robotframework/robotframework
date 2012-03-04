@@ -12,12 +12,15 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+import re
+
 from robot.errors import DataError
 from robot.variables import is_list_var, is_scalar_var
 from robot.utils import safe_repr, format_assign_message, get_error_message
 
 
 class VariableAssigner(object):
+    _valid_extended_attr = re.compile('^[_a-zA-Z]\w*$')
 
     def __init__(self, assign):
         ap = AssignParser(assign)
@@ -38,13 +41,15 @@ class VariableAssigner(object):
             context.output.info(format_assign_message(name, value))
 
     def _extended_assign(self, name, value, variables):
-        if '.' not in name or variables.contains(name, extended=False):
+        if '.' not in name or name.startswith('@') \
+                or variables.contains(name, extended=False):
             return False
         base, attr = self._split_extended_assign(name)
         if not variables.contains(base, extended=True):
             return False
         var = variables[base]
-        if not self._variable_supports_extended_assign(var):
+        if not (self._variable_supports_extended_assign(var) and
+                self._is_valid_extended_attribute(attr)):
             return False
         try:
             setattr(var, attr, value)
@@ -59,6 +64,9 @@ class VariableAssigner(object):
 
     def _variable_supports_extended_assign(self, var):
         return not isinstance(var, (basestring, int, long, float))
+
+    def _is_valid_extended_attribute(self, attr):
+        return self._valid_extended_attr.match(attr) is not None
 
     def _normal_assign(self, name, value, variables):
         variables[name] = value
