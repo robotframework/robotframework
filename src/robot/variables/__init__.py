@@ -18,9 +18,10 @@ import tempfile
 from robot import utils
 from robot.output import LOGGER
 
-from variables import Variables
-from variablesplitter import VariableSplitter
-from isvar import is_var, is_scalar_var, is_list_var
+from .isvar import is_var, is_scalar_var, is_list_var
+from .variables import Variables
+from .variableassigner import VariableAssigner
+from .variablesplitter import VariableSplitter
 
 
 GLOBAL_VARIABLES = Variables()

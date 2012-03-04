@@ -15,8 +15,9 @@
 import re
 
 from robot.errors import DataError
-from robot.variables import is_list_var, is_scalar_var
 from robot.utils import safe_repr, format_assign_message, get_error_message
+
+from .isvar import is_list_var, is_scalar_var
 
 
 class VariableAssigner(object):

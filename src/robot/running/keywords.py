@@ -16,9 +16,7 @@ from robot import utils
 from robot.errors import (DataError, ExecutionFailed, ExecutionFailures,
                           HandlerExecutionFailed)
 from robot.common import BaseKeyword
-from robot.variables import is_scalar_var
-
-from .variableassigner import VariableAssigner
+from robot.variables import is_scalar_var, VariableAssigner
 
 
 class Keywords(object):
