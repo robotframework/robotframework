@@ -1012,6 +1012,74 @@ must be in the beginning of the extended syntax. Using :code:`__xxx__`
 methods in the test data like this is already a bit questionable, and
 it is normally better to move this kind of logic into test libraries.
 
+Extended variable assignment
+''''''''''''''''''''''''''''
+
+Starting from Robot Framework 2.7, it is possible to set attributes of
+objects stored to scalar variables using `keyword return values`__ and
+a variation of the `extended variable syntax`_. Assuming we have
+variable :var:`${OBJECT}` from the previous examples, attributes could
+be set to it like in the example below.
+
+__ `Return values from keywords`_
+
+.. table:: Extended variable assignment
+   :class: example
+
+   ===========  ====================  ==============  ===============
+    Test Case          Action            Argument         Argument
+   ===========  ====================  ==============  ===============
+   Example      ${OBJECT.name} =      Set Variable    New name
+   \            ${OBJECT.new_attr} =  Set Variable    New attribute
+   ===========  ====================  ==============  ===============
+
+The extended variable assignment syntax is evaluated using the
+following rules:
+
+1. The assigned variable must be a scalar variable and have at least
+   one dot. Otherwise the extended assignment syntax is not used and
+   the variable is assigned normally.
+
+2. If there exists a variable with the full name
+   (e.g. :var:`${OBJECT.name}` in the example above) that variable
+   will be assigned a new value and the extended syntax is not used.
+
+3. The name of the base variable is created. The body of the name
+   consists of all the characters between the opening :var:`${` and
+   the last dot, for example, :var:`OBJECT` in :var:`${OBJECT.name}`
+   and :var:`foo.bar` in :var:`${foo.bar.zap}`. As the second example
+   illustrates, the base name may contain normal extended variable
+   syntax.
+
+4. The name of the attribute to set is created by taking all the
+   characters between the last dot and the closing :var:`}`, for
+   example, :var:`name` in :var:`${OBJECT.name}`. If the name does not
+   start with a letter or underscore and contain only these characters
+   and numbers, the attribute is considered invalid and the extended
+   syntax is not used. A new variable with the full name is created
+   instead.
+
+5. A variable matching the base name is searched. If no variable is
+   found, the extended syntax is not used and, instead, a new variable
+   is created using the full variable name.
+
+6. If the found variable is a string or a number, the extended syntax
+   is ignored and a new variable created using the full name. This is
+   done because you cannot add new attributes to Python strings or
+   numbers, and this way the new syntax is also less
+   backwards-incompatible.
+
+7. If all the previous rules match, the attribute is set to the base
+   variable. If setting fails for any reason, an exception is raised
+   and the test fails.
+
+.. note:: Unlike when assigning variables normally using `return
+          values from keywords`_, changes to variables done using the
+          extended assign syntax are not limited to the current
+          scope. Because no new variable is created but instead the
+          state of an existing variable is changed, all tests and
+          keywords that see that variable will also see the changes
+
 Variables inside variables
 ''''''''''''''''''''''''''
 
