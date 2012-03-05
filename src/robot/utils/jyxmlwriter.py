@@ -23,7 +23,6 @@ from .abstractxmlwriter import AbstractXmlWriter
 class XmlWriter(AbstractXmlWriter):
 
     def __init__(self, path):
-        self.path = path
         self._output = self._create_output(path)
         self._writer = SAXTransformerFactory.newInstance().newTransformerHandler()
         self._writer.setResult(StreamResult(self._output))

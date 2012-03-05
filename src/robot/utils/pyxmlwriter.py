@@ -22,7 +22,6 @@ from .abstractxmlwriter import AbstractXmlWriter
 class XmlWriter(AbstractXmlWriter):
 
     def __init__(self, output):
-        self.path = output # TODO: is this attribute needed?
         self._output = self._create_output(output)
         self._writer = XMLGenerator(self._output, encoding='UTF-8')
         self._writer.startDocument()
