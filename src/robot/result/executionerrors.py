@@ -12,7 +12,7 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from robot.model.itemlist import ItemList
+from robot.model import ItemList
 from robot.utils import setter
 
 from .message import Message
@@ -26,7 +26,7 @@ class ExecutionErrors(object):
 
     @setter
     def messages(self, msgs):
-        return ItemList(self.message_class, msgs)
+        return ItemList(self.message_class, items=msgs)
 
     def add(self, other):
         self.messages.extend(other.messages)

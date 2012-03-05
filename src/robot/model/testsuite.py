@@ -12,16 +12,16 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from robot import utils
+from robot.utils import setter
 
-from .metadata import Metadata
-from .testcase import TestCase
-from .keyword import Keyword, Keywords
-from .itemlist import ItemList
 from .criticality import Criticality
-from .tagsetter import TagSetter
 from .filter import Filter
+from .itemlist import ItemList
+from .keyword import Keyword, Keywords
+from .metadata import Metadata
 from .modelobject import ModelObject
+from .tagsetter import TagSetter
+from .testcase import TestCase, TestCases
 
 
 class TestSuite(ModelObject):
@@ -59,21 +59,21 @@ class TestSuite(ModelObject):
             self.set_criticality()
         return self._criticality
 
-    @utils.setter
+    @setter
     def metadata(self, metadata):
         return Metadata(metadata)
 
-    @utils.setter
+    @setter
     def suites(self, suites):
-        return ItemList(self.__class__, suites, parent=self)
+        return TestSuites(self.__class__, self, suites)
 
-    @utils.setter
+    @setter
     def tests(self, tests):
-        return ItemList(self.test_class, tests, parent=self)
+        return TestCases(self.test_class, self, tests)
 
-    @utils.setter
+    @setter
     def keywords(self, keywords):
-        return Keywords(self.keyword_class, keywords, parent=self)
+        return Keywords(self.keyword_class, self, keywords)
 
     @property
     def id(self):
@@ -101,3 +101,10 @@ class TestSuite(ModelObject):
 
     def visit(self, visitor):
         visitor.visit_suite(self)
+
+
+class TestSuites(ItemList):
+    __slots__ = []
+
+    def __init__(self, suite_class=TestSuite, parent=None, suites=None):
+        ItemList.__init__(self, suite_class, {'parent': parent}, suites)

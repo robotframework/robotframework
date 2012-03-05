@@ -2,7 +2,10 @@ import unittest
 from robot.utils.asserts import assert_equal, assert_true, assert_raises
 
 from robot.model.itemlist import ItemList
-from robot.model import Keyword
+
+
+class Object(object):
+    attr = 1
 
 
 class TestItemLists(unittest.TestCase):
@@ -35,20 +38,22 @@ class TestItemLists(unittest.TestCase):
     def test_only_matching_types_can_be_added(self):
         assert_raises(TypeError, ItemList(int).append, 'not integer')
 
-    def test_parent(self):
-        kw1 = Keyword()
-        kw2 = Keyword()
+    def test_common_attrs(self):
+        item1 = Object()
+        item2 = Object()
         parent = object()
-        kws = ItemList(Keyword, [kw1], parent=parent)
-        kws.append(kw2)
-        assert_true(kw1.parent is parent)
-        assert_true(kw2.parent is parent)
-        assert_equal(list(kws), [kw1, kw2])
+        items = ItemList(Object, {'attr': 2, 'parent': parent}, [item1])
+        items.append(item2)
+        assert_true(item1.parent is parent)
+        assert_equal(item1.attr, 2)
+        assert_true(item2.parent is parent)
+        assert_equal(item2.attr, 2)
+        assert_equal(list(items), [item1, item2])
 
     def test_getitem(self):
         item1 = object()
         item2 = object()
-        items = ItemList(object, [item1, item2])
+        items = ItemList(object, items=[item1, item2])
         assert_true(items[0] is item1)
         assert_true(items[1] is item2)
         assert_true(items[-1] is item2)
@@ -68,13 +73,14 @@ class TestItemLists(unittest.TestCase):
         assert_equal(len(items), 0)
 
     def test_str(self):
-        items = ItemList(str, ['foo', 'bar', 'quux'])
-        assert_equal(str(items), '[foo, bar, quux]')
+        assert_equal(str(ItemList(str, items=['foo', 'bar', 'quux'])),
+                     '[foo, bar, quux]')
 
     def test_unicode(self):
-        assert_equal(unicode(ItemList(int, [1, 2, 3, 4])), '[1, 2, 3, 4]')
-        assert_equal(unicode(ItemList(unicode, [u'hyv\xe4\xe4', u'y\xf6t\xe4'])),
-                     u'[hyv\xe4\xe4, y\xf6t\xe4]')
+        assert_equal(unicode(ItemList(int, items=[1, 2, 3, 4])),
+                     '[1, 2, 3, 4]')
+        assert_equal(unicode(ItemList(unicode, items=[u'hyv\xe4\xe4', u'y\xf6'])),
+                     u'[hyv\xe4\xe4, y\xf6]')
 
 
 if __name__ == '__main__':

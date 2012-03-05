@@ -14,6 +14,7 @@
 
 from robot.utils import html_escape
 
+from .itemlist import ItemList
 from .modelobject import ModelObject
 
 
@@ -37,3 +38,11 @@ class Message(ModelObject):
 
     def __unicode__(self):
         return self.message
+
+
+class Messages(ItemList):
+    __slots__ = []
+
+    def __init__(self, message_class=Message, parent=None, messages=None):
+        ItemList.__init__(self, message_class, {'parent': parent}, messages)
+

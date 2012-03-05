@@ -12,21 +12,21 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from robot import utils
+from robot.utils import setter
 
 from itemlist import ItemList
-from message import Message
+from message import Message, Messages
 from modelobject import ModelObject
 
 
 class Keyword(ModelObject):
     __slots__ = ['parent', 'name', 'doc', 'args', 'type', 'timeout']
-    message_class = Message
     KEYWORD_TYPE = 'kw'
     SETUP_TYPE = 'setup'
     TEARDOWN_TYPE = 'teardown'
     FOR_LOOP_TYPE = 'for'
     FOR_ITEM_TYPE = 'foritem'
+    message_class = Message
 
     def __init__(self, name='', doc='', args=None, type='kw', timeout=''):
         self.parent = None
@@ -38,13 +38,13 @@ class Keyword(ModelObject):
         self.messages = []
         self.keywords = []
 
-    @utils.setter
+    @setter
     def keywords(self, keywords):
-        return Keywords(self.__class__, keywords, parent=self)
+        return Keywords(self.__class__, self, keywords)
 
-    @utils.setter
+    @setter
     def messages(self, messages):
-        return ItemList(self.message_class, messages, parent=self)
+        return Messages(self.message_class, self, messages)
 
     @property
     def id(self):
@@ -59,8 +59,8 @@ class Keyword(ModelObject):
 class Keywords(ItemList):
     __slots__ = []
 
-    def __init__(self, keyword_class=Keyword, items=None, parent=None):
-        ItemList.__init__(self, keyword_class, items, parent=parent)
+    def __init__(self, keyword_class=Keyword, parent=None, keywords=None):
+        ItemList.__init__(self, keyword_class, {'parent': parent}, keywords)
 
     @property
     def setup(self):
@@ -77,5 +77,5 @@ class Keywords(ItemList):
     @property
     def normal(self):
         for kw in self:
-            if kw.type in ('kw', 'for', 'foritem'):
+            if kw.type not in ('setup', 'teardown'):
                 yield kw

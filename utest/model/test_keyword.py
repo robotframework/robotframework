@@ -51,23 +51,23 @@ class TestKeywords(unittest.TestCase):
     def test_setup(self):
         assert_equal(Keywords().setup, None)
         setup = Keyword(type='setup')
-        assert_true(Keywords(items=[setup, Keyword(), Keyword()]).setup is setup)
+        assert_true(Keywords(keywords=[setup, Keyword(), Keyword()]).setup is setup)
 
     def test_teardown(self):
         assert_equal(Keywords().teardown, None)
         teardown = Keyword(type='teardown')
-        assert_true(Keywords(items=[Keyword(), teardown]).teardown is teardown)
+        assert_true(Keywords(keywords=[Keyword(), teardown]).teardown is teardown)
 
     def test_for_loops_are_included(self):
         kws = [Keyword(type='for'), Keyword(), Keyword(type='foritem')]
-        assert_equal(list(Keywords(items=kws).normal), kws)
-        assert_equal(list(Keywords(items=kws).all), kws)
+        assert_equal(list(Keywords(keywords=kws).normal), kws)
+        assert_equal(list(Keywords(keywords=kws).all), kws)
 
     def test_iteration(self):
         kws = [Keyword(type='setup'), Keyword(), Keyword(), Keyword(type='teardown')]
-        assert_equal(list(Keywords(items=kws)), kws)
-        assert_equal(list(Keywords(items=kws).all), kws)
-        assert_equal(list(Keywords(items=kws).normal), kws[1:-1])
+        assert_equal(list(Keywords(keywords=kws)), kws)
+        assert_equal(list(Keywords(keywords=kws).all), kws)
+        assert_equal(list(Keywords(keywords=kws).normal), kws[1:-1])
 
 
 if __name__ == '__main__':
