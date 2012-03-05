@@ -29,7 +29,7 @@ class TestSuite(model.TestSuite):
     keyword_class = Keyword
 
     def __init__(self, source='', name='', doc='', metadata=None,
-                 message='', starttime='N/A', endtime='N/A'):
+                 message='', starttime=None, endtime=None):
         model.TestSuite.__init__(self, source, name, doc, metadata)
         self.message = message
         self.starttime = starttime
@@ -51,10 +51,10 @@ class TestSuite(model.TestSuite):
 
     @property
     def elapsedtime(self):
-        if self.starttime == 'N/A' or self.endtime == 'N/A':
-            return sum(child.elapsedtime for child in
-                       chain(self.suites, self.tests, self.keywords))
-        return utils.get_elapsed_time(self.starttime, self.endtime)
+        if self.starttime and self.endtime:
+            return utils.get_elapsed_time(self.starttime, self.endtime)
+        return sum(child.elapsedtime for child in
+                   chain(self.suites, self.tests, self.keywords))
 
     def remove_keywords(self, how):
         self.visit(KeywordRemover(how))

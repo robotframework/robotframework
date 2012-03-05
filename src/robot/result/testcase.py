@@ -22,7 +22,7 @@ class TestCase(model.TestCase):
     keyword_class = Keyword
 
     def __init__(self, name='', doc='', tags=None, timeout='', status='FAIL',
-                 message='', starttime='N/A', endtime='N/A'):
+                 message='', starttime=None, endtime=None):
         model.TestCase.__init__(self, name, doc, tags, timeout)
         self.status = status
         self.message = message

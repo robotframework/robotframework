@@ -57,7 +57,7 @@ class XmlLogger(object):
             self._write_message(msg)
 
     def _write_message(self, msg):
-        attrs = {'timestamp': msg.timestamp, 'level': msg.level}
+        attrs = {'timestamp': msg.timestamp or 'N/A', 'level': msg.level}
         if msg.html:
             attrs['html'] = 'yes'
         self._writer.element('msg', msg.message, attrs)
@@ -165,9 +165,9 @@ class XmlLogger(object):
         self._writer.end(container_tag)
 
     def _write_status(self, item, message=None, extra_attrs=None):
-        attrs = {'status': item.status, 'starttime': item.starttime,
-                 'endtime': item.endtime}
-        if item.starttime == 'N/A' or item.endtime == 'N/A':
+        attrs = {'status': item.status, 'starttime': item.starttime or 'N/A',
+                 'endtime': item.endtime or 'N/A'}
+        if not (item.starttime and item.endtime):
             attrs['elapsedtime'] = item.elapsedtime
         if extra_attrs:
             attrs.update(extra_attrs)

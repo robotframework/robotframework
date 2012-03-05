@@ -35,8 +35,8 @@ class TestTimestamp(unittest.TestCase):
         assert_equals(self._context.timestamp('20110604 12:00:00.042'),
                       24 * 60 * 60 * 1000)
 
-    def test_na_timestamp(self):
-        assert_equals(self._context.timestamp('N/A'), None)
+    def test_none_timestamp(self):
+        assert_equals(self._context.timestamp(None), None)
 
 
 if __name__ == '__main__':

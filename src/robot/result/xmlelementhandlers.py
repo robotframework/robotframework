@@ -51,6 +51,10 @@ class _Handler(object):
     def end(self, elem, result):
         pass
 
+    def _timestamp(self, elem, attr_name):
+        timestamp = elem.get(attr_name)
+        return timestamp if timestamp != 'N/A' else None
+
 
 class RootHandler(_Handler):
 
@@ -123,7 +127,7 @@ class MessageHandler(_Handler):
         result.messages.create(elem.text or '',
                                elem.get('level'),
                                elem.get('html', 'no') == 'yes',
-                               elem.get('timestamp'))
+                               self._timestamp(elem, 'timestamp'))
 
 
 class _StatusHandler(_Handler):
@@ -136,8 +140,8 @@ class _StatusHandler(_Handler):
         result.message = elem.text or ''
 
     def _set_times(self, elem, result):
-        result.starttime = elem.get('starttime', 'N/A')
-        result.endtime = elem.get('endtime', 'N/A')
+        result.starttime = self._timestamp(elem, 'starttime')
+        result.endtime = self._timestamp(elem, 'endtime')
 
 
 class KeywordStatusHandler(_StatusHandler):

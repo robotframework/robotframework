@@ -50,7 +50,7 @@ class Filter(SuiteVisitor):
         if not self:
             return False
         if hasattr(suite, 'starttime'):
-            suite.starttime = suite.endtime = 'N/A'
+            suite.starttime = suite.endtime = None
         if self.include_suites:
             return self._filter_by_suite_name(suite)
         if self.include_tests:

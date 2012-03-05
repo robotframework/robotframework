@@ -20,8 +20,7 @@ from .modelobject import ModelObject
 class Message(ModelObject):
     __slots__ = ['message', 'level', 'html', 'timestamp', 'parent']
 
-    # TODO: Use None instead of N/A with all timestamps in model
-    def __init__(self, message='', level='INFO', html=False, timestamp='N/A',
+    def __init__(self, message='', level='INFO', html=False, timestamp=None,
                  parent=None):
         self.message = message
         self.level = level

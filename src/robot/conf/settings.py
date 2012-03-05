@@ -285,8 +285,8 @@ class RobotSettings(_BaseSettings):
 class RebotSettings(_BaseSettings):
     _extra_cli_opts = {'Output'         : ('output', 'NONE'),
                        'LogLevel'       : ('loglevel', 'TRACE'),
-                       'StartTime'      : ('starttime', 'N/A'),
-                       'EndTime'        : ('endtime', 'N/A')}
+                       'StartTime'      : ('starttime', None),
+                       'EndTime'        : ('endtime', None)}
 
     def _outputfile_disabled(self, type_, name):
         return name == 'NONE'

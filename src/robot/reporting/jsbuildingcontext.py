@@ -45,7 +45,7 @@ class JsBuildingContext(object):
         return self.string(rel_source)
 
     def timestamp(self, time):
-        if time == 'N/A':   # TODO: Should definitely use None in model!
+        if not time:
             return None
         # Must use `long` due to http://ironpython.codeplex.com/workitem/31549
         millis = long(round(timestamp_to_secs(time) * 1000))

@@ -22,7 +22,7 @@ class Keyword(model.Keyword):
     message_class = Message
 
     def __init__(self, name='', doc='', args=None, type='kw', timeout='',
-                 status='FAIL', starttime='N/A', endtime='N/A'):
+                 status='FAIL', starttime=None, endtime=None):
         model.Keyword.__init__(self, name, doc, args, type, timeout)
         self.status = status
         self.starttime = starttime
