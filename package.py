@@ -54,6 +54,8 @@ ROBOT_PATH = join(ROOT_PATH, 'src', 'robot')
 JAVA_SRC = join(ROOT_PATH, 'src', 'java', 'org', 'robotframework')
 JYTHON_VERSION = '2.5.2'
 SETUP_PATH = join(ROOT_PATH, 'setup.py')
+BITMAP = join(ROOT_PATH, 'robot.bmp')
+INSTALL_SCRIPT = 'robot_postinstall.py'
 VERSION_PATH = join(ROBOT_PATH, 'version.py')
 POM_PATH = join(ROOT_PATH, 'pom.xml')
 VERSIONS = [re.compile('^2\.\d+(\.\d+)?$'), 'trunk', 'keep']
@@ -164,7 +166,8 @@ def _create_sdist():
     _create('sdist', 'source distribution')
 
 def _create_wininst():
-    _create('bdist_wininst', 'Windows installer')
+    _create('bdist_wininst --bitmap %s --install-script %s' % (BITMAP, INSTALL_SCRIPT),
+            'Windows installer')
     if os.sep != '\\':
         print 'Warning: Windows installers created on other platforms may not'
         print 'be exactly identical to ones created in Windows.'
