@@ -173,7 +173,6 @@ def process_suite(suite):
         process_keyword(kw)
     suite.setup = suite.keywords.setup
     suite.teardown = suite.keywords.teardown
-    #suite.keywords = list(suite.keywords.normal)
     return suite
 
 def process_test(test):

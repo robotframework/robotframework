@@ -104,7 +104,7 @@ Elapsed Time
     Should Be Equal As Numbers  ${SUITE.test_count}  6
     Comment  2) Filter ouput created in earlier step and check  that times are set accordingly.
     Run Rebot  --include incl2 --include excl3 ${ESCAPES}  ${OUTFILE}
-    Check Times  ${SUITE}  N/A  N/A  6004
+    Check Times  ${SUITE}  ${NONE}  ${NONE}  6004
     Check Times  ${SUITE.tests[0]}  20061227 12:00:01.000  20061227 12:00:03.000  2000
     Check Times  ${SUITE.tests[1]}  20061227 12:00:03.000  20061227 12:00:07.000  4000
     Check Times  ${SUITE.tests[2]}  20061227 12:00:07.003  20061227 12:00:07.007  004
@@ -119,8 +119,8 @@ Run And Check Include And Exclude
     Check Suite Contains Tests  ${SUITE}  @{tests}
     Should Be True  ${SUITE.statistics.all.passed} == len(@{tests})
     Should Be True  ${SUITE.statistics.all.failed} == 0
-    ${exp_start} =  Evaluate  "${params}" == "" and "${ORIG_START}" or "N/A"
-    ${exp_end} =  Evaluate  "${params}" == "" and "${ORIG_END}" or "N/A"
+    ${exp_start} =  Evaluate  "${params}" == "" and "${ORIG_START}" or ${None}
+    ${exp_end} =  Evaluate  "${params}" == "" and "${ORIG_END}" or ${None}
     Should Be Equal  ${SUITE.starttime}  ${exp_start}
     Should Be Equal  ${SUITE.endtime}  ${exp_end}
     Is Valid Elapsed Time  ${SUITE.elapsedtime}

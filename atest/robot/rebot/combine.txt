@@ -98,8 +98,8 @@ Critical/Non-Critical Tags Can Be Given
     Tag Statistics Should Be  ${tags[1]}  9  1
 
 Suite Times
-    Should Be Equal  ${SUITE3.starttime}  N/A
-    Should Be Equal  ${SUITE3.endtime}  N/A
+    Should Be Equal  ${SUITE3.starttime}  ${NONE}
+    Should Be Equal  ${SUITE3.endtime}  ${NONE}
     Is Valid Elapsed Time  ${SUITE3.elapsedtime}
     Should Be True  ${SUITE3.elapsedtime} == ${MILLIS1} + ${MILLIS2} + 9999
     Is Valid Timestamp  ${SUITE3.suites[0].starttime}
@@ -115,14 +115,14 @@ Suite Times
     Should Be Equal  ${SUITE3.suites[2].elapsedtime}  ${9999}
 
 Suite Times In Recombine
-    Should Be Equal  ${SUITE4.starttime}  N/A
-    Should Be Equal  ${SUITE4.endtime}  N/A
+    Should Be Equal  ${SUITE4.starttime}  ${NONE}
+    Should Be Equal  ${SUITE4.endtime}  ${NONE}
     Should Be True  ${SUITE4.elapsedtime} == 9999 + ${MILLIS1} + ${MILLIS2}
     Should Be Equal  ${SUITE4.suites[0].starttime}  20061227 11:59:59.000
     Should Be Equal  ${SUITE4.suites[0].endtime}  20061227 12:00:08.999
     Should Be Equal  ${SUITE4.suites[0].elapsedtime}  ${9999}
-    Should Be Equal  ${SUITE4.suites[1].starttime}  N/A
-    Should Be Equal  ${SUITE4.suites[1].endtime}  N/A
+    Should Be Equal  ${SUITE4.suites[1].starttime}  ${NONE}
+    Should Be Equal  ${SUITE4.suites[1].endtime}  ${NONE}
     Is Valid Timestamp  ${SUITE4.suites[1].suites[0].starttime}
     Is Valid Timestamp  ${SUITE4.suites[1].suites[0].endtime}
     Is Valid Elapsed Time  ${SUITE4.suites[1].suites[0].elapsedtime}

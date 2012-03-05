@@ -68,8 +68,8 @@ Check Normal Suite Times
 
 Check Minimal Suite Times
     [Arguments]  ${mysuite}
-    Should Be Equal  ${mysuite.starttime}  N/A
-    Should Be Equal  ${mysuite.endtime}  N/A
+    Should Be Equal  ${mysuite.starttime}  ${NONE}
+    Should Be Equal  ${mysuite.endtime}  ${NONE}
     Should Be Equal  ${mysuite.elapsedtime}  ${0}
 
 Check Suite Defaults
