@@ -104,7 +104,8 @@ class Listeners(object):
             if li.version == 1:
                 li.call_method(li.start_test, test.name, test.doc, test.tags)
             else:
-                attrs = self._get_start_attrs(test, 'tags', 'critical')
+                attrs = self._get_start_attrs(test, 'tags')
+                attrs['critical'] = 'yes' if test.critical else 'no'
                 attrs['template'] = test.template or ''
                 li.call_method(li.start_test, test.name, attrs)
 
@@ -114,7 +115,8 @@ class Listeners(object):
             if li.version == 1:
                 li.call_method(li.end_test, test.status, test.message)
             else:
-                attrs = self._get_end_attrs(test, 'tags', 'critical')
+                attrs = self._get_end_attrs(test, 'tags')
+                attrs['critical'] = 'yes' if test.critical else 'no'
                 attrs['template'] = test.template or ''
                 li.call_method(li.end_test, test.name, attrs)
 
