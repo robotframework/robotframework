@@ -119,38 +119,38 @@ class TestSetCriticality(unittest.TestCase):
         assert_equals(test.critical, exp)
 
     def test_no_crit_nor_noncrit(self):
-        self._test([], [], 'yes')
+        self._test([], [], True)
 
     def test_non_matching_crit(self):
-        self._test(['no','match'], [], 'no')
+        self._test(['no','match'], [], False)
 
     def test_non_matching_noncrit(self):
-        self._test([], ['nomatch'], 'yes')
+        self._test([], ['nomatch'], True)
 
     def test_non_matching_crit_and_noncrit(self):
-        self._test(['no'], ['match','here'], 'no')
+        self._test(['no'], ['match','here'], False)
 
     def test_matching_crit(self):
-        self._test(['tag1','match'], [], 'yes')
+        self._test(['tag1','match'], [], True)
 
     def test_matching_noncrit(self):
-        self._test([], ['tag1','tag2'], 'no')
+        self._test([], ['tag1','tag2'], False)
 
     def test_matching_crit_and_noncrit(self):
-        self._test(['tag1'], ['yyy','tag2','xxx'], 'no')
+        self._test(['tag1'], ['yyy','tag2','xxx'], False)
 
     def test_crit_is_pattern(self):
-        self._test(['*1'], [], 'yes')
-        self._test(['*1'], ['tag2'], 'no')
+        self._test(['*1'], [], True)
+        self._test(['*1'], ['tag2'], False)
 
     def test_non_crit_is_pattern(self):
-        self._test([], ['tag?'], 'no')
-        self._test(['tag1','tagx'], ['????'], 'no')
+        self._test([], ['tag?'], False)
+        self._test(['tag1','tagx'], ['????'], False)
 
     def test_crit_and_noncrit_are_patterns(self):
-        self._test(['*1'], ['tag?'], 'no')
-        self._test(['?a?3'], ['nomatch-*'], 'yes')
-        self._test(['?a?3'], ['tag*'], 'no')
+        self._test(['*1'], ['tag?'], False)
+        self._test(['?a?3'], ['nomatch-*'], True)
+        self._test(['?a?3'], ['tag*'], False)
 
 
 class TC(BaseTestCase):

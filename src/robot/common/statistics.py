@@ -89,7 +89,7 @@ class CriticalStats(Stat):
         self.add_suite(suite)
 
     def _is_included(self, test):
-        return test.critical == 'yes'
+        return test.critical
 
     def _subsuite_stats(self, suite):
         return suite.critical_stats
@@ -175,7 +175,7 @@ class SuiteStatistics:
     def _process_tests(self, suite, tag_stats):
         for test in suite.tests:
             self.all.add_test(test)
-            if test.critical == 'yes':
+            if test.critical:
                 self.critical.add_test(test)
             tag_stats.add_test(test, suite.critical)
 

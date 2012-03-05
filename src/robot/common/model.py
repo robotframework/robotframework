@@ -166,7 +166,7 @@ class BaseTestSuite(_TestAndSuiteHelper):
 
     def _add_test_to_stats(self, test):
         self.all_stats.add_test(test)
-        if test.critical == 'yes':
+        if test.critical:
             self.critical_stats.add_test(test)
 
     def _add_suite_to_stats(self, suite):
@@ -322,7 +322,7 @@ class BaseTestCase(_TestAndSuiteHelper):
 
     def __init__(self, name, parent):
         _TestAndSuiteHelper.__init__(self, name, parent)
-        self.critical = 'yes'
+        self.critical = True
         if parent:
             parent.tests.append(self)
 
@@ -337,7 +337,7 @@ class BaseTestCase(_TestAndSuiteHelper):
         self._set_teardown_fail_msg(message)
 
     def set_criticality(self, critical):
-        self.critical = 'yes' if critical.are_critical(self.tags) else 'no'
+        self.critical = critical.are_critical(self.tags)
 
     def is_included(self, incl_tags, excl_tags):
         """Returns True if this test case is included but not excluded.
@@ -380,7 +380,7 @@ class BaseTestCase(_TestAndSuiteHelper):
         if self.status != other.status:
             return -1 if self.status == 'FAIL' else 1
         if self.critical != other.critical:
-            return -1 if self.critical == 'yes' else 1
+            return -1 if self.critical else 1
         try:
             return cmp(self.longname, other.longname)
         except AttributeError:

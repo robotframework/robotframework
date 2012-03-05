@@ -37,7 +37,7 @@ class TestMock(BaseTestCase):
     def __init__(self, status='PASS', tags=None, critical=True):
         self.status = status
         self.tags = tags is not None and tags or []
-        self.critical = critical and 'yes' or 'no'
+        self.critical = critical
         self.name = ''
 
 

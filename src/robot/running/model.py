@@ -257,7 +257,7 @@ class RunnableTestCase(BaseTestCase):
 
     def keyword_failed(self, err):
         self.timeout.set_keyword_timeout(err.timeout)
-        self._suite_errors.test_failed(exit=err.exit, critical=self.critical=='yes')
+        self._suite_errors.test_failed(exit=err.exit, critical=self.critical)
 
     def _run_setup(self, context):
         self.setup.run(context, TestSetupListener(self))
@@ -283,7 +283,7 @@ class RunnableTestCase(BaseTestCase):
             self.status = 'FAIL'
             self.message = self.timeout.get_message()
         if self.status == 'FAIL':
-            self._suite_errors.test_failed(critical=self.critical=='yes')
+            self._suite_errors.test_failed(critical=self.critical)
 
     def _not_allowed_to_run(self):
         self.status = 'FAIL'

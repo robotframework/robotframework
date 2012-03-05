@@ -79,7 +79,8 @@ class XmlLogger(object):
 
     def end_test(self, test):
         self._write_list('tags', 'tag', test.tags)
-        self._write_status(test, test.message, {'critical': test.critical})
+        self._write_status(test, test.message,
+                           {'critical': 'yes' if test.critical else 'no'})
         self._writer.end('test')
 
     def start_suite(self, suite):
