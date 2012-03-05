@@ -4,7 +4,7 @@ import os
 from StringIO import StringIO
 
 from robot.result import ResultFromXml
-from robot.result.outputwriter import OutputWriter
+from robot.reporting.outputwriter import OutputWriter
 from robot.utils.pyxmlwriter import XmlWriter
 from robot.utils.asserts import assert_equals
 from robot.utils import ET, ETSource

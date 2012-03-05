@@ -17,10 +17,10 @@ from __future__ import with_statement
 from robot.errors import DataError
 from robot.model import Statistics
 from robot.utils import ET, ETSource
+from robot.reporting.outputwriter import OutputWriter
 
 from .executionerrors import ExecutionErrors
 from .configurer import SuiteConfigurer
-from .outputwriter import OutputWriter
 from .suiteteardownfailed import SuiteTeardownFailureHandler
 from .testsuite import TestSuite
 from .xmlelementhandlers import XmlElementHandler

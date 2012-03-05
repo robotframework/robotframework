@@ -13,8 +13,8 @@
 #  limitations under the License.
 
 from robot.output.xmllogger import XmlLogger
+from robot.result.visitor import ResultVisitor
 
-from .visitor import ResultVisitor
 
 # TODO: Unify XmlLogger and ResultVisitor APIs.
 # Perhaps XmlLogger could be ResultVisitor.
