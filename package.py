@@ -163,7 +163,7 @@ def _verify_platform(version_number, release_tag=None):
     return True
 
 def _create_sdist():
-    _create('sdist', 'source distribution')
+    _create('sdist --force-manifest', 'source distribution')
 
 def _create_wininst():
     _create('bdist_wininst --bitmap %s --install-script %s' % (BITMAP, INSTALL_SCRIPT),
