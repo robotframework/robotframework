@@ -20,6 +20,7 @@ from robot.utils import ET, ETSource
 
 from .executionerrors import ExecutionErrors
 from .configurer import SuiteConfigurer
+from .outputwriter import OutputWriter
 from .suiteteardownfailed import SuiteTeardownFailureHandler
 from .testsuite import TestSuite
 from .xmlelementhandlers import XmlElementHandler
@@ -32,7 +33,7 @@ def ResultFromXml(*sources):
         return CombinedExecutionResult(*[ResultFromXml(src) for src in sources])
     source = ETSource(sources[0])
     try:
-        return ExecutionResultBuilder(source).build(ExecutionResult())
+        return ExecutionResultBuilder(source).build(ExecutionResult(sources[0]))
     except DataError, err:
         raise DataError("Reading XML source '%s' failed: %s"
                         % (unicode(source), unicode(err)))
@@ -57,7 +58,8 @@ class ExecutionResultBuilder(object):
 
 class ExecutionResult(object):
 
-    def __init__(self, root_suite=None, errors=None):
+    def __init__(self, source=None, root_suite=None, errors=None):
+        self.source = source
         self.suite = root_suite or TestSuite()
         self.errors = errors or ExecutionErrors()
         self.generator = None
@@ -81,6 +83,9 @@ class ExecutionResult(object):
 
     def visit(self, visitor):
         visitor.visit_result(self)
+
+    def save(self, path=None):
+        self.visit(OutputWriter(path or self.source))
 
 
 class CombinedExecutionResult(ExecutionResult):

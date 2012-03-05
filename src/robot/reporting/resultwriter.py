@@ -16,9 +16,6 @@ from robot.errors import DataError
 from robot.output import LOGGER
 from robot.result import ResultFromXml
 
-# TODO: OutputWriter belongs into robot.reporting
-from robot.result.outputwriter import OutputWriter
-
 from .jsmodelbuilders import JsModelBuilder
 from .logreportwriters import LogWriter, ReportWriter
 from .xunitwriter import XUnitWriter
@@ -44,7 +41,7 @@ class ResultWriter(object):
 
     def _write_output(self, result, path):
         try:
-            result.visit(OutputWriter(path))
+            result.save(path)
         except DataError, err:
             LOGGER.error(unicode(err))
         else:

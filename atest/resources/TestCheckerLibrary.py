@@ -24,7 +24,7 @@ class TestCheckerLibrary:
         path = path.replace('/', os.sep)
         try:
             print "Processing output '%s'" % path
-            result = ExecutionResult(NoSlotsTestSuite())
+            result = ExecutionResult(root_suite=NoSlotsTestSuite())
             ExecutionResultBuilder(path).build(result)
         except:
             raise RuntimeError('Processing output failed: %s'

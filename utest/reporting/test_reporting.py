@@ -89,7 +89,7 @@ class TestReporting(unittest.TestCase):
         errors = ExecutionErrors()
         errors.messages.create(message=self.EXPECTED_ERROR_MESSAGE,
                                level='ERROR', timestamp='20201212 12:12:12.000')
-        return ExecutionResult(suite, errors)
+        return ExecutionResult(root_suite=suite, errors=errors)
 
     def _verify_output(self, content):
         assert_true(self.EXPECTED_SUITE_NAME in content)
