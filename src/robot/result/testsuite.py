@@ -59,5 +59,5 @@ class TestSuite(model.TestSuite):
     def remove_keywords(self, how):
         self.visit(KeywordRemover(how))
 
-    def filter_messages(self, log_level):
+    def filter_messages(self, log_level='TRACE'):
         self.visit(MessageFilter(log_level))

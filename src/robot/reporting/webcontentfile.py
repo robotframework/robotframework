@@ -36,8 +36,6 @@ except ImportError:  # Occurs unless using standalone robotframework.jar
 
 else:
 
-    # TODO: JAR version has not been tested after refactoring!!
-
     from java.io import BufferedReader, InputStreamReader
 
 

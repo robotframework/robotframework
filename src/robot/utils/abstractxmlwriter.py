@@ -32,8 +32,6 @@ class AbstractXmlWriter:
         return dict((n, self._escape(v)) for n, v in attrs.items())
 
     def _escape(self, content):
-        # TODO: Test is the IPY bug below still valid with new implementation:
-        # http://ironpython.codeplex.com/workitem/29402
         return self._illegal_chars.sub('', unic(content))
 
     def content(self, content):

@@ -58,7 +58,6 @@ class _ExecutionContext(object):
     def teardown(self):
         if self._in_teardown:
             return True
-        # TODO: tests and suites should also call start/end_teardown()
         test_or_suite = self.namespace.test or self.namespace.suite
         return test_or_suite.status != 'RUNNING'
 

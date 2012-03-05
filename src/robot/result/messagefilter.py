@@ -20,8 +20,7 @@ from robot.model import SuiteVisitor
 class MessageFilter(SuiteVisitor):
 
     def __init__(self, loglevel):
-        loglevel = loglevel or 'trace' #TODO: is this the correct default?
-        self._is_logged = IsLogged(loglevel)
+        self._is_logged = IsLogged(loglevel or 'TRACE')
 
     def start_keyword(self, keyword):
         keyword.messages = [msg for msg in keyword.messages

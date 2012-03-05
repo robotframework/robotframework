@@ -439,8 +439,6 @@ class _VariableScopes:
         if self._uk_handlers:
             self.current.set_from_variable_table(rawvariables, overwrite)
 
-    # TODO: This should be removed so that these objects themselves had
-    # the capability of resolving variables.
     def replace_meta(self, name, item, errors):
         error = None
         for varz in [self.current] + self._parents:

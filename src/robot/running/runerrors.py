@@ -156,7 +156,6 @@ class TestRunErrors(object):
         return self._kw_err
 
     def get_teardown_message(self, message):
-        # TODO: This API is really in need of cleanup
         if message == '':
             return 'Teardown failed:\n%s' % self._teardown_err
         return '%s\n\nAlso teardown failed:\n%s' % (message, self._teardown_err)
