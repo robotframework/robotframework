@@ -49,17 +49,16 @@ class Filter(SuiteVisitor):
     def start_suite(self, suite):
         if not self:
             return False
-        # TODO: is this too eager? Cleanup at least..
         if hasattr(suite, 'starttime'):
             suite.starttime = suite.endtime = 'N/A'
         if self.include_suites:
             return self._filter_by_suite_name(suite)
         if self.include_tests:
-            suite.tests = list(self._filter(suite, self._included_by_test_name))
+            suite.tests = self._filter(suite, self._included_by_test_name)
         if self.include_tags:
-            suite.tests = list(self._filter(suite, self._included_by_tags))
+            suite.tests = self._filter(suite, self._included_by_tags)
         if self.exclude_tags:
-            suite.tests = list(self._filter(suite, self._not_excluded_by_tags))
+            suite.tests = self._filter(suite, self._not_excluded_by_tags)
         return bool(suite.suites)
 
     def _filter_by_suite_name(self, suite):
@@ -73,9 +72,7 @@ class Filter(SuiteVisitor):
         return True
 
     def _filter(self, suite, filter):
-        for test in suite.tests:
-            if filter(test):
-                yield test
+        return [t for t in suite.tests if filter(t)]
 
     def _included_by_test_name(self, test):
         return self.include_tests.match(test.name, test.longname)

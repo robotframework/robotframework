@@ -75,7 +75,7 @@ class TagPatterns(object):
 
 
 def TagPattern(pattern):
-    pattern = pattern.replace('&', 'AND') # TODO: where should this be done?
+    pattern = pattern.replace('&', 'AND')
     if 'NOT' in pattern:
         return _NotTagPattern(*pattern.split('NOT', 1))
     if 'AND' in pattern:
