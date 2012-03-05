@@ -54,10 +54,7 @@ class TestRobotEnv(unittest.TestCase):
             assert_true(isinstance(k, unicode) and isinstance(v, unicode))
 
     def _upper_on_windows(self, name):
-        if os.sep == '/':
-            return name
-        # Upper-case only ASCII characters like, at least, WinXP does...
-        return decode_from_system(encode_to_system(name).upper())
+        return name if os.sep == '/' else name.upper()
 
 
 if __name__ == '__main__':
