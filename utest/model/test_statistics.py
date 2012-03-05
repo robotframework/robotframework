@@ -2,7 +2,8 @@ import unittest
 
 from robot.utils.asserts import assert_equals, assert_true
 from robot.model.statistics import Statistics
-from robot.result import TestSuite, TestCase
+from robot.result.testsuite import TestSuite
+from robot.result.testcase import TestCase
 
 
 def verify_stat(stat, name, passed, failed, critical=None, non_crit=None, id=None):

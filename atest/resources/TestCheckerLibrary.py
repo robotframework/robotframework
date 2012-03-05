@@ -3,7 +3,9 @@ import re
 
 from robot import utils
 from robot.result.executionresult import ExecutionResultBuilder, ExecutionResult
-from robot.result import TestSuite, TestCase, Keyword
+from robot.result.testsuite import TestSuite
+from robot.result.testcase import TestCase
+from robot.result.keyword import Keyword
 from robot.libraries.BuiltIn import BuiltIn
 
 

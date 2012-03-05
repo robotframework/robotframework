@@ -3,7 +3,8 @@ import unittest
 from robot.utils.asserts import assert_equal, assert_raises_with_msg
 
 from robot.errors import DataError
-from robot.result import TestSuite, TestCase
+from robot.result.testsuite import TestSuite
+from robot.result.testcase import TestCase
 from robot.result.configurer import SuiteConfigurer
 
 

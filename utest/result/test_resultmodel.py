@@ -1,7 +1,10 @@
 import unittest
 from robot.utils.asserts import assert_equal, assert_raises, assert_true, assert_false
 
-from robot.result import TestSuite, TestCase, Keyword, Message
+from robot.result.testsuite import TestSuite
+from robot.result.testcase import TestCase
+from robot.result.keyword import Keyword
+from robot.result.message import Message
 
 
 class TestSuiteStats(unittest.TestCase):

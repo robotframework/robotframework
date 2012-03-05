@@ -5,7 +5,7 @@ from test_jsmodelbuilders import remap
 from robot.reporting.jsexecutionresult import (JsExecutionResult,
                                                _KeywordRemover, StringIndex)
 from robot.reporting.jsmodelbuilders import SuiteBuilder, JsBuildingContext
-from robot.result import TestSuite
+from robot.result.testsuite import TestSuite
 
 
 class TestRemoveDataNotNeededInReport(unittest.TestCase):
