@@ -23,6 +23,10 @@ class BaseKeyword:
         self.type = type
         self.status = 'NOT_RUN'
 
+    @property
+    def passed(self):
+        return self.status == 'PASS'
+
     def serialize(self, serializer):
         serializer.start_keyword(self)
         serializer.end_keyword(self)

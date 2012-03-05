@@ -130,7 +130,7 @@ class CommandLineWriter(object):
             return
         if self._keyword_marker_count == self._status_length:
             self._clear_status()
-        marker, color = ('.', 'green') if kw.status == 'PASS' else ('F', 'red')
+        marker, color = ('.', 'green') if kw.passed else ('F', 'red')
         self._highlighter.highlight(marker, color, self._stdout)
         self._keyword_marker_count += 1
 

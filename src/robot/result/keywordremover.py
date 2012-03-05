@@ -63,7 +63,7 @@ class PassedKeywordRemover(_KeywordRemover):
                 self._clear_content(keyword)
 
     def _should_be_cleared(self, item):
-        return item.is_passed and not self._contains_warning(item)
+        return item.passed and not self._contains_warning(item)
 
     def visit_keyword(self, keyword):
         pass
@@ -76,7 +76,7 @@ class ForLoopItemsRemover(_KeywordRemover):
         if kw.type == kw.FOR_LOOP_TYPE:
             before = len(kw.keywords)
             kw.keywords = [item for item in kw.keywords
-                           if not item.is_passed or self._contains_warning(item)]
+                           if not item.passed or self._contains_warning(item)]
             self._removal_message.set_if_removed(kw, before)
 
 
@@ -86,7 +86,7 @@ class WaitUntilKeywordSucceedsRemover(_KeywordRemover):
     def start_keyword(self, kw):
         if kw.name == 'BuiltIn.Wait Until Keyword Succeeds' and kw.keywords:
             keywords = list(kw.keywords)
-            last_included = 2 if kw.keywords[-1].is_passed else 1
+            last_included = 2 if kw.keywords[-1].passed else 1
             kw.keywords = self._kws_with_warnings(keywords[:-last_included]) + \
                           keywords[-last_included:]
             self._removal_message.set_if_removed(kw, len(keywords))

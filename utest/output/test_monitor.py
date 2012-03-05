@@ -67,6 +67,10 @@ class Stub(object):
         self.status = status
         self.message = message
 
+    @property
+    def passed(self):
+        return self.status == 'PASS'
+
 
 class MessageStub(object):
 

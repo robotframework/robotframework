@@ -332,6 +332,10 @@ class BaseTestCase(_TestAndSuiteHelper):
             return 't1'
         return '%s-t%d' % (self.parent.id, self.parent.tests.index(self)+1)
 
+    @property
+    def passed(self):
+        return self.status == 'PASS'
+
     def suite_teardown_failed(self, message):
         self.status = 'FAIL'
         self._set_teardown_fail_msg(message)
@@ -378,7 +382,7 @@ class BaseTestCase(_TestAndSuiteHelper):
 
     def __cmp__(self, other):
         if self.status != other.status:
-            return -1 if self.status == 'FAIL' else 1
+            return -1 if not self.passed else 1
         if self.critical != other.critical:
             return -1 if self.critical else 1
         try:

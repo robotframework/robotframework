@@ -53,7 +53,7 @@ class Stat:
         self.failed += other.failed
 
     def add_test(self, test):
-        if test.status == 'PASS':
+        if test.passed:
             self.passed += 1
         else:
             self.failed += 1

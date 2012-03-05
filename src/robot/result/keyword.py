@@ -32,7 +32,6 @@ class Keyword(model.Keyword):
     def elapsedtime(self):
         return utils.get_elapsed_time(self.starttime, self.endtime)
 
-    # TODO: is_passed -> passed
     @property
-    def is_passed(self):
+    def passed(self):
         return self.status == 'PASS'

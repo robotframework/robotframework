@@ -33,7 +33,6 @@ class TestCase(model.TestCase):
     def elapsedtime(self):
         return utils.get_elapsed_time(self.starttime, self.endtime)
 
-    # TODO: Rename to passed
     @property
-    def is_passed(self):
+    def passed(self):
         return self.status == 'PASS'

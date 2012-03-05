@@ -27,7 +27,7 @@ class SuiteTeardownFailureHandler(SuiteVisitor):
             suite.visit(SuiteTeardownFailed())
 
     def _suite_teardown_failed(self, teardown):
-        return bool(teardown and teardown.status == 'FAIL')
+        return bool(teardown and not teardown.passed)
 
     def start_test(self, test):
         return False

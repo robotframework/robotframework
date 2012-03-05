@@ -49,7 +49,7 @@ class XUnitWriter(ResultVisitor):
                  'name': test.name,
                  'time': self._time_as_seconds(test.elapsedtime)}
         self._writer.start('testcase', attrs)
-        if test.status == 'FAIL':
+        if not test.passed:
             test.visit(TestFailureWriter(self._writer))
 
     def _time_as_seconds(self, millis):
