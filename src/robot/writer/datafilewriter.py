@@ -16,14 +16,17 @@ from __future__ import with_statement
 import os
 
 from robot.errors import DataError
+
 from .filewriters import FileWriter
 
 
 class DataFileWriter(object):
-    """Writes parsed Robot Framework test data file objects back to disk."""
+    """Object to write parsed test data file objects back to disk."""
 
     def __init__(self, **options):
-        """:param options: used to create a :py:class:`.WriteConfiguration`."""
+        """:param **options: A :py:class:`.WritingContext` is created based
+        on these.
+        """
         self._options = options
 
     def write(self, datafile):
@@ -71,6 +74,7 @@ class WritingContext(object):
             WriteConfiguration(datafile, format='html') ->
                Output file is created from `datafile.source` by stripping
                extension and replacing it with `html`.
+
         """
         self.datafile = datafile
         self.pipe_separated = pipe_separated

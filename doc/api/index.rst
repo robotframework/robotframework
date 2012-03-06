@@ -1,20 +1,16 @@
-============================================
-Welcome to Robot Framework API documentation
-============================================
+=================================
+Robot Framework API documentation
+=================================
 
 .. toctree::
    :maxdepth: 2
 
 
 
-Robot Framework's most important APIs are documented below.
+This document describes the public API of Robot Framework. Installation,
+basic usage and wealth of other topics are covered in the `user guide`__.
 
-Model
-=====
-
-.. autoclass:: robot.model.Tags
-    :members:
-    :undoc-members:
+__ http://code.google.com/p/robotframework/wiki/UserGuide
 
 Logging
 =======
@@ -40,18 +36,18 @@ Parsing
     :inherited-members:
 
 
-Serializing data
-================
+Saving data
+===========
 
 
 .. automodule:: robot.writer
     :members:
 
 
-.. automodule:: robot.writer.serializer
+.. automodule:: robot.writer.datafilewriter
     :members:
 
-.. autofunction:: robot.writer.writer.FileWriter
+.. autofunction:: robot.writer.datafilewriter.DataFileWriter
 
 
 Indices and tables
