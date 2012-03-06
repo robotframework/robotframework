@@ -104,24 +104,10 @@ Examples:
      ======================================
 """
 
-__version__ = '1.0'
-
-
+from __future__ import with_statement
 import os.path
 import sys
 import glob
-try:
-    import xml.etree.cElementTree as ET
-except ImportError:
-    try:
-        import cElementTree as ET
-    except ImportError:
-        try:
-            import elementtree.ElementTree as ET
-        except ImportError:
-            raise ImportError('Could not import ElementTree module. '
-                              'Upgrade to Python 2.5+ or install ElementTree '
-                              'from http://effbot.org/zone/element-index.htm')
 
 try:
     from matplotlib import pylab
@@ -138,6 +124,9 @@ try:
 except ImportError:
     raise ImportError('Could not import Robot Framework modules. '
                       'Make sure you have Robot Framework installed.')
+
+
+__version__ = '1.0.1'
 
 
 class AllStatistics(object):
@@ -201,7 +190,7 @@ class Statistics(object):
     def __init__(self, path, name=None, namemeta=None, verbose=False):
         if verbose:
             print path
-        root = ET.ElementTree(file=path).getroot()
+        root = utils.ET.ElementTree(file=path).getroot()
         self.name = self._get_name(name, namemeta, root)
         stats = root.find('statistics')
         crit_node, all_node = list(stats.find('total'))
@@ -454,7 +443,7 @@ class Ristopy(object):
             pylab.close('all')
 
     def _plot_one_graph(self, args):
-        opts, paths = self._arg_parser.parse_args(args, help='help', version='version')
+        opts, paths = self._arg_parser.parse_args(args)
         stats = AllStatistics(paths, opts['namemeta'], opts['verbose'])
         output = self._plot(stats, opts)
         return output is None
