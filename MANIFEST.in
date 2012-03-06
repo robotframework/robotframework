@@ -1,6 +1,7 @@
 include src/bin/*ybot src/bin/*rebot src/bin/*.bat
-include src/robot/webcontent/*.html src/robot/webcontent/*.js src/robot/webcontent/*.css src/robot/webcontent/lib/*.js
+include src/robot/htmldata/*/*.html src/robot/htmldata/*/*.js src/robot/htmldata/*/*.css
 include MANIFEST.in LICENSE.txt COPYRIGHT.txt INSTALL.txt install.py
+prune src/robot/htmldata/testdata
 
 recursive-include tools *.py *.au3 *.rb *.html *.txt *.png
 prune tools/*/test

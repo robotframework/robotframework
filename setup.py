@@ -24,12 +24,15 @@ Operating System :: OS Independent
 Programming Language :: Python
 Topic :: Software Development :: Testing
 """.strip().splitlines()
-PACKAGES = ['robot', 'robot.api', 'robot.common', 'robot.conf', 'robot.libdocpkg',
-            'robot.libraries', 'robot.model', 'robot.output', 'robot.parsing',
-            'robot.result', 'robot.reporting', 'robot.running',
+PACKAGES = ['robot', 'robot.api', 'robot.common', 'robot.conf',
+            'robot.htmldata', 'robot.libdocpkg', 'robot.libraries',
+            'robot.model', 'robot.output', 'robot.parsing',
+            'robot.reporting', 'robot.result', 'robot.running',
             'robot.running.timeouts', 'robot.utils', 'robot.variables',
             'robot.writer']
-PACKAGE_DATA = ['htmldata/'+p for p in '*.html', '*.css', '*.js', 'lib/*.js']
+PACKAGE_DATA = [join('htmldata', directory, pattern)
+                for directory in 'rebot', 'libdoc', 'testdoc', 'lib'
+                for pattern in '*.html', '*.css', '*.js']
 if sys.platform.startswith('java'):
     SCRIPTS = ['jybot', 'jyrebot']
 elif sys.platform == 'cli':
