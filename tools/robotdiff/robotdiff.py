@@ -51,11 +51,11 @@ $ robotdiff.py output1.xml output2.xml output3.xml
 $ robotdiff.py --name Env1 --name Env2 smoke1.xml smoke2.xml
 """
 
-import os
 import sys
+import os.path
 
-from robot import utils
-from robot.output import TestSuite
+from robot.utils import ArgumentParser, NormalizedDict, HtmlWriter
+from robot.result import ExecutionResult
 from robot.errors import DataError, Information
 
 
@@ -72,10 +72,9 @@ def main(args):
     _exit('Report: %s' % reporter.outpath)
 
 def _process_args(cliargs):
-    ap = utils.ArgumentParser(__doc__, arg_limits=(2, sys.maxint))
+    ap = ArgumentParser(__doc__, arg_limits=(2, ))
     try:
-        return ap.parse_args(cliargs, unescape='escape', help='help',
-                             check_args=True)
+        return ap.parse_args(cliargs)
     except Information, msg:
         _exit(msg)
     except DataError, err:
@@ -99,7 +98,7 @@ def _exit(msg, error=False):
 class DiffResults(object):
 
     def __init__(self):
-        self._stats = utils.NormalizedDict()
+        self._stats = NormalizedDict()
         self.column_names = []
 
     @property
@@ -108,7 +107,7 @@ class DiffResults(object):
                 for name, statuses in sorted(self._stats.items()))
 
     def add_output(self, path, column=None):
-        self._add_suite(TestSuite(path))
+        self._add_suite(ExecutionResult(path).suite)
         self.column_names.append(column or path)
         for stats in self._stats.values():
             self._add_missing_statuses(stats)
@@ -173,9 +172,9 @@ class RowStatus(object):
 class DiffReporter(object):
 
     def __init__(self, outpath=None, title=None):
-        self.outpath = utils.abspath(outpath or 'robotdiff.html')
+        self.outpath = os.path.abspath(outpath or 'robotdiff.html')
         self._title = title or 'Test Run Diff Report'
-        self._writer = utils.HtmlWriter(open(self.outpath, 'w'))
+        self._writer = HtmlWriter(open(self.outpath, 'w'))
 
     def report(self, results):
         self._start(results.column_names)
@@ -207,7 +206,8 @@ class DiffReporter(object):
                              {'class': 'col_status ' + item.status})
 
     def _end(self):
-        self._writer.end_many(['table', 'body', 'html'])
+        for tag in 'table', 'body', 'html':
+            self._writer.end(tag)
         self._writer.close()
 
 
