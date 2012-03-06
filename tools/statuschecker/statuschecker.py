@@ -39,14 +39,14 @@ detail in the tool documentation.
 
 import re
 
-from robot.output import TestSuite
+from robot.result import ExecutionResult
 
 
 def process_output(inpath, outpath=None):
-    suite = TestSuite(inpath)
-    _process_suite(suite)
-    suite.write_to_file(outpath)
-    return suite.critical_stats.failed
+    result = ExecutionResult(inpath)
+    _process_suite(result.suite)
+    result.save(outpath)
+    return result.return_code
 
 def _process_suite(suite):
     for subsuite in suite.suites:
