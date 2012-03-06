@@ -1,6 +1,6 @@
 import unittest
 
-from robot.htmldata.htmltemplate import HtmlTemplate
+from robot.htmldata.template import HtmlTemplate
 from robot.htmldata import LOG, REPORT
 from robot.utils.asserts import assert_true, assert_raises, assert_equals
 

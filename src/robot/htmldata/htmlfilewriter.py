@@ -19,7 +19,7 @@ import re
 from robot.utils import HtmlWriter
 from robot.version import get_full_version
 
-from .htmltemplate import HtmlTemplate
+from .template import HtmlTemplate
 
 
 class HtmlFileWriter(object):
