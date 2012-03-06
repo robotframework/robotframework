@@ -1,11 +1,11 @@
 import unittest
 from os.path import dirname, join
 
-from robot.result import ResultFromXml
+from robot.result import ExecutionResult
 from robot.result.visitor import SuiteVisitor
 
 
-RESULT = ResultFromXml(join(dirname(__file__), 'golden.xml'))
+RESULT = ExecutionResult(join(dirname(__file__), 'golden.xml'))
 
 
 class TestVisitingSuite(unittest.TestCase):

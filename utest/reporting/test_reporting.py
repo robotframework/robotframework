@@ -1,10 +1,10 @@
 from StringIO import StringIO
 import os
 import unittest
+
 from robot.reporting.resultwriter import ResultWriter, Results
 from robot.output import LOGGER
-
-from robot.result.executionresult import ExecutionResult
+from robot.result.executionresult import Result
 from robot.result.executionerrors import ExecutionErrors
 from robot.result.testsuite import TestSuite
 from robot.utils.asserts import assert_true, assert_equals
@@ -89,7 +89,7 @@ class TestReporting(unittest.TestCase):
         errors = ExecutionErrors()
         errors.messages.create(message=self.EXPECTED_ERROR_MESSAGE,
                                level='ERROR', timestamp='20201212 12:12:12.000')
-        return ExecutionResult(root_suite=suite, errors=errors)
+        return Result(root_suite=suite, errors=errors)
 
     def _verify_output(self, content):
         assert_true(self.EXPECTED_SUITE_NAME in content)

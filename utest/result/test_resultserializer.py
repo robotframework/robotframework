@@ -3,7 +3,7 @@ import unittest
 import os
 from StringIO import StringIO
 
-from robot.result import ResultFromXml
+from robot.result import ExecutionResult
 from robot.reporting.outputwriter import OutputWriter
 from robot.utils.pyxmlwriter import XmlWriter
 from robot.utils.asserts import assert_equals
@@ -71,7 +71,7 @@ class TestResultSerializer(unittest.TestCase):
     def test_single_result_serialization(self):
         output = StringIO()
         writer = TestableOutputWriter(output)
-        ResultFromXml(GOLDEN_XML).visit(writer)
+        ExecutionResult(GOLDEN_XML).visit(writer)
         self._assert_xml_content(self._xml_lines(output.getvalue()),
                                  self._xml_lines(GOLDEN_XML))
 
@@ -90,7 +90,7 @@ class TestResultSerializer(unittest.TestCase):
     def test_combining_results(self):
         output = StringIO()
         writer = TestableOutputWriter(output)
-        ResultFromXml(GOLDEN_XML, GOLDEN_XML).visit(writer)
+        ExecutionResult(GOLDEN_XML, GOLDEN_XML).visit(writer)
         self._assert_xml_content(self._xml_lines(output.getvalue()),
                                  self._xml_lines(GOLDEN_XML_TWICE))
 

@@ -14,49 +14,15 @@
 
 from __future__ import with_statement
 
-from robot.errors import DataError
 from robot.model import Statistics
-from robot.utils import ET, ETSource
 from robot.reporting.outputwriter import OutputWriter
 
 from .executionerrors import ExecutionErrors
 from .configurer import SuiteConfigurer
-from .suiteteardownfailed import SuiteTeardownFailureHandler
 from .testsuite import TestSuite
-from .xmlelementhandlers import XmlElementHandler
 
 
-def ResultFromXml(*sources):
-    if not sources:
-        raise DataError('One or more data source needed.')
-    if len(sources) > 1:
-        return CombinedExecutionResult(*[ResultFromXml(src) for src in sources])
-    source = ETSource(sources[0])
-    try:
-        return ExecutionResultBuilder(source).build(ExecutionResult(sources[0]))
-    except DataError, err:
-        raise DataError("Reading XML source '%s' failed: %s"
-                        % (unicode(source), unicode(err)))
-
-
-class ExecutionResultBuilder(object):
-
-    def __init__(self, source):
-        self._source = source \
-            if isinstance(source, ETSource) else ETSource(source)
-
-    def build(self, result):
-        handler = XmlElementHandler(result)
-        # Faster attribute lookup inside for loop
-        start, end = handler.start, handler.end
-        with self._source as source:
-            for event, elem in ET.iterparse(source, events=('start', 'end')):
-                start(elem) if event == 'start' else end(elem)
-        SuiteTeardownFailureHandler(result.generator).visit_suite(result.suite)
-        return result
-
-
-class ExecutionResult(object):
+class Result(object):
 
     def __init__(self, source=None, root_suite=None, errors=None):
         self.source = source
@@ -88,10 +54,10 @@ class ExecutionResult(object):
         self.visit(OutputWriter(path or self.source))
 
 
-class CombinedExecutionResult(ExecutionResult):
+class CombinedResult(Result):
 
     def __init__(self, *others):
-        ExecutionResult.__init__(self)
+        Result.__init__(self)
         for other in others:
             self.add_result(other)
 
