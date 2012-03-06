@@ -44,7 +44,7 @@ else:
         _base_dir = '/Lib/robot/htmldata/'
 
         def __init__(self, filename):
-            self._path = self._base_dir + filename
+            self._path = self._base_dir + filename.replace(os.sep, '/')
 
         def __iter__(self):
             with self._reader as reader:
