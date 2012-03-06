@@ -29,7 +29,7 @@ PACKAGES = ['robot', 'robot.api', 'robot.common', 'robot.conf', 'robot.libdocpkg
             'robot.result', 'robot.reporting', 'robot.running',
             'robot.running.timeouts', 'robot.utils', 'robot.variables',
             'robot.writer']
-PACKAGE_DATA = ['webcontent/'+p for p in '*.html', '*.css', '*.js', 'lib/*.js']
+PACKAGE_DATA = ['htmldata/'+p for p in '*.html', '*.css', '*.js', 'lib/*.js']
 if sys.platform.startswith('java'):
     SCRIPTS = ['jybot', 'jyrebot']
 elif sys.platform == 'cli':
