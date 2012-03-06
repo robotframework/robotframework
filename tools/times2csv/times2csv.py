@@ -29,22 +29,22 @@ values are 'suite', 'test' and 'keyword', and they can be combined to specify
 multiple items e.g. like 'suite-test' or 'test-keyword'.
 
 Examples:
-$ times2csv.py output.xml
-$ times2csv.py path/results.xml path2/times.csv
-$ times2csv.py output.xml times.csv test
-$ times2csv.py output.xml times.csv suite-test
+  times2csv.py output.xml
+  times2csv.py path/results.xml path2/times.csv
+  times2csv.py output.xml times.csv test
+  times2csv.py output.xml times.csv suite-test
 """
 
 import sys
 import os
 import csv
 
-from robot.output import TestSuite
+from robot.result import ExecutionResult
 from robot import utils
 
 
 def process_file(inpath, outpath, items):
-    suite = TestSuite(inpath)
+    suite = ExecutionResult(inpath).suite
     outfile = open(outpath, 'wb')
     writer = csv.writer(outfile)
     writer.writerow(['TYPE', 'NAME', 'STATUS', 'START', 'END', 'ELAPSED',
@@ -56,7 +56,7 @@ def process_suite(suite, writer, items, level=0):
     if 'suite' in items:
         process_item(suite, writer, level, 'Suite')
     if 'keyword' in items:
-        for kw in suite.setup, suite.teardown:
+        for kw in suite.keywords:
             process_keyword(kw, writer, level+1)
     for subsuite in suite.suites:
         process_suite(subsuite, writer, items, level+1)
@@ -67,7 +67,7 @@ def process_test(test, writer, items, level):
     if 'test' in items:
         process_item(test, writer, level, 'Test', 'suite' not in items)
     if 'keyword' in items:
-        for kw in [test.setup] + test.keywords + [test.teardown]:
+        for kw in test.keywords:
             process_keyword(kw, writer, level+1)
 
 def process_keyword(kw, writer, level):
@@ -87,7 +87,7 @@ def process_item(item, writer, level, item_type, long_name=False):
 
 
 if __name__ == '__main__':
-    if not (2 <= len(sys.argv) <= 4) or '--help' in sys.argv:
+    if not (2 <= len(sys.argv) <= 4) or sys.argv[1] in ('--help', '-h'):
         print __doc__
         sys.exit(1)
     inxml = sys.argv[1]
