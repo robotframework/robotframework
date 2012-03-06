@@ -13,7 +13,6 @@
 #  limitations under the License.
 
 import os
-from os.path import dirname
 import re
 
 from robot.htmldata import HtmlFileWriter, ModelWriter, JsonWriter, LIBDOC
@@ -24,7 +23,7 @@ class LibdocHtmlWriter(object):
 
     def write(self, libdoc, output):
         model_writer = LibdocModelWriter(output, libdoc)
-        HtmlFileWriter(output, model_writer, dirname(LIBDOC)).write(LIBDOC)
+        HtmlFileWriter(output, model_writer).write(LIBDOC)
 
 
 class LibdocModelWriter(ModelWriter):

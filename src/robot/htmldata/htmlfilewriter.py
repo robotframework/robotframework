@@ -24,20 +24,25 @@ from .htmlfile import HtmlFile
 
 class HtmlFileWriter(object):
 
-    def __init__(self, output, model_writer, base_dir):
-        html_writer = HtmlWriter(output)
-        self._writers = (model_writer,
-                         JsFileWriter(html_writer, base_dir),
-                         CssFileWriter(html_writer, base_dir),
-                         GeneratorWriter(html_writer),
-                         LineWriter(output))
+    def __init__(self, output, model_writer):
+        self._output = output
+        self._model_writer = model_writer
 
     def write(self, template):
+        writers = self._get_writers(os.path.dirname(template))
         for line in HtmlFile(template):
-            for writer in self._writers:
+            for writer in writers:
                 if writer.handles(line):
                     writer.write(line)
                     break
+
+    def _get_writers(self, base_dir):
+        html_writer = HtmlWriter(self._output)
+        return (self._model_writer,
+                JsFileWriter(html_writer, base_dir),
+                CssFileWriter(html_writer, base_dir),
+                GeneratorWriter(html_writer),
+                LineWriter(self._output))
 
 
 class _Writer(object):

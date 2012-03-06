@@ -64,7 +64,7 @@ Examples:
 
 import sys
 import os
-from os.path import dirname, abspath
+from os.path import abspath, dirname
 import codecs
 import time
 
@@ -93,7 +93,7 @@ class TestDoc(utils.Application):
     def _write_test_doc(self, suite, outfile, title):
         output = codecs.open(outfile, 'w', 'UTF-8')
         model_writer = TestdocModelWriter(output, suite, title)
-        HtmlFileWriter(output, model_writer, dirname(TESTDOC)).write(TESTDOC)
+        HtmlFileWriter(output, model_writer).write(TESTDOC)
         output.close()
 
 

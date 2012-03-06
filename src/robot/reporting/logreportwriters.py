@@ -13,7 +13,7 @@
 #  limitations under the License.
 
 from __future__ import with_statement
-from os.path import dirname, basename, splitext
+from os.path import basename, splitext
 import codecs
 
 from robot.htmldata import HtmlFileWriter, ModelWriter, LOG, REPORT
@@ -31,7 +31,7 @@ class _LogReportWriter(object):
             if isinstance(path, basestring) else path  # unit test hook
         with outfile:
             model_writer = RobotModelWriter(outfile, self._js_model, config)
-            writer = HtmlFileWriter(outfile, model_writer, dirname(template))
+            writer = HtmlFileWriter(outfile, model_writer)
             writer.write(template)
 
 
