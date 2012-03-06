@@ -2,7 +2,8 @@ import os
 import re
 
 from robot import utils
-from robot.result.executionresult import ExecutionResultBuilder, ExecutionResult
+from robot.result.resultbuilder import ExecutionResultBuilder
+from robot.result.executionresult import Result
 from robot.result.testsuite import TestSuite
 from robot.result.testcase import TestCase
 from robot.result.keyword import Keyword
@@ -26,7 +27,7 @@ class TestCheckerLibrary:
         path = path.replace('/', os.sep)
         try:
             print "Processing output '%s'" % path
-            result = ExecutionResult(root_suite=NoSlotsTestSuite())
+            result = Result(root_suite=NoSlotsTestSuite())
             ExecutionResultBuilder(path).build(result)
         except:
             raise RuntimeError('Processing output failed: %s'
