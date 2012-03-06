@@ -12,3 +12,4 @@ atest/results
 ext-lib
 *.iml
 .DS_Store
+doc/api/_build
