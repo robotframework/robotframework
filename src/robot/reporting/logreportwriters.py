@@ -17,8 +17,9 @@ import os
 import os.path
 import codecs
 
+from robot.htmldata import HtmlFileWriter, ModelWriter
+
 from .jswriter import JsResultWriter, SplitLogWriter
-from .htmlfilewriter import HtmlFileWriter, ModelWriter
 
 
 class _LogReportWriter(object):

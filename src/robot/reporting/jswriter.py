@@ -14,7 +14,7 @@
 
 import os
 
-from .jsonwriter import JsonWriter
+from robot.htmldata import JsonWriter
 
 
 class JsResultWriter(object):

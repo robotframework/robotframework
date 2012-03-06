@@ -69,14 +69,13 @@ import codecs
 import time
 
 if 'robot' not in sys.modules:
-    import pythonpathsetter   # running testdoc.py as script
+    import pythonpathsetter
 
 from robot import utils
 from robot.running import TestSuite, Keyword
 from robot.conf import RobotSettings
 from robot.parsing import populators
-from robot.reporting.htmlfilewriter import HtmlFileWriter, ModelWriter
-from robot.reporting.jsonwriter import JsonWriter
+from robot.htmldata import HtmlFileWriter, ModelWriter, JsonWriter
 
 
 class TestDoc(utils.Application):

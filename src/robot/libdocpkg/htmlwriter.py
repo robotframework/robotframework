@@ -15,8 +15,7 @@
 import os
 import re
 
-from robot.reporting.htmlfilewriter import HtmlFileWriter, ModelWriter
-from robot.reporting.jsonwriter import JsonWriter
+from robot.htmldata import HtmlFileWriter, ModelWriter, JsonWriter
 from robot import utils
 
 

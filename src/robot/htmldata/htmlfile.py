@@ -23,8 +23,8 @@ try:
 
 except ImportError:  # Occurs unless using standalone robotframework.jar
 
-    class WebContentFile(object):
-        _base_dir = join(dirname(abspath(__file__)), '..', 'webcontent')
+    class HtmlFile(object):
+        _base_dir = join(dirname(abspath(__file__)), '..', 'htmldata')
 
         def __init__(self, filename):
             self._path = join(self._base_dir, filename)
@@ -39,8 +39,8 @@ else:
     from java.io import BufferedReader, InputStreamReader
 
 
-    class WebContentFile(object):
-        _base_dir = '/Lib/robot/webcontent/'
+    class HtmlFile(object):
+        _base_dir = '/Lib/robot/htmldata/'
 
         def __init__(self, filename):
             self._path = self._base_dir + filename
