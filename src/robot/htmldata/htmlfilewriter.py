@@ -19,7 +19,7 @@ import re
 from robot.utils import HtmlWriter
 from robot.version import get_full_version
 
-from .htmlfile import HtmlFile
+from .htmltemplate import HtmlTemplate
 
 
 class HtmlFileWriter(object):
@@ -30,7 +30,7 @@ class HtmlFileWriter(object):
 
     def write(self, template):
         writers = self._get_writers(os.path.dirname(template))
-        for line in HtmlFile(template):
+        for line in HtmlTemplate(template):
             for writer in writers:
                 if writer.handles(line):
                     writer.write(line)
@@ -90,7 +90,7 @@ class _InliningWriter(_Writer):
 
     def _inline_file(self, filename, tag, attrs):
         self._html_writer.start(tag, attrs)
-        for line in HtmlFile(os.path.join(self._base_dir, filename)):
+        for line in HtmlTemplate(os.path.join(self._base_dir, filename)):
             self._html_writer.content(line + os.linesep, escape=False)
         self._html_writer.end(tag)
 

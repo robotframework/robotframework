@@ -20,11 +20,12 @@ from contextlib import contextmanager
 
 
 try:
+    from java.io import BufferedReader, InputStreamReader
     from org.robotframework.RobotRunner import getResourceAsStream
 
 except ImportError:  # Occurs unless using standalone robotframework.jar
 
-    class HtmlFile(object):
+    class HtmlTemplate(object):
         _base_dir = join(dirname(abspath(__file__)), '..', 'htmldata')
 
         def __init__(self, filename):
@@ -37,10 +38,7 @@ except ImportError:  # Occurs unless using standalone robotframework.jar
 
 else:
 
-    from java.io import BufferedReader, InputStreamReader
-
-
-    class HtmlFile(object):
+    class HtmlTemplate(object):
         _base_dir = '/Lib/robot/htmldata/'
 
         def __init__(self, filename):

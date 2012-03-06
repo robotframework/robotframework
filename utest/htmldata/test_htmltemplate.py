@@ -1,22 +1,23 @@
 import unittest
 
-from robot.htmldata.htmlfile import HtmlFile
+from robot.htmldata.htmltemplate import HtmlTemplate
+from robot.htmldata import LOG, REPORT
 from robot.utils.asserts import assert_true, assert_raises, assert_equals
 
 
-class TestWebContentFile(unittest.TestCase):
+class TestHtmlTemplate(unittest.TestCase):
 
-    def test_get_webcontent_file(self):
-        log = list(HtmlFile('log.html'))
+    def test_creating(self):
+        log = list(HtmlTemplate(LOG))
         assert_true(log[0].startswith('<!DOCTYPE'))
         assert_equals(log[-1], '</html>')
 
     def test_lines_do_not_have_line_breaks(self):
-        for line in HtmlFile('report.html'):
+        for line in HtmlTemplate(REPORT):
             assert_true(not line.endswith('\n'))
 
     def test_non_existing(self):
-        assert_raises(IOError, list, HtmlFile('nonex.html'))
+        assert_raises(IOError, list, HtmlTemplate('nonex.html'))
 
 
 if __name__ == "__main__":
