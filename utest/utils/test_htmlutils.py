@@ -45,7 +45,7 @@ class TestHtmlEscapeAndFormat(unittest.TestCase):
                 _test_escape_and_format(inp, exp)
 
 
-class TestLinks(unittest.TestCase):
+class TestUrlsToLinks(unittest.TestCase):
 
     def test_not_links(self):
         for nolink in ['http no link', 'http:/no', 'xx://no',
@@ -99,7 +99,7 @@ class TestLinks(unittest.TestCase):
                       '<a href="ftp://&lt;&amp;&gt;/">ftp://&lt;&amp;&gt;/</a>')
 
 
-class TestHtmlFormat(unittest.TestCase):
+class TestHtmlFormatBoldAndItalic(unittest.TestCase):
 
     def test_one_word_bold(self):
         for inp, exp in [('*bold*', '<b>bold</b>'),
@@ -224,6 +224,9 @@ class TestHtmlFormat(unittest.TestCase):
                          ('_i *bi*_', '<i>i <b>bi</b></i>'),
                          ('*b _bi*_', '<b>b <i>bi</b></i>')]:
             assert_equals(html_format(inp), exp)
+
+
+class TestHtmlFormatTable(unittest.TestCase):
 
     def test_one_row_table(self):
         inp = '| one | two |'
@@ -379,6 +382,9 @@ after
                              ['2','<a href="ftp://two/">ftp://two/</a>']])
         assert_equals(html_format(inp), exp)
 
+
+class TestHtmlFormatHr(unittest.TestCase):
+
     def test_hr_is_three_or_more_hyphens(self):
         for i in range(3, 10):
             hr = '-' * i
@@ -407,7 +413,7 @@ after
         assert_equals(html_format(inp), exp)
 
 
-class TestPreformattedBlock(unittest.TestCase):
+class TestHtmlFormatPreformatted(unittest.TestCase):
 
     def test_single_line_block(self):
         self._assert_preformatted('| some', 'some')
