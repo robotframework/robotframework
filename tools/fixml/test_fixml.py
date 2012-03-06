@@ -8,10 +8,8 @@ BASEDIR = os.path.dirname(os.path.abspath(__file__))
 # Ensure robot found in PYTHONPATH
 sys.path.insert(0, os.path.join(BASEDIR, '..', '..', 'src'))
 
-from robot.output import TestSuite
-from robot.output.readers import TestSuite as TestSuiteReader
+from robot.result import ExecutionResult
 from robot.utils.asserts import assert_equals
-from robot import utils
 
 import fixml
 
@@ -51,13 +49,12 @@ class TestFixml(unittest.TestCase):
         while len(input) > 250:
             input = input[:-10]
             fixxxed = fixml.Fixxxer(input)
-            root = utils.etreewrapper.get_root(string=str(fixxxed))
-            suite = TestSuiteReader(root.find('suite'))
+            suite = ExecutionResult(str(fixxxed)).suite
             assert_equals(suite.name, 'Suite')
 
     def _fix_xml_and_parse(self, base):
         outfile = self._fix_xml(base)
-        return TestSuite(outfile).suites[0]
+        return ExecutionResult(outfile).suite.suites[0]
 
     def _fix_xml(self, base):
         infile = os.path.join('test', '%s.xml' % base)
@@ -65,8 +62,8 @@ class TestFixml(unittest.TestCase):
         return fixml.main(infile, outfile)
 
     def _assert_statistics(self, suite, passed, failed):
-        assert_equals(suite.critical_stats.passed, passed)
-        assert_equals(suite.critical_stats.failed, failed)
+        assert_equals(suite.statistics.critical.passed, passed)
+        assert_equals(suite.statistics.critical.failed, failed)
 
 
 if __name__ == '__main__':
