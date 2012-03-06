@@ -21,7 +21,7 @@ License and Copyright
 
 All the content in the 'utest' folder is under following copyright:
 
-  Copyright 2008-2011 Nokia Siemens Networks Oyj
+  Copyright 2008-2012 Nokia Siemens Networks Oyj
 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -38,11 +38,11 @@ All the content in the 'utest' folder is under following copyright:
 Running Unit Tests
 ------------------
 
-All unit tests can be run with script 'run_utests.py'. To get more information 
-run 'python run_utests.py --help'. Python and Jython interpreter should be used 
-to verify interoperability with both supported interpreters. Unit test files 
-should always start with prefix 'test_'. This is the mechanism the unit tests 
-are found by the 'run_utests.py' script. 
+All unit tests can be run with script 'run_utests.py'. To get more information
+run 'python run_utests.py --help'. Python and Jython interpreter should be used
+to verify interoperability with both supported interpreters. Unit test files
+should always start with prefix 'test_'. This is the mechanism the unit tests
+are found by the 'run_utests.py' script.
 
 To run only certain unit tests you need to set the Robot Framework's 'src'
 folder to PYTHONPATH and run the test like 'python path/test_xxx.py'. There are
