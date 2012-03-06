@@ -13,11 +13,10 @@
 #  limitations under the License.
 
 from __future__ import with_statement
-import os
-import os.path
+from os.path import dirname, basename, splitext
 import codecs
 
-from robot.htmldata import HtmlFileWriter, ModelWriter
+from robot.htmldata import HtmlFileWriter, ModelWriter, LOG, REPORT
 
 from .jswriter import JsResultWriter, SplitLogWriter
 
@@ -32,7 +31,7 @@ class _LogReportWriter(object):
             if isinstance(path, basestring) else path  # unit test hook
         with outfile:
             model_writer = RobotModelWriter(outfile, self._js_model, config)
-            writer = HtmlFileWriter(outfile, model_writer)
+            writer = HtmlFileWriter(outfile, model_writer, dirname(template))
             writer.write(template)
 
 
@@ -50,9 +49,9 @@ class RobotModelWriter(ModelWriter):
 class LogWriter(_LogReportWriter):
 
     def write(self, path, config):
-        self._write_file(path, config, 'log.html')
+        self._write_file(path, config, LOG)
         if self._js_model.split_results:
-            self._write_split_logs(os.path.splitext(path)[0])
+            self._write_split_logs(splitext(path)[0])
 
     def _write_split_logs(self, base):
         for index, (keywords, strings) in enumerate(self._js_model.split_results):
@@ -62,10 +61,10 @@ class LogWriter(_LogReportWriter):
     def _write_split_log(self, index, keywords, strings, path):
         with codecs.open(path, 'wb', encoding='UTF-8') as outfile:
             writer = SplitLogWriter(outfile)
-            writer.write(keywords, strings, index, os.path.basename(path))
+            writer.write(keywords, strings, index, basename(path))
 
 
 class ReportWriter(_LogReportWriter):
 
     def write(self, path, config):
-        self._write_file(path, config, 'report.html')
+        self._write_file(path, config, REPORT)

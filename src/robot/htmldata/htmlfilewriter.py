@@ -24,11 +24,11 @@ from .htmlfile import HtmlFile
 
 class HtmlFileWriter(object):
 
-    def __init__(self, output, model_writer):
+    def __init__(self, output, model_writer, base_dir):
         html_writer = HtmlWriter(output)
         self._writers = (model_writer,
-                         JsFileWriter(html_writer),
-                         CssFileWriter(html_writer),
+                         JsFileWriter(html_writer, base_dir),
+                         CssFileWriter(html_writer, base_dir),
                          GeneratorWriter(html_writer),
                          LineWriter(output))
 
@@ -79,12 +79,13 @@ class GeneratorWriter(_Writer):
 
 class _InliningWriter(_Writer):
 
-    def __init__(self, html_writer):
+    def __init__(self, html_writer, base_dir):
         self._html_writer = html_writer
+        self._base_dir = base_dir
 
     def _inline_file(self, filename, tag, attrs):
         self._html_writer.start(tag, attrs)
-        for line in HtmlFile(filename):
+        for line in HtmlFile(os.path.join(self._base_dir, filename)):
             self._html_writer.content(line + os.linesep, escape=False)
         self._html_writer.end(tag)
 

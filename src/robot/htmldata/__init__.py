@@ -14,3 +14,8 @@
 
 from .htmlfilewriter import HtmlFileWriter, ModelWriter
 from .jsonwriter import JsonWriter
+
+LOG = 'rebot/log.html'
+REPORT = 'rebot/report.html'
+LIBDOC = 'libdoc/libdoc.html'
+TESTDOC = 'testdoc/testdoc.html'

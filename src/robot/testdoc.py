@@ -14,7 +14,6 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-
 USAGE = """robot.testdoc -- Robot Framework test data documentation tool
 
 Version:  <VERSION>
@@ -65,6 +64,7 @@ Examples:
 
 import sys
 import os
+from os.path import dirname, abspath
 import codecs
 import time
 
@@ -75,7 +75,7 @@ from robot import utils
 from robot.running import TestSuite, Keyword
 from robot.conf import RobotSettings
 from robot.parsing import populators
-from robot.htmldata import HtmlFileWriter, ModelWriter, JsonWriter
+from robot.htmldata import HtmlFileWriter, ModelWriter, JsonWriter, TESTDOC
 
 
 class TestDoc(utils.Application):
@@ -85,7 +85,7 @@ class TestDoc(utils.Application):
 
     def main(self, args, title=None, **options):
         datasources = args[0:-1]
-        outfile = os.path.abspath(args[-1])
+        outfile = abspath(args[-1])
         suite = TestSuiteFactory(datasources, **options)
         self._write_test_doc(suite, outfile, title)
         self.console(outfile)
@@ -93,7 +93,7 @@ class TestDoc(utils.Application):
     def _write_test_doc(self, suite, outfile, title):
         output = codecs.open(outfile, 'w', 'UTF-8')
         model_writer = TestdocModelWriter(output, suite, title)
-        HtmlFileWriter(output, model_writer).write('testdoc.html')
+        HtmlFileWriter(output, model_writer, dirname(TESTDOC)).write(TESTDOC)
         output.close()
 
 
@@ -157,7 +157,7 @@ class JsonConverter(object):
     def _get_relative_source(self, source):
         if not source or not self._output_path:
             return ''
-        return utils.get_link_path(source, os.path.dirname(self._output_path))
+        return utils.get_link_path(source, dirname(self._output_path))
 
     def _html(self, item):
         return utils.html_format(utils.unescape(item))

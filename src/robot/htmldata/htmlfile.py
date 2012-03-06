@@ -13,9 +13,10 @@
 #  limitations under the License.
 
 from __future__ import with_statement
+import os
+from os.path import abspath, dirname, join
 import codecs
 from contextlib import contextmanager
-from os.path import abspath, dirname, join
 
 
 try:
@@ -27,7 +28,7 @@ except ImportError:  # Occurs unless using standalone robotframework.jar
         _base_dir = join(dirname(abspath(__file__)), '..', 'htmldata')
 
         def __init__(self, filename):
-            self._path = join(self._base_dir, filename)
+            self._path = join(self._base_dir, filename.replace('/', os.sep))
 
         def __iter__(self):
             with codecs.open(self._path, encoding='UTF-8') as file:
