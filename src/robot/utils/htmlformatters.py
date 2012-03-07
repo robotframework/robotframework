@@ -19,7 +19,7 @@ from itertools import cycle
 
 class LinkFormatter(object):
     _image_exts = ('.jpg', '.jpeg', '.png', '.gif', '.bmp')
-    _link = re.compile('(\[.+?\|.*?\])')
+    _link = re.compile('\[(.+?\|.*?)\]')
     _url = re.compile('''
 ((^|\ ) ["'([]*)           # begin of line or space and opt. any char "'([
 (\w{3,9}://[\S]+?)         # url (protocol is any alphanum 3-9 long string)
@@ -52,15 +52,13 @@ class LinkFormatter(object):
         return attr.replace('"', '&quot;')
 
     def format_link(self, text):
-        return ''.join(formatter(token) for formatter, token in
-                       zip(cycle([self._format_url, self._format_link]),
-                           self._link.split(text)))
+        # 2nd, 4th, etc. token contains link, others surrounding content
+        tokens = self._link.split(text)
+        formatters = cycle([self._format_url, self._format_link])
+        return ''.join(f(t) for f, t in zip(formatters, tokens))
 
     def _format_link(self, text):
-        return self._link.sub(self._replace_link, text)
-
-    def _replace_link(self, match):
-        link, content = [t.strip() for t in match.group()[1:-1].split('|', 1)]
+        link, content = [t.strip() for t in text.split('|', 1)]
         if self._is_image(content):
             content = self._get_image(content, link)
         elif self._is_image(link):
