@@ -14,12 +14,12 @@
 
 import string
 
-from .htmlformatters import UrlFormatter, HtmlFormatter
+from .htmlformatters import LinkFormatter, HtmlFormatter
 
 
 _html_escapes = (('&', '&amp;'), ('<', '&lt;'), ('>', '&gt;'))
 _html_attr_escapes = _html_escapes + (('"', '&quot;'),)
-_format_url = UrlFormatter().format
+_format_url = LinkFormatter().format_url
 
 
 def html_escape(text, formatting=False):

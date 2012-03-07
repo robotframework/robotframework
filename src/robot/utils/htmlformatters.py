@@ -13,9 +13,10 @@
 #  limitations under the License.
 
 import re
+from functools import partial
 
 
-class UrlFormatter(object):
+class LinkFormatter(object):
     _image_exts = ('.jpg', '.jpeg', '.png', '.gif', '.bmp')
     _url = re.compile('''
 ( (^|\ ) ["'([]* )         # begin of line or space and opt. any char "'([
@@ -23,23 +24,27 @@ class UrlFormatter(object):
 (?= [])"'.,!?:;]* ($|\ ) ) # opt. any char ])"'.,!?:; and end of line or space
 ''', re.VERBOSE|re.MULTILINE)
 
-    def __init__(self, formatting=False):
-        self._formatting = formatting
+    def format_url(self, text):
+        return self._format(text)
 
-    def format(self, text):
-        return self._url.sub(self._repl_url, text) if '://' in text else text
+    def format_link(self, text):
+        return self._format(text, format_as_image=True)
 
-    def _repl_url(self, match):
+    def _format(self, text, format_as_image=False):
+        if '://' not in text:
+            return text
+        return self._url.sub(partial(self._format_url, format_as_image), text)
+
+    def _format_url(self, format_as_image, match):
         pre = match.group(1)
         url = match.group(3).replace('"', '&quot;')
-        if self._format_as_image(url):
-            tmpl = '<img src="%s" title="%s" class="robotdoc">'
-        else:
-            tmpl = '<a href="%s">%s</a>'
-        return pre + tmpl % (url, url)
+        template = self._get_template(format_as_image, url)
+        return pre + template % (url, url)
 
-    def _format_as_image(self, url):
-        return self._formatting and url.lower().endswith(self._image_exts)
+    def _get_template(self, format_as_image, url):
+        if format_as_image and url.lower().endswith(self._image_exts):
+            return '<img src="%s" title="%s" class="robotdoc">'
+        return '<a href="%s">%s</a>'
 
 
 class HtmlFormatter(object):
@@ -133,10 +138,10 @@ _                          # end of italic
 ''', re.VERBOSE)
 
     def __init__(self):
-        self._format_url = UrlFormatter(formatting=True).format
+        self._format_link = LinkFormatter().format_link
 
     def format(self, line):
-        return self._format_url(self._format_italic(self._format_bold(line)))
+        return self._format_link(self._format_italic(self._format_bold(line)))
 
     def _format_bold(self, line):
         return self._bold.sub('\\1<b>\\3</b>', line) if '*' in line else line
