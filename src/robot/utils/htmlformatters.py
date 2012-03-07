@@ -18,12 +18,12 @@ from functools import partial
 
 class LinkFormatter(object):
     _image_exts = ('.jpg', '.jpeg', '.png', '.gif', '.bmp')
-    _url = re.compile('''
-( (^|\ ) ["'([]* )         # begin of line or space and opt. any char "'([
-(\w{3,9}://[\S]+?)         # url (protocol is any alphanum 3-9 long string)
-(?= [])"'.,!?:;]* ($|\ ) ) # opt. any char ])"'.,!?:; and end of line or space
-''', re.VERBOSE|re.MULTILINE)
     _link = re.compile('\[(.+?)\|(.*?)\]')
+    _url = re.compile('''
+((^|\ ) ["'([]*)           # begin of line or space and opt. any char "'([
+(\w{3,9}://[\S]+?)         # url (protocol is any alphanum 3-9 long string)
+(?=[])"'.,!?:;]* ($|\ ))   # opt. any char ])"'.,!?:; and end of line or space
+''', re.VERBOSE|re.MULTILINE)
 
     def format_url(self, text):
         return self._format_url(text)
