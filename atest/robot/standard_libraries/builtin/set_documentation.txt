@@ -1,0 +1,11 @@
+*** Settings ***
+Suite Setup       Run Tests    ${EMPTY}    standard_libraries/builtin/set_documentation.txt
+Force Tags        regression    jybot    pybot
+Resource          atest_resource.txt
+
+*** Test Cases ***
+Set test documentation
+    Check Test Doc    ${TESTNAME}     This has been set!\nTo several lines.
+
+Replace test documentation
+    Check Test Doc    ${TESTNAME}     New doc
