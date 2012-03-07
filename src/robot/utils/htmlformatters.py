@@ -36,14 +36,20 @@ class LinkFormatter(object):
 
     def _replace_url(self, format_as_image, match):
         pre = match.group(1)
-        url = match.group(3).replace('"', '&quot;')
-        template = self._get_template(format_as_image, url)
-        return pre + template % (url, url)
-
-    def _get_template(self, format_as_image, url):
+        url = match.group(3)
         if format_as_image and self._is_image(url):
-            return '<img src="%s" title="%s" class="robotdoc">'
-        return '<a href="%s">%s</a>'
+            return pre + self._get_image(url)
+        return pre + self._get_link(url)
+
+    def _get_image(self, src, title=None):
+        return '<img src="%s" title="%s" class="robotdoc">' \
+                % (self._quot(src), self._quot(title or src))
+
+    def _get_link(self, href, content=None):
+        return '<a href="%s">%s</a>' % (self._quot(href), content or href)
+
+    def _quot(self, attr):
+        return attr.replace('"', '&quot;')
 
     def format_link(self, text):
         return ''.join(formatter(token) for formatter, token in
@@ -56,10 +62,10 @@ class LinkFormatter(object):
     def _replace_link(self, match):
         link, content = [t.strip() for t in match.group()[1:-1].split('|', 1)]
         if self._is_image(content):
-            content = '<img src="%s" title="%s" class="robotdoc">' % (content, link)
+            content = self._get_image(content, link)
         elif self._is_image(link):
-            return '<img src="%s" title="%s" class="robotdoc">' % (link, content)
-        return '<a href="%s">%s</a>' % (link, content)
+            return self._get_image(link, content)
+        return self._get_link(link, content)
 
     def _is_image(self, text):
         return text.lower().endswith(self._image_exts)

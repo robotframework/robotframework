@@ -100,10 +100,16 @@ class TestUrlsToLinks(unittest.TestCase):
                                     img % (uprl, uprl))
 
     def test_link_with_chars_needed_escaping(self):
-        assert_escape('http://foo"bar',
-                      '<a href="http://foo&quot;bar">http://foo&quot;bar</a>')
-        assert_escape('ftp://<&>/',
-                      '<a href="ftp://&lt;&amp;&gt;/">ftp://&lt;&amp;&gt;/</a>')
+        for items in [
+            ('http://foo"bar',
+             '<a href="http://foo&quot;bar">http://foo"bar</a>'),
+            ('ftp://<&>/',
+             '<a href="ftp://&lt;&amp;&gt;/">ftp://&lt;&amp;&gt;/</a>'),
+            ('http://x&".png',
+            '<a href="http://x&amp;&quot;.png">http://x&amp;".png</a>',
+            '<img src="http://x&amp;&quot;.png" title="http://x&amp;&quot;.png" class="robotdoc">')
+        ]:
+            assert_escape_and_format(*items)
 
 
 class TestHtmlFormatBoldAndItalic(unittest.TestCase):
@@ -238,7 +244,7 @@ class TestHtmlFormatCustomLinks(unittest.TestCase):
 
     def test_image_with_text(self):
         assert_format('[img.png|title]', '<img src="img.png" title="title" class="robotdoc">')
-        assert_format('[img.png|]', '<img src="img.png" title="" class="robotdoc">')
+        assert_format('[img.png|]', '<img src="img.png" title="img.png" class="robotdoc">')
 
     def test_image_with_image(self):
         assert_format('[x.png|thumb.png]',
@@ -265,6 +271,10 @@ class TestHtmlFormatCustomLinks(unittest.TestCase):
     def test_multiple_links_and_urls(self):
         assert_format('[L|T]ftp://u[X|Y][http://u]',
                       '<a href="L">T</a><a href="ftp://u">ftp://u</a><a href="X">Y</a>[<a href="http://u">http://u</a>]')
+
+    def test_escaping(self):
+        assert_format('["|<&>]', '<a href="&quot;">&lt;&amp;&gt;</a>')
+        assert_format('[<".jpg|">]', '<img src="&lt;&quot;.jpg" title="&quot;&gt;" class="robotdoc">')
 
     def test_formatted_link(self):
         assert_format('*[link.html|title]*', '<b><a href="link.html">title</a></b>')
