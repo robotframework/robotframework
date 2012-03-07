@@ -1,9 +1,10 @@
 *** Settings ***
 Documentation
-...  We have _formatting_ and <escaping>.\n
-...  \n
-...  | *Name* | *URL* |\n
+...  We have _formatting_ and <escaping>.
+...
+...  | *Name* | *URL* |
 ...  | Robot  | http://robotframework.org |
+...  | Custom | [http://robotframework.org|link] |
 Metadata    Escape   this is <b>not bold</b>
 Metadata    Format   this is *bold*
 

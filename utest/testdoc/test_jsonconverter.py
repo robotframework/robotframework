@@ -196,6 +196,10 @@ We have <i>formatting</i> and &lt;escaping&gt;.
 <td>Robot</td>
 <td><a href="http://robotframework.org">http://robotframework.org</a></td>
 </tr>
+<tr>
+<td>Custom</td>
+<td><a href="http://robotframework.org">link</a></td>
+</tr>
 </table>''')
 
     def test_suite_metadata(self):
