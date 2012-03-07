@@ -226,6 +226,23 @@ class TestHtmlFormatBoldAndItalic(unittest.TestCase):
             assert_format(inp, exp)
 
 
+class TestHtmlFormatCustomLinks(unittest.TestCase):
+
+    def _test_text_with_text(self):
+        assert_format('[link.html|title]', '<a href="link.html">title</a>')
+
+    def _test_text_with_image(self):
+        assert_format('[link|img.png]',
+                      '<a href="link"><img src="img.png" title="link"></a>')
+
+    def _test_image_with_text(self):
+        assert_format('[img.png|title]', '<img src="img.png" title="title">')
+
+    def _test_image_with_image(self):
+        assert_format('[x.png|thumb.png]',
+                      '<a href="x.png"><img src="thumb.png" title="x.png"></a>')
+
+
 class TestHtmlFormatTable(unittest.TestCase):
 
     def test_one_row_table(self):
