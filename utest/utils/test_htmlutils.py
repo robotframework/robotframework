@@ -230,6 +230,7 @@ class TestHtmlFormatCustomLinks(unittest.TestCase):
 
     def test_text_with_text(self):
         assert_format('[link.html|title]', '<a href="link.html">title</a>')
+        assert_format('[link|t|i|t|l|e]', '<a href="link">t|i|t|l|e</a>')
 
     def test_text_with_image(self):
         assert_format('[link|img.png]',
@@ -249,17 +250,21 @@ class TestHtmlFormatCustomLinks(unittest.TestCase):
     def test_whitespace_is_strip(self):
         assert_format('[ link.html  | title words  ]', '<a href="link.html">title words</a>')
 
-    def test_multiple_links(self):
-        assert_format('start [link|img.png] middle [link.html|title] end',
-                'start <a href="link"><img src="img.png" title="link" class="robotdoc"></a> '
-                'middle <a href="link.html">title</a> end')
-
     def test_url_and_link(self):
         assert_format('http://url [link|title]',
                       '<a href="http://url">http://url</a> <a href="link">title</a>')
 
-    def _test_link_as_url(self):
+    def test_link_as_url(self):
         assert_format('[http://url|title]', '<a href="http://url">title</a>')
+
+    def test_multiple_links(self):
+        assert_format('start [link|img.png] middle [link.html|title] end',
+                      'start <a href="link"><img src="img.png" title="link" class="robotdoc"></a> '
+                      'middle <a href="link.html">title</a> end')
+
+    def test_multiple_links_and_urls(self):
+        assert_format('[L|T]ftp://u[X|Y][http://u]',
+                      '<a href="L">T</a><a href="ftp://u">ftp://u</a><a href="X">Y</a>[<a href="http://u">http://u</a>]')
 
     def test_formatted_link(self):
         assert_format('*[link.html|title]*', '<b><a href="link.html">title</a></b>')

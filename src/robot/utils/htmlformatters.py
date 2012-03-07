@@ -14,11 +14,12 @@
 
 import re
 from functools import partial
+from itertools import cycle
 
 
 class LinkFormatter(object):
     _image_exts = ('.jpg', '.jpeg', '.png', '.gif', '.bmp')
-    _link = re.compile('\[(.+?)\|(.*?)\]')
+    _link = re.compile('(\[.+?\|.*?\])')
     _url = re.compile('''
 ((^|\ ) ["'([]*)           # begin of line or space and opt. any char "'([
 (\w{3,9}://[\S]+?)         # url (protocol is any alphanum 3-9 long string)
@@ -26,9 +27,9 @@ class LinkFormatter(object):
 ''', re.VERBOSE|re.MULTILINE)
 
     def format_url(self, text):
-        return self._format_url(text)
+        return self._format_url(text, format_as_image=False)
 
-    def _format_url(self, text, format_as_image=False):
+    def _format_url(self, text, format_as_image=True):
         if '://' not in text:
             return text
         return self._url.sub(partial(self._replace_url, format_as_image), text)
@@ -45,14 +46,15 @@ class LinkFormatter(object):
         return '<a href="%s">%s</a>'
 
     def format_link(self, text):
-        return self._format_link(self._format_url(text, format_as_image=True))
+        return ''.join(formatter(token) for formatter, token in
+                       zip(cycle([self._format_url, self._format_link]),
+                           self._link.split(text)))
 
     def _format_link(self, text):
         return self._link.sub(self._replace_link, text)
 
     def _replace_link(self, match):
-        link = match.group(1).strip()
-        content = match.group(2).strip()
+        link, content = [t.strip() for t in match.group()[1:-1].split('|', 1)]
         if self._is_image(content):
             content = '<img src="%s" title="%s" class="robotdoc">' % (content, link)
         elif self._is_image(link):
