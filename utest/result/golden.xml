@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <robot generated="20111024 13:41:20.873" generator="Robot trunk 20111007 (Python 2.7.2 on linux2)">
 <suite id="s1" source="normal.html" name="Normal">
-<doc>Normal test cases</doc>
 <metadata>
 <item name="Something">My Value</item>
 </metadata>
@@ -40,6 +39,7 @@
 </tags>
 <status status="PASS" endtime="20111024 13:41:20.934" critical="yes" starttime="20111024 13:41:20.925"></status>
 </test>
+<doc>Normal test cases</doc>
 <status status="PASS" endtime="20111024 13:41:20.952" starttime="20111024 13:41:20.873"></status>
 </suite>
 <statistics>

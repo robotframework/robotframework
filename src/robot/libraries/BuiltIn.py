@@ -1821,7 +1821,25 @@ class _Misc:
             raise RuntimeError("'Set Test Documentation' keyword cannot be used in "
                                "suite setup or teardown")
         test.doc = doc
+        self._namespace.variables.set_test('${TEST_DOCUMENTATION}', test.doc)
         self.log('Set test documentation to:\n%s' % doc)
+
+
+    def set_suite_documentation(self, doc):
+        """Sets documentation for for the current suite.
+
+        The current documentation is available from built-in variable
+        ${SUITE DOCUMENTATION}.
+
+        New in Robot Framework 2.7.
+        """
+        if not isinstance(doc, unicode):
+            doc = utils.unic(doc)
+        suite = self._namespace.suite
+        suite.doc = doc
+        self._namespace.variables.set_suite('${SUITE_DOCUMENTATION}', suite.doc)
+        self.log('Set suite documentation to:\n%s' % doc)
+
 
     def set_tags(self, *tags):
         """Adds given `tags` for the current test or all tests in a suite.
