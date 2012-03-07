@@ -16,7 +16,6 @@
 <status status="PASS" endtime="20111024 13:41:20.888" starttime="20111024 13:41:20.886"></status>
 </kw>
 <test id="s1-s1-t1" name="First One" timeout="">
-<doc>Test case documentation</doc>
 <kw type="kw" name="BuiltIn.Log" timeout="">
 <doc>Logs the given message with the given level.</doc>
 <arguments>
@@ -39,6 +38,7 @@
 </kw>
 <status status="PASS" endtime="20111024 13:41:20.933" starttime="20111024 13:41:20.930"></status>
 </kw>
+<doc>Test case documentation</doc>
 <tags>
 <tag>t1</tag>
 </tags>
@@ -58,7 +58,6 @@
 <status status="PASS" endtime="20111024 13:41:20.888" starttime="20111024 13:41:20.886"></status>
 </kw>
 <test id="s1-s2-t1" name="First One" timeout="">
-<doc>Test case documentation</doc>
 <kw type="kw" name="BuiltIn.Log" timeout="">
 <doc>Logs the given message with the given level.</doc>
 <arguments>
@@ -81,6 +80,7 @@
 </kw>
 <status status="PASS" endtime="20111024 13:41:20.933" starttime="20111024 13:41:20.930"></status>
 </kw>
+<doc>Test case documentation</doc>
 <tags>
 <tag>t1</tag>
 </tags>
