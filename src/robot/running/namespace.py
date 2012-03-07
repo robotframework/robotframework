@@ -63,6 +63,7 @@ class Namespace:
         variables = _VariableScopes(suite, parent_vars)
         variables['${SUITE_NAME}'] = suite.longname
         variables['${SUITE_SOURCE}'] = suite.source
+        variables['${SUITE_DOCUMENTATION}'] = suite.doc
         return variables
 
     def _import_default_libraries(self):
