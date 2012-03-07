@@ -1805,6 +1805,24 @@ class _Misc:
         test.message = message
         self.log('Set test message to:\n%s' % message)
 
+    def set_test_documentation(self, doc):
+        """Sets documentation for for the current test.
+
+        The current documentation is available from built-in variable
+        ${TEST DOCUMENTATION}. This keyword can not be used in suite
+        setup or suite teardown.
+
+        New in Robot Framework 2.7.
+        """
+        if not isinstance(doc, unicode):
+            doc = utils.unic(doc)
+        test = self._namespace.test
+        if not test:
+            raise RuntimeError("'Set Test Documentation' keyword cannot be used in "
+                               "suite setup or teardown")
+        test.doc = doc
+        self.log('Set test documentation to:\n%s' % doc)
+
     def set_tags(self, *tags):
         """Adds given `tags` for the current test or all tests in a suite.
 

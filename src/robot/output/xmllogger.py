@@ -75,9 +75,9 @@ class XmlLogger(object):
     def start_test(self, test):
         self._writer.start('test', {'id': test.id, 'name': test.name,
                                     'timeout': test.timeout})
-        self._writer.element('doc', test.doc)
 
     def end_test(self, test):
+        self._writer.element('doc', test.doc)
         self._write_list('tags', 'tag', test.tags)
         self._write_status(test, test.message,
                            {'critical': 'yes' if test.critical else 'no'})

@@ -217,7 +217,7 @@ def _compile_java_classes(tmpdir, jython_jar):
                     for f in os.listdir(JAVA_SRC) if f.endswith('.java')]
     print 'Compiling %d source files' % len(source_files)
     subprocess.call(['javac', '-d', tmpdir, '-target', '1.5', '-source', '1.5',
-                     '-cp', jython_jar] + source_files)
+                     '-cp', jython_jar] + source_files, shell=os.name=='nt')
 
 def _create_tmpdir():
     tmpdir = join(ROOT_PATH, 'tmp-jar-dir')
@@ -259,7 +259,8 @@ def _create_jar_file(source, version):
     return path
 
 def _fill_jar(sourcedir, jarpath):
-    subprocess.call(['jar', 'cvfM', jarpath, '.'], cwd=sourcedir)
+    subprocess.call(['jar', 'cvfM', jarpath, '.'], cwd=sourcedir,
+                    shell=os.name=='nt')
 
 
 if __name__ == '__main__':

@@ -40,6 +40,9 @@ ${EXECDIR}
 $CURDIR
     Check Test Case  ${TESTNAME}
 
+${TEST DOCUMENTATION}
+    Check Test Case  ${TESTNAME}
+
 Built-In Variables Cannot Be Overridden In Variable Table Or From CLI
     [Documentation]  Except for number variabels
     Check Test Case  ${TESTNAME}

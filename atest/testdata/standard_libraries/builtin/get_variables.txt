@@ -47,7 +47,7 @@ Set Variable in User Keyword
 Get Length Of Variables
     ${variables}=   Get Variables
     ${var_count}  get length  ${variables}
-    Should Be Equal As Integers  ${var_count}  32
+    Should Be Equal As Integers  ${var_count}  33
 
 * Keywords *
 Set Some Variables
