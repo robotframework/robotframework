@@ -12,6 +12,7 @@ Replace test documentation
 
 Set suite documentation
     Check Test Case       ${TESTNAME}
+    Check Test Case       ${TESTNAME} 2
     Should be equal       ${SUITE.suites[0].doc}    New suite doc
 
 Set init file suite docs

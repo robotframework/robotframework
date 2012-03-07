@@ -14,3 +14,7 @@ Replace test documentation
 Set suite documentation
    Set suite documentation     New suite doc
    Should be equal        ${SUITE DOCUMENTATION}      New suite doc
+
+Set suite documentation 2
+   Should be equal        ${SUITE DOCUMENTATION}      New suite doc
+
