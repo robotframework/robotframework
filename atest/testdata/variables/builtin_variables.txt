@@ -93,6 +93,10 @@ ${EXECDIR}
     Should Not End With  ${EXECDIR}  \\
     Should Start With  \${EXECDIR}  $
 
+${TEST DOCUMENTATION}
+   [Documentation]     This documentation can be read.
+   Should be Equal     This documentation can be read.      ${TEST DOCUMENTATION}
+
 $CURDIR
     Directory Should Exist  ${CURDIR}
     Should Not End With  ${CURDIR}  /
