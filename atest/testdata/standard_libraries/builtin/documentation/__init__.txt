@@ -1,0 +1,4 @@
+*** Settings ***
+Documentation     Init file docs
+Suite setup       Set suite documentation      ${SUITE DOCUMENTATION} concatenated
+Suite teardown    Should be equal     ${SUITE DOCUMENTATION}      Init file docs concatenated
