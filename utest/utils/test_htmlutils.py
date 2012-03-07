@@ -228,19 +228,49 @@ class TestHtmlFormatBoldAndItalic(unittest.TestCase):
 
 class TestHtmlFormatCustomLinks(unittest.TestCase):
 
-    def _test_text_with_text(self):
+    def test_text_with_text(self):
         assert_format('[link.html|title]', '<a href="link.html">title</a>')
 
-    def _test_text_with_image(self):
+    def test_text_with_image(self):
         assert_format('[link|img.png]',
-                      '<a href="link"><img src="img.png" title="link"></a>')
+                      '<a href="link"><img src="img.png" title="link" class="robotdoc"></a>')
 
-    def _test_image_with_text(self):
-        assert_format('[img.png|title]', '<img src="img.png" title="title">')
+    def test_image_with_text(self):
+        assert_format('[img.png|title]', '<img src="img.png" title="title" class="robotdoc">')
+        assert_format('[img.png|]', '<img src="img.png" title="" class="robotdoc">')
 
-    def _test_image_with_image(self):
+    def test_image_with_image(self):
         assert_format('[x.png|thumb.png]',
-                      '<a href="x.png"><img src="thumb.png" title="x.png"></a>')
+                      '<a href="x.png"><img src="thumb.png" title="x.png" class="robotdoc"></a>')
+
+    def test_link_is_required(self):
+        assert_format('[|]', '[|]')
+
+    def test_whitespace_is_strip(self):
+        assert_format('[ link.html  | title words  ]', '<a href="link.html">title words</a>')
+
+    def test_multiple_links(self):
+        assert_format('start [link|img.png] middle [link.html|title] end',
+                'start <a href="link"><img src="img.png" title="link" class="robotdoc"></a> '
+                'middle <a href="link.html">title</a> end')
+
+    def test_url_and_link(self):
+        assert_format('http://url [link|title]',
+                      '<a href="http://url">http://url</a> <a href="link">title</a>')
+
+    def _test_link_as_url(self):
+        assert_format('[http://url|title]', '<a href="http://url">title</a>')
+
+    def test_formatted_link(self):
+        assert_format('*[link.html|title]*', '<b><a href="link.html">title</a></b>')
+
+    def test_link_in_table(self):
+        assert_format('| [link.html|title] |', '''\
+<table class="robotdoc">
+<tr>
+<td><a href="link.html">title</a></td>
+</tr>
+</table>''')
 
 
 class TestHtmlFormatTable(unittest.TestCase):
