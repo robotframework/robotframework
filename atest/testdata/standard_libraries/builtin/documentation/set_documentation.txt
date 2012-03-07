@@ -1,0 +1,16 @@
+*** Settings ***
+Documentation        Old suite docs
+
+*** Test Cases ***
+Set test documentation
+    Set test documentation      This has been set!\nTo several lines.
+    Should be equal      ${TEST DOCUMENTATION}       This has been set!\nTo several lines.
+
+Replace test documentation
+   [Documentation]         This will be replaced
+   Set test documentation      New doc
+   Should be equal        ${TEST DOCUMENTATION}      New doc
+
+Set suite documentation
+   Set suite documentation     New suite doc
+   Should be equal        ${SUITE DOCUMENTATION}      New suite doc

@@ -1,5 +1,5 @@
 *** Settings ***
-Suite Setup       Run Tests    ${EMPTY}    standard_libraries/builtin/set_documentation.txt
+Suite Setup       Run Tests    ${EMPTY}    standard_libraries/builtin/documentation/
 Force Tags        regression    jybot    pybot
 Resource          atest_resource.txt
 
@@ -9,3 +9,10 @@ Set test documentation
 
 Replace test documentation
     Check Test Doc    ${TESTNAME}     New doc
+
+Set suite documentation
+    Check Test Case       ${TESTNAME}
+    Should be equal       ${SUITE.suites[0].doc}    New suite doc
+
+Set init file suite docs
+    Should be equal     ${SUITE.doc}    Init file docs concatenated
