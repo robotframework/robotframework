@@ -13,6 +13,8 @@
 #  limitations under the License.
 
 import sys
+import codecs
+from contextlib import contextmanager
 
 from .encodingsniffer import get_output_encoding, get_system_encoding
 from .unic import unic
@@ -44,3 +46,12 @@ def decode_from_system(string, can_be_from_java=True):
 def encode_to_system(string, errors='replace'):
     """Encodes Unicode to system encoding (e.g. cli args and env vars)."""
     return string.encode(SYSTEM_ENCODING, errors)
+
+# workaround for Python 2.5.0 bug: http://bugs.python.org/issue1586513
+@contextmanager
+def utf8open(filename, mode='r'):
+    file = codecs.open(filename, mode=mode, encoding='utf8')
+    try:
+        yield file
+    finally:
+        file.close()

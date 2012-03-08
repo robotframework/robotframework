@@ -18,7 +18,7 @@ import robot
 from robot.conf.settings import RebotSettings
 from robot.reporting.resultwriter import Results
 from robot.reporting.jswriter import JsResultWriter
-
+from robot.utils import utf8open
 
 def run_robot(testdata, outxml):
     robot.run(testdata, log='NONE', report='NONE', output=outxml)
@@ -38,7 +38,7 @@ def create_jsdata(outxml, target):
     config = {'logURL': 'log.html',
               'reportURL': 'report.html',
               'background': {'fail': 'DeepPink'}}
-    with codecs.open(target, 'w', 'UTF-8') as output:
+    with utf8open(target, 'w') as output:
         writer = JsResultWriter(output, start_block='', end_block='')
         writer.write(result, config)
     print 'Log:    ', normpath(join(BASEDIR, '..', 'log.html'))
