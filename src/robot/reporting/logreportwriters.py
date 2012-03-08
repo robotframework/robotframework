@@ -17,6 +17,7 @@ from os.path import basename, splitext
 import codecs
 
 from robot.htmldata import HtmlFileWriter, ModelWriter, LOG, REPORT
+from robot.utils import utf8open
 
 from .jswriter import JsResultWriter, SplitLogWriter
 
@@ -59,7 +60,7 @@ class LogWriter(_LogReportWriter):
             self._write_split_log(index, keywords, strings, '%s-%d.js' % (base, index))
 
     def _write_split_log(self, index, keywords, strings, path):
-        with codecs.open(path, 'wb', encoding='UTF-8') as outfile:
+        with utf8open(path, 'wb') as outfile:
             writer = SplitLogWriter(outfile)
             writer.write(keywords, strings, index, basename(path))
 

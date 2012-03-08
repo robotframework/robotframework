@@ -1,10 +1,11 @@
 from __future__ import with_statement
 import os
-import codecs
+
+from robot.utils import utf8open
 
 
 def output_should_have_correct_line_separators(path):
-    with codecs.open(path, encoding='UTF-8') as infile:
+    with utf8open(path) as infile:
         content = infile.read()
     content = content.replace(os.linesep, '')
     incorrect = content.count('\n')

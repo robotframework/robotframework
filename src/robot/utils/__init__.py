@@ -17,7 +17,7 @@ from .application import Application
 from .compress import compress_text
 from .connectioncache import ConnectionCache
 from .encoding import (decode_output, encode_output,
-                       decode_from_system, encode_to_system)
+                       decode_from_system, encode_to_system, utf8open)
 from .error import (get_error_message, get_error_details, ErrorDetails,
                     RERAISED_EXCEPTIONS)
 from .escaping import escape, unescape

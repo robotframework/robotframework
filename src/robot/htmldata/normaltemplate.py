@@ -15,8 +15,8 @@
 from __future__ import with_statement
 import os
 from os.path import abspath, dirname, join, normpath
-import codecs
 
+from robot.utils import utf8open
 
 class HtmlTemplate(object):
     _base_dir = join(dirname(abspath(__file__)), '..', 'htmldata')
@@ -25,6 +25,6 @@ class HtmlTemplate(object):
         self._path = normpath(join(self._base_dir, filename.replace('/', os.sep)))
 
     def __iter__(self):
-        with codecs.open(self._path, encoding='UTF-8') as file:
+        with utf8open(self._path) as file:
             for line in file:
                 yield line.rstrip()

@@ -26,7 +26,7 @@ from robot.errors import DataError, Information, FrameworkError
 from robot.version import get_full_version
 
 from misc import plural_or_not
-from encoding import decode_output, decode_from_system
+from encoding import decode_output, decode_from_system, utf8open
 
 
 ESCAPES = dict(
@@ -205,7 +205,7 @@ class ArgumentParser:
 
     def _read_argfile(self, path):
         try:
-            with codecs.open(path, encoding='UTF-8') as f:
+            with utf8open(path) as f:
                 content = f.read()
         except (IOError, UnicodeError), err:
             raise DataError("Opening argument file '%s' failed: %s"
