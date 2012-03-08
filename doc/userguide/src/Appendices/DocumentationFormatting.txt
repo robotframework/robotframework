@@ -193,12 +193,50 @@ clickable links. Additionally, URLs that end with extension
 :path:`.jpg`, :path:`.jpeg`, :path:`.png`, :path:`.gif` or
 :path:`.bmp` (case-insensitive) will automatically create images. For
 example URLs like :code:`http://some.url` are turned into links, and
-:code:`http:///server/image.jpg` and :code:`file:///path/chart.png`
+:code:`http:///host/image.jpg` and :code:`file:///path/chart.png`
 into images.
 
 The automatic conversion of URLs to links is applied to all the data
 in logs and reports, but creating images is done only for test suite,
-test case and keyword documentation.
+test case and keyword documentation, and for test suite metadata.
+
+Custom links and images
+~~~~~~~~~~~~~~~~~~~~~~~
+
+Starting from Robot Framework 2.7, it is also possible to create custom links
+and embed images using special syntax :code:`[link|content]`. This creates
+a link or image depending are :code:`link` and :code:`content` images.
+They are considered images if they have the same image extensions that are
+special with URLs_. The surrounding square brackets and the pipe character
+between the parts are mandatory in all cases.
+
+Link with text content
+''''''''''''''''''''''
+
+If neither :code:`link` nor :code:`content` is image, the end result is
+a normal link where :code:`link` is the link target and :code:`content`
+the visible text::
+
+    [file.html|this file] -> <a href="file.html">this file</a>
+    [http://host|that host] -> <a href="http://host">that host</a>
+
+Link with image content
+'''''''''''''''''''''''
+
+If :code:`content` is an image, you get a link where the link content is an
+image. Link target is created by :code:`link` and it can be either text or image::
+
+    [robot.html|robot.png] -> <a href="robot.html"><img src="robot.png"></a>
+    [image.jpg|thumb.jpg] -> <a href="image.jpg"><img src="thumb.jpg"></a>
+
+Image with title text
+'''''''''''''''''''''
+
+If :code:`link` is an image but :code:`content` is not, the syntax creates an
+image where the :code:`content` is the title text shown when mouse is over
+the image::
+
+    [robot.jpeg|Robot rocks!] -> <img src="robot.jpeg" title="Robot rocks!">
 
 Tables
 ~~~~~~
