@@ -28,12 +28,17 @@ class _LogReportWriter(object):
         self._js_model = js_model
 
     def _write_file(self, path, config, template):
-        outfile = codecs.open(path, 'wb', encoding='UTF-8') \
-            if isinstance(path, basestring) else path  # unit test hook
-        with outfile:
-            model_writer = RobotModelWriter(outfile, self._js_model, config)
-            writer = HtmlFileWriter(outfile, model_writer)
-            writer.write(template)
+        if isinstance(path, basestring):
+            with utf8open(path, 'wb') as outfile:
+                self._write_to_outfile(outfile, config, template)
+        else: # unit test hook
+            with path as outfile:
+                self._write_to_outfile(outfile, config, template)
+
+    def _write_to_outfile(self, outfile, config, template):
+        model_writer = RobotModelWriter(outfile, self._js_model, config)
+        writer = HtmlFileWriter(outfile, model_writer)
+        writer.write(template)
 
 
 class RobotModelWriter(ModelWriter):
