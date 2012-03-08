@@ -24,6 +24,7 @@ LEVELS = {'TRACE': logging.NOTSET,
 
 
 def initialize(level):
+    logging.raiseExceptions = False
     logging.getLogger().addHandler(RobotHandler())
     set_level(level)
 

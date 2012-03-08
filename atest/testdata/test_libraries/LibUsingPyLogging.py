@@ -2,6 +2,8 @@ import logging
 import time
 import sys
 
+logging.getLogger().addHandler(logging.StreamHandler())
+
 
 class CustomHandler(logging.Handler):
 
