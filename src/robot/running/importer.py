@@ -29,7 +29,10 @@ class Importer(object):
         self._library_cache = ImportCache()
         self._resource_cache = ImportCache()
 
-    def import_library(self, name, args, alias, variables):
+    def reset(self):
+        self.__init__()
+
+    def import_library(self, name, args=None, alias=None, variables=None):
         lib = TestLibrary(name, args, variables, create_handlers=False)
         positional, named = lib.positional_args, lib.named_args
         lib = self._import_library(name, positional, named, lib)

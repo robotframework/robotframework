@@ -5,13 +5,29 @@ from os.path import abspath, dirname, join, exists
 from os import remove
 from StringIO import StringIO
 
-from robot.utils.asserts import assert_equals
+from robot.utils.asserts import assert_equals, assert_true
+from robot.running import namespace
 from robot import run, rebot
 
 ROOT = dirname(dirname(dirname(abspath(__file__))))
 TEMP = tempfile.gettempdir()
 LOG_PATH = join(TEMP, 'log.html')
 LOG = 'Log:     %s' % LOG_PATH
+
+
+class StreamWithOnlyWriteAndFlush(object):
+
+    def __init__(self):
+        self._buffer = []
+
+    def write(self, msg):
+        self._buffer.append(msg)
+
+    def flush(self):
+        pass
+
+    def getvalue(self):
+        return ''.join(self._buffer)
 
 
 class Base(unittest.TestCase):
@@ -140,19 +156,24 @@ class TestRebot(Base):
         self._assert_outputs()
 
 
-class StreamWithOnlyWriteAndFlush(object):
+class TestStateBetweenTestRuns(unittest.TestCase):
 
-    def __init__(self):
-        self._buffer = []
 
-    def write(self, msg):
-        self._buffer.append(msg)
+    def test_importer_caches_are_cleared_between_runs(self):
+        data = join(ROOT, 'atest', 'testdata', 'core', 'import_settings.txt')
+        run(data, stdout=StringIO(), stderr=StringIO())
+        lib = self._import_library()
+        res = self._import_resource()
+        run(data, stdout=StringIO(), stderr=StringIO())
+        assert_true(lib is not self._import_library())
+        assert_true(res is not self._import_resource())
 
-    def flush(self):
-        pass
+    def _import_library(self):
+        return namespace.IMPORTER.import_library('OperatingSystem')
 
-    def getvalue(self):
-        return ''.join(self._buffer)
+    def _import_resource(self):
+        resource = join(ROOT, 'atest', 'testdata', 'core', 'resources.html')
+        return namespace.IMPORTER.import_resource(resource)
 
 
 if __name__ == '__main__':

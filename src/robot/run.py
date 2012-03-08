@@ -323,7 +323,7 @@ if 'robot' not in sys.modules:
 from robot.conf import RobotSettings
 from robot.output import LOGGER, Output, pyloggingconf
 from robot.reporting import ResultWriter
-from robot.running import TestSuite, STOP_SIGNAL_MONITOR
+from robot.running import TestSuite, STOP_SIGNAL_MONITOR, namespace
 from robot.utils import Application
 from robot.variables import init_global_variables
 
@@ -335,6 +335,7 @@ class RobotFramework(Application):
 
     def main(self, datasources, **options):
         STOP_SIGNAL_MONITOR.start()
+        namespace.IMPORTER.reset()
         settings = RobotSettings(options)
         pyloggingconf.initialize(settings['LogLevel'])
         LOGGER.register_console_logger(width=settings['MonitorWidth'],
