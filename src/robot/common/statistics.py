@@ -196,10 +196,8 @@ class TagStatistics:
     def __init__(self, include=None, exclude=None, combine=None, docs=None,
                  links=None):
         self.stats = NormalizedDict(ignore=['_'])
-        self._include = MultiMatcher(include, ignore=['_'],
-                                     match_if_no_patterns=False)
-        self._exclude = MultiMatcher(exclude, ignore=['_'],
-                                     match_if_no_patterns=False)
+        self._include = MultiMatcher(include, ignore=['_'])
+        self._exclude = MultiMatcher(exclude, ignore=['_'])
         self._combine = combine or []
         info = TagStatInfo(docs or [], links or [])
         self._get_doc = info.get_doc

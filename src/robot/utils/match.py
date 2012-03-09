@@ -34,8 +34,7 @@ def matches(string, pattern, ignore=(), caseless=True, spaceless=True):
 
 def matches_any(string, patterns, ignore=(), caseless=True, spaceless=True):
     """Deprecated!! Use MultiMatcher instead."""
-    matcher = MultiMatcher(patterns, ignore, caseless, spaceless,
-                           match_if_no_patterns=False)
+    matcher = MultiMatcher(patterns, ignore, caseless, spaceless)
     return matcher.match(string)
 
 
@@ -67,7 +66,7 @@ class Matcher(object):
 class MultiMatcher(object):
 
     def __init__(self, patterns=None, ignore=(), caseless=True, spaceless=True,
-                 match_if_no_patterns=True):
+                 match_if_no_patterns=False):
         self._matchers = [Matcher(p, ignore, caseless, spaceless)
                           for p in self._ensure_list(patterns)]
         self._match_if_no_patterns = match_if_no_patterns

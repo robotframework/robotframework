@@ -44,7 +44,7 @@ class ConsoleViewer(object):
             self._console(kw.name)
 
     def show(self, *names):
-        if MultiMatcher(names).match('intro'):
+        if MultiMatcher(names, match_if_no_patterns=True).match('intro'):
             self._show_intro(self._libdoc)
             if self._libdoc.inits:
                 self._show_inits(self._libdoc)
@@ -102,7 +102,7 @@ class KeywordMatcher(object):
         self._keywords = libdoc.keywords
 
     def search(self, patterns):
-        matcher = MultiMatcher(patterns)
+        matcher = MultiMatcher(patterns, match_if_no_patterns=True)
         for kw in self._keywords:
             if matcher.match(kw.name):
                 yield kw

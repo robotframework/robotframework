@@ -202,7 +202,7 @@ class BaseTestSuite(_TestAndSuiteHelper):
 
     def filter_by_names(self, suites=None, tests=None, zero_tests_ok=False):
         suites = [([], name.split('.')) for name in suites or []]
-        tests = utils.MultiMatcher(tests, ignore=['_'])
+        tests = utils.MultiMatcher(tests, ignore=['_'], match_if_no_patterns=True)
         if not self._filter_by_names(suites, tests) and not zero_tests_ok:
             self._raise_no_tests_filtered_by_names(suites, tests)
 
@@ -413,8 +413,7 @@ class _Critical:
     def _get_tags(self, tags):
         if isinstance(tags, utils.MultiMatcher):
             return tags
-        return utils.MultiMatcher(utils.normalize_tags(tags or []),
-                                  ignore=['_'], match_if_no_patterns=False)
+        return utils.MultiMatcher(utils.normalize_tags(tags or []), ignore=['_'])
 
     def is_critical(self, tag):
         return self.tags.match(tag)

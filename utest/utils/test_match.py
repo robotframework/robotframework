@@ -57,13 +57,13 @@ class TestMultiMatcher(unittest.TestCase):
         assert matcher.match('..::FOO::..')
         assert not matcher.match('bar')
 
-    def test_match_when_no_patterns_by_default(self):
+    def test_do_not_match_when_no_patterns_by_default(self):
         matcher = MultiMatcher([])
-        assert matcher.match('xxx')
-
-    def test_configure_no_match_when_no_patterns(self):
-        matcher = MultiMatcher(match_if_no_patterns=False)
         assert not matcher.match('xxx')
+
+    def test_configure_to_match_when_no_patterns(self):
+        matcher = MultiMatcher(match_if_no_patterns=True)
+        assert matcher.match('xxx')
 
     def test_len(self):
         assert_equals(len(MultiMatcher()), 0)
