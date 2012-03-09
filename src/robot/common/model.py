@@ -210,12 +210,18 @@ class BaseTestSuite(_TestAndSuiteHelper):
         self.suites = [suite for suite in self.suites
                        if suite._filter_by_names(suites, tests)]
         if not suites:
-            self.tests = [test for test in self.tests if tests == [] or
-                          any(utils.matches_any(name, tests, ignore=['_'])
-                              for name in [test.name, test.longname])]
+            self.tests = self._filter_tests_by_names(tests)
         else:
             self.tests = []
         return bool(self.suites or self.tests)
+
+    def _filter_tests_by_names(self, tests):
+        if not tests:
+            return list(self.tests)
+        matcher = utils.MultiMatcher(tests, ignore=['_'], match_if_no_patterns=False)
+        return [test for test in self.tests if
+                any(matcher.match(name)
+                for name in [test.name, test.longname])]
 
     def _filter_suite_names(self, suites):
         try:
