@@ -68,8 +68,15 @@ class MultiMatcher(object):
     def __init__(self, patterns=None, ignore=(), caseless=True, spaceless=True,
                  match_if_no_patterns=True):
         self._matchers = [Matcher(p, ignore, caseless, spaceless)
-                          for p in patterns or []]
+                          for p in self._ensure_list(patterns)]
         self._match_if_no_patterns = match_if_no_patterns
+
+    def _ensure_list(self, patterns):
+        if patterns is None:
+            return []
+        if isinstance(patterns, basestring):
+            return  [patterns]
+        return patterns
 
     def match(self, string):
         if not self._matchers and self._match_if_no_patterns:

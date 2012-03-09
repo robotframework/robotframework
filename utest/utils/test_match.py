@@ -74,6 +74,12 @@ class TestMultiMatcher(unittest.TestCase):
         assert_equals([m.pattern for m in MultiMatcher(['1', 'xxx', '3'])],
                       ['1', 'xxx', '3'])
 
+    def test_single_string_is_converted_to_list(self):
+        matcher = MultiMatcher('one string')
+        assert matcher.match('one string')
+        assert not matcher.match('o')
+        assert_equals(len(matcher), 1)
+
 
 if __name__ == "__main__":
     unittest.main()
