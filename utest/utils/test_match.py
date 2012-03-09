@@ -1,6 +1,7 @@
 import unittest
 
 from robot.utils.match import *
+from robot.utils.asserts import assert_equals
 
 
 class TestMatch(unittest.TestCase):
@@ -61,8 +62,17 @@ class TestMultiMatcher(unittest.TestCase):
         assert matcher.match('xxx')
 
     def test_configure_no_match_when_no_patterns(self):
-        matcher = MultiMatcher(None, match_if_no_patterns=False)
+        matcher = MultiMatcher(match_if_no_patterns=False)
         assert not matcher.match('xxx')
+
+    def test_len(self):
+        assert_equals(len(MultiMatcher()), 0)
+        assert_equals(len(MultiMatcher(['one', 'two'])), 2)
+
+    def test_iter(self):
+        assert_equals(list(MultiMatcher()), [])
+        assert_equals([matcher.pattern for matcher in MultiMatcher('123')],
+                      ['1', '2', '3'])
 
 
 if __name__ == "__main__":

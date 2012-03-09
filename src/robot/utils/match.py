@@ -75,3 +75,9 @@ class MultiMatcher(object):
         if not self._matchers and self._match_if_no_patterns:
             return True
         return any(m.match(string) for m in self._matchers)
+
+    def __len__(self):
+        return len(self._matchers)
+
+    def __iter__(self):
+        return iter(self._matchers)
