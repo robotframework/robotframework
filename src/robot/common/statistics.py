@@ -14,8 +14,8 @@
 
 import re
 
-from robot import utils
 from robot.model.tags import TagPatterns
+from robot.utils import Matcher, MultiMatcher, NormalizedDict
 
 
 class Statistics:
@@ -195,9 +195,11 @@ class TagStatistics:
 
     def __init__(self, include=None, exclude=None, combine=None, docs=None,
                  links=None):
-        self.stats = utils.NormalizedDict(ignore=['_'])
-        self._include = include or []
-        self._exclude = exclude or []
+        self.stats = NormalizedDict(ignore=['_'])
+        self._include = MultiMatcher(include, ignore=['_'],
+                                     match_if_no_patterns=False)
+        self._exclude = MultiMatcher(exclude, ignore=['_'],
+                                     match_if_no_patterns=False)
         self._combine = combine or []
         info = TagStatInfo(docs or [], links or [])
         self._get_doc = info.get_doc
@@ -219,9 +221,9 @@ class TagStatistics:
             self.stats[tag].add_test(test)
 
     def _is_included(self, tag):
-        if self._include and not utils.matches_any(tag, self._include, ignore=['_']):
+        if self._include and not self._include.match(tag):
             return False
-        return not utils.matches_any(tag, self._exclude, ignore=['_'])
+        return not self._exclude.match(tag)
 
     def _add_combined_statistics(self, test):
         for pattern, name in self._combine:
@@ -274,10 +276,10 @@ class TagStatDoc:
 
     def __init__(self, pattern, doc):
         self.text = doc
-        self._pattern = pattern
+        self._matcher = Matcher(pattern, ignore=['_'])
 
     def matches(self, tag):
-        return utils.matches(tag, self._pattern, ignore=['_'])
+        return self._matcher.match(tag)
 
 
 class TagStatLink:

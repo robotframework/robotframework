@@ -3,6 +3,7 @@ import unittest
 from robot.utils.asserts import *
 from robot.common.statistics import *
 from robot.common.model import _Critical, BaseTestCase
+from robot import utils
 
 
 class SuiteMock:
