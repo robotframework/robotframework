@@ -24,18 +24,19 @@ def eq(str1, str2, ignore=(), caseless=True, spaceless=True):
     return str1 == str2
 
 
+# TODO: Remove matches and matches_any in 2.8.
+# They aren't used much in 2.7 anymore but don't want to remove them after RC.
+
 def matches(string, pattern, ignore=(), caseless=True, spaceless=True):
+    """Deprecated!! Use Matcher instead."""
     return Matcher(pattern, ignore, caseless, spaceless).match(string)
 
 
-# TODO: matches_any should be removed and any(utils.match(...) for p in patterns)
-# used instead. Currently mainly used in robot.common.model and can be removed
-# after that module is nuked.
 def matches_any(string, patterns, ignore=(), caseless=True, spaceless=True):
-    for pattern in patterns:
-        if matches(string, pattern, ignore, caseless, spaceless):
-            return True
-    return False
+    """Deprecated!! Use MultiMatcher instead."""
+    matcher = MultiMatcher(patterns, ignore, caseless, spaceless,
+                           match_if_no_patterns=False)
+    return matcher.match(string)
 
 
 class Matcher(object):
