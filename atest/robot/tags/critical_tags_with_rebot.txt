@@ -13,7 +13,7 @@ Neither Critical Nor Non-Critical
     ${EMPTY}                                          yes    yes
 
 Critical
-    --critical pass                                   yes    no
+    --critical pa__ss                                 yes    no
 
 Critical Not Matching
     -c nomatch                                        no     no
@@ -28,7 +28,7 @@ Non-Critical Not Matching
     -n these -n dont -n match                         yes    yes
 
 Non-Critical With Pattern
-    --NonCritiCal fSTAR -n QUESTass                   no     no
+    --NonCritiCal f__STAR -n QUEST__ass               no     no
 
 Critical And Non-Critical Matching Different Test
     -c paSTARss -n faiQUEST -c nomatch                yes    no

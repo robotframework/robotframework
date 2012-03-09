@@ -15,7 +15,7 @@ Neither Critical Nor Non-Critical
     ${EMPTY}  FAIL  ${MSG 211 211}
 
 Critical
-    --critical pass  PASS  ${MSG 110 211}
+    --critical p_a_s_s  PASS  ${MSG 110 211}
 
 Critical Not Matching
     -c nomatch  PASS  ${MSG 000 211}
@@ -30,7 +30,7 @@ Non-Critical Not Matching
     -n these -n dont -n match  FAIL  ${MSG 211 211}
 
 Non-Critical With Pattern
-    --NonCritical fSTAR -n QUESTass  PASS  ${MSG 000 211}
+    --NonCritical f__STAR -n QUESTass  PASS  ${MSG 000 211}
 
 Critical And Non-Critical Matching Different Test
     --critical paSTARss --noncritical faiQUEST -c nomatch  PASS  ${MSG 110 211}

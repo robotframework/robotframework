@@ -1,11 +1,8 @@
 import unittest
-import sys
 
-from robot import utils
 from robot.utils.asserts import *
 from robot.common.statistics import *
 from robot.common.model import _Critical, BaseTestCase
-from robot.errors import DataError
 
 
 class SuiteMock:
