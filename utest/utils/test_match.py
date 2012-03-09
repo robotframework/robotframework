@@ -71,8 +71,8 @@ class TestMultiMatcher(unittest.TestCase):
 
     def test_iter(self):
         assert_equals(list(MultiMatcher()), [])
-        assert_equals([matcher.pattern for matcher in MultiMatcher('123')],
-                      ['1', '2', '3'])
+        assert_equals([m.pattern for m in MultiMatcher(['1', 'xxx', '3'])],
+                      ['1', 'xxx', '3'])
 
 
 if __name__ == "__main__":

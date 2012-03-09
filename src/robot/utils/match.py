@@ -47,7 +47,6 @@ class Matcher(object):
         self._normalize = partial(normalize, ignore=ignore, caseless=caseless,
                                   spaceless=spaceless)
         self._regexp = self._get_and_compile_regexp(self._normalize(pattern))
-        self.min_length = len(self.pattern.replace('*',''))
 
     def _get_and_compile_regexp(self, pattern):
         pattern = '^%s$' % ''.join(self._get_regexp(pattern))
@@ -68,9 +67,8 @@ class MultiMatcher(object):
 
     def __init__(self, patterns=None, ignore=(), caseless=True, spaceless=True,
                  match_if_no_patterns=True):
-        self._matchers = sorted([Matcher(p, ignore, caseless, spaceless)
-                                 for p in patterns or []],
-                                lambda x,y: x.min_length - y.min_length)
+        self._matchers = [Matcher(p, ignore, caseless, spaceless)
+                          for p in patterns or []]
         self._match_if_no_patterns = match_if_no_patterns
 
     def match(self, string):
