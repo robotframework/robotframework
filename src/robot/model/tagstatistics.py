@@ -14,17 +14,17 @@
 
 import re
 
-from robot import utils
+from robot.utils import NormalizedDict
 
-from .tags import TagPatterns
-from .stats import TagStat, CombinedTagStat
 from .criticality import Criticality
+from .stats import TagStat, CombinedTagStat
+from .tags import TagPatterns
 
 
 class TagStatistics(object):
 
     def __init__(self, combined_stats):
-        self.tags = utils.NormalizedDict(ignore=['_'])
+        self.tags = NormalizedDict(ignore=['_'])
         self.combined = combined_stats
 
     def visit(self, visitor):
