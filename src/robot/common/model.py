@@ -202,25 +202,23 @@ class BaseTestSuite(_TestAndSuiteHelper):
     def filter_by_names(self, suites=None, tests=None, zero_tests_ok=False):
         suites = [([], name.split('.')) for name in suites or []]
         tests = tests or []
-        if not self._filter_by_names(suites, tests) and not zero_tests_ok:
+        test_matcher = utils.MultiMatcher(tests, ignore=['_'])
+        if not self._filter_by_names(suites, test_matcher) and not zero_tests_ok:
             self._raise_no_tests_filtered_by_names(suites, tests)
 
-    def _filter_by_names(self, suites, tests):
+    def _filter_by_names(self, suites, test_matcher):
         suites = self._filter_suite_names(suites)
         self.suites = [suite for suite in self.suites
-                       if suite._filter_by_names(suites, tests)]
+                       if suite._filter_by_names(suites, test_matcher)]
         if not suites:
-            self.tests = self._filter_tests_by_names(tests)
+            self.tests = self._filter_tests_by_names(test_matcher)
         else:
             self.tests = []
         return bool(self.suites or self.tests)
 
-    def _filter_tests_by_names(self, tests):
-        if not tests:
-            return list(self.tests)
-        matcher = utils.MultiMatcher(tests, ignore=['_'], match_if_no_patterns=False)
+    def _filter_tests_by_names(self, test_matcher):
         return [test for test in self.tests if
-                any(matcher.match(name)
+                any(test_matcher.match(name)
                 for name in [test.name, test.longname])]
 
     def _filter_suite_names(self, suites):
