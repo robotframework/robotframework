@@ -12,30 +12,26 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from robot import utils
+from robot.utils import MultiMatcher
 
 
 class _NamePatterns(object):
 
     def __init__(self, patterns=None):
-        self._matchers = [utils.Matcher(p, ignore=['_'])
-                          for p in self._ensure_list(patterns)]
-
-    def _ensure_list(self, patterns):
-        if patterns is None:
-            return []
-        if isinstance(patterns, basestring):
-            return  [patterns]
-        return patterns
+        self._matcher = MultiMatcher(patterns, ignore=['_'],
+                                     match_if_no_patterns=False)
 
     def match(self, name, longname=None):
         return self._match(name) or longname and self._match_longname(longname)
 
     def _match(self, name):
-        return any(matcher.match(name) for matcher in self._matchers)
+        return self._matcher.match(name)
+
+    def _match_longname(self, name):
+        raise NotImplementedError
 
     def __nonzero__(self):
-        return bool(self._matchers)
+        return bool(self._matcher)
 
 
 class SuiteNamePatterns(_NamePatterns):
