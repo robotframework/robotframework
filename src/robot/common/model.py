@@ -14,9 +14,10 @@
 
 import random
 
-from statistics import Stat
 from robot import utils
 from robot.errors import DataError
+
+from .statistics import Stat
 
 
 class _TestAndSuiteHelper:
@@ -201,25 +202,20 @@ class BaseTestSuite(_TestAndSuiteHelper):
 
     def filter_by_names(self, suites=None, tests=None, zero_tests_ok=False):
         suites = [([], name.split('.')) for name in suites or []]
-        tests = tests or []
-        test_matcher = utils.MultiMatcher(tests, ignore=['_'])
-        if not self._filter_by_names(suites, test_matcher) and not zero_tests_ok:
+        tests = utils.MultiMatcher(tests, ignore=['_'])
+        if not self._filter_by_names(suites, tests) and not zero_tests_ok:
             self._raise_no_tests_filtered_by_names(suites, tests)
 
-    def _filter_by_names(self, suites, test_matcher):
+    def _filter_by_names(self, suites, tests):
         suites = self._filter_suite_names(suites)
         self.suites = [suite for suite in self.suites
-                       if suite._filter_by_names(suites, test_matcher)]
+                       if suite._filter_by_names(suites, tests)]
         if not suites:
-            self.tests = self._filter_tests_by_names(test_matcher)
+            self.tests = [test for test in self.tests
+                          if tests.match(test.name) or tests.match(test.longname)]
         else:
             self.tests = []
         return bool(self.suites or self.tests)
-
-    def _filter_tests_by_names(self, test_matcher):
-        return [test for test in self.tests if
-                any(test_matcher.match(name)
-                for name in [test.name, test.longname])]
 
     def _filter_suite_names(self, suites):
         try:
@@ -235,7 +231,7 @@ class BaseTestSuite(_TestAndSuiteHelper):
         return ([], parent + suite)
 
     def _raise_no_tests_filtered_by_names(self, suites, tests):
-        tests = utils.seq2str(tests, lastsep=' or ')
+        tests = utils.seq2str([matcher.pattern for matcher in tests], lastsep=' or ')
         suites = utils.seq2str(['.'.join(p + s) for p, s in suites],
                                lastsep=' or ')
         if not suites:
