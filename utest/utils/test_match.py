@@ -70,9 +70,8 @@ class TestMultiMatcher(unittest.TestCase):
         assert_equals(len(MultiMatcher(['one', 'two'])), 2)
 
     def test_iter(self):
-        assert_equals(list(MultiMatcher()), [])
-        assert_equals([m.pattern for m in MultiMatcher(['1', 'xxx', '3'])],
-                      ['1', 'xxx', '3'])
+        assert_equals(tuple(MultiMatcher()), ())
+        assert_equals(list(MultiMatcher(['1', 'xxx', '3'])), ['1', 'xxx', '3'])
 
     def test_single_string_is_converted_to_list(self):
         matcher = MultiMatcher('one string')

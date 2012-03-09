@@ -231,7 +231,7 @@ class BaseTestSuite(_TestAndSuiteHelper):
         return ([], parent + suite)
 
     def _raise_no_tests_filtered_by_names(self, suites, tests):
-        tests = utils.seq2str([matcher.pattern for matcher in tests], lastsep=' or ')
+        tests = utils.seq2str(list(tests), lastsep=' or ')
         suites = utils.seq2str(['.'.join(p + s) for p, s in suites],
                                lastsep=' or ')
         if not suites:

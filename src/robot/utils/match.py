@@ -39,7 +39,7 @@ def matches_any(string, patterns, ignore=(), caseless=True, spaceless=True):
 
 
 class Matcher(object):
-    _match_pattern_tokenizer = re.compile('(\*|\?)')
+    _pattern_tokenizer = re.compile('(\*|\?)')
     _wildcards = {'*': '.*', '?': '.'}
 
     def __init__(self, pattern, ignore=(), caseless=True, spaceless=True):
@@ -49,11 +49,11 @@ class Matcher(object):
         self._regexp = self._get_and_compile_regexp(self._normalize(pattern))
 
     def _get_and_compile_regexp(self, pattern):
-        pattern = '^%s$' % ''.join(self._get_regexp(pattern))
+        pattern = '^%s$' % ''.join(self._yield_regexp(pattern))
         return re.compile(pattern, re.DOTALL)
 
-    def _get_regexp(self, pattern):
-        for token in self._match_pattern_tokenizer.split(pattern):
+    def _yield_regexp(self, pattern):
+        for token in self._pattern_tokenizer.split(pattern):
             if token in self._wildcards:
                 yield self._wildcards[token]
             else:
@@ -67,8 +67,8 @@ class MultiMatcher(object):
 
     def __init__(self, patterns=None, ignore=(), caseless=True, spaceless=True,
                  match_if_no_patterns=False):
-        self._matchers = [Matcher(p, ignore, caseless, spaceless)
-                          for p in self._ensure_list(patterns)]
+        self._matchers = [Matcher(pattern, ignore, caseless, spaceless)
+                          for pattern in self._ensure_list(patterns)]
         self._match_if_no_patterns = match_if_no_patterns
 
     def _ensure_list(self, patterns):
@@ -79,12 +79,13 @@ class MultiMatcher(object):
         return patterns
 
     def match(self, string):
-        if not self._matchers and self._match_if_no_patterns:
-            return True
-        return any(m.match(string) for m in self._matchers)
+        if self._matchers:
+            return any(m.match(string) for m in self._matchers)
+        return self._match_if_no_patterns
 
     def __len__(self):
         return len(self._matchers)
 
     def __iter__(self):
-        return iter(self._matchers)
+        for matcher in self._matchers:
+            yield matcher.pattern
