@@ -411,14 +411,20 @@ class _Critical:
         self.set(tags, nons)
 
     def set(self, tags, nons):
-        self.tags = utils.normalize_tags(tags or [])
-        self.nons = utils.normalize_tags(nons or [])
+        self.tags = self._get_tags(tags)
+        self.nons = self._get_tags(nons)
+
+    def _get_tags(self, tags):
+        if isinstance(tags, utils.MultiMatcher):
+            return tags
+        return utils.MultiMatcher(utils.normalize_tags(tags or []),
+                                  ignore=['_'], match_if_no_patterns=False)
 
     def is_critical(self, tag):
-        return utils.matches_any(tag, self.tags)
+        return self.tags.match(tag)
 
     def is_non_critical(self, tag):
-        return utils.matches_any(tag, self.nons)
+        return self.nons.match(tag)
 
     def are_critical(self, tags):
         for tag in tags:
