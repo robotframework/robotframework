@@ -35,8 +35,13 @@ def normalize(string, ignore=(), caseless=True, spaceless=True):
     return string
 
 
+# TODO: Move normalizing tags to robot.model.Tags in 2.8.
+# Move can be done after all tag related code uses Tags.
+
 def normalize_tags(tags):
-    """Returns tags sorted and duplicates, empty, and NONE removed.
+    """DEPRECATED!! Use robot.model.Tags instead.
+
+    Returns tags sorted and duplicates, empty, and NONE removed.
 
     If duplicate tags have different case/space, the one used first wins.
     """
