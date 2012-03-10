@@ -27,7 +27,7 @@ Introduction
 
 * The main study material for this training is the excellent *Dive Into
   Python* book which is freely available for on-line reading,
-  downloading or printing from http://diveintopython.org.  It is
+  downloading or printing from http://diveintopython.net.  It is
   targeted for people who already know how to program but do not know
   Python before.
 
@@ -109,7 +109,7 @@ Interactive interpreter
     command :code:`exit()`.
 
 * Dive Into Python has some more examples:
-  http://diveintopython.org/installing_python/shell.html
+  http://diveintopython.net/installing_python/shell.html
 
 
 Python editors
@@ -221,7 +221,7 @@ First program
   into the log file.
 
 * For more interesting examples see Dive Into Python:
-  http://diveintopython.org/getting_to_know_python/index.html
+  http://diveintopython.net/getting_to_know_python/index.html
 
 
 Functions
@@ -265,7 +265,7 @@ Creating functions
 * The hard part in this example is string formatting (i.e. :code:`"Hello,
   %s!" % name`) which uses similar syntax as for example C language.
   More information about it can be found e.g. from Dive Into Python:
-  http://diveintopython.org/native_data_types/formatting_strings.html
+  http://diveintopython.net/native_data_types/formatting_strings.html
 
 
 Optional and named arguments
@@ -312,7 +312,7 @@ Optional and named arguments
   argument, and :code:`test` could be used with one to four arguments.
 
 * Dive Into Python explains both optional and named arguments very well:
-  http://diveintopython.org/power_of_introspection/optional_arguments.html
+  http://diveintopython.net/power_of_introspection/optional_arguments.html
 
 
 Variable number of arguments
@@ -388,7 +388,7 @@ Documenting functions
      Prints 'Hello, world!' to the standard output.
 
 * Doc strings are covered pretty well in Dive Into Python:
-  http://diveintopython.org/getting_to_know_python/documenting_functions.html
+  http://diveintopython.net/getting_to_know_python/documenting_functions.html
 
 * Robot Framework has `libdoc.py`_ tool that can generate test library
   documentation based on these doc strings. Documenting functions that
@@ -403,7 +403,7 @@ Container data types
   Ruby. You are going to use them a lot!
 
 * See Dive Into Python for more information and examples than shown
-  below: http://diveintopython.org/native_data_types
+  below: http://diveintopython.net/native_data_types
 
 
 Lists
@@ -547,7 +547,7 @@ Looping
 * For more examples and information see:
 
   - Python Tutorial: http://docs.python.org/tutorial/controlflow.html
-  - Dive Into Python: http://diveintopython.org/file_handling/for_loops.html
+  - Dive Into Python: http://diveintopython.net/file_handling/for_loops.html
 
 
 List comprehensions
@@ -567,7 +567,7 @@ List comprehensions
 
 * This syntax might look a bit strange at first but you will love it
   very soon. To learn more see, for example, Dive Into Python:
-  http://diveintopython.org/native_data_types/mapping_lists.html
+  http://diveintopython.net/native_data_types/mapping_lists.html
 
 
 Modules
@@ -687,7 +687,7 @@ Classes and instances
   from Dive Into Python and/or study detailed information from Python
   Tutorial:
 
-  - http://diveintopython.org/object_oriented_framework
+  - http://diveintopython.net/object_oriented_framework
   - http://docs.python.org/tutorial/classes.html
 
 Exceptions
@@ -718,7 +718,7 @@ Exceptions
   :code:`throws SomeException` to methods that may raise an exception.
 
 * More information can be found, for example, from Dive Into Python:
-  http://diveintopython.org/file_handling/index.html
+  http://diveintopython.net/file_handling/index.html
 
 * Exceptions are an important part of the Robot Framework Library API
   because keywords use them to communicate failures to the framework.
@@ -735,7 +735,7 @@ Regular expressions
   other languages.
 
 * Dive Into Python contains a good introduction again:
-  http://diveintopython.org/regular_expressions/index.html
+  http://diveintopython.net/regular_expressions/index.html
 
 * Notice that Python strings also have many useful methods
   (e.g. :code:`startswith`, :code:`find`, :code:`isdigit`) so regexps
@@ -758,9 +758,9 @@ Unit testing
 * Dive Into Python has really good chapters about `unit testing`__,
   `test-driven development`__ (TDD), and refactoring__.
 
-__ http://diveintopython.org/unit_testing/index.html
-__ http://diveintopython.org/unit_testing/stage_1.html
-__ http://diveintopython.org/refactoring/index.html
+__ http://diveintopython.net/unit_testing/index.html
+__ http://diveintopython.net/unit_testing/stage_1.html
+__ http://diveintopython.net/refactoring/index.html
 
 
 Writing test libraries
