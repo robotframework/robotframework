@@ -1,14 +1,18 @@
 #!/usr/bin/env python
 
-"""Install script for Robot Framework source distributions.
+"""Custom Robot Framework installation script.
 
 Usage:  python install.py [ in(stall) | un(install) | re(install) ]
 
-Using 'python install.py install' simply runs 'python setup.py install'
-internally. You need to use 'setup.py' directly, if you want to alter the
+Using `python install.py install` simply runs `python setup.py install`
+internally. You need to use `setup.py` directly, if you want to alter the
 default installation somehow.
 
-See 'INSTALL.txt' or Robot Framework User Guide for more information.
+To install with with Jython or IronPython instead of Python, replace `python`
+with `jython` or `ipy`, respectively.
+
+For more information about installation in general see
+http://code.google.com/p/robotframework/wiki/Installation
 """
 
 import glob
@@ -57,9 +61,7 @@ def _get_installation_directory():
     return robot_dir
 
 def _remove_runners():
-    runners = ['pybot', 'jybot', 'rebot']
-    if os.name == 'java':
-        runners.remove('pybot')
+    runners = ['pybot', 'jybot', 'ipybot', 'rebot', 'jyrebot', 'ipyrebot']
     if os.sep == '\\':
         runners = [r + '.bat' for r in runners]
     for name in runners:
