@@ -1404,7 +1404,7 @@ Framework how these libraries are actually implemented (for example,
 how calls to the :code:`run_keyword` method are mapped to a correct
 keyword implementation), and many different approaches are
 possible. However, if you use Java, you may want to examine
-`JavaTools`_ before implementing your own system. This collection of
+`JavalibCore`_ before implementing your own system. This collection of
 reusable tools supports several ways of creating keywords, and it is
 likely that it already has a mechanism that suites your needs.
 

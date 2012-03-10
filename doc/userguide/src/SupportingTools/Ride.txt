@@ -1,6 +1,0 @@
-Test data editing tool (RIDE)
------------------------------
-
-RIDE is a standalone tool for editing test data. It helps in
-creating, editing and maintaining of Robot Framework test data.
-The project pages are at https://github.com/robotframework/RIDE/.

@@ -1,4 +1,4 @@
-
+.. _testdoc:
 
 Test data documentation tool (:prog:`testdoc`)
 ----------------------------------------------

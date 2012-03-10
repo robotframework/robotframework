@@ -83,9 +83,8 @@ Supporting Tools
    :local:
 
 .. include:: SupportingTools/Libdoc.txt
-.. include:: SupportingTools/Tidy.txt
 .. include:: SupportingTools/Testdoc.txt
-.. include:: SupportingTools/Ride.txt
+.. include:: SupportingTools/Tidy.txt
 .. include:: SupportingTools/OtherTools.txt
 
 Appendices
@@ -198,6 +197,7 @@ Appendices
 .. _reports: report_
 .. _report files: report_
 .. _test reports: report_
+.. _debug files: `Debug file`_
 .. _log level: `Log levels`_
 .. _library search path: `Adjusting library search path`_
 .. _module search path: `library search path`_
@@ -219,17 +219,6 @@ Appendices
 
 .. _HTML formatting: `Documentation formatting`_
 .. _command line options: `All command line options`_
-.. _testdoc.py: ../../tools/testdoc/doc/testdoc.html
-.. _risto.py: ../../tools/ristopy/doc/ristopy.html
-.. _robotidy.py: ../../tools/robotidy/doc/robotidy.html
-.. _robotdiff.py: ../../tools/robotdiff/doc/robotdiff.html
-.. _times2csv.py: ../../tools/times2csv/doc/times2csv.html
-.. _fileviewer.py: ../../tools/fileviewer/doc/fileviewer.html
-.. _One click installer: ../../tools/oneclickinstaller/doc/oneclickinstaller.html
-.. _statuschecker.py: ../../tools/statuschecker/doc/statuschecker.html
-.. _RIDE: `Test data editing tool (RIDE)`_
-.. _mabot: `Manual test execution tool (mabot)`_
-.. _javatools: `Base classes for Java libraries (JavalibCore)`_
 
 .. 6. Misc
 
@@ -244,12 +233,15 @@ Appendices
 .. _Python Homepage: Python_
 .. _Jython: http://www.jython.org/
 .. _Jython Homepage: Jython_
+.. _IronPython: http://ironpython.codeplex.com
 .. _Java: http://java.sun.com/
 .. _reStructuredText: http://docutils.sourceforge.net/rst.html
 .. _Pygments: http://pygments.org/
 .. _distutils: http://docs.python.org/dist/dist.html
 .. _setuptools: http://peak.telecommunity.com/DevCenter/setuptools
-.. _Easy Install: http://peak.telecommunity.com/DevCenter/EasyInstall
+.. _easy_install: http://peak.telecommunity.com/DevCenter/EasyInstall
+.. _Easy Install: easy_install_
+.. _pip: http://pip-installer.org
 .. _AutoIT: http://www.autoitscript.com/autoit3
 .. _XML-RPC: http://www.xmlrpc.com/
 .. _Acceptance Test Driven Development: http://testobsessed.com/2008/12/08/acceptance-test-driven-development-atdd-an-overview
