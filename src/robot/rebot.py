@@ -21,6 +21,7 @@ Version:  <VERSION>
 Usage:  rebot|jyrebot|ipyrebot [options] robot_outputs
    or:  python|jython|ipy -m robot.rebot [options] robot_outputs
    or:  python|jython|ipy path/to/robot/rebot.py [options] robot_outputs
+   or:  java -jar robotframework.jar rebot [options] robot_outputs
 
 Rebot can be used to generate logs and reports in HTML format. It can also
 produce new XML output files which can be further processed with Rebot or
@@ -35,7 +36,7 @@ Depending is Robot Framework installed using Python, Jython, or IronPython
 interpreter, Rebot can be run using `rebot`, `jyrebot` or `ipyrebot` command,
 respectively. Alternatively, it is possible to directly execute `robot.rebot`
 module (e.g. `python -m robot.rebot`) or `robot/rebot.py` script using a
-selected interpreter.
+selected interpreter. Finally, there is also a standalone JAR distribution.
 
 For more information about Robot Framework run, for example, `pybot --help` or
 go to http://robotframework.org.

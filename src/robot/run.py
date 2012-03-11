@@ -21,6 +21,7 @@ Version:  <VERSION>
 Usage:  pybot|jybot|ipybot [options] data_sources
    or:  python|jython|ipy -m robot.run [options] data_sources
    or:  python|jython|ipy path/to/robot/run.py [options] data_sources
+   or:  java -jar robotframework.jar [options] data_sources
 
 Robot Framework is a Python-based keyword-driven test automation framework for
 acceptance level testing and acceptance test-driven development (ATDD). It has
@@ -33,7 +34,7 @@ Depending is Robot Framework installed using Python, Jython, or IronPython
 interpreter, it has a start-up script, `pybot`, `jybot` or `ipybot`,
 respectively. Alternatively, it is possible to directly execute `robot.run`
 module (e.g. `python -m robot.run`) or `robot/run.py` script using a selected
-interpreter.
+interpreter. Finally, there is also a standalone JAR distribution.
 
 Data sources given to Robot Framework are either test case files or directories
 containing them and/or other directories. Single test case file creates a test
