@@ -190,12 +190,20 @@ User Guides.
 Preconditions
 ~~~~~~~~~~~~~
 
-Robot Framework is supported on Python_, Jython_  and IronPython_ and should
-also run on PyPy_. The interpreter you want to use should be installed before
-installing the framework.
+Robot Framework is supported on Python_, Jython_ (JVM) and IronPython_ (.NET)
+and should also run on PyPy_. The interpreter you want to use should be
+installed before installing the framework.
 
-If you just want to test the framework and do not have any special
-needs, it is recommended to try it first with Python.
+Which interpreter to use depends on the needed test libraries and test
+environment in general. Some libraries use tools or modules that only work
+with Python, while others may use Java_ tools that require Jython or require
+.NET_ and thus IronPython. There are also many tools and libraries that run
+fine with all interpreters.
+
+If you you do not have special needs or just want to try out the framework,
+it is recommended to use Python. It is the most mature implementation,
+considerably faster than Jython or IronPython (especially start-up time is
+faster) and also readily available on most UNIX-like operating systems.
 
 Python installation
 '''''''''''''''''''

@@ -2,11 +2,10 @@ Basic usage
 -----------
 
 Robot Framework test cases are executed from the command line, and the
-end result is, by default, an output file in XML format and an HTML
-report and log. After the execution, `output files`__ can be combined and
+end result is, by default, an `output file`_ in XML format and an HTML
+report_ and log_. After the execution, output files can be combined and
 otherwise `post-processed`__ with the :prog:`rebot` tool.
 
-__ `Created outputs`_
 __ `Post-processing outputs`_
 
 .. contents::
@@ -21,40 +20,21 @@ Synopsis
 
 ::
 
-   pybot [options] datasources
-   jybot [options] datasources
-   interpreter /path/to/robot/runner.py [options] datasources
-   java -jar robotframework-<version>.jar [options] datasources
+    pybot|jybot|ipybot [options] data_sources
+    python|jython|ipy -m robot.run [options] data_sources
+    python|jython|ipy path/to/robot/run.py [options] data_sources
+    java -jar robotframework.jar [options] data_sources
 
-Different runner scripts
-''''''''''''''''''''''''
+Test execution is normally started using :prog:`pybot`, :prog:`jybot`
+or :prog:`ipybot` `runner script`_. These scripts are otherwise identical, but
+the first one executes tests using Python_, the second using Jython_, and the
+last one using IronPython_. Alternatively it is possible to use
+:prog:`robot.run` `entry point`_ either as a module or a script using
+any interpreter, or use the `standalone JAR distribution`_.
 
-Test execution is normally started with the :prog:`pybot` or
-:prog:`jybot` commands. These commands are otherwise identical, but
-the former executes tests using the Python interpreter and the latter uses
-Jython. Which one to use depends on the needed test libraries. Some
-libraries use modules or syntax available only on Python, others use
-Java-based tools that require Jython, and some work on both. If you
-can use either :prog:`pybot` or :prog:`jybot`, the former is
-recommended, as Python is somewhat faster than Jython.
-
-Starting from Robot Framework 2.5.2, it is also possible to get Robot Framework
-as a single jar file.  In this case, Jython is bundled inside the jar, and the
-above discussion about Jython applies. Normal arguments to
-Robot Framework are given after the jar file name.
-
-Another possibility for starting the test execution is running the
-:prog:`runner.py` script under the installed__ :code:`robot` module
-directly. This method allows selecting the interpreter and setting
-command line options to it freely. The most common use case is
-altering the options controlling `JVM maximum memory consumption`__.
-
-__ `Where files are installed`_
-__ `Modifying Java startup parameters`_
-
-Regardless of the runner script, the path (or paths) to the test data to be
-executed is given as an argument. Additionally, different command line
-options can be used to alter the test execution or generated
+Regardless of execution approach, the path (or paths) to the test data to be
+executed is given as an argument after the command. Additionally, different
+command line options can be used to alter the test execution or generated
 outputs in some way.
 
 Specifying test data to be executed
@@ -68,9 +48,8 @@ from. The given file or directory creates the top-level test suite,
 which gets its name, unless overridden with the :opt:`--name` option__,
 from the `file or directory name`__. Different execution possibilities
 are illustrated in the examples below. Note that in these examples, as
-well as in other examples in this section, only the :prog:`pybot`
-command is used, but :prog:`jybot` or a custom runner script
-could be used similarly.
+well as in other examples in this section, only the :prog:`pybot` script
+is used, but other execution approaches could be used similarly.
 
 __ `Test case files`_
 __ `Test suite directories`_
@@ -114,7 +93,7 @@ When options are used, they must always be given between the runner
 script and the data sources. For example::
 
    pybot -L debug my_tests.txt
-   jybot --include smoke --variable HOST:10.0.0.42 path/to/tests/
+   pybot --include smoke --variable HOST:10.0.0.42 path/to/tests/
 
 Short and long options
 ''''''''''''''''''''''
@@ -241,6 +220,8 @@ This might be useful, for example, in continuous integration servers where
 post-processing of results is needed before the overall status of test
 execution can be determined.
 
+.. note:: Same return codes are also used with rebot_.
+
 Errors and warnings during execution
 ''''''''''''''''''''''''''''''''''''
 
@@ -348,9 +329,8 @@ a hash mark (#) are ignored::
    # This is a comment
    path/to/my/tests
 
-.. note:: Starting from Robot Framework 2.5 it is possible to have also non-ASCII
-          characters in argument files. For this to work, the argument file must
-          be saved using UTF-8 encoding.
+.. note:: To use non-ASCII characters in argument files, they must be saved
+          using UTF-8 encoding.
 
 Another important usage for argument files is specifying input files or
 directories in certain order. This can be very useful if the `alphabetical
@@ -389,9 +369,8 @@ Reading arguments from the standard input is a new feature in Robot Framework 2.
 Getting help and version information
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Both when executing test cases with :prog:`pybot` or :prog:`jybot` and
-when post-processing reports with :prog:`rebot`, it is possible to get
-command line help with the option :opt:`--help` and its short version
+Both when executing test cases and when post-processing outputs, it is possible
+to get command line help with the option :opt:`--help` and its short version
 :opt:`-h`. These help texts have a short general overview and
 briefly explain the available command line options.
 
@@ -400,13 +379,13 @@ the option :opt:`--version`. This information also contains Python
 or Jython version and the platform type::
 
    $ pybot --version
-   Robot Framework 2.0.3 (Python 2.5.1 on cygwin)
+   Robot Framework 2.7 (Python 2.6.6 on linux2)
 
-   C:\>jybot --version
-   Robot Framework 2.0.3 (Jython 2.2 on java1.5.0_16)
+   $ jybot --version
+   Robot Framework 2.7 (Jython 2.5.2 on java1.6.0_21)
 
    C:\>rebot --version
-   Rebot 2.0.3 (Python 2.5.2 on win32)
+   Rebot 2.7 (Python 2.7.1 on win32)
 
 
 Creating start-up scripts
@@ -500,27 +479,22 @@ function.
 Modifying Java startup parameters
 '''''''''''''''''''''''''''''''''
 
-Sometimes there is need to alter the Java startup parameters. The most
-common use case is increasing the JVM maximum memory size as the
+Sometimes when using Jython there is need to alter the Java startup parameters.
+The most common use case is increasing the JVM maximum memory size as the
 default value may not be enough for creating reports and logs when
-outputs are very big. How to give the parameters to Java depends on
-the Jython version.
+outputs are very big. There are several ways to configure JVM options:
 
-With Jython 2.2 you need to modify the Jython start-up script
-(:prog:`jython` shell script or :prog:`jython.bat` batch file) by
-adding the needed options (e.g. :opt:`-Xmx1024m` which sets the
-maximum memory to 1024 megabytes) to the :prog:`java` command. On
-Windows the final command could look like this::
+1. Modify Jython start-up script (:prog:`jython` shell script or
+   prog:`jython.bat` batch file) directly. This is a permanent configuration.
 
-   "C:\Java\jre1.6.0\bin\java.exe" -Xmx1024m -Dpython.home="C:\Jython22" -classpath "C:\Jython22\jython.jar;%CLASSPATH%" org.python.util.jython %ARGS%
+2. Set :var:`JYTHON_OPTS` environment variable. This can be done permanently
+   in operating system level or per execution in a custom start-up script.
 
-With Jython 2.5 it is also possible, and easier, to give the Java
-parameters with :opt:`-J` option to the Jython interpreter. This means
-that you can modify the :prog:`jybot` start-up script instead of
-Jython scripts. The last line of the :prog:`jybot` script can, again in
-Windows, be edited like below::
+3. Pass the needed Java parameters wit :opt:`-J` option to Jython start-up
+   script that will pass them forward to Java. This is especially easy when
+   using `direct entry points`_::
 
-  %jython% -J-Xmx1024m %runner% %*
+      jython -J-Xmx1024m -m robot.run some_tests.txt
 
 Debugging problems
 ~~~~~~~~~~~~~~~~~~

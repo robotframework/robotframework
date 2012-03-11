@@ -176,7 +176,6 @@ Appendices
 .. 3. Executing test cases
 
 .. _syslog: `System log`_
-.. _rebot: `Post-processing outputs`_
 .. _test execution: `Starting test execution`_
 .. _execution errors: `Errors and warnings during execution`_
 .. _test execution errors: `execution errors`_
