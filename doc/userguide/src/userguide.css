@@ -1,11 +1,11 @@
 /* Robot Framework User Guide Style Sheet
 
-   This stylesheet contains styles from restructuredText's default 
+   This stylesheet contains styles from restructuredText's default
    'html4css1.css' and after that modifications needed for Robot Framework User
-   Guide. These styles are added into the same file against suggestions at 
+   Guide. These styles are added into the same file against suggestions at
    reST's stylesheet HowTo mentioned below, because we want to be able to
-   embed all styles into the created HTML file. Everything before 'Robot 
-   Framework User Guide Modifications' text is from 'html4css1.css' without 
+   embed all styles into the created HTML file. Everything before 'Robot
+   Framework User Guide Modifications' text is from 'html4css1.css' without
    any changes so that part can still be changed easily.
 */
 
@@ -286,7 +286,7 @@ ul.auto-toc {
 
 
 /* **************************************** *
- * Robot Framework User Guide Modifications * 
+ * Robot Framework User Guide Modifications *
  * **************************************** */
 
 /* Tables
@@ -297,7 +297,6 @@ ul.auto-toc {
 table.example, table.tsv-example, table.messages, table.tabular {
     border: 1px solid #808080;
     border-collapse: collapse;
-    empty-cell: show;
     margin: 0.5em 2em;
 }
 table.example caption, table.tsv-example caption, table.tabular caption {
@@ -324,7 +323,7 @@ table.tabular th, table.tabular td {
     border: 1px solid black;
     padding: 0.1em 0.3em;
     height: 1.2em;
-    font-size: 0.8em;
+    font-size: 0.9em;
 }
 table.messages {
     border: 1px solid gray;
@@ -339,7 +338,7 @@ table.messages td {
 table.messages td.time {
     width: 7em;
     letter-spacing: -0.05em;
-} 
+}
 table.messages td.level {
     width: 5em;
     text-align: center;
@@ -370,7 +369,7 @@ table.messages td.warn {
 .msg {
     font-family: monospace;
 }
-.name {  
+.name {
     font-style: italic;
 }
 .path {
@@ -380,9 +379,23 @@ table.messages td.warn {
     background: #f4f4f4;
 }
 
-
 /* Overridden and modified styles */
 
+h1 {
+    font-size: 2em;
+}
+h2 {
+    font-size: 1.6em;
+}
+h3 {
+    font-size: 1.4em;
+}
+h4 {
+    font-size: 1.2em;
+}
+h5 {
+    font-size: 1em;
+}
 cite {
     font-size: 0.95em;
 }
@@ -408,7 +421,7 @@ a img {
     border: 1px solid blue;
 }
 
-/* Pygments 
+/* Pygments
 
 - Styles generated using "HtmlFormatter().get_style_defs('.highlight')"
 - Changed only background (f8f8f8 -> f4f4f4) and added margin
