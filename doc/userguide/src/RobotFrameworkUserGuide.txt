@@ -201,8 +201,6 @@ Appendices
 .. _log level: `Log levels`_
 .. _library search path: `Adjusting library search path`_
 .. _module search path: `library search path`_
-.. _runner script: `Different runner scripts`_
-.. _runner scripts: `runner script`_
 .. _return code: `return codes`_
 .. _post-process outputs: `post-processing outputs`_
 
@@ -224,17 +222,17 @@ Appendices
 
 .. _download page: http://downloads.robotframework.org
 .. _project page: http://robotframework.org
-.. _source code: http://source.robotframework.org
+.. _version control system: http://source.robotframework.org
 .. _issue tracker: http://issues.robotframework.org
 
 .. External link targets
 
 .. _Python: http://www.python.org/
-.. _Python Homepage: Python_
 .. _Jython: http://www.jython.org/
-.. _Jython Homepage: Jython_
 .. _IronPython: http://ironpython.codeplex.com
+.. _PyPy: http://pypy.org
 .. _Java: http://java.sun.com/
+.. _.NET: http://www.microsoft.com/NET/
 .. _reStructuredText: http://docutils.sourceforge.net/rst.html
 .. _Pygments: http://pygments.org/
 .. _distutils: http://docs.python.org/dist/dist.html
