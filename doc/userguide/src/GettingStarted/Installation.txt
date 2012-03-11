@@ -3,8 +3,8 @@ Installation and uninstallation
 
 These instructions cover installing Robot Framework and its preconditions on
 different operating systems. Installation changed considerably in Robot
-Framework 2.7. The most important changes are `listed separately`__ and previous
-User Guides can be consulted for details about installing earlier versions.
+Framework 2.7. The most important changes are `listed separately`__ and `previous
+User Guides`_ can be consulted for details about installing earlier versions.
 
 __ `Changes compared to Robot Framework 2.6 and earlier`_
 
@@ -15,10 +15,10 @@ __ `Changes compared to Robot Framework 2.6 and earlier`_
 Introduction
 ~~~~~~~~~~~~
 
+.. tip:: If you have pip_ installed, just run :cli:`pip install robotframework`.
+
 Supported installation approaches
 '''''''''''''''''''''''''''''''''
-
-.. tip:: If you have pip_ installed, just run :cli:`pip install robotframework`.
 
 Robot Framework is implemented with Python_ and also runs on Jython_ (JVM) and
 IronPython_ (.NET) interpreters. Before installing the framework, an obvious
@@ -35,7 +35,7 @@ http://downloads.robotframework.org.
     command. This approach works on all operating systems and with all interpreters.
 
 `Using Windows installer`_
-    There are graphical installers for both 32bit and 64bit Windows systems.
+    There are graphical installers for both 32 bit and 64 bit Windows systems.
 
 `Python package managers`_
     Python package managers such as pip_ and `easy_install`_ make installation
@@ -103,12 +103,12 @@ illustrate using them also with other interpreters.
 .. table:: Direct entry points
    :class: tabular
 
-   ===================  ============================  =================================
+   ==================  ============================  ==================================
        Entry point              Run as module                   Run as script
-   ===================  ============================  =================================
-   Test execution       :cli:`python -m robot.run`    :cli:`python path/robot/run.py`
-   Post-processing      :cli:`python -m robot.rebot`  :cli:`python path/robot/rebot.py`
-   ===================  ============================  =================================
+   ==================  ============================  ==================================
+   Test execution      :cli:`python -m robot.run`    :cli:`python path/robot/run.py`
+   Post-processing     :cli:`python -m robot.rebot`  :cli:`python path/robot/rebot.py`
+   ==================  ============================  ==================================
 
 .. sourcecode:: bash
 
@@ -133,25 +133,25 @@ Built-in tools
 Starting from Robot Framework 2.7, libdoc_, testdoc_, and tidy_ tools are
 bundled with the core framework and have their own entry points. Also they can
 be executed both as a module using the :opt:`-m` option or directly as a script.
-The table below lists the entry points using Python, but they can be used with
+The table below lists the entry points using Python but they can be used with
 any supported interpreter.
 
 .. table:: Entry points to built-in tools
    :class: tabular
 
-   ===================  ==============================  ===================================
-           Tool                  Run as module                   Run as script
-   ===================  ==============================  ===================================
-   libdoc               :cli:`python -m robot.libdoc`   :cli:`python path/robot/libdoc.py`
-   testdoc              :cli:`python -m robot.testdoc`  :cli:`python path/robot/testdoc.py`
-   tidy                 :cli:`python -m robot.tidy`     :cli:`python path/robot/tidy.py`
-   ===================  ==============================  ===================================
+   =================  ===============================  ======================================
+          Tool                  Run as module                     Run as script
+   =================  ===============================  ======================================
+   libdoc             :cli:`python -m robot.libdoc`    :cli:`python path/robot/libdoc.py`
+   testdoc            :cli:`python -m robot.testdoc`   :cli:`python path/robot/testdoc.py`
+   tidy               :cli:`python -m robot.tidy`      :cli:`python path/robot/tidy.py`
+   =================  ===============================  ======================================
 
 Verifying installation
 ``````````````````````
 
-After a successful installation you should be able to run created `runner
-scripts_` with :opt:`--version` and get both Robot Framework and interpreter
+After a successful installation, you should be able to execute created `runner
+scripts_` with :opt:`--version` option and get both Robot Framework and interpreter
 versions as a result.
 
 .. sourcecode:: bash
@@ -167,8 +167,8 @@ Changes compared to Robot Framework 2.6 and earlier
 
 Robot Framework installation has changed quite a bit between 2.6 and
 2.7 versions and the most important changes are listed below. If you need
-more information about installing older versions, please consult the previous
-User Guides.
+more information about installing older versions, please consult the `previous
+User Guides`_.
 
 - Installation using pip_ is finally supported.
 - Installation using IronPython_ is officially supported. As a result you get
@@ -179,8 +179,8 @@ User Guides.
   anymore. You need to install the framework using Jython to create it.
 - All `runner scripts`_ require the appropriate interpreter to be in PATH_.
 - Outside Windows, `runner scripts`_ are implemented in Python.
-- :path:`robot/runner.py` `entry point`_ has been deprecated in favor of
-  :path:`robot/run.py` and also programmatic execution API has changed.
+- :prog:`robot/runner.py` `entry point`_ has been deprecated in favor of
+  :prog:`robot/run.py` and also programmatic execution API has changed.
 - `Source distribution`_ only contains actual source code and tools. You
   need to download, for example, User Guide and Quick Start Guide separately
   or view them online.
@@ -196,8 +196,8 @@ installed before installing the framework.
 
 Which interpreter to use depends on the needed test libraries and test
 environment in general. Some libraries use tools or modules that only work
-with Python, while others may use Java_ tools that require Jython or require
-.NET_ and thus IronPython. There are also many tools and libraries that run
+with Python, while others may use Java_ tools that require Jython or need
+`.NET`_ and thus IronPython. There are also many tools and libraries that run
 fine with all interpreters.
 
 If you you do not have special needs or just want to try out the framework,
@@ -210,9 +210,9 @@ Python installation
 
 On most UNIX-like systems such as Linux and OSX you have Python
 installed by default. If you are on Windows or otherwise need to
-install Python yourself, your best place to start is probably http://python.org.
+install Python yourself, your best place to start is http://python.org.
 There you can download a suitable installer and get more information about
-the installation and Python in general.
+the installation process and Python in general.
 
 Starting from Robot Framework 2.5, Python 2.5 is the minimum supported
 Python version. Earlier versions support also Python 2.3 and
@@ -259,8 +259,7 @@ IronPython installation
 
 IronPython_ allows running Robot Framework on the `.NET`_ platform.
 Installation with IronPython is officially supported starting from Robot Framework
-2.7. Additionally, only IronPython 2.7.x on .NET 4.0 series is officially
-supported and tested.
+2.7. Only IronPython 2.7.x on .NET 4.0 series is officially supported and tested.
 
 When using IronPython, an additional dependency is installing elementtree__
 module 1.2.7 preview release. This is required because the :code:`elementtree`
@@ -430,7 +429,7 @@ need to be in PATH_.
 
 .. note::  If you have multiple versions of Python or other interpreters
            installed, the executed runner scripts will always use the one
-           that is *first* in :var:PATH regardless under what Python version
+           that is *first* in :var:`PATH` regardless under what Python version
            that script is installed. To avoid that, you can always use
            the `direct entry points`_ with the interpreter of choice like
            :cli:`c:\\Python25\\python.exe -m robot.run`.
@@ -444,9 +443,9 @@ Python package managers
 
 Python nowadays has various good package managers available for
 installing and otherwise managing Python packages. The most well known ones are
-`easy_install` and its successor `pip`_. We highly recommend
+`easy_install`_ and its successor `pip`_. We highly recommend
 :prog:`pip` as it is more actively developed and has nice features such as
-uninstallation support.
+uninstallation_ support.
 
 Different package managers have different usage, but with :prog:`pip`
 and :prog:`easy_install` the basic usage is similar:
@@ -488,15 +487,15 @@ Using One Click Installer
 '''''''''''''''''''''''''
 
 The One Click Installer can install Robot Framework and its preconditions_ Python
-and Jython (optional). It also automatically puts both Robot Framework
-`runner scripts`_, as well as Python and Jython executables into PATH_.
-
-.. note::  One Click Installer works only on Windows XP (32 bit).
+and Jython (optional). It also automatically puts Robot Framework
+`runner scripts`_ as well as Python and Jython executables into PATH_.
 
 The One Click Installer requires that you have downloaded all the required
 component installers separately and have them in the same directory with it.
 More detailed instructions and details about the supported installers are
 available on `One Click Installer`_ wiki page.
+
+.. note::  One Click Installer works only on Windows XP (32 bit).
 
 .. note::  You should use this installer only if you *do not* previously
            have Python or Jython installed.
@@ -610,9 +609,10 @@ Manual uninstallation
 `````````````````````
 
 The framework can always be uninstalled manually. This requires removing
-:code:`robot` module that is installed under the interpreter used for
-installation (actual location depends on the interpreter and operating system)
-as well as the created `runner scripts`_.
+:code:`robot` module as well as the created `runner scripts`_ from locations
+`where they are installed`__.
+
+__ `Where files are installed`_
 
 Upgrading
 '''''''''

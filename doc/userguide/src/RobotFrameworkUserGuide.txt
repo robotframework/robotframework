@@ -223,6 +223,7 @@ Appendices
 .. _project page: http://robotframework.org
 .. _version control system: http://source.robotframework.org
 .. _issue tracker: http://issues.robotframework.org
+.. _previous User Guides: http://code.google.com/p/robotframework/wiki/UserGuide
 
 .. External link targets
 
@@ -230,7 +231,7 @@ Appendices
 .. _Jython: http://www.jython.org/
 .. _IronPython: http://ironpython.codeplex.com
 .. _PyPy: http://pypy.org
-.. _Java: http://java.sun.com/
+.. _Java: http://java.com/
 .. _.NET: http://www.microsoft.com/NET/
 .. _reStructuredText: http://docutils.sourceforge.net/rst.html
 .. _Pygments: http://pygments.org/
