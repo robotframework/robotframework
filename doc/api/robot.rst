@@ -96,3 +96,25 @@ robot Package
     :members:
     :undoc-members:
     :show-inheritance:
+
+Subpackages
+-----------
+
+.. toctree::
+
+    robot.api
+    robot.common
+    robot.conf
+    robot.htmldata
+    robot.libdocpkg
+    robot.libraries
+    robot.model
+    robot.output
+    robot.parsing
+    robot.reporting
+    robot.result
+    robot.running
+    robot.utils
+    robot.variables
+    robot.writer
+
