@@ -29,6 +29,14 @@ from populators import FromFilePopulator, FromDirectoryPopulator
 
 def TestData(parent=None, source=None, include_suites=[],
              warn_on_skipped=False):
+    # TODO: can we change the order of parent and source?? source seems mandatory
+    """Parses a file or directory to a corresponding model object.
+
+    :param parent: (optional) parent to be used in creation of the model object.
+    :param source: path where test data is read from.
+    :returns: :class:`~.model.TestDataDirectory`  if `source` is a directory,
+        :class:`~.model.TestCaseFile` otherwise.
+    """
     if os.path.isdir(source):
         return TestDataDirectory(parent, source).populate(include_suites,
                                                           warn_on_skipped)

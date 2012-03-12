@@ -12,6 +12,26 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+"""This package implements parsing of test data files.
+
+Classes :class:`~.model.TestCaseFile`, :class:`~.model.TestDataDirectory` and
+:class:`~.model.ResourceFile` represented parsed test data. These can be
+modified and saved back to disk. In addition, convenience function
+:func:`~.model.TestData` can be used to parse file or directory to a
+corresponding object.
+
+
+Example:
+
+.. code-block:: python
+
+    from robot.parsing import TestCaseFile
+
+    suite = TestCaseFile(source='path/to/tests.html').populate()
+    print 'Suite: ', suite.name
+    for test in suite.testcase_table:
+        print test.name
+"""
 from datarow import DataRow
 from model import (TestData, TestCaseFile, TestDataDirectory, ResourceFile,
                    TestCase, UserKeyword)
