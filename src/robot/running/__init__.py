@@ -26,8 +26,8 @@ def UserLibrary(path):
     This is used at least by libdoc.py."""
     from robot.parsing import ResourceFile
     from robot import utils
-    from arguments import UserKeywordArguments
-    from userkeyword import UserLibrary as RuntimeUserLibrary
+    from .arguments import UserKeywordArguments
+    from .userkeyword import UserLibrary as RuntimeUserLibrary
 
     resource = ResourceFile(path).populate()
     ret = RuntimeUserLibrary(resource.keyword_table.keywords, path)

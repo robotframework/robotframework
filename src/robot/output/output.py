@@ -70,7 +70,7 @@ class Output(AbstractLogger):
 
     def set_log_level(self, level):
         # TODO: Module structure should be cleaned up to prevent cyclic imports
-        import pyloggingconf
-        pyloggingconf.set_level(level)
+        from .pyloggingconf import set_level
+        set_level(level)
         return self._xmllogger.set_log_level(level)
 
