@@ -32,35 +32,14 @@ __ http://code.google.com/p/robotframework/wiki/TestDataTidyingTool
 Public API
 ==========
 
-The `robot.api`__ package exposes the public Robot Framework API.
-
-Following APIs are available:
-
-  * :py:func:`~robot.result.resultbuilder.ExecutionResult` for reading
-    execution results from a xml file.
-
-  * :py:class:`~robot.parsing.model.TestCaseFile`,
-    :py:class:`~robot.parsing.model.TestDataDirectory`,and
-    :py:class:`~robot.parsing.model.ResourceFile` for parsing data files to
-    objects. In addition, a convenience function
-    :py:func:`~robot.parsing.model.TestData` creates either
-    :py:class:`~robot.parsing.model.TestCaseFile` or
-    :py:class:`~robot.parsing.model.TestDataDirectory` based on input.
-
-  * :py:func:`~robot.running.model.TestSuite` for creating a
-    test suite that can be executed programmatically.
-
-__ robot.api.html
-
-All of the above members can be imported like
-
-.. code-block:: python
-
-    from robot.api import <name>
+.. automodule:: robot.api
 
 
 All packages
 ============
+
+Packages and modules not listed in the chapters above are considered private,
+and included here only for reference.
 
 .. toctree::
     :maxdepth: 1

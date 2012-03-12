@@ -12,31 +12,34 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-"""This package exposes the public API of Robot Framework
+"""This package exposes the public APIs of Robot Framework.
 
-Following APIs are available:
+Classes and functions exposed in this module are considered stable, and thus
+safe to use in building external tools on top of Robot Framework.
+
+Currently available APIs are:
 
   * :py:func:`~robot.result.resultbuilder.ExecutionResult` for reading
     execution results from a xml file.
 
   * :py:class:`~robot.parsing.model.TestCaseFile`,
     :py:class:`~robot.parsing.model.TestDataDirectory`,and
-    :py:class:`~robot.parsing.model.ResourceFile` for parsing data files to
-    objects. In addition, a convenience function
+    :py:class:`~robot.parsing.model.ResourceFile` for parsing data files.
+    In addition, a convenience function
     :py:func:`~robot.parsing.model.TestData` creates either
     :py:class:`~robot.parsing.model.TestCaseFile` or
     :py:class:`~robot.parsing.model.TestDataDirectory` based on input.
 
   * :py:func:`~robot.running.model.TestSuite` for creating a
-    test suite that can be executed programmatically.
+    test suite that can be executed.
 
-__ robot.api.html
-
-All of the above members can be imported like
+These names can be imported like this:
 
 .. code-block:: python
 
     from robot.api import <name>
+
+See documentations of the individual classes/functions for more details.
 """
 
 from robot.parsing import TestCaseFile, TestDataDirectory, ResourceFile, TestData
