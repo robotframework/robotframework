@@ -40,6 +40,9 @@ class XmlWriter(AbstractXmlWriter):
     def _end(self, name):
         self._writer.endElement(name)
 
+    def _newline(self):
+        self._output.write('\n')
+
     # Workaround for http://ironpython.codeplex.com/workitem/29474
     if sys.platform == 'cli':
         def _escape(self, content):

@@ -50,5 +50,8 @@ class XmlWriter(AbstractXmlWriter):
     def _content(self, content):
         self._writer.characters(content, 0, len(content))
 
+    def _newline(self):
+        self._writer.ignorableWhitespace('\n', 0, 1)
+
     def _end(self, name):
         self._writer.endElement('', '', name)
