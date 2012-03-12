@@ -281,8 +281,9 @@ class Rebot(Application):
 def rebot_cli(arguments):
     """Command line execution entry point for running rebot.
 
-    For programmatic usage the `rebot` method is typically better. It has
-    better API for that usage and does not use sys.exit like this method.
+    For programmatic usage the :func:`rebot` method is typically better. It has
+    better API for that usage and does not call :func:`sys.exit` like this
+    method.
     """
     Rebot().execute_cli(arguments)
 
@@ -300,13 +301,17 @@ def rebot(*datasources, **options):
     A return code is returned similarly as when running on the command line.
 
     Examples:
-    rebot('path/to/output.xml')
-    with open('stdout.txt', 'w') as stdout:
-        rebot('o1.xml', 'o2.xml', report='r.html', log='NONE', stdout=stdout)
 
-    Equivalent command line usage:
-    rebot path/to/output.xml
-    rebot --report r.html --log NONE o1.xml o2.xml > stdout.txt
+    .. code-block:: python
+
+        rebot('path/to/output.xml')
+        with open('stdout.txt', 'w') as stdout:
+            rebot('o1.xml', 'o2.xml', report='r.html', log='NONE', stdout=stdout)
+
+    Equivalent command line usage::
+
+        rebot path/to/output.xml
+        rebot --report r.html --log NONE o1.xml o2.xml > stdout.txt
     """
     return Rebot().execute(*datasources, **options)
 
