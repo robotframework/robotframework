@@ -25,6 +25,9 @@ class AbstractXmlWriter:
         if newline:
             self._newline()
 
+    def _newline(self):
+        raise NotImplementedError
+
     def _start(self, name, attrs):
         raise NotImplementedError
 
@@ -51,7 +54,7 @@ class AbstractXmlWriter:
     def _end(self, name):
         raise NotImplementedError
 
-    def element(self, name, content=None, attributes={}, newline=True):
+    def element(self, name, content=None, attributes=None, newline=True):
         self.start(name, attributes, newline=False)
         self.content(content)
         self.end(name, newline)
