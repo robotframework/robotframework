@@ -20,15 +20,17 @@ from .unic import unic
 class AbstractXmlWriter:
     _illegal_chars = re.compile(u'[\x00-\x08\x0B\x0C\x0E-\x1F\uFFFE\uFFFF]')
 
-    def start(self, name, attributes={}, newline=True):
+    def start(self, name, attributes=None, newline=True):
         self._start(name, self._escape_attrs(attributes))
         if newline:
-            self.content('\n')
+            self._newline()
 
     def _start(self, name, attrs):
         raise NotImplementedError
 
     def _escape_attrs(self, attrs):
+        if not attrs:
+            return {}
         return dict((n, self._escape(v)) for n, v in attrs.items())
 
     def _escape(self, content):
@@ -44,7 +46,7 @@ class AbstractXmlWriter:
     def end(self, name, newline=True):
         self._end(name)
         if newline:
-            self.content('\n')
+            self._newline()
 
     def _end(self, name):
         raise NotImplementedError
