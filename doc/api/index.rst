@@ -13,7 +13,7 @@ __ http://code.google.com/p/robotframework/wiki/UserGuide
 
 
 Entry points
-------------
+============
 
 Command line entry points are implemented as Python modules and they also
 have programmatic APIs. Following entry points exist:
@@ -30,7 +30,7 @@ __ http://code.google.com/p/robotframework/wiki/TestDataTidyingTool
 
 
 Public API
-----------
+==========
 
 The `robot.api`__ package exposes the public Robot Framework API.
 
@@ -60,7 +60,7 @@ All of the above members can be imported like
 
 
 All packages
-------------
+============
 
 .. toctree::
     :maxdepth: 1
@@ -83,11 +83,9 @@ All packages
     robot.writer
 
 
-
 Indices and tables
 ==================
 
 * :ref:`genindex`
 * :ref:`modindex`
 * :ref:`search`
-
