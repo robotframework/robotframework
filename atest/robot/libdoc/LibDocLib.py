@@ -13,9 +13,10 @@ class LibDocLib(object):
     def __init__(self, interpreter):
         self._interpreter = interpreter
         self._cmd = [interpreter, '-m', 'robot.libdoc']
-        path_var = 'PYTHONPATH' if 'python' in interpreter else 'JYTHONPATH'
         self._env = os.environ.copy()
-        self._env.update({path_var: ROBOT_SRC})
+        self._env.update(PYTHONPATH=ROBOT_SRC,
+                         JYTHONPATH=ROBOT_SRC,
+                         IRONPYTHONPATH=ROBOT_SRC)
 
     def run_libdoc(self, args):
         cmd = self._cmd + [a for a in args.split(' ') if a]

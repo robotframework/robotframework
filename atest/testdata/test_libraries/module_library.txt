@@ -88,7 +88,7 @@ Lambda Keyword
     Lambda Keyword  2  3
 
 Lambda Keyword With Arguments
-    [Documentation]  FAIL ZeroDivisionError: integer division or modulo by zero
+    [Documentation]  FAIL STARTS: ZeroDivisionError:
     ${ret} =  Lambda Keyword With Two Args  4  2
     Should Be Equal  ${ret}  ${2}
     Lambda Keyword With Two Args  4  0
