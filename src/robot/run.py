@@ -358,8 +358,9 @@ class RobotFramework(Application):
 def run_cli(arguments):
     """Command line execution entry point for running tests.
 
-    For programmatic usage the `run` method is typically better. It has
-    better API for that usage and does not use sys.exit like this method.
+    For programmatic usage the :func:`run` method is typically better. It has
+    better API for that usage and does not call :func:`sys.exit` like this
+    method.
     """
     RobotFramework().execute_cli(arguments)
 
@@ -376,14 +377,18 @@ def run(*datasources, **options):
 
     A return code is returned similarly as when running on the command line.
 
-    Examples:
-    run('path/to/tests.html')
-    with open('stdout.txt', 'w') as stdout:
-        run('t1.txt', 't2.txt', report='r.html', log='NONE', stdout=stdout)
+    Example:
 
-    Equivalent command line usage:
-    pybot path/to/tests.html
-    pybot --report r.html --log NONE t1.txt t2.txt > stdout.txt
+    .. code-block:: python
+
+        run('path/to/tests.html')
+        with open('stdout.txt', 'w') as stdout:
+            run('t1.txt', 't2.txt', report='r.html', log='NONE', stdout=stdout)
+
+    Equivalent command line usage::
+
+        pybot path/to/tests.html
+        pybot --report r.html --log NONE t1.txt t2.txt > stdout.txt
     """
     return RobotFramework().execute(*datasources, **options)
 
