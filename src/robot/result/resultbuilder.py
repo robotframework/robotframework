@@ -26,6 +26,9 @@ def ExecutionResult(*sources):
     """Constructs :class:`Result` object based on execution result xml file(s).
 
     :param sources: The Robot Framework output xml file(s).
+    :returns: :py:class:`~.executionresult.Result` instance.
+
+    See :py:mod:`robot.result` for usage example.
     """
     if not sources:
         raise DataError('One or more data source needed.')

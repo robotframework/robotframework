@@ -12,4 +12,20 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+"""This package implements post-processing of Robot Framework outputs.
+
+The entry point of this API is the :func:`~.resultbuilder.ExecutionResult`
+factory method, which returns an instance of
+:class:`~.model.executionresult.Result`.
+
+Here is an example that reads a given output file and marks each test case whose
+execution time is longer than three minutes failed. The :class:`Result` object
+is then written back to disk and normal log and report files could be
+generated with ``rebot``.
+
+.. literalinclude:: /../../doc/api/check_test_times.py
+
+
+"""
+
 from .resultbuilder import ExecutionResult

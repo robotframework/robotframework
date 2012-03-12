@@ -23,6 +23,7 @@ from .testsuite import TestSuite
 
 
 class Result(object):
+    """Contains results of test execution."""
 
     def __init__(self, source=None, root_suite=None, errors=None):
         self.source = source
