@@ -23,7 +23,7 @@ execution time is longer than three minutes failed. The :class:`Result` object
 is then written back to disk and normal log and report files could be
 generated with ``rebot``.
 
-.. literalinclude:: /../../doc/api/check_test_times.py
+.. literalinclude:: /../../doc/api/code_examples/check_test_times.py
 
 
 """
