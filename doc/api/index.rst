@@ -4,7 +4,7 @@ Robot Framework API documentation
 
 
 This document describes the public API of Robot Framework. Installation,
-basic usage and wealth of other topics are covered in the `user guide`__.
+basic usage and wealth of other topics are covered in `Robot Framework User Guide`__.
 
 __ http://code.google.com/p/robotframework/wiki/UserGuide
 
@@ -16,7 +16,7 @@ Entry points
 ============
 
 Command line entry points are implemented as Python modules and they also
-have programmatic APIs. Following entry points exist:
+provide programmatic APIs. Following entry points exist:
 
   * :py:mod:`robot.run` entry point for executing tests.
   * :py:mod:`robot.rebot` entry point for post-processing outputs.
@@ -38,8 +38,9 @@ Public API
 All packages
 ============
 
-Packages and modules not listed in the chapters above are considered private,
-and included here only for reference.
+All :py:mod:`robot` sub packages are listed below. Typically you should not
+need to import anything from them directly, but the above public APIs may
+return objects implemented in them.
 
 .. toctree::
     :maxdepth: 1
@@ -48,8 +49,8 @@ and included here only for reference.
     autodoc/*
 
 
-Indices and tables
-==================
+Indices
+=======
 
 * :ref:`genindex`
 * :ref:`modindex`

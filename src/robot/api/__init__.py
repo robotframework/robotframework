@@ -14,24 +14,27 @@
 
 """This package exposes the public APIs of Robot Framework.
 
-Classes and functions exposed in this module are considered stable, and thus
-safe to use in building external tools on top of Robot Framework.
+Unless stated otherwise, the APIs exposed in this module are considered stable,
+and thus safe to use when building external tools on top of Robot Framework.
 
-Currently available APIs are:
+Currently exposed APIs are:
+
+  * :py:mod:`.logger` for test libraries' logging purposes.
 
   * :py:func:`~robot.result.resultbuilder.ExecutionResult` for reading
-    execution results from a xml file.
+    execution results from XML output files.
 
   * :py:class:`~robot.parsing.model.TestCaseFile`,
-    :py:class:`~robot.parsing.model.TestDataDirectory`,and
+    :py:class:`~robot.parsing.model.TestDataDirectory`, and
     :py:class:`~robot.parsing.model.ResourceFile` for parsing data files.
-    In addition, a convenience function
+    In addition, a convenience factory function
     :py:func:`~robot.parsing.model.TestData` creates either
     :py:class:`~robot.parsing.model.TestCaseFile` or
-    :py:class:`~robot.parsing.model.TestDataDirectory` based on input.
+    :py:class:`~robot.parsing.model.TestDataDirectory` based on the input.
 
   * :py:func:`~robot.running.model.TestSuite` for creating a
-    test suite that can be executed.
+    test suite that can be executed. This API is going to change in
+    Robot Framework 2.8.
 
 These names can be imported like this:
 
@@ -39,7 +42,7 @@ These names can be imported like this:
 
     from robot.api import <name>
 
-See documentations of the individual classes/functions for more details.
+See documentations of the individual APIs for more details.
 """
 
 from robot.parsing import TestCaseFile, TestDataDirectory, ResourceFile, TestData
