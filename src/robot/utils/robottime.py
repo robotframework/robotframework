@@ -41,7 +41,8 @@ START_TIME = _get_timetuple()
 def timestr_to_secs(timestr):
     """Parses time in format like '1h 10s' and returns time in seconds (float).
 
-    Given time must be in format '1d 2h 3m 4s 5ms' with following rules.
+    Given time must be in format '1d 2h 3m 4s 5ms' with following rules:
+
     - Time parts having zero value can be ignored (e.g. '3m 4s' is ok)
     - Format is case and space insensitive
     - Instead of 'd' it is also possible to use 'day' or 'days'
@@ -107,9 +108,10 @@ def secs_to_timestr(secs, compact=False):
     """Converts time in seconds to a string representation.
 
     Returned string is in format like
-    '1 day 2 hours 3 minutes 4 seconds 5 milliseconds' with following rules.
+    '1 day 2 hours 3 minutes 4 seconds 5 milliseconds' with following rules:
+
     - Time parts having zero value are not included (e.g. '3 minutes 4 seconds'
-    instead of '0 days 0 hours 3 minutes 4 seconds')
+      instead of '0 days 0 hours 3 minutes 4 seconds')
     - Hour part has a maximun of 23 and minutes and seconds both have 59
       (e.g. '1 minute 40 seconds' instead of '100 seconds')
 

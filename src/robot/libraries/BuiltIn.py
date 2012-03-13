@@ -882,7 +882,7 @@ class _Variables:
         This keyword is mainly used for setting scalar variables.
         Additionally it can be used for converting a scalar variable
         containing a list to a list variable or to multiple scalar variables.
-        It is recommended to use `Create List' when creating new lists.
+        It is recommended to use `Create List` when creating new lists.
 
         Examples:
         | ${hi} =   | Set Variable | Hello, world! |
@@ -892,8 +892,8 @@ class _Variables:
         | ${item1}  | ${item2} =   | Set Variable  | ${list with 2 items} |
 
         Variables created with this keyword are available only in the
-        scope where they are created. See `Set Global Variable`, `Set
-        Test Variable` and `Set Suite Variable` for information on how to
+        scope where they are created. See `Set Global Variable`,
+        `Set Test Variable` and `Set Suite Variable` for information on how to
         set variables so that they are available also in a larger scope.
         """
         if len(values) == 0:

@@ -24,8 +24,9 @@ class DataFileWriter(object):
     """Object to write parsed test data file objects back to disk."""
 
     def __init__(self, **options):
-        """:param **options: A :class:`.WritingContext` is created based
-        on these.
+        """
+        :param `**options`: A :class:`.WritingContext` is created based
+            on these.
         """
         self._options = options
 

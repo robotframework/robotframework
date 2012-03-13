@@ -35,68 +35,71 @@ general can be found from http://pyunit.sourceforge.net/. This module can be
 used freely in same terms as unittest.
 
 
-----[unittest licence]------------------------------------------------
+unittest license::
 
-Copyright (c) 1999-2003 Steve Purcell
-This module is free software, and you may redistribute it and/or modify
-it under the same terms as Python itself, so long as this copyright message
-and disclaimer are retained in their original form.
+    Copyright (c) 1999-2003 Steve Purcell
+    This module is free software, and you may redistribute it and/or modify
+    it under the same terms as Python itself, so long as this copyright message
+    and disclaimer are retained in their original form.
 
-IN NO EVENT SHALL THE AUTHOR BE LIABLE TO ANY PARTY FOR DIRECT, INDIRECT,
-SPECIAL, INCIDENTAL, OR CONSEQUENTIAL DAMAGES ARISING OUT OF THE USE OF
-THIS CODE, EVEN IF THE AUTHOR HAS BEEN ADVISED OF THE POSSIBILITY OF SUCH
-DAMAGE.
+    IN NO EVENT SHALL THE AUTHOR BE LIABLE TO ANY PARTY FOR DIRECT, INDIRECT,
+    SPECIAL, INCIDENTAL, OR CONSEQUENTIAL DAMAGES ARISING OUT OF THE USE OF
+    THIS CODE, EVEN IF THE AUTHOR HAS BEEN ADVISED OF THE POSSIBILITY OF SUCH
+    DAMAGE.
 
-THE AUTHOR SPECIFICALLY DISCLAIMS ANY WARRANTIES, INCLUDING, BUT NOT
-LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A
-PARTICULAR PURPOSE.  THE CODE PROVIDED HEREUNDER IS ON AN "AS IS" BASIS,
-AND THERE IS NO OBLIGATION WHATSOEVER TO PROVIDE MAINTENANCE,
-SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
+    THE AUTHOR SPECIFICALLY DISCLAIMS ANY WARRANTIES, INCLUDING, BUT NOT
+    LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A
+    PARTICULAR PURPOSE.  THE CODE PROVIDED HEREUNDER IS ON AN "AS IS" BASIS,
+    AND THERE IS NO OBLIGATION WHATSOEVER TO PROVIDE MAINTENANCE,
+    SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 
 
-----[example usage]---------------------------------------------------
+Examples:
 
-import unittest
-from robot.util.asserts import *
+.. code-block:: python
 
-class MyTests(unittest.TestCase):
+    import unittest
+    from robot.util.asserts import *
 
-    def test_old_style(self):
+    class MyTests(unittest.TestCase):
+
+        def test_old_style(self):
+            self.assertEquals(1, 2, 'my msg')
+
+        def test_new_style(self):
+            assert_equals(1, 2, 'my msg')
+
+
+Example output::
+
+    FF
+    ======================================================================
+    FAIL: test_old_style (__main__.MyTests)
+    ----------------------------------------------------------------------
+    Traceback (most recent call last):
+    File "example.py", line 7, in test_old_style
         self.assertEquals(1, 2, 'my msg')
+    AssertionError: my msg
 
-    def test_new_style(self):
+    ======================================================================
+    FAIL: test_new_style (__main__.MyTests)
+    ----------------------------------------------------------------------
+    Traceback (most recent call last):
+    File "example.py", line 10, in test_new_style
         assert_equals(1, 2, 'my msg')
+    File "/path/to/robot/asserts.py", line 142, in fail_unless_equal
+        _report_unequality_failure(first, second, msg, values, '!=')
+    File "/path/to/robot/src/robot/asserts.py", line 209, in _report_unequality_failure
+        raise _report_failure(msg)
+    File "/path/to/robot/src/robot/asserts.py", line 200, in _report_failure
+        raise AssertionError(msg)
+    AssertionError: my msg: 1 != 2
 
+    ----------------------------------------------------------------------
+    Ran 2 tests in 0.000s
 
-----[example output]--------------------------------------------------
+    FAILED (failures=2)
 
-FF
-======================================================================
-FAIL: test_old_style (__main__.MyTests)
-----------------------------------------------------------------------
-Traceback (most recent call last):
-  File "example.py", line 7, in test_old_style
-    self.assertEquals(1, 2, 'my msg')
-AssertionError: my msg
-
-======================================================================
-FAIL: test_new_style (__main__.MyTests)
-----------------------------------------------------------------------
-Traceback (most recent call last):
-  File "example.py", line 10, in test_new_style
-    assert_equals(1, 2, 'my msg')
-  File "/path/to/robot/asserts.py", line 142, in fail_unless_equal
-    _report_unequality_failure(first, second, msg, values, '!=')
-  File "/path/to/robot/src/robot/asserts.py", line 209, in _report_unequality_failure
-    raise _report_failure(msg)
-  File "/path/to/robot/src/robot/asserts.py", line 200, in _report_failure
-    raise AssertionError(msg)
-AssertionError: my msg: 1 != 2
-
-----------------------------------------------------------------------
-Ran 2 tests in 0.000s
-
-FAILED (failures=2)
 """
 
 from .unic import unic

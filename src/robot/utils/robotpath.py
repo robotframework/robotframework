@@ -45,7 +45,8 @@ def abspath(path):
     1) Converts non-Unicode paths to Unicode using file system encoding
     2) At least Jython 2.5.1 on Windows returns wrong path with 'c:'.
     3) Python until 2.6.5 and at least Jython 2.5.1 don't handle non-ASCII
-    characters in the working directory: http://bugs.python.org/issue3426
+        characters in the working directory: http://bugs.python.org/issue3426
+
     """
     if not isinstance(path, unicode):
         path = decode_from_system(path)
