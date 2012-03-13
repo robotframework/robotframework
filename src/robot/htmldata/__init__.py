@@ -12,6 +12,12 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+"""This package implements html file writing.
+
+:mod:`robot.reporting`, :mod:`robot.libdoc` and :mod:`robot.testdoc` use
+this package.
+"""
+
 from .htmlfilewriter import HtmlFileWriter, ModelWriter
 from .jsonwriter import JsonWriter
 

@@ -12,6 +12,8 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+"""This package contains various utility classes and functions."""
+
 from .argumentparser import ArgumentParser
 from .application import Application
 from .compress import compress_text

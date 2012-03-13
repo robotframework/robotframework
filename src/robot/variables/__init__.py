@@ -12,6 +12,11 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+"""This package implements handling and resolving of variables.
+
+This code should not be used externally, as it will be radically changed.
+"""
+
 import os
 import tempfile
 

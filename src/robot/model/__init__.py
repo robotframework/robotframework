@@ -12,6 +12,8 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+"""This package contains base classes used by :mod:`robot.result` package."""
+
 from .testsuite import TestSuite
 from .testcase import TestCase
 from .keyword import Keyword

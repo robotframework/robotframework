@@ -32,9 +32,8 @@ Example:
     for test in suite.testcase_table:
         print test.name
 """
-from datarow import DataRow
-from model import (TestData, TestCaseFile, TestDataDirectory, ResourceFile,
-                   TestCase, UserKeyword)
+
+from .model import TestData, TestCaseFile, TestDataDirectory, ResourceFile
 from populators import READERS
 VALID_EXTENSIONS = tuple(READERS)
 del READERS

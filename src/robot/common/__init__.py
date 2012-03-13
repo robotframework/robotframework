@@ -12,9 +12,13 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+"""This package contains some old base classes.
 
-from model import BaseTestSuite, BaseTestCase
-from keyword import BaseKeyword
-from handlers import UserErrorHandler
-from libraries import BaseLibrary
-from statistics import Statistics
+This code will be removed and should not be used externally.
+"""
+
+from .model import BaseTestSuite, BaseTestCase
+from .keyword import BaseKeyword
+from .handlers import UserErrorHandler
+from .libraries import BaseLibrary
+from .statistics import Statistics

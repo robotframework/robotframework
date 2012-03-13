@@ -12,6 +12,11 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+"""This package implements the libdoc tool.
+
+For programmatic entry point, see :func:`robot.libdoc.libdoc`
+"""
+
 from .builder import DocumentationBuilder
 from .consoleviewer import ConsoleViewer
 

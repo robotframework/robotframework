@@ -12,4 +12,6 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from settings import RobotSettings, RebotSettings
+"""This package implements settings for both test execution and rebot."""
+
+from .settings import RobotSettings, RebotSettings

@@ -24,7 +24,7 @@ class DataFileWriter(object):
     """Object to write parsed test data file objects back to disk."""
 
     def __init__(self, **options):
-        """:param **options: A :py:class:`.WritingContext` is created based
+        """:param **options: A :class:`.WritingContext` is created based
         on these.
         """
         self._options = options
@@ -32,7 +32,10 @@ class DataFileWriter(object):
     def write(self, datafile):
         """Writes given `datafile` using `**options`.
 
-        :param datafile: A robot.parsing.model.DataFile object to be written
+        :param datafile: The parsed test data object to be written
+        :type datafile: :py:class:`~robot.parsing.model.TestCaseFile`,
+            :py:class:`~robot.parsing.model.ResourceFile`,
+            :py:class:`~robot.parsing.model.TestDataDirectory`
         """
         with WritingContext(datafile, **self._options) as ctx:
             FileWriter(ctx).write(datafile)
@@ -68,13 +71,14 @@ class WritingContext(object):
         If `output` is not given, an output file is created based on the source
         of the given datafile and value of `format`. Examples:
 
-            WriteConfiguration(datafile, output=StringIO) ->
-               Output written in the StringIO instance using format of
-              `datafile.source`
-            WriteConfiguration(datafile, format='html') ->
-               Output file is created from `datafile.source` by stripping
-               extension and replacing it with `html`.
+        Write output in a StringIO instance using format of `datafile.source`::
 
+            WriteConfiguration(datafile, output=StringIO)
+
+        Output file is created from `datafile.source` by stripping extension
+        and replacing it with `html`::
+
+            WriteConfiguration(datafile, format='html')
         """
         self.datafile = datafile
         self.pipe_separated = pipe_separated

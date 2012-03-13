@@ -12,6 +12,8 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+"""This package implements runtime logging and listener interface."""
+
 from .output import Output
 from .logger import LOGGER
 from .xmllogger import XmlLogger

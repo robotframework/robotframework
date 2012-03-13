@@ -106,10 +106,10 @@ class _TestData(object):
         """Writes this datafile to disk.
 
         :param options: Configuration for writing. These are passed to
-            :py:class:`~robot.writer.datafilewriter.WriteConfiguration` as
+            :py:class:`~robot.writer.datafilewriter.WritingContext` as
             keyword arguments.
 
-        See also :py:meth:`robot.writer.datafilewriter.DataFileWriter.write`
+        See also :py:class:`robot.writer.datafilewriter.DataFileWriter`
         """
         return DataFileWriter(**options).write(self)
 
