@@ -224,6 +224,7 @@ Appendices
 .. _version control system: http://source.robotframework.org
 .. _issue tracker: http://issues.robotframework.org
 .. _previous User Guides: http://code.google.com/p/robotframework/wiki/UserGuide
+.. _API documentation: http://robot-framework.readthedocs.org
 
 .. External link targets
 
@@ -240,6 +241,7 @@ Appendices
 .. _easy_install: http://peak.telecommunity.com/DevCenter/EasyInstall
 .. _Easy Install: easy_install_
 .. _pip: http://pip-installer.org
+.. _Read the Docs: http://readthedocs.org
 .. _AutoIT: http://www.autoitscript.com/autoit3
 .. _XML-RPC: http://www.xmlrpc.com/
 .. _Acceptance Test Driven Development: http://testobsessed.com/2008/12/08/acceptance-test-driven-development-atdd-an-overview
