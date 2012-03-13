@@ -21,7 +21,7 @@ def generate():
     update()
     orig_dir = abspath(os.curdir)
     os.chdir(BUILD_DIR)
-    rc = call(['make', 'html'])
+    rc = call(['make', 'html'], shell=os.name=='nt')
     os.chdir(orig_dir)
     print abspath(join(BUILD_DIR, '_build', 'html', 'index.html'))
     return rc
@@ -35,4 +35,9 @@ if __name__ == '__main__':
     if sys.argv[1:]:
         print __doc__
         sys.exit(1)
-    sys.exit(generate())
+    try:
+        import sphinx as _
+    except ImportError:
+        sys.exit('Generating API docs requires Sphinx')
+    else:
+        sys.exit(generate())
