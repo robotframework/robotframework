@@ -30,6 +30,13 @@ from .defaultvalues import DefaultValues
 
 
 def TestSuite(datasources, settings):
+    """Creates a runnable test suite from given datasources and settings.
+
+    :param datasources: List of paths to read data from.
+    :param settings: Execution configuration.
+    :type settings: :class:`~robot.conf.settings.RobotSettings`
+    :returns: :class:`RunnableTestSuite`
+    """
     datasources = [utils.abspath(path) for path in datasources]
     suite = _get_suite(datasources, settings['SuiteNames'], settings['WarnOnSkipped'])
     suite.set_options(settings)

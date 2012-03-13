@@ -12,6 +12,16 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+
+"""This package implements the core execution logic of Robot Framework.
+
+The code in this package is in many places suboptimal, and the APIs are not
+considered stable.
+
+Currently, the main entry point is the :func:`~.model.TestSuite` factory
+method.
+"""
+
 from .model import TestSuite
 from .keywords import Keyword
 from .testlibraries import TestLibrary
