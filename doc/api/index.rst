@@ -43,23 +43,9 @@ and included here only for reference.
 
 .. toctree::
     :maxdepth: 1
+    :glob:
 
-    robot
-    robot.api
-    robot.common
-    robot.conf
-    robot.htmldata
-    robot.libdocpkg
-    robot.libraries
-    robot.model
-    robot.output
-    robot.parsing
-    robot.reporting
-    robot.result
-    robot.running
-    robot.utils
-    robot.variables
-    robot.writer
+    autodoc/*
 
 
 Indices and tables

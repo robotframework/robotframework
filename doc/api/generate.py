@@ -14,6 +14,7 @@ from os.path import abspath, dirname, join
 from subprocess import call
 
 BUILD_DIR = abspath(dirname(__file__))
+AUTODOC_DIR = join(BUILD_DIR, 'autodoc')
 ROBOT_DIR = join(BUILD_DIR, '..', '..', 'src', 'robot')
 
 
@@ -27,7 +28,7 @@ def generate():
     return rc
 
 def update():
-    call(['sphinx-apidoc', '--output-dir', BUILD_DIR, '--force' , '--no-toc',
+    call(['sphinx-apidoc', '--output-dir', AUTODOC_DIR, '--force' , '--no-toc',
           '--maxdepth', '2', ROBOT_DIR])
 
 
