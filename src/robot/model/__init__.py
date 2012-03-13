@@ -12,7 +12,13 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-"""This package contains base classes used by :mod:`robot.result` package."""
+"""Contains base classes and other generic functionality.
+
+In RF 2.7 this package is mainly used by :mod:`robot.result` package, but
+there is a plan to change also :mod:`robot.running` to use this in RF 2.8.
+
+This package is considered stable.
+"""
 
 from .testsuite import TestSuite
 from .testcase import TestCase

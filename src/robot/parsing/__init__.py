@@ -12,16 +12,18 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-"""This package implements parsing of test data files.
+"""Implements parsing of test data files.
 
 Classes :class:`~.model.TestCaseFile`, :class:`~.model.TestDataDirectory` and
 :class:`~.model.ResourceFile` represented parsed test data. These can be
-modified and saved back to disk. In addition, convenience function
+modified and saved back to disk. In addition, a convenience factory function
 :func:`~.model.TestData` can be used to parse file or directory to a
 corresponding object.
 
+This package is considered stable.
 
-Example:
+Example
+-------
 
 .. code-block:: python
 
@@ -34,6 +36,6 @@ Example:
 """
 
 from .model import TestData, TestCaseFile, TestDataDirectory, ResourceFile
-from populators import READERS
+from .populators import READERS
 VALID_EXTENSIONS = tuple(READERS)
 del READERS

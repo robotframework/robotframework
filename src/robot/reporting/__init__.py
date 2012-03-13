@@ -12,6 +12,9 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-"""This package implements report and log file generation."""
+"""Implements report and log file generation.
+
+This package is considered stable.
+"""
 
 from .resultwriter import ResultWriter

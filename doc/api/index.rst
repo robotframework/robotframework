@@ -38,7 +38,7 @@ Public API
 All packages
 ============
 
-All :py:mod:`robot` sub packages are listed below. Typically you should not
+All :py:mod:`robot` packages are listed below. Typically you should not
 need to import anything from them directly, but the above public APIs may
 return objects implemented in them.
 

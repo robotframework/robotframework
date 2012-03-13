@@ -12,7 +12,11 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-"""This package contains various utility classes and functions."""
+"""Various generic utility classes and functions.
+
+Provided utilities are generally stable, but absolute backwards compatibility
+between major versions is not guaranteed.
+"""
 
 from .argumentparser import ArgumentParser
 from .application import Application

@@ -12,19 +12,23 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-"""This package implements post-processing of Robot Framework outputs.
+"""Implements parsing results from XML output files.
 
 The entry point of this API is the :func:`~.resultbuilder.ExecutionResult`
 factory method, which returns an instance of
 :class:`~.executionresult.Result`.
 
-Here is an example that reads a given output file and marks each test case whose
+This package is considered stable.
+
+Example
+-------
+
+The example below reads a given output file and marks each test case whose
 execution time is longer than three minutes failed. The
 :class:`~.executionresult.Result` object is then written back to disk and
-normal log and report files could be generated with ``rebot``.
+normal log and report files could be generated with ``rebot`` tool.
 
 .. literalinclude:: /../../doc/api/code_examples/check_test_times.py
-
 """
 
 from .resultbuilder import ExecutionResult

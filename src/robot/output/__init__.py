@@ -12,7 +12,10 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-"""This package implements runtime logging and listener interface."""
+"""TImplements runtime logging and listener interface.
+
+This package is likely to change in RF 2.8.
+"""
 
 from .output import Output
 from .logger import LOGGER

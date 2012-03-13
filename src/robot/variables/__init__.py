@@ -12,9 +12,10 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-"""This package implements handling and resolving of variables.
+"""Implements handling and resolving of variables.
 
-This code should not be used externally, as it will be radically changed.
+This package is likely to change radically in RF 2.8. External code should use
+functionality provided directly by this package with care.
 """
 
 import os

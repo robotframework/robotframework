@@ -12,9 +12,11 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-"""This package implements the libdoc tool.
+"""Implements `libdoc` tool.
 
-For programmatic entry point, see :func:`robot.libdoc.libdoc`
+For programmatic entry point, see :mod:`robot.libdoc`.
+
+This package is considered stable.
 """
 
 from .builder import DocumentationBuilder

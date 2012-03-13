@@ -12,11 +12,10 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+"""Implements the core test execution logic.
 
-"""This package implements the core execution logic of Robot Framework.
-
-The code in this package is in many places suboptimal, and the APIs are not
-considered stable.
+The code in this package is in many places suboptimal and likely to change in
+RF 2.8. External code should use this package with care.
 
 Currently, the main entry point is the :func:`~.model.TestSuite` factory
 method.

@@ -12,9 +12,11 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-"""This package implements writing of parsed test data to files.
+"""Implements writing of parsed test data to files.
 
-It is used by :py:meth:`robot.parsing.model.TestCaseFile.save`.
+This functionality is used by :py:meth:`robot.parsing.model.TestCaseFile.save`.
+
+This package is considered stable.
 """
 
 from .datafilewriter import DataFileWriter
