@@ -124,7 +124,7 @@ class _RunnableHandler(_BaseHandler):
 
     def _runner_for(self, handler, output, positional, named, timeout):
         if timeout and timeout.active:
-            output.debug(timeout.get_message())
+            output.debug(timeout.get_message)
             return lambda: timeout.run(handler, args=positional, kwargs=named)
         return lambda: handler(*positional, **named)
 

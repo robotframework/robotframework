@@ -15,6 +15,7 @@
 import sys
 import inspect
 from array import ArrayType
+from functools import partial
 
 from robot.errors import DataError, FrameworkError
 from robot.variables import is_list_var, is_scalar_var
@@ -54,16 +55,17 @@ class _KeywordArguments(object):
     def check_arg_limits_for_dry_run(self, args):
         self._arg_limit_checker.check_arg_limits_for_dry_run(args)
 
-    def _tracelog_args(self, logger, posargs, namedargs={}):
-        if self._logger_not_available_during_library_init(logger):
-            return
-        args = [utils.safe_repr(a) for a in posargs] \
-             + ['%s=%s' % (utils.unic(a), utils.safe_repr(namedargs[a]))
-                for a in namedargs]
-        logger.trace('Arguments: [ %s ]' % ' | '.join(args))
+    def _tracelog_args(self, logger, positional, named=None):
+        if logger:
+            message = partial(self._get_tracelog_arg_message, positional, named)
+            logger.trace(message)
 
-    def _logger_not_available_during_library_init(self, logger):
-        return not logger
+    def _get_tracelog_arg_message(self, positional, named):
+        args = [utils.safe_repr(arg) for arg in positional]
+        if named:
+            args += ['%s=%s' % (utils.unic(name), utils.safe_repr(value))
+                     for name, value in named.items()]
+        return 'Arguments: [ %s ]' % ' | '.join(args)
 
 
 class PythonKeywordArguments(_KeywordArguments):
@@ -151,7 +153,7 @@ class DynamicKeywordArguments(_KeywordArguments):
             raise TypeError('Argument spec should be a list/array of strings')
 
     def _parse_arg_spec(self, argspec):
-        if argspec == []:
+        if not argspec:
             return [], [], None
         args = []
         defaults = []
@@ -300,14 +302,13 @@ class UserKeywordArguments(object):
         return args[:len(self.names)], args[len(self.names):]
 
     def _tracelog_args(self, logger, variables):
-        arguments_string = self._get_arguments_as_string(variables)
-        logger.trace('Arguments: [ %s ]' % arguments_string)
+        logger.trace(partial(self._get_tracelog_arg_message, variables))
 
-    def _get_arguments_as_string(self, variables):
-        args = []
-        for name in self.names + ([self.varargs] if self.varargs else []):
-            args.append('%s=%s' % (name, utils.safe_repr(variables[name])))
-        return ' | '.join(args)
+    def _get_tracelog_arg_message(self, variables):
+        names = self.names + ([self.varargs] if self.varargs else [])
+        args =  ['%s=%s' % (name, utils.safe_repr(variables[name]))
+                 for name in names]
+        return 'Arguments: [ %s ]' % ' | '.join(args)
 
 
 class _MissingArg(object):

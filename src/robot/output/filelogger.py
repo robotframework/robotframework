@@ -48,10 +48,10 @@ class FileLogger(AbstractLogger):
         self.info("Ended test case '%s'" % test.name)
 
     def start_keyword(self, kw):
-        self.debug("Started keyword '%s'" % kw.name)
+        self.debug(lambda: "Started keyword '%s'" % kw.name)
 
     def end_keyword(self, kw):
-        self.debug("Ended keyword '%s'" % kw.name)
+        self.debug(lambda: "Ended keyword '%s'" % kw.name)
 
     def output_file(self, name, path):
         self.info('%s: %s' % (name, path))
