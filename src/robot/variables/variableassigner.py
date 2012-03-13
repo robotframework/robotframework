@@ -29,7 +29,7 @@ class VariableAssigner(object):
         self.list_var = ap.list_var
 
     def assign(self, context, return_value):
-        context.trace('Return: %s' % safe_repr(return_value))
+        context.trace(lambda: 'Return: %s' % safe_repr(return_value))
         if self.scalar_vars or self.list_var:
             self._assign(context, ReturnValue(self.scalar_vars, self.list_var,
                                               return_value))

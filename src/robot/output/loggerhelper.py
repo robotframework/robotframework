@@ -62,7 +62,7 @@ class AbstractLogger:
 
 
 class Message(BaseMessage):
-    __slots__ = []
+    __slots__ = ['_message']
 
     def __init__(self, message, level='INFO', html=False, timestamp=None):
         message = self._normalize_message(message)
@@ -71,6 +71,8 @@ class Message(BaseMessage):
         BaseMessage.__init__(self, message, level, html, timestamp)
 
     def _normalize_message(self, msg):
+        if callable(msg):
+            return msg
         if not isinstance(msg, unicode):
             msg = utils.unic(msg)
         return msg.replace('\r\n', '\n')
@@ -82,6 +84,16 @@ class Message(BaseMessage):
         if level not in LEVELS:
             raise DataError("Invalid log level '%s'" % level)
         return level, html
+
+    def _get_message(self):
+        if callable(self._message):
+            self._message = self._message()
+        return self._message
+
+    def _set_message(self, message):
+        self._message = message
+
+    message = property(_get_message, _set_message)
 
 
 class IsLogged:

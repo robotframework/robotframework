@@ -57,7 +57,8 @@ class _Timeout(object):
             self.message = variables.replace_string(self.message)
         except (DataError, ValueError), err:
             self.secs = 0.000001 # to make timeout active
-            self.error = 'Setting %s timeout failed: %s' % (self.type.lower(), unicode(err))
+            self.error = 'Setting %s timeout failed: %s' \
+                    % (self.type.lower(), unicode(err))
 
     def start(self):
         if self.secs > 0:
@@ -89,15 +90,15 @@ class _Timeout(object):
         timeout = self.time_left()
         if timeout <= 0:
             raise TimeoutError(self.get_message())
-        executable = lambda:runnable(*(args or ()), **(kwargs or {}))
+        executable = lambda: runnable(*(args or ()), **(kwargs or {}))
         return Timeout(timeout, self._timeout_error).execute(executable)
 
     def get_message(self):
         if not self.active:
             return '%s timeout not active.' % self.type
         if not self.timed_out():
-            return '%s timeout %s active. %s seconds left.' % (self.type, self.string,
-                                                       self.time_left())
+            return '%s timeout %s active. %s seconds left.' \
+                % (self.type, self.string, self.time_left())
         return self._timeout_error
 
     @property
@@ -108,8 +109,8 @@ class _Timeout(object):
 
 
 class TestTimeout(_Timeout):
-    _keyword_timeouted = False
     type = 'Test'
+    _keyword_timeouted = False
 
     def set_keyword_timeout(self, timeout_occurred):
         self._keyword_timeouted = self._keyword_timeouted or timeout_occurred
