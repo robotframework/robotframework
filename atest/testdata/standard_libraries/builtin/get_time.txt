@@ -1,3 +1,6 @@
+*** Settings ***
+Library      times.py
+
 *** Test Cases ***
 Get Time As Timestamp
     ${time1} =  Get Time
@@ -23,12 +26,15 @@ Get Time As Parts
     Should Be True  0 <= int('${sec}') <= 59
 
 When Time Is Seconds After Epoch
-    ${secs} =  Evaluate  1177665267 + time.altzone  modules=time
-    ${time} =  Get Time  ${EMPTY}  ${secs}
-    Should Be Equal  ${time}  2007-04-27 09:14:27
-    ${secs} =  Convert To String  ${secs}
-    ${time} =  Get Time  time_=${secs}
-    Should Be Equal  ${time}  2007-04-27 09:14:27
+    ${secs after epoch} =    get_timestamp_from_date     2007  4  27  9  14  27
+    ${converted date string} =  Get Time  ${EMPTY}  ${secs after epoch}
+    Should Be Equal  ${converted date string}  2007-04-27 09:14:27
+
+When Time Is Seconds After Epoch As String
+    ${secs after epoch} =    get_timestamp_from_date     2007  4  27  9  14  27
+    ${secs after epoch} =  Convert To String  ${secs after epoch}
+    ${converted date string} =  Get Time  time_=${secs after epoch}
+    Should Be Equal  ${converted date string}  2007-04-27 09:14:27
 
 When Time Is Timestamp
     ${secs} =  Get Time  secs  2007-04-27 09:14:27
