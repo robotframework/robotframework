@@ -23,7 +23,12 @@ from .testsuite import TestSuite
 
 
 class Result(object):
-    """Contains results of test execution."""
+    """Contains results of test execution.
+
+    :ivar source: Path to the xml file where results are read from.
+    :ivar suite: Hierarchical :class:`~.testsuite.TestSuite` results.
+    :ivar errors: Execution :class:`~.executionerrors.ExecutionErrors`.
+    """
 
     def __init__(self, source=None, root_suite=None, errors=None):
         self.source = source
@@ -35,10 +40,12 @@ class Result(object):
 
     @property
     def statistics(self):
+        """Test execution :class:`~robot.model.statistics.Statistics`."""
         return Statistics(self.suite, **self._stat_config)
 
     @property
     def return_code(self):
+        """Return code (integer) of test execution."""
         if self._status_rc:
             return min(self.suite.statistics.critical.failed, 250)
         return 0

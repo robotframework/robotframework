@@ -30,6 +30,21 @@ class TestSuite(model.TestSuite):
 
     def __init__(self, source='', name='', doc='', metadata=None,
                  message='', starttime=None, endtime=None):
+        """Results of a single test suite.
+
+        :ivar parent: Parent :class:`TestSuite` or `None`.
+        :ivar source: Path to the source file.
+        :ivar name: Test suite name.
+        :ivar doc: Test suite documentation.
+        :ivar metadata: Test suite metadata as a dictionary.
+        :ivar suites: Child suite results.
+        :ivar tests: Test case results. a list of :class:`~.testcase.TestCase`
+            instances.
+        :ivar keywords: A list containing setup and teardown results.
+        :ivar message: Possible failure message.
+        :ivar starttime: Test suite execution start time as a timestamp.
+        :ivar endtime: Test suite execution end time as a timestamp.
+        """
         model.TestSuite.__init__(self, source, name, doc, metadata)
         self.message = message
         self.starttime = starttime
