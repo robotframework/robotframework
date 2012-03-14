@@ -5,10 +5,7 @@ from os.path import abspath, dirname, join
 from subprocess import call, STDOUT
 import tempfile
 
-from robot.errors import DataError
 from robot.utils.asserts import assert_equals
-from robot.tidy import TidyCommandLine
-import robot.tidy
 
 ROBOT_SRC = join(dirname(abspath(__file__)), '..', '..', '..', 'src')
 
@@ -55,11 +52,3 @@ class TidyLib(object):
         for line1, line2 in zip(result.split(), expected.split()):
             msg = "\n%s\n!=\n%s\n" % (result, expected)
             assert_equals(repr(unicode(line1)), repr(unicode(line2)), msg)
-
-    def run_tidy(self, argument_string):
-        """Runs tidy programmatically. Fails if there are any expections."""
-        runner = TidyCommandLine(robot.tidy.__doc__)
-        try:
-            runner.run([str(a) for a in argument_string.split()])
-        except DataError, err:
-            raise RuntimeError(unicode(err))
