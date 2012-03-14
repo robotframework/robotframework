@@ -23,7 +23,7 @@ Verify File
     Should Be Equal  ${content}  ${expected}
 
 Create Base Test Directory
-    Remove Directory  ${BASE}  recursive
+    Remove Base Test Directory
     Create Directory  ${BASE}
 
 Remove Base Test Directory

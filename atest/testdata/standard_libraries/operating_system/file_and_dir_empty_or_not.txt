@@ -47,7 +47,7 @@ Non-ASCII File Should Be Empty
 File With Space Should Be Empty
     [Documentation]  FAIL File '${WITH SPACE}' is not empty. Size: 12 bytes
     Test File Should Be Empty  ${WITH SPACE}
-	
+
 File Should Be Empty When File Does Not Exist
     [Documentation]  FAIL   File '${NON ASCII}' does not exist
     File Should Be Empty  ${NON ASCII}
@@ -72,7 +72,7 @@ File Should Not Be Empty When File Does Not Exist
 Test Directory Should Be Empty
     [Arguments]  ${dir}
     Create Directory  ${dir}
-    Directory Should Be Empty  ${dir}
+    Directory Should Be Empty  ${dir}  this should not fail
     Create Directory  ${dir}/dir
     Create File  ${dir}/file.txt
     Create File  ${dir}/nöẗ önlÿ äscïï
@@ -80,22 +80,23 @@ Test Directory Should Be Empty
 
 Test Directory Should Not Be Empty
     [Arguments]  ${dir}
+    Create Directory  ${dir}
     Create File  ${dir}/file.txt
-    Directory Should Not Be Empty  ${dir}
+    Directory Should Not Be Empty  ${dir}  this should not fail
     Remove File  ${dir}/file.txt
     Directory Should Not Be Empty  ${dir}
 
 Test File Should Be Empty
     [Arguments]  ${file}
     Create File  ${file}
-    File Should Be Empty  ${file}
+    File Should Be Empty  ${file}  this should not fail
     Create File  ${file}  some content
     File Should Be Empty  ${file}
 
 Test File Should Not Be Empty
     [Arguments]  ${file}
     Create File  ${file}  some content
-    File Should Not Be Empty  ${file}
+    File Should Not Be Empty  ${file}  this should not fail
     Create File  ${file}
     File Should Not Be Empty  ${file}
 
