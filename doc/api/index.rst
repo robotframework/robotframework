@@ -6,7 +6,14 @@ Robot Framework API documentation
 This document describes the public API of Robot Framework. Installation,
 basic usage and wealth of other topics are covered in `Robot Framework User Guide`__.
 
+Main API entry points are documented here, but the lower level implementation
+details are not that well documented. If the documentation is insufficient,
+it is possible to view the source code by clicking `[source]` link in the
+documentation. In case viewing the source is not helpful either,
+questions may be sent to the `users mailing list`__.
+
 __ http://code.google.com/p/robotframework/wiki/UserGuide
+__ http://groups.google.com/group/robotframework-users
 
 .. toctree::
     :maxdepth: 2
