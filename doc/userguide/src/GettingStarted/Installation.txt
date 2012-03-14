@@ -79,7 +79,7 @@ interpreters:
    =============  ==============  ================
 
 On UNIX-like operating systems such as Linux and OSX, the runner scripts
-are implemented using Python, and on Windows they are batch files. Regardless
+are implemented using Python, and on Windows they are batch files. Regardless of
 the operating system, using any of these scripts requires that the appropriate
 interpreter is in PATH_.
 
@@ -151,7 +151,7 @@ Verifying installation
 ``````````````````````
 
 After a successful installation, you should be able to execute created `runner
-scripts_` with :opt:`--version` option and get both Robot Framework and interpreter
+scripts`_ with :opt:`--version` option and get both Robot Framework and interpreter
 versions as a result.
 
 .. sourcecode:: bash

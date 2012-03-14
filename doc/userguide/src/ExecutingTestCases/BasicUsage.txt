@@ -485,7 +485,7 @@ default value may not be enough for creating reports and logs when
 outputs are very big. There are several ways to configure JVM options:
 
 1. Modify Jython start-up script (:prog:`jython` shell script or
-   prog:`jython.bat` batch file) directly. This is a permanent configuration.
+   :prog:`jython.bat` batch file) directly. This is a permanent configuration.
 
 2. Set :var:`JYTHON_OPTS` environment variable. This can be done permanently
    in operating system level or per execution in a custom start-up script.
