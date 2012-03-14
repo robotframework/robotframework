@@ -44,9 +44,24 @@ return objects implemented in them.
 
 .. toctree::
     :maxdepth: 1
-    :glob:
 
-    autodoc/*
+    autodoc/robot
+    autodoc/robot.api
+    autodoc/robot.common
+    autodoc/robot.conf
+    autodoc/robot.htmldata
+    autodoc/robot.libdocpkg
+    autodoc/robot.libraries
+    autodoc/robot.model
+    autodoc/robot.output
+    autodoc/robot.parsing
+    autodoc/robot.reporting
+    autodoc/robot.result
+    autodoc/robot.running
+    autodoc/robot.utils
+    autodoc/robot.variables
+    autodoc/robot.writer
+
 
 
 Indices
