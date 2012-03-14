@@ -85,6 +85,8 @@ def _get_interpreter():
         return 'Jython'
     if sys.platform == 'cli':
         return 'IronPython'
+    if 'PyPy' in sys.version:
+        return 'PyPy'
     return 'Python'
 """
 
