@@ -47,6 +47,16 @@ A test
     def test_rows_are_not_split_if_there_are_headers(self):
         self._test_rows_are_not_split_if_there_are_headers()
 
+    def test_configuring_number_of_separating_spaces(self):
+        output = StringIO()
+        create_test_case_file().save(output=output, txt_separating_spaces=8)
+        expected = '''\
+*** test case ***         some        and other
+A test
+                          A kw        an arg'''.strip()
+        actual = output.getvalue().strip()
+        assert_equals(repr(expected), repr(actual))
+
 
 class TestTsvWriter(_WriterTestCase):
 

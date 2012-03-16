@@ -77,10 +77,10 @@ class _DataFileWriter(object):
 
 
 class SpaceSeparatedTxtWriter(_DataFileWriter):
-    _separator = ' '*4
 
     def __init__(self, configuration):
         formatter = TxtFormatter(configuration.txt_column_count)
+        self._separator = ' ' * configuration.txt_separating_spaces
         _DataFileWriter.__init__(self, formatter, configuration)
 
     def _write_row(self, row):

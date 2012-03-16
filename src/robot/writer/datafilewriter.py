@@ -53,8 +53,8 @@ class WritingContext(object):
     tsv_column_count = 8
     _formats = [txt_format, html_format, tsv_format]
 
-    def __init__(self, datafile, format='', output=None,
-                 pipe_separated=False, line_separator=os.linesep):
+    def __init__(self, datafile, format='', output=None, pipe_separated=False,
+                 txt_separating_spaces=4, line_separator=os.linesep):
         """
         :param datafile: The datafile to be written.
         :type datafile: :py:class:`~robot.parsing.model.TestCaseFile`,
@@ -67,6 +67,8 @@ class WritingContext(object):
             used to construct a new file object.
         :param bool pipe_separated: Whether to use pipes as separator when
             output file format is txt.
+        :param int txt_separating_spaces: Number of separating spaces between
+            cells in space separated format.
         :param str line_separator: Line separator used in output files.
 
         If `output` is not given, an output file is created based on the source
@@ -86,6 +88,7 @@ class WritingContext(object):
         self.line_separator = line_separator
         self._given_output = output
         self.format = self._validate_format(format) or self._format_from_file()
+        self.txt_separating_spaces = txt_separating_spaces
         self.output = output
 
     def __enter__(self):
