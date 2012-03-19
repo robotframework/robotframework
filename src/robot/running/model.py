@@ -62,7 +62,7 @@ def _get_multisource_suite(datasources, include_suites, warn_on_skipped):
         try:
             suitedatas.append(_parse_suite(datasource, include_suites, warn_on_skipped))
         except DataError, err:
-            LOGGER.info(err)
+            LOGGER.warn(err)
     suite = RunnableMultiTestSuite(suitedatas)
     if suite.get_test_count() == 0:
         raise DataError("Data sources %s contain no test cases."

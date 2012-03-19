@@ -46,3 +46,18 @@ Wildcards
     Check Names  ${SUITE.suites[2]}  Tsuite3  Tsuite1 & Tsuite2 & Tsuite3.
     Should Contain Tests  ${SUITE.suites[2]}   Suite3 First
     Check Names  ${SUITE.suites[2].tests[0]}  Suite3 First  Tsuite1 & Tsuite2 & Tsuite3.Tsuite3.
+
+Warning When Parsing Any Data Source Fails
+    Run Tests  ${EMPTY}  nonex  misc/pass_and_fail.html
+    ${nonex} =  Normalize Path  ${DATADIR}/nonex
+    Check Log Message  ${ERRORS.msgs[0]}  Parsing '${nonex}' failed: Data source does not exist.  WARN
+    Check Names  ${SUITE}  Pass And Fail
+    Check Names  ${SUITE.suites[0]}  Pass And Fail  Pass And Fail.
+    Should Contain Tests  ${SUITE.suites[0]}  Pass  Fail
+
+Warnings And Error When Parsing All Data Sources Fail
+    Run Tests Without Processing Output  ${EMPTY}  nonex1  nonex2
+    ${nonex} =  Normalize Path  ${DATADIR}/nonex
+    Check Stderr Contains  [ WARN ] Parsing '${nonex}1' failed: Data source does not exist.
+    Check Stderr Contains  [ WARN ] Parsing '${nonex}2' failed: Data source does not exist.
+    Check Stderr Contains  [ ERROR ] Data sources '${nonex}1' and '${nonex}2' contain no test cases.
