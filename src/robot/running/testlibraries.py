@@ -71,6 +71,8 @@ class _DynamicMethod(object):
             return self._to_unicode(value)
 
     def _to_unicode(self, value):
+        if not value:
+            return value
         if isinstance(value, unicode):
             return value
         if isinstance(value, str):

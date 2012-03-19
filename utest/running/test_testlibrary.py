@@ -429,7 +429,7 @@ class TestDynamicLibrary(unittest.TestCase):
 
     def test_get_keyword_doc_and_args_are_ignored_if_not_callable(self):
         lib = TestLibrary('classes.InvalidAttributeDynamicLibrary')
-        assert_equals(len(lib.handlers), 4)
+        assert_equals(len(lib.handlers), 5)
         assert_equals(lib.handlers['No Arg'].doc, '')
         self._assert_handler_args(lib.handlers['No Arg'], 0, sys.maxint)
 
@@ -445,7 +445,8 @@ class TestDynamicLibrary(unittest.TestCase):
         lib = TestLibrary('classes.ArgDocDynamicLibrary')
         for name, exp in [('No Arg', ()), ('One Arg', (1,1)),
                           ('One or Two Args', (1, 2)),
-                          ('Many Args', (0, sys.maxint))]:
+                          ('Many Args', (0, sys.maxint)),
+                          ('No Arg Spec', (0, sys.maxint))]:
             self._assert_handler_args(lib.handlers[name], *exp)
 
     def _assert_handler_args(self, handler, minargs=0, maxargs=0):

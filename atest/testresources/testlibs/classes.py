@@ -131,7 +131,8 @@ class ArgDocDynamicLibrary:
         kws = [('No Arg', []),
                ('One Arg', ['arg']),
                ('One or Two Args', ['arg', 'darg=dvalue']),
-               ('Many Args', ['*args'])]
+               ('Many Args', ['*args']),
+               ('No Arg Spec', None)]
         self._keywords = dict((name, _KeywordInfo(name, argspec))
                               for name, argspec in kws)
     def get_keyword_names(self):

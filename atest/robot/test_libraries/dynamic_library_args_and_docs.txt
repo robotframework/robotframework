@@ -18,21 +18,24 @@ Documentation And Argument Boundaries Work With Default Args
 Documentation And Argument Boundaries Work With Varargs
     Keyword documentation for Many Args
 
+Documentation and Argument Boundaries Work When Argspec is None
+    Keyword documentation for No Arg Spec
+
 Keyword Not Created And Warning Shown When Getting Documentation Fails
     [Template]  Check Creating Keyword Failed Due To Invalid Doc Message
     0  Many Args
     1  No Arg
-    2  One Arg
-    3  One or Two Args
-    [Teardown]  Check Log Message  ${ERRORS.msgs[4]}   Imported library 'classes.InvalidGetDocDynamicLibrary' contains no keywords  WARN
+    3  One Arg
+    4  One or Two Args
+    [Teardown]  Check Log Message  ${ERRORS.msgs[5]}   Imported library 'classes.InvalidGetDocDynamicLibrary' contains no keywords  WARN
 
 Keyword Not Created And Warning Shown When Getting Arguments Fails
     [Template]  Check Creating Keyword Failed Due To Invalid Args Message
-    5  Many Args
-    6  No Arg
-    7  One Arg
-    8  One or Two Args
-    [Teardown]  Check Log Message  ${ERRORS.msgs[9]}   Imported library 'classes.InvalidGetArgsDynamicLibrary' contains no keywords  WARN
+    6  Many Args
+    7  No Arg
+    9  One Arg
+    10  One or Two Args
+    [Teardown]  Check Log Message  ${ERRORS.msgs[11]}   Imported library 'classes.InvalidGetArgsDynamicLibrary' contains no keywords  WARN
 
 Documentation And Argument Boundaries Work With No Args In Java
     [Tags]  jybot
