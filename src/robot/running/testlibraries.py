@@ -68,11 +68,9 @@ class _DynamicMethod(object):
             raise DataError("Calling dynamic method '%s' failed: %s" %
                             (self._method.__name__, utils.get_error_message()))
         else:
-            return self._to_unicode(value)
+            return self._to_unicode(value) if value is not None else self._default
 
     def _to_unicode(self, value):
-        if not value:
-            return value
         if isinstance(value, unicode):
             return value
         if isinstance(value, str):
