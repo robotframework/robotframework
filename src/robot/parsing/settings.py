@@ -309,6 +309,9 @@ class _DataList(object):
     def __getitem__(self, index):
         return self.data[index]
 
+    def __setitem__(self, index, item):
+        self.data[index] = item
+
     def __len__(self):
         return len(self.data)
 

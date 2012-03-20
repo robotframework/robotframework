@@ -101,6 +101,9 @@ class TestSettingTable(unittest.TestCase):
         assert_equal(self.table.metadata[0].value, 'bar')
         assert_equal(self.table.metadata[1].name, 'boo')
         assert_equal(self.table.metadata[1].value, 'f a r')
+        self.table.metadata[0] = self.table.metadata[1]
+        assert_equal(self.table.metadata[0].name, 'boo')
+        assert_equal(self.table.metadata[0].value, 'f a r')
 
     def test_imports(self):
         self._verify_import(self.table.add_library('Name'), 'Name')
@@ -112,6 +115,8 @@ class TestSettingTable(unittest.TestCase):
                             'N2', ['1', '2', '3', '4'])
         assert_equal(len(self.table.imports), 5)
         assert_true(all(isinstance(im, _Import) for im in self.table.imports))
+        self.table.imports[1] = self.table.imports[0]
+        assert_equals(self.table.imports[1].name, 'Name')
 
     def test_resource_with_invalid_args(self):
         reso = self.table.add_resource('reso.txt', ['invalid', 'args'])
