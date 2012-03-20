@@ -32,11 +32,13 @@ File Containing No Test Cases
     Check Stderr Matches Regexp  \\[ ERROR \\] Test suite '.*[/\\\\]empty_testcase_table.txt' contains no test cases.${USAGE_TIP}
 
 Multisource Containing No Test Cases
-    Run Tests Without Processing Output  ${EMPTY}  ${HTMLDIR}${/}empty.html  ${TSVDIR}${/}empty.tsv
-    Check Stderr Matches Regexp  \\[ ERROR \\] Data sources '.*[/\\\\]empty.html' and '.*[/\\\\]empty.tsv' contain no test cases.${USAGE_TIP}
-    ${syslog} =  Get Syslog
-    Should Match RegExp  ${syslog}  '.*[/\\\\]empty.html' failed: ${EMPTY TC TABLE MSG}
-    Should Match RegExp  ${syslog}  Parsing '.*[/\\\\]empty.tsv' failed: ${EMPTY TC TABLE MSG}
+    Run Tests Without Processing Output  ${EMPTY}  ${HTMLDIR}/empty.html  ${TSVDIR}/empty.tsv
+    ${html} =  Normalize Path  ${DATADIR}/${HTMLDIR}/empty.html
+    ${tsv} =  Normalize Path  ${DATADIR}/${TSVDIR}/empty.tsv
+    Stderr Should Be Equal To  SEPARATOR=\n
+    ...  [ WARN ] Parsing '${html}' failed: ${EMPTY TC TABLE MSG}
+    ...  [ WARN ] Parsing '${tsv}' failed: ${EMPTY TC TABLE MSG}
+    ...  [ ERROR ] Data sources '${html}' and '${tsv}' contain no test cases.${USAGE_TIP}\n
 
 Empty HTML File
     Check Parsing Error  empty.html  ${EMPTY TC TABLE MSG}  ${HTMLDIR}${/}empty.html

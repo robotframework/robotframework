@@ -187,6 +187,10 @@ File Should Be Equal To
     ${exp} =  Catenate  @{expected}
     Should Be Equal  ${content}  ${exp}
 
+Stderr Should Be Equal To
+    [Arguments]  @{expected}
+    File Should Be Equal To  ${STDERR FILE}  @{EXPECTED}
+
 Stderr Should Be Empty
     ${stderr} =  Get Stderr
     Should Be Empty  ${stderr}  Errors in test execution
