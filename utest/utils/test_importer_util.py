@@ -356,6 +356,15 @@ class TestErrorDetails(unittest.TestCase):
         for line in lines[1:]:
             assert_true(line.startswith('  '))
 
+    def test_non_ascii_bytes_in_pythonpath(self):
+        sys.path.append('hyv\xe4')
+        try:
+            error = self._failing_import('NoneExisting')
+        finally:
+            sys.path.pop()
+        last_line = self._get_pythonpath(error).splitlines()[-1].strip()
+        assert_true(last_line.startswith('hyv'))
+
     if sys.platform.startswith('java'):
 
         def test_classpath(self):

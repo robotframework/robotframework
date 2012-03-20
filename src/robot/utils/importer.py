@@ -21,6 +21,7 @@ if sys.platform.startswith('java'):
 
 from robot.errors import DataError
 
+from .encoding import decode_from_system
 from .error import get_error_details
 from .robotpath import abspath, normpath
 
@@ -104,7 +105,8 @@ class Importer(object):
         yield '%s:' % type
         for item in items:
             if item:
-                yield '  %s' % item
+                yield '  %s' % (item if isinstance(item, unicode)
+                                else decode_from_system(item))
 
     def _instantiate_if_needed(self, imported, args):
         if args is None:
