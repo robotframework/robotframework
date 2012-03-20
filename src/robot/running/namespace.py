@@ -162,6 +162,8 @@ class Namespace:
         for base in [basedir] + sys.path:
             if not (base and os.path.isdir(base)):
                 continue
+            if not isinstance(base, unicode):
+                base = utils.decode_from_system(base)
             ret = os.path.join(base, path)
             if os.path.isfile(ret):
                 return ret
