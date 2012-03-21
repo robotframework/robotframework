@@ -36,7 +36,7 @@ class RowSplitter(object):
         while data:
             current, data = self._split(data)
             rows.append(self._escape_last_empty_cell(current))
-            if data:
+            if data and indent + 1 < self._cols:
                 data = self._indent(data, indent)
         return rows
 
