@@ -12,20 +12,21 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-
 """A module to handle different character widths on the console.
 
 Some East Asian characters have width of two on console, and combining
 characters themselves take no extra space.
 
-See issue 604 [1] for more details. It also contains `generate_wild_chars.py`
-script that was originally used to create the East Asian wild character map.
-Big thanks for xieyanbo for the script and the original patch.
+See issue 604 [1] for more details about East Asian characters. The issue also
+contains `generate_wild_chars.py` script that was originally used to create
+`_EAST_ASIAN_WILD_CHARS` mapping. An updated version of the script is attached
+to issue 1096. Big thanks for xieyanbo for the script and the original patch.
 
 Note that Python's `unicodedata` module is not used here because importing
 it takes several seconds on Jython.
 
 [1] http://code.google.com/p/robotframework/issues/detail?id=604
+[2] http://code.google.com/p/robotframework/issues/detail?id=1096
 """
 
 def get_char_width(char):
@@ -45,7 +46,7 @@ def _char_in_map(char, map):
     return False
 
 
-_COMBINING_CHARS = [(768,879)]
+_COMBINING_CHARS = [(768, 879)]
 
 _EAST_ASIAN_WILD_CHARS = [
         (888, 889), (895, 899), (907, 907), (909, 909), (930, 930),
