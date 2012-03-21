@@ -31,7 +31,7 @@ class TestCase(model.TestCase):
         :ivar tags: Test case tags, a list of strings.
         :ivar timeout: Test case timeout.
         :ivar keywords: Keyword results, a list of :class:`~.keyword.Keyword`.
-            instances
+            instances and contains also possible setup and teardown keywords.
         :ivar status: String 'PASS' of 'FAIL'.
         :ivar message: Possible failure message.
         :ivar starttime: Test case execution start time as a timestamp.
