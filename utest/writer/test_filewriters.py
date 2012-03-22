@@ -55,7 +55,7 @@ A test
 A test
                           A kw        an arg'''.strip()
         actual = output.getvalue().strip()
-        assert_equals(repr(expected), repr(actual))
+        assert_equals(expected.splitlines(), actual.splitlines())
 
 
 class TestTsvWriter(_WriterTestCase):
