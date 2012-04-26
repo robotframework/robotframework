@@ -31,7 +31,7 @@
 </script>
 
 <script type="text/javascript">
-    $(document).ready(function(){
+    $(document).ready(function() {
         parseTemplates();
         document.title = libdoc.name;
         $.tmpl('start', libdoc).appendTo($('body'));
@@ -41,12 +41,18 @@
         $.tmpl('shortcuts', libdoc).appendTo($('body'));
         $.tmpl('keywords', libdoc).appendTo($('body'));
         $.tmpl('footer', libdoc).appendTo($('body'));
+        scrollToHash();
     });
 
     function parseTemplates() {
         $('script[type="text/x-jquery-tmpl"]').map(function (idx, elem) {
             $.template(elem.id, elem.text);
         });
+    }
+
+    function scrollToHash() {
+        if (window.location.hash)
+            window.location.hash = window.location.hash.substring(1);
     }
 </script>
 
