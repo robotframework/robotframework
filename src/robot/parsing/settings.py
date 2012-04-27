@@ -248,7 +248,7 @@ class Library(_Import):
         _Import.__init__(self, parent, name, args, alias, comment)
 
     def _split_alias(self, args):
-        if len(args) >= 2 and args[-2].upper() == 'WITH NAME':
+        if len(args) >= 2 and str(args[-2]).upper() == 'WITH NAME':
             return args[:-2], args[-1]
         return args, None
 
