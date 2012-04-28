@@ -30,7 +30,8 @@ By default all test cases are expected to 'PASS' and have no message. Changing
 the expected status to 'FAIL' is done by having word 'FAIL' (in uppercase)
 somewhere in the test case documentation. Expected error message must then be
 given after 'FAIL'. Error message can also be specified as a regular
-expression by prefixing it with string 'REGEXP:'.
+expression by prefixing it with string 'REGEXP:'. Testing only the beginning
+of the message is possible with 'STARTS:' prefix.
 
 This tool also allows testing the created log messages. They are specified
 using a syntax 'LOG x.y:z LEVEL Actual message', which is described in detail
@@ -83,6 +84,10 @@ def _message_matches(actual, expected):
     if expected.startswith('REGEXP:'):
         pattern = '^%s$' % expected.replace('REGEXP:', '', 1).strip()
         if re.match(pattern, actual, re.DOTALL):
+            return True
+    if expected.startswith('STARTS:'):
+        start = expected.replace('STARTS:', '', 1).strip()
+        if actual.startswith(start):
             return True
     return False
 

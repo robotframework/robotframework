@@ -6,9 +6,13 @@ Expected Fail
     [Documentation]  Texts before fail (in caps) is ignored. FAIL Expected failure
     Fail  Expected failure
 
-Expected Fail As Regexp
+Expected Fail With REGEXP
     [Documentation]  FAIL REGEXP: Pattern is here .* \\d+
     Fail  Pattern is here whatever 123
+
+Expected Fail With STARTS
+    [Documentation]  FAIL STARTS: This is start
+    Fail  This is start and this is end
 
 Log Message
     [Documentation]  LOG 1 Hello world!

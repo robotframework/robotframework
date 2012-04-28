@@ -44,6 +44,9 @@ prefixing it with :msg:`REGEXP:`. The specified regular expression
 must match the error message fully. Having spaces between the status,
 the message or the possible regular expression prefix is optional.
 
+It is also possible to test only the beginning of the error by
+prefixing the expected message with :msg:`STARTS:`.
+
 .. table:: Examples
    :class: example
 
@@ -54,6 +57,8 @@ the message or the possible regular expression prefix is optional.
    \                  Steps            \          \
    Regexp Example     [Documentation]  FAIL       REGEXP: (IOError|OSError): .*
    \                  Steps            \          \
+   Start Example      [Documentation]  FAIL       STARTS: IOError:
+   \                  Steps            \          \
    =================  ===============  =========  =============================
 
 
@@ -62,7 +67,7 @@ Defining expected log messages
 
 The expected keyword log messages can also be defined in the test case
 documentation using a syntax such as::
-    
+
    LOG x.y:z LEVEL Actual message
 
 The part before the colon is the number of the keyword to check. For
