@@ -44,9 +44,6 @@ Non-existing library should cause catchable error
     Run Keyword And Expect Error  No library with name 'NonExisting' found.
     ...  Get Library Instance  NonExisting
 
-'Import Library' keyword should be able to handle special arguments
-    Import Library    ParameterLibrary    ${42}    last
-
 Library scopes 1
     ${test} =  Get Library Instance  libraryscope.Test
     ${suite} =  Get Library Instance  libraryscope.Suite

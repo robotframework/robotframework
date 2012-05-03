@@ -34,3 +34,7 @@ Import Library Using Physical Path, Arguments And WITH NAME
 Import Library Failure Is Catchable
     Run Keyword And Expect Error  Importing test library 'NonExistingLib' failed: ImportError: *
     ...  Import Library  NonExistingLib
+
+'Import Library' keyword should be able to handle special arguments
+    Import Library    ParameterLibrary    ${42}    last
+    Import Library    ParameterLibrary    hyvää päivää    last
