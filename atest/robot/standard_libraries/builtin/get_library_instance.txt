@@ -22,9 +22,6 @@ Library with alias
 `Import Library` keyword
     Check Test Case  ${TESTNAME}
 
-'Import Library' keyword should be able to handle special arguments
-    Check Test Case  ${TESTNAME}
-
 Non-existing library should cause catchable error
     Check Test Case  ${TESTNAME}
 

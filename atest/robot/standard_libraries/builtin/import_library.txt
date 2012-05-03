@@ -22,3 +22,6 @@ Import Library Using Physical Path, Arguments And WITH NAME
 Import Library Failure Is Catchable
     Check Test Case  ${TESTNAME}
 
+'Import Library' keyword should be able to handle special arguments
+    Check Test Case  ${TESTNAME}
+
