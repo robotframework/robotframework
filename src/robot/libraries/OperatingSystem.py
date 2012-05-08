@@ -201,7 +201,7 @@ class OperatingSystem:
 
         Returns the index of this process. The indexing starts from 1, and it
         can be used to switch between the processes with the `Switch Process`
-        keyword. To end all processes and reset indexing, the
+        keyword. To wait until all processes terminate and to reset indexing, the
         `Stop All Processes` keyword must be used.
 
         The optional `alias` is a name for this process that may be used with
@@ -263,21 +263,27 @@ class OperatingSystem:
         return output
 
     def stop_process(self):
-        """Stops the current process without reading from it.
+        """Waits until the current process terminates without reading from it.
 
-        Stopping a process does not remove it from the process list. To reset
-        the process list (and indexes and aliases), `Stop All Processes` must
-        be used. Stopping an already stopped process has no effect.
+        Note that this keyword does not actually stop the process, only waits
+        until it terminates on its own. It does not either remove it from the
+        process list. To reset the process list (and indexes and aliases),
+        `Stop All Processes` must be used. Calling Stop Process on a process
+        that has already terminated has no effect.
 
         See `Start Process` and `Switch Process` for more information.
         """
         PROCESSES.current.close()
 
     def stop_all_processes(self):
-        """Stops all the processes and removes them from the process list.
+        """Waits until all the processes terminate and removes them from the
+        process list.
 
-        Resets the indexing that `Start Process` uses. All aliases are
-        also deleted. It does not matter have some of the processes
+        Note that this keyword does not actually stop the processes, only waits
+        until they terminate on their own.
+
+        This keyword resets the indexing that `Start Process` uses. All aliases
+        are also deleted. It does not matter have some of the processes
         already been closed or not.
 
         It is highly recommended to use this keyword in test or suite level
