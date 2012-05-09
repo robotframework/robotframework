@@ -36,6 +36,11 @@ Complex
     ::FOR  ${i}  IN  @{list}
     \    Log   Got ${i}
 
+Log levels
+    Log     This is a WARNING!      WARN
+    Log     This is info            INFO
+    Log     This is debug           DEBUG
+    Log     This is trace           TRACE
 
 *** Keywords **
 User Kw
