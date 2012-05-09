@@ -32,8 +32,8 @@
   </ul>
 </div>
 <script type="text/javascript">removeJavaScriptDisabledWarning();</script>
-<div id="slectooooori1">
-    <select id="log_level_selector" onchange="logLevelSelected(this.options[this.selectedIndex].value);">
+<div id="log_level_selector">
+    <select onchange="logLevelSelected(this.options[this.selectedIndex].value);">
     <option selected="selected" value="0">Show all</option>
     <option value="1">DEBUG</option>
     <option value="2">INFO</option>
@@ -66,10 +66,13 @@ $(document).ready(function(){
 
 function logLevelSelected(value) {
     value = parseInt(value);
+    var elem = document.elementFromPoint(100, 5);
     changeClassDisplay(".trace_message", value < 1);
     changeClassDisplay(".debug_message", value < 2);
     changeClassDisplay(".info_message",  value < 3);
     changeClassDisplay(".warn_message",  value < 4);
+    elem.scrollIntoView(true);
+
 }
 
 function changeClassDisplay(clazz, visible) {
