@@ -14,7 +14,7 @@ Invalid Input
     Check Parsing Error  unsupported.log  Unsupported file format 'log'.  ${PARSING}${/}unsupported.log
 
 Malformed HTML
-    Check Parsing Error  malformed.html  HTMLParseError:?.*  ${HTMLDIR}${/}malformed.html
+    Check Parsing Error  malformed.html  .*  ${HTMLDIR}${/}malformed.html
 
 HTML File Not Containing Tests
     Check Parsing Error  invalid.html  ${EMPTY TC TABLE MSG}  ${HTMLDIR}${/}invalid.html

@@ -16,7 +16,10 @@ import xmlrpclib
 import socket
 import time
 import sys
-from xml.parsers.expat import ExpatError
+try:
+    from xml.parsers.expat import ExpatError
+except ImportError:   # No expat in IronPython 2.7
+    class ExpatError(Exception): pass
 
 from robot import utils
 from robot.errors import RemoteError
