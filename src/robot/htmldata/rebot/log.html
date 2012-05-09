@@ -32,6 +32,14 @@
   </ul>
 </div>
 <script type="text/javascript">removeJavaScriptDisabledWarning();</script>
+<div id="slectooooori1">
+    <select id="log_level_selector" onchange="logLevelSelected(this.options[this.selectedIndex].value);">
+    <option selected="selected" value="0">Show all</option>
+    <option value="1">DEBUG</option>
+    <option value="2">INFO</option>
+    <option value="3">WARN</option>
+</select>
+</div>
 
 <div id="header"></div>
 <div id="statistics_container"></div>
@@ -55,6 +63,28 @@ $(document).ready(function(){
         expandSuite(topsuite);
     }
 });
+
+function logLevelSelected(value) {
+    value = parseInt(value);
+    changeClassDisplay(".trace_message", value < 1);
+    changeClassDisplay(".debug_message", value < 2);
+    changeClassDisplay(".info_message",  value < 3);
+    changeClassDisplay(".warn_message",  value < 4);
+}
+
+function changeClassDisplay(clazz, visible) {
+    var ss = document.styleSheets;
+
+    for (var i=0; i<ss.length; i++) {
+        var rules = ss[i].cssRules || ss[i].rules;
+
+        for (var j=0; j<rules.length; j++) {
+            if (rules[j].selectorText === clazz) {
+                rules[j].style.display = visible? "block" : "none";
+            }
+        }
+    }
+}
 
 function addErrors() {
     var errors = window.testdata.errors();
@@ -314,7 +344,7 @@ function addTestExecutionLog(main) {
 </script>
 
 <script type="text/x-jquery-tmpl" id="messageTemplate">
-  <table class="messages">
+  <table class="messages ${level.toLowerCase()}_message">
     <tr>
       <td class="time">${time}</td>
       <td class="${level.toLowerCase()} level">${level}</td>

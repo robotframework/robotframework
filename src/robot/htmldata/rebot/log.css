@@ -57,6 +57,18 @@ table.messages td, table.errors.td {
 table.messages td.time {
     width: 6em;
 }
+.trace_message {
+    display: block;
+}
+.debug_message {
+    display: block;
+}
+.info_message {
+    display: block;
+}
+.warn_message {
+    display: block;
+}
 table.errors td.time {
     width: 10em;
     white-space: nowrap;
