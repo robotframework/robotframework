@@ -56,7 +56,7 @@ Get start/end messages
     @{all msgs} =  Set Variable  ${all msgs}
     ${return} =  Create List
     :FOR  ${msg}  IN  @{all msgs}
-    \  Run Keyword Unless  "message: " in """${msg.message}"""  Append To List  ${return}  ${msg}
+    \  Run Keyword Unless  "message: " in r"""${msg.message}"""  Append To List  ${return}  ${msg}
     [Return]  ${return}
 
 Correct messages should be logged to normal log
