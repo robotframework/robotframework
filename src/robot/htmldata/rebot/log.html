@@ -34,7 +34,7 @@
 <script type="text/javascript">removeJavaScriptDisabledWarning();</script>
 <div id="log_level_selector">
     <select onchange="logLevelSelected(this.options[this.selectedIndex].value);">
-    <option selected="selected" value="0">Show all</option>
+    <option value="0" selected="selected">TRACE</option>
     <option value="1">DEBUG</option>
     <option value="2">INFO</option>
     <option value="3">WARN</option>
@@ -64,15 +64,40 @@ $(document).ready(function(){
     }
 });
 
-function logLevelSelected(value) {
-    value = parseInt(value);
-    var elem = document.elementFromPoint(100, 5);
-    changeClassDisplay(".trace_message", value < 1);
-    changeClassDisplay(".debug_message", value < 2);
-    changeClassDisplay(".info_message",  value < 3);
-    changeClassDisplay(".warn_message",  value < 4);
-    elem.scrollIntoView(true);
+function logLevelSelected(level) {
+    var anchors = getViewAnchorElements();
+    setMessageVisibility(level);
+    scrollToShortestVisibleAnchorElement(anchors);
+}
 
+function getViewAnchorElements() {
+    var elem1 = $(document.elementFromPoint(100, 0));
+    var elem2 = $(document.elementFromPoint(100, 20));
+    return [elem1, elem2];
+}
+
+function scrollToShortestVisibleAnchorElement(anchors) {
+    anchors = $.map(anchors, closestVisibleParent);
+    var shortest = anchors[0];
+    for (var i=1; i<anchors.length; i++) {
+        if (shortest.height() > anchors[i].height())
+            shortest = anchors[i];
+    }
+    shortest.get()[0].scrollIntoView(true);
+}
+
+function setMessageVisibility(level) {
+    level = parseInt(level);
+    changeClassDisplay(".trace_message", level < 1);
+    changeClassDisplay(".debug_message", level < 2);
+    changeClassDisplay(".info_message", level < 3);
+}
+
+function closestVisibleParent(elem) {
+    while ( !elem.is(":visible") ) {
+        elem = elem.parent();
+    }
+    return elem;
 }
 
 function changeClassDisplay(clazz, visible) {
