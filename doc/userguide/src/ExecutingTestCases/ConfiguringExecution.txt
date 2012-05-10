@@ -229,8 +229,8 @@ Adjusting library search path
 When a `test library is taken into use`__, Robot Framework uses the Python
 or Jython interpreter to import a module implementing the library from
 the system. The location where these modules are searched from is called
-PYTHONPATH, and when running tests on Jython, also Java CLASSPATH is
-used.
+PYTHONPATH, and when running tests on Jython or using the jar distribution,
+also Java CLASSPATH is used.
 
 Adjusting the library search path so that libraries are found is
 a requirement for successful test execution. In addition to
@@ -268,11 +268,21 @@ regardless of the interpreter.
 Setting CLASSPATH
 '''''''''''''''''
 
-CLASSPATH is used only with Jython, and the most common way to alter
-it is setting an environment variable similarly as with PYTHONPATH.
-Note that instead of CLASSPATH, it is always possible to use
-PYTHONPATH with Jython, even with libraries and listeners implemented
-with Java.
+CLASSPATH is used with Jython or when using the standalone jar.
+
+When using Jython the most common way to alter CLASSPATH is setting an
+environment variable similarly as with PYTHONPATH. Note that instead of
+CLASSPATH, it is always possible to use PYTHONPATH with Jython, even with
+libraries and listeners implemented with Java.
+
+When using the standalone jar distribution, the CLASSPATH has to be set a
+bit differently, due to the fact that `java -jar` command does not read
+the CLASSPATH environment variable. In this case, there are two different
+ways to configure CLASSPATH, which are shown in the examples below::
+
+  java -cp lib/testlibrary.jar:lib/app.jar:robotframework-2.7.1.jar org.robotframework.RobotFramework example.txt
+
+  java -Xbootclasspath/a:lib/testlibrary.jar:lib/app.jar -jar robotframework-2.7.1.jar example.txt
 
 Using --pythonpath option
 '''''''''''''''''''''''''
@@ -288,9 +298,9 @@ __ `Escaping complicated characters`_
 
 Examples::
 
-   --pythonpath libs/ 
-   --pythonpath /opt/testlibs:mylibs.zip:yourlibs 
-   --pythonpath mylib.jar --pythonpath lib/STAR.jar --escape star:STAR 
+   --pythonpath libs/
+   --pythonpath /opt/testlibs:mylibs.zip:yourlibs
+   --pythonpath mylib.jar --pythonpath lib/STAR.jar --escape star:STAR
 
 Setting variables
 ~~~~~~~~~~~~~~~~~
