@@ -150,6 +150,8 @@ function changeClassDisplay(clazz, visible) {
     var styles = document.styleSheets;
     for (var i = 0; i < styles.length; i++) {
         var rules = styles[i].cssRules || styles[i].rules;
+        if (rules === null) // on Chrome external css files have both rules as null. not a problem on generated logs.
+            continue;
         for (var j = 0; j < rules.length; j++)
             if (rules[j].selectorText === clazz)
                 rules[j].style.display = visible ? "table" : "none";
