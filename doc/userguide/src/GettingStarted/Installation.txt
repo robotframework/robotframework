@@ -509,8 +509,8 @@ as a dependency. It is an easy way to get everything in one package that
 requires no installation, but has a downside that it does not work with Python.
 
 The package is named :prog:`robotframework-<version>.jar` and it is available
-on the `download page`_. After downloading the package, you can execute tests
-with it like:
+on the `download page`_ or as a `Maven dependency`__. After downloading the
+package, you can execute tests with it like:
 
 .. sourcecode:: bash
 
@@ -528,6 +528,8 @@ first argument to the JAR file:
 
 For more information about the different commands, execute the JAR file without
 arguments.
+
+__ http://search.maven.org/#search%7Cgav%7C1%7Cg%3A%22org.robotframework%22%20AND%20a%3A%22robotframework%22
 
 Manual installation
 '''''''''''''''''''
