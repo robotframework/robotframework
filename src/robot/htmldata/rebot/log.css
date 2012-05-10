@@ -58,22 +58,27 @@ table.messages td.time {
     width: 6em;
 }
 .trace_message {
-    display: block;
+    display: table;
 }
 .debug_message {
-    display: block;
+    display: table;
 }
 .info_message {
-    display: block;
+    display: table;
 }
 .warn_message {
-    display: block;
+    display: table;
 }
 #log_level_selector {
     position: fixed;
     z-index: 1000;
-    top: 0;
-    right: 100;
+    bottom: 0;
+    right: 0;
+    padding: 0.2em 0.1em 0.2em 0.4em;
+    border-radius: 3px 0 0 0;
+    background: lightgray;
+    font-size: 0.9em;
+    font-weight: bold;
 }
 table.errors td.time {
     width: 10em;
