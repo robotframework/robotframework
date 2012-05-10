@@ -32,20 +32,12 @@
   </ul>
 </div>
 <script type="text/javascript">removeJavaScriptDisabledWarning();</script>
-<div id="log_level_selector">
-    <select onchange="logLevelSelected(this.options[this.selectedIndex].value);">
-    <option value="0" selected="selected">TRACE</option>
-    <option value="1">DEBUG</option>
-    <option value="2">INFO</option>
-    <option value="3">WARN</option>
-</select>
-</div>
 
 <div id="header"></div>
 <div id="statistics_container"></div>
 
 <script type="text/javascript">
-$(document).ready(function(){
+$(document).ready(function() {
     try {
         var topsuite = window.testdata.suite();
     } catch (e) {
@@ -56,6 +48,7 @@ $(document).ready(function(){
     addStatistics();
     addErrors();
     addTestExecutionLog(topsuite);
+    addLogLevelSelector();
     if (window.location.hash) {
         makeElementVisible(window.location.hash.substring(1));
         scrollToHash();
@@ -64,9 +57,14 @@ $(document).ready(function(){
     }
 });
 
-function logLevelSelected(level) {
+function addLogLevelSelector() {
+    $.tmpl('logLevelSelectorTemplate').appendTo($('body'));
+    logLevelSelected();
+}
+
+function logLevelSelected() {
     var anchors = getViewAnchorElements();
-    setMessageVisibility(level);
+    setMessageVisibility();
     scrollToShortestVisibleAnchorElement(anchors);
 }
 
@@ -86,8 +84,8 @@ function scrollToShortestVisibleAnchorElement(anchors) {
     shortest.get()[0].scrollIntoView(true);
 }
 
-function setMessageVisibility(level) {
-    level = parseInt(level);
+function setMessageVisibility() {
+    var level = parseInt($('#log_level_selector option:selected')[0].value);
     changeClassDisplay(".trace_message", level < 1);
     changeClassDisplay(".debug_message", level < 2);
     changeClassDisplay(".info_message", level < 3);
@@ -102,15 +100,11 @@ function closestVisibleParent(elem) {
 
 function changeClassDisplay(clazz, visible) {
     var ss = document.styleSheets;
-
     for (var i=0; i<ss.length; i++) {
         var rules = ss[i].cssRules || ss[i].rules;
-
-        for (var j=0; j<rules.length; j++) {
-            if (rules[j].selectorText === clazz) {
-                rules[j].style.display = visible? "block" : "none";
-            }
-        }
+        for (var j=0; j<rules.length; j++)
+            if (rules[j].selectorText === clazz)
+                rules[j].style.display = visible ? "table" : "none";
     }
 }
 
@@ -379,6 +373,18 @@ function addTestExecutionLog(main) {
       <td class="msg">{{html text}}</td>
     </tr>
   </table>
+</script>
+
+<script type="text/x-jquery-tmpl" id="logLevelSelectorTemplate">
+  <div id="log_level_selector">
+  Log level:
+  <select onchange="logLevelSelected();">
+    <option value="3">WARN</option>
+    <option value="2" selected="selected">INFO</option>
+    <option value="1">DEBUG</option>
+    <option value="0">TRACE</option>
+  </select>
+  </div>
 </script>
 
 </body>
