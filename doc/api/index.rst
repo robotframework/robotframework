@@ -36,6 +36,14 @@ __ http://code.google.com/p/robotframework/wiki/TestDataDocumentationTool
 __ http://code.google.com/p/robotframework/wiki/TestDataTidyingTool
 
 
+Java entry points
+=================
+
+The Robot Framework Jar distribution contains also a Java API, in the form
+of the `org.robotframework.RobotFramework`__ class.
+
+__ _static/javadoc/index.html
+
 Public API
 ==========
 
