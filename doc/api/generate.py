@@ -15,6 +15,7 @@ Sphinx, sphinx-apidoc and javadoc commands need to be in $PATH.
 
 import sys
 import os
+import shutil
 from os.path import abspath, dirname, join
 from subprocess import call
 
@@ -27,6 +28,7 @@ JAVA_TARGET = join(BUILD_DIR, '_static', 'javadoc')
 
 
 def generate():
+    clean()
     update()
     create_javadoc()
     orig_dir = abspath(os.curdir)
@@ -35,6 +37,13 @@ def generate():
     os.chdir(orig_dir)
     print abspath(join(BUILD_DIR, '_build', 'html', 'index.html'))
     return rc
+
+
+def clean():
+    for dirname in AUTODOC_DIR, JAVA_TARGET:
+        if os.path.exists(dirname):
+            print 'Cleaning', dirname
+            shutil.rmtree(dirname)
 
 
 def update():
@@ -46,7 +55,7 @@ def update():
 def create_javadoc():
     print 'Creating javadoc'
     call(['javadoc', '-sourcepath', JAVA_SRC, '-d', JAVA_TARGET,
-          'org.robotframework'])
+          '-notimestamp', 'org.robotframework'])
 
 
 if __name__ == '__main__':
