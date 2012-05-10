@@ -72,6 +72,7 @@ Extending Robot Framework
 .. include:: ExtendingRobotFramework/CreatingTestLibraries.txt
 .. include:: ExtendingRobotFramework/RemoteLibrary.txt
 .. include:: ExtendingRobotFramework/ListenerInterface.txt
+.. include:: ExtendingRobotFramework/ExtendingRobotFrameworkJar.txt
 
 Supporting Tools
 ================
