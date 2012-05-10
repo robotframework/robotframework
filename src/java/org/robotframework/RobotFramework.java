@@ -19,24 +19,43 @@ import org.robotframework.RunnerFactory;
 import org.robotframework.RobotRunner;
 
 /**
- * 
+ *
  * Entry point for using Robot Framework from Java programs.
- * 
+ *
  */
 public class RobotFramework {
 
+    /**
+     * Entry point when used as a main program. Uses
+     * {@link #run} to run Robot Framework and calls
+     * {@link java.lang.System#exit} with the return code.
+     *
+     * @param args
+     *              The command line options, passed to <code>run</code>.
+     */
     public static void main(String[] args) {
         int rc = run(args);
         System.exit(rc);
     }
 
     /**
-     * Runs Robot Framework tests.
-     * 
+     * Runs Robot Framework.<p>
+     *
+     * The default action is to run tests, but it is also possible to use
+     * other RF functionality by giving a command as a first value in
+     * <code>args</code>. The available commands are <ul><li>rebot</li>
+     * <li>libdoc</li><li>tidy</li><li>testdoc</li></ul><p>
+     *
+     * Example usages:<br>
+     * <code>run(new String[] {"--outputdir", "/tmp", "mytests.txt"})</code><br>
+     * <code>run(new String[] {"libdoc", "MyLibrary", "mydoc.html"})</code>
+     *
      * @param args
-     *            The command line options to Robot Framework, for example
-     *            ['--outputdir', '/tmp', 'mytestdir']. At least one datasource
-     *            must be specified.
+     *              The command line options to Robot Framework.
+     *
+     * @return      Robot Framework return code. See the {@link
+     *              <a href="http://robotframework.googlecode.com/hg/doc/userguide/RobotFrameworkUserGuide.html">
+     *              the user guide</a>} for meaning of different return codes.
      */
     public static int run(String[] args) {
         RobotRunner runner = new RunnerFactory().createRunner();
