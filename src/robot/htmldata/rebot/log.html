@@ -62,52 +62,6 @@ function addLogLevelSelector() {
     logLevelSelected();
 }
 
-function logLevelSelected() {
-    var anchors = getViewAnchorElements();
-    setMessageVisibility();
-    scrollToShortestVisibleAnchorElement(anchors);
-}
-
-function getViewAnchorElements() {
-    var elem1 = $(document.elementFromPoint(100, 0));
-    var elem2 = $(document.elementFromPoint(100, 20));
-    return [elem1, elem2];
-}
-
-function scrollToShortestVisibleAnchorElement(anchors) {
-    anchors = $.map(anchors, closestVisibleParent);
-    var shortest = anchors[0];
-    for (var i=1; i<anchors.length; i++) {
-        if (shortest.height() > anchors[i].height())
-            shortest = anchors[i];
-    }
-    shortest.get()[0].scrollIntoView(true);
-}
-
-function setMessageVisibility() {
-    var level = parseInt($('#log_level_selector option:selected')[0].value);
-    changeClassDisplay(".trace_message", level < 1);
-    changeClassDisplay(".debug_message", level < 2);
-    changeClassDisplay(".info_message", level < 3);
-}
-
-function closestVisibleParent(elem) {
-    while ( !elem.is(":visible") ) {
-        elem = elem.parent();
-    }
-    return elem;
-}
-
-function changeClassDisplay(clazz, visible) {
-    var ss = document.styleSheets;
-    for (var i=0; i<ss.length; i++) {
-        var rules = ss[i].cssRules || ss[i].rules;
-        for (var j=0; j<rules.length; j++)
-            if (rules[j].selectorText === clazz)
-                rules[j].style.display = visible ? "table" : "none";
-    }
-}
-
 function addErrors() {
     var errors = window.testdata.errors();
     if (errors.hasNext()) {
