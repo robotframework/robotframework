@@ -70,12 +70,8 @@ table.messages td.time {
     display: table;
 }
 #log_level_selector {
-    position: fixed;
-    z-index: 1000;
-    bottom: 0;
-    right: 0;
     padding: 0.2em 0.1em 0.2em 0.4em;
-    border-radius: 3px 0 0 0;
+    border-radius: 3px 3px 3px 3px;
     background: lightgray;
     font-size: 0.9em;
     font-weight: bold;

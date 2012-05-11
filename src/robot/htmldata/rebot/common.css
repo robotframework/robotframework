@@ -76,19 +76,19 @@ h1 {
     font-style: italic;
 }
 /* Report/log link */
-#report_or_log_link {
+#header_top {
     position: fixed;
     z-index: 1000;
     top: 0;
     right: 0;
+}
+
+#report_or_log_link a {
     background: black;
     border-radius: 0 0 0 4px;
-    width: 8em;
     text-align: center;
-}
-#report_or_log_link a {
     display: block;
-    width: 100%;
+    width: 12em;
     color: white;
     text-decoration: none;
     font-weight: bold;

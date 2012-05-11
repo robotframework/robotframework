@@ -29,8 +29,11 @@ function addHeader() {
     createGenerated(window.output.generatedTimestamp,
                     window.testdata.generated().getTime()
     ).appendTo($('#header'));
-    $.tmpl('<div id="report_or_log_link"><a href="#"></a></div>' +
-            '<h1>${title}</h1>', {
+    $.tmpl('' +
+        '<div id="header_top"><div id="report_or_log_link">' +
+        '<a href="#"></a>' +
+        '</div></div>' +
+        '<h1>${title}</h1>', {
         title: document.title
     }).appendTo($('#header'));
 }
