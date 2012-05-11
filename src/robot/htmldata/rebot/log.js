@@ -158,21 +158,21 @@ function changeClassDisplay(clazz, visible) {
     }
 }
 
-function  LogLevelController(minLogLevel, defaultLogLevel) {
-    function should_show_log_level_chooser() {
-        return minLogLevel == 'TRACE'  ||  minLogLevel == 'DEBUG';
+function  LogLevelController(minLevel, defaultLevel) {
+    function shouldShowLogLevelChooser() {
+        return minLevel == 'TRACE'  ||  minLevel == 'DEBUG';
     }
-    function default_log_level() {
-        if (minLogLevel == 'TRACE')
-            return defaultLogLevel;
-        return defaultLogLevel == 'TRACE' ? 'DEBUG' : defaultLogLevel;
+    function defaultLogLevel() {
+        if (minLevel == 'TRACE')
+            return defaultLevel;
+        return defaultLevel == 'TRACE' ? 'DEBUG' : defaultLevel;
     }
-    function show_trace() {
-        return minLogLevel == 'TRACE';
+    function showTrace() {
+        return minLevel == 'TRACE';
     }
     return {
-        should_show_log_level_chooser:should_show_log_level_chooser,
-        default_log_level:default_log_level,
-        show_trace:show_trace
+        shouldShowLogLevelChooser:shouldShowLogLevelChooser,
+        defaultLogLevel:defaultLogLevel,
+        showTrace:showTrace
     }
 }
