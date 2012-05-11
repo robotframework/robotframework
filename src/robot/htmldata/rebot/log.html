@@ -58,8 +58,13 @@ $(document).ready(function() {
 });
 
 function addLogLevelSelector() {
-    $.tmpl('logLevelSelectorTemplate').appendTo($('#header_top'));
-    logLevelSelected();
+    var controller = LogLevelController("TRACE", "TRACE");
+    if (controller.should_show_log_level_chooser()) {
+        var selector = $.tmpl('logLevelSelectorTemplate', controller);
+        selector.find('select').val(window.testdata.LEVELS.indexOf(controller.default_log_level()));
+        selector.appendTo($('#header_top'));
+        logLevelSelected();
+    }
 }
 
 function addErrors() {
@@ -333,9 +338,9 @@ function addTestExecutionLog(main) {
   <div id="log_level_selector">
   Log level:
   <select onchange="logLevelSelected();">
-    <option value="2" selected="selected">INFO</option>
+    <option value="2">INFO</option>
     <option value="1">DEBUG</option>
-    <option value="0">TRACE</option>
+    {{if show_trace()}}<option value="0">TRACE</option>{{/if}}
   </select>
   </div>
 </script>

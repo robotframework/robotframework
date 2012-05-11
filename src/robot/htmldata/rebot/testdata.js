@@ -305,7 +305,8 @@ window.testdata = function () {
         findPathTo: findPathTo,
         generated: generated,
         statistics: statistics,
-        getStringStore: getStringStore
+        getStringStore: getStringStore,
+        LEVELS: LEVELS
     };
 
 }();

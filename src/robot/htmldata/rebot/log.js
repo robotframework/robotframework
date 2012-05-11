@@ -135,9 +135,9 @@ function scrollToShortestVisibleAnchorElement(anchors) {
 
 function setMessageVisibility() {
     var level = parseInt($('#log_level_selector option:selected')[0].value);
-    changeClassDisplay(".trace_message", level < 1);
-    changeClassDisplay(".debug_message", level < 2);
-    changeClassDisplay(".info_message", level < 3);
+    changeClassDisplay(".trace_message", level <= window.testdata.LEVELS.indexOf("TRACE"));
+    changeClassDisplay(".debug_message", level <= window.testdata.LEVELS.indexOf("DEBUG"));
+    changeClassDisplay(".info_message", level <= window.testdata.LEVELS.indexOf("INFO"));
 }
 
 function closestVisibleParent(elem) {
@@ -155,5 +155,24 @@ function changeClassDisplay(clazz, visible) {
         for (var j = 0; j < rules.length; j++)
             if (rules[j].selectorText === clazz)
                 rules[j].style.display = visible ? "table" : "none";
+    }
+}
+
+function  LogLevelController(minLogLevel, defaultLogLevel) {
+    function should_show_log_level_chooser() {
+        return minLogLevel == 'TRACE'  ||  minLogLevel == 'DEBUG';
+    }
+    function default_log_level() {
+        if (minLogLevel == 'TRACE')
+            return defaultLogLevel;
+        return defaultLogLevel == 'TRACE' ? 'DEBUG' : defaultLogLevel;
+    }
+    function show_trace() {
+        return minLogLevel == 'TRACE';
+    }
+    return {
+        should_show_log_level_chooser:should_show_log_level_chooser,
+        default_log_level:default_log_level,
+        show_trace:show_trace
     }
 }
