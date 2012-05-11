@@ -130,7 +130,6 @@ describe("Handling Suite", function () {
     it("should parse message", function () {
         var message = nthKeyword(firstTest(window.testdata.suite()), 0).messages()[0];
         expect(message.text).toEqual("Slept 100 milliseconds");
-        expect(message.time).toBeLessThan(util.timeFromDate(new Date()));
     });
 
     it("should parse timestamp", function () {
