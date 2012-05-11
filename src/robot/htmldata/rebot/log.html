@@ -58,13 +58,14 @@ $(document).ready(function() {
 });
 
 function addLogLevelSelector() {
-    var controller = LogLevelController("TRACE", "TRACE");
+    var controller = LogLevelController('TRACE', 'TRACE');
     if (controller.shouldShowLogLevelChooser()) {
         var selector = $.tmpl('logLevelSelectorTemplate', controller);
-        var selected = window.testdata.LEVELS.indexOf(controller.defaultLogLevel())
+        var selected = window.testdata.LEVELS.indexOf(controller.defaultLogLevel());
         selector.find('select').val(selected);
         selector.appendTo($('#top_right_header'));
         logLevelSelected();
+        $('#report_or_log_link a').css({'border-bottom-left-radius': '0'});
     }
 }
 
