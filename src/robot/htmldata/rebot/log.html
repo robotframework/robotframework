@@ -62,7 +62,7 @@ function addLogLevelSelector() {
     if (controller.should_show_log_level_chooser()) {
         var selector = $.tmpl('logLevelSelectorTemplate', controller);
         selector.find('select').val(window.testdata.LEVELS.indexOf(controller.default_log_level()));
-        selector.appendTo($('#header_top'));
+        selector.appendTo($('#top_right_header'));
         logLevelSelected();
     }
 }

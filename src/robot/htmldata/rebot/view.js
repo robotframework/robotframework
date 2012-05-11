@@ -30,7 +30,7 @@ function addHeader() {
                     window.testdata.generated().getTime()
     ).appendTo($('#header'));
     $.tmpl('' +
-        '<div id="header_top"><div id="report_or_log_link">' +
+        '<div id="top_right_header"><div id="report_or_log_link">' +
         '<a href="#"></a>' +
         '</div></div>' +
         '<h1>${title}</h1>', {
