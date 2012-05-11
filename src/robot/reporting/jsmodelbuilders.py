@@ -35,7 +35,8 @@ class JsModelBuilder(object):
             errors=ErrorsBuilder(self._context).build(result_from_xml.errors),
             strings=self._context.strings,
             basemillis=self._context.basemillis,
-            split_results=self._context.split_results
+            split_results=self._context.split_results,
+            min_level=self._context.min_level
         )
 
 
@@ -138,6 +139,7 @@ class MessageBuilder(_Builder):
     def build(self, msg):
         if msg.level == 'WARN':
             self._context.create_link_target(msg)
+        self._context.message_level(msg.level)
         return self._build(msg)
 
     def _build(self, msg):

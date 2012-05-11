@@ -22,9 +22,10 @@ from .stringcache import StringIndex
 class JsExecutionResult(object):
 
     def __init__(self, suite, statistics, errors, strings, basemillis=None,
-                 split_results=None):
+                 split_results=None, min_level=None):
         self.suite = suite
         self.strings = strings
+        self.min_level = min_level
         self.data = self._get_data(statistics, errors, basemillis or 0)
         self.split_results = split_results or []
 
@@ -35,7 +36,8 @@ class JsExecutionResult(object):
             'errors': errors,
             'baseMillis': basemillis,
             'generatedMillis': long(time.mktime(gentime) * 1000) - basemillis,
-            'generatedTimestamp': utils.format_time(gentime, gmtsep=' ')
+            'generatedTimestamp': utils.format_time(gentime, gmtsep=' '),
+            'minLevel': self.min_level
         }
 
     def remove_data_not_needed_in_report(self):
