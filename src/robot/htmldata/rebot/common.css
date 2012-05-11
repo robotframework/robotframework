@@ -75,26 +75,33 @@ h1 {
 #javascript_disabled b {
     font-style: italic;
 }
-/* Report/log link */
+/* Top right header */
 #top_right_header {
     position: fixed;
-    z-index: 1000;
     top: 0;
     right: 0;
+    z-index: 1000;
+    width: 12em;
+    font-weight: bold;
+    text-align: center;
 }
 #report_or_log_link a {
-    background: black;
-    border-radius: 0 0 0 4px;
-    text-align: center;
     display: block;
-    width: 12em;
+    background: black;
     color: white;
     text-decoration: none;
-    font-weight: bold;
     letter-spacing: 0.1em;
+    padding: 0.3em 0;
+    border-bottom-left-radius: 4px;
 }
 #report_or_log_link a:hover {
     color: yellow;
+}
+#log_level_selector {
+    padding: 0.3em 0;
+    font-size: 0.9em;
+    border-bottom-left-radius: 4px;
+    background: lightgray;
 }
 /* Statistics table */
 table.statistics {

@@ -1,3 +1,5 @@
+var LEVELS = {TRACE: 0, DEBUG: 1, INFO: 2};
+
 function toggleSuite(suiteId) {
     toggleElement(suiteId, ['keyword', 'suite', 'test']);
 }
@@ -112,9 +114,9 @@ function stopPropagation(event) {
         event.stopPropagation();
 }
 
-function logLevelSelected() {
+function logLevelSelected(level) {
     var anchors = getViewAnchorElements();
-    setMessageVisibility();
+    setMessageVisibility(level);
     scrollToShortestVisibleAnchorElement(anchors);
 }
 
@@ -133,11 +135,11 @@ function scrollToShortestVisibleAnchorElement(anchors) {
     shortest.get()[0].scrollIntoView(true);
 }
 
-function setMessageVisibility() {
-    var level = parseInt($('#log_level_selector option:selected')[0].value);
-    changeClassDisplay(".trace_message", level <= window.testdata.LEVELS.indexOf("TRACE"));
-    changeClassDisplay(".debug_message", level <= window.testdata.LEVELS.indexOf("DEBUG"));
-    changeClassDisplay(".info_message", level <= window.testdata.LEVELS.indexOf("INFO"));
+function setMessageVisibility(level) {
+    level = parseInt(level);
+    changeClassDisplay(".trace_message", level <= LEVELS.TRACE);
+    changeClassDisplay(".debug_message", level <= LEVELS.DEBUG);
+    changeClassDisplay(".info_message", level <= LEVELS.INFO);
 }
 
 function closestVisibleParent(elem) {
@@ -158,21 +160,27 @@ function changeClassDisplay(clazz, visible) {
     }
 }
 
-function  LogLevelController(minLevel, defaultLevel) {
-    function shouldShowLogLevelChooser() {
-        return minLevel == 'TRACE'  ||  minLevel == 'DEBUG';
+function LogLevelController(minLevel, defaultLevel) {
+    minLevel = LEVELS[minLevel];
+    defaultLevel = LEVELS[defaultLevel];
+
+    function showLogLevelSelector() {
+        return minLevel < LEVELS.INFO;
     }
+
     function defaultLogLevel() {
-        if (minLevel == 'TRACE')
-            return defaultLevel;
-        return defaultLevel == 'TRACE' ? 'DEBUG' : defaultLevel;
+        if (minLevel > defaultLevel)
+            return minLevel;
+        return defaultLevel;
     }
+
     function showTrace() {
-        return minLevel == 'TRACE';
+        return minLevel == LEVELS.TRACE;
     }
+
     return {
-        shouldShowLogLevelChooser:shouldShowLogLevelChooser,
-        defaultLogLevel:defaultLogLevel,
-        showTrace:showTrace
-    }
+        showLogLevelSelector: showLogLevelSelector,
+        defaultLogLevel: defaultLogLevel,
+        showTrace: showTrace
+    };
 }

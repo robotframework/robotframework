@@ -48,7 +48,7 @@ $(document).ready(function() {
     addStatistics();
     addErrors();
     addTestExecutionLog(topsuite);
-    addLogLevelSelector();
+    addLogLevelSelector(window.output['minLevel'], 'TRACE');
     if (window.location.hash) {
         makeElementVisible(window.location.hash.substring(1));
         scrollToHash();
@@ -57,14 +57,14 @@ $(document).ready(function() {
     }
 });
 
-function addLogLevelSelector() {
-    var controller = LogLevelController(window.output["minLevel"], "INFO");
-    if (controller.shouldShowLogLevelChooser()) {
+function addLogLevelSelector(minLevel, defaultLevel) {
+    var controller = LogLevelController(minLevel, defaultLevel);
+    if (controller.showLogLevelSelector()) {
         var selector = $.tmpl('logLevelSelectorTemplate', controller);
-        var selected = window.testdata.LEVELS.indexOf(controller.defaultLogLevel())
-        selector.find('select').val(selected);
+        selector.find('select').val(controller.defaultLogLevel());
         selector.appendTo($('#top_right_header'));
-        logLevelSelected();
+        $('#report_or_log_link a').css({'border-bottom-left-radius': '0'});
+        logLevelSelected(controller.defaultLogLevel());
     }
 }
 
@@ -338,11 +338,11 @@ function addTestExecutionLog(main) {
 <script type="text/x-jquery-tmpl" id="logLevelSelectorTemplate">
   <div id="log_level_selector">
   Log level:
-  <select onchange="logLevelSelected();">
-    <option value="2">INFO</option>
-    <option value="1">DEBUG</option>
-    {{if showTrace()}}<option value="0">TRACE</option>{{/if}}
-  </select>
+    <select onchange="logLevelSelected(this.options[selectedIndex].value);">
+      <option value="2">INFO</option>
+      <option value="1">DEBUG</option>
+      {{if showTrace()}}<option value="0">TRACE</option>{{/if}}
+    </select>
   </div>
 </script>
 
