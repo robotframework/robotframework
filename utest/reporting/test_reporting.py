@@ -109,6 +109,7 @@ class TestReporting(unittest.TestCase):
 
     def _verify_log(self, content):
         self._verify_output(content)
+        assert_true('["minLevel"] = "DEBUG"' in content)
 
     def _verify_report(self, content):
         assert_true(self.EXPECTED_SUITE_NAME in content)
