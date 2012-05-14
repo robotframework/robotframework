@@ -7,9 +7,9 @@ from robot.reporting.jswriter import JsResultWriter
 
 
 def get_lines(suite=(), strings=(), basemillis=100, start_block='',
-              end_block='', split_threshold=9999):
+              end_block='', split_threshold=9999, min_level='INFO'):
     output = StringIO()
-    data = JsExecutionResult(suite, None, None, strings, basemillis)
+    data = JsExecutionResult(suite, None, None, strings, basemillis, min_level=min_level)
     writer = JsResultWriter(output, start_block, end_block, split_threshold)
     writer.write(data, settings={})
     return output.getvalue().splitlines()
@@ -26,10 +26,11 @@ def assert_separators(lines, separator, end_separator=False):
 class TestDataModelWrite(unittest.TestCase):
 
     def test_writing_datamodel_elements(self):
-        lines = get_lines()
+        lines = get_lines(min_level='DEBUG')
         assert_true(lines[0].startswith('window.output = {}'), lines[0])
         assert_true(lines[1].startswith('window.output["'), lines[1])
         assert_true(lines[-1].startswith('window.settings ='), lines[-1])
+        assert_true('window.output["minLevel"] = "DEBUG";' in lines)
 
     def test_writing_datamodel_with_separator(self):
         lines = get_lines(start_block='seppo\n')

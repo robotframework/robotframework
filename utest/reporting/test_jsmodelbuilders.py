@@ -68,10 +68,12 @@ class TestBuildTestSuite(unittest.TestCase):
 
     def test_default_message(self):
         self._verify_message(Message())
+        self._verify_min_message_level('INFO')
 
     def test_message_with_values(self):
         msg = Message('Message', 'DEBUG', timestamp='20111204 22:04:03.210')
         self._verify_message(msg, 'Message', 1, 0)
+        self._verify_min_message_level('DEBUG')
 
     def test_message_linking(self):
         msg = Message('Message', 'WARN', timestamp='20111204 22:04:03.210',
@@ -105,14 +107,15 @@ class TestBuildTestSuite(unittest.TestCase):
         m = self._verify_message(suite.tests[0].keywords[0].messages[0])
         k1 = self._verify_keyword(suite.tests[0].keywords[0],
                                   type=3, keywords=(k,), messages=(m,))
-        suite.tests[0].keywords[1].messages = [Message(), Message('msg')]
+        suite.tests[0].keywords[1].messages = [Message(), Message('msg', level='TRACE')]
         m1 = self._verify_message(suite.tests[0].keywords[1].messages[0])
-        m2 = self._verify_message(suite.tests[0].keywords[1].messages[1], 'msg')
+        m2 = self._verify_message(suite.tests[0].keywords[1].messages[1], 'msg', level=0)
         k2 = self._verify_keyword(suite.tests[0].keywords[1], messages=(m1, m2))
         T1 = self._verify_test(suite.tests[0], critical=0, keywords=(k1, k2))
         T2 = self._verify_test(suite.tests[1], critical=0, status=1)
         self._verify_suite(suite, status=0, keywords=(K1, K2), suites=(S1,),
                            tests=(T1, T2), stats=(3, 1, 1, 0))
+        self._verify_min_message_level('TRACE')
 
     def test_timestamps(self):
         suite = TestSuite(starttime='20111205 00:33:33.333')
@@ -158,6 +161,9 @@ class TestBuildTestSuite(unittest.TestCase):
 
     def _verify_message(self, msg, message='', level=2, timestamp=None):
         return self._build_and_verify(MessageBuilder, msg, timestamp, level, message)
+
+    def _verify_min_message_level(self, expected):
+        assert_equals(self.context.min_level, expected)
 
     def _build_and_verify(self, builder_class, item, *expected):
         self.context = JsBuildingContext(log_path=join(CURDIR, 'log.html'))
