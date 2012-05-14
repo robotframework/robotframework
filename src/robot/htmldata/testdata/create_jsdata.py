@@ -36,6 +36,7 @@ def create_jsdata(outxml, target):
     })
     result = Results(outxml, settings).js_result
     config = {'logURL': 'log.html',
+              'defaultLogLevel': 'DEBUG',
               'reportURL': 'report.html',
               'background': {'fail': 'DeepPink'}}
     with utf8open(target, 'w') as output:
