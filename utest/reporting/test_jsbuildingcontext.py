@@ -1,4 +1,6 @@
+import random
 import unittest
+from robot.output.loggerhelper import LEVELS
 
 from robot.reporting.jsmodelbuilders import JsBuildingContext
 from robot.utils.asserts import assert_equals
@@ -37,6 +39,30 @@ class TestTimestamp(unittest.TestCase):
 
     def test_none_timestamp(self):
         assert_equals(self._context.timestamp(None), None)
+
+
+class TestMinLogLevel(unittest.TestCase):
+
+    def setUp(self):
+        self._context = JsBuildingContext()
+
+    def test_trace_is_identified_as_smallest_log_level(self):
+        self._messages(LEVELS.keys())
+        assert_equals('TRACE', self._context.min_level)
+
+    def test_debug_is_identified_when_no_trace(self):
+        self._messages([l for l in LEVELS if l != 'TRACE'])
+        assert_equals('DEBUG', self._context.min_level)
+
+    def test_info_is_smallest_when_no_debug_or_trace(self):
+        self._messages(['INFO', 'WARN', 'ERROR', 'FAIL'])
+        assert_equals('INFO', self._context.min_level)
+
+    def _messages(self, levels):
+        levels = levels[:]
+        random.shuffle(levels)
+        for level in levels:
+            self._context.message_level(level)
 
 
 if __name__ == '__main__':
