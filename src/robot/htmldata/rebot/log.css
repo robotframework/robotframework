@@ -69,13 +69,6 @@ table.messages td.time {
 .warn_message {
     display: table;
 }
-#log_level_selector {
-    padding: 0.2em 0.1em 0.2em 0.4em;
-    border-radius: 3px 0 0 3px;
-    background: lightgray;
-    font-size: 0.9em;
-    font-weight: bold;
-}
 table.errors td.time {
     width: 10em;
     white-space: nowrap;
