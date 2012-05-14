@@ -80,11 +80,13 @@ class TestRemoveDataNotNeededInReport(unittest.TestCase):
                   (0, 0, 2, 3, 4, 5, ())),
                  (), 9)
         result = JsExecutionResult(suite=suite, strings=tuple(' ABCDEF'),
-                                   errors=(1, 2), statistics={}, basemillis=0)
+                                   errors=(1, 2), statistics={}, basemillis=0,
+                                   min_level='DEBUG')
         assert_equals(result.data['errors'], (1, 2))
         result.remove_data_not_needed_in_report()
         assert_equals(result.strings, tuple('ACE'))
         assert_equals(result.suite, exp_s)
+        assert_equals(result.data['minLevel'], 'DEBUG')
         assert_true('errors' not in result.data)
 
 
