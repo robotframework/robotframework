@@ -35,6 +35,7 @@ class _BaseSettings(object):
                  'Report'           : ('report', 'report.html'),
                  'XUnitFile'        : ('xunitfile', 'NONE'),
                  'SplitLog'         : ('splitlog', False),
+                 'WumptiDumpti'     : ('wumptidumpti', 'TRACE'),
                  'TimestampOutputs' : ('timestampoutputs', False),
                  'LogTitle'         : ('logtitle', None),
                  'ReportTitle'      : ('reporttitle', None),
@@ -331,7 +332,8 @@ class RebotSettings(_BaseSettings):
         return {
             'title': self['LogTitle'],
             'reportURL': self._url_from_path(self.log, self.report),
-            'splitLogBase': os.path.basename(os.path.splitext(self.log)[0])
+            'splitLogBase': os.path.basename(os.path.splitext(self.log)[0]),
+            'defaultLogLevel': self['WumptiDumpti']
         }
 
     @property

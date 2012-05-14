@@ -161,6 +161,7 @@ Options
                                     --reportbackground #00E:#E00
  -L --loglevel level      Threshold level for logging. Available levels:
                           TRACE, DEBUG, INFO (default), WARN, NONE (no logging)
+    --wumptidumpti level  Default log level shown in log file.
     --suitestatlevel level  How many levels to show in `Statistics by Suite`
                           in log and report. By default all suite levels are
                           shown. Example:  --suitestatlevel 3
