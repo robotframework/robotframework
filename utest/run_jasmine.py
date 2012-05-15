@@ -34,15 +34,17 @@ def clear_reports():
     os.mkdir(REPORT_DIR)
 
 def download_jasmine_reporters():
-    if exists(join(BASE, '..', 'ext-lib', 'jasmine-reporters')):
+    if exists(join(EXT_LIB, 'jasmine-reporters')):
         return
+    if not exists(EXT_LIB):
+        os.mkdir(EXT_LIB)
     reporter = urllib2.urlopen(JASMINE_REPORTER_URL)
     with open(join(EXT_LIB, 'tmp.zip'), 'w') as temp:
         temp.write(reporter.read())
     with open(join(EXT_LIB, 'tmp.zip'), 'r') as temp:
         ZipFile(temp).extractall(EXT_LIB)
     extraction_dir = glob(join(EXT_LIB, 'larrymyers-jasmine-reporters*'))[0]
-    print 'Extracting Jasmine-Reporters to' % extraction_dir
+    print 'Extracting Jasmine-Reporters to', extraction_dir
     shutil.move(extraction_dir, join(EXT_LIB, 'jasmine-reporters'))
 
 
