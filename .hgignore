@@ -5,7 +5,7 @@ tmp?
 build
 dist
 atest/results
-jasmine-results
+utest/jasmine-results
 .idea
 .*project
 *.pyc
