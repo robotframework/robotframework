@@ -16,7 +16,7 @@ import os
 
 from robot import utils
 from robot.errors import DataError, FrameworkError
-from robot.output import LOGGER
+from robot.output import LOGGER, loggerhelper
 
 
 class _BaseSettings(object):
@@ -109,8 +109,19 @@ class _BaseSettings(object):
     def _process_log_level(self, value):
         values = value.upper().split(':')
         if len(values) == 2:
+            self._validate_log_level_and_default(*values)
             self['DefaultLogLevel'] = values[1]
+        elif len(values) > 2:
+            raise DataError('Invalid log level "%s"' % value)
         return values[0]
+
+    def _validate_log_level_and_default(self, log_level, default):
+        if log_level not in loggerhelper.LEVELS:
+            raise DataError('Invalid log level "%s"' % log_level)
+        if default not in loggerhelper.LEVELS:
+            raise DataError('Invalid log level "%s"' % default)
+        if not loggerhelper.IsLogged(log_level)(default):
+            raise DataError('Default shown log level "%s" is not shown when using log level "%s"' % (default, log_level))
 
     def __getitem__(self, name):
         if name not in self._cli_opts:
