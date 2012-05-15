@@ -70,6 +70,25 @@ class TestRobotAndRebotSettings(unittest.TestCase):
         RebotSettings()
         assert_equals(RobotSettings()._opts, orig_opts)
 
+    def test_log_levels(self):
+        self._verify_log_level('TRACE')
+        self._verify_log_level('DEBUG')
+        self._verify_log_level('INFO')
+        self._verify_log_level('WARN')
+        self._verify_log_level('NONE')
+
+    def test_log_levels_with_default(self):
+        self._verify_log_level('TRACE:INFO', level='TRACE', default='INFO')
+        self._verify_log_level('TRACE:DEBUG', level='TRACE', default='DEBUG')
+        self._verify_log_level('DEBUG:INFO', level='DEBUG', default='INFO')
+
+    def _verify_log_level(self, input, level=None, default=None):
+        level = level or input
+        settings = RobotSettings({'loglevel':input})
+        assert_equals(level, settings['LogLevel'])
+        if default:
+            assert_equals(default, settings['DefaultLogLevel'])
+
 
 if __name__ == '__main__':
     unittest.main()

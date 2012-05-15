@@ -101,10 +101,16 @@ class _BaseSettings(object):
         if name == 'TagStatLink':
             return [v for v in [self._process_tag_stat_link(v) for v in value] if v]
         if name == 'LogLevel':
-            return value.upper()
+            return self._process_log_level(value)
         if name == 'RemoveKeywords':
             return [v.upper() for v in value]
         return value
+
+    def _process_log_level(self, value):
+        values = value.upper().split(':')
+        if len(values) == 2:
+            self['DefaultLogLevel'] = values[1]
+        return values[0]
 
     def __getitem__(self, name):
         if name not in self._cli_opts:
