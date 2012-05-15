@@ -7,6 +7,10 @@
   <script type="text/javascript" src="jasmine-1.0.2/jasmine.js"></script>
   <script type="text/javascript" src="jasmine-1.0.2/jasmine-html.js"></script>
 
+  <!-- reporters from external jasmine-reporters dependency -->
+  <script type="text/javascript" src="../../ext-lib/jasmine-reporters/src/jasmine.junit_reporter.js"></script>
+  <script type="text/javascript" src="../../ext-lib/jasmine-reporters/src/jasmine.console_reporter.js"></script>
+
   <!-- include source files here... -->
   <script type="text/javascript" src="../../src/robot/htmldata/lib/jsxcompressor.js"></script>
   <script type="text/javascript" src="../../src/robot/htmldata/rebot/fileloading.js"></script>
@@ -36,6 +40,10 @@
 
 <script type="text/javascript">
   jasmine.getEnv().addReporter(new jasmine.TrivialReporter());
+  if (jasmine.JUnitXmlReporter != undefined) {
+    jasmine.getEnv().addReporter(new jasmine.ConsoleReporter());
+    jasmine.getEnv().addReporter(new jasmine.JUnitXmlReporter('jasmine-results/'));
+  }
   jasmine.getEnv().execute();
 </script>
 
