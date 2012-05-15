@@ -25,9 +25,12 @@ Trace Level
 
 Debug Level
     Run Tests  --loglevel debug  ${TESTDATA}
-    Check Log Message  ${SUITE.tests[0].kws[0].kws[0].msgs[0]}  Hello says "Pass"!  INFO
-    Check Log Message  ${SUITE.tests[0].kws[0].kws[1].msgs[0]}  Debug message  DEBUG
-    Check Log Message  ${SUITE.tests[1].kws[1].msgs[0]}  Expected failure  FAIL
+    Should Log On Debug Level
+
+Debug Level With Default
+    Run Tests  --loglevel dEBug:iNfo --log ${TEMPDIR}${/}logfile.html  ${TESTDATA}
+    Should Log On Debug Level
+    Check File Contains  ${TEMPDIR}${/}logfile.html  "defaultLogLevel":"INFO"
 
 Info Level
     Run Tests  -L InFo  ${TESTDATA}
@@ -57,3 +60,8 @@ None Level
     Should Be Equal As Integers  ${SUITE.tests[0].kws[0].kws[1].message_count}  0
     Should Be Equal As Integers  ${SUITE.tests[1].kws[1].message_count}  0
 
+*** Keywords ***
+Should Log On Debug Level
+    Check Log Message  ${SUITE.tests[0].kws[0].kws[0].msgs[0]}  Hello says "Pass"!  INFO
+    Check Log Message  ${SUITE.tests[0].kws[0].kws[1].msgs[0]}  Debug message  DEBUG
+    Check Log Message  ${SUITE.tests[1].kws[1].msgs[0]}  Expected failure  FAIL
