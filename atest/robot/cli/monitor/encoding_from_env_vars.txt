@@ -12,7 +12,6 @@ ${STDERR FILE}  ${TEMPDIR}/redirect_stderr.txt
 Invalid Encoding In Environment Variables
   ${stdout}  ${stderr} =  Run Some Tests With Std Streams Redirected
   Should Contain   ${stdout}  Pass And Fail :: Some tests here
-  Should Be Empty  ${stderr}
 
 
 *** Keywords ***
