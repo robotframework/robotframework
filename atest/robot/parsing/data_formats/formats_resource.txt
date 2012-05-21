@@ -69,7 +69,6 @@ Check Suite With Init
     Check Suite Contains Tests  ${suite}  @{SUBSUITE_TESTS}
 
 Check Is Docutils Installed
-    ${INTERPRETER} =  Set Variable If  '${INTERPRETER}' == 'coverage'  python  ${INTERPRETER}
     ${output} =  Run  ${INTERPRETER} -c "import docutils"
     ${DOCUTILS INSTALLED} =  Set Variable If  """${output}""" == ""  YES  NO
     Set Suite Variable  $DOCUTILS INSTALLED

@@ -91,14 +91,9 @@ Set Variables
 
 Set Runners
     ${robot} =  Join Path  ${ROBOTPATH}  run.py
-    ${INTERPRETER} =  Get Coverage Runner
     Set Suite Variable  $ROBOT  ${INTERPRETER} ${robot}
     ${rebot} =  Join Path  ${ROBOTPATH}  rebot.py
     Set Suite Variable  $REBOT  ${INTERPRETER} ${rebot}
-
-Get Coverage Runner
-    ${INTERPRETER} =  Set Variable If  '${INTERPRETER}' == 'coverage'  coverage run -p  ${INTERPRETER}
-    [Return]  ${INTERPRETER}
 
 Check Test Case
     [Arguments]  ${name}=${TEST NAME}  ${status}=${None}  ${message}=${None}

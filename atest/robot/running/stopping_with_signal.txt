@@ -99,8 +99,7 @@ Wait Until Finished With Timeout
 
 Start Running Robot
     [arguments]  ${test signal file}  ${datasource}  ${teardown sleep}  ${runmode}
-    ${runner} =  Get Coverage Runner
-    Start Run  ${runner}  ${test signal file}  ${datasource}  ${teardown sleep}  ${runmode}
+    Start Run  ${INTERPRETER}  ${test signal file}  ${datasource}  ${teardown sleep}  ${runmode}
 
 Start Running Jybot
     [arguments]  ${test signal file}  ${datasource}  ${teardown sleep}  ${runmode}

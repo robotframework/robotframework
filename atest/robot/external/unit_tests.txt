@@ -19,7 +19,6 @@ Unit Tests With Jython
 *** Keywords ***
 Run Unit Tests
     [Timeout]
-    ${INTERPRETER} =  Get Coverage Runner
     ${rc} =  Run And Return RC  ${INTERPRETER} ${TESTPATH} --quiet 1>${STDOUTFILE} 2> ${STDERRFILE}
     Get Stderr
     Get Stdout
