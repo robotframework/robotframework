@@ -7,10 +7,10 @@ Fail until the end
     Wait Until Keyword Succeeds    0.2    0.05    Fail    Not gonna happen
 
 Passes before timeout
-    Wait Until Keyword Succeeds    1    0.01    Fail Two Times
+    Wait Until Keyword Succeeds    2    0.01    Fail Two Times
 
 Warnings
-    Wait Until Keyword Succeeds    1    0.01    Warn And Fail Two Times
+    Wait Until Keyword Succeeds    2    0.01    Warn And Fail Two Times
 
 One Warning
     [Documentation]    FAIL Timeout 200 milliseconds exceeded. The last error was: Until the end

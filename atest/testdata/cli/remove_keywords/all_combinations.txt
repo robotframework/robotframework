@@ -29,11 +29,11 @@ For when test passes
 
 WUKS when test fails
     [Documentation]    FAIL Cannot pass
-    Wait Until Keyword Succeeds    1s    0.01s    My Keyword
+    Wait Until Keyword Succeeds    2s    0.01s    My Keyword
     Fail    Cannot pass
 
 WUKS when test passes
-     Wait Until Keyword Succeeds    1s    0.01s    My Keyword
+     Wait Until Keyword Succeeds    2s    0.01s    My Keyword
 
 *** Keywords ***
 
