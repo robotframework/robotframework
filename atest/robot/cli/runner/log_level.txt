@@ -5,6 +5,7 @@ Resource        atest_resource.txt
 
 *** Variables ***
 ${TESTDATA}  misc/pass_and_fail.html
+${LOG NAME}   logfile.html
 
 *** Test Cases ***
 No Log Level Given
@@ -19,18 +20,19 @@ Trace Level
     Should Log On Trace Level
 
 Debug Level
-    Run Tests  --loglevel debug  ${TESTDATA}
+    Run Tests  --loglevel debug --log ${LOG NAME}  ${TESTDATA}
     Should Log On Debug Level
+    Min level should be 'DEBUG' and default 'DEBUG'
 
 Debug Level With Default Info
-    Run Tests  --loglevel dEBug:iNfo --log ${TEMPDIR}${/}logfile.html  ${TESTDATA}
+    Run Tests  --loglevel dEBug:iNfo --log ${LOG NAME}  ${TESTDATA}
     Should Log On Debug Level
-    Check File Contains  ${TEMPDIR}${/}logfile.html  "defaultLogLevel":"INFO"
+    Min level should be 'DEBUG' and default 'INFO'
 
 Trace Level With Default Debug
-    Run Tests  --loglevel trace:Debug --log ${TEMPDIR}${/}logfile.html  ${TESTDATA}
+    Run Tests  --loglevel trace:Debug --log ${LOG NAME}  ${TESTDATA}
     Should Log On Trace Level
-    Check File Contains  ${TEMPDIR}${/}logfile.html  "defaultLogLevel":"DEBUG"
+    Min level should be 'TRACE' and default 'DEBUG'
 
 Info Level
     Run Tests  -L InFo  ${TESTDATA}
@@ -55,12 +57,18 @@ Warnings Should Be Written To Syslog
     Check Syslog Contains  | WARN \ |  Hello says "Fail"!
 
 None Level
-    Run Tests  --loglevel NONE --variable LEVEL1:ERROR --variable LEVEL2:FAIL  ${TESTDATA}
+    Run Tests  --loglevel NONE --log ${LOG NAME} --variable LEVEL1:ERROR --variable LEVEL2:FAIL  ${TESTDATA}
     Should Be Equal As Integers  ${SUITE.tests[0].kws[0].kws[0].message_count}  0
     Should Be Equal As Integers  ${SUITE.tests[0].kws[0].kws[1].message_count}  0
     Should Be Equal As Integers  ${SUITE.tests[1].kws[1].message_count}  0
+    Min level should be 'NONE' and default 'NONE'
 
 *** Keywords ***
+Min level should be '${min}' and default '${default}'
+    ${log}=    Get file      ${OUTDIR}/${LOG NAME}
+    Should contain    ${log}    ["minLevel"] = "${min}"
+    Should contain    ${log}    "defaultLogLevel":"${default}"
+
 Should Log On Debug Level
     Check Log Message  ${SUITE.tests[0].kws[0].kws[0].msgs[0]}  Hello says "Pass"!  INFO
     Check Log Message  ${SUITE.tests[0].kws[0].kws[1].msgs[0]}  Debug message  DEBUG

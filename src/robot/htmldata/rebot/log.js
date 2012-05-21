@@ -1,4 +1,4 @@
-var LEVELS = {TRACE: 0, DEBUG: 1, INFO: 2};
+var LEVELS = {TRACE: 0, DEBUG: 1, INFO: 2, WARN: 3, FAIL: 4, NONE: 5};
 
 function toggleSuite(suiteId) {
     toggleElement(suiteId, ['keyword', 'suite', 'test']);
