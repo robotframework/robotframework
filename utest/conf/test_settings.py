@@ -78,12 +78,19 @@ class TestRobotAndRebotSettings(unittest.TestCase):
         self._verify_log_level('WARN')
         self._verify_log_level('NONE')
 
+    def test_default_log_level(self):
+        self._verify_log_levels(RobotSettings(), 'INFO')
+        self._verify_log_levels(RebotSettings(), 'TRACE')
+
     def _verify_log_level(self, input, level=None, default=None):
         level = level or input
-        settings = RobotSettings({'loglevel':input})
-        assert_equals(level, settings['LogLevel'])
-        if default:
-            assert_equals(default, settings['DefaultLogLevel'])
+        default = default or level
+        self._verify_log_levels(RobotSettings({'loglevel': input}), level, default)
+        self._verify_log_levels(RebotSettings({'loglevel': input}), level, default)
+
+    def _verify_log_levels(self, settings, level, default=None):
+        assert_equals(settings['LogLevel'], level)
+        assert_equals(settings['VisibleLogLevel'], default or level)
 
     def test_log_levels_with_default(self):
         self._verify_log_level('TRACE:INFO', level='TRACE', default='INFO')
@@ -99,8 +106,6 @@ class TestRobotAndRebotSettings(unittest.TestCase):
 
     def _verify_raises_dataerror(self, input):
         self.assertRaises(DataError, lambda: RobotSettings({'loglevel':input}))
-
-
 
 
 if __name__ == '__main__':
