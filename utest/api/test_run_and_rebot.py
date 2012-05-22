@@ -67,9 +67,8 @@ class Base(unittest.TestCase):
         if output:
             raise AssertionError('Expected output to be empty:\n%s' % output)
 
-    def _assert_output_contains(self, output, expected_items):
-        for expected in expected_items:
-            content, count = expected
+    def _assert_output_contains(self, output, expected):
+        for content, count in expected:
             if output.count(content) != count:
                 raise AssertionError("'%s' not %d times in output:\n%s"
                                      % (content, count, output))

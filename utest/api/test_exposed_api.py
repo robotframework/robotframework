@@ -1,10 +1,9 @@
 import unittest
 
-from robot import parsing
-from robot import result
-from robot import running
+from robot import parsing, result, running
 
 from robot.utils.asserts import assert_equals
+
 
 class TestExposedApi(unittest.TestCase):
 
