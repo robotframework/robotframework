@@ -161,7 +161,7 @@ Options
                                     --reportbackground #00E:#E00
  -L --loglevel level      Threshold level for logging. Available levels:
                           TRACE, DEBUG, INFO (default), WARN, NONE (no logging)
-                          To define default log level shown in a log file use
+                          To define default visible log level in a log file use
                           syntax: [LOGLEVEL]:[DEFAULT]
                           Examples: --loglevel DEBUG
                                     --loglevel TRACE:DEBUG
