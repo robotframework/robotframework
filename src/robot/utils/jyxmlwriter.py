@@ -39,12 +39,14 @@ class XmlWriter(AbstractXmlWriter):
             raise IOError(-1, err.getMessage(), output)
 
     def _start(self, name, attrs):
-        self._writer.startElement('', '', name, self._get_attrs_impl(attrs))
+        # Passing also localName is required due to Saxon XML library bug
+        self._writer.startElement('', name, name, self._get_attrs_impl(attrs))
 
     def _get_attrs_impl(self, attrs):
         ai = AttributesImpl()
         for name, value in attrs.items():
-            ai.addAttribute('', '', name, '', value)
+            # Passing also localName is required due to Saxon XML library bug
+            ai.addAttribute('', name, name, '', value)
         return ai
 
     def _content(self, content):
