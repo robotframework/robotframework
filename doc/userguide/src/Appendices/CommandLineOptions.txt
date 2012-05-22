@@ -40,7 +40,7 @@ Command line options for test execution
   --reportbackground <colors>  `Sets background colors`_ of the generated report.
   -L, --loglevel <level>  `Sets the threshold level`_ for logging. Optionally
                           the default `visible log level`_ can be given
-                          separated with :.
+                          separated with a colon (:).
   --suitestatlevel <level>  Defines how many `levels to show`_ in the
                            :name:`Statistics by Suite` table in outputs.
   --tagstatinclude <tag>  `Includes only these tags`_ in the :name:`Statistics
@@ -96,7 +96,7 @@ Command line options for post-processing outputs
   --reportbackground <colors>  `Sets background colors`_ of the generated report.
   -L, --loglevel <level>  `Sets the threshold level`_ to select log messages.
                           Optionally the default `visible log level`_ can be given
-                          separated with :.
+                          separated with a colon (:).
   --suitestatlevel <level>  Defines how many `levels to show`_ in the
                            :name:`Statistics by Suite` table in outputs.
   --tagstatinclude <tag>  `Includes only these tags`_ in the :name:`Statistics
