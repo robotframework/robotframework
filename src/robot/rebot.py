@@ -122,7 +122,7 @@ Options
  -L --loglevel level      Threshold for selecting messages. Available levels:
                           TRACE (default), DEBUG, INFO, WARN, NONE (no msgs).
                           Use syntax `LOGLEVEL:DEFAULT` to define the default
-                          visible log level in a log file.
+                          visible log level in log files.
                           Examples: --loglevel DEBUG
                                     --loglevel DEBUG:INFO
     --suitestatlevel level  How many levels to show in `Statistics by Suite`

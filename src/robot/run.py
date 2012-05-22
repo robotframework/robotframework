@@ -162,7 +162,7 @@ Options
  -L --loglevel level      Threshold level for logging. Available levels: TRACE,
                           DEBUG, INFO (default), WARN, NONE (no logging). Use
                           syntax `LOGLEVEL:DEFAULT` to define the default
-                          visible log level in a log file.
+                          visible log level in log files.
                           Examples: --loglevel DEBUG
                                     --loglevel DEBUG:INFO
     --suitestatlevel level  How many levels to show in `Statistics by Suite`
