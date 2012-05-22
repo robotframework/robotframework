@@ -174,7 +174,7 @@ class TestStateBetweenTestRuns(unittest.TestCase):
         resource = join(ROOT, 'atest', 'testdata', 'core', 'resources.html')
         return namespace.IMPORTER.import_resource(resource)
 
-    def test_x(self):
+    def test_clear_namespace_between_runs(self):
         data = join(ROOT, 'atest', 'testdata', 'variables', 'commandline_variables.html')
         rc = run(data, stdout=StringIO(), stderr=StringIO(), test=['NormalText'], variable=['NormalText:Hello'])
         assert_equals(rc, 0)
