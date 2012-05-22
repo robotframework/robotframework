@@ -159,12 +159,11 @@ Options
                           `passed:failed`. Both color names and codes work.
                           Examples: --reportbackground green:yellow:red
                                     --reportbackground #00E:#E00
- -L --loglevel level      Threshold level for logging. Available levels:
-                          TRACE, DEBUG, INFO (default), WARN, NONE (no logging)
-                          To define default visible log level in a log file use
-                          syntax: [LOGLEVEL]:[DEFAULT]
+ -L --loglevel level      Threshold level for logging. Available levels: TRACE,
+                          DEBUG, INFO (default), WARN, NONE (no logging). Use
+                          syntax `LOGLEVEL:DEFAULT` to define the default
+                          visible log level in a log file.
                           Examples: --loglevel DEBUG
-                                    --loglevel TRACE:DEBUG
                                     --loglevel DEBUG:INFO
     --suitestatlevel level  How many levels to show in `Statistics by Suite`
                           in log and report. By default all suite levels are
