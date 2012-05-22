@@ -39,13 +39,14 @@ class XmlWriter(AbstractXmlWriter):
             raise IOError(-1, err.getMessage(), output)
 
     def _start(self, name, attrs):
-        # Passing also localName is required due to Saxon XML library bug
+        # Passing also localName is required due to Saxon stupidity:
+        # http://code.google.com/p/robotframework/issues/detail?id=1130
         self._writer.startElement('', name, name, self._get_attrs_impl(attrs))
 
     def _get_attrs_impl(self, attrs):
         ai = AttributesImpl()
         for name, value in attrs.items():
-            # Passing also localName is required due to Saxon XML library bug
+            # Also here localName is required due to Saxon
             ai.addAttribute('', name, name, '', value)
         return ai
 
