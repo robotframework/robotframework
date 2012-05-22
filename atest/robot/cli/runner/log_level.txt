@@ -66,8 +66,8 @@ None Level
 *** Keywords ***
 Min level should be '${min}' and default '${default}'
     ${log}=    Get file      ${OUTDIR}/${LOG NAME}
-    Should contain    ${log}    ["minLevel"] = "${min}"
-    Should contain    ${log}    "defaultLogLevel":"${default}"
+    Should contain    ${log}    "minLevel":"${min}"
+    Should contain    ${log}    "defaultLevel":"${default}"
 
 Should Log On Debug Level
     Check Log Message  ${SUITE.tests[0].kws[0].kws[0].msgs[0]}  Hello says "Pass"!  INFO

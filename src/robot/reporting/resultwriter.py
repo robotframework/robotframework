@@ -33,7 +33,8 @@ class ResultWriter(object):
         if settings.xunit:
             self._write_xunit(results.result, settings.xunit)
         if settings.log:
-            self._write_log(results.js_result, settings.log, settings.log_config)
+            config = dict(settings.log_config, minLevel=results.js_result.min_level)
+            self._write_log(results.js_result, settings.log, config)
         if settings.report:
             results.js_result.remove_data_not_needed_in_report()
             self._write_report(results.js_result, settings.report, settings.report_config)

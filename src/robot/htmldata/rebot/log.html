@@ -48,7 +48,7 @@ $(document).ready(function() {
     addStatistics();
     addErrors();
     addTestExecutionLog(topsuite);
-    addLogLevelSelector(window.output['minLevel'], window.settings['defaultLogLevel']);
+    addLogLevelSelector(window.settings['minLevel'], window.settings['defaultLevel']);
     if (window.location.hash) {
         makeElementVisible(window.location.hash.substring(1));
         scrollToHash();

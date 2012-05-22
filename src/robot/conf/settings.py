@@ -353,7 +353,7 @@ class RebotSettings(_BaseSettings):
             'title': self['LogTitle'],
             'reportURL': self._url_from_path(self.log, self.report),
             'splitLogBase': os.path.basename(os.path.splitext(self.log)[0]),
-            'defaultLogLevel': self['VisibleLogLevel']
+            'defaultLevel': self['VisibleLogLevel']
         }
 
     @property

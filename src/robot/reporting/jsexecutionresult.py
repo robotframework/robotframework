@@ -36,8 +36,7 @@ class JsExecutionResult(object):
             'errors': errors,
             'baseMillis': basemillis,
             'generatedMillis': long(time.mktime(gentime) * 1000) - basemillis,
-            'generatedTimestamp': utils.format_time(gentime, gmtsep=' '),
-            'minLevel': self.min_level
+            'generatedTimestamp': utils.format_time(gentime, gmtsep=' ')
         }
 
     def remove_data_not_needed_in_report(self):
