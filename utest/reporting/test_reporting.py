@@ -20,7 +20,6 @@ class TestReporting(unittest.TestCase):
     EXPECTED_FAILING_TEST = 'My Failing Test'
     EXPECTED_DEBUG_MESSAGE = '1111DEBUG777'
     EXPECTED_ERROR_MESSAGE = 'ERROR M355463'
-    EXPECTED_MIN_LOG_LEVEL = 'DEBUG'
 
     def test_no_generation(self):
         settings = StubSettings()
@@ -110,7 +109,6 @@ class TestReporting(unittest.TestCase):
 
     def _verify_log(self, content):
         self._verify_output(content)
-        assert_true('["minLevel"] = "%s"' % self.EXPECTED_MIN_LOG_LEVEL in content)
 
     def _verify_report(self, content):
         assert_true(self.EXPECTED_SUITE_NAME in content)
@@ -123,7 +121,7 @@ class TestReporting(unittest.TestCase):
 
 class StubSettings(object):
     log = None
-    log_config = None
+    log_config = {}
     split_log = False
     report = None
     report_config = None

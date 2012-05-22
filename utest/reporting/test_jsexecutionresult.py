@@ -86,7 +86,7 @@ class TestRemoveDataNotNeededInReport(unittest.TestCase):
         result.remove_data_not_needed_in_report()
         assert_equals(result.strings, tuple('ACE'))
         assert_equals(result.suite, exp_s)
-        assert_equals(result.data['minLevel'], 'DEBUG')
+        assert_equals(result.min_level, 'DEBUG')
         assert_true('errors' not in result.data)
 
 

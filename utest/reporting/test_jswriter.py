@@ -30,7 +30,6 @@ class TestDataModelWrite(unittest.TestCase):
         assert_true(lines[0].startswith('window.output = {}'), lines[0])
         assert_true(lines[1].startswith('window.output["'), lines[1])
         assert_true(lines[-1].startswith('window.settings ='), lines[-1])
-        assert_true('window.output["minLevel"] = "DEBUG";' in lines)
 
     def test_writing_datamodel_with_separator(self):
         lines = get_lines(start_block='seppo\n')
