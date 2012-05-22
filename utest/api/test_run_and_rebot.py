@@ -115,6 +115,11 @@ class TestRun(Base):
         self._assert_output(output, [('[ WARN ]', 4), ('[ ERROR ]', 1),
                                      ('Warnings And Errors', 3), ('Output:', 1),
                                      ('Log:', 0), ('Report:', 0)])
+        self._assert_outputs()
+
+    def test_multi_options_as_single_string(self):
+        assert_equals(run(self.data, output='NONE', exclude='fail'), 0)
+        self._assert_outputs([('FAIL', 0)])
 
 
 class TestRebot(Base):

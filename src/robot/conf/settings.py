@@ -67,6 +67,8 @@ class _BaseSettings(object):
             value = opts.get(cli_name, default)
             if value in [None, []]:
                 value = default
+            elif default == [] and isinstance(value, basestring):
+                value = [value]
             self[name] = self._process_value(name, value, log)
 
     def __setitem__(self, name, value):

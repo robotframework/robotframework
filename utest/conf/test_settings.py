@@ -71,6 +71,10 @@ class TestRobotAndRebotSettings(unittest.TestCase):
         RebotSettings()
         assert_equals(RobotSettings()._opts, orig_opts)
 
+    def test_multi_options_as_single_string(self):
+        assert_equals(RobotSettings({'test': 'one'})['TestNames'], ['one'])
+        assert_equals(RebotSettings({'exclude': 'two'})['Exclude'], ['two'])
+
     def test_log_levels(self):
         self._verify_log_level('TRACE')
         self._verify_log_level('DEBUG')
