@@ -97,15 +97,18 @@ class TestRobotAndRebotSettings(unittest.TestCase):
         self._verify_log_level('TRACE:debug', level='TRACE', default='DEBUG')
         self._verify_log_level('DEBUG:INFO', level='DEBUG', default='INFO')
 
-    def test_default_log_level_validation(self):
-        self._verify_raises_dataerror('INFO:TRACE')
-        self._verify_raises_dataerror('DEBUG:TRACE')
-        self._verify_raises_dataerror('DEBUG:INFO:FOO')
-        self._verify_raises_dataerror('INFO:bar')
-        self._verify_raises_dataerror('bar:INFO')
+    def test_invalid_log_level(self):
+        self._verify_invalid_log_level('kekonen')
+        self._verify_invalid_log_level('DEBUG:INFO:FOO')
+        self._verify_invalid_log_level('INFO:bar')
+        self._verify_invalid_log_level('bar:INFO')
 
-    def _verify_raises_dataerror(self, input):
-        self.assertRaises(DataError, lambda: RobotSettings({'loglevel':input}))
+    def test_visible_level_higher_than_normal_level(self):
+        self._verify_invalid_log_level('INFO:TRACE')
+        self._verify_invalid_log_level('DEBUG:TRACE')
+
+    def _verify_invalid_log_level(self, input):
+        self.assertRaises(DataError, RobotSettings, {'loglevel': input})
 
 
 if __name__ == '__main__':
