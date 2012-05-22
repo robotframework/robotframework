@@ -120,11 +120,12 @@ class _BaseSettings(object):
 
     def _validate_log_level_and_default(self, log_level, default):
         if log_level not in loggerhelper.LEVELS:
-            raise DataError('Invalid log level "%s"' % log_level)
+            raise DataError("Invalid log level '%s'" % log_level)
         if default not in loggerhelper.LEVELS:
-            raise DataError('Invalid log level "%s"' % default)
+            raise DataError("Invalid log level '%s'" % default)
         if not loggerhelper.IsLogged(log_level)(default):
-            raise DataError('Default shown log level "%s" is not shown when using log level "%s"' % (default, log_level))
+            raise DataError("Default visible log level '%s' is lower than "
+                            "log level '%s'" % (default, log_level))
 
     def __getitem__(self, name):
         if name not in self._opts:
