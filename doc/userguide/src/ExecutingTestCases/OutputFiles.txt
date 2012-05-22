@@ -251,6 +251,31 @@ arguments as the :opt:`--loglevel` option, and it also returns the
 old level so that it can be restored later, for example, in a `test
 teardown`_.
 
+If you wish to change the default `visible log level`_, you can give the default
+visible level after the log level separated by :. For example :msg:`TRACE:INFO`.
+See `Visible log level`_ below for more information.
+
+Visible log level
+'''''''''''''''''
+
+Starting from Robot Framework 2.7.2, if the log file contains messages at
+:msg:`DEBUG` or :msg:`TRACE` levels, the visible log level drop down will show
+in the upper right corner. This will allow users to filter messages below chosen
+level from the view. This can be useful especially when running test at
+:msg:`TRACE` level.
+
+.. figure:: src/ExecutingTestCases/visible_log_level.png
+   :target: src/ExecutingTestCases/visible_log_level.html
+   :width: 500
+
+   An example log showing visible log level drop down at upper right corner
+
+By default the drop down will be set at the lowest log level, so that all
+messages in the file are shown. This default visible log level can be changed by
+writing log level as for example :msg:`TRACE:INFO`. Then test will be run using
+level :msg:`TRACE`, but the visible log level in the log file will be
+:msg:`INFO` by default.
+
 Splitting logs
 ~~~~~~~~~~~~~~
 

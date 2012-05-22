@@ -38,7 +38,9 @@ Command line options for test execution
   --logtitle <title>      `Sets a title`_ for the generated test log.
   --reporttitle <title>   `Sets a title`_ for the generated test report.
   --reportbackground <colors>  `Sets background colors`_ of the generated report.
-  -L, --loglevel <level>  `Sets the threshold level`_ for logging.
+  -L, --loglevel <level>  `Sets the threshold level`_ for logging. Optionally
+                          the default `visible log level`_ can be given
+                          separated with :.
   --suitestatlevel <level>  Defines how many `levels to show`_ in the
                            :name:`Statistics by Suite` table in outputs.
   --tagstatinclude <tag>  `Includes only these tags`_ in the :name:`Statistics
@@ -93,6 +95,8 @@ Command line options for post-processing outputs
   --reporttitle <title>   `Sets a title`_ for the generated test report.
   --reportbackground <colors>  `Sets background colors`_ of the generated report.
   -L, --loglevel <level>  `Sets the threshold level`_ to select log messages.
+                          Optionally the default `visible log level`_ can be given
+                          separated with :.
   --suitestatlevel <level>  Defines how many `levels to show`_ in the
                            :name:`Statistics by Suite` table in outputs.
   --tagstatinclude <tag>  `Includes only these tags`_ in the :name:`Statistics
@@ -160,3 +164,4 @@ Command line options for post-processing outputs
 .. _Removes keyword data: `Removing keywords from outputs`_
 .. _starting time: `Setting start and end time of execution`_
 .. _ending time: `starting time`_
+
