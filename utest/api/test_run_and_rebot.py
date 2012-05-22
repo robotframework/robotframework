@@ -158,7 +158,6 @@ class TestRebot(Base):
 
 class TestStateBetweenTestRuns(unittest.TestCase):
 
-
     def test_importer_caches_are_cleared_between_runs(self):
         data = join(ROOT, 'atest', 'testdata', 'core', 'import_settings.txt')
         run(data, stdout=StringIO(), stderr=StringIO())
@@ -174,6 +173,13 @@ class TestStateBetweenTestRuns(unittest.TestCase):
     def _import_resource(self):
         resource = join(ROOT, 'atest', 'testdata', 'core', 'resources.html')
         return namespace.IMPORTER.import_resource(resource)
+
+    def test_x(self):
+        data = join(ROOT, 'atest', 'testdata', 'variables', 'commandline_variables.html')
+        rc = run(data, stdout=StringIO(), stderr=StringIO(), test=['NormalText'], variable=['NormalText:Hello'])
+        assert_equals(rc, 0)
+        rc = run(data, stdout=StringIO(), stderr=StringIO(), test=['NormalText'])
+        assert_equals(rc, 1)
 
 
 if __name__ == '__main__':
