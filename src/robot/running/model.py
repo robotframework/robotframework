@@ -32,6 +32,10 @@ from .defaultvalues import DefaultValues
 def TestSuite(datasources, settings):
     """Creates a runnable test suite from given datasources and settings.
 
+    This is a factory method that returns either :class:`RunnableTestSuite`
+    or :class:`RunnableMultiTestSuite`. This method, and especially the
+    returned suite, is likely to change heavily in version 2.8.
+
     :param datasources: List of paths to read data from. Starting from 2.7.2,
                         a single datasource can also be given as a string.
     :param settings: Execution configuration.
