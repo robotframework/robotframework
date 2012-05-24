@@ -3,7 +3,6 @@
 from os.path import abspath, dirname, normpath, join
 import os
 import sys
-import codecs
 
 BASEDIR = dirname(abspath(__file__))
 LOG = normpath(join(BASEDIR, '..', 'log.html'))
@@ -36,7 +35,8 @@ def create_jsdata(outxml, target):
     })
     result = Results(outxml, settings).js_result
     config = {'logURL': 'log.html',
-              'defaultLogLevel': 'DEBUG',
+              'minLevel': 'DEBUG',
+              'defaultLevel': 'DEBUG',
               'reportURL': 'report.html',
               'background': {'fail': 'DeepPink'}}
     with utf8open(target, 'w') as output:
