@@ -163,30 +163,30 @@ table.statistics th {
     float: left;
     height: 100%;
 }
-/* HTML in users' suite documentation etc. */
-table.robotdoc, pre.robotdoc, hr.robotdoc {
+/* Documentation formatting */
+.doc table, .doc pre, .doc hr {
     margin: 0.5em 1em;
 }
-table.robotdoc {
+.doc table {
     border: 1px solid gray;
     background: transparent;
     border-collapse: collapse;
     empty-cells: show;
     font-size: 0.85em;
 }
-table.robotdoc td {
+.doc td {
     border: 1px solid gray;
     padding: 0.1em 0.3em;
     height: 1.2em;
 }
-pre.robotdoc {
+.doc pre {
     font-size: 1.1em;
     background: #F4F4FF;
 }
-img.robotdoc {
+.doc img {
     border: 1px solid gray;
 }
-hr.robotdoc {
+.doc hr {
     background: gray;
     height: 1px;
     border: 0;

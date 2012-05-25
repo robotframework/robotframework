@@ -177,7 +177,7 @@ function addTestExecutionLog(main) {
       {{/if}}
     </td>
     <td class="${level.toLowerCase()} level">${level}</td>
-    <td class="msg">{{html text}}</td>
+    <td class="msg doc">{{html text}}</td>
   </tr>
 </script>
 
@@ -200,13 +200,13 @@ function addTestExecutionLog(main) {
         {{if doc()}}
         <tr>
           <th>Documentation:</th>
-          <td>{{html doc()}}</td>
+          <td class="doc">{{html doc()}}</td>
         </tr>
         {{/if}}
         {{each metadata}}
         <tr>
           <th>${$value[0]}:</th>
-          <td>{{html $value[1]}}</td>
+          <td class="doc">{{html $value[1]}}</td>
         </tr>
         {{/each}}
         {{if source}}
@@ -257,7 +257,7 @@ function addTestExecutionLog(main) {
         {{if doc()}}
         <tr>
           <th>Documentation:</th>
-          <td>{{html doc()}}</td>
+          <td class="doc">{{html doc()}}</td>
         </tr>
         {{/if}}
         {{if tags.length}}
@@ -307,7 +307,7 @@ function addTestExecutionLog(main) {
         {{if doc()}}
         <tr>
           <th>Documentation:</th>
-          <td>{{html doc()}}</td>
+          <td class="doc">{{html doc()}}</td>
         </tr>
         {{/if}}
         {{if timeout}}
@@ -330,7 +330,7 @@ function addTestExecutionLog(main) {
     <tr>
       <td class="time">${time}</td>
       <td class="${level.toLowerCase()} level">${level}</td>
-      <td class="msg">{{html text}}</td>
+      <td class="msg doc">{{html text}}</td>
     </tr>
   </table>
 </script>

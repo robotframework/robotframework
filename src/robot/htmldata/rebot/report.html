@@ -286,13 +286,13 @@ function popUpTo(list, upTo) {
     {{if doc()}}
     <tr>
       <th>Documentation:</th>
-      <td>{{html doc()}}</td>
+      <td class="doc">{{html doc()}}</td>
     </tr>
     {{/if}}
     {{each metadata}}
     <tr>
       <th>${$value[0]}:</th>
-      <td>{{html $value[1]}}</td>
+      <td class="doc">{{html $value[1]}}</td>
     </tr>
     {{/each}}
     {{if times.startTime != 'N/A'}}
@@ -439,7 +439,7 @@ function popUpTo(list, upTo) {
   {{if doc}}
   <tr>
     <th>Documentation:</th>
-    <td>{{html doc}}</td>
+    <td class="doc">{{html doc}}</td>
   </tr>
   {{/if}}
   {{if combined}}
@@ -468,7 +468,7 @@ function popUpTo(list, upTo) {
   {{if doc()}}
   <tr>
     <th>Documentation:</th>
-    <td>{{html doc()}}</td>
+    <td class="doc">{{html doc()}}</td>
   </tr>
   {{/if}}
   {{if $item.logURL}}
@@ -480,7 +480,7 @@ function popUpTo(list, upTo) {
   {{each metadata}}
   <tr>
     <th>${$value[0]}:</th>
-    <td>{{html $value[1]}}</td>
+    <td class="doc">{{html $value[1]}}</td>
   </tr>
   {{/each}}
   <tr>
@@ -527,7 +527,7 @@ function popUpTo(list, upTo) {
     {{else}}
     <td class="col_name"><span class="parent_name">${formatParentName}</span>${name}</td>
     {{/if}}
-    <td class="col_doc">{{html doc()}}</td>
+    <td class="col_doc doc">{{html doc()}}</td>
     <td class="col_tags">${tags.join(', ')}</td>
     <td class="col_crit">{{if isCritical}}yes{{else}}no{{/if}}</td>
     <td class="col_status ${status.toLowerCase()}">${status}</td>
