@@ -27,7 +27,7 @@ class _AbstractSwingDialog:
     def _show_dialog(self, pane):
         dialog = pane.createDialog(None, 'Robot Framework')
         dialog.setModal(False)
-        dialog.setAlwaysOnTop(True);
+        dialog.setAlwaysOnTop(True)
         dialog.show()
         while dialog.isShowing():
             time.sleep(0.2)
