@@ -42,7 +42,7 @@ class LinkFormatter(object):
         return pre + self._get_link(url)
 
     def _get_image(self, src, title=None):
-        return '<img src="%s" title="%s" class="robotdoc">' \
+        return '<img src="%s" title="%s">' \
                 % (self._quot(src), self._quot(title or src))
 
     def _get_link(self, href, content=None):
@@ -177,7 +177,7 @@ class RulerFormatter(object):
     newline = ''
 
     def format(self, line):
-        return '<hr class="robotdoc">'
+        return '<hr>'
 
 
 class TableFormatter(object):
@@ -191,7 +191,7 @@ class TableFormatter(object):
 
     def format(self, lines):
         maxlen = max(len(row) for row in lines)
-        table = ['<table class="robotdoc">']
+        table = ['<table>']
         for line in lines:
             line += [''] * (maxlen - len(line))  # fix ragged tables
             table.append('<tr>')
@@ -211,4 +211,4 @@ class PreformattedFormatter(object):
 
     def format(self, lines):
         lines = [self._format_line(line) for line in lines]
-        return '\n'.join(['<pre class="robotdoc">'] + lines + ['</pre>'])
+        return '\n'.join(['<pre>'] + lines + ['</pre>'])

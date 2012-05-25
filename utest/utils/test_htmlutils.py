@@ -90,7 +90,7 @@ class TestUrlsToLinks(unittest.TestCase):
 
     def test_image_links(self):
         link = '(<a href="%s">%s</a>)'
-        img = '(<img src="%s" title="%s" class="robotdoc">)'
+        img = '(<img src="%s" title="%s">)'
         for ext in ['jpg', 'jpeg', 'png', 'gif', 'bmp']:
             url = 'foo://bar/zap.%s' % ext
             uprl = url.upper()
@@ -107,7 +107,7 @@ class TestUrlsToLinks(unittest.TestCase):
              '<a href="ftp://&lt;&amp;&gt;/">ftp://&lt;&amp;&gt;/</a>'),
             ('http://x&".png',
             '<a href="http://x&amp;&quot;.png">http://x&amp;".png</a>',
-            '<img src="http://x&amp;&quot;.png" title="http://x&amp;&quot;.png" class="robotdoc">')
+            '<img src="http://x&amp;&quot;.png" title="http://x&amp;&quot;.png">')
         ]:
             assert_escape_and_format(*items)
 
@@ -240,15 +240,15 @@ class TestHtmlFormatCustomLinks(unittest.TestCase):
 
     def test_text_with_image(self):
         assert_format('[link|img.png]',
-                      '<a href="link"><img src="img.png" title="link" class="robotdoc"></a>')
+                      '<a href="link"><img src="img.png" title="link"></a>')
 
     def test_image_with_text(self):
-        assert_format('[img.png|title]', '<img src="img.png" title="title" class="robotdoc">')
-        assert_format('[img.png|]', '<img src="img.png" title="img.png" class="robotdoc">')
+        assert_format('[img.png|title]', '<img src="img.png" title="title">')
+        assert_format('[img.png|]', '<img src="img.png" title="img.png">')
 
     def test_image_with_image(self):
         assert_format('[x.png|thumb.png]',
-                      '<a href="x.png"><img src="thumb.png" title="x.png" class="robotdoc"></a>')
+                      '<a href="x.png"><img src="thumb.png" title="x.png"></a>')
 
     def test_link_is_required(self):
         assert_format('[|]', '[|]')
@@ -265,7 +265,7 @@ class TestHtmlFormatCustomLinks(unittest.TestCase):
 
     def test_multiple_links(self):
         assert_format('start [link|img.png] middle [link.html|title] end',
-                      'start <a href="link"><img src="img.png" title="link" class="robotdoc"></a> '
+                      'start <a href="link"><img src="img.png" title="link"></a> '
                       'middle <a href="link.html">title</a> end')
 
     def test_multiple_links_and_urls(self):
@@ -274,14 +274,14 @@ class TestHtmlFormatCustomLinks(unittest.TestCase):
 
     def test_escaping(self):
         assert_format('["|<&>]', '<a href="&quot;">&lt;&amp;&gt;</a>')
-        assert_format('[<".jpg|">]', '<img src="&lt;&quot;.jpg" title="&quot;&gt;" class="robotdoc">')
+        assert_format('[<".jpg|">]', '<img src="&lt;&quot;.jpg" title="&quot;&gt;">')
 
     def test_formatted_link(self):
         assert_format('*[link.html|title]*', '<b><a href="link.html">title</a></b>')
 
     def test_link_in_table(self):
         assert_format('| [link.html|title] |', '''\
-<table class="robotdoc">
+<table>
 <tr>
 <td><a href="link.html">title</a></td>
 </tr>
@@ -450,13 +450,13 @@ class TestHtmlFormatHr(unittest.TestCase):
     def test_hr_is_three_or_more_hyphens(self):
         for i in range(3, 10):
             hr = '-' * i
-            assert_format(hr, '<hr class="robotdoc">')
-            assert_format(hr + '  ', '<hr class="robotdoc">')
+            assert_format(hr, '<hr>')
+            assert_format(hr + '  ', '<hr>')
 
     def test_hr_with_other_stuff_around(self):
-        for inp, exp in [('---\n-', '<hr class="robotdoc">-'),
-                         ('xx\n---\nxx', 'xx\n<hr class="robotdoc">xx'),
-                         ('xx\n\n------\n\nxx', 'xx\n\n<hr class="robotdoc">\nxx')]:
+        for inp, exp in [('---\n-', '<hr>-'),
+                         ('xx\n---\nxx', 'xx\n<hr>xx'),
+                         ('xx\n\n------\n\nxx', 'xx\n\n<hr>\nxx')]:
             assert_format(inp, exp)
 
     def test_not_hr(self):
@@ -469,9 +469,9 @@ class TestHtmlFormatHr(unittest.TestCase):
 | t | a | b | l | e |
 ---
 '''[1:-1]
-        exp = '<hr class="robotdoc">' \
+        exp = '<hr>' \
             + _format_table([['t','a','b','l','e']]) \
-            + '<hr class="robotdoc">'
+            + '<hr>'
         assert_format(inp, exp)
 
 
@@ -494,15 +494,15 @@ class TestHtmlFormatPreformatted(unittest.TestCase):
 
     def test_block_mixed_with_other_content(self):
         assert_format('before block:\n| some\n| quote\nafter block',
-                      'before block:\n<pre class="robotdoc">\nsome\nquote\n</pre>after block')
+                      'before block:\n<pre>\nsome\nquote\n</pre>after block')
 
     def test_multiple_blocks(self):
         assert_format('| some\n| quote\nbetween\n| other block\n\nafter', '''\
-<pre class="robotdoc">
+<pre>
 some
 quote
 </pre>between
-<pre class="robotdoc">
+<pre>
 other block
 </pre>
 after''')
@@ -511,11 +511,11 @@ after''')
         self._assert_preformatted('| _some_', '<i>some</i>')
 
     def _assert_preformatted(self, inp, exp):
-        assert_format(inp, '<pre class="robotdoc">\n' + exp + '\n</pre>')
+        assert_format(inp, '<pre>\n' + exp + '\n</pre>')
 
 
 class TestFormatTable(unittest.TestCase):
-    _table_start = '<table class="robotdoc">'
+    _table_start = '<table>'
 
     def test_one_row_table(self):
         inp = [['1','2','3']]

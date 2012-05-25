@@ -187,7 +187,7 @@ class TestDocumentationFormatting(unittest.TestCase):
                      doc='''\
 We have <i>formatting</i> and &lt;escaping&gt;.
 
-<table class="robotdoc">
+<table>
 <tr>
 <td><b>Name</b></td>
 <td><b>URL</b></td>
