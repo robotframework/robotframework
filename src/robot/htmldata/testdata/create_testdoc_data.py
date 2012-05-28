@@ -1,7 +1,8 @@
+#!/usr/bin/env python
+
 import sys
 from os.path import abspath, dirname, join, normpath
 import shutil
-
 
 BASE = dirname(abspath(__file__))
 ROOT = normpath(join(BASE, '..', '..', '..', '..'))
@@ -12,6 +13,7 @@ OUTPUT = join(BASE, '..', 'testdoc.js')
 REAL_OUTPUT =  join(BASE, 'testdoc.js')
 
 sys.path.insert(0, SRC)
+
 from robot.testdoc import TestSuiteFactory, TestdocModelWriter
 
 with open(OUTPUT, 'w') as output:
