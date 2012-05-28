@@ -22,10 +22,7 @@ _html_attr_escapes = _html_escapes + (('"', '&quot;'),)
 _format_url = LinkFormatter().format_url
 
 
-def html_escape(text, formatting=False):
-    # TODO: Remove formatting attribute after RIDE does not use it anymore
-    if formatting:
-        return _ride_formatting(text)
+def html_escape(text):
     return _format_url(_html_escape(text))
 
 def _ride_formatting(text):
