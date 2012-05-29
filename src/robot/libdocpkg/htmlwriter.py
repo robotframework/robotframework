@@ -34,10 +34,10 @@ class LibdocModelWriter(ModelWriter):
 
     def write(self, line):
         self._output.write('<script type="text/javascript">' + os.linesep)
-        self._write_data()
+        self.write_data()
         self._output.write('</script>' + os.linesep)
 
-    def _write_data(self):
+    def write_data(self):
         formatter = DocFormatter(self._libdoc.keywords)
         libdoc = JsonConverter(formatter).convert(self._libdoc)
         JsonWriter(self._output).write_json('libdoc = ', libdoc)

@@ -1,0 +1,54 @@
+*** Settings ***
+Documentation  *URL:*    http://robotframework.org
+...
+...            _Image:_  http://code.google.com/p/robotframework/logo?ext.png
+...
+...            ----------------------------
+...
+...            | *My* | *Table* |
+...            | 1    | 2       |
+...            | foo  |
+...            regular line
+...            | block formatted
+...            | \ \ content\t\tand whitespaces
+
+
+*** Keywords ***
+One paragraph
+    [Documentation]    Hello, world!
+
+Multiple paragraps
+    [Documentation]    Hell, world!
+    ...
+    ...    Second paragraph *has formatting* and [http://example.com|link].
+    ...    This is still part of second paragraph.
+    ...
+    ...    Third paragraph is _short_.
+
+Tables alone
+    [Documentation]
+    ...    | *a* | *b*   | *c*  |
+    ...    | 1st | table | here |
+    ...
+    ...    | 2nd | table | has | only | one | row |
+
+Preformatted
+    [Documentation]
+    ...    | First block
+    ...    | has two lines
+    ...
+    ...    | Second has only one
+
+HR
+    [Documentation]
+    ...    ---
+    ...
+    ...    ---------------
+
+Images
+    [Documentation]
+    ...    http://code.google.com/p/robotframework/logo?ext.png
+    ...
+    ...    Images are [http://code.google.com/p/robotframework/logo?ext.png|title]
+    ...    inside paragraphs. This one is also a link:
+    ...    [http://code.google.com/p/robotframework/logo?ext.png|http://code.google.com/p/robotframework/logo?ext.png]
