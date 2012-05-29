@@ -41,14 +41,14 @@ h1 {
 }
 /* Status text colors -- !important allows using them in links */
 .error, .fail {
-    color: red !important;;
+    color: red !important;
     font-weight: bold;
 }
 .pass {
-    color: #009900 !important;;
+    color: #009900 !important;
 }
 .warn {
-    color: #FFCC00 !important;;
+    color: #FFCC00 !important;
     font-weight: bold;
 }
 .not_run {
