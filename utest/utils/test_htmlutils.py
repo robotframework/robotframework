@@ -176,7 +176,7 @@ class TestHtmlFormatBoldAndItalic(unittest.TestCase):
         inp = 'this is *bold*\nand *this*\nand *that*'
         exp = 'this is <b>bold</b> and <b>this</b> and <b>that</b>'
         assert_format(inp, exp, p=True)
-        assert_format('this *works\ntoo!*', 'this *works too!*', p=True)
+        assert_format('this *works\ntoo!*', 'this <b>works too!</b>', p=True)
 
     def test_not_bolded_if_no_content(self):
         assert_format('**', p=True)

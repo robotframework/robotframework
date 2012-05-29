@@ -205,8 +205,8 @@ class ParagraphFormatter(object):
         return line
 
     def format(self, lines):
-        # TODO: Join before or after format?
-        return '<p>%s</p>' % ' '.join(self._format_line(l).strip() for l in lines)
+        paragraph = ' '.join(l.strip() for l in lines).strip()
+        return '<p>%s</p>' % self._format_line(paragraph)
 
 
 class TableFormatter(object):
