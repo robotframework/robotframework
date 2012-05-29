@@ -39,6 +39,13 @@ Preformatted
     ...
     ...    | Second has only one
 
+Lists
+    [Documentation]
+    ...    - first
+    ...    - second
+    ...
+    ...    - another
+
 HR
     [Documentation]
     ...    ---

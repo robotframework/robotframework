@@ -82,6 +82,7 @@ table.keywords td.arg {
 /* Documentation formatting */
 .doc > * {
     margin: 1em 1em 0 1em;
+    padding: 0;
 }
 .doc > p {
     margin: 1em 0 0 0;
@@ -101,9 +102,16 @@ table.keywords td.arg {
     padding: 0.1em 0.3em;
     height: 1.2em;
 }
-.doc pre {
+.doc padding-right:
+
+;e {
     font-size: 1.1em;
     background: #F4F4FF;
+}
+.doc li {
+    list-style-position: inside;
+    list-style-type: square;
+    font-size: 0.9em;
 }
 .doc img {
     border: 1px solid gray;

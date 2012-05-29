@@ -512,6 +512,45 @@ class TestHtmlFormatHr(unittest.TestCase):
         assert_format(inp, exp)
 
 
+class TestHtmlFormatList(unittest.TestCase):
+
+    def test_not_a_list(self):
+        for inp in ('-- item', '+ item', '* item', '-item'):
+            assert_format(inp, inp, p=True)
+
+    def test_one_item_list(self):
+        assert_format('- item', '<ul>\n<li>item</li>\n</ul>')
+        assert_format(' -   item', '<ul>\n<li>item</li>\n</ul>')
+
+    def test_multi_item_list(self):
+        assert_format('- 1\n  -  2\n- 3',
+                      '<ul>\n<li>1</li>\n<li>2</li>\n<li>3</li>\n</ul>')
+
+    def test_lists_with_other_content(self):
+        assert_format('''
+before
+- a
+- b
+between
+
+- c
+- d
+
+---
+''',  '''\
+<p>before</p>
+<ul>
+<li>a</li>
+<li>b</li>
+</ul>
+<p>between</p>
+<ul>
+<li>c</li>
+<li>d</li>
+</ul>
+<hr>''')
+
+
 class TestHtmlFormatPreformatted(unittest.TestCase):
 
     def test_single_line_block(self):

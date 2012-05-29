@@ -112,6 +112,7 @@ class HtmlFormatter(object):
         self._results = []
         self._formatters = [TableFormatter(),
                             PreformattedFormatter(),
+                            ListFormatter(),
                             RulerFormatter()]
         self._formatters.append(ParagraphFormatter(self._formatters[:]))
         self._current = None
@@ -220,3 +221,13 @@ class PreformattedFormatter(_BlockFormatter):
     def format(self, lines):
         lines = [self._format_line(line.strip()[2:]) for line in lines]
         return '\n'.join(['<pre>'] + lines + ['</pre>'])
+
+
+class ListFormatter(_BlockFormatter):
+
+    def handles(self, line):
+        return line.strip().startswith('- ')
+
+    def format(self, lines):
+        items = ['<li>%s</li>' % i.strip()[1:].strip() for i in lines]
+        return '\n'.join(['<ul>'] + items + ['</ul>'])
