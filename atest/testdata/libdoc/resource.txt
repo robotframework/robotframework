@@ -2,8 +2,7 @@
 Documentation   This resource file has documentation.
 ...
 ...  And it is even set in multiple cells with _formatting_.
-...  This should be in the same paragraph as the sentence above\
-...  and this line appended to previous.
+...  This should be in the same paragraph as the sentence above.
 ...
 ...  Here is a literal\nnewline\n
 ...
@@ -25,13 +24,13 @@ Keyword with some "stuff" to <escape>
     No Operation
 
 kw 3
-    [Documentation]   manual\nnewline\
-    ...  and eol escape
+    [Documentation]   literal\nnewline
     [Arguments]  ${a1}   @{a2}
 
 kw 4  [Arguments]  ${a1}=d  @{a2}
 
 kw 5  [Documentation]   foo bar `kw`.
+      ...
       ...  baa `${a1}` alskdj alskdjlajd
       ...  askf laskdjf asldkfj alsdkfj alsdkfjasldkfj
       ...  askf laskdjf _asldkfj_ alsdkfj alsdkfjasldkfj

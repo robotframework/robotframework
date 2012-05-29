@@ -53,7 +53,8 @@ Keyword Documentation
     ...    | Your Keyword | yyy |\n\n
     ...    See `My Keyword` for no more information.
     Keyword Doc Should Start With    1
-    ...    Does nothing & <doc> has "stuff" to 'escape'!! and ignored indentation
+    ...    Does nothing & <doc> has "stuff" to 'escape'!!
+    ...    \nand ignored indentation
 
 Non ASCII
     Keyword Doc Should Be    2    Hyvää yötä.\n\nСпасибо!

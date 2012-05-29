@@ -31,7 +31,8 @@ class JavaDocBuilder(object):
         return libdoc
 
     def _get_doc(self, code_object):
-        return code_object.getRawCommentText().strip()
+        doc = code_object.getRawCommentText()
+        return '\n'.join(line.strip() for line in doc.splitlines())
 
     def _get_version(self, doc):
         version = self._get_attr(doc, 'VERSION', '<unknown>')
