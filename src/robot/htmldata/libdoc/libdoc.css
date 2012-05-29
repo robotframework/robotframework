@@ -20,7 +20,7 @@ a:hover, a:active {
     color: black;
 }
 div.shortcuts {
-    margin: 1em 0em;
+    margin: 1em 0;
     font-size: 0.9em;
 }
 div.shortcuts a {
@@ -80,11 +80,14 @@ table.keywords td.arg {
     font-style: italic;
 }
 /* Documentation formatting */
-.doc {
-    white-space: pre-wrap;
+.doc > * {
+    margin: 1em 1em 0 1em;
 }
-.doc table, .doc pre, .doc hr {
-    margin: 0.5em 1em;
+.doc > p {
+    margin: 1em 0 0 0;
+}
+.doc > *:first-child {
+    margin-top: 0;
 }
 .doc table {
     border: 1px solid gray;
@@ -93,7 +96,7 @@ table.keywords td.arg {
     empty-cells: show;
     font-size: 0.85em;
 }
-.doc td {
+.doc table td {
     border: 1px solid gray;
     padding: 0.1em 0.3em;
     height: 1.2em;
@@ -104,6 +107,9 @@ table.keywords td.arg {
 }
 .doc img {
     border: 1px solid gray;
+}
+.doc a img {
+    border: 1px solid #c30;
 }
 .doc hr {
     background: gray;
