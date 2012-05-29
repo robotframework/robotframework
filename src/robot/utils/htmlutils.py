@@ -25,10 +25,6 @@ _format_url = LinkFormatter().format_url
 def html_escape(text):
     return _format_url(_html_escape(text))
 
-def _ride_formatting(text):
-    return html_format(text).replace('\t', '&nbsp;'*8) \
-                .replace('  ', ' &nbsp;').replace('\n', '<br>\n')
-
 def _html_escape(text):
     for name, value in _html_escapes:
         text = text.replace(name, value)
