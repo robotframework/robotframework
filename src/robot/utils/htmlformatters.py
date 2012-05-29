@@ -120,7 +120,7 @@ class HtmlFormatter(object):
         for line in text.splitlines():
             self._process_line(line)
         self._end_current()
-        return ''.join(self._results)
+        return '\n'.join(self._results)
 
     def _process_line(self, line):
         if not line:

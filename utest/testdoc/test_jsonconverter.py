@@ -184,7 +184,8 @@ class TestDocumentationFormatting(unittest.TestCase):
     def test_suite_documentation(self):
         test_convert(self.suite,
                      doc='''\
-<p>We have <i>formatting</i> and &lt;escaping&gt;.</p><table>
+<p>We have <i>formatting</i> and &lt;escaping&gt;.</p>
+<table>
 <tr>
 <td><b>Name</b></td>
 <td><b>URL</b></td>

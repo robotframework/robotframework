@@ -134,18 +134,18 @@ class TestFormatParagraph(unittest.TestCase):
         assert_format('  foo  \n  bar', '<p>foo bar</p>')
 
     def test_multiple_paragraphs(self):
-        assert_format('P\n1\n\nP 2', '<p>P 1</p><p>P 2</p>')
+        assert_format('P\n1\n\nP 2', '<p>P 1</p>\n<p>P 2</p>')
 
     def test_leading_empty_line(self):
         assert_format('\nP', '<p>P</p>')
 
     def test_other_formatted_content_before_paragraph(self):
-        assert_format('---\nP', '<hr><p>P</p>')
-        assert_format('| PRE \nP', '<pre>\nPRE\n</pre><p>P</p>')
+        assert_format('---\nP', '<hr>\n<p>P</p>')
+        assert_format('| PRE \nP', '<pre>\nPRE\n</pre>\n<p>P</p>')
 
     def test_other_formatted_content_after_paragraph(self):
-        assert_format('P\n---', '<p>P</p><hr>')
-        assert_format('P\n| PRE \n', '<p>P</p><pre>\nPRE\n</pre>')
+        assert_format('P\n---', '<p>P</p>\n<hr>')
+        assert_format('P\n| PRE \n', '<p>P</p>\n<pre>\nPRE\n</pre>')
 
 
 class TestHtmlFormatBoldAndItalic(unittest.TestCase):
@@ -379,9 +379,9 @@ class TestHtmlFormatTable(unittest.TestCase):
 
  after table
 '''
-        exp = '<p>before table</p>' \
+        exp = '<p>before table</p>\n' \
             + _format_table([['in','table'],['still','in']]) \
-            + '<p>after table</p>'
+            + '\n<p>after table</p>'
         assert_format(inp, exp)
 
     def test_multiple_tables(self):
@@ -402,16 +402,17 @@ between
 
 after
 '''
-        exp = '<p>before tables</p>' \
+        exp = '<p>before tables</p>\n' \
             + _format_table([['table','1'],['still','1']]) \
-            + '<p>between</p>' \
+            + '\n<p>between</p>\n' \
             + _format_table([['table','2']]) \
-            + '<p>between</p>' \
+            + '\n<p>between</p>\n' \
             + _format_table([['3.1.1','3.1.2','3.1.3'],
                              ['3.2.1','3.2.2','3.2.3'],
                              ['3.3.1','3.3.2','3.3.3']]) \
+            + '\n' \
             + _format_table([['t','4'],['','']]) \
-            + '<p>after</p>'
+            + '\n<p>after</p>'
         assert_format(inp, exp)
 
     def test_ragged_table(self):
@@ -436,7 +437,7 @@ after
 '''
         exp = _format_table([['<b>a</b>','<b>b</b>','<b>c</b>'],
                              ['<b>b</b>','x','y'],
-                             ['<b>c</b>','z','']]) \
+                             ['<b>c</b>','z','']]) + '\n' \
             + _format_table([['a','x <b>b</b> y','<b>b</b> <b>c</b>'],
                              ['*a','b*','']])
         assert_format(inp, exp)
@@ -452,7 +453,7 @@ after
 '''
         exp = _format_table([['<i>a</i>','<i>b</i>','<i>c</i>'],
                              ['<i>b</i>','x','y'],
-                             ['<i>c</i>','z','']]) \
+                             ['<i>c</i>','z','']]) + '\n' \
             +  _format_table([['a','x <i>b</i> y','<i>b</i> <i>c</i>'],
                               ['_a','b_','']])
         assert_format(inp, exp)
@@ -487,13 +488,13 @@ class TestHtmlFormatHr(unittest.TestCase):
             assert_format(hr + '  ', '<hr>')
 
     def test_hr_with_other_stuff_around(self):
-        for inp, exp in [('---\n-', '<hr><p>-</p>'),
-                         ('xx\n---\nxx', '<p>xx</p><hr><p>xx</p>'),
-                         ('xx\n\n------\n\nxx', '<p>xx</p><hr><p>xx</p>')]:
+        for inp, exp in [('---\n-', '<hr>\n<p>-</p>'),
+                         ('xx\n---\nxx', '<p>xx</p>\n<hr>\n<p>xx</p>'),
+                         ('xx\n\n------\n\nxx', '<p>xx</p>\n<hr>\n<p>xx</p>')]:
             assert_format(inp, exp)
 
     def test_multiple_hrs(self):
-        assert_format('---\n---\n\n---', '<hr><hr><hr>')
+        assert_format('---\n---\n\n---', '<hr>\n<hr>\n<hr>')
 
     def test_not_hr(self):
         for inp in ['-', '--', ' --- ', '...---...', '===']:
@@ -505,9 +506,9 @@ class TestHtmlFormatHr(unittest.TestCase):
 | t | a | b | l | e |
 ---
 '''[1:-1]
-        exp = '<hr>' \
+        exp = '<hr>\n' \
             + _format_table([['t','a','b','l','e']]) \
-            + '<hr>'
+            + '\n<hr>'
         assert_format(inp, exp)
 
 
@@ -530,16 +531,19 @@ class TestHtmlFormatPreformatted(unittest.TestCase):
 
     def test_block_mixed_with_other_content(self):
         assert_format('before block:\n| some\n| quote\nafter block',
-                      '<p>before block:</p><pre>\nsome\nquote\n</pre><p>after block</p>')
+                      '<p>before block:</p>\n<pre>\nsome\nquote\n</pre>\n<p>after block</p>')
 
     def test_multiple_blocks(self):
         assert_format('| some\n| quote\nbetween\n| other block\n\nafter', '''\
 <pre>
 some
 quote
-</pre><p>between</p><pre>
+</pre>
+<p>between</p>
+<pre>
 other block
-</pre><p>after</p>''')
+</pre>
+<p>after</p>''')
 
     def test_block_line_with_other_formatting(self):
         self._assert_preformatted('| _some_', '<i>some</i>')
