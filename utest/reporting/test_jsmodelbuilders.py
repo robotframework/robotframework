@@ -33,7 +33,7 @@ class TestBuildTestSuite(unittest.TestCase):
     def test_suite_with_values(self):
         suite = TestSuite('', 'Name', 'Doc', {'m1': 'v1', 'M2': 'V2'}, 'Message',
                           '20111204 19:00:00.000', '20111204 19:00:42.001')
-        self._verify_suite(suite, 'Name', 'Doc', ('m1', 'v1', 'M2', 'V2'),
+        self._verify_suite(suite, 'Name', 'Doc', ('m1', '<p>v1</p>', 'M2', '<p>V2</p>'),
                            message='Message', start=0, elapsed=42001)
 
     def test_relative_source(self):
@@ -46,7 +46,7 @@ class TestBuildTestSuite(unittest.TestCase):
         self._verify_suite(TestSuite(name='*xxx*', doc='*bold* <&>',
                                      metadata={'*x*': '*b*', '<': '>'}),
                            name='*xxx*', doc='<b>bold</b> &lt;&amp;&gt;',
-                           metadata=('*x*', '<b>b</b>', '<', '&gt;'))
+                           metadata=('*x*', '<p><b>b</b></p>', '<', '<p>&gt;</p>'))
 
     def test_default_test(self):
         self._verify_test(TestCase())
@@ -139,6 +139,7 @@ class TestBuildTestSuite(unittest.TestCase):
                       suites=(), tests=(), keywords=(), stats=(0, 0, 0, 0)):
         status = (status, start, elapsed, message) \
                 if message else (status, start, elapsed)
+        doc = '<p>%s</p>' % doc if doc else ''
         return self._build_and_verify(SuiteBuilder, suite, name, source,
                                       relsource, doc, metadata, status,
                                       suites, tests, keywords, stats)
@@ -150,12 +151,14 @@ class TestBuildTestSuite(unittest.TestCase):
                      status=0, message='', start=None, elapsed=0, keywords=()):
         status = (status, start, elapsed, message) \
                 if message else (status, start, elapsed)
+        doc = '<p>%s</p>' % doc if doc else ''
         return self._build_and_verify(TestBuilder, test, name, timeout,
                                       critical, doc, tags, status, keywords)
 
     def _verify_keyword(self, keyword, type=0, name='', doc='', args='',  timeout='',
                         status=0, start=None, elapsed=0, keywords=(), messages=()):
         status = (status, start, elapsed)
+        doc = '<p>%s</p>' % doc if doc else ''
         return self._build_and_verify(KeywordBuilder, keyword, type, name, timeout,
                                       doc, args, status, keywords, messages)
 

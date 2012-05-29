@@ -1,5 +1,4 @@
 import unittest
-import os
 from os.path import abspath, dirname, join, normpath
 
 from robot.utils.asserts import assert_equals
@@ -29,8 +28,8 @@ class TestJsonConverter(unittest.TestCase):
                      id='s1',
                      name='Misc',
                      fullName='Misc',
-                     doc='My doc',
-                     metadata=[('1', '2'), ('abc', '123')],
+                     doc='<p>My doc</p>',
+                     metadata=[('1', '<p>2</p>'), ('abc', '<p>123</p>')],
                      numberOfTests=163,
                      tests=[],
                      keywords=[])
@@ -79,8 +78,8 @@ class TestJsonConverter(unittest.TestCase):
                      id='s1-s1',
                      name='Normal',
                      fullName='Normal & Pass And Fail.Normal',
-                     doc='Normal test cases',
-                     metadata=[('Something', 'My Value')],
+                     doc='<p>Normal test cases</p>',
+                     metadata=[('Something', '<p>My Value</p>')],
                      numberOfTests=2)
         test_convert(suite['suites'][1],
                      source=normpath(join(DATADIR, 'pass_and_fail.html')),
@@ -88,7 +87,7 @@ class TestJsonConverter(unittest.TestCase):
                      id='s1-s2',
                      name='Pass And Fail',
                      fullName='Normal & Pass And Fail.Pass And Fail',
-                     doc='Some tests here',
+                     doc='<p>Some tests here</p>',
                      metadata=[],
                      numberOfTests=2)
 
@@ -111,7 +110,7 @@ class TestJsonConverter(unittest.TestCase):
                      id='s1-s10-t1',
                      name='Default Test Timeout',
                      fullName='Misc.Timeouts.Default Test Timeout',
-                     doc='I have a timeout',
+                     doc='<p>I have a timeout</p>',
                      tags=[],
                      timeout='1 minute 42 seconds')
 
@@ -185,9 +184,7 @@ class TestDocumentationFormatting(unittest.TestCase):
     def test_suite_documentation(self):
         test_convert(self.suite,
                      doc='''\
-We have <i>formatting</i> and &lt;escaping&gt;.
-
-<table>
+<p>We have <i>formatting</i> and &lt;escaping&gt;.</p><table>
 <tr>
 <td><b>Name</b></td>
 <td><b>URL</b></td>
@@ -204,13 +201,13 @@ We have <i>formatting</i> and &lt;escaping&gt;.
 
     def test_suite_metadata(self):
         test_convert(self.suite,
-                     metadata=[('CLI', '<b>bold</b>'),
-                               ('Escape', 'this is &lt;b&gt;not bold&lt;/b&gt;'),
-                               ('Format', 'this is <b>bold</b>')])
+                     metadata=[('CLI', '<p><b>bold</b></p>'),
+                               ('Escape', '<p>this is &lt;b&gt;not bold&lt;/b&gt;</p>'),
+                               ('Format', '<p>this is <b>bold</b></p>')])
 
     def test_test_documentation(self):
         test_convert(self.suite['tests'][0],
-                     doc='<b>I</b> can haz <i>formatting</i> &amp; &lt;escaping&gt;!!')
+                     doc='<p><b>I</b> can haz <i>formatting</i> &amp; &lt;escaping&gt;!!</p>')
 
     def test_no_extra_escaping(self):
         # jQuery handles escaping by default so we should not do it

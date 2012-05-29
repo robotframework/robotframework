@@ -76,7 +76,7 @@ class HtmlFormatter(object):
         self._collectors = (BlockCollector(self._rows, TableFormatter()),
                             BlockCollector(self._rows, PreformattedFormatter()),
                             LineCollector(self._rows, RulerFormatter()),
-                            LineCollector(self._rows, LineFormatter()))
+                            ParagraphCollector(self._rows, ParagraphFormatter()))
         self._current_block = None
 
     def format(self, text):
@@ -90,13 +90,17 @@ class HtmlFormatter(object):
             self._current_block.add(line)
             return
         self._end_current_block()
+        if not line:
+            return
         collector = self._find_collector(line)
         collector.add(line)
-        self._current_block = collector if collector.is_block else None
+        if collector.is_block:
+            self._current_block = collector
 
     def _end_current_block(self):
         if self._current_block:
             self._current_block.end()
+            self._current_block = None
 
     def _find_collector(self, line):
         for collector in self._collectors:
@@ -109,7 +113,9 @@ class _Collector(object):
     def __init__(self, result, formatter):
         self._result = result
         self._formatter = formatter
-        self.handles = formatter.handles
+
+    def handles(self, line):
+        return self._formatter.handles(line)
 
 
 class LineCollector(_Collector):
@@ -133,6 +139,18 @@ class BlockCollector(_Collector):
     def end(self):
         self._result.append(self._formatter.format(self._lines))
         self._lines = []
+
+
+class ParagraphCollector(BlockCollector):
+
+    def handles(self, line):
+        # TODO: Should get list of possible formatters dynamically
+        formatters = RulerFormatter(), TableFormatter(), PreformattedFormatter()
+        if any(formatter.handles(line) for formatter in formatters):
+            return False
+        if line:
+            return True
+        return not self._lines
 
 
 class LineFormatter(object):
@@ -178,6 +196,17 @@ class RulerFormatter(object):
 
     def format(self, line):
         return '<hr>'
+
+
+class ParagraphFormatter(object):
+    _format_line = LineFormatter().format
+
+    def pre_format(self, line):
+        return line
+
+    def format(self, lines):
+        # TODO: Join before or after format?
+        return '<p>%s</p>' % ' '.join(self._format_line(l).strip() for l in lines)
 
 
 class TableFormatter(object):
