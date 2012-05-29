@@ -5,7 +5,7 @@ from robot.utils.asserts import assert_equals
 from robot.utils.htmlutils import html_escape, html_format, html_attr_escape
 from robot.utils.htmlformatters import TableFormatter
 
-_format_table = TableFormatter().format
+_format_table = TableFormatter()._format_table
 
 
 def assert_escape_and_format(inp, exp_escape=None, exp_format=None):
@@ -491,6 +491,9 @@ class TestHtmlFormatHr(unittest.TestCase):
                          ('xx\n---\nxx', '<p>xx</p><hr><p>xx</p>'),
                          ('xx\n\n------\n\nxx', '<p>xx</p><hr><p>xx</p>')]:
             assert_format(inp, exp)
+
+    def test_multiple_hrs(self):
+        assert_format('---\n---\n\n---', '<hr><hr><hr>')
 
     def test_not_hr(self):
         for inp in ['-', '--', ' --- ', '...---...', '===']:
