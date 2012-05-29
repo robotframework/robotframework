@@ -650,8 +650,8 @@ class _Verify:
         the one in Java. See the following documents for more details about
         regular expressions in general and Python implementation in particular.
 
-        * http://docs.python.org/lib/module-re.html
-        * http://www.amk.ca/python/howto/regex/
+        | http://docs.python.org/lib/module-re.html
+        | http://www.amk.ca/python/howto/regex/
 
         Things to note about the regexp syntax in Robot Framework test data:
 
