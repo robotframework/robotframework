@@ -13,7 +13,7 @@
     background: transparent;
     border-collapse: collapse;
     empty-cells: show;
-    font-size: 0.85em;
+    font-size: 0.9em;
 }
 .doc table td {
     border: 1px solid gray;
@@ -27,7 +27,6 @@
 .doc li {
     list-style-position: inside;
     list-style-type: square;
-    font-size: 0.9em;
 }
 .doc img {
     border: 1px solid gray;

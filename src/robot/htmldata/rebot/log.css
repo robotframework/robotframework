@@ -86,9 +86,9 @@ table.metadata th {
     text-align: left;
     vertical-align: top;
     white-space: nowrap;
+    padding-right: 0.5em;
 }
 table.metadata td {
-    padding-left: 0.5em;
     vertical-align: top;
     white-space: pre-wrap;
 }

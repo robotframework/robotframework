@@ -16,7 +16,7 @@ a, a:link, a:visited {
     color: #c30;
 }
 a img {
-    border: 1px solid #c30;
+    border: 1px solid #c30 !important;
 }
 a:hover, a:active {
     text-decoration: underline;
