@@ -68,7 +68,9 @@ from os.path import abspath, dirname
 import codecs
 import time
 
-if 'robot' not in sys.modules:
+# Allows running as a script. __name__ check needed with multiprocessing:
+# http://code.google.com/p/robotframework/issues/detail?id=1137
+if 'robot' not in sys.modules and __name__ == '__main__':
     import pythonpathsetter
 
 from robot import utils
