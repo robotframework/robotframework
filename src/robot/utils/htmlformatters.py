@@ -119,7 +119,7 @@ class HtmlFormatter(object):
 
     def format(self, text):
         for line in text.splitlines():
-            self._process_line(line)
+            self._process_line(line.strip())
         self._end_current()
         return '\n'.join(self._results)
 
@@ -186,12 +186,11 @@ class ParagraphFormatter(_BlockFormatter):
         return not self._lines
 
     def format(self, lines):
-        paragraph = ' '.join(l.strip() for l in lines).strip()
-        return '<p>%s</p>' % self._format_line(paragraph)
+        return '<p>%s</p>' % self._format_line(' '.join(lines))
 
 
 class TableFormatter(_BlockFormatter):
-    handles = re.compile('^\s*\| (.* |)\|\s*$').match
+    handles = re.compile('^\| (.* |)\|$').match
     _line_splitter = re.compile(' \|(?= )')
     _format_cell = LineFormatter().format
 
@@ -199,8 +198,7 @@ class TableFormatter(_BlockFormatter):
         return self._format_table([self._split_to_cells(l) for l in lines])
 
     def _split_to_cells(self, line):
-        line = line.strip()[1:-1]   # remove outer whitespace and pipes
-        return [cell.strip() for cell in self._line_splitter.split(line)]
+        return [cell.strip() for cell in self._line_splitter.split(line[1:-1])]
 
     def _format_table(self, rows):
         maxlen = max(len(row) for row in rows)
@@ -215,11 +213,13 @@ class TableFormatter(_BlockFormatter):
 
 
 class PreformattedFormatter(_BlockFormatter):
-    handles = re.compile('\s*\|( |$)').match
     _format_line = LineFormatter().format
 
+    def handles(self, line):
+        return line.startswith('| ') or line == '|'
+
     def format(self, lines):
-        lines = [self._format_line(line.strip()[2:]) for line in lines]
+        lines = [self._format_line(line[2:]) for line in lines]
         return '\n'.join(['<pre>'] + lines + ['</pre>'])
 
 
@@ -227,9 +227,9 @@ class ListFormatter(_BlockFormatter):
     _format_item = LineFormatter().format
 
     def handles(self, line):
-        return line.strip().startswith('- ')
+        return line.startswith('- ')
 
-    def format(self, items):
-        items = ['<li>%s</li>' % self._format_item(item.strip()[1:].strip())
-                 for item in items]
+    def format(self, lines):
+        items = ['<li>%s</li>' % self._format_item(line[2:].strip())
+                 for line in lines]
         return '\n'.join(['<ul>'] + items + ['</ul>'])

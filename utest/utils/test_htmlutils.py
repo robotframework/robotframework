@@ -484,8 +484,9 @@ class TestHtmlFormatHr(unittest.TestCase):
     def test_hr_is_three_or_more_hyphens(self):
         for i in range(3, 10):
             hr = '-' * i
+            spaces = ' ' * i
             assert_format(hr, '<hr>')
-            assert_format(hr + '  ', '<hr>')
+            assert_format(spaces + hr + spaces, '<hr>')
 
     def test_hr_with_other_stuff_around(self):
         for inp, exp in [('---\n-', '<hr>\n<p>-</p>'),
@@ -497,18 +498,15 @@ class TestHtmlFormatHr(unittest.TestCase):
         assert_format('---\n---\n\n---', '<hr>\n<hr>\n<hr>')
 
     def test_not_hr(self):
-        for inp in ['-', '--', ' --- ', '...---...', '===']:
-            assert_format(inp, inp.strip(), p=True)
+        for inp in ['-', '--', '-- --', '...---...', '===']:
+            assert_format(inp, p=True)
 
     def test_hr_before_and_after_table(self):
         inp = '''
 ---
 | t | a | b | l | e |
----
-'''[1:-1]
-        exp = '<hr>\n' \
-            + _format_table([['t','a','b','l','e']]) \
-            + '\n<hr>'
+---'''
+        exp = '<hr>\n' + _format_table([['t','a','b','l','e']]) + '\n<hr>'
         assert_format(inp, exp)
 
 
@@ -564,6 +562,9 @@ class TestHtmlFormatPreformatted(unittest.TestCase):
     def test_block_without_any_content(self):
         self._assert_preformatted('|', '')
 
+    def test_first_char_after_pipe_must_be_space(self):
+        assert_format('|x', p=True)
+
     def test_multi_line_block(self):
         self._assert_preformatted('| some\n|\n| quote', 'some\n\nquote')
 
@@ -590,7 +591,8 @@ other block
 <p>after</p>''')
 
     def test_block_line_with_other_formatting(self):
-        self._assert_preformatted('| _some_', '<i>some</i>')
+        self._assert_preformatted('| _some_ formatted\n| text *here*',
+                                  '<i>some</i> formatted\ntext <b>here</b>')
 
     def _assert_preformatted(self, inp, exp):
         assert_format(inp, '<pre>\n' + exp + '\n</pre>')
