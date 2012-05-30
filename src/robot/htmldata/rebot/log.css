@@ -90,7 +90,6 @@ table.metadata th {
 }
 table.metadata td {
     vertical-align: top;
-    white-space: pre-wrap;
 }
 div.keyword table.metadata {
     font-size: 0.9em;

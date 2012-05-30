@@ -19,7 +19,10 @@ Simple
     Log  do nothing
 
 Log HTML  [tags]   !"#%&/()=
+    [Documentation]    This test uses _*formatted*_ HTML.
+    ...  | Isn't | that | _cool?_ |
     Log   <blink><b><font face="comic sans ms" size="42" color="red">CAN HAZ HMTL & NO CSS?!?!??!!?</font></b></blink>  HTML
+    Log   <table><tr><td>This table<td>should have<tr><td>no special<td>formatting</table>  HTML
     Log   escape < &lt; <b>no bold</b>
     Fail  escape < &lt; <b>no bold</b>
 

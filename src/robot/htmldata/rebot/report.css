@@ -27,7 +27,6 @@ table.details th {
 table.details td {
     vertical-align: top;
     padding: 0.2em 0.4em;
-    white-space: pre-wrap;
 }
 table.details #selector th, table.details #selector td {
     padding-top: 0.5em;
@@ -89,15 +88,12 @@ table#test_details th.col_crit, table#test_details th.col_status {
 table#test_details .col_name {
     min-width: 13em;
     font-weight: bold;
-    white-space: pre-wrap;
 }
 table#test_details .col_doc {
     min-width: 13em;
-    white-space: pre-wrap;
 }
 table#test_details .col_tags {
     min-width: 10em;
-    white-space: pre-wrap;
 }
 table#test_details .col_crit {
     width: 2em;
