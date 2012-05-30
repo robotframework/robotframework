@@ -162,7 +162,7 @@ class _BlockFormatter(object):
 
 
 class RulerFormatter(_BlockFormatter):
-    _hr_matcher = re.compile('^-{3,} *$').match
+    _hr_matcher = re.compile('^-{3,}$').match
 
     def handles(self, line):
         return not self._lines and self._hr_matcher(line)
