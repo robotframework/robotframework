@@ -3,7 +3,7 @@ body {
     color: black;
     font-size: small;
     font-family: sans-serif;
-    padding: 0.1em 0.5em;
+    padding: 0 0.5em;
 }
 .metadata th {
     text-align: left;
@@ -14,6 +14,9 @@ a.name, span.name {
 }
 a, a:link, a:visited {
     color: #c30;
+}
+a img {
+    border: 1px solid #c30;
 }
 a:hover, a:active {
     text-decoration: underline;
