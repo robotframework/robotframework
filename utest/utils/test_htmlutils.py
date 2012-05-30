@@ -526,11 +526,16 @@ class TestHtmlFormatList(unittest.TestCase):
         assert_format('- 1\n  -  2\n- 3',
                       '<ul>\n<li>1</li>\n<li>2</li>\n<li>3</li>\n</ul>')
 
-    def test_lists_with_other_content(self):
+    def test_list_with_formatted_content(self):
+        assert_format('- *bold* text\n- _italic_\n- [http://url|link]',
+                      '<ul>\n<li><b>bold</b> text</li>\n<li><i>italic</i></li>\n'
+                      '<li><a href="http://url">link</a></li>\n</ul>')
+
+    def test_lists_with_other_content_around(self):
         assert_format('''
 before
 - a
-- b
+- *b*
 between
 
 - c
@@ -541,7 +546,7 @@ between
 <p>before</p>
 <ul>
 <li>a</li>
-<li>b</li>
+<li><b>b</b></li>
 </ul>
 <p>between</p>
 <ul>

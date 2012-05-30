@@ -224,10 +224,12 @@ class PreformattedFormatter(_BlockFormatter):
 
 
 class ListFormatter(_BlockFormatter):
+    _format_item = LineFormatter().format
 
     def handles(self, line):
         return line.strip().startswith('- ')
 
-    def format(self, lines):
-        items = ['<li>%s</li>' % i.strip()[1:].strip() for i in lines]
+    def format(self, items):
+        items = ['<li>%s</li>' % self._format_item(item.strip()[1:].strip())
+                 for item in items]
         return '\n'.join(['<ul>'] + items + ['</ul>'])
