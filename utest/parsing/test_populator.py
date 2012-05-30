@@ -270,24 +270,12 @@ class DocumentationCatenationTest(_PopulatorTest):
                            'doc in two cells')
 
     def test_multiple_rows_are_catenated_with_newline(self):
-        self._assert_doc([['doc'], ['...', 'in two lines']],
+        self._assert_doc([['doc'], ['in two lines']],
                          'doc\\nin two lines')
 
-    def test_newline_is_not_added_if_it_already_exists(self):
+    def test_multiple_rows_are_catenated_with_newline2(self):
         self._assert_doc([['doc\\n'], ['in two lines']],
-                         'doc\\nin two lines')
-
-    def test_newline_is_not_added_if_it_already_exists2(self):
-        self._assert_doc([['doc\\\\n'], ['in multiple\\\\\\n'], ['lines']],
-                         'doc\\\\n\\nin multiple\\\\\\nlines')
-
-    def test_backslash_escapes_newline_adding(self):
-        self._assert_doc([['doc\\'], ['in two lines']],
-                         'doc\\ in two lines')
-
-    def test_backslash_escapes_newline_adding2(self):
-        self._assert_doc([['doc\\\\'], ['in multiple\\\\\\', 'lines']],
-                          'doc\\\\\\nin multiple\\\\\\ lines')
+                         'doc\\n\\nin two lines')
 
     def test_documentation_defined_multiple_times(self):
         self._create_table('Settings', [['Documentation', 'some doc'],
