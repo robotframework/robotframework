@@ -1,12 +1,13 @@
 *** Settings ***
-Documentation  *URL:*    http://robotframework.org\n
-...            _Image:_  http://code.google.com/p/robotframework/logo?ext.png\n
-...            ----------------------------\n
-...            | *My* | *Table* |\n
-...            | 1    | 2       |\n
-...            | foo  |\n
-...            regular line\n
-...            | block formatted\n
+Documentation  *URL:*    http://robotframework.org
+...
+...            _Image:_  http://code.google.com/p/robotframework/logo?ext.png
+...            ----------------------------
+...            | *My* | *Table* |
+...            | 1    | 2       |
+...            | foo  |
+...            regular line
+...            | block formatted
 ...            | \ \ content\t\tand whitespaces
 Metadata       URL       http://robotframework.org
 Metadata       Image     http://code.google.com/p/robotframework/logo?ext.png
