@@ -24,6 +24,9 @@ a:hover, a:active {
     font-size: 0.7em;
     letter-spacing: -0.07em;
 }
+.message {
+    white-space: pre-wrap;
+}
 /* Headers */
 #header {
     width: 58em;

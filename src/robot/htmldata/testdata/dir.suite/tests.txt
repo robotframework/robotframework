@@ -40,9 +40,14 @@ Complex
     \    Log   Got ${i}
 
 Log levels
-    Log     This is a WARNING!      WARN
+    Log     This is a WARNING!\n\nWith multiple lines.      WARN
     Log     This is info            INFO
     Log     This is debug           DEBUG
+
+Multi-line failure
+    [Template]    Fail
+    First failure
+    Second failure\nhas multiple\nlines
 
 *** Keywords **
 User Kw

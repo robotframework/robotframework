@@ -492,7 +492,7 @@ function popUpTo(list, upTo) {
   {{if message()}}
   <tr>
     <th>Message:</th>
-    <td>${message()}</td>
+    <td class="message">${message()}</td>
   </tr>
   {{/if}}
   <tr>
@@ -533,7 +533,7 @@ function popUpTo(list, upTo) {
     <td class="col_tags">${tags.join(', ')}</td>
     <td class="col_crit">{{if isCritical}}yes{{else}}no{{/if}}</td>
     <td class="col_status ${status.toLowerCase()}">${status}</td>
-    <td class="col_msg">${message()}</td>
+    <td class="col_msg message">${message()}</td>
     <td class="col_times">${times.startTime}<br>${times.elapsedTime}</td>
   </tr>
 </script>

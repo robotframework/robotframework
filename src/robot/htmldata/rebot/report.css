@@ -105,7 +105,6 @@ table#test_details .col_status {
 }
 table#test_details .col_msg {
     min-width: 13em;
-    white-space: pre-wrap;
 }
 table#test_details .col_times {
     width: 9em;

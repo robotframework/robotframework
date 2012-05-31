@@ -77,9 +77,6 @@ td.level {
     width: 5em;
     text-align: center;
 }
-td.msg {
-    white-space: pre-wrap;
-}
 /* Metadata */
 table.metadata th {
     width: 13em;

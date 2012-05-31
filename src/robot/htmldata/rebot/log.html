@@ -179,7 +179,7 @@ function addTestExecutionLog(main) {
       {{/if}}
     </td>
     <td class="${level.toLowerCase()} level">${level}</td>
-    <td class="msg">{{html text}}</td>
+    <td class="message">{{html text}}</td>
   </tr>
 </script>
 
@@ -231,7 +231,7 @@ function addTestExecutionLog(main) {
         {{if message()}}
         <tr>
           <th>Message:</th>
-          <td>${message()}</td>
+          <td class="message">${message()}</td>
         </tr>
         {{/if}}
       </table>
@@ -285,7 +285,7 @@ function addTestExecutionLog(main) {
         {{if message()}}
         <tr>
           <th>Message:</th>
-          <td>${message()}</td>
+          <td class="message">${message()}</td>
         </tr>
         {{/if}}
       </table>
@@ -332,7 +332,7 @@ function addTestExecutionLog(main) {
     <tr>
       <td class="time">${time}</td>
       <td class="${level.toLowerCase()} level">${level}</td>
-      <td class="msg">{{html text}}</td>
+      <td class="message">{{html text}}</td>
     </tr>
   </table>
 </script>
