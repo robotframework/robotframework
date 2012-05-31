@@ -51,24 +51,21 @@ window.model = (function () {
     }
 
     function containsTagPattern(testTags, pattern) {
-        testTags = util.map(testTags, util.normalize);
+        if (pattern.indexOf('NOT') != -1) {
+            var tagnames = pattern.split('NOT');
+            var required = tagnames[0];
+            var notAllowed = tagnames.slice(1);
+            return containsTagPattern(testTags, required) &&
+                !containsTagPattern(testTags, notAllowed.join('NOT'));
+        }
         if (pattern.indexOf('&') != -1) {
             var tagnames = pattern.split('&');
             return util.all(util.map(tagnames, function (name) {
                 return containsTagPattern(testTags, name);
             }));
         }
-        if (pattern.indexOf('NOT') != -1) {
-            var tagnames = pattern.split('NOT');
-            var required = tagnames[0];
-            var notAllowed = tagnames.slice(1);
-            return containsTagPattern(testTags, required) &&
-                    util.all(util.map(notAllowed, function (name) {
-                        return !containsTagPattern(testTags, name);
-                    }));
-        }
-        var matcher = util.Matcher(pattern);
-        return util.any(util.map(testTags, matcher.matches));
+        testTags = util.map(testTags, util.normalize);
+        return util.any(util.map(testTags, util.Matcher(pattern).matches));
     }
 
     function findSuiteByName(suite, name) {
