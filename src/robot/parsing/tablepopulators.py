@@ -12,6 +12,8 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+import re
+
 from robot.parsing.settings import Documentation, MetadataList
 
 
@@ -258,6 +260,7 @@ class SettingPopulator(_PropertyPopulator):
 
 
 class DocumentationPopulator(_PropertyPopulator):
+    _end_of_line_escapes = re.compile(r'(\\+)n?$')
 
     def populate(self):
         self._setter(self._value, self._comments.value)
@@ -274,11 +277,19 @@ class DocumentationPopulator(_PropertyPopulator):
     def _row_joiner(self):
         if self._is_empty():
             return None
-        return '\\n'
+        return self._joiner_based_on_eol_escapes()
 
     def _is_empty(self):
         return not self._value or \
                (len(self._value) == 1 and self._value[0] == '')
+
+    def _joiner_based_on_eol_escapes(self):
+        match = self._end_of_line_escapes.search(self._value[-1])
+        if not match or len(match.group(1)) % 2 == 0:
+            return '\\n'
+        if not match.group(0).endswith('n'):
+            return ' '
+        return None
 
 
 class MetadataPopulator(DocumentationPopulator):
