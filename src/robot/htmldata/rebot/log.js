@@ -151,12 +151,23 @@ function closestVisibleParent(elem) {
 function changeClassDisplay(clazz, visible) {
     var styles = document.styleSheets;
     for (var i = 0; i < styles.length; i++) {
-        var rules = styles[i].cssRules || styles[i].rules;
-        if (rules === null) // on Chrome external css files have both rules as null. not a problem on generated logs.
+        var rules = getRules(styles[i]);
+        if (rules === null)
             continue;
         for (var j = 0; j < rules.length; j++)
             if (rules[j].selectorText === clazz)
                 rules[j].style.display = visible ? "table" : "none";
+    }
+}
+
+function getRules(style) {
+    // With Chrome external CSS files seem to have only null roles and with
+    // Firefox accessing rules can result to security error.
+    // Neither of these are a problem on with generated logs.
+    try {
+        return style.cssRules || style.rules;
+    } catch (e) {
+        return null;
     }
 }
 
