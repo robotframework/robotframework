@@ -140,6 +140,32 @@ as the test suite documentation in the previous section.
       """
       pass
 
+
+Paragraphs
+~~~~~~~~~~
+
+Starting from Robot Framework 2.7.2, all regular text in the formatted
+documentation is represented as paragraphs. Lines of documentation separated
+by a single newline will be combined in one paragraph. Two newlines can be used
+to separate paragraphs. For example, the following suite documentation::
+
+  *** Settings ***
+  Documentation
+  ...    First line.
+  ...
+  ...    Second paragraph, this time
+  ...    with multiple lines.
+
+will be formatted as:
+
+.. raw:: html
+
+  <div class="doc">
+  <p>First line.</p>
+  <p>Second paragraph, this time with multiple lines.</p>
+  </div>
+
+
 Bold and italic
 ~~~~~~~~~~~~~~~
 
@@ -242,25 +268,54 @@ Tables
 ~~~~~~
 
 Tables are created using the pipe character with whitespace around it
-as a cell boundary and the newline character as a row separator::
+as a cell boundary and the possibly automatically added newline character
+as a row separator::
 
-   | *A*  | *B*   | *C*   |
-   | _1_  | Hello | world |
-   | _2_  | Hi    |       |
+   | *A* | *B*   | *C*   |
+   | _1_ | Hello | world |
+   | _2_ | Hi    |
 
 The created table always has a thin border and the text is
 left-aligned. Formatting using bold and italic works also in table
-cells, so it is possible to create headers. For example the above
-documentation would be formatted like this:
+cells, so it is possible to create headers. Empty cells are automatically
+added to make rows equally long. For example, the above
+example would be formatted like this:
 
-.. table::
-   :class: tabular
+.. raw:: html
 
-   ========  ========  ========
-   **A**     **B**     **C**
-   *1*       Hello     world
-   *2*       Hi
-   ========  ========  ========
+  <div class="doc">
+  <table>
+    <tr><td><b>A</b></td><td><b>B</b></td><td><b>C</b></td>
+    <tr><td><i>1</i></td><td>Hello</td><td>world</td>
+    <tr><td><i>2</i></td><td>Hi</td><td></td>
+  </table>
+  </div>
+
+Lists
+~~~~~
+
+A list is created by using the sequence '- ' to denote list elements. An empty
+line or line not starting with '- ' ends the list::
+
+  Example:
+  - a list item
+  - a second list item
+
+  This is outside the list.
+
+The above documentation is formatted like this:
+
+.. raw:: html
+
+  <div class="doc">
+  <p>Example:</p>
+  <ul>
+    <li>a list item</li>
+    <li>a second list item</li>
+  </ul>
+  <p>This is outside the list.</p>
+  </div>
+
 
 Preformatted text
 ~~~~~~~~~~~~~~~~~
@@ -277,7 +332,18 @@ block when converted to HTML::
   Doc before block:
   | inside block
   |    some   additional whitespace
-  After block
+  After block.
+
+The above documentation is formatted like this:
+
+.. raw:: html
+
+  <div class="doc">
+  <p>Doc before block:</p>
+  <pre>inside block
+    some   additional whitespace</pre>
+  <p>After block.</p>
+  </div>
 
 Horizontal ruler
 ~~~~~~~~~~~~~~~~
@@ -291,3 +357,13 @@ hyphens alone in a line::
    ---
 
    More text...
+
+The above documentation is formatted like this:
+
+.. raw:: html
+
+  <div class="doc">
+  <p>Some text here.</p>
+  <hr>
+  <p>More text...</p>
+  </div>
