@@ -57,18 +57,6 @@ table.messages td, table.errors.td {
 table.messages td.time {
     width: 6em;
 }
-.trace_message {
-    display: table;
-}
-.debug_message {
-    display: table;
-}
-.info_message {
-    display: table;
-}
-.warn_message {
-    display: table;
-}
 table.errors td.time {
     width: 10em;
     white-space: nowrap;
@@ -76,6 +64,14 @@ table.errors td.time {
 td.level {
     width: 5em;
     text-align: center;
+}
+/* Message tables - these MUST NOT be combined together because otherwise
+   dynamically altering them based on visible log level is not possible. */
+.trace_message {
+    display: table;
+}
+.debug_message {
+    display: table;
 }
 /* Metadata */
 table.metadata th {
