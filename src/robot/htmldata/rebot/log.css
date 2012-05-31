@@ -51,7 +51,7 @@ table.messages {
     font-family: monospace;
     font-size: 1.2em;
 }
-table.messages td, table.errors.td {
+table.messages td, table.errors td {
     vertical-align: top;
 }
 table.messages td.time {
