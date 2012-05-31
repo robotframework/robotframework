@@ -297,7 +297,7 @@ ul.auto-toc {
 table.example, table.tsv-example, table.messages, table.tabular {
     border: 1px solid #808080;
     border-collapse: collapse;
-    margin: 0.5em 2em;
+    margin: 5px 20px;
 }
 table.example caption, table.tsv-example caption, table.tabular caption {
     text-align: left;
@@ -328,7 +328,7 @@ table.tabular th, table.tabular td {
 table.messages {
     border: 1px solid gray;
     font-family: monospace;
-    margin: 1em 2em;
+    margin: 10px 20px;
     width: 60%;
 }
 table.messages td {
@@ -351,6 +351,45 @@ table.messages td.pass {
 }
 table.messages td.warn {
     color: #FFCC00;
+}
+
+/* Documentation formatting examples */
+
+.doc {
+    margin-left: 20px;
+    margin-right: 20px;
+    background: #f4f4f4;
+    font-size: 0.9em;
+}
+.doc > * {
+    margin: 10px 10px 0 10px;
+    padding: 0;
+}
+.doc > p {
+    margin: 10px 0 0 0;
+}
+.doc > *:first-child {
+    margin-top: 0;
+}
+.doc li {
+    list-style: square inside;
+}
+.doc table {
+    border: 1px solid gray;
+    background: transparent;
+    border-collapse: collapse;
+    empty-cells: show;
+    font-size: 0.9em;
+}
+.doc table td {
+    border: 1px solid gray;
+    padding: 0.1em 0.3em;
+    height: 1.2em;
+}
+.doc hr {
+    background: gray;
+    height: 1px;
+    border: 0;
 }
 
 /* Roles -- these are defined in roles.txt file */
@@ -402,11 +441,13 @@ cite {
 div.admonition, div.attention, div.caution, div.danger, div.error,
 div.hint, div.important, div.note, div.tip, div.warning {
     border: 1px solid gray;
-    margin: 1em 2em;
+    margin: 10px 20px;
     padding: 0.7em 1em;
     font-size: 0.9em;
 }
 pre.literal-block, pre.doctest-block {
+    margin-left: 20px;
+    margin-right: 20px;
     background: #f4f4f4;
 }
 li, li p.first {
@@ -414,11 +455,15 @@ li, li p.first {
     margin-bottom: 0.3em;
 }
 div.contents li {
-    margin-top: 0em;
-    margin-bottom: 0em;
+    margin-top: 0;
+    margin-bottom: 0;
 }
 a img {
     border: 1px solid blue;
+}
+div.figure, div.topic {
+    margin-left: 20px;
+    margin-right: 20px;
 }
 
 /* Pygments
@@ -428,7 +473,7 @@ a img {
 - For more details see e.g. http://pygments.org/docs/quickstart/
 */
 
-.highlight  { background: #f4f4f4; margin: 1em 2em; }
+.highlight  { background: #f4f4f4; margin: 10px 20px; }
 .highlight .c { color: #408080; font-style: italic } /* Comment */
 .highlight .err { border: 1px solid #FF0000 } /* Error */
 .highlight .k { color: #008000; font-weight: bold } /* Keyword */
