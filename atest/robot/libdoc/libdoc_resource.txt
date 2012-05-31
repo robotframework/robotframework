@@ -1,4 +1,5 @@
 *** Settings ***
+Resource          atest_resource.txt
 Library           LibDocLib.py    ${INTERPRETER}
 Library           XmlLibrary.py
 Library           OperatingSystem

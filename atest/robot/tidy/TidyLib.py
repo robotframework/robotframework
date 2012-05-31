@@ -15,17 +15,13 @@ class TidyLib(object):
     def __init__(self, interpreter):
         self._cmd = [interpreter, '-m', 'robot.tidy']
         self._interpreter = interpreter
-        self._env = os.environ.copy()
-        self._env.update(PYTHONPATH=ROBOT_SRC,
-                         JYTHONPATH=ROBOT_SRC,
-                         IRONPYTHONPATH=ROBOT_SRC)
 
     def run_tidy_and_return_output(self, options, input, command=None):
         """Runs tidy in the operating system and returns output."""
         options = options.split(' ') if options else []
         with tempfile.TemporaryFile() as output:
-            rc = call(self._cmd + options + [self._path(input)],
-                      stdout=output, stderr=STDOUT, env=self._env, shell=os.sep=='\\')
+            rc = call(self._cmd + options + [self._path(input)], stdout=output,
+                      stderr=STDOUT, cwd=ROBOT_SRC, shell=os.sep=='\\')
             output.seek(0)
             content = output.read()
             if rc:

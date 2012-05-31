@@ -3,9 +3,7 @@ Force Tags       regression    pybot    jybot
 Resource         libdoc_resource.txt
 Test Template    Run Libdoc And Verify Created Output File
 
-
 *** Test Cases ***
-
 Default format is got from output file extension
     String ${OUTHTML}                     HTML    String
     String ${OUTXML}                      XML     String    path=${OUTXML}
@@ -20,13 +18,14 @@ Override name and version
 
 Relative path with Python libraries
     [Template]    NONE
-    [Setup]    Directory Should Not Exist    TempDirInExecDir
-    Create Directory    TempDirInExecDir
-    Create File    TempDirInExecDir/MyLibrary.py    def my_keyword(): pass
-    Run Libdoc And Parse Output    TempDirInExecDir/MyLibrary.py
+    ${dir in libdoc exec dir}=    Set Variable     ${ROBOTPATH}/../TempDirInExecDir
+    Directory Should Not Exist    ${dir in libdoc exec dir}
+    Create Directory    ${dir in libdoc exec dir}
+    Create File    ${dir in libdoc exec dir}/MyLibrary.py    def my_keyword(): pass
+    Run Libdoc And Parse Output    ${dir in libdoc exec dir}/MyLibrary.py
     Name Should Be    MyLibrary
     Keyword Name Should Be    0    My Keyword
-    [Teardown]    Remove Directory    TempDirInExecDir    recursively
+    [Teardown]    Remove Directory    ${dir in libdoc exec dir}    recursively
 
 *** Keywords ***
 Run Libdoc And Verify Created Output File
