@@ -1,8 +1,8 @@
 import unittest
 import sys
 import tempfile
-from os.path import abspath, dirname, join, exists
-from os import remove
+from os.path import abspath, dirname, join, exists, curdir
+from os import remove, chdir
 from StringIO import StringIO
 
 from robot.utils.asserts import assert_equals, assert_true
@@ -164,10 +164,10 @@ class TestStateBetweenTestRuns(unittest.TestCase):
 
     def test_importer_caches_are_cleared_between_runs(self):
         data = join(ROOT, 'atest', 'testdata', 'core', 'import_settings.txt')
-        run(data, stdout=StringIO(), stderr=StringIO())
+        run(data, outputdir=TEMP, stdout=StringIO(), stderr=StringIO())
         lib = self._import_library()
         res = self._import_resource()
-        run(data, stdout=StringIO(), stderr=StringIO())
+        run(data, outputdir=TEMP, stdout=StringIO(), stderr=StringIO())
         assert_true(lib is not self._import_library())
         assert_true(res is not self._import_resource())
 
@@ -180,10 +180,30 @@ class TestStateBetweenTestRuns(unittest.TestCase):
 
     def test_clear_namespace_between_runs(self):
         data = join(ROOT, 'atest', 'testdata', 'variables', 'commandline_variables.html')
-        rc = run(data, stdout=StringIO(), stderr=StringIO(), test=['NormalText'], variable=['NormalText:Hello'])
+        rc = run(data, outputdir=TEMP, stdout=StringIO(), stderr=StringIO(),
+                 test=['NormalText'], variable=['NormalText:Hello'])
         assert_equals(rc, 0)
-        rc = run(data, stdout=StringIO(), stderr=StringIO(), test=['NormalText'])
+        rc = run(data, outputdir=TEMP, stdout=StringIO(), stderr=StringIO(),
+                 test=['NormalText'])
         assert_equals(rc, 1)
+
+
+class TestRelativeImportsFromPythonpath(Base):
+    _data = join(abspath(dirname(__file__)), 'import_test.txt')
+
+    def setUp(self):
+        self._orig_path = abspath(curdir)
+        chdir(ROOT)
+        sys.path.append(join('atest', 'testresources'))
+
+    def tearDown(self):
+        chdir(self._orig_path)
+        sys.path.pop()
+
+    def test_importing_library_from_pythonpath(self):
+        errors = StringIO()
+        run(self._data, outputdir=TEMP, stdout=StringIO(), stderr=errors)
+        self._assert_output(errors, '')
 
 
 if __name__ == '__main__':

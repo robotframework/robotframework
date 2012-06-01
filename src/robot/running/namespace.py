@@ -164,7 +164,7 @@ class Namespace:
                 continue
             if not isinstance(base, unicode):
                 base = utils.decode_from_system(base)
-            ret = os.path.join(base, path)
+            ret = os.path.abspath(os.path.join(base, path))
             if os.path.isfile(ret):
                 return ret
             if os.path.isdir(ret) and os.path.isfile(os.path.join(ret, '__init__.py')):
