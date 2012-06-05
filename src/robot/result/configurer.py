@@ -20,9 +20,9 @@ class SuiteConfigurer(object):
 
     def __init__(self, name=None, doc=None, metadata=None, set_tags=None,
                  include_tags=None, exclude_tags=None, include_suites=None,
-                 include_tests=None, remove_keywords=None, log_level=None,
-                 critical=None, noncritical=None, starttime=None,
-                 endtime=None):
+                 include_tests=None, process_empty_suite=False,
+                 remove_keywords=None, log_level=None, critical=None,
+                 noncritical=None, starttime=None, endtime=None):
         self.name = name
         self.doc = doc
         self.metadata = metadata
@@ -33,6 +33,7 @@ class SuiteConfigurer(object):
         self.exclude_tags = exclude_tags
         self.include_suites = include_suites
         self.include_tests = include_tests
+        self.process_empty_suite = process_empty_suite
         self.remove_keywords = self._get_remove_keywords(remove_keywords)
         self.log_level = log_level
         self.starttime = self._get_time(starttime)
@@ -57,7 +58,7 @@ class SuiteConfigurer(object):
         self._set_suite_attributes(suite)
         suite.filter(self.include_suites, self.include_tests,
                      self.include_tags, self.exclude_tags)
-        if not suite.test_count:
+        if not (suite.test_count or self.process_empty_suite):
             self._raise_no_tests_error(suite.name)
         suite.set_tags(self.add_tags, self.remove_tags)
         for how in self.remove_keywords:

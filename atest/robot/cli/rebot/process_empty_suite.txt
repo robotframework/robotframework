@@ -1,0 +1,27 @@
+*** Settings ***
+Force Tags      pybot  jybot  regression
+Resource        rebot_cli_resource.txt
+
+*** Test Cases ***
+
+No tests in file
+     Run Tests Without Processing Output    --include nonex --RunEmptySuite    ${TEST FILE}
+     Rebot empty suite    --processemptysuite    ${OUTFILE}
+
+Empty suite after filtering by tags
+     Rebot empty suite    --ProcessEmptySuite --include nonex    ${MY INPUT}
+
+Empty suite after filtering by names
+     Rebot empty suite    --ProcessEmpty --test nonex    ${MY INPUT}
+
+Empty multi source suite after filtering
+     Rebot empty suite    --ProcessE --test nonex    ${MY INPUT}    ${MY INPUT}
+
+
+*** Keywords ***
+Rebot empty suite
+     [Arguments]    ${options}    @{sources}
+     Run rebot     ${options} -l log.html -r report.html    @{sources}
+     Should be empty  ${SUITE.tests}
+     Should be empty  ${SUITE.suites}
+     Stderr should be empty

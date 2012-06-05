@@ -31,7 +31,7 @@ Empty multi source suite after filtering
 *** Keywords ***
 Run empty suite
      [Arguments]    ${options}    @{sources}
-     Run tests     ${options}    @{sources}
+     Run tests     ${options} -l log.html -r report.html    @{sources}
      Should be empty  ${SUITE.tests}
      Should be empty  ${SUITE.suites}
      Stderr should be empty

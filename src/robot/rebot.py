@@ -81,6 +81,9 @@ Options
                           not run even if they are included with --include.
                           Tags are excluded using the rules explained in
                           --include.
+    --processemptysuite   Processes output also if the top level test suite is
+                          empty. Useful e.g. with --include/--exclude when it
+                          is not an error that no test matches the condition.
  -c --critical tag *      Tests having given tag are considered critical. If no
                           critical tags are set, all tags are critical. Tags
                           can be given as a pattern like e.g. with --test.
