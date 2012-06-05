@@ -118,7 +118,7 @@ many interesting possibilities:
 When no tests match selection
 '''''''''''''''''''''''''''''
 
-By default when no tests match the selection criteria the execution fails
+By default when no tests match the selection criteria test execution fails
 with an error like::
 
     [ ERROR ] Suite 'Example' with includes 'xxx' contains no test cases.
@@ -127,12 +127,19 @@ Because no outputs are generated, this behavior can be problematic if tests
 are executed and results processed automatically. Luckily a command line
 option :opt:`--RunEmptySuite` can be used to force the suite to be executed
 also in this case. As a result normal outputs are created but show zero
-executed tests.
+executed tests. The same option can be used also to alter the behavior when
+an empty directory or a test case file containing no tests is executed.
 
-The same option can be used also to alter the behavior when an empty
-directory or a test case file containing no tests is executed.
+Similar situation can occur also when processing output files with rebot_.
+It is possible that no test match the used filtering criteria or that
+the output file contained no tests to begin with. By default executing
+:prog:`rebot` fails in these cases, but it has a separate
+:opt:`--ProcessEmptySuite` option that can be used to alter the behavior.
+In practice this option works the same way as :opt:`--RunEmptySuite` when
+running tests.
 
-.. Note:: This is a new option in Robot Framework 2.6.
+.. note:: :opt:`--RunEmptySuite` option was added Robot Framework 2.6
+          and :opt:`--ProcessEmptySuite` in 2.7.2.
 
 Setting criticality
 ~~~~~~~~~~~~~~~~~~~

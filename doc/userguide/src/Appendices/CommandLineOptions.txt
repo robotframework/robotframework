@@ -114,6 +114,8 @@ Command line options for post-processing outputs
   --endtime <timestamp>   Sets the `ending time`_ of test execution when creating reports.
   --nostatusrc            Sets the `return code`_ to zero regardless of failures
                           in test cases. Error codes are returned normally.
+  --processemptysuite     Processes an output file even if the top level `test suite is
+                          empty`_.
   -E, --escape <what:with>  `Escapes characters`_ that are problematic in the console.
   -A, --argumentfile <path>   A text file to `read more arguments`_ from.
   -h, --help              Prints `usage instructions`_.
