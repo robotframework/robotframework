@@ -48,7 +48,6 @@ class _BaseSettings(object):
                  'TagStatLink'      : ('tagstatlink', []),
                  'RemoveKeywords'   : ('removekeywords', []),
                  'NoStatusRC'       : ('nostatusrc', False),
-                 'RunEmptySuite'    : ('runemptysuite', False),
                  'MonitorWidth'     : ('monitorwidth', 78),
                  'MonitorColors'    : ('monitorcolors', 'AUTO'),
                  'StdOut'           : ('stdout', None),
@@ -274,6 +273,7 @@ class RobotSettings(_BaseSettings):
     _extra_cli_opts = {'Output'        : ('output', 'output.xml'),
                        'LogLevel'      : ('loglevel', 'INFO'),
                        'RunMode'       : ('runmode', []),
+                       'RunEmptySuite' : ('runemptysuite', False),
                        'WarnOnSkipped' : ('warnonskippedfiles', False),
                        'Variables'     : ('variable', []),
                        'VariableFiles' : ('variablefile', []),
@@ -295,6 +295,7 @@ class RobotSettings(_BaseSettings):
             settings._opts[name] = None
         settings._opts['Output'] = 'NONE'
         settings._opts['LogLevel'] = 'TRACE'
+        settings._opts['ProcessEmptySuite'] = self['RunEmptySuite']
         return datasource, settings
 
     def _outputfile_disabled(self, type_, name):
@@ -307,10 +308,11 @@ class RobotSettings(_BaseSettings):
 
 
 class RebotSettings(_BaseSettings):
-    _extra_cli_opts = {'Output'         : ('output', 'NONE'),
-                       'LogLevel'       : ('loglevel', 'TRACE'),
-                       'StartTime'      : ('starttime', None),
-                       'EndTime'        : ('endtime', None)}
+    _extra_cli_opts = {'Output'            : ('output', 'NONE'),
+                       'LogLevel'          : ('loglevel', 'TRACE'),
+                       'ProcessEmptySuite' : ('processemptysuite', False),
+                       'StartTime'         : ('starttime', None),
+                       'EndTime'           : ('endtime', None)}
 
     def _outputfile_disabled(self, type_, name):
         return name == 'NONE'
@@ -329,7 +331,7 @@ class RebotSettings(_BaseSettings):
             'exclude_tags': self['Exclude'],
             'include_suites': self['SuiteNames'],
             'include_tests': self['TestNames'],
-            'process_empty_suite': self['RunEmptySuite'],
+            'process_empty_suite': self['ProcessEmptySuite'],
             'remove_keywords': self['RemoveKeywords'],
             'log_level': self['LogLevel'],
             'critical': self['Critical'],
