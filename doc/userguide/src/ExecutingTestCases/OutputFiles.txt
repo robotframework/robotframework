@@ -351,8 +351,8 @@ Two or more tags separated by :code:`AND` or :code:`&`
    Tags can be given as simple patterns.
 
 Two or more tags separated by :code:`NOT`
-   The combined statistics contain tests that have the first tag but
-   not the others. Also in this case tags may be patterns.
+   The combined statistics contain tests that have the first tag but not
+   any of the others. Also in this case tags may be patterns.
 
 The following examples illustrate these usages, and the figure below shows a snippet
 of the resulting :name:`Statistics by Tag` table when the example test data is
