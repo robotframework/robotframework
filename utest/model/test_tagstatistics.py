@@ -117,7 +117,7 @@ class TestTagStatistics(unittest.TestCase):
                 ('tNOTs*NOTr', ['t'], 1),
                 ('tNOTs*NOTr', ['t','s'], 0),
                 ('tNOTs*NOTr', ['S','T'], 0),
-                ('tNOTs*NOTr', ['R','T','s'], 1),
+                ('tNOTs*NOTr', ['R','T','s'], 0),
                ]:
             self._verify_combined_statistics(comb_tags, test_tags, expected_count)
 
