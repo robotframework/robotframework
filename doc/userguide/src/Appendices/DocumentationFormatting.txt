@@ -144,27 +144,34 @@ as the test suite documentation in the previous section.
 Paragraphs
 ~~~~~~~~~~
 
-Starting from Robot Framework 2.7.2, all regular text in the formatted
-documentation is represented as paragraphs. Lines of documentation separated
-by a single newline will be combined in one paragraph. Two newlines can be used
-to separate paragraphs. For example, the following suite documentation::
+Starting from Robot Framework 2.7.2, all regular text in the formatted HTML
+documentation is represented as paragraphs. In practice, lines separated
+by a single newline will be combined in a paragraph regardless whether the
+newline is added manually or automatically. Multiple paragraphs can be separated
+with an empty line (i.e. two newlines) and also tables, lists, and other
+specially formatted blocks discussed in subsequent sections end a paragraph.
+
+For example, the following test suite or resource file documentation::
 
   *** Settings ***
   Documentation
-  ...    First line.
+  ...    First paragraph has only one line.
   ...
-  ...    Second paragraph, this time
+  ...    Second paragraph, this time created
   ...    with multiple lines.
 
-will be formatted as:
+will be formatted in HTML as:
 
 .. raw:: html
 
   <div class="doc">
-  <p>First line.</p>
-  <p>Second paragraph, this time with multiple lines.</p>
+  <p>First paragraph has only one line.</p>
+  <p>Second paragraph, this time created with multiple lines.</p>
   </div>
 
+.. note:: Prior to 2.7.2 handling paragraphs was inconsistent. In documentation
+          generated with libdoc_ lines were combined to paragraphs but in
+          documentations shown in log and report they were not.
 
 Bold and italic
 ~~~~~~~~~~~~~~~
@@ -172,14 +179,15 @@ Bold and italic
 Bold text can be created by having an asterisk before and after the
 selected word or words, for example :code:`\*this is bold*`. Italic
 style works similarly, but the special character to use is an
-underscore, for example :code:`\_italic_`. It is also possible to have
+underscore, for example, :code:`\_italic_`. It is also possible to have
 bold italic with the syntax :code:`\_*bold italic*_`.
 
 An asterisk or an underscore alone, or in the middle of a word, does
 not start formatting, but punctuation characters before or after them
-are allowed. Both bold and italic are limited for formatting text on
-one line, and formatting spanning several lines must be explicitly
-started and stopped on every line.
+are allowed. When multiple lines form a paragraph__, both bold and italic
+can span over multiple lines.
+
+__ paragraphs
 
 .. raw:: html
 
@@ -206,7 +214,7 @@ started and stopped on every line.
        <td><i><b>bold italic</b></i>, <i>italic</i>, nothing</td>
      </tr>
      <tr>
-       <td>This is *bold*\n<br>*on multiple*\n<br>*lines*.</td>
+       <td>This is *bold\n<br>on multiple\n<br>lines*.</td>
        <td>This is <b>bold</b><br><b>on multiple</b><br><b>lines</b>.</td>
      </tr>
    </table>
@@ -218,7 +226,7 @@ All strings that look like URLs are automatically converted into
 clickable links. Additionally, URLs that end with extension
 :path:`.jpg`, :path:`.jpeg`, :path:`.png`, :path:`.gif` or
 :path:`.bmp` (case-insensitive) will automatically create images. For
-example URLs like :code:`http://some.url` are turned into links, and
+example, URLs like :code:`http://example.com` are turned into links, and
 :code:`http:///host/image.jpg` and :code:`file:///path/chart.png`
 into images.
 
@@ -229,7 +237,7 @@ test case and keyword documentation, and for test suite metadata.
 Custom links and images
 ~~~~~~~~~~~~~~~~~~~~~~~
 
-Starting from Robot Framework 2.7, it is also possible to create custom links
+Starting from Robot Framework 2.7, it is possible to create custom links
 and embed images using special syntax :code:`[link|content]`. This creates
 a link or image depending are :code:`link` and :code:`content` images.
 They are considered images if they have the same image extensions that are
@@ -239,7 +247,7 @@ between the parts are mandatory in all cases.
 Link with text content
 ''''''''''''''''''''''
 
-If neither :code:`link` nor :code:`content` is image, the end result is
+If neither :code:`link` nor :code:`content` is an image, the end result is
 a normal link where :code:`link` is the link target and :code:`content`
 the visible text::
 
@@ -279,7 +287,7 @@ The created table always has a thin border and the text is
 left-aligned. Formatting using bold and italic works also in table
 cells, so it is possible to create headers. Empty cells are automatically
 added to make rows equally long. For example, the above
-example would be formatted like this:
+example would be formatted like this in HTML:
 
 .. raw:: html
 
@@ -294,8 +302,8 @@ example would be formatted like this:
 Lists
 ~~~~~
 
-A list is created by using the sequence '- ' to denote list elements. An empty
-line or line not starting with '- ' ends the list::
+Lists are created by starting a line with a hyphen and space ('- ').
+An empty line or line not starting with '- ' ends the list::
 
   Example:
   - a list item
@@ -303,7 +311,7 @@ line or line not starting with '- ' ends the list::
 
   This is outside the list.
 
-The above documentation is formatted like this:
+The above documentation is formatted like this in HTML:
 
 .. raw:: html
 
@@ -316,15 +324,18 @@ The above documentation is formatted like this:
   <p>This is outside the list.</p>
   </div>
 
+.. note:: Support for formatting lists was added in 2.7.2. Prior to that,
+          the same syntax prevented :prog:`libdoc` from combining lines to
+          paragraphs, though, so the end result was similar.
 
 Preformatted text
 ~~~~~~~~~~~~~~~~~
 
-Starting from Robot Framework 2.7, it is also possible to embed blocks of
+Starting from Robot Framework 2.7, it is possible to embed blocks of
 preformatted text in the documentation. Preformatted block is created by
-starting lines with '| ', one space being mandatory after the pipe character.
-The sequence '| ' will be removed from the resulting HTML, but all other
-whitespace is preserved.
+starting lines with '| ', one space being mandatory after the pipe character
+except on otherwise empty lines. The starting '| ' sequence will be removed
+from the resulting HTML, but all other whitespace is preserved.
 
 In the following documentation, the two middle lines form a preformatted
 block when converted to HTML::
@@ -349,8 +360,8 @@ Horizontal ruler
 ~~~~~~~~~~~~~~~~
 
 Horizontal rulers (the <hr> tag) make it possible to separate larger
-sections from each others, and they can be created by having three
-hyphens alone in a line::
+sections from each others, and they can be created by having three or more
+hyphens alone on a line::
 
    Some text here.
 
