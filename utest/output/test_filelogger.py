@@ -1,21 +1,34 @@
 import unittest
 from StringIO import StringIO
+import time
 
 from robot import utils
 from robot.utils.asserts import *
 
 from robot.output.filelogger import FileLogger
+from robot.utils.robottime import TimestampCache
+
+
+class _FakeTimeCache(TimestampCache):
+
+    def __init__(self, fake_time):
+        self.fake = time.mktime(fake_time)
+        self.fake += fake_time[6] / 1000.0
+        TimestampCache.__init__(self)
+
+    def  _get_epoch(self):
+        return self.fake
 
 
 class TestFileLogger(unittest.TestCase):
-    
+
     def setUp(self):
+        utils.robottime.TIMESTAMP_CACHE = _FakeTimeCache((2006, 6, 13, 8, 37, 42, 123, 0, 1))
         FileLogger._get_writer = lambda *args: StringIO()
         self.logger = FileLogger('whatever', 'INFO')
-        utils.robottime._CURRENT_TIME = (2006, 6, 13, 8, 37, 42, 123)
-   
+
     def tearDown(self):
-        utils.robottime._CURRENT_TIME = None
+        utils.robottime.TIMESTAMP_CACHE = TimestampCache()
 
     def test_write(self):
         self.logger.write('my message', 'INFO')
@@ -24,7 +37,7 @@ class TestFileLogger(unittest.TestCase):
         self.logger.write('my 2nd msg\nwith 2 lines', 'ERROR')
         expected += '20060613 08:37:42.123 | ERROR | my 2nd msg\nwith 2 lines\n'
         self._verify_message(expected)
-                        
+
     def test_write_helpers(self):
         self.logger.info('my message')
         expected = '20060613 08:37:42.123 | INFO  | my message\n'

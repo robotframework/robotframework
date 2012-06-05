@@ -1,5 +1,4 @@
 import unittest
-import sys
 import re
 import time
 import datetime
@@ -211,6 +210,12 @@ class TestTime(unittest.TestCase):
         if secs_after == secs_before: # Check that second has not passed during the measurements
             assert_equal(get_time_result, '%02d' % secs_before)
             assert_equal(parse_time_result % 60, secs_after)
+
+    def test_get_timestamp_without_millis(self):
+        # Need to test twice to verify also possible cached timestamp
+        assert_true(re.match('\d{8} \d\d:\d\d:\d\d', get_timestamp(millissep=None)))
+        assert_true(re.match('\d{8} \d\d:\d\d:\d\d', get_timestamp(millissep=None)))
+
 
 if __name__ == "__main__":
     unittest.main()
