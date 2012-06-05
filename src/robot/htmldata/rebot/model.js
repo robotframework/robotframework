@@ -56,7 +56,9 @@ window.model = (function () {
             var required = tagnames[0];
             var notAllowed = tagnames.slice(1);
             return containsTagPattern(testTags, required) &&
-                !containsTagPattern(testTags, notAllowed.join('NOT'));
+                util.all(util.map(notAllowed, function (name) {
+                    return !containsTagPattern(testTags, name);
+                }));
         }
         if (pattern.indexOf('&') != -1) {
             var tagnames = pattern.split('&');

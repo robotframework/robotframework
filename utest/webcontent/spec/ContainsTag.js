@@ -26,9 +26,11 @@ describe("Searching by tags", function () {
     });
 
     it("should find tags combined with multiple NOTs", function() {
+        expect(model.containsTagPattern(['a'], 'a NOT c NOT d')).toBeTruthy();
         expect(model.containsTagPattern(['a', 'b'], 'a NOT c NOT d')).toBeTruthy();
         expect(model.containsTagPattern(['a', 'b'], 'a NOT b NOT c')).not.toBeTruthy();
-        expect(model.containsTagPattern(['a', 'b', 'c'], 'a NOT b NOT c')).toBeTruthy();
+        expect(model.containsTagPattern(['a', 'b', 'c'], 'a NOT b NOT c')).not.toBeTruthy();
+        expect(model.containsTagPattern(['x'], 'a NOT c NOT d')).not.toBeTruthy();
     });
 
     it("should find tags combined with NOT and &", function() {
@@ -38,7 +40,7 @@ describe("Searching by tags", function () {
         expect(model.containsTagPattern(['x', 'y'], 'x & y NOT z')).toBeTruthy();
         expect(model.containsTagPattern(['x', 'y', 'z'], 'x & y NOT z')).not.toBeTruthy();
         expect(model.containsTagPattern(['x', 'y'], 'x & y NOT x & z')).toBeTruthy();
-        expect(model.containsTagPattern(['x', 'y', 'z'], 'x & y NOT x & z NOT y & z')).toBeTruthy();
+        expect(model.containsTagPattern(['x', 'y', 'z'], 'x & y NOT x & z NOT y & z')).not.toBeTruthy();
         expect(model.containsTagPattern(['x', 'y', 'z'], 'x & y NOT x & z NOT xxx')).not.toBeTruthy();
     });
 
@@ -61,7 +63,7 @@ describe("Searching by tags", function () {
         expect(model.containsTagPattern(['xx', 'yy'], 'x* & y?')).toBeTruthy();
         expect(model.containsTagPattern(['xxxyyy'], 'x* NOT y')).toBeTruthy();
         expect(model.containsTagPattern(['xxxyyy'], 'x* NOT *y')).not.toBeTruthy();
-        expect(model.containsTagPattern(['xx', 'yy'], '* NOT x? NOT ?y')).toBeTruthy();
+        expect(model.containsTagPattern(['xx', 'yy'], '* NOT x? NOT ?y')).not.toBeTruthy();
     });
 
     it("should esacpe regex metacharacters in patterns", function() {
