@@ -329,6 +329,7 @@ class RebotSettings(_BaseSettings):
             'exclude_tags': self['Exclude'],
             'include_suites': self['SuiteNames'],
             'include_tests': self['TestNames'],
+            'process_empty_suite': self['RunEmptySuite'],
             'remove_keywords': self['RemoveKeywords'],
             'log_level': self['LogLevel'],
             'critical': self['Critical'],
