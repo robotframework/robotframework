@@ -77,7 +77,7 @@ class TagPatterns(object):
 def TagPattern(pattern):
     pattern = pattern.replace('&', 'AND')
     if 'NOT' in pattern:
-        return _NotTagPattern(*pattern.split('NOT', 1))
+        return _NotTagPattern(*pattern.split('NOT'))
     if 'AND' in pattern:
         return _AndTagPattern(pattern.split('AND'))
     return _SingleTagPattern(pattern)
@@ -106,9 +106,10 @@ class _AndTagPattern(object):
 
 class _NotTagPattern(object):
 
-    def __init__(self, must_match, must_not_match):
+    def __init__(self, must_match, *must_not_match):
         self._must = TagPattern(must_match)
-        self._must_not = TagPattern(must_not_match)
+        self._must_not = [TagPattern(m) for m in must_not_match]
 
     def match(self, tags):
-        return self._must.match(tags) and not self._must_not.match(tags)
+        return self._must.match(tags) \
+            and not any(p.match(tags) for p in self._must_not)

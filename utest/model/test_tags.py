@@ -133,21 +133,25 @@ class TestTagPatterns(unittest.TestCase):
         assert_true(patterns.match(['1', '22', '333', '4', '5', '7']))
 
     def test_match_with_multiple_nots(self):
-        patterns = TagPatterns(['xNOTyNOTz', '1 NOT 2 NOT 3 NOT 4',
-                                'a AND b NOT c AND d NOT e AND f'])
+        patterns = TagPatterns(['xNOTyNOTz', '1 NOT 2 NOT 3 NOT 4'])
         assert_true(patterns.match(['x']))
-        assert_true(patterns.match(['x', 'z']))
-        assert_true(patterns.match(['x', 'y', 'z']))
-        assert_false(patterns.match(['xxx']))
         assert_false(patterns.match(['x', 'y']))
+        assert_false(patterns.match(['x', 'z']))
+        assert_false(patterns.match(['x', 'y', 'z']))
+        assert_false(patterns.match(['xxx']))
         assert_true(patterns.match(['1']))
-        assert_true(patterns.match(['1', '3', '4']))
-        assert_true(patterns.match(['1', '2', '3']))
+        assert_false(patterns.match(['1', '3', '4']))
+        assert_false(patterns.match(['1', '2', '3']))
         assert_false(patterns.match(['1', '2', '3', '4']))
+
+    def test_match_with_multiple_nots_with_ands(self):
+        patterns = TagPatterns('a AND b NOT c AND d NOT e AND f')
         assert_true(patterns.match(['a', 'b']))
         assert_true(patterns.match(['a', 'b', 'c']))
         assert_true(patterns.match(['a', 'b', 'c', 'e']))
-        assert_true(patterns.match(['a', 'b', 'c', 'd', 'e', 'f']))
+        assert_false(patterns.match(['a', 'b', 'c', 'd']))
+        assert_false(patterns.match(['a', 'b', 'e', 'f']))
+        assert_false(patterns.match(['a', 'b', 'c', 'd', 'e', 'f']))
         assert_false(patterns.match(['a', 'b', 'c', 'd', 'e']))
 
     def test_seq2str(self):
