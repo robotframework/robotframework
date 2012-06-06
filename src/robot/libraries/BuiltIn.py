@@ -1033,6 +1033,8 @@ class _RunKeyword:
         can be a variable and thus set dynamically, e.g. from a return value of
         another keyword or from the command line.
         """
+        if not isinstance(name, basestring):
+            raise RuntimeError('Keyword name must be a string.')
         kw = Keyword(name, list(args))
         return kw.run(self._execution_context)
 
