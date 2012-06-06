@@ -31,7 +31,7 @@ PACKAGES = ['robot', 'robot.api', 'robot.common', 'robot.conf',
             'robot.running.timeouts', 'robot.utils', 'robot.variables',
             'robot.writer']
 PACKAGE_DATA = [join('htmldata', directory, pattern)
-                for directory in 'rebot', 'libdoc', 'testdoc', 'lib'
+                for directory in 'rebot', 'libdoc', 'testdoc', 'lib', 'common'
                 for pattern in '*.html', '*.css', '*.js']
 if sys.platform.startswith('java'):
     SCRIPTS = ['jybot', 'jyrebot']
