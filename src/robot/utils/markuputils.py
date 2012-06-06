@@ -13,20 +13,26 @@
 #  limitations under the License.
 
 import string
+import re
 
 from .htmlformatters import LinkFormatter, HtmlFormatter
 
 
+_format_url = LinkFormatter().format_url
 _generic_escapes = (('&', '&amp;'), ('<', '&lt;'), ('>', '&gt;'))
 _attribute_escapes = _generic_escapes + (('"', '&quot;'),)
-_format_url = LinkFormatter().format_url
+_illegal_chars_in_xml = re.compile(u'[\x00-\x08\x0B\x0C\x0E-\x1F\uFFFE\uFFFF]')
 
 
 def html_escape(text):
-    return _format_url(xml_escape(text))
+    return _format_url(_escape(text))
 
 
 def xml_escape(text):
+    return _illegal_chars_in_xml.sub('', _escape(text))
+
+
+def _escape(text):
     for name, value in _generic_escapes:
         text = text.replace(name, value)
     return text
