@@ -20,6 +20,14 @@ from .markuputils import html_escape, xml_escape, attribute_escape
 class _MarkupWriter(object):
 
     def __init__(self, output, line_separator=os.linesep, encoding=None):
+        """Creates new _MarkupWriter.
+
+        :param output: Either an opened, file like object, or a path to the
+            desired output file. In the latter case, the file is created.
+        :param line_separator: Defines the used line separator.
+        :param encoding: Encoding to be used to encode all text written to the
+            output file. If `None`, text will not be encoded.
+        """
         if isinstance(output, basestring):
             output = open(output, 'w')
         self.output = output
