@@ -49,5 +49,5 @@ class OutputWriter(XmlLogger, ResultVisitor):
     end_suite_statistics = XmlLogger.end_suite_stats
 
     def visit_stat(self, stat):
-        self._writer.element('stat', stat.name, stat.get_attributes())
-
+        self._writer.element('stat', stat.name,
+                             stat.get_attributes(values_as_strings=True))

@@ -64,7 +64,7 @@ class XmlLogger(object):
 
     def start_keyword(self, kw):
         self._writer.start('kw', {'name': kw.name, 'type': kw.type,
-                                  'timeout': kw.timeout})
+                                  'timeout': str(kw.timeout)})
         self._writer.element('doc', kw.doc)
         self._write_list('arguments', 'arg', kw.args)
 
@@ -74,7 +74,7 @@ class XmlLogger(object):
 
     def start_test(self, test):
         self._writer.start('test', {'id': test.id, 'name': test.name,
-                                    'timeout': test.timeout})
+                                    'timeout': str(test.timeout)})
 
     def end_test(self, test):
         self._writer.element('doc', test.doc)
@@ -169,7 +169,7 @@ class XmlLogger(object):
         attrs = {'status': item.status, 'starttime': item.starttime or 'N/A',
                  'endtime': item.endtime or 'N/A'}
         if not (item.starttime and item.endtime):
-            attrs['elapsedtime'] = item.elapsedtime
+            attrs['elapsedtime'] = str(item.elapsedtime)
         if extra_attrs:
             attrs.update(extra_attrs)
         self._writer.element('status', message, attrs)

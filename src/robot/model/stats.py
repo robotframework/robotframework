@@ -22,13 +22,16 @@ class Stat(object):
         self.passed = 0
         self.failed = 0
 
-    def get_attributes(self, include_label=False, exclude_empty=False):
+    def get_attributes(self, include_label=False, exclude_empty=False,
+                       values_as_strings=False):
         attrs =  {'pass': self.passed, 'fail': self.failed}
         attrs.update(self._get_custom_attrs())
         if include_label:
             attrs['label'] = self.name
         if exclude_empty:
             attrs = dict((k, v) for k, v in attrs.items() if v != '')
+        if values_as_strings:
+            attrs = dict((k, unicode(v)) for k, v in attrs.items())
         return attrs
 
     def _get_custom_attrs(self):

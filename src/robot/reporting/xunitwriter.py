@@ -34,10 +34,10 @@ class XUnitWriter(ResultVisitor):
             return
         self._root_suite = suite
         attrs = {'name': suite.name,
-                 'tests': suite.statistics.all.total,
-                 'errors': 0,
-                 'failures': suite.statistics.all.failed,
-                 'skip': 0}
+                 'tests': str(suite.statistics.all.total),
+                 'errors': '0',
+                 'failures': str(suite.statistics.all.failed),
+                 'skip': '0'}
         self._writer.start('testsuite', attrs)
 
     def end_suite(self, suite):
@@ -53,7 +53,7 @@ class XUnitWriter(ResultVisitor):
             test.visit(TestFailureWriter(self._writer))
 
     def _time_as_seconds(self, millis):
-        return int(round(millis, -3) / 1000)
+        return str(int(round(millis, -3) / 1000))
 
     def end_test(self, test):
         self._writer.end('testcase')
