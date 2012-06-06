@@ -31,7 +31,8 @@ def normalize(string, ignore=(), caseless=True, spaceless=True):
         string = string.lower()
         ignore = [i.lower() for i in ignore]
     for ign in ignore:
-        string = string.replace(ign, '')
+        if ign in string:  # performance optimization
+            string = string.replace(ign, '')
     return string
 
 
