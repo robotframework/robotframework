@@ -652,7 +652,7 @@ class TestFormatTable(unittest.TestCase):
         assert_equals(_format_table(inp), exp)
 
 
-class TestHtmlAttrEscape(unittest.TestCase):
+class TestAttributeEscape(unittest.TestCase):
 
     def test_nothing_to_escape(self):
         for inp in ['', 'whatever', 'nothing here, move along']:

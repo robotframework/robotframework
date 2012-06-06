@@ -13,18 +13,23 @@
 #  limitations under the License.
 
 import os
-import re
 
 from .markuputils import html_escape, xml_escape, attribute_escape
-from .unic import unic
 
 
 class _MarkupWriter(object):
 
     def __init__(self, output, line_separator=os.linesep, encoding=None):
+        if isinstance(output, basestring):
+            output = open(output, 'w')
         self.output = output
         self._line_separator = line_separator
-        self._encoding = encoding
+        self._encode = self._create_encoder(encoding)
+
+    def _create_encoder(self, encoding):
+        if encoding is None:
+            return lambda text: text
+        return lambda text: text.encode(encoding)
 
     def start(self, name, attrs=None, newline=True):
         self._write('<%s%s>%s' % (name, self._get_attrs(attrs),
@@ -49,9 +54,6 @@ class _MarkupWriter(object):
     def _write(self, text):
         self.output.write(self._encode(text))
 
-    def _encode(self, text):
-        return text.encode(self._encoding) if self._encoding else text
-
     def _get_attrs(self, attrs):
         if not attrs:
             return ''
@@ -69,23 +71,16 @@ class HtmlWriter(_MarkupWriter):
 
 
 class XmlWriter(_MarkupWriter):
-    _illegal_chars = re.compile(u'[\x00-\x08\x0B\x0C\x0E-\x1F\uFFFE\uFFFF]')
 
     def __init__(self, output, line_separator=os.linesep, encoding=None):
-        _MarkupWriter.__init__(self, self._create_output(output),
-                              line_separator, encoding)
+        _MarkupWriter.__init__(self, output, line_separator, encoding)
         self._preamble()
-
-    def _create_output(self, output):
-        return open(output, 'w') \
-            if isinstance(output, basestring) else output
 
     def _preamble(self):
         self.content('<?xml version="1.0" encoding="UTF-8"?>\n', escape=False)
 
     def _escape(self, text):
-        text = xml_escape(text)
-        return self._illegal_chars.sub('', unic(text))
+        return xml_escape(text)
 
     def _format_attributes(self, attrs):
         return ('%s="%s"' % (name, attribute_escape(unicode(attrs[name])))
