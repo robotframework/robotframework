@@ -93,3 +93,8 @@ class XmlWriter(_MarkupWriter):
     def _format_attributes(self, attrs):
         return ('%s="%s"' % (name, attribute_escape(attrs[name]))
                              for name in attrs)
+
+
+class NullMarkupWriter(object):
+    """Mock implementation of _MarkupWriter interface"""
+    start = content = element = end = close = lambda *args: None

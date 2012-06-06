@@ -13,7 +13,7 @@
 #  limitations under the License.
 
 from robot.errors import DataError
-from robot.utils import XmlWriter, get_timestamp
+from robot.utils import XmlWriter, NullMarkupWriter, get_timestamp
 from robot.version import get_full_version
 
 from .loggerhelper import IsLogged
@@ -28,6 +28,8 @@ class XmlLogger(object):
         self._errors = []
 
     def _get_writer(self, path, generator):
+        if path == 'NONE':
+            return NullMarkupWriter()
         try:
             writer = XmlWriter(path, encoding='UTF-8')
         except EnvironmentError, err:
