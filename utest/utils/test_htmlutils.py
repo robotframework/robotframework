@@ -2,7 +2,7 @@ import unittest
 
 from robot.utils.asserts import assert_equals
 
-from robot.utils.htmlutils import html_escape, html_format, html_attr_escape
+from robot.utils.markuputils import html_escape, html_format, attribute_escape
 from robot.utils.htmlformatters import TableFormatter
 
 _format_table = TableFormatter()._format_table
@@ -656,18 +656,18 @@ class TestHtmlAttrEscape(unittest.TestCase):
 
     def test_nothing_to_escape(self):
         for inp in ['', 'whatever', 'nothing here, move along']:
-            assert_equals(html_attr_escape(inp), inp)
+            assert_equals(attribute_escape(inp), inp)
 
     def test_html_entities(self):
         for inp, exp in [('"', '&quot;'), ('<', '&lt;'), ('>', '&gt;'),
                          ('&', '&amp;'), ('&<">&', '&amp;&lt;&quot;&gt;&amp;'),
                          ('Sanity < "check"', 'Sanity &lt; &quot;check&quot;')]:
-            assert_equals(html_attr_escape(inp), exp)
+            assert_equals(attribute_escape(inp), exp)
 
     def test_newlines_and_tabs(self):
         for inp, exp in [('\n', ' '), ('\t', ' '), ('"\n\t"', '&quot;  &quot;'),
                          ('N1\nN2\n\nT1\tT3\t\t\t', 'N1 N2  T1 T3   ')]:
-            assert_equals(html_attr_escape(inp), exp)
+            assert_equals(attribute_escape(inp), exp)
 
 
 if __name__ == '__main__':

@@ -12,8 +12,8 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from robot.utils import XmlWriter, get_timestamp
 from robot.errors import DataError
+from robot.utils import XmlWriter, get_timestamp
 from robot.version import get_full_version
 
 from .loggerhelper import IsLogged
@@ -29,10 +29,10 @@ class XmlLogger(object):
 
     def _get_writer(self, path, generator):
         try:
-            writer = XmlWriter(path)
+            writer = XmlWriter(path, encoding='UTF-8')
         except EnvironmentError, err:
-            raise DataError("Opening output file '%s' failed: %s"
-                            % (path, err.strerror))
+            raise DataError("Opening output file '%s' failed: %s" %
+                            (path, err.strerror))
         writer.start('robot', {'generator': get_full_version(generator),
                                'generated': get_timestamp()})
         return writer
@@ -126,7 +126,8 @@ class XmlLogger(object):
         self._stat(stat)
 
     def suite_stat(self, stat):
-        self._stat(stat, stat.longname, attrs={'id': stat.id, 'name': stat.name})
+        self._stat(stat, stat.longname,
+                   attrs={'id': stat.id, 'name': stat.name})
 
     def tag_stat(self, stat):
         self._stat(stat, attrs={'info': self._get_tag_stat_info(stat),

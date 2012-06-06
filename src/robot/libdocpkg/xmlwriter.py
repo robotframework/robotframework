@@ -18,7 +18,7 @@ from robot.utils import XmlWriter, get_timestamp
 class LibdocXmlWriter(object):
 
     def write(self, libdoc, outfile):
-        writer = XmlWriter(outfile)
+        writer = XmlWriter(outfile, encoding='UTF-8')
         writer.start('keywordspec', {'name': libdoc.name, 'type': libdoc.type,
                                      'generated': get_timestamp(millissep=None)})
         writer.element('version', libdoc.version)

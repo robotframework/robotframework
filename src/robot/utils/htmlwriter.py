@@ -14,10 +14,10 @@
 
 import os
 
-from .htmlutils import html_escape, html_attr_escape
+from .markuputils import html_escape, attribute_escape
 
 
-class HtmlWriter(object):
+class MarkupWriter(object):
 
     def __init__(self, output, line_separator=os.linesep, encoding=None):
         self.output = output
@@ -30,12 +30,13 @@ class HtmlWriter(object):
 
     def content(self, content=None, escape=True):
         if content:
-            self._write(html_escape(content) if escape else content)
+            self._write(self._escape(content) if escape else content)
 
     def end(self, name, newline=True):
         self._write('</%s>%s' % (name, self._line_separator if newline else ''))
 
-    def element(self, name, content=None, attrs=None, escape=True, newline=True):
+    def element(self, name, content=None, attrs=None, escape=True,
+                newline=True):
         self.start(name, attrs, newline=False)
         self.content(content, escape)
         self.end(name, newline)
@@ -52,5 +53,14 @@ class HtmlWriter(object):
     def _get_attrs(self, attrs):
         if not attrs:
             return ''
-        return ' ' + ' '.join('%s="%s"' % (name, html_attr_escape(attrs[name]))
-                              for name in sorted(attrs))
+        return ' ' + ' '.join(self._format_attributes(attrs))
+
+
+class HtmlWriter(MarkupWriter):
+
+    def _escape(self, content):
+        return html_escape(content)
+
+    def _format_attributes(self, attrs):
+        return ('%s="%s"' % (name, attribute_escape(attrs[name]))
+                             for name in sorted(attrs))

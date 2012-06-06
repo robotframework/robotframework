@@ -180,7 +180,8 @@ class TestStateBetweenTestRuns(unittest.TestCase):
 
     def test_clear_namespace_between_runs(self):
         data = join(ROOT, 'atest', 'testdata', 'variables', 'commandline_variables.html')
-        rc = run(data, outputdir=TEMP, stdout=StringIO(), stderr=StringIO(),
+        err = StringIO()
+        rc = run(data, outputdir=TEMP, stdout=StringIO(), stderr=err,
                  test=['NormalText'], variable=['NormalText:Hello'])
         assert_equals(rc, 0)
         rc = run(data, outputdir=TEMP, stdout=StringIO(), stderr=StringIO(),

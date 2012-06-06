@@ -13,21 +13,32 @@
 #  limitations under the License.
 
 import os
+import re
 
-from abstractxmlwriter import AbstractXmlWriter
-
-
-def XmlWriter(path):
-    if path == 'NONE':
-        return NullXmlWriter()
-    if os.name == 'java':
-        from jyxmlwriter import XmlWriter
-    else:
-        from pyxmlwriter import XmlWriter
-    return XmlWriter(path)
+from .htmlwriter import MarkupWriter
+from .markuputils import xml_escape, attribute_escape
+from .unic import unic
 
 
-class NullXmlWriter(AbstractXmlWriter):
-    closed = False
-    _start = _content = _end = _newline = close = lambda self, *args: None
+class XmlWriter(MarkupWriter):
+    _illegal_chars = re.compile(u'[\x00-\x08\x0B\x0C\x0E-\x1F\uFFFE\uFFFF]')
 
+    def __init__(self, output, line_separator=os.linesep, encoding=None):
+        MarkupWriter.__init__(self, self._create_output(output),
+                              line_separator, encoding)
+        self._preamble()
+
+    def _create_output(self, output):
+        return open(output, 'w') \
+            if isinstance(output, basestring) else output
+
+    def _preamble(self):
+        self.content('<?xml version="1.0" encoding="UTF-8"?>\n', escape=False)
+
+    def _escape(self, text):
+        text = xml_escape(text)
+        return self._illegal_chars.sub('', unic(text))
+
+    def _format_attributes(self, attrs):
+        return ('%s="%s"' % (name, attribute_escape(unicode(attrs[name])))
+                             for name in attrs)

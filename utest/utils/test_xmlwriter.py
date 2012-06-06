@@ -12,7 +12,7 @@ PATH = os.path.join(tempfile.gettempdir(), 'test_xmlwriter.xml')
 class TestXmlWriter(unittest.TestCase):
 
     def setUp(self):
-        self.writer = XmlWriter(PATH)
+        self.writer = XmlWriter(PATH, encoding='UTF-8')
 
     def tearDown(self):
         self.writer.close()
@@ -47,7 +47,7 @@ class TestXmlWriter(unittest.TestCase):
         self.writer.element('leaf1.1', 'leaf content', {'type': 'kw'})
         self.writer.element('leaf1.2')
         self.writer.end('child1')
-        self.writer.element('child2', attributes={'class': 'foo'})
+        self.writer.element('child2', attrs={'class': 'foo'})
         self.writer.end('root')
         self.writer.close()
         with ETSource(PATH) as source:
@@ -62,8 +62,8 @@ class TestXmlWriter(unittest.TestCase):
     def test_newline_insertion(self):
         self.writer.start('root')
         self.writer.start('suite', {'type': 'directory_suite'})
-        self.writer.element('test', attributes={'name': 'my_test'}, newline=False)
-        self.writer.element('test', attributes={'name': 'my_2nd_test'})
+        self.writer.element('test', attrs={'name': 'my_test'}, newline=False)
+        self.writer.element('test', attrs={'name': 'my_2nd_test'})
         self.writer.end('suite', False)
         self.writer.start('suite', {'name': 'another suite'}, newline=False)
         self.writer.content('Suite 2 content')

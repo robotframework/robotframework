@@ -28,7 +28,7 @@ from .error import (get_error_message, get_error_details, ErrorDetails,
                     RERAISED_EXCEPTIONS)
 from .escaping import escape, unescape
 from .etreewrapper import ET, ETSource
-from .htmlutils import html_format, html_escape, html_attr_escape
+from .markuputils import html_format, html_escape, attribute_escape
 from .htmlwriter import HtmlWriter
 from .importer import Importer
 from .match import eq, matches, matches_any, Matcher, MultiMatcher
@@ -45,6 +45,9 @@ from .text import (cut_long_message, format_assign_message,
                   pad_console_length, get_console_length)
 from .unic import unic, safe_repr
 from .xmlwriter import XmlWriter
+
+# TODO: for backwards compatibility, remove in RF 2.8
+html_attr_escape = attribute_escape
 
 import sys
 is_jython = sys.platform.startswith('java')
