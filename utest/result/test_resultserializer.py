@@ -5,7 +5,7 @@ from StringIO import StringIO
 
 from robot.result import ExecutionResult
 from robot.reporting.outputwriter import OutputWriter
-from robot.utils.pyxmlwriter import XmlWriter
+from robot.utils import XmlWriter
 from robot.utils.asserts import assert_equals
 from robot.utils import ET, ETSource
 
@@ -21,47 +21,10 @@ class StreamXmlWriter(XmlWriter):
         pass
 
 
-if os.name == 'java':
-    from java.io import Writer
-    from array import array
-    from robot.utils.jyxmlwriter import XmlWriter
-
-    class StreamXmlWriter(XmlWriter):
-
-        def _create_output(self, output):
-            return StreamOutputWriter(output)
-
-        def close(self):
-            pass
-
-    class StreamOutputWriter(Writer):
-
-        def __init__(self, output):
-            self._output = output
-
-        def close(self):
-            pass
-
-        def flush(self):
-            pass
-
-        def write(self, value, offset=None, length=None):
-            # There are 5 overloaded version of #write() in java.io.Writer,
-            # the three that TransformHandler uses are handled below.
-            self._output.write(self._content(value, offset, length))
-
-        def _content(self, value, offset, length):
-            if isinstance(value, array):
-                return value[offset:offset+length].tostring()
-            if isinstance(value, int):
-                return unichr(value)
-            return value
-
-
 class TestableOutputWriter(OutputWriter):
 
     def _get_writer(self, output, generator):
-        writer = StreamXmlWriter(output)
+        writer = StreamXmlWriter(output, encoding='UTF-8')
         writer.start('robot')
         return writer
 
