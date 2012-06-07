@@ -26,26 +26,22 @@ _illegal_chars_in_xml = re.compile(u'[\x00-\x08\x0B\x0C\x0E-\x1F\uFFFE\uFFFF]')
 
 
 def html_escape(text):
-    return _format_url(_generic_escape(text))
+    return _format_url(_escape(text))
 
 
 def xml_escape(text):
-    return _illegal_chars_in_xml.sub('', _generic_escape(text))
+    return _illegal_chars_in_xml.sub('', _escape(text))
 
 
 def html_format(text):
-    return HtmlFormatter().format(_generic_escape(text))
+    return HtmlFormatter().format(_escape(text))
 
 
 def attribute_escape(attr):
     return _escape(attr, _attribute_escapes)
 
 
-def _generic_escape(text):
-    return _escape(text, _generic_escapes)
-
-
-def _escape(text, escapes):
+def _escape(text, escapes=_generic_escapes):
     for name, value in escapes:
         if name in text:  # performance optimization
             text = text.replace(name, value)
