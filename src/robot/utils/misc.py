@@ -14,7 +14,7 @@
 
 import inspect
 
-from unic import unic
+from .unic import unic
 
 
 def printable_name(string, code_style=False):
@@ -36,15 +36,14 @@ def printable_name(string, code_style=False):
     'miXed_CAPS_nAMe'  -> 'MiXed CAPS NAMe'
     ''                 -> ''
     """
-    if code_style:
+    if code_style and '_' in string:
         string = string.replace('_', ' ')
     parts = string.split()
-    if len(parts) == 0:
+    if not parts:
         return ''
-    elif len(parts) == 1 and code_style:
+    if code_style and len(parts) == 1:
         parts = _splitCamelCaseString(parts[0])
-    parts = [ part[0].upper() + part[1:] for part in parts if part != '' ]
-    return ' '.join(parts)
+    return ' '.join(part[0].upper() + part[1:] for part in parts if part != '')
 
 
 def _splitCamelCaseString(string):
@@ -56,7 +55,7 @@ def _splitCamelCaseString(string):
         prev, char, next = string[i-1:i+2]
         if _isWordBoundary(prev, char, next):
             parts.append(''.join(current_part))
-            current_part = [ char ]
+            current_part = [char]
         else:
             current_part.append(char)
     parts.append(''.join(current_part))   # append last part
@@ -79,7 +78,7 @@ def plural_or_not(item):
 def seq2str(sequence, quote="'", sep=', ', lastsep=' and '):
     """Returns sequence in format 'item 1', 'item 2' and 'item 3'"""
     quote_elem = lambda string: quote + unic(string) + quote
-    if len(sequence) == 0:
+    if not sequence:
         return ''
     if len(sequence) == 1:
         return quote_elem(sequence[0])

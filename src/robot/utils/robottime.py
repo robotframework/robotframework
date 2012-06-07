@@ -15,8 +15,8 @@
 import time
 import datetime
 
-from normalizing import normalize
-from misc import plural_or_not
+from .normalizing import normalize
+from .misc import plural_or_not
 
 
 def _get_timetuple(epoch_secs=None):
@@ -333,7 +333,8 @@ def _timestamp_to_millis(timestamp, seps=None):
 
 def _normalize_timestamp(ts, seps):
     for sep in seps:
-        ts = ts.replace(sep, '')
+        if sep in ts:
+            ts = ts.replace(sep, '')
     ts = ts.ljust(17, '0')
     return '%s%s%s %s:%s:%s.%s' % (ts[:4], ts[4:6], ts[6:8], ts[8:10],
                                    ts[10:12], ts[12:14], ts[14:17])

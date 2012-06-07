@@ -75,7 +75,9 @@ class Message(BaseMessage):
             return msg
         if not isinstance(msg, unicode):
             msg = utils.unic(msg)
-        return msg.replace('\r\n', '\n')
+        if '\r\n' in msg:
+            msg = msg.replace('\r\n', '\n')
+        return msg
 
     def _get_level_and_html(self, level, html):
         level = level.upper()

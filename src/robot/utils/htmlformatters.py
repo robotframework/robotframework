@@ -49,12 +49,12 @@ class LinkFormatter(object):
         return '<a href="%s">%s</a>' % (self._quot(href), content or href)
 
     def _quot(self, attr):
-        return attr.replace('"', '&quot;')
+        return attr if '"' not in attr else attr.replace('"', '&quot;')
 
     def format_link(self, text):
         # 2nd, 4th, etc. token contains link, others surrounding content
         tokens = self._link.split(text)
-        formatters = cycle([self._format_url, self._format_link])
+        formatters = cycle((self._format_url, self._format_link))
         return ''.join(f(t) for f, t in zip(formatters, tokens))
 
     def _format_link(self, text):

@@ -245,7 +245,8 @@ class ArgumentParser:
         if isinstance(value, list):
             return [self._unescape(item, escapes) for item in value]
         for esc_name, esc_value in escapes.items():
-            value = value.replace(esc_name, esc_value)
+            if esc_name in value:
+                value = value.replace(esc_name, esc_value)
         return value
 
     def _process_opts(self, opt_tuple):

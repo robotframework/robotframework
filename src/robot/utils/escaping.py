@@ -23,7 +23,8 @@ def escape(item):
     if not isinstance(item, basestring):
         return item
     for seq in _SEQS_TO_BE_ESCAPED:
-        item = item.replace(seq, '\\' + seq)
+        if seq in item:
+            item = item.replace(seq, '\\' + seq)
     return item
 
 
