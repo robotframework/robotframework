@@ -29,5 +29,5 @@ Version
     ${rc}  ${output} =  Run And Return Rc And Output  ${ROBOT} --version
     Should Be Equal  ${rc}  ${251}
     Log  ${output}
-    Should Match Regexp  ${output}  ^Robot Framework (2\\.\\d+(\\.\\d+)?( (a|b|c)\\d*)?|trunk 20\\d{6}) \\([PJ]ython 2\\.[\\d.]+.* on .+\\)$
+    Should Match Regexp  ${output}  ^Robot Framework (2\\.\\d+(\\.\\d+)?( (a|b|c)\\d*)?|trunk 20\\d{6}) \\((Python|Jython|IronPython) 2\\.[\\d.]+.* on .+\\)$
     Should Be True  len("${output}") < 80  Too long version line
