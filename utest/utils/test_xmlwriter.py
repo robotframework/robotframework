@@ -19,11 +19,11 @@ class TestXmlWriter(unittest.TestCase):
         os.remove(PATH)
 
     def test_write_element_in_pieces(self):
-        self.writer.start('name', {'attr': 'value'})
+        self.writer.start('name', {'attr': 'value'}, newline=False)
         self.writer.content('Some content here!!')
         self.writer.end('name')
         self.writer.close()
-        self._verify_node(None, 'name', '\nSome content here!!', {'attr': 'value'})
+        self._verify_node(None, 'name', 'Some content here!!', {'attr': 'value'})
 
     def test_calling_content_multiple_times(self):
         self.writer.start(u'robot-log', newline=False)

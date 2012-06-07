@@ -7,7 +7,7 @@ Resource        atest_resource.txt
 *** Test Cases ***
 Statistics Should Be Written to XML
     ${output} =  Get File  ${OUTFILE}
-    ${exp} =  Catenate  SEPARATOR=\n  (?s)  <statistics>  <total>  .*  </total>
+    ${exp} =  Catenate  SEPARATOR=\\r?\\n  (?s)  <statistics>  <total>  .*  </total>
     ...  <tag>  .*  </tag>  <suite>  .*  </suite>  </statistics>
     Matches Regexp  ${output}  ${exp}
 
