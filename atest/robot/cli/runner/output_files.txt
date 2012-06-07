@@ -19,8 +19,10 @@ Output And Log
     Output Directory Should Contain  mylog.html  myoutput.xml
 
 Output Disabled with NONE
+    Remove File    NONE
     Run Tests Without Processing Output  --outputdir ${CLI OUTDIR} -o NONE -r None -l none  ${TESTFILE}
     Output Directory Should Be Empty
+    File Should Not Exist     NONE
 
 Debugfile Can Be Created When Output Is NONE
     Run Tests Without Processing Output  --outputdir ${CLI OUTDIR} -o NONE -r report.html -b debug.txt  ${TESTFILE}
