@@ -147,7 +147,7 @@ def create_userguide():
 --stylesheet-path=src/userguide.css
 src/RobotFrameworkUserGuide.txt
 RobotFrameworkUserGuide.html
-'''.split('\n')[1:-1] 
+'''.split('\n')[1:-1]
 
     os.chdir(ugdir)
     publish_cmdline(writer_name='html', description=description, argv=arguments)
@@ -175,7 +175,7 @@ def create_distribution():
     if os.path.exists(outdir):
         print 'Removing previous user guide distribution'
         shutil.rmtree(outdir)
-    
+
     for dirname in [outdir, tools, templates, libraries, images]:
         print "Creating output directory '%s'" % dirname
         os.mkdir(dirname)
@@ -186,8 +186,8 @@ def create_distribution():
         scheme, _, path, _, _, fragment = urlparse(res.group(5))
         if scheme or (fragment and not path):
             return res.group(0)
-        replaced_link = '%s %s="%%s/%s"' % (res.group(1), res.group(4), 
-                                            os.path.basename(path)) 
+        replaced_link = '%s %s="%%s/%s"' % (res.group(1), res.group(4),
+                                            os.path.basename(path))
         if path.startswith('../../tools'):
             copy(path, tools)
             copy_tool_images(path)
@@ -202,7 +202,8 @@ def create_distribution():
             copy(path, images)
             replaced_link = replaced_link % 'images'
         else:
-            raise ValueError('Invalid link target: %s' % path)
+            raise ValueError('Invalid link target: %s (context: %s)'
+                             % (path, res.group(0)))
         print "Modified link '%s' -> '%s'" % (res.group(0), replaced_link)
         return replaced_link
 
@@ -236,7 +237,7 @@ def create_zip():
     ugdir = create_distribution()
     zip_distribution(ugdir)
 
-    
+
 def zip_distribution(dirpath):
     """Generic zipper. Used also by qs2html.py """
     from zipfile import ZipFile, ZIP_DEFLATED
