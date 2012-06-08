@@ -187,7 +187,7 @@ not start formatting, but punctuation characters before or after them
 are allowed. When multiple lines form a paragraph__, both bold and italic
 can span over multiple lines.
 
-__ paragraphs
+__ paragraphs_
 
 .. raw:: html
 
