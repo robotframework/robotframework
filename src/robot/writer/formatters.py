@@ -32,7 +32,8 @@ class _DataFileFormatter(object):
         return self._format_row([], table)
 
     def format_header(self, table):
-        return self._format_row(self._header_for(table))
+        header = self._format_row(table.header)
+        return self._format_header(header, table)
 
     def format_table(self, table):
         rows = self._extractor.rows_from_table(table)
@@ -64,14 +65,17 @@ class _DataFileFormatter(object):
     def _format_row(self, row, table=None):
         raise NotImplementedError
 
-    def _header_for(self, table):
+    def _format_header(self, header, table):
         raise NotImplementedError
 
 
 class TsvFormatter(_DataFileFormatter):
 
-    def _header_for(self, table):
-        return ['*%s*' % cell for cell in table.header]
+    def _format_header(self, header, table):
+        return [self._format_header_cell(cell) for cell in header]
+
+    def _format_header_cell(self, cell):
+        return '*%s*' % cell if cell else ''
 
     def _format_row(self, row, table=None):
         return self._pad(self._escape(row))
@@ -105,8 +109,8 @@ class TxtFormatter(_DataFileFormatter):
             return ColumnAligner(self._test_or_keyword_name_width, table)
         return None
 
-    def _header_for(self, table):
-        header = ['*** %s ***' % table.header[0]] + table.header[1:]
+    def _format_header(self, header, table):
+        header = ['*** %s ***' % header[0]] + header[1:]
         aligner = self._aligner_for(table)
         if aligner:
             return aligner.align_row(header)
