@@ -12,7 +12,8 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from robot import utils
+from robot.utils import (format_assign_message, get_elapsed_time,
+                         get_error_message, get_timestamp, plural_or_not)
 from robot.errors import (DataError, ExecutionFailed, ExecutionFailures,
                           HandlerExecutionFailed)
 from robot.common import BaseKeyword
@@ -88,7 +89,7 @@ class Keyword(BaseKeyword):
         self.name = self._get_name(handler.longname)
         self.doc = handler.shortdoc
         self.timeout = getattr(handler, 'timeout', '')
-        self.starttime = utils.get_timestamp()
+        self.starttime = get_timestamp()
         context.start_keyword(self)
         if self.doc.startswith('*DEPRECATED*'):
             msg = self.doc.replace('*DEPRECATED*', '', 1).strip()
@@ -111,8 +112,8 @@ class Keyword(BaseKeyword):
             self._report_failure(context)
 
     def _end(self, context, return_value=None, error=None):
-        self.endtime = utils.get_timestamp()
-        self.elapsedtime = utils.get_elapsed_time(self.starttime, self.endtime)
+        self.endtime = get_timestamp()
+        self.elapsedtime = get_elapsed_time(self.starttime, self.endtime)
         try:
             if not error or error.can_continue(context.teardown):
                 self._set_variables(context, return_value)
@@ -153,7 +154,7 @@ class ForLoop(BaseKeyword):
                                  ' | '.join(data.items))
 
     def run(self, context):
-        self.starttime = utils.get_timestamp()
+        self.starttime = get_timestamp()
         context.output.start_keyword(self)
         try:
             self._validate()
@@ -167,8 +168,8 @@ class ForLoop(BaseKeyword):
         else:
             error = None
         self.status = 'PASS' if not error else 'FAIL'
-        self.endtime = utils.get_timestamp()
-        self.elapsedtime = utils.get_elapsed_time(self.starttime, self.endtime)
+        self.endtime = get_timestamp()
+        self.elapsedtime = get_elapsed_time(self.starttime, self.endtime)
         context.output.end_keyword(self)
         if error:
             raise error
@@ -229,14 +230,14 @@ class ForLoop(BaseKeyword):
             return items
         raise DataError('Number of FOR loop values should be multiple of '
                         'variables. Got %d variables but %d value%s.'
-                        % (len(self.vars), len(items), utils.plural_or_not(items)))
+                        % (len(self.vars), len(items), plural_or_not(items)))
 
     def _get_range_items(self, items):
         try:
             items = [self._to_int_with_arithmetics(item) for item in items]
         except:
             raise DataError('Converting argument of FOR IN RANGE failed: %s'
-                            % utils.get_error_message())
+                            % get_error_message())
         if not 1 <= len(items) <= 3:
             raise DataError('FOR IN RANGE expected 1-3 arguments, '
                             'got %d instead.' % len(items))
@@ -253,12 +254,12 @@ class ForLoop(BaseKeyword):
 class _ForItem(BaseKeyword):
 
     def __init__(self, vars, items):
-        name = ', '.join(utils.format_assign_message(var, item)
+        name = ', '.join(format_assign_message(var, item)
                          for var, item in zip(vars, items))
         BaseKeyword.__init__(self, name, type='foritem')
-        self.starttime = utils.get_timestamp()
+        self.starttime = get_timestamp()
 
     def end(self, status):
         self.status = status
-        self.endtime = utils.get_timestamp()
-        self.elapsedtime = utils.get_elapsed_time(self.starttime, self.endtime)
+        self.endtime = get_timestamp()
+        self.elapsedtime = get_elapsed_time(self.starttime, self.endtime)
