@@ -301,8 +301,10 @@ def get_start_timestamp(daysep='', daytimesep=' ', timesep=':', millissep=None):
 
 def get_elapsed_time(start_time, end_time):
     """Returns the time between given timestamps in milliseconds."""
-    if not (start_time and end_time):
+    if start_time == end_time or not (start_time and end_time):
         return 0
+    if start_time[:-4] == end_time[:-4]:
+        return int(end_time[-3:]) - int(start_time[-3:])
     start_millis = _timestamp_to_millis(start_time)
     end_millis = _timestamp_to_millis(end_time)
     # start/end_millis can be long but we want to return int when possible
