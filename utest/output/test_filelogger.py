@@ -11,9 +11,8 @@ from robot.utils.robottime import TimestampCache
 
 class _FakeTimeCache(TimestampCache):
 
-    def __init__(self, fake_time):
-        self.fake = time.mktime(fake_time)
-        self.fake += fake_time[6] / 1000.0
+    def __init__(self):
+        self.fake = time.mktime((2006, 6, 13, 8, 37, 42, 0, 0, 1)) + 0.123
         TimestampCache.__init__(self)
 
     def  _get_epoch(self):
@@ -23,7 +22,7 @@ class _FakeTimeCache(TimestampCache):
 class TestFileLogger(unittest.TestCase):
 
     def setUp(self):
-        utils.robottime.TIMESTAMP_CACHE = _FakeTimeCache((2006, 6, 13, 8, 37, 42, 123, 0, 1))
+        utils.robottime.TIMESTAMP_CACHE = _FakeTimeCache()
         FileLogger._get_writer = lambda *args: StringIO()
         self.logger = FileLogger('whatever', 'INFO')
 
