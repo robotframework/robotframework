@@ -79,6 +79,8 @@ class ExecutionFailed(RobotError):
 
     def __init__(self, message, timeout=False, syntax=False, exit=False,
                  cont=False, exit_for_loop=False):
+        if '\r\n' in message:
+            message = message.replace('\r\n', '\n')
         RobotError.__init__(self, utils.cut_long_message(message))
         self.timeout = timeout
         self.syntax = syntax
