@@ -19,19 +19,14 @@ from robot.output import LOGGER
 from robot.errors import DataError
 from robot.model import SuiteNamePatterns
 
-from datarow import DataRow
-from tablepopulators import (SettingTablePopulator, VariableTablePopulator,
-                             TestTablePopulator, KeywordTablePopulator,
-                             NullPopulator)
-from htmlreader import HtmlReader
-from tsvreader import TsvReader
-from txtreader import TxtReader
-try:
-    from restreader import RestReader
-except ImportError:
-    def RestReader():
-        raise DataError("Using reStructuredText test data requires having "
-                        "'docutils' module installed.")
+from .datarow import DataRow
+from .tablepopulators import (SettingTablePopulator, VariableTablePopulator,
+                              TestTablePopulator, KeywordTablePopulator,
+                              NullPopulator)
+from .htmlreader import HtmlReader
+from .tsvreader import TsvReader
+from .txtreader import TxtReader
+from .restreader import RestReader
 
 
 READERS = {'html': HtmlReader, 'htm': HtmlReader, 'xhtml': HtmlReader,

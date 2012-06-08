@@ -15,37 +15,42 @@
 import tempfile
 import os
 
-from docutils.core import publish_cmdline
+from robot.errors import DataError
 
-from htmlreader import HtmlReader
-
-
-# Ignore custom sourcecode directives at least we use in reST sources.
-# See e.g. ug2html.py for an example how custom directives are created.
-from docutils.parsers.rst import directives
-ignorer = lambda *args: []
-ignorer.content = 1
-directives.register_directive('sourcecode', ignorer)
-del directives, ignorer
+from .htmlreader import HtmlReader
 
 
-class RestReader(HtmlReader):
+def RestReader():
+    try:
+        from docutils.core import publish_cmdline
+        from docutils.parsers.rst import directives
+    except ImportError:
+        raise DataError("Using reStructuredText test data requires having "
+                        "'docutils' module installed.")
 
-    def read(self, rstfile, rawdata):
-        htmlpath = self._rest_to_html(rstfile.name)
-        htmlfile = None
-        try:
-            htmlfile = open(htmlpath, 'rb')
-            return HtmlReader.read(self, htmlfile, rawdata)
-        finally:
-            if htmlfile:
-                htmlfile.close()
-            os.remove(htmlpath)
+    # Ignore custom sourcecode directives at least we use in reST sources.
+    # See e.g. ug2html.py for an example how custom directives are created.
+    ignorer = lambda *args: []
+    ignorer.content = 1
+    directives.register_directive('sourcecode', ignorer)
 
-    def _rest_to_html(self, rstpath):
-        filedesc, htmlpath = tempfile.mkstemp('.html')
-        os.close(filedesc)
-        publish_cmdline(writer_name='html', argv=[rstpath, htmlpath])
-        return htmlpath
+    class RestReader(HtmlReader):
 
+        def read(self, rstfile, rawdata):
+            htmlpath = self._rest_to_html(rstfile.name)
+            htmlfile = None
+            try:
+                htmlfile = open(htmlpath, 'rb')
+                return HtmlReader.read(self, htmlfile, rawdata)
+            finally:
+                if htmlfile:
+                    htmlfile.close()
+                os.remove(htmlpath)
 
+        def _rest_to_html(self, rstpath):
+            filedesc, htmlpath = tempfile.mkstemp('.html')
+            os.close(filedesc)
+            publish_cmdline(writer_name='html', argv=[rstpath, htmlpath])
+            return htmlpath
+
+    return RestReader()
