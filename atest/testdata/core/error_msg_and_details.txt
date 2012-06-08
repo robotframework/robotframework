@@ -34,6 +34,14 @@ Java Exception With 'null' Message
     [Documentation]    FAIL ArrayStoreException
     Java Exception
 
+Multiline Error
+    [Documentation]    FAIL First line\n2nd\n3rd and last
+    Exception    AssertionError    First line\n2nd\n3rd and last
+
+Multiline Java Error
+    [Documentation]    FAIL ArrayStoreException: First line\n2nd\n3rd and last
+    Java Exception    First line\n2nd\n3rd and last
+
 External Failure
     [Documentation]    FAIL UnboundLocalError: Raised from an external object!
     External Exception    UnboundLocalError    Raised from an external object!

@@ -26,6 +26,13 @@ Message Is Got Correctly If Python Exception Has Non-String Message
 Message Is Got Correctly If Python Exception Has 'None' Message
     Python Exception With 'None' Message    AssertionError
 
+Multiline Error
+    Multiline Error   First line\n2nd\n3rd and last
+
+Multiline Java Error
+    [Tags]   jybot
+    Multiline Java Error   ArrayStoreException: First line\n2nd\n3rd and last
+
 Message Is Got Correctly If Java Exception Has 'null' Message
     [Tags]    jybot
     Java Exception With 'null' Message    ArrayStoreException
