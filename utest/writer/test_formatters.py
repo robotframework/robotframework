@@ -12,7 +12,8 @@ class TestTxtFormatter(unittest.TestCase):
         self._formatter = TxtFormatter(6)
 
     def test_escaping_whitespace(self):
-        assert_equals(self._formatter._escape(['so  me']), ['so \ me'])
+        assert_equals(self._formatter._escape(['so  me']), ['so \\ me'])
+        assert_equals(self._formatter._escape(['   ']), [' \\ \\ '])
 
     def test_replacing_newlines(self):
         assert_equals(self._formatter._escape(['so\nme']), ['so me'])
