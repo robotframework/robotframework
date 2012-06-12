@@ -1,3 +1,4 @@
+import time
 import unittest
 
 from robot.utils.asserts import assert_equals
@@ -8,10 +9,15 @@ class FakeTimestampCache(TimestampCache):
 
     def __init__(self, epoch):
         TimestampCache.__init__(self)
-        self.epoch = epoch
+        self.epoch = epoch + self.timezone_correction()
 
     def _get_epoch(self):
         return self.epoch
+
+    def timezone_correction(self):
+        dst = 3600 if time.daylight == 0 else 0
+        tz = 7200 + time.timezone
+        return (tz + dst)
 
 
 class TestTimestamp(unittest.TestCase):
