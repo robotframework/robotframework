@@ -258,6 +258,9 @@ class _Table(object):
     def report_invalid_syntax(self, message, level='ERROR'):
         self.parent.report_invalid_syntax(self.name, message, level)
 
+    def __nonzero__(self):
+        return bool(self._header or len(self))
+
     def __len__(self):
         return sum(1 for item in self)
 
@@ -425,6 +428,9 @@ class TestCaseTable(_Table):
 
     def is_started(self):
         return bool(self._header)
+
+    def __nonzero__(self):
+        return True
 
 
 class KeywordTable(_Table):

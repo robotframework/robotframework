@@ -1,0 +1,22 @@
+*** Settings ***
+Library           TidyLib.py    ${INTERPRETER}
+Resource          atest_resource.txt
+
+*** Variables ***
+${DATADIR}        ${CURDIR}/../../testdata/tidy
+${TIDYDIR}        ${TEMPDIR}/tidy-test
+
+*** Keywords ***
+Run tidy with golden file and check result
+    [Arguments]    ${options}    ${expected_result_file}
+    Run tidy and check result    ${options}    ${DATADIR}/golden.txt    ${expected_result_file}
+
+Run tidy with golden resource file and check result
+    [Arguments]    ${options}    ${expected_result_file}
+    Run tidy and check result    ${options}    ${DATADIR}/golden_resource.txt    ${expected_result_file}
+
+Check file count
+    [Arguments]    ${directory}    ${pattern}    ${expected count}
+    ${files}=    Count Files In Directory    ${directory}    ${pattern}
+    Should Be Equal As Numbers    ${files}    ${expected count}
+
