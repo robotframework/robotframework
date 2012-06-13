@@ -189,6 +189,11 @@ Cut Long Variable Value In For Item Name
     Should Be For Item  ${test.kws[7].kws[0]}  \${var1} = ${exp10}, \${var2} = ${exp100}, \${var3} = ${exp200}
     Should Be For Item  ${test.kws[7].kws[1]}  \${var1} = ${exp200+}, \${var2} = ${exp200+}, \${var3} = ${exp200+}
 
+For with illegal xml characters
+    ${test} =  Check Test Case      ${TEST NAME}
+    Should be equal  ${test.kws[0].kws[0].name}    \${var} = illegal:
+    Should be equal  ${test.kws[0].kws[1].name}    \${var} = more:
+
 For In Range
     ${test} =  Check Test Case  For In Range
     Should Be For In Range Keyword  ${test.kws[1]}  100

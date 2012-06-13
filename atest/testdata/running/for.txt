@@ -1,5 +1,6 @@
 *** Settings ***
 Documentation  NO RIDE because we want to test different formatting
+Variables   binary_list.py
 
 *** Variables ***
 @{NUMS}  1  2  3  4  5
@@ -223,6 +224,10 @@ Cut Long Variable Value In For Item Name
     \  Log Many  ${var1}  ${var2}  ${var3}
     Equals  ${var}  ${var3}  Sanity check
 
+For with illegal xml characters
+    :FOR    ${var}  IN  @{ILLEGAL VALUES}
+    \       Log     ${var}
+
 For In Range
     @{var} =  List
     :FOR  ${i}  IN RANGE  100
@@ -309,7 +314,6 @@ For word can have many colons
     :::f:o:r:::  ${i}  inrange  4  10
     \  ${result} =  Set Variable  ${result}${i}
     Should Be Equal  ${result}  0123456789
-
 
 
 *** Keywords ***

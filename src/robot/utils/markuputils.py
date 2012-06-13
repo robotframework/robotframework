@@ -12,7 +12,6 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-import string
 import re
 
 from .htmlformatters import LinkFormatter, HtmlFormatter
@@ -20,8 +19,8 @@ from .htmlformatters import LinkFormatter, HtmlFormatter
 
 _format_url = LinkFormatter().format_url
 _generic_escapes = (('&', '&amp;'), ('<', '&lt;'), ('>', '&gt;'))
-_attribute_escapes = _generic_escapes + (('"', '&quot;'),) \
-        + tuple((ws, ' ') for ws in string.whitespace if ws != ' ')
+_attribute_escapes = _generic_escapes \
+         + (('"', '&quot;'), ('\n', ' '), ('\r', ' '), ('\t', ' '))
 _illegal_chars_in_xml = re.compile(u'[\x00-\x08\x0B\x0C\x0E-\x1F\uFFFE\uFFFF]')
 
 
@@ -45,4 +44,4 @@ def _escape(text, escapes=_generic_escapes):
     for name, value in escapes:
         if name in text:  # performance optimization
             text = text.replace(name, value)
-    return text
+    return _illegal_chars_in_xml.sub('', text)

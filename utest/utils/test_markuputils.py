@@ -669,6 +669,10 @@ class TestAttributeEscape(unittest.TestCase):
                          ('N1\nN2\n\nT1\tT3\t\t\t', 'N1 N2  T1 T3   ')]:
             assert_equals(attribute_escape(inp), exp)
 
+    def test_illegal_chars_in_xml(self):
+        for c in u'\x00\x08\x0B\x0C\x0E\x1F\uFFFE\uFFFF':
+            assert_equals(attribute_escape(c), '')
+
 
 if __name__ == '__main__':
     unittest.main()
