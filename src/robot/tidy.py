@@ -46,6 +46,7 @@ Options
  -p --usepipes   Use pipe (`|`) as a cell separator in the txt format.
  -s --spacecount number
                  The number of spaces between cells in the txt format.
+                 New in Robot Framework 2.7.3.
  -h -? --help    Show this help.
 
 Cleaning up the test data

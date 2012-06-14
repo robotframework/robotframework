@@ -41,6 +41,9 @@ Options
                   Output file format. If omitted, the format of the input
                   file is used.
  -p, --use-pipes  Use a pipe character (|) as a cell separator in the txt format.
+ -s, --spacecount <number>
+                  The number of spaces between cells in the txt format.
+                  New in Robot Framework 2.7.3.
  -h, --help       Show this help.
 
 Alternative execution
