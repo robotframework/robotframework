@@ -41,7 +41,7 @@ class TestSpaceSeparatedWriter(_WriterTestCase):
         expected = '''\
 *** test case ***     some    and other
 A test                A kw    an arg
-'''.replace('\n', os.linesep)
+'''.replace('\n', str(os.linesep))
         assert_equals(repr(expected), repr(output.getvalue()))
 
     def test_rows_are_not_split_if_there_are_headers(self):
@@ -53,7 +53,7 @@ A test                A kw    an arg
         expected = '''\
 *** test case ***         some        and other
 A test                    A kw        an arg
-'''.replace('\n', os.linesep)
+'''.replace('\n', str(os.linesep))
         assert_equals(repr(expected), repr(output.getvalue()))
 
 
