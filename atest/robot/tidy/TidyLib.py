@@ -45,6 +45,8 @@ class TidyLib(object):
     def _assert_result(self, result, expected):
         result = result.decode('UTF-8')
         expected = expected.decode('UTF-8')
-        for line1, line2 in zip(result.splitlines(), expected.splitlines()):
+        result_lines = result.splitlines()
+        expected_lines = expected.splitlines()
+        for line1, line2 in zip(result_lines, expected_lines):
             msg = "\n%s\n!=\n%s\n" % (result, expected)
             assert_equals(repr(unicode(line1)), repr(unicode(line2)), msg)
