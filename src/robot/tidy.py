@@ -38,12 +38,14 @@ Options
                    python -m robot.tidy --inplace tests.html
                    python -m robot.tidy --inplace --format txt *.html
  -r --recursive  Process given directory recursively. Files in the directory
-                 are processed in place similarly as when --inplace option is
-                 used.
+                 are processed in place similarly as when --inplace option
+                 is used.
  -f --format txt|html|tsv
                  Output file format. If omitted, the format of the input
                  file is used.
  -p --usepipes   Use pipe (`|`) as a cell separator in the txt format.
+ -s --spacecount number
+                 The number of spaces between cells in the txt format.
  -h -? --help    Show this help.
 
 Cleaning up the test data
@@ -154,8 +156,9 @@ class TidyCommandLine(Application):
         Application.__init__(self, USAGE)
 
     def main(self, inputs, recursive=False, inplace=False, format='txt',
-             usepipes=False):
-        tidy = Tidy(format=format, pipe_separated=usepipes)
+             usepipes=False, spacecount=4):
+        tidy = Tidy(format=format, pipe_separated=usepipes,
+                    txt_separating_spaces=spacecount)
         if recursive:
             tidy.directory(inputs[0])
         elif inplace:
@@ -185,7 +188,20 @@ class TidyCommandLine(Application):
         format = options['format']
         if format and format not in ['txt', 'tsv', 'html']:
             raise DataError("Invalid format: %s." % format)
+        if not options['spacecount']:
+            options.pop('spacecount')
+        else:
+            options['spacecount'] = self._validate_spacecount(options['spacecount'])
         return options, arguments
+
+    def _validate_spacecount(self, spacecount):
+        try:
+            spacecount = int(spacecount)
+            if spacecount < 2:
+                raise ValueError
+        except ValueError:
+            raise DataError('--spacecount must be an integer greater than 1')
+        return spacecount
 
 
 def tidy_cli(args):

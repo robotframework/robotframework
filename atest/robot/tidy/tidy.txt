@@ -7,13 +7,15 @@ Suite Teardown    Remove Directory     ${TIDYDIR}    recursive=True
 
 *** Test cases ***
 Tidying single test case file
+    [Documentation]   Test tidying to different formats
     [Template]    Run tidy with golden file and check result
     ${EMPTY}    ${DATADIR}/golden.txt
     --usepipes    ${DATADIR}/golden_pipes.txt
     --format tsv    ${DATADIR}/golden.tsv
     --format html    ${DATADIR}/golden.html
+    --spacecount 2    ${DATADIR}/golden_two_spaces.txt
 
-Tidying single resource case file
+Tidying single resource file
     [Template]    Run tidy with golden resource file and check result
     ${EMPTY}    ${DATADIR}/golden_resource.txt
     -p    ${DATADIR}/golden_pipes_resource.txt
@@ -54,7 +56,7 @@ Tidying directory
     Check file count    ${TEMPDIR}/tests    *.txt    0
     ${output_after}=    Run Robot Directly    ${TEMPDIR}/tests
     Should Be Equal    ${output_before}    ${output_after}
-    [Teardown]    Remove Directory    ${TEMPDIR}/tests    recurisive=True
+    [Teardown]    Remove Directory    ${TEMPDIR}/tests    recursive=True
 
 Custom headers are preserved and tables aligned accordingly
     Run tidy and check result    ${EMPTY}     ${DATADIR}/golden_with_headers.txt    ${DATADIR}/golden_with_headers.txt
