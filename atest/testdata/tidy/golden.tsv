@@ -9,18 +9,15 @@ MyVar	val1	val2	val3	val4	val5	val6	val6
 ...	val7	val8	val9	# var comment			
 							
 *Test Cases*							
-My Test Case							
-	[Documentation]	This is a long comment that spans several columns					
+My Test Case	[Documentation]	This is a long comment that spans several columns					
 	My TC Step 1	my step arg	# step 1 comment				
 	My TC Step 2	my step 2 arg	second \ arg	# step 2 comment			
 	[Teardown]	1 minute	args				
 							
-Another Test							
-	Log	ääöö§§					
+Another Test	Log	ääöö§§					
 							
 *Keywords*							
-My Keyword							
-	[Documentation]	Documentation	# Comment for doc				
+My Keyword	[Documentation]	Documentation	# Comment for doc				
 	# Comment row						
 	# Comment row 2						
 	My Step 1	args	args 2	args 3	args 4	args 5	args 6

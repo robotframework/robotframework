@@ -9,8 +9,7 @@ MyVar	val1	val2	val3	val4	val5	val6	val6
 ...	val7	val8	val9	# var comment			
 							
 *Keywords*							
-My Keyword							
-	[Documentation]	Documentation	# Comment for doc				
+My Keyword	[Documentation]	Documentation	# Comment for doc				
 	# Comment row						
 	# Comment row 2						
 	My Step 1	args	args 2	args 3	args 4	args 5	args 6

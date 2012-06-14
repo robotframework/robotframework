@@ -20,13 +20,15 @@ from .rowsplitter import RowSplitter
 
 
 class _DataFileFormatter(object):
-    _want_names_on_first_content_row = False
     _consecutive_whitespace = re.compile('\s{2,}')
 
     def __init__(self, column_count):
         self._splitter = RowSplitter(column_count)
         self._column_count = column_count
         self._extractor = DataExtractor(self._want_names_on_first_content_row)
+
+    def _want_names_on_first_content_row(self, table, name):
+        return True
 
     def empty_row_after(self, table):
         return self._format_row([], table)
@@ -115,6 +117,10 @@ class TxtFormatter(_DataFileFormatter):
         if aligner:
             return aligner.align_row(header)
         return header
+
+    def _want_names_on_first_content_row(self, table, name):
+        return self._should_align_columns(table) and \
+                len(name) <= self._test_or_keyword_name_width
 
     def _escape(self, row):
         if not row:

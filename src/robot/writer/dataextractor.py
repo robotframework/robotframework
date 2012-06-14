@@ -16,8 +16,9 @@
 class DataExtractor(object):
     """Transforms table of a parsed test data file into a list of rows."""
 
-    def __init__(self, want_name_on_first_content_row=False):
-        self._want_names_on_first_content_row = want_name_on_first_content_row
+    def __init__(self, want_name_on_first_row=None):
+        self._want_name_on_first_row = want_name_on_first_row or \
+                                       (lambda t,n: False)
 
     def rows_from_table(self, table):
         if table.type in ['setting', 'variable']:
@@ -27,18 +28,18 @@ class DataExtractor(object):
     def _rows_from_indented_table(self, table):
         items = list(table)
         for index, item in enumerate(items):
-            for row in self._rows_from_test_or_keyword(item):
+            for row in self._rows_from_test_or_keyword(item, table):
                 yield row
             if not self._last(items, index):
                 yield []
 
-    def _rows_from_test_or_keyword(self, test_or_keyword):
+    def _rows_from_test_or_keyword(self, test_or_keyword, table):
         rows = list(self._rows_from_item(test_or_keyword, 1))
-        for r in self._add_name(test_or_keyword.name, rows):
+        for r in self._add_name(test_or_keyword.name, rows, table):
             yield r
 
-    def _add_name(self, name, rows):
-        if rows and self._want_names_on_first_content_row:
+    def _add_name(self, name, rows, table):
+        if rows and self._want_name_on_first_row(table, name):
             rows[0][0] = name
             return rows
         return [[name]] + rows

@@ -20,7 +20,6 @@ from .formatters import _DataFileFormatter
 
 
 class HtmlFormatter(_DataFileFormatter):
-    _want_names_on_first_content_row = True
 
     def _format_row(self, row, table=None):
         row = self._pad(self._escape_consecutive_whitespace(row), table)
