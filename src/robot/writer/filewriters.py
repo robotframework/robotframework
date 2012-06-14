@@ -50,14 +50,15 @@ class _DataFileWriter(object):
         self._encoding = configuration.encoding
 
     def write(self, datafile):
-        for table in datafile:
-            if table:
-                self._write_table(table)
+        tables = [table for table in datafile if table]
+        for table in tables:
+            self._write_table(table, is_last=table is tables[-1])
 
-    def _write_table(self, table):
+    def _write_table(self, table, is_last):
         self._write_header(table)
         self._write_rows(self._formatter.format_table(table))
-        self._write_empty_row(table)
+        if not is_last:
+            self._write_empty_row(table)
 
     def _write_header(self, table):
         self._write_row(self._formatter.format_header(table))
@@ -72,7 +73,7 @@ class _DataFileWriter(object):
     def _encode(self, row):
         return row.encode(self._encoding)
 
-    def _write_row(self):
+    def _write_row(self, row):
         raise NotImplementedError
 
 
@@ -133,10 +134,10 @@ class HtmlFileWriter(_DataFileWriter):
         _DataFileWriter.write(self, datafile)
         self._writer.content(TEMPLATE_END, escape=False)
 
-    def _write_table(self, table):
+    def _write_table(self, table, is_last):
         self._writer.start('table', {'id': table.type.replace(' ', ''),
                                      'border': '1'})
-        _DataFileWriter._write_table(self, table)
+        _DataFileWriter._write_table(self, table, is_last)
         self._writer.end('table')
 
     def _write_row(self, row):

@@ -16,7 +16,7 @@ class TidyLib(object):
         self._cmd = [interpreter, '-m', 'robot.tidy']
         self._interpreter = interpreter
 
-    def run_tidy_and_return_output(self, options, input, command=None):
+    def run_tidy(self, options, input, command=None):
         """Runs tidy in the operating system and returns output."""
         options = options.split(' ') if options else []
         with tempfile.TemporaryFile() as output:
@@ -26,27 +26,34 @@ class TidyLib(object):
             content = output.read()
             if rc:
                 raise RuntimeError(content)
-            return content
+            return content.decode('UTF-8')
 
-    def run_tidy_and_check_result(self, options, input, expected):
+    def run_tidy_and_check_result(self, options, input, expected=None):
         """Runs tidy and checks that output matches content of file `expected`."""
-        result = self.run_tidy_and_return_output(options, input)
-        self._assert_result(result, open(self._path(expected)).read())
+        result = self.run_tidy(options, input)
+        self.compare_tidy_results(result, expected or input)
 
-    def run_tidy_as_a_script_and_check_result(self, options, input, expected):
+    def run_tidy_as_a_script_and_check_result(self, options, input, expected=None):
         """Runs tidy and checks that output matches content of file `expected`."""
         cmd = [self._interpreter, join(ROBOT_SRC, 'robot', 'tidy.py')]
-        result = self.run_tidy_and_return_output(options, input, cmd)
-        self._assert_result(result, open(self._path(expected)).read())
+        result = self.run_tidy(options, input, cmd)
+        self.compare_tidy_results(result, expected or input)
+
+    def compare_tidy_results(self, result, expected):
+        if os.path.isfile(result):
+            result = self._read(result)
+        if os.path.isfile(expected):
+            expected = self._read(expected)
+        result_lines = result.splitlines()
+        expected_lines = expected.splitlines()
+        msg = "Actual:\n%s\n\nExpected:\n%s\n\n" % (repr(result), repr(expected))
+        assert_equals(len(result_lines), len(expected_lines), msg)
+        for line1, line2 in zip(result_lines, expected_lines):
+            assert_equals(repr(unicode(line1)), repr(unicode(line2)), msg)
 
     def _path(self, path):
         return path.replace('/', os.sep)
 
-    def _assert_result(self, result, expected):
-        result = result.decode('UTF-8')
-        expected = expected.decode('UTF-8')
-        result_lines = result.splitlines()
-        expected_lines = expected.splitlines()
-        for line1, line2 in zip(result_lines, expected_lines):
-            msg = "\n%s\n!=\n%s\n" % (result, expected)
-            assert_equals(repr(unicode(line1)), repr(unicode(line2)), msg)
+    def _read(self, path):
+        with open(self._path(path)) as f:
+            return f.read().decode('UTF-8')

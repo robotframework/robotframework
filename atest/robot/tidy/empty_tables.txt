@@ -6,8 +6,8 @@ Suite Teardown    Remove Directory     ${TIDYDIR}    recursive=True
 
 *** Test cases ***
 Empty test case file
-    Run tidy and check result    ${EMPTY}    ${DATADIR}/testsuite_with_empty_tables.txt    ${DATADIR}/testsuite_with_empty_tables.txt
+    Run tidy and check result    ${EMPTY}    ${DATADIR}/testsuite_with_empty_tables.txt
 
 Empty resource file
-    Run tidy and check result    ${EMPTY}    ${DATADIR}/resource_with_empty_tables.txt    ${DATADIR}/resource_with_empty_tables.txt
+    Run tidy and check result    ${EMPTY}    ${DATADIR}/resource_with_empty_tables.txt
 

@@ -27,13 +27,15 @@ Tidying single init file
 
 Tidying single file in place
     [Setup]    Copy File    ${DATADIR}/golden.txt    ${TIDYDIR}/golden.txt
-    Run tidy and check result    --inplace --usepipes    ${TIDYDIR}/golden.txt    ${DATADIR}/golden_pipes.txt
+    Run tidy    --inplace --usepipes    ${TIDYDIR}/golden.txt
+    Compare tidy results    ${TIDYDIR}/golden.txt    ${DATADIR}/golden_pipes.txt
     Check file count    ${TIDYDIR}    *.txt    1
     [Teardown]    Empty Directory     ${TIDYDIR}
 
 Tidying single file in place and change format
     [Setup]    Copy File    ${DATADIR}/golden.txt    ${TIDYDIR}/golden.txt
-    Run tidy and check result    -i -f html    ${TIDYDIR}/golden.txt    ${DATADIR}/golden.html
+    Run tidy    -i -f html    ${TIDYDIR}/golden.txt    ${DATADIR}/golden.html
+    Compare tidy results    ${TIDYDIR}/golden.html    ${DATADIR}/golden.html
     Check file count    ${TIDYDIR}    *.html    1
     Check file count    ${TIDYDIR}    *.txt    0
     [Teardown]    Empty Directory     ${TIDYDIR}
@@ -41,7 +43,7 @@ Tidying single file in place and change format
 Tidying many files in place
     [Setup]    Copy Golden Files
     List Directory      ${TIDYDIR}
-    Run tidy and return output    --InPlace --ForMat html   ${TIDYDIR}/golden*
+    Run tidy    --InPlace --ForMat html   ${TIDYDIR}/golden*
     List Directory      ${TIDYDIR}
     Check file count    ${TIDYDIR}    *.html    2
     Check file count    ${TIDYDIR}    *.txt    0
@@ -51,7 +53,7 @@ Tidying many files in place
 Tidying directory
     [Setup]    Copy Directory    ${DATADIR}/tests    ${TEMPDIR}/tests
     ${output_before}=    Run Robot Directly    ${DATADIR}/tests
-    Run Tidy and return output    --recursive --format tsv    ${TEMPDIR}/tests
+    Run Tidy    --recursive --format tsv    ${TEMPDIR}/tests
     Check file count    ${TEMPDIR}/tests    *.tsv    2
     Check file count    ${TEMPDIR}/tests    *.txt    0
     ${output_after}=    Run Robot Directly    ${TEMPDIR}/tests
@@ -59,10 +61,10 @@ Tidying directory
     [Teardown]    Remove Directory    ${TEMPDIR}/tests    recursive=True
 
 Custom headers are preserved and tables aligned accordingly
-    Run tidy and check result    ${EMPTY}     ${DATADIR}/golden_with_headers.txt    ${DATADIR}/golden_with_headers.txt
+    Run tidy and check result    ${EMPTY}     ${DATADIR}/golden_with_headers.txt
 
 Running Tidy as a script
-    Run tidy as a script and check result    ${EMPTY}    ${DATADIR}/golden.txt    ${DATADIR}/golden.txt
+    Run tidy as a script and check result    ${EMPTY}    ${DATADIR}/golden.txt
 
 
 *** Keywords ***
