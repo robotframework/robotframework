@@ -44,6 +44,6 @@ class DataExtractorTest(unittest.TestCase):
         table = TestCaseTable(None)
         t = table.add('Test')
         t.add_step(['No op'])
-        extractor = DataExtractor(want_name_on_first_content_row=True)
+        extractor = DataExtractor(lambda t,n: True)
         assert_equals(list(extractor._rows_from_indented_table(table)),
                       [['Test', 'No op']])

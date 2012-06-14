@@ -36,7 +36,7 @@ class TestTxtFormatter(unittest.TestCase):
         table.set_header(['test case', 'cus  tom',  'header'])
         table.add('Test case with a long name').add_step(['keyword here', 'args'])
         assert_equals(self._formatter.format_header(table),
-                     ['*** test case ***         ', 'cus \\ tom   ', 'header'])
+                     ['*** test case *** ', 'cus \\ tom   ', 'header'])
 
 
 

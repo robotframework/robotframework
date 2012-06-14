@@ -22,7 +22,7 @@ class _WriterTestCase(unittest.TestCase):
 
     def _test_rows_are_not_split_if_there_are_headers(self, format='txt'):
         output = self._add_long_step_and_save(format)
-        assert_equals(len(output.splitlines()), 4)
+        assert_equals(len(output.splitlines()), 3)
 
     def _add_long_step_and_save(self, format):
         data = create_test_case_file()
@@ -37,12 +37,11 @@ class TestSpaceSeparatedWriter(_WriterTestCase):
     def test_end_of_line_whitespace_is_removed(self):
         output = StringIO()
         create_test_case_file().save(output=output)
-        expected = '''
+        expected = '''\
 *** test case ***     some    and other
-A test
-                      A kw    an arg'''.strip()
-        for exp, act in zip(expected.splitlines(), output.getvalue().splitlines()):
-            assert_equals(repr(exp), repr(act))
+A test                A kw    an arg
+'''
+        assert_equals(repr(expected), repr(output.getvalue()))
 
     def test_rows_are_not_split_if_there_are_headers(self):
         self._test_rows_are_not_split_if_there_are_headers()
@@ -52,10 +51,9 @@ A test
         create_test_case_file().save(output=output, txt_separating_spaces=8)
         expected = '''\
 *** test case ***         some        and other
-A test
-                          A kw        an arg'''.strip()
-        actual = output.getvalue().strip()
-        assert_equals(expected.splitlines(), actual.splitlines())
+A test                    A kw        an arg
+'''
+        assert_equals(repr(expected), repr(output.getvalue()))
 
 
 class TestTsvWriter(_WriterTestCase):
@@ -76,7 +74,7 @@ class TestHtmlWriter(_WriterTestCase):
         with ETSource('\n'.join(output.splitlines()[1:])) as source:
             tree = ET.parse(source)
         lines = tree.findall('body/table/tr')
-        assert_equals(len(lines), 4)
+        assert_equals(len(lines), 3)
         for l in lines:
             cols = l.findall('td') or l.findall('th')
             assert_equals(len(cols), 9)
