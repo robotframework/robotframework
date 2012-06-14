@@ -1,4 +1,5 @@
 from __future__ import with_statement
+import os
 import unittest
 from StringIO import StringIO
 
@@ -40,7 +41,7 @@ class TestSpaceSeparatedWriter(_WriterTestCase):
         expected = '''\
 *** test case ***     some    and other
 A test                A kw    an arg
-'''
+'''.replace('\n', os.linesep)
         assert_equals(repr(expected), repr(output.getvalue()))
 
     def test_rows_are_not_split_if_there_are_headers(self):
@@ -52,7 +53,7 @@ A test                A kw    an arg
         expected = '''\
 *** test case ***         some        and other
 A test                    A kw        an arg
-'''
+'''.replace('\n', os.linesep)
         assert_equals(repr(expected), repr(output.getvalue()))
 
 
