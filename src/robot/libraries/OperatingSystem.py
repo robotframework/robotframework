@@ -18,6 +18,7 @@ import time
 import glob
 import fnmatch
 import shutil
+import subprocess
 
 try:
     from robot.version import get_version
@@ -1278,7 +1279,9 @@ class _Process2(_Process):
 
     def __init__(self, command, input_):
         self._command = self._process_command(command)
-        stdin, self.stdout = os.popen2(self._command)
+        p = subprocess.Popen(self._command, shell=True, stdin=subprocess.PIPE,
+                             stdout=subprocess.PIPE, close_fds=True)
+        stdin, self.stdout = p.stdin, p.stdout
         if input_:
             stdin.write(input_)
         stdin.close()
