@@ -2,7 +2,7 @@ import unittest
 
 from robot.utils.asserts import assert_equals
 
-from robot.utils.markuputils import html_escape, html_format, attribute_escape
+from robot.utils.markuputils import html_escape, html_format, attribute_escape, xml_escape
 from robot.utils.htmlformatters import TableFormatter
 
 _format_table = TableFormatter()._format_table
@@ -674,6 +674,35 @@ class TestAttributeEscape(unittest.TestCase):
             assert_equals(attribute_escape(c), '')
 
 
+class TestConvertingNonStringsToStrings(unittest.TestCase):
+
+    def test_xml_escape(self):
+        self._test_escape_method(xml_escape)
+
+    def test_html_escape(self):
+        self._test_escape_method(html_escape)
+
+    def test_attribute_escape(self):
+        self._test_escape_method(attribute_escape)
+
+    def test_html_format(self):
+        self._test_escape_method(html_format, '<p>', '</p>')
+
+    def _test_escape_method(self, method, before='', after=''):
+        self._verify_result(method(42), '42', before, after)
+        self._verify_result(method('\xff'), '\\xff', before, after)
+        self._verify_result(method(self.CustomStr('>\x00<')), '&gt;&lt;', before, after)
+        self._verify_result(method(self.CustomStr('\xff')), '\\xff', before, after)
+
+    def _verify_result(self, expected, actual, before, after):
+        assert_equals(expected, before + actual + after)
+
+    class CustomStr:
+        def __init__(self, custom_str):
+            self.custom_str = custom_str
+        def __str__(self):
+            return self.custom_str
+
+
 if __name__ == '__main__':
     unittest.main()
-

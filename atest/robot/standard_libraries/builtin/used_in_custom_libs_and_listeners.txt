@@ -1,5 +1,7 @@
 *** Settings ***
-Documentation   These tests mainly verify that using BuiltIn externally does not cause importing problems as in <http://code.google.com/p/robotframework/issues/detail?id=654>. There are separate tests for creating and registering Run Keyword variants.
+Documentation   These tests mainly verify that using BuiltIn externally does not cause importing problems as in
+...             http://code.google.com/p/robotframework/issues/detail?id=654.
+...             There are separate tests for creating and registering Run Keyword variants.
 Suite Setup     Run Tests  --listener ${CURDIR}${/}listener_using_builtin.py  standard_libraries/builtin/used_in_custom_libs_and_listeners.txt
 Force Tags      regression  pybot  jybot
 Resource        atest_resource.txt
@@ -13,3 +15,7 @@ Keywords Using BuiltIn
 
 Listener Using BuiltIn
     Check Test Case  ${TESTNAME}
+
+Use 'Run Keyword' with non-string values
+    ${tc} =  Check Test Case  ${TESTNAME}
+    Check Log Message  ${tc.kws[0].kws[0].msgs[0]}  42

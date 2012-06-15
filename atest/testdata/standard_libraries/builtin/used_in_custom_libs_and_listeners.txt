@@ -14,3 +14,6 @@ Keywords Using BuiltIn
 
 Listener Using BuiltIn
     Should Be Equal  ${SET BY LISTENER}  quux
+
+Use 'Run Keyword' with non-string values
+    Use Run Keyword with non string value
