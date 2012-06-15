@@ -13,7 +13,7 @@
 #  limitations under the License.
 
 from robot.errors import DataError
-from robot.utils import XmlWriter, NullMarkupWriter, get_timestamp
+from robot.utils import XmlWriter, NullMarkupWriter, get_timestamp, unic
 from robot.version import get_full_version
 
 from .loggerhelper import IsLogged
@@ -68,7 +68,7 @@ class XmlLogger(object):
         self._writer.start('kw', {'name': kw.name, 'type': kw.type,
                                   'timeout': str(kw.timeout)})
         self._writer.element('doc', kw.doc)
-        self._write_list('arguments', 'arg', kw.args)
+        self._write_list('arguments', 'arg', (unic(a) for a in kw.args))
 
     def end_keyword(self, kw):
         self._write_status(kw)

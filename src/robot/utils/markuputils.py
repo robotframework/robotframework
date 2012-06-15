@@ -15,7 +15,6 @@
 import re
 
 from .htmlformatters import LinkFormatter, HtmlFormatter
-from .unic import unic
 
 
 _format_url = LinkFormatter().format_url
@@ -42,8 +41,6 @@ def attribute_escape(attr):
 
 
 def _escape(text, escapes=_generic_escapes):
-    if not isinstance(text, unicode):
-        text = unic(text)
     for name, value in escapes:
         if name in text:  # performance optimization
             text = text.replace(name, value)
