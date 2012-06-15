@@ -12,5 +12,6 @@ def get_test_name():
 def set_secret_variable():
     BuiltIn().set_test_variable('${SECRET}', '*****')
 
-def use_run_keyword_with_non_string_value():
+def use_run_keyword_with_non_unicode_values():
     BuiltIn().run_keyword('Log', 42)
+    BuiltIn().run_keyword('Log', '\xff')
