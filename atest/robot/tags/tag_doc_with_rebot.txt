@@ -26,7 +26,7 @@ Tag Doc For Combined Statistics
 *** Keywords ***
 
 Run Tests And Rebot With Tag Doc
-    Run Tests Without Processing Output  ${EMPTY}  misc/normal.html
+    Run Tests Without Processing Output  ${EMPTY}  misc/normal.txt
     ${opts} =  Catenate
     ...  --tagdoc f1:Some_documentation_for_rebot
     ...  --tagdoc t_1:http://some.url_*bold*

@@ -24,7 +24,7 @@ Output Files With Java
 
 *** Keywords ***
 Run Some Tests
-    Run Tests Without Processing Output  --listener "${LISTENERS}${/}ListenAll.py" --listener "${LISTENERS}${/}JavaListener.java" --log mylog.html --report myrep.html --output myout.xml --debugfile mydeb.txt  misc${/}pass_and_fail.html
+    Run Tests Without Processing Output  --listener "${LISTENERS}${/}ListenAll.py" --listener "${LISTENERS}${/}JavaListener.java" --log mylog.html --report myrep.html --output myout.xml --debugfile mydeb.txt  misc${/}pass_and_fail.txt
     Process Output  ${OUTDIR}${/}myout.xml
     Should Be Equal  ${SUITE.name}  Pass And Fail
 

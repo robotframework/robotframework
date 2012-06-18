@@ -31,7 +31,7 @@ class TestExposedApi(unittest.TestCase):
 
 class TestTestSuite(unittest.TestCase):
     misc = join(abspath(__file__), '..', '..', '..', 'atest', 'testdata', 'misc')
-    sources = [join(misc, n) for n in 'pass_and_fail.html', 'normal.html']
+    sources = [join(misc, n) for n in 'pass_and_fail.txt', 'normal.txt']
 
     def test_create_with_datasources_as_list(self):
         suite = api.TestSuite(self.sources, RobotSettings())

@@ -4,7 +4,7 @@ Resource      atest_resource.txt
 
 *** Variables ***
 ${CMD}    ${INTERPRETER} ${CURDIR}${/}..${/}..${/}..${/}src${/}robot${/}testdoc.py
-${INPUT 1}    ${CURDIR}${/}..${/}..${/}testdata${/}misc${/}pass_and_fail.html
+${INPUT 1}    ${CURDIR}${/}..${/}..${/}testdata${/}misc${/}pass_and_fail.txt
 ${INPUT 2}    ${CURDIR}${/}..${/}..${/}testdata${/}misc${/}suites
 ${OUTFILE}    ${TEMPDIR}${/}testdoc-output.html
 

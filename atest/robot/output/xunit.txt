@@ -5,7 +5,7 @@ Resource        atest_resource.txt
 Resource        xunit_resource.txt
 
 *** Variables ***
-${TESTDATA}  misc/pass_and_fail.html
+${TESTDATA}  misc/pass_and_fail.txt
 ${INVALID}   ${TEMPDIR}${/}ïnvälïd-xünït.xml
 
 *** Test Cases ***

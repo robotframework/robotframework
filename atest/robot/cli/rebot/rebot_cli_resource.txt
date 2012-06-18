@@ -2,8 +2,8 @@
 Resource  ../runner/cli_resource.txt
 
 *** Variables ***
-${TEST FILE}      misc${/}normal.html
-${PASSFAIL FILE}  misc${/}pass_and_fail.html
+${TEST FILE}      misc${/}normal.txt
+${PASSFAIL FILE}  misc${/}pass_and_fail.txt
 ${MYOUTDIR}       ${TEMPDIR}${/}robot-test-145435
 ${MYINPUT}        ${TEMPDIR}${/}robot-test-145435.xml
 ${M_211_211}      2 critical tests, 1 passed, 1 failed\n 2 tests total, 1 passed, 1 failed

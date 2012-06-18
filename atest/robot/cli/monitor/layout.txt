@@ -36,14 +36,14 @@ Outputs
 
 Long Documentation Should Be Cut
     ${doc} =  Evaluate  '0123456789' * 10
-    Run Tests  --name My_Name --doc start${doc}end  misc/normal.html
+    Run Tests  --name My_Name --doc start${doc}end  misc/normal.txt
     ${expbase} =  Evaluate  'My Name :: start' + '0123456789'*5
     Check Stdout Contains  ${SEP_LINE1}\n ${expbase}012345678...\n ${SEP_LINE1}\n
     Check Stdout Contains  ${SEP_LINE2}\n ${expbase}... | PASS |\n
 
 Long Name Should Be Cut
     ${name} =  Evaluate  '0123456789' * 10
-    Run Tests  --name start${name}end --doc whatever  misc/normal.html
+    Run Tests  --name start${name}end --doc whatever  misc/normal.txt
     ${expbase} =  Evaluate  'start' + '0123456789'*6
     Check Stdout Contains  ${SEP_LINE1}\n ${expbase}0123456789...\n ${SEP_LINE1}\n
     Check Stdout Contains  ${SEP_LINE2}\n ${expbase}0... | PASS |\n

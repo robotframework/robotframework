@@ -59,7 +59,7 @@ Use Starttime And Endtime With Single Output
 
 *** Keywords ***
 Create Input Files
-    Create Output With Robot  ${INPUT1}  ${EMPTY}  misc${/}normal.html
+    Create Output With Robot  ${INPUT1}  ${EMPTY}  misc${/}normal.txt
     Create Output With Robot  ${INPUT2}  ${EMPTY}  misc${/}suites${/}tsuite1.html
     Run Rebot  ${EMPTY}  ${INPUT1}  ${INPUT2}
     Set Suite Variable  $ORIG_START  ${SUITE.starttime}

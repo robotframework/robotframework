@@ -1,5 +1,5 @@
 *** Settings ***
-Suite Setup     Run Tests  --listener OldListenAll --listener OldListenAll:${TEMPDIR}${/}${ALL_FILE2} --listener old_module_listener --listener old_listeners.ListenSome --listener OldJavaListener --listener old_listeners.InvalidMethods  misc/pass_and_fail.html
+Suite Setup     Run Tests  --listener OldListenAll --listener OldListenAll:${TEMPDIR}${/}${ALL_FILE2} --listener old_module_listener --listener old_listeners.ListenSome --listener OldJavaListener --listener old_listeners.InvalidMethods  misc/pass_and_fail.txt
 Suite Teardown  Remove Listener Files
 Force Tags      regression
 Default Tags    pybot  jybot

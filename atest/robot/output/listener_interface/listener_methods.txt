@@ -70,7 +70,7 @@ Suite And Test Counts
     Stderr Should Be Empty
 
 Suite Source
-    Run Tests  --listener listeners.SuiteSource --name Root  misc/suites/subsuites  misc/pass_and_fail.html
+    Run Tests  --listener listeners.SuiteSource --name Root  misc/suites/subsuites  misc/pass_and_fail.txt
     Stderr Should Be Empty
 
 Keyword Type
@@ -83,7 +83,7 @@ Suite And Test Counts With Java
     Stderr Should Be Empty
 
 Executing Keywords from Listeners
-    Run Tests  --listener listeners.KeywordExecutingListener  misc/pass_and_fail.html
+    Run Tests  --listener listeners.KeywordExecutingListener  misc/pass_and_fail.txt
     ${tc}=  Get Test Case  Pass
     Check Log Message  ${tc.kws[0].msgs[0]}  Start Pass
     Check Log Message  ${tc.kws[2].msgs[0]}  End Pass
@@ -102,7 +102,7 @@ Run Tests With Listeners
     ...  --listener module_listener --listener listeners.ListenSome --listener JavaListener
     ...  --listener attributeverifyinglistener --listener JavaAttributeVerifyingListener
     ...  --metadata ListenerMeta:Hello --critical pass
-    Run Tests  ${args}  misc/pass_and_fail.html
+    Run Tests  ${args}  misc/pass_and_fail.txt
 
 Check Listen All File
     [Arguments]  ${filename}

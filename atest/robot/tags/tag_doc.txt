@@ -32,7 +32,7 @@ Run Tests With Tag Docs
     ...  --tagdoc _d_?_:Doc_for_many_tags
     ...  --tagdoc D2:More_doc
     ...  --tagstatcombine d*:DX
-    Run Tests  ${opts}  misc/normal.html
+    Run Tests  ${opts}  misc/normal.txt
 
 Tag doc should be correct in output
     [Arguments]  ${index}  ${tag}  ${doc}

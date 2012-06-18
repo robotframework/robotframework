@@ -5,8 +5,8 @@ Resource        cli_resource.txt
 
 *** Variables ***
 ${MISCDIR}   ${CURDIR}/../../../testdata/misc
-${PASSING}   ${MISCDIR}/normal.html
-${FAILING}   ${MISCDIR}/pass_and_fail.html
+${PASSING}   ${MISCDIR}/normal.txt
+${FAILING}   ${MISCDIR}/pass_and_fail.txt
 
 *** Test Cases ***
 

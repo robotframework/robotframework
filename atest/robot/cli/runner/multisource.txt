@@ -48,7 +48,7 @@ Wildcards
     Check Names  ${SUITE.suites[2].tests[0]}  Suite3 First  Tsuite1 & Tsuite2 & Tsuite3.Tsuite3.
 
 Warning When Parsing Any Data Source Fails
-    Run Tests  ${EMPTY}  nonex  misc/pass_and_fail.html
+    Run Tests  ${EMPTY}  nonex  misc/pass_and_fail.txt
     ${nonex} =  Normalize Path  ${DATADIR}/nonex
     Check Log Message  ${ERRORS.msgs[0]}  Parsing '${nonex}' failed: Data source does not exist.  WARN
     Check Names  ${SUITE}  Pass And Fail

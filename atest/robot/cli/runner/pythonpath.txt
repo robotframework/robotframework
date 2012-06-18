@@ -4,7 +4,7 @@ Default Tags    regression  pybot  jybot
 Resource        cli_resource.txt
 
 *** Variables ***
-${DUMMY_LIB_TEST}  misc${/}dummy_lib_test.html
+${DUMMY_LIB_TEST}  misc${/}dummy_lib_test.txt
 
 *** Test Cases ***
 

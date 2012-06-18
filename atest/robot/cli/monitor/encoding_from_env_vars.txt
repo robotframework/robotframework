@@ -3,7 +3,7 @@ Force Tags   regression   pybot  jybot  non windows
 Resource     monitor_resource.txt
 
 *** Variables ***
-${TES TFILE}    ${CURDIR}/../../../testdata/misc/pass_and_fail.html
+${TES TFILE}    ${CURDIR}/../../../testdata/misc/pass_and_fail.txt
 ${STDOUT FILE}  ${TEMPDIR}/redirect_stdout.txt
 ${STDERR FILE}  ${TEMPDIR}/redirect_stderr.txt
 

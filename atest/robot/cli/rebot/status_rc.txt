@@ -9,8 +9,8 @@ Resource        rebot_cli_resource.txt
 ${PASSING}         ${TEMPDIR}/rebot-testing-passing.xml
 ${FAILING}         ${TEMPDIR}/rebot-testing-failing.xml
 ${MISCDIR}         ${CURDIR}/../../../testdata/misc
-${PASSING TESTS}   ${MISCDIR}/normal.html
-${FAILING TESTS}   ${MISCDIR}/pass_and_fail.html
+${PASSING TESTS}   ${MISCDIR}/normal.txt
+${FAILING TESTS}   ${MISCDIR}/pass_and_fail.txt
 ${REPORT}          ${TEMPDIR}${/}robot-testing-report.html
 ${NO OUTPUTS}      [ ERROR ] No outputs created.\n\nTry --help for usage information.
 

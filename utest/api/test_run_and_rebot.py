@@ -75,7 +75,7 @@ class Base(unittest.TestCase):
 
 
 class TestRun(Base):
-    data = join(ROOT, 'atest', 'testdata', 'misc', 'pass_and_fail.html')
+    data = join(ROOT, 'atest', 'testdata', 'misc', 'pass_and_fail.txt')
     warn = join(ROOT, 'atest', 'testdata', 'misc', 'warnings_and_errors.txt')
     nonex = join(TEMP, 'non-existing-file-this-is.txt')
 

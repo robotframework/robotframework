@@ -25,7 +25,7 @@ Invalid colors are ignored with a warning
 
 Report should have correct background
     [Arguments]  ${opt}  ${pass}=#99FF66  ${noncrit}=#99FF66  ${fail}=#FF3333
-    Run Tests  ${opt} --report rep.html  misc/pass_and_fail.html
+    Run Tests  ${opt} --report rep.html  misc/pass_and_fail.txt
     ${report} =  Get File  ${OUTDIR}/rep.html
     Should Contain  ${report}  "background":{"fail":"${fail}","nonCriticalFail":"${noncrit}","pass":"${pass}"},
 

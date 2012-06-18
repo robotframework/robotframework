@@ -43,6 +43,6 @@ Spaces are preserved
     Should Be Equal  ${SUITE.suites[6].name}  Suite 6
 
 Root File Suite Name
-    [Setup]  Run Tests  ${EMPTY}  misc/pass_and_fail.html
+    [Setup]  Run Tests  ${EMPTY}  misc/pass_and_fail.txt
     Should Be Equal  ${SUITE.name}  Pass And Fail
 

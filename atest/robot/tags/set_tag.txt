@@ -1,0 +1,38 @@
+*** Setting ***
+Test Teardown     Remove File    ${OUTDIR}${/}${OUTFILE}
+Force Tags        pybot    jybot    regression
+Resource          atest_resource.txt
+
+*** Variable ***
+
+*** Test Case ***
+run File Suite and With Tag
+    Run Tests    --settag cmdlinetag    misc/normal.txt
+    Check Test Tags    First One    cmdlinetag    f1    t1    t2
+    Check Test Tags    Second One    cmdlinetag    d1    d2    f1
+
+Run Directory Suite With set Tag
+    Run Tests    --settag CmdLineTag    misc/suites
+    Check Test Tags    Third in Suite 1    CmdLineTag    d1    d2    f1
+    Check Test Tags    SubSuite1 First    CmdLineTag    f1    t1
+    Check Test Tags    SubSuite2 First    CmdLineTag    f1
+
+Run Multisource Suite With set Tag
+    Run Tests    --settag cmdlinetag    misc/normal.txt    misc/pass_and_fail.txt
+    Check Test Tags    First One    cmdlinetag    f1    t1    t2
+    Check Test Tags    Pass    cmdlinetag    force    pass
+
+Set Tag Used Multiple Times
+    Run Tests    -G cmdlinetag --settag anothertag --settag 3rdtag    misc/normal.txt
+    Check Test Tags    First One    3rdtag    anothertag    cmdlinetag    f1    t1
+    ...    t2
+
+Set Tag Used with Previously Defined Tag
+    Run Tests    --settag F1    misc/normal.txt
+    Check Test Tags    First One    f1    t1    t2
+
+Set Tag Used Multiple Time With Same Argument
+    Run Tests    --settag CtaG --settag ctag    misc/normal.txt
+    Check Test Tags    First One    CtaG    f1    t1    t2
+
+*** Keyword ***

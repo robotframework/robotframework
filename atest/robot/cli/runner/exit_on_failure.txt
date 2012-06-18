@@ -4,7 +4,7 @@ Resource        atest_resource.txt
 
 *** Test Cases ***
 Exit On Failure
-    [Setup]  Run Tests  --runmode exitonfailure  misc/pass_and_fail.html  misc/suites  running/fatal_exception/02__irrelevant.txt
+    [Setup]  Run Tests  --runmode exitonfailure  misc/pass_and_fail.txt  misc/suites  running/fatal_exception/02__irrelevant.txt
     Check Test Case  Pass
     Check Test Case  Fail
     Check Test Case  SubSuite1 First  FAIL  Critical failure occurred and ExitOnFailure option is in use

@@ -40,8 +40,8 @@ Argument File with Non-ASCII Characters
 
 Arguments From Stdin
     ${test dir} =  Normalize Path  ${TESTDATA}/misc/
-    Create Argument File Without BOM  ${ARG FILE}  --name My Name with Nön Äscii  ${test dir}${/}normal.html
-    ${output}=  Run Robot Directly  --doc from_command_line --argumentfile stdin ${test dir}${/}pass_and_fail.html < ${ARG FILE}
+    Create Argument File Without BOM  ${ARG FILE}  --name My Name with Nön Äscii  ${test dir}${/}normal.txt
+    ${output}=  Run Robot Directly  --doc from_command_line --argumentfile stdin ${test dir}${/}pass_and_fail.txt < ${ARG FILE}
     Should Contain  ${output}  Normal
     Should Contain  ${output}  Pass And Fail
     Should Contain  ${output}  My Name with N

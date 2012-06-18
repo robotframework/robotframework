@@ -1,0 +1,10 @@
+*** Setting ***
+Library           DummyLib
+
+*** Variable ***
+
+*** Test Case ***
+Dummy Test
+    dummykw
+
+*** Keyword ***

@@ -4,8 +4,8 @@ Resource        atest_resource.txt
 
 *** Variables ***
 ${CLI OUTDIR}     ${TEMPDIR}${/}robot-cli-test-${INTERPRETER.split(__import__('os').sep)[-1]}
-${TEST FILE}      misc${/}normal.html
-${UNICODE TEST}   misc${/}unicode.html
+${TEST FILE}      misc${/}normal.txt
+${UNICODE TEST}   misc${/}unicode.txt
 
 
 *** Keywords ***

@@ -52,7 +52,7 @@ Keywords With Warnings Are Removed When All are Removed
 
 *** Keywords ***
 Run Some Tests
-    Create Output With Robot    ${INPUTFILE}    ${EMPTY}    misc${/}pass_and_fail.html    misc${/}warnings_and_errors.txt
+    Create Output With Robot    ${INPUTFILE}    ${EMPTY}    misc${/}pass_and_fail.txt    misc${/}warnings_and_errors.txt
 
 Run Rebot And Set My Suite
     [Arguments]    ${rebot params}    ${suite index}

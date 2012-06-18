@@ -4,7 +4,7 @@ Force Tags      regression  jybot  pybot
 Resource        atest_resource.txt
 
 *** Variables ***
-${TESTDATA_TEST}  misc/many_tests.html
+${TESTDATA_TEST}  misc/many_tests.txt
 ${TESTDATA_SUITES}  misc/suites
 ${ESCAPES}  --escape star:STAR --escape quest:QUEST --escape space:SPACE
 ${TEST_ERROR_MESSAGE}  Suite 'Many Tests' contains no test cases named 'notexists'.\n\n Try --help for usage information.

@@ -34,8 +34,8 @@ class TestJsonConverter(unittest.TestCase):
                      tests=[],
                      keywords=[])
         test_convert(self.suite['suites'][0],
-                     source=join(normpath(DATADIR), 'dummy_lib_test.html'),
-                     relativeSource='misc/dummy_lib_test.html',
+                     source=join(normpath(DATADIR), 'dummy_lib_test.txt'),
+                     relativeSource='misc/dummy_lib_test.txt',
                      id='s1-s1',
                      name='Dummy Lib Test',
                      fullName='Misc.Dummy Lib Test',
@@ -58,8 +58,8 @@ class TestJsonConverter(unittest.TestCase):
                      keywords=[])
 
     def test_multi_suite(self):
-        data = TestSuiteFactory([join(DATADIR, 'normal.html'),
-                                 join(DATADIR, 'pass_and_fail.html')])
+        data = TestSuiteFactory([join(DATADIR, 'normal.txt'),
+                                 join(DATADIR, 'pass_and_fail.txt')])
         suite = JsonConverter().convert(data)
         test_convert(suite,
                      source='',
@@ -73,7 +73,7 @@ class TestJsonConverter(unittest.TestCase):
                      keywords=[],
                      tests=[])
         test_convert(suite['suites'][0],
-                     source=normpath(join(DATADIR, 'normal.html')),
+                     source=normpath(join(DATADIR, 'normal.txt')),
                      relativeSource='',
                      id='s1-s1',
                      name='Normal',
@@ -82,7 +82,7 @@ class TestJsonConverter(unittest.TestCase):
                      metadata=[('Something', '<p>My Value</p>')],
                      numberOfTests=2)
         test_convert(suite['suites'][1],
-                     source=normpath(join(DATADIR, 'pass_and_fail.html')),
+                     source=normpath(join(DATADIR, 'pass_and_fail.txt')),
                      relativeSource='',
                      id='s1-s2',
                      name='Pass And Fail',

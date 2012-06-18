@@ -7,7 +7,7 @@ Resource          ../../resources/rebot_resource.html
 Resource          xunit_resource.txt
 
 *** Variables ***
-${TESTDATA_TEST}    misc${/}many_tests.html
+${TESTDATA_TEST}    misc${/}many_tests.txt
 ${TESTDATA_SUITES}  misc${/}suites
 ${MYOUTDIR}         ${TEMPDIR}${/}robot-test-xunit
 ${INPUT FILE}       ${TEMPDIR}${/}robot-test-xunit-file.xml

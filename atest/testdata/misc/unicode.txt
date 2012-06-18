@@ -1,0 +1,13 @@
+*** Setting ***
+Library           UnicodeLibrary
+
+*** Variable ***
+
+*** Test Case ***
+Unicode Test
+    Print Unicode Strings
+    ${msg} =    Evaluate    u'Fran\\xe7ais'
+    Log    ${msg}
+    Log    Français
+
+*** Keyword ***

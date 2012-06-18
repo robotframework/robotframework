@@ -31,14 +31,14 @@ Invalid Monitor Colors
 
 Monitor Width
     ${name} =  Evaluate  'Start-' + '0123456789' * 9 + '-end'
-    Run Tests  --monitorwidth 105 --name ${name} --doc x  misc/pass_and_fail.html
+    Run Tests  --monitorwidth 105 --name ${name} --doc x  misc/pass_and_fail.txt
     Check Stdout Contains  ${SEP_CHAR1 * 105}\n ${name} :: x\n ${SEP_CHAR1 * 105}\n
     Check Stdout Contains  ${SEP_CHAR2 * 105}\n ${name[:-7]}... | FAIL |\n ${MSG_211}\n ${SEP_CHAR1 * 105}\n
     ${statuts} =  Create Status Line  Pass  93  PASS
     Check Stdout Contains  ${SEP_CHAR1 * 105}\n ${statuts}\n ${SEP_CHAR2 * 105}\n
     ${statuts} =  Create Status Line  Fail :: FAIL Expected failure  68  FAIL
     Check Stdout Contains  ${SEP_CHAR2 * 105}\n ${statuts}\n Expected failure\n ${SEP_CHAR2 * 105}\n
-    Run Tests  -W 20 --name ${name}  misc/pass_and_fail.html
+    Run Tests  -W 20 --name ${name}  misc/pass_and_fail.txt
     Check Stdout Contains  ${SEP_CHAR1 * 20}\n Start-01234567890...\n ${SEP_CHAR1 * 20}\n
     Check Stdout Contains  ${SEP_CHAR2 * 20}\n Start-01... | FAIL |\n ${MSG_211}\n ${SEP_CHAR1 * 20}\n
     Check Stdout Contains  ${SEP_CHAR1 * 20}\n Pass${SPACE * 8}| PASS |\n ${SEP_CHAR2 * 20}\n
@@ -48,7 +48,7 @@ Monitor Width
 *** Keywords ***
 
 Run Tests With Colors  [Arguments]  ${colors}
-    Run Tests  ${colors} --variable LEVEL1:WARN  misc/pass_and_fail.html
+    Run Tests  ${colors} --variable LEVEL1:WARN  misc/pass_and_fail.txt
 
 Outputs should not have ANSI colors
     Check Stdout Contains  | PASS |
