@@ -30,7 +30,7 @@ class TestJsonConverter(unittest.TestCase):
                      fullName='Misc',
                      doc='<p>My doc</p>',
                      metadata=[('1', '<p>2</p>'), ('abc', '<p>123</p>')],
-                     numberOfTests=163,
+                     numberOfTests=170,
                      tests=[],
                      keywords=[])
         test_convert(self.suite['suites'][0],
@@ -166,7 +166,7 @@ class TestJsonConverter(unittest.TestCase):
                      type='FOR')
 
     def test_assign(self):
-        test_convert(self.suite['suites'][-2]['tests'][0]['keywords'][1],
+        test_convert(self.suite['suites'][-2]['tests'][1]['keywords'][0],
                      name='${msg} = Evaluate',
                      arguments="u'Fran\\\\xe7ais'",
                      type='KEYWORD')
