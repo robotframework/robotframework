@@ -665,8 +665,8 @@ class TestAttributeEscape(unittest.TestCase):
             assert_equals(attribute_escape(inp), exp)
 
     def test_newlines_and_tabs(self):
-        for inp, exp in [('\n', ' '), ('\t', ' '), ('"\n\t"', '&quot;  &quot;'),
-                         ('N1\nN2\n\nT1\tT3\t\t\t', 'N1 N2  T1 T3   ')]:
+        for inp, exp in [('\n', '&#10;'), ('\t', '&#09;'), ('"\n\t"', '&quot;&#10;&#09;&quot;'),
+                         ('N1\nN2\n\nT1\tT3\t\t\t', 'N1&#10;N2&#10;&#10;T1&#09;T3&#09;&#09;&#09;')]:
             assert_equals(attribute_escape(inp), exp)
 
     def test_illegal_chars_in_xml(self):
