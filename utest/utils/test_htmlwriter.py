@@ -41,8 +41,8 @@ class TestHtmlWriter(unittest.TestCase):
         self._verify('<x 1="&lt;" 2="&amp;" 3="&lt;/html&gt;">')
 
     def test_start_with_newlines_and_tabs_in_attribute_values(self):
-        self.writer.start('x', {'1':'\n', '3': 'A\nB\tC', '2': '\t'}, False)
-        self._verify('<x 1=" " 2=" " 3="A B C">')
+        self.writer.start('x', {'1':'\n', '3': 'A\nB\tC', '2': '\t', '4': '\r\n'}, False)
+        self._verify('<x 1="&#10;" 2="&#09;" 3="A&#10;B&#09;C" 4="&#13;&#10;">')
 
     def test_end(self):
         self.writer.start('robot', newline=False)

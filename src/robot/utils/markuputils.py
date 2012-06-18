@@ -20,7 +20,7 @@ from .htmlformatters import LinkFormatter, HtmlFormatter
 _format_url = LinkFormatter().format_url
 _generic_escapes = (('&', '&amp;'), ('<', '&lt;'), ('>', '&gt;'))
 _attribute_escapes = _generic_escapes \
-         + (('"', '&quot;'), ('\n', ' '), ('\r', ' '), ('\t', ' '))
+         + (('"', '&quot;'), ('\n', '&#10;'), ('\r', '&#13;'), ('\t', '&#09;'))
 _illegal_chars_in_xml = re.compile(u'[\x00-\x08\x0B\x0C\x0E-\x1F\uFFFE\uFFFF]')
 
 
