@@ -161,6 +161,9 @@ Actual tests   : %s"""  % (str(list(expected_names)), str(actual_tests))
 
     def get_node(self, file_path, node_path=None):
         dom =  utils.ET.parse(file_path)
+        # This search path is broken on certain python versions
+        if node_path == '/':
+            return dom.getroot()
         return dom.find(node_path) if node_path else dom
 
     def get_nodes(self, file_path, node_path):
