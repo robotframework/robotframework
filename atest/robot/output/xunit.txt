@@ -2,10 +2,10 @@
 Documentation   Tests for xunit-compatible xml-output.
 Default Tags    regression  pybot  jybot
 Resource        atest_resource.txt
-Resource        xunit_resource.txt
+Variables       unicode_vars.py
 
 *** Variables ***
-${TESTDATA}  misc/pass_and_fail.txt
+${TESTDATA}  misc/unicode.txt
 ${INVALID}   ${TEMPDIR}${/}ïnvälïd-xünït.xml
 
 *** Test Cases ***
@@ -15,14 +15,18 @@ No XUnit Option Given
 
 XUnit Option Given
     Run Tests  -x xunit.xml -l log.html  ${TESTDATA}
-    Check Stdout Contains  XUnit
     Stderr should be empty
+    Check Stdout Contains  XUnit
     File Should Exist  ${OUTDIR}/xunit.xml
     File Should Exist  ${OUTDIR}/log.html
-    ${dom} =  Get Dom
-    Check Root Element Is Test Suite  ${dom}
-    Check Element Count  ${dom}  testcase  2
-    Check Element Count  ${dom}  failure  1
+    ${root} =  Get Node  ${OUTDIR}/xunit.xml  /
+    Should Be Equal  ${root.tag}  testsuite
+    ${tests} =  Get Nodes  ${OUTDIR}/xunit.xml  testcase
+    Length Should Be  ${tests}  8
+    Should Be Equal  ${tests[-1].attrib['name']}  Ünïcödë Tëst änd Këywörd Nämës
+    ${failures} =  Get Nodes  ${OUTDIR}/xunit.xml  testcase/failure
+    Length Should Be  ${failures}  4
+    Should Be Equal  ${failures[0].attrib['message']}  ${MESSAGES}
 
 Invalid XUnit File
     Create Directory  ${INVALID}
