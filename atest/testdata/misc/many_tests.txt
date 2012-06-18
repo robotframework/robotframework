@@ -6,8 +6,6 @@ Force Tags        f1
 Default Tags      d1    d2
 Metadata          Something    My Value
 
-*** Variable ***
-
 *** Test Case ***
 First
     [Tags]    t1    t2
@@ -24,5 +22,3 @@ Fourth One With More Complex Name
 
 Fifth
     Log    Test 5
-
-*** Keyword ***
