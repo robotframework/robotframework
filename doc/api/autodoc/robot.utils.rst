@@ -9,14 +9,6 @@ utils Package
     :undoc-members:
     :show-inheritance:
 
-:mod:`abstractxmlwriter` Module
--------------------------------
-
-.. automodule:: robot.utils.abstractxmlwriter
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
 :mod:`application` Module
 -------------------------
 
@@ -113,22 +105,6 @@ utils Package
     :undoc-members:
     :show-inheritance:
 
-:mod:`htmlutils` Module
------------------------
-
-.. automodule:: robot.utils.htmlutils
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-:mod:`htmlwriter` Module
-------------------------
-
-.. automodule:: robot.utils.htmlwriter
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
 :mod:`importer` Module
 ----------------------
 
@@ -137,10 +113,18 @@ utils Package
     :undoc-members:
     :show-inheritance:
 
-:mod:`jyxmlwriter` Module
+:mod:`markuputils` Module
 -------------------------
 
-.. automodule:: robot.utils.jyxmlwriter
+.. automodule:: robot.utils.markuputils
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+:mod:`markupwriters` Module
+---------------------------
+
+.. automodule:: robot.utils.markupwriters
     :members:
     :undoc-members:
     :show-inheritance:
@@ -165,14 +149,6 @@ utils Package
 -------------------------
 
 .. automodule:: robot.utils.normalizing
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-:mod:`pyxmlwriter` Module
--------------------------
-
-.. automodule:: robot.utils.pyxmlwriter
     :members:
     :undoc-members:
     :show-inheritance:
@@ -221,14 +197,6 @@ utils Package
 ------------------
 
 .. automodule:: robot.utils.unic
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-:mod:`xmlwriter` Module
------------------------
-
-.. automodule:: robot.utils.xmlwriter
     :members:
     :undoc-members:
     :show-inheritance:

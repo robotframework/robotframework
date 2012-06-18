@@ -132,12 +132,14 @@ extends java.lang.Object</pre>
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>static void</code></td>
-<td class="colLast"><code><strong><a href="../../org/robotframework/RobotFramework.html#main(java.lang.String[])">main</a></strong>(java.lang.String[]&nbsp;args)</code>&nbsp;</td>
+<td class="colLast"><code><strong><a href="../../org/robotframework/RobotFramework.html#main(java.lang.String[])">main</a></strong>(java.lang.String[]&nbsp;args)</code>
+<div class="block">Entry point when used as a main program.</div>
+</td>
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code>static int</code></td>
 <td class="colLast"><code><strong><a href="../../org/robotframework/RobotFramework.html#run(java.lang.String[])">run</a></strong>(java.lang.String[]&nbsp;args)</code>
-<div class="block">Runs Robot Framework tests.</div>
+<div class="block">Runs Robot Framework.</div>
 </td>
 </tr>
 </table>
@@ -186,6 +188,10 @@ extends java.lang.Object</pre>
 <li class="blockList">
 <h4>main</h4>
 <pre>public static&nbsp;void&nbsp;main(java.lang.String[]&nbsp;args)</pre>
+<div class="block">Entry point when used as a main program. Uses
+ <a href="../../org/robotframework/RobotFramework.html#run(java.lang.String[])"><code>run(java.lang.String[])</code></a> to run Robot Framework and calls
+ <code>System.exit(int)</code> with the return code.</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>args</code> - The command line options, passed to <code>run</code>.</dd></dl>
 </li>
 </ul>
 <a name="run(java.lang.String[])">
@@ -195,10 +201,19 @@ extends java.lang.Object</pre>
 <li class="blockList">
 <h4>run</h4>
 <pre>public static&nbsp;int&nbsp;run(java.lang.String[]&nbsp;args)</pre>
-<div class="block">Runs Robot Framework tests.</div>
-<dl><dt><span class="strong">Parameters:</span></dt><dd><code>args</code> - The command line options to Robot Framework, for example
-            ['--outputdir', '/tmp', 'mytestdir']. At least one datasource
-            must be specified.</dd></dl>
+<div class="block">Runs Robot Framework.<p>
+
+ The default action is to run tests, but it is also possible to use
+ other RF functionality by giving a command as a first value in
+ <code>args</code>. The available commands are <ul><li>rebot</li>
+ <li>libdoc</li><li>tidy</li><li>testdoc</li></ul><p>
+
+ Example usages:<br>
+ <code>run(new String[] {"--outputdir", "/tmp", "mytests.txt"})</code><br>
+ <code>run(new String[] {"libdoc", "MyLibrary", "mydoc.html"})</code></div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>args</code> - The command line options to Robot Framework.</dd>
+<dt><span class="strong">Returns:</span></dt><dd>Robot Framework return code. See the <a href="http://robotframework.googlecode.com/hg/doc/userguide/RobotFrameworkUserGuide.html">
+              the user guide</a> for meaning of different return codes.</dd></dl>
 </li>
 </ul>
 </li>
