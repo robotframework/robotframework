@@ -72,7 +72,7 @@ class TestFailureWriter(ResultVisitor):
 
     def start_test(self, test):
         self._writer.start('failure', {'message': test.message,
-                                       'type': 'AssertionError'})
+                                       'type': 'AssertionError'}, newline=False)
 
     def end_test(self, test):
         self._writer.end('failure')

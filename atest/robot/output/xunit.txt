@@ -3,30 +3,38 @@ Documentation   Tests for xunit-compatible xml-output.
 Default Tags    regression  pybot  jybot
 Resource        atest_resource.txt
 Variables       unicode_vars.py
+Suite Setup     Run Tests  -x xunit.xml -l log.html -L debug  ${TESTDATA}
 
 *** Variables ***
 ${TESTDATA}  misc/unicode.txt
 ${INVALID}   ${TEMPDIR}${/}ïnvälïd-xünït.xml
 
 *** Test Cases ***
-No XUnit Option Given
-    Run Tests  ${EMPTY}  ${TESTDATA}
-    Check Stdout Does Not Contain  XUnit
-
-XUnit Option Given
-    Run Tests  -x xunit.xml -l log.html  ${TESTDATA}
+XUnit File Is Created
     Stderr should be empty
     Check Stdout Contains  XUnit
     File Should Exist  ${OUTDIR}/xunit.xml
     File Should Exist  ${OUTDIR}/log.html
-    ${root} =  Get Node  ${OUTDIR}/xunit.xml  /
+
+File Structure Is Correct
+    ${root} =  Get XUnit Node  /
     Should Be Equal  ${root.tag}  testsuite
-    ${tests} =  Get Nodes  ${OUTDIR}/xunit.xml  testcase
+    ${tests} =  Get XUnit Nodes  testcase
     Length Should Be  ${tests}  8
-    Should Be Equal  ${tests[-1].attrib['name']}  Ünïcödë Tëst änd Këywörd Nämës
-    ${failures} =  Get Nodes  ${OUTDIR}/xunit.xml  testcase/failure
+    ${failures} =  Get XUnit Nodes  testcase/failure
     Length Should Be  ${failures}  4
+    Log  ${failures[0].text}
+    Should Start With  ${failures[0].text}  Traceback
+
+Non-ASCII Content
+    ${tests} =  Get XUnit Nodes  testcase
+    Should Be Equal  ${tests[-1].attrib['name']}  Ünïcödë Tëst änd Këywörd Nämës
+    ${failures} =  Get XUnit Nodes  testcase/failure
     Should Be Equal  ${failures[0].attrib['message']}  ${MESSAGES}
+
+No XUnit Option Given
+    Run Tests  ${EMPTY}  ${TESTDATA}
+    Check Stdout Does Not Contain  XUnit
 
 Invalid XUnit File
     Create Directory  ${INVALID}
@@ -37,3 +45,14 @@ Invalid XUnit File
     ${path} =  Regexp Escape  ${INVALID}
     Check Stderr Matches Regexp
     ...  \\[ ERROR \\] Opening XUnit result file '${path}' failed: .*
+
+*** Keywords ***
+Get XUnit Node
+    [Arguments]  ${path}
+    ${node} =  Get Node  ${OUTDIR}/xunit.xml  ${path}
+    [Return]  ${node}
+
+Get XUnit Nodes
+    [Arguments]  ${path}
+    ${nodes} =  Get Nodes  ${OUTDIR}/xunit.xml  ${path}
+    [Return]  ${nodes}
