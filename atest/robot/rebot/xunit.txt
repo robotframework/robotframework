@@ -3,8 +3,7 @@ Default Tags      regression    jybot    pybot
 Suite Setup       Create Input File
 Test Setup        Empty Directory     ${MYOUTDIR}
 Suite Teardown    Remove Temps
-Resource          ../../resources/rebot_resource.html
-Resource          xunit_resource.txt
+Resource          rebot_resource.html
 
 *** Variables ***
 ${TESTDATA_TEST}    misc${/}many_tests.txt
@@ -24,12 +23,14 @@ XUnit Option Given
     Run Rebot  --xunitfile xunit.xml --log log.html  ${INPUT FILE}
     Stderr Should Be Empty
     Check Stdout Contains  XUnit
-    File Should Exist  ${OUTDIR}${/}xunit.xml
-    File Should Exist  ${OUTDIR}${/}log.html
-    ${dom} =  Get Dom
-    Check Root Element Is Test Suite  ${dom}
-    Check Element Count  ${dom}  testcase  15
-    Check Element Count  ${dom}  failure   1
+    File Should Exist  ${OUTDIR}/xunit.xml
+    File Should Exist  ${OUTDIR}/log.html
+    ${root} =  Get Node  ${OUTDIR}/xunit.xml  /
+    Should Be Equal    ${root.tag}    testsuite
+    ${tests} =  Get Nodes  ${OUTDIR}/xunit.xml  testcase
+    Length Should Be  ${tests}  15
+    ${failures} =  Get Nodes  ${OUTDIR}/xunit.xml  testcase/failure
+    Length Should Be  ${failures}  1
 
 Invalid XUnit File
     Create Directory  ${INVALID}
