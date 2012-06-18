@@ -32,6 +32,10 @@ Non-ASCII Content
     ${failures} =  Get XUnit Nodes  testcase/failure
     Should Be Equal  ${failures[0].attrib['message']}  ${MESSAGES}
 
+Multiline failure
+    ${failures} =  Get XUnit Nodes  testcase/failure
+    Should Be Equal  ${failures[-1].attrib['message']}  Just ASCII here\n\nAlso teardown failed:\n${MESSAGES}
+
 No XUnit Option Given
     Run Tests  ${EMPTY}  ${TESTDATA}
     Check Stdout Does Not Contain  XUnit
