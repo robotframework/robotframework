@@ -4,9 +4,10 @@ Suite Setup       Create Input File
 Test Setup        Empty Directory     ${MYOUTDIR}
 Suite Teardown    Remove Temps
 Resource          rebot_resource.html
+Variables         unicode_vars.py
 
 *** Variables ***
-${TESTDATA_TEST}    misc${/}many_tests.txt
+${TESTDATA_TEST}    misc${/}unicode.txt
 ${TESTDATA_SUITES}  misc${/}suites
 ${MYOUTDIR}         ${TEMPDIR}${/}robot-test-xunit
 ${INPUT FILE}       ${TEMPDIR}${/}robot-test-xunit-file.xml
@@ -26,11 +27,13 @@ XUnit Option Given
     File Should Exist  ${OUTDIR}/xunit.xml
     File Should Exist  ${OUTDIR}/log.html
     ${root} =  Get Node  ${OUTDIR}/xunit.xml  /
-    Should Be Equal    ${root.tag}    testsuite
+    Should Be Equal  ${root.tag}  testsuite
     ${tests} =  Get Nodes  ${OUTDIR}/xunit.xml  testcase
-    Length Should Be  ${tests}  15
+    Length Should Be  ${tests}  18
+    Should Be Equal  ${tests[7].attrib['name']}  Ünïcödë Tëst änd Këywörd Nämës
     ${failures} =  Get Nodes  ${OUTDIR}/xunit.xml  testcase/failure
-    Length Should Be  ${failures}  1
+    Length Should Be  ${failures}  5
+    Should Be Equal  ${failures[0].attrib['message']}  ${MESSAGES}
 
 Invalid XUnit File
     Create Directory  ${INVALID}
@@ -44,8 +47,8 @@ Invalid XUnit File
 *** Keywords ***
 Create Input File
     Create Output With Robot  ${INPUT FILE}  ${EMPTY}  ${TESTDATA_TEST}  ${TESTDATA_SUITES}
-    Create Directory          ${MYOUTDIR}
+    Create Directory  ${MYOUTDIR}
 
 Remove Temps
-    Remove Directory    ${MYOUTDIR}  recursive
-    Remove File         ${INPUT FILE}
+    Remove Directory  ${MYOUTDIR}  recursive
+    Remove File  ${INPUT FILE}
