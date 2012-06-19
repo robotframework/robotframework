@@ -322,7 +322,7 @@ class TestHtmlFormatCustomLinks(unittest.TestCase):
 
     def test_link_in_table(self):
         assert_format('| [link.html|title] |', '''\
-<table>
+<table border="1">
 <tr>
 <td><a href="link.html">title</a></td>
 </tr>
@@ -599,7 +599,8 @@ other block
 
 
 class TestFormatTable(unittest.TestCase):
-    _table_start = '<table>'
+    # RIDE needs border="1" because its HTML view doesn't support CSS
+    _table_start = '<table border="1">'
 
     def test_one_row_table(self):
         inp = [['1','2','3']]

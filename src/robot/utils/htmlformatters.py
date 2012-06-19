@@ -202,7 +202,7 @@ class TableFormatter(_BlockFormatter):
 
     def _format_table(self, rows):
         maxlen = max(len(row) for row in rows)
-        table = ['<table>']
+        table = ['<table border="1">']
         for row in rows:
             row += [''] * (maxlen - len(row))  # fix ragged tables
             table.append('<tr>')
