@@ -50,7 +50,7 @@ class ResultWriter(object):
 
     def _write_xunit(self, result, path):
         try:
-            result.visit(XUnitWriter(path))
+            XUnitWriter(result).write(path)
         except EnvironmentError, err:
             LOGGER.error("Opening XUnit result file '%s' failed: %s"
                          % (path, err.strerror))
