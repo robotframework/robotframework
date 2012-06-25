@@ -15,6 +15,7 @@
 from robot.errors import DataError
 from robot.output import LOGGER
 from robot.result import ExecutionResult
+from robot.utils import unic
 
 from .jsmodelbuilders import JsModelBuilder
 from .logreportwriters import LogWriter, ReportWriter
@@ -41,39 +42,30 @@ class ResultWriter(object):
         return results.return_code
 
     def _write_output(self, result, path):
-        try:
-            result.save(path)
-        except DataError, err:
-            LOGGER.error(unicode(err))
-        else:
-            LOGGER.output_file('Output', path)
+        self._write('Output', result.save, path)
 
     def _write_xunit(self, result, path):
-        try:
-            XUnitWriter(result).write(path)
-        except EnvironmentError, err:
-            LOGGER.error("Opening XUnit result file '%s' failed: %s"
-                         % (path, err.strerror))
-        else:
-            LOGGER.output_file('XUnit', path)
+        self._write('XUnit', XUnitWriter(result).write, path)
 
     def _write_log(self, js_result, path, config):
-        try:
-            LogWriter(js_result).write(path, config)
-        except EnvironmentError, err:
-            # Cannot use err.filename due to http://bugs.jython.org/issue1825
-            # and thus error has wrong file name if writing split log fails.
-            LOGGER.error("Writing log file '%s' failed: %s" % (path, err.strerror))
-        else:
-            LOGGER.output_file('Log', path)
+        self._write('Log', LogWriter(js_result).write, path, config)
 
     def _write_report(self, js_result, path, config):
+        self._write('Report', ReportWriter(js_result).write, path, config)
+
+    def _write(self, name, writer, path, *args):
         try:
-            ReportWriter(js_result).write(path, config)
+            writer(path, *args)
+        except DataError, err:
+            LOGGER.error(unicode(err))
         except EnvironmentError, err:
-            LOGGER.error("Writing report file '%s' failed: %s" % (path, err.strerror))
+            # `err.filename` can be different than `path` at least if reading
+            # log/report templates or writing split log fails.
+            # `unic` is needed due to http://bugs.jython.org/issue1825.
+            LOGGER.error("Writing %s file '%s' failed: %s: %s" %
+                         (name.lower(), path, err.strerror, unic(err.filename)))
         else:
-            LOGGER.output_file('Report', path)
+            LOGGER.output_file(name, path)
 
 
 class Results(object):

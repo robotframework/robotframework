@@ -42,7 +42,7 @@ Invalid XUnit File
     File Should Exist  ${OUTDIR}/log.html
     ${path} =  Regexp Escape  ${INVALID}
     Check Stderr Matches Regexp
-    ...  \\[ ERROR \\] Opening XUnit result file '${path}' failed: .*
+    ...  \\[ ERROR \\] Writing xunit file '${path}' failed: .*
 
 *** Keywords ***
 Create Input File
