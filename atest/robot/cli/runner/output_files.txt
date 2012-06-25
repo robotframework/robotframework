@@ -33,8 +33,7 @@ All Outputs
     Output Directory Should Contain  mylog.html  myoutput.xml  myreport.html
 
 All Outputs With Default Names
-    ${path} =  Join Path  ${CURDIR}/../../..  testdata  ${TESTFILE}
-    Run Robot Directly  --outputdir ${CLI OUTDIR} ${path}
+    Run Robot Directly  --outputdir ${CLI OUTDIR} ${DATADIR}${/}${TESTFILE}
     Output Directory Should Contain  log.html  output.xml  report.html
 
 All Outputs Without Extensions
@@ -57,7 +56,7 @@ Non-writable Output File
     Check Stderr Matches Regexp  \\[ ERROR \\] Opening output file '.*diréctöry.xml' failed: .*${USAGE_TIP}
 
 Non-writable Log and Report
-    ${directory} =  Join Path  ${CLI OUTDIR}/diréctöry.html
+    ${directory} =  Normalize Path  ${CLI OUTDIR}/diréctöry.html
     Create Directory  ${directory}
     Run Tests  --log ${directory} --report ${directory}  ${TESTFILE}
     Should Be Equal  ${SUITE.status}  PASS
