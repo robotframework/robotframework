@@ -18,15 +18,25 @@ from robot.result.visitor import ResultVisitor
 from robot.utils import XmlWriter
 
 
-class XUnitWriter(ResultVisitor):
+class XUnitWriter(object):
+
+    def __init__(self, execution_result):
+        self._execution_result = execution_result
+
+    def write(self, output):
+        writer = XUnitFileWriter(XmlWriter(output, encoding='UTF-8'))
+        self._execution_result.visit(writer)
+
+
+class XUnitFileWriter(ResultVisitor):
     """Provides an xUnit-compatible result file.
 
     Attempts to adhere to the de facto schema guessed by Peter Reilly, see:
     http://marc.info/?l=ant-dev&m=123551933508682
     """
 
-    def __init__(self, output):
-        self._writer = XmlWriter(output, encoding='UTF-8')
+    def __init__(self, xml_writer):
+        self._writer = xml_writer
         self._root_suite = None
 
     def start_suite(self, suite):

@@ -48,7 +48,7 @@ Invalid XUnit File
     ${dir}  ${base} =  Split Path  ${INVALID}
     ${path} =  Regexp Escape  ${INVALID}
     Check Stderr Matches Regexp
-    ...  \\[ ERROR \\] Opening XUnit result file '${path}' failed: .*
+    ...  \\[ ERROR \\] Writing xunit file '${path}' failed: .*
 
 *** Keywords ***
 Get XUnit Node
