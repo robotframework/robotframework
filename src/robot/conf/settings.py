@@ -356,7 +356,7 @@ class RebotSettings(_BaseSettings):
         if not self.log:
             return {}
         return {
-            'title': utils.html_escape(self['LogTitle']),
+            'title': utils.html_escape(self['LogTitle'] or ''),
             'reportURL': self._url_from_path(self.log, self.report),
             'splitLogBase': os.path.basename(os.path.splitext(self.log)[0]),
             'defaultLevel': self['VisibleLogLevel']
@@ -367,7 +367,7 @@ class RebotSettings(_BaseSettings):
         if not self.report:
             return {}
         return {
-            'title': utils.html_escape(self['ReportTitle']),
+            'title': utils.html_escape(self['ReportTitle'] or ''),
             'logURL': self._url_from_path(self.report, self.log),
             'background' : self._resolve_background_colors(),
         }
