@@ -20,6 +20,9 @@ class TestStringContext(unittest.TestCase):
     def test_cache_strings(self):
         self._verify(['Foo', '', 'Foo', 'Foo', ''], [1, 0, 1, 1, 0] , ['Foo'])
 
+    def test_escape_strings(self):
+        self._verify(['</script>', '&', '&'], [1, 2, 2] , ['&lt;/script&gt;', '&amp;'])
+
     def test_none_string(self):
         self._verify([None, '', None], [0, 0, 0], [])
 

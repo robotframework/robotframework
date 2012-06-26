@@ -12,6 +12,8 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+from robot.utils import html_escape
+
 from .tags import TagPatterns
 
 
@@ -23,7 +25,7 @@ class Stat(object):
         self.failed = 0
 
     def get_attributes(self, include_label=False, exclude_empty=False,
-                       values_as_strings=False):
+                       values_as_strings=False, html_escape=False):
         attrs =  {'pass': self.passed, 'fail': self.failed}
         attrs.update(self._get_custom_attrs())
         if include_label:
@@ -32,10 +34,15 @@ class Stat(object):
             attrs = dict((k, v) for k, v in attrs.items() if v != '')
         if values_as_strings:
             attrs = dict((k, unicode(v)) for k, v in attrs.items())
+        if html_escape:
+            attrs = dict((k, self._html_escape(v)) for k, v in attrs.items())
         return attrs
 
     def _get_custom_attrs(self):
         return {}
+
+    def _html_escape(self, item):
+        return html_escape(item) if isinstance(item, basestring) else item
 
     @property
     def total(self):

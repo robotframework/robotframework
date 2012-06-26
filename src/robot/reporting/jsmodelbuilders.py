@@ -145,7 +145,7 @@ class MessageBuilder(_Builder):
     def _build(self, msg):
         return (self._timestamp(msg.timestamp),
                 LEVELS[msg.level],
-                self._string(msg.html_message))
+                self._string(msg.html_message, escape=False))
 
 
 class StatisticsBuilder(object):
@@ -156,7 +156,8 @@ class StatisticsBuilder(object):
                 self._build_stats(statistics.suite))
 
     def _build_stats(self, stats):
-        return tuple(stat.get_attributes(include_label=True, exclude_empty=True)
+        return tuple(stat.get_attributes(include_label=True, exclude_empty=True,
+                                         html_escape=True)
                      for stat in stats)
 
 

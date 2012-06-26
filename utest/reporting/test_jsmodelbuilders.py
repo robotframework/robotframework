@@ -46,7 +46,7 @@ class TestBuildTestSuite(unittest.TestCase):
         self._verify_suite(TestSuite(name='*xxx*', doc='*bold* <&>',
                                      metadata={'*x*': '*b*', '<': '>'}),
                            name='*xxx*', doc='<b>bold</b> &lt;&amp;&gt;',
-                           metadata=('*x*', '<p><b>b</b></p>', '<', '<p>&gt;</p>'))
+                           metadata=('*x*', '<p><b>b</b></p>', '&lt;', '<p>&gt;</p>'))
 
     def test_default_test(self):
         self._verify_test(TestCase())
@@ -304,7 +304,7 @@ class TestBuildStatistics(unittest.TestCase):
     def test_tag_stats(self):
         t2, comb, t1 = self._build_statistics()[1]
         self._verify_stat(t2, 2, 0, 't2', info='critical', doc='doc', links='t:url')
-        self._verify_stat(comb, 2, 0, 'name', info='combined', combined='t1&t2')
+        self._verify_stat(comb, 2, 0, 'name', info='combined', combined='t1&amp;t2')
         self._verify_stat(t1, 2, 2, 't1')
 
     def test_suite_stats(self):
