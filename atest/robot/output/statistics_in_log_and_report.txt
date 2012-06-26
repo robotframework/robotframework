@@ -56,8 +56,8 @@ Verify tag stats
     ...    info:critical    links:T1:http://t/1    doc:the doc
     Verify stat    ${stats[1]}    label:t2    pass:2    fail:0
     ...    info:non-critical    links:T2:http://t/2
-    Verify stat    ${stats[2]}    label:f1 & t1    pass:5    fail:1
-    ...    info:combined    combined:f1 & t1
+    Verify stat    ${stats[2]}    label:f1 &amp; t1    pass:5    fail:1
+    ...    info:combined    combined:f1 &amp; t1
     Verify stat    ${stats[3]}    label:d1    pass:1    fail:0
 
 Verify suite stats
