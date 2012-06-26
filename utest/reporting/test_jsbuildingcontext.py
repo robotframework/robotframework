@@ -9,15 +9,22 @@ from robot.utils.asserts import assert_equals
 class TestStringContext(unittest.TestCase):
 
     def test_add_empty_string(self):
-        self._verify([''], [0] , ('*',))
+        self._verify([''], [0] , [])
 
-    def test_add_text(self):
-        self._verify(['Hello!'], [1] , ('*', '*Hello!'))
+    def test_add_string(self):
+        self._verify(['Hello!'], [1], ['Hello!'])
 
-    def test_add_several_texts(self):
-        self._verify(['Hello!', '', 'Foo'], [1, 0, 2] , ('*', '*Hello!', '*Foo'))
+    def test_add_several_strings(self):
+        self._verify(['Hello!', 'Foo'], [1, 2] , ['Hello!', 'Foo'])
+
+    def test_cache_strings(self):
+        self._verify(['Foo', '', 'Foo', 'Foo', ''], [1, 0, 1, 1, 0] , ['Foo'])
+
+    def test_none_string(self):
+        self._verify([None, '', None], [0, 0, 0], [])
 
     def _verify(self, strings, exp_ids, exp_strings):
+        exp_strings = tuple('*'+s for s in [''] + exp_strings)
         ctx = JsBuildingContext()
         results = [ctx.string(s) for s in strings]
         assert_equals(results, exp_ids)
