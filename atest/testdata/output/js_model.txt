@@ -1,0 +1,18 @@
+*** Settings ***
+Documentation    </script>
+Metadata    </script>    </script>
+Force Tags    </script>
+Resource    </script>
+
+*** Test Cases ***
+</script>
+    [Documentation]    FAIL </script>
+    [Timeout]    10s    </script>
+    Log    </script>
+    </script>
+
+*** Keywords ***
+</script>
+    [Documentation]    </script>
+    [Timeout]    10s    </script>
+    Fail    </script>
