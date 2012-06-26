@@ -169,10 +169,10 @@ class TestSuiteTeardownFailed(unittest.TestCase):
         assert_equals(tc2.message, 'Message')
 
 
-class TestBuildingFromXmlString(unittest.TestCase):
+class TestBuildingFromXmlStringAndHandlingMissingInformation(unittest.TestCase):
 
-    def test_result_is_built(self):
-        xml = """
+    def setUp(self):
+        self.result = ExecutionResult("""
 <robot>
     <suite name="foo">
         <test name="some name">
@@ -181,8 +181,33 @@ class TestBuildingFromXmlString(unittest.TestCase):
     <status status="PASS"></status>
     </suite>
 </robot>
-""".strip()
-        result = ExecutionResult(xml)
+""")
+
+    def test_suite(self):
+        suite = self.result.suite
+        assert_equals(suite.id, 's1')
+        assert_equals(suite.name, 'foo')
+        assert_equals(suite.doc, '')
+        assert_equals(suite.source, '')
+        assert_equals(suite.metadata, {})
+        assert_equals(list(suite.keywords), [])
+        assert_equals(suite.starttime, None)
+        assert_equals(suite.endtime, None)
+        assert_equals(suite.elapsedtime, 0)
+
+    def test_test(self):
+        test = self.result.suite.tests[0]
+        assert_equals(test.id, 's1-t1')
+        assert_equals(test.name, 'some name')
+        assert_equals(test.doc, '')
+        assert_equals(test.timeout, '')
+        assert_equals(test.critical, True)
+        assert_equals(list(test.tags), [])
+        assert_equals(list(test.keywords), [])
+        assert_equals(test.starttime, None)
+        assert_equals(test.endtime, None)
+        assert_equals(test.elapsedtime, 0)
+
 
 if __name__ == '__main__':
     unittest.main()

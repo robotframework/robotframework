@@ -78,7 +78,7 @@ class SuiteHandler(_Handler):
 
     def start(self, elem, result):
         return result.suites.create(name=elem.get('name'),
-                                    source=elem.get('source'))
+                                    source=elem.get('source', ''))
 
     def _children(self):
         return [DocHandler(), MetadataHandler(), SuiteStatusHandler(),
@@ -89,7 +89,7 @@ class RootSuiteHandler(SuiteHandler):
 
     def start(self, elem, result):
         result.suite.name = elem.get('name')
-        result.suite.source = elem.get('source')
+        result.suite.source = elem.get('source', '')
         return result.suite
 
     def _children(self):
@@ -101,7 +101,7 @@ class TestCaseHandler(_Handler):
 
     def start(self, elem, result):
         return result.tests.create(name=elem.get('name'),
-                                   timeout=elem.get('timeout'))
+                                   timeout=elem.get('timeout', ''))
 
     def _children(self):
         return [DocHandler(), TagsHandler(), TestStatusHandler(), KeywordHandler()]
