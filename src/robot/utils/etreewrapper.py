@@ -79,7 +79,7 @@ class ETSource(object):
 
     def _source_is_file_name(self):
         return isinstance(self._source, basestring) \
-                and not self._source.startswith('<')
+                and not self._source.lstrip().startswith('<')
 
     def _open_source_if_necessary(self):
         if self._source_is_file_name():

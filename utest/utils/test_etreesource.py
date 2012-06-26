@@ -35,7 +35,7 @@ class TestETSource(unittest.TestCase):
         assert_true(source._opened is None)
 
     def test_xml_string(self):
-        xml = '<tag>content</tag>'
+        xml = '\n<tag>content</tag>\n'
         source = ETSource(xml)
         with source as src:
             assert_equals(src.read(), xml)
