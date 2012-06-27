@@ -190,7 +190,7 @@ class _BaseSettings(object):
         return tuple(colors)
 
     def _process_tag_stat_combine(self, value):
-        for replwhat, replwith in [('AND', '&'), ('&', ' & '), ('NOT', ' NOT ')]:
+        for replwhat, replwith in [('&', 'AND'), ('AND', ' AND '), ('NOT', ' NOT ')]:
             value = value.replace(replwhat, replwith)
         if ':' not in value:
             return value, ''

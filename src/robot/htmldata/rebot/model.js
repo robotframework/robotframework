@@ -60,8 +60,8 @@ window.model = (function () {
                     return !containsTagPattern(testTags, name);
                 }));
         }
-        if (pattern.indexOf('&') != -1) {
-            var tagnames = pattern.split('&');
+        if (pattern.indexOf('AND') != -1) {
+            var tagnames = pattern.split('AND');
             return util.all(util.map(tagnames, function (name) {
                 return containsTagPattern(testTags, name);
             }));

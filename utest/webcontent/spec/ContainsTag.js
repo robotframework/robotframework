@@ -14,10 +14,10 @@ describe("Searching by tags", function () {
         expect(model.containsTag(['x      x', 'y y', 'z z'], 'XX')).toBeTruthy();
     });
 
-    it("should find tags combined with &", function() {
-        expect(model.containsTagPattern(['x', 'y'], 'x&y')).toBeTruthy();
-        expect(model.containsTagPattern(['xx', 'Yy', 'ZZ'], 'Y Y & X X & zz')).toBeTruthy();
-        expect(model.containsTagPattern(['x', 'y'], 'xx&y')).not.toBeTruthy();
+    it("should find tags combined with AND", function() {
+        expect(model.containsTagPattern(['x', 'y'], 'xANDy')).toBeTruthy();
+        expect(model.containsTagPattern(['xx', 'Yy', 'ZZ'], 'Y Y AND X X AND zz')).toBeTruthy();
+        expect(model.containsTagPattern(['x', 'y'], 'xxANDy')).not.toBeTruthy();
     });
 
     it("should find tags combined with NOT", function() {
@@ -33,15 +33,15 @@ describe("Searching by tags", function () {
         expect(model.containsTagPattern(['x'], 'a NOT c NOT d')).not.toBeTruthy();
     });
 
-    it("should find tags combined with NOT and &", function() {
-        expect(model.containsTagPattern(['x', 'y', 'z'], 'x NOT y & z')).not.toBeTruthy();
-        expect(model.containsTagPattern(['x', 'y'], 'x NOT y & z')).toBeTruthy();
-        expect(model.containsTagPattern(['x', 'y'], 'x NOT z & y')).toBeTruthy();
-        expect(model.containsTagPattern(['x', 'y'], 'x & y NOT z')).toBeTruthy();
-        expect(model.containsTagPattern(['x', 'y', 'z'], 'x & y NOT z')).not.toBeTruthy();
-        expect(model.containsTagPattern(['x', 'y'], 'x & y NOT x & z')).toBeTruthy();
-        expect(model.containsTagPattern(['x', 'y', 'z'], 'x & y NOT x & z NOT y & z')).not.toBeTruthy();
-        expect(model.containsTagPattern(['x', 'y', 'z'], 'x & y NOT x & z NOT xxx')).not.toBeTruthy();
+    it("should find tags combined with NOT and AND", function() {
+        expect(model.containsTagPattern(['x', 'y', 'z'], 'x NOT y AND z')).not.toBeTruthy();
+        expect(model.containsTagPattern(['x', 'y'], 'x NOT y AND z')).toBeTruthy();
+        expect(model.containsTagPattern(['x', 'y'], 'x NOT z AND y')).toBeTruthy();
+        expect(model.containsTagPattern(['x', 'y'], 'x AND y NOT z')).toBeTruthy();
+        expect(model.containsTagPattern(['x', 'y', 'z'], 'x AND y NOT z')).not.toBeTruthy();
+        expect(model.containsTagPattern(['x', 'y'], 'x AND y NOT x AND z')).toBeTruthy();
+        expect(model.containsTagPattern(['x', 'y', 'z'], 'x AND y NOT x AND z NOT y AND z')).not.toBeTruthy();
+        expect(model.containsTagPattern(['x', 'y', 'z'], 'x AND y NOT x AND z NOT xxx')).not.toBeTruthy();
     });
 
     it("should ignore underscore in patterns and tag names", function() {
@@ -59,8 +59,8 @@ describe("Searching by tags", function () {
         expect(model.containsTagPattern(['x', 'y'], 'x')).toBeTruthy();
     });
 
-    it("should find tags combined with patterns and & and NOT", function() {
-        expect(model.containsTagPattern(['xx', 'yy'], 'x* & y?')).toBeTruthy();
+    it("should find tags combined with patterns and AND and NOT", function() {
+        expect(model.containsTagPattern(['xx', 'yy'], 'x* AND y?')).toBeTruthy();
         expect(model.containsTagPattern(['xxxyyy'], 'x* NOT y')).toBeTruthy();
         expect(model.containsTagPattern(['xxxyyy'], 'x* NOT *y')).not.toBeTruthy();
         expect(model.containsTagPattern(['xx', 'yy'], '* NOT x? NOT ?y')).not.toBeTruthy();
