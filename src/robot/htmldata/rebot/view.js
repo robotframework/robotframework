@@ -22,7 +22,8 @@ function parseTemplates() {
 
 function setTitle(suiteName, type) {
     var givenTitle = window.settings.title;
-    document.title = givenTitle ? givenTitle : suiteName + " Test " + type;
+    var title = givenTitle ? givenTitle : suiteName + " Test " + type;
+    document.title = util.unescape(title);
 }
 
 function addHeader() {

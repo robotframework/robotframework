@@ -41,6 +41,10 @@ window.util = function () {
         return false;
     }
 
+    function unescape(string) {
+        return string.replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&amp;/g, '&');
+    }
+
     function normalize(string) {
         return string.toLowerCase().replace(/ /g, '').replace(/_/g, '');
     }
@@ -153,6 +157,7 @@ window.util = function () {
         all: all,
         any: any,
         contains: contains,
+        unescape: unescape,
         normalize: normalize,
         Matcher: Matcher,
         formatParentName: formatParentName,
