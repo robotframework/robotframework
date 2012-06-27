@@ -128,7 +128,7 @@ function addTestExecutionLog(main) {
   <tr>
     <td class="col_stat_name">
       <div class="stat_name">
-        <span title="${doc}">${label}</span>
+        <span>${label}</span>
       </div>
     </td>
     {{tmpl($data) 'stat_columns'}}
@@ -172,8 +172,8 @@ function addTestExecutionLog(main) {
   <tr>
     <td class="time">
       {{if link}}
-      <a onclick="makeElementVisible('${link}')"
-         href="#${link}" title="Link to details.">${date} ${time}</a>
+      <a onclick="makeElementVisible('${link}')" href="#${link}"
+         title="Link to details">${date} ${time}</a>
       {{else}}
       ${date} ${time}
       {{/if}}

@@ -225,7 +225,7 @@ function calculateTotalTime(tests) {
     return util.formatElapsed(totaltime);
 }
 
-function renderTestDetails(sortedColumn){
+function renderTestDetails(sortedColumn) {
     if (!window.elementsToRender.length)
         return;
     var elements = popUpTo(window.elementsToRender, 10);
@@ -236,7 +236,7 @@ function renderTestDetails(sortedColumn){
         setTimeout(function () {renderTestDetails(sortedColumn);}, 0);
     else {
         configureTableSorter();
-        highlightDefaultSortColumn(sortedColumn)
+        highlightDefaultSortColumn(sortedColumn);
     }
 }
 
@@ -278,11 +278,14 @@ function popUpTo(list, upTo) {
     <tr>
       <th>Status:</th>
       {{if criticalFailed}}
-      <td><a class="fail" href="#total_critical" onclick="totalDetailSelected('critical')">${criticalFailed} critical test{{if criticalFailed != 1}}s{{/if}} failed</a></td>
+      <td><a href="#total_critical" onclick="totalDetailSelected('critical')"
+             class="fail">${criticalFailed} critical test{{if criticalFailed != 1}}s{{/if}} failed</a></td>
       {{else totalFailed}}
-      <td><a class="pass" href="#total_critical" onclick="totalDetailSelected('critical')">All critical tests passed</a></td>
+      <td><a href="#total_critical" onclick="totalDetailSelected('critical')"
+             class="pass">All critical tests passed</a></td>
       {{else}}
-      <td><a class="pass" href="#total_all" onclick="totalDetailSelected('all')">All tests passed</a></td>
+      <td><a href="#total_all" onclick="totalDetailSelected('all')"
+             class="pass">All tests passed</a></td>
       {{/if}}
     </tr>
     {{if doc()}}
@@ -453,7 +456,8 @@ function popUpTo(list, upTo) {
   {{if links}}{{if links.length}}
   <tr>
     <th>Links:</th>
-    <td>{{each links}}<a href="${$value.url}" title="${$value.url}">${$value.title}</a>{{/each}} </td>
+    <td>{{each links}}<a href="{{html $value.url}}"
+                         title="{{html $value.url}}">{{html $value.title}}</a> &nbsp; {{/each}}</td>
   </tr>
   {{/if}}{{/if}}
   <tr>
@@ -497,7 +501,7 @@ function popUpTo(list, upTo) {
   {{/if}}
   <tr>
     <th>Start / End:</th>
-    <td>${times.startTime}  /  ${times.endTime}</td>
+    <td>${times.startTime} / ${times.endTime}</td>
   </tr>
   <tr>
     <th>Elapsed:</th>
