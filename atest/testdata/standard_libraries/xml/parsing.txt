@@ -25,4 +25,3 @@ Parse invalid string
 Parse non-existing file
     [Documentation]    FAIL Source file 'non-existing.xml' does not exist.
     Parse XML    non-existing.xml
-
