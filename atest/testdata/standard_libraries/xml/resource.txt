@@ -1,0 +1,5 @@
+*** Settings ***
+Library     XML
+
+*** Variables ***
+${TEST} =      ${CURDIR}/test.xml

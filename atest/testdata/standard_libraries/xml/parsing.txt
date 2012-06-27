@@ -1,8 +1,5 @@
 *** Settings ***
-Library     XML
-
-*** Variables ***
-${TEST} =      ${CURDIR}/test.xml
+Resource     resource.txt
 
 *** Test Cases ***
 Parse file
