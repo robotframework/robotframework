@@ -20,7 +20,7 @@ Total statistics should be Correct
 Tag statistics should be Correct
     ${stats} =  Get Node  ${OUTFILE}  statistics/tag
     Tag Node Information Should Be Correct  ${stats.getchildren()[0]}  t1  5  1  info=critical  links=my title:http://url.to:::title:url
-    Tag Node Information Should Be Correct  ${stats.getchildren()[2]}  d1 & d2  1  0  info=combined
+    Tag Node Information Should Be Correct  ${stats.getchildren()[2]}  d1 AND d2  1  0  info=combined
     Tag Node Information Should Be Correct  ${stats.getchildren()[3]}  f1 NOT t1  4  0  info=combined
     Tag Node Information Should Be Correct  ${stats.getchildren()[4]}  d1  1  0  links=title:url
     Tag Node Information Should Be Correct  ${stats.getchildren()[5]}  d2  1  0
