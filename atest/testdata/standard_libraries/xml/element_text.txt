@@ -16,15 +16,37 @@ Get text of element with no text
     ${text}=     Get Element Text    <tag/>
     Should Be Equal    ${text}    ${EMPTY}
 
+Get text with whitespace
+    ${text}=     Get Element Text    <tag>\nfoo \ bar\n</tag>
+    Should Be Equal    ${text}     \nfoo \ bar\n
+
+Get text with whitespace normalized
+    ${text}=     Get Element Text    <tag>\nfoo \ bar\n</tag>    .    normalize
+    Should Be Equal    ${text}     foo bar
+
 Get text of element containing children
-    ${text}=     Get Elements Texts    ${TEST}    child[2]
-    What should the return value be in this case ???
-    Should Be Equal    ${text}    child 1 text
+    ${p}=    Catenate    SEPARATOR=\n
+    ...    <p>
+    ...    \ \ This <i>interesting "<b>example</b>"</i> spans \ \
+    ...    \ \ \ \ <span id="x">multiple lines<i></i><i>...</i></span>
+    ...    </p>
+    ${text}=     Get Element Text    ${p}
+    Should Be Equal    ${text}    \n${SPACE*2}This interesting "example" spans${SPACE*2}\n${SPACE*4}multiple lines...\n
+    ${text}=     Get Element Text    ${p}    normalize_whitespace=True
+    Should Be Equal    ${text}    This interesting "example" spans multiple lines...
 
 Get texts of elements
     ${texts}=     Get Elements Texts    ${TEST}    child
     Length Should Be    ${texts}    3
     Should Be Equal    ${texts[0]}    child 1 text
+    Should Be Equal    ${texts[1]}    \n${SPACE*8}child 2 text\n${SPACE*8}grand child text\n${SPACE*8}more text\n${SPACE*4}
+    Should Be Equal    ${texts[2]}    ${EMPTY}
+
+Get texts of elements whitespace normalized
+    ${texts}=     Get Elements Texts    ${TEST}    child    normalize
+    Length Should Be    ${texts}    3
+    Should Be Equal    ${texts[0]}    child 1 text
+    Should Be Equal    ${texts[1]}    child 2 text grand child text more text
     Should Be Equal    ${texts[2]}    ${EMPTY}
 
 Element text should be
