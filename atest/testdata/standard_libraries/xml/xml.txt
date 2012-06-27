@@ -1,0 +1,28 @@
+*** Settings ***
+Library     XML
+
+*** Variables ***
+${TEST} =      ${CURDIR}/test.xml
+
+*** Test Cases ***
+Parse file
+    ${root} =   Parse XML     ${TEST}
+    Should be equal     ${root.tag}     test
+
+Parse string
+    ${root} =   Parse XML     <simple>päivää</simple>
+    Should be equal     ${root.tag}     simple
+    Should be equal     ${root.text}     päivää
+
+Parse invalid file
+    [Documentation]    FAIL
+    Parse XML    ${CURDIR}/xml.txt
+
+Parse invalid string
+    [Documentation]    FAIL
+    Parse XML    <kekkonen>urho
+
+Parse non-existing file
+    [Documentation]    FAIL Source file 'non-existing.xml' does not exist.
+    Parse XML    non-existing.xml
+
