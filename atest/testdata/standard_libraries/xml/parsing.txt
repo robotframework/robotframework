@@ -13,7 +13,7 @@ Parse string
 
 Parse invalid file
     [Documentation]    FAIL
-    Parse XML    ${CURDIR}/xml.txt
+    Parse XML    ${CURDIR}/parsing.txt
 
 Parse invalid string
     [Documentation]    FAIL

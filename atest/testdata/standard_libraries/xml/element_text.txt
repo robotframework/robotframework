@@ -60,3 +60,13 @@ Element text should match
     Element Text Should Match    <tag>text</tag>    te?t
     Element Text Should Match    <root><tag>text</tag></root>    t*    tag
     Element Text Should Match    <root><tag>text</tag></root>    no*    tag
+
+Element text should be with whitespace normalized
+    Element Text Should Be    <p>\n1 <i>2</i>\t<b>3</b>!\n</p>    1 2 3!
+    ...    normalize_whitespace=yes
+    Element Text Should Be    <r>1<tag>\n2\n3\n</tag>4</r>    2 3    tag    yes
+
+Element text should match with whitespace normalized
+    Element Text Should Match    <p>\n1 <i>2</i>\t<b>3</b>!\n</p>    1*!
+    ...    normalize_whitespace=yes
+    Element Text Should Match    <r>1<tag>\n2\n3\n</tag>4</r>    2?3    tag    yes

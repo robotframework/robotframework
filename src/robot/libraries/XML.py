@@ -22,6 +22,12 @@ from robot.libraries.BuiltIn import BuiltIn
 
 
 class XML(object):
+    """
+    Supported xpath is documented here: http://effbot.org/zone/element-xpath.htm
+    Notice that support for predicates (e.g. tag[@id="1"]) is supported
+    only in 1.3 i.e in Python 2.7!
+    """
+
     _should_be_equal = BuiltIn().should_be_equal
     _should_match = BuiltIn().should_match
     _normalize_whitespace = partial(re.compile('\s+').sub, ' ')
@@ -69,11 +75,15 @@ class XML(object):
         return [self.get_element_text(elem, normalize_whitespace=normalize_whitespace)
                 for elem in self.get_elements(source, match)]
 
-    def element_text_should_be(self, source, expected, match='.'):
-        self._should_be_equal(self.get_element_text(source, match), expected)
+    def element_text_should_be(self, source, expected, match='.',
+                               normalize_whitespace=False):
+        text = self.get_element_text(source, match, normalize_whitespace)
+        self._should_be_equal(text, expected)
 
-    def element_text_should_match(self, source, pattern, match='.'):
-        self._should_match(self.get_element_text(source, match), pattern)
+    def element_text_should_match(self, source, pattern, match='.',
+                                  normalize_whitespace=False):
+        text = self.get_element_text(source, match, normalize_whitespace)
+        self._should_match(text, pattern)
 
     def get_element_attribute(self, source, name, match=None):
         return self.get_element(source, match).get(name)
