@@ -34,25 +34,29 @@ class XML(object):
         return source
 
     def get_element(self, source, match):
-        parent = self._get_parent(source)
-        return parent.find(match) if match else parent
+        elements = self.get_elements(source, match)
+        if not elements:
+            raise RuntimeError("No element matching '%s' found." % match)
+        if len(elements) > 1:
+            raise RuntimeError("Multiple elements (%d) matching '%s' found." % (len(elements), match))
+        return elements[0]
 
     def get_elements(self, source, match):
         return self._get_parent(source).findall(match)
 
-    def get_element_text(self, source, match):
+    def get_element_text(self, source, match='.'):
         return self.get_element(source, match).text or ''
 
     def get_elements_texts(self, source, match):
         return [elem.text or '' for elem in self.get_elements(source, match)]
 
-    def element_text_should_be(self, source, expected, match=None):
+    def element_text_should_be(self, source, expected, match='.'):
         should_be_equal(self.get_element_text(source, match), expected)
 
-    def element_text_should_match(self, source, pattern, match=None):
+    def element_text_should_match(self, source, pattern, match='.'):
         should_match(self.get_element_text(source, match), pattern)
 
-    def get_attribute(self, source, name, match=None):
+    def get_element_attribute(self, source, name, match=None):
         return self.get_element(source, match).get(name)
 
     def element_attribute_should_match(self, source, name, pattern, match=None):

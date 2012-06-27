@@ -1,0 +1,48 @@
+*** Settings ***
+Resource     resource.txt
+
+*** Test cases ***
+Get element from parent element
+    ${root} =   Parse XML     ${TEST}
+    ${element}=    Get Element    ${root}    another
+    Should Be Equal    ${element.tag}    another
+    ${element}=    Get Element    ${element}    child
+    Should Be Equal    ${element.tag}    child
+
+Get element from xml file
+    ${child}=    Get Element    ${TEST}    another
+    Should Be Equal    ${child.tag}    another
+
+Get element from xml string
+    ${child}=    Get Element    <root><tag>text</tag></root>    tag
+    Should Be Equal    ${child.text}    text
+
+Get grandchild element
+    ${child}=    Get Element    ${TEST}    child/grandchild
+    Should Be Equal    ${child.text}    grand child text
+
+Get element with index
+    [Documentation]    FAIL No element matching 'child[4]' found.
+    ${child}=    Get Element    ${TEST}    child[1]
+    Should Be Equal    ${child.text}    child 1 text
+    ${child}=    Get Element    ${TEST}    child[3]
+    Should Be Equal    ${child.text}    ${NONE}
+    Get Element    ${TEST}    child[4]
+
+Get element must match exactly one
+    [Documentation]    FAIL Multiple elements (3) matching 'child' found.
+    Get Element    ${TEST}    child
+
+Get element with attribute
+    ${child}=    Get Element    ${TEST}    child[@id="2"]
+    Should Be Equal    ${child.tag}    child
+
+Get non-existing element
+    [Documentation]    FAIL No element matching 'non-existing' found.
+    Get Element    ${TEST}    non-existing
+
+Get elements
+    ${children}=    Get Elements    ${TEST}    child
+    Length Should Be    ${children}    3
+    ${children}=    Get Elements    ${TEST}    non-existing
+    Length Should Be    ${children}    0

@@ -1,0 +1,40 @@
+*** Settings ***
+Resource     resource.txt
+
+*** Test cases ***
+Get text of current element
+    ${text}=     Get Element Text    <tag>text</tag>
+    Should Be Equal    ${text}    text
+
+Get text of child element
+    ${text}=     Get Element Text    <root><tag>text</tag></root>    tag
+    Should Be Equal    ${text}    text
+
+Get text of element with no text
+    ${text}=     Get Element Text    <tag></tag>
+    Should Be Equal    ${text}    ${EMPTY}
+    ${text}=     Get Element Text    <tag/>
+    Should Be Equal    ${text}    ${EMPTY}
+
+Get text of element containing children
+    ${text}=     Get Elements Texts    ${TEST}    child[2]
+    What should the return value be in this case ???
+    Should Be Equal    ${text}    child 1 text
+
+Get texts of elements
+    ${texts}=     Get Elements Texts    ${TEST}    child
+    Length Should Be    ${texts}    3
+    Should Be Equal    ${texts[0]}    child 1 text
+    Should Be Equal    ${texts[2]}    ${EMPTY}
+
+Element text should be
+    [Documentation]    FAIL text != no dice
+    Element Text Should Be    <tag>text</tag>    text
+    Element Text Should Be    <root><tag>text</tag></root>    text    tag
+    Element Text Should Be    <root><tag>text</tag></root>    no dice    tag
+
+Element text should match
+    [Documentation]    FAIL 'text' does not match 'no*'
+    Element Text Should Match    <tag>text</tag>    te?t
+    Element Text Should Match    <root><tag>text</tag></root>    t*    tag
+    Element Text Should Match    <root><tag>text</tag></root>    no*    tag

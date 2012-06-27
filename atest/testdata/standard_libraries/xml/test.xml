@@ -4,6 +4,10 @@
     <child id="2">
         child 2 text
         <grandchild>grand child text</grandchild>
+        more text
     </child>
     <child id="3" a2="xxx" a3="y"/>
+    <another attr="value">
+        <child>text</child>
+    </another>
 </test>
