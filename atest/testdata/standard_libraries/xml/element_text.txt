@@ -70,3 +70,11 @@ Element text should match with whitespace normalized
     Element Text Should Match    <p>\n1 <i>2</i>\t<b>3</b>!\n</p>    1*!
     ...    normalize_whitespace=yes
     Element Text Should Match    <r>1<tag>\n2\n3\n</tag>4</r>    2?3    tag    yes
+
+Element text should be failing with custom message
+    [Documentation]    FAIL special
+    Element Text Should Be    <tag>text</tag>    wrong    message=special
+
+Element text should match failing with custom message
+    [Documentation]    FAIL my message
+    Element Text Should Match    <tag>text</tag>    x*x    message=my message

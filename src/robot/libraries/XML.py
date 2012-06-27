@@ -76,14 +76,14 @@ class XML(object):
                 for elem in self.get_elements(source, match)]
 
     def element_text_should_be(self, source, expected, match='.',
-                               normalize_whitespace=False):
+                               normalize_whitespace=False, message=None):
         text = self.get_element_text(source, match, normalize_whitespace)
-        self._should_be_equal(text, expected)
+        self._should_be_equal(text, expected, message, values=False)
 
     def element_text_should_match(self, source, pattern, match='.',
-                                  normalize_whitespace=False):
+                                  normalize_whitespace=False, message=None):
         text = self.get_element_text(source, match, normalize_whitespace)
-        self._should_match(text, pattern)
+        self._should_match(text, pattern, message, values=False)
 
     def get_element_attribute(self, source, name, match=None):
         return self.get_element(source, match).get(name)
