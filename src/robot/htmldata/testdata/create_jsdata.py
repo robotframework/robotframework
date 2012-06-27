@@ -25,13 +25,19 @@ def run_robot(testdata, outxml):
 
 def create_jsdata(outxml, target):
     settings = RebotSettings({
+        'name': '<Suite.Name>',
         'critical': ['i?'],
         'noncritical': ['*kek*kone*'],
         'tagstatlink': ['force:http://google.com:<kuukkeli&gt;',
-                        'i*:http://%1/:Title of i%1'],
+                        'i*:http://%1/:Title of i%1',
+                        '?1:http://%1/:Title',
+                        '</script>:<url>:<title>'],
         'tagdoc': ['test:this_is_*my_bold*_test',
-                   'IX:*Combined* & escaped <&lt; tag doc'],
-        'tagstatcombine': ['fooANDi*:No Match', 'i?:IX']
+                   'IX:*Combined* & escaped <&lt; tag doc',
+                   '</script>:<doc>'],
+        'tagstatcombine': ['fooANDi*:No Match',
+                           'i?:IX',
+                           '<*>:<any>']
     })
     result = Results(outxml, settings).js_result
     config = {'logURL': 'log.html',

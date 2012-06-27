@@ -49,6 +49,15 @@ Multi-line failure
     First failure
     Second failure\nhas multiple\nlines
 
+Escape JS </script>
+    [Documentation]    </script>
+    [Tags]    </script>
+    Log    </script>
+    </script>
+
 *** Keywords **
 User Kw
     Log   in User Kw
+
+</script>
+    Fail    </script>
