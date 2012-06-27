@@ -65,7 +65,7 @@ class ETSource(object):
             self._opened.close()
         if exc_type is None or exc_type is DataError:
             return False
-        raise DataError(exc_value)
+        raise DataError(exc_value) # TODO: this loses original traceback
 
     def __str__(self):
         if self._source_is_file_name():
@@ -85,7 +85,7 @@ class ETSource(object):
         if self._source_is_file_name():
             return self._open_source_file()
         if isinstance(self._source, basestring):
-            return StringIO(self._source)
+            return StringIO(self._source.encode('UTF-8'))
         return None
 
     def _open_source_file(self):

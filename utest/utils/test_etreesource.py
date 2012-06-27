@@ -4,7 +4,7 @@ import sys
 import unittest
 
 from robot.utils.asserts import assert_equals, assert_raises, assert_true
-from robot.utils.etreewrapper import ETSource
+from robot.utils.etreewrapper import ETSource, ET
 from robot.errors import DataError
 
 IRONPYTHON = sys.platform == 'cli'
@@ -34,13 +34,20 @@ class TestETSource(unittest.TestCase):
         self._verify_string_representation(source, PATH)
         assert_true(source._opened is None)
 
-    def test_xml_string(self):
-        xml = '\n<tag>content</tag>\n'
+    def test_byte_string(self):
+        self._test_string('\n<tag>content</tag>\n')
+
+    def test_unicode_string(self):
+        self._test_string(u'\n<tag>hyv\xe4</tag>\n')
+
+    def _test_string(self, xml):
         source = ETSource(xml)
         with source as src:
-            assert_equals(src.read(), xml)
+            assert_equals(src.read().decode('UTF-8'), xml)
         self._verify_string_representation(source, '<in-memory file>')
         assert_true(source._opened.closed)
+        with ETSource(xml) as src:
+            assert_equals(ET.parse(src).getroot().tag, 'tag')
 
     def test_path_is_validated(self):
         def use(src):
