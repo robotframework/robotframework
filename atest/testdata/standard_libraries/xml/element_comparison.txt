@@ -1,0 +1,46 @@
+*** Settings ***
+Resource     resource.txt
+Test Template     Elements are different
+
+*** Test cases ***
+Elements should be equal
+    [Template]    Element should be equal to itself
+    <tag/>
+    <root><tag/></root>
+    <tag a="1" b="2"/>
+    <root>\n<tag>some\ntext</tag>tail text</root>
+
+Tag names are different
+    <tag/>   <täg/>    Different tag name: tag != täg
+
+Different attribute values
+    <tag a="1"/>   <tag a="2"/>    Different attributes: {'a': '1'} != {'a': '2'}
+    <tag a="1" c="3"/>   <tag b="1"/>
+    ...   Different attributes: {'a': '1', 'c': '3'} != {'b': '1'}
+
+Texts are different
+    <tag>some text</tag>   <tag>different</tag>  Different text: some text != different
+    <tag>some text</tag>   <tag/>    Different text: some text !=${SPACE}
+
+Different tails
+    <root><tag/>tail</root>   <root><tag/>wrong</root>    Different tail text: tail != wrong
+    <root><tag/>tail</root>   <root><tag/></root>    Different tail text: tail !=${SPACE}
+
+Different number of children
+    <root><tag/><tag/></root>    <root><tag/></root>   Different number of child elements: 2 != 1
+
+Differences in child
+    <root><tag><child/></tag></root>    <root><different></different>tail</root>
+    ...    Different tag name: tag != different
+
+*** Keywords ***
+Element should be equal to itself
+    [Arguments]    ${source}
+    ${xml}=    Parse XML    ${source}
+    Elements Should Be Equal    ${source}    ${xml}
+    Elements Should Be Equal    ${xml}    ${source}
+
+Elements are different
+    [Arguments]   ${source}    ${expected}    ${error}
+    Run Keyword and Expect Error    ${error}
+    ...    Elements Should Be Equal   ${source}    ${expected}
