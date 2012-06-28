@@ -28,8 +28,8 @@ class XML(object):
     only in 1.3 i.e in Python 2.7!
     """
 
-    _should_be_equal = BuiltIn().should_be_equal
-    _should_match = BuiltIn().should_match
+    _should_be_equal = partial(BuiltIn().should_be_equal, values=False)
+    _should_match = partial(BuiltIn().should_match, values=False)
     _normalize_whitespace = partial(re.compile('\s+').sub, ' ')
 
     def parse_xml(self, source):
@@ -78,18 +78,27 @@ class XML(object):
     def element_text_should_be(self, source, expected, match='.',
                                normalize_whitespace=False, message=None):
         text = self.get_element_text(source, match, normalize_whitespace)
-        self._should_be_equal(text, expected, message, values=False)
+        self._should_be_equal(text, expected, message)
 
     def element_text_should_match(self, source, pattern, match='.',
                                   normalize_whitespace=False, message=None):
         text = self.get_element_text(source, match, normalize_whitespace)
-        self._should_match(text, pattern, message, values=False)
+        self._should_match(text, pattern, message)
 
-    def get_element_attribute(self, source, name, match=None):
-        return self.get_element(source, match).get(name)
+    def get_element_attribute(self, source, name, match='.', default=None):
+        return self.get_element(source, match).get(name, default)
 
-    def element_attribute_should_match(self, source, name, pattern, match=None):
-        self._should_match(self.get_attribute(source, name, match), pattern)
+    def get_element_attributes(self, source, match='.'):
+        return self.get_element(source, match).attrib.copy()
 
-    def element_attribute_should_be(self, source, name, expected, match=None):
-        self._should_be_equal(self.get_attribute(source, name, match), expected)
+    def element_attribute_should_be(self, source, name, expected, match='.',
+                                    message=None):
+        attr = self.get_element_attribute(source, name, match)
+        self._should_be_equal(attr, expected, message)
+
+    def element_attribute_should_match(self, source, name, pattern, match='.',
+                                       message=None):
+        attr = self.get_element_attribute(source, name, match)
+        if attr is None:
+            raise AssertionError("Attribute '%s' does not exist." % name)
+        self._should_match(attr, pattern, message)
