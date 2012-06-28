@@ -10,6 +10,7 @@ Libraries:
   Screenshot (sc)
   String (st)
   Telnet (te)
+  XML (xm)
 """
 
 import sys
@@ -23,7 +24,7 @@ from robot.libdoc import libdoc
 
 LIBRARIES = {}
 for line in __doc__.splitlines():
-    res = re.search('  (\w+) \((\w\w)\)', line)
+    res = re.search('\s+(\w+) \((\w+)\)', line)
     if res:
         name, alias = res.groups()
         LIBRARIES[name.lower()] = LIBRARIES[alias] = name
