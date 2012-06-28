@@ -19,14 +19,17 @@ class TestSplitArgsFromNameOrPath(unittest.TestCase):
         self.method = SettingWrapper()._split_args_from_name_or_path
 
     def test_with_no_args(self):
+        assert not os.path.exists('name'), 'does not work if you have name folder!'
         assert_equals(self.method('name'), ('name', []))
 
     def test_with_args(self):
+        assert not os.path.exists('name'), 'does not work if you have name folder!'
         assert_equals(self.method('name:arg'), ('name', ['arg']))
         assert_equals(self.method('listener:v1:v2:v3'), ('listener', ['v1', 'v2', 'v3']))
         assert_equals(self.method('aa:bb:cc'), ('aa', ['bb', 'cc']))
 
     def test_empty_args(self):
+        assert not os.path.exists('foo'), 'does not work if you have foo folder!'
         assert_equals(self.method('foo:'), ('foo', ['']))
         assert_equals(self.method('bar:arg1::arg3'), ('bar', ['arg1', '', 'arg3']))
         assert_equals(self.method('L:'), ('L', ['']))
