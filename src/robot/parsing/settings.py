@@ -32,11 +32,11 @@ class Setting(object):
 
     @property
     def source(self):
-        return self.parent.source if self.parent else None
+        return self.parent.source if self.parent is not None else None
 
     @property
     def directory(self):
-        return self.parent.directory if self.parent else None
+        return self.parent.directory if self.parent is not None else None
 
     def populate(self, value, comment=None):
         """Mainly used at parsing time, later attributes can be set directly."""
