@@ -32,7 +32,7 @@ from .context import EXECUTION_CONTEXTS
 
 STDLIB_NAMES = set(('BuiltIn', 'Collections', 'Dialogs', 'Easter',
                     'OperatingSystem', 'Remote', 'Reserved',
-                    'Screenshot', 'String', 'Telnet'))
+                    'Screenshot', 'String', 'Telnet', 'XML'))
 IMPORTER = Importer()
 
 
