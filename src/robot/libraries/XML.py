@@ -41,22 +41,22 @@ class XML(object):
             return self.parse_xml(source)
         return source
 
-    def get_element(self, source, match):
-        if match == '.':  # TODO: Is this good workaround for ET 1.2 not supporting '.'?
+    def get_element(self, source, xpath):
+        if xpath == '.':  # TODO: Is this good workaround for ET 1.2 not supporting '.'?
             return self._get_parent(source)
-        elements = self.get_elements(source, match)
+        elements = self.get_elements(source, xpath)
         if not elements:
-            raise RuntimeError("No element matching '%s' found." % match)
+            raise RuntimeError("No element matching '%s' found." % xpath)
         if len(elements) > 1:
             raise RuntimeError("Multiple elements (%d) matching '%s' found."
-                               % (len(elements), match))
+                               % (len(elements), xpath))
         return elements[0]
 
-    def get_elements(self, source, match):
-        return self._get_parent(source).findall(match)
+    def get_elements(self, source, xpath):
+        return self._get_parent(source).findall(xpath)
 
-    def get_element_text(self, source, match='.', normalize_whitespace=False):
-        element = self.get_element(source, match)
+    def get_element_text(self, source, xpath='.', normalize_whitespace=False):
+        element = self.get_element(source, xpath)
         text = ''.join(self._yield_texts(element))
         if normalize_whitespace:
             text = self._normalize_whitespace(text).strip()
@@ -71,34 +71,34 @@ class XML(object):
         if element.tail and not top:
             yield element.tail
 
-    def get_elements_texts(self, source, match, normalize_whitespace=False):
+    def get_elements_texts(self, source, xpath, normalize_whitespace=False):
         return [self.get_element_text(elem, normalize_whitespace=normalize_whitespace)
-                for elem in self.get_elements(source, match)]
+                for elem in self.get_elements(source, xpath)]
 
-    def element_text_should_be(self, source, expected, match='.',
+    def element_text_should_be(self, source, expected, xpath='.',
                                normalize_whitespace=False, message=None):
-        text = self.get_element_text(source, match, normalize_whitespace)
+        text = self.get_element_text(source, xpath, normalize_whitespace)
         self._should_be_equal(text, expected, message)
 
-    def element_text_should_match(self, source, pattern, match='.',
+    def element_text_should_match(self, source, pattern, xpath='.',
                                   normalize_whitespace=False, message=None):
-        text = self.get_element_text(source, match, normalize_whitespace)
+        text = self.get_element_text(source, xpath, normalize_whitespace)
         self._should_match(text, pattern, message)
 
-    def get_element_attribute(self, source, name, match='.', default=None):
-        return self.get_element(source, match).get(name, default)
+    def get_element_attribute(self, source, name, xpath='.', default=None):
+        return self.get_element(source, xpath).get(name, default)
 
-    def get_element_attributes(self, source, match='.'):
-        return self.get_element(source, match).attrib.copy()
+    def get_element_attributes(self, source, xpath='.'):
+        return self.get_element(source, xpath).attrib.copy()
 
-    def element_attribute_should_be(self, source, name, expected, match='.',
+    def element_attribute_should_be(self, source, name, expected, xpath='.',
                                     message=None):
-        attr = self.get_element_attribute(source, name, match)
+        attr = self.get_element_attribute(source, name, xpath)
         self._should_be_equal(attr, expected, message)
 
-    def element_attribute_should_match(self, source, name, pattern, match='.',
+    def element_attribute_should_match(self, source, name, pattern, xpath='.',
                                        message=None):
-        attr = self.get_element_attribute(source, name, match)
+        attr = self.get_element_attribute(source, name, xpath)
         if attr is None:
             raise AssertionError("Attribute '%s' does not exist." % name)
         self._should_match(attr, pattern, message)
