@@ -107,27 +107,12 @@ class XML(object):
 
     def elements_should_be_equal(self, source, expected,
                                  normalize_whitespace=False):
-        self._compare(self.get_element(source), self.get_element(expected),
-                      normalize_whitespace, self._should_be_equal)
-
-    def _compare(self, actual, expected, normalize_whitespace, comparator):
-        self._should_be_equal(actual.tag, expected.tag,
-                              'Different tag name')
-        comparator(actual.text or '', expected.text or '', 'Different text')
-        self._should_be_equal(sorted(actual.attrib.keys()),
-                sorted(expected.attrib.keys()), 'Different attribute names')
-        for key in actual.attrib:
-            act, exp = actual.attrib[key], expected.attrib[key]
-            comparator(act, exp, 'Different value for attribute %s' % key)
-        comparator(actual.tail or '', expected.tail or '', 'Different tail text')
-        self._should_be_equal(len(actual), len(expected),
-                              'Different number of child elements')
-        for a, e in zip(actual, expected):
-            self._compare(a, e, normalize_whitespace, comparator)
+        ElementComparator(self._should_be_equal).compare(self.get_element(source),
+            self.get_element(expected), normalize_whitespace)
 
     def elements_should_match(self, source, expected, normalize_whitespace=False):
-        self._compare(self.get_element(source), self.get_element(expected),
-                      normalize_whitespace, self._should_match)
+        ElementComparator(self._should_match).compare(self.get_element(source),
+                self.get_element(expected), normalize_whitespace)
 
     def log_element(self, source, level='INFO'):
         logger.write(self.element_to_string(source), level)
@@ -138,3 +123,42 @@ class XML(object):
         tree.write(output, encoding='UTF-8', xml_declaration=xml_declaration)
         output.seek(0)
         return output.read().decode('UTF-8')
+
+
+class ElementComparator(object):
+    _should_be_equal = BuiltIn().should_be_equal
+
+    def __init__(self, comparator):
+        self._comparator = comparator
+
+    def compare(self, actual, expected, normalize_whitespace):
+        self._compare_tag_name(actual, expected)
+        self._compare_texts(actual, expected)
+        self._compare_attributes(actual, expected)
+        self._compare_tails(actual, expected)
+        self._compare_children(actual, expected, normalize_whitespace)
+
+    def _compare_tag_name(self, actual, expected):
+        self._should_be_equal(actual.tag, expected.tag, 'Different tag name')
+
+    def _compare_texts(self, actual, expected):
+        self._comparator(actual.text or '', expected.text or '',
+                         'Different text')
+
+    def _compare_attributes(self, actual, expected):
+        act_names = sorted(actual.attrib.keys())
+        exp_names = sorted(expected.attrib.keys())
+        self._should_be_equal(act_names, exp_names, 'Different attribute names')
+        for key in actual.attrib:
+            act, exp = actual.attrib[key], expected.attrib[key]
+            self._comparator(act, exp, 'Different value for attribute %s' % key)
+
+    def _compare_tails(self, actual, expected):
+        self._comparator(actual.tail or '', expected.tail or '',
+                         'Different tail text')
+
+    def _compare_children(self, actual, expected, normalize_whitespace):
+        self._should_be_equal(len(actual), len(expected),
+                              'Different number of child elements')
+        for a, e in zip(actual, expected):
+            self.compare(a, e, normalize_whitespace)
