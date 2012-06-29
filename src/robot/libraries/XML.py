@@ -110,21 +110,24 @@ class XML(object):
         self._compare(self.get_element(source), self.get_element(expected),
                       normalize_whitespace, self._should_be_equal)
 
-    def _compare(self, actual, expected, normalize_whitespace,
-                 comparator):
+    def _compare(self, actual, expected, normalize_whitespace, comparator):
         self._should_be_equal(actual.tag, expected.tag,
                               'Different tag name')
         comparator(actual.text or '', expected.text or '', 'Different text')
-        comparator(actual.attrib, expected.attrib, 'Different attributes')
+        self._should_be_equal(sorted(actual.attrib.keys()),
+                sorted(expected.attrib.keys()), 'Different attribute names')
+        for key in actual.attrib:
+            act, exp = actual.attrib[key], expected.attrib[key]
+            comparator(act, exp, 'Different value for attribute %s' % key)
         comparator(actual.tail or '', expected.tail or '', 'Different tail text')
         self._should_be_equal(len(actual), len(expected),
                               'Different number of child elements')
         for a, e in zip(actual, expected):
             self._compare(a, e, normalize_whitespace, comparator)
 
-    def elements_should_match(self, source, expected,
-                             normalize_whitespace=False, message=None):
-        raise NotImplementedError
+    def elements_should_match(self, source, expected, normalize_whitespace=False):
+        self._compare(self.get_element(source), self.get_element(expected),
+                      normalize_whitespace, self._should_match)
 
     def log_element(self, source, level='INFO'):
         logger.write(self.element_to_string(source), level)

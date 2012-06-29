@@ -1,0 +1,42 @@
+*** Settings ***
+Resource     resource.txt
+Test Template     Elements do not match
+
+*** Test cases ***
+Elements should match
+    [Template]    Match Elements
+    <tag>content</tag>    <tag>c*</tag>
+    <tag a="1" b="421"/>    <tag a="?" b="4*"/>
+    <root>\n<tag>some\ntext</tag>tail text</root>    <root>\n<tag>some*</tag>tail??ex?</root>
+
+Tag names are different
+    <tag/>   <täg/>    Different tag name: tag != täg
+
+Different attribute values
+    <tag a="12"/>   <tag a="?"/>    Different value for attribute a: '12' does not match '?'
+    <tag a="1" c="3"/>   <tag a="?" b="?"/>
+    ...   Different attribute names: ['a', 'c'] != ['a', 'b']
+
+Texts are different
+    <tag>some text</tag>   <tag>no match*</tag>  Different text: 'some text' does not match 'no match*'
+    <tag></tag>   <tag>?*</tag>    Different text: '' does not match '?*'
+
+Different tails
+    <root><tag/>tail</root>   <root><tag/>wrong*</root>    Different tail text: 'tail' does not match 'wrong*'
+    <root><tag/></root>   <root><tag/>?</root>    Different tail text: '' does not match '?'
+
+Differences in child
+    <root><tag>content</tag></root>    <root><tag>invalid*</tag></root>
+    ...    Different text: 'content' does not match 'invalid*'
+
+*** Keywords ***
+Match Elements
+    [Arguments]    ${source}    ${match}
+    Elements Should Match    ${source}    ${match}
+    ${source}=    Parse XML    ${source}
+    Elements Should Match    ${source}    ${match}
+
+Elements do not match
+    [Arguments]   ${source}    ${expected}    ${error}
+    Run Keyword and Expect Error    ${error}
+    ...    Elements Should Match   ${source}    ${expected}
