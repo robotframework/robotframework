@@ -11,7 +11,7 @@ Log element
 Element to string
     ${text}=    Element To String    <simple>content</simple>
     Should Be Equal    ${text}    <simple>content</simple>
-    ${text}=    Element To String    ${TEST}    with_preamble=${True}
+    ${text}=    Element To String    ${TEST}    xml_declaration=${True}
     ${expected}=    Get File    ${TEST}
     # TODO: Fails because attributes are not ordered
     Should Be Equal    ${text.strip()}    ${expected.strip()}
