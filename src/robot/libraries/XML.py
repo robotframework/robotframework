@@ -17,8 +17,9 @@ from __future__ import with_statement
 import re
 from functools import partial
 
-from robot.utils import ET, ETSource
 from robot.libraries.BuiltIn import BuiltIn
+from robot.api import logger
+from robot.utils import ET, ETSource
 
 
 class XML(object):
@@ -124,9 +125,10 @@ class XML(object):
                              normalize_whitespace=False, message=None):
         raise NotImplementedError
 
-    def log_element(self, source):
-        raise NotImplementedError
+    def log_element(self, source, level='INFO'):
+        logger.write(self.element_to_string(source), level)
 
-    def element_to_string(self, source):
-        raise NotImplementedError
-
+    def element_to_string(self, source, with_preamble=False):
+        method = 'xml' if with_preamble else 'html'
+        return ET.tostring(self.get_element(source),
+                           encoding='UTF-8', method=method).decode('UTF-8')
