@@ -140,7 +140,7 @@ class TestRebot(Base):
         assert_equals(rebot(self.nonex), 252)
         assert_equals(rebot(self.data, outputdir=TEMP), 1)
         self._assert_outputs(stdout=[(LOG, 1)],
-                             stderr=[('[ ERROR ]', 1), (self.nonex, 2), ('--help', 1)])
+                             stderr=[('[ ERROR ]', 1), (self.nonex, 1), ('--help', 1)])
 
     def test_custom_stdout(self):
         stdout = StringIO()

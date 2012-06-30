@@ -16,8 +16,6 @@ import os
 import sys
 from StringIO import StringIO
 
-from robot.errors import DataError
-
 
 _IRONPYTHON = sys.platform == 'cli'
 _ERROR = 'No valid ElementTree XML parser module found'
@@ -55,16 +53,12 @@ class ETSource(object):
         self._opened = None
 
     def __enter__(self):
-        if self._source_file_does_not_exist():
-            raise DataError("Source file '%s' does not exist." % self._source)
         self._opened = self._open_source_if_necessary()
         return self._opened or self._source
 
     def __exit__(self, exc_type, exc_value, exc_trace):
         if self._opened:
             self._opened.close()
-        if exc_type is None or exc_type is DataError:
-            return False
 
     def __str__(self):
         if self._source_is_file_name():
@@ -72,9 +66,6 @@ class ETSource(object):
         if hasattr(self._source, 'name'):
             return self._source.name
         return '<in-memory file>'
-
-    def _source_file_does_not_exist(self):
-        return self._source_is_file_name() and not os.path.isfile(self._source)
 
     def _source_is_file_name(self):
         return isinstance(self._source, basestring) \

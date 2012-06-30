@@ -53,7 +53,7 @@ class TestETSource(unittest.TestCase):
         def use(src):
             with src:
                 pass
-        assert_raises(DataError, use, ETSource('nonex.xml'))
+        assert_raises(IOError, use, ETSource('nonex.xml'))
 
     def test_non_ascii_string_repr(self):
         self._verify_string_representation(ETSource(u'\xe4'), u'\xe4')
