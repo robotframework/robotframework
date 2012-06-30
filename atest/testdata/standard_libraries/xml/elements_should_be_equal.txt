@@ -14,7 +14,7 @@ Tag names are different
     <tag/>   <täg/>    Different tag name: tag != täg
 
 Different attribute values
-    <tag a="1"/>   <tag a="2"/>    Different value for attribute a: 1 != 2
+    <tag a="1"/>   <tag a="2"/>    Different value for attribute 'a': 1 != 2
     <tag a="1" c="3"/>   <tag b="1"/>
     ...   Different attribute names: ['a', 'c'] != ['b']
 

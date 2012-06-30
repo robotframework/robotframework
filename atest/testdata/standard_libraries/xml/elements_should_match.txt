@@ -13,7 +13,7 @@ Tag names are different
     <tag/>   <täg/>    Different tag name: tag != täg
 
 Different attribute values
-    <tag a="12"/>   <tag a="?"/>    Different value for attribute a: '12' does not match '?'
+    <tag a="12"/>   <tag a="?"/>    Different value for attribute 'a': '12' does not match '?'
     <tag a="1" c="3"/>   <tag a="?" b="?"/>
     ...   Different attribute names: ['a', 'c'] != ['a', 'b']
 

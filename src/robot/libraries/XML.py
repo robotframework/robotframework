@@ -15,36 +15,31 @@
 from __future__ import with_statement
 
 import re
-from functools import partial
 
-from robot.libraries.BuiltIn import BuiltIn
 from robot.api import logger
+from robot.libraries.BuiltIn import BuiltIn
 from robot.utils import ET, ETSource
+
+
+should_be_equal = BuiltIn().should_be_equal
+should_match = BuiltIn().should_match
 
 
 class XML(object):
     """
     Supported xpath is documented here: http://effbot.org/zone/element-xpath.htm
-    Notice that support for predicates (e.g. tag[@id="1"]) is supported
-    only in 1.3 i.e in Python 2.7!
+    Notice that predicates (e.g. tag[@id="1"]) are supported only in ET 1.3
+    i.e in Python 2.7!
     """
-
-    _should_be_equal = BuiltIn().should_be_equal
-    _should_match = BuiltIn().should_match
-    _normalize_whitespace = partial(re.compile('\s+').sub, ' ')
+    _whitespace = re.compile('\s+')
     _xml_declaration = re.compile('^<\?xml .*\?>\n')
 
     def parse_xml(self, source):
         with ETSource(source) as source:
             return ET.parse(source).getroot()
 
-    def _get_parent(self, source):
-        if isinstance(source, basestring):
-            return self.parse_xml(source)
-        return source
-
     def get_element(self, source, xpath='.'):
-        if xpath == '.':  # TODO: Is this good workaround for ET 1.2 not supporting '.'?
+        if xpath == '.':  # ET included in Python < 2.7 does not support '.'.
             return self._get_parent(source)
         elements = self.get_elements(source, xpath)
         if not elements:
@@ -53,6 +48,11 @@ class XML(object):
             raise RuntimeError("Multiple elements (%d) matching '%s' found."
                                % (len(elements), xpath))
         return elements[0]
+
+    def _get_parent(self, source):
+        if isinstance(source, basestring):
+            return self.parse_xml(source)
+        return source
 
     def get_elements(self, source, xpath):
         return self._get_parent(source).findall(xpath)
@@ -73,6 +73,9 @@ class XML(object):
         if element.tail and not top:
             yield element.tail
 
+    def _normalize_whitespace(self, text):
+        return self._whitespace.sub(' ', text.strip())
+
     def get_elements_texts(self, source, xpath, normalize_whitespace=False):
         return [self.get_element_text(elem, normalize_whitespace=normalize_whitespace)
                 for elem in self.get_elements(source, xpath)]
@@ -80,12 +83,12 @@ class XML(object):
     def element_text_should_be(self, source, expected, xpath='.',
                                normalize_whitespace=False, message=None):
         text = self.get_element_text(source, xpath, normalize_whitespace)
-        self._should_be_equal(text, expected, message, values=False)
+        should_be_equal(text, expected, message, values=False)
 
     def element_text_should_match(self, source, pattern, xpath='.',
                                   normalize_whitespace=False, message=None):
         text = self.get_element_text(source, xpath, normalize_whitespace)
-        self._should_match(text, pattern, message, values=False)
+        should_match(text, pattern, message, values=False)
 
     def get_element_attribute(self, source, name, xpath='.', default=None):
         return self.get_element(source, xpath).get(name, default)
@@ -96,23 +99,23 @@ class XML(object):
     def element_attribute_should_be(self, source, name, expected, xpath='.',
                                     message=None):
         attr = self.get_element_attribute(source, name, xpath)
-        self._should_be_equal(attr, expected, message, values=False)
+        should_be_equal(attr, expected, message, values=False)
 
     def element_attribute_should_match(self, source, name, pattern, xpath='.',
                                        message=None):
         attr = self.get_element_attribute(source, name, xpath)
         if attr is None:
             raise AssertionError("Attribute '%s' does not exist." % name)
-        self._should_match(attr, pattern, message, values=False)
+        should_match(attr, pattern, message, values=False)
 
     def elements_should_be_equal(self, source, expected,
                                  normalize_whitespace=False):
-        ElementComparator(self._should_be_equal).compare(self.get_element(source),
-            self.get_element(expected), normalize_whitespace)
+        comparator = ElementComparator(should_be_equal, normalize_whitespace)
+        comparator.compare(self.get_element(source), self.get_element(expected))
 
     def elements_should_match(self, source, expected, normalize_whitespace=False):
-        ElementComparator(self._should_match).compare(self.get_element(source),
-                self.get_element(expected), normalize_whitespace)
+        comparator = ElementComparator(should_match, normalize_whitespace)
+        comparator.compare(self.get_element(source), self.get_element(expected))
 
     def element_to_string(self, source):
         string = ET.tostring(self.get_element(source), encoding='UTF-8')
@@ -125,39 +128,38 @@ class XML(object):
 
 
 class ElementComparator(object):
-    _should_be_equal = BuiltIn().should_be_equal
 
-    def __init__(self, comparator):
+    def __init__(self, comparator, normalize_whitespace):
         self._comparator = comparator
+        self._normalize_whitespace = normalize_whitespace
 
-    def compare(self, actual, expected, normalize_whitespace):
-        self._compare_tag_name(actual, expected)
-        self._compare_texts(actual, expected)
+    def compare(self, actual, expected):
+        self._compare_tags(actual, expected)
         self._compare_attributes(actual, expected)
+        self._compare_texts(actual, expected)
         self._compare_tails(actual, expected)
-        self._compare_children(actual, expected, normalize_whitespace)
+        self._compare_children(actual, expected)
 
-    def _compare_tag_name(self, actual, expected):
-        self._should_be_equal(actual.tag, expected.tag, 'Different tag name')
+    def _compare_tags(self, actual, expected):
+        should_be_equal(actual.tag, expected.tag, 'Different tag name')
 
     def _compare_texts(self, actual, expected):
         self._comparator(actual.text or '', expected.text or '',
                          'Different text')
 
     def _compare_attributes(self, actual, expected):
-        act_names = sorted(actual.attrib.keys())
-        exp_names = sorted(expected.attrib.keys())
-        self._should_be_equal(act_names, exp_names, 'Different attribute names')
+        should_be_equal(sorted(actual.attrib), sorted(expected.attrib),
+                        'Different attribute names')
         for key in actual.attrib:
-            act, exp = actual.attrib[key], expected.attrib[key]
-            self._comparator(act, exp, 'Different value for attribute %s' % key)
+            self._comparator(actual.attrib[key], expected.attrib[key],
+                             "Different value for attribute '%s'" % key)
 
     def _compare_tails(self, actual, expected):
         self._comparator(actual.tail or '', expected.tail or '',
                          'Different tail text')
 
-    def _compare_children(self, actual, expected, normalize_whitespace):
-        self._should_be_equal(len(actual), len(expected),
-                              'Different number of child elements')
-        for a, e in zip(actual, expected):
-            self.compare(a, e, normalize_whitespace)
+    def _compare_children(self, actual, expected):
+        should_be_equal(len(actual), len(expected),
+                        'Different number of child elements')
+        for act, exp in zip(actual, expected):
+            self.compare(act, exp)
