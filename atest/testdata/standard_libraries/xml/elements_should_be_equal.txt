@@ -10,28 +10,40 @@ Elements should be equal
     <tag a="1" b="2"/>
     <root>\n<tag>some\ntext</tag>tail text</root>
 
-Tag names are different
+Different tag names
     <tag/>   <täg/>    Different tag name: tag != täg
 
-Different attribute values
+Different attributes
     <tag a="1"/>   <tag a="2"/>    Different value for attribute 'a': 1 != 2
     <tag a="1" c="3"/>   <tag b="1"/>
     ...   Different attribute names: ['a', 'c'] != ['b']
 
-Texts are different
+Different texts
     <tag>some text</tag>   <tag>different</tag>  Different text: some text != different
     <tag>some text</tag>   <tag/>    Different text: some text !=${SPACE}
 
-Different tails
-    <root><tag/>tail</root>   <root><tag/>wrong</root>    Different tail text: tail != wrong
-    <root><tag/>tail</root>   <root><tag/></root>    Different tail text: tail !=${SPACE}
+Different tail texts
+    <root><tag/>tail</root>   <root><tag/>wrong</root>
+    ...    Different tail text at 'root/tag': tail != wrong
+    <root><tag/>tail</root>   <root><tag/></root>
+    ...    Different tail text at 'root/tag': tail !=${SPACE}
 
 Different number of children
     <root><tag/><tag/></root>    <root><tag/></root>   Different number of child elements: 2 != 1
 
-Differences in child
-    <root><tag><child/></tag></root>    <root><different></different>tail</root>
-    ...    Different tag name: tag != different
+Differences in children
+    <root><tag/></root>    <root><different/></root>
+    ...    Different tag name at 'root/tag': tag != different
+    <a a="a"><b><c><d/></c></b></a>    <a a="a"><b><c><wrong/></c></b></a>
+    ...    Different tag name at 'a/b/c/d': d != wrong
+    <root><tag/></root>    <root><tag a="1"/></root>
+    ...    Different attribute names at 'root/tag': [] != ['a']
+    <a><b><c a="a" b="b"/></b></a>    <a><b><c a="ä" b="b"></c></b></a>
+    ...    Different value for attribute 'a' at 'a/b/c': a != ä
+    <root><tag/></root>    <root><tag>text</tag></root>
+    ...    Different text at 'root/tag': \ != text
+    <root><tag><c1/><c2/></tag></root>    <root><tag/></root>
+    ...    Different number of child elements at 'root/tag': 2 != 0
 
 Normalize whitespace
     [Template]    NONE
