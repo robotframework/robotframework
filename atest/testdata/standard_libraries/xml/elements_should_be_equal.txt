@@ -1,8 +1,8 @@
 *** Settings ***
-Resource     resource.txt
-Test Template     Elements are different
+Resource          resource.txt
+Test Template     Elements should not be equal
 
-*** Test cases ***
+*** Test Cases ***
 Elements should be equal
     [Template]    Element should be equal to itself
     <tag/>
@@ -33,6 +33,13 @@ Differences in child
     <root><tag><child/></tag></root>    <root><different></different>tail</root>
     ...    Different tag name: tag != different
 
+Normalize whitespace
+    [Template]    NONE
+    Elements should be equal    <p>\n\tThis \ \ \ text\n<i>spaces \ has</i> also \ in\ttail!\n</p>
+    ...   <p>This text <i>spaces has</i> also in tail!</p>    normalize
+    Elements should not be equal    <tag>\ntext \ here\n</tag>    <tag>\twrong \ here\t</tag>
+    ...   Different text: text here != wrong here    normalize
+
 *** Keywords ***
 Element should be equal to itself
     [Arguments]    ${source}
@@ -40,7 +47,7 @@ Element should be equal to itself
     Elements Should Be Equal    ${source}    ${xml}
     Elements Should Be Equal    ${xml}    ${source}
 
-Elements are different
-    [Arguments]   ${source}    ${expected}    ${error}
+Elements should not be equal
+    [Arguments]   ${source}    ${expected}    ${error}    ${normalize}=${FALSE}
     Run Keyword and Expect Error    ${error}
-    ...    Elements Should Be Equal   ${source}    ${expected}
+    ...    Elements Should Be Equal   ${source}    ${expected}    ${normalize}

@@ -61,7 +61,7 @@ class XML(object):
         element = self.get_element(source, xpath)
         text = ''.join(self._yield_texts(element))
         if normalize_whitespace:
-            text = self._normalize_whitespace(text).strip()
+            text = self._normalize_whitespace(text)
         return text
 
     def _yield_texts(self, element, top=True):
@@ -108,13 +108,15 @@ class XML(object):
             raise AssertionError("Attribute '%s' does not exist." % name)
         should_match(attr, pattern, message, values=False)
 
-    def elements_should_be_equal(self, source, expected,
-                                 normalize_whitespace=False):
-        comparator = ElementComparator(should_be_equal, normalize_whitespace)
-        comparator.compare(self.get_element(source), self.get_element(expected))
+    def elements_should_be_equal(self, source, expected, normalize_whitespace=False):
+        self._compare_elements(source, expected, should_be_equal, normalize_whitespace)
 
     def elements_should_match(self, source, expected, normalize_whitespace=False):
-        comparator = ElementComparator(should_match, normalize_whitespace)
+        self._compare_elements(source, expected, should_match, normalize_whitespace)
+
+    def _compare_elements(self, source, expected, comparator, normalize_whitespace):
+        normalizer = self._normalize_whitespace if normalize_whitespace else None
+        comparator = ElementComparator(comparator, normalizer)
         comparator.compare(self.get_element(source), self.get_element(expected))
 
     def element_to_string(self, source):
@@ -129,9 +131,9 @@ class XML(object):
 
 class ElementComparator(object):
 
-    def __init__(self, comparator, normalize_whitespace):
+    def __init__(self, comparator, normalizer=None):
         self._comparator = comparator
-        self._normalize_whitespace = normalize_whitespace
+        self._normalizer = normalizer
 
     def compare(self, actual, expected):
         self._compare_tags(actual, expected)
@@ -144,8 +146,15 @@ class ElementComparator(object):
         should_be_equal(actual.tag, expected.tag, 'Different tag name')
 
     def _compare_texts(self, actual, expected):
-        self._comparator(actual.text or '', expected.text or '',
+        self._comparator(self._text(actual.text), self._text(expected.text),
                          'Different text')
+
+    def _text(self, text):
+        if not text:
+            return ''
+        if not self._normalizer:
+            return text
+        return self._normalizer(text)
 
     def _compare_attributes(self, actual, expected):
         should_be_equal(sorted(actual.attrib), sorted(expected.attrib),
@@ -155,7 +164,7 @@ class ElementComparator(object):
                              "Different value for attribute '%s'" % key)
 
     def _compare_tails(self, actual, expected):
-        self._comparator(actual.tail or '', expected.tail or '',
+        self._comparator(self._text(actual.tail), self._text(expected.tail),
                          'Different tail text')
 
     def _compare_children(self, actual, expected):

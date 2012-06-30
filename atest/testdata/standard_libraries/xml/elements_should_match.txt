@@ -1,6 +1,6 @@
 *** Settings ***
-Resource     resource.txt
-Test Template     Elements do not match
+Resource          resource.txt
+Test Template     Elements should not match
 
 *** Test cases ***
 Elements should match
@@ -29,6 +29,13 @@ Differences in child
     <root><tag>content</tag></root>    <root><tag>invalid*</tag></root>
     ...    Different text: 'content' does not match 'invalid*'
 
+Normalize whitespace
+    [Template]    NONE
+    Elements should match    <p>\n\tThis \ \ \ text\n<i>spaces \ has</i> also \ in\ttail!\n</p>
+    ...   <p>This *<i>spaces ???</i>*!</p>    normalize_whitespace=yes
+    Elements should not match    <tag>\ntext\n</tag>    <tag>\t*wrong*\t</tag>
+    ...   Different text: 'text' does not match '*wrong*'    normalize
+
 *** Keywords ***
 Match Elements
     [Arguments]    ${source}    ${match}
@@ -36,7 +43,7 @@ Match Elements
     ${source}=    Parse XML    ${source}
     Elements Should Match    ${source}    ${match}
 
-Elements do not match
-    [Arguments]   ${source}    ${expected}    ${error}
+Elements should not match
+    [Arguments]   ${source}    ${expected}    ${error}    ${normalize}=${FALSE}
     Run Keyword and Expect Error    ${error}
-    ...    Elements Should Match   ${source}    ${expected}
+    ...    Elements Should Match   ${source}    ${expected}    ${normalize}
