@@ -6,13 +6,15 @@ Resource     resource.txt
 ${XML}    <root>\n\t<tag attr="1">content</tag>\n</root>
 
 *** Test Cases ***
-Log element
-    Log Element    <simple>content</simple>
-    Log Element    <root><tag a="1" c="3">päivää</tag></root>    DEBUG
-    Log Element    ${TEST}
-
 Element to string
     ${string}=    Element To String    ${XML}
     Should Be Equal    ${string}    ${XML}
     ${string}=    Element To String    ${TEST}
     Elements Should Be Equal    ${string}    ${TEST}
+
+Log element
+    ${string}=    Log Element    ${XML}
+    Should Be Equal    ${string}    ${XML}
+    Log Element    <root><tag a="1" c="3">päivää</tag></root>    DEBUG
+    Log Element    ${TEST}
+

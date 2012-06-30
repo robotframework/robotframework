@@ -114,12 +114,14 @@ class XML(object):
         ElementComparator(self._should_match).compare(self.get_element(source),
                 self.get_element(expected), normalize_whitespace)
 
-    def log_element(self, source, level='INFO'):
-        logger.write(self.element_to_string(source), level)
-
     def element_to_string(self, source):
         string = ET.tostring(self.get_element(source), encoding='UTF-8')
         return self._xml_declaration.sub('', string.decode('UTF-8'))
+
+    def log_element(self, source, level='INFO'):
+        string = self.element_to_string(source)
+        logger.write(string, level)
+        return string
 
 
 class ElementComparator(object):
