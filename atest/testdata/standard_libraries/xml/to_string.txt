@@ -2,16 +2,17 @@
 Library      OperatingSystem
 Resource     resource.txt
 
-*** Test cases ***
+*** Variables ***
+${XML}    <root>\n\t<tag attr="1">content</tag>\n</root>
+
+*** Test Cases ***
 Log element
     Log Element    <simple>content</simple>
     Log Element    <root><tag a="1" c="3">päivää</tag></root>    DEBUG
     Log Element    ${TEST}
 
 Element to string
-    ${text}=    Element To String    <simple>content</simple>
-    Should Be Equal    ${text}    <simple>content</simple>
-    ${text}=    Element To String    ${TEST}    xml_declaration=${True}
-    ${expected}=    Get File    ${TEST}
-    # TODO: Fails because attributes are not ordered
-    Should Be Equal    ${text.strip()}    ${expected.strip()}
+    ${string}=    Element To String    ${XML}
+    Should Be Equal    ${string}    ${XML}
+    ${string}=    Element To String    ${TEST}
+    Elements Should Be Equal    ${string}    ${TEST}

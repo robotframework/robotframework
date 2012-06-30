@@ -16,7 +16,6 @@ from __future__ import with_statement
 
 import re
 from functools import partial
-from StringIO import StringIO
 
 from robot.libraries.BuiltIn import BuiltIn
 from robot.api import logger
@@ -33,6 +32,7 @@ class XML(object):
     _should_be_equal = BuiltIn().should_be_equal
     _should_match = BuiltIn().should_match
     _normalize_whitespace = partial(re.compile('\s+').sub, ' ')
+    _xml_declaration = re.compile('^<\?xml .*\?>\n')
 
     def parse_xml(self, source):
         with ETSource(source) as source:
@@ -117,12 +117,9 @@ class XML(object):
     def log_element(self, source, level='INFO'):
         logger.write(self.element_to_string(source), level)
 
-    def element_to_string(self, source, xml_declaration=False):
-        tree = ET.ElementTree(self.get_element(source))
-        output = StringIO()
-        tree.write(output, encoding='UTF-8', xml_declaration=xml_declaration)
-        output.seek(0)
-        return output.read().decode('UTF-8')
+    def element_to_string(self, source):
+        string = ET.tostring(self.get_element(source), encoding='UTF-8')
+        return self._xml_declaration.sub('', string.decode('UTF-8'))
 
 
 class ElementComparator(object):
