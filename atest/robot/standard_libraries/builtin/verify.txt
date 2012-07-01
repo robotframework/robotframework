@@ -153,7 +153,10 @@ Get Length
     Check Log Message  ${tc.kws[5].kws[0].msgs[0]}  Length is 0
 
 Length Should Be
-    Check Test Case  ${TESTNAME}
+    ${tc} =  Check Test Case  ${TESTNAME}
+    Check Log Message  ${tc.kws[-1].msgs[0]}  Length is 2
+    Check Log Message  ${tc.kws[-1].msgs[1]}  Length of '*' should be 3 but is 2  FAIL  pattern=yep
+    Length Should Be  ${tc.kws[-1].msgs}  2
 
 Length Should Be With Non Default Message
     Check Test Case  ${TESTNAME}

@@ -272,7 +272,7 @@ Get Length
     Verify Get Length  ${10}  Getting length from an int fails
 
 Length Should Be
-    [Documentation]  FAIL Length of '['a', 'b']' should be 3 but it is 2
+    [Documentation]  FAIL Length of '['a', 'b']' should be 3 but is 2
     :FOR  ${input}     ${expected}  IN
     ...   ${TUPLE 0}   0
     ...   ${LIST 0}    0

@@ -750,11 +750,10 @@ class _Verify:
         default error message can be overridden with the `msg` argument.
         """
         length = self._convert_to_integer(length)
-        if self.get_length(item) != length:
-            if not msg:
-                msg = "Length of '%s' should be %d but it is %d" \
-                        % (item, length, self.get_length(item))
-            raise AssertionError(msg)
+        actual = self.get_length(item)
+        if actual != length:
+            raise AssertionError(msg or "Length of '%s' should be %d but is %d"
+                                        % (item, length, actual))
 
     def should_be_empty(self, item, msg=None):
         """Verifies that the given item is empty.
