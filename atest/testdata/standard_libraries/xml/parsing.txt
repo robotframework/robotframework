@@ -12,13 +12,13 @@ Parse string
     Should be equal     ${root.text}     päivää
 
 Parse invalid file
-    [Documentation]    FAIL
+    [Documentation]    FAIL REGEXP: (SyntaxError|ExpatError): .*
     Parse XML    ${CURDIR}/parsing.txt
 
 Parse invalid string
-    [Documentation]    FAIL
+    [Documentation]    FAIL REGEXP: (SyntaxError|ExpatError): .*
     Parse XML    <kekkonen>urho
 
 Parse non-existing file
-    [Documentation]    FAIL Source file 'non-existing.xml' does not exist.
+    [Documentation]    FAIL STARTS: IOError:
     Parse XML    non-existing.xml
