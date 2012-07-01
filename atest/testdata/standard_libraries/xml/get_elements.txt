@@ -46,3 +46,10 @@ Get elements
     Length Should Be    ${children}    3
     ${children}=    Get Elements    ${TEST}    non-existing
     Length Should Be    ${children}    0
+
+Non-ASCII
+    ${elem}=    Get Element    <root><täg/></root>    täg
+    Should Be Equal    ${elem.tag}    täg
+    ${elems}=    Get Elements    <root><täg/><other/></root>    täg
+    Length Should Be    ${elems}    1
+    Should Be Equal    ${elems[0].tag}    täg

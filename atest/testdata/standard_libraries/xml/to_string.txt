@@ -3,7 +3,7 @@ Library      OperatingSystem
 Resource     resource.txt
 
 *** Variables ***
-${XML}    <root>\n\t<tag attr="1">content</tag>\n</root>
+${XML}    <root>\n\t<täg attr="hyvä">sisältö</täg>\n</root>
 
 *** Test Cases ***
 Element to string

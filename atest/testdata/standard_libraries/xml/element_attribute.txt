@@ -61,3 +61,11 @@ Element attribute should match when no attribute exists
 Element attribute should match with custom error message
     [Documentation]    FAIL Special
     Element Attribute Should Match    <tag a="1"/>    a    ??    message=Special
+
+Non-ASCII
+    ${attr}=    Get Element Attribute    <täg ä='ö'/>    ä
+    Should Be Equal    ${attr}    ö
+    ${attrs}=    Get Element Attribute    <täg ä='ö'/>
+    Should Be True    ${attrs} == {u'\\xf6': u'\\xe4'}
+    Element Attribute Should Be    <täg ä='ö'/>    ä    ö
+    Element Attribute Should Match    <täg ä='öö'/>    ä    ö?

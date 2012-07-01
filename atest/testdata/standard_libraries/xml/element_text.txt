@@ -78,3 +78,9 @@ Element text should be failing with custom message
 Element text should match failing with custom message
     [Documentation]    FAIL my message
     Element Text Should Match    <tag>text</tag>    x*x    message=my message
+
+Non-ASCII
+    ${text}=    Get Element Text    <p><i>hyvää</i> yötä</p>
+    Should Be Equal    ${text}    hyvää yötä
+    Element Text Should Be    <p><i>hyvää</i> yötä</p>    hyvää yötä
+    Element Text Should Match    <p><i>hyvää</i> yötä</p>    ???ää yö*tä
