@@ -45,6 +45,18 @@ Differences in children
     <root><tag><c1/><c2/></tag></root>    <root><tag/></root>
     ...    Different number of child elements at 'root/tag': 2 != 0
 
+Differences in children with same name
+    <root><tag>x</tag><tag/></root>    <root><tag>y</tag><tag/></root>
+    ...    Different text at 'root/tag': x != y
+    <root><tag/><tag>x</tag></root>    <root><tag/><tag>y</tag></root>
+    ...    Different text at 'root/tag[2]': x != y
+    <a><b/><b><c/><c/><d/><c/></b></a>    <a><b/><b><c/><c/><d/><c><e/></c></b></a>
+    ...    Different number of child elements at 'a/b[2]/c[3]': 0 != 1
+
+Differences in children with non-ASCII path
+    <å><ä><ö/><ö>oikea</ö></ä></å>    <å><ä><ö/><ö>väärä</ö></ä></å>
+    ...    Different text at 'å/ä/ö[2]': oikea != väärä
+
 Normalize whitespace
     [Template]    NONE
     Elements should be equal    <p>\n\tThis \ \ \ text\n<i>spaces \ has</i> also \ in\ttail!\n</p>

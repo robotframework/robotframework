@@ -195,6 +195,24 @@ class ElementComparator(object):
         self._compare(len(actual), len(expected), 'Different number of child elements',
                       location, should_be_equal)
         if not location:
-            location = actual.tag
+            location = Location(actual.tag)
         for act, exp in zip(actual, expected):
-            self.compare(act, exp, '%s/%s' % (location, act.tag))
+            self.compare(act, exp, location.child(act.tag))
+
+
+class Location(object):
+
+    def __init__(self, path):
+        self._path = path
+        self._children = {}
+
+    def child(self, tag):
+        if tag not in self._children:
+            self._children[tag] = 1
+        else:
+            self._children[tag] += 1
+            tag += '[%d]' % self._children[tag]
+        return Location('%s/%s' % (self._path, tag))
+
+    def __str__(self):
+        return self._path

@@ -41,6 +41,17 @@ Differences in children
     <root><tag><c1/><c2/></tag></root>    <root><tag/></root>
     ...    Different number of child elements at 'root/tag': 2 != 0
 
+Differences in children with same name
+    <root><tag>x</tag><tag/></root>    <root><tag>??</tag><tag/></root>
+    ...    Different text at 'root/tag': 'x' does not match '??'
+    <root><tag/><tag>x</tag></root>    <root><tag/><tag>??</tag></root>
+    ...    Different text at 'root/tag[2]': 'x' does not match '??'
+    <a><b/><b><c/><c/><d/><c d='e'/></b></a>    <a><b/><b><c/><c/><d/><c d='e?'/></b></a>
+    ...    Different value for attribute 'd' at 'a/b[2]/c[3]': 'e' does not match 'e?'
+
+Differences in children with non-ASCII path
+    <å><ä><ö/><ö>oikea</ö></ä></å>    <å><ä><ö/><ö>*väärä*</ö></ä></å>
+    ...    Different text at 'å/ä/ö[2]': 'oikea' does not match '*väärä*'
 
 Normalize whitespace
     [Template]    NONE
