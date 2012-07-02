@@ -65,7 +65,7 @@ Element attribute should match with custom error message
 Non-ASCII
     ${attr}=    Get Element Attribute    <täg ä='ö'/>    ä
     Should Be Equal    ${attr}    ö
-    ${attrs}=    Get Element Attribute    <täg ä='ö'/>
-    Should Be True    ${attrs} == {u'\\xf6': u'\\xe4'}
+    ${attrs}=    Get Element Attributes    <täg ä='ö'/>
+    Should Be True    ${attrs} == {u'\\xe4': u'\\xf6'}
     Element Attribute Should Be    <täg ä='ö'/>    ä    ö
     Element Attribute Should Match    <täg ä='öö'/>    ä    ö?

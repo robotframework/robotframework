@@ -12,11 +12,11 @@ Parse string
     Should be equal     ${root.text}     päivää
 
 Parse invalid file
-    [Documentation]    FAIL REGEXP: (SyntaxError|ExpatError): .*
+    [Documentation]    FAIL REGEXP: .*Error: .*
     Parse XML    ${CURDIR}/parsing.txt
 
 Parse invalid string
-    [Documentation]    FAIL REGEXP: (SyntaxError|ExpatError): .*
+    [Documentation]    FAIL REGEXP: .*Error: .*
     Parse XML    <kekkonen>urho
 
 Parse non-existing file

@@ -33,14 +33,6 @@ Path
     \    Should Be Equal    ${elem.tag}    child
     Should Be Equal    ${elem.text}    text
 
-'..'
-    [Template]    NONE
-    ${child}=    Get Element    ${test}    .//grandchild
-    ${parent}=    Get Element    ${child}    ..
-    Should Be Equal    ${parent.attrib['id']}    2
-    ${another}=    Get Element    ${child}    ../../another
-    Should Be Equal    ${another.attrib['attr']}    value
-
 '[@attrib]'
     [Documentation]    FAIL No element matching 'child[@nonex]' found.
     child[@a2]    child    ${NONE}
@@ -54,8 +46,8 @@ Path
 
 '[tag]'
     [Documentation]    FAIL No element matching '.[nonex]' found.
-    .[grandchild]    child
-    .[nonex]    not-found
+    *[grandchild]    child
+    child[nonex]    not-found
 
 '[position]'
     [Documentation]    FAIL No element matching 'child[4]' found.
@@ -79,4 +71,4 @@ Get element by xpath
     [Arguments]    ${xpath}    ${tag}    ${text}=IGNORE    ${xml}=${TEST}
     ${element}=     Get Element    ${xml}    ${xpath}
     Should Be Equal    ${element.tag}    ${tag}
-    Run Keyword If    '${text}' != 'IGNORE'    Should Be Equal    ${element.text}    ${text}
+    Run Keyword If    '''${text}''' != 'IGNORE'    Should Be Equal    ${element.text}    ${text}
