@@ -58,19 +58,20 @@ class XML(object):
     def get_elements(self, source, xpath):
         return self._get_parent(source).findall(self._get_xpath(xpath))
 
-    if sys.version_info < (2, 7):
+    if sys.version_info >= (2, 7):
+        def _get_xpath(self, xpath):
+            return xpath
+    else:
         def _get_xpath(self, xpath):
             try:
                 return str(xpath)
             except UnicodeError:
-                if xpath.replace('/', '').isalnum():
-                    return xpath
-                raise RuntimeError('Non-ASCII XPATHs containing other than '
-                                   'tag names are not supported with Python '
-                                   'interpreters below 2.7.')
-    else:
-        def _get_xpath(self, xpath):
-            return xpath
+                if not xpath.replace('/', '').isalnum():
+                    logger.warn('XPATHs containing non-ASCII characters and '
+                                'other than tag names do not always work on '
+                                'Python/Jython earlier than 2.7. Verify results '
+                                'manually and consider upgrading to 2.7.')
+                return xpath
 
     def get_element_text(self, source, xpath='.', normalize_whitespace=False):
         element = self.get_element(source, xpath)
