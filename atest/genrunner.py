@@ -43,6 +43,8 @@ Resource         atest_resource.txt
 
 """ % locals())
     for test in TESTS:
-        output.write(test + '\n    Check Test Case    ${TESTNAME}\n\n')
+        output.write(test + '\n    Check Test Case    ${TESTNAME}\n')
+        if test is not TESTS[-1]:
+            output.write('\n')
 
 print OUTPATH
