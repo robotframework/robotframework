@@ -45,7 +45,7 @@ Path
     child[@id="xxx"]    not-found
 
 '[tag]'
-    [Documentation]    FAIL No element matching '.[nonex]' found.
+    [Documentation]    FAIL No element matching 'child[nonex]' found.
     *[grandchild]    child
     child[nonex]    not-found
 
@@ -63,7 +63,8 @@ Non-ASCII tag names
     täg/chïld    chïld    xml=<rööt><täg><chïld/></täg></rööt>
 
 More complex non-ASCII xpath
-    .//chïld    chïld    xml=<rööt><täg><chïld/></täg></rööt>
+    [Documentation]    FAIL Multiple elements (2) matching './/chïld' found.
+    .//chïld    chïld    xml=<rööt><chïld/><täg><chïld/></täg></rööt>
 
 
 *** Keywords ***
