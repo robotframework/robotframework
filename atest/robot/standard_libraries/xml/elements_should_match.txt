@@ -1,0 +1,33 @@
+*** Settings ***
+Suite Setup      Run Tests    ${EMPTY}    standard_libraries/xml/elements_should_match.txt
+Force Tags       regression    pybot    jybot
+Resource         atest_resource.txt
+
+*** Test Cases ***
+
+Elements should match
+    Check Test Case    ${TESTNAME}
+
+Different tag names
+    Check Test Case    ${TESTNAME}
+
+Different attributes
+    Check Test Case    ${TESTNAME}
+
+Different texts
+    Check Test Case    ${TESTNAME}
+
+Different tail texts
+    Check Test Case    ${TESTNAME}
+
+Differences in children
+    Check Test Case    ${TESTNAME}
+
+Differences in children with same name
+    Check Test Case    ${TESTNAME}
+
+Differences in children with non-ASCII path
+    Check Test Case    ${TESTNAME}
+
+Normalize whitespace
+    Check Test Case    ${TESTNAME}

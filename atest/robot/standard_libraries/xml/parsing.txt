@@ -1,0 +1,21 @@
+*** Settings ***
+Suite Setup      Run Tests    ${EMPTY}    standard_libraries/xml/parsing.txt
+Force Tags       regression    pybot    jybot
+Resource         atest_resource.txt
+
+*** Test Cases ***
+
+Parse file
+    Check Test Case    ${TESTNAME}
+
+Parse string
+    Check Test Case    ${TESTNAME}
+
+Parse invalid file
+    Check Test Case    ${TESTNAME}
+
+Parse invalid string
+    Check Test Case    ${TESTNAME}
+
+Parse non-existing file
+    Check Test Case    ${TESTNAME}
