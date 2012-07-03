@@ -1,5 +1,6 @@
 *** Settings ***
 Suite Setup      Run Tests    ${EMPTY}    standard_libraries/xml/xpath.txt
+Test Setup       Make Tests Requiring Python 2.7 Non-Critical If Requirement Not Met
 Force Tags       regression    pybot    jybot
 Resource         atest_resource.txt
 
@@ -24,22 +25,44 @@ Path
     Check Test Case    ${TESTNAME}
 
 '[@attrib]'
+    [Tags]    2.7+
     Check Test Case    ${TESTNAME}
 
 '[@attrib="value"]'
+    [Tags]    2.7+
     Check Test Case    ${TESTNAME}
 
 '[tag]'
+    [Tags]    2.7+
     Check Test Case    ${TESTNAME}
 
 '[position]'
+    [Tags]    2.7+
     Check Test Case    ${TESTNAME}
 
 Stacked predicates
+    [Tags]    2.7+
     Check Test Case    ${TESTNAME}
 
 Non-ASCII tag names
     Check Test Case    ${TESTNAME}
 
 More complex non-ASCII xpath
+    [Tags]    2.7+
     Check Test Case    ${TESTNAME}
+
+Warning when using more complex non-ASCII xpath with interpreter < 2.7
+    Run Keyword If    '${SUITE.doc}' < '2.7'    Verify Non-ASCII xpath error
+
+*** Keywords ***
+Make Tests Requiring Python 2.7 Non-Critical If Requirement Not Met
+    Run Keyword If    '2.7+' in @{TEST TAGS} and '${SUITE.doc}' < '2.7'
+    ...    Remove Tags    regression
+
+Verify Non-ASCII xpath error
+    ${tc}=    Get Test Case    More complex non-ASCII xpath
+    ${msg}=    Catenate
+    ...    XPATHs containing non-ASCII characters and other than tag names
+    ...    do not always work with Python/Jython versions prior to 2.7.
+    ...    Verify results manually and consider upgrading to 2.7.
+    Check Log Message    ${tc.kws[0].kws[0].msgs[0]}    ${msg}    WARN

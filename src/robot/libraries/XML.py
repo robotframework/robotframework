@@ -68,9 +68,9 @@ class XML(object):
             except UnicodeError:
                 if not xpath.replace('/', '').isalnum():
                     logger.warn('XPATHs containing non-ASCII characters and '
-                                'other than tag names do not always work on '
-                                'Python/Jython earlier than 2.7. Verify results '
-                                'manually and consider upgrading to 2.7.')
+                                'other than tag names do not always work with '
+                                'Python/Jython versions prior to 2.7. Verify '
+                                'results manually and consider upgrading to 2.7.')
                 return xpath
 
     def get_element_text(self, source, xpath='.', normalize_whitespace=False):

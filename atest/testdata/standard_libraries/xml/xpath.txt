@@ -5,6 +5,7 @@ Documentation    Tests ET's XPATH support documented at
 ...              expressions with non-ASCII characters require ET 1.3
 ...              (i.e. interpreter version 2.7) or newer.
 Resource         resource.txt
+Suite Setup      Add Interpreter Version to Suite Documentation
 Test Template    Get element by xpath
 
 
@@ -73,3 +74,7 @@ Get element by xpath
     ${element}=     Get Element    ${xml}    ${xpath}
     Should Be Equal    ${element.tag}    ${tag}
     Run Keyword If    '''${text}''' != 'IGNORE'    Should Be Equal    ${element.text}    ${text}
+
+Add Interpreter Version to Suite Documentation
+    ${version}=    Evaluate    sys.version[:3]    modules=sys
+    Set Suite Documentation    ${version}
