@@ -38,22 +38,18 @@ class XML(object):
     be used as an input with all other keywords, but these keywords also
     support parsing XML files and strings directly.
 
-    *Elements attributes*
+    *Finding elements with xpath*
 
-    All keywords returning elements, such as `Parse XML`, and `Get Element`,
-    return ElementTree's
-    [Element classes|http://docs.python.org/library/xml.etree.elementtree.html#xml.etree.ElementTree.Element].
-    These elements can be used as inputs for other keywords, but they also
-    contain several useful attributes that can be accessed directly using
-    the extended variable syntax.
+    ElementTree, and thus also this library, supports finding elements using
+    xpath expressions. ElementTree does not, however, support the full xpath
+    syntax, and what is supported depends on its version. ElementTree 1.3 that
+    is distributed with Python/Jython 2.7 supports richer syntax than versions
+    distributed with earlier Python interpreters.
 
-    The attributes that are both useful and convenient to use in the test
-    data are explained below with examples. Also other attributes, and also
-    methods, can be accessed, but that is typically better to do in custom
-    libraries than directly in the test data.
-
-    In the examples `${XML}` and `${HTML}` refer to the following example
-    structures:
+    Supported xpath syntax is explained below and
+    [ElementTree documentation|http://effbot.org/zone/element-xpath.htm]
+    provides more details. In the examples `${XML}` refers to the following
+    example structure:
 
     | <example>
     |   <first>text</first>
@@ -65,72 +61,12 @@ class XML(object):
     |     <second id="child"/>
     |     <child><grandchild/></child>
     |   </third>
-    | </example>
-
-    | <html>
-    |   <head><title>Example</title></head>
-    |   <body>
+    |   <html>
     |     <p>
-    |       Example text with <b>bold</b> and <i>italics</i>.
+    |       Text with <b>bold</b> and <i>italics</i>.
     |     </p>
-    |   </body>
-    | </html>
-
-    _tag_
-
-    The tag of the element.
-
-    | ${root} =       | Parse XML   | ${XML}  |
-    | Should Be Equal | ${root.tag} | example |
-
-    _text_
-
-    The text that the element contains or Python `None` if the element has no
-    text. Notice that the text _does not_ contain texts of possible child
-    elements nor text after/between children. Notice also that in XML
-    whitespace is significant, so the text contains also possible indentation
-    and newlines. To get also text of the possible children, optionally
-    whitespace normalized, use `Get Element Text` keyword.
-
-    | ${1st} =        | Get Element | ${XML}    | first  |
-    | Should Be Equal | ${1st.text} | text      |        |
-    | ${2nd} =        | Get Element | ${XML}    | second |
-    | Should Be Equal | ${2nd.text} | ${NONE}   |        |
-    | ${p} =          | Get Element | ${HTML}   | body/p |
-    | Should Be Equal | ${p.text}   | \n${SPACE*6}Example text with${SPACE} |
-
-    _tail_
-
-    The text after the element before the next opening or closing tag. Python
-    `None` if the element has no tail. Similarly as with `text`, also `tail`
-    contains possible indentation and newlines.
-
-    | ${title} =      | Get Element    | ${HTML}   | head/title  |
-    | Should Be Equal | ${title.tail}  | ${NONE}   |             |
-    | ${b} =          | Get Element    | ${HTML}   | body/p/b    |
-    | Should Be Equal | ${b.tail}      | ${SPACE}and${SPACE}     |
-
-    _attrib_
-
-    A Python dictionary containing attributes of the element.
-
-    | ${1st} =        | Get Element         | ${XML} | first  |
-    | Should Be Empty | ${1st.attrib}       |        |        |
-    | ${2nd} =        | Get Element         | ${XML} | second |
-    | Should Be Equal | ${2nd.attrib['id']} | 2      |        |
-
-    *Finding elements with xpath*
-
-    ElementTree, and thus also this library, supports finding elements using
-    xpath expressions. ElementTree does not, however, support the full xpath
-    syntax, and what is supported depends on its version. ElementTree 1.3 that
-    is distributed with Python/Jython 2.7 supports richer syntax than versions
-    distributed with earlier Python interpreters.
-
-    Supported xpath syntax is explained below and
-    [ElementTree documentation|http://effbot.org/zone/element-xpath.htm]
-    provides more details. The examples use same `${XML}` and `${HTML}`
-    structures as earlier examples.
+    |   </html>
+    | </example>
 
     _Tag names_
 
@@ -191,6 +127,63 @@ class XML(object):
 
     Predicates can also be stacked like `path[predicate1][predicate2]`.
     A limitation is that possible position predicate must always be first.
+
+    *Elements attributes*
+
+    All keywords returning elements, such as `Parse XML`, and `Get Element`,
+    return ElementTree's
+    [Element classes|http://docs.python.org/library/xml.etree.elementtree.html#xml.etree.ElementTree.Element].
+    These elements can be used as inputs for other keywords, but they also
+    contain several useful attributes that can be accessed directly using
+    the extended variable syntax.
+
+    The attributes that are both useful and convenient to use in the test
+    data are explained below with examples. Also other attributes, and also
+    methods, can be accessed, but that is typically better to do in custom
+    libraries than directly in the test data.
+
+    The examples use same `${XML}` structure as earlier examples.
+
+    _tag_
+
+    The tag of the element.
+
+    | ${root} =       | Parse XML   | ${XML}  |
+    | Should Be Equal | ${root.tag} | example |
+
+    _text_
+
+    The text that the element contains or Python `None` if the element has no
+    text. Notice that the text _does not_ contain texts of possible child
+    elements nor text after/between children. Notice also that in XML
+    whitespace is significant, so the text contains also possible indentation
+    and newlines. To get also text of the possible children, optionally
+    whitespace normalized, use `Get Element Text` keyword.
+
+    | ${1st} =        | Get Element | ${XML}  | first  |
+    | Should Be Equal | ${1st.text} | text    |        |
+    | ${2nd} =        | Get Element | ${XML}  | second |
+    | Should Be Equal | ${2nd.text} | ${NONE} |        |
+    | ${p} =          | Get Element | ${XML}  | html/p |
+    | Should Be Equal | ${p.text}   | \\n${SPACE*6}Text with${SPACE} |
+
+    _tail_
+
+    The text after the element before the next opening or closing tag. Python
+    `None` if the element has no tail. Similarly as with `text`, also `tail`
+    contains possible indentation and newlines.
+
+    | ${b} =          | Get Element    | ${XML}  | html/p/b  |
+    | Should Be Equal | ${b.tail}      | ${SPACE}and${SPACE} |
+
+    _attrib_
+
+    A Python dictionary containing attributes of the element.
+
+    | ${1st} =        | Get Element         | ${XML} | first  |
+    | Should Be Empty | ${1st.attrib}       |        |        |
+    | ${2nd} =        | Get Element         | ${XML} | second |
+    | Should Be Equal | ${2nd.attrib['id']} | 2      |        |
     """
 
     _whitespace = re.compile('\s+')
@@ -201,7 +194,7 @@ class XML(object):
             return ET.parse(source).getroot()
 
     def get_element(self, source, xpath='.'):
-        if xpath == '.':  # ET included in Python < 2.7 does not support '.'.
+        if xpath == '.':  # ET < 1.3 does not support '.' alone.
             return self._get_parent(source)
         elements = self.get_elements(source, xpath)
         if not elements:
