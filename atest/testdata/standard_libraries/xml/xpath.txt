@@ -16,15 +16,23 @@ Tag
 Path
     another/child    child    text
 
+Path matches children from different parents
+    [Template]    NONE
+    @{elements}=    Get Elements    ${TEST}    child/grandchild
+    Length Should Be    ${elements}    2
+    :FOR    ${elem}    IN    @{elements}
+    \    Should Be Equal    ${elem.tag}    grandchild
+    Should Be Equal    ${elem.text}    ${NONE}
+
 '*'
-    */grandchild    grandchild    grand child text
+    */child    child    text
 
 '.'
     .    test
     ./another    another
 
 '//'
-    .//grandchild    grandchild
+    .//ggc    ggc
 
 '//' returning multiple elements
     [Template]    NONE

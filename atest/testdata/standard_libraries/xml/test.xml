@@ -6,7 +6,7 @@
         <grandchild>grand child text</grandchild>
         more text
     </child>
-    <child id="3" a2="xxx" a3="y"/>
+    <child id="3" a2="xxx" a3="y"><grandchild><ggc/></grandchild></child>
     <another attr="value">
         <child>text</child>
     </another>

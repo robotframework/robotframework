@@ -12,6 +12,9 @@ Tag
 Path
     Check Test Case    ${TESTNAME}
 
+Path matches children from different parents
+    Check Test Case    ${TESTNAME}
+
 '*'
     Check Test Case    ${TESTNAME}
 

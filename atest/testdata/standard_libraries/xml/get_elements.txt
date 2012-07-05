@@ -12,8 +12,8 @@ Get element from parent element
 Get element from xml file
     ${child}=    Get Element    ${TEST}    another
     Should Be Equal    ${child.tag}    another
-    ${child}=    Get Element    ${TEST}    child/grandchild
-    Should Be Equal    ${child.text}    grand child text
+    ${child}=    Get Element    ${TEST}    another/child
+    Should Be Equal    ${child.text}    text
 
 Get element from xml string
     ${child}=    Get Element    <root><tag>text</tag></root>    tag
