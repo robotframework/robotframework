@@ -33,6 +33,9 @@ Path matches children from different parents
 
 '//'
     .//ggc    ggc
+    .//grandchild/ggc    ggc
+    child//ggc    ggc
+    another//child    child
 
 '//' returning multiple elements
     [Template]    NONE
