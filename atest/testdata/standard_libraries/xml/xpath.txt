@@ -58,7 +58,8 @@ Path matches children from different parents
 
 '[tag]'
     [Documentation]    FAIL No element matching 'child[nonex]' found.
-    *[grandchild]    child
+    another[child]    another
+    */grandchild[ggc]    grandchild
     child[nonex]    not-found
 
 '[position]'
@@ -69,6 +70,7 @@ Path matches children from different parents
 
 Stacked predicates
     child[@id][@a3='y']    child    ${NONE}
+    child/grandchild[1][ggc]    grandchild    ${NONE}
 
 Non-ASCII tag names
     täg    täg    xml=<rööt><täg/></rööt>
