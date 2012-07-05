@@ -26,5 +26,14 @@ Get elements
 Get elements returns empty list when no elements match
     Check Test Case    ${TESTNAME}
 
+Get child elements
+    Check Test Case    ${TESTNAME}
+
+Get child elements fails when multiple parent elements match
+    Check Test Case    ${TESTNAME}
+
+Get child elements fails when no parent element matches
+    Check Test Case    ${TESTNAME}
+
 Non-ASCII
     Check Test Case    ${TESTNAME}

@@ -28,13 +28,31 @@ Get element fails when no elements match
     Get Element    ${TEST}    non-existing
 
 Get elements
-    ${children}=    Get Elements    ${TEST}    child
-    Length Should Be    ${children}    3
-    Should Be Equal    ${children[0].text}    child 1 text
+    ${elements}=    Get Elements    ${TEST}    child
+    Length Should Be    ${elements}    3
+    Should Be Equal    ${elements[0].text}    child 1 text
 
 Get elements returns empty list when no elements match
-    ${children}=    Get Elements    ${TEST}    non-existing
-    Length Should Be    ${children}    0
+    ${elements}=    Get Elements    ${TEST}    non-existing
+    Should Be Empty    ${elements}
+
+Get child elements
+    ${children}=    Get Child Elements    ${TEST}
+    Length Should Be    ${children}    4
+    Should Be Equal    ${children[0].text}    child 1 text
+    Should Be Equal    ${children[1].attrib['id']}    2
+    Should Be Equal    ${children[2].attrib['id']}    3
+    Should Be Equal    ${children[3].tag}    another
+    ${children}=    Get Child Elements    ${TEST}    another/child
+    Should Be Empty    ${children}
+
+Get child elements fails when multiple parent elements match
+    [Documentation]    FAIL Multiple elements (3) matching 'child' found.
+    Get Child Elements    ${TEST}    child
+
+Get child elements fails when no parent element matches
+    [Documentation]    FAIL No element matching 'non-existing' found.
+    Get Child Elements    ${TEST}    non-existing
 
 Non-ASCII
     ${elem}=    Get Element    <root><täg/></root>    täg

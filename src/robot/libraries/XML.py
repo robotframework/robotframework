@@ -73,6 +73,9 @@ class XML(object):
                                 'results manually and consider upgrading to 2.7.')
                 return xpath
 
+    def get_child_elements(self, source, xpath='.'):
+        return list(self.get_element(source, xpath))
+
     def get_element_text(self, source, xpath='.', normalize_whitespace=False):
         element = self.get_element(source, xpath)
         text = ''.join(self._yield_texts(element))
