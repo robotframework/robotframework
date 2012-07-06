@@ -194,8 +194,6 @@ class XML(object):
             return ET.parse(source).getroot()
 
     def get_element(self, source, xpath='.'):
-        if xpath == '.':  # ET < 1.3 does not support '.' alone.
-            return self._get_parent(source)
         elements = self.get_elements(source, xpath)
         if not elements:
             raise RuntimeError("No element matching '%s' found." % xpath)
@@ -204,13 +202,16 @@ class XML(object):
                                % (len(elements), xpath))
         return elements[0]
 
-    def _get_parent(self, source):
+    def get_elements(self, source, xpath):
+        source = self._parse_xml(source)
+        if xpath == '.':  # ET < 1.3 does not support '.' alone.
+            return [source]
+        return source.findall(self._get_xpath(xpath))
+
+    def _parse_xml(self, source):
         if isinstance(source, basestring):
             return self.parse_xml(source)
         return source
-
-    def get_elements(self, source, xpath):
-        return self._get_parent(source).findall(self._get_xpath(xpath))
 
     if sys.version_info >= (2, 7):
         def _get_xpath(self, xpath):
