@@ -27,6 +27,10 @@ Path matches children from different parents
 '//' returning multiple elements
     Check Test Case    ${TESTNAME}
 
+'..'
+    [Tags]    2.7+
+    Check Test Case    ${TESTNAME}
+
 '[@attrib]'
     [Tags]    2.7+
     Check Test Case    ${TESTNAME}

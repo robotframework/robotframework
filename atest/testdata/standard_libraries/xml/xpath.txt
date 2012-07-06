@@ -45,6 +45,12 @@ Path matches children from different parents
     \    Should Be Equal    ${elem.tag}    child
     Should Be Equal    ${elem.text}    text
 
+'..'
+    another/..    test
+    another/child/..    another
+    .//ggc/..    grandchild
+    another/child/../../child[@id="3"]  child
+
 '[@attrib]'
     [Documentation]    FAIL No element matching 'child[@nonex]' found.
     child[@a2]    child    ${NONE}
