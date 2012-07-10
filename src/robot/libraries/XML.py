@@ -73,6 +73,10 @@ class XML(object):
     |   </html>
     | </example>
 
+    The actual contents fo ${XML} can be either path to a file containing the above
+    structure, the string containing the above structure, or the parsed ElementTree
+    element.
+
     _Tag names_
 
     When just a single tag name is used, xpath matches all direct child
