@@ -31,12 +31,17 @@ class XML(object):
 
     As the name implies, `XML` is a test library for verifying contents of XML
     files. In practice this library is a pretty thin wrapper on top of Python's
-    [ElementTree XML API|http://docs.python.org/library/xml.etree.elementtree.html].
+    [http://docs.python.org/library/xml.etree.elementtree.html|ElementTree XML API].
 
-    XML can be parsed into an element structure using either `Parse XML`,
-    `Get Element` or `Get Elements` keywords. The returned elements can then
-    be used as an input with all other keywords, but these keywords also
-    support parsing XML files and strings directly.
+    The library has the following three main usages:
+
+    - Parsing an XML file, or a string containing XML, into an element structure
+      and finding certain elements from it for for further analysis
+      (e.g. `Parse XML` and `Get Element` keywords).
+    - Getting text or attributes of a certain element
+      (e.g. `Get Element Text` and `Get Element Attribute`)
+    - Directly verifying text or attributes of a certain element
+      (e.g `Element Text Should Be` and `Element Attribute Should Match`)
 
     *Finding elements with xpath*
 
@@ -47,7 +52,7 @@ class XML(object):
     distributed with earlier Python interpreters.
 
     Supported xpath syntax is explained below and
-    [ElementTree documentation|http://effbot.org/zone/element-xpath.htm]
+    [http://effbot.org/zone/element-xpath.htm|ElementTree documentation]
     provides more details. In the examples `${XML}` refers to the following
     example structure:
 
@@ -70,8 +75,8 @@ class XML(object):
 
     _Tag names_
 
-    When just a tag name is used, xpath matches all direct child elements
-    that have that tag name.
+    When just a single tag name is used, xpath matches all direct child
+    elements that have that tag name.
 
     | ${elem} =        | Get Element   | ${XML}      | third  |
     | Should Be Equal  | ${elem.tag}   | third       |        |
@@ -80,9 +85,11 @@ class XML(object):
 
     _Paths_
 
-    Paths are creating by combining tag names with a forward slash (`/`).
+    Paths are created by combining tag names with a forward slash (`/`).
     For example, `parent/child` matches all `child` elements under `parent`
-    element.
+    element. Notice that if there are multiple `parent` elements that all
+    have `child` elements, `parent/child` xpath will match all these `child`
+    elements.
 
     | ${elem} = | Get Element | ${XML} | second/child            |
     | ${elem} = | Get Element | ${XML} | third/child/grandchild  |
@@ -92,13 +99,23 @@ class XML(object):
     An asterisk (`*`) can be used in paths instead of a tag name to denote
     any element.
 
-    | @{children} =    | Get Element | ${XML} | */child |
-    | Length Should Be | ${children} | 3      |         |
+    | @{children} =    | Get Elements | ${XML} | */child |
+    | Length Should Be | ${children}  | 3      |         |
 
-    _Current node_
+    _Current element_
 
-    The current node is denoted with a dot (`.`). Normally the current node
-    is implicit and does not need to be included in the path.
+    The current element is denoted with a dot (`.`). Normally the current
+    element is implicit and does not need to be included in the path.
+
+    _Parent element_
+
+    The parent element of another element is denoted with two dots (`..`).
+    Notice that it is not possible to refer to the parent of the current
+    element. This syntax is supported only in ElementTree 1.3 that is
+    distributed with Python/Jython 2.7.
+
+    | ${elem} =       | Get Element | ${XML} | */second/.. |
+    | Should Be Equal | ${elem.tag} | third  |             |
 
     _Search all sub elements_
 
@@ -106,24 +123,25 @@ class XML(object):
     direct children, are searched. If the search is started from the current
     element, an explicit dot is required.
 
-    | @{elements} =    | Get Element | ${XML} | .//second |
-    | Length Should Be | ${children} | 2      |           |
+    | @{elements} =    | Get Elements | ${XML} | .//second |
+    | Length Should Be | ${elements}  | 2      |           |
 
     _Predicates_
 
     Predicates allow selecting elements using also other criteria than tag
     names such as attributes or position. They are specified after the normal
-    tag name or path using syntax `path[predicate]`.
+    tag name or path using syntax `path[predicate]`. The path can have
+    wildcards and other special syntax explained above.
 
     Notice that predicates are supported only in ElementTree 1.3 that is
     shipped with Python/Jython 2.7. What predicates are supported in that
     version is explained in the table below.
 
-    | _Predicate_     | _Matches elements that_ | _Example_ |
-    | @attrib         | have the specified attribute. | third[@id] |
-    | @attrib="value" | have the specified attribute and it has the specified value. | *[@id="2"] |
-    | position        | are in the specified position. Position can be an integer (starting from 1), expression `last()`, or relative expression like `last() - 1`. | third/child[1] |
-    | tag             | have child element named `tag`. | third/child[grandchild] |
+    | _Predicate_     | _Matches_ | _Example_ |
+    | @attrib         | Elements with attribute `attrib`. | second[@id] |
+    | @attrib="value" | Elements with attribute `attrib` having value `value`. | *[@id="2"] |
+    | position        | Elements at the specified position. Position can be an integer (starting from 1), expression `last()`, or relative expression like `last() - 1`. | third/child[1] |
+    | tag             | Elements with a child element named `tag`. | third/child[grandchild] |
 
     Predicates can also be stacked like `path[predicate1][predicate2]`.
     A limitation is that possible position predicate must always be first.
@@ -132,15 +150,15 @@ class XML(object):
 
     All keywords returning elements, such as `Parse XML`, and `Get Element`,
     return ElementTree's
-    [Element classes|http://docs.python.org/library/xml.etree.elementtree.html#xml.etree.ElementTree.Element].
+    [http://docs.python.org/library/xml.etree.elementtree.html#xml.etree.ElementTree.Element|Element classes].
     These elements can be used as inputs for other keywords, but they also
     contain several useful attributes that can be accessed directly using
     the extended variable syntax.
 
     The attributes that are both useful and convenient to use in the test
-    data are explained below with examples. Also other attributes, and also
-    methods, can be accessed, but that is typically better to do in custom
-    libraries than directly in the test data.
+    data are explained below. Also other attributes, including methods, can
+    be accessed, but that is typically better to do in custom libraries than
+    directly in the test data.
 
     The examples use same `${XML}` structure as earlier examples.
 
@@ -155,16 +173,16 @@ class XML(object):
 
     The text that the element contains or Python `None` if the element has no
     text. Notice that the text _does not_ contain texts of possible child
-    elements nor text after/between children. Notice also that in XML
+    elements nor text after or between children. Notice also that in XML
     whitespace is significant, so the text contains also possible indentation
     and newlines. To get also text of the possible children, optionally
     whitespace normalized, use `Get Element Text` keyword.
 
-    | ${1st} =        | Get Element | ${XML}  | first  |
-    | Should Be Equal | ${1st.text} | text    |        |
-    | ${2nd} =        | Get Element | ${XML}  | second |
-    | Should Be Equal | ${2nd.text} | ${NONE} |        |
-    | ${p} =          | Get Element | ${XML}  | html/p |
+    | ${1st} =        | Get Element | ${XML}  | first        |
+    | Should Be Equal | ${1st.text} | text    |              |
+    | ${2nd} =        | Get Element | ${XML}  | second/child |
+    | Should Be Equal | ${2nd.text} | ${NONE} |              |
+    | ${p} =          | Get Element | ${XML}  | html/p       |
     | Should Be Equal | ${p.text}   | \\n${SPACE*6}Text with${SPACE} |
 
     _tail_
@@ -186,6 +204,7 @@ class XML(object):
     | Should Be Equal | ${2nd.attrib['id']} | 2      |        |
     """
 
+    ROBOT_LIBRARY_SCOPE = 'GLOBAL'
     _whitespace = re.compile('\s+')
     _xml_declaration = re.compile('^<\?xml .*\?>\n')
 
