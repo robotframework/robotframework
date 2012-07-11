@@ -302,12 +302,14 @@ example would be formatted like this in HTML:
 Lists
 ~~~~~
 
-Lists are created by starting a line with a hyphen and space ('- ').
-An empty line or line not starting with '- ' ends the list::
+Lists are created by starting a line with a hyphen and space ('- '). List items
+can be split into multiple lines by indenting continuing lines with one or more
+spaces. A line that does not start with '- ' and is not indented ends the list::
 
   Example:
   - a list item
-  - a second list item
+  - second list item
+    is continued
 
   This is outside the list.
 
@@ -319,14 +321,15 @@ The above documentation is formatted like this in HTML:
   <p>Example:</p>
   <ul>
     <li>a list item</li>
-    <li>a second list item</li>
+    <li>second list item is continued</li>
   </ul>
   <p>This is outside the list.</p>
   </div>
 
 .. note:: Support for formatting lists was added in 2.7.2. Prior to that,
           the same syntax prevented :prog:`libdoc` from combining lines to
-          paragraphs, though, so the end result was similar.
+          paragraphs, so the end result was similar. Support for splitting
+          list items into multiple lines was added in 2.7.4.
 
 Preformatted text
 ~~~~~~~~~~~~~~~~~

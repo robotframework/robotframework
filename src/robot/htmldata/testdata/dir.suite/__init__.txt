@@ -14,6 +14,11 @@ Documentation  Documentation for the whole test suite. All this forms a single
 ...            regular line
 ...            | pre *formatted*
 ...            | \ \ content\t\with whitespaces
+...            ---
+...            - first list item
+...            - second list item
+...            \ is continued \
+...            using *two* different approaches
 Metadata       URL       http://robotframework.org
 Metadata       Image     http://code.google.com/p/robotframework/logo?ext.png
 Metadata       Formatting  *Bold* and _italics_

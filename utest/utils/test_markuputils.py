@@ -529,6 +529,21 @@ class TestHtmlFormatList(unittest.TestCase):
                       '<ul>\n<li><b>bold</b> text</li>\n<li><i>italic</i></li>\n'
                       '<li><a href="http://url">link</a></li>\n</ul>')
 
+    def test_indentation_can_be_used_to_continue_list_item(self):
+        assert_format('''
+  outside list
+- this item
+  continues
+  - 2nd item
+    continues
+ twice
+''', '''\
+<p>outside list</p>
+<ul>
+<li>this item continues</li>
+<li>2nd item continues twice</li>
+</ul>''')
+
     def test_lists_with_other_content_around(self):
         assert_format('''
 before
@@ -538,6 +553,8 @@ between
 
 - c
 - d
+  e
+  f
 
 ---
 ''',  '''\
@@ -549,7 +566,7 @@ between
 <p>between</p>
 <ul>
 <li>c</li>
-<li>d</li>
+<li>d e f</li>
 </ul>
 <hr>''')
 
