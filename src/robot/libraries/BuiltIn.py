@@ -1852,6 +1852,8 @@ class _Misc:
         that suite, recursively, gets the given tags. It is a failure
         to use this keyword in a suite teardown.
 
+        The current test tags are available from built in variable @{TEST TAGS}.
+
         See `Remove Tags` for another keyword to modify tags at test
         execution time.
         """
@@ -1869,6 +1871,8 @@ class _Misc:
 
         This keyword can affect either one test case or all test cases in a
         test suite similarly as `Set Tags` keyword.
+
+        The current test tags are available from built in variable @{TEST TAGS}.
 
         Example:
         | Remove Tags | mytag | something-* | ?ython |
