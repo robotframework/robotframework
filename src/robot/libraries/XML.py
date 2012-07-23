@@ -30,34 +30,49 @@ class XML(object):
     """Robot Framework test library for XML verification.
 
     As the name implies, `XML` is a test library for verifying contents of XML
-    files. In practice this library is a pretty thin wrapper on top of Python's
+    files. In practice it is a pretty thin wrapper on top of Python's
     [http://docs.python.org/library/xml.etree.elementtree.html|ElementTree XML API].
 
     The library has the following three main usages:
 
-    - Parsing an XML file, or a string containing XML, into an element structure
-      and finding certain elements from it for for further analysis
+    - Parsing an XML file, or a string containing XML, into an XML element
+      structure and finding certain elements from it for for further analysis
       (e.g. `Parse XML` and `Get Element` keywords).
-    - Getting text or attributes of a certain element
-      (e.g. `Get Element Text` and `Get Element Attribute`)
-    - Directly verifying text or attributes of a certain element
-      (e.g `Element Text Should Be` and `Element Attribute Should Match`)
+    - Getting text or attributes of elements
+      (e.g. `Get Element Text` and `Get Element Attribute`).
+    - Directly verifying text or attributes of elements
+      (e.g `Element Text Should Be` and `Element Attribute Should Match`).
 
-    *Finding elements with xpath*
+    In the future this library may grow functionality for modifying and
+    creating XML content.
 
-    ElementTree, and thus also this library, supports finding elements using
-    xpath expressions. ElementTree does not, however, support the full xpath
-    syntax, and what is supported depends on its version. ElementTree 1.3 that
-    is distributed with Python/Jython 2.7 supports richer syntax than versions
-    distributed with earlier Python interpreters.
+    *Parsing XML*
 
-    Supported xpath syntax is explained below and
-    [http://effbot.org/zone/element-xpath.htm|ElementTree documentation]
-    provides more details. In the examples `${XML}` refers to the following
-    example structure:
+    XML can be parsed into an element structure using `Parse XML` keyword.
+    It accepts both paths to XML files and strings that contains XML. The
+    keyword returns the root element of the structure, which then contains
+    other elements as its children and their children.
+
+    The element structure returned by `Parse XML`, as well as elements
+    returned by keywords such as `Get Element`, can be used as the `source`
+    argument with other keywords. In addition to an already parsed XML
+    structure, other keywords also accept paths to XML files and strings
+    containing XML similarly as `Parse XML`.
+
+    *Example*
+
+    This simple example demonstrates parsing XML and verifying its contents
+    both using keywords in this library and in BuiltIn. How to use xpath
+    expressions to find elements and what attributes the returned elements
+    contain are discussed, with more examples, in subsequent sections.
+
+    In the example, `${XML}` refers to the following example XML content.
+    It could either be a path to file containing it or it could contain the
+    XML itself. The same example structure is used also in the subsequent
+    examples.
 
     | <example>
-    |   <first>text</first>
+    |   <first id="1">text</first>
     |   <second id="2">
     |     <child/>
     |   </second>
@@ -73,19 +88,43 @@ class XML(object):
     |   </html>
     | </example>
 
-    The actual contents fo ${XML} can be either path to a file containing the above
-    structure, the string containing the above structure, or the parsed ElementTree
-    element.
+    | ${root} =                | `Parse XML`   | ${XML}  |       |             |
+    | `Should Be Equal`        | ${root.tag}   | example |       |             |
+    | ${first} =               | `Get Element` | ${root} | first |             |
+    | `Should Be Equal`        | ${first.text} | text    |       |             |
+    | `Element Text Should Be` | ${first}      | text    |       |             |
+    | `Element Attribute Should Be` | ${first} | id      | 1     |             |
+    | `Element Attribute Should Be` | ${root}  | id      | 1     | xpath=first |
+    | `Element Attribute Should Be` | ${XML}   | id      | 1     | xpath=first |
+
+    Notice that in the example three last lines are equivalent. Which one to
+    use in practice depends on which other elements you need to get or verify.
+    If you only need to do one test, using the last line alone would suffice.
+    If more tests were needed, parsing the XML with `Parse XML` only once would
+    be more efficient.
+
+    *Finding elements with xpath*
+
+    ElementTree, and thus also this library, supports finding elements using
+    xpath expressions. ElementTree does not, however, support the full xpath
+    syntax, and what is supported depends on its version. ElementTree 1.3 that
+    is distributed with Python/Jython 2.7 supports richer syntax than versions
+    distributed with earlier Python interpreters.
+
+    Supported xpath syntax is explained below and
+    [http://effbot.org/zone/element-xpath.htm|ElementTree documentation]
+    provides more details. In the examples `${XML}` refers to the same XML
+    structure as in the earlier example.
 
     _Tag names_
 
     When just a single tag name is used, xpath matches all direct child
     elements that have that tag name.
 
-    | ${elem} =        | Get Element   | ${XML}      | third  |
-    | Should Be Equal  | ${elem.tag}   | third       |        |
-    | @{children} =    | Get Elements  | ${elem}     | child  |
-    | Length Should Be | ${children}   | 2           |        |
+    | ${elem} =          | `Get Element`  | ${XML}      | third |
+    | `Should Be Equal`  | ${elem.tag}    | third       |       |
+    | @{children} =      | `Get Elements` | ${elem}     | child |
+    | `Length Should Be` | ${children}    | 2           |       |
 
     _Paths_
 
@@ -95,16 +134,16 @@ class XML(object):
     have `child` elements, `parent/child` xpath will match all these `child`
     elements.
 
-    | ${elem} = | Get Element | ${XML} | second/child            |
-    | ${elem} = | Get Element | ${XML} | third/child/grandchild  |
+    | ${elem} = | `Get Element` | ${XML} | second/child            |
+    | ${elem} = | `Get Element` | ${XML} | third/child/grandchild  |
 
     _Wildcards_
 
     An asterisk (`*`) can be used in paths instead of a tag name to denote
     any element.
 
-    | @{children} =    | Get Elements | ${XML} | */child |
-    | Length Should Be | ${children}  | 3      |         |
+    | @{children} =      | `Get Elements` | ${XML} | */child |
+    | `Length Should Be` | ${children}    | 3      |         |
 
     _Current element_
 
@@ -118,8 +157,8 @@ class XML(object):
     element. This syntax is supported only in ElementTree 1.3 that is
     distributed with Python/Jython 2.7.
 
-    | ${elem} =       | Get Element | ${XML} | */second/.. |
-    | Should Be Equal | ${elem.tag} | third  |             |
+    | ${elem} =         | `Get Element` | ${XML} | */second/.. |
+    | `Should Be Equal` | ${elem.tag}   | third  |             |
 
     _Search all sub elements_
 
@@ -127,8 +166,8 @@ class XML(object):
     direct children, are searched. If the search is started from the current
     element, an explicit dot is required.
 
-    | @{elements} =    | Get Elements | ${XML} | .//second |
-    | Length Should Be | ${elements}  | 2      |           |
+    | @{elements} =      | `Get Elements` | ${XML} | .//second |
+    | `Length Should Be` | ${elements}    | 2      |           |
 
     _Predicates_
 
@@ -141,8 +180,8 @@ class XML(object):
     shipped with Python/Jython 2.7. What predicates are supported in that
     version is explained in the table below.
 
-    | _Predicate_     | _Matches_ | _Example_ |
-    | @attrib         | Elements with attribute `attrib`. | second[@id] |
+    | _Predicate_     | _Matches_                         | _Example_          |
+    | @attrib         | Elements with attribute `attrib`. | second[@id]        |
     | @attrib="value" | Elements with attribute `attrib` having value `value`. | *[@id="2"] |
     | position        | Elements at the specified position. Position can be an integer (starting from 1), expression `last()`, or relative expression like `last() - 1`. | third/child[1] |
     | tag             | Elements with a child element named `tag`. | third/child[grandchild] |
@@ -164,14 +203,14 @@ class XML(object):
     be accessed, but that is typically better to do in custom libraries than
     directly in the test data.
 
-    The examples use same `${XML}` structure as earlier examples.
+    The examples use the same `${XML}` structure as the earlier examples.
 
     _tag_
 
     The tag of the element.
 
-    | ${root} =       | Parse XML   | ${XML}  |
-    | Should Be Equal | ${root.tag} | example |
+    | ${root} =         | `Parse XML` | ${XML}  |
+    | `Should Be Equal` | ${root.tag} | example |
 
     _text_
 
@@ -182,12 +221,12 @@ class XML(object):
     and newlines. To get also text of the possible children, optionally
     whitespace normalized, use `Get Element Text` keyword.
 
-    | ${1st} =        | Get Element | ${XML}  | first        |
-    | Should Be Equal | ${1st.text} | text    |              |
-    | ${2nd} =        | Get Element | ${XML}  | second/child |
-    | Should Be Equal | ${2nd.text} | ${NONE} |              |
-    | ${p} =          | Get Element | ${XML}  | html/p       |
-    | Should Be Equal | ${p.text}   | \\n${SPACE*6}Text with${SPACE} |
+    | ${1st} =          | `Get Element` | ${XML}  | first        |
+    | `Should Be Equal` | ${1st.text}   | text    |              |
+    | ${2nd} =          | `Get Element` | ${XML}  | second/child |
+    | `Should Be Equal` | ${2nd.text}   | ${NONE} |              |
+    | ${p} =            | `Get Element` | ${XML}  | html/p       |
+    | `Should Be Equal` | ${p.text}     | \\n${SPACE*6}Text with${SPACE} |
 
     _tail_
 
@@ -195,17 +234,17 @@ class XML(object):
     `None` if the element has no tail. Similarly as with `text`, also `tail`
     contains possible indentation and newlines.
 
-    | ${b} =          | Get Element    | ${XML}  | html/p/b  |
-    | Should Be Equal | ${b.tail}      | ${SPACE}and${SPACE} |
+    | ${b} =            | `Get Element` | ${XML}  | html/p/b  |
+    | `Should Be Equal` | ${b.tail}     | ${SPACE}and${SPACE} |
 
     _attrib_
 
     A Python dictionary containing attributes of the element.
 
-    | ${1st} =        | Get Element         | ${XML} | first  |
-    | Should Be Empty | ${1st.attrib}       |        |        |
-    | ${2nd} =        | Get Element         | ${XML} | second |
-    | Should Be Equal | ${2nd.attrib['id']} | 2      |        |
+    | ${2nd} =          | `Get Element`       | ${XML} | second |
+    | `Should Be Equal` | ${2nd.attrib['id']} | 2      |        |
+    | ${3rd} =          | `Get Element`       | ${XML} | third  |
+    | `Should Be Empty` | ${3rd.attrib}       |        |        |
     """
 
     ROBOT_LIBRARY_SCOPE = 'GLOBAL'
