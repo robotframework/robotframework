@@ -579,12 +579,12 @@ class XML(object):
         comparator = ElementComparator(comparator, normalizer)
         comparator.compare(self.get_element(source), self.get_element(expected))
 
-    def element_to_string(self, source):
-        string = ET.tostring(self.get_element(source), encoding='UTF-8')
-        return self._xml_declaration.sub('', string.decode('UTF-8'))
+    def element_to_string(self, source, xpath='.'):
+        string = ET.tostring(self.get_element(source, xpath), encoding='UTF-8')
+        return self._xml_declaration.sub('', string.decode('UTF-8')).strip()
 
-    def log_element(self, source, level='INFO'):
-        string = self.element_to_string(source)
+    def log_element(self, source, level='INFO', xpath='.'):
+        string = self.element_to_string(source, xpath)
         logger.write(string, level)
         return string
 
