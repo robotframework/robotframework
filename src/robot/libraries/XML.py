@@ -616,7 +616,7 @@ class ElementComparator(object):
 
     def __init__(self, comparator, normalizer=None, exclude_children=False):
         self._comparator = comparator
-        self._normalizer = normalizer
+        self._normalizer = normalizer or (lambda text: text)
         self._exclude_children = exclude_children
 
     def compare(self, actual, expected, location=None):
@@ -627,6 +627,10 @@ class ElementComparator(object):
         if not self._exclude_children:
             self._compare_children(actual, expected, location)
 
+    def _compare_tags(self, actual, expected, location):
+        self._compare(actual.tag, expected.tag, 'Different tag name', location,
+                      should_be_equal)
+
     def _compare(self, actual, expected, message, location, comparator=None):
         if location:
             message = "%s at '%s'" % (message, location)
@@ -634,27 +638,19 @@ class ElementComparator(object):
             comparator = self._comparator
         comparator(actual, expected, message)
 
-    def _compare_tags(self, actual, expected, location):
-        self._compare(actual.tag, expected.tag, 'Different tag name', location,
-                      should_be_equal)
+    def _compare_attributes(self, actual, expected, location):
+        self._compare(sorted(actual.attrib), sorted(expected.attrib),
+                      'Different attribute names', location, should_be_equal)
+        for key in actual.attrib:
+            self._compare(actual.attrib[key], expected.attrib[key],
+                          "Different value for attribute '%s'" % key, location)
 
     def _compare_texts(self, actual, expected, location):
         self._compare(self._text(actual.text), self._text(expected.text),
                       'Different text', location)
 
     def _text(self, text):
-        if not text:
-            return ''
-        if not self._normalizer:
-            return text
-        return self._normalizer(text)
-
-    def _compare_attributes(self, actual, expected, location):
-        self._compare(sorted(actual.attrib), sorted(expected.attrib),
-                     'Different attribute names', location, should_be_equal)
-        for key in actual.attrib:
-            self._compare(actual.attrib[key], expected.attrib[key],
-                          "Different value for attribute '%s'" % key, location)
+        return self._normalizer(text or '')
 
     def _compare_tails(self, actual, expected, location):
         self._compare(self._text(actual.tail), self._text(expected.tail),
