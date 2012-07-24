@@ -430,7 +430,7 @@ class XML(object):
                                normalize_whitespace=False, message=None):
         """Verifies that the text of the specified element is `expected`.
 
-        The elements whose text is verified is specified using `source` and
+        The element whose text is verified is specified using `source` and
         `xpath`. They have exactly the same semantics as with `Get Element`
         keyword.
 
@@ -524,7 +524,7 @@ class XML(object):
                                     message=None):
         """Verifies that the specified attribute is `expected`.
 
-        The elements whose attribute is verified is specified using `source`
+        The element whose attribute is verified is specified using `source`
         and `xpath`. They have exactly the same semantics as with `Get Element`
         keyword.
 
@@ -580,10 +580,28 @@ class XML(object):
         comparator.compare(self.get_element(source), self.get_element(expected))
 
     def element_to_string(self, source, xpath='.'):
+        """Returns the string representation of the specified element.
+
+        The element to convert to a string is specified using `source` and
+        `xpath`. They have exactly the same semantics as with `Get Element`
+        keyword.
+
+        The returned string does not contain any XML declaration.
+
+        See also `Log Element`.
+        """
         string = ET.tostring(self.get_element(source, xpath), encoding='UTF-8')
         return self._xml_declaration.sub('', string.decode('UTF-8')).strip()
 
     def log_element(self, source, level='INFO', xpath='.'):
+        """Logs the string representation of the specified element.
+
+        The element specified with `source` and `xpath` is first converted to
+        a string using `Element To String` keyword internally. The resulting
+        string is then logged using the given `level`.
+
+        The logged string is also returned.
+        """
         string = self.element_to_string(source, xpath)
         logger.write(string, level)
         return string
