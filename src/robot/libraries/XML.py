@@ -21,7 +21,7 @@ from robot.api import logger
 from robot.libraries.BuiltIn import BuiltIn
 from robot.utils import ET, ETSource
 
-
+# TODO: Use robot.utils.asserts directly
 should_be_equal = BuiltIn().should_be_equal
 should_match = BuiltIn().should_match
 
@@ -252,10 +252,37 @@ class XML(object):
     _xml_declaration = re.compile('^<\?xml .*\?>\n')
 
     def parse_xml(self, source):
+        """Parses the given XML file or string into an element structure.
+
+        The `source` can either be a path to an XML file or a string containing
+        XML. In both cases the XML is parsed into ElementTree
+        [http://docs.python.org/library/xml.etree.elementtree.html#xml.etree.ElementTree.Element|element structure]
+        and the root element is returned.
+
+        Examples:
+        | ${xml} =  | Parse XML | ${CURDIR}/test.xml    |
+        | ${root} = | Parse XML | <root><child/></root> |
+
+        For more details and examples, see `Parsing XML` section in
+        `introduction`.
+        """
         with ETSource(source) as source:
             return ET.parse(source).getroot()
 
     def get_element(self, source, xpath='.'):
+        """Returns an element in the `source` matching the `xpath`.
+
+        The `source` can be a path to an XML file, a string containing XML, or
+        an already parsed XML element. The `xpath` specifies which element to
+        find. See the `introduction` for more details.
+
+        The keyword fails if more or less than one element matches the `xpath`.
+        Use `Get Elements` if you want all matching elements to be returned.
+
+        Examples using `${XML}` structure from the `introduction`:
+        | ${element} = | Get Element | ${XML}     | second |
+        | ${child} =   | Get Element | ${element} | child  |
+        """
         elements = self.get_elements(source, xpath)
         if not elements:
             raise RuntimeError("No element matching '%s' found." % xpath)
@@ -265,6 +292,22 @@ class XML(object):
         return elements[0]
 
     def get_elements(self, source, xpath):
+        """Returns a list of elements in the `source` matching the `xpath`.
+
+        The `source` can be a path to an XML file, a string containing XML, or
+        an already parsed XML element. The `xpath` specifies which element to
+        find. See the `introduction` for more details.
+
+        Elements matching the `xpath` are returned as a list. If no elements
+        match, an empty list is returned. Use `Get Element` if you want to get
+        exactly one match.
+
+        Examples using `${XML}` structure from the `introduction`:
+        | ${children} =    | Get Elements | ${XML} | third/child |
+        | Length Should Be | ${children}  | 2      |             |
+        | ${children} =    | Get Elements | ${XML} | first/child |
+        | Should Be Empty  |  ${children} |        |             |
+        """
         source = self._parse_xml(source)
         if xpath == '.':  # ET < 1.3 does not support '.' alone.
             return [source]
@@ -291,9 +334,57 @@ class XML(object):
                 return xpath
 
     def get_child_elements(self, source, xpath='.'):
+        """Returns the child elements of the specified element as a list.
+
+        The element whose text to return is specified using `source` and
+        `xpath`. They have exactly the same semantics as with `Get Element`
+        keyword.
+
+        All the direct child elements of the specified element are returned.
+        If the element has no children, an empty list is returned.
+
+        See the `introduction` for more details about both the `source` and
+        the `xpath` syntax.
+
+        Examples using `${XML}` structure from the `introduction`:
+        | ${children} =    | Get Child Elements | ${XML} |             |
+        | Length Should Be | ${children}        | 4      |             |
+        | ${children} =    | Get Child Elements | ${XML} | xpath=first |
+        | Should Be Empty  | ${children}        |        |             |
+        """
         return list(self.get_element(source, xpath))
 
     def get_element_text(self, source, xpath='.', normalize_whitespace=False):
+        """Returns all text of the element, possibly whitespace normalized.
+
+        The element whose text to return is specified using `source` and
+        `xpath`. They have exactly the same semantics as with `Get Element`
+        keyword.
+
+        This keyword returns all the text of the specified element, including
+        all the text its children and grandchildren contains. If the element
+        has no text, an empty string is returned. As discussed in the
+        `introduction`, the returned text is thus not always the same as
+        the `text` attribute of the element.
+
+        Be default all whitespace, including newlines and indentation, inside
+        the element is returned as-is. If `normalize_whitespace` is given any
+        non-false value, then leading and trailing whitespace is stripped,
+        newlines and tabs converted to spaces, and multiple spaces collapsed
+        into one. This is especially useful when dealing with HTML data.
+
+        Examples using `${XML}` structure from the `introduction`:
+        | ${text} =       | Get Element Text | ${XML}       | first        |
+        | Should Be Equal | ${text}          | text         |              |
+        | ${text} =       | Get Element Text | ${XML}       | second/child |
+        | Should Be Empty | ${text}          |              |              |
+        | ${paragraph} =  | Get Element      | ${XML}       | html/p       |
+        | ${text} =       | Get Element Text | ${paragraph} | normalize_whitespace=yes |
+        | Should Be Equal | ${text}          | Text with bold and italics. |
+
+        See also `Get Elements Texts`, `Element Text Should Be` and
+        `Element Text Should Match`.
+        """
         element = self.get_element(source, xpath)
         text = ''.join(self._yield_texts(element))
         if normalize_whitespace:
@@ -313,32 +404,165 @@ class XML(object):
         return self._whitespace.sub(' ', text.strip())
 
     def get_elements_texts(self, source, xpath, normalize_whitespace=False):
+        """Returns text of all elements matching `xpath` as a list.
+
+        The elements whose text to return is specified using `source` and
+        `xpath`. They have exactly the same semantics as with `Get Elements`
+        keyword.
+
+        The text of the matched elements is returned using the same logic
+        as with `Get Element Text`. This includes optional whitespace
+        normalization using the `normalize_whitespace` option.
+
+        Examples using `${XML}` structure from the `introduction`:
+        | @{texts} =       | Get Elements Texts | ${XML}    | third/child |
+        | Length Should Be | ${texts}           | 2         |             |
+        | Should Be Equal  | @{texts}[0]        | more text |             |
+        | Should Be Equal  | @{texts}[1]        | ${EMPTY}  |             |
+
+        See also `Get Element Text`, `Element Text Should Be` and
+        `Element Text Should Match`.
+        """
         return [self.get_element_text(elem, normalize_whitespace=normalize_whitespace)
                 for elem in self.get_elements(source, xpath)]
 
     def element_text_should_be(self, source, expected, xpath='.',
                                normalize_whitespace=False, message=None):
+        """Verifies that the text of the specified element is `expected`.
+
+        The elements whose text is verified is specified using `source` and
+        `xpath`. They have exactly the same semantics as with `Get Element`
+        keyword.
+
+        The text to verify is got from the specified element using the same
+        logic as with `Get Element Text`. This includes optional whitespace
+        normalization using the `normalize_whitespace` option.
+
+        The keyword passes if the text of the element is equal to the
+        `expected` value, and otherwise it fails. The default error message can
+        be overridden with the `message` argument.
+
+        Examples using `${XML}` structure from the `introduction`:
+        | Element Text Should Be | ${XML}       | text     | xpath=first      |
+        | Element Text Should Be | ${XML}       | ${EMPTY} | xpath=second/child |
+        | ${paragraph} =         | Get Element  | ${XML}   | xpath=html/p     |
+        | Element Text Should Be | ${paragraph} | Text with bold and italics. | normalize_whitespace=yes |
+
+        See also `Get Element Text`, `Get Elements Texts` and
+        `Element Text Should Match`.
+        """
         text = self.get_element_text(source, xpath, normalize_whitespace)
         should_be_equal(text, expected, message, values=False)
 
     def element_text_should_match(self, source, pattern, xpath='.',
                                   normalize_whitespace=False, message=None):
+        """Verifies that the text of the specified element matches `expected`.
+
+        This keyword works exactly like `Element Text Should Be` except that
+        the expected value can be given as a pattern that the text of the
+        element must match.
+
+        Pattern matching is similar as matching files in a shell, and it is
+        always case-sensitive. In the pattern, '*' matches anything and '?'
+        matches any single character.
+
+        Examples using `${XML}` structure from the `introduction`:
+        | Element Text Should Match | ${XML}       | t???   | xpath=first  |
+        | ${paragraph} =            | Get Element  | ${XML} | xpath=html/p |
+        | Element Text Should Match | ${paragraph} | Text with * and *. | normalize_whitespace=yes |
+
+        See also `Get Element Text`, `Get Elements Texts` and
+        `Element Text Should Be`.
+        """
         text = self.get_element_text(source, xpath, normalize_whitespace)
         should_match(text, pattern, message, values=False)
 
     def get_element_attribute(self, source, name, xpath='.', default=None):
+        """Returns the named attribute of the specified element.
+
+        The element whose attribute to return is specified using `source` and
+        `xpath`. They have exactly the same semantics as with `Get Element`
+        keyword.
+
+        The value of the attribute `name` of the specified element is returned.
+        If the element does not have such element, the `default` value is
+        returned instead.
+
+        Examples using `${XML}` structure from the `introduction`:
+        | ${attribute} =  | Get Element Attribute | ${XML} | id | xpath=first |
+        | Should Be Equal | ${attribute}          | 1      |    |             |
+        | ${attribute} =  | Get Element Attribute | ${XML} | xx | xpath=first | default=value |
+        | Should Be Equal | ${attribute}          | value  |    |             |
+
+        See also `Get Element Attributes`, `Element Attribute Should Be`,
+        and `Element Attribute Should Match`.
+        """
         return self.get_element(source, xpath).get(name, default)
 
     def get_element_attributes(self, source, xpath='.'):
+        """Returns all attributes of the specified element.
+
+        The element whose attributes to return is specified using `source` and
+        `xpath`. They have exactly the same semantics as with `Get Element`
+        keyword.
+
+        Attributes are returned as a Python dictionary. It is a copy of the
+        original attributes so modifying it has no effect on the XML structure.
+
+        Examples using `${XML}` structure from the `introduction`:
+        | ${attributes} = | Get Element Attributes       | ${XML} | first |
+        | Should Be True  | ${attributes} == {'id': '1'} |        |       |
+        | ${attributes} = | Get Element Attributes       | ${XML} | third |
+        | Should Be Empty | ${attributes}                |        |       |
+
+        See also `Get Element Attribute`, `Element Attribute Should Be`,
+        and `Element Attribute Should Match`.
+        """
         return self.get_element(source, xpath).attrib.copy()
 
     def element_attribute_should_be(self, source, name, expected, xpath='.',
                                     message=None):
+        """Verifies that the specified attribute is `expected`.
+
+        The elements whose attribute is verified is specified using `source`
+        and `xpath`. They have exactly the same semantics as with `Get Element`
+        keyword.
+
+        The keyword passes if the attribute `name` of the element is equal to
+        the `expected` value, and otherwise it fails. To test that the element
+        does not have certain attribute, use Python `None` (i.e. variable
+        `${NONE}`) as the `expected` value. The default error message can be
+        overridden with the `message` argument.
+
+        Examples using `${XML}` structure from the `introduction`:
+        | Element Attribute Should Be | ${XML} | id | 1       | xpath=first |
+        | Element Attribute Should Be | ${XML} | id | ${NONE} |             |
+
+        See also `Get Element Attribute`, `Get Element Attributes` and
+        `Element Text Should Match`.
+        """
         attr = self.get_element_attribute(source, name, xpath)
         should_be_equal(attr, expected, message, values=False)
 
     def element_attribute_should_match(self, source, name, pattern, xpath='.',
                                        message=None):
+        """Verifies that the specified attribute matches `expected`.
+
+        This keyword works exactly like `Element Attribute Should Be` except
+        that the expected value can be given as a pattern that the attribute of
+        the element must match.
+
+        Pattern matching is similar as matching files in a shell, and it is
+        always case-sensitive. In the pattern, '*' matches anything and '?'
+        matches any single character.
+
+        Examples using `${XML}` structure from the `introduction`:
+        | Element Attribute Should Match | ${XML} | id | ?   | xpath=first |
+        | Element Attribute Should Match | ${XML} | id | c*d | xpath=third/second |
+
+        See also `Get Element Attribute`, `Get Element Attributes` and
+        `Element Text Should Be`.
+        """
         attr = self.get_element_attribute(source, name, xpath)
         if attr is None:
             raise AssertionError("Attribute '%s' does not exist." % name)
