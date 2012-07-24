@@ -60,6 +60,11 @@ Normalize whitespace
     Elements should not match    <tag>\ntext\n</tag>    <tag>\t*wrong*\t</tag>
     ...   Different text: 'text' does not match '*wrong*'    normalize
 
+Exclude children
+    [Template]    Elements should match
+    ${TEST}    <test name="*">\n${SPACE*4}</test>    exclude_children=yes
+    ${TEST}    <test name="????"/>    normalize    exclude
+
 *** Keywords ***
 Match Elements
     [Arguments]    ${source}    ${match}

@@ -64,6 +64,11 @@ Normalize whitespace
     Elements should not be equal    <tag>\ntext \ here\n</tag>    <tag>\twrong \ here\t</tag>
     ...   Different text: text here != wrong here    normalize
 
+Exclude children
+    [Template]    Elements should be equal
+    ${TEST}    <test name="root">\n${SPACE*4}</test>    exclude_children=yes
+    ${TEST}    <test name="root"/>    normalize    exclude
+
 *** Keywords ***
 Element should be equal to itself
     [Arguments]    ${source}

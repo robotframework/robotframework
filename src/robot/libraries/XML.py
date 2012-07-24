@@ -568,15 +568,20 @@ class XML(object):
             raise AssertionError("Attribute '%s' does not exist." % name)
         should_match(attr, pattern, message, values=False)
 
-    def elements_should_be_equal(self, source, expected, normalize_whitespace=False):
-        self._compare_elements(source, expected, should_be_equal, normalize_whitespace)
+    def elements_should_be_equal(self, source, expected, normalize_whitespace=False,
+                                 exclude_children=False):
+        self._compare_elements(source, expected, should_be_equal,
+                               normalize_whitespace, exclude_children)
 
-    def elements_should_match(self, source, expected, normalize_whitespace=False):
-        self._compare_elements(source, expected, should_match, normalize_whitespace)
+    def elements_should_match(self, source, expected, normalize_whitespace=False,
+                              exclude_children=False):
+        self._compare_elements(source, expected, should_match,
+                               normalize_whitespace, exclude_children)
 
-    def _compare_elements(self, source, expected, comparator, normalize_whitespace):
+    def _compare_elements(self, source, expected, comparator,
+                          normalize_whitespace, exclude_children):
         normalizer = self._normalize_whitespace if normalize_whitespace else None
-        comparator = ElementComparator(comparator, normalizer)
+        comparator = ElementComparator(comparator, normalizer, exclude_children)
         comparator.compare(self.get_element(source), self.get_element(expected))
 
     def element_to_string(self, source, xpath='.'):
@@ -609,16 +614,18 @@ class XML(object):
 
 class ElementComparator(object):
 
-    def __init__(self, comparator, normalizer=None):
+    def __init__(self, comparator, normalizer=None, exclude_children=False):
         self._comparator = comparator
         self._normalizer = normalizer
+        self._exclude_children = exclude_children
 
     def compare(self, actual, expected, location=None):
         self._compare_tags(actual, expected, location)
         self._compare_attributes(actual, expected, location)
         self._compare_texts(actual, expected, location)
         self._compare_tails(actual, expected, location)
-        self._compare_children(actual, expected, location)
+        if not self._exclude_children:
+            self._compare_children(actual, expected, location)
 
     def _compare(self, actual, expected, message, location, comparator=None):
         if location:

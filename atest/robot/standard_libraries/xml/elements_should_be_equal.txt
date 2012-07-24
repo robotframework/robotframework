@@ -34,3 +34,6 @@ Differences in children with non-ASCII path
 
 Normalize whitespace
     Check Test Case    ${TESTNAME}
+
+Exclude children
+    Check Test Case    ${TESTNAME}
