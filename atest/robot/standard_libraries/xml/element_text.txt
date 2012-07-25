@@ -30,10 +30,13 @@ Get texts of elements whitespace normalized
     Check Test Case    ${TESTNAME}
 
 Element text should be
-    Check Test Case    ${TESTNAME}
+    ${tc} =    Check Test Case    ${TESTNAME}
+    Should Be Empty    ${tc.kws[0].msgs}
 
 Element text should match
     Check Test Case    ${TESTNAME}
+    ${tc} =    Check Test Case    ${TESTNAME}
+    Should Be Empty    ${tc.kws[0].msgs}
 
 Element text should be with whitespace normalized
     Check Test Case    ${TESTNAME}

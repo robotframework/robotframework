@@ -19,10 +19,10 @@ import sys
 
 from robot.api import logger
 from robot.libraries.BuiltIn import BuiltIn
-from robot.utils import ET, ETSource
+from robot.utils import ET, ETSource, asserts
 
-# TODO: Use robot.utils.asserts directly
-should_be_equal = BuiltIn().should_be_equal
+
+should_be_equal = asserts.assert_equals
 should_match = BuiltIn().should_match
 
 
