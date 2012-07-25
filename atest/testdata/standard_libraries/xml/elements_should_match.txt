@@ -63,7 +63,7 @@ Normalize whitespace
 Exclude children
     [Template]    Elements should match
     ${TEST}    <test name="*">\n${SPACE*4}</test>    exclude_children=yes
-    ${TEST}    <test name="????"/>    normalize    exclude
+    ${TEST}    <test name="????"/>    exclude    normalize
 
 *** Keywords ***
 Match Elements
@@ -73,6 +73,7 @@ Match Elements
     Elements Should Match    ${source}    ${match}
 
 Elements should not match
-    [Arguments]   ${source}    ${expected}    ${error}    ${normalize}=${FALSE}
+    [Arguments]    ${source}    ${expected}    ${error}    ${normalize}=${FALSE}
     Run Keyword and Expect Error    ${error}
-    ...    Elements Should Match   ${source}    ${expected}    ${normalize}
+    ...    Elements Should Match    ${source}    ${expected}    ${normalize}
+    ...    normalize_whitespace=${normalize}

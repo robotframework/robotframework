@@ -568,18 +568,18 @@ class XML(object):
             raise AssertionError("Attribute '%s' does not exist." % name)
         should_match(attr, pattern, message, values=False)
 
-    def elements_should_be_equal(self, source, expected, normalize_whitespace=False,
-                                 exclude_children=False):
+    def elements_should_be_equal(self, source, expected, exclude_children=False,
+                                 normalize_whitespace=False):
         self._compare_elements(source, expected, should_be_equal,
-                               normalize_whitespace, exclude_children)
+                               exclude_children, normalize_whitespace)
 
-    def elements_should_match(self, source, expected, normalize_whitespace=False,
-                              exclude_children=False):
+    def elements_should_match(self, source, expected, exclude_children=False,
+                              normalize_whitespace=False):
         self._compare_elements(source, expected, should_match,
-                               normalize_whitespace, exclude_children)
+                               exclude_children, normalize_whitespace)
 
-    def _compare_elements(self, source, expected, comparator,
-                          normalize_whitespace, exclude_children):
+    def _compare_elements(self, source, expected, comparator, exclude_children,
+                          normalize_whitespace):
         normalizer = self._normalize_whitespace if normalize_whitespace else None
         comparator = ElementComparator(comparator, normalizer, exclude_children)
         comparator.compare(self.get_element(source), self.get_element(expected))
