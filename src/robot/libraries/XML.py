@@ -19,7 +19,8 @@ import sys
 
 from robot.api import logger
 from robot.libraries.BuiltIn import BuiltIn
-from robot.utils import ET, ETSource, asserts
+from robot.utils import asserts, ET, ETSource
+from robot.version import get_version
 
 
 should_be_equal = asserts.assert_equals
@@ -40,8 +41,8 @@ class XML(object):
       (e.g. `Parse XML` and `Get Element` keywords).
     - Getting text or attributes of elements
       (e.g. `Get Element Text` and `Get Element Attribute`).
-    - Directly verifying text or attributes of elements
-      (e.g `Element Text Should Be` and `Element Attribute Should Match`).
+    - Directly verifying text, attributes, or whole elements
+      (e.g `Element Text Should Be` and `Elements Should Be Equal`).
 
     In the future this library may grow functionality for modifying and
     creating XML content.
@@ -49,7 +50,7 @@ class XML(object):
     *Parsing XML*
 
     XML can be parsed into an element structure using `Parse XML` keyword.
-    It accepts both paths to XML files and strings that contains XML. The
+    It accepts both paths to XML files and strings that contain XML. The
     keyword returns the root element of the structure, which then contains
     other elements as its children and their children.
 
@@ -61,15 +62,16 @@ class XML(object):
 
     *Example*
 
-    This simple example demonstrates parsing XML and verifying its contents
-    both using keywords in this library and in BuiltIn. How to use xpath
-    expressions to find elements and what attributes the returned elements
-    contain are discussed, with more examples, in subsequent sections.
+    The following simple example demonstrates parsing XML and verifying its
+    contents both using keywords in this library and in `BuiltIn` and
+    `Collections` libraries. How to use xpath expressions to find elements
+    and what attributes the returned elements contain are discussed, with
+    more examples, in the subsequent sections.
 
     In the example, `${XML}` refers to the following example XML content.
-    It could either be a path to file containing it or it could contain the
-    XML itself. The same example structure is used also in the subsequent
-    examples.
+    `${XML}` could either be a path to file containing the structure or it
+    could contain the XML itself. The same example structure is used also in
+    the subsequent examples.
 
     | <example>
     |   <first id="1">text</first>
@@ -92,6 +94,7 @@ class XML(object):
     | `Should Be Equal`        | ${root.tag}   | example |       |             |
     | ${first} =               | `Get Element` | ${root} | first |             |
     | `Should Be Equal`        | ${first.text} | text    |       |             |
+    | `Dictionary Should Contain Key` | ${first.attrib}  | id    |             |
     | `Element Text Should Be` | ${first}      | text    |       |             |
     | `Element Attribute Should Be` | ${first} | id      | 1     |             |
     | `Element Attribute Should Be` | ${root}  | id      | 1     | xpath=first |
@@ -99,19 +102,19 @@ class XML(object):
 
     Notice that in the example three last lines are equivalent. Which one to
     use in practice depends on which other elements you need to get or verify.
-    If you only need to do one test, using the last line alone would suffice.
-    If more tests were needed, parsing the XML with `Parse XML` only once would
-    be more efficient.
+    If you only need to do one verification, using the last line alone would
+    suffice. If more verifications are needed, parsing the XML with `Parse XML`
+    only once would be more efficient.
 
     *Finding elements with xpath*
 
     ElementTree, and thus also this library, supports finding elements using
     xpath expressions. ElementTree does not, however, support the full xpath
     syntax, and what is supported depends on its version. ElementTree 1.3 that
-    is distributed with Python/Jython 2.7 supports richer syntax than versions
-    distributed with earlier Python interpreters.
+    is distributed with Python and Jython 2.7 supports richer syntax than
+    versions distributed with earlier Python interpreters.
 
-    Supported xpath syntax is explained below and
+    The supported xpath syntax is explained below and
     [http://effbot.org/zone/element-xpath.htm|ElementTree documentation]
     provides more details. In the examples `${XML}` refers to the same XML
     structure as in the earlier example.
@@ -134,8 +137,10 @@ class XML(object):
     have `child` elements, `parent/child` xpath will match all these `child`
     elements.
 
-    | ${elem} = | `Get Element` | ${XML} | second/child            |
-    | ${elem} = | `Get Element` | ${XML} | third/child/grandchild  |
+    | ${elem} =         | `Get Element` | ${XML}     | second/child            |
+    | `Should Be Equal` | ${elem.tag}   | child      |                         |
+    | ${elem} =         | `Get Element` | ${XML}     | third/child/grandchild  |
+    | `Should Be Equal` | ${elem.tag}   | grandchild |                         |
 
     _Wildcards_
 
@@ -148,14 +153,14 @@ class XML(object):
     _Current element_
 
     The current element is denoted with a dot (`.`). Normally the current
-    element is implicit and does not need to be included in the path.
+    element is implicit and does not need to be included in the xpath.
 
     _Parent element_
 
     The parent element of another element is denoted with two dots (`..`).
     Notice that it is not possible to refer to the parent of the current
-    element. This syntax is supported only in ElementTree 1.3 that is
-    distributed with Python/Jython 2.7.
+    element. This syntax is supported only in ElementTree 1.3 (i.e.
+    Python/Jython 2.7 and newer).
 
     | ${elem} =         | `Get Element` | ${XML} | */second/.. |
     | `Should Be Equal` | ${elem.tag}   | third  |             |
@@ -168,17 +173,19 @@ class XML(object):
 
     | @{elements} =      | `Get Elements` | ${XML} | .//second |
     | `Length Should Be` | ${elements}    | 2      |           |
+    | ${b} =             | `Get Element`  | ${XML} | html//b   |
+    | `Should Be Equal`  | ${b.text}      | bold   |           |
 
     _Predicates_
 
     Predicates allow selecting elements using also other criteria than tag
-    names such as attributes or position. They are specified after the normal
-    tag name or path using syntax `path[predicate]`. The path can have
+    names, for example, attributes or position. They are specified after the
+    normal tag name or path using syntax `path[predicate]`. The path can have
     wildcards and other special syntax explained above.
 
-    Notice that predicates are supported only in ElementTree 1.3 that is
-    shipped with Python/Jython 2.7. What predicates are supported in that
-    version is explained in the table below.
+    What predicates ElementTree supports is explained in the table below.
+    Notice that predicates in general are supported only in ElementTree 1.3
+    (i.e. Python/Jython 2.7 and newer).
 
     | _Predicate_     | _Matches_                         | _Example_          |
     | @attrib         | Elements with attribute `attrib`. | second[@id]        |
@@ -189,7 +196,7 @@ class XML(object):
     Predicates can also be stacked like `path[predicate1][predicate2]`.
     A limitation is that possible position predicate must always be first.
 
-    *Elements attributes*
+    *Element attributes*
 
     All keywords returning elements, such as `Parse XML`, and `Get Element`,
     return ElementTree's
@@ -248,6 +255,7 @@ class XML(object):
     """
 
     ROBOT_LIBRARY_SCOPE = 'GLOBAL'
+    ROBOT_LIBRARY_VERSION = get_version()
     _whitespace = re.compile('\s+')
     _xml_declaration = re.compile('^<\?xml .*\?>\n')
 
@@ -263,8 +271,10 @@ class XML(object):
         | ${xml} =  | Parse XML | ${CURDIR}/test.xml    |
         | ${root} = | Parse XML | <root><child/></root> |
 
-        For more details and examples, see `Parsing XML` section in
+        For more details and examples, see `Parsing XML` section in the
         `introduction`.
+
+        See also `Get Element` and `Get Elements`.
         """
         with ETSource(source) as source:
             return ET.parse(source).getroot()
@@ -274,14 +284,18 @@ class XML(object):
 
         The `source` can be a path to an XML file, a string containing XML, or
         an already parsed XML element. The `xpath` specifies which element to
-        find. See the `introduction` for more details.
+        find. See the `introduction` for more details about both the possible
+        sources and the supported xpath syntax.
 
-        The keyword fails if more or less than one element matches the `xpath`.
-        Use `Get Elements` if you want all matching elements to be returned.
+        The keyword fails if more, or less, than one element matches the
+        `xpath`. Use `Get Elements` if you want all matching elements to be
+        returned.
 
         Examples using `${XML}` structure from the `introduction`:
         | ${element} = | Get Element | ${XML}     | second |
         | ${child} =   | Get Element | ${element} | child  |
+
+        See also `Parse XML` and `Get Elements`.
         """
         elements = self.get_elements(source, xpath)
         if not elements:
@@ -307,6 +321,8 @@ class XML(object):
         | Length Should Be | ${children}  | 2      |             |
         | ${children} =    | Get Elements | ${XML} | first/child |
         | Should Be Empty  |  ${children} |        |             |
+
+        See also `Get Element`.
         """
         source = self._parse_xml(source)
         if xpath == '.':  # ET < 1.3 does not support '.' alone.
@@ -336,15 +352,12 @@ class XML(object):
     def get_child_elements(self, source, xpath='.'):
         """Returns the child elements of the specified element as a list.
 
-        The element whose text to return is specified using `source` and
+        The element whose children to return is specified using `source` and
         `xpath`. They have exactly the same semantics as with `Get Element`
         keyword.
 
         All the direct child elements of the specified element are returned.
         If the element has no children, an empty list is returned.
-
-        See the `introduction` for more details about both the `source` and
-        the `xpath` syntax.
 
         Examples using `${XML}` structure from the `introduction`:
         | ${children} =    | Get Child Elements | ${XML} |             |
@@ -511,10 +524,10 @@ class XML(object):
         original attributes so modifying it has no effect on the XML structure.
 
         Examples using `${XML}` structure from the `introduction`:
-        | ${attributes} = | Get Element Attributes       | ${XML} | first |
-        | Should Be True  | ${attributes} == {'id': '1'} |        |       |
-        | ${attributes} = | Get Element Attributes       | ${XML} | third |
-        | Should Be Empty | ${attributes}                |        |       |
+        | ${attributes} = | Get Element Attributes      | ${XML} | first |
+        | Dictionary Should Contain Key | ${attributes} | id     |       |
+        | ${attributes} = | Get Element Attributes      | ${XML} | third |
+        | Should Be Empty | ${attributes}               |        |       |
 
         See also `Get Element Attribute`, `Element Attribute Should Be`,
         and `Element Attribute Should Match`.
@@ -573,21 +586,21 @@ class XML(object):
                                  normalize_whitespace=False):
         """Verifies that the given `source` element is equal to `expected`.
 
-        Both `source` and `expected` can be given as a path to an XML file,
-        as a string containing XML, or as already parsed XML element structure.
+        Both `source` and `expected` can be given as a path to an XML file, as
+        a string containing XML, or as an already parsed XML element structure.
         See `introduction` for more information about parsing XML in general.
 
         The keyword passes if the `source` element and `expected` element
         are equal. This includes testing the tag names, texts, and attributes
-        of the elements. By default also children are verifies similarly, but
-        this can be disabled by setting `exclude_children` to any true value
-        (e.g. any non-empty string).
+        of the elements. By default also child elements are verified the same
+        way, but this can be disabled by setting `exclude_children` to any true
+        value (e.g. any non-empty string).
 
         All texts inside the given elements are verified, but possible text
         outside them is not. By default texts must match exactly, but setting
         `normalize_whitespace` to any true value makes text verification
         independent on newlines, tabs, and the amount of spaces. For more
-        details about handling texts see `Get Element Text` keyword and
+        details about handling text see `Get Element Text` keyword and
         discussion about elements' `text` and `tail` attributes in the
         `introduction`.
 
@@ -641,7 +654,8 @@ class XML(object):
         `xpath`. They have exactly the same semantics as with `Get Element`
         keyword.
 
-        The returned string does not contain any XML declaration.
+        The returned string is in Unicode format and it does not contain any
+        XML declaration.
 
         See also `Log Element`.
         """
@@ -651,7 +665,7 @@ class XML(object):
     def log_element(self, source, level='INFO', xpath='.'):
         """Logs the string representation of the specified element.
 
-        The element specified with `source` and `xpath` is first converted to
+        The element specified with `source` and `xpath` is first converted into
         a string using `Element To String` keyword internally. The resulting
         string is then logged using the given `level`.
 
