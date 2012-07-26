@@ -10,6 +10,11 @@ Elements should be equal
     <tag a="1" b="2"/>
     <root>\n<tag>some\ntext</tag>tail text</root>
 
+Tail text is not checked with root element
+    [Template]    NONE
+    ${elem} =    Get Element    ${TEST}    another/child
+    Elements should be equal    ${elem}    <child>text</child>
+
 Different tag names
     <tag/>   <täg/>    Different tag name: tag != täg
 

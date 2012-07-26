@@ -621,10 +621,13 @@ class ElementComparator(object):
         self._exclude_children = exclude_children
 
     def compare(self, actual, expected, location=None):
+        if not location:
+            location = Location(actual.tag)
         self._compare_tags(actual, expected, location)
         self._compare_attributes(actual, expected, location)
         self._compare_texts(actual, expected, location)
-        self._compare_tails(actual, expected, location)
+        if location.is_not_root:
+            self._compare_tails(actual, expected, location)
         if not self._exclude_children:
             self._compare_children(actual, expected, location)
 
@@ -633,8 +636,8 @@ class ElementComparator(object):
                       should_be_equal)
 
     def _compare(self, actual, expected, message, location, comparator=None):
-        if location:
-            message = "%s at '%s'" % (message, location)
+        if location.is_not_root:
+            message = "%s at '%s'" % (message, location.path)
         if not comparator:
             comparator = self._comparator
         comparator(actual, expected, message)
@@ -660,16 +663,15 @@ class ElementComparator(object):
     def _compare_children(self, actual, expected, location):
         self._compare(len(actual), len(expected), 'Different number of child elements',
                       location, should_be_equal)
-        if not location:
-            location = Location(actual.tag)
         for act, exp in zip(actual, expected):
             self.compare(act, exp, location.child(act.tag))
 
 
 class Location(object):
 
-    def __init__(self, path):
-        self._path = path
+    def __init__(self, path, is_root=True):
+        self.path = path
+        self.is_not_root = not is_root
         self._children = {}
 
     def child(self, tag):
@@ -678,7 +680,4 @@ class Location(object):
         else:
             self._children[tag] += 1
             tag += '[%d]' % self._children[tag]
-        return Location('%s/%s' % (self._path, tag))
-
-    def __str__(self):
-        return self._path
+        return Location('%s/%s' % (self.path, tag), is_root=False)

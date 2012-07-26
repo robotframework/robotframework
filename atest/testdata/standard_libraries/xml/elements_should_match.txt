@@ -9,6 +9,11 @@ Elements should match
     <tag a="1" b="421"/>    <tag a="?" b="4*"/>
     <root>\n<tag>some\ntext</tag>tail text</root>    <root>\n<tag>some*</tag>tail??ex?</root>
 
+Tail text is not checked with root element
+    [Template]    NONE
+    ${elem} =    Get Element    ${TEST}    another/child
+    Elements should match    ${elem}    <child>t??t</child>
+
 Different tag names
     <tag/>   <täg/>    Different tag name: tag != täg
 

@@ -8,6 +8,9 @@ Resource         atest_resource.txt
 Elements should be equal
     Check Test Case    ${TESTNAME}
 
+Tail text is not checked with root element
+    Check Test Case    ${TESTNAME}
+
 Different tag names
     Check Test Case    ${TESTNAME}
 
