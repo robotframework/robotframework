@@ -571,11 +571,60 @@ class XML(object):
 
     def elements_should_be_equal(self, source, expected, exclude_children=False,
                                  normalize_whitespace=False):
+        """Verifies that the given `source` element is equal to `expected`.
+
+        Both `source` and `expected` can be given as a path to an XML file,
+        as a string containing XML, or as already parsed XML element structure.
+        See `introduction` for more information about parsing XML in general.
+
+        The keyword passes if the `source` element and `expected` element
+        are equal. This includes testing the tag names, texts, and attributes
+        of the elements. By default also children are verifies similarly, but
+        this can be disabled by setting `exclude_children` to any true value
+        (e.g. any non-empty string).
+
+        All texts inside the given elements are verified, but possible text
+        outside them is not. By default texts must match exactly, but setting
+        `normalize_whitespace` to any true value makes text verification
+        independent on newlines, tabs, and the amount of spaces. For more
+        details about handling texts see `Get Element Text` keyword and
+        discussion about elements' `text` and `tail` attributes in the
+        `introduction`.
+
+        Examples using `${XML}` structure from the `introduction`:
+        | ${first} =               | Get Element | ${XML} | first             |
+        | Elements Should Be Equal | ${first}    | <first id="1">text</first> |
+        | ${p} =                   | Get Element | ${XML} | html/p            |
+        | Elements Should Be Equal | ${p} | <p>Text with <b>bold</b> and <i>italics</i>.</p> | normalize_whitespace=yes |
+        | Elements Should Be Equal | ${p} | <p>Text with</p> | exclude | normalize |
+
+        The last example may look a bit strange because the `<p>` element only
+        has text `Text with`. The reason is that rest of the text inside `<p>`
+        actually belongs to the child elements.
+
+        See also `Elements Should Match`.
+        """
         self._compare_elements(source, expected, should_be_equal,
                                exclude_children, normalize_whitespace)
 
     def elements_should_match(self, source, expected, exclude_children=False,
                               normalize_whitespace=False):
+        """Verifies that the given `source` element matches `expected`.
+
+        This keyword works exactly like `Elements Should Be Equal` except that
+        texts and attribute values in the expected value can be given as
+        patterns.
+
+        Pattern matching is similar as matching files in a shell, and it is
+        always case-sensitive. In the pattern, '*' matches anything and '?'
+        matches any single character.
+
+        Examples using `${XML}` structure from the `introduction`:
+        | ${first} =            | Get Element | ${XML} | first          |
+        | Elements Should Match | ${first}    | <first id="?">*</first> |
+
+        See `Elements Should Be Equal` for more examples.
+        """
         self._compare_elements(source, expected, should_match,
                                exclude_children, normalize_whitespace)
 
