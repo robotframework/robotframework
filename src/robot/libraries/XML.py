@@ -369,9 +369,10 @@ class XML(object):
 
         Be default all whitespace, including newlines and indentation, inside
         the element is returned as-is. If `normalize_whitespace` is given any
-        non-false value, then leading and trailing whitespace is stripped,
-        newlines and tabs converted to spaces, and multiple spaces collapsed
-        into one. This is especially useful when dealing with HTML data.
+        true value (e.g. any non-empty string), then leading and trailing
+        whitespace is stripped, newlines and tabs converted to spaces, and
+        multiple spaces collapsed into one. This is especially useful when
+        dealing with HTML data.
 
         Examples using `${XML}` structure from the `introduction`:
         | ${text} =       | Get Element Text | ${XML}       | first        |
