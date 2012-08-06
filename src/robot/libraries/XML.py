@@ -324,15 +324,11 @@ class XML(object):
 
         See also `Get Element`.
         """
-        source = self._parse_xml(source)
+        if isinstance(source, basestring):
+            source = self.parse_xml(source)
         if xpath == '.':  # ET < 1.3 does not support '.' alone.
             return [source]
         return source.findall(self._get_xpath(xpath))
-
-    def _parse_xml(self, source):
-        if isinstance(source, basestring):
-            return self.parse_xml(source)
-        return source
 
     if sys.version_info >= (2, 7):
         def _get_xpath(self, xpath):
