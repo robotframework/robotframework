@@ -4,8 +4,10 @@ Force Tags       regression    pybot    jybot
 Resource         atest_resource.txt
 
 *** Test Cases ***
+Parse file using forwards slash as path separator
+    Check Test Case    ${TESTNAME}
 
-Parse file
+Parse file using system path separator
     Check Test Case    ${TESTNAME}
 
 Parse string

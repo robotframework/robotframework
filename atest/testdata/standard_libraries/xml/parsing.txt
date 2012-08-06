@@ -2,8 +2,12 @@
 Resource     resource.txt
 
 *** Test Cases ***
-Parse file
-    ${root} =   Parse XML     ${TEST}
+Parse file using forwards slash as path separator
+    ${root} =   Parse XML     ${CURDIR}/test.xml
+    Should be equal     ${root.tag}     test
+
+Parse file using system path separator
+    ${root} =   Parse XML     ${CURDIR}${/}test.xml
     Should be equal     ${root.tag}     test
 
 Parse string
@@ -13,7 +17,7 @@ Parse string
 
 Parse invalid file
     [Documentation]    FAIL REGEXP: .*Error: .*
-    Parse XML    ${CURDIR}/parsing.txt
+    Parse XML    ${CURDIR}${/}parsing.txt
 
 Parse invalid string
     [Documentation]    FAIL REGEXP: .*Error: .*
