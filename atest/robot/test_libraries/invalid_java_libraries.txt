@@ -1,0 +1,30 @@
+*** Settings ***
+Suite Setup      Run Tests    ${EMPTY}    test_libraries/invalid_java_libraries.txt
+Force Tags       regression    jybot
+Resource         atest_resource.txt
+
+*** Test Cases ***
+
+Importing Abstract Java Library Fails Cleanly
+    Verify Error    0    AbstractJavaLibrary
+
+Importing Java Library Without Public Constructor Fails Cleanly
+    Verify Error    1    JavaLibraryWithoutPublicConstructor
+
+Importing Abstract Java Library Without Public Constructor Fails Cleanly
+    Verify Error    2    java.lang.Enum
+    Verify Error    3    java.lang.Enum    arguments 'name' and '42'
+
+Invalid Java Libraries Do Not Cause Fatal Errors
+    Check Test Case    ${TESTNAME}
+
+
+*** Keywords ***
+
+Verify Error
+    [Arguments]    ${index}    ${name}    ${args}=no arguments
+    ${path} =    Normalize Path    ${DATADIR}/test_libraries/invalid_java_libraries.txt
+    ${msg} =    Catenate
+    ...    Error in file '${path}' in table 'Settings': Creating an instance
+    ...    of the test library '${name}' with ${args} failed: TypeError: *
+    Check Log Message    ${ERRORS.msgs[${index}]}    ${msg}    ERROR    pattern=yes

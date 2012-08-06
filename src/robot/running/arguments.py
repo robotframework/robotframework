@@ -112,12 +112,19 @@ class JavaKeywordArguments(_KeywordArguments):
             return handler
 
     def _get_arg_limits(self, signatures):
-        if len(signatures) == 1:
-            return self._get_single_sig_arg_limits(signatures[0])
+        if not signatures:
+            return self._no_signatures_arg_limits()
+        elif len(signatures) == 1:
+            return self._get_single_signature_arg_limits(signatures[0])
         else:
-            return self._get_multi_sig_arg_limits(signatures)
+            return self._get_multi_signature_arg_limits(signatures)
 
-    def _get_single_sig_arg_limits(self, signature):
+    def _no_signatures_arg_limits(self):
+        # This happens at least if class has no public constructors.
+        # Better to accept all arguments and leave error handling for later.
+        return 0, sys.maxint
+
+    def _get_single_signature_arg_limits(self, signature):
         args = signature.args
         if len(args) > 0 and args[-1].isArray():
             mina = len(args) - 1
@@ -126,7 +133,7 @@ class JavaKeywordArguments(_KeywordArguments):
             mina = maxa = len(args)
         return mina, maxa
 
-    def _get_multi_sig_arg_limits(self, signatures):
+    def _get_multi_signature_arg_limits(self, signatures):
         mina = maxa = None
         for sig in signatures:
             argc = len(sig.args)
