@@ -80,7 +80,7 @@ def process_keyword(kw, writer, level):
 
 def process_item(item, writer, level, item_type, long_name=False):
     indent = '' if level == 0 else ('|  ' * (level-1) + '|- ')
-    name = item.longname if long_name else item.name
+    name = (item.longname if long_name else item.name).encode('UTF-8')
     elapsed = utils.elapsed_time_to_string(item.elapsedtime)
     writer.writerow([indent+item_type, name, item.status, item.starttime,
                      item.endtime, elapsed, item.elapsedtime/1000.0])

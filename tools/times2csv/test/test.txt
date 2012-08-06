@@ -1,0 +1,7 @@
+*** Test Cases ***
+Hyvä testi
+    Parempi keywörd
+
+*** Keywords ***
+Parempi keywörd
+    Log    Paras messäge!
