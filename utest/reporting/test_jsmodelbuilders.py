@@ -1,7 +1,7 @@
 import unittest
 from os.path import abspath, basename, dirname, join
 
-from robot.utils.asserts import assert_equals
+from robot.utils.asserts import assert_equals, assert_true
 from robot.result.testsuite import TestSuite
 from robot.result.testcase import TestCase
 from robot.result.keyword import Keyword
@@ -254,6 +254,20 @@ class TestSplitting(unittest.TestCase):
         sub.tests.create('test', doc='tdoc')
         sub.tests[0].keywords.create('koowee', doc='kdoc')
         return suite
+
+    def test_message_linking(self):
+        suite = self._get_suite_with_keywords()
+        msg = suite.keywords[0].keywords[0].messages.create(
+                'Message', 'WARN', timestamp='20111204 22:04:03.210')
+        context = JsBuildingContext(split_log=True)
+        SuiteBuilder(context).build(suite)
+        errors = ErrorsBuilder(context).build(ExecutionErrors([msg]))
+        assert_equals(remap(errors, context.strings),
+                      ((0, 3, 'Message', 's1-k1-k1'),))
+        assert_equals(remap(context.link(msg), context.strings), 's1-k1-k1')
+        assert_true('*s1-k1-k1' in context.strings)
+        for res in context.split_results:
+            assert_true('*s1-k1-k1' not in res[1])
 
 
 class TestPruneInput(unittest.TestCase):

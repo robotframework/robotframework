@@ -30,7 +30,7 @@ class JsBuildingContext(object):
                 if isinstance(log_path, basestring) else None
         self._split_log = split_log
         self._prune_input = prune_input
-        self._strings = self._orig_strings = StringCache()
+        self._strings = self._top_level_strings = StringCache()
         self.basemillis = None
         self.split_results = []
         self.min_level = 'NONE'
@@ -58,18 +58,19 @@ class JsBuildingContext(object):
             self.basemillis = millis
         return millis - self.basemillis
 
-    def create_link_target(self, msg):
-        self._msg_links[self._link_key(msg)] = self.string(msg.parent.id)
-
     def message_level(self, level):
         if LEVELS[level] < LEVELS[self.min_level]:
             self.min_level = level
 
-    def _link_key(self, msg):
-        return (msg.message, msg.level, msg.timestamp)
+    def create_link_target(self, msg):
+        id = self._top_level_strings.add(msg.parent.id)
+        self._msg_links[self._link_key(msg)] = id
 
     def link(self, msg):
         return self._msg_links.get(self._link_key(msg))
+
+    def _link_key(self, msg):
+        return (msg.message, msg.level, msg.timestamp)
 
     @property
     def strings(self):
@@ -83,7 +84,7 @@ class JsBuildingContext(object):
 
     def end_splitting(self, model):
         self.split_results.append((model, self.strings))
-        self._strings = self._orig_strings
+        self._strings = self._top_level_strings
         return len(self.split_results)
 
     @contextmanager
