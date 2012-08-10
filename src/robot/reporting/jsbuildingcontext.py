@@ -59,7 +59,7 @@ class JsBuildingContext(object):
         return millis - self.basemillis
 
     def create_link_target(self, msg):
-        self._msg_links[self._link_key(msg)] = self.string(msg.parent.id)
+        self._msg_links[self._link_key(msg)] = self._orig_strings.add(msg.parent.id)
 
     def message_level(self, level):
         if LEVELS[level] < LEVELS[self.min_level]:
