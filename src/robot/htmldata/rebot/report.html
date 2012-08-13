@@ -445,6 +445,10 @@ function popUpTo(list, upTo) {
 </script>
 
 <script type="text/x-jquery-tmpl" id="tagOrTotalDetailsTemplate">
+  <tr>
+      <th>Status:</th>
+      <td>${total} total, ${pass} passed, {{if fail}}<span class="fail">${fail} failed</span>{{else}}<span class="pass">0 failed</span>{{/if}}</td>
+  </tr>
   {{if doc}}
   <tr>
     <th>Documentation:</th>
@@ -465,27 +469,20 @@ function popUpTo(list, upTo) {
   </tr>
   {{/if}}{{/if}}
   <tr>
-    <th>Status:</th>
-    <td>${total} total, ${pass} passed, {{if fail}}<span class="fail">${fail} failed</span>{{else}}<span class="pass">0 failed</span>{{/if}}</td>
-  </tr>
-  <tr>
     <th>Total Time:</th>
     <td>${totalTime}</td>
   </tr>
 </script>
 
 <script type="text/x-jquery-tmpl" id="suiteDetailsTemplate">
+  <tr>
+    <th>Status:</th>
+    <td>{{tmpl($data) 'suiteStatusMessageTemplate'}}</td>
+  </tr>
   {{if doc()}}
   <tr>
     <th>Documentation:</th>
     <td class="doc">{{html doc()}}</td>
-  </tr>
-  {{/if}}
-  {{if $item.logURL}}
-  <tr>
-    <th>Log File:</th>
-    <td><a href="${$item.logURL}#${id}"
-           title="{{html fullName}}">${$item.logURL}#${id}</a></td>
   </tr>
   {{/if}}
   {{each metadata}}
@@ -494,10 +491,6 @@ function popUpTo(list, upTo) {
     <td class="doc">{{html $value[1]}}</td>
   </tr>
   {{/each}}
-  <tr>
-    <th>Status:</th>
-    <td>{{tmpl($data) 'suiteStatusMessageTemplate'}}</td>
-  </tr>
   {{if message()}}
   <tr>
     <th>Message:</th>
@@ -512,6 +505,13 @@ function popUpTo(list, upTo) {
     <th>Elapsed:</th>
     <td>${times.elapsedTime}</td>
   </tr>
+  {{if $item.logURL}}
+  <tr>
+    <th>Log File:</th>
+    <td><a href="${$item.logURL}#${id}"
+           title="{{html fullName}}">${$item.logURL}#${id}</a></td>
+  </tr>
+  {{/if}}
 </script>
 
 <script type="text/x-jquery-tmpl" id="testDetailsTableTemplate">
