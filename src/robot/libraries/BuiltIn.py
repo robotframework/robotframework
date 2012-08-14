@@ -785,8 +785,28 @@ class _Verify:
 class _Variables:
 
     def get_variables(self):
-        """Returns a dictionary containing all variables in the current scope."""
-        return self._variables
+        """Returns a dictionary containing all variables in the current scope.
+
+        Variables are returned as a special dictionary that allows accessing
+        variables in space, case, and underscore insensitive manner similarly
+        as accessing variables in the test data. This dictionary supports all
+        same operations as normal Python dictionaries and, for example,
+        Collections library can be used to access or modify it. Modifying the
+        returned dictionary has no effect on the variables available in the
+        current scope.
+
+        Example:
+        | ${example_variable} =         | Set Variable | example value         |
+        | ${variables} =                | Get Variables |                      |
+        | Dictionary Should Contain Key | ${variables} | \\${example_variable} |
+        | Dictionary Should Contain Key | ${variables} | \\${ExampleVariable}  |
+        | Set To Dictionary             | ${variables} | \\${name} | value     |
+        | Variable Should Not Exist     | \\${name}    |           |           |
+
+        Note: Prior to Robot Framework 2.7.4 variables were returned as
+        a custom object that did not support all dictionary methods.
+        """
+        return utils.NormalizedDict(self._variables.current, ignore='_')
 
     def get_variable_value(self, name, default=None):
         """Returns variable value or `default` if the variable does not exist.
