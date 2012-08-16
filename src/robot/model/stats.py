@@ -23,6 +23,7 @@ class Stat(object):
         self.name = name
         self.passed = 0
         self.failed = 0
+        self.elapsed = 0
 
     def get_attributes(self, include_label=False, exclude_empty=False,
                        values_as_strings=False, html_escape=False):
@@ -49,14 +50,17 @@ class Stat(object):
         return self.passed + self.failed
 
     def add_test(self, test):
+        self._update_stats(test)
+        self._update_elapsed(test)
+
+    def _update_stats(self, test):
         if test.passed:
             self.passed += 1
         else:
             self.failed += 1
 
-    def add_stat(self, other):
-        self.passed += other.passed
-        self.failed += other.failed
+    def _update_elapsed(self, test):
+        self.elapsed += test.elapsedtime
 
     def __cmp__(self, other):
         return cmp(self.name, other.name)
@@ -78,10 +82,18 @@ class SuiteStat(Stat):
     def __init__(self, suite):
         Stat.__init__(self, suite.longname)
         self.id = suite.id
+        self.elapsed = suite.elapsedtime
         self._name = suite.name
 
     def _get_custom_attrs(self):
         return {'id': self.id, 'name': self._name}
+
+    def _update_elapsed(self, test):
+        pass
+
+    def add_stat(self, other):
+        self.passed += other.passed
+        self.failed += other.failed
 
 
 class TagStat(Stat):
