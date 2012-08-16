@@ -311,19 +311,30 @@ def get_elapsed_time(start_time, end_time):
     return int(end_millis - start_millis)
 
 
-def elapsed_time_to_string(elapsed_millis):
-    """Converts elapsed time in millisecods to format 'hh:mm:ss.mil'"""
-    elapsed_millis = round(elapsed_millis)
-    if elapsed_millis < 0:
-        pre = '-'
-        elapsed_millis = abs(elapsed_millis)
-    else:
-        pre = ''
-    millis = elapsed_millis % 1000
-    secs  = int(elapsed_millis / 1000) % 60
-    mins  = int(elapsed_millis / 60000) % 60
-    hours = int(elapsed_millis / 3600000)
-    return '%s%02d:%02d:%02d.%03d' % (pre, hours, mins, secs, millis)
+def elapsed_time_to_string(elapsed, include_millis=True):
+    """Converts elapsed time in milliseconds to format 'hh:mm:ss.mil'.
+
+    If `include_millis` is True, '.mil' part is omitted.
+    """
+    prefix = ''
+    if elapsed < 0:
+        elapsed = abs(elapsed)
+        prefix = '-'
+    if include_millis:
+        return prefix + _elapsed_time_to_string(elapsed)
+    return prefix + _elapsed_time_to_string_without_millis(elapsed)
+
+def _elapsed_time_to_string(elapsed):
+    secs, millis = divmod(int(round(elapsed)), 1000)
+    mins, secs = divmod(secs, 60)
+    hours, mins = divmod(mins, 60)
+    return '%02d:%02d:%02d.%03d' % (hours, mins, secs, millis)
+
+def _elapsed_time_to_string_without_millis(elapsed):
+    secs = int(round(elapsed, -3)) / 1000
+    mins, secs = divmod(secs, 60)
+    hours, mins = divmod(mins, 60)
+    return '%02d:%02d:%02d' % (hours, mins, secs)
 
 
 def _timestamp_to_millis(timestamp, seps=None):
