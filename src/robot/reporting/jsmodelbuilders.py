@@ -156,8 +156,8 @@ class StatisticsBuilder(object):
                 self._build_stats(statistics.suite))
 
     def _build_stats(self, stats):
-        return tuple(stat.get_attributes(include_label=True, exclude_empty=True,
-                                         html_escape=True)
+        return tuple(stat.get_attributes(include_label=True, include_elapsed=True,
+                                         exclude_empty=True, html_escape=True)
                      for stat in stats)
 
 

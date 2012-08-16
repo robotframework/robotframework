@@ -12,7 +12,7 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from robot.utils import html_escape
+from robot.utils import elapsed_time_to_string, html_escape
 
 from .tags import TagPatterns
 
@@ -25,12 +25,16 @@ class Stat(object):
         self.failed = 0
         self.elapsed = 0
 
-    def get_attributes(self, include_label=False, exclude_empty=False,
-                       values_as_strings=False, html_escape=False):
+    def get_attributes(self, include_label=False, include_elapsed=False,
+                       exclude_empty=False, values_as_strings=False,
+                       html_escape=False):
         attrs =  {'pass': self.passed, 'fail': self.failed}
         attrs.update(self._get_custom_attrs())
         if include_label:
             attrs['label'] = self.name
+        if include_elapsed:
+            attrs['elapsed'] = elapsed_time_to_string(self.elapsed,
+                                                      include_millis=False)
         if exclude_empty:
             attrs = dict((k, v) for k, v in attrs.items() if v != '')
         if values_as_strings:

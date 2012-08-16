@@ -188,6 +188,17 @@ class TestElapsedTime(unittest.TestCase):
         assert_equals(self.stats.suite.suites[0].stat.elapsed, 30000)
         assert_equals(self.stats.suite.suites[1].stat.elapsed, 12042)
 
+    def test_suite_stats_when_suite_has_no_times(self):
+        suite = TestSuite()
+        assert_equals(Statistics(suite).suite.stat.elapsed, 0)
+        ts = '20120816 00:00:'
+        suite.tests = [TestCase(starttime=ts+'00.000', endtime=ts+'00.001'),
+                       TestCase(starttime=ts+'00.001', endtime=ts+'01.001')]
+        assert_equals(Statistics(suite).suite.stat.elapsed, 1001)
+        suite.suites = [TestSuite(starttime=ts+'02.000', endtime=ts+'12.000'),
+                        TestSuite()]
+        assert_equals(Statistics(suite).suite.stat.elapsed, 11001)
+
 
 if __name__ == "__main__":
     unittest.main()

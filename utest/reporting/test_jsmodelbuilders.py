@@ -312,20 +312,23 @@ class TestBuildStatistics(unittest.TestCase):
 
     def test_total_stats(self):
         critical, all = self._build_statistics()[0]
-        self._verify_stat(critical, 2, 0, 'Critical Tests')
-        self._verify_stat(all, 2, 2, 'All Tests')
+        self._verify_stat(all, 2, 2, 'All Tests', '00:00:33')
+        self._verify_stat(critical, 2, 0, 'Critical Tests', '00:00:22')
 
     def test_tag_stats(self):
-        t2, comb, t1 = self._build_statistics()[1]
-        self._verify_stat(t2, 2, 0, 't2', info='critical', doc='doc', links='t:url')
-        self._verify_stat(comb, 2, 0, 'name', info='combined', combined='t1&amp;t2')
-        self._verify_stat(t1, 2, 2, 't1')
+        t2, comb, t1, t3 = self._build_statistics()[1]
+        self._verify_stat(t2, 2, 0, 't2', '00:00:22',
+                          info='critical', doc='doc', links='t:url')
+        self._verify_stat(comb, 2, 0, 'name', '00:00:22',
+                          info='combined', combined='t1&amp;t2')
+        self._verify_stat(t1, 2, 2, 't1', '00:00:33')
+        self._verify_stat(t3, 0, 1, 't3', '00:00:01')
 
     def test_suite_stats(self):
         root, sub1, sub2 = self._build_statistics()[2]
-        self._verify_stat(root, 2, 2, 'root', name='root', id='s1')
-        self._verify_stat(sub1, 1, 1, 'root.sub1', name='sub1', id='s1-s1')
-        self._verify_stat(sub2, 1, 1, 'root.sub2', name='sub2', id='s1-s2')
+        self._verify_stat(root, 2, 2, 'root', '00:00:42', name='root', id='s1')
+        self._verify_stat(sub1, 1, 1, 'root.sub1', '00:00:10', name='sub1', id='s1-s1')
+        self._verify_stat(sub2, 1, 1, 'root.sub2', '00:00:30', name='sub2', id='s1-s2')
 
     def _build_statistics(self):
         return StatisticsBuilder().build(self._get_statistics())
@@ -338,20 +341,26 @@ class TestBuildStatistics(unittest.TestCase):
                           tag_stat_link=[('?2', 'url', '%1')])
 
     def _get_suite(self):
-        suite = TestSuite(name='root')
+        ts = lambda s, ms=0: '20120816 16:09:%02d.%03d' % (s, ms)
+        suite = TestSuite(name='root', starttime=ts(0), endtime=ts(42))
         suite.set_criticality(critical_tags=['t2'])
-        sub1 = TestSuite(name='sub1')
+        sub1 = TestSuite(name='sub1', starttime=ts(0), endtime=ts(10))
         sub2 = TestSuite(name='sub2')
         suite.suites = [sub1, sub2]
-        sub1.tests = [TestCase(tags=['t1', 't2'], status='PASS'),
-                      TestCase(tags=['t1'], status='FAIL')]
-        sub2.tests.create(tags=['t1', 't2'], status='PASS')
-        sub2.suites.create(name='below suite stat level')
-        sub2.suites[0].tests.create(tags=['t1'], status='FAIL')
+        sub1.tests = [
+            TestCase(tags=['t1', 't2'], status='PASS', starttime=ts(0), endtime=ts(1, 500)),
+            TestCase(tags=['t1', 't3'], status='FAIL', starttime=ts(2), endtime=ts(3, 499))
+        ]
+        sub2.tests = [
+            TestCase(tags=['t1', 't2'], status='PASS', starttime=ts(10), endtime=ts(30))
+        ]
+        sub2.suites.create(name='below suite stat level')\
+                .tests.create(tags=['t1'], status='FAIL', starttime=ts(30), endtime=ts(40))
         return suite
 
-    def _verify_stat(self, stat, pass_, fail, label, **attrs):
-        attrs.update({'pass': pass_, 'fail': fail, 'label': label})
+    def _verify_stat(self, stat, pass_, fail, label, elapsed, **attrs):
+        attrs.update({'pass': pass_, 'fail': fail, 'label': label,
+                      'elapsed': elapsed})
         assert_equals(stat, attrs)
 
 
