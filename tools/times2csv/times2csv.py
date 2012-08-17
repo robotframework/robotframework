@@ -73,8 +73,7 @@ def process_test(test, writer, items, level):
 def process_keyword(kw, writer, level):
     if kw is None:
         return
-    kw_type = kw.type.capitalize()
-    process_item(kw, writer, level, kw_type)
+    process_item(kw, writer, level, kw.type.capitalize())
     for subkw in kw.keywords:
         process_keyword(subkw, writer, level+1)
 
