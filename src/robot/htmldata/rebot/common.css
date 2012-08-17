@@ -114,7 +114,7 @@ table.statistics th {
     text-align: center;
 }
 .col_graph {
-    width: 11em;
+    width: 9em;
 }
 .stat_name {
     float: left;
@@ -139,7 +139,7 @@ table.statistics th {
 .graph, .empty_graph {
     border: 1px solid black;
     width: 100%;
-    height: 0.75em;
+    height: 0.7em;
     padding: 0;
     background: red;
 }
