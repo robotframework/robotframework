@@ -199,6 +199,23 @@ class TestElapsedTime(unittest.TestCase):
                         TestSuite()]
         assert_equals(Statistics(suite).suite.stat.elapsed, 11001)
 
+    def test_elapsed_from_get_attributes(self):
+        for time, expected in [('00:00:00.000', '0.000'),
+                               ('00:00:00.001', '0.001'),
+                               ('00:00:00.500', '0.500'),
+                               ('00:00:00.999', '0.999'),
+                               ('00:00:01.000', '00:00:01'),
+                               ('00:00:01.001', '00:00:01'),
+                               ('00:00:01.499', '00:00:01'),
+                               ('00:00:01.500', '00:00:02'),
+                               ('01:59:59:499', '01:59:59'),
+                               ('01:59:59:500', '02:00:00')]:
+            suite = TestSuite(starttime='20120817 00:00:00.000',
+                              endtime='20120817 ' + time)
+            stat = Statistics(suite).suite.stat
+            elapsed = stat.get_attributes(include_elapsed=True)['elapsed']
+            assert_equals(elapsed, expected)
+
 
 if __name__ == "__main__":
     unittest.main()
