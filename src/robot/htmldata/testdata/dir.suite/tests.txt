@@ -18,6 +18,18 @@ Library         pölkü/myLib.py
 Simple
     Log  do nothing
 
+Long
+    [Tags]    long1    long2    long3
+    Sleep    0.5 seconds
+
+Longer
+    [Tags]    long2    long3
+    Sleep    0.7 second
+
+Longest
+    [Tags]    long3    *kek*kone*
+    Sleep    2 seconds
+
 Log HTML  [tags]   !"#%&/()=
     [Documentation]    This test uses _*formatted*_ HTML.
     ...  | Isn't | that | _cool?_ |
