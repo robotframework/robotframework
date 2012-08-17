@@ -72,6 +72,7 @@ function addStatistics() {
         '<th class="col_stat">Total</th>' +
         '<th class="col_stat">Pass</th>' +
         '<th class="col_stat">Fail</th>' +
+        '<th class="col_elapsed">Elapsed</th>' +
         '<th class="col_graph">Graph</th>';
     var statTable =
         '<h2>Test Statistics</h2>' +
@@ -114,6 +115,7 @@ $.template("stat_columns",
     '<td class="col_stat">${total}</td>' +
     '<td class="col_stat">${pass}</td>' +
     '<td class="col_stat">${fail}</td>' +
+    '<td class="col_elapsed">${elapsed}</td>' +
     '<td class="col_graph">' +
       '{{if total}}' +
       '<div class="graph">' +

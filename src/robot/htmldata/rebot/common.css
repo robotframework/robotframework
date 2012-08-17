@@ -109,8 +109,12 @@ table.statistics th {
     width: 3em;
     text-align: center;
 }
+.col_elapsed {
+    width: 4em;
+    text-align: center;
+}
 .col_graph {
-   width: 11em;
+    width: 11em;
 }
 .stat_name {
     float: left;
