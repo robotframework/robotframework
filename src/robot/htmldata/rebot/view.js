@@ -87,6 +87,15 @@ function addStatistics() {
         '</table>';
     $(statTable).appendTo('#statistics_container');
     $.map(['total', 'tag', 'suite'], addStatTable);
+    addTooltipsToElapsedTimes();
+}
+
+function addTooltipsToElapsedTimes() {
+    $('#total_stats .col_elapsed, #tag_stats .col_elapsed').attr('title',
+        'Total execution time of these tests. ' +
+        'Excludes suite setups and teardowns.');
+    $('#suite_stats .col_elapsed').attr('title',
+        'Total execution time of this suite.');
 }
 
 function addStatTable(tableName) {
