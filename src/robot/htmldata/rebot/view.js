@@ -92,10 +92,10 @@ function addStatistics() {
 
 function addTooltipsToElapsedTimes() {
     $('#total_stats .col_elapsed, #tag_stats .col_elapsed').attr('title',
-        'Total execution time of these tests. ' +
+        'Total execution time of these test cases. ' +
         'Excludes suite setups and teardowns.');
     $('#suite_stats .col_elapsed').attr('title',
-        'Total execution time of this suite.');
+        'Total execution time of this test suite.');
 }
 
 function addStatTable(tableName) {
