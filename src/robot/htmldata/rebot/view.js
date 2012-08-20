@@ -73,7 +73,7 @@ function addStatistics() {
         '<th class="col_stat">Pass</th>' +
         '<th class="col_stat">Fail</th>' +
         '<th class="col_elapsed">Elapsed</th>' +
-        '<th class="col_graph">Graph</th>';
+        '<th class="col_graph">Pass / Fail</th>';
     var statTable =
         '<h2>Test Statistics</h2>' +
         '<table class="statistics" id="total_stats">' +
@@ -143,6 +143,7 @@ $.template('no_tags_row',
     '<td class="col_stat"></td>' +
     '<td class="col_stat"></td>' +
     '<td class="col_stat"></td>' +
+    '<td class="col_elapsed">0.000</td>' +
     '<td class="col_graph">' +
       '<div class="empty_graph"></div>' +
     '</td>' +
