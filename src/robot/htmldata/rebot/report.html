@@ -231,8 +231,7 @@ function renderTestDetails(sortedColumn) {
         return;
     var elements = popUpTo(window.elementsToRender, 10);
     $.tmpl('testDetailsTableRowTemplate', elements,
-           {logURL: window.settings.logURL}
-    ).appendTo('#test_details tbody');
+           {logURL: window.settings.logURL}).appendTo('#test_details tbody');
     if (window.elementsToRender.length)
         setTimeout(function () {renderTestDetails(sortedColumn);}, 0);
     else {
@@ -243,18 +242,17 @@ function renderTestDetails(sortedColumn) {
 
 function configureTableSorter() {
     $.tablesorter.addParser({
-            id: 'criticality',
-            is: function(s) {
-                // return false so this parser is not auto detected
-                return false;
-            },
-            format: function(s) {
-                return s.toLowerCase().replace(/no/,1).replace(/yes/,0);
-            },
-            type: 'numeric'
-        });
+        id: 'criticality',
+        type: 'numeric',
+        is: function(s) {
+            return false;  // do not auto-detect
+        },
+        format: function(s) {
+            return s.toLowerCase().replace(/no/, 1).replace(/yes/, 0);
+        }
+    });
     $("#test_details").tablesorter({
-        headers:{ 3:{ sorter:'criticality' }}
+        headers: {3: {sorter:'criticality'}}
     });
 }
 
