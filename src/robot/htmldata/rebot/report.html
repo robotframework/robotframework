@@ -231,7 +231,7 @@ function renderTestDetails(sortedColumn) {
         return;
     var elements = popUpTo(window.elementsToRender, 10);
     $.tmpl('testDetailsTableRowTemplate', elements,
-           {logURL: window.settings.logURL}).appendTo('#test_details tbody');
+           {logURL: window.settings.logURL}).appendTo('#test_details > tbody');
     if (window.elementsToRender.length)
         setTimeout(function () {renderTestDetails(sortedColumn);}, 0);
     else {
