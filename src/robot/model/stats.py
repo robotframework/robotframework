@@ -33,7 +33,8 @@ class Stat(object):
         if include_label:
             attrs['label'] = self.name
         if include_elapsed:
-            attrs['elapsed'] = self._elapsed_time_to_string(self.elapsed)
+            attrs['elapsed'] = elapsed_time_to_string(self.elapsed,
+                                                      include_millis=False)
         if exclude_empty:
             attrs = dict((k, v) for k, v in attrs.items() if v != '')
         if values_as_strings:
@@ -44,11 +45,6 @@ class Stat(object):
 
     def _get_custom_attrs(self):
         return {}
-
-    def _elapsed_time_to_string(self, elapsed):
-        if elapsed < 1000:
-            return '0.%03d' % elapsed
-        return elapsed_time_to_string(elapsed, include_millis=False)
 
     def _html_escape(self, item):
         return html_escape(item) if isinstance(item, basestring) else item
