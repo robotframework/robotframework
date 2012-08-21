@@ -325,7 +325,7 @@ function popUpTo(list, upTo) {
 </script>
 
 <script type="text/x-jquery-tmpl" id="totalStatisticsRowTemplate">
-  <tr onclick="totalDetailSelected('${type}')">
+  <tr onclick="totalDetailSelected('${type}')" class="row-${$item.index}">
     <td class="col_stat_name">
       <div class="stat_name">
         <a href="#total_${type}">{{html label}}</a>
@@ -336,7 +336,7 @@ function popUpTo(list, upTo) {
 </script>
 
 <script type="text/x-jquery-tmpl" id="tagStatisticsRowTemplate">
-  <tr onclick="tagDetailSelected('${label}');">
+  <tr onclick="tagDetailSelected('${label}');" class="row-${$item.index}">
     <td class="col_stat_name">
       <div class="stat_name">
         <a href="#tag_${label}"
@@ -355,7 +355,7 @@ function popUpTo(list, upTo) {
 </script>
 
 <script type="text/x-jquery-tmpl" id="suiteStatisticsRowTemplate">
-  <tr onclick="suiteDetailSelected('${id}');">
+  <tr onclick="suiteDetailSelected('${id}');" class="row-${$item.index}">
     <td class="col_stat_name">
       <div class="stat_name">
         <a href="#suite_${id}"

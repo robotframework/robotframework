@@ -100,7 +100,20 @@ function addTooltipsToElapsedTimes() {
 }
 
 function enableStatisticsSorter() {
-    $(".statistics").tablesorter({headers: {5: {sorter: false}}});
+    $.tablesorter.addParser({
+        id: 'statName',
+        type: 'numeric',
+        is: function(s) {
+            return false;  // do not auto-detect
+        },
+        format: function(string, table, cell, cellIndex) {
+            var index = $(cell).parent().attr('class').substring(4);
+            return parseInt(index);
+        }
+    });
+    $(".statistics").tablesorter({
+        headers: {0: {sorter:'statName'}, 5: {sorter: false}}
+    });
 }
 
 function addStatTable(tableName) {
@@ -130,7 +143,7 @@ function renderStatTable(tableName, templateName, stats) {
     var locator = '#' + tableName + '_stats > tbody';
     // Need explicit for loop because $.tmpl() does not handle very large lists
     for (var i = 0; stats !== undefined && i < stats.length; i++) {
-        $.tmpl(templateName , stats[i]).appendTo($(locator));
+        $.tmpl(templateName , stats[i], {index: i}).appendTo($(locator));
     }
 }
 
