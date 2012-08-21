@@ -114,14 +114,23 @@ function addStatTable(tableName) {
 }
 
 function renderNoTagStatTable() {
-    $.tmpl('no_tags_row').appendTo($('#tag_stats'));
+    $('<tr>' +
+        '<td class="col_stat_name">No Tags</td>' +
+        '<td class="col_stat"></td>' +
+        '<td class="col_stat"></td>' +
+        '<td class="col_stat"></td>' +
+        '<td class="col_elapsed"></td>' +
+        '<td class="col_graph">' +
+          '<div class="empty_graph"></div>' +
+        '</td>' +
+      '</tr>').appendTo($('#tag_stats > tbody'));
 }
 
 function renderStatTable(tableName, templateName, stats) {
-    var tableId = "#" + tableName + "_stats";
+    var locator = '#' + tableName + '_stats > tbody';
     // Need explicit for loop because $.tmpl() does not handle very large lists
     for (var i = 0; stats !== undefined && i < stats.length; i++) {
-        $.tmpl(templateName , stats[i]).appendTo($(tableId + '> tbody'));
+        $.tmpl(templateName , stats[i]).appendTo($(locator));
     }
 }
 
@@ -140,19 +149,6 @@ $.template("stat_columns",
       '<div class="empty_graph"></div>' +
       '{{/if}}' +
     '</td>'
-);
-
-$.template('no_tags_row',
-    '<tr>' +
-    '<td class="col_stat_name">No Tags</td>' +
-    '<td class="col_stat"></td>' +
-    '<td class="col_stat"></td>' +
-    '<td class="col_stat"></td>' +
-    '<td class="col_elapsed">0.000</td>' +
-    '<td class="col_graph">' +
-      '<div class="empty_graph"></div>' +
-    '</td>' +
-    '</tr>'
 );
 
 $.template('suiteStatusMessageTemplate',
