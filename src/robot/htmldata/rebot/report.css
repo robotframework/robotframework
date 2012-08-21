@@ -13,7 +13,7 @@ th {
 /* Summary and total/tag/suite details */
 table.details {
     clear: both;
-    width: 58em;
+    width: 800px;
     margin-bottom: 1em;
 }
 table.details th {

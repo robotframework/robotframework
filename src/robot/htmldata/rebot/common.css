@@ -29,7 +29,7 @@ a:hover, a:active {
 }
 /* Headers */
 #header {
-    width: 58em;
+    width: 800px;
     height: 3em;
     margin: 6px 0;
 }
@@ -89,7 +89,7 @@ h1 {
 }
 /* Statistics table */
 table.statistics {
-    width: 58em;
+    width: 800px;
     border-collapse: collapse;
     empty-cells: show;
     margin-bottom: 1em;
