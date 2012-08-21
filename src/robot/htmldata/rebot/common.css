@@ -96,6 +96,7 @@ table.statistics {
 }
 table.statistics tr:hover {
     background: #F4F4FF;
+    cursor: pointer;
 }
 table.statistics td, table.statistics th {
     border: 1px solid black;

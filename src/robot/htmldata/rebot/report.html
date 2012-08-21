@@ -325,11 +325,10 @@ function popUpTo(list, upTo) {
 </script>
 
 <script type="text/x-jquery-tmpl" id="totalStatisticsRowTemplate">
-  <tr>
+  <tr onclick="totalDetailSelected('${type}')">
     <td class="col_stat_name">
       <div class="stat_name">
-        <a href="#total_${type}"
-           onclick="totalDetailSelected('${type}')">{{html label}}</a>
+        <a href="#total_${type}">{{html label}}</a>
       </div>
     </td>
     {{tmpl($data) 'stat_columns'}}
@@ -337,16 +336,16 @@ function popUpTo(list, upTo) {
 </script>
 
 <script type="text/x-jquery-tmpl" id="tagStatisticsRowTemplate">
-  <tr>
+  <tr onclick="tagDetailSelected('${label}');">
     <td class="col_stat_name">
       <div class="stat_name">
-        <a href="#tag_${label}" onclick="tagDetailSelected('${label}');"
+        <a href="#tag_${label}"
            title="{{html doc}}">{{html label}}</a>
         {{if info}}(${info}){{/if}}
       </div>
       <div class="tag_links">
         {{each links}}
-        <span>[<a href="{{html $value.url}}"
+        <span>[<a href="{{html $value.url}}" onclick="stopPropagation(event);"
                   title="{{html $value.url}}">{{html $value.title}}</a>]</span>
         {{/each}}
       </div>
@@ -356,10 +355,10 @@ function popUpTo(list, upTo) {
 </script>
 
 <script type="text/x-jquery-tmpl" id="suiteStatisticsRowTemplate">
-  <tr>
+  <tr onclick="suiteDetailSelected('${id}');">
     <td class="col_stat_name">
       <div class="stat_name">
-        <a href="#suite_${id}" onclick="suiteDetailSelected('${id}');"
+        <a href="#suite_${id}"
            title="{{html label}}"><span class="parent_name">{{html formatParentName}}</span>{{html name}}</a>
       </div>
     </td>
@@ -531,15 +530,16 @@ function popUpTo(list, upTo) {
 </script>
 
 <script type="text/x-jquery-tmpl" id="testDetailsTableRowTemplate">
-  <tr>
-    {{if $item.logURL}}
+  {{if $item.logURL}}
+  <tr onclick="location = '${$item.logURL}#${id}'" style="cursor: pointer">
     <td class="col_name">
         <a href="${$item.logURL}#${id}"
            title="{{html fullName}}"><span class="parent_name">{{html formatParentName}}</span>{{html name}}</a>
     </td>
-    {{else}}
+  {{else}}
+  <tr>
     <td class="col_name"><span class="parent_name">{{html formatParentName}}</span>{{html name}}</td>
-    {{/if}}
+  {{/if}}
     <td class="col_doc doc">{{html doc()}}</td>
     <td class="col_tags">{{html tags.join(', ')}}</td>
     <td class="col_crit">{{if isCritical}}yes{{else}}no{{/if}}</td>
