@@ -103,14 +103,17 @@ table.statistics td, table.statistics th {
     margin: 0;
 }
 table.statistics th {
-    background: #DCDCF0;
+    background-color: #DCDCDC;
 }
 .col_stat {
     width: 3em;
     text-align: center;
 }
+table.statistics th.col_stat, table.statistics th.col_elapsed {
+    padding-right: 1em;
+}
 .col_elapsed {
-    width: 4em;
+    width: 4.5em;
     text-align: center;
 }
 .col_graph {
@@ -150,4 +153,19 @@ table.statistics th {
     position: relative;
     float: left;
     height: 100%;
+}
+/* Tablesorter - adapted from Blue Skin available at http://tablesorter.com */
+.header {
+    background-image: url(data:image/gif;base64,R0lGODlhCwAJAIAAAH9/fwAAACH5BAEAAAEALAAAAAALAAkAAAIRjAOnBr3cnIr0WUjTrC9e9BQAOw==);
+    background-repeat: no-repeat;
+    background-position: center right;
+    cursor: pointer;
+}
+.headerSortUp {
+    background-image: url(data:image/gif;base64,R0lGODlhCwAEAIAAAAAAAAAAACH5BAEAAAEALAAAAAALAAQAAAIKDI4Qu6nMEJwPFgA7);
+    background-color: #ADBDD8 !important;
+}
+.headerSortDown {
+    background-image: url(data:image/gif;base64,R0lGODlhCwAEAIAAAAAAAAAAACH5BAEAAAEALAAAAAALAAQAAAIKjAOnBr3cnIr0FAA7);
+    background-color: #ADBDD8 !important;
 }

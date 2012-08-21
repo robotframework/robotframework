@@ -76,18 +76,19 @@ function addStatistics() {
         '<th class="col_graph">Pass / Fail</th>';
     var statTable =
         '<h2>Test Statistics</h2>' +
-        '<table class="statistics" id="total_stats">' +
-        '<tr><th class="col_stat_name">Total Statistics</th>' + statHeaders + '</tr>' +
-        '</table>' +
-        '<table class="statistics" id="tag_stats">' +
-        '<tr><th class="col_stat_name">Statistics by Tag</th>' + statHeaders + '</tr>' +
-        '</table>' +
-        '<table class="statistics" id="suite_stats">' +
-        '<tr><th class="col_stat_name">Statistics by Suite</th>' + statHeaders + '</tr>' +
-        '</table>';
+        '<table class="statistics" id="total_stats"><thead><tr>' +
+        '<th class="col_stat_name">Total Statistics</th>' + statHeaders +
+        '</tr></thead><tbody></tbody></table>' +
+        '<table class="statistics" id="tag_stats"><thead><tr>' +
+        '<th class="col_stat_name">Statistics by Tag</th>' + statHeaders +
+        '</tr></thead><tbody></tbody></table>' +
+        '<table class="statistics" id="suite_stats"><thead><tr>' +
+        '<th class="col_stat_name">Statistics by Suite</th>' + statHeaders +
+        '</tr></thead><tbody></tbody></table>';
     $(statTable).appendTo('#statistics_container');
     $.map(['total', 'tag', 'suite'], addStatTable);
     addTooltipsToElapsedTimes();
+    enableStatisticsSorter();
 }
 
 function addTooltipsToElapsedTimes() {
@@ -96,6 +97,10 @@ function addTooltipsToElapsedTimes() {
         'Excludes suite setups and teardowns.');
     $('#suite_stats .col_elapsed').attr('title',
         'Total execution time of this test suite.');
+}
+
+function enableStatisticsSorter() {
+    $(".statistics").tablesorter({headers: {5: {sorter: false}}});
 }
 
 function addStatTable(tableName) {
@@ -116,7 +121,7 @@ function renderStatTable(tableName, templateName, stats) {
     var tableId = "#" + tableName + "_stats";
     // Need explicit for loop because $.tmpl() does not handle very large lists
     for (var i = 0; stats !== undefined && i < stats.length; i++) {
-        $.tmpl(templateName , stats[i]).appendTo($(tableId));
+        $.tmpl(templateName , stats[i]).appendTo($(tableId + '> tbody'));
     }
 }
 

@@ -81,9 +81,10 @@ table#test_details th, table#test_details td {
 }
 table#test_details th {
     white-space: nowrap;
+    padding: 0.2em;
 }
 table#test_details th.col_crit, table#test_details th.col_status {
-    padding-right: 1.5em;
+    padding-right: 1em;
 }
 table#test_details .col_name {
     min-width: 13em;
@@ -112,19 +113,4 @@ table#test_details .col_times {
 }
 table#test_details td.col_times {
     text-align: right;
-}
-/* Tablesorter - adapted from Blue Skin available at http://tablesorter.com */
-table#test_details thead tr .header {
-    background-image: url(data:imge/gif;base64,R0lGODlhFQAJAIAAACMtMP///yH5BAEAAAEALAAAAAAVAAkAAAIXjI+AywnaYnhUMoqt3gZXPmVg94yJVQAAOw==);
-    background-repeat: no-repeat;
-    background-position: center right;
-    cursor: pointer;
-}
-table#test_details thead tr .headerSortUp {
-    background-image: url(data:imge/gif;base64,R0lGODlhFQAEAIAAACMtMP///yH5BAEAAAEALAAAAAAVAAQAAAINjB+gC+jP2ptn0WskLQA7);
-    background-color: #8DBDD8;
-}
-table#test_details thead tr .headerSortDown {
-    background-image: url(data:imge/gif;base64,R0lGODlhFQAEAIAAACMtMP///yH5BAEAAAEALAAAAAAVAAQAAAINjI8Bya2wnINUMopZAQA7);
-    background-color: #8DBDD8;
 }
