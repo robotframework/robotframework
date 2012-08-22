@@ -42,6 +42,7 @@ def init_global_variables(settings):
                          ('${:}', os.pathsep),
                          ('${SPACE}', ' '),
                          ('${EMPTY}', ''),
+                         ('@{EMPTY}', []),
                          ('${True}', True),
                          ('${False}', False),
                          ('${None}', None),

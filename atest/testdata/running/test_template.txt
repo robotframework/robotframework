@@ -32,6 +32,10 @@ Test Template With Variables
   [Template]  Expect Exactly Two Args
   ${VARIABLE}  ${VARIABLE}
 
+Test Template With @{EMPTY} Variable
+  [Template]   Test Template With Default Parameters
+  @{EMPTY}
+
 Test Template With Variables And Keyword Name
   [template]  Expect Exactly Three Args
   ${SAME VARIABLE}  Variable content  ${VARIABLE}
@@ -152,8 +156,11 @@ Templates and fatal errors 2
     [Documentation]  FAIL  Test execution is stopped due to a fatal error
     Fail  This should not be executed
 
-
 *** Keywords ***
+Test Template With Default Parameters
+  [arguments]  ${first}=first  ${second}=second
+  Log many  ${first}  ${second}
+
 Expect Exactly Two Args  [arguments]  ${a1}  ${a2}
   Should Be Equal  ${a1}  ${a2}
 

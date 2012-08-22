@@ -19,6 +19,9 @@ Test Overriding Default Template In Test With Empty
 Test Template With Variables
     Check Test Case  ${TESTNAME}
 
+Test Template With @{EMPTY} Variable
+    Check Test Case  ${TESTNAME}
+
 Test Template With Variables And Keyword Name
     Check Test Case  ${TESTNAME}
 

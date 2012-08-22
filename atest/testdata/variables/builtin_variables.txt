@@ -68,6 +68,8 @@ ${EMPTY}
     Should Be Equal  ${EMPTY}  \
     Should Be Equal  ${EMPTY * 5}  \
     Should Be Equal  -${EMPTY}-${EMPTY*2}-${EMPTY}-  ----
+    Should Be True   @{EMPTY} == []
+    Should Be True   @{EMPTY}+@{EMPTY} == []
 
 ${/}
     ${exp} =  Evaluate  os.sep  modules=os
