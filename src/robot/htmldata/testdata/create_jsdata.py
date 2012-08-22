@@ -49,8 +49,8 @@ def create_jsdata(outxml, target):
     with utf8open(target, 'w') as output:
         writer = JsResultWriter(output, start_block='', end_block='')
         writer.write(result, config)
-    print 'Log:    ', normpath(join(BASEDIR, '..', 'log.html'))
-    print 'Report: ', normpath(join(BASEDIR, '..', 'report.html'))
+    print 'Log:    ', normpath(join(BASEDIR, '..', 'rebot', 'log.html'))
+    print 'Report: ', normpath(join(BASEDIR, '..', 'rebot', 'report.html'))
 
 
 if __name__ == '__main__':

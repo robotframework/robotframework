@@ -192,14 +192,20 @@ def jar(*version_info):
     print 'Using Jython %s' % jython_jar
     ver = version(*version_info)
     tmpdir = _create_tmpdir()
-    _compile_java_classes(tmpdir, jython_jar)
-    _unzip_jython_jar(tmpdir, jython_jar)
-    _copy_robot_files(tmpdir)
-    _compile_all_py_files(tmpdir, jython_jar)
-    _overwrite_manifest(tmpdir, ver)
-    jar_path = _create_jar_file(tmpdir, ver)
+    try:
+        _compile_java_classes(tmpdir, jython_jar)
+        _unzip_jython_jar(tmpdir, jython_jar)
+        _copy_robot_files(tmpdir)
+        _compile_all_py_files(tmpdir, jython_jar)
+        _overwrite_manifest(tmpdir, ver)
+        try:
+            jar_path = _create_jar_file(tmpdir, ver)
+            print 'Created %s based on %s' % (jar_path, jython_jar)
+        except subprocess.CalledProcessError:
+            print "Unable to create jar! Check for jar command available at the command line."
+    except subprocess.CalledProcessError:
+        print "Unable to compile java classes! Check for javac command available at the command line."
     shutil.rmtree(tmpdir)
-    print 'Created %s based on %s' % (jar_path, jython_jar)
 
 def _get_jython_jar():
     lib_dir = join(ROOT_PATH, 'ext-lib')
@@ -210,7 +216,7 @@ def _get_jython_jar():
         os.mkdir(lib_dir)
     dl_url = "http://search.maven.org/remotecontent?filepath=org/python/jython-standalone/%s/jython-standalone-%s.jar" \
             % (JYTHON_VERSION, JYTHON_VERSION)
-    print 'Jython not found, goind to download from %s' % dl_url
+    print 'Jython not found, going to download from %s' % dl_url
     urllib.urlretrieve(dl_url, jar_path)
     return jar_path
 
@@ -218,7 +224,7 @@ def _compile_java_classes(tmpdir, jython_jar):
     source_files = [join(JAVA_SRC, f)
                     for f in os.listdir(JAVA_SRC) if f.endswith('.java')]
     print 'Compiling %d source files' % len(source_files)
-    subprocess.call(['javac', '-d', tmpdir, '-target', '1.5', '-source', '1.5',
+    subprocess.check_call(['javac', '-d', tmpdir, '-target', '1.5', '-source', '1.5',
                      '-cp', jython_jar] + source_files, shell=os.name=='nt')
 
 def _create_tmpdir():
@@ -238,7 +244,7 @@ def _copy_robot_files(tmpdir):
     shutil.rmtree(join(todir, 'htmldata', 'testdata'))
 
 def _compile_all_py_files(tmpdir, jython_jar):
-    subprocess.call(['java', '-jar', jython_jar, '-m', 'compileall', tmpdir])
+    subprocess.check_call(['java', '-jar', jython_jar, '-m', 'compileall', tmpdir])
     # Jython will not work without its py-files, but robot will
     for root, _, files in os.walk(join(tmpdir,'Lib','robot')):
         for f in files:
@@ -261,7 +267,7 @@ def _create_jar_file(source, version):
     return path
 
 def _fill_jar(sourcedir, jarpath):
-    subprocess.call(['jar', 'cvfM', jarpath, '.'], cwd=sourcedir,
+    subprocess.check_call(['jar', 'cvfM', jarpath, '.'], cwd=sourcedir,
                     shell=os.name=='nt')
 
 

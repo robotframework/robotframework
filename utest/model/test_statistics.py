@@ -6,7 +6,8 @@ from robot.result.testsuite import TestSuite
 from robot.result.testcase import TestCase
 
 
-def verify_stat(stat, name, passed, failed, critical=None, non_crit=None, id=None):
+def verify_stat(stat, name, passed, failed, critical=None, non_crit=None,
+                id=None, elapsed=0):
     assert_equals(stat.name, name, 'stat.name')
     assert_equals(stat.passed, passed)
     assert_equals(stat.failed, failed)
@@ -16,6 +17,7 @@ def verify_stat(stat, name, passed, failed, critical=None, non_crit=None, id=Non
         assert_equals(stat.non_critical, non_crit)
     if id:
         assert_equals(stat.id, id)
+    assert_equals(stat.elapsed, elapsed)
 
 def verify_suite(suite, name, id, passed, failed):
     verify_stat(suite.stat, name, passed, failed, id=id)
@@ -146,6 +148,73 @@ class TestSuiteStatistics(unittest.TestCase):
         verify_stat(stats[4], 'Root Suite.First Sub Suite.Sub Suite 1_3', 1, 0, id='s1-s1-s3')
         verify_stat(stats[5], 'Root Suite.Second Sub Suite', 0, 1, id='s1-s2')
         verify_stat(stats[6], 'Root Suite.Second Sub Suite.Sub Suite 2_1', 0, 1, id='s1-s2-s1')
+
+
+class TestElapsedTime(unittest.TestCase):
+
+    def setUp(self):
+        ts = '20120816 00:00:'
+        suite = TestSuite(starttime=ts+'00.000', endtime=ts+'59.999')
+        suite.suites = [
+            TestSuite(starttime=ts+'00.000', endtime=ts+'30.000'),
+            TestSuite(starttime=ts+'30.000', endtime=ts+'42.042')
+        ]
+        suite.suites[0].tests = [
+            TestCase(starttime=ts+'00.000', endtime=ts+'00.001', tags=['t1']),
+            TestCase(starttime=ts+'00.001', endtime=ts+'01.001', tags=['t1', 't2'])
+        ]
+        suite.suites[1].tests = [
+            TestCase(starttime=ts+'30.000', endtime=ts+'40.000', tags=['t1', 't2', 't3'])
+        ]
+        suite.set_criticality(critical_tags=['t2'])
+        self.stats = Statistics(suite, tag_stat_combine=[('?2', 'combined')])
+
+    def test_total_stats(self):
+        assert_equals(self.stats.total.all.elapsed, 11001)
+        assert_equals(self.stats.total.critical.elapsed, 11000)
+
+    def test_tag_stats(self):
+        t1, t2, t3 = self.stats.tags.tags.values()
+        verify_stat(t1, 't1', 0, 3, elapsed=11001)
+        verify_stat(t2, 't2', 0, 2, elapsed=11000)
+        verify_stat(t3, 't3', 0, 1, elapsed=10000)
+
+    def test_combined_tag_stats(self):
+        combined = self.stats.tags.combined[0]
+        verify_stat(combined, 'combined', 0, 2, elapsed=11000)
+
+    def test_suite_stats(self):
+        assert_equals(self.stats.suite.stat.elapsed, 59999)
+        assert_equals(self.stats.suite.suites[0].stat.elapsed, 30000)
+        assert_equals(self.stats.suite.suites[1].stat.elapsed, 12042)
+
+    def test_suite_stats_when_suite_has_no_times(self):
+        suite = TestSuite()
+        assert_equals(Statistics(suite).suite.stat.elapsed, 0)
+        ts = '20120816 00:00:'
+        suite.tests = [TestCase(starttime=ts+'00.000', endtime=ts+'00.001'),
+                       TestCase(starttime=ts+'00.001', endtime=ts+'01.001')]
+        assert_equals(Statistics(suite).suite.stat.elapsed, 1001)
+        suite.suites = [TestSuite(starttime=ts+'02.000', endtime=ts+'12.000'),
+                        TestSuite()]
+        assert_equals(Statistics(suite).suite.stat.elapsed, 11001)
+
+    def test_elapsed_from_get_attributes(self):
+        for time, expected in [('00:00:00.000', '00:00:00'),
+                               ('00:00:00.001', '00:00:00'),
+                               ('00:00:00.500', '00:00:01'),
+                               ('00:00:00.999', '00:00:01'),
+                               ('00:00:01.000', '00:00:01'),
+                               ('00:00:01.001', '00:00:01'),
+                               ('00:00:01.499', '00:00:01'),
+                               ('00:00:01.500', '00:00:02'),
+                               ('01:59:59:499', '01:59:59'),
+                               ('01:59:59:500', '02:00:00')]:
+            suite = TestSuite(starttime='20120817 00:00:00.000',
+                              endtime='20120817 ' + time)
+            stat = Statistics(suite).suite.stat
+            elapsed = stat.get_attributes(include_elapsed=True)['elapsed']
+            assert_equals(elapsed, expected)
 
 
 if __name__ == "__main__":

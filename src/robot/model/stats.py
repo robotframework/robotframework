@@ -12,7 +12,7 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from robot.utils import html_escape
+from robot.utils import elapsed_time_to_string, html_escape
 
 from .tags import TagPatterns
 
@@ -23,13 +23,18 @@ class Stat(object):
         self.name = name
         self.passed = 0
         self.failed = 0
+        self.elapsed = 0
 
-    def get_attributes(self, include_label=False, exclude_empty=False,
-                       values_as_strings=False, html_escape=False):
+    def get_attributes(self, include_label=False, include_elapsed=False,
+                       exclude_empty=False, values_as_strings=False,
+                       html_escape=False):
         attrs =  {'pass': self.passed, 'fail': self.failed}
         attrs.update(self._get_custom_attrs())
         if include_label:
             attrs['label'] = self.name
+        if include_elapsed:
+            attrs['elapsed'] = elapsed_time_to_string(self.elapsed,
+                                                      include_millis=False)
         if exclude_empty:
             attrs = dict((k, v) for k, v in attrs.items() if v != '')
         if values_as_strings:
@@ -49,14 +54,17 @@ class Stat(object):
         return self.passed + self.failed
 
     def add_test(self, test):
+        self._update_stats(test)
+        self._update_elapsed(test)
+
+    def _update_stats(self, test):
         if test.passed:
             self.passed += 1
         else:
             self.failed += 1
 
-    def add_stat(self, other):
-        self.passed += other.passed
-        self.failed += other.failed
+    def _update_elapsed(self, test):
+        self.elapsed += test.elapsedtime
 
     def __cmp__(self, other):
         return cmp(self.name, other.name)
@@ -78,10 +86,18 @@ class SuiteStat(Stat):
     def __init__(self, suite):
         Stat.__init__(self, suite.longname)
         self.id = suite.id
+        self.elapsed = suite.elapsedtime
         self._name = suite.name
 
     def _get_custom_attrs(self):
         return {'id': self.id, 'name': self._name}
+
+    def _update_elapsed(self, test):
+        pass
+
+    def add_stat(self, other):
+        self.passed += other.passed
+        self.failed += other.failed
 
 
 class TagStat(Stat):

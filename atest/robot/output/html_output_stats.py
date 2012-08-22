@@ -31,6 +31,7 @@ def _get_stats_line(path):
                 return line[len(prefix):-2]
 
 def verify_stat(stat, *attrs):
+    stat.pop('elapsed')
     expected = dict(_get_expected_stat(attrs))
     if stat != expected:
         raise WrongStat('\n%-9s: %s\n%-9s: %s' % ('Got', stat, 'Expected', expected))

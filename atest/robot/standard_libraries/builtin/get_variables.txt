@@ -5,7 +5,6 @@ Resource    atest_resource.txt
 
 *** Test Cases ***
 Automatic and Command Line Variables
-
     Check test Case  ${TEST NAME}
 
 Variable Table
@@ -33,5 +32,8 @@ Set Variable in User Keyword
 Local Variables in Test Case Leak
     Check test Case  ${TEST NAME}
 
-Get Length Of Variables
+Variables Are Returned as NormalizedDict
+    Check test Case  ${TEST NAME}
+
+Modifying Returned Variables Has No Effect On Real Variables
     Check test Case  ${TEST NAME}

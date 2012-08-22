@@ -29,7 +29,7 @@ a:hover, a:active {
 }
 /* Headers */
 #header {
-    width: 58em;
+    width: 800px;
     height: 3em;
     margin: 6px 0;
 }
@@ -67,7 +67,6 @@ h1 {
     right: 0;
     z-index: 1000;
     width: 12em;
-    font-weight: bold;
     text-align: center;
 }
 #report_or_log_link a {
@@ -90,13 +89,14 @@ h1 {
 }
 /* Statistics table */
 table.statistics {
-    width: 58em;
+    width: 800px;
     border-collapse: collapse;
     empty-cells: show;
     margin-bottom: 1em;
 }
 table.statistics tr:hover {
     background: #F4F4FF;
+    cursor: pointer;
 }
 table.statistics td, table.statistics th {
     border: 1px solid black;
@@ -104,14 +104,21 @@ table.statistics td, table.statistics th {
     margin: 0;
 }
 table.statistics th {
-    background: #DCDCF0;
+    background-color: #DCDCDC;
 }
 .col_stat {
     width: 3em;
     text-align: center;
 }
+table.statistics th.col_stat, table.statistics th.col_elapsed {
+    padding-right: 1em;
+}
+.col_elapsed {
+    width: 4.5em;
+    text-align: center;
+}
 .col_graph {
-   width: 11em;
+    width: 9em;
 }
 .stat_name {
     float: left;
@@ -136,7 +143,7 @@ table.statistics th {
 .graph, .empty_graph {
     border: 1px solid black;
     width: 100%;
-    height: 0.75em;
+    height: 0.7em;
     padding: 0;
     background: red;
 }
@@ -147,4 +154,19 @@ table.statistics th {
     position: relative;
     float: left;
     height: 100%;
+}
+/* Tablesorter - adapted from Blue Skin available at http://tablesorter.com */
+.header {
+    background-image: url(data:image/gif;base64,R0lGODlhCwAJAIAAAH9/fwAAACH5BAEAAAEALAAAAAALAAkAAAIRjAOnBr3cnIr0WUjTrC9e9BQAOw==);
+    background-repeat: no-repeat;
+    background-position: center right;
+    cursor: pointer;
+}
+.headerSortUp {
+    background-image: url(data:image/gif;base64,R0lGODlhCwAEAIAAAAAAAAAAACH5BAEAAAEALAAAAAALAAQAAAIKDI4Qu6nMEJwPFgA7);
+    background-color: #ADBDD8 !important;
+}
+.headerSortDown {
+    background-image: url(data:image/gif;base64,R0lGODlhCwAEAIAAAAAAAAAAACH5BAEAAAEALAAAAAALAAQAAAIKjAOnBr3cnIr0FAA7);
+    background-color: #ADBDD8 !important;
 }

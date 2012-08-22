@@ -87,3 +87,7 @@ table.metadata td {
 div.keyword table.metadata {
     font-size: 0.9em;
 }
+/* Custom styles for statistics */
+#total_stats tr:hover, #tag_stats tr:hover {
+    cursor: default;
+}

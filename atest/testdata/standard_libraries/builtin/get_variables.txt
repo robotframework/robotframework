@@ -7,8 +7,7 @@ Suite Setup  Set Some Variables
 *** Variables ***
 ${MY VARIABLE}  dhrfad
 
-
-*** Test cases ***
+*** Test Cases ***
 Automatic and Command Line Variables
   Variables Should Contain  \${/}  \${cmd line}
 
@@ -44,12 +43,21 @@ Test Case Variable
 Set Variable in User Keyword
   Set Var In UK
 
-Get Length Of Variables
-    ${variables}=   Get Variables
-    ${var_count}  get length  ${variables}
-    Should Be Equal As Integers  ${var_count}  34
+Variables Are Returned as NormalizedDict
+  ${variables}=   Get Variables
+  Should Be Equal  ${variables.__class__.__name__}  NormalizedDict
+  Dictionary Should Contain Key  ${variables}  \${MY VARIABLE}
+  Dictionary Should Contain Key  ${variables}  \${_MY_ vAriab LE}
+  ${copy}=  Copy Dictionary  ${variables}
+  Dictionary Should Contain Key  ${copy}  \${MY VARIABLE}
+  Dictionary Should Contain Key  ${copy}  \${_MY_ vAriab LE}
 
-* Keywords *
+Modifying Returned Variables Has No Effect On Real Variables
+  ${variables}=   Get Variables
+  Set To Dictionary    ${variables}    \${name}    value
+  Variable Should Not Exist    ${name}
+
+*** Keywords ***
 Set Some Variables
   Set Suite Variable  ${Suite Var from suite setup}  Some value
   Set Global Variable  ${Global from Suite setup}  Some value

@@ -1,3 +1,7 @@
+*** Settings ***
+Suite Setup      Parempi keywörd
+Suite Teardown   Parempi keywörd
+
 *** Test Cases ***
 Hyvä testi
     Parempi keywörd

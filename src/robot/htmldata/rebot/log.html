@@ -7,14 +7,15 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="Generator" content="">
 <link rel="icon" type="image/x-icon" href="data:image/x-icon;base64,AAABAAEAEBAQAAEABAAoAQAAFgAAACgAAAAQAAAAIAAAAAEABAAAAAAAAAIAAAAAAAAAAAAAEAAAAAAAAAAAAAAAJEBoACtnfgA5cYYAERsiAEx2lAAbKkQAcazBACZCVwAcM1cAK0ucAAMDBQAnQncASG+FABkoVQAyWmgA6f8SgvH/Ij99+GLyIinyJfn/Yi//KSLzUy9iZogpIld3/4JVVTkid7vyUjNVNVJEAGOZ6Z7pXwAABpmZkRiLAAAGiJZpmGAAAEEt3SXdxAAATC7o/u3EAAC8MRZpjasAAAY1VVVTYAAABKqqqqpAAAAADKqq4AAAAAAAv4sAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAMADAADgAwAA4AcAAOAHAADgBwAAwAcAAOAHAADgDwAA8A8AAPg/AAD+fwAA">
-<link rel="stylesheet" type="text/css" href="log.css" media="all">
 <link rel="stylesheet" type="text/css" href="common.css" media="all">
+<link rel="stylesheet" type="text/css" href="log.css" media="all">
 <link rel="stylesheet" type="text/css" href="print.css" media="print">
 <link rel="stylesheet" type="text/css" href="../common/js_disabled.css" media="all">
 <link rel="stylesheet" type="text/css" href="../common/doc_formatting.css" media="all">
 <script type="text/javascript" src="log.js"></script>
 <script type="text/javascript" src="../lib/jquery.min.js"></script>
 <script type="text/javascript" src="../lib/jquery.tmpl.min.js"></script>
+<script type="text/javascript" src="../lib/jquery.tablesorter.min.js"></script>
 <script type="text/javascript" src="../lib/jsxcompressor.js"></script>
 <script type="text/javascript" src="fileloading.js"></script>
 <script type="text/javascript" src="model.js"></script>
@@ -125,7 +126,7 @@ function addTestExecutionLog(main) {
 </script>
 
 <script type="text/x-jquery-tmpl" id="totalStatisticsRowTemplate">
-  <tr>
+  <tr class="row-${$item.index}">
     <td class="col_stat_name">
       <div class="stat_name">
         <span>{{html label}}</span>
@@ -136,7 +137,7 @@ function addTestExecutionLog(main) {
 </script>
 
 <script type="text/x-jquery-tmpl" id="tagStatisticsRowTemplate">
-  <tr>
+  <tr class="row-${$item.index}">
     <td class="col_stat_name">
       <div class="stat_name">
         <span title="{{html doc}}">{{html label}}</span>
@@ -154,10 +155,10 @@ function addTestExecutionLog(main) {
 </script>
 
 <script type="text/x-jquery-tmpl" id="suiteStatisticsRowTemplate">
-  <tr>
+  <tr onclick="makeElementVisible('${id}')" class="row-${$item.index}">
     <td class="col_stat_name">
       <div class="stat_name">
-        <a onclick="makeElementVisible('${id}')" title="{{html label}}"
+        <a title="{{html label}}"
            href="#${id}"><span class="parent_name">{{html formatParentName}}</span>{{html name}}</a>
       </div>
     </td>

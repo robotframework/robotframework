@@ -9,7 +9,8 @@ from robot.utils.asserts import (assert_equal, assert_raises_with_msg,
 from robot.utils.robottime import (timestr_to_secs, secs_to_timestr, get_time,
                                    parse_time, format_time, get_elapsed_time,
                                    get_timestamp, get_start_timestamp,
-                                   timestamp_to_secs, _get_timetuple)
+                                   timestamp_to_secs, elapsed_time_to_string,
+                                   _get_timetuple)
 
 
 EXAMPLE_TIME = time.mktime(datetime.datetime(2007, 9, 20, 16, 15, 14).timetuple())
@@ -169,6 +170,57 @@ class TestTime(unittest.TestCase):
                                   ('20060526 14:01:09.499', -1001)]:
             actual = get_elapsed_time(starttime, endtime)
             assert_equal(actual, expected, endtime)
+
+    def test_elapsed_time_to_string(self):
+        for elapsed, expected in [(0, '00:00:00.000'),
+                                  (0.1, '00:00:00.000'),
+                                  (0.49999, '00:00:00.000'),
+                                  (0.5, '00:00:00.001'),
+                                  (1, '00:00:00.001'),
+                                  (42, '00:00:00.042'),
+                                  (999, '00:00:00.999'),
+                                  (999.9, '00:00:01.000'),
+                                  (1000, '00:00:01.000'),
+                                  (1001, '00:00:01.001'),
+                                  (60000, '00:01:00.000'),
+                                  (600000, '00:10:00.000'),
+                                  (654321, '00:10:54.321'),
+                                  (660000, '00:11:00.000'),
+                                  (3600000, '01:00:00.000'),
+                                  (36000000, '10:00:00.000'),
+                                  (360000000, '100:00:00.000'),
+                                  (360000000 + 36000000 + 3600000 +
+                                   660000 + 11111, '111:11:11.111')]:
+            assert_equal(elapsed_time_to_string(elapsed), expected, elapsed)
+            if expected != '00:00:00.000':
+                assert_equal(elapsed_time_to_string(-1 * elapsed),
+                             '-' + expected, elapsed)
+
+    def test_elapsed_time_to_string_without_millis(self):
+        for elapsed, expected in [(0, '00:00:00'),
+                                  (1, '00:00:00'),
+                                  (499, '00:00:00'),
+                                  (499.999, '00:00:00'),
+                                  (500, '00:00:01'),
+                                  (999, '00:00:01'),
+                                  (1000, '00:00:01'),
+                                  (1499, '00:00:01'),
+                                  (59499.9, '00:00:59'),
+                                  (59500.0, '00:01:00'),
+                                  (59999, '00:01:00'),
+                                  (60000, '00:01:00'),
+                                  (654321, '00:10:54'),
+                                  (654500, '00:10:55'),
+                                  (3599999, '01:00:00'),
+                                  (3600000, '01:00:00'),
+                                  (359999999, '100:00:00'),
+                                  (360000000, '100:00:00'),
+                                  (360000500, '100:00:01')]:
+            assert_equal(elapsed_time_to_string(elapsed, include_millis=False),
+                         expected, elapsed)
+            if expected != '00:00:00':
+                assert_equal(elapsed_time_to_string(-1 * elapsed, False),
+                             '-' + expected, elapsed)
 
     def test_parse_modified_time_with_valid_times(self):
         for input, expected in [('100', 100),

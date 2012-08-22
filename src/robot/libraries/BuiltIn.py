@@ -785,8 +785,28 @@ class _Verify:
 class _Variables:
 
     def get_variables(self):
-        """Returns a dictionary containing all variables in the current scope."""
-        return self._variables
+        """Returns a dictionary containing all variables in the current scope.
+
+        Variables are returned as a special dictionary that allows accessing
+        variables in space, case, and underscore insensitive manner similarly
+        as accessing variables in the test data. This dictionary supports all
+        same operations as normal Python dictionaries and, for example,
+        Collections library can be used to access or modify it. Modifying the
+        returned dictionary has no effect on the variables available in the
+        current scope.
+
+        Example:
+        | ${example_variable} =         | Set Variable | example value         |
+        | ${variables} =                | Get Variables |                      |
+        | Dictionary Should Contain Key | ${variables} | \\${example_variable} |
+        | Dictionary Should Contain Key | ${variables} | \\${ExampleVariable}  |
+        | Set To Dictionary             | ${variables} | \\${name} | value     |
+        | Variable Should Not Exist     | \\${name}    |           |           |
+
+        Note: Prior to Robot Framework 2.7.4 variables were returned as
+        a custom object that did not support all dictionary methods.
+        """
+        return utils.NormalizedDict(self._variables.current, ignore='_')
 
     def get_variable_value(self, name, default=None):
         """Returns variable value or `default` if the variable does not exist.
@@ -807,12 +827,10 @@ class _Variables:
         This keyword was added in Robot Framework 2.6. See `Set Variable If`
         for another keyword to set variables dynamically.
         """
-        name = self._get_var_name(name)
-        variables = self.get_variables()
         try:
-            return variables[name]
+            return self._variables[self._get_var_name(name)]
         except DataError:
-            return variables.replace_scalar(default)
+            return self._variables.replace_scalar(default)
 
     def log_variables(self, level='INFO'):
         """Logs all variables in the current scope with given log level."""
@@ -834,10 +852,9 @@ class _Variables:
         See also `Variable Should Not Exist` and `Keyword Should Exist`.
         """
         name = self._get_var_name(name)
-        variables = self.get_variables()
-        msg = variables.replace_string(msg) if msg \
+        msg = self._variables.replace_string(msg) if msg \
             else "Variable %s does not exist" % name
-        asserts.fail_unless(variables.has_key(name), msg)
+        asserts.fail_unless(name in self._variables, msg)
 
     def variable_should_not_exist(self, name, msg=None):
         """Fails if the given variable exists within the current scope.
@@ -851,10 +868,9 @@ class _Variables:
         See also `Variable Should Exist` and `Keyword Should Exist`.
         """
         name = self._get_var_name(name)
-        variables = self.get_variables()
-        msg = variables.replace_string(msg) if msg \
+        msg = self._variables.replace_string(msg) if msg \
             else "Variable %s exists" % name
-        asserts.fail_if(variables.has_key(name), msg)
+        asserts.fail_if(name in self._variables, msg)
 
     def replace_variables(self, text):
         """Replaces variables in the given text with their current values.
@@ -873,7 +889,7 @@ class _Variables:
         | ${message} =    | Replace Variables | ${template}            |
         | Should Be Equal | ${message}        | Hello Robot!           |
         """
-        return self.get_variables().replace_scalar(text)
+        return self._variables.replace_scalar(text)
 
     def set_variable(self, *values):
         """Returns the given values which can then be assigned to a variables.
@@ -915,7 +931,7 @@ class _Variables:
         """
         name = self._get_var_name(name)
         value = self._get_var_value(name, values)
-        self.get_variables().set_test(name, value)
+        self._variables.set_test(name, value)
         self._log_set_variable(name, value)
 
     def set_suite_variable(self, name, *values):
@@ -954,7 +970,7 @@ class _Variables:
         """
         name = self._get_var_name(name)
         value = self._get_var_value(name, values)
-        self.get_variables().set_suite(name, value)
+        self._variables.set_suite(name, value)
         self._log_set_variable(name, value)
 
     def set_global_variable(self, name, *values):
@@ -970,7 +986,7 @@ class _Variables:
         """
         name = self._get_var_name(name)
         value = self._get_var_value(name, values)
-        self.get_variables().set_global(name, value)
+        self._variables.set_global(name, value)
         self._log_set_variable(name, value)
 
     # Helpers
@@ -984,7 +1000,7 @@ class _Variables:
 
     def _resolve_possible_variable(self, name):
         try:
-            resolved = self.get_variables()[name]
+            resolved = self._variables[name]
             return self._unescape_variable_if_needed(resolved)
         except (KeyError, ValueError, DataError):
             return name
@@ -1005,10 +1021,9 @@ class _Variables:
         raise ValueError
 
     def _get_var_value(self, name, values):
-        variables = self.get_variables()
         if not values:
-            return variables[name]
-        values = variables.replace_list(values)
+            return self._variables[name]
+        values = self._variables.replace_list(values)
         if len(values) == 1 and name[0] == '$':
             return values[0]
         return list(values)
@@ -1050,7 +1065,7 @@ class _RunKeyword:
         | Suite Setup | Run Keywords | Initialize database | Start servers |
         """
         errors = []
-        for kw in self.get_variables().replace_list(names):
+        for kw in self._variables.replace_list(names):
             try:
                 self.run_keyword(kw)
             except ExecutionFailed, err:

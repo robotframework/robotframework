@@ -178,6 +178,7 @@ function renderSuiteDetails(id) {
         $('#print_selector').text(suite.name);
     });
 }
+
 function scrollToSelector(anchor) {
     $('#test_details_container').css('min-height', $(window).height());
     window.prevLocationHash = "#"+anchor;
@@ -230,8 +231,7 @@ function renderTestDetails(sortedColumn) {
         return;
     var elements = popUpTo(window.elementsToRender, 10);
     $.tmpl('testDetailsTableRowTemplate', elements,
-           {logURL: window.settings.logURL}
-    ).appendTo('#test_details tbody');
+           {logURL: window.settings.logURL}).appendTo('#test_details > tbody');
     if (window.elementsToRender.length)
         setTimeout(function () {renderTestDetails(sortedColumn);}, 0);
     else {
@@ -242,24 +242,23 @@ function renderTestDetails(sortedColumn) {
 
 function configureTableSorter() {
     $.tablesorter.addParser({
-            id: 'criticality',
-            is: function(s) {
-                // return false so this parser is not auto detected
-                return false;
-            },
-            format: function(s) {
-                return s.toLowerCase().replace(/no/,1).replace(/yes/,0);
-            },
-            type: 'numeric'
-        });
+        id: 'criticality',
+        type: 'numeric',
+        is: function(s) {
+            return false;  // do not auto-detect
+        },
+        format: function(s) {
+            return s.toLowerCase().replace(/no/, 1).replace(/yes/, 0);
+        }
+    });
     $("#test_details").tablesorter({
-        headers:{ 3:{ sorter:'criticality' }}
+        headers: {3: {sorter:'criticality'}}
     });
 }
 
 function highlightDefaultSortColumn(sortColumn) {
     if (sortColumn) {
-        var locator = 'th:contains(' + sortColumn + ')';
+        var locator = '#test_details th:contains(' + sortColumn + ')';
         $(locator).addClass('headerSortUp');
     }
 }
@@ -326,11 +325,10 @@ function popUpTo(list, upTo) {
 </script>
 
 <script type="text/x-jquery-tmpl" id="totalStatisticsRowTemplate">
-  <tr>
+  <tr onclick="totalDetailSelected('${type}')" class="row-${$item.index}">
     <td class="col_stat_name">
       <div class="stat_name">
-        <a href="#total_${type}"
-           onclick="totalDetailSelected('${type}')">{{html label}}</a>
+        <a href="#total_${type}">{{html label}}</a>
       </div>
     </td>
     {{tmpl($data) 'stat_columns'}}
@@ -338,16 +336,16 @@ function popUpTo(list, upTo) {
 </script>
 
 <script type="text/x-jquery-tmpl" id="tagStatisticsRowTemplate">
-  <tr>
+  <tr onclick="tagDetailSelected('${label}');" class="row-${$item.index}">
     <td class="col_stat_name">
       <div class="stat_name">
-        <a href="#tag_${label}" onclick="tagDetailSelected('${label}');"
+        <a href="#tag_${label}"
            title="{{html doc}}">{{html label}}</a>
         {{if info}}(${info}){{/if}}
       </div>
       <div class="tag_links">
         {{each links}}
-        <span>[<a href="{{html $value.url}}"
+        <span>[<a href="{{html $value.url}}" onclick="stopPropagation(event);"
                   title="{{html $value.url}}">{{html $value.title}}</a>]</span>
         {{/each}}
       </div>
@@ -357,10 +355,10 @@ function popUpTo(list, upTo) {
 </script>
 
 <script type="text/x-jquery-tmpl" id="suiteStatisticsRowTemplate">
-  <tr>
+  <tr onclick="suiteDetailSelected('${id}');" class="row-${$item.index}">
     <td class="col_stat_name">
       <div class="stat_name">
-        <a href="#suite_${id}" onclick="suiteDetailSelected('${id}');"
+        <a href="#suite_${id}"
            title="{{html label}}"><span class="parent_name">{{html formatParentName}}</span>{{html name}}</a>
       </div>
     </td>
@@ -498,11 +496,11 @@ function popUpTo(list, upTo) {
   </tr>
   {{/if}}
   <tr>
-    <th>Start / End:</th>
+    <th>Start / End Time:</th>
     <td>${times.startTime} / ${times.endTime}</td>
   </tr>
   <tr>
-    <th>Elapsed:</th>
+    <th>Elapsed Time:</th>
     <td>${times.elapsedTime}</td>
   </tr>
   {{if $item.logURL}}
@@ -532,15 +530,16 @@ function popUpTo(list, upTo) {
 </script>
 
 <script type="text/x-jquery-tmpl" id="testDetailsTableRowTemplate">
-  <tr>
-    {{if $item.logURL}}
+  {{if $item.logURL}}
+  <tr onclick="location = '${$item.logURL}#${id}'" style="cursor: pointer">
     <td class="col_name">
         <a href="${$item.logURL}#${id}"
            title="{{html fullName}}"><span class="parent_name">{{html formatParentName}}</span>{{html name}}</a>
     </td>
-    {{else}}
+  {{else}}
+  <tr>
     <td class="col_name"><span class="parent_name">{{html formatParentName}}</span>{{html name}}</td>
-    {{/if}}
+  {{/if}}
     <td class="col_doc doc">{{html doc()}}</td>
     <td class="col_tags">{{html tags.join(', ')}}</td>
     <td class="col_crit">{{if isCritical}}yes{{else}}no{{/if}}</td>
