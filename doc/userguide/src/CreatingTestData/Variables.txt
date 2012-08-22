@@ -660,7 +660,8 @@ spaces or empty cells`__ with a backslash. If more than one space is
 needed, it is possible to use the `extended variable syntax`_ like
 :var:`${SPACE * 5}`.  In the following example, :name:`Should Be
 Equal` keyword gets identical arguments but those using variables are
-easier to understand than those using backslashes.
+easier to understand than those using backslashes. There is also variable for
+empty list called :var:`@{EMPTY}`.
 
 __ Escaping_
 
@@ -676,6 +677,7 @@ __ Escaping_
    Quoted Space   Should Be Equal    "${SPACE}"        " "
    Quoted Spaces  Should Be Equal    "${SPACE * 2}"    " \\ "
    Empty          Should Be Equal    ${EMPTY}          \\
+   Empty          Should Be True     @{EMPTY} == []    \\
    =============  =================  ================  ================================
 
 Automatic variables
