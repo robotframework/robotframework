@@ -170,6 +170,8 @@ the arguments as explained below:
           and using it alone in the cell (e.g. :code:`${bytes}`) because then
           the value is used as-is.
 
+.. _list variable:
+
 List variables
 ''''''''''''''
 
@@ -660,13 +662,9 @@ spaces or empty cells`__ with a backslash. If more than one space is
 needed, it is possible to use the `extended variable syntax`_ like
 :var:`${SPACE * 5}`.  In the following example, :name:`Should Be
 Equal` keyword gets identical arguments but those using variables are
-easier to understand than those using backslashes. There is also variable for
-empty list called :var:`@{EMPTY}`. '@{EMPTY}' variable can be used for example
-with test templates to use default values of the template.
+easier to understand than those using backslashes.
 
-__ Escaping_
-
-.. table:: Using :var:`${SPACE}`, :var:`${EMPTY}` and :var:'@{EMPTY}'
+.. table:: Using :var:`${SPACE}` and :var:`${EMPTY}` variables
    :class: example
 
    =============   =================  ================  ================================
@@ -677,9 +675,27 @@ __ Escaping_
    Ten Spaces      Should Be Equal    ${SPACE * 10}     \\ \\ \\ \\ \\ \\ \\ \\ \\ \\ \\
    Quoted Space    Should Be Equal    "${SPACE}"        " "
    Quoted Spaces   Should Be Equal    "${SPACE * 2}"    " \\ "
-   Empty variable  Should Be Equal    ${EMPTY}          \\
-   Empty list      Should Be True     @{EMPTY} == []    \\
+   Empty           Should Be Equal    ${EMPTY}          \\
    =============   =================  ================  ================================
+
+Starting from Robot Framework 2.7.4, there is also an empty `list
+variable`_ :var:`@{EMPTY}`. Because it has no content, it basically
+vanishes when used somewhere in the test data. Its main use case is
+with `test templates`_ when the `template keyword is used without
+arguments`__.
+
+.. table:: Using :var:`@{EMPTY}` variable
+   :class: example
+
+   =============   ============  ============  ============
+     Test Case        Action       Argument      Argument
+   =============   ============  ============  ============
+   Example         [Template]    Some keyword
+   \               @{EMPTY}
+   =============   ============  ============  ============
+
+__ Escaping_
+__ https://groups.google.com/group/robotframework-users/browse_thread/thread/ccc9e1cd77870437/4577836fe946e7d5?lnk=gst&q=templates#4577836fe946e7d5
 
 Automatic variables
 '''''''''''''''''''
