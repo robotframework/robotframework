@@ -661,7 +661,8 @@ needed, it is possible to use the `extended variable syntax`_ like
 :var:`${SPACE * 5}`.  In the following example, :name:`Should Be
 Equal` keyword gets identical arguments but those using variables are
 easier to understand than those using backslashes. There is also variable for
-empty list called :var:`@{EMPTY}`.
+empty list called :var:`@{EMPTY}`. '@{EMPTY}' variable can be used for example
+with test templates to use default values of the template.
 
 __ Escaping_
 
