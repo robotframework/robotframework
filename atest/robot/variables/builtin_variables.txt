@@ -25,6 +25,9 @@ ${SPACE}
 ${EMPTY}
     Check Test Case  ${TESTNAME}
 
+@{EMPTY}
+    Check Test Case  ${TESTNAME}
+
 ${/}
     Check Test Case  ${TESTNAME}
 
