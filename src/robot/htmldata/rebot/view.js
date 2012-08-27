@@ -130,7 +130,7 @@ function addStatTable(tableName) {
 }
 
 function renderNoTagStatTable() {
-    $('<tr>' +
+    $('<tr class="row-0">' +
         '<td class="col_stat_name">No Tags</td>' +
         '<td class="col_stat"></td>' +
         '<td class="col_stat"></td>' +
