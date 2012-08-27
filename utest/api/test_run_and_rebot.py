@@ -69,9 +69,15 @@ class Base(unittest.TestCase):
 
     def _assert_output_contains(self, output, expected):
         for content, count in expected:
-            if output.count(content) != count:
-                raise AssertionError("'%s' not %d times in output:\n%s"
-                                     % (content, count, output))
+            if isinstance(count, tuple):
+                minimum, maximum = count
+                error = '%d-%d' % count
+            else:
+                minimum = maximum = count
+                error = '%d' % count
+            if not (minimum <= output.count(content) <= maximum):
+                raise AssertionError("'%s' not %s times in output:\n%s"
+                                     % (content, error, output))
 
 
 class TestRun(Base):
@@ -92,8 +98,11 @@ class TestRun(Base):
     def test_run_fails(self):
         assert_equals(run(self.nonex), 252)
         assert_equals(run(self.data, outputdir=TEMP), 1)
+        # self.nonex always appears in our error message. It may also appear
+        # in the error message by the interpreter included in our message.
         self._assert_outputs(stdout=[('Pass And Fail', 2), (LOG, 1)],
-                             stderr=[('[ ERROR ]', 1), (self.nonex, 1), ('--help', 1)])
+                             stderr=[('[ ERROR ]', 1), (self.nonex, (1, 2)),
+                                     ('--help', 1)])
 
     def test_custom_stdout(self):
         stdout = StringIO()
