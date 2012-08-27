@@ -13,6 +13,7 @@
 #  limitations under the License.
 
 import sys
+import os.path
 from StringIO import StringIO
 
 
@@ -82,6 +83,11 @@ class ETSource(object):
         # it didn't close files it had opened. This caused problems with Jython
         # especially on Windows: http://bugs.jython.org/issue1598
         # The bug has now been fixed in ET and worked around in Jython 2.5.2.
-        # File cannot be opened on IronPython, though, as on IronPython ET
-        # doesn't handle non-ASCII characters correctly in that case.
-        return open(self._source, 'rb') if not _IRONPYTHON else None
+        if not _IRONPYTHON:
+            return open(self._source, 'rb')
+        # File cannot be opened on IronPython, however, as ET does not seem to
+        # handle non-ASCII characters correctly in that case. We want to check
+        # that the file exists even in that case, though.
+        if not os.path.exists(self._source):
+            raise IOError(2, 'No such file', self._source)
+        return None
