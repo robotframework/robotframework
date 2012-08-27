@@ -107,15 +107,15 @@ function enableStatisticsSorter() {
             return false;  // do not auto-detect
         },
         format: function(string, table, cell, cellIndex) {
-            // Rows have class in format 'row-<index>'. Indices are returned
-            // in reversed order because table's initial order is descending.
+            // Rows have class in format 'row-<index>'.
             var index = $(cell).parent().attr('class').substring(4);
-            return parseInt(index) * -1;
+            return parseInt(index);
         }
     });
     $(".statistics").tablesorter({
         sortInitialOrder: 'desc',
-        headers: {0: {sorter:'statName'}, 5: {sorter: false}}
+        headers: {0: {sorter:'statName', sortInitialOrder: 'asc'},
+                  5: {sorter: false}}
     });
 }
 
