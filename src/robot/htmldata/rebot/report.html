@@ -71,6 +71,16 @@ function addSummary(topsuite) {
 }
 
 function addDetails() {
+    $.tablesorter.addParser({
+        id: 'criticality',
+        type: 'numeric',
+        is: function(s) {
+            return false;  // do not auto-detect
+        },
+        format: function(s) {
+            return s === 'yes' ? 0 : 1;
+        }
+    });
     if (window.location.hash)
         showDetailsByHash();
     else
@@ -239,16 +249,6 @@ function renderTestDetails(sortByStatus) {
 }
 
 function configureTableSorter(sortByStatus) {
-    $.tablesorter.addParser({
-        id: 'criticality',
-        type: 'numeric',
-        is: function(s) {
-            return false;  // do not auto-detect
-        },
-        format: function(s) {
-            return s.toLowerCase().replace(/no/, 1).replace(/yes/, 0);
-        }
-    });
     var config = {headers: {3: {sorter: 'criticality'},
                             6: {sortInitialOrder: 'desc'}}};
     if (sortByStatus)
