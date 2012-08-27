@@ -107,6 +107,9 @@ table#test_details .col_status {
 table#test_details .col_msg {
     min-width: 13em;
 }
+table#test_details .col_details_elapsed {
+    width: 5em;
+}
 table#test_details .col_times {
     width: 9em;
     white-space: nowrap;

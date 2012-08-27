@@ -522,7 +522,8 @@ function popUpTo(list, upTo) {
           <th class="col_crit">Crit.</th>
           <th class="col_status">Status</th>
           <th class="col_msg">Message</th>
-          <th class="col_times">Start / Elapsed</th>
+          <th class="col_elapsed">Elapsed</th>
+          <th class="col_times">Start / End</th>
         </tr>
     </thead>
     <tbody></tbody>
@@ -545,7 +546,8 @@ function popUpTo(list, upTo) {
     <td class="col_crit">{{if isCritical}}yes{{else}}no{{/if}}</td>
     <td class="col_status ${status.toLowerCase()}">${status}</td>
     <td class="col_msg message">{{html message()}}</td>
-    <td class="col_times">${times.startTime}<br>${times.elapsedTime}</td>
+    <td class="col_details_elapsed">${times.elapsedTime}</td>
+    <td class="col_times">${times.startTime}<br>${times.endTime}</td>
   </tr>
 </script>
 
