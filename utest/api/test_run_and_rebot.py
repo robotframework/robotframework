@@ -98,10 +98,8 @@ class TestRun(Base):
     def test_run_fails(self):
         assert_equals(run(self.nonex), 252)
         assert_equals(run(self.data, outputdir=TEMP), 1)
-        # self.nonex always appears in our error message. It may also appear
-        # in the error message by the interpreter included in our message.
         self._assert_outputs(stdout=[('Pass And Fail', 2), (LOG, 1)],
-                             stderr=[('[ ERROR ]', 1), (self.nonex, (1, 2)),
+                             stderr=[('[ ERROR ]', 1), (self.nonex, 1),
                                      ('--help', 1)])
 
     def test_custom_stdout(self):
@@ -148,8 +146,11 @@ class TestRebot(Base):
     def test_run_fails(self):
         assert_equals(rebot(self.nonex), 252)
         assert_equals(rebot(self.data, outputdir=TEMP), 1)
+        # self.nonex always appears in our error message. It may also appear
+        # in the error message by the interpreter included in our message.
         self._assert_outputs(stdout=[(LOG, 1)],
-                             stderr=[('[ ERROR ]', 1), (self.nonex, 1), ('--help', 1)])
+                             stderr=[('[ ERROR ]', 1), (self.nonex, (1, 2)),
+                                     ('--help', 1)])
 
     def test_custom_stdout(self):
         stdout = StringIO()
