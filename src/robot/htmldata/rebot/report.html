@@ -124,10 +124,10 @@ function renderTotalSelector(name) {
 function renderTotalDetails(name) {
     var index = (name == 'critical') ? 0 : 1;
     var stat = window.testdata.statistics().total[index];
-    var tests = getTotalTests(name)
+    var tests = getTotalTests(name);
     stat.totalTime = calculateTotalTime(tests);
     $.tmpl('tagOrTotalDetailsTemplate', stat).appendTo('#details_header');
-    drawTestDetailsTable(tests, 'Status');
+    drawTestDetailsTable(tests, true);
 }
 
 function tagDetailSelected(name) {
@@ -152,7 +152,7 @@ function renderTagDetails(tag) {
     if (tag)
         tag.totalTime = calculateTotalTime(tests);
     $.tmpl('tagOrTotalDetailsTemplate', tag).appendTo('#details_header');
-    drawTestDetailsTable(tests, 'Status');
+    drawTestDetailsTable(tests, true);
 }
 
 function suiteDetailSelected(id) {
@@ -174,7 +174,7 @@ function renderSuiteDetails(id) {
         var suite = testdata.find(id);
         var opts = {logURL: window.settings.logURL};
         $.tmpl('suiteDetailsTemplate', suite, opts).appendTo('#details_header');
-        drawTestDetailsTable(suite.allTests());
+        drawTestDetailsTable(suite.allTests(), false);
         $('#print_selector').text(suite.name);
     });
 }
@@ -192,10 +192,10 @@ function renderSelector(args, template, stats) {
     $.tmpl(template, stats).appendTo('#test_details_container');
 }
 
-function drawTestDetailsTable(tests, sortedColumn) {
+function drawTestDetailsTable(tests, sortByStatus) {
     $.tmpl('testDetailsTableTemplate').appendTo('#test_details_container');
     window.elementsToRender = tests;
-    renderTestDetails(sortedColumn);
+    renderTestDetails(sortByStatus);
 }
 
 function sortByStatus(t1, t2) {
@@ -226,21 +226,19 @@ function calculateTotalTime(tests) {
     return util.formatElapsed(totaltime);
 }
 
-function renderTestDetails(sortedColumn) {
+function renderTestDetails(sortByStatus) {
     if (!window.elementsToRender.length)
         return;
     var elements = popUpTo(window.elementsToRender, 10);
     $.tmpl('testDetailsTableRowTemplate', elements,
            {logURL: window.settings.logURL}).appendTo('#test_details > tbody');
     if (window.elementsToRender.length)
-        setTimeout(function () {renderTestDetails(sortedColumn);}, 0);
-    else {
-        configureTableSorter();
-        highlightDefaultSortColumn(sortedColumn);
-    }
+        setTimeout(function () {renderTestDetails(sortByStatus);}, 0);
+    else
+        configureTableSorter(sortByStatus);
 }
 
-function configureTableSorter() {
+function configureTableSorter(sortByStatus) {
     $.tablesorter.addParser({
         id: 'criticality',
         type: 'numeric',
@@ -251,16 +249,11 @@ function configureTableSorter() {
             return s.toLowerCase().replace(/no/, 1).replace(/yes/, 0);
         }
     });
-    $("#test_details").tablesorter({
-        headers: {3: {sorter:'criticality'}, 6: {sortInitialOrder: 'desc'}}
-    });
-}
-
-function highlightDefaultSortColumn(sortColumn) {
-    if (sortColumn) {
-        var locator = '#test_details th:contains(' + sortColumn + ')';
-        $(locator).addClass('tablesorter-headerSortDown');
-    }
+    var config = {headers: {3: {sorter: 'criticality'},
+                            6: {sortInitialOrder: 'desc'}}};
+    if (sortByStatus)
+        config['sortList'] = [[4, 0], [3, 0]];
+    $("#test_details").tablesorter(config);
 }
 
 function popUpTo(list, upTo) {
