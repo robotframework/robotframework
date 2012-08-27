@@ -163,10 +163,10 @@ table.statistics th.col_stat, table.statistics th.col_elapsed {
     cursor: pointer;
 }
 .tablesorter-headerSortUp {
-    background-image: url(data:image/gif;base64,R0lGODlhCwAEAIAAAAAAAAAAACH5BAEAAAEALAAAAAALAAQAAAIKDI4Qu6nMEJwPFgA7);
-    background-color: #ADBDD8 !important;
+    background-image: url(data:image/gif;base64,R0lGODlhCwAJAKEAAAAAAH9/fwAAAAAAACH5BAEAAAIALAAAAAALAAkAAAIUlBWnFr3cnIr0WQOyBmvzp13CpxQAOw==);
+    background-color: #B8C8E3 !important;
 }
 .tablesorter-headerSortDown {
-    background-image: url(data:image/gif;base64,R0lGODlhCwAEAIAAAAAAAAAAACH5BAEAAAEALAAAAAALAAQAAAIKjAOnBr3cnIr0FAA7);
-    background-color: #ADBDD8 !important;
+    background-image: url(data:image/gif;base64,R0lGODlhCwAJAKEAAAAAAH9/fwAAAAAAACH5BAEAAAIALAAAAAALAAkAAAIUlAWnBr3cnIr0WROyDmvzp13CpxQAOw==);
+    background-color: #B8C8E3 !important;
 }
