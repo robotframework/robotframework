@@ -156,17 +156,17 @@ table.statistics th.col_stat, table.statistics th.col_elapsed {
     height: 100%;
 }
 /* Tablesorter - adapted from Blue Skin available at http://tablesorter.com */
-.header {
+.tablesorter-header {
     background-image: url(data:image/gif;base64,R0lGODlhCwAJAIAAAH9/fwAAACH5BAEAAAEALAAAAAALAAkAAAIRjAOnBr3cnIr0WUjTrC9e9BQAOw==);
     background-repeat: no-repeat;
     background-position: center right;
     cursor: pointer;
 }
-.headerSortUp {
+.tablesorter-headerSortUp {
     background-image: url(data:image/gif;base64,R0lGODlhCwAEAIAAAAAAAAAAACH5BAEAAAEALAAAAAALAAQAAAIKDI4Qu6nMEJwPFgA7);
     background-color: #ADBDD8 !important;
 }
-.headerSortDown {
+.tablesorter-headerSortDown {
     background-image: url(data:image/gif;base64,R0lGODlhCwAEAIAAAAAAAAAAACH5BAEAAAEALAAAAAALAAQAAAIKjAOnBr3cnIr0FAA7);
     background-color: #ADBDD8 !important;
 }

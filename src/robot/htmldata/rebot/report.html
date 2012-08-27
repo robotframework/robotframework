@@ -259,7 +259,7 @@ function configureTableSorter() {
 function highlightDefaultSortColumn(sortColumn) {
     if (sortColumn) {
         var locator = '#test_details th:contains(' + sortColumn + ')';
-        $(locator).addClass('headerSortUp');
+        $(locator).addClass('tablesorter-headerSortDown');
     }
 }
 
