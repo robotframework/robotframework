@@ -45,7 +45,7 @@ class FromFilePopulator(object):
 
     def __init__(self, datafile):
         self._datafile = datafile
-        self._current_populator = NullPopulator()
+        self._populator = NullPopulator()
         self._curdir = self._get_curdir(datafile.directory)
 
     def _get_curdir(self, path):
@@ -77,21 +77,21 @@ class FromFilePopulator(object):
             raise DataError("Unsupported file format '%s'." % extension)
 
     def start_table(self, header):
-        self._current_populator.populate()
+        self._populator.populate()
         table = self._datafile.start_table(DataRow(header).all)
-        self._current_populator = self._populators[table.type](table) \
-                                    if table is not None else NullPopulator()
-        return bool(self._current_populator)
+        self._populator = self._populators[table.type](table) \
+                if table is not None else NullPopulator()
+        return bool(self._populator)
 
     def eof(self):
-        self._current_populator.populate()
+        self._populator.populate()
 
     def add(self, row):
         if PROCESS_CURDIR and self._curdir:
             row = self._replace_curdirs_in(row)
         data = DataRow(row)
         if data:
-            self._current_populator.add(data)
+            self._populator.add(data)
 
     def _replace_curdirs_in(self, row):
         return [cell.replace('${CURDIR}', self._curdir) for cell in row]
