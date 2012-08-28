@@ -11,12 +11,12 @@ th {
     color: black;
 }
 /* Summary and total/tag/suite details */
-table.details {
+.details {
     clear: both;
-    width: 800px;
+    width: 63em;
     margin-bottom: 1em;
 }
-table.details th {
+.details th {
     background: white;
     width: 10em;
     white-space: nowrap;
@@ -24,11 +24,11 @@ table.details th {
     vertical-align: top;
     padding: 0.2em 0.4em;
 }
-table.details td {
+.details td {
     vertical-align: top;
     padding: 0.2em 0.4em;
 }
-table.details #selector th, table.details #selector td {
+#selector th, #selector td {
     padding-top: 0.5em;
     padding-bottom: 1em;
     white-space: normal;
@@ -42,7 +42,7 @@ table.details #selector th, table.details #selector td {
     padding: 0;
     margin: 0 1em;
 }
-#detail_tabs li {
+.detail_tab {
     float: left;
     background: #DCDCF0;
     border: 1px solid black;
@@ -51,69 +51,62 @@ table.details #selector th, table.details #selector td {
     padding-top: 0.1em;
     border-radius: 3px 3px 0 0;
 }
-#detail_tabs li:hover {
+.detail_tab:hover {
     background: yellow;
 }
-#detail_tabs li a {
+.detail_tab a {
     color: black;
     text-decoration: none;
     font-weight: bold;
     padding: 0 1em;
 }
-#detail_tabs li.tab_selected {
+.detail_tab_selected {
     position: relative;
     top: 1px;
     background: white;
 }
-#detail_tabs li.tab_selected:hover {
+.detail_tab_selected:hover {
     background: white;
 }
 /* Test details table */
-table#test_details {
+#test_details {
     width: 100%;
 }
-table#test_details tr:hover {
+#test_details tr:hover {
     background: #F4F4FF;
 }
-table#test_details th, table#test_details td {
+#test_details th, table#test_details td {
     border: 1px solid black;
     padding: 0 0.2em;
 }
-table#test_details th {
-    white-space: nowrap;
+#test_details th {
     padding: 0.2em;
 }
-table#test_details th.col_crit, table#test_details th.col_status {
-    padding-right: 1em;
-}
-table#test_details .col_name {
+.details_col_name {
     min-width: 13em;
     font-weight: bold;
 }
-table#test_details .col_doc {
+.details_col_doc {
     min-width: 13em;
 }
-table#test_details .col_tags {
+.details_col_tags {
     min-width: 10em;
 }
-table#test_details .col_crit {
+.details_col_crit {
     width: 2em;
     text-align: center;
 }
-table#test_details .col_status {
+.details_col_status {
     width: 3em;
     text-align: center;
 }
-table#test_details .col_msg {
+.details_col_msg {
     min-width: 13em;
 }
-table#test_details .col_details_elapsed {
+.details_col_elapsed {
     width: 5em;
 }
-table#test_details .col_times {
+.details_col_times {
     width: 9em;
     white-space: nowrap;
-}
-table#test_details td.col_times {
-    text-align: right;
 }

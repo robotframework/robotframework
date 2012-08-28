@@ -13,7 +13,7 @@ a:link, a:visited {
     text-decoration: none;
     color: blue;
 }
-a img {
+a > img {
     border: 1px solid blue !important;
 }
 a:hover, a:active {
@@ -29,7 +29,7 @@ a:hover, a:active {
 }
 /* Headers */
 #header {
-    width: 800px;
+    width: 63em;
     height: 3em;
     margin: 6px 0;
 }
@@ -88,37 +88,36 @@ h1 {
     background: lightgray;
 }
 /* Statistics table */
-table.statistics {
-    width: 800px;
+.statistics {
+    width: 63em;
     border-collapse: collapse;
     empty-cells: show;
     margin-bottom: 1em;
 }
-table.statistics tr:hover {
+.statistics tr:hover {
     background: #F4F4FF;
     cursor: pointer;
 }
-table.statistics td, table.statistics th {
+.statistics th, .statistics td {
     border: 1px solid black;
-    padding: 1px 4px;
-    margin: 0;
+    padding: 0.1em 0.3em;
 }
-table.statistics th {
+.statistics th {
     background-color: #DCDCDC;
 }
-.col_stat {
+.stats_col_stat {
     width: 3em;
     text-align: center;
 }
-table.statistics th.col_stat, table.statistics th.col_elapsed {
-    padding-right: 1em;
-}
-.col_elapsed {
+.stats_col_elapsed {
     width: 4.5em;
     text-align: center;
 }
-.col_graph {
+.stats_col_graph {
     width: 9em;
+}
+th.stats_col_graph:hover {
+    cursor: default;
 }
 .stat_name {
     float: left;
@@ -138,8 +137,6 @@ table.statistics th.col_stat, table.statistics th.col_elapsed {
 .pass_bar {
     background: #00F000;
 }
-.fail_bar {
-}
 .graph, .empty_graph {
     border: 1px solid black;
     width: 100%;
@@ -155,7 +152,7 @@ table.statistics th.col_stat, table.statistics th.col_elapsed {
     float: left;
     height: 100%;
 }
-/* Tablesorter - adapted from Blue Skin available at http://tablesorter.com */
+/* Tablesorter - adapted from provided Blue Skin */
 .tablesorter-header {
     background-image: url(data:image/gif;base64,R0lGODlhCwAJAIAAAH9/fwAAACH5BAEAAAEALAAAAAALAAkAAAIRjAOnBr3cnIr0WUjTrC9e9BQAOw==);
     background-repeat: no-repeat;
@@ -169,4 +166,7 @@ table.statistics th.col_stat, table.statistics th.col_elapsed {
 .tablesorter-headerSortDown {
     background-image: url(data:image/gif;base64,R0lGODlhCwAJAKEAAAAAAH9/fwAAAAAAACH5BAEAAAIALAAAAAALAAkAAAIUlAWnBr3cnIr0WROyDmvzp13CpxQAOw==);
     background-color: #B8C8E3 !important;
+}
+.narrow {
+    padding-right: 1em !important;
 }

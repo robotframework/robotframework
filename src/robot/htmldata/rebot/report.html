@@ -127,7 +127,7 @@ function totalDetailSelected(name) {
 }
 
 function renderTotalSelector(name) {
-    var args = {linkTarget: 'total_'+name, totalTabStatus: 'tab_selected'};
+    var args = {linkTarget: 'total_'+name, totalTabStatus: 'detail_tab_selected'};
     renderSelector(args, 'totalDetailsSelectorTemplate', {selected: name});
 }
 
@@ -152,7 +152,7 @@ function tagDetailSelected(name) {
 }
 
 function renderTagSelector(tagName) {
-    var args = {linkTarget: 'tag_'+tagName, tagTabStatus: 'tab_selected'};
+    var args = {linkTarget: 'tag_'+tagName, tagTabStatus: 'detail_tab_selected'};
     var tagstats = {tags: window.testdata.statistics().tag, selected: tagName};
     renderSelector(args, 'tagDetailsSelectorTemplate', tagstats);
 }
@@ -173,7 +173,7 @@ function suiteDetailSelected(id) {
 }
 
 function renderSuiteSelector(id) {
-    var args = {linkTarget: 'suite_'+id, suiteTabStatus: 'tab_selected'};
+    var args = {linkTarget: 'suite_'+id, suiteTabStatus: 'detail_tab_selected'};
     var stats = {suites: window.testdata.statistics().suite,
                  selected: id};
     renderSelector(args, 'suiteDetailsSelectorTemplate', stats);
@@ -319,7 +319,7 @@ function popUpTo(list, upTo) {
 
 <script type="text/x-jquery-tmpl" id="totalStatisticsRowTemplate">
   <tr onclick="totalDetailSelected('${type}')" class="row-${$item.index}">
-    <td class="col_stat_name">
+    <td class="stats_col_name">
       <div class="stat_name">
         <a href="#total_${type}">{{html label}}</a>
       </div>
@@ -330,7 +330,7 @@ function popUpTo(list, upTo) {
 
 <script type="text/x-jquery-tmpl" id="tagStatisticsRowTemplate">
   <tr onclick="tagDetailSelected('${label}');" class="row-${$item.index}">
-    <td class="col_stat_name">
+    <td class="stats_col_name">
       <div class="stat_name">
         <a href="#tag_${label}"
            title="{{html doc}}">{{html label}}</a>
@@ -349,7 +349,7 @@ function popUpTo(list, upTo) {
 
 <script type="text/x-jquery-tmpl" id="suiteStatisticsRowTemplate">
   <tr onclick="suiteDetailSelected('${id}');" class="row-${$item.index}">
-    <td class="col_stat_name">
+    <td class="stats_col_name">
       <div class="stat_name">
         <a href="#suite_${id}"
            title="{{html label}}"><span class="parent_name">{{html formatParentName}}</span>{{html name}}</a>
@@ -362,13 +362,13 @@ function popUpTo(list, upTo) {
 <script type="text/x-jquery-tmpl" id="detailsHeaderTemplate">
   <h2 id="${linkTarget}">Test Details</h2>
   <ul id="detail_tabs">
-    <li class="${totalTabStatus}">
+    <li class="${totalTabStatus} detail_tab">
       <a href="#totals" onclick="renderTotalSelector();">Totals</a>
     </li>
-    <li class="${tagTabStatus}">
+    <li class="${tagTabStatus} detail_tab">
       <a href="#tags" onclick="renderTagSelector();">Tags</a>
     </li>
-    <li class="${suiteTabStatus}">
+    <li class="${suiteTabStatus} detail_tab">
       <a href="#suites" onclick="renderSuiteSelector();">Suites</a>
     </li>
   </ul>
@@ -509,14 +509,14 @@ function popUpTo(list, upTo) {
   <table id="test_details">
     <thead>
         <tr>
-          <th class="col_name">Name</th>
-          <th class="col_doc">Documentation</th>
-          <th class="col_tags">Tags</th>
-          <th class="col_crit">Crit.</th>
-          <th class="col_status">Status</th>
-          <th class="col_msg">Message</th>
-          <th class="col_elapsed">Elapsed</th>
-          <th class="col_times">Start / End</th>
+          <th class="details_col_name">Name</th>
+          <th class="details_col_doc">Documentation</th>
+          <th class="details_col_tags">Tags</th>
+          <th class="details_col_crit narrow">Crit.</th>
+          <th class="details_col_status narrow">Status</th>
+          <th class="details_col_msg">Message</th>
+          <th class="details_col_elapsed">Elapsed</th>
+          <th class="details_col_times">Start / End</th>
         </tr>
     </thead>
     <tbody></tbody>
@@ -526,21 +526,21 @@ function popUpTo(list, upTo) {
 <script type="text/x-jquery-tmpl" id="testDetailsTableRowTemplate">
   {{if $item.logURL}}
   <tr onclick="location = '${$item.logURL}#${id}'" style="cursor: pointer">
-    <td class="col_name">
+    <td class="details_col_name">
         <a href="${$item.logURL}#${id}"
            title="{{html fullName}}"><span class="parent_name">{{html formatParentName}}</span>{{html name}}</a>
     </td>
   {{else}}
   <tr>
-    <td class="col_name"><span class="parent_name">{{html formatParentName}}</span>{{html name}}</td>
+    <td class="details_col_name"><span class="parent_name">{{html formatParentName}}</span>{{html name}}</td>
   {{/if}}
-    <td class="col_doc doc">{{html doc()}}</td>
-    <td class="col_tags">{{html tags.join(', ')}}</td>
-    <td class="col_crit">{{if isCritical}}yes{{else}}no{{/if}}</td>
-    <td class="col_status ${status.toLowerCase()}">${status}</td>
-    <td class="col_msg message">{{html message()}}</td>
-    <td class="col_details_elapsed">${times.elapsedTime}</td>
-    <td class="col_times">${times.startTime}<br>${times.endTime}</td>
+    <td class="details_col_doc doc">{{html doc()}}</td>
+    <td class="details_col_tags">{{html tags.join(', ')}}</td>
+    <td class="details_col_crit">{{if isCritical}}yes{{else}}no{{/if}}</td>
+    <td class="details_col_status ${status.toLowerCase()}">${status}</td>
+    <td class="details_col_msg message">{{html message()}}</td>
+    <td class="details_col_elapsed">${times.elapsedTime}</td>
+    <td class="details_col_times">${times.startTime}<br>${times.endTime}</td>
   </tr>
 </script>
 

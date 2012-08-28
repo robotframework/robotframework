@@ -127,7 +127,7 @@ function addTestExecutionLog(main) {
 
 <script type="text/x-jquery-tmpl" id="totalStatisticsRowTemplate">
   <tr class="row-${$item.index}">
-    <td class="col_stat_name">
+    <td class="stats_col_name">
       <div class="stat_name">
         <span>{{html label}}</span>
       </div>
@@ -138,7 +138,7 @@ function addTestExecutionLog(main) {
 
 <script type="text/x-jquery-tmpl" id="tagStatisticsRowTemplate">
   <tr class="row-${$item.index}">
-    <td class="col_stat_name">
+    <td class="stats_col_name">
       <div class="stat_name">
         <span title="{{html doc}}">{{html label}}</span>
         {{if info}}(${info}){{/if}}
@@ -156,7 +156,7 @@ function addTestExecutionLog(main) {
 
 <script type="text/x-jquery-tmpl" id="suiteStatisticsRowTemplate">
   <tr onclick="makeElementVisible('${id}')" class="row-${$item.index}">
-    <td class="col_stat_name">
+    <td class="stats_col_name">
       <div class="stat_name">
         <a title="{{html label}}"
            href="#${id}"><span class="parent_name">{{html formatParentName}}</span>{{html name}}</a>
@@ -173,7 +173,7 @@ function addTestExecutionLog(main) {
 
 <script type="text/x-jquery-tmpl" id="errorTemplate">
   <tr>
-    <td class="time">
+    <td class="error_time">
       {{if link}}
       <a onclick="makeElementVisible('${link}')" href="#${link}"
          title="Link to details">${date} ${time}</a>
@@ -308,7 +308,7 @@ function addTestExecutionLog(main) {
          onclick="stopPropagation(event);">Expand All</a>
     </div>
     <div id="${id}_children" style="display: none;">
-      <table class="metadata">
+      <table class="metadata keyword_metadata">
         {{if doc()}}
         <tr>
           <th>Documentation:</th>

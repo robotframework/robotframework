@@ -69,21 +69,21 @@ function addReportOrLogLink(myType) {
 
 function addStatistics() {
     var statHeaders =
-        '<th class="col_stat">Total</th>' +
-        '<th class="col_stat">Pass</th>' +
-        '<th class="col_stat">Fail</th>' +
-        '<th class="col_elapsed">Elapsed</th>' +
-        '<th class="col_graph">Pass / Fail</th>';
+        '<th class="stats_col_stat narrow">Total</th>' +
+        '<th class="stats_col_stat narrow">Pass</th>' +
+        '<th class="stats_col_stat narrow">Fail</th>' +
+        '<th class="stats_col_elapsed narrow">Elapsed</th>' +
+        '<th class="stats_col_graph">Pass / Fail</th>';
     var statTable =
         '<h2>Test Statistics</h2>' +
         '<table class="statistics" id="total_stats"><thead><tr>' +
-        '<th class="col_stat_name">Total Statistics</th>' + statHeaders +
+        '<th class="stats_col_name">Total Statistics</th>' + statHeaders +
         '</tr></thead><tbody></tbody></table>' +
         '<table class="statistics" id="tag_stats"><thead><tr>' +
-        '<th class="col_stat_name">Statistics by Tag</th>' + statHeaders +
+        '<th class="stats_col_name">Statistics by Tag</th>' + statHeaders +
         '</tr></thead><tbody></tbody></table>' +
         '<table class="statistics" id="suite_stats"><thead><tr>' +
-        '<th class="col_stat_name">Statistics by Suite</th>' + statHeaders +
+        '<th class="stats_col_name">Statistics by Suite</th>' + statHeaders +
         '</tr></thead><tbody></tbody></table>';
     $(statTable).appendTo('#statistics_container');
     $.map(['total', 'tag', 'suite'], addStatTable);
@@ -92,10 +92,10 @@ function addStatistics() {
 }
 
 function addTooltipsToElapsedTimes() {
-    $('#total_stats .col_elapsed, #tag_stats .col_elapsed').attr('title',
+    $('.stats_col_elapsed').attr('title',
         'Total execution time of these test cases. ' +
         'Excludes suite setups and teardowns.');
-    $('#suite_stats .col_elapsed').attr('title',
+    $('#suite_stats .stats_col_elapsed').attr('title',
         'Total execution time of this test suite.');
 }
 
@@ -131,12 +131,12 @@ function addStatTable(tableName) {
 
 function renderNoTagStatTable() {
     $('<tr class="row-0">' +
-        '<td class="col_stat_name">No Tags</td>' +
-        '<td class="col_stat"></td>' +
-        '<td class="col_stat"></td>' +
-        '<td class="col_stat"></td>' +
-        '<td class="col_elapsed"></td>' +
-        '<td class="col_graph">' +
+        '<td class="stats_col_name">No Tags</td>' +
+        '<td class="stats_col_stat"></td>' +
+        '<td class="stats_col_stat"></td>' +
+        '<td class="stats_col_stat"></td>' +
+        '<td class="stats_col_elapsed"></td>' +
+        '<td class="stats_col_graph">' +
           '<div class="empty_graph"></div>' +
         '</td>' +
       '</tr>').appendTo($('#tag_stats > tbody'));
@@ -151,11 +151,11 @@ function renderStatTable(tableName, templateName, stats) {
 }
 
 $.template("stat_columns",
-    '<td class="col_stat">${total}</td>' +
-    '<td class="col_stat">${pass}</td>' +
-    '<td class="col_stat">${fail}</td>' +
-    '<td class="col_elapsed">${elapsed}</td>' +
-    '<td class="col_graph">' +
+    '<td class="stats_col_stat">${total}</td>' +
+    '<td class="stats_col_stat">${pass}</td>' +
+    '<td class="stats_col_stat">${fail}</td>' +
+    '<td class="stats_col_elapsed">${elapsed}</td>' +
+    '<td class="stats_col_graph">' +
       '{{if total}}' +
       '<div class="graph">' +
         '<div class="pass_bar" style="width: ${passWidth}%;" title="${passPercent}%"></div>' +

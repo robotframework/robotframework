@@ -1,30 +1,30 @@
 /* Containers */
-div.suite, div.test, table.errors {
+.suite, .test, .errors {
     border: 1px solid gray;
     padding: 0.3em;
     margin: 0.2em 0;
 }
-div.test {
+.test {
     border-style: dashed;
 }
-table.errors, table.metadata, table.messages {
+.errors, .metadata, .messages {
     width: 100%;
 }
-div.keyword, table.metadata, table.messages {
+.keyword, .metadata, .messages {
     padding-left: 1.2em;
 }
 /* Suite, test and kw headers */
-div.elementheader {
+.elementheader {
     border: 1px solid white;
     border-radius: 2px;
     padding: 0.2em 0;
 }
-div.elementheader:hover {
+.elementheader:hover {
     cursor: pointer;
     background: #F4F4FF;
     border: 1px solid #D3D3D3;
 }
-div.foldingbutton {
+.foldingbutton {
     float: left;
     height: 0.9em;
     width: 0.9em;
@@ -35,33 +35,33 @@ div.foldingbutton {
     border: 1px solid black;
     border-radius: 2px;
 }
-div.foldingbutton:hover {
+.foldingbutton:hover {
     background: yellow;
 }
-span.name {
+.name {
     font-weight: bold;
 }
-a.expandall {
+.expandall {
     float: right;
     margin: 0.2em 0.5em;
     font-size: 0.8em;
 }
 /* Messages and errors */
-table.messages {
+.messages {
     font-family: monospace;
     font-size: 1.2em;
 }
-table.messages td, table.errors td {
+.messages td, .errors td {
     vertical-align: top;
 }
-table.messages td.time {
+.time {
     width: 6em;
 }
-table.errors td.time {
+.error_time {
     width: 10em;
     white-space: nowrap;
 }
-td.level {
+.level {
     width: 5em;
     text-align: center;
 }
@@ -74,17 +74,17 @@ td.level {
     display: table;
 }
 /* Metadata */
-table.metadata th {
+.metadata th {
     width: 13em;
     text-align: left;
     vertical-align: top;
     white-space: nowrap;
     padding-right: 0.5em;
 }
-table.metadata td {
+.metadata td {
     vertical-align: top;
 }
-div.keyword table.metadata {
+.keyword_metadata {
     font-size: 0.9em;
 }
 /* Custom styles for statistics */

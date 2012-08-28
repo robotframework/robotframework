@@ -9,7 +9,7 @@ a:link, a:visited {
 #header {
     width: auto;
 }
-table.details, table.statistics {
+.details, .statistics {
     width: 100%;
 }
 #generated_ago, #report_or_log_link, #normal_selector, .expand {
@@ -18,7 +18,10 @@ table.details, table.statistics {
 #print_selector {
     display: table-cell;
 }
-table#test_details thead tr .header {
+.narrow {
+    padding: inherit !important;
+}
+.tablesorter-header {
     background-image: none;
     background: #DCDCF0 !important;
 }
