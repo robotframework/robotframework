@@ -122,7 +122,7 @@ function totalDetailSelected(name) {
     if (!name) return;
     renderTotalSelector(name);
     renderTotalDetails(name);
-    $('#print_selector').text(name);
+    updatePrintSelector(name == 'critical' ? 'Critical Tests' : 'All Tests');
     scrollToSelector('total_'+name);
 }
 
@@ -140,6 +140,12 @@ function renderTotalDetails(name) {
     drawTestDetailsTable(tests, true);
 }
 
+function updatePrintSelector(name, info) {
+    if (info)
+        name += ' (' + info + ')';
+    $('#print_selector').html(name);
+}
+
 function tagDetailSelected(name) {
     if (!name) return;
     renderTagSelector(name);
@@ -147,7 +153,7 @@ function tagDetailSelected(name) {
         return tag.label == name;
     })[0];
     renderTagDetails(tag);
-    $('#print_selector').text(name);
+    updatePrintSelector(name, tag.info);
     scrollToSelector('tag_'+name);
 }
 
@@ -185,7 +191,7 @@ function renderSuiteDetails(id) {
         var opts = {logURL: window.settings.logURL};
         $.tmpl('suiteDetailsTemplate', suite, opts).appendTo('#details_header');
         drawTestDetailsTable(suite.allTests(), false);
-        $('#print_selector').text(suite.name);
+        updatePrintSelector(suite.fullName);
     });
 }
 
