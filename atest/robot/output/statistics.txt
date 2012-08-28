@@ -12,13 +12,13 @@ Statistics Should Be Written to XML
     Should Match Regexp  ${output}  ${exp}
 
 Total statistics should be Correct
-    ${stats} =  Get Node  ${OUTFILE}  statistics/total
+    ${stats} =  Get Element  ${OUTFILE}  statistics/total
     ${crit}  ${total} =  Call Method  ${stats}  findall  stat
     Node Information Should Be Correct  ${crit}  Critical Tests  5  1
     Node Information Should Be Correct  ${total}  All Tests  9  1
 
 Tag statistics should be Correct
-    ${stats} =  Get Node  ${OUTFILE}  statistics/tag
+    ${stats} =  Get Element  ${OUTFILE}  statistics/tag
     Tag Node Information Should Be Correct  ${stats.getchildren()[0]}  t1  5  1  info=critical  links=my title:http://url.to:::title:url
     Tag Node Information Should Be Correct  ${stats.getchildren()[2]}  d1 AND d2  1  0  info=combined
     Tag Node Information Should Be Correct  ${stats.getchildren()[3]}  f1 NOT t1  4  0  info=combined
@@ -28,11 +28,11 @@ Tag statistics should be Correct
     Tag Node Information Should Be Correct  ${stats.getchildren()[7]}  sub3  2  0
 
 Combined Tag Statistics Name Can Be Given
-    ${stats} =  Get Node  ${OUTFILE}  statistics/tag
+    ${stats} =  Get Element  ${OUTFILE}  statistics/tag
     Tag Node Information Should Be Correct  ${stats.getchildren()[1]}  combined tag with new name  1  0  combined
 
 Suite statistics should be Correct
-    ${stats} =  Get Node  ${OUTFILE}  statistics/suite
+    ${stats} =  Get Element  ${OUTFILE}  statistics/suite
     Suite Node Information Should Be Correct  ${stats.getchildren()[0]}  Suites  9  1
     Suite Node Information Should Be Correct  ${stats.getchildren()[1]}  Suites.Fourth  0  1
     Suite Node Information Should Be Correct  ${stats.getchildren()[2]}  Suites.Subsuites  2  0

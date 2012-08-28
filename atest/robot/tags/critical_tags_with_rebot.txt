@@ -47,7 +47,7 @@ Run Test To Create Output
 Test Criticality
     [Arguments]  ${options}  ${crit 1}  ${crit 2}
     Run Rebot  ${options} --escape star:STAR --escape quest:QUEST --report rebot-report.html  ${INPUT FILE}
-    ${tests} =  Get Nodes  ${OUT FILE}  suite/test
+    ${tests} =  Get Elements  ${OUT FILE}  suite/test
     Test Status And Criticality Should Be  ${tests[0]}  PASS  ${crit 1}
     Test Status And Criticality Should Be  ${tests[1]}  FAIL  ${crit 2}
 

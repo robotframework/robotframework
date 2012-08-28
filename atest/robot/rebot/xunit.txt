@@ -26,12 +26,12 @@ XUnit Option Given
     Check Stdout Contains  XUnit
     File Should Exist  ${OUTDIR}/xunit.xml
     File Should Exist  ${OUTDIR}/log.html
-    ${root} =  Get Node  ${OUTDIR}/xunit.xml  /
+    ${root} =  Parse XML  ${OUTDIR}/xunit.xml
     Should Be Equal  ${root.tag}  testsuite
-    ${tests} =  Get Nodes  ${OUTDIR}/xunit.xml  testcase
+    ${tests} =  Get Elements  ${root}  testcase
     Length Should Be  ${tests}  18
     Should Be Equal  ${tests[7].attrib['name']}  Ünïcödë Tëst änd Këywörd Nämës
-    ${failures} =  Get Nodes  ${OUTDIR}/xunit.xml  testcase/failure
+    ${failures} =  Get Elements  ${root}  testcase/failure
     Length Should Be  ${failures}  5
     Should Be Equal  ${failures[0].attrib['message']}  ${MESSAGES}
 

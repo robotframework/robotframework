@@ -5,6 +5,7 @@ Library         Collections
 Library         String
 Library         TestCheckerLibrary
 Library         TestHelper
+Library         XML
 Variables       atest_variables.py
 
 *** Variables ***
@@ -273,7 +274,7 @@ Previous test should have passed
 Get Stat Nodes
     [Arguments]  ${type}  ${output}=
     ${output} =  Set Variable If  "${output}"  ${output}  ${OUTFILE}
-    ${nodes} =  Get Nodes  ${output}  statistics/${type}/stat
+    ${nodes} =  Get Elements  ${output}  statistics/${type}/stat
     [Return]  ${nodes}
 
 Get Tag Stat Nodes

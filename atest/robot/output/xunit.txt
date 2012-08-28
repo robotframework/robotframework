@@ -17,7 +17,7 @@ XUnit File Is Created
     File Should Exist  ${OUTDIR}/log.html
 
 File Structure Is Correct
-    ${root} =  Get XUnit Node  /
+    ${root} =  Get XUnit Node  .
     Should Be Equal  ${root.tag}  testsuite
     ${tests} =  Get XUnit Nodes  testcase
     Length Should Be  ${tests}  8
@@ -53,10 +53,10 @@ Invalid XUnit File
 *** Keywords ***
 Get XUnit Node
     [Arguments]  ${path}
-    ${node} =  Get Node  ${OUTDIR}/xunit.xml  ${path}
+    ${node} =  Get Element  ${OUTDIR}/xunit.xml  ${path}
     [Return]  ${node}
 
 Get XUnit Nodes
     [Arguments]  ${path}
-    ${nodes} =  Get Nodes  ${OUTDIR}/xunit.xml  ${path}
+    ${nodes} =  Get Elements  ${OUTDIR}/xunit.xml  ${path}
     [Return]  ${nodes}
