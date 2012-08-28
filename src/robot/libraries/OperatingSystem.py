@@ -1280,7 +1280,8 @@ class _Process2(_Process):
     def __init__(self, command, input_):
         self._command = self._process_command(command)
         p = subprocess.Popen(self._command, shell=True, stdin=subprocess.PIPE,
-                             stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+                             stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
+                             close_fds=os.sep=='/')
         stdin, self.stdout = p.stdin, p.stdout
         if input_:
             stdin.write(input_)
