@@ -41,15 +41,13 @@ class TestCheckerLibrary:
         tests = self.get_tests_from_suite(suite, name)
         if len(tests) == 1:
             return tests[0]
-        elif len(tests) == 0:
-            err = "No test '%s' found from suite '%s'"
-        else:
-            err = "More than one test '%s' found from suite '%s'"
+        err = "No test '%s' found from suite '%s'" if not tests \
+            else "More than one test '%s' found from suite '%s'"
         raise RuntimeError(err % (name, suite.name))
 
     def get_tests_from_suite(self, suite, name=None):
-        tests = [ test for test in suite.tests
-                  if name is None or utils.eq(test.name, name) ]
+        tests = [test for test in suite.tests
+                 if name is None or utils.eq(test.name, name)]
         for subsuite in suite.suites:
             tests.extend(self.get_tests_from_suite(subsuite, name))
         return tests
@@ -58,14 +56,12 @@ class TestCheckerLibrary:
         suites = self.get_suites_from_suite(suite, name)
         if len(suites) == 1:
             return suites[0]
-        elif len(suites) == 0:
-            err = "No suite '%s' found from suite '%s'"
-        else:
-            err = "More than one suite '%s' found from suite '%s'"
+        err = "No suite '%s' found from suite '%s'" if not suites \
+            else "More than one suite '%s' found from suite '%s'"
         raise RuntimeError(err % (name, suite.name))
 
     def get_suites_from_suite(self, suite, name):
-        suites = utils.eq(suite.name, name) and [ suite ] or []
+        suites = [suite] if utils.eq(suite.name, name) else []
         for subsuite in suite.suites:
             suites.extend(self.get_suites_from_suite(subsuite, name))
         return suites
@@ -85,7 +81,6 @@ class TestCheckerLibrary:
             test.exp_status = status
         if message is not None:
             test.exp_message = message
-
         if test.exp_status != test.status:
             if test.exp_status == 'PASS':
                 msg = "Test was expected to PASS but it FAILED. "
@@ -94,7 +89,6 @@ class TestCheckerLibrary:
                 msg = "Test was expected to FAIL but it PASSED. "
                 msg += "Expected message:\n" + test.exp_message
             raise AssertionError(msg)
-
         if test.exp_message == test.message:
             return
         if test.exp_message.startswith('REGEXP:'):
@@ -107,18 +101,16 @@ class TestCheckerLibrary:
                 raise RuntimeError("Empty 'STARTS:' is not allowed")
             if test.message.startswith(start):
                 return
-
         raise AssertionError("Wrong message\n\n"
                              "Expected:\n%s\n\nActual:\n%s\n"
                              % (test.exp_message, test.message))
 
-
     def check_suite_contains_tests(self, suite, *expected_names):
-        actual_tests = [ test for test in self.get_tests_from_suite(suite) ]
+        actual_tests = [test for test in self.get_tests_from_suite(suite)]
         tests_msg  = """
 Expected tests : %s
 Actual tests   : %s"""  % (str(list(expected_names)), str(actual_tests))
-        expected_names = [ utils.normalize(name) for name in expected_names ]
+        expected_names = [utils.normalize(name) for name in expected_names]
         if len(actual_tests) != len(expected_names):
             raise AssertionError("Wrong number of tests." + tests_msg)
         for test in actual_tests:
@@ -129,8 +121,7 @@ Actual tests   : %s"""  % (str(list(expected_names)), str(actual_tests))
             else:
                 raise AssertionError("Test '%s' was not expected to be run.%s"
                                      % (test.name, tests_msg))
-        if len(expected_names) != 0:
-            raise Exception("Bug in test library")
+        assert not expected_names
 
     def should_contain_tests(self, suite, *test_names):
         self.check_suite_contains_tests(suite, *test_names)
@@ -153,7 +144,7 @@ Actual tests   : %s"""  % (str(list(expected_names)), str(actual_tests))
         for act, exp in zip(test.tags, tag_names):
             utils.eq(act, exp)
 
-    def  should_contain_keywords(self, item, *kw_names):
+    def should_contain_keywords(self, item, *kw_names):
         actual_names =  [kw.name for kw in item.keywords]
         utils.asserts.assert_equals(len(actual_names), len(kw_names), 'Wrong number of keywords')
         for act, exp in zip(actual_names, kw_names):
