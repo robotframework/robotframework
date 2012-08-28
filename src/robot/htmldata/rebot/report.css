@@ -83,11 +83,11 @@ th {
     padding: 0.2em;
 }
 .details_col_name {
-    min-width: 13em;
+    min-width: 20em;
     font-weight: bold;
 }
 .details_col_doc {
-    min-width: 13em;
+    min-width: 10em;
 }
 .details_col_tags {
     min-width: 10em;
@@ -101,7 +101,7 @@ th {
     text-align: center;
 }
 .details_col_msg {
-    min-width: 13em;
+    min-width: 20em;
 }
 .details_col_elapsed {
     width: 5em;
