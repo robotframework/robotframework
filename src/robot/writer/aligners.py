@@ -17,8 +17,8 @@ from .dataextractor import DataExtractor
 
 class _Aligner(object):
 
-    def __init__(self, widths):
-        self._widths = widths
+    def __init__(self, widths=None):
+        self._widths = widths or []
 
     def align_rows(self, rows):
         return [self.align_row(r) for r in rows]
@@ -52,3 +52,12 @@ class ColumnAligner(_Aligner):
                 else:
                     result[index] = max(len(col), result[index])
         return result
+
+
+class NullAligner(_Aligner):
+
+    def align_rows(self, rows):
+        return rows
+
+    def align_row(self, row):
+        return row

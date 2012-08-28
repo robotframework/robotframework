@@ -14,13 +14,13 @@
 
 import re
 
-from .aligners import FirstColumnAligner, ColumnAligner
+from .aligners import FirstColumnAligner, ColumnAligner, NullAligner
 from .dataextractor import DataExtractor
 from .rowsplitter import RowSplitter
 
 
 class _DataFileFormatter(object):
-    _consecutive_whitespace = re.compile('\s{2,}')
+    _whitespace = re.compile('\s{2,}')
 
     def __init__(self, column_count):
         self._splitter = RowSplitter(column_count)
@@ -60,9 +60,11 @@ class _DataFileFormatter(object):
         return table is not None and table.type in ['test case', 'keyword']
 
     def _escape_consecutive_whitespace(self, row):
-        return [self._consecutive_whitespace.sub(
-                lambda match: '\\'.join(match.group(0)), item.replace('\n', ' '))
-                for item in row]
+        return [self._whitespace.sub(self._whitespace_escaper,
+                                     cell.replace('\n', ' ')) for cell in row]
+
+    def _whitespace_escaper(self, match):
+        return '\\'.join(match.group(0))
 
     def _format_row(self, row, table=None):
         raise NotImplementedError
@@ -100,23 +102,19 @@ class TxtFormatter(_DataFileFormatter):
     def _format_row(self, row, table=None):
         row = self._escape(row)
         aligner = self._aligner_for(table)
-        if aligner:
-            return aligner.align_row(row)
-        return row
+        return aligner.align_row(row)
 
     def _aligner_for(self, table):
         if table and table.type in ['setting', 'variable']:
             return FirstColumnAligner(self._setting_and_variable_name_width)
         if self._should_align_columns(table):
             return ColumnAligner(self._test_or_keyword_name_width, table)
-        return None
+        return NullAligner()
 
     def _format_header(self, header, table):
         header = ['*** %s ***' % header[0]] + header[1:]
         aligner = self._aligner_for(table)
-        if aligner:
-            return aligner.align_row(header)
-        return header
+        return aligner.align_row(header)
 
     def _want_names_on_first_content_row(self, table, name):
         return self._should_align_columns(table) and \
