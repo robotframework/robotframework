@@ -57,10 +57,12 @@ class _TablePopulator(Populator):
         return row.is_commented()
 
     def _add(self, row):
-        if not self._is_continuing(row):
+        if self._is_continuing(row):
+            self._consume_comments()
+        else:
             self._populator.populate()
             self._populator = self._get_populator(row)
-        self._comment_cache.consume(self._populator.add)
+            self._consume_standalone_comments()
         self._populator.add(row)
 
     def _is_continuing(self, row):
@@ -69,8 +71,14 @@ class _TablePopulator(Populator):
     def _get_populator(self, row):
         raise NotImplementedError
 
-    def populate(self):
+    def _consume_comments(self):
         self._comment_cache.consume(self._populator.add)
+
+    def _consume_standalone_comments(self):
+        self._consume_comments()
+
+    def populate(self):
+        self._consume_comments()
         self._populator.populate()
 
 
@@ -92,6 +100,18 @@ class VariableTablePopulator(_TablePopulator):
 
     def _get_populator(self, row):
         return VariablePopulator(self._table.add, row.head)
+
+    def _consume_standalone_comments(self):
+        self._comment_cache.consume(self._populate_standalone_comment)
+
+    def _populate_standalone_comment(self, comment):
+        populator = self._get_populator(comment)
+        populator.add(comment)
+        populator.populate()
+
+    def populate(self):
+        self._populator.populate()
+        self._consume_standalone_comments()
 
 
 class _StepContainingTablePopulator(_TablePopulator):

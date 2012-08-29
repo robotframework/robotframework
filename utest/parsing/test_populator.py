@@ -78,7 +78,7 @@ class _PopulatorTest(unittest.TestCase):
         tag = self._setting_with(tag_name)
         assert_equals(tag.value, exp_value)
 
-    def _assert_variable(self, index, exp_name, exp_value, exp_comment=None):
+    def _assert_variable(self, index, exp_name, exp_value, exp_comment=[]):
         var = self._datafile.variable_table.variables[index]
         assert_equals(var.name, exp_name)
         assert_equals(var.value, exp_value)
@@ -534,15 +534,19 @@ class TestPopulatingComments(_PopulatorTest):
 
     def test_variable_table(self):
         self._create_table('variables', [['${varname}', 'varvalue', '#has comment'],
+                                         ['${name}', '# no value'],
                                          ['#label', 'A', 'B', 'C'],
                                          ['@{items}', '1', '2', '3'],
-                                         ['${ohtervarname}', '##end comment'],
+                                         ['${X}', '##end comment'],
                                          ['', '', '#comment'],
-                                         ['...', 'otherval'],
+                                         ['...', 'VAL'],
                                          ['#EOT']])
         self._assert_variable(0, '${varname}', ['varvalue'], ['# has comment'])
-        self._assert_variable(1, '@{items}', ['1', '2', '3'], ['# label', 'A', 'B', 'C'])
-        self._assert_variable(2, '${ohtervarname}', ['otherval'], ['#end comment', 'comment', 'EOT'])
+        self._assert_variable(1, '${name}', [''], ['# no value'])
+        self._assert_variable(2, '', [], ['# label', 'A', 'B', 'C'])
+        self._assert_variable(3, '@{items}', ['1', '2', '3'])
+        self._assert_variable(4, '${X}', ['VAL'], ['#end comment', 'comment'])
+        self._assert_variable(5, '', [], ['# EOT'])
 
     def test_test_case_table(self):
         self._create_table('test cases', [['#start of table comment'],

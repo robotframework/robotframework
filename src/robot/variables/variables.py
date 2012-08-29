@@ -262,6 +262,8 @@ class Variables(utils.NormalizedDict):
 
     def set_from_variable_table(self, variable_table, overwrite=False):
         for variable in variable_table:
+            if not variable:
+                continue
             try:
                 name, value = self._get_var_table_name_and_value(
                     variable.name, variable.value, variable_table.source)

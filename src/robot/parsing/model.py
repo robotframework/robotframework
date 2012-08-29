@@ -472,6 +472,9 @@ class Variable(object):
     def is_for_loop(self):
         return False
 
+    def __nonzero__(self):
+        return bool(self.name or ''.join(self.value))
+
 
 class _WithSteps(object):
 
