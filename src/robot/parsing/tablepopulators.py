@@ -53,6 +53,9 @@ class _TablePopulator(Populator):
         else:
             self._add(row)
 
+    def _is_cacheable_comment_row(self, row):
+        return row.is_commented()
+
     def _add(self, row):
         if not self._is_continuing(row):
             self._populator.populate()
@@ -60,18 +63,15 @@ class _TablePopulator(Populator):
         self._comment_cache.consume(self._populator.add)
         self._populator.add(row)
 
+    def _is_continuing(self, row):
+        return row.is_continuing() and self._populator
+
     def _get_populator(self, row):
         raise NotImplementedError
 
     def populate(self):
         self._comment_cache.consume(self._populator.add)
         self._populator.populate()
-
-    def _is_continuing(self, row):
-        return row.is_continuing() and self._populator
-
-    def _is_cacheable_comment_row(self, row):
-        return row.is_commented()
 
 
 class SettingTablePopulator(_TablePopulator):
@@ -100,7 +100,7 @@ class _StepContainingTablePopulator(_TablePopulator):
         return row.is_indented() and self._populator or row.is_commented()
 
     def _is_cacheable_comment_row(self, row):
-        return row.is_commented() and isinstance(self._populator, NullPopulator)
+        return row.is_commented() and not self._populator
 
 
 class TestTablePopulator(_StepContainingTablePopulator):
