@@ -72,7 +72,7 @@ class _TablePopulator(Populator):
         raise NotImplementedError
 
     def _consume_comments(self):
-        self._comment_cache.consume(self._populator.add)
+        self._comment_cache.consume_with(self._populator.add)
 
     def _consume_standalone_comments(self):
         self._consume_comments()
@@ -102,7 +102,7 @@ class VariableTablePopulator(_TablePopulator):
         return VariablePopulator(self._table.add, row.head)
 
     def _consume_standalone_comments(self):
-        self._comment_cache.consume(self._populate_standalone_comment)
+        self._comment_cache.consume_with(self._populate_standalone_comment)
 
     def _populate_standalone_comment(self, comment):
         populator = self._get_populator(comment)
@@ -173,11 +173,11 @@ class _TestCaseUserKeywordPopulator(Populator):
         self._test_or_uk_creator = test_or_uk_creator
         self._test_or_uk = None
         self._populator = NullPopulator()
-        self._comments = CommentCache()
+        self._comment_cache = CommentCache()
 
     def add(self, row):
         if row.is_commented():
-            self._comments.add(row)
+            self._comment_cache.add(row)
             return
         if not self._test_or_uk:
             self._test_or_uk = self._test_or_uk_creator(row.head)
@@ -189,9 +189,9 @@ class _TestCaseUserKeywordPopulator(Populator):
         if not self._continues(row):
             self._populator.populate()
             self._populator = self._get_populator(row)
-            self._comments.consume(self._populate_comment_row)
+            self._comment_cache.consume_with(self._populate_comment_row)
         else:
-            self._comments.consume(self._populator.add)
+            self._comment_cache.consume_with(self._populator.add)
         self._populator.add(row)
 
     def _populate_comment_row(self, crow):
@@ -201,7 +201,7 @@ class _TestCaseUserKeywordPopulator(Populator):
 
     def populate(self):
         self._populator.populate()
-        self._comments.consume(self._populate_comment_row)
+        self._comment_cache.consume_with(self._populate_comment_row)
 
     def _get_populator(self, row):
         if row.starts_test_or_user_keyword_setting():
