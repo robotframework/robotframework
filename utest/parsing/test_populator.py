@@ -537,16 +537,24 @@ class TestPopulatingComments(_PopulatorTest):
                                          ['${name}', '# no value'],
                                          ['#label', 'A', 'B', 'C'],
                                          ['@{items}', '1', '2', '3'],
-                                         ['${X}', '##end comment'],
-                                         ['', '', '#comment'],
-                                         ['...', 'VAL'],
+                                         ['# s1'],
+                                         ['', '# s2', ''],
+                                         ['', '', '# s3'],
+                                         ['@{X}', '# c1'],
+                                         ['', '', '# c2'],
+                                         ['...', 'V1', '# c3'],
+                                         ['# c4'],
+                                         ['...', 'V2', '# c5'],
                                          ['#EOT']])
         self._assert_variable(0, '${varname}', ['varvalue'], ['# has comment'])
         self._assert_variable(1, '${name}', [''], ['# no value'])
         self._assert_variable(2, '', [], ['# label', 'A', 'B', 'C'])
         self._assert_variable(3, '@{items}', ['1', '2', '3'])
-        self._assert_variable(4, '${X}', ['VAL'], ['#end comment', 'comment'])
-        self._assert_variable(5, '', [], ['# EOT'])
+        self._assert_variable(4, '', [], ['# s1'])
+        self._assert_variable(5, '', [], ['# s2'])
+        self._assert_variable(6, '', [], ['# s3'])
+        self._assert_variable(7, '@{X}', ['V1', 'V2'], ['# c1', 'c2', 'c3', 'c4', 'c5'])
+        self._assert_variable(8, '', [], ['# EOT'])
 
     def test_test_case_table(self):
         self._create_table('test cases', [['#start of table comment'],
