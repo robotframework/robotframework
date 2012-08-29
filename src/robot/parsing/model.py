@@ -464,7 +464,7 @@ class Variable(object):
         self.comment = Comment(comment)
 
     def as_list(self):
-        if self:
+        if self.has_data():
             return [self.name] + self.value + self.comment.as_list()
         return self.comment.as_list()
 
@@ -474,7 +474,7 @@ class Variable(object):
     def is_for_loop(self):
         return False
 
-    def __nonzero__(self):
+    def has_data(self):
         return bool(self.name or ''.join(self.value))
 
 
