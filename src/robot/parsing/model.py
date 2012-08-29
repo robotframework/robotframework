@@ -464,7 +464,9 @@ class Variable(object):
         self.comment = Comment(comment)
 
     def as_list(self):
-        return [self.name] + self.value + self.comment.as_list()
+        if self:
+            return [self.name] + self.value + self.comment.as_list()
+        return self.comment.as_list()
 
     def is_set(self):
         return True

@@ -6,9 +6,11 @@ from robot.writer.dataextractor import DataExtractor
 
 var_table = VariableTable(None)
 var_table.add('${A scalar}', 'value', 'var comment')
+var_table.add('', '', 'standalone comment')
 var_table.add('@{A list}', ['v', 'a', 'lue'])
 
 var_table_rows = [['${A scalar}', 'value', '# var comment'],
+                  ['# standalone comment'],
                   ['@{A list}', 'v', 'a', 'lue']]
 
 test_table = TestCaseTable(None)
@@ -47,3 +49,7 @@ class DataExtractorTest(unittest.TestCase):
         extractor = DataExtractor(lambda t,n: True)
         assert_equals(list(extractor._rows_from_indented_table(table)),
                       [['Test', 'No op']])
+
+
+if __name__ == '__main__':
+    unittest.main()
