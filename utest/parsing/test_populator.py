@@ -533,9 +533,10 @@ class TestPopulatingComments(_PopulatorTest):
         self._assert_meta(0, 'metaname', 'metavalue', ['# last line is commented'])
 
     def test_variable_table(self):
-        self._create_table('variables', [['${varname}', 'varvalue', '#has comment'],
+        self._create_table('variables', [['# before'],
+                                         ['${varname}', 'varvalue', '#has comment'],
                                          ['${name}', '# no value'],
-                                         ['#label', 'A', 'B', 'C'],
+                                         ['#middle', 'A', 'B', 'C'],
                                          ['@{items}', '1', '2', '3'],
                                          ['# s1'],
                                          ['', '# s2', ''],
@@ -546,15 +547,17 @@ class TestPopulatingComments(_PopulatorTest):
                                          ['# c4'],
                                          ['...', 'V2', '# c5'],
                                          ['#EOT']])
-        self._assert_variable(0, '${varname}', ['varvalue'], ['# has comment'])
-        self._assert_variable(1, '${name}', [''], ['# no value'])
-        self._assert_variable(2, '', [], ['# label', 'A', 'B', 'C'])
-        self._assert_variable(3, '@{items}', ['1', '2', '3'])
-        self._assert_variable(4, '', [], ['# s1'])
-        self._assert_variable(5, '', [], ['# s2'])
-        self._assert_variable(6, '', [], ['# s3'])
-        self._assert_variable(7, '@{X}', ['V1', 'V2'], ['# c1', 'c2', 'c3', 'c4', 'c5'])
-        self._assert_variable(8, '', [], ['# EOT'])
+        self._assert_no_parsing_errors()
+        self._assert_variable(0, '', [], ['# before'])
+        self._assert_variable(1, '${varname}', ['varvalue'], ['# has comment'])
+        self._assert_variable(2, '${name}', [''], ['# no value'])
+        self._assert_variable(3, '', [], ['# middle', 'A', 'B', 'C'])
+        self._assert_variable(4, '@{items}', ['1', '2', '3'])
+        self._assert_variable(5, '', [], ['# s1'])
+        self._assert_variable(6, '', [], ['# s2'])
+        self._assert_variable(7, '', [], ['# s3'])
+        self._assert_variable(8, '@{X}', ['V1', 'V2'], ['# c1', 'c2', 'c3', 'c4', 'c5'])
+        self._assert_variable(9, '', [], ['# EOT'])
 
     def test_test_case_table(self):
         self._create_table('test cases', [['#start of table comment'],
