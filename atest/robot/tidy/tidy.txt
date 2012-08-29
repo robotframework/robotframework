@@ -2,72 +2,72 @@
 Force Tags        pybot    jybot   regression
 Library           OperatingSystem
 Resource          tidy_resource.txt
-Suite Setup       Create Directory     ${TIDYDIR}
-Suite Teardown    Remove Directory     ${TIDYDIR}    recursive=True
+Suite Setup       Create Directory     ${TEMP}
+Suite Teardown    Remove Directory     ${TEMP}    recursive=True
 
 *** Test cases ***
 Tidying single test case file
     [Documentation]   Test tidying to different formats
     [Template]    Run tidy with golden file and check result
-    ${EMPTY}    ${DATADIR}/golden.txt
-    --usepipes    ${DATADIR}/golden_pipes.txt
-    --format tsv    ${DATADIR}/golden.tsv
-    --format html    ${DATADIR}/golden.html
-    --spacecount 2    ${DATADIR}/golden_two_spaces.txt
+    ${EMPTY}    golden.txt
+    --usepipes    golden_pipes.txt
+    --format tsv    golden.tsv
+    --format html    golden.html
+    --spacecount 2    golden_two_spaces.txt
 
 Tidying single resource file
     [Template]    Run tidy with golden resource file and check result
-    ${EMPTY}    ${DATADIR}/golden_resource.txt
-    -p    ${DATADIR}/golden_pipes_resource.txt
-    -f tsv    ${DATADIR}/golden_resource.tsv
-    --FORMAT html    ${DATADIR}/golden_resource.html
+    ${EMPTY}    golden_resource.txt
+    -p    golden_pipes_resource.txt
+    -f tsv    golden_resource.tsv
+    --FORMAT html    golden_resource.html
 
 Tidying single init file
-    Run tidy and check result    ${EMPTY}    ${DATADIR}/__init__.txt    ${DATADIR}/__init__.txt
+    Run tidy and check result    ${EMPTY}    __init__.txt
 
 Tidying single file in place
-    [Setup]    Copy File    ${DATADIR}/golden.txt    ${TIDYDIR}/golden.txt
-    Run tidy    --inplace --usepipes    ${TIDYDIR}/golden.txt
-    Compare tidy results    ${TIDYDIR}/golden.txt    ${DATADIR}/golden_pipes.txt
-    Check file count    ${TIDYDIR}    *.txt    1
-    [Teardown]    Empty Directory     ${TIDYDIR}
+    [Setup]    Copy File    ${DATA}/golden.txt    ${TEMP}/golden.txt
+    Run tidy    --inplace --usepipes    ${TEMP}/golden.txt
+    Compare tidy results    ${TEMP}/golden.txt    ${DATA}/golden_pipes.txt
+    Check file count    ${TEMP}    *.txt    1
+    [Teardown]    Empty Directory     ${TEMP}
 
 Tidying single file in place and change format
-    [Setup]    Copy File    ${DATADIR}/golden.txt    ${TIDYDIR}/golden.txt
-    Run tidy    -i -f html    ${TIDYDIR}/golden.txt    ${DATADIR}/golden.html
-    Compare tidy results    ${TIDYDIR}/golden.html    ${DATADIR}/golden.html
-    Check file count    ${TIDYDIR}    *.html    1
-    Check file count    ${TIDYDIR}    *.txt    0
-    [Teardown]    Empty Directory     ${TIDYDIR}
+    [Setup]    Copy File    ${DATA}/golden.txt    ${TEMP}/golden.txt
+    Run tidy    -i -f html    ${TEMP}/golden.txt
+    Compare tidy results    ${TEMP}/golden.html    ${DATA}/golden.html
+    Check file count    ${TEMP}    *.html    1
+    Check file count    ${TEMP}    *.txt    0
+    [Teardown]    Empty Directory     ${TEMP}
 
 Tidying many files in place
     [Setup]    Copy Golden Files
-    List Directory      ${TIDYDIR}
-    Run tidy    --InPlace --ForMat html   ${TIDYDIR}/golden*
-    List Directory      ${TIDYDIR}
-    Check file count    ${TIDYDIR}    *.html    2
-    Check file count    ${TIDYDIR}    *.txt    0
-    Check file count    ${TIDYDIR}    *.tsv    0
-    [Teardown]    Empty Directory     ${TIDYDIR}
+    List Directory      ${TEMP}
+    Run tidy    --InPlace --ForMat html   ${TEMP}/golden*
+    List Directory      ${TEMP}
+    Check file count    ${TEMP}    *.html    2
+    Check file count    ${TEMP}    *.txt    0
+    Check file count    ${TEMP}    *.tsv    0
+    [Teardown]    Empty Directory     ${TEMP}
 
 Tidying directory
-    [Setup]    Copy Directory    ${DATADIR}/tests    ${TEMPDIR}/tests
-    ${output_before}=    Run Robot Directly    ${DATADIR}/tests
-    Run Tidy    --recursive --format tsv    ${TEMPDIR}/tests
-    Check file count    ${TEMPDIR}/tests    *.tsv    2
-    Check file count    ${TEMPDIR}/tests    *.txt    0
-    ${output_after}=    Run Robot Directly    ${TEMPDIR}/tests
+    [Setup]    Copy Directory    ${DATA}/tests    ${TEMP}/tests
+    ${output_before}=    Run Robot Directly    ${DATA}/tests
+    Run Tidy    --recursive --format tsv    ${TEMP}/tests
+    Check file count    ${TEMP}/tests    *.tsv    2
+    Check file count    ${TEMP}/tests    *.txt    0
+    ${output_after}=    Run Robot Directly    ${TEMP}/tests
     Should Be Equal    ${output_before}    ${output_after}
-    [Teardown]    Remove Directory    ${TEMPDIR}/tests    recursive=True
+    [Teardown]    Remove Directory    ${TEMP}/tests    recursive=True
 
 Custom headers are preserved and tables aligned accordingly
-    Run tidy and check result    ${EMPTY}     ${DATADIR}/golden_with_headers.txt
+    Run tidy and check result    ${EMPTY}     golden_with_headers.txt
 
 Running Tidy as a script
-    Run tidy as a script and check result    ${EMPTY}    ${DATADIR}/golden.txt
+    Run tidy as a script and check result    ${EMPTY}    golden.txt
 
 
 *** Keywords ***
 Copy Golden Files
-     Copy File    ${DATADIR}/golden_pipes.txt    ${TIDYDIR}/
-     Copy File    ${DATADIR}/golden.tsv    ${TIDYDIR}/
+     Copy File    ${DATA}/golden_pipes.txt    ${TEMP}/
+     Copy File    ${DATA}/golden.tsv    ${TEMP}/

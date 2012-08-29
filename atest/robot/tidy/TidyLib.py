@@ -7,7 +7,9 @@ import tempfile
 
 from robot.utils.asserts import assert_equals
 
+
 ROBOT_SRC = join(dirname(abspath(__file__)), '..', '..', '..', 'src')
+DATA_DIR = join(dirname(abspath(__file__)), '..', '..', 'testdata', 'tidy')
 
 
 class TidyLib(object):
@@ -19,8 +21,9 @@ class TidyLib(object):
     def run_tidy(self, options, input, command=None):
         """Runs tidy in the operating system and returns output."""
         options = options.split(' ') if options else []
+        command = command or self._cmd
         with tempfile.TemporaryFile() as output:
-            rc = call(self._cmd + options + [self._path(input)], stdout=output,
+            rc = call(command + options + [self._path(input)], stdout=output,
                       stderr=STDOUT, cwd=ROBOT_SRC, shell=os.sep=='\\')
             output.seek(0)
             content = output.read()
@@ -42,8 +45,7 @@ class TidyLib(object):
     def compare_tidy_results(self, result, expected):
         if os.path.isfile(result):
             result = self._read(result)
-        if os.path.isfile(expected):
-            expected = self._read(expected)
+        expected = self._read(expected)
         result_lines = result.splitlines()
         expected_lines = expected.splitlines()
         msg = "Actual:\n%s\n\nExpected:\n%s\n\n" % (repr(result), repr(expected))
@@ -52,7 +54,7 @@ class TidyLib(object):
             assert_equals(repr(unicode(line1)), repr(unicode(line2)), msg)
 
     def _path(self, path):
-        return path.replace('/', os.sep)
+        return join(DATA_DIR, path.replace('/', os.sep))
 
     def _read(self, path):
         with open(self._path(path)) as f:
