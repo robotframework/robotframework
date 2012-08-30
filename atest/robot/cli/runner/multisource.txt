@@ -58,4 +58,4 @@ Warnings And Error When Parsing All Data Sources Fail
     Run Tests Without Processing Output  ${EMPTY}  nönex1  nönex2
     ${nönex} =  Normalize Path  ${DATADIR}/nönex
     Check Stderr Contains  [ WARN ]  Arguments '${nönex}1' and '${nönex}2' did not exist and were ignored. Validate the used command line syntax.
-    Check Stderr Contains  [ ERROR ] Expected at least 1 argument, got 0.
+    Check Stderr Contains  [ ERROR ] No valid arguments given.

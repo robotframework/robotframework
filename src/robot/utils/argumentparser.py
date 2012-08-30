@@ -126,9 +126,9 @@ class ArgumentParser:
             args_list = self._process_possible_argfile(args_list)
         opts, args = self._parse_args(args_list)
         opts, args = self._handle_special_options(opts, args)
+        self._arg_limit_validator(args)
         if self._validator:
             opts, args = self._validator(opts, args)
-        self._arg_limit_validator(args)
         return opts, args
 
     def _handle_special_options(self, opts, args):
