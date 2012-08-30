@@ -1841,9 +1841,9 @@ class _Misc:
         self.log('Set test documentation to:\n%s' % doc)
 
     def set_suite_documentation(self, doc):
-        """Sets documentation for for the current suite.
+        """Sets documentation for the current suite.
 
-        The current documentation is available from built-in variable
+        The current documentation is available in built-in variable
         ${SUITE DOCUMENTATION}.
 
         New in Robot Framework 2.7.
@@ -1855,6 +1855,19 @@ class _Misc:
         self._variables.set_suite('${SUITE_DOCUMENTATION}', suite.doc)
         self.log('Set suite documentation to:\n%s' % doc)
 
+    def set_suite_metadata(self, name, value):
+        """Sets metadata for the current suite.
+
+        The current metadata is available as a Python dictionary in built-in
+        variable ${SUITE METADATA}. Notice that modifying that variable
+        directly has no effect on the actual metadata the suite has.
+
+        New in Robot Framework 2.7.4.
+        """
+        metadata = self._namespace.suite.metadata
+        metadata[name] = value
+        self._variables.set_suite('${SUITE_METADATA}', metadata.copy())
+        self.log("Set suite metadata '%s' to value '%s'." % (name, value))
 
     def set_tags(self, *tags):
         """Adds given `tags` for the current test or all tests in a suite.

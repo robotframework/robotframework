@@ -90,13 +90,13 @@ class XmlLogger(object):
         if suite.source:
             attrs['source'] = suite.source
         self._writer.start('suite', attrs)
+
+    def end_suite(self, suite):
+        self._writer.element('doc', suite.doc)
         self._writer.start('metadata')
         for name, value in suite.metadata.items():
             self._writer.element('item', value, {'name': name})
         self._writer.end('metadata')
-
-    def end_suite(self, suite):
-        self._writer.element('doc', suite.doc)
         self._write_status(suite, suite.message)
         self._writer.end('suite')
 
