@@ -40,20 +40,20 @@ def set_level(level):
 class RobotHandler(logging.Handler):
 
     def emit(self, record):
-        message, details = self._get_message(record)
+        message, error = self._get_message(record)
         method = self._get_logger_method(record.levelno)
         method(message)
-        if details:
-            logger.debug(details)
+        if error:
+            logger.debug(error)
 
     def _get_message(self, record):
         try:
             return record.getMessage(), None
-        except Exception:
-            message = 'Failed to log following message properly: %s' % \
-                        utils.unic(record.msg)
-            details = utils.get_error_details()[1]
-            return message, details
+        except:
+            message = 'Failed to log following message properly: %s' \
+                        % utils.unic(record.msg)
+            error = '\n'.join(utils.get_error_details())
+            return message, error
 
     def _get_logger_method(self, level):
         if level >= logging.WARNING:

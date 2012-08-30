@@ -36,7 +36,7 @@ Messages below threshold level are ignored fully
 Error in creating message is logged
     ${tc}=  Check test case  ${TEST NAME}
     Check log message  ${tc.kws[0].msgs[0]}  Failed to log following message properly: <Unrepresentable object 'InvalidMessage'. Error: Should not have been logged>
-    Check log message  ${tc.kws[0].msgs[1]}  Traceback (most recent call last):*    DEBUG    pattern=true
+    Check log message  ${tc.kws[0].msgs[1]}  Should not have been logged\nTraceback (most recent call last):*    DEBUG    pattern=true
 
 Log using custom logger
     ${tc} =  Check test case  ${TEST NAME}
