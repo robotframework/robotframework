@@ -7,14 +7,11 @@ Resource          atest_resource.txt
 Previous Test Variables Should Have Default Values
     Check test case    ${TEST NAME}
 
-Test Name In Test
-    Check test case    ${TEST NAME}
-
-Test Name In Setup
-    Check test case    ${TEST NAME}
+Test Name
+    Check Test Case    ${TEST NAME}
 
 Test Tags
-    Check Test Case    Test Tags
+    Check Test Case    ${TEST NAME}
 
 Test Status Should Not Exist Outside Teardown
     Check test case    ${TEST NAME}

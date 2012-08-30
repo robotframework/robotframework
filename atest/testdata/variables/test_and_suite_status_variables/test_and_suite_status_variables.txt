@@ -1,6 +1,6 @@
 *** Setting ***
 Suite Setup       Check All Variables In Suite Setup    ${EXP_SUITE_NAME}
-Suite Teardown    Check All Variables In Suite Teardown    ${EXP_SUITE_NAME}    FAIL    10 critical tests, 8 passed, 2 failed\n 10 tests total, 8 passed, 2 failed    Previous Test Variables Should Have Correct Values When That Test Fails    PASS
+Suite Teardown    Check All Variables In Suite Teardown    ${EXP_SUITE_NAME}    FAIL    9 critical tests, 7 passed, 2 failed\n 9 tests total, 7 passed, 2 failed    Previous Test Variables Should Have Correct Values When That Test Fails    PASS
 Force Tags        Force 1
 Resource          resource.txt
 
@@ -18,26 +18,23 @@ Test Tags
     [Teardown]    Check Test Tags    Force 1    Hello, world!    id-8899
 
 Suite Variables In Test
-    Equals    ${SUITE_NAME}    ${EXP_SUITE_NAME}
-    Fail If Variable Exists    $SUITE_STATUS
-    Fail If Variable Exists    $SUITE_MESSAGE
+    Should Be Equal    ${SUITE_NAME}    ${EXP_SUITE_NAME}
+    Variable Should Not Exist    $SUITE_STATUS
+    Variable Should Not Exist    $SUITE_MESSAGE
 
-Test Name In Test
-    Equals    ${TEST_NAME}    Test Name In Test
-    Check Previous Test variables    Suite Variables In Test    PASS
-
-Test Name In Setup
-    [Setup]    Equals    ${TEST_NAME}    Test Name In Setup
-    Check Previous Test variables    Test Name In Test    PASS
+Test Name
+    [Setup]    Should Be Equal    ${TEST_NAME}    Test Name
+    Should Be Equal    ${TEST_NAME}    Test Name
+    [Teardown]    Should Be Equal    ${TEST_NAME}    Test Name
 
 Test Status Should Not Exist Outside Teardown
-    [Setup]    Fail If variable Exists    $TEST_STATUS
-    Fail If variable Exists    $TEST_STATUS
-    Check Previous Test variables    Test Name In Setup    PASS
+    [Setup]    Variable Should Not Exist    $TEST_STATUS
+    Variable Should Not Exist    $TEST_STATUS
+    Check Previous Test variables    Test Name    PASS
 
 Test Message Should Not Exist Outside Teardown
-    [Setup]    Fail If variable Exists    $TEST_MESSAGE
-    Fail If variable Exists    $TEST_MESSAGE
+    [Setup]    Variable Should Not Exist    $TEST_MESSAGE
+    Variable Should Not Exist    $TEST_MESSAGE
     Check Previous Test variables    Test Status Should Not Exist Outside Teardown    PASS
 
 Test Status When Test Fails
