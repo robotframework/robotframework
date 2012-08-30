@@ -13,7 +13,7 @@
 #  limitations under the License.
 
 from robot.version import get_version
-from robot import utils
+from robot.utils import seq2str, seq2str2, unic
 
 
 class _List:
@@ -266,8 +266,7 @@ class _List:
         not contain the value 'x'" is shown in case of a failure. Otherwise,
         the given `msg` is used in case of a failure.
         """
-        default = "%s does not contain value '%s'" % (utils.seq2str2(list_),
-                                                      value)
+        default = "%s does not contain value '%s'" % (seq2str2(list_), value)
         _verify_condition(value in list_, default, msg)
 
     def list_should_not_contain_value(self, list_, value, msg=None):
@@ -275,7 +274,7 @@ class _List:
 
         See `List Should Contain Value` for an explanation of `msg`.
         """
-        default = "%s contains value '%s'" % (utils.seq2str2(list_), value)
+        default = "%s contains value '%s'" % (seq2str2(list_), value)
         _verify_condition(value not in list_, default, msg)
 
     def list_should_not_contain_duplicates(self, list_, msg=None):
@@ -300,7 +299,7 @@ class _List:
                     dupes.append(item)
         if dupes:
             if not msg:
-                msg = '%s found multiple times' % utils.seq2str(dupes)
+                msg = '%s found multiple times' % seq2str(dupes)
             raise AssertionError(msg)
 
     def lists_should_be_equal(self, list1, list2, msg=None, values=True,
@@ -367,8 +366,7 @@ class _List:
         See the use of `msg` and `values` from the `Lists Should Be Equal`
         keyword.
         """
-        diffs = ', '.join(utils.unic(item) for item in list2
-                          if item not in list1)
+        diffs = ', '.join(unic(item) for item in list2 if item not in list1)
         default = 'Following values were not found from first list: ' + diffs
         _verify_condition(diffs == '', default, msg, values)
 
@@ -598,7 +596,7 @@ class _Dictionary:
         The given dictionaries are never altered by this keyword.
         """
         keys = self.get_dictionary_keys(dict2)
-        diffs = [ utils.unic(k) for k in keys if k not in dict1 ]
+        diffs = [unic(k) for k in keys if k not in dict1]
         default = "Following keys missing from first dictionary: %s" \
                   % ', '.join(diffs)
         _verify_condition(diffs == [], default, msg, values)
@@ -626,8 +624,8 @@ class _Dictionary:
     def _keys_should_be_equal(self, dict1, dict2, msg, values):
         keys1 = self.get_dictionary_keys(dict1)
         keys2 = self.get_dictionary_keys(dict2)
-        miss1 = [utils.unic(k) for k in keys2 if k not in dict1]
-        miss2 = [utils.unic(k) for k in keys1 if k not in dict2]
+        miss1 = [unic(k) for k in keys2 if k not in dict1]
+        miss2 = [unic(k) for k in keys1 if k not in dict2]
         error = []
         if miss1:
             error += ['Following keys missing from first dictionary: %s'
