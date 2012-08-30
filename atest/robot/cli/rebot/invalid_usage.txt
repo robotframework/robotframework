@@ -15,6 +15,19 @@ No Input
 Non-Existing Input
     Rebot should fail  nönéx.xml  Reading XML source 'nönéx\\.xml' failed: .*
 
+Non-Existing Input And Existing Input
+    Run Rebot  ${EMPTY}  nönex  ${MYINPUT}
+    ${nönex} =  Normalize Path  ${DATADIR}/nönex
+    Check Stderr Contains  [ WARN ]  Argument '${nönex}' did not exist and was ignored. Validate the used command line syntax
+    Check Names  ${SUITE}  Normal
+    Should Contain Tests  ${SUITE}  First One  Second One
+
+Only Non-Existing Inputs
+    Run Rebot Without Processing Output  ${EMPTY}  nönex1  nönex2
+    ${nönex} =  Normalize Path  ${DATADIR}/nönex
+    Check Stderr Contains  [ WARN ]  Arguments '${nönex}1' and '${nönex}2' did not exist and were ignored. Validate the used command line syntax
+    Check Stderr Contains  [ ERROR ] Expected at least 1 argument, got 0.
+
 Non-XML Input
     Create File  ${MYOUTDIR}/invalid.txt  Hello, world
     Rebot should fail  ${MYOUTDIR}${/}invalid.txt  (\\[Fatal Error\\] .*: Content is not allowed in prolog.\\n)?Reading XML source '.*invalid.txt' failed: .*

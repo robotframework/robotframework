@@ -268,9 +268,10 @@ from robot.errors import DataError
 from robot.reporting import ResultWriter
 from robot.output import LOGGER
 from robot.utils import Application
+from robot.run import RobotFramework
 
 
-class Rebot(Application):
+class Rebot(RobotFramework):
 
     def __init__(self):
         Application.__init__(self, USAGE, arg_limits=(1,), logger=LOGGER)
