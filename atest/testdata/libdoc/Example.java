@@ -29,7 +29,7 @@ public class Example {
     /**
      * Should not be visible in library documentation
      */
-    private Example(String[] args) {
+    private Example(double dontShowMe) {
     }
 
     /**
@@ -49,6 +49,18 @@ public class Example {
      * See `My Keyword` for no more information.
      */
     public void keyword(String arg) {
+    }
+
+    /**
+     * Creating varargs using `type[]`.
+     */
+    public void varargs1(String[] varargs) {
+    }
+
+    /**
+     * Creating varargs using `type...`.
+     */
+    public void varargs2(int normal, int... varargs) {
     }
 
     /**

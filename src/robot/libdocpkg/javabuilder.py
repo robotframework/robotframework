@@ -55,9 +55,16 @@ class JavaDocBuilder(object):
     def _keyword_doc(self, method):
         return KeywordDoc(
             name=utils.printable_name(method.name(), code_style=True),
-            args=[param.name() for param in method.parameters()],
+            args=list(self._yield_keyword_arguments(method)),
             doc=self._get_doc(method)
         )
+
+    def _yield_keyword_arguments(self, method):
+        for param in method.parameters():
+            name = param.name()
+            if param.type().dimension() == '[]':
+                name = '*' + name
+            yield name
 
     def _intializers(self, doc):
         inits = [self._keyword_doc(init) for init in doc.constructors()]
@@ -86,7 +93,7 @@ def ClassDoc(path):
     context = Context()
     Messager.preRegister(context, 'libdoc')
     jdoctool = JavadocTool.make0(context)
-    filter =  ModifierFilter(PUBLIC)
+    filter = ModifierFilter(PUBLIC)
     java_names = List.of(path)
     root = jdoctool.getRootDocImpl('en', 'utf-8', filter, java_names,
                                    List.nil(), False, List.nil(),

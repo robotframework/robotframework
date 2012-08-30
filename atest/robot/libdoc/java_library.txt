@@ -44,6 +44,8 @@ Keyword Names
 Keyword Arguments
     Keyword Arguments Should Be     0    arg
     Keyword Arguments Should Be     1
+    Keyword Arguments Should Be     -2    *varargs
+    Keyword Arguments Should Be     -1    normal    *varargs
 
 Keyword Documentation
     Keyword Doc Should Start With    0
