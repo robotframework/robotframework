@@ -14,6 +14,7 @@
 
 from robot.version import get_version
 from robot.utils import seq2str, seq2str2, unic
+from robot.utils.asserts import assert_equals
 
 
 class _List:
@@ -340,7 +341,7 @@ class _List:
         default = 'Lengths are different: %d != %d' % (len1, len2)
         _verify_condition(len1 == len2, default, msg, values)
         names = self._get_list_index_name_mapping(names, len1)
-        diffs = list(self._get_diffs(list1, list2, names))
+        diffs = list(self._yield_list_diffs(list1, list2, names))
         default = 'Lists are different:\n' + '\n'.join(diffs)
         _verify_condition(diffs == [], default, msg, values)
 
@@ -351,11 +352,13 @@ class _List:
             return dict((int(index), names[index]) for index in names)
         return dict(zip(range(list_length), names))
 
-    def _get_diffs(self, list1, list2, names):
+    def _yield_list_diffs(self, list1, list2, names):
         for index, (item1, item2) in enumerate(zip(list1, list2)):
-            if item1 != item2:
-                name = ' (%s)' % names[index] if index in names else ''
-                yield 'Index %d%s: %s != %s' % (index, name, item1, item2)
+            name = ' (%s)' % names[index] if index in names else ''
+            try:
+                assert_equals(item1, item2, msg='Index %d%s' % (index, name))
+            except AssertionError, err:
+                yield unic(err)
 
     def list_should_contain_sub_list(self, list1, list2, msg=None, values=True):
         """Fails if not all of the elements in `list2` are found in `list1`.
@@ -637,10 +640,16 @@ class _Dictionary:
         return keys1
 
     def _key_values_should_be_equal(self, keys, dict1, dict2, msg, values):
-        diffs = ['Key %s: %s != %s' % (k, dict1[k], dict2[k])
-                 for k in keys if dict1[k] != dict2[k]]
+        diffs = list(self._yield_dict_diffs(keys, dict1, dict2))
         default = 'Following keys have different values:\n' + '\n'.join(diffs)
         _verify_condition(diffs == [], default, msg, values)
+
+    def _yield_dict_diffs(self, keys, dict1, dict2):
+        for key in keys:
+            try:
+                assert_equals(dict1[key], dict2[key], msg='Key %s' % (key,))
+            except AssertionError, err:
+                yield unic(err)
 
 
 class Collections(_List, _Dictionary):

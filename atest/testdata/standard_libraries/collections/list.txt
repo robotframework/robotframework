@@ -242,7 +242,7 @@ Lists Should Be Equal With Different Lengths And Own And Default Error Messages
     Lists Should Be Equal  ${L1}  ${L4}  My error message!
 
 Lists Should Be Equal With Different Values
-    [Documentation]  FAIL Lists are different:\n Index 0: 11 != 10\n Index 1: 12 != 12\n Index 2: 13 != 14
+    [Documentation]  FAIL Lists are different:\n Index 0: 11 != 10\n Index 1: 12 (number) != 12 (string)\n Index 2: 13 != 14
     Lists Should Be Equal  ${L3}  ${L3B}
 
 Lists Should Be Equal With Different Values And Own Error Message
@@ -250,26 +250,26 @@ Lists Should Be Equal With Different Values And Own Error Message
     Lists Should Be Equal  ${L3}  ${L3B}  My error message!  False
 
 Lists Should Be Equal With Different Values And Own And Default Error Messages
-    [Documentation]  FAIL My error message!\n Lists are different:\n Index 0: 11 != 10\n Index 1: 12 != 12\n Index 2: 13 != 14
+    [Documentation]  FAIL My error message!\n Lists are different:\n Index 0: 11 != 10\n Index 1: 12 (number) != 12 (string)\n Index 2: 13 != 14
     Lists Should Be Equal  ${L3}  ${L3B}  My error message!
 
 Lists Should Be Equal With Named Indices As List
-    [Documentation]  FAIL Lists are different:\n Index 0 (a): 11 != 10\n Index 1 (b): 12 != 12\n Index 2 (c): 13 != 14
+    [Documentation]  FAIL Lists are different:\n Index 0 (a): 11 != 10\n Index 1 (b): 12 (number) != 12 (string)\n Index 2 (c): 13 != 14
     ${names} =  Create List  a  b  c  ignored
     Lists Should Be Equal  ${L3}  ${L3B}  names=${names}
 
 Lists Should Be Equal With Named Indices As List With Too Few Values
-    [Documentation]  FAIL My message\nLists are different:\n Index 0 (a): 11 != 10\n Index 1 (b): 12 != 12\n Index 2: 13 != 14
+    [Documentation]  FAIL My message\nLists are different:\n Index 0 (a): 11 != 10\n Index 1 (b): 12 (number) != 12 (string)\n Index 2: 13 != 14
     ${names} =  Create List  a  b
     Lists Should Be Equal  ${L3}  ${L3B}  My message  names=${names}
 
 Lists Should Be Equal With Named Indices As Dictionary
-    [Documentation]  FAIL Lists are different:\n Index 0 (a): 11 != 10\n Index 1 (b): 12 != 12\n Index 2 (c): 13 != 14
+    [Documentation]  FAIL Lists are different:\n Index 0 (a): 11 != 10\n Index 1 (b): 12 (number) != 12 (string)\n Index 2 (c): 13 != 14
     ${names} =  Create Dictionary  0  a  1  b  2  c  42  ignored
     Lists Should Be Equal  ${L3}  ${L3B}  names=${names}
 
 Lists Should Be Equal With Named Indices As Dictionary With Too Few Values
-    [Documentation]  FAIL Lists are different:\n Index 0 (a): 11 != 10\n Index 1: 12 != 12\n Index 2 (c): 13 != 14
+    [Documentation]  FAIL Lists are different:\n Index 0 (a): 11 != 10\n Index 1: 12 (number) != 12 (string)\n Index 2 (c): 13 != 14
     ${names} =  Create Dictionary  0  a  2  c
     Lists Should Be Equal  ${L3}  ${L3B}  names=${names}
 
