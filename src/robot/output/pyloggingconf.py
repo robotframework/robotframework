@@ -15,7 +15,7 @@
 import logging
 
 from robot.api import logger
-
+from robot import utils
 
 LEVELS = {'TRACE': logging.NOTSET,
           'DEBUG': logging.DEBUG,
@@ -40,8 +40,20 @@ def set_level(level):
 class RobotHandler(logging.Handler):
 
     def emit(self, record):
+        message, details = self._get_message(record)
         method = self._get_logger_method(record.levelno)
-        method(record.getMessage())
+        method(message)
+        if details:
+            logger.debug(details)
+
+    def _get_message(self, record):
+        try:
+            return record.getMessage(), None
+        except Exception:
+            message = 'Failed to log following message properly: %s' % \
+                        utils.unic(record.msg)
+            details = utils.get_error_details()[1]
+            return message, details
 
     def _get_logger_method(self, level):
         if level >= logging.WARNING:

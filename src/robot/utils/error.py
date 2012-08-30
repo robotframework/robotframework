@@ -14,7 +14,6 @@
 
 import re
 import sys
-import os.path
 import traceback
 
 from robot.errors import RobotError

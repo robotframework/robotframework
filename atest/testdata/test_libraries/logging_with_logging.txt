@@ -21,6 +21,9 @@ Messages below threshold level are ignored fully
     [Setup]  Set log level  warn
     Log invalid message
 
+Error in creating message is logged
+    Log invalid message
+
 Log using custom logger
     Log using custom logger
 
