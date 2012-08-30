@@ -22,6 +22,11 @@ Suite Name
 Suite Documentation
     Check Test Case    ${TEST NAME}
 
+Suite Metadata
+    Check Test Case    ${TEST NAME}
+    Should Be Equal    ${SUITE.suites[0].metadata['MeTa1']}    Value
+    Dictionary Should Not Contain Key    ${SUITE.suites[0].metadata}    NotSet
+
 Suite Status And Suite Message Are Not Visible In Tests
     Check Test Case    ${TEST NAME}
 

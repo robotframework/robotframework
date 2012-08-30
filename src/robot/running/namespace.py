@@ -64,6 +64,7 @@ class Namespace:
         variables['${SUITE_NAME}'] = suite.longname
         variables['${SUITE_SOURCE}'] = suite.source
         variables['${SUITE_DOCUMENTATION}'] = suite.doc
+        variables['${SUITE_METADATA}'] = suite.metadata.copy()
         return variables
 
     def _import_default_libraries(self):

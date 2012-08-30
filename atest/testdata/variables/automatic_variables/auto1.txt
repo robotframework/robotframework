@@ -1,14 +1,21 @@
 *** Setting ***
 Documentation     This is suite documentation.
-Suite Setup       Check All Variables In Suite Setup    ${EXP_SUITE_NAME}
-Suite Teardown    Check All Variables In Suite Teardown    ${EXP_SUITE_NAME}
-...    FAIL    ${EXP_SUITE_STATS}   Previous Test Variables Should Have Correct Values When That Test Fails    PASS
+Metadata          MeTa1    Value
+Metadata          meta2    value
+Suite Setup       Check Variables In Suite Setup    ${EXP_SUITE_NAME}
+...               ${EXP_SUITE_DOC}    ${EXP_SUITE_META}
+Suite Teardown    Check Variables In Suite Teardown    ${EXP_SUITE_NAME}
+...               FAIL    ${EXP_SUITE_STATS}    @{LAST_TEST}
 Force Tags        Force 1
 Resource          resource.txt
+Library           Collections
 
 *** Variable ***
 ${EXP_SUITE_NAME}    Automatic Variables.Auto1
-${EXP_SUITE_STATS}   12 critical tests, 10 passed, 2 failed\n 12 tests total, 10 passed, 2 failed
+${EXP_SUITE_DOC}     This is suite documentation.
+${EXP_SUITE_META}    {'MeTa1': 'Value', 'meta2': 'value'}
+${EXP_SUITE_STATS}   13 critical tests, 11 passed, 2 failed\n 13 tests total, 11 passed, 2 failed
+@{LAST_TEST}         Previous Test Variables Should Have Correct Values When That Test Fails    PASS
 
 *** Test Case ***
 Previous Test Variables Should Have Default Values
@@ -37,6 +44,11 @@ Suite Name
 
 Suite Documentation
     Should Be Equal    ${SUITE_DOCUMENTATION}    This is suite documentation.
+
+Suite Metadata
+    Should Be True    ${SUITE METADATA} == {'MeTa1': 'Value', 'meta2': 'value'}
+    Set To Dictionary    ${SUITE METADATA}    Meta1    not really set
+    Set To Dictionary    ${SUITE METADATA}    NotSet    not really set
 
 Suite Status And Suite Message Are Not Visible In Tests
     Variable Should Not Exist    $SUITE_STATUS

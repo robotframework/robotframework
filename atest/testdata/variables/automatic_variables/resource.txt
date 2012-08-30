@@ -1,13 +1,15 @@
 *** Keyword ***
-Check All Variables In Suite Setup
-    [Arguments]    ${name}    @{prev_test}
+Check Variables In Suite Setup
+    [Arguments]    ${name}    ${doc}    ${meta}    @{prev_test}
     Check Test Variables Do Not Exist
     Check Previous Test Variables    @{prev_test}
     Should Be Equal    ${SUITE_NAME}    ${name}
+    Should Be Equal    ${SUITE_DOCUMENTATION}    ${doc}
+    Should Be True    ${SUITE METADATA} == ${meta}
     Variable Should Not Exist    $SUITE_STATUS
     Variable Should Not Exist    $SUITE_MESSAGE
 
-Check All Variables In Suite Teardown
+Check Variables In Suite Teardown
     [Arguments]    ${name}    ${status}    ${message}    @{prev_test}
     Check Test Variables Do Not Exist
     Check Previous Test Variables    @{prev_test}
