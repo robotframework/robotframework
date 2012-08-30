@@ -71,9 +71,9 @@ class Parallel(object):
         self._data_source = None
 
     def _get_arguments(self, additional_arguments):
-        options,_ = ArgumentParser(_get_cmd_arguments()).parse_args(sys.argv[1:], argfile='argumentfile', unescape='escape')
+        options,_ = ArgumentParser(_get_cmd_arguments()).parse_args(sys.argv[1:])
         args = []
-        for arg in ['loglevel', 'runmode', 'pythonpath', 'variable', 'variablefile']:
+        for arg in ['loglevel', 'runmode', 'variable', 'variablefile']:
            args += self._get_type_arguments(options, arg)
         args += list(additional_arguments)
         return args
