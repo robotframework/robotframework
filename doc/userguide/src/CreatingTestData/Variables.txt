@@ -746,6 +746,10 @@ can be changed dynamically using keywords from the `BuiltIn`_ library.
    |                        | set dynamically using using :name:`Set Suite          |            |
    |                        | Documentation` keyword. New in Robot Framework 2.7.   |            |
    +------------------------+-------------------------------------------------------+------------+
+   | ${SUITE METADATA}      | The free metadata of the current test suite. Can be   | Everywhere |
+   |                        | set using :name:`Set Suite Metadata` keyword.         |            |
+   |                        | New in Robot Framework 2.7.4.                         |            |
+   +------------------------+-------------------------------------------------------+------------+
    | ${SUITE STATUS}        | The status of the current test suite, either PASS or  | `Suite     |
    |                        | FAIL.                                                 | teardown`_ |
    +------------------------+-------------------------------------------------------+------------+
