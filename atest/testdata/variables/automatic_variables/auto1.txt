@@ -1,0 +1,69 @@
+*** Setting ***
+Documentation     This is suite documentation.
+Suite Setup       Check All Variables In Suite Setup    ${EXP_SUITE_NAME}
+Suite Teardown    Check All Variables In Suite Teardown    ${EXP_SUITE_NAME}
+...    FAIL    ${EXP_SUITE_STATS}   Previous Test Variables Should Have Correct Values When That Test Fails    PASS
+Force Tags        Force 1
+Resource          resource.txt
+
+*** Variable ***
+${EXP_SUITE_NAME}    Automatic Variables.Auto1
+${EXP_SUITE_STATS}   12 critical tests, 10 passed, 2 failed\n 12 tests total, 10 passed, 2 failed
+
+*** Test Case ***
+Previous Test Variables Should Have Default Values
+    Check Previous Test Variables
+
+Test Name
+    [Setup]    Should Be Equal    ${TEST_NAME}    Test Name
+    Should Be Equal    ${TEST_NAME}    Test Name
+    [Teardown]    Should Be Equal    ${TEST_NAME}    Test Name
+
+Test Documentation
+    [Documentation]    My doc.
+    ...                In 2 lines!
+    [Setup]    Should Be Equal    ${TEST DOCUMENTATION}    My doc.\nIn 2 lines!
+    Should Be Equal    ${TEST DOCUMENTATION}    My doc.\nIn 2 lines!
+    [Teardown]    Should Be Equal    ${TEST DOCUMENTATION}    My doc.\nIn 2 lines!
+
+Test Tags
+    [Tags]    id-8899    Hello, world!
+    [Setup]    Check Test Tags    Force 1    Hello, world!    id-8899
+    Check Test Tags    Force 1    Hello, world!    id-8899
+    [Teardown]    Check Test Tags    Force 1    Hello, world!    id-8899
+
+Suite Name
+    Should Be Equal    ${SUITE_NAME}    ${EXP_SUITE_NAME}
+
+Suite Documentation
+    Should Be Equal    ${SUITE_DOCUMENTATION}    This is suite documentation.
+
+Suite Status And Suite Message Are Not Visible In Tests
+    Variable Should Not Exist    $SUITE_STATUS
+    Variable Should Not Exist    $SUITE_MESSAGE
+
+Test Status Should Not Exist Outside Teardown
+    [Setup]    Variable Should Not Exist    $TEST_STATUS
+    Variable Should Not Exist    $TEST_STATUS
+
+Test Message Should Not Exist Outside Teardown
+    [Setup]    Variable Should Not Exist    $TEST_MESSAGE
+    Variable Should Not Exist    $TEST_MESSAGE
+    Check Previous Test variables    Test Status Should Not Exist Outside Teardown    PASS
+
+Test Status When Test Fails
+    [Documentation]    FAIL Expected failure in test
+    Check Previous Test variables    Test Message Should Not Exist Outside Teardown    PASS
+    Fail    Expected failure in test
+    [Teardown]    Check Test Variables    Test Status When Test Fails    FAIL    Expected failure in test
+
+Test Status When Setup Fails
+    [Documentation]    FAIL Setup failed:\nExpected failure in setup
+    [Setup]    Fail    Expected failure in setup
+    Fail    Should not be executed
+    [Teardown]    Check Test Variables    Test Status When Setup Fails    FAIL    Setup failed:\nExpected failure in setup
+
+Previous Test Variables Should Have Correct Values When That Test Fails
+    [Setup]    Check Previous Test variables    Test Status When Setup Fails    FAIL    Setup failed:\nExpected failure in setup
+    Check Previous Test variables    Test Status When Setup Fails    FAIL    Setup failed:\nExpected failure in setup
+    [Teardown]    Check Previous Test variables    Test Status When Setup Fails    FAIL    Setup failed:\nExpected failure in setup

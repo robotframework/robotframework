@@ -10,7 +10,19 @@ Previous Test Variables Should Have Default Values
 Test Name
     Check Test Case    ${TEST NAME}
 
+Test Documentation
+    Check Test Case    ${TEST NAME}
+
 Test Tags
+    Check Test Case    ${TEST NAME}
+
+Suite Name
+    Check Test Case    ${TEST NAME}
+
+Suite Documentation
+    Check Test Case    ${TEST NAME}
+
+Suite Status And Suite Message Are Not Visible In Tests
     Check Test Case    ${TEST NAME}
 
 Test Status Should Not Exist Outside Teardown
@@ -38,7 +50,3 @@ Suite And Prev Test Variables Work Correctly In Setup
 Suite And Prev Test Variables Work Correctly In Teardown
     Should Be Equal    ${SUITE.suites[0].teardown.status}    PASS
     Should Be Equal    ${SUITE.suites[1].teardown.status}    PASS
-
-Suite Variables In Test
-    Check test case    ${TEST NAME}
-

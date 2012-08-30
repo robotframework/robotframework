@@ -1,6 +1,5 @@
 *** Settings ***
 Library         OperatingSystem
-Documentation   This is suite documentation.
 
 *** Variables ***
 ${TEMPDIR}  Cannot be overridden
@@ -100,13 +99,6 @@ ${EXECDIR}
     Should Not End With  ${EXECDIR}  /
     Should Not End With  ${EXECDIR}  \\
     Should Start With  \${EXECDIR}  $
-
-${TEST DOCUMENTATION}
-   [Documentation]     This documentation can be read.
-   Should be Equal     This documentation can be read.      ${TEST DOCUMENTATION}
-
-${SUITE DOCUMENTATION}
-   Should be Equal     This is suite documentation.      ${SUITE DOCUMENTATION}
 
 $CURDIR
     Directory Should Exist  ${CURDIR}
