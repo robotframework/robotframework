@@ -1257,7 +1257,7 @@ class _RunKeyword:
         first value is returned, and otherwise the second value is
         returned. The second value can also be omitted, in which case
         it has a default value None. This usage is illustrated in the
-        examples below, where ${rc} is assumed to be zero.
+        examples below, where `${rc}` is assumed to be zero.
 
         | ${var1} = | Set Variable If | ${rc} == 0 | zero     | nonzero |
         | ${var2} = | Set Variable If | ${rc} > 0  | value1   | value2  |
@@ -1741,7 +1741,7 @@ class _Misc:
         list of Python modules to be imported and added to the
         namespace of the evaluated `expression`.
 
-        Examples (expecting ${result} is 3.14):
+        Examples (expecting `${result}` is 3.14):
         | ${status} = | Evaluate | 0 < ${result} < 10    |
         | ${down}   = | Evaluate | int(${result})        |
         | ${up}     = | Evaluate | math.ceil(${result})  | math |
@@ -1825,7 +1825,7 @@ class _Misc:
         """Sets documentation for for the current test.
 
         The current documentation is available from built-in variable
-        ${TEST DOCUMENTATION}. This keyword can not be used in suite
+        `${TEST DOCUMENTATION}`. This keyword can not be used in suite
         setup or suite teardown.
 
         New in Robot Framework 2.7.
@@ -1844,7 +1844,7 @@ class _Misc:
         """Sets documentation for the current suite.
 
         The current documentation is available in built-in variable
-        ${SUITE DOCUMENTATION}.
+        `${SUITE DOCUMENTATION}`.
 
         New in Robot Framework 2.7.
         """
@@ -1859,7 +1859,7 @@ class _Misc:
         """Sets metadata for the current suite.
 
         The current metadata is available as a Python dictionary in built-in
-        variable ${SUITE METADATA}. Notice that modifying that variable
+        variable `${SUITE METADATA}`. Notice that modifying that variable
         directly has no effect on the actual metadata the suite has.
 
         New in Robot Framework 2.7.4.
