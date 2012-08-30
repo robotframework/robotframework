@@ -702,7 +702,9 @@ Automatic variables
 
 Some automatic variables can also be used in the test data. These
 variables can have different values during the test execution and some
-of them are not even available all the time.
+of them are not even available all the time. Altering the value of
+these variables does not affect the original values, but some values
+can be changed dynamically using keywords from the `BuiltIn`_ library.
 
 .. table:: Available automatic variables
    :class: tabular
@@ -713,9 +715,12 @@ of them are not even available all the time.
    | ${TEST NAME}           | The name of the current test case.                    | Test case  |
    +------------------------+-------------------------------------------------------+------------+
    | @{TEST TAGS}           | Contains the tags of the current test case in         | Test case  |
-   |                        | alphabetical order.                                   |            |
+   |                        | alphabetical order. Can be modified dynamically using |            |
+   |                        | :name:`Set Tags` and :name:`Remove Tags` keywords.    |            |
    +------------------------+-------------------------------------------------------+------------+
-   | ${TEST DOCUMENTATION}  | The documentation of the current test case.           | Test case  |
+   | ${TEST DOCUMENTATION}  | The documentation of the current test case. Can be set| Test case  |
+   |                        | dynamically using using :name:`Set Test Documentation`|            |
+   |                        | keyword. New in Robot Framework 2.7.                  |            |
    +------------------------+-------------------------------------------------------+------------+
    | ${TEST STATUS}         | The status of the current test case, either PASS or   | `Test      |
    |                        | FAIL.                                                 | teardown`_ |
@@ -737,7 +742,9 @@ of them are not even available all the time.
    | ${SUITE SOURCE}        | An absolute path to the suite file or directory. New  | Everywhere |
    |                        | in Robot Framework 2.5.                               |            |
    +------------------------+-------------------------------------------------------+------------+
-   | ${SUITE DOCUMENTATION} | The documentation of the current test suite.          | Everywhere |
+   | ${SUITE DOCUMENTATION} | The documentation of the current test suite. Can be   | Everywhere |
+   |                        | set dynamically using using :name:`Set Suite          |            |
+   |                        | Documentation` keyword. New in Robot Framework 2.7.   |            |
    +------------------------+-------------------------------------------------------+------------+
    | ${SUITE STATUS}        | The status of the current test suite, either PASS or  | `Suite     |
    |                        | FAIL.                                                 | teardown`_ |
