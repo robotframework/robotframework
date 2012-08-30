@@ -321,6 +321,7 @@ $ pybot tests.html
 """
 
 import sys
+import os.path
 
 # Allows running as a script. __name__ check needed with multiprocessing:
 # http://code.google.com/p/robotframework/issues/detail?id=1137
@@ -331,7 +332,7 @@ from robot.conf import RobotSettings
 from robot.output import LOGGER, Output, pyloggingconf
 from robot.reporting import ResultWriter
 from robot.running import TestSuite, STOP_SIGNAL_MONITOR, namespace
-from robot.utils import Application
+from robot.utils import Application, seq2str
 from robot.variables import init_global_variables
 
 
@@ -359,6 +360,23 @@ class RobotFramework(Application):
             output, settings = settings.get_rebot_datasource_and_settings()
             ResultWriter(output).write_results(settings)
         return suite.return_code
+
+    def validate(self, options, arguments):
+        if len(arguments) > 1:
+            arguments = self._validate_arguments_exist(arguments)
+        return options, arguments
+
+    def _validate_arguments_exist(self, arguments):
+        valid = []
+        nonex = []
+        for arg in arguments:
+            (valid if os.path.exists(arg) else nonex).append(arg)
+        if nonex:
+            s, were = ('s', 'were') if len(nonex) > 1 else ('', 'was')
+            LOGGER.warn("Argument%s %s did not exist and %s ignored. "
+                        "Validate the used command line syntax."
+                        % (s, seq2str(nonex), were))
+        return valid
 
 
 def run_cli(arguments):
