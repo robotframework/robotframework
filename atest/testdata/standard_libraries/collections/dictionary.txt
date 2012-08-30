@@ -106,7 +106,9 @@ Dictionaries Should Equal With Second Dictionary Missing Keys
     Dictionaries Should Be Equal  ${D2}  ${D0}
 
 Dictionaries Should Equal With Both Dictionaries Missing Keys
-    [Documentation]  FAIL Following keys missing from first dictionary: b\n Following keys missing from second dictionary: , B, d, ()
+    [Documentation]  FAIL
+    ...    Following keys missing from first dictionary: b
+    ...    Following keys missing from second dictionary: , B, d, ()
     Dictionaries Should Be Equal  ${BIG}  ${D3}
 
 Dictionaries Should Be Equal With Different Keys And Own Error Message
@@ -114,11 +116,15 @@ Dictionaries Should Be Equal With Different Keys And Own Error Message
     Dictionaries Should Be Equal  ${D2}  ${D3}  My error message!  No Values
 
 Dictionaries Should Be Equal With Different Keys And Own And Default Error Messages
-    [Documentation]  FAIL My error message!\n Following keys missing from first dictionary: 3
+    [Documentation]  FAIL
+    ...    My error message!
+    ...    Following keys missing from first dictionary: 3
     Dictionaries Should Be Equal  ${D2}  ${D3}  My error message!
 
 Dictionaries Should Be Equal With Different Values
-    [Documentation]  FAIL Following keys have different values:\n Key b: 2 != x
+    [Documentation]  FAIL
+    ...    Following keys have different values:
+    ...    Key b: 2 != x
     Dictionaries Should Be Equal  ${D2}  ${D2B}
 
 Dictionaries Should Be Equal With Different Values And Own Error Message
@@ -126,7 +132,10 @@ Dictionaries Should Be Equal With Different Values And Own Error Message
     Dictionaries Should Be Equal  ${D2}  ${D2B}  My error message!  False
 
 Dictionaries Should Be Equal With Different Values And Own And Default Error Messages
-    [Documentation]  FAIL My error message!\n Following keys have different values:\n Key b: 2 != x
+    [Documentation]  FAIL
+    ...    My error message!
+    ...    Following keys have different values:
+    ...    Key b: 2 != x
     Dictionaries Should Be Equal  ${D2}  ${D2B}  My error message!
 
 Dictionary Should Contain Sub Dictionary
@@ -142,11 +151,15 @@ Dictionary Should Contain Sub Dictionary With Missing Keys And Own Error Message
     Dictionary Should Contain Sub Dictionary  ${D2}  ${D3}  My error message!  False
 
 Dictionary Should Contain Sub Dictionary With Missing Keys And Own And Default Error Message
-    [Documentation]  FAIL My error message!\n Following keys missing from first dictionary: 3
+    [Documentation]  FAIL
+    ...    My error message!
+    ...    Following keys missing from first dictionary: 3
     Dictionary Should Contain Sub Dictionary  ${D2}  ${D3}  My error message!
 
 Dictionary Should Contain Sub Dictionary With Different Value
-    [Documentation]  FAIL Following keys have different values:\n Key b: 2 != x
+    [Documentation]  FAIL
+    ...    Following keys have different values:
+    ...    Key b: 2 != x
     Dictionary Should Contain Sub Dictionary  ${D3}  ${D2B}
 
 Dictionary Should Contain Sub Dictionary With Different Value And Own Error Message
@@ -154,7 +167,10 @@ Dictionary Should Contain Sub Dictionary With Different Value And Own Error Mess
     Dictionary Should Contain Sub Dictionary  ${D3}  ${D2B}  My error message!  False
 
 Dictionary Should Contain Sub Dictionary With Different Value And Own And Default Error Message
-    [Documentation]  FAIL My error message!\n Following keys have different values:\n Key b: 2 != x
+    [Documentation]  FAIL
+    ...    My error message!
+    ...    Following keys have different values:
+    ...    Key b: 2 != x
     Dictionary Should Contain Sub Dictionary  ${D3}  ${D2B}  My error message!
 
 Log Dictionary With Different Log Levels
