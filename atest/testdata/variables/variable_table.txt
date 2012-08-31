@@ -13,7 +13,7 @@ ${LIST WITH ESCAPES}    one \\    two \\\\    three \\\\\\    \${non_existing}
 @{LIST}           Hello    again    ?
 @{LIST WITH ESCAPES}    one \\    two \\\\    three \\\\\\    \${non_existing}
 @{LIST CREATED FROM LIST WITH ESCAPES}    @{LIST WITH ESCAPES}
-@{EMPTY}
+@{EMPTY LIST}
 ${lowercase}      Variable name in lower case
 @{lowercase}      Variable name in lower case
 ${S P a c e s }    Variable name with spaces
@@ -85,11 +85,11 @@ List Created From List With Escapes
     Should Be Equal    ${LIST WITH ESCAPES}    ${LIST CREATED FROM LIST WITH ESCAPES}
 
 List With No Items
-    [Documentation]    FAIL Non-existing variable '\@{EMPTY}[0]'
-    Should Be True    @{EMPTY} == [ ]
-    ${ret} =    Catenate    @{EMPTY}    @{EMPTY}    only value    @{EMPTY}
+    [Documentation]    FAIL Non-existing variable '\@{EMPTY LIST}[0]'
+    Should Be True    @{EMPTY LIST} == []
+    ${ret} =    Catenate    @{EMPTY LIST}    @{EMPTY LIST}    only value    @{EMPTY LIST}
     Should Be Equal    ${ret}    only value
-    Log    @{EMPTY}[0]
+    Log    @{EMPTY LIST}[0]
 
 Scalar Variable Containing List Is Different Than List Variable
     ${ret} =    Catenate    ${LIST}
