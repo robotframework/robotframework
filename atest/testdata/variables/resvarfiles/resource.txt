@@ -16,7 +16,7 @@ ${LIST WITH ESCAPES}    one \\    two \\\\    three \\\\\\    \${non_existing}
 @{LIST}           Hello    again    ?
 @{LIST WITH ESCAPES}    one \\    two \\\\    three \\\\\\    \${non_existing}
 @{LIST CREATED FROM LIST WITH ESCAPES}    @{LIST WITH ESCAPES}
-@{EMPTY}
+@{EMPTY LIST}
 ${lowercase}      Variable name in lower case
 @{lowercase}      Variable name in lower case
 ${S P a c e s }    Variable name with spaces

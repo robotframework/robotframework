@@ -21,7 +21,7 @@ OBJECT = _Object('dude')
 LIST__ONE_ITEM = ['Hello again?']
 LIST__LIST = ['Hello', 'again', '?']
 LIST__LIST_WITH_ESCAPES = LIST_WITH_ESCAPES[:]
-LIST__EMPTY = []
+LIST__EMPTY_LIST = []
 LIST__OBJECTS = [STRING, INTEGER, LIST, OBJECT]
 
 lowercase = 'Variable name in lower case'

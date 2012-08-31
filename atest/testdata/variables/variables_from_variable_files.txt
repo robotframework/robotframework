@@ -63,11 +63,11 @@ List With Escapes
     Should Be Equal    @{LIST WITH ESCAPES}[3]    \${non_existing}
 
 List With No Items
-    [Documentation]    FAIL Non-existing variable '\@{EMPTY}[0]'
-    Should Be True    @{EMPTY} == [ ]
-    ${ret} =    Catenate    @{EMPTY}    @{EMPTY}    only value    @{EMPTY}
+    [Documentation]    FAIL Non-existing variable '\@{EMPTY LIST}[0]'
+    Should Be True    @{EMPTY LIST} == []
+    ${ret} =    Catenate    @{EMPTY LIST}    @{EMPTY LIST}    only value    @{EMPTY LIST}
     Should Be Equal    ${ret}    only value
-    Log    @{EMPTY}[0]
+    Log    @{EMPTY LIST}[0]
 
 List With Objects
     Should Be Equal    @{objects}[0]    Hello world!
