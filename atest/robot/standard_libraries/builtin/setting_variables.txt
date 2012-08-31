@@ -1,0 +1,81 @@
+*** Setting ***    Value
+Documentation     Tests for set variable and set test/suite/global variable keywords
+Suite Setup       Run Tests    --variable cli_var_1:CLI1 --variable cli_var_2:CLI2 --variable cli_var_3:CLI3    standard_libraries/builtin/setting_variables
+Force Tags        regression    jybot    pybot
+Resource          atest_resource.txt
+
+*** Test Case ***
+Set Variable
+    ${tc} =    Check Test Case    ${TESTNAME}
+    Check Log Message    ${tc.kws[0].msgs[0]}    \${var} = Hello
+
+Set Variable With More Or Less Than One Value
+    ${tc} =    Check Test Case    ${TESTNAME}
+
+Set Test Variable - Scalars
+    Check Test Case    ${TESTNAME}
+
+Set Test Variable - Lists
+    Check Test Case    ${TESTNAME}
+
+Set Test Variable Needing Escaping
+    Check Test Case    ${TESTNAME}
+
+Set Test Variable In User Keyword
+    Check Test Case    ${TESTNAME}
+
+Set Test Variable Not Affecting Other Tests
+    Check Test Case    ${TESTNAME}
+
+Check Test Vars Set In One Suite Are Not Available In Another
+    Check Test Case    ${TESTNAME}
+
+Set Suite Variable
+    Check Test Case    Set Suite Variable 1
+    Check Test Case    Set Suite Variable 2
+    Check Suite Teardown Passed
+
+Check Suite Vars Set In One Suite Are Not Available In Another
+    Check Test Case    Check Suite Vars Set In One Suite Are Not Available In Another
+
+Set Global Variables
+    Check Test Case    Set Global Variable 1
+    Check Test Case    Set Global Variable 2
+    Check Suite Teardown Passed
+
+Check Global Vars Set In One Suite Are Available In Another
+    Check Test Case    Check Global Vars Set In One Suite Are Available In Another
+
+Variable Scopes And Overriding
+    Check Test Case    Scopes And Overriding 1
+    Check Test Case    Scopes And Overriding 2
+    Check Test Case    Scopes And Overriding 3
+
+Overiding Variable When It Has Non-string Value
+    Check Test Case    ${TEST NAME}
+
+Set Test/Suite/Global Variables With Normal Variable Syntax
+    Check Test Case    Set Test/Suite/Global Variables With Normal Variable Syntax 1
+    Check Test Case    Set Test/Suite/Global Variables With Normal Variable Syntax 2
+
+It Should Be Possible To Set Test/Suite/Global Variable Using Empty List Variable
+    Check Test Case    It Should Be Possible To Set Test/Suite/Global Variable using Empty List Variable 1
+    Check Test Case    It Should Be Possible To Set Test/Suite/Global Variable using Empty List Variable 2
+
+Set Test/Suite/Global Variable In User Keyword When Variable Name Is Used As Argument
+    Check Test Case    ${TEST NAME}
+
+Setting Test/Suite/Global Variable Which Value Is In Variable Like Syntax
+    Check Test Case    ${TEST NAME}
+
+Setting Test/Suite/Global Variable Which Value Is In Variable Syntax
+    Check Test Case    ${TEST NAME}
+
+Set Test/Suite/Global Variable With Internal Variables In Name
+    [Documentation]    This obscure test is here to prevent this bug from reappearing:\n http://code.google.com/p/robotframework/issues/detail?id=397
+    Check Test Case    ${TEST NAME}
+
+*** Keyword ***
+Check Suite Teardown Passed
+    ${suite} =    Get Test Suite    Variables
+    Should Be Equal    ${suite.teardown.status}    PASS
