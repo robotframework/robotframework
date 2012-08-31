@@ -61,8 +61,13 @@ Using Set And Remove Tags In Suite Teardown Fails
 Set and Removed Tags Should Affect Criticality
     ${tags} =  Get Total Stat Nodes
     Tag Statistics Should Be  ${tags[0]}  0  0
-    Tag Statistics Should Be  ${tags[1]}  12  2
+    Tag Statistics Should Be  ${tags[1]}  12  4
 
+Modifying ${TEST TAGS} after setting them has no affect on tags test has
+    Check Test Tags    ${TEST NAME}    force-init    set-init    new
+
+Modifying ${TEST TAGS} after removing them has no affect on tags test has
+    Check Test Tags    ${TEST NAME}
 
 *** Keywords ***
 Should Have Only Suite Tags

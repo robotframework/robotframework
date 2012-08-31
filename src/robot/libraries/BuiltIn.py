@@ -1920,7 +1920,7 @@ class _Misc:
                 self._set_or_remove_tags(handler, suite=ns.suite)
             else:
                 self._set_or_remove_tags(handler, test=ns.test)
-                ns.variables.set_test('@{TEST_TAGS}', ns.test.tags)
+                ns.variables.set_test('@{TEST_TAGS}', ns.test.tags[:])
             ns.suite._set_critical_tags(ns.suite.critical)
         elif suite:
             for sub in suite.suites:

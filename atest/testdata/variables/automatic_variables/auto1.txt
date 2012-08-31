@@ -14,7 +14,7 @@ Library           Collections
 ${EXP_SUITE_NAME}    Automatic Variables.Auto1
 ${EXP_SUITE_DOC}     This is suite documentation.
 ${EXP_SUITE_META}    {'MeTa1': 'Value', 'meta2': 'value'}
-${EXP_SUITE_STATS}   13 critical tests, 11 passed, 2 failed\n 13 tests total, 11 passed, 2 failed
+${EXP_SUITE_STATS}   15 critical tests, 13 passed, 2 failed\n 15 tests total, 13 passed, 2 failed
 @{LAST_TEST}         Previous Test Variables Should Have Correct Values When That Test Fails    PASS
 
 *** Test Case ***
@@ -39,6 +39,12 @@ Test Tags
     Check Test Tags    Force 1    Hello, world!    id-8899
     [Teardown]    Check Test Tags    Force 1    Hello, world!    id-8899
 
+Modifying ${TEST TAGS} does not affect actual tags test has
+    [Documentation]    The variable is changed but not "real" tags
+    [Tags]    mytag
+    Append To List    ${TEST TAGS}    not really added
+    Check Test Tags    Force 1    mytag    not really added
+
 Suite Name
     Should Be Equal    ${SUITE_NAME}    ${EXP_SUITE_NAME}
 
@@ -46,9 +52,15 @@ Suite Documentation
     Should Be Equal    ${SUITE_DOCUMENTATION}    This is suite documentation.
 
 Suite Metadata
-    Should Be True    ${SUITE METADATA} == {'MeTa1': 'Value', 'meta2': 'value'}
+    [Setup]    Should Be True    ${SUITE METADATA} == ${EXP_SUITE_META}
+    Should Be True    ${SUITE METADATA} == ${EXP_SUITE_META}
+    [Teardown]    Should Be True    ${SUITE METADATA} == ${EXP_SUITE_META}
+
+Modifying ${SUITE METADATA} does not affect actual metadata suite has
+    [Documentation]    The variable is changed but not "real" metadata
     Set To Dictionary    ${SUITE METADATA}    Meta1    not really set
     Set To Dictionary    ${SUITE METADATA}    NotSet    not really set
+    Should Be True    ${SUITE METADATA} == {'MeTa1': 'not really set', 'meta2': 'value', 'NotSet': 'not really set'}
 
 Suite Status And Suite Message Are Not Visible In Tests
     Variable Should Not Exist    $SUITE_STATUS

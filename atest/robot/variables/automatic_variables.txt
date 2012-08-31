@@ -16,6 +16,9 @@ Test Documentation
 Test Tags
     Check Test Case    ${TEST NAME}
 
+Modifying ${TEST TAGS} does not affect actual tags test has
+    Check Test Tags    ${TEST NAME}    Force 1    mytag
+
 Suite Name
     Check Test Case    ${TEST NAME}
 
@@ -24,6 +27,8 @@ Suite Documentation
 
 Suite Metadata
     Check Test Case    ${TEST NAME}
+
+Modifying ${SUITE METADATA} does not affect actual metadata suite has
     Should Be Equal    ${SUITE.suites[0].metadata['MeTa1']}    Value
     Dictionary Should Not Contain Key    ${SUITE.suites[0].metadata}    NotSet
 
