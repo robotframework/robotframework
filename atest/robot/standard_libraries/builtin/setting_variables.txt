@@ -72,8 +72,13 @@ Setting Test/Suite/Global Variable Which Value Is In Variable Syntax
     Check Test Case    ${TEST NAME}
 
 Set Test/Suite/Global Variable With Internal Variables In Name
-    [Documentation]    This obscure test is here to prevent this bug from reappearing:\n http://code.google.com/p/robotframework/issues/detail?id=397
+    [Documentation]    This obscure test is here to prevent this bug from reappearing:
+    ...                http://code.google.com/p/robotframework/issues/detail?id=397
     Check Test Case    ${TEST NAME}
+
+Using @{EMPTY} to with `Set Test/Suite/Global Variable` keywords
+    Check Test Case    ${TEST NAME}
+    Check Test Case    ${TEST NAME} 2
 
 *** Keyword ***
 Check Suite Teardown Passed

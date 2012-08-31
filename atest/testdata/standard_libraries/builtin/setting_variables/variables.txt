@@ -1,10 +1,11 @@
-*** Setting ***    Value
+*** Setting ***
 Documentation     See also variables2.html
 Suite Setup       My Suite Setup
 Suite Teardown    My Suite Teardown
 Library           OperatingSystem
+Library           Collections
 
-*** Variable ***    Value
+*** Variable ***
 @{LIST}           Hello    world
 ${SCALAR}         Hi tellus
 
@@ -46,7 +47,7 @@ Set Test Variable - Lists
     Set Test Variable    @list    One    Two    Three
     Should Be True    @{list} == ['One','Two','Three']
     @{list} =    Set Variable    1    2    3
-    Set Test Variable    @list
+    Set Test Variable    @{list}
     Should Be True    @{list} == ['1','2','3']
     Set Test Variable    @new    This    is    ok
     Should Be True    @{new} == ['This','is','ok']
@@ -249,6 +250,26 @@ Set Test/Suite/Global Variable With Internal Variables In Name
     Should Be Equal    ${bar}    pub
     Set Test Variable    ${xxx ${nonex}}    whatever
 
+Using @{EMPTY} to with `Set Test/Suite/Global Variable` keywords
+    Set Test Variable    @{LIST}    @{EMPTY}
+    Should Be Empty    ${LIST}
+    Append To List    ${LIST}    test
+    Should Be True    ${LIST} == ['test']
+    Verify @{EMPTY} is still empty
+    Set Suite Variable    @{LIST}    @{EMPTY}
+    Should Be Empty    ${LIST}
+    Append To List    ${LIST}    suite
+    Verify @{EMPTY} is still empty
+    Set Global Variable    @{NEW}    @{EMPTY}
+    Should Be Empty    ${NEW}
+    Append To List    ${NEW}    global
+    Verify @{EMPTY} is still empty
+
+Using @{EMPTY} to with `Set Test/Suite/Global Variable` keywords 2
+    Should Be True    ${LIST} == ['suite']
+    Should Be True    ${NEW} == ['global']
+
+
 *** Keyword ***
 My Suite Setup
     ${suite_setup_local_var} =    Set Variable    Variable available only locally    in suite setup
@@ -368,3 +389,6 @@ Test Setting Variable In User Keyword
     Run Keyword    Set ${type} Variable    ${arg}    value
     Should Not Be Equal    ${arg}    value    Value is set to variable \${arg} even it should be set to variable \${variable}    False
     Should Be Equal    ${variable}    value    Value is not set to variable \${variable} even it should
+
+Verify @{EMPTY} is still empty
+    No Operation    @{EMPTY}
