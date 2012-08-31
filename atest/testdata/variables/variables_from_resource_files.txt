@@ -1,5 +1,5 @@
 *** Setting ***
-Resource          resvarfiles/resource.html
+Resource          resvarfiles/resource.txt
 
 *** Variable ***
 
