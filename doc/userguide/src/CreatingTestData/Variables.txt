@@ -680,19 +680,22 @@ easier to understand than those using backslashes.
 
 Starting from Robot Framework 2.7.4, there is also an empty `list
 variable`_ :var:`@{EMPTY}`. Because it has no content, it basically
-vanishes when used somewhere in the test data. Its main use case is
+vanishes when used somewhere in the test data. It is useful, for example,
 with `test templates`_ when the `template keyword is used without
-arguments`__.
+arguments`__ or when overriding list variables in different scopes.
+Modifying the value of :var:`@{EMPTY}` is not possible.
 
 .. table:: Using :var:`@{EMPTY}` variable
    :class: example
 
-   =============   ============  ============  ============
-     Test Case        Action       Argument      Argument
-   =============   ============  ============  ============
-   Example         [Template]    Some keyword
+   =============   ===================  ============  ============
+     Test Case           Action           Argument      Argument
+   =============   ===================  ============  ============
+   Template        [Template]           Some keyword
    \               @{EMPTY}
-   =============   ============  ============  ============
+   \
+   Override        Set Global Variable  @{LIST}       @{EMPTY}
+   =============   ===================  ============  ============
 
 __ Escaping_
 __ https://groups.google.com/group/robotframework-users/browse_thread/thread/ccc9e1cd77870437/4577836fe946e7d5?lnk=gst&q=templates#4577836fe946e7d5

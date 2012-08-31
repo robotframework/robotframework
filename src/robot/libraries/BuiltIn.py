@@ -954,8 +954,15 @@ class _Variables:
 
         Examples:
         | Set Suite Variable | ${GREET} | Hello, world! |
+        | Set Suite Variable | @{LIST}  | First item    | Second item |
         | ${ID} =            | Get ID   |
         | Set Suite Variable | ${ID}    |
+
+        To override an existing value with an empty value, use built-in
+        variables `${EMPTY}` or `@{EMPTY}`:
+
+        | Set Suite Variable | ${GREET} | ${EMPTY} |
+        | Set Suite Variable | @{LIST}  | @{EMPTY} | # New in RF 2.7.4 |
 
         *NOTE:* If the variable has value which itself is a variable (escaped
         or not), you must always use the escaped format to reset the variable:
