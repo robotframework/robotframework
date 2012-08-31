@@ -1,0 +1,100 @@
+*** Setting ***
+Variables         resvarfiles/variables.py
+
+*** Variable ***
+
+*** Test Case ***
+Scalar String
+    Should Be Equal    ${STRING}    Hello world!
+    Should Be Equal    I said: "${STRING}"    I said: "Hello world!"
+
+Scalar Non-Strings
+    Should Be True    ${INTEGER} == 42
+    Should Be True    ${FLOAT} == -1.2
+    Should Be True    ${BOOLEAN} == True
+    Should Be True    ${NONE VALUE} == None
+
+Scalar String With Escapes
+    Should Be Equal    ${ESCAPES}    one \\ two \\\\ \${non_existing}
+
+Empty Scalar String
+    Should Be Equal    ${NO VALUE}    ${EMPTY}
+    Should Be Equal    "${NO VALUE}${NO VALUE}"    ""
+
+Scalar List
+    Should Not Be Equal    ${LIST}    Hello world !
+    Should Be True    ${LIST} == ['Hello','world', '!']
+    Should Be Equal    ${LIST[0]}    Hello
+    Should Be Equal    ${LIST[1]}    world
+    Should Be Equal    ${LIST[2]}    !
+
+Scalar List With Non-Strings
+    Should Be True    ${LIST WITH NON STRINGS} == [42, -1.2, True, None]
+
+Scalar List With Escapes
+    Should Be Equal    ${LIST WITH ESCAPES [0]}    one \\
+    Should Be Equal    ${LIST WITH ESCAPES [1]}    two \\\\
+    Should Be Equal    ${LIST WITH ESCAPES [2]}    three \\\\\\
+    Should Be Equal    ${LIST WITH ESCAPES [3]}    \${non_existing}
+    ${exp} =    Create List    one \\    two \\\\    three \\\\\\    \${non_existing}
+    Should Be Equal    ${LIST WITH ESCAPES}    ${exp}
+    Should Be True    ${LIST WITH ESCAPES} == ['one \\\\', 'two \\\\\\\\', 'three \\\\\\\\\\\\', '\${non_existing}']    Backslashes are doubled here because 'Should Be True' uses 'eval' internally
+
+Scalar Object
+    Should Not Be Equal    ${OBJECT}    dude    Comparing object to string
+    Should Be Equal    Hi ${OBJECT}!!    Hi dude!!    Comparing two strings
+    Should Be Equal    ${OBJECT.name}    dude
+    Should Be Equal    ${OBJECT.name.capitalize()} says hi!    Dude says hi!
+
+List with One Item
+    Should Be True    @{ONE ITEM} == ['Hello again?']
+    Should Be Equal    @{ONE ITEM}[0]    Hello again?
+
+List With Multiple Items
+    Should Be Equal    @{LIST}[0]    Hello
+    Should Be Equal    @{LIST}[1]    again
+    Should Be Equal    @{LIST}[2]    ?
+    Should Be True    @{LIST} == ['Hello', 'again', '?']
+
+List With Escapes
+    Should Be Equal    @{LIST WITH ESCAPES}[0]    one \\
+    Should Be Equal    @{LIST WITH ESCAPES}[1]    two \\\\
+    Should Be Equal    @{LIST WITH ESCAPES}[2]    three \\\\\\
+    Should Be Equal    @{LIST WITH ESCAPES}[3]    \${non_existing}
+
+List With No Items
+    [Documentation]    FAIL Non-existing variable '\@{EMPTY}[0]'
+    Should Be True    @{EMPTY} == [ ]
+    ${ret} =    Catenate    @{EMPTY}    @{EMPTY}    only value    @{EMPTY}
+    Should Be Equal    ${ret}    only value
+    Log    @{EMPTY}[0]
+
+List With Objects
+    Should Be Equal    @{objects}[0]    Hello world!
+    Should Be Equal    @{objects}[1]    ${42}
+    Should Be Equal    @{objects}[2]    ${LIST}
+    Should Be Equal    @{objects}[3]    ${OBJECT}
+    Should Be Equal    -- @{objects} --    -- ['${STRING}', ${INTEGER}, ${LIST}, '${OBJECT}'] --
+    Should Be Equal    -- @{objects} --    -- ['Hello world!', 42, ['Hello', 'world', '!'], 'dude'] --
+
+Scalar Variable Containing List Is Different Than List Variable
+    ${ret} =    Catenate    ${LIST}
+    Should Be Equal    ${ret}    ['Hello', 'world', '!']
+    ${ret} =    Catenate    @{LIST}
+    Should Be Equal    ${ret}    Hello again ?
+
+Variable Names Are Case Insensitive
+    Should Be Equal    ${lowercase}    Variable name in lower case
+    Should Be Equal    ${LOWERCASE}    Variable name in lower case
+    Should Be Equal    ${LoWerCAse}    Variable name in lower case
+    Should Be Equal    @{lowercase}[0]    Variable name in lower case
+    Should Be Equal    @{LOWERCASE}[0]    Variable name in lower case
+    Should Be Equal    @{lOWErcasE}[0]    Variable name in lower case
+
+Variable Names Are Underscore Insensitive
+    Should Be Equal    ${underscores}    Variable name with under scores
+    Should Be Equal    ${_U N D_er_Scores__}    Variable name with under scores
+    Should Be Equal    @{underscores}[0]    Variable name with under scores
+    Should Be Equal    @{ _u_N_de__r _S C ores__ }[0]    Variable name with under scores
+
+*** Keyword ***
