@@ -6,61 +6,61 @@ Resource        atest_resource.txt
 
 *** Test Cases ***
 Scalar String
-    Check Test Case  Scalar String
+    Check Test Case    ${TEST NAME}
 
 Scalar Non-Strings
-    Check Test Case  Scalar Non-Strings
+    Check Test Case    ${TEST NAME}
 
 Scalar String With Escapes
-    Check Test Case  Scalar String With Escapes
+    Check Test Case    ${TEST NAME}
 
 Empty Scalar String
-    Check Test Case  Empty Scalar String
+    Check Test Case    ${TEST NAME}
 
 Scalar List
-    Check Test Case  Scalar List
+    Check Test Case    ${TEST NAME}
     Syslog Contains Deprecation Warning About Variable  LIST
 
 Scalar List With Non-Strings
-    Check Test Case  Scalar List With Non-Strings
+    Check Test Case    ${TEST NAME}
     Syslog Contains Deprecation Warning About Variable  LIST WITH NON STRINGS
 
 Scalar List With Escapes
-    Check Test Case  Scalar List With Escapes
+    Check Test Case    ${TEST NAME}
     Syslog Contains Deprecation Warning About Variable  LIST WITH ESCAPES
 
 List With One Item
-    Check Test Case  List with One Item
+    Check Test Case    ${TEST NAME}
 
 List With Multiple Items
-    Check Test Case  List With Multiple Items
+    Check Test Case    ${TEST NAME}
 
 List With Escapes
-    Check Test Case  List With Escapes
+    Check Test Case    ${TEST NAME}
 
 List Created From List With Escapes
-    Check Test Case  List Created From List With Escapes
+    Check Test Case    ${TEST NAME}
 
 List With No Items
-    Check Test Case  List With No Items
+    Check Test Case    ${TEST NAME}
 
 Scalar Variable Containing List Is Different Than List Variable
-    Check Test Case  Scalar Variable Containing List Is Different Than List Variable
+    Check Test Case    ${TEST NAME}
 
 Variable Names Are Case Insensitive
-    Check Test Case  Variable Names Are Case Insensitive
+    Check Test Case    ${TEST NAME}
 
 Variable Names Are Space Insensitive
-    Check Test Case  Variable Names Are Space Insensitive
+    Check Test Case    ${TEST NAME}
 
 Variable Names Are Underscore Insensitive
-    Check Test Case  Variable Names Are Underscore Insensitive
+    Check Test Case    ${TEST NAME}
 
 Assign Mark With Scalar Variable
-    Check Test Case  Assign Mark With Scalar variable
+    Check Test Case    ${TEST NAME}
 
 Assign Mark With List Variable
-    Check Test Case  Assign Mark With List variable
+    Check Test Case    ${TEST NAME}
 
 *** Keywords ***
 Syslog Contains Deprecation Warning About Variable
