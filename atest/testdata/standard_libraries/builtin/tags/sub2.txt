@@ -1,0 +1,23 @@
+*** Setting ***
+Suite Teardown    Set Tags    this-should-fail
+
+*** Variable ***
+
+*** Test Case ***
+Set Tags In Test Setup
+    [Documentation]    FAIL Teardown of the parent suite failed.
+    [Tags]    tag
+    [Setup]    Set And Remove Tags    setup
+    Should Be True    ${TEST_TAGS} == ['set-init','setup','tag']
+
+Set Tags In Test Teardown
+    [Documentation]    FAIL Teardown of the parent suite failed.
+    No Operation
+    [Teardown]    Set And Remove Tags    teardown
+
+*** Keyword ***
+Set And Remove Tags
+    [Arguments]    @{set}
+    Set Tags    @{set}
+    Remove Tags    force-init
+    Log Many    @{TEST_TAGS}
