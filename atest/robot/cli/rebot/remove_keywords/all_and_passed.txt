@@ -16,7 +16,7 @@ Remove All
     Length Should Be    ${tc2.keywords}    2
     Keyword Should Be Empty    ${tc2.keywords[0]}    My Keyword    ['Fail']
     Keyword Should Be Empty    ${tc2.keywords[1]}    BuiltIn.Fail    ['msg=Expected failure']
-    Keyword Should Contain Removal Message    ${tc2.keywords[1]}   Fails the test immediately with the given (optional) message.\n\n
+    Keyword Should Contain Removal Message    ${tc2.keywords[1]}   Fails the test with the given message and optionally alters its tags.\n\n
 
 Remove Passed
     [Setup]    Run Rebot and Set My Suite    --removekeywords passed    0
