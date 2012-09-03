@@ -41,16 +41,15 @@ class _DataFileFormatter(object):
         rows = self._extractor.rows_from_table(table)
         if self._should_split_rows(table):
             return self._split_rows(rows, table)
-        return [self._format_row(r, table) for r in rows]
+        return (self._format_row(r, table) for r in rows)
 
     def _should_split_rows(self, table):
-        if self._should_align_columns(table):
-            return False
-        return True
+        return not self._should_align_columns(table)
 
     def _split_rows(self, rows, table):
+        indented = self._is_indented_table(table)
         for row in rows:
-            for r in self._splitter.split(row, self._is_indented_table(table)):
+            for r in self._splitter.split(row, indented):
                 yield self._format_row(r, table)
 
     def _should_align_columns(self, table):
