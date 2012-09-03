@@ -87,8 +87,7 @@ Start And Send Signal
     ${jython} =  Running On Jython  ${INTERPRETER}
     ${testfile} =  Set Variable If  ${jython}  robot_signal_test_jython.txt  robot_signal_test_python.txt
     Remove File  ${TEMPDIR}/${testfile}
-    Run Keyword unless  ${jython}  Start Running Robot  ${testfile}  running/stopping_with_signal/${testcase file}  ${teardown sleep}  ${runmode}
-    Run Keyword if  ${jython}  Start Running jybot  ${testfile}  running/stopping_with_signal/${testcase file}  ${teardown sleep}  ${runmode}
+    Start Run  ${testfile}  running/stopping_with_signal/${testcase file}  ${teardown sleep}  ${runmode}
     Wait Until Created  ${TEMPDIR}/${testfile}  1 minutes
     Run Keyword  ${signal method}  ${signal}
     Wait Until Finished With Timeout
@@ -97,21 +96,12 @@ Wait Until Finished With Timeout
     [timeout]  1 minute
     wait until finished
 
-Start Running Robot
-    [arguments]  ${test signal file}  ${datasource}  ${teardown sleep}  ${runmode}
-    Start Run  ${test signal file}  ${datasource}  ${teardown sleep}  ${runmode}  ${INTERPRETER}
-
-Start Running Jybot
-    [arguments]  ${test signal file}  ${datasource}  ${teardown sleep}  ${runmode}
-    @{jybot} =  Get Jython Path
-    Start Run  ${test signal file}  ${datasource}  ${teardown sleep}  ${runmode}  @{jybot}
-
 Start Run
-    [arguments]  ${test signal file}  ${datasource}  ${teardown sleep}  ${runmode}  @{runner}
+    [arguments]  ${test signal file}  ${datasource}  ${teardown sleep}  ${runmode}
     Set Runners
     ${path to datasource} =  Set Variables And Get Datasources  ${datasource}
-    ${path to runner} =  Join Path  ${ROBOTPATH}  run.py
-    @{command} =  Create List  @{runner}  ${path to runner}  --variable  TESTSIGNALFILE:${test signal file}  --output  ${OUTFILE}  --report  None  --log  None  --debugfile  ${TEST DEBUG FILE}  --variable  TEARDOWNSLEEP:${teardown sleep}  --runmode  ${runmode}  ${path to datasource}
+    @{runner} =    Get Runner    ${INTERPRETER}    ${ROBOTPATH}
+    @{command} =  Create List  @{runner}  --variable  TESTSIGNALFILE:${test signal file}  --output  ${OUTFILE}  --report  None  --log  None  --debugfile  ${TEST DEBUG FILE}  --variable  TEARDOWNSLEEP:${teardown sleep}  --runmode  ${runmode}  ${path to datasource}
     Log Many  @{command}
     ProcessManager.start process  @{command}
 

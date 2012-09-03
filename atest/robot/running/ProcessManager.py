@@ -51,13 +51,16 @@ class ProcessManager(object):
         while time.time() < max_time:
             pass
 
-    def get_jython_path(self):
+    def get_runner(self, interpreter, robot_path):
+        run = os.path.join(robot_path, 'run.py')
+        if 'jython' not in interpreter:
+            return [interpreter, run]
         jython_home = os.getenv('JYTHON_HOME')
         if not jython_home:
             raise RuntimeError('This test requires JYTHON_HOME environment variable to be set.')
         return [self._get_java(), '-Dpython.home=%s' % jython_home,
                 '-classpath',  self._get_classpath(jython_home),
-                'org.python.util.jython']
+                'org.python.util.jython', run]
 
     def _get_java(self):
         java_home = os.getenv('JAVA_HOME')
