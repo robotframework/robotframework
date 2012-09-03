@@ -5,12 +5,6 @@ Default Tags    jybot  pybot
 Resource        atest_resource.txt
 
 *** Test Cases ***
-Fail
-    Check test case  ${TESTNAME}
-
-Fail With Message
-    Check test case  ${TESTNAME}
-
 Should Not Be True
     Check test case  ${TESTNAME}
 

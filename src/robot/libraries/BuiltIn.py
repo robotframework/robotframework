@@ -297,7 +297,7 @@ class _Converter:
 
 class _Verify:
 
-    def fail(self, msg=None):
+    def fail(self, msg=None, *tags):
         """Fails the test immediately with the given (optional) message.
 
         See `Fatal Error` if you need to stop the whole test execution.

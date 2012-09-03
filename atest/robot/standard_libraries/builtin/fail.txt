@@ -1,0 +1,29 @@
+*** Settings ***
+Suite Setup      Run Tests    ${EMPTY}    standard_libraries/builtin/fail.txt
+Force Tags       regression    pybot    jybot
+Resource         atest_resource.txt
+
+*** Test Cases ***
+
+Fail
+    ${tc}=    Check Test Tags    ${TESTNAME}    f    f
+    Length Should Be    ${tc.kws[0].msgs}    1
+
+Fail With Message
+    ${tc}=    Check Test Case    ${TESTNAME}
+    Length Should Be    ${tc.kws[0].msgs}    1
+
+Set one tag
+    Check Test Case    ${TESTNAME}
+
+Set multiple tags
+    Check Test Case    ${TESTNAME}
+
+Remove one tag
+    Check Test Case    ${TESTNAME}
+
+Remove multiple tags
+    Check Test Case    ${TESTNAME}
+
+Remove multiple tags with pattern
+    Check Test Case    ${TESTNAME}

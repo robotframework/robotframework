@@ -2,6 +2,7 @@ import os
 import re
 
 from robot import utils
+from robot.utils.asserts import assert_equals
 from robot.result.resultbuilder import ExecutionResultBuilder
 from robot.result.executionresult import Result
 from robot.result.testsuite import TestSuite
@@ -142,13 +143,13 @@ Actual tests   : %s"""  % (str(list(expected_names)), str(actual_tests))
     def should_contain_tags(self, test, *tag_names):
         utils.asserts.assert_equals(len(test.tags), len(tag_names), 'Wrong number of tags')
         for act, exp in zip(test.tags, tag_names):
-            utils.eq(act, exp)
+            assert_equals(act, exp)
 
     def should_contain_keywords(self, item, *kw_names):
         actual_names =  [kw.name for kw in item.keywords]
         utils.asserts.assert_equals(len(actual_names), len(kw_names), 'Wrong number of keywords')
         for act, exp in zip(actual_names, kw_names):
-            utils.eq(act, exp)
+            assert_equals(act, exp)
 
 
 def process_suite(suite):

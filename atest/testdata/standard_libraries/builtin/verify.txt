@@ -9,14 +9,6 @@ ${INT1}  ${1}
 @{LIST}  a  b  cee  b  ${42}
 
 *** Test Cases ***
-Fail
-    [Documentation]  FAIL AssertionError
-    Fail
-
-Fail With Message
-    [Documentation]  FAIL Failure message
-    Fail  Failure message
-
 Should Not Be True
     [Documentation]  FAIL '0 < 1' should not be true
     Should Not Be True  0 > 1
