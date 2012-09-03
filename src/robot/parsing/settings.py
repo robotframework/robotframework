@@ -72,6 +72,9 @@ class Setting(object):
             ret.extend(self.value)
         return ret
 
+    def __nonzero__(self):
+        return self.is_set()
+
 
 class StringValueJoiner(object):
 
