@@ -13,8 +13,7 @@ class ProcessManager(object):
         self._stderr = ''
 
     def start_process(self, *args):
-        args = args[0].split() + list(args[1:])
-        self._process = subprocess.Popen(args, stderr=subprocess.PIPE, 
+        self._process = subprocess.Popen(args, stderr=subprocess.PIPE,
                                          stdout=subprocess.PIPE)
         self._stdout = ''
         self._stderr = ''
@@ -56,8 +55,9 @@ class ProcessManager(object):
         jython_home = os.getenv('JYTHON_HOME')
         if not jython_home:
             raise RuntimeError('This test requires JYTHON_HOME environment variable to be set.')
-        return '%s -Dpython.home=%s -classpath %s org.python.util.jython' \
-                % (self._get_java(), jython_home, self._get_classpath(jython_home))
+        return [self._get_java(), '-Dpython.home=%s' % jython_home,
+                '-classpath',  self._get_classpath(jython_home),
+                'org.python.util.jython']
 
     def _get_java(self):
         java_home = os.getenv('JAVA_HOME')
@@ -69,5 +69,6 @@ class ProcessManager(object):
 
     def _get_classpath(self, jython_home):
         jython_jar = os.path.join(jython_home, 'jython.jar')
-        return jython_jar + os.pathsep + os.getenv('CLASSPATH','')
+        cp = jython_jar + os.pathsep + os.getenv('CLASSPATH', '')
+        return cp.strip(':;')
 
