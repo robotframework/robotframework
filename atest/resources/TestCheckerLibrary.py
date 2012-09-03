@@ -135,19 +135,20 @@ Actual tests   : %s"""  % (str(list(expected_names)), str(actual_tests))
 
     def should_contain_suites(self, suite, *suite_names):
         actual_names = [s.name for s in suite.suites]
-        utils.asserts.assert_equals(len(actual_names), len(suite_names), 'Wrong number of subsuites')
+        assert_equals(len(actual_names), len(suite_names), 'Wrong number of subsuites')
         for expected in suite_names:
             if not any(utils.matches(expected, name) for name in actual_names):
                 raise AssertionError('Suite %s not found' % expected)
 
-    def should_contain_tags(self, test, *tag_names):
-        utils.asserts.assert_equals(len(test.tags), len(tag_names), 'Wrong number of tags')
-        for act, exp in zip(test.tags, tag_names):
+    def should_contain_tags(self, test, *tags):
+        assert_equals(len(test.tags), len(tags), 'Wrong number of tags')
+        tags = sorted(tags, key=lambda s: s.lower().replace('_', '').replace(' ', ''))
+        for act, exp in zip(test.tags, tags):
             assert_equals(act, exp)
 
     def should_contain_keywords(self, item, *kw_names):
         actual_names =  [kw.name for kw in item.keywords]
-        utils.asserts.assert_equals(len(actual_names), len(kw_names), 'Wrong number of keywords')
+        assert_equals(len(actual_names), len(kw_names), 'Wrong number of keywords')
         for act, exp in zip(actual_names, kw_names):
             assert_equals(act, exp)
 
