@@ -4,26 +4,47 @@ Force Tags       regression    pybot    jybot
 Resource         atest_resource.txt
 
 *** Test Cases ***
-
 Fail
-    ${tc}=    Check Test Tags    ${TESTNAME}    f    f
+    ${tc}=    Check Test Tags    ${TESTNAME}    force1    force2
     Length Should Be    ${tc.kws[0].msgs}    1
 
 Fail With Message
-    ${tc}=    Check Test Case    ${TESTNAME}
+    ${tc}=    Check Test Tags    ${TESTNAME}    force1    force2
     Length Should Be    ${tc.kws[0].msgs}    1
 
 Set one tag
-    Check Test Case    ${TESTNAME}
+    ${tc}=    Check Test Tags    ${TESTNAME}    force1    force2    tag
+    Length Should Be    ${tc.kws[0].msgs}    2
+    Check Log Message    ${tc.kws[0].msgs[0]}     Set tag 'tag'.
 
 Set multiple tags
-    Check Test Case    ${TESTNAME}
+    ${tc}=    Check Test Tags    ${TESTNAME}    force1    force2    tag1    tag2
+    Length Should Be    ${tc.kws[0].msgs}    2
+    Check Log Message    ${tc.kws[0].msgs[0]}     Set tags 'tag1' and 'tag2'.
 
 Remove one tag
-    Check Test Case    ${TESTNAME}
+    ${tc}=    Check Test Tags    ${TESTNAME}    force2
+    Length Should Be    ${tc.kws[0].msgs}    2
+    Check Log Message    ${tc.kws[0].msgs[0]}      Removed tag 'force1'.
 
 Remove multiple tags
-    Check Test Case    ${TESTNAME}
+    ${tc}=    Check Test Tags    ${TESTNAME}
+    Length Should Be    ${tc.kws[0].msgs}    2
+    Check Log Message    ${tc.kws[0].msgs[0]}     Removed tags 'force1' and 'force2'.
 
 Remove multiple tags with pattern
-    Check Test Case    ${TESTNAME}
+    ${tc}=    Check Test Tags    ${TESTNAME}
+    Length Should Be    ${tc.kws[0].msgs}    2
+    Check Log Message    ${tc.kws[0].msgs[0]}     Removed tag 'force?'.
+
+Set and remove tags
+    ${tc}=    Check Test Tags    ${TESTNAME}    force2    tag1    tag2
+    Length Should Be    ${tc.kws[0].msgs}    3
+    Check Log Message    ${tc.kws[0].msgs[0]}     Removed tags 'force1' and 'nonEx'.
+    Check Log Message    ${tc.kws[0].msgs[1]}     Set tags 'tag1' and 'tag2'.
+
+Set tags should not be removed
+    ${tc}=    Check Test Tags    ${TESTNAME}    fii    foo
+    Length Should Be    ${tc.kws[0].msgs}    3
+    Check Log Message    ${tc.kws[0].msgs[0]}     Removed tag 'f*'.
+    Check Log Message    ${tc.kws[0].msgs[1]}     Set tags 'fii' and 'foo'.

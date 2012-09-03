@@ -298,10 +298,31 @@ class _Converter:
 class _Verify:
 
     def fail(self, msg=None, *tags):
-        """Fails the test immediately with the given (optional) message.
+        """Fails the test with the given message and optionally alters its tags.
+
+        The error message is specified using the optional `msg` argument.
+
+        Starting from Robot Framework 2.7.4, it is possible to modify tags of
+        the current test case by passing tags after the message. Tags starting
+        with a hyphen (e.g. `-regression`) are removed and others added. Tags
+        are modified using `Set Tags` and `Remove Tags` internally, and the
+        semantics setting and removing them are the same as with these keywords.
+
+        Examples:
+        | Fail | Keyword not ready |             | | # Fails with the given message. |
+        | Fail | Keyword not ready | not-ready   | | # Fails and adds 'not-ready' tag. |
+        | Fail | OS not supported  | -regression | | # Removes tag 'regression'. |
+        | Fail | My message        | -old   | new  | # Adds tag 'new' and removes 'old'. |
+        | Fail | My message        | tag    | -t*  | # Removes all tags starting with 't' except the newly added 'tag'. |
 
         See `Fatal Error` if you need to stop the whole test execution.
         """
+        set_tags = [tag for tag in tags if not tag.startswith('-')]
+        remove_tags = [tag[1:] for tag in tags if tag.startswith('-')]
+        if remove_tags:
+            self.remove_tags(*remove_tags)
+        if set_tags:
+            self.set_tags(*set_tags)
         raise AssertionError(msg) if msg else AssertionError()
 
     def fatal_error(self, msg=None):
@@ -1888,8 +1909,8 @@ class _Misc:
 
         The current test tags are available from built in variable @{TEST TAGS}.
 
-        See `Remove Tags` for another keyword to modify tags at test
-        execution time.
+        See `Remove Tags` if you want to remove certain tags and `Fail` if
+        you want to fail the test case after setting and/or removing tags.
         """
         tags = utils.normalize_tags(tags)
         handler = lambda test: utils.normalize_tags(test.tags + tags)
@@ -1910,6 +1931,9 @@ class _Misc:
 
         Example:
         | Remove Tags | mytag | something-* | ?ython |
+
+        See `Set Tags` if you want to add certain tags and `Fail` if you want
+        to fail the test case after setting and/or removing tags.
         """
         tags = TagPatterns(tags)
         handler = lambda test: [t for t in test.tags if not tags.match(t)]

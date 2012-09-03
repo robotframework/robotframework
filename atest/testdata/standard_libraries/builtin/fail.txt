@@ -30,3 +30,11 @@ Remove multiple tags
 Remove multiple tags with pattern
     [Documentation]    FAIL Message
     Fail    Message    -force?
+
+Set and remove tags
+    [Documentation]    FAIL Message
+    Fail    Message    tag1    -force1    tag2    -nonEx
+
+Set tags should not be removed
+     [Documentation]    FAIL Message
+     Fail    Message    foo     -f*    fii
