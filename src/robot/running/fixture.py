@@ -14,7 +14,7 @@
 
 from robot.errors import ExecutionFailed, DataError
 
-from keywords import Keyword
+from .keywords import Keyword
 
 
 class _Fixture(object):
