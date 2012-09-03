@@ -7,7 +7,7 @@ Resource          atest_resource.txt
 File Suite
     Run Tests    --settag cmdlinetag    misc/normal.txt
     Check Test Tags    First One    cmdlinetag    f1    t1    t2
-    Check Test Tags    Second One    cmdlinetag    d1    d2    f1
+    Check Test Tags    Second One    cmdlinetag    d1    d_2    f1
 
 Directory Suite
     Run Tests    --settag CmdLineTag    misc/suites
