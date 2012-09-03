@@ -99,7 +99,7 @@ Wait Until Finished With Timeout
 
 Start Running Robot
     [arguments]  ${test signal file}  ${datasource}  ${teardown sleep}  ${runmode}
-    Start Run  ${test signal file}  ${datasource}  ${teardown sleep}  ${runmode} ${INTERPRETER}  
+    Start Run  ${test signal file}  ${datasource}  ${teardown sleep}  ${runmode}  ${INTERPRETER}
 
 Start Running Jybot
     [arguments]  ${test signal file}  ${datasource}  ${teardown sleep}  ${runmode}
