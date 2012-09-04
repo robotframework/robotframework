@@ -9,27 +9,56 @@ ${EXECUTED}       This is executed
 
 *** Test Case ***
 Run Keyword If With True Expression
-    ${tc} =    Check Test Case    Run Keyword If With True Expression
+    ${tc} =    Check Test Case    ${TEST NAME}
     Check Log Message    ${tc.kws[0].kws[0].msgs[0]}    ${EXECUTED}
 
 Run Keyword If With False Expression
-    ${tc} =    Check Test Case    Run Keyword If With False Expression
+    ${tc} =    Check Test Case    ${TEST NAME}
     Should Be Equal As Integers    ${tc.kws[0].keyword_count}    0
 
 Run Keyword In User Keyword
-    ${tc} =    Check Test Case    Run Keyword In User Keyword
+    ${tc} =    Check Test Case    ${TEST NAME}
     Check Log Message    ${tc.kws[0].kws[0].kws[0].msgs[0]}    ${EXECUTED}
     Should Be Equal As Integers    ${tc.kws[1].kws[0].keyword_count}    0
 
+Run Keyword With ELSE
+    ${tc} =    Check Test Case    ${TEST NAME}
+    Check Log Message    ${tc.kws[1].kws[0].msgs[0]}    ${EXECUTED}
+    Check Log Message    ${tc.kws[3].kws[0].msgs[0]}    ${EXECUTED}
+
+ELSE and ELSE IF must be upper case
+    ${tc} =    Check Test Case    ${TEST NAME}
+    Test ELSE (IF) Escaping    ${tc.kws[0].kws[0]}    else
+    Test ELSE (IF) Escaping    ${tc.kws[1].kws[0]}    ELSE iF
+
+Run Keyword With Escaped ELSE and ELSE IF
+    ${tc} =    Check Test Case    ${TEST NAME}
+    Test ELSE (IF) Escaping    ${tc.kws[0].kws[0]}    ELSE
+    Test ELSE (IF) Escaping    ${tc.kws[1].kws[0]}    ELSE IF
+
+Run Keyword With ELSE and ELSE IF from Variable
+    ${tc} =    Check Test Case    ${TEST NAME}
+    Test ELSE (IF) Escaping    ${tc.kws[0].kws[0]}    ELSE
+    Test ELSE (IF) Escaping    ${tc.kws[1].kws[0]}    ELSE
+    Test ELSE (IF) Escaping    ${tc.kws[2].kws[0]}    ELSE IF
+    Test ELSE (IF) Escaping    ${tc.kws[3].kws[0]}    ELSE IF
+
 Run Keyword Unless With False Expression
-    ${tc} =    Check Test Case    Run Keyword Unless With False Expression
+    ${tc} =    Check Test Case    ${TEST NAME}
     Check Log Message    ${tc.kws[1].kws[0].msgs[0]}    ${EXECUTED}
 
 Run Keyword Unless With True Expression
-    ${tc} =    Check Test Case    Run Keyword Unless With True Expression
+    ${tc} =    Check Test Case    ${TEST NAME}
     Should Be Equal As Integers    ${tc.kws[0].keyword_count}    0
 
 Variable Values Should Not Be Visible As Keyword's Arguments
     ${tc} =    Check Test Case    Run Keyword In User Keyword
     Check KW Arguments    ${tc.kws[0].kws[0]}    '\${status}' == 'PASS'    Log    \${message}
     Check KW Arguments    ${tc.kws[0].kws[0].kws[0]}    \${message}
+
+*** Keywords ***
+Test ELSE (IF) Escaping
+    [Arguments]    ${kw}    ${else (if)}
+    Length Should Be    ${kw.msgs}    2
+    Check Log Message    ${kw.msgs[0]}    ${else (if)}
+    Check Log Message    ${kw.msgs[1]}    ${EXECUTED}

@@ -1119,8 +1119,17 @@ class _RunKeyword:
         In this example, only either 'Some Action' or 'Another Action' is
         executed, based on the status of 'My Keyword'.
         """
+        args = list(args)
+        else_branch = None
+        if "ELSE" in args:
+            else_index = args.index("ELSE")
+            else_branch = args[else_index+1:]
+            args = args[:else_index]
+
         if self._is_true(condition):
             return self.run_keyword(name, *args)
+        elif else_branch:
+            return self.run_keyword(*else_branch)
 
     def run_keyword_unless(self, condition, name, *args):
         """Runs the given keyword with the given arguments, if `condition` is false.

@@ -1,23 +1,47 @@
 *** Variable ***
-${EXECUTED}       This is executed
+${EXECUTED}             This is executed
+@{ARGS WITH ELSE}       ELSE    ${EXECUTED}
+@{ARGS WITH ELSE IF}    ELSE IF    ${EXECUTED}
 
 *** Test Case ***
 Run Keyword If With True Expression
     Run Keyword If    ${True}    Log    ${EXECUTED}
 
 Run Keyword If With False Expression
-    Run Keyword If    0 == 1    Log    ${MESSAGE}    # Should not be executed nor evaluated
+    Run Keyword If    0 == 1    Log    ${NON EXISTING}
 
 Run Keyword In User Keyword
     Conditional User Keyword    PASS    ${EXECUTED}
     Conditional User Keyword    FAIL    ${EXECUTED}
 
+Run Keyword With ELSE
+    Run Keyword If    ${True}    No Operation    ELSE    Fail
+    Run Keyword If    ${True}    Log    ${EXECUTED}    ELSE    Fail    message
+    Run Keyword If    ${True}    Log Many    1    2    3    4    ELSE    Fail
+    Run Keyword If    ${False}    Non Existing    ${ne1}    ${ne2}    ${ne3}
+    ...    ELSE    Log    ${EXECUTED}
+
+ELSE and ELSE IF must be upper case
+    Run Keyword If    ${True}    Log Many    else    ${EXECUTED}
+    Run Keyword If    ${True}    Log Many    ELSE iF   ${EXECUTED}
+
+Run Keyword With Escaped ELSE and ELSE IF
+    Run Keyword If    ${True}    Log Many    \ELSE    ${EXECUTED}
+    Run Keyword If    ${True}    Log Many    \ELSE IF   ${EXECUTED}
+
+Run Keyword With ELSE and ELSE IF from Variable
+    Run Keyword If    ${True}    Log Many    @{ARGS WITH ELSE}
+    Run Keyword If    ${True}    Log Many    @{ARGS WITH ELSE}    ELSE    Fail
+    Run Keyword If    ${True}    Log Many    @{ARGS WITH ELSE IF}
+    Run Keyword If    ${True}    Log Many    @{ARGS WITH ELSE IF}    ELSE    Fail
+
 Run Keyword Unless With False Expression
-    ${empty list}    Create List
+    ${empty list} =    Create List
     Run Keyword Unless    ${empty list}    Log    ${EXECUTED}
 
 Run Keyword Unless With True Expression
-    Run Keyword Unless    ${0} == ${0}    Log    ${MESSAGE}    # Should not be executed nor evaluated
+    Run Keyword Unless    ${0} == ${0}    Log    ${NON EXISTING}
+
 
 *** Keyword ***
 Conditional User Keyword
