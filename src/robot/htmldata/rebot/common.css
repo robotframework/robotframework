@@ -134,23 +134,23 @@ th.stats_col_graph:hover {
     margin-left: 0.2em;
 }
 /* Statistics graph */
-.pass_bar {
-    background: #00F000;
-}
 .graph, .empty_graph {
     border: 1px solid black;
-    width: 100%;
-    height: 0.7em;
+    width: auto;
+    height: 8px;
     padding: 0;
     background: red;
 }
 .empty_graph {
     background: #E9E9E9;
 }
-.graph div {
+.pass_bar, .fail_bar {
     position: relative;
     float: left;
     height: 100%;
+}
+.pass_bar {
+    background: #00F000;
 }
 /* Tablesorter - adapted from provided Blue Skin */
 .tablesorter-header {
