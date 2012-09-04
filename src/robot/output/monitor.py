@@ -76,14 +76,14 @@ class CommandLineWriter(object):
         self._stdout = stdout or sys.__stdout__
         self._stderr = stderr or sys.__stderr__
         self._highlighter = StatusHighlighter(colors, self._stdout, self._stderr)
-        self._keyword_marker_count = 0
+        self._keyword_marker = KeywordMarker(self._stdout, self._highlighter)
         self._last_info = None
 
     def info(self, name, doc, start_suite=False):
         width, separator = self._get_info_width_and_separator(start_suite)
         self._last_info = self._get_info(name, doc, width) + separator
         self._write(self._last_info, newline=False)
-        self._keyword_marker_count = 0
+        self._keyword_marker.reset_count()
 
     def _get_info_width_and_separator(self, start_suite):
         if start_suite:
@@ -116,7 +116,7 @@ class CommandLineWriter(object):
 
     def _clear_info_line(self):
         self._write('\r' + ' ' * self._width + '\r', newline=False)
-        self._keyword_marker_count = 0
+        self._keyword_marker.reset_count()
 
     def _rewrite_info(self):
         self._write(self._last_info, newline=False)
@@ -126,13 +126,10 @@ class CommandLineWriter(object):
             self._write(message.strip())
 
     def keyword_marker(self, kw):
-        if not isatty(self._stdout):
-            return
-        if self._keyword_marker_count == self._status_length:
+        if self._keyword_marker.marker_count == self._status_length:
             self._clear_status()
-        marker, color = ('.', 'green') if kw.passed else ('F', 'red')
-        self._highlighter.highlight(marker, color, self._stdout)
-        self._keyword_marker_count += 1
+            self._keyword_marker.reset_count()
+        self._keyword_marker.mark(kw)
 
     def error(self, message, level, clear=False):
         if clear and isatty(self._stdout):
@@ -191,6 +188,24 @@ class StatusHighlighter(object):
         stream.write(text)
         stream.flush()
         highlighter.reset()
+
+
+class KeywordMarker(object):
+
+    def __init__(self, stdout, highlighter):
+        if not isatty(stdout):
+            self.mark = lambda kw: None
+        self._stdout = stdout
+        self._highlighter = highlighter
+        self.marker_count = 0
+
+    def mark(self, kw):
+        marker, color = ('.', 'green') if kw.passed else ('F', 'red')
+        self._highlighter.highlight(marker, color, self._stdout)
+        self.marker_count += 1
+
+    def reset_count(self):
+        self.marker_count = 0
 
 
 def isatty(stream):
