@@ -48,7 +48,6 @@ class _BaseSettings(object):
                  'TagStatLink'      : ('tagstatlink', []),
                  'RemoveKeywords'   : ('removekeywords', []),
                  'NoStatusRC'       : ('nostatusrc', False),
-                 'MonitorWidth'     : ('monitorwidth', 78),
                  'MonitorColors'    : ('monitorcolors', 'AUTO'),
                  'StdOut'           : ('stdout', None),
                  'StdErr'           : ('stderr', None)}
@@ -278,6 +277,7 @@ class RobotSettings(_BaseSettings):
                        'Variables'     : ('variable', []),
                        'VariableFiles' : ('variablefile', []),
                        'Listeners'     : ('listener', []),
+                       'MonitorWidth'  : ('monitorwidth', 78),
                        'DebugFile'     : ('debugfile', 'NONE')}
 
     def is_rebot_needed(self):
