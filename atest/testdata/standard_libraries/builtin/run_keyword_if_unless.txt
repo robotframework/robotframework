@@ -1,0 +1,25 @@
+*** Variable ***
+${EXECUTED}       This is executed
+
+*** Test Case ***
+Run Keyword If With True Expression
+    Run Keyword If    ${True}    Log    ${EXECUTED}
+
+Run Keyword If With False Expression
+    Run Keyword If    0 == 1    Log    ${MESSAGE}    # Should not be executed nor evaluated
+
+Run Keyword In User Keyword
+    Conditional User Keyword    PASS    ${EXECUTED}
+    Conditional User Keyword    FAIL    ${EXECUTED}
+
+Run Keyword Unless With False Expression
+    ${empty list}    Create List
+    Run Keyword Unless    ${empty list}    Log    ${EXECUTED}
+
+Run Keyword Unless With True Expression
+    Run Keyword Unless    ${0} == ${0}    Log    ${MESSAGE}    # Should not be executed nor evaluated
+
+*** Keyword ***
+Conditional User Keyword
+    [Arguments]    ${status}    ${message}
+    Run Keyword If    '${status}' == 'PASS'    Log    ${message}

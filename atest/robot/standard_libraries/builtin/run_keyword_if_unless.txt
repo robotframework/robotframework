@@ -1,0 +1,35 @@
+*** Setting ***
+Suite Setup       Run Tests    ${EMPTY}    standard_libraries/builtin/run_keyword_if_unless.txt
+Force Tags        regression
+Default Tags      jybot    pybot
+Resource          atest_resource.txt
+
+*** Variable ***
+${EXECUTED}       This is executed
+
+*** Test Case ***
+Run Keyword If With True Expression
+    ${tc} =    Check Test Case    Run Keyword If With True Expression
+    Check Log Message    ${tc.kws[0].kws[0].msgs[0]}    ${EXECUTED}
+
+Run Keyword If With False Expression
+    ${tc} =    Check Test Case    Run Keyword If With False Expression
+    Should Be Equal As Integers    ${tc.kws[0].keyword_count}    0
+
+Run Keyword In User Keyword
+    ${tc} =    Check Test Case    Run Keyword In User Keyword
+    Check Log Message    ${tc.kws[0].kws[0].kws[0].msgs[0]}    ${EXECUTED}
+    Should Be Equal As Integers    ${tc.kws[1].kws[0].keyword_count}    0
+
+Run Keyword Unless With False Expression
+    ${tc} =    Check Test Case    Run Keyword Unless With False Expression
+    Check Log Message    ${tc.kws[1].kws[0].msgs[0]}    ${EXECUTED}
+
+Run Keyword Unless With True Expression
+    ${tc} =    Check Test Case    Run Keyword Unless With True Expression
+    Should Be Equal As Integers    ${tc.kws[0].keyword_count}    0
+
+Variable Values Should Not Be Visible As Keyword's Arguments
+    ${tc} =    Check Test Case    Run Keyword In User Keyword
+    Check KW Arguments    ${tc.kws[0].kws[0]}    '\${status}' == 'PASS'    Log    \${message}
+    Check KW Arguments    ${tc.kws[0].kws[0].kws[0]}    \${message}
