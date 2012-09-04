@@ -21,9 +21,81 @@ Run Keyword With ELSE
     Run Keyword If    ${False}    Non Existing    ${ne1}    ${ne2}    ${ne3}
     ...    ELSE    Log    ${EXECUTED}
 
+ELSE without keyword is invalid 1
+    [Documentation]    FAIL ELSE requires keyword.
+    Run Keyword If    ${True}    Catenate    a1    a2    ELSE
+
+ELSE without keyword is invalid 2
+    [Documentation]    FAIL ELSE requires keyword.
+    Run Keyword If    ${False}    Catenate    a1    a2    ELSE
+
+Only first ELSE is significant
+    ${ret} =    Run Keyword If    ${False}    Fail
+    ...    ELSE    Catenate    ${EXECUTED}    ELSE    Fail
+    Should Be Equal    ${ret}    ${EXECUTED} ELSE Fail
+
+Run Keyword With ELSE IF
+    Run Keyword If    ${True}     Log     ${EXECUTED}
+    ...    ELSE IF    ${True}     Fail    Should not go here
+    Run Keyword If    ${False}    Fail
+    ...    ELSE IF    ${True}     Log    ${EXECUTED}
+
+Run Keyword with ELSE IF and ELSE
+    Run Keyword If    ${False}    Fail
+    ...    ELSE IF    ${True}     Log    ${EXECUTED}
+    ...    ELSE       Fail
+    Run Keyword If    ${False}    Fail
+    ...    ELSE IF    ${False}    Fail
+    ...    ELSE       Log    ${EXECUTED}
+
+Run Keyword with multiple ELSE IF
+    Run Keyword If    ${False}    Fail
+    ...    ELSE IF    ${False}    Fail
+    ...    ELSE IF    ${False}    Fail
+    ...    ELSE IF    ${False}    Fail
+    ...    ELSE IF    ${True}     Log    ${EXECUTED}
+    ...    ELSE       Fail
+    Run Keyword If    ${False}    Fail
+    ...    ELSE IF    ${False}    Fail
+    ...    ELSE IF    ${True}     Log    ${EXECUTED}
+    ...    ELSE IF    ${False}    Fail
+    ...    ELSE IF    ${True}     Fail
+    ...    ELSE       Fail
+    Run Keyword If    ${False}    Fail
+    ...    ELSE IF    ${False}    Fail
+    ...    ELSE IF    ${False}    Fail
+    ...    ELSE IF    ${False}    Fail
+    ...    ELSE IF    ${False}    Fail
+    ...    ELSE       Log    ${EXECUTED}
+
+ELSE IF without keyword is invalid 1
+    [Documentation]    FAIL ELSE IF requires condition and keyword.
+    Run Keyword If    ${True}    Catenate    a1    a2    ELSE IF
+
+ELSE IF without keyword is invalid 2
+    [Documentation]    FAIL ELSE IF requires condition and keyword.
+    Run Keyword If    ${True}    Catenate    a1    a2    ELSE IF    ${True}
+
+ELSE IF without keyword is invalid 3
+    [Documentation]    FAIL ELSE IF requires condition and keyword.
+    Run Keyword If    ${False}    Catenate    a1    a2    ELSE IF
+
+ELSE IF without keyword is invalid 4
+    [Documentation]    FAIL ELSE IF requires condition and keyword.
+    Run Keyword If    ${False}    Catenate    a1    a2    ELSE IF    ${True}
+
+ELSE before ELSE IF is ignored
+    Run Keyword If    ${False}    Fail
+    ...    ELSE       Fail
+    ...    ELSE IF    ${True}     Log    ${EXECUTED}
+
 ELSE and ELSE IF must be upper case
     Run Keyword If    ${True}    Log Many    else    ${EXECUTED}
     Run Keyword If    ${True}    Log Many    ELSE iF   ${EXECUTED}
+
+ELSE and ELSE IF must be whitespace sensitive
+    Run Keyword If    ${True}    Log Many    EL SE    ${EXECUTED}
+    Run Keyword If    ${True}    Log Many    ELSEIF   ${EXECUTED}
 
 Run Keyword With Escaped ELSE and ELSE IF
     Run Keyword If    ${True}    Log Many    \ELSE    ${EXECUTED}

@@ -26,10 +26,48 @@ Run Keyword With ELSE
     Check Log Message    ${tc.kws[1].kws[0].msgs[0]}    ${EXECUTED}
     Check Log Message    ${tc.kws[3].kws[0].msgs[0]}    ${EXECUTED}
 
+ELSE without keyword is invalid
+    Check Test Case    ${TEST NAME} 1
+    Check Test Case    ${TEST NAME} 2
+
+Only first ELSE is significant
+    Check Test Case    ${TEST NAME}
+
+Run Keyword With ELSE IF
+    ${tc} =    Check Test Case    ${TEST NAME}
+    Check Log Message    ${tc.kws[1].kws[0].msgs[0]}    ${EXECUTED}
+
+Run Keyword with ELSE IF and ELSE
+    ${tc} =    Check Test Case    ${TEST NAME}
+    Check Log Message    ${tc.kws[0].kws[0].msgs[0]}    ${EXECUTED}
+    Check Log Message    ${tc.kws[1].kws[0].msgs[0]}    ${EXECUTED}
+
+Run Keyword with multiple ELSE IF
+    ${tc} =    Check Test Case    ${TEST NAME}
+    Check Log Message    ${tc.kws[0].kws[0].msgs[0]}    ${EXECUTED}
+    Check Log Message    ${tc.kws[1].kws[0].msgs[0]}    ${EXECUTED}
+    Check Log Message    ${tc.kws[2].kws[0].msgs[0]}    ${EXECUTED}
+
+ELSE IF without keyword is invalid
+    [Template]    Check Test Case
+    ${TEST NAME} 1
+    ${TEST NAME} 2
+    ${TEST NAME} 3
+    ${TEST NAME} 4
+
+ELSE before ELSE IF is ignored
+    ${tc} =    Check Test Case    ${TEST NAME}
+    Check Log Message    ${tc.kws[0].kws[0].msgs[0]}    ${EXECUTED}
+
 ELSE and ELSE IF must be upper case
     ${tc} =    Check Test Case    ${TEST NAME}
     Test ELSE (IF) Escaping    ${tc.kws[0].kws[0]}    else
     Test ELSE (IF) Escaping    ${tc.kws[1].kws[0]}    ELSE iF
+
+ELSE and ELSE IF must be whitespace sensitive
+    ${tc} =    Check Test Case    ${TEST NAME}
+    Test ELSE (IF) Escaping    ${tc.kws[0].kws[0]}    EL SE
+    Test ELSE (IF) Escaping    ${tc.kws[1].kws[0]}    ELSEIF
 
 Run Keyword With Escaped ELSE and ELSE IF
     ${tc} =    Check Test Case    ${TEST NAME}

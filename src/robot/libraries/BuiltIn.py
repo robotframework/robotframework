@@ -1121,15 +1121,29 @@ class _RunKeyword:
         """
         args = list(args)
         else_branch = None
+        if "ELSE IF" in args:
+            return self._handle_elif(condition, name, args)
         if "ELSE" in args:
             else_index = args.index("ELSE")
             else_branch = args[else_index+1:]
+            if not else_branch:
+                raise DataError('ELSE requires keyword.')
             args = args[:else_index]
-
         if self._is_true(condition):
             return self.run_keyword(name, *args)
         elif else_branch:
             return self.run_keyword(*else_branch)
+
+    def _handle_elif(self, condition, name, args):
+        elif_index = args.index("ELSE IF")
+        tail = args[elif_index+1:]
+        if len(tail) < 2:
+            raise DataError('ELSE IF requires condition and keyword.')
+        head = args[:elif_index]
+        if self._is_true(condition):
+            return self.run_keyword(name, *head)
+        condition = self._variables.replace_scalar(tail.pop(0))
+        return self.run_keyword_if(condition, *tail)
 
     def run_keyword_unless(self, condition, name, *args):
         """Runs the given keyword with the given arguments, if `condition` is false.
