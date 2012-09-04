@@ -1119,31 +1119,30 @@ class _RunKeyword:
         In this example, only either 'Some Action' or 'Another Action' is
         executed, based on the status of 'My Keyword'.
         """
-        args = list(args)
-        else_branch = None
+        args, else_branch, elif_branch = list(args), None, None
         if "ELSE IF" in args:
-            return self._handle_elif(condition, name, args)
+            args, elif_branch = self._split_to_branch("ELSE IF", args)
+            if len(elif_branch) < 2:
+                raise DataError('ELSE IF requires condition and keyword.')
+            return self._handle_elif(condition, name, args, elif_branch)
         if "ELSE" in args:
-            else_index = args.index("ELSE")
-            else_branch = args[else_index+1:]
+            args, else_branch = self._split_to_branch("ELSE", args)
             if not else_branch:
                 raise DataError('ELSE requires keyword.')
-            args = args[:else_index]
         if self._is_true(condition):
             return self.run_keyword(name, *args)
         elif else_branch:
             return self.run_keyword(*else_branch)
 
-    def _handle_elif(self, condition, name, args):
-        elif_index = args.index("ELSE IF")
-        tail = args[elif_index+1:]
-        if len(tail) < 2:
-            raise DataError('ELSE IF requires condition and keyword.')
-        head = args[:elif_index]
+    def _handle_elif(self, condition, name, args, branch):
         if self._is_true(condition):
-            return self.run_keyword(name, *head)
-        condition = self._variables.replace_scalar(tail.pop(0))
-        return self.run_keyword_if(condition, *tail)
+            return self.run_keyword(name, *args)
+        condition = self._variables.replace_scalar(branch.pop(0))
+        return self.run_keyword_if(condition, *branch)
+
+    def _split_to_branch(self, control_word, args):
+        index = args.index(control_word)
+        return args[:index], args[index+1:]
 
     def run_keyword_unless(self, condition, name, *args):
         """Runs the given keyword with the given arguments, if `condition` is false.
