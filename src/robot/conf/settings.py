@@ -278,6 +278,7 @@ class RobotSettings(_BaseSettings):
                        'VariableFiles' : ('variablefile', []),
                        'Listeners'     : ('listener', []),
                        'MonitorWidth'  : ('monitorwidth', 78),
+                       'MonitorMarkers': ('monitormarkers', 'AUTO'),
                        'DebugFile'     : ('debugfile', 'NONE')}
 
     def is_rebot_needed(self):

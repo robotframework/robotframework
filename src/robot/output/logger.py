@@ -67,14 +67,14 @@ class Logger(AbstractLogger):
         for log in loggers:
             self._loggers.unregister_logger(log)
 
-    def register_console_logger(self, width=78, colors='AUTO', stdout=None,
-                                stderr=None):
+    def register_console_logger(self, width=78, colors='AUTO', markers='AUTO',
+                                stdout=None, stderr=None):
         self.disable_automatic_console_logger()
-        self._register_console_logger(width, colors, stdout, stderr)
+        self._register_console_logger(width, colors, markers, stdout, stderr)
 
-    def _register_console_logger(self, width=78, colors='AUTO', stdout=None,
-                                 stderr=None):
-        monitor = CommandLineMonitor(width, colors, stdout, stderr)
+    def _register_console_logger(self, width=78, colors='AUTO', markers='AUTO',
+                                 stdout=None, stderr=None):
+        monitor = CommandLineMonitor(width, colors, markers, stdout, stderr)
         self._loggers.register_regular_logger(monitor)
 
     def register_file_logger(self, path=None, level='INFO'):

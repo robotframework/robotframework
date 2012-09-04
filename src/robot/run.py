@@ -240,6 +240,9 @@ Options
                           on:   always use colors
                           off:  never use colors
                           Note that colors do not work with Jython on Windows.
+ -R --monitormarkers auto|on|off  Show `.` (success) or `F` (failure) on
+                          console when a top level keyword in a test case ends.
+                          Values have same semantics as with --monitorcolors.
  -P --pythonpath path *   Additional locations (directories, ZIPs, JARs) where
                           to search test libraries from when they are imported.
                           Multiple paths can be given by separating them with a
@@ -349,6 +352,7 @@ class RobotFramework(Application):
         pyloggingconf.initialize(settings['LogLevel'])
         LOGGER.register_console_logger(width=settings['MonitorWidth'],
                                        colors=settings['MonitorColors'],
+                                       markers=settings['MonitorMarkers'],
                                        stdout=settings['StdOut'],
                                        stderr=settings['StdErr'])
         init_global_variables(settings)

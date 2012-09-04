@@ -1,5 +1,4 @@
 import unittest
-import re
 
 from robot.utils.asserts import assert_equals
 from robot.output.monitor import CommandLineMonitor
@@ -7,9 +6,9 @@ from robot.output.monitor import CommandLineMonitor
 
 class TestKeywordNotification(unittest.TestCase):
 
-    def setUp(self):
-        self.stream = StreamStub()
-        self.monitor = CommandLineMonitor(width=16, colors='off',
+    def setUp(self, markers='AUTO', isatty=True):
+        self.stream = StreamStub(isatty)
+        self.monitor = CommandLineMonitor(width=16, colors='off', markers=markers,
                                           stdout=self.stream, stderr=self.stream)
         self.monitor.start_test(Stub())
 
@@ -50,6 +49,24 @@ class TestKeywordNotification(unittest.TestCase):
         self._write_marker(count=2)
         self._verify(before='[ WARN ] Message\n', after='..')
 
+    def test_markers_off(self):
+        self.setUp(markers='OFF')
+        self._write_marker()
+        self._write_marker('FAIL')
+        self._verify()
+
+    def test_markers_on(self):
+        self.setUp(markers='on', isatty=False)
+        self._write_marker()
+        self._write_marker('FAIL')
+        self._verify('.F')
+
+    def test_markers_auto_off(self):
+        self.setUp(markers='AUTO', isatty=False)
+        self._write_marker()
+        self._write_marker('FAIL')
+        self._verify()
+
     def _write_marker(self, status='PASS', count=1):
         for i in range(count):
             self.monitor.start_keyword(Stub())
@@ -81,17 +98,15 @@ class MessageStub(object):
 
 class StreamStub(object):
 
-    def __init__(self):
+    def __init__(self, isatty=True):
         self.buffer = []
+        self.isatty = lambda: isatty
 
     def write(self, msg):
         self.buffer.append(msg)
 
     def flush(self):
         pass
-
-    def isatty(self):
-        return True
 
     def __str__(self):
         return ''.join(self.buffer).rsplit('\r')[-1]
