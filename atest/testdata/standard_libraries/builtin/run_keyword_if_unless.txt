@@ -21,9 +21,57 @@ Run Keyword With ELSE
     Run Keyword If    ${False}    Non Existing    ${ne1}    ${ne2}    ${ne3}
     ...    ELSE    Log    ${EXECUTED}
 
+Only first ELSE is significant
+   ${msg} =    Run Keyword If    ${False}    Fail
+   ...    ELSE    Catenate    ${EXECUTED}    ELSE    Fail
+   Should Be Equal    ${msg}    ${EXECUTED} ELSE Fail
+
+Run Keyword With ELSE IF
+    Run Keyword If    ${True}     Log     ${EXECUTED}
+    ...    ELSE IF    ${True}     Fail    Should not go here
+    Run Keyword If    ${False}    Fail
+    ...    ELSE IF    ${True}     Log    ${EXECUTED}
+
+Run Keyword with ELSE IF and ELSE
+    Run Keyword If    ${False}    Fail
+    ...    ELSE IF    ${True}     Log    ${EXECUTED}
+    ...    ELSE       Fail
+    Run Keyword If    ${False}    Fail
+    ...    ELSE IF    ${False}    Fail
+    ...    ELSE       Log    ${EXECUTED}
+
+Run Keyword with multiple ELSE IF
+    Run Keyword If    ${False}    Fail
+    ...    ELSE IF    ${False}    Fail
+    ...    ELSE IF    ${False}    Fail
+    ...    ELSE IF    ${False}    Fail
+    ...    ELSE IF    ${True}     Log    ${EXECUTED}
+    ...    ELSE       Fail
+    Run Keyword If    ${False}    Fail
+    ...    ELSE IF    ${False}    Fail
+    ...    ELSE IF    ${True}     Log    ${EXECUTED}
+    ...    ELSE IF    ${False}    Fail
+    ...    ELSE IF    ${True}     Fail
+    ...    ELSE       Fail
+    Run Keyword If    ${False}    Fail
+    ...    ELSE IF    ${False}    Fail
+    ...    ELSE IF    ${False}    Fail
+    ...    ELSE IF    ${False}    Fail
+    ...    ELSE IF    ${False}    Fail
+    ...    ELSE       Log    ${EXECUTED}
+
+ELSE before ELSE IF is ignored
+    Run Keyword If    ${False}    Fail
+    ...    ELSE       Fail
+    ...    ELSE IF    ${True}     Log    ${EXECUTED}
+
 ELSE and ELSE IF must be upper case
     Run Keyword If    ${True}    Log Many    else    ${EXECUTED}
     Run Keyword If    ${True}    Log Many    ELSE iF   ${EXECUTED}
+
+ELSE and ELSE IF must be whitespace sensitive
+    Run Keyword If    ${True}    Log Many    EL SE    ${EXECUTED}
+    Run Keyword If    ${True}    Log Many    ELSEIF   ${EXECUTED}
 
 Run Keyword With Escaped ELSE and ELSE IF
     Run Keyword If    ${True}    Log Many    \ELSE    ${EXECUTED}
