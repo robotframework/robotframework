@@ -241,7 +241,7 @@ Options
                           off:  never use colors
                           Note that colors do not work with Jython on Windows.
  -R --monitormarkers auto|on|off  Show `.` (success) or `F` (failure) on
-                          console when a top level keyword in a test case ends.
+                          console when top level keywords in test cases end.
                           Values have same semantics as with --monitorcolors.
  -P --pythonpath path *   Additional locations (directories, ZIPs, JARs) where
                           to search test libraries from when they are imported.
