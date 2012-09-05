@@ -1111,13 +1111,33 @@ class _RunKeyword:
         True` keyword, and `name` and `*args` have same semantics as with
         `Run Keyword`.
 
-        Example, a simple if/else construct:
+        Example, a simple if-construct:
         | ${status} | ${value} = | Run Keyword And Ignore Error | My Keyword |
         | Run Keyword If     | '${status}' == 'PASS' | Some Action    |
         | Run Keyword Unless | '${status}' == 'PASS' | Another Action |
 
         In this example, only either 'Some Action' or 'Another Action' is
         executed, based on the status of 'My Keyword'.
+
+        Starting from Robot version 2.4.7 one can optionally define
+        ELSE IF- and ELSE-branches as part of `Run Keyword If`. Either one of the
+        optional branches can be omitted. However, if specified, ELSE IF must be defined
+        with a `condition` and a keyword. Similarly, ELSE mut be defined with a keyword to be
+        run.
+
+        Given previous example, if-construct can also be defined like this:
+        | ${status} | ${value} = | Run Keyword And Ignore Error | My Keyword |
+        | Run Keyword If | '${status}' == 'PASS' | Some Action | ELSE | Another Action |
+
+        This example is equivalent with the first one.
+
+        One can define multiple ELSE IF-branches:
+        | ${status} | ${value} = | Run Keyword And Ignore Error | My Keyword |
+        | Run Keyword If | '${status}' == 'PASS' | Some Action | ELSE IF |
+        | ... | '${status}' == 'TIMEOUT' | Another Action | ELSE IF | '${status}' == 'Fail' |
+        | ... | Yet Another Action | ELSE | Handle General Error |
+
+        In this example, only one of the keywords is executed based on the status of `My Keyword`.
         """
         args = list(args)
         branch = None
