@@ -1103,7 +1103,6 @@ class _RunKeyword:
         if errors:
             raise ExecutionFailures(errors)
 
-
     def run_keyword_if(self, condition, name, *args):
         """Runs the given keyword with the given arguments, if `condition` is true.
 
@@ -1139,21 +1138,22 @@ class _RunKeyword:
 
         In this example, only one of the keywords is executed based on the status of `My Keyword`.
         """
-        if "ELSE IF" in args:
-            args, branch = self._split_to_branch(args, "ELSE IF", 2,
-                                                 'condition and keyword')
-            branch_keyword = self.run_keyword_if
-        elif "ELSE" in args:
-            args, branch = self._split_to_branch(args, "ELSE", 1, 'keyword')
-            branch_keyword = self.run_keyword
-        else:
-            branch = branch_keyword = None
+        args, branch = self._split_elif_or_else_branch(args)
         if self._is_true(condition):
             return self.run_keyword(name, *args)
-        elif branch:
-            return branch_keyword(*branch)
+        return branch()
 
-    def _split_to_branch(self, args, control_word, required, error):
+    def _split_elif_or_else_branch(self, args):
+        if "ELSE IF" in args:
+            args, branch = self._split_branch(args, "ELSE IF", 2,
+                                              'condition and keyword')
+            return args, lambda: self.run_keyword_if(*branch)
+        if "ELSE" in args:
+            args, branch = self._split_branch(args, "ELSE", 1, 'keyword')
+            return args, lambda: self.run_keyword(*branch)
+        return args, lambda: None
+
+    def _split_branch(self, args, control_word, required, error):
         args = list(args)
         index = args.index(control_word)
         branch = self._variables.replace_from_beginning(required, args[index+1:])
