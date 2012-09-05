@@ -1119,7 +1119,9 @@ class _RunKeyword:
         In this example, only either 'Some Action' or 'Another Action' is
         executed, based on the status of 'My Keyword'.
         """
-        args, branch = list(args), None
+        args = list(args)
+        branch = None
+        condition = self._is_true(condition)
         if "ELSE IF" in args:
             args, branch = self._split_to_branch("ELSE IF", args)
             return self._handle_elif(condition, name, args, branch)
@@ -1127,7 +1129,7 @@ class _RunKeyword:
             args, branch = self._split_to_branch("ELSE", args)
             if not branch:
                 raise DataError('ELSE requires keyword.')
-        if self._is_true(condition):
+        if condition:
             return self.run_keyword(name, *args)
         elif branch:
             return self.run_keyword(*branch)
@@ -1135,7 +1137,7 @@ class _RunKeyword:
     def _handle_elif(self, condition, name, args, branch):
         if len(branch) < 2:
             raise DataError('ELSE IF requires condition and keyword.')
-        if self._is_true(condition):
+        if condition:
             return self.run_keyword(name, *args)
         condition = self._variables.replace_scalar(branch.pop(0))
         return self.run_keyword_if(condition, *branch)
