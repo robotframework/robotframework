@@ -26,9 +26,21 @@ Run Keyword With ELSE
     Check Log Message    ${tc.kws[1].kws[0].msgs[0]}    ${EXECUTED}
     Check Log Message    ${tc.kws[3].kws[0].msgs[0]}    ${EXECUTED}
 
+Keyword Name in ELSE as variable
+    Check Test Case    ${TEST NAME}
+
+Keyword Name in ELSE as list variable
+    Check Test Case    ${TEST NAME}
+
+Keyword Name in ELSE as non-existing variable
+    [Template]    Check Test Case
+    ${TEST NAME} 1
+    ${TEST NAME} 2
+
 ELSE without keyword is invalid
-    Check Test Case    ${TEST NAME} 1
-    Check Test Case    ${TEST NAME} 2
+    [Template]    Check Test Case
+    ${TEST NAME} 1
+    ${TEST NAME} 2
 
 Only first ELSE is significant
     Check Test Case    ${TEST NAME}
@@ -47,6 +59,18 @@ Run Keyword with multiple ELSE IF
     Check Log Message    ${tc.kws[0].kws[0].msgs[0]}    ${EXECUTED}
     Check Log Message    ${tc.kws[1].kws[0].msgs[0]}    ${EXECUTED}
     Check Log Message    ${tc.kws[2].kws[0].msgs[0]}    ${EXECUTED}
+
+Keyword Name in ELSE IF as variable
+    Check Test Case    ${TEST NAME}
+
+Keyword Name in ELSE IF as list variable
+    Check Test Case    ${TEST NAME}
+
+Keyword Name in ELSE IF as non-existing variable
+    [Template]    Check Test Case
+    ${TEST NAME} 1
+    ${TEST NAME} 2
+    ${TEST NAME} 3
 
 ELSE IF without keyword is invalid
     [Template]    Check Test Case

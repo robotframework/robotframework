@@ -1139,32 +1139,28 @@ class _RunKeyword:
 
         In this example, only one of the keywords is executed based on the status of `My Keyword`.
         """
-        args = list(args)
-        branch = None
-        condition = self._is_true(condition)
         if "ELSE IF" in args:
-            args, branch = self._split_to_branch("ELSE IF", args)
-            return self._handle_elif(condition, name, args, branch)
-        if "ELSE" in args:
-            args, branch = self._split_to_branch("ELSE", args)
-            if not branch:
-                raise DataError('ELSE requires keyword.')
-        if condition:
+            args, branch = self._split_to_branch(args, "ELSE IF", 2,
+                                                 'condition and keyword')
+            branch_keyword = self.run_keyword_if
+        elif "ELSE" in args:
+            args, branch = self._split_to_branch(args, "ELSE", 1, 'keyword')
+            branch_keyword = self.run_keyword
+        else:
+            branch = branch_keyword = None
+        if self._is_true(condition):
             return self.run_keyword(name, *args)
         elif branch:
-            return self.run_keyword(*branch)
+            return branch_keyword(*branch)
 
-    def _handle_elif(self, condition, name, args, branch):
-        if len(branch) < 2:
-            raise DataError('ELSE IF requires condition and keyword.')
-        if condition:
-            return self.run_keyword(name, *args)
-        condition = self._variables.replace_scalar(branch.pop(0))
-        return self.run_keyword_if(condition, *branch)
-
-    def _split_to_branch(self, control_word, args):
+    def _split_to_branch(self, args, control_word, required, error):
+        args = list(args)
         index = args.index(control_word)
-        return args[:index], args[index+1:]
+        branch = self._variables.replace_from_beginning(required, args[index+1:])
+        args = args[:index]
+        if len(branch) < required:
+            raise DataError('%s requires %s.' % (control_word, error))
+        return args, branch
 
     def run_keyword_unless(self, condition, name, *args):
         """Runs the given keyword with the given arguments, if `condition` is false.

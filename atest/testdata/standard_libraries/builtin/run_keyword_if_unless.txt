@@ -2,6 +2,9 @@
 ${EXECUTED}             This is executed
 @{ARGS WITH ELSE}       ELSE    ${EXECUTED}
 @{ARGS WITH ELSE IF}    ELSE IF    ${EXECUTED}
+${CATENATE}             Catenate
+${FAIL}                 Fail
+@{CATENATE STUFF}       Catenate    1    2    \${escaped}    c:\\temp
 
 *** Test Case ***
 Run Keyword If With True Expression
@@ -20,6 +23,26 @@ Run Keyword With ELSE
     Run Keyword If    ${True}    Log Many    1    2    3    4    ELSE    Fail
     Run Keyword If    ${False}    Non Existing    ${ne1}    ${ne2}    ${ne3}
     ...    ELSE    Log    ${EXECUTED}
+
+Keyword Name in ELSE as variable
+    ${ret} =    Run Keyword If    ${1}    ${CATENATE}    1    2    ELSE    ${FAIL}
+    Should Be Equal    ${ret}    1 2
+    ${ret} =    Run Keyword If    ${0}    ${FAIL}    ELSE    ${CATENATE}    a    b
+    Should Be Equal    ${ret}    a b
+
+Keyword Name in ELSE as list variable
+    ${ret} =    Run Keyword If    ${0}    ${FAIL}    ELSE    @{CATENATE STUFF}
+    Should Be Equal    ${ret}    1 2 \${escaped} c:\\temp
+    ${ret} =    Run Keyword If    ${0}    ${FAIL}    ELSE    @{EMPTY}    @{CATENATE STUFF}    foo
+    Should Be Equal    ${ret}    1 2 \${escaped} c:\\temp foo
+
+Keyword Name in ELSE as non-existing variable 1
+    [Documentation]    FAIL Non-existing variable '\${NON EXISTING}'.
+    Run Keyword If    ${1}    ${NON EXISTING}    ELSE    ${FAIL}
+
+Keyword Name in ELSE as non-existing variable 2
+    [Documentation]    FAIL Non-existing variable '\${NON EXISTING}'.
+    Run Keyword If    ${0}    ${FAIL}    ELSE    ${NON EXISTING}
 
 ELSE without keyword is invalid 1
     [Documentation]    FAIL ELSE requires keyword.
@@ -67,6 +90,35 @@ Run Keyword with multiple ELSE IF
     ...    ELSE IF    ${False}    Fail
     ...    ELSE IF    ${False}    Fail
     ...    ELSE       Log    ${EXECUTED}
+
+Keyword Name in ELSE IF as variable
+    ${ret} =    Run Keyword If    ${True}    ${CATENATE}    1    2
+    ...    ELSE IF    ${True}    ${FAIL}
+    Should Be Equal    ${ret}    1 2
+    ${ret} =    Run Keyword If    ${False}    ${FAIL}
+    ...    ELSE IF    ${True}    ${CATENATE}    1    2
+    Should Be Equal    ${ret}    1 2
+    ${ret} =    Run Keyword If    ${False}    ${FAIL}
+    ...    ELSE IF    ${False}    ${CATENATE}    1    2
+    Should Be Equal    ${ret}    ${None}
+
+Keyword Name in ELSE IF as list variable
+    ${ret} =    Run Keyword If    ${0}    ${FAIL}    ELSE IF    ${1}   @{CATENATE STUFF}
+    Should Be Equal    ${ret}    1 2 \${escaped} c:\\temp
+    ${ret} =    Run Keyword If    ${0}    ${FAIL}    ELSE IF    ${1}   @{EMPTY}    @{CATENATE STUFF}    foo
+    Should Be Equal    ${ret}    1 2 \${escaped} c:\\temp foo
+
+Keyword Name in ELSE IF as non-existing variable 1
+    [Documentation]    FAIL Non-existing variable '\${NON EXISTING}'.
+    Run Keyword If    ${1}    ${NON EXISTING}    ELSE IF    ${1}    ${FAIL}
+
+Keyword Name in ELSE If as non-existing variable 2
+    [Documentation]    FAIL Non-existing variable '\${NON EXISTING}'.
+    Run Keyword If    ${0}    ${FAIL}    ELSE IF    ${1}    ${NON EXISTING}
+
+Keyword Name in ELSE If as non-existing variable 3
+    [Documentation]    FAIL Non-existing variable '\${NON EXISTING}'.
+    Run Keyword If    ${0}    ${FAIL}    ELSE IF    ${0}    ${NON EXISTING}
 
 ELSE IF without keyword is invalid 1
     [Documentation]    FAIL ELSE IF requires condition and keyword.
