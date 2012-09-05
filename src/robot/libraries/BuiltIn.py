@@ -1110,33 +1110,39 @@ class _RunKeyword:
         True` keyword, and `name` and `*args` have same semantics as with
         `Run Keyword`.
 
-        Example, a simple if-construct:
-        | ${status} | ${value} = | Run Keyword And Ignore Error | My Keyword |
-        | Run Keyword If     | '${status}' == 'PASS' | Some Action    |
-        | Run Keyword Unless | '${status}' == 'PASS' | Another Action |
+        Example, a simple if/else construct:
+        | ${status} | ${value} = | `Run Keyword And Ignore Error` | `My Keyword` |
+        | `Run Keyword If`     | '${status}' == 'PASS' | `Some Action`    | arg |
+        | `Run Keyword Unless` | '${status}' == 'PASS' | `Another Action` |
 
-        In this example, only either 'Some Action' or 'Another Action' is
-        executed, based on the status of 'My Keyword'.
+        In this example, only either `Some Action` or `Another Action` is
+        executed, based on the status of `My Keyword`.
 
-        Starting from Robot version 2.4.7 one can optionally define
-        ELSE IF- and ELSE-branches as part of `Run Keyword If`. Either one of the
-        optional branches can be omitted. However, if specified, ELSE IF must be defined
-        with a `condition` and a keyword. Similarly, ELSE mut be defined with a keyword to be
-        run.
+        Starting from Robot version 2.7.4, this keyword supports also optional
+        ELSE and ELSE IF branches. Both of these are defined in `*args` and must
+        use exactly format `ELSE` or `ELSE IF`, respectively. ELSE branches
+        must contain first the name of the keyword to execute and then its
+        possible arguments. ELSE IF branches must first contain a condition,
+        like the first argument to this keyword, and then the keyword to execute
+        and its possible arguments. It is possible to have ELSE branch after
+        ELSE IF and to have multiple ELSE IF branches.
 
-        Given previous example, if-construct can also be defined like this:
-        | ${status} | ${value} = | Run Keyword And Ignore Error | My Keyword |
-        | Run Keyword If | '${status}' == 'PASS' | Some Action | ELSE | Another Action |
+        Given previous example, if/else construct can also be created like this:
+        | ${status} | ${value} = | `Run Keyword And Ignore Error` | My Keyword |
+        | `Run Keyword If` | '${status}' == 'PASS' | `Some Action` | arg | ELSE | `Another Action` |
 
-        This example is equivalent with the first one.
+        Using ELSE and/or ELSE IF branches is especially handy if you are
+        interested in the return value. This is illustrated by the example
+        below that also demonstrates using ELSE IF and ELSE together:
 
-        One can define multiple ELSE IF-branches:
-        | ${status} | ${value} = | Run Keyword And Ignore Error | My Keyword |
-        | Run Keyword If | '${status}' == 'PASS' | Some Action | ELSE IF |
-        | ... | '${status}' == 'TIMEOUT' | Another Action | ELSE IF | '${status}' == 'Fail' |
-        | ... | Yet Another Action | ELSE | Handle General Error |
+        | ${result} = | `Run Keyword If` | ${rc} == 0  | `Zero return value` |
+        | ...         | ELSE IF          | 0 < ${rc} < 42 | `Normal return value` |
+        | ...         | ELSE IF          | ${rc} < 0      | `Negative return value` | ${rc} | arg2 |
+        | ...         | ELSE             | `Abnormal return value` | ${rc} |
 
-        In this example, only one of the keywords is executed based on the status of `My Keyword`.
+        If you need to use literal ELSE and ELSE IF strings as arguments to
+        this keyword, you can escape them with a backslash like `\\ELSE` and
+        `\\ELSE IF`.
         """
         args, branch = self._split_elif_or_else_branch(args)
         if self._is_true(condition):
@@ -1144,23 +1150,22 @@ class _RunKeyword:
         return branch()
 
     def _split_elif_or_else_branch(self, args):
-        if "ELSE IF" in args:
-            args, branch = self._split_branch(args, "ELSE IF", 2,
+        if 'ELSE IF' in args:
+            args, branch = self._split_branch(args, 'ELSE IF', 2,
                                               'condition and keyword')
             return args, lambda: self.run_keyword_if(*branch)
-        if "ELSE" in args:
-            args, branch = self._split_branch(args, "ELSE", 1, 'keyword')
+        if 'ELSE' in args:
+            args, branch = self._split_branch(args, 'ELSE', 1, 'keyword')
             return args, lambda: self.run_keyword(*branch)
         return args, lambda: None
 
-    def _split_branch(self, args, control_word, required, error):
+    def _split_branch(self, args, control_word, required, required_error):
         args = list(args)
         index = args.index(control_word)
         branch = self._variables.replace_from_beginning(required, args[index+1:])
-        args = args[:index]
         if len(branch) < required:
-            raise DataError('%s requires %s.' % (control_word, error))
-        return args, branch
+            raise DataError('%s requires %s.' % (control_word, required_error))
+        return args[:index], branch
 
     def run_keyword_unless(self, condition, name, *args):
         """Runs the given keyword with the given arguments, if `condition` is false.
