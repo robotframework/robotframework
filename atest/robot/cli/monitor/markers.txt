@@ -53,8 +53,16 @@ Warnings Are Shown Correctly
 Errors Are Shown Correctly
     Check Stderr Contains    [ ERROR ] Error in file
 
-Markers Are Disabled
-    Run Tests Without Processing Output    -K OFF    ${TEST FILE}
+Markers Can Be Disabled
+    Run Tests And Verify That Markers Are Disabled    -K OFF
+
+Markers Are Disabled By Default When Redirecting Output
+    Run Tests And Verify That Markers Are Disabled    --MonitorMarkers AuTo
+
+*** Keywords ***
+Run Tests And Verify That Markers Are Disabled
+    [Arguments]    ${opt}
+    Run Tests Without Processing Output    ${opt}    ${TEST FILE}
     Check Stdout Contains    SEPARATOR=\n
     ...    Few Pass Markers${SPACE * 54}| PASS |
     ...    ${SEPARATOR * 78}
