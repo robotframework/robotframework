@@ -240,7 +240,7 @@ Options
                           on:   always use colors
                           off:  never use colors
                           Note that colors do not work with Jython on Windows.
- -R --monitormarkers auto|on|off  Show `.` (success) or `F` (failure) on
+ -K --monitormarkers auto|on|off  Show `.` (success) or `F` (failure) on
                           console when top level keywords in test cases end.
                           Values have same semantics as with --monitorcolors.
  -P --pythonpath path *   Additional locations (directories, ZIPs, JARs) where
