@@ -63,7 +63,9 @@ Command line options for test execution
                           Valid modes are `ExitOnFailure`_, `SkipTeardownOnExit`_,
                           `DryRun`_, and `Random`_:<what>.
   -W, --monitorwidth <chars>  `Sets the width`_ of the console output.
-  -C, --monitorcolors <on|off|force>  `Specifies are colors`_ used in the console.
+  -C, --monitorcolors <on|off|force>  `Specifies are colors`_ used on the console.
+  -K, --monitormarkers <on|off|force>  Specifies are `console markers`_
+                          (:cli:`.` and :cli:`F`) used.
   -P, --pythonpath <path>   Additional locations where to `search test libraries`_ from when they are imported.
   -E, --escape <what:with>   `Escapes characters`_ that are problematic in the console.
   -A, --argumentfile <path>   A text file to `read more arguments`_ from.

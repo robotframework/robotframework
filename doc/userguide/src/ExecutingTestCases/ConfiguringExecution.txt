@@ -392,17 +392,15 @@ Console colors
 
 The :opt:`--monitorcolors (-C)` option is used to control whether
 colors should be used in the console output. Colors should work on all
-other platforms except for Windows when using Jython. This option has
-following case-insensitive values:
+other platforms except for Windows when using Jython. This option supports
+the following case-insensitive values:
 
 :opt:`auto`
-    Colors are enabled when output is written into the console but
-    not when it is redirected into a file. This is the default and there
-    is rarely need to change it.
+    Colors are enabled when outputs are written into the console, but not
+    when they are redirected into a file or elsewhere. This is the default.
 
 :opt:`on`
-    Colors are used also when output is redirected into a file.
-    Does not have effect on Windows.
+    Colors are used also when outputs are redirected. Does not work on Windows.
 
 :opt:`off`
     Colors are disabled.
@@ -413,6 +411,28 @@ following case-insensitive values:
 
 .. note:: Support for colors on Windows and the :opt:`auto` mode are
           new features in Robot Framework 2.5.6.
+
+Console markers
+'''''''''''''''
+
+Starting from Robot Framework 2.7, special markers :cli:`.` (success) and
+:cli:`F` (failure) are shown on the console when top level keywords in
+test cases end. The markers allow following the test execution in high level,
+and they are erased when test cases end.
+
+Starting from Robot Framework 2.7.4, it is possible to configure when markers
+are used with :opt:`--monitormarkers (-K)` option. It supports the following
+case-insensitive values:
+
+:opt:`auto`
+    Markers are enabled when the standard output is written into the console,
+    but not when it is redirected into a file or elsewhere. This is the default.
+
+:opt:`on`
+    Markers are always used.
+
+:opt:`off`
+    Markers are disabled.
 
 Setting listeners
 ~~~~~~~~~~~~~~~~~
