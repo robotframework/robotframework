@@ -43,7 +43,12 @@ Run Tests Without Processing Output
 Run Tests Helper
     [Arguments]  ${user options}  @{data list}
     ${data string} =  Set Variables And Get Datasources  @{data list}
-    ${options} =  Catenate  ${user options}  --variable interpreter:${INTERPRETER}  --pythonpath ${LIBPATH1}  --pythonpath ${LIBPATH2}
+    ${options} =  Catenate
+    ...    ${user options}
+    ...    --variable interpreter:${INTERPRETER}
+    ...    --pythonpath ${LIBPATH1}
+    ...    --pythonpath ${LIBPATH2}
+    ...    --MonitorMarkers OFF    # AUTO (default) doesn't work with IronPython
     Run Helper  ${ROBOT}  ${options}  ${data string}
 
 Run Rebot
