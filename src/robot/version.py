@@ -2,9 +2,9 @@
 
 import sys
 
-VERSION = 'trunk'
-RELEASE = '20120726'
-TIMESTAMP = '20120726-160415'
+VERSION = '2.7.4'
+RELEASE = 'final'
+TIMESTAMP = '20120906-105507'
 
 def get_version(sep=' '):
     if RELEASE == 'final':

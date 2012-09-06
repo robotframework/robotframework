@@ -105,6 +105,14 @@ libraries Package
     :undoc-members:
     :show-inheritance:
 
+:mod:`XML` Module
+-----------------
+
+.. automodule:: robot.libraries.XML
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 :mod:`dialogs_jy` Module
 ------------------------
 

@@ -9,6 +9,14 @@ parsing Package
     :undoc-members:
     :show-inheritance:
 
+:mod:`comments` Module
+----------------------
+
+.. automodule:: robot.parsing.comments
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 :mod:`datarow` Module
 ---------------------
 
