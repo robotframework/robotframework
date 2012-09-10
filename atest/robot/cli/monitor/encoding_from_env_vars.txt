@@ -1,5 +1,5 @@
 *** Settings ***
-Force Tags   regression   pybot  jybot  non windows
+Force Tags   regression   pybot  jybot
 Resource     monitor_resource.txt
 
 *** Variables ***
@@ -10,8 +10,9 @@ ${STDERR FILE}  ${TEMPDIR}/redirect_stderr.txt
 *** Test Cases ***
 
 Invalid Encoding In Environment Variables
-  ${stdout}  ${stderr} =  Run Some Tests With Std Streams Redirected
-  Should Contain   ${stdout}  Pass And Fail :: Some tests here
+    [Tags]  x-exclude-on-windows
+    ${stdout}  ${stderr} =  Run Some Tests With Std Streams Redirected
+    Should Contain   ${stdout}  Pass And Fail :: Some tests here
 
 
 *** Keywords ***

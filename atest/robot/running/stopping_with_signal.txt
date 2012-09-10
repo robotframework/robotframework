@@ -15,7 +15,7 @@ SIGINT Signal Should Stop Test Execution Gracefully
     Check Test Cases Have Failed Correctly
 
 SIGTERM Signal Should Stop Test Execution Gracefully
-    [tags]  non windows  pybot  jybot
+    [Tags]  pybot  jybot  x-exclude-on-windows
     Start And Send Signal  without_any_timeout.txt  One Signal  SIGTERM
     Process Output For Graceful Shutdown
     Check Test Cases Have Failed Correctly
@@ -46,7 +46,7 @@ Two SIGINT Signals Should Stop Test Execution Forcefully
     Check Tests Have Been Forced To Shutdown
 
 Two SIGTERM Signals Should Stop Test Execution Forcefully
-    [tags]  non windows  pybot  jybot
+    [Tags]  pybot  jybot  x-exclude-on-windows
     Start And Send Signal  without_any_timeout.txt  Two Signals  SIGTERM  2s
     Check Tests Have Been Forced To Shutdown
 
@@ -83,7 +83,7 @@ One Signal Should Stop Test Execution Gracefully And Skip Teardowns With Runmode
 
 *** Keywords ***
 Start And Send Signal
-    [arguments]  ${testcase file}  ${signal method}  ${signal}  ${teardown sleep}=0s  ${runmode}=normal
+    [Arguments]  ${testcase file}  ${signal method}  ${signal}  ${teardown sleep}=0s  ${runmode}=normal
     ${jython} =  Running On Jython  ${INTERPRETER}
     ${testfile} =  Set Variable If  ${jython}  robot_signal_test_jython.txt  robot_signal_test_python.txt
     Remove File  ${TEMPDIR}/${testfile}

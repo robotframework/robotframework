@@ -70,9 +70,9 @@ def atests(interpreter, *params):
         'INCLUDE': 'jybot' if 'jython' in basename(interpreter) else 'pybot'
     }
     if os.name == 'nt':
-        args += ' --exclude nonwindows'
+        args += ' --exclude x-exclude-on-windows'
     if sys.platform == 'darwin' and 'python' in basename(interpreter):
-        args += ' --exclude nonmacpython'
+        args += ' --exclude x-exclude-on-osx-python'
     command = '%s %s %s %s' % (sys.executable, RUNNER, args, ' '.join(params))
     print 'Running command\n%s\n' % command
     sys.stdout.flush()

@@ -19,7 +19,7 @@ Non-ASCII file name with ordinals < 255
     Check Test Case    ${TESTNAME}
 
 Non-ASCII file name with ordinals > 255
-    [Tags]    x-fails-on-jython/windows
+    [Tags]    x-fails-on-windows-jython
     Check Test Case    ${TESTNAME}
 
 ASCII only directory name
@@ -32,11 +32,11 @@ Non-ASCII directory name with ordinals < 255
     Check Test Case    ${TESTNAME}
 
 Non-ASCII directory name with ordinals > 255
-    [Tags]    x-fails-on-jython/windows
+    [Tags]    x-fails-on-windows-jython
     Check Test Case    ${TESTNAME}
 
 *** Keywords ***
 Make Tests Failing On Jython/Windows Non Critical If Using That Combo
-    Run Keyword If    'x-fails-on-jython/windows' in @{TEST TAGS}
+    Run Keyword If    'x-fails-on-windows-jython' in @{TEST TAGS}
     ...    Run Keyword If    'jython' in '${INTERPRETER}' and '${:}' == ';'
     ...    Remove Tags    regression
