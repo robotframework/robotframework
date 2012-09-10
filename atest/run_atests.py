@@ -61,6 +61,7 @@ ARGUMENTS = ' '.join('''
 --TagStatCombine pybotNOTjybot
 --TagStatExclude pybot
 --TagStatExclude jybot
+--TagStatExclude x-*
 '''.strip().splitlines())
 
 
