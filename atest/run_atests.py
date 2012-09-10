@@ -20,22 +20,16 @@ $ atest/run_atests.py python --test example atest/robot
 $ atest/run_atests.py /usr/bin/jython25 atest/robot/tags/tag_doc.txt
 """
 
+import os
 import signal
 import subprocess
-import os.path
-import shutil
-import glob
 import sys
-from zipfile import ZipFile, ZIP_DEFLATED
+from os.path import abspath, basename, dirname, isdir, join, normpath
+from shutil import rmtree
 
-CURDIR = os.path.dirname(os.path.abspath(__file__))
-RESULTDIR = os.path.join(CURDIR, 'results')
-
-sys.path.insert(0, os.path.join(CURDIR, '..', 'src'))
-
-import robot
-
-
+CURDIR = dirname(abspath(__file__))
+RUNNER = normpath(join(CURDIR, '..', 'src', 'robot', 'run.py'))
+RESULTS = join(CURDIR, 'results')
 ARGUMENTS = ' '.join('''
 --doc RobotSPFrameworkSPacceptanceSPtests
 --reporttitle RobotSPFrameworkSPTestSPReport
@@ -45,7 +39,7 @@ ARGUMENTS = ' '.join('''
 --variable INTERPRETER:%(INTERPRETER)s
 --variable STANDALONE_JYTHON:NO
 --pythonpath %(PYTHONPATH)s
---include %(RUNNER)s
+--include %(INCLUDE)s
 --outputdir %(OUTPUTDIR)s
 --output output.xml
 --report report.html
@@ -62,51 +56,34 @@ ARGUMENTS = ' '.join('''
 --TagStatExclude pybot
 --TagStatExclude jybot
 --TagStatExclude x-*
-'''.strip().splitlines())
+'''.strip().split())
 
 
 def atests(interpreter, *params):
-    if os.path.isdir(RESULTDIR):
-        shutil.rmtree(RESULTDIR)
-    runner = ('jython' in os.path.basename(interpreter) and 'jybot'
-                   or 'pybot')
+    if isdir(RESULTS):
+        rmtree(RESULTS)
     args = ARGUMENTS % {
-        'PYTHONPATH' : os.path.join(CURDIR, 'resources'),
-        'OUTPUTDIR' : RESULTDIR,
+        'PYTHONPATH' : join(CURDIR, 'resources'),
+        'OUTPUTDIR' : RESULTS,
         'INTERPRETER': interpreter,
         'PLATFORM': sys.platform,
-        'RUNNER': runner
-        }
+        'INCLUDE': 'jybot' if 'jython' in basename(interpreter) else 'pybot'
+    }
     if os.name == 'nt':
         args += ' --exclude nonwindows'
-    if sys.platform == 'darwin' and runner == 'pybot':
+    if sys.platform == 'darwin' and 'python' in basename(interpreter):
         args += ' --exclude nonmacpython'
-    runner = os.path.join(os.path.dirname(robot.__file__), 'run.py')
-    command = '%s %s %s %s' % (sys.executable, runner, args, ' '.join(params))
+    command = '%s %s %s %s' % (sys.executable, RUNNER, args, ' '.join(params))
     print 'Running command\n%s\n' % command
     sys.stdout.flush()
     signal.signal(signal.SIGINT, signal.SIG_IGN)
     return subprocess.call(command.split())
 
 
-def buildbot(interpreter, *params):
-    params = '--log NONE --report NONE --SplitOutputs 1'.split() + list(params)
-    rc = atests(interpreter, *params)
-    zippath = os.path.join(RESULTDIR, 'outputs.zip')
-    zipfile = ZipFile(zippath, 'w', compression=ZIP_DEFLATED)
-    for output in glob.glob(os.path.join(RESULTDIR, '*.xml')):
-        zipfile.write(output, os.path.basename(output))
-    zipfile.close()
-    print 'Archive:', zippath
-    return rc
-
-
 if __name__ == '__main__':
     if len(sys.argv) == 1 or '--help' in sys.argv:
         print __doc__
         rc = 251
-    elif sys.argv[1] == 'buildbot':
-        rc = buildbot(*sys.argv[2:])
     else:
         rc = atests(*sys.argv[1:])
     sys.exit(rc)
