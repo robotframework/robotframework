@@ -5,7 +5,7 @@ Resource        atest_resource.txt
 
 *** Variables ***
 ${TESTFILE}   ${TEMPDIR}${/}robot-os-tests${/}f1.txt
-${NONASCII}   ${TEMPDIR}${/}robot-os-tests${/}ŋöñ-äßçíï
+${NONASCII}   ${TEMPDIR}${/}robot-os-tests${/}nön-äscïï
 ${WITHSPACE}  ${TEMPDIR}${/}robot-os-tests${/}with space
 
 *** Test Cases ***

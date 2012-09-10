@@ -7,7 +7,7 @@ ${BASE}          ${TEMPDIR}${/}robot-os-tests
 ${TESTFILE}      ${BASE}${/}f1.txt
 ${TESTFILE 2}    ${BASE}${/}f2.txt
 ${TESTDIR}       ${BASE}${/}d1
-${NON ASCII}     ${BASE}${/}ŋöñ-äßçíï
+${NON ASCII}     ${BASE}${/}nön-äscïï
 ${WITH SPACE}    ${BASE}${/}with space
 ${ANYDIR}        .*[/\\\\]
 
