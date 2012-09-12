@@ -189,7 +189,7 @@ For With Non Existing Variable
     \  Log  ${nonexisting}
 
 For With Invalid Set
-    [Documentation]  FAIL Cannot assign return values: Expected list-like object, got unicode instead.
+    [Documentation]  FAIL Cannot assign return values: Expected list-like object, got string instead.
     :FOR  ${i}  IN  1  3
     \  ${x}  ${y} =  Set Variable  Only one value
 

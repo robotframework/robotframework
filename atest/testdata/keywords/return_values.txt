@@ -99,7 +99,7 @@ Multiple Scalars With Too Few Values
     ${a}  ${b}  ${c} =  Create List  a  b
 
 Multiple Scalars When No List Returned
-    [Documentation]  FAIL Cannot assign return values: Expected list-like object, got unicode instead.
+    [Documentation]  FAIL Cannot assign return values: Expected list-like object, got string instead.
     ${a}  ${b} =  Set Variable  This is not list
 
 List When No List Returned

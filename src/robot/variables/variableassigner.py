@@ -155,8 +155,8 @@ class ReturnValue(object):
         return zip(scalars, ret) + [(list_, ret[len(scalars):])]
 
     def _raise_expected_list(self, ret):
-        self._raise('Expected list-like object, got %s instead.'
-                    % type(ret).__name__)
+        typ = 'string' if isinstance(ret, basestring) else type(ret).__name__
+        self._raise('Expected list-like object, got %s instead.' % typ)
 
     def _raise_too_few_arguments(self, ret):
         self._raise('Need more values than %d.' % len(ret))
