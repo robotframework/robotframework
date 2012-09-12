@@ -1,0 +1,31 @@
+*** Setting ***
+Documentation     Verify that Quick Start Guide can be executed without problems
+Suite Setup       Set Variables    quickstart
+Suite Teardown    Remove Directory    ${RESULTDIR}    recursively
+Force Tags        regression    pybot
+Resource          atest_resource.txt
+
+*** Variable ***
+${QS DIR}         atest/robot/external/../../../doc/quickstart
+${RESULTDIR}      ${TEMPDIR}${/}rf-quickstart-result
+
+*** Test Case ***
+Execute Quick Start Guide In HTML Format
+    Run Quick Start    quickstart.html
+
+Execute Quick Start Guide In ReST Format
+    Make Test Non-Critical If Docutils Is Not Installed
+    Run Quick Start    quickstart.rst
+
+*** Keyword ***
+Run Quick Start
+    [Arguments]    ${file}
+    ${qs} =    Join Path    ${QS DIR}    ${file}
+    ${rc}    ${output} =    Run and Return RC and Output    ${ROBOT} --monitorcolors off --outputdir ${RESULTDIR} ${qs}
+    Log    ${output}
+    Should Be Equal As Integers    ${rc}    0    Running Quick Start Guide failed with rc ${rc}.    False
+
+Make Test Non-Critical If Docutils Is Not Installed
+    ${error} =    Run    ${INTERPRETER} -c "import docutils"
+    Run Keyword If    """${error}"""    Remove Tags    regression
+    Run Keyword If    """${error}"""    Fail    docutils is not installed
