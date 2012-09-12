@@ -84,12 +84,16 @@ class TestSafeRepr(unittest.TestCase):
         assert_equals(safe_repr(u'foo'), "u'foo'")
         assert_equals(safe_repr(u"f'o'o"), "u\"f'o'o\"")
 
+    def test_unicode_items_in_list_repr_have_u_prefix(self):
+        assert_equals(safe_repr([]), '[]')
+        assert_equals(safe_repr([u'foo']), "[u'foo']")
+        assert_equals(safe_repr([u'a', 1, u"'"]), "[u'a', 1, u\"'\"]")
+
 
 class UnicodeRepr:
 
     def __repr__(self):
         return u'Hyv\xe4'
-
 
 class UnicodeFails(object):
     def __unicode__(self): raise RuntimeError('Failure in __unicode__')
