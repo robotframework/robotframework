@@ -6,9 +6,9 @@ Force Tags      regression  pybot  jybot
 Resource        rebot_cli_resource.txt
 
 *** Variables ***
-${PASSING}         ${TEMPDIR}${/}rebot-testing-passing.xml
-${FAILING}         ${TEMPDIR}${/}rebot-testing-failing.xml
-${REPORT}          ${TEMPDIR}${/}robot-testing-report.html
+${PASSING}         %{TEMPDIR}${/}rebot-testing-passing.xml
+${FAILING}         %{TEMPDIR}${/}rebot-testing-failing.xml
+${REPORT}          %{TEMPDIR}${/}robot-testing-report.html
 ${NO OUTPUTS}      [ ERROR ] No outputs created.\n\nTry --help for usage information.
 
 *** Test Cases ***

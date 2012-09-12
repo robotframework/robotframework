@@ -21,15 +21,16 @@ $ atest/run_atests.py /usr/bin/jython25 atest/robot/tags/tag_doc.txt
 """
 
 import os
+import shutil
 import signal
 import subprocess
 import sys
-from os.path import abspath, basename, dirname, isdir, join, normpath
-from shutil import rmtree
+import tempfile
+from os.path import abspath, basename, dirname, exists, join, normpath, splitext
+
 
 CURDIR = dirname(abspath(__file__))
 RUNNER = normpath(join(CURDIR, '..', 'src', 'robot', 'run.py'))
-RESULTS = join(CURDIR, 'results')
 ARGUMENTS = ' '.join('''
 --doc RobotSPFrameworkSPacceptanceSPtests
 --reporttitle RobotSPFrameworkSPTestSPReport
@@ -60,11 +61,10 @@ ARGUMENTS = ' '.join('''
 
 
 def atests(interpreter, *params):
-    if isdir(RESULTS):
-        rmtree(RESULTS)
+    resultdir, tempdir = _get_result_and_temp_dirs(interpreter)
     args = ARGUMENTS % {
         'PYTHONPATH' : join(CURDIR, 'resources'),
-        'OUTPUTDIR' : RESULTS,
+        'OUTPUTDIR' : resultdir,
         'INTERPRETER': interpreter,
         'PLATFORM': sys.platform,
         'INCLUDE': 'jybot' if 'jython' in basename(interpreter) else 'pybot'
@@ -74,10 +74,29 @@ def atests(interpreter, *params):
     if sys.platform == 'darwin' and 'python' in basename(interpreter):
         args += ' --exclude x-exclude-on-osx-python'
     command = '%s %s %s %s' % (sys.executable, RUNNER, args, ' '.join(params))
+    environ = dict(os.environ, TEMPDIR=tempdir)
     print 'Running command\n%s\n' % command
     sys.stdout.flush()
     signal.signal(signal.SIGINT, signal.SIG_IGN)
-    return subprocess.call(command.split())
+    try:
+        return subprocess.call(command.split(), env=environ)
+    finally:
+        shutil.rmtree(tempdir)
+
+
+def _get_result_and_temp_dirs(interpreter):
+    interpreter = splitext(basename(interpreter))[0]
+    resultdir = join(CURDIR, 'results', interpreter)
+    tempdir = join(tempfile.gettempdir(), 'robottests', interpreter)
+    if os.path.exists(tempdir):
+        print 'Temp directory for this interpreter already exists:', tempdir
+        print 'Cannot run tests simultaneously with same interpreter.'
+        print 'Remove the directory if it is left from an interrupted run.'
+        sys.exit(255)
+    if exists(resultdir):
+        shutil.rmtree(resultdir)
+    os.mkdir(tempdir)
+    return resultdir, tempdir
 
 
 if __name__ == '__main__':
