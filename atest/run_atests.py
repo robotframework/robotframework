@@ -95,7 +95,7 @@ def _get_result_and_temp_dirs(interpreter):
         sys.exit(255)
     if exists(resultdir):
         shutil.rmtree(resultdir)
-    os.mkdir(tempdir)
+    os.makedirs(tempdir)
     return resultdir, tempdir
 
 
