@@ -84,11 +84,6 @@ class TestSafeRepr(unittest.TestCase):
         assert_equals(safe_repr(u'foo'), "u'foo'")
         assert_equals(safe_repr(u"f'o'o"), "u\"f'o'o\"")
 
-    def test_unicode_items_in_lists_tuples_and_dicts_have_u_prefix(self):
-        assert_equals(safe_repr([u'x', u'y']), "[u'x', u'y']")
-        assert_equals(safe_repr((u'x', u'y')), "(u'x', u'y')")
-        assert_equals(safe_repr({u'x': u'y'}), "{u'x': u'y'}")
-
 
 class UnicodeRepr:
 
@@ -105,6 +100,7 @@ class StrFails(object):
 
 class ReprFails(object):
     def __repr__(self): raise RuntimeError('Failure in __repr__')
+
 
 if __name__ == '__main__':
     unittest.main()

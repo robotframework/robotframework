@@ -70,10 +70,6 @@ if sys.platform == 'cli':
     # IronPython omits u prefix from repr(u'foo') but we want to be consistent.
     _safe_repr = safe_repr
     def safe_repr(item):
-        if isinstance(item, (tuple, list)):
-            return type(item)(safe_repr(i) for i in item)
-        if isinstance(item, dict):
-            return dict((safe_repr(k), safe_repr(v)) for k, v in item.items())
         ret = _safe_repr(item)
         if isinstance(item, unicode) and not ret.startswith('u'):
             ret = 'u' + ret
