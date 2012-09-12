@@ -4,7 +4,7 @@ Suite Setup     Create Input File
 Suite Teardown  Remove Temps
 Test Setup      Empty Directory  ${MYOUTDIR}
 Default Tags    regression  jybot  pybot
-Resource        rebot_resource.html
+Resource        rebot_resource.txt
 
 *** Variables ***
 ${TESTDATA_TEST}    misc${/}many_tests.txt

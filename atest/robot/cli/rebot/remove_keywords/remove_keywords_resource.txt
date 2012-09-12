@@ -1,5 +1,5 @@
 *** Settings ***
-Resource          rebot_resource.html
+Resource          rebot_resource.txt
 
 *** Variables ***
 ${INPUTFILE}      %{TEMPDIR}${/}rebot-test-rmkw.xml

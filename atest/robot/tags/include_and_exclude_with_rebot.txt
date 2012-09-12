@@ -3,7 +3,7 @@ Documentation   Testing rebot's include/exclude functionality. Tests also includ
 Suite Setup     Create Output With Robot  ${INPUT FILE}  ${EMPTY}  ${TESTFILE}
 Suite Teardown  Remove File  ${INPUT FILE}
 Default Tags    regression  pybot  jybot
-Resource        rebot_resource.html
+Resource        rebot_resource.txt
 Test Template   Run And Check Include And Exclude
 
 *** Variables ***
