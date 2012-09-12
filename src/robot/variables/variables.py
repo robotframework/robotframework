@@ -44,7 +44,7 @@ class Variables(utils.NormalizedDict):
     (.+?)        # base name (group 1)
     ([^\s\w].+)  # extended part (group 2)
     }$           # "}" and end of the string
-    ''', re.VERBOSE)
+    ''', re.UNICODE|re.VERBOSE)
 
     def __init__(self, identifiers=('$','@','%','&','*')):
         utils.NormalizedDict.__init__(self, ignore=['_'])

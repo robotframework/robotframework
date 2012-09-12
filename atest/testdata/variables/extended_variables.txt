@@ -85,6 +85,12 @@ Testing Extended Var Regexp
     Should Be Equal  ${var.upper}  ${_ V _ A _ R _ . upper ( ) }
     Log Many  So this works ${var.upper()}  but this does not ${var..upper()}
 
+Base name contains non-ASCII characters
+    ${äiti}=  Set Variable    hyvä
+    Should Be Equal    ${äiti.upper()}    HYVÄ
+    ${isä}=  Set Variable    hyvä
+    Should Be Equal    ${isä.upper()}    HYVÄ
+
 Failing When Attribute Does Not exists 1
     [Documentation]  FAIL STARTS: Resolving variable '\${OBJ.nonex}' failed: AttributeError:
     Log  ${OBJ.nonex}

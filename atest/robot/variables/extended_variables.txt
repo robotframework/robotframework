@@ -46,6 +46,9 @@ Failing When Base Name Starts With Existing Variable
 Testing Extended Var Regexp
     Check Test Case  ${TESTNAME}
 
+Base name contains non-ASCII characters
+    Check Test Case  ${TESTNAME}
+
 Failing When Attribute Does Not exists
     Check Test Case  ${TESTNAME} 1
     Check Test Case  ${TESTNAME} 2

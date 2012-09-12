@@ -14,7 +14,7 @@ Library Imports
     Verify Error  Library setting requires a name  Setting
     Verify Error  Importing test library 'NonExistingLibrary' failed: ImportError:  Setting
     Check Test Case  Check Valid Library Import
-    Verify Error  Replacing variables from setting 'Library' failed: Resolving variable '\${unicodeï¿½ï¿½ï¿½}' failed: Non-existing variable '\${unicode}'.  Setting
+    Verify Error  Replacing variables from setting 'Library' failed: Resolving variable '\${unicodeï¿½ï¿½ï¿½}' failed: Non-existing variable '\${unicodeï}'.  Setting
 
 Resource Imports
     Verify Error  Resource file 'non-existing-resource.html' does not exist  Setting
