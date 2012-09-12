@@ -155,9 +155,11 @@ class ReturnValue(object):
         return zip(scalars, ret) + [(list_, ret[len(scalars):])]
 
     def _raise_expected_list(self, ret):
-        raise DataError('Cannot assign return values: Expected list-like '
-                        'object, got %s instead.' % type(ret).__name__)
+        self._raise('Expected list-like object, got %s instead.'
+                    % type(ret).__name__)
 
     def _raise_too_few_arguments(self, ret):
-        raise DataError('Cannot assign return values: Need more values than %d.'
-                        % len(ret))
+        self._raise('Need more values than %d.' % len(ret))
+
+    def _raise(self, error):
+        raise DataError('Cannot assign return values: %s' % error)
