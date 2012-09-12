@@ -1,16 +1,13 @@
 *** Settings ***
-Suite Setup     Set Runners and generate input files
+Suite Setup     Generate input files
 Suite Teardown  Remove input files
 Test Template   Run Rebot and Verify RC
 Force Tags      regression  pybot  jybot
 Resource        rebot_cli_resource.txt
 
 *** Variables ***
-${PASSING}         ${TEMPDIR}/rebot-testing-passing.xml
-${FAILING}         ${TEMPDIR}/rebot-testing-failing.xml
-${MISCDIR}         ${CURDIR}/../../../testdata/misc
-${PASSING TESTS}   ${MISCDIR}/normal.txt
-${FAILING TESTS}   ${MISCDIR}/pass_and_fail.txt
+${PASSING}         ${TEMPDIR}${/}rebot-testing-passing.xml
+${FAILING}         ${TEMPDIR}${/}rebot-testing-failing.xml
 ${REPORT}          ${TEMPDIR}${/}robot-testing-report.html
 ${NO OUTPUTS}      [ ERROR ] No outputs created.\n\nTry --help for usage information.
 
@@ -37,11 +34,10 @@ Error when no output is created
 
 
 *** Keywords ***
-Set runners and generate input files
-    Set runners
-    Run Tests Without Processing Output  ${EMPTY}  ${PASSING TESTS}
+Generate input files
+    Run Tests Without Processing Output  ${EMPTY}  misc/normal.txt
     Move File  ${OUTFILE}  ${PASSING}
-    Run Tests Without Processing Output  ${EMPTY}  ${FAILING TESTS}
+    Run Tests Without Processing Output  ${EMPTY}  misc/pass_and_fail.txt
     Move File  ${OUTFILE}  ${FAILING}
 
 Remove input files
@@ -51,6 +47,5 @@ Run Rebot and Verify RC
     [Arguments]  ${options & source}  ${rc}=  ${output}=  ${report}=${REPORT}
     ${returned rc}  ${returned output} =  Run And Return RC And Output
     ...  ${REBOT} --log NONE --report ${report} ${options & source}
-    Run Keyword If  ${rc} != ${returned rc}  Log  ${output}
     Should Be Equal As Integers  ${returned rc}  ${rc}
     Run Keyword If  """${output}"""  Should Be Equal  ${returned output}  ${output}
