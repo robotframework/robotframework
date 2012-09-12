@@ -80,6 +80,10 @@ class TestSafeRepr(unittest.TestCase):
         assert_equals(safe_repr(ReprFails()),
                       _unrepresentable_msg % ('ReprFails', 'Failure in __repr__'))
 
+    def test_repr_of_unicode_has_u_prefix(self):
+        assert_equals(safe_repr(u'foo'), "u'foo'")
+        assert_equals(safe_repr(u"f'o'o"), "u\"f'o'o\"")
+
 
 class UnicodeRepr:
 

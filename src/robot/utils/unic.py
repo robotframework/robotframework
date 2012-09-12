@@ -66,6 +66,15 @@ def safe_repr(item):
     except:
         return _unrepresentable_object(item)
 
+if sys.platform == 'cli':
+    _safe_repr = safe_repr
+    def safe_repr(item):
+        ret = _safe_repr(item)
+        # IronPython omits u prefix but we want to be consistent.
+        if isinstance(item, unicode) and not ret.startswith('u'):
+            ret = 'u' + ret
+        return ret
+
 
 _unrepresentable_msg = u"<Unrepresentable object '%s'. Error: %s>"
 
