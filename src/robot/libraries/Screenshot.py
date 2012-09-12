@@ -19,7 +19,11 @@ if sys.platform.startswith('java'):
     from javax.imageio import ImageIO
     from java.io import File
 elif sys.platform == 'cli':
-    pass  # IronPython imports here
+    import clr
+    clr.AddReference('System.Windows.Forms')
+    clr.AddReference('System.Drawing')
+    from System.Drawing import Bitmap, Graphics, Imaging
+    from System.Windows.Forms import Screen
 else:
     try:
         import wx
@@ -288,7 +292,12 @@ class ScreenshotTaker(object):
         ImageIO.write(image, 'jpg', File(path))
 
     def _cli_screenshot(self, path):
-        raise NotImplementedError
+        bmp = Bitmap(Screen.PrimaryScreen.Bounds.Width,
+                     Screen.PrimaryScreen.Bounds.Height)
+        g = Graphics.FromImage(bmp)
+        g.CopyFromScreen(0, 0, 0, 0, bmp.Size)
+        g.Dispose()
+        bmp.Save(path, Imaging.ImageFormat.Jpeg)
 
     def _wx_screenshot(self, path):
         context = wx.ScreenDC()
