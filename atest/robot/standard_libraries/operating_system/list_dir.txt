@@ -7,7 +7,7 @@ Resource        atest_resource.txt
 ${BASE}   ${TEMPDIR}${/}robot-os-tests
 ${DIR}    foodir
 ${F1}     foo.txt
-${F2}     ŋöŋ-äßćïï.txt
+${F2}     nön-äscïï.txt
 
 
 *** Test Cases ***

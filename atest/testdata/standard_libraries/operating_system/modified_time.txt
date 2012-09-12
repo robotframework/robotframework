@@ -6,10 +6,8 @@ Resource        os_resource.txt
 *** Test Cases ***
 Get Modified Time As Timestamp
     ${time1} =  Get Modified Time  ${CURDIR}
-    Log  ${time1}
     Create File  ${TESTFILE}  hello
     ${time2} =  Get Modified Time  ${TESTFILE}
-    Log  ${time2}
     Should Be True  '${time2}' >= '${time1}'
     Should Match Regexp  ${time1}  \\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}:\\d{2}
 
@@ -24,7 +22,7 @@ Get Modified Time As Parts
     Should Be True  2000 < ${year} < 2100
     ${yyyy}  ${mm}  ${dd} =  Get Modified Time  ${CURDIR}  year, month, day
     Should Be Equal  ${yyyy}  ${year}
-    Comment  Must use 'int', because otherwise 08 and 09 cause problems.  They are thougt to be octal but there is no such octal numbers as 08 or 09.
+    # Must use `int('x')` because otherwise 08 and 09 are considered octal
     Should Be True  1 <= int('${mm}') <= 12
     Should Be True  1 <= int('${dd}') <= 31
     @{time} =  Get Modified Time  ${CURDIR}  year, sec, min, hour
@@ -91,4 +89,3 @@ Set And Get Modified Time Of File With Spaces In Name
     Set Modified Time  ${WITH SPACE}  2010-09-26 21:24
     ${time} =  Get Modified Time  ${WITH SPACE}
     Should Be Equal  ${time}  2010-09-26 21:24:00
-

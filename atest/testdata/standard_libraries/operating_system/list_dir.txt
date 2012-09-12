@@ -6,7 +6,7 @@ Resource        os_resource.txt
 *** Variables ***
 ${DIR}    foodir
 ${F1}     foo.txt
-${F2}     ŋöŋ-äßćïï.txt
+${F2}     nön-äscïï.txt
 
 *** Test Cases ***
 

@@ -44,11 +44,9 @@ Remove Files Using Glob Pattern
 Remove Non-ASCII Files Using Glob Pattern
     Create File  ${BASE}/file
     Create File  ${BASE}/fïlë
-    Create File  ${BASE}/fĩlẽ
-    Create File  ${BASE}/fîlê
     Create File  ${BASE}/fílé
-    Remove Files  ${BASE}/*e  ${BASE}/???ê
-    Directory Should Have Items  ${BASE}  fílé  fïlë  fĩlẽ  
+    Remove Files  ${BASE}/*e  ${BASE}/???ë
+    Directory Should Have Items  ${BASE}  fílé
     Remove File  ${BASE}${/}f*
     Directory Should Be Empty  ${BASE}
 
