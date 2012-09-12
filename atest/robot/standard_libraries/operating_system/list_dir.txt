@@ -4,7 +4,7 @@ Force Tags      regression  pybot  jybot
 Resource        atest_resource.txt
 
 *** Variables ***
-${BASE}   ${TEMPDIR}${/}robot-os-tests
+${BASE}   %{TEMPDIR}${/}robot-os-tests
 ${DIR}    foodir
 ${F1}     foo.txt
 ${F2}     nön-äscïï.txt

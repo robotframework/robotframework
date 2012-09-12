@@ -4,7 +4,7 @@ Force Tags      regression  jybot  pybot
 Resource        atest_resource.txt
 
 *** Variables ***
-${TESTFILE}  ${TEMPDIR}${/}robot-os-tests${/}f1.txt
+${TESTFILE}  %{TEMPDIR}${/}robot-os-tests${/}f1.txt
 
 *** Test Cases ***
 Get Modified Time As Timestamp

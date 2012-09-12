@@ -9,9 +9,9 @@ Variables         unicode_vars.py
 *** Variables ***
 ${TESTDATA_TEST}    misc${/}unicode.txt
 ${TESTDATA_SUITES}  misc${/}suites
-${MYOUTDIR}         ${TEMPDIR}${/}robot-test-xunit
-${INPUT FILE}       ${TEMPDIR}${/}robot-test-xunit-file.xml
-${INVALID}          ${TEMPDIR}${/}ïnvälïd-xünït.xml
+${MYOUTDIR}         %{TEMPDIR}${/}robot-test-xunit
+${INPUT FILE}       %{TEMPDIR}${/}robot-test-xunit-file.xml
+${INVALID}          %{TEMPDIR}${/}ïnvälïd-xünït.xml
 
 
 *** Test Cases ***

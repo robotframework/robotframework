@@ -28,9 +28,9 @@ Import Variables With Arguments
     Should Be Equal  ${IMPORT_VARIABLES_2_ARGS}  one arg only default
     Should Be Equal  ${COMMON VARIABLE}  ${2}
     Comment  Copy to (hopefully) shorter path to prevent cutting error message
-    Copy File  ${CURDIR}/variables_to_import_2.py  ${TEMPDIR}/variables_to_import_2.py
-    Import Variables  ${TEMPDIR}/variables_to_import_2.py  1  2  3
-    [Teardown]  Remove File  ${TEMPDIR}/variables_to_import_2.py
+    Copy File  ${CURDIR}/variables_to_import_2.py  %{TEMPDIR}/variables_to_import_2.py
+    Import Variables  %{TEMPDIR}/variables_to_import_2.py  1  2  3
+    [Teardown]  Remove File  %{TEMPDIR}/variables_to_import_2.py
 
 Import Variables In User Keyword 1
     Import Variables In User Keyword  Set in  user keyword

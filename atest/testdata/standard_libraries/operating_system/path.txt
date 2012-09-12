@@ -9,15 +9,15 @@ Join Path
     Join Path And Check  a${/}b${/}c${/}d${/}e  a  b  c  d${/}e
     Join Path And Check  ${CURDIR}  ${CURDIR}
     Join Path And Check  ${CURDIR}${/}foo  ${CURDIR}  foo
-    Join Path And Check  ${CURDIR}${/}bar  ${TEMPDIR}  ${CURDIR}  bar
+    Join Path And Check  ${CURDIR}${/}bar  %{TEMPDIR}  ${CURDIR}  bar
 
 Join Paths
     @{paths} =  Join Paths  base  example  other
     Should Be Equal  @{paths}[0]  base${/}example
     Should Be Equal  @{paths}[1]  base${/}other
     Length Should Be  ${paths}  2
-    @{paths} =  Join Paths  ${CURDIR}${/}my${/}base  ${TEMPDIR}${/}example  other
-    Should Be Equal  @{paths}[0]  ${TEMPDIR}${/}example
+    @{paths} =  Join Paths  ${CURDIR}${/}my${/}base  %{TEMPDIR}${/}example  other
+    Should Be Equal  @{paths}[0]  %{TEMPDIR}${/}example
     Should Be Equal  @{paths}[1]  ${CURDIR}${/}my${/}base${/}other
     Length Should Be  ${paths}  2
     @{paths} =  Join Paths  my${/}base  example${/}path${/}  other  one${/}more
@@ -102,7 +102,7 @@ Join Path And Check
     [Arguments]  ${expected}  @{inputs}
     ${path} =  Join Path  @{inputs}
     Should Be Equal  ${path}  ${expected}  Joining ${inputs} failed
-    
+
 Normalize Path And Check
     [Arguments]  ${input}  ${expected}
     ${path} =  Normalize Path  ${input}

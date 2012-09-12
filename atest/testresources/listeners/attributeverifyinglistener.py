@@ -1,9 +1,8 @@
 import os
-import tempfile
 
 ROBOT_LISTENER_API_VERSION = '2'
 
-OUTFILE = open(os.path.join(tempfile.gettempdir(), 'listener_attrs.txt'), 'w')
+OUTFILE = open(os.path.join(os.getenv('TEMPDIR'), 'listener_attrs.txt'), 'w')
 START_ATTRS = 'doc starttime '
 END_ATTRS = START_ATTRS + 'endtime elapsedtime status '
 EXPECTED_TYPES = {'elapsedtime': (int, long), 'tags': list, 'args': list,

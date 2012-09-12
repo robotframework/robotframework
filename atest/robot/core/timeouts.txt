@@ -1,15 +1,15 @@
 *** Settings ***
 Documentation   Tests for test case and user keyword timeouts. Using timeouts with variables and invalid timeouts is tested in 'metadata.html'. It seems that on Cygwin Python tests now and then fail with an error message "error: can't allocate lock"
 Suite Setup     Run Tests  ${EMPTY}  core/timeouts.txt
-Suite Teardown  Remove Dir  ${timeout_temp}  recursive
+Suite Teardown  Remove Directory  ${TIMEOUT TEMP}  recursive
 Force Tags      regression
 Default Tags    jybot  pybot
 Resource        atest_resource.txt
 
 *** Variables ***
-${timeout_temp}  ${TEMPDIR}${/}robot_timeout_tests
-${test_stopped}  ${timeout_temp}${/}test_stopped.txt
-${kw_stopped}  ${timeout_temp}${/}kw_stopped.txt
+${TIMEOUT TEMP}  %{TEMPDIR}${/}robot_timeout_tests
+${TEST STOPPED}  ${TIMEOUT TEMP}${/}test_stopped.txt
+${KW STOPPED}    ${TIMEOUT TEMP}${/}kw_stopped.txt
 
 *** Test Cases ***
 Timed Test Passes

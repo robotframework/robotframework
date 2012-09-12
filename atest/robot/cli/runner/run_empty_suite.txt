@@ -3,7 +3,7 @@ Force Tags      pybot  jybot  regression
 Resource        cli_resource.txt
 
 *** Variables ***
-${NO TESTS DIR}     ${TEMPDIR}/robot_test_run_empty_suite
+${NO TESTS DIR}     %{TEMPDIR}/robot_test_run_empty_suite
 ${NO TESTS FILE}    ${NO TESTS DIR}.txt
 
 *** Test Cases ***

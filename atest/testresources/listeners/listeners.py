@@ -1,16 +1,13 @@
 import os
-import tempfile
-import logging
 
 from robot.libraries.BuiltIn import BuiltIn
-from robot.api import logger
 
 
 class ListenSome:
     ROBOT_LISTENER_API_VERSION = '2'
 
     def __init__(self):
-        outpath = os.path.join(tempfile.gettempdir(), 'listen_some.txt')
+        outpath = os.path.join(os.getenv('TEMPDIR'), 'listen_some.txt')
         self.outfile = open(outpath, 'w')
 
     def startTest(self, name, attrs):
@@ -27,7 +24,7 @@ class WithArgs(object):
     ROBOT_LISTENER_API_VERSION = '2'
 
     def __init__(self, arg1, arg2='default'):
-        outpath = os.path.join(tempfile.gettempdir(), 'listener_with_args.txt')
+        outpath = os.path.join(os.getenv('TEMPDIR'), 'listener_with_args.txt')
         outfile = open(outpath, 'a')
         outfile.write("I got arguments '%s' and '%s'\n" % (arg1, arg2))
         outfile.close()

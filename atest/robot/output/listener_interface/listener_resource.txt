@@ -27,8 +27,16 @@ Listener Import Message Should Be In Syslog
     Should Contain X Times    ${syslog}    Imported listener ${type} '${name or path}' from ${location}    ${count}
 
 Remove Listener Files
-    Remove Files  ${TEMPDIR}${/}${ALL_FILE}  ${TEMPDIR}${/}${SOME_FILE}  ${JAVATEMPDIR}${/}${JAVA_FILE}  ${TEMPDIR}${/}${ARGS_FILE}  ${TEMPDIR}${/}${ALL_FILE2}  ${TEMPDIR}${/}${MODULE_FILE}  ${JAVATEMPDIR}${/}${JAVA_ARGS_FILE}
-    ...  ${TEMPDIR}${/}${ATTR_TYPE_FILE}  ${JAVATEMPDIR}${/}${JAVA_ATTR_TYPE_FILE}
+    Remove Files
+    ...  %{TEMPDIR}${/}${ALL_FILE}
+    ...  %{TEMPDIR}${/}${SOME_FILE}
+    ...  %{TEMPDIR}${/}${JAVA_FILE}
+    ...  %{TEMPDIR}${/}${ARGS_FILE}
+    ...  %{TEMPDIR}${/}${ALL_FILE2}
+    ...  %{TEMPDIR}${/}${MODULE_FILE}
+    ...  %{TEMPDIR}${/}${JAVA_ARGS_FILE}
+    ...  %{TEMPDIR}${/}${ATTR_TYPE_FILE}
+    ...  %{TEMPDIR}${/}${JAVA_ATTR_TYPE_FILE}
 
 Check Listener File
     [Arguments]  ${file}  @{expected}
@@ -38,7 +46,6 @@ Check Listener File
 
 Get Listener FIle
     [Arguments]  ${file}
-    ${dir} =  Set Variable If  "${file}" in ["${JAVA_FILE}", "${JAVA_ARGS_FILE}"]  ${JAVATEMPDIR}  ${TEMPDIR}
-    ${content} =  Get File  ${dir}/${file}
+    ${content} =  Get File  %{TEMPDIR}/${file}
     [Return]  ${content}
 

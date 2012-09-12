@@ -4,15 +4,14 @@ Suite Setup     Create Input File
 Suite Teardown  Remove Temps
 Test Setup      Empty Directory  ${MYOUTDIR}
 Default Tags    regression  jybot  pybot
-Resource        ../../resources/rebot_resource.html
+Resource        rebot_resource.html
 
 *** Variables ***
-${TESTDATA_TEST}  misc${/}many_tests.txt
+${TESTDATA_TEST}    misc${/}many_tests.txt
 ${TESTDATA_SUITES}  misc${/}suites
-${MYOUTDIR}  ${TEMPDIR}${/}robot-test-145567
-${INPUT FILE}  ${TEMPDIR}${/}robot-test-file.xml
-${ESCAPES}  --escape star:STAR --escape quest:QUEST
-${USAGE_TIP}  \n\nTry --help for usage information.
+${MYOUTDIR}         %{TEMPDIR}${/}robot-test-145567
+${INPUT FILE}       %{TEMPDIR}${/}robot-test-file.xml
+${ESCAPES}          --escape star:STAR --escape quest:QUEST
 
 *** Test Cases ***
 One Call To Test

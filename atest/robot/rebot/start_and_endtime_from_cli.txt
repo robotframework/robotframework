@@ -2,11 +2,11 @@
 Suite Setup     Create Input Files
 Suite Teardown  Remove Files  ${INPUT1}  ${INPUT2}
 Force Tags      regression  pybot  jybot
-Resource        ../../resources/rebot_resource.html
+Resource        rebot_resource.html
 
 *** Variables ***
-${INPUT1}  ${TEMPDIR}${/}rebot-test-a.xml
-${INPUT2}  ${TEMPDIR}${/}rebot-test-b.xml
+${INPUT1}       %{TEMPDIR}${/}rebot-test-a.xml
+${INPUT2}       %{TEMPDIR}${/}rebot-test-b.xml
 
 *** Test Cases ***
 Combine With Both Starttime and endtime should Set Correct Elapsed Time

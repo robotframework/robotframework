@@ -7,7 +7,7 @@ Suite Setup     Run Tests  -x xunit.xml -l log.html -L debug  ${TESTDATA}
 
 *** Variables ***
 ${TESTDATA}  misc/unicode.txt
-${INVALID}   ${TEMPDIR}${/}ïnvälïd-xünït.xml
+${INVALID}   %{TEMPDIR}${/}ïnvälïd-xünït.xml
 
 *** Test Cases ***
 XUnit File Is Created

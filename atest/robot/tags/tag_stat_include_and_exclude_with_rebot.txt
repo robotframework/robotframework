@@ -7,7 +7,7 @@ Test Template   Run And Check Include And Exclude
 
 *** Variables ***
 ${DATA SOURCE}  tags/include_and_exclude.txt
-${INPUT FILE}   ${TEMPDIR}${/}robot-test-tagstat-85321.xml
+${INPUT FILE}   %{TEMPDIR}${/}robot-test-tagstat.xml
 ${ESCAPES}      -E star:STAR -E quest:QUEST -E space:SP
 ${F}            force
 ${I1}           incl1

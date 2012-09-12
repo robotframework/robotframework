@@ -5,8 +5,8 @@ Force Tags        pybot    jybot    regression
 Resource          atest_resource.txt
 
 *** Variable ***
-${INFILE1}        ${TEMPDIR}${/}rebot-test-1.xml
-${INFILE2}        ${TEMPDIR}${/}rebot-test-2.xml
+${INFILE1}        %{TEMPDIR}${/}rebot-test-1.xml
+${INFILE2}        %{TEMPDIR}${/}rebot-test-2.xml
 
 *** Test Case ***
 Tags Defined With Robot Set Tag Should Be Preserved

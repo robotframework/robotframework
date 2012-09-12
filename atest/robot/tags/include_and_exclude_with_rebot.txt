@@ -8,7 +8,7 @@ Test Template   Run And Check Include And Exclude
 
 *** Variables ***
 ${TESTFILE}     tags/include_and_exclude.txt
-${INPUT FILE}   ${TEMPDIR}${/}robot-test-145435.xml
+${INPUT FILE}   %{TEMPDIR}${/}robot-cli-input.xml
 ${ESCAPES}      --escape star:STAR --escape quest:QUEST --escape amp:AMP
 @{INCL_ALL}     Incl-1  Incl-12  Incl-123
 @{EXCL_ALL}     Excl-1  Excl-12  Excl-123

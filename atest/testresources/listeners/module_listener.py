@@ -1,7 +1,6 @@
 import os
-import tempfile
 
-outpath = os.path.join(tempfile.gettempdir(), 'listen_by_module.txt')
+outpath = os.path.join(os.getenv('TEMPDIR'), 'listen_by_module.txt')
 OUTFILE = open(outpath, 'w')
 ROBOT_LISTENER_API_VERSION = 2
 

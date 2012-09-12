@@ -5,13 +5,13 @@ Force Tags      regression  pybot  jybot
 Resource        ../../resources/rebot_resource.html
 
 *** Variables ***
-${TEMP OUT 1}  ${TEMPDIR}${/}rebot-test-1.xml
-${TEMP OUT 2}  ${TEMPDIR}${/}rebot-test-2.xml
-${COMB OUT 1}  ${TEMPDIR}${/}rebot-test-3.xml
-${COMB OUT 2}  ${TEMPDIR}${/}rebot-test-4.xml
-${COMB OUT 3}  ${TEMPDIR}${/}rebot-test-5.xml
-${COMB OUT 4}  ${TEMPDIR}${/}rebot-test-6.xml
-${OUT PATTERN}  ${TEMPDIR}${/}rebot-test-?.*
+${TEMP OUT 1}  %{TEMPDIR}${/}rebot-test-1.xml
+${TEMP OUT 2}  %{TEMPDIR}${/}rebot-test-2.xml
+${COMB OUT 1}  %{TEMPDIR}${/}rebot-test-3.xml
+${COMB OUT 2}  %{TEMPDIR}${/}rebot-test-4.xml
+${COMB OUT 3}  %{TEMPDIR}${/}rebot-test-5.xml
+${COMB OUT 4}  %{TEMPDIR}${/}rebot-test-6.xml
+${OUT PATTERN}  %{TEMPDIR}${/}rebot-test-?.*
 ${SUITE1}  Set in suite setup by combining Pass And Fail and Normal w/o options.
 ${SUITE2}  As previous but with --name, --doc, etc.
 ${SUITE3}  Combined from Pass And Fail, Normal and Times

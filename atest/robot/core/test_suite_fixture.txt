@@ -11,7 +11,7 @@ ${4_fail_msg}  \n\n4 critical tests, 0 passed, 4 failed\n 4 tests total, 0 passe
 ${5_fail_msg}  \n\n5 critical tests, 0 passed, 5 failed\n 5 tests total, 0 passed, 5 failed
 ${12_fail_msg}  \n\n12 critical tests, 0 passed, 12 failed\n 12 tests total, 0 passed, 12 failed
 ${also}  \n\nAlso teardown of the parent suite failed.
-${teardown_file}  %{TEMPDIR}/robot-suite-teardown-executed-0123.txt
+${teardown_file}  %{TEMPDIR}/robot-suite-teardown-executed.txt
 
 *** Test Cases ***
 Passing Suite Setup

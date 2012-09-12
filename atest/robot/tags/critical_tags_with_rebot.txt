@@ -6,7 +6,7 @@ Resource        atest_resource.txt
 Test Template   Test Criticality
 
 *** Variables ***
-${INPUT FILE}  ${TEMPDIR}/rebot-test-input.xml
+${INPUT FILE}  %{TEMPDIR}/rebot-test-input.xml
 
 *** Test Cases ***
 Neither Critical Nor Non-Critical

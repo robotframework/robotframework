@@ -9,7 +9,7 @@ Library         NamespaceUsingLibrary
 *** Test Cases ***
 Normal Library Import
     Directory Should Not Be Empty  ${CURDIR}
-    Directory Should Exist  ${TEMPDIR}
+    Directory Should Exist  %{TEMPDIR}
 
 Library Import With Spaces In Name
     Print  It works!

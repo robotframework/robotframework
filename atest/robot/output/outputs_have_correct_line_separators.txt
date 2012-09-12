@@ -4,7 +4,7 @@ Resource        atest_resource.txt
 Library         OutputVerifierLibrary.py
 
 *** Variables ***
-${REBOT INFILE}    ${TEMPDIR}/robot-rebot-infile.xml
+${REBOT INFILE}    %{TEMPDIR}/robot-rebot-infile.xml
 
 *** Test Cases ***
 

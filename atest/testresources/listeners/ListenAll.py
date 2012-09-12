@@ -1,18 +1,16 @@
 import os
-import tempfile
 import time
 
 
 class ListenAll:
-
     ROBOT_LISTENER_API_VERSION = '2'
 
     def __init__(self, *path):
-        if not path:
-            path = os.path.join(tempfile.gettempdir(), 'listen_all.txt')
-        else:
-            path = ':'.join(path)
+        path = ':'.join(path) if path else self._get_default_path()
         self.outfile = open(path, 'w')
+
+    def _get_default_path(self):
+        return os.path.join(os.getenv('TEMPDIR'), 'listen_all.txt')
 
     def start_suite(self, name, attrs):
         metastr = ' '.join('%s: %s' % (k, v) for k, v in attrs['metadata'].items())

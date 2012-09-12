@@ -5,7 +5,7 @@ Library           OperatingSystem
 
 *** Variables ***
 ${TESTDATADIR}    ${CURDIR}/../../testdata/libdoc
-${OUTPREFIX}      ${TEMPDIR}${/}robot-libdoc-test-file
+${OUTPREFIX}      %{TEMPDIR}${/}robot-libdoc-test-file
 ${OUTXML}         ${OUTPREFIX}.xml
 ${OUTHTML}        ${OUTPREFIX}.html
 

@@ -105,7 +105,7 @@ Directory Should Exist
     [Documentation]  FAIL REGEXP: Path '${ANYDIR}non-existing-directory' does not match any directory
     Create Directory  ${NON ASCII}
     Create Directory  ${WITH SPACE}
-    Directory Should Exist  ${TEMPDIR}
+    Directory Should Exist  %{TEMPDIR}
     Directory Should Exist  ${NON ASCII}
     Directory Should Exist  ${WITH SPACE}
     Directory Should Exist  non-existing-directory

@@ -4,9 +4,9 @@ Force Tags      regression  jybot  pybot
 Resource        atest_resource.txt
 
 *** Variables ***
-${TESTFILE}   ${TEMPDIR}${/}robot-os-tests${/}f1.txt
-${NONASCII}   ${TEMPDIR}${/}robot-os-tests${/}nön-äscïï
-${WITHSPACE}  ${TEMPDIR}${/}robot-os-tests${/}with space
+${TESTFILE}   %{TEMPDIR}${/}robot-os-tests${/}f1.txt
+${NONASCII}   %{TEMPDIR}${/}robot-os-tests${/}nön-äscïï
+${WITHSPACE}  %{TEMPDIR}${/}robot-os-tests${/}with space
 
 *** Test Cases ***
 Get File Size

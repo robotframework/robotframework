@@ -53,14 +53,14 @@ Java Listener
     Check Listener File  ${JAVA_FILE}  @{expected}
 
 Correct Attributes To Listener Methods
-    ${status} =  Log File  ${TEMPDIR}/${ATTR_TYPE_FILE}
+    ${status} =  Log File  %{TEMPDIR}/${ATTR_TYPE_FILE}
     Check Stderr Does Not Contain  attributeverifyinglistener
     Should Not Contain  ${status}  FAILED
     Should Contain X Times  ${status}  PASSED  160
 
 Correct Attributes To Java Listener Methods
     [Tags]  jybot
-    ${status} =  Log File  ${JAVATEMPDIR}/${JAVA_ATTR_TYPE_FILE}
+    ${status} =  Log File  %{TEMPDIR}/${JAVA_ATTR_TYPE_FILE}
     Check Stderr Does Not Contain  JavaAttributeVerifyingListener
     Should Not Contain  ${status}  FAILED
     Should Contain X Times  ${status}  PASSED  160
@@ -98,7 +98,7 @@ Test Template
 *** Keywords ***
 Run Tests With Listeners
     ${args}=  Catenate
-    ...  --listener ListenAll --listener ListenAll:${TEMPDIR}${/}${ALL_FILE2}
+    ...  --listener ListenAll --listener ListenAll:%{TEMPDIR}${/}${ALL_FILE2}
     ...  --listener module_listener --listener listeners.ListenSome --listener JavaListener
     ...  --listener attributeverifyinglistener --listener JavaAttributeVerifyingListener
     ...  --metadata ListenerMeta:Hello --critical pass

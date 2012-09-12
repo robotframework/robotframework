@@ -48,7 +48,7 @@ Run With Stderr Redirected To Stdout
 
 Run With Stderr Redirected To File
     [Documentation]  Stderr is redirected to a file using syntax "2>stderr.txt"
-    ${temp} =  Join Path  ${TEMPDIR}  robot_test_stderr.txt
+    ${temp} =  Join Path  %{TEMPDIR}  robot_test_stderr.txt
     ${stdout} =  Run  ${PROG} 42 hello world 2>${temp}
     Equals  ${stdout}  hello
     ${stderr} =  Get File  ${temp}

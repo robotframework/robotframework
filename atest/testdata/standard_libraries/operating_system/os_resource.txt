@@ -3,7 +3,7 @@ Library         OperatingSystem
 Library         Collections
 
 *** Variables ***
-${BASE}          ${TEMPDIR}${/}robot-os-tests
+${BASE}          %{TEMPDIR}${/}robot-os-tests
 ${TESTFILE}      ${BASE}${/}f1.txt
 ${TESTFILE 2}    ${BASE}${/}f2.txt
 ${TESTDIR}       ${BASE}${/}d1

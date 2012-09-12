@@ -7,9 +7,9 @@ Library         ExampleJavaLibrary
 Library         OperatingSystem
 
 *** Variables ***
-${timeout_temp}  ${TEMPDIR}${/}robot_timeout_tests
-${test_stopped}  ${timeout_temp}${/}test_stopped.txt
-${kw_stopped}  ${timeout_temp}${/}kw_stopped.txt
+${TIMEOUT TEMP}    %{TEMPDIR}${/}robot_timeout_tests
+${TEST STOPPED}    ${TIMEOUT TEMP}${/}test_stopped.txt
+${KW STOPPED}      ${TIMEOUT TEMP}${/}kw_stopped.txt
 
 *** Test Cases ***
 Passing
@@ -57,12 +57,12 @@ Looping Forever And Timeouting
 Stopped After Test Timeout
     [Documentation]  Keyword that is stopped after test timeout should not write to a file FAIL Test timeout 99 milliseconds exceeded.
     [Timeout]  99 milliseconds
-    Write To File After Sleeping  ${test_stopped}  2
+    Write To File After Sleeping  ${TEST STOPPED}  2
 
 Stopped After Keyword Timeout
     [Documentation]  Keyword that is stopped after keyword timeout should not write to a file FAIL Keyword timeout 100 milliseconds exceeded.
     [Timeout]  1 minute
-    Timeouted Write To File After Sleeping  ${kw_stopped}  2
+    Timeouted Write To File After Sleeping  ${KW STOPPED}  2
 
 Timout Defined For One Test
     [Documentation]  FAIL Test timeout 42 milliseconds exceeded.

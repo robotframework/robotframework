@@ -4,7 +4,7 @@ Suite Teardown    Create File    ${TEARDOWN FILE}
 Library           OperatingSystem
 
 *** Variables ***
-${TEARDOWN FILE}    ${TEMPDIR}/robot-suite-teardown-executed-0123.txt
+${TEARDOWN FILE}    %{TEMPDIR}/robot-suite-teardown-executed.txt
 
 *** Test Case ***
 Test

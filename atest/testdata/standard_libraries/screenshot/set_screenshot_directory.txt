@@ -5,8 +5,8 @@ Test Teardown:  Clean Temp Files
 Resource:       screenshot_resource.txt
 
 *** Variables ***
-${SCREENSHOT DIR} =     ${TEMPDIR}${/}robot_atest_screenshots
-${BASENAME} =           ${SCREENSHOT DIR}${/}screenshot 
+${SCREENSHOT DIR} =     %{TEMPDIR}${/}robot_atest_screenshots
+${BASENAME} =           ${SCREENSHOT DIR}${/}screenshot
 ${FIRST_SCREENSHOT} =   ${BASENAME}_1.jpg
 
 *** Test Cases ***

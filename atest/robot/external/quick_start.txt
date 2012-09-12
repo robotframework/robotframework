@@ -7,7 +7,7 @@ Resource          atest_resource.txt
 
 *** Variable ***
 ${QS DIR}         atest/robot/external/../../../doc/quickstart
-${RESULTDIR}      ${TEMPDIR}${/}rf-quickstart-result
+${RESULTDIR}      %{TEMPDIR}${/}rf-quickstart-result
 
 *** Test Case ***
 Execute Quick Start Guide In HTML Format

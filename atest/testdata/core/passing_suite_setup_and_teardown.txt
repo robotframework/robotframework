@@ -5,7 +5,7 @@ Suite Teardown    My Teardown
 Library           OperatingSystem
 
 *** Variables ***
-${TEARDOWN FILE}    ${TEMPDIR}/robot-suite-teardown-executed-0123.txt
+${TEARDOWN FILE}    %{TEMPDIR}/robot-suite-teardown-executed.txt
 
 *** Test Case ***
 Verify Suite Setup

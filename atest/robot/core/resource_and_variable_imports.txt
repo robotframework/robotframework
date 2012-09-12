@@ -130,10 +130,10 @@ Variable File In PYTHONPATH
 *** Keywords ***
 
 Run Tests With Non-ASCII Items In PYTHONPATH
-    Create Directory    ${TEMPDIR}/nön-äscïï
-    Set Environment Variable  PYTHONPATH  ${TEMPDIR}/nön-äscïï${:}${PPATH_RESDIR}
+    Create Directory    %{TEMPDIR}/nön-äscïï
+    Set Environment Variable  PYTHONPATH  %{TEMPDIR}/nön-äscïï${:}${PPATH_RESDIR}
     Run Tests  ${EMPTY}  ${DATAFILE}
-    [Teardown]  Remove Directory  ${TEMPDIR}/nön-äscïï
+    [Teardown]  Remove Directory  %{TEMPDIR}/nön-äscïï
 
 Stderr Should Contain Error
     [Arguments]    ${path}    @{error parts}

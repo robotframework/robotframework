@@ -17,10 +17,10 @@ Pythonpath option
     Tests Should Pass Without Errors  --pythonpath ${CLI OUTDIR}  ${DUMMY_LIB_TEST}
 
 Pythonpath option with multiple entries
-    Tests Should Pass Without Errors  -P .:${CLI OUTDIR}${/}:${TEMPDIR} -P ${CURDIR}  ${DUMMY_LIB_TEST}
+    Tests Should Pass Without Errors  -P .:${CLI OUTDIR}${/}:%{TEMPDIR} -P ${CURDIR}  ${DUMMY_LIB_TEST}
 
 Pythonpath option as glob pattern
-    Tests Should Pass Without Errors  --pythonpath ${TEMPDIR}${/}robot-cli-test-STAR --escape star:STAR  ${DUMMY_LIB_TEST}
+    Tests Should Pass Without Errors  --pythonpath %{TEMPDIR}${/}c*i --escape star:STAR  ${DUMMY_LIB_TEST}
 
 PYTHONPATH environment variable
     Set Environment Variable  PYTHONPATH  ${CLI OUTDIR}${:}spam${:}eggs

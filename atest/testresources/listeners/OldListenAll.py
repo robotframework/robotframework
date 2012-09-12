@@ -1,12 +1,11 @@
 import os
-import tempfile
 
 
 class OldListenAll:
 
     def __init__(self, *path):
         if not path:
-            path = os.path.join(tempfile.gettempdir(), 'listen_all.txt')
+            path = os.path.join(os.getenv('TEMPDIR'), 'listen_all.txt')
         else:
             path = ':'.join(path)
         self.outfile = open(path, 'w')

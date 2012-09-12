@@ -1,8 +1,9 @@
 *** Settings ***
-Library    OperatingSystem
+Library          OperatingSystem
+Test Teardown    Remove File    ${VARFILE}
 
 *** Variables ***
-${VARFILE}    ${TEMPDIR}/robot_variable_test.py
+${VARFILE}    %{TEMPDIR}/robot_variable_test.py
 
 *** Test Cases ***
 

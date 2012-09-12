@@ -23,7 +23,7 @@ Listener With Arguments
 
 Listener With Path
     class    ${LISTENERS}${/}OldListenAll.py    OldListenAll
-    [Teardown]    File Should Exist  ${TEMPDIR}${/}${ALL_FILE2}
+    [Teardown]    File Should Exist  %{TEMPDIR}${/}${ALL_FILE2}
 
 Listener With Wrong Number Of Arguments
     [Template]    Check Syslog contains
@@ -74,7 +74,7 @@ Run Tests With Listeners
     ...    --listener old_module_listener
     ...    --listener old_listeners.WithArgs:value
     ...    --listener old_listeners.WithArgs:a1:a2
-    ...    --listener ${LISTENERS}${/}OldListenAll.py:${TEMPDIR}${/}${ALL_FILE2}
+    ...    --listener ${LISTENERS}${/}OldListenAll.py:%{TEMPDIR}${/}${ALL_FILE2}
     ...    --listener old_listeners.WithArgs
     ...    --listener old_listeners.WithArgs:1:2:3
     ...    --listener OldJavaListener

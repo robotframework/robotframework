@@ -9,7 +9,7 @@ ${TESTSIGNALFILE} =  test_signal_file.txt
 
 *** Test Case ***
 Test
-    Create File  ${TEMPDIR}/${TESTSIGNALFILE}
+    Create File  %{TEMPDIR}/${TESTSIGNALFILE}
     Swallow exception
     Fail  Should not be executed
 

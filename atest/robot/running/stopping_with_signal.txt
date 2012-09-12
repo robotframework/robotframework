@@ -86,9 +86,9 @@ Start And Send Signal
     [Arguments]  ${testcase file}  ${signal method}  ${signal}  ${teardown sleep}=0s  ${runmode}=normal
     ${jython} =  Running On Jython  ${INTERPRETER}
     ${testfile} =  Set Variable If  ${jython}  robot_signal_test_jython.txt  robot_signal_test_python.txt
-    Remove File  ${TEMPDIR}/${testfile}
+    Remove File  %{TEMPDIR}/${testfile}
     Start Run  ${testfile}  running/stopping_with_signal/${testcase file}  ${teardown sleep}  ${runmode}
-    Wait Until Created  ${TEMPDIR}/${testfile}  1 minutes
+    Wait Until Created  %{TEMPDIR}/${testfile}  1 minutes
     Run Keyword  ${signal method}  ${signal}
     Wait Until Finished With Timeout
 
@@ -132,7 +132,7 @@ Set Timestamp
     Set Suite Variable  ${TEST TIMESTAMP}  ${tmp time}
 
 Set Test Debug File
-    Set Test Variable  ${TEST DEBUG FILE}  ${TEMPDIR}/${TESTNAME}_${TEST TIMESTAMP}.txt
+    Set Test Variable  ${TEST DEBUG FILE}  %{TEMPDIR}/${TESTNAME}_${TEST TIMESTAMP}.txt
 
 Log Info From Process And Cleanup
     Run Keyword If Test Failed  Log Stdout And Stderr
