@@ -18,6 +18,8 @@ if sys.platform.startswith('java'):
     from java.awt import Toolkit, Robot, Rectangle
     from javax.imageio import ImageIO
     from java.io import File
+elif sys.platform == 'cli':
+    pass  # IronPython imports here
 else:
     try:
         import wx
@@ -39,13 +41,7 @@ from robot.libraries.BuiltIn import BuiltIn
 
 
 class Screenshot(object):
-
     """A test library for taking screenshots and embedding them into log files.
-
-    *Using with Jython*
-
-    On Jython this library uses Java AWT APIs. They are always available
-    and thus no external modules are needed.
 
     *Using with Python*
 
@@ -60,6 +56,18 @@ class Screenshot(object):
       This module can take screenshots only on Windows.
 
     Python support was added in Robot Framework 2.5.5.
+
+    *Using with Jython*
+
+    On Jython this library uses Java AWT APIs. They are always available
+    and thus no external modules are needed.
+
+    *Using with IronPython*
+
+    On IronPython this library uses .NET APIs. They are always available
+    and thus no external modules are needed.
+
+    IronPython support was added in Robot Framework 2.7.5.
 
     *Where screenshots are saved*
 
@@ -257,6 +265,8 @@ class ScreenshotTaker(object):
     def _get_screenshot_taker(self, module_name):
         if sys.platform.startswith('java'):
             return self._java_screenshot
+        if sys.platform == 'cli':
+            return self._cli_screenshot
         if module_name:
             method_name = '_%s_screenshot' % module_name.lower()
             if hasattr(self, method_name):
@@ -276,6 +286,9 @@ class ScreenshotTaker(object):
         rectangle = Rectangle(0, 0, size.width, size.height)
         image = Robot().createScreenCapture(rectangle)
         ImageIO.write(image, 'jpg', File(path))
+
+    def _cli_screenshot(self, path):
+        raise NotImplementedError
 
     def _wx_screenshot(self, path):
         context = wx.ScreenDC()
