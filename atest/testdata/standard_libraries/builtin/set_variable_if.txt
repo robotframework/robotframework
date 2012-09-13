@@ -82,14 +82,14 @@ If / Else If
     Should Be Equal  ${var}  Here we go!
 
 If / Else If / Else
-    ${var} =  Set Variable If  
-    ...  ${False}  this value is not used  
+    ${var} =  Set Variable If
+    ...  ${False}  this value is not used
     ...  ${None}   this value is not used
     ...  ${0}      this value is not used
     ...  Final else!
     Should Be Equal  ${var}  Final else!
-    ${var} =  Set Variable If  
-    ...  ${False}  this value is not used  
+    ${var} =  Set Variable If
+    ...  ${False}  this value is not used
     ...  ${None}   this value is not used
     ...  ${0}      this value is not used
     Should Be Equal  ${var}  ${None}
@@ -120,7 +120,7 @@ With List Variables In Values
     ${var} =  Set Variable If  False  @{EMPTY LIST}  @{2 ITEMS}
     Should Be Equal  ${var}  2
     ${var} =  Set Variable If  True  @{2 ITEMS} as string
-    Should Be Equal  ${var}  [u'1', u'2'] as string
+    Should Be Equal  ${var}  @{2 ITEMS} as string
 
 With List Variables In Expressions And Values
     ${var} =  Set Variable If  @{1 ITEM}  this is set

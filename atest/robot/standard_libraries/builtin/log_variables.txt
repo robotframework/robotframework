@@ -33,7 +33,7 @@ Log Variables In Suite Setup
     Check Log Message  ${kw.messages[22]}  \${SUITE_METADATA} = {}
     Check Log Message  ${kw.messages[23]}  \${SUITE_NAME} = *  pattern=yes
     Check Log Message  ${kw.messages[24]}  \${suite_setup_global_var} = Global var set in suite setup
-    Check Log Message  ${kw.messages[25]}  \${suite_setup_local_var} = [u'Variable available only locally', u'in suite setup']
+    Check Log Message  ${kw.messages[25]}  \${suite_setup_local_var} = [*'Variable available only locally', *'in suite setup']  pattern=yes
     Check Log Message  ${kw.messages[26]}  \${suite_setup_suite_var} = Suite var set in suite setup
     Check Log Message  ${kw.messages[27]}  \${SUITE_SOURCE} = *  pattern=yes
     Check Log Message  ${kw.messages[28]}  \${TEMPDIR} = *  pattern=yes

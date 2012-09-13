@@ -17,7 +17,7 @@ Keyword Implemented In Library Class Itself
 
 Non Existing Keyword
     Check Test Case  ${TESTNAME}
-    Check Log Message  ${ERRORS.msgs[0]}  Adding keyword 'non_existing_kw' to library 'GetKeywordNamesLibrary' failed: AttributeError: Non-existing keyword 'non_existing_kw'  WARN
+    Check Log Message  ${ERRORS.msgs[0]}  Adding keyword 'non_existing_kw' to library 'GetKeywordNamesLibrary' failed: AttributeError: *  WARN  pattern=yes
 
 Named Keyword Is Not Method
     Check Test Case  ${TESTNAME}

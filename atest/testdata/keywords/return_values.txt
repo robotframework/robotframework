@@ -12,10 +12,9 @@ Empty Scalar Variable
     Should Be Equal  ${setvar}  ${EMPTY}
 
 List To Scalar Variable
-    ${setvar} =  Create List  a  b  c
+    ${setvar} =  Create List  a  ${2}
     Should Be Equal  ${setvar[0]}  a
-    Should Be Equal  ${setvar[1]}  b
-    Should Be Equal  ${setvar[2]}  c
+    Should Be Equal  ${setvar[1]}  ${2}
 
 Multible Scalar Variables
     ${var1}  ${var2} =  Create List  one  two
@@ -89,10 +88,10 @@ Long Values To List Variable
 
 Scalar Variables With More Values Than Variables
     [Documentation]  Extra string variables are added to last scalar variable as list
-    ${a}  ${b}  ${c} =  List  a  b  c  d  e  f
+    ${a}  ${b}  ${c} =  Create List  a  b  c  ${4}
     Should Be Equal  ${a}  a
-    Should Be True  '${b}' == 'b'
-    Should Be True  ${c} == ['c', 'd', 'e', 'f']
+    Should Be Equal  ${b}  b
+    Should Be True  ${c} == ['c', 4]
 
 Multiple Scalars With Too Few Values
     [Documentation]  FAIL Cannot assign return values: Need more values than 2.

@@ -93,7 +93,7 @@ List With No Items
 
 Scalar Variable Containing List Is Different Than List Variable
     ${ret} =    Catenate    ${LIST}
-    Should Be Equal    ${ret}    [u'Hello', u'world', u'!']
+    Should Be True    ${ret} == ['Hello', 'world', '!']
     ${ret} =    Catenate    @{LIST}
     Should Be Equal    ${ret}    Hello again ?
 

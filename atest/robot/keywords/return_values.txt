@@ -16,7 +16,7 @@ Empty Scalar Variable
 
 List To Scalar Variable
     ${test} =  Check Test Case  ${TEST NAME}
-    Check Log Message  ${test.kws[0].msgs[0]}  \${setvar} = [u'a', u'b', u'c']
+    Check Log Message  ${test.kws[0].msgs[0]}  \${setvar} = [*'a', 2]  pattern=yep
 
 Multible Scalar Variables
     ${test} =  Check Test Case  ${TEST NAME}
@@ -73,7 +73,7 @@ Scalar Variables With More Values Than Variables
     ${test} =  Check Test Case  ${TEST NAME}
     Check Log Message  ${test.kws[0].msgs[0]}  \${a} = a
     Check Log Message  ${test.kws[0].msgs[1]}  \${b} = b
-    Check Log Message  ${test.kws[0].msgs[2]}  \${c} = [u'c', u'd', u'e', u'f']
+    Check Log Message  ${test.kws[0].msgs[2]}  \${c} = [*'c', 4]  pattern=yes
 
 Multiple Scalars With Too Few Values
     ${test} =  Check Test Case  ${TEST NAME}
