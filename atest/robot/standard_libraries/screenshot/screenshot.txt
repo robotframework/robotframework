@@ -1,5 +1,5 @@
 *** Settings ***
-Suite Setup     Run Tests  ${EMPTY}  standard_libraries/screenshot/screenshot.txt
+Suite Setup     Run Tests  -l log.html -L debug  standard_libraries/screenshot/screenshot.txt
 Force Tags      pybot  jybot  regression
 Resource        atest_resource.txt
 
@@ -36,23 +36,23 @@ Save Screenshot To With Non Existing Path
 
 Log Screenshot With Defaults
     ${test} =  Check Test Case  ${TESTNAME}
-    Message Should Contain  ${test.kws[0].msgs[1]}  <img src="screenshot_1.jpg" width="100%">
+    Message Should Contain  ${test.kws[0].msgs[2]}  <img src="screenshot_1.jpg" width="100%">
 
 Log Screenshot With Filename Defined
     ${test} =  Check Test Case  ${TESTNAME}
-    Message Should Contain  ${test.kws[0].msgs[1]}  <img src="image_1.jpg" width="100%">
+    Message Should Contain  ${test.kws[0].msgs[2]}  <img src="image_1.jpg" width="100%">
 
 Log Screenshot With Filename And Path Defined
     ${test} =  Check Test Case  ${TESTNAME}
-    Message Should Contain  ${test.kws[0].msgs[1]}  <img src="image_1.jpg" width="100%">
+    Message Should Contain  ${test.kws[0].msgs[2]}  <img src="image_1.jpg" width="100%">
 
 Log Screenshot With Filename, Path And Width Defined
     ${test} =  Check Test Case  ${TESTNAME}
-    Check Link In Log  ${test.kws[0].msgs[1]}  image_1.jpg  50%
+    Check Link In Log  ${test.kws[0].msgs[2]}  image_1.jpg  50%
 
 Log Screenshot With Initializing The Screenshot Library
     ${test} =  Check Test Case  ${TESTNAME}
-    Check Link In Log  ${test.kws[0].msgs[1]}  screenshot_1.jpg
+    Check Link In Log  ${test.kws[0].msgs[2]}  screenshot_1.jpg
 
 *** Keywords ***
 Check Link In Log
