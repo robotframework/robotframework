@@ -78,23 +78,17 @@ def atests(interpreter, *params):
     print 'Running command\n%s\n' % command
     sys.stdout.flush()
     signal.signal(signal.SIGINT, signal.SIG_IGN)
-    try:
-        return subprocess.call(command.split(), env=environ)
-    finally:
-        shutil.rmtree(tempdir)
+    return subprocess.call(command.split(), env=environ)
 
 
 def _get_result_and_temp_dirs(interpreter):
     interpreter = splitext(basename(interpreter))[0]
     resultdir = join(CURDIR, 'results', interpreter)
     tempdir = join(tempfile.gettempdir(), 'robottests', interpreter)
-    if os.path.exists(tempdir):
-        print 'Temp directory for this interpreter already exists:', tempdir
-        print 'Cannot run tests simultaneously with same interpreter.'
-        print 'Remove the directory if it is left from an interrupted run.'
-        sys.exit(255)
     if exists(resultdir):
         shutil.rmtree(resultdir)
+    if exists(tempdir):
+        shutil.rmtree(tempdir)
     os.makedirs(tempdir)
     return resultdir, tempdir
 
