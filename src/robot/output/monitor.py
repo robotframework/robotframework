@@ -16,7 +16,7 @@ import sys
 
 from robot import utils
 
-from .highlighting import Highlighter, NoHighlighting
+from .highlighting import AnsiHighlighter, Highlighter, NoHighlighting
 from .loggerhelper import IsLogged
 
 
@@ -167,12 +167,13 @@ class StatusHighlighter(object):
                                   for stream in streams)
 
     def _get_highlighter(self, stream, colors):
-        auto = isatty(stream)
-        enable = {'AUTO': auto,
-                  'ON': True,
-                  'FORCE': True,   # compatibility with 2.5.5 and earlier
-                  'OFF': False}.get(colors.upper(), auto)
-        return Highlighter(stream) if enable else NoHighlighting(stream)
+        auto = Highlighter if isatty(stream) else NoHighlighting
+        highlighter = {'AUTO': auto,
+                       'ON': Highlighter,
+                       'FORCE': Highlighter,   # compatibility with 2.5.5 and earlier
+                       'OFF': NoHighlighting,
+                       'ANSI': AnsiHighlighter}.get(colors.upper(), auto)
+        return highlighter(stream)
 
     def highlight_status(self, status, stream):
         highlighter = self._start_status_highlighting(status, stream)

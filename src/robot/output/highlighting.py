@@ -26,11 +26,11 @@ except ImportError:  # Not on Windows or using Jython
 
 def Highlighter(stream):
     if os.sep == '/':
-        return UnixHighlighter(stream)
+        return AnsiHighlighter(stream)
     return DosHighlighter(stream) if windll else NoHighlighting(stream)
 
 
-class UnixHighlighter(object):
+class AnsiHighlighter(object):
     _ANSI_GREEN  = '\033[32m'
     _ANSI_RED = '\033[31m'
     _ANSI_YELLOW = '\033[33m'
@@ -55,7 +55,7 @@ class UnixHighlighter(object):
         self._stream.write(color)
 
 
-class NoHighlighting(UnixHighlighter):
+class NoHighlighting(AnsiHighlighter):
 
     def _set_color(self, color):
         pass
@@ -112,13 +112,13 @@ if windll:
     class _COORD(Structure):
         _fields_ = [("X", c_short),
                     ("Y", c_short)]
-    
+
     class _SMALL_RECT(Structure):
         _fields_ = [("Left", c_short),
                     ("Top", c_short),
                     ("Right", c_short),
                     ("Bottom", c_short)]
-    
+
     class _CONSOLE_SCREEN_BUFFER_INFO(Structure):
         _fields_ = [("dwSize", _COORD),
                     ("dwCursorPosition", _COORD),
