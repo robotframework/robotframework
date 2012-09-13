@@ -3,13 +3,9 @@ Library  Library.py
 Library  OperatingSystem
 Suite Teardown  Sleep  ${TEARDOWN SLEEP}
 
-*** Variables ***
-${TEARDOWN SLEEP} =  0 seconds
-${TESTSIGNALFILE} =  test_signal_file.txt
-
 *** Test Case ***
 Test
-  Create File  %{TEMPDIR}/${TESTSIGNALFILE}
+  Create File  ${TESTSIGNALFILE}
   Busy Sleep  2
   No Operation
 

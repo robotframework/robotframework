@@ -3,67 +3,68 @@ Force Tags      regression
 Default Tags    pybot  jybot
 Resource        atest_resource.txt
 Library         ProcessManager.py
-Test Teardown   Log Info From Process And Cleanup
-Suite Setup     Set Timestamp
-Test Setup      Set Test Debug File
+Test Teardown   Run Keyword If Test Failed    Log Stdout And Stderr
+
+*** Variables ***
+${TEST FILE}    %{TEMPDIR}${/}signal-tests.txt
 
 
 *** Test Cases ***
 SIGINT Signal Should Stop Test Execution Gracefully
-    Start And Send Signal  without_any_timeout.txt  One Signal  SIGINT
+    Start And Send Signal  without_any_timeout.txt  One SIGINT
     Process Output For Graceful Shutdown
     Check Test Cases Have Failed Correctly
 
 SIGTERM Signal Should Stop Test Execution Gracefully
     [Tags]  pybot  jybot  x-exclude-on-windows
-    Start And Send Signal  without_any_timeout.txt  One Signal  SIGTERM
+    Start And Send Signal  without_any_timeout.txt  One SIGTERM
     Process Output For Graceful Shutdown
     Check Test Cases Have Failed Correctly
 
 Execution Is Stopped Even If Keyword Swallows Exception
     [Tags]  pybot
-    Start And Send Signal  swallow_exception.txt  One Signal  SIGTERM
+    Start And Send Signal  swallow_exception.txt  One SIGTERM
     Process Output For Graceful Shutdown
     Check Test Cases Have Failed Correctly
 
 One Signal Should Stop Test Execution Gracefully When Run Keyword Is Used
-    Start And Send Signal  run_keyword.txt  One Signal  SIGTERM
+    Start And Send Signal  run_keyword.txt  One SIGTERM
     Process Output For Graceful Shutdown
     Check Test Cases Have Failed Correctly
 
 One Signal Should Stop Test Execution Gracefully When Test Timeout Is Used
-    Start And Send Signal  test_timeout.txt  One Signal  SIGTERM
+    Start And Send Signal  test_timeout.txt  One SIGTERM
     Process Output For Graceful Shutdown
     Check Test Cases Have Failed Correctly
 
 One Signal Should Stop Test Execution Gracefully When Keyword Timeout Is Used
-    Start And Send Signal  keyword_timeout.txt  One Signal  SIGTERM
+    Start And Send Signal  keyword_timeout.txt  One SIGTERM
     Process Output For Graceful Shutdown
     Check Test Cases Have Failed Correctly
 
 Two SIGINT Signals Should Stop Test Execution Forcefully
-    Start And Send Signal  without_any_timeout.txt  Two Signals  SIGINT  2s
+    Start And Send Signal  without_any_timeout.txt  Two SIGINTs  2s
     Check Tests Have Been Forced To Shutdown
 
 Two SIGTERM Signals Should Stop Test Execution Forcefully
     [Tags]  pybot  jybot  x-exclude-on-windows
-    Start And Send Signal  without_any_timeout.txt  Two Signals  SIGTERM  2s
+    Start And Send Signal  without_any_timeout.txt  Two SIGTERMs  2s
     Check Tests Have Been Forced To Shutdown
 
 Two Signals Should Stop Test Execution Forcefully When Run Keyword Is Used
-    Start And Send Signal  run_keyword.txt  Two Signals  SIGINT  2s
+    Start And Send Signal  run_keyword.txt  Two SIGINTs  2s
     Check Tests Have Been Forced To Shutdown
 
 Two Signals Should Stop Test Execution Forcefully When Test Timeout Is Used
-    Start And Send Signal  test_timeout.txt  Two Signals  SIGINT  2s
+    Start And Send Signal  test_timeout.txt  Two SIGINTs  2s
     Check Tests Have Been Forced To Shutdown
 
 Two Signals Should Stop Test Execution Forcefully When Keyword Timeout Is Used
-    Start And Send Signal  keyword_timeout.txt  Two Signals  SIGINT  2s
+    Start And Send Signal  keyword_timeout.txt  Two SIGINTs  2s
     Check Tests Have Been Forced To Shutdown
 
 One Signal Should Stop Test Execution Gracefully And Test Case And Suite Teardowns Should Be Run
-    Start And Send Signal  with_teardown.txt  One Signal  SIGINT
+    Start And Send Signal  with_teardown.txt  One SIGINT
     Process Output For Graceful Shutdown
     Check Test Cases Have Failed Correctly
     ${tc} =  Get Test Case  Test
@@ -72,7 +73,7 @@ One Signal Should Stop Test Execution Gracefully And Test Case And Suite Teardow
     Check Log Message  ${ts.teardown.kws[0].msgs[0]}  Logging Suite Teardown
 
 One Signal Should Stop Test Execution Gracefully And Skip Teardowns With Runmode
-    Start And Send Signal  with_teardown.txt  One Signal  SIGINT  runmode=SkipTeardownOnExit
+    Start And Send Signal  with_teardown.txt  One SIGINT  runmode=SkipTeardownOnExit
     Process Output For Graceful Shutdown
     Check Test Cases Have Failed Correctly
     ${tc} =  Get Test Case  Test
@@ -83,57 +84,52 @@ One Signal Should Stop Test Execution Gracefully And Skip Teardowns With Runmode
 
 *** Keywords ***
 Start And Send Signal
-    [Arguments]  ${testcase file}  ${signal method}  ${signal}  ${teardown sleep}=0s  ${runmode}=normal
-    ${jython} =  Running On Jython  ${INTERPRETER}
-    ${testfile} =  Set Variable If  ${jython}  robot_signal_test_jython.txt  robot_signal_test_python.txt
-    Remove File  %{TEMPDIR}/${testfile}
-    Start Run  ${testfile}  running/stopping_with_signal/${testcase file}  ${teardown sleep}  ${runmode}
-    Wait Until Created  %{TEMPDIR}/${testfile}  1 minutes
-    Run Keyword  ${signal method}  ${signal}
-    Wait Until Finished With Timeout
-
-Wait Until Finished With Timeout
-    [timeout]  1 minute
-    wait until finished
+    [Arguments]    ${datasource}    ${signals}    ${sleep}=0s    ${runmode}=normal
+    Remove File    ${TEST FILE}
+    Start Run    ${datasource}    ${sleep}    ${runmode}
+    Wait Until Created    ${TESTFILE}    timeout=45s
+    Run Keyword    ${signals}
+    Wait Until Finished
 
 Start Run
-    [arguments]  ${test signal file}  ${datasource}  ${teardown sleep}  ${runmode}
+    [Arguments]    ${datasource}    ${sleep}    ${runmode}
     Set Runners
-    ${path to datasource} =  Set Variables And Get Datasources  ${datasource}
+    ${datasource} =    Set Variables And Get Datasources    running/stopping_with_signal/${datasource}
     @{runner} =    Get Runner    ${INTERPRETER}    ${ROBOTPATH}
-    @{command} =  Create List  @{runner}  --variable  TESTSIGNALFILE:${test signal file}  --output  ${OUTFILE}  --report  None  --log  None  --debugfile  ${TEST DEBUG FILE}  --variable  TEARDOWNSLEEP:${teardown sleep}  --runmode  ${runmode}  ${path to datasource}
-    Log Many  @{command}
-    ProcessManager.start process  @{command}
+    @{command} =    Create List
+    ...    @{runner}
+    ...    --output    ${OUTFILE}    --report    NONE    --log    NONE
+    ...    --variable    TESTSIGNALFILE:${TEST FILE}
+    ...    --variable    TEARDOWNSLEEP:${sleep}
+    ...    --runmode    ${runmode}
+    ...    ${datasource}
+    Log Many    @{command}
+    ProcessManager.start process    @{command}
 
 Check Test Cases Have Failed Correctly
-    Check Test Case  Test  FAIL  Execution terminated by signal
-    Check Test Case  Test2  FAIL  Test execution is stopped due to a fatal error
+    Check Test Case    Test    FAIL    Execution terminated by signal
+    Check Test Case    Test2    FAIL    Test execution is stopped due to a fatal error
 
 Check Tests Have Been Forced To Shutdown
-    ${stderr string}  ProcessManager.Get Stderr
-    Should Contain  ${stderr string}  Execution forcefully stopped
+    ${stderr} =    ProcessManager.Get Stderr
+    Should Contain    ${stderr}    Execution forcefully stopped
 
 Process Output For Graceful Shutdown
-    Wait Until Created  ${OUTFILE}
-    Process Output  ${OUTFILE}
+    Wait Until Created    ${OUTFILE}    timeout=45s
+    Process Output    ${OUTFILE}
 
-One Signal
-    [arguments]  ${signal}
-    send terminate  ${signal}
+One SIGINT
+    Send Terminate    SIGINT
 
-Two Signals
-    [arguments]  ${signal}
-    send terminate  ${signal}
-    Busy Sleep  1
-    send terminate  ${signal}
+One SIGTERM
+    Send Terminate    SIGTERM
 
-Set Timestamp
-    ${tmp time} =  Get Time
-    Set Suite Variable  ${TEST TIMESTAMP}  ${tmp time}
+Two SIGINTs
+    One SIGINT
+    Sleep    1s
+    One SIGINT
 
-Set Test Debug File
-    Set Test Variable  ${TEST DEBUG FILE}  %{TEMPDIR}/${TESTNAME}_${TEST TIMESTAMP}.txt
-
-Log Info From Process And Cleanup
-    Run Keyword If Test Failed  Log Stdout And Stderr
-    Run Keyword If Test Passed  Remove File  ${TEST DEBUG FILE}
+Two SIGTERMs
+    One SIGTERM
+    Sleep    1s
+    One SIGTERM

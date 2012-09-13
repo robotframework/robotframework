@@ -2,21 +2,20 @@ import subprocess
 import os
 import signal
 import ctypes
-import time
 
 
 class ProcessManager(object):
 
     def __init__(self):
         self._process = None
-        self._stdout = ''
-        self._stderr = ''
+        self._stdout = None
+        self._stderr = None
 
     def start_process(self, *args):
         self._process = subprocess.Popen(args, stderr=subprocess.PIPE,
                                          stdout=subprocess.PIPE)
-        self._stdout = ''
-        self._stderr = ''
+        self._stdout = None
+        self._stderr = None
 
     def send_terminate(self, signal_name):
         if os.name != 'nt':
@@ -39,17 +38,15 @@ class ProcessManager(object):
         return self._stderr
 
     def log_stdout_and_stderr(self):
-        print "stdout: ", self._process.stdout.read()
-        print "stderr: ", self._process.stderr.read()
+        self.wait_until_finished()
+        print 'STDOUT:'
+        print self._stdout
+        print 'STDERR:'
+        print self._stderr
 
     def wait_until_finished(self):
-        if self._process.returncode is None:
+        if self._stdout is None:
             self._stdout, self._stderr = self._process.communicate()
-
-    def busy_sleep(self, seconds):
-        max_time = time.time() + int(seconds)
-        while time.time() < max_time:
-            pass
 
     def get_runner(self, interpreter, robot_path):
         run = os.path.join(robot_path, 'run.py')
@@ -74,4 +71,3 @@ class ProcessManager(object):
         jython_jar = os.path.join(jython_home, 'jython.jar')
         cp = jython_jar + os.pathsep + os.getenv('CLASSPATH', '')
         return cp.strip(':;')
-
