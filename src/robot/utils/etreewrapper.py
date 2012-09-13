@@ -75,7 +75,7 @@ class ETSource(object):
         if self._source_is_file_name():
             return self._open_source_file()
         if isinstance(self._source, basestring):
-            return StringIO(self._source.encode('UTF-8'))
+            return self._open_string_io(self._source)
         return None
 
     def _open_source_file(self):
@@ -91,3 +91,6 @@ class ETSource(object):
         if not os.path.exists(self._source):
             raise IOError(2, 'No such file', self._source)
         return None
+
+    def _open_string_io(self, source):
+        return StringIO(source.encode('UTF-8') if not _IRONPYTHON else source)
