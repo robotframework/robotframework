@@ -43,7 +43,10 @@ class TestETSource(unittest.TestCase):
     def _test_string(self, xml):
         source = ETSource(xml)
         with source as src:
-            assert_equals(src.read().decode('UTF-8'), xml)
+            content = src.read()
+            if not IRONPYTHON:
+                content = content.decode('UTF-8')
+            assert_equals(content, xml)
         self._verify_string_representation(source, '<in-memory file>')
         assert_true(source._opened.closed)
         with ETSource(xml) as src:
