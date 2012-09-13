@@ -95,5 +95,5 @@ Get element by xpath
     Run Keyword If    '''${text}''' != 'IGNORE'    Should Be Equal    ${element.text}    ${text}
 
 Add Interpreter Version to Suite Documentation
-    ${version}=    Evaluate    sys.version[:3]    modules=sys
-    Set Suite Documentation    ${version}
+    ${et}=    Evaluate    robot.utils.ET    modules=robot
+    Set Suite Metadata    ET Version    ${et.VERSION}

@@ -46,6 +46,11 @@ else:
         raise ImportError(_ERROR)
 
 
+# cElementTree.VERSION seems to always be 1.0.6. We want real API version.
+if ET.VERSION < '1.3' and hasattr(ET, 'tostringlist'):
+    ET.VERSION = '1.3'
+
+
 class ETSource(object):
 
     def __init__(self, source):

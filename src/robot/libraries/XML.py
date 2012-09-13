@@ -336,7 +336,7 @@ class XML(object):
             return [source]
         return source.findall(self._get_xpath(xpath))
 
-    if sys.version_info >= (2, 7):
+    if ET.VERSION >= '1.3':
         def _get_xpath(self, xpath):
             return xpath
     else:

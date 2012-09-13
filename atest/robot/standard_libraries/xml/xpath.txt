@@ -1,6 +1,6 @@
 *** Settings ***
 Suite Setup      Run Tests    ${EMPTY}    standard_libraries/xml/xpath.txt
-Test Setup       Make Tests Requiring Python 2.7 Non-Critical If Requirement Not Met
+Test Setup       Make Tests Requiring ET 1.3 Non-Critical If Requirement Not Met
 Force Tags       regression    pybot    jybot
 Resource         atest_resource.txt
 
@@ -28,43 +28,47 @@ Path matches children from different parents
     Check Test Case    ${TESTNAME}
 
 '..'
-    [Tags]    x-requires-2.7+
+    [Tags]    X-Requires-ET-1.3
     Check Test Case    ${TESTNAME}
 
 '[@attrib]'
-    [Tags]    x-requires-2.7+
+    [Tags]    X-Requires-ET-1.3
     Check Test Case    ${TESTNAME}
 
 '[@attrib="value"]'
-    [Tags]    x-requires-2.7+
+    [Tags]    X-Requires-ET-1.3
     Check Test Case    ${TESTNAME}
 
 '[tag]'
-    [Tags]    x-requires-2.7+
+    [Tags]    X-Requires-ET-1.3
     Check Test Case    ${TESTNAME}
 
 '[position]'
-    [Tags]    x-requires-2.7+
+    [Tags]    X-Requires-ET-1.3
     Check Test Case    ${TESTNAME}
 
 Stacked predicates
-    [Tags]    x-requires-2.7+
+    [Tags]    X-Requires-ET-1.3
     Check Test Case    ${TESTNAME}
 
 Non-ASCII tag names
     Check Test Case    ${TESTNAME}
 
 More complex non-ASCII xpath
-    [Tags]    x-requires-2.7+
+    [Tags]    X-Requires-ET-1.3
     Check Test Case    ${TESTNAME}
 
 Warning when using more complex non-ASCII xpath with interpreter < 2.7
-    Run Keyword If    '${SUITE.doc}' < '2.7'    Verify Non-ASCII xpath error
+    Run Keyword If ET < 1.3    Verify Non-ASCII xpath error
 
 *** Keywords ***
-Make Tests Requiring Python 2.7 Non-Critical If Requirement Not Met
-    Run Keyword If    'x-requires-2.7+' in @{TEST TAGS} and '${SUITE.doc}' < '2.7'
-    ...    Remove Tags    regression
+Make Tests Requiring ET 1.3 Non-Critical If Requirement Not Met
+    Run Keyword If    'X-Requires-ET-1.3' in @{TEST TAGS}
+    ...    Run Keyword If ET < 1.3    Remove Tags    regression
+
+Run Keyword If ET < 1.3
+    [Arguments]    ${kw}    @{args}
+    Run Keyword If    '${SUITE.metadata["ET Version"]}' < '1.3'    ${kw}    @{args}
 
 Verify Non-ASCII xpath error
     ${tc}=    Get Test Case    More complex non-ASCII xpath
