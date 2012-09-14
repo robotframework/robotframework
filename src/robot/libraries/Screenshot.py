@@ -39,9 +39,10 @@ else:
     except ImportError:
         ImageGrab = None
 
-from robot.version import get_version
 from robot import utils
+from robot.api import logger
 from robot.libraries.BuiltIn import BuiltIn
+from robot.version import get_version
 
 
 class Screenshot(object):
@@ -226,8 +227,8 @@ class Screenshot(object):
     def _screenshot_to_file(self, path):
         path = utils.abspath(self._norm_path(path))
         self._validate_screenshot_path(path)
-        print '*DEBUG* Using %s modules for taking screenshot.' \
-            % self._screenshot_taker.module
+        logger.debug('Using %s modules for taking screenshot.'
+                     % self._screenshot_taker.module)
         self._screenshot_taker(path)
         return path
 
@@ -249,12 +250,13 @@ class Screenshot(object):
 
     def _embed_screenshot(self, path, width):
         link = utils.get_link_path(path, self._log_dir)
-        print '*HTML* <a href="%s"><img src="%s" width="%s"></a>' \
-              % (link, link, width)
+        logger.info('<a href="%s"><img src="%s" width="%s"></a>'
+                    % (link, link, width), html=True)
 
     def _link_screenshot(self, path):
         link = utils.get_link_path(path, self._log_dir)
-        print "*HTML* Screenshot saved to '<a href=\"%s\">%s</a>'." % (link, path)
+        logger.info("Screenshot saved to '<a href=\"%s\">%s</a>'."
+                    % (link, path), html=True)
 
 
 class ScreenshotTaker(object):
