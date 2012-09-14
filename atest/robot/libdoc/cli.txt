@@ -30,8 +30,10 @@ Relative path with Python libraries
 *** Keywords ***
 Run Libdoc And Verify Created Output File
     [Arguments]    ${args}   ${format}    ${name}    ${version}=    ${path}=${OUTHTML}
-    Run Libdoc And Verify Output    ${args}    ${path}
+    ${stdout} =    Run Libdoc    ${args}
     Run Keyword    ${format} Doc Should Have Been Created    ${path}    ${name}    ${version}
+    Path to output should be in stdout    ${path}    ${stdout.rstrip()}
+    [Teardown]    Remove Output Files
 
 HTML Doc Should Have Been Created
     [Arguments]    ${path}    ${name}    ${version}
@@ -46,3 +48,11 @@ XML Doc Should Have Been Created
     Set Test Variable   ${libdoc}
     Name Should Be    ${name}
     Run Keyword If    "${version}"    Version Should Match    ${version}
+
+Path to output should be in stdout
+    [Documentation]    Printed path may be in different format than original.
+    ...                IronPython seems to like 'c:\olddos~1\format~2.ext'.
+    [Arguments]    ${path}    ${stdout}
+    File Should Exist    ${stdout}
+    Remove File    ${path}
+    File Should Not Exist    ${stdout}

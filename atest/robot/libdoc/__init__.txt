@@ -1,4 +1,4 @@
 *** Settings ***
 Resource         libdoc_resource.txt
-Suite Setup      Remove File    ${OUTPREFIX}*
-Suite Teardown   Remove File    ${OUTPREFIX}*
+Suite Setup      Remove Output Files
+Suite Teardown   Remove Output Files

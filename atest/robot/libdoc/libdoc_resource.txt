@@ -111,3 +111,6 @@ Get Keyword Arguments
     ${kws}=    Get Elements    ${LIBDOC}    ${type}
     ${args}=    Get Elements Texts   ${kws[${index}]}    arguments/arg
     [Return]    ${args}
+
+Remove Output Files
+    Remove Files    ${OUTPREFIX}*
