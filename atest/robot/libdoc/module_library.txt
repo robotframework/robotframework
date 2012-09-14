@@ -40,7 +40,12 @@ Keyword Documentation
     Keyword Doc Should Start With    0   Get the intialization variables
     Keyword Doc Should Be    1   A keyword\n\nSee `get hello` for details
 
-Non ASCII
+Valid non-ASCII
     Keyword Doc Should Be    2    Hyvää yötä.\n\nСпасибо!
-    Keyword Doc Should Be    3    Hyv\\xe4\\xe4 y\\xf6t\\xe4.
     Keyword Doc Should Be    4    Hyvää yötä.
+
+Invalid non-ASCII
+    ${path}    ${base} =    Split Path    ${INTERPRETER}
+    ${expected} =   Set Variable If    'ipy' not in '${base}'
+    ...    Hyv\\xe4\\xe4 y\\xf6t\\xe4.    Hyvää yötä.
+    Keyword Doc Should Be    3    ${expected}
