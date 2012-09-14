@@ -184,7 +184,7 @@ class Variables(utils.NormalizedDict):
                 if not ignore_errors:
                     raise
                 value = string[splitted.start:splitted.end]
-            if not isinstance(value, basestring):
+            if not isinstance(value, unicode):
                 value = utils.unic(value)
             result.append(value)
             string = string[splitted.end:]
