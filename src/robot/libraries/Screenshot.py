@@ -46,11 +46,14 @@ from robot.version import get_version
 
 
 class Screenshot(object):
-    """A test library for taking screenshots and embedding them into log files.
+    """Test library for taking screenshots on the machine where tests are run.
+
+    Notice that successfully taking screenshots requires tests to be run with
+    a physical or virtual display.
 
     *Using with Python*
 
-    On Python you need to have one of the following modules installed to be
+    With Python you need to have one of the following modules installed to be
     able to use this library. The first module that is found will be used.
 
     - wxPython :: http://wxpython.org :: Required also by RIDE so many Robot
@@ -62,15 +65,11 @@ class Screenshot(object):
 
     Python support was added in Robot Framework 2.5.5.
 
-    *Using with Jython*
+    *Using with Jython and IronPython*
 
-    On Jython this library uses Java AWT APIs. They are always available
-    and thus no external modules are needed.
-
-    *Using with IronPython*
-
-    On IronPython this library uses .NET APIs. They are always available
-    and thus no external modules are needed.
+    With Jython and IronPython this library uses APIs provided by JVM and .NET
+    platforms, respectively. These APIs are always available and thus no
+    external modules are needed.
 
     IronPython support was added in Robot Framework 2.7.5.
 
@@ -180,19 +179,19 @@ class Screenshot(object):
         return path
 
     def take_screenshot(self, name="screenshot", width="800px"):
-        """Takes a screenshot and embeds it into the log file.
+        """Takes a screenshot in JPEG format and embeds it into the log file.
 
-        Name of the file where the screenshot is stored is derived from `name`.
-        If `name` ends with extension `.jpg` or `.jpeg`, the screenshot will be
-        stored with that name. Otherwise a unique name is created by adding
-        underscore, a running index and extension to the `name`.
+        Name of the file where the screenshot is stored is derived from the
+        given `name`. If the `name` ends with extension `.jpg` or `.jpeg`,
+        the screenshot will be stored with that exact name. Otherwise a unique
+        name is created by adding an underscore, a running index and
+        an extension to the `name`.
 
         The name will be interpreted to be relative to the directory where
         the log file is written. It is also possible to use absolute paths.
+        Using `/` as a path separator works in all operating systems.
 
         `width` specifies the size of the screenshot in the log file.
-
-        The path where the screenshot is saved is returned.
 
         Examples: (LOGDIR is determined automatically by the library)
         | Take Screenshot |                  |     | # LOGDIR/screenshot_1.jpg (index automatically incremented) |
@@ -202,8 +201,7 @@ class Screenshot(object):
         | Take Screenshot | images/login.jpg | 80% | # Specify both name and width. |
         | Take Screenshot | width=550px      |     | # Specify only width. |
 
-        Screenshots can be only taken in JPEG format. It is possible to use `/`
-        as a path separator in all operating systems.
+        The path where the screenshot is saved is returned.
         """
         path = self._save_screenshot(name)
         self._embed_screenshot(path, width)
