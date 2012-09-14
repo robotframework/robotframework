@@ -225,17 +225,23 @@ class Screenshot(object):
         return self._screenshot_to_file(path)
 
     def _screenshot_to_file(self, path):
-        path = utils.abspath(self._norm_path(path))
-        self._validate_screenshot_path(path)
+        path = self._validate_screenshot_path(path)
         logger.debug('Using %s modules for taking screenshot.'
                      % self._screenshot_taker.module)
-        self._screenshot_taker(path)
+        try:
+            self._screenshot_taker(path)
+        except:
+            logger.warn('Taking screenshot failed: %s\n'
+                        'Make sure tests are run with a physical or virtual display.'
+                        % utils.get_error_message())
         return path
 
     def _validate_screenshot_path(self, path):
+        path = utils.abspath(self._norm_path(path))
         if not os.path.exists(os.path.dirname(path)):
-            raise RuntimeError("Directory '%s' where to save the screenshot does "
-                               "not exist" % os.path.dirname(path))
+            raise RuntimeError("Directory '%s' where to save the screenshot "
+                               "does not exist" % os.path.dirname(path))
+        return path
 
     def _get_screenshot_path(self, basename, directory):
         directory = self._norm_path(directory) if directory else self._screenshot_dir
@@ -296,9 +302,11 @@ class ScreenshotTaker(object):
     def _cli_screenshot(self, path):
         bmp = Bitmap(Screen.PrimaryScreen.Bounds.Width,
                      Screen.PrimaryScreen.Bounds.Height)
-        g = Graphics.FromImage(bmp)
-        g.CopyFromScreen(0, 0, 0, 0, bmp.Size)
-        g.Dispose()
+        graphics = Graphics.FromImage(bmp)
+        try:
+            graphics.CopyFromScreen(0, 0, 0, 0, bmp.Size)
+        finally:
+            graphics.Dispose()
         bmp.Save(path, Imaging.ImageFormat.Jpeg)
 
     def _wx_screenshot(self, path):
