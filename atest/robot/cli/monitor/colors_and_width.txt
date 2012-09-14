@@ -24,6 +24,10 @@ Monitor Colors On
     Run Tests With Colors  --MonitorCol on
     Outputs should have ANSI colors when not on Windows
 
+Monitor Colors ANSI
+    Run Tests With Colors  --MonitorColors AnSi
+    Outputs should have ANSI colors
+
 Invalid Monitor Colors
     [Documentation]  Invalid color mapped to 'auto' (default)
     Run Tests With Colors  -C INVALID
