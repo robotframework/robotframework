@@ -137,10 +137,11 @@ class LibDoc(Application):
             self.console(os.path.abspath(output))
 
     def _get_format(self, format, output):
-        format = (format if format else os.path.splitext(output)[1][1:]).upper()
-        if format in ['HTML', 'XML']:
-            return format
-        raise DataError("Format must be either 'HTML' or 'XML', got '%s'." % format)
+        format = (format or os.path.splitext(output)[1][1:]).upper()
+        if format not in ['HTML', 'XML']:
+            raise DataError("Format must be either 'HTML' or 'XML', got '%s'."
+                            % format)
+        return format
 
 
 def libdoc_cli(args):
