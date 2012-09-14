@@ -1,29 +1,28 @@
 *** Settings ***
-Documentation   In these tests keywords log, raise, and return messages containing ISO-8859-1 byte strings. Notice that they _do not_ use Unicode.
 Library         bytelib
 Variables       expbytevalues.py
 
 *** Test Cases ***
 In Return Value
-    [Documentation]  Return value is not altered by the framework and thus it contains the exact sama bytes that the keyword returned. When the return value is logged, the bytes are escaped.
+    [Documentation]  Return value is not altered by the framework and thus it
+    ...              contains the exact same bytes that the keyword returned.
     ${retval} =  In Return Value
     Should Be Equal  ${retval}  ${exp_return_value}
 
 In Message
-    [Documentation]  In the log message bytes are escaped.
     In Message
 
 In Exception
-    [Documentation]  In the error message bytes are escaped. FAIL ${exp_error_msg}
+    [Documentation]  FAIL ${exp_error_msg}
     In Exception
 
 In Exception In Setup
-    [Documentation]  In the error message bytes are escaped. FAIL Setup failed:\n${exp_error_msg}
+    [Documentation]  FAIL Setup failed:\n${exp_error_msg}
     [Setup]  In Exception
     No Operation
 
 In Exception In Teardown
-    [Documentation]  In the error message bytes are escaped. FAIL Teardown failed:\n${exp_error_msg}
+    [Documentation]  FAIL Teardown failed:\n${exp_error_msg}
     No Operation
     [Teardown]  In Exception
 
