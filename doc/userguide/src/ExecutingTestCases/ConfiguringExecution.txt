@@ -391,9 +391,12 @@ Console colors
 ''''''''''''''
 
 The :opt:`--monitorcolors (-C)` option is used to control whether
-colors should be used in the console output. Colors should work on all
-other platforms except for Windows when using Jython. This option supports
-the following case-insensitive values:
+colors should be used in the console output. Colors are implemented
+using `ANSI colors`__ except on Windows where, by default, Windows
+APIs are used instead. Accessing these APIs from Jython is not possible,
+and as a result colors do not work with Jython on Windows.
+
+This option supports the following case-insensitive values:
 
 :opt:`auto`
     Colors are enabled when outputs are written into the console, but not
@@ -402,6 +405,11 @@ the following case-insensitive values:
 :opt:`on`
     Colors are used also when outputs are redirected. Does not work on Windows.
 
+:opt:`ansi`
+    Same as :opt:`on` but uses ANSI colors also on Windows. Useful, for example,
+    when redirecting output to a program that understands ANSI colors.
+    New in Robot Framework 2.7.5.
+
 :opt:`off`
     Colors are disabled.
 
@@ -409,8 +417,10 @@ the following case-insensitive values:
     Backwards compatibility with Robot Framework 2.5.5 and older.
     Should not be used.
 
-.. note:: Support for colors on Windows and the :opt:`auto` mode are
-          new features in Robot Framework 2.5.6.
+.. note:: Support for colors on Windows and the :opt:`auto` mode were
+          added in Robot Framework 2.5.6.
+
+__ http://en.wikipedia.org/wiki/ANSI_escape_code
 
 Console markers
 '''''''''''''''

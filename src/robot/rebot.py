@@ -190,10 +190,11 @@ Options
                           of combined test suites together.
     --nostatusrc          Sets the return code to zero regardless of failures
                           in test cases. Error codes are returned normally.
- -C --monitorcolors auto|on|off  Use colors on console output or not.
+ -C --monitorcolors auto|on|ansi|off  Use colors on console output or not.
                           auto: use colors when output not redirected (default)
                           on:   always use colors
-                          off:  never use colors
+                          ansi: like `on` but use ANSI colors also on Windows
+                          off:  disable colors altogether
                           Note that colors do not work with Jython on Windows.
  -E --escape what:with *  Escape characters which are problematic in console.
                           `what` is the name of the character to escape and

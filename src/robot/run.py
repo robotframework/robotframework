@@ -235,10 +235,11 @@ Options
                           In the `DryRun` test data is verified and tests run
                           so that library keywords are not executed.
  -W --monitorwidth chars  Width of the monitor output. Default is 78.
- -C --monitorcolors auto|on|off  Use colors on console output or not.
+ -C --monitorcolors auto|on|ansi|off  Use colors on console output or not.
                           auto: use colors when output not redirected (default)
                           on:   always use colors
-                          off:  never use colors
+                          ansi: like `on` but use ANSI colors also on Windows
+                          off:  disable colors altogether
                           Note that colors do not work with Jython on Windows.
  -K --monitormarkers auto|on|off  Show `.` (success) or `F` (failure) on
                           console when top level keywords in test cases end.
