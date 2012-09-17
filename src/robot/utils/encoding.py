@@ -37,6 +37,8 @@ def encode_output(string, errors='replace'):
 
 def decode_from_system(string, can_be_from_java=True):
     """Decodes bytes from system (e.g. cli args or env vars) to Unicode."""
+    if sys.platform == 'cli':
+        return string
     if sys.platform.startswith('java') and can_be_from_java:
         # http://bugs.jython.org/issue1592
         from java.lang import String
