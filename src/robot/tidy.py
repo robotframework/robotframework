@@ -169,7 +169,7 @@ class TidyCommandLine(Application):
             self._print(tidy.file(inputs[0]))
 
     def _print(self, msg):
-        if sys.stdout.isatty():
+        if self._isatty(sys.stdout):
             msg = encode_output(msg)
         else:
             if os.sep == '\\' and 'b' not in sys.stdout.mode:
