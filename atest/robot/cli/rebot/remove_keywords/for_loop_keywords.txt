@@ -4,37 +4,47 @@ Suite Teardown    Remove File    ${INPUTFILE}
 Force Tags        pybot    jybot    regression
 Resource          remove_keywords_resource.txt
 
+*** Variables ***
+${0 REMOVED}      ${EMPTY}
+${1 REMOVED}      _1 passing step removed using --RemoveKeywords option._
+${3 REMOVED}      _3 passing steps removed using --RemoveKeywords option._
+${4 REMOVED}      _4 passing steps removed using --RemoveKeywords option._
+
 *** Test Cases ***
-Passed Steps Are Removed
+Passed Steps Are Removed Except The Last One
     ${tc}=    Check Test Case    Simple For
-    Keyword Should Be Empty    ${tc.kws[1]}    \${var} IN [ one | two ]    []
-    Should Be Equal   ${tc.kws[1].doc}    _2 passing steps removed using --RemoveKeywords option._
+    Length Should Be    ${tc.kws[1].kws}    1
+    Should Be Equal     ${tc.kws[1].doc}    ${1 REMOVED}
+    Should Be Equal     ${tc.kws[1].kws[0].status}    PASS
 
 Failed Steps Are Not Removed
     ${tc}=    Check Test Case    For Failing 2
     Length Should Be    ${tc.kws[0].kws}    1
-    Should Be Equal   ${tc.kws[0].doc}    _3 passing steps removed using --RemoveKeywords option._
-    Should Be Equal    ${tc.kws[0].kws[0].name}    \${num} = 4
+    Should Be Equal     ${tc.kws[0].doc}    ${3 REMOVED}
+    Should Be Equal     ${tc.kws[0].kws[0].name}    \${num} = 4
     Length Should Be    ${tc.kws[0].kws[0].kws}    2
-    Should Be Equal    ${tc.kws[0].kws[0].kws[1].status}    FAIL
+    Should Be Equal     ${tc.kws[0].kws[0].status}    FAIL
 
 Steps With Warning Are Not Removed
     ${tc}=    Check Test Case    Simple For 2
-    Log    ${tc.kws[0].kws[0].kws[-1]}
+    Length Should Be     ${tc.kws[0].kws}    2
+    Should Be Equal      ${tc.kws[0].doc}    ${4 REMOVED}
     Check Log Message    ${tc.kws[0].kws[0].kws[-1].kws[0].msgs[0]}    Presidential Candidate!    WARN
     Check Log Message    ${tc.kws[0].kws[1].kws[-1].kws[0].msgs[0]}    Presidential Candidate!    WARN
 
 Steps From Nested Loops Are Removed
     ${tc}=    Check Test Case    Nested For In User Keywords
-    Length Should Be    ${tc.kws[0].kws[0].kws[0].kws}    2
-    Keyword Should Be Empty    ${tc.kws[0].kws[0].kws[0].kws[0].kws[1]}    \${x} IN [ 1 | 2 ]    []
-    Keyword Should Be Empty    ${tc.kws[0].kws[0].kws[0].kws[1].kws[0]}    \${arg} IN [ \@{args} ]    []
+    Length Should Be    ${tc.kws[0].kws[0].kws}    1
+    Should Be Equal     ${tc.kws[0].kws[0].doc}    ${0 REMOVED}
+    Length Should Be    ${tc.kws[0].kws[0].kws[0].kws[0].kws[1].kws}    1
+    Should Be Equal     ${tc.kws[0].kws[0].kws[0].kws[0].kws[1].doc}    ${1 REMOVED}
+    Length Should Be    ${tc.kws[0].kws[0].kws[0].kws[1].kws[0].kws}    1
+    Should Be Equal     ${tc.kws[0].kws[0].kws[0].kws[1].kws[0].doc}    ${1 REMOVED}
 
-Check Removal Message
-    ${tc}=    Check Test Case    For With Failures In User Keywords
-    Should Be Equal   ${tc.kws[0].doc}    _1 passing step removed using --RemoveKeywords option._
-    ${tc}=    Check Test Case    For Failing
-    Should Be Equal   ${tc.kws[0].doc}    ${EMPTY}
+Empty Loops Are Handled Correctly
+    ${tc}=    Check Test Case    Empty For
+    Should Be Empty    ${tc.kws[0].kws}
+    Should Be Equal    ${tc.kws[0].doc}    ${0 REMOVED}
 
 *** Keywords ***
 Remove For Loop Keywords With Rebot

@@ -79,7 +79,8 @@ class ForLoopItemsRemover(_KeywordRemover):
             self._removal_message.set_if_removed(kw, before)
 
     def _remove_keywords(self, keywords):
-        return [kw for kw in keywords if self._failed_or_contains_warning(kw)]
+        return [kw for kw in keywords
+                if self._failed_or_contains_warning(kw) or kw is keywords[-1]]
 
 
 class WaitUntilKeywordSucceedsRemover(_KeywordRemover):
