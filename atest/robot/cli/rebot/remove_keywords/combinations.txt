@@ -23,12 +23,18 @@ Run Rebot With RemoveKeywords
     ${rmkws}=    Catenate    SEPARATOR= --RemoveKeywords=    ${EMPTY}    @{options}
     Run Rebot    ${rmkws} --log log.html   ${INPUTFILE}
     Validate Log    @{options}
+    Validate Tests
 
 Validate Log
     [Arguments]    @{options}
-    ${LOG}=   Get File  ${OUTDIR}/log.html
-    : FOR   ${item}  in  @{options}
-    \   Should Not Contain  ${LOG}  -${item}
+    ${LOG}=    Get File    ${OUTDIR}/log.html
+    : FOR    ${item}    IN    @{options}
+    \   Should Not Contain    ${LOG}    -${item}
+
+Validate Tests
+    Check Suite Contains Tests    ${SUITE}    Passing    Failing
+    ...    For when test fails    For when test passes
+    ...    WUKS when test fails    WUKS when test passes
 
 Create Output
     Create Output With Robot    ${INPUTFILE}    ${EMPTY}    cli/remove_keywords/all_combinations.txt

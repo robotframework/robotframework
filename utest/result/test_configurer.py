@@ -1,6 +1,6 @@
 from itertools import chain
 import unittest
-from robot.utils.asserts import assert_equal, assert_raises_with_msg
+from robot.utils.asserts import assert_equal, assert_raises_with_msg, assert_true
 
 from robot.errors import DataError
 from robot.result.testsuite import TestSuite
@@ -180,10 +180,12 @@ class TestRemoveKeywords(unittest.TestCase):
         assert_equal(len(suite.keywords.setup.messages), 1)
         assert_equal(len(suite.keywords.teardown.keywords), 1)
 
-    def test_remove_for_removes_for_loop_items_when_item_is_passed(self):
+    def test_remove_for_removes_passed_items_except_last(self):
         suite, forloop = self.suite_with_forloop()
+        last = forloop.keywords[-1]
         self._remove_for_loop(suite)
-        assert_equal(len(forloop.keywords), 0)
+        assert_equal(len(forloop.keywords), 1)
+        assert_true(forloop.keywords[-1] is last)
 
     def suite_with_forloop(self):
         suite = TestSuite()
@@ -197,16 +199,19 @@ class TestRemoveKeywords(unittest.TestCase):
 
     def test_remove_for_removes_passing_items_when_there_are_failures(self):
         suite, forloop = self.suite_with_forloop()
-        suite.tests[0].keywords.create(status='FAIL')
-        suite.tests[0].status = 'FAIL'
+        failed = forloop.keywords.create(status='FAIL')
         self._remove_for_loop(suite)
-        assert_equal(len(forloop.keywords), 0)
+        assert_equal(len(forloop.keywords), 1)
+        assert_true(forloop.keywords[-1] is failed)
 
     def test_remove_for_does_not_remove_for_loop_items_with_warnings(self):
         suite, forloop = self.suite_with_forloop()
         forloop.keywords[2].messages.create(message='danger!', level='WARN')
+        warn = forloop.keywords[2]
+        last = forloop.keywords[-1]
         self._remove_for_loop(suite)
-        assert_equal(len(forloop.keywords), 1)
+        assert_equal(len(forloop.keywords), 2)
+        assert_equal(list(forloop.keywords), [warn, last])
 
     def test_remove_based_on_multiple_condition(self):
         suite = TestSuite()
@@ -214,11 +219,13 @@ class TestRemoveKeywords(unittest.TestCase):
         t1.keywords.create().messages.create()
         t2 = suite.tests.create(status='FAIL')
         t2.keywords.create().messages.create()
-        t2.keywords.create(type='for').keywords.create(type='foritem', status='PASS')
+        t2.keywords.create(type='for')
+        for i in range(10):
+            t2.keywords[1].keywords.create(type='foritem', status='PASS')
         self._remove(['passed', 'for'], suite)
-        assert_equal(len(suite.tests[0].keywords[0].messages), 0)
-        assert_equal(len(suite.tests[1].keywords[0].messages), 1)
-        assert_equal(len(suite.tests[1].keywords[1].keywords), 0)
+        assert_equal(len(t1.keywords[0].messages), 0)
+        assert_equal(len(t2.keywords[0].messages), 1)
+        assert_equal(len(t2.keywords[1].keywords), 1)
 
     def _suite_with_setup_and_teardown_and_test_with_keywords(self):
         suite = TestSuite()
