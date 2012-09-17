@@ -6,7 +6,8 @@ Resource        atest_resource.txt
 *** Variables ***
 ${PASS MESSAGE}    -PASSED -ALL
 ${FAIL MESSAGE}    -ALL +PASSED
-${FOR MESSAGE}     -FOR -ALL
+${REMOVED FOR MESSAGE}     -FOR -ALL
+${KEPT FOR MESSAGE}        +FOR -ALL
 ${REMOVED WUKS MESSAGE}    -WUKS -ALL
 ${KEPT WUKS MESSAGE}       +WUKS -ALL
 
@@ -21,7 +22,8 @@ PASSED option when test fails
     Output should contain fail message
 
 FOR option
-    Log should not contain    ${FOR MESSAGE}
+    Log should not contain    ${REMOVED FOR MESSAGE}
+    Log should contain    ${KEPT FOR MESSAGE}
     Output should contain for messages
 
 WUKS option
@@ -65,9 +67,11 @@ Output should contain for messages
 Test should contain for messages
     [Arguments]    ${name}
     ${tc} =    Check test case    ${name}
-    Check log message    ${tc.kws[0].kws[0].kws[0].msgs[0]}    ${FOR MESSAGE} one
-    Check log message    ${tc.kws[0].kws[1].kws[0].msgs[0]}    ${FOR MESSAGE} two
-    Check log message    ${tc.kws[0].kws[2].kws[0].msgs[0]}    ${FOR MESSAGE} three
+    ${for} =    Set Variable    ${tc.kws[0].kws[0]}
+    Check log message    ${for.kws[0].kws[0].kws[0].msgs[0]}    ${REMOVED FOR MESSAGE} one
+    Check log message    ${for.kws[1].kws[0].kws[0].msgs[0]}    ${REMOVED FOR MESSAGE} two
+    Check log message    ${for.kws[2].kws[0].kws[0].msgs[0]}    ${REMOVED FOR MESSAGE} three
+    Check log message    ${for.kws[3].kws[0].kws[0].msgs[0]}    ${KEPT FOR MESSAGE} LAST
 
 Output should contain WUKS messages
     Test should contain WUKS messages    WUKS when test passes
