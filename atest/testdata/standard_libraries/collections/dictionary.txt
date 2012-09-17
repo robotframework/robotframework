@@ -187,8 +187,7 @@ Log Dictionary With Different Log Levels
 Log Dictionary With Different Dictionaries
     Log Dictionary  ${D0}
     Log Dictionary  ${D1}
-    ${tuple} =  Evaluate  (1, 2, 3)
-    ${dict} =  Create Dictionary  ${tuple}  ${3.12}  1  2
+    ${dict} =  Evaluate  {(1, 2, 3): 3.14, True: 'xxx', 'foo': []}
     Log Dictionary  ${dict}
 
 *** Keywords ***

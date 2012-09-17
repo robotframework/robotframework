@@ -119,14 +119,14 @@ Log Dictionary With Different Log Levels
     ${tc} =  Check Test Case  ${TEST NAME}
     ${expected} =  Set Variable  Dictionary size is 3 and it contains following items:\n 3: None\n a: 1\n b: 2
     Check Log Message  ${tc.kws[0].msgs[0]}  ${expected}  INFO
-    Variable Should Not Exist  ${tc.kws[1].msgs[0]}
+    Should Be Empty    ${tc.kws[1].msgs}
     Check Log Message  ${tc.kws[2].msgs[0]}  ${expected}  WARN
     Check Log Message  ${tc.kws[3].msgs[0]}  ${expected}  DEBUG
     Check Log Message  ${tc.kws[4].msgs[0]}  ${expected}  INFO
 
 Log Dictionary With Different Dictionaries
     ${tc} =  Check Test Case  ${TEST NAME}
-    Check Log Message  ${tc.kws[0].msgs[0]}  Dictionary is empty  INFO
-    Check Log Message  ${tc.kws[1].msgs[0]}  Dictionary has one item:\n a: 1  INFO
-    Check Log Message  ${tc.kws[4].msgs[0]}  Dictionary size is 2 and it contains following items:\n (1, 2, 3): 3.12\n 1: 2  INFO
+    Check Log Message  ${tc.kws[0].msgs[0]}  Dictionary is empty
+    Check Log Message  ${tc.kws[1].msgs[0]}  Dictionary has one item:\n a: 1
+    Check Log Message  ${tc.kws[3].msgs[0]}  Dictionary size is 3 and it contains following items:\nTrue: xxx\nfoo: []\n(1, 2, 3): 3.14
 
