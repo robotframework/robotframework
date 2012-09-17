@@ -37,6 +37,9 @@ class _KeywordRemover(SuiteVisitor):
         kw.messages = []
         self._removal_message.set(kw)
 
+    def _failed_or_contains_warning(self, item):
+        return not item.passed or self._contains_warning(item)
+
     def _contains_warning(self, item):
         contains_warning = ContainsWarning()
         item.visit(contains_warning)
@@ -58,12 +61,9 @@ class PassedKeywordRemover(_KeywordRemover):
                     self._clear_content(keyword)
 
     def visit_test(self, test):
-        if self._should_be_cleared(test):
+        if not self._failed_or_contains_warning(test):
             for keyword in test.keywords:
                 self._clear_content(keyword)
-
-    def _should_be_cleared(self, item):
-        return item.passed and not self._contains_warning(item)
 
     def visit_keyword(self, keyword):
         pass
@@ -75,9 +75,11 @@ class ForLoopItemsRemover(_KeywordRemover):
     def start_keyword(self, kw):
         if kw.type == kw.FOR_LOOP_TYPE:
             before = len(kw.keywords)
-            kw.keywords = [item for item in kw.keywords
-                           if not item.passed or self._contains_warning(item)]
+            kw.keywords = self._remove_keywords(kw.keywords)
             self._removal_message.set_if_removed(kw, before)
+
+    def _remove_keywords(self, keywords):
+        return [kw for kw in keywords if self._failed_or_contains_warning(kw)]
 
 
 class WaitUntilKeywordSucceedsRemover(_KeywordRemover):
@@ -85,14 +87,17 @@ class WaitUntilKeywordSucceedsRemover(_KeywordRemover):
 
     def start_keyword(self, kw):
         if kw.name == 'BuiltIn.Wait Until Keyword Succeeds' and kw.keywords:
-            keywords = list(kw.keywords)
-            last_included = 2 if kw.keywords[-1].passed else 1
-            kw.keywords = self._kws_with_warnings(keywords[:-last_included]) + \
-                          keywords[-last_included:]
-            self._removal_message.set_if_removed(kw, len(keywords))
+            before = len(kw.keywords)
+            kw.keywords = self._remove_keywords(list(kw.keywords))
+            self._removal_message.set_if_removed(kw, before)
+
+    def _remove_keywords(self, keywords):
+        include_from_end = 2 if keywords[-1].passed else 1
+        return self._kws_with_warnings(keywords[:-include_from_end]) \
+                + keywords[-include_from_end:]
 
     def _kws_with_warnings(self, keywords):
-        return [k for k in keywords if self._contains_warning(k)]
+        return [kw for kw in keywords if self._contains_warning(kw)]
 
 
 class ContainsWarning(SuiteVisitor):
@@ -122,10 +127,7 @@ class RemovalMessage(object):
     def set_if_removed(self, kw, len_before):
         removed = len_before - len(kw.keywords)
         if removed:
-            self._set(kw, self._message % (removed, utils.plural_or_not(removed)))
+            self.set(kw, self._message % (removed, utils.plural_or_not(removed)))
 
-    def set(self, kw):
-        self._set(kw, self._message)
-
-    def _set(self, kw, message):
-        kw.doc = ('%s\n\n_%s_' % (kw.doc, message)).strip()
+    def set(self, kw, message=None):
+        kw.doc = ('%s\n\n_%s_' % (kw.doc, message or self._message)).strip()
