@@ -285,6 +285,11 @@ class XML(object):
         with ETSource(source) as source:
             return ET.parse(source).getroot()
 
+    def save_xml(self, source, path, encoding='UTF-8'):
+        tree = ET.ElementTree(self.get_element(source, xpath='.'))
+        kwargs = {'xml_declaration': True} if ET.VERSION >= '1.3' else {}
+        tree.write(path, encoding, **kwargs)
+
     def get_element(self, source, xpath):
         """Returns an element in the `source` matching the `xpath`.
 
