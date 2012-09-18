@@ -1,0 +1,48 @@
+*** Settings ***
+Suite Setup      Run Tests    ${EMPTY}    standard_libraries/xml/add_and_remove_elements.txt
+Force Tags       regression    pybot    jybot
+Resource         atest_resource.txt
+
+*** Test Cases ***
+
+Add Element
+    Check Test Case    ${TESTNAME}
+
+Add Element As String
+    Check Test Case    ${TESTNAME}
+
+Add Element With Index
+    Check Test Case    ${TESTNAME}
+
+Remove Element
+    Check Test Case    ${TESTNAME}
+
+Remove Non-Direct Child Element
+    Check Test Case    ${TESTNAME}
+
+Remove Element Fails If No Element Match
+    Check Test Case    ${TESTNAME}
+
+Remove Element Fails If Multiple Elements Match
+    Check Test Case    ${TESTNAME}
+
+Remove Element Requires Xpath
+    Check Test Case    ${TESTNAME}
+
+Remove Element Cannot Remove Root Element Fails
+    Check Test Case    ${TESTNAME}
+
+Remove Elements
+    Check Test Case    ${TESTNAME}
+
+Remove Elements Can Remove All Child Elements
+    Check Test Case    ${TESTNAME}
+
+Remove Elements Does Not Fail If No Element Match
+    Check Test Case    ${TESTNAME}
+
+Remove Elements Requires Xpath
+    Check Test Case    ${TESTNAME}
+
+Remove Elements Cannot Remove Root Element Fails
+    Check Test Case    ${TESTNAME}

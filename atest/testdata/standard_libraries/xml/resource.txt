@@ -3,7 +3,7 @@ Library     XML
 
 *** Variables ***
 ${TEST} =      ${CURDIR}/test.xml
-${SIMPLE} =    <root><child id="1">text</child></root>
+${SIMPLE} =    <root><child id="1">text</child><c2><gc /></c2></root>
 
 
 *** Keywords ***

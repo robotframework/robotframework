@@ -718,6 +718,41 @@ class XML(object):
     def remove_element_attributes(self, source, xpath='.'):
         self.get_element(source, xpath).attrib.clear()
 
+    def add_element(self, source, element, index=None, xpath='.'):
+        source = self.get_element(source, xpath)
+        element = self.get_element(element)
+        if index is None:
+            source.append(element)
+        else:
+            source.insert(int(index), element)
+
+    def remove_element(self, source, xpath=''):
+        self._verify_removing_xpath(xpath)
+        source = self.get_element(source)
+        self._remove_element(source, self.get_element(source, xpath))
+
+    def remove_elements(self, source, xpath=''):
+        self._verify_removing_xpath(xpath)
+        source = self.get_element(source)
+        for element in self.get_elements(source, xpath):
+            self._remove_element(source, element)
+
+    def _verify_removing_xpath(self, xpath):
+        if not xpath:
+            raise RuntimeError('No xpath given.')
+        if xpath == '.':
+            raise RuntimeError('Cannot remove root element.')
+
+    def _remove_element(self, tree, element):
+        parent = self._find_parent(tree, element)
+        parent.remove(element)
+
+    def _find_parent(self, tree, element):
+        for parent in tree.getiterator():
+            for child in parent:
+                if child is element:
+                    return parent
+
     def save_xml(self, source, path, encoding='UTF-8'):
         tree = ET.ElementTree(self.get_element(source))
         kwargs = {'xml_declaration': True} if ET.VERSION >= '1.3' else {}

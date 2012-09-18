@@ -1,0 +1,71 @@
+*** Settings ***
+Resource        resource.txt
+Test Setup      Parse XML To Test Variable    ${SIMPLE}    \${XML}
+
+*** Variables ***
+${NEW}          <new attr="value"/>
+
+*** Test Cases ***
+
+Add Element
+    ${elem} =    Parse XML    ${NEW}
+    Add Element    ${XML}    ${elem}
+    Element Attribute Should Be    ${XML}    attr    value    xpath=new
+    ${children} =    Get Child Elements    ${XML}
+    Should Be Equal    ${children[-1].tag}    new
+
+Add Element As String
+    Add Element    ${XML}    ${NEW}    xpath=c2
+    Element Attribute Should Be    ${XML}    attr    value    xpath=c2/new
+
+Add Element With Index
+    Add Element    ${XML}    ${NEW}    index=0
+    Element Attribute Should Be    ${XML}    attr    value    xpath=new
+    ${children} =    Get Child Elements    ${XML}
+    Should Be Equal    ${children[0].tag}    new
+
+Remove Element
+    Remove Element    ${XML}    child
+    Remove Element    ${XML}    xpath=c2
+    Elements Should Be Equal    ${XML}    <root/>
+
+Remove Non-Direct Child Element
+    Remove Element    ${XML}    c2/gc
+    Element Should Not Exist    ${XML}    c2/gc
+
+Remove Element Fails If No Element Match
+    [Documentation]    FAIL No element matching 'nonex' found.
+    Remove Element    ${XML}    nonex
+
+Remove Element Fails If Multiple Elements Match
+    [Documentation]    FAIL Multiple elements (3) matching 'child' found.
+    Remove Element    ${TEST}    child
+
+Remove Element Requires Xpath
+    [Documentation]    FAIL No xpath given.
+    Remove Element    ${XML}
+
+Remove Element Cannot Remove Root Element Fails
+    [Documentation]    FAIL Cannot remove root element.
+    Remove Element    ${XML}    .
+
+Remove Elements
+    ${tree} =    Parse XML    ${TEST}
+    Remove Elements    ${tree}    xpath=.//child
+    Element Should Not Exist    ${tree}    .//child
+
+Remove Elements Can Remove All Child Elements
+    Remove Elements    ${XML}    *
+    Elements Should Be Equal    ${XML}    <root/>
+
+Remove Elements Does Not Fail If No Element Match
+    Remove Elements    ${XML}    nonex
+
+Remove Elements Requires Xpath
+    [Documentation]    FAIL No xpath given.
+    Remove Elements    ${XML}
+
+Remove Elements Cannot Remove Root Element Fails
+    [Documentation]    FAIL Cannot remove root element.
+    Remove Elements    ${XML}    .
+
