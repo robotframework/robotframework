@@ -305,7 +305,7 @@ class ScreenshotTaker(object):
             graphics.CopyFromScreen(0, 0, 0, 0, bmp.Size)
         finally:
             graphics.Dispose()
-        bmp.Save(path, Imaging.ImageFormat.Jpeg)
+            bmp.Save(path, Imaging.ImageFormat.Jpeg)
 
     def _wx_screenshot(self, path):
         context = wx.ScreenDC()
