@@ -200,7 +200,7 @@ class ArgumentParser:
         if path.upper() != 'STDIN':
             content = self._read_argfile(path)
         else:
-            content = decode_output(sys.__stdin__.read())
+            content = self._read_argfile_from_stdin()
         return self._process_argfile(content)
 
     def _read_argfile(self, path):
@@ -212,6 +212,12 @@ class ArgumentParser:
                             % (path, err))
         if content.startswith(codecs.BOM_UTF8.decode('UTF-8')):
             content = content[1:]
+        return content
+
+    def _read_argfile_from_stdin(self):
+        content = sys.__stdin__.read()
+        if sys.platform != 'cli':
+            content = decode_output(content)
         return content
 
     def _process_argfile(self, content):
