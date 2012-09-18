@@ -1,9 +1,6 @@
 *** Settings ***
 Resource        resource.txt
-Test Setup      Parse Simple XML
-
-*** Variables ***
-${SIMPLE}       <root><child id="1">text</child></root>
+Test Setup      Parse XML To Test Variable    ${SIMPLE}    \${XML}
 
 *** Test Cases ***
 
@@ -55,8 +52,3 @@ Remove Element Attributes
     ${attrib} =    Get Element Attributes    ${XML}    xpath=child
     Should Be Empty    ${attrib}
 
-
-*** Keywords ***
-Parse Simple XML
-    ${XML} =    Parse XML    ${SIMPLE}
-    Set Test Variable    ${XML}

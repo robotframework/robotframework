@@ -5,7 +5,6 @@ Test Setup      Remove File    ${OUTPUT}
 
 *** Variables ***
 ${OUTPUT}       %{TEMPDIR}/xmllib.xml
-${SIMPLE}       <root><child a="1" /><child>text</child></root>
 ${NON-ASCII}    <hyvää>yötä</hyvää>
 
 *** Test Cases ***

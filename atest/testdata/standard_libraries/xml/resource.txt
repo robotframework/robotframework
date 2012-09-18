@@ -3,3 +3,11 @@ Library     XML
 
 *** Variables ***
 ${TEST} =      ${CURDIR}/test.xml
+${SIMPLE} =    <root><child id="1">text</child></root>
+
+
+*** Keywords ***
+Parse XML To Test Variable
+    [Arguments]    ${input}    ${var}
+    ${result} =    Parse XML    ${input}
+    Set Test Variable    ${var}    ${result}
