@@ -1,0 +1,62 @@
+*** Settings ***
+Resource        resource.txt
+Test Setup      Parse Simple XML
+
+*** Variables ***
+${SIMPLE}       <root><child id="1">text</child></root>
+
+*** Test Cases ***
+
+Set Element Tag
+    Set Element Tag    ${XML}    kekkonen
+    Should Be Equal    ${XML.tag}    kekkonen
+
+Set Tag Using Xpath
+    Set Element Tag    ${XML}    kekkonen    xpath=child
+    Should Be Equal    ${XML.tag}    root
+    Element Text Should Be    ${XML}    text    xpath=kekkonen
+
+Set Element Text
+    Set Element Text    ${XML}    new    xpath=child
+    Element Text Should Be    ${XML}    new    xpath=child
+
+Set Element Text And Tail
+    ${child} =    Get Element    ${XML}    child
+    Set Element Text    ${XML}    new text    new tail    xpath=child
+    Should Be Equal    ${child.text}    new text
+    Should Be Equal    ${child.tail}    new tail
+    Set Element Text    ${child}    tail=
+    Should Be Equal    ${child.text}    new text
+    Should Be Equal    ${child.tail}    ${EMPTY}
+    Set Element Text    ${child}    text=final value
+    Should Be Equal    ${child.text}    final value
+    Should Be Equal    ${child.tail}    ${EMPTY}
+
+Set Element Attribute
+    Set Element Attribute    ${XML}    attr    value
+    Element Attribute Should Be    ${XML}    attr    value
+
+Overwrite Element Attribute
+    Set Element Attribute    ${XML}    id    new    xpath=child
+    Element Attribute Should Be    ${XML}    id    new    xpath=child
+
+Remove Element Attribute
+    Remove Element Attribute    ${XML}    id    xpath=child
+    Element Attribute Should Be    ${XML}    id    ${NONE}    xpath=child
+
+Removing Non-Existing Attribute Passes
+    Remove Element Attribute    ${XML}    nonex
+    Should Be Empty    ${XML.attrib}
+
+Remove Element Attributes
+    Remove Element Attributes    ${XML}
+    Should Be Empty    ${XML.attrib}
+    Remove Element Attributes    ${XML}    xpath=child
+    ${attrib} =    Get Element Attributes    ${XML}    xpath=child
+    Should Be Empty    ${attrib}
+
+
+*** Keywords ***
+Parse Simple XML
+    ${XML} =    Parse XML    ${SIMPLE}
+    Set Test Variable    ${XML}

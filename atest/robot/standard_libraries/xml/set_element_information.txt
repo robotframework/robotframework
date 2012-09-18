@@ -1,0 +1,33 @@
+*** Settings ***
+Suite Setup      Run Tests    ${EMPTY}    standard_libraries/xml/set_element_information.txt
+Force Tags       regression    pybot    jybot
+Resource         atest_resource.txt
+
+*** Test Cases ***
+
+Set Element Tag
+    Check Test Case    ${TESTNAME}
+
+Set Tag Using Xpath
+    Check Test Case    ${TESTNAME}
+
+Set Element Text
+    Check Test Case    ${TESTNAME}
+
+Set Element Text And Tail
+    Check Test Case    ${TESTNAME}
+
+Set Element Attribute
+    Check Test Case    ${TESTNAME}
+
+Overwrite Element Attribute
+    Check Test Case    ${TESTNAME}
+
+Remove Element Attribute
+    Check Test Case    ${TESTNAME}
+
+Removing Non-Existing Attribute Passes
+    Check Test Case    ${TESTNAME}
+
+Remove Element Attributes
+    Check Test Case    ${TESTNAME}

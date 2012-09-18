@@ -285,11 +285,6 @@ class XML(object):
         with ETSource(source) as source:
             return ET.parse(source).getroot()
 
-    def save_xml(self, source, path, encoding='UTF-8'):
-        tree = ET.ElementTree(self.get_element(source))
-        kwargs = {'xml_declaration': True} if ET.VERSION >= '1.3' else {}
-        tree.write(path, encoding, **kwargs)
-
     def get_element(self, source, xpath='.'):
         """Returns an element in the `source` matching the `xpath`.
 
@@ -682,6 +677,33 @@ class XML(object):
         string = self.element_to_string(source, xpath)
         logger.write(string, level)
         return string
+
+    def set_element_tag(self, source, tag, xpath='.'):
+        self.get_element(source, xpath).tag = tag
+
+    def set_element_text(self, source, text=None, tail=None, xpath='.'):
+        element = self.get_element(source, xpath)
+        if text is not None:
+            element.text = text
+        if tail is not None:
+            element.tail = tail
+
+    def set_element_attribute(self, source, name, value, xpath='.'):
+        self.get_element(source, xpath).attrib[name] = value
+
+    def remove_element_attribute(self, source, name, xpath='.'):
+        try:
+            self.get_element(source, xpath).attrib.pop(name)
+        except KeyError:
+            pass
+
+    def remove_element_attributes(self, source, xpath='.'):
+        self.get_element(source, xpath).attrib.clear()
+
+    def save_xml(self, source, path, encoding='UTF-8'):
+        tree = ET.ElementTree(self.get_element(source))
+        kwargs = {'xml_declaration': True} if ET.VERSION >= '1.3' else {}
+        tree.write(path, encoding, **kwargs)
 
 
 class ElementComparator(object):
