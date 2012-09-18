@@ -15,7 +15,6 @@
 from __future__ import with_statement
 
 import re
-import sys
 
 from robot.api import logger
 from robot.libraries.BuiltIn import BuiltIn
@@ -703,7 +702,9 @@ class XML(object):
     def save_xml(self, source, path, encoding='UTF-8'):
         tree = ET.ElementTree(self.get_element(source))
         kwargs = {'xml_declaration': True} if ET.VERSION >= '1.3' else {}
-        tree.write(path, encoding, **kwargs)
+        # Older ET versions don't close files they open.
+        with open(path, 'w') as output:
+            tree.write(output, encoding, **kwargs)
 
 
 class ElementComparator(object):
