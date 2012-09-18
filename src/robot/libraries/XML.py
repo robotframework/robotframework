@@ -286,11 +286,11 @@ class XML(object):
             return ET.parse(source).getroot()
 
     def save_xml(self, source, path, encoding='UTF-8'):
-        tree = ET.ElementTree(self.get_element(source, xpath='.'))
+        tree = ET.ElementTree(self.get_element(source))
         kwargs = {'xml_declaration': True} if ET.VERSION >= '1.3' else {}
         tree.write(path, encoding, **kwargs)
 
-    def get_element(self, source, xpath):
+    def get_element(self, source, xpath='.'):
         """Returns an element in the `source` matching the `xpath`.
 
         The `source` can be a path to an XML file, a string containing XML, or
@@ -652,8 +652,8 @@ class XML(object):
                           normalize_whitespace):
         normalizer = self._normalize_whitespace if normalize_whitespace else None
         comparator = ElementComparator(comparator, normalizer, exclude_children)
-        comparator.compare(self.get_element(source, xpath='.'),
-                           self.get_element(expected, xpath='.'))
+        comparator.compare(self.get_element(source),
+                           self.get_element(expected))
 
     def element_to_string(self, source, xpath='.'):
         """Returns the string representation of the specified element.

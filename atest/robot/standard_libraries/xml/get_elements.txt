@@ -14,6 +14,12 @@ Get element from xml file
 Get element from xml string
     Check Test Case    ${TESTNAME}
 
+Get element with named xpath
+    Check Test Case    ${TESTNAME}
+
+Get element without xpath
+    Check Test Case    ${TESTNAME}
+
 Get element fails when multiple elements match
     Check Test Case    ${TESTNAME}
 

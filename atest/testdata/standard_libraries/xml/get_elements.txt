@@ -19,6 +19,14 @@ Get element from xml string
     ${child}=    Get Element    <root><tag>text</tag></root>    tag
     Should Be Equal    ${child.text}    text
 
+Get element with named xpath
+    ${child}=    Get Element    <root><tag>text</tag></root>    xpath=tag
+    Should Be Equal    ${child.text}    text
+
+Get element without xpath
+    ${root}=    Get Element    <root><tag>text</tag></root>
+    Should Be Equal    ${root.tag}    root
+
 Get element fails when multiple elements match
     [Documentation]    FAIL Multiple elements (3) matching 'child' found.
     Get Element    ${TEST}    child
