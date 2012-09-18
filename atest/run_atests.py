@@ -38,6 +38,9 @@ ARGUMENTS = ' '.join('''
 --metadata Interpreter:%(INTERPRETER)s
 --metadata Platform:%(PLATFORM)s
 --variable INTERPRETER:%(INTERPRETER)s
+--variable PYTHON:%(PYTHON)s
+--variable JYTHON:%(JYTHON)s
+--variable IRONPYTHON:%(IRONPYTHON)s
 --variable STANDALONE_JYTHON:NO
 --pythonpath %(PYTHONPATH)s
 --include %(INCLUDE)s
@@ -60,18 +63,22 @@ ARGUMENTS = ' '.join('''
 '''.strip().split())
 
 
-def atests(interpreter, *params):
+def atests(interpreter_path, *params):
+    interpreter = splitext(basename(interpreter_path))[0]
     resultdir, tempdir = _get_result_and_temp_dirs(interpreter)
     args = ARGUMENTS % {
         'PYTHONPATH' : join(CURDIR, 'resources'),
         'OUTPUTDIR' : resultdir,
-        'INTERPRETER': interpreter,
+        'INTERPRETER': interpreter_path,
+        'PYTHON': interpreter_path if 'python' in interpreter else '',
+        'JYTHON': interpreter_path if 'jython' in interpreter else '',
+        'IRONPYTHON': interpreter_path if 'ipy' in interpreter else '',
         'PLATFORM': sys.platform,
-        'INCLUDE': 'jybot' if 'jython' in basename(interpreter) else 'pybot'
+        'INCLUDE': 'jybot' if 'jython' in interpreter else 'pybot'
     }
     if os.name == 'nt':
         args += ' --exclude x-exclude-on-windows'
-    if sys.platform == 'darwin' and 'python' in basename(interpreter):
+    if sys.platform == 'darwin' and 'python' in interpreter:
         args += ' --exclude x-exclude-on-osx-python'
     command = '%s %s %s %s' % (sys.executable, RUNNER, args, ' '.join(params))
     environ = dict(os.environ, TEMPDIR=tempdir)
@@ -82,7 +89,6 @@ def atests(interpreter, *params):
 
 
 def _get_result_and_temp_dirs(interpreter):
-    interpreter = splitext(basename(interpreter))[0]
     resultdir = join(CURDIR, 'results', interpreter)
     tempdir = join(tempfile.gettempdir(), 'robottests', interpreter)
     if exists(resultdir):

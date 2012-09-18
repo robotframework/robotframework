@@ -229,4 +229,12 @@ Get Count
 
 Verify argument type message
     [Arguments]  ${msg}  ${type1}  ${type2}
+    ${type1} =    Str Type to Unicode On IronPython    ${type1}
+    ${type2} =    Str Type to Unicode On IronPython    ${type2}
     Check log message  ${msg}  Argument types are:\n<type '${type1}'>\n<type '${type2}'>
+
+Str Type to Unicode On IronPython
+    [Arguments]    ${type}
+    ${type} =    Set Variable If    "${IRONPYTHON}" and "${type}" == "str"
+    ...     unicode    ${type}
+    [Return]    ${type}
