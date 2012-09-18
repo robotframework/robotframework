@@ -29,12 +29,10 @@ Listener With Wrong Number Of Arguments
     [Template]    Check Syslog contains
     Taking listener 'old_listeners.WithArgs' into use failed:
     ...    Importing listener 'old_listeners.WithArgs' failed:
-    ...    Creating instance failed:
-    ...    TypeError: __init__() takes at least 2 arguments (1 given)${EMPTY TB}
+    ...    Creating instance failed: TypeError:
     Taking listener 'old_listeners.WithArgs:1:2:3' into use failed:
     ...    Importing listener 'old_listeners.WithArgs' failed:
-    ...    Creating instance failed:
-    ...    TypeError: __init__() takes at most 3 arguments (4 given)${EMPTY TB}
+    ...    Creating instance failed: TypeError:
 
 Non Existing Listener
     [Template]    Check Syslog contains
