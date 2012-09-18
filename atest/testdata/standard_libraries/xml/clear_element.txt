@@ -1,0 +1,18 @@
+*** Settings ***
+Resource    resource.txt
+
+*** Test Cases ***
+Clear Element
+    ${xml} =    Parse XML    ${TEST}
+    Clear Element    ${xml}
+    Elements Should Be Equal    ${xml}    <test/>
+
+Tail Text Is Not Cleared By Default
+    ${xml} =    Parse XML    <root><child attr="value">text</child>tail</root>
+    Clear Element    ${xml}    xpath=child
+    Elements Should Be Equal    ${xml}    <root><child/>tail</root>
+
+Tail Text Can Be Cleared
+    ${xml} =    Parse XML    <root><child attr="value">text</child>tail</root>
+    Clear Element    ${xml}    child    clear_tail=yes
+    Elements Should Be Equal    ${xml}    <root><child/></root>

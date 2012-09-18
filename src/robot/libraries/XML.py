@@ -757,6 +757,13 @@ class XML(object):
     def copy_element(self, source, xpath='.'):
         return copy.deepcopy(self.get_element(source, xpath))
 
+    def clear_element(self, source, xpath='.', clear_tail=False):
+        element = self.get_element(source, xpath)
+        tail = element.tail
+        element.clear()
+        if not clear_tail:
+            element.tail = tail
+
     def save_xml(self, source, path, encoding='UTF-8'):
         tree = ET.ElementTree(self.get_element(source))
         kwargs = {'xml_declaration': True} if ET.VERSION >= '1.3' else {}
