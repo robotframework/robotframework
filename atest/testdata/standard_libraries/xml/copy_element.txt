@@ -1,0 +1,34 @@
+*** Settings ***
+Resource    resource.txt
+
+*** Test Cases ***
+Elements Are Mutable
+    ${xml} =    Parse XML    <r><child/></r>
+    ${child} =    Get Element    ${xml}    child
+    Add Element    ${xml}    ${child}
+    Elements Should Be Equal    ${xml}    <r><child/><child/></r>
+    Set Element Attribute    ${child}    a    1
+    Elements Should Be Equal    ${xml}    <r><child a="1"/><child a="1"/></r>
+
+Copy Element
+    ${xml} =    Parse XML    <r><child/></r>
+    ${child} =    Get Element    ${xml}    child
+    ${copy} =    Copy Element    ${child}
+    Add Element    ${xml}    ${copy}
+    Elements Should Be Equal    ${xml}    <r><child/><child/></r>
+    Set Element Attribute    ${child}    a    1
+    Elements Should Be Equal    ${xml}    <r><child a="1"/><child/></r>
+
+Copy Element Using Xpath
+    ${xml} =    Parse XML    <r><child/></r>
+    ${copy} =    Copy Element    ${xml}    xpath=child
+    Add Element    ${xml}    ${copy}
+    Elements Should Be Equal    ${xml}    <r><child/><child/></r>
+    Set Element Attribute    ${copy}    a    1
+    Elements Should Be Equal    ${xml}    <r><child/><child a="1"/></r>
+
+Copy Deeper Structure
+    ${xml} =    Parse XML    ${TEST}
+    ${copy} =    Copy Element    ${xml}    another
+    Set Element Text    ${copy}    new    xpath=child
+    Element Text Should Be    ${xml}    text    xpath=another/child

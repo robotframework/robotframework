@@ -14,6 +14,7 @@
 
 from __future__ import with_statement
 
+import copy
 import re
 
 from robot.api import logger
@@ -752,6 +753,9 @@ class XML(object):
             for child in parent:
                 if child is element:
                     return parent
+
+    def copy_element(self, source, xpath='.'):
+        return copy.deepcopy(self.get_element(source, xpath))
 
     def save_xml(self, source, path, encoding='UTF-8'):
         tree = ET.ElementTree(self.get_element(source))
