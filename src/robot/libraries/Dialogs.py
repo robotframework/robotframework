@@ -21,17 +21,17 @@ Jython but they provide the same functionality.
 
 The library has following two limitations:
 - It is not compatible with IronPython.
-- It cannot be used with timeouts in Python.
+- It cannot be used with timeouts on Python.
 """
 
 import sys
 
 if sys.platform.startswith('java'):
-    from dialogs_jy import MessageDialog, PassFailDialog, InputDialog, SelectionDialog
+    from .dialogs_jy import MessageDialog, PassFailDialog, InputDialog, SelectionDialog
 elif sys.platform == 'cli':
-    raise ImportError('Dialogs library is not supported on IronPython')
+    from .dialogs_ipy import MessageDialog, PassFailDialog, InputDialog, SelectionDialog
 else:
-    from dialogs_py import MessageDialog, PassFailDialog, InputDialog, SelectionDialog
+    from .dialogs_py import MessageDialog, PassFailDialog, InputDialog, SelectionDialog
 
 try:
     from robot.version import get_version
