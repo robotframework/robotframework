@@ -702,7 +702,8 @@ class XML(object):
     def save_xml(self, source, path, encoding='UTF-8'):
         tree = ET.ElementTree(self.get_element(source))
         kwargs = {'xml_declaration': True} if ET.VERSION >= '1.3' else {}
-        # Older ET versions don't close files they open.
+        # Need to explicitly open/close files because older ET versions don't
+        # close files they open and Jython/IPY don't close them implicitly.
         with open(path, 'w') as output:
             tree.write(output, encoding, **kwargs)
 
