@@ -48,7 +48,7 @@ Should Not Be Equal
     ${STR1}  1
 
 Should Not Be Equal with bytes containing non-ascii characters
-    [Documentation]  FAIL   \\xe4 == \\xe4
+    [Documentation]  FAIL   ${BYTES WITH NON ASCII} == ${BYTES WITH NON ASCII}
     Should Not Be Equal  ${BYTES WITH NON ASCII}   ${BYTES WITHOUT NON ASCII}
     Should Not Be Equal  ${BYTES WITH NON ASCII}   unicode
     Should Not Be Equal  ${BYTES WITH NON ASCII}   ${BYTES WITH NON ASCII}
@@ -62,12 +62,12 @@ Should Be Equal
     A  B  Error message
 
 Should Be Equal with bytes containing non-ascii characters
-    [Documentation]  FAIL   \\xe4 != hyva
+    [Documentation]  FAIL   ${BYTES WITH NON ASCII} != ${BYTES WITHOUT NON ASCII}
     Should be equal  ${BYTES WITH NON ASCII}  ${BYTES WITH NON ASCII}
     Should be equal  ${BYTES WITH NON ASCII}  ${BYTES WITHOUT NON ASCII}
 
 Should Be Equal with unicode and bytes with non-ascii characters
-    [Documentation]  FAIL   \\xe4 != this fails
+    [Documentation]  FAIL   ${BYTES WITH NON ASCII} != this fails
     Should be equal  ${BYTES WITHOUT NON ASCII}  hyva
     Should be equal  ${BYTES WITH NON ASCII}  this fails
 
@@ -222,7 +222,7 @@ Should Match
     Should Match  NOK  OK  Failure
 
 Should Match with bytes containing non-ascii characters
-    [Documentation]  FAIL   '\\xe4' does not match 'aaappaa'
+    [Documentation]  FAIL   '${BYTES WITH NON ASCII}' does not match 'aaappaa'
     Should match  ${BYTES WITH NON ASCII}  aaappaa
 
 Should Not Match Regexp
@@ -237,7 +237,7 @@ Should Match Regexp
     Should Match Regexp  ${EMPTY}  whatever  Something failed  No values
 
 Should Match Regexp with bytes containing non-ascii characters
-    [Documentation]   FAIL   '\\xe4' does not match 'aappaa'
+    [Documentation]   FAIL   '${BYTES WITH NON ASCII}' does not match 'aappaa'
     Should Match Regexp  ${BYTES WITH NON ASCII}  aappaa
 
 Should Match Regexp Returns Match And Groups
