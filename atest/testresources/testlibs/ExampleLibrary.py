@@ -115,11 +115,11 @@ class ExampleLibrary:
 
     def write_to_file_after_sleeping(self, path, sec, msg=None):
         f = open(path, 'w')
-        self._sleep(sec)
-        if msg is None:
-            msg = 'Slept %s seconds' % sec
-        f.write(msg)
-        f.close()
+        try:
+            self._sleep(sec)
+            f.write(msg or 'Slept %s seconds' % sec)
+        finally:  # may be killed by timeouts
+            f.close()
 
     def sleep_without_logging(self, timestr):
         seconds = utils.timestr_to_secs(timestr)

@@ -74,7 +74,7 @@ Timeouted Keyword Passes
     Log  Testing outputcapture in timeouted test
     Timeouted Keyword Passes
 
-Timeouted Keyword Fails
+Timeouted Keyword Fails Before Timeout
     [Documentation]  FAIL Failure before keyword timeout
     [Timeout]  2 seconds
     Timeouted Keyword Fails Before Timeout
