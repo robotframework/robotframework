@@ -453,7 +453,8 @@ The option has the following modes of operation:
    enough information to investigate possible failures.
 
 :opt:`FOR`
-   Remove all passed iterations from `for loops`_.
+   Remove passed iterations from `for loops`_. Starting from Robot Framework
+   2.7.5, the last iteration is always kept.
 
 :opt:`WUKS`
    Remove all but last failing keyword inside BuiltIn_ keyword

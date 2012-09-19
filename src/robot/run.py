@@ -208,7 +208,7 @@ Options
                           all:    remove data from all keywords
                           passed: remove data only from keywords in passed
                                   test cases and suites
-                          for:    remove all passed iterations from for loops
+                          for:    remove passed iterations from for loops
                           wuks:   remove all but last failing keyword from
                                   `Wait Until Keyword Succeeds`
     --listener class *    A class for monitoring test execution. Gets
