@@ -1,7 +1,14 @@
 import unittest
+import sys
 
 from robot.utils.asserts import assert_equals
 from robot.output.monitor import CommandLineMonitor
+
+# Overwrite IronPython's special utils.isatty with version using stream.isatty.
+# Otherwise our StreamStub.isatty would not really work.
+if sys.platform == 'cli':
+    from robot import utils
+    utils.isatty = lambda stream: hasattr(stream, 'isatty') and stream.isatty()
 
 
 class TestKeywordNotification(unittest.TestCase):
