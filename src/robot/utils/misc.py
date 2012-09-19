@@ -113,5 +113,13 @@ if sys.platform != 'cli':
 
 else:
 
+    from ctypes import windll
+
+    _HANDLE_IDS = {sys.__stdout__ : -11, sys.__stderr__ : -12}
+    _CONSOLE_TYPE = 2
+
     def isatty(stream):
-        return True
+        if stream not in _HANDLE_IDS:
+            return False
+        handle = windll.kernel32.GetStdHandle(_HANDLE_IDS[stream])
+        return windll.kernel32.GetFileType(handle) == _CONSOLE_TYPE
