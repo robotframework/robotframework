@@ -24,7 +24,7 @@ Usage:  python -m robot.tidy [options] inputfile
    or:  python -m robot.tidy --recursive [options] directory
 
 Tidy tool can be used to clean up and change format of Robot Framework test
-data files. The output is written to the standard output stream by default,
+data files. The output is written into the standard output stream by default,
 but an optional output file can be given starting from Robot Framework 2.7.5.
 Files can also be modified in-place using --inplace or --recursive options.
 
@@ -69,7 +69,7 @@ based on the extension of the input file. Output format can be set using
 the --format option.
 
 Examples:
-  python -m robot.tidy --format tsv tests_in_html.html tests_in_tsv.tsv
+  python -m robot.tidy --format tsv --inplace tests.html
   python -m robot.tidy --format txt --recursive mytests
 
 Output encoding

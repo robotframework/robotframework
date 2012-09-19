@@ -7,9 +7,10 @@ Test data clean-up tool (:prog:`tidy`)
 Framework test data files. It is built-in into Robot Framework and
 automatically included in the installation starting from version 2.7.
 
-By default, the output of the tool is written into the standard output
-stream, but it can also be redirected to a file. Alternatively, files can be
-modified in-place using :opt:`--inplace` or :opt:`--recursive` options.
+The output is written into the standard output stream by default, but
+an optional output file can be given starting from Robot Framework 2.7.5.
+Files can also be modified in-place using :opt:`--inplace` or
+:opt:`--recursive` options.
 
 General usage
 ~~~~~~~~~~~~~
@@ -20,7 +21,7 @@ Synopsis
 ::
 
     python -m robot.tidy [options] inputfile
-    python -m robot.tidy [options] inputfile > outputfile
+    python -m robot.tidy [options] inputfile [outputfile]
     python -m robot.tidy --inplace [options] inputfile [more input files]
     python -m robot.tidy --recursive [options] directory
 
@@ -75,7 +76,7 @@ settings, and consistent amount of whitespace between cells and tables.
 
 Examples::
 
-    python -m robot.tidy messed_up_tests.html > cleaned_tests.html
+    python -m robot.tidy messed_up_tests.html cleaned_tests.html
     python -m robot.tidy --inplace tests.txt
 
 Changing the test data format
@@ -88,5 +89,5 @@ the :opt:`--format` option.
 
 Examples::
 
-    python -m robot.tidy --format tsv tests_in_html.html > tests_in_tsv.tsv
+    python -m robot.tidy --format tsv --inplace tests.html
     python -m robot.tidy --format txt --recursive mytests
