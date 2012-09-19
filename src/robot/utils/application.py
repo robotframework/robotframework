@@ -45,7 +45,8 @@ class Application(object):
         self._exit(rc)
 
     def console(self, msg):
-        print encode_output(msg)
+        if msg:
+            print encode_output(msg)
 
     @contextmanager
     def _logging(self):

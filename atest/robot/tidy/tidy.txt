@@ -2,8 +2,8 @@
 Force Tags        pybot    jybot   regression
 Library           OperatingSystem
 Resource          tidy_resource.txt
-Suite Setup       Create Directory     ${TEMP}
-Suite Teardown    Remove Directory     ${TEMP}    recursive=True
+Test Setup        Create Directory     ${TEMP}
+Test Teardown     Remove Directory     ${TEMP}    recursive=True
 
 *** Test cases ***
 Tidying single test case file
@@ -24,13 +24,17 @@ Tidying single resource file
 
 Tidying single init file
     Run tidy and check result    ${EMPTY}    __init__.txt
+    File Should Exist    ${TEMP FILE}
+
+Tidying single file without output prints output to console
+    Run tidy and check result    ${EMPTY}    golden.txt    output=
+    File Should Not Exist    ${TEMP FILE}
 
 Tidying single file in place
     [Setup]    Copy File    ${DATA}/golden.txt    ${TEMP}/golden.txt
     Run tidy    --inplace --usepipes    ${TEMP}/golden.txt
     Compare tidy results    ${TEMP}/golden.txt    ${DATA}/golden_pipes.txt
     Check file count    ${TEMP}    *.txt    1
-    [Teardown]    Empty Directory     ${TEMP}
 
 Tidying single file in place and change format
     [Setup]    Copy File    ${DATA}/golden.txt    ${TEMP}/golden.txt
@@ -38,7 +42,6 @@ Tidying single file in place and change format
     Compare tidy results    ${TEMP}/golden.html    ${DATA}/golden.html
     Check file count    ${TEMP}    *.html    1
     Check file count    ${TEMP}    *.txt    0
-    [Teardown]    Empty Directory     ${TEMP}
 
 Tidying many files in place
     [Setup]    Copy Golden Files
@@ -48,7 +51,6 @@ Tidying many files in place
     Check file count    ${TEMP}    *.html    2
     Check file count    ${TEMP}    *.txt    0
     Check file count    ${TEMP}    *.tsv    0
-    [Teardown]    Empty Directory     ${TEMP}
 
 Tidying directory
     [Setup]    Copy Directory    ${DATA}/tests    ${TEMP}/tests
@@ -58,7 +60,6 @@ Tidying directory
     Check file count    ${TEMP}/tests    *.txt    0
     ${output_after}=    Run Robot Directly    ${TEMP}/tests
     Should Be Equal    ${output_before}    ${output_after}
-    [Teardown]    Remove Directory    ${TEMP}/tests    recursive=True
 
 Custom headers are preserved and tables aligned accordingly
     Run tidy and check result    ${EMPTY}     golden_with_headers.txt
