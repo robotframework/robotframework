@@ -22,10 +22,12 @@ UTF-8	[Documentation]	äöå §½€
 	[Teardown]	Logging Keyword	äöå					
 								
 UTF-8 Name Äöå §½€"	[Documentation]	Quote is actually plain ASCII but there was a bug in processing them also.						
-	${ret}	äöå §½€						
-	Log	${ret}						
+	...	FAIL Virheessäkin on ääkkösiä: Äöå §½€"
+	${ret}	äöå §½€
+	Log	${ret}
+	Should Be Equal	${ret}	äöå §½€
 	Log	${UTF NAME öäå §½€}						
-								
+	Fail	Virheessäkin on ääkkösiä: Äöå §½€"
 
 *Keyword*	*Action*	*Argument*	*Argument*	*Argument*	*Argument*	*Argument*	*Argument*	
 Logging Keyword	[Arguments]	${value}						

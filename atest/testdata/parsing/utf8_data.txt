@@ -25,6 +25,7 @@ UTF-8 Name Äöå §½€"
   ...              FAIL  Virheessäkin on ääkkösiä: Äöå §½€"
   ${ret} =  äöå §½€
   Log       ${ret}
+  Should Be Equal    ${ret}    äöå §½€
   Log       ${UTF NAME öäå §½€}
   Fail      Virheessäkin on ääkkösiä: Äöå §½€"
 
