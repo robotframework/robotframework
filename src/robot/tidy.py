@@ -97,7 +97,7 @@ if 'robot' not in sys.modules and __name__ == '__main__':
 
 from robot.errors import DataError
 from robot.parsing import ResourceFile, TestDataDirectory, TestCaseFile
-from robot.utils import Application, encode_output
+from robot.utils import Application, encode_output, isatty
 
 
 class Tidy(object):
@@ -169,7 +169,7 @@ class TidyCommandLine(Application):
             self._print(tidy.file(inputs[0]))
 
     def _print(self, msg):
-        if self._isatty(sys.stdout):
+        if isatty(sys.stdout):
             msg = encode_output(msg)
         else:
             if os.sep == '\\' and 'b' not in sys.stdout.mode:

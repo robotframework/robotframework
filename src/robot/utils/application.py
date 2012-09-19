@@ -101,12 +101,6 @@ class Application(object):
             self._exit(rc)
         return rc
 
-    def _isatty(self, stream):
-        # http://ironpython.codeplex.com/workitem/33123
-        if sys.platform == 'cli':
-            return False
-        return hasattr(stream, 'isatty') and stream.isatty()
-
     def _exit(self, rc):
         sys.exit(rc)
 
