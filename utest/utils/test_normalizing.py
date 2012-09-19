@@ -23,6 +23,10 @@ class TestNormalizing(unittest.TestCase):
         assert_equals(normalize('Fo o BaR', caseless=False), 'FooBaR')
         assert_equals(normalize('Fo O B AR', caseless=True), 'foobar')
 
+    def test_normalize_with_caseless_non_ascii(self):
+        assert_equals(normalize(u'\xc4iti', caseless=False), u'\xc4iti')
+        assert_equals(normalize(u'\xc4iti', caseless=True), u'\xe4iti')
+
     def test_normalize_with_spaceless(self):
         assert_equals(normalize('Fo o BaR', spaceless=False), 'fo o bar')
         assert_equals(normalize('Fo O B AR', spaceless=True), 'foobar')
@@ -115,6 +119,15 @@ class TestNormalizedDict(unittest.TestCase):
             assert_equals(nd1[key], 'value 2')
             assert_raises(KeyError, nd2.__getitem__, key)
             assert_true(key not in nd2)
+
+    def test_caseless_with_non_ascii(self):
+        nd1 = NormalizedDict({u'\xe4': 1})
+        assert_equals(nd1[u'\xe4'], 1)
+        assert_equals(nd1[u'\xc4'], 1)
+        assert_true(u'\xc4' in nd1)
+        nd2 = NormalizedDict({u'\xe4': 1}, caseless=False)
+        assert_equals(nd2[u'\xe4'], 1)
+        assert_true(u'\xc4' not in nd2)
 
     def test_has_key_and_contains(self):
         nd = NormalizedDict({'Foo': 'bar'})

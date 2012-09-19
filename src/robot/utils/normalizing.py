@@ -13,6 +13,7 @@
 #  limitations under the License.
 
 import re
+import sys
 from UserDict import UserDict
 
 
@@ -28,12 +29,33 @@ def normalize(string, ignore=(), caseless=True, spaceless=True):
     if spaceless:
         string = _WHITESPACE_REGEXP.sub('', string)
     if caseless:
-        string = string.lower()
-        ignore = [i.lower() for i in ignore]
+        string = lower(string)
+        ignore = [lower(i) for i in ignore]
     for ign in ignore:
         if ign in string:  # performance optimization
             string = string.replace(ign, '')
     return string
+
+
+# IronPython fails to lowercase non-ASCII characters:
+# http://ironpython.codeplex.com/workitem/33133
+if sys.platform != 'cli':
+    def lower(string):
+        return string.lower()
+
+else:
+    def lower(string):
+        if string.islower():
+            return string
+        if not _has_non_ascii_chars(string):
+            return string.lower()
+        return ''.join(c if not c.isupper() else c.swapcase() for c in string)
+
+    def _has_non_ascii_chars(string):
+        for c in string:
+            if c >= u'\x80':
+                return True
+        return False
 
 
 # TODO: Move normalizing tags to robot.model.Tags in 2.8.
@@ -56,7 +78,7 @@ def normalize_tags(tags):
 class NormalizedDict(UserDict):
     """Custom dictionary implementation automatically normalizing keys."""
 
-    def __init__(self, initial=None, ignore=[], caseless=True, spaceless=True):
+    def __init__(self, initial=None, ignore=(), caseless=True, spaceless=True):
         """Initializes with possible initial value and normalizing spec.
 
         Initial values can be either a dictionary or an iterable of name/value
