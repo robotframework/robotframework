@@ -1,11 +1,12 @@
 from __future__ import with_statement
 
 import os
+import re
 from os.path import abspath, dirname, join
 from subprocess import call, STDOUT
 import tempfile
 
-from robot.utils.asserts import assert_equals
+from robot.utils.asserts import assert_equals, assert_true
 from robot.utils import decode_output
 
 
@@ -51,16 +52,28 @@ class TidyLib(object):
         result = self.run_tidy(options, input, output, tidy)
         self.compare_tidy_results(output or result, expected or input)
 
-    def compare_tidy_results(self, result, expected):
+    def compare_tidy_results(self, result, expected, *filters):
         if os.path.isfile(result):
             result = self._read(result)
+        filters = [re.compile('^%s$' % f) for f in filters]
         expected = self._read(expected)
         result_lines = result.splitlines()
         expected_lines = expected.splitlines()
-        msg = "Actual:\n%s\n\nExpected:\n%s\n\n" % (repr(result), repr(expected))
+        msg = "Actual:\n%r\n\nExpected:\n%r\n\n" % (result, expected)
         assert_equals(len(result_lines), len(expected_lines), msg)
-        for line1, line2 in zip(result_lines, expected_lines):
-            assert_equals(repr(unicode(line1)), repr(unicode(line2)), msg)
+        for res, exp in zip(result_lines, expected_lines):
+            filter = self._filter_matches(filters, exp)
+            if not filter:
+                assert_equals(repr(unicode(res)), repr(unicode(exp)), msg)
+            else:
+                assert_true(filter.match(res),
+                            '%s: %r does not match %r' % (msg, res, filter.pattern))
+
+    def _filter_matches(self, filters, expected):
+        for filter in filters:
+            if filter.match(expected):
+                return filter
+        return None
 
     def _path(self, path):
         return abspath(join(DATA_DIR, path.replace('/', os.sep)))

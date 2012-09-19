@@ -18,7 +18,7 @@ My Test Case
   [Teardown]  1 minute  args
 
 Another Test
-  Log  ääöö§§
+  Log  Non-ASCII: ääöö§§
 
 *** Keywords ***
 My Keyword

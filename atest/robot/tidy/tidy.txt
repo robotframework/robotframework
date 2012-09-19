@@ -27,7 +27,9 @@ Tidying single init file
     File Should Exist    ${TEMP FILE}
 
 Tidying single file without output file prints output to console
-    Run tidy and check result    ${EMPTY}    golden.txt    output=
+    [Documentation]    Depending on console encoding, non-ASCII characters may not be shown correctly
+    ${stdout} =    Run tidy    ${EMPTY}    golden.txt    output=${NONE}
+    Compare tidy results    ${stdout}    golden.txt    \\s+Log\\s+Non-ASCII:.*
     File Should Not Exist    ${TEMP FILE}
 
 Tidying single file in place
