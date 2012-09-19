@@ -46,7 +46,7 @@ Tidying single file in place and change format
 Tidying many files in place
     [Setup]    Copy Golden Files
     List Directory      ${TEMP}
-    Run tidy    --InPlace --ForMat html   ${TEMP}/golden*
+    Run tidy    --InPlace --ForMat HtmL   ${TEMP}/golden*
     List Directory      ${TEMP}
     Check file count    ${TEMP}    *.html    2
     Check file count    ${TEMP}    *.txt    0
@@ -55,7 +55,7 @@ Tidying many files in place
 Tidying directory
     [Setup]    Copy Directory    ${DATA}/tests    ${TEMP}/tests
     ${output_before}=    Run Robot Directly    ${DATA}/tests
-    Run Tidy    --recursive --format tsv    ${TEMP}/tests
+    Run Tidy    --recursive --format TSV    ${TEMP}/tests
     Check file count    ${TEMP}/tests    *.tsv    2
     Check file count    ${TEMP}/tests    *.txt    0
     ${output_after}=    Run Robot Directly    ${TEMP}/tests

@@ -191,7 +191,7 @@ class TidyCommandLine(Application):
             raise DataError('Default mode requires 1 or 2 arguments.')
 
     def _validate_format(self, format):
-        if format and format not in ['txt', 'tsv', 'html']:
+        if format and format.lower() not in ['txt', 'tsv', 'html']:
             raise DataError("Invalid format: %s." % format)
 
     def _validate_spacecount(self, spacecount):
