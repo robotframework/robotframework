@@ -47,13 +47,15 @@ else:
     def lower(string):
         if string.islower():
             return string
-        if not _has_non_ascii_chars(string):
+        if string.isupper():
+            return string.swapcase()
+        if not _has_uppercase_non_ascii_chars(string):
             return string.lower()
         return ''.join(c if not c.isupper() else c.swapcase() for c in string)
 
-    def _has_non_ascii_chars(string):
+    def _has_uppercase_non_ascii_chars(string):
         for c in string:
-            if c >= u'\x80':
+            if c >= u'\x80' and c.isupper():
                 return True
         return False
 

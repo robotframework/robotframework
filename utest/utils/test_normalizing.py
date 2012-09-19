@@ -8,16 +8,17 @@ from robot.utils.asserts import (assert_equals, assert_true, assert_false,
 class TestNormalizing(unittest.TestCase):
 
     def test_normalize_with_defaults(self):
-        for inp, exp in [ ('', ''),
-                          ('            ', ''),
-                          (' \n\t\r', ''),
-                          ('foo', 'foo'),
-                          (' f o o ', 'foo'),
-                          ('_BAR', '_bar'),
-                          ('Fo OBar\r\n', 'foobar'),
-                          ('foo\tbar', 'foobar'),
-                          ('\n \n \n \n F o O \t\tBaR \r \r \r   ', 'foobar') ]:
-            assert_equals(exp, normalize(inp))
+        for inp, exp in [('', ''),
+                         ('            ', ''),
+                         (' \n\t\r', ''),
+                         ('foo', 'foo'),
+                         ('BAR', 'bar'),
+                         (' f o o ', 'foo'),
+                         ('_BAR', '_bar'),
+                         ('Fo OBar\r\n', 'foobar'),
+                         ('foo\tbar', 'foobar'),
+                         ('\n \n \n \n F o O \t\tBaR \r \r \r   ', 'foobar')]:
+            assert_equals(normalize(inp), exp)
 
     def test_normalize_with_caseless(self):
         assert_equals(normalize('Fo o BaR', caseless=False), 'FooBaR')
@@ -25,7 +26,8 @@ class TestNormalizing(unittest.TestCase):
 
     def test_normalize_with_caseless_non_ascii(self):
         assert_equals(normalize(u'\xc4iti', caseless=False), u'\xc4iti')
-        assert_equals(normalize(u'\xc4iti', caseless=True), u'\xe4iti')
+        for mother in [u'\xc4ITI', u'\xc4iTi', u'\xe4iti', u'\xe4iTi']:
+            assert_equals(normalize(mother, caseless=True), u'\xe4iti')
 
     def test_normalize_with_spaceless(self):
         assert_equals(normalize('Fo o BaR', spaceless=False), 'fo o bar')
