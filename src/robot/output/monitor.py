@@ -167,7 +167,7 @@ class StatusHighlighter(object):
                                   for stream in streams)
 
     def _get_highlighter(self, stream, colors):
-        auto = Highlighter if isatty(stream) else NoHighlighting
+        auto = Highlighter if utils.isatty(stream) else NoHighlighting
         highlighter = {'AUTO': auto,
                        'ON': Highlighter,
                        'FORCE': Highlighter,   # compatibility with 2.5.5 and earlier
@@ -205,7 +205,7 @@ class KeywordMarker(object):
         self.marker_count = 0
 
     def _marking_enabled(self, markers, stdout):
-        auto = isatty(stdout)
+        auto = utils.isatty(stdout)
         return {'AUTO': auto,
                 'ON': True,
                 'OFF': False}.get(markers.upper(), auto)
@@ -219,6 +219,3 @@ class KeywordMarker(object):
     def reset_count(self):
         self.marker_count = 0
 
-
-def isatty(stream):
-    return hasattr(stream, 'isatty') and stream.isatty()

@@ -13,6 +13,7 @@
 #  limitations under the License.
 
 import inspect
+import sys
 
 from .unic import unic
 
@@ -102,3 +103,15 @@ def getdoc(item):
         return doc.decode('UTF-8')
     except UnicodeDecodeError:
         return unic(doc)
+
+
+# On IronPython sys.stdxxx.isatty() always returns True
+if sys.platform != 'cli':
+
+    def isatty(stream):
+        return hasattr(stream, 'isatty') and stream.isatty()
+
+else:
+
+    def isatty(stream):
+        return True
