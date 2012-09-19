@@ -26,7 +26,7 @@ Tidying single init file
     Run tidy and check result    ${EMPTY}    __init__.txt
     File Should Exist    ${TEMP FILE}
 
-Tidying single file without output prints output to console
+Tidying single file without output file prints output to console
     Run tidy and check result    ${EMPTY}    golden.txt    output=
     File Should Not Exist    ${TEMP FILE}
 

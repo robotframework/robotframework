@@ -97,7 +97,7 @@ if 'robot' not in sys.modules and __name__ == '__main__':
 
 from robot.errors import DataError
 from robot.parsing import ResourceFile, TestDataDirectory, TestCaseFile
-from robot.utils import Application, encode_output, isatty
+from robot.utils import Application
 
 
 class Tidy(object):
@@ -111,7 +111,7 @@ class Tidy(object):
         try:
             self._save_file(data, outfile)
             if not output:
-                return outfile.getvalue().decode('UTF-8')
+                return outfile.getvalue().replace('\r\n', '\n').decode('UTF-8')
         finally:
             outfile.close()
 
