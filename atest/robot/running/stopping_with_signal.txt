@@ -1,6 +1,5 @@
 *** Settings ***
-Force Tags      regression
-Default Tags    pybot  jybot
+Force Tags      regression    pybot  jybot
 Resource        atest_resource.txt
 Library         ProcessManager.py
 Test Teardown   Run Keyword If Test Failed    Log Stdout And Stderr
@@ -16,13 +15,14 @@ SIGINT Signal Should Stop Test Execution Gracefully
     Check Test Cases Have Failed Correctly
 
 SIGTERM Signal Should Stop Test Execution Gracefully
-    [Tags]  pybot  jybot  x-exclude-on-windows
+    [Tags]  x-exclude-on-windows
     Start And Send Signal  without_any_timeout.txt  One SIGTERM
     Process Output For Graceful Shutdown
     Check Test Cases Have Failed Correctly
 
 Execution Is Stopped Even If Keyword Swallows Exception
-    [Tags]  pybot
+    [Documentation]  This only works with Python.
+    Run Keyword If    not "${PYTHON}"    Remove Tags    regression
     Start And Send Signal  swallow_exception.txt  One SIGTERM
     Process Output For Graceful Shutdown
     Check Test Cases Have Failed Correctly
@@ -47,7 +47,7 @@ Two SIGINT Signals Should Stop Test Execution Forcefully
     Check Tests Have Been Forced To Shutdown
 
 Two SIGTERM Signals Should Stop Test Execution Forcefully
-    [Tags]  pybot  jybot  x-exclude-on-windows
+    [Tags]  x-exclude-on-windows
     Start And Send Signal  without_any_timeout.txt  Two SIGTERMs  2s
     Check Tests Have Been Forced To Shutdown
 

@@ -6,7 +6,7 @@ def busy_sleep(seconds):
     while time.time() < max_time:
         pass
 
-def swallow_exception(timeout=30):
+def swallow_exception(timeout=3):
     try:
         busy_sleep(timeout)
     except:
