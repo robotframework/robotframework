@@ -55,8 +55,8 @@ Looping Forever And Timeouting
     Fail  This should not be executed
 
 Stopped After Test Timeout
-    [Documentation]  Keyword that is stopped after test timeout should not write to a file FAIL Test timeout 99 milliseconds exceeded.
-    [Timeout]  99 milliseconds
+    [Documentation]  Keyword that is stopped after test timeout should not write to a file FAIL Test timeout 500 milliseconds exceeded.
+    [Timeout]  0.5s
     Write To File After Sleeping  ${TEST STOPPED}  2
 
 Stopped After Keyword Timeout
