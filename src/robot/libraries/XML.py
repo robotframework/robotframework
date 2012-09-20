@@ -285,28 +285,6 @@ class XML(object):
         with ETSource(source) as source:
             return ET.parse(source).getroot()
 
-    def element_should_exist(self, source, xpath='.', message=None):
-        count = len(self.get_elements(source, xpath))
-        if not count:
-            self._raise_wrong_number_of_matches(count, xpath, message)
-
-    def element_should_not_exist(self, source, xpath='.', message=None):
-        count = len(self.get_elements(source, xpath))
-        if count:
-            self._raise_wrong_number_of_matches(count, xpath, message)
-
-    def _raise_wrong_number_of_matches(self, count, xpath, message=None):
-        if not message:
-            message = self._wrong_number_of_matches(count, xpath)
-        raise AssertionError(message)
-
-    def _wrong_number_of_matches(self, count, xpath):
-        if not count:
-            return "No element matching '%s' found." % xpath
-        if count == 1:
-            return "One element matching '%s' found." % xpath
-        return "Multiple elements (%d) matching '%s' found." % (count, xpath)
-
     def get_element(self, source, xpath='.'):
         """Returns an element in the `source` matching the `xpath`.
 
@@ -329,6 +307,18 @@ class XML(object):
         if len(elements) != 1:
             self._raise_wrong_number_of_matches(len(elements), xpath)
         return elements[0]
+
+    def _raise_wrong_number_of_matches(self, count, xpath, message=None):
+        if not message:
+            message = self._wrong_number_of_matches(count, xpath)
+        raise AssertionError(message)
+
+    def _wrong_number_of_matches(self, count, xpath):
+        if not count:
+            return "No element matching '%s' found." % xpath
+        if count == 1:
+            return "One element matching '%s' found." % xpath
+        return "Multiple elements (%d) matching '%s' found." % (count, xpath)
 
     def get_elements(self, source, xpath):
         """Returns a list of elements in the `source` matching the `xpath`.
@@ -387,6 +377,17 @@ class XML(object):
         | Should Be Empty  | ${children}        |        |             |
         """
         return list(self.get_element(source, xpath))
+
+
+    def element_should_exist(self, source, xpath='.', message=None):
+        count = len(self.get_elements(source, xpath))
+        if not count:
+            self._raise_wrong_number_of_matches(count, xpath, message)
+
+    def element_should_not_exist(self, source, xpath='.', message=None):
+        count = len(self.get_elements(source, xpath))
+        if count:
+            self._raise_wrong_number_of_matches(count, xpath, message)
 
     def get_element_text(self, source, xpath='.', normalize_whitespace=False):
         """Returns all text of the element, possibly whitespace normalized.
