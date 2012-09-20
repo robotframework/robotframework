@@ -19,7 +19,7 @@ import re
 
 from robot.api import logger
 from robot.libraries.BuiltIn import BuiltIn
-from robot.utils import asserts, ET, ETSource
+from robot.utils import asserts, ET, ETSource, plural_or_not as s
 from robot.version import get_version
 
 
@@ -378,14 +378,18 @@ class XML(object):
         """
         return list(self.get_element(source, xpath))
 
+    def get_element_count(self, source, xpath='.'):
+        count = len(self.get_elements(source, xpath))
+        logger.info("%d element%s matched '%s'." % (count, s(count), xpath))
+        return count
 
     def element_should_exist(self, source, xpath='.', message=None):
-        count = len(self.get_elements(source, xpath))
+        count = self.get_element_count(source, xpath)
         if not count:
             self._raise_wrong_number_of_matches(count, xpath, message)
 
     def element_should_not_exist(self, source, xpath='.', message=None):
-        count = len(self.get_elements(source, xpath))
+        count = self.get_element_count(source, xpath)
         if count:
             self._raise_wrong_number_of_matches(count, xpath, message)
 

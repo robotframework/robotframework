@@ -2,6 +2,13 @@
 Resource        resource.txt
 
 *** Test Cases ***
+Get Element Count
+    [Template]    Count Should Be
+    nonex       0
+    another     1
+    .           1
+    .//child    4
+
 Element Should Exist Passes When There Are One Or More Matches
     Element Should Exist    ${TEST}    another/child
     Element Should Exist    ${TEST}    xpath=child
@@ -31,3 +38,9 @@ Element Should Not Exist With Custom Error Message
     [Documentation]    FAIL    My error
     Element Should Not Exist    <root/>    nonex    Not used
     Element Should Not Exist    ${TEST}    xpath=another/child    message=My error
+
+*** Keywords ***
+Count Should Be
+    [Arguments]    ${xpath}    ${expected}
+    ${count} =    Get Element Count    ${TEST}    xpath=${xpath}
+    Should Be Equal As Integers    ${count}    ${expected}
