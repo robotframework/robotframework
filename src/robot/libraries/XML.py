@@ -265,7 +265,7 @@ class XML(object):
     _whitespace = re.compile('\s+')
     _xml_declaration = re.compile('^<\?xml .*\?>\n')
 
-    def parse_xml(self, source):
+    def parse_xml(self, source, *namespaces):
         """Parses the given XML file or string into an element structure.
 
         The `source` can either be a path to an XML file or a string containing
@@ -283,7 +283,24 @@ class XML(object):
         See also `Get Element` and `Get Elements`.
         """
         with ETSource(source) as source:
-            return ET.parse(source).getroot()
+            root = ET.parse(source).getroot()
+        if namespaces:
+            namespaces = tuple(self._format_namespace(ns) for ns in namespaces)
+            self._handle_namespaces(root, namespaces)
+        return root
+
+    def _format_namespace(self, namespace):
+        return '{%s}' % namespace
+
+    def _handle_namespaces(self, elem, namespaces, default=None):
+        for ns in namespaces:
+            if elem.tag.startswith(ns):
+                elem.tag = elem.tag[len(ns):]
+                if default != ns:
+                    elem.set('xmlns', ns[1:-1])
+                    default = ns
+        for child in elem:
+            self._handle_namespaces(child, namespaces, default)
 
     def get_element(self, source, xpath='.'):
         """Returns an element in the `source` matching the `xpath`.

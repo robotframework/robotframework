@@ -1,0 +1,8 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<test name="root" xmlns="default">
+    <child id="1">default ns</child>
+    <another xmlns="default2">
+        <child>2nd default</child>
+    </another>
+    <back>back in default</back>
+</test>
