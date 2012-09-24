@@ -1,0 +1,9 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<test name="root" xmlns="default" xmlns:prefix="http://uri">
+    <child id="1">default ns</child>
+    <prefix:child>ns with prefix</prefix:child>
+    <prefix2:child xmlns:prefix2="whatever.xsd">2nd prefix</prefix2:child>
+    <another xmlns="default2">
+        <child>2nd default</child>
+    </another>
+</test>

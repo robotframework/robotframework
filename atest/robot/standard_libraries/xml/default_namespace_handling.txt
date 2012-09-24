@@ -1,0 +1,21 @@
+*** Settings ***
+Suite Setup      Run Tests    ${EMPTY}    standard_libraries/xml/default_namespace_handling.txt
+Force Tags       regression    pybot    jybot
+Resource         atest_resource.txt
+
+*** Test Cases ***
+
+Tag names contain namespace in Clark Notation
+    Check Test Case    ${TESTNAME}
+
+Clarck Notation must be used in xpaths
+    Check Test Case    ${TESTNAME}
+
+xmlns attributes are removed
+    Check Test Case    ${TESTNAME}
+
+Saved XML is semantically correct
+    Check Test Case    ${TESTNAME}
+
+Prefixes are mangled when XML is saved
+    Check Test Case    ${TESTNAME}
