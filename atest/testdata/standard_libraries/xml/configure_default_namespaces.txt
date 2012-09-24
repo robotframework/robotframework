@@ -22,7 +22,7 @@ Default xmlns attributes are preserved
     ${ROOT}    .    name    root    xmlns    default
     ${ROOT}    another    xmlns    default2
 
-No extra xmlns attribute is added
+No extra xmlns attributes are added
     [Template]    Element Should Have Attributes
     ${ROOT}    child    id    1
     ${ROOT}    another/child

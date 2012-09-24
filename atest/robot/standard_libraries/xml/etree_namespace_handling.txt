@@ -15,7 +15,7 @@ Clarck Notation must be used in xpaths
 xmlns attributes are removed
     Check Test Case    ${TESTNAME}
 
-Saved XML is semantically correct
+Saved XML is semantically same as original
     Check Test Case    ${TESTNAME}
 
 Prefixes are mangled when XML is saved

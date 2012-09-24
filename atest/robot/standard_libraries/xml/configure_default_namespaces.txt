@@ -13,7 +13,7 @@ Default namespace is not needed in xpath
 Default xmlns attributes are preserved
     Check Test Case    ${TESTNAME}
 
-No extra xmlns attribute is added
+No extra xmlns attributes are added
     Check Test Case    ${TESTNAME}
 
 Saved XML is exactly same
