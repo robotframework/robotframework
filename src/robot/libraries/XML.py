@@ -379,16 +379,49 @@ class XML(object):
         return list(self.get_element(source, xpath))
 
     def get_element_count(self, source, xpath='.'):
+        """Returns and logs how many elements the given `xpath` matches.
+
+        Arguments `source` and `xpath` have exactly the same semantics as with
+        `Get Elements` keyword that this keyword uses internally.
+
+        See also `Element Should Exist` and `Element Should Not Exist`.
+
+        New in Robot Framework 2.7.5.
+        """
         count = len(self.get_elements(source, xpath))
         logger.info("%d element%s matched '%s'." % (count, s(count), xpath))
         return count
 
     def element_should_exist(self, source, xpath='.', message=None):
+        """Verifies that one or more element match the given `xpath`.
+
+        Arguments `source` and `xpath` have exactly the same semantics as with
+        `Get Elements` keyword. Keyword passes if the `xpath` matches one or
+        more elements in the `source`. The default error message can be
+        overridden with the `message` argument.
+
+        See also `Element Should Not Exist` as well as `Get Element Count`
+        that this keyword uses internally.
+
+        New in Robot Framework 2.7.5.
+        """
         count = self.get_element_count(source, xpath)
         if not count:
             self._raise_wrong_number_of_matches(count, xpath, message)
 
     def element_should_not_exist(self, source, xpath='.', message=None):
+        """Verifies that no element match the given `xpath`.
+
+        Arguments `source` and `xpath` have exactly the same semantics as with
+        `Get Elements` keyword. Keyword fails if the `xpath` matches any
+        element in the `source`. The default error message can be overridden
+        with the `message` argument.
+
+        See also `Element Should Exist` as well as `Get Element Count`
+        that this keyword uses internally.
+
+        New in Robot Framework 2.7.5.
+        """
         count = self.get_element_count(source, xpath)
         if count:
             self._raise_wrong_number_of_matches(count, xpath, message)
