@@ -12,6 +12,7 @@ Tag names contain namespace in Clark Notation
     Should Be Equal    ${children[1].tag}    {http://uri}child
     Should Be Equal    ${children[2].tag}    {whatever.xsd}child
     Should Be Equal    ${children[3].tag}    {default2}another
+    Should Be Equal    ${children[4].tag}    {default}back
 
 Clarck Notation must be used in xpaths
     [Template]    Element Text Should Be
@@ -22,11 +23,12 @@ Clarck Notation must be used in xpaths
 
 xmlns attributes are removed
     [Template]    Element Should Have Attributes
-    .    name    root
-    {default}child    id    1
-    {http://uri}child
-    {whatever.xsd}child
-    {default2}another/{default2}child
+    ${NS}    .    name    root
+    ${NS}    {default}child    id    1
+    ${NS}    {http://uri}child
+    ${NS}    {whatever.xsd}child
+    ${NS}    {default2}another/{default2}child
+    ${NS}    {default}back
 
 Saved XML is semantically correct
     ${root} =    Parse XML    ${NS}
@@ -46,14 +48,6 @@ Prefixes are mangled when XML is saved
     ...    ${SPACE*4}<ns1:another xmlns:ns1="default2">
     ...    ${SPACE*8}<ns1:child>2nd default</ns1:child>
     ...    ${SPACE*4}</ns1:another>
+    ...    ${SPACE*4}<ns0:back>back in default</ns0:back>
     ...    </ns0:test>
     Should Be Equal    ${content}    ${expected}
-
-
-*** Keywords ***
-Element Should Have Attributes
-    [Arguments]    ${xpath}    @{attributes}
-    ${elem} =    Get Element    ${NS}    ${xpath}
-    ${expected} =    Create Dictionary    @{attributes}
-    Dictionaries Should Be Equal    ${elem.attrib}    ${expected}
-

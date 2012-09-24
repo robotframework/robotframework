@@ -6,4 +6,5 @@
     <another xmlns="default2">
         <child>2nd default</child>
     </another>
+    <back>back in default</back>
 </test>
