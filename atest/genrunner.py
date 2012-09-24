@@ -1,16 +1,16 @@
 #!/usr/bin/env python
 
-"""Script to generate atest runners based on data files.
+"""Script to generate atest runners based on plain text data files.
 
-Usage:  %s path/to/data.file
+Usage:  %s path/to/data.txt
 """
 
 from __future__ import with_statement
-from os.path import abspath, basename, dirname, exists, join
+from os.path import abspath, basename, dirname, exists, join, splitext
 import os
 import sys
 
-if len(sys.argv) != 2:
+if len(sys.argv) != 2 or splitext(sys.argv[1])[1] != '.txt':
     print __doc__ % basename(sys.argv[0])
     sys.exit(1)
 
@@ -40,7 +40,6 @@ Force Tags       regression    pybot    jybot
 Resource         atest_resource.txt
 
 *** Test Cases ***
-
 """ % locals())
     for test in TESTS:
         output.write(test + '\n    Check Test Case    ${TESTNAME}\n')
