@@ -1,4 +1,5 @@
 *** Settings ***
+Documentation    Testing how ElementTree handles namespaces by default
 Suite Setup      Run Tests    ${EMPTY}    standard_libraries/xml/default_namespace_handling.txt
 Force Tags       regression    pybot    jybot
 Resource         atest_resource.txt
