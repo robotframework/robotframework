@@ -1,9 +1,13 @@
 *** Settings ***
-Library     XML
+Library        XML
+Library        Collections
+Library        OperatingSystem
 
 *** Variables ***
 ${TEST} =      ${CURDIR}/test.xml
+${NS} =        ${CURDIR}/namespaces.xml
 ${SIMPLE} =    <root><child id="1">text</child><c2><gc /></c2></root>
+${OUTPUT} =    %{TEMPDIR}/xmllib.xml
 
 
 *** Keywords ***

@@ -1,5 +1,4 @@
 *** Settings ***
-Library      Collections
 Resource     resource.txt
 
 *** Test Cases ***

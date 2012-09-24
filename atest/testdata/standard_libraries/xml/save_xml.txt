@@ -1,10 +1,8 @@
 *** Settings ***
 Resource        resource.txt
-Library         OperatingSystem
 Test Setup      Remove File    ${OUTPUT}
 
 *** Variables ***
-${OUTPUT}       %{TEMPDIR}/xmllib.xml
 ${NON-ASCII}    <hyvää>yötä</hyvää>
 
 *** Test Cases ***
