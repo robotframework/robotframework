@@ -240,15 +240,22 @@ class _RunKeywordHandler(_PythonHandler):
             keywords.add_keyword(keyword)
         return keywords
 
+    def _variable_syntax_in(self, kw_name, context):
+        try:
+            resolved = context.namespace.variables.replace_string(kw_name)
+            #Variable can contain value, but it might be wrong,
+            #therefore it cannot be returned
+            return resolved != kw_name
+        except DataError:
+            return True
+
     def _get_keywords(self, args):
         if self._handler_name == 'run_keyword_if':
             return list(self._get_run_kw_if_keywords(args))
-        arg_names = self.arguments.names
-        if 'name' in arg_names:
-            name_index = arg_names.index('name')
-            return [ Keyword(args[name_index], args[name_index+1:]) ]
-        elif self.arguments.varargs == 'names':
-            return [ Keyword(name, []) for name in args[len(arg_names):] ]
+        if self._handler_name == 'run_keywords':
+            return self._get_run_kws_keywords(args)
+        if 'name' in self.arguments.names:
+            return self._get_default_run_kw_keywords(args)
         return []
 
     def _get_run_kw_if_keywords(self, given_args):
@@ -270,14 +277,12 @@ class _RunKeywordHandler(_PythonHandler):
             raise DataError('Invalid ELSE IF/ELSE usage.')
         return kw_call, given_args
 
-    def _variable_syntax_in(self, kw_name, context):
-        try:
-            resolved = context.namespace.variables.replace_string(kw_name)
-            #Variable can contain value, but it might be wrong,
-            #therefore it cannot be returned
-            return resolved != kw_name
-        except DataError:
-            return True
+    def _get_run_kws_keywords(self, given_args):
+        return [Keyword(name, []) for name in given_args]
+
+    def _get_default_run_kw_keywords(self, given_args):
+        index = self.arguments.names.index('name')
+        return [Keyword(given_args[index], given_args[index+1:])]
 
 
 class _XTimesHandler(_RunKeywordHandler):
