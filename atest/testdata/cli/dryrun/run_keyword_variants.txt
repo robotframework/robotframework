@@ -1,11 +1,13 @@
 *** Variables ***
 ${existing} =  foo
-${FAILURE MESSAGE WITH LOG KW} =  Keyword 'BuiltIn.Log' expected 1 to 2 arguments, got 0.
+${LOG GOT WRONG ARGS} =  Keyword 'BuiltIn.Log' expected 1 to 2 arguments, got
+${LOG GOT ZERO ARGS} =  ${LOG GOT WRONG ARGS} 0.
+${LOG GOT THREE ARGS} =  ${LOG GOT WRONG ARGS} 3.
 
 
 *** Test Cases ***
 Run Keyword With Keyword with Invalid Number of Arguments
-    [Documentation]  FAIL ${FAILURE MESSAGE WITH LOG KW}
+    [Documentation]  FAIL ${LOG GOT ZERO ARGS}
     Run Keyword    Log
 
 Run Keyword With Missing Keyword
@@ -21,7 +23,7 @@ Run Keyword With UK
     Run Keyword  UK
 
 Run Keyword With Failing UK
-    [Documentation]  FAIL ${FAILURE MESSAGE WITH LOG KW}
+    [Documentation]  FAIL ${LOG GOT ZERO ARGS}
     Run Keyword  Failing UK
 
 Comment
@@ -37,12 +39,12 @@ Run Keywords When All Keywords Pass
     Run Keywords  Fail  No Operation  UK
 
 Run Keywords When One Keyword Fails
-    [Documentation]  FAIL ${FAILURE MESSAGE WITH LOG KW}
+    [Documentation]  FAIL ${LOG GOT ZERO ARGS}
     Run Keywords  Fail  No Operation  Log  UK
 
 Run Keywords When Multiple Keyword Fails
     [Documentation]  FAIL  Several failures occurred:\n\n
-    ...  1) ${FAILURE MESSAGE WITH LOG KW}\n\n
+    ...  1) ${LOG GOT ZERO ARGS}\n\n
     ...  2) No keyword with name 'Missing' found.
     Run Keywords  Fail  No Operation  Log  UK  Missing
 
@@ -51,7 +53,7 @@ Run Keyword in For Loop Pass
     \  Run Keyword  No Operation
 
 Run Keyword in For Loop Fail
-    [Documentation]  FAIL ${FAILURE MESSAGE WITH LOG KW}
+    [Documentation]  FAIL ${LOG GOT ZERO ARGS}
     :FOR  ${i}  IN RANGE  5
     \  Run Keyword  Log
 
@@ -59,21 +61,94 @@ Wait Until Keyword Succeeds Pass
     Wait Until Keyword Succeeds  30 seconds  1 second  No Operation
 
 Wait Until Keyword Succeeds Fail
-    [Documentation]  FAIL ${FAILURE MESSAGE WITH LOG KW}
+    [Documentation]  FAIL ${LOG GOT ZERO ARGS}
     Wait Until Keyword Succeeds  30 seconds  1 second  Log
 
 Run Keyword If Pass
     Run Keyword If  ${TRUE}  No Operation
 
 Run Keyword If Fail
-    [Documentation]  FAIL ${FAILURE MESSAGE WITH LOG KW}
+    [Documentation]  FAIL ${LOG GOT ZERO ARGS}
     Run Keyword If  ${FALSE}  Log
+
+Run Keyword If with ELSE
+    [Documentation]  FAIL  Several failures occurred:\n\n
+    ...  1) ${LOG GOT ZERO ARGS}\n\n
+    ...  2) Keyword 'UK' expected 0 arguments, got 1.\n\n
+    ...  3) No keyword with name 'Non Existing' found.\n\n
+    ...  4) ${LOG GOT THREE ARGS}
+    Run Keyword If    expression    No Operation    ELSE    UK
+    RunKeywordIf      expression    Log             ELSE    No Operation
+    runkeywordif      expression    No operation    ELSE    UK    not allowed
+    RUN_KEYWORD_IF    expression    Non Existing    ELSE    Log    1   2   3
+
+Run Keyword If with ELSE IF
+    [Documentation]  FAIL  Several failures occurred:\n\n
+    ...  1) ${LOG GOT ZERO ARGS}\n\n
+    ...  2) Keyword 'UK' expected 0 arguments, got 1.\n\n
+    ...  3) No keyword with name 'Non Existing' found.\n\n
+    ...  4) ${LOG GOT THREE ARGS}
+    Run Keyword If    expr    No Operation    ELSE IF    expr    UK
+    Run Keyword If    expr    Log             ELSE IF    expr    No Operation
+    Run Keyword If    expr    No operation    ELSE IF    expr    UK    not allowed
+    Run Keyword If    expr    Non Existing    ELSE IF    expr    Log    1   2   3
+
+Run Keyword If with ELSE IF and ELSE
+    [Documentation]  FAIL  Several failures occurred:\n\n
+    ...  1) ${LOG GOT ZERO ARGS}\n\n
+    ...  2) Keyword 'UK' expected 0 arguments, got 2.\n\n
+    ...  3) No keyword with name 'not found kw' found.\n\n
+    ...  4) ${LOG GOT THREE ARGS}
+    Run Keyword If    expr    Log
+    ...    ELSE IF    expr    UK    1    2
+    ...    ELSE IF    expr    not found kw
+    ...    ELSE    Log    1   2   3
+
+Run Keyword If with ELSE IF and ELSE without keywords
+    [Documentation]  FAIL  Several failures occurred:\n\n
+    ...  1) Invalid ELSE IF/ELSE usage.\n\n
+    ...  2) Invalid ELSE IF/ELSE usage.\n\n
+    ...  3) Invalid ELSE IF/ELSE usage.\n\n
+    ...  4) Invalid ELSE IF/ELSE usage.\n\n
+    ...  5) Invalid ELSE IF/ELSE usage.\n\n
+    ...  6) Invalid ELSE IF/ELSE usage.\n\n
+    ...  7) Invalid ELSE IF/ELSE usage.\n\n
+    ...  8) Invalid ELSE IF/ELSE usage.\n\n
+    ...  9) Invalid ELSE IF/ELSE usage.\n\n
+    ...  10) Invalid ELSE IF/ELSE usage.\n\n
+    ...  11) Keyword 'BuiltIn.Run Keyword If' expected at least 2 arguments, got 1.\n\n
+    ...  12) Keyword 'BuiltIn.Run Keyword If' expected at least 2 arguments, got 1.\n\n
+    ...  13) Invalid ELSE IF/ELSE usage.\n\n
+    ...  14) Invalid ELSE IF/ELSE usage.
+    Run Keyword If    False   No Operation    ELSE IF    True
+    Run Keyword If    False   No Operation    ELSE IF
+    Run Keyword If    False   No Operation    ELSE
+    Run Keyword If    False   No Operation    ELSE IF    True    ELSE    No Operation
+    Run Keyword If    False   No Operation    ELSE IF    ELSE    No Operation
+    Run Keyword If    False   No Operation    ELSE IF    ELSE
+    Run Keyword If    False   ELSE IF    ELSE
+    Run Keyword If    False   ELSE IF
+    Run Keyword If    False   ELSE
+    Run Keyword If    ELSE IF    ELSE
+    Run Keyword If    ELSE IF
+    Run Keyword If    ELSE
+    Run Keyword If    True    ELSE    No Operation
+    Run Keyword If    True    ELSE
+
+Run Keyword If with escaped or non-caps ELSE IF and ELSE
+    [Documentation]  FAIL  Several failures occurred:\n\n
+    ...  1) ${LOG GOT THREE ARGS}\n\n
+    ...  2) ${LOG GOT WRONG ARGS} 5.
+     Run Keyword If    expr    Log    \ELSE IF    not expr    not kw
+     Run Keyword If    expr    Log    \ELSE    not kw (and not level either)
+     Run Keyword If    expr    Log    else if    valid args for log
+     Run Keyword If    expr    Log    else    too    many    args    again
 
 Test Teardown Related Run Keyword Variants
     [Documentation]  FAIL  Several failures occurred:\n\n
-    ...  1) ${FAILURE MESSAGE WITH LOG KW}\n\n
-    ...  2) ${FAILURE MESSAGE WITH LOG KW}\n\n
-    ...  3) ${FAILURE MESSAGE WITH LOG KW}
+    ...  1) ${LOG GOT ZERO ARGS}\n\n
+    ...  2) ${LOG GOT ZERO ARGS}\n\n
+    ...  3) ${LOG GOT ZERO ARGS}
     Run Keyword If Test Failed  Log
     Run Keyword If Test Passed  Log
     Run Keyword If Timeout Occurred  Log

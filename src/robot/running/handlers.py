@@ -241,6 +241,8 @@ class _RunKeywordHandler(_PythonHandler):
         return keywords
 
     def _get_keywords(self, args):
+        if self._handler_name == 'run_keyword_if':
+            return list(self._get_run_kw_if_keywords(args))
         arg_names = self.arguments.names
         if 'name' in arg_names:
             name_index = arg_names.index('name')
@@ -248,6 +250,25 @@ class _RunKeywordHandler(_PythonHandler):
         elif self.arguments.varargs == 'names':
             return [ Keyword(name, []) for name in args[len(arg_names):] ]
         return []
+
+    def _get_run_kw_if_keywords(self, given_args):
+        while 'ELSE IF' in given_args:
+            kw_call, given_args = self._split_run_kw_if_args(given_args, 'ELSE IF', 2)
+            yield Keyword(kw_call[1], kw_call[2:])
+        if 'ELSE' in given_args:
+            kw_call, given_args = self._split_run_kw_if_args(given_args, 'ELSE', 1)
+            yield Keyword(kw_call[1], kw_call[2:])
+            yield Keyword(given_args[0], given_args[1:])
+        else:
+            yield Keyword(given_args[1], given_args[2:])
+
+    def _split_run_kw_if_args(self, given_args, control_word, required_after):
+        index = given_args.index(control_word)
+        kw_call = given_args[:index]
+        given_args = given_args[index+1:]
+        if len(kw_call) < 2 or len(given_args) < required_after:
+            raise DataError('Invalid ELSE IF/ELSE usage.')
+        return kw_call, given_args
 
     def _variable_syntax_in(self, kw_name, context):
         try:

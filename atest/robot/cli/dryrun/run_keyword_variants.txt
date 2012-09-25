@@ -53,6 +53,20 @@ Run Keyword If Pass
 Run Keyword If Fail
     Check Test Case  ${TESTNAME}
 
-Test Teardown Related Run Keyword Variants
+Run Keyword If with ELSE
     Check Test Case  ${TESTNAME}
 
+Run Keyword If with ELSE IF
+    Check Test Case  ${TESTNAME}
+
+Run Keyword If with ELSE IF and ELSE
+    Check Test Case  ${TESTNAME}
+
+Run Keyword If with ELSE IF and ELSE without keywords
+    Check Test Case  ${TESTNAME}
+
+Run Keyword If with escaped or non-caps ELSE IF and ELSE
+    Check Test Case  ${TESTNAME}
+
+Test Teardown Related Run Keyword Variants
+    Check Test Case  ${TESTNAME}
