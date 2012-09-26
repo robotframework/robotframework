@@ -1,6 +1,6 @@
 *** Settings ***
-Documentation    Testing how XML library handles namespaces by default
-Suite Setup      Run Tests    ${EMPTY}    standard_libraries/xml/configure_non_default_namespaces.txt
+Documentation    Tests for XML library's default namespace handling.
+Suite Setup      Run Tests    ${EMPTY}    standard_libraries/xml/namespaces.txt
 Force Tags       regression    pybot    jybot
 Resource         atest_resource.txt
 

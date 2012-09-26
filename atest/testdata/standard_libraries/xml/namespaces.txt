@@ -45,9 +45,7 @@ Saved XML is semantically same as original
     Elements Should Be Equal    ${etree1}    ${etree2}
 
 Saved XML is has same content as original but only default namespaces
-    Save XML    ${NS}    ${OUTPUT}
-    ${content} =    Get File    ${OUTPUT}
-    ${expected} =    Catenate    SEPARATOR=\n
+    Saved XML Should Be    ${NS}
     ...   <?xml version='1.0' encoding='UTF-8'?>
     ...   <test name="root" xmlns="default">
     ...   ${INDENT}<child1 id="1">default ns</child1>
@@ -65,12 +63,15 @@ Saved XML is has same content as original but only default namespaces
     ...   ${INDENT}</another>
     ...   ${INDENT}<back>back in default</back>
     ...   </test>
-    Should Be Equal    ${content}    ${expected}
 
 Attribute namespaces are not handled
     ${elem} =    Parse XML    <root id="1" ns:id="2" xmlns:ns="http://attr.ns" />
     Element Attribute Should Be    ${elem}    id    1
     Element Attribute Should Be    ${elem}    {http://attr.ns}id    2
+    Saved XML Should Be    ${ELEM}
+    ...    <?xml version='1.0' encoding='UTF-8'?>
+    ...    <root id="1" ns0:id="2" xmlns:ns0="http://attr.ns" />
+    Elements Should Be Equal    ${elem}    ${OUTPUT}
 
 *** Keywords ***
 Element Should Have Attributes
