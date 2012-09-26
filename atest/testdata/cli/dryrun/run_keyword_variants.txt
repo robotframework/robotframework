@@ -106,20 +106,20 @@ Run Keyword If with ELSE IF and ELSE
 
 Run Keyword If with ELSE IF and ELSE without keywords
     [Documentation]  FAIL  Several failures occurred:\n\n
-    ...  1) Invalid ELSE IF/ELSE usage.\n\n
-    ...  2) Invalid ELSE IF/ELSE usage.\n\n
-    ...  3) Invalid ELSE IF/ELSE usage.\n\n
-    ...  4) Invalid ELSE IF/ELSE usage.\n\n
-    ...  5) Invalid ELSE IF/ELSE usage.\n\n
-    ...  6) Invalid ELSE IF/ELSE usage.\n\n
-    ...  7) Invalid ELSE IF/ELSE usage.\n\n
-    ...  8) Invalid ELSE IF/ELSE usage.\n\n
-    ...  9) Invalid ELSE IF/ELSE usage.\n\n
-    ...  10) Invalid ELSE IF/ELSE usage.\n\n
+    ...  1) Invalid 'Run Keyword If' usage.\n\n
+    ...  2) Invalid 'Run Keyword If' usage.\n\n
+    ...  3) Invalid 'Run Keyword If' usage.\n\n
+    ...  4) Invalid 'Run Keyword If' usage.\n\n
+    ...  5) Invalid 'Run Keyword If' usage.\n\n
+    ...  6) Invalid 'Run Keyword If' usage.\n\n
+    ...  7) Invalid 'Run Keyword If' usage.\n\n
+    ...  8) Invalid 'Run Keyword If' usage.\n\n
+    ...  9) Invalid 'Run Keyword If' usage.\n\n
+    ...  10) Invalid 'Run Keyword If' usage.\n\n
     ...  11) Keyword 'BuiltIn.Run Keyword If' expected at least 2 arguments, got 1.\n\n
     ...  12) Keyword 'BuiltIn.Run Keyword If' expected at least 2 arguments, got 1.\n\n
-    ...  13) Invalid ELSE IF/ELSE usage.\n\n
-    ...  14) Invalid ELSE IF/ELSE usage.
+    ...  13) Invalid 'Run Keyword If' usage.\n\n
+    ...  14) Invalid 'Run Keyword If' usage.
     Run Keyword If    False   No Operation    ELSE IF    True
     Run Keyword If    False   No Operation    ELSE IF
     Run Keyword If    False   No Operation    ELSE
@@ -143,6 +143,22 @@ Run Keyword If with escaped or non-caps ELSE IF and ELSE
      Run Keyword If    expr    Log    \ELSE    not kw (and not level either)
      Run Keyword If    expr    Log    else if    valid args for log
      Run Keyword If    expr    Log    else    too    many    args    again
+
+Run Keyword If with list variable in ELSE IF and ELSE
+    [Documentation]  FAIL  Several failures occurred:\n\n
+    ...  1) Keyword 'BuiltIn.Log' expected 1 to 2 arguments, got 4.\n\n
+    ...  2) Keyword 'BuiltIn.Log' expected 1 to 2 arguments, got 5.
+    Run Keyword If    @{list}
+    Run Keyword If    @{list}    ELSE      @{list}
+    Run Keyword If    @{list}    ELSE IF   @{list}
+    Run Keyword If    @{list}    ELSE IF   @{list}    ELSE    @{list}
+    Run Keyword If    @{list}    Not Considered Keyword     ELSE    @{list}    XXX
+    Run Keyword If    @{list}    ELSE      Log   1    2     3    4
+    Run Keyword If    expr       No Operation    ELSE IF    @{list}    UK    1
+    Run Keyword If    expr       No Operation    ELSE IF    @{list}    UK    1    2
+    ...    ELSE IF    expr       Log    1    2    3    4    5
+    Run Keyword If    expr       No Operation    ELSE IF    @{list}    No Operation
+    ...  ELSE    @{list}
 
 Test Teardown Related Run Keyword Variants
     [Documentation]  FAIL  Several failures occurred:\n\n

@@ -16,6 +16,7 @@ from __future__ import with_statement
 
 from robot import utils
 from robot.errors import DataError
+from robot.variables import is_list_var
 
 from outputcapture import OutputCapturer
 from runkwregister import RUN_KW_REGISTER
@@ -259,23 +260,38 @@ class _RunKeywordHandler(_PythonHandler):
         return []
 
     def _get_run_kw_if_keywords(self, given_args):
+        for kw_call in self._get_run_kw_if_calls(given_args):
+            if kw_call:
+                yield Keyword(kw_call[0], kw_call[1:])
+
+    def _get_run_kw_if_calls(self, given_args):
         while 'ELSE IF' in given_args:
             kw_call, given_args = self._split_run_kw_if_args(given_args, 'ELSE IF', 2)
-            yield Keyword(kw_call[1], kw_call[2:])
+            yield kw_call
         if 'ELSE' in given_args:
-            kw_call, given_args = self._split_run_kw_if_args(given_args, 'ELSE', 1)
-            yield Keyword(kw_call[1], kw_call[2:])
-            yield Keyword(given_args[0], given_args[1:])
-        else:
-            yield Keyword(given_args[1], given_args[2:])
+            kw_call, else_call = self._split_run_kw_if_args(given_args, 'ELSE', 1)
+            yield kw_call
+            yield else_call
+        elif self._validate_kw_call(given_args):
+            expr, kw_call = given_args[0], given_args[1:]
+            if not is_list_var(expr):
+                yield kw_call
 
     def _split_run_kw_if_args(self, given_args, control_word, required_after):
         index = given_args.index(control_word)
-        kw_call = given_args[:index]
-        given_args = given_args[index+1:]
-        if len(kw_call) < 2 or len(given_args) < required_after:
-            raise DataError('Invalid ELSE IF/ELSE usage.')
-        return kw_call, given_args
+        expr_and_call = given_args[:index]
+        remaining = given_args[index+1:]
+        if not (self._validate_kw_call(expr_and_call) and
+                self._validate_kw_call(remaining, required_after)):
+            raise DataError("Invalid 'Run Keyword If' usage.")
+        if is_list_var(expr_and_call[0]):
+            return [], remaining
+        return expr_and_call[1:], remaining
+
+    def _validate_kw_call(self, kw_call, min_length=2):
+        if len(kw_call) >= min_length:
+            return True
+        return any(is_list_var(item) for item in kw_call)
 
     def _get_run_kws_keywords(self, given_args):
         return [Keyword(name, []) for name in given_args]

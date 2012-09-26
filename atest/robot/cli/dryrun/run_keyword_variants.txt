@@ -68,5 +68,8 @@ Run Keyword If with ELSE IF and ELSE without keywords
 Run Keyword If with escaped or non-caps ELSE IF and ELSE
     Check Test Case  ${TESTNAME}
 
+Run Keyword If with list variable in ELSE IF and ELSE
+    Check Test Case  ${TESTNAME}
+
 Test Teardown Related Run Keyword Variants
     Check Test Case  ${TESTNAME}
