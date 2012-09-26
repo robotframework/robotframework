@@ -414,13 +414,13 @@ class _VariableScopes:
     def replace_string(self, string):
         return self.current.replace_string(string)
 
-    def replace_from_beginning(self, how_many, args):
+    def replace_from_beginning(self, args, how_many):
         # There might be @{list} variables and those might have more or less
         # arguments that is needed. Therefore we need to go through arguments
         # one by one.
         processed = []
         while len(processed) < how_many and args:
-            processed += self.current.replace_list([args.pop(0)])
+            processed.extend(self.current.replace_list([args.pop(0)]))
         # In case @{list} variable is unpacked, the arguments going further
         # needs to be escaped, otherwise those are unescaped twice.
         processed[how_many:] = [utils.escape(arg) for arg in processed[how_many:]]

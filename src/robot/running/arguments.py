@@ -189,7 +189,7 @@ class RunKeywordArguments(PythonKeywordArguments):
         self._arg_resolution_index = arg_resolution_index
 
     def _resolve(self, args, variables, output):
-        args = variables.replace_from_beginning(self._arg_resolution_index, args)
+        args = variables.replace_from_beginning(args, self._arg_resolution_index)
         return args, {}
 
 

@@ -1168,7 +1168,7 @@ class _RunKeyword:
     def _split_branch(self, args, control_word, required, required_error):
         args = list(args)
         index = args.index(control_word)
-        branch = self._variables.replace_from_beginning(required, args[index+1:])
+        branch = self._variables.replace_from_beginning(args[index+1:], required)
         if len(branch) < required:
             raise DataError('%s requires %s.' % (control_word, required_error))
         return args[:index], branch
