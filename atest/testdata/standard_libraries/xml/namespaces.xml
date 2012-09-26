@@ -1,11 +1,15 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <test name="root" xmlns="default" xmlns:prefix="http://uri">
-    <child id="1">default ns</child>
-    <prefix:child>ns with prefix</prefix:child>
-    <prefix2:child xmlns:prefix2="whatever.xsd">
-        <prefix2:item>2nd prefix</prefix2:item>
-        <prefix:item>1st prefix again</prefix:item>
-    </prefix2:child>
+    <child1 id="1">default ns</child1>
+    <prefix:child2>ns with prefix</prefix:child2>
+    <prefix2:child3 xmlns:prefix2="whatever.xsd">
+        <prefix2:grand-child>2nd prefix</prefix2:grand-child>
+        <prefix:grand-child-2>
+            <prefix:ggc>1st prefix again</prefix:ggc>
+            <ggc2>default ns 2</ggc2>
+        </prefix:grand-child-2>
+        <prefix2:grand-child-3>2nd prefix 2</prefix2:grand-child-3>
+    </prefix2:child3>
     <another xmlns="default2">
         <child>2nd default</child>
     </another>

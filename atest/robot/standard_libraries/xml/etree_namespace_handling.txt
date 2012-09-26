@@ -5,7 +5,6 @@ Force Tags       regression    pybot    jybot
 Resource         atest_resource.txt
 
 *** Test Cases ***
-
 Tag names contain namespace in Clark Notation
     Check Test Case    ${TESTNAME}
 
@@ -15,8 +14,11 @@ Clarck Notation must be used in xpaths
 xmlns attributes are removed
     Check Test Case    ${TESTNAME}
 
-Saved XML is semantically same as original
+Parsed XML is semantically same as original
     Check Test Case    ${TESTNAME}
 
 Prefixes are mangled when XML is saved
+    Check Test Case    ${TESTNAME}
+
+Attribute namespaces
     Check Test Case    ${TESTNAME}

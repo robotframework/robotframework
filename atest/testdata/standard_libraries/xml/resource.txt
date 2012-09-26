@@ -9,12 +9,12 @@ ${NS} =            ${CURDIR}/namespaces.xml
 ${DEFAULT NS} =    ${CURDIR}/default_namespaces.xml
 ${SIMPLE} =        <root><child id="1">text</child><c2><gc /></c2></root>
 ${OUTPUT} =        %{TEMPDIR}/xmllib.xml
-
+${INDENT} =        ${SPACE * 4}
 
 *** Keywords ***
 Parse XML To Test Variable
-    [Arguments]    ${input}    ${var}    @{namespaces}
-    ${result} =    Parse XML    ${input}    @{namespaces}
+    [Arguments]    ${input}    ${var}    ${etree namespaces}=
+    ${result} =    Parse XML    ${input}    ${etree namespaces}
     Set Test Variable    ${var}    ${result}
 
 Element Should Have Attributes
@@ -22,3 +22,10 @@ Element Should Have Attributes
     ${elem} =    Get Element    ${source}    ${xpath}
     ${expected} =    Create Dictionary    @{attributes}
     Dictionaries Should Be Equal    ${elem.attrib}    ${expected}
+
+Saved XML Should Be
+    [Arguments]    ${tree}    @{expected}
+    Save XML    ${tree}    ${OUTPUT}
+    ${content} =    Get File    ${OUTPUT}
+    ${expected} =    Catenate    SEPARATOR=\n    @{expected}
+    Should Be Equal    ${content}    ${expected}

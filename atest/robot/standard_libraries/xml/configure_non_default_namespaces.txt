@@ -1,0 +1,24 @@
+*** Settings ***
+Documentation    Testing how XML library handles namespaces by default
+Suite Setup      Run Tests    ${EMPTY}    standard_libraries/xml/configure_non_default_namespaces.txt
+Force Tags       regression    pybot    jybot
+Resource         atest_resource.txt
+
+*** Test Cases ***
+Tag names contain no namespaces
+    Check Test Case    ${TESTNAME}
+
+Namespaces are not needed in xpath
+    Check Test Case    ${TESTNAME}
+
+xmlns attributes with default namespaces are added when needed
+    Check Test Case    ${TESTNAME}
+
+Saved XML is semantically same as original
+    Check Test Case    ${TESTNAME}
+
+Saved XML is has same content as original but only default namespaces
+    Check Test Case    ${TESTNAME}
+
+Attribute namespaces are not handled
+    Check Test Case    ${TESTNAME}

@@ -1,61 +1,73 @@
 *** Settings ***
-Documentation    Testing how ElementTree handles namespaces by default
 Resource         resource.txt
+Suite Setup      Remove File    ${OUTPUT}
+Test Setup       Parse XML To Test Variable    ${NS}    \${ROOT}    etree namespaces
 Test Teardown    Remove File    ${OUTPUT}
-
-*** Variables ***
-${INDENT} =    ${SPACE * 4}
 
 *** Test Cases ***
 Tag names contain namespace in Clark Notation
-    ${root} =    Parse XML    ${NS}
-    Should Be Equal    ${root.tag}    {default}test
-    ${children} =    Get Child Elements    ${root}
-    Should Be Equal    ${children[0].tag}    {default}child
-    Should Be Equal    ${children[1].tag}    {http://uri}child
-    Should Be Equal    ${children[2].tag}    {whatever.xsd}child
+    Should Be Equal    ${ROOT.tag}    {default}test
+    ${children} =    Get Child Elements    ${ROOT}
+    Should Be Equal    ${children[0].tag}    {default}child1
+    Should Be Equal    ${children[1].tag}    {http://uri}child2
+    Should Be Equal    ${children[2].tag}    {whatever.xsd}child3
     Should Be Equal    ${children[3].tag}    {default2}another
     Should Be Equal    ${children[4].tag}    {default}back
 
 Clarck Notation must be used in xpaths
     [Template]    Element Text Should Be
-    ${NS}    default ns        xpath={default}child
-    ${NS}    ns with prefix    xpath={http://uri}child
-    ${NS}    2nd prefix        xpath={whatever.xsd}child/{whatever.xsd}item
-    ${NS}    1st prefix again  xpath={whatever.xsd}child/{http://uri}item
-    ${NS}    2nd default       xpath={default2}another/{default2}child
-    ${NS}    back in default   xpath={default}back
+    ${ROOT}    default ns        xpath={default}child1
+    ${ROOT}    ns with prefix    xpath={http://uri}child2
+    ${ROOT}    2nd prefix        xpath={whatever.xsd}child3/{whatever.xsd}grand-child
+    ${ROOT}    1st prefix again  xpath={whatever.xsd}child3/{http://uri}grand-child-2/{http://uri}ggc
+    ${ROOT}    default ns 2      xpath={whatever.xsd}child3/{http://uri}grand-child-2/{default}ggc2
+    ${ROOT}    2nd default       xpath={default2}another/{default2}child
+    ${ROOT}    back in default   xpath={default}back
 
 xmlns attributes are removed
     [Template]    Element Should Have Attributes
-    ${NS}    .    name    root
-    ${NS}    {default}child    id    1
-    ${NS}    {http://uri}child
-    ${NS}    {whatever.xsd}child
-    ${NS}    {default2}another/{default2}child
-    ${NS}    {default}back
+    ${ROOT}    .    name    root
+    ${ROOT}    {default}child1    id    1
+    ${ROOT}    {http://uri}child2
+    ${ROOT}    {whatever.xsd}child3
+    ${ROOT}    {whatever.xsd}child3/{whatever.xsd}grand-child
+    ${ROOT}    {whatever.xsd}child3/{http://uri}grand-child-2
+    ${ROOT}    {whatever.xsd}child3/{http://uri}grand-child-2/{http://uri}ggc
+    ${ROOT}    {whatever.xsd}child3/{http://uri}grand-child-2/{default}ggc2
+    ${ROOT}    {whatever.xsd}child3/{whatever.xsd}grand-child-3
+    ${ROOT}    {default2}another
+    ${ROOT}    {default2}another/{default2}child
+    ${ROOT}    {default}back
 
-Saved XML is semantically same as original
-    ${root} =    Parse XML    ${NS}
-    Save XML    ${root}    ${OUTPUT}
-    Elements Should Be Equal    ${root}    ${OUTPUT}
+Parsed XML is semantically same as original
+    Save XML    ${ROOT}    ${OUTPUT}
+    ${root2} =    Parse XML    ${OUTPUT}    etree_namespaces=yes please
+    Elements Should Be Equal    ${ROOT}    ${root2}
 
 Prefixes are mangled when XML is saved
-    ${root} =    Parse XML    ${NS}
-    Save XML    ${root}    ${OUTPUT}
-    ${content} =    Get File    ${OUTPUT}
-    ${expected} =    Catenate    SEPARATOR=\n
+    Saved XML Should Be    ${ROOT}
     ...    <?xml version='1.0' encoding='UTF-8'?>
     ...    <ns0:test name="root" xmlns:ns0="default">
-    ...    ${INDENT}<ns0:child id="1">default ns</ns0:child>
-    ...    ${INDENT}<ns1:child xmlns:ns1="http://uri">ns with prefix</ns1:child>
-    ...    ${INDENT}<ns1:child xmlns:ns1="whatever.xsd">
-    ...    ${INDENT}${INDENT}<ns1:item>2nd prefix</ns1:item>
-    ...    ${INDENT}${INDENT}<ns2:item xmlns:ns2="http://uri">1st prefix again</ns2:item>
-    ...    ${INDENT}</ns1:child>
+    ...    ${INDENT}<ns0:child1 id="1">default ns</ns0:child1>
+    ...    ${INDENT}<ns1:child2 xmlns:ns1="http://uri">ns with prefix</ns1:child2>
+    ...    ${INDENT}<ns1:child3 xmlns:ns1="whatever.xsd">
+    ...    ${INDENT}${INDENT}<ns1:grand-child>2nd prefix</ns1:grand-child>
+    ...    ${INDENT}${INDENT}<ns2:grand-child-2 xmlns:ns2="http://uri">
+    ...    ${INDENT}${INDENT}${INDENT}<ns2:ggc>1st prefix again</ns2:ggc>
+    ...    ${INDENT}${INDENT}${INDENT}<ns0:ggc2>default ns 2</ns0:ggc2>
+    ...    ${INDENT}${INDENT}</ns2:grand-child-2>
+    ...    ${INDENT}${INDENT}<ns1:grand-child-3>2nd prefix 2</ns1:grand-child-3>
+    ...    ${INDENT}</ns1:child3>
     ...    ${INDENT}<ns1:another xmlns:ns1="default2">
     ...    ${INDENT}${INDENT}<ns1:child>2nd default</ns1:child>
     ...    ${INDENT}</ns1:another>
     ...    ${INDENT}<ns0:back>back in default</ns0:back>
     ...    </ns0:test>
-    Should Be Equal    ${content}    ${expected}
+
+Attribute namespaces
+    ${elem} =    Parse XML    <root id="1" ns:id="2" xmlns:ns="http://attr.ns" />    etree_namespaces=yes
+    Element Attribute Should Be    ${elem}    id    1
+    Element Attribute Should Be    ${elem}    {http://attr.ns}id    2
+    Saved XML Should be    ${elem}
+    ...    <?xml version='1.0' encoding='UTF-8'?>
+    ...    <root id="1" ns0:id="2" xmlns:ns0="http://attr.ns" />
