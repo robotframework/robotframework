@@ -260,31 +260,33 @@ class _RunKeywordHandler(_PythonHandler):
         return []
 
     def _get_run_kw_if_keywords(self, given_args):
-        for kw_call in self._x(given_args):
-            if len(kw_call) >= 1:
+        for kw_call in self._get_run_kw_if_calls(given_args):
+            if kw_call:
                 yield Keyword(kw_call[0], kw_call[1:])
 
-    def _x(self, given_args):
+    def _get_run_kw_if_calls(self, given_args):
         while 'ELSE IF' in given_args:
-            expr_and_call, given_args = self._split_run_kw_if_args(given_args, 'ELSE IF', 2)
-            yield expr_and_call[1:]
+            kw_call, given_args = self._split_run_kw_if_args(given_args, 'ELSE IF', 2)
+            yield kw_call
         if 'ELSE' in given_args:
-            expr_and_call, else_call = self._split_run_kw_if_args(given_args, 'ELSE', 1)
-            yield expr_and_call[1:]
+            kw_call, else_call = self._split_run_kw_if_args(given_args, 'ELSE', 1)
+            yield kw_call
             yield else_call
-        elif self._validate_kw_call(given_args) and not is_list_var(given_args[0]):
-            yield given_args[1:]
+        elif self._validate_kw_call(given_args):
+            expr, kw_call = given_args[0], given_args[1:]
+            if not is_list_var(expr):
+                yield kw_call
 
     def _split_run_kw_if_args(self, given_args, control_word, required_after):
         index = given_args.index(control_word)
         expr_and_call = given_args[:index]
-        given_args = given_args[index+1:]
+        remaining = given_args[index+1:]
         if not (self._validate_kw_call(expr_and_call) and
-                self._validate_kw_call(given_args, required_after)):
+                self._validate_kw_call(remaining, required_after)):
             raise DataError("Invalid 'Run Keyword If' usage.")
         if is_list_var(expr_and_call[0]):
-            expr_and_call = []
-        return expr_and_call, given_args
+            return [], remaining
+        return expr_and_call[1:], remaining
 
     def _validate_kw_call(self, kw_call, min_length=2):
         if len(kw_call) >= min_length:
