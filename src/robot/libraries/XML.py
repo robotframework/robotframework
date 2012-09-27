@@ -206,7 +206,7 @@ class XML(object):
 
     All keywords returning elements, such as `Parse XML`, and `Get Element`,
     return ElementTree's
-    [http://docs.python.org/library/xml.etree.elementtree.html#xml.etree.ElementTree.Element|Element classes].
+    [http://docs.python.org/library/xml.etree.elementtree.html#xml.etree.ElementTree.Element|Element objects].
     These elements can be used as inputs for other keywords, but they also
     contain several useful attributes that can be accessed directly using
     the extended variable syntax.
@@ -258,6 +258,19 @@ class XML(object):
     | `Should Be Equal` | ${2nd.attrib['id']} | 2      |        |
     | ${3rd} =          | `Get Element`       | ${XML} | third  |
     | `Should Be Empty` | ${3rd.attrib}       |        |        |
+
+    *Handling namespaces*
+
+    ElementTree handles XML namespaces in by adding namespace to tag names
+    in so called Clark Notation. This is inconvenient especially with xpaths,
+    and by default this library strips those namespaces and moves them to
+    `xmlns` attribute instead.
+
+    _Default namespace handling_
+
+    _ElementTree namespaces_
+
+
     """
 
     ROBOT_LIBRARY_SCOPE = 'GLOBAL'
