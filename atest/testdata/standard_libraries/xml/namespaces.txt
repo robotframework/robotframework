@@ -46,7 +46,6 @@ Saved XML is semantically same as original
 
 Saved XML is has same content as original but only default namespaces
     Saved XML Should Be    ${NS}
-    ...   <?xml version='1.0' encoding='UTF-8'?>
     ...   <test name="root" xmlns="default">
     ...   ${INDENT}<child1 id="1">default ns</child1>
     ...   ${INDENT}<child2 xmlns="http://uri">ns with prefix</child2>
@@ -65,13 +64,8 @@ Saved XML is has same content as original but only default namespaces
     ...   </test>
 
 Attribute namespaces are not handled
-    ${elem} =    Parse XML    <root id="1" ns:id="2" xmlns:ns="http://attr.ns" />
-    Element Attribute Should Be    ${elem}    id    1
-    Element Attribute Should Be    ${elem}    {http://attr.ns}id    2
-    Saved XML Should Be    ${ELEM}
-    ...    <?xml version='1.0' encoding='UTF-8'?>
-    ...    <root id="1" ns0:id="2" xmlns:ns0="http://attr.ns" />
-    Elements Should Be Equal    ${elem}    ${OUTPUT}
+    ${elem} =    Parse XML    ${ATTR NS}
+    Test Attribute Namespace Parsing    ${elem}
 
 *** Keywords ***
 Element Should Have Attributes

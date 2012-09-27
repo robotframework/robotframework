@@ -45,8 +45,38 @@ Parsed XML is semantically same as original
     Elements Should Be Equal    ${ROOT}    ${root2}
 
 Prefixes are mangled when XML is saved
-    Saved XML Should Be    ${ROOT}
-    ...    <?xml version='1.0' encoding='UTF-8'?>
+    @{expected} =    Run Keyword Depending On Etree Version
+    ...    Get Expected Etree 1.3 Output
+    ...    Get Expected Etree 1.2 Output
+    Saved XML Should Be    ${ROOT}    @{expected}
+
+Attribute namespaces
+    ${elem} =    Parse XML    ${ATTR NS}    etree_namespaces=yes
+    Test Attribute Namespace Parsing    ${elem}
+
+*** Keywords ***
+Get Expected Etree 1.3 Output
+    @{expected} =    Create List
+    ...    <ns0:test xmlns:ns0="default" xmlns:ns1="http://uri" xmlns:ns2="whatever.xsd" xmlns:ns3="default2" name="root">
+    ...    ${INDENT}<ns0:child1 id="1">default ns</ns0:child1>
+    ...    ${INDENT}<ns1:child2>ns with prefix</ns1:child2>
+    ...    ${INDENT}<ns2:child3>
+    ...    ${INDENT}${INDENT}<ns2:grand-child>2nd prefix</ns2:grand-child>
+    ...    ${INDENT}${INDENT}<ns1:grand-child-2>
+    ...    ${INDENT}${INDENT}${INDENT}<ns1:ggc>1st prefix again</ns1:ggc>
+    ...    ${INDENT}${INDENT}${INDENT}<ns0:ggc2>default ns 2</ns0:ggc2>
+    ...    ${INDENT}${INDENT}</ns1:grand-child-2>
+    ...    ${INDENT}${INDENT}<ns2:grand-child-3>2nd prefix 2</ns2:grand-child-3>
+    ...    ${INDENT}</ns2:child3>
+    ...    ${INDENT}<ns3:another>
+    ...    ${INDENT}${INDENT}<ns3:child>2nd default</ns3:child>
+    ...    ${INDENT}</ns3:another>
+    ...    ${INDENT}<ns0:back>back in default</ns0:back>
+    ...    </ns0:test>
+    [Return]    @{expected}
+
+Get Expected Etree 1.2 Output
+    @{expected} =    Create List
     ...    <ns0:test name="root" xmlns:ns0="default">
     ...    ${INDENT}<ns0:child1 id="1">default ns</ns0:child1>
     ...    ${INDENT}<ns1:child2 xmlns:ns1="http://uri">ns with prefix</ns1:child2>
@@ -63,12 +93,4 @@ Prefixes are mangled when XML is saved
     ...    ${INDENT}</ns1:another>
     ...    ${INDENT}<ns0:back>back in default</ns0:back>
     ...    </ns0:test>
-
-Attribute namespaces
-    ${elem} =    Parse XML    <root id="1" ns:id="2" xmlns:ns="http://attr.ns" />    etree_namespaces=yes
-    Element Attribute Should Be    ${elem}    id    1
-    Element Attribute Should Be    ${elem}    {http://attr.ns}id    2
-    Saved XML Should be    ${elem}
-    ...    <?xml version='1.0' encoding='UTF-8'?>
-    ...    <root id="1" ns0:id="2" xmlns:ns0="http://attr.ns" />
-    Elements Should Be Equal    ${elem}    ${OUTPUT}
+    [Return]    @{expected}
