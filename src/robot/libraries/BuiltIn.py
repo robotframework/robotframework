@@ -1146,9 +1146,10 @@ class _RunKeyword:
         | ...         | ELSE IF          | ${rc} < 0      | `Negative return value` | ${rc} | arg2 |
         | ...         | ELSE             | `Abnormal return value` | ${rc} |
 
-        If you need to use literal ELSE and ELSE IF strings as arguments to
-        this keyword, you can escape them with a backslash like `\\ELSE` and
-        `\\ELSE IF`.
+        Notice that ELSE and ELSE IF control arguments must be used explicitly
+        and thus cannot come from variables. If you need to use literal ELSE
+        and ELSE IF strings as arguments, you can either use variables or
+        escape them with a backslash like `\\ELSE` and `\\ELSE IF`.
         """
         args, branch = self._split_elif_or_else_branch(args)
         if self._is_true(condition):
@@ -1168,7 +1169,8 @@ class _RunKeyword:
     def _split_branch(self, args, control_word, required, required_error):
         args = list(args)
         index = args.index(control_word)
-        branch = self._variables.replace_from_beginning(required, args[index+1:])
+        branch = self._variables.replace_from_beginning(args[index+1:], required,
+                                                        extra_escapes=('ELSE', 'ELSE IF'))
         if len(branch) < required:
             raise DataError('%s requires %s.' % (control_word, required_error))
         return args[:index], branch
