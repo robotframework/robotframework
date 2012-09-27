@@ -29,6 +29,7 @@ class _KeywordArguments(object):
     _type = 'Keyword'
 
     def __init__(self, argument_source, kw_or_lib_name):
+        self.name = kw_or_lib_name
         self.names, self.defaults, self.varargs, self.minargs, self.maxargs \
             = self._determine_args(argument_source)
         self._arg_limit_checker = _ArgLimitChecker(self.minargs, self.maxargs,
@@ -189,7 +190,8 @@ class RunKeywordArguments(PythonKeywordArguments):
         self._arg_resolution_index = arg_resolution_index
 
     def _resolve(self, args, variables, output):
-        args = variables.replace_from_beginning(args, self._arg_resolution_index)
+        escapes = () if self.name != 'BuiltIn.Run Keyword If' else ('ELSE IF', 'ELSE')
+        args = variables.replace_from_beginning(args, self._arg_resolution_index, escapes)
         return args, {}
 
 

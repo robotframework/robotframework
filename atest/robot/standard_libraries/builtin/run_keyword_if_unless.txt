@@ -83,6 +83,9 @@ ELSE before ELSE IF is ignored
     ${tc} =    Check Test Case    ${TEST NAME}
     Check Log Message    ${tc.kws[0].kws[0].msgs[0]}    ${EXECUTED}
 
+ELSE and ELSE IF inside list arguments should be escaped
+    Check Test Case    ${TEST NAME}
+
 ELSE and ELSE IF must be upper case
     ${tc} =    Check Test Case    ${TEST NAME}
     Test ELSE (IF) Escaping    ${tc.kws[0].kws[0]}    else

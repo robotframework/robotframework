@@ -5,6 +5,8 @@ ${EXECUTED}             This is executed
 ${CATENATE}             Catenate
 ${FAIL}                 Fail
 @{CATENATE STUFF}       Catenate    1    2    \${escaped}    c:\\temp
+@{EXPR AND CATENATE}    True    Catenate    \${foo}    ELSE IF    zig    ELSE    bar
+
 
 *** Test Case ***
 Run Keyword If With True Expression
@@ -140,6 +142,14 @@ ELSE before ELSE IF is ignored
     Run Keyword If    ${False}    Fail
     ...    ELSE       Fail
     ...    ELSE IF    ${True}     Log    ${EXECUTED}
+
+ELSE and ELSE IF inside list arguments should be escaped
+    ${result}=    Run Keyword If    False    Keyword    ELSE IF    @{EXPR AND CATENATE}
+    Should be equal    ${result}    \${foo} ELSE IF zig ELSE bar
+    ${result}=    Run Keyword If    False    Keyword    ELSE    Catenate    @{EXPR AND CATENATE}
+    Should be equal    ${result}    True Catenate \${foo} ELSE IF zig ELSE bar
+    ${result}=    Run Keyword If    @{EXPR AND CATENATE}
+    Should be equal    ${result}    \${foo} ELSE IF zig ELSE bar
 
 ELSE and ELSE IF must be upper case
     Run Keyword If    ${True}    Log Many    else    ${EXECUTED}
