@@ -615,6 +615,21 @@ other block
         assert_format(inp, '<pre>\n' + exp + '\n</pre>')
 
 
+class TestHtmlFormatHeaders(unittest.TestCase):
+
+    def test_no_header(self):
+        for line in ['', 'hello', '=', '==', '====', '= =', '=  =', '==     ==',
+                     '= inconsistent levels ==', '==== 4 is too many ====',
+                     '=no spaces=', '=no spaces =', '= no spaces=']:
+            assert_format(line, p=bool(line))
+
+    def test_header(self):
+        for line, expected in [('= My Header =', '<h2>My Header</h2>'),
+                               ('== my == header ==', '<h3>my == header</h3>'),
+                               ('  === ===    ===  ', '<h4>===</h4>')]:
+            assert_format(line, expected)
+
+
 class TestFormatTable(unittest.TestCase):
     # RIDE needs border="1" because its HTML view doesn't support CSS
     _table_start = '<table border="1">'

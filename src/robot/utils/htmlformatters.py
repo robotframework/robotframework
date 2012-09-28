@@ -113,6 +113,7 @@ class HtmlFormatter(object):
         self._formatters = [TableFormatter(),
                             PreformattedFormatter(),
                             ListFormatter(),
+                            HeaderFormatter(),
                             RulerFormatter()]
         self._formatters.append(ParagraphFormatter(self._formatters[:]))
         self._current = None
@@ -176,6 +177,18 @@ class RulerFormatter(_Formatter):
 
     def format(self, lines):
         return '<hr>'
+
+
+class HeaderFormatter(_Formatter):
+    _matcher = re.compile(r'^(={1,3})\s+(\S.*?)\s+\1$').match
+
+    def _handles(self, line):
+        return not self._lines and self._matcher(line)
+
+    def format(self, lines):
+        match = self._matcher(lines[0])
+        level = len(match.group(1)) + 1
+        return '<h%d>%s</h%d>' % (level, match.group(2), level)
 
 
 class ParagraphFormatter(_Formatter):
