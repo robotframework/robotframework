@@ -3,34 +3,43 @@ Library         Dialogs
 
 *** Test Cases ***
 Pause Execution
-    Pause Execution  Press OK.
-    Pause Execution  Verify that this pretty long text is displayed nicely. And then press OK.
-    Pause Execution  And verify that\nthis pretty\nlong text\nis displayed\nnicely.\n\nAnd then press OK.
+    Pause Execution    Press OK.
 
-Execute Manual Step
+Pause Execution With Long Line
+    Pause Execution    Verify that this pretty long text is displayed nicely. And then press OK.
+
+Pause Execution With Multiple Lines
+    Pause Execution    And verify that\nthis pretty\nlong text\nis displayed\nnicely.\n\nAnd then press OK.
+
+Execute Manual Step Passing
+    Execute Manual Step    Press PASS.
+
+Execute Manual Step Failing
     [Documentation]  FAIL Predefined error message
-    Execute Manual Step  Press PASS.
-    Execute Manual Step  Press FAIL and then OK on next dialog.  Predefined error message
+    Execute Manual Step    Press FAIL and then OK on next dialog.    Predefined error message
 
 Get Value From User
-    ${value} =  Get Value From User  Type 'value' and press OK.  Overwrite me
-    Should Be Equal  ${value}  value
-    ${value} =  Get Value From User  Press OK.
-    Should Be Equal  ${value}  ${EMPTY}
+    ${value} =    Get Value From User  Type 'value' and press OK.    Overwrite me
+    Should Be Equal    ${value}    value
+
+Get Empty Value From User
+    ${value} =    Get Value From User    Press OK.
+    Should Be Equal    ${value}    ${EMPTY}
 
 Get Value From User Cancelled
     [Documentation]  FAIL No value provided by user
-    Get Value From User  Press Cancel.
+    Get Value From User    Press Cancel.
 
 Get Selection From User
-    ${value} =  Get Selection From User  Select 'value' and press OK.  zip  zap  foo  value  bar
-    Should Be Equal  ${value}  value
+    ${value} =    Get Selection From User    Select 'value' and press OK.
+    ...    zip    zap    foo    value    bar
+    Should Be Equal    ${value}    value
 
 Get Selection From User Cancelled
     [Documentation]  FAIL No value provided by user
-    Get Selection From User  Press Cancel.  zip  zap  foo
+    Get Selection From User    Press Cancel.    zip    zap    foo
 
 Dialog and timeout
     [Timeout]  1s
     [Tags]     jybot_only
-    Execute Manual Step  Wait for timeout
+    Execute Manual Step    Wait for timeout

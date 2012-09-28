@@ -7,10 +7,22 @@ Resource        atest_resource.txt
 Pause Execution
     Check Test Case  ${TESTNAME}
 
-Execute Manual Step
+Pause Execution With Long Line
+    Check Test Case  ${TESTNAME}
+
+Pause Execution With Multiple Lines
+    Check Test Case  ${TESTNAME}
+
+Execute Manual Step Passing
+    Check Test Case  ${TESTNAME}
+
+Execute Manual Step Failing
     Check Test Case  ${TESTNAME}
 
 Get Value From User
+    Check Test Case  ${TESTNAME}
+
+Get Empty Value From User
     Check Test Case  ${TESTNAME}
 
 Get Value From User Cancelled
