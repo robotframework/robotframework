@@ -1,11 +1,8 @@
-import unittest, sys, os
+import unittest
 
-if __name__ == "__main__":
-    sys.path.insert(0, "../../../src")
 
-from robot.utils.asserts import *
-
-from robot.utils.escaping import *
+from robot.utils.asserts import assert_equals
+from robot.utils.escaping import escape, unescape
 
 
 class TestUnEscape(unittest.TestCase):
@@ -13,7 +10,7 @@ class TestUnEscape(unittest.TestCase):
     def test_no_unescape(self):
         for inp in [ 'no escapes', '' ]:
             assert_equals(unescape(inp), inp)
-            
+
     def test_single_backslash(self):
         for inp, exp in [ ('\\', ''),
                           ('\\ ', ' '),
@@ -21,7 +18,7 @@ class TestUnEscape(unittest.TestCase):
                           ('\\a', 'a'),
                           ('a\\b\\c\\d', 'abcd') ]:
             assert_equals(unescape(inp), exp, inp)
-            
+
     def test_multiple_backslash(self):
         for inp, exp in [ ('\\\\', '\\'),
                           ('\\\\\\', '\\'),
@@ -30,7 +27,7 @@ class TestUnEscape(unittest.TestCase):
                           ('x\\\\\\x', 'x\\x'),
                           ('x\\\\\\\\x', 'x\\\\x') ]:
             assert_equals(unescape(inp), exp, inp)
-            
+
     def test_lf(self):
         for inp, exp in [ ('\\n', '\n'),
                           ('\\\\n', '\\n'),
@@ -59,8 +56,8 @@ class TestUnEscape(unittest.TestCase):
                           ('\\r x', '\r x'),
                           ('\\\\r x', '\\r x'),
                           ('\\\\\\r x', '\\\r x') ]:
-            assert_equals(unescape(inp), exp, inp)            
-                                   
+            assert_equals(unescape(inp), exp, inp)
+
     def test_tab(self):
         for inp, exp in [ ('\\t', '\t'),
                           ('\\\\t', '\\t'),
@@ -75,10 +72,10 @@ class TestUnEscape(unittest.TestCase):
                           ('\\\\t x', '\\t x'),
                           ('\\\\\\t x', '\\\t x') ]:
             assert_equals(unescape(inp), exp, inp)
-            
-            
+
+
 class TestEscape(unittest.TestCase):
-            
+
     def test_escape(self):
         for inp, exp in [ ('nothing to escape', 'nothing to escape'),
                           ('still nothing $ @', 'still nothing $ @' ),
@@ -101,4 +98,4 @@ class TestEscape(unittest.TestCase):
 
 if __name__ == '__main__':
     unittest.main()
-            
+
