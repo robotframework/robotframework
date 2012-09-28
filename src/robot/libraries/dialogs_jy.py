@@ -18,11 +18,14 @@ from javax.swing.JOptionPane import PLAIN_MESSAGE, UNINITIALIZED_VALUE, \
     YES_NO_OPTION, OK_CANCEL_OPTION, DEFAULT_OPTION
 
 
-class _AbstractSwingDialog:
+class _SwingDialog(object):
 
     def __init__(self, pane):
-        self._show_dialog(pane)
-        self.result = self._get_value(pane)
+        self._pane = pane
+
+    def show(self):
+        self._show_dialog(self._pane)
+        return self._get_value(self._pane)
 
     def _show_dialog(self, pane):
         dialog = pane.createDialog(None, 'Robot Framework')
@@ -38,37 +41,37 @@ class _AbstractSwingDialog:
         return value if value != UNINITIALIZED_VALUE else None
 
 
-class MessageDialog(_AbstractSwingDialog):
+class MessageDialog(_SwingDialog):
 
     def __init__(self, message):
         pane = JOptionPane(message, PLAIN_MESSAGE, DEFAULT_OPTION)
-        _AbstractSwingDialog.__init__(self, pane)
+        _SwingDialog.__init__(self, pane)
 
 
-class InputDialog(_AbstractSwingDialog):
+class InputDialog(_SwingDialog):
 
     def __init__(self, message, default):
         pane = JOptionPane(message, PLAIN_MESSAGE, OK_CANCEL_OPTION)
         pane.setWantsInput(True)
         pane.setInitialSelectionValue(default)
-        _AbstractSwingDialog.__init__(self, pane)
+        _SwingDialog.__init__(self, pane)
 
 
-class SelectionDialog(_AbstractSwingDialog):
+class SelectionDialog(_SwingDialog):
 
     def __init__(self, message, options):
         pane = JOptionPane(message, PLAIN_MESSAGE, OK_CANCEL_OPTION)
         pane.setWantsInput(True)
         pane.setSelectionValues(options)
-        _AbstractSwingDialog.__init__(self, pane)
+        _SwingDialog.__init__(self, pane)
 
 
-class PassFailDialog(_AbstractSwingDialog):
+class PassFailDialog(_SwingDialog):
 
     def __init__(self, message):
         pane = JOptionPane(message, PLAIN_MESSAGE, YES_NO_OPTION,
                            None, ['PASS', 'FAIL'], 'PASS')
-        _AbstractSwingDialog.__init__(self, pane)
+        _SwingDialog.__init__(self, pane)
 
     def _get_value(self, pane):
         return pane.getValue() == 'PASS'

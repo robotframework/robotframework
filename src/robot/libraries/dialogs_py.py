@@ -18,17 +18,21 @@ from Tkinter import (Tk, Toplevel, Frame, Listbox, Label, Button, Entry,
                      BOTH, END, LEFT, W)
 
 
-class _AbstractTkDialog(Toplevel):
+class _TkDialog(Toplevel):
     _left_button = 'OK'
     _right_button = 'Cancel'
 
-    def __init__(self, message, *args):
+    def __init__(self, message, value=None):
         self._prevent_execution_with_timeouts()
         Toplevel.__init__(self, self._get_parent())
         self._init_dialog()
-        self._create_body(message, args)
+        self._create_body(message, value)
         self._create_buttons()
+        self._result = None
+
+    def show(self):
         self.wait_window(self)
+        return self._result
 
     def _prevent_execution_with_timeouts(self):
         if 'linux' not in sys.platform \
@@ -59,16 +63,16 @@ class _AbstractTkDialog(Toplevel):
         self.attributes('-topmost', True)
         self.attributes('-topmost', False)
 
-    def _create_body(self, message, args):
+    def _create_body(self, message, value):
         frame = Frame(self)
         Label(frame, text=message, anchor=W, justify=LEFT).pack(fill=BOTH)
-        selector = self._create_selector(frame, *args)
+        selector = self._create_selector(frame, value)
         if selector:
             selector.pack(fill=BOTH)
             selector.focus_set()
         frame.pack(padx=5, pady=5, expand=1, fill=BOTH)
 
-    def _create_selector(self, frame):
+    def _create_selector(self, frame, value):
         return None
 
     def _create_buttons(self):
@@ -86,7 +90,7 @@ class _AbstractTkDialog(Toplevel):
 
     def _left_button_clicked(self, event=None):
         if self._validate_value():
-            self.result = self._get_value()
+            self._result = self._get_value()
             self.destroy()
 
     def _get_value(self):
@@ -96,21 +100,21 @@ class _AbstractTkDialog(Toplevel):
         return True
 
     def _right_button_clicked(self, event=None):
-        self.result = self._get_right_button_value()
+        self._result = self._get_right_button_value()
         self.destroy()
 
     def _get_right_button_value(self):
         return None
 
 
-class MessageDialog(_AbstractTkDialog):
+class MessageDialog(_TkDialog):
     _right_button = None
 
 
-class InputDialog(_AbstractTkDialog):
+class InputDialog(_TkDialog):
 
     def __init__(self, message, default=''):
-        _AbstractTkDialog.__init__(self, message, default)
+        _TkDialog.__init__(self, message, default)
 
     def _create_selector(self, parent, default):
         self._entry = Entry(parent)
@@ -122,10 +126,10 @@ class InputDialog(_AbstractTkDialog):
         return self._entry.get()
 
 
-class SelectionDialog(_AbstractTkDialog):
+class SelectionDialog(_TkDialog):
 
     def __init__(self, message, values):
-        _AbstractTkDialog.__init__(self, message, values)
+        _TkDialog.__init__(self, message, values)
 
     def _create_selector(self, parent, values):
         self._listbox = Listbox(parent)
@@ -140,7 +144,7 @@ class SelectionDialog(_AbstractTkDialog):
         return self._listbox.get(self._listbox.curselection())
 
 
-class PassFailDialog(_AbstractTkDialog):
+class PassFailDialog(_TkDialog):
     _left_button = 'PASS'
     _right_button = 'FAIL'
 

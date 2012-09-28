@@ -49,7 +49,7 @@ def pause_execution(message='Test execution paused. Press OK to continue.'):
 
     `message` is the message shown in the dialog.
     """
-    MessageDialog(message)
+    MessageDialog(message).show()
 
 
 def execute_manual_step(message, default_error=''):
@@ -62,7 +62,7 @@ def execute_manual_step(message, default_error=''):
     `default_error` is the default value shown in the possible error message
     dialog.
     """
-    if not PassFailDialog(message).result:
+    if not PassFailDialog(message).show():
         msg = get_value_from_user('Give error message:', default_error)
         raise AssertionError(msg)
 
@@ -74,7 +74,7 @@ def get_value_from_user(message, default_value=''):
     the possible default value shown in the input field. Selecting 'Cancel'
     fails the keyword.
     """
-    return _validate_user_input(InputDialog(message, default_value).result)
+    return _validate_user_input(InputDialog(message, default_value))
 
 
 def get_selection_from_user(message, *values):
@@ -83,10 +83,11 @@ def get_selection_from_user(message, *values):
     `message` is the instruction shown in the dialog and `values` are
     the options given to the user. Selecting 'Cancel' fails the keyword.
     """
-    return _validate_user_input(SelectionDialog(message, values).result)
+    return _validate_user_input(SelectionDialog(message, values))
 
 
-def _validate_user_input(value):
+def _validate_user_input(dialog):
+    value = dialog.show()
     if value is None:
         raise RuntimeError('No value provided by user')
     return value
