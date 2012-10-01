@@ -2,7 +2,7 @@
     margin: 1em 1em 0 1em;
     padding: 0;
 }
-.doc > p {
+.doc > p, .doc > h1, .doc > h2, .doc > h3, .doc > h4 {
     margin: 1em 0 0 0;
 }
 .doc > *:first-child {
