@@ -34,6 +34,8 @@ class XML(object):
     files. In practice it is a pretty thin wrapper on top of Python's
     [http://docs.python.org/library/xml.etree.elementtree.html|ElementTree XML API].
 
+    = Key usages =
+
     The library has the following three main usages:
 
     - Parsing an XML file, or a string containing XML, into an XML element
@@ -43,11 +45,10 @@ class XML(object):
       (e.g. `Get Element Text` and `Get Element Attribute`).
     - Directly verifying text, attributes, or whole elements
       (e.g `Element Text Should Be` and `Elements Should Be Equal`).
+    - Modifying XML and saving it (e.g. `Set Element Text`, `Add Element`,
+      and `Save XML`).
 
-    In the future this library may grow functionality for modifying and
-    creating XML content.
-
-    *Parsing XML*
+    = Parsing XML =
 
     XML can be parsed into an element structure using `Parse XML` keyword.
     It accepts both paths to XML files and strings that contain XML. The
@@ -66,7 +67,7 @@ class XML(object):
     escaped by doubling it (`\\\\`). Using the built-in variable `${/}`
     naturally works too.
 
-    *Example*
+    = Example =
 
     The following simple example demonstrates parsing XML and verifying its
     contents both using keywords in this library and in `BuiltIn` and
@@ -112,7 +113,7 @@ class XML(object):
     suffice. If more verifications are needed, parsing the XML with `Parse XML`
     only once would be more efficient.
 
-    *Finding elements with xpath*
+    = Finding elements with xpath =
 
     ElementTree, and thus also this library, supports finding elements using
     xpath expressions. ElementTree does not, however, support the full xpath
@@ -125,7 +126,7 @@ class XML(object):
     provides more details. In the examples `${XML}` refers to the same XML
     structure as in the earlier example.
 
-    _Tag names_
+    == Tag names ==
 
     When just a single tag name is used, xpath matches all direct child
     elements that have that tag name.
@@ -135,7 +136,7 @@ class XML(object):
     | @{children} =      | `Get Elements` | ${elem}     | child |
     | `Length Should Be` | ${children}    | 2           |       |
 
-    _Paths_
+    == Paths ==
 
     Paths are created by combining tag names with a forward slash (`/`).
     For example, `parent/child` matches all `child` elements under `parent`
@@ -148,7 +149,7 @@ class XML(object):
     | ${elem} =         | `Get Element` | ${XML}     | third/child/grandchild  |
     | `Should Be Equal` | ${elem.tag}   | grandchild |                         |
 
-    _Wildcards_
+    == Wildcards ==
 
     An asterisk (`*`) can be used in paths instead of a tag name to denote
     any element.
@@ -156,12 +157,12 @@ class XML(object):
     | @{children} =      | `Get Elements` | ${XML} | */child |
     | `Length Should Be` | ${children}    | 3      |         |
 
-    _Current element_
+    == Current element ==
 
     The current element is denoted with a dot (`.`). Normally the current
     element is implicit and does not need to be included in the xpath.
 
-    _Parent element_
+    == Parent element ==
 
     The parent element of another element is denoted with two dots (`..`).
     Notice that it is not possible to refer to the parent of the current
@@ -171,7 +172,7 @@ class XML(object):
     | ${elem} =         | `Get Element` | ${XML} | */second/.. |
     | `Should Be Equal` | ${elem.tag}   | third  |             |
 
-    _Search all sub elements_
+    == Search all sub elements ==
 
     Two forward slashes (`//`) mean that all sub elements, not only the
     direct children, are searched. If the search is started from the current
@@ -182,7 +183,7 @@ class XML(object):
     | ${b} =             | `Get Element`  | ${XML} | html//b   |
     | `Should Be Equal`  | ${b.text}      | bold   |           |
 
-    _Predicates_
+    == Predicates ==
 
     Predicates allow selecting elements using also other criteria than tag
     names, for example, attributes or position. They are specified after the
@@ -202,7 +203,7 @@ class XML(object):
     Predicates can also be stacked like `path[predicate1][predicate2]`.
     A limitation is that possible position predicate must always be first.
 
-    *Element attributes*
+    = Element attributes =
 
     All keywords returning elements, such as `Parse XML`, and `Get Element`,
     return ElementTree's
@@ -218,14 +219,14 @@ class XML(object):
 
     The examples use the same `${XML}` structure as the earlier examples.
 
-    _tag_
+    == tag ==
 
     The tag of the element.
 
     | ${root} =         | `Parse XML` | ${XML}  |
     | `Should Be Equal` | ${root.tag} | example |
 
-    _text_
+    == text ==
 
     The text that the element contains or Python `None` if the element has no
     text. Notice that the text _does not_ contain texts of possible child
@@ -241,7 +242,7 @@ class XML(object):
     | ${p} =            | `Get Element` | ${XML}  | html/p       |
     | `Should Be Equal` | ${p.text}     | \\n${SPACE*6}Text with${SPACE} |
 
-    _tail_
+    == tail ==
 
     The text after the element before the next opening or closing tag. Python
     `None` if the element has no tail. Similarly as with `text`, also `tail`
@@ -250,7 +251,7 @@ class XML(object):
     | ${b} =            | `Get Element` | ${XML}  | html/p/b  |
     | `Should Be Equal` | ${b.tail}     | ${SPACE}and${SPACE} |
 
-    _attrib_
+    == attrib ==
 
     A Python dictionary containing attributes of the element.
 
@@ -259,16 +260,16 @@ class XML(object):
     | ${3rd} =          | `Get Element`       | ${XML} | third  |
     | `Should Be Empty` | ${3rd.attrib}       |        |        |
 
-    *Handling namespaces*
+    = Handling namespaces =
 
     ElementTree handles XML namespaces in by adding namespace to tag names
     in so called Clark Notation. This is inconvenient especially with xpaths,
     and by default this library strips those namespaces and moves them to
     `xmlns` attribute instead.
 
-    _Default namespace handling_
+    == Default namespace handling ==
 
-    _ElementTree namespaces_
+    == ElementTree namespaces ==
 
 
     """
