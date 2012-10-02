@@ -272,6 +272,31 @@ the image::
 
     [robot.jpeg|Robot rocks!] -> <img src="robot.jpeg" title="Robot rocks!">
 
+Section titles
+~~~~~~~~~~~~~~
+
+If documentation gets longer, it is often a good idea to split it into
+sections. Starting from Robot Framework 2.7.5, it is possible to separate
+sections with titles using syntax :code:`= My Title =`, where the number of
+equal signs denotes the level of the title::
+
+    = First section =
+
+    == Subsection ==
+
+    Some text.
+
+    == Second subsection ==
+
+    More text.
+
+    = Second section =
+
+    You probably got the idea.
+
+Notice that only three title levels are supported and that spaces between
+equal signs and the title text are mandatory.
+
 Tables
 ~~~~~~
 
