@@ -2,35 +2,58 @@
 Force Tags       regression    pybot    jybot
 Resource         libdoc_resource.txt
 Suite Setup      Run Libdoc And Parse Model From HTML
-Test Template    Should Contain Link
+Test Template    Doc Should Contain Link
 
 *** Test Cases ***
 Linking to sections in introduction
-    ${MODEL['doc']}    introduction    Introduction
-    ${MODEL['doc']}    introduction    Library INTROduction
-    ${MODEL['doc']}    importing       importing
-    ${MODEL['doc']}    importing       Library Importing
-    ${MODEL['doc']}    shortcuts       ShortCuts
-    ${MODEL['doc']}    keywords        Keywords
+    ${MODEL}    introduction    Introduction
+    ${MODEL}    introduction    Library INTROduction
+    ${MODEL}    importing       importing
+    ${MODEL}    importing       Library Importing
+    ${MODEL}    shortcuts       ShortCuts
+    ${MODEL}    keywords        Keywords
 
 Linking to sections in importing and keywords
-    ${MODEL['inits'][0]['doc']}       introduction    introduction
-    ${MODEL['keywords'][0]['doc']}    importing       Importing
-    ${MODEL['keywords'][1]['doc']}    shortcuts       shortcuts
+    ${MODEL['inits'][0]}       introduction    introduction
+    ${MODEL['keywords'][0]}    importing       Importing
+    ${MODEL['keywords'][1]}    shortcuts       shortcuts
 
 Linking to keywords in introduction
-    ${MODEL['doc']}    Keyword           Keyword
-    ${MODEL['doc']}    Second Keyword    secoNd kEywoRD
+    ${MODEL}    Keyword           Keyword
+    ${MODEL}    Second Keyword    secoNd kEywoRD
 
-Linking to keywords in imporing and keywords
-    ${MODEL['inits'][0]['doc']}       Keyword           keyword
-    ${MODEL['keywords'][0]['doc']}    Second Keyword    Second Keyword
+Linking to keywords in importing and keywords
+    ${MODEL['inits'][0]}       Keyword           keyword
+    ${MODEL['keywords'][0]}    Second Keyword    Second Keyword
 
 Non-matching text in backticks gets formatting
-    [Template]    Should Contain Name
-    ${MODEL['doc']}    backticks
-    ${MODEL['keywords'][1]['doc']}    arg
-    ${MODEL['keywords'][1]['doc']}    no link
+    [Template]    Doc Should Contain Name
+    ${MODEL}    backticks
+    ${MODEL['keywords'][1]}    arg
+    ${MODEL['keywords'][1]}    no link
+
+Linking to first level headers in introduction
+
+    [Template]    NONE
+    Doc Should Contain Link    ${MODEL}    Linking to headers    linking to headers
+    Doc Should Contain Link    ${MODEL}    First = Level =       first = level =
+    Doc Should Contain    ${MODEL}    <h2 id="Linking to headers">Linking to headers</h2>
+    Doc Should Contain    ${MODEL}    <h2 id="First = Level =">First = Level =</h2>
+
+Linking to first level headers in importing and keywords
+    ${MODEL['inits'][0]}       Formatting            formatting
+    ${MODEL['keywords'][1]}    Linking to headers    linking to headers
+
+Second and third level headers are not linkable
+    [Template]    Doc Should Contain Name
+    ${MODEL}    Second level
+    ${MODEL}    Third level
+    ${MODEL['keywords'][1]}    second level
+
+Only headers in introduction are linkable
+    [Template]    NONE
+    Doc Should Contain Name    ${MODEL['keywords'][1]}    not linkable
+    Doc Should Contain    ${MODEL['keywords'][1]}    <h2>Not linkable</h2>
 
 
 *** Keywords ***
@@ -40,10 +63,14 @@ Run Libdoc And Parse Model From HTML
     ${MODEL} =    Get Libdoc Model From HTML    ${OUT HTML}
     Set Suite Variable    ${MODEL}
 
-Should Contain Link
-    [Arguments]    ${doc}    ${target}    ${text}
-    Should Contain    ${doc}    <a href="#${target}" class="name">${text}</a>
+Doc Should Contain Link
+    [Arguments]    ${object}    ${target}    ${text}
+    Doc Should Contain    ${object}    <a href="#${target}" class="name">${text}</a>
 
-Should Contain Name
-    [Arguments]    ${doc}    ${text}
-    Should Contain    ${doc}    <span class="name">${text}</span>
+Doc Should Contain Name
+    [Arguments]    ${object}    ${text}
+    Doc Should Contain    ${object}    <span class="name">${text}</span>
+
+Doc Should Contain
+    [Arguments]    ${object}    ${expected}
+    Should Contain    ${object['doc']}    ${expected}

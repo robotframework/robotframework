@@ -38,7 +38,7 @@ class LibdocModelWriter(ModelWriter):
         self._output.write('</script>' + os.linesep)
 
     def write_data(self):
-        formatter = DocFormatter(self._libdoc.keywords)
+        formatter = DocFormatter(self._libdoc.doc, self._libdoc.keywords)
         libdoc = JsonConverter(formatter).convert(self._libdoc)
         JsonWriter(self._output).write_json('libdoc = ', libdoc)
 
@@ -51,7 +51,7 @@ class JsonConverter(object):
     def convert(self, libdoc):
         return {
             'name': libdoc.name,
-            'doc': self._doc_formatter.html(libdoc.doc),
+            'doc': self._doc_formatter.html(libdoc.doc, intro=True),
             'version': libdoc.version,
             'named_args': libdoc.named_args,
             'scope': libdoc.scope,
@@ -73,12 +73,13 @@ class JsonConverter(object):
 
 
 class DocFormatter(object):
+    _header_regexp = re.compile(r'<h2>(.+?)</h2>')
     _name_regexp = re.compile('`(.+?)`')
 
-    def __init__(self, keywords):
-        self._targets = self._get_targets(keywords)
+    def __init__(self, introduction, keywords):
+        self._targets = self._get_targets(introduction, keywords)
 
-    def _get_targets(self, keywords):
+    def _get_targets(self, introduction, keywords):
         targets = utils.NormalizedDict({
             'introduction': 'introduction',
             'library introduction': 'introduction',
@@ -87,16 +88,26 @@ class DocFormatter(object):
             'shortcuts': 'shortcuts',
             'keywords': 'keywords'
         })
+        for header in self._yield_header_targets(introduction):
+            targets[header] = header
         for kw in keywords:
             targets[kw.name] = kw.name
         return targets
 
-    def html(self, doc):
+    def _yield_header_targets(self, introduction):
+        for line in introduction.splitlines():
+            line = line.strip()
+            if line.startswith('= ') and line.endswith(' ='):
+                yield line[1:-1].strip()
+
+    def html(self, doc, intro=False):
         doc = utils.html_format(doc)
+        if intro:
+            doc = self._header_regexp.sub(r'<h2 id="\1">\1</h2>', doc)
         return self._name_regexp.sub(self._link_keywords, doc)
 
-    def _link_keywords(self, res):
-        name = res.group(1)
+    def _link_keywords(self, match):
+        name = match.group(1)
         if name in self._targets:
             return '<a href="#%s" class="name">%s</a>' % (self._targets[name], name)
         return '<span class="name">%s</span>' % name
