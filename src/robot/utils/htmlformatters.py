@@ -169,26 +169,35 @@ class _Formatter(object):
         raise NotImplementedError
 
 
-class RulerFormatter(_Formatter):
-    _matcher = re.compile('^-{3,}$').match
+class _SingleLineFormatter(_Formatter):
 
     def _handles(self, line):
-        return not self._lines and self._matcher(line)
+        return not self._lines and self._match(line)
+
+    def _match(self, line):
+        raise NotImplementedError
 
     def format(self, lines):
+        return self.format_line(lines[0])
+
+    def format_line(self, line):
+        raise NotImplementedError
+
+
+class RulerFormatter(_SingleLineFormatter):
+    _match = re.compile('^-{3,}$').match
+
+    def format_line(self, line):
         return '<hr>'
 
 
-class HeaderFormatter(_Formatter):
-    _matcher = re.compile(r'^(={1,3})\s+(\S.*?)\s+\1$').match
+class HeaderFormatter(_SingleLineFormatter):
+    _match = re.compile(r'^(={1,3})\s+(\S.*?)\s+\1$').match
 
-    def _handles(self, line):
-        return not self._lines and self._matcher(line)
-
-    def format(self, lines):
-        match = self._matcher(lines[0])
-        level = len(match.group(1)) + 1
-        return '<h%d>%s</h%d>' % (level, match.group(2), level)
+    def format_line(self, line):
+        level, text = self._match(line).groups()
+        level = len(level) + 1
+        return '<h%d>%s</h%d>' % (level, text, level)
 
 
 class ParagraphFormatter(_Formatter):
