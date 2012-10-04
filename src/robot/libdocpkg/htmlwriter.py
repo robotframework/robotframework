@@ -76,14 +76,18 @@ class DocFormatter(object):
     _name_regexp = re.compile('`(.+?)`')
 
     def __init__(self, keywords):
-        self._targets = utils.NormalizedDict({
+        self._targets = self._get_targets(keywords)
+
+    def _get_targets(self, keywords):
+        targets = utils.NormalizedDict({
             'introduction': 'introduction',
             'library introduction': 'introduction',
             'importing': 'importing',
             'library importing': 'importing'
         })
         for kw in keywords:
-            self._targets[kw.name] = kw.name
+            targets[kw.name] = kw.name
+        return targets
 
     def html(self, doc):
         doc = utils.html_format(doc)
