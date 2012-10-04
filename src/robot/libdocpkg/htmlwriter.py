@@ -83,7 +83,9 @@ class DocFormatter(object):
             'introduction': 'introduction',
             'library introduction': 'introduction',
             'importing': 'importing',
-            'library importing': 'importing'
+            'library importing': 'importing',
+            'shortcuts': 'shortcuts',
+            'keywords': 'keywords'
         })
         for kw in keywords:
             targets[kw.name] = kw.name

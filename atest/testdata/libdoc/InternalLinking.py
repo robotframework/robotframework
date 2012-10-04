@@ -6,6 +6,8 @@ class InternalLinking:
     - `Library INTROduction`
     - `importing`
     - `Library Importing`
+    - `ShortCuts`
+    - `Keywords`
 
     Also linking to keywords works:
     - `Keyword`
@@ -21,4 +23,4 @@ class InternalLinking:
         """First keyword here. See also `Importing` and `Second Keyword`."""
 
     def second_keyword(self, arg):
-        """We got `arg`. And have `no link`."""
+        """We got `arg`. And have `no link`. Except to `shortcuts`."""
