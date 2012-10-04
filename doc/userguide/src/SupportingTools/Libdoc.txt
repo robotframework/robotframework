@@ -96,7 +96,6 @@ Resource files must always be specified using a path. If the path does
 not exist, resource files are also searched from all directories in
 PYTHONPATH similarly as when executing test cases.
 
-
 Creating documentation
 ''''''''''''''''''''''
 
@@ -323,35 +322,58 @@ Possible variables in resource files are not documented.
    +--------------+------------------+------------------------+-------------------------------+
 
 Documentation syntax
-''''''''''''''''''''
+~~~~~~~~~~~~~~~~~~~~
 
 Generic formatting rules
-````````````````````````
+''''''''''''''''''''''''
 
 The documentation is generated according to Robot Framework's `documentation
 formatting`_ rules. Most important features of are formatting using
-:code:`*bold*` and :code:`_italic_`, automatic conversion of URLs to
-clickable links, and the possibility to create tables and pre-formatted blocks
-(useful for examples) simply with pipe character.
+:code:`*bold*` and :code:`_italic_`, custom links and automatic conversion of
+URLs links, and the possibility to create tables and pre-formatted blocks
+(useful for examples) simply with pipe character. If documentation gets longer,
+support for section titles (new in Robot Framework 2.7.5) can also be handy.
 
-Special formatting and internal linking
-```````````````````````````````````````
+Internal linking and argument formatting
+''''''''''''''''''''''''''''''''''''''''
 
-:prog:`libdoc` supports also special formatting of keyword names
-and arguments with backtick character :code:`\``. Even more
-importantly, this syntax also automatically creates internal links to
-other keywords in the library. For example, documentation of the
-following simple Python library would have link from :name:`Log
-Messages` to :name:`Log Message`, and :code:`\`message\`` and
-:code:`\`level\`` would be formatted specially.
+:prog:`libdoc` supports internal linking to keywords and different sections
+in the documentation. Linking is done by surrounding the target name with
+backtick characters like :code:`\`target\``. Target names are case-insensitive
+and possible targets are explained in the table below.
+
+.. table:: Possible link targets
+   :class: tabular
+
+   ====================  =================================================================
+          Target                                  Explanation
+   ====================  =================================================================
+   Keywords              All keywords can be linked like :code:`\`Another Keyword\``.
+   Introduction section  Use :code:`\`introduction\`` or :code:`\`library introduction\``.
+   Importing section     Use :code:`\`importing\`` and :code:`\`library importing\``.
+   Shortcuts section     Use :code:`\`shortcuts\``. New in Robot Framework 2.7.5.
+   Keywords section      Use :code:`\`keywords\``. New in Robot Framework 2.7.5.
+   ====================  =================================================================
+
+If the text between backticks does not match any target, :prog:`libdoc` will
+not create a link but instead formats the text specially. This formatting
+works very well with keyword arguments referenced in keyword documentations.
+
+The following example illustrates linking to keywords and to introduction
+section as well as formatting arguments.
 
 .. sourcecode:: python
+
+   """Library for logging messages.
+
+   See `Log Message` and `Log Messages` keywords.
+   """
 
    def log_message(message, level="INFO"):
        """Writes given message to log using specified log level.
 
        `message` can be any object. Valid values for `level` are "INFO" (default),
-       "DEBUG" and "TRACE".
+       "DEBUG" and "TRACE". See `introduction` for no more information.
        """
        print "*%s* %s" % (level, message)
 
@@ -364,17 +386,11 @@ Messages` to :name:`Log Message`, and :code:`\`message\`` and
        log_message(message1, level)
        log_message(message2, level)
 
-Additionally, using :code:`\`introduction\`` or :code:`\`library introduction\``,
-case insensitively, generates a link to the library introduction in the beginning
-of the generated documentation. Similarly :code:`\`importing\``
-or :code:`\`library importing\`` generates a link to the `importing section`_.
-
-Internal linking between keywords is used by all `standard
-libraries`_, so their documentation (and source) acts as a more
-realistic example.
+Internal linking is used by all `standard libraries`_ so their documentation
+(and source code) act as a more realistic example.
 
 Keywords' arguments
-```````````````````
+'''''''''''''''''''
 
 :prog:`libdoc` handles keywords' arguments automatically so that
 arguments specified for methods in libraries or user keywords in
