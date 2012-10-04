@@ -1,4 +1,6 @@
+import json
 import os
+import pprint
 import tempfile
 from os.path import join, dirname, abspath
 from subprocess import call, STDOUT
@@ -24,3 +26,16 @@ class LibDocLib(object):
         output = stdout.read().replace('\r\n', '\n')
         logger.info(output)
         return decode_output(output)
+
+    def get_libdoc_model_from_html(self, path):
+        with open(path) as html_file:
+            model_string = self._find_model(html_file)
+        model = json.loads(model_string)
+        logger.info(pprint.pformat(model))
+        return model
+
+    def _find_model(self, html_file):
+        for line in html_file:
+            if line.startswith('libdoc = '):
+                return line.split('=', 1)[1].strip(' \n;')
+        raise RuntimeError('No model found from HTML')

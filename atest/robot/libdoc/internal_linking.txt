@@ -1,0 +1,46 @@
+*** Settings ***
+Force Tags       regression    pybot    jybot
+Resource         libdoc_resource.txt
+Suite Setup      Run Libdoc And Parse Model From HTML
+Test Template    Should Contain Link
+
+*** Test Cases ***
+Linking to sections in introduction
+    ${MODEL['doc']}    introduction    Introduction
+    ${MODEL['doc']}    introduction    Library INTROduction
+    ${MODEL['doc']}    importing       importing
+    ${MODEL['doc']}    importing       Library Importing
+
+Linking to sections in importing and keywords
+    ${MODEL['inits'][0]['doc']}       introduction    introduction
+    ${MODEL['keywords'][0]['doc']}    importing       Importing
+
+Linking to keywords in introduction
+    ${MODEL['doc']}    Keyword           Keyword
+    ${MODEL['doc']}    Second Keyword    secoNd kEywoRD
+
+Linking to keywords in imporing and keywords
+    ${MODEL['inits'][0]['doc']}       Keyword           keyword
+    ${MODEL['keywords'][0]['doc']}    Second Keyword    Second Keyword
+
+Non-matching text in backticks gets formatting
+    [Template]    Should Contain Name
+    ${MODEL['doc']}    backticks
+    ${MODEL['keywords'][1]['doc']}    arg
+    ${MODEL['keywords'][1]['doc']}    no link
+
+
+*** Keywords ***
+
+Run Libdoc And Parse Model From HTML
+    Run Libdoc    ${TESTDATADIR}/InternalLinking.py ${OUT HTML}
+    ${MODEL} =    Get Libdoc Model From HTML    ${OUT HTML}
+    Set Suite Variable    ${MODEL}
+
+Should Contain Link
+    [Arguments]    ${doc}    ${target}    ${text}
+    Should Contain    ${doc}    <a href="#${target}" class="name">${text}</a>
+
+Should Contain Name
+    [Arguments]    ${doc}    ${text}
+    Should Contain    ${doc}    <span class="name">${text}</span>
