@@ -65,7 +65,7 @@ class Importer(object):
         type = lib.__class__.__name__.replace('Library', '').lower()[1:]
         LOGGER.info("Imported library '%s' with arguments %s "
                     "(version %s, %s type, %s scope, %d keywords)"
-                    % (name, utils.seq2str2(args), lib.version,
+                    % (name, utils.seq2str2(args), lib.version or '<unknown>',
                        type, lib.scope.lower(), len(lib)))
         if not lib:
             LOGGER.warn("Imported library '%s' contains no keywords" % name)

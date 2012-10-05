@@ -138,13 +138,10 @@ class _BaseTestLibrary(BaseLibrary):
         pass
 
     def _get_version(self, code):
-        try:
-            return str(code.ROBOT_LIBRARY_VERSION)
-        except AttributeError:
-            try:
-                return str(code.__version__)
-            except AttributeError:
-                return '<unknown>'
+        for version_attr in 'ROBOT_LIBRARY_VERSION', '__version__':
+            if hasattr(code, version_attr):
+                return utils.unic(getattr(code, version_attr))
+        return ''
 
     def _create_init_handler(self, libcode):
         return InitHandler(self, self._resolve_init_method(libcode))
