@@ -212,26 +212,25 @@ class TestLibraryInit(unittest.TestCase):
 class TestVersion(unittest.TestCase):
 
     def test_version_of_python_libarary(self):
-        self._test_version('classes.VersionLibrary', '0.1')
-        self._test_version('classes.VersionObjectLibrary', 'ver')
+        self._verify_version('classes.VersionLibrary', '0.1')
+        self._verify_version('classes.VersionObjectLibrary', 'ver')
 
     def test_version_with_no_version_info_defined(self):
-        self._test_version('classes.NameLibrary', '<unknown>')
+        self._verify_version('classes.NameLibrary', '')
 
     def test_version_of_module_library(self):
-        self._test_version('module_library', 'test')
-
-    def _test_version(self, name, version):
-        lib = TestLibrary(name)
-        assert_equals(lib.version, version)
+        self._verify_version('module_library', 'test')
 
     if utils.is_jython:
 
         def test_version_of_java_library(self):
-            self._test_version('JavaVersionLibrary', '1.0')
+            self._verify_version('JavaVersionLibrary', '1.0')
 
         def test_version_of_java_library_with_no_version_defined(self):
-            self._test_version('ExampleJavaLibrary', '<unknown>')
+            self._verify_version('ExampleJavaLibrary', '')
+
+    def _verify_version(self, name, version):
+        assert_equals(TestLibrary(name).version, version)
 
 
 class _TestScopes(unittest.TestCase):
@@ -454,6 +453,7 @@ class TestDynamicLibrary(unittest.TestCase):
         assert_equals(handler.arguments._arg_limit_checker.maxargs, maxargs)
 
     if utils.is_jython:
+
         def test_dynamic_java_handlers(self):
             lib = TestLibrary('ArgDocDynamicJavaLibrary')
             for name, min, max in [('Java No Arg', 0, 0),
@@ -500,6 +500,7 @@ class TestDynamicLibraryIntroDocumentation(unittest.TestCase):
         assert_equals(TestLibrary(library_name).doc, expected_doc)
 
     if utils.is_jython:
+
         def test_dynamic_init_doc_from_java_library(self):
             self._assert_intro_doc('ArgDocDynamicJavaLibrary',
                                    'Dynamic Java intro doc.')
