@@ -7,8 +7,12 @@ from robot.utils.asserts import assert_raises_with_msg
 
 class TestArgumentValidation(unittest.TestCase):
 
-    def test_invalid_format(self):
-        self._validate(format='invalid', error='Invalid format: invalid.')
+    def test_invalid_explicit_format(self):
+        self._validate(format='invalid', error="Invalid format: 'INVALID'.")
+
+    def test_invalid_implicit_format(self):
+        self._validate(args=['x.txt', 'y.inv'], error="Invalid format: 'INV'.")
+        self._validate(args=['x.txt', 'inv'], error="Invalid format: ''.")
 
     def test_invalid_space_count(self):
         error = '--spacecount must be an integer greater than 1.'
@@ -29,7 +33,7 @@ class TestArgumentValidation(unittest.TestCase):
 
     def test_default_mode_accepts_one_or_two_arguments(self):
         self._validate(args=['1'])
-        self._validate(args=['1', '2'])
+        self._validate(args=['1', '2.txt'])
         self._validate(args=['1', '2', '3'],
                        error='Default mode requires 1 or 2 arguments.')
 
