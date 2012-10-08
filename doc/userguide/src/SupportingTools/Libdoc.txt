@@ -8,9 +8,10 @@ Library documentation tool (:prog:`libdoc`)
    :local:
 
 :prog:`libdoc` is a tool for generating keyword documentation for test
-libraries and resource files in HTML and XML formats. The former format is
-suitable for humans and the latter for RIDE_ and other tools. Libdoc also
-has few special commands to show library or resource information on the console.
+libraries and resource files in HTML and XML formats. The former
+format is suitable for humans and the latter for RIDE_ and other
+tools. :prog:`libdoc` also has few special commands to show library or
+resource information on the console.
 
 Documentation can be created for:
 
@@ -52,7 +53,8 @@ Options
                            from the extension of the output file.
   -N, --name <newname>     Sets the name of the documented library or resource.
   -V, --version <newversion>  Sets the version of the documented library or
-                           resource.
+                           resource. The default value for test libraries is
+                           `got from the source code`__.
   -P, --pythonpath <path>  Additional locations where to search for libraries
                            and resources similarly as when `running tests`__.
   -E, --escape <what:with>  Escapes characters which are problematic in console.
@@ -63,6 +65,7 @@ Options
   -h, --help               Prints this help.
 
 
+__ `Specifying library version`_
 __ `Using --pythonpath option`_
 
 Specifying library or resource file
@@ -104,7 +107,7 @@ Creating documentation
 ''''''''''''''''''''''
 
 When creating documentation in HTML or XML format, the output file must
-be specified as a second argument after the library/resource name or path.
+be specified as the second argument after the library/resource name or path.
 Output format is got automatically from the extension but can also be set
 with :opt:`--format` option.
 
@@ -170,16 +173,15 @@ Python libraries
 ''''''''''''''''
 
 The documentation for Python libraries is written simply as doc
-strings for the library class and for methods implementing
+strings for the library class or module and for methods implementing
 keywords. The first line of the method documentation is considered as
-a short documentation for the keywords (used for example as a tool tip in
+a short documentation for the keyword (used, for example, as a tool tip in
 links in the generated HTML documentation), and it should thus be as
 describing as possible, but not too long.
 
-The simple example below illustrates how to write the documentation,
-and for example `standard libraries`_ give more
-realistic examples. For more information on Python documentation
-strings, see `PEP-257`__.
+The simple example below illustrates how to write the documentation in
+general, and there is a little longer `example`_ at the end of this
+chapter containing also an example of the generated documentation.
 
 .. sourcecode:: python
 
@@ -202,12 +204,14 @@ strings, see `PEP-257`__.
             """
             pass
 
-.. note:: If you want to use non-ASCII charactes in the documentation of
-          Python libraries, you must either use UTF-8 as your `source code
-          encoding`__ or create docstrings as Unicode.
+.. tip:: If you want to use non-ASCII charactes in the documentation of
+         Python libraries, you must either use UTF-8 as your `source code
+         encoding`__ or create docstrings as Unicode.
 
-__ http://www.python.org/dev/peps/pep-0257
+         For more information on Python documentation strings, see `PEP-257`__.
+
 __ http://www.python.org/dev/peps/pep-0263
+__ http://www.python.org/dev/peps/pep-0257
 
 Java libraries
 ''''''''''''''
@@ -285,8 +289,8 @@ Resource file documentation
 Keywords in resource files can have documentation using
 :opt:`[Documentation]` setting, and this documentation is also used by
 :prog:`libdoc`. First line of the documentation (until the first
-:code:`\\n`) is considered to be the short documentation similarly as
-with test libraries.
+`implicit newline`__ or explicit :code:`\\n`) is considered to be the short
+documentation similarly as with test libraries.
 
 Also the resource file itself can have :opt:`Documentation` in the
 Setting table for documenting the whole resource file.
@@ -299,7 +303,7 @@ Possible variables in resource files are not documented.
    +---------------+-----------------------------------------+-----------------------------------+
    |    Setting    |                  Value                  |               Value               |
    +===============+=========================================+===================================+
-   | Documentation | Resource file for demo purposes.\\n     |                                   |
+   | Documentation | Resource file for demo purposes.        |                                   |
    +---------------+-----------------------------------------+-----------------------------------+
    | ...           | This resource is only used in an example| and it doesn't do anything useful.|
    +---------------+-----------------------------------------+-----------------------------------+
@@ -325,6 +329,8 @@ Possible variables in resource files are not documented.
    |              | No Operation     |                        |                               |
    +--------------+------------------+------------------------+-------------------------------+
 
+__ `Automatic newlines in test data`_
+
 Documentation syntax
 ~~~~~~~~~~~~~~~~~~~~
 
@@ -338,60 +344,107 @@ URLs links, and the possibility to create tables and pre-formatted blocks
 (useful for examples) simply with pipe character. If documentation gets longer,
 support for section titles (new in Robot Framework 2.7.5) can also be handy.
 
+.. _internal linking:
+
 Internal linking and argument formatting
 ''''''''''''''''''''''''''''''''''''''''
 
-:prog:`libdoc` supports internal linking to keywords and different sections
-in the documentation. Linking is done by surrounding the target name with
-backtick characters like :code:`\`target\``. Target names are case-insensitive
-and possible targets are explained in the table below.
+:prog:`libdoc` supports internal linking to keywords and different
+sections in the documentation. Linking is done by surrounding the
+target name with backtick characters like :code:`\`target\``. Target
+names are case-insensitive and possible targets are explained in the
+subsequent sections. The same syntax can also be used for formatting
+arguments or other data.
 
-.. table:: Possible link targets
-   :class: tabular
+In addition to the examples in the following sections, internal linking
+and argument formatting is shown also in the longer `example` at the
+end of this chapter.
 
-   ====================  =================================================================
-          Target                                  Explanation
-   ====================  =================================================================
-   Keywords              All keywords can be linked like :code:`\`Another Keyword\``.
-   Introduction section  Use :code:`\`introduction\`` or :code:`\`library introduction\``.
-   Importing section     Use :code:`\`importing\`` and :code:`\`library importing\``.
-   Shortcuts section     Use :code:`\`shortcuts\``. New in Robot Framework 2.7.5.
-   Keywords section      Use :code:`\`keywords\``. New in Robot Framework 2.7.5.
-   ====================  =================================================================
+Linking to keywords
+```````````````````
 
-If the text between backticks does not match any target, :prog:`libdoc` will
-not create a link but instead formats the text specially. This formatting
-works very well with keyword arguments referenced in keyword documentations.
-
-The following example illustrates linking to keywords and to introduction
-section as well as formatting arguments.
+All keywords the library have automatically create link targets and they can
+be linked using syntax :code:`\`Keyword Name\``. This is illustrated with
+the example below where both keywords have links to each others.
 
 .. sourcecode:: python
 
-   """Library for logging messages.
+   def keyword(log_level="INFO"):
+       """Does something and logs the output using the given level.
 
-   See `Log Message` and `Log Messages` keywords.
+       Valid values for log level` are "INFO" (default) "DEBUG" and "TRACE".
+
+       See also `Another Keyword`.
+       """
+       # ...
+
+   def another_keyword(argument, log_level="INFO"):
+       """Does something with the given argument else and logs the output.
+
+       See `Keyword` for information about valid log levels.
+       """
+       # ...
+
+Linking to automatic sections
+`````````````````````````````
+
+The documentation generated by :prog:`libdoc` always contains sections
+for overall library introduction, shortcuts to keywords, and for
+actual keywords.  If a library itself takes arguments, there is also
+separate `importing section`_.
+
+All these sections act as targets that can be linked, and the possible
+target names are listed in the table below. Using these targets is
+shown in the example of the next section.
+
+.. table:: Automatic section link targets
+   :class: tabular
+
+   ================  =============================================================
+        Section                                 Target
+   ================  =============================================================
+   Introduction      :code:`\`introduction\`` and :code:`\`library introduction\``
+   Importing         :code:`\`importing\`` and :code:`\`library importing\``
+   Shortcuts         :code:`\`shortcuts\`` (New in Robot Framework 2.7.5.)
+   Keywords          :code:`\`keywords\`` (New in Robot Framework 2.7.5.)
+   ================  =============================================================
+
+Linking to custom sections
+``````````````````````````
+
+Starting from Robot Framework 2.7.5, `documentation formatting`_
+supports custom `section titles`_. The first level titles used in the
+library or resource file introduction automatically create link
+targets. The example below illustrates linking both to automatic and
+custom sections:
+
+.. sourcecode:: python
+
+   """Library for libdoc demonstration purposes.
+
+   This library does not do anything useful.
+
+   = My section  =
+
+   We do have a custom section in the documentation, though.
    """
 
-   def log_message(message, level="INFO"):
-       """Writes given message to log using specified log level.
+   def keyword():
+       """Does nothing.
 
-       `message` can be any object. Valid values for `level` are "INFO" (default),
-       "DEBUG" and "TRACE". See `introduction` for no more information.
+       See `introduction` for more information and `My section` to test how
+       linking to custom sections works.
        """
-       print "*%s* %s" % (level, message)
+       pass
 
-   def log_messages(message1, message2, level="INFO"):
-       """Writes given messages to log using specified log level.
+Argument formatting
+```````````````````
 
-       See `Log Message` keyword for more information about valid values
-       for `level`.
-       """
-       log_message(message1, level)
-       log_message(message2, level)
-
-Internal linking is used by all `standard libraries`_ so their documentation
-(and source code) act as a more realistic example.
+If the text between backticks does not match any target,
+:prog:`libdoc` will not create a link but instead formats the text
+specially. This formatting works very well with keyword arguments
+referenced in keyword documentations, but can also be used with other
+special data.
 
 Keywords' arguments
 '''''''''''''''''''
@@ -401,3 +454,21 @@ arguments specified for methods in libraries or user keywords in
 resource files are listed in a separate column. User keyword arguments
 are shown without :var:`${}` or :var:`@{}` to make arguments look
 the same regardless where keywords originated from.
+
+Example
+~~~~~~~
+
+The following example illustrates how to use the most important
+`documentation formatting`_ possibilities, `internal linking`_, and so
+on. `Click here`__ to see how the generated documentation looks like.
+
+.. sourcecode:: python
+
+   src/SupportingTools/LoggingLibrary.py
+
+All `standard libraries`_ have documentation generated by
+:prog:`libdoc` and their documentation (and source code) act as a more
+realistic examples.
+
+__ src/SupportingTools/LoggingLibrary.html
+
