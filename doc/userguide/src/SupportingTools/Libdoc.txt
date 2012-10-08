@@ -3,6 +3,10 @@
 Library documentation tool (:prog:`libdoc`)
 -------------------------------------------
 
+.. contents::
+   :depth: 1
+   :local:
+
 :prog:`libdoc` is a tool for generating keyword documentation for test
 libraries and resource files in HTML and XML formats. The former format is
 suitable for humans and the latter for RIDE_ and other tools. Libdoc also
