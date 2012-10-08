@@ -67,7 +67,7 @@ function addLogLevelSelector(minLevel, defaultLevel) {
         selector.find('select').val(controller.defaultLogLevel());
         selector.appendTo($('#top_right_header'));
         $('#report_or_log_link a').css({'border-bottom-left-radius': '0'});
-        logLevelSelected(controller.defaultLogLevel());
+        setMessageVisibility(controller.defaultLogLevel());
     }
 }
 
