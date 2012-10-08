@@ -5,7 +5,7 @@ Resource          atest_resource.txt
 *** Variables ***
 ${DATA}           ${CURDIR}/../../testdata/tidy
 ${TEMP}           %{TEMPDIR}${/}tidy-test-dir
-${TEMPFILE}       ${TEMP}${/}tidy-test-file
+${TEMPFILE}       ${TEMP}${/}tidy-test-file.txt
 
 *** Keywords ***
 Run tidy with golden file and check result

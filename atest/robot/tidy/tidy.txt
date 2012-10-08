@@ -9,11 +9,11 @@ Test Teardown     Remove Directory     ${TEMP}    recursive=True
 Tidying single test case file
     [Documentation]   Test tidying to different formats
     [Template]    Run tidy with golden file and check result
-    ${EMPTY}    golden.txt
-    --usepipes    golden_pipes.txt
-    --format tsv    golden.tsv
-    --format html    golden.html
-    --spacecount 2    golden_two_spaces.txt
+    ${EMPTY}            golden.txt
+    --usepipes -f txt   golden_pipes.txt
+    --format tsv        golden.tsv
+    --format html       golden.html
+    --spacecount 2      golden_two_spaces.txt
 
 Tidying single resource file
     [Template]    Run tidy with golden resource file and check result
@@ -31,6 +31,10 @@ Tidying single file without output file prints output to console
     ${stdout} =    Run tidy    ${EMPTY}    golden.txt    output=${NONE}
     Compare tidy results    ${stdout}    golden.txt    \\s+Log\\s+Non-ASCII:.*
     File Should Not Exist    ${TEMP FILE}
+
+Default format is got from output file
+    Run tidy    ${EMPTY}    ${DATA}/golden.txt    ${TEMP}/golden.html
+    Compare tidy results    ${TEMP}/golden.html    ${DATA}/golden.html
 
 Tidying single file in place
     [Setup]    Copy File    ${DATA}/golden.txt    ${TEMP}/golden.txt

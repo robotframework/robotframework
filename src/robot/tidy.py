@@ -174,15 +174,15 @@ class TidyCommandLine(Application):
             self.console(output)
 
     def validate(self, opts, args):
-        self._validate_mode_and_arguments(opts['inplace'], opts['recursive'], args)
-        self._validate_format(opts['format'])
+        self._validate_mode_and_arguments(args, **opts)
+        opts['format'] = self._validate_format(args, **opts)
         if not opts['spacecount']:
             opts.pop('spacecount')
         else:
             opts['spacecount'] = self._validate_spacecount(opts['spacecount'])
         return opts, args
 
-    def _validate_mode_and_arguments(self, inplace, recursive, args):
+    def _validate_mode_and_arguments(self, args, inplace, recursive, **others):
         if inplace and recursive:
             raise DataError('--recursive and --inplace can not be used together.')
         if recursive and (len(args) > 1 or not os.path.isdir(args[0])):
@@ -190,9 +190,15 @@ class TidyCommandLine(Application):
         if not (inplace or recursive) and len(args) > 2:
             raise DataError('Default mode requires 1 or 2 arguments.')
 
-    def _validate_format(self, format):
-        if format and format.lower() not in ['txt', 'tsv', 'html']:
+    def _validate_format(self, args, format, inplace, recursive, **others):
+        if not format:
+            if inplace or recursive or len(args) < 2:
+                return None
+            format = os.path.splitext(args[1])[1][1:]
+        format = format.upper()
+        if format not in ['TXT', 'TSV', 'HTML']:
             raise DataError("Invalid format: %s." % format)
+        return format
 
     def _validate_spacecount(self, spacecount):
         try:

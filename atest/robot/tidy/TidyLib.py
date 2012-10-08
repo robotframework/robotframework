@@ -12,7 +12,7 @@ from robot.utils import decode_output
 
 ROBOT_SRC = join(dirname(abspath(__file__)), '..', '..', '..', 'src')
 DATA_DIR = join(dirname(abspath(__file__)), '..', '..', 'testdata', 'tidy')
-TEMP_FILE = join(os.getenv('TEMPDIR'), 'tidy-test-dir', 'tidy-test-file')
+TEMP_FILE = join(os.getenv('TEMPDIR'), 'tidy-test-dir', 'tidy-test-file.txt')
 
 
 class TidyLib(object):

@@ -43,8 +43,9 @@ Options
                   are processed in place similarly as when :opt:`--inplace`
                   option is used.
  -f, --format <txt|html|tsv>
-                  Output file format. If omitted, the format of the input
-                  file is used.
+                  Output file format. If the output file is given explicitly,
+                  the default value is got from its extension. Otherwise
+                  the format is not changed.
  -p, --use-pipes  Use a pipe character (|) as a cell separator in the txt format.
  -s, --spacecount <number>
                   The number of spaces between cells in the txt format.
@@ -89,9 +90,11 @@ Changing test data format
 Robot Framework supports test data in HTML, TSV and TXT formats and :prog:`tidy`
 makes changing between the formats trivial. Input format is always determined
 based on the extension of the input file. Output format can be set using
-the :opt:`--format` option.
+the :opt:`--format` option, and the default value is got from the extension
+of the possible output file.
 
 Examples::
 
-    python -m robot.tidy --format tsv --inplace tests.html
-    python -m robot.tidy --format txt --recursive mytests
+    python -m robot.tidy tests.html tests.txt
+    python -m robot.tidy --format txt --inplace tests.html
+    python -m robot.tidy --format tsv --recursive mytests
