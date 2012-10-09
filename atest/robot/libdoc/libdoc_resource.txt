@@ -30,6 +30,16 @@ Run Libdoc And Verify Output
     ${expected}=    Catenate    SEPARATOR=\n    @{expected}
     Should Match    ${output}   ${expected}
 
+Run Libdoc And Parse Model From HTML
+    [Arguments]    ${args}
+    Run Libdoc    ${args} ${OUT HTML}
+    ${MODEL} =    Get Libdoc Model From HTML    ${OUT HTML}
+    Set Suite Variable    ${MODEL}
+
+Doc Should Contain In HTML
+    [Arguments]    ${object}    ${expected}
+    Should Contain    ${object['doc']}    ${expected}
+
 Name Should Be
     [Arguments]    ${name}
     Element Attribute Should Be    ${LIBDOC}    name    ${name}

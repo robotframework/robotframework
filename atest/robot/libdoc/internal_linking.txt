@@ -1,7 +1,7 @@
 *** Settings ***
 Force Tags       regression    pybot    jybot
 Resource         libdoc_resource.txt
-Suite Setup      Run Libdoc And Parse Model From HTML
+Suite Setup      Run Libdoc And Parse Model From HTML    ${TESTDATADIR}/InternalLinking.py
 Test Template    Doc Should Contain Link
 
 *** Test Cases ***
@@ -58,19 +58,15 @@ Only headers in introduction are linkable
 
 *** Keywords ***
 
-Run Libdoc And Parse Model From HTML
-    Run Libdoc    ${TESTDATADIR}/InternalLinking.py ${OUT HTML}
-    ${MODEL} =    Get Libdoc Model From HTML    ${OUT HTML}
-    Set Suite Variable    ${MODEL}
-
 Doc Should Contain Link
     [Arguments]    ${object}    ${target}    ${text}
-    Doc Should Contain    ${object}    <a href="#${target}" class="name">${text}</a>
+    Doc Should Contain   ${object}    <a href="#${target}" class="name">${text}</a>
 
 Doc Should Contain Name
     [Arguments]    ${object}    ${text}
-    Doc Should Contain    ${object}    <span class="name">${text}</span>
+    Doc Should Contain   ${object}    <span class="name">${text}</span>
 
 Doc Should Contain
-    [Arguments]    ${object}    ${expected}
-    Should Contain    ${object['doc']}    ${expected}
+    [Arguments]    ${object}    ${text}
+    Doc Should Contain In HTML    ${object}    ${text}
+
