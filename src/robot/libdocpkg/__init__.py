@@ -27,7 +27,7 @@ from .consoleviewer import ConsoleViewer
 
 
 def LibraryDocumentation(library_or_resource, name=None, version=None,
-                         doc_format='ROBOT'):
+                         doc_format=None):
     builder = DocumentationBuilder(library_or_resource)
     try:
         libdoc = builder.build(library_or_resource)
@@ -40,5 +40,6 @@ def LibraryDocumentation(library_or_resource, name=None, version=None,
         libdoc.name = name
     if version:
         libdoc.version = version
-    libdoc.doc_format = doc_format
+    if doc_format:
+        libdoc.doc_format = doc_format
     return libdoc

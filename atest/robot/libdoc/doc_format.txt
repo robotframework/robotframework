@@ -1,6 +1,8 @@
 *** Settings ***
 Force Tags       regression    pybot    jybot
 Resource         libdoc_resource.txt
+Suite Setup      Set Suite Variable    ${LIBRARY}    ${TESTDATADIR}/DocFormat.py
+Test Setup       Remove Output Files
 
 *** Variables ***
 ${EXAMPLE URL}     http://example.com
@@ -29,17 +31,23 @@ Text format in XML
 HTML format in XML
     Test Format In XML    --docfor HtMl    HTML
 
+Read format from XML
+    Run Libdoc    -F HTML ${LIBRARY} ${OUTXML}
+    Copy File    ${OUTXML}    ${OUTPREFIX}-2.xml
+    Set Test Variable    ${LIBRARY}    ${OUTPREFIX}-2.xml
+    Test Format In XML    ${EMPTY}    HTML
+
 
 *** Keywords ***
 
 Test Format In HTML
     [Arguments]    ${options}    ${expected}
-    Run Libdoc And Parse Model From HTML    ${options} ${TESTDATADIR}/DocFormat.py
+    Run Libdoc And Parse Model From HTML    ${options} ${LIBRARY}
     Doc Should Contain In HTML    ${MODEL['keywords'][0]}    ${expected}
 
 Test Format In XML
     [Arguments]    ${options}    ${expected}
-    Run Libdoc And Parse Output     ${options} ${TESTDATADIR}/DocFormat.py
+    Run Libdoc And Parse Output     ${options} ${LIBRARY}
     Format should be    ${expected}
     Keyword Doc Should Be    0    *bold* or <b>bold</b> http://example.com
 

@@ -30,7 +30,8 @@ class SpecDocBuilder(object):
                             version=spec.find('version').text or '',
                             doc=spec.find('doc').text or '',
                             scope=spec.find('scope').text or '',
-                            named_args=self._get_named_args(spec))
+                            named_args=self._get_named_args(spec),
+                            doc_format=spec.get('format', 'ROBOT'))
         libdoc.inits = self._create_keywords(spec, 'init')
         libdoc.keywords = self._create_keywords(spec, 'kw')
         return libdoc
