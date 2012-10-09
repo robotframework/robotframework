@@ -138,10 +138,18 @@ class _BaseTestLibrary(BaseLibrary):
         pass
 
     def _get_version(self, code):
-        for version_attr in 'ROBOT_LIBRARY_VERSION', '__version__':
-            if hasattr(code, version_attr):
-                return utils.unic(getattr(code, version_attr))
+        return self._get_string_attr(code, 'ROBOT_LIBRARY_VERSION', '__version__')
+
+    def _get_string_attr(self, object, *attrs):
+        for attr in attrs:
+            if hasattr(object, attr):
+                return utils.unic(getattr(object, attr))
         return ''
+
+    def _get_scope(self, libcode):
+        scope = self._get_string_attr(libcode, 'ROBOT_LIBRARY_SCOPE')
+        scope = utils.normalize(scope, ignore='_').upper()
+        return scope if scope in ['GLOBAL','TESTSUITE'] else 'TESTCASE'
 
     def _create_init_handler(self, libcode):
         return InitHandler(self, self._resolve_init_method(libcode))
@@ -173,14 +181,6 @@ class _BaseTestLibrary(BaseLibrary):
 
     def _restoring_end(self):
         self._libinst = self._instance_cache.pop()
-
-    def _get_scope(self, libcode):
-        try:
-            scope = libcode.ROBOT_LIBRARY_SCOPE
-            scope = utils.normalize(scope, ignore=['_']).upper()
-        except (AttributeError, TypeError):
-            scope = 'TESTCASE'
-        return scope if scope in ['GLOBAL','TESTSUITE'] else 'TESTCASE'
 
     def get_instance(self):
         if self._libinst is None:
