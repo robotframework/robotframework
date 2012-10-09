@@ -23,11 +23,13 @@ from .builder import DocumentationBuilder
 from .consoleviewer import ConsoleViewer
 
 
-def LibraryDocumentation(library_or_resource, name=None, version=None):
+def LibraryDocumentation(library_or_resource, name=None, version=None,
+                         doc_format='ROBOT'):
     builder = DocumentationBuilder(library_or_resource)
     libdoc = builder.build(library_or_resource)
     if name:
         libdoc.name = name
     if version:
         libdoc.version = version
+    libdoc.doc_format = doc_format
     return libdoc

@@ -22,8 +22,11 @@ Invalid option
     --invalid         option --invalid not recognized
 
 Invalid format
-    -f XXX BuiltIn out.html    Format must be either 'HTML' or 'XML', got 'XXX'.
-    BuiltIn out.ext            Format must be either 'HTML' or 'XML', got 'EXT'.
+    -f XXX BuiltIn out.html    Format must be 'HTML' or 'XML', got 'XXX'.
+    BuiltIn out.ext            Format must be 'HTML' or 'XML', got 'EXT'.
+
+Invalid doc format
+    --docformat inv BuiltIn out    Doc format must be 'ROBOT', 'TEXT' or 'HTML', got 'INV'.
 
 Non-existing library
     NonExistingLib out.html   Importing test library 'NonExistingLib' failed: *

@@ -37,6 +37,7 @@ Options
  -f --format HTML|XML     Specifies whether to generate HTML or XML output.
                           If this options is not used, the format is got
                           from the extension of the output file.
+ -F --docformat ROBOT|HTML|TEXT|REST     TODO
  -n --name newname        Sets the name of the documented library or resource.
  -v --version newversion  Sets the version of the documented library or
                           resource.
@@ -110,7 +111,7 @@ import os
 if 'robot' not in sys.modules and __name__ == '__main__':
     import pythonpathsetter
 
-from robot.utils import Application
+from robot.utils import Application, seq2str
 from robot.errors import DataError
 from robot.libdocpkg import LibraryDocumentation, ConsoleViewer
 
@@ -127,20 +128,29 @@ class LibDoc(Application):
             raise DataError('Only two arguments allowed when writing output.')
         return options, arguments
 
-    def main(self, args, name='', version='', format=None):
+    def main(self, args, name='', version='', format=None, docformat=None):
         lib_or_res, output = args[:2]
-        libdoc = LibraryDocumentation(lib_or_res, name, version)
+        libdoc = LibraryDocumentation(lib_or_res, name, version,
+                                      self._get_doc_format(docformat))
         if ConsoleViewer.handles(output):
             ConsoleViewer(libdoc).view(output, *args[2:])
         else:
-            libdoc.save(output, self._get_format(format, output))
+            libdoc.save(output, self._get_output_format(format, output))
             self.console(os.path.abspath(output))
 
-    def _get_format(self, format, output):
-        format = (format or os.path.splitext(output)[1][1:]).upper()
-        if format not in ['HTML', 'XML']:
-            raise DataError("Format must be either 'HTML' or 'XML', got '%s'."
-                            % format)
+    def _get_doc_format(self, format):
+        return self._verify_format('Doc format', format or 'ROBOT',
+                                   ['ROBOT', 'TEXT', 'HTML'])
+
+    def _get_output_format(self, format, output):
+        default = os.path.splitext(output)[1][1:]
+        return self._verify_format('Format', format or default, ['HTML', 'XML'])
+
+    def _verify_format(self, type, format, valid):
+        format = format.upper()
+        if format not in valid:
+            raise DataError("%s must be %s, got '%s'."
+                            % (type, seq2str(valid, lastsep=' or '), format))
         return format
 
 

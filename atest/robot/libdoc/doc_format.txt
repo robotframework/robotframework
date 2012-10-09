@@ -1,0 +1,48 @@
+*** Settings ***
+Force Tags       regression    pybot    jybot
+Resource         libdoc_resource.txt
+
+*** Variables ***
+${EXAMPLE URL}     http://example.com
+${EXAMPLE LINK}    <a href="${EXAMPLE URL}">${EXAMPLE URL}</a>
+
+*** Test Cases ***
+
+Robot format in HTML
+    Test Format in HTML    --docformat Robot
+    ...    <b>bold</b> or &lt;b&gt;bold&lt;/b&gt; ${EXAMPLE LINK}
+
+Text format in HTML
+    Test Format in HTML    --DocFormat TEXT
+    ...    *bold* or &lt;b&gt;bold&lt;/b&gt; ${EXAMPLE LINK}
+
+HTML format in HTML
+    Test Format in HTML    -F html
+    ...    *bold* or <b>bold</b> ${EXAMPLE URL}
+
+Robot format in XML
+    Test Format In XML    --DOCFORMAT RoBoT    ROBOT
+
+Text format in XML
+    Test Format In XML    -F text    TEXT
+
+HTML format in XML
+    Test Format In XML    --docfor HtMl    HTML
+
+
+*** Keywords ***
+
+Test Format In HTML
+    [Arguments]    ${options}    ${expected}
+    Run Libdoc And Parse Model From HTML    ${options} ${TESTDATADIR}/DocFormat.py
+    Doc Should Contain In HTML    ${MODEL['keywords'][0]}    ${expected}
+
+Test Format In XML
+    [Arguments]    ${options}    ${expected}
+    Run Libdoc And Parse Output     ${options} ${TESTDATADIR}/DocFormat.py
+    Format should be    ${expected}
+    Keyword Doc Should Be    0    *bold* or <b>bold</b> http://example.com
+
+Format should be
+    [Arguments]    ${expected}
+    Element Attribute Should Be    ${LIBDOC}    format    ${expected}
