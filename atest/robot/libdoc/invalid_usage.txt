@@ -26,7 +26,7 @@ Invalid format
     BuiltIn out.ext            Format must be 'HTML' or 'XML', got 'EXT'.
 
 Invalid doc format
-    --docformat inv BuiltIn out    Doc format must be 'ROBOT', 'TEXT' or 'HTML', got 'INV'.
+    --docformat inv BuiltIn out    Doc format must be 'ROBOT', 'TEXT', 'HTML' or 'REST', got 'INV'.
 
 Non-existing library
     NonExistingLib out.html   Importing test library 'NonExistingLib' failed: *

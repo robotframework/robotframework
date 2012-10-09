@@ -22,6 +22,14 @@ HTML format in HTML
     Test Format in HTML    -F html
     ...    *bold* or <b>bold</b> ${EXAMPLE URL}
 
+reST format in HTML
+    [Setup]    Make test non-critical if docutils is not installed
+    Test Format in HTML    --docformat rest
+    ...    <em>bold</em> or &lt;b&gt;bold&lt;/b&gt; <a *>${EXAMPLE URL}</a>
+    ...    Link to <cite>Keyword</cite>.
+    Doc Should Contain In HTML    ${MODEL['keywords'][2]}
+    ...    This link to <a href="#Keyword" class="name">Keyword</a>
+
 Robot format in XML
     Test Format In XML    --DOCFORMAT RoBoT    ROBOT
 
@@ -41,9 +49,12 @@ Read format from XML
 *** Keywords ***
 
 Test Format In HTML
-    [Arguments]    ${options}    ${expected}
+    [Arguments]    ${options}    ${expected1}
+    ...    ${expected2}=Link to <a href="#Keyword" class="name">Keyword</a>.
     Run Libdoc And Parse Model From HTML    ${options} ${LIBRARY}
-    Doc Should Contain In HTML    ${MODEL['keywords'][0]}    ${expected}
+    Doc Should Contain In HTML    ${MODEL}                   ${expected1}
+    Doc Should Contain In HTML    ${MODEL['keywords'][0]}    ${expected1}
+    Doc Should Contain In HTML    ${MODEL['keywords'][1]}    ${expected2}
 
 Test Format In XML
     [Arguments]    ${options}    ${expected}
@@ -54,3 +65,7 @@ Test Format In XML
 Format should be
     [Arguments]    ${expected}
     Element Attribute Should Be    ${LIBDOC}    format    ${expected}
+
+Make test non-critical if docutils is not installed
+    ${output} =  Run  ${INTERPRETER} -c "import docutils; print 'OK'"
+    Run Keyword If    """${output}""" != "OK"    Remove Tags    regression

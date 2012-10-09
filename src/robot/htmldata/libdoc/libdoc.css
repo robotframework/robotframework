@@ -38,7 +38,7 @@ table.keywords {
     border: 2px solid black;
     border-collapse: collapse;
     empty-cells: show;
-    margin: 0.3em 0em;
+    margin: 0.3em 0;
     width: 100%;
 }
 table.keywords th, table.keywords td {
@@ -60,4 +60,11 @@ table.keywords td.arg {
 }
 .footer {
     font-size: 0.9em;
+}
+/* Docs originating from HTML and reST are wrapped to divs. */
+.doc div > *:first-child {
+    margin-top: 0;
+}
+.doc div > *:last-child {    /* Does not work with IE8. */
+    margin-bottom: 0;
 }

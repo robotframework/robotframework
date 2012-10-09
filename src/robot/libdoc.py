@@ -141,7 +141,8 @@ class LibDoc(Application):
     def _get_doc_format(self, format):
         if not format:
             return None
-        return self._verify_format('Doc format', format, ['ROBOT', 'TEXT', 'HTML'])
+        return self._verify_format('Doc format', format,
+                                   ['ROBOT', 'TEXT', 'HTML', 'REST'])
 
     def _get_output_format(self, format, output):
         default = os.path.splitext(output)[1][1:]

@@ -15,6 +15,7 @@
 import os
 import re
 
+from robot.errors import DataError
 from robot.htmldata import HtmlFileWriter, ModelWriter, JsonWriter, LIBDOC
 from robot import utils
 
@@ -122,13 +123,22 @@ class DocToHtml(object):
     def __init__(self, format):
         self._formatter =  {'ROBOT': utils.html_format,
                             'TEXT': self._format_text,
-                            'HTML': self._format_html}[format]
+                            'HTML': self._format_html,
+                            'REST': self._format_rest}[format]
 
     def _format_text(self, doc):
         return '<p style="white-space: pre-wrap">%s</p>' % utils.html_escape(doc)
 
     def _format_html(self, doc):
         return '<div style="margin: 0">%s</div>' % doc
+
+    def _format_rest(self, doc):
+        try:
+            from docutils.core import publish_parts
+        except ImportError:
+            raise DataError("reST format requires 'docutils' module to be installed.")
+        parts = publish_parts(doc, writer_name='html')
+        return self._format_html(parts['html_body'])
 
     def __call__(self, doc):
         return self._formatter(doc)
