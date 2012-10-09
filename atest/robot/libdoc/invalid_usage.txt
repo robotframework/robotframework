@@ -31,6 +31,19 @@ Invalid doc format
 Non-existing library
     NonExistingLib out.html   Importing test library 'NonExistingLib' failed: *
 
+Non-existing spec
+    nonex.xml out.html    Spec file 'nonex.xml' does not exist.
+
+Invalid spec
+    [Setup]    Create File    ${OUTXML}    <wrong/>
+    ${OUTXML} out.html    Invalid spec file '${OUTXML}'.
+    [Teardown]    Remove File    ${OUTXML}
+
+Non-XML spec
+    [Setup]    Create File    ${OUTXML}    very wrong
+    ${OUTXML} out.html    Building library '${OUTXML}' failed: *
+    [Teardown]    Remove File    ${OUTXML}
+
 Invalid resource
     ${CURDIR}/invalid_usage.txt out.html
     ...   [ ERROR ] *: Non-existing setting 'Force Tags'.

@@ -19,6 +19,9 @@ For programmatic entry point, see :mod:`robot.libdoc`.
 This package is considered stable.
 """
 
+from robot.errors import DataError
+from robot.utils import get_error_message
+
 from .builder import DocumentationBuilder
 from .consoleviewer import ConsoleViewer
 
@@ -26,7 +29,13 @@ from .consoleviewer import ConsoleViewer
 def LibraryDocumentation(library_or_resource, name=None, version=None,
                          doc_format='ROBOT'):
     builder = DocumentationBuilder(library_or_resource)
-    libdoc = builder.build(library_or_resource)
+    try:
+        libdoc = builder.build(library_or_resource)
+    except DataError:
+        raise
+    except:
+        raise DataError("Building library '%s' failed: %s"
+                        % (library_or_resource, get_error_message()))
     if name:
         libdoc.name = name
     if version:
