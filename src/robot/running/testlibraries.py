@@ -110,6 +110,7 @@ class _BaseTestLibrary(BaseLibrary):
         self._libinst = None
         if libcode is not None:
             self._doc = utils.getdoc(libcode)
+            self.doc_format = self._get_doc_format(libcode)
             self.scope = self._get_scope(libcode)
             self._libcode = libcode
             self.init =  self._create_init_handler(libcode)
@@ -137,16 +138,21 @@ class _BaseTestLibrary(BaseLibrary):
     def end_test(self):
         pass
 
-    def _get_version(self, code):
-        return self._get_string_attr(code, 'ROBOT_LIBRARY_VERSION') \
-            or self._get_string_attr(code, '__version__')
+    def _get_version(self, libcode):
+        return self._get_attr(libcode, 'ROBOT_LIBRARY_VERSION') \
+            or self._get_attr(libcode, '__version__')
 
-    def _get_string_attr(self, object, attr, default=''):
-        return utils.unic(getattr(object, attr, default))
+    def _get_attr(self, object, attr, default='', upper=False):
+        value = utils.unic(getattr(object, attr, default))
+        if upper:
+            value = utils.normalize(value, ignore='_').upper()
+        return value
+
+    def _get_doc_format(self, libcode):
+        return self._get_attr(libcode, 'ROBOT_LIBRARY_DOC_FORMAT', upper=True)
 
     def _get_scope(self, libcode):
-        scope = self._get_string_attr(libcode, 'ROBOT_LIBRARY_SCOPE')
-        scope = utils.normalize(scope, ignore='_').upper()
+        scope = self._get_attr(libcode, 'ROBOT_LIBRARY_SCOPE', upper=True)
         return scope if scope in ['GLOBAL','TESTSUITE'] else 'TESTCASE'
 
     def _create_init_handler(self, libcode):

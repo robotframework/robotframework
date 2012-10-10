@@ -99,6 +99,7 @@ class SynonymLibrary:
 
 class VersionLibrary:
     ROBOT_LIBRARY_VERSION = '0.1'
+    ROBOT_LIBRARY_DOC_FORMAT = 'html'
     kw = lambda x:None
 
 

@@ -211,26 +211,46 @@ class TestLibraryInit(unittest.TestCase):
 
 class TestVersion(unittest.TestCase):
 
-    def test_version_of_python_libarary(self):
+    def test_no_version(self):
+        self._verify_version('classes.NameLibrary', '')
+
+    def test_version_in_class_library(self):
         self._verify_version('classes.VersionLibrary', '0.1')
         self._verify_version('classes.VersionObjectLibrary', 'ver')
 
-    def test_version_with_no_version_info_defined(self):
-        self._verify_version('classes.NameLibrary', '')
-
-    def test_version_of_module_library(self):
+    def test_version_in_module_library(self):
         self._verify_version('module_library', 'test')
 
     if utils.is_jython:
 
-        def test_version_of_java_library(self):
-            self._verify_version('JavaVersionLibrary', '1.0')
-
-        def test_version_of_java_library_with_no_version_defined(self):
+        def test_no_version_in_java_library(self):
             self._verify_version('ExampleJavaLibrary', '')
+
+        def test_version_in_java_library(self):
+            self._verify_version('JavaVersionLibrary', '1.0')
 
     def _verify_version(self, name, version):
         assert_equals(TestLibrary(name).version, version)
+
+
+class TestDocFormat(unittest.TestCase):
+
+    def test_no_doc_format(self):
+        self._verify_doc_format('classes.NameLibrary', '')
+
+    def test_doc_format_in_python_libarary(self):
+        self._verify_doc_format('classes.VersionLibrary', 'HTML')
+
+    if utils.is_jython:
+
+        def test_no_doc_format_in_java_library(self):
+            self._verify_doc_format('ExampleJavaLibrary', '')
+
+        def test_doc_format_in_java_library(self):
+            self._verify_doc_format('JavaVersionLibrary', 'TEXT')
+
+    def _verify_doc_format(self, name, doc_format):
+        assert_equals(TestLibrary(name).doc_format, doc_format)
 
 
 class _TestScopes(unittest.TestCase):
