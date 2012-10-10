@@ -138,13 +138,11 @@ class _BaseTestLibrary(BaseLibrary):
         pass
 
     def _get_version(self, code):
-        return self._get_string_attr(code, 'ROBOT_LIBRARY_VERSION', '__version__')
+        return self._get_string_attr(code, 'ROBOT_LIBRARY_VERSION') \
+            or self._get_string_attr(code, '__version__')
 
-    def _get_string_attr(self, object, *attrs):
-        for attr in attrs:
-            if hasattr(object, attr):
-                return utils.unic(getattr(object, attr))
-        return ''
+    def _get_string_attr(self, object, attr, default=''):
+        return utils.unic(getattr(object, attr, default))
 
     def _get_scope(self, libcode):
         scope = self._get_string_attr(libcode, 'ROBOT_LIBRARY_SCOPE')
