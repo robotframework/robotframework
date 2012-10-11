@@ -26,7 +26,10 @@ Invalid format
     BuiltIn out.ext            Format must be 'HTML' or 'XML', got 'EXT'.
 
 Invalid doc format
-    --docformat inv BuiltIn out    Doc format must be 'ROBOT', 'TEXT', 'HTML' or 'REST', got 'INV'.
+    --docformat inv BuiltIn out.html    Doc format must be 'ROBOT', 'TEXT', 'HTML' or 'REST', got 'INV'.
+
+Invalid doc format in library
+    ${TESTDATADIR}/DocFormatInvalid.py out.html   Invalid documentation format 'INVALID'.
 
 Non-existing library
     NonExistingLib out.html   Importing test library 'NonExistingLib' failed: *

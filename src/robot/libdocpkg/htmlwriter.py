@@ -121,10 +121,17 @@ class DocFormatter(object):
 class DocToHtml(object):
 
     def __init__(self, format):
-        self._formatter =  {'ROBOT': utils.html_format,
-                            'TEXT': self._format_text,
-                            'HTML': self._format_html,
-                            'REST': self._format_rest}[format]
+        self._formatter =  self._get_formatter(format)
+
+
+    def _get_formatter(self, format):
+        try:
+            return {'ROBOT': utils.html_format,
+                    'TEXT': self._format_text,
+                    'HTML': self._format_html,
+                    'REST': self._format_rest}[format]
+        except KeyError:
+            raise DataError("Invalid documentation format '%s'." % format)
 
     def _format_text(self, doc):
         return '<p style="white-space: pre-wrap">%s</p>' % utils.html_escape(doc)
