@@ -5,7 +5,7 @@
  *
  */
 public class Example {
-    public static final String ROBOT_LIBRARY_VERSION = "1.0";
+    public static final String ROBOT_LIBRARY_VERSION = "1.0 <alpha>";
     public static final String ROBOT_LIBRARY_SCOPE = "GLOBAL";
 
     /**

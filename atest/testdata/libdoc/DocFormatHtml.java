@@ -3,7 +3,7 @@
  *
  * *bold* or <b>bold</b> http://example.com
  */
-public class Example {
+public class DocFormatHtml {
     public static final String ROBOT_LIBRARY_DOC_FORMAT = "Html";
 
     /**

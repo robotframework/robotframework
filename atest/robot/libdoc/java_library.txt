@@ -13,7 +13,7 @@ Documentation
     ...    This library is only used in an example and it doesn't do anything useful.
 
 Version
-    Version Should Match    1.0
+    Version Should Be    1.0 <alpha>
 
 Type
     Type Should Be    library

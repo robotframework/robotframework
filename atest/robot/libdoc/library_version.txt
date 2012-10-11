@@ -18,7 +18,7 @@ No version defined in Python library
 
 Version defined with ROBOT_LIBRARY_VERSION in Java library
     [Tags]    jybot
-    Example.java    1.0
+    Example.java    1.0 <alpha>
 
 No version defined in Java library
     [Tags]    jybot

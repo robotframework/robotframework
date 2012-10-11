@@ -36,8 +36,7 @@ class JavaDocBuilder(object):
         return '\n'.join(line.strip() for line in text.splitlines())
 
     def _get_version(self, doc):
-        version = self._get_attr(doc, 'VERSION')
-        return utils.html_escape(version)
+        return self._get_attr(doc, 'VERSION')
 
     def _get_scope(self, doc):
         return self._get_attr(doc, 'SCOPE', default='TESTCASE', upper=True)
