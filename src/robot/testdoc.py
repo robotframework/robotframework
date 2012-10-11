@@ -76,7 +76,7 @@ if 'robot' not in sys.modules and __name__ == '__main__':
 from robot import utils
 from robot.running import TestSuite, Keyword
 from robot.conf import RobotSettings
-from robot.parsing import populators
+from robot.parsing import disable_curdir_processing
 from robot.htmldata import HtmlFileWriter, ModelWriter, JsonWriter, TESTDOC
 
 
@@ -99,14 +99,11 @@ class TestDoc(utils.Application):
         output.close()
 
 
+@disable_curdir_processing
 def TestSuiteFactory(datasources, **options):
     if isinstance(datasources, basestring):
         datasources = [datasources]
-    populators.PROCESS_CURDIR = False
-    try:
-        return TestSuite(datasources, RobotSettings(options))
-    finally:
-        populators.PROCESS_CURDIR = True
+    return TestSuite(datasources, RobotSettings(options))
 
 
 class TestdocModelWriter(ModelWriter):

@@ -36,6 +36,17 @@ Example
 """
 
 from .model import TestData, TestCaseFile, TestDataDirectory, ResourceFile
-from .populators import READERS
-VALID_EXTENSIONS = tuple(READERS)
-del READERS
+from . import populators
+
+VALID_EXTENSIONS = tuple(populators.READERS)
+
+def disable_curdir_processing(method):
+    """Decorator to disable processing `${CURDIR}` variable."""
+    def decorated(*args, **kwargs):
+        original = populators.PROCESS_CURDIR
+        populators.PROCESS_CURDIR = False
+        try:
+            return method(*args, **kwargs)
+        finally:
+            populators.PROCESS_CURDIR = original
+    return decorated

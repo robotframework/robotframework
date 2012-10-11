@@ -17,7 +17,7 @@ import sys
 
 from robot.errors import DataError
 from robot.running import TestLibrary, UserLibrary
-from robot.parsing import populators
+from robot.parsing import disable_curdir_processing
 from robot import utils
 
 from .model import LibraryDoc, KeywordDoc
@@ -68,12 +68,9 @@ class ResourceDocBuilder(object):
         libdoc.keywords = KeywordDocBuilder().build_keywords(res)
         return libdoc
 
+    @disable_curdir_processing
     def _import_resource(self, path):
-        populators.PROCESS_CURDIR = False
-        try:
-            return UserLibrary(self._find_resource_file(path))
-        finally:
-            populators.PROCESS_CURDIR = True
+        return UserLibrary(self._find_resource_file(path))
 
     def _find_resource_file(self, path):
         if os.path.isfile(path):
