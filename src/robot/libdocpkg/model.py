@@ -23,7 +23,7 @@ from .output import LibdocOutput
 class LibraryDoc(object):
 
     def __init__(self, name='', doc='', version='', type='library',
-                 scope='', named_args=False, doc_format='ROBOT'):
+                 scope='', named_args=False, doc_format=''):
         self.name = name
         self.doc = doc
         self.version = version
@@ -33,6 +33,10 @@ class LibraryDoc(object):
         self.doc_format = doc_format
         self.inits = []
         self.keywords = []
+
+    @setter
+    def doc_format(self, format):
+        return format or 'ROBOT'
 
     @setter
     def keywords(self, kws):

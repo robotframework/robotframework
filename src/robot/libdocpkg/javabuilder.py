@@ -25,7 +25,8 @@ class JavaDocBuilder(object):
         libdoc = LibraryDoc(name=doc.qualifiedName(),
                             doc=self._get_doc(doc),
                             version=self._get_version(doc),
-                            scope=self._get_scope(doc))
+                            scope=self._get_scope(doc),
+                            doc_format=self._get_doc_format(doc))
         libdoc.keywords = self._keywords(doc)
         libdoc.inits = self._intializers(doc)
         return libdoc
@@ -35,14 +36,17 @@ class JavaDocBuilder(object):
         return '\n'.join(line.strip() for line in doc.splitlines())
 
     def _get_version(self, doc):
-        version = self._get_attr(doc, 'VERSION', '')
+        version = self._get_attr(doc, 'VERSION')
         return utils.html_escape(version)
 
     def _get_scope(self, doc):
         scope = self._get_attr(doc, 'SCOPE', 'TEST CASE')
         return scope.replace('_', ' ').lower()
 
-    def _get_attr(self, doc, name, default):
+    def _get_doc_format(self, doc):
+        return self._get_attr(doc, 'DOC_FORMAT')
+
+    def _get_attr(self, doc, name, default=''):
         for field in doc.fields():
             if field.name() == 'ROBOT_LIBRARY_' + name \
                and field.isPublic() and field.constantValue():

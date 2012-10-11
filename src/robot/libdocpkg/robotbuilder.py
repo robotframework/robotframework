@@ -33,7 +33,8 @@ class LibraryDocBuilder(object):
                             doc=self._get_doc(lib),
                             version=lib.version,
                             scope=self._get_scope(lib),
-                            named_args=lib.supports_named_arguments)
+                            named_args=lib.supports_named_arguments,
+                            doc_format=lib.doc_format)
         libdoc.inits = self._get_initializers(lib)
         libdoc.keywords = KeywordDocBuilder().build_keywords(lib)
         return libdoc

@@ -38,7 +38,7 @@ Run Libdoc And Parse Model From HTML
 
 Doc Should Contain In HTML
     [Arguments]    ${object}    ${expected}
-    Should Match    ${object['doc']}    *${expected}*
+    Should Contain    ${object['doc']}    ${expected}
 
 Name Should Be
     [Arguments]    ${name}
