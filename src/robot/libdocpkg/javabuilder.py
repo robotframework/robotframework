@@ -31,26 +31,28 @@ class JavaDocBuilder(object):
         libdoc.inits = self._intializers(doc)
         return libdoc
 
-    def _get_doc(self, code_object):
-        doc = code_object.getRawCommentText()
-        return '\n'.join(line.strip() for line in doc.splitlines())
+    def _get_doc(self, doc):
+        text = doc.getRawCommentText()
+        return '\n'.join(line.strip() for line in text.splitlines())
 
     def _get_version(self, doc):
         version = self._get_attr(doc, 'VERSION')
         return utils.html_escape(version)
 
     def _get_scope(self, doc):
-        scope = self._get_attr(doc, 'SCOPE', 'TEST CASE')
-        return scope.replace('_', ' ').lower()
+        return self._get_attr(doc, 'SCOPE', default='TESTCASE', upper=True)
 
     def _get_doc_format(self, doc):
-        return self._get_attr(doc, 'DOC_FORMAT')
+        return self._get_attr(doc, 'DOC_FORMAT', upper=True)
 
-    def _get_attr(self, doc, name, default=''):
+    def _get_attr(self, doc, name, default='', upper=False):
+        name = 'ROBOT_LIBRARY_' + name
         for field in doc.fields():
-            if field.name() == 'ROBOT_LIBRARY_' + name \
-               and field.isPublic() and field.constantValue():
-                return field.constantValue()
+            if field.name() == name and field.isPublic():
+                value = field.constantValue()
+                if upper:
+                    value = utils.normalize(value, ignore='_').upper()
+                return value
         return default
 
     def _keywords(self, doc):

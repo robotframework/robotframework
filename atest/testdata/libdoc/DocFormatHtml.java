@@ -4,7 +4,7 @@
  * *bold* or <b>bold</b> http://example.com
  */
 public class Example {
-    public static final String ROBOT_LIBRARY_DOC_FORMAT = "HTML";
+    public static final String ROBOT_LIBRARY_DOC_FORMAT = "Html";
 
     /**
      * *bold* or <b>bold</b> http://example.com

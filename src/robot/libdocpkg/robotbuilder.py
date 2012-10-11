@@ -32,7 +32,7 @@ class LibraryDocBuilder(object):
         libdoc = LibraryDoc(name=lib.name,
                             doc=self._get_doc(lib),
                             version=lib.version,
-                            scope=self._get_scope(lib),
+                            scope=lib.scope,
                             named_args=lib.supports_named_arguments,
                             doc_format=lib.doc_format)
         libdoc.inits = self._get_initializers(lib)
@@ -52,12 +52,6 @@ class LibraryDocBuilder(object):
 
     def _get_doc(self, lib):
         return lib.doc or "Documentation for test library `%s`." % lib.name
-
-    def _get_scope(self, lib):
-        if hasattr(lib, 'scope'):
-            return {'TESTCASE': 'test case', 'TESTSUITE': 'test suite',
-                    'GLOBAL': 'global'}[lib.scope]
-        return ''
 
     def _get_initializers(self, lib):
         if lib.init.arguments.maxargs:
