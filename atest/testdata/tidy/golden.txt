@@ -18,7 +18,7 @@ My Test Case
     [Teardown]    1 minute    args
 
 Another Test
-    Log    Non-ASCII: ääöö§§
+    Log Many    Non-ASCII: ääöö§§    ${CURDIR}
 
 *** Keywords ***
 My Keyword

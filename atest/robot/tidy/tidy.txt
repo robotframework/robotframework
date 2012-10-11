@@ -29,7 +29,7 @@ Tidying single init file
 Tidying single file without output file prints output to console
     [Documentation]    Depending on console encoding, non-ASCII characters may not be shown correctly
     ${stdout} =    Run tidy    ${EMPTY}    golden.txt    output=${NONE}
-    Compare tidy results    ${stdout}    golden.txt    \\s+Log\\s+Non-ASCII:.*
+    Compare tidy results    ${stdout}    golden.txt    \\s+Log Many\\s+Non-ASCII:.*\\s+\\$\\{CURDIR\\}
     File Should Not Exist    ${TEMP FILE}
 
 Default format is got from output file

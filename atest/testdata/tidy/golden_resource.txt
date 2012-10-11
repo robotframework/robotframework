@@ -20,5 +20,5 @@ My Keyword
     \    Loop Step    args    args 2    args 3    args 4    args 5
     \    ...    args 6    args 7    args 8    args 9    # loop step comment
     \    Loop Step 2
-    My Step 2    my step 2 arg    second arg    # step 2 comment
+    My Step 2    my step 2 arg    ${CURDIR}    # step 2 comment
     [Return]    args 1    args 2

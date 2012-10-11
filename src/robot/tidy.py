@@ -96,7 +96,8 @@ if 'robot' not in sys.modules and __name__ == '__main__':
     import pythonpathsetter
 
 from robot.errors import DataError
-from robot.parsing import ResourceFile, TestDataDirectory, TestCaseFile
+from robot.parsing import (ResourceFile, TestDataDirectory, TestCaseFile,
+                           disable_curdir_processing)
 from robot.utils import Application
 
 
@@ -139,6 +140,7 @@ class Tidy(object):
     def _is_directory(self, data):
         return hasattr(data, 'initfile')
 
+    @disable_curdir_processing
     def _create_datafile(self, source):
         if self._is_init_file(source):
             dir_ = os.path.dirname(source)

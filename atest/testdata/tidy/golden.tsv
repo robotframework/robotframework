@@ -16,7 +16,7 @@ My Test Case	[Documentation]	This is a long comment that spans several columns
 	My TC Step 2	my step 2 arg	second \ arg	# step 2 comment			
 	[Teardown]	1 minute	args				
 							
-Another Test	Log	Non-ASCII: ääöö§§					
+Another Test	Log Many	Non-ASCII: ääöö§§	${CURDIR}				
 							
 *Keywords*							
 My Keyword	[Documentation]	Documentation	# Comment for doc				
