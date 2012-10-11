@@ -13,7 +13,7 @@
 #  limitations under the License.
 
 from robot.version import get_version
-from robot.utils import seq2str, seq2str2, unic
+from robot.utils import plural_or_not, seq2str, seq2str2, unic
 from robot.utils.asserts import assert_equals
 
 
@@ -134,6 +134,24 @@ class _List:
             return list_.pop(self._index_to_int(index))
         except IndexError:
             self._index_error(list_, index)
+
+    def remove_duplicates(self, list_):
+        """Returns a list without duplicates based on the given `list`.
+
+        Creates and returns a new list that contains all items in the given
+        list so that one item can appear only once. Order of the items in
+        the new list is the same as in the original except for missing
+        duplicates. Number of the removed duplicates is logged.
+
+        New in Robot Framework 2.7.5.
+        """
+        ret = []
+        for item in list_:
+            if item not in ret:
+                ret.append(item)
+        removed = len(list_) - len(ret)
+        print '%d duplicate%s removed.' % (removed, plural_or_not(removed))
+        return ret
 
     def get_from_list(self, list_, index):
         """Returns the value specified with an `index` from `list`.

@@ -87,6 +87,12 @@ Remove From List With Invalid Index
     [Documentation]  FAIL ${INDEX ERROR}
     Remove From List  ${L3}  index
 
+Remove Duplicates
+    ${result} =  Remove Duplicates  ${L3}
+    Should Be Equal  ${result}  ${L3}
+    ${result} =  Remove Duplicates  ${LONG}
+    Compare To Expected String  ${result}  ['1', 2, '41', 42, '43', '44']
+
 Count Values In List
     ${count} =  Count Values In List  ${LONG}  1
     Should Be Equal As Integers  ${count}  3

@@ -60,6 +60,11 @@ Remove From List Index Out Of List
 Remove From List With Invalid Index
     Check Test Case  ${TEST NAME}
 
+Remove Duplicates
+    ${tc} =    Check Test Case  ${TEST NAME}
+    Check Log Message    ${tc.kws[0].msgs[0]}    0 duplicates removed.
+    Check Log Message    ${tc.kws[2].msgs[0]}    3 duplicates removed.
+
 Count Values In List
     Check Test Case  ${TEST NAME}
 
