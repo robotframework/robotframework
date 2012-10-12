@@ -34,6 +34,9 @@ ${/}
 ${:}
     Check Test Case  ${TESTNAME}
 
+${\n}
+    Check Test Case  ${TESTNAME}
+
 ${TEMPDIR}
     Check Test Case  ${TESTNAME}
 

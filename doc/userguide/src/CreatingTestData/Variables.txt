@@ -573,7 +573,7 @@ operating-system-agnostic.
    |            | :path:`c:\\Documents and Settings\\<user>\\Local Settings\\Temp`.|
    +------------+------------------------------------------------------------------+
    | ${EXECDIR} | An absolute path to the directory where test execution was       |
-   |            | started from. New in Robot Framework 2.1.                        |
+   |            | started from.                                                    |
    +------------+------------------------------------------------------------------+
    | ${/}       | The system directory path separator. :code:`/` in UNIX-like      |
    |            | systems, :code:`\\` in Windows.                                  |
@@ -581,16 +581,19 @@ operating-system-agnostic.
    | ${:}       | The system path element separator. :code:`:` in UNIX-like        |
    |            | systems and :code:`;` in Windows.                                |
    +------------+------------------------------------------------------------------+
+   | ${\\n}     | The system line separator. :code:`\\n` in UNIX-like systems and  |
+   |            | systems and :code:`\\r\\n` in Windows. New in version 2.7.5.     |
+   +------------+------------------------------------------------------------------+
 
 .. table:: Using operating-system-related built-in variables
    :class: example
 
-   =============  ========================  =======================  ===================================
+   =============  ========================  =======================  ==================================
      Test Case             Action                   Argument                       Argument
-   =============  ========================  =======================  ===================================
-   Example        Create File               ${CURDIR}${/}input.data  Some text here
-   \              Set Environment Variable  CLASSPATH                ${TEMPDIR}${:}${TEMPDIR}${/}foo.jar
-   =============  ========================  =======================  ===================================
+   =============  ========================  =======================  ==================================
+   Example        Create Binary File        ${CURDIR}${/}input.data  Some text here${\n}on two lines
+   \              Set Environment Variable  CLASSPATH                ${TEMPDIR}${:}${CURDIR}${/}foo.jar
+   =============  ========================  =======================  ==================================
 
 Number variables
 ''''''''''''''''

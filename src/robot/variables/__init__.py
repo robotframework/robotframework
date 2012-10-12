@@ -40,6 +40,7 @@ def init_global_variables(settings):
                          ('${EXECDIR}', utils.abspath('.')),
                          ('${/}', os.sep),
                          ('${:}', os.pathsep),
+                         ('${\\n}', os.linesep),
                          ('${SPACE}', ' '),
                          ('${EMPTY}', ''),
                          ('@{EMPTY}', ()),

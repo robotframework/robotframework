@@ -84,6 +84,10 @@ ${:}
     ${exp} =  Evaluate  os.pathsep  modules=os
     Should Be Equal  ${:}  ${exp}
 
+${\n}
+    ${exp} =  Evaluate  os.linesep  modules=os
+    Should Be Equal  ${\n}  ${exp}
+
 ${TEMPDIR}
     ${exp} =  Evaluate  tempfile.gettempdir().rstrip('/')  modules=tempfile
     Should Be Equal  ${TEMPDIR}  ${exp}
