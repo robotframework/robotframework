@@ -51,6 +51,12 @@ Options
   -f, --format <html|xml>  Specifies whether to generate HTML or XML output.
                            If this options is not used, the format is got
                            from the extension of the output file.
+  -F, --docformat <robot|html|text|rest>
+                           Specifies the source documentation format. Possible
+                           values are Robot Framework's documentation format,
+                           HTML, plain text, and reStructuredText. Default value
+                           can be specified in test library source code and
+                           the initial default value is :opt:`robot`.
   -N, --name <newname>     Sets the name of the documented library or resource.
   -V, --version <newversion>  Sets the version of the documented library or
                            resource. The default value for test libraries is
@@ -334,15 +340,129 @@ __ `Automatic newlines in test data`_
 Documentation syntax
 ~~~~~~~~~~~~~~~~~~~~
 
-Generic formatting rules
-''''''''''''''''''''''''
+Available documentation formats
+'''''''''''''''''''''''''''''''
 
-The documentation is generated according to Robot Framework's `documentation
-formatting`_ rules. Most important features of are formatting using
-:code:`*bold*` and :code:`_italic_`, custom links and automatic conversion of
-URLs links, and the possibility to create tables and pre-formatted blocks
-(useful for examples) simply with pipe character. If documentation gets longer,
-support for section titles (new in Robot Framework 2.7.5) can also be handy.
+:prog:`libdoc` supports documentation in Robot Framework's own `documentation
+syntax`_, HTML, plain text, and reStructuredText_. The format to use can be
+specified in `test library source code`__ using :code:`ROBOT_LIBRARY_DOC_FORMAT`
+attribute or given from the command line using :opt:`--docformat (-F)` option.
+In both cases the possible case-insensitive values are :code:`ROBOT` (default),
+:code:`HTML`, :code:`TEXT` and :code:`reST`.
+
+Robot Framework's own documentation format is the default and generally
+recommended format. Other formats are especially useful when using existing
+code with existing documentation in test libraries. Support for other formats
+was added in Robot Framework 2.7.5.
+
+__ `Specifying documentation format`_
+
+Robot Framework documentation format
+````````````````````````````````````
+
+Most important features in Robot Framework's `documentation syntax`_ are
+formatting using :code:`*bold*` and :code:`_italic_`, custom links and
+automatic conversion of URLs to links, and the possibility to create tables and
+pre-formatted text blocks (useful for examples) simply with pipe character.
+If documentation gets longer, support for section titles (new in Robot
+Framework 2.7.5) can also be handy.
+
+Some of the most important formatting features are illustrated in the example
+below. Notice that since this is the default format, there is no need to use
+:code:`ROBOT_LIBRARY_DOC_FORMAT` attribute nor give the format from the command
+line.
+
+.. sourcecode:: python
+
+    """Example library in Robot Framework format.
+
+    - Formatting with *bold* and _italic_.
+    - URLs like http://example.com are turned to links.
+    - Custom links like [http://robotframework.org|Robot Framework] are supported.
+    - Linking to `My Keyword` works.
+    """
+
+    def my_keyword():
+        """Nothing more to see here."""
+
+HTML documentation format
+`````````````````````````
+
+When using HTML format, you can create documentation pretty much freely using
+any syntax. The main drawback is that HTML markup is not that human friendly,
+and that can make the documentation in the source code hard to maintain and read.
+Documentation in HTML format is used by :prog:`libdoc` directly without any
+transformation or escaping. The special syntax for `linking to keywords`_ using
+syntax like :code:`\`My Keyword\`` is supported, however.
+
+Example below contains the same formatting examples as the previous example.
+Now :code:`ROBOT_LIBRARY_DOC_FORMAT` attribute must be used or format given
+on the command line like :opt:`--docformat HTML`.
+
+.. sourcecode:: python
+
+    """Example library in HTML format.
+
+    <ul>
+      <li>Formatting with <b>bold</b> and <i>italic</i>.
+      <li>URLs are not turned to links automatically.
+      <li>Custom links like <a href="http://www.w3.org/html">HTML</a> are supported.
+      <li>Linking to `My Keyword` works.
+    </ul>
+    """
+    ROBOT_LIBRARY_DOC_FORMAT = 'HTML'
+
+    def my_keyword():
+        """Nothing more to see here."""
+
+Plain text documentation format
+```````````````````````````````
+
+When the plain text format is used, :prog:`libdoc` uses the documentation as-is.
+Newlines and other whitespace are preserved except for indentation, and
+HTML special characters (:code:`<>&`) escaped. The only formatting done is
+turning URLs into clickable links and supporting `internal linking`_
+like :code:`\`My Keyword\``.
+
+.. sourcecode:: python
+
+    """Example library in plain text format.
+
+    - Formatting is not supported.
+    - URLs like http://example.com are turned to links.
+    - Custom links are not supported.
+    - Linking to `My Keyword` works.
+    """
+    ROBOT_LIBRARY_DOC_FORMAT = 'text'
+
+    def my_keyword():
+        """Nothing more to see here"""
+
+reStructuredText documentation format
+`````````````````````````````````````
+
+reStructuredText_ is simple yet powerful markup syntax used widely in Python
+projects (including this User Guide) and elsewhere. The main limitation
+is that you need to have :code:`docutils` module installed to be able to generate
+documentation using it. Because backtick characters have special meaning in
+reStructuredText, `linking to keywords`_ requires them to be escaped like
+:code:`\\\`My Keyword\\\``.
+
+.. sourcecode:: python
+
+    """Example library in reStructuredText format.
+
+    - Formatting with **bold** and *italic*.
+    - URLs like http://example.com are turned to links.
+    - Custom links like reStructuredText__ are supported.
+    - Linking to \`My Keyword\` works but requires backtics to be escaped.
+
+    __ http://docutils.sourceforge.net
+    """
+    ROBOT_LIBRARY_DOC_FORMAT = 'reST'
+
+    def my_keyword():
+        """Nothing more to see here"""
 
 .. _internal linking:
 
@@ -385,6 +505,9 @@ the example below where both keywords have links to each others.
        """
        # ...
 
+.. note:: When using `reStructuredText documentation format`_, backticks must
+          be escaped like :code:`\\\`Keyword Name\\\``.
+
 Linking to automatic sections
 `````````````````````````````
 
@@ -412,7 +535,7 @@ shown in the example of the next section.
 Linking to custom sections
 ``````````````````````````
 
-Starting from Robot Framework 2.7.5, `documentation formatting`_
+Starting from version 2.7.5, Robot Framework's `documentation syntax`_
 supports custom `section titles`_. The first level titles used in the
 library or resource file introduction automatically create link
 targets. The example below illustrates linking both to automatic and
@@ -436,6 +559,9 @@ custom sections:
        linking to custom sections works.
        """
        pass
+
+.. note:: Linking to custom sections works only when using `Robot Framework
+          documentation format`_.
 
 Argument formatting
 ```````````````````
