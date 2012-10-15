@@ -1,5 +1,5 @@
 .. include:: <isonum.txt>
-.. include:: ../userguide/src/roles.txt
+.. include:: ../userguide/src/roles.rst
 
 
 ===============================================================

@@ -1,4 +1,4 @@
-.. include:: ../../../doc/userguide/src/roles.txt
+.. include:: ../../../doc/userguide/src/roles.rst
 
 ============
 times2csv.py

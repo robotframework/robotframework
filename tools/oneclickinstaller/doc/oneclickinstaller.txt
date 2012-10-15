@@ -1,4 +1,4 @@
-.. include:: ../../../doc/userguide/src/roles.txt
+.. include:: ../../../doc/userguide/src/roles.rst
 
 ===================================
 Robot Framework One Click Installer

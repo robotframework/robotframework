@@ -77,7 +77,7 @@ Roles used in Robot Framework User Guide
 
 For the formatting roles, which are used in Robot Framework User Guide
 to make it easier for the reader to distinguish certain parts of the
-text, see the file `src/roles.txt`.
+text, see the file `src/roles.rst`.
  
 
 Using source code directive with files

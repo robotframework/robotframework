@@ -1,4 +1,4 @@
-.. include:: ../../../doc/userguide/src/roles.txt
+.. include:: ../../../doc/userguide/src/roles.rst
 
 =================================================================
   fixml.py -- A tool to fix broken Robot Framework output files
