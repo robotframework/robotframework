@@ -137,7 +137,7 @@ def create_userguide():
     sys.path.insert(0, os.path.join(ugdir, '..', '..', 'src', 'robot'))
     from version import get_version
     print 'Version:', get_version()
-    vfile = open(os.path.join(ugdir, 'src', 'version.txt'), 'w')
+    vfile = open(os.path.join(ugdir, 'src', 'version.rst'), 'w')
     vfile.write('.. |version| replace:: %s\n' % get_version())
     vfile.close()
 
@@ -145,7 +145,7 @@ def create_userguide():
     arguments = '''
 --time
 --stylesheet-path=src/userguide.css
-src/RobotFrameworkUserGuide.txt
+src/RobotFrameworkUserGuide.rst
 RobotFrameworkUserGuide.html
 '''.split('\n')[1:-1]
 
