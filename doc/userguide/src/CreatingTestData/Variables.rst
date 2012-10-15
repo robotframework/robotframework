@@ -591,7 +591,7 @@ operating-system-agnostic.
    =============  ========================  =======================  ==================================
      Test Case             Action                   Argument                       Argument
    =============  ========================  =======================  ==================================
-   Example        Create Binary File        ${CURDIR}${/}input.data  Some text here${\n}on two lines
+   Example        Create Binary File        ${CURDIR}${/}input.data  Some text here${\\n}on two lines
    \              Set Environment Variable  CLASSPATH                ${TEMPDIR}${:}${CURDIR}${/}foo.jar
    =============  ========================  =======================  ==================================
 
