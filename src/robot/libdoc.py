@@ -37,7 +37,12 @@ Options
  -f --format HTML|XML     Specifies whether to generate HTML or XML output.
                           If this options is not used, the format is got
                           from the extension of the output file.
- -F --docformat ROBOT|HTML|TEXT|REST     TODO
+ -F --docformat ROBOT|HTML|TEXT|REST
+                          Specifies the source documentation format. Possible
+                          values are Robot Framework's documentation format,
+                          HTML, plain text, and reStructuredText. The default
+                          value can be specified in test library source code
+                          and the initial default value is `ROBOT`.
  -n --name newname        Sets the name of the documented library or resource.
  -v --version newversion  Sets the version of the documented library or
                           resource.
