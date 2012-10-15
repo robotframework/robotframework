@@ -308,6 +308,75 @@ A Java class using :code:`ROBOT_LIBRARY_VERSION`:
         }
     }
 
+Specifying documentation format
+'''''''''''''''''''''''''''''''
+
+Starting from Robot Framework 2.7.5, library documentation tool `libdoc`_
+supports documentation in multiple formats. If you want to use something
+else than Robot Framework's own `documentation formatting`_, you can specify
+the format in the source code using  :code:`ROBOT_LIBRARY_DOC_FORMAT` attribute
+similarly as scope__ and version__ are set with their own
+:code:`ROBOT_LIBRARY_*` attributes.
+
+The possible values for documentation format are :code:`ROBOT` (default),
+:code:`HTML`, :code:`TEXT` (plain text), and :code:`REST` (reStructuredText_,
+requires :code:`docutils` module to be installed). The value is case-insensitive.
+
+Setting the documentation format is illustrated by the following Python and
+Java examples that use reStructuredText and HTML formats, respectively.
+See `Documenting libraries`_ section and `libdoc`_ chapter for more information
+about documenting test libraries in general.
+
+.. sourcecode:: python
+
+    """A library for *documentation format* demonstration purposes.
+
+    This documentation is created using reStructuredText__. Here is a link
+    to the only \\`Keyword\\`.
+
+    __ http://docutils.sourceforge.net
+    """
+
+    ROBOT_LIBRARY_DOC_FORMAT = 'reST'
+
+    def keyword():
+        """**Nothing** to see here. Not even in the table below.
+
+        =======  =====  =====
+        Table    here   has
+        nothing  to     see.
+        =======  =====  =====
+        """
+        pass
+
+A Java class using :code:`ROBOT_LIBRARY_VERSION`:
+
+.. sourcecode:: java
+
+    /**
+     * A library for <i>documentation format</i> demonstration purposes.
+     *
+     * This documentation is created using <a href="http://www.w3.org/html">HTML</a>.
+     * Here is a link to the only `Keyword`.
+     */
+    public class DocFormatExample {
+
+        public static final String ROBOT_LIBRARY_DOC_FORMAT = "HTML";
+
+        /**<b>Nothing</b> to see here. Not even in the table below.
+         *
+         * <table>
+         * <tr><td>Table</td><td>here</td><td>has</td></tr>
+         * <tr><td>nothing</td><td>to</td><td>see.</td></tr>
+         * </table>
+         */
+        public void keyword() {
+        }
+    }
+
+__ `Test library scope`_
+__ `Specifying library version`_
+
 Creating static keywords
 ~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -1250,7 +1319,15 @@ does not work with Java libraries using the static API,
 because their documentations are lost in compilation and not available
 at runtime.
 
-.. note:: If you want to use non-ASCII charactes in the documentation of
+By default documentation is considered to follow Robot Framework's
+`documentation formatting`_ rules. This simple format allows often used
+styles like :code:`*bold*` and :code:`_italic_`, tables, lists, links, etc.
+Starting from Robot Framework 2.7.5, it is possible to use also HTML, plain
+text and reStructuredText_ formats. See `Specifying documentation format`_
+section for information how to set the format in the library source code and
+`libdoc`_ chapter for more information about the formats in general.
+
+.. note:: If you want to use non-ASCII characters in the documentation of
           Python libraries, you must either use UTF-8 as your `source code
           encoding`__ or create docstrings as Unicode.
 
