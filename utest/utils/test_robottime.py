@@ -246,6 +246,24 @@ class TestTime(unittest.TestCase):
             assert_true(exp <= parsed <= exp +1,
                         "%d <= %d <= %d" % (exp, parsed, exp+1) )
 
+    def test_parse_modified_time_with_utc(self):
+        for input, adjusted in [('utc', 0),
+                                ('UTC', 0),
+                                ('Utc', 0),
+                                ('utc + 100 seconds', 100),
+                                ('utc - 100 seconds', -100),
+                                ('utc + 1 day 100 seconds', 86500),
+                                ('utc - 1 day 100 seconds', -86500),
+                                ('utc + 1 day 10 hours 1 minute 10 seconds',
+                                 122470),
+                                ('utc - 1 day 10 hours 1 minute 10 seconds',
+                                 -122470),
+                                ('utc +   100 seconds', 100)]:
+            exp = get_time('epoch') + adjusted + time.altzone
+            parsed = parse_time(input)
+            assert_true(exp <= parsed <= exp +1,
+                        "%d <= %d <= %d" % (exp, parsed, exp+1) )
+
     def test_parse_modified_time_with_invalid_times(self):
         for value, msg in [("-100", "Epoch time must be positive (got -100)"),
                            ("YYYY-MM-DD hh:mm:ss",

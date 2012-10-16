@@ -236,7 +236,7 @@ def get_time(format='timestamp', time_=None):
 def parse_time(timestr):
     """Parses the time string and returns its value as seconds since epoch.
 
-    Time can be given in four different formats:
+    Time can be given in six different formats:
 
     1) Numbers are interpreted as time since epoch directly. It is possible to
        use also ints and floats, not only strings containing numbers.
@@ -245,6 +245,8 @@ def parse_time(timestr):
        closest second.
     4) Format 'NOW - 1 day' or 'NOW + 1 hour 30 min' is the current time
        plus/minus the time specified with the time string.
+    5&6) 'UTC' should work as 'NOW' but return time in UTC. Requires that time zone
+          and daylight savings are correctly set.
     """
     try:
         ret = int(timestr)
@@ -262,13 +264,21 @@ def parse_time(timestr):
         return int(round(secs))
     normtime = timestr.lower().replace(' ', '')
     now = int(time.time())
+    utc = now + time.altzone
     if normtime == 'now':
         return now
+    elif normtime == 'utc':
+        return utc
     if normtime.startswith('now'):
         if normtime[3] == '+':
             return now + timestr_to_secs(normtime[4:])
         if normtime[3] == '-':
             return now - timestr_to_secs(normtime[4:])
+    elif normtime.startswith('utc'):
+        if normtime[3] == '+':
+            return utc + timestr_to_secs(normtime[4:])
+        if normtime[3] == '-':
+            return utc - timestr_to_secs(normtime[4:])
     raise ValueError("Invalid time format '%s'" % timestr)
 
 

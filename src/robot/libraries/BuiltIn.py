@@ -1767,7 +1767,7 @@ class _Misc:
         3) Otherwise (and by default) the time is returned as a
            timestamp string in the format '2006-02-24 15:08:31'.
 
-        By default this keyword returns the current time, but that can be
+        By default this keyword returns the current local time, but that can be
         altered using `time` argument as explained below.
 
         1) If `time` is a floating point number, it is interpreted as
@@ -1778,14 +1778,27 @@ class _Misc:
            timestamp formats are 'YYYY-MM-DD hh:mm:ss' and 'YYYYMMDD hhmmss'.
 
         3) If `time` is equal to 'NOW' (case-insensitive), the
-           current time is used.
+           current local time is used.
 
         4) If `time` is in the format 'NOW - 1 day' or 'NOW + 1 hour
-           30 min', the current time plus/minus the time specified
+           30 min', the current local time plus/minus the time specified
            with the time string is used. The time string format is
            described in an appendix of Robot Framework User Guide.
+        
+        5) If `time` is equal to 'UTC' (case-insensitive), the
+           UTC is used. The UTC does not verify the time zone or 
+           the daylight savings from external source. Instead the UTC 
+           relies that time zone and daylight savings are correctly set
+           in the current machine. Relies internally python time.altzone
+           to return offset from the local DST timezone
+        
+        6) If `time` is in the format 'UTC - 1 day' or 'UTC + 1 hour
+           30 min', the UTC plus/minus the time specified
+           with the time string is used. The time string format is
+           described in an appendix of Robot Framework User Guide.
+        
 
-        Examples (expecting the current time is 2006-03-29 15:06:21):
+        Examples (expecting the current local time is 2006-03-29 15:06:21):
         | ${time} = | Get Time |             |  |  |
         | ${secs} = | Get Time | epoch       |  |  |
         | ${year} = | Get Time | return year |  |  |
@@ -1800,18 +1813,25 @@ class _Misc:
         | @{time} = ['2006', '03', '29', '15', '06', '21']
         | ${y} = '2006'
         | ${s} = '21'
-
+        
+        Examples 
+        (expecting the current local time is 2006-03-29 15:06:21 and 
+        UTC is 2006-03-29 12:06:21):
         | ${time} = | Get Time |      | 1177654467 |
         | ${secs} = | Get Time | sec  | 2007-04-27 09:14:27 |
-        | ${year} = | Get Time | year | NOW      | # The time of execution |
+        | ${year} = | Get Time | year | NOW      | # The local time of execution |
         | ${day} =  | Get Time | day  | NOW - 1d | # 1 day subtraced from NOW |
         | @{time} = | Get Time | hour min sec | NOW + 1h 2min 3s | # 1h 2min 3s added to NOW |
+        | @{utc} = | Get Time | hour min sec | UTC      | # The UTC time of execution |
+        | ${utc hour} = | Get Time | hour | UTC - 1h | # 1h added to UTC |
         =>
         | ${time} = '2007-04-27 09:14:27'
         | ${secs} = 27
         | ${year} = '2006'
         | ${day} = '28'
         | @{time} = ['16', '08', '24']
+        | @{utc} = ['12', '06', '21']
+        | ${utc hour} = '11'
         """
         return utils.get_time(format, utils.parse_time(time_))
 

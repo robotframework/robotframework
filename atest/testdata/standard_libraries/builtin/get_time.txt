@@ -59,3 +59,17 @@ Empty Format Is Interpreted As Timestamp When Time Given
 Invalid Time Does Not Cause Un-Catchable Failure
     Run Keyword And Expect Error  ValueError: Invalid time format 'invalid'
     ...  Get Time  timestamp  invalid
+
+When Time Is Utc
+    ${utc} =  Get Time  epoch  UTC
+    ${now} =  Get Time  epoch  NOW
+    ${zone}  Evaluate  time.altzone  modules=time
+    ${utc minus zone} =  Evaluate  ${utc} - ${zone}
+    ${now plus 1} =  Evaluate  ${now} + ${1}
+    Should Be True  ${now} <= ${utc minus zone} <= ${now plus 1}
+
+When Time Is Utc +- Something
+    ${time} =  Get Time  epoch  UTC
+    ${time minus} =  Get Time  epoch  UTC - 1 hour
+    ${time plus} =  Get Time  epoch  UTC + 2 minutes 1 second
+    Should Be True  ${time minus} < ${time} < ${time plus}
