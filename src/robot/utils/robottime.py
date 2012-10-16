@@ -213,7 +213,7 @@ def get_time(format='timestamp', time_=None):
       format '2006-02-24 15:08:31'
     """
     if time_ is None:
-        time_ = time.time()
+        time_ = round(time.time())
     format = format.lower()
     # 1) Return time in seconds since epoc
     if 'epoch' in format:
@@ -236,50 +236,63 @@ def get_time(format='timestamp', time_=None):
 def parse_time(timestr):
     """Parses the time string and returns its value as seconds since epoch.
 
-    Time can be given in six different formats:
+    Time can be given in five different formats:
 
     1) Numbers are interpreted as time since epoch directly. It is possible to
        use also ints and floats, not only strings containing numbers.
     2) Valid timestamp ('YYYY-MM-DD hh:mm:ss' and 'YYYYMMDD hhmmss').
-    3) 'NOW' (case-insensitive) is the current time rounded down to the
+    3) 'NOW' (case-insensitive) is the current local time rounded to the
        closest second.
-    4) Format 'NOW - 1 day' or 'NOW + 1 hour 30 min' is the current time
-       plus/minus the time specified with the time string.
-    5&6) 'UTC' should work as 'NOW' but return time in UTC. Requires that time zone
-          and daylight savings are correctly set.
+    4) 'UTC' (case-insensitive) is the current time in UTC.
+    5) Format 'NOW - 1 day' or 'UTC + 1 hour 30 min' is the current local/UTC
+       time plus/minus the time specified with the time string.
     """
-    try:
-        ret = int(timestr)
-    except ValueError:
-        pass
-    else:
-        if ret < 0:
-            raise ValueError("Epoch time must be positive (got %s)" % timestr)
-        return ret
-    try:
-        secs = timestamp_to_secs(timestr, (' ', ':', '-', '.'))
-    except ValueError:
-        pass
-    else:
-        return int(round(secs))
-    normtime = timestr.lower().replace(' ', '')
-    now = int(time.time())
-    utc = now + time.altzone
-    if normtime == 'now':
-        return now
-    elif normtime == 'utc':
-        return utc
-    if normtime.startswith('now'):
-        if normtime[3] == '+':
-            return now + timestr_to_secs(normtime[4:])
-        if normtime[3] == '-':
-            return now - timestr_to_secs(normtime[4:])
-    elif normtime.startswith('utc'):
-        if normtime[3] == '+':
-            return utc + timestr_to_secs(normtime[4:])
-        if normtime[3] == '-':
-            return utc - timestr_to_secs(normtime[4:])
+    for method in [_parse_time_epoch,
+                   _parse_time_timestamp,
+                   _parse_time_now_and_utc]:
+        seconds = method(timestr)
+        if seconds is not None:
+            return int(round(seconds))
     raise ValueError("Invalid time format '%s'" % timestr)
+
+def _parse_time_epoch(timestr):
+    try:
+        ret = float(timestr)
+    except ValueError:
+        return None
+    if ret < 0:
+        raise ValueError("Epoch time must be positive (got %s)" % timestr)
+    return ret
+
+def _parse_time_timestamp(timestr):
+    try:
+        return timestamp_to_secs(timestr, (' ', ':', '-', '.'))
+    except ValueError:
+        return None
+
+def _parse_time_now_and_utc(timestr):
+    timestr = timestr.replace(' ', '').lower()
+    base = _parse_time_now_and_utc_base(timestr[:3])
+    if base is not None:
+        extra = _parse_time_now_and_utc_extra(timestr[3:])
+        if extra is not None:
+            return base + extra
+    return None
+
+def _parse_time_now_and_utc_base(base):
+    now = time.time()
+    if base == 'now':
+        return now
+    if base == 'utc':
+        return now + time.altzone
+    return None
+
+def _parse_time_now_and_utc_extra(extra):
+    if not extra:
+        return 0
+    if extra[0] not in ['+', '-']:
+        return None
+    return (1 if extra[0] == '+' else -1) * timestr_to_secs(extra[1:])
 
 
 def get_timestamp(daysep='', daytimesep=' ', timesep=':', millissep='.'):

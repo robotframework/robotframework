@@ -222,64 +222,52 @@ class TestTime(unittest.TestCase):
                 assert_equal(elapsed_time_to_string(-1 * elapsed, False),
                              '-' + expected, elapsed)
 
-    def test_parse_modified_time_with_valid_times(self):
+    def test_parse_time_with_valid_times(self):
         for input, expected in [('100', 100),
                                 ('2007-09-20 16:15:14', EXAMPLE_TIME),
                                 ('20070920 161514', EXAMPLE_TIME)]:
             assert_equal(parse_time(input), expected)
 
-    def test_parse_modified_time_with_now(self):
+    def test_parse_time_with_now_and_utc(self):
         for input, adjusted in [('now', 0),
                                 ('NOW', 0),
                                 ('Now', 0),
-                                ('now + 100 seconds', 100),
-                                ('now - 100 seconds', -100),
+                                ('now+100seconds', 100),
+                                ('now    -    100    seconds   ', -100),
                                 ('now + 1 day 100 seconds', 86500),
                                 ('now - 1 day 100 seconds', -86500),
-                                ('now + 1 day 10 hours 1 minute 10 seconds',
-                                 122470),
-                                ('now - 1 day 10 hours 1 minute 10 seconds',
-                                 -122470),
-                                ('now +   100 seconds', 100)]:
-            exp = get_time('epoch') + adjusted
+                                ('now + 1day 10hours 1minute 10secs', 122470),
+                                ('NOW - 1D 10H 1MIN 10S', -122470)]:
+            expected = get_time('epoch') + adjusted
             parsed = parse_time(input)
-            assert_true(exp <= parsed <= exp +1,
-                        "%d <= %d <= %d" % (exp, parsed, exp+1) )
-
-    def test_parse_modified_time_with_utc(self):
-        for input, adjusted in [('utc', 0),
-                                ('UTC', 0),
-                                ('Utc', 0),
-                                ('utc + 100 seconds', 100),
-                                ('utc - 100 seconds', -100),
-                                ('utc + 1 day 100 seconds', 86500),
-                                ('utc - 1 day 100 seconds', -86500),
-                                ('utc + 1 day 10 hours 1 minute 10 seconds',
-                                 122470),
-                                ('utc - 1 day 10 hours 1 minute 10 seconds',
-                                 -122470),
-                                ('utc +   100 seconds', 100)]:
-            exp = get_time('epoch') + adjusted + time.altzone
-            parsed = parse_time(input)
-            assert_true(exp <= parsed <= exp +1,
-                        "%d <= %d <= %d" % (exp, parsed, exp+1) )
+            assert_true(expected <= parsed <= expected + 1),
+            parsed = parse_time(input.upper().replace('NOW', 'UtC'))
+            expected += time.altzone
+            assert_true(expected <= parsed <= expected + 1),
 
     def test_parse_modified_time_with_invalid_times(self):
         for value, msg in [("-100", "Epoch time must be positive (got -100)"),
                            ("YYYY-MM-DD hh:mm:ss",
                             "Invalid time format 'YYYY-MM-DD hh:mm:ss'"),
                            ("now + foo", "Invalid time string 'foo'"),
-                           ("now +    2a ", "Invalid time string '2a'")]:
+                           ("now -    2a ", "Invalid time string '2a'"),
+                           ("now+", "Invalid time string ''"),
+                           ("nowadays", "Invalid time format 'nowadays'")]:
             assert_raises_with_msg(ValueError, msg, parse_time, value)
 
-    def test_parse_time_and_get_time_must_round_seconds_down(self):
-        secs_before = int(time.time()) % 60
-        get_time_result = get_time()[-2:]
-        parse_time_result = parse_time('NOW') % 60
-        secs_after = int(time.time()) % 60
-        if secs_after == secs_before: # Check that second has not passed during the measurements
-            assert_equal(get_time_result, '%02d' % secs_before)
-            assert_equal(parse_time_result % 60, secs_after)
+    def test_parse_time_and_get_time_must_round_seconds_same_way(self):
+        self._verify_parse_time_and_get_time_rounding()
+        time.sleep(0.5)
+        self._verify_parse_time_and_get_time_rounding()
+
+    def _verify_parse_time_and_get_time_rounding(self):
+        secs = lambda: int(round(time.time())) % 60
+        start_secs = secs()
+        gt_result = get_time()[-2:]
+        pt_result = parse_time('NOW') % 60
+        # Check that seconds have not changed during test
+        if secs() == start_secs:
+            assert_equal(gt_result, '%02d' % pt_result)
 
     def test_get_timestamp_without_millis(self):
         # Need to test twice to verify also possible cached timestamp
