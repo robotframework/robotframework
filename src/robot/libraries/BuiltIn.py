@@ -1750,11 +1750,11 @@ class _Misc:
     def get_time(self, format='timestamp', time_='NOW'):
         """Returns the given time in the requested format.
 
-        How time is returned is determined based on the given `format` string
-        as follows. Note that all checks are case-insensitive.
+        How time is returned is determined based on the given `format`
+        string as follows. Note that all checks are case-insensitive.
 
         1) If `format` contains the word 'epoch', the time is returned
-           in seconds after the UNIX epoch (Jan 1, 1970 0:00:00).
+           in seconds after the UNIX epoch (1970-01-01 00:00:00 UTC).
            The return value is always an integer.
 
         2) If `format` contains any of the words 'year', 'month',
@@ -1767,36 +1767,30 @@ class _Misc:
         3) Otherwise (and by default) the time is returned as a
            timestamp string in the format '2006-02-24 15:08:31'.
 
-        By default this keyword returns the current local time, but that can be
-        altered using `time` argument as explained below.
+        By default this keyword returns the current local time, but
+        that can be altered using `time` argument as explained below.
+        Note that all checks involving strings are case-insensitive.
 
         1) If `time` is a floating point number, it is interpreted as
-           seconds since the epoch. This documentation is written about
-           1177654467 seconds after the epoch.
+           seconds since the epoch. This documentation was originally
+           written about 1177654467 seconds after the epoch.
 
         2) If `time` is a valid timestamp, that time will be used. Valid
            timestamp formats are 'YYYY-MM-DD hh:mm:ss' and 'YYYYMMDD hhmmss'.
 
-        3) If `time` is equal to 'NOW' (case-insensitive), the
-           current local time is used.
+        3) If `time` is equal to 'NOW' (default), the current local
+           time is used. This time is got using Python's `time.time()`
+           function.
 
-        4) If `time` is in the format 'NOW - 1 day' or 'NOW + 1 hour
-           30 min', the current local time plus/minus the time specified
-           with the time string is used. The time string format is
-           described in an appendix of Robot Framework User Guide.
-        
-        5) If `time` is equal to 'UTC' (case-insensitive), the
-           UTC is used. The UTC does not verify the time zone or 
-           the daylight savings from external source. Instead the UTC 
-           relies that time zone and daylight savings are correctly set
-           in the current machine. Relies internally python time.altzone
-           to return offset from the local DST timezone
-        
-        6) If `time` is in the format 'UTC - 1 day' or 'UTC + 1 hour
-           30 min', the UTC plus/minus the time specified
-           with the time string is used. The time string format is
-           described in an appendix of Robot Framework User Guide.
-        
+        4) If `time` is equal to 'UTC', the current time in
+           [http://en.wikipedia.org/wiki/Coordinated_Universal_Time|UTC]
+           is used. This time is got using 'time.time() + time.altzone'
+           in Python.
+
+        5) If `time` is in the format like 'NOW - 1 day' or 'UTC + 1
+           hour 30 min', the current local/UTC time plus/minus the time
+           specified with the time string is used. The time string format
+           is described in an appendix of Robot Framework User Guide.
 
         Examples (expecting the current local time is 2006-03-29 15:06:21):
         | ${time} = | Get Time |             |  |  |
@@ -1813,25 +1807,22 @@ class _Misc:
         | @{time} = ['2006', '03', '29', '15', '06', '21']
         | ${y} = '2006'
         | ${s} = '21'
-        
-        Examples 
-        (expecting the current local time is 2006-03-29 15:06:21 and 
-        UTC is 2006-03-29 12:06:21):
-        | ${time} = | Get Time |      | 1177654467 |
-        | ${secs} = | Get Time | sec  | 2007-04-27 09:14:27 |
-        | ${year} = | Get Time | year | NOW      | # The local time of execution |
-        | ${day} =  | Get Time | day  | NOW - 1d | # 1 day subtraced from NOW |
-        | @{time} = | Get Time | hour min sec | NOW + 1h 2min 3s | # 1h 2min 3s added to NOW |
-        | @{utc} = | Get Time | hour min sec | UTC      | # The UTC time of execution |
-        | ${utc hour} = | Get Time | hour | UTC - 1h | # 1h added to UTC |
+
+        Examples (expecting the current local time is 2006-03-29 15:06:21 and
+        UTC time is 2006-03-29 12:06:21):
+        | ${time} = | Get Time |              | 1177654467          | # Time given as epoch seconds        |
+        | ${secs} = | Get Time | sec          | 2007-04-27 09:14:27 | # Time given as a timestamp          |
+        | ${year} = | Get Time | year         | NOW                 | # The local time of execution        |
+        | @{time} = | Get Time | hour min sec | NOW + 1h 2min 3s    | # 1h 2min 3s added to the local time |
+        | @{utc} =  | Get Time | hour min sec | UTC                 | # The UTC time of execution          |
+        | ${hour} = | Get Time | hour         | UTC - 1 hour        | # 1h subtracted from the UTC  time   |
         =>
         | ${time} = '2007-04-27 09:14:27'
         | ${secs} = 27
         | ${year} = '2006'
-        | ${day} = '28'
         | @{time} = ['16', '08', '24']
         | @{utc} = ['12', '06', '21']
-        | ${utc hour} = '11'
+        | ${hour} = '11'
         """
         return utils.get_time(format, utils.parse_time(time_))
 
