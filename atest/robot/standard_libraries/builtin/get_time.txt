@@ -32,8 +32,8 @@ Empty Format Is Interpreted As Timestamp When Time Given
 Invalid Time Does Not Cause Un-Catchable Failure
     Check Test Case  ${TEST NAME}
 
-When Time Is Utc
+When Time Is UTC
     Check Test Case  ${TEST NAME}
 
-When Time Is Utc +- something
+When Time Is UTC +- something
     Check Test Case  ${TEST NAME}

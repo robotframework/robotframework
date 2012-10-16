@@ -60,15 +60,13 @@ Invalid Time Does Not Cause Un-Catchable Failure
     Run Keyword And Expect Error  ValueError: Invalid time format 'invalid'
     ...  Get Time  timestamp  invalid
 
-When Time Is Utc
+When Time Is UTC
     ${utc} =  Get Time  epoch  UTC
     ${now} =  Get Time  epoch  NOW
-    ${zone}  Evaluate  time.altzone  modules=time
-    ${utc minus zone} =  Evaluate  ${utc} - ${zone}
-    ${now plus 1} =  Evaluate  ${now} + ${1}
-    Should Be True  ${now} <= ${utc minus zone} <= ${now plus 1}
+    ${zone} =  Evaluate  time.altzone  modules=time
+    Should Be True  ${now} <= ${utc} - ${zone} <= ${now} + 1
 
-When Time Is Utc +- Something
+When Time Is UTC +- Something
     ${time} =  Get Time  epoch  UTC
     ${time minus} =  Get Time  epoch  UTC - 1 hour
     ${time plus} =  Get Time  epoch  UTC + 2 minutes 1 second
