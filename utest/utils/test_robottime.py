@@ -255,19 +255,23 @@ class TestTime(unittest.TestCase):
                            ("nowadays", "Invalid time format 'nowadays'")]:
             assert_raises_with_msg(ValueError, msg, parse_time, value)
 
-    def test_parse_time_and_get_time_must_round_seconds_same_way(self):
+    def test_parse_time_and_get_time_must_round_seconds_down(self):
+        # Rounding to closest second, instead of rounding down, could give
+        # times that are greater then e.g. timestamps of files created
+        # afterwards.
         self._verify_parse_time_and_get_time_rounding()
         time.sleep(0.5)
         self._verify_parse_time_and_get_time_rounding()
 
     def _verify_parse_time_and_get_time_rounding(self):
-        secs = lambda: int(round(time.time())) % 60
+        secs = lambda: int(time.time()) % 60
         start_secs = secs()
         gt_result = get_time()[-2:]
         pt_result = parse_time('NOW') % 60
         # Check that seconds have not changed during test
         if secs() == start_secs:
-            assert_equal(gt_result, '%02d' % pt_result)
+            assert_equal(gt_result, '%02d' % start_secs)
+            assert_equal(pt_result, start_secs)
 
     def test_get_timestamp_without_millis(self):
         # Need to test twice to verify also possible cached timestamp

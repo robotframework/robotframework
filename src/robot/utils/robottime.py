@@ -212,12 +212,11 @@ def get_time(format='timestamp', time_=None):
     - Otherwise (and by default) the time is returned as a timestamp string in
       format '2006-02-24 15:08:31'
     """
-    if time_ is None:
-        time_ = round(time.time())
+    time_ = int(time_ or time.time())
     format = format.lower()
     # 1) Return time in seconds since epoc
     if 'epoch' in format:
-        return int(time_)
+        return time_
     timetuple = time.localtime(time_)
     parts = []
     for i, match in enumerate('year month day hour min sec'.split()):
@@ -241,18 +240,19 @@ def parse_time(timestr):
     1) Numbers are interpreted as time since epoch directly. It is possible to
        use also ints and floats, not only strings containing numbers.
     2) Valid timestamp ('YYYY-MM-DD hh:mm:ss' and 'YYYYMMDD hhmmss').
-    3) 'NOW' (case-insensitive) is the current local time rounded to the
-       closest second.
+    3) 'NOW' (case-insensitive) is the current local time.
     4) 'UTC' (case-insensitive) is the current time in UTC.
     5) Format 'NOW - 1 day' or 'UTC + 1 hour 30 min' is the current local/UTC
        time plus/minus the time specified with the time string.
+
+    Seconds are rounded down to avoid getting times in the future.
     """
     for method in [_parse_time_epoch,
                    _parse_time_timestamp,
                    _parse_time_now_and_utc]:
         seconds = method(timestr)
         if seconds is not None:
-            return int(round(seconds))
+            return int(seconds)
     raise ValueError("Invalid time format '%s'" % timestr)
 
 def _parse_time_epoch(timestr):
