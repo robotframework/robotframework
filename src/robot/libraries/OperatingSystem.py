@@ -54,7 +54,6 @@ except ImportError:
 
 
 class OperatingSystem:
-
     """A test library providing keywords for OS related tasks.
 
     `OperatingSystem` is Robot Framework's standard library that
@@ -66,7 +65,7 @@ class OperatingSystem:
     (e.g. `File Should Exist`, `Directory Should Be Empty`) and
     manipulate environment variables (e.g. `Set Environment Variable`).
 
-    *Pattern matching*
+    = Pattern matching =
 
     Some keywords allow their arguments to be specified as _glob patterns_
     where:
@@ -80,7 +79,7 @@ class OperatingSystem:
     matching is implemented using Python's `fnmatch` module:
     http://docs.python.org/library/fnmatch.html
 
-    *Path separators*
+    = Path separators =
 
     All keywords expecting paths as arguments accept a forward slash
     (`/`) as a path separator regardless the operating system. Notice
@@ -89,7 +88,7 @@ class OperatingSystem:
     cases the built-in variable `${/}` can be used to keep the test
     data platform independent.
 
-    *Example*
+    = Example =
 
     |  *Setting*  |     *Value*     |
     | Library     | OperatingSystem |
@@ -1071,9 +1070,9 @@ class OperatingSystem:
            is described in an appendix of Robot Framework User Guide.
 
         Examples:
-        | Set Modified Time | /path/file | 1177654467         | #(2007-04-27 9:14:27) |
-        | Set Modified Time | /path/file | 2007-04-27 9:14:27 |
-        | Set Modified Time | /path/file | NOW                | # The time of execution |
+        | Set Modified Time | /path/file | 1177654467         | # Time given as epoch seconds |
+        | Set Modified Time | /path/file | 2007-04-27 9:14:27 | # Time given as a timestamp   |
+        | Set Modified Time | /path/file | NOW                | # The local time of execution |
         | Set Modified Time | /path/file | NOW - 1 day        | # 1 day subtracted from the local time |
         | Set Modified Time | /path/file | UTC + 1h 2min 3s   | # 1h 2min 3s added to the UTC time |
 
