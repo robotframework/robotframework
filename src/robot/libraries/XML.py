@@ -730,8 +730,7 @@ class XML(object):
                           normalize_whitespace):
         normalizer = self._normalize_whitespace if normalize_whitespace else None
         comparator = ElementComparator(comparator, normalizer, exclude_children)
-        comparator.compare(self.get_element(source),
-                           self.get_element(expected))
+        comparator.compare(self.get_element(source), self.get_element(expected))
 
     def element_to_string(self, source, xpath='.'):
         """Returns the string representation of the specified element.
@@ -775,10 +774,9 @@ class XML(object):
         self.get_element(source, xpath).attrib[name] = value
 
     def remove_element_attribute(self, source, name, xpath='.'):
-        try:
-            self.get_element(source, xpath).attrib.pop(name)
-        except KeyError:
-            pass
+        attrib = self.get_element(source, xpath).attrib
+        if name in attrib:
+            attrib.pop(name)
 
     def remove_element_attributes(self, source, xpath='.'):
         self.get_element(source, xpath).attrib.clear()
@@ -808,12 +806,12 @@ class XML(object):
         if xpath == '.':
             raise RuntimeError('Cannot remove root element.')
 
-    def _remove_element(self, tree, element):
-        parent = self._find_parent(tree, element)
+    def _remove_element(self, root, element):
+        parent = self._find_parent(root, element)
         parent.remove(element)
 
-    def _find_parent(self, tree, element):
-        for parent in tree.getiterator():
+    def _find_parent(self, root, element):
+        for parent in root.getiterator():
             for child in parent:
                 if child is element:
                     return parent
