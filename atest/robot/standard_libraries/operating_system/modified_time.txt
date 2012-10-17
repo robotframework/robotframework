@@ -32,6 +32,9 @@ Set Modified Time Using Timestamp
     Check Log Message  ${tc.kws[2].kws[2].kws[0].msgs[0]}  Set modified time of '<a href="file://${TESTFILE}">${TESTFILE}</a>' to 2007-04-26 11:22:30  HTML
     Check Log Message  ${tc.kws[2].kws[3].kws[0].msgs[0]}  Set modified time of '<a href="file://${TESTFILE}">${TESTFILE}</a>' to 2007-04-26 11:22:30  HTML
 
+Set Modified Time Using Invalid Timestamp
+    Check Test Case  ${TESTNAME}
+
 Set Modified Time Using NOW
     Check Test Case  ${TESTNAME}
 

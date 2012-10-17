@@ -45,14 +45,17 @@ Set Modified Time Using Epoch
     Set Modified time  ${TESTFILE}  -1
 
 Set Modified Time Using Timestamp
-    [Documentation]  FAIL Setting modified time of '${TESTFILE}' failed: Invalid time format 'invalid'
     Create File  ${TESTFILE}
     ${expected} =  Evaluate  1177586550 + time.altzone  modules=time
     :FOR  ${timestamp}  IN  2007-04-26 11:22:30  20070426 11:22:30  20070426 112230  20070426-112230  20070426 11:22:30.456
-    ...  20070426 11:22:29.9  invalid
     \  Set Modified Time  ${TESTFILE}  ${timestamp}
     \  ${mtime} =  Get Modified Time  ${TESTFILE}  epoch
     \  Should Be Equal  ${mtime}  ${expected}
+
+Set Modified Time Using Invalid Timestamp
+    [Documentation]  FAIL Setting modified time of '${TESTFILE}' failed: Invalid time format 'invalid'
+    Create File  ${TESTFILE}
+    Set Modified Time  ${TESTFILE}  invalid
 
 Set Modified Time Using NOW
     [Documentation]  FAIL Setting modified time of '${TESTFILE}' failed: Invalid time string 'invalid'
