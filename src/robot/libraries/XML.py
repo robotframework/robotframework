@@ -732,34 +732,6 @@ class XML(object):
         comparator = ElementComparator(comparator, normalizer, exclude_children)
         comparator.compare(self.get_element(source), self.get_element(expected))
 
-    def element_to_string(self, source, xpath='.'):
-        """Returns the string representation of the specified element.
-
-        The element to convert to a string is specified using `source` and
-        `xpath`. They have exactly the same semantics as with `Get Element`
-        keyword.
-
-        The returned string is in Unicode format and it does not contain any
-        XML declaration.
-
-        See also `Log Element`.
-        """
-        string = ET.tostring(self.get_element(source, xpath), encoding='UTF-8')
-        return self._xml_declaration.sub('', string.decode('UTF-8')).strip()
-
-    def log_element(self, source, level='INFO', xpath='.'):
-        """Logs the string representation of the specified element.
-
-        The element specified with `source` and `xpath` is first converted into
-        a string using `Element To String` keyword internally. The resulting
-        string is then logged using the given `level`.
-
-        The logged string is also returned.
-        """
-        string = self.element_to_string(source, xpath)
-        logger.write(string, level)
-        return string
-
     def set_element_tag(self, source, tag, xpath='.'):
         source = self.get_element(source)
         self.get_element(source, xpath).tag = tag
@@ -830,9 +802,6 @@ class XML(object):
                 if child is element:
                     return parent
 
-    def copy_element(self, source, xpath='.'):
-        return copy.deepcopy(self.get_element(source, xpath))
-
     def clear_element(self, source, xpath='.', clear_tail=False):
         source = self.get_element(source)
         element = self.get_element(source, xpath)
@@ -841,6 +810,37 @@ class XML(object):
         if not clear_tail:
             element.tail = tail
         return source
+
+    def copy_element(self, source, xpath='.'):
+        return copy.deepcopy(self.get_element(source, xpath))
+
+    def element_to_string(self, source, xpath='.'):
+        """Returns the string representation of the specified element.
+
+        The element to convert to a string is specified using `source` and
+        `xpath`. They have exactly the same semantics as with `Get Element`
+        keyword.
+
+        The returned string is in Unicode format and it does not contain any
+        XML declaration.
+
+        See also `Log Element` and `Save XML`.
+        """
+        string = ET.tostring(self.get_element(source, xpath), encoding='UTF-8')
+        return self._xml_declaration.sub('', string.decode('UTF-8')).strip()
+
+    def log_element(self, source, level='INFO', xpath='.'):
+        """Logs the string representation of the specified element.
+
+        The element specified with `source` and `xpath` is first converted into
+        a string using `Element To String` keyword internally. The resulting
+        string is then logged using the given `level`.
+
+        The logged string is also returned.
+        """
+        string = self.element_to_string(source, xpath)
+        logger.write(string, level)
+        return string
 
     def save_xml(self, source, path, encoding='UTF-8'):
         tree = ET.ElementTree(self.get_element(source))
