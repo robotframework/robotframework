@@ -8,6 +8,9 @@ Resource         atest_resource.txt
 Clear Element
     Check Test Case    ${TESTNAME}
 
+Clear Element Returns Root Element
+    Check Test Case    ${TESTNAME}
+
 Tail Text Is Not Cleared By Default
     Check Test Case    ${TESTNAME}
 

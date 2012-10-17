@@ -14,6 +14,9 @@ Add Element As String
 Add Element With Index
     Check Test Case    ${TESTNAME}
 
+Add Element Returns Root Element
+    Check Test Case    ${TESTNAME}
+
 Remove Element
     Check Test Case    ${TESTNAME}
 
@@ -29,7 +32,10 @@ Remove Element Fails If Multiple Elements Match
 Remove Element Requires Xpath
     Check Test Case    ${TESTNAME}
 
-Remove Element Cannot Remove Root Element Fails
+Remove Element Cannot Remove Root Element
+    Check Test Case    ${TESTNAME}
+
+Remove Element Returns Root Element
     Check Test Case    ${TESTNAME}
 
 Remove Elements
@@ -44,5 +50,9 @@ Remove Elements Does Not Fail If No Element Match
 Remove Elements Requires Xpath
     Check Test Case    ${TESTNAME}
 
-Remove Elements Cannot Remove Root Element Fails
+Remove Elements Cannot Remove Root Element
     Check Test Case    ${TESTNAME}
+
+Remove Elements Returns Root Element
+    Check Test Case    ${TESTNAME}
+

@@ -8,7 +8,10 @@ Resource         atest_resource.txt
 Set Element Tag
     Check Test Case    ${TESTNAME}
 
-Set Tag Using Xpath
+Set Element Tag Using Xpath
+    Check Test Case    ${TESTNAME}
+
+Set Element Tag Returns Root Element
     Check Test Case    ${TESTNAME}
 
 Set Element Text
@@ -17,10 +20,16 @@ Set Element Text
 Set Element Text And Tail
     Check Test Case    ${TESTNAME}
 
+Set Element Text Returns Root Element
+    Check Test Case    ${TESTNAME}
+
 Set Element Attribute
     Check Test Case    ${TESTNAME}
 
 Overwrite Element Attribute
+    Check Test Case    ${TESTNAME}
+
+Set Element Attribute Returns Root Element
     Check Test Case    ${TESTNAME}
 
 Remove Element Attribute
@@ -29,5 +38,11 @@ Remove Element Attribute
 Removing Non-Existing Attribute Passes
     Check Test Case    ${TESTNAME}
 
+Remove Element Attribute Returns Root Element
+    Check Test Case    ${TESTNAME}
+
 Remove Element Attributes
+    Check Test Case    ${TESTNAME}
+
+Remove Element Attributes Returns Root Element
     Check Test Case    ${TESTNAME}

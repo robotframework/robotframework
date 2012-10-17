@@ -24,6 +24,10 @@ Add Element With Index
     ${children} =    Get Child Elements    ${XML}
     Should Be Equal    ${children[0].tag}    new
 
+Add Element Returns Root Element
+    ${root} =    Add Element    ${SIMPLE}    <new>element</new>    xpath=c2
+    Element Text Should Be    ${root}    element    xpath=c2/new
+
 Remove Element
     Remove Element    ${XML}    child
     Remove Element    ${XML}    xpath=c2
@@ -45,9 +49,13 @@ Remove Element Requires Xpath
     [Documentation]    FAIL No xpath given.
     Remove Element    ${XML}
 
-Remove Element Cannot Remove Root Element Fails
+Remove Element Cannot Remove Root Element
     [Documentation]    FAIL Cannot remove root element.
     Remove Element    ${XML}    .
+
+Remove Element Returns Root Element
+    ${root} =    Remove Element    ${SIMPLE}    xpath=c2
+    Element Should Not Exist    ${root}    xpath=c2
 
 Remove Elements
     ${tree} =    Parse XML    ${TEST}
@@ -65,7 +73,11 @@ Remove Elements Requires Xpath
     [Documentation]    FAIL No xpath given.
     Remove Elements    ${XML}
 
-Remove Elements Cannot Remove Root Element Fails
+Remove Elements Cannot Remove Root Element
     [Documentation]    FAIL Cannot remove root element.
     Remove Elements    ${XML}    .
+
+Remove Elements Returns Root Element
+    ${root} =    Remove Elements    ${SIMPLE}    xpath=c2
+    Element Should Not Exist    ${root}    xpath=c2
 

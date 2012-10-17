@@ -762,45 +762,59 @@ class XML(object):
         return string
 
     def set_element_tag(self, source, tag, xpath='.'):
+        source = self.get_element(source)
         self.get_element(source, xpath).tag = tag
+        return source
 
     def set_element_text(self, source, text=None, tail=None, xpath='.'):
+        source = self.get_element(source)
         element = self.get_element(source, xpath)
         if text is not None:
             element.text = text
         if tail is not None:
             element.tail = tail
+        return source
 
     def set_element_attribute(self, source, name, value, xpath='.'):
+        source = self.get_element(source)
         self.get_element(source, xpath).attrib[name] = value
+        return source
 
     def remove_element_attribute(self, source, name, xpath='.'):
+        source = self.get_element(source)
         try:
             self.get_element(source, xpath).attrib.pop(name)
         except KeyError:
             pass
+        return source
 
     def remove_element_attributes(self, source, xpath='.'):
+        source = self.get_element(source)
         self.get_element(source, xpath).attrib.clear()
+        return source
 
     def add_element(self, source, element, index=None, xpath='.'):
-        source = self.get_element(source, xpath)
+        source = self.get_element(source)
+        parent = self.get_element(source, xpath)
         element = self.get_element(element)
         if index is None:
-            source.append(element)
+            parent.append(element)
         else:
-            source.insert(int(index), element)
+            parent.insert(int(index), element)
+        return source
 
     def remove_element(self, source, xpath=''):
-        self._verify_removing_xpath(xpath)
         source = self.get_element(source)
+        self._verify_removing_xpath(xpath)
         self._remove_element(source, self.get_element(source, xpath))
+        return source
 
     def remove_elements(self, source, xpath=''):
-        self._verify_removing_xpath(xpath)
         source = self.get_element(source)
+        self._verify_removing_xpath(xpath)
         for element in self.get_elements(source, xpath):
             self._remove_element(source, element)
+        return source
 
     def _verify_removing_xpath(self, xpath):
         if not xpath:
@@ -822,11 +836,13 @@ class XML(object):
         return copy.deepcopy(self.get_element(source, xpath))
 
     def clear_element(self, source, xpath='.', clear_tail=False):
+        source = self.get_element(source)
         element = self.get_element(source, xpath)
         tail = element.tail
         element.clear()
         if not clear_tail:
             element.tail = tail
+        return source
 
     def save_xml(self, source, path, encoding='UTF-8'):
         tree = ET.ElementTree(self.get_element(source))
