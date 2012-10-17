@@ -1771,15 +1771,16 @@ class _Misc:
         that can be altered using `time` argument as explained below.
         Note that all checks involving strings are case-insensitive.
 
-        1) If `time` is a floating point number, it is interpreted as
-           seconds since the epoch. This documentation was originally
-           written about 1177654467 seconds after the epoch.
+        1) If `time` is a number, or a string that can be converted to
+           a number, it is interpreted as seconds since the UNIX epoch.
+           This documentation was originally written about 1177654467
+           seconds after the epoch.
 
-        2) If `time` is a valid timestamp, that time will be used. Valid
+        2) If `time` is a timestamp, that time will be used. Valid
            timestamp formats are 'YYYY-MM-DD hh:mm:ss' and 'YYYYMMDD hhmmss'.
 
         3) If `time` is equal to 'NOW' (default), the current local
-           time is used. This time is got using Python's `time.time()`
+           time is used. This time is got using Python's 'time.time()'
            function.
 
         4) If `time` is equal to 'UTC', the current time in
@@ -1787,8 +1788,8 @@ class _Misc:
            is used. This time is got using 'time.time() + time.altzone'
            in Python.
 
-        5) If `time` is in the format like 'NOW - 1 day' or 'UTC + 1
-           hour 30 min', the current local/UTC time plus/minus the time
+        5) If `time` is in the format like 'NOW - 1 day' or 'UTC + 1 hour
+           30 min', the current local/UTC time plus/minus the time
            specified with the time string is used. The time string format
            is described in an appendix of Robot Framework User Guide.
 
@@ -1823,6 +1824,8 @@ class _Misc:
         | @{time} = ['16', '08', '24']
         | @{utc} = ['12', '06', '21']
         | ${hour} = '11'
+
+        Support for UTC time is a new feature in Robot Framework 2.7.5.
         """
         return utils.get_time(format, utils.parse_time(time_))
 

@@ -1042,33 +1042,42 @@ class OperatingSystem:
         return mtime
 
     def set_modified_time(self, path, mtime):
-        """Sets the file modification time.
+        """Sets the file modification and access times.
 
-        Changes the modification and access times of the given file to the
-        value determined by `mtime`, which can be given in four different ways.
+        Changes the modification and access times of the given file to
+        the value determined by `mtime`. The time can be given in
+        different formats described below. Note that all checks
+        involving strings are case-insensitive.
 
-        1) If `mtime` is a floating point number, it is interpreted as
-           seconds since epoch (Jan 1, 1970 0:00:00). This
-           documentation is written about 1177654467 seconds since
-           epoch.
+        1) If `mtime` is a number, or a string that can be converted
+           to a number, it is interpreted as seconds since the UNIX
+           epoch (1970-01-01 00:00:00 UTC). This documentation was
+           originally written about 1177654467 seconds after the epoch.
 
-        2) If `mtime` is a valid timestamp, that time will be used. Valid
+        2) If `mtime` is a timestamp, that time will be used. Valid
            timestamp formats are 'YYYY-MM-DD hh:mm:ss' and 'YYYYMMDD hhmmss'.
 
-        3) If `mtime` is equal to 'NOW' (case-insensitive), the
-           current time is used.
+        3) If `mtime` is equal to 'NOW', the current local time is used.
+           This time is got using Python's 'time.time()' function.
 
-        4) If `mtime` is in the format 'NOW - 1 day' or 'NOW + 1 hour
-           30 min', the current time plus/minus the time specified
-           with the time string is used. The time string format is
-           described in an appendix of Robot Framework User Guide.
+        4) If `mtime` is equal to 'UTC', the current time in
+           [http://en.wikipedia.org/wiki/Coordinated_Universal_Time|UTC]
+           is used. This time is got using 'time.time() + time.altzone'
+           in Python.
+
+        5) If `mtime` is in the format like 'NOW - 1 day' or 'UTC + 1
+           hour 30 min', the current local/UTC time plus/minus the time
+           specified with the time string is used. The time string format
+           is described in an appendix of Robot Framework User Guide.
 
         Examples:
         | Set Modified Time | /path/file | 1177654467         | #(2007-04-27 9:14:27) |
         | Set Modified Time | /path/file | 2007-04-27 9:14:27 |
         | Set Modified Time | /path/file | NOW                | # The time of execution |
-        | Set Modified Time | /path/file | NOW - 1d           | # 1 day subtracted from NOW |
-        | Set Modified Time | /path/file | NOW + 1h 2min 3s   | # 1h 2min 3s added to NOW |
+        | Set Modified Time | /path/file | NOW - 1 day        | # 1 day subtracted from the local time |
+        | Set Modified Time | /path/file | UTC + 1h 2min 3s   | # 1h 2min 3s added to the UTC time |
+
+        Support for UTC time is a new feature in Robot Framework 2.7.5.
         """
         path = self._absnorm(path)
         try:
