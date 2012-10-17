@@ -73,6 +73,17 @@ Set Modified Time Using NOW
     Should Be True  ${t3}-9 <= ${t1} + (24*60*60 + 2*60*60 + 3*60 + 4) <= ${t3}
     Set Modified Time  ${TESTFILE}  NOW + invalid
 
+Set Modified Time Using UTC
+    Create File  ${TESTFILE}
+    ${now} =  Get Time  epoch
+    Set Modified Time  ${TESTFILE}  UTC
+    ${mtime} =  Get Modified Time  ${TESTFILE}  epoch
+    ${zone} =  Evaluate  time.altzone  modules=time
+    Should Be True  ${now} <= ${mtime} - ${zone} <= ${now} + 2
+    Set Modified Time  ${TESTFILE}  utc - ${zone}
+    ${mtime} =  Get Modified Time  ${TESTFILE}  epoch
+    Should Be True  ${now} <= ${mtime} <= ${now} + 4
+
 Set Modified Time Fails When Path Does Not Exist
     [Documentation]  FAIL Setting modified time of '${CURDIR}${/}does_not_exist' failed: File does not exist
     Set Modified Time  ${CURDIR}${/}does_not_exist  0

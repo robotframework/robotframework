@@ -38,6 +38,9 @@ Set Modified Time Using Invalid Timestamp
 Set Modified Time Using NOW
     Check Test Case  ${TESTNAME}
 
+Set Modified Time Using UTC
+    Check Test Case  ${TESTNAME}
+
 Set Modified Time Fails When Path Does Not Exist
     Check Test Case  ${TESTNAME}
 
