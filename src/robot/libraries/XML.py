@@ -862,7 +862,7 @@ class XML(object):
     def add_element(self, source, element, index=None, xpath='.'):
         source = self.get_element(source)
         parent = self.get_element(source, xpath)
-        element = self.get_element(element)
+        element = self.copy_element(element)
         if index is None:
             parent.append(element)
         else:

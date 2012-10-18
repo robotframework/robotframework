@@ -24,6 +24,12 @@ Add Element With Index
     ${children} =    Get Child Elements    ${XML}
     Should Be Equal    ${children[0].tag}    new
 
+Added Element Is A Copy
+    ${elem} =    Parse XML    ${NEW}
+    Add Element    ${XML}    ${elem}
+    Clear Element    ${elem}
+    Element Attribute Should Be    ${XML}    attr    value    xpath=new
+
 Add Element Returns Root Element
     ${root} =    Add Element    ${SIMPLE}    <new>element</new>    xpath=c2
     Element Text Should Be    ${root}    element    xpath=c2/new
