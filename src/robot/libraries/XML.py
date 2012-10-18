@@ -291,10 +291,11 @@ class XML(object):
         | ${xml} =  | Parse XML | ${CURDIR}/test.xml    |
         | ${root} = | Parse XML | <root><child/></root> |
 
-        For more details and examples, see `Parsing XML` section in the
-        `introduction`.
+        Use `Get Element` keyword if you want to get a certain element and not
+        the whole structure. See `Parsing XML` section for more details and
+        examples
 
-        See also `Get Element` and `Get Elements`.
+        TODO: document namespace handling (new in 2.7.5)
         """
         with ETSource(source) as source:
             root = ET.parse(source).getroot()
@@ -327,7 +328,9 @@ class XML(object):
         | ${element} = | Get Element | ${XML}     | second |
         | ${child} =   | Get Element | ${element} | child  |
 
-        See also `Parse XML` and `Get Elements`.
+        `Parse XML` is recommended for parsing XML when the whole structure
+        is needed. It must be used if there is a need to configure how XML
+        namespaces are handled.
         """
         elements = self.get_elements(source, xpath)
         if len(elements) != 1:
@@ -362,8 +365,6 @@ class XML(object):
         | Length Should Be | ${children}  | 2      |             |
         | ${children} =    | Get Elements | ${XML} | first/child |
         | Should Be Empty  |  ${children} |        |             |
-
-        See also `Get Element`.
         """
         if isinstance(source, basestring):
             source = self.parse_xml(source)
@@ -518,9 +519,6 @@ class XML(object):
         | Length Should Be | ${texts}           | 2         |             |
         | Should Be Equal  | @{texts}[0]        | more text |             |
         | Should Be Equal  | @{texts}[1]        | ${EMPTY}  |             |
-
-        See also `Get Element Text`, `Element Text Should Be` and
-        `Element Text Should Match`.
         """
         return [self.get_element_text(elem, normalize_whitespace=normalize_whitespace)
                 for elem in self.get_elements(source, xpath)]
@@ -539,16 +537,14 @@ class XML(object):
 
         The keyword passes if the text of the element is equal to the
         `expected` value, and otherwise it fails. The default error message can
-        be overridden with the `message` argument.
+        be overridden with the `message` argument.  Use `Element Text Should
+        Match` to verify the text against a pattern instead of an exact value.
 
         Examples using `${XML}` structure from the `introduction`:
         | Element Text Should Be | ${XML}       | text     | xpath=first      |
         | Element Text Should Be | ${XML}       | ${EMPTY} | xpath=second/child |
         | ${paragraph} =         | Get Element  | ${XML}   | xpath=html/p     |
         | Element Text Should Be | ${paragraph} | Text with bold and italics. | normalize_whitespace=yes |
-
-        See also `Get Element Text`, `Get Elements Texts` and
-        `Element Text Should Match`.
         """
         text = self.get_element_text(source, xpath, normalize_whitespace)
         should_be_equal(text, expected, message, values=False)
@@ -569,9 +565,6 @@ class XML(object):
         | Element Text Should Match | ${XML}       | t???   | xpath=first  |
         | ${paragraph} =            | Get Element  | ${XML} | xpath=html/p |
         | Element Text Should Match | ${paragraph} | Text with * and *. | normalize_whitespace=yes |
-
-        See also `Get Element Text`, `Get Elements Texts` and
-        `Element Text Should Be`.
         """
         text = self.get_element_text(source, xpath, normalize_whitespace)
         should_match(text, pattern, message, values=False)
@@ -594,7 +587,7 @@ class XML(object):
         | Should Be Equal | ${attribute}          | value  |    |             |
 
         See also `Get Element Attributes`, `Element Attribute Should Be`,
-        and `Element Attribute Should Match`.
+        `Element Attribute Should Match` and `Element Should Not Have Attribute`.
         """
         return self.get_element(source, xpath).get(name, default)
 
@@ -614,8 +607,7 @@ class XML(object):
         | ${attributes} = | Get Element Attributes      | ${XML} | third |
         | Should Be Empty | ${attributes}               |        |       |
 
-        See also `Get Element Attribute`, `Element Attribute Should Be`,
-        and `Element Attribute Should Match`.
+        Use `Get Element Attribute` to get the value of a single attribute.
         """
         return self.get_element(source, xpath).attrib.copy()
 
@@ -628,17 +620,18 @@ class XML(object):
         keyword.
 
         The keyword passes if the attribute `name` of the element is equal to
-        the `expected` value, and otherwise it fails. To test that the element
-        does not have certain attribute, use Python `None` (i.e. variable
-        `${NONE}`) as the `expected` value. The default error message can be
-        overridden with the `message` argument.
+        the `expected` value, and otherwise it fails. The default error message
+        can be overridden with the `message` argument.
+
+        To test that the element does not have a certain attribute, Python
+        `None` (i.e. variable `${NONE}`) can be used as the `expected` value.
+        A cleaner alternative is using `Element Should Not Have Attribute`.
 
         Examples using `${XML}` structure from the `introduction`:
         | Element Attribute Should Be | ${XML} | id | 1       | xpath=first |
         | Element Attribute Should Be | ${XML} | id | ${NONE} |             |
 
-        See also `Get Element Attribute`, `Get Element Attributes` and
-        `Element Text Should Match`.
+        See also `Element Attribute Should Match` and `Get Element Attribute`.
         """
         attr = self.get_element_attribute(source, name, xpath)
         should_be_equal(attr, expected, message, values=False)
@@ -658,9 +651,6 @@ class XML(object):
         Examples using `${XML}` structure from the `introduction`:
         | Element Attribute Should Match | ${XML} | id | ?   | xpath=first |
         | Element Attribute Should Match | ${XML} | id | c*d | xpath=third/second |
-
-        See also `Get Element Attribute`, `Get Element Attributes` and
-        `Element Text Should Be`.
         """
         attr = self.get_element_attribute(source, name, xpath)
         if attr is None:
