@@ -61,6 +61,16 @@ Element attribute should match with custom error message
     [Documentation]    FAIL Special
     Element Attribute Should Match    <tag a="1"/>    a    ??    message=Special
 
+Element should not have attribute
+    [Documentation]    FAIL Attribute 'y' exists and has value '3'.
+    Element Should Not Have Attribute    <elem/>    attr
+    Element Should Not Have Attribute    <r x="1"><c y="2"/></r>    x    xpath=c
+    Element Should Not Have Attribute    <r x="1"><c y="3"/></r>    y    xpath=c
+
+Element should not have attribute with custom error message
+    [Documentation]    FAIL Custom
+    Element Should Not Have Attribute    <elem id="1"/>    id    message=Custom
+
 Non-ASCII
     ${attr}=    Get Element Attribute    <täg ä='ö'/>    ä
     Should Be Equal    ${attr}    ö

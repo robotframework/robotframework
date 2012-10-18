@@ -43,5 +43,11 @@ Element attribute should match when no attribute exists
 Element attribute should match with custom error message
     Check Test Case    ${TESTNAME}
 
+Element should not have attribute
+    Check Test Case    ${TESTNAME}
+
+Element should not have attribute with custom error message
+    Check Test Case    ${TESTNAME}
+
 Non-ASCII
     Check Test Case    ${TESTNAME}

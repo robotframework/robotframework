@@ -657,6 +657,30 @@ class XML(object):
             raise AssertionError("Attribute '%s' does not exist." % name)
         should_match(attr, pattern, message, values=False)
 
+    def element_should_not_have_attribute(self, source, name, xpath='.', message=None):
+        """Verifies that the specified element does not have  attribute `name`.
+
+        The element whose attribute is verified is specified using `source`
+        and `xpath`. They have exactly the same semantics as with `Get Element`
+        keyword.
+
+        The keyword fails if the specified element has attribute `name`.
+        The default error message can be overridden with the `message` argument.
+
+        Examples using `${XML}` structure from the `introduction`:
+        | Element Should Not Have Attribute | ${XML} | id  |
+        | Element Should Not Have Attribute | ${XML} | xxx | xpath=first |
+
+        See also `Get Element Attribute`, `Get Element Attributes`,
+        `Element Text Should Be` and `Element Text Should Match`.
+
+        New in Robot Framework 2.7.5.
+        """
+        attr = self.get_element_attribute(source, name, xpath)
+        if attr is not None:
+            raise AssertionError(message or "Attribute '%s' exists and "
+                                            "has value '%s'." % (name, attr))
+
     def elements_should_be_equal(self, source, expected, exclude_children=False,
                                  normalize_whitespace=False):
         """Verifies that the given `source` element is equal to `expected`.
