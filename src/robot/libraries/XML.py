@@ -782,6 +782,8 @@ class XML(object):
         | Element Text Should Be | ${XML} | new text | xpath=first    |
         | Set Element Text       | ${XML} | tail=&   | xpath=html/p/b |
         | Element Text Should Be | ${XML} | Text with bold&italics. | xpath=html/p  | normalize_whitespace=yes |
+        | Set Element Text       | ${XML} | slanted  | !! | xpath=html/p/i |
+        | Element Text Should Be | ${XML} | Text with bold&slanted!! | xpath=html/p  | normalize_whitespace=yes |
 
         New in Robot Framework 2.7.5.
         """
@@ -958,6 +960,31 @@ class XML(object):
                     return parent
 
     def clear_element(self, source, xpath='.', clear_tail=False):
+        """Clears the contents of the specified element.
+
+        The element to clear is specified using `source` and `xpath`. They
+        have exactly the same semantics as with `Get Element` keyword.
+        The given `source` structure  is modified and also returned.
+
+        Clearing the element means removing its text, attributes, and children.
+        Element's tail text is not removed by default, but that can be changed
+        by giving `clear_tail` a true value (e.g. any non-empty string).
+        See `Element attributes` section for more information about tail in
+        general.
+
+        Examples using `${XML}` structure from `Example`:
+        | Clear Element            | ${XML}   | xpath=first |
+        | ${first} = | Get Element | ${XML}   | xpath=first |
+        | Elements Should Be Equal | ${first} | <first/>    |
+        | Clear Element            | ${XML}   | xpath=html/p/b | clear_tail=yes |
+        | Element Text Should Be   | ${XML}   | Text with italics. | xpath=html/p | normalize_whitespace=yes |
+        | Clear Element            | ${XML}   |
+        | Elements Should Be Equal | ${XML}   | <example/> |
+
+        Use `Remove Element` to remove the whole element.
+
+        New in Robot Framework 2.7.5.
+        """
         source = self.get_element(source)
         element = self.get_element(source, xpath)
         tail = element.tail
