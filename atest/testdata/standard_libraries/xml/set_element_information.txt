@@ -45,6 +45,11 @@ Set Element Attribute
     Set Element Attribute    ${XML}    attr    value
     Element Attribute Should Be    ${XML}    attr    value
 
+Set element Attribute should fail with empty name
+    [Documentation]    FAIL    Attribute name can not be empty.
+    Set Element Attribute    ${XML}    ${EMPTY}    value
+
+
 Overwrite Element Attribute
     Set Element Attribute    ${XML}    id    new    xpath=child
     Element Attribute Should Be    ${XML}    id    new    xpath=child

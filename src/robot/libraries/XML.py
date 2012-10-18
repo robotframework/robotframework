@@ -812,6 +812,8 @@ class XML(object):
 
         New in Robot Framework 2.7.5.
         """
+        if not name:
+            raise RuntimeError('Attribute name can not be empty.')
         source = self.get_element(source)
         self.get_element(source, xpath).attrib[name] = value
         return source

@@ -26,6 +26,9 @@ Set Element Text Returns Root Element
 Set Element Attribute
     Check Test Case    ${TESTNAME}
 
+Set element Attribute should fail with empty name
+    Check Test Case    ${TESTNAME}
+
 Overwrite Element Attribute
     Check Test Case    ${TESTNAME}
 
