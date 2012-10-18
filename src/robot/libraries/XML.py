@@ -751,7 +751,7 @@ class XML(object):
 
         The element whose tag to set is specified using `source` and
         `xpath`. They have exactly the same semantics as with `Get Element`
-        keyword. The given `source` element is modified and also returned.
+        keyword. The given `source` structure  is modified and also returned.
 
         Examples using `${XML}` structure from `Example`:
         | Set Element Tag      | ${XML}     | newTag     |
@@ -771,7 +771,7 @@ class XML(object):
 
         The element whose text to set is specified using `source` and
         `xpath`. They have exactly the same semantics as with `Get Element`
-        keyword. The given `source` element is modified and also returned.
+        keyword. The given `source` structure  is modified and also returned.
 
         Element's text and tail text are changed only if new `text` and/or
         `tail` values are given. See `Element attributes` section for more
@@ -798,7 +798,7 @@ class XML(object):
 
         The element whose attribute to set is specified using `source` and
         `xpath`. They have exactly the same semantics as with `Get Element`
-        keyword. The given `source` element is modified and also returned.
+        keyword. The given `source` structure  is modified and also returned.
 
         It is possible to both set new attributes and to overwrite existing.
         Use `Remove Element Attribute` or `Remove Element Attributes` for
@@ -821,7 +821,7 @@ class XML(object):
 
         The element whose attribute to remove is specified using `source` and
         `xpath`. They have exactly the same semantics as with `Get Element`
-        keyword. The given `source` element is modified and also returned.
+        keyword. The given `source` structure  is modified and also returned.
 
         It is not a failure to remove a non-existing attribute. Use `Remove
         Element Attributes` to remove all attributes and `Set Element Attribute`
@@ -844,7 +844,7 @@ class XML(object):
 
         The element whose attributes to remove is specified using `source` and
         `xpath`. They have exactly the same semantics as with `Get Element`
-        keyword. The given `source` element is modified and also returned.
+        keyword. The given `source` structure  is modified and also returned.
 
         Use `Remove Element Attribute` to remove a single attribute and
         `Set Element Attribute` to set them.
@@ -860,6 +860,33 @@ class XML(object):
         return source
 
     def add_element(self, source, element, index=None, xpath='.'):
+        """Adds a child element to the specified element.
+
+        The element to whom to add the new element is specified using `source`
+        and `xpath`. They have exactly the same semantics as with `Get Element`
+        keyword. The given `source` structure  is modified and also returned.
+
+        The `element` to add can be specified as a path to an XML file or
+        as a string containing XML, or it can be an already parsed XML element.
+        The element is copied before adding so modifying either the original
+        or the added element has no effect on the other
+        .
+        The element is added as the last child by default, but a custom index
+        can be used to alter the position. Indices start from zero (0 = first
+        position, 1 = second position, etc.), and negative numbers refer to
+        positions at the end (-1 = second last position, -2 = third last, etc.).
+
+        Examples using `${XML}` structure from `Example`:
+        | Add Element | ${XML} | <new id="x"><c1/></new> |
+        | Add Element | ${XML} | <c2/> | xpath=new |
+        | Add Element | ${XML} | <c3/> | index=1 | xpath=new |
+        | ${new} = | Get Element | ${XML} | new |
+        | Elements Should Be Equal | ${new} | <new id="x"><c1/><c3/><c2/></new> |
+
+        Use `Remove Element` or `Remove Elements` to remove elements.
+
+        New in Robot Framework 2.7.5.
+        """
         source = self.get_element(source)
         parent = self.get_element(source, xpath)
         element = self.copy_element(element)
@@ -870,12 +897,44 @@ class XML(object):
         return source
 
     def remove_element(self, source, xpath=''):
+        """Removes the element matching `xpath` from the `source` structure.
+
+        The element to remove from the `source` is specified with `xpath`
+        using the same semantics as with `Get Element` keyword. The given
+        `source` structure  is modified and also returned.
+
+        The keyword fails if `xpath` does not match exactly one element.
+        Use `Remove Elements` to remove all matched elements and `Add Element`
+        to add new ones.
+
+        Examples using `${XML}` structure from `Example`:
+        | Remove Element           | ${XML} | xpath=second |
+        | Element Should Not Exist | ${XML} | xpath=second |
+
+        New in Robot Framework 2.7.5.
+        """
         source = self.get_element(source)
         self._verify_removing_xpath(xpath)
         self._remove_element(source, self.get_element(source, xpath))
         return source
 
     def remove_elements(self, source, xpath=''):
+        """Removes all elements matching `xpath` from the `source` structure.
+
+        The elements to remove from the `source` are specified with `xpath`
+        using the same semantics as with `Get Elements` keyword. The given
+        `source` structure  is modified and also returned.
+
+        It is not a failure if `xpath` matches no elements. Use `Remove Element`
+        to remove exactly one element and `Add Element` to add new ones.
+
+        Examples using `${XML}` structure from `Example`:
+        | Remove Elements          | ${XML} | xpath=*/child      |
+        | Element Should Not Exist | ${XML} | xpath=second/child |
+        | Element Should Not Exist | ${XML} | xpath=third/child  |
+
+        New in Robot Framework 2.7.5.
+        """
         source = self.get_element(source)
         self._verify_removing_xpath(xpath)
         for element in self.get_elements(source, xpath):
