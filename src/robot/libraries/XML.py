@@ -747,11 +747,44 @@ class XML(object):
         comparator.compare(self.get_element(source), self.get_element(expected))
 
     def set_element_tag(self, source, tag, xpath='.'):
+        """Sets the tag of the specified element to `tag`.
+
+        The element whose tag to set is specified using `source` and
+        `xpath`. They have exactly the same semantics as with `Get Element`
+        keyword. The given `source` element is modified and also returned.
+
+        Examples using `${XML}` structure from `Example`:
+        | Set Element Tag      | ${XML}     | newTag     |
+        | Should Be Equal      | ${XML.tag} | newTag     |
+        | Set Element Tag      | ${XML}     | xxx        | xpath=second/child |
+        | Element Should Exist | ${XML}     | second/xxx |
+        | Element Should Not Exist | ${XML} | second/child |
+
+        New in Robot Framework 2.7.5.
+        """
         source = self.get_element(source)
         self.get_element(source, xpath).tag = tag
         return source
 
     def set_element_text(self, source, text=None, tail=None, xpath='.'):
+        """Sets text and/or tail text of the specified element.
+
+        The element whose text to set is specified using `source` and
+        `xpath`. They have exactly the same semantics as with `Get Element`
+        keyword. The given `source` element is modified and also returned.
+
+        Element's text and tail text are changed only if new `text` and/or
+        `tail` values are given. See `Element attributes` section for more
+        information about text and tail in general.
+
+        Examples using `${XML}` structure from `Example`:
+        | Set Element Text       | ${XML} | new text | xpath=first    |
+        | Element Text Should Be | ${XML} | new text | xpath=first    |
+        | Set Element Text       | ${XML} | tail=&   | xpath=html/p/b |
+        | Element Text Should Be | ${XML} | Text with bold&italics. | xpath=html/p  | normalize_whitespace=yes |
+
+        New in Robot Framework 2.7.5.
+        """
         source = self.get_element(source)
         element = self.get_element(source, xpath)
         if text is not None:
@@ -761,11 +794,45 @@ class XML(object):
         return source
 
     def set_element_attribute(self, source, name, value, xpath='.'):
+        """Sets attribute `name` of the specified element to `value`
+
+        The element whose attribute to set is specified using `source` and
+        `xpath`. They have exactly the same semantics as with `Get Element`
+        keyword. The given `source` element is modified and also returned.
+
+        It is possible to both set new attributes and to overwrite existing.
+        Use `Remove Element Attribute` or `Remove Element Attributes` for
+        removing them.
+
+        Examples using `${XML}` structure from `Example`:
+        | Set Element Attribute       | ${XML} | attr | value |
+        | Element Attribute Should Be | ${XML} | attr | value |
+        | Set Element Attribute       | ${XML} | id   | new   | xpath=first |
+        | Element Attribute Should Be | ${XML} | id   | new   | xpath=first |
+
+        New in Robot Framework 2.7.5.
+        """
         source = self.get_element(source)
         self.get_element(source, xpath).attrib[name] = value
         return source
 
     def remove_element_attribute(self, source, name, xpath='.'):
+        """Removes attribute `name` from the specified element.
+
+        The element whose attribute to remove is specified using `source` and
+        `xpath`. They have exactly the same semantics as with `Get Element`
+        keyword. The given `source` element is modified and also returned.
+
+        It is not a failure to remove a non-existing attribute. Use `Remove
+        Element Attributes` to remove all attributes and `Set Element Attribute`
+        to set them.
+
+        Examples using `${XML}` structure from `Example`:
+        | Remove Element Attribute          | ${XML} | id | xpath=first |
+        | Element Should Not Have Attribute | ${XML} | id | xpath=first |
+
+        New in Robot Framework 2.7.5.
+        """
         source = self.get_element(source)
         attrib = self.get_element(source, xpath).attrib
         if name in attrib:
@@ -773,6 +840,21 @@ class XML(object):
         return source
 
     def remove_element_attributes(self, source, xpath='.'):
+        """Removes all attributes from the specified element.
+
+        The element whose attributes to remove is specified using `source` and
+        `xpath`. They have exactly the same semantics as with `Get Element`
+        keyword. The given `source` element is modified and also returned.
+
+        Use `Remove Element Attribute` to remove a single attribute and
+        `Set Element Attribute` to set them.
+
+        Examples using `${XML}` structure from `Example`:
+        | Remove Element Attributes         | ${XML} | xpath=first |
+        | Element Should Not Have Attribute | ${XML} | id | xpath=first |
+
+        New in Robot Framework 2.7.5.
+        """
         source = self.get_element(source)
         self.get_element(source, xpath).attrib.clear()
         return source
