@@ -996,6 +996,26 @@ class XML(object):
         return source
 
     def copy_element(self, source, xpath='.'):
+        """Returns a copy of the specified element.
+
+        The element to copy is specified using `source` and `xpath`. They
+        have exactly the same semantics as with `Get Element` keyword.
+
+        If the copy or the original element is modified afterwards, the changes
+        have no effect on the other.
+
+        Examples using `${XML}` structure from `Example`:
+        | ${elem} =  | Get Element  | ${XML}  | xpath=first |
+        | ${copy1} = | Copy Element | ${elem} |
+        | ${copy2} = | Copy Element | ${XML}  | xpath=first |
+        | Set Element Text         | ${XML}   | new text    | xpath=first      |
+        | Set Element Attribute    | ${copy1} | id          | new              |
+        | Elements Should Be Equal | ${elem}  | <first id="1">new text</first> |
+        | Elements Should Be Equal | ${copy1} | <first id="new">text</first>   |
+        | Elements Should Be Equal | ${copy2} | <first id="1">text</first>     |
+
+        New in Robot Framework 2.7.5.
+        """
         return copy.deepcopy(self.get_element(source, xpath))
 
     def element_to_string(self, source, xpath='.'):
@@ -1027,6 +1047,20 @@ class XML(object):
         return string
 
     def save_xml(self, source, path, encoding='UTF-8'):
+        """Saves the given element to the specified file.
+
+        The element to save is specified with `source` using the same
+        semantics as with `Get Element` keyword.
+
+        The file where the element is saved is denoted with `path` and the
+        encoding to use with `encoding`. The resulting file contains an XML
+        declaration.
+
+        Use `Element To String` if you just need a string representation of
+        the element,
+
+        New in Robot Framework 2.7.5.
+        """
         tree = ET.ElementTree(self.get_element(source))
         kwargs = {'xml_declaration': True} if ET.VERSION >= '1.3' else {}
         # Need to explicitly open/close files because older ET versions don't
