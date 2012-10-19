@@ -36,15 +36,21 @@ def ExecutionResult(*sources, **options):
     if not sources:
         raise DataError('One or more data source needed.')
     if len(sources) > 1:
-        return CombinedResult(ExecutionResult(src, **options) for src in sources)
-    source = ETSource(sources[0])
+        return _combined_result(sources, options)
+    return _single_result(sources[0], options)
+
+def _combined_result(sources, options):
+    return CombinedResult(ExecutionResult(src, **options) for src in sources)
+
+def _single_result(source, options):
+    ets = ETSource(source)
     try:
-        return ExecutionResultBuilder(source, **options).build(Result(sources[0]))
+        return ExecutionResultBuilder(ets, **options).build(Result(source))
     except IOError, err:
         error = err.strerror
     except:
         error = get_error_message()
-    raise DataError("Reading XML source '%s' failed: %s" % (unicode(source), error))
+    raise DataError("Reading XML source '%s' failed: %s" % (unicode(ets), error))
 
 
 class ExecutionResultBuilder(object):
@@ -56,19 +62,21 @@ class ExecutionResultBuilder(object):
 
     def build(self, result):
         handler = XmlElementHandler(result)
-        # Faster attribute lookup inside for loop
-        start, end = handler.start, handler.end
         with self._source as source:
-            for event, elem in self._get_context(source):
-                start(elem) if event == 'start' else end(elem)
+            self._parse(source, handler.start, handler.end)
         SuiteTeardownFailureHandler(result.generator).visit_suite(result.suite)
         return result
 
-    def _get_context(self, source):
+    def _parse(self, source, start, end):
         context = ET.iterparse(source, events=('start', 'end'))
         if not self._include_keywords:
             context = self._omit_keywords(context)
-        return context
+        for event, elem in context:
+            if event == 'start':
+                start(elem)
+            else:
+                end(elem)
+                elem.clear()
 
     def _omit_keywords(self, context):
         kws = 0

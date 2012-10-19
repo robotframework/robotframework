@@ -27,7 +27,6 @@ class XmlElementHandler(object):
     def end(self, elem):
         result, handler = self._stack.pop()
         handler.end(elem, result)
-        elem.clear()
 
 
 class _Handler(object):
