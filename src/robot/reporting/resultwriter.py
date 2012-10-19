@@ -81,7 +81,11 @@ class Results(object):
     @property
     def result(self):
         if self._result is None:
-            self._result = ExecutionResult(*self._data_sources)
+            include_keywords = bool(self._settings.log or
+                                    self._settings.output or
+                                    self._settings.xunit)
+            self._result = ExecutionResult(include_keywords=include_keywords,
+                                           *self._data_sources)
             self._result.configure(self._settings.status_rc,
                                    self._settings.suite_config,
                                    self._settings.statistics_config)
