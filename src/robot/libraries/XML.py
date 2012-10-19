@@ -462,6 +462,8 @@ class XML(object):
         """
         if isinstance(source, basestring):
             source = self.parse_xml(source)
+        if not xpath:
+            raise RuntimeError('No xpath given.')
         if xpath == '.':  # ET < 1.3 does not support '.' alone.
             return [source]
         return source.findall(self._get_xpath(xpath))
@@ -1018,7 +1020,6 @@ class XML(object):
         New in Robot Framework 2.7.5.
         """
         source = self.get_element(source)
-        self._verify_removing_xpath(xpath)
         self._remove_element(source, self.get_element(source, xpath), remove_tail)
         return source
 
@@ -1043,16 +1044,9 @@ class XML(object):
         New in Robot Framework 2.7.5.
         """
         source = self.get_element(source)
-        self._verify_removing_xpath(xpath)
         for element in self.get_elements(source, xpath):
             self._remove_element(source, element, remove_tail)
         return source
-
-    def _verify_removing_xpath(self, xpath):
-        if not xpath:
-            raise RuntimeError('No xpath given.')
-        if xpath == '.':
-            raise RuntimeError('Cannot remove root element.')
 
     def _remove_element(self, root, element, remove_tail=False):
         parent = self._find_parent(root, element)
@@ -1065,6 +1059,7 @@ class XML(object):
             for child in parent:
                 if child is element:
                     return parent
+        raise RuntimeError('Cannot remove root element.')
 
     def _preserve_tail(self, element, parent):
         index = list(parent).index(element)
