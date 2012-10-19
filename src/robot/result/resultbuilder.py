@@ -33,7 +33,7 @@ def ExecutionResult(*sources):
     if not sources:
         raise DataError('One or more data source needed.')
     if len(sources) > 1:
-        return CombinedResult(*[ExecutionResult(src) for src in sources])
+        return CombinedResult(ExecutionResult(src) for src in sources)
     source = ETSource(sources[0])
     try:
         return ExecutionResultBuilder(source).build(Result(sources[0]))

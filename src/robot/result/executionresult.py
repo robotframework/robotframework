@@ -64,7 +64,7 @@ class Result(object):
 
 class CombinedResult(Result):
 
-    def __init__(self, *others):
+    def __init__(self, others):
         Result.__init__(self)
         for other in others:
             self.add_result(other)
