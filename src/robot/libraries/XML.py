@@ -28,15 +28,13 @@ should_match = BuiltIn().should_match
 
 
 class XML(object):
-    """Robot Framework test library for XML verification.
+    """Robot Framework test library for verifying and modifying XML documents.
 
     As the name implies, `XML` is a test library for verifying contents of XML
     files. In practice it is a pretty thin wrapper on top of Python's
     [http://docs.python.org/library/xml.etree.elementtree.html|ElementTree XML API].
 
-    = Key usages =
-
-    The library has the following three main usages:
+    The library has the following main usages:
 
     - Parsing an XML file, or a string containing XML, into an XML element
       structure and finding certain elements from it for for further analysis
@@ -45,8 +43,18 @@ class XML(object):
       (e.g. `Get Element Text` and `Get Element Attribute`).
     - Directly verifying text, attributes, or whole elements
       (e.g `Element Text Should Be` and `Elements Should Be Equal`).
-    - Modifying XML and saving it (e.g. `Set Element Text`, `Add Element`,
+    - Modifying XML and saving it (e.g. `Set Element Text`, `Add Element`
       and `Save XML`).
+
+    == Table of contents ==
+
+    - `Parsing XML`
+    - `Example`
+    - `Finding elements with xpath`
+    - `Element attributes`
+    - `Handling XML namespaces`
+    - `Shortcuts`
+    - `Keywords`
 
     = Parsing XML =
 
@@ -73,12 +81,12 @@ class XML(object):
     contents both using keywords in this library and in `BuiltIn` and
     `Collections` libraries. How to use xpath expressions to find elements
     and what attributes the returned elements contain are discussed, with
-    more examples, in the subsequent sections.
+    more examples, in `Finding elements with xpath` and `Element attributes`
+    sections.
 
-    In the example, `${XML}` refers to the following example XML content.
-    `${XML}` could either be a path to file containing the structure or it
-    could contain the XML itself. The same example structure is used also in
-    the subsequent examples.
+    In this example, as well as in many other examples in this documentation,
+    `${XML}` refers to the following example XML document. In practice `${XML}`
+    could either be a path to an XML file or it could contain the XML itself.
 
     | <example>
     |   <first id="1">text</first>
@@ -260,18 +268,96 @@ class XML(object):
     | ${3rd} =          | `Get Element`       | ${XML} | third  |
     | `Should Be Empty` | ${3rd.attrib}       |        |        |
 
-    = Handling namespaces =
+    = Handling XML namespaces =
 
-    ElementTree handles XML namespaces in by adding namespace to tag names
-    in so called Clark Notation. This is inconvenient especially with xpaths,
-    and by default this library strips those namespaces and moves them to
-    `xmlns` attribute instead.
+    ElementTree handles possible namespaces in XML documents by adding the
+    namespace URI to tag names in so called Clark Notation. That is
+    inconvenient especially with xpaths, and by default this library strips
+    those namespaces away and moves them to `xmlns` attribute instead. That can
+    be avoided by passing `keep_clark_notation` argument to `Parse XML` keyword.
+    The pros and cons of both approaches are discussed in more detail below.
+
+    == How ElementTree handles namespaces ==
+
+    If an XML document has namespaces, ElementTree adds namespace information
+    to tag names in [http://www.jclark.com/xml/xmlns.htm|Clark Notation]
+    (e.g. `{http://ns.uri}tag` and removes original `xmlns` attributes. This
+    is done both with default namespaces and with namespaces with a prefix.
+    How it works in practice is illustrated by the following example, where
+    `${NS}` variable contains this XML document:
+
+    | <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
+    |                 xmlns="http://www.w3.org/1999/xhtml">
+    |   <xsl:template match="/">
+    |     <html></html>
+    |   </xsl:template>
+    | </xsl:stylesheet>
+
+    | ${root} = | `Parse XML` | ${NS} | keep_clark_notation=yes |
+    | `Should Be Equal` | ${root.tag} | {http://www.w3.org/1999/XSL/Transform}stylesheet |
+    | `Element Should Exist` | ${root} | {http://www.w3.org/1999/XSL/Transform}template/{http://www.w3.org/1999/xhtml}html |
+    | `Should Be Empty` | ${root.attrib} |
+
+    As you can see, including the namespace URI in tag names makes xpaths
+    really long and complex.
+
+    If you save the XML, ElementTree moves namespace information back to `xmlns`
+    attributes. Unfortunately it does not restore the original prefixes:
+
+    | <ns0:stylesheet xmlns:ns0="http://www.w3.org/1999/XSL/Transform">
+    |   <ns0:template match="/">
+    |     <ns1:html xmlns:ns1="http://www.w3.org/1999/xhtml"></ns1:html>
+    |   </ns0:template>
+    | </ns0:stylesheet>
+
+    The resulting output is semantically same as the original, but mangling
+    prefixes like this may still not be desirable. Notice also that the actual
+    output depends slightly on ElementTree version.
 
     == Default namespace handling ==
 
-    == ElementTree namespaces ==
+    Because the way ElementTree handles namespaces makes xpaths so complicated,
+    this library, by default, strips namespaces from tag names and moves that
+    information back to `xmlns` attributes. How this works in practice is shown
+    by the example below, where `${NS}` variable contains the same XML
+    document as in the previous example.
 
+    | ${root} = | `Parse XML` | ${NS} |
+    | `Should Be Equal` | ${root.tag} | stylesheet |
+    | `Element Should Exist` | ${root} | template/html |
+    | `Element Attribute Should Be` | ${root} | xmlns | http://www.w3.org/1999/XSL/Transform |
+    | `Element Attribute Should Be` | ${root} | xmlns | http://www.w3.org/1999/xhtml | xpath=template/html |
 
+    Now that tags do not contain namespace information, xpaths are simple again.
+
+    A minor limitation of this approach is that namespace prefixes are lost.
+    As a result the saved output is not exactly same as the original one in
+    this case either:
+
+    | <stylesheet xmlns="http://www.w3.org/1999/XSL/Transform">
+    |   <template match="/">
+    |     <html xmlns="http://www.w3.org/1999/xhtml"></html>
+    |   </template>
+    | </stylesheet>
+
+    Also this output is semantically same as the original. If the original XML
+    had only default namespaces, the output would also looks identical.
+
+    == Attribute namespaces ==
+
+    Attributes in XML documents are, by default, in the same namespaces as
+    the element they belong to. It is possible to use different namespaces
+    by using prefixes, but this is pretty rare.
+
+    If an attribute has a namespace prefix, ElementTree will replace it with
+    Clark Notation the same way it handles elements. Because stripping
+    namespaces from attributes could cause attribute conflicts, this library
+    does not handle attribute namespaces at all. Thus the following example
+    works the same way regardless how namespaces are handled.
+
+    | ${root} = | `Parse XML` | <root id="1" ns:id="2" xmlns:ns="http://my.ns"/> |
+    | `Element Attribute Should Be` | ${root} | id | 1 |
+    | `Element Attribute Should Be` | ${root} | {http://my.ns}id | 2 |
     """
 
     ROBOT_LIBRARY_SCOPE = 'GLOBAL'
@@ -279,7 +365,7 @@ class XML(object):
     _whitespace = re.compile('\s+')
     _xml_declaration = re.compile('^<\?xml .*\?>\n')
 
-    def parse_xml(self, source, etree_namespaces=False):
+    def parse_xml(self, source, keep_clark_notation=False):
         """Parses the given XML file or string into an element structure.
 
         The `source` can either be a path to an XML file or a string containing
@@ -287,30 +373,38 @@ class XML(object):
         [http://docs.python.org/library/xml.etree.elementtree.html#xml.etree.ElementTree.Element|element structure]
         and the root element is returned.
 
+        As discussed in `Handling XML namespaces` section, this keyword, by
+        default, strips possible namespaces added by ElementTree into tag names.
+        This typically eases handling XML documents with namespaces
+        considerably. If you do not want that to happen, or want to avoid
+        the small overhead of going through the element structure when your
+        XML does not have namespaces, you can disable this feature by giving
+        `keep_clark_notation` argument a true value (e.g. any non-empty string).
+
         Examples:
-        | ${xml} =  | Parse XML | ${CURDIR}/test.xml    |
         | ${root} = | Parse XML | <root><child/></root> |
+        | ${xml} =  | Parse XML | ${CURDIR}/test.xml    | no namespace cleanup |
 
         Use `Get Element` keyword if you want to get a certain element and not
         the whole structure. See `Parsing XML` section for more details and
         examples
 
-        TODO: document namespace handling (new in 2.7.5)
+        Stripping namespaces is a new feature in Robot Framework 2.7.5.
         """
         with ETSource(source) as source:
             root = ET.parse(source).getroot()
-        if not etree_namespaces:
+        if not keep_clark_notation:
             self._strip_namespaces(root)
         return root
 
-    def _strip_namespaces(self, elem, current=None):
+    def _strip_namespaces(self, elem, current_ns=None):
         if elem.tag.startswith('{') and '}' in elem.tag:
             ns, elem.tag = elem.tag[1:].split('}', 1)
-            if ns != current:
+            if ns != current_ns:
                 elem.set('xmlns', ns)
-                current = ns
+                current_ns = ns
         for child in elem:
-            self._strip_namespaces(child, current)
+            self._strip_namespaces(child, current_ns)
 
     def get_element(self, source, xpath='.'):
         """Returns an element in the `source` matching the `xpath`.
