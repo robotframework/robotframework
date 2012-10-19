@@ -26,6 +26,15 @@ Remove Element
 Remove Non-Direct Child Element
     Check Test Case    ${TESTNAME}
 
+Remove Element Keeps Tail By Default
+    Check Test Case    ${TESTNAME}
+
+Remove Element Can Be Configured To Remove Tail
+    Check Test Case    ${TESTNAME}
+
+Remove Element Keeps Tail When Parent or Sibling Contains No Text
+    Check Test Case    ${TESTNAME}
+
 Remove Element Fails If No Element Match
     Check Test Case    ${TESTNAME}
 
@@ -48,6 +57,12 @@ Remove Elements Can Remove All Child Elements
     Check Test Case    ${TESTNAME}
 
 Remove Elements Does Not Fail If No Element Match
+    Check Test Case    ${TESTNAME}
+
+Remove Elements Keeps Tail By Default
+    Check Test Case    ${TESTNAME}
+
+Remove Elements Can Be Configured To Remove Tail
     Check Test Case    ${TESTNAME}
 
 Remove Elements Requires Xpath

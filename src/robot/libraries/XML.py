@@ -994,7 +994,7 @@ class XML(object):
             parent.insert(int(index), element)
         return source
 
-    def remove_element(self, source, xpath=''):
+    def remove_element(self, source, xpath='', remove_tail=False):
         """Removes the element matching `xpath` from the `source` structure.
 
         The element to remove from the `source` is specified with `xpath`
@@ -1002,21 +1002,27 @@ class XML(object):
         `source` structure  is modified and also returned.
 
         The keyword fails if `xpath` does not match exactly one element.
-        Use `Remove Elements` to remove all matched elements and `Add Element`
-        to add new ones.
+        Use `Remove Elements` to remove all matched elements.
+
+        Element's tail text is not removed by default, but that can be changed
+        by giving `remove_tail` a true value (e.g. any non-empty string).
+        See `Element attributes` section for more information about tail in
+        general.
 
         Examples using `${XML}` structure from `Example`:
         | Remove Element           | ${XML} | xpath=second |
         | Element Should Not Exist | ${XML} | xpath=second |
+        | Remove Element           | ${XML} | xpath=html/p/b | remove_tail=yes |
+        | Element Text Should Be   | ${XML} | Text with italics. | xpath=html/p | normalize_whitespace=yes |
 
         New in Robot Framework 2.7.5.
         """
         source = self.get_element(source)
         self._verify_removing_xpath(xpath)
-        self._remove_element(source, self.get_element(source, xpath))
+        self._remove_element(source, self.get_element(source, xpath), remove_tail)
         return source
 
-    def remove_elements(self, source, xpath=''):
+    def remove_elements(self, source, xpath='', remove_tail=False):
         """Removes all elements matching `xpath` from the `source` structure.
 
         The elements to remove from the `source` are specified with `xpath`
@@ -1025,6 +1031,9 @@ class XML(object):
 
         It is not a failure if `xpath` matches no elements. Use `Remove Element`
         to remove exactly one element and `Add Element` to add new ones.
+
+        Element's tail text is not removed by default, but that can be changed
+        by using `remove_tail` argument similarly as with `Remove Element`.
 
         Examples using `${XML}` structure from `Example`:
         | Remove Elements          | ${XML} | xpath=*/child      |
@@ -1036,7 +1045,7 @@ class XML(object):
         source = self.get_element(source)
         self._verify_removing_xpath(xpath)
         for element in self.get_elements(source, xpath):
-            self._remove_element(source, element)
+            self._remove_element(source, element, remove_tail)
         return source
 
     def _verify_removing_xpath(self, xpath):
@@ -1045,8 +1054,10 @@ class XML(object):
         if xpath == '.':
             raise RuntimeError('Cannot remove root element.')
 
-    def _remove_element(self, root, element):
+    def _remove_element(self, root, element, remove_tail=False):
         parent = self._find_parent(root, element)
+        if element.tail and not remove_tail:
+            self._preserve_tail(element, parent)
         parent.remove(element)
 
     def _find_parent(self, root, element):
@@ -1054,6 +1065,14 @@ class XML(object):
             for child in parent:
                 if child is element:
                     return parent
+
+    def _preserve_tail(self, element, parent):
+        index = list(parent).index(element)
+        if index == 0:
+            parent.text = (parent.text or '') + element.tail
+        else:
+            sibling = parent[index-1]
+            sibling.tail = (sibling.tail or '') + element.tail
 
     def clear_element(self, source, xpath='.', clear_tail=False):
         """Clears the contents of the specified element.
