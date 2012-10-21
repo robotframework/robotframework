@@ -42,6 +42,9 @@ def create_jsdata(outxml, target):
     })
     result = Results(outxml, settings).js_result
     config = {'logURL': 'log.html',
+              'title': 'This is a long long title. A very long title indeed. '
+                       'And it even contains some stuff to <esc&ape>. '
+                       'Yet it should still look good.',
               'minLevel': 'DEBUG',
               'defaultLevel': 'DEBUG',
               'reportURL': 'report.html',
