@@ -61,6 +61,7 @@ class ExecutionResultBuilder(object):
         self._include_keywords = include_keywords
 
     def build(self, result):
+        # Parsing is performance optimized. Do not change without profiling!
         handler = XmlElementHandler(result)
         with self._source as source:
             self._parse(source, handler.start, handler.end)
@@ -79,13 +80,15 @@ class ExecutionResultBuilder(object):
                 elem.clear()
 
     def _omit_keywords(self, context):
-        kws = 0
+        started_kws = 0
         for event, elem in context:
-            if event == 'start' and elem.tag == 'kw':
-                kws += 1
-            if not kws:
+            start = event == 'start'
+            kw = elem.tag == 'kw'
+            if kw and start:
+                started_kws += 1
+            if not started_kws:
                 yield event, elem
-            else:
+            elif not start:
                 elem.clear()
-            if event == 'end' and elem.tag == 'kw':
-                kws -= 1
+            if kw and not start:
+                started_kws -= 1
