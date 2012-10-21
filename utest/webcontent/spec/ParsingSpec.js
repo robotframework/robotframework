@@ -132,11 +132,6 @@ describe("Handling Suite", function () {
         expect(message.text).toEqual("Slept 100 milliseconds");
     });
 
-    it("should parse timestamp", function () {
-        var timestamp = window.testdata.generated();
-        expect(timestamp).toEqual(new Date(window.output.baseMillis+window.output.generatedMillis));
-    });
-
 });
 
 describe("Setups and teardowns", function () {
