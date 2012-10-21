@@ -28,7 +28,7 @@ function setTitle(suiteName, type) {
 
 function addHeader() {
     createGenerated(window.output.generatedTimestamp,
-                    window.testdata.generated().getTime()
+                    window.output.generatedMillis
     ).appendTo($('#header'));
     $.tmpl('' +
         '<div id="top_right_header"><div id="report_or_log_link">' +

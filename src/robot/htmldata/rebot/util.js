@@ -112,7 +112,12 @@ window.util = function () {
         return numString;
     }
 
+    function timestamp(millis) {
+        return new Date(window.output.baseMillis + millis);
+    }
+
     function createGeneratedAgoString(generatedMillis) {
+        generatedMillis = timestamp(generatedMillis);
         function timeString(time, shortUnit) {
             var unit = {'y': 'year', 'd': 'day', 'h': 'hour',
                         'm': 'minute', 's': 'second'}[shortUnit];
@@ -165,6 +170,7 @@ window.util = function () {
         dateFromDate: dateFromDate,
         dateTimeFromDate: dateTimeFromDate,
         formatElapsed: formatElapsed,
+        timestamp: timestamp,
         createGeneratedAgoString: createGeneratedAgoString
     };
 }();

@@ -19,21 +19,19 @@ window.testdata = function () {
         return "elementId_" + idCounter;
     }
 
-    function timestamp(millis) {
-        return new Date(window.output.baseMillis + millis);
-    }
-
     function times(stats) {
         var startMillis = stats[1];
         var elapsed = stats[2];
         if (startMillis == null)
             return [null, null, elapsed];
-        return [timestamp(startMillis), timestamp(startMillis + elapsed), elapsed];
+        return [util.timestamp(startMillis),
+                util.timestamp(startMillis + elapsed),
+                elapsed];
     }
 
     function message(element, strings) {
         return addElement(model.Message(LEVELS[element[1]],
-                                        timestamp(element[0]),
+                                        util.timestamp(element[0]),
                                         strings.get(element[2]),
                                         strings.get(element[3])));
     }
@@ -245,10 +243,6 @@ window.testdata = function () {
         }
     }
 
-    function generated() {
-        return timestamp(window.output.generatedMillis);
-    }
-
     function errors() {
         var iterator = new Object();
         iterator.counter = 0;
@@ -303,7 +297,6 @@ window.testdata = function () {
         errors: errors,
         find: findById,
         findPathTo: findPathTo,
-        generated: generated,
         statistics: statistics,
         getStringStore: getStringStore,
         LEVELS: LEVELS
