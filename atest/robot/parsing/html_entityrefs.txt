@@ -6,18 +6,18 @@ Resource        atest_resource.txt
 
 *** Test Cases ***
 Scandinavian Letters
-    Check Test Case  Scandinavian Letters
+    Check Test Case    ${TEST NAME}
 
 XML Escapes
-    Check Test Case  XML Escapes
+    Check Test Case    ${TEST NAME}
 
 Other Escapes
-    Check Test Case  Other Escapes
+    Check Test Case    ${TEST NAME}
 
 Numerical Escapes
     [Documentation]  These are character references
-    Check Test Case  Numerical Escapes
+    Check Test Case    ${TEST NAME}
 
 Variables using escapes
-    Check Test Case  Variables using escapes
+    Check Test Case    ${TEST NAME}
 

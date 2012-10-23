@@ -14,10 +14,9 @@
 
 
 import HTMLParser
-import sys
 from htmlentitydefs import entitydefs
 
-extra_entitydefs = {'nbsp': ' ',  'apos': "'", 'tilde': '~'}
+
 NON_BREAKING_SPACE = u'\xA0'
 
 
@@ -29,16 +28,16 @@ class HtmlReader(HTMLParser.HTMLParser):
     def __init__(self):
         HTMLParser.HTMLParser.__init__(self)
         self._encoding = 'ISO-8859-1'
-        self._handlers = { 'table_start' : self.table_start,
-                           'table_end'   : self.table_end,
-                           'tr_start'    : self.tr_start,
-                           'tr_end'      : self.tr_end,
-                           'td_start'    : self.td_start,
-                           'td_end'      : self.td_end,
-                           'th_start'    : self.td_start,
-                           'th_end'      : self.td_end,
-                           'br_start'    : self.br_start,
-                           'meta_start'  : self.meta_start }
+        self._handlers = {'table_start' : self.table_start,
+                          'table_end'   : self.table_end,
+                          'tr_start'    : self.tr_start,
+                          'tr_end'      : self.tr_end,
+                          'td_start'    : self.td_start,
+                          'td_end'      : self.td_end,
+                          'th_start'    : self.td_start,
+                          'th_end'      : self.td_end,
+                          'br_start'    : self.br_start,
+                          'meta_start'  : self.meta_start}
 
     def read(self, htmlfile, populator):
         self.populator = populator
@@ -46,12 +45,15 @@ class HtmlReader(HTMLParser.HTMLParser):
         self.current_row = None
         self.current_cell = None
         for line in htmlfile.readlines():
-            self.feed(line)
+            self.feed(self._decode(line))
         # Calling close is required by the HTMLParser but may cause problems
         # if the same instance of our HtmlParser is reused. Currently it's
         # used only once so there's no problem.
         self.close()
         self.populator.eof()
+
+    def _decode(self, line):
+        return line.decode(self._encoding)
 
     def handle_starttag(self, tag, attrs):
         handler = self._handlers.get(tag+'_start')
@@ -63,22 +65,20 @@ class HtmlReader(HTMLParser.HTMLParser):
         if handler is not None:
             handler()
 
-    def handle_data(self, data, decode=True):
+    def handle_data(self, data):
         if self.state == self.IGNORE or self.current_cell is None:
             return
-        if decode:
-            data = data.decode(self._encoding)
         if NON_BREAKING_SPACE in data:
             data = data.replace(NON_BREAKING_SPACE, ' ')
         self.current_cell.append(data)
 
     def handle_entityref(self, name):
         value = self._handle_entityref(name)
-        self.handle_data(value, decode=False)
+        self.handle_data(value)
 
     def _handle_entityref(self, name):
-        if extra_entitydefs.has_key(name):
-            return extra_entitydefs[name]
+        if name == 'apos':  # missing from entitydefs
+            return "'"
         try:
             value = entitydefs[name]
         except KeyError:
@@ -89,12 +89,12 @@ class HtmlReader(HTMLParser.HTMLParser):
 
     def handle_charref(self, number):
         value = self._handle_charref(number)
-        self.handle_data(value, decode=False)
+        self.handle_data(value)
 
     def _handle_charref(self, number):
-        if number.lower().startswith('x'):
-            number = number[1:]
+        if number.startswith(('x', 'X')):
             base = 16
+            number = number[1:]
         else:
             base = 10
         try:
@@ -133,13 +133,8 @@ class HtmlReader(HTMLParser.HTMLParser):
         if self.current_cell is not None:
             self.td_end()
         if self.state == self.INITIAL:
-            if len(self.current_row) > 0:
-                if self.populator.start_table(self.current_row):
-                    self.state = self.PROCESS
-                else:
-                    self.state = self.IGNORE
-            else:
-                self.state = self.IGNORE
+            accepted = self.populator.start_table(self.current_row)
+            self.state = self.PROCESS if accepted else self.IGNORE
         elif self.state == self.PROCESS:
             self.populator.add(self.current_row)
         self.current_row = None
@@ -158,8 +153,7 @@ class HtmlReader(HTMLParser.HTMLParser):
         self.current_cell = None
 
     def br_start(self, attrs=None):
-        if self.current_cell is not None and self.state != self.IGNORE:
-            self.current_cell.append('\n')
+        self.handle_data('\n')
 
     def meta_start(self, attrs):
         encoding = self._get_encoding_from_meta(attrs)
@@ -178,7 +172,7 @@ class HtmlReader(HTMLParser.HTMLParser):
                     token = token.strip()
                     if token.lower().startswith('charset='):
                         encoding = token[8:]
-        return valid_http_equiv and encoding or None
+        return encoding if valid_http_equiv else None
 
     def _get_encoding_from_pi(self, data):
         data = data.strip()
@@ -193,18 +187,3 @@ class HtmlReader(HTMLParser.HTMLParser):
                     encoding = encoding[1:-1]
                 return encoding
         return None
-
-
-# Workaround for following bug in Python 2.6: http://bugs.python.org/issue3932
-if sys.version_info[:2] > (2, 5):
-    def unescape_from_py25(self, s):
-        if '&' not in s:
-            return s
-        s = s.replace("&lt;", "<")
-        s = s.replace("&gt;", ">")
-        s = s.replace("&apos;", "'")
-        s = s.replace("&quot;", '"')
-        s = s.replace("&amp;", "&") # Must be last
-        return s
-
-    HTMLParser.HTMLParser.unescape = unescape_from_py25
