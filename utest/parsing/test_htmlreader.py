@@ -94,9 +94,9 @@ class TestHtmlReader(unittest.TestCase):
         for name in VALID_TABLES:
             self.reader.feed('<table>')
             self.reader.feed(row_template % (name, 'Value 1', 'Value2'))
-            row_data = [ ['Just', 'some', 'data'],
-                         ['here', '', 'for'],
-                         ['', 'these', 'rows'] ]
+            row_data = [['Just', 'some', 'data'],
+                        ['here', '', 'for'],
+                        ['', 'these', 'rows']]
             for data in row_data:
                 self.reader.feed(row_template % tuple(data))
             assert_equals(self.reader.state, self.reader.PROCESS)
@@ -111,41 +111,41 @@ class TestEntityAndCharRefs(unittest.TestCase):
         self.reader = HtmlReader()
         self.reader.handle_data = self._handle_response
 
-    def _handle_response(self, value, decode):
+    def _handle_response(self, value):
         self.response = value
 
     def test_handle_entiryrefs(self):
-        for inp, exp in [ ('nbsp', ' '),
-                          ('apos', "'"),
-                          ('tilde', '~'),
-                          ('lt', '<'),
-                          ('gt', '>'),
-                          ('amp', '&'),
-                          ('quot', '"'),
-                          ('auml', u'\u00E4'),
-                          ('ouml', u'\u00F6'),
-                          ('uuml', u'\u00FC'),
-                          ('aring', u'\u00E5'),
-                          ('ntilde', u'\u00F1'),
-                          ('Auml', u'\u00C4'),
-                          ('Ouml', u'\u00D6'),
-                          ('Uuml', u'\u00DC'),
-                          ('Aring', u'\u00C5'),
-                          ('Ntilde', u'\u00D1'),
-                          ('nabla', u'\u2207'),
-                          ('ldquo', u'\u201c'),
-                          ('invalid', '&invalid;') ]:
+        for inp, exp in [('nbsp', u'\xa0'),
+                         ('apos', "'"),
+                         ('tilde', u'\u02dc'),
+                         ('lt', '<'),
+                         ('gt', '>'),
+                         ('amp', '&'),
+                         ('quot', '"'),
+                         ('auml', u'\xE4'),
+                         ('ouml', u'\xF6'),
+                         ('uuml', u'\xFC'),
+                         ('aring', u'\xE5'),
+                         ('ntilde', u'\xF1'),
+                         ('Auml', u'\xC4'),
+                         ('Ouml', u'\xD6'),
+                         ('Uuml', u'\xDC'),
+                         ('Aring', u'\xC5'),
+                         ('Ntilde', u'\xD1'),
+                         ('nabla', u'\u2207'),
+                         ('ldquo', u'\u201c'),
+                         ('invalid', '&invalid;')]:
             self.reader.handle_entityref(inp)
             msg = '%s: %r != %r' % (inp,  self.response, exp)
             assert_equals(self.response, exp, msg, False)
 
     def test_handle_charefs(self):
-        for inp, exp in [ ('82', 'R'),
-                          ('228', u'\u00E4'),
-                          ('xe4', u'\u00E4'),
-                          ('XE4', u'\u00E4'),
-                          ('X2603', u'\u2603'),
-                          ('invalid', '&#invalid;') ]:
+        for inp, exp in [('82', 'R'),
+                         ('228', u'\xE4'),
+                         ('xe4', u'\xE4'),
+                         ('XE4', u'\xE4'),
+                         ('X2603', u'\u2603'),
+                         ('invalid', '&#invalid;')]:
             self.reader.handle_charref(inp)
             msg = '%s: %r != %r' % (inp,  self.response, exp)
             assert_equals(self.response, exp, msg, False)
