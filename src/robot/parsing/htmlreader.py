@@ -18,6 +18,7 @@ import sys
 from htmlentitydefs import entitydefs
 
 extra_entitydefs = {'nbsp': ' ',  'apos': "'", 'tilde': '~'}
+NON_BREAKING_SPACE = u'\xA0'
 
 
 class HtmlReader(HTMLParser.HTMLParser):
@@ -67,6 +68,8 @@ class HtmlReader(HTMLParser.HTMLParser):
             return
         if decode:
             data = data.decode(self._encoding)
+        if NON_BREAKING_SPACE in data:
+            data = data.replace(NON_BREAKING_SPACE, ' ')
         self.current_cell.append(data)
 
     def handle_entityref(self, name):
