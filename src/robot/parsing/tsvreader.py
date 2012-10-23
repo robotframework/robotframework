@@ -39,11 +39,11 @@ class TsvReader:
         row = row.decode('UTF-8')
         if NBSP in row:
             row = row.replace(NBSP, ' ')
-        return row
+        return row.rstrip()
 
     @classmethod
     def split_row(cls, row):
-        return row.rstrip().split('\t')
+        return row.split('\t')
 
     def _process(self, cell):
         if len(cell) > 1 and cell[0] == cell[-1] == '"':

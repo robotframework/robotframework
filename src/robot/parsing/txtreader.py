@@ -14,7 +14,7 @@
 
 import re
 
-from tsvreader import TsvReader
+from .tsvreader import TsvReader
 
 
 class TxtReader(TsvReader):
@@ -23,7 +23,8 @@ class TxtReader(TsvReader):
 
     @classmethod
     def split_row(cls, row):
-        row = row.rstrip().replace('\t', '  ')
+        if '\t' in row:
+            row = row.replace('\t', '  ')
         if not row.startswith('| '):
             return cls._space_splitter.split(row)
         row = row[1:-1] if row.endswith(' |') else row[1:]

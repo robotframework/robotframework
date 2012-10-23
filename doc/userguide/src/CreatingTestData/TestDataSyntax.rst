@@ -496,7 +496,8 @@ Handling whitespace
 '''''''''''''''''''
 
 Robot Framework handles whitespace, such as spaces, newlines and tabs,
-the same way as they are handled in HTML. This means that Robot Framework:
+the same way as they are handled in HTML. This means that
+Robot Framework:
 
 - Removes leading and trailing whitespace in all cells.
 - Changes multiple consecutive spaces into single spaces.
