@@ -30,4 +30,4 @@ class TxtReader(TsvReader):
         return [cell.strip() for cell in cls._pipe_splitter.split(row)]
 
     def _process(self, cell):
-        return cell.decode('UTF-8')
+        return cell
