@@ -523,6 +523,13 @@ like :var:`${SPACE * 8}` which makes handling consecutive spaces very simple.
           are equivalent. An exception to this rule is that the whitespace
           character is not ignored inside the `extended variable syntax`_.
 
+.. note:: Starting from Robot Framework 2.7.5, non-breaking spaces are
+          replaced with normal spaces regardless the test data format.
+          This is done to avoid hard-to-debug errors when a non-breaking
+          space is accidentally used instead of a normal space. If real
+          non-breaking spaces are needed in test data, it is possible to
+          create variables containing them, for example, in `variable files`_.
+
 __ `Space and empty variables`_
 
 Dividing test data to several rows
