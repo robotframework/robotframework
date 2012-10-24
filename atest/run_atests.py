@@ -64,7 +64,7 @@ ARGUMENTS = ' '.join('''
 
 
 def atests(interpreter_path, *params):
-    interpreter = splitext(basename(interpreter_path))[0]
+    interpreter = _get_interpreter_basename(interpreter_path)
     resultdir, tempdir = _get_result_and_temp_dirs(interpreter)
     args = ARGUMENTS % {
         'PYTHONPATH' : join(CURDIR, 'resources'),
@@ -87,6 +87,12 @@ def atests(interpreter_path, *params):
     signal.signal(signal.SIGINT, signal.SIG_IGN)
     return subprocess.call(command.split(), env=environ)
 
+def _get_interpreter_basename(interpreter):
+    interpreter = basename(interpreter)
+    base, ext  = splitext(interpreter)
+    if ext.lower() in ('.sh', '.bat', '.cmd', '.exe'):
+        return base
+    return interpreter
 
 def _get_result_and_temp_dirs(interpreter):
     resultdir = join(CURDIR, 'results', interpreter)
