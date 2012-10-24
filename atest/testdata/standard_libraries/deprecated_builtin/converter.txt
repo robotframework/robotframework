@@ -6,7 +6,7 @@ Integer
     ${minus42}    Integer    -42
     Fail Unless Ints Equal    ${minus42}    -42
     ${googol}    Integer    10000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
-    Fail Unless    ${googol} == 10**100
+    Fail Unless    ${googol} == 10**100L
 
 Float
     ${minus10}    Float    -10.000
