@@ -7,6 +7,8 @@
 				<xs:element name="statistics" type="statistics" minOccurs="0"/>
 				<xs:element name="errors" type="errors" minOccurs="0"/>
 			</xs:sequence>
+			<xs:attribute name="generator" type="xs:string"/>
+			<xs:attribute name="generated" type="xs:string"/>
 			<xs:anyAttribute processContents="lax"/>
 		</xs:complexType>
 	</xs:element>
@@ -47,21 +49,39 @@
 			<xs:attribute name="type" type="xs:string"/>
 			<xs:attribute name="timeout" type="xs:string"/>
 	</xs:complexType>
+ <xs:attribute name="status">
+  <xs:simpleType>
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="PASS"/>
+      <xs:enumeration value="FAIL"/>
+    </xs:restriction>
+  </xs:simpleType>
+</xs:attribute>
 	<xs:complexType name="status">
 	    <xs:simpleContent>
             <xs:extension base="xs:string">
-			<xs:attribute name="status" type="xs:string"/>
+			<xs:attribute ref="status"/>
 			<xs:attribute name="endtime" type="xs:string"/>
 			<xs:attribute name="starttime" type="xs:string"/>
 			<xs:attribute name="critical" type="xs:string"/>
             </xs:extension>
         </xs:simpleContent>
     </xs:complexType>
+ <xs:attribute name="level">
+  <xs:simpleType>
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="TRACE"/>
+      <xs:enumeration value="DEBUG"/>
+      <xs:enumeration value="INFO"/>
+      <xs:enumeration value="WARN"/>
+    </xs:restriction>
+  </xs:simpleType>
+</xs:attribute>
 	<xs:complexType name="msg">
 	    <xs:simpleContent>
             <xs:extension base="xs:string">
 			<xs:attribute name="timestamp" type="xs:string"/>
-			<xs:attribute name="level" type="xs:string"/>
+			<xs:attribute ref="level"/>
 			<xs:attribute name="html" type="xs:string"/>
             </xs:extension>
         </xs:simpleContent>
@@ -115,6 +135,7 @@
             </xs:extension>
         </xs:simpleContent>
 	</xs:complexType>
+
 	<xs:complexType name="errors">
 			<xs:sequence>
 			    <xs:element name="error" type="xs:string" minOccurs="0" maxOccurs="unbounded"/>
