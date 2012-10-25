@@ -1,144 +1,143 @@
 <?xml version="1.0" encoding="utf-8"?>
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
-	<xs:element name="robot">
-		<xs:complexType>
-			<xs:sequence>
-				<xs:element name="suite" type="suite"/>
-				<xs:element name="statistics" type="statistics" minOccurs="0"/>
-				<xs:element name="errors" type="errors" minOccurs="0"/>
-			</xs:sequence>
-			<xs:attribute name="generator" type="xs:string"/>
-			<xs:attribute name="generated" type="xs:string"/>
-			<xs:anyAttribute processContents="lax"/>
-		</xs:complexType>
-	</xs:element>
-	<xs:complexType name="suite">
-			<xs:all>
-			    <xs:element name="kw" type="kw" maxOccurs="unbounded"  minOccurs="0"/>
-				<xs:element name="suite" type="suite" maxOccurs="unbounded"  minOccurs="0"/>
-				<xs:element name="test" type="test" maxOccurs="unbounded"  minOccurs="0"/>
-				<xs:element name="doc" type="xs:string"  minOccurs="0"/>
-				<xs:element name="metadata" type="metadata" minOccurs="0"/>
-				<xs:element name="status" type="status"/>
-			</xs:all>
-			<xs:attribute name="name" type="xs:string"/>
-			<xs:attribute name="source" type="xs:string"/>
-			<xs:attribute name="id" type="xs:string"/>
-	</xs:complexType>
-	<xs:complexType name="test">
-			<xs:all>
-			    <xs:element name="kw" type="kw" maxOccurs="unbounded"  minOccurs="0"/>
-			    <xs:element name="msg" type="msg" minOccurs="0"/>
-				<xs:element name="doc" type="xs:string"  minOccurs="0"/>
-				<xs:element name="tags" type="tags" minOccurs="0"/>
-				<xs:element name="status" type="status"/>
-			</xs:all>
-			<xs:attribute name="name" type="xs:string"/>
-			<xs:attribute name="id" type="xs:string"/>
-			<xs:attribute name="timeout" type="xs:string"/>
-	</xs:complexType>
-	<xs:complexType name="kw">
-			<xs:all>
-				<xs:element name="doc" type="xs:string"  minOccurs="0"/>
-				<xs:element name="arguments" type="arguments" minOccurs="0"/>
-			    <xs:element name="kw" type="kw" maxOccurs="unbounded"  minOccurs="0"/>
-				<xs:element name="msg" type="msg" maxOccurs="unbounded" minOccurs="0"/>
-				<xs:element name="status" type="status"/>
-			</xs:all>
-			<xs:attribute name="name" type="xs:string"/>
-			<xs:attribute name="type" type="xs:string"/>
-			<xs:attribute name="timeout" type="xs:string"/>
-	</xs:complexType>
- <xs:attribute name="status">
-  <xs:simpleType>
-    <xs:restriction base="xs:string">
-      <xs:enumeration value="PASS"/>
-      <xs:enumeration value="FAIL"/>
-    </xs:restriction>
-  </xs:simpleType>
-</xs:attribute>
-	<xs:complexType name="status">
-	    <xs:simpleContent>
+    <xs:element name="robot">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="suite" type="suite"/>
+                <xs:element name="statistics" type="statistics" minOccurs="0"/>
+                <xs:element name="errors" type="errors" minOccurs="0"/>
+            </xs:sequence>
+            <xs:attribute name="generator" type="xs:string"/>
+            <xs:attribute name="generated" type="xs:string"/>
+            <xs:anyAttribute processContents="lax"/>
+        </xs:complexType>
+    </xs:element>
+    <xs:complexType name="suite">
+        <xs:all>
+            <xs:element name="kw" type="kw" maxOccurs="unbounded" minOccurs="0"/>
+            <xs:element name="suite" type="suite" maxOccurs="unbounded" minOccurs="0"/>
+            <xs:element name="test" type="test" maxOccurs="unbounded" minOccurs="0"/>
+            <xs:element name="doc" type="xs:string" minOccurs="0"/>
+            <xs:element name="metadata" type="metadata" minOccurs="0"/>
+            <xs:element name="status" type="status"/>
+        </xs:all>
+        <xs:attribute name="name" type="xs:string"/>
+        <xs:attribute name="source" type="xs:string"/>
+        <xs:attribute name="id" type="xs:string"/>
+    </xs:complexType>
+    <xs:complexType name="test">
+        <xs:all>
+            <xs:element name="kw" type="kw" maxOccurs="unbounded" minOccurs="0"/>
+            <xs:element name="msg" type="msg" minOccurs="0"/>
+            <xs:element name="doc" type="xs:string" minOccurs="0"/>
+            <xs:element name="tags" type="tags" minOccurs="0"/>
+            <xs:element name="status" type="status"/>
+        </xs:all>
+        <xs:attribute name="name" type="xs:string"/>
+        <xs:attribute name="id" type="xs:string"/>
+        <xs:attribute name="timeout" type="xs:string"/>
+    </xs:complexType>
+    <xs:complexType name="kw">
+        <xs:all>
+            <xs:element name="doc" type="xs:string" minOccurs="0"/>
+            <xs:element name="arguments" type="arguments" minOccurs="0"/>
+            <xs:element name="kw" type="kw" maxOccurs="unbounded" minOccurs="0"/>
+            <xs:element name="msg" type="msg" maxOccurs="unbounded" minOccurs="0"/>
+            <xs:element name="status" type="status"/>
+        </xs:all>
+        <xs:attribute name="name" type="xs:string"/>
+        <xs:attribute name="type" type="xs:string"/>
+        <xs:attribute name="timeout" type="xs:string"/>
+    </xs:complexType>
+    <xs:attribute name="status">
+        <xs:simpleType>
+            <xs:restriction base="xs:string">
+                <xs:enumeration value="PASS"/>
+                <xs:enumeration value="FAIL"/>
+            </xs:restriction>
+        </xs:simpleType>
+    </xs:attribute>
+    <xs:complexType name="status">
+        <xs:simpleContent>
             <xs:extension base="xs:string">
-			<xs:attribute ref="status"/>
-			<xs:attribute name="endtime" type="xs:string"/>
-			<xs:attribute name="starttime" type="xs:string"/>
-			<xs:attribute name="critical" type="xs:string"/>
+                <xs:attribute ref="status"/>
+                <xs:attribute name="endtime" type="xs:string"/>
+                <xs:attribute name="starttime" type="xs:string"/>
+                <xs:attribute name="critical" type="xs:string"/>
             </xs:extension>
         </xs:simpleContent>
     </xs:complexType>
- <xs:attribute name="level">
-  <xs:simpleType>
-    <xs:restriction base="xs:string">
-      <xs:enumeration value="TRACE"/>
-      <xs:enumeration value="DEBUG"/>
-      <xs:enumeration value="INFO"/>
-      <xs:enumeration value="WARN"/>
-    </xs:restriction>
-  </xs:simpleType>
-</xs:attribute>
-	<xs:complexType name="msg">
-	    <xs:simpleContent>
+    <xs:attribute name="level">
+        <xs:simpleType>
+            <xs:restriction base="xs:string">
+                <xs:enumeration value="TRACE"/>
+                <xs:enumeration value="DEBUG"/>
+                <xs:enumeration value="INFO"/>
+                <xs:enumeration value="WARN"/>
+            </xs:restriction>
+        </xs:simpleType>
+    </xs:attribute>
+    <xs:complexType name="msg">
+        <xs:simpleContent>
             <xs:extension base="xs:string">
-			<xs:attribute name="timestamp" type="xs:string"/>
-			<xs:attribute ref="level"/>
-			<xs:attribute name="html" type="xs:string"/>
+                <xs:attribute name="timestamp" type="xs:string"/>
+                <xs:attribute ref="level"/>
+                <xs:attribute name="html" type="xs:string"/>
             </xs:extension>
         </xs:simpleContent>
     </xs:complexType>
-	<xs:complexType name="arguments">
-			<xs:sequence>
-				<xs:element name="arg" type="xs:string"  minOccurs="0" maxOccurs="unbounded"/>
-			</xs:sequence>
+    <xs:complexType name="arguments">
+        <xs:sequence>
+            <xs:element name="arg" type="xs:string" minOccurs="0" maxOccurs="unbounded"/>
+        </xs:sequence>
     </xs:complexType>
-	<xs:complexType name="tags">
-			<xs:sequence>
-				<xs:element name="tag" type="xs:string"  minOccurs="0" maxOccurs="unbounded"/>
-			</xs:sequence>
+    <xs:complexType name="tags">
+        <xs:sequence>
+            <xs:element name="tag" type="xs:string" minOccurs="0" maxOccurs="unbounded"/>
+        </xs:sequence>
     </xs:complexType>
-	<xs:complexType name="metadata">
-			<xs:sequence>
-				<xs:element name="item" type="metadataItem"  minOccurs="0" maxOccurs="unbounded"/>
-			</xs:sequence>
+    <xs:complexType name="metadata">
+        <xs:sequence>
+            <xs:element name="item" type="metadataItem" minOccurs="0" maxOccurs="unbounded"/>
+        </xs:sequence>
     </xs:complexType>
-	<xs:complexType name="metadataItem">
-	    <xs:simpleContent>
+    <xs:complexType name="metadataItem">
+        <xs:simpleContent>
             <xs:extension base="xs:string">
-			<xs:attribute name="name" type="xs:string"/>
+                <xs:attribute name="name" type="xs:string"/>
             </xs:extension>
         </xs:simpleContent>
-    </xs:complexType>    
-	<xs:complexType name="statistics">
-			<xs:all>
-			    <xs:element name="total" type="stats"/>
-			    <xs:element name="tag" type="stats"/>
-				<xs:element name="suite" type="stats"/>
-			</xs:all>
-	</xs:complexType>
+    </xs:complexType>
+    <xs:complexType name="statistics">
+        <xs:all>
+            <xs:element name="total" type="stats"/>
+            <xs:element name="tag" type="stats"/>
+            <xs:element name="suite" type="stats"/>
+        </xs:all>
+    </xs:complexType>
     <xs:complexType name="stats">
-			<xs:sequence>
-			    <xs:element name="stat" type="stat" minOccurs="0" maxOccurs="unbounded"/>
-			</xs:sequence>
-	</xs:complexType>	
+        <xs:sequence>
+            <xs:element name="stat" type="stat" minOccurs="0" maxOccurs="unbounded"/>
+        </xs:sequence>
+    </xs:complexType>
     <xs:complexType name="stat">
-	    <xs:simpleContent>
+        <xs:simpleContent>
             <xs:extension base="xs:string">
-			<xs:attribute name="fail" type="xs:integer"/>
-			<xs:attribute name="critical" type="xs:string"/>
-			<xs:attribute name="pass" type="xs:integer"/>
-			<xs:attribute name="info" type="xs:string"/>
-			<xs:attribute name="links" type="xs:string"/>
-			<xs:attribute name="doc" type="xs:string"/>
-			<xs:attribute name="combined" type="xs:string"/>
-			<xs:attribute name="id" type="xs:string"/>
-			<xs:attribute name="name" type="xs:string"/>
+                <xs:attribute name="fail" type="xs:integer"/>
+                <xs:attribute name="critical" type="xs:string"/>
+                <xs:attribute name="pass" type="xs:integer"/>
+                <xs:attribute name="info" type="xs:string"/>
+                <xs:attribute name="links" type="xs:string"/>
+                <xs:attribute name="doc" type="xs:string"/>
+                <xs:attribute name="combined" type="xs:string"/>
+                <xs:attribute name="id" type="xs:string"/>
+                <xs:attribute name="name" type="xs:string"/>
             </xs:extension>
         </xs:simpleContent>
-	</xs:complexType>
-
-	<xs:complexType name="errors">
-			<xs:sequence>
-			    <xs:element name="error" type="xs:string" minOccurs="0" maxOccurs="unbounded"/>
-			</xs:sequence>
-	</xs:complexType>		
+    </xs:complexType>
+    <xs:complexType name="errors">
+        <xs:sequence>
+            <xs:element name="error" type="xs:string" minOccurs="0" maxOccurs="unbounded"/>
+        </xs:sequence>
+    </xs:complexType>
 </xs:schema>
