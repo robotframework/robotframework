@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
-	
 	<xs:element name="robot">
 		<xs:complexType>
 			<xs:sequence>
@@ -12,38 +11,38 @@
 		</xs:complexType>
 	</xs:element>
 	<xs:complexType name="suite">
-			<xs:sequence>
+			<xs:all>
 			    <xs:element name="kw" type="kw" maxOccurs="unbounded"  minOccurs="0"/>
 				<xs:element name="suite" type="suite" maxOccurs="unbounded"  minOccurs="0"/>
 				<xs:element name="test" type="test" maxOccurs="unbounded"  minOccurs="0"/>
 				<xs:element name="doc" type="xs:string"  minOccurs="0"/>
 				<xs:element name="metadata" type="metadata" minOccurs="0"/>
 				<xs:element name="status" type="status"/>
-			</xs:sequence>
+			</xs:all>
 			<xs:attribute name="name" type="xs:string"/>
 			<xs:attribute name="source" type="xs:string"/>
 			<xs:attribute name="id" type="xs:string"/>
 	</xs:complexType>
 	<xs:complexType name="test">
-			<xs:sequence>
+			<xs:all>
 			    <xs:element name="kw" type="kw" maxOccurs="unbounded"  minOccurs="0"/>
 			    <xs:element name="msg" type="msg" minOccurs="0"/>
 				<xs:element name="doc" type="xs:string"  minOccurs="0"/>
 				<xs:element name="tags" type="tags" minOccurs="0"/>
 				<xs:element name="status" type="status"/>
-			</xs:sequence>
+			</xs:all>
 			<xs:attribute name="name" type="xs:string"/>
 			<xs:attribute name="id" type="xs:string"/>
 			<xs:attribute name="timeout" type="xs:string"/>
 	</xs:complexType>
 	<xs:complexType name="kw">
-			<xs:sequence>
+			<xs:all>
 				<xs:element name="doc" type="xs:string"  minOccurs="0"/>
 				<xs:element name="arguments" type="arguments" minOccurs="0"/>
 			    <xs:element name="kw" type="kw" maxOccurs="unbounded"  minOccurs="0"/>
 				<xs:element name="msg" type="msg" maxOccurs="unbounded" minOccurs="0"/>
 				<xs:element name="status" type="status"/>
-			</xs:sequence>
+			</xs:all>
 			<xs:attribute name="name" type="xs:string"/>
 			<xs:attribute name="type" type="xs:string"/>
 			<xs:attribute name="timeout" type="xs:string"/>
@@ -77,7 +76,6 @@
 				<xs:element name="tag" type="xs:string"  minOccurs="0" maxOccurs="unbounded"/>
 			</xs:sequence>
     </xs:complexType>
-
 	<xs:complexType name="metadata">
 			<xs:sequence>
 				<xs:element name="item" type="metadataItem"  minOccurs="0" maxOccurs="unbounded"/>
@@ -90,13 +88,12 @@
             </xs:extension>
         </xs:simpleContent>
     </xs:complexType>    
-    
 	<xs:complexType name="statistics">
-			<xs:sequence>
+			<xs:all>
 			    <xs:element name="total" type="stats"/>
 			    <xs:element name="tag" type="stats"/>
 				<xs:element name="suite" type="stats"/>
-			</xs:sequence>
+			</xs:all>
 	</xs:complexType>
     <xs:complexType name="stats">
 			<xs:sequence>
