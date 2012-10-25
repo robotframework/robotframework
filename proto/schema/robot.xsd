@@ -6,27 +6,47 @@
 			<xs:sequence>
 				<xs:element name="suite" type="suite"/>
 				<xs:element name="statistics" type="statistics" minOccurs="0"/>
+				<xs:element name="errors" type="errors" minOccurs="0"/>
 			</xs:sequence>
 			<xs:anyAttribute processContents="lax"/>
 		</xs:complexType>
 	</xs:element>
 	<xs:complexType name="suite">
 			<xs:sequence>
-			    <xs:element name="doc" type="xs:string"  minOccurs="0"/>
-			    <xs:element name="metadata" type="metadata" minOccurs="0"/>
+			    <xs:element name="kw" type="kw" maxOccurs="unbounded"  minOccurs="0"/>
 				<xs:element name="suite" type="suite" maxOccurs="unbounded"  minOccurs="0"/>
 				<xs:element name="test" type="test" maxOccurs="unbounded"  minOccurs="0"/>
+				<xs:element name="doc" type="xs:string"  minOccurs="0"/>
+				<xs:element name="metadata" type="metadata" minOccurs="0"/>
 				<xs:element name="status" type="status"/>
 			</xs:sequence>
 			<xs:attribute name="name" type="xs:string"/>
+			<xs:attribute name="source" type="xs:string"/>
+			<xs:attribute name="id" type="xs:string"/>
 	</xs:complexType>
 	<xs:complexType name="test">
 			<xs:sequence>
+			    <xs:element name="kw" type="kw" maxOccurs="unbounded"  minOccurs="0"/>
+			    <xs:element name="msg" type="msg" minOccurs="0"/>
 				<xs:element name="doc" type="xs:string"  minOccurs="0"/>
 				<xs:element name="tags" type="tags" minOccurs="0"/>
 				<xs:element name="status" type="status"/>
 			</xs:sequence>
 			<xs:attribute name="name" type="xs:string"/>
+			<xs:attribute name="id" type="xs:string"/>
+			<xs:attribute name="timeout" type="xs:string"/>
+	</xs:complexType>
+	<xs:complexType name="kw">
+			<xs:sequence>
+				<xs:element name="doc" type="xs:string"  minOccurs="0"/>
+				<xs:element name="arguments" type="arguments" minOccurs="0"/>
+			    <xs:element name="kw" type="kw" maxOccurs="unbounded"  minOccurs="0"/>
+				<xs:element name="msg" type="msg" maxOccurs="unbounded" minOccurs="0"/>
+				<xs:element name="status" type="status"/>
+			</xs:sequence>
+			<xs:attribute name="name" type="xs:string"/>
+			<xs:attribute name="type" type="xs:string"/>
+			<xs:attribute name="timeout" type="xs:string"/>
 	</xs:complexType>
 	<xs:complexType name="status">
 	    <xs:simpleContent>
@@ -34,8 +54,23 @@
 			<xs:attribute name="status" type="xs:string"/>
 			<xs:attribute name="endtime" type="xs:string"/>
 			<xs:attribute name="starttime" type="xs:string"/>
+			<xs:attribute name="critical" type="xs:string"/>
             </xs:extension>
         </xs:simpleContent>
+    </xs:complexType>
+	<xs:complexType name="msg">
+	    <xs:simpleContent>
+            <xs:extension base="xs:string">
+			<xs:attribute name="timestamp" type="xs:string"/>
+			<xs:attribute name="level" type="xs:string"/>
+			<xs:attribute name="html" type="xs:string"/>
+            </xs:extension>
+        </xs:simpleContent>
+    </xs:complexType>
+	<xs:complexType name="arguments">
+			<xs:sequence>
+				<xs:element name="arg" type="xs:string"  minOccurs="0" maxOccurs="unbounded"/>
+			</xs:sequence>
     </xs:complexType>
 	<xs:complexType name="tags">
 			<xs:sequence>
@@ -44,11 +79,17 @@
     </xs:complexType>
 
 	<xs:complexType name="metadata">
+			<xs:sequence>
+				<xs:element name="item" type="metadataItem"  minOccurs="0" maxOccurs="unbounded"/>
+			</xs:sequence>
+    </xs:complexType>
+	<xs:complexType name="metadataItem">
 	    <xs:simpleContent>
             <xs:extension base="xs:string">
+			<xs:attribute name="name" type="xs:string"/>
             </xs:extension>
         </xs:simpleContent>
-    </xs:complexType>
+    </xs:complexType>    
     
 	<xs:complexType name="statistics">
 			<xs:sequence>
@@ -68,7 +109,18 @@
 			<xs:attribute name="fail" type="xs:integer"/>
 			<xs:attribute name="critical" type="xs:string"/>
 			<xs:attribute name="pass" type="xs:integer"/>
+			<xs:attribute name="info" type="xs:string"/>
+			<xs:attribute name="links" type="xs:string"/>
+			<xs:attribute name="doc" type="xs:string"/>
+			<xs:attribute name="combined" type="xs:string"/>
+			<xs:attribute name="id" type="xs:string"/>
+			<xs:attribute name="name" type="xs:string"/>
             </xs:extension>
         </xs:simpleContent>
+	</xs:complexType>
+	<xs:complexType name="errors">
+			<xs:sequence>
+			    <xs:element name="error" type="xs:string" minOccurs="0" maxOccurs="unbounded"/>
+			</xs:sequence>
 	</xs:complexType>		
 </xs:schema>
