@@ -1,0 +1,3498 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<robot generated="20121024 15:44:38.937" generator="Robot trunk 20120906 (Python 2.7.2 on darwin)">
+<suite source="/Users/jmalinen/Documents/workspace/robot/atest/robot/standard_libraries/deprecated_builtin" id="s1" name="Deprecated Builtin">
+<suite source="/Users/jmalinen/Documents/workspace/robot/atest/robot/standard_libraries/deprecated_builtin/converter.txt" id="s1-s1" name="Converter">
+<kw type="setup" name="atest_resource.Run Tests" timeout="">
+<doc></doc>
+<arguments>
+<arg>${EMPTY}</arg>
+<arg>standard_libraries/deprecated_builtin/converter.txt</arg>
+</arguments>
+<kw type="kw" name="atest_resource.Run Tests Helper" timeout="">
+<doc></doc>
+<arguments>
+<arg>${options}</arg>
+<arg>@{data list}</arg>
+</arguments>
+<kw type="kw" name="${data string} = atest_resource.Set Variables And Get Datasources" timeout="">
+<doc></doc>
+<arguments>
+<arg>@{data list}</arg>
+</arguments>
+<kw type="kw" name="BuiltIn.Set Suite Variable" timeout="">
+<doc>Makes a variable available everywhere within the scope of the current suite.</doc>
+<arguments>
+<arg>$SUITE</arg>
+<arg>${NONE}</arg>
+</arguments>
+<msg timestamp="20121024 15:44:39.068" level="INFO">${SUITE} = None</msg>
+<status status="PASS" endtime="20121024 15:44:39.068" starttime="20121024 15:44:39.067"></status>
+</kw>
+<kw type="kw" name="${name} = TestHelper.Get Output Name" timeout="">
+<doc></doc>
+<arguments>
+<arg>@{data list}</arg>
+</arguments>
+<msg timestamp="20121024 15:44:39.068" level="INFO">${name} = converter</msg>
+<status status="PASS" endtime="20121024 15:44:39.068" starttime="20121024 15:44:39.068"></status>
+</kw>
+<kw type="kw" name="atest_resource.Set Variables" timeout="">
+<doc></doc>
+<arguments>
+<arg>${name}</arg>
+</arguments>
+<kw type="kw" name="${OUTDIR} = OperatingSystem.Join Path" timeout="">
+<doc>Joins the given path part(s) to the given base path.</doc>
+<arguments>
+<arg>${OUTPUTDIR}</arg>
+<arg>output</arg>
+<arg>${name}</arg>
+</arguments>
+<msg timestamp="20121024 15:44:39.070" level="INFO">${OUTDIR} = /Users/jmalinen/Documents/workspace/robot/atest/results/python2.5/output/converter</msg>
+<status status="PASS" endtime="20121024 15:44:39.070" starttime="20121024 15:44:39.070"></status>
+</kw>
+<kw type="kw" name="BuiltIn.Set Global Variable" timeout="">
+<doc>Makes a variable available globally in all tests and suites.</doc>
+<arguments>
+<arg>$OUTDIR</arg>
+<arg>${OUTDIR.encode('ascii', 'ignore').replace('?', '_') .replace('*', '_')}</arg>
+</arguments>
+<msg timestamp="20121024 15:44:39.071" level="INFO">${OUTDIR} = /Users/jmalinen/Documents/workspace/robot/atest/results/python2.5/output/converter</msg>
+<status status="PASS" endtime="20121024 15:44:39.071" starttime="20121024 15:44:39.070"></status>
+</kw>
+<kw type="kw" name="OperatingSystem.Create Directory" timeout="">
+<doc>Creates the specified directory.</doc>
+<arguments>
+<arg>${OUTDIR}</arg>
+</arguments>
+<msg timestamp="20121024 15:44:39.072" html="yes" level="INFO">Created directory '&lt;a href="file:///Users/jmalinen/Documents/workspace/robot/atest/results/python2.5/output/converter"&gt;/Users/jmalinen/Documents/workspace/robot/atest/results/python2.5/output/converter&lt;/a&gt;'</msg>
+<status status="PASS" endtime="20121024 15:44:39.072" starttime="20121024 15:44:39.072"></status>
+</kw>
+<kw type="kw" name="BuiltIn.Set Suite Variable" timeout="">
+<doc>Makes a variable available everywhere within the scope of the current suite.</doc>
+<arguments>
+<arg>$OUTFILE</arg>
+<arg>${OUTDIR}${/}output.xml</arg>
+</arguments>
+<msg timestamp="20121024 15:44:39.073" level="INFO">${OUTFILE} = /Users/jmalinen/Documents/workspace/robot/atest/results/python2.5/output/converter/output.xml</msg>
+<status status="PASS" endtime="20121024 15:44:39.073" starttime="20121024 15:44:39.073"></status>
+</kw>
+<kw type="kw" name="BuiltIn.Set Suite Variable" timeout="">
+<doc>Makes a variable available everywhere within the scope of the current suite.</doc>
+<arguments>
+<arg>$STDOUT_FILE</arg>
+<arg>${OUTDIR}${/}stdout.txt</arg>
+</arguments>
+<msg timestamp="20121024 15:44:39.074" level="INFO">${STDOUT_FILE} = /Users/jmalinen/Documents/workspace/robot/atest/results/python2.5/output/converter/stdout.txt</msg>
+<status status="PASS" endtime="20121024 15:44:39.074" starttime="20121024 15:44:39.073"></status>
+</kw>
+<kw type="kw" name="BuiltIn.Set Suite Variable" timeout="">
+<doc>Makes a variable available everywhere within the scope of the current suite.</doc>
+<arguments>
+<arg>$STDERR_FILE</arg>
+<arg>${OUTDIR}${/}stderr.txt</arg>
+</arguments>
+<msg timestamp="20121024 15:44:39.075" level="INFO">${STDERR_FILE} = /Users/jmalinen/Documents/workspace/robot/atest/results/python2.5/output/converter/stderr.txt</msg>
+<status status="PASS" endtime="20121024 15:44:39.075" starttime="20121024 15:44:39.074"></status>
+</kw>
+<kw type="kw" name="BuiltIn.Set Suite Variable" timeout="">
+<doc>Makes a variable available everywhere within the scope of the current suite.</doc>
+<arguments>
+<arg>$SYSLOG_FILE</arg>
+<arg>${OUTDIR}${/}syslog.txt</arg>
+</arguments>
+<msg timestamp="20121024 15:44:39.076" level="INFO">${SYSLOG_FILE} = /Users/jmalinen/Documents/workspace/robot/atest/results/python2.5/output/converter/syslog.txt</msg>
+<status status="PASS" endtime="20121024 15:44:39.076" starttime="20121024 15:44:39.075"></status>
+</kw>
+<kw type="kw" name="OperatingSystem.Set Environment Variable" timeout="">
+<doc>Sets an environment variable to a specified value.</doc>
+<arguments>
+<arg>ROBOT_SYSLOG_FILE</arg>
+<arg>${SYSLOG_FILE}</arg>
+</arguments>
+<msg timestamp="20121024 15:44:39.076" level="INFO">Environment variable 'ROBOT_SYSLOG_FILE' set to value '/Users/jmalinen/Documents/workspace/robot/atest/results/python2.5/output/converter/syslog.txt'</msg>
+<status status="PASS" endtime="20121024 15:44:39.076" starttime="20121024 15:44:39.076"></status>
+</kw>
+<kw type="kw" name="atest_resource.Set Runners" timeout="">
+<doc></doc>
+<arguments>
+</arguments>
+<kw type="kw" name="${robot} = OperatingSystem.Join Path" timeout="">
+<doc>Joins the given path part(s) to the given base path.</doc>
+<arguments>
+<arg>${ROBOTPATH}</arg>
+<arg>run.py</arg>
+</arguments>
+<msg timestamp="20121024 15:44:39.078" level="INFO">${robot} = /Users/jmalinen/Documents/workspace/robot/src/robot/run.py</msg>
+<status status="PASS" endtime="20121024 15:44:39.078" starttime="20121024 15:44:39.077"></status>
+</kw>
+<kw type="kw" name="BuiltIn.Set Suite Variable" timeout="">
+<doc>Makes a variable available everywhere within the scope of the current suite.</doc>
+<arguments>
+<arg>$ROBOT</arg>
+<arg>${INTERPRETER} ${robot}</arg>
+</arguments>
+<msg timestamp="20121024 15:44:39.079" level="INFO">${ROBOT} = python2.5 /Users/jmalinen/Documents/workspace/robot/src/robot/run.py</msg>
+<status status="PASS" endtime="20121024 15:44:39.079" starttime="20121024 15:44:39.078"></status>
+</kw>
+<kw type="kw" name="${rebot} = OperatingSystem.Join Path" timeout="">
+<doc>Joins the given path part(s) to the given base path.</doc>
+<arguments>
+<arg>${ROBOTPATH}</arg>
+<arg>rebot.py</arg>
+</arguments>
+<msg timestamp="20121024 15:44:39.079" level="INFO">${rebot} = /Users/jmalinen/Documents/workspace/robot/src/robot/rebot.py</msg>
+<status status="PASS" endtime="20121024 15:44:39.079" starttime="20121024 15:44:39.079"></status>
+</kw>
+<kw type="kw" name="BuiltIn.Set Suite Variable" timeout="">
+<doc>Makes a variable available everywhere within the scope of the current suite.</doc>
+<arguments>
+<arg>$REBOT</arg>
+<arg>${INTERPRETER} ${rebot}</arg>
+</arguments>
+<msg timestamp="20121024 15:44:39.080" level="INFO">${REBOT} = python2.5 /Users/jmalinen/Documents/workspace/robot/src/robot/rebot.py</msg>
+<status status="PASS" endtime="20121024 15:44:39.080" starttime="20121024 15:44:39.080"></status>
+</kw>
+<status status="PASS" endtime="20121024 15:44:39.080" starttime="20121024 15:44:39.076"></status>
+</kw>
+<status status="PASS" endtime="20121024 15:44:39.080" starttime="20121024 15:44:39.068"></status>
+</kw>
+<kw type="kw" name="@{data list} = OperatingSystem.Join Paths" timeout="">
+<doc>Joins given paths with base and returns resulted paths.</doc>
+<arguments>
+<arg>${DATADIR}</arg>
+<arg>@{data list}</arg>
+</arguments>
+<msg timestamp="20121024 15:44:39.081" level="INFO">@{data list} = [ /Users/jmalinen/Documents/workspace/robot/atest/testdata/standard_libraries/deprecated_builtin/converter.txt ]</msg>
+<status status="PASS" endtime="20121024 15:44:39.081" starttime="20121024 15:44:39.081"></status>
+</kw>
+<kw type="kw" name="${data string} = BuiltIn.Catenate" timeout="">
+<doc>Catenates the given items together and returns the resulted string.</doc>
+<arguments>
+<arg>@{data list}</arg>
+</arguments>
+<msg timestamp="20121024 15:44:39.082" level="INFO">${data string} = /Users/jmalinen/Documents/workspace/robot/atest/testdata/standard_libraries/deprecated_builtin/converter.txt</msg>
+<status status="PASS" endtime="20121024 15:44:39.082" starttime="20121024 15:44:39.081"></status>
+</kw>
+<msg timestamp="20121024 15:44:39.082" level="INFO">${data string} = /Users/jmalinen/Documents/workspace/robot/atest/testdata/standard_libraries/deprecated_builtin/converter.txt</msg>
+<status status="PASS" endtime="20121024 15:44:39.082" starttime="20121024 15:44:39.066"></status>
+</kw>
+<kw type="kw" name="${options} = BuiltIn.Catenate" timeout="">
+<doc>Catenates the given items together and returns the resulted string.</doc>
+<arguments>
+<arg>--MonitorMarkers OFF</arg>
+<arg>${user options}</arg>
+<arg>--variable interpreter:${INTERPRETER}</arg>
+<arg>--pythonpath ${LIBPATH1}</arg>
+<arg>--pythonpath ${LIBPATH2}</arg>
+</arguments>
+<msg timestamp="20121024 15:44:39.083" level="INFO">${options} = --MonitorMarkers OFF  --variable interpreter:python2.5 --pythonpath /Users/jmalinen/Documents/workspace/robot/atest/resources/../testresources/testlibs --pythonpath /Users/jmalinen/Documents/workspace...</msg>
+<status status="PASS" endtime="20121024 15:44:39.083" starttime="20121024 15:44:39.082"></status>
+</kw>
+<kw type="kw" name="atest_resource.Run Helper" timeout="">
+<doc></doc>
+<arguments>
+<arg>${ROBOT}</arg>
+<arg>${options}</arg>
+<arg>${data string}</arg>
+</arguments>
+<kw type="kw" name="OperatingSystem.Remove Files" timeout="">
+<doc>Uses `Remove File` to remove multiple files one-by-one.</doc>
+<arguments>
+<arg>${OUTFILE}</arg>
+<arg>${OUTDIR}/*.xml</arg>
+<arg>${OUTDIR}/*.html</arg>
+</arguments>
+<msg timestamp="20121024 15:44:39.085" html="yes" level="INFO">File '&lt;a href="file:///Users/jmalinen/Documents/workspace/robot/atest/results/python2.5/output/converter/output.xml"&gt;/Users/jmalinen/Documents/workspace/robot/atest/results/python2.5/output/converter/output.xml&lt;/a&gt;' does not exist</msg>
+<msg timestamp="20121024 15:44:39.086" html="yes" level="INFO">File '&lt;a href="file:///Users/jmalinen/Documents/workspace/robot/atest/results/python2.5/output/converter/*.xml"&gt;/Users/jmalinen/Documents/workspace/robot/atest/results/python2.5/output/converter/*.xml&lt;/a&gt;' does not exist</msg>
+<msg timestamp="20121024 15:44:39.086" html="yes" level="INFO">File '&lt;a href="file:///Users/jmalinen/Documents/workspace/robot/atest/results/python2.5/output/converter/*.html"&gt;/Users/jmalinen/Documents/workspace/robot/atest/results/python2.5/output/converter/*.html&lt;/a&gt;' does not exist</msg>
+<status status="PASS" endtime="20121024 15:44:39.086" starttime="20121024 15:44:39.085"></status>
+</kw>
+<kw type="kw" name="${cmd} = BuiltIn.Catenate" timeout="">
+<doc>Catenates the given items together and returns the resulted string.</doc>
+<arguments>
+<arg>${runner}</arg>
+<arg>--monitorcolors OFF</arg>
+<arg>--outputdir ${OUTDIR}</arg>
+<arg>--output ${OUTFILE}</arg>
+<arg>--report NONE</arg>
+<arg>--log NONE</arg>
+<arg>${options}</arg>
+<arg>${data string}</arg>
+<arg>1&gt;${STDOUTFILE}</arg>
+<arg>2&gt;${STDERRFILE}</arg>
+</arguments>
+<msg timestamp="20121024 15:44:39.088" level="INFO">${cmd} = python2.5 /Users/jmalinen/Documents/workspace/robot/src/robot/run.py --monitorcolors OFF --outputdir /Users/jmalinen/Documents/workspace/robot/atest/results/python2.5/output/converter --output /Users/...</msg>
+<status status="PASS" endtime="20121024 15:44:39.087" starttime="20121024 15:44:39.086"></status>
+</kw>
+<kw type="kw" name="${rc} = OperatingSystem.Run And Return Rc" timeout="">
+<doc>Runs the given command in the system and returns the return code.</doc>
+<arguments>
+<arg>${cmd}</arg>
+</arguments>
+<msg timestamp="20121024 15:44:39.088" level="INFO">Running command 'python2.5 /Users/jmalinen/Documents/workspace/robot/src/robot/run.py --monitorcolors OFF --outputdir /Users/jmalinen/Documents/workspace/robot/atest/results/python2.5/output/converter --output /Users/jmalinen/Documents/workspace/robot/atest/results/python2.5/output/converter/output.xml --report NONE --log NONE --MonitorMarkers OFF  --variable interpreter:python2.5 --pythonpath /Users/jmalinen/Documents/workspace/robot/atest/resources/../testresources/testlibs --pythonpath /Users/jmalinen/Documents/workspace/robot/atest/resources/../testresources/listeners /Users/jmalinen/Documents/workspace/robot/atest/testdata/standard_libraries/deprecated_builtin/converter.txt 1&gt;/Users/jmalinen/Documents/workspace/robot/atest/results/python2.5/output/converter/stdout.txt 2&gt;/Users/jmalinen/Documents/workspace/robot/atest/results/python2.5/output/converter/stderr.txt'</msg>
+<msg timestamp="20121024 15:44:39.653" level="INFO">${rc} = 0</msg>
+<status status="PASS" endtime="20121024 15:44:39.653" starttime="20121024 15:44:39.088"></status>
+</kw>
+<kw type="kw" name="BuiltIn.Log" timeout="">
+<doc>Logs the given message with the given level.</doc>
+<arguments>
+<arg>&lt;a href="file://${OUTDIR}"&gt;${OUTDIR}&lt;/a&gt;</arg>
+<arg>HTML</arg>
+</arguments>
+<msg timestamp="20121024 15:44:39.654" html="yes" level="INFO">&lt;a href="file:///Users/jmalinen/Documents/workspace/robot/atest/results/python2.5/output/converter"&gt;/Users/jmalinen/Documents/workspace/robot/atest/results/python2.5/output/converter&lt;/a&gt;</msg>
+<status status="PASS" endtime="20121024 15:44:39.654" starttime="20121024 15:44:39.653"></status>
+</kw>
+<kw type="kw" name="BuiltIn.Log" timeout="">
+<doc>Logs the given message with the given level.</doc>
+<arguments>
+<arg>&lt;a href="file://${OUTFILE}"&gt;${OUTFILE}&lt;/a&gt;</arg>
+<arg>HTML</arg>
+</arguments>
+<msg timestamp="20121024 15:44:39.655" html="yes" level="INFO">&lt;a href="file:///Users/jmalinen/Documents/workspace/robot/atest/results/python2.5/output/converter/output.xml"&gt;/Users/jmalinen/Documents/workspace/robot/atest/results/python2.5/output/converter/output.xml&lt;/a&gt;</msg>
+<status status="PASS" endtime="20121024 15:44:39.655" starttime="20121024 15:44:39.654"></status>
+</kw>
+<kw type="kw" name="BuiltIn.Log" timeout="">
+<doc>Logs the given message with the given level.</doc>
+<arguments>
+<arg>&lt;a href="file://${STDOUTFILE}"&gt;${STDOUTFILE}&lt;/a&gt;</arg>
+<arg>HTML</arg>
+</arguments>
+<msg timestamp="20121024 15:44:39.655" html="yes" level="INFO">&lt;a href="file:///Users/jmalinen/Documents/workspace/robot/atest/results/python2.5/output/converter/stdout.txt"&gt;/Users/jmalinen/Documents/workspace/robot/atest/results/python2.5/output/converter/stdout.txt&lt;/a&gt;</msg>
+<status status="PASS" endtime="20121024 15:44:39.655" starttime="20121024 15:44:39.655"></status>
+</kw>
+<kw type="kw" name="BuiltIn.Log" timeout="">
+<doc>Logs the given message with the given level.</doc>
+<arguments>
+<arg>&lt;a href="file://${STDERRFILE}"&gt;${STDERRFILE}&lt;/a&gt;</arg>
+<arg>HTML</arg>
+</arguments>
+<msg timestamp="20121024 15:44:39.656" html="yes" level="INFO">&lt;a href="file:///Users/jmalinen/Documents/workspace/robot/atest/results/python2.5/output/converter/stderr.txt"&gt;/Users/jmalinen/Documents/workspace/robot/atest/results/python2.5/output/converter/stderr.txt&lt;/a&gt;</msg>
+<status status="PASS" endtime="20121024 15:44:39.656" starttime="20121024 15:44:39.656"></status>
+</kw>
+<kw type="kw" name="BuiltIn.Log" timeout="">
+<doc>Logs the given message with the given level.</doc>
+<arguments>
+<arg>&lt;a href="file://${SYSLOGFILE}"&gt;${SYSLOGFILE}&lt;/a&gt;</arg>
+<arg>HTML</arg>
+</arguments>
+<msg timestamp="20121024 15:44:39.657" html="yes" level="INFO">&lt;a href="file:///Users/jmalinen/Documents/workspace/robot/atest/results/python2.5/output/converter/syslog.txt"&gt;/Users/jmalinen/Documents/workspace/robot/atest/results/python2.5/output/converter/syslog.txt&lt;/a&gt;</msg>
+<status status="PASS" endtime="20121024 15:44:39.657" starttime="20121024 15:44:39.656"></status>
+</kw>
+<status status="PASS" endtime="20121024 15:44:39.657" starttime="20121024 15:44:39.083"></status>
+</kw>
+<status status="PASS" endtime="20121024 15:44:39.657" starttime="20121024 15:44:39.065"></status>
+</kw>
+<kw type="kw" name="TestCheckerLibrary.Process Output" timeout="">
+<doc></doc>
+<arguments>
+<arg>${OUTFILE}</arg>
+</arguments>
+<msg timestamp="20121024 15:44:39.663" level="INFO">${SUITE} = Converter</msg>
+<msg timestamp="20121024 15:44:39.663" level="INFO">${STATISTICS} = &lt;robot.model.statistics.Statistics object at 0x118ca90&gt;</msg>
+<msg timestamp="20121024 15:44:39.663" level="INFO">${ERRORS} = &lt;robot.result.executionerrors.ExecutionErrors object at 0x118cb70&gt;</msg>
+<msg timestamp="20121024 15:44:39.664" level="INFO">Processing output '/Users/jmalinen/Documents/workspace/robot/atest/results/python2.5/output/converter/output.xml'</msg>
+<status status="PASS" endtime="20121024 15:44:39.664" starttime="20121024 15:44:39.657"></status>
+</kw>
+<status status="PASS" endtime="20121024 15:44:39.664" starttime="20121024 15:44:39.064"></status>
+</kw>
+<test id="s1-s1-t1" timeout="" name="Integer">
+<kw type="kw" name="atest_resource.Check Test Case" timeout="">
+<doc></doc>
+<arguments>
+<arg>${TEST NAME}</arg>
+</arguments>
+<kw type="kw" name="${test} = TestCheckerLibrary.Get Test From Suite" timeout="">
+<doc></doc>
+<arguments>
+<arg>${SUITE}</arg>
+<arg>${name}</arg>
+</arguments>
+<msg timestamp="20121024 15:44:39.667" level="INFO">${test} = Integer</msg>
+<status status="PASS" endtime="20121024 15:44:39.667" starttime="20121024 15:44:39.666"></status>
+</kw>
+<kw type="kw" name="TestCheckerLibrary.Check Test Status" timeout="">
+<doc>Verifies that test's status and message are as expected.</doc>
+<arguments>
+<arg>${test}</arg>
+<arg>${status}</arg>
+<arg>${message}</arg>
+</arguments>
+<status status="PASS" endtime="20121024 15:44:39.667" starttime="20121024 15:44:39.667"></status>
+</kw>
+<status status="PASS" endtime="20121024 15:44:39.668" starttime="20121024 15:44:39.665"></status>
+</kw>
+<doc></doc>
+<tags>
+<tag>jybot</tag>
+<tag>pybot</tag>
+<tag>regression</tag>
+</tags>
+<status status="PASS" endtime="20121024 15:44:39.668" critical="yes" starttime="20121024 15:44:39.664"></status>
+</test>
+<test id="s1-s1-t2" timeout="" name="Float">
+<kw type="kw" name="atest_resource.Check Test Case" timeout="">
+<doc></doc>
+<arguments>
+<arg>${TEST NAME}</arg>
+</arguments>
+<kw type="kw" name="${test} = TestCheckerLibrary.Get Test From Suite" timeout="">
+<doc></doc>
+<arguments>
+<arg>${SUITE}</arg>
+<arg>${name}</arg>
+</arguments>
+<msg timestamp="20121024 15:44:39.671" level="INFO">${test} = Float</msg>
+<status status="PASS" endtime="20121024 15:44:39.671" starttime="20121024 15:44:39.670"></status>
+</kw>
+<kw type="kw" name="TestCheckerLibrary.Check Test Status" timeout="">
+<doc>Verifies that test's status and message are as expected.</doc>
+<arguments>
+<arg>${test}</arg>
+<arg>${status}</arg>
+<arg>${message}</arg>
+</arguments>
+<status status="PASS" endtime="20121024 15:44:39.672" starttime="20121024 15:44:39.671"></status>
+</kw>
+<status status="PASS" endtime="20121024 15:44:39.672" starttime="20121024 15:44:39.669"></status>
+</kw>
+<doc></doc>
+<tags>
+<tag>jybot</tag>
+<tag>pybot</tag>
+<tag>regression</tag>
+</tags>
+<status status="PASS" endtime="20121024 15:44:39.672" critical="yes" starttime="20121024 15:44:39.668"></status>
+</test>
+<test id="s1-s1-t3" timeout="" name="String">
+<kw type="kw" name="atest_resource.Check Test Case" timeout="">
+<doc></doc>
+<arguments>
+<arg>${TEST NAME}</arg>
+</arguments>
+<kw type="kw" name="${test} = TestCheckerLibrary.Get Test From Suite" timeout="">
+<doc></doc>
+<arguments>
+<arg>${SUITE}</arg>
+<arg>${name}</arg>
+</arguments>
+<msg timestamp="20121024 15:44:39.677" level="INFO">${test} = String</msg>
+<status status="PASS" endtime="20121024 15:44:39.677" starttime="20121024 15:44:39.677"></status>
+</kw>
+<kw type="kw" name="TestCheckerLibrary.Check Test Status" timeout="">
+<doc>Verifies that test's status and message are as expected.</doc>
+<arguments>
+<arg>${test}</arg>
+<arg>${status}</arg>
+<arg>${message}</arg>
+</arguments>
+<status status="PASS" endtime="20121024 15:44:39.678" starttime="20121024 15:44:39.678"></status>
+</kw>
+<status status="PASS" endtime="20121024 15:44:39.678" starttime="20121024 15:44:39.674"></status>
+</kw>
+<doc></doc>
+<tags>
+<tag>jybot</tag>
+<tag>pybot</tag>
+<tag>regression</tag>
+</tags>
+<status status="PASS" endtime="20121024 15:44:39.678" critical="yes" starttime="20121024 15:44:39.673"></status>
+</test>
+<test id="s1-s1-t4" timeout="" name="Boolean">
+<kw type="kw" name="atest_resource.Check Test Case" timeout="">
+<doc></doc>
+<arguments>
+<arg>${TEST NAME}</arg>
+</arguments>
+<kw type="kw" name="${test} = TestCheckerLibrary.Get Test From Suite" timeout="">
+<doc></doc>
+<arguments>
+<arg>${SUITE}</arg>
+<arg>${name}</arg>
+</arguments>
+<msg timestamp="20121024 15:44:39.681" level="INFO">${test} = Boolean</msg>
+<status status="PASS" endtime="20121024 15:44:39.681" starttime="20121024 15:44:39.681"></status>
+</kw>
+<kw type="kw" name="TestCheckerLibrary.Check Test Status" timeout="">
+<doc>Verifies that test's status and message are as expected.</doc>
+<arguments>
+<arg>${test}</arg>
+<arg>${status}</arg>
+<arg>${message}</arg>
+</arguments>
+<status status="PASS" endtime="20121024 15:44:39.682" starttime="20121024 15:44:39.682"></status>
+</kw>
+<status status="PASS" endtime="20121024 15:44:39.682" starttime="20121024 15:44:39.680"></status>
+</kw>
+<doc></doc>
+<tags>
+<tag>jybot</tag>
+<tag>pybot</tag>
+<tag>regression</tag>
+</tags>
+<status status="PASS" endtime="20121024 15:44:39.683" critical="yes" starttime="20121024 15:44:39.679"></status>
+</test>
+<test id="s1-s1-t5" timeout="" name="List">
+<kw type="kw" name="atest_resource.Check Test Case" timeout="">
+<doc></doc>
+<arguments>
+<arg>${TEST NAME}</arg>
+</arguments>
+<kw type="kw" name="${test} = TestCheckerLibrary.Get Test From Suite" timeout="">
+<doc></doc>
+<arguments>
+<arg>${SUITE}</arg>
+<arg>${name}</arg>
+</arguments>
+<msg timestamp="20121024 15:44:39.686" level="INFO">${test} = List</msg>
+<status status="PASS" endtime="20121024 15:44:39.686" starttime="20121024 15:44:39.685"></status>
+</kw>
+<kw type="kw" name="TestCheckerLibrary.Check Test Status" timeout="">
+<doc>Verifies that test's status and message are as expected.</doc>
+<arguments>
+<arg>${test}</arg>
+<arg>${status}</arg>
+<arg>${message}</arg>
+</arguments>
+<status status="PASS" endtime="20121024 15:44:39.686" starttime="20121024 15:44:39.686"></status>
+</kw>
+<status status="PASS" endtime="20121024 15:44:39.687" starttime="20121024 15:44:39.684"></status>
+</kw>
+<doc></doc>
+<tags>
+<tag>jybot</tag>
+<tag>pybot</tag>
+<tag>regression</tag>
+</tags>
+<status status="PASS" endtime="20121024 15:44:39.687" critical="yes" starttime="20121024 15:44:39.683"></status>
+</test>
+<doc></doc>
+<metadata>
+</metadata>
+<status status="PASS" endtime="20121024 15:44:39.687" starttime="20121024 15:44:38.986"></status>
+</suite>
+<suite source="/Users/jmalinen/Documents/workspace/robot/atest/robot/standard_libraries/deprecated_builtin/deprecated.html" id="s1-s2" name="Deprecated">
+<kw type="setup" name="atest_resource.Run Tests" timeout="">
+<doc></doc>
+<arguments>
+<arg></arg>
+<arg>standard_libraries${/}deprecated_builtin${/}deprecated.html</arg>
+</arguments>
+<kw type="kw" name="atest_resource.Run Tests Helper" timeout="">
+<doc></doc>
+<arguments>
+<arg>${options}</arg>
+<arg>@{data list}</arg>
+</arguments>
+<kw type="kw" name="${data string} = atest_resource.Set Variables And Get Datasources" timeout="">
+<doc></doc>
+<arguments>
+<arg>@{data list}</arg>
+</arguments>
+<kw type="kw" name="BuiltIn.Set Suite Variable" timeout="">
+<doc>Makes a variable available everywhere within the scope of the current suite.</doc>
+<arguments>
+<arg>$SUITE</arg>
+<arg>${NONE}</arg>
+</arguments>
+<msg timestamp="20121024 15:44:39.703" level="INFO">${SUITE} = None</msg>
+<status status="PASS" endtime="20121024 15:44:39.703" starttime="20121024 15:44:39.702"></status>
+</kw>
+<kw type="kw" name="${name} = TestHelper.Get Output Name" timeout="">
+<doc></doc>
+<arguments>
+<arg>@{data list}</arg>
+</arguments>
+<msg timestamp="20121024 15:44:39.704" level="INFO">${name} = deprecated</msg>
+<status status="PASS" endtime="20121024 15:44:39.704" starttime="20121024 15:44:39.703"></status>
+</kw>
+<kw type="kw" name="atest_resource.Set Variables" timeout="">
+<doc></doc>
+<arguments>
+<arg>${name}</arg>
+</arguments>
+<kw type="kw" name="${OUTDIR} = OperatingSystem.Join Path" timeout="">
+<doc>Joins the given path part(s) to the given base path.</doc>
+<arguments>
+<arg>${OUTPUTDIR}</arg>
+<arg>output</arg>
+<arg>${name}</arg>
+</arguments>
+<msg timestamp="20121024 15:44:39.707" level="INFO">${OUTDIR} = /Users/jmalinen/Documents/workspace/robot/atest/results/python2.5/output/deprecated</msg>
+<status status="PASS" endtime="20121024 15:44:39.707" starttime="20121024 15:44:39.705"></status>
+</kw>
+<kw type="kw" name="BuiltIn.Set Global Variable" timeout="">
+<doc>Makes a variable available globally in all tests and suites.</doc>
+<arguments>
+<arg>$OUTDIR</arg>
+<arg>${OUTDIR.encode('ascii', 'ignore').replace('?', '_') .replace('*', '_')}</arg>
+</arguments>
+<msg timestamp="20121024 15:44:39.708" level="INFO">${OUTDIR} = /Users/jmalinen/Documents/workspace/robot/atest/results/python2.5/output/deprecated</msg>
+<status status="PASS" endtime="20121024 15:44:39.708" starttime="20121024 15:44:39.707"></status>
+</kw>
+<kw type="kw" name="OperatingSystem.Create Directory" timeout="">
+<doc>Creates the specified directory.</doc>
+<arguments>
+<arg>${OUTDIR}</arg>
+</arguments>
+<msg timestamp="20121024 15:44:39.709" html="yes" level="INFO">Created directory '&lt;a href="file:///Users/jmalinen/Documents/workspace/robot/atest/results/python2.5/output/deprecated"&gt;/Users/jmalinen/Documents/workspace/robot/atest/results/python2.5/output/deprecated&lt;/a&gt;'</msg>
+<status status="PASS" endtime="20121024 15:44:39.709" starttime="20121024 15:44:39.708"></status>
+</kw>
+<kw type="kw" name="BuiltIn.Set Suite Variable" timeout="">
+<doc>Makes a variable available everywhere within the scope of the current suite.</doc>
+<arguments>
+<arg>$OUTFILE</arg>
+<arg>${OUTDIR}${/}output.xml</arg>
+</arguments>
+<msg timestamp="20121024 15:44:39.710" level="INFO">${OUTFILE} = /Users/jmalinen/Documents/workspace/robot/atest/results/python2.5/output/deprecated/output.xml</msg>
+<status status="PASS" endtime="20121024 15:44:39.710" starttime="20121024 15:44:39.709"></status>
+</kw>
+<kw type="kw" name="BuiltIn.Set Suite Variable" timeout="">
+<doc>Makes a variable available everywhere within the scope of the current suite.</doc>
+<arguments>
+<arg>$STDOUT_FILE</arg>
+<arg>${OUTDIR}${/}stdout.txt</arg>
+</arguments>
+<msg timestamp="20121024 15:44:39.711" level="INFO">${STDOUT_FILE} = /Users/jmalinen/Documents/workspace/robot/atest/results/python2.5/output/deprecated/stdout.txt</msg>
+<status status="PASS" endtime="20121024 15:44:39.711" starttime="20121024 15:44:39.710"></status>
+</kw>
+<kw type="kw" name="BuiltIn.Set Suite Variable" timeout="">
+<doc>Makes a variable available everywhere within the scope of the current suite.</doc>
+<arguments>
+<arg>$STDERR_FILE</arg>
+<arg>${OUTDIR}${/}stderr.txt</arg>
+</arguments>
+<msg timestamp="20121024 15:44:39.711" level="INFO">${STDERR_FILE} = /Users/jmalinen/Documents/workspace/robot/atest/results/python2.5/output/deprecated/stderr.txt</msg>
+<status status="PASS" endtime="20121024 15:44:39.711" starttime="20121024 15:44:39.711"></status>
+</kw>
+<kw type="kw" name="BuiltIn.Set Suite Variable" timeout="">
+<doc>Makes a variable available everywhere within the scope of the current suite.</doc>
+<arguments>
+<arg>$SYSLOG_FILE</arg>
+<arg>${OUTDIR}${/}syslog.txt</arg>
+</arguments>
+<msg timestamp="20121024 15:44:39.712" level="INFO">${SYSLOG_FILE} = /Users/jmalinen/Documents/workspace/robot/atest/results/python2.5/output/deprecated/syslog.txt</msg>
+<status status="PASS" endtime="20121024 15:44:39.712" starttime="20121024 15:44:39.712"></status>
+</kw>
+<kw type="kw" name="OperatingSystem.Set Environment Variable" timeout="">
+<doc>Sets an environment variable to a specified value.</doc>
+<arguments>
+<arg>ROBOT_SYSLOG_FILE</arg>
+<arg>${SYSLOG_FILE}</arg>
+</arguments>
+<msg timestamp="20121024 15:44:39.713" level="INFO">Environment variable 'ROBOT_SYSLOG_FILE' set to value '/Users/jmalinen/Documents/workspace/robot/atest/results/python2.5/output/deprecated/syslog.txt'</msg>
+<status status="PASS" endtime="20121024 15:44:39.713" starttime="20121024 15:44:39.713"></status>
+</kw>
+<kw type="kw" name="atest_resource.Set Runners" timeout="">
+<doc></doc>
+<arguments>
+</arguments>
+<kw type="kw" name="${robot} = OperatingSystem.Join Path" timeout="">
+<doc>Joins the given path part(s) to the given base path.</doc>
+<arguments>
+<arg>${ROBOTPATH}</arg>
+<arg>run.py</arg>
+</arguments>
+<msg timestamp="20121024 15:44:39.715" level="INFO">${robot} = /Users/jmalinen/Documents/workspace/robot/src/robot/run.py</msg>
+<status status="PASS" endtime="20121024 15:44:39.715" starttime="20121024 15:44:39.714"></status>
+</kw>
+<kw type="kw" name="BuiltIn.Set Suite Variable" timeout="">
+<doc>Makes a variable available everywhere within the scope of the current suite.</doc>
+<arguments>
+<arg>$ROBOT</arg>
+<arg>${INTERPRETER} ${robot}</arg>
+</arguments>
+<msg timestamp="20121024 15:44:39.716" level="INFO">${ROBOT} = python2.5 /Users/jmalinen/Documents/workspace/robot/src/robot/run.py</msg>
+<status status="PASS" endtime="20121024 15:44:39.716" starttime="20121024 15:44:39.715"></status>
+</kw>
+<kw type="kw" name="${rebot} = OperatingSystem.Join Path" timeout="">
+<doc>Joins the given path part(s) to the given base path.</doc>
+<arguments>
+<arg>${ROBOTPATH}</arg>
+<arg>rebot.py</arg>
+</arguments>
+<msg timestamp="20121024 15:44:39.716" level="INFO">${rebot} = /Users/jmalinen/Documents/workspace/robot/src/robot/rebot.py</msg>
+<status status="PASS" endtime="20121024 15:44:39.716" starttime="20121024 15:44:39.716"></status>
+</kw>
+<kw type="kw" name="BuiltIn.Set Suite Variable" timeout="">
+<doc>Makes a variable available everywhere within the scope of the current suite.</doc>
+<arguments>
+<arg>$REBOT</arg>
+<arg>${INTERPRETER} ${rebot}</arg>
+</arguments>
+<msg timestamp="20121024 15:44:39.717" level="INFO">${REBOT} = python2.5 /Users/jmalinen/Documents/workspace/robot/src/robot/rebot.py</msg>
+<status status="PASS" endtime="20121024 15:44:39.717" starttime="20121024 15:44:39.717"></status>
+</kw>
+<status status="PASS" endtime="20121024 15:44:39.717" starttime="20121024 15:44:39.713"></status>
+</kw>
+<status status="PASS" endtime="20121024 15:44:39.717" starttime="20121024 15:44:39.704"></status>
+</kw>
+<kw type="kw" name="@{data list} = OperatingSystem.Join Paths" timeout="">
+<doc>Joins given paths with base and returns resulted paths.</doc>
+<arguments>
+<arg>${DATADIR}</arg>
+<arg>@{data list}</arg>
+</arguments>
+<msg timestamp="20121024 15:44:39.718" level="INFO">@{data list} = [ /Users/jmalinen/Documents/workspace/robot/atest/testdata/standard_libraries/deprecated_builtin/deprecated.html ]</msg>
+<status status="PASS" endtime="20121024 15:44:39.718" starttime="20121024 15:44:39.718"></status>
+</kw>
+<kw type="kw" name="${data string} = BuiltIn.Catenate" timeout="">
+<doc>Catenates the given items together and returns the resulted string.</doc>
+<arguments>
+<arg>@{data list}</arg>
+</arguments>
+<msg timestamp="20121024 15:44:39.719" level="INFO">${data string} = /Users/jmalinen/Documents/workspace/robot/atest/testdata/standard_libraries/deprecated_builtin/deprecated.html</msg>
+<status status="PASS" endtime="20121024 15:44:39.719" starttime="20121024 15:44:39.718"></status>
+</kw>
+<msg timestamp="20121024 15:44:39.719" level="INFO">${data string} = /Users/jmalinen/Documents/workspace/robot/atest/testdata/standard_libraries/deprecated_builtin/deprecated.html</msg>
+<status status="PASS" endtime="20121024 15:44:39.719" starttime="20121024 15:44:39.701"></status>
+</kw>
+<kw type="kw" name="${options} = BuiltIn.Catenate" timeout="">
+<doc>Catenates the given items together and returns the resulted string.</doc>
+<arguments>
+<arg>--MonitorMarkers OFF</arg>
+<arg>${user options}</arg>
+<arg>--variable interpreter:${INTERPRETER}</arg>
+<arg>--pythonpath ${LIBPATH1}</arg>
+<arg>--pythonpath ${LIBPATH2}</arg>
+</arguments>
+<msg timestamp="20121024 15:44:39.720" level="INFO">${options} = --MonitorMarkers OFF  --variable interpreter:python2.5 --pythonpath /Users/jmalinen/Documents/workspace/robot/atest/resources/../testresources/testlibs --pythonpath /Users/jmalinen/Documents/workspace...</msg>
+<status status="PASS" endtime="20121024 15:44:39.720" starttime="20121024 15:44:39.719"></status>
+</kw>
+<kw type="kw" name="atest_resource.Run Helper" timeout="">
+<doc></doc>
+<arguments>
+<arg>${ROBOT}</arg>
+<arg>${options}</arg>
+<arg>${data string}</arg>
+</arguments>
+<kw type="kw" name="OperatingSystem.Remove Files" timeout="">
+<doc>Uses `Remove File` to remove multiple files one-by-one.</doc>
+<arguments>
+<arg>${OUTFILE}</arg>
+<arg>${OUTDIR}/*.xml</arg>
+<arg>${OUTDIR}/*.html</arg>
+</arguments>
+<msg timestamp="20121024 15:44:39.722" html="yes" level="INFO">File '&lt;a href="file:///Users/jmalinen/Documents/workspace/robot/atest/results/python2.5/output/deprecated/output.xml"&gt;/Users/jmalinen/Documents/workspace/robot/atest/results/python2.5/output/deprecated/output.xml&lt;/a&gt;' does not exist</msg>
+<msg timestamp="20121024 15:44:39.722" html="yes" level="INFO">File '&lt;a href="file:///Users/jmalinen/Documents/workspace/robot/atest/results/python2.5/output/deprecated/*.xml"&gt;/Users/jmalinen/Documents/workspace/robot/atest/results/python2.5/output/deprecated/*.xml&lt;/a&gt;' does not exist</msg>
+<msg timestamp="20121024 15:44:39.723" html="yes" level="INFO">File '&lt;a href="file:///Users/jmalinen/Documents/workspace/robot/atest/results/python2.5/output/deprecated/*.html"&gt;/Users/jmalinen/Documents/workspace/robot/atest/results/python2.5/output/deprecated/*.html&lt;/a&gt;' does not exist</msg>
+<status status="PASS" endtime="20121024 15:44:39.723" starttime="20121024 15:44:39.722"></status>
+</kw>
+<kw type="kw" name="${cmd} = BuiltIn.Catenate" timeout="">
+<doc>Catenates the given items together and returns the resulted string.</doc>
+<arguments>
+<arg>${runner}</arg>
+<arg>--monitorcolors OFF</arg>
+<arg>--outputdir ${OUTDIR}</arg>
+<arg>--output ${OUTFILE}</arg>
+<arg>--report NONE</arg>
+<arg>--log NONE</arg>
+<arg>${options}</arg>
+<arg>${data string}</arg>
+<arg>1&gt;${STDOUTFILE}</arg>
+<arg>2&gt;${STDERRFILE}</arg>
+</arguments>
+<msg timestamp="20121024 15:44:39.724" level="INFO">${cmd} = python2.5 /Users/jmalinen/Documents/workspace/robot/src/robot/run.py --monitorcolors OFF --outputdir /Users/jmalinen/Documents/workspace/robot/atest/results/python2.5/output/deprecated --output /Users...</msg>
+<status status="PASS" endtime="20121024 15:44:39.724" starttime="20121024 15:44:39.723"></status>
+</kw>
+<kw type="kw" name="${rc} = OperatingSystem.Run And Return Rc" timeout="">
+<doc>Runs the given command in the system and returns the return code.</doc>
+<arguments>
+<arg>${cmd}</arg>
+</arguments>
+<msg timestamp="20121024 15:44:39.725" level="INFO">Running command 'python2.5 /Users/jmalinen/Documents/workspace/robot/src/robot/run.py --monitorcolors OFF --outputdir /Users/jmalinen/Documents/workspace/robot/atest/results/python2.5/output/deprecated --output /Users/jmalinen/Documents/workspace/robot/atest/results/python2.5/output/deprecated/output.xml --report NONE --log NONE --MonitorMarkers OFF  --variable interpreter:python2.5 --pythonpath /Users/jmalinen/Documents/workspace/robot/atest/resources/../testresources/testlibs --pythonpath /Users/jmalinen/Documents/workspace/robot/atest/resources/../testresources/listeners /Users/jmalinen/Documents/workspace/robot/atest/testdata/standard_libraries/deprecated_builtin/deprecated.html 1&gt;/Users/jmalinen/Documents/workspace/robot/atest/results/python2.5/output/deprecated/stdout.txt 2&gt;/Users/jmalinen/Documents/workspace/robot/atest/results/python2.5/output/deprecated/stderr.txt'</msg>
+<msg timestamp="20121024 15:44:40.322" level="INFO">${rc} = 24</msg>
+<status status="PASS" endtime="20121024 15:44:40.321" starttime="20121024 15:44:39.724"></status>
+</kw>
+<kw type="kw" name="BuiltIn.Log" timeout="">
+<doc>Logs the given message with the given level.</doc>
+<arguments>
+<arg>&lt;a href="file://${OUTDIR}"&gt;${OUTDIR}&lt;/a&gt;</arg>
+<arg>HTML</arg>
+</arguments>
+<msg timestamp="20121024 15:44:40.323" html="yes" level="INFO">&lt;a href="file:///Users/jmalinen/Documents/workspace/robot/atest/results/python2.5/output/deprecated"&gt;/Users/jmalinen/Documents/workspace/robot/atest/results/python2.5/output/deprecated&lt;/a&gt;</msg>
+<status status="PASS" endtime="20121024 15:44:40.323" starttime="20121024 15:44:40.322"></status>
+</kw>
+<kw type="kw" name="BuiltIn.Log" timeout="">
+<doc>Logs the given message with the given level.</doc>
+<arguments>
+<arg>&lt;a href="file://${OUTFILE}"&gt;${OUTFILE}&lt;/a&gt;</arg>
+<arg>HTML</arg>
+</arguments>
+<msg timestamp="20121024 15:44:40.323" html="yes" level="INFO">&lt;a href="file:///Users/jmalinen/Documents/workspace/robot/atest/results/python2.5/output/deprecated/output.xml"&gt;/Users/jmalinen/Documents/workspace/robot/atest/results/python2.5/output/deprecated/output.xml&lt;/a&gt;</msg>
+<status status="PASS" endtime="20121024 15:44:40.323" starttime="20121024 15:44:40.323"></status>
+</kw>
+<kw type="kw" name="BuiltIn.Log" timeout="">
+<doc>Logs the given message with the given level.</doc>
+<arguments>
+<arg>&lt;a href="file://${STDOUTFILE}"&gt;${STDOUTFILE}&lt;/a&gt;</arg>
+<arg>HTML</arg>
+</arguments>
+<msg timestamp="20121024 15:44:40.324" html="yes" level="INFO">&lt;a href="file:///Users/jmalinen/Documents/workspace/robot/atest/results/python2.5/output/deprecated/stdout.txt"&gt;/Users/jmalinen/Documents/workspace/robot/atest/results/python2.5/output/deprecated/stdout.txt&lt;/a&gt;</msg>
+<status status="PASS" endtime="20121024 15:44:40.324" starttime="20121024 15:44:40.324"></status>
+</kw>
+<kw type="kw" name="BuiltIn.Log" timeout="">
+<doc>Logs the given message with the given level.</doc>
+<arguments>
+<arg>&lt;a href="file://${STDERRFILE}"&gt;${STDERRFILE}&lt;/a&gt;</arg>
+<arg>HTML</arg>
+</arguments>
+<msg timestamp="20121024 15:44:40.325" html="yes" level="INFO">&lt;a href="file:///Users/jmalinen/Documents/workspace/robot/atest/results/python2.5/output/deprecated/stderr.txt"&gt;/Users/jmalinen/Documents/workspace/robot/atest/results/python2.5/output/deprecated/stderr.txt&lt;/a&gt;</msg>
+<status status="PASS" endtime="20121024 15:44:40.325" starttime="20121024 15:44:40.325"></status>
+</kw>
+<kw type="kw" name="BuiltIn.Log" timeout="">
+<doc>Logs the given message with the given level.</doc>
+<arguments>
+<arg>&lt;a href="file://${SYSLOGFILE}"&gt;${SYSLOGFILE}&lt;/a&gt;</arg>
+<arg>HTML</arg>
+</arguments>
+<msg timestamp="20121024 15:44:40.326" html="yes" level="INFO">&lt;a href="file:///Users/jmalinen/Documents/workspace/robot/atest/results/python2.5/output/deprecated/syslog.txt"&gt;/Users/jmalinen/Documents/workspace/robot/atest/results/python2.5/output/deprecated/syslog.txt&lt;/a&gt;</msg>
+<status status="PASS" endtime="20121024 15:44:40.326" starttime="20121024 15:44:40.325"></status>
+</kw>
+<status status="PASS" endtime="20121024 15:44:40.326" starttime="20121024 15:44:39.720"></status>
+</kw>
+<status status="PASS" endtime="20121024 15:44:40.326" starttime="20121024 15:44:39.699"></status>
+</kw>
+<kw type="kw" name="TestCheckerLibrary.Process Output" timeout="">
+<doc></doc>
+<arguments>
+<arg>${OUTFILE}</arg>
+</arguments>
+<msg timestamp="20121024 15:44:40.335" level="INFO">${SUITE} = Deprecated</msg>
+<msg timestamp="20121024 15:44:40.336" level="INFO">${STATISTICS} = &lt;robot.model.statistics.Statistics object at 0x110ef30&gt;</msg>
+<msg timestamp="20121024 15:44:40.336" level="INFO">${ERRORS} = &lt;robot.result.executionerrors.ExecutionErrors object at 0x119fa50&gt;</msg>
+<msg timestamp="20121024 15:44:40.336" level="INFO">Processing output '/Users/jmalinen/Documents/workspace/robot/atest/results/python2.5/output/deprecated/output.xml'</msg>
+<status status="PASS" endtime="20121024 15:44:40.336" starttime="20121024 15:44:40.326"></status>
+</kw>
+<status status="PASS" endtime="20121024 15:44:40.336" starttime="20121024 15:44:39.698"></status>
+</kw>
+<test id="s1-s2-t1" timeout="" name="Deprecated BuiltIn Should Be Imported Automatically">
+<kw type="kw" name="atest_resource.Check Syslog Contains" timeout="">
+<doc></doc>
+<arguments>
+<arg>Imported library 'DeprecatedBuiltIn' with arguments [ ] (</arg>
+</arguments>
+<kw type="kw" name="atest_resource.Check File Contains" timeout="">
+<doc></doc>
+<arguments>
+<arg>${SYSLOG_FILE}</arg>
+<arg>@{expected}</arg>
+</arguments>
+<kw type="kw" name="${exp} = BuiltIn.Catenate" timeout="">
+<doc>Catenates the given items together and returns the resulted string.</doc>
+<arguments>
+<arg>@{expected}</arg>
+</arguments>
+<msg timestamp="20121024 15:44:40.340" level="INFO">${exp} = Imported library 'DeprecatedBuiltIn' with arguments [ ] (</msg>
+<status status="PASS" endtime="20121024 15:44:40.340" starttime="20121024 15:44:40.340"></status>
+</kw>
+<kw type="kw" name="${file} = atest_resource.Get Output File" timeout="">
+<doc>Output encoding avare helper</doc>
+<arguments>
+<arg>${path}</arg>
+</arguments>
+<kw type="kw" name="${encoding} = BuiltIn.Evaluate" timeout="">
+<doc>Evaluates the given expression in Python and returns the results.</doc>
+<arguments>
+<arg>__import__('robot').utils.encoding.OUTPUT_ENCODING</arg>
+</arguments>
+<msg timestamp="20121024 15:44:40.342" level="INFO">${encoding} = utf-8</msg>
+<status status="PASS" endtime="20121024 15:44:40.342" starttime="20121024 15:44:40.341"></status>
+</kw>
+<kw type="kw" name="${encoding} = BuiltIn.Set Variable If" timeout="">
+<doc>Sets variable based on the given condition.</doc>
+<arguments>
+<arg>r'${path}' in [r'${STDERR FILE}',r'${STDOUT FILE}']</arg>
+<arg>${encoding}</arg>
+<arg>UTF-8</arg>
+</arguments>
+<msg timestamp="20121024 15:44:40.343" level="INFO">${encoding} = UTF-8</msg>
+<status status="PASS" endtime="20121024 15:44:40.343" starttime="20121024 15:44:40.342"></status>
+</kw>
+<kw type="kw" name="${file} = OperatingSystem.Log File" timeout="">
+<doc>Wrapper for `Get File` that also logs the returned file.</doc>
+<arguments>
+<arg>${path}</arg>
+<arg>${encoding}</arg>
+</arguments>
+<msg timestamp="20121024 15:44:40.343" html="yes" level="INFO">Getting file '&lt;a href="file:///Users/jmalinen/Documents/workspace/robot/atest/results/python2.5/output/deprecated/syslog.txt"&gt;/Users/jmalinen/Documents/workspace/robot/atest/results/python2.5/output/deprecated/syslog.txt&lt;/a&gt;'</msg>
+<msg timestamp="20121024 15:44:40.343" level="INFO">20121024 15:44:39.963 | INFO  | Robot Framework trunk 20120906 (Python 2.5.6 on darwin)
+20121024 15:44:39.964 | INFO  | Arguments: /Users/jmalinen/Documents/workspace/robot/atest/testdata/standard_libraries/deprecated_builtin/deprecated.html
+20121024 15:44:39.964 | INFO  | Settings:
+Critical: None
+DebugFile: NONE
+Doc: None
+Exclude: []
+Include: []
+Listeners: []
+Log: NONE
+LogLevel: INFO
+LogTitle: None
+Metadata: []
+MonitorColors: OFF
+MonitorMarkers: OFF
+MonitorWidth: 78
+Name: None
+NoStatusRC: False
+NonCritical: None
+Output: /Users/jmalinen/Documents/workspace/robot/atest/results/python2.5/output/deprecated/output.xml
+OutputDir: /Users/jmalinen/Documents/workspace/robot/atest/results/python2.5/output/deprecated
+RemoveKeywords: []
+Report: NONE
+ReportBackground: ('#99FF66', '#99FF66', '#FF3333')
+ReportTitle: None
+RunEmptySuite: False
+RunMode: []
+SetTag: []
+SplitLog: False
+StdErr: None
+StdOut: None
+SuiteNames: []
+SuiteStatLevel: -1
+TagDoc: []
+TagStatCombine: []
+TagStatExclude: []
+TagStatInclude: []
+TagStatLink: []
+TestNames: []
+TimestampOutputs: False
+VariableFiles: []
+Variables: [u'interpreter:python2.5']
+VisibleLogLevel: INFO
+WarnOnSkipped: False
+XUnitFile: NONE
+20121024 15:44:40.084 | INFO  | Parsing file '/Users/jmalinen/Documents/workspace/robot/atest/testdata/standard_libraries/deprecated_builtin/deprecated.html'.
+20121024 15:44:40.209 | INFO  | No debug file
+20121024 15:44:40.209 | INFO  | Initializing namespace for test suite 'Deprecated'
+20121024 15:44:40.211 | INFO  | Imported test library class 'BuiltIn' from '/Users/jmalinen/Documents/workspace/robot/src/robot/libraries/BuiltIn.pyc'.
+20121024 15:44:40.230 | INFO  | Imported library 'BuiltIn' with arguments [ ] (version trunk 20120906, class type, global scope, 87 keywords)
+20121024 15:44:40.230 | INFO  | Imported test library class 'DeprecatedBuiltIn' from '/Users/jmalinen/Documents/workspace/robot/src/robot/libraries/DeprecatedBuiltIn.pyc'.
+20121024 15:44:40.239 | INFO  | Imported library 'DeprecatedBuiltIn' with arguments [ ] (version &lt;unknown&gt;, class type, global scope, 52 keywords)
+20121024 15:44:40.239 | INFO  | Imported test library class 'Reserved' from '/Users/jmalinen/Documents/workspace/robot/src/robot/libraries/Reserved.pyc'.
+20121024 15:44:40.240 | INFO  | Imported library 'Reserved' with arguments [ ] (version &lt;unknown&gt;, dynamic type, global scope, 10 keywords)
+20121024 15:44:40.241 | INFO  | Imported test library module 'Easter' from '/Users/jmalinen/Documents/workspace/robot/src/robot/libraries/Easter.pyc'.
+20121024 15:44:40.241 | INFO  | Imported library 'Easter' with arguments [ ] (version &lt;unknown&gt;, module type, global scope, 1 keywords)
+20121024 15:44:40.241 | INFO  | Started test suite 'Deprecated'
+20121024 15:44:40.242 | INFO  | Started test case 'Fail'
+20121024 15:44:40.244 | INFO  | Ended test case 'Fail'
+20121024 15:44:40.245 | INFO  | Started test case 'Fail with Message'
+20121024 15:44:40.247 | INFO  | Ended test case 'Fail with Message'
+20121024 15:44:40.248 | INFO  | Started test case 'Error'
+20121024 15:44:40.249 | INFO  | Ended test case 'Error'
+20121024 15:44:40.249 | INFO  | Started test case 'Error With Message'
+20121024 15:44:40.251 | INFO  | Ended test case 'Error With Message'
+20121024 15:44:40.251 | INFO  | Started test case 'Fail If 1'
+20121024 15:44:40.253 | INFO  | Ended test case 'Fail If 1'
+20121024 15:44:40.254 | INFO  | Started test case 'Fail If 2'
+20121024 15:44:40.255 | INFO  | Ended test case 'Fail If 2'
+20121024 15:44:40.256 | INFO  | Started test case 'Fail Unless 1'
+20121024 15:44:40.258 | INFO  | Ended test case 'Fail Unless 1'
+20121024 15:44:40.259 | INFO  | Started test case 'Fail Unless 2'
+20121024 15:44:40.260 | INFO  | Ended test case 'Fail Unless 2'
+20121024 15:44:40.261 | INFO  | Started test case 'Fail If Equal'
+20121024 15:44:40.263 | INFO  | Ended test case 'Fail If Equal'
+20121024 15:44:40.264 | INFO  | Started test case 'Fail Unless Equal'
+20121024 15:44:40.266 | INFO  | Ended test case 'Fail Unless Equal'
+20121024 15:44:40.266 | INFO  | Started test case 'Fail If Ints Equal'
+20121024 15:44:40.269 | INFO  | Ended test case 'Fail If Ints Equal'
+20121024 15:44:40.270 | INFO  | Started test case 'Fail Unless Ints Equal'
+20121024 15:44:40.272 | INFO  | Ended test case 'Fail Unless Ints Equal'
+20121024 15:44:40.273 | INFO  | Started test case 'Fail If Floats Equal'
+20121024 15:44:40.275 | INFO  | Ended test case 'Fail If Floats Equal'
+20121024 15:44:40.276 | INFO  | Started test case 'Fail Unless Floats Equal'
+20121024 15:44:40.279 | INFO  | Ended test case 'Fail Unless Floats Equal'
+20121024 15:44:40.280 | INFO  | Started test case 'Fail If Starts'
+20121024 15:44:40.281 | INFO  | Ended test case 'Fail If Starts'
+20121024 15:44:40.282 | INFO  | Started test case 'Fail Unless Starts'
+20121024 15:44:40.285 | INFO  | Ended test case 'Fail Unless Starts'
+20121024 15:44:40.286 | INFO  | Started test case 'Fail If Ends'
+20121024 15:44:40.288 | INFO  | Ended test case 'Fail If Ends'
+20121024 15:44:40.289 | INFO  | Started test case 'Fail Unless Ends'
+20121024 15:44:40.291 | INFO  | Ended test case 'Fail Unless Ends'
+20121024 15:44:40.292 | INFO  | Started test case 'Fail If Contains'
+20121024 15:44:40.293 | INFO  | Ended test case 'Fail If Contains'
+20121024 15:44:40.294 | INFO  | Started test case 'Fail Unless Contains'
+20121024 15:44:40.296 | INFO  | Ended test case 'Fail Unless Contains'
+20121024 15:44:40.297 | INFO  | Started test case 'Fail If Matches'
+20121024 15:44:40.300 | INFO  | Ended test case 'Fail If Matches'
+20121024 15:44:40.301 | INFO  | Started test case 'Fail Unless Matches'
+20121024 15:44:40.302 | INFO  | Ended test case 'Fail Unless Matches'
+20121024 15:44:40.303 | INFO  | Started test case 'Fail If Regexp Matches'
+20121024 15:44:40.306 | INFO  | Ended test case 'Fail If Regexp Matches'
+20121024 15:44:40.307 | INFO  | Started test case 'Fail Unless Regexp Matches'
+20121024 15:44:40.308 | INFO  | Ended test case 'Fail Unless Regexp Matches'
+20121024 15:44:40.309 | INFO  | Ended test suite 'Deprecated'
+20121024 15:44:40.309 | INFO  | Tests execution ended. Statistics:
+24 critical tests, 0 passed, 24 failed
+24 tests total, 0 passed, 24 failed
+20121024 15:44:40.310 | INFO  | Output: /Users/jmalinen/Documents/workspace/robot/atest/results/python2.5/output/deprecated/output.xml
+</msg>
+<msg timestamp="20121024 15:44:40.344" level="INFO">${file} = 20121024 15:44:39.963 | INFO  | Robot Framework trunk 20120906 (Python 2.5.6 on darwin)
+20121024 15:44:39.964 | INFO  | Arguments: /Users/jmalinen/Documents/workspace/robot/atest/testdata/standard_lib...</msg>
+<status status="PASS" endtime="20121024 15:44:40.344" starttime="20121024 15:44:40.343"></status>
+</kw>
+<msg timestamp="20121024 15:44:40.344" level="INFO">${file} = 20121024 15:44:39.963 | INFO  | Robot Framework trunk 20120906 (Python 2.5.6 on darwin)
+20121024 15:44:39.964 | INFO  | Arguments: /Users/jmalinen/Documents/workspace/robot/atest/testdata/standard_lib...</msg>
+<status status="PASS" endtime="20121024 15:44:40.344" starttime="20121024 15:44:40.340"></status>
+</kw>
+<kw type="kw" name="BuiltIn.Should Contain" timeout="">
+<doc>Fails if `item1` does not contain `item2` one or more times.</doc>
+<arguments>
+<arg>${file}</arg>
+<arg>${exp}</arg>
+</arguments>
+<status status="PASS" endtime="20121024 15:44:40.345" starttime="20121024 15:44:40.344"></status>
+</kw>
+<status status="PASS" endtime="20121024 15:44:40.345" starttime="20121024 15:44:40.339"></status>
+</kw>
+<status status="PASS" endtime="20121024 15:44:40.345" starttime="20121024 15:44:40.338"></status>
+</kw>
+<doc></doc>
+<tags>
+<tag>jybot</tag>
+<tag>pybot</tag>
+<tag>regression</tag>
+</tags>
+<status status="PASS" endtime="20121024 15:44:40.345" critical="yes" starttime="20121024 15:44:40.337"></status>
+</test>
+<doc></doc>
+<metadata>
+</metadata>
+<status status="PASS" endtime="20121024 15:44:40.346" starttime="20121024 15:44:39.688"></status>
+</suite>
+<suite source="/Users/jmalinen/Documents/workspace/robot/atest/robot/standard_libraries/deprecated_builtin/grep.txt" id="s1-s3" name="Grep">
+<kw type="setup" name="atest_resource.Run Tests" timeout="">
+<doc></doc>
+<arguments>
+<arg>${EMPTY}</arg>
+<arg>standard_libraries/deprecated_builtin/grep.txt</arg>
+</arguments>
+<kw type="kw" name="atest_resource.Run Tests Helper" timeout="">
+<doc></doc>
+<arguments>
+<arg>${options}</arg>
+<arg>@{data list}</arg>
+</arguments>
+<kw type="kw" name="${data string} = atest_resource.Set Variables And Get Datasources" timeout="">
+<doc></doc>
+<arguments>
+<arg>@{data list}</arg>
+</arguments>
+<kw type="kw" name="BuiltIn.Set Suite Variable" timeout="">
+<doc>Makes a variable available everywhere within the scope of the current suite.</doc>
+<arguments>
+<arg>$SUITE</arg>
+<arg>${NONE}</arg>
+</arguments>
+<msg timestamp="20121024 15:44:40.360" level="INFO">${SUITE} = None</msg>
+<status status="PASS" endtime="20121024 15:44:40.360" starttime="20121024 15:44:40.360"></status>
+</kw>
+<kw type="kw" name="${name} = TestHelper.Get Output Name" timeout="">
+<doc></doc>
+<arguments>
+<arg>@{data list}</arg>
+</arguments>
+<msg timestamp="20121024 15:44:40.361" level="INFO">${name} = grep</msg>
+<status status="PASS" endtime="20121024 15:44:40.361" starttime="20121024 15:44:40.361"></status>
+</kw>
+<kw type="kw" name="atest_resource.Set Variables" timeout="">
+<doc></doc>
+<arguments>
+<arg>${name}</arg>
+</arguments>
+<kw type="kw" name="${OUTDIR} = OperatingSystem.Join Path" timeout="">
+<doc>Joins the given path part(s) to the given base path.</doc>
+<arguments>
+<arg>${OUTPUTDIR}</arg>
+<arg>output</arg>
+<arg>${name}</arg>
+</arguments>
+<msg timestamp="20121024 15:44:40.363" level="INFO">${OUTDIR} = /Users/jmalinen/Documents/workspace/robot/atest/results/python2.5/output/grep</msg>
+<status status="PASS" endtime="20121024 15:44:40.363" starttime="20121024 15:44:40.362"></status>
+</kw>
+<kw type="kw" name="BuiltIn.Set Global Variable" timeout="">
+<doc>Makes a variable available globally in all tests and suites.</doc>
+<arguments>
+<arg>$OUTDIR</arg>
+<arg>${OUTDIR.encode('ascii', 'ignore').replace('?', '_') .replace('*', '_')}</arg>
+</arguments>
+<msg timestamp="20121024 15:44:40.364" level="INFO">${OUTDIR} = /Users/jmalinen/Documents/workspace/robot/atest/results/python2.5/output/grep</msg>
+<status status="PASS" endtime="20121024 15:44:40.364" starttime="20121024 15:44:40.363"></status>
+</kw>
+<kw type="kw" name="OperatingSystem.Create Directory" timeout="">
+<doc>Creates the specified directory.</doc>
+<arguments>
+<arg>${OUTDIR}</arg>
+</arguments>
+<msg timestamp="20121024 15:44:40.365" html="yes" level="INFO">Created directory '&lt;a href="file:///Users/jmalinen/Documents/workspace/robot/atest/results/python2.5/output/grep"&gt;/Users/jmalinen/Documents/workspace/robot/atest/results/python2.5/output/grep&lt;/a&gt;'</msg>
+<status status="PASS" endtime="20121024 15:44:40.365" starttime="20121024 15:44:40.364"></status>
+</kw>
+<kw type="kw" name="BuiltIn.Set Suite Variable" timeout="">
+<doc>Makes a variable available everywhere within the scope of the current suite.</doc>
+<arguments>
+<arg>$OUTFILE</arg>
+<arg>${OUTDIR}${/}output.xml</arg>
+</arguments>
+<msg timestamp="20121024 15:44:40.365" level="INFO">${OUTFILE} = /Users/jmalinen/Documents/workspace/robot/atest/results/python2.5/output/grep/output.xml</msg>
+<status status="PASS" endtime="20121024 15:44:40.366" starttime="20121024 15:44:40.365"></status>
+</kw>
+<kw type="kw" name="BuiltIn.Set Suite Variable" timeout="">
+<doc>Makes a variable available everywhere within the scope of the current suite.</doc>
+<arguments>
+<arg>$STDOUT_FILE</arg>
+<arg>${OUTDIR}${/}stdout.txt</arg>
+</arguments>
+<msg timestamp="20121024 15:44:40.366" level="INFO">${STDOUT_FILE} = /Users/jmalinen/Documents/workspace/robot/atest/results/python2.5/output/grep/stdout.txt</msg>
+<status status="PASS" endtime="20121024 15:44:40.366" starttime="20121024 15:44:40.366"></status>
+</kw>
+<kw type="kw" name="BuiltIn.Set Suite Variable" timeout="">
+<doc>Makes a variable available everywhere within the scope of the current suite.</doc>
+<arguments>
+<arg>$STDERR_FILE</arg>
+<arg>${OUTDIR}${/}stderr.txt</arg>
+</arguments>
+<msg timestamp="20121024 15:44:40.367" level="INFO">${STDERR_FILE} = /Users/jmalinen/Documents/workspace/robot/atest/results/python2.5/output/grep/stderr.txt</msg>
+<status status="PASS" endtime="20121024 15:44:40.367" starttime="20121024 15:44:40.367"></status>
+</kw>
+<kw type="kw" name="BuiltIn.Set Suite Variable" timeout="">
+<doc>Makes a variable available everywhere within the scope of the current suite.</doc>
+<arguments>
+<arg>$SYSLOG_FILE</arg>
+<arg>${OUTDIR}${/}syslog.txt</arg>
+</arguments>
+<msg timestamp="20121024 15:44:40.368" level="INFO">${SYSLOG_FILE} = /Users/jmalinen/Documents/workspace/robot/atest/results/python2.5/output/grep/syslog.txt</msg>
+<status status="PASS" endtime="20121024 15:44:40.368" starttime="20121024 15:44:40.368"></status>
+</kw>
+<kw type="kw" name="OperatingSystem.Set Environment Variable" timeout="">
+<doc>Sets an environment variable to a specified value.</doc>
+<arguments>
+<arg>ROBOT_SYSLOG_FILE</arg>
+<arg>${SYSLOG_FILE}</arg>
+</arguments>
+<msg timestamp="20121024 15:44:40.369" level="INFO">Environment variable 'ROBOT_SYSLOG_FILE' set to value '/Users/jmalinen/Documents/workspace/robot/atest/results/python2.5/output/grep/syslog.txt'</msg>
+<status status="PASS" endtime="20121024 15:44:40.369" starttime="20121024 15:44:40.368"></status>
+</kw>
+<kw type="kw" name="atest_resource.Set Runners" timeout="">
+<doc></doc>
+<arguments>
+</arguments>
+<kw type="kw" name="${robot} = OperatingSystem.Join Path" timeout="">
+<doc>Joins the given path part(s) to the given base path.</doc>
+<arguments>
+<arg>${ROBOTPATH}</arg>
+<arg>run.py</arg>
+</arguments>
+<msg timestamp="20121024 15:44:40.370" level="INFO">${robot} = /Users/jmalinen/Documents/workspace/robot/src/robot/run.py</msg>
+<status status="PASS" endtime="20121024 15:44:40.370" starttime="20121024 15:44:40.370"></status>
+</kw>
+<kw type="kw" name="BuiltIn.Set Suite Variable" timeout="">
+<doc>Makes a variable available everywhere within the scope of the current suite.</doc>
+<arguments>
+<arg>$ROBOT</arg>
+<arg>${INTERPRETER} ${robot}</arg>
+</arguments>
+<msg timestamp="20121024 15:44:40.371" level="INFO">${ROBOT} = python2.5 /Users/jmalinen/Documents/workspace/robot/src/robot/run.py</msg>
+<status status="PASS" endtime="20121024 15:44:40.371" starttime="20121024 15:44:40.371"></status>
+</kw>
+<kw type="kw" name="${rebot} = OperatingSystem.Join Path" timeout="">
+<doc>Joins the given path part(s) to the given base path.</doc>
+<arguments>
+<arg>${ROBOTPATH}</arg>
+<arg>rebot.py</arg>
+</arguments>
+<msg timestamp="20121024 15:44:40.372" level="INFO">${rebot} = /Users/jmalinen/Documents/workspace/robot/src/robot/rebot.py</msg>
+<status status="PASS" endtime="20121024 15:44:40.372" starttime="20121024 15:44:40.371"></status>
+</kw>
+<kw type="kw" name="BuiltIn.Set Suite Variable" timeout="">
+<doc>Makes a variable available everywhere within the scope of the current suite.</doc>
+<arguments>
+<arg>$REBOT</arg>
+<arg>${INTERPRETER} ${rebot}</arg>
+</arguments>
+<msg timestamp="20121024 15:44:40.373" level="INFO">${REBOT} = python2.5 /Users/jmalinen/Documents/workspace/robot/src/robot/rebot.py</msg>
+<status status="PASS" endtime="20121024 15:44:40.373" starttime="20121024 15:44:40.372"></status>
+</kw>
+<status status="PASS" endtime="20121024 15:44:40.373" starttime="20121024 15:44:40.369"></status>
+</kw>
+<status status="PASS" endtime="20121024 15:44:40.373" starttime="20121024 15:44:40.361"></status>
+</kw>
+<kw type="kw" name="@{data list} = OperatingSystem.Join Paths" timeout="">
+<doc>Joins given paths with base and returns resulted paths.</doc>
+<arguments>
+<arg>${DATADIR}</arg>
+<arg>@{data list}</arg>
+</arguments>
+<msg timestamp="20121024 15:44:40.375" level="INFO">@{data list} = [ /Users/jmalinen/Documents/workspace/robot/atest/testdata/standard_libraries/deprecated_builtin/grep.txt ]</msg>
+<status status="PASS" endtime="20121024 15:44:40.375" starttime="20121024 15:44:40.374"></status>
+</kw>
+<kw type="kw" name="${data string} = BuiltIn.Catenate" timeout="">
+<doc>Catenates the given items together and returns the resulted string.</doc>
+<arguments>
+<arg>@{data list}</arg>
+</arguments>
+<msg timestamp="20121024 15:44:40.375" level="INFO">${data string} = /Users/jmalinen/Documents/workspace/robot/atest/testdata/standard_libraries/deprecated_builtin/grep.txt</msg>
+<status status="PASS" endtime="20121024 15:44:40.375" starttime="20121024 15:44:40.375"></status>
+</kw>
+<msg timestamp="20121024 15:44:40.376" level="INFO">${data string} = /Users/jmalinen/Documents/workspace/robot/atest/testdata/standard_libraries/deprecated_builtin/grep.txt</msg>
+<status status="PASS" endtime="20121024 15:44:40.376" starttime="20121024 15:44:40.359"></status>
+</kw>
+<kw type="kw" name="${options} = BuiltIn.Catenate" timeout="">
+<doc>Catenates the given items together and returns the resulted string.</doc>
+<arguments>
+<arg>--MonitorMarkers OFF</arg>
+<arg>${user options}</arg>
+<arg>--variable interpreter:${INTERPRETER}</arg>
+<arg>--pythonpath ${LIBPATH1}</arg>
+<arg>--pythonpath ${LIBPATH2}</arg>
+</arguments>
+<msg timestamp="20121024 15:44:40.377" level="INFO">${options} = --MonitorMarkers OFF  --variable interpreter:python2.5 --pythonpath /Users/jmalinen/Documents/workspace/robot/atest/resources/../testresources/testlibs --pythonpath /Users/jmalinen/Documents/workspace...</msg>
+<status status="PASS" endtime="20121024 15:44:40.377" starttime="20121024 15:44:40.376"></status>
+</kw>
+<kw type="kw" name="atest_resource.Run Helper" timeout="">
+<doc></doc>
+<arguments>
+<arg>${ROBOT}</arg>
+<arg>${options}</arg>
+<arg>${data string}</arg>
+</arguments>
+<kw type="kw" name="OperatingSystem.Remove Files" timeout="">
+<doc>Uses `Remove File` to remove multiple files one-by-one.</doc>
+<arguments>
+<arg>${OUTFILE}</arg>
+<arg>${OUTDIR}/*.xml</arg>
+<arg>${OUTDIR}/*.html</arg>
+</arguments>
+<msg timestamp="20121024 15:44:40.379" html="yes" level="INFO">File '&lt;a href="file:///Users/jmalinen/Documents/workspace/robot/atest/results/python2.5/output/grep/output.xml"&gt;/Users/jmalinen/Documents/workspace/robot/atest/results/python2.5/output/grep/output.xml&lt;/a&gt;' does not exist</msg>
+<msg timestamp="20121024 15:44:40.380" html="yes" level="INFO">File '&lt;a href="file:///Users/jmalinen/Documents/workspace/robot/atest/results/python2.5/output/grep/*.xml"&gt;/Users/jmalinen/Documents/workspace/robot/atest/results/python2.5/output/grep/*.xml&lt;/a&gt;' does not exist</msg>
+<msg timestamp="20121024 15:44:40.380" html="yes" level="INFO">File '&lt;a href="file:///Users/jmalinen/Documents/workspace/robot/atest/results/python2.5/output/grep/*.html"&gt;/Users/jmalinen/Documents/workspace/robot/atest/results/python2.5/output/grep/*.html&lt;/a&gt;' does not exist</msg>
+<status status="PASS" endtime="20121024 15:44:40.380" starttime="20121024 15:44:40.378"></status>
+</kw>
+<kw type="kw" name="${cmd} = BuiltIn.Catenate" timeout="">
+<doc>Catenates the given items together and returns the resulted string.</doc>
+<arguments>
+<arg>${runner}</arg>
+<arg>--monitorcolors OFF</arg>
+<arg>--outputdir ${OUTDIR}</arg>
+<arg>--output ${OUTFILE}</arg>
+<arg>--report NONE</arg>
+<arg>--log NONE</arg>
+<arg>${options}</arg>
+<arg>${data string}</arg>
+<arg>1&gt;${STDOUTFILE}</arg>
+<arg>2&gt;${STDERRFILE}</arg>
+</arguments>
+<msg timestamp="20121024 15:44:40.382" level="INFO">${cmd} = python2.5 /Users/jmalinen/Documents/workspace/robot/src/robot/run.py --monitorcolors OFF --outputdir /Users/jmalinen/Documents/workspace/robot/atest/results/python2.5/output/grep --output /Users/jmali...</msg>
+<status status="PASS" endtime="20121024 15:44:40.382" starttime="20121024 15:44:40.380"></status>
+</kw>
+<kw type="kw" name="${rc} = OperatingSystem.Run And Return Rc" timeout="">
+<doc>Runs the given command in the system and returns the return code.</doc>
+<arguments>
+<arg>${cmd}</arg>
+</arguments>
+<msg timestamp="20121024 15:44:40.383" level="INFO">Running command 'python2.5 /Users/jmalinen/Documents/workspace/robot/src/robot/run.py --monitorcolors OFF --outputdir /Users/jmalinen/Documents/workspace/robot/atest/results/python2.5/output/grep --output /Users/jmalinen/Documents/workspace/robot/atest/results/python2.5/output/grep/output.xml --report NONE --log NONE --MonitorMarkers OFF  --variable interpreter:python2.5 --pythonpath /Users/jmalinen/Documents/workspace/robot/atest/resources/../testresources/testlibs --pythonpath /Users/jmalinen/Documents/workspace/robot/atest/resources/../testresources/listeners /Users/jmalinen/Documents/workspace/robot/atest/testdata/standard_libraries/deprecated_builtin/grep.txt 1&gt;/Users/jmalinen/Documents/workspace/robot/atest/results/python2.5/output/grep/stdout.txt 2&gt;/Users/jmalinen/Documents/workspace/robot/atest/results/python2.5/output/grep/stderr.txt'</msg>
+<msg timestamp="20121024 15:44:40.736" level="INFO">${rc} = 0</msg>
+<status status="PASS" endtime="20121024 15:44:40.735" starttime="20121024 15:44:40.382"></status>
+</kw>
+<kw type="kw" name="BuiltIn.Log" timeout="">
+<doc>Logs the given message with the given level.</doc>
+<arguments>
+<arg>&lt;a href="file://${OUTDIR}"&gt;${OUTDIR}&lt;/a&gt;</arg>
+<arg>HTML</arg>
+</arguments>
+<msg timestamp="20121024 15:44:40.736" html="yes" level="INFO">&lt;a href="file:///Users/jmalinen/Documents/workspace/robot/atest/results/python2.5/output/grep"&gt;/Users/jmalinen/Documents/workspace/robot/atest/results/python2.5/output/grep&lt;/a&gt;</msg>
+<status status="PASS" endtime="20121024 15:44:40.736" starttime="20121024 15:44:40.736"></status>
+</kw>
+<kw type="kw" name="BuiltIn.Log" timeout="">
+<doc>Logs the given message with the given level.</doc>
+<arguments>
+<arg>&lt;a href="file://${OUTFILE}"&gt;${OUTFILE}&lt;/a&gt;</arg>
+<arg>HTML</arg>
+</arguments>
+<msg timestamp="20121024 15:44:40.737" html="yes" level="INFO">&lt;a href="file:///Users/jmalinen/Documents/workspace/robot/atest/results/python2.5/output/grep/output.xml"&gt;/Users/jmalinen/Documents/workspace/robot/atest/results/python2.5/output/grep/output.xml&lt;/a&gt;</msg>
+<status status="PASS" endtime="20121024 15:44:40.737" starttime="20121024 15:44:40.737"></status>
+</kw>
+<kw type="kw" name="BuiltIn.Log" timeout="">
+<doc>Logs the given message with the given level.</doc>
+<arguments>
+<arg>&lt;a href="file://${STDOUTFILE}"&gt;${STDOUTFILE}&lt;/a&gt;</arg>
+<arg>HTML</arg>
+</arguments>
+<msg timestamp="20121024 15:44:40.738" html="yes" level="INFO">&lt;a href="file:///Users/jmalinen/Documents/workspace/robot/atest/results/python2.5/output/grep/stdout.txt"&gt;/Users/jmalinen/Documents/workspace/robot/atest/results/python2.5/output/grep/stdout.txt&lt;/a&gt;</msg>
+<status status="PASS" endtime="20121024 15:44:40.738" starttime="20121024 15:44:40.737"></status>
+</kw>
+<kw type="kw" name="BuiltIn.Log" timeout="">
+<doc>Logs the given message with the given level.</doc>
+<arguments>
+<arg>&lt;a href="file://${STDERRFILE}"&gt;${STDERRFILE}&lt;/a&gt;</arg>
+<arg>HTML</arg>
+</arguments>
+<msg timestamp="20121024 15:44:40.738" html="yes" level="INFO">&lt;a href="file:///Users/jmalinen/Documents/workspace/robot/atest/results/python2.5/output/grep/stderr.txt"&gt;/Users/jmalinen/Documents/workspace/robot/atest/results/python2.5/output/grep/stderr.txt&lt;/a&gt;</msg>
+<status status="PASS" endtime="20121024 15:44:40.738" starttime="20121024 15:44:40.738"></status>
+</kw>
+<kw type="kw" name="BuiltIn.Log" timeout="">
+<doc>Logs the given message with the given level.</doc>
+<arguments>
+<arg>&lt;a href="file://${SYSLOGFILE}"&gt;${SYSLOGFILE}&lt;/a&gt;</arg>
+<arg>HTML</arg>
+</arguments>
+<msg timestamp="20121024 15:44:40.739" html="yes" level="INFO">&lt;a href="file:///Users/jmalinen/Documents/workspace/robot/atest/results/python2.5/output/grep/syslog.txt"&gt;/Users/jmalinen/Documents/workspace/robot/atest/results/python2.5/output/grep/syslog.txt&lt;/a&gt;</msg>
+<status status="PASS" endtime="20121024 15:44:40.739" starttime="20121024 15:44:40.739"></status>
+</kw>
+<status status="PASS" endtime="20121024 15:44:40.739" starttime="20121024 15:44:40.377"></status>
+</kw>
+<status status="PASS" endtime="20121024 15:44:40.739" starttime="20121024 15:44:40.358"></status>
+</kw>
+<kw type="kw" name="TestCheckerLibrary.Process Output" timeout="">
+<doc></doc>
+<arguments>
+<arg>${OUTFILE}</arg>
+</arguments>
+<msg timestamp="20121024 15:44:40.750" level="INFO">${SUITE} = Grep</msg>
+<msg timestamp="20121024 15:44:40.750" level="INFO">${STATISTICS} = &lt;robot.model.statistics.Statistics object at 0x1308150&gt;</msg>
+<msg timestamp="20121024 15:44:40.750" level="INFO">${ERRORS} = &lt;robot.result.executionerrors.ExecutionErrors object at 0x13267b0&gt;</msg>
+<msg timestamp="20121024 15:44:40.751" level="INFO">Processing output '/Users/jmalinen/Documents/workspace/robot/atest/results/python2.5/output/grep/output.xml'</msg>
+<status status="PASS" endtime="20121024 15:44:40.751" starttime="20121024 15:44:40.740"></status>
+</kw>
+<status status="PASS" endtime="20121024 15:44:40.751" starttime="20121024 15:44:40.357"></status>
+</kw>
+<test id="s1-s3-t1" timeout="" name="Grep Literal">
+<kw type="kw" name="atest_resource.Check Test Case" timeout="">
+<doc></doc>
+<arguments>
+<arg>Grep Literal</arg>
+</arguments>
+<kw type="kw" name="${test} = TestCheckerLibrary.Get Test From Suite" timeout="">
+<doc></doc>
+<arguments>
+<arg>${SUITE}</arg>
+<arg>${name}</arg>
+</arguments>
+<msg timestamp="20121024 15:44:40.754" level="INFO">${test} = Grep Literal</msg>
+<status status="PASS" endtime="20121024 15:44:40.754" starttime="20121024 15:44:40.753"></status>
+</kw>
+<kw type="kw" name="TestCheckerLibrary.Check Test Status" timeout="">
+<doc>Verifies that test's status and message are as expected.</doc>
+<arguments>
+<arg>${test}</arg>
+<arg>${status}</arg>
+<arg>${message}</arg>
+</arguments>
+<status status="PASS" endtime="20121024 15:44:40.754" starttime="20121024 15:44:40.754"></status>
+</kw>
+<status status="PASS" endtime="20121024 15:44:40.755" starttime="20121024 15:44:40.752"></status>
+</kw>
+<doc></doc>
+<tags>
+<tag>jybot</tag>
+<tag>pybot</tag>
+<tag>regression</tag>
+</tags>
+<status status="PASS" endtime="20121024 15:44:40.755" critical="yes" starttime="20121024 15:44:40.751"></status>
+</test>
+<test id="s1-s3-t2" timeout="" name="Grep Case Insensitive">
+<kw type="kw" name="atest_resource.Check Test Case" timeout="">
+<doc></doc>
+<arguments>
+<arg>Grep Case Insensitive</arg>
+</arguments>
+<kw type="kw" name="${test} = TestCheckerLibrary.Get Test From Suite" timeout="">
+<doc></doc>
+<arguments>
+<arg>${SUITE}</arg>
+<arg>${name}</arg>
+</arguments>
+<msg timestamp="20121024 15:44:40.758" level="INFO">${test} = Grep Case Insensitive</msg>
+<status status="PASS" endtime="20121024 15:44:40.758" starttime="20121024 15:44:40.757"></status>
+</kw>
+<kw type="kw" name="TestCheckerLibrary.Check Test Status" timeout="">
+<doc>Verifies that test's status and message are as expected.</doc>
+<arguments>
+<arg>${test}</arg>
+<arg>${status}</arg>
+<arg>${message}</arg>
+</arguments>
+<status status="PASS" endtime="20121024 15:44:40.759" starttime="20121024 15:44:40.758"></status>
+</kw>
+<status status="PASS" endtime="20121024 15:44:40.759" starttime="20121024 15:44:40.756"></status>
+</kw>
+<doc></doc>
+<tags>
+<tag>jybot</tag>
+<tag>pybot</tag>
+<tag>regression</tag>
+</tags>
+<status status="PASS" endtime="20121024 15:44:40.759" critical="yes" starttime="20121024 15:44:40.755"></status>
+</test>
+<test id="s1-s3-t3" timeout="" name="Grep Simple Pattern">
+<kw type="kw" name="atest_resource.Check Test Case" timeout="">
+<doc></doc>
+<arguments>
+<arg>Grep Simple Pattern</arg>
+</arguments>
+<kw type="kw" name="${test} = TestCheckerLibrary.Get Test From Suite" timeout="">
+<doc></doc>
+<arguments>
+<arg>${SUITE}</arg>
+<arg>${name}</arg>
+</arguments>
+<msg timestamp="20121024 15:44:40.762" level="INFO">${test} = Grep Simple Pattern</msg>
+<status status="PASS" endtime="20121024 15:44:40.762" starttime="20121024 15:44:40.762"></status>
+</kw>
+<kw type="kw" name="TestCheckerLibrary.Check Test Status" timeout="">
+<doc>Verifies that test's status and message are as expected.</doc>
+<arguments>
+<arg>${test}</arg>
+<arg>${status}</arg>
+<arg>${message}</arg>
+</arguments>
+<status status="PASS" endtime="20121024 15:44:40.763" starttime="20121024 15:44:40.762"></status>
+</kw>
+<status status="PASS" endtime="20121024 15:44:40.763" starttime="20121024 15:44:40.760"></status>
+</kw>
+<doc></doc>
+<tags>
+<tag>jybot</tag>
+<tag>pybot</tag>
+<tag>regression</tag>
+</tags>
+<status status="PASS" endtime="20121024 15:44:40.763" critical="yes" starttime="20121024 15:44:40.759"></status>
+</test>
+<test id="s1-s3-t4" timeout="" name="Grep Regexp">
+<kw type="kw" name="atest_resource.Check Test Case" timeout="">
+<doc></doc>
+<arguments>
+<arg>Grep Regexp</arg>
+</arguments>
+<kw type="kw" name="${test} = TestCheckerLibrary.Get Test From Suite" timeout="">
+<doc></doc>
+<arguments>
+<arg>${SUITE}</arg>
+<arg>${name}</arg>
+</arguments>
+<msg timestamp="20121024 15:44:40.766" level="INFO">${test} = Grep Regexp</msg>
+<status status="PASS" endtime="20121024 15:44:40.766" starttime="20121024 15:44:40.766"></status>
+</kw>
+<kw type="kw" name="TestCheckerLibrary.Check Test Status" timeout="">
+<doc>Verifies that test's status and message are as expected.</doc>
+<arguments>
+<arg>${test}</arg>
+<arg>${status}</arg>
+<arg>${message}</arg>
+</arguments>
+<status status="PASS" endtime="20121024 15:44:40.767" starttime="20121024 15:44:40.767"></status>
+</kw>
+<status status="PASS" endtime="20121024 15:44:40.767" starttime="20121024 15:44:40.765"></status>
+</kw>
+<doc></doc>
+<tags>
+<tag>jybot</tag>
+<tag>pybot</tag>
+<tag>regression</tag>
+</tags>
+<status status="PASS" endtime="20121024 15:44:40.767" critical="yes" starttime="20121024 15:44:40.764"></status>
+</test>
+<test id="s1-s3-t5" timeout="" name="No Deprecation Warning Is Shown When Grep Is Used">
+<kw type="kw" name="BuiltIn.Length Should Be" timeout="">
+<doc>Verifies that the length of the given item is correct.</doc>
+<arguments>
+<arg>${ERRORS.msgs}</arg>
+<arg>0</arg>
+</arguments>
+<msg timestamp="20121024 15:44:40.770" level="INFO">Length is 0</msg>
+<status status="PASS" endtime="20121024 15:44:40.770" starttime="20121024 15:44:40.769"></status>
+</kw>
+<doc></doc>
+<tags>
+<tag>jybot</tag>
+<tag>pybot</tag>
+<tag>regression</tag>
+</tags>
+<status status="PASS" endtime="20121024 15:44:40.770" critical="yes" starttime="20121024 15:44:40.768"></status>
+</test>
+<test id="s1-s3-t6" timeout="" name="Regexp Escape">
+<kw type="kw" name="atest_resource.Check Test Case" timeout="">
+<doc></doc>
+<arguments>
+<arg>Regexp Escape</arg>
+</arguments>
+<kw type="kw" name="${test} = TestCheckerLibrary.Get Test From Suite" timeout="">
+<doc></doc>
+<arguments>
+<arg>${SUITE}</arg>
+<arg>${name}</arg>
+</arguments>
+<msg timestamp="20121024 15:44:40.774" level="INFO">${test} = Regexp Escape</msg>
+<status status="PASS" endtime="20121024 15:44:40.774" starttime="20121024 15:44:40.773"></status>
+</kw>
+<kw type="kw" name="TestCheckerLibrary.Check Test Status" timeout="">
+<doc>Verifies that test's status and message are as expected.</doc>
+<arguments>
+<arg>${test}</arg>
+<arg>${status}</arg>
+<arg>${message}</arg>
+</arguments>
+<status status="PASS" endtime="20121024 15:44:40.775" starttime="20121024 15:44:40.774"></status>
+</kw>
+<status status="PASS" endtime="20121024 15:44:40.775" starttime="20121024 15:44:40.772"></status>
+</kw>
+<doc></doc>
+<tags>
+<tag>jybot</tag>
+<tag>pybot</tag>
+<tag>regression</tag>
+</tags>
+<status status="PASS" endtime="20121024 15:44:40.775" critical="yes" starttime="20121024 15:44:40.771"></status>
+</test>
+<doc></doc>
+<metadata>
+</metadata>
+<status status="PASS" endtime="20121024 15:44:40.776" starttime="20121024 15:44:40.346"></status>
+</suite>
+<suite source="/Users/jmalinen/Documents/workspace/robot/atest/robot/standard_libraries/deprecated_builtin/misc.html" id="s1-s4" name="Misc">
+<kw type="setup" name="atest_resource.Run Tests" timeout="">
+<doc></doc>
+<arguments>
+<arg></arg>
+<arg>standard_libraries${/}deprecated_builtin${/}misc.html</arg>
+</arguments>
+<kw type="kw" name="atest_resource.Run Tests Helper" timeout="">
+<doc></doc>
+<arguments>
+<arg>${options}</arg>
+<arg>@{data list}</arg>
+</arguments>
+<kw type="kw" name="${data string} = atest_resource.Set Variables And Get Datasources" timeout="">
+<doc></doc>
+<arguments>
+<arg>@{data list}</arg>
+</arguments>
+<kw type="kw" name="BuiltIn.Set Suite Variable" timeout="">
+<doc>Makes a variable available everywhere within the scope of the current suite.</doc>
+<arguments>
+<arg>$SUITE</arg>
+<arg>${NONE}</arg>
+</arguments>
+<msg timestamp="20121024 15:44:40.794" level="INFO">${SUITE} = None</msg>
+<status status="PASS" endtime="20121024 15:44:40.795" starttime="20121024 15:44:40.794"></status>
+</kw>
+<kw type="kw" name="${name} = TestHelper.Get Output Name" timeout="">
+<doc></doc>
+<arguments>
+<arg>@{data list}</arg>
+</arguments>
+<msg timestamp="20121024 15:44:40.795" level="INFO">${name} = misc</msg>
+<status status="PASS" endtime="20121024 15:44:40.795" starttime="20121024 15:44:40.795"></status>
+</kw>
+<kw type="kw" name="atest_resource.Set Variables" timeout="">
+<doc></doc>
+<arguments>
+<arg>${name}</arg>
+</arguments>
+<kw type="kw" name="${OUTDIR} = OperatingSystem.Join Path" timeout="">
+<doc>Joins the given path part(s) to the given base path.</doc>
+<arguments>
+<arg>${OUTPUTDIR}</arg>
+<arg>output</arg>
+<arg>${name}</arg>
+</arguments>
+<msg timestamp="20121024 15:44:40.800" level="INFO">${OUTDIR} = /Users/jmalinen/Documents/workspace/robot/atest/results/python2.5/output/misc</msg>
+<status status="PASS" endtime="20121024 15:44:40.800" starttime="20121024 15:44:40.797"></status>
+</kw>
+<kw type="kw" name="BuiltIn.Set Global Variable" timeout="">
+<doc>Makes a variable available globally in all tests and suites.</doc>
+<arguments>
+<arg>$OUTDIR</arg>
+<arg>${OUTDIR.encode('ascii', 'ignore').replace('?', '_') .replace('*', '_')}</arg>
+</arguments>
+<msg timestamp="20121024 15:44:40.802" level="INFO">${OUTDIR} = /Users/jmalinen/Documents/workspace/robot/atest/results/python2.5/output/misc</msg>
+<status status="PASS" endtime="20121024 15:44:40.802" starttime="20121024 15:44:40.801"></status>
+</kw>
+<kw type="kw" name="OperatingSystem.Create Directory" timeout="">
+<doc>Creates the specified directory.</doc>
+<arguments>
+<arg>${OUTDIR}</arg>
+</arguments>
+<msg timestamp="20121024 15:44:40.802" html="yes" level="INFO">Created directory '&lt;a href="file:///Users/jmalinen/Documents/workspace/robot/atest/results/python2.5/output/misc"&gt;/Users/jmalinen/Documents/workspace/robot/atest/results/python2.5/output/misc&lt;/a&gt;'</msg>
+<status status="PASS" endtime="20121024 15:44:40.802" starttime="20121024 15:44:40.802"></status>
+</kw>
+<kw type="kw" name="BuiltIn.Set Suite Variable" timeout="">
+<doc>Makes a variable available everywhere within the scope of the current suite.</doc>
+<arguments>
+<arg>$OUTFILE</arg>
+<arg>${OUTDIR}${/}output.xml</arg>
+</arguments>
+<msg timestamp="20121024 15:44:40.803" level="INFO">${OUTFILE} = /Users/jmalinen/Documents/workspace/robot/atest/results/python2.5/output/misc/output.xml</msg>
+<status status="PASS" endtime="20121024 15:44:40.803" starttime="20121024 15:44:40.803"></status>
+</kw>
+<kw type="kw" name="BuiltIn.Set Suite Variable" timeout="">
+<doc>Makes a variable available everywhere within the scope of the current suite.</doc>
+<arguments>
+<arg>$STDOUT_FILE</arg>
+<arg>${OUTDIR}${/}stdout.txt</arg>
+</arguments>
+<msg timestamp="20121024 15:44:40.804" level="INFO">${STDOUT_FILE} = /Users/jmalinen/Documents/workspace/robot/atest/results/python2.5/output/misc/stdout.txt</msg>
+<status status="PASS" endtime="20121024 15:44:40.804" starttime="20121024 15:44:40.804"></status>
+</kw>
+<kw type="kw" name="BuiltIn.Set Suite Variable" timeout="">
+<doc>Makes a variable available everywhere within the scope of the current suite.</doc>
+<arguments>
+<arg>$STDERR_FILE</arg>
+<arg>${OUTDIR}${/}stderr.txt</arg>
+</arguments>
+<msg timestamp="20121024 15:44:40.805" level="INFO">${STDERR_FILE} = /Users/jmalinen/Documents/workspace/robot/atest/results/python2.5/output/misc/stderr.txt</msg>
+<status status="PASS" endtime="20121024 15:44:40.805" starttime="20121024 15:44:40.804"></status>
+</kw>
+<kw type="kw" name="BuiltIn.Set Suite Variable" timeout="">
+<doc>Makes a variable available everywhere within the scope of the current suite.</doc>
+<arguments>
+<arg>$SYSLOG_FILE</arg>
+<arg>${OUTDIR}${/}syslog.txt</arg>
+</arguments>
+<msg timestamp="20121024 15:44:40.806" level="INFO">${SYSLOG_FILE} = /Users/jmalinen/Documents/workspace/robot/atest/results/python2.5/output/misc/syslog.txt</msg>
+<status status="PASS" endtime="20121024 15:44:40.806" starttime="20121024 15:44:40.805"></status>
+</kw>
+<kw type="kw" name="OperatingSystem.Set Environment Variable" timeout="">
+<doc>Sets an environment variable to a specified value.</doc>
+<arguments>
+<arg>ROBOT_SYSLOG_FILE</arg>
+<arg>${SYSLOG_FILE}</arg>
+</arguments>
+<msg timestamp="20121024 15:44:40.806" level="INFO">Environment variable 'ROBOT_SYSLOG_FILE' set to value '/Users/jmalinen/Documents/workspace/robot/atest/results/python2.5/output/misc/syslog.txt'</msg>
+<status status="PASS" endtime="20121024 15:44:40.806" starttime="20121024 15:44:40.806"></status>
+</kw>
+<kw type="kw" name="atest_resource.Set Runners" timeout="">
+<doc></doc>
+<arguments>
+</arguments>
+<kw type="kw" name="${robot} = OperatingSystem.Join Path" timeout="">
+<doc>Joins the given path part(s) to the given base path.</doc>
+<arguments>
+<arg>${ROBOTPATH}</arg>
+<arg>run.py</arg>
+</arguments>
+<msg timestamp="20121024 15:44:40.808" level="INFO">${robot} = /Users/jmalinen/Documents/workspace/robot/src/robot/run.py</msg>
+<status status="PASS" endtime="20121024 15:44:40.808" starttime="20121024 15:44:40.807"></status>
+</kw>
+<kw type="kw" name="BuiltIn.Set Suite Variable" timeout="">
+<doc>Makes a variable available everywhere within the scope of the current suite.</doc>
+<arguments>
+<arg>$ROBOT</arg>
+<arg>${INTERPRETER} ${robot}</arg>
+</arguments>
+<msg timestamp="20121024 15:44:40.809" level="INFO">${ROBOT} = python2.5 /Users/jmalinen/Documents/workspace/robot/src/robot/run.py</msg>
+<status status="PASS" endtime="20121024 15:44:40.809" starttime="20121024 15:44:40.808"></status>
+</kw>
+<kw type="kw" name="${rebot} = OperatingSystem.Join Path" timeout="">
+<doc>Joins the given path part(s) to the given base path.</doc>
+<arguments>
+<arg>${ROBOTPATH}</arg>
+<arg>rebot.py</arg>
+</arguments>
+<msg timestamp="20121024 15:44:40.809" level="INFO">${rebot} = /Users/jmalinen/Documents/workspace/robot/src/robot/rebot.py</msg>
+<status status="PASS" endtime="20121024 15:44:40.809" starttime="20121024 15:44:40.809"></status>
+</kw>
+<kw type="kw" name="BuiltIn.Set Suite Variable" timeout="">
+<doc>Makes a variable available everywhere within the scope of the current suite.</doc>
+<arguments>
+<arg>$REBOT</arg>
+<arg>${INTERPRETER} ${rebot}</arg>
+</arguments>
+<msg timestamp="20121024 15:44:40.810" level="INFO">${REBOT} = python2.5 /Users/jmalinen/Documents/workspace/robot/src/robot/rebot.py</msg>
+<status status="PASS" endtime="20121024 15:44:40.810" starttime="20121024 15:44:40.810"></status>
+</kw>
+<status status="PASS" endtime="20121024 15:44:40.810" starttime="20121024 15:44:40.806"></status>
+</kw>
+<status status="PASS" endtime="20121024 15:44:40.810" starttime="20121024 15:44:40.795"></status>
+</kw>
+<kw type="kw" name="@{data list} = OperatingSystem.Join Paths" timeout="">
+<doc>Joins given paths with base and returns resulted paths.</doc>
+<arguments>
+<arg>${DATADIR}</arg>
+<arg>@{data list}</arg>
+</arguments>
+<msg timestamp="20121024 15:44:40.811" level="INFO">@{data list} = [ /Users/jmalinen/Documents/workspace/robot/atest/testdata/standard_libraries/deprecated_builtin/misc.html ]</msg>
+<status status="PASS" endtime="20121024 15:44:40.811" starttime="20121024 15:44:40.811"></status>
+</kw>
+<kw type="kw" name="${data string} = BuiltIn.Catenate" timeout="">
+<doc>Catenates the given items together and returns the resulted string.</doc>
+<arguments>
+<arg>@{data list}</arg>
+</arguments>
+<msg timestamp="20121024 15:44:40.812" level="INFO">${data string} = /Users/jmalinen/Documents/workspace/robot/atest/testdata/standard_libraries/deprecated_builtin/misc.html</msg>
+<status status="PASS" endtime="20121024 15:44:40.812" starttime="20121024 15:44:40.811"></status>
+</kw>
+<msg timestamp="20121024 15:44:40.812" level="INFO">${data string} = /Users/jmalinen/Documents/workspace/robot/atest/testdata/standard_libraries/deprecated_builtin/misc.html</msg>
+<status status="PASS" endtime="20121024 15:44:40.812" starttime="20121024 15:44:40.793"></status>
+</kw>
+<kw type="kw" name="${options} = BuiltIn.Catenate" timeout="">
+<doc>Catenates the given items together and returns the resulted string.</doc>
+<arguments>
+<arg>--MonitorMarkers OFF</arg>
+<arg>${user options}</arg>
+<arg>--variable interpreter:${INTERPRETER}</arg>
+<arg>--pythonpath ${LIBPATH1}</arg>
+<arg>--pythonpath ${LIBPATH2}</arg>
+</arguments>
+<msg timestamp="20121024 15:44:40.813" level="INFO">${options} = --MonitorMarkers OFF  --variable interpreter:python2.5 --pythonpath /Users/jmalinen/Documents/workspace/robot/atest/resources/../testresources/testlibs --pythonpath /Users/jmalinen/Documents/workspace...</msg>
+<status status="PASS" endtime="20121024 15:44:40.813" starttime="20121024 15:44:40.812"></status>
+</kw>
+<kw type="kw" name="atest_resource.Run Helper" timeout="">
+<doc></doc>
+<arguments>
+<arg>${ROBOT}</arg>
+<arg>${options}</arg>
+<arg>${data string}</arg>
+</arguments>
+<kw type="kw" name="OperatingSystem.Remove Files" timeout="">
+<doc>Uses `Remove File` to remove multiple files one-by-one.</doc>
+<arguments>
+<arg>${OUTFILE}</arg>
+<arg>${OUTDIR}/*.xml</arg>
+<arg>${OUTDIR}/*.html</arg>
+</arguments>
+<msg timestamp="20121024 15:44:40.816" html="yes" level="INFO">File '&lt;a href="file:///Users/jmalinen/Documents/workspace/robot/atest/results/python2.5/output/misc/output.xml"&gt;/Users/jmalinen/Documents/workspace/robot/atest/results/python2.5/output/misc/output.xml&lt;/a&gt;' does not exist</msg>
+<msg timestamp="20121024 15:44:40.816" html="yes" level="INFO">File '&lt;a href="file:///Users/jmalinen/Documents/workspace/robot/atest/results/python2.5/output/misc/*.xml"&gt;/Users/jmalinen/Documents/workspace/robot/atest/results/python2.5/output/misc/*.xml&lt;/a&gt;' does not exist</msg>
+<msg timestamp="20121024 15:44:40.816" html="yes" level="INFO">File '&lt;a href="file:///Users/jmalinen/Documents/workspace/robot/atest/results/python2.5/output/misc/*.html"&gt;/Users/jmalinen/Documents/workspace/robot/atest/results/python2.5/output/misc/*.html&lt;/a&gt;' does not exist</msg>
+<status status="PASS" endtime="20121024 15:44:40.816" starttime="20121024 15:44:40.815"></status>
+</kw>
+<kw type="kw" name="${cmd} = BuiltIn.Catenate" timeout="">
+<doc>Catenates the given items together and returns the resulted string.</doc>
+<arguments>
+<arg>${runner}</arg>
+<arg>--monitorcolors OFF</arg>
+<arg>--outputdir ${OUTDIR}</arg>
+<arg>--output ${OUTFILE}</arg>
+<arg>--report NONE</arg>
+<arg>--log NONE</arg>
+<arg>${options}</arg>
+<arg>${data string}</arg>
+<arg>1&gt;${STDOUTFILE}</arg>
+<arg>2&gt;${STDERRFILE}</arg>
+</arguments>
+<msg timestamp="20121024 15:44:40.817" level="INFO">${cmd} = python2.5 /Users/jmalinen/Documents/workspace/robot/src/robot/run.py --monitorcolors OFF --outputdir /Users/jmalinen/Documents/workspace/robot/atest/results/python2.5/output/misc --output /Users/jmali...</msg>
+<status status="PASS" endtime="20121024 15:44:40.817" starttime="20121024 15:44:40.816"></status>
+</kw>
+<kw type="kw" name="${rc} = OperatingSystem.Run And Return Rc" timeout="">
+<doc>Runs the given command in the system and returns the return code.</doc>
+<arguments>
+<arg>${cmd}</arg>
+</arguments>
+<msg timestamp="20121024 15:44:40.818" level="INFO">Running command 'python2.5 /Users/jmalinen/Documents/workspace/robot/src/robot/run.py --monitorcolors OFF --outputdir /Users/jmalinen/Documents/workspace/robot/atest/results/python2.5/output/misc --output /Users/jmalinen/Documents/workspace/robot/atest/results/python2.5/output/misc/output.xml --report NONE --log NONE --MonitorMarkers OFF  --variable interpreter:python2.5 --pythonpath /Users/jmalinen/Documents/workspace/robot/atest/resources/../testresources/testlibs --pythonpath /Users/jmalinen/Documents/workspace/robot/atest/resources/../testresources/listeners /Users/jmalinen/Documents/workspace/robot/atest/testdata/standard_libraries/deprecated_builtin/misc.html 1&gt;/Users/jmalinen/Documents/workspace/robot/atest/results/python2.5/output/misc/stdout.txt 2&gt;/Users/jmalinen/Documents/workspace/robot/atest/results/python2.5/output/misc/stderr.txt'</msg>
+<msg timestamp="20121024 15:44:41.180" level="INFO">${rc} = 0</msg>
+<status status="PASS" endtime="20121024 15:44:41.179" starttime="20121024 15:44:40.818"></status>
+</kw>
+<kw type="kw" name="BuiltIn.Log" timeout="">
+<doc>Logs the given message with the given level.</doc>
+<arguments>
+<arg>&lt;a href="file://${OUTDIR}"&gt;${OUTDIR}&lt;/a&gt;</arg>
+<arg>HTML</arg>
+</arguments>
+<msg timestamp="20121024 15:44:41.181" html="yes" level="INFO">&lt;a href="file:///Users/jmalinen/Documents/workspace/robot/atest/results/python2.5/output/misc"&gt;/Users/jmalinen/Documents/workspace/robot/atest/results/python2.5/output/misc&lt;/a&gt;</msg>
+<status status="PASS" endtime="20121024 15:44:41.181" starttime="20121024 15:44:41.180"></status>
+</kw>
+<kw type="kw" name="BuiltIn.Log" timeout="">
+<doc>Logs the given message with the given level.</doc>
+<arguments>
+<arg>&lt;a href="file://${OUTFILE}"&gt;${OUTFILE}&lt;/a&gt;</arg>
+<arg>HTML</arg>
+</arguments>
+<msg timestamp="20121024 15:44:41.181" html="yes" level="INFO">&lt;a href="file:///Users/jmalinen/Documents/workspace/robot/atest/results/python2.5/output/misc/output.xml"&gt;/Users/jmalinen/Documents/workspace/robot/atest/results/python2.5/output/misc/output.xml&lt;/a&gt;</msg>
+<status status="PASS" endtime="20121024 15:44:41.181" starttime="20121024 15:44:41.181"></status>
+</kw>
+<kw type="kw" name="BuiltIn.Log" timeout="">
+<doc>Logs the given message with the given level.</doc>
+<arguments>
+<arg>&lt;a href="file://${STDOUTFILE}"&gt;${STDOUTFILE}&lt;/a&gt;</arg>
+<arg>HTML</arg>
+</arguments>
+<msg timestamp="20121024 15:44:41.182" html="yes" level="INFO">&lt;a href="file:///Users/jmalinen/Documents/workspace/robot/atest/results/python2.5/output/misc/stdout.txt"&gt;/Users/jmalinen/Documents/workspace/robot/atest/results/python2.5/output/misc/stdout.txt&lt;/a&gt;</msg>
+<status status="PASS" endtime="20121024 15:44:41.182" starttime="20121024 15:44:41.182"></status>
+</kw>
+<kw type="kw" name="BuiltIn.Log" timeout="">
+<doc>Logs the given message with the given level.</doc>
+<arguments>
+<arg>&lt;a href="file://${STDERRFILE}"&gt;${STDERRFILE}&lt;/a&gt;</arg>
+<arg>HTML</arg>
+</arguments>
+<msg timestamp="20121024 15:44:41.183" html="yes" level="INFO">&lt;a href="file:///Users/jmalinen/Documents/workspace/robot/atest/results/python2.5/output/misc/stderr.txt"&gt;/Users/jmalinen/Documents/workspace/robot/atest/results/python2.5/output/misc/stderr.txt&lt;/a&gt;</msg>
+<status status="PASS" endtime="20121024 15:44:41.183" starttime="20121024 15:44:41.182"></status>
+</kw>
+<kw type="kw" name="BuiltIn.Log" timeout="">
+<doc>Logs the given message with the given level.</doc>
+<arguments>
+<arg>&lt;a href="file://${SYSLOGFILE}"&gt;${SYSLOGFILE}&lt;/a&gt;</arg>
+<arg>HTML</arg>
+</arguments>
+<msg timestamp="20121024 15:44:41.183" html="yes" level="INFO">&lt;a href="file:///Users/jmalinen/Documents/workspace/robot/atest/results/python2.5/output/misc/syslog.txt"&gt;/Users/jmalinen/Documents/workspace/robot/atest/results/python2.5/output/misc/syslog.txt&lt;/a&gt;</msg>
+<status status="PASS" endtime="20121024 15:44:41.183" starttime="20121024 15:44:41.183"></status>
+</kw>
+<status status="PASS" endtime="20121024 15:44:41.184" starttime="20121024 15:44:40.814"></status>
+</kw>
+<status status="PASS" endtime="20121024 15:44:41.184" starttime="20121024 15:44:40.792"></status>
+</kw>
+<kw type="kw" name="TestCheckerLibrary.Process Output" timeout="">
+<doc></doc>
+<arguments>
+<arg>${OUTFILE}</arg>
+</arguments>
+<msg timestamp="20121024 15:44:41.187" level="INFO">${SUITE} = Misc</msg>
+<msg timestamp="20121024 15:44:41.188" level="INFO">${STATISTICS} = &lt;robot.model.statistics.Statistics object at 0x1332cd0&gt;</msg>
+<msg timestamp="20121024 15:44:41.188" level="INFO">${ERRORS} = &lt;robot.result.executionerrors.ExecutionErrors object at 0x1332c90&gt;</msg>
+<msg timestamp="20121024 15:44:41.188" level="INFO">Processing output '/Users/jmalinen/Documents/workspace/robot/atest/results/python2.5/output/misc/output.xml'</msg>
+<status status="PASS" endtime="20121024 15:44:41.188" starttime="20121024 15:44:41.184"></status>
+</kw>
+<status status="PASS" endtime="20121024 15:44:41.188" starttime="20121024 15:44:40.791"></status>
+</kw>
+<test id="s1-s4-t1" timeout="" name="Noop">
+<kw type="kw" name="atest_resource.Check Test Case" timeout="">
+<doc></doc>
+<arguments>
+<arg>Noop</arg>
+</arguments>
+<kw type="kw" name="${test} = TestCheckerLibrary.Get Test From Suite" timeout="">
+<doc></doc>
+<arguments>
+<arg>${SUITE}</arg>
+<arg>${name}</arg>
+</arguments>
+<msg timestamp="20121024 15:44:41.191" level="INFO">${test} = Noop</msg>
+<status status="PASS" endtime="20121024 15:44:41.191" starttime="20121024 15:44:41.191"></status>
+</kw>
+<kw type="kw" name="TestCheckerLibrary.Check Test Status" timeout="">
+<doc>Verifies that test's status and message are as expected.</doc>
+<arguments>
+<arg>${test}</arg>
+<arg>${status}</arg>
+<arg>${message}</arg>
+</arguments>
+<status status="PASS" endtime="20121024 15:44:41.192" starttime="20121024 15:44:41.191"></status>
+</kw>
+<status status="PASS" endtime="20121024 15:44:41.192" starttime="20121024 15:44:41.190"></status>
+</kw>
+<doc></doc>
+<tags>
+<tag>jybot</tag>
+<tag>pybot</tag>
+<tag>regression</tag>
+</tags>
+<status status="PASS" endtime="20121024 15:44:41.192" critical="yes" starttime="20121024 15:44:41.189"></status>
+</test>
+<test id="s1-s4-t2" timeout="" name="Set">
+<kw type="kw" name="atest_resource.Check Test Case" timeout="">
+<doc></doc>
+<arguments>
+<arg>Set</arg>
+</arguments>
+<kw type="kw" name="${test} = TestCheckerLibrary.Get Test From Suite" timeout="">
+<doc></doc>
+<arguments>
+<arg>${SUITE}</arg>
+<arg>${name}</arg>
+</arguments>
+<msg timestamp="20121024 15:44:41.195" level="INFO">${test} = Set</msg>
+<status status="PASS" endtime="20121024 15:44:41.195" starttime="20121024 15:44:41.195"></status>
+</kw>
+<kw type="kw" name="TestCheckerLibrary.Check Test Status" timeout="">
+<doc>Verifies that test's status and message are as expected.</doc>
+<arguments>
+<arg>${test}</arg>
+<arg>${status}</arg>
+<arg>${message}</arg>
+</arguments>
+<status status="PASS" endtime="20121024 15:44:41.196" starttime="20121024 15:44:41.195"></status>
+</kw>
+<status status="PASS" endtime="20121024 15:44:41.196" starttime="20121024 15:44:41.193"></status>
+</kw>
+<doc></doc>
+<tags>
+<tag>jybot</tag>
+<tag>pybot</tag>
+<tag>regression</tag>
+</tags>
+<status status="PASS" endtime="20121024 15:44:41.196" critical="yes" starttime="20121024 15:44:41.193"></status>
+</test>
+<test id="s1-s4-t3" timeout="" name="Message">
+<kw type="kw" name="atest_resource.Check Test Case" timeout="">
+<doc></doc>
+<arguments>
+<arg>Message</arg>
+</arguments>
+<kw type="kw" name="${test} = TestCheckerLibrary.Get Test From Suite" timeout="">
+<doc></doc>
+<arguments>
+<arg>${SUITE}</arg>
+<arg>${name}</arg>
+</arguments>
+<msg timestamp="20121024 15:44:41.199" level="INFO">${test} = Message</msg>
+<status status="PASS" endtime="20121024 15:44:41.199" starttime="20121024 15:44:41.198"></status>
+</kw>
+<kw type="kw" name="TestCheckerLibrary.Check Test Status" timeout="">
+<doc>Verifies that test's status and message are as expected.</doc>
+<arguments>
+<arg>${test}</arg>
+<arg>${status}</arg>
+<arg>${message}</arg>
+</arguments>
+<status status="PASS" endtime="20121024 15:44:41.200" starttime="20121024 15:44:41.199"></status>
+</kw>
+<status status="PASS" endtime="20121024 15:44:41.200" starttime="20121024 15:44:41.197"></status>
+</kw>
+<doc></doc>
+<tags>
+<tag>jybot</tag>
+<tag>pybot</tag>
+<tag>regression</tag>
+</tags>
+<status status="PASS" endtime="20121024 15:44:41.200" critical="yes" starttime="20121024 15:44:41.196"></status>
+</test>
+<doc>Tests for BuiltIn library's misc functionality</doc>
+<metadata>
+</metadata>
+<status status="PASS" endtime="20121024 15:44:41.201" starttime="20121024 15:44:40.776"></status>
+</suite>
+<suite source="/Users/jmalinen/Documents/workspace/robot/atest/robot/standard_libraries/deprecated_builtin/variables.html" id="s1-s5" name="Variables">
+<kw type="setup" name="atest_resource.Run Tests" timeout="">
+<doc></doc>
+<arguments>
+<arg></arg>
+<arg>standard_libraries${/}deprecated_builtin${/}variables.html</arg>
+</arguments>
+<kw type="kw" name="atest_resource.Run Tests Helper" timeout="">
+<doc></doc>
+<arguments>
+<arg>${options}</arg>
+<arg>@{data list}</arg>
+</arguments>
+<kw type="kw" name="${data string} = atest_resource.Set Variables And Get Datasources" timeout="">
+<doc></doc>
+<arguments>
+<arg>@{data list}</arg>
+</arguments>
+<kw type="kw" name="BuiltIn.Set Suite Variable" timeout="">
+<doc>Makes a variable available everywhere within the scope of the current suite.</doc>
+<arguments>
+<arg>$SUITE</arg>
+<arg>${NONE}</arg>
+</arguments>
+<msg timestamp="20121024 15:44:41.217" level="INFO">${SUITE} = None</msg>
+<status status="PASS" endtime="20121024 15:44:41.217" starttime="20121024 15:44:41.216"></status>
+</kw>
+<kw type="kw" name="${name} = TestHelper.Get Output Name" timeout="">
+<doc></doc>
+<arguments>
+<arg>@{data list}</arg>
+</arguments>
+<msg timestamp="20121024 15:44:41.218" level="INFO">${name} = variables</msg>
+<status status="PASS" endtime="20121024 15:44:41.217" starttime="20121024 15:44:41.217"></status>
+</kw>
+<kw type="kw" name="atest_resource.Set Variables" timeout="">
+<doc></doc>
+<arguments>
+<arg>${name}</arg>
+</arguments>
+<kw type="kw" name="${OUTDIR} = OperatingSystem.Join Path" timeout="">
+<doc>Joins the given path part(s) to the given base path.</doc>
+<arguments>
+<arg>${OUTPUTDIR}</arg>
+<arg>output</arg>
+<arg>${name}</arg>
+</arguments>
+<msg timestamp="20121024 15:44:41.219" level="INFO">${OUTDIR} = /Users/jmalinen/Documents/workspace/robot/atest/results/python2.5/output/variables</msg>
+<status status="PASS" endtime="20121024 15:44:41.219" starttime="20121024 15:44:41.219"></status>
+</kw>
+<kw type="kw" name="BuiltIn.Set Global Variable" timeout="">
+<doc>Makes a variable available globally in all tests and suites.</doc>
+<arguments>
+<arg>$OUTDIR</arg>
+<arg>${OUTDIR.encode('ascii', 'ignore').replace('?', '_') .replace('*', '_')}</arg>
+</arguments>
+<msg timestamp="20121024 15:44:41.220" level="INFO">${OUTDIR} = /Users/jmalinen/Documents/workspace/robot/atest/results/python2.5/output/variables</msg>
+<status status="PASS" endtime="20121024 15:44:41.220" starttime="20121024 15:44:41.220"></status>
+</kw>
+<kw type="kw" name="OperatingSystem.Create Directory" timeout="">
+<doc>Creates the specified directory.</doc>
+<arguments>
+<arg>${OUTDIR}</arg>
+</arguments>
+<msg timestamp="20121024 15:44:41.221" html="yes" level="INFO">Created directory '&lt;a href="file:///Users/jmalinen/Documents/workspace/robot/atest/results/python2.5/output/variables"&gt;/Users/jmalinen/Documents/workspace/robot/atest/results/python2.5/output/variables&lt;/a&gt;'</msg>
+<status status="PASS" endtime="20121024 15:44:41.221" starttime="20121024 15:44:41.221"></status>
+</kw>
+<kw type="kw" name="BuiltIn.Set Suite Variable" timeout="">
+<doc>Makes a variable available everywhere within the scope of the current suite.</doc>
+<arguments>
+<arg>$OUTFILE</arg>
+<arg>${OUTDIR}${/}output.xml</arg>
+</arguments>
+<msg timestamp="20121024 15:44:41.222" level="INFO">${OUTFILE} = /Users/jmalinen/Documents/workspace/robot/atest/results/python2.5/output/variables/output.xml</msg>
+<status status="PASS" endtime="20121024 15:44:41.222" starttime="20121024 15:44:41.222"></status>
+</kw>
+<kw type="kw" name="BuiltIn.Set Suite Variable" timeout="">
+<doc>Makes a variable available everywhere within the scope of the current suite.</doc>
+<arguments>
+<arg>$STDOUT_FILE</arg>
+<arg>${OUTDIR}${/}stdout.txt</arg>
+</arguments>
+<msg timestamp="20121024 15:44:41.223" level="INFO">${STDOUT_FILE} = /Users/jmalinen/Documents/workspace/robot/atest/results/python2.5/output/variables/stdout.txt</msg>
+<status status="PASS" endtime="20121024 15:44:41.223" starttime="20121024 15:44:41.222"></status>
+</kw>
+<kw type="kw" name="BuiltIn.Set Suite Variable" timeout="">
+<doc>Makes a variable available everywhere within the scope of the current suite.</doc>
+<arguments>
+<arg>$STDERR_FILE</arg>
+<arg>${OUTDIR}${/}stderr.txt</arg>
+</arguments>
+<msg timestamp="20121024 15:44:41.224" level="INFO">${STDERR_FILE} = /Users/jmalinen/Documents/workspace/robot/atest/results/python2.5/output/variables/stderr.txt</msg>
+<status status="PASS" endtime="20121024 15:44:41.224" starttime="20121024 15:44:41.223"></status>
+</kw>
+<kw type="kw" name="BuiltIn.Set Suite Variable" timeout="">
+<doc>Makes a variable available everywhere within the scope of the current suite.</doc>
+<arguments>
+<arg>$SYSLOG_FILE</arg>
+<arg>${OUTDIR}${/}syslog.txt</arg>
+</arguments>
+<msg timestamp="20121024 15:44:41.225" level="INFO">${SYSLOG_FILE} = /Users/jmalinen/Documents/workspace/robot/atest/results/python2.5/output/variables/syslog.txt</msg>
+<status status="PASS" endtime="20121024 15:44:41.225" starttime="20121024 15:44:41.224"></status>
+</kw>
+<kw type="kw" name="OperatingSystem.Set Environment Variable" timeout="">
+<doc>Sets an environment variable to a specified value.</doc>
+<arguments>
+<arg>ROBOT_SYSLOG_FILE</arg>
+<arg>${SYSLOG_FILE}</arg>
+</arguments>
+<msg timestamp="20121024 15:44:41.225" level="INFO">Environment variable 'ROBOT_SYSLOG_FILE' set to value '/Users/jmalinen/Documents/workspace/robot/atest/results/python2.5/output/variables/syslog.txt'</msg>
+<status status="PASS" endtime="20121024 15:44:41.225" starttime="20121024 15:44:41.225"></status>
+</kw>
+<kw type="kw" name="atest_resource.Set Runners" timeout="">
+<doc></doc>
+<arguments>
+</arguments>
+<kw type="kw" name="${robot} = OperatingSystem.Join Path" timeout="">
+<doc>Joins the given path part(s) to the given base path.</doc>
+<arguments>
+<arg>${ROBOTPATH}</arg>
+<arg>run.py</arg>
+</arguments>
+<msg timestamp="20121024 15:44:41.227" level="INFO">${robot} = /Users/jmalinen/Documents/workspace/robot/src/robot/run.py</msg>
+<status status="PASS" endtime="20121024 15:44:41.227" starttime="20121024 15:44:41.226"></status>
+</kw>
+<kw type="kw" name="BuiltIn.Set Suite Variable" timeout="">
+<doc>Makes a variable available everywhere within the scope of the current suite.</doc>
+<arguments>
+<arg>$ROBOT</arg>
+<arg>${INTERPRETER} ${robot}</arg>
+</arguments>
+<msg timestamp="20121024 15:44:41.228" level="INFO">${ROBOT} = python2.5 /Users/jmalinen/Documents/workspace/robot/src/robot/run.py</msg>
+<status status="PASS" endtime="20121024 15:44:41.228" starttime="20121024 15:44:41.227"></status>
+</kw>
+<kw type="kw" name="${rebot} = OperatingSystem.Join Path" timeout="">
+<doc>Joins the given path part(s) to the given base path.</doc>
+<arguments>
+<arg>${ROBOTPATH}</arg>
+<arg>rebot.py</arg>
+</arguments>
+<msg timestamp="20121024 15:44:41.229" level="INFO">${rebot} = /Users/jmalinen/Documents/workspace/robot/src/robot/rebot.py</msg>
+<status status="PASS" endtime="20121024 15:44:41.229" starttime="20121024 15:44:41.228"></status>
+</kw>
+<kw type="kw" name="BuiltIn.Set Suite Variable" timeout="">
+<doc>Makes a variable available everywhere within the scope of the current suite.</doc>
+<arguments>
+<arg>$REBOT</arg>
+<arg>${INTERPRETER} ${rebot}</arg>
+</arguments>
+<msg timestamp="20121024 15:44:41.229" level="INFO">${REBOT} = python2.5 /Users/jmalinen/Documents/workspace/robot/src/robot/rebot.py</msg>
+<status status="PASS" endtime="20121024 15:44:41.230" starttime="20121024 15:44:41.229"></status>
+</kw>
+<status status="PASS" endtime="20121024 15:44:41.230" starttime="20121024 15:44:41.226"></status>
+</kw>
+<status status="PASS" endtime="20121024 15:44:41.230" starttime="20121024 15:44:41.218"></status>
+</kw>
+<kw type="kw" name="@{data list} = OperatingSystem.Join Paths" timeout="">
+<doc>Joins given paths with base and returns resulted paths.</doc>
+<arguments>
+<arg>${DATADIR}</arg>
+<arg>@{data list}</arg>
+</arguments>
+<msg timestamp="20121024 15:44:41.231" level="INFO">@{data list} = [ /Users/jmalinen/Documents/workspace/robot/atest/testdata/standard_libraries/deprecated_builtin/variables.html ]</msg>
+<status status="PASS" endtime="20121024 15:44:41.231" starttime="20121024 15:44:41.230"></status>
+</kw>
+<kw type="kw" name="${data string} = BuiltIn.Catenate" timeout="">
+<doc>Catenates the given items together and returns the resulted string.</doc>
+<arguments>
+<arg>@{data list}</arg>
+</arguments>
+<msg timestamp="20121024 15:44:41.232" level="INFO">${data string} = /Users/jmalinen/Documents/workspace/robot/atest/testdata/standard_libraries/deprecated_builtin/variables.html</msg>
+<status status="PASS" endtime="20121024 15:44:41.232" starttime="20121024 15:44:41.231"></status>
+</kw>
+<msg timestamp="20121024 15:44:41.232" level="INFO">${data string} = /Users/jmalinen/Documents/workspace/robot/atest/testdata/standard_libraries/deprecated_builtin/variables.html</msg>
+<status status="PASS" endtime="20121024 15:44:41.232" starttime="20121024 15:44:41.215"></status>
+</kw>
+<kw type="kw" name="${options} = BuiltIn.Catenate" timeout="">
+<doc>Catenates the given items together and returns the resulted string.</doc>
+<arguments>
+<arg>--MonitorMarkers OFF</arg>
+<arg>${user options}</arg>
+<arg>--variable interpreter:${INTERPRETER}</arg>
+<arg>--pythonpath ${LIBPATH1}</arg>
+<arg>--pythonpath ${LIBPATH2}</arg>
+</arguments>
+<msg timestamp="20121024 15:44:41.233" level="INFO">${options} = --MonitorMarkers OFF  --variable interpreter:python2.5 --pythonpath /Users/jmalinen/Documents/workspace/robot/atest/resources/../testresources/testlibs --pythonpath /Users/jmalinen/Documents/workspace...</msg>
+<status status="PASS" endtime="20121024 15:44:41.233" starttime="20121024 15:44:41.233"></status>
+</kw>
+<kw type="kw" name="atest_resource.Run Helper" timeout="">
+<doc></doc>
+<arguments>
+<arg>${ROBOT}</arg>
+<arg>${options}</arg>
+<arg>${data string}</arg>
+</arguments>
+<kw type="kw" name="OperatingSystem.Remove Files" timeout="">
+<doc>Uses `Remove File` to remove multiple files one-by-one.</doc>
+<arguments>
+<arg>${OUTFILE}</arg>
+<arg>${OUTDIR}/*.xml</arg>
+<arg>${OUTDIR}/*.html</arg>
+</arguments>
+<msg timestamp="20121024 15:44:41.236" html="yes" level="INFO">File '&lt;a href="file:///Users/jmalinen/Documents/workspace/robot/atest/results/python2.5/output/variables/output.xml"&gt;/Users/jmalinen/Documents/workspace/robot/atest/results/python2.5/output/variables/output.xml&lt;/a&gt;' does not exist</msg>
+<msg timestamp="20121024 15:44:41.236" html="yes" level="INFO">File '&lt;a href="file:///Users/jmalinen/Documents/workspace/robot/atest/results/python2.5/output/variables/*.xml"&gt;/Users/jmalinen/Documents/workspace/robot/atest/results/python2.5/output/variables/*.xml&lt;/a&gt;' does not exist</msg>
+<msg timestamp="20121024 15:44:41.236" html="yes" level="INFO">File '&lt;a href="file:///Users/jmalinen/Documents/workspace/robot/atest/results/python2.5/output/variables/*.html"&gt;/Users/jmalinen/Documents/workspace/robot/atest/results/python2.5/output/variables/*.html&lt;/a&gt;' does not exist</msg>
+<status status="PASS" endtime="20121024 15:44:41.236" starttime="20121024 15:44:41.235"></status>
+</kw>
+<kw type="kw" name="${cmd} = BuiltIn.Catenate" timeout="">
+<doc>Catenates the given items together and returns the resulted string.</doc>
+<arguments>
+<arg>${runner}</arg>
+<arg>--monitorcolors OFF</arg>
+<arg>--outputdir ${OUTDIR}</arg>
+<arg>--output ${OUTFILE}</arg>
+<arg>--report NONE</arg>
+<arg>--log NONE</arg>
+<arg>${options}</arg>
+<arg>${data string}</arg>
+<arg>1&gt;${STDOUTFILE}</arg>
+<arg>2&gt;${STDERRFILE}</arg>
+</arguments>
+<msg timestamp="20121024 15:44:41.238" level="INFO">${cmd} = python2.5 /Users/jmalinen/Documents/workspace/robot/src/robot/run.py --monitorcolors OFF --outputdir /Users/jmalinen/Documents/workspace/robot/atest/results/python2.5/output/variables --output /Users/...</msg>
+<status status="PASS" endtime="20121024 15:44:41.237" starttime="20121024 15:44:41.236"></status>
+</kw>
+<kw type="kw" name="${rc} = OperatingSystem.Run And Return Rc" timeout="">
+<doc>Runs the given command in the system and returns the return code.</doc>
+<arguments>
+<arg>${cmd}</arg>
+</arguments>
+<msg timestamp="20121024 15:44:41.238" level="INFO">Running command 'python2.5 /Users/jmalinen/Documents/workspace/robot/src/robot/run.py --monitorcolors OFF --outputdir /Users/jmalinen/Documents/workspace/robot/atest/results/python2.5/output/variables --output /Users/jmalinen/Documents/workspace/robot/atest/results/python2.5/output/variables/output.xml --report NONE --log NONE --MonitorMarkers OFF  --variable interpreter:python2.5 --pythonpath /Users/jmalinen/Documents/workspace/robot/atest/resources/../testresources/testlibs --pythonpath /Users/jmalinen/Documents/workspace/robot/atest/resources/../testresources/listeners /Users/jmalinen/Documents/workspace/robot/atest/testdata/standard_libraries/deprecated_builtin/variables.html 1&gt;/Users/jmalinen/Documents/workspace/robot/atest/results/python2.5/output/variables/stdout.txt 2&gt;/Users/jmalinen/Documents/workspace/robot/atest/results/python2.5/output/variables/stderr.txt'</msg>
+<msg timestamp="20121024 15:44:41.643" level="INFO">${rc} = 10</msg>
+<status status="PASS" endtime="20121024 15:44:41.643" starttime="20121024 15:44:41.238"></status>
+</kw>
+<kw type="kw" name="BuiltIn.Log" timeout="">
+<doc>Logs the given message with the given level.</doc>
+<arguments>
+<arg>&lt;a href="file://${OUTDIR}"&gt;${OUTDIR}&lt;/a&gt;</arg>
+<arg>HTML</arg>
+</arguments>
+<msg timestamp="20121024 15:44:41.644" html="yes" level="INFO">&lt;a href="file:///Users/jmalinen/Documents/workspace/robot/atest/results/python2.5/output/variables"&gt;/Users/jmalinen/Documents/workspace/robot/atest/results/python2.5/output/variables&lt;/a&gt;</msg>
+<status status="PASS" endtime="20121024 15:44:41.644" starttime="20121024 15:44:41.643"></status>
+</kw>
+<kw type="kw" name="BuiltIn.Log" timeout="">
+<doc>Logs the given message with the given level.</doc>
+<arguments>
+<arg>&lt;a href="file://${OUTFILE}"&gt;${OUTFILE}&lt;/a&gt;</arg>
+<arg>HTML</arg>
+</arguments>
+<msg timestamp="20121024 15:44:41.644" html="yes" level="INFO">&lt;a href="file:///Users/jmalinen/Documents/workspace/robot/atest/results/python2.5/output/variables/output.xml"&gt;/Users/jmalinen/Documents/workspace/robot/atest/results/python2.5/output/variables/output.xml&lt;/a&gt;</msg>
+<status status="PASS" endtime="20121024 15:44:41.645" starttime="20121024 15:44:41.644"></status>
+</kw>
+<kw type="kw" name="BuiltIn.Log" timeout="">
+<doc>Logs the given message with the given level.</doc>
+<arguments>
+<arg>&lt;a href="file://${STDOUTFILE}"&gt;${STDOUTFILE}&lt;/a&gt;</arg>
+<arg>HTML</arg>
+</arguments>
+<msg timestamp="20121024 15:44:41.645" html="yes" level="INFO">&lt;a href="file:///Users/jmalinen/Documents/workspace/robot/atest/results/python2.5/output/variables/stdout.txt"&gt;/Users/jmalinen/Documents/workspace/robot/atest/results/python2.5/output/variables/stdout.txt&lt;/a&gt;</msg>
+<status status="PASS" endtime="20121024 15:44:41.645" starttime="20121024 15:44:41.645"></status>
+</kw>
+<kw type="kw" name="BuiltIn.Log" timeout="">
+<doc>Logs the given message with the given level.</doc>
+<arguments>
+<arg>&lt;a href="file://${STDERRFILE}"&gt;${STDERRFILE}&lt;/a&gt;</arg>
+<arg>HTML</arg>
+</arguments>
+<msg timestamp="20121024 15:44:41.646" html="yes" level="INFO">&lt;a href="file:///Users/jmalinen/Documents/workspace/robot/atest/results/python2.5/output/variables/stderr.txt"&gt;/Users/jmalinen/Documents/workspace/robot/atest/results/python2.5/output/variables/stderr.txt&lt;/a&gt;</msg>
+<status status="PASS" endtime="20121024 15:44:41.646" starttime="20121024 15:44:41.645"></status>
+</kw>
+<kw type="kw" name="BuiltIn.Log" timeout="">
+<doc>Logs the given message with the given level.</doc>
+<arguments>
+<arg>&lt;a href="file://${SYSLOGFILE}"&gt;${SYSLOGFILE}&lt;/a&gt;</arg>
+<arg>HTML</arg>
+</arguments>
+<msg timestamp="20121024 15:44:41.647" html="yes" level="INFO">&lt;a href="file:///Users/jmalinen/Documents/workspace/robot/atest/results/python2.5/output/variables/syslog.txt"&gt;/Users/jmalinen/Documents/workspace/robot/atest/results/python2.5/output/variables/syslog.txt&lt;/a&gt;</msg>
+<status status="PASS" endtime="20121024 15:44:41.647" starttime="20121024 15:44:41.646"></status>
+</kw>
+<status status="PASS" endtime="20121024 15:44:41.647" starttime="20121024 15:44:41.234"></status>
+</kw>
+<status status="PASS" endtime="20121024 15:44:41.647" starttime="20121024 15:44:41.214"></status>
+</kw>
+<kw type="kw" name="TestCheckerLibrary.Process Output" timeout="">
+<doc></doc>
+<arguments>
+<arg>${OUTFILE}</arg>
+</arguments>
+<msg timestamp="20121024 15:44:41.651" level="INFO">${SUITE} = Variables</msg>
+<msg timestamp="20121024 15:44:41.652" level="INFO">${STATISTICS} = &lt;robot.model.statistics.Statistics object at 0x1332490&gt;</msg>
+<msg timestamp="20121024 15:44:41.652" level="INFO">${ERRORS} = &lt;robot.result.executionerrors.ExecutionErrors object at 0x135cef0&gt;</msg>
+<msg timestamp="20121024 15:44:41.652" level="INFO">Processing output '/Users/jmalinen/Documents/workspace/robot/atest/results/python2.5/output/variables/output.xml'</msg>
+<status status="PASS" endtime="20121024 15:44:41.652" starttime="20121024 15:44:41.647"></status>
+</kw>
+<status status="PASS" endtime="20121024 15:44:41.652" starttime="20121024 15:44:41.213"></status>
+</kw>
+<test id="s1-s5-t1" timeout="" name="Fail Unless Variable Exists">
+<kw type="kw" name="atest_resource.Check Test Case" timeout="">
+<doc></doc>
+<arguments>
+<arg>Fail Unless Variable Exists 1</arg>
+</arguments>
+<kw type="kw" name="${test} = TestCheckerLibrary.Get Test From Suite" timeout="">
+<doc></doc>
+<arguments>
+<arg>${SUITE}</arg>
+<arg>${name}</arg>
+</arguments>
+<msg timestamp="20121024 15:44:41.655" level="INFO">${test} = Fail Unless Variable Exists 1</msg>
+<status status="PASS" endtime="20121024 15:44:41.655" starttime="20121024 15:44:41.655"></status>
+</kw>
+<kw type="kw" name="TestCheckerLibrary.Check Test Status" timeout="">
+<doc>Verifies that test's status and message are as expected.</doc>
+<arguments>
+<arg>${test}</arg>
+<arg>${status}</arg>
+<arg>${message}</arg>
+</arguments>
+<status status="PASS" endtime="20121024 15:44:41.656" starttime="20121024 15:44:41.656"></status>
+</kw>
+<status status="PASS" endtime="20121024 15:44:41.656" starttime="20121024 15:44:41.653"></status>
+</kw>
+<kw type="kw" name="atest_resource.Check Test Case" timeout="">
+<doc></doc>
+<arguments>
+<arg>Fail Unless Variable Exists 2</arg>
+</arguments>
+<kw type="kw" name="${test} = TestCheckerLibrary.Get Test From Suite" timeout="">
+<doc></doc>
+<arguments>
+<arg>${SUITE}</arg>
+<arg>${name}</arg>
+</arguments>
+<msg timestamp="20121024 15:44:41.658" level="INFO">${test} = Fail Unless Variable Exists2</msg>
+<status status="PASS" endtime="20121024 15:44:41.658" starttime="20121024 15:44:41.658"></status>
+</kw>
+<kw type="kw" name="TestCheckerLibrary.Check Test Status" timeout="">
+<doc>Verifies that test's status and message are as expected.</doc>
+<arguments>
+<arg>${test}</arg>
+<arg>${status}</arg>
+<arg>${message}</arg>
+</arguments>
+<status status="PASS" endtime="20121024 15:44:41.659" starttime="20121024 15:44:41.658"></status>
+</kw>
+<status status="PASS" endtime="20121024 15:44:41.659" starttime="20121024 15:44:41.656"></status>
+</kw>
+<kw type="kw" name="atest_resource.Check Test Case" timeout="">
+<doc></doc>
+<arguments>
+<arg>Fail Unless Variable Exists 3</arg>
+</arguments>
+<kw type="kw" name="${test} = TestCheckerLibrary.Get Test From Suite" timeout="">
+<doc></doc>
+<arguments>
+<arg>${SUITE}</arg>
+<arg>${name}</arg>
+</arguments>
+<msg timestamp="20121024 15:44:41.661" level="INFO">${test} = Fail Unless Variable Exists 3</msg>
+<status status="PASS" endtime="20121024 15:44:41.661" starttime="20121024 15:44:41.660"></status>
+</kw>
+<kw type="kw" name="TestCheckerLibrary.Check Test Status" timeout="">
+<doc>Verifies that test's status and message are as expected.</doc>
+<arguments>
+<arg>${test}</arg>
+<arg>${status}</arg>
+<arg>${message}</arg>
+</arguments>
+<status status="PASS" endtime="20121024 15:44:41.662" starttime="20121024 15:44:41.661"></status>
+</kw>
+<status status="PASS" endtime="20121024 15:44:41.662" starttime="20121024 15:44:41.659"></status>
+</kw>
+<kw type="kw" name="atest_resource.Check Test Case" timeout="">
+<doc></doc>
+<arguments>
+<arg>Fail Unless Variable Exists 4</arg>
+</arguments>
+<kw type="kw" name="${test} = TestCheckerLibrary.Get Test From Suite" timeout="">
+<doc></doc>
+<arguments>
+<arg>${SUITE}</arg>
+<arg>${name}</arg>
+</arguments>
+<msg timestamp="20121024 15:44:41.664" level="INFO">${test} = Fail Unless Variable Exists 4</msg>
+<status status="PASS" endtime="20121024 15:44:41.664" starttime="20121024 15:44:41.663"></status>
+</kw>
+<kw type="kw" name="TestCheckerLibrary.Check Test Status" timeout="">
+<doc>Verifies that test's status and message are as expected.</doc>
+<arguments>
+<arg>${test}</arg>
+<arg>${status}</arg>
+<arg>${message}</arg>
+</arguments>
+<status status="PASS" endtime="20121024 15:44:41.665" starttime="20121024 15:44:41.664"></status>
+</kw>
+<status status="PASS" endtime="20121024 15:44:41.665" starttime="20121024 15:44:41.662"></status>
+</kw>
+<kw type="kw" name="atest_resource.Check Test Case" timeout="">
+<doc></doc>
+<arguments>
+<arg>Fail Unless Variable Exists 5</arg>
+</arguments>
+<kw type="kw" name="${test} = TestCheckerLibrary.Get Test From Suite" timeout="">
+<doc></doc>
+<arguments>
+<arg>${SUITE}</arg>
+<arg>${name}</arg>
+</arguments>
+<msg timestamp="20121024 15:44:41.667" level="INFO">${test} = Fail Unless Variable Exists 5</msg>
+<status status="PASS" endtime="20121024 15:44:41.667" starttime="20121024 15:44:41.666"></status>
+</kw>
+<kw type="kw" name="TestCheckerLibrary.Check Test Status" timeout="">
+<doc>Verifies that test's status and message are as expected.</doc>
+<arguments>
+<arg>${test}</arg>
+<arg>${status}</arg>
+<arg>${message}</arg>
+</arguments>
+<status status="PASS" endtime="20121024 15:44:41.667" starttime="20121024 15:44:41.667"></status>
+</kw>
+<status status="PASS" endtime="20121024 15:44:41.668" starttime="20121024 15:44:41.665"></status>
+</kw>
+<doc></doc>
+<tags>
+<tag>jybot</tag>
+<tag>pybot</tag>
+<tag>regression</tag>
+</tags>
+<status status="PASS" endtime="20121024 15:44:41.668" critical="yes" starttime="20121024 15:44:41.652"></status>
+</test>
+<test id="s1-s5-t2" timeout="" name="Fail If Variable Exists">
+<kw type="kw" name="atest_resource.Check Test Case" timeout="">
+<doc></doc>
+<arguments>
+<arg>Fail If Variable Exists 1</arg>
+</arguments>
+<kw type="kw" name="${test} = TestCheckerLibrary.Get Test From Suite" timeout="">
+<doc></doc>
+<arguments>
+<arg>${SUITE}</arg>
+<arg>${name}</arg>
+</arguments>
+<msg timestamp="20121024 15:44:41.671" level="INFO">${test} = Fail If Variable Exists 1</msg>
+<status status="PASS" endtime="20121024 15:44:41.671" starttime="20121024 15:44:41.670"></status>
+</kw>
+<kw type="kw" name="TestCheckerLibrary.Check Test Status" timeout="">
+<doc>Verifies that test's status and message are as expected.</doc>
+<arguments>
+<arg>${test}</arg>
+<arg>${status}</arg>
+<arg>${message}</arg>
+</arguments>
+<status status="PASS" endtime="20121024 15:44:41.672" starttime="20121024 15:44:41.671"></status>
+</kw>
+<status status="PASS" endtime="20121024 15:44:41.672" starttime="20121024 15:44:41.669"></status>
+</kw>
+<kw type="kw" name="atest_resource.Check Test Case" timeout="">
+<doc></doc>
+<arguments>
+<arg>Fail If Variable Exists 2</arg>
+</arguments>
+<kw type="kw" name="${test} = TestCheckerLibrary.Get Test From Suite" timeout="">
+<doc></doc>
+<arguments>
+<arg>${SUITE}</arg>
+<arg>${name}</arg>
+</arguments>
+<msg timestamp="20121024 15:44:41.674" level="INFO">${test} = Fail If Variable Exists 2</msg>
+<status status="PASS" endtime="20121024 15:44:41.674" starttime="20121024 15:44:41.673"></status>
+</kw>
+<kw type="kw" name="TestCheckerLibrary.Check Test Status" timeout="">
+<doc>Verifies that test's status and message are as expected.</doc>
+<arguments>
+<arg>${test}</arg>
+<arg>${status}</arg>
+<arg>${message}</arg>
+</arguments>
+<status status="PASS" endtime="20121024 15:44:41.674" starttime="20121024 15:44:41.674"></status>
+</kw>
+<status status="PASS" endtime="20121024 15:44:41.675" starttime="20121024 15:44:41.672"></status>
+</kw>
+<kw type="kw" name="atest_resource.Check Test Case" timeout="">
+<doc></doc>
+<arguments>
+<arg>Fail If Variable Exists 3</arg>
+</arguments>
+<kw type="kw" name="${test} = TestCheckerLibrary.Get Test From Suite" timeout="">
+<doc></doc>
+<arguments>
+<arg>${SUITE}</arg>
+<arg>${name}</arg>
+</arguments>
+<msg timestamp="20121024 15:44:41.677" level="INFO">${test} = Fail If Variable Exists 3</msg>
+<status status="PASS" endtime="20121024 15:44:41.676" starttime="20121024 15:44:41.676"></status>
+</kw>
+<kw type="kw" name="TestCheckerLibrary.Check Test Status" timeout="">
+<doc>Verifies that test's status and message are as expected.</doc>
+<arguments>
+<arg>${test}</arg>
+<arg>${status}</arg>
+<arg>${message}</arg>
+</arguments>
+<status status="PASS" endtime="20121024 15:44:41.677" starttime="20121024 15:44:41.677"></status>
+</kw>
+<status status="PASS" endtime="20121024 15:44:41.677" starttime="20121024 15:44:41.675"></status>
+</kw>
+<kw type="kw" name="atest_resource.Check Test Case" timeout="">
+<doc></doc>
+<arguments>
+<arg>Fail If Variable Exists 4</arg>
+</arguments>
+<kw type="kw" name="${test} = TestCheckerLibrary.Get Test From Suite" timeout="">
+<doc></doc>
+<arguments>
+<arg>${SUITE}</arg>
+<arg>${name}</arg>
+</arguments>
+<msg timestamp="20121024 15:44:41.681" level="INFO">${test} = Fail If Variable Exists 4</msg>
+<status status="PASS" endtime="20121024 15:44:41.681" starttime="20121024 15:44:41.679"></status>
+</kw>
+<kw type="kw" name="TestCheckerLibrary.Check Test Status" timeout="">
+<doc>Verifies that test's status and message are as expected.</doc>
+<arguments>
+<arg>${test}</arg>
+<arg>${status}</arg>
+<arg>${message}</arg>
+</arguments>
+<status status="PASS" endtime="20121024 15:44:41.682" starttime="20121024 15:44:41.681"></status>
+</kw>
+<status status="PASS" endtime="20121024 15:44:41.682" starttime="20121024 15:44:41.678"></status>
+</kw>
+<kw type="kw" name="atest_resource.Check Test Case" timeout="">
+<doc></doc>
+<arguments>
+<arg>Fail If Variable Exists 5</arg>
+</arguments>
+<kw type="kw" name="${test} = TestCheckerLibrary.Get Test From Suite" timeout="">
+<doc></doc>
+<arguments>
+<arg>${SUITE}</arg>
+<arg>${name}</arg>
+</arguments>
+<msg timestamp="20121024 15:44:41.684" level="INFO">${test} = Fail If Variable Exists 5</msg>
+<status status="PASS" endtime="20121024 15:44:41.684" starttime="20121024 15:44:41.683"></status>
+</kw>
+<kw type="kw" name="TestCheckerLibrary.Check Test Status" timeout="">
+<doc>Verifies that test's status and message are as expected.</doc>
+<arguments>
+<arg>${test}</arg>
+<arg>${status}</arg>
+<arg>${message}</arg>
+</arguments>
+<status status="PASS" endtime="20121024 15:44:41.685" starttime="20121024 15:44:41.684"></status>
+</kw>
+<status status="PASS" endtime="20121024 15:44:41.685" starttime="20121024 15:44:41.682"></status>
+</kw>
+<doc></doc>
+<tags>
+<tag>jybot</tag>
+<tag>pybot</tag>
+<tag>regression</tag>
+</tags>
+<status status="PASS" endtime="20121024 15:44:41.685" critical="yes" starttime="20121024 15:44:41.668"></status>
+</test>
+<doc>Tests for variable related functionality in BuiltIn</doc>
+<metadata>
+</metadata>
+<status status="PASS" endtime="20121024 15:44:41.686" starttime="20121024 15:44:41.201"></status>
+</suite>
+<suite source="/Users/jmalinen/Documents/workspace/robot/atest/robot/standard_libraries/deprecated_builtin/verify.html" id="s1-s6" name="Verify">
+<kw type="setup" name="atest_resource.Run Tests" timeout="">
+<doc></doc>
+<arguments>
+<arg></arg>
+<arg>standard_libraries${/}deprecated_builtin${/}verify.html</arg>
+</arguments>
+<kw type="kw" name="atest_resource.Run Tests Helper" timeout="">
+<doc></doc>
+<arguments>
+<arg>${options}</arg>
+<arg>@{data list}</arg>
+</arguments>
+<kw type="kw" name="${data string} = atest_resource.Set Variables And Get Datasources" timeout="">
+<doc></doc>
+<arguments>
+<arg>@{data list}</arg>
+</arguments>
+<kw type="kw" name="BuiltIn.Set Suite Variable" timeout="">
+<doc>Makes a variable available everywhere within the scope of the current suite.</doc>
+<arguments>
+<arg>$SUITE</arg>
+<arg>${NONE}</arg>
+</arguments>
+<msg timestamp="20121024 15:44:41.702" level="INFO">${SUITE} = None</msg>
+<status status="PASS" endtime="20121024 15:44:41.702" starttime="20121024 15:44:41.702"></status>
+</kw>
+<kw type="kw" name="${name} = TestHelper.Get Output Name" timeout="">
+<doc></doc>
+<arguments>
+<arg>@{data list}</arg>
+</arguments>
+<msg timestamp="20121024 15:44:41.703" level="INFO">${name} = verify</msg>
+<status status="PASS" endtime="20121024 15:44:41.703" starttime="20121024 15:44:41.702"></status>
+</kw>
+<kw type="kw" name="atest_resource.Set Variables" timeout="">
+<doc></doc>
+<arguments>
+<arg>${name}</arg>
+</arguments>
+<kw type="kw" name="${OUTDIR} = OperatingSystem.Join Path" timeout="">
+<doc>Joins the given path part(s) to the given base path.</doc>
+<arguments>
+<arg>${OUTPUTDIR}</arg>
+<arg>output</arg>
+<arg>${name}</arg>
+</arguments>
+<msg timestamp="20121024 15:44:41.704" level="INFO">${OUTDIR} = /Users/jmalinen/Documents/workspace/robot/atest/results/python2.5/output/verify</msg>
+<status status="PASS" endtime="20121024 15:44:41.704" starttime="20121024 15:44:41.704"></status>
+</kw>
+<kw type="kw" name="BuiltIn.Set Global Variable" timeout="">
+<doc>Makes a variable available globally in all tests and suites.</doc>
+<arguments>
+<arg>$OUTDIR</arg>
+<arg>${OUTDIR.encode('ascii', 'ignore').replace('?', '_') .replace('*', '_')}</arg>
+</arguments>
+<msg timestamp="20121024 15:44:41.705" level="INFO">${OUTDIR} = /Users/jmalinen/Documents/workspace/robot/atest/results/python2.5/output/verify</msg>
+<status status="PASS" endtime="20121024 15:44:41.705" starttime="20121024 15:44:41.705"></status>
+</kw>
+<kw type="kw" name="OperatingSystem.Create Directory" timeout="">
+<doc>Creates the specified directory.</doc>
+<arguments>
+<arg>${OUTDIR}</arg>
+</arguments>
+<msg timestamp="20121024 15:44:41.706" html="yes" level="INFO">Created directory '&lt;a href="file:///Users/jmalinen/Documents/workspace/robot/atest/results/python2.5/output/verify"&gt;/Users/jmalinen/Documents/workspace/robot/atest/results/python2.5/output/verify&lt;/a&gt;'</msg>
+<status status="PASS" endtime="20121024 15:44:41.706" starttime="20121024 15:44:41.706"></status>
+</kw>
+<kw type="kw" name="BuiltIn.Set Suite Variable" timeout="">
+<doc>Makes a variable available everywhere within the scope of the current suite.</doc>
+<arguments>
+<arg>$OUTFILE</arg>
+<arg>${OUTDIR}${/}output.xml</arg>
+</arguments>
+<msg timestamp="20121024 15:44:41.707" level="INFO">${OUTFILE} = /Users/jmalinen/Documents/workspace/robot/atest/results/python2.5/output/verify/output.xml</msg>
+<status status="PASS" endtime="20121024 15:44:41.707" starttime="20121024 15:44:41.707"></status>
+</kw>
+<kw type="kw" name="BuiltIn.Set Suite Variable" timeout="">
+<doc>Makes a variable available everywhere within the scope of the current suite.</doc>
+<arguments>
+<arg>$STDOUT_FILE</arg>
+<arg>${OUTDIR}${/}stdout.txt</arg>
+</arguments>
+<msg timestamp="20121024 15:44:41.708" level="INFO">${STDOUT_FILE} = /Users/jmalinen/Documents/workspace/robot/atest/results/python2.5/output/verify/stdout.txt</msg>
+<status status="PASS" endtime="20121024 15:44:41.708" starttime="20121024 15:44:41.707"></status>
+</kw>
+<kw type="kw" name="BuiltIn.Set Suite Variable" timeout="">
+<doc>Makes a variable available everywhere within the scope of the current suite.</doc>
+<arguments>
+<arg>$STDERR_FILE</arg>
+<arg>${OUTDIR}${/}stderr.txt</arg>
+</arguments>
+<msg timestamp="20121024 15:44:41.709" level="INFO">${STDERR_FILE} = /Users/jmalinen/Documents/workspace/robot/atest/results/python2.5/output/verify/stderr.txt</msg>
+<status status="PASS" endtime="20121024 15:44:41.709" starttime="20121024 15:44:41.708"></status>
+</kw>
+<kw type="kw" name="BuiltIn.Set Suite Variable" timeout="">
+<doc>Makes a variable available everywhere within the scope of the current suite.</doc>
+<arguments>
+<arg>$SYSLOG_FILE</arg>
+<arg>${OUTDIR}${/}syslog.txt</arg>
+</arguments>
+<msg timestamp="20121024 15:44:41.710" level="INFO">${SYSLOG_FILE} = /Users/jmalinen/Documents/workspace/robot/atest/results/python2.5/output/verify/syslog.txt</msg>
+<status status="PASS" endtime="20121024 15:44:41.710" starttime="20121024 15:44:41.709"></status>
+</kw>
+<kw type="kw" name="OperatingSystem.Set Environment Variable" timeout="">
+<doc>Sets an environment variable to a specified value.</doc>
+<arguments>
+<arg>ROBOT_SYSLOG_FILE</arg>
+<arg>${SYSLOG_FILE}</arg>
+</arguments>
+<msg timestamp="20121024 15:44:41.710" level="INFO">Environment variable 'ROBOT_SYSLOG_FILE' set to value '/Users/jmalinen/Documents/workspace/robot/atest/results/python2.5/output/verify/syslog.txt'</msg>
+<status status="PASS" endtime="20121024 15:44:41.710" starttime="20121024 15:44:41.710"></status>
+</kw>
+<kw type="kw" name="atest_resource.Set Runners" timeout="">
+<doc></doc>
+<arguments>
+</arguments>
+<kw type="kw" name="${robot} = OperatingSystem.Join Path" timeout="">
+<doc>Joins the given path part(s) to the given base path.</doc>
+<arguments>
+<arg>${ROBOTPATH}</arg>
+<arg>run.py</arg>
+</arguments>
+<msg timestamp="20121024 15:44:41.712" level="INFO">${robot} = /Users/jmalinen/Documents/workspace/robot/src/robot/run.py</msg>
+<status status="PASS" endtime="20121024 15:44:41.712" starttime="20121024 15:44:41.711"></status>
+</kw>
+<kw type="kw" name="BuiltIn.Set Suite Variable" timeout="">
+<doc>Makes a variable available everywhere within the scope of the current suite.</doc>
+<arguments>
+<arg>$ROBOT</arg>
+<arg>${INTERPRETER} ${robot}</arg>
+</arguments>
+<msg timestamp="20121024 15:44:41.712" level="INFO">${ROBOT} = python2.5 /Users/jmalinen/Documents/workspace/robot/src/robot/run.py</msg>
+<status status="PASS" endtime="20121024 15:44:41.713" starttime="20121024 15:44:41.712"></status>
+</kw>
+<kw type="kw" name="${rebot} = OperatingSystem.Join Path" timeout="">
+<doc>Joins the given path part(s) to the given base path.</doc>
+<arguments>
+<arg>${ROBOTPATH}</arg>
+<arg>rebot.py</arg>
+</arguments>
+<msg timestamp="20121024 15:44:41.713" level="INFO">${rebot} = /Users/jmalinen/Documents/workspace/robot/src/robot/rebot.py</msg>
+<status status="PASS" endtime="20121024 15:44:41.713" starttime="20121024 15:44:41.713"></status>
+</kw>
+<kw type="kw" name="BuiltIn.Set Suite Variable" timeout="">
+<doc>Makes a variable available everywhere within the scope of the current suite.</doc>
+<arguments>
+<arg>$REBOT</arg>
+<arg>${INTERPRETER} ${rebot}</arg>
+</arguments>
+<msg timestamp="20121024 15:44:41.716" level="INFO">${REBOT} = python2.5 /Users/jmalinen/Documents/workspace/robot/src/robot/rebot.py</msg>
+<status status="PASS" endtime="20121024 15:44:41.716" starttime="20121024 15:44:41.713"></status>
+</kw>
+<status status="PASS" endtime="20121024 15:44:41.716" starttime="20121024 15:44:41.710"></status>
+</kw>
+<status status="PASS" endtime="20121024 15:44:41.717" starttime="20121024 15:44:41.703"></status>
+</kw>
+<kw type="kw" name="@{data list} = OperatingSystem.Join Paths" timeout="">
+<doc>Joins given paths with base and returns resulted paths.</doc>
+<arguments>
+<arg>${DATADIR}</arg>
+<arg>@{data list}</arg>
+</arguments>
+<msg timestamp="20121024 15:44:41.717" level="INFO">@{data list} = [ /Users/jmalinen/Documents/workspace/robot/atest/testdata/standard_libraries/deprecated_builtin/verify.html ]</msg>
+<status status="PASS" endtime="20121024 15:44:41.717" starttime="20121024 15:44:41.717"></status>
+</kw>
+<kw type="kw" name="${data string} = BuiltIn.Catenate" timeout="">
+<doc>Catenates the given items together and returns the resulted string.</doc>
+<arguments>
+<arg>@{data list}</arg>
+</arguments>
+<msg timestamp="20121024 15:44:41.719" level="INFO">${data string} = /Users/jmalinen/Documents/workspace/robot/atest/testdata/standard_libraries/deprecated_builtin/verify.html</msg>
+<status status="PASS" endtime="20121024 15:44:41.718" starttime="20121024 15:44:41.718"></status>
+</kw>
+<msg timestamp="20121024 15:44:41.719" level="INFO">${data string} = /Users/jmalinen/Documents/workspace/robot/atest/testdata/standard_libraries/deprecated_builtin/verify.html</msg>
+<status status="PASS" endtime="20121024 15:44:41.719" starttime="20121024 15:44:41.701"></status>
+</kw>
+<kw type="kw" name="${options} = BuiltIn.Catenate" timeout="">
+<doc>Catenates the given items together and returns the resulted string.</doc>
+<arguments>
+<arg>--MonitorMarkers OFF</arg>
+<arg>${user options}</arg>
+<arg>--variable interpreter:${INTERPRETER}</arg>
+<arg>--pythonpath ${LIBPATH1}</arg>
+<arg>--pythonpath ${LIBPATH2}</arg>
+</arguments>
+<msg timestamp="20121024 15:44:41.720" level="INFO">${options} = --MonitorMarkers OFF  --variable interpreter:python2.5 --pythonpath /Users/jmalinen/Documents/workspace/robot/atest/resources/../testresources/testlibs --pythonpath /Users/jmalinen/Documents/workspace...</msg>
+<status status="PASS" endtime="20121024 15:44:41.720" starttime="20121024 15:44:41.719"></status>
+</kw>
+<kw type="kw" name="atest_resource.Run Helper" timeout="">
+<doc></doc>
+<arguments>
+<arg>${ROBOT}</arg>
+<arg>${options}</arg>
+<arg>${data string}</arg>
+</arguments>
+<kw type="kw" name="OperatingSystem.Remove Files" timeout="">
+<doc>Uses `Remove File` to remove multiple files one-by-one.</doc>
+<arguments>
+<arg>${OUTFILE}</arg>
+<arg>${OUTDIR}/*.xml</arg>
+<arg>${OUTDIR}/*.html</arg>
+</arguments>
+<msg timestamp="20121024 15:44:41.722" html="yes" level="INFO">File '&lt;a href="file:///Users/jmalinen/Documents/workspace/robot/atest/results/python2.5/output/verify/output.xml"&gt;/Users/jmalinen/Documents/workspace/robot/atest/results/python2.5/output/verify/output.xml&lt;/a&gt;' does not exist</msg>
+<msg timestamp="20121024 15:44:41.722" html="yes" level="INFO">File '&lt;a href="file:///Users/jmalinen/Documents/workspace/robot/atest/results/python2.5/output/verify/*.xml"&gt;/Users/jmalinen/Documents/workspace/robot/atest/results/python2.5/output/verify/*.xml&lt;/a&gt;' does not exist</msg>
+<msg timestamp="20121024 15:44:41.722" html="yes" level="INFO">File '&lt;a href="file:///Users/jmalinen/Documents/workspace/robot/atest/results/python2.5/output/verify/*.html"&gt;/Users/jmalinen/Documents/workspace/robot/atest/results/python2.5/output/verify/*.html&lt;/a&gt;' does not exist</msg>
+<status status="PASS" endtime="20121024 15:44:41.723" starttime="20121024 15:44:41.721"></status>
+</kw>
+<kw type="kw" name="${cmd} = BuiltIn.Catenate" timeout="">
+<doc>Catenates the given items together and returns the resulted string.</doc>
+<arguments>
+<arg>${runner}</arg>
+<arg>--monitorcolors OFF</arg>
+<arg>--outputdir ${OUTDIR}</arg>
+<arg>--output ${OUTFILE}</arg>
+<arg>--report NONE</arg>
+<arg>--log NONE</arg>
+<arg>${options}</arg>
+<arg>${data string}</arg>
+<arg>1&gt;${STDOUTFILE}</arg>
+<arg>2&gt;${STDERRFILE}</arg>
+</arguments>
+<msg timestamp="20121024 15:44:41.724" level="INFO">${cmd} = python2.5 /Users/jmalinen/Documents/workspace/robot/src/robot/run.py --monitorcolors OFF --outputdir /Users/jmalinen/Documents/workspace/robot/atest/results/python2.5/output/verify --output /Users/jma...</msg>
+<status status="PASS" endtime="20121024 15:44:41.724" starttime="20121024 15:44:41.723"></status>
+</kw>
+<kw type="kw" name="${rc} = OperatingSystem.Run And Return Rc" timeout="">
+<doc>Runs the given command in the system and returns the return code.</doc>
+<arguments>
+<arg>${cmd}</arg>
+</arguments>
+<msg timestamp="20121024 15:44:41.725" level="INFO">Running command 'python2.5 /Users/jmalinen/Documents/workspace/robot/src/robot/run.py --monitorcolors OFF --outputdir /Users/jmalinen/Documents/workspace/robot/atest/results/python2.5/output/verify --output /Users/jmalinen/Documents/workspace/robot/atest/results/python2.5/output/verify/output.xml --report NONE --log NONE --MonitorMarkers OFF  --variable interpreter:python2.5 --pythonpath /Users/jmalinen/Documents/workspace/robot/atest/resources/../testresources/testlibs --pythonpath /Users/jmalinen/Documents/workspace/robot/atest/resources/../testresources/listeners /Users/jmalinen/Documents/workspace/robot/atest/testdata/standard_libraries/deprecated_builtin/verify.html 1&gt;/Users/jmalinen/Documents/workspace/robot/atest/results/python2.5/output/verify/stdout.txt 2&gt;/Users/jmalinen/Documents/workspace/robot/atest/results/python2.5/output/verify/stderr.txt'</msg>
+<msg timestamp="20121024 15:44:42.195" level="INFO">${rc} = 22</msg>
+<status status="PASS" endtime="20121024 15:44:42.194" starttime="20121024 15:44:41.724"></status>
+</kw>
+<kw type="kw" name="BuiltIn.Log" timeout="">
+<doc>Logs the given message with the given level.</doc>
+<arguments>
+<arg>&lt;a href="file://${OUTDIR}"&gt;${OUTDIR}&lt;/a&gt;</arg>
+<arg>HTML</arg>
+</arguments>
+<msg timestamp="20121024 15:44:42.195" html="yes" level="INFO">&lt;a href="file:///Users/jmalinen/Documents/workspace/robot/atest/results/python2.5/output/verify"&gt;/Users/jmalinen/Documents/workspace/robot/atest/results/python2.5/output/verify&lt;/a&gt;</msg>
+<status status="PASS" endtime="20121024 15:44:42.195" starttime="20121024 15:44:42.195"></status>
+</kw>
+<kw type="kw" name="BuiltIn.Log" timeout="">
+<doc>Logs the given message with the given level.</doc>
+<arguments>
+<arg>&lt;a href="file://${OUTFILE}"&gt;${OUTFILE}&lt;/a&gt;</arg>
+<arg>HTML</arg>
+</arguments>
+<msg timestamp="20121024 15:44:42.196" html="yes" level="INFO">&lt;a href="file:///Users/jmalinen/Documents/workspace/robot/atest/results/python2.5/output/verify/output.xml"&gt;/Users/jmalinen/Documents/workspace/robot/atest/results/python2.5/output/verify/output.xml&lt;/a&gt;</msg>
+<status status="PASS" endtime="20121024 15:44:42.196" starttime="20121024 15:44:42.196"></status>
+</kw>
+<kw type="kw" name="BuiltIn.Log" timeout="">
+<doc>Logs the given message with the given level.</doc>
+<arguments>
+<arg>&lt;a href="file://${STDOUTFILE}"&gt;${STDOUTFILE}&lt;/a&gt;</arg>
+<arg>HTML</arg>
+</arguments>
+<msg timestamp="20121024 15:44:42.197" html="yes" level="INFO">&lt;a href="file:///Users/jmalinen/Documents/workspace/robot/atest/results/python2.5/output/verify/stdout.txt"&gt;/Users/jmalinen/Documents/workspace/robot/atest/results/python2.5/output/verify/stdout.txt&lt;/a&gt;</msg>
+<status status="PASS" endtime="20121024 15:44:42.197" starttime="20121024 15:44:42.196"></status>
+</kw>
+<kw type="kw" name="BuiltIn.Log" timeout="">
+<doc>Logs the given message with the given level.</doc>
+<arguments>
+<arg>&lt;a href="file://${STDERRFILE}"&gt;${STDERRFILE}&lt;/a&gt;</arg>
+<arg>HTML</arg>
+</arguments>
+<msg timestamp="20121024 15:44:42.197" html="yes" level="INFO">&lt;a href="file:///Users/jmalinen/Documents/workspace/robot/atest/results/python2.5/output/verify/stderr.txt"&gt;/Users/jmalinen/Documents/workspace/robot/atest/results/python2.5/output/verify/stderr.txt&lt;/a&gt;</msg>
+<status status="PASS" endtime="20121024 15:44:42.198" starttime="20121024 15:44:42.197"></status>
+</kw>
+<kw type="kw" name="BuiltIn.Log" timeout="">
+<doc>Logs the given message with the given level.</doc>
+<arguments>
+<arg>&lt;a href="file://${SYSLOGFILE}"&gt;${SYSLOGFILE}&lt;/a&gt;</arg>
+<arg>HTML</arg>
+</arguments>
+<msg timestamp="20121024 15:44:42.198" html="yes" level="INFO">&lt;a href="file:///Users/jmalinen/Documents/workspace/robot/atest/results/python2.5/output/verify/syslog.txt"&gt;/Users/jmalinen/Documents/workspace/robot/atest/results/python2.5/output/verify/syslog.txt&lt;/a&gt;</msg>
+<status status="PASS" endtime="20121024 15:44:42.198" starttime="20121024 15:44:42.198"></status>
+</kw>
+<status status="PASS" endtime="20121024 15:44:42.198" starttime="20121024 15:44:41.720"></status>
+</kw>
+<status status="PASS" endtime="20121024 15:44:42.199" starttime="20121024 15:44:41.700"></status>
+</kw>
+<kw type="kw" name="TestCheckerLibrary.Process Output" timeout="">
+<doc></doc>
+<arguments>
+<arg>${OUTFILE}</arg>
+</arguments>
+<msg timestamp="20121024 15:44:42.207" level="INFO">${SUITE} = Verify</msg>
+<msg timestamp="20121024 15:44:42.208" level="INFO">${STATISTICS} = &lt;robot.model.statistics.Statistics object at 0x13656f0&gt;</msg>
+<msg timestamp="20121024 15:44:42.208" level="INFO">${ERRORS} = &lt;robot.result.executionerrors.ExecutionErrors object at 0x1383330&gt;</msg>
+<msg timestamp="20121024 15:44:42.208" level="INFO">Processing output '/Users/jmalinen/Documents/workspace/robot/atest/results/python2.5/output/verify/output.xml'</msg>
+<status status="PASS" endtime="20121024 15:44:42.209" starttime="20121024 15:44:42.199"></status>
+</kw>
+<status status="PASS" endtime="20121024 15:44:42.209" starttime="20121024 15:44:41.698"></status>
+</kw>
+<test id="s1-s6-t1" timeout="" name="Error">
+<kw type="kw" name="atest_resource.Check Test Case" timeout="">
+<doc></doc>
+<arguments>
+<arg>Error</arg>
+</arguments>
+<kw type="kw" name="${test} = TestCheckerLibrary.Get Test From Suite" timeout="">
+<doc></doc>
+<arguments>
+<arg>${SUITE}</arg>
+<arg>${name}</arg>
+</arguments>
+<msg timestamp="20121024 15:44:42.212" level="INFO">${test} = Error</msg>
+<status status="PASS" endtime="20121024 15:44:42.212" starttime="20121024 15:44:42.211"></status>
+</kw>
+<kw type="kw" name="TestCheckerLibrary.Check Test Status" timeout="">
+<doc>Verifies that test's status and message are as expected.</doc>
+<arguments>
+<arg>${test}</arg>
+<arg>${status}</arg>
+<arg>${message}</arg>
+</arguments>
+<status status="PASS" endtime="20121024 15:44:42.212" starttime="20121024 15:44:42.212"></status>
+</kw>
+<status status="PASS" endtime="20121024 15:44:42.213" starttime="20121024 15:44:42.210"></status>
+</kw>
+<doc></doc>
+<tags>
+<tag>jybot</tag>
+<tag>pybot</tag>
+<tag>regression</tag>
+</tags>
+<status status="PASS" endtime="20121024 15:44:42.213" critical="yes" starttime="20121024 15:44:42.209"></status>
+</test>
+<test id="s1-s6-t2" timeout="" name="Error With Message">
+<kw type="kw" name="atest_resource.Check Test Case" timeout="">
+<doc></doc>
+<arguments>
+<arg>Error With Message</arg>
+</arguments>
+<kw type="kw" name="${test} = TestCheckerLibrary.Get Test From Suite" timeout="">
+<doc></doc>
+<arguments>
+<arg>${SUITE}</arg>
+<arg>${name}</arg>
+</arguments>
+<msg timestamp="20121024 15:44:42.216" level="INFO">${test} = Error With Message</msg>
+<status status="PASS" endtime="20121024 15:44:42.216" starttime="20121024 15:44:42.215"></status>
+</kw>
+<kw type="kw" name="TestCheckerLibrary.Check Test Status" timeout="">
+<doc>Verifies that test's status and message are as expected.</doc>
+<arguments>
+<arg>${test}</arg>
+<arg>${status}</arg>
+<arg>${message}</arg>
+</arguments>
+<status status="PASS" endtime="20121024 15:44:42.217" starttime="20121024 15:44:42.216"></status>
+</kw>
+<status status="PASS" endtime="20121024 15:44:42.217" starttime="20121024 15:44:42.214"></status>
+</kw>
+<doc></doc>
+<tags>
+<tag>jybot</tag>
+<tag>pybot</tag>
+<tag>regression</tag>
+</tags>
+<status status="PASS" endtime="20121024 15:44:42.217" critical="yes" starttime="20121024 15:44:42.213"></status>
+</test>
+<test id="s1-s6-t3" timeout="" name="Fail If 1">
+<kw type="kw" name="atest_resource.Check Test Case" timeout="">
+<doc></doc>
+<arguments>
+<arg>Fail If 1</arg>
+</arguments>
+<kw type="kw" name="${test} = TestCheckerLibrary.Get Test From Suite" timeout="">
+<doc></doc>
+<arguments>
+<arg>${SUITE}</arg>
+<arg>${name}</arg>
+</arguments>
+<msg timestamp="20121024 15:44:42.220" level="INFO">${test} = Fail If 1</msg>
+<status status="PASS" endtime="20121024 15:44:42.220" starttime="20121024 15:44:42.219"></status>
+</kw>
+<kw type="kw" name="TestCheckerLibrary.Check Test Status" timeout="">
+<doc>Verifies that test's status and message are as expected.</doc>
+<arguments>
+<arg>${test}</arg>
+<arg>${status}</arg>
+<arg>${message}</arg>
+</arguments>
+<status status="PASS" endtime="20121024 15:44:42.221" starttime="20121024 15:44:42.220"></status>
+</kw>
+<status status="PASS" endtime="20121024 15:44:42.221" starttime="20121024 15:44:42.218"></status>
+</kw>
+<doc></doc>
+<tags>
+<tag>jybot</tag>
+<tag>pybot</tag>
+<tag>regression</tag>
+</tags>
+<status status="PASS" endtime="20121024 15:44:42.221" critical="yes" starttime="20121024 15:44:42.217"></status>
+</test>
+<test id="s1-s6-t4" timeout="" name="Fail If 2">
+<kw type="kw" name="atest_resource.Check Test Case" timeout="">
+<doc></doc>
+<arguments>
+<arg>Fail If 2</arg>
+</arguments>
+<kw type="kw" name="${test} = TestCheckerLibrary.Get Test From Suite" timeout="">
+<doc></doc>
+<arguments>
+<arg>${SUITE}</arg>
+<arg>${name}</arg>
+</arguments>
+<msg timestamp="20121024 15:44:42.225" level="INFO">${test} = Fail If 2</msg>
+<status status="PASS" endtime="20121024 15:44:42.225" starttime="20121024 15:44:42.224"></status>
+</kw>
+<kw type="kw" name="TestCheckerLibrary.Check Test Status" timeout="">
+<doc>Verifies that test's status and message are as expected.</doc>
+<arguments>
+<arg>${test}</arg>
+<arg>${status}</arg>
+<arg>${message}</arg>
+</arguments>
+<status status="PASS" endtime="20121024 15:44:42.225" starttime="20121024 15:44:42.225"></status>
+</kw>
+<status status="PASS" endtime="20121024 15:44:42.225" starttime="20121024 15:44:42.222"></status>
+</kw>
+<doc></doc>
+<tags>
+<tag>jybot</tag>
+<tag>pybot</tag>
+<tag>regression</tag>
+</tags>
+<status status="PASS" endtime="20121024 15:44:42.226" critical="yes" starttime="20121024 15:44:42.222"></status>
+</test>
+<test id="s1-s6-t5" timeout="" name="Fail Unless 1">
+<kw type="kw" name="atest_resource.Check Test Case" timeout="">
+<doc></doc>
+<arguments>
+<arg>Fail Unless 1</arg>
+</arguments>
+<kw type="kw" name="${test} = TestCheckerLibrary.Get Test From Suite" timeout="">
+<doc></doc>
+<arguments>
+<arg>${SUITE}</arg>
+<arg>${name}</arg>
+</arguments>
+<msg timestamp="20121024 15:44:42.230" level="INFO">${test} = Fail Unless 1</msg>
+<status status="PASS" endtime="20121024 15:44:42.230" starttime="20121024 15:44:42.229"></status>
+</kw>
+<kw type="kw" name="TestCheckerLibrary.Check Test Status" timeout="">
+<doc>Verifies that test's status and message are as expected.</doc>
+<arguments>
+<arg>${test}</arg>
+<arg>${status}</arg>
+<arg>${message}</arg>
+</arguments>
+<status status="PASS" endtime="20121024 15:44:42.231" starttime="20121024 15:44:42.230"></status>
+</kw>
+<status status="PASS" endtime="20121024 15:44:42.231" starttime="20121024 15:44:42.228"></status>
+</kw>
+<doc></doc>
+<tags>
+<tag>jybot</tag>
+<tag>pybot</tag>
+<tag>regression</tag>
+</tags>
+<status status="PASS" endtime="20121024 15:44:42.231" critical="yes" starttime="20121024 15:44:42.227"></status>
+</test>
+<test id="s1-s6-t6" timeout="" name="Fail Unless 2">
+<kw type="kw" name="atest_resource.Check Test Case" timeout="">
+<doc></doc>
+<arguments>
+<arg>Fail Unless 2</arg>
+</arguments>
+<kw type="kw" name="${test} = TestCheckerLibrary.Get Test From Suite" timeout="">
+<doc></doc>
+<arguments>
+<arg>${SUITE}</arg>
+<arg>${name}</arg>
+</arguments>
+<msg timestamp="20121024 15:44:42.235" level="INFO">${test} = Fail Unless 2</msg>
+<status status="PASS" endtime="20121024 15:44:42.234" starttime="20121024 15:44:42.234"></status>
+</kw>
+<kw type="kw" name="TestCheckerLibrary.Check Test Status" timeout="">
+<doc>Verifies that test's status and message are as expected.</doc>
+<arguments>
+<arg>${test}</arg>
+<arg>${status}</arg>
+<arg>${message}</arg>
+</arguments>
+<status status="PASS" endtime="20121024 15:44:42.235" starttime="20121024 15:44:42.235"></status>
+</kw>
+<status status="PASS" endtime="20121024 15:44:42.235" starttime="20121024 15:44:42.233"></status>
+</kw>
+<doc></doc>
+<tags>
+<tag>jybot</tag>
+<tag>pybot</tag>
+<tag>regression</tag>
+</tags>
+<status status="PASS" endtime="20121024 15:44:42.236" critical="yes" starttime="20121024 15:44:42.232"></status>
+</test>
+<test id="s1-s6-t7" timeout="" name="Fail If Equal">
+<kw type="kw" name="atest_resource.Check Test Case" timeout="">
+<doc></doc>
+<arguments>
+<arg>Fail If Equal</arg>
+</arguments>
+<kw type="kw" name="${test} = TestCheckerLibrary.Get Test From Suite" timeout="">
+<doc></doc>
+<arguments>
+<arg>${SUITE}</arg>
+<arg>${name}</arg>
+</arguments>
+<msg timestamp="20121024 15:44:42.239" level="INFO">${test} = Fail If Equal</msg>
+<status status="PASS" endtime="20121024 15:44:42.239" starttime="20121024 15:44:42.238"></status>
+</kw>
+<kw type="kw" name="TestCheckerLibrary.Check Test Status" timeout="">
+<doc>Verifies that test's status and message are as expected.</doc>
+<arguments>
+<arg>${test}</arg>
+<arg>${status}</arg>
+<arg>${message}</arg>
+</arguments>
+<status status="PASS" endtime="20121024 15:44:42.239" starttime="20121024 15:44:42.239"></status>
+</kw>
+<status status="PASS" endtime="20121024 15:44:42.240" starttime="20121024 15:44:42.237"></status>
+</kw>
+<doc></doc>
+<tags>
+<tag>jybot</tag>
+<tag>pybot</tag>
+<tag>regression</tag>
+</tags>
+<status status="PASS" endtime="20121024 15:44:42.240" critical="yes" starttime="20121024 15:44:42.236"></status>
+</test>
+<test id="s1-s6-t8" timeout="" name="Fail Unless Equal">
+<kw type="kw" name="atest_resource.Check Test Case" timeout="">
+<doc></doc>
+<arguments>
+<arg>Fail Unless Equal</arg>
+</arguments>
+<kw type="kw" name="${test} = TestCheckerLibrary.Get Test From Suite" timeout="">
+<doc></doc>
+<arguments>
+<arg>${SUITE}</arg>
+<arg>${name}</arg>
+</arguments>
+<msg timestamp="20121024 15:44:42.243" level="INFO">${test} = Fail Unless Equal</msg>
+<status status="PASS" endtime="20121024 15:44:42.243" starttime="20121024 15:44:42.242"></status>
+</kw>
+<kw type="kw" name="TestCheckerLibrary.Check Test Status" timeout="">
+<doc>Verifies that test's status and message are as expected.</doc>
+<arguments>
+<arg>${test}</arg>
+<arg>${status}</arg>
+<arg>${message}</arg>
+</arguments>
+<status status="PASS" endtime="20121024 15:44:42.244" starttime="20121024 15:44:42.243"></status>
+</kw>
+<status status="PASS" endtime="20121024 15:44:42.244" starttime="20121024 15:44:42.241"></status>
+</kw>
+<doc></doc>
+<tags>
+<tag>jybot</tag>
+<tag>pybot</tag>
+<tag>regression</tag>
+</tags>
+<status status="PASS" endtime="20121024 15:44:42.244" critical="yes" starttime="20121024 15:44:42.240"></status>
+</test>
+<test id="s1-s6-t9" timeout="" name="Fail If Ints Equal">
+<kw type="kw" name="atest_resource.Check Test Case" timeout="">
+<doc></doc>
+<arguments>
+<arg>Fail If Ints Equal</arg>
+</arguments>
+<kw type="kw" name="${test} = TestCheckerLibrary.Get Test From Suite" timeout="">
+<doc></doc>
+<arguments>
+<arg>${SUITE}</arg>
+<arg>${name}</arg>
+</arguments>
+<msg timestamp="20121024 15:44:42.248" level="INFO">${test} = Fail If Ints Equal</msg>
+<status status="PASS" endtime="20121024 15:44:42.248" starttime="20121024 15:44:42.247"></status>
+</kw>
+<kw type="kw" name="TestCheckerLibrary.Check Test Status" timeout="">
+<doc>Verifies that test's status and message are as expected.</doc>
+<arguments>
+<arg>${test}</arg>
+<arg>${status}</arg>
+<arg>${message}</arg>
+</arguments>
+<status status="PASS" endtime="20121024 15:44:42.249" starttime="20121024 15:44:42.249"></status>
+</kw>
+<status status="PASS" endtime="20121024 15:44:42.249" starttime="20121024 15:44:42.245"></status>
+</kw>
+<doc></doc>
+<tags>
+<tag>jybot</tag>
+<tag>pybot</tag>
+<tag>regression</tag>
+</tags>
+<status status="PASS" endtime="20121024 15:44:42.249" critical="yes" starttime="20121024 15:44:42.244"></status>
+</test>
+<test id="s1-s6-t10" timeout="" name="Fail Unless Ints Equal">
+<kw type="kw" name="atest_resource.Check Test Case" timeout="">
+<doc></doc>
+<arguments>
+<arg>Fail Unless Ints Equal</arg>
+</arguments>
+<kw type="kw" name="${test} = TestCheckerLibrary.Get Test From Suite" timeout="">
+<doc></doc>
+<arguments>
+<arg>${SUITE}</arg>
+<arg>${name}</arg>
+</arguments>
+<msg timestamp="20121024 15:44:42.253" level="INFO">${test} = Fail Unless Ints Equal</msg>
+<status status="PASS" endtime="20121024 15:44:42.253" starttime="20121024 15:44:42.252"></status>
+</kw>
+<kw type="kw" name="TestCheckerLibrary.Check Test Status" timeout="">
+<doc>Verifies that test's status and message are as expected.</doc>
+<arguments>
+<arg>${test}</arg>
+<arg>${status}</arg>
+<arg>${message}</arg>
+</arguments>
+<status status="PASS" endtime="20121024 15:44:42.254" starttime="20121024 15:44:42.253"></status>
+</kw>
+<status status="PASS" endtime="20121024 15:44:42.254" starttime="20121024 15:44:42.251"></status>
+</kw>
+<doc></doc>
+<tags>
+<tag>jybot</tag>
+<tag>pybot</tag>
+<tag>regression</tag>
+</tags>
+<status status="PASS" endtime="20121024 15:44:42.254" critical="yes" starttime="20121024 15:44:42.250"></status>
+</test>
+<test id="s1-s6-t11" timeout="" name="Fail If Floats Equal">
+<kw type="kw" name="atest_resource.Check Test Case" timeout="">
+<doc></doc>
+<arguments>
+<arg>Fail If Floats Equal</arg>
+</arguments>
+<kw type="kw" name="${test} = TestCheckerLibrary.Get Test From Suite" timeout="">
+<doc></doc>
+<arguments>
+<arg>${SUITE}</arg>
+<arg>${name}</arg>
+</arguments>
+<msg timestamp="20121024 15:44:42.259" level="INFO">${test} = Fail If Floats Equal</msg>
+<status status="PASS" endtime="20121024 15:44:42.258" starttime="20121024 15:44:42.258"></status>
+</kw>
+<kw type="kw" name="TestCheckerLibrary.Check Test Status" timeout="">
+<doc>Verifies that test's status and message are as expected.</doc>
+<arguments>
+<arg>${test}</arg>
+<arg>${status}</arg>
+<arg>${message}</arg>
+</arguments>
+<status status="PASS" endtime="20121024 15:44:42.259" starttime="20121024 15:44:42.259"></status>
+</kw>
+<status status="PASS" endtime="20121024 15:44:42.259" starttime="20121024 15:44:42.257"></status>
+</kw>
+<doc></doc>
+<tags>
+<tag>jybot</tag>
+<tag>pybot</tag>
+<tag>regression</tag>
+</tags>
+<status status="PASS" endtime="20121024 15:44:42.260" critical="yes" starttime="20121024 15:44:42.255"></status>
+</test>
+<test id="s1-s6-t12" timeout="" name="Fail Unless Floats Equal">
+<kw type="kw" name="atest_resource.Check Test Case" timeout="">
+<doc></doc>
+<arguments>
+<arg>Fail Unless Floats Equal</arg>
+</arguments>
+<kw type="kw" name="${test} = TestCheckerLibrary.Get Test From Suite" timeout="">
+<doc></doc>
+<arguments>
+<arg>${SUITE}</arg>
+<arg>${name}</arg>
+</arguments>
+<msg timestamp="20121024 15:44:42.263" level="INFO">${test} = Fail Unless Floats Equal</msg>
+<status status="PASS" endtime="20121024 15:44:42.263" starttime="20121024 15:44:42.262"></status>
+</kw>
+<kw type="kw" name="TestCheckerLibrary.Check Test Status" timeout="">
+<doc>Verifies that test's status and message are as expected.</doc>
+<arguments>
+<arg>${test}</arg>
+<arg>${status}</arg>
+<arg>${message}</arg>
+</arguments>
+<status status="PASS" endtime="20121024 15:44:42.264" starttime="20121024 15:44:42.263"></status>
+</kw>
+<status status="PASS" endtime="20121024 15:44:42.264" starttime="20121024 15:44:42.261"></status>
+</kw>
+<doc></doc>
+<tags>
+<tag>jybot</tag>
+<tag>pybot</tag>
+<tag>regression</tag>
+</tags>
+<status status="PASS" endtime="20121024 15:44:42.264" critical="yes" starttime="20121024 15:44:42.260"></status>
+</test>
+<test id="s1-s6-t13" timeout="" name="Fail If Starts">
+<kw type="kw" name="atest_resource.Check Test Case" timeout="">
+<doc></doc>
+<arguments>
+<arg>Fail If Starts</arg>
+</arguments>
+<kw type="kw" name="${test} = TestCheckerLibrary.Get Test From Suite" timeout="">
+<doc></doc>
+<arguments>
+<arg>${SUITE}</arg>
+<arg>${name}</arg>
+</arguments>
+<msg timestamp="20121024 15:44:42.268" level="INFO">${test} = Fail If Starts</msg>
+<status status="PASS" endtime="20121024 15:44:42.268" starttime="20121024 15:44:42.268"></status>
+</kw>
+<kw type="kw" name="TestCheckerLibrary.Check Test Status" timeout="">
+<doc>Verifies that test's status and message are as expected.</doc>
+<arguments>
+<arg>${test}</arg>
+<arg>${status}</arg>
+<arg>${message}</arg>
+</arguments>
+<status status="PASS" endtime="20121024 15:44:42.269" starttime="20121024 15:44:42.269"></status>
+</kw>
+<status status="PASS" endtime="20121024 15:44:42.269" starttime="20121024 15:44:42.266"></status>
+</kw>
+<doc></doc>
+<tags>
+<tag>jybot</tag>
+<tag>pybot</tag>
+<tag>regression</tag>
+</tags>
+<status status="PASS" endtime="20121024 15:44:42.269" critical="yes" starttime="20121024 15:44:42.265"></status>
+</test>
+<test id="s1-s6-t14" timeout="" name="Fail Unless Starts">
+<kw type="kw" name="atest_resource.Check Test Case" timeout="">
+<doc></doc>
+<arguments>
+<arg>Fail Unless Starts</arg>
+</arguments>
+<kw type="kw" name="${test} = TestCheckerLibrary.Get Test From Suite" timeout="">
+<doc></doc>
+<arguments>
+<arg>${SUITE}</arg>
+<arg>${name}</arg>
+</arguments>
+<msg timestamp="20121024 15:44:42.273" level="INFO">${test} = Fail Unless Starts</msg>
+<status status="PASS" endtime="20121024 15:44:42.273" starttime="20121024 15:44:42.272"></status>
+</kw>
+<kw type="kw" name="TestCheckerLibrary.Check Test Status" timeout="">
+<doc>Verifies that test's status and message are as expected.</doc>
+<arguments>
+<arg>${test}</arg>
+<arg>${status}</arg>
+<arg>${message}</arg>
+</arguments>
+<status status="PASS" endtime="20121024 15:44:42.273" starttime="20121024 15:44:42.273"></status>
+</kw>
+<status status="PASS" endtime="20121024 15:44:42.274" starttime="20121024 15:44:42.271"></status>
+</kw>
+<doc></doc>
+<tags>
+<tag>jybot</tag>
+<tag>pybot</tag>
+<tag>regression</tag>
+</tags>
+<status status="PASS" endtime="20121024 15:44:42.274" critical="yes" starttime="20121024 15:44:42.270"></status>
+</test>
+<test id="s1-s6-t15" timeout="" name="Fail If Ends">
+<kw type="kw" name="atest_resource.Check Test Case" timeout="">
+<doc></doc>
+<arguments>
+<arg>Fail If Ends</arg>
+</arguments>
+<kw type="kw" name="${test} = TestCheckerLibrary.Get Test From Suite" timeout="">
+<doc></doc>
+<arguments>
+<arg>${SUITE}</arg>
+<arg>${name}</arg>
+</arguments>
+<msg timestamp="20121024 15:44:42.277" level="INFO">${test} = Fail If Ends</msg>
+<status status="PASS" endtime="20121024 15:44:42.277" starttime="20121024 15:44:42.276"></status>
+</kw>
+<kw type="kw" name="TestCheckerLibrary.Check Test Status" timeout="">
+<doc>Verifies that test's status and message are as expected.</doc>
+<arguments>
+<arg>${test}</arg>
+<arg>${status}</arg>
+<arg>${message}</arg>
+</arguments>
+<status status="PASS" endtime="20121024 15:44:42.278" starttime="20121024 15:44:42.277"></status>
+</kw>
+<status status="PASS" endtime="20121024 15:44:42.278" starttime="20121024 15:44:42.275"></status>
+</kw>
+<doc></doc>
+<tags>
+<tag>jybot</tag>
+<tag>pybot</tag>
+<tag>regression</tag>
+</tags>
+<status status="PASS" endtime="20121024 15:44:42.278" critical="yes" starttime="20121024 15:44:42.274"></status>
+</test>
+<test id="s1-s6-t16" timeout="" name="Fail Unless Ends">
+<kw type="kw" name="atest_resource.Check Test Case" timeout="">
+<doc></doc>
+<arguments>
+<arg>Fail Unless Ends</arg>
+</arguments>
+<kw type="kw" name="${test} = TestCheckerLibrary.Get Test From Suite" timeout="">
+<doc></doc>
+<arguments>
+<arg>${SUITE}</arg>
+<arg>${name}</arg>
+</arguments>
+<msg timestamp="20121024 15:44:42.282" level="INFO">${test} = Fail Unless Ends</msg>
+<status status="PASS" endtime="20121024 15:44:42.282" starttime="20121024 15:44:42.281"></status>
+</kw>
+<kw type="kw" name="TestCheckerLibrary.Check Test Status" timeout="">
+<doc>Verifies that test's status and message are as expected.</doc>
+<arguments>
+<arg>${test}</arg>
+<arg>${status}</arg>
+<arg>${message}</arg>
+</arguments>
+<status status="PASS" endtime="20121024 15:44:42.282" starttime="20121024 15:44:42.282"></status>
+</kw>
+<status status="PASS" endtime="20121024 15:44:42.283" starttime="20121024 15:44:42.280"></status>
+</kw>
+<doc></doc>
+<tags>
+<tag>jybot</tag>
+<tag>pybot</tag>
+<tag>regression</tag>
+</tags>
+<status status="PASS" endtime="20121024 15:44:42.283" critical="yes" starttime="20121024 15:44:42.278"></status>
+</test>
+<test id="s1-s6-t17" timeout="" name="Fail If Contains">
+<kw type="kw" name="atest_resource.Check Test Case" timeout="">
+<doc></doc>
+<arguments>
+<arg>Fail If Contains</arg>
+</arguments>
+<kw type="kw" name="${test} = TestCheckerLibrary.Get Test From Suite" timeout="">
+<doc></doc>
+<arguments>
+<arg>${SUITE}</arg>
+<arg>${name}</arg>
+</arguments>
+<msg timestamp="20121024 15:44:42.286" level="INFO">${test} = Fail If Contains</msg>
+<status status="PASS" endtime="20121024 15:44:42.286" starttime="20121024 15:44:42.285"></status>
+</kw>
+<kw type="kw" name="TestCheckerLibrary.Check Test Status" timeout="">
+<doc>Verifies that test's status and message are as expected.</doc>
+<arguments>
+<arg>${test}</arg>
+<arg>${status}</arg>
+<arg>${message}</arg>
+</arguments>
+<status status="PASS" endtime="20121024 15:44:42.287" starttime="20121024 15:44:42.286"></status>
+</kw>
+<status status="PASS" endtime="20121024 15:44:42.287" starttime="20121024 15:44:42.284"></status>
+</kw>
+<doc></doc>
+<tags>
+<tag>jybot</tag>
+<tag>pybot</tag>
+<tag>regression</tag>
+</tags>
+<status status="PASS" endtime="20121024 15:44:42.287" critical="yes" starttime="20121024 15:44:42.283"></status>
+</test>
+<test id="s1-s6-t18" timeout="" name="Fail Unless Contains">
+<kw type="kw" name="atest_resource.Check Test Case" timeout="">
+<doc></doc>
+<arguments>
+<arg>Fail Unless Contains</arg>
+</arguments>
+<kw type="kw" name="${test} = TestCheckerLibrary.Get Test From Suite" timeout="">
+<doc></doc>
+<arguments>
+<arg>${SUITE}</arg>
+<arg>${name}</arg>
+</arguments>
+<msg timestamp="20121024 15:44:42.291" level="INFO">${test} = Fail Unless Contains</msg>
+<status status="PASS" endtime="20121024 15:44:42.291" starttime="20121024 15:44:42.290"></status>
+</kw>
+<kw type="kw" name="TestCheckerLibrary.Check Test Status" timeout="">
+<doc>Verifies that test's status and message are as expected.</doc>
+<arguments>
+<arg>${test}</arg>
+<arg>${status}</arg>
+<arg>${message}</arg>
+</arguments>
+<status status="PASS" endtime="20121024 15:44:42.292" starttime="20121024 15:44:42.292"></status>
+</kw>
+<status status="PASS" endtime="20121024 15:44:42.292" starttime="20121024 15:44:42.289"></status>
+</kw>
+<doc></doc>
+<tags>
+<tag>jybot</tag>
+<tag>pybot</tag>
+<tag>regression</tag>
+</tags>
+<status status="PASS" endtime="20121024 15:44:42.292" critical="yes" starttime="20121024 15:44:42.288"></status>
+</test>
+<test id="s1-s6-t19" timeout="" name="Fail If Matches">
+<kw type="kw" name="atest_resource.Check Test Case" timeout="">
+<doc></doc>
+<arguments>
+<arg>Fail If Matches</arg>
+</arguments>
+<kw type="kw" name="${test} = TestCheckerLibrary.Get Test From Suite" timeout="">
+<doc></doc>
+<arguments>
+<arg>${SUITE}</arg>
+<arg>${name}</arg>
+</arguments>
+<msg timestamp="20121024 15:44:42.296" level="INFO">${test} = Fail If Matches</msg>
+<status status="PASS" endtime="20121024 15:44:42.296" starttime="20121024 15:44:42.295"></status>
+</kw>
+<kw type="kw" name="TestCheckerLibrary.Check Test Status" timeout="">
+<doc>Verifies that test's status and message are as expected.</doc>
+<arguments>
+<arg>${test}</arg>
+<arg>${status}</arg>
+<arg>${message}</arg>
+</arguments>
+<status status="PASS" endtime="20121024 15:44:42.297" starttime="20121024 15:44:42.296"></status>
+</kw>
+<status status="PASS" endtime="20121024 15:44:42.297" starttime="20121024 15:44:42.294"></status>
+</kw>
+<doc></doc>
+<tags>
+<tag>jybot</tag>
+<tag>pybot</tag>
+<tag>regression</tag>
+</tags>
+<status status="PASS" endtime="20121024 15:44:42.297" critical="yes" starttime="20121024 15:44:42.293"></status>
+</test>
+<test id="s1-s6-t20" timeout="" name="Fail Unless Matches">
+<kw type="kw" name="atest_resource.Check Test Case" timeout="">
+<doc></doc>
+<arguments>
+<arg>Fail Unless Matches</arg>
+</arguments>
+<kw type="kw" name="${test} = TestCheckerLibrary.Get Test From Suite" timeout="">
+<doc></doc>
+<arguments>
+<arg>${SUITE}</arg>
+<arg>${name}</arg>
+</arguments>
+<msg timestamp="20121024 15:44:42.302" level="INFO">${test} = Fail Unless Matches</msg>
+<status status="PASS" endtime="20121024 15:44:42.302" starttime="20121024 15:44:42.301"></status>
+</kw>
+<kw type="kw" name="TestCheckerLibrary.Check Test Status" timeout="">
+<doc>Verifies that test's status and message are as expected.</doc>
+<arguments>
+<arg>${test}</arg>
+<arg>${status}</arg>
+<arg>${message}</arg>
+</arguments>
+<status status="PASS" endtime="20121024 15:44:42.303" starttime="20121024 15:44:42.302"></status>
+</kw>
+<status status="PASS" endtime="20121024 15:44:42.303" starttime="20121024 15:44:42.300"></status>
+</kw>
+<doc></doc>
+<tags>
+<tag>jybot</tag>
+<tag>pybot</tag>
+<tag>regression</tag>
+</tags>
+<status status="PASS" endtime="20121024 15:44:42.303" critical="yes" starttime="20121024 15:44:42.298"></status>
+</test>
+<test id="s1-s6-t21" timeout="" name="Fail If Regexp Matches">
+<kw type="kw" name="atest_resource.Check Test Case" timeout="">
+<doc></doc>
+<arguments>
+<arg>Fail If Regexp Matches</arg>
+</arguments>
+<kw type="kw" name="${test} = TestCheckerLibrary.Get Test From Suite" timeout="">
+<doc></doc>
+<arguments>
+<arg>${SUITE}</arg>
+<arg>${name}</arg>
+</arguments>
+<msg timestamp="20121024 15:44:42.306" level="INFO">${test} = Fail If Regexp Matches</msg>
+<status status="PASS" endtime="20121024 15:44:42.306" starttime="20121024 15:44:42.306"></status>
+</kw>
+<kw type="kw" name="TestCheckerLibrary.Check Test Status" timeout="">
+<doc>Verifies that test's status and message are as expected.</doc>
+<arguments>
+<arg>${test}</arg>
+<arg>${status}</arg>
+<arg>${message}</arg>
+</arguments>
+<status status="PASS" endtime="20121024 15:44:42.307" starttime="20121024 15:44:42.307"></status>
+</kw>
+<status status="PASS" endtime="20121024 15:44:42.307" starttime="20121024 15:44:42.304"></status>
+</kw>
+<doc></doc>
+<tags>
+<tag>jybot</tag>
+<tag>pybot</tag>
+<tag>regression</tag>
+</tags>
+<status status="PASS" endtime="20121024 15:44:42.307" critical="yes" starttime="20121024 15:44:42.303"></status>
+</test>
+<test id="s1-s6-t22" timeout="" name="Fail Unless Regexp Matches">
+<kw type="kw" name="atest_resource.Check Test Case" timeout="">
+<doc></doc>
+<arguments>
+<arg>Fail Unless Regexp Matches</arg>
+</arguments>
+<kw type="kw" name="${test} = TestCheckerLibrary.Get Test From Suite" timeout="">
+<doc></doc>
+<arguments>
+<arg>${SUITE}</arg>
+<arg>${name}</arg>
+</arguments>
+<msg timestamp="20121024 15:44:42.311" level="INFO">${test} = Fail Unless Regexp Matches</msg>
+<status status="PASS" endtime="20121024 15:44:42.311" starttime="20121024 15:44:42.310"></status>
+</kw>
+<kw type="kw" name="TestCheckerLibrary.Check Test Status" timeout="">
+<doc>Verifies that test's status and message are as expected.</doc>
+<arguments>
+<arg>${test}</arg>
+<arg>${status}</arg>
+<arg>${message}</arg>
+</arguments>
+<status status="PASS" endtime="20121024 15:44:42.311" starttime="20121024 15:44:42.311"></status>
+</kw>
+<status status="PASS" endtime="20121024 15:44:42.312" starttime="20121024 15:44:42.309"></status>
+</kw>
+<doc></doc>
+<tags>
+<tag>jybot</tag>
+<tag>pybot</tag>
+<tag>regression</tag>
+</tags>
+<status status="PASS" endtime="20121024 15:44:42.312" critical="yes" starttime="20121024 15:44:42.308"></status>
+</test>
+<doc></doc>
+<metadata>
+</metadata>
+<status status="PASS" endtime="20121024 15:44:42.312" starttime="20121024 15:44:41.686"></status>
+</suite>
+<doc>Robot Framework acceptance tests</doc>
+<metadata>
+<item name="Interpreter">python2.5</item>
+<item name="Platform">darwin</item>
+</metadata>
+<status status="PASS" endtime="20121024 15:44:42.313" starttime="20121024 15:44:38.937"></status>
+</suite>
+<statistics>
+<total>
+<stat fail="0" pass="39">Critical Tests</stat>
+<stat fail="0" pass="39">All Tests</stat>
+</total>
+<tag>
+<stat info="critical" links="" doc="" combined="" pass="39" fail="0">regression</stat>
+<stat info="combined" links="" doc="" combined="jybot NOT pybot" pass="0" fail="0">jybot NOT pybot</stat>
+<stat info="combined" links="" doc="" combined="pybot NOT jybot" pass="0" fail="0">pybot NOT jybot</stat>
+</tag>
+<suite>
+<stat fail="0" pass="39" id="s1" name="Deprecated Builtin">Deprecated Builtin</stat>
+<stat fail="0" pass="5" id="s1-s1" name="Converter">Deprecated Builtin.Converter</stat>
+<stat fail="0" pass="1" id="s1-s2" name="Deprecated">Deprecated Builtin.Deprecated</stat>
+<stat fail="0" pass="6" id="s1-s3" name="Grep">Deprecated Builtin.Grep</stat>
+<stat fail="0" pass="3" id="s1-s4" name="Misc">Deprecated Builtin.Misc</stat>
+<stat fail="0" pass="2" id="s1-s5" name="Variables">Deprecated Builtin.Variables</stat>
+<stat fail="0" pass="22" id="s1-s6" name="Verify">Deprecated Builtin.Verify</stat>
+</suite>
+</statistics>
+<errors>
+</errors>
+</robot>

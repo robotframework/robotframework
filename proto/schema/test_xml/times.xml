@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+Hand-edited from "Tags From Command Line" so that suite/test start/end times 
+are as follows. Note that suite has some extra time simulating framework 
+overhead before and after tests.
+
+NAME        START         END
+Times       11:59:59.000  12:00:08.999 
+- Incl-1    12:00:00.000  12:00:01.000
+- Incl-12   12:00:01.000  12:00:03.000
+- Incl-123  12:00:03.000  12:00:07.000
+- Excl-1    12:00:07.000  12:00:07.001
+- Excl-12   12:00:07.001  12:00:07.003
+- Excl-123  12:00:07.003  12:00:07.007
+
+-->
+<robot version="1.6 devel" generator="robot"><suite name="Times"><doc></doc>
+<metadata></metadata>
+<test name="Incl-1"><doc></doc>
+<tags><tag>force</tag>
+<tag>incl1</tag>
+</tags>
+<status status="PASS" endtime="20061227 12:00:01.000" starttime="20061227 12:00:00.000"></status>
+</test>
+<test name="Incl-12"><doc></doc>
+<tags><tag>force</tag>
+<tag>incl1</tag>
+<tag>incl2</tag>
+</tags>
+<status status="PASS" endtime="20061227 12:00:03.000" starttime="20061227 12:00:01.000"></status>
+</test>
+<test name="Incl-123"><doc></doc>
+<tags><tag>force</tag>
+<tag>incl1</tag>
+<tag>incl2</tag>
+<tag>incl3</tag>
+</tags>
+<status status="PASS" endtime="20061227 12:00:07.000" starttime="20061227 12:00:03.000"></status>
+</test>
+<test name="Excl-1"><doc></doc>
+<tags><tag>excl1</tag>
+<tag>force</tag>
+</tags>
+<status status="PASS" endtime="20061227 12:00:07.001" starttime="20061227 12:00:07.000"></status>
+</test>
+<test name="Excl-12"><doc></doc>
+<tags><tag>excl1</tag>
+<tag>excl2</tag>
+<tag>force</tag>
+</tags>
+<status status="PASS" endtime="20061227 12:00:07.003" starttime="20061227 12:00:07.001"></status>
+</test>
+<test name="Excl-123"><doc></doc>
+<tags><tag>excl1</tag>
+<tag>excl2</tag>
+<tag>excl3</tag>
+<tag>force</tag>
+</tags>
+<status status="PASS" endtime="20061227 12:00:07.007" starttime="20061227 12:00:07.003"></status>
+</test>
+<status status="PASS" endtime="20061227 12:00:08.999" starttime="20061227 11:59:59.000"></status>
+</suite>
+<statistics><total><stat fail="0" pass="6">Critical Tests</stat>
+<stat fail="0" pass="6">All Tests</stat>
+</total>
+<tag><stat fail="0" critical="yes" pass="3">excl1</stat>
+<stat fail="0" critical="yes" pass="2">excl2</stat>
+<stat fail="0" critical="yes" pass="1">excl3</stat>
+<stat fail="0" critical="yes" pass="6">force</stat>
+<stat fail="0" critical="yes" pass="3">incl1</stat>
+<stat fail="0" critical="yes" pass="2">incl2</stat>
+<stat fail="0" critical="yes" pass="1">incl3</stat>
+</tag>
+<suite><stat fail="0" pass="6">Tags From Commandline</stat>
+</suite>
+</statistics>
+</robot>
