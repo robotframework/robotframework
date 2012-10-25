@@ -74,6 +74,8 @@
                 <xs:enumeration value="DEBUG"/>
                 <xs:enumeration value="INFO"/>
                 <xs:enumeration value="WARN"/>
+                <xs:enumeration value="ERROR"/>
+                <xs:enumeration value="FAIL"/>
             </xs:restriction>
         </xs:simpleType>
     </xs:attribute>
@@ -137,7 +139,7 @@
     </xs:complexType>
     <xs:complexType name="errors">
         <xs:sequence>
-            <xs:element name="error" type="xs:string" minOccurs="0" maxOccurs="unbounded"/>
+            <xs:element name="msg" type="msg" minOccurs="0" maxOccurs="unbounded"/>
         </xs:sequence>
     </xs:complexType>
 </xs:schema>
