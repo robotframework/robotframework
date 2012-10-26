@@ -15,7 +15,7 @@
     </xs:element>
     <xs:complexType name="suite">
         <xs:all>
-            <xs:element name="kw" type="kw" maxOccurs="unbounded" minOccurs="0"/>
+            <xs:element name="kw" type="kw" maxOccurs="2" minOccurs="0"/>
             <xs:element name="suite" type="suite" maxOccurs="unbounded" minOccurs="0"/>
             <xs:element name="test" type="test" maxOccurs="unbounded" minOccurs="0"/>
             <xs:element name="doc" type="xs:string" minOccurs="0"/>
