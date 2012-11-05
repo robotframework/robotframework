@@ -101,12 +101,20 @@
             </xs:restriction>
         </xs:simpleType>
     </xs:attribute>
+    <xs:attribute name="html">
+        <xs:simpleType>
+            <xs:restriction base="xs:string">
+                <xs:enumeration value="yes"/>
+                <xs:enumeration value="no"/>
+            </xs:restriction>
+        </xs:simpleType>
+    </xs:attribute>
     <xs:complexType name="msg">
         <xs:simpleContent>
             <xs:extension base="xs:string">
                 <xs:attribute name="timestamp" type="xs:string"/>
                 <xs:attribute ref="level"/>
-                <xs:attribute name="html" type="xs:string"/>
+                <xs:attribute ref="html"/>
                 <xs:anyAttribute processContents="lax"/>
             </xs:extension>
         </xs:simpleContent>
