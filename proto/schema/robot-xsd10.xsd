@@ -61,6 +61,14 @@
             </xs:restriction>
         </xs:simpleType>
     </xs:attribute>
+    <xs:attribute name="critical">
+        <xs:simpleType>
+            <xs:restriction base="xs:string">
+                <xs:enumeration value="yes"/>
+                <xs:enumeration value="no"/>
+            </xs:restriction>
+        </xs:simpleType>
+    </xs:attribute>
     <xs:complexType name="status">
         <xs:simpleContent>
             <xs:extension base="xs:string">
@@ -68,7 +76,7 @@
                 <xs:attribute name="endtime" type="xs:string"/>
                 <xs:attribute name="starttime" type="xs:string"/>
                 <xs:attribute name="elapsedtime" type="xs:string"/>
-                <xs:attribute name="critical" type="xs:string"/>
+                <xs:attribute ref="critical"/>
                 <xs:anyAttribute processContents="lax"/>
             </xs:extension>
         </xs:simpleContent>
