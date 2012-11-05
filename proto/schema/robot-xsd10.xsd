@@ -40,6 +40,15 @@
         <xs:attribute name="timeout" type="xs:string"/>
         <xs:anyAttribute processContents="lax"/>
     </xs:complexType>
+    <xs:attribute name="type">
+        <xs:simpleType>
+            <xs:restriction base="xs:string">
+                <xs:enumeration value="kw"/>
+                <xs:enumeration value="setup"/>
+                <xs:enumeration value="teardown"/>
+            </xs:restriction>
+        </xs:simpleType>
+    </xs:attribute>
     <xs:complexType name="kw">
         <xs:choice minOccurs="0" maxOccurs="unbounded">
             <xs:element name="doc" type="xs:string"/>
@@ -49,7 +58,7 @@
             <xs:element name="status" type="status"/>
         </xs:choice>
         <xs:attribute name="name" type="xs:string"/>
-        <xs:attribute name="type" type="xs:string"/>
+        <xs:attribute ref="type"/>
         <xs:attribute name="timeout" type="xs:string"/>
         <xs:anyAttribute processContents="lax"/>
     </xs:complexType>
