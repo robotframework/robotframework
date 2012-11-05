@@ -46,6 +46,8 @@
                 <xs:enumeration value="kw"/>
                 <xs:enumeration value="setup"/>
                 <xs:enumeration value="teardown"/>
+                <xs:enumeration value="foritem"/>
+                <xs:enumeration value="for"/>
             </xs:restriction>
         </xs:simpleType>
     </xs:attribute>
