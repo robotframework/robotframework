@@ -1,0 +1,24 @@
+*** Settings ***
+Library         OperatingSystem
+Library         screenshot_dependency_check.py
+Resource        atest_resource.txt
+
+*** Keywords ***
+Make Test Non-critical And Fail It If Screenshot dependencies are not installed
+    ${SCREENSHOT_DEPENDENCIES} =     Are Screenshot dependencies available
+    Run Keyword if  "${SCREENSHOT_DEPENDENCIES}"=="NO"  Remove Tags  regression
+    Run Keyword if  "${SCREENSHOT_DEPENDENCIES}"=="NO"  Fail  This test is made non-critical and not executed because Screenshot library's dependencies are not installed.
+
+Are Screenshot dependencies available
+    ${IS IPY OR JYTHON} =    Interpreter is jython or ipy   ${INTERPRETER}
+    ${SCREENSHOT DEPENDENCIES INSTALLED} =   Run keyword if    ${IS IPY OR JYTHON}    Ipy and jython have dependencies
+    ...      ELSE    Interpreter has screenshot dependencies
+    [return]     ${SCREENSHOT DEPENDENCIES INSTALLED}
+
+Ipy and jython have dependencies
+    [return]     YES
+
+Interpreter has screenshot dependencies
+    ${output} =   Run  ${INTERPRETER} -c "import robot.libraries.Screenshot as Screenshot; print Screenshot.wx or Screenshot.gdk or Screenshot.ImageGrab"
+    ${SCREENSHOT DEPENDENCIES INSTALLED} =  Set Variable If  """${output}""" == "None"    NO  YES
+    [return]    ${SCREENSHOT DEPENDENCIES INSTALLED}
