@@ -1,6 +1,5 @@
 *** Settings ***
-Suite Setup     Run Tests  -l log.html -L debug  standard_libraries/screenshot/screenshot.txt
-Test setup      Make Test Non-critical And Fail It If Screenshot dependencies are not installed
+Suite Setup     Run if dependencies are available  -l log.html -L debug  standard_libraries/screenshot/screenshot.txt
 Force Tags      pybot  jybot  regression
 Resource        screenshot_resource.txt
 

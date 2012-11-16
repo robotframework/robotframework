@@ -1,2 +1,3 @@
-def interpreter_is_jython_or_ipy(interpreter):
-    return 'jython' in interpreter or 'ipy' in interpreter
+import robot
+from os.path import abspath, dirname, join
+ROBOT_PYTHONPATH= abspath(join(dirname(robot.__file__),'..'))
