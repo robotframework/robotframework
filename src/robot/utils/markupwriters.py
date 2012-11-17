@@ -85,6 +85,9 @@ class HtmlWriter(_MarkupWriter):
 
 class XmlWriter(_MarkupWriter):
 
+    def __init__(self, output, line_separator='\n', encoding=None):
+        _MarkupWriter.__init__(self, output, line_separator, encoding)
+
     def _preamble(self):
         self._write('<?xml version="1.0" encoding="UTF-8"?>', newline=True)
 

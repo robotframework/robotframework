@@ -96,4 +96,4 @@ class TestFailureWriter(ResultVisitor):
         - first FAIL message is already reported as <failure> attribute
         """
         if msg.level == 'DEBUG':
-            self._writer.content(msg.message + os.linesep)
+            self._writer.content(msg.message + '\n')
