@@ -1,6 +1,5 @@
 from os.path import abspath, dirname, join
 import os
-import tempfile
 import robot
 
 __all__ = ['ROBOTPATH', 'ROBOT_VERSION', 'DATADIR', 'WINDOWS']
