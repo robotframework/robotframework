@@ -1,6 +1,5 @@
 *** Settings ***
 Library         OperatingSystem
-Variables       screenshot_dependency_check.py
 Resource        atest_resource.txt
 
 *** Keywords ***
@@ -10,27 +9,19 @@ Run if dependencies are available
     Run Tests      @{args}
 
 Make Suite Non-critical And Fail It If Screenshot dependencies are not installed
-    ${SCREENSHOT DEPENDENCIES} =     Are Screenshot dependencies available
-    Run Keyword if  "${SCREENSHOT DEPENDENCIES}"=="NO"  Remove Tags  regression
-    Run Keyword if  "${SCREENSHOT DEPENDENCIES}"=="NO"  Fail  This suite is made non-critical and not executed because Screenshot library's dependencies are not installed.
+    ${dependencies} =     Are Screenshot dependencies available
+    Run Keyword If    not ${dependencies}    Fail
+    ...   This suite is made non-critical and not executed because Screenshot library's dependencies are not installed.
+    ...   -regression
 
 Are Screenshot dependencies available
-    ${IS IPY OR JYTHON} =    Interpreter is jython or ipy
-    ${SCREENSHOT DEPENDENCIES INSTALLED} =   Run keyword if    "${IS IPY OR JYTHON}"=="YES"    Ipy and jython have dependencies
-    ...      ELSE    Interpreter has screenshot dependencies
-    [return]     ${SCREENSHOT DEPENDENCIES INSTALLED}
-
-Interpreter is jython or ipy
-    ${IPY OR JYTHON SET} =    Set variable if   '${JYTHON}' != '' or '${IRONPYTHON}' != ''    YES   NO
-    [return]    ${IPY OR JYTHON SET}
-
-Ipy and jython have dependencies
-    [return]     YES
+    ${dependencies} =   Run keyword if    '${JYTHON}' or '${IRONPYTHON}'
+    ...    Set variable    ${TRUE}
+    ...    ELSE
+    ...    Interpreter has screenshot dependencies
+    [return]     ${dependencies}
 
 Interpreter has screenshot dependencies
-    ${old python path} =      Get Environment Variable   PYTHONPATH    default=${EMPTY}
-    Set environment variable   PYTHONPATH    ${ROBOT PYTHONPATH}
-    ${output} =   Run  ${INTERPRETER} -c "import robot.libraries.Screenshot as Screenshot; print Screenshot.wx or Screenshot.gdk or Screenshot.ImageGrab"
-    Set environment variable   PYTHONPATH    ${old python path}
-    ${SCREENSHOT DEPENDENCIES INSTALLED} =  Set Variable If  """${output}""" == "None"    NO  YES
-    [return]    ${SCREENSHOT DEPENDENCIES INSTALLED}
+    ${lib} =    Normalize Path    ${ROBOT PATH}/libraries/Screenshot.py
+    ${output} =   Run  ${INTERPRETER} "${lib}" test
+    [return]    ${output == 'OK'}
