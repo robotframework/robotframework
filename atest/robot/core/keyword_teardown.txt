@@ -14,6 +14,13 @@ Failing Keyword with Teardown
     Check Log Message  ${tc.kws[0].kws[0].msgs[0]}  Expected Failure!  FAIL
     Check Log Message  ${tc.kws[0].kws[1].msgs[0]}  In Failing UK Teardown
 
+Teardown in keyword with embedded arguments
+    ${tc}=  Check Test Case  ${TESTNAME}
+    Check Log Message  ${tc.kws[0].kws[0].msgs[0]}  In UK with Embedded Arguments
+    Check Log Message  ${tc.kws[0].kws[1].msgs[0]}  In Teardown of UK with Embedded Arguments
+    Check Log Message  ${tc.kws[1].kws[0].msgs[0]}  Expected Failure in UK with Embedded Arguments  FAIL
+    Check Log Message  ${tc.kws[1].kws[1].msgs[0]}  In Teardown of Failing UK with Embedded Arguments
+
 Failure in Keyword Teardown
     ${tc}=  Check Test Case  ${TESTNAME}
     Check Log Message  ${tc.kws[0].kws[0].msgs[0]}  In UK

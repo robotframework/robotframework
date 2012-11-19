@@ -277,8 +277,8 @@ class EmbeddedArgs(UserKeywordHandler):
             raise TypeError('Does not match given name')
         self.embedded_args = zip(template.embedded_args, match.groups())
         self.name = name
-        self.teardown = None
         self.origname = template.name
+        self.teardown = template.teardown
         self._copy_attrs_from_template(template)
 
     def _run(self, context, args):
