@@ -7,6 +7,11 @@ Failing Keyword with Teardown
     [Documentation]  FAIL Expected Failure!
     Failing Keyword with Teardown
 
+Teardown in Keyword with Embedded Arguments
+    [Documentation]  FAIL Expected Failure in UK with Embedded Arguments
+    Keyword with Teardown and Embedded Arguments
+    Failing Keyword with Teardown and Embedded Arguments
+
 Failure in Keyword Teardown
     [Documentation]  FAIL Keyword teardown failed:\nFailing in UK Teardown
     Failure in Keyword Teardown
@@ -53,6 +58,14 @@ Failing Keyword with Teardown
     Fail  Expected Failure!
     Log   Executed if in nested Teardown
     [Teardown]  Log  In Failing UK Teardown
+
+Keyword with Teardown and ${embedded} ${arguments:a.*}
+    Log  In UK with ${embedded} ${arguments}
+    [Teardown]  Log  In Teardown of UK with ${embedded} ${arguments}
+
+Failing Keyword with Teardown and ${embedded} ${arguments:a.*}
+    Fail  Expected Failure in UK with ${embedded} ${arguments}
+    [Teardown]  Log  In Teardown of Failing UK with ${embedded} ${arguments}
 
 Failure in Keyword Teardown
     Log  In UK

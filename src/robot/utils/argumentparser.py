@@ -225,10 +225,18 @@ class ArgumentParser:
         for line in content.splitlines():
             line = line.strip()
             if line.startswith('-'):
-                args.extend(line.split(' ', 1))
+                separator = self._get_argfile_option_separator(line)
+                args.extend(line.split(separator, 1))
             elif line and not line.startswith('#'):
                 args.append(line)
         return args
+
+    def _get_argfile_option_separator(self, line):
+        if '=' not in line:
+            return ' '
+        if ' ' not in line:
+            return '='
+        return ' ' if line.index(' ') < line.index('=') else '='
 
     def _get_escapes(self, escape_strings):
         escapes = {}
