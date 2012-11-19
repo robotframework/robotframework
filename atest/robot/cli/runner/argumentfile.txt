@@ -4,16 +4,15 @@ Test Setup      Create Output Directory and Set Variables
 Default Tags    regression  pybot  jybot
 Resource        cli_resource.txt
 
-*** Variables ***
-${TESTDATA}  ${CURDIR}/../../../testdata
-
 *** Test Cases ***
 Argument File
-    Create Argument File  ${ARGFILE}  --name From Argfile  -M Meta1:From AF  -M Meta2:To be overwritten  \# comment line  --outputdir ${CLI OUTDIR}  -l none
-    ...  -r none  ${EMPTY}  -o output.xml  ${EMPTY}
+    Create Argument File  ${ARGFILE}  --name=From Argfile_With Spaces
+    ...  --metadata Meta1:From AF  -M=Meta2:Overwritten
+    ...  \# comment line  ${EMPTY}  \# another comment
+    ...  -d ${CLI OUTDIR}  -l=none --report=none  -o output.xml  ${EMPTY}
     Run Tests Without Processing Output  -M Meta1:Overwritten -A ${ARGFILE} -M Meta2:cli  ${TESTFILE}
     Process Output  ${CLI OUTDIR}/output.xml
-    Should Be Equal  ${SUITE.name}  From Argfile
+    Should Be Equal  ${SUITE.name}  From Argfile With Spaces
     Should Be Equal as Strings  ${SUITE.metadata}  {Meta1: From AF, Meta2: cli, Something: My Value}
 
 Two Argument Files
@@ -31,7 +30,7 @@ Recursive Argument File
     Should Be Equal  ${SUITE.metadata['Second']}  2
 
 Argument File with Non-ASCII Characters
-    Copy File  ${TESTDATA}/parsing/non_ascii_paths/test-auml-ouml.txt  %{TEMPDIR}/testäö.txt
+    Copy File  ${DATADIR}/parsing/non_ascii_paths/test-auml-ouml.txt  %{TEMPDIR}/testäö.txt
     ${path} =  Join Path  %{TEMPDIR}/testäö.txt
     Create Argument File  ${ARGFILE 3}  -D äëïöüÿ  -C off  ${path}
     ${output} =  Run Robot Directly  --argumentfile ${ARGFILE 3}
@@ -39,7 +38,7 @@ Argument File with Non-ASCII Characters
     Should Contain  ${output}  Testäö :: äëïöüÿ
 
 Arguments From Stdin
-    ${test dir} =  Normalize Path  ${TESTDATA}/misc/
+    ${test dir} =  Normalize Path  ${DATADIR}/misc/
     Create Argument File Without BOM  ${ARG FILE}  --name My Name with Nön Äscii  ${test dir}${/}normal.txt
     ${output}=  Run Robot Directly  --doc from_command_line --argumentfile stdin ${test dir}${/}pass_and_fail.txt < ${ARG FILE}
     Should Contain  ${output}  Normal

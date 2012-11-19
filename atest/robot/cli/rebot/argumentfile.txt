@@ -7,7 +7,7 @@ Resource        rebot_cli_resource.txt
 
 *** Test Cases ***
 Argument File
-    Create File  ${MYOUTDIR}${/}a.txt  --name From_Arg_File\n -c xxx\n # comment line\n --log none\n -r none\n --outputdir ${MYOUTDIR}\n -o myout.xml\n ${MYINPUT}
+    Create File  ${MYOUTDIR}${/}a.txt  --name From_Arg File\n -c xxx\n # comment line\n --log=none\n -r=none\n --outputdir ${MYOUTDIR}\n -o myout.xml\n ${MYINPUT}
     ${output} =  Run  ${REBOT} --log disable_me.html --argumentfile ${MYOUTDIR}${/}a.txt 2>&1
     Should Not Contain  ${output}  ERROR
     Directory Should Contain  ${MYOUTDIR}  a.txt  myout.xml
