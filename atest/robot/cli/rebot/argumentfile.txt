@@ -7,7 +7,12 @@ Resource        rebot_cli_resource.txt
 
 *** Test Cases ***
 Argument File
-    Create File  ${MYOUTDIR}${/}a.txt  --name From_Arg File\n -c xxx\n # comment line\n --log=none\n -r=none\n --outputdir ${MYOUTDIR}\n -o myout.xml\n ${MYINPUT}
+    ${content} =    Catenate    SEPARATOR=\n
+    ...    --name From_Arg File    -c xxx
+    ...    # comment line    ${EMPTY}
+    ...    --log=none    -r=none    -o myout.xml    --outputdir ${MYOUTDIR}
+    ...    ${MYINPUT}
+    Create File  ${MYOUTDIR}${/}a.txt  ${content}
     ${output} =  Run  ${REBOT} --log disable_me.html --argumentfile ${MYOUTDIR}${/}a.txt 2>&1
     Should Not Contain  ${output}  ERROR
     Directory Should Contain  ${MYOUTDIR}  a.txt  myout.xml
