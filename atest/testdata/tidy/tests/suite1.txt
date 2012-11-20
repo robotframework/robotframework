@@ -4,7 +4,7 @@ ${MyVar}          a value
 *** Test Cases ***
 My Test Case
     [Documentation]    This is an example test case
-    Log    ${MyVar}
+    Log    ${MyVar} and ${CURDIR}
 
 Another Test
     My Keyword

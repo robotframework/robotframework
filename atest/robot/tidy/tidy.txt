@@ -63,7 +63,11 @@ Tidying directory
     ${output_before}=    Run Robot Directly    ${DATA}/tests
     Run Tidy    --recursive --format TSV    ${TEMP}/tests
     Check file count    ${TEMP}/tests    *.tsv    2
+    Check file count    ${TEMP}/tests/sub    *.tsv    1
     Check file count    ${TEMP}/tests    *.txt    0
+    Check file count    ${TEMP}/tests/sub    *.txt    0
+    Files Should Have $CURDIR    ${TEMP}/tests
+    Files Should Have $CURDIR    ${TEMP}/tests/sub
     ${output_after}=    Run Robot Directly    ${TEMP}/tests
     Should Be Equal    ${output_before}    ${output_after}
 
@@ -76,5 +80,12 @@ Running Tidy as a script
 
 *** Keywords ***
 Copy Golden Files
-     Copy File    ${DATA}/golden_pipes.txt    ${TEMP}/
-     Copy File    ${DATA}/golden.tsv    ${TEMP}/
+    Copy File    ${DATA}/golden_pipes.txt    ${TEMP}/
+    Copy File    ${DATA}/golden.tsv    ${TEMP}/
+
+Files Should Have $CURDIR
+    [Arguments]    ${directory}
+    @{paths} =    List Files In Directory    ${directory}    absolute=True
+    :FOR    ${path}    IN    @{paths}
+    \    ${content} =    Get File    ${path}
+    \    Should Contain    ${content}    $\{CURDIR}

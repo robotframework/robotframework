@@ -117,7 +117,7 @@ class Tidy(object):
             outfile.close()
 
     def directory(self, path):
-        self._save_directory(TestDataDirectory(source=path).populate())
+        self._save_directory(self._create_datafile(path))
 
     def inplace(self, path):
         self._save_file(self._create_datafile(path))
@@ -142,6 +142,8 @@ class Tidy(object):
 
     @disable_curdir_processing
     def _create_datafile(self, source):
+        if os.path.isdir(source):
+            return TestDataDirectory(source=source).populate()
         if self._is_init_file(source):
             dir_ = os.path.dirname(source)
             return TestDataDirectory(source=dir_).populate(recurse=False)
