@@ -107,7 +107,7 @@ class Tidy(object):
         self._options = options
 
     def file(self, path, output=None):
-        data = self._create_datafile(path)
+        data = self._parse_data(path)
         outfile = open(output, 'w') if output else StringIO()
         try:
             self._save_file(data, outfile)
@@ -117,10 +117,28 @@ class Tidy(object):
             outfile.close()
 
     def directory(self, path):
-        self._save_directory(self._create_datafile(path))
+        self._save_directory(self._parse_data(path))
 
     def inplace(self, path):
-        self._save_file(self._create_datafile(path))
+        self._save_file(self._parse_data(path))
+
+    @disable_curdir_processing
+    def _parse_data(self, path):
+        if os.path.isdir(path):
+            return TestDataDirectory(source=path).populate()
+        if self._is_init_file(path):
+            path = os.path.dirname(path)
+            return TestDataDirectory(source=path).populate(recurse=False)
+        try:
+            return TestCaseFile(source=path).populate()
+        except DataError:
+            try:
+                return ResourceFile(source=path).populate()
+            except DataError:
+                raise DataError("Invalid data source '%s'." % path)
+
+    def _is_init_file(self, path):
+        return os.path.splitext(os.path.basename(path))[0].lower() == '__init__'
 
     def _save_file(self, data, output=None):
         source = data.initfile if self._is_directory(data) else data.source
@@ -139,24 +157,6 @@ class Tidy(object):
 
     def _is_directory(self, data):
         return hasattr(data, 'initfile')
-
-    @disable_curdir_processing
-    def _create_datafile(self, source):
-        if os.path.isdir(source):
-            return TestDataDirectory(source=source).populate()
-        if self._is_init_file(source):
-            dir_ = os.path.dirname(source)
-            return TestDataDirectory(source=dir_).populate(recurse=False)
-        try:
-            return TestCaseFile(source=source).populate()
-        except DataError:
-            try:
-                return ResourceFile(source=source).populate()
-            except DataError:
-                raise DataError("Invalid data source '%s'." % source)
-
-    def _is_init_file(self, source):
-        return os.path.splitext(os.path.basename(source))[0] == '__init__'
 
 
 class TidyCommandLine(Application):
