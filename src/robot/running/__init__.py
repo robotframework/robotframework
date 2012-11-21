@@ -40,10 +40,14 @@ def UserLibrary(path):
 
     resource = ResourceFile(path).populate()
     ret = RuntimeUserLibrary(resource.keyword_table.keywords, path)
-    for handler in ret.handlers.values(): # This is done normally only at runtime.
-        handler.arguments = UserKeywordArguments(handler._keyword_args,
-                                                 handler.longname)
-        handler.doc = utils.unescape(handler._doc)
+    for handler in ret.handlers.values():
+        if handler.type != 'error':
+            handler.arguments = UserKeywordArguments(handler._keyword_args,
+                                                     handler.longname)
+            handler.doc = utils.unescape(handler._doc)
+        else:
+            handler.arguments = UserKeywordArguments([], handler.longname)
+            handler.doc = '*Creating keyword failed: %s*' % handler.error
     ret.doc = resource.setting_table.doc.value
     return ret
 

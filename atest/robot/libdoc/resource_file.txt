@@ -66,3 +66,6 @@ Keyword Documentation
 
 Non ASCII
     Keyword Doc Should Be    6    Hyvää yötä.\n\nСпасибо!
+
+Same keyword name multiple times
+    Keyword Doc Should Be    -1    *Creating keyword failed: Keyword 'Same Twice' defined multiple times.*

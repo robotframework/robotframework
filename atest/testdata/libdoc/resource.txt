@@ -48,3 +48,8 @@ curdir  [Documentation]  ${CURDIR}
 
 non ascii doc
     [Documentation]    Hyvää yötä.\n\nСпасибо!
+
+Same Twice
+    [Documentation]    Having same keyword twice is an error.
+
+Same Twice
