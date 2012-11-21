@@ -36,9 +36,9 @@ class TestUserLibrary(unittest.TestCase):
         userkeyword.EmbeddedArgsTemplate = self._orig_embeddedargstemplate
 
     def test_name_from_resource(self):
-        for source, exp in [ ('resources.html', 'resources'), 
-                             (os.path.join('..','res','My Res.HTM'), 'My Res'),
-                             (os.path.abspath('my_res.xhtml'), 'my_res') ]:
+        for source, exp in [('resources.html', 'resources'),
+                            (os.path.join('..','res','My Res.HTM'), 'My Res'),
+                            (os.path.abspath('my_res.xhtml'), 'my_res')]:
             lib = userkeyword.UserLibrary([], source)
             assert_equals(lib.name, exp)
 
@@ -63,7 +63,7 @@ class TestUserLibrary(unittest.TestCase):
         self._lib_has_embedded_arg_keyword(lib)
 
     def test_creating_duplicate_embedded_arg_keyword_in_resource_file(self):
-        lib = self._get_userlibrary('source', 'Embedded ${arg}', 
+        lib = self._get_userlibrary('source', 'Embedded ${arg}',
                                     'kw', 'Embedded ${arg}')
         assert_equals(len(lib.handlers.keys()), 2)
         assert_true(lib.handlers.has_key('kw'))
@@ -73,20 +73,20 @@ class TestUserLibrary(unittest.TestCase):
         assert_equals(len(lib.handlers.keys()), 2)
         assert_true(lib.handlers.has_key('kw'))
         assert_true(lib.handlers.has_key('kw 2'))
-        assert_equals(lib.handlers['kw']._error, 
-                      "Keyword 'kw' defined multiple times")
-        
+        assert_equals(lib.handlers['kw'].error,
+                      "Keyword 'kw' defined multiple times.")
+
     def test_creating_duplicate_keyword_in_test_case_file(self):
         lib = self._get_userlibrary('NOT_RESOURCE', 'MYKW', 'my kw')
         assert_equals(len(lib.handlers.keys()), 1)
         assert_true(lib.handlers.has_key('mykw'))
-        assert_equals(lib.handlers['mykw']._error,
-                      "Keyword 'my kw' defined multiple times")
+        assert_equals(lib.handlers['mykw'].error,
+                      "Keyword 'my kw' defined multiple times.")
 
     def test_has_handler_with_non_existing_keyword(self):
         lib = self._get_userlibrary('source', 'kw')
         assert_false(lib.has_handler('non existing kw'))
-        
+
     def test_has_handler_with_normal_keyword(self):
         lib = self._get_userlibrary('source', 'kw')
         assert_true(lib.has_handler('kw'))
@@ -104,7 +104,7 @@ class TestUserLibrary(unittest.TestCase):
 
     def _get_userlibrary(self, source, *keyword_names):
         return userkeyword.UserLibrary([UserKeyword(None, name) for name in keyword_names])
-        
+
     def _lib_has_embedded_arg_keyword(self, lib):
         assert_true(lib.handlers.has_key('Embedded ${arg}'))
         assert_equals(len(lib.embedded_arg_handlers), 1)

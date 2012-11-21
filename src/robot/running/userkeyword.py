@@ -47,8 +47,8 @@ class UserLibrary(BaseLibrary):
             else:
                 self.embedded_arg_handlers.append(handler)
             if handler.name in self.handlers:
-                err = "Keyword '%s' defined multiple times" % handler.name
-                handler = UserErrorHandler(handler.name, err)
+                error = "Keyword '%s' defined multiple times." % handler.name
+                handler = UserErrorHandler(handler.name, error)
             self.handlers[handler.name] = handler
 
     def _get_name_for_resource_file(self, path):

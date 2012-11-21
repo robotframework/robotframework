@@ -27,11 +27,11 @@ class UserErrorHandler:
     def __init__(self, name, error):
         self.name = self.longname = name
         self.doc = self.shortdoc = ''
-        self._error = error
+        self.error = error
         self.timeout = ''
 
     def init_keyword(self, varz):
         pass
 
     def run(self, *args):
-        raise DataError(self._error)
+        raise DataError(self.error)
