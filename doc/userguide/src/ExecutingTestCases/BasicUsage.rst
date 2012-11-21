@@ -314,14 +314,24 @@ selected carefully.
 Argument files
 ~~~~~~~~~~~~~~
 
-Problematic characters can often be handled easily using *argument files*.
-These files can contain both command line options and paths
-to the test data, one per line. They are taken into use with
-:opt:`--argumentfile` option (short option :opt:`-A`) along with possible other
-command line options.  Argument files can contain any
-characters without escaping, but spaces in the beginning and end
-of lines are ignored. Additionally, empty lines and lines starting with
-a hash mark (#) are ignored::
+Argument files allow placing all or some command line options and arguments
+into an external file where they will be read. This avoids the problems with
+characters that are problematic on the command line. If lot of options or
+arguments are needed, argument files also prevent the command that is used on
+the command line growing too long.
+
+Argument files are taken into use with :opt:`--argumentfile` option
+(short option :opt:`-A`) along with possible other command line options.
+
+Argument file syntax
+''''''''''''''''''''
+
+Argument files can contain both command line options and paths to the test data,
+one option or data source per line. Both short and long options are supported,
+but the latter are recommended because they are easier to understand.
+Argument files can contain any characters without escaping, but spaces in
+the beginning and end of lines are ignored. Additionally, empty lines and
+lines starting with a hash mark (#) are ignored::
 
    --doc This is an example (where "special characters" are ok!)
    --metadata X:Value with spaces
@@ -329,42 +339,45 @@ a hash mark (#) are ignored::
    # This is a comment
    path/to/my/tests
 
-.. note:: To use non-ASCII characters in argument files, they must be saved
-          using UTF-8 encoding.
+In the above example the separator between options and their values is a single
+space. In Robot Framework 2.7.6 and newer it is possible to use either an equal
+sign (=) or any number of spaces. As an example, the following three lines are
+identical::
 
-Another important usage for argument files is specifying input files or
-directories in certain order. This can be very useful if the `alphabetical
-default execution order`__ is not suitable::
+    --name An Example
+    --name=An Example
+    --name       An Example
 
-   --name My Example Tests
-   tests/some_tests.html
-   tests/second.html
-   tests/more/tests.html
-   tests/more/another.html
-   tests/even_more_tests.html
+If argument files contain non-ASCII characters, they must be saved using
+UTF-8 encoding.
 
-When an argument file is used on the command line, its contents are
-placed to the original list of arguments to the same place where the
-argument file option was. Argument files can be used either alone so
-that they contain all the options and paths to the test data, or along
-with other options and paths. It is possible to use :opt:`--argumentfile`
-option multiple times or even recursively::
+Using argument files
+''''''''''''''''''''
+
+Argument files can be used either alone so that they contain all the options
+and paths to the test data, or along with other options and paths. When
+an argument file is used with other arguments, its contents are placed into
+the original list of arguments to the same place where the argument file
+option was. This means that options in argument files can override options
+before it, and its options can be overridden by options after it. It is possible
+to use :opt:`--argumentfile` option multiple times or even recursively::
 
    pybot --argumentfile all_arguments.txt
-   pybot --name example --argumentfile other_options_and_paths.txt
-   pybot --argumentfile default_options.txt --name example my_tests.html
-   pybot -A first.txt -A second.txt -A third.txt some_tests.tsv
+   pybot --name Example --argumentfile other_options_and_paths.txt
+   pybot --argumentfile default_options.txt --name Example my_tests.html
+   pybot -A first.txt -A second.txt -A third.txt tests.txt
 
-__ `Specifying test data to be executed`_
 
-Special value :opt:`STDIN` can be used to read arguments from the standard
-input stream instead of a file. This can be useful when generating arguments
-with a script::
+Reading argument files from standard input
+''''''''''''''''''''''''''''''''''''''''''
+
+Starting from Robot Framework 2.5.6, special argument file name :opt:`STDIN`
+can be used to read arguments from the standard input stream instead of a file.
+This can be useful when generating arguments with a script::
 
    generate_arguments.sh | pybot --argumentfile STDIN
-   generate_arguments.sh | pybot --name Example --argumentfile STDIN mytest.txt
+   generate_arguments.sh | pybot --name Example --argumentfile STDIN tests.txt
 
-Reading arguments from the standard input is a new feature in Robot Framework 2.5.6.
 
 Getting help and version information
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
