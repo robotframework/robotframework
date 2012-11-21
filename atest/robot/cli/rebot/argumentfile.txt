@@ -8,8 +8,8 @@ Resource        rebot_cli_resource.txt
 *** Test Cases ***
 Argument File
     ${content} =    Catenate    SEPARATOR=\n
-    ...    --name From_Arg File    -c xxx
-    ...    # comment line    ${EMPTY}
+    ...    --name From_Arg File    -D= Leading space    -M${SPACE*5}No:Spaces
+    ...    \# comment line    ${EMPTY}
     ...    --log=none    -r=none    -o myout.xml    --outputdir ${MYOUTDIR}
     ...    ${MYINPUT}
     Create File  ${MYOUTDIR}${/}a.txt  ${content}
@@ -18,3 +18,5 @@ Argument File
     Directory Should Contain  ${MYOUTDIR}  a.txt  myout.xml
     Process Output  ${MYOUTDIR}${/}myout.xml
     Should Be Equal  ${SUITE.name}  From Arg File
+    Should Be Equal  ${SUITE.doc}  ${SPACE}Leading space
+    Should Be Equal  ${SUITE.metadata['No']}  Spaces

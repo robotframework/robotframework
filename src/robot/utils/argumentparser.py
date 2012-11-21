@@ -410,16 +410,25 @@ class ArgFileParser(object):
         for line in content.splitlines():
             line = line.strip()
             if line.startswith('-'):
-                separator = self._get_option_separator(line)
-                args.extend(line.split(separator, 1))
+                args.extend(self._split_option(line))
             elif line and not line.startswith('#'):
                 args.append(line)
         return args
 
+    def _split_option(self, line):
+        separator = self._get_option_separator(line)
+        if not separator:
+            return [line]
+        option, value = line.split(separator, 1)
+        if separator == ' ':
+            value = value.strip()
+        return [option, value]
+
     def _get_option_separator(self, line):
+        if ' ' not in line and '=' not in line:
+            return None
         if '=' not in line:
             return ' '
         if ' ' not in line:
             return '='
         return ' ' if line.index(' ') < line.index('=') else '='
-

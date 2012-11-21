@@ -7,9 +7,10 @@ Resource        cli_resource.txt
 *** Test Cases ***
 Argument File
     Create Argument File  ${ARGFILE}  --name=From Argfile_With Spaces
-    ...  --metadata Meta1:From AF  -M=Meta2:Overwritten
-    ...  \# comment line  ${EMPTY}  \# another comment
-    ...  -d ${CLI OUTDIR}  -l=none --report=none  -o output.xml  ${EMPTY}
+    ...  --metadata${SPACE*10}Meta1:From AF  -M=Meta2:Overwritten
+    ...  --RunEmptySuite
+    ...  ${EMPTY}  \# comment line  ${EMPTY}  \# another comment
+    ...  -d ${CLI OUTDIR}  -l=none --report=none  -o${SPACE*5}output.xml
     Run Tests Without Processing Output  -M Meta1:Overwritten -A ${ARGFILE} -M Meta2:cli  ${TESTFILE}
     Process Output  ${CLI OUTDIR}/output.xml
     Should Be Equal  ${SUITE.name}  From Argfile With Spaces
