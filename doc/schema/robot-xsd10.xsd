@@ -22,7 +22,7 @@
             <xs:element name="metadata" type="metadata"/>
             <xs:element name="status" type="status"/>
         </xs:choice>
-        <xs:attribute name="name" type="xs:string"/>
+        <xs:attribute name="name" type="xs:string" use="required"/>
         <xs:attribute name="source" type="xs:string"/>
         <xs:attribute name="id" type="xs:string"/>
         <xs:anyAttribute processContents="lax"/>
@@ -35,7 +35,7 @@
             <xs:element name="tags" type="tags"/>
             <xs:element name="status" type="status"/>
         </xs:choice>
-        <xs:attribute name="name" type="xs:string"/>
+        <xs:attribute name="name" type="xs:string" use="required"/>
         <xs:attribute name="id" type="xs:string"/>
         <xs:attribute name="timeout" type="xs:string"/>
         <xs:anyAttribute processContents="lax"/>
@@ -59,7 +59,7 @@
             <xs:element name="msg" type="msg" maxOccurs="unbounded"/>
             <xs:element name="status" type="status"/>
         </xs:choice>
-        <xs:attribute name="name" type="xs:string"/>
+        <xs:attribute name="name" type="xs:string" use="required"/>
         <xs:attribute ref="type"/>
         <xs:attribute name="timeout" type="xs:string"/>
         <xs:anyAttribute processContents="lax"/>
@@ -83,7 +83,7 @@
     <xs:complexType name="status">
         <xs:simpleContent>
             <xs:extension base="xs:string">
-                <xs:attribute ref="status"/>
+                <xs:attribute ref="status" use="required"/>
                 <xs:attribute name="endtime" type="xs:string"/>
                 <xs:attribute name="starttime" type="xs:string"/>
                 <xs:attribute name="elapsedtime" type="xs:string"/>
@@ -140,7 +140,7 @@
     <xs:complexType name="metadataItem">
         <xs:simpleContent>
             <xs:extension base="xs:string">
-                <xs:attribute name="name" type="xs:string"/>
+                <xs:attribute name="name" type="xs:string" use="required"/>
                 <xs:anyAttribute processContents="lax"/>
             </xs:extension>
         </xs:simpleContent>
