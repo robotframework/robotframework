@@ -14,7 +14,6 @@
 
 from __future__ import with_statement
 import getopt     # optparse was not supported by Jython 2.2
-from mercurial.revset import optimize
 import os
 import re
 import sys
