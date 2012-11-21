@@ -196,7 +196,7 @@ class UserKeywordHandler(object):
         return ret[0]
 
 
-class EmbeddedArgsTemplate(object):
+class EmbeddedArgsTemplate(UserKeywordHandler):
     _regexp_extension = re.compile(r'(?<!\\)\(\?.+\)')
     _regexp_group_start = re.compile(r'(?<!\\)\((.*?)\)')
     _regexp_group_escape = r'(?:\1)'
@@ -210,9 +210,8 @@ class EmbeddedArgsTemplate(object):
                 = self._read_embedded_args_and_regexp(keyword.name)
         if not self.embedded_args:
             raise TypeError('Must have embedded arguments')
-        self.name = keyword.name
+        UserKeywordHandler.__init__(self, keyword, libname)
         self.keyword = keyword
-        self.libname = libname
 
     def _read_embedded_args_and_regexp(self, string):
         args = []
