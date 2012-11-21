@@ -14,6 +14,7 @@
 
 from __future__ import with_statement
 import getopt     # optparse was not supported by Jython 2.2
+from mercurial.revset import optimize
 import os
 import re
 import sys
@@ -177,66 +178,11 @@ class ArgumentParser:
         return opts, [self._unescape(arg, escapes) for arg in args]
 
     def _process_possible_argfile(self, args):
-        argfile_opts = ['--argumentfile']
-        for sopt, lopt in self._short_to_long.items():
-            if lopt == 'argumentfile':
-                argfile_opts.append('-'+sopt)
-        while True:
-            try:
-                index = self._get_argfile_index(args, argfile_opts)
-                path = args[index+1]
-            except IndexError:
-                break
-            args[index:index+2] = self._get_args_from_file(path)
-        return args
-
-    def _get_argfile_index(self, args, argfile_opts):
-        for opt in argfile_opts:
-            if opt in args:
-                return args.index(opt)
-        raise IndexError
-
-    def _get_args_from_file(self, path):
-        if path.upper() != 'STDIN':
-            content = self._read_argfile(path)
-        else:
-            content = self._read_argfile_from_stdin()
-        return self._process_argfile(content)
-
-    def _read_argfile(self, path):
-        try:
-            with utf8open(path) as f:
-                content = f.read()
-        except (IOError, UnicodeError), err:
-            raise DataError("Opening argument file '%s' failed: %s"
-                            % (path, err))
-        if content.startswith(codecs.BOM_UTF8.decode('UTF-8')):
-            content = content[1:]
-        return content
-
-    def _read_argfile_from_stdin(self):
-        content = sys.__stdin__.read()
-        if sys.platform != 'cli':
-            content = decode_output(content)
-        return content
-
-    def _process_argfile(self, content):
-        args = []
-        for line in content.splitlines():
-            line = line.strip()
-            if line.startswith('-'):
-                separator = self._get_argfile_option_separator(line)
-                args.extend(line.split(separator, 1))
-            elif line and not line.startswith('#'):
-                args.append(line)
-        return args
-
-    def _get_argfile_option_separator(self, line):
-        if '=' not in line:
-            return ' '
-        if ' ' not in line:
-            return '='
-        return ' ' if line.index(' ') < line.index('=') else '='
+        options = ['--argumentfile']
+        for short_opt, long_opt in self._short_to_long.items():
+            if long_opt == 'argumentfile':
+                options.append('-'+short_opt)
+        return ArgFileParser(options).process(args)
 
     def _get_escapes(self, escape_strings):
         escapes = {}
@@ -413,3 +359,76 @@ class ArgLimitValidator(object):
         else:
             expectation = "at least %d argument%s" % (min_args, min_end)
         raise DataError("Expected %s, got %d." % (expectation, arg_count))
+
+
+class ArgFileParser(object):
+
+    def __init__(self, options):
+        self._options = options
+
+    def process(self, args):
+        while True:
+            index = self._get_index(args)
+            if index < 0:
+                break
+            path = args[index+1]
+            args[index:index+2] = self._get_args(path)
+        return args
+
+    def _get_index(self, args):
+        for opt in self._options:
+            if opt in args:
+                return args.index(opt)
+        return -1
+
+    def _get_args(self, path):
+        if path.upper() != 'STDIN':
+            content = self._read_from_file(path)
+        else:
+            content = self._read_from_stdin()
+        return self._process_file(content)
+
+    def _read_from_file(self, path):
+        try:
+            with utf8open(path) as f:
+                content = f.read()
+        except (IOError, UnicodeError), err:
+            raise DataError("Opening argument file '%s' failed: %s"
+                            % (path, err))
+        if content.startswith(codecs.BOM_UTF8.decode('UTF-8')):
+            content = content[1:]
+        return content
+
+    def _read_from_stdin(self):
+        content = sys.__stdin__.read()
+        if sys.platform != 'cli':
+            content = decode_output(content)
+        return content
+
+    def _process_file(self, content):
+        args = []
+        for line in content.splitlines():
+            line = line.strip()
+            if line.startswith('-'):
+                args.extend(self._split_option(line))
+            elif line and not line.startswith('#'):
+                args.append(line)
+        return args
+
+    def _split_option(self, line):
+        separator = self._get_option_separator(line)
+        if not separator:
+            return [line]
+        option, value = line.split(separator, 1)
+        if separator == ' ':
+            value = value.strip()
+        return [option, value]
+
+    def _get_option_separator(self, line):
+        if ' ' not in line and '=' not in line:
+            return None
+        if '=' not in line:
+            return ' '
+        if ' ' not in line:
+            return '='
+        return ' ' if line.index(' ') < line.index('=') else '='
