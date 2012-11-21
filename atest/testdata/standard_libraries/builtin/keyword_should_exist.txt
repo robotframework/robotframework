@@ -52,7 +52,7 @@ Duplicate keywords
     Duplicated keyword
 
 Duplicate keywords in same resourc
-    [Documentation]  FAIL Keyword 'Duplicate keyword in same resource' defined multiple times
+    [Documentation]  FAIL Keyword 'Duplicate keyword in same resource' defined multiple times.
     Duplicate keyword in same resource
 
 Higher priority keyword overrides
