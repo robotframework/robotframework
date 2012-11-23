@@ -1,18 +1,18 @@
 *** Settings ***
-Documentation   Testing rebot's include/exclude functionality. Tests also include/excludeg first during test execution and then with rebot.
-Suite Setup     Create Output With Robot  ${INPUT FILE}  ${EMPTY}  ${TESTFILE}
-Suite Teardown  Remove File  ${INPUT FILE}
-Default Tags    regression  pybot  jybot
-Resource        rebot_resource.txt
-Test Template   Run And Check Include And Exclude
+Documentation     Testing rebot's include/exclude functionality. Tests also include/exclude first during test execution and then with rebot.
+Suite Setup       Create Output With Robot  ${INPUT FILE}  ${EMPTY}  ${TESTFILE}
+Suite Teardown    Remove File  ${INPUT FILE}
+Default Tags      regression  pybot  jybot
+Resource          rebot_resource.txt
+Test Template     Run And Check Include And Exclude
 
 *** Variables ***
-${TESTFILE}     tags/include_and_exclude.txt
-${INPUT FILE}   %{TEMPDIR}${/}robot-cli-input.xml
-${ESCAPES}      --escape star:STAR --escape quest:QUEST --escape amp:AMP
-@{INCL_ALL}     Incl-1  Incl-12  Incl-123
-@{EXCL_ALL}     Excl-1  Excl-12  Excl-123
-@{ALL}  @{INCL_ALL}  @{EXCL_ALL}
+${TESTFILE}       tags/include_and_exclude.txt
+${INPUT FILE}     %{TEMPDIR}/robot-tags-input.xml
+${ESCAPES}        --escape star:STAR --escape quest:QUEST --escape amp:AMP
+@{INCL_ALL}       Incl-1  Incl-12  Incl-123
+@{EXCL_ALL}       Excl-1  Excl-12  Excl-123
+@{ALL}            @{INCL_ALL}    @{EXCL_ALL}
 
 *** Test Cases ***
 No Includes Or Excludes
@@ -93,7 +93,7 @@ Elapsed Time
     [Documentation]  Test setting start, end and elapsed times correctly when filtering by tags
     [Template]  NONE
     Comment  1) Rebot hand-edited output with predefined times and  check that times are read correctly.
-    Run Rebot  ${EMPTY}  rebot${/}times.xml
+    Run Rebot  ${EMPTY}  rebot/times.xml
     Check Times  ${SUITE.tests[0]}  20061227 12:00:00.000  20061227 12:00:01.000  1000
     Check Times  ${SUITE.tests[1]}  20061227 12:00:01.000  20061227 12:00:03.000  2000
     Check Times  ${SUITE.tests[2]}  20061227 12:00:03.000  20061227 12:00:07.000  4000
@@ -119,16 +119,16 @@ Run And Check Include And Exclude
     Check Suite Contains Tests  ${SUITE}  @{tests}
     Should Be True  ${SUITE.statistics.all.passed} == len(@{tests})
     Should Be True  ${SUITE.statistics.all.failed} == 0
-    ${exp_start} =  Evaluate  "${params}" == "" and "${ORIG_START}" or ${None}
-    ${exp_end} =  Evaluate  "${params}" == "" and "${ORIG_END}" or ${None}
-    Should Be Equal  ${SUITE.starttime}  ${exp_start}
-    Should Be Equal  ${SUITE.endtime}  ${exp_end}
+    ${exp start} =  Evaluate  ${NONE} if "${params}" else "${ORIG START}"
+    ${exp end} =  Evaluate  ${NONE} if "${params}" else "${ORIG END}"
+    Should Be Equal  ${SUITE.starttime}  ${exp start}
+    Should Be Equal  ${SUITE.endtime}  ${exp end}
     Is Valid Elapsed Time  ${SUITE.elapsedtime}
-    Should Be True  ${SUITE.elapsedtime} <= ${ORIGELAPSED}
+    Should Be True  ${SUITE.elapsedtime} <= ${ORIG ELAPSED}
 
 Run And Check Error
     [Arguments]  ${params}  ${filter_msg}
     Run Rebot Without Processing Output  ${params} ${ESCAPES}  ${INPUT FILE}
     ${stderr} =  Get Stderr
-    Should Be Equal  ${stderr.strip()}  [ ERROR ] Suite 'Include And Exclude' contains no tests ${filter_msg}.\n\n Try --help for usage information.
+    Should Be Equal  ${stderr.strip()}  [ ERROR ] Suite 'Include And Exclude' contains no tests ${filter_msg}.${USAGE TIP}
     File Should Not Exist  ${OUTFILE}
