@@ -13,6 +13,7 @@
     font-size: 1.2em;
 }
 #javascript_disabled li {
+    clear: left;  /* without this first bullet floats right on Chrome */
     margin: 0.5em 0;
 }
 #javascript_disabled b {
