@@ -27,14 +27,14 @@ function setTitle(suiteName, type) {
 }
 
 function addHeader() {
-    return $.tmpl('<div id="generated">' +
-                    '<span>Generated<br>${generated}</span><br>' +
-                    '<span id="generated_ago">${ago} ago</span>' +
-                  '</div>' +
-                  '<div id="top_right_header">' +
-                    '<div id="report_or_log_link"><a href="#"></a></div>' +
-                  '</div>' +
-                  '<h1>${title}</h1>', {
+    $.tmpl('<div id="generated">' +
+             '<span>Generated<br>${generated}</span><br>' +
+             '<span id="generated_ago">${ago} ago</span>' +
+           '</div>' +
+           '<div id="top_right_header">' +
+             '<div id="report_or_log_link"><a href="#"></a></div>' +
+           '</div>' +
+           '<h1>${title}</h1>', {
         generated: window.output.generatedTimestamp,
         ago: util.createGeneratedAgoString(window.output.generatedMillis),
         title: document.title
@@ -44,6 +44,7 @@ function addHeader() {
 function addReportOrLogLink(myType) {
     var url;
     var text;
+    var container = $('#report_or_log_link');
     if (myType == 'Report') {
         url = window.settings.logURL;
         text = 'LOG';
@@ -52,10 +53,10 @@ function addReportOrLogLink(myType) {
         text = 'REPORT';
     }
     if (url) {
-        $('#report_or_log_link a').attr('href', url);
-        $('#report_or_log_link a').text(text);
+        container.find('a').attr('href', url);
+        container.find('a').text(text);
     } else {
-        $('#report_or_log_link').remove();
+        container.remove();
     }
 }
 
@@ -87,7 +88,7 @@ function addTooltipsToElapsedTimes() {
     $('.stats_col_elapsed').attr('title',
         'Total execution time of these test cases. ' +
         'Excludes suite setups and teardowns.');
-    $('#suite_stats .stats_col_elapsed').attr('title',
+    $('#suite_stats').find('.stats_col_elapsed').attr('title',
         'Total execution time of this test suite.');
 }
 
