@@ -113,7 +113,9 @@ window.util = function () {
     }
 
     function timestamp(millis) {
-        return new Date(window.output.baseMillis + millis);
+        // used also by tools that do not set window.output.baseMillis
+        var base = window.output ? window.output.baseMillis : 0;
+        return new Date(base + millis);
     }
 
     function createGeneratedAgoString(generatedMillis) {
