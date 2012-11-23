@@ -1,18 +1,14 @@
 *** Setting ***
 Default Tags      03    four
 
-*** Variable ***
-
 *** Test Case ***
 No Own Tags With Default Tags
-    NOOP
+    No Operation
 
 Own Tags With Default Tags
     [Tags]    FOUR    viisi    00    01    01
-    NOOP
+    No Operation
 
 Own Tags Empty With Default Tags
     [Tags]
-    NOOP
-
-*** Keyword ***
+    No Operation

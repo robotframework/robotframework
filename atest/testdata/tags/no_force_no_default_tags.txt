@@ -1,17 +1,11 @@
-*** Setting ***
-
-*** Variable ***
-
 *** Test Case ***
 No Own Tags No Force Nor Default
-    NOOP
+    No Operation
 
 Own Tags No Force Nor Default
     [Tags]    FOUR    viisi    00    01    01
-    NOOP
+    No Operation
 
 Own Tags Empty No Force Nor Default
     [Tags]
-    NOOP
-
-*** Keyword ***
+    No Operation

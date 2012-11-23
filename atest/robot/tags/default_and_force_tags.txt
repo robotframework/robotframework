@@ -1,9 +1,7 @@
 *** Setting ***
-Suite Setup       Run Tests    \    tags/default_and_force_tags.txt
-Force Tags        regression    jybot    pybot    smoke
+Suite Setup       Run Tests    ${EMPTY}    tags/default_and_force_tags.txt
+Force Tags        regression    jybot    pybot
 Resource          atest_resource.txt
-
-*** Variable ***
 
 *** Test Case ***
 No Own Tags
@@ -14,5 +12,3 @@ Own Tags
 
 Own Tags Empty
     Check Test Tags    Own Tags Empty    01    02
-
-*** Keyword ***
