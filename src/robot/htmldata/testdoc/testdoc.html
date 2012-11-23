@@ -12,7 +12,6 @@
 <link rel="stylesheet" type="text/css" href="../rebot/print.css" media="print">
 <script type="text/javascript" src="../lib/jquery.min.js"></script>
 <script type="text/javascript" src="../lib/jquery.tmpl.min.js"></script>
-<script type="text/javascript" src="../rebot/view.js"></script>
 <script type="text/javascript" src="../rebot/util.js"></script>
 <style type="text/css" media="all">
 #header {
@@ -60,7 +59,13 @@ function addTitle(title) {
 }
 
 function addGenerated(timestamp, millis) {
-    createGenerated(timestamp, millis).appendTo($('#header'));
+    $.tmpl('<div id="generated">' +
+             '<span>Generated<br>${generated}</span><br>' +
+             '<span id="generated_ago">${generatedAgo} ago</span>' +
+           '</div>', {
+        generated: timestamp,
+        generatedAgo: util.createGeneratedAgoString(millis)
+    }).appendTo($('#header'));
 }
 
 function addSuite(suite, parent_locator) {
