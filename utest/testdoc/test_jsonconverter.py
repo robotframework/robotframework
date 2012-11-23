@@ -208,7 +208,8 @@ class TestDocumentationFormatting(unittest.TestCase):
 
     def test_test_documentation(self):
         test_convert(self.suite['tests'][0],
-                     doc='<p><b>I</b> can haz <i>formatting</i> &amp; &lt;escaping&gt;!!</p>')
+                     doc='<p><b>I</b> can haz <i>formatting</i> &amp; &lt;escaping&gt;!!</p>'
+                         '\n<ul>\n<li>list</li>\n<li>here</li>\n</ul>')
 
     def test_no_extra_escaping(self):
         # jQuery handles escaping by default so we should not do it

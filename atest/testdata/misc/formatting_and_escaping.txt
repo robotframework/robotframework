@@ -11,6 +11,8 @@ Metadata    Format   this is *bold*
 *** Test Cases ***
 Formatting
     [Documentation]    *I* can haz _formatting_ & <escaping>!!
+    ...    - list
+    ...    - here
     No Operation
 
 <Escaping>
