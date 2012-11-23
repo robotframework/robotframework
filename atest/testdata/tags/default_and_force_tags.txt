@@ -1,0 +1,19 @@
+*** Setting ***
+Force Tags        01    \    02
+Default Tags      03    \    four
+
+*** Variable ***
+
+*** Test Case ***
+No Own Tags
+    No Operation
+
+Own Tags
+    [Tags]    FOUR    viisi    00    \    01    01
+    No Operation
+
+Own Tags Empty
+    [Tags]
+    No Operation
+
+*** Keyword ***

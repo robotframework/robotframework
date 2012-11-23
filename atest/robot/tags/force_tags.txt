@@ -1,0 +1,18 @@
+*** Setting ***
+Suite Setup       Run Tests    \    tags/force_tags.txt
+Force Tags        regression    jybot    pybot
+Resource          atest_resource.txt
+
+*** Variable ***
+
+*** Test Case ***
+No Own Tags With Force Tags
+    Check Test Tags    No Own Tags With Force Tags    01    02
+
+Own Tags With Force Tags
+    Check Test Tags    Own Tags With Force Tags    00    01    02    FOUR    viisi
+
+Own Tags Empty With Force Tags
+    Check Test Tags    Own Tags Empty With Force Tags    01    02
+
+*** Keyword ***

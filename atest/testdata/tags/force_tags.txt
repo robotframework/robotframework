@@ -1,0 +1,18 @@
+*** Setting ***
+Force Tags        01    02
+
+*** Variable ***
+
+*** Test Case ***
+No Own Tags With Force Tags
+    NOOP
+
+Own Tags With Force Tags
+    [Tags]    FOUR    viisi    00    01    01
+    NOOP
+
+Own Tags Empty With Force Tags
+    [Tags]
+    NOOP
+
+*** Keyword ***
