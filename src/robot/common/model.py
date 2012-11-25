@@ -376,7 +376,10 @@ class BaseTestCase(_TestAndSuiteHelper):
         tag1&tag2) and then all of them must match some tag from self.tags.
         """
         for item in tag.split('&'):
-            if not any(utils.matches(t, item, ignore=['_']) for t in self.tags):
+            if item.upper() == 'NO-TAGS':
+                if self.tags:
+                    return False
+            elif not any(utils.matches(t, item, ignore=['_']) for t in self.tags):
                 return False
         return True
 

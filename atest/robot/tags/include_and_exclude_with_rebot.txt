@@ -1,14 +1,16 @@
 *** Settings ***
 Documentation     Testing rebot's include/exclude functionality. Tests also include/exclude first during test execution and then with rebot.
-Suite Setup       Create Output With Robot  ${INPUT FILE}  ${EMPTY}  ${TESTFILE}
+Suite Setup       Create Input Files
 Suite Teardown    Remove File  ${INPUT FILE}
 Default Tags      regression  pybot  jybot
 Resource          rebot_resource.txt
 Test Template     Run And Check Include And Exclude
 
 *** Variables ***
-${TESTFILE}       tags/include_and_exclude.txt
+${TEST FILE}      tags/include_and_exclude.txt
+${TEST FILE2}     tags/no_force_no_default_tags.txt
 ${INPUT FILE}     %{TEMPDIR}/robot-tags-input.xml
+${INPUT FILE 2}   %{TEMPDIR}/robot-tags-input-2.xml
 ${ESCAPES}        --escape star:STAR --escape quest:QUEST --escape amp:AMP
 @{INCL_ALL}       Incl-1  Incl-12  Incl-123
 @{EXCL_ALL}       Excl-1  Excl-12  Excl-123
@@ -68,6 +70,15 @@ Exclude with NOT
 Include and Exclude with NOT
     --include incl1NOTincl3 --exclude incl1NOTincl2  Incl-12
 
+Include tests without tags
+    [Setup]    Set Test Variable    ${INPUT FILE}    ${INPUT FILE 2}
+    --include NO-TAGS    No Own Tags No Force Nor Default    Own Tags Empty No Force Nor Default
+    --include no-tagsNOTnonex    No Own Tags No Force Nor Default    Own Tags Empty No Force Nor Default
+
+Exclude tests without tags
+    [Setup]    Set Test Variable    ${INPUT FILE}    ${INPUT FILE 2}
+    --exclude No-Tags    Own Tags No Force Nor Default
+
 Non Matching Include
     [Template]    Run And Check Error
     --include nonex  with tag 'nonex'
@@ -110,7 +121,11 @@ Elapsed Time
     Check Times  ${SUITE.tests[2]}  20061227 12:00:07.003  20061227 12:00:07.007  004
     Should Be Equal As Numbers  ${SUITE.test_count}  3
 
+
 *** Keywords ***
+Create Input Files
+    Create Output With Robot  ${INPUT FILE 2}  ${EMPTY}  ${TEST FILE 2}
+    Create Output With Robot  ${INPUT FILE}  ${EMPTY}  ${TEST FILE}
 
 Run And Check Include And Exclude
     [Arguments]  ${params}  @{tests}

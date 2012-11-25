@@ -154,6 +154,16 @@ class TestTagPatterns(unittest.TestCase):
         assert_false(patterns.match(['a', 'b', 'c', 'd', 'e', 'f']))
         assert_false(patterns.match(['a', 'b', 'c', 'd', 'e']))
 
+    def test_no_tags(self):
+        patterns = TagPatterns('No-Tags')
+        assert_true(patterns.match([]))
+        assert_false(patterns.match(['anything']))
+        patterns = TagPatterns(['no-tags NOT xxx', 'tag'])
+        assert_true(patterns.match([]))
+        assert_true(patterns.match(['tag']))
+        assert_false(patterns.match(['xxx']))
+        assert_false(patterns.match(['nonex']))
+
     def test_seq2str(self):
         patterns = TagPatterns([u'is\xe4', u'\xe4iti'])
         assert_equal(utils.seq2str(patterns), u"'is\xe4' and '\xe4iti'")
