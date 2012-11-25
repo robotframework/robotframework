@@ -1,60 +1,74 @@
 *** Settings ***
-Suite Setup     Run Tests  --critical t1 --tagdoc f1:this_is_tagdoc --tagstatlink t*:http://url.to:my_title --tagstatlink ?1:url:title --tagstatcombine d1ANDd2 --tagstatcombine d1ANDd2:combined_tag_with_new_name --suitestatlevel 2 --tagstatexclude t2 --tagstatcombine f1NOTt1  misc/suites
-Force Tags      regression
-Default Tags    pybot  jybot
-Resource        atest_resource.txt
+Suite Setup       My Setup
+Force Tags        regression
+Default Tags      pybot    jybot
+Resource          atest_resource.txt
 
 *** Test Cases ***
 Statistics Should Be Written to XML
-    ${output} =  Get File  ${OUTFILE}
-    ${exp} =  Catenate  SEPARATOR=\\r?\\n  (?s)  <statistics>  <total>  .*  </total>
-    ...  <tag>  .*  </tag>  <suite>  .*  </suite>  </statistics>
-    Should Match Regexp  ${output}  ${exp}
+    ${output} =    Get File    ${OUTFILE}
+    ${exp} =    Catenate    SEPARATOR=\\r?\\n
+    ...    (?s)    <statistics>    <total>    .*    </total>
+    ...    <tag>    .*    </tag>    <suite>    .*    </suite>    </statistics>
+    Should Match Regexp    ${output}    ${exp}
 
 Total statistics should be Correct
-    ${stats} =  Get Element  ${OUTFILE}  statistics/total
-    ${crit}  ${total} =  Call Method  ${stats}  findall  stat
-    Node Information Should Be Correct  ${crit}  Critical Tests  5  1
-    Node Information Should Be Correct  ${total}  All Tests  9  1
+    ${stats} =    Get Element    ${OUTFILE}    statistics/total
+    ${crit}    ${total} =    Call Method    ${stats}    findall    stat
+    Node Should Be Correct    ${crit}    Critical Tests    5    1
+    Node Should Be Correct    ${total}    All Tests    9    1
 
 Tag statistics should be Correct
-    ${stats} =  Get Element  ${OUTFILE}  statistics/tag
-    Tag Node Information Should Be Correct  ${stats.getchildren()[0]}  t1  5  1  info=critical  links=my title:http://url.to:::title:url
-    Tag Node Information Should Be Correct  ${stats.getchildren()[2]}  d1 AND d2  1  0  info=combined
-    Tag Node Information Should Be Correct  ${stats.getchildren()[3]}  f1 NOT t1  4  0  info=combined
-    Tag Node Information Should Be Correct  ${stats.getchildren()[4]}  d1  1  0  links=title:url
-    Tag Node Information Should Be Correct  ${stats.getchildren()[5]}  d2  1  0
-    Tag Node Information Should Be Correct  ${stats.getchildren()[6]}  f1  9  1  doc=this is tagdoc  links=title:url
-    Tag Node Information Should Be Correct  ${stats.getchildren()[7]}  sub3  2  0
+    ${stats} =    Get Element    ${OUTFILE}    statistics/tag
+    Tag Node Should Be Correct    ${stats[0]}    t1    5    1    info=critical    links=my title:http://url.to:::title:url
+    Tag Node Should Be Correct    ${stats[2]}    d1 AND d2    1    0    info=combined
+    Tag Node Should Be Correct    ${stats[3]}    f1 NOT t1    4    0    info=combined
+    Tag Node Should Be Correct    ${stats[4]}    d1    1    0    links=title:url
+    Tag Node Should Be Correct    ${stats[5]}    d2    1    0
+    Tag Node Should Be Correct    ${stats[6]}    f1    9    1    doc=this is tagdoc    links=title:url
+    Tag Node Should Be Correct    ${stats[7]}    sub3    2    0
 
 Combined Tag Statistics Name Can Be Given
-    ${stats} =  Get Element  ${OUTFILE}  statistics/tag
-    Tag Node Information Should Be Correct  ${stats.getchildren()[1]}  combined tag with new name  1  0  combined
+    ${stats} =    Get Element    ${OUTFILE}    statistics/tag
+    Tag Node Should Be Correct    ${stats[1]}    combined tag with new name    1    0    combined
 
 Suite statistics should be Correct
-    ${stats} =  Get Element  ${OUTFILE}  statistics/suite
-    Suite Node Information Should Be Correct  ${stats.getchildren()[0]}  Suites  9  1
-    Suite Node Information Should Be Correct  ${stats.getchildren()[1]}  Suites.Fourth  0  1
-    Suite Node Information Should Be Correct  ${stats.getchildren()[2]}  Suites.Subsuites  2  0
-    Suite Node Information Should Be Correct  ${stats.getchildren()[3]}  Suites.Subsuites2  2  0
-    Suite Node Information Should Be Correct  ${stats.getchildren()[4]}  Suites.Tsuite1  3  0
-    Suite Node Information Should Be Correct  ${stats.getchildren()[5]}  Suites.Tsuite2  1  0
-    Suite Node Information Should Be Correct  ${stats.getchildren()[6]}  Suites.Tsuite3  1  0
+    ${stats} =    Get Element    ${OUTFILE}    statistics/suite
+    Suite Node Should Be Correct    ${stats[0]}    Suites    9    1
+    Suite Node Should Be Correct    ${stats[1]}    Suites.Fourth    0    1
+    Suite Node Should Be Correct    ${stats[2]}    Suites.Subsuites    2    0
+    Suite Node Should Be Correct    ${stats[3]}    Suites.Subsuites2    2    0
+    Suite Node Should Be Correct    ${stats[4]}    Suites.Tsuite1    3    0
+    Suite Node Should Be Correct    ${stats[5]}    Suites.Tsuite2    1    0
+    Suite Node Should Be Correct    ${stats[6]}    Suites.Tsuite3    1    0
 
 *** Keywords ***
-Node Information Should Be Correct
-    [Arguments]  ${node}  ${name}  ${pass}  ${fail}
-    Should be equal  ${node.text}  ${name}
-    Should be equal  ${node.attrib['pass']}  ${pass}
-    Should be equal  ${node.attrib['fail']}  ${fail}
+My Setup
+    ${options} =    Catenate
+    ...    --critical t1
+    ...    --tagdoc f1:this_is_tagdoc
+    ...    --tagstatlink t*:http://url.to:my_title
+    ...    --tagstatlink ?1:url:title
+    ...    --tagstatcombine d1ANDd2
+    ...    --tagstatcombine d1ANDd2:combined_tag_with_new_name
+    ...    --suitestatlevel 2
+    ...    --tagstatexclude t2
+    ...    --tagstatcombine f1NOTt1
+    Run Tests    ${options}    misc/suites
 
-Tag Node Information Should Be Correct
-    [Arguments]  ${node}  ${name}  ${pass}  ${fail}  ${info}=  ${doc}=  ${links}=
-    Node Information Should Be Correct  ${node}  ${name}  ${pass}  ${fail}
-    Should be equal  ${node.attrib['info']}  ${info}
-    Should be equal  ${node.attrib['doc']}   ${doc}
-    Should be equal  ${node.attrib['links']}  ${links}
+Node Should Be Correct
+    [Arguments]    ${node}    ${name}    ${pass}    ${fail}
+    Should be equal    ${node.text}    ${name}
+    Should be equal    ${node.attrib['pass']}    ${pass}
+    Should be equal    ${node.attrib['fail']}    ${fail}
 
-Suite Node Information Should Be Correct
-    [Arguments]  ${node}  ${name}  ${pass}  ${fail}
-    Node Information Should Be Correct  ${node}  ${name}  ${pass}  ${fail}
+Tag Node Should Be Correct
+    [Arguments]    ${node}    ${name}    ${pass}    ${fail}    ${info}=    ${doc}=    ${links}=
+    Node Should Be Correct    ${node}    ${name}    ${pass}    ${fail}
+    Should be equal    ${node.attrib['info']}    ${info}
+    Should be equal    ${node.attrib['doc']}     ${doc}
+    Should be equal    ${node.attrib['links']}    ${links}
+
+Suite Node Should Be Correct
+    [Arguments]    ${node}    ${name}    ${pass}    ${fail}
+    Node Should Be Correct    ${node}    ${name}    ${pass}    ${fail}
