@@ -21,10 +21,10 @@ from .rowsplitter import RowSplitter
 
 class _DataFileFormatter(object):
     _whitespace = re.compile('\s{2,}')
-    _split_doc = True
+    _split_multiline_doc = True
 
     def __init__(self, column_count):
-        self._splitter = RowSplitter(column_count, split_doc=self._split_doc)
+        self._splitter = RowSplitter(column_count, self._split_multiline_doc)
         self._column_count = column_count
         self._extractor = DataExtractor(self._want_names_on_first_content_row)
 
@@ -48,9 +48,8 @@ class _DataFileFormatter(object):
         return not self._should_align_columns(table)
 
     def _split_rows(self, original_rows, table):
-        indented = self._is_indented_table(table)
         for original in original_rows:
-            for split in self._splitter.split(original, indented):
+            for split in self._splitter.split(original, table.type):
                 yield split
 
     def _should_align_columns(self, table):

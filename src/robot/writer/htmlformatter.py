@@ -20,7 +20,7 @@ from .formatters import _DataFileFormatter
 
 
 class HtmlFormatter(_DataFileFormatter):
-    _split_doc = False
+    _split_multiline_doc = False
 
     def _format_row(self, row, table=None):
         row = self._pad(self._escape_consecutive_whitespace(row), table)

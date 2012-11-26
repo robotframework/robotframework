@@ -5,7 +5,7 @@ Documentation     Hello
 
 *** Test Cases ***
 Multiline
-    [Documentation]    Hillo
+    [Documentation]    Hillo    # I can has comment!
     ...    | table |
     ...    | world |
 
@@ -21,6 +21,11 @@ Empty
 
 None
     No Operation
+
+Comments
+    [Documentation]    First line    # First comment    Middle comment    Last comment
+    ...    Middle line
+    ...    Last line
 
 *** Keywords ***
 Keyword doc

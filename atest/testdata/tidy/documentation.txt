@@ -5,7 +5,7 @@ Documentation    Hello
 
 *** Test Cases ***
 Multiline
-    [ DocuMentation ]    Hillo
+    [ DocuMentation ]    Hillo    # I can has comment!
     ...  | table |
     ...  | world |
 Multiline with manual line separators
@@ -16,6 +16,10 @@ Empty
     [Documentation]
 None
     No Operation
+Comments
+    [Documentation]    First line    # First comment
+    ...    Middle line               # Middle comment
+    ...    Last line    # Last comment
 
 *** Keywords ***
 Keyword doc
