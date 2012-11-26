@@ -1,0 +1,24 @@
+*Settings*							
+Documentation	Hello						
+...	- list						
+...	- <world>						
+							
+*Test Cases*							
+Multiline	[Documentation]	Hillo					
+	...	| table |					
+	...	| world |					
+							
+Multiline with manual line separators	[Documentation]	Hillo					
+	...	on					
+	...	hyvää!					
+							
+One line	[Documentation]	One line					
+							
+Empty							
+							
+None	No Operation						
+							
+*Keywords*							
+Keyword doc	[Documentation]	Multi					
+	...	line					
+	...	stuff					

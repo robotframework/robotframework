@@ -23,14 +23,36 @@ class RowSplitter(object):
     def __init__(self, cols=8):
         self._cols = cols
 
-    def split(self, row, indented_table=False):
+    def split(self, row, indented_table=False):  # TODO: pass table type instead
         if not row:
             return self._split_empty_row()
         indent = self._get_indent(row, indented_table)
+        if self._is_doc_row(row, indented_table):
+            return self._split_doc_row(row, indent)
         return self._split_row(row, indent)
 
     def _split_empty_row(self):
         yield []
+
+    def _is_doc_row(self, row, tc_or_kw_table):
+        if tc_or_kw_table:
+            return len(row) > 2 and row[1] == '[Documentation]'
+        return len(row) > 1 and row[0] in 'Documentation'
+
+    def _split_doc_row(self, row, indent):
+        first, rest = self._split_row_from_doc(row[indent+1])
+        yield row[:indent+1] + [first]
+        while rest:
+            current, rest = self._split_row_from_doc(rest)
+            yield self._indent([self._line_continuation, current], indent)
+
+    def _split_row_from_doc(self, doc):
+        if '\\n' not in doc:
+            return doc, ''
+        first, rest =  doc.split('\\n', 1)
+        if rest.startswith(' '):
+            rest = rest[1:]
+        return first, rest
 
     def _get_indent(self, row, indented_table):
         indent = len(list(itertools.takewhile(lambda x: x == '', row)))
