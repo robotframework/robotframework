@@ -21,10 +21,12 @@ Tag statistics should be Correct
     ${stats} =    Get Element    ${OUTFILE}    statistics/tag
     Tag Node Should Be Correct    ${stats[0]}    t1    5    1    critical
     Tag Node Should Be Correct    ${stats[1]}    d1 AND d2    1    0    combined
-    Tag Node Should Be Correct    ${stats[2]}    d1    1    0
-    Tag Node Should Be Correct    ${stats[3]}    d2    1    0
-    Tag Node Should Be Correct    ${stats[4]}    f1    9    1
-    Tag Node Should Be Correct    ${stats[5]}    sub3    2    0
+    Tag Node Should Be Correct    ${stats[2]}    F1 NOT T_1    4    0    info=combined
+    Tag Node Should Be Correct    ${stats[3]}    d1    1    0
+    Tag Node Should Be Correct    ${stats[4]}    d2    1    0
+    Tag Node Should Be Correct    ${stats[5]}    f1    9    1
+    Tag Node Should Be Correct    ${stats[6]}    sub3    2    0
+    Tag Node Should Be Correct    ${stats[7]}    XxX    9    1
 
 Suite statistics should be Correct
     ${stats} =    Get Element    ${OUTFILE}    statistics/suite
@@ -45,6 +47,8 @@ My Setup
     ...    --tagstatcombine d1ANDd2
     ...    --suitestatlevel 2
     ...    --tagstatexclude t2
+    ...    --TagStatComb F1NOTT_1
+    ...    --SetTag XxX
     Run Rebot    ${options}    ${OUTDIR}/statistics.xml
 
 Node Should Be Correct

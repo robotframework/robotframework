@@ -12,7 +12,7 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from robot.utils import elapsed_time_to_string, html_escape
+from robot.utils import elapsed_time_to_string, html_escape, normalize
 
 from .tags import TagPatterns
 
@@ -24,6 +24,7 @@ class Stat(object):
         self.passed = 0
         self.failed = 0
         self.elapsed = 0
+        self._norm_name = normalize(name, ignore='_')
 
     def get_attributes(self, include_label=False, include_elapsed=False,
                        exclude_empty=False, values_as_strings=False,
@@ -67,7 +68,7 @@ class Stat(object):
         self.elapsed += test.elapsedtime
 
     def __cmp__(self, other):
-        return cmp(self.name, other.name)
+        return cmp(self._norm_name, other._norm_name)
 
     def __nonzero__(self):
         return not self.failed
@@ -133,7 +134,7 @@ class TagStat(Stat):
         return cmp(other.critical, self.critical) \
             or cmp(other.non_critical, self.non_critical) \
             or cmp(bool(other.combined), bool(self.combined)) \
-            or cmp(self.name, other.name)
+            or Stat.__cmp__(self, other)
 
 
 class CombinedTagStat(TagStat):

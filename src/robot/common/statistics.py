@@ -15,7 +15,7 @@
 import re
 
 from robot.model.tags import TagPatterns
-from robot.utils import Matcher, MultiMatcher, NormalizedDict
+from robot.utils import Matcher, MultiMatcher, NormalizedDict, normalize
 
 
 class Statistics:
@@ -41,6 +41,7 @@ class Stat:
 
     def __init__(self, name=''):
         self.name = name
+        self._norm_name = normalize(name, ignore='_')
         self.passed = 0
         self.failed = 0
 
@@ -76,7 +77,7 @@ class Stat:
         return suite.all_stats
 
     def __cmp__(self, other):
-        return cmp(self.name, other.name)
+        return cmp(self._norm_name, other._norm_name)
 
     def __nonzero__(self):
         return self.failed == 0
@@ -93,6 +94,7 @@ class CriticalStats(Stat):
 
     def _subsuite_stats(self, suite):
         return suite.critical_stats
+
 
 class AllStats(Stat):
 
@@ -137,7 +139,7 @@ class TagStat(Stat):
             return cmp(other.non_critical, self.non_critical)
         if bool(self.combined) != bool(other.combined):
             return cmp(bool(other.combined), bool(self.combined))
-        return cmp(self.name, other.name)
+        return Stat.__cmp__(self, other)
 
     def serialize(self, serializer):
         serializer.tag_stat(self)
