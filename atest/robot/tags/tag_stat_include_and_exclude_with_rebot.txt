@@ -16,8 +16,8 @@ ${I3}           incl_3
 ${E1}           excl1
 ${E2}           excl 2
 ${E3}           excl_3
-@{INCL}         ${I2}    ${I1}    ${I3}
-@{EXCL}         ${E2}    ${E1}    ${E3}
+@{INCL}         ${I1}    ${I2}    ${I3}
+@{EXCL}         ${E1}    ${E2}    ${E3}
 @{ALL}          @{EXCL}    ${F}    @{INCL}
 
 *** Test Cases ***
@@ -41,14 +41,14 @@ One Exclude
     --tagstatexclude excl1    ${E2}    ${E3}    ${F}    @{INCL}
 
 Matching And Non Matching Excludes
-    --TagStatE EXCL3 --TagStatE nonexisting    ${E2}    ${E1}    ${F}   @{INCL}
+    --TagStatE EXCL3 --TagStatE nonexisting    ${E1}    ${E2}    ${F}   @{INCL}
 
 More Excludes
     --TagStatExclude excl3 --TagStatExclude excl2    ${E1}    ${F}   @{INCL}
 
 Exclude With Patterns
     --TagStatExc exc??    ${F}   @{INCL}
-    --TagStatExc STAR3 --TagStatE eSTAR2 --TagStatE eSTAR1    ${F}    ${I2}    ${I1}
+    --TagStatExc STAR3 --TagStatE eSTAR2 --TagStatE eSTAR1    ${F}    ${I1}    ${I2}
 
 Include And Exclude
     --TagStatInc STAR_2 --TagStatExc EXCL_STAR    ${I2}
