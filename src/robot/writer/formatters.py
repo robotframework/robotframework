@@ -40,17 +40,17 @@ class _DataFileFormatter(object):
     def format_table(self, table):
         rows = self._extractor.rows_from_table(table)
         if self._should_split_rows(table):
-            return self._split_rows(rows, table)
+            rows = self._split_rows(rows, table)
         return (self._format_row(r, table) for r in rows)
 
     def _should_split_rows(self, table):
         return not self._should_align_columns(table)
 
-    def _split_rows(self, rows, table):
+    def _split_rows(self, original_rows, table):
         indented = self._is_indented_table(table)
-        for row in rows:
-            for r in self._splitter.split(row, indented):
-                yield self._format_row(r, table)
+        for original in original_rows:
+            for split in self._splitter.split(original, indented):
+                yield split
 
     def _should_align_columns(self, table):
         return self._is_indented_table(table) and bool(table.header[1:])
