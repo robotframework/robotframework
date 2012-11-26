@@ -80,8 +80,6 @@ def TagPattern(pattern):
         return _NotTagPattern(*pattern.split('NOT'))
     if 'AND' in pattern:
         return _AndTagPattern(pattern.split('AND'))
-    if pattern.strip().upper() == 'NO-TAGS':
-        return _NoTagsPattern()
     return _SingleTagPattern(pattern)
 
 
@@ -95,12 +93,6 @@ class _SingleTagPattern(object):
 
     def __unicode__(self):
         return self._matcher.pattern
-
-
-class _NoTagsPattern(object):
-
-    def match(self, tags):
-        return not tags
 
 
 class _AndTagPattern(object):

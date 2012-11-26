@@ -70,14 +70,13 @@ Exclude with NOT
 Include and Exclude with NOT
     --include incl1NOTincl3 --exclude incl1NOTincl2  Incl-12
 
-Include tests without tags
+Select tests without any tags
     [Setup]    Set Test Variable    ${INPUT FILE}    ${INPUT FILE 2}
-    --include NO-TAGS    No Own Tags No Force Nor Default    Own Tags Empty No Force Nor Default
-    --include no-tagsNOTnonex    No Own Tags No Force Nor Default    Own Tags Empty No Force Nor Default
+    --exclude STAR    No Own Tags No Force Nor Default    Own Tags Empty No Force Nor Default
 
-Exclude tests without tags
+Select tests with any tag
     [Setup]    Set Test Variable    ${INPUT FILE}    ${INPUT FILE 2}
-    --exclude No-Tags    Own Tags No Force Nor Default
+    --include STAR    Own Tags No Force Nor Default
 
 Non Matching Include
     [Template]    Run And Check Error
