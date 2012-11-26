@@ -20,14 +20,15 @@ class RowSplitter(object):
     _empty_cell_escape = '${EMPTY}'
     _line_continuation = '...'
 
-    def __init__(self, cols=8):
+    def __init__(self, cols=8, split_doc=True):
         self._cols = cols
+        self._split_doc = split_doc
 
     def split(self, row, indented_table=False):  # TODO: pass table type instead
         if not row:
             return self._split_empty_row()
         indent = self._get_indent(row, indented_table)
-        if self._is_doc_row(row, indented_table):
+        if self._split_doc and self._is_doc_row(row, indented_table):
             return self._split_doc_row(row, indent)
         return self._split_row(row, indent)
 

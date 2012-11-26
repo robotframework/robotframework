@@ -12,6 +12,9 @@ Documentation in text file
 Documentation in TSV file
     tsv
 
+Documentation in HTML file
+    html
+
 *** Keywords ***
 Verify documentation formatting
     [Arguments]    ${format}

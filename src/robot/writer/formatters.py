@@ -21,9 +21,10 @@ from .rowsplitter import RowSplitter
 
 class _DataFileFormatter(object):
     _whitespace = re.compile('\s{2,}')
+    _split_doc = True
 
     def __init__(self, column_count):
-        self._splitter = RowSplitter(column_count)
+        self._splitter = RowSplitter(column_count, split_doc=self._split_doc)
         self._column_count = column_count
         self._extractor = DataExtractor(self._want_names_on_first_content_row)
 
