@@ -174,9 +174,10 @@ class TestHtmlFormatter(unittest.TestCase):
         expected = 'This is real new line:\n        here we have a single backslash n: \\n<br>\nand here backslash + newline: \\\n and here bslash blash n \\\\n and bslash x 3 n \\\\\\n<br>\n'
         assert_equals(HtmlCell(original).content, expected)
 
-    def test_no_br_to_newlines_without_whitespace(self):
+    def test_br_to_newlines_without_whitespace(self):
         original = r"Here there is no space after backslash-n: '\n'"
-        assert_equals(HtmlCell(original).content, original)
+        assert_equals(HtmlCell(original).content,
+                      original.replace('\\n', '\\n<br>\n'))
 
     def test_no_br_to_double_backslashes(self):
         original = r"Here there is double backslash-n: \\n "

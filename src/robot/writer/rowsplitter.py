@@ -38,7 +38,7 @@ class RowSplitter(object):
     def _is_doc_row(self, row, tc_or_kw_table):
         if tc_or_kw_table:
             return len(row) > 2 and row[1] == '[Documentation]'
-        return len(row) > 1 and row[0] in 'Documentation'
+        return len(row) > 1 and row[0] == 'Documentation'
 
     def _split_doc_row(self, row, indent):
         first, rest = self._split_row_from_doc(row[indent+1])
