@@ -11,7 +11,7 @@ class TestRowSplitter(unittest.TestCase):
         self._formatter = RowSplitter(cols=self._cols)
 
     def _split(self, data):
-        return list(self._formatter.split(data))
+        return list(self._formatter.split(data, 'whatever'))
 
     def test_escaping_empty_cells_at_eol(self):
         assert_equals(self._split(['Some', 'text', '', 'with empty']),
