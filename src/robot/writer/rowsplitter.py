@@ -55,7 +55,8 @@ class RowSplitter(object):
         yield row[:indent+1] + [first] + row[indent+2:]
         while rest:
             current, rest = self._split_doc(rest)
-            yield self._indent([self._line_continuation, current], indent)
+            current = [self._line_continuation, current] if current else [self._line_continuation]
+            yield self._indent(current, indent)
 
     def _split_doc(self, doc):
         if '\\n' not in doc:

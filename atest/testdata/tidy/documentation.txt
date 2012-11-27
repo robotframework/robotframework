@@ -8,6 +8,10 @@ Multiline
     [ DocuMentation ]    Hillo    # I can has comment!
     ...  | table |
     ...  | world |
+Multiple paragraphs
+    [Documentation]    Hello
+    ...
+    ...                Huhuu
 Multiline with manual line separators
     [Document]    Hillo\non\n hyvää!
 One line

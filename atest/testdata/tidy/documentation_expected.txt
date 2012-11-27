@@ -9,6 +9,11 @@ Multiline
     ...    | table |
     ...    | world |
 
+Multiple paragraphs
+    [Documentation]    Hello
+    ...
+    ...    Huhuu
+
 Multiline with manual line separators
     [Documentation]    Hillo
     ...    on
