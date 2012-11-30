@@ -25,7 +25,8 @@ Continue in test with several continuable failures
     [Documentation]     FAIL ${HEADER}\n\n
     ...    1) ${EXC}: A\n\n
     ...    2) ${EXC}: B\n\n
-    ...    3) ${EXC}: C\n\n${TEARDOWN ERROR}
+    ...    3) ${EXC}: C\n\n
+    ...    ${TEARDOWN ERROR}
     Raise Continuable Failure    A
     Log    This should be executed
     Raise Continuable Failure    B
@@ -40,14 +41,16 @@ Continue in user keyword with several continuable failures
     ...    3) ${EXC}: 3\n\n
     ...    4) ${EXC}: 1\n\n
     ...    5) ${EXC}: 2\n\n
-    ...    6) ${EXC}: 3\n\n${TEARDOWN ERROR}
+    ...    6) ${EXC}: 3\n\n
+    ...    ${TEARDOWN ERROR}
     Several Continuable Failures In User Keyword In Test Case
     Several Continuable Failures In User Keyword In Test Case, Again
 
 Continuable and regular failure
     [Documentation]     FAIL ${HEADER}\n\n
     ...    1) ${ERROR}\n\n
-    ...    2) Stopping here!! (with ∏ön ÄßÇïï €§)\n\n${TEARDOWN ERROR}
+    ...    2) Stopping here!! (with ∏ön ÄßÇïï €§)\n\n
+    ...    ${TEARDOWN ERROR}
     Raise Continuable Failure
     Log    This should be executed
     Fail    Stopping here!! (with ∏ön ÄßÇïï €§)
@@ -59,14 +62,16 @@ Continue in nested user keyword
     ...    2) ${EXC}: 1\n\n
     ...    3) ${EXC}: 2\n\n
     ...    4) ${EXC}: 3\n\n
-    ...    5) ${ERROR} in top level after nesting (with ∏ön ÄßÇïï €§)\n\n${TEARDOWN ERROR}
+    ...    5) ${ERROR} in top level after nesting (with ∏ön ÄßÇïï €§)\n\n
+    ...    ${TEARDOWN ERROR}
     Continuable Failure In Nested UK
 
 Continuable and regular failure in UK
     [Documentation]    FAIL ${HEADER}\n\n
     ...    1) ${EXC}: one\n\n
     ...    2) ${EXC}: two\n\n
-    ...    3) Stop!!\n\n${TEARDOWN ERROR}
+    ...    3) Stop!!\n\n
+    ...    ${TEARDOWN ERROR}
     Continuable and regular failure
     Fail    This should not be executed
 
@@ -86,7 +91,8 @@ Several continuable failures and regular failure in nested UK
     ...    12) ${EXC}: first level 2\n\n
     ...    13) ${EXC}: one\n\n
     ...    14) ${EXC}: two\n\n
-    ...    15) Stop!!\n\n${TEARDOWN ERROR}
+    ...    15) Stop!!\n\n
+    ...    ${TEARDOWN ERROR}
     Continuable Failure In Nested UK
     Continuable and regular failure in nested UK
     Fail    This should not be executed
@@ -96,7 +102,8 @@ Continue when setting variables
     ...    1) ${ERROR}\n\n
     ...    2) ${ERROR}\n\n
     ...    3) ${ERROR}\n\n
-    ...    4) No jokes\n\n${TEARDOWN ERROR}
+    ...    4) No jokes\n\n
+    ...    ${TEARDOWN ERROR}
     ${ret}=    Raise Continuable Failure
     Should Be Equal    ${ret}    ${None}
     ${r1}    ${r2}    ${r3}=    Raise Continuable Failure
@@ -125,7 +132,8 @@ Continue many times in test setup and teardown
     ...    ${HEADER}\n\n
     ...    1) ${EXC}: 1\n\n
     ...    2) ${EXC}: 2\n\n
-    ...    3) ${EXC}: 3\n\n${TEARDOWN ERROR}
+    ...    3) ${EXC}: 3\n\n
+    ...    ${TEARDOWN ERROR}
     [Setup]    Several Continuable Failures In User Keyword In Test Setup
     Fail    This should not be executed
     [Teardown]    Several Continuable Failures In User Keyword In Test Teardown
@@ -136,7 +144,8 @@ Continue in for loop
     ...    2) ContinuableApocalypseException: 1\n\n
     ...    3) ContinuableApocalypseException: 2\n\n
     ...    4) ContinuableApocalypseException: 3\n\n
-    ...    5) ContinuableApocalypseException: 4\n\n${TEARDOWN ERROR}
+    ...    5) ContinuableApocalypseException: 4\n\n
+    ...    ${TEARDOWN ERROR}
     :FOR    ${i}    IN RANGE    0    5
     \    Raise Continuable Failure    ${i}
     \    Log    This should be executed inside for loop
@@ -147,7 +156,8 @@ Continuable and regular failure in for loop
     ...    1) ContinuableApocalypseException: janne\n\n
     ...    2) ContinuableApocalypseException: jussi\n\n
     ...    3) ContinuableApocalypseException: keijo\n\n
-    ...    4) keijo == keijo\n\n${TEARDOWN ERROR}
+    ...    4) keijo == keijo\n\n
+    ...    ${TEARDOWN ERROR}
     :FOR    ${name}    IN    janne    jussi    keijo    juha    jooseppi
     \    Raise Continuable Failure    ${name}
     \    Should Not Be Equal    ${name}    keijo
