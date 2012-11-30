@@ -116,11 +116,13 @@ class Keyword(BaseKeyword):
         self.elapsedtime = get_elapsed_time(self.starttime, self.endtime)
         try:
             if not error or error.can_continue(context.teardown):
-                self._set_variables(context, return_value)
+                self._set_variables(context, return_value, error)
         finally:
             context.end_keyword(self)
 
-    def _set_variables(self, context, return_value):
+    def _set_variables(self, context, return_value, error):
+        if error:
+            return_value = error.return_value
         try:
             VariableAssigner(self.assign).assign(context, return_value)
         except DataError, err:

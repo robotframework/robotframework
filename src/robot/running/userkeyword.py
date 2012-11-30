@@ -141,14 +141,21 @@ class UserKeywordHandler(object):
 
     def _dry_run(self, context, variables, args_spec, argument_values):
         resolved_arguments = args_spec.resolve_arguments_for_dry_run(argument_values)
-        self._execute(context, variables, args_spec, resolved_arguments)
-        return None
+        error = self._execute(context, variables, args_spec, resolved_arguments)
+        if error:
+            raise error
 
     def _variable_resolving_run(self, context, variables, args_spec, argument_values):
         resolved_arguments = args_spec.resolve(argument_values, variables,
                                                context.output)
-        self._execute(context, variables, args_spec, resolved_arguments)
-        return self._get_return_value(variables)
+        error = self._execute(context, variables, args_spec, resolved_arguments)
+        if error and not error.can_continue(context.teardown):
+            raise error
+        return_value = self._get_return_value(variables)
+        if error:
+            error.return_value = return_value
+            raise error
+        return return_value
 
     def _execute(self, context, variables, args_spec, resolved_arguments):
         args_spec.set_variables(resolved_arguments, variables, context.output)
@@ -162,7 +169,7 @@ class UserKeywordHandler(object):
             error = None
         td_error = self._run_teardown(context, error)
         if error or td_error:
-            raise UserKeywordExecutionFailed(error, td_error)
+            return UserKeywordExecutionFailed(error, td_error)
 
     def _run_teardown(self, context, error):
         if not self.teardown:

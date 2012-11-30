@@ -50,6 +50,9 @@ Continue when setting variables
     Check Log Message    ${tc.kws[4].msgs[1]}    \@{list} = [ ]
     Length Should Be     ${tc.kws[6].msgs}     1
 
+Continuable failure in user keyword returning value
+    Check Test Case    ${TESTNAME}
+
 Continue in test setup
     ${tc}=    Check Test Case    ${TESTNAME}
     Check Log Message    ${tc.setup.kws[1].msgs[0]}    This should be executed in Test Setup

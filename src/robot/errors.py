@@ -87,6 +87,7 @@ class ExecutionFailed(RobotError):
         self.exit = exit
         self.cont = cont
         self.exit_for_loop = exit_for_loop
+        self.return_value = None
 
     @property
     def dont_cont(self):

@@ -112,6 +112,17 @@ Continue when setting variables
     Should Be True    @{list} == []
     ${notset} =    Fail    No jokes
 
+Continuable failure in user keyword returning value
+    [Documentation]    FAIL ${HEADER}\n\n
+    ...    1) Continuable failure\n\n
+    ...    2) Another continuable failure\n\n
+    ...    3) Continuable failure\n\n
+    ...    ${TEARDOWN ERROR}
+    ${ret} =    Continuable failure in user keyword returning value
+    Should Be Equal    ${ret}    return value
+    ${ret} =    Continuable failure in nested user keyword returning value
+    Should Be Equal    ${ret}    return value 2
+
 Continue in test setup
     [Documentation]    FAIL Setup failed:\n${ERROR WITH TEARDOWN}
     [Setup]    Continuable Failure In User Keyword In Test Setup
@@ -196,3 +207,15 @@ Continuable and regular failure
     Raise Continuable Failure    two
     Log    This should be executed in Nested UK (with ∏ön ÄßÇïï €§)
     Fail    Stop!!
+
+Continuable failure in user keyword returning value
+    Run Keyword And Continue On Failure   Fail    Continuable failure
+    ${ret} =    Set Variable    return value
+    Should Be Equal    ${ret}    return value
+    [Return]    ${ret}
+
+Continuable failure in nested user keyword returning value
+    Run Keyword And Continue On Failure   Fail    Another continuable failure
+    ${ret} =    Continuable failure in user keyword returning value
+    Should Be Equal    ${ret}    return value
+    [Return]    ${ret} 2
