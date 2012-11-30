@@ -1,80 +1,85 @@
 *** Settings ***
-Library  JavaExceptions
+Library    JavaExceptions
+Library    ExitForLoop.py
 
 *** Test Cases ***
 Simple Exit For Loop
-    :FOR  ${var}  IN  one  two
-    \  Exit For Loop
-    \  Fail  Should not be executed
-    Should BE Equal  ${var}  one
+    :FOR    ${var}    IN    one    two
+    \    Exit For Loop
+    \    Fail    Should not be executed
+    Should BE Equal    ${var}    one
 
-Exit For Loop In Runkeyword
-    :FOR  ${var}  IN  one  two  three
-    \  Run Keyword If  '${var}' == 'two'  Exit For Loop
-    \  ${x} =  Set Variable  ${var}-extra
-    Should Be Equal  ${x}  one-extra
-    Should Be Equal  ${var}  two
+Exit For Loop In `Run Keyword`
+    :FOR    ${var}    IN    one    two    three
+    \    Run Keyword If    '${var}' == 'two'    Exit For Loop
+    \    ${x} =    Set Variable    ${var}-extra
+    Should Be Equal    ${x}    one-extra
+    Should Be Equal    ${var}    two
 
-Exit For Loop In UserKeyword
-    :FOR  ${var}  IN  one  two
-    \  With Only Exit For Loop
-    \  Fail  Should not be executed
-    Should BE Equal  ${var}  one
+Exit For Loop In User Keyword
+    :FOR    ${var}    IN    one    two
+    \    With Only Exit For Loop
+    \    Fail    Should not be executed
+    Should BE Equal    ${var}    one
 
-Exit For Loop In UserKeyword With Loop
-    :FOR  ${var}  IN  one  two
-    \  With Loop
-    \  ${x} =  Set Variable  ${var}-extra
-    Should Be Equal  ${x}  two-extra
+Exit For Loop In User Keyword With Loop
+    :FOR    ${var}    IN    one    two
+    \    With Loop
+    \    ${x} =    Set Variable    ${var}-extra
+    Should Be Equal    ${x}    two-extra
 
-Exit For Loop In UserKeyword With Loop Within Loop
-    :FOR  ${var}  IN  one  two
-    \  With Loop Within Loop
-    \  ${x} =  Set Variable  ${var}-extra
-    Should Be Equal  ${x}  two-extra
+Exit For Loop In User Keyword With Loop Within Loop
+    :FOR    ${var}    IN    one    two
+    \    With Loop Within Loop
+    \    ${x} =    Set Variable    ${var}-extra
+    Should Be Equal    ${x}    two-extra
 
-Exit For Loop In Userkeyword Calling Userkeyword With Exit For Loop
-    :FOR  ${var}  IN  one  two
-    \  With Keyword For Loop Calling Keyword With Exit For Loop
-    \  ${x} =  Set Variable  ${var}-extra
-    Should Be Equal  ${x}  two-extra
+Exit For Loop In User Keyword Calling User Keyword With Exit For Loop
+    :FOR    ${var}    IN    one    two
+    \    With Keyword For Loop Calling Keyword With Exit For Loop
+    \    ${x} =    Set Variable    ${var}-extra
+    Should Be Equal    ${x}    two-extra
 
 Exit For Loop Without For Loop Should Fail
-   [Documentation]  FAIL Exit for loop without enclosing for loop.
+   [Documentation]    FAIL Exit for loop without enclosing for loop.
    Exit For Loop
 
-Exit For Loop In Userkeyword Without For Loop Should Fail
-   [Documentation]  FAIL Exit for loop without enclosing for loop.
+Exit For Loop In User Keyword Without For Loop Should Fail
+   [Documentation]    FAIL Exit for loop without enclosing for loop.
    With Only Exit For Loop
 
-Exit For Loop With Userlibrary
-    :FOR  ${var}  IN  one  two
-    \  Throw Exit For Loop
-    \  Fail  Should not be executed
-    Should BE Equal  ${var}  one
+Custom exception with ROBOT_EXIT_FOR_LOOP
+    :FOR    ${var}    IN    one    two
+    \    Raise Exit For Loop
+    \    Fail    Should not be executed
+    Should BE Equal    ${var}    one
 
+Custom Java exception with ROBOT_EXIT_FOR_LOOP
+    :FOR    ${var}    IN    one    two
+    \    Throw Exit For Loop
+    \    Fail    Should not be executed
+    Should BE Equal    ${var}    one
 
 *** Keyword ***
 With Loop
-    :FOR  ${var}  IN  one  two
-    \  Exit For Loop
-    \  Fail
-    Log  KW Finished
+    :FOR    ${var}    IN    one    two
+    \    Exit For Loop
+    \    Fail    Should not be executed
+    Should Be Equal    ${var}    one
 
 With Only Exit For Loop
     Exit For Loop
     Fail
 
 With Loop Within Loop
-    :FOR  ${var}  IN  one  two
-    \  With Loop
-    \  Log  This is Logged
-    \  Exit For Loop
-    \  Fail
-    Log  Loop Within Loop Finished
+    :FOR    ${var}    IN    one    two
+    \    With Loop
+    \    Exit For Loop
+    \    Fail    Should not be executed
+    Should Be Equal    ${var}    one
 
 With Keyword For Loop Calling Keyword With Exit For Loop
-    :FOR  ${var}  IN  one  two
-    \  With Only Exit For Loop
-    \  Fail
-    Log  This Is Logged
+    :FOR    ${var}    IN    one    two
+    \    With Only Exit For Loop
+    \    Fail    Should not be executed
+    Should Be Equal    ${var}    one

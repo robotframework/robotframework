@@ -1,53 +1,54 @@
 *** Settings ***
-Suite Setup     Run Tests  ${EMPTY}  running/exit_for_loop.txt
-Default Tags      regression  pybot  jybot
-Resource        atest_resource.txt
+Suite Setup       Run Tests    ${EMPTY}    running/exit_for_loop.txt
+Force Tags        regression
+Default Tags      pybot    jybot
+Resource          atest_resource.txt
 
 *** Test Cases ***
-
 Simple Exit For Loop
     Test And All Keywords Should Have Passed
 
-Exit For Loop In Runkeyword
+Exit For Loop In `Run Keyword`
     Test And All Keywords Should Have Passed
 
-Exit For Loop In UserKeyword
+Exit For Loop In User Keyword
     Test And All Keywords Should Have Passed
 
-Exit For Loop In UserKeyword With Loop
+Exit For Loop In User Keyword With Loop
     Test And All Keywords Should Have Passed
 
-Exit For Loop In UserKeyword With Loop Within Loop
+Exit For Loop In User Keyword With Loop Within Loop
     Test And All Keywords Should Have Passed
 
-Exit For Loop In Userkeyword Calling Userkeyword With Exit For Loop
+Exit For Loop In User Keyword Calling User Keyword With Exit For Loop
     Test And All Keywords Should Have Passed
 
 Exit For Loop Without For Loop Should Fail
-    Check Test Case  ${TESTNAME}
+    Check Test Case    ${TESTNAME}
 
-Exit For Loop In Userkeyword Without For Loop Should Fail
-    Check Test Case  ${TESTNAME}
+Exit For Loop In User Keyword Without For Loop Should Fail
+    Check Test Case    ${TESTNAME}
 
 Exit For Loop Keyword Should Have No Messages
-    ${tc} =  Check Test Case  Simple Exit For Loop
-    Should Be Equal  ${tc.kws[0].kws[0].kws[0].name}  BuiltIn.Exit For Loop
-    Should Be Empty  ${tc.kws[0].kws[0].kws[0].msgs}
+    ${tc} =    Check Test Case    Simple Exit For Loop
+    Should Be Equal    ${tc.kws[0].kws[0].kws[0].name}    BuiltIn.Exit For Loop
+    Should Be Empty    ${tc.kws[0].kws[0].kws[0].msgs}
 
-Exit For Loop With Userlibrary
-    [tags]  regression  jybot
+Custom exception with ROBOT_EXIT_FOR_LOOP
+    Test And All Keywords Should Have Passed
+
+Custom Java exception with ROBOT_EXIT_FOR_LOOP
+    [Tags]    jybot
     Test And All Keywords Should Have Passed
 
 *** Keyword ***
 Test And All Keywords Should Have Passed
-    ${tc} =  Check Test Case  ${TESTNAME}
-    Check All Keywords Passed  ${tc}
-    Should Be Equal  ${tc.kws[-1].name}  BuiltIn.Should Be Equal
+    ${tc} =    Check Test Case    ${TESTNAME}
+    All Keywords Should Have Passed    ${tc}
 
-
-Check All Keywords Passed
-    [arguments]  ${tc or kw}
-    @{kws} =  Set Variable  ${tc or kw.kws}
-    :FOR  ${kw}  IN  @{kws}
-    \    Should Be Equal  ${kw.status}  PASS
-    \    Check All Keywords Passed  ${kw} 
+All Keywords Should Have Passed
+    [Arguments]    ${tc or kw}
+    @{kws} =    Set Variable    ${tc or kw.kws}
+    :FOR    ${kw}    IN    @{kws}
+    \    Should Be Equal    ${kw.status}    PASS
+    \    All Keywords Should Have Passed    ${kw}
