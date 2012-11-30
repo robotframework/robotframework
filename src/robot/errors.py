@@ -90,7 +90,7 @@ class ExecutionFailed(RobotError):
 
     @property
     def dont_cont(self):
-        return self.timeout or self.syntax or self.exit
+        return self.timeout or self.syntax or self.exit or self.exit_for_loop
 
     cont = property(lambda self: self._cont and not self.dont_cont,
                     lambda self, cont: self._set_cont(cont))

@@ -41,6 +41,12 @@ Custom Java exception with ROBOT_EXIT_FOR_LOOP
     [Tags]    jybot
     Test And All Keywords Should Have Passed
 
+Exit For Loop In Test Teardown
+    Test And All Keywords Should Have Passed
+
+Exit For Loop In Keyword Teardown
+    Test And All Keywords Should Have Passed
+
 *** Keyword ***
 Test And All Keywords Should Have Passed
     ${tc} =    Check Test Case    ${TESTNAME}

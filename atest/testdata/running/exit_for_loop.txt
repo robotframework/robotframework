@@ -60,6 +60,13 @@ Custom Java exception with ROBOT_EXIT_FOR_LOOP
     \    Fail    Should not be executed
     Should BE Equal    ${var}    one
 
+Exit For Loop In Test Teardown
+    No Operation
+    [Teardown]      With Loop
+
+Exit For Loop In Keyword Teardown
+    Exit For Loop In Keyword Teardown
+
 *** Keyword ***
 With Loop
     :FOR    ${var}    IN    one    two
@@ -83,3 +90,7 @@ With Keyword For Loop Calling Keyword With Exit For Loop
     \    With Only Exit For Loop
     \    Fail    Should not be executed
     Should Be Equal    ${var}    one
+
+Exit For Loop In Keyword Teardown
+    No Operation
+    [Teardown]    With Loop
