@@ -26,7 +26,7 @@ Continue in user keyword with several continuable failures
 
 Continuable and regular failure
     ${tc}=  Check Test Case  ${TESTNAME}
-    Should Be Equal As Numbers  ${tc.kws.__len__()}  3
+    Length Should Be  ${tc.kws}  3
 
 Continue in nested user keyword
     ${tc}=  Check Test Case  ${TESTNAME}
@@ -53,7 +53,7 @@ Continue when setting variables
 Continue in test setup
     ${tc}=  Check Test Case  ${TESTNAME}
     Check Log Message  ${tc.setup.kws[1].msgs[0]}  This should be executed in Test Setup
-    Should Be Equal As Numbers  ${tc.kws.__len__()}  0
+    Should Be Empty  ${tc.kws}
 
 Continue in test teardown
     ${tc}=  Check Test Case  ${TESTNAME}
@@ -62,7 +62,7 @@ Continue in test teardown
 Continue many times in test setup and teardown
     ${tc}=  Check Test Case  ${TESTNAME}
     Verify all failures in user keyword  ${tc.setup}  Test Setup
-    Should Be Equal As Numbers  ${tc.kws.__len__()}  0
+    Should Be Empty  ${tc.kws}
     Verify all failures in user keyword  ${tc.teardown}  Test Teardown
 
 Continue in suite teardown
