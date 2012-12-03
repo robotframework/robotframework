@@ -268,6 +268,7 @@ class BaseTestSuite(_TestAndSuiteHelper):
         raise DataError(msg + 'contains no test cases.')
 
     def set_runmode(self, runmode):
+        origmode = runmode
         runmode = runmode.upper()
         if runmode == 'EXITONFAILURE':
             self._run_mode_exit_on_failure = True
@@ -283,6 +284,8 @@ class BaseTestSuite(_TestAndSuiteHelper):
             random.shuffle(self.suites)
             random.shuffle(self.tests)
         else:
+            from robot.output import LOGGER  # avoid recursive import
+            LOGGER.warn("Option '--runmode' does not support value '%s'." % origmode)
             return
         for suite in self.suites:
             suite.set_runmode(runmode)
