@@ -5,7 +5,7 @@ from robot.utils import abspath, normpath, get_link_path
 from robot.utils.asserts import assert_equal, assert_true
 
 
-class TestAbsNormPath(unittest.TestCase):
+class TestAbspath(unittest.TestCase):
 
     def test_abspath(self):
         path = abspath('xxx')
@@ -23,16 +23,15 @@ class TestAbsNormPath(unittest.TestCase):
             os.chdir('..')
             os.rmdir(nonasc)
 
+
+class TestNormpath(unittest.TestCase):
+
     def test_normpath(self):
-        for inp, exp in self._get_normpath_inputs():
+        inputs = self._posix_inputs if os.sep == '/' else self._windows_inputs
+        for inp, exp in inputs():
             assert_equal(normpath(inp), exp, inp)
 
-    def _get_normpath_inputs(self):
-        if os.sep == '/':
-            return self._get_normpath_inputs_for_posix()
-        return self._get_normpath_inputs_for_windows()
-
-    def _get_normpath_inputs_for_posix(self):
+    def _posix_inputs(self):
         return [('/tmp/', '/tmp'),
                 ('/tmp', '/tmp'),
                 ('/tmp/foo/..', '/tmp'),
@@ -42,7 +41,7 @@ class TestAbsNormPath(unittest.TestCase):
                 ('/non/Existing/..', '/non'),
                 ('/', '/')]
 
-    def _get_normpath_inputs_for_windows(self):
+    def _windows_inputs(self):
         inputs = [('c:\\temp', 'c:\\temp'),
                   ('C:\\TEMP\\', 'c:\\temp'),
                   ('c:\\Temp\\foo\..', 'c:\\temp'),
