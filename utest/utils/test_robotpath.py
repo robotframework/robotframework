@@ -23,6 +23,21 @@ class TestAbspath(unittest.TestCase):
             os.chdir('..')
             os.rmdir(nonasc)
 
+    if os.sep != '/':
+        unc_path = r'\\server\D$\dir\.\f1\..\\f2'
+        unc_exp = r'\\server\D$\dir\f2'
+
+        def test_unc_path(self):
+            assert_equal(abspath(self.unc_path), self.unc_exp)
+
+        def test_unc_path_when_chdir_is_root(self):
+            orig = abspath('.')
+            os.chdir('\\')
+            try:
+                assert_equal(abspath(self.unc_path), self.unc_exp)
+            finally:
+                os.chdir(orig)
+
 
 class TestNormpath(unittest.TestCase):
 

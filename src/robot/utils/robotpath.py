@@ -51,7 +51,9 @@ def abspath(path):
         path = decode_from_system(path)
     if os.sep == '\\' and len(path) == 2 and path[1] == ':':
         return path + '\\'
-    return os.path.normpath(os.path.join(os.getcwdu(), path))
+    if not os.path.isabs(path):
+        path = os.path.join(os.getcwdu(), path)
+    return os.path.normpath(path)
 
 
 def get_link_path(target, base):
