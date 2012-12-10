@@ -18,6 +18,7 @@ import time
 import re
 import inspect
 
+from robot.api import logger
 from robot.version import get_version
 from robot import utils
 
@@ -119,8 +120,8 @@ class Telnet:
             newline = self._newline
         if prompt is None:
             prompt, prompt_is_regexp = self._prompt
-        print '*INFO* Opening connection to %s:%s with prompt: %s' \
-                % (host, port, self._prompt)
+        logger.info('Opening connection to %s:%s with prompt: %s'
+                    % (host, port, self._prompt))
         self._conn = self._get_connection(host, port, timeout, newline,
                                           prompt, prompt_is_regexp)
         return self._cache.register(self._conn, alias)
@@ -488,28 +489,19 @@ class TelnetConnection(telnetlib.Telnet):
         INFO. The old value is returned and can be used to restore it later,
         similarly as with `Set Timeout`.
         """
-        self._is_valid_log_level(level, raise_if_invalid=True)
+        if not self._is_valid_log_level(level):
+            raise AssertionError("Invalid log level '%s'" % level)
         old = self._default_log_level
         self._default_log_level = level.upper()
         return old
 
     def _log(self, msg, level=None):
-        self._is_valid_log_level(level, raise_if_invalid=True)
         msg = msg.strip()
-        if level is None:
-            level = self._default_log_level
-        if msg != '':
-            print '*%s* %s' % (level.upper(), msg)
+        if msg:
+            logger.write(msg, level or self._default_log_level)
 
-    def _is_valid_log_level(self, level, raise_if_invalid=False):
-        if level is None:
-            return True
-        if isinstance(level, basestring) and \
-                level.upper() in ['TRACE', 'DEBUG', 'INFO', 'WARN']:
-            return True
-        if not raise_if_invalid:
-            return False
-        raise AssertionError("Invalid log level '%s'" % level)
+    def _is_valid_log_level(self, level):
+        return level.upper() in ('TRACE', 'DEBUG', 'INFO', 'WARN')
 
     def _negotiate_echo_on(self, sock, cmd, opt):
         # This is supposed to turn server side echoing on and turn other options off.
