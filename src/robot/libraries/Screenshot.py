@@ -27,7 +27,6 @@ elif sys.platform == 'cli':
 else:
     try:
         import wx
-        _wx_app_reference = wx.PySimpleApp()
     except ImportError:
         wx = None
     try:
@@ -268,6 +267,7 @@ class ScreenshotTaker(object):
     def __init__(self, module_name=None):
         self._screenshot = self._get_screenshot_taker(module_name)
         self.module = self._screenshot.__name__.split('_')[1]
+        self._wx_app_reference = None
 
     def __call__(self, path):
         self._screenshot(path)
@@ -308,6 +308,8 @@ class ScreenshotTaker(object):
             bmp.Save(path, Imaging.ImageFormat.Jpeg)
 
     def _wx_screenshot(self, path):
+        if not self._wx_app_reference:
+            self._wx_app_reference = wx.PySimpleApp()
         context = wx.ScreenDC()
         width, height = context.GetSize()
         bitmap = wx.EmptyBitmap(width, height, -1)
