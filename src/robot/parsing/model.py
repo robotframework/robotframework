@@ -21,10 +21,10 @@ from robot.output import LOGGER
 from robot import utils
 from robot.writer import DataFileWriter
 
-from settings import (Documentation, Fixture, Timeout, Tags, Metadata,
-    Library, Resource, Variables, Arguments, Return, Template, Comment,
-    MetadataList, ImportList)
-from populators import FromFilePopulator, FromDirectoryPopulator
+from .comments import Comment
+from .populators import FromFilePopulator, FromDirectoryPopulator
+from .settings import (Documentation, Fixture, Timeout, Tags, Metadata, Library,
+    Resource, Variables, Arguments, Return, Template, MetadataList, ImportList)
 
 
 def TestData(parent=None, source=None, include_suites=[],

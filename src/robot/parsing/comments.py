@@ -38,3 +38,22 @@ class Comments(object):
     @property
     def value(self):
         return self._comments
+
+
+class Comment(object):
+
+    def __init__(self, comment_data):
+        if isinstance(comment_data, basestring):
+            comment_data = [comment_data] if comment_data else []
+        self._comment = comment_data or []
+
+    def __len__(self):
+        return len(self._comment)
+
+    def as_list(self):
+        if self._has_comment():
+            self._comment[0] = '# ' + self._comment[0]
+        return self._comment
+
+    def _has_comment(self):
+        return self._comment and self._comment[0] and self._comment[0][0] != '#'
