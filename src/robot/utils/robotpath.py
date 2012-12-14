@@ -64,12 +64,13 @@ def get_link_path(target, base):
 
     Rationale: os.path.relpath is not available before Python 2.6
     """
-    pathname =  _get_pathname(target, base)
-    url = urllib.pathname2url(pathname.encode('UTF-8'))
-    if os.path.isabs(pathname):
-        pre = url.startswith('/') and 'file:' or 'file:///'
-        url = pre + url
-    # Want consistent url on all platforms/interpreters
+    path =  _get_pathname(target, base)
+    url = urllib.pathname2url(path.encode('UTF-8'))
+    if os.path.isabs(path):
+        url = 'file:' + url
+    # At least Jython seems to use 'C|/Path' and not 'C:/Path'
+    if os.sep == '\\' and '|/' in url:
+        url = url.replace('|/', ':/', 1)
     return url.replace('%5C', '/').replace('%3A', ':').replace('|', ':')
 
 def _get_pathname(target, base):

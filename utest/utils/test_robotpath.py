@@ -76,22 +76,19 @@ class TestNormpath(unittest.TestCase):
 class TestGetLinkPath(unittest.TestCase):
 
     def test_get_link_path(self):
-        for basedir, target, expected in self._get_link_path_inputs():
+        inputs = self._posix_inputs if os.sep == '/' else self._windows_inputs
+        for basedir, target, expected in inputs():
             assert_equal(get_link_path(target, basedir).replace('R:', 'r:'),
                          expected, '%s -> %s' % (target, basedir))
 
     def test_get_link_path_to_non_existing_path(self):
-        assert_equal(get_link_path('/non_existing/foo.txt', '/non_existing/does_not_exist_never.txt'), '../foo.txt')
+        assert_equal(get_link_path('/non-ex/foo.txt', '/non-ex/nothing_here.txt'),
+                     '../foo.txt')
 
-    def test_get_link_path_with_unicode(self):
+    def test_get_non_ascii_link_path(self):
         assert_equal(get_link_path(u'\xe4\xf6.txt', ''), '%C3%A4%C3%B6.txt')
 
-    def _get_link_path_inputs(self):
-        if os.sep == '/':
-            return self._get_link_path_inputs_for_posix()
-        return self._get_link_path_inputs_for_windows()
-
-    def _get_link_path_inputs_for_posix(self):
+    def _posix_inputs(self):
         return [('/tmp/', '/tmp/bar.txt', 'bar.txt'),
                 ('/tmp', '/tmp/x/bar.txt', 'x/bar.txt'),
                 ('/tmp/', '/tmp/x/y/bar.txt', 'x/y/bar.txt'),
@@ -115,7 +112,7 @@ class TestGetLinkPath(unittest.TestCase):
                  '../path/to/existing/file'),
                 ('/path/to/identity', '/path/to/identity', 'identity')]
 
-    def _get_link_path_inputs_for_windows(self):
+    def _windows_inputs(self):
         return [('c:\\temp\\', 'c:\\temp\\bar.txt', 'bar.txt'),
                 ('c:\\temp', 'c:\\temp\\x\\bar.txt', 'x/bar.txt'),
                 ('c:\\temp\\', 'c:\\temp\\x\\y\\bar.txt', 'x/y/bar.txt'),
@@ -140,3 +137,7 @@ class TestGetLinkPath(unittest.TestCase):
                  'c:\\windows\\path\\to\\existing\\file',
                  'path/to/existing/file'),
                 ('c:\\path\\2\\identity', 'c:\\path\\2\\identity', 'identity')]
+
+
+if __name__ == '__main__':
+    unittest.main()
