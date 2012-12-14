@@ -22,8 +22,8 @@ None
     No Operation
 Comments
     [Documentation]    First line    # First comment
-    ...    Middle line               # Middle comment
-    ...    Last line    # Last comment
+    ...    Middle line               #Middle comment
+    ...    Last line    ###Last comment###
 
 *** Keywords ***
 Keyword doc

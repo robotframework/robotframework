@@ -381,10 +381,10 @@ class TestCaseTablePopulatingTest(_PopulatorTest):
         test = self._first_test()
         assert_equals(test.name, '')
         assert_equals(test.doc.value, "What's up doc?")
-        assert_equals(test.steps[0].comment.as_list(), ['# comment'])
+        assert_equals(test.steps[0].comment.as_list(), ['#comment'])
 
     def test_unnamed_test_and_line_continuation(self):
-        self._create_table('test cases', [['', '...', 'foo', '#comment']])
+        self._create_table('test cases', [['', '...', 'foo', '# comment']])
         assert_equals(self._first_test().name, '')
         assert_equals(self._first_test().steps[0].keyword, 'foo')
         assert_equals(self._first_test().steps[0].comment.as_list(), ['# comment'])
@@ -513,30 +513,30 @@ class TestPopulatingComments(_PopulatorTest):
 
     def test_setting_table(self):
         self._create_table('settings', [['Force Tags', 'Foo', 'Bar', '#comment'],
-                                        ['Library', 'Foo', '#Lib comment'],
+                                        ['Library', 'Foo', '# Lib comment'],
                                         [' #Resource', 'resource.txt'],
                                         ['Resource', 'resource2.txt'],
-                                        ['#comment', 'between rows', 'in many cells'],
-                                        ['Default Tags', 'Quux', '#also end of line'],
+                                        ['# comment', 'between rows', 'in many cells'],
+                                        ['Default Tags', 'Quux', '# also eol'],
                                         ['Variables', 'varz.py'],
                                         ['# between values'],
                                         ['...', 'arg'],
                                         ['Meta: metaname', 'metavalue'],
-                                        ['#last line is commented'],
+                                        ['### last line is commented'],
                                         ])
         self._assert_no_parsing_errors()
-        self._assert_setting('force_tags', ['Foo', 'Bar'], ['# comment'])
+        self._assert_setting('force_tags', ['Foo', 'Bar'], ['#comment'])
         self._assert_import(0, 'Foo', [], ['# Lib comment'])
-        self._assert_import(1, 'resource2.txt', [], ['# Resource', 'resource.txt'])
-        self._assert_setting('default_tags', ['Quux'], ['# comment', 'between rows', 'in many cells', 'also end of line'])
+        self._assert_import(1, 'resource2.txt', [], ['#Resource', 'resource.txt'])
+        self._assert_setting('default_tags', ['Quux'], ['# comment', 'between rows', 'in many cells', '# also eol'])
         self._assert_import(2, 'varz.py', ['arg'], ['# between values'])
-        self._assert_meta(0, 'metaname', 'metavalue', ['# last line is commented'])
+        self._assert_meta(0, 'metaname', 'metavalue', ['### last line is commented'])
 
     def test_variable_table(self):
         self._create_table('variables', [['# before'],
-                                         ['${varname}', 'varvalue', '#has comment'],
+                                         ['${varname}', 'varvalue', '# has comment'],
                                          ['${name}', '# no value'],
-                                         ['#middle', 'A', 'B', 'C'],
+                                         ['# middle', 'A', 'B', 'C'],
                                          ['@{items}', '1', '2', '3'],
                                          ['# s1'],
                                          ['', '# s2', ''],
@@ -546,7 +546,7 @@ class TestPopulatingComments(_PopulatorTest):
                                          ['...', 'V1', '# c3'],
                                          ['# c4'],
                                          ['...', 'V2', '# c5'],
-                                         ['#EOT']])
+                                         ['###EOT###']])
         self._assert_no_parsing_errors()
         self._assert_variable(0, '', [], ['# before'])
         self._assert_variable(1, '${varname}', ['varvalue'], ['# has comment'])
@@ -556,13 +556,13 @@ class TestPopulatingComments(_PopulatorTest):
         self._assert_variable(5, '', [], ['# s1'])
         self._assert_variable(6, '', [], ['# s2'])
         self._assert_variable(7, '', [], ['# s3'])
-        self._assert_variable(8, '@{X}', ['V1', 'V2'], ['# c1', 'c2', 'c3', 'c4', 'c5'])
-        self._assert_variable(9, '', [], ['# EOT'])
+        self._assert_variable(8, '@{X}', ['V1', 'V2'], ['# c1', '# c2', '# c3', '# c4', '# c5'])
+        self._assert_variable(9, '', [], ['###EOT###'])
 
     def test_test_case_table(self):
-        self._create_table('test cases', [['#start of table comment'],
+        self._create_table('test cases', [['# start of table comment'],
                                           ['Test case'],
-                                          ['', 'No operation', '#step comment'],
+                                          ['', 'No operation', '# step comment'],
                                           ['', '', '#This step has', 'only comment'],
                                           ['Another test', '#comment in name row'],
                                           ['', 'Log many', 'argh'],
@@ -571,19 +571,19 @@ class TestPopulatingComments(_PopulatorTest):
                                           ['Test with for loop'],
                                           ['',':FOR', 'v*ttuperkele'],
                                           ['#commented out in for loop'],
-                                          ['','', 'Fooness in the bar', '#end commtne'],
+                                          ['','', 'Fooness in the bar', '###end commtne'],
                                           ['','# ', '   Barness  '],
                                           ['', 'Lodi']
                                           ])
         self._assert_comment(self._first_test().steps[0], ['# start of table comment'])
         self._assert_comment(self._first_test().steps[1], ['# step comment'])
-        self._assert_comment(self._first_test().steps[2], ['# This step has', 'only comment'])
-        self._assert_comment(self._nth_test(2).steps[0], ['# comment in name row'])
-        self._assert_comment(self._nth_test(2).steps[1], ['# Comment between step def'])
+        self._assert_comment(self._first_test().steps[2], ['#This step has', 'only comment'])
+        self._assert_comment(self._nth_test(2).steps[0], ['#comment in name row'])
+        self._assert_comment(self._nth_test(2).steps[1], ['#', 'Comment between step def'])
         assert_equals(self._nth_test(2).steps[1].args, ['argh', 'urgh'])
-        self._assert_comment(self._nth_test(3).steps[0].steps[0], ['# commented out in for loop'])
-        self._assert_comment(self._nth_test(3).steps[0].steps[1], ['# end commtne'])
-        self._assert_comment(self._nth_test(3).steps[1], ['# Barness'])
+        self._assert_comment(self._nth_test(3).steps[0].steps[0], ['#commented out in for loop'])
+        self._assert_comment(self._nth_test(3).steps[0].steps[1], ['###end commtne'])
+        self._assert_comment(self._nth_test(3).steps[1], ['#', 'Barness'])
         self._number_of_steps_should_be(self._nth_test(3), 3)
 
     def _assert_comment(self, step, expected_comment):

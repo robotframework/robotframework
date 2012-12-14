@@ -28,7 +28,7 @@ None
     No Operation
 
 Comments
-    [Documentation]    First line    # First comment    Middle comment    Last comment
+    [Documentation]    First line    # First comment    #Middle comment    ###Last comment###
     ...    Middle line
     ...    Last line
 

@@ -22,7 +22,7 @@ Empty
 							
 None	No Operation						
 							
-Comments	[Documentation]	First line	# First comment	Middle comment	Last comment		
+Comments	[Documentation]	First line	# First comment	#Middle comment	###Last comment###		
 	...	Middle line					
 	...	Last line					
 							

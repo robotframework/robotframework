@@ -80,7 +80,7 @@ class RowSplitter(object):
 
     def _add_line_continuation(self, data):
         if data:
-            if self._in_comment:
+            if self._in_comment and not data[0].startswith(self._comment_mark):
                 data[0] = self._comment_mark + data[0]
             data = [self._line_continuation] + data
         return data

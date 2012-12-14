@@ -51,9 +51,9 @@ class Comment(object):
         return len(self._comment)
 
     def as_list(self):
-        if self._has_comment():
+        if self._not_commented():
             self._comment[0] = '# ' + self._comment[0]
         return self._comment
 
-    def _has_comment(self):
+    def _not_commented(self):
         return self._comment and self._comment[0] and self._comment[0][0] != '#'
