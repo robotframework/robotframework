@@ -645,12 +645,11 @@ class Step(object):
 
     def as_list(self, indent=False, include_comment=True):
         kw = [self.keyword] if self.keyword is not None else []
-        ret = self.assign + kw + self.args
+        comments = self.comment.as_list() if include_comment else []
+        data = self.assign + kw + self.args + comments
         if indent:
-            ret.insert(0, '')
-        if include_comment and self.comment:
-            ret += self.comment.as_list()
-        return ret
+            data.insert(0, '')
+        return data
 
 
 class OldStyleSettingAndVariableTableHeaderMatcher(object):
