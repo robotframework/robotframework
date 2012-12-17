@@ -1,6 +1,5 @@
 *** Settings ***
 Force Tags        pybot    jybot   regression
-Library           OperatingSystem
 Resource          tidy_resource.txt
 Test Setup        Create Directory     ${TEMP}
 Test Teardown     Remove Directory     ${TEMP}    recursive=True
@@ -36,28 +35,6 @@ Default format is got from output file
     Run tidy    ${EMPTY}    ${DATA}/golden.txt    ${TEMP}/golden.html
     Compare tidy results    ${TEMP}/golden.html    ${DATA}/golden.html
 
-Tidying single file in place
-    [Setup]    Copy File    ${DATA}/golden.txt    ${TEMP}/golden.txt
-    Run tidy    --inplace --usepipes    ${TEMP}/golden.txt
-    Compare tidy results    ${TEMP}/golden.txt    ${DATA}/golden_pipes.txt
-    Check file count    ${TEMP}    *.txt    1
-
-Tidying single file in place and change format
-    [Setup]    Copy File    ${DATA}/golden.txt    ${TEMP}/golden.txt
-    Run tidy    -i -f html    ${TEMP}/golden.txt
-    Compare tidy results    ${TEMP}/golden.html    ${DATA}/golden.html
-    Check file count    ${TEMP}    *.html    1
-    Check file count    ${TEMP}    *.txt    0
-
-Tidying many files in place
-    [Setup]    Copy Golden Files
-    List Directory      ${TEMP}
-    Run tidy    --InPlace --ForMat HtmL   ${TEMP}/golden*
-    List Directory      ${TEMP}
-    Check file count    ${TEMP}    *.html    2
-    Check file count    ${TEMP}    *.txt    0
-    Check file count    ${TEMP}    *.tsv    0
-
 Tidying directory
     [Setup]    Copy Directory    ${DATA}/tests    ${TEMP}/tests
     ${output_before}=    Run Robot Directly    ${DATA}/tests
@@ -79,10 +56,6 @@ Running Tidy as a script
 
 
 *** Keywords ***
-Copy Golden Files
-    Copy File    ${DATA}/golden_pipes.txt    ${TEMP}/
-    Copy File    ${DATA}/golden.tsv    ${TEMP}/
-
 Files Should Have $CURDIR
     [Arguments]    ${directory}
     @{paths} =    List Files In Directory    ${directory}    absolute=True
