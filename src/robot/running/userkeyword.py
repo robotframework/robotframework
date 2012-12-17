@@ -25,7 +25,7 @@ from .keywords import Keywords
 from .fixture import Teardown, KeywordTeardownListener
 from .timeouts import KeywordTimeout
 from .arguments import UserKeywordArguments
-from .runerrors import  KeywordRunErrors
+from .runerrors import KeywordRunErrors
 
 
 class UserLibrary(BaseLibrary):
