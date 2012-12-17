@@ -569,8 +569,10 @@ class TestPopulatingComments(_PopulatorTest):
                                           ['#', 'Comment between step def'],
                                           ['', '...', 'urgh'],
                                           ['Test with for loop'],
-                                          ['',':FOR', 'v*ttuperkele'],
+                                          ['',':FOR', '${i}', 'IN', '1', '# FOR comment'],
+                                          ['','...', '2', '3', '##continues', 'here'],
                                           ['#commented out in for loop'],
+                                          ['', '#commented out in for loop, again'],
                                           ['','', 'Fooness in the bar', '###end commtne'],
                                           ['','# ', '   Barness  '],
                                           ['', 'Lodi']
@@ -581,8 +583,10 @@ class TestPopulatingComments(_PopulatorTest):
         self._assert_comment(self._nth_test(2).steps[0], ['#comment in name row'])
         self._assert_comment(self._nth_test(2).steps[1], ['#', 'Comment between step def'])
         assert_equals(self._nth_test(2).steps[1].args, ['argh', 'urgh'])
+        self._assert_comment(self._nth_test(3).steps[0], ['# FOR comment', '##continues', 'here'])
         self._assert_comment(self._nth_test(3).steps[0].steps[0], ['#commented out in for loop'])
-        self._assert_comment(self._nth_test(3).steps[0].steps[1], ['###end commtne'])
+        self._assert_comment(self._nth_test(3).steps[0].steps[1], ['#commented out in for loop, again'])
+        self._assert_comment(self._nth_test(3).steps[0].steps[2], ['###end commtne'])
         self._assert_comment(self._nth_test(3).steps[1], ['#', 'Barness'])
         self._number_of_steps_should_be(self._nth_test(3), 3)
 

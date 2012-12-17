@@ -142,6 +142,7 @@ class ForLoopPopulator(Populator):
         self._loop = None
         self._populator = NullPopulator()
         self._declaration = []
+        self._declaration_comments = []
 
     def add(self, row):
         dedented_row = row.dedent()
@@ -149,7 +150,7 @@ class ForLoopPopulator(Populator):
             declaration_ready = self._populate_declaration(row)
             if not declaration_ready:
                 return
-            self._loop = self._for_loop_creator(self._declaration)
+            self._create_for_loop()
         if not row.is_continuing():
             self._populator.populate()
             self._populator = StepPopulator(self._loop.add_step)
@@ -158,12 +159,17 @@ class ForLoopPopulator(Populator):
     def _populate_declaration(self, row):
         if row.starts_for_loop() or row.is_continuing():
             self._declaration.extend(row.dedent().data)
+            self._declaration_comments.extend(row.comments)
             return False
         return True
 
+    def _create_for_loop(self):
+        self._loop = self._for_loop_creator(self._declaration,
+                                            self._declaration_comments)
+
     def populate(self):
         if not self._loop:
-            self._for_loop_creator(self._declaration)
+            self._create_for_loop()
         self._populator.populate()
 
 

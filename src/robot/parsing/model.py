@@ -522,8 +522,8 @@ class TestCase(_WithSteps, _WithSettings):
     def directory(self):
         return self.parent.directory
 
-    def add_for_loop(self, data):
-        self.steps.append(ForLoop(data))
+    def add_for_loop(self, declaration, comment=None):
+        self.steps.append(ForLoop(declaration, comment))
         return self.steps[-1]
 
     def report_invalid_syntax(self, message, level='ERROR'):
@@ -580,18 +580,19 @@ class UserKeyword(TestCase):
 
 class ForLoop(_WithSteps):
 
-    def __init__(self, content):
-        self.range, index = self._get_range_and_index(content)
-        self.vars = content[:index]
-        self.items = content[index+1:]
+    def __init__(self, declaration, comment=None):
+        self.range, index = self._get_range_and_index(declaration)
+        self.vars = declaration[:index]
+        self.items = declaration[index+1:]
+        self.comment = Comment(comment)
         self.steps = []
 
-    def _get_range_and_index(self, content):
-        for index, item in enumerate(content):
+    def _get_range_and_index(self, declaration):
+        for index, item in enumerate(declaration):
             item = item.upper().replace(' ', '')
             if item in ['IN', 'INRANGE']:
                 return item == 'INRANGE', index
-        return False, len(content)
+        return False, len(declaration)
 
     def is_comment(self):
         return False
@@ -602,8 +603,10 @@ class ForLoop(_WithSteps):
     def apply_template(self, template):
         return self
 
-    def as_list(self, indent=False, include_comment=False):
-        return [': FOR'] + self.vars + ['IN RANGE' if self.range else 'IN'] + self.items
+    def as_list(self, indent=False, include_comment=True):
+        IN = ['IN RANGE' if self.range else 'IN']
+        comments = self.comment.as_list() if include_comment else []
+        return  [': FOR'] + self.vars + IN + self.items + comments
 
     def __iter__(self):
         return iter(self.steps)
