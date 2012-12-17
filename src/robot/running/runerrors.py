@@ -169,16 +169,5 @@ class KeywordRunErrors(object):
     def __init__(self):
         self.teardown_error = None
 
-    def get_message(self):
-        if not self._teardown_err:
-            return self._kw_err
-        if not self._kw_err:
-            return 'Keyword teardown failed:\n%s' % self._teardown_err
-        return '%s\n\nAlso keyword teardown failed:\n%s' % (self._kw_err,
-                                                            self._teardown_err)
-
-
-
     def teardown_err(self, err):
         self.teardown_error = err
-
