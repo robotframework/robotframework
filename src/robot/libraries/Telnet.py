@@ -408,7 +408,7 @@ class TelnetConnection(telnetlib.Telnet):
             loglevel = expected[-1]
             expected = expected[:-1]
         else:
-            loglevel = 'INFO'
+            loglevel = None
         try:
             index, _, ret = self.expect(expected, self._timeout)
         except TypeError:
@@ -501,7 +501,7 @@ class TelnetConnection(telnetlib.Telnet):
             logger.write(msg, level or self._default_log_level)
 
     def _is_valid_log_level(self, level):
-        return level.upper() in ('TRACE', 'DEBUG', 'INFO', 'WARN')
+        return level is None or level.upper() in ('TRACE', 'DEBUG', 'INFO', 'WARN')
 
     def _negotiate_echo_on(self, sock, cmd, opt):
         # This is supposed to turn server side echoing on and turn other options off.
