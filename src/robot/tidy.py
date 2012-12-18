@@ -200,8 +200,8 @@ class TidyCommandLine(Application):
                 return None
             format = os.path.splitext(args[1])[1][1:]
         format = format.upper()
-        if format not in ['TXT', 'TSV', 'HTML']:
-            raise DataError("Invalid format: '%s'." % format)
+        if format not in ('TXT', 'TSV', 'HTML'):
+            raise DataError("Invalid format '%s'." % format)
         return format
 
     def _validate_spacecount(self, spacecount):
