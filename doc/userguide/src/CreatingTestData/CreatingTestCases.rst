@@ -454,9 +454,9 @@ approaches can naturally be used together.
    All executed test cases get tags set with this option in addition
    to tags they got elsewhere.
 
-`Set Tags`:name: and `Remove Tags`:name: keywords
-   These `BuiltIn keywords`_ can be used to modify tags during the
-   test execution.
+`Set Tags`:name:, `Remove Tags`:name: and `Fail`:name: keywords
+   These `BuiltIn keywords`_ can be used to manipulate tags dynamically
+   during the test execution.
 
 Tags are free text, but they are normalized so that they are converted
 to lowercase and all spaces are removed. If a test case gets the same tag
