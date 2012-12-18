@@ -47,6 +47,12 @@ Options
  -s --spacecount number
                  The number of spaces between cells in the txt format.
                  New in Robot Framework 2.7.3.
+ -l --lineseparator native|windows|unix
+                 Line separator to use in outputs. The default is 'native'.
+                 native:  use operating system's native line separators
+                 windows: use Windows line separators (CRLF)
+                 unix:    use Unix line separators (LF)
+                 New in Robot Framework 2.7.6.
  -h -? --help    Show this help.
 
 Cleaning up the test data
@@ -108,7 +114,7 @@ class Tidy(object):
 
     def file(self, path, output=None):
         data = self._parse_data(path)
-        outfile = open(output, 'w') if output else StringIO()
+        outfile = open(output, 'wb') if output else StringIO()
         try:
             self._save_file(data, outfile)
             if not output:
@@ -165,9 +171,10 @@ class TidyCommandLine(Application):
         Application.__init__(self, USAGE, arg_limits=(1,))
 
     def main(self, arguments, recursive=False, inplace=False, format='txt',
-             usepipes=False, spacecount=4):
+             usepipes=False, spacecount=4, lineseparator=os.linesep):
         tidy = Tidy(format=format, pipe_separated=usepipes,
-                    txt_separating_spaces=spacecount)
+                    txt_separating_spaces=spacecount,
+                    line_separator=lineseparator)
         if recursive:
             tidy.directory(arguments[0])
         elif inplace:
@@ -180,6 +187,7 @@ class TidyCommandLine(Application):
     def validate(self, opts, args):
         self._validate_mode_and_arguments(args, **opts)
         opts['format'] = self._validate_format(args, **opts)
+        opts['lineseparator'] = self._validate_line_sep(**opts)
         if not opts['spacecount']:
             opts.pop('spacecount')
         else:
@@ -203,6 +211,15 @@ class TidyCommandLine(Application):
         if format not in ('TXT', 'TSV', 'HTML'):
             raise DataError("Invalid format '%s'." % format)
         return format
+
+    def _validate_line_sep(self, lineseparator, **others):
+        if not lineseparator:
+            return os.linesep
+        values = {'native': os.linesep, 'windows': '\r\n', 'unix': '\n'}
+        try:
+            return values[lineseparator.lower()]
+        except KeyError:
+            raise DataError("Invalid line separator '%s'." % lineseparator)
 
     def _validate_spacecount(self, spacecount):
         try:

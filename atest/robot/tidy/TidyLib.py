@@ -79,5 +79,15 @@ class TidyLib(object):
         return abspath(join(DATA_DIR, path.replace('/', os.sep)))
 
     def _read(self, path):
-        with open(self._path(path)) as f:
+        with open(self._path(path), 'rb') as f:
             return f.read().decode('UTF-8')
+
+    def output_should_have_correct_line_separators(self, expected, path=TEMP_FILE):
+        content = self._read(path)
+        expected = str(expected)
+        if expected not in content:
+            raise AssertionError('Output did not contain %r' % expected)
+        if expected == '\n' and '\r' in content:
+            raise AssertionError('Output contains \\r')
+        if '\r\r' in content:
+            raise AssertionError('Output contains \\r\\r')

@@ -50,6 +50,14 @@ Options
  -s, --spacecount <number>
                   The number of spaces between cells in the txt format.
                   New in Robot Framework 2.7.3.
+ -l, --lineseparator <native|windows|unix>
+                  Line separator to use in outputs. The default is 'native'.
+
+                  - *native*: use operating system's native line separators
+                  - *windows*: use Windows line separators (CRLF)
+                  - *unix*: use Unix line separators (LF)
+
+                  New in Robot Framework 2.7.6.
  -h, --help       Show this help.
 
 Alternative execution

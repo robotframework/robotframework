@@ -1,8 +1,9 @@
 import unittest
+import os
 
 from robot.errors import DataError
 from robot.tidy import TidyCommandLine
-from robot.utils.asserts import assert_raises_with_msg
+from robot.utils.asserts import assert_raises_with_msg, assert_equals
 
 
 class TestArgumentValidation(unittest.TestCase):
@@ -49,15 +50,26 @@ class TestArgumentValidation(unittest.TestCase):
         self._validate(recursive=True,
                        error='--recursive requires exactly one directory as argument.')
 
+    def test_line_separator(self):
+        for input, expected in [(None, os.linesep), ('Native', os.linesep),
+                                ('windows', '\r\n'), ('UNIX', '\n')]:
+            opts, _ =  self._validate(lineseparator=input)
+            assert_equals(opts['lineseparator'], expected)
+
+    def test_invalid_line_separator(self):
+        self._validate(lineseparator='invalid',
+                       error="Invalid line separator 'invalid'.")
+
     def _validate(self, inplace=False, recursive=False, format=None,
-                  spacecount=None, args=['a_file.txt'], error=None):
-        opts = {'inplace': inplace, 'recursive': recursive,
-                'format': format, 'spacecount': spacecount}
+                  spacecount=None, lineseparator=None, args=['a_file.txt'],
+                  error=None):
+        opts = {'inplace': inplace, 'recursive': recursive, 'format': format,
+                'spacecount': spacecount, 'lineseparator': lineseparator}
         validate = lambda: TidyCommandLine().validate(opts, args)
         if error:
             assert_raises_with_msg(DataError, error, validate)
         else:
-            validate()
+            return validate()
 
 
 if __name__ == '__main__':

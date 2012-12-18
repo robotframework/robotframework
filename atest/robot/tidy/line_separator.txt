@@ -1,0 +1,34 @@
+*** Settings ***
+Force Tags        pybot    jybot   regression
+Resource          tidy_resource.txt
+Test Setup        Create Directory     ${TEMP}
+Test Teardown     Remove Directory     ${TEMP}    recursive=True
+Test Template     Output should be correct and have correct line separators
+
+
+*** Test Cases ***
+Default
+    ${EMPTY}                    golden.txt     ${\n}
+    -f tsv                      golden.tsv     ${\n}
+    --format html               golden.html    ${\n}
+
+Native
+    --lineseparator native      golden.txt     ${\n}
+    --LineSep Native -f tsv     golden.tsv     ${\n}
+    -l NATIVE --format html     golden.html    ${\n}
+
+Windows
+    --lineseparator windows     golden.txt     \r\n
+    --LineSep Windows -f tsv    golden.tsv     \r\n
+    -l WINDOWS --format html    golden.html    \r\n
+
+Unix
+    --lineseparator unix        golden.txt     \n
+    --LineSep Unix -f tsv       golden.tsv     \n
+    -l UNIX --format html       golden.html    \n
+
+*** Keywords ***
+Output should be correct and have correct line separators
+    [Arguments]    ${options}    ${expected file}    ${expected separator}
+    Run tidy with golden file and check result    ${options}    ${expected file}
+    Output should have correct line separators    ${expected separator}
