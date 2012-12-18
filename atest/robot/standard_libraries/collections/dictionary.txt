@@ -19,8 +19,10 @@ Set To Dictionary With wrong number of arguments
     Check Test Case  ${TEST NAME}
 
 Remove From Dictionary
-    ${test case} =  Check Test Case  ${TEST NAME}
-    Check Log Message  ${test case.kws[0].msgs[0]}  Removed item with key 'b' and value '2'\n Key 'x' not found\n Key '2' not found
+    ${tc} =  Check Test Case  ${TEST NAME}
+    Check Log Message  ${tc.kws[0].msgs[0]}  Removed item with key 'b' and value '2'
+    Check Log Message  ${tc.kws[0].msgs[1]}  Key 'x' not found
+    Check Log Message  ${tc.kws[0].msgs[2]}  Key '2' not found
 
 Keep In Dictionary
     Check Test Case  ${TEST NAME}

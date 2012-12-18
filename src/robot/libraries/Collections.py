@@ -12,9 +12,10 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from robot.version import get_version
+from robot.api import logger
 from robot.utils import plural_or_not, seq2str, seq2str2, unic
 from robot.utils.asserts import assert_equals
+from robot.version import get_version
 
 
 class _List:
@@ -150,7 +151,7 @@ class _List:
             if item not in ret:
                 ret.append(item)
         removed = len(list_) - len(ret)
-        print '%d duplicate%s removed.' % (removed, plural_or_not(removed))
+        logger.info('%d duplicate%s removed.' % (removed, plural_or_not(removed)))
         return ret
 
     def get_from_list(self, list_, index):
@@ -314,12 +315,10 @@ class _List:
             if item not in dupes:
                 count = list_.count(item)
                 if count > 1:
-                    print "*INFO* '%s' found %d times" % (item, count)
+                    logger.info("'%s' found %d times" % (item, count))
                     dupes.append(item)
         if dupes:
-            if not msg:
-                msg = '%s found multiple times' % seq2str(dupes)
-            raise AssertionError(msg)
+            raise AssertionError(msg or '%s found multiple times' % seq2str(dupes))
 
     def lists_should_be_equal(self, list1, list2, msg=None, values=True,
                               names=None):
@@ -399,16 +398,17 @@ class _List:
         If you only want to the length, use keyword `Get Length` from
         the BuiltIn library.
         """
-        print '*%s* ' % level.upper(),
-        if len(list_) == 0:
-            print 'List is empty'
+        logger.write('\n'.join(self._log_list(list_)), level)
+
+    def _log_list(self, list_):
+        if not list_:
+            yield 'List is empty'
         elif len(list_) == 1:
-            print 'List has one item:\n%s' % list_[0]
+            yield 'List has one item:\n%s' % list_[0]
         else:
-            print 'List length is %d and it contains following items:' \
-                % len(list_)
+            yield 'List length is %d and it contains following items:' % len(list_)
             for index, item in enumerate(list_):
-                print '%s: %s' % (index, item)
+                yield '%s: %s' % (index, item)
 
     def _index_to_int(self, index, empty_to_zero=False):
         if empty_to_zero and not index:
@@ -469,11 +469,11 @@ class _Dictionary:
         - ${D3} = {'a': 1, 'c': 3}
         """
         for key in keys:
-            try:
+            if key in dictionary:
                 value = dictionary.pop(key)
-                print "Removed item with key '%s' and value '%s'" % (key, value)
-            except KeyError:
-                print "Key '%s' not found" % (key)
+                logger.info("Removed item with key '%s' and value '%s'" % (key, value))
+            else:
+                logger.info("Key '%s' not found" % (key))
 
     def keep_in_dictionary(self, dictionary, *keys):
         """Keeps the given `keys` in the `dictionary` and removes all other.
@@ -631,16 +631,17 @@ class _Dictionary:
         If you only want to log the size, use keyword `Get Length` from
         the BuiltIn library.
         """
-        print '*%s* ' % level.upper(),
-        if len(dictionary) == 0:
-            print 'Dictionary is empty'
+        logger.write('\n'.join(self._log_dictionary(dictionary)), level)
+
+    def _log_dictionary(self, dictionary):
+        if not dictionary:
+            yield 'Dictionary is empty'
         elif len(dictionary) == 1:
-            print 'Dictionary has one item:'
+            yield 'Dictionary has one item:'
         else:
-            print 'Dictionary size is %d and it contains following items:' \
-                  % len(dictionary)
+            yield 'Dictionary size is %d and it contains following items:' % len( dictionary)
         for key in self.get_dictionary_keys(dictionary):
-            print '%s: %s' % (key, dictionary[key])
+            yield '%s: %s' % (key, dictionary[key])
 
     def _keys_should_be_equal(self, dict1, dict2, msg, values):
         keys1 = self.get_dictionary_keys(dict1)

@@ -12,12 +12,12 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-
 import re
 from fnmatch import fnmatchcase
 from random import randint
 from string import ascii_lowercase, ascii_uppercase, digits
 
+from robot.api import logger
 from robot.version import get_version
 
 
@@ -48,7 +48,7 @@ class String:
     def get_line_count(self, string):
         """Returns and logs the number of lines in the given `string`."""
         count = len(string.splitlines())
-        print '*INFO* %d lines' % count
+        logger.info('%d lines' % count)
         return count
 
     def split_to_lines(self, string, start=0, end=None):
@@ -75,7 +75,7 @@ class String:
         start = self._convert_to_index(start, 'start')
         end = self._convert_to_index(end, 'end')
         lines = string.splitlines()[start:end]
-        print '*INFO* %d lines returned' % len(lines)
+        logger.info('%d lines returned' % len(lines))
         return lines
 
     def get_line(self, string, line_number):
@@ -178,7 +178,7 @@ class String:
     def _get_matching_lines(self, string, matches):
         lines = string.splitlines()
         matching = [ line for line in lines if matches(line) ]
-        print '*INFO* %d out of %d lines matched' % (len(matching), len(lines))
+        logger.info('%d out of %d lines matched' % (len(matching), len(lines)))
         return '\n'.join(matching)
 
     def replace_string(self, string, search_for, replace_with, count=-1):
