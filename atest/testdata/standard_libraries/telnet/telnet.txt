@@ -14,35 +14,43 @@ Write & Read
     Sleep    300 ms
     ${out} =    Read
     Should Be Equal    ${out}    ${HOME}\r\n${FULL PROMPT}
+
+Write & Read Non-ASCII
     Write    echo Hyvää yötä
     Sleep    300 ms
-    ${out} =    Read    debug
+    ${out} =    Read    deBug
     Should Be Equal    ${out}    Hyvää yötä\r\n${FULL PROMPT}
 
 Read Until
-    [Documentation]    FAIL No match found for 'Not found' in 500 milliseconds
     Write    pwd
     ${out} =    Read Until    /
     Should Be Equal    ${out}    /
     ${out} =    Read Until    /    DEBUG
     Should Be Equal    ${out}    home/
-    Read
+
+Read Until Non-ASCII
     Write    echo Hyvää yötä
     ${out} =    Read Until    yötä
     Should Be Equal    ${out}    Hyvää yötä
+
+Read Until Fails
+    [Documentation]    FAIL No match found for 'Not found' in 500 milliseconds
     Read Until    Not found
 
 Read Until Regexp
-    [Documentation]    FAIL No match found for 'Not found' in 500 milliseconds
     Write    pwd
     ${out} =    Read Until Regexp    /h[abo]me.${USERNAME}\\s+
     Should Be Equal    ${out}    ${HOME}\r\n
     ${out} =    Read Until Regexp    .*@    deBUG
     Should Be Equal    ${out}    ${PROMPT START}
-    Read
+
+Read Until Regexp Non-ASCII
     Write    echo Päivää
     ${out} =    Read Until Regexp    no match    ää   debug
     Should Be Equal    ${out}    Päivää
+
+Read Until Regexp Fails
+    [Documentation]    FAIL No match found for 'Not found' in 500 milliseconds
     Read Until Regexp    Not found
 
 Read Until Prompt
