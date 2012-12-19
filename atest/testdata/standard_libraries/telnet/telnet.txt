@@ -115,9 +115,8 @@ Invalid Login
 
 Invalid Login With Prompt Set
     [Documentation]    FAIL Login incorrect
-    [Setup]    Open Connection    ${HOST}
-    Set Prompt    ${PROMPT}
-    Login    invalid    password
+    [Setup]    Open Connection    ${HOST}    timeout=5s    prompt=${PROMPT}
+    Login    ${USERNAME}    ${EMPTY}
 
 Switch Connection
     ${index} =    Login And Set Prompt

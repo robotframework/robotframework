@@ -303,10 +303,10 @@ class TelnetConnection(telnetlib.Telnet):
         until the prompt is found. Otherwise, the keyword sleeps for a
         second and reads everything that is available.
         """
-        ret = self.read_until(login_prompt, 'TRACE').decode('ASCII', 'ignore')
+        ret = self.read_until(login_prompt, 'TRACE')
         self.write_bare(username + self._newline)
         ret += username + '\n'
-        ret += self.read_until(password_prompt, 'TRACE').decode('ASCII', 'ignore')
+        ret += self.read_until(password_prompt, 'TRACE')
         self.write_bare(password + self._newline)
         ret += '*' * len(password) + '\n'
         if self._prompt_is_set():
@@ -325,7 +325,7 @@ class TelnetConnection(telnetlib.Telnet):
         time.sleep(1)
         while True:
             try:
-                ret += self.read_until('\n', 'TRACE').decode('ASCII', 'ignore')
+                ret += self.read_until('\n', 'TRACE')
             except AssertionError:
                 return ret
             else:
@@ -401,8 +401,7 @@ class TelnetConnection(telnetlib.Telnet):
             self._log(ret, loglevel)
             if ret.endswith(expected):
                 return ret
-        raise AssertionError("No match found for '%s' in %s"
-                             % (expected, utils.secs_to_timestr(timeout)))
+        self._raise_no_match_found(expected, timeout)
 
     def read(self, loglevel=None):
         """Reads and returns/logs everything that is currently available in the output.
@@ -429,8 +428,7 @@ class TelnetConnection(telnetlib.Telnet):
                                           self._timeout).decode('ASCII', 'ignore')
         self._log(ret, loglevel)
         if not ret.endswith(expected):
-            raise AssertionError("No match found for '%s' in %s"
-                                 % (expected, utils.secs_to_timestr(self._timeout)))
+            self._raise_no_match_found(expected)
         return ret
 
     def read_until_regexp(self, *expected):
@@ -464,9 +462,7 @@ class TelnetConnection(telnetlib.Telnet):
         if index == -1:
             expected = [exp if isinstance(exp, str) else exp.pattern
                         for exp in expected]
-            raise AssertionError("No match found for %s in %s"
-                                 % (utils.seq2str(expected, lastsep=' or '),
-                                    utils.secs_to_timestr(self._timeout)))
+            self._raise_no_match_found(expected)
         return ret
 
     def read_until_prompt(self, loglevel=None):
@@ -507,6 +503,13 @@ class TelnetConnection(telnetlib.Telnet):
         msg = msg.strip()
         if msg:
             logger.write(msg, level or self._default_log_level)
+
+    def _raise_no_match_found(self, expected, timeout=None):
+        timeout = utils.secs_to_timestr(timeout or self._timeout)
+        expected = "'%s'" % expected if isinstance(expected, basestring) \
+            else utils.seq2str(expected, lastsep=' or ')
+        raise AssertionError("No match found for %s in %s" % (expected, timeout))
+
     def _negotiate_echo_on(self, sock, cmd, opt):
         # This is supposed to turn server side echoing on and turn other options off.
         if opt == telnetlib.ECHO and cmd in (telnetlib.WILL, telnetlib.WONT):
