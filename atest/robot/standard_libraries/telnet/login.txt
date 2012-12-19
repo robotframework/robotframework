@@ -1,0 +1,12 @@
+*** Setting ***
+Suite Setup       Run Tests    ${EMPTY}    standard_libraries/telnet/login.txt
+Force Tags        jybot    pybot
+Resource          telnet_resource.txt
+
+*** Test Case ***
+
+Invalid Login
+    Check Test Case    Invalid Login
+
+Invalid Login With Prompt Set
+    Check Test Case    Invalid Login With Prompt Set

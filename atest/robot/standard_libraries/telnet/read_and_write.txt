@@ -1,24 +1,27 @@
 *** Setting ***
-Suite Setup       Run Tests    --variablefile ${VARIABLES} --loglevel DEBUG -l log   standard_libraries/telnet/telnet.txt
+Suite Setup       Run Tests    --loglevel DEBUG    standard_libraries/telnet/read_and_write.txt
 Force Tags        jybot    pybot
-Resource          atest_resource.txt
-Variables         ${VARIABLES}
-
-*** Variable ***
-${VARIABLES}      ${CURDIR}${/}telnet_variables.py    # Contains e.g. credentials
+Resource          telnet_resource.txt
 
 *** Test Case ***
-Open Connection
-    ${tc} =    Check Test Case    Write & Read
-    Check Log Message    ${tc.setup.kws[0].msgs[0]}    Opening connection to localhost:23 with prompt: $
-
 Write & Read
     ${tc} =    Check Test Case    ${TEST NAME}
-    Check Log Message    ${tc.kws[2].msgs[0]}    ${HOME}\n${FULL PROMPT}
+    Check Log Message    ${tc.kws[0].msgs[0]}    pwd
+    Check Log Message    ${tc.kws[3].msgs[0]}    ${HOME}\n${FULL PROMPT}
 
 Write & Read Non-ASCII
     ${tc} =    Check Test Case    ${TEST NAME}
+    Check Log Message    ${tc.kws[0].msgs[0]}    echo Hyvää yötä    WARN
     Check Log Message    ${tc.kws[2].msgs[0]}    Hyvää yötä\n${FULL PROMPT}    DEBUG
+
+Write Does Not Allow Newlines
+    Check Test Case    ${TEST NAME}
+
+Write Bare
+    Check Test Case    ${TEST NAME}
+
+Write Bare With Newlines
+    Check Test Case    ${TEST NAME}
 
 Read Until
     ${tc} =    Check Test Case    ${TEST NAME}
@@ -53,43 +56,11 @@ Read Until Regexp Prompt
     ${tc} =    Check Test Case    ${TEST NAME}
     Check Log Message    ${tc.kws[2].msgs[0]}    ${HOME}\n${FULL PROMPT}
 
-Write Long Commandline
-     Check Test Case    ${TEST NAME}
-
 Write Until Expected Output
     ${tc} =    Check Test Case    ${TEST NAME}
     Check Log Message    ${tc.kws[1].msgs[0]}    ${FULL PROMPT}a=$(($a - 1)); if (($a == 0)); then echo BLAST OFF; fi
     Check Log Message    ${tc.kws[1].msgs[1]}    ${FULL PROMPT}
     Check Log Message    ${tc.kws[1].msgs[2]}    a=$(($a - 1)); if (($a == 0)); then echo BLAST OFF; fi
 
-Set Prompt
-    Check Test Case    ${TEST NAME}
-
-Set Timeout
-    Check Test Case    ${TEST NAME}
-
-Set Newline
-    Check Test Case    ${TEST NAME}
-
-Set Default Log Level
-    ${tc} =    Check Test Case    ${TEST NAME}
-    Check Log Message    ${tc.kws[1].msgs[0]}    pwd    DEBUG
-    Check Log Message    ${tc.kws[3].msgs[0]}    ${HOME}\n${FULL PROMPT}    WARN
-
-Invalid Login
-    Check Test Case    Invalid Login
-
-Invalid Login With Prompt Set
-    Check Test Case    Invalid Login With Prompt Set
-
-Switch Connection
-    Check Test Case    Switch Connection
-
 Execute Command
-    Check Test Case    Execute Command
-
-*** Keyword ***
-My Check Log Message
-    [Arguments]    ${msg}    ${exp_begin}    ${exp_level}=INFO
-    Should Start With    ${msg.message}    ${exp_begin}
-    Should Be Equal    ${msg.level}    ${exp_level}
+    Check Test Case    ${TEST NAME}

@@ -1,0 +1,38 @@
+*** Setting ***
+Suite Setup       Run Tests    --loglevel DEBUG    standard_libraries/telnet/configuration.txt
+Force Tags        jybot    pybot
+Resource          telnet_resource.txt
+
+*** Test Case ***
+
+Prompt Set In Init
+    Check Test Case    ${TEST NAME}
+
+Prompt Set In Open Connection
+    Check Test Case    ${TEST NAME}
+
+Set Prompt Keyword
+    Check Test Case    ${TEST NAME}
+
+Timeout Set In Init
+    Check Test Case    ${TEST NAME}
+
+Timeout Set In Open Connection
+    Check Test Case    ${TEST NAME}
+
+Set Timeout Keyword
+    Check Test Case    ${TEST NAME}
+
+Newline Set In Init
+    Check Test Case    ${TEST NAME}
+
+Newline Set In Open Connection
+    Check Test Case    ${TEST NAME}
+
+Set Newline Keyword
+    Check Test Case    ${TEST NAME}
+
+Set Default Log Level Keyword
+    ${tc} =    Check Test Case    ${TEST NAME}
+    Check Log Message    ${tc.kws[2].msgs[0]}    pwd    DEBUG
+    Check Log Message    ${tc.kws[5].msgs[0]}    ${HOME}\n${FULL PROMPT}    WARN

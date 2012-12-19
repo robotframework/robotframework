@@ -1,0 +1,16 @@
+*** Setting ***
+Test Teardown     Close All Connections
+Library           Telnet
+Resource          telnet_resource.txt
+
+*** Test Case ***
+
+Invalid Login
+    [Documentation]    FAIL Login incorrect
+    Open Connection    ${HOST}
+    Login    invalid    password
+
+Invalid Login With Prompt Set
+    [Documentation]    FAIL Login incorrect
+    Open Connection    ${HOST}    timeout=5s    prompt=${PROMPT}
+    Login    ${USERNAME}    ${EMPTY}

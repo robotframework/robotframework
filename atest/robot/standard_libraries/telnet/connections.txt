@@ -1,0 +1,19 @@
+*** Setting ***
+Suite Setup       Run Tests    ${EMPTY}    standard_libraries/telnet/connections.txt
+Force Tags        jybot    pybot
+Resource          telnet_resource.txt
+
+*** Test Case ***
+Open Connection
+    ${tc} =    Check Test Case    ${TEST NAME}
+    Check Log Message    ${tc.kws[0].msgs[0]}    Opening connection to localhost:23 with prompt: xxx
+
+Close Connection
+    Check Test Case    ${TEST NAME}
+
+Close All Connections
+    Check Test Case    ${TEST NAME} 1
+    Check Test Case    ${TEST NAME} 2
+
+Switch Connection
+    Check Test Case    ${TEST NAME}

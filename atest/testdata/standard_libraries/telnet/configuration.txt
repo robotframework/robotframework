@@ -1,0 +1,81 @@
+*** Setting ***
+Test Setup        Open Connection    ${HOST}
+Test Teardown     Close All Connections
+Library           Telnet    123    CRLF    $    REGEXP
+Resource          telnet_resource.txt
+
+
+*** Test Case ***
+
+Prompt Set In Init
+    Prompt Should Be    $    ${TRUE}
+
+Prompt Set In Open Connection
+    Open Connection    ${HOST}    prompt=xxx
+    Prompt Should Be    xxx    ${FALSE}
+    Open Connection    ${HOST}    ${EMPTY}    ${EMPTY}    ${EMPTY}    ${EMPTY}
+    ...    prompt    regexp
+    Prompt Should Be    prompt    ${TRUE}
+
+Set Prompt Keyword
+    Set Prompt    >-<
+    Prompt Should Be    >-<    ${FALSE}
+    Set Prompt    >\\s+    regexp
+    Prompt Should Be    >\\s+    ${TRUE}
+
+Timeout Set In Init
+    Timeout Should Be    2 minutes 3 seconds
+
+Timeout Set In Open Connection
+    Open Connection    ${HOST}    timeout=0.5s
+    Timeout Should Be    500 milliseconds
+    Open Connection    ${HOST}    ${EMPTY}    ${EMPTY}    61
+    Timeout Should Be    1 minute 1 second
+
+Set Timeout Keyword
+    [Documentation]    FAIL No match found for 'Not found' in 42 milliseconds
+    Set Timeout    1 h 2 min 3 secs
+    Timeout Should Be    1 hour 2 minutes 3 seconds
+    Set Timeout    0.042
+    Read Until    Not found
+
+Newline Set In Init
+    Newline Should Be    \r\n
+
+Newline Set In Open Connection
+    Open Connection    ${HOST}    newline=LF
+    Newline Should Be    \n
+    Open Connection    ${HOST}    ${EMPTY}    ${EMPTY}    ${EMPTY}    CR
+    Newline Should Be    \r
+
+Set Newline Keyword
+    Set Newline    LF\rFOO
+    Newline Should Be    \n\rFOO
+
+Set Default Log Level Keyword
+    [Documentation]    FAIL Invalid log level 'Invalid'
+    [Setup]    Login And Set Prompt
+    ${old} =    Set Default log Level    debug
+    Should Be Equal    ${old}    INFO
+    Write    pwd
+    ${old} =    Set Default log Level    WARN
+    Should Be Equal    ${old}    DEBUG
+    Read Until Prompt
+    Set Default log Level    Invalid
+
+*** Keywords ***
+Prompt Should Be
+    [Arguments]    ${expected prompt}    ${expected regexp}
+    ${prompt}    ${regexp} =    Set Prompt    prompt
+    Should Be Equal    ${prompt}    ${expected prompt}
+    Should Be Equal    ${regexp}    ${expected regexp}
+
+Timeout Should Be
+    [Arguments]    ${expected}
+    ${timeout} =    Set Timeout    1 s
+    Should Be Equal    ${timeout}    ${expected}
+
+Newline Should Be
+    [Arguments]    ${expected}
+    ${newline} =    Set Newline    CRLF
+    Should Be Equal    ${newline}    ${expected}
