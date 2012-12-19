@@ -1204,6 +1204,27 @@ class _RunKeyword:
                 raise
             return 'FAIL', unicode(err)
 
+    def run_keyword_and_return_status(self, name, *args):
+        """Runs the given keyword with given arguments and returns run status as boolean value.
+
+        This keyword returns 'True' if the keyword that is executed succeeds and
+        'False' if the keyword that is executed fails. This keyword uses
+        'Run Keyword And Ignore Error' and determines the return value based on
+        that.
+
+        The keyword name and arguments work as in `Run Keyword`. See
+        `Run Keyword If` for a usage example.
+
+        This keyword can be used as a convenience keyword when using
+        'Run Keyword If'.
+
+        Example:
+        | ${passed} = | Run Keyword And Return Status | Keyword | args |
+        | Run Keyword If | ${passed} | Another keyword |
+        """
+        status, _ = self.run_keyword_and_ignore_error(name, *args)
+        return status == 'PASS'
+
     def run_keyword_and_continue_on_failure(self, name, *args):
         """Runs the keyword and continues execution even if a failure occurs.
 
