@@ -369,38 +369,42 @@ class TelnetConnection(telnetlib.Telnet):
 
     def write_until_expected_output(self, text, expected, timeout,
                                     retry_interval, loglevel=None):
-        """Writes the given text repeatedly, until `expected` appears in the output.
+        """Writes the given `text` repeatedly, until `expected` appears in the output.
 
-        `text` is written without appending a
-        newline. `retry_interval` defines the time waited before
-        writing `text` again. `text` is consumed from the output
-        before `expected` is tried to be read.
+        `text` is written without appending a newline and it is consumed from
+        the output before trying to find `expected`. If `expected` does not
+        appear in the output within `timeout`, this keyword fails.
 
-        If `expected` does not appear in the output within `timeout`,
-        this keyword fails.
+        `retry_interval` defines the time to wait `expected` to appear before
+        writing the `text` again. Consuming the written `text` is subject to
+        the read timeout set in `library importing` or with with `Set Timeout`
+        keyword.
+
+        Both `timeout` and `retry_interval` are given in Robot Framework's
+        time format (e.g. 1 minute 20 seconds) that is explained in the User
+        Guide.
 
         See `Read` for more information on `loglevel`.
 
         Example:
-        | Write Until Expected Output | ps -ef| grep myprocess\\n | myprocess |
-        | ...                         | 5s                        | 0.5s      |
+        | Write Until Expected Output | ps -ef| grep myprocess\\r\\n | myprocess |
+        | ...                         | 5 s                          | 0.5 s     |
 
-        This writes the 'ps -ef | grep myprocess\\n', until
-        'myprocess' appears on the output. The command is written
-        every 0.5 seconds and the keyword ,fails if 'myprocess' does
-        not appear in the output in 5 seconds.
+        The above example writes command `ps -ef | grep myprocess\\r\\n` until
+        `myprocess` appears in the output. The command is written every 0.5
+        seconds and the keyword fails if `myprocess` does not appear in
+        the output in 5 seconds.
         """
         timeout = utils.timestr_to_secs(timeout)
         retry_interval = utils.timestr_to_secs(retry_interval)
         maxtime = time.time() + timeout
         while time.time() < maxtime:
             self.write_bare(text)
-            self.read_until(text, loglevel)
-            ret = telnetlib.Telnet.read_until(self, self._str(expected),
-                                              retry_interval).decode('ASCII', 'ignore')
-            self._log(ret, loglevel)
-            if ret.endswith(expected):
-                return ret
+            self._read_until(text, self._timeout, loglevel)
+            try:
+                return self._read_until(expected, retry_interval, loglevel)
+            except AssertionError:
+                pass
         self._raise_no_match_found(expected, timeout)
 
     def read(self, loglevel=None):
@@ -424,12 +428,15 @@ class TelnetConnection(telnetlib.Telnet):
 
         See `Read` for more information on `loglevel`.
         """
-        ret = telnetlib.Telnet.read_until(self, self._str(expected),
-                                          self._timeout).decode('ASCII', 'ignore')
-        self._log(ret, loglevel)
-        if not ret.endswith(expected):
+        return self._read_until(expected, self._timeout, loglevel)
+
+    def _read_until(self, expected, timeout, loglevel):
+        output = telnetlib.Telnet.read_until(self, self._str(expected),
+                                             timeout).decode('ASCII', 'ignore')
+        self._log(output, loglevel)
+        if not output.endswith(expected):
             self._raise_no_match_found(expected)
-        return ret
+        return output
 
     def read_until_regexp(self, *expected):
         """Reads from the current output, until a match to a regexp in expected.
