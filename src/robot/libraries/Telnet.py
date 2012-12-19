@@ -12,7 +12,6 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-
 import telnetlib
 import time
 import re
@@ -24,7 +23,6 @@ from robot import utils
 
 
 class Telnet:
-
     """A test library providing communication over Telnet connections.
 
     `Telnet` is Robot Framework's standard library that makes it
@@ -36,7 +34,6 @@ class Telnet:
     expected to be ASCII encoded and all non-ASCII characters are
     silently ignored.
     """
-
     ROBOT_LIBRARY_SCOPE = 'TEST_SUITE'
     ROBOT_LIBRARY_VERSION = get_version()
 
@@ -54,12 +51,13 @@ class Telnet:
         | Library | Telnet |     |    |     |    | # default values                |
         | Library | Telnet | 0.5 |    |     |    | # set only timeout              |
         | Library | Telnet |     | LF |     |    | # set only newline              |
+        | Library | Telnet | newline=LF |  |  |  | # set only newline using named arguments |
         | Library | Telnet | 2.0 | LF |     |    | # set timeout and newline       |
         | Library | Telnet | 2.0 | CRLF | $ |    | # set also prompt               |
         | Library | Telnet | 2.0 | LF | ($|~) | True | # set prompt with simple regexp |
         """
-        self._timeout = timeout == '' and 3.0 or timeout
-        self._newline = newline == '' and 'CRLF' or newline
+        self._timeout = timeout or 3.0
+        self._newline = newline or 'CRLF'
         self._prompt = (prompt, prompt_is_regexp)
         self._cache = utils.ConnectionCache()
         self._conn = None
@@ -70,19 +68,25 @@ class Telnet:
 
     def _get_library_keywords(self):
         if self._lib_kws is None:
-            self._lib_kws = [ name for name in dir(self)
-                              if not name.startswith('_') and name != 'get_keyword_names'
-                              and inspect.ismethod(getattr(self, name)) ]
+            self._lib_kws = self._get_keywords(self, ['get_keyword_names'])
         return self._lib_kws
+
+    def _get_keywords(self, source, excluded):
+        return [name for name in dir(source)
+                if self._is_keyword(name, source, excluded)]
+
+    def _is_keyword(self, name, source, excluded):
+        return (name not in excluded and
+                not name.startswith('_') and
+                name != 'get_keyword_names' and
+                inspect.ismethod(getattr(source, name)))
 
     def _get_connection_keywords(self):
         if self._conn_kws is None:
             conn = self._get_connection()
-            excluded = [ name for name in dir(telnetlib.Telnet())
-                         if name not in ['write', 'read', 'read_until'] ]
-            self._conn_kws = [ name for name in dir(conn)
-                               if not name.startswith('_') and name not in excluded
-                               and inspect.ismethod(getattr(conn, name)) ]
+            excluded = [name for name in dir(telnetlib.Telnet())
+                        if name not in ['write', 'read', 'read_until']]
+            self._conn_kws = self._get_keywords(conn, excluded)
         return self._conn_kws
 
     def __getattr__(self, name):
@@ -91,8 +95,7 @@ class Telnet:
         # If no connection is initialized, get attributes from a non-active
         # connection. This makes it possible for Robot to create keyword
         # handlers when it imports the library.
-        conn = self._conn is None and self._get_connection() or self._conn
-        return getattr(conn, name)
+        return getattr(self._conn or self._get_connection(), name)
 
     def open_connection(self, host, alias=None, port=23, timeout=None,
                         newline=None, prompt=None, prompt_is_regexp=False):
@@ -114,14 +117,12 @@ class Telnet:
         here overrides those values for this connection. See `importing` for
         more information.
         """
-        if timeout is None or timeout == '':
-            timeout = self._timeout
-        if newline is None:
-            newline = self._newline
-        if prompt is None:
+        timeout = timeout or self._timeout
+        newline = newline or self._newline
+        if not prompt:
             prompt, prompt_is_regexp = self._prompt
         logger.info('Opening connection to %s:%s with prompt: %s'
-                    % (host, port, self._prompt))
+                    % (host, port, prompt))
         self._conn = self._get_connection(host, port, timeout, newline,
                                           prompt, prompt_is_regexp)
         return self._cache.register(self._conn, alias)
@@ -182,12 +183,12 @@ class TelnetConnection(telnetlib.Telnet):
 
     def __init__(self, host=None, port=23, timeout=3.0, newline='CRLF',
                  prompt=None, prompt_is_regexp=False):
-        port = port == '' and 23 or int(port)
+        port = int(port) if port else 23
         telnetlib.Telnet.__init__(self, host, port)
         self.set_timeout(timeout)
         self.set_newline(newline)
         self.set_prompt(prompt, prompt_is_regexp)
-        self._default_log_level = 'INFO'
+        self.set_default_log_level('INFO')
         self.set_option_negotiation_callback(self._negotiate_echo_on)
 
     def set_timeout(self, timeout):
@@ -201,14 +202,15 @@ class TelnetConnection(telnetlib.Telnet):
         timeout and fail if the expected output has not appeared when
         this timeout expires.
 
-        The old timeout is returned and can be used to restore it later.
+        The old timeout is returned and can be used to restore the timeout
+        later.
 
         Example:
-        | ${tout} = | Set Timeout | 2 minute 30 seconds |
+        | ${timeout} = | Set Timeout | 2 minute 30 seconds |
         | Do Something |
-        | Set Timeout | ${tout} |
+        | Set Timeout  | ${timeout}  |
         """
-        old = getattr(self, '_timeout', 3.0)
+        old = getattr(self, '_timeout', 0)
         self._timeout = utils.timestr_to_secs(timeout)
         return utils.secs_to_timestr(old)
 
@@ -222,15 +224,58 @@ class TelnetConnection(telnetlib.Telnet):
         | Set Newline | \\n  |
         | Set Newline | CRLF |
 
-        Correct newline to use depends on the system and the default
-        value is 'CRLF'.
+        Correct newline to use depends on the system and network configuration.
+        The default value is 'CRLF'.
 
-        The old newline is returned and can be used to restore it later.
-        See `Set Prompt` or `Set Timeout` for an example.
+        The old newline is returned and can be used to restore the newline
+        later similarly as with `Set Timeout`.
         """
-        old = getattr(self, '_newline', 'CRLF')
+        old = getattr(self, '_newline', None)
         self._newline = newline.upper().replace('LF','\n').replace('CR','\r')
         return old
+
+    def set_prompt(self, prompt, prompt_is_regexp=False):
+        """Sets the prompt used in this connection to `prompt`.
+
+        If `prompt_is_regexp` is any non-empty string, the given prompt is
+        considered to be a regular expression.
+
+        The old prompt is returned and can be used to restore the prompt later.
+
+        Example:
+        | ${prompt} | ${regexp} = | Set Prompt | $ |
+        | Do Something |
+        | Set Prompt | ${prompt} | ${regexp} |
+        """
+        old = getattr(self, '_prompt', (None, False))
+        if prompt_is_regexp:
+            self._prompt = (re.compile(prompt), True)
+        else:
+            self._prompt = (prompt, False)
+        if old[1]:
+            return old[0].pattern, True
+        return old
+
+    def _prompt_is_set(self):
+        return self._prompt[0] is not None
+
+    def set_default_log_level(self, level):
+        """Sets the default log level used by all read keywords.
+
+        The possible values are TRACE, DEBUG, INFO and WARN. The default is
+        INFO.
+
+        The old value is returned and can be used to restore the log level
+        later similarly as with `Set Timeout`.
+        """
+        if level is None or not self._is_valid_log_level(level):
+            raise AssertionError("Invalid log level '%s'" % level)
+        old = getattr(self, '_default_log_level', None)
+        self._default_log_level = level.upper()
+        return old
+
+    def _is_valid_log_level(self, level):
+        return level is None or level.upper() in ('TRACE', 'DEBUG', 'INFO', 'WARN')
 
     def close_connection(self, loglevel=None):
         """Closes the current Telnet connection and returns any remaining output.
@@ -238,9 +283,9 @@ class TelnetConnection(telnetlib.Telnet):
         See `Read` for more information on `loglevel`.
         """
         telnetlib.Telnet.close(self)
-        ret = self.read_all().decode('ASCII', 'ignore')
-        self._log(ret, loglevel)
-        return ret
+        output = self._decode(self.read_all())
+        self._log(output, loglevel)
+        return output
 
     def login(self, username, password, login_prompt='login: ',
               password_prompt='Password: '):
@@ -258,10 +303,10 @@ class TelnetConnection(telnetlib.Telnet):
         until the prompt is found. Otherwise, the keyword sleeps for a
         second and reads everything that is available.
         """
-        ret = self.read_until(login_prompt, 'TRACE').decode('ASCII', 'ignore')
+        ret = self.read_until(login_prompt, 'TRACE')
         self.write_bare(username + self._newline)
         ret += username + '\n'
-        ret += self.read_until(password_prompt, 'TRACE').decode('ASCII', 'ignore')
+        ret += self.read_until(password_prompt, 'TRACE')
         self.write_bare(password + self._newline)
         ret += '*' * len(password) + '\n'
         if self._prompt_is_set():
@@ -280,7 +325,7 @@ class TelnetConnection(telnetlib.Telnet):
         time.sleep(1)
         while True:
             try:
-                ret += self.read_until('\n', 'TRACE').decode('ASCII', 'ignore')
+                ret += self.read_until('\n', 'TRACE')
             except AssertionError:
                 return ret
             else:
@@ -314,49 +359,47 @@ class TelnetConnection(telnetlib.Telnet):
 
         Does not consume the written text.
         """
-        try:
-            text = str(text)
-        except UnicodeError:
-            raise ValueError('Only ASCII characters are allowed in Telnet. '
-                             'Got: %s' % text)
-        telnetlib.Telnet.write(self, text)
+        telnetlib.Telnet.write(self, self._encode(text))
 
     def write_until_expected_output(self, text, expected, timeout,
                                     retry_interval, loglevel=None):
-        """Writes the given text repeatedly, until `expected` appears in the output.
+        """Writes the given `text` repeatedly, until `expected` appears in the output.
 
-        `text` is written without appending a
-        newline. `retry_interval` defines the time waited before
-        writing `text` again. `text` is consumed from the output
-        before `expected` is tried to be read.
+        `text` is written without appending a newline and it is consumed from
+        the output before trying to find `expected`. If `expected` does not
+        appear in the output within `timeout`, this keyword fails.
 
-        If `expected` does not appear in the output within `timeout`,
-        this keyword fails.
+        `retry_interval` defines the time to wait `expected` to appear before
+        writing the `text` again. Consuming the written `text` is subject to
+        the read timeout set in `library importing` or with with `Set Timeout`
+        keyword.
+
+        Both `timeout` and `retry_interval` are given in Robot Framework's
+        time format (e.g. 1 minute 20 seconds) that is explained in the User
+        Guide.
 
         See `Read` for more information on `loglevel`.
 
         Example:
-        | Write Until Expected Output | ps -ef| grep myprocess\\n | myprocess |
-        | ...                         | 5s                        | 0.5s      |
+        | Write Until Expected Output | ps -ef| grep myprocess\\r\\n | myprocess |
+        | ...                         | 5 s                          | 0.5 s     |
 
-        This writes the 'ps -ef | grep myprocess\\n', until
-        'myprocess' appears on the output. The command is written
-        every 0.5 seconds and the keyword ,fails if 'myprocess' does
-        not appear in the output in 5 seconds.
+        The above example writes command `ps -ef | grep myprocess\\r\\n` until
+        `myprocess` appears in the output. The command is written every 0.5
+        seconds and the keyword fails if `myprocess` does not appear in
+        the output in 5 seconds.
         """
         timeout = utils.timestr_to_secs(timeout)
         retry_interval = utils.timestr_to_secs(retry_interval)
-        starttime = time.time()
-        while time.time() - starttime < timeout:
+        maxtime = time.time() + timeout
+        while time.time() < maxtime:
             self.write_bare(text)
-            self.read_until(text, loglevel)
-            ret = telnetlib.Telnet.read_until(self, expected,
-                                              retry_interval).decode('ASCII', 'ignore')
-            self._log(ret, loglevel)
-            if ret.endswith(expected):
-                return ret
-        raise AssertionError("No match found for '%s' in %s"
-                             % (expected, utils.secs_to_timestr(timeout)))
+            self._read_until(text, self._timeout, loglevel)
+            try:
+                return self._read_until(expected, retry_interval, loglevel)
+            except AssertionError:
+                pass
+        self._raise_no_match_found(expected, timeout)
 
     def read(self, loglevel=None):
         """Reads and returns/logs everything that is currently available in the output.
@@ -367,9 +410,9 @@ class TelnetConnection(telnetlib.Telnet):
         log level, and the available levels are TRACE, DEBUG, INFO,
         and WARN.
         """
-        ret = self.read_very_eager().decode('ASCII', 'ignore')
-        self._log(ret, loglevel)
-        return ret
+        output = self._decode(self.read_very_eager())
+        self._log(output, loglevel)
+        return output
 
     def read_until(self, expected, loglevel=None):
         """Reads from the current output, until expected is encountered.
@@ -379,13 +422,15 @@ class TelnetConnection(telnetlib.Telnet):
 
         See `Read` for more information on `loglevel`.
         """
-        ret = telnetlib.Telnet.read_until(self, expected,
-                                          self._timeout).decode('ASCII', 'ignore')
-        self._log(ret, loglevel)
-        if not ret.endswith(expected):
-            raise AssertionError("No match found for '%s' in %s"
-                                 % (expected, utils.secs_to_timestr(self._timeout)))
-        return ret
+        return self._read_until(expected, self._timeout, loglevel)
+
+    def _read_until(self, expected, timeout, loglevel):
+        output = self._decode(
+            telnetlib.Telnet.read_until(self, self._encode(expected), timeout))
+        self._log(output, loglevel)
+        if not output.endswith(expected):
+            self._raise_no_match_found(expected)
+        return output
 
     def read_until_regexp(self, *expected):
         """Reads from the current output, until a match to a regexp in expected.
@@ -403,25 +448,23 @@ class TelnetConnection(telnetlib.Telnet):
         | Read Until Regexp | first_regexp | second_regexp |
         | Read Until Regexp | some regexp  | DEBUG |
         """
-        expected = list(expected)
-        if self._is_valid_log_level(expected[-1]):
-            loglevel = expected[-1]
-            expected = expected[:-1]
+        expected = [self._encode(exp) if isinstance(exp, unicode) else exp
+                    for exp in expected]
+        if expected and self._is_valid_log_level(expected[-1]):
+            loglevel = expected.pop()
         else:
             loglevel = None
         try:
-            index, _, ret = self.expect(expected, self._timeout)
+            index, _, output = self.expect(expected, self._timeout)
         except TypeError:
-            index, ret = -1, ''
-        ret = ret.decode('ASCII', 'ignore')
-        self._log(ret, loglevel)
+            index, output = -1, ''
+        output = self._decode(output)
+        self._log(output, loglevel)
         if index == -1:
-            expected = [ exp if isinstance(exp, basestring) else exp.pattern
-                         for exp in expected ]
-            raise AssertionError("No match found for %s in %s"
-                                 % (utils.seq2str(expected, lastsep=' or '),
-                                    utils.secs_to_timestr(self._timeout)))
-        return ret
+            expected = [exp if isinstance(exp, str) else exp.pattern
+                        for exp in expected]
+            self._raise_no_match_found(expected)
+        return output
 
     def read_until_prompt(self, loglevel=None):
         """Reads from the current output, until a prompt is found.
@@ -457,51 +500,24 @@ class TelnetConnection(telnetlib.Telnet):
         self.write(command, loglevel)
         return self.read_until_prompt(loglevel)
 
-    def set_prompt(self, prompt, prompt_is_regexp=False):
-        """Sets the prompt used in this connection to `prompt`.
+    def _encode(self, text):
+        if isinstance(text, str):
+            return text
+        return text.encode('UTF-8')
 
-        If `prompt_is_regexp` is a non-empty string, the given prompt is
-        considered to be a regular expression.
-
-        The old prompt is returned and can be used to restore it later.
-
-        Example:
-        | ${prompt} | ${regexp} = | Set Prompt | $ |
-        | Do Something |
-        | Set Prompt | ${prompt} | ${regexp} |
-        """
-        old = hasattr(self, '_prompt') and self._prompt or (None, False)
-        if prompt_is_regexp:
-            self._prompt = (re.compile(prompt), True)
-        else:
-            self._prompt = (prompt, False)
-        if old[1]:
-            return old[0].pattern, True
-        return old
-
-    def _prompt_is_set(self):
-        return self._prompt[0] is not None
-
-    def set_default_log_level(self, level):
-        """Sets the default log level used by all read keywords.
-
-        The possible values are TRACE, DEBUG, INFO and WARN. The default is
-        INFO. The old value is returned and can be used to restore it later,
-        similarly as with `Set Timeout`.
-        """
-        if not self._is_valid_log_level(level):
-            raise AssertionError("Invalid log level '%s'" % level)
-        old = self._default_log_level
-        self._default_log_level = level.upper()
-        return old
+    def _decode(self, bytes):
+        return bytes.decode('UTF-8')
 
     def _log(self, msg, level=None):
         msg = msg.strip()
         if msg:
             logger.write(msg, level or self._default_log_level)
 
-    def _is_valid_log_level(self, level):
-        return level is None or level.upper() in ('TRACE', 'DEBUG', 'INFO', 'WARN')
+    def _raise_no_match_found(self, expected, timeout=None):
+        timeout = utils.secs_to_timestr(timeout or self._timeout)
+        expected = "'%s'" % expected if isinstance(expected, basestring) \
+            else utils.seq2str(expected, lastsep=' or ')
+        raise AssertionError("No match found for %s in %s" % (expected, timeout))
 
     def _negotiate_echo_on(self, sock, cmd, opt):
         # This is supposed to turn server side echoing on and turn other options off.
