@@ -314,12 +314,13 @@ class TelnetConnection(telnetlib.Telnet):
 
         Does not consume the written text.
         """
+        telnetlib.Telnet.write(self, self._str(text))
+
+    def _str(self, text):
         try:
-            text = str(text)
+            return str(text)
         except UnicodeError:
-            raise ValueError('Only ASCII characters are allowed in Telnet. '
-                             'Got: %s' % text)
-        telnetlib.Telnet.write(self, text)
+            raise ValueError('Telnet library currently supports only ASCII.')
 
     def write_until_expected_output(self, text, expected, timeout,
                                     retry_interval, loglevel=None):
@@ -350,7 +351,7 @@ class TelnetConnection(telnetlib.Telnet):
         while time.time() - starttime < timeout:
             self.write_bare(text)
             self.read_until(text, loglevel)
-            ret = telnetlib.Telnet.read_until(self, expected,
+            ret = telnetlib.Telnet.read_until(self, self._str(expected),
                                               retry_interval).decode('ASCII', 'ignore')
             self._log(ret, loglevel)
             if ret.endswith(expected):
@@ -379,7 +380,7 @@ class TelnetConnection(telnetlib.Telnet):
 
         See `Read` for more information on `loglevel`.
         """
-        ret = telnetlib.Telnet.read_until(self, expected,
+        ret = telnetlib.Telnet.read_until(self, self._str(expected),
                                           self._timeout).decode('ASCII', 'ignore')
         self._log(ret, loglevel)
         if not ret.endswith(expected):
@@ -403,10 +404,10 @@ class TelnetConnection(telnetlib.Telnet):
         | Read Until Regexp | first_regexp | second_regexp |
         | Read Until Regexp | some regexp  | DEBUG |
         """
-        expected = list(expected)
-        if self._is_valid_log_level(expected[-1]):
-            loglevel = expected[-1]
-            expected = expected[:-1]
+        expected = [self._str(exp) if isinstance(exp, unicode) else exp
+                    for exp in expected]
+        if expected and self._is_valid_log_level(expected[-1]):
+            loglevel = expected.pop()
         else:
             loglevel = None
         try:
@@ -416,8 +417,8 @@ class TelnetConnection(telnetlib.Telnet):
         ret = ret.decode('ASCII', 'ignore')
         self._log(ret, loglevel)
         if index == -1:
-            expected = [ exp if isinstance(exp, basestring) else exp.pattern
-                         for exp in expected ]
+            expected = [exp if isinstance(exp, str) else exp.pattern
+                        for exp in expected]
             raise AssertionError("No match found for %s in %s"
                                  % (utils.seq2str(expected, lastsep=' or '),
                                     utils.secs_to_timestr(self._timeout)))

@@ -82,10 +82,9 @@ Write &
     Write    ${PWD}
     Write    ${PWD_AMP}
 
-Write Unicode
-    [Documentation]    FAIL REGEXP: (ValueError: Only ASCII characters are allowed in Telnet. Got: .*|No match found for '.*
-    ...    ' in 1 second 500 milliseconds)
-    Write    ${unic_string}
+Write Non-ASCII
+    [Documentation]    FAIL ValueError: Telnet library currently supports only ASCII.
+    Write    Hyvää yötä!
 
 Set Prompt
     ${prompt}    ${is_regexp} =    Set Prompt    $$$    REGEXP

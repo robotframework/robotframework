@@ -48,7 +48,7 @@ Write &
 Write Long Commandline
     Check Test Case    Write Long Commandline
 
-Write Unicode
+Write Non-ASCII
     Check Test Case    ${TEST NAME}
 
 Set Timeout
