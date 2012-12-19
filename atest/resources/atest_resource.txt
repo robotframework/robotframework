@@ -146,7 +146,7 @@ Check Log Message
     ${html} =  Set Variable If  ${html} or '${level}' == 'HTML'  ${True}  ${False}
     ${level} =  Set Variable If  '${level}' == 'HTML'  INFO  ${level}
     ${checker} =  Set Variable If  '${pattern}'  Should Match  Should Be Equal
-    Run Keyword  ${checker}  ${item.message.rstrip()}  ${msg}  Wrong log message
+    Run Keyword  ${checker}  ${item.message.rstrip()}  ${msg.rstrip()}  Wrong log message
     Should Be Equal  ${item.level}  ${level}  Wrong log level
     Should Be Equal  ${item.html}  ${html}  Wrong HTML status
 
