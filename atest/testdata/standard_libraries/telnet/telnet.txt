@@ -1,23 +1,63 @@
 *** Setting ***
-Suite Teardown    Close All Connections
-Test Setup        Login And Set Prompt
-Test Teardown     Close Connection
-Library           Telnet    1 s 500 ms
+Test Setup        Login And Set Prompt    alias=ORIGINAL
+Test Teardown     Close All Connections
+Library           Telnet
 
 *** Variable ***
-${dir}            longdirname
-${dirs}           ${dir}1/${dir}2/${dir}3/${dir}4/${dir}5/${dir}6
+${PROMPT}         $${SPACE}
+${DIR}            longdirname
+${DIRS}           ${dir}1/${dir}2/${dir}3/${dir}4/${dir}5/${dir}6
 
 *** Test Case ***
 Write & Read
     Write    pwd
-    sleep    300 ms
+    Sleep    300 ms
     ${out} =    Read
-    Should Be Equal    ${out}    /home/${USERNAME}\r\n${FULL PROMPT} \
+    Should Be Equal    ${out}    ${HOME}\r\n${FULL PROMPT}
     Write    pwd
-    sleep    300 ms
-    ${out} =    Read    warn
-    Should Be Equal    ${out}    /home/${USERNAME}\r\n${FULL PROMPT} \
+    Sleep    300 ms
+    ${out} =    Read    debug
+    Should Be Equal    ${out}    ${HOME}\r\n${FULL PROMPT}
+
+Read Until
+    [Documentation]    FAIL No match found for 'Not found' in 500 milliseconds
+    Write    pwd
+    ${out} =    Read Until    /
+    Should Be Equal    ${out}    /
+    ${out} =    Read Until    /    DEBUG
+    Should Be Equal    ${out}    home/
+    Read Until    Not found
+
+Read Until Regexp
+    [Documentation]    FAIL No match found for 'Not found' in 500 milliseconds
+    Write    pwd
+    ${out} =    Read Until Regexp    /h[abo]me.${USERNAME}\\s+
+    Should Be Equal    ${out}    ${HOME}\r\n
+    ${out} =    Read Until Regexp    .*@    deBUG
+    Should Be Equal    ${out}    ${PROMPT START}
+    Read Until Regexp    Not found
+
+Read Until Prompt
+    [Documentation]    FAIL No match found for '$$' in 500 milliseconds
+    Write    pwd
+    ${out} =    Read Until Prompt
+    Should Be Equal    ${out}    ${HOME}\r\n${FULL PROMPT}
+    Write    pwd
+    ${out} =    Read Until Prompt    dEbUg
+    Should Be Equal    ${out}    ${HOME}\r\n${FULL PROMPT}
+    Set Prompt    $$
+    Write    pwd
+    Read Until Prompt
+
+Read Until Regexp Prompt
+    [Documentation]    FAIL No match found for 'No match' in 500 milliseconds
+    Set Prompt    \\$\\s    REGEXP
+    Write    pwd
+    ${out} =    Read Until Prompt
+    Should Be Equal    ${out}    ${HOME}\r\n${FULL PROMPT}
+    Set Prompt    No match    true
+    Write    pwd
+    Read Until Prompt
 
 Write Long Commandline
     Write    mkdir -p ${dirs}
@@ -28,83 +68,37 @@ Write Long Commandline
     Should End With    ${out}    ${FULL PROMPT}
     Write    rm -rf ${dir}1
 
-Read Until
-    [Documentation]    FAIL No match found for 'Not found' in 1 second 500 milliseconds
-    Write    pwd
-    ${out} =    Read Until    /
-    Should Be Equal    ${out}    /
-    ${out} =    Read Until    /    DEBUG
-    Should Be Equal    ${out}    home/
-    Read Until    Not found
-
-Read Until Regexp
-    [Documentation]    FAIL No match found for 'Not found' in 1 second 500 milliseconds
-    Write    pwd
-    ${out} =    Read Until Regexp    /h[abo]me.${USERNAME}\\s+
-    Should Be Equal    ${out}    /home/${USERNAME}\r\n
-    ${out} =    Read Until Regexp    .*@    deBUG
-    Should Be Equal    ${out}    ${PROMPT START}
-    ${out} =    Read Until Regexp    Not found
-
 Write Until Expected Output
-    [Documentation]    FAIL No match found for 'Not found' in 1 second
-    [Setup]    Login and Set Timeout
-    Write    a=3
-    Write Until Expected Output    a=$(($a - 1)); if (($a == 0)); then echo BLAST OFF; fi\r\n    BLAST OFF    2 s    0.4s
-    Write Until Expected Output    ls    Not found    1s    0.1s
-    [Teardown]    Set Timeout    1.5 s
-
-Read Until Prompt
-    [Documentation]    FAIL No match found for '$$' in 1 second 500 milliseconds
-    Set Prompt    $
-    Write    pwd
-    ${out} =    Read Until Prompt
-    Should Be Equal    ${out}    /home/${USERNAME}\r\n${FULL PROMPT}
-    Write    pwd
-    ${out} =    Read Until Prompt    wArN
-    Should Be Equal    ${out}    /home/${USERNAME}\r\n${FULL PROMPT}
-    Set Prompt    $$
-    Write    pwd
-    Read Until Prompt
-
-Read Until Regexp Prompt
-    [Documentation]    FAIL No match found for 'No match' in 1 second 500 milliseconds
-    Set Prompt    \\$    REGEXP
-    Write    pwd
-    ${out} =    Read Until Prompt
-    Should Be Equal    ${out}    /home/${USERNAME}\r\n${FULL PROMPT}
-    Set Prompt    No match    true
-    Write    pwd
-    Read Until Prompt
-
-Write &
-    Write    pwd &
-    Write    ${PWD}
-    Write    ${PWD_AMP}
+    [Documentation]    FAIL No match found for 'Not found' in 300 milliseconds
+    Write    a=10
+    Write Until Expected Output    a=$(($a - 1)); if (($a == 0)); then echo BLAST OFF; fi\r\n    BLAST OFF    2 s    10ms
+    Write Until Expected Output    ls    Not found    300ms    100ms
 
 Write Non-ASCII
     [Documentation]    FAIL ValueError: Telnet library currently supports only ASCII.
     Write    Hyvää yötä!
 
 Set Prompt
-    ${prompt}    ${is_regexp} =    Set Prompt    $$$    REGEXP
-    Should Be Equal    ${prompt}    $
-    Should Be Equal    ${is_regexp}    ${False}
-    ${prompt}    ${is_regexp} =    Set Prompt    $
-    Should Be Equal    ${prompt}    $$$
-    Should Be Equal    ${is_regexp}    ${True}
+    ${old}    ${regexp} =    Set Prompt    $$$    REGEXP
+    Should Be Equal    ${old}    ${PROMPT}
+    Should Be Equal    ${regexp}    ${False}
+    ${old}    ${regexp} =    Set Prompt    $
+    Should Be Equal    ${old}    $$$
+    Should Be Equal    ${regexp}    ${True}
 
 Set Timeout
-    [Documentation]    FAIL No match found for 'Not found' in 500 milliseconds
-    ${to} =    Set Timeout    3 min 2 secs
-    Should Be Equal    ${to}    1 second 500 milliseconds
-    ${to} =    Set Timeout    0.5
-    Should Be Equal    ${to}    3 minutes 2 seconds
+    [Documentation]    FAIL No match found for 'Not found' in 42 milliseconds
+    ${to} =    Set Timeout    1 h 2 min 3 secs
+    Should Be Equal    ${to}    500 milliseconds
+    ${to} =    Set Timeout    0.042
+    Should Be Equal    ${to}    1 hour 2 minutes 3 seconds
     Read Until    Not found
 
 Set Newline
     ${newline} =    Set Newline    LF
     Should Be Equal    ${newline}    \r\n
+    ${newline} =    Set Newline    ${newline}
+    Should Be Equal    ${newline}    \n
 
 Set Default Log Level
     [Documentation]    FAIL Invalid log level 'Invalid'
@@ -116,42 +110,38 @@ Set Default Log Level
 
 Invalid Login
     [Documentation]    FAIL Login incorrect
-    [Setup]
-    Open Connection    ${HOST}
-    Login    invalid    invalid
-    [Teardown]    Close All Connections
+    [Setup]    Open Connection    ${HOST}
+    Login    invalid    password
 
 Invalid Login With Prompt Set
     [Documentation]    FAIL Login incorrect
-    [Setup]
-    Open Connection    ${HOST}
-    Set Prompt    $
-    Login    invalid    invalid
-    [Teardown]    Close All Connections
+    [Setup]    Open Connection    ${HOST}
+    Set Prompt    ${PROMPT}
+    Login    invalid    password
 
 Switch Connection
-    [Setup]
-    ${first} =    Login And Set Prompt
+    ${index} =    Login And Set Prompt
     Write    cd /tmp
     Read Until Prompt
-    Write    pwd
-    ${dir} =    Read Until Prompt
-    Should Start With    ${dir}    /tmp
-    ${second} =    Login And Set Prompt
-    ${old} =    Switch Connection    ${first}
-    Should Be Equal    ${old}    ${second}
+    Current Directory Should Be    /tmp
+    Switch Connection    ORIGINAL
+    Current Directory Should Be    ${HOME}
+    Switch Connection    ${index}
+    Current Directory Should Be    /tmp
 
 Execute Command
     ${output} =    Execute Command    pwd
-    Should Be Equal    ${output}    /home/${USERNAME}\r\n${FULL PROMPT}
+    Should Be Equal    ${output}    ${HOME}\r\n${FULL PROMPT}
 
 *** Keyword ***
 Login And Set Prompt
-    ${index} =    Open Connection    ${HOST}
-    Set Prompt    $
+    [Arguments]    ${alias}=${NONE}
+    ${index} =    Open Connection    ${HOST}    prompt=${PROMPT}    alias=${alias}
     Login    ${USERNAME}    ${PASSWORD}
+    Set Timeout    0.5 seconds    # Must set after login to
     [Return]    ${index}
 
-Login And Set Timeout
-    Login and Set Prompt
-    Set Timeout    0.3
+Current Directory Should Be
+    [Arguments]    ${expected}
+    ${dir} =    Execute Command    pwd
+    Should Start With    ${dir}    ${expected}\r\n

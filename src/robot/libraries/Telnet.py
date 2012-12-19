@@ -12,7 +12,6 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-
 import telnetlib
 import time
 import re
@@ -24,7 +23,6 @@ from robot import utils
 
 
 class Telnet:
-
     """A test library providing communication over Telnet connections.
 
     `Telnet` is Robot Framework's standard library that makes it
@@ -36,7 +34,6 @@ class Telnet:
     expected to be ASCII encoded and all non-ASCII characters are
     silently ignored.
     """
-
     ROBOT_LIBRARY_SCOPE = 'TEST_SUITE'
     ROBOT_LIBRARY_VERSION = get_version()
 
@@ -54,12 +51,13 @@ class Telnet:
         | Library | Telnet |     |    |     |    | # default values                |
         | Library | Telnet | 0.5 |    |     |    | # set only timeout              |
         | Library | Telnet |     | LF |     |    | # set only newline              |
+        | Library | Telnet | newline=LF |  |  |  | # set only newline using named arguments |
         | Library | Telnet | 2.0 | LF |     |    | # set timeout and newline       |
         | Library | Telnet | 2.0 | CRLF | $ |    | # set also prompt               |
         | Library | Telnet | 2.0 | LF | ($|~) | True | # set prompt with simple regexp |
         """
-        self._timeout = timeout == '' and 3.0 or timeout
-        self._newline = newline == '' and 'CRLF' or newline
+        self._timeout = timeout or 3.0
+        self._newline = newline or 'CRLF'
         self._prompt = (prompt, prompt_is_regexp)
         self._cache = utils.ConnectionCache()
         self._conn = None
@@ -70,19 +68,25 @@ class Telnet:
 
     def _get_library_keywords(self):
         if self._lib_kws is None:
-            self._lib_kws = [ name for name in dir(self)
-                              if not name.startswith('_') and name != 'get_keyword_names'
-                              and inspect.ismethod(getattr(self, name)) ]
+            self._lib_kws = self._get_keywords(self, ['get_keyword_names'])
         return self._lib_kws
+
+    def _get_keywords(self, source, excluded):
+        return [name for name in dir(source)
+                if self._is_keyword(name, source, excluded)]
+
+    def _is_keyword(self, name, source, excluded):
+        return (name not in excluded and
+                not name.startswith('_') and
+                name != 'get_keyword_names' and
+                inspect.ismethod(getattr(source, name)))
 
     def _get_connection_keywords(self):
         if self._conn_kws is None:
             conn = self._get_connection()
-            excluded = [ name for name in dir(telnetlib.Telnet())
-                         if name not in ['write', 'read', 'read_until'] ]
-            self._conn_kws = [ name for name in dir(conn)
-                               if not name.startswith('_') and name not in excluded
-                               and inspect.ismethod(getattr(conn, name)) ]
+            excluded = [name for name in dir(telnetlib.Telnet())
+                        if name not in ['write', 'read', 'read_until']]
+            self._conn_kws = self._get_keywords(conn, excluded)
         return self._conn_kws
 
     def __getattr__(self, name):
@@ -91,8 +95,7 @@ class Telnet:
         # If no connection is initialized, get attributes from a non-active
         # connection. This makes it possible for Robot to create keyword
         # handlers when it imports the library.
-        conn = self._conn is None and self._get_connection() or self._conn
-        return getattr(conn, name)
+        return getattr(self._conn or self._get_connection(), name)
 
     def open_connection(self, host, alias=None, port=23, timeout=None,
                         newline=None, prompt=None, prompt_is_regexp=False):
@@ -114,14 +117,12 @@ class Telnet:
         here overrides those values for this connection. See `importing` for
         more information.
         """
-        if timeout is None or timeout == '':
-            timeout = self._timeout
-        if newline is None:
-            newline = self._newline
-        if prompt is None:
+        timeout = timeout or self._timeout
+        newline = newline or self._newline
+        if not prompt:
             prompt, prompt_is_regexp = self._prompt
         logger.info('Opening connection to %s:%s with prompt: %s'
-                    % (host, port, self._prompt))
+                    % (host, port, prompt))
         self._conn = self._get_connection(host, port, timeout, newline,
                                           prompt, prompt_is_regexp)
         return self._cache.register(self._conn, alias)
@@ -182,12 +183,12 @@ class TelnetConnection(telnetlib.Telnet):
 
     def __init__(self, host=None, port=23, timeout=3.0, newline='CRLF',
                  prompt=None, prompt_is_regexp=False):
-        port = port == '' and 23 or int(port)
+        port = int(port) if port else 23
         telnetlib.Telnet.__init__(self, host, port)
         self.set_timeout(timeout)
         self.set_newline(newline)
         self.set_prompt(prompt, prompt_is_regexp)
-        self._default_log_level = 'INFO'
+        self.set_default_log_level('INFO')
         self.set_option_negotiation_callback(self._negotiate_echo_on)
 
     def set_timeout(self, timeout):
@@ -201,14 +202,15 @@ class TelnetConnection(telnetlib.Telnet):
         timeout and fail if the expected output has not appeared when
         this timeout expires.
 
-        The old timeout is returned and can be used to restore it later.
+        The old timeout is returned and can be used to restore the timeout
+        later.
 
         Example:
-        | ${tout} = | Set Timeout | 2 minute 30 seconds |
+        | ${timeout} = | Set Timeout | 2 minute 30 seconds |
         | Do Something |
-        | Set Timeout | ${tout} |
+        | Set Timeout  | ${timeout}  |
         """
-        old = getattr(self, '_timeout', 3.0)
+        old = getattr(self, '_timeout', 0)
         self._timeout = utils.timestr_to_secs(timeout)
         return utils.secs_to_timestr(old)
 
@@ -222,15 +224,58 @@ class TelnetConnection(telnetlib.Telnet):
         | Set Newline | \\n  |
         | Set Newline | CRLF |
 
-        Correct newline to use depends on the system and the default
-        value is 'CRLF'.
+        Correct newline to use depends on the system and network configuration.
+        The default value is 'CRLF'.
 
-        The old newline is returned and can be used to restore it later.
-        See `Set Prompt` or `Set Timeout` for an example.
+        The old newline is returned and can be used to restore the newline
+        later similarly as with `Set Timeout`.
         """
-        old = getattr(self, '_newline', 'CRLF')
+        old = getattr(self, '_newline', None)
         self._newline = newline.upper().replace('LF','\n').replace('CR','\r')
         return old
+
+    def set_prompt(self, prompt, prompt_is_regexp=False):
+        """Sets the prompt used in this connection to `prompt`.
+
+        If `prompt_is_regexp` is any non-empty string, the given prompt is
+        considered to be a regular expression.
+
+        The old prompt is returned and can be used to restore the prompt later.
+
+        Example:
+        | ${prompt} | ${regexp} = | Set Prompt | $ |
+        | Do Something |
+        | Set Prompt | ${prompt} | ${regexp} |
+        """
+        old = getattr(self, '_prompt', (None, False))
+        if prompt_is_regexp:
+            self._prompt = (re.compile(prompt), True)
+        else:
+            self._prompt = (prompt, False)
+        if old[1]:
+            return old[0].pattern, True
+        return old
+
+    def _prompt_is_set(self):
+        return self._prompt[0] is not None
+
+    def set_default_log_level(self, level):
+        """Sets the default log level used by all read keywords.
+
+        The possible values are TRACE, DEBUG, INFO and WARN. The default is
+        INFO.
+
+        The old value is returned and can be used to restore the log level
+        later similarly as with `Set Timeout`.
+        """
+        if level is None or not self._is_valid_log_level(level):
+            raise AssertionError("Invalid log level '%s'" % level)
+        old = getattr(self, '_default_log_level', None)
+        self._default_log_level = level.upper()
+        return old
+
+    def _is_valid_log_level(self, level):
+        return level is None or level.upper() in ('TRACE', 'DEBUG', 'INFO', 'WARN')
 
     def close_connection(self, loglevel=None):
         """Closes the current Telnet connection and returns any remaining output.
@@ -347,8 +392,8 @@ class TelnetConnection(telnetlib.Telnet):
         """
         timeout = utils.timestr_to_secs(timeout)
         retry_interval = utils.timestr_to_secs(retry_interval)
-        starttime = time.time()
-        while time.time() - starttime < timeout:
+        maxtime = time.time() + timeout
+        while time.time() < maxtime:
             self.write_bare(text)
             self.read_until(text, loglevel)
             ret = telnetlib.Telnet.read_until(self, self._str(expected),
@@ -458,52 +503,10 @@ class TelnetConnection(telnetlib.Telnet):
         self.write(command, loglevel)
         return self.read_until_prompt(loglevel)
 
-    def set_prompt(self, prompt, prompt_is_regexp=False):
-        """Sets the prompt used in this connection to `prompt`.
-
-        If `prompt_is_regexp` is a non-empty string, the given prompt is
-        considered to be a regular expression.
-
-        The old prompt is returned and can be used to restore it later.
-
-        Example:
-        | ${prompt} | ${regexp} = | Set Prompt | $ |
-        | Do Something |
-        | Set Prompt | ${prompt} | ${regexp} |
-        """
-        old = hasattr(self, '_prompt') and self._prompt or (None, False)
-        if prompt_is_regexp:
-            self._prompt = (re.compile(prompt), True)
-        else:
-            self._prompt = (prompt, False)
-        if old[1]:
-            return old[0].pattern, True
-        return old
-
-    def _prompt_is_set(self):
-        return self._prompt[0] is not None
-
-    def set_default_log_level(self, level):
-        """Sets the default log level used by all read keywords.
-
-        The possible values are TRACE, DEBUG, INFO and WARN. The default is
-        INFO. The old value is returned and can be used to restore it later,
-        similarly as with `Set Timeout`.
-        """
-        if not self._is_valid_log_level(level):
-            raise AssertionError("Invalid log level '%s'" % level)
-        old = self._default_log_level
-        self._default_log_level = level.upper()
-        return old
-
     def _log(self, msg, level=None):
         msg = msg.strip()
         if msg:
             logger.write(msg, level or self._default_log_level)
-
-    def _is_valid_log_level(self, level):
-        return level is None or level.upper() in ('TRACE', 'DEBUG', 'INFO', 'WARN')
-
     def _negotiate_echo_on(self, sock, cmd, opt):
         # This is supposed to turn server side echoing on and turn other options off.
         if opt == telnetlib.ECHO and cmd in (telnetlib.WILL, telnetlib.WONT):
