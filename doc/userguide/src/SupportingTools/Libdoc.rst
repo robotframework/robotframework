@@ -57,6 +57,7 @@ Options
                            HTML, plain text, and reStructuredText. Default value
                            can be specified in test library source code and
                            the initial default value is :opt:`robot`.
+                           New in Robot Framework 2.7.5.
   -N, --name <newname>     Sets the name of the documented library or resource.
   -V, --version <newversion>  Sets the version of the documented library or
                            resource. The default value for test libraries is
