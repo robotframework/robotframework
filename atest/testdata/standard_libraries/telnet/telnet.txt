@@ -14,10 +14,10 @@ Write & Read
     Sleep    300 ms
     ${out} =    Read
     Should Be Equal    ${out}    ${HOME}\r\n${FULL PROMPT}
-    Write    pwd
+    Write    echo Hyvää yötä
     Sleep    300 ms
     ${out} =    Read    debug
-    Should Be Equal    ${out}    ${HOME}\r\n${FULL PROMPT}
+    Should Be Equal    ${out}    Hyvää yötä\r\n${FULL PROMPT}
 
 Read Until
     [Documentation]    FAIL No match found for 'Not found' in 500 milliseconds
@@ -26,6 +26,10 @@ Read Until
     Should Be Equal    ${out}    /
     ${out} =    Read Until    /    DEBUG
     Should Be Equal    ${out}    home/
+    Read
+    Write    echo Hyvää yötä
+    ${out} =    Read Until    yötä
+    Should Be Equal    ${out}    Hyvää yötä
     Read Until    Not found
 
 Read Until Regexp
@@ -35,6 +39,10 @@ Read Until Regexp
     Should Be Equal    ${out}    ${HOME}\r\n
     ${out} =    Read Until Regexp    .*@    deBUG
     Should Be Equal    ${out}    ${PROMPT START}
+    Read
+    Write    echo Päivää
+    ${out} =    Read Until Regexp    no match    ää   debug
+    Should Be Equal    ${out}    Päivää
     Read Until Regexp    Not found
 
 Read Until Prompt
@@ -73,10 +81,6 @@ Write Until Expected Output
     Write    a=10
     Write Until Expected Output    a=$(($a - 1)); if (($a == 0)); then echo BLAST OFF; fi\r\n    BLAST OFF    2 s    10ms
     Write Until Expected Output    ls    Not found    300ms    100ms
-
-Write Non-ASCII
-    [Documentation]    FAIL ValueError: Telnet library currently supports only ASCII.
-    Write    Hyvää yötä!
 
 Set Prompt
     ${old}    ${regexp} =    Set Prompt    $$$    REGEXP

@@ -283,9 +283,9 @@ class TelnetConnection(telnetlib.Telnet):
         See `Read` for more information on `loglevel`.
         """
         telnetlib.Telnet.close(self)
-        ret = self.read_all().decode('ASCII', 'ignore')
-        self._log(ret, loglevel)
-        return ret
+        output = self._decode(self.read_all())
+        self._log(output, loglevel)
+        return output
 
     def login(self, username, password, login_prompt='login: ',
               password_prompt='Password: '):
@@ -359,13 +359,7 @@ class TelnetConnection(telnetlib.Telnet):
 
         Does not consume the written text.
         """
-        telnetlib.Telnet.write(self, self._str(text))
-
-    def _str(self, text):
-        try:
-            return str(text)
-        except UnicodeError:
-            raise ValueError('Telnet library currently supports only ASCII.')
+        telnetlib.Telnet.write(self, self._encode(text))
 
     def write_until_expected_output(self, text, expected, timeout,
                                     retry_interval, loglevel=None):
@@ -416,9 +410,9 @@ class TelnetConnection(telnetlib.Telnet):
         log level, and the available levels are TRACE, DEBUG, INFO,
         and WARN.
         """
-        ret = self.read_very_eager().decode('ASCII', 'ignore')
-        self._log(ret, loglevel)
-        return ret
+        output = self._decode(self.read_very_eager())
+        self._log(output, loglevel)
+        return output
 
     def read_until(self, expected, loglevel=None):
         """Reads from the current output, until expected is encountered.
@@ -431,8 +425,8 @@ class TelnetConnection(telnetlib.Telnet):
         return self._read_until(expected, self._timeout, loglevel)
 
     def _read_until(self, expected, timeout, loglevel):
-        output = telnetlib.Telnet.read_until(self, self._str(expected),
-                                             timeout).decode('ASCII', 'ignore')
+        output = self._decode(
+            telnetlib.Telnet.read_until(self, self._encode(expected), timeout))
         self._log(output, loglevel)
         if not output.endswith(expected):
             self._raise_no_match_found(expected)
@@ -454,23 +448,23 @@ class TelnetConnection(telnetlib.Telnet):
         | Read Until Regexp | first_regexp | second_regexp |
         | Read Until Regexp | some regexp  | DEBUG |
         """
-        expected = [self._str(exp) if isinstance(exp, unicode) else exp
+        expected = [self._encode(exp) if isinstance(exp, unicode) else exp
                     for exp in expected]
         if expected and self._is_valid_log_level(expected[-1]):
             loglevel = expected.pop()
         else:
             loglevel = None
         try:
-            index, _, ret = self.expect(expected, self._timeout)
+            index, _, output = self.expect(expected, self._timeout)
         except TypeError:
-            index, ret = -1, ''
-        ret = ret.decode('ASCII', 'ignore')
-        self._log(ret, loglevel)
+            index, output = -1, ''
+        output = self._decode(output)
+        self._log(output, loglevel)
         if index == -1:
             expected = [exp if isinstance(exp, str) else exp.pattern
                         for exp in expected]
             self._raise_no_match_found(expected)
-        return ret
+        return output
 
     def read_until_prompt(self, loglevel=None):
         """Reads from the current output, until a prompt is found.
@@ -505,6 +499,14 @@ class TelnetConnection(telnetlib.Telnet):
         """
         self.write(command, loglevel)
         return self.read_until_prompt(loglevel)
+
+    def _encode(self, text):
+        if isinstance(text, str):
+            return text
+        return text.encode('UTF-8')
+
+    def _decode(self, bytes):
+        return bytes.decode('UTF-8')
 
     def _log(self, msg, level=None):
         msg = msg.strip()

@@ -15,17 +15,19 @@ Open Connection
 Write & Read
     ${tc} =    Check Test Case    ${TEST NAME}
     Check Log Message    ${tc.kws[2].msgs[0]}    ${HOME}\n${FULL PROMPT}
-    Check Log Message    ${tc.kws[6].msgs[0]}    ${HOME}\n${FULL PROMPT}    DEBUG
+    Check Log Message    ${tc.kws[6].msgs[0]}    Hyvää yötä\n${FULL PROMPT}    DEBUG
 
 Read Until
     ${tc} =    Check Test Case    ${TEST NAME}
     Check Log Message    ${tc.kws[1].msgs[0]}    /
     Check Log Message    ${tc.kws[3].msgs[0]}    home/    DEBUG
+    Check Log Message    ${tc.kws[7].msgs[0]}    Hyvää yötä
 
 Read Until Regexp
     ${tc} =    Check Test Case    ${TEST NAME}
     Check Log Message    ${tc.kws[1].msgs[0]}    ${HOME}
     Check Log Message    ${tc.kws[3].msgs[0]}    ${PROMPT START}    DEBUG
+    Check Log Message    ${tc.kws[7].msgs[0]}    Päivää    DEBUG
 
 Read Until Prompt
     ${tc} =    Check Test Case    ${TEST NAME}
@@ -44,9 +46,6 @@ Write Until Expected Output
     Check Log Message    ${tc.kws[1].msgs[0]}    ${FULL PROMPT}a=$(($a - 1)); if (($a == 0)); then echo BLAST OFF; fi
     Check Log Message    ${tc.kws[1].msgs[1]}    ${FULL PROMPT}
     Check Log Message    ${tc.kws[1].msgs[2]}    a=$(($a - 1)); if (($a == 0)); then echo BLAST OFF; fi
-
-Write Non-ASCII
-    Check Test Case    ${TEST NAME}
 
 Set Prompt
     Check Test Case    ${TEST NAME}
