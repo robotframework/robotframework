@@ -1122,7 +1122,8 @@ class _RunKeyword:
         | `Run Keyword Unless` | '${status}' == 'PASS' | `Another Action` |
 
         In this example, only either `Some Action` or `Another Action` is
-        executed, based on the status of `My Keyword`.
+        executed, based on the status of `My Keyword`. Instead of `Run Keyword
+        And Ignore Error` you can also use `Run Keyword And Return Status`.
 
         Starting from Robot version 2.7.4, this keyword supports also optional
         ELSE and ELSE IF branches. Both of these are defined in `*args` and must
@@ -1189,7 +1190,8 @@ class _RunKeyword:
         This keyword returns two values, so that the first is either 'PASS' or
         'FAIL', depending on the status of the executed keyword. The second
         value is either the return value of the keyword or the received error
-        message.
+        message. See `Run Keyword And Return Status` If you are only interested
+        in the execution status.
 
         The keyword name and arguments work as in `Run Keyword`. See
         `Run Keyword If` for a usage example.
@@ -1205,22 +1207,20 @@ class _RunKeyword:
             return 'FAIL', unicode(err)
 
     def run_keyword_and_return_status(self, name, *args):
-        """Runs the given keyword with given arguments and returns run status as boolean value.
+        """Runs the given keyword with given arguments and returns the status as a Boolean value.
 
-        This keyword returns 'True' if the keyword that is executed succeeds and
-        'False' if the keyword that is executed fails. This keyword uses
-        'Run Keyword And Ignore Error' and determines the return value based on
-        that.
+        This keyword returns `True` if the keyword that is executed succeeds and
+        `False` if it fails. This is useful, for example, in combination with
+        `Run Keyword If`. If you are interested in the error message or return
+        value, use `Run Keyword And Ignore Error` instead.
 
-        The keyword name and arguments work as in `Run Keyword`. See
-        `Run Keyword If` for a usage example.
-
-        This keyword can be used as a convenience keyword when using
-        'Run Keyword If'.
+        The keyword name and arguments work as in `Run Keyword`.
 
         Example:
-        | ${passed} = | Run Keyword And Return Status | Keyword | args |
-        | Run Keyword If | ${passed} | Another keyword |
+        | ${passed} = | `Run Keyword And Return Status` | Keyword | args |
+        | `Run Keyword If` | ${passed} | Another keyword |
+
+        New in Robot Framework 2.7.6.
         """
         status, _ = self.run_keyword_and_ignore_error(name, *args)
         return status == 'PASS'
