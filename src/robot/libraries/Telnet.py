@@ -468,6 +468,8 @@ class TelnetConnection(telnetlib.Telnet):
         | Read Until Regexp | some regexp  | DEBUG |
         """
         self._verify_connection()
+        if not expected:
+            raise RuntimeError('At least one pattern required')
         expected = [self._encode(exp) if isinstance(exp, unicode) else exp
                     for exp in expected]
         if expected and self._is_valid_log_level(expected[-1]):
