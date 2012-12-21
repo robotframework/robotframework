@@ -64,3 +64,6 @@ Write Until Expected Output
 
 Execute Command
     Check Test Case    ${TEST NAME}
+
+Writing and reading fails if there is no connection
+    Check Test Case    ${TEST NAME}

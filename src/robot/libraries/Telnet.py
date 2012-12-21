@@ -185,10 +185,10 @@ class TelnetConnection(telnetlib.Telnet):
                  prompt=None, prompt_is_regexp=False):
         port = int(port) if port else 23
         telnetlib.Telnet.__init__(self, host, port)
-        self.set_timeout(timeout)
-        self.set_newline(newline)
-        self.set_prompt(prompt, prompt_is_regexp)
-        self.set_default_log_level('INFO')
+        self._set_timeout(timeout)
+        self._set_newline(newline)
+        self._set_prompt(prompt, prompt_is_regexp)
+        self._set_default_log_level('INFO')
         self.set_option_negotiation_callback(self._negotiate_echo_on)
 
     def set_timeout(self, timeout):
@@ -210,9 +210,13 @@ class TelnetConnection(telnetlib.Telnet):
         | Do Something |
         | Set Timeout  | ${timeout}  |
         """
-        old = getattr(self, '_timeout', 0)
-        self._timeout = utils.timestr_to_secs(timeout)
+        self._verify_connection()
+        old = self._timeout
+        self._set_timeout(timeout)
         return utils.secs_to_timestr(old)
+
+    def _set_timeout(self, timeout):
+        self._timeout = utils.timestr_to_secs(timeout)
 
     def set_newline(self, newline):
         """Sets the newline used by the `Write` keyword.
@@ -230,9 +234,13 @@ class TelnetConnection(telnetlib.Telnet):
         The old newline is returned and can be used to restore the newline
         later similarly as with `Set Timeout`.
         """
-        old = getattr(self, '_newline', None)
-        self._newline = newline.upper().replace('LF','\n').replace('CR','\r')
+        self._verify_connection()
+        old = self._newline
+        self._set_newline(newline)
         return old
+
+    def _set_newline(self, newline):
+        self._newline = newline.upper().replace('LF','\n').replace('CR','\r')
 
     def set_prompt(self, prompt, prompt_is_regexp=False):
         """Sets the prompt used in this connection to `prompt`.
@@ -247,14 +255,18 @@ class TelnetConnection(telnetlib.Telnet):
         | Do Something |
         | Set Prompt | ${prompt} | ${regexp} |
         """
-        old = getattr(self, '_prompt', (None, False))
+        self._verify_connection()
+        old = self._prompt
+        self._set_prompt(prompt, prompt_is_regexp)
+        if old[1]:
+            return old[0].pattern, True
+        return old
+
+    def _set_prompt(self, prompt, prompt_is_regexp):
         if prompt_is_regexp:
             self._prompt = (re.compile(prompt), True)
         else:
             self._prompt = (prompt, False)
-        if old[1]:
-            return old[0].pattern, True
-        return old
 
     def _prompt_is_set(self):
         return self._prompt[0] is not None
@@ -268,11 +280,15 @@ class TelnetConnection(telnetlib.Telnet):
         The old value is returned and can be used to restore the log level
         later similarly as with `Set Timeout`.
         """
+        self._verify_connection()
+        old = self._default_log_level
+        self._set_default_log_level(level)
+        return old
+
+    def _set_default_log_level(self, level):
         if level is None or not self._is_valid_log_level(level):
             raise AssertionError("Invalid log level '%s'" % level)
-        old = getattr(self, '_default_log_level', None)
         self._default_log_level = level.upper()
-        return old
 
     def _is_valid_log_level(self, level):
         return level is None or level.upper() in ('TRACE', 'DEBUG', 'INFO', 'WARN')
@@ -359,6 +375,7 @@ class TelnetConnection(telnetlib.Telnet):
 
         Does not consume the written text.
         """
+        self._verify_connection()
         telnetlib.Telnet.write(self, self._encode(text))
 
     def write_until_expected_output(self, text, expected, timeout,
@@ -410,6 +427,7 @@ class TelnetConnection(telnetlib.Telnet):
         log level, and the available levels are TRACE, DEBUG, INFO,
         and WARN.
         """
+        self._verify_connection()
         output = self._decode(self.read_very_eager())
         self._log(output, loglevel)
         return output
@@ -425,6 +443,7 @@ class TelnetConnection(telnetlib.Telnet):
         return self._read_until(expected, self._timeout, loglevel)
 
     def _read_until(self, expected, timeout, loglevel):
+        self._verify_connection()
         output = self._decode(
             telnetlib.Telnet.read_until(self, self._encode(expected), timeout))
         self._log(output, loglevel)
@@ -448,6 +467,7 @@ class TelnetConnection(telnetlib.Telnet):
         | Read Until Regexp | first_regexp | second_regexp |
         | Read Until Regexp | some regexp  | DEBUG |
         """
+        self._verify_connection()
         expected = [self._encode(exp) if isinstance(exp, unicode) else exp
                     for exp in expected]
         if expected and self._is_valid_log_level(expected[-1]):
@@ -499,6 +519,10 @@ class TelnetConnection(telnetlib.Telnet):
         """
         self.write(command, loglevel)
         return self.read_until_prompt(loglevel)
+
+    def _verify_connection(self):
+        if not self.sock:
+            raise RuntimeError('No connection open')
 
     def _encode(self, text):
         if isinstance(text, str):

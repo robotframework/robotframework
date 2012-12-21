@@ -1,5 +1,4 @@
 *** Setting ***
-Test Teardown     Close Connection
 Suite Teardown    Close All Connections
 Library           Telnet
 Resource          telnet_resource.txt
@@ -10,15 +9,21 @@ Open Connection
     Should Be Equal    ${index}    ${1}
 
 Close Connection
-    [Documentation]    FAIL
+    [Documentation]    FAIL No connection open
     Write    hello
     Close Connection
     Write    this fails
 
+Closing already closed connection is OK
+    Close Connection
+    Open Connection    ${HOST}
+    Close Connection
+    Close Connection
+
 Close All Connections 1
-    [Documentation]    FAIL
+    [Documentation]    FAIL No connection open
     ${index} =    Open Connection    ${HOST}   prompt=xxx
-    Should Be Equal    ${index}    ${2}
+    Should Be Equal    ${index}    ${3}
     Close All Connections
     Write    this fails
 

@@ -2,9 +2,13 @@
 Variables         telnet_variables.py
 
 *** Keyword ***
-Login And Set Prompt
+Login and set prompt
     [Arguments]    ${alias}=${NONE}
     ${index} =    Open Connection    ${HOST}    prompt=${PROMPT}    alias=${alias}
     Login    ${USERNAME}    ${PASSWORD}
     Set Timeout    0.3 seconds    # Must set after login to give login time to succeed
     [Return]    ${index}
+
+Should fail because no connection
+    [Arguments]    ${kw}    @{args}
+    Run Keyword And Expect Error    No connection open    ${kw}    @{args}

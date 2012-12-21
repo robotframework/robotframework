@@ -101,3 +101,13 @@ Write Until Expected Output
 Execute Command
     ${output} =    Execute Command    pwd
     Should Be Equal    ${output}    ${HOME}\r\n${FULL PROMPT}
+
+Writing and reading fails if there is no connection
+    [Setup]    NONE
+    [Template]    Should fail because no connection
+    Write    foo
+    Write Bare    bar
+    Write Until Expected Output    foo    bar    1s    0.1s
+    Read
+    Read Until    foo
+    Read Until Regexp    bar

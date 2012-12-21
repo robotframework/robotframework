@@ -63,6 +63,15 @@ Set Default Log Level Keyword
     Read Until Prompt
     Set Default log Level    Invalid
 
+Writing and reading fails if there is no connection
+    [Setup]    NONE
+    [Template]    Should fail because no connection
+    Set Prompt    $
+    Set Timeout    1s
+    Set Newline    LF
+    Set Default Log Level    DEBUG
+
+
 *** Keywords ***
 Prompt Should Be
     [Arguments]    ${expected prompt}    ${expected regexp}
