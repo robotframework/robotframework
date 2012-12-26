@@ -1099,15 +1099,30 @@ class _RunKeyword:
         | Suite Setup | Run Keywords | Initialize database | Start servers |
         """
         errors = []
-        for kw in self._variables.replace_list(names):
+        for kw, args in self._split_run_keywords(list(names)):
             try:
-                self.run_keyword(kw)
+                self.run_keyword(kw, *args)
             except ExecutionFailed, err:
                 errors.extend(err.get_errors())
                 if not err.can_continue(self._execution_context.teardown):
                     break
         if errors:
             raise ExecutionFailures(errors)
+
+    def _split_run_keywords(self, names):
+        if 'AND' not in names:
+            for name in self._variables.replace_list(names):
+                yield name, ()
+            return
+        while 'AND' in names:
+            index = names.index('AND')
+            if index == len(names) - 1:
+                raise DataError("AND requires keyword")
+            needed = self._variables.replace_list(names[0:index], extra_escapes=('AND',))
+            yield needed[0], needed[1:]
+            names = names[index+1:]
+        needed = self._variables.replace_list(names, extra_escapes=('AND',))
+        yield needed[0], needed[1:]
 
     def run_keyword_if(self, condition, name, *args):
         """Runs the given keyword with the given arguments, if `condition` is true.
