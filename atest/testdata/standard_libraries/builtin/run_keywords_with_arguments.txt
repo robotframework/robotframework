@@ -46,5 +46,5 @@ AND as last argument should raise an error
    Run Keywords  Log Many  1  2  AND  No Operation  AND
 
 Consecutive AND's
-    [Documentation]  FAIL  Consecutive AND's not supported
+   [Documentation]  FAIL  AND requires keyword
     Run Keywords  Log Many  1  2  AND  AND  No Operation

@@ -1110,21 +1110,25 @@ class _RunKeyword:
             raise ExecutionFailures(errors)
 
     def _split_run_keywords(self, names):
-        if names[-1] == 'AND':
-            raise DataError("AND requires keyword")
         if 'AND' not in names:
             for name in self._variables.replace_list(names):
                 yield name, ()
-            return
+        else:
+            for name, args in self._split_run_keywords_from_and(names):
+                yield name, args
+
+    def _split_run_keywords_from_and(self, names):
         while 'AND' in names:
             index = names.index('AND')
-            if names[index+1] == 'AND':
-                raise DataError("Consecutive AND's not supported")
-            needed = self._variables.replace_from_beginning(names[:index], 1, extra_escapes=('AND',))
-            yield needed[0], needed[1:]
+            yield self._resolve_run_keywords_name_and_args(names[:index])
             names = names[index+1:]
+        yield self._resolve_run_keywords_name_and_args(names)
+
+    def _resolve_run_keywords_name_and_args(self, names):
         needed = self._variables.replace_from_beginning(names, 1, extra_escapes=('AND',))
-        yield needed[0], needed[1:]
+        if not needed:
+            raise DataError('AND requires keyword')
+        return needed[0], needed[1:]
 
     def run_keyword_if(self, condition, name, *args):
         """Runs the given keyword with the given arguments, if `condition` is true.
