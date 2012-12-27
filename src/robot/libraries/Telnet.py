@@ -12,6 +12,8 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+from __future__ import with_statement
+from contextlib import contextmanager
 import telnetlib
 import time
 import re
@@ -411,9 +413,10 @@ class TelnetConnection(telnetlib.Telnet):
         maxtime = time.time() + timeout
         while time.time() < maxtime:
             self.write_bare(text)
-            self._read_until(text, self._timeout, loglevel)
+            self.read_until(text, loglevel)
             try:
-                return self._read_until(expected, retry_interval, loglevel)
+                with self._custom_timeout(retry_interval):
+                    return self.read_until(expected, loglevel)
             except AssertionError:
                 pass
         self._raise_no_match_found(expected, timeout)
@@ -440,16 +443,17 @@ class TelnetConnection(telnetlib.Telnet):
 
         See `Read` for more information on `loglevel`.
         """
-        return self._read_until(expected, self._timeout, loglevel)
-
-    def _read_until(self, expected, timeout, loglevel):
-        self._verify_connection()
-        output = self._decode(
-            telnetlib.Telnet.read_until(self, self._encode(expected), timeout))
+        output = self._read_until(expected)
         self._log(output, loglevel)
         if not output.endswith(expected):
             self._raise_no_match_found(expected)
         return output
+
+    def _read_until(self, expected):
+        self._verify_connection()
+        expected = self._encode(expected)
+        output = telnetlib.Telnet.read_until(self, expected, self._timeout)
+        return self._decode(output)
 
     def read_until_regexp(self, *expected):
         """Reads from the current output, until a match to a regexp in expected.
@@ -467,26 +471,30 @@ class TelnetConnection(telnetlib.Telnet):
         | Read Until Regexp | first_regexp | second_regexp |
         | Read Until Regexp | some regexp  | DEBUG |
         """
-        self._verify_connection()
         if not expected:
             raise RuntimeError('At least one pattern required')
-        expected = [self._encode(exp) if isinstance(exp, unicode) else exp
-                    for exp in expected]
-        if expected and self._is_valid_log_level(expected[-1]):
-            loglevel = expected.pop()
+        if self._is_valid_log_level(expected[-1]):
+            loglevel = expected[-1]
+            expected = expected[:-1]
         else:
             loglevel = None
+        index, output = self._read_until_with_regexp(expected)
+        self._log(output, loglevel)
+        if index == -1:
+            expected = [exp if isinstance(exp, basestring) else exp.pattern
+                        for exp in expected]
+            self._raise_no_match_found(expected)
+        return output
+
+    def _read_until_with_regexp(self, expected):
+        self._verify_connection()
+        expected = [self._encode(exp) if isinstance(exp, unicode) else exp
+                    for exp in expected]
         try:
             index, _, output = self.expect(expected, self._timeout)
         except TypeError:
             index, output = -1, ''
-        output = self._decode(output)
-        self._log(output, loglevel)
-        if index == -1:
-            expected = [exp if isinstance(exp, str) else exp.pattern
-                        for exp in expected]
-            self._raise_no_match_found(expected)
-        return output
+        return index, self._decode(output)
 
     def read_until_prompt(self, loglevel=None):
         """Reads from the current output, until a prompt is found.
@@ -521,6 +529,14 @@ class TelnetConnection(telnetlib.Telnet):
         """
         self.write(command, loglevel)
         return self.read_until_prompt(loglevel)
+
+    @contextmanager
+    def _custom_timeout(self, timeout):
+        old = self.set_timeout(timeout)
+        try:
+            yield
+        finally:
+            self.set_timeout(old)
 
     def _verify_connection(self):
         if not self.sock:
