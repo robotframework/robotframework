@@ -12,6 +12,8 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+from __future__ import with_statement
+from contextlib import contextmanager
 import telnetlib
 import time
 import re
@@ -304,12 +306,14 @@ class TelnetConnection(telnetlib.Telnet):
         return output
 
     def login(self, username, password, login_prompt='login: ',
-              password_prompt='Password: '):
+              password_prompt='Password: ', login_timeout='1 second',
+              login_failed_text='Login incorrect'):
+
         """Logs in to the Telnet server with the given user information.
 
-        The login keyword reads from the connection until login_prompt
+        The login keyword reads from the connection until `login_prompt`
         is encountered and then types the user name. Then it reads
-        until password_prompt is encountered and types the
+        until `password_prompt` is encountered and types the
         password. The rest of the output (if any) is also read, and
         all the text that has been read is returned as a single
         string.
@@ -321,33 +325,32 @@ class TelnetConnection(telnetlib.Telnet):
         """
         ret = self.read_until(login_prompt, 'TRACE')
         self.write_bare(username + self._newline)
-        ret += username + '\n'
         ret += self.read_until(password_prompt, 'TRACE')
         self.write_bare(password + self._newline)
-        ret += '*' * len(password) + '\n'
-        if self._prompt_is_set():
-            try:
-                ret += self.read_until_prompt('TRACE')
-            except AssertionError:
-                self._verify_login(ret)
-                raise
-        else:
-            ret += self._verify_login(ret)
+        output, success = self._verify_login(login_timeout, login_failed_text)
+        ret += output
         self._log(ret)
+        if not success:
+            raise AssertionError('Login incorrect')
         return ret
 
-    def _verify_login(self, ret):
-        # It is necessary to wait for the 'login incorrect' message to appear.
-        time.sleep(1)
-        while True:
-            try:
-                ret += self.read_until('\n', 'TRACE')
-            except AssertionError:
-                return ret
-            else:
-                if 'Login incorrect' in ret:
-                    self._log(ret)
-                    raise AssertionError("Login incorrect")
+    def _verify_login(self, timeout, failed_text):
+        if self._prompt_is_set():
+            return self._verify_login_with_prompt(timeout)
+        return self._verify_login_without_prompt(timeout, failed_text)
+
+    def _verify_login_with_prompt(self, timeout):
+        try:
+            with self._custom_timeout(timeout):
+                return self.read_until_prompt('TRACE'), True
+        except AssertionError:
+            return '', False
+
+    def _verify_login_without_prompt(self, delay, failed_text):
+        time.sleep(utils.timestr_to_secs(delay))
+        output = self.read('TRACE')
+        success = failed_text not in output
+        return output, success
 
     def write(self, text, loglevel=None):
         """Writes the given text over the connection and appends a newline.
@@ -411,9 +414,10 @@ class TelnetConnection(telnetlib.Telnet):
         maxtime = time.time() + timeout
         while time.time() < maxtime:
             self.write_bare(text)
-            self._read_until(text, self._timeout, loglevel)
+            self.read_until(text, loglevel)
             try:
-                return self._read_until(expected, retry_interval, loglevel)
+                with self._custom_timeout(retry_interval):
+                    return self.read_until(expected, loglevel)
             except AssertionError:
                 pass
         self._raise_no_match_found(expected, timeout)
@@ -440,16 +444,17 @@ class TelnetConnection(telnetlib.Telnet):
 
         See `Read` for more information on `loglevel`.
         """
-        return self._read_until(expected, self._timeout, loglevel)
-
-    def _read_until(self, expected, timeout, loglevel):
-        self._verify_connection()
-        output = self._decode(
-            telnetlib.Telnet.read_until(self, self._encode(expected), timeout))
+        output = self._read_until(expected)
         self._log(output, loglevel)
         if not output.endswith(expected):
             self._raise_no_match_found(expected)
         return output
+
+    def _read_until(self, expected):
+        self._verify_connection()
+        expected = self._encode(expected)
+        output = telnetlib.Telnet.read_until(self, expected, self._timeout)
+        return self._decode(output)
 
     def read_until_regexp(self, *expected):
         """Reads from the current output, until a match to a regexp in expected.
@@ -467,26 +472,30 @@ class TelnetConnection(telnetlib.Telnet):
         | Read Until Regexp | first_regexp | second_regexp |
         | Read Until Regexp | some regexp  | DEBUG |
         """
-        self._verify_connection()
         if not expected:
             raise RuntimeError('At least one pattern required')
-        expected = [self._encode(exp) if isinstance(exp, unicode) else exp
-                    for exp in expected]
-        if expected and self._is_valid_log_level(expected[-1]):
-            loglevel = expected.pop()
+        if self._is_valid_log_level(expected[-1]):
+            loglevel = expected[-1]
+            expected = expected[:-1]
         else:
             loglevel = None
+        index, output = self._read_until_with_regexp(expected)
+        self._log(output, loglevel)
+        if index == -1:
+            expected = [exp if isinstance(exp, basestring) else exp.pattern
+                        for exp in expected]
+            self._raise_no_match_found(expected)
+        return output
+
+    def _read_until_with_regexp(self, expected):
+        self._verify_connection()
+        expected = [self._encode(exp) if isinstance(exp, unicode) else exp
+                    for exp in expected]
         try:
             index, _, output = self.expect(expected, self._timeout)
         except TypeError:
             index, output = -1, ''
-        output = self._decode(output)
-        self._log(output, loglevel)
-        if index == -1:
-            expected = [exp if isinstance(exp, str) else exp.pattern
-                        for exp in expected]
-            self._raise_no_match_found(expected)
-        return output
+        return index, self._decode(output)
 
     def read_until_prompt(self, loglevel=None):
         """Reads from the current output, until a prompt is found.
@@ -521,6 +530,14 @@ class TelnetConnection(telnetlib.Telnet):
         """
         self.write(command, loglevel)
         return self.read_until_prompt(loglevel)
+
+    @contextmanager
+    def _custom_timeout(self, timeout):
+        old = self.set_timeout(timeout)
+        try:
+            yield
+        finally:
+            self.set_timeout(old)
 
     def _verify_connection(self):
         if not self.sock:
