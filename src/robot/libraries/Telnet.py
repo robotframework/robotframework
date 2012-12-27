@@ -306,12 +306,14 @@ class TelnetConnection(telnetlib.Telnet):
         return output
 
     def login(self, username, password, login_prompt='login: ',
-              password_prompt='Password: '):
+              password_prompt='Password: ', login_timeout='1 second',
+              login_failed_text='Login incorrect'):
+
         """Logs in to the Telnet server with the given user information.
 
-        The login keyword reads from the connection until login_prompt
+        The login keyword reads from the connection until `login_prompt`
         is encountered and then types the user name. Then it reads
-        until password_prompt is encountered and types the
+        until `password_prompt` is encountered and types the
         password. The rest of the output (if any) is also read, and
         all the text that has been read is returned as a single
         string.
@@ -323,33 +325,32 @@ class TelnetConnection(telnetlib.Telnet):
         """
         ret = self.read_until(login_prompt, 'TRACE')
         self.write_bare(username + self._newline)
-        ret += username + '\n'
         ret += self.read_until(password_prompt, 'TRACE')
         self.write_bare(password + self._newline)
-        ret += '*' * len(password) + '\n'
-        if self._prompt_is_set():
-            try:
-                ret += self.read_until_prompt('TRACE')
-            except AssertionError:
-                self._verify_login(ret)
-                raise
-        else:
-            ret += self._verify_login(ret)
+        output, success = self._verify_login(login_timeout, login_failed_text)
+        ret += output
         self._log(ret)
+        if not success:
+            raise AssertionError('Login incorrect')
         return ret
 
-    def _verify_login(self, ret):
-        # It is necessary to wait for the 'login incorrect' message to appear.
-        time.sleep(1)
-        while True:
-            try:
-                ret += self.read_until('\n', 'TRACE')
-            except AssertionError:
-                return ret
-            else:
-                if 'Login incorrect' in ret:
-                    self._log(ret)
-                    raise AssertionError("Login incorrect")
+    def _verify_login(self, timeout, failed_text):
+        if self._prompt_is_set():
+            return self._verify_login_with_prompt(timeout)
+        return self._verify_login_without_prompt(timeout, failed_text)
+
+    def _verify_login_with_prompt(self, timeout):
+        try:
+            with self._custom_timeout(timeout):
+                return self.read_until_prompt('TRACE'), True
+        except AssertionError:
+            return '', False
+
+    def _verify_login_without_prompt(self, delay, failed_text):
+        time.sleep(utils.timestr_to_secs(delay))
+        output = self.read('TRACE')
+        success = failed_text not in output
+        return output, success
 
     def write(self, text, loglevel=None):
         """Writes the given text over the connection and appends a newline.
