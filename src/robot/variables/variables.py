@@ -124,7 +124,7 @@ class Variables(utils.NormalizedDict):
             return int(number[2:], bases[number[:2]])
         return int(number)
 
-    def replace_list(self, items, extra_escapes=()):
+    def replace_list(self, items):
         """Replaces variables from a list of items.
 
         If an item in a list is a @{list} variable its value is returned.
@@ -138,7 +138,7 @@ class Variables(utils.NormalizedDict):
                 results.extend(self[listvar])
             else:
                 item = self.replace_scalar(item)
-                results.append('\\' + item if item in extra_escapes else item)
+                results.append(item)
         return results
 
     def _replace_variables_inside_possible_list_var(self, item):

@@ -1,7 +1,8 @@
 ***Variables***
 ${NOOP}  No Operation
 @{MANY ARGUMENTS}  hello  1  2  3
-@{ESCAPED}  1  \AND  2  Log Many  \${escaped}  c:\\temp
+@{ESCAPED}  1  \AND  2  Log Many  x\${escaped}  c:\\temp
+@{LIST VARIABLE}  Log Many  this  AND  that
 ${AND VARIABLE}  AND
 
 
@@ -29,15 +30,21 @@ Escaped AND
     Run Keywords  Log Many  this  \AND  that  AND  no kw
 
 AND from Variable
-    [Documentation]  FAIL  No keyword with name 'AND' found.
-    Run Keywords  No Operation  ${AND VARIABLE}  that
+    [Documentation]  FAIL  No keyword with name 'no kw' found.
+    Run Keywords  Log Many  this  ${AND VARIABLE}  that  AND  no kw
 
-AND from List Variable
-    Run Keywords  Log Many  @{ESCAPED}  AND  No Operation
+AND in List Variable
+    [Documentation]  FAIL  No keyword with name 'no kw' found.
+    Run Keywords  @{LIST VARIABLE}  AND  no kw
 
-Already Escaped AND
-    Run Keywords  Log Many  @{ESCAPED}  AND  No Operation
+Escapes in List Variable should be handled correctly
+    [Documentation]  FAIL  No keyword with name 'no kw' found.
+    Run Keywords  Log Many  @{ESCAPED}  AND  no kw
 
 AND as last argument should raise an error
    [Documentation]  FAIL  AND requires keyword
    Run Keywords  Log Many  1  2  AND  No Operation  AND
+
+Consecutive AND's
+    [Documentation]  FAIL  Consecutive AND's not supported
+    Run Keywords  Log Many  1  2  AND  AND  No Operation

@@ -405,8 +405,8 @@ class _VariableScopes:
         vs.current = self.current
         return vs
 
-    def replace_list(self, items, extra_escapes=()):
-        return self.current.replace_list(items, extra_escapes)
+    def replace_list(self, items):
+        return self.current.replace_list(items)
 
     def replace_scalar(self, items):
         return self.current.replace_scalar(items)
