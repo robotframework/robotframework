@@ -49,9 +49,3 @@ Already Escaped AND
 
 AND as last argument should raise an error
     ${tc}=  Check Test Case  ${TESTNAME}
-
-***Keywords***
-Test Should Have Correct Keywords  [Arguments]  @{expected}
-    ${tc} =  Check Test Case  ${TESTNAME}
-    Should Contain Keywords  ${tc.kws[0]}  @{expected}
-    [Return]  ${tc}

@@ -45,10 +45,3 @@ In suite teardown
     ...  Failing  Passing  BuiltIn.Fail
     Should Be Equal  ${SUITE.message}
     ...  Suite teardown failed:\nSeveral failures occurred:\n\n1) Expected error message\n\n2) AssertionError
-
-
-***Keywords***
-Test Should Have Correct Keywords  [Arguments]  @{expected}
-    ${tc} =  Check Test Case  ${TESTNAME}
-    Should Contain Keywords  ${tc.kws[0]}  @{expected}
-    [Return]  ${tc}
