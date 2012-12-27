@@ -1,7 +1,7 @@
 *** Setting ***
 Test Setup        Open Connection    ${HOST}
 Test Teardown     Close All Connections
-Library           Telnet    123    CRLF    $    REGEXP
+Library           Telnet    123    CRLF    $    REGEXP    ASCII
 Resource          telnet_resource.txt
 
 
@@ -52,6 +52,19 @@ Set Newline Keyword
     Set Newline    LF\rFOO
     Newline Should Be    \n\rFOO
 
+Encoding Set In Init
+    Encoding Should Be    ASCII
+
+Encoding Set In Open Connection
+    Open Connection    ${HOST}    encoding=ISO-8859-15
+    Encoding Should Be    ISO-8859-15
+    Open Connection    ${HOST}    encoding=Latin1
+    Encoding Should Be    Latin1
+
+Set Encoding Keyword
+    Set Encoding    us-ascii
+    Encoding Should Be    us-ascii
+
 Set Default Log Level Keyword
     [Documentation]    FAIL Invalid log level 'Invalid'
     [Setup]    Login And Set Prompt
@@ -63,12 +76,13 @@ Set Default Log Level Keyword
     Read Until Prompt
     Set Default log Level    Invalid
 
-Writing and reading fails if there is no connection
+Configuration fails if there is no connection
     [Setup]    NONE
     [Template]    Should fail because no connection
     Set Prompt    $
     Set Timeout    1s
     Set Newline    LF
+    Set Encoding    ASCII
     Set Default Log Level    DEBUG
 
 
@@ -88,3 +102,8 @@ Newline Should Be
     [Arguments]    ${expected}
     ${newline} =    Set Newline    CRLF
     Should Be Equal    ${newline}    ${expected}
+
+Encoding Should Be
+    [Arguments]    ${expected}
+    ${encoding} =    Set Encoding    ASCII
+    Should Be Equal    ${encoding}    ${expected}

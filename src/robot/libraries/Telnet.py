@@ -39,13 +39,15 @@ class Telnet:
     ROBOT_LIBRARY_SCOPE = 'TEST_SUITE'
     ROBOT_LIBRARY_VERSION = get_version()
 
-    def __init__(self, timeout=3.0, newline='CRLF', prompt=None, prompt_is_regexp=False):
+    def __init__(self, timeout=3.0, newline='CRLF', prompt=None,
+                 prompt_is_regexp=False, encoding='UTF-8'):
         """Telnet library can be imported with optional arguments.
 
         Initialization parameters are used as default values when new
         connections are opened with `Open Connection` keyword. They can also be
-        set after opening the connection using the `Set Timeout`, `Set Newline` and
-        `Set Prompt` keywords. See these keywords for more information.
+        set after opening the connection using the `Set Timeout`, `Set Newline`,
+        `Set Prompt`, and `Set Encoding` keywords. See these keywords for more
+        information.
 
         Examples (use only one of these):
 
@@ -53,14 +55,15 @@ class Telnet:
         | Library | Telnet |     |    |     |    | # default values                |
         | Library | Telnet | 0.5 |    |     |    | # set only timeout              |
         | Library | Telnet |     | LF |     |    | # set only newline              |
-        | Library | Telnet | newline=LF |  |  |  | # set only newline using named arguments |
+        | Library | Telnet | newline=LF | encoding=ISO-8859-1 | | | # set newline and encoding using named arguments |
         | Library | Telnet | 2.0 | LF |     |    | # set timeout and newline       |
         | Library | Telnet | 2.0 | CRLF | $ |    | # set also prompt               |
         | Library | Telnet | 2.0 | LF | ($|~) | True | # set prompt with simple regexp |
         """
         self._timeout = timeout or 3.0
         self._newline = newline or 'CRLF'
-        self._prompt = (prompt, prompt_is_regexp)
+        self._prompt = (prompt, bool(prompt_is_regexp))
+        self._encoding = encoding
         self._cache = utils.ConnectionCache()
         self._conn = None
         self._conn_kws = self._lib_kws = None
@@ -100,7 +103,8 @@ class Telnet:
         return getattr(self._conn or self._get_connection(), name)
 
     def open_connection(self, host, alias=None, port=23, timeout=None,
-                        newline=None, prompt=None, prompt_is_regexp=False):
+                        newline=None, prompt=None, prompt_is_regexp=False,
+                        encoding=None):
         """Opens a new Telnet connection to the given host and port.
 
         Possible already opened connections are cached.
@@ -114,19 +118,20 @@ class Telnet:
         be used for switching between connections, similarly as the
         index. See `Switch Connection` for more details about that.
 
-        The `timeout`, `newline`, `prompt` and `prompt_is_regexp` arguments get
-        default values when the library is taken into use, but setting them
-        here overrides those values for this connection. See `importing` for
-        more information.
+        The `timeout`, `newline`, `prompt`, `prompt_is_regexp`, and `encoding`
+        arguments get default values when the library is taken into use, but
+        setting them here overrides those values for this connection. See
+        `importing` for more information.
         """
         timeout = timeout or self._timeout
         newline = newline or self._newline
+        encoding = encoding or self._encoding
         if not prompt:
             prompt, prompt_is_regexp = self._prompt
         logger.info('Opening connection to %s:%s with prompt: %s'
                     % (host, port, prompt))
         self._conn = self._get_connection(host, port, timeout, newline,
-                                          prompt, prompt_is_regexp)
+                                          prompt, prompt_is_regexp, encoding)
         return self._cache.register(self._conn, alias)
 
     def _get_connection(self, *args):
@@ -184,12 +189,13 @@ class Telnet:
 class TelnetConnection(telnetlib.Telnet):
 
     def __init__(self, host=None, port=23, timeout=3.0, newline='CRLF',
-                 prompt=None, prompt_is_regexp=False):
+                 prompt=None, prompt_is_regexp=False, encoding='UTF-8'):
         port = int(port) if port else 23
         telnetlib.Telnet.__init__(self, host, port)
         self._set_timeout(timeout)
         self._set_newline(newline)
         self._set_prompt(prompt, prompt_is_regexp)
+        self._set_encoding(encoding)
         self._set_default_log_level('INFO')
         self.set_option_negotiation_callback(self._negotiate_echo_on)
 
@@ -272,6 +278,32 @@ class TelnetConnection(telnetlib.Telnet):
 
     def _prompt_is_set(self):
         return self._prompt[0] is not None
+
+    def set_encoding(self, encoding):
+        """Sets the encoding to use in this connection when writing and reading.
+
+        The default encoding can be set during `importing` or using `Open
+        Connection` keyword. The default value is 'UTF-8' and it works fine
+        also with ASCII data.
+
+        Setting encoding is a new feature in Robot Framework 2.7.6. Earlier
+        versions only supported ASCII.
+        """
+        self._verify_connection()
+        old = self._encoding
+        self._set_encoding(encoding)
+        return old
+
+    def _set_encoding(self, encoding):
+        self._encoding = encoding
+
+    def _encode(self, text):
+        if isinstance(text, str):
+            return text
+        return text.encode(self._encoding)
+
+    def _decode(self, bytes):
+        return bytes.decode(self._encoding)
 
     def set_default_log_level(self, level):
         """Sets the default log level used by all read keywords.
@@ -564,14 +596,6 @@ class TelnetConnection(telnetlib.Telnet):
     def _verify_connection(self):
         if not self.sock:
             raise RuntimeError('No connection open')
-
-    def _encode(self, text):
-        if isinstance(text, str):
-            return text
-        return text.encode('UTF-8')
-
-    def _decode(self, bytes):
-        return bytes.decode('UTF-8')
 
     def _log(self, msg, level=None):
         msg = msg.strip()

@@ -32,10 +32,19 @@ Newline Set In Open Connection
 Set Newline Keyword
     Check Test Case    ${TEST NAME}
 
+Encoding Set In Init
+    Check Test Case    ${TEST NAME}
+
+Encoding Set In Open Connection
+    Check Test Case    ${TEST NAME}
+
+Set Encoding Keyword
+    Check Test Case    ${TEST NAME}
+
 Set Default Log Level Keyword
     ${tc} =    Check Test Case    ${TEST NAME}
     Check Log Message    ${tc.kws[2].msgs[0]}    pwd    DEBUG
     Check Log Message    ${tc.kws[5].msgs[0]}    ${HOME}\n${FULL PROMPT}    WARN
 
-Writing and reading fails if there is no connection
+Configuration fails if there is no connection
     Check Test Case    ${TEST NAME}
