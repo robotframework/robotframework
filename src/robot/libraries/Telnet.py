@@ -327,7 +327,7 @@ class TelnetConnection(telnetlib.Telnet):
         self.write_bare(username + self._newline)
         ret += self.read_until(password_prompt, 'TRACE')
         self.write_bare(password + self._newline)
-        output, success = self._verify_login(login_timeout, login_failed_text)
+        success, output = self._verify_login(login_timeout, login_failed_text)
         ret += output
         self._log(ret)
         if not success:
@@ -340,24 +340,22 @@ class TelnetConnection(telnetlib.Telnet):
         return self._verify_login_without_prompt(timeout, failed_text)
 
     def _verify_login_with_prompt(self, timeout):
-        try:
-            with self._custom_timeout(timeout):
-                return self.read_until_prompt('TRACE'), True
-        except AssertionError:
-            return '', False
+        with self._custom_timeout(timeout):
+            return self._read_until_prompt()
 
     def _verify_login_without_prompt(self, delay, failed_text):
         time.sleep(utils.timestr_to_secs(delay))
         output = self.read('TRACE')
         success = failed_text not in output
-        return output, success
+        return success, output
 
     def write(self, text, loglevel=None):
         """Writes the given text over the connection and appends a newline.
 
         Consumes the written text (until the appended newline) from
-        the output and returns it. The given text must not contain
-        newlines.
+        the output and logs and returns it. The given text must not contain
+        newlines. Use `Write Bare` instead if either of these features
+        causes a problem.
 
         Note: This keyword does not return the possible output of the
         executed command. To get the output, one of the `Read XXX`
@@ -366,10 +364,9 @@ class TelnetConnection(telnetlib.Telnet):
         See `Read` for more information on `loglevel`.
         """
         if self._newline in text:
-            raise RuntimeError("Write cannot be used with string containing "
-                               "newlines. Use 'Write Bare' instead.")
-        text += self._newline
-        self.write_bare(text)
+            raise RuntimeError("'Write' keyword cannot be used with strings "
+                               "containing newlines. Use 'Write Bare' instead.")
+        self.write_bare(text + self._newline)
         # Can't read until 'text' because long lines are cut strangely in the output
         return self.read_until(self._newline, loglevel)
 
@@ -377,6 +374,9 @@ class TelnetConnection(telnetlib.Telnet):
         """Writes the given text over the connection without appending a newline.
 
         Does not consume the written text.
+
+        Use `Write` to both append a newline and to consume the written text
+        automatically.
         """
         self._verify_connection()
         telnetlib.Telnet.write(self, self._encode(text))
@@ -479,7 +479,7 @@ class TelnetConnection(telnetlib.Telnet):
             expected = expected[:-1]
         else:
             loglevel = None
-        index, output = self._read_until_with_regexp(expected)
+        index, output = self._read_until_regexp(*expected)
         self._log(output, loglevel)
         if index == -1:
             expected = [exp if isinstance(exp, basestring) else exp.pattern
@@ -487,7 +487,7 @@ class TelnetConnection(telnetlib.Telnet):
             self._raise_no_match_found(expected)
         return output
 
-    def _read_until_with_regexp(self, expected):
+    def _read_until_regexp(self, *expected):
         self._verify_connection()
         expected = [self._encode(exp) if isinstance(exp, unicode) else exp
                     for exp in expected]
@@ -507,10 +507,24 @@ class TelnetConnection(telnetlib.Telnet):
         """
         if not self._prompt_is_set():
             raise RuntimeError('Prompt is not set')
+        success, output = self._read_until_prompt()
+        self._log(output, loglevel)
+        if not success:
+            prompt, regexp = self._prompt
+            raise AssertionError("Prompt '%s' not found in %s"
+                    % (prompt if not regexp else prompt.pattern,
+                       utils.secs_to_timestr(self._timeout)))
+        return output
+
+    def _read_until_prompt(self):
         prompt, regexp = self._prompt
         if regexp:
-            return self.read_until_regexp(prompt, loglevel)
-        return self.read_until(prompt, loglevel)
+            index, output = self._read_until_regexp(prompt)
+            success = index != -1
+        else:
+            output = self._read_until(prompt)
+            success = output.endswith(prompt)
+        return success, output
 
     def execute_command(self, command, loglevel=None):
         """Executes given command and reads and returns everything until prompt.

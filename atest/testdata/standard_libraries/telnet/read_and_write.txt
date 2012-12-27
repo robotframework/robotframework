@@ -22,7 +22,7 @@ Write & Read Non-ASCII
     Should Be Equal    ${out}    Hyvää yötä\r\n${FULL PROMPT}
 
 Write Does Not Allow Newlines
-    [Documentation]    FAIL Write cannot be used with string containing newlines. Use 'Write Bare' instead.
+    [Documentation]    FAIL 'Write' keyword cannot be used with strings containing newlines. Use 'Write Bare' instead.
     Write    hello\r\nworld
 
 Write Bare
@@ -75,7 +75,7 @@ Read Until Regexp Requires At Least One Pattern
     Read Until Regexp
 
 Read Until Prompt
-    [Documentation]    FAIL No match found for '$$' in ${TIMEOUT}
+    [Documentation]    FAIL Prompt '$$' not found in ${TIMEOUT}
     Write    pwd
     ${out} =    Read Until Prompt
     Should Be Equal    ${out}    ${HOME}\r\n${FULL PROMPT}
@@ -87,7 +87,7 @@ Read Until Prompt
     Read Until Prompt
 
 Read Until Regexp Prompt
-    [Documentation]    FAIL No match found for 'No match' in ${TIMEOUT}
+    [Documentation]    FAIL Prompt 'No match' not found in ${TIMEOUT}
     Set Prompt    \\$\\s    REGEXP
     Write    pwd
     ${out} =    Read Until Prompt
