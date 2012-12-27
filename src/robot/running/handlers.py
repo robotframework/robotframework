@@ -230,12 +230,12 @@ class _RunKeywordHandler(_PythonHandler):
 
     def _dry_run(self, context, args):
         _RunnableHandler._dry_run(self, context, args)
-        keywords = self._get_runnable_keywords(context, args)
+        keywords = self._get_runnable_dry_run_keywords(context, args)
         keywords.run(context)
 
-    def _get_runnable_keywords(self, context, args):
+    def _get_runnable_dry_run_keywords(self, context, args):
         keywords = Keywords([])
-        for keyword in self._get_keywords(args):
+        for keyword in self._get_dry_run_keywords(args):
             if self._variable_syntax_in(keyword.name, context):
                 continue
             keywords.add_keyword(keyword)
@@ -250,11 +250,11 @@ class _RunKeywordHandler(_PythonHandler):
         except DataError:
             return True
 
-    def _get_keywords(self, args):
+    def _get_dry_run_keywords(self, args):
         if self._handler_name == 'run_keyword_if':
             return list(self._get_run_kw_if_keywords(args))
         if self._handler_name == 'run_keywords':
-            return self._get_run_kws_keywords(args)
+            return list(self._get_run_kws_keywords(args))
         if 'name' in self.arguments.names:
             return self._get_default_run_kw_keywords(args)
         return []
@@ -294,7 +294,20 @@ class _RunKeywordHandler(_PythonHandler):
         return any(is_list_var(item) for item in kw_call)
 
     def _get_run_kws_keywords(self, given_args):
-        return [Keyword(name, []) for name in given_args]
+        for kw_call in self._get_run_kws_calls(given_args):
+            yield Keyword(kw_call[0], kw_call[1:])
+
+    def _get_run_kws_calls(self, given_args):
+        if 'AND' not in given_args:
+            for kw_call in given_args:
+                yield [kw_call,]
+        else:
+            while 'AND' in given_args:
+                index = given_args.index('AND')
+                kw_call, given_args = given_args[:index], given_args[index + 1:]
+                yield kw_call
+            if given_args:
+                yield given_args
 
     def _get_default_run_kw_keywords(self, given_args):
         index = self.arguments.names.index('name')
