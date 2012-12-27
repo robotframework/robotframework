@@ -327,7 +327,7 @@ class TelnetConnection(telnetlib.Telnet):
         self.write_bare(username + self._newline)
         ret += self.read_until(password_prompt, 'TRACE')
         self.write_bare(password + self._newline)
-        output, success = self._verify_login(login_timeout, login_failed_text)
+        success, output = self._verify_login(login_timeout, login_failed_text)
         ret += output
         self._log(ret)
         if not success:
@@ -340,17 +340,14 @@ class TelnetConnection(telnetlib.Telnet):
         return self._verify_login_without_prompt(timeout, failed_text)
 
     def _verify_login_with_prompt(self, timeout):
-        try:
-            with self._custom_timeout(timeout):
-                return self.read_until_prompt('TRACE'), True
-        except AssertionError:
-            return '', False
+        with self._custom_timeout(timeout):
+            return self._read_until_prompt()
 
     def _verify_login_without_prompt(self, delay, failed_text):
         time.sleep(utils.timestr_to_secs(delay))
         output = self.read('TRACE')
         success = failed_text not in output
-        return output, success
+        return success, output
 
     def write(self, text, loglevel=None):
         """Writes the given text over the connection and appends a newline.

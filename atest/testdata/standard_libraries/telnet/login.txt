@@ -31,6 +31,7 @@ Login and verify output
     Should Not Contain     ${output}    test\n
     Should Contain Once    ${output}    Password: \r\n
     Should Contain Once    ${output}    ${FULL PROMPT}
+    Should End With        ${output}    ${FULL PROMPT}
 
 Should Contain Once
     [Arguments]    ${output}    ${expected}
