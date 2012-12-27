@@ -35,6 +35,12 @@ Run Keywords When One Keyword Fails
 Run Keywords When Multiple Keyword Fails
     Check Test Case  ${TESTNAME}
 
+Run Keywords With Arguments
+    Test Should Have Correct Keywords  BuiltIn.Log Many  BuiltIn.No Operation
+
+Run Keywords With Arguments Should Fail With Incorrect Amount of Arguments
+    Test Should Have Correct Keywords  BuiltIn.Log  BuiltIn.Log
+
 Run Keyword in For Loop Pass
     Check Test Case  ${TESTNAME}
 
