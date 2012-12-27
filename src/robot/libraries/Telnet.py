@@ -307,46 +307,54 @@ class TelnetConnection(telnetlib.Telnet):
 
     def login(self, username, password, login_prompt='login: ',
               password_prompt='Password: ', login_timeout='1 second',
-              login_failed_text='Login incorrect'):
-
+              login_incorrect='Login incorrect'):
         """Logs in to the Telnet server with the given user information.
 
-        The login keyword reads from the connection until `login_prompt`
-        is encountered and then types the user name. Then it reads
-        until `password_prompt` is encountered and types the
-        password. The rest of the output (if any) is also read, and
-        all the text that has been read is returned as a single
-        string.
+        This keyword reads from the connection until `login_prompt` is
+        encountered and then types the given `username`. Then it reads
+        until `password_prompt` is encountered and types the given
+        `password`. In both cases a newline is appended automatically
+        and the connection specific timeout used when waiting for outputs.
 
-        If a prompt has been set to this connection, either with `Open
-        Connection` or `Set Prompt`, this keyword reads the output
-        until the prompt is found. Otherwise, the keyword sleeps for a
-        second and reads everything that is available.
+        How logging status is verified depends on whether prompt is set for
+        this connection or not:
+
+        1) If prompt is set, this keyword reads the output until the prompt
+        is found using the normal timeout. If no prompt is found, login is
+        considered failed and also this keyword fails. Note that in this case
+        both `login_timeout` and `login_incorrect` arguments are ignored.
+
+        2) If prompt is not set, this keywords sleeps until `login_timeout`
+        and then reads all the output available on the connection. If the
+        output contains `login_incorrect` text, login is considered failed
+        and also this keyword fails. Both of these configuration parameters
+        were added in Robot Framework 2.7.6. In earlier versions they were
+        hard coded.
         """
-        ret = self.read_until(login_prompt, 'TRACE')
-        self.write_bare(username + self._newline)
-        ret += self.read_until(password_prompt, 'TRACE')
-        self.write_bare(password + self._newline)
-        success, output = self._verify_login(login_timeout, login_failed_text)
-        ret += output
-        self._log(ret)
+        output = self._submit_credentials(username, password, login_prompt,
+                                          password_prompt)
+        if self._prompt_is_set():
+            success, output2 = self._read_until_prompt()
+        else:
+            success, output2 = self._verify_login_without_prompt(
+                    login_timeout, login_incorrect)
+        output += output2
+        self._log(output)
         if not success:
             raise AssertionError('Login incorrect')
-        return ret
+        return output
 
-    def _verify_login(self, timeout, failed_text):
-        if self._prompt_is_set():
-            return self._verify_login_with_prompt(timeout)
-        return self._verify_login_without_prompt(timeout, failed_text)
+    def _submit_credentials(self, username, password, login_prompt, password_prompt):
+        output = self.read_until(login_prompt, 'TRACE')
+        output += self.write(username, 'TRACE')
+        output += self.read_until(password_prompt, 'TRACE')
+        output += self.write(password, 'TRACE')
+        return output
 
-    def _verify_login_with_prompt(self, timeout):
-        with self._custom_timeout(timeout):
-            return self._read_until_prompt()
-
-    def _verify_login_without_prompt(self, delay, failed_text):
+    def _verify_login_without_prompt(self, delay, incorrect):
         time.sleep(utils.timestr_to_secs(delay))
         output = self.read('TRACE')
-        success = failed_text not in output
+        success = incorrect not in output
         return success, output
 
     def write(self, text, loglevel=None):

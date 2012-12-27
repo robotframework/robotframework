@@ -20,9 +20,9 @@ Failed login without prompt
 
 Failed login with prompt
     [Documentation]    FAIL Login incorrect
-    Open Connection    ${HOST}    timeout=5s    prompt=${PROMPT}
+    Open Connection    ${HOST}    timeout=4 seconds    prompt=${PROMPT}
     Login    ${USERNAME}    ${EMPTY}    login_prompt=:    password_prompt=:
-    ...    login_timeout=4s    login_failed_text=This is not used
+    ...    login_timeout=Not used    login_incorrect=This is not used
 
 *** Keywords ***
 Login and verify output
