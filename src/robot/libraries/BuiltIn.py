@@ -1087,16 +1087,38 @@ class _RunKeyword:
         return kw.run(self._execution_context)
 
     def run_keywords(self, *names):
-        """Executes all the given keywords in a sequence without arguments.
+        """Executes all the given keywords in a sequence.
 
         This keyword is mainly useful in setups and teardowns when they need to
         take care of multiple actions and creating a new higher level user
-        keyword is overkill. User keywords must nevertheless be used if the
-        executed keywords need to take arguments.
+        keyword is overkill.
 
-        Example:
-        |  *Setting*  |   *Value*    |      *Value*        |    *Value*    |
-        | Suite Setup | Run Keywords | Initialize database | Start servers |
+        Example, a simple use of `Run Keywords`:
+        | Run Keywords | Initialize database | Start servers |
+        | Run Keywords | ${KW 1} | ${KW 2} |
+        | Run Keywords | @{KEYWORDS} |
+
+        In this example, we call `Run Keywords` with three different combination
+        of arguments. Keyword names and arguments can come from variables, as
+        demonstrated in the second and third row.
+
+        Starting from Robot version 2.7.6, keywords can also be run with
+        arguments using upper case `AND` as control argument.
+        The keywords are then called in a way that the first argument is the
+        keyword and proceeding arguments until `AND` are arguments to that
+        keyword. First argument after `AND` is the keyword and proceeding
+        arguments are its arguments. And so on.
+
+        Example, some ways to use `Run Keywords` using arguments:
+        | Run Keywords | Initialize database | db1 | AND | Start servers | server1 | server2 | server3 |
+        | Run Keywords | Initialize database | ${DB NAME} | AND | Start servers | @{SERVERS} |
+        | Run Keywords | ${INIT DB} | AND | @{START SERVERS} |
+
+        Notice that `AND` control argument must be used explicitly and thus
+        cannot come from variables. If you need to use literal `AND` string as
+        argument, you can either use variables or escape them with a backslash
+        like \`AND`.
+
         """
         errors = []
         for kw, args in self._split_run_keywords(list(names)):
@@ -1127,7 +1149,7 @@ class _RunKeyword:
     def _resolve_run_keywords_name_and_args(self, names):
         needed = self._variables.replace_from_beginning(names, 1, extra_escapes=('AND',))
         if not needed:
-            raise DataError('AND requires keyword')
+            raise DataError('Incorrect use of AND')
         return needed[0], needed[1:]
 
     def run_keyword_if(self, condition, name, *args):

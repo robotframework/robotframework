@@ -23,7 +23,7 @@ AND must be upper case
 
 AND must be whitespace sensitive
     [Documentation]  FAIL  No keyword with name 'no kw' found.
-        Run Keywords  Log Many  this  A ND  that  AND  no kw
+    Run Keywords  Log Many  this  A ND  that  AND  no kw
 
 Escaped AND
     [Documentation]  FAIL  No keyword with name 'no kw' found.
@@ -42,9 +42,13 @@ Escapes in List Variable should be handled correctly
     Run Keywords  Log Many  @{ESCAPED}  AND  no kw
 
 AND as last argument should raise an error
-   [Documentation]  FAIL  AND requires keyword
-   Run Keywords  Log Many  1  2  AND  No Operation  AND
+    [Documentation]  FAIL  Incorrect use of AND
+    Run Keywords  Log Many  1  2  AND  No Operation  AND
 
 Consecutive AND's
-   [Documentation]  FAIL  AND requires keyword
+    [Documentation]  FAIL  Incorrect use of AND
     Run Keywords  Log Many  1  2  AND  AND  No Operation
+
+AND as first argument should raise an error
+    [Documentation]  FAIL  Incorrect use of AND
+    Run Keywords  AND  Log Many  1  2
