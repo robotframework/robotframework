@@ -39,7 +39,7 @@ Show intro only
     Should Contain Intro    Telnet    Version:
     Should Contain Importing
     ...    timeout=3 seconds, newline=CRLF, prompt=None,\n${SPACE*12}prompt_is_regexp=False, encoding=UTF-8, default_log_level=INFO
-    ...    Telnet library can be imported with optional arguments.
+    ...    Telnet library can be imported with optional configuration parameters.
     Should Not Contain Keyword    Open Connection
     Should Not Contain Keyword    Write
 
