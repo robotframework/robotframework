@@ -33,7 +33,8 @@ Init Documentation
     ...    Initialization parameters are used as default values when new\nconnections are
 
 Init Arguments
-    Init Arguments Should Be    0    timeout=3.0    newline=CRLF    prompt=None    prompt_is_regexp=False
+    Init Arguments Should Be    0    timeout=3.0    newline=CRLF    prompt=None
+    ...    prompt_is_regexp=False    encoding=UTF-8
 
 Keyword Names
     Keyword Name Should Be     0    Close All Connections
