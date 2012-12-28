@@ -48,7 +48,10 @@ Escapes in List Variable should be handled correctly
     Check Log Message  ${tc.kws[0].kws[0].msgs[5]}  c:\\temp
 
 AND as last argument should raise an error
-    ${tc}=  Check Test Case  ${TESTNAME}
+    Test Should Have Correct Keywords  BuiltIn.Log Many  BuiltIn.No Operation
 
 Consecutive AND's
-   ${tc}=  Check Test Case  ${TESTNAME}
+    Test Should Have Correct Keywords  BuiltIn.Log Many
+
+AND as first argument should raise an error
+    Check Test Case  ${TESTNAME}
