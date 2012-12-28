@@ -92,6 +92,16 @@ Configuration fails if there is no connection
     Set Encoding    ASCII
     Set Default Log Level    DEBUG
 
+Default configuration
+    [Setup]    NONE
+    Import Library    Telnet    WITH NAME    Default
+    Set Library Search Order    Default
+    Open Connection    ${HOST}
+    Prompt Should Be    ${NONE}    ${FALSE}
+    Timeout Should Be    3 seconds
+    Newline Should Be    \r\n
+    Encoding Should Be    UTF-8
+    Default Log Level Should Be    INFO
 
 *** Keywords ***
 Prompt Should Be

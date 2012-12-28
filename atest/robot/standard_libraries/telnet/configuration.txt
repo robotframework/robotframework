@@ -54,3 +54,6 @@ Set Default Log Level Keyword
 
 Configuration fails if there is no connection
     Check Test Case    ${TEST NAME}
+
+Default configuration
+    Check Test Case    ${TEST NAME}
