@@ -10,7 +10,7 @@ Name
 Documentation
     Doc Should Start With
     ...    A test library providing communication over Telnet connections.\n\n
-    ...    `Telnet` is Robot Framework's standard library that makes it\npossible
+    ...    `Telnet` is Robot Framework's standard library that makes it possible to\n
 
 Version
     Version Should Match    *
@@ -33,8 +33,8 @@ Init Documentation
     ...    Initialization parameters are used as default values when new\nconnections are
 
 Init Arguments
-    Init Arguments Should Be    0    timeout=3.0    newline=CRLF    prompt=None
-    ...    prompt_is_regexp=False    encoding=UTF-8
+    Init Arguments Should Be    0    timeout=3 seconds    newline=CRLF    prompt=None
+    ...    prompt_is_regexp=False    encoding=UTF-8    default_log_level=INFO
 
 Keyword Names
     Keyword Name Should Be     0    Close All Connections
