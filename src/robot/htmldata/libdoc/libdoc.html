@@ -65,12 +65,12 @@
     {{if scope}}<tr><th>Library scope:</th><td>${scope}</td></tr>{{/if}}
     <tr><th>Named arguments:</th><td>{{if named_args}}supported{{else}}not supported{{/if}}</td></tr>
     </table>
-    <h2 id="introduction">Introduction</h2>
+    <h2 id="Introduction">Introduction</h2>
     <div class="doc">{{html doc}}</div>
 </script>
 
 <script type="text/x-jquery-tmpl" id="importing_template">
-    <h2 id="importing">Importing</h2>
+    <h2 id="Importing">Importing</h2>
     <table border="1" class="keywords">
         <tr>
             <th class="arg">Arguments</th>
@@ -86,7 +86,7 @@
 </script>
 
 <script type="text/x-jquery-tmpl" id="shortcuts_template">
-    <h2 id="shortcuts">Shortcuts</h2>
+    <h2 id="Shortcuts">Shortcuts</h2>
     <div class='shortcuts'>
         {{each keywords}}
             <a href="#${$value.name}" title="${$value.shortdoc}">${$value.name}</a>
@@ -96,7 +96,7 @@
 </script>
 
 <script type="text/x-jquery-tmpl" id="keywords_template">
-    <h2 id="keywords">Keywords</h2>
+    <h2 id="Keywords">Keywords</h2>
     <table border="1" class="keywords">
         <tr>
             <th class="kw">Keyword</th>

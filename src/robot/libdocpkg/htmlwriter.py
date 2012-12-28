@@ -85,12 +85,12 @@ class DocFormatter(object):
 
     def _get_targets(self, keywords, introduction, robot_format):
         targets = utils.NormalizedDict({
-            'introduction': 'introduction',
-            'library introduction': 'introduction',
-            'importing': 'importing',
-            'library importing': 'importing',
-            'shortcuts': 'shortcuts',
-            'keywords': 'keywords'
+            'introduction': 'Introduction',
+            'library introduction': 'Introduction',
+            'importing': 'Importing',
+            'library importing': 'Importing',
+            'shortcuts': 'Shortcuts',
+            'keywords': 'Keywords'
         })
         for kw in keywords:
             targets[kw.name] = kw.name

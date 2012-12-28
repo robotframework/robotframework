@@ -6,17 +6,17 @@ Test Template    Doc Should Contain Link
 
 *** Test Cases ***
 Linking to sections in introduction
-    ${MODEL}    introduction    Introduction
-    ${MODEL}    introduction    Library INTROduction
-    ${MODEL}    importing       importing
-    ${MODEL}    importing       Library Importing
-    ${MODEL}    shortcuts       ShortCuts
-    ${MODEL}    keywords        Keywords
+    ${MODEL}    Introduction    Introduction
+    ${MODEL}    Introduction    Library INTROduction
+    ${MODEL}    Importing       importing
+    ${MODEL}    Importing       Library Importing
+    ${MODEL}    Shortcuts       ShortCuts
+    ${MODEL}    Keywords        Keywords
 
 Linking to sections in importing and keywords
-    ${MODEL['inits'][0]}       introduction    introduction
-    ${MODEL['keywords'][0]}    importing       Importing
-    ${MODEL['keywords'][1]}    shortcuts       shortcuts
+    ${MODEL['inits'][0]}       Introduction    introduction
+    ${MODEL['keywords'][0]}    Importing       Importing
+    ${MODEL['keywords'][1]}    Shortcuts       shortcuts
 
 Linking to keywords in introduction
     ${MODEL}    Keyword           Keyword
