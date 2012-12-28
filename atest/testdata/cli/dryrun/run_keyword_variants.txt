@@ -48,12 +48,18 @@ Run Keywords When Multiple Keyword Fails
     ...  2) No keyword with name 'Missing' found.
     Run Keywords  Fail  No Operation  Log  UK  Missing
 
-Run Keywords With Arguments
+Run Keywords With Arguments When All Keywords Pass
     Run Keywords  Log Many  this  is  AND  No Operation
 
-Run Keywords With Arguments Should Fail With Incorrect Amount of Arguments
+Run Keywords With Arguments When One Keyword Fails
     [Documentation]  FAIL  Keyword 'BuiltIn.Log' expected 1 to 2 arguments, got 3.
     Run Keywords  Log  FOO  AND  Log  Bar  DEBUG  this should fail
+
+Run Keywords With Arguments When Multiple Keyword Fails
+    [Documentation]  FAIL  Several failures occurred:\n\n
+    ...  1) Keyword 'BuiltIn.Log' expected 1 to 2 arguments, got 3.\n\n
+    ...  2) No keyword with name 'no kw' found.
+    Run Keywords  Log  FOO  DEBUG  this should fail  AND  no kw
 
 Run Keyword in For Loop Pass
     :FOR  ${i}  IN RANGE  5

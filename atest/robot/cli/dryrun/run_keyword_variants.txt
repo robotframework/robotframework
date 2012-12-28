@@ -35,11 +35,14 @@ Run Keywords When One Keyword Fails
 Run Keywords When Multiple Keyword Fails
     Check Test Case  ${TESTNAME}
 
-Run Keywords With Arguments
+Run Keywords With Arguments When All Keywords Pass
     Test Should Have Correct Keywords  BuiltIn.Log Many  BuiltIn.No Operation
 
-Run Keywords With Arguments Should Fail With Incorrect Amount of Arguments
+Run Keywords With Arguments When One Keyword Fails
     Test Should Have Correct Keywords  BuiltIn.Log  BuiltIn.Log
+
+Run Keywords With Arguments When Multiple Keyword Fails
+    Test Should Have Correct Keywords  BuiltIn.Log  no kw
 
 Run Keyword in For Loop Pass
     Check Test Case  ${TESTNAME}
