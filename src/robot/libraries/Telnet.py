@@ -39,8 +39,8 @@ class Telnet:
     ROBOT_LIBRARY_SCOPE = 'TEST_SUITE'
     ROBOT_LIBRARY_VERSION = get_version()
 
-    def __init__(self, timeout=3.0, newline='CRLF', prompt=None,
-                 prompt_is_regexp=False, encoding='UTF-8'):
+    def __init__(self, timeout='3 seconds', newline='CRLF', prompt=None,
+                 prompt_is_regexp=False, encoding='UTF-8', default_log_level='INFO'):
         """Telnet library can be imported with optional arguments.
 
         Initialization parameters are used as default values when new
@@ -64,6 +64,7 @@ class Telnet:
         self._newline = newline or 'CRLF'
         self._prompt = (prompt, bool(prompt_is_regexp))
         self._encoding = encoding
+        self._default_log_level = default_log_level
         self._cache = utils.ConnectionCache()
         self._conn = None
         self._conn_kws = self._lib_kws = None
@@ -104,7 +105,7 @@ class Telnet:
 
     def open_connection(self, host, alias=None, port=23, timeout=None,
                         newline=None, prompt=None, prompt_is_regexp=False,
-                        encoding=None):
+                        encoding=None, default_log_level=None):
         """Opens a new Telnet connection to the given host and port.
 
         Possible already opened connections are cached.
@@ -126,12 +127,14 @@ class Telnet:
         timeout = timeout or self._timeout
         newline = newline or self._newline
         encoding = encoding or self._encoding
+        default_log_level = default_log_level or self._default_log_level
         if not prompt:
             prompt, prompt_is_regexp = self._prompt
         logger.info('Opening connection to %s:%s with prompt: %s'
                     % (host, port, prompt))
         self._conn = self._get_connection(host, port, timeout, newline,
-                                          prompt, prompt_is_regexp, encoding)
+                                          prompt, prompt_is_regexp,
+                                          encoding, default_log_level)
         return self._cache.register(self._conn, alias)
 
     def _get_connection(self, *args):
@@ -189,14 +192,14 @@ class Telnet:
 class TelnetConnection(telnetlib.Telnet):
 
     def __init__(self, host=None, port=23, timeout=3.0, newline='CRLF',
-                 prompt=None, prompt_is_regexp=False, encoding='UTF-8'):
-        port = int(port) if port else 23
-        telnetlib.Telnet.__init__(self, host, port)
+                 prompt=None, prompt_is_regexp=False, encoding='UTF-8',
+                 default_log_level='INFO'):
+        telnetlib.Telnet.__init__(self, host, int(port) if port else 23)
         self._set_timeout(timeout)
         self._set_newline(newline)
         self._set_prompt(prompt, prompt_is_regexp)
         self._set_encoding(encoding)
-        self._set_default_log_level('INFO')
+        self._set_default_log_level(default_log_level)
         self.set_option_negotiation_callback(self._negotiate_echo_on)
 
     def set_timeout(self, timeout):

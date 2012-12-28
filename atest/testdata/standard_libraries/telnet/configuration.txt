@@ -1,7 +1,7 @@
 *** Setting ***
 Test Setup        Open Connection    ${HOST}
 Test Teardown     Close All Connections
-Library           Telnet    123    CRLF    $    REGEXP    ASCII
+Library           Telnet    123    CRLF    $    REGEXP    ASCII    DeBuG
 Resource          telnet_resource.txt
 
 
@@ -65,14 +65,21 @@ Set Encoding Keyword
     Set Encoding    us-ascii
     Encoding Should Be    us-ascii
 
+Default Log Level In Init
+    Default Log Level Should Be    DEBUG
+
+Default Log Level In Open Connection
+    Open Connection    ${HOST}    default_log_level=trace
+    Default Log Level Should Be    TRACE
+
 Set Default Log Level Keyword
     [Documentation]    FAIL Invalid log level 'Invalid'
     [Setup]    Login And Set Prompt
-    ${old} =    Set Default log Level    debug
-    Should Be Equal    ${old}    INFO
+    Set Default Log Level    debug
+    Default Log Level Should Be    DEBUG
     Write    pwd
-    ${old} =    Set Default log Level    WARN
-    Should Be Equal    ${old}    DEBUG
+    Set Default Log Level    WARN
+    Default Log Level Should Be    WARN
     Read Until Prompt
     Set Default log Level    Invalid
 
@@ -92,18 +99,34 @@ Prompt Should Be
     ${prompt}    ${regexp} =    Set Prompt    prompt
     Should Be Equal    ${prompt}    ${expected prompt}
     Should Be Equal    ${regexp}    ${expected regexp}
+    ${prompt}    ${regexp} =    Set Prompt    ${prompt}    ${regexp}
+    Should Be Equal    ${prompt}    prompt
+    Should Be Equal    ${regexp}    ${FALSE}
 
 Timeout Should Be
     [Arguments]    ${expected}
-    ${timeout} =    Set Timeout    1 s
+    ${timeout} =    Set Timeout    61.5
     Should Be Equal    ${timeout}    ${expected}
+    ${timeout} =    Set Timeout    ${timeout}
+    Should Be Equal    ${timeout}    1 minute 1 second 500 milliseconds
 
 Newline Should Be
     [Arguments]    ${expected}
     ${newline} =    Set Newline    CRLF
     Should Be Equal    ${newline}    ${expected}
+    ${newline} =    Set Newline    ${newline}
+    Should Be Equal    ${newline}    \r\n
 
 Encoding Should Be
     [Arguments]    ${expected}
     ${encoding} =    Set Encoding    ASCII
     Should Be Equal    ${encoding}    ${expected}
+    ${encoding} =    Set Encoding    ${encoding}
+    Should Be Equal    ${encoding}    ASCII
+
+Default Log Level Should Be
+    [Arguments]    ${expected}
+    ${level} =    Set Default Log Level    WARN
+    Should Be Equal    ${level}    ${expected}
+    ${level} =    Set Default Log Level    ${level}
+    Should Be Equal    ${level}    WARN

@@ -41,6 +41,12 @@ Encoding Set In Open Connection
 Set Encoding Keyword
     Check Test Case    ${TEST NAME}
 
+Default Log Level In Init
+    Check Test Case    ${TEST NAME}
+
+Default Log Level In Open Connection
+    Check Test Case    ${TEST NAME}
+
 Set Default Log Level Keyword
     ${tc} =    Check Test Case    ${TEST NAME}
     Check Log Message    ${tc.kws[2].msgs[0]}    pwd    DEBUG
