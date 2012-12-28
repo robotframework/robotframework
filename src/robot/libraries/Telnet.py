@@ -30,22 +30,33 @@ class Telnet:
     `Telnet` is Robot Framework's standard library that makes it possible to
     connect to Telnet servers and execute commands on the opened connections.
 
+    == Table of contents ==
+
+    - `Connections`
+    - `Reading and writing`
+    - `Configuration`
+    - `Importing`
+    - `Shortcuts`
+    - `Keywords`
+
     = Connections =
 
     The first step of using `Telnet` is opening a connection with `Open
-    Connection` keyword. Typically this is continued with `Login`.
+    Connection` keyword. Typically the next step is logging in with `Login`
+    keyword. In the end connection can be closed with `Close Connection`.
 
     It is possible to open multiple connections and switch the active one
-    using `Switch Connection`. The active connection can be closed with
-    `Close Connection` and all connections with `Close All Connections`.
+    using `Switch Connection`. `Close All Connections` can be used to close
+    all the connections. That is especially useful in suite teardowns to
+    guarantee that all connections are always closed.
 
     = Reading and writing =
 
     After opening a connection and possibly logging in, commands can be
     executed or text written to the connection for other reasons using `Write`
-    and `Write Bare` keywords. The main difference between them is that the
-    former appends a [Configuration|newline] automatically and also consumes
-    the written text from the output.
+    and `Write Bare` keywords. The main difference between these two is that
+    the former appends a [#Configuration|newline] automatically and also
+    consumes the written text from the output.
 
     After writing something to the connection, the resulting output can be
     read using `Read`, `Read Until`, `Read Until Regexp`, and `Read Until
@@ -54,13 +65,14 @@ class Telnet:
 
     As a convenience when running a command, it is possible to use `Execute
     Command` that simply uses `Write` and `Read Until Prompt` internally.
-    In some special cases `Write Until Expected Output` can be useful.
+    `Write Until Expected Output` is useful if you need to wait until writing
+    something produces a desired output.
 
     = Configuration =
 
     Many aspects related the connections can be easily configured either
     globally or per connection basis. Global configuration is done when
-    [importing|library is imported], and these values can be overridden per
+    [#Importing|library is imported], and these values can be overridden per
     connection by `Open Connection` or with setting specific keywords
     `Set Timeout`, `Set Newline`, `Set Prompt`, `Set Encoding`, and
     `Set Default Log Level`. All the setting specific keywords return the
@@ -68,19 +80,19 @@ class Telnet:
 
     == Timeout ==
 
-    `timeout` defines how long is the maximum time to wait when reading
+    Timeout defines how long is the maximum time to wait when reading
     output. It is used internally by `Read Until`, `Read Until Regexp`,
     `Read Until Prompt`, and `Login` keywords. The default value is 3 seconds.
 
     == Newline ==
 
-    `newline` defines which line separator `Write` keyword should use. The
+    Newline defines which line separator `Write` keyword should use. The
     default value is `CRLF` that is typically used by Telnet connections.
 
     == Prompt ==
 
     Often the easiest way to read the output of a command is reading all
-    the output until next `prompt` with `Read Until Prompt`. It also makes
+    the output until the next prompt with `Read Until Prompt`. It also makes
     it easier, and faster, to verify did `Login` succeed.
 
     Prompt can be specified either as a normal string or a regular expression.
@@ -98,13 +110,13 @@ class Telnet:
 
     == Default log level ==
 
-    All keywords that read something explicitly or implicitly log the output.
-    These keywords take the log level to use as an optional argument, and if
-    no log level is specified they use the default value.
+    All keywords that read something log the output. These keywords take the
+    log level to use as an optional argument, and if no log level is specified
+    they use the default value.
 
-    The default value for this default value is `INFO`. Changing it, for
-    example, to `DEBUG` can be a good idea if there is lot of unnecessary
-    output.
+    The default value for default log level is `INFO`. Changing it, fo example,
+    to `DEBUG` can be a good idea if there is lot of unnecessary output that
+    makes log files big.
 
     Configuring default log level in `importing` and with `Open Connection`
     are new features in Robot Framework 2.7.6. In earlier versions only
