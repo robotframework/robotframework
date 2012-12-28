@@ -1087,16 +1087,31 @@ class _RunKeyword:
         return kw.run(self._execution_context)
 
     def run_keywords(self, *names):
-        """Executes all the given keywords in a sequence without arguments.
+        """Executes all the given keywords in a sequence.
 
         This keyword is mainly useful in setups and teardowns when they need to
         take care of multiple actions and creating a new higher level user
-        keyword is overkill. User keywords must nevertheless be used if the
-        executed keywords need to take arguments.
+        keyword is overkill.
+
+        Keywords are, by default, called without arguments eg. every argument to
+        `Run Keywords` is considered as separate keyword. Keywords can be run
+        with arguments using upper case `AND` as a separator argument. If `AND`
+        is used, the keywords are called with arguments in a way that the first
+        argument given is the keyword being called and arguments preceding `AND`
+        are arguments to that keyword.
+
+        Keyword names and arguments can come from variables, but `AND` can only
+        come as first hand argument.
 
         Example:
         |  *Setting*  |   *Value*    |      *Value*        |    *Value*    |
         | Suite Setup | Run Keywords | Initialize database | Start servers |
+        | Suite Setup | Run Keywords | @{KEYWORDS} |
+        | Suite Setup | Run Keywords | Initialize database | ${DB NAME} | AND | Start servers | server1 | server2 | server3 |
+        | Suite Setup | Run Keywords | Initialize database | AND | Start servers | @{SERVERS} |
+        | Suite Setup | Run Keywords | @{INIT DB} | AND | @{START SERVERS} |
+
+        The AND New in Robot Framework 2.7.6.
         """
         errors = []
         for kw, args in self._split_run_keywords(list(names)):
