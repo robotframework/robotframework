@@ -27,14 +27,88 @@ from robot import utils
 class Telnet:
     """A test library providing communication over Telnet connections.
 
-    `Telnet` is Robot Framework's standard library that makes it
-    possible to connect to Telnet servers and execute commands on the
-    opened connections.
+    `Telnet` is Robot Framework's standard library that makes it possible to
+    connect to Telnet servers and execute commands on the opened connections.
 
-    See `Open Connection` and `Switch Connection` for details on how
-    to handle multiple simultaneous connections. The responses are
-    expected to be ASCII encoded and all non-ASCII characters are
-    silently ignored.
+    = Connections =
+
+    The first step of using `Telnet` is opening a connection with `Open
+    Connection` keyword. Typically this is continued with `Login`.
+
+    It is possible to open multiple connections and switch the active one
+    using `Switch Connection`. The active connection can be closed with
+    `Close Connection` and all connections with `Close All Connections`.
+
+    = Reading and writing =
+
+    After opening a connection and possibly logging in, commands can be
+    executed or text written to the connection for other reasons using `Write`
+    and `Write Bare` keywords. The main difference between them is that the
+    former appends a [Configuration|newline] automatically and also consumes
+    the written text from the output.
+
+    After writing something to the connection, the resulting output can be
+    read using `Read`, `Read Until`, `Read Until Regexp`, and `Read Until
+    Prompt` keywords. Which one to use depends on the context, but the latest
+    one is often the most convenient.
+
+    As a convenience when running a command, it is possible to use `Execute
+    Command` that simply uses `Write` and `Read Until Prompt` internally.
+    In some special cases `Write Until Expected Output` can be useful.
+
+    = Configuration =
+
+    Many aspects related the connections can be easily configured either
+    globally or per connection basis. Global configuration is done when
+    [importing|library is imported], and these values can be overridden per
+    connection by `Open Connection` or with setting specific keywords
+    `Set Timeout`, `Set Newline`, `Set Prompt`, `Set Encoding`, and
+    `Set Default Log Level`. All the setting specific keywords return the
+    old value of the setting that can be later used for resetting the value.
+
+    == Timeout ==
+
+    `timeout` defines how long is the maximum time to wait when reading
+    output. It is used internally by `Read Until`, `Read Until Regexp`,
+    `Read Until Prompt`, and `Login` keywords. The default value is 3 seconds.
+
+    == Newline ==
+
+    `newline` defines which line separator `Write` keyword should use. The
+    default value is `CRLF` that is typically used by Telnet connections.
+
+    == Prompt ==
+
+    Often the easiest way to read the output of a command is reading all
+    the output until next `prompt` with `Read Until Prompt`. It also makes
+    it easier, and faster, to verify did `Login` succeed.
+
+    Prompt can be specified either as a normal string or a regular expression.
+    The latter is especially useful if the prompt changes as a result of
+    the executed commands.
+
+    == Encoding ==
+
+    Encoding is needed when written or read text contains non-ASCII characters.
+    The default encoding is UTF-8 that works also with ASCII.
+
+    Using UTF-8 encoding by default and being able to configure encoding are
+    new features in Robot Framework 2.7.6. In earlier versions only ASCII was
+    supported.
+
+    == Default log level ==
+
+    All keywords that read something explicitly or implicitly log the output.
+    These keywords take the log level to use as an optional argument, and if
+    no log level is specified they use the default value.
+
+    The default value for this default value is `INFO`. Changing it, for
+    example, to `DEBUG` can be a good idea if there is lot of unnecessary
+    output.
+
+    Configuring default log level in `importing` and with `Open Connection`
+    are new features in Robot Framework 2.7.6. In earlier versions only
+    `Set Default Log Level` could be used.
     """
     ROBOT_LIBRARY_SCOPE = 'TEST_SUITE'
     ROBOT_LIBRARY_VERSION = get_version()
