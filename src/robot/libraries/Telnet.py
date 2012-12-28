@@ -657,8 +657,7 @@ class TelnetConnection(telnetlib.Telnet):
         """Reads output until the prompt is encountered.
 
         This keyword requires the prompt to be [#Configuration|configured]
-        either in `importing` or with `Open Connection` or `Set Prompt`
-        keyword.
+        either in `importing` or with `Open Connection` or `Set Prompt` keyword.
 
         Text up to and including the prompt is returned and logged. If no prompt
         is found, this keyword fails. How much to wait for the output depends
@@ -688,7 +687,10 @@ class TelnetConnection(telnetlib.Telnet):
         return success, output
 
     def execute_command(self, command, loglevel=None):
-        """Executes given command and reads and returns everything until prompt.
+        """Executes the given `command` and reads and returns everything until the prompt.
+
+        This keyword requires the prompt to be [#Configuration|configured]
+        either in `importing` or with `Open Connection` or `Set Prompt` keyword.
 
         This is a convenience keyword that uses `Write` and `Read Until Prompt`
         internally Following two examples are thus functionally identical:
