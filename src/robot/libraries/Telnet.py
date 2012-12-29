@@ -45,11 +45,12 @@ class Telnet:
 
     The first step of using `Telnet` is opening a connection with `Open
     Connection` keyword. Typically the next step is logging in with `Login`
-    keyword. In the end connection can be closed with `Close Connection`.
+    keyword, and in the end the opened connection can be closed with `Close
+    Connection`.
 
     It is possible to open multiple connections and switch the active one
     using `Switch Connection`. `Close All Connections` can be used to close
-    all the connections. That is especially useful in suite teardowns to
+    all the connections, which is especially useful in suite teardowns to
     guarantee that all connections are always closed.
 
     = Writing and reading =
@@ -57,8 +58,8 @@ class Telnet:
     After opening a connection and possibly logging in, commands can be
     executed or text written to the connection for other reasons using `Write`
     and `Write Bare` keywords. The main difference between these two is that
-    the former appends a [#Configuration|newline] automatically and also
-    consumes the written text from the output.
+    the former adds a [#Configuration|configurable newline] after the text
+    automatically.
 
     After writing something to the connection, the resulting output can be
     read using `Read`, `Read Until`, `Read Until Regexp`, and `Read Until
@@ -70,7 +71,7 @@ class Telnet:
     `Write Until Expected Output` is useful if you need to wait until writing
     something produces a desired output.
 
-    Written and read text is automatically encoded/decoded using the
+    Written and read text is automatically encoded/decoded using a
     [#Configuration|configured encoding].
 
     = Configuration =
@@ -80,8 +81,7 @@ class Telnet:
     [#Importing|library is imported], and these values can be overridden per
     connection by `Open Connection` or with setting specific keywords
     `Set Timeout`, `Set Newline`, `Set Prompt`, `Set Encoding`, and
-    `Set Default Log Level`. All the setting specific keywords return the
-    old value of the setting that can be later used for resetting the value.
+    `Set Default Log Level`
 
     == Timeout ==
 
@@ -144,9 +144,10 @@ class Telnet:
     = Time string format =
 
     Timeouts and other times used must be given as a time string using format
-    in format like '15 seconds', '1min 10s', or just '10' or '1.5' if you want
-    to use seconds. The time string format is described in more detail in
-    an appendix of [http://code.google.com/p/robotframework/wiki/UserGuide|Robot Framework User Guide].
+    in format like '15 seconds' or '1min 10s'. If the timeout is given as
+    just a number, for example, '10' or '1.5', it is considered to be seconds.
+    The time string format is described in more detail in an appendix of
+    [http://code.google.com/p/robotframework/wiki/UserGuide|Robot Framework User Guide].
     """
     ROBOT_LIBRARY_SCOPE = 'TEST_SUITE'
     ROBOT_LIBRARY_VERSION = get_version()
@@ -160,8 +161,7 @@ class Telnet:
         overridden after opening the connection using the `Set Timeout`,
         `Set Newline`, `Set Prompt`, `Set Encoding`, and `Set Default Log Level`
         keywords. See these keywords and `Configuration` section above for more
-        information about these configuration parameters and their possible
-        values.
+        information about these parameters and their possible values.
 
         Examples (use only one of these):
 
@@ -172,7 +172,7 @@ class Telnet:
         | Library | Telnet | newline=LF | encoding=ISO-8859-1 | | | # set newline and encoding using named arguments |
         | Library | Telnet | 2.0 | LF |     |    | # set timeout and newline       |
         | Library | Telnet | 2.0 | CRLF | $ |    | # set also prompt               |
-        | Library | Telnet | 2.0 | LF | ($|~) | True | # set prompt with simple regexp |
+        | Library | Telnet | 2.0 | LF | (> |# ) | True | # set prompt as a regular expression |
         """
         self._timeout = timeout or 3.0
         self._newline = newline or 'CRLF'
@@ -225,7 +225,7 @@ class Telnet:
         The `timeout`, `newline`, `prompt`, `prompt_is_regexp`, `encoding`,
         and `default_log_level` arguments get default values when the library
         is [#Importing|imported]. Setting them here overrides those values for
-        this connection. See `Configuration` section for more information.
+        the opened connection. See `Configuration` section for more information.
 
         Possible already opened connections are cached and it is possible to
         switch back to them using `Switch Connection` keyword. It is possible
@@ -251,7 +251,7 @@ class Telnet:
         return TelnetConnection(*args)
 
     def switch_connection(self, index_or_alias):
-        """Switches between active connections using an index or alias.
+        """Switches between active connections using an index or an alias.
 
         Aliases can be given to `Open Connection` keyword which also always
         returns the connection index.
@@ -259,18 +259,18 @@ class Telnet:
         This keyword returns the index of previous active connection.
 
         Example:
-        | Open Connection   | myhost.net        |          |          |
-        | Login             | john              | secret   |          |
-        | Write             | some command      |          |          |
-        | Open Connection   | yourhost.com      | 2nd conn |          |
-        | Login             | root              | password |          |
-        | Write             | another cmd       |          |          |
-        | ${old index}=     | Switch Connection | 1        | # index  |
-        | Write             | something         |          |          |
-        | Switch Connection | 2nd conn          | # alias  |          |
-        | Write             | whatever          |          |          |
-        | Switch Connection | ${old index}      | # back to original again |
-        | [Teardown]        | Close All Connections   |            |
+        | `Open Connection`   | myhost.net              |          |           |
+        | `Login`             | john                    | secret   |           |
+        | `Write`             | some command            |          |           |
+        | `Open Connection`   | yourhost.com            | 2nd conn |           |
+        | `Login`             | root                    | password |           |
+        | `Write`             | another cmd             |          |           |
+        | ${old index}=       | `Switch Connection`     | 1        | # index   |
+        | `Write`             | something               |          |           |
+        | `Switch Connection` | 2nd conn                |          | # alias   |
+        | `Write`             | whatever                |          |           |
+        | `Switch Connection` | ${old index}            | | # back to original |
+        | [Teardown]          | `Close All Connections` |          |           |
 
         The example above expects that there were no other open
         connections when opening the first one, because it used index
@@ -278,9 +278,9 @@ class Telnet:
         sure about that, you can store the index into a variable as
         shown below.
 
-        | ${index} =         | Open Connection | myhost.net |
-        | # Do something ... |                 |            |
-        | Switch Connection  | ${index         |            |
+        | ${index} =          | `Open Connection` | myhost.net |
+        | `Do Something`      |                   |            |
+        | `Switch Connection` | ${index}          |            |
         """
         old_index = self._cache.current_index
         self._conn = self._cache.switch(index_or_alias)
@@ -289,11 +289,13 @@ class Telnet:
     def close_all_connections(self):
         """Closes all open connections and empties the connection cache.
 
-        After this keyword, new indexes got from the `Open Connection`
-        keyword are reset to 1.
+        If multiple connections are opened, this keyword should be used in
+        a test or suite teardown to make sure that all connections are closed.
+        It is not an error is some of the connections have already been closed
+        by `Close Connection`.
 
-        This keyword should be used in a test or suite teardown to
-        make sure all connections are closed.
+        After this keyword, new indexes returned by `Open Connection`
+        keyword are reset to 1.
         """
         self._conn = self._cache.close_all()
 
@@ -365,6 +367,12 @@ class TelnetConnection(telnetlib.Telnet):
         | ${prompt} | ${regexp} = | `Set Prompt` | $ |
         | `Do Something` |
         | `Set Prompt` | ${prompt} | ${regexp} |
+
+        See the documentation of
+        [http://docs.python.org/2/library/re.html|Python `re` module]
+        for more information about the supported regular expression syntax.
+        Notice that possible backslashes need to be escaped in Robot Framework
+        test data.
 
         See `Configuration` section for more information about global and
         connection specific configuration.
@@ -441,6 +449,9 @@ class TelnetConnection(telnetlib.Telnet):
         Remaining output in the connection is read, logged, and returned.
         It is not an error to close an already closed connection.
 
+        Use `Close All Connections` if you want to make sure all opened
+        connections are closed.
+
         See `Logging` section for more information about log levels.
         """
         self.close()
@@ -453,11 +464,11 @@ class TelnetConnection(telnetlib.Telnet):
               login_incorrect='Login incorrect'):
         """Logs in to the Telnet server with the given user information.
 
-        This keyword reads from the connection until `login_prompt` is
-        encountered and then types the given `username`. Then it reads
-        until `password_prompt` is encountered and types the given
-        `password`. In both cases a newline is appended automatically
-        and the connection specific timeout used when waiting for outputs.
+        This keyword reads from the connection until the `login_prompt` is
+        encountered and then types the given `username`. Then it reads until
+        the `password_prompt` and types the given `password`. In both cases
+        a newline is appended automatically and the connection specific
+        timeout used when waiting for outputs.
 
         How logging status is verified depends on whether a prompt is set for
         this connection or not:
@@ -618,7 +629,8 @@ class TelnetConnection(telnetlib.Telnet):
         If the last given argument is a [#Logging|valid log level], it is used
         as `loglevel` similarly as with `Read Until` keyword.
 
-        See [http://docs.python.org/2/library/re.html|Python documentation]
+        See the documentation of
+        [http://docs.python.org/2/library/re.html|Python `re` module]
         for more information about the supported regular expression syntax.
         Notice that possible backslashes need to be escaped in Robot Framework
         test data.
@@ -687,7 +699,7 @@ class TelnetConnection(telnetlib.Telnet):
         return success, output
 
     def execute_command(self, command, loglevel=None):
-        """Executes the given `command` and reads and returns everything until the prompt.
+        """Executes the given `command` and reads, logs, and returns everything until the prompt.
 
         This keyword requires the prompt to be [#Configuration|configured]
         either in `importing` or with `Open Connection` or `Set Prompt` keyword.
