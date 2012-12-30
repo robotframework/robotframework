@@ -40,7 +40,7 @@ Options
  -r --recursive  Process given directory recursively. Files in the directory
                  are processed in-place similarly as when --inplace option
                  is used.
- -f --format txt|html|tsv
+ -f --format txt|html|tsv|robot
                  Output file format. If omitted, the format of the input
                  file is used.
  -p --usepipes   Use pipe (`|`) as a cell separator in the txt format.
@@ -210,7 +210,7 @@ class TidyCommandLine(Application):
                 return None
             format = os.path.splitext(args[1])[1][1:]
         format = format.upper()
-        if format not in ('TXT', 'TSV', 'HTML'):
+        if format not in ('TXT', 'TSV', 'HTML', 'ROBOT'):
             raise DataError("Invalid format '%s'." % format)
         return format
 

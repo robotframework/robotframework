@@ -12,6 +12,7 @@ Tidying single test case file
     --usepipes -f txt   golden_pipes.txt
     --format tsv        golden.tsv
     --format html       golden.html
+    --for robot         golden.txt
     --spacecount 2      golden_two_spaces.txt
 
 Tidying single resource file
@@ -20,6 +21,7 @@ Tidying single resource file
     -p    golden_pipes_resource.txt
     -f tsv    golden_resource.tsv
     --FORMAT html    golden_resource.html
+    --FOR ROBOT    golden_resource.txt
 
 Tidying single init file
     Run tidy and check result    ${EMPTY}    __init__.txt

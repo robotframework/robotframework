@@ -48,10 +48,11 @@ class WritingContext(object):
     txt_format = 'txt'
     html_format = 'html'
     tsv_format = 'tsv'
+    robot_format = 'robot'
     txt_column_count = 8
     html_column_count = 5
     tsv_column_count = 8
-    _formats = [txt_format, html_format, tsv_format]
+    _formats = [txt_format, html_format, tsv_format, robot_format]
 
     def __init__(self, datafile, format='', output=None, pipe_separated=False,
                  txt_separating_spaces=4, line_separator=os.linesep):
