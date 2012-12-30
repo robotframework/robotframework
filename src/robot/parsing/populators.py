@@ -14,10 +14,10 @@
 
 import os
 
-from robot import utils
-from robot.output import LOGGER
 from robot.errors import DataError
 from robot.model import SuiteNamePatterns
+from robot.output import LOGGER
+from robot.utils import get_error_message, unic
 
 from .datarow import DataRow
 from .tablepopulators import (SettingTablePopulator, VariableTablePopulator,
@@ -57,7 +57,7 @@ class FromFilePopulator(object):
         try:
             self._get_reader(path).read(source, self)
         except:
-            raise DataError(utils.get_error_message())
+            raise DataError(get_error_message())
         finally:
             source.close()
 
@@ -67,7 +67,7 @@ class FromFilePopulator(object):
         try:
             return open(path, 'rb')
         except:
-            raise DataError(utils.get_error_message())
+            raise DataError(get_error_message())
 
     def _get_reader(self, path):
         extension = os.path.splitext(path.lower())[-1][1:]
@@ -165,10 +165,10 @@ class FromDirectoryPopulator(object):
 
     def _list_dir(self, path):
         # os.listdir returns Unicode entries when path is Unicode
-        names = os.listdir(utils.unic(path))
+        names = os.listdir(unic(path))
         for name in sorted(names, key=unicode.lower):
-            # utils.unic needed to handle nfc/nfd normalization on OSX
-            yield utils.unic(name), utils.unic(os.path.join(path, name))
+            # unic needed to handle nfc/nfd normalization on OSX
+            yield unic(name), unic(os.path.join(path, name))
 
     def _is_init_file(self, name, path):
         if not os.path.isfile(path):
