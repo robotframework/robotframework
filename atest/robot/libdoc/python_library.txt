@@ -47,7 +47,7 @@ Keyword Arguments
 Keyword Documentation
     Keyword Doc Should Start With    0   Closes all open connections
     Keyword Doc Should Start With    2
-    ...    Executes the given `command` and reads and returns everything until the prompt.\n\n
+    ...    Executes the given `command` and reads, logs, and returns everything until the prompt.\n\n
     ...    This keyword requires the prompt to be [#Configuration|configured]\n
     ...    either in `importing` or with `Open Connection` or `Set Prompt` keyword.\n\n
     ...    This is a convenience keyword that uses `Write` and `Read Until Prompt`\n
