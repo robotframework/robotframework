@@ -59,7 +59,7 @@ Cleaning up the test data
 =========================
 
 Test case files created with HTML editors or written by hand can be normalized
-using tidy. Tidy always writes consistent headers, consistent order for
+using Tidy. Tidy always writes consistent headers, consistent order for
 settings, and consistent amount of whitespace between cells and tables.
 
 Examples:
@@ -69,12 +69,14 @@ Examples:
 Changing the test data format
 =============================
 
-Robot Framework supports test data in HTML, TSV and TXT formats and this tool
+Robot Framework supports test data in HTML, TSV and TXT formats, and Tidy
 makes changing between the formats trivial. Input format is always determined
-based on the extension of the input file. Output format can be set using
-the --format option.
+based on the extension of the input file. Output format is got from the
+extension of the output file, when used, and can also be set using the --format
+option.
 
 Examples:
+  python -m robot.tidy tests.html tests.tsv
   python -m robot.tidy --format tsv --inplace tests.html
   python -m robot.tidy --format txt --recursive mytests
 
@@ -87,9 +89,9 @@ console use the current console encoding.
 Alternative execution
 =====================
 
-In the above examples tidy is used only with Python, but it works also with
-Jython and IronPython. Above tidy is executed as an installed module, but
-it can also be executed as a script like `python path/robot/tidy.py`.
+In the above examples Tidy is used only with Python, but it works also with
+Jython and IronPython. Above it is executed as an installed module, but it
+can also be run as a script like `python path/robot/tidy.py`.
 """
 
 import os
