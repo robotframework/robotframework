@@ -31,7 +31,7 @@ from .restreader import RestReader
 
 READERS = {'html': HtmlReader, 'htm': HtmlReader, 'xhtml': HtmlReader,
            'tsv': TsvReader , 'rst': RestReader, 'rest': RestReader,
-           'txt': TxtReader}
+           'txt': TxtReader, 'robot': TxtReader}
 
 # Hook for external tools for altering ${CURDIR} processing
 PROCESS_CURDIR = True

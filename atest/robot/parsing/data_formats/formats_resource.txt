@@ -1,14 +1,15 @@
 *** Settings ***
-Resource        atest_resource.txt
+Resource           atest_resource.txt
 
 *** Variables ***
-${DATA ROOT}  parsing${/}data_formats
-${HTMLDIR}  ${DATA ROOT}${/}html
-${TSVDIR}  ${DATA ROOT}${/}tsv
-${TXTDIR}  ${DATA ROOT}${/}txt
-${RESTDIR}  ${DATA ROOT}${/}rest
-${MIXEDDIR}  ${DATA ROOT}${/}mixed_data
-@{SAMPLE_TESTS}  Passing  Failing  User Keyword  Own Tags  Default Tags  Variable Table  Resource File
+${DATA ROOT}       parsing${/}data_formats
+${HTML DIR}        ${DATA ROOT}${/}html
+${TSV DIR}         ${DATA ROOT}${/}tsv
+${TXT DIR}         ${DATA ROOT}${/}txt
+${ROBOT DIR}       ${DATA ROOT}${/}robot
+${REST DIR}        ${DATA ROOT}${/}rest
+${MIXED DIR}       ${DATA ROOT}${/}mixed_data
+@{SAMPLE TESTS}    Passing  Failing  User Keyword  Own Tags  Default Tags  Variable Table  Resource File
 ...  Variable File  Library Import  Test Timeout  Keyword Timeout  Empty Rows  Document  Default Fixture
 ...  Overridden Fixture  Quotes
 @{SUBSUITE_TESTS}  Suite1 Test  Suite2 Test
