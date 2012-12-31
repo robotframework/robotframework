@@ -3,6 +3,8 @@ ${existing} =  foo
 ${LOG GOT WRONG ARGS} =  Keyword 'BuiltIn.Log' expected 1 to 2 arguments, got
 ${LOG GOT ZERO ARGS} =  ${LOG GOT WRONG ARGS} 0.
 ${LOG GOT THREE ARGS} =  ${LOG GOT WRONG ARGS} 3.
+${LOG KW} =  Log
+@{LOG THAT} = Log  that  DEBUG
 
 
 *** Test Cases ***
@@ -60,6 +62,9 @@ Run Keywords With Arguments When Multiple Keyword Fails
     ...  1) Keyword 'BuiltIn.Log' expected 1 to 2 arguments, got 3.\n\n
     ...  2) No keyword with name 'no kw' found.
     Run Keywords  Log  FOO  DEBUG  this should fail  AND  no kw
+
+Run Keywords With Arguments With Variables
+    Run Keywords  ${LOG KW}  this  DEBUG  AND  @{LOG THAT}  AND  Log  only kw
 
 Run Keyword in For Loop Pass
     :FOR  ${i}  IN RANGE  5
