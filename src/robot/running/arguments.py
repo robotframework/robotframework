@@ -190,8 +190,7 @@ class RunKeywordArguments(PythonKeywordArguments):
         self._arg_resolution_index = arg_resolution_index
 
     def _resolve(self, args, variables, output):
-        escapes = () if self.name != 'BuiltIn.Run Keyword If' else ('ELSE IF', 'ELSE')
-        args = variables.replace_from_beginning(args, self._arg_resolution_index, escapes)
+        args = variables.replace_from_beginning(args, self._arg_resolution_index)
         return args, {}
 
 

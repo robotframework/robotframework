@@ -1,0 +1,35 @@
+*** Variables ***
+@{RUN KEYWORDS}  Run Keywords  kw that logs  AND  kw that should not be called
+@{RUN KWS ARGS}  kw that logs  AND  kw that should not be called
+@{RUN KEYWORD IF}  Run Keyword If  ${FALSE}  Log  no  ELSE IF  ${FALSE}  Log  no  ELSE  Log  log message
+@{RUN KW IF ARGS}  ${FALSE}  Log  no  ELSE IF  ${FALSE}  Log  no  ELSE  Log  log message
+
+*** Test cases ***
+Run Keyword with Run Keywords With Arguments Inside List variable should escape AND
+    [Documentation]  FAIL  No keyword with name 'AND' found.
+    Run Keyword  Run Keywords  @{RUN KWS ARGS}
+
+Run Keyword with Run Keywords And Arguments Inside List variable should escape AND
+    [Documentation]  FAIL  No keyword with name 'AND' found.
+    Run Keyword  @{RUN KEYWORDS}
+
+Run Keyword If with Run Keywords With Arguments Inside List variable should escape AND
+    [Documentation]  FAIL  No keyword with name 'AND' found.
+    Run Keyword If  ${TRUE}  Run Keywords  @{RUN KWS ARGS}
+
+Run Keyword If with Run Keywords And Arguments Inside List variable should escape AND
+    [Documentation]  FAIL  No keyword with name 'AND' found.
+    Run Keyword If  ${TRUE}  Run Keyword  @{RUN KEYWORDS}
+
+Run Keywords With Run Keyword If should not escape ELSE and ELSE IF
+    Run Keywords  Run Keyword If  ${FALSE}  Log  no  ELSE IF  ${FALSE}  Log  no  ELSE  Log  log message  AND  Log  that
+
+Run Keywords With Run Keyword If In List Variable Should Escape ELSE and ELSE IF From List Variable
+    Run Keywords  @{RUN KEYWORD IF}  AND  Log  that
+
+Run Keywords With Run Keyword If With Arguments From List Variable should escape ELSE and ELSE IF From List Variable
+    Run Keywords  Run Keyword If  @{RUN KW IF ARGS}  AND  Log  that
+
+*** Keywords ***
+kw that logs
+    Log  log message
