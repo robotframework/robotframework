@@ -111,8 +111,14 @@ class TsvFileWriter(_DataFileWriter):
                                'Writing tab separated format is not possible.')
         formatter = TsvFormatter(configuration.tsv_column_count)
         _DataFileWriter.__init__(self, formatter, configuration)
-        self._writer = csv.writer(configuration.output, dialect='excel-tab',
-                                  lineterminator=configuration.line_separator)
+        self._writer = self._get_writer(configuration)
+
+    def _get_writer(self, configuration):
+        # Custom dialect needed as a workaround for
+        # http://ironpython.codeplex.com/workitem/33627
+        dialect = csv.excel_tab()
+        dialect.lineterminator = configuration.line_separator
+        return csv.writer(configuration.output, dialect=dialect)
 
     def _write_row(self, row):
         self._writer.writerow([self._encode(c) for c in row])
