@@ -18,13 +18,13 @@ from robot import utils
 from robot.errors import DataError
 from robot.variables import is_list_var
 
-from outputcapture import OutputCapturer
-from runkwregister import RUN_KW_REGISTER
-from keywords import Keywords, Keyword
-from arguments import (PythonKeywordArguments, JavaKeywordArguments,
-                       DynamicKeywordArguments, RunKeywordArguments,
-                       PythonInitArguments, JavaInitArguments)
-from signalhandler import STOP_SIGNAL_MONITOR
+from .arguments import (PythonKeywordArguments, JavaKeywordArguments,
+                        DynamicKeywordArguments, RunKeywordArguments,
+                        PythonInitArguments, JavaInitArguments)
+from .keywords import Keywords, Keyword
+from .outputcapture import OutputCapturer
+from .runkwregister import RUN_KW_REGISTER
+from .signalhandler import STOP_SIGNAL_MONITOR
 
 
 if utils.is_jython:
