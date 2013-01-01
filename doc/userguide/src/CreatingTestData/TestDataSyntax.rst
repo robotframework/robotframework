@@ -35,19 +35,34 @@ Supported file formats
 ~~~~~~~~~~~~~~~~~~~~~~
 
 Robot Framework test data is defined in tabular format, using either
-the hypertext markup language (HTML), tab-separated values (TSV),
-plain text, or reStructuredText (reST) formats. Robot Framework
-selects a parser for the test data based on the file extension. The
-extension is case-insensitive, and the recognized extensions are
+hypertext markup language (HTML), tab-separated values (TSV),
+plain text, or reStructuredText (reST) formats. The details of these
+formats, as well as the main benefits and problems with them, are explained
+in the subsequent sections. Which format to use depends on the context,
+but the plain text format is recommended if there are no special needs.
+
+Robot Framework selects a parser for the test data based on the file extension.
+The extension is case-insensitive, and the recognized extensions are
 :path:`.html`, :path:`.htm` and :path:`.xhtml` for HTML, :path:`.tsv`
-for TSV, :path:`.txt` for plain text, and :path:`.rst` or
-:path:`.rest` for reStructuredText.
+for TSV, :path:`.txt` and special :path:`.robot` for plain text, and
+:path:`.rst` and :path:`.rest` for reStructuredText.
 
 Different `test data templates`_ are available for HTML and TSV
 formats to make it easier to get started writing tests.
 
+.. note:: The special :path:`.robot` extension with plain text files is
+          supported starting from Robot Framework 2.7.6.
+
 HTML format
 '''''''''''
+
+HTML files support formatting and free text around tables. This makes it
+possible to add additional information into test case files and allows creating
+test case files that look like formal test specifications. The main problem
+with HTML format is that editing these files using normal text editors is not
+that easy. Another problem is that HTML does not work as well with version
+control systems because the diffs resulting from changes contain HTML syntax
+in addition to changes to the actual test data.
 
 In HTML files, the test data is defined in separate tables (see the
 example below). Robot Framework recognizes these `test data tables`_
@@ -102,8 +117,9 @@ Editing test data
 
 Test data in HTML files can be edited with whichever editor you
 prefer, but a graphic editor, where you can actually see the tables,
-is recommended.  There is also a tool called RIDE_
-available that is designed for editing the test data.
+is recommended. RIDE_ can read and write HTML files, but unfortunately
+it loses all HTML formatting and also possible data outside test case
+tables.
 
 Encoding and entity references
 ``````````````````````````````
@@ -123,6 +139,11 @@ If no encoding is specified, Robot Framework uses ISO-8859-1 by default.
 
 TSV format
 ''''''''''
+
+TSV files can be edited in spreadsheet programs and, because the syntax is
+so simple, they are easy to generate programmatically. They are also pretty
+easy to edit using normal text editors and they work well in version control,
+but the `plain text format`_ is even better suited for these purposes.
 
 The TSV format can be used in Robot Framework's test data for all the
 same purposes as HTML. In a TSV file, all the data is in one large
@@ -189,6 +210,10 @@ a subset of UTF-8, plain ASCII is naturally supported too.
 Plain text format
 '''''''''''''''''
 
+The plain texts format is very easy to edit using any text editor and
+they also work very well in version control. Because of these benefits
+it has became the most used data format with Robot Framework.
+
 The plain text format is technically otherwise similar to the `TSV
 format`_ but the separator between the cells is different. The TSV
 format uses tabs, but in the plain text format you can use either two
@@ -217,22 +242,24 @@ because with TSV the alignment cannot be controlled.
 ::
 
    *** Settings ***
-   Library     OperatingSystem
+   Library       OperatingSystem
 
    *** Variables ***
-   ${MESSAGE}  Hello, world!
+   ${MESSAGE}    Hello, world!
 
    *** Test Cases ***
-   My Test  [Documentation]  Example test
-       Log         ${MESSAGE}
-       My Keyword  /tmp
+   My Test
+       [Documentation]    Example test
+       Log    ${MESSAGE}
+       My Keyword    /tmp
 
    Another Test
-       Should Be Equal  ${MESSAGE}  Hello, world!
+       Should Be Equal    ${MESSAGE}    Hello, world!
 
    *** Keywords ***
-   My Keyword  [Arguments]  ${path}
-       Directory Should Exist  ${path}
+   My Keyword
+       [Arguments]    ${path}
+       Directory Should Exist    ${path}
 
 Because space is used as separator, all empty cells must be escaped__
 with :var:`${EMPTY}` variable or a single backslash. Otherwise
@@ -241,6 +268,8 @@ because leading, trailing, and consecutive spaces must always be
 escaped.
 
 __ Escaping_
+
+.. tip:: It is recommend to use four spaces between keywords and arguments.
 
 Pipe and space separated format
 ```````````````````````````````
@@ -291,26 +320,33 @@ Editing and encoding
 ````````````````````
 
 One of the biggest benefit of the plain text format over HTML and TSV
-is that editing it using normal text editors is very easy. For Emacs__
-there is even a special `robot-mode.el`__ that provides syntax
-highlighting and keyword completion. The plain text format is also
+is that editing it using normal text editors is very easy. Many editors
+and IDEs (at least Eclipse, Emacs, Vim, and TextMate) also have plugins that
+support syntax highlighting Robot Framework test data and may also provide
+other features such as keyword completion. The plain text format is also
 supported by RIDE_.
-
-__ http://www.gnu.org/software/emacs/
-__ http://code.google.com/p/robot-mode/
 
 Similarly as with the TSV test data, plain text files are always expected
 to use UTF-8 encoding. As a consequence also ASCII files are supported.
 
+Recognized extensions
+`````````````````````
+
+Starting from Robot Framework 2.7.6, it is possible to save plain text
+test data files using a special :path:`.robot` extension in addition to
+the normal :path:`.txt` extension. The new extension makes it easier to
+distinguish test data files from other plain text files.
+
 reStructuredText format
 '''''''''''''''''''''''
 
-reStructuredText (reST) is a easy-to-read plain text markup syntax that
+reStructuredText (reST) is an easy-to-read plain text markup syntax that
 is commonly used for documentation of Python projects (including
-Python itself, as well as this user guide). Using reST with Robot
+Python itself, as well as this User Guide). Using reST with Robot
 Framework allows you to mix richly formatted documents and tables that
 specify test data in a concise text format that is easy to work with
 using simple text editors, diff tools, and source control systems.
+In practice it combines the benefits of plain text and HTML formats.
 
 Tools to process reStructuredText are freely available as part of the
 docutils__ project, and there is a `quick reference guide`__ that
@@ -371,9 +407,8 @@ of the table::
 Editing test data
 `````````````````
 
-Test data in reST files can be edited with any text editor. It is recommended
-that the editor be configured to use a monospace font to aid with alignment
-of table elements.
+Test data in reST files can be edited with any text editor, and many editors
+also provide automatic syntax highlighting for it.
 
 Note that RIDE_ does not support direct editing of test data in reST source
 files.
@@ -381,13 +416,18 @@ files.
 Temporary files when using reST
 ```````````````````````````````
 
-Unlike HTML or TSV formats, Robot Framework does not parse reST files
+Unlike other formats, Robot Framework does not parse reST files
 directly.  Instead, docutils is used to automatically transform reST
 source files into temporary HTML files that are subsequently read by
 Robot. These temporary files are removed immediately after being
 read. This HTML file generation and cleanup is handled internally by
 Robot Framework, it does not require the user to directly invoke
 docutils tools.
+
+Generating HTML files based on reST files every time tests are run obviously
+adds some overhead. If this is a problem, it can be a good idea to convert
+reST files to HTML using external tools separately and let Robot Framework
+use the generated files only.
 
 Syntax errors in reST source files
 ``````````````````````````````````
