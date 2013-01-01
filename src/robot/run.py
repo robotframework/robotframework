@@ -294,9 +294,11 @@ but the latter matches --log, --loglevel and --logtitle.
 Environment Variables
 =====================
 
-ROBOT_SYSLOG_FILE         Path to the syslog file. If not specified, or set to
-                          special value `NONE`, writing to syslog file is
-                          disabled. Path must be absolute.
+ROBOT_SYSLOG_FILE         Path to a file where Robot Framework writes internal
+                          information about parsing test case files and running
+                          tests. Can be useful when debugging problems. If not
+                          set, or set to special value `NONE`, writing to the
+                          syslog file is disabled.
 ROBOT_SYSLOG_LEVEL        Log level to use when writing to the syslog file.
                           Available levels are the same as for --loglevel
                           option and the default is INFO.
@@ -310,18 +312,18 @@ $ pybot tests.html
 # Using options and running with `jybot`.
 $ jybot --include smoke --name Smoke_Tests path/to/tests.txt
 
-# Executing `robot.run` module using Python
+# Executing `robot.run` module using Python.
 $ python -m robot.run --test test1 --test test2 test_directory
 
-# Running `robot/run.py` script with Jython
-$ jython /path/to/robot/run.py tests.tsv
+# Running `robot/run.py` script with Jython.
+$ jython /path/to/robot/run.py tests.robot
 
-# Executing multiple data sources and using case-insensitive long options.
+# Executing multiple test case files and using case-insensitive long options.
 $ pybot --SuiteStatLevel 2 /my/tests/*.html /your/tests.html
 
 # Setting syslog file before running tests.
 $ export ROBOT_SYSLOG_FILE=/tmp/syslog.txt
-$ pybot tests.html
+$ pybot tests.tsv
 """
 
 import sys

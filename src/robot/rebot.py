@@ -232,9 +232,10 @@ but the latter matches both --log and --logtitle.
 Environment Variables
 =====================
 
-ROBOT_SYSLOG_FILE         Path to the syslog file. If not specified, or set to
-                          special value `NONE`, writing to syslog file is
-                          disabled. Path must be absolute.
+ROBOT_SYSLOG_FILE         Path to a file where Robot Framework writes internal
+                          information about processed files. Can be useful when
+                          debugging problems. If not set, or set to special
+                          value `NONE`, writing to the syslog file is disabled.
 ROBOT_SYSLOG_LEVEL        Log level to use when writing to the syslog file.
                           Available levels are the same as for --loglevel
                           option to Robot and the default is INFO.
@@ -250,10 +251,10 @@ $ rebot --log smoke_log.html --report smoke_report.html --include smoke
         --ReportTitle Smoke_Tests --ReportBackground green:yellow:red
         --TagStatCombine tag1ANDtag2 path/to/myoutput.xml
 
-# Executing `robot.rebot` module using Python and creating combined outputs
+# Executing `robot.rebot` module using Python and creating combined outputs.
 $ python -m robot.rebot outputs/*.xml
 
-# Running `robot/rebot.py` script with Jython
+# Running `robot/rebot.py` script with Jython.
 $ jython path/robot/rebot.py -N Project_X -l none -r x.html output.xml
 """
 
