@@ -12,10 +12,9 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-
 import inspect
 
-from robot import utils
+from robot.utils import NormalizedDict
 
 
 class _RunKeywordRegister:
@@ -26,9 +25,9 @@ class _RunKeywordRegister:
     def register_run_keyword(self, libname, keyword, args_to_process=None):
         if args_to_process is None:
             args_to_process = self._get_args_from_method(keyword)
-            keyword =  keyword.__name__
+            keyword = keyword.__name__
         if libname not in self._libs:
-            self._libs[libname] = utils.NormalizedDict(ignore=['_'])
+            self._libs[libname] = NormalizedDict(ignore=['_'])
         self._libs[libname][keyword] = int(args_to_process)
 
     def get_args_to_process(self, libname, kwname):
@@ -41,10 +40,10 @@ class _RunKeywordRegister:
 
     def _get_args_from_method(self, method):
         if inspect.ismethod(method):
-            return method.im_func.func_code.co_argcount -1
+            return method.im_func.func_code.co_argcount - 1
         elif inspect.isfunction(method):
             return method.func_code.co_argcount
-        raise ValueError("Needs function or method!")
+        raise ValueError('Needs function or method')
 
 
 RUN_KW_REGISTER = _RunKeywordRegister()
