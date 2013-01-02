@@ -4,7 +4,7 @@ ${LOG GOT WRONG ARGS} =  Keyword 'BuiltIn.Log' expected 1 to 2 arguments, got
 ${LOG GOT ZERO ARGS} =  ${LOG GOT WRONG ARGS} 0.
 ${LOG GOT THREE ARGS} =  ${LOG GOT WRONG ARGS} 3.
 ${LOG KW} =  Log
-@{LOG THAT} = Log  that  DEBUG
+@{LOG THAT} =  Log  that  DEBUG
 
 
 *** Test Cases ***
@@ -31,11 +31,32 @@ Run Keyword With Failing UK
 Comment
     Comment  Missing Keyword  Should Not Fail  Even Missing ${variable} Should Not Fail
 
-Set Variables
-    Set Test Variable  ${test}
+Set Test/Suite/Global Variable
+    Set Test Variable  ${test}  value
+    Set Test Variable  \${test}
+    Set Test Variable  $test
     Set Suite Variable  ${suite}
+    Set Suite Variable  \${suite}  value
+    Set Suite Variable  $suite
     Set Suite Variable  ${global}
-    Set Variable If  ${global}
+    Set Suite Variable  \${global}
+    Set Suite Variable  $global  value
+
+Variable Should (Not) Exist
+    Variable Should Exist  ${var}
+    Variable Should Exist  \${var}
+    Variable Should Exist  $var
+    Variable Should Not Exist  ${var}
+    Variable Should Not Exist  \${var}
+    Variable Should Not Exist  $var
+
+Get Variable Value
+    Get Variable Value  ${var}
+    Get Variable Value  \${var}  default
+    Get Variable Value  $var  ${default}
+
+Set Variable If
+    Set Variable If  True  ${foo}  ${bar}
 
 Run Keywords When All Keywords Pass
     Run Keywords  Fail  No Operation  UK

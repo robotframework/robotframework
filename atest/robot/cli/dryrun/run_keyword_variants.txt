@@ -23,7 +23,16 @@ Run Keyword With Failing UK
 Comment
     Check Test Case  ${TESTNAME}
 
-Set Variables
+Set Test/Suite/Global Variable
+    Check Test Case  ${TESTNAME}
+
+Variable Should (Not) Exist
+    Check Test Case  ${TESTNAME}
+
+Get Variable Value
+    Check Test Case  ${TESTNAME}
+
+Set Variable If
     Check Test Case  ${TESTNAME}
 
 Run Keywords When All Keywords Pass

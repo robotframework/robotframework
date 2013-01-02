@@ -221,9 +221,12 @@ class _RunKeywordHandler(_PythonHandler):
         return runner()
 
     def _parse_arguments(self, handler_method):
-        arg_index = RUN_KW_REGISTER.get_args_to_process(self.library.orig_name,
-                                                        self.name)
+        arg_index = self._get_args_to_process()
         return RunKeywordArguments(handler_method, self.longname, arg_index)
+
+    def _get_args_to_process(self):
+        return RUN_KW_REGISTER.get_args_to_process(self.library.orig_name,
+                                                   self.name)
 
     def _get_timeout(self, namespace):
         return None
@@ -255,7 +258,7 @@ class _RunKeywordHandler(_PythonHandler):
             return list(self._get_run_kw_if_keywords(args))
         if self._handler_name == 'run_keywords':
             return list(self._get_run_kws_keywords(args))
-        if 'name' in self.arguments.names:
+        if 'name' in self.arguments.names and self._get_args_to_process() > 0:
             return self._get_default_run_kw_keywords(args)
         return []
 
