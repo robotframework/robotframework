@@ -20,25 +20,29 @@ Infinite recursion with Run Keyword
     [Documentation]    FAIL ${LIMIT EXCEEDED}
     Recursion with Run Keyword
 
+Infinitely recursive for loop
+    [Documentation]    FAIL ${LIMIT EXCEEDED}
+    Infinitely recursive for loop
+
 Recursion below the recursion limit is ok
     [Documentation]    FAIL Still below limit!${PTD FAILED}
-    Limited recursion 1
-    Limited recursion 2
-
+    Limited recursion
+    Recursive for loop    10
+    Failing limited recursion
 
 *** Keywords ***
 
 Recursion
     Recursion
 
-Limited recursion 1
+Limited recursion
     [Arguments]    ${limit}=${15}
-    Run Keyword If    ${limit} > 0    Limited recursion 1   ${limit - 1}
+    Run Keyword If    ${limit} > 0    Limited recursion   ${limit - 1}
 
-Limited recursion 2
+Failing limited recursion
     [Arguments]    ${limit}=${30}
     Run Keyword If    ${limit} < 0    Fail    Still below limit!
-    Limited recursion 2     ${limit - 1}
+    Failing limited recursion     ${limit - 1}
 
 Cyclic recursion
     Cyclic recursion 2
@@ -51,3 +55,12 @@ Cyclic recursion 3
 
 Recursion With Run Keyword
     Run Keyword    Recursion With Run Keyword
+
+Recursive for loop
+    [Arguments]    ${rounds}
+    :FOR    ${i}    IN RANGE    ${rounds}
+    \    Recursive for loop    ${i}
+
+Infinitely recursive for loop
+    :FOR    ${var}    IN    recursion
+    \    Infinitely recursive for loop

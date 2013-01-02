@@ -14,7 +14,10 @@ Infinite cyclic recursion
 Infinite recursion with Run Keyword
     Check Test Case    ${TESTNAME}
 
+Infinitely recursive for loop
+    Check Test Case    ${TESTNAME}
+
 Recursion below the recursion limit is ok
-    [Documentation]    Also verifies that blown recursion limit doesn't affect subsequent tests
+    [Documentation]    Also verifies that recursion limit blown earlier doesn't affect subsequent tests
     Check Test Case    ${TESTNAME}
 

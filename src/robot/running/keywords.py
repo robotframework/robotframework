@@ -157,7 +157,7 @@ class ForLoop(BaseKeyword):
 
     def run(self, context):
         self.starttime = get_timestamp()
-        context.output.start_keyword(self)
+        context.start_keyword(self)
         try:
             self._validate()
             self._run(context)
@@ -172,7 +172,7 @@ class ForLoop(BaseKeyword):
         self.status = 'PASS' if not error else 'FAIL'
         self.endtime = get_timestamp()
         self.elapsedtime = get_elapsed_time(self.starttime, self.endtime)
-        context.output.end_keyword(self)
+        context.end_keyword(self)
         if error:
             raise error
 
@@ -211,17 +211,21 @@ class ForLoop(BaseKeyword):
 
     def _run_one_round(self, context, variables, values):
         foritem = _ForItem(variables, values)
-        context.output.start_keyword(foritem)
+        context.start_keyword(foritem)
         for var, value in zip(variables, values):
             context.get_current_vars()[var] = value
         try:
             self.keywords.run(context)
         except ExecutionFailed, err:
             error = err
+        except DataError, err:
+            msg = unicode(err)
+            context.output.fail(msg)
+            error = ExecutionFailed(unicode(err), syntax=True)
         else:
             error = None
         foritem.end('PASS' if not error or error.exit_for_loop else 'FAIL')
-        context.output.end_keyword(foritem)
+        context.end_keyword(foritem)
         return error
 
     def _replace_vars_from_items(self, variables):
