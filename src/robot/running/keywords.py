@@ -158,23 +158,29 @@ class ForLoop(BaseKeyword):
     def run(self, context):
         self.starttime = get_timestamp()
         context.start_keyword(self)
-        try:
-            self._validate()
-            self._run(context)
-        except ExecutionFailed, err:
-            error = err
-        except DataError, err:
-            msg = unicode(err)
-            context.output.fail(msg)
-            error = ExecutionFailed(msg, syntax=True)
-        else:
-            error = None
+        error = self._run_with_error_handling(self._validate_and_run, context)
         self.status = 'PASS' if not error else 'FAIL'
         self.endtime = get_timestamp()
         self.elapsedtime = get_elapsed_time(self.starttime, self.endtime)
         context.end_keyword(self)
         if error:
             raise error
+
+    def _run_with_error_handling(self, runnable, context):
+        try:
+            runnable(context)
+        except ExecutionFailed, err:
+            return err
+        except DataError, err:
+            msg = unicode(err)
+            context.output.fail(msg)
+            return ExecutionFailed(msg, syntax=True)
+        else:
+            return None
+
+    def _validate_and_run(self, context):
+        self._validate()
+        self._run(context)
 
     def _validate(self):
         if not self.vars:
@@ -214,16 +220,7 @@ class ForLoop(BaseKeyword):
         context.start_keyword(foritem)
         for var, value in zip(variables, values):
             context.get_current_vars()[var] = value
-        try:
-            self.keywords.run(context)
-        except ExecutionFailed, err:
-            error = err
-        except DataError, err:
-            msg = unicode(err)
-            context.output.fail(msg)
-            error = ExecutionFailed(unicode(err), syntax=True)
-        else:
-            error = None
+        error = self._run_with_error_handling(self.keywords.run, context)
         foritem.end('PASS' if not error or error.exit_for_loop else 'FAIL')
         context.end_keyword(foritem)
         return error
