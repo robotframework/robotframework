@@ -35,12 +35,12 @@ class _Fixture(object):
                 self._keyword = Keyword(self.name, self.args,
                                         type=type(self).__name__.lower())
 
-    def run(self, context, error_listener):
+    def run(self, context):
         if self._keyword:
             try:
                 self._keyword.run(context)
             except ExecutionFailed, err:
-                error_listener.notify(err)
+                return err
 
     def serialize(self, serializer):
         if self._keyword:
@@ -48,46 +48,9 @@ class _Fixture(object):
             serializer.end_keyword(self._keyword)
 
 
-class Setup(_Fixture): pass
-class Teardown(_Fixture): pass
+class Setup(_Fixture):
+    pass
 
 
-
-class SuiteTearDownListener(object):
-    def __init__(self, suite):
-        self._suite = suite
-    def notify(self, error):
-        self._suite.suite_teardown_failed('Suite teardown failed:\n%s'
-                                          % unicode(error))
-
-
-class SuiteSetupListener(object):
-    def __init__(self, suite):
-        self._suite = suite
-    def notify(self, error):
-        self._suite.run_errors.suite_setup_err(error)
-
-
-class _TestListener(object):
-    def __init__(self, test):
-        self._test = test
-    def notify(self, error):
-        self._test.keyword_failed(error)
-        self._notify_run_errors(error)
-
-
-class TestSetupListener(_TestListener):
-    def _notify_run_errors(self, error):
-        self._test.run_errors.setup_err(unicode(error))
-
-
-class TestTeardownListener(_TestListener):
-    def _notify_run_errors(self, error):
-        self._test.run_errors.teardown_err(unicode(error))
-
-
-class KeywordTeardownListener(object):
-    def __init__(self, run_errors):
-        self._run_errors = run_errors
-    def notify(self, error):
-        self._run_errors.teardown_err(error)
+class Teardown(_Fixture):
+    pass

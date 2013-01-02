@@ -19,8 +19,7 @@ from robot.errors import ExecutionFailed, DataError
 from robot.variables import GLOBAL_VARIABLES
 from robot.output import LOGGER
 
-from .fixture import (Setup, Teardown, SuiteSetupListener, SuiteTearDownListener,
-                      TestSetupListener, TestTeardownListener)
+from .fixture import Setup, Teardown
 from .keywords import Keywords
 from .namespace import Namespace
 from .runerrors import SuiteRunErrors, TestRunErrors
@@ -80,7 +79,7 @@ def _get_multisource_suite(datasources, include_suites, warn_on_skipped):
 def _check_suite_contains_tests(suite, run_empty_suites=False):
     suite.filter_empty_suites()
     if not suite.get_test_count() and not run_empty_suites:
-        raise DataError("Test suite '%s' contains no test cases." % (suite.source))
+        raise DataError("Test suite '%s' contains no test cases." % suite.source)
 
 
 class RunnableTestSuite(BaseTestSuite):
@@ -103,17 +102,17 @@ class RunnableTestSuite(BaseTestSuite):
             RunnableTestSuite(suite, parent=self, defaults=defaults)
         for test in data.testcase_table:
             RunnableTestCase(test, parent=self, defaults=defaults)
-        self._run_mode_exit_on_failure = False
-        self._run_mode_dry_run = False
-        self._run_mode_skip_teardowns_on_exit = False
+        self._exit_on_failure_mode = False
+        self._skip_teardowns_on_exit_mode = False
+        self._dry_run_mode = False
 
     def filter_empty_suites(self):
         for suite in self.suites[:]:
             suite.filter_empty_suites()
             if suite.get_test_count() == 0:
                 self.suites.remove(suite)
-                LOGGER.info("Running test suite '%s' failed: Test suite"
-                            " contains no test cases." % (suite.source))
+                LOGGER.info("Running test suite '%s' failed: Test suite "
+                            "contains no test cases." % suite.source)
 
     def _get_metadata(self, metadata):
         meta = utils.NormalizedDict()
@@ -121,58 +120,58 @@ class RunnableTestSuite(BaseTestSuite):
             meta[item.name] = item.value
         return meta
 
-    def run(self, output, parent=None, errors=None):
-        context = self._start_run(output, parent, errors)
-        self._run_setup(context)
-        self._run_sub_suites(context)
-        self._run_tests(context)
-        self._report_status(context)
-        self._run_teardown(context)
-        self._end_run(context)
-
-    def _start_run(self, output, parent, errors):
+    def run(self, output, parent_context=None, errors=None):
         if not errors:
-            errors = SuiteRunErrors(self._run_mode_exit_on_failure, self._run_mode_skip_teardowns_on_exit)
-        self.run_errors = errors
-        self.run_errors.start_suite()
+            errors = SuiteRunErrors(self._exit_on_failure_mode,
+                                    self._skip_teardowns_on_exit_mode)
+        context = self._start_run(output, parent_context, errors)
+        self._run_setup(context, errors)
+        self._run_sub_suites(context, errors)
+        self._run_tests(context, errors)
+        self._report_status(context, errors)
+        self._run_teardown(context, errors)
+        self._end_run(context, errors)
+
+    def _start_run(self, output, parent_context, errors):
+        errors.start_suite()
         self.status = 'RUNNING'
         self.starttime = utils.get_timestamp()
-        parent_vars = parent.context.get_current_vars() if parent else None
+        parent_vars = parent_context.get_current_vars() if parent_context else None
         ns = Namespace(self, parent_vars)
-        self.context = EXECUTION_CONTEXTS.start_suite(ns, output, self._run_mode_dry_run)
+        context = EXECUTION_CONTEXTS.start_suite(ns, output, self._dry_run_mode)
         if not errors.exit:
             ns.handle_imports()
-        self._set_variable_dependent_metadata(self.context)
+        self._set_variable_dependent_metadata(context, errors)
         output.start_suite(self)
-        return self.context
+        return context
 
-    def _set_variable_dependent_metadata(self, context):
-        errors = []
+    def _set_variable_dependent_metadata(self, context, errors):
+        init_errors = []
         self.doc = context.replace_vars_from_setting('Documentation', self.doc,
-                                                     errors)
-        self.setup.replace_variables(context.get_current_vars(), errors)
-        self.teardown.replace_variables(context.get_current_vars(), errors)
+                                                     init_errors)
+        self.setup.replace_variables(context.get_current_vars(), init_errors)
+        self.teardown.replace_variables(context.get_current_vars(), init_errors)
         for name, value in self.metadata.items():
             self.metadata[name] = context.replace_vars_from_setting(name, value,
-                                                                    errors)
-        if errors:
-            self.run_errors.suite_init_err('Suite initialization failed:\n%s'
-                                            % '\n'.join(errors))
+                                                                    init_errors)
+        errors.suite_initialized('\n'.join(init_errors))
 
-    def _run_setup(self, context):
-        if self.run_errors.is_suite_setup_allowed():
-            self.setup.run(context, SuiteSetupListener(self))
-            self.run_errors.setup_executed()
+    def _run_setup(self, context, errors):
+        if errors.is_suite_setup_allowed():
+            error = self.setup.run(context)
+            errors.setup_executed(error)
 
-    def _run_teardown(self, context):
-        if self.run_errors.is_suite_teardown_allowed():
-            self.teardown.run(context, SuiteTearDownListener(self))
+    def _run_teardown(self, context, errors):
+        if errors.is_suite_teardown_allowed():
+            error = self.teardown.run(context)
+            if error:
+                self.suite_teardown_failed(error)
 
-    def _run_sub_suites(self, context):
+    def _run_sub_suites(self, context, errors):
         for suite in self.suites:
-            suite.run(context.output, self, self.run_errors)
+            suite.run(context.output, context, errors)
 
-    def _run_tests(self, context):
+    def _run_tests(self, context, errors):
         executed_tests = []
         for test in self.tests:
             normname = utils.normalize(test.name)
@@ -180,20 +179,20 @@ class RunnableTestSuite(BaseTestSuite):
                 LOGGER.warn("Multiple test cases with name '%s' executed in "
                             "test suite '%s'"% (test.name, self.longname))
             executed_tests.append(normname)
-            test.run(context, self.run_errors)
+            test.run(context, errors)
             context.set_prev_test_variables(test)
 
-    def _report_status(self, context):
+    def _report_status(self, context, errors):
         self.set_status()
-        self.message = self.run_errors.suite_error()
+        self.message = errors.get_suite_error() or ''
         context.report_suite_status(self.status, self.get_full_message())
 
-    def _end_run(self, context):
+    def _end_run(self, context, errors):
         self.endtime = utils.get_timestamp()
         self.elapsedtime = utils.get_elapsed_time(self.starttime, self.endtime)
         context.copy_prev_test_vars_to_global()
         context.end_suite(self)
-        self.run_errors.end_suite()
+        errors.end_suite()
 
 
 class RunnableMultiTestSuite(RunnableTestSuite):
@@ -207,9 +206,9 @@ class RunnableMultiTestSuite(RunnableTestSuite):
         self.teardown = Teardown(None, None)
         for suite in suitedatas:
             RunnableTestSuite(suite, parent=self)
-        self._run_mode_exit_on_failure = False
-        self._run_mode_dry_run = False
-        self._run_mode_skip_teardowns_on_exit = False
+        self._exit_on_failure_mode = False
+        self._skip_teardowns_on_exit_mode = False
+        self._dry_run_mode = False
 
 
 class RunnableTestCase(BaseTestCase):
@@ -224,21 +223,21 @@ class RunnableTestCase(BaseTestCase):
         self.template = defaults.get_template(tc_data.template)
         self.keywords = Keywords(tc_data.steps, self.template)
 
-    def run(self, context, suite_errors):
-        self._suite_errors = suite_errors
-        self._start_run(context)
-        if self.run_errors.is_allowed_to_run():
-            self._run(context)
+    def run(self, context, parent_errors):
+        errors = self._start_run(context, parent_errors)
+        if errors.is_allowed_to_run():
+            self._run(context, errors)
         else:
-            self._not_allowed_to_run()
+            self._not_allowed_to_run(errors)
         self._end_run(context)
 
-    def _start_run(self, context):
-        self.run_errors = TestRunErrors(self._suite_errors)
+    def _start_run(self, context, parent_errors):
+        errors = TestRunErrors(parent_errors)
         self.status = 'RUNNING'
         self.starttime = utils.get_timestamp()
-        self.run_errors.init_err(self._init_test(context))
+        errors.test_initialized(self._init_test(context))
         context.start_test(self)
+        return errors
 
     def _init_test(self, context):
         errors = []
@@ -257,52 +256,64 @@ class RunnableTestCase(BaseTestCase):
             return 'Test case contains no keywords'
         return None
 
-    def _run(self, context):
+    def _run(self, context, errors):
         self.timeout.start()
-        self._run_setup(context)
-        if not self.run_errors.setup_failed():
-            try:
-                self.keywords.run(context)
-            except ExecutionFailed, err:
-                self.run_errors.kw_err(unicode(err))
-                self.keyword_failed(err)
-        context.set_test_status_before_teardown(*self._report_status())
-        self._run_teardown(context)
-        self._report_status_after_teardown()
+        failed = self._run_setup(context, errors)
+        if not failed:
+            self._run_keywords(context, errors)
+        self._set_status_before_teardown(context, errors)
+        failed = self._run_teardown(context, errors)
+        self._set_status_after_teardown(failed, errors)
 
-    def keyword_failed(self, err):
+    def _test_failed(self, err, errors):
         self.timeout.set_keyword_timeout(err.timeout)
-        self._suite_errors.test_failed(exit=err.exit, critical=self.critical)
+        errors.test_failed(exit=err.exit, critical=self.critical)
 
-    def _run_setup(self, context):
-        self.setup.run(context, TestSetupListener(self))
+    def _run_setup(self, context, errors):
+        error = self.setup.run(context)
+        if error:
+            errors.setup_failed(error)
+            self._test_failed(error, errors)
+        return bool(error)
 
-    def _report_status(self):
-        message = self.run_errors.get_message()
+    def _run_keywords(self, context, errors):
+        try:
+            self.keywords.run(context)
+        except ExecutionFailed, err:
+            errors.keyword_failed(err)
+            self._test_failed(err, errors)
+
+    def _set_status_before_teardown(self, context, errors):
+        message = errors.get_message()
         if message:
             self.status = 'FAIL'
             self.message = message
         else:
             self.status = 'PASS'
-        return self.message, self.status
+        context.set_test_status_before_teardown(self.message, self.status)
 
-    def _run_teardown(self, context):
-        if self._suite_errors.is_test_teardown_allowed():
-            self.teardown.run(context, TestTeardownListener(self))
+    def _run_teardown(self, context, errors):
+        if not errors.is_test_teardown_allowed():
+            return False
+        error = self.teardown.run(context)
+        if error:
+            errors.teardown_failed(error)
+            self._test_failed(error, errors)
+        return bool(error)
 
-    def _report_status_after_teardown(self):
-        if self.run_errors.teardown_failed():
+    def _set_status_after_teardown(self, teardown_failed, errors):
+        if teardown_failed:
             self.status = 'FAIL'
-            self.message = self.run_errors.get_teardown_message(self.message)
+            self.message = errors.get_teardown_message(self.message)
         if self.status == 'PASS' and self.timeout.timed_out():
             self.status = 'FAIL'
             self.message = self.timeout.get_message()
         if self.status == 'FAIL':
-            self._suite_errors.test_failed(critical=self.critical)
+            errors.test_failed(critical=self.critical)
 
-    def _not_allowed_to_run(self):
+    def _not_allowed_to_run(self, errors):
         self.status = 'FAIL'
-        self.message = self.run_errors.parent_or_init_error()
+        self.message = errors.get_parent_or_init_error()
 
     def _end_run(self, context):
         self.endtime = utils.get_timestamp()

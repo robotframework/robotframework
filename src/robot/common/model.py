@@ -174,15 +174,16 @@ class BaseTestSuite(_TestAndSuiteHelper):
         self.critical_stats.add_stat(suite.critical_stats)
         self.all_stats.add_stat(suite.all_stats)
 
-    def suite_teardown_failed(self, message=None):
-        if message:
-            self._set_teardown_fail_msg(message)
+    def suite_teardown_failed(self, error=None, message=None):
+        if error:
+            message = 'Suite teardown failed:\n%s' % unicode(error)
+        self._set_teardown_fail_msg(message)
         self.critical_stats.fail_all()
         self.all_stats.fail_all()
         self.status = self._get_status()
         sub_message = 'Teardown of the parent suite failed.'
         for suite in self.suites:
-            suite.suite_teardown_failed(sub_message)
+            suite.suite_teardown_failed(message=sub_message)
         for test in self.tests:
             test.suite_teardown_failed(sub_message)
 
@@ -271,11 +272,11 @@ class BaseTestSuite(_TestAndSuiteHelper):
         origmode = runmode
         runmode = runmode.upper()
         if runmode == 'EXITONFAILURE':
-            self._run_mode_exit_on_failure = True
+            self._exit_on_failure_mode = True
         elif runmode == 'SKIPTEARDOWNONEXIT':
-            self._run_mode_skip_teardowns_on_exit = True
+            self._skip_teardowns_on_exit_mode = True
         elif runmode == 'DRYRUN':
-            self._run_mode_dry_run = True
+            self._dry_run_mode = True
         elif runmode == 'RANDOM:TEST':
             random.shuffle(self.tests)
         elif runmode == 'RANDOM:SUITE':

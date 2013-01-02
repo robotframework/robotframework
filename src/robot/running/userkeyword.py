@@ -22,10 +22,9 @@ from robot.output import LOGGER
 from robot import utils
 
 from .keywords import Keywords
-from .fixture import Teardown, KeywordTeardownListener
+from .fixture import Teardown
 from .timeouts import KeywordTimeout
 from .arguments import UserKeywordArguments
-from .runerrors import KeywordRunErrors
 
 
 class UserLibrary(BaseLibrary):
@@ -177,10 +176,9 @@ class UserKeywordHandler(object):
         teardown = Teardown(self.teardown.name, self.teardown.args)
         teardown.replace_variables(context.get_current_vars(), [])
         context.start_keyword_teardown(error)
-        run_errors = KeywordRunErrors()
-        teardown.run(context, KeywordTeardownListener(run_errors))
+        error = teardown.run(context)
         context.end_keyword_teardown()
-        return run_errors.teardown_error
+        return error
 
     def _verify_keyword_is_valid(self):
         if self._errors:

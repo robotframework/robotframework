@@ -14,16 +14,16 @@ class TestSuiteRunErrors(unittest.TestCase):
         self._setup_and_teardown_allowed()
 
     def test_suite_run_with_errors(self):
-        self.errs.suite_init_err('Awfulness happened!')
+        self.errs.suite_initialized('Awfulness happened!')
         self._setup_and_teardown_disallowed()
 
     def test_teardown_executed_after_setup_errs(self):
-        self.errs.suite_setup_err(ExecutionFailed('Terriblesness occured!'))
+        self.errs.setup_executed(ExecutionFailed('Terriblesness occured!'))
         self.errs.setup_executed()
         assert_true(self.errs.is_suite_teardown_allowed())
 
     def test_higher_level_setup_err_prevents_all_lower_level_setups(self):
-        self.errs.suite_setup_err(ExecutionFailed('Terriblesness occured!'))
+        self.errs.setup_executed(ExecutionFailed('Terriblesness occured!'))
         self.errs.start_suite()
         self._setup_and_teardown_disallowed()
         self.errs.end_suite()
@@ -32,13 +32,13 @@ class TestSuiteRunErrors(unittest.TestCase):
         self.errs.end_suite()
 
     def test_higher_level_init_err_prevents_lower_level_setup(self):
-        self.errs.suite_init_err('Terriblesness occured!')
+        self.errs.suite_initialized('Terriblesness occured!')
         self.errs.start_suite()
         self._setup_and_teardown_disallowed()
 
     def test_sibling_errors_dont_affect_each_other(self):
         self.errs.start_suite()
-        self.errs.suite_setup_err(ExecutionFailed('Terriblesness occured!'))
+        self.errs.setup_executed(ExecutionFailed('Terriblesness occured!'))
         self.errs.start_suite()
         self._setup_and_teardown_disallowed()
         self.errs.end_suite()
@@ -62,6 +62,7 @@ class TestSuiteRunErrors(unittest.TestCase):
 
     def _setup_and_teardown_allowed(self):
         assert_true(self.errs.is_suite_setup_allowed())
+        self.errs.setup_executed()
         assert_true(self.errs.is_suite_teardown_allowed())
 
     def _setup_and_teardown_disallowed(self):

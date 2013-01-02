@@ -13,161 +13,134 @@
 #  limitations under the License.
 
 class SuiteRunErrors(object):
-    _NO_ERROR = None
     _exit_on_failure_error = ('Critical failure occurred and ExitOnFailure '
                               'option is in use')
     _exit_on_fatal_error = 'Test execution is stopped due to a fatal error'
     _parent_suite_init_error = 'Initialization of the parent suite failed.'
     _parent_suite_setup_error = 'Setup of the parent suite failed.'
 
-    def __init__(self, run_mode_is_exit_on_failure=False, run_mode_skip_teardowns_on_exit=False):
-        self._run_mode_is_exit_on_failure = run_mode_is_exit_on_failure
-        self._run_mode_skip_teardowns_on_exit = run_mode_skip_teardowns_on_exit
+    def __init__(self, exit_on_failure_mode=False, skip_teardowns_on_exit_mode=False):
+        self._exit_on_failure_mode = exit_on_failure_mode
+        self._skip_teardowns_on_exit_mode = skip_teardowns_on_exit_mode
         self._earlier_init_errors = []
         self._earlier_setup_errors = []
-        self._earlier_suite_setup_executions = []
-        self._init_current_errors()
-        self._exit_runmode = self._exit_fatal = False
-        self._current_suite_setup_executed = False
+        self._earlier_setup_executions = []
+        self._init_error = None
+        self._setup_error = None
+        self._setup_executed = False
+        self._exit_on_failure = False
+        self._exit_on_fatal = False
 
     @property
     def exit(self):
-        return self._exit_fatal or self._exit_runmode
-
-    def _init_current_errors(self):
-        self._current_init_err = self._current_setup_err = self._NO_ERROR
+        return self._exit_on_fatal or self._exit_on_failure
 
     def start_suite(self):
-        self._earlier_init_errors.append(self._current_init_err)
-        self._earlier_setup_errors.append(self._current_setup_err)
-        self._earlier_suite_setup_executions.append(self._current_suite_setup_executed)
-        self._init_current_errors()
-        self._current_suite_setup_executed = False
+        self._earlier_init_errors.append(self._init_error)
+        self._earlier_setup_errors.append(self._setup_error)
+        self._earlier_setup_executions.append(self._setup_executed)
+        self._init_error = None
+        self._setup_error = None
+        self._setup_executed = False
 
     def end_suite(self):
-        self._current_setup_err = self._earlier_setup_errors.pop()
-        self._current_init_err = self._earlier_init_errors.pop()
-        self._current_suite_setup_executed = self._earlier_suite_setup_executions.pop()
+        self._setup_error = self._earlier_setup_errors.pop()
+        self._init_error = self._earlier_init_errors.pop()
+        self._setup_executed = self._earlier_setup_executions.pop()
 
     def is_suite_setup_allowed(self):
-        return self._current_init_err is self._NO_ERROR and \
-                not self._earlier_errors()
+        return not (self._init_error or self.exit or
+                    any(self._earlier_init_errors + self._earlier_setup_errors))
 
     def is_suite_teardown_allowed(self):
-        if not self.is_test_teardown_allowed():
-            return False
-        if self._current_suite_setup_executed:
-            return True
-        return self._current_init_err is self._NO_ERROR and \
-                not self._earlier_errors()
+        return self._setup_executed and not self._skip_teardown()
+
+    def _skip_teardown(self):
+        return self._skip_teardowns_on_exit_mode and self.exit
 
     def is_test_teardown_allowed(self):
-        if not self._run_mode_skip_teardowns_on_exit:
-            return True
-        return not (self._exit_fatal or self._exit_runmode)
+        return not self._skip_teardown()
 
-    def _earlier_errors(self):
-        if self._exit_runmode or self._exit_fatal:
-            return True
-        for err in self._earlier_setup_errors + self._earlier_init_errors:
-            if err is not self._NO_ERROR:
-                return True
-        return False
+    def suite_initialized(self, error=None):
+        if error:
+            self._init_error = 'Suite initialization failed:\n%s' % error
 
-    def suite_init_err(self, error_message):
-        self._current_init_err = error_message
+    def setup_executed(self, error=None):
+        self._setup_executed = True
+        if error:
+            self._setup_error = unicode(error)
+            if error.exit:
+                self._exit_on_fatal = True
 
-    def setup_executed(self):
-        self._current_suite_setup_executed = True
-
-    def suite_setup_err(self, err):
-        if err.exit:
-            self._exit_fatal = True
-        self._current_setup_err = unicode(err)
-
-    def suite_error(self):
-        if self._earlier_init_erros_occurred():
+    def get_suite_error(self):
+        if any(self._earlier_init_errors):
             return self._parent_suite_init_error
-        if self._earlier_setup_errors_occurred():
+        if any(self._earlier_setup_errors):
             return self._parent_suite_setup_error
-        if self._current_init_err:
-            return self._current_init_err
-        if self._current_setup_err:
-            return 'Suite setup failed:\n%s' % self._current_setup_err
-        return ''
+        if self._init_error:
+            return self._init_error
+        if self._setup_error:
+            return 'Suite setup failed:\n%s' % self._setup_error
+        return None
 
-    def _earlier_init_erros_occurred(self):
-        return any(self._earlier_init_errors)
-
-    def _earlier_setup_errors_occurred(self):
-        return any(self._earlier_setup_errors)
-
-    def child_error(self):
-        if self._current_init_err or self._earlier_init_erros_occurred():
+    def get_child_error(self):
+        if self._init_error or any(self._earlier_init_errors):
             return self._parent_suite_init_error
-        if self._current_setup_err or self._earlier_setup_errors_occurred():
+        if self._setup_error or any(self._earlier_setup_errors):
             return self._parent_suite_setup_error
-        if self._exit_runmode:
+        if self._exit_on_failure:
             return self._exit_on_failure_error
-        if self._exit_fatal:
+        if self._exit_on_fatal:
             return self._exit_on_fatal_error
         return None
 
     def test_failed(self, exit=False, critical=False):
-        if critical and self._run_mode_is_exit_on_failure:
-            self._exit_runmode = True
+        if critical and self._exit_on_failure_mode:
+            self._exit_on_failure = True
         if exit:
-            self._exit_fatal = True
+            self._exit_on_fatal = True
 
 
 class TestRunErrors(object):
 
-    def __init__(self, err):
-        self._parent_err = err.child_error() if err else None
-        self._init_err = None
-        self._setup_err = None
-        self._kw_err = None
-        self._teardown_err = None
+    def __init__(self, parent):
+        self._parent = parent
+        self._parent_error = parent.get_child_error()
+        self._init_error = None
+        self._setup_error = None
+        self._keyword_error = None
+        self._teardown_error = None
 
     def is_allowed_to_run(self):
-        return not bool(self._parent_err or self._init_err)
+        return not bool(self._parent_error or self._init_error)
 
-    def init_err(self, err):
-        self._init_err = err
+    def is_test_teardown_allowed(self):
+        return self._parent.is_test_teardown_allowed()
 
-    def setup_err(self, err):
-        self._setup_err = err
+    def test_initialized(self, error=None):
+        self._init_error = error
 
-    def setup_failed(self):
-        return bool(self._setup_err)
+    def setup_failed(self, error):
+        self._setup_error = unicode(error)
 
-    def kw_err(self, error):
-        self._kw_err = error
+    def keyword_failed(self, error):
+        self._keyword_error = unicode(error)
 
-    def teardown_err(self, err):
-        self._teardown_err = err
+    def teardown_failed(self, error):
+        self._teardown_error = unicode(error)
 
-    def teardown_failed(self):
-        return bool(self._teardown_err)
+    def test_failed(self, exit=False, critical=False):
+        self._parent.test_failed(exit, critical)
 
     def get_message(self):
-        if self._setup_err:
-            return 'Setup failed:\n%s' % self._setup_err
-        return self._kw_err
+        if self._setup_error:
+            return 'Setup failed:\n%s' % self._setup_error
+        return self._keyword_error
 
     def get_teardown_message(self, message):
-        if message == '':
-            return 'Teardown failed:\n%s' % self._teardown_err
-        return '%s\n\nAlso teardown failed:\n%s' % (message, self._teardown_err)
+        if not message:
+            return 'Teardown failed:\n%s' % self._teardown_error
+        return '%s\n\nAlso teardown failed:\n%s' % (message, self._teardown_error)
 
-    def parent_or_init_error(self):
-        return self._parent_err or self._init_err
-
-
-class KeywordRunErrors(object):
-
-    def __init__(self):
-        self.teardown_error = None
-
-    def teardown_err(self, err):
-        self.teardown_error = err
+    def get_parent_or_init_error(self):
+        return self._parent_error or self._init_error
