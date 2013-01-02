@@ -414,22 +414,22 @@ class _VariableScopes:
     def replace_string(self, string):
         return self.current.replace_string(string)
 
-    def replace_from_beginning(self, args, how_many=sys.maxint):
-        # There might be @{list} variables and those might have more or less
-        # arguments that is needed. Therefore we need to go through arguments
-        # one by one.
+    def replace_run_kw_info(self, args, needed=sys.maxint):
+        # @{list} variables can contain more or less arguments than needed.
+        # Therefore we need to go through arguments one by one.
         processed = []
-        while len(processed) < how_many and args:
+        while len(processed) < needed and args:
             processed.extend(self.current.replace_list([args.pop(0)]))
-        # In case @{list} variable is unpacked, the arguments going further
-        # needs to be escaped, otherwise those are unescaped twice.
-        if len(processed) > how_many:
-            processed[how_many:] = [self._escape(arg)
-                                    for arg in processed[how_many:]]
+        # If @{list} variable is opened, arguments going further must be
+        # escaped to prevent them being un-escaped twice.
+        if len(processed) > needed:
+            processed[needed:] = [self._escape_run_kw_arg(arg)
+                                    for arg in processed[needed:]]
         return processed + args
 
-    def _escape(self, arg):
+    def _escape_run_kw_arg(self, arg):
         arg = utils.escape(arg)
+        # Escape also special syntax used by Run Kw If and Run Kws.
         if arg in ('ELSE', 'ELSE IF', 'AND'):
             arg = '\\' + arg
         return arg

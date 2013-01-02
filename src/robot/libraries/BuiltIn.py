@@ -1130,26 +1130,26 @@ class _RunKeyword:
         if errors:
             raise ExecutionFailures(errors)
 
-    def _split_run_keywords(self, names):
-        if 'AND' not in names:
-            for name in self._variables.replace_from_beginning(names):
+    def _split_run_keywords(self, keywords):
+        if 'AND' not in keywords:
+            for name in self._variables.replace_run_kw_info(keywords):
                 yield name, ()
         else:
-            for name, args in self._split_run_keywords_from_and(names):
+            for name, args in self._split_run_keywords_from_and(keywords):
                 yield name, args
 
-    def _split_run_keywords_from_and(self, names):
-        while 'AND' in names:
-            index = names.index('AND')
-            yield self._resolve_run_keywords_name_and_args(names[:index])
-            names = names[index+1:]
-        yield self._resolve_run_keywords_name_and_args(names)
+    def _split_run_keywords_from_and(self, keywords):
+        while 'AND' in keywords:
+            index = keywords.index('AND')
+            yield self._resolve_run_keywords_name_and_args(keywords[:index])
+            keywords = keywords[index+1:]
+        yield self._resolve_run_keywords_name_and_args(keywords)
 
-    def _resolve_run_keywords_name_and_args(self, names):
-        needed = self._variables.replace_from_beginning(names, 1)
-        if not needed:
+    def _resolve_run_keywords_name_and_args(self, kw_call):
+        kw_call = self._variables.replace_run_kw_info(kw_call, needed=1)
+        if not kw_call:
             raise DataError('Incorrect use of AND')
-        return needed[0], needed[1:]
+        return kw_call[0], kw_call[1:]
 
     def run_keyword_if(self, condition, name, *args):
         """Runs the given keyword with the given arguments, if `condition` is true.
@@ -1212,7 +1212,7 @@ class _RunKeyword:
     def _split_branch(self, args, control_word, required, required_error):
         args = list(args)
         index = args.index(control_word)
-        branch = self._variables.replace_from_beginning(args[index+1:], required)
+        branch = self._variables.replace_run_kw_info(args[index+1:], required)
         if len(branch) < required:
             raise DataError('%s requires %s.' % (control_word, required_error))
         return args[:index], branch
