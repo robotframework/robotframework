@@ -1,0 +1,12 @@
+*** Setting ***
+Suite Setup       Fail    Expected failure
+Suite Teardown    Log    Suite teardown executed
+
+*** Test Case ***
+Test 1
+    [Documentation]    FAIL Setup of the parent suite failed.
+    Fail    This is not executed
+
+Test 2
+    [Documentation]    FAIL Setup of the parent suite failed.
+    Fail    This is not executed

@@ -37,7 +37,7 @@ Passing Suite Setup And Teardown
 
 Failing Suite Setup
     [Documentation]    Checks that tests in the suite are found from it and marked failed. Also checks that suite teardown is executed.
-    Run Tests    ${EMPTY}    core/failing_suite_setup.html
+    Run Tests    ${EMPTY}    core/failing_suite_setup.txt
     Check Suite Status    ${SUITE}    FAIL    Suite setup failed:\nExpected failure${2_fail_msg}
     ...    Test 1    Test 2
     Should Be Equal    ${SUITE.setup.status}    FAIL
