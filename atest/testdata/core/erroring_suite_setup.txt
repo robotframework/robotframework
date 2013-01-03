@@ -1,0 +1,17 @@
+*** Setting ***
+Suite Setup       Non-Existing Keyword
+Suite Teardown    My TD
+
+*** Test Case ***
+Test 1
+    [Documentation]    FAIL Setup of the parent suite failed.
+    Fail    This is not executed
+
+Test 2
+    [Documentation]    FAIL Setup of the parent suite failed.
+    Fail    This is not executed
+
+*** Keyword ***
+My TD
+    Log    Hello from suite teardown!
+    No Operation
