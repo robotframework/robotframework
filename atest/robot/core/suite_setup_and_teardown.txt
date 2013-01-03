@@ -48,7 +48,7 @@ Failing Suite Setup
 
 Erroring Suite Setup
     [Documentation]    Checks that tests in the suite are found from it and marked failed. Also checks that suite teardown is executed.
-    Run Tests    ${EMPTY}    core/erroring_suite_setup.html
+    Run Tests    ${EMPTY}    core/erroring_suite_setup.txt
     Check Suite Status    ${SUITE}    FAIL    Suite setup failed:\nNo keyword with name 'Non-Existing Keyword' found.${2_fail_msg}
     ...    Test 1    Test 2
     Should Be Equal    ${SUITE.setup.status}    FAIL
@@ -81,7 +81,7 @@ Erroring Suite Teardown
     Should Be Equal    ${SUITE.teardown.status}    FAIL
 
 Failing Suite Setup And Teardown
-    Run Tests    ${EMPTY}     core/failing_suite_setup_and_teardown.html
+    Run Tests    ${EMPTY}     core/failing_suite_setup_and_teardown.txt
     Check Suite Status    ${SUITE}    FAIL    Suite setup failed:\n Setup failure\n\n Also suite teardown failed:\n Teardown failure${2_fail_msg}
     ...    Test 1    Test 2
     Should Be Equal    ${SUITE.setup.status}    FAIL
@@ -110,9 +110,9 @@ Failing Higher Level Suite Setup
     Run Tests    ${EMPTY}    core/failing_higher_level_suite_setup
     Check Suite Status    ${SUITE}    FAIL    Suite setup failed:\nExpected failure in higher level setup${2_fail_msg}
     ...    Test 1    Test 2
-    Check Suite Status    ${SUITE.suites[0]}    FAIL    Setup of the parent suite failed.${1_fail_msg}
+    Check Suite Status    ${SUITE.suites[0]}    FAIL    Setup of the parent suite failed:\nExpected failure in higher level setup${1_fail_msg}
     ...    Test 1
-    Check Suite Status    ${SUITE.suites[1]}    FAIL    Setup of the parent suite failed.${1_fail_msg}
+    Check Suite Status    ${SUITE.suites[1]}    FAIL    Setup of the parent suite failed:\nExpected failure in higher level setup${1_fail_msg}
     ...    Test 2
 
 *** Keywords ***

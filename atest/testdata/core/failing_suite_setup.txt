@@ -4,9 +4,9 @@ Suite Teardown    Log    Suite teardown executed
 
 *** Test Case ***
 Test 1
-    [Documentation]    FAIL Setup of the parent suite failed.
+    [Documentation]    FAIL Setup of the parent suite failed:\nExpected failure
     Fail    This is not executed
 
 Test 2
-    [Documentation]    FAIL Setup of the parent suite failed.
+    [Documentation]    FAIL Setup of the parent suite failed:\nExpected failure
     Fail    This is not executed

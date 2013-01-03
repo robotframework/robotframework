@@ -17,7 +17,7 @@ class SuiteRunErrors(object):
                               'option is in use')
     _exit_on_fatal_error = 'Test execution is stopped due to a fatal error'
     _parent_suite_init_error = 'Initialization of the parent suite failed.'
-    _parent_suite_setup_error = 'Setup of the parent suite failed.'
+    _parent_suite_setup_error = 'Setup of the parent suite failed:\n'
 
     def __init__(self, exit_on_failure_mode=False, skip_teardowns_on_exit_mode=False):
         self._exit_on_failure_mode = exit_on_failure_mode
@@ -73,26 +73,30 @@ class SuiteRunErrors(object):
                 self._exit_on_fatal = True
 
     def get_suite_error(self):
-        if any(self._earlier_init_errors):
-            return self._parent_suite_init_error
-        if any(self._earlier_setup_errors):
-            return self._parent_suite_setup_error
         if self._init_error:
             return self._init_error
         if self._setup_error:
             return 'Suite setup failed:\n%s' % self._setup_error
+        if any(self._earlier_init_errors):
+            return self._parent_suite_init_error
+        if any(self._earlier_setup_errors):
+            return self._get_setup_error()
         return None
 
     def get_child_error(self):
         if self._init_error or any(self._earlier_init_errors):
             return self._parent_suite_init_error
         if self._setup_error or any(self._earlier_setup_errors):
-            return self._parent_suite_setup_error
+            return self._get_setup_error()
         if self._exit_on_failure:
             return self._exit_on_failure_error
         if self._exit_on_fatal:
             return self._exit_on_fatal_error
         return None
+
+    def _get_setup_error(self):
+        error = self._setup_error or [e for e in self._earlier_setup_errors if e][0]
+        return self._parent_suite_setup_error + error
 
     def test_failed(self, exit=False, critical=False):
         if critical and self._exit_on_failure_mode:

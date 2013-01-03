@@ -4,13 +4,15 @@ Suite Teardown    Fail    Teardown failure
 
 *** Test Case ***
 Test 1
-    [Documentation]    FAIL Setup of the parent suite failed.
+    [Documentation]    FAIL Setup of the parent suite failed:
+    ...    Setup failure
     ...
     ...    Also teardown of the parent suite failed.
     Fail    This is not executed
 
 Test 2
-    [Documentation]    FAIL Setup of the parent suite failed.
+    [Documentation]    FAIL Setup of the parent suite failed:
+    ...    Setup failure
     ...
     ...    Also teardown of the parent suite failed.
     Fail    This is not executed
