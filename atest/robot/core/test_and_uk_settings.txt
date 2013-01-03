@@ -132,7 +132,7 @@ Non Existing Variable In Suite Setup And Teardown
 *** Keywords ***
 My Setup
     Run Tests  --variable suite_doc_from_cli:Hello --variable suite_fixture_from_cli:Log --variable meta_from_cli:my_metadata  core${/}test_and_uk_settings.html
-    ${PATH} =  Join Path  ${CURDIR}${/}..${/}..  testdata${/}core${/}test_and_uk_settings.html
+    ${PATH} =  Normalize Path  ${CURDIR}/../../testdata/core/test_and_uk_settings.html
     Set Suite Variable  $PATH
 
 Verify Setup
