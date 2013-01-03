@@ -46,7 +46,7 @@ Test Case With Invalid Timeout
 
 Multiple Test Case Metas
     ${test} =  Check Test Case  Multiple Test Case Metas
-    Equal  ${test.doc}  Documentation for this test case
+    Should Be Equal  ${test.doc}  Documentation for this test case
     Should Contain Tags  ${test}  force-1  test-1  test-2
     Verify Setup  ${test}  BuiltIn.Log  Test case setup
     Verify Teardown  ${test}  BuiltIn.Log  Test case teardown
@@ -57,41 +57,41 @@ Test Case With Invalid Metadata
 
 Escaping Metadata In Test Case Table
     ${test} =  Check Test Case  Escaping Metadata in Test Case Table
-    Equal  ${test.doc}  Two backslashes \\\\
+    Should Be Equal  ${test.doc}  Two backslashes \\\\
 
 User Keyword Name
     ${test} =  Check testcase  Lower Case User Keyword Name
-    Equals  ${test.keywords[0].name}  UK with lower case name
+    Should Be Equal  ${test.keywords[0].name}  UK with lower case name
 
 User Keyword Documentation
     [Documentation]  Check that test case documentation can be set in one cell and in multiple columns and lines
     ${test} =  Check testcase  User Keyword Documentation
-    Equal  ${test.keywords[0].doc}  Documentation for a user keyword
-    Equal  ${test.keywords[1].doc}  Documentation for a user keyword in multiple columns
-    Equal  ${test.keywords[2].doc}  Documentation for a user keyword in multiple lines
+    Should Be Equal  ${test.keywords[0].doc}  Documentation for a user keyword
+    Should Be Equal  ${test.keywords[1].doc}  Documentation for a user keyword in multiple columns
+    Should Be Equal  ${test.keywords[2].doc}  Documentation for a user keyword in multiple lines
 
 User Keyword Short Documentation
     [Documentation]  Checks that it is possible to use "short doc" with user keywords i.e. that only the first line (until real newline) is taken into documentation.
     ${test} =  Check testcase  User Keyword With Short Documentation
-    Equal  ${test.keywords[0].doc}  This is the short doc and also the only thing logged
+    Should Be Equal  ${test.keywords[0].doc}  This is the short doc and also the only thing logged
 
 User Keyword Documentation With Variables
     [Documentation]  Check that variables work in user keyword documentation and invalid variables are handled correctly
     ${test} =  Check testcase  User Keyword Documentation With Variables
-    Equal  ${test.keywords[0].doc}  Variables work in documentation since Robot 1.2
+    Should Be Equal  ${test.keywords[0].doc}  Variables work in documentation since Robot 1.2
 
 User Keyword Documentation With Non Existing Variables
     ${tc} =  Check testcase  User Keyword Documentation with non Existing Variables
-    Equals  ${tc.kws[0].doc}  Starting from RF 2.1 \@{non-existing} variables are just left unchanged in keyword documentation.
+    Should Be Equal  ${tc.kws[0].doc}  Starting from RF 2.1 \@{non-existing} variables are just left unchanged in keyword documentation.
 
 User Keyword Arguments
     [Documentation]  Check that user keyword Arguments work. Arguments and Return are handled differently than other metadatas.
     ${test} =  Check testcase  User Keyword Arguments
-    Equal  ${test.keywords[0].args[0]}  one
+    Should Be Equal  ${test.keywords[0].args[0]}  one
     Check Log Message  ${test.keywords[0].keywords[0].messages[0]}  one
-    Equal  ${test.keywords[1].args[0]}  one
-    Equal  ${test.keywords[1].args[1]}  two
-    Equal  ${test.keywords[1].args[2]}  three
+    Should Be Equal  ${test.keywords[1].args[0]}  one
+    Should Be Equal  ${test.keywords[1].args[1]}  two
+    Should Be Equal  ${test.keywords[1].args[2]}  three
     Check Log Message  ${test.keywords[1].keywords[0].messages[0]}  one two three
 
 User Keyword Return
@@ -109,7 +109,7 @@ User Keyword With Invalid Timeout
 
 User Keyword With Multiple Metas
     ${test} =  Check testcase  User Keyword With Multiple Metas
-    Equal  ${test.keywords[0].doc}  Documentation for a user keyword
+    Should Be Equal  ${test.keywords[0].doc}  Documentation for a user keyword
 
 User Keyword With Invalid Metadata
     Check Test Case  User Keyword With Invalid Metadata
@@ -117,18 +117,22 @@ User Keyword With Invalid Metadata
     Check Stderr Contains  [ ERROR ] Error in file '${PATH}' in table 'Keyword': Invalid syntax in keyword 'UK With Invalid Meta Failing': Non-existing setting 'Invalid'.
 
 Non Existing Variable In Suite Setup And Teardown
-    Run Tests  ${EMPTY}  core${/}test_and_uk_settings.html
-    Equals  ${SUITE.status}  FAIL
-    ${exp} =  Catenate  SEPARATOR=\n  Suite initialization failed:  Replacing variables from Setup failed: Non-existing variable '\${SUITE_FIXTURE_FROM_CLI}'.  Replacing variables from Teardown failed: Non-existing variable '\${SUITE_FIXTURE_FROM_CLI}'.  Replacing variables from setting 'Var from CLI' failed: Non-existing variable '\${META_FROM_CLI}'.
-    Equals  ${SUITE.message}  ${exp}
+    Run Tests  ${EMPTY}  core/test_and_uk_settings.html
+    Should Be Equal  ${SUITE.status}  FAIL
+    ${errors} =    Catenate    SEPARATOR=\n
+    ...    Replacing variables from Setup failed: Non-existing variable '\${SUITE_FIXTURE_FROM_CLI}'.
+    ...    Replacing variables from Teardown failed: Non-existing variable '\${SUITE_FIXTURE_FROM_CLI}'.
+    ...    Replacing variables from setting 'Var from CLI' failed: Non-existing variable '\${META_FROM_CLI}'.
+    ${exp} =  Catenate  SEPARATOR=\n
+    Should Be Equal  ${SUITE.message}  Suite initialization failed:\n${errors}
     ${tc} =  Get Test Case  Test Case Documentation
-    Equals  ${tc.status}  FAIL
-    Equals  ${tc.message}  Initialization of the parent suite failed.
+    Should Be Equal  ${tc.status}  FAIL
+    Should Be Equal  ${tc.message}  Initialization of the parent suite failed:\n${errors}
 
 *** Keywords ***
 My Setup
     Run Tests  --variable suite_doc_from_cli:Hello --variable suite_fixture_from_cli:Log --variable meta_from_cli:my_metadata  core${/}test_and_uk_settings.html
-    ${PATH} =  Join Path  ${CURDIR}${/}..${/}..  testdata${/}core${/}test_and_uk_settings.html
+    ${PATH} =  Normalize Path  ${CURDIR}/../../testdata/core/test_and_uk_settings.html
     Set Suite Variable  $PATH
 
 Verify Setup
@@ -141,6 +145,6 @@ Verify Teardown
 
 Verify Fixture
     [Arguments]  ${fixture}  ${expected_name}  ${expected_message}
-    Equal  ${fixture.name}  ${expected_name}
+    Should Be Equal  ${fixture.name}  ${expected_name}
     Check Log Message  ${fixture.messages[0]}  ${expected_message}
 

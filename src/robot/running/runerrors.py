@@ -16,8 +16,10 @@ class SuiteRunErrors(object):
     _exit_on_failure_error = ('Critical failure occurred and ExitOnFailure '
                               'option is in use')
     _exit_on_fatal_error = 'Test execution is stopped due to a fatal error'
-    _parent_suite_init_error = 'Initialization of the parent suite failed.'
-    _parent_suite_setup_error = 'Setup of the parent suite failed:\n'
+    _parent_init_error_prefix = 'Initialization of the parent suite failed:\n'
+    _parent_setup_error_prefix = 'Setup of the parent suite failed:\n'
+    _init_error_prefix = 'Suite initialization failed:\n'
+    _setup_error_prefix = 'Suite setup failed:\n'
 
     def __init__(self, exit_on_failure_mode=False, skip_teardowns_on_exit_mode=False):
         self._exit_on_failure_mode = exit_on_failure_mode
@@ -63,7 +65,7 @@ class SuiteRunErrors(object):
 
     def suite_initialized(self, error=None):
         if error:
-            self._init_error = 'Suite initialization failed:\n%s' % error
+            self._init_error = error
 
     def setup_executed(self, error=None):
         self._setup_executed = True
@@ -74,18 +76,18 @@ class SuiteRunErrors(object):
 
     def get_suite_error(self):
         if self._init_error:
-            return self._init_error
+            return self._init_error_prefix + self._init_error
         if self._setup_error:
-            return 'Suite setup failed:\n%s' % self._setup_error
+            return self._setup_error_prefix + self._setup_error
         if any(self._earlier_init_errors):
-            return self._parent_suite_init_error
+            return self._get_init_error()
         if any(self._earlier_setup_errors):
             return self._get_setup_error()
         return None
 
     def get_child_error(self):
         if self._init_error or any(self._earlier_init_errors):
-            return self._parent_suite_init_error
+            return self._get_init_error()
         if self._setup_error or any(self._earlier_setup_errors):
             return self._get_setup_error()
         if self._exit_on_failure:
@@ -94,9 +96,18 @@ class SuiteRunErrors(object):
             return self._exit_on_fatal_error
         return None
 
+    def _get_init_error(self):
+        error = self._get_error(self._init_error, *self._earlier_init_errors)
+        return self._parent_init_error_prefix + error
+
     def _get_setup_error(self):
-        error = self._setup_error or [e for e in self._earlier_setup_errors if e][0]
-        return self._parent_suite_setup_error + error
+        error = self._get_error(self._setup_error, *self._earlier_setup_errors)
+        return self._parent_setup_error_prefix + error
+
+    def _get_error(self, *errors):
+        for error in errors:
+            if error:
+                return error
 
     def test_failed(self, exit=False, critical=False):
         if critical and self._exit_on_failure_mode:
