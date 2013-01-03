@@ -1,2 +1,4 @@
 *** Test cases ***
-Test  No operation
+Test 2
+    [Documentation]  FAIL Setup of the parent suite failed.
+    No operation

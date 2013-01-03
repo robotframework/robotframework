@@ -2,4 +2,6 @@
 Suite Setup  Fail  In File
 
 *** Test cases ***
-Test  No operation
+Test 1
+    [Documentation]  FAIL Setup of the parent suite failed.
+    No operation

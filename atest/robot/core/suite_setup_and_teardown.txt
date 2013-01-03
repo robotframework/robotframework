@@ -17,12 +17,13 @@ ${teardown_file}    %{TEMPDIR}/robot-suite-teardown-executed.txt
 Passing Suite Setup
     Run Tests    ${EMPTY}    core/passing_suite_setup.html
     Check Suite Status    ${SUITE}    PASS    ${1_pass_msg}
-    Check Suite Contains Tests    ${SUITE}    Verify Suite Setup
+    ...    Verify Suite Setup
 
 Passing Suite Teardown
     [Setup]    Remove File    ${teardown_file}
     Run Tests    ${EMPTY}    core/passing_suite_teardown.txt
     Check Suite Status    ${SUITE}    PASS    ${1_pass_msg}
+    ...   Test
     File Should Exist    ${teardown_file}
     [Teardown]    Remove File    ${teardown_file}
 
@@ -30,7 +31,7 @@ Passing Suite Setup And Teardown
     [Setup]    Remove File    ${teardown_file}
     Run Tests    ${EMPTY}    core/passing_suite_setup_and_teardown.txt
     Check Suite Status    ${SUITE}    PASS    ${1_pass_msg}
-    Check Suite Contains Tests    ${SUITE}    Verify Suite Setup
+    ...    Verify Suite Setup
     File Should Exist    ${teardown_file}
     [Teardown]    Remove File    ${teardown_file}
 
@@ -38,7 +39,7 @@ Failing Suite Setup
     [Documentation]    Checks that tests in the suite are found from it and marked failed. Also checks that suite teardown is executed.
     Run Tests    ${EMPTY}    core/failing_suite_setup.html
     Check Suite Status    ${SUITE}    FAIL    Suite setup failed:\nExpected failure${2_fail_msg}
-    Check Suite Contains Tests    ${SUITE}    Test 1    Test 2
+    ...    Test 1    Test 2
     Should Be Equal    ${SUITE.setup.status}    FAIL
     Should Be Equal    ${SUITE.teardown.status}    PASS
     Length Should Be    ${SUITE.teardown.msgs}    1
@@ -49,7 +50,7 @@ Erroring Suite Setup
     [Documentation]    Checks that tests in the suite are found from it and marked failed. Also checks that suite teardown is executed.
     Run Tests    ${EMPTY}    core/erroring_suite_setup.html
     Check Suite Status    ${SUITE}    FAIL    Suite setup failed:\nNo keyword with name 'Non-Existing Keyword' found.${2_fail_msg}
-    Check Suite Contains Tests    ${SUITE}    Test 1    Test 2
+    ...    Test 1    Test 2
     Should Be Equal    ${SUITE.setup.status}    FAIL
     ${td} =    Set Variable    ${SUITE.teardown}
     Should Be Equal    ${td.name}    My TD
@@ -64,61 +65,62 @@ Erroring Suite Setup
 Failing Suite Teardown When All Tests Pass
     Run Tests    ${EMPTY}    core/failing_suite_teardown.html
     Check Suite Status    ${SUITE}    FAIL    Suite teardown failed:\nExpected failure${2_fail_msg}
-    Check Suite Contains Tests    ${SUITE}    Test 1    Test 2
+    ...    Test 1    Test 2
     Should Be Equal    ${SUITE.teardown.status}    FAIL
 
 Failing Suite Teardown When Also Tests Fail
     Run Tests    ${EMPTY}    core/failing_suite_teardown_2.html
     Check Suite Status    ${SUITE}    FAIL    Suite teardown failed:\nExpected failure${5_fail_msg}
-    Check Suite Contains Tests    ${SUITE}    Test Passes    Test Fails    Setup Fails    Teardown Fails    Test and Teardown Fail
+    ...    Test Passes    Test Fails    Setup Fails    Teardown Fails    Test and Teardown Fail
     Should Be Equal    ${SUITE.teardown.status}    FAIL
 
 Erroring Suite Teardown
     Run Tests    ${EMPTY}    core/erroring_suite_teardown.html
     Check Suite Status    ${SUITE}    FAIL    Suite teardown failed:\nNo keyword with name 'Non-Existing Keyword' found.${2_fail_msg}
-    Check Suite Contains Tests    ${SUITE}    Test 1    Test 2
+    ...    Test 1    Test 2
     Should Be Equal    ${SUITE.teardown.status}    FAIL
 
 Failing Suite Setup And Teardown
     Run Tests    ${EMPTY}     core/failing_suite_setup_and_teardown.html
     Check Suite Status    ${SUITE}    FAIL    Suite setup failed:\n Setup failure\n\n Also suite teardown failed:\n Teardown failure${2_fail_msg}
-    Check Suite Contains Tests    ${SUITE}    Test 1    Test 2
+    ...    Test 1    Test 2
     Should Be Equal    ${SUITE.setup.status}    FAIL
     Should Be Equal    ${SUITE.teardown.status}    FAIL
 
 Failing Higher Level Suite Teardown
     Run Tests    ${EMPTY}    core/failing_suite_teardown_dir
     Check Suite Status    ${SUITE}    FAIL    Suite teardown failed:\nFailure in top level suite teardown${12_fail_msg}
-    Check Suite Contains Tests    ${SUITE}    PTD Passing    PTD Failing    FTD Passing    FTD Failing    PTD PTD Passing
+    ...    PTD Passing    PTD Failing    FTD Passing    FTD Failing    PTD PTD Passing
     ...    PTD PTD Failing    PTD FTD Passing    PTD FTD Failing    FTD PTD Passing    FTD PTD Failing    FTD FTD Passing
     ...    FTD FTD Failing
-    ${ptd_suite} =    Get Test Suite    Passing Teardown Dir
-    Check Suite Status    ${ptd_suite}    FAIL    Teardown of the parent suite failed.${4_fail_msg}
-    Check Suite Contains Tests    ${ptd_suite}    PTD PTD Passing    PTD PTD Failing    PTD FTD Passing    PTD FTD Failing
-    ${ptd_ptd_suite} =    Get Test Suite    Ptd Passing Teardown
-    Check Suite Status    ${ptd_ptd_suite}    FAIL    Teardown of the parent suite failed.${2_fail_msg}
-    Check Suite Contains Tests    ${ptd_ptd_suite}    PTD PTD Passing    PTD PTD Failing
-    ${ptd_ftd_suite} =    Get Test Suite    Ptd Failing Teardown
-    Check Suite Status    ${ptd_ftd_suite}    FAIL    Suite teardown failed:\nFailure in suite teardown${also}${2_fail_msg}
-    Check Suite Contains Tests    ${ptd_ftd_suite}    PTD FTD Passing    PTD FTD Failing
-    ${ftd_suite} =    Get Test Suite    Failing Teardown Dir
-    Check Suite Status    ${ftd_suite}    FAIL    Suite teardown failed:\nFailure in sub suite teardown${also}${4_fail_msg}
-    Check Suite Contains Tests    ${ftd_suite}    FTD PTD Passing    FTD PTD Failing    FTD FTD Passing    FTD FTD Failing
-    ${ftd_ptd_suite} =    Get Test Suite    Ftd Passing Teardown
-    Check Suite Status    ${ftd_ptd_suite}    FAIL    Teardown of the parent suite failed.${also}${2_fail_msg}
-    Check Suite Contains Tests    ${ftd_ptd_suite}    FTD PTD Passing    FTD PTD Failing
-    ${ftd_ftd_suite} =    Get Test Suite    Ftd Failing Teardown
-    Check Suite Status    ${ftd_ftd_suite}    FAIL    Suite teardown failed:\nFailure in suite teardown${also}${also}${2_fail_msg}
-    Check Suite Contains Tests    ${ftd_ftd_suite}    FTD FTD Passing    FTD FTD Failing
+    Check Suite Status    Passing Teardown Dir    FAIL    Teardown of the parent suite failed.${4_fail_msg}
+    ...    PTD PTD Passing    PTD PTD Failing    PTD FTD Passing    PTD FTD Failing
+    Check Suite Status    Ptd Passing Teardown    FAIL    Teardown of the parent suite failed.${2_fail_msg}
+    ...    PTD PTD Passing    PTD PTD Failing
+    Check Suite Status    Ptd Failing Teardown    FAIL    Suite teardown failed:\nFailure in suite teardown${also}${2_fail_msg}
+    ...    PTD FTD Passing    PTD FTD Failing
+    Check Suite Status    Failing Teardown Dir    FAIL    Suite teardown failed:\nFailure in sub suite teardown${also}${4_fail_msg}
+    ...    FTD PTD Passing    FTD PTD Failing    FTD FTD Passing    FTD FTD Failing
+    Check Suite Status    Ftd Passing Teardown    FAIL    Teardown of the parent suite failed.${also}${2_fail_msg}
+    ...    FTD PTD Passing    FTD PTD Failing
+    Check Suite Status    Ftd Failing Teardown    FAIL    Suite teardown failed:\nFailure in suite teardown${also}${also}${2_fail_msg}
+    ...    FTD FTD Passing    FTD FTD Failing
 
 Failing Higher Level Suite Setup
     Run Tests    ${EMPTY}    core/failing_higher_level_suite_setup
     Check Suite Status    ${SUITE}    FAIL    Suite setup failed:\nExpected failure in higher level setup${2_fail_msg}
+    ...    Test 1    Test 2
     Check Suite Status    ${SUITE.suites[0]}    FAIL    Setup of the parent suite failed.${1_fail_msg}
+    ...    Test 1
     Check Suite Status    ${SUITE.suites[1]}    FAIL    Setup of the parent suite failed.${1_fail_msg}
+    ...    Test 2
 
 *** Keywords ***
 Check Suite Status
-    [Arguments]    ${suite}    ${status}    ${message}
+    [Arguments]    ${suite or name}    ${status}    ${message}    @{tests}
+    ${is string} =    Run Keyword And Return Status    Should Be String    ${suite or name}
+    ${suite} =    Run Keyword If    ${is string}    Get Test Suite    ${suite or name}
+    ...    ELSE    Set Variable    ${suite or name}
     Should Be Equal    ${suite.status}    ${status}    Wrong suite status
     Should Be Equal    ${suite.full_message}    ${message}    Wrong suite message
+    Check Suite Contains Tests    ${suite}    @{tests}
