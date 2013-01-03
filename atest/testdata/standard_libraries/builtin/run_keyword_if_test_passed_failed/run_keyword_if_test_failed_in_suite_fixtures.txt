@@ -1,0 +1,12 @@
+*** Setting ***
+Suite Setup       Run Keyword If Test Failed    Log    ${NON EXISTING}    #Should not be executed nor evaluated
+Suite Teardown    Run Keyword If Test Failed    Log    ${NON EXISTING}    #Should not be executed nor evaluated
+
+
+*** Test Case ***
+Run Keyword If test Failed Can't Be Used In Suite Setup or Teardown
+    [Documentation]    FAIL Setup of the parent suite failed:
+    ...    Keyword 'Run Keyword If Test Failed' can only be used in test teardown
+    ...
+    ...    Also teardown of the parent suite failed.
+    No Operation
