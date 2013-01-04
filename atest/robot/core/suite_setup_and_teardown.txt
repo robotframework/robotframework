@@ -15,7 +15,7 @@ ${teardown_file}    %{TEMPDIR}/robot-suite-teardown-executed.txt
 
 *** Test Cases ***
 Passing Suite Setup
-    Run Tests    ${EMPTY}    core/passing_suite_setup.html
+    Run Tests    ${EMPTY}    core/passing_suite_setup.txt
     Check Suite Status    ${SUITE}    PASS    ${1_pass_msg}
     ...    Verify Suite Setup
 
@@ -63,19 +63,19 @@ Erroring Suite Setup
     Should Be Equal    ${td.kws[1].name}    BuiltIn.No Operation
 
 Failing Suite Teardown When All Tests Pass
-    Run Tests    ${EMPTY}    core/failing_suite_teardown.html
+    Run Tests    ${EMPTY}    core/failing_suite_teardown.txt
     Check Suite Status    ${SUITE}    FAIL    Suite teardown failed:\nExpected failure${2_fail_msg}
     ...    Test 1    Test 2
     Should Be Equal    ${SUITE.teardown.status}    FAIL
 
 Failing Suite Teardown When Also Tests Fail
-    Run Tests    ${EMPTY}    core/failing_suite_teardown_2.html
+    Run Tests    ${EMPTY}    core/failing_suite_teardown_2.txt
     Check Suite Status    ${SUITE}    FAIL    Suite teardown failed:\nExpected failure${5_fail_msg}
     ...    Test Passes    Test Fails    Setup Fails    Teardown Fails    Test and Teardown Fail
     Should Be Equal    ${SUITE.teardown.status}    FAIL
 
 Erroring Suite Teardown
-    Run Tests    ${EMPTY}    core/erroring_suite_teardown.html
+    Run Tests    ${EMPTY}    core/erroring_suite_teardown.txt
     Check Suite Status    ${SUITE}    FAIL    Suite teardown failed:\nNo keyword with name 'Non-Existing Keyword' found.${2_fail_msg}
     ...    Test 1    Test 2
     Should Be Equal    ${SUITE.teardown.status}    FAIL

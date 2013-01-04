@@ -1,0 +1,19 @@
+*** Setting ***
+Suite Setup       Log    Suite setup executed
+Suite Teardown    Fail    Expected failure
+Default Tags      tag1    tag2
+
+*** Test Case ***
+Test 1
+    [Documentation]    FAIL Teardown of the parent suite failed.
+    Log    This is executed normally
+    My Keyword
+
+Test 2
+    [Documentation]    FAIL Teardown of the parent suite failed.
+    Log    All tests pass here
+
+*** Keyword ***
+My Keyword
+    Log    User keywords work normally
+    No Operation
