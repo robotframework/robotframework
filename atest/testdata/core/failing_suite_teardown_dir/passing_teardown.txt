@@ -1,0 +1,10 @@
+*** Test Case ***
+PTD Passing
+    [Documentation]    FAIL Teardown of the parent suite failed.
+    No Operation
+
+PTD Failing
+    [Documentation]    FAIL Failure in test
+    ...
+    ...    Also teardown of the parent suite failed.
+    Fail    Failure in test

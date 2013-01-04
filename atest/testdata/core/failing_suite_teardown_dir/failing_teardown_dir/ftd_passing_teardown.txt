@@ -1,0 +1,11 @@
+*** Variable ***
+${ALSO}           \n\nAlso teardown of the parent suite failed.
+
+*** Test Case ***
+FTD PTD Passing
+    [Documentation]    FAIL Teardown of the parent suite failed.${ALSO}
+    No Operation
+
+FTD PTD Failing
+    [Documentation]    FAIL Failure in test${ALSO}${ALSO}
+    Fail    Failure in test
