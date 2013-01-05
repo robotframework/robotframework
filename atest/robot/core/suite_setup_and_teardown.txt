@@ -63,14 +63,15 @@ Erroring Suite Setup
 
 Failing Suite Teardown When All Tests Pass
     Run Tests    ${EMPTY}    core/failing_suite_teardown.txt
-    ${error} =    Catenate    SEPARATOR=
-    ...    Suite teardown failed:\n
-    ...    Several failures occurred:\n\n
-    ...    1) first\n\n
+    ${error} =    Catenate    SEPARATOR=\n\n
+    ...    Several failures occurred:
+    ...    1) first
     ...    2) second
-    Check Suite Status    ${SUITE}    FAIL    ${error}\n\n${2 FAIL MSG}
+    Check Suite Status    ${SUITE}    FAIL
+    ...    Suite teardown failed:\n${error}\n\n${2 FAIL MSG}
     ...    Test 1    Test 2
     Should Be Equal    ${SUITE.teardown.status}    FAIL
+    Output should contain teardown error    ${error}
 
 Failing Suite Teardown When Also Tests Fail
     Run Tests    ${EMPTY}    core/failing_suite_teardown_2.txt
@@ -78,6 +79,7 @@ Failing Suite Teardown When Also Tests Fail
     ...    Suite teardown failed:\nExpected failure\n\n${5 FAIL MSG}
     ...    Test Passes    Test Fails    Setup Fails    Teardown Fails    Test and Teardown Fail
     Should Be Equal    ${SUITE.teardown.status}    FAIL
+    Output should contain teardown error    Expected failure
 
 Erroring Suite Teardown
     Run Tests    ${EMPTY}    core/erroring_suite_teardown.txt
@@ -85,6 +87,7 @@ Erroring Suite Teardown
     ...    Suite teardown failed:\nNo keyword with name 'Non-Existing Keyword' found.\n\n${2 FAIL MSG}
     ...    Test 1    Test 2
     Should Be Equal    ${SUITE.teardown.status}    FAIL
+    Output should contain teardown error    No keyword with name 'Non-Existing Keyword' found.
 
 Failing Suite Setup And Teardown
     Run Tests    ${EMPTY}     core/failing_suite_setup_and_teardown.txt
@@ -99,14 +102,10 @@ Failing Suite Setup And Teardown
     ...    Test 1    Test 2
     Should Be Equal    ${SUITE.setup.status}    FAIL
     Should Be Equal    ${SUITE.teardown.status}    FAIL
+    Output should contain teardown error    Teardown failure\nin two lines
 
 Failing Higher Level Suite Teardown
     Run Tests    ${EMPTY}    core/failing_suite_teardown_dir
-    ${error} =    Catenate    SEPARATOR=
-    ...    Teardown of the parent suite failed:\n
-    ...    Failure in top level suite teardown\n\n
-    ...    Also teardown of the parent suite failed:\n
-    ...    Failure in suite teardown
     Check Suite Status    ${SUITE}    FAIL
     ...    Suite teardown failed:\nFailure in top level suite teardown\n\n${12 FAIL MSG}
     ...    PTD Passing    PTD Failing    FTD Passing    FTD Failing    PTD PTD Passing
@@ -127,6 +126,7 @@ Failing Higher Level Suite Teardown
     Check Suite Status    Ftd Failing Teardown    FAIL
     ...    Suite teardown failed:\nFailure in suite teardown\n\n${2 FAIL MSG}
     ...    FTD FTD Passing    FTD FTD Failing
+
 
 Failing Higher Level Suite Setup
     Run Tests    ${EMPTY}    core/failing_higher_level_suite_setup
@@ -158,3 +158,9 @@ Check Suite Status
     Should Be Equal    ${suite.status}    ${status}    Wrong suite status
     Should Be Equal    ${suite.full_message}    ${message}    Wrong suite message
     Check Suite Contains Tests    ${suite}    @{tests}
+
+Output should contain teardown error
+    [Arguments]    ${error}
+    ${keywords} =    Get Elements    ${OUTFILE}    suite/kw
+    Element Text Should Be    ${keywords[-1]}    ${error}    xpath=status
+
