@@ -184,7 +184,7 @@ class RunnableTestSuite(BaseTestSuite):
 
     def _report_status(self, context, errors):
         self.set_status()
-        self.message = errors.get_suite_error() or ''
+        self.message = errors.get_suite_error()
         context.report_suite_status(self.status, self.get_full_message())
 
     def _end_run(self, context, errors):

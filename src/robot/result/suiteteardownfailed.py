@@ -43,23 +43,10 @@ class SuiteTeardownFailed(SuiteVisitor):
     def __init__(self, error):
         self._normal_msg += error
         self._also_msg += error
-        self._started = 0
-
-    def start_suite(self, suite):
-        self._started += 1
-
-    def end_suite(self, suite):
-        self._started -= 1
-        # TODO: Do we really need these messages?
-        if self._started:
-            self._set_message(suite)
 
     def visit_test(self, test):
         test.status = 'FAIL'
-        self._set_message(test)
-
-    def _set_message(self, item):
-        item.message += self._also_msg if item.message else self._normal_msg
+        test.message += self._also_msg if test.message else self._normal_msg
 
     def visit_keyword(self, keyword):
         pass

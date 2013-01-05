@@ -76,11 +76,7 @@ class SuiteRunErrors(object):
             return self._init_error_prefix + self._init_error
         if self._setup_error:
             return self._setup_error_prefix + self._setup_error
-        if any(self._earlier_init_errors):
-            return self._get_init_error()
-        if any(self._earlier_setup_errors):
-            return self._get_setup_error()
-        return None
+        return ''
 
     def get_child_error(self):
         if self._init_error or any(self._earlier_init_errors):
@@ -91,7 +87,7 @@ class SuiteRunErrors(object):
             return self._exit_on_failure_error
         if self._exit_on_fatal:
             return self._exit_on_fatal_error
-        return None
+        return ''
 
     def _get_init_error(self):
         error = self._get_error(self._init_error, *self._earlier_init_errors)
