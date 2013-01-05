@@ -153,12 +153,12 @@ class TestSuiteTeardownFailed(unittest.TestCase):
     def test_passed_test(self):
         tc = ExecutionResult(StringIO(SUITE_TEARDOWN_FAILED)).suite.tests[0]
         assert_equals(tc.status, 'FAIL')
-        assert_equals(tc.message, 'Teardown of the parent suite failed.')
+        assert_equals(tc.message, 'Teardown of the parent suite failed:\nXXX')
 
     def test_failed_test(self):
         tc = ExecutionResult(StringIO(SUITE_TEARDOWN_FAILED)).suite.tests[1]
         assert_equals(tc.status, 'FAIL')
-        assert_equals(tc.message, 'Message\n\nAlso teardown of the parent suite failed.')
+        assert_equals(tc.message, 'Message\n\nAlso teardown of the parent suite failed:\nXXX')
 
     def test_already_processed(self):
         inp = SUITE_TEARDOWN_FAILED.replace('generator="Robot', 'generator="Rebot')

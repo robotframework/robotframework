@@ -44,7 +44,7 @@
 <msg timestamp="20111031 13:06:46.979" level="DEBUG">Traceback (most recent call last):
   File "/home/peke/Devel/robotframework/src/robot/libraries/BuiltIn.py", line 304, in fail
     raise AssertionError(msg) if msg else AssertionError()</msg>
-<status status="FAIL" endtime="20111031 13:06:46.980" starttime="20111031 13:06:46.978"></status>
+<status status="FAIL" endtime="20111031 13:06:46.980" starttime="20111031 13:06:46.978">XXX</status>
 </kw>
 <status status="FAIL" endtime="20111031 13:06:46.980" starttime="20111031 13:06:46.923">Suite teardown failed:
 XXX</status>
