@@ -8,8 +8,10 @@ ${NOOP}      No Operation
 ${PASSING}   Passing
 ${FAILING}   Failing
 @{KEYWORDS}  ${NOOP}  ${PASSING}  Log Variables
-${TD ERR}    Teardown of the parent suite failed.
-${ATD ERR}   \n\nAlso teardown of the parent suite failed.
+${ERRORS}    Several failures occurred:\n\n1) Expected error message\n\n2) AssertionError
+${TD ERR}    Teardown of the parent suite failed:\n${ERRORS}
+${ATD ERR}   \n\nAlso teardown of the parent suite failed:\n${ERRORS}
+
 
 
 ***Test Cases***

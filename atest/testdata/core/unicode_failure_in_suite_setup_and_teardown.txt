@@ -8,5 +8,6 @@ Unicode Failure In Suite Setup and Teardown
     [Documentation]  FAIL  Setup of the parent suite failed:
     ...    Circle is 360°, Hyvää üötä, উৄ ৰ ৺ ট ৫ ৪ হ
     ...
-    ...    Also teardown of the parent suite failed.
+    ...    Also teardown of the parent suite failed:
+    ...    Circle is 360°, Hyvää üötä, উৄ ৰ ৺ ট ৫ ৪ হ
 

@@ -1,5 +1,3 @@
-*** Setting ***
-
 *** Variable ***
 ${EXPECTED FAILURE}    Expected failure
 ${TEARDOWN MESSAGE}    Teardown message
@@ -11,18 +9,18 @@ Run Keyword If test Failed When Test Fails
     [Teardown]    Run Keyword If Test Failed    Log    Hello from teardown!
 
 Run Keyword If test Failed When Test Does Not Fail
-    Noop
-    [Teardown]    Run Keyword If Test Failed    Log    ${MESSAGE}    #Should not be executed nor evaluated
+    No Operation
+    [Teardown]    Run Keyword If Test Failed    Fail    ${NOT EXECUTED}
 
 Run Keyword If Test Failed Can't Be Used In Setup
     [Documentation]    FAIL Setup failed:
     ...    Keyword 'Run Keyword If Test Failed' can only be used in test teardown
-    [Setup]    Run Keyword If Test Failed    Fail    ${MESSAGE}    #Should not be executed nor evaluated
-    Noop
+    [Setup]    Run Keyword If Test Failed    Fail    ${NOT EXECUTED}
+    No Operation
 
 Run Keyword If Test Failed Can't Be Used in Test
     [Documentation]    FAIL Keyword 'Run Keyword If Test Failed' can only be used in test teardown
-    Run Keyword If Test Failed    Log    ${MESSAGE}    #Should not be executed nor evaluated
+    Run Keyword If Test Failed    Fail    ${NOT EXECUTED}
 
 Run Keyword If Test Failed Uses User Keyword
     [Documentation]    FAIL Expected failure
@@ -38,7 +36,7 @@ Run Keyword If Test Failed Fails
     [Teardown]    Run Keyword If Test Failed    Fail    Expected teardown failure
 
 Run Keyword If Test Passed When Test Passes
-    Noop
+    No Operation
     [Teardown]    Run Keyword If Test Passed    Log    Teardown of passing test
 
 Run Keyword If Test Passed When Test Fails
@@ -49,21 +47,21 @@ Run Keyword If Test Passed When Test Fails
 Run Keyword If Test Passed Can't Be used In Setup
     [Documentation]    FAIL Setup failed:
     ...    Keyword 'Run Keyword If Test Passed' can only be used in test teardown
-    [Setup]    Run Keyword If Test Passed    Fail    ${MESSAGE}    #Should not be executed nor evaluated
-    Noop
+    [Setup]    Run Keyword If Test Passed    Fail    ${NOT EXECUTED}
+    No Operation
 
 Run Keyword If Test Passed Can't Be used In Test
     [Documentation]    FAIL Keyword 'Run Keyword If Test Passed' can only be used in test teardown
-    Run Keyword If Test Passed    Fail    ${MESSAGE}    #Should not be executed nor evaluated
+    Run Keyword If Test Passed    Fail    ${NOT EXECUTED}
 
 Run Keyword If Test Passes Uses User Keyword
-    Noop
+    No Operation
     [Teardown]    Run Keyword If Test Passed    Teardown UK    ${TEARDOWN MESSAGE}
 
 Run Keyword If Test Passed Fails
     [Documentation]    FAIL Teardown failed:
     ...    Expected failure
-    Noop
+    No Operation
     [Teardown]    Run Keyword If Test Passed    Fail    ${EXPECTED FAILURE}
 
 *** Keyword ***
