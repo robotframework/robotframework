@@ -5,11 +5,11 @@ Resource          atest_resource.txt
 
 *** Variables ***
 ${1 PASS MSG}     1 critical test, 1 passed, 0 failed\n 1 test total, 1 passed, 0 failed
-${1 FAIL MSG}     \n\n1 critical test, 0 passed, 1 failed\n 1 test total, 0 passed, 1 failed
-${2 FAIL MSG}     \n\n2 critical tests, 0 passed, 2 failed\n 2 tests total, 0 passed, 2 failed
-${4 FAIL MSG}     \n\n4 critical tests, 0 passed, 4 failed\n 4 tests total, 0 passed, 4 failed
-${5 FAIL MSG}     \n\n5 critical tests, 0 passed, 5 failed\n 5 tests total, 0 passed, 5 failed
-${12 FAIL MSG}    \n\n12 critical tests, 0 passed, 12 failed\n 12 tests total, 0 passed, 12 failed
+${1 FAIL MSG}     1 critical test, 0 passed, 1 failed\n 1 test total, 0 passed, 1 failed
+${2 FAIL MSG}     2 critical tests, 0 passed, 2 failed\n 2 tests total, 0 passed, 2 failed
+${4 FAIL MSG}     4 critical tests, 0 passed, 4 failed\n 4 tests total, 0 passed, 4 failed
+${5 FAIL MSG}     5 critical tests, 0 passed, 5 failed\n 5 tests total, 0 passed, 5 failed
+${12 FAIL MSG}    12 critical tests, 0 passed, 12 failed\n 12 tests total, 0 passed, 12 failed
 ${ALSO}           \n\nAlso teardown of the parent suite failed.
 ${EXECUTED FILE}    %{TEMPDIR}/robot-suite-teardown-executed.txt
 
@@ -38,7 +38,7 @@ Passing Suite Setup And Teardown
 Failing Suite Setup
     [Documentation]    Checks that tests in the suite are found from it and marked failed. Also checks that suite teardown is executed.
     Run Tests    ${EMPTY}    core/failing_suite_setup.txt
-    Check Suite Status    ${SUITE}    FAIL    Suite setup failed:\nExpected failure${2 FAIL MSG}
+    Check Suite Status    ${SUITE}    FAIL    Suite setup failed:\nExpected failure\n\n${2 FAIL MSG}
     ...    Test 1    Test 2
     Should Be Equal    ${SUITE.setup.status}    FAIL
     Should Be Equal    ${SUITE.teardown.status}    PASS
@@ -49,7 +49,7 @@ Failing Suite Setup
 Erroring Suite Setup
     [Documentation]    Checks that tests in the suite are found from it and marked failed. Also checks that suite teardown is executed.
     Run Tests    ${EMPTY}    core/erroring_suite_setup.txt
-    Check Suite Status    ${SUITE}    FAIL    Suite setup failed:\nNo keyword with name 'Non-Existing Keyword' found.${2 FAIL MSG}
+    Check Suite Status    ${SUITE}    FAIL    Suite setup failed:\nNo keyword with name 'Non-Existing Keyword' found.\n\n${2 FAIL MSG}
     ...    Test 1    Test 2
     Should Be Equal    ${SUITE.setup.status}    FAIL
     ${td} =    Set Variable    ${SUITE.teardown}
@@ -69,19 +69,19 @@ Failing Suite Teardown When All Tests Pass
     ...    Several failures occurred:\n\n
     ...    1) first\n\n
     ...    2) second
-    Check Suite Status    ${SUITE}    FAIL    ${error}${2 FAIL MSG}
+    Check Suite Status    ${SUITE}    FAIL    ${error}\n\n${2 FAIL MSG}
     ...    Test 1    Test 2
     Should Be Equal    ${SUITE.teardown.status}    FAIL
 
 Failing Suite Teardown When Also Tests Fail
     Run Tests    ${EMPTY}    core/failing_suite_teardown_2.txt
-    Check Suite Status    ${SUITE}    FAIL    Suite teardown failed:\nExpected failure${5 FAIL MSG}
+    Check Suite Status    ${SUITE}    FAIL    Suite teardown failed:\nExpected failure\n\n${5 FAIL MSG}
     ...    Test Passes    Test Fails    Setup Fails    Teardown Fails    Test and Teardown Fail
     Should Be Equal    ${SUITE.teardown.status}    FAIL
 
 Erroring Suite Teardown
     Run Tests    ${EMPTY}    core/erroring_suite_teardown.txt
-    Check Suite Status    ${SUITE}    FAIL    Suite teardown failed:\nNo keyword with name 'Non-Existing Keyword' found.${2 FAIL MSG}
+    Check Suite Status    ${SUITE}    FAIL    Suite teardown failed:\nNo keyword with name 'Non-Existing Keyword' found.\n\n${2 FAIL MSG}
     ...    Test 1    Test 2
     Should Be Equal    ${SUITE.teardown.status}    FAIL
 
@@ -94,7 +94,7 @@ Failing Suite Setup And Teardown
     ...    Also suite teardown failed:\n
     ...    Teardown failure\n
     ...    in two lines
-    Check Suite Status    ${SUITE}    FAIL    ${error}${2 FAIL MSG}
+    Check Suite Status    ${SUITE}    FAIL    ${error}\n\n${2 FAIL MSG}
     ...    Test 1    Test 2
     Should Be Equal    ${SUITE.setup.status}    FAIL
     Should Be Equal    ${SUITE.teardown.status}    FAIL
@@ -107,36 +107,36 @@ Failing Higher Level Suite Teardown
     ...    Also teardown of the parent suite failed:\n
     ...    Failure in suite teardown
     Check Suite Status    ${SUITE}    FAIL
-    ...    Suite teardown failed:\nFailure in top level suite teardown${12 FAIL MSG}
+    ...    Suite teardown failed:\nFailure in top level suite teardown\n\n${12 FAIL MSG}
     ...    PTD Passing    PTD Failing    FTD Passing    FTD Failing    PTD PTD Passing
     ...    PTD PTD Failing    PTD FTD Passing    PTD FTD Failing    FTD PTD Passing    FTD PTD Failing    FTD FTD Passing
     ...    FTD FTD Failing
     Check Suite Status    Passing Teardown Dir    FAIL
-    ...    Teardown of the parent suite failed:\nFailure in top level suite teardown${4 FAIL MSG}
+    ...    Teardown of the parent suite failed:\nFailure in top level suite teardown\n\n${4 FAIL MSG}
     ...    PTD PTD Passing    PTD PTD Failing    PTD FTD Passing    PTD FTD Failing
     Check Suite Status    Ptd Passing Teardown    FAIL
-    ...    Teardown of the parent suite failed:\nFailure in top level suite teardown${2 FAIL MSG}
+    ...    Teardown of the parent suite failed:\nFailure in top level suite teardown\n\n${2 FAIL MSG}
     ...    PTD PTD Passing    PTD PTD Failing
     Check Suite Status    Ptd Failing Teardown    FAIL
-    ...    Suite teardown failed:\nLeaf suite failed\n\nAlso teardown of the parent suite failed:\nFailure in top level suite teardown${2 FAIL MSG}
+    ...    Suite teardown failed:\nLeaf suite failed\n\nAlso teardown of the parent suite failed:\nFailure in top level suite teardown\n\n${2 FAIL MSG}
     ...    PTD FTD Passing    PTD FTD Failing
     Check Suite Status    Failing Teardown Dir    FAIL
-    ...    Suite teardown failed:\nFailure in sub suite teardown\n\nAlso teardown of the parent suite failed:\nFailure in top level suite teardown${4 FAIL MSG}
+    ...    Suite teardown failed:\nFailure in sub suite teardown\n\nAlso teardown of the parent suite failed:\nFailure in top level suite teardown\n\n${4 FAIL MSG}
     ...    FTD PTD Passing    FTD PTD Failing    FTD FTD Passing    FTD FTD Failing
     Check Suite Status    Ftd Passing Teardown    FAIL
-    ...    Teardown of the parent suite failed:\nFailure in sub suite teardown\n\nAlso teardown of the parent suite failed:\nFailure in top level suite teardown${2 FAIL MSG}
+    ...    Teardown of the parent suite failed:\nFailure in sub suite teardown\n\nAlso teardown of the parent suite failed:\nFailure in top level suite teardown\n\n${2 FAIL MSG}
     ...    FTD PTD Passing    FTD PTD Failing
     Check Suite Status    Ftd Failing Teardown    FAIL
-    ...    Suite teardown failed:\nFailure in suite teardown\n\nAlso teardown of the parent suite failed:\nFailure in sub suite teardown\n\nAlso teardown of the parent suite failed:\nFailure in top level suite teardown${2 FAIL MSG}
+    ...    Suite teardown failed:\nFailure in suite teardown\n\nAlso teardown of the parent suite failed:\nFailure in sub suite teardown\n\nAlso teardown of the parent suite failed:\nFailure in top level suite teardown\n\n${2 FAIL MSG}
     ...    FTD FTD Passing    FTD FTD Failing
 
 Failing Higher Level Suite Setup
     Run Tests    ${EMPTY}    core/failing_higher_level_suite_setup
-    Check Suite Status    ${SUITE}    FAIL    Suite setup failed:\nExpected failure in higher level setup${2 FAIL MSG}
+    Check Suite Status    ${SUITE}    FAIL    Suite setup failed:\nExpected failure in higher level setup\n\n${2 FAIL MSG}
     ...    Test 1    Test 2
-    Check Suite Status    ${SUITE.suites[0]}    FAIL    Setup of the parent suite failed:\nExpected failure in higher level setup${1 FAIL MSG}
+    Check Suite Status    ${SUITE.suites[0]}    FAIL    Setup of the parent suite failed:\nExpected failure in higher level setup\n\n${1 FAIL MSG}
     ...    Test 1
-    Check Suite Status    ${SUITE.suites[1]}    FAIL    Setup of the parent suite failed:\nExpected failure in higher level setup${1 FAIL MSG}
+    Check Suite Status    ${SUITE.suites[1]}    FAIL    Setup of the parent suite failed:\nExpected failure in higher level setup\n\n${1 FAIL MSG}
     ...    Test 2
 
 *** Keywords ***
