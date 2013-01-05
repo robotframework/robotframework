@@ -136,6 +136,19 @@ Failing Higher Level Suite Setup
     Check Suite Status    ${SUITE.suites[0]}    FAIL    ${1 FAIL MSG}    Test 1
     Check Suite Status    ${SUITE.suites[1]}    FAIL    ${1 FAIL MSG}    Test 2
 
+Long Error Messages
+    Run Tests    ${EMPTY}    core/long_suite_setup_and_teardown_errors.txt
+    ${setup} =    Evaluate    'setup\\n' * 20
+    ${teardown} =    Evaluate    'teardown\\n' * 20
+    ${explanation} =    Set Variable    [ Message content over the limit has been removed. ]\n
+    ${error} =    Catenate    SEPARATOR=\n
+    ...    Suite setup failed:
+    ...    ${setup}${SPACE * 4}${explanation}${setup}
+    ...    Also suite teardown failed:
+    ...    ${teardown}${SPACE * 4}${explanation}${teardown}
+    ...    ${1 FAIL MSG}
+    Check Suite Status    ${SUITE}    FAIL    ${error}    Test
+
 *** Keywords ***
 Check Suite Status
     [Arguments]    ${suite or name}    ${status}    ${message}    @{tests}
