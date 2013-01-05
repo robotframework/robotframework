@@ -81,8 +81,7 @@ class XmlLogger(object):
     def end_test(self, test):
         self._writer.element('doc', test.doc)
         self._write_list('tags', 'tag', test.tags)
-        self._write_status(test, test.message,
-                           {'critical': 'yes' if test.critical else 'no'})
+        self._write_status(test, {'critical': 'yes' if test.critical else 'no'})
         self._writer.end('test')
 
     def start_suite(self, suite):
@@ -97,7 +96,7 @@ class XmlLogger(object):
         for name, value in suite.metadata.items():
             self._writer.element('item', value, {'name': name})
         self._writer.end('metadata')
-        self._write_status(suite, suite.message)
+        self._write_status(suite)
         self._writer.end('suite')
 
     def start_statistics(self, stats):
@@ -167,11 +166,11 @@ class XmlLogger(object):
             self._writer.element(item_tag, item)
         self._writer.end(container_tag)
 
-    def _write_status(self, item, message=None, extra_attrs=None):
+    def _write_status(self, item, extra_attrs=None):
         attrs = {'status': item.status, 'starttime': item.starttime or 'N/A',
                  'endtime': item.endtime or 'N/A'}
         if not (item.starttime and item.endtime):
             attrs['elapsedtime'] = str(item.elapsedtime)
         if extra_attrs:
             attrs.update(extra_attrs)
-        self._writer.element('status', message, attrs)
+        self._writer.element('status', item.message, attrs)

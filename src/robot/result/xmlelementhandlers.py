@@ -148,6 +148,8 @@ class KeywordStatusHandler(_StatusHandler):
     def end(self, elem, result):
         self._set_status(elem, result)
         self._set_times(elem, result)
+        if result.type == result.TEARDOWN_TYPE:
+            self._set_message(elem, result)
 
 
 class SuiteStatusHandler(_StatusHandler):

@@ -64,7 +64,12 @@ Erroring Suite Setup
 
 Failing Suite Teardown When All Tests Pass
     Run Tests    ${EMPTY}    core/failing_suite_teardown.txt
-    Check Suite Status    ${SUITE}    FAIL    Suite teardown failed:\nExpected failure${2_fail_msg}
+    ${error} =    Catenate    SEPARATOR=
+    ...    Suite teardown failed:\n
+    ...    Several failures occurred:\n\n
+    ...    1) first\n\n
+    ...    2) second
+    Check Suite Status    ${SUITE}    FAIL    ${error}${2_fail_msg}
     ...    Test 1    Test 2
     Should Be Equal    ${SUITE.teardown.status}    FAIL
 
@@ -82,28 +87,47 @@ Erroring Suite Teardown
 
 Failing Suite Setup And Teardown
     Run Tests    ${EMPTY}     core/failing_suite_setup_and_teardown.txt
-    Check Suite Status    ${SUITE}    FAIL    Suite setup failed:\n Setup failure\n\n Also suite teardown failed:\n Teardown failure${2_fail_msg}
+    ${error} =    Catenate    SEPARATOR=
+    ...    Suite setup failed:\n
+    ...    Setup failure\n
+    ...    in two lines\n\n
+    ...    Also suite teardown failed:\n
+    ...    Teardown failure\n
+    ...    in two lines
+    Check Suite Status    ${SUITE}    FAIL    ${error}${2_fail_msg}
     ...    Test 1    Test 2
     Should Be Equal    ${SUITE.setup.status}    FAIL
     Should Be Equal    ${SUITE.teardown.status}    FAIL
 
 Failing Higher Level Suite Teardown
     Run Tests    ${EMPTY}    core/failing_suite_teardown_dir
-    Check Suite Status    ${SUITE}    FAIL    Suite teardown failed:\nFailure in top level suite teardown${12_fail_msg}
+    ${error} =    Catenate    SEPARATOR=
+    ...    Teardown of the parent suite failed:\n
+    ...    Failure in top level suite teardown\n\n
+    ...    Also teardown of the parent suite failed:\n
+    ...    Failure in suite teardown
+    Check Suite Status    ${SUITE}    FAIL
+    ...    Suite teardown failed:\nFailure in top level suite teardown${12_fail_msg}
     ...    PTD Passing    PTD Failing    FTD Passing    FTD Failing    PTD PTD Passing
     ...    PTD PTD Failing    PTD FTD Passing    PTD FTD Failing    FTD PTD Passing    FTD PTD Failing    FTD FTD Passing
     ...    FTD FTD Failing
-    Check Suite Status    Passing Teardown Dir    FAIL    Teardown of the parent suite failed.${4_fail_msg}
+    Check Suite Status    Passing Teardown Dir    FAIL
+    ...    Teardown of the parent suite failed:\nFailure in top level suite teardown${4_fail_msg}
     ...    PTD PTD Passing    PTD PTD Failing    PTD FTD Passing    PTD FTD Failing
-    Check Suite Status    Ptd Passing Teardown    FAIL    Teardown of the parent suite failed.${2_fail_msg}
+    Check Suite Status    Ptd Passing Teardown    FAIL
+    ...    Teardown of the parent suite failed:\nFailure in top level suite teardown${2_fail_msg}
     ...    PTD PTD Passing    PTD PTD Failing
-    Check Suite Status    Ptd Failing Teardown    FAIL    Suite teardown failed:\nFailure in suite teardown${also}${2_fail_msg}
+    Check Suite Status    Ptd Failing Teardown    FAIL
+    ...    Suite teardown failed:\nLeaf suite failed\n\nAlso teardown of the parent suite failed:\nFailure in top level suite teardown${2_fail_msg}
     ...    PTD FTD Passing    PTD FTD Failing
-    Check Suite Status    Failing Teardown Dir    FAIL    Suite teardown failed:\nFailure in sub suite teardown${also}${4_fail_msg}
+    Check Suite Status    Failing Teardown Dir    FAIL
+    ...    Suite teardown failed:\nFailure in sub suite teardown\n\nAlso teardown of the parent suite failed:\nFailure in top level suite teardown${4_fail_msg}
     ...    FTD PTD Passing    FTD PTD Failing    FTD FTD Passing    FTD FTD Failing
-    Check Suite Status    Ftd Passing Teardown    FAIL    Teardown of the parent suite failed.${also}${2_fail_msg}
+    Check Suite Status    Ftd Passing Teardown    FAIL
+    ...    Teardown of the parent suite failed:\nFailure in sub suite teardown\n\nAlso teardown of the parent suite failed:\nFailure in top level suite teardown${2_fail_msg}
     ...    FTD PTD Passing    FTD PTD Failing
-    Check Suite Status    Ftd Failing Teardown    FAIL    Suite teardown failed:\nFailure in suite teardown${also}${also}${2_fail_msg}
+    Check Suite Status    Ftd Failing Teardown    FAIL
+    ...    Suite teardown failed:\nFailure in suite teardown\n\nAlso teardown of the parent suite failed:\nFailure in sub suite teardown\n\nAlso teardown of the parent suite failed:\nFailure in top level suite teardown${2_fail_msg}
     ...    FTD FTD Passing    FTD FTD Failing
 
 Failing Higher Level Suite Setup

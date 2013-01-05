@@ -21,6 +21,7 @@ class BaseKeyword:
         self.doc = doc
         self.timeout = timeout
         self.type = type
+        self.message = ''
         self.status = 'NOT_RUN'
 
     @property

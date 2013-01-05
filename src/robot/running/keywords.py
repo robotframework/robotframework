@@ -114,6 +114,8 @@ class Keyword(BaseKeyword):
     def _end(self, context, return_value=None, error=None):
         self.endtime = get_timestamp()
         self.elapsedtime = get_elapsed_time(self.starttime, self.endtime)
+        if error and self.type == 'teardown':
+            self.message = unicode(error)
         try:
             if not error or error.can_continue(context.teardown):
                 self._set_variables(context, return_value, error)

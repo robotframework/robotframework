@@ -1,14 +1,29 @@
 *** Setting ***
 Suite Teardown    Fail    Failure in suite teardown
 
-*** Variable ***
-${ALSO}           \n\nAlso teardown of the parent suite failed.
-
 *** Test Case ***
 FTD FTD Passing
-    [Documentation]    FAIL Teardown of the parent suite failed.${ALSO}${ALSO}
+    [Documentation]    FAIL
+    ...    Teardown of the parent suite failed:
+    ...    Failure in suite teardown
+    ...
+    ...    Also teardown of the parent suite failed:
+    ...    Failure in sub suite teardown
+    ...
+    ...    Also teardown of the parent suite failed:
+    ...    Failure in top level suite teardown
     No Operation
 
 FTD FTD Failing
-    [Documentation]    FAIL Failure in test${ALSO}${ALSO}${ALSO}
+    [Documentation]    FAIL
+    ...    Failure in test
+    ...
+    ...    Also teardown of the parent suite failed:
+    ...    Failure in suite teardown
+    ...
+    ...    Also teardown of the parent suite failed:
+    ...    Failure in sub suite teardown
+    ...
+    ...    Also teardown of the parent suite failed:
+    ...    Failure in top level suite teardown
     Fail    Failure in test

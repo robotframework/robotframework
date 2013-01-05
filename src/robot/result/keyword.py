@@ -18,7 +18,7 @@ from .message import Message
 
 
 class Keyword(model.Keyword):
-    __slots__ = ['status', 'starttime', 'endtime']
+    __slots__ = ['status', 'starttime', 'endtime', 'message']
     message_class = Message
 
     def __init__(self, name='', doc='', args=None, type='kw', timeout='',
@@ -44,6 +44,7 @@ class Keyword(model.Keyword):
         self.status = status
         self.starttime = starttime
         self.endtime = endtime
+        self.message = ''  # only used with suite teardowns
 
     @property
     def elapsedtime(self):

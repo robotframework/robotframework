@@ -1,18 +1,24 @@
 *** Setting ***
-Suite Setup       Fail    Setup failure
-Suite Teardown    Fail    Teardown failure
+Suite Setup       Fail    Setup failure\nin two lines
+Suite Teardown    Fail    Teardown failure\nin two lines
 
 *** Test Case ***
 Test 1
     [Documentation]    FAIL Setup of the parent suite failed:
     ...    Setup failure
+    ...    in two lines
     ...
-    ...    Also teardown of the parent suite failed.
+    ...    Also teardown of the parent suite failed:
+    ...    Teardown failure
+    ...    in two lines
     Fail    This is not executed
 
 Test 2
     [Documentation]    FAIL Setup of the parent suite failed:
     ...    Setup failure
+    ...    in two lines
     ...
-    ...    Also teardown of the parent suite failed.
+    ...    Also teardown of the parent suite failed:
+    ...    Teardown failure
+    ...    in two lines
     Fail    This is not executed

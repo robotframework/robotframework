@@ -1,10 +1,14 @@
 *** Test Case ***
 PTD Passing
-    [Documentation]    FAIL Teardown of the parent suite failed.
+    [Documentation]    FAIL
+      ...    Teardown of the parent suite failed:
+      ...    Failure in top level suite teardown
     No Operation
 
 PTD Failing
-    [Documentation]    FAIL Failure in test
+    [Documentation]    FAIL
+    ...    Failure in test
     ...
-    ...    Also teardown of the parent suite failed.
+    ...    Also teardown of the parent suite failed:
+    ...    Failure in top level suite teardown
     Fail    Failure in test

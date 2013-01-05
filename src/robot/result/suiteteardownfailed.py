@@ -23,30 +23,36 @@ class SuiteTeardownFailureHandler(SuiteVisitor):
     def start_suite(self, suite):
         if not self._should_handle:
             return False
-        if self._suite_teardown_failed(suite.keywords.teardown):
-            suite.visit(SuiteTeardownFailed())
 
-    def _suite_teardown_failed(self, teardown):
-        return bool(teardown and not teardown.passed)
+    def end_suite(self, suite):
+        teardown = suite.keywords.teardown
+        if teardown and not teardown.passed:
+            suite.visit(SuiteTeardownFailed(teardown.message))
 
-    def start_test(self, test):
-        return False
+    def visit_test(self, test):
+        pass
 
-    def start_keyword(self, keyword):
-        return False
+    def visit_keyword(self, keyword):
+        pass
 
 
 class SuiteTeardownFailed(SuiteVisitor):
-    _normal_msg = 'Teardown of the parent suite failed.'
-    _also_msg = '\n\nAlso teardown of the parent suite failed.'
+    _normal_msg = 'Teardown of the parent suite failed:\n'
+    _also_msg = '\n\nAlso teardown of the parent suite failed:\n'
 
-    def __init__(self):
-        self._top_level_visited = False
+    def __init__(self, error):
+        self._normal_msg += error
+        self._also_msg += error
+        self._started = 0
 
     def start_suite(self, suite):
-        if self._top_level_visited:
+        self._started += 1
+
+    def end_suite(self, suite):
+        self._started -= 1
+        # TODO: Do we really need these messages?
+        if self._started:
             self._set_message(suite)
-        self._top_level_visited = True
 
     def visit_test(self, test):
         test.status = 'FAIL'
