@@ -27,15 +27,15 @@ Over The Limit
     Has Been Cut  3121 x 1 Message Over The Limit  .*${3DOTS}\\n  ${3DOTS}.*\\n
 
 Multiple Short Errors
-    ${test} =  Has Been Cut  ${TESTNAME}
-    Should Be Equal  ${test.message.count('\n')}  ${40}
-    
+    ${tc} =  Has Been Cut  ${TESTNAME}
+    Should Contain X Times  ${tc.message}  \n  40
+
 Two long errors
-    ${test} =  Has Been Cut  ${TESTNAME}
-    Should Be Equal  ${test.message.count('\n')}  ${40}
-    Should Be True  ${test.message.startswith('Several failures occurred:\n\n1) ContinuableApocalypseException: 1')}
-    Should Be True  ${test.message.endswith('1961~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~2000')}
-    
+    ${tc} =  Has Been Cut  ${TESTNAME}
+    Should Contain X Times    ${tc.message}    \n    40
+    Should Start With    ${tc.message}    Several failures occurred:\n\n1) ContinuableApocalypseException: 1
+    Should End With    ${tc.message}    1961~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~2000
+
 
 *** Keywords ***
 Has Been Cut
