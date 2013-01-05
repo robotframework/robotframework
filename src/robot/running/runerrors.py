@@ -50,18 +50,15 @@ class SuiteRunErrors(object):
         self._init_error = self._earlier_init_errors.pop()
         self._setup_executed = self._earlier_setup_executions.pop()
 
-    def is_suite_setup_allowed(self):
+    def is_setup_allowed(self):
         return not (self._init_error or self.exit or
                     any(self._earlier_init_errors + self._earlier_setup_errors))
 
-    def is_suite_teardown_allowed(self):
+    def is_teardown_allowed(self):
         return self._setup_executed and not self._skip_teardown()
 
     def _skip_teardown(self):
         return self._skip_teardowns_on_exit_mode and self.exit
-
-    def is_test_teardown_allowed(self):
-        return not self._skip_teardown()
 
     def suite_initialized(self, error=None):
         if error:
@@ -126,11 +123,11 @@ class TestRunErrors(object):
         self._keyword_error = None
         self._teardown_error = None
 
-    def is_allowed_to_run(self):
+    def is_run_allowed(self):
         return not bool(self._parent_error or self._init_error)
 
-    def is_test_teardown_allowed(self):
-        return self._parent.is_test_teardown_allowed()
+    def is_teardown_allowed(self):
+        return self._parent.is_teardown_allowed()
 
     def test_initialized(self, error=None):
         self._init_error = error

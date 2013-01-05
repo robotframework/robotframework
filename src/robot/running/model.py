@@ -136,8 +136,8 @@ class RunnableTestSuite(BaseTestSuite):
         errors.start_suite()
         self.status = 'RUNNING'
         self.starttime = utils.get_timestamp()
-        parent_vars = parent_context.get_current_vars() if parent_context else None
-        ns = Namespace(self, parent_vars)
+        variables = parent_context.get_current_vars() if parent_context else None
+        ns = Namespace(self, variables)
         context = EXECUTION_CONTEXTS.start_suite(ns, output, self._dry_run_mode)
         if not errors.exit:
             ns.handle_imports()
@@ -157,12 +157,12 @@ class RunnableTestSuite(BaseTestSuite):
         errors.suite_initialized('\n'.join(init_errors))
 
     def _run_setup(self, context, errors):
-        if errors.is_suite_setup_allowed():
+        if errors.is_setup_allowed():
             error = self.setup.run(context)
             errors.setup_executed(error)
 
     def _run_teardown(self, context, errors):
-        if errors.is_suite_teardown_allowed():
+        if errors.is_teardown_allowed():
             error = self.teardown.run(context)
             if error:
                 self.suite_teardown_failed(error)
@@ -225,7 +225,7 @@ class RunnableTestCase(BaseTestCase):
 
     def run(self, context, parent_errors):
         errors = self._start_run(context, parent_errors)
-        if errors.is_allowed_to_run():
+        if errors.is_run_allowed():
             self._run(context, errors)
         else:
             self._not_allowed_to_run(errors)
@@ -293,7 +293,7 @@ class RunnableTestCase(BaseTestCase):
         context.set_test_status_before_teardown(self.message, self.status)
 
     def _run_teardown(self, context, errors):
-        if not errors.is_test_teardown_allowed():
+        if not errors.is_teardown_allowed():
             return False
         error = self.teardown.run(context)
         if error:

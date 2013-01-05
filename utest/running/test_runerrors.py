@@ -20,7 +20,7 @@ class TestSuiteRunErrors(unittest.TestCase):
     def test_teardown_executed_after_setup_errs(self):
         self.errs.setup_executed(ExecutionFailed('Terriblesness occured!'))
         self.errs.setup_executed()
-        assert_true(self.errs.is_suite_teardown_allowed())
+        assert_true(self.errs.is_teardown_allowed())
 
     def test_higher_level_setup_err_prevents_all_lower_level_setups(self):
         self.errs.setup_executed(ExecutionFailed('Terriblesness occured!'))
@@ -51,23 +51,23 @@ class TestSuiteRunErrors(unittest.TestCase):
         self.errs.test_failed(exit=True)
         self.errs.end_suite()
         self.errs.start_suite()
-        assert_false(self.errs.is_suite_setup_allowed())
-        assert_false(self.errs.is_suite_setup_allowed())
+        assert_false(self.errs.is_setup_allowed())
+        assert_false(self.errs.is_setup_allowed())
 
     def test_teardown_is_run_after_setup_called(self):
         self.errs.start_suite()
         self.errs.setup_executed()
         self.errs.test_failed(exit=True)
-        assert_true(self.errs.is_suite_teardown_allowed())
+        assert_true(self.errs.is_teardown_allowed())
 
     def _setup_and_teardown_allowed(self):
-        assert_true(self.errs.is_suite_setup_allowed())
+        assert_true(self.errs.is_setup_allowed())
         self.errs.setup_executed()
-        assert_true(self.errs.is_suite_teardown_allowed())
+        assert_true(self.errs.is_teardown_allowed())
 
     def _setup_and_teardown_disallowed(self):
-        assert_false(self.errs.is_suite_setup_allowed())
-        assert_false(self.errs.is_suite_teardown_allowed())
+        assert_false(self.errs.is_setup_allowed())
+        assert_false(self.errs.is_teardown_allowed())
 
 
 if __name__ == '__main__':
