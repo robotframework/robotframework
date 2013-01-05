@@ -1,5 +1,4 @@
 *** Settings ***
-Documentation     Test cases for failing suite setup and teardown. Some related tests are also found from test_suite_dir_with_suite_file.html
 Force Tags        regression    jybot    pybot
 Resource          atest_resource.txt
 
@@ -36,9 +35,9 @@ Passing Suite Setup And Teardown
     [Teardown]    Remove File    ${EXECUTED FILE}
 
 Failing Suite Setup
-    [Documentation]    Checks that tests in the suite are found from it and marked failed. Also checks that suite teardown is executed.
     Run Tests    ${EMPTY}    core/failing_suite_setup.txt
-    Check Suite Status    ${SUITE}    FAIL    Suite setup failed:\nExpected failure\n\n${2 FAIL MSG}
+    Check Suite Status    ${SUITE}    FAIL
+    ...    Suite setup failed:\nExpected failure\n\n${2 FAIL MSG}
     ...    Test 1    Test 2
     Should Be Equal    ${SUITE.setup.status}    FAIL
     Should Be Equal    ${SUITE.teardown.status}    PASS
@@ -47,9 +46,9 @@ Failing Suite Setup
     Should Be Empty    ${SUITE.teardown.kws}
 
 Erroring Suite Setup
-    [Documentation]    Checks that tests in the suite are found from it and marked failed. Also checks that suite teardown is executed.
     Run Tests    ${EMPTY}    core/erroring_suite_setup.txt
-    Check Suite Status    ${SUITE}    FAIL    Suite setup failed:\nNo keyword with name 'Non-Existing Keyword' found.\n\n${2 FAIL MSG}
+    Check Suite Status    ${SUITE}    FAIL
+    ...    Suite setup failed:\nNo keyword with name 'Non-Existing Keyword' found.\n\n${2 FAIL MSG}
     ...    Test 1    Test 2
     Should Be Equal    ${SUITE.setup.status}    FAIL
     ${td} =    Set Variable    ${SUITE.teardown}
@@ -75,13 +74,15 @@ Failing Suite Teardown When All Tests Pass
 
 Failing Suite Teardown When Also Tests Fail
     Run Tests    ${EMPTY}    core/failing_suite_teardown_2.txt
-    Check Suite Status    ${SUITE}    FAIL    Suite teardown failed:\nExpected failure\n\n${5 FAIL MSG}
+    Check Suite Status    ${SUITE}    FAIL
+    ...    Suite teardown failed:\nExpected failure\n\n${5 FAIL MSG}
     ...    Test Passes    Test Fails    Setup Fails    Teardown Fails    Test and Teardown Fail
     Should Be Equal    ${SUITE.teardown.status}    FAIL
 
 Erroring Suite Teardown
     Run Tests    ${EMPTY}    core/erroring_suite_teardown.txt
-    Check Suite Status    ${SUITE}    FAIL    Suite teardown failed:\nNo keyword with name 'Non-Existing Keyword' found.\n\n${2 FAIL MSG}
+    Check Suite Status    ${SUITE}    FAIL
+    ...    Suite teardown failed:\nNo keyword with name 'Non-Existing Keyword' found.\n\n${2 FAIL MSG}
     ...    Test 1    Test 2
     Should Be Equal    ${SUITE.teardown.status}    FAIL
 
@@ -109,8 +110,8 @@ Failing Higher Level Suite Teardown
     Check Suite Status    ${SUITE}    FAIL
     ...    Suite teardown failed:\nFailure in top level suite teardown\n\n${12 FAIL MSG}
     ...    PTD Passing    PTD Failing    FTD Passing    FTD Failing    PTD PTD Passing
-    ...    PTD PTD Failing    PTD FTD Passing    PTD FTD Failing    FTD PTD Passing    FTD PTD Failing    FTD FTD Passing
-    ...    FTD FTD Failing
+    ...    PTD PTD Failing    PTD FTD Passing    PTD FTD Failing    FTD PTD Passing
+    ...    FTD PTD Failing    FTD FTD Passing    FTD FTD Failing
     Check Suite Status    Passing Teardown Dir    FAIL    ${4 FAIL MSG}
     ...    PTD PTD Passing    PTD PTD Failing    PTD FTD Passing    PTD FTD Failing
     Check Suite Status    Ptd Passing Teardown    FAIL    ${2 FAIL MSG}
@@ -129,12 +130,11 @@ Failing Higher Level Suite Teardown
 
 Failing Higher Level Suite Setup
     Run Tests    ${EMPTY}    core/failing_higher_level_suite_setup
-    Check Suite Status    ${SUITE}    FAIL    Suite setup failed:\nExpected failure in higher level setup\n\n${2 FAIL MSG}
+    Check Suite Status    ${SUITE}    FAIL
+    ...    Suite setup failed:\nExpected failure in higher level setup\n\n${2 FAIL MSG}
     ...    Test 1    Test 2
-    Check Suite Status    ${SUITE.suites[0]}    FAIL    ${1 FAIL MSG}
-    ...    Test 1
-    Check Suite Status    ${SUITE.suites[1]}    FAIL    ${1 FAIL MSG}
-    ...    Test 2
+    Check Suite Status    ${SUITE.suites[0]}    FAIL    ${1 FAIL MSG}    Test 1
+    Check Suite Status    ${SUITE.suites[1]}    FAIL    ${1 FAIL MSG}    Test 2
 
 *** Keywords ***
 Check Suite Status
