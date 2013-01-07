@@ -13,6 +13,7 @@
 #  limitations under the License.
 
 import codecs
+import os
 
 
 class LibdocOutput(object):
@@ -31,3 +32,5 @@ class LibdocOutput(object):
     def __exit__(self, *exc_info):
         if self._output_file:
             self._output_file.close()
+        if exc_info:
+            os.remove(self._output_path)

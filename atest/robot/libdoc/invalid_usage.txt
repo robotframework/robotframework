@@ -1,8 +1,9 @@
 *** Settings ***
 Force Tags       regression    pybot    jybot
 Resource         libdoc_resource.txt
+Test Setup       Remove File    ${OUT HTML}
 Test Template    Run libdoc and verify error
-
+Test Teardown    Should Not Exist    ${OUT HTML}
 
 *** Variable ***
 ${USAGE TIP}    \nTry --help for usage information.\n
@@ -22,35 +23,37 @@ Invalid option
     --invalid         option --invalid not recognized
 
 Invalid format
-    -f XXX BuiltIn out.html    Format must be 'HTML' or 'XML', got 'XXX'.
+    -f XXX BuiltIn ${OUT HTML}    Format must be 'HTML' or 'XML', got 'XXX'.
     BuiltIn out.ext            Format must be 'HTML' or 'XML', got 'EXT'.
 
 Invalid doc format
-    --docformat inv BuiltIn out.html    Doc format must be 'ROBOT', 'TEXT', 'HTML' or 'REST', got 'INV'.
+    --docformat inv BuiltIn ${OUT HTML}    Doc format must be 'ROBOT', 'TEXT', 'HTML' or 'REST', got 'INV'.
 
 Invalid doc format in library
-    ${TESTDATADIR}/DocFormatInvalid.py out.html   Invalid documentation format 'INVALID'.
+    ${TESTDATADIR}/DocFormatInvalid.py ${OUT HTML}   Invalid documentation format 'INVALID'.
 
 Non-existing library
-    NonExistingLib out.html   Importing test library 'NonExistingLib' failed: *
+    NonExistingLib ${OUT HTML}   Importing test library 'NonExistingLib' failed: *
 
 Non-existing spec
-    nonex.xml out.html    Spec file 'nonex.xml' does not exist.
+    nonex.xml ${OUT HTML}    Spec file 'nonex.xml' does not exist.
 
 Invalid spec
-    [Setup]    Create File    ${OUTXML}    <wrong/>
-    ${OUTXML} out.html    Invalid spec file '${OUTXML}'.
-    [Teardown]    Remove File    ${OUTXML}
+    [Setup]    Create File    ${OUT XML}    <wrong/>
+    ${OUT XML} ${OUT HTML}    Invalid spec file '${OUT XML}'.
+    [Teardown]    Remove File    ${OUT XML}
 
 Non-XML spec
-    [Setup]    Create File    ${OUTXML}    very wrong
-    ${OUTXML} out.html    Building library '${OUTXML}' failed: *
-    [Teardown]    Remove File    ${OUTXML}
+    [Setup]    Create File    ${OUT XML}    very wrong
+    ${OUTXML} ${OUT HTML}    Building library '${OUT XML}' failed: *
+    [Teardown]    Remove File    ${OUT XML}
 
 Invalid resource
-    ${CURDIR}/invalid_usage.txt out.html
+    ${CURDIR}/invalid_usage.txt ${OUT HTML}
     ...   [ ERROR ] *: Non-existing setting 'Force Tags'.
+    ...   [ ERROR ] *: Non-existing setting 'Test Setup'.
     ...   [ ERROR ] *: Non-existing setting 'Test Template'.
+    ...   [ ERROR ] *: Non-existing setting 'Test Teardown'.
     ...   Resource file '*' contains a test case table which is not allowed.
 
 

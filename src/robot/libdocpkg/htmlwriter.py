@@ -31,7 +31,8 @@ class LibdocModelWriter(ModelWriter):
 
     def __init__(self, output, libdoc):
         self._output = output
-        self._libdoc = libdoc
+        formatter = DocFormatter(libdoc.keywords, libdoc.doc, libdoc.doc_format)
+        self._libdoc = JsonConverter(formatter).convert(libdoc)
 
     def write(self, line):
         self._output.write('<script type="text/javascript">' + os.linesep)
@@ -39,10 +40,7 @@ class LibdocModelWriter(ModelWriter):
         self._output.write('</script>' + os.linesep)
 
     def write_data(self):
-        formatter = DocFormatter(self._libdoc.keywords, self._libdoc.doc,
-                                 self._libdoc.doc_format)
-        libdoc = JsonConverter(formatter).convert(self._libdoc)
-        JsonWriter(self._output).write_json('libdoc = ', libdoc)
+        JsonWriter(self._output).write_json('libdoc = ', self._libdoc)
 
 
 class JsonConverter(object):
@@ -81,7 +79,7 @@ class DocFormatter(object):
     def __init__(self, keywords, introduction, doc_format='ROBOT'):
         self._doc_to_html = DocToHtml(doc_format)
         self._targets = self._get_targets(keywords, introduction,
-                                          doc_format == 'ROBOT')
+                                          robot_format=doc_format=='ROBOT')
 
     def _get_targets(self, keywords, introduction, robot_format):
         targets = utils.NormalizedDict({
@@ -122,7 +120,6 @@ class DocToHtml(object):
 
     def __init__(self, format):
         self._formatter =  self._get_formatter(format)
-
 
     def _get_formatter(self, format):
         try:
