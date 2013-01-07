@@ -32,5 +32,5 @@ class LibdocOutput(object):
     def __exit__(self, *exc_info):
         if self._output_file:
             self._output_file.close()
-        if exc_info:
+        if any(exc_info):
             os.remove(self._output_path)
