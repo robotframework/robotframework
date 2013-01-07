@@ -16,7 +16,6 @@
 package org.robotframework;
 
 import org.python.core.PyObject;
-import org.python.core.PySystemState;
 import org.python.util.PythonInterpreter;
 
 /**
@@ -34,7 +33,7 @@ public class RunnerFactory {
     }
 
     private PyObject importRunnerClass() {
-        PythonInterpreter interpreter = new PythonInterpreter(null, new PySystemState());
+        PythonInterpreter interpreter = new PythonInterpreter();
         interpreter.exec("import robot; from robot.jarrunner import JarRunner");
         return interpreter.get("JarRunner");
     }
