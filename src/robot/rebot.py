@@ -14,7 +14,7 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-USAGE = """Rebot -- Robot Framework Report and Log Generator
+USAGE = """Rebot -- Robot Framework report and log generator
 
 Version:  <VERSION>
 

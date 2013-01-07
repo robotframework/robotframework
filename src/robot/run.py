@@ -14,14 +14,14 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-USAGE = """Robot Framework -- A keyword-driven test automation framework
+USAGE = """Robot Framework -- A generic test automation framework
 
 Version:  <VERSION>
 
 Usage:  pybot|jybot|ipybot [options] data_sources
    or:  python|jython|ipy -m robot.run [options] data_sources
    or:  python|jython|ipy path/to/robot/run.py [options] data_sources
-   or:  java -jar robotframework.jar [options] data_sources
+   or:  java -jar robotframework.jar run [options] data_sources
 
 Robot Framework is a Python-based keyword-driven test automation framework for
 acceptance level testing and acceptance test-driven development (ATDD). It has

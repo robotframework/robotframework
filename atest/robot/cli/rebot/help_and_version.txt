@@ -10,7 +10,7 @@ Help
     ${rc}  ${help} =  Run And Return Rc And Output  ${REBOT} --help 2>&1
     Should Be Equal  ${rc}  ${251}
     Log  ${help.replace(' ','_').replace('\\t','_'*8)}
-    Should Start With  ${help}  Rebot -- Robot Framework Report and Log Generator\n \n Version: \
+    Should Start With  ${help}  Rebot -- Robot Framework report and log generator\n\nVersion: \
     Should End With  ${help}  \n$ jython path/robot/rebot.py -N Project_X -l none -r x.html output.xml\n
 
     Should Not Contain  ${help}  ERROR

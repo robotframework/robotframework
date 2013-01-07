@@ -14,7 +14,7 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-USAGE = """robot.tidy -- Robot Framework test data clean-up tool.
+USAGE = """robot.tidy -- Robot Framework test data clean-up tool
 
 Version:  <VERSION>
 
