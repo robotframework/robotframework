@@ -22,9 +22,18 @@ One Call To Test With Normalized Test Name
 Two Calls To Test
     Run And Check Tests  --test First --test thirdone  First  Third One
 
-One Call To Test With Nonexisting Test Name
-    Run Failing Test  --test notexists  ${TESTDATA_TEST}
+Non-Existing Test
+    Run Failing Test
     ...  Suite 'Many Tests' contains no test cases named 'notexists'.
+    ...  --test notexists  ${TESTDATA_TEST}
+
+Non-Existing Test When Running Multiple Suites
+    Run Failing Test
+    ...  Suite 'Many Tests & Suites' contains no test cases named 'notexists'.
+    ...  --test notexists  ${TESTDATA_TEST}  ${TESTDATA_SUITES}
+    Run Failing Test
+    ...  Suite 'My Name' contains no test cases named 'notexists'.
+    ...  --name My_Name --test notexists  ${TESTDATA_TEST}  ${TESTDATA_SUITES}
 
 Two Calls To Test With One Nonexisting Test Name
     Run And Check Tests  --test notexists --test First  First
@@ -64,9 +73,18 @@ Correct Files Processed With --suite Matches Files
     Check Syslog Contains  Parsing file '${suitedir}${/}tsuite1.html
     Check Syslog Contains  Parsing file '${suitedir}${/}tsuite2.html
 
-Suite With No Matching Args
-    Run Failing Test  --suite notexists  ${TESTDATA_SUITES}
+Non-Existing Suite
+    Run Failing Test
     ...  Suite 'Suites' contains no test suites named 'notexists'.
+    ...  --suite notexists  ${TESTDATA_SUITES}
+
+Non-Existing Suite When Running Multiple Suites
+    Run Failing Test
+    ...  Suite 'Suites & Many Tests' contains no test suites named 'notexists'.
+    ...  --suite notexists  ${TESTDATA_SUITES}  ${TESTDATA_TEST}
+    Run Failing Test
+    ...  Suite 'Custom' contains no test suites named 'xxx'.
+    ...  --suite xxx -N Custom  ${TESTDATA_SUITES}  ${TESTDATA_TEST}
 
 Suite With Matching And NonMatching Args
     Run Suites  --suite tsuite1 --suite notexists
@@ -156,7 +174,7 @@ Run Suites
     Stderr Should Be Empty
 
 Run Failing Test
-    [Arguments]  ${params}  ${testdata}  ${error}
-    Run Tests Without Processing Output  ${params} ${ESCAPES}  ${testdata}
+    [Arguments]  ${error}  ${params}  @{inputs}
+    Run Tests Without Processing Output  ${params} ${ESCAPES}  @{inputs}
     Stderr Should Be Equal To  [ ERROR ] ${error}${USAGE TIP}\n
 

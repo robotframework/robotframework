@@ -56,10 +56,11 @@ class SuiteConfigurer(object):
 
     def configure(self, suite):
         self._set_suite_attributes(suite)
+        name = suite.name
         suite.filter(self.include_suites, self.include_tests,
                      self.include_tags, self.exclude_tags)
         if not (suite.test_count or self.process_empty_suite):
-            self._raise_no_tests_error(suite.name)
+            self._raise_no_tests_error(name)
         suite.set_tags(self.add_tags, self.remove_tags)
         for how in self.remove_keywords:
             suite.remove_keywords(how)

@@ -23,8 +23,7 @@ from .statistics import Stat
 class _TestAndSuiteHelper:
     _longname = None
 
-    def __init__(self, name, parent=None):
-        self.name = name
+    def __init__(self, parent=None):
         self.doc = ''
         self.parent = parent
         self.setup = None
@@ -59,10 +58,11 @@ class _TestAndSuiteHelper:
 
 
 class BaseTestSuite(_TestAndSuiteHelper):
-    """Base class for TestSuite used in runtime and by rebot."""
+    """Base class for TestSuite used in runtime and but not anymore by rebot."""
 
     def __init__(self, name, source=None, parent=None):
-        _TestAndSuiteHelper.__init__(self, name, parent)
+        _TestAndSuiteHelper.__init__(self, parent)
+        self._name = name
         self.source = utils.abspath(source) if source else None
         self._id = None
         self.metadata = utils.NormalizedDict()
@@ -76,12 +76,12 @@ class BaseTestSuite(_TestAndSuiteHelper):
 
     def set_name(self, name):
         if name:
-            self.name = name
-        elif self._is_multi_source_suite():
-            self.name = ' & '.join(suite.name for suite in self.suites)
+            self._name = name
 
-    def _is_multi_source_suite(self):
-        return self.parent is None and self.name == ''
+    def _get_name(self):
+        return self._name or ' & '.join(suite.name for suite in self.suites)
+
+    name = property(_get_name, set_name)
 
     @property
     def id(self):
@@ -204,8 +204,9 @@ class BaseTestSuite(_TestAndSuiteHelper):
     def filter_by_names(self, suites=None, tests=None, zero_tests_ok=False):
         suites = [([], name.split('.')) for name in suites or []]
         tests = utils.MultiMatcher(tests, ignore=['_'], match_if_no_patterns=True)
+        name = self.name
         if not self._filter_by_names(suites, tests) and not zero_tests_ok:
-            self._raise_no_tests_filtered_by_names(suites, tests)
+            self._raise_no_tests_filtered_by_names(name, suites, tests)
 
     def _filter_by_names(self, suites, tests):
         suites = self._filter_suite_names(suites)
@@ -231,7 +232,7 @@ class BaseTestSuite(_TestAndSuiteHelper):
             return (parent + [suite[0]], suite[1:])
         return ([], parent + suite)
 
-    def _raise_no_tests_filtered_by_names(self, suites, tests):
+    def _raise_no_tests_filtered_by_names(self, name, suites, tests):
         tests = utils.seq2str(list(tests), lastsep=' or ')
         suites = utils.seq2str(['.'.join(p + s) for p, s in suites],
                                lastsep=' or ')
@@ -241,13 +242,14 @@ class BaseTestSuite(_TestAndSuiteHelper):
             msg = 'test suites named %s.' % suites
         else:
             msg = 'test cases %s in suites %s.' % (tests, suites)
-        raise DataError("Suite '%s' contains no %s" % (self.name, msg))
+        raise DataError("Suite '%s' contains no %s" % (name, msg))
 
     def filter_by_tags(self, includes=None, excludes=None, zero_tests_ok=False):
         includes = includes or []
         excludes = excludes or []
+        name = self.name
         if not self._filter_by_tags(includes, excludes) and not zero_tests_ok:
-            self._raise_no_tests_filtered_by_tags(includes, excludes)
+            self._raise_no_tests_filtered_by_tags(name, includes, excludes)
 
     def _filter_by_tags(self, incls, excls):
         self.suites = [suite for suite in self.suites
@@ -256,10 +258,10 @@ class BaseTestSuite(_TestAndSuiteHelper):
                       if test.is_included(incls, excls)]
         return bool(self.suites or self.tests)
 
-    def _raise_no_tests_filtered_by_tags(self, incls, excls):
+    def _raise_no_tests_filtered_by_tags(self, name, incls, excls):
         incl = utils.seq2str(incls)
         excl = utils.seq2str(excls)
-        msg = "Suite '%s' with "  % self.name
+        msg = "Suite '%s' with "  % name
         if incl:
             msg += 'includes %s ' % incl
             if excl:
@@ -292,13 +294,13 @@ class BaseTestSuite(_TestAndSuiteHelper):
             suite.set_runmode(runmode)
 
     def set_options(self, settings):
+        self.set_name(settings['Name'])
+        self.set_doc(settings['Doc'])
+        self.set_metadata(settings['Metadata'])
         self.set_tags(settings['SetTag'])
         self.filter(settings['SuiteNames'], settings['TestNames'],
                     settings['Include'], settings['Exclude'],
                     settings['RunEmptySuite'])
-        self.set_name(settings['Name'])
-        self.set_doc(settings['Doc'])
-        self.set_metadata(settings['Metadata'])
         self.set_critical_tags(settings['Critical'], settings['NonCritical'])
         self._return_status_rc = not settings['NoStatusRC']
         if 'RunMode' in settings:
@@ -325,7 +327,8 @@ class BaseTestSuite(_TestAndSuiteHelper):
 class BaseTestCase(_TestAndSuiteHelper):
 
     def __init__(self, name, parent):
-        _TestAndSuiteHelper.__init__(self, name, parent)
+        _TestAndSuiteHelper.__init__(self, parent)
+        self.name = name
         self.critical = True
         if parent:
             parent.tests.append(self)

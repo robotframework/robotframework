@@ -53,13 +53,31 @@ Suite Under Subdirectory Using Pattern
 Suite and test together
     Run And Check Suites and Tests  --suite tsuite1 --suite tsuite3 --test STAR1first --test STAR2STAR  Tsuite1  Suite1 First
 
-No Matching tests
-    Failing Rebot  --test nonex  ${INPUT FILE}
+No matching tests
+    Failing Rebot
     ...  Suite 'Many Tests & Suites' contains no tests named 'nonex'.
+    ...  --test nonex  ${INPUT FILE}
 
-No Matching Suites
-    Failing Rebot  --suite nonex -s n2 -s n3  ${INPUT FILE}
+No matching tests when reboting multiple inputs
+    Failing Rebot
+    ...  Suite 'Many Tests & Suites & Many Tests & Suites' contains no tests named 'nonex'.
+    ...  --test nonex  ${INPUT FILE}  ${INPUT FILE}
+    Failing Rebot
+    ...  Suite 'My Name' contains no tests named 'nonex'.
+    ...  --test nonex -N My_Name  ${INPUT FILE}  ${INPUT FILE}
+
+No matching suites
+    Failing Rebot
     ...  Suite 'Many Tests & Suites' contains no tests in suites 'nonex', 'n2' or 'n3'.
+    ...  --suite nonex -s n2 -s n3  ${INPUT FILE}
+
+No matching suites when reboting multiple inputs
+    Failing Rebot
+    ...  Suite 'Many Tests & Suites & Many Tests & Suites' contains no tests in suite 'nonex'.
+    ...  --suite nonex  ${INPUT FILE}  ${INPUT FILE}
+    Failing Rebot
+    ...  Suite 'CustomName' contains no tests in suite 'nonex'.
+    ...  --name CustomName --suite nonex  ${INPUT FILE}  ${INPUT FILE}
 
 No Matching Tests In Matching Suites
     Run Rebot Without Processing Output  --suite nonex --suite suites --test first --test nonex --test STARone ${ESCAPES}  ${INPUT FILE}
@@ -137,6 +155,6 @@ Run Suites
     Stderr Should Be Empty
 
 Failing Rebot
-    [Arguments]  ${params}  ${input}  ${error}
-    Run Rebot Without Processing Output  ${params} ${ESCAPES}  ${input}
+    [Arguments]  ${error}  ${params}  @{inputs}
+    Run Rebot Without Processing Output  ${params} ${ESCAPES}  @{inputs}
     Stderr Should Be Equal To  [ ERROR ] ${error}${USAGE TIP}\n

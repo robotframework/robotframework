@@ -85,6 +85,12 @@ Non Matching Include And Exclude
     -i nonex -e nonex2    includes 'nonex' and excludes 'nonex2'
     --include nonex -i incl? -e STAR1 -e STAR2 -e STAR3    includes 'nonex' and 'incl?' and excludes '*1', '*2' and '*3'
 
+Non Matching When Running Multiple Suites
+    [Setup]    Set Test Variable    @{DATA SOURCES}    misc/pass_and_fail.txt    misc/normal.txt
+    [Template]    Run And Check Error
+    --include nonex    includes 'nonex'    Pass And Fail & Normal
+    --include nonex --name MyName   includes 'nonex'    MyName
+
 *** Keywords ***
 Run And Check Include And Exclude
     [Arguments]    ${params}    @{tests}
@@ -93,9 +99,9 @@ Run And Check Include And Exclude
     Check Suite Contains Tests    ${SUITE}    @{tests}
 
 Run And Check Error
-    [Arguments]    ${params}    ${filter_msg}
+    [Arguments]    ${params}    ${filter_msg}    ${suite name}=Include And Exclude
     Run Tests Without Processing Output    ${params} ${ESCAPES}    @{DATA SOURCES}
     Stderr Should Be Equal To    SEPARATOR=
-    ...    [ ERROR ] Suite 'Include And Exclude' with ${filter_msg} contains no test cases.
+    ...    [ ERROR ] Suite '${suite name}' with ${filter_msg} contains no test cases.
     ...    ${USAGE TIP}\n
     File Should Not Exist    ${OUTFILE}
