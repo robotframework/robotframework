@@ -17,10 +17,10 @@ from itertools import chain
 from robot.model import TotalStatisticsBuilder
 from robot import model, utils
 
-from messagefilter import MessageFilter
-from keywordremover import KeywordRemover
-from testcase import TestCase
-from keyword import Keyword
+from .messagefilter import MessageFilter
+from .keywordremover import KeywordRemover
+from .keyword import Keyword
+from .testcase import TestCase
 
 
 class TestSuite(model.TestSuite):
