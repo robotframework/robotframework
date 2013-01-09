@@ -4,7 +4,7 @@ Test Template     Run And Check Include And Exclude
 Resource          atest_resource.txt
 
 *** Variables ***
-${DATA SOURCE}    tags/include_and_exclude.txt
+@{DATA SOURCES}   tags/include_and_exclude.txt
 ${ESCAPES}        --escape star:STAR --escape quest:QUEST --escape amp:AMP
 @{INCL_ALL}       Incl-1    Incl-12    Incl-123
 @{EXCL_ALL}       Excl-1    Excl-12    Excl-123
@@ -65,11 +65,11 @@ Include and Exclude with NOT
     --include incl1NOTincl3 --exclude incl1NOTincl2    Incl-12
 
 Select tests without any tags
-    [Setup]    Set Test Variable    ${DATA SOURCE}    tags/no_force_no_default_tags.txt
+    [Setup]    Set Test Variable    @{DATA SOURCES}    tags/no_force_no_default_tags.txt
     --exclude STAR    No Own Tags No Force Nor Default    Own Tags Empty No Force Nor Default
 
 Select tests with any tag
-    [Setup]    Set Test Variable    ${DATA SOURCE}    tags/no_force_no_default_tags.txt
+    [Setup]    Set Test Variable    @{DATA SOURCES}    tags/no_force_no_default_tags.txt
     --include STAR    Own Tags No Force Nor Default
 
 Non Matching Include
@@ -88,13 +88,14 @@ Non Matching Include And Exclude
 *** Keywords ***
 Run And Check Include And Exclude
     [Arguments]    ${params}    @{tests}
-    Run Tests    ${params} ${ESCAPES}    ${DATA SOURCE}
+    Run Tests    ${params} ${ESCAPES}    @{DATA SOURCES}
     Stderr Should Be Empty
     Check Suite Contains Tests    ${SUITE}    @{tests}
 
 Run And Check Error
     [Arguments]    ${params}    ${filter_msg}
-    Run Tests Without Processing Output    ${params} ${ESCAPES}    ${DATA SOURCE}
-    ${stderr} =    Get File    ${STDERR_FILE}
-    Should Be Equal    ${stderr.strip()}    [ ERROR ] Suite 'Include And Exclude' with ${filter_msg} contains no test cases.\n\n Try --help for usage information.
+    Run Tests Without Processing Output    ${params} ${ESCAPES}    @{DATA SOURCES}
+    Stderr Should Be Equal To    SEPARATOR=
+    ...    [ ERROR ] Suite 'Include And Exclude' with ${filter_msg} contains no test cases.
+    ...    ${USAGE TIP}\n
     File Should Not Exist    ${OUTFILE}

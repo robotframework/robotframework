@@ -111,14 +111,14 @@ Elapsed Time
     Check Times    ${SUITE.tests[4]}    20061227 12:00:07.001    20061227 12:00:07.003    0002
     Check Times    ${SUITE.tests[5]}    20061227 12:00:07.003    20061227 12:00:07.007    0004
     Check Times    ${SUITE}    20061227 11:59:59.000    20061227 12:00:08.999    9999
-    Should Be Equal As Numbers    ${SUITE.test_count}    6
+    Length Should Be    ${SUITE.tests}    6
     Comment    2) Filter ouput created in earlier step and check    that times are set accordingly.
     Run Rebot    --include incl2 --include excl3 ${ESCAPES}    ${OUTFILE}
     Check Times    ${SUITE}    ${NONE}    ${NONE}    6004
     Check Times    ${SUITE.tests[0]}    20061227 12:00:01.000    20061227 12:00:03.000    2000
     Check Times    ${SUITE.tests[1]}    20061227 12:00:03.000    20061227 12:00:07.000    4000
     Check Times    ${SUITE.tests[2]}    20061227 12:00:07.003    20061227 12:00:07.007    004
-    Should Be Equal As Numbers    ${SUITE.test_count}    3
+    Length Should Be    ${SUITE.tests}    3
 
 *** Keywords ***
 Create Input Files
@@ -132,8 +132,8 @@ Run And Check Include And Exclude
     Check Suite Contains Tests    ${SUITE}    @{tests}
     Should Be True    ${SUITE.statistics.all.passed} == len(@{tests})
     Should Be True    ${SUITE.statistics.all.failed} == 0
-    ${exp start} =    Evaluate    ${NONE} if "${params}" else "${ORIG START}"
-    ${exp end} =    Evaluate    ${NONE} if "${params}" else "${ORIG END}"
+    ${exp start} =    Set Variable If    "${params}"    ${NONE}    ${ORIG START}
+    ${exp end} =    Set Variable If    "${params}"    ${NONE}    ${ORIG END}
     Should Be Equal    ${SUITE.starttime}    ${exp start}
     Should Be Equal    ${SUITE.endtime}    ${exp end}
     Is Valid Elapsed Time    ${SUITE.elapsedtime}
@@ -142,6 +142,7 @@ Run And Check Include And Exclude
 Run And Check Error
     [Arguments]    ${params}    ${filter_msg}
     Run Rebot Without Processing Output    ${params} ${ESCAPES}    ${INPUT FILE}
-    ${stderr} =    Get Stderr
-    Should Be Equal    ${stderr.strip()}    [ ERROR ] Suite 'Include And Exclude' contains no tests ${filter_msg}.${USAGE TIP}
+    Stderr Should Be Equal To    SEPARATOR=
+    ...    [ ERROR ] Suite 'Include And Exclude' contains no tests ${filter_msg}.
+    ...    ${USAGE TIP}\n
     File Should Not Exist    ${OUTFILE}
