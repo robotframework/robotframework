@@ -7,8 +7,6 @@ Resource        atest_resource.txt
 ${TESTDATA_TEST}  misc/many_tests.txt
 ${TESTDATA_SUITES}  misc/suites
 ${ESCAPES}  --escape star:STAR --escape quest:QUEST --escape space:SPACE
-${TEST_ERROR_MESSAGE}  Suite 'Many Tests' contains no test cases named 'notexists'.\n\n Try --help for usage information.
-${SUITE_ERROR_MESSAGE}  Suite 'Suites' contains no test suites named 'notexists'.\n\n Try --help for usage information.
 
 *** Test Cases ***
 One Call To Test
@@ -25,7 +23,8 @@ Two Calls To Test
     Run And Check Tests  --test First --test thirdone  First  Third One
 
 One Call To Test With Nonexisting Test Name
-    Run Failing Test  --test notexists  ${TESTDATA_TEST}  ${TEST_ERROR_MESSAGE}
+    Run Failing Test  --test notexists  ${TESTDATA_TEST}
+    ...  Suite 'Many Tests' contains no test cases named 'notexists'.
 
 Two Calls To Test With One Nonexisting Test Name
     Run And Check Tests  --test notexists --test First  First
@@ -66,7 +65,8 @@ Correct Files Processed With --suite Matches Files
     Check Syslog Contains  Parsing file '${suitedir}${/}tsuite2.html
 
 Suite With No Matching Args
-    Run Failing Test  --suite notexists  ${TESTDATA_SUITES}  ${SUITE_ERROR_MESSAGE}
+    Run Failing Test  --suite notexists  ${TESTDATA_SUITES}
+    ...  Suite 'Suites' contains no test suites named 'notexists'.
 
 Suite With Matching And NonMatching Args
     Run Suites  --suite tsuite1 --suite notexists
@@ -156,8 +156,7 @@ Run Suites
     Stderr Should Be Empty
 
 Run Failing Test
-    [Arguments]  ${params}  ${testdata}  ${error_msg}
+    [Arguments]  ${params}  ${testdata}  ${error}
     Run Tests Without Processing Output  ${params} ${ESCAPES}  ${testdata}
-    ${stderr} =  Get Stderr
-    Should End With  ${stderr.strip()}  ${error_msg}
+    Stderr Should Be Equal To  [ ERROR ] ${error}${USAGE TIP}\n
 

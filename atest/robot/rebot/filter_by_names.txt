@@ -54,14 +54,12 @@ Suite and test together
     Run And Check Suites and Tests  --suite tsuite1 --suite tsuite3 --test STAR1first --test STAR2STAR  Tsuite1  Suite1 First
 
 No Matching tests
-    Run Rebot Without Processing Output  --test nonex  ${INPUT FILE}
-    ${stderr} =  Get Stderr
-    Should Be Equal  ${stderr.strip()}  [ ERROR ] Suite 'Many Tests & Suites' contains no tests named 'nonex'.${USAGE_TIP}
+    Failing Rebot  --test nonex  ${INPUT FILE}
+    ...  Suite 'Many Tests & Suites' contains no tests named 'nonex'.
 
 No Matching Suites
-    Run Rebot Without Processing Output  --suite nonex -s n2 -s n3  ${INPUT FILE}
-    ${stderr} =  Get Stderr
-    Should Be Equal  ${stderr.strip()}  [ ERROR ] Suite 'Many Tests & Suites' contains no tests in suites 'nonex', 'n2' or 'n3'.${USAGE_TIP}
+    Failing Rebot  --suite nonex -s n2 -s n3  ${INPUT FILE}
+    ...  Suite 'Many Tests & Suites' contains no tests in suites 'nonex', 'n2' or 'n3'.
 
 No Matching Tests In Matching Suites
     Run Rebot Without Processing Output  --suite nonex --suite suites --test first --test nonex --test STARone ${ESCAPES}  ${INPUT FILE}
@@ -138,3 +136,7 @@ Run Suites
     Run Rebot  ${params} ${ESCAPES}  ${INPUT FILE}
     Stderr Should Be Empty
 
+Failing Rebot
+    [Arguments]  ${params}  ${input}  ${error}
+    Run Rebot Without Processing Output  ${params} ${ESCAPES}  ${input}
+    Stderr Should Be Equal To  [ ERROR ] ${error}${USAGE TIP}\n
