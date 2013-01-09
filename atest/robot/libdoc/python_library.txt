@@ -33,8 +33,10 @@ Init Documentation
     ...    Configuration parameters are used as default values when new\nconnections are
 
 Init Arguments
-    Init Arguments Should Be    0    timeout=3 seconds    newline=CRLF    prompt=None
-    ...    prompt_is_regexp=False    encoding=UTF-8    default_log_level=INFO
+    Init Arguments Should Be    0    timeout=3 seconds    newline=CRLF
+    ...    prompt=None    prompt_is_regexp=False
+    ...    encoding=UTF-8    encoding_errors=ignore
+    ...    default_log_level=INFO
 
 Keyword Names
     Keyword Name Should Be     0    Close All Connections
