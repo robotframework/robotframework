@@ -10,7 +10,7 @@ Open Connection
 
 Close Connection
     ${tc} =    Check Test Case    ${TEST NAME}
-    Check Log Message    ${tc.kws[0].msgs[0]}    *hello    pattern=yes
+    Check Log Message    ${tc.kws[1].msgs[0]}    *hello    pattern=yes
 
 Closing already closed connection is OK
     Check Test Case    ${TEST NAME}

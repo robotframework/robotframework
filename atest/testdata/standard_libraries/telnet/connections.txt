@@ -10,6 +10,7 @@ Open Connection
 
 Close Connection
     [Documentation]    FAIL No connection open
+    Read Until    login:
     Write    hello
     Close Connection
     Write    this fails
