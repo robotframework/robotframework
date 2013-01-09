@@ -41,6 +41,9 @@ Encoding Set In Open Connection
 Set Encoding Keyword
     Check Test Case    ${TEST NAME}
 
+Use Configured Encoding
+    Check Test Case    ${TEST NAME}
+
 Default Log Level In Init
     Check Test Case    ${TEST NAME}
 

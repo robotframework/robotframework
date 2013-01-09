@@ -61,6 +61,15 @@ Read Until Regexp
     ${out} =    Read Until Regexp    no match    .*@    blaah    deBUG
     Should Be Equal    ${out}    ${PROMPT START}
 
+Read Until Regexp With Compiled Regexp
+    Write    pwd
+    ${regexp} =    Evaluate    re.compile('/h[abo]me.${USERNAME}\\s+')    modules=re
+    ${out} =    Read Until Regexp    ${regexp}
+    Should Be Equal    ${out}    ${HOME}\r\n
+    ${regexp} =    Evaluate    re.compile('.*@')    modules=re
+    ${out} =    Read Until Regexp    no match    ${regexp}    blaah    deBUG
+    Should Be Equal    ${out}    ${PROMPT START}
+
 Read Until Regexp Non-ASCII
     Write    echo Päivää
     ${out} =    Read Until Regexp    ei mätsää    ää    debug

@@ -1,11 +1,10 @@
 *** Setting ***
 Test Setup        Open Connection    ${HOST}
 Test Teardown     Close All Connections
-Library           Telnet    123    CRLF    $    REGEXP    ASCII    DeBuG
+Library           Telnet    3.142    CRLF    $    REGEXP    ASCII    strict    DeBuG
 Resource          telnet_resource.txt
 
-
-*** Test Case ***
+*** Test Cases ***
 
 Prompt Set In Init
     Prompt Should Be    $    ${TRUE}
@@ -24,7 +23,7 @@ Set Prompt Keyword
     Prompt Should Be    >\\s+    ${TRUE}
 
 Timeout Set In Init
-    Timeout Should Be    2 minutes 3 seconds
+    Timeout Should Be    3 seconds 142 milliseconds
 
 Timeout Set In Open Connection
     Open Connection    ${HOST}    timeout=0.5s
@@ -53,17 +52,33 @@ Set Newline Keyword
     Newline Should Be    \n\rFOO
 
 Encoding Set In Init
-    Encoding Should Be    ASCII
+    Encoding Should Be    ASCII    strict
 
 Encoding Set In Open Connection
-    Open Connection    ${HOST}    encoding=ISO-8859-15
-    Encoding Should Be    ISO-8859-15
+    Open Connection    ${HOST}    encoding=ISO-8859-15    encoding_errors=xxx
+    Encoding Should Be    ISO-8859-15    xxx
     Open Connection    ${HOST}    encoding=Latin1
-    Encoding Should Be    Latin1
+    Encoding Should Be    Latin1    strict
 
 Set Encoding Keyword
     Set Encoding    us-ascii
-    Encoding Should Be    us-ascii
+    Encoding Should Be    us-ascii    strict
+    Set Encoding    xxx    yyy
+    Encoding Should Be    xxx   yyy
+    Set Encoding    encoding=ASCII
+    Encoding Should Be    ASCII   yyy
+    Set Encoding    errors=ignore
+    Encoding Should Be    ASCII   ignore
+
+Use Configured Encoding
+    Login and set prompt
+    Run Keyword And Expect Error    UnicodeEncodeError:*    Write    echo päivää
+    Set Encoding    errors=ignore
+    Write    echo hyvää päivää
+    Read Until    hyv piv
+    Set Encoding    UTF-8
+    Write    echo hyvää päivää
+    Read Until    hyvää päivää
 
 Default Log Level In Init
     Default Log Level Should Be    DEBUG
@@ -100,7 +115,7 @@ Default configuration
     Prompt Should Be    ${NONE}    ${FALSE}
     Timeout Should Be    3 seconds
     Newline Should Be    \r\n
-    Encoding Should Be    UTF-8
+    Encoding Should Be    UTF-8    ignore
     Default Log Level Should Be    INFO
 
 *** Keywords ***
@@ -128,11 +143,13 @@ Newline Should Be
     Should Be Equal    ${newline}    \r\n
 
 Encoding Should Be
-    [Arguments]    ${expected}
-    ${encoding} =    Set Encoding    ASCII
-    Should Be Equal    ${encoding}    ${expected}
-    ${encoding} =    Set Encoding    ${encoding}
+    [Arguments]    ${expected encoding}    ${expected errors}
+    ${encoding}    ${errors} =    Set Encoding    ASCII    ignore
+    Should Be Equal    ${encoding}    ${expected encoding}
+    Should Be Equal    ${errors}    ${expected errors}
+    ${encoding}    ${errors} =    Set Encoding    ${encoding}    ${errors}
     Should Be Equal    ${encoding}    ASCII
+    Should Be Equal    ${errors}    ignore
 
 Default Log Level Should Be
     [Arguments]    ${expected}
