@@ -1,68 +1,68 @@
 *** Settings ***
-Force Tags      regression  jybot  pybot
-Resource        atest_resource.txt
-Test Template   Run And Check Include And Exclude
+Force Tags        regression    jybot    pybot
+Test Template     Run And Check Include And Exclude
+Resource          atest_resource.txt
 
 *** Variables ***
-${DATA SOURCE}  tags/include_and_exclude.txt
-${ESCAPES}      --escape star:STAR --escape quest:QUEST --escape amp:AMP
-@{INCL_ALL}     Incl-1  Incl-12  Incl-123
-@{EXCL_ALL}     Excl-1  Excl-12  Excl-123
-@{ALL}          @{INCL_ALL}  @{EXCL_ALL}
+${DATA SOURCE}    tags/include_and_exclude.txt
+${ESCAPES}        --escape star:STAR --escape quest:QUEST --escape amp:AMP
+@{INCL_ALL}       Incl-1    Incl-12    Incl-123
+@{EXCL_ALL}       Excl-1    Excl-12    Excl-123
+@{ALL}            @{INCL_ALL}    @{EXCL_ALL}
 
 *** Test Cases ***
 No Includes Or Excludes
-    ${EMPTY}  @{ALL}
+    ${EMPTY}    @{ALL}
 
 One Include
-    --include incl1  @{INCL_ALL}
+    --include incl1    @{INCL_ALL}
 
 Matching And Non Matching Includes
-    -i INCL3 -i nonexisting  Incl-123
+    -i INCL3 -i nonexisting    Incl-123
 
 More Includes
-    -i incl2 --include incl3 -i _ --include incl2  Incl-12  Incl-123
+    -i incl2 --include incl3 -i _ --include incl2    Incl-12    Incl-123
 
 Includes With AND
-    [Documentation]  Testing including like "--include tag1&tag2" both with "&" and "AND"
-    --include incl1ANDincl2  Incl-12  Incl-123
-    -i incl1AMPincl2AMPincl3  Incl-123
+    [Documentation]    Testing including like "--include tag1&tag2" both with "&" and "AND"
+    --include incl1ANDincl2    Incl-12    Incl-123
+    -i incl1AMPincl2AMPincl3    Incl-123
 
 Include With Patterns
-    --include incl?  @{INCL_ALL}
-    -i STARcl3 -i iSTAR2  Incl-12  Incl-123  Excl-123
-    -i i?*3ANDFORCE --include iSTAR  @{INCL_ALL}
+    --include incl?    @{INCL_ALL}
+    -i STARcl3 -i iSTAR2    Incl-12    Incl-123    Excl-123
+    -i i?*3ANDFORCE --include iSTAR    @{INCL_ALL}
 
 One Exclude
-    --exclude excl1  @{INCL_ALL}
+    --exclude excl1    @{INCL_ALL}
 
 Matching And Non Matching Excludes
-    -e EXCL3 -e nonexisting  @{INCL_ALL}  Excl-1  Excl-12
+    -e EXCL3 -e nonexisting    @{INCL_ALL}    Excl-1    Excl-12
 
 More Excludes
-    --exclude excl3 -e excl2  @{INCL_ALL}  Excl-1
+    --exclude excl3 -e excl2    @{INCL_ALL}    Excl-1
 
 Exclude With AND
-    --exclude excl1AMPexcl2  @{INCL_ALL}  Excl-1
-    -e excl1AMPexcl2ANDexcl3  @{INCL_ALL}  Excl-1  Excl-12
+    --exclude excl1AMPexcl2    @{INCL_ALL}    Excl-1
+    -e excl1AMPexcl2ANDexcl3    @{INCL_ALL}    Excl-1    Excl-12
 
 Exclude With Patterns
-    --exclude exc??  @{INCL_ALL}
-    -e STAR3 -e eSTAR2 -e eSTAR1  Incl-1  Incl-12
+    --exclude exc??    @{INCL_ALL}
+    -e STAR3 -e eSTAR2 -e eSTAR1    Incl-1    Incl-12
 
 Include And Exclude
-    [Documentation]  Include and exclude together with and without patterns and ANDing
-    -i force --exclude excl2  @{INCL_ALL}  Excl-1
-    --include STARcl2 -i nonex -e e???2 -i forceANDi*1  @{INCL_ALL}
+    [Documentation]    Include and exclude together with and without patterns and ANDing
+    -i force --exclude excl2    @{INCL_ALL}    Excl-1
+    --include STARcl2 -i nonex -e e???2 -i forceANDi*1    @{INCL_ALL}
 
 Include with NOT
-    --include incl1NOTincl3  Incl-1  Incl-12
+    --include incl1NOTincl3    Incl-1    Incl-12
 
 Exclude with NOT
-    --exclude excl1NOTexcl2ANDexcl3  Excl-123  @{INCL_ALL}
+    --exclude excl1NOTexcl2ANDexcl3    Excl-123    @{INCL_ALL}
 
 Include and Exclude with NOT
-    --include incl1NOTincl3 --exclude incl1NOTincl2  Incl-12
+    --include incl1NOTincl3 --exclude incl1NOTincl2    Incl-12
 
 Select tests without any tags
     [Setup]    Set Test Variable    ${DATA SOURCE}    tags/no_force_no_default_tags.txt
@@ -74,28 +74,27 @@ Select tests with any tag
 
 Non Matching Include
     [Template]    Run And Check Error
-    --include nonex  includes 'nonex'
-    --include nonex -i nonex2  includes 'nonex' and 'nonex2'
+    --include nonex    includes 'nonex'
+    --include nonex -i nonex2    includes 'nonex' and 'nonex2'
 
 Non Matching Exclude
-    --exclude nonexisting -e nonex2 -e nonex3  @{ALL}
+    --exclude nonexisting -e nonex2 -e nonex3    @{ALL}
 
 Non Matching Include And Exclude
     [Template]    Run And Check Error
-    -i nonex -e nonex2  includes 'nonex' and excludes 'nonex2'
-    --include nonex -i incl? -e STAR1 -e STAR2 -e STAR3  includes 'nonex' and 'incl?' and excludes '*1', '*2' and '*3'
+    -i nonex -e nonex2    includes 'nonex' and excludes 'nonex2'
+    --include nonex -i incl? -e STAR1 -e STAR2 -e STAR3    includes 'nonex' and 'incl?' and excludes '*1', '*2' and '*3'
 
 *** Keywords ***
 Run And Check Include And Exclude
-    [Arguments]  ${params}  @{tests}
-    Run Tests  ${params} ${ESCAPES}  ${DATA SOURCE}
+    [Arguments]    ${params}    @{tests}
+    Run Tests    ${params} ${ESCAPES}    ${DATA SOURCE}
     Stderr Should Be Empty
-    Check Suite Contains Tests  ${SUITE}  @{tests}
+    Check Suite Contains Tests    ${SUITE}    @{tests}
 
 Run And Check Error
-    [Arguments]  ${params}  ${filter_msg}
-    Run Tests Without Processing Output  ${params} ${ESCAPES}  ${DATA SOURCE}
-    ${stderr} =  Get File  ${STDERR_FILE}
-    Should Be Equal  ${stderr.strip()}  [ ERROR ] Suite 'Include And Exclude' with ${filter_msg} contains no test cases.\n\n Try --help for usage information.
-    File Should Not Exist  ${OUTFILE}
-
+    [Arguments]    ${params}    ${filter_msg}
+    Run Tests Without Processing Output    ${params} ${ESCAPES}    ${DATA SOURCE}
+    ${stderr} =    Get File    ${STDERR_FILE}
+    Should Be Equal    ${stderr.strip()}    [ ERROR ] Suite 'Include And Exclude' with ${filter_msg} contains no test cases.\n\n Try --help for usage information.
+    File Should Not Exist    ${OUTFILE}
