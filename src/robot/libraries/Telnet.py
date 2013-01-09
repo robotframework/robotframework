@@ -441,7 +441,11 @@ class TelnetConnection(telnetlib.Telnet):
         self._default_log_level = level.upper()
 
     def _is_valid_log_level(self, level):
-        return level is None or level.upper() in ('TRACE', 'DEBUG', 'INFO', 'WARN')
+        if level is None:
+            return True
+        if not isinstance(level, basestring):
+            return False
+        return level.upper() in ('TRACE', 'DEBUG', 'INFO', 'WARN')
 
     def close_connection(self, loglevel=None):
         """Closes the current Telnet connection.
