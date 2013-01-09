@@ -98,8 +98,8 @@ class Telnet:
     with special 'LF' and 'CR' syntax.
 
     Examples:
-    | Set Newline | \\n  |
-    | Set Newline | CRLF |
+    | `Set Newline` | \\n  |
+    | `Set Newline` | CRLF |
 
     == Prompt ==
 
@@ -116,9 +116,26 @@ class Telnet:
     Encoding is needed when written or read text contains non-ASCII characters.
     The default encoding is UTF-8 that works also with ASCII.
 
-    Using UTF-8 encoding by default and being able to configure encoding are
-    new features in Robot Framework 2.7.6. In earlier versions only ASCII was
-    supported.
+    It is also possible to configure the error handler to use if encoding
+    or decoding characters fails. Accepted values are the same that
+    encode/decode functions in Python strings accept. In practice the following
+    values are the most useful:
+
+    - `ignore`: ignore characters that cannot be encoded (default)
+    - `strict`: fail if characters cannot be encoded
+    - `replace`: replace characters that cannot be encoded with a replacement
+      character
+
+    Examples:
+    | `Open Connection` | lolcathost | encoding=Latin1 | encoding_errors=strict |
+    | `Set Encoding` | ISO-8859-15 |
+    | `Set Encoding` | errors=ignore |
+
+    Using UTF-8 encoding by default and being able to configure the encoding
+    are new features in Robot Framework 2.7.6. In earlier versions only ASCII
+    was supported and encoding errors were silently ignored. Robot Framework
+    2.7.7 added a possibility to specify the error handler and changed the
+    default behavior back to ignoring errors.
 
     == Default log level ==
 
@@ -152,8 +169,10 @@ class Telnet:
     ROBOT_LIBRARY_SCOPE = 'TEST_SUITE'
     ROBOT_LIBRARY_VERSION = get_version()
 
-    def __init__(self, timeout='3 seconds', newline='CRLF', prompt=None,
-                 prompt_is_regexp=False, encoding='UTF-8', default_log_level='INFO'):
+    def __init__(self, timeout='3 seconds', newline='CRLF',
+                 prompt=None, prompt_is_regexp=False,
+                 encoding='UTF-8', encoding_errors='ignore',
+                 default_log_level='INFO'):
         """Telnet library can be imported with optional configuration parameters.
 
         Configuration parameters are used as default values when new
@@ -178,6 +197,7 @@ class Telnet:
         self._newline = newline or 'CRLF'
         self._prompt = (prompt, bool(prompt_is_regexp))
         self._encoding = encoding
+        self._encoding_errors = encoding_errors
         self._default_log_level = default_log_level
         self._cache = utils.ConnectionCache()
         self._conn = None
@@ -219,7 +239,7 @@ class Telnet:
 
     def open_connection(self, host, alias=None, port=23, timeout=None,
                         newline=None, prompt=None, prompt_is_regexp=False,
-                        encoding=None, default_log_level=None):
+                        encoding=None, encoding_errors=None, default_log_level=None):
         """Opens a new Telnet connection to the given host and port.
 
         The `timeout`, `newline`, `prompt`, `prompt_is_regexp`, `encoding`,
@@ -236,6 +256,7 @@ class Telnet:
         timeout = timeout or self._timeout
         newline = newline or self._newline
         encoding = encoding or self._encoding
+        encoding_errors = encoding_errors or self._encoding_errors
         default_log_level = default_log_level or self._default_log_level
         if not prompt:
             prompt, prompt_is_regexp = self._prompt
@@ -243,7 +264,8 @@ class Telnet:
                     % (host, port, prompt))
         self._conn = self._get_connection(host, port, timeout, newline,
                                           prompt, prompt_is_regexp,
-                                          encoding, default_log_level)
+                                          encoding, encoding_errors,
+                                          default_log_level)
         return self._cache.register(self._conn, alias)
 
     def _get_connection(self, *args):
@@ -303,13 +325,14 @@ class Telnet:
 class TelnetConnection(telnetlib.Telnet):
 
     def __init__(self, host=None, port=23, timeout=3.0, newline='CRLF',
-                 prompt=None, prompt_is_regexp=False, encoding='UTF-8',
+                 prompt=None, prompt_is_regexp=False,
+                 encoding='UTF-8', encoding_errors='ignore',
                  default_log_level='INFO'):
         telnetlib.Telnet.__init__(self, host, int(port) if port else 23)
         self._set_timeout(timeout)
         self._set_newline(newline)
         self._set_prompt(prompt, prompt_is_regexp)
-        self._set_encoding(encoding)
+        self._set_encoding(encoding, encoding_errors)
         self._set_default_log_level(default_log_level)
         self.set_option_negotiation_callback(self._negotiate_echo_on)
 
@@ -343,6 +366,7 @@ class TelnetConnection(telnetlib.Telnet):
         """Sets the newline used by `Write` keyword in the current connection.
 
         The old newline is returned and can be used to restore the newline later.
+        See `Set Timeout` for a similar example.
 
         See `Configuration` section for more information about global and
         connection specific configuration.
@@ -393,33 +417,39 @@ class TelnetConnection(telnetlib.Telnet):
     def _prompt_is_set(self):
         return self._prompt[0] is not None
 
-    def set_encoding(self, encoding):
+    def set_encoding(self, encoding=None, errors=None):
         """Sets the encoding to use for `writing and reading` in the current connection.
 
-        The old encoding is returned and can be used to restore the encoding
-        later.
+        The given `encoding` specifies the encoding to use when written/read
+        text is encoded/decoded, and `errors` specifies the error handler to
+        use if encoding/decoding fails. Either of these can be omitted and in
+        that case the old value is not affected.
 
-        See `Configuration` section for more information about global and
-        connection specific configuration.
+        See `Configuration` section for more information about encoding and
+        error handlers, as well as global and connection specific configuration
+        in general.
 
-        Setting encoding is a new feature in Robot Framework 2.7.6. Earlier
-        versions only supported ASCII.
+        The old values are returned and can be used to restore the encoding
+        and the error handler later. See `Set Prompt` for a similar example.
+
+        Setting encoding in general is a new feature in Robot Framework 2.7.6
+        and specifying the error handler was added in Robot Framework 2.7.7.
         """
         self._verify_connection()
         old = self._encoding
-        self._set_encoding(encoding)
+        self._set_encoding(encoding or old[0], errors or old[1])
         return old
 
-    def _set_encoding(self, encoding):
-        self._encoding = encoding
+    def _set_encoding(self, encoding, errors):
+        self._encoding = (encoding, errors)
 
     def _encode(self, text):
         if isinstance(text, str):
             return text
-        return text.encode(self._encoding)
+        return text.encode(*self._encoding)
 
     def _decode(self, bytes):
-        return bytes.decode(self._encoding)
+        return bytes.decode(*self._encoding)
 
     def set_default_log_level(self, level):
         """Sets the default log level used for `logging` in the current connection.
