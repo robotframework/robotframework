@@ -293,7 +293,7 @@ class Variables(utils.NormalizedDict):
             return self.replace_scalar(value[0])
         msg = ("Creating a scalar variable with a list value in the Variable "
                "table is deprecated and this functionality will be removed in "
-               "Robot Framework 2.7. Create a list variable '@%s' and use "
+               "Robot Framework 2.8. Create a list variable '@%s' and use "
                "it as a scalar variable '%s' instead" % (name[1:], name))
         if path:
             msg += " in file '%s'" % path
