@@ -187,40 +187,46 @@ class TidyCommandLine(Application):
             self.console(output)
 
     def validate(self, opts, args):
-        self._validate_mode_and_arguments(args, **opts)
-        opts['format'] = self._validate_format(args, **opts)
-        opts['lineseparator'] = self._validate_line_sep(**opts)
+        validator = ArgumentValidator()
+        validator.mode_and_arguments(args, **opts)
+        opts['format'] = validator.format(args, **opts)
+        opts['lineseparator'] = validator.line_sep(**opts)
         if not opts['spacecount']:
             opts.pop('spacecount')
         else:
-            opts['spacecount'] = self._validate_spacecount(opts['spacecount'])
+            opts['spacecount'] = validator.spacecount(opts['spacecount'])
         return opts, args
 
-    def _validate_mode_and_arguments(self, args, inplace, recursive, **others):
-        if inplace and recursive:
-            raise DataError('--recursive and --inplace can not be used together.')
-        elif recursive:
-            self._validate_recursive_arguments(args)
-        elif inplace:
-            self._validate_inplace_arguments(args)
-        else:
-            self._validate_default_mode_arguments(args)
 
-    def _validate_recursive_arguments(self, args):
-        if len(args) != 1 or not os.path.isdir(args[0]):
-            raise DataError('--recursive requires exactly one directory as argument.')
+class ArgumentValidator(object):
 
-    def _validate_inplace_arguments(self, args):
+    def mode_and_arguments(self, args, recursive, inplace, **others):
+        validators = {(True, True): self._recursive_and_inplace_together,
+                      (True, False): self._recursive_mode_arguments,
+                      (False, True): self._inplace_mode_arguments,
+                      (False, False): self._default_mode_arguments}
+        validators[(recursive, inplace)](args)
+
+    def _recursive_and_inplace_together(self, args):
+        raise DataError('--recursive and --inplace can not be used together.')
+
+    def _recursive_mode_arguments(self, args):
+        if len(args) != 1:
+            raise DataError('--recursive requires exactly one argument.')
+        if not os.path.isdir(args[0]):
+            raise DataError('--recursive requires input to be a directory.')
+
+    def _inplace_mode_arguments(self, args):
         if not all(os.path.isfile(path) for path in args):
-            raise DataError('Given input is not a file.')
+            raise DataError('--inplace requires inputs to be files.')
 
-    def _validate_default_mode_arguments(self, args):
+    def _default_mode_arguments(self, args):
         if len(args) not in (1, 2):
             raise DataError('Default mode requires 1 or 2 arguments.')
         if not os.path.isfile(args[0]):
-            raise DataError('Given input is not a file.')
+            raise DataError('Default mode requires input to be a file.')
 
-    def _validate_format(self, args, format, inplace, recursive, **others):
+    def format(self, args, format, inplace, recursive, **others):
         if not format:
             if inplace or recursive or len(args) < 2:
                 return None
@@ -230,16 +236,14 @@ class TidyCommandLine(Application):
             raise DataError("Invalid format '%s'." % format)
         return format
 
-    def _validate_line_sep(self, lineseparator, **others):
-        if not lineseparator:
-            return os.linesep
+    def line_sep(self, lineseparator, **others):
         values = {'native': os.linesep, 'windows': '\r\n', 'unix': '\n'}
         try:
-            return values[lineseparator.lower()]
+            return values[(lineseparator or 'native').lower()]
         except KeyError:
             raise DataError("Invalid line separator '%s'." % lineseparator)
 
-    def _validate_spacecount(self, spacecount):
+    def spacecount(self, spacecount):
         try:
             spacecount = int(spacecount)
             if spacecount < 2:

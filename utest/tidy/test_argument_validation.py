@@ -3,10 +3,22 @@ import os
 
 from robot.errors import DataError
 from robot.tidy import TidyCommandLine
-from robot.utils.asserts import assert_raises_with_msg, assert_equals
+from robot.utils.asserts import assert_raises_with_msg, assert_equals, assert_true
 
 
 class TestArgumentValidation(unittest.TestCase):
+
+    def test_valid_explicit_format(self):
+        opts, _ = self._validate(format='txt')
+        assert_equals(opts['format'], 'TXT')
+
+    def test_valid_implicit_format(self):
+        opts, _ = self._validate(args=[__file__, 'out.robot'])
+        assert_equals(opts['format'], 'ROBOT')
+
+    def test_no_format(self):
+        opts, _ = self._validate()
+        assert_equals(opts['format'], None)
 
     def test_invalid_explicit_format(self):
         self._validate(format='invalid', error="Invalid format 'INVALID'.")
@@ -14,6 +26,14 @@ class TestArgumentValidation(unittest.TestCase):
     def test_invalid_implicit_format(self):
         self._validate(args=[__file__, 'y.inv'], error="Invalid format 'INV'.")
         self._validate(args=[__file__, 'inv'], error="Invalid format ''.")
+
+    def test_no_space_count(self):
+        opts, _ = self._validate()
+        assert_true('spacecount' not in opts)
+
+    def test_valid_space_count(self):
+        opts, _ = self._validate(spacecount='42')
+        assert_equals(opts['spacecount'], 42)
 
     def test_invalid_space_count(self):
         error = '--spacecount must be an integer greater than 1.'
@@ -39,23 +59,26 @@ class TestArgumentValidation(unittest.TestCase):
                        error='Default mode requires 1 or 2 arguments.')
 
     def test_recursive_accepts_only_one_argument(self):
-        self._validate(recursive=True, args=['a', 'b'],
-                       error='--recursive requires exactly one directory as argument.')
+        self._validate(recursive=True, args=['.', '..'],
+                       error='--recursive requires exactly one argument.')
 
     def test_inplace_accepts_one_or_more_arguments(self):
         for count in range(1, 10):
             self._validate(inplace=True, args=[__file__]*count)
 
-    def test_default_and_inplace_modes_requires_inputs_to_be_files(self):
-        error = 'Given input is not a file.'
+    def test_default_mode_requires_input_to_be_file(self):
+        error = 'Default mode requires input to be a file.'
         self._validate(args=['.'], error=error)
         self._validate(args=['non_existing.txt'], error=error)
+
+    def test_inplace_requires_inputs_to_be_files(self):
+        error = '--inplace requires inputs to be files.'
         self._validate(inplace=True, args=[__file__, '.'], error=error)
         self._validate(inplace=True, args=[__file__, 'nonex.txt'], error=error)
 
     def test_recursive_requires_input_to_be_directory(self):
         self._validate(recursive=True,
-                       error='--recursive requires exactly one directory as argument.')
+                       error='--recursive requires input to be a directory.')
 
     def test_line_separator(self):
         for input, expected in [(None, os.linesep), ('Native', os.linesep),
