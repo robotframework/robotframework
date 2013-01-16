@@ -199,10 +199,26 @@ class TidyCommandLine(Application):
     def _validate_mode_and_arguments(self, args, inplace, recursive, **others):
         if inplace and recursive:
             raise DataError('--recursive and --inplace can not be used together.')
-        if recursive and (len(args) > 1 or not os.path.isdir(args[0])):
+        elif recursive:
+            self._validate_recursive_arguments(args)
+        elif inplace:
+            self._validate_inplace_arguments(args)
+        else:
+            self._validate_default_mode_arguments(args)
+
+    def _validate_recursive_arguments(self, args):
+        if len(args) != 1 or not os.path.isdir(args[0]):
             raise DataError('--recursive requires exactly one directory as argument.')
-        if not (inplace or recursive) and len(args) > 2:
+
+    def _validate_inplace_arguments(self, args):
+        if not all(os.path.isfile(path) for path in args):
+            raise DataError('Given input is not a file.')
+
+    def _validate_default_mode_arguments(self, args):
+        if len(args) not in (1, 2):
             raise DataError('Default mode requires 1 or 2 arguments.')
+        if not os.path.isfile(args[0]):
+            raise DataError('Given input is not a file.')
 
     def _validate_format(self, args, format, inplace, recursive, **others):
         if not format:

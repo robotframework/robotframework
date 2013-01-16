@@ -12,8 +12,8 @@ class TestArgumentValidation(unittest.TestCase):
         self._validate(format='invalid', error="Invalid format 'INVALID'.")
 
     def test_invalid_implicit_format(self):
-        self._validate(args=['x.txt', 'y.inv'], error="Invalid format 'INV'.")
-        self._validate(args=['x.txt', 'inv'], error="Invalid format ''.")
+        self._validate(args=[__file__, 'y.inv'], error="Invalid format 'INV'.")
+        self._validate(args=[__file__, 'inv'], error="Invalid format ''.")
 
     def test_invalid_space_count(self):
         error = '--spacecount must be an integer greater than 1.'
@@ -33,9 +33,9 @@ class TestArgumentValidation(unittest.TestCase):
                                    Stubbed().execute_cli, args)
 
     def test_default_mode_accepts_one_or_two_arguments(self):
-        self._validate(args=['1'])
-        self._validate(args=['1', '2.txt'])
-        self._validate(args=['1', '2', '3'],
+        self._validate(args=[__file__])
+        self._validate(args=[__file__, '2.txt'])
+        self._validate(args=[__file__, '2', '3'],
                        error='Default mode requires 1 or 2 arguments.')
 
     def test_recursive_accepts_only_one_argument(self):
@@ -44,7 +44,14 @@ class TestArgumentValidation(unittest.TestCase):
 
     def test_inplace_accepts_one_or_more_arguments(self):
         for count in range(1, 10):
-            self._validate(inplace=True, args=['a']*count)
+            self._validate(inplace=True, args=[__file__]*count)
+
+    def test_default_and_inplace_modes_requires_inputs_to_be_files(self):
+        error = 'Given input is not a file.'
+        self._validate(args=['.'], error=error)
+        self._validate(args=['non_existing.txt'], error=error)
+        self._validate(inplace=True, args=[__file__, '.'], error=error)
+        self._validate(inplace=True, args=[__file__, 'nonex.txt'], error=error)
 
     def test_recursive_requires_input_to_be_directory(self):
         self._validate(recursive=True,
@@ -61,7 +68,7 @@ class TestArgumentValidation(unittest.TestCase):
                        error="Invalid line separator 'invalid'.")
 
     def _validate(self, inplace=False, recursive=False, format=None,
-                  spacecount=None, lineseparator=None, args=['a_file.txt'],
+                  spacecount=None, lineseparator=None, args=[__file__],
                   error=None):
         opts = {'inplace': inplace, 'recursive': recursive, 'format': format,
                 'spacecount': spacecount, 'lineseparator': lineseparator}
