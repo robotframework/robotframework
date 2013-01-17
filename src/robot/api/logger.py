@@ -102,3 +102,4 @@ def console(msg, newline=True):
     if newline:
         msg += '\n'
     sys.__stdout__.write(msg)
+    sys.__stdout__.flush()
