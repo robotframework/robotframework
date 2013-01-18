@@ -7,10 +7,11 @@ Test data documentation tool (:prog:`testdoc`)
    :depth: 1
    :local:
 
-:prog:`testdoc` is tool for generating high level documentation of based on
-Robot Framework test data. The created documentation is in HTML format and it
-includes name, documentation and other metadata of ach test suite and test case,
-as well as the top-level keywords and their arguments.
+:prog:`testdoc` is tool for generating high level documentation based
+on Robot Framework test cases. The created documentation is in HTML
+format and it includes name, documentation and other metadata of each
+test suite and test case, as well as the top-level keywords and their
+arguments.
 
 :prog:`testdoc` is built-in into Robot Framework and automatically included
 in the installation starting from version 2.7. With earlier versions you
