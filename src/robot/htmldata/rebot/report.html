@@ -443,8 +443,8 @@ function popUpTo(list, upTo) {
 
 <script type="text/x-jquery-tmpl" id="tagOrTotalDetailsTemplate">
   <tr>
-      <th>Status:</th>
-      <td>${total} total, ${pass} passed, {{if fail}}<span class="fail">${fail} failed</span>{{else}}<span class="pass">0 failed</span>{{/if}}</td>
+    <th>Status:</th>
+    <td>${total} total, ${pass} passed, {{if fail}}<span class="fail">${fail} failed</span>{{else}}<span class="pass">0 failed</span>{{/if}}</td>
   </tr>
   {{if doc}}
   <tr>
@@ -514,16 +514,16 @@ function popUpTo(list, upTo) {
 <script type="text/x-jquery-tmpl" id="testDetailsTableTemplate">
   <table id="test_details">
     <thead>
-        <tr>
-          <th class="details_col_name">Name</th>
-          <th class="details_col_doc">Documentation</th>
-          <th class="details_col_tags">Tags</th>
-          <th class="details_col_crit narrow">Crit.</th>
-          <th class="details_col_status narrow">Status</th>
-          <th class="details_col_msg">Message</th>
-          <th class="details_col_elapsed">Elapsed</th>
-          <th class="details_col_times">Start / End</th>
-        </tr>
+      <tr>
+        <th class="details_col_name">Name</th>
+        <th class="details_col_doc">Documentation</th>
+        <th class="details_col_tags">Tags</th>
+        <th class="details_col_crit narrow">Crit.</th>
+        <th class="details_col_status narrow">Status</th>
+        <th class="details_col_msg">Message</th>
+        <th class="details_col_elapsed">Elapsed</th>
+        <th class="details_col_times">Start / End</th>
+      </tr>
     </thead>
     <tbody></tbody>
   </table>
@@ -533,12 +533,14 @@ function popUpTo(list, upTo) {
   {{if $item.logURL}}
   <tr onclick="location = '${$item.logURL}#${id}'" style="cursor: pointer">
     <td class="details_col_name">
-        <a href="${$item.logURL}#${id}"
-           title="{{html fullName}}"><span class="parent_name">{{html formatParentName}}</span>{{html name}}</a>
+      <a href="${$item.logURL}#${id}"
+         title="{{html fullName}}"><span class="parent_name">{{html formatParentName}}</span>{{html name}}</a>
     </td>
   {{else}}
   <tr>
-    <td class="details_col_name"><span class="parent_name">{{html formatParentName}}</span>{{html name}}</td>
+    <td class="details_col_name">
+        <span class="parent_name">{{html formatParentName}}</span>{{html name}}
+    </td>
   {{/if}}
     <td class="details_col_doc doc">{{html doc()}}</td>
     <td class="details_col_tags">{{html tags.join(', ')}}</td>
