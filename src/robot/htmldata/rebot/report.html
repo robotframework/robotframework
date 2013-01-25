@@ -336,16 +336,15 @@ function popUpTo(list, upTo) {
 
 <script type="text/x-jquery-tmpl" id="tagStatisticsRowTemplate">
   <tr onclick="tagDetailSelected('${label}');" class="row-${$item.index}">
-    <td class="stats_col_name">
+    <td class="stats_col_name" title="${doc}">
       <div class="stat_name">
-        <a href="#tag_${label}"
-           title="{{html doc}}">{{html label}}</a>
+        <a href="#tag_${label}">{{html label}}</a>
         {{if info}}(${info}){{/if}}
       </div>
       <div class="tag_links">
         {{each links}}
-        <span>[<a href="{{html $value.url}}" onclick="stopPropagation(event);"
-                  title="{{html $value.url}}">{{html $value.title}}</a>]</span>
+        <span>[<a href="${$value.url}" onclick="stopPropagation(event);"
+                  title="${$value.url}">{{html $value.title}}</a>]</span>
         {{/each}}
       </div>
     </td>
@@ -355,10 +354,9 @@ function popUpTo(list, upTo) {
 
 <script type="text/x-jquery-tmpl" id="suiteStatisticsRowTemplate">
   <tr onclick="suiteDetailSelected('${id}');" class="row-${$item.index}">
-    <td class="stats_col_name">
+    <td class="stats_col_name" title="${label}">
       <div class="stat_name">
-        <a href="#suite_${id}"
-           title="{{html label}}"><span class="parent_name">{{html formatParentName}}</span>{{html name}}</a>
+        <a href="#suite_${id}"><span class="parent_name">{{html formatParentName}}</span>{{html name}}</a>
       </div>
     </td>
     {{tmpl($data) 'stat_columns'}}
@@ -461,8 +459,8 @@ function popUpTo(list, upTo) {
   {{if links}}{{if links.length}}
   <tr>
     <th>Links:</th>
-    <td>{{each links}}<a href="{{html $value.url}}"
-                         title="{{html $value.url}}">{{html $value.title}}</a> &nbsp; {{/each}}</td>
+    <td>{{each links}}<a href="${$value.url}"
+                         title="${$value.url}">{{html $value.title}}</a> &nbsp; {{/each}}</td>
   </tr>
   {{/if}}{{/if}}
   <tr>
@@ -506,7 +504,7 @@ function popUpTo(list, upTo) {
   <tr>
     <th>Log File:</th>
     <td><a href="${$item.logURL}#${id}"
-           title="{{html fullName}}">${$item.logURL}#${id}</a></td>
+           title="${fullName}">${$item.logURL}#${id}</a></td>
   </tr>
   {{/if}}
 </script>
@@ -531,13 +529,12 @@ function popUpTo(list, upTo) {
 
 <script type="text/x-jquery-tmpl" id="testDetailsTableRowTemplate">
   {{if $item.logURL}}
-  <tr onclick="location = '${$item.logURL}#${id}'" style="cursor: pointer">
+  <tr onclick="location = '${$item.logURL}#${id}'" style="cursor: pointer" title="${fullName}">
     <td class="details_col_name">
-      <a href="${$item.logURL}#${id}"
-         title="{{html fullName}}"><span class="parent_name">{{html formatParentName}}</span>{{html name}}</a>
+      <a href="${$item.logURL}#${id}"><span class="parent_name">{{html formatParentName}}</span>{{html name}}</a>
     </td>
   {{else}}
-  <tr>
+  <tr title="${fullName}">
     <td class="details_col_name">
         <span class="parent_name">{{html formatParentName}}</span>{{html name}}
     </td>

@@ -61,10 +61,11 @@ Multi-line failure
     First failure
     Second failure\nhas multiple\nlines
 
-Escape JS </script>
+Escape JS </script> " http://url.com
     [Documentation]    </script>
     [Tags]    </script>
     Log    </script>
+    kw http://url.com
     </script>
 
 *** Keywords **
@@ -73,3 +74,6 @@ User Kw
 
 </script>
     Fail    </script>
+
+kw http://url.com
+    No Operation

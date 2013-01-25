@@ -138,15 +138,15 @@ function addTestExecutionLog(main) {
 
 <script type="text/x-jquery-tmpl" id="tagStatisticsRowTemplate">
   <tr class="row-${$item.index}">
-    <td class="stats_col_name">
+    <td class="stats_col_name" title="${doc}">
       <div class="stat_name">
-        <span title="{{html doc}}">{{html label}}</span>
+        <span>{{html label}}</span>
         {{if info}}(${info}){{/if}}
       </div>
       <div class="tag_links">
         {{each links}}
-        <span>[<a href="{{html $value.url}}"
-                  title="{{html $value.url}}">{{html $value.title}}</a>]</span>
+        <span>[<a href="${$value.url}"
+                  title="${$value.url}">{{html $value.title}}</a>]</span>
         {{/each}}
       </div>
     </td>
@@ -156,10 +156,9 @@ function addTestExecutionLog(main) {
 
 <script type="text/x-jquery-tmpl" id="suiteStatisticsRowTemplate">
   <tr onclick="makeElementVisible('${id}')" class="row-${$item.index}">
-    <td class="stats_col_name">
+    <td class="stats_col_name" title="${label}">
       <div class="stat_name">
-        <a title="{{html label}}"
-           href="#${id}"><span class="parent_name">{{html formatParentName}}</span>{{html name}}</a>
+        <a href="#${id}"><span class="parent_name">{{html formatParentName}}</span>{{html name}}</a>
       </div>
     </td>
     {{tmpl($data) 'stat_columns'}}
@@ -189,7 +188,7 @@ function addTestExecutionLog(main) {
 <script type="text/x-jquery-tmpl" id="suiteTemplate">
   <div id="${id}" class="suite">
     <div id="${id}_elementheader" class="elementheader"
-         onclick="toggleSuite('${id}');" title="{{html fullName}}">
+         onclick="toggleSuite('${id}');" title="${fullName}">
       <div id="${id}_foldingbutton" class="foldingbutton">+</div>
       <span class="${status.toLowerCase()}">TEST&nbsp;SUITE:</span>
       <span class="name">{{html name}}</span>
@@ -218,7 +217,7 @@ function addTestExecutionLog(main) {
         <tr>
           <th>Source:</th>
           {{if relativeSource}}
-          <td><a href="{{html relativeSource}}">{{html source}}</a></td>
+          <td><a href="${relativeSource}">{{html source}}</a></td>
           {{else}}
           <td>{{html source}}</td>
           {{/if}}
@@ -245,7 +244,7 @@ function addTestExecutionLog(main) {
 <script type="text/x-jquery-tmpl" id="testTemplate">
   <div id="${id}" class="test">
     <div id="${id}_elementheader" onclick="toggleTest('${id}');"
-         class="elementheader" title="{{html fullName}}">
+         class="elementheader" title="${fullName}">
       <div id="${id}_foldingbutton" class="foldingbutton">+</div>
       <span class="${status.toLowerCase()}">TEST&nbsp;CASE: </span>
       <span class="name">{{html name}}</span>
@@ -299,7 +298,7 @@ function addTestExecutionLog(main) {
 <script type="text/x-jquery-tmpl" id="keywordTemplate">
   <div id="${id}" class="keyword">
     <div id="${id}_elementheader" class="elementheader"
-         onclick="toggleKeyword('${id}');" title="{{html name}}">
+         onclick="toggleKeyword('${id}');" title="${name}">
       <div id="${id}_foldingbutton" class="foldingbutton">+</div>
       <span class="${status.toLowerCase()}">${type}: </span>
       <span class="name">{{html name}}</span>
