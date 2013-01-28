@@ -99,6 +99,10 @@ class TestUrlsToLinks(unittest.TestCase):
                  '"<a href="gopher://3.0">gopher://3.0</a>"')]:
             assert_escape_and_format(inp, exp)
 
+    def test_pipe_ends_url(self):
+        assert_escape_and_format('|http://link|title|',
+                                 '|<a href="http://link">http://link</a>|title|')
+
     def test_image_urls(self):
         link = '(<a href="%s">%s</a>)'
         img = '(<img src="%s" title="%s">)'

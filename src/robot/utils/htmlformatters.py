@@ -24,18 +24,19 @@ class LinkFormatter(object):
     # http://daringfireball.net/2010/07/improved_regex_for_matching_urls
     # Main differences compared to the original:
     # - Protocol is required and it must contain ://
+    # - Pipe (|) always ends URL
     _url = re.compile(ur'''
 \b
 (                           # Capture 1: entire matched URL
   [a-z][\w-]+://                # URL protocol and ://
   (?:                           # One or more:
-    [^\s()]+                        # Run of non-space, non-()
+    [^\s()|]+                       # Run of non-space, non-()|
     |                               #   or
     \((?:[^\s()]+|\([^\s()]+\))*\)  # balanced parens, up to 2 levels
   )+
   (?:                           # End with:
                                     # not a space or one of these punct chars
-    [^\s`!()\[\]{};:'".,?\xab\xbb\u201c\u201d\u2018\u2019]
+    [^\s`|!()\[\]{};:'".,?\xab\xbb\u201c\u201d\u2018\u2019]
     |                               #   or
     \((?:[^\s()]+|\([^\s()]+\))*\)  # balanced parens, up to 2 levels
   )
