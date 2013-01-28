@@ -29,14 +29,15 @@ class LinkFormatter(object):
 (                           # Capture 1: entire matched URL
   [a-z][\w-]+://                # URL protocol and ://
   (?:                           # One or more:
-    [^\s()<>]+                      # Run of non-space, non-()<>
+    [^\s()]+                        # Run of non-space, non-()
     |                               #   or
-    \(([^\s()<>]+|(\([^\s()<>]+\)))*\)  # balanced parens, up to 2 levels
+    \((?:[^\s()]+|\([^\s()]+\))*\)  # balanced parens, up to 2 levels
   )+
   (?:                           # End with:
-    \(([^\s()<>]+|(\([^\s()<>]+\)))*\)  # balanced parens, up to 2 levels
-    |                                   #   or
-    [^\s`!()\[\]{};:'".,<>?\xab\xbb\u201c\u201d\u2018\u2019]        # not a space or one of these punct chars
+                                    # not a space or one of these punct chars
+    [^\s`!()\[\]{};:'".,?\xab\xbb\u201c\u201d\u2018\u2019]
+    |                               #   or
+    \((?:[^\s()]+|\([^\s()]+\))*\)  # balanced parens, up to 2 levels
   )
 )''', re.VERBOSE|re.IGNORECASE)
 
