@@ -20,27 +20,11 @@ from itertools import cycle
 class LinkFormatter(object):
     _image_exts = ('.jpg', '.jpeg', '.png', '.gif', '.bmp')
     _link = re.compile('\[(.+?\|.*?)\]')
-    # Based on public domain URL matching regexp available and explained at
-    # http://daringfireball.net/2010/07/improved_regex_for_matching_urls
-    # Main differences compared to the original:
-    # - Protocol is required and it must contain ://
-    # - Pipe (|) always ends URL
-    _url = re.compile(ur'''
-\b
-(                           # Capture 1: entire matched URL
-  [a-z][\w-]+://                # URL protocol and ://
-  (?:                           # One or more:
-    [^\s()|]+                       # Run of non-space, non-()|
-    |                               #   or
-    \((?:[^\s()]+|\([^\s()]+\))*\)  # balanced parens, up to 2 levels
-  )+
-  (?:                           # End with:
-                                    # not a space or one of these punct chars
-    [^\s`|!()\[\]{};:'".,?\xab\xbb\u201c\u201d\u2018\u2019]
-    |                               #   or
-    \((?:[^\s()]+|\([^\s()]+\))*\)  # balanced parens, up to 2 levels
-  )
-)''', re.VERBOSE|re.IGNORECASE)
+    _url = re.compile('''
+((^|\ ) ["'\(\[]*)           # begin of line or space and opt. any char "'([
+([a-z][\w+-.]*://[^\s|]+?)   # url
+(?=[\]\)|"'.,!?:;]* ($|\ ))   # opt. any char ])"'.,!?:; and end of line or space
+''', re.VERBOSE|re.MULTILINE|re.IGNORECASE)
 
     def format_url(self, text):
         return self._format_url(text, format_as_image=False)
@@ -51,10 +35,11 @@ class LinkFormatter(object):
         return self._url.sub(partial(self._replace_url, format_as_image), text)
 
     def _replace_url(self, format_as_image, match):
-        url = match.group(1)
+        pre = match.group(1)
+        url = match.group(3)
         if format_as_image and self._is_image(url):
-            return self._get_image(url)
-        return self._get_link(url)
+            return pre + self._get_image(url)
+        return pre + self._get_link(url)
 
     def _get_image(self, src, title=None):
         return '<img src="%s" title="%s">' \

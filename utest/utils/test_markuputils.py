@@ -82,13 +82,12 @@ class TestUrlsToLinks(unittest.TestCase):
                 ('hello http://link world',
                  'hello <a href="http://link">http://link</a> world'),
                 ('multi\nhttp://link\nline',
-                 'multi\n<a href="http://link">http://link</a>\n'
-                 'line'),
+                 'multi\n<a href="http://link">http://link</a>\nline'),
                 ('http://link, ftp://link2.',
                  '<a href="http://link">http://link</a>, '
                  '<a href="ftp://link2">ftp://link2</a>.'),
-                ('x (http://yy, z)',
-                 'x (<a href="http://yy">http://yy</a>, z)'),
+                ('x (git+ssh://yy, z)',
+                 'x (<a href="git+ssh://yy">git+ssh://yy</a>, z)'),
                 ('(http://x.com/blah_(wikipedia)#cite-1)',
                  '(<a href="http://x.com/blah_(wikipedia)#cite-1">http://x.com/blah_(wikipedia)#cite-1</a>)'),
                 ('x-yojimbo-item://6303,E4C1,6A6E, FOO',
@@ -98,10 +97,6 @@ class TestUrlsToLinks(unittest.TestCase):
                  '<a href="ftp://kaksi/">ftp://kaksi/</a>; '
                  '"<a href="gopher://3.0">gopher://3.0</a>"')]:
             assert_escape_and_format(inp, exp)
-
-    def test_pipe_ends_url(self):
-        assert_escape_and_format('|http://link|title|',
-                                 '|<a href="http://link">http://link</a>|title|')
 
     def test_image_urls(self):
         link = '(<a href="%s">%s</a>)'
