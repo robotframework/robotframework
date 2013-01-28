@@ -242,7 +242,10 @@ class TestTime(unittest.TestCase):
             parsed = parse_time(input)
             assert_true(expected <= parsed <= expected + 1),
             parsed = parse_time(input.upper().replace('NOW', 'UtC'))
-            expected += time.altzone
+            if time.localtime().tm_isdst:
+                expected += time.altzone
+            else:
+                expected += time.timezone
             assert_true(expected <= parsed <= expected + 1),
 
     def test_parse_modified_time_with_invalid_times(self):

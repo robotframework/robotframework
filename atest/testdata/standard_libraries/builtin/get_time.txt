@@ -63,7 +63,7 @@ Invalid Time Does Not Cause Un-Catchable Failure
 When Time Is UTC
     ${utc} =  Get Time  epoch  UTC
     ${now} =  Get Time  epoch  NOW
-    ${zone} =  Evaluate  time.altzone  modules=time
+    ${zone} =  Get Correct Time Zone
     Should Be True  ${now} <= ${utc} - ${zone} <= ${now} + 1
 
 When Time Is UTC +- Something
