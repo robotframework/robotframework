@@ -12,8 +12,8 @@ class TestHtmlMessage(unittest.TestCase):
 
     def test_no_html(self):
         assert_equal(Message('Hello, Kitty!').html_message, 'Hello, Kitty!')
-        assert_equal(Message('<b> & ftp://x').html_message,
-                             '&lt;b&gt; &amp; <a href="ftp://x">ftp://x</a>')
+        assert_equal(Message('<b> & ftp://url').html_message,
+                             '&lt;b&gt; &amp; <a href="ftp://url">ftp://url</a>')
 
     def test_html(self):
         assert_equal(Message('Hello, Kitty!', html=True).html_message, 'Hello, Kitty!')
