@@ -61,14 +61,14 @@ class TestEntities(unittest.TestCase):
 
 class TestUrlsToLinks(unittest.TestCase):
 
-    def test_not_links(self):
-        for nolink in ['http no link', 'http:/no', 'xx://no',
-                       'tooolong10://no', 'http://', 'http:// no']:
-            assert_escape_and_format(nolink)
+    def test_not_urls(self):
+        for no_url in ['http no link', 'http:/no', '123://no',
+                       '1a://no', 'http://', 'http:// no']:
+            assert_escape_and_format(no_url)
 
-    def test_simple_links(self):
+    def test_simple_urls(self):
         for link in ['http://robot.fi', 'https://r.fi/', 'FTP://x.y.z/p/f.txt',
-                     '123456://link', 'file:///c:/temp/xxx.yyy']:
+                     'a23456://link', 'file:///c:/temp/xxx.yyy']:
             exp = '<a href="%s">%s</a>' % (link, link)
             assert_escape_and_format(link, exp)
             for end in [',', '.', ';', ':', '!', '?', '...', '!?!', ' hello' ]:
@@ -77,7 +77,7 @@ class TestUrlsToLinks(unittest.TestCase):
             for start, end in [('(',')'), ('[',']'), ('"','"'), ("'","'")]:
                 assert_escape_and_format(start+link+end, start+exp+end)
 
-    def test_complex_links(self):
+    def test_complex_urls_and_surrounding_content(self):
         for inp, exp in [
                 ('hello http://link world',
                  'hello <a href="http://link">http://link</a> world'),
@@ -87,15 +87,19 @@ class TestUrlsToLinks(unittest.TestCase):
                 ('http://link, ftp://link2.',
                  '<a href="http://link">http://link</a>, '
                  '<a href="ftp://link2">ftp://link2</a>.'),
-                ('x (http://y, z)',
-                 'x (<a href="http://y">http://y</a>, z)'),
+                ('x (http://yy, z)',
+                 'x (<a href="http://yy">http://yy</a>, z)'),
+                ('(http://x.com/blah_(wikipedia)#cite-1)',
+                 '(<a href="http://x.com/blah_(wikipedia)#cite-1">http://x.com/blah_(wikipedia)#cite-1</a>)'),
+                ('x-yojimbo-item://6303,E4C1,6A6E, FOO',
+                 '<a href="x-yojimbo-item://6303,E4C1,6A6E">x-yojimbo-item://6303,E4C1,6A6E</a>, FOO'),
                 ('Hello http://one, ftp://kaksi/; "gopher://3.0"',
                  'Hello <a href="http://one">http://one</a>, '
                  '<a href="ftp://kaksi/">ftp://kaksi/</a>; '
                  '"<a href="gopher://3.0">gopher://3.0</a>"')]:
             assert_escape_and_format(inp, exp)
 
-    def test_image_links(self):
+    def test_image_urls(self):
         link = '(<a href="%s">%s</a>)'
         img = '(<img src="%s" title="%s">)'
         for ext in ['jpg', 'jpeg', 'png', 'gif', 'bmp']:
@@ -106,7 +110,7 @@ class TestUrlsToLinks(unittest.TestCase):
             assert_escape_and_format(inp.upper(), link % (uprl, uprl),
                                     img % (uprl, uprl))
 
-    def test_link_with_chars_needed_escaping(self):
+    def test_url_with_chars_needing_escaping(self):
         for items in [
             ('http://foo"bar',
              '<a href="http://foo&quot;bar">http://foo"bar</a>'),
@@ -309,9 +313,9 @@ class TestHtmlFormatCustomLinks(unittest.TestCase):
                       'middle <a href="link.html">title</a> end', p=True)
 
     def test_multiple_links_and_urls(self):
-        assert_format('[L|T]ftp://u[X|Y][http://u]',
-                      '<a href="L">T</a><a href="ftp://u">ftp://u</a>'
-                      '<a href="X">Y</a>[<a href="http://u">http://u</a>]', p=True)
+        assert_format('[L|T]ftp://url[X|Y][http://u2]',
+                      '<a href="L">T</a><a href="ftp://url">ftp://url</a>'
+                      '<a href="X">Y</a>[<a href="http://u2">http://u2</a>]', p=True)
 
     def test_escaping(self):
         assert_format('["|<&>]', '<a href="&quot;">&lt;&amp;&gt;</a>', p=True)
@@ -474,8 +478,10 @@ after
 | 1 | http://one |
 | 2 | ftp://two/ |
 '''
-        exp = _format_table([['1','<a href="http://one">http://one</a>'],
-                             ['2','<a href="ftp://two/">ftp://two/</a>']])
+        exp = _format_table([['1','FIRST'],
+                             ['2','SECOND']]) \
+            .replace('FIRST', '<a href="http://one">http://one</a>') \
+            .replace('SECOND', '<a href="ftp://two/">ftp://two/</a>')
         assert_format(inp, exp)
 
 
