@@ -334,6 +334,13 @@ different Windows versions, but the basic approach should still be the same.
 
   4. Start a new command prompt for the changes to take effect.
 
+.. note:: Do not add quotes around directories you add into :var:`PATH`.
+          For example, never use :path:`"C:\\Python27\\Scripts"`.
+          Quotes `can cause problems with Python programs`__ and they are not
+          needed even if the directory path contains spaces.
+
+__ http://bugs.python.org/issue17023
+
 Setting :var:`PATH` on UNIX-like systems
 ````````````````````````````````````````
 
