@@ -19,7 +19,4 @@ def get_timestamp_from_date(*args):
     return int(time.mktime(datetime.datetime(*(int(arg) for arg in args)).timetuple()))
 
 def get_correct_time_zone():
-    if time.localtime().tm_isdst:
-        return time.altzone
-    else:
-        return time.timezone
+    return time.altzone if time.localtime().tm_isdst else time.timezone

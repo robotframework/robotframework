@@ -284,10 +284,8 @@ def _parse_time_now_and_utc_base(base):
     if base == 'now':
         return now
     if base == 'utc':
-        if time.localtime().tm_isdst:
-            return now + time.altzone
-        else:
-            return now + time.timezone
+        zone = time.altzone if time.localtime().tm_isdst else time.timezone
+        return now + zone
     return None
 
 def _parse_time_now_and_utc_extra(extra):
