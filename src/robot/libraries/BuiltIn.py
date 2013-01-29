@@ -1961,13 +1961,28 @@ class _Misc:
         return [re.escape(p) for p in patterns]
 
     def set_test_message(self, message, append=False):
-        """Sets message for for the current test.
+        """Sets message for the current test case.
 
-        This is overridden by possible failure message, except when this keyword
-        is used in test case teardown. In test case teardown this overrides
-        messages even for failed tests.
+        If this keyword is used outside a test teardown, the message is
+        overridden by possible failure message. If this is used in teardown,
+        possible earlier failure message is overridden. Failures in teardown
+        are always shown in addition to this message.
 
-        This keyword can not be used in suite setup or suite teardown.
+        If the optional `append` argument is given any value considered `true`
+        in Python, for example, any non-empty string, the given `message` is
+        added after the possible earlier message by joining the messages with
+        a space.
+
+        In teardown the current test message is available as a built-in variable
+        `${TEST MESSAGE}`. This keyword can not be used in suite setup or
+        or suite teardown.
+
+        Examples:
+        | Set Test Message | My message      |            |
+        | Set Test Message | is continued.   | append=yes |
+        | Should Be Equal  | ${TEST MESSAGE} | My message is continued. |
+
+        New in Robot Framework 2.5. Support for `append` was added in 2.7.7.
         """
         test = self._namespace.test
         if not test:
@@ -1982,13 +1997,17 @@ class _Misc:
         return '%s %s' % (initial, new) if append and initial else new
 
     def set_test_documentation(self, doc, append=False):
-        """Sets documentation for for the current test.
+        """Sets documentation for the current test case.
 
-        The current documentation is available from built-in variable
+        By default the possible existing documentation is overwritten, but
+        this can be changed using the optional `append` argument similarly
+        as with `Set Test Message` keyword.
+
+        The current test documentation is available as a built-in variable
         `${TEST DOCUMENTATION}`. This keyword can not be used in suite
         setup or suite teardown.
 
-        New in Robot Framework 2.7.
+        New in Robot Framework 2.7. Support for `append` was added in 2.7.7.
         """
         test = self._namespace.test
         if not test:
@@ -1999,12 +2018,16 @@ class _Misc:
         self.log('Set test documentation to:\n%s' % test.doc)
 
     def set_suite_documentation(self, doc, append=False):
-        """Sets documentation for the current suite.
+        """Sets documentation for the current test suite.
 
-        The current documentation is available in built-in variable
+        By default the possible existing documentation is overwritten, but
+        this can be changed using the optional `append` argument similarly
+        as with `Set Test Message` keyword.
+
+        The current suite documentation is available as a built-in variable
         `${SUITE DOCUMENTATION}`.
 
-        New in Robot Framework 2.7.
+        New in Robot Framework 2.7. Support for `append` was added in 2.7.7.
         """
         suite = self._namespace.suite
         suite.doc = self._get_possibly_appended_value(suite.doc, doc, append)
@@ -2012,13 +2035,17 @@ class _Misc:
         self.log('Set suite documentation to:\n%s' % suite.doc)
 
     def set_suite_metadata(self, name, value, append=False):
-        """Sets metadata for the current suite.
+        """Sets metadata for the current test suite.
 
-        The current metadata is available as a Python dictionary in built-in
-        variable `${SUITE METADATA}`. Notice that modifying that variable
-        directly has no effect on the actual metadata the suite has.
+        By default possible existing metadata values are overwritten, but
+        this can be changed using the optional `append` argument similarly
+        as with `Set Test Message` keyword.
 
-        New in Robot Framework 2.7.4.
+        The current metadata is available as a built-in variable
+        `${SUITE METADATA}` in a Python dictionary. Notice that modifying this
+        variable directly has no effect on the actual metadata the suite has.
+
+        New in Robot Framework 2.7.4. Support for `append` was added in 2.7.7.
         """
         if not isinstance(name, unicode):
             name = utils.unic(name)
@@ -2037,7 +2064,7 @@ class _Misc:
         that suite, recursively, gets the given tags. It is a failure
         to use this keyword in a suite teardown.
 
-        The current test tags are available from built in variable @{TEST TAGS}.
+        The current tags are available as a built-in variable `@{TEST TAGS}`.
 
         See `Remove Tags` if you want to remove certain tags and `Fail` if
         you want to fail the test case after setting and/or removing tags.
@@ -2057,7 +2084,7 @@ class _Misc:
         This keyword can affect either one test case or all test cases in a
         test suite similarly as `Set Tags` keyword.
 
-        The current test tags are available from built in variable @{TEST TAGS}.
+        The current tags are available as a built-in variable `@{TEST TAGS}`.
 
         Example:
         | Remove Tags | mytag | something-* | ?ython |
