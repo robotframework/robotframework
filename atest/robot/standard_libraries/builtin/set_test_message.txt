@@ -11,6 +11,11 @@ Set Message To Successful Test
 Reset Message
     Check Test Case  ${TEST NAME}  PASS  My Real Test Message
 
+Append To Message
+    ${tc} =  Check Test Case  ${TEST NAME}  PASS  My message is continued
+    Check Log Message  ${tc.kws[0].msgs[0]}  Set test message to:\nMy message
+    Check Log Message  ${tc.kws[1].msgs[0]}  Set test message to:\nMy message is continued
+
 Set Non-ASCII Message
     ${tc} =  Check Test Case  ${TEST NAME}  PASS  Hyvää yötä
     Check Log Message  ${tc.kws[0].msgs[0]}  Set test message to:\nHyvää yötä

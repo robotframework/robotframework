@@ -22,6 +22,23 @@ Names are case and space insensitive
     Check log message    ${tc.kws[1].msgs[0]}
     ...    Set suite metadata 'MYname' to value 'final value'.
 
+Append to value
+    Metadata should have value    To Append    Original is continued \n\ntwice!
+    ${tc} =    Check test case    ${TESTNAME}
+    Check log message    ${tc.kws[0].msgs[0]}
+    ...    Set suite metadata 'To Append' to value 'Original'.
+    Check log message    ${tc.kws[2].msgs[0]}
+    ...    Set suite metadata 'toappend' to value 'Original is continued'.
+    Check log message    ${tc.kws[4].msgs[0]}
+    ...    Set suite metadata 'TOAPPEND' to value 'Original is continued \n\ntwice!'.
+
+Non-ASCII and non-string names and values
+    ${tc} =    Check test case    ${TESTNAME}
+    Check log message    ${tc.kws[0].msgs[0]}
+    ...    Set suite metadata '42' to value '1'.
+    Check log message    ${tc.kws[2].msgs[0]}
+    ...    Set suite metadata '42' to value '1 päivä'.
+
 Modifying ${SUITE METADATA} has no effect also after setting metadata
     Check test case    ${TESTNAME}
     Metadata should have value    Cannot be   set otherwise

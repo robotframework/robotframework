@@ -8,6 +8,11 @@ Reset Message
     Set Test Message  My Real Test Message
     [Teardown]  Should Be Equal  ${TEST MESSAGE}  My Real Test Message
 
+Append To Message
+    Set Test Message  My message    append please
+    Set Test Message  is continued    append=please
+    [Teardown]  Should Be Equal  ${TEST MESSAGE}  My message is continued
+
 Set Non-ASCII Message
     Set Test Message  Hyvää yötä
     [Teardown]  Should Be Equal  ${TEST MESSAGE}  Hyvää yötä

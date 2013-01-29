@@ -1960,7 +1960,7 @@ class _Misc:
             return re.escape(patterns[0])
         return [re.escape(p) for p in patterns]
 
-    def set_test_message(self, message):
+    def set_test_message(self, message, append=False):
         """Sets message for for the current test.
 
         This is overridden by possible failure message, except when this keyword
@@ -1969,16 +1969,19 @@ class _Misc:
 
         This keyword can not be used in suite setup or suite teardown.
         """
-        if not isinstance(message, unicode):
-            message = utils.unic(message)
         test = self._namespace.test
         if not test:
             raise RuntimeError("'Set Test Message' keyword cannot be used in "
                                "suite setup or teardown")
-        test.message = message
-        self.log('Set test message to:\n%s' % message)
+        test.message = self._get_possibly_appended_value(test.message, message, append)
+        self.log('Set test message to:\n%s' % test.message)
 
-    def set_test_documentation(self, doc):
+    def _get_possibly_appended_value(self, initial, new, append):
+        if not isinstance(new, unicode):
+            new = utils.unic(new)
+        return '%s %s' % (initial, new) if append and initial else new
+
+    def set_test_documentation(self, doc, append=False):
         """Sets documentation for for the current test.
 
         The current documentation is available from built-in variable
@@ -1987,17 +1990,15 @@ class _Misc:
 
         New in Robot Framework 2.7.
         """
-        if not isinstance(doc, unicode):
-            doc = utils.unic(doc)
         test = self._namespace.test
         if not test:
             raise RuntimeError("'Set Test Documentation' keyword cannot be used in "
                                "suite setup or teardown")
-        test.doc = doc
+        test.doc = self._get_possibly_appended_value(test.doc, doc, append)
         self._variables.set_test('${TEST_DOCUMENTATION}', test.doc)
-        self.log('Set test documentation to:\n%s' % doc)
+        self.log('Set test documentation to:\n%s' % test.doc)
 
-    def set_suite_documentation(self, doc):
+    def set_suite_documentation(self, doc, append=False):
         """Sets documentation for the current suite.
 
         The current documentation is available in built-in variable
@@ -2005,14 +2006,12 @@ class _Misc:
 
         New in Robot Framework 2.7.
         """
-        if not isinstance(doc, unicode):
-            doc = utils.unic(doc)
         suite = self._namespace.suite
-        suite.doc = doc
+        suite.doc = self._get_possibly_appended_value(suite.doc, doc, append)
         self._variables.set_suite('${SUITE_DOCUMENTATION}', suite.doc)
-        self.log('Set suite documentation to:\n%s' % doc)
+        self.log('Set suite documentation to:\n%s' % suite.doc)
 
-    def set_suite_metadata(self, name, value):
+    def set_suite_metadata(self, name, value, append=False):
         """Sets metadata for the current suite.
 
         The current metadata is available as a Python dictionary in built-in
@@ -2021,10 +2020,12 @@ class _Misc:
 
         New in Robot Framework 2.7.4.
         """
+        if not isinstance(name, unicode):
+            name = utils.unic(name)
         metadata = self._namespace.suite.metadata
-        metadata[name] = value
+        metadata[name] = self._get_possibly_appended_value(metadata.get(name, ''), value, append)
         self._variables.set_suite('${SUITE_METADATA}', metadata.copy())
-        self.log("Set suite metadata '%s' to value '%s'." % (name, value))
+        self.log("Set suite metadata '%s' to value '%s'." % (name, metadata[name]))
 
     def set_tags(self, *tags):
         """Adds given `tags` for the current test or all tests in a suite.

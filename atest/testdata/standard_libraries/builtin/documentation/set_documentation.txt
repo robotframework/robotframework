@@ -11,6 +11,13 @@ Replace test documentation
    Set test documentation      New doc
    Should be equal        ${TEST DOCUMENTATION}      New doc
 
+Append to test documentation
+   [Documentation]         Original doc
+   Set test documentation      is continued    append please
+   Should be equal        ${TEST DOCUMENTATION}      Original doc is continued
+   Set test documentation      \n\ntwice!    append=yep
+   Should be equal        ${TEST DOCUMENTATION}      Original doc is continued \n\ntwice!
+
 Set suite documentation
    Set suite documentation     New suite doc
    Should be equal        ${SUITE DOCUMENTATION}      New suite doc
@@ -18,3 +25,11 @@ Set suite documentation
 Set suite documentation 2
    Should be equal        ${SUITE DOCUMENTATION}      New suite doc
 
+Append to suite documentation
+   Set suite documentation      is continued    append please
+   Should be equal        ${SUITE DOCUMENTATION}      New suite doc is continued
+   Set suite documentation      \n\ntwice!    append=yep
+   Should be equal        ${SUITE DOCUMENTATION}      New suite doc is continued \n\ntwice!
+
+Append to suite documentation 2
+   Should be equal        ${SUITE DOCUMENTATION}      New suite doc is continued \n\ntwice!
