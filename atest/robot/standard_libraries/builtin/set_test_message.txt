@@ -34,10 +34,16 @@ Setting Message In Test Body After Continuable Failure Has No Effect
 Setting Message In Teardown After Continuable Failure Works
     Check Test Case  ${TEST NAME}
 
-Set Message and Fail On Teardown
+Set Message In Body and Fail In Teardown
     Check Test Case  ${TEST NAME}
 
-Set Message On Setup
+Set Message In Teardown And Fail Afterwards
+    Check Test Case  ${TEST NAME}
+
+Fail In Teardown And Set Message Afterwards
+    Check Test Case  ${TEST NAME}
+
+Set Message In Setup
     Check Test Case  ${TEST NAME}  PASS  Message set in setup
 
 Check Message From Previous Test
