@@ -25,6 +25,10 @@ class ExecutionContexts(object):
     def current(self):
         return self._contexts[-1] if self._contexts else None
 
+    @property
+    def top(self):
+        return self._contexts[0] if self._contexts else None
+
     def __iter__(self):
         return iter(self._contexts)
 

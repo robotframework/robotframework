@@ -26,6 +26,11 @@ Append to value
     Set Suite Metadata    TOAPPEND    \n\ntwice!    append=please
     Metadata variable should have value    To Append    Original is continued \n\ntwice!
 
+Set top-level suite metadata
+    Set Suite Metadata    New metadata    Metadata for    top=yes
+    Set Suite Metadata    newmetadata    top level suite    append    top
+    Metadata variable should have value    New metadata    Set in test
+
 Non-ASCII and non-string names and values
     Set Suite Metadata    ${42}    ${1}
     Metadata variable should have value    42    1

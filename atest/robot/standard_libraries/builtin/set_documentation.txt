@@ -26,10 +26,15 @@ Set suite documentation
 Append to suite documentation
     ${tc} =    Check Test Case    ${TESTNAME}
     Check Log Message    ${tc.kws[0].msgs[0]}    Set suite documentation to:\nNew suite doc is continued
-    Check Log Message    ${tc.kws[2].msgs[0]}    Set suite documentation to:\nNew suite doc is continued \n\ntwice!
-    Check Test Case    ${TESTNAME} 2
+    ${tc} =    Check Test Case    ${TESTNAME} 2
+    Check Log Message    ${tc.kws[1].msgs[0]}    Set suite documentation to:\nNew suite doc is continued \n\ntwice!
     Should Be Equal    ${SUITE.suites[0].doc}    New suite doc is continued \n\ntwice!
 
 Set init file suite docs
-    Should Be Equal     ${SUITE.doc}    Init file docs concatenated
-    Check Log Message    ${SUITE.setup.msgs[0]}    Set suite documentation to:\nInit file docs concatenated
+    Should Be Equal     ${SUITE.doc}    Init file doc. Concatenated in setup. Appended in test.
+    Check Log Message    ${SUITE.setup.msgs[0]}    Set suite documentation to:\nInit file doc. Concatenated in setup.
+
+Set top level suite documentation
+    ${tc} =    Check Test Case    ${TESTNAME}
+    Check Log Message    ${tc.kws[0].msgs[0]}    Set suite documentation to:\nInit file doc. Concatenated in setup. Appended in test.
+

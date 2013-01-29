@@ -2017,41 +2017,55 @@ class _Misc:
         self._variables.set_test('${TEST_DOCUMENTATION}', test.doc)
         self.log('Set test documentation to:\n%s' % test.doc)
 
-    def set_suite_documentation(self, doc, append=False):
+    def set_suite_documentation(self, doc, append=False, top=False):
         """Sets documentation for the current test suite.
 
         By default the possible existing documentation is overwritten, but
         this can be changed using the optional `append` argument similarly
         as with `Set Test Message` keyword.
 
-        The current suite documentation is available as a built-in variable
-        `${SUITE DOCUMENTATION}`.
+        This keyword sets the documentation of the current suite by default.
+        If the optional `top` argument is given any value considered
+        `true` in Python, for example, any non-empty string, the documentation
+        of the top level suite is altered instead.
 
-        New in Robot Framework 2.7. Support for `append` was added in 2.7.7.
+        The documentation of the current suite is available as a built-in
+        variable `${SUITE DOCUMENTATION}`.
+
+        New in Robot Framework 2.7. Support for `append` and `top` were
+        added in 2.7.7..
         """
-        suite = self._namespace.suite
+        ns = self._get_namespace(top)
+        suite = ns.suite
         suite.doc = self._get_possibly_appended_value(suite.doc, doc, append)
-        self._variables.set_suite('${SUITE_DOCUMENTATION}', suite.doc)
+        ns.variables.set_suite('${SUITE_DOCUMENTATION}', suite.doc)
         self.log('Set suite documentation to:\n%s' % suite.doc)
 
-    def set_suite_metadata(self, name, value, append=False):
+    def set_suite_metadata(self, name, value, append=False, top=False):
         """Sets metadata for the current test suite.
 
         By default possible existing metadata values are overwritten, but
         this can be changed using the optional `append` argument similarly
         as with `Set Test Message` keyword.
 
-        The current metadata is available as a built-in variable
+        This keyword sets the metadata of the current suite by default.
+        If the optional `top` argument is given any value considered
+        `true` in Python, for example, any non-empty string, the metadata
+        of the top level suite is altered instead.
+
+        The metadata of the current suite is available as a built-in variable
         `${SUITE METADATA}` in a Python dictionary. Notice that modifying this
         variable directly has no effect on the actual metadata the suite has.
 
-        New in Robot Framework 2.7.4. Support for `append` was added in 2.7.7.
+        New in Robot Framework 2.7.4. Support for `append` and `top` were
+        added in 2.7.7.
         """
         if not isinstance(name, unicode):
             name = utils.unic(name)
-        metadata = self._namespace.suite.metadata
+        ns = self._get_namespace(top)
+        metadata = ns.suite.metadata
         metadata[name] = self._get_possibly_appended_value(metadata.get(name, ''), value, append)
-        self._variables.set_suite('${SUITE_METADATA}', metadata.copy())
+        ns.variables.set_suite('${SUITE_METADATA}', metadata.copy())
         self.log("Set suite metadata '%s' to value '%s'." % (name, metadata[name]))
 
     def set_tags(self, *tags):
@@ -2166,6 +2180,10 @@ class BuiltIn(_Verify, _Converter, _Variables, _RunKeyword, _Misc):
     @property
     def _namespace(self):
         return self._execution_context.namespace
+
+    def _get_namespace(self, top=False):
+        ctx = EXECUTION_CONTEXTS.top if top else EXECUTION_CONTEXTS.current
+        return ctx.namespace
 
     @property
     def _variables(self):

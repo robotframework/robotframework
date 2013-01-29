@@ -28,8 +28,12 @@ Set suite documentation 2
 Append to suite documentation
    Set suite documentation      is continued    append please
    Should be equal        ${SUITE DOCUMENTATION}      New suite doc is continued
+
+Append to suite documentation 2
+   Should be equal        ${SUITE DOCUMENTATION}      New suite doc is continued
    Set suite documentation      \n\ntwice!    append=yep
    Should be equal        ${SUITE DOCUMENTATION}      New suite doc is continued \n\ntwice!
 
-Append to suite documentation 2
+Set top level suite documentation
+   Set suite documentation    Appended in test.    append=yes    top=please
    Should be equal        ${SUITE DOCUMENTATION}      New suite doc is continued \n\ntwice!

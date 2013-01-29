@@ -1,5 +1,5 @@
 *** Settings ***
-Suite Setup       Run Tests    ${EMPTY}    standard_libraries/builtin/set_suite_metadata.txt
+Suite Setup       Run Tests    ${EMPTY}    standard_libraries/builtin/set_suite_metadata.txt    misc/pass_and_fail.txt
 Force Tags        regression    jybot    pybot
 Resource          atest_resource.txt
 
@@ -32,6 +32,14 @@ Append to value
     Check log message    ${tc.kws[4].msgs[0]}
     ...    Set suite metadata 'TOAPPEND' to value 'Original is continued \n\ntwice!'.
 
+Set top-level suite metadata
+    Metadata should have value    New metadata    Metadata for top level suite    top=yes
+    ${tc} =    Check test case    ${TESTNAME}
+    Check log message    ${tc.kws[0].msgs[0]}
+    ...    Set suite metadata 'New metadata' to value 'Metadata for'.
+    Check log message    ${tc.kws[1].msgs[0]}
+    ...    Set suite metadata 'newmetadata' to value 'Metadata for top level suite'.
+
 Non-ASCII and non-string names and values
     ${tc} =    Check test case    ${TESTNAME}
     Check log message    ${tc.kws[0].msgs[0]}
@@ -51,5 +59,6 @@ Set in suite teardown
 
 *** Keywords ***
 Metadata should have value
-    [Arguments]    ${name}    ${value}
-    Should Be Equal    ${SUITE.metadata['${name}']}    ${value}
+    [Arguments]    ${name}    ${value}    ${top}=
+    ${suite} =    Set Variable If    "${top}"    ${SUITE}    ${SUITE.suites[0]}
+    Should Be Equal    ${suite.metadata['${name}']}    ${value}
