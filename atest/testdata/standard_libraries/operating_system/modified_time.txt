@@ -2,6 +2,7 @@
 Test Setup      Create Base Test Directory
 Suite Teardown  Remove Base Test Directory
 Resource        os_resource.txt
+Library         ../builtin/times.py
 
 *** Test Cases ***
 Get Modified Time As Timestamp
@@ -78,7 +79,7 @@ Set Modified Time Using UTC
     ${now} =  Get Time  epoch
     Set Modified Time  ${TESTFILE}  UTC
     ${mtime} =  Get Modified Time  ${TESTFILE}  epoch
-    ${zone} =  Evaluate  time.altzone  modules=time
+    ${zone} =  Get Correct Time Zone
     Should Be True  ${now} <= ${mtime} - ${zone} <= ${now} + 2
     Set Modified Time  ${TESTFILE}  utc - ${zone}
     ${mtime} =  Get Modified Time  ${TESTFILE}  epoch
