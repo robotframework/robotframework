@@ -79,7 +79,7 @@ Set Modified Time Using UTC
     ${now} =  Get Time  epoch
     Set Modified Time  ${TESTFILE}  UTC
     ${mtime} =  Get Modified Time  ${TESTFILE}  epoch
-    ${zone} =  Get Correct Time Zone
+    ${zone} =  Get Current Time Zone
     Should Be True  ${now} <= ${mtime} - ${zone} <= ${now} + 2
     Set Modified Time  ${TESTFILE}  utc - ${zone}
     ${mtime} =  Get Modified Time  ${TESTFILE}  epoch

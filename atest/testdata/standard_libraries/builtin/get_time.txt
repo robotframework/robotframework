@@ -26,12 +26,12 @@ Get Time As Parts
     Should Be True  0 <= int('${sec}') <= 59
 
 When Time Is Seconds After Epoch
-    ${secs after epoch} =    get_timestamp_from_date     2007  4  27  9  14  27
+    ${secs after epoch} =    Get Timestamp From Date     2007  4  27  9  14  27
     ${converted date string} =  Get Time  ${EMPTY}  ${secs after epoch}
     Should Be Equal  ${converted date string}  2007-04-27 09:14:27
 
 When Time Is Seconds After Epoch As String
-    ${secs after epoch} =    get_timestamp_from_date     2007  4  27  9  14  27
+    ${secs after epoch} =    Get Timestamp From Date     2007  4  27  9  14  27
     ${secs after epoch} =  Convert To String  ${secs after epoch}
     ${converted date string} =  Get Time  time_=${secs after epoch}
     Should Be Equal  ${converted date string}  2007-04-27 09:14:27
@@ -63,7 +63,7 @@ Invalid Time Does Not Cause Un-Catchable Failure
 When Time Is UTC
     ${utc} =  Get Time  epoch  UTC
     ${now} =  Get Time  epoch  NOW
-    ${zone} =  Get Correct Time Zone
+    ${zone} =  Get Current Time Zone
     Should Be True  ${now} <= ${utc} - ${zone} <= ${now} + 1
 
 When Time Is UTC +- Something
