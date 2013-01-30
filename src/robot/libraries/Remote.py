@@ -31,6 +31,7 @@ class Remote:
     def __init__(self, uri='http://localhost:8270'):
         if '://' not in uri:
             uri = 'http://' + uri
+        self._uri = uri
         self._client = XmlRpcRemoteClient(uri)
 
     def get_keyword_names(self, attempts=5):
@@ -39,7 +40,8 @@ class Remote:
                 return self._client.get_keyword_names()
             except TypeError, err:
                 time.sleep(1)
-        raise RuntimeError('Connecting remote server failed: %s' % err)
+        raise RuntimeError('Connecting remote server at %s failed: %s'
+                           % (self._uri, err))
 
     def get_keyword_arguments(self, name):
         try:
