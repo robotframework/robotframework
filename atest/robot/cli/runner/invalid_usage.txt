@@ -9,6 +9,9 @@ Resource        cli_resource.txt
 No Input
     Run Should Fail  ${EMPTY}  Expected at least 1 argument, got 0\\.
 
+Argument File Option Without Value As Last Argument
+    Run Should Fail  --argumentfile  option --argumentfile requires argument
+
 Non-Existing Input
     Run Should Fail  nonexisting.html  Parsing '.*[/\\\\]nonexisting.html' failed: Data source does not exist\\.
 

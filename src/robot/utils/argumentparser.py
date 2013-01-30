@@ -367,18 +367,23 @@ class ArgFileParser(object):
 
     def process(self, args):
         while True:
-            index = self._get_index(args)
-            if index < 0:
+            path, replace = self._get_index(args)
+            if not path:
                 break
-            path = args[index+1]
-            args[index:index+2] = self._get_args(path)
+            args[replace] = self._get_args(path)
         return args
 
     def _get_index(self, args):
         for opt in self._options:
-            if opt in args:
-                return args.index(opt)
-        return -1
+            start = opt + '=' if opt.startswith('--') else opt
+            for index, arg in enumerate(args):
+                # Handles `--argumentfile foo` and `-A foo`
+                if arg == opt and index + 1 < len(args):
+                    return args[index+1], slice(index, index+2)
+                # Handles `--argumentfile=foo` and `-Afoo`
+                if arg.startswith(start):
+                    return arg[len(start):], slice(index, index+1)
+        return None, -1
 
     def _get_args(self, path):
         if path.upper() != 'STDIN':

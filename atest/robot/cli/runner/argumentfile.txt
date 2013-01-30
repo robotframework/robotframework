@@ -47,6 +47,13 @@ Arguments From Stdin
     Should Contain  ${output}  My Name with N
     Should Contain  ${output}  from command line
 
+Option And Argument File Together
+    Create Argument File  ${ARGFILE}  --name My name
+    Create Argument File  ${ARGFILE2}  --doc My docu
+    Run Tests  --argumentfile=${ARGFILE} -A${ARGFILE2}  ${TESTFILE}
+    Should Be Equal  ${SUITE.name}  My name
+    Should Be Equal  ${SUITE.doc}  My docu
+
 *** Keywords ***
 Create Output Directory and Set Variables
     Create Output Directory
