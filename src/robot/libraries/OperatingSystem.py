@@ -276,8 +276,7 @@ class OperatingSystem:
         PROCESSES.current.close()
 
     def stop_all_processes(self):
-        """Waits until all the processes terminate and removes them from the
-        process list.
+        """Waits until all the processes terminate and removes them from the process list.
 
         Note that this keyword does not actually stop the processes, only waits
         until they terminate on their own.

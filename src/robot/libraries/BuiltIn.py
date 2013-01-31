@@ -1887,7 +1887,8 @@ class _Misc:
         | @{utc} = ['12', '06', '21']
         | ${hour} = '11'
 
-        Support for UTC time is a new feature in Robot Framework 2.7.5.
+        Support for UTC time was added in Robot Framework 2.7.5 but it did not
+        work correctly until 2.7.7.
         """
         return utils.get_time(format, utils.parse_time(time_))
 
