@@ -1,7 +1,8 @@
 *** Setting ***
 Test Setup        Login And Set Prompt
 Test Teardown     Close All Connections
-Library           Telnet
+Library           Telnet    newline=CRLF
+Library           String
 Resource          telnet_resource.txt
 
 *** Variables ***
@@ -20,6 +21,16 @@ Write & Read Non-ASCII
     Sleep    300 ms
     ${out} =    Read    deBug
     Should Be Equal    ${out}    Hyvää yötä\r\n${FULL PROMPT}
+
+Write & Read Non-ASCII Bytes
+    Set Encoding    NONE
+    ${bytes} =    Encode String    echo Hyvää yötä    UTF-8
+    Write    ${bytes}
+    ${out} =    Read Until Prompt
+    Should Be Byte String    ${out}
+    ${expected} =    Encode String    Hyvää yötä\r\n${FULL PROMPT}    UTF-8
+    Should Be Equal    ${out}    ${expected}
+    [Teardown]    Set Encoding    UTF-8
 
 Write Does Not Allow Newlines
     [Documentation]    FAIL 'Write' keyword cannot be used with strings containing newlines. Use 'Write Bare' instead.

@@ -2,7 +2,7 @@
 Library           String
 
 *** Variables ***
-${NSN}    nokia_siemens_networks
+${NSN}            nokia_siemens_networks
 ${WHITE SPACES}    hello\nworld\t${SPACE*5}again
 
 *** Test Cases ***
@@ -85,4 +85,3 @@ Result Should Contain Items In Given Order
     Length Should Be    ${result list}    ${length}
     : FOR    ${i}    IN RANGE    0    ${length}
     \    Should Be Equal    ${result list[${i}]}    @{expected}[${i}]
-
