@@ -653,9 +653,9 @@ class TelnetConnection(telnetlib.Telnet):
         See `Logging` section for more information about log levels. Use
         `Read Until Regexp` if more complex matching is needed.
         """
-        output = self._read_until(expected)
+        success, output = self._read_until(expected)
         self._log(output, loglevel)
-        if not output.endswith(expected):
+        if not success:
             self._raise_no_match_found(expected)
         return output
 
@@ -663,7 +663,7 @@ class TelnetConnection(telnetlib.Telnet):
         self._verify_connection()
         expected = self._encode(expected)
         output = telnetlib.Telnet.read_until(self, expected, self._timeout)
-        return self._decode(output)
+        return output.endswith(expected), self._decode(output)
 
     def read_until_regexp(self, *expected):
         """Reads output until any of the `expected` regular expressions match.
@@ -695,9 +695,9 @@ class TelnetConnection(telnetlib.Telnet):
             expected = expected[:-1]
         else:
             loglevel = None
-        index, output = self._read_until_regexp(*expected)
+        success, output = self._read_until_regexp(*expected)
         self._log(output, loglevel)
-        if index == -1:
+        if not success:
             expected = [exp if isinstance(exp, basestring) else exp.pattern
                         for exp in expected]
             self._raise_no_match_found(expected)
@@ -711,7 +711,7 @@ class TelnetConnection(telnetlib.Telnet):
             index, _, output = self.expect(expected, self._timeout)
         except TypeError:
             index, output = -1, ''
-        return index, self._decode(output)
+        return index != -1, self._decode(output)
 
     def read_until_prompt(self, loglevel=None):
         """Reads output until the prompt is encountered.
@@ -738,13 +738,8 @@ class TelnetConnection(telnetlib.Telnet):
 
     def _read_until_prompt(self):
         prompt, regexp = self._prompt
-        if regexp:
-            index, output = self._read_until_regexp(prompt)
-            success = index != -1
-        else:
-            output = self._read_until(prompt)
-            success = output.endswith(prompt)
-        return success, output
+        read_until = self._read_until_regexp if regexp else self._read_until
+        return read_until(prompt)
 
     def execute_command(self, command, loglevel=None):
         """Executes the given `command` and reads, logs, and returns everything until the prompt.
