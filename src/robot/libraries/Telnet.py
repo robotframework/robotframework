@@ -113,13 +113,21 @@ class Telnet:
 
     == Encoding ==
 
-    Encoding is needed when written or read text contains non-ASCII characters.
-    The default encoding is UTF-8 that works also with ASCII.
+    To ease handling text containing non-ASCII characters, all written text is
+    encoded and read text decoded by default. The default encoding is UTF-8
+    that works also with ASCII. Encoding can be disabled by using a special
+    encoding value `NONE`. This is mainly useful if you need to get the bytes
+    received from the connection as-is.
 
-    It is also possible to configure the error handler to use if encoding
-    or decoding characters fails. Accepted values are the same that
-    encode/decode functions in Python strings accept. In practice the following
-    values are the most useful:
+    Notice that when writing to the connection, only Unicode strings are
+    encoded using the defined encoding. Byte strings are expected to be already
+    encoded correctly. Notice also that normal text in test data is passed to
+    the library as Unicode and you need to use variables to use bytes.
+
+    It is also possible to configure the error handler to use if encoding or
+    decoding characters fails. Accepted values are the same that encode/decode
+    functions in Python strings accept. In practice the following values are
+    the most useful:
 
     - `ignore`: ignore characters that cannot be encoded (default)
     - `strict`: fail if characters cannot be encoded
@@ -134,8 +142,9 @@ class Telnet:
     Using UTF-8 encoding by default and being able to configure the encoding
     are new features in Robot Framework 2.7.6. In earlier versions only ASCII
     was supported and encoding errors were silently ignored. Robot Framework
-    2.7.7 added a possibility to specify the error handler and changed the
-    default behavior back to ignoring errors.
+    2.7.7 added a possibility to specify the error handler, changed the
+    default behavior back to ignoring encoding errors, and added the
+    possibility to disable encoding.
 
     == Default log level ==
 
@@ -377,7 +386,7 @@ class TelnetConnection(telnetlib.Telnet):
         return old
 
     def _set_newline(self, newline):
-        self._newline = newline.upper().replace('LF','\n').replace('CR','\r')
+        self._newline = str(newline).upper().replace('LF','\n').replace('CR','\r')
 
     def set_prompt(self, prompt, prompt_is_regexp=False):
         """Sets the prompt used by `Read Until Prompt` and `Login` in the current connection.
@@ -423,7 +432,8 @@ class TelnetConnection(telnetlib.Telnet):
         The given `encoding` specifies the encoding to use when written/read
         text is encoded/decoded, and `errors` specifies the error handler to
         use if encoding/decoding fails. Either of these can be omitted and in
-        that case the old value is not affected.
+        that case the old value is not affected. Use string `NONE` to disable
+        encoding altogether.
 
         See `Configuration` section for more information about encoding and
         error handlers, as well as global and connection specific configuration
@@ -432,8 +442,8 @@ class TelnetConnection(telnetlib.Telnet):
         The old values are returned and can be used to restore the encoding
         and the error handler later. See `Set Prompt` for a similar example.
 
-        Setting encoding in general is a new feature in Robot Framework 2.7.6
-        and specifying the error handler was added in Robot Framework 2.7.7.
+        Setting encoding in general is a new feature in Robot Framework 2.7.6.
+        Specifying the error handler and disabling encoding were added in 2.7.7.
         """
         self._verify_connection()
         old = self._encoding
@@ -441,14 +451,18 @@ class TelnetConnection(telnetlib.Telnet):
         return old
 
     def _set_encoding(self, encoding, errors):
-        self._encoding = (encoding, errors)
+        self._encoding = (encoding.upper(), errors)
 
     def _encode(self, text):
         if isinstance(text, str):
             return text
+        if self._encoding[0] == 'NONE':
+            return str(text)
         return text.encode(*self._encoding)
 
     def _decode(self, bytes):
+        if self._encoding[0] == 'NONE':
+            return bytes
         return bytes.decode(*self._encoding)
 
     def set_default_log_level(self, level):

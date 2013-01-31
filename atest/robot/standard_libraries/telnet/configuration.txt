@@ -44,6 +44,9 @@ Set Encoding Keyword
 Use Configured Encoding
     Check Test Case    ${TEST NAME}
 
+Disable Encoding
+    Check Test Case    ${TEST NAME}
+
 Default Log Level In Init
     Check Test Case    ${TEST NAME}
 

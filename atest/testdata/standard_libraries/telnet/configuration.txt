@@ -2,6 +2,7 @@
 Test Setup        Open Connection    ${HOST}
 Test Teardown     Close All Connections
 Library           Telnet    3.142    CRLF    $    REGEXP    ASCII    strict    DeBuG
+Library           String
 Resource          telnet_resource.txt
 
 *** Test Cases ***
@@ -58,15 +59,15 @@ Encoding Set In Open Connection
     Open Connection    ${HOST}    encoding=ISO-8859-15    encoding_errors=xxx
     Encoding Should Be    ISO-8859-15    xxx
     Open Connection    ${HOST}    encoding=Latin1
-    Encoding Should Be    Latin1    strict
+    Encoding Should Be    LATIN1    strict
 
 Set Encoding Keyword
     Set Encoding    us-ascii
-    Encoding Should Be    us-ascii    strict
-    Set Encoding    xxx    yyy
-    Encoding Should Be    xxx   yyy
+    Encoding Should Be    US-ASCII    strict
+    Set Encoding    xXx    yYy
+    Encoding Should Be    XXX   yYy
     Set Encoding    encoding=ASCII
-    Encoding Should Be    ASCII   yyy
+    Encoding Should Be    ASCII   yYy
     Set Encoding    errors=ignore
     Encoding Should Be    ASCII   ignore
 
@@ -79,6 +80,14 @@ Use Configured Encoding
     Set Encoding    UTF-8
     Write    echo hyvää päivää
     Read Until    hyvää päivää
+
+Disable Encoding
+    Login and set prompt
+    Set Encoding    none    whatever
+    Encoding Should Be    NONE    whatever
+    Write    hello
+    ${out} =    Read Until Prompt
+    Should Be Byte String    ${out}
 
 Default Log Level In Init
     Default Log Level Should Be    DEBUG

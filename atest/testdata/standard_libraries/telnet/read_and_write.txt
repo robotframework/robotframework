@@ -24,13 +24,21 @@ Write & Read Non-ASCII
 
 Write & Read Non-ASCII Bytes
     Set Encoding    NONE
-    ${bytes} =    Encode String    echo Hyvää yötä    UTF-8
+    ${bytes} =    Encode String To Bytes   echo Hyvää yötä    UTF-8
     Write    ${bytes}
     ${out} =    Read Until Prompt
     Should Be Byte String    ${out}
-    ${expected} =    Encode String    Hyvää yötä\r\n${FULL PROMPT}    UTF-8
+    ${expected} =    Encode String To Bytes    Hyvää yötä\r\n${FULL PROMPT}    UTF-8
     Should Be Equal    ${out}    ${expected}
     [Teardown]    Set Encoding    UTF-8
+
+Write ASCII-Only Unicode When Encoding Is Disabled
+    [Documentation]   FAIL STARTS: UnicodeEncodeError:
+    Set Encoding    NONE
+    Write    echo Only ASCII
+    ${out} =    Read Until Prompt
+    Should Be Equal    ${out}    Only ASCII\r\n${FULL PROMPT}
+    Write    Tämä ei toimi
 
 Write Does Not Allow Newlines
     [Documentation]    FAIL 'Write' keyword cannot be used with strings containing newlines. Use 'Write Bare' instead.
