@@ -6,7 +6,6 @@ ${NSN}            nokia_siemens_networks
 ${TEXT IN COLUMNS}    robot\tframework\nis\tgood\tfor\ttesting
 ${FIRST LINE}     robot\tframework
 ${SECOND LINE}    is\tgood\tfor\ttesting
-${ERROR MESSAGE}    My error message
 
 *** Test Cases ***
 Fetch From Left
@@ -87,45 +86,3 @@ Get Substring With Invalid Start
 Get Substring With Invalid End
     [Documentation]    FAIL ValueError: Cannot convert 'end' argument 'invalid' to an integer
     Get Substring    Hello Robot    2    invalid
-
-Should Be String Positive
-    Should be String    Robot
-    Should be string    ${space}
-    Should be string    ${EMPTY}
-
-Should Be String Negative For Number
-    [Documentation]    FAIL ${ERROR MESSAGE}
-    Should be string    ${0}    ${ERROR MESSAGE}
-
-Should Be String Negative For Boolean
-    [Documentation]    FAIL ${ERROR MESSAGE}
-    Should be string    ${TRUE}    ${ERROR MESSAGE}
-
-Should Not Be String Positive
-    Should Not Be String    ${0}
-    Should Not Be String    ${TRUE}
-
-Should Not Be String Negative
-    [Documentation]    FAIL ${ERROR MESSAGE}
-    Should not be string    Nokia    ${ERROR MESSAGE}
-
-Should Be Lowercase Positive
-    Should Be Lowercase    foo bar
-
-Should Be Lowercase Negative
-    [Documentation]    FAIL 'foo and bAr' is not lowercase
-    Should be lowercase    foo and bAr
-
-Should Be Uppercase Positive
-    Should Be Uppercase    FOO BAR
-
-Should Be Uppercase Negative
-    [Documentation]    FAIL 'FOO AND BaR' is not uppercase
-    Should be uppercase    FOO AND BaR
-
-Should Be Titlecase Positive
-    Should be titlecase    Foo Bar!
-
-Should Be Titlecase Negative
-    [Documentation]    FAIL 'Foo and Bar' is not titlecase
-    Should be titlecase    Foo and Bar

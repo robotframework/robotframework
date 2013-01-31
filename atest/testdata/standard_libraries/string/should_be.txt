@@ -1,0 +1,46 @@
+*** Settings ***
+Library           String
+
+*** Test Cases ***
+Should Be String Positive
+    Should be String    Robot
+    Should be string    ${SPACE}
+    Should be string    ${EMPTY}
+
+Should Be String Negative
+    [Template]     Run Keyword And Expect Error
+    Given item '0' is not a string    Should be string    ${0}
+    My error    Should be string    ${TRUE}    My error
+
+Should Not Be String Positive
+    Should Not Be String    ${0}
+    Should Not Be String    ${TRUE}
+
+Should Not Be String Negative
+    [Template]    Run Keyword And Expect Error
+    Given item 'Hello' is a string   Should not be string    Hello
+    My error message    Should not be string    world    My error message
+
+Should Be Lowercase Positive
+    Should Be Lowercase    foo bar
+
+Should Be Lowercase Negative
+    [Template]    Run Keyword And Expect Error
+    'foo and bAr' is not lowercase    Should be lowercase    foo and bAr
+    My error    Should be lowercase    UP!    My error
+
+Should Be Uppercase Positive
+    Should Be Uppercase    FOO BAR
+
+Should Be Uppercase Negative
+    [Template]    Run Keyword And Expect Error
+    'FOO AND BaR' is not uppercase    Should be uppercase    FOO AND BaR
+    Custom error    Should be uppercase    low...    Custom error
+
+Should Be Titlecase Positive
+    Should be titlecase    Foo Bar!
+
+Should Be Titlecase Negative
+    [Template]    Run Keyword And Expect Error
+    'Foo and Bar' is not titlecase    Should be titlecase    Foo and Bar
+    Special error    Should be titlecase    all low    Special error

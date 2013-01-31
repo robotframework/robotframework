@@ -53,36 +53,4 @@ Get Substring With Invalid Start
 Get Substring With Invalid End
     Check Test Case    ${TESTNAME}
 
-Should Be String Positive
-    Check Test Case    ${TESTNAME}
-
-Should Be String Negative For Number
-    Check Test Case    ${TESTNAME}
-
-Should Be String Negative For Boolean
-    Check Test Case    ${TESTNAME}
-
-Should Not Be String Positive
-    Check Test Case    ${TESTNAME}
-
-Should Not Be String Negative
-    Check Test Case    ${TESTNAME}
-
-Should Be Lowercase Positive
-    Check Test Case    ${TESTNAME}
-
-Should Be Lowercase Negative
-    Check Test Case    ${TESTNAME}
-
-Should Be Uppercase Positive
-    Check Test Case    ${TESTNAME}
-
-Should Be Uppercase Negative
-    Check Test Case    ${TESTNAME}
-
-Should Be Titlecase Positive
-    Check Test Case    ${TESTNAME}
-
-Should Be Titlecase Negative
-    Check Test Case    ${TESTNAME}
 
