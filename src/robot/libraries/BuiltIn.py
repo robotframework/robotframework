@@ -257,6 +257,10 @@ class _Converter:
 
         Uses '__unicode__' or '__str__' method with Python objects and
         'toString' with Java objects.
+
+        Use `Encode String To Bytes` and `Decode Bytes To String` keywords
+        in `String` library if you need to convert between Unicode and byte
+        strings.
         """
         self._log_types(item)
         return self._convert_to_string(item)
