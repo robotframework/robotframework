@@ -18,6 +18,7 @@ from random import randint
 from string import ascii_lowercase, ascii_uppercase, digits
 
 from robot.api import logger
+from robot.utils import unic
 from robot.version import get_version
 
 
@@ -44,6 +45,12 @@ class String:
 
     ROBOT_LIBRARY_SCOPE = 'GLOBAL'
     ROBOT_LIBRARY_VERSION = get_version()
+
+    def encode_string_to_bytes(self, string, encoding, errors='strict'):
+        return string.encode(encoding, errors)
+
+    def decode_bytes_to_string(self, bytes, encoding, errors='strict'):
+        return bytes.decode(encoding, errors)
 
     def get_line_count(self, string):
         """Returns and logs the number of lines in the given `string`."""
@@ -343,9 +350,7 @@ class String:
         `msg` argument.
         """
         if not isinstance(item, basestring):
-            if not msg:
-                msg = "Given item '%s' is not a string" % item
-            raise AssertionError(msg)
+            self._fail(msg, "Given item '%s' is not a string", item)
 
     def should_not_be_string(self, item, msg=None):
         """Fails if the given `item` is a string.
@@ -354,9 +359,15 @@ class String:
         `msg` argument.
         """
         if isinstance(item, basestring):
-            if not msg:
-                msg = "Given item '%s' is a string" % item
-            raise AssertionError(msg)
+            self._fail(msg, "Given item '%s' is a string", item)
+
+    def should_be_unicode_string(self, item, msg=None):
+        if not isinstance(item, unicode):
+            self._fail(msg, "Given item '%s' is not a Unicode string", item)
+
+    def should_be_byte_string(self, item, msg=None):
+        if not isinstance(item, str):
+            self._fail(msg, "Given item '%s' is not a byte string", item)
 
     def should_be_lowercase(self, string, msg=None):
         """Fails if the given `string` is not in lowercase.
@@ -371,7 +382,7 @@ class String:
         All these keywords were added in Robot Framework 2.1.2.
         """
         if not string.islower():
-            raise AssertionError(msg or "'%s' is not lowercase" % string)
+            self._fail(msg, "'%s' is not lowercase", string)
 
     def should_be_uppercase(self, string, msg=None):
         """Fails if the given `string` is not in uppercase.
@@ -386,7 +397,7 @@ class String:
         All these keywords were added in Robot Framework 2.1.2.
         """
         if not string.isupper():
-            raise AssertionError(msg or "'%s' is not uppercase" % string)
+            self._fail(msg, "'%s' is not uppercase", string)
 
     def should_be_titlecase(self, string, msg=None):
         """Fails if given `string` is not title.
@@ -405,7 +416,7 @@ class String:
         All theses keyword were added in Robot Framework 2.1.2.
         """
         if not string.istitle():
-            raise AssertionError(msg or "'%s' is not titlecase" % string)
+            self._fail(msg, "'%s' is not titlecase", string)
 
     def _convert_to_index(self, value, name):
         if value == '':
@@ -420,3 +431,8 @@ class String:
         except ValueError:
             raise ValueError("Cannot convert '%s' argument '%s' to an integer"
                              % (name, value))
+
+    def _fail(self, message, default_template, *items):
+        if not message:
+            message = default_template % tuple(unic(item) for item in items)
+        raise AssertionError(message)

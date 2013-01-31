@@ -16,6 +16,18 @@ Should Not Be String Positive
 Should Not Be String Negative
     Check Test Case    ${TESTNAME}
 
+Should Be Unicode String Positive
+    Check Test Case    ${TESTNAME}
+
+Should Be Unicode String Negative
+    Check Test Case    ${TESTNAME}
+
+Should Be Byte String Positive
+    Check Test Case    ${TESTNAME}
+
+Should Be Byte String Negative
+    Check Test Case    ${TESTNAME}
+
 Should Be Lowercase Positive
     Check Test Case    ${TESTNAME}
 

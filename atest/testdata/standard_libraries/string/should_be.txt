@@ -1,11 +1,15 @@
 *** Settings ***
 Library           String
+Suite Setup       Create Byte String Variables
+
+*** Variables ***
+${BYTES}          <set by suite setup>
 
 *** Test Cases ***
 Should Be String Positive
     Should be String    Robot
-    Should be string    ${SPACE}
-    Should be string    ${EMPTY}
+    Should be String    ${EMPTY}
+    Should be String    ${BYTES}
 
 Should Be String Negative
     [Template]     Run Keyword And Expect Error
@@ -18,29 +22,53 @@ Should Not Be String Positive
 
 Should Not Be String Negative
     [Template]    Run Keyword And Expect Error
-    Given item 'Hello' is a string   Should not be string    Hello
-    My error message    Should not be string    world    My error message
+    Given item '${BYTES}' is a string   Should not be string    ${BYTES}
+    My error message    Should not be string    Hello    My error message
+
+Should Be Unicode String Positive
+    Should be Unicode String    Robot
+
+Should Be Unicode String Negative
+    [Template]     Run Keyword And Expect Error
+    Given item '${BYTES}' is not a Unicode string    Should Be Unicode String    ${BYTES}
+    My error    Should Be Unicode String    ${0}    My error
+
+Should Be Byte String Positive
+    Should be Byte String    ${BYTES}
+
+Should Be Byte String Negative
+    [Template]     Run Keyword And Expect Error
+    Given item 'Hyvä' is not a byte string    Should Be Byte String    Hyvä
+    My error    Should Be Byte String    ${0}    My error
 
 Should Be Lowercase Positive
     Should Be Lowercase    foo bar
+    Should Be Lowercase    ${BYTES.lower()}
 
 Should Be Lowercase Negative
     [Template]    Run Keyword And Expect Error
-    'foo and bAr' is not lowercase    Should be lowercase    foo and bAr
-    My error    Should be lowercase    UP!    My error
+    '${BYTES}' is not lowercase    Should Be Lowercase    ${BYTES}
+    My error    Should Be Lowercase    UP!    My error
 
 Should Be Uppercase Positive
     Should Be Uppercase    FOO BAR
+    Should Be Uppercase    ${BYTES.upper()}
 
 Should Be Uppercase Negative
     [Template]    Run Keyword And Expect Error
-    'FOO AND BaR' is not uppercase    Should be uppercase    FOO AND BaR
-    Custom error    Should be uppercase    low...    Custom error
+    '${BYTES}' is not uppercase    Should Be Uppercase    ${BYTES}
+    Custom error    Should Be Uppercase    low...    Custom error
 
 Should Be Titlecase Positive
-    Should be titlecase    Foo Bar!
+    Should Be Titlecase    Foo Bar!
+    Should Be Titlecase    ${BYTES}
 
 Should Be Titlecase Negative
     [Template]    Run Keyword And Expect Error
-    'Foo and Bar' is not titlecase    Should be titlecase    Foo and Bar
-    Special error    Should be titlecase    all low    Special error
+    '${BYTES.lower()}' is not titlecase    Should Be Titlecase    ${BYTES.lower()}
+    Special error    Should Be Titlecase    all low    Special error
+
+*** Keywords ***
+Create Byte String Variables
+    ${BYTES} =    Evaluate    "Hyv\\xe4"
+    Set Suite Variable    ${BYTES}
