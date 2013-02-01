@@ -188,10 +188,9 @@ class OperatingSystem:
     def start_process(self, command, stdin=None, alias=None):
         """Starts the given command as a background process.
 
-        Starts the process in the background and sets this process as
-        the current process. The following calls of the keywords `Read
-        Process Output` or `Stop Process` affect this process, unless
-        the keyword `Switch Process` is used.
+        Starts the process in background and sets it as the active process.
+        `Read Process Output` or `Stop Process` keywords affect this process
+        unless `Switch Process` is used in between.
 
         If the command needs input through the standard input stream,
         it can be defined with the `stdin` argument.  It is not
@@ -199,18 +198,17 @@ class OperatingSystem:
         line arguments must be given as part of the command like
         '/tmp/script.sh arg1 arg2'.
 
-        Returns the index of this process. The indexing starts from 1, and it
-        can be used to switch between the processes with the `Switch Process`
-        keyword. To wait until all processes terminate and to reset indexing, the
-        `Stop All Processes` keyword must be used.
+        Returns the index of this process. Indexing starts from 1, and indices
+        can be used to switch between processes using `Switch Process` keyword.
+        `Stop All Processes` can be used to reset indexing.
 
         The optional `alias` is a name for this process that may be used with
         `Switch Process` instead of the returned index.
 
         The standard error stream is redirected to the standard input
-        stream automatically by adding '2>&1' after the executed
-        command. This is done the same way, and for the same reasons,
-        as with `Run` keyword.
+        stream automatically. This is done for the same reasons as with `Run`
+        keyword, but redirecting is done when the process is started and not
+        by adding '2>&1' to the command.
 
         Example:
         | Start Process  | /path/longlasting.sh |
@@ -226,11 +224,12 @@ class OperatingSystem:
     def switch_process(self, index_or_alias):
         """Switches the active process to the specified process.
 
-        The index is the return value of the `Start Process` keyword and an
-        alias may have been defined to it.
+        New active process can be specified either using an index or an alias.
+        Indices are return values from `Start Process` and aliases can be
+        given to that keyword.
 
         Example:
-        | Start Process  | /path/script.sh arg  |    | 1st process |
+        | Start Process  | /path/script.sh arg  | alias=1st process |
         | ${2nd} =       | Start Process        | /path/script2.sh |
         | Switch Process | 1st process          |
         | ${out1} =      | Read Process Output  |
@@ -242,51 +241,47 @@ class OperatingSystem:
         PROCESSES.switch(index_or_alias)
 
     def read_process_output(self):
-        """Waits for the process to finish and returns its output.
+        """Waits for a process to finish and returns its output.
 
-        As mentioned in the documentation of `Start Process` keyword,
-        and documented thoroughly in `Run` keyword, the standard error
-        stream is automatically redirected to the standard
-        output. This keyword thus always returns all the output
-        procuded by the command.
+        This keyword waits for a process started with `Start Process` to end
+        and then returns all output it has produced. The returned output
+        contains everything the process has written into the standard output
+        and error streams.
 
-        Note that although the process is finished, it is not removed
-        from the process list. Trying to read from a stopped process
-        nevertheless fails. To reset the process list (and indexes and
-        aliases), `Stop All Processes` must be used.
+        There is no need to use `Stop Process` after using this keyword.
+        Trying to read from an already stopped process fails.
 
-        See `Start Process` and `Switch Process` for more information
-        and examples about running processes.
+        Note that although the process is finished, it still stays as the
+        active process. Use `Switch Process` to switch the active process or
+        `Stop All Processes` to reset the list of started processes.
         """
         output = PROCESSES.current.read()
         PROCESSES.current.close()
         return output
 
     def stop_process(self):
-        """Waits until the current process terminates without reading from it.
+        """Closes the standard output stream of the process.
 
-        Note that this keyword does not actually stop the process, only waits
-        until it terminates on its own. It does not either remove it from the
-        process list. To reset the process list (and indexes and aliases),
-        `Stop All Processes` must be used. Calling Stop Process on a process
-        that has already terminated has no effect.
+        This keyword does not actually stop the process nor even wait for it
+        to terminate. Only thing it does is closing the standard output stream
+        of the process. Depending on the process that may terminate it but
+        that is not guaranteed. Use `Read Process Output` instead if you need
+        to wait for the process to complete.
 
-        See `Start Process` and `Switch Process` for more information.
+        This keyword operates the active process similarly as `Read Process
+        Output`. Stopping an already stopped process is not an error.
         """
         PROCESSES.current.close()
 
     def stop_all_processes(self):
-        """Waits until all the processes terminate and removes them from the process list.
+        """Closes the standard output of all the processes and resets the process list.
 
-        Note that this keyword does not actually stop the processes, only waits
-        until they terminate on their own.
+        Exactly like `Stop Process`, this keyword does not actually stop
+        processes nor even wait for them to terminate.
 
         This keyword resets the indexing that `Start Process` uses. All aliases
         are also deleted. It does not matter have some of the processes
         already been closed or not.
-
-        It is highly recommended to use this keyword in test or suite level
-        teardown to make sure all the started processes are closed.
         """
         PROCESSES.close_all()
 
