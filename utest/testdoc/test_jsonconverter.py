@@ -65,8 +65,8 @@ class TestJsonConverter(unittest.TestCase):
                      source='',
                      relativeSource='',
                      id='s1',
-                     name='Normal & Pass And Fail',
-                     fullName='Normal & Pass And Fail',
+                     name='Normal &amp; Pass And Fail',
+                     fullName='Normal &amp; Pass And Fail',
                      doc='',
                      metadata=[],
                      numberOfTests=4,
@@ -77,7 +77,7 @@ class TestJsonConverter(unittest.TestCase):
                      relativeSource='',
                      id='s1-s1',
                      name='Normal',
-                     fullName='Normal & Pass And Fail.Normal',
+                     fullName='Normal &amp; Pass And Fail.Normal',
                      doc='<p>Normal test cases</p>',
                      metadata=[('Something', '<p>My Value</p>')],
                      numberOfTests=2)
@@ -86,7 +86,7 @@ class TestJsonConverter(unittest.TestCase):
                      relativeSource='',
                      id='s1-s2',
                      name='Pass And Fail',
-                     fullName='Normal & Pass And Fail.Pass And Fail',
+                     fullName='Normal &amp; Pass And Fail.Pass And Fail',
                      doc='<p>Some tests here</p>',
                      metadata=[],
                      numberOfTests=2)
@@ -172,13 +172,13 @@ class TestJsonConverter(unittest.TestCase):
                      type='KEYWORD')
 
 
-class TestDocumentationFormatting(unittest.TestCase):
+class TestFormattingAndEscaping(unittest.TestCase):
     suite = None
 
     def setUp(self):
         if not self.suite:
             suite = TestSuiteFactory(join(DATADIR, 'formatting_and_escaping.txt'),
-                                     metadata=['CLI:*bold*'])
+                                     name='<suite>', metadata=['CLI>:*bold*'])
             self.__class__.suite = JsonConverter().convert(suite)
 
     def test_suite_documentation(self):
@@ -202,7 +202,7 @@ class TestDocumentationFormatting(unittest.TestCase):
 
     def test_suite_metadata(self):
         test_convert(self.suite,
-                     metadata=[('CLI', '<p><b>bold</b></p>'),
+                     metadata=[('CLI&gt;', '<p><b>bold</b></p>'),
                                ('Escape', '<p>this is &lt;b&gt;not bold&lt;/b&gt;</p>'),
                                ('Format', '<p>this is <b>bold</b></p>')])
 
@@ -211,14 +211,14 @@ class TestDocumentationFormatting(unittest.TestCase):
                      doc='<p><b>I</b> can haz <i>formatting</i> &amp; &lt;escaping&gt;!!</p>'
                          '\n<ul>\n<li>list</li>\n<li>here</li>\n</ul>')
 
-    def test_no_extra_escaping(self):
-        # jQuery handles escaping by default so we should not do it
+    def test_escaping(self):
+        test_convert(self.suite, name='&lt;suite&gt;')
         test_convert(self.suite['tests'][1],
-                     name='<Escaping>',
-                     tags=['*not bold*', '<b>not bold either</b>'],
-                     keywords=[{'type': 'KEYWORD',
-                                'name': '<blink>NO</blink>',
-                                'arguments': '<&>'}])
+            name='&lt;Escaping&gt;',
+            tags=['*not bold*', '&lt;b&gt;not bold either&lt;/b&gt;'],
+            keywords=[{'type': 'KEYWORD',
+                       'name': '&lt;blink&gt;NO&lt;/blink&gt;',
+                       'arguments': '&lt;&amp;&gt;'}])
 
 
 if __name__ == '__main__':
