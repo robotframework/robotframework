@@ -18,7 +18,7 @@ One input
 
 Many inputs
     ${output}=    Run TestDoc    --exclude t1 --title MyDoc ${INPUT 1} ${INPUT2}
-    Testdoc Should Contain    "name":"Pass And Fail & Suites"    "title":"MyDoc"    "numberOfTests":6
+    Testdoc Should Contain    "name":"Pass And Fail &amp; Suites"    "title":"MyDoc"    "numberOfTests":6
     Testdoc Should Not Contain    "name":"Suite4 First"
     Output Should Contain Outfile    ${output}
 
