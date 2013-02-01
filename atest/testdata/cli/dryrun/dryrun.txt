@@ -7,6 +7,9 @@ Library  DoesNotExist
 Variables  wrong_path.py
 Resource  NonExisting.tsv
 
+# Library keywords get NOT_RUN status. That should be OK teardown status.
+Suite Teardown    No Operation
+
 
 *** Variables ***
 ${value}    value

@@ -1,3 +1,7 @@
+*** Settings ***
+Suite Teardown    Simple UK
+Resource          resource.txt
+
 *** Test Cases ***
 Some other test
     [Documentation]  FAIL Keyword 'BuiltIn.Log' expected 1 to 2 arguments, got 0.

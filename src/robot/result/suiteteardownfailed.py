@@ -26,7 +26,8 @@ class SuiteTeardownFailureHandler(SuiteVisitor):
 
     def end_suite(self, suite):
         teardown = suite.keywords.teardown
-        if teardown and not teardown.passed:
+        # Both 'PASS' and 'NOT_RUN' (used in dry-run) statuses are OK.
+        if teardown and teardown.status == 'FAIL':
             suite.visit(SuiteTeardownFailed(teardown.message))
 
     def visit_test(self, test):
