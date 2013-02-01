@@ -20,12 +20,14 @@ Should Be Unicode String Positive
     Check Test Case    ${TESTNAME}
 
 Should Be Unicode String Negative
+    [Tags]    x-fails-on-ipy
     Check Test Case    ${TESTNAME}
 
 Should Be Byte String Positive
     Check Test Case    ${TESTNAME}
 
 Should Be Byte String Negative
+    [Tags]    x-fails-on-ipy
     Check Test Case    ${TESTNAME}
 
 Should Be Lowercase Positive

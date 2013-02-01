@@ -80,6 +80,8 @@ def atests(interpreter_path, *params):
         args += ' --exclude x-exclude-on-windows'
     if sys.platform == 'darwin' and 'python' in interpreter:
         args += ' --exclude x-exclude-on-osx-python'
+    if 'ipy' in interpreter:
+        args += ' --noncritical x-fails-on-ipy'
     command = '%s %s %s %s' % (sys.executable, RUNNER, args, ' '.join(params))
     environ = dict(os.environ, TEMPDIR=tempdir)
     print 'Running command\n%s\n' % command
