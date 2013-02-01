@@ -143,10 +143,11 @@ class JsonConverter(object):
             'source': suite.source or '',
             'relativeSource': self._get_relative_source(suite.source),
             'id': suite.id,
-            'name': suite.name,
-            'fullName': suite.longname,
+            'name': self._escape(suite.name),
+            'fullName': self._escape(suite.longname),
             'doc': self._html(suite.doc),
-            'metadata': [(n, self._html(v)) for n, v in suite.metadata.items()],
+            'metadata': [(self._escape(name), self._html(value))
+                         for name, value in suite.metadata.items()],
             'numberOfTests': suite.get_test_count(),
             'suites': self._convert_suites(suite),
             'tests': self._convert_tests(suite),
@@ -157,6 +158,9 @@ class JsonConverter(object):
         if not source or not self._output_path:
             return ''
         return utils.get_link_path(source, dirname(self._output_path))
+
+    def _escape(self, item):
+        return utils.html_escape(item)
 
     def _html(self, item):
         return utils.html_format(utils.unescape(item))
@@ -169,11 +173,11 @@ class JsonConverter(object):
 
     def _convert_test(self, test):
         return {
-            'name': test.name,
-            'fullName': test.longname,
+            'name': self._escape(test.name),
+            'fullName': self._escape(test.longname),
             'id': test.id,
             'doc': self._html(test.doc),
-            'tags': utils.normalize_tags(test.tags),
+            'tags': [self._escape(t) for t in utils.normalize_tags(test.tags)],
             'timeout': self._get_timeout(test.timeout),
             'keywords': list(self._convert_keywords(test))
         }
@@ -188,8 +192,9 @@ class JsonConverter(object):
 
     def _convert_keyword(self, kw, type=None):
         return {
-            'name': kw._get_name(kw.name) if isinstance(kw, Keyword) else kw.name,
-            'arguments': ', '.join(kw.args),
+            'name': self._escape(kw._get_name(kw.name)
+                                 if isinstance(kw, Keyword) else kw.name),
+            'arguments': self._escape(', '.join(kw.args)),
             'type': type or {'kw': 'KEYWORD', 'for': 'FOR'}[kw.type]
         }
 

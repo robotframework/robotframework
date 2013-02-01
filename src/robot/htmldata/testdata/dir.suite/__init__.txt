@@ -22,6 +22,6 @@ Documentation  Documentation for the whole test suite. All this forms a single
 Metadata       URL       http://robotframework.org
 Metadata       Image     http://code.google.com/p/robotframework/logo?ext.png
 Metadata       Formatting  *Bold* and _italics_
-Metadata       <Escape>      < &lt; </script>
+Metadata       </script>      < &lt; </script>
 Suite Setup    Log  higher level suite setup
 Force Tags     i1  i2

@@ -6,7 +6,7 @@ import shutil
 
 BASE = dirname(abspath(__file__))
 ROOT = normpath(join(BASE, '..', '..', '..', '..'))
-DATADIR = join(ROOT, 'atest', 'testdata', 'misc')
+DATA = [join(ROOT, 'atest', 'testdata', 'misc'), join(BASE, 'dir.suite')]
 SRC = join(ROOT, 'src')
 # must generate data next to testdoc.html to get relative sources correct
 OUTPUT = join(BASE, '..', 'testdoc.js')
@@ -17,7 +17,7 @@ sys.path.insert(0, SRC)
 from robot.testdoc import TestSuiteFactory, TestdocModelWriter
 
 with open(OUTPUT, 'w') as output:
-    TestdocModelWriter(output, TestSuiteFactory(DATADIR)).write_data()
+    TestdocModelWriter(output, TestSuiteFactory(DATA)).write_data()
 
 shutil.move(OUTPUT, REAL_OUTPUT)
 
