@@ -38,7 +38,25 @@ Log HTML  [tags]   !"#%&/()=
     Log   escape < &lt; <b>no bold</b>
     Fail  escape < &lt; <b>no bold</b>
 
-Unicode  [tags]   with unicode 官话
+Long doc with formatting
+    [Documentation]    This test has a pretty long documentation.
+    ...
+    ...    It contains multiple rows in source and
+    ...    multiple paragraphs in HTML.
+    ...
+    ...    It has URLs like http://robotframework.org and
+    ...    [http://robotframework.org|custom links].
+    ...
+    ...    - lists
+    ...    - tooooo
+    ...
+    ...    | as wel | as |
+    ...    | tables | !! |
+    No Operation
+
+Non-ASCII 官话
+    [Documentation]   with nön-äscii 官话
+    [Tags]   with nön-äscii 官话
     Log  hyvää joulua
 
 Complex
