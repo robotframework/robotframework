@@ -80,8 +80,13 @@ function addStatistics() {
         '</tr></thead><tbody></tbody></table>';
     $(statTable).appendTo('#statistics_container');
     $.map(['total', 'tag', 'suite'], addStatTable);
+    stopStatLinkClickPropagation();
     addTooltipsToElapsedTimes();
     enableStatisticsSorter();
+}
+
+function stopStatLinkClickPropagation() {
+    $('.statistics a').attr('onclick', 'stopPropagation(event);');
 }
 
 function addTooltipsToElapsedTimes() {

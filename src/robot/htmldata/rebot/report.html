@@ -245,13 +245,19 @@ function calculateTotalTime(tests) {
 function renderTestDetails(sortByStatus) {
     if (!window.elementsToRender.length)
         return;
-    var elements = popUpTo(window.elementsToRender, 10);
-    $.tmpl('testDetailsTableRowTemplate', elements,
-           {logURL: window.settings.logURL}).appendTo('#test_details > tbody');
+    var tests = popUpTo(window.elementsToRender, 10);
+    renderTestDetailsRows(tests);
     if (window.elementsToRender.length)
         setTimeout(function () {renderTestDetails(sortByStatus);}, 0);
     else
         configureTableSorter(sortByStatus);
+}
+
+function renderTestDetailsRows(tests) {
+    var rows = $.tmpl('testDetailsTableRowTemplate', tests,
+                      {logURL: window.settings.logURL});
+    rows.find('a').attr('onclick', 'stopPropagation(event);');
+    rows.appendTo('#test_details > tbody');
 }
 
 function configureTableSorter(sortByStatus) {
@@ -343,7 +349,7 @@ function popUpTo(list, upTo) {
       </div>
       <div class="tag_links">
         {{each links}}
-        <span>[<a href="${$value.url}" onclick="stopPropagation(event);"
+        <span>[<a href="${$value.url}"
                   title="${$value.url}">{{html $value.title}}</a>]</span>
         {{/each}}
       </div>
