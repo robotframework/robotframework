@@ -117,8 +117,7 @@ function addStatTable(tableName) {
     if (tableName == 'tag' && stats.length == 0) {
         renderNoTagStatTable();
     } else {
-        var templateName = tableName + 'StatisticsRowTemplate';
-        renderStatTable(tableName, templateName, stats);
+        renderStatTable(tableName, stats);
     }
 }
 
@@ -135,11 +134,12 @@ function renderNoTagStatTable() {
       '</tr>').appendTo($('#tag_stats > tbody'));
 }
 
-function renderStatTable(tableName, templateName, stats) {
-    var locator = '#' + tableName + '_stats > tbody';
+function renderStatTable(tableName, stats) {
+    var template = tableName + 'StatisticsRowTemplate';
+    var target = $('#' + tableName + '_stats > tbody');
     // Need explicit for loop because $.tmpl() does not handle very large lists
     for (var i = 0; stats !== undefined && i < stats.length; i++) {
-        $.tmpl(templateName , stats[i], {index: i}).appendTo($(locator));
+        $.tmpl(template, stats[i], {index: i}).appendTo(target);
     }
 }
 
