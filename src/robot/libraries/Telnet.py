@@ -167,6 +167,11 @@ class Telnet:
     `WARN`. Levels below `INFO` are not shown in log files by default whereas
     warnings are shown more prominently.
 
+    The [http://docs.python.org/2/library/telnetlib.html|telnetlib module]
+    used by this library has a custom logging system for logging content it
+    sends and receives. Starting from Robot Framework 2.7.7, these low level
+    log messages are forwarded to Robot's log file using `TRACE` level.
+
     = Time string format =
 
     Timeouts and other times used must be given as a time string using format
@@ -792,3 +797,7 @@ class TelnetConnection(telnetlib.Telnet):
                 self.sock.sendall(telnetlib.IAC + telnetlib.WONT + opt)
             elif cmd in (telnetlib.WILL, telnetlib.WONT):
                 self.sock.sendall(telnetlib.IAC + telnetlib.DONT + opt)
+
+    def msg(self, msg, *args):
+        # Forward telnetlib's debug messages to log
+        logger.trace(lambda: msg % args)

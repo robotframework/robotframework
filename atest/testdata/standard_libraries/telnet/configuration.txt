@@ -126,6 +126,15 @@ Default configuration
     Newline Should Be    \r\n
     Encoding Should Be    UTF-8    ignore
     Default Log Level Should Be    INFO
+    [Teardown]    Set Library Search Order    Telnet
+
+Telnetlib's Debug Messages Are Logged On Trace Level
+    [Setup]    Login And Set Prompt    encoding=UTF-8
+    Set Log Level    TRACE
+    Write    echo hyvä
+    ${out} =    Read Until Prompt
+    Should Start With    ${out}    hyvä
+    [Teardown]    Set Log Level    DEBUG
 
 *** Keywords ***
 Prompt Should Be

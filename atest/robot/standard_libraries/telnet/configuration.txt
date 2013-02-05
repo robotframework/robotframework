@@ -63,3 +63,8 @@ Configuration fails if there is no connection
 
 Default configuration
     Check Test Case    ${TEST NAME}
+
+Telnetlib's Debug Messages Are Logged On Trace Level
+    ${tc} =    Check Test Case    ${TEST NAME}
+    Check Log Message    ${tc.kws[1].msgs[1]}    send 'echo hyv\\xc3\\xa4\\r\\n'    TRACE
+    Check Log Message    ${tc.kws[1].msgs[2]}    recv 'e*'    TRACE    pattern=yep
