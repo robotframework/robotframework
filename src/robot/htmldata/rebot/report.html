@@ -50,6 +50,7 @@ $(document).ready(function () {
     }
     setBackground(topsuite);
     initLayout(topsuite.name, 'Report');
+    storage.init('report');
     addSummary(topsuite);
     addStatistics();
     addDetails();
@@ -287,14 +288,14 @@ function popUpTo(list, upTo) {
 function toggleDetailsColumn(name) {
     var column = $('.details_col_' + name);
     column.toggleClass('hidden');
-    setToLocalStorage(name, column.hasClass('hidden') ? 'hidden' : 'visible');
+    storage.set(name, column.hasClass('hidden') ? 'hidden' : 'visible');
 }
 
 function hideHiddenDetailsColumns(elem) {
     var columns = ['doc', 'tags', 'msg', 'elapsed', 'times'];
     for (var i = 0; i < columns.length; i++) {
         var col = columns[i];
-        if (getFromLocalStorage(col, 'visible') == 'hidden')
+        if (storage.get(col, 'visible') == 'hidden')
             elem.find('.details_col_' + col).addClass('hidden');
     }
 }
