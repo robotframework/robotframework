@@ -80,17 +80,21 @@ th {
     padding: 0 0.2em;
 }
 #test_details th {
+    position: relative;
     padding: 0.2em;
 }
-#test_details .details_toggle {
-    float: left;
+.details_toggle {
+    position: absolute;
+    left: 2px;
+    top: 0;
+    bottom: 0;
+    width: 9px;
+    background-image: url(data:image/gif;base64,R0lGODlhCQAJAIABAICAgP///yH5BAEKAAEALAAAAAAJAAkAAAIRjI8Ap6b72Fup1egatoGjUwAAOw==);
+    background-repeat: no-repeat;
+    background-position: center center;
 }
-#test_details .details_toggle:hover {
-    color: red;
-}
-#test_details th span {
-    background-color: yellow;
-    width: auto;
+.details_toggle:hover {
+    background-image: url(data:image/gif;base64,R0lGODlhCQAJAIABAAAAAP///yH5BAEKAAEALAAAAAAJAAkAAAIRjI8Ap6b72Fup1egatoGjUwAAOw==);
 }
 .details_col_name {
     min-width: 20em;
@@ -121,11 +125,11 @@ th {
     white-space: nowrap;
 }
 .hidden {
-    width: 0;
+    width: 9px;
     min-width: 0;
     background-image: none;
     padding: 0.2em !important;
 }
-th.hidden .details_header, td.hidden > div {
+.hidden .details_header, td.hidden > div {
     display: none;
 }
