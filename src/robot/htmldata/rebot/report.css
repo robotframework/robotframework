@@ -82,6 +82,16 @@ th {
 #test_details th {
     padding: 0.2em;
 }
+#test_details .details_toggle {
+    float: left;
+}
+#test_details .details_toggle:hover {
+    color: red;
+}
+#test_details th span {
+    background-color: yellow;
+    width: auto;
+}
 .details_col_name {
     min-width: 20em;
     font-weight: bold;

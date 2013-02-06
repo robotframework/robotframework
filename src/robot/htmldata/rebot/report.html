@@ -262,7 +262,8 @@ function renderTestDetailsRows(tests) {
 
 function configureTableSorter(sortByStatus) {
     var config = {headers: {3: {sorter: 'criticality'},
-                            6: {sortInitialOrder: 'desc'}}};
+                            6: {sortInitialOrder: 'desc'}},
+                  selectorSort: '.details_header'};
     if (sortByStatus)
         config['sortList'] = [[4, 0], [3, 0]];
     $("#test_details").tablesorter(config);
@@ -273,6 +274,25 @@ function popUpTo(list, upTo) {
     while (list.length > 0 && result.length < upTo)
         result.push(list.shift());
     return result;
+}
+
+storage = {};
+
+function toggleDetailsColumn(name) {
+    var close = (storage[name] || 'open') == 'open';
+    var th = $('th.details_col_' + name);
+    var td = $('td.details_col_' + name);
+    var css, title;
+    if (close) {
+        css = {'width': '10px', 'min-width': '0', 'background-image': 'none'};
+    } else {
+        css = {'width': '', 'min-width': '', 'background-image': ''};
+    }
+    th.css(css);
+    th.find('.details_header').toggle();
+    td.css(css);
+    td.find('div').toggle();
+    storage[name] = close ? 'closed' : 'open';
 }
 </script>
 
@@ -519,14 +539,35 @@ function popUpTo(list, upTo) {
   <table id="test_details">
     <thead>
       <tr>
-        <th class="details_col_name">Name</th>
-        <th class="details_col_doc">Documentation</th>
-        <th class="details_col_tags">Tags</th>
-        <th class="details_col_crit narrow">Crit.</th>
-        <th class="details_col_status narrow">Status</th>
-        <th class="details_col_msg">Message</th>
-        <th class="details_col_elapsed">Elapsed</th>
-        <th class="details_col_times">Start / End</th>
+        <th class="details_col_name" title="Name">
+          <div class='details_header'>Name</div>
+        </th>
+        <th class="details_col_doc" title="Documentation">
+          <div class='details_toggle' onclick="toggleDetailsColumn('doc')">x</div>
+          <div class='details_header'>Documentation</div>
+        </th>
+        <th class="details_col_tags" title="Tags">
+          <div class='details_toggle' onclick="toggleDetailsColumn('tags')">x</div>
+          <div class='details_header'>Tags</div>
+        </th>
+        <th class="details_col_crit narrow" title="Critical">
+          <div class='details_header'>Crit.</div>
+        </th>
+        <th class="details_col_status narrow" title="Status">
+          <div class='details_header'>Status</div>
+        </th>
+        <th class="details_col_msg" title="Message">
+          <div class='details_toggle' onclick="toggleDetailsColumn('msg')">x</div>
+          <div class='details_header'>Message</div>
+        </th>
+        <th class="details_col_elapsed narrow" title="Elapsed Time">
+          <div class='details_toggle' onclick="toggleDetailsColumn('elapsed')">x</div>
+          <div class='details_header'>Elapsed</div>
+        </th>
+        <th class="details_col_times" title="Start Time / End Time">
+          <div class='details_toggle' onclick="toggleDetailsColumn('times')">x</div>
+          <div class='details_header'>Start / End</div>
+        </th>
       </tr>
     </thead>
     <tbody></tbody>
@@ -537,21 +578,21 @@ function popUpTo(list, upTo) {
   {{if $item.logURL}}
   <tr onclick="location = '${$item.logURL}#${id}'" style="cursor: pointer" title="${fullName}">
     <td class="details_col_name">
-      <a href="${$item.logURL}#${id}"><span class="parent_name">{{html formatParentName}}</span>{{html name}}</a>
+      <div><a href="${$item.logURL}#${id}"><span class="parent_name">{{html formatParentName}}</span>{{html name}}</a></div>
     </td>
   {{else}}
   <tr title="${fullName}">
     <td class="details_col_name">
-        <span class="parent_name">{{html formatParentName}}</span>{{html name}}
+      <div><span class="parent_name">{{html formatParentName}}</span>{{html name}}</div>
     </td>
   {{/if}}
-    <td class="details_col_doc doc">{{html doc()}}</td>
-    <td class="details_col_tags">{{html tags.join(', ')}}</td>
-    <td class="details_col_crit">{{if isCritical}}yes{{else}}no{{/if}}</td>
-    <td class="details_col_status ${status.toLowerCase()}">${status}</td>
-    <td class="details_col_msg message">{{html message()}}</td>
-    <td class="details_col_elapsed">${times.elapsedTime}</td>
-    <td class="details_col_times">${times.startTime}<br>${times.endTime}</td>
+    <td class="details_col_doc"><div class="doc">{{html doc()}}</div></td>
+    <td class="details_col_tags"><div>{{html tags.join(', ')}}</div></td>
+    <td class="details_col_crit"><div>{{if isCritical}}yes{{else}}no{{/if}}</div></td>
+    <td class="details_col_status"><div class="${status.toLowerCase()}">${status}</div></td>
+    <td class="details_col_msg"><div class="message">{{html message()}}</div></td>
+    <td class="details_col_elapsed"><div>${times.elapsedTime}</div></td>
+    <td class="details_col_times"><div>${times.startTime}<br>${times.endTime}</div></td>
   </tr>
 </script>
 
