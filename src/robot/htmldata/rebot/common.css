@@ -162,13 +162,16 @@ th.stats_col_graph:hover {
     background-position: center right;
     cursor: pointer;
 }
-.tablesorter-headerSortUp {
+.tablesorter-headerAsc {
     background-image: url(data:image/gif;base64,R0lGODlhCwAJAKEAAAAAAH9/fwAAAAAAACH5BAEAAAIALAAAAAALAAkAAAIUlBWnFr3cnIr0WQOyBmvzp13CpxQAOw==);
     background-color: #B8C8E3 !important;
 }
-.tablesorter-headerSortDown {
+.tablesorter-headerDesc {
     background-image: url(data:image/gif;base64,R0lGODlhCwAJAKEAAAAAAH9/fwAAAAAAACH5BAEAAAIALAAAAAALAAkAAAIUlAWnBr3cnIr0WROyDmvzp13CpxQAOw==);
     background-color: #B8C8E3 !important;
+}
+.sorter-false {
+    background-image: none;
 }
 .narrow {
     padding-right: 1em !important;
