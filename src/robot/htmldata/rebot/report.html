@@ -21,6 +21,7 @@
 <script type="text/javascript" src="util.js"></script>
 <script type="text/javascript" src="testdata.js"></script>
 <script type="text/javascript" src="view.js"></script>
+<script type="text/javascript" src="../common/storage.js"></script>
 <!-- JS MODEL --><script type="text/javascript" src="../testdata/data.js"></script>
 <title></title>
 </head>
@@ -209,9 +210,15 @@ function renderSelector(args, template, stats) {
 }
 
 function drawTestDetailsTable(tests, sortByStatus) {
-    $.tmpl('testDetailsTableTemplate').appendTo('#test_details_container');
+    renderTestDetailsHeader();
     window.elementsToRender = tests;
     renderTestDetails(sortByStatus);
+}
+
+function renderTestDetailsHeader() {
+    var header = $.tmpl('testDetailsTableTemplate');
+    hideHiddenDetailsColumns(header);
+    header.appendTo('#test_details_container');
 }
 
 function sortByStatus(t1, t2) {
@@ -257,6 +264,7 @@ function renderTestDetailsRows(tests) {
     var rows = $.tmpl('testDetailsTableRowTemplate', tests,
                       {logURL: window.settings.logURL});
     rows.find('a').attr('onclick', 'stopPropagation(event);');
+    hideHiddenDetailsColumns(rows);
     rows.appendTo('#test_details > tbody');
 }
 
@@ -276,12 +284,19 @@ function popUpTo(list, upTo) {
     return result;
 }
 
-storage = {};
-
 function toggleDetailsColumn(name) {
-    var close = (storage[name] || 'open') == 'open';
-    $('.details_col_' + name).toggleClass('hidden');
-    storage[name] = close ? 'closed' : 'open';
+    var column = $('.details_col_' + name);
+    column.toggleClass('hidden');
+    setToLocalStorage(name, column.hasClass('hidden') ? 'hidden' : 'visible');
+}
+
+function hideHiddenDetailsColumns(elem) {
+    var columns = ['doc', 'tags', 'msg', 'elapsed', 'times'];
+    for (var i = 0; i < columns.length; i++) {
+        var col = columns[i];
+        if (getFromLocalStorage(col, 'visible') == 'hidden')
+            elem.find('.details_col_' + col).addClass('hidden');
+    }
 }
 </script>
 
