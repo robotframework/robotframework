@@ -120,3 +120,12 @@ th {
     width: 9em;
     white-space: nowrap;
 }
+.hidden {
+    width: 0;
+    min-width: 0;
+    background-image: none;
+    padding: 0.2em !important;
+}
+th.hidden .details_header, td.hidden > div {
+    display: none;
+}

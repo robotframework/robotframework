@@ -280,18 +280,7 @@ storage = {};
 
 function toggleDetailsColumn(name) {
     var close = (storage[name] || 'open') == 'open';
-    var th = $('th.details_col_' + name);
-    var td = $('td.details_col_' + name);
-    var css, title;
-    if (close) {
-        css = {'width': '10px', 'min-width': '0', 'background-image': 'none'};
-    } else {
-        css = {'width': '', 'min-width': '', 'background-image': ''};
-    }
-    th.css(css);
-    th.find('.details_header').toggle();
-    td.css(css);
-    td.find('div').toggle();
+    $('.details_col_' + name).toggleClass('hidden');
     storage[name] = close ? 'closed' : 'open';
 }
 </script>
