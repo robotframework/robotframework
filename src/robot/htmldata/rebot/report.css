@@ -73,6 +73,7 @@ td {
 /* Test details table */
 #test_details {
     width: 100%;
+    table-layout: fixed;
 }
 #test_details tr:hover {
     background: #F4F4FF;
@@ -85,15 +86,13 @@ td {
 .details_toggle {
     position: absolute;
     left: 2px;
-    top: 0;
-    bottom: 0;
-    width: 9px;
-    background-image: url(data:image/gif;base64,R0lGODlhCQAJAIABAICAgP///yH5BAEKAAEALAAAAAAJAAkAAAIRjI8Ap6b72Fup1egatoGjUwAAOw==);
-    background-repeat: no-repeat;
-    background-position: center center;
+    top: 6px;
 }
-.details_toggle:hover {
-    background-image: url(data:image/gif;base64,R0lGODlhCQAJAIABAAAAAP///yH5BAEKAAEALAAAAAAJAAkAAAIRjI8Ap6b72Fup1egatoGjUwAAOw==);
+.details_toggle:before {
+    content: url(data:image/gif;base64,R0lGODlhCQAJAIABAICAgP///yH5BAEKAAEALAAAAAAJAAkAAAIRjI8Ap6b72Fup1egatoGjUwAAOw==);
+}
+.details_toggle:hover:before {
+    content: url(data:image/gif;base64,R0lGODlhCQAJAIABAAAAAP///yH5BAEKAAEALAAAAAAJAAkAAAIRjI8Ap6b72Fup1egatoGjUwAAOw==);
 }
 .details_col_name {
     min-width: 20em;
@@ -117,11 +116,13 @@ td {
     min-width: 20em;
 }
 .details_col_elapsed {
-    width: 5em;
+    width: 6em;
+    text-align: center;
 }
 .details_col_times {
-    width: 9em;
+    width: 11em;
     white-space: nowrap;
+    text-align: center;
 }
 .hidden {
     width: 9px;
