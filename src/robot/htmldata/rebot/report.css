@@ -1,6 +1,5 @@
 /* Generic table styles */
 table {
-    background: white;
     border: 1px solid black;
     border-collapse: collapse;
     empty-cells: show;
@@ -9,6 +8,9 @@ table {
 th {
     background: #DCDCF0;
     color: black;
+}
+td {
+    background: white;
 }
 /* Summary and total/tag/suite details */
 .details {
@@ -75,11 +77,8 @@ th {
 #test_details tr:hover {
     background: #F4F4FF;
 }
-#test_details th, table#test_details td {
+#test_details th, #test_details td {
     border: 1px solid black;
-    padding: 0 0.2em;
-}
-#test_details th {
     position: relative;
     padding: 0.2em;
 }

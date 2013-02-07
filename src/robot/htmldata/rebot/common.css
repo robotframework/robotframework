@@ -9,7 +9,7 @@ body {
 br {
     mso-data-placement: same-cell; /* maintain line breaks in Excel */
 }
-a:link, a:visited {
+a, a:link, a:visited {
     text-decoration: none;
     color: blue;
 }
@@ -103,7 +103,7 @@ h2 {
 }
 .statistics th, .statistics td {
     border: 1px solid black;
-    padding: 0.1em 0.3em;
+    padding: 0.2em 0.3em;
 }
 .statistics th {
     background-color: #DCDCF0;
