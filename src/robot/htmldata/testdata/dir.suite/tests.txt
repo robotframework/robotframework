@@ -86,6 +86,11 @@ Escape JS </script> " http://url.com
     kw http://url.com
     </script>
 
+Long messages
+    ${msg} =    Evaluate    'HelloWorld' * 100
+    Log    ${msg}    WARN
+    Fail    ${msg}
+
 *** Keywords **
 User Kw
     Log   in User Kw
