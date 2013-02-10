@@ -49,20 +49,17 @@
 /* Messages and errors */
 .messages {
     font-family: monospace;
-    font-size: 1.2em;
-}
-.messages td, .errors td {
-    vertical-align: top;
+    font-size: 1.1em;
 }
 .time {
-    width: 6em;
+    width: 8em;
 }
 .error_time {
-    width: 10em;
+    width: 11.5em;
     white-space: nowrap;
 }
 .level {
-    width: 5em;
+    width: 4em;
     text-align: center;
 }
 /* Message tables - these MUST NOT be combined together because otherwise
@@ -77,12 +74,8 @@
 .metadata th {
     width: 13em;
     text-align: left;
-    vertical-align: top;
     white-space: nowrap;
     padding-right: 0.5em;
-}
-.metadata td {
-    vertical-align: top;
 }
 .keyword_metadata {
     font-size: 0.9em;

@@ -6,6 +6,15 @@ body {
     padding: 6px;
     background: white;
 }
+table {
+    table-layout: fixed;
+    word-wrap: break-word;
+    empty-cells: show;
+    font-size: 1em;
+}
+th, td {
+    vertical-align: top;
+}
 br {
     mso-data-placement: same-cell; /* maintain line breaks in Excel */
 }
@@ -103,10 +112,11 @@ h2 {
 }
 .statistics th, .statistics td {
     border: 1px solid black;
-    padding: 0.2em 0.3em;
+    padding: 0.1em 0.3em;
 }
 .statistics th {
     background-color: #DCDCF0;
+    padding: 0.2em 0.3em;
 }
 .stats_col_stat {
     width: 3em;
@@ -118,6 +128,7 @@ h2 {
 }
 .stats_col_graph {
     width: 9em;
+    vertical-align: middle;
 }
 th.stats_col_graph:hover {
     cursor: default;
@@ -140,7 +151,7 @@ th.stats_col_graph:hover {
 .graph, .empty_graph {
     border: 1px solid black;
     width: auto;
-    height: 8px;
+    height: 7px;
     padding: 0;
     background: red;
 }
@@ -148,7 +159,6 @@ th.stats_col_graph:hover {
     background: #E9E9E9;
 }
 .pass_bar, .fail_bar {
-    position: relative;
     float: left;
     height: 100%;
 }

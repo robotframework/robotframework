@@ -1,8 +1,5 @@
 /* Generic table styles */
 table {
-    border: 1px solid black;
-    border-collapse: collapse;
-    empty-cells: show;
     margin: 0 1px;
 }
 th {
@@ -14,6 +11,8 @@ td {
 }
 /* Summary and total/tag/suite details */
 .details {
+    border: 1px solid black;
+    border-collapse: collapse;
     clear: both;
     width: 63em;
     margin-bottom: 1em;
@@ -73,20 +72,20 @@ td {
 /* Test details table */
 #test_details {
     width: 100%;
-    table-layout: fixed;
+    border-spacing: 1px;
+    background-color: black;
 }
 #test_details tr:hover {
     background: #F4F4FF;
 }
 #test_details th, #test_details td {
-    border: 1px solid black;
     position: relative;
     padding: 0.2em;
 }
 .details_toggle {
     position: absolute;
     left: 2px;
-    top: 6px;
+    top: 5px;
 }
 .details_toggle:before {
     content: url(data:image/gif;base64,R0lGODlhCQAJAIABAICAgP///yH5BAEKAAEALAAAAAAJAAkAAAIRjI8Ap6b72Fup1egatoGjUwAAOw==);
@@ -105,22 +104,22 @@ td {
     min-width: 10em;
 }
 .details_col_crit {
-    width: 2em;
+    width: 3em;
     text-align: center;
 }
 .details_col_status {
-    width: 3em;
+    width: 4em;
     text-align: center;
 }
 .details_col_msg {
     min-width: 20em;
 }
 .details_col_elapsed {
-    width: 6em;
+    width: 7em;
     text-align: center;
 }
 .details_col_times {
-    width: 11em;
+    width: 12em;
     white-space: nowrap;
     text-align: center;
 }
