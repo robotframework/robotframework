@@ -79,19 +79,14 @@ td {
     background: #F4F4FF;
 }
 #test_details th, #test_details td {
-    position: relative;
     padding: 0.2em;
 }
 .details_toggle {
-    position: absolute;
-    left: 2px;
-    top: 5px;
+    float: left;
+    color: #808080;
 }
-.details_toggle:before {
-    content: url(data:image/gif;base64,R0lGODlhCQAJAIABAICAgP///yH5BAEKAAEALAAAAAAJAAkAAAIRjI8Ap6b72Fup1egatoGjUwAAOw==);
-}
-.details_toggle:hover:before {
-    content: url(data:image/gif;base64,R0lGODlhCQAJAIABAAAAAP///yH5BAEKAAEALAAAAAAJAAkAAAIRjI8Ap6b72Fup1egatoGjUwAAOw==);
+.details_toggle:hover {
+    color: black;
 }
 .details_col_name {
     min-width: 20em;
@@ -124,10 +119,12 @@ td {
     text-align: center;
 }
 .hidden {
-    width: 9px;
+    width: 13px;
     min-width: 0;
     background-image: none;
-    padding: 0.2em !important;
+}
+.hidden:hover {
+    background-color: #DCDCF0;
 }
 .hidden .details_header, td.hidden > div {
     display: none;

@@ -288,15 +288,20 @@ function popUpTo(list, upTo) {
 function toggleDetailsColumn(name) {
     var column = $('.details_col_' + name);
     column.toggleClass('hidden');
-    storage.set(name, column.hasClass('hidden') ? 'hidden' : 'visible');
+    var hidden = column.hasClass('hidden');
+    storage.set(name, hidden ? 'hidden' : 'visible');
+    column.find('.details_toggle').html(hidden ? '&hellip;' : '&times;');
 }
 
 function hideHiddenDetailsColumns(elem) {
-    var columns = ['doc', 'tags', 'msg', 'elapsed', 'times'];
-    for (var i = 0; i < columns.length; i++) {
-        var col = columns[i];
-        if (storage.get(col, 'visible') == 'hidden')
-            elem.find('.details_col_' + col).addClass('hidden');
+    var names = ['doc', 'tags', 'msg', 'elapsed', 'times'];
+    for (var i = 0; i < names.length; i++) {
+        var name = names[i];
+        if (storage.get(name, 'visible') == 'hidden') {
+            var column = elem.find('.details_col_' + name);
+            column.addClass('hidden');
+            column.find('.details_toggle').html('&hellip;');
+        }
     }
 }
 </script>
@@ -548,11 +553,11 @@ function hideHiddenDetailsColumns(elem) {
           <div class='details_header'>Name</div>
         </th>
         <th class="details_col_doc" title="Documentation">
-          <div class='details_toggle' onclick="toggleDetailsColumn('doc')"></div>
+          <div class='details_toggle' onclick="toggleDetailsColumn('doc')">&times;</div>
           <div class='details_header'>Documentation</div>
         </th>
         <th class="details_col_tags" title="Tags">
-          <div class='details_toggle' onclick="toggleDetailsColumn('tags')"></div>
+          <div class='details_toggle' onclick="toggleDetailsColumn('tags')">&times;</div>
           <div class='details_header'>Tags</div>
         </th>
         <th class="details_col_crit narrow" title="Critical">
@@ -562,15 +567,15 @@ function hideHiddenDetailsColumns(elem) {
           <div class='details_header'>Status</div>
         </th>
         <th class="details_col_msg" title="Message">
-          <div class='details_toggle' onclick="toggleDetailsColumn('msg')"></div>
+          <div class='details_toggle' onclick="toggleDetailsColumn('msg')">&times;</div>
           <div class='details_header'>Message</div>
         </th>
         <th class="details_col_elapsed" title="Elapsed Time">
-          <div class='details_toggle' onclick="toggleDetailsColumn('elapsed')"></div>
+          <div class='details_toggle' onclick="toggleDetailsColumn('elapsed')">&times;</div>
           <div class='details_header'>Elapsed</div>
         </th>
         <th class="details_col_times" title="Start Time / End Time">
-          <div class='details_toggle' onclick="toggleDetailsColumn('times')"></div>
+          <div class='details_toggle' onclick="toggleDetailsColumn('times')">&times;</div>
           <div class='details_header'>Start / End</div>
         </th>
       </tr>
