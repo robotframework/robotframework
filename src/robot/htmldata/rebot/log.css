@@ -1,7 +1,7 @@
 /* Containers */
 .suite, .test, .errors {
     border: 1px solid gray;
-    padding: 0.3em;
+    padding: 0.3em 0.2em;
     margin: 0.2em 0;
 }
 .test {
@@ -11,7 +11,7 @@
     width: 100%;
 }
 .children {
-    margin-left: 1.8em;
+    margin-left: 1.5em;
 }
 /* Suite, test and kw headers */
 .elementheader {
@@ -28,11 +28,14 @@
 .foldingbutton {
     display: inline-block;
     position: absolute;
-    left: 0.2em;
-    top: 0.2em;
-    bottom: 0.3em;
-    width: 1em;
-    font-size: 0.9em;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 0.9em;
+    margin: 0.4em 0 0.4em 0.3em;
+    padding: 0.1em;
+    font-size: 0.7em;
+    font-weight: bold;
     text-align: center;
     border: 1px solid black;
     border-radius: 2px;
@@ -41,7 +44,7 @@
     background: yellow;
 }
 .type {
-    margin-left: 1.8em;
+    margin-left: 1.5em;
 }
 .name {
     font-weight: bold;
