@@ -17,7 +17,7 @@
 .elementheader {
     border: 1px solid white;
     border-radius: 2px;
-    padding: 0.15em 0.3em;
+    padding: 0.15em 0;
 }
 .elementheader:hover {
     cursor: pointer;
@@ -28,7 +28,7 @@
     display: inline-block;
     width: 1.2em;
     text-align: center;
-    margin-right: 0.3em;
+    margin: 0 0.3em;
     border: 1px solid black;
     border-radius: 2px;
 }
@@ -40,7 +40,7 @@
 }
 .expandall {
     float: right;
-    margin: 0.3em 0.5em;
+    padding: 0.3em 0.8em;
     font-size: 0.8em;
 }
 /* Messages and errors */
