@@ -46,7 +46,7 @@ function drawCallback(element, childElement, childrenNames) {
     }
 }
 
-function expandRecursively(){
+function expandRecursively() {
     if (!window.elementsToExpand.length)
         return;
     var element = window.elementsToExpand.pop();
@@ -55,7 +55,7 @@ function expandRecursively(){
         return;
     }
     expandElement(element);
-    element.callWhenChildrenReady( function () {
+    element.callWhenChildrenReady(function () {
         var children = element.children();
         for (var i = children.length-1; i >= 0; i--) {
             if (window.expandDecider(children[i]))
