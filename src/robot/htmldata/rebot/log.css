@@ -11,7 +11,7 @@
     width: 100%;
 }
 .keyword, .metadata, .messages {
-    padding-left: 1.2em;
+    padding-left: 2em;
 }
 /* Suite, test and kw headers */
 .elementheader {
@@ -28,7 +28,7 @@
     display: inline-block;
     width: 1.2em;
     text-align: center;
-    margin: 0 0.3em;
+    margin: 0 0.2em;
     border: 1px solid black;
     border-radius: 2px;
 }
@@ -69,10 +69,9 @@
 }
 /* Metadata */
 .metadata th {
-    width: 13em;
+    width: 12.5em;
     text-align: left;
     white-space: nowrap;
-    padding-right: 0.5em;
 }
 .keyword_metadata {
     font-size: 0.9em;
