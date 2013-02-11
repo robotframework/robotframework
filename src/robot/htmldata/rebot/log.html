@@ -189,7 +189,7 @@ function addTestExecutionLog(main) {
   <div id="${id}" class="suite">
     <div class="elementheader" onclick="toggleSuite('${id}')" title="${fullName}">
       <span id="${id}_foldingbutton" class="foldingbutton">+</span>
-      <span class="${status.toLowerCase()}">TEST&nbsp;SUITE:</span>
+      <span class="type ${status.toLowerCase()}">TEST&nbsp;SUITE:</span>
       <span class="name">{{html name}}</span>
       <a class="expandall" href="javascript:expandAllChildren('${id}')"
          onclick="stopPropagation(event);">Expand All</a>
@@ -245,7 +245,7 @@ function addTestExecutionLog(main) {
   <div id="${id}" class="test">
     <div class="elementheader" onclick="toggleTest('${id}')" title="${fullName}">
       <span id="${id}_foldingbutton" class="foldingbutton">+</span>
-      <span class="${status.toLowerCase()}">TEST&nbsp;CASE: </span>
+      <span class="type ${status.toLowerCase()}">TEST&nbsp;CASE: </span>
       <span class="name">{{html name}}</span>
       {{if !isCritical}}<span>  (non-critical)</span>{{/if}}
       <a class="expandall" href="javascript:expandAllChildren('${id}')"
@@ -298,7 +298,7 @@ function addTestExecutionLog(main) {
   <div id="${id}" class="keyword">
     <div class="elementheader" onclick="toggleKeyword('${id}')" title="${name}">
       <span id="${id}_foldingbutton" class="foldingbutton">+</span>
-      <span class="${status.toLowerCase()}">${type}: </span>
+      <span class="type ${status.toLowerCase()}">${type}: </span>
       <span class="name">{{html name}}</span>
       <span class="arg">{{html arguments}}</span>
       <a class="expandall" href="javascript:expandAllChildren('${id}')"
