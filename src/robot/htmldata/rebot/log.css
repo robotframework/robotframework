@@ -17,7 +17,7 @@
 .elementheader {
     border: 1px solid white;
     border-radius: 2px;
-    padding: 0.2em 0;
+    padding: 0.15em 0.3em;
 }
 .elementheader:hover {
     cursor: pointer;
@@ -25,13 +25,10 @@
     border: 1px solid #D3D3D3;
 }
 .foldingbutton {
-    float: left;
-    height: 0.9em;
-    width: 0.9em;
-    line-height: 0.9em;
+    display: inline-block;
+    width: 1.2em;
     text-align: center;
-    font-size: 0.7em;
-    margin: 0.3em 0.5em;
+    margin-right: 0.3em;
     border: 1px solid black;
     border-radius: 2px;
 }
@@ -43,7 +40,7 @@
 }
 .expandall {
     float: right;
-    margin: 0.2em 0.5em;
+    margin: 0.3em 0.5em;
     font-size: 0.8em;
 }
 /* Messages and errors */

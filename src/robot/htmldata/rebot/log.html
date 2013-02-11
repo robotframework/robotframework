@@ -189,11 +189,11 @@ function addTestExecutionLog(main) {
   <div id="${id}" class="suite">
     <div id="${id}_elementheader" class="elementheader"
          onclick="toggleSuite('${id}');" title="${fullName}">
-      <div id="${id}_foldingbutton" class="foldingbutton">+</div>
+      <span id="${id}_foldingbutton" class="foldingbutton">+</span>
       <span class="${status.toLowerCase()}">TEST&nbsp;SUITE:</span>
       <span class="name">{{html name}}</span>
-        <a class="expandall" href="javascript:expandAllChildren('${id}')"
-           onclick="stopPropagation(event);">Expand All</a>
+      <a class="expandall" href="javascript:expandAllChildren('${id}')"
+         onclick="stopPropagation(event);">Expand All</a>
     </div>
     <div id="${id}_children" style="display: none;">
       <table class="metadata">
@@ -246,12 +246,12 @@ function addTestExecutionLog(main) {
   <div id="${id}" class="test">
     <div id="${id}_elementheader" onclick="toggleTest('${id}');"
          class="elementheader" title="${fullName}">
-      <div id="${id}_foldingbutton" class="foldingbutton">+</div>
+      <span id="${id}_foldingbutton" class="foldingbutton">+</span>
       <span class="${status.toLowerCase()}">TEST&nbsp;CASE: </span>
       <span class="name">{{html name}}</span>
       {{if !isCritical}}<span>  (non-critical)</span>{{/if}}
-        <a class="expandall" href="javascript:expandAllChildren('${id}')"
-           onclick="stopPropagation(event);">Expand All</a>
+      <a class="expandall" href="javascript:expandAllChildren('${id}')"
+         onclick="stopPropagation(event);">Expand All</a>
     </div>
     <div id="${id}_children" style="display: none;">
       <table class="metadata">
@@ -300,7 +300,7 @@ function addTestExecutionLog(main) {
   <div id="${id}" class="keyword">
     <div id="${id}_elementheader" class="elementheader"
          onclick="toggleKeyword('${id}');" title="${name}">
-      <div id="${id}_foldingbutton" class="foldingbutton">+</div>
+      <span id="${id}_foldingbutton" class="foldingbutton">+</span>
       <span class="${status.toLowerCase()}">${type}: </span>
       <span class="name">{{html name}}</span>
       <span class="arg">{{html arguments}}</span>

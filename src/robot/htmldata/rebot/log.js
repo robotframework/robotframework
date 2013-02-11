@@ -22,7 +22,7 @@ function toggleElement(elementId, childrenNames) {
     var childElement = $("#"+elementId+"_children");
     childElement.toggle(100, function () {
         var foldingButton = $('#'+elementId+'_foldingbutton');
-        foldingButton.text(foldingButton.text() == '+' ? '-' : '+');
+        foldingButton.html(foldingButton.text() == '+' ? '&minus;' : '+');
     });
     populateChildren(elementId, childElement, childrenNames);
 }
@@ -70,7 +70,7 @@ function expandElement(element) {
     var childElement = $("#" + element.id + "_children");
     childElement.show();
     populateChildren(element.id, childElement, element.childrenNames);
-    $('#'+element.id+'_foldingbutton').text('-');
+    $('#'+element.id+'_foldingbutton').html('&minus;');
 }
 
 function expandElementWithId(elementid) {
