@@ -17,7 +17,7 @@
 .elementheader {
     border: 1px solid white;
     border-radius: 2px;
-    padding: 0.15em 0;
+    padding: 0.2em 0;
     position: relative;
 }
 .elementheader:hover {
@@ -30,7 +30,7 @@
     position: absolute;
     left: 0.2em;
     top: 0.2em;
-    bottom: 0.2em;
+    bottom: 0.3em;
     width: 1em;
     font-size: 0.9em;
     text-align: center;
@@ -53,7 +53,7 @@
     top: 0;
     bottom: 0;
     font-size: 0.8em;
-    padding: 0.4em 1em;
+    padding: 0.5em 1em;
 }
 /* Messages and errors */
 .messages {
