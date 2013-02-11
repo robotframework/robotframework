@@ -2,12 +2,12 @@
 table {
     margin: 0 1px;
 }
+tr {
+    background: white;
+}
 th {
     background: #DCDCF0;
     color: black;
-}
-td {
-    background: white;
 }
 /* Summary and total/tag/suite details */
 .details {
@@ -118,14 +118,14 @@ td {
     white-space: nowrap;
     text-align: center;
 }
+.hidden .details_header, td.hidden > div {
+    display: none;
+}
 .hidden {
     width: 13px;
     min-width: 0;
     background-image: none;
 }
-.hidden:hover {
+th.hidden:hover {
     background-color: #DCDCF0;
-}
-.hidden .details_header, td.hidden > div {
-    display: none;
 }
