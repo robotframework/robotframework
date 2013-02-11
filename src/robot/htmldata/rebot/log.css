@@ -10,7 +10,7 @@
 .errors, .metadata, .messages {
     width: 100%;
 }
-.keyword, .metadata, .messages {
+.children {
     margin-left: 1.8em;
 }
 /* Suite, test and kw headers */
