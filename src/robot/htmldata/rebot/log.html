@@ -187,8 +187,7 @@ function addTestExecutionLog(main) {
 
 <script type="text/x-jquery-tmpl" id="suiteTemplate">
   <div id="${id}" class="suite">
-    <div id="${id}_elementheader" class="elementheader"
-         onclick="toggleSuite('${id}');" title="${fullName}">
+    <div class="elementheader" onclick="toggleSuite('${id}')" title="${fullName}">
       <span id="${id}_foldingbutton" class="foldingbutton">+</span>
       <span class="${status.toLowerCase()}">TEST&nbsp;SUITE:</span>
       <span class="name">{{html name}}</span>
@@ -244,8 +243,7 @@ function addTestExecutionLog(main) {
 
 <script type="text/x-jquery-tmpl" id="testTemplate">
   <div id="${id}" class="test">
-    <div id="${id}_elementheader" onclick="toggleTest('${id}');"
-         class="elementheader" title="${fullName}">
+    <div class="elementheader" onclick="toggleTest('${id}')" title="${fullName}">
       <span id="${id}_foldingbutton" class="foldingbutton">+</span>
       <span class="${status.toLowerCase()}">TEST&nbsp;CASE: </span>
       <span class="name">{{html name}}</span>
@@ -298,8 +296,7 @@ function addTestExecutionLog(main) {
 
 <script type="text/x-jquery-tmpl" id="keywordTemplate">
   <div id="${id}" class="keyword">
-    <div id="${id}_elementheader" class="elementheader"
-         onclick="toggleKeyword('${id}');" title="${name}">
+    <div class="elementheader" onclick="toggleKeyword('${id}')" title="${name}">
       <span id="${id}_foldingbutton" class="foldingbutton">+</span>
       <span class="${status.toLowerCase()}">${type}: </span>
       <span class="name">{{html name}}</span>
