@@ -73,6 +73,14 @@ function addSummary(topsuite) {
 }
 
 function addDetails() {
+    addCustomSortersForDetails();
+    if (window.location.hash)
+        showDetailsByHash();
+    else
+        renderTotalSelector();
+}
+
+function addCustomSortersForDetails() {
     $.tablesorter.addParser({
         id: 'criticality',
         type: 'numeric',
@@ -83,10 +91,16 @@ function addDetails() {
             return s === 'yes' ? 0 : 1;
         }
     });
-    if (window.location.hash)
-        showDetailsByHash();
-    else
-        renderTotalSelector();
+    $.tablesorter.addParser({
+        id: 'times',
+        type: 'text',
+        is: function(s) {
+            return false;  // do not auto-detect
+        },
+        format: function(s) {
+            return s.substring(0, 21);  // return only start time
+        }
+    });
 }
 
 function showDetailsByHash() {
@@ -271,7 +285,8 @@ function renderTestDetailsRows(tests) {
 
 function configureTableSorter(sortByStatus) {
     var config = {headers: {3: {sorter: 'criticality'},
-                            6: {sortInitialOrder: 'desc'}},
+                            6: {sortInitialOrder: 'desc'},
+                            7: {sorter: 'times'}},
                   selectorSort: '.details_header'};
     if (sortByStatus)
         config['sortList'] = [[4, 0], [3, 0]];
