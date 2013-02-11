@@ -57,6 +57,11 @@
     bottom: 0;
     font-size: 0.8em;
     padding: 0.5em 1em;
+    color: #808080 !important;
+}
+.expandall:hover {
+    text-decoration: none;
+    color: black !important;
 }
 /* Messages and errors */
 .messages {
