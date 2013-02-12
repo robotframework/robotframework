@@ -86,7 +86,7 @@ function addStatistics() {
 }
 
 function stopStatLinkClickPropagation() {
-    $('.statistics a').attr('onclick', 'stopPropagation(event);');
+    $('.statistics a').click(stopPropagation);
 }
 
 function addTooltipsToElapsedTimes() {

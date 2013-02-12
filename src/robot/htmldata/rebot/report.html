@@ -278,7 +278,7 @@ function renderTestDetails(sortByStatus) {
 function renderTestDetailsRows(tests) {
     var rows = $.tmpl('testDetailsTableRowTemplate', tests,
                       {logURL: window.settings.logURL});
-    rows.find('a').attr('onclick', 'stopPropagation(event);');
+    rows.find('a').click(stopPropagation);
     hideHiddenDetailsColumns(rows);
     rows.appendTo('#test_details > tbody');
 }
