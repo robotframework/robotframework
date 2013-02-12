@@ -72,11 +72,11 @@
     width: 8em;
 }
 .error_time {
-    width: 11.5em;
+    width: 11em;
     white-space: nowrap;
 }
 .level {
-    width: 4em;
+    width: 4.5em;
     text-align: center;
 }
 /* Message tables - these MUST NOT be combined together because otherwise

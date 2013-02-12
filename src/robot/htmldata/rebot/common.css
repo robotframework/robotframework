@@ -1,6 +1,6 @@
 /* Generic and misc styles */
 body {
-    font-family: sans-serif;
+    font-family: Helvetica, sans-serif;
     font-size: 0.8em;
     color: black;
     padding: 6px;
@@ -118,12 +118,15 @@ h2 {
     background-color: #DCDCF0;
     padding: 0.2em 0.3em;
 }
+.statistics td {
+    vertical-align: middle;
+}
 .stats_col_stat {
-    width: 3em;
+    width: 3.3em;
     text-align: center;
 }
 .stats_col_elapsed {
-    width: 4.5em;
+    width: 5em;
     text-align: center;
 }
 .stats_col_graph {
