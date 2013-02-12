@@ -13,7 +13,7 @@ Should Be String Positive
 
 Should Be String Negative
     [Template]     Run Keyword And Expect Error
-    Given item '0' is not a string    Should be string    ${0}
+    '0' is not a string.    Should be string    ${0}
     My error    Should be string    ${TRUE}    My error
 
 Should Not Be String Positive
@@ -22,7 +22,7 @@ Should Not Be String Positive
 
 Should Not Be String Negative
     [Template]    Run Keyword And Expect Error
-    Given item '${BYTES}' is a string   Should not be string    ${BYTES}
+    '${BYTES}' is a string.    Should not be string    ${BYTES}
     My error message    Should not be string    Hello    My error message
 
 Should Be Unicode String Positive
@@ -30,7 +30,7 @@ Should Be Unicode String Positive
 
 Should Be Unicode String Negative
     [Template]     Run Keyword And Expect Error
-    Given item '${BYTES}' is not a Unicode string    Should Be Unicode String    ${BYTES}
+    '${BYTES}' is not a Unicode string.    Should Be Unicode String    ${BYTES}
     My error    Should Be Unicode String    ${0}    My error
 
 Should Be Byte String Positive
@@ -38,7 +38,7 @@ Should Be Byte String Positive
 
 Should Be Byte String Negative
     [Template]     Run Keyword And Expect Error
-    Given item 'Hyvä' is not a byte string    Should Be Byte String    Hyvä
+    'Hyvä' is not a byte string.    Should Be Byte String    Hyvä
     My error    Should Be Byte String    ${0}    My error
 
 Should Be Lowercase Positive
@@ -47,7 +47,7 @@ Should Be Lowercase Positive
 
 Should Be Lowercase Negative
     [Template]    Run Keyword And Expect Error
-    '${BYTES}' is not lowercase    Should Be Lowercase    ${BYTES}
+    '${BYTES}' is not lowercase.    Should Be Lowercase    ${BYTES}
     My error    Should Be Lowercase    UP!    My error
 
 Should Be Uppercase Positive
@@ -56,7 +56,7 @@ Should Be Uppercase Positive
 
 Should Be Uppercase Negative
     [Template]    Run Keyword And Expect Error
-    '${BYTES}' is not uppercase    Should Be Uppercase    ${BYTES}
+    '${BYTES}' is not uppercase.    Should Be Uppercase    ${BYTES}
     Custom error    Should Be Uppercase    low...    Custom error
 
 Should Be Titlecase Positive
@@ -65,7 +65,7 @@ Should Be Titlecase Positive
 
 Should Be Titlecase Negative
     [Template]    Run Keyword And Expect Error
-    '${BYTES.lower()}' is not titlecase    Should Be Titlecase    ${BYTES.lower()}
+    '${BYTES.lower()}' is not titlecase.    Should Be Titlecase    ${BYTES.lower()}
     Special error    Should Be Titlecase    all low    Special error
 
 *** Keywords ***

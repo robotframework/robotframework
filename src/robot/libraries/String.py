@@ -395,7 +395,7 @@ class String:
         `msg` argument.
         """
         if not isinstance(item, basestring):
-            self._fail(msg, "Given item '%s' is not a string", item)
+            self._fail(msg, "'%s' is not a string.", item)
 
     def should_not_be_string(self, item, msg=None):
         """Fails if the given `item` is a string.
@@ -404,7 +404,7 @@ class String:
         `msg` argument.
         """
         if isinstance(item, basestring):
-            self._fail(msg, "Given item '%s' is a string", item)
+            self._fail(msg, "'%s' is a string.", item)
 
     def should_be_unicode_string(self, item, msg=None):
         """Fails if the given `item` is not a Unicode string.
@@ -419,7 +419,7 @@ class String:
         New in Robot Framework 2.7.7.
         """
         if not isinstance(item, unicode):
-            self._fail(msg, "Given item '%s' is not a Unicode string", item)
+            self._fail(msg, "'%s' is not a Unicode string.", item)
 
     def should_be_byte_string(self, item, msg=None):
         """Fails if the given `item` is not a byte string.
@@ -434,37 +434,37 @@ class String:
         New in Robot Framework 2.7.7.
         """
         if not isinstance(item, str):
-            self._fail(msg, "Given item '%s' is not a byte string", item)
+            self._fail(msg, "'%s' is not a byte string.", item)
 
     def should_be_lowercase(self, string, msg=None):
         """Fails if the given `string` is not in lowercase.
 
-        The default error message can be overridden with the optional
-        `msg` argument.
-
         For example 'string' and 'with specials!' would pass, and 'String', ''
         and ' ' would fail.
+
+        The default error message can be overridden with the optional
+        `msg` argument.
 
         See also `Should Be Uppercase` and `Should Be Titlecase`.
         All these keywords were added in Robot Framework 2.1.2.
         """
         if not string.islower():
-            self._fail(msg, "'%s' is not lowercase", string)
+            self._fail(msg, "'%s' is not lowercase.", string)
 
     def should_be_uppercase(self, string, msg=None):
         """Fails if the given `string` is not in uppercase.
 
-        The default error message can be overridden with the optional
-        `msg` argument.
-
         For example 'STRING' and 'WITH SPECIALS!' would pass, and 'String', ''
         and ' ' would fail.
+
+        The default error message can be overridden with the optional
+        `msg` argument.
 
         See also `Should Be Titlecase` and `Should Be Lowercase`.
         All these keywords were added in Robot Framework 2.1.2.
         """
         if not string.isupper():
-            self._fail(msg, "'%s' is not uppercase", string)
+            self._fail(msg, "'%s' is not uppercase.", string)
 
     def should_be_titlecase(self, string, msg=None):
         """Fails if given `string` is not title.
@@ -473,17 +473,17 @@ class String:
         character in it, uppercase characters only follow uncased
         characters and lowercase characters only cased ones.
 
-        The default error message can be overridden with the optional
-        `msg` argument.
-
         For example 'This Is Title' would pass, and 'Word In UPPER',
         'Word In lower', '' and ' ' would fail.
+
+        The default error message can be overridden with the optional
+        `msg` argument.
 
         See also `Should Be Uppercase` and `Should Be Lowercase`.
         All theses keyword were added in Robot Framework 2.1.2.
         """
         if not string.istitle():
-            self._fail(msg, "'%s' is not titlecase", string)
+            self._fail(msg, "'%s' is not titlecase.", string)
 
     def _convert_to_index(self, value, name):
         if value == '':
@@ -496,7 +496,7 @@ class String:
         try:
             return int(value)
         except ValueError:
-            raise ValueError("Cannot convert '%s' argument '%s' to an integer"
+            raise ValueError("Cannot convert '%s' argument '%s' to an integer."
                              % (name, value))
 
     def _fail(self, message, default_template, *items):
