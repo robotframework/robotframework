@@ -23,33 +23,74 @@ from robot.version import get_version
 
 
 class String:
-
     """A test library for string manipulation and verification.
 
     `String` is Robot Framework's standard library for manipulating
     strings (e.g. `Replace String Using Regexp`, `Split To Lines`) and
     verifying their contents (e.g. `Should Be String`).
 
-    Following keywords from the BuiltIn library can also be used with
-    strings:
+    Following keywords from `BuiltIn` library can also be used with strings:
+
     - `Catenate`
     - `Get Length`
     - `Length Should Be`
-    - `Should (Not) Match (Regexp)`
     - `Should (Not) Be Empty`
     - `Should (Not) Be Equal (As Strings/Integers/Numbers)`
+    - `Should (Not) Match (Regexp)`
     - `Should (Not) Contain`
     - `Should (Not) Start With`
     - `Should (Not) End With`
+    - `Convert To String`
     """
-
     ROBOT_LIBRARY_SCOPE = 'GLOBAL'
     ROBOT_LIBRARY_VERSION = get_version()
 
     def encode_string_to_bytes(self, string, encoding, errors='strict'):
+        """Encodes the given Unicode `string` to bytes using the given `encoding`.
+
+        `errors` argument controls what to do if encoding some characters fails.
+        All values accepted by `encode` method in Python are valid, but in
+        practice the following values are most useful:
+
+        - `strict`: fail if characters cannot be encoded (default)
+        - `ignore`: ignore characters that cannot be encoded
+        - `replace`: replace characters that cannot be encoded with
+          a replacement character
+
+        Examples:
+        | ${bytes} = | Encode String To Bytes | ${string} | UTF-8 |
+        | ${bytes} = | Encode String To Bytes | ${string} | ASCII | errors=ignore |
+
+        Use `Decode Bytes To String` if you need to convert byte strings to
+        Unicode strings, and `Convert To String` in `BuiltIn` if you need to
+        convert arbitrary objects to Unicode strings.
+
+        New in Robot Framework 2.7.7.
+        """
         return string.encode(encoding, errors)
 
     def decode_bytes_to_string(self, bytes, encoding, errors='strict'):
+        """Decodes the given `bytes` to a Unicode string using the given `encoding`.
+
+        `errors` argument controls what to do if decoding some bytes fails.
+        All values accepted by `decode` method in Python are valid, but in
+        practice the following values are most useful:
+
+        - `strict`: fail if characters cannot be decoded (default)
+        - `ignore`: ignore characters that cannot be decoded
+        - `replace`: replace characters that cannot be decoded with
+          a replacement character
+
+        Examples:
+        | ${string} = | Decode Bytes To String | ${bytes} | UTF-8 |
+        | ${string} = | Decode Bytes To String | ${bytes} | ASCII | errors=ignore |
+
+        Use `Encode String To Bytes` if you need to convert Unicode strings to
+        byte strings, and `Convert To String` in `BuiltIn` if you need to
+        convert arbitrary objects to Unicode strings.
+
+        New in Robot Framework 2.7.7.
+        """
         return bytes.decode(encoding, errors)
 
     def get_line_count(self, string):
@@ -346,6 +387,10 @@ class String:
     def should_be_string(self, item, msg=None):
         """Fails if the given `item` is not a string.
 
+        This keyword passes regardless is the `item` is a Unicode string or
+        a byte string. Use `Should Be Unicode String` or `Should Be Byte
+        String` if you want to restrict the string type.
+
         The default error message can be overridden with the optional
         `msg` argument.
         """
@@ -362,10 +407,32 @@ class String:
             self._fail(msg, "Given item '%s' is a string", item)
 
     def should_be_unicode_string(self, item, msg=None):
+        """Fails if the given `item` is not a Unicode string.
+
+        Use `Should Be Byte String` if you want to verify the `item` is a
+        byte string, or `Should Be String` if both Unicode and byte strings
+        are fine.
+
+        The default error message can be overridden with the optional
+        `msg` argument.
+
+        New in Robot Framework 2.7.7.
+        """
         if not isinstance(item, unicode):
             self._fail(msg, "Given item '%s' is not a Unicode string", item)
 
     def should_be_byte_string(self, item, msg=None):
+        """Fails if the given `item` is not a byte string.
+
+        Use `Should Be Unicode String` if you want to verify the `item` is a
+        Unicode string, or `Should Be String` if both Unicode and byte strings
+        are fine.
+
+        The default error message can be overridden with the optional
+        `msg` argument.
+
+        New in Robot Framework 2.7.7.
+        """
         if not isinstance(item, str):
             self._fail(msg, "Given item '%s' is not a byte string", item)
 
