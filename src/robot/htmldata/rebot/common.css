@@ -123,10 +123,12 @@ h2 {
 }
 .stats_col_stat {
     width: 3.3em;
+    padding-right: 1em !important;
     text-align: center;
 }
 .stats_col_elapsed {
     width: 5em;
+    padding-right: 1em !important;
     text-align: center;
 }
 .stats_col_graph {
@@ -192,7 +194,4 @@ th.stats_col_graph:hover {
 }
 .sorter-false:hover {
     background-color: #DCDCF0;
-}
-.narrow {
-    padding-right: 1em !important;
 }

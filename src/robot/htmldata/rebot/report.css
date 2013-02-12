@@ -81,6 +81,9 @@ th {
 #test_details th, #test_details td {
     padding: 0.2em;
 }
+.details_col_header {
+    padding-right: 1em;
+}
 .details_col_toggle {
     float: left;
     color: #808080;
@@ -100,18 +103,18 @@ th {
     min-width: 10em;
 }
 .details_col_crit {
-    width: 3em;
+    width: 3.5em;
     text-align: center;
 }
 .details_col_status {
-    width: 4em;
+    width: 4.5em;
     text-align: center;
 }
 .details_col_msg {
     min-width: 20em;
 }
 .details_col_elapsed {
-    width: 6.5em;
+    width: 7em;
     text-align: center;
 }
 .details_col_times {

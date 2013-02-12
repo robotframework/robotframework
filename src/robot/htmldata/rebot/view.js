@@ -62,10 +62,10 @@ function addReportOrLogLink(myType) {
 
 function addStatistics() {
     var statHeaders =
-        '<th class="stats_col_stat narrow">Total</th>' +
-        '<th class="stats_col_stat narrow">Pass</th>' +
-        '<th class="stats_col_stat narrow">Fail</th>' +
-        '<th class="stats_col_elapsed narrow">Elapsed</th>' +
+        '<th class="stats_col_stat">Total</th>' +
+        '<th class="stats_col_stat">Pass</th>' +
+        '<th class="stats_col_stat">Fail</th>' +
+        '<th class="stats_col_elapsed">Elapsed</th>' +
         '<th class="stats_col_graph">Pass / Fail</th>';
     var statTable =
         '<h2>Test Statistics</h2>' +
