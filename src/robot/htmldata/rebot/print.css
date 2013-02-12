@@ -12,14 +12,22 @@ a:link, a:visited {
 .details, .statistics {
     width: 100%;
 }
-#generated_ago, #report_or_log_link, #normal_selector, .expand {
+#generated_ago, #top_right_header, #normal_selector, .expandall, .hidden, .details_col_toggle {
     display: none;
+}
+#test_details {
+    border-collapse: collapse;
+    table-layout: auto;
+}
+#test_details th, #test_details td {
+    border: 1px solid black;
+}
+.statistics th, .details_col_header {
+    padding-right: 0.5em;
+    padding-left: 0.5em;
 }
 #print_selector {
     display: table-cell;
-}
-.narrow {
-    padding: inherit !important;
 }
 .tablesorter-header {
     background-image: none;
