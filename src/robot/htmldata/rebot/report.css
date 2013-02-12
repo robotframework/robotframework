@@ -84,6 +84,7 @@ th {
 .details_col_toggle {
     float: left;
     color: #808080;
+    cursor: pointer;
 }
 .details_col_toggle:hover {
     color: black;
