@@ -287,7 +287,7 @@ function configureTableSorter(sortByStatus) {
     var config = {headers: {3: {sorter: 'criticality'},
                             6: {sortInitialOrder: 'desc'},
                             7: {sorter: 'times'}},
-                  selectorSort: '.details_header'};
+                  selectorSort: '.details_col_header'};
     if (sortByStatus)
         config['sortList'] = [[4, 0], [3, 0]];
     $("#test_details").tablesorter(config);
@@ -305,7 +305,7 @@ function toggleDetailsColumn(name) {
     column.toggleClass('hidden');
     var hidden = column.hasClass('hidden');
     storage.set(name, hidden ? 'hidden' : 'visible');
-    column.find('.details_toggle').html(hidden ? '&hellip;' : '&times;');
+    column.find('.details_col_toggle').html(hidden ? '&hellip;' : '&times;');
 }
 
 function hideHiddenDetailsColumns(elem) {
@@ -315,7 +315,7 @@ function hideHiddenDetailsColumns(elem) {
         if (storage.get(name, 'visible') == 'hidden') {
             var column = elem.find('.details_col_' + name);
             column.addClass('hidden');
-            column.find('.details_toggle').html('&hellip;');
+            column.find('.details_col_toggle').html('&hellip;');
         }
     }
 }
@@ -565,33 +565,33 @@ function hideHiddenDetailsColumns(elem) {
     <thead>
       <tr>
         <th class="details_col_name" title="Name">
-          <div class='details_header'>Name</div>
+          <div class='details_col_header'>Name</div>
         </th>
         <th class="details_col_doc" title="Documentation">
-          <div class='details_toggle' onclick="toggleDetailsColumn('doc')">&times;</div>
-          <div class='details_header'>Documentation</div>
+          <div class='details_col_toggle' onclick="toggleDetailsColumn('doc')">&times;</div>
+          <div class='details_col_header'>Documentation</div>
         </th>
         <th class="details_col_tags" title="Tags">
-          <div class='details_toggle' onclick="toggleDetailsColumn('tags')">&times;</div>
-          <div class='details_header'>Tags</div>
+          <div class='details_col_toggle' onclick="toggleDetailsColumn('tags')">&times;</div>
+          <div class='details_col_header'>Tags</div>
         </th>
         <th class="details_col_crit narrow" title="Critical">
-          <div class='details_header'>Crit.</div>
+          <div class='details_col_header'>Crit.</div>
         </th>
         <th class="details_col_status narrow" title="Status">
-          <div class='details_header'>Status</div>
+          <div class='details_col_header'>Status</div>
         </th>
         <th class="details_col_msg" title="Message">
-          <div class='details_toggle' onclick="toggleDetailsColumn('msg')">&times;</div>
-          <div class='details_header'>Message</div>
+          <div class='details_col_toggle' onclick="toggleDetailsColumn('msg')">&times;</div>
+          <div class='details_col_header'>Message</div>
         </th>
         <th class="details_col_elapsed" title="Elapsed Time">
-          <div class='details_toggle' onclick="toggleDetailsColumn('elapsed')">&times;</div>
-          <div class='details_header'>Elapsed</div>
+          <div class='details_col_toggle' onclick="toggleDetailsColumn('elapsed')">&times;</div>
+          <div class='details_col_header'>Elapsed</div>
         </th>
         <th class="details_col_times" title="Start Time / End Time">
-          <div class='details_toggle' onclick="toggleDetailsColumn('times')">&times;</div>
-          <div class='details_header'>Start / End</div>
+          <div class='details_col_toggle' onclick="toggleDetailsColumn('times')">&times;</div>
+          <div class='details_col_header'>Start / End</div>
         </th>
       </tr>
     </thead>

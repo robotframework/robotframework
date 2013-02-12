@@ -81,11 +81,11 @@ th {
 #test_details th, #test_details td {
     padding: 0.2em;
 }
-.details_toggle {
+.details_col_toggle {
     float: left;
     color: #808080;
 }
-.details_toggle:hover {
+.details_col_toggle:hover {
     color: black;
 }
 .details_col_name {
@@ -118,7 +118,7 @@ th {
     white-space: nowrap;
     text-align: center;
 }
-.hidden .details_header, td.hidden > div {
+.hidden .details_col_header, td.hidden > div {
     display: none;
 }
 .hidden {
