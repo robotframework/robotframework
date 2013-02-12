@@ -192,7 +192,7 @@ function addTestExecutionLog(main) {
       <span class="type ${status.toLowerCase()}">TEST&nbsp;SUITE:</span>
       <span class="name">{{html name}}</span>
       <a class="expandall" href="javascript:expandAllChildren('${id}')"
-         onclick="stopPropagation(event);">Expand All</a>
+         onclick="stopPropagation(event)">Expand All</a>
     </div>
     <div id="${id}_children" class="children" style="display: none">
       <table class="metadata">
@@ -249,7 +249,7 @@ function addTestExecutionLog(main) {
       <span class="name">{{html name}}</span>
       {{if !isCritical}}<span>  (non-critical)</span>{{/if}}
       <a class="expandall" href="javascript:expandAllChildren('${id}')"
-         onclick="stopPropagation(event);">Expand All</a>
+         onclick="stopPropagation(event)">Expand All</a>
     </div>
     <div id="${id}_children" class="children" style="display: none">
       <table class="metadata">
@@ -302,7 +302,7 @@ function addTestExecutionLog(main) {
       <span class="name">{{html name}}</span>
       <span class="arg">{{html arguments}}</span>
       <a class="expandall" href="javascript:expandAllChildren('${id}')"
-         onclick="stopPropagation(event);">Expand All</a>
+         onclick="stopPropagation(event)">Expand All</a>
     </div>
     <div id="${id}_children" class="children" style="display: none">
       <table class="metadata keyword_metadata">
@@ -340,7 +340,7 @@ function addTestExecutionLog(main) {
 <script type="text/x-jquery-tmpl" id="logLevelSelectorTemplate">
   <div id="log_level_selector">
   Log level:
-    <select onchange="logLevelSelected(this.options[selectedIndex].value);">
+    <select onchange="logLevelSelected(this.options[selectedIndex].value)">
       <option value="2">INFO</option>
       <option value="1">DEBUG</option>
       {{if showTrace()}}<option value="0">TRACE</option>{{/if}}

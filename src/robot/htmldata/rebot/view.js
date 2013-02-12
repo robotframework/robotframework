@@ -156,8 +156,8 @@ $.template("stat_columns",
     '<td class="stats_col_graph">' +
       '{{if total}}' +
       '<div class="graph">' +
-        '<div class="pass_bar" style="width: ${passWidth}%;" title="${passPercent}%"></div>' +
-        '<div class="fail_bar" style="width: ${failWidth}%;" title="${failPercent}%"></div>' +
+        '<div class="pass_bar" style="width: ${passWidth}%" title="${passPercent}%"></div>' +
+        '<div class="fail_bar" style="width: ${failWidth}%" title="${failPercent}%"></div>' +
       '</div>' +
       '{{else}}' +
       '<div class="empty_graph"></div>' +

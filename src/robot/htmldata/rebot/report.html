@@ -386,7 +386,7 @@ function hideHiddenDetailsColumns(elem) {
 </script>
 
 <script type="text/x-jquery-tmpl" id="tagStatisticsRowTemplate">
-  <tr onclick="tagDetailSelected('${label}');" class="row-${$item.index}">
+  <tr onclick="tagDetailSelected('${label}')" class="row-${$item.index}">
     <td class="stats_col_name" title="${doc}">
       <div class="stat_name">
         <a href="#tag_${label}">{{html label}}</a>
@@ -404,7 +404,7 @@ function hideHiddenDetailsColumns(elem) {
 </script>
 
 <script type="text/x-jquery-tmpl" id="suiteStatisticsRowTemplate">
-  <tr onclick="suiteDetailSelected('${id}');" class="row-${$item.index}">
+  <tr onclick="suiteDetailSelected('${id}')" class="row-${$item.index}">
     <td class="stats_col_name" title="${label}">
       <div class="stat_name">
         <a href="#suite_${id}"><span class="parent_name">{{html formatParentName}}</span>{{html name}}</a>
@@ -418,13 +418,13 @@ function hideHiddenDetailsColumns(elem) {
   <h2 id="${linkTarget}">Test Details</h2>
   <ul id="detail_tabs">
     <li class="${totalTabStatus} detail_tab">
-      <a href="#totals" onclick="renderTotalSelector();">Totals</a>
+      <a href="#totals" onclick="renderTotalSelector()">Totals</a>
     </li>
     <li class="${tagTabStatus} detail_tab">
-      <a href="#tags" onclick="renderTagSelector();">Tags</a>
+      <a href="#tags" onclick="renderTagSelector()">Tags</a>
     </li>
     <li class="${suiteTabStatus} detail_tab">
-      <a href="#suites" onclick="renderSuiteSelector();">Suites</a>
+      <a href="#suites" onclick="renderSuiteSelector()">Suites</a>
     </li>
   </ul>
 </script>
@@ -435,11 +435,11 @@ function hideHiddenDetailsColumns(elem) {
       <th>Type:</th>
       <td id="normal_selector">
         <input id="radio_critical" type="radio" name="totals_radio"
-               onclick="totalDetailSelected('critical');"
+               onclick="totalDetailSelected('critical')"
                {{if selected == 'critical'}}checked="checked"{{/if}}>
         <label for="radio_critical">Critical Tests</label><br>
         <input id="radio_all" type="radio" name="totals_radio"
-               onclick="totalDetailSelected('all');"
+               onclick="totalDetailSelected('all')"
                {{if selected == 'all'}}checked="checked"{{/if}}>
         <label for="radio_all">All Tests</label>
       </td>
@@ -454,7 +454,7 @@ function hideHiddenDetailsColumns(elem) {
       <th>Name:</th>
       <td id="normal_selector">
         <select id="tag_detail_selector"
-                onchange="tagDetailSelected(this.options[this.selectedIndex].value);">
+                onchange="tagDetailSelected(this.options[this.selectedIndex].value)">
           <option value="">Select tag...</option>
           {{each tags}}
           <option value="${$value.label}"
@@ -475,7 +475,7 @@ function hideHiddenDetailsColumns(elem) {
       <th>Name:</th>
       <td id="normal_selector">
         <select id="suite_detail_selector"
-                onchange="suiteDetailSelected(this.options[this.selectedIndex].value);">
+                onchange="suiteDetailSelected(this.options[this.selectedIndex].value)">
           <option value="">Select suite...</option>
           {{each suites}}
           <option value="${$value.id}"
