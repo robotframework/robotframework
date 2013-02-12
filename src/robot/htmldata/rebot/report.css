@@ -111,11 +111,11 @@ th {
     min-width: 20em;
 }
 .details_col_elapsed {
-    width: 7em;
+    width: 6.5em;
     text-align: center;
 }
 .details_col_times {
-    width: 12em;
+    width: 11em;
     white-space: nowrap;
     text-align: center;
 }
