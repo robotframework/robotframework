@@ -28,18 +28,20 @@
 .foldingbutton {
     position: absolute;
     left: 0.3em;
-    top: 0.5em;
-    font-size: 0.7em;
-    line-height: 1.1em;
-    height: 1em;
-    width: 1em;
-    text-align: center;
-    font-weight: bold;
+    top: 0.4em;
     border: 1px solid black;
     border-radius: 2px;
+    width: 9px;
+    height: 9px;
+    background-repeat: no-repeat;
+    background-position: center center;
+    background-image: url(data:image/gif;base64,R0lGODlhCQAJAIAAAAAAAAAAACH5BAEKAAEALAAAAAAJAAkAAAIKjI+pywb/mpysAAA7);
+}
+.closed {
+    background-image: url(data:image/gif;base64,R0lGODlhCQAJAIABAAAAAP///yH5BAEKAAEALAAAAAAJAAkAAAIMjI+pAcsKYoSuuYsKADs=);
 }
 .foldingbutton:hover {
-    background: yellow;
+    background-color: yellow;
 }
 .element-header-text {
     margin-left: 1.4em;
