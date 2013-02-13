@@ -14,6 +14,12 @@
     display: none;
     margin-left: 1.4em;
 }
+.suite, .test, .keyword {
+    margin-left: -0.2em;
+}
+#s1, .suite > .children > .keyword {
+    margin-left: 0;
+}
 /* Suite, test and kw headers */
 .elementheader {
     border: 1px solid white;
