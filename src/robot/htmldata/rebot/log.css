@@ -11,7 +11,7 @@
     width: 100%;
 }
 .children {
-    margin-left: 1.5em;
+    margin-left: 1.4em;
 }
 /* Suite, test and kw headers */
 .elementheader {
@@ -26,16 +26,15 @@
     border: 1px solid #D3D3D3;
 }
 .foldingbutton {
-    display: inline-block;
     position: absolute;
-    left: 0;
-    top: 0;
-    width: 0.9em;
-    margin: 0.4em 0 0.4em 0.3em;
-    padding: 0.1em;
+    left: 0.3em;
+    top: 0.5em;
     font-size: 0.7em;
-    font-weight: bold;
+    line-height: 1.1em;
+    height: 1em;
+    width: 1em;
     text-align: center;
+    font-weight: bold;
     border: 1px solid black;
     border-radius: 2px;
 }
@@ -43,7 +42,7 @@
     background: yellow;
 }
 .element-header-text {
-    margin-left: 1.5em;
+    margin-left: 1.4em;
     margin-right: 6em;
 }
 .name {
