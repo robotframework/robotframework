@@ -38,21 +38,20 @@ a:hover, a:active {
 }
 /* Headers */
 #header {
-    width: 63em;
+    width: 65em;
     height: 3em;
     margin: 6px 0;
 }
 h1 {
     float: left;
-    width: 70%;
     margin: 0 0 0.5em 0;
+    width: 75%;
 }
 h2 {
     clear: left;
 }
 #generated {
     float: right;
-    width : 29%;
     text-align: right;
     font-size: 0.9em;
     white-space: nowrap;
@@ -101,7 +100,7 @@ h2 {
 }
 /* Statistics table */
 .statistics {
-    width: 63em;
+    width: 65em;
     border-collapse: collapse;
     empty-cells: show;
     margin-bottom: 1em;
@@ -122,18 +121,15 @@ h2 {
     vertical-align: middle;
 }
 .stats_col_stat {
-    width: 3.3em;
-    padding-right: 1em !important;
+    width: 4.5em;
     text-align: center;
 }
 .stats_col_elapsed {
-    width: 5em;
-    padding-right: 1em !important;
+    width: 5.5em;
     text-align: center;
 }
 .stats_col_graph {
     width: 9em;
-    vertical-align: middle;
 }
 th.stats_col_graph:hover {
     cursor: default;

@@ -27,14 +27,14 @@ function setTitle(suiteName, type) {
 }
 
 function addHeader() {
-    $.tmpl('<div id="generated">' +
+    $.tmpl('<h1>${title}</h1>' +
+           '<div id="generated">' +
              '<span>Generated<br>${generated}</span><br>' +
              '<span id="generated_ago">${ago} ago</span>' +
            '</div>' +
            '<div id="top_right_header">' +
              '<div id="report_or_log_link"><a href="#"></a></div>' +
-           '</div>' +
-           '<h1>${title}</h1>', {
+           '</div>', {
         generated: window.output.generatedTimestamp,
         ago: util.createGeneratedAgoString(window.output.generatedMillis),
         title: document.title
