@@ -188,7 +188,7 @@ function addTestExecutionLog(main) {
 <script type="text/x-jquery-tmpl" id="suiteTemplate">
   <div id="${id}" class="suite">
     <div class="elementheader" onclick="toggleSuite('${id}')" title="${fullName}">
-      <div id="${id}_foldingbutton" class="foldingbutton closed"></div>
+      <div class="foldingbutton closed"></div>
       <div class="element-header-text">
         <span class="${status.toLowerCase()}">TEST SUITE: </span>
         <span class="name">{{html name}}</span>
@@ -196,7 +196,7 @@ function addTestExecutionLog(main) {
       <a class="expandall" href="javascript:expandAllChildren('${id}')"
          onclick="stopPropagation(event)">Expand All</a>
     </div>
-    <div id="${id}_children" class="children" style="display: none">
+    <div class="children">
       <table class="metadata">
         <tr>
           <th>Full Name:</th>
@@ -246,7 +246,7 @@ function addTestExecutionLog(main) {
 <script type="text/x-jquery-tmpl" id="testTemplate">
   <div id="${id}" class="test">
     <div class="elementheader" onclick="toggleTest('${id}')" title="${fullName}">
-      <div id="${id}_foldingbutton" class="foldingbutton closed"></div>
+      <div class="foldingbutton closed"></div>
       <div class="element-header-text">
         <span class="${status.toLowerCase()}">TEST CASE: </span>
         <span class="name">{{html name}}</span>
@@ -255,7 +255,7 @@ function addTestExecutionLog(main) {
       <a class="expandall" href="javascript:expandAllChildren('${id}')"
          onclick="stopPropagation(event)">Expand All</a>
     </div>
-    <div id="${id}_children" class="children" style="display: none">
+    <div class="children">
       <table class="metadata">
         <tr>
           <th>Full Name:</th>
@@ -301,7 +301,7 @@ function addTestExecutionLog(main) {
 <script type="text/x-jquery-tmpl" id="keywordTemplate">
   <div id="${id}" class="keyword">
     <div class="elementheader" onclick="toggleKeyword('${id}')" title="${name}">
-      <div id="${id}_foldingbutton" class="foldingbutton closed"></div>
+      <div class="foldingbutton closed"></div>
       <div class="element-header-text">
         <span class="${status.toLowerCase()}">${type}: </span>
         <span class="name">{{html name}}</span>
@@ -310,7 +310,7 @@ function addTestExecutionLog(main) {
       <a class="expandall" href="javascript:expandAllChildren('${id}')"
          onclick="stopPropagation(event)">Expand All</a>
     </div>
-    <div id="${id}_children" class="children" style="display: none">
+    <div class="children">
       <table class="metadata keyword_metadata">
         {{if doc()}}
         <tr>

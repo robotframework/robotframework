@@ -19,20 +19,20 @@ function addElements(elems, templateName, target){
 }
 
 function toggleElement(elementId, childrenNames) {
-    var childElement = $("#"+elementId+"_children");
-    childElement.toggle(100, function () {
-        var foldingButton = $('#'+elementId+'_foldingbutton');
-        foldingButton.toggleClass('closed');
+    var element = $('#' + elementId);
+    var children = element.find('> .children');
+    children.toggle(100, '', function () {
+        element.find('> .elementheader > .foldingbutton').toggleClass('closed');
     });
-    populateChildren(elementId, childElement, childrenNames);
+    populateChildren(elementId, children, childrenNames);
 }
 
 function populateChildren(elementId, childElement, childrenNames) {
-    if (!childElement.hasClass("populated")) {
+    if (!childElement.hasClass('populated')) {
         var element = window.testdata.find(elementId);
         var callback = drawCallback(element, childElement, childrenNames);
         element.callWhenChildrenReady(callback);
-        childElement.addClass("populated");
+        childElement.addClass('populated');
     }
 }
 
@@ -66,11 +66,13 @@ function expandRecursively() {
     });
 }
 
-function expandElement(element) {
-    var childElement = $("#" + element.id + "_children");
-    childElement.show();
-    populateChildren(element.id, childElement, element.childrenNames);
-    $('#'+element.id+'_foldingbutton').removeClass('closed');
+function expandElement(item) {
+    var element = $('#' + item.id);
+    var children = element.find('> .children');
+    children.show(0, '', function () {
+        element.find('> .elementheader > .foldingbutton').removeClass('closed');
+    });
+    populateChildren(item.id, children, item.childrenNames);
 }
 
 function expandElementWithId(elementid) {
