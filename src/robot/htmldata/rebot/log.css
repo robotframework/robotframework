@@ -30,7 +30,6 @@
     position: absolute;
     left: 0;
     top: 0;
-    bottom: 0;
     width: 0.9em;
     margin: 0.4em 0 0.4em 0.3em;
     padding: 0.1em;
@@ -43,8 +42,9 @@
 .foldingbutton:hover {
     background: yellow;
 }
-.type {
+.element-header-text {
     margin-left: 1.5em;
+    margin-right: 6em;
 }
 .name {
     font-weight: bold;
@@ -56,7 +56,9 @@
     top: 0;
     bottom: 0;
     font-size: 0.8em;
-    padding: 0.5em 1em;
+    width: 7em;
+    text-align: center;
+    padding-top: 0.5em;
     color: #808080 !important;
 }
 .expandall:hover {
