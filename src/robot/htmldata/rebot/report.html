@@ -227,7 +227,8 @@ function renderSelector(args, template, stats) {
 function drawTestDetailsTable(tests, sortByStatus) {
     renderTestDetailsHeader();
     window.elementsToRender = tests;
-    renderTestDetails(sortByStatus);
+    var target = $('#test-details > tbody');
+    renderTestDetails(sortByStatus, target);
 }
 
 function renderTestDetailsHeader() {
@@ -264,23 +265,23 @@ function calculateTotalTime(tests) {
     return util.formatElapsed(totaltime);
 }
 
-function renderTestDetails(sortByStatus) {
+function renderTestDetails(sortByStatus, target) {
     if (!window.elementsToRender.length)
         return;
-    var tests = popUpTo(window.elementsToRender, 10);
-    renderTestDetailsRows(tests);
+    var tests = popUpTo(window.elementsToRender, 50);
+    renderTestDetailsRows(tests, target);
     if (window.elementsToRender.length)
-        setTimeout(function () {renderTestDetails(sortByStatus);}, 0);
+        setTimeout(function () {renderTestDetails(sortByStatus, target);}, 0);
     else
         configureTableSorter(sortByStatus);
 }
 
-function renderTestDetailsRows(tests) {
+function renderTestDetailsRows(tests, target) {
     var rows = $.tmpl('testDetailsTableRowTemplate', tests,
                       {logURL: window.settings.logURL});
     rows.find('a').click(stopPropagation);
     hideHiddenDetailsColumns(rows);
-    rows.appendTo('#test-details > tbody');
+    rows.appendTo(target);
 }
 
 function configureTableSorter(sortByStatus) {
