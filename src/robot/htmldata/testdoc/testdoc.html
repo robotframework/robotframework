@@ -105,15 +105,12 @@ function expandElement(elementId) {
     children.show(0, '', function () {
         element.find('> .element-header > .folding-button').removeClass('closed');
     });
-    return children;
 }
 
 function expandAllChildren(elementId) {
-    var elem = expandElement(elementId);
-    var childrenToClick = elem.find('.expand');
-    for (var i = 0; i < childrenToClick.length; i++) {
-        childrenToClick[i].click();
-    }
+    var element = $('#' + elementId);
+    element.find('.children').show();
+    element.find('.folding-button').removeClass('closed');
 }
 
 // For complete cross-browser experience..
