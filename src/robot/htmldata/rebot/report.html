@@ -327,13 +327,13 @@ function hideHiddenDetailsColumns(elem) {
     <tr>
       <th>Status:</th>
       {{if criticalFailed}}
-      <td><a href="#total-critical" onclick="totalDetailSelected('critical')"
+      <td><a href="#total_critical" onclick="totalDetailSelected('critical')"
              class="fail">${criticalFailed} critical test{{if criticalFailed != 1}}s{{/if}} failed</a></td>
       {{else totalFailed}}
-      <td><a href="#total-critical" onclick="totalDetailSelected('critical')"
+      <td><a href="#total_critical" onclick="totalDetailSelected('critical')"
              class="pass">All critical tests passed</a></td>
       {{else}}
-      <td><a href="#total-all" onclick="totalDetailSelected('all')"
+      <td><a href="#total_all" onclick="totalDetailSelected('all')"
              class="pass">All tests passed</a></td>
       {{/if}}
     </tr>
