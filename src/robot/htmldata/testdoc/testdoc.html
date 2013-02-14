@@ -12,20 +12,15 @@
 <link rel="stylesheet" type="text/css" href="../rebot/print.css" media="print">
 <link rel="stylesheet" type="text/css" href="../common/doc_formatting.css" media="all">
 <link rel="stylesheet" type="text/css" href="../common/js_disabled.css" media="all">
+<link rel="stylesheet" type="text/css" href="testdoc.css" media="all">
 <script type="text/javascript" src="../lib/jquery.min.js"></script>
 <script type="text/javascript" src="../lib/jquery.tmpl.min.js"></script>
 <script type="text/javascript" src="../rebot/util.js"></script>
-<style type="text/css" media="all">
-#header {
-  height: 4em;
-  width: auto;
-}
-</style>
 <!-- JS MODEL --><script type="text/javascript" src="../testdata/testdoc.js"></script>
 <title></title>
 </head>
 <body>
-<div id="javascript_disabled">
+<div id="javascript-disabled">
   <h1>Opening test suite documentation failed</h1>
   <ul>
     <li>Verify that you have <b>JavaScript enabled</b> in your browser.</li>
@@ -35,7 +30,7 @@
 </div>
 <script type="text/javascript">
     // Not using jQuery here for maximum speed
-    document.getElementById('javascript_disabled').style.display = 'none';
+    document.getElementById('javascript-disabled').style.display = 'none';
 </script>
 
 <div id="header"><h1></h1></div>
@@ -63,7 +58,7 @@ function addTitle(title) {
 function addGenerated(timestamp, millis) {
     $.tmpl('<div id="generated">' +
              '<span>Generated<br>${generated}</span><br>' +
-             '<span id="generated_ago">${generatedAgo} ago</span>' +
+             '<span id="generated-ago">${generatedAgo} ago</span>' +
            '</div>', {
         generated: timestamp,
         generatedAgo: util.createGeneratedAgoString(millis)
@@ -79,41 +74,43 @@ function addSuite(suite, parent_locator) {
 
 function addSuites(suite) {
     $.map(suite.suites, function (s, _) {
-        addSuite(s, '#' + suite.id + '_children');
+        addSuite(s, '#' + suite.id + '> .children');
     });
 }
 
 function addTests(suite) {
     $.map(suite.tests, function (test, _) {
-        $.tmpl('testTemplate', test).appendTo($('#' + suite.id + '_children'));
+        $.tmpl('testTemplate', test).appendTo($('#' + suite.id + '> .children'));
         addKeywords(test);
     });
 }
 
 function addKeywords(parent) {
     $.map(parent.keywords, function (kw, _) {
-        $.tmpl('keywordTemplate', kw).appendTo($('#' + parent.id + '_children'));
+        $.tmpl('keywordTemplate', kw).appendTo($('#' + parent.id + '> .children'));
     });
 }
 
 function toggleElement(elementId) {
-    var childElement = $("#"+elementId+"_children");
-    childElement.toggle(100, function () {
-        var foldingButton = $('#'+elementId+'_foldingbutton');
-        foldingButton.text(foldingButton.text() == '+' ? '-' : '+');
+    var element = $('#' + elementId);
+    var children = element.find('> .children');
+    children.toggle(100, '', function () {
+        element.find('> .element-header > .folding-button').toggleClass('closed');
     });
 }
 
 function expandElement(elementId) {
-    var childElement = $("#" + elementId + "_children");
-    childElement.show();
-    $('#'+elementId+'_foldingbutton').text('-');
-    return childElement;
+    var element = $('#' + elementId);
+    var children = element.find('> .children');
+    children.show(0, '', function () {
+        element.find('> .element-header > .folding-button').removeClass('closed');
+    });
+    return children;
 }
 
 function expandAllChildren(elementId) {
     var elem = expandElement(elementId);
-    var childrenToClick = elem.find('[class="expandall"]');
+    var childrenToClick = elem.find('.expand');
     for (var i = 0; i < childrenToClick.length; i++) {
         childrenToClick[i].click();
     }
@@ -131,15 +128,16 @@ function stopPropagation(event) {
 
 <script type="text/x-jquery-tmpl" id="suiteTemplate">
   <div id="${id}" class="suite">
-    <div id="${id}_elementheader" class="elementheader"
-         onclick="toggleElement('${id}');" title="${fullName}">
-      <div id="${id}_foldingbutton" class="foldingbutton">+</div>
-      <span class="not_run">TEST&nbsp;SUITE:</span>
-      <span class="name">{{html name}}</span>
-        <a class="expandall" href="javascript:expandAllChildren('${id}')"
-           onclick="stopPropagation(event);">Expand All</a>
+    <div class="element-header" onclick="toggleElement('${id}')" title="${fullName}">
+      <div class="folding-button closed"></div>
+      <div class="element-header-text">
+        <span class="not-run">TEST SUITE: </span>
+        <span class="name">{{html name}}</span>
+      </div>
+      <a class="expand" href="javascript:expandAllChildren('${id}')"
+         onclick="stopPropagation(event)">Expand All</a>
     </div>
-    <div id="${id}_children" style="display: none;">
+    <div class="children">
       <table class="metadata">
         <tr>
           <th>Full Name:</th>
@@ -178,15 +176,16 @@ function stopPropagation(event) {
 
 <script type="text/x-jquery-tmpl" id="testTemplate">
   <div id="${id}" class="test">
-    <div id="${id}_elementheader" onclick="toggleElement('${id}');"
-         class="elementheader" title="${fullName}">
-      <div id="${id}_foldingbutton" class="foldingbutton">+</div>
-      <span class="not_run">TEST&nbsp;CASE: </span>
-      <span class="name">{{html name}}</span>
-        <a class="expandall" href="javascript:expandAllChildren('${id}')"
-           onclick="stopPropagation(event);">Expand All</a>
+    <div class="element-header" onclick="toggleElement('${id}')" title="${fullName}">
+      <div class="folding-button closed"></div>
+      <div class="element-header-text">
+        <span class="not-run">TEST CASE: </span>
+        <span class="name">{{html name}}</span>
+      </div>
+      <a class="expand" href="javascript:expandAllChildren('${id}')"
+         onclick="stopPropagation(event)">Expand All</a>
     </div>
-    <div id="${id}_children" style="display: none;">
+    <div class="children">
       <table class="metadata">
         <tr>
           <th>Full Name:</th>
@@ -216,11 +215,13 @@ function stopPropagation(event) {
 </script>
 
 <script type="text/x-jquery-tmpl" id="keywordTemplate">
-  <div class="elementheader" style="cursor: auto;">
-    <div class="keyword">
-      <span class="not_run">${type}: </span>
-      <span class="name">{{html name}}</span>
-      <span class="arg">{{html arguments}}</span>
+  <div class="keyword">
+    <div class="element-header" style="cursor: auto">
+      <div class="element-header-text">
+        <span class="not-run">${type}: </span>
+        <span class="name">{{html name}}</span>
+        <span class="arg">{{html arguments}}</span>
+      </div>
     </div>
   </div>
 </script>
