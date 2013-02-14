@@ -1,10 +1,10 @@
 function removeJavaScriptDisabledWarning() {
     // Not using jQuery here for maximum speed
-    document.getElementById('javascript_disabled').style.display = 'none';
+    document.getElementById('javascript-disabled').style.display = 'none';
 }
 
 function addJavaScriptDisabledWarning() {
-    document.getElementById('javascript_disabled').style.display = 'block';
+    document.getElementById('javascript-disabled').style.display = 'block';
 }
 
 function initLayout(suiteName, type) {
@@ -30,10 +30,10 @@ function addHeader() {
     $.tmpl('<h1>${title}</h1>' +
            '<div id="generated">' +
              '<span>Generated<br>${generated}</span><br>' +
-             '<span id="generated_ago">${ago} ago</span>' +
+             '<span id="generated-ago">${ago} ago</span>' +
            '</div>' +
-           '<div id="top_right_header">' +
-             '<div id="report_or_log_link"><a href="#"></a></div>' +
+           '<div id="top-right-header">' +
+             '<div id="report-or-log-link"><a href="#"></a></div>' +
            '</div>', {
         generated: window.output.generatedTimestamp,
         ago: util.createGeneratedAgoString(window.output.generatedMillis),
@@ -44,7 +44,7 @@ function addHeader() {
 function addReportOrLogLink(myType) {
     var url;
     var text;
-    var container = $('#report_or_log_link');
+    var container = $('#report-or-log-link');
     if (myType == 'Report') {
         url = window.settings.logURL;
         text = 'LOG';
@@ -62,23 +62,23 @@ function addReportOrLogLink(myType) {
 
 function addStatistics() {
     var statHeaders =
-        '<th class="stats_col_stat">Total</th>' +
-        '<th class="stats_col_stat">Pass</th>' +
-        '<th class="stats_col_stat">Fail</th>' +
-        '<th class="stats_col_elapsed">Elapsed</th>' +
-        '<th class="stats_col_graph">Pass / Fail</th>';
+        '<th class="stats-col-stat">Total</th>' +
+        '<th class="stats-col-stat">Pass</th>' +
+        '<th class="stats-col-stat">Fail</th>' +
+        '<th class="stats-col-elapsed">Elapsed</th>' +
+        '<th class="stats-col-graph">Pass / Fail</th>';
     var statTable =
         '<h2>Test Statistics</h2>' +
-        '<table class="statistics" id="total_stats"><thead><tr>' +
-        '<th class="stats_col_name">Total Statistics</th>' + statHeaders +
+        '<table class="statistics" id="total-stats"><thead><tr>' +
+        '<th class="stats-col-name">Total Statistics</th>' + statHeaders +
         '</tr></thead><tbody></tbody></table>' +
-        '<table class="statistics" id="tag_stats"><thead><tr>' +
-        '<th class="stats_col_name">Statistics by Tag</th>' + statHeaders +
+        '<table class="statistics" id="tag-stats"><thead><tr>' +
+        '<th class="stats-col-name">Statistics by Tag</th>' + statHeaders +
         '</tr></thead><tbody></tbody></table>' +
-        '<table class="statistics" id="suite_stats"><thead><tr>' +
-        '<th class="stats_col_name">Statistics by Suite</th>' + statHeaders +
+        '<table class="statistics" id="suite-stats"><thead><tr>' +
+        '<th class="stats-col-name">Statistics by Suite</th>' + statHeaders +
         '</tr></thead><tbody></tbody></table>';
-    $(statTable).appendTo('#statistics_container');
+    $(statTable).appendTo('#statistics-container');
     $.map(['total', 'tag', 'suite'], addStatTable);
     stopStatLinkClickPropagation();
     addTooltipsToElapsedTimes();
@@ -90,10 +90,10 @@ function stopStatLinkClickPropagation() {
 }
 
 function addTooltipsToElapsedTimes() {
-    $('.stats_col_elapsed').attr('title',
+    $('.stats-col-elapsed').attr('title',
         'Total execution time of these test cases. ' +
         'Excludes suite setups and teardowns.');
-    $('#suite_stats').find('.stats_col_elapsed').attr('title',
+    $('#suite-stats').find('.stats-col-elapsed').attr('title',
         'Total execution time of this test suite.');
 }
 
@@ -128,39 +128,39 @@ function addStatTable(tableName) {
 
 function renderNoTagStatTable() {
     $('<tr class="row-0">' +
-        '<td class="stats_col_name">No Tags</td>' +
-        '<td class="stats_col_stat"></td>' +
-        '<td class="stats_col_stat"></td>' +
-        '<td class="stats_col_stat"></td>' +
-        '<td class="stats_col_elapsed"></td>' +
-        '<td class="stats_col_graph">' +
-          '<div class="empty_graph"></div>' +
+        '<td class="stats-col-name">No Tags</td>' +
+        '<td class="stats-col-stat"></td>' +
+        '<td class="stats-col-stat"></td>' +
+        '<td class="stats-col-stat"></td>' +
+        '<td class="stats-col-elapsed"></td>' +
+        '<td class="stats-col-graph">' +
+          '<div class="empty-graph"></div>' +
         '</td>' +
-      '</tr>').appendTo($('#tag_stats > tbody'));
+      '</tr>').appendTo($('#tag-stats > tbody'));
 }
 
 function renderStatTable(tableName, stats) {
     var template = tableName + 'StatisticsRowTemplate';
-    var target = $('#' + tableName + '_stats > tbody');
+    var target = $('#' + tableName + '-stats > tbody');
     // Need explicit for loop because $.tmpl() does not handle very large lists
     for (var i = 0; stats !== undefined && i < stats.length; i++) {
         $.tmpl(template, stats[i], {index: i}).appendTo(target);
     }
 }
 
-$.template("stat_columns",
-    '<td class="stats_col_stat">${total}</td>' +
-    '<td class="stats_col_stat">${pass}</td>' +
-    '<td class="stats_col_stat">${fail}</td>' +
-    '<td class="stats_col_elapsed">${elapsed}</td>' +
-    '<td class="stats_col_graph">' +
+$.template('statColumnsTemplate',
+    '<td class="stats-col-stat">${total}</td>' +
+    '<td class="stats-col-stat">${pass}</td>' +
+    '<td class="stats-col-stat">${fail}</td>' +
+    '<td class="stats-col-elapsed">${elapsed}</td>' +
+    '<td class="stats-col-graph">' +
       '{{if total}}' +
       '<div class="graph">' +
-        '<div class="pass_bar" style="width: ${passWidth}%" title="${passPercent}%"></div>' +
-        '<div class="fail_bar" style="width: ${failWidth}%" title="${failPercent}%"></div>' +
+        '<div class="pass-bar" style="width: ${passWidth}%" title="${passPercent}%"></div>' +
+        '<div class="fail-bar" style="width: ${failWidth}%" title="${failPercent}%"></div>' +
       '</div>' +
       '{{else}}' +
-      '<div class="empty_graph"></div>' +
+      '<div class="empty-graph"></div>' +
       '{{/if}}' +
     '</td>'
 );

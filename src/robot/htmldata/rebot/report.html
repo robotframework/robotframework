@@ -26,7 +26,7 @@
 <title></title>
 </head>
 <body>
-<div id="javascript_disabled">
+<div id="javascript-disabled">
   <h1>Opening Robot Framework report failed</h1>
   <ul>
     <li>Verify that you have <b>JavaScript enabled</b> in your browser.</li>
@@ -37,8 +37,8 @@
 <script type="text/javascript">removeJavaScriptDisabledWarning();</script>
 
 <div id="header"></div>
-<div id="statistics_container"></div>
-<div id="test_details_container"></div>
+<div id="statistics-container"></div>
+<div id="test-details-container"></div>
 
 <script type="text/javascript">
 $(document).ready(function () {
@@ -143,7 +143,7 @@ function totalDetailSelected(name) {
 }
 
 function renderTotalSelector(name) {
-    var args = {linkTarget: 'total_'+name, totalTabStatus: 'detail_tab_selected'};
+    var args = {linkTarget: 'total_'+name, totalTabStatus: 'detail-tab-selected'};
     renderSelector(args, 'totalDetailsSelectorTemplate', {selected: name});
 }
 
@@ -152,14 +152,14 @@ function renderTotalDetails(name) {
     var stat = window.testdata.statistics().total[index];
     var tests = getTotalTests(name);
     stat.totalTime = calculateTotalTime(tests);
-    $.tmpl('tagOrTotalDetailsTemplate', stat).appendTo('#details_header');
+    $.tmpl('tagOrTotalDetailsTemplate', stat).appendTo('#details-header');
     drawTestDetailsTable(tests, true);
 }
 
 function updatePrintSelector(name, info) {
     if (info)
         name += ' (' + info + ')';
-    $('#print_selector').html(name);
+    $('#print-selector').html(name);
 }
 
 function tagDetailSelected(name) {
@@ -174,7 +174,7 @@ function tagDetailSelected(name) {
 }
 
 function renderTagSelector(tagName) {
-    var args = {linkTarget: 'tag_'+tagName, tagTabStatus: 'detail_tab_selected'};
+    var args = {linkTarget: 'tag_'+tagName, tagTabStatus: 'detail-tab-selected'};
     var tagstats = {tags: window.testdata.statistics().tag, selected: tagName};
     renderSelector(args, 'tagDetailsSelectorTemplate', tagstats);
 }
@@ -183,7 +183,7 @@ function renderTagDetails(tag) {
     var tests = getTestsHavingTag(tag);
     if (tag)
         tag.totalTime = calculateTotalTime(tests);
-    $.tmpl('tagOrTotalDetailsTemplate', tag).appendTo('#details_header');
+    $.tmpl('tagOrTotalDetailsTemplate', tag).appendTo('#details-header');
     drawTestDetailsTable(tests, true);
 }
 
@@ -195,7 +195,7 @@ function suiteDetailSelected(id) {
 }
 
 function renderSuiteSelector(id) {
-    var args = {linkTarget: 'suite_'+id, suiteTabStatus: 'detail_tab_selected'};
+    var args = {linkTarget: 'suite_'+id, suiteTabStatus: 'detail-tab-selected'};
     var stats = {suites: window.testdata.statistics().suite,
                  selected: id};
     renderSelector(args, 'suiteDetailsSelectorTemplate', stats);
@@ -205,23 +205,23 @@ function renderSuiteDetails(id) {
     testdata.findPathTo(id, function () {
         var suite = testdata.find(id);
         var opts = {logURL: window.settings.logURL};
-        $.tmpl('suiteDetailsTemplate', suite, opts).appendTo('#details_header');
+        $.tmpl('suiteDetailsTemplate', suite, opts).appendTo('#details-header');
         drawTestDetailsTable(suite.allTests(), false);
         updatePrintSelector(suite.fullName);
     });
 }
 
 function scrollToSelector(anchor) {
-    $('#test_details_container').css('min-height', $(window).height());
+    $('#test-details-container').css('min-height', $(window).height());
     window.prevLocationHash = "#"+anchor;
     window.location.hash = anchor;
 }
 
 function renderSelector(args, template, stats) {
     window.elementsToRender = [];
-    $('#test_details_container').empty();
-    $.tmpl('detailsHeaderTemplate', args).appendTo('#test_details_container');
-    $.tmpl(template, stats).appendTo('#test_details_container');
+    $('#test-details-container').empty();
+    $.tmpl('detailsHeaderTemplate', args).appendTo('#test-details-container');
+    $.tmpl(template, stats).appendTo('#test-details-container');
 }
 
 function drawTestDetailsTable(tests, sortByStatus) {
@@ -233,7 +233,7 @@ function drawTestDetailsTable(tests, sortByStatus) {
 function renderTestDetailsHeader() {
     var header = $.tmpl('testDetailsTableTemplate');
     hideHiddenDetailsColumns(header);
-    header.appendTo('#test_details_container');
+    header.appendTo('#test-details-container');
 }
 
 function sortByStatus(t1, t2) {
@@ -280,17 +280,17 @@ function renderTestDetailsRows(tests) {
                       {logURL: window.settings.logURL});
     rows.find('a').click(stopPropagation);
     hideHiddenDetailsColumns(rows);
-    rows.appendTo('#test_details > tbody');
+    rows.appendTo('#test-details > tbody');
 }
 
 function configureTableSorter(sortByStatus) {
     var config = {headers: {3: {sorter: 'criticality'},
                             6: {sortInitialOrder: 'desc'},
                             7: {sorter: 'times'}},
-                  selectorSort: '.details_col_header'};
+                  selectorSort: '.details-col-header'};
     if (sortByStatus)
         config['sortList'] = [[4, 0], [3, 0]];
-    $("#test_details").tablesorter(config);
+    $("#test-details").tablesorter(config);
 }
 
 function popUpTo(list, upTo) {
@@ -301,11 +301,11 @@ function popUpTo(list, upTo) {
 }
 
 function toggleDetailsColumn(name) {
-    var column = $('.details_col_' + name);
+    var column = $('.details-col-' + name);
     column.toggleClass('hidden');
     var hidden = column.hasClass('hidden');
     storage.set(name, hidden ? 'hidden' : 'visible');
-    column.find('.details_col_toggle').html(hidden ? '&hellip;' : '&times;');
+    column.find('.details-col-toggle').html(hidden ? '&hellip;' : '&times;');
 }
 
 function hideHiddenDetailsColumns(elem) {
@@ -313,9 +313,9 @@ function hideHiddenDetailsColumns(elem) {
     for (var i = 0; i < names.length; i++) {
         var name = names[i];
         if (storage.get(name, 'visible') == 'hidden') {
-            var column = elem.find('.details_col_' + name);
+            var column = elem.find('.details-col-' + name);
             column.addClass('hidden');
-            column.find('.details_col_toggle').html('&hellip;');
+            column.find('.details-col-toggle').html('&hellip;');
         }
     }
 }
@@ -327,13 +327,13 @@ function hideHiddenDetailsColumns(elem) {
     <tr>
       <th>Status:</th>
       {{if criticalFailed}}
-      <td><a href="#total_critical" onclick="totalDetailSelected('critical')"
+      <td><a href="#total-critical" onclick="totalDetailSelected('critical')"
              class="fail">${criticalFailed} critical test{{if criticalFailed != 1}}s{{/if}} failed</a></td>
       {{else totalFailed}}
-      <td><a href="#total_critical" onclick="totalDetailSelected('critical')"
+      <td><a href="#total-critical" onclick="totalDetailSelected('critical')"
              class="pass">All critical tests passed</a></td>
       {{else}}
-      <td><a href="#total_all" onclick="totalDetailSelected('all')"
+      <td><a href="#total-all" onclick="totalDetailSelected('all')"
              class="pass">All tests passed</a></td>
       {{/if}}
     </tr>
@@ -376,84 +376,84 @@ function hideHiddenDetailsColumns(elem) {
 
 <script type="text/x-jquery-tmpl" id="totalStatisticsRowTemplate">
   <tr onclick="totalDetailSelected('${type}')" class="row-${$item.index}">
-    <td class="stats_col_name">
-      <div class="stat_name">
+    <td class="stats-col-name">
+      <div class="stat-name">
         <a href="#total_${type}">{{html label}}</a>
       </div>
     </td>
-    {{tmpl($data) 'stat_columns'}}
+    {{tmpl($data) 'statColumnsTemplate'}}
   </tr>
 </script>
 
 <script type="text/x-jquery-tmpl" id="tagStatisticsRowTemplate">
   <tr onclick="tagDetailSelected('${label}')" class="row-${$item.index}">
-    <td class="stats_col_name" title="${doc}">
-      <div class="stat_name">
+    <td class="stats-col-name" title="${doc}">
+      <div class="stat-name">
         <a href="#tag_${label}">{{html label}}</a>
         {{if info}}(${info}){{/if}}
       </div>
-      <div class="tag_links">
+      <div class="tag-links">
         {{each links}}
         <span>[<a href="${$value.url}"
                   title="${$value.url}">{{html $value.title}}</a>]</span>
         {{/each}}
       </div>
     </td>
-    {{tmpl($data) 'stat_columns'}}
+    {{tmpl($data) 'statColumnsTemplate'}}
   </tr>
 </script>
 
 <script type="text/x-jquery-tmpl" id="suiteStatisticsRowTemplate">
   <tr onclick="suiteDetailSelected('${id}')" class="row-${$item.index}">
-    <td class="stats_col_name" title="${label}">
-      <div class="stat_name">
-        <a href="#suite_${id}"><span class="parent_name">{{html formatParentName}}</span>{{html name}}</a>
+    <td class="stats-col-name" title="${label}">
+      <div class="stat-name">
+        <a href="#suite_${id}"><span class="parent-name">{{html formatParentName}}</span>{{html name}}</a>
       </div>
     </td>
-    {{tmpl($data) 'stat_columns'}}
+    {{tmpl($data) 'statColumnsTemplate'}}
   </tr>
 </script>
 
 <script type="text/x-jquery-tmpl" id="detailsHeaderTemplate">
   <h2 id="${linkTarget}">Test Details</h2>
-  <ul id="detail_tabs">
-    <li class="${totalTabStatus} detail_tab">
+  <ul id="detail-tabs">
+    <li class="${totalTabStatus} detail-tab">
       <a href="#totals" onclick="renderTotalSelector()">Totals</a>
     </li>
-    <li class="${tagTabStatus} detail_tab">
+    <li class="${tagTabStatus} detail-tab">
       <a href="#tags" onclick="renderTagSelector()">Tags</a>
     </li>
-    <li class="${suiteTabStatus} detail_tab">
+    <li class="${suiteTabStatus} detail-tab">
       <a href="#suites" onclick="renderSuiteSelector()">Suites</a>
     </li>
   </ul>
 </script>
 
 <script  type="text/x-jquery-tmpl" id="totalDetailsSelectorTemplate">
-  <table class="details" id="details_header">
+  <table class="details" id="details-header">
     <tr id="selector">
       <th>Type:</th>
-      <td id="normal_selector">
-        <input id="radio_critical" type="radio" name="totals_radio"
+      <td id="normal-selector">
+        <input id="radio-critical" type="radio" name="totals-radio"
                onclick="totalDetailSelected('critical')"
                {{if selected == 'critical'}}checked="checked"{{/if}}>
-        <label for="radio_critical">Critical Tests</label><br>
-        <input id="radio_all" type="radio" name="totals_radio"
+        <label for="radio-critical">Critical Tests</label><br>
+        <input id="radio-all" type="radio" name="totals-radio"
                onclick="totalDetailSelected('all')"
                {{if selected == 'all'}}checked="checked"{{/if}}>
-        <label for="radio_all">All Tests</label>
+        <label for="radio-all">All Tests</label>
       </td>
-      <td id="print_selector"></td>
+      <td id="print-selector"></td>
     </tr>
   </table>
 </script>
 
 <script  type="text/x-jquery-tmpl" id="tagDetailsSelectorTemplate">
-  <table class="details" id="details_header">
+  <table class="details" id="details-header">
     <tr id="selector">
       <th>Name:</th>
-      <td id="normal_selector">
-        <select id="tag_detail_selector"
+      <td id="normal-selector">
+        <select id="tag-detail-selector"
                 onchange="tagDetailSelected(this.options[this.selectedIndex].value)">
           <option value="">Select tag...</option>
           {{each tags}}
@@ -464,17 +464,17 @@ function hideHiddenDetailsColumns(elem) {
           {{/each}}
         </select>
       </td>
-      <td id="print_selector"></td>
+      <td id="print-selector"></td>
     </tr>
   </table>
 </script>
 
 <script  type="text/x-jquery-tmpl" id="suiteDetailsSelectorTemplate">
-  <table class="details" id="details_header">
+  <table class="details" id="details-header">
     <tr id="selector">
       <th>Name:</th>
-      <td id="normal_selector">
-        <select id="suite_detail_selector"
+      <td id="normal-selector">
+        <select id="suite-detail-selector"
                 onchange="suiteDetailSelected(this.options[this.selectedIndex].value)">
           <option value="">Select suite...</option>
           {{each suites}}
@@ -485,7 +485,7 @@ function hideHiddenDetailsColumns(elem) {
           {{/each}}
         </select>
       </td>
-      <td id="print_selector"></td>
+      <td id="print-selector"></td>
     </tr>
   </table>
 </script>
@@ -561,37 +561,37 @@ function hideHiddenDetailsColumns(elem) {
 </script>
 
 <script type="text/x-jquery-tmpl" id="testDetailsTableTemplate">
-  <table id="test_details">
+  <table id="test-details">
     <thead>
       <tr>
-        <th class="details_col_name" title="Name">
-          <div class='details_col_header'>Name</div>
+        <th class="details-col-name" title="Name">
+          <div class='details-col-header'>Name</div>
         </th>
-        <th class="details_col_doc" title="Documentation">
-          <div class='details_col_toggle' onclick="toggleDetailsColumn('doc')">&times;</div>
-          <div class='details_col_header'>Documentation</div>
+        <th class="details-col-doc" title="Documentation">
+          <div class='details-col-toggle' onclick="toggleDetailsColumn('doc')">&times;</div>
+          <div class='details-col-header'>Documentation</div>
         </th>
-        <th class="details_col_tags" title="Tags">
-          <div class='details_col_toggle' onclick="toggleDetailsColumn('tags')">&times;</div>
-          <div class='details_col_header'>Tags</div>
+        <th class="details-col-tags" title="Tags">
+          <div class='details-col-toggle' onclick="toggleDetailsColumn('tags')">&times;</div>
+          <div class='details-col-header'>Tags</div>
         </th>
-        <th class="details_col_crit" title="Critical">
-          <div class='details_col_header'>Crit.</div>
+        <th class="details-col-crit" title="Critical">
+          <div class='details-col-header'>Crit.</div>
         </th>
-        <th class="details_col_status" title="Status">
-          <div class='details_col_header'>Status</div>
+        <th class="details-col-status" title="Status">
+          <div class='details-col-header'>Status</div>
         </th>
-        <th class="details_col_msg" title="Message">
-          <div class='details_col_toggle' onclick="toggleDetailsColumn('msg')">&times;</div>
-          <div class='details_col_header'>Message</div>
+        <th class="details-col-msg" title="Message">
+          <div class='details-col-toggle' onclick="toggleDetailsColumn('msg')">&times;</div>
+          <div class='details-col-header'>Message</div>
         </th>
-        <th class="details_col_elapsed" title="Elapsed Time">
-          <div class='details_col_toggle' onclick="toggleDetailsColumn('elapsed')">&times;</div>
-          <div class='details_col_header'>Elapsed</div>
+        <th class="details-col-elapsed" title="Elapsed Time">
+          <div class='details-col-toggle' onclick="toggleDetailsColumn('elapsed')">&times;</div>
+          <div class='details-col-header'>Elapsed</div>
         </th>
-        <th class="details_col_times" title="Start Time / End Time">
-          <div class='details_col_toggle' onclick="toggleDetailsColumn('times')">&times;</div>
-          <div class='details_col_header'>Start / End</div>
+        <th class="details-col-times" title="Start Time / End Time">
+          <div class='details-col-toggle' onclick="toggleDetailsColumn('times')">&times;</div>
+          <div class='details-col-header'>Start / End</div>
         </th>
       </tr>
     </thead>
@@ -602,22 +602,22 @@ function hideHiddenDetailsColumns(elem) {
 <script type="text/x-jquery-tmpl" id="testDetailsTableRowTemplate">
   {{if $item.logURL}}
   <tr onclick="location = '${$item.logURL}#${id}'" style="cursor: pointer" title="${fullName}">
-    <td class="details_col_name">
-      <div><a href="${$item.logURL}#${id}"><span class="parent_name">{{html formatParentName}}</span>{{html name}}</a></div>
+    <td class="details-col-name">
+      <div><a href="${$item.logURL}#${id}"><span class="parent-name">{{html formatParentName}}</span>{{html name}}</a></div>
     </td>
   {{else}}
   <tr title="${fullName}">
-    <td class="details_col_name">
-      <div><span class="parent_name">{{html formatParentName}}</span>{{html name}}</div>
+    <td class="details-col-name">
+      <div><span class="parent-name">{{html formatParentName}}</span>{{html name}}</div>
     </td>
   {{/if}}
-    <td class="details_col_doc"><div class="doc">{{html doc()}}</div></td>
-    <td class="details_col_tags"><div>{{html tags.join(', ')}}</div></td>
-    <td class="details_col_crit"><div>{{if isCritical}}yes{{else}}no{{/if}}</div></td>
-    <td class="details_col_status"><div class="${status.toLowerCase()}">${status}</div></td>
-    <td class="details_col_msg"><div class="message">{{html message()}}</div></td>
-    <td class="details_col_elapsed"><div>${times.elapsedTime}</div></td>
-    <td class="details_col_times"><div>${times.startTime}<br>${times.endTime}</div></td>
+    <td class="details-col-doc"><div class="doc">{{html doc()}}</div></td>
+    <td class="details-col-tags"><div>{{html tags.join(', ')}}</div></td>
+    <td class="details-col-crit"><div>{{if isCritical}}yes{{else}}no{{/if}}</div></td>
+    <td class="details-col-status"><div class="${status.toLowerCase()}">${status}</div></td>
+    <td class="details-col-msg"><div class="message">{{html message()}}</div></td>
+    <td class="details-col-elapsed"><div>${times.elapsedTime}</div></td>
+    <td class="details-col-times"><div>${times.startTime}<br>${times.endTime}</div></td>
   </tr>
 </script>
 

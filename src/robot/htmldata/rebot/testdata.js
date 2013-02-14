@@ -16,7 +16,7 @@ window.testdata = function () {
 
     function uniqueId() {
         idCounter++;
-        return "elementId_" + idCounter;
+        return 'element-id-' + idCounter;
     }
 
     function times(stats) {

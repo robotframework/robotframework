@@ -29,7 +29,7 @@ a:hover, a:active {
     text-decoration: underline;
     color: purple;
 }
-.parent_name {
+.parent-name {
     font-size: 0.7em;
     letter-spacing: -0.07em;
 }
@@ -68,11 +68,11 @@ h2 {
     color: #FFCC00 !important;
     font-weight: bold;
 }
-.not_run {
+.not-run {
     color: #444444 !important;
 }
 /* Top right header */
-#top_right_header {
+#top-right-header {
     position: fixed;
     top: 0;
     right: 0;
@@ -80,7 +80,7 @@ h2 {
     width: 12em;
     text-align: center;
 }
-#report_or_log_link a {
+#report-or-log-link a {
     display: block;
     background: black;
     color: white;
@@ -89,10 +89,10 @@ h2 {
     padding: 0.3em 0;
     border-bottom-left-radius: 4px;
 }
-#report_or_log_link a:hover {
+#report-or-log-link a:hover {
     color: yellow;
 }
-#log_level_selector {
+#log-level-selector {
     padding: 0.3em 0;
     font-size: 0.9em;
     border-bottom-left-radius: 4px;
@@ -120,50 +120,50 @@ h2 {
 .statistics td {
     vertical-align: middle;
 }
-.stats_col_stat {
+.stats-col-stat {
     width: 4.5em;
     text-align: center;
 }
-.stats_col_elapsed {
+.stats-col-elapsed {
     width: 5.5em;
     text-align: center;
 }
-.stats_col_graph {
+.stats-col-graph {
     width: 9em;
 }
-th.stats_col_graph:hover {
+th.stats-col-graph:hover {
     cursor: default;
 }
-.stat_name {
+.stat-name {
     float: left;
 }
-.stat_name a, .stat_name span {
+.stat-name a, .stat-name span {
     font-weight: bold;
 }
-.tag_links {
+.tag-links {
     font-size: 0.9em;
     float: right;
     margin-top: 0.05em;
 }
-.tag_links span {
+.tag-links span {
     margin-left: 0.2em;
 }
 /* Statistics graph */
-.graph, .empty_graph {
+.graph, .empty-graph {
     border: 1px solid black;
     width: auto;
     height: 7px;
     padding: 0;
     background: red;
 }
-.empty_graph {
+.empty-graph {
     background: #E9E9E9;
 }
-.pass_bar, .fail_bar {
+.pass-bar, .fail-bar {
     float: left;
     height: 100%;
 }
-.pass_bar {
+.pass-bar {
     background: #00F000;
 }
 /* Tablesorter - adapted from provided Blue Skin */

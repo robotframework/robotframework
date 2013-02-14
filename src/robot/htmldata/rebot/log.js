@@ -22,7 +22,7 @@ function toggleElement(elementId, childrenNames) {
     var element = $('#' + elementId);
     var children = element.find('> .children');
     children.toggle(100, '', function () {
-        element.find('> .elementheader > .foldingbutton').toggleClass('closed');
+        element.find('> .element-header > .folding-button').toggleClass('closed');
     });
     populateChildren(elementId, children, childrenNames);
 }
@@ -70,7 +70,7 @@ function expandElement(item) {
     var element = $('#' + item.id);
     var children = element.find('> .children');
     children.show(0, '', function () {
-        element.find('> .elementheader > .foldingbutton').removeClass('closed');
+        element.find('> .element-header > .folding-button').removeClass('closed');
     });
     populateChildren(item.id, children, item.childrenNames);
 }
@@ -130,9 +130,9 @@ function scrollToShortestVisibleAnchorElement(anchors) {
 
 function setMessageVisibility(level) {
     level = parseInt(level);
-    changeClassDisplay(".trace_message", level <= LEVELS.TRACE);
-    changeClassDisplay(".debug_message", level <= LEVELS.DEBUG);
-    changeClassDisplay(".info_message", level <= LEVELS.INFO);
+    changeClassDisplay(".trace-message", level <= LEVELS.TRACE);
+    changeClassDisplay(".debug-message", level <= LEVELS.DEBUG);
+    changeClassDisplay(".info-message", level <= LEVELS.INFO);
 }
 
 function closestVisibleParent(elem) {

@@ -12,24 +12,24 @@ a:link, a:visited {
 .details, .statistics {
     width: 100%;
 }
-#generated_ago, #top_right_header, #normal_selector,
-.foldingbutton, .expandall, .hidden, .details_col_toggle {
+#generated-ago, #top-right-header, #normal-selector,
+.folding-button, .expand, .hidden, .details-col-toggle {
     display: none;
 }
 .element-header-text, .children {
     margin: 0;
 }
-#test_details {
+#test-details {
     border-collapse: collapse;
     table-layout: auto;
 }
-#test_details th, #test_details td {
+#test-details th, #test-details td {
     border: 1px solid black;
 }
-.details_col_header {
+.details-col-header {
     padding: 0;
 }
-#print_selector {
+#print-selector {
     display: table-cell;
 }
 .tablesorter-header {

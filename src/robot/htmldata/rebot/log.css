@@ -1,5 +1,5 @@
 /* Containers */
-.suite, .test, .errors {
+.suite, .test, #errors {
     border: 1px solid gray;
     padding: 0.3em 0.2em;
     margin: 0.2em 0;
@@ -7,7 +7,7 @@
 .test {
     border-style: dashed;
 }
-.errors, .metadata, .messages {
+#errors, .metadata, .messages {
     width: 100%;
 }
 .children {
@@ -21,18 +21,18 @@
     margin-left: 0;
 }
 /* Suite, test and kw headers */
-.elementheader {
+.element-header {
     border: 1px solid white;
     border-radius: 2px;
     padding: 0.2em 0;
     position: relative;
 }
-.elementheader:hover {
+.element-header:hover {
     cursor: pointer;
     background: #F4F4FF;
     border: 1px solid #D3D3D3;
 }
-.foldingbutton {
+.folding-button {
     position: absolute;
     left: 0.3em;
     top: 0.4em;
@@ -47,7 +47,7 @@
 .closed {
     background-image: url(data:image/gif;base64,R0lGODlhCQAJAIABAAAAAP///yH5BAEKAAEALAAAAAAJAAkAAAIMjI+pAcsKYoSuuYsKADs=);
 }
-.foldingbutton:hover {
+.folding-button:hover {
     background-color: yellow;
 }
 .element-header-text {
@@ -57,7 +57,7 @@
 .name {
     font-weight: bold;
 }
-.expandall {
+.expand {
     display: inline-block;
     position: absolute;
     right: 0;
@@ -69,7 +69,7 @@
     padding-top: 0.5em;
     color: #808080 !important;
 }
-.expandall:hover {
+.expand:hover {
     text-decoration: none;
     color: black !important;
 }
@@ -81,7 +81,7 @@
 .time {
     width: 8em;
 }
-.error_time {
+.error-time {
     width: 11em;
     white-space: nowrap;
 }
@@ -91,10 +91,10 @@
 }
 /* Message tables - these MUST NOT be combined together because otherwise
    dynamically altering them based on visible log level is not possible. */
-.trace_message {
+.trace-message {
     display: table;
 }
-.debug_message {
+.debug-message {
     display: table;
 }
 /* Metadata */
@@ -103,10 +103,10 @@
     text-align: left;
     white-space: nowrap;
 }
-.keyword_metadata {
+.keyword-metadata {
     font-size: 0.9em;
 }
 /* Custom styles for statistics */
-#total_stats tr:hover, #tag_stats tr:hover {
+#total-stats tr:hover, #tag-stats tr:hover {
     cursor: default;
 }

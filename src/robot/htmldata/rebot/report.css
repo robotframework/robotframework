@@ -34,16 +34,16 @@ th {
     padding-bottom: 1em;
     white-space: normal;
 }
-#print_selector {
+#print-selector {
     display: none;
 }
 /* Tabs - adapted from http://www.htmldog.com/articles/tabs */
-#detail_tabs {
+#detail-tabs {
     list-style: none;
     padding: 0;
     margin: 0 1em;
 }
-.detail_tab {
+.detail-tab {
     float: left;
     background: #DCDCF0;
     border: 1px solid black;
@@ -52,77 +52,77 @@ th {
     padding-top: 0.1em;
     border-radius: 3px 3px 0 0;
 }
-.detail_tab:hover {
+.detail-tab:hover {
     background: yellow;
 }
-.detail_tab a {
+.detail-tab a {
     color: black;
     text-decoration: none;
     font-weight: bold;
     padding: 0 1em;
 }
-.detail_tab_selected {
+.detail-tab-selected {
     position: relative;
     top: 1px;
     background: white;
 }
-.detail_tab_selected:hover {
+.detail-tab-selected:hover {
     background: white;
 }
 /* Test details table */
-#test_details {
+#test-details {
     width: 100%;
     border-spacing: 1px;
     background-color: black;
 }
-#test_details tr:hover {
+#test-details tr:hover {
     background: #F4F4FF;
 }
-#test_details th, #test_details td {
+#test-details th, #test-details td {
     padding: 0.2em;
 }
-.details_col_header {
+.details-col-header {
     padding-right: 1em;
 }
-.details_col_toggle {
+.details-col-toggle {
     float: left;
     color: #808080;
     cursor: pointer;
 }
-.details_col_toggle:hover {
+.details-col-toggle:hover {
     color: black;
 }
-.details_col_name {
+.details-col-name {
     min-width: 20em;
     font-weight: bold;
 }
-.details_col_doc {
+.details-col-doc {
     min-width: 10em;
 }
-.details_col_tags {
+.details-col-tags {
     min-width: 10em;
 }
-.details_col_crit {
+.details-col-crit {
     width: 3.5em;
     text-align: center;
 }
-.details_col_status {
+.details-col-status {
     width: 4.5em;
     text-align: center;
 }
-.details_col_msg {
+.details-col-msg {
     min-width: 20em;
 }
-.details_col_elapsed {
+.details-col-elapsed {
     width: 7em;
     text-align: center;
 }
-.details_col_times {
+.details-col-times {
     width: 11em;
     white-space: nowrap;
     text-align: center;
 }
-.hidden .details_col_header, td.hidden > div {
+.hidden .details-col-header, td.hidden > div {
     display: none;
 }
 .hidden {
