@@ -258,11 +258,10 @@ function getTotalTests(name) {
 }
 
 function calculateTotalTime(tests) {
-    var totaltime = 0;
-    $.map(tests, function (test) {
-        totaltime += test.times.elapsedMillis;
-    });
-    return util.formatElapsed(totaltime);
+    var total = 0;
+    for (var i = 0, len = tests.length; i < len; i++)
+        total += tests[i].times.elapsedMillis;
+    return util.formatElapsed(total);
 }
 
 function renderTestDetails(sortByStatus, target) {

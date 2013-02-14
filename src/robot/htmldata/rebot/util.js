@@ -1,8 +1,8 @@
 window.util = function () {
 
-    function map(elems, func){
+    function map(elems, func) {
         var ret = [];
-        for (var i=0; i<elems.length; i++) {
+        for (var i = 0, len = elems.length; i < len; i++) {
             ret[i] = func(elems[i]);
         }
         return ret;
@@ -10,7 +10,7 @@ window.util = function () {
 
     function filter(elems, predicate) {
         var ret = [];
-        for (var i=0; i<elems.length; i++) {
+        for (var i = 0, len = elems.length; i < len; i++) {
             if (predicate(elems[i]))
                 ret.push(elems[i]);
         }
@@ -18,7 +18,7 @@ window.util = function () {
     }
 
     function all(elems) {
-        for (var i=0; i<elems.length; i++) {
+        for (var i = 0, len = elems.length; i < len; i++) {
             if (!elems[i])
                 return false;
         }
@@ -26,7 +26,7 @@ window.util = function () {
     }
 
     function any(elems) {
-        for (var i=0; i<elems.length; i++) {
+        for (var i = 0, len = elems.length; i < len; i++) {
             if (elems[i])
                 return elems[i];
         }
@@ -34,7 +34,7 @@ window.util = function () {
     }
 
     function contains(elems, e) {
-        for (var i=0; i<elems.length; i++) {
+        for (var i = 0, len = elems.length; i < len; i++) {
             if (elems[i] == e)
                 return true;
         }
