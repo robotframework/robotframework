@@ -71,13 +71,13 @@ function addStatistics() {
         '<h2>Test Statistics</h2>' +
         '<table class="statistics" id="total-stats"><thead><tr>' +
         '<th class="stats-col-name">Total Statistics</th>' + statHeaders +
-        '</tr></thead><tbody></tbody></table>' +
+        '</tr></thead></table>' +
         '<table class="statistics" id="tag-stats"><thead><tr>' +
         '<th class="stats-col-name">Statistics by Tag</th>' + statHeaders +
-        '</tr></thead><tbody></tbody></table>' +
+        '</tr></thead></table>' +
         '<table class="statistics" id="suite-stats"><thead><tr>' +
         '<th class="stats-col-name">Statistics by Suite</th>' + statHeaders +
-        '</tr></thead><tbody></tbody></table>';
+        '</tr></thead></table>';
     $(statTable).appendTo('#statistics-container');
     $.map(['total', 'tag', 'suite'], addStatTable);
     stopStatLinkClickPropagation();
@@ -127,7 +127,7 @@ function addStatTable(tableName) {
 }
 
 function renderNoTagStatTable() {
-    $('<tr class="row-0">' +
+    $('<tbody><tr class="row-0">' +
         '<td class="stats-col-name">No Tags</td>' +
         '<td class="stats-col-stat"></td>' +
         '<td class="stats-col-stat"></td>' +
@@ -136,16 +136,16 @@ function renderNoTagStatTable() {
         '<td class="stats-col-graph">' +
           '<div class="empty-graph"></div>' +
         '</td>' +
-      '</tr>').appendTo($('#tag-stats > tbody'));
+      '</tr></tbody>').appendTo('#tag-stats');
 }
 
 function renderStatTable(tableName, stats) {
     var template = tableName + 'StatisticsRowTemplate';
-    var target = $('#' + tableName + '-stats > tbody');
-    // Need explicit for loop because $.tmpl() does not handle very large lists
-    for (var i = 0; stats !== undefined && i < stats.length; i++) {
-        $.tmpl(template, stats[i], {index: i}).appendTo(target);
+    var tbody = $('<tbody></tbody>');
+    for (var i = 0, len = stats.length; i < len; i++) {
+        $.tmpl(template, stats[i], {index: i}).appendTo(tbody);
     }
+    tbody.appendTo('#' + tableName + '-stats');
 }
 
 $.template('statColumnsTemplate',
