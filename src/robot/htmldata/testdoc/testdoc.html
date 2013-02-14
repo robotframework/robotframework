@@ -41,7 +41,7 @@ $(document).ready(function(){
     addTitle(window.testdoc.title);
     addGenerated(window.testdoc.generated, window.testdoc.generatedMillis);
     addSuite(window.testdoc.suite, 'body');
-    expandElement(window.testdoc.suite.id);
+    toggleElement(window.testdoc.suite.id);
 });
 
 function parseTemplates() {
@@ -96,14 +96,6 @@ function toggleElement(elementId) {
     var children = element.find('> .children');
     children.toggle(100, '', function () {
         element.find('> .element-header > .folding-button').toggleClass('closed');
-    });
-}
-
-function expandElement(elementId) {
-    var element = $('#' + elementId);
-    var children = element.find('> .children');
-    children.show(0, '', function () {
-        element.find('> .element-header > .folding-button').removeClass('closed');
     });
 }
 
