@@ -219,9 +219,10 @@ function scrollToSelector(anchor) {
 
 function renderSelector(args, template, stats) {
     window.elementsToRender = [];
-    $('#test-details-container').empty();
-    $.tmpl('detailsHeaderTemplate', args).appendTo('#test-details-container');
-    $.tmpl(template, stats).appendTo('#test-details-container');
+    var container = $('#test-details-container');
+    container.empty();
+    $.tmpl('detailsHeaderTemplate', args).appendTo(container);
+    $.tmpl(template, stats).appendTo(container);
 }
 
 function drawTestDetailsTable(tests, sortByStatus) {
