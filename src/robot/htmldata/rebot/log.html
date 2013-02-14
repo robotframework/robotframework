@@ -80,7 +80,7 @@ function addErrors() {
     }
 }
 
-function drawErrorsRecursively(){
+function drawErrorsRecursively() {
     if (!window.errorsToRender.hasNext())
         return;
     var elements = popFromIterator(window.errorsToRender, 10);
@@ -119,9 +119,9 @@ function makeElementVisible(element) {
 }
 
 function addTestExecutionLog(main) {
-    $('<h2>Test Execution Log</h2>').appendTo($('body'));
-    var root = $.tmpl('suiteTemplate', main);
-    root.appendTo($('body'));
+    var body = $('body');
+    $('<h2>Test Execution Log</h2>').appendTo(body);
+    $.tmpl('suiteTemplate', main).appendTo(body);
 }
 </script>
 
@@ -145,8 +145,7 @@ function addTestExecutionLog(main) {
       </div>
       <div class="tag-links">
         {{each links}}
-        <span>[<a href="${$value.url}"
-                  title="${$value.url}">{{html $value.title}}</a>]</span>
+        <span>[<a href="${$value.url}" title="${$value.url}">{{html $value.title}}</a>]</span>
         {{/each}}
       </div>
     </td>
@@ -174,8 +173,7 @@ function addTestExecutionLog(main) {
   <tr>
     <td class="error-time">
       {{if link}}
-      <a onclick="makeElementVisible('${link}')" href="#${link}"
-         title="Link to details">${date} ${time}</a>
+      <a onclick="makeElementVisible('${link}')" href="#${link}" title="Link to details">${date} ${time}</a>
       {{else}}
       ${date} ${time}
       {{/if}}

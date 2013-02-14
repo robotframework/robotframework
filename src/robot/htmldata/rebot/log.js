@@ -20,9 +20,9 @@ function addElements(elems, templateName, target){
 
 function toggleElement(elementId, childrenNames) {
     var element = $('#' + elementId);
-    var children = element.find('> .children');
+    var children = element.children('.children');
     children.toggle(100, '', function () {
-        element.find('> .element-header > .folding-button').toggleClass('closed');
+        element.children('.element-header').children('.folding-button').toggleClass('closed');
     });
     populateChildren(elementId, children, childrenNames);
 }
@@ -68,9 +68,9 @@ function expandRecursively() {
 
 function expandElement(item) {
     var element = $('#' + item.id);
-    var children = element.find('> .children');
+    var children = element.children('.children');
     children.show(0, '', function () {
-        element.find('> .element-header > .folding-button').removeClass('closed');
+        element.children('.element-header').children('.folding-button').removeClass('closed');
     });
     populateChildren(item.id, children, item.childrenNames);
 }

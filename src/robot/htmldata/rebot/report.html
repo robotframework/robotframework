@@ -59,12 +59,14 @@ $(document).ready(function () {
 });
 
 function setBackground(topsuite) {
+    var color;
     if (topsuite.criticalFailed)
-        $("body").css("background-color", window.settings.background.fail);
+        color = window.settings.background.fail;
     else if (topsuite.totalFailed)
-        $("body").css("background-color", window.settings.background.nonCriticalFail);
+        color = window.settings.background.nonCriticalFail;
     else
-        $("body").css("background-color", window.settings.background.pass);
+        color = window.settings.background.pass;
+    $('body').css('background-color', color);
 }
 
 function addSummary(topsuite) {
@@ -232,7 +234,7 @@ function renderSelector(args, template, stats) {
 function drawTestDetailsTable(tests, sortByStatus) {
     renderTestDetailsHeader();
     window.elementsToRender = tests;
-    var target = $('#test-details > tbody');
+    var target = $('#test-details').find('tbody');
     renderTestDetails(sortByStatus, target);
 }
 
