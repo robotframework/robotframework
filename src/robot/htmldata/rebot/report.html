@@ -295,7 +295,7 @@ function configureTableSorter(sortByStatus) {
                   selectorSort: '.details-col-header'};
     if (sortByStatus)
         config['sortList'] = [[4, 0], [3, 0]];
-    var table = $('test-details');
+    var table = $('#test-details');
     table.tablesorter(config);
     // remove possibly invalid colgroup added by tablesorter
     // https://github.com/Mottie/tablesorter/issues/238
