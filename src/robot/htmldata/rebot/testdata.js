@@ -246,17 +246,16 @@ window.testdata = function () {
         }
     }
 
-    function errors() {
-        var iterator = new Object();
-        iterator.counter = 0;
-        iterator.next = function () {
-            return message(window.output.errors[iterator.counter++],
-                           StringStore(window.output.strings));
+    function errorIterator() {
+        return {
+            next: function () {
+                return message(window.output.errors.shift(),
+                               StringStore(window.output.strings));
+            },
+            hasNext: function () {
+                return window.output.errors.length > 0;
+            }
         };
-        iterator.hasNext = function () {
-            return iterator.counter < window.output.errors.length;
-        };
-        return iterator;
     }
 
     function statistics() {
@@ -296,7 +295,7 @@ window.testdata = function () {
 
     return {
         suite: suite,
-        errors: errors,
+        errorIterator: errorIterator,
         find: findById,
         findPathTo: findPathTo,
         statistics: statistics,

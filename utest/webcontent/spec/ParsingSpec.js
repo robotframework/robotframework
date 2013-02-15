@@ -258,7 +258,7 @@ describe("Handling messages", function (){
     });
 
     it("should show warning in errors", function () {
-        var firstError = window.testdata.errors().next()
+        var firstError = window.testdata.errorIterator().next();
         expectMessage(firstError, "warning", "WARN");
         var callbackExecuted = false;
         window.testdata.findPathTo(firstError.link, function (pathToKeyword) {

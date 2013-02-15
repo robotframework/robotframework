@@ -72,21 +72,18 @@ function addLogLevelSelector(minLevel, defaultLevel) {
 }
 
 function addErrors() {
-    var errors = window.testdata.errors();
+    var errors = window.testdata.errorIterator();
     if (errors.hasNext()) {
         $.tmpl('errorHeaderTemplate').appendTo($('body'));
-        window.errorsToRender = errors;
-        drawErrorsRecursively();
+        drawErrorsRecursively(errors, $('#errors'));
     }
 }
 
-function drawErrorsRecursively() {
-    if (!window.errorsToRender.hasNext())
-        return;
-    var elements = popFromIterator(window.errorsToRender, 10);
-    $.tmpl('errorTemplate', elements).appendTo($('#errors'));
-    if (window.errorsToRender.hasNext())
-        setTimeout(drawErrorsRecursively, 0);
+function drawErrorsRecursively(errors, target) {
+    var elements = popFromIterator(errors, 10);
+    $.tmpl('errorTemplate', elements).appendTo(target);
+    if (errors.hasNext())
+        setTimeout(function () { drawErrorsRecursively(errors, target); }, 0);
     else
         scrollToHash();
 }
