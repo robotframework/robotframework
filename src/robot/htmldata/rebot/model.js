@@ -11,6 +11,7 @@ window.model = (function () {
         suite.populateTests = createIterablePopulator("Test");
         suite.populateSuites = createIterablePopulator("Suite");
         suite.childrenNames = ['keyword', 'suite', 'test'];
+        suite.callWhenChildrenReady = function (callable) { callable(); };
         suite.message = data.message;
         suite.children = function () {
             return suite.keywords().concat(suite.tests()).concat(suite.suites());
@@ -94,8 +95,7 @@ window.model = (function () {
             doc: data.doc,
             status: data.status,
             times: data.times,
-            id: data.parent ? data.parent.id + "-" + symbol + (data.index + 1) : symbol + "1",
-            callWhenChildrenReady: function (callable) { callable(); }
+            id: data.parent ? data.parent.id + "-" + symbol + (data.index + 1) : symbol + "1"
         };
     }
 
