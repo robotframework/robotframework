@@ -195,47 +195,36 @@ window.testdata = function () {
         return root;
     }
 
-    function findById(id) {
+    function findLoaded(id) {
         return elementsById[id];
     }
 
-    function findPathTo(id, callback) {
+    function ensureLoaded(id, callback) {
         var ids = id.split('-');
-        if (ids[0] != 's1') {
-            return;
-        }
         var root = suite();
         ids.shift();
-        findPathWithId(ids, root, [root.id], callback);
+        loadItems(ids, root, [root.id], callback);
     }
 
-    function findPathWithId(ids, current, result, callback) {
-        if (ids.length == 0) {
+    function loadItems(ids, current, result, callback) {
+        if (!ids.length) {
             callback(result);
-        } else {
-            current.callWhenChildrenReady(function () {
-                var type = ids[0][0];
-                var index = parseInt(ids[0].substring(1)) - 1;
-                doWithSelected(current, type, index, function (item) {
-                    result.push(item.id);
-                    ids.shift();
-                    findPathWithId(ids, item, result, callback);
-                });
-            });
+            return;
         }
-    }
-
-    function doWithSelected(element, selector, index, func) {
-        var item = selectFrom(element, selector, index);
-        if (item !== undefined) {
-           func(item);
-        }
+        current.callWhenChildrenReady(function () {
+            var id = ids.shift();
+            var type = id[0];
+            var index = parseInt(id.substring(1)) - 1;
+            var item = selectFrom(current, type, index);
+            result.push(item.id);
+            loadItems(ids, item, result, callback);
+        });
     }
 
     function selectFrom(element, type, index) {
-        if (type == 'k') {
+        if (type === 'k') {
             return element.keywords()[index];
-        } else if (type == 't') {
+        } else if (type === 't') {
             return element.tests()[index];
         } else {
             return element.suites()[index];
@@ -292,8 +281,8 @@ window.testdata = function () {
     return {
         suite: suite,
         errorIterator: errorIterator,
-        find: findById,
-        findPathTo: findPathTo,
+        findLoaded: findLoaded,
+        ensureLoaded: ensureLoaded,
         statistics: statistics,
         StringStore: StringStore,  // exposed for tests
         LEVELS: LEVELS

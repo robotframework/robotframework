@@ -208,8 +208,8 @@ function renderSuiteSelector(id) {
 }
 
 function renderSuiteDetails(id) {
-    testdata.findPathTo(id, function (ids) {
-        var suite = testdata.find(id);
+    window.testdata.ensureLoaded(id, function (ids) {
+        var suite = window.testdata.findLoaded(id);
         var opts = {logURL: window.settings.logURL};
         $.tmpl('suiteDetailsTemplate', suite, opts).appendTo('#details-header');
         drawTestDetailsTable(suite.allTests(), false);

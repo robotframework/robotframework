@@ -22,7 +22,7 @@ function toggleElement(elementId, childrenNames) {
 
 function populateChildren(elementId, childElement, childrenNames) {
     if (!childElement.hasClass('populated')) {
-        var element = window.testdata.find(elementId);
+        var element = window.testdata.findLoaded(elementId);
         var callback = drawCallback(element, childElement, childrenNames);
         element.callWhenChildrenReady(callback);
         childElement.addClass('populated');
@@ -70,7 +70,7 @@ function expandElement(item) {
 }
 
 function expandElementWithId(elementid) {
-    expandElement(window.testdata.find(elementid));
+    expandElement(window.testdata.findLoaded(elementid));
 }
 
 function elementHiddenByUser(elementId) {
@@ -79,7 +79,7 @@ function elementHiddenByUser(elementId) {
 }
 
 function expandAllChildren(elementId) {
-    window.elementsToExpand = [window.testdata.find(elementId)];
+    window.elementsToExpand = [window.testdata.findLoaded(elementId)];
     window.expandDecider = function () { return true; };
     expandRecursively();
 }

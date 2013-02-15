@@ -102,12 +102,10 @@ function popFromIterator(iterator, upTo) {
 }
 
 function makeElementVisible(id) {
-    // findPathTo ensures that all the data for the element has been downloaded
-    // from server before executing the callback function
-    window.testdata.findPathTo(id, function (ids) {
+    window.testdata.ensureLoaded(id, function (ids) {
         util.map(ids, expandElementWithId);
         if (ids.length) {
-            expandCriticalFailed(window.testdata.find(util.last(ids)));
+            expandCriticalFailed(window.testdata.findLoaded(util.last(ids)));
             window.location.hash = id;
         }
     });
