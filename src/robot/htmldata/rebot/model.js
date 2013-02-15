@@ -1,15 +1,15 @@
 window.model = (function () {
 
     function Suite(data) {
-        var suite = createModelObject(data, "s");
+        var suite = createModelObject(data);
         suite.source = data.source;
         suite.relativeSource = data.relativeSource;
-        suite.fullName = data.parent ? data.parent.fullName + "." + data.name : data.name;
+        suite.fullName = data.parent ? data.parent.fullName + '.' + data.name : data.name;
         setStats(suite, data.statistics);
         suite.metadata = data.metadata;
-        suite.populateKeywords = createIterablePopulator("Keyword");
-        suite.populateTests = createIterablePopulator("Test");
-        suite.populateSuites = createIterablePopulator("Suite");
+        suite.populateKeywords = createIterablePopulator('Keyword');
+        suite.populateTests = createIterablePopulator('Test');
+        suite.populateSuites = createIterablePopulator('Suite');
         suite.childrenNames = ['keyword', 'suite', 'test'];
         suite.callWhenChildrenReady = function (callable) { callable(); };
         suite.message = data.message;
@@ -18,9 +18,9 @@ window.model = (function () {
         };
         suite.searchTests = function (predicate) {
             var tests = [];
-            var subSuites = this.suites();
-            for (var i in subSuites)
-                tests = tests.concat(subSuites[i].searchTests(predicate));
+            var suites = this.suites();
+            for (var i in suites)
+                tests = tests.concat(suites[i].searchTests(predicate));
             return tests.concat(util.filter(this.tests(), predicate));
         };
         suite.searchTestsByTag = function (tag) {
@@ -89,22 +89,22 @@ window.model = (function () {
         }
     }
 
-    function createModelObject(data, symbol) {
+    function createModelObject(data) {
         return {
             name: data.name,
             doc: data.doc,
             status: data.status,
             times: data.times,
-            id: data.parent ? data.parent.id + "-" + symbol + (data.index + 1) : symbol + "1"
+            id: data.parent ? data.parent.id + '-' + data.id : data.id
         };
     }
 
     function Test(data) {
-        var test = createModelObject(data, "t");
-        test.fullName = data.parent.fullName + "." + test.name;
+        var test = createModelObject(data);
+        test.fullName = data.parent.fullName + '.' + test.name;
         test.formatParentName = function () { return util.formatParentName(test); };
         test.timeout = data.timeout;
-        test.populateKeywords = createIterablePopulator("Keyword");
+        test.populateKeywords = createIterablePopulator('Keyword');
         test.childrenNames = ['keyword'];
         test.isChildrenLoaded = data.isChildrenLoaded;
         test.callWhenChildrenReady = window.fileLoading.getCallbackHandlerForKeywords(test);
@@ -119,15 +119,12 @@ window.model = (function () {
     }
 
     function Keyword(data) {
-        var kw = createModelObject(data, "k");
+        var kw = createModelObject(data);
         kw.type = data.type;
-        var parent = data.parent;
-        var parentPath = (parent.path === undefined) ? parent.fullName : parent.path;
-        kw.path = parentPath + "." + data.index;
         kw.arguments = data.args;
         kw.timeout = data.timeout;
-        kw.populateMessages = createIterablePopulator("Message");
-        kw.populateKeywords = createIterablePopulator("Keyword");
+        kw.populateMessages = createIterablePopulator('Message');
+        kw.populateKeywords = createIterablePopulator('Keyword');
         kw.childrenNames = ['keyword', 'message'];
         kw.isChildrenLoaded = data.isChildrenLoaded;
         kw.callWhenChildrenReady = window.fileLoading.getCallbackHandlerForKeywords(kw);
@@ -167,14 +164,14 @@ window.model = (function () {
     }
 
     function populateIterable(obj, name, populator) {
-        var nameInLowerCase = name.toLowerCase();
-        obj[nameInLowerCase + "s"] = createGetAllFunction(populator.numberOfItems, populator.creator);
+        name = name.toLowerCase() + 's';
+        obj[name] = createGetAllFunction(populator.numberOfItems, populator.creator);
     }
 
     function createGetAllFunction(numberOfElements, creator) {
-        var cached = undefined;
+        var cached = null;
         return function () {
-            if (cached === undefined) {
+            if (cached === null) {
                 cached = [];
                 for (var i = 0; i < numberOfElements(); i++) {
                     cached.push(creator(i));
@@ -191,7 +188,7 @@ window.model = (function () {
         Message: Message,
         Times: Times,
         containsTag: containsTag,  // Exposed for tests
-        containsTagPattern: containsTagPattern,  // Exposed for tests
+        containsTagPattern: containsTagPattern  // Exposed for tests
     };
 }());
 
@@ -248,8 +245,8 @@ window.stats = (function () {
     function calculatePercents(total, passed, failed) {
         if (total == 0)
             return [0.0, 0.0];
-        pass = 100.0 * passed / total;
-        fail = 100.0 * failed / total;
+        var pass = 100.0 * passed / total;
+        var fail = 100.0 * failed / total;
         if (pass > 0 && pass < 0.1)
             return [0.1, 99.9];
         if (fail > 0 && fail < 0.1)

@@ -8,7 +8,7 @@ window.testdata = function () {
     var KEYWORDS = ['KEYWORD', 'SETUP', 'TEARDOWN', 'FOR', 'VAR'];
 
     function addElement(elem) {
-        if (elem.id == undefined)
+        if (!elem.id)
             elem.id = uniqueId();
         elementsById[elem.id] = elem;
         return elem;
@@ -22,7 +22,7 @@ window.testdata = function () {
     function times(stats) {
         var startMillis = stats[1];
         var elapsed = stats[2];
-        if (startMillis == null)
+        if (startMillis === null)
             return [null, null, elapsed];
         return [util.timestamp(startMillis),
                 util.timestamp(startMillis + elapsed),
@@ -52,7 +52,9 @@ window.testdata = function () {
 
     function createKeyword(parent, element, strings, index) {
         var kw = model.Keyword({
+            parent: parent,
             type: KEYWORDS[element[0]],
+            id: 'k' + (index + 1),
             name: strings.get(element[1]),
             timeout: strings.get(element[2]),
             args: strings.get(element[4]),
@@ -63,8 +65,6 @@ window.testdata = function () {
             },
             status: parseStatus(element[5], strings),
             times: model.Times(times(element[5])),
-            parent: parent,
-            index: index,
             isChildrenLoaded: typeof(element[6]) !== 'number'
         });
         lazyPopulateKeywordsFromFile(kw, element[6], strings);
@@ -87,12 +87,12 @@ window.testdata = function () {
         return util.map(taglist, strings.get);
     }
 
-    function createTest(suite, element, strings, index) {
+    function createTest(parent, element, strings, index) {
         var statusElement = element[5];
         var test = model.Test({
-            parent: suite,
+            parent: parent,
+            id: 't' + (index + 1),
             name: strings.get(element[0]),
-            index: index,
             doc: function () {
                 var doc = strings.get(element[3]);
                 this.doc = function () { return doc; };
@@ -101,7 +101,7 @@ window.testdata = function () {
             timeout: strings.get(element[1]),
             isCritical: element[2],
             status: parseStatus(statusElement),
-            message:  function () {
+            message: function () {
                 var msg = createMessage(statusElement, strings);
                 this.message = function () { return msg; };
                 return msg;
@@ -122,8 +122,8 @@ window.testdata = function () {
         var statusElement = element[5];
         var suite = model.Suite({
             parent: parent,
+            id: 's' + ((index || 0) + 1),
             name: strings.get(element[0]),
-            index: index,
             source: strings.get(element[1]),
             relativeSource: strings.get(element[2]),
             doc: function () {
@@ -184,7 +184,7 @@ window.testdata = function () {
             },
             creator: function (index) {
                 return creator(window['keywords'+structureIndex][index],
-                               getStringStore(window['strings'+structureIndex]),
+                               StringStore(window['strings'+structureIndex]),
                                index);
             }
         };
@@ -194,18 +194,18 @@ window.testdata = function () {
         var elem = window.output.suite;
         if (elementsById[elem.id])
             return elem;
-        var main = addElement(createSuite(undefined, elem, getStringStore(window.output.strings)));
-        window.output.suite = main;
-        return main;
+        var root = addElement(createSuite(null, elem, StringStore(window.output.strings)));
+        window.output.suite = root;
+        return root;
     }
 
     function findById(id) {
         return elementsById[id];
     }
 
-    function findPathTo(pathId, callback) {
-        var ids = pathId.split("-");
-        if (ids[0] != "s1") {
+    function findPathTo(id, callback) {
+        var ids = id.split('-');
+        if (ids[0] != 's1') {
             return;
         }
         var root = suite();
@@ -213,16 +213,19 @@ window.testdata = function () {
         findPathWithId(ids, root, [root.id], callback);
     }
 
-    function findPathWithId(pathId, current, result, callback) {
-        if (pathId.length == 0) {
+    function findPathWithId(ids, current, result, callback) {
+        if (ids.length == 0) {
             callback(result);
         } else {
             current.callWhenChildrenReady(function () {
-                doWithSelected(current, pathId[0][0], parseInt(pathId[0].substring(1))-1, function (item) {
-                result.push(item.id);
-                pathId.shift();
-                findPathWithId(pathId, item, result, callback);
-            })});
+                var type = ids[0][0];
+                var index = parseInt(ids[0].substring(1)) - 1;
+                doWithSelected(current, type, index, function (item) {
+                    result.push(item.id);
+                    ids.shift();
+                    findPathWithId(ids, item, result, callback);
+                });
+            });
         }
     }
 
@@ -233,12 +236,12 @@ window.testdata = function () {
         }
     }
 
-    function selectFrom(element, selector, index) {
-        if (selector == "k") {
+    function selectFrom(element, type, index) {
+        if (type == 'k') {
             return element.keywords()[index];
-        } else if(selector == "t") {
+        } else if (type == 't') {
             return element.tests()[index];
-        } else if(selector == "s") {
+        } else {
             return element.suites()[index];
         }
     }
@@ -248,7 +251,7 @@ window.testdata = function () {
         iterator.counter = 0;
         iterator.next = function () {
             return message(window.output.errors[iterator.counter++],
-                           getStringStore(window.output.strings));
+                           StringStore(window.output.strings));
         };
         iterator.hasNext = function () {
             return iterator.counter < window.output.errors.length;
@@ -264,7 +267,7 @@ window.testdata = function () {
         return _statistics;
     }
 
-    function getStringStore(strings) {
+    function StringStore(strings) {
 
         function getText(id) {
             var text = strings[id];
@@ -273,7 +276,7 @@ window.testdata = function () {
             if (text[0] == '*')
                 return text.substring(1);
             var extracted = extract(text);
-            strings[id] = "*"+extracted;
+            strings[id] = '*' + extracted;
             return extracted;
         }
 
@@ -284,8 +287,7 @@ window.testdata = function () {
         }
 
         function get(id) {
-            if (id == undefined) return undefined;
-            if (id == null) return null;
+            if (id === null) return null;
             return getText(id);
         }
 
@@ -298,7 +300,7 @@ window.testdata = function () {
         find: findById,
         findPathTo: findPathTo,
         statistics: statistics,
-        getStringStore: getStringStore,
+        StringStore: StringStore,  // exposed for tests
         LEVELS: LEVELS
     };
 

@@ -49,7 +49,7 @@ function expandRecursively() {
     if (!window.elementsToExpand.length)
         return;
     var element = window.elementsToExpand.pop();
-    if (element == undefined || elementHiddenByUser(element.id)) {
+    if (!element || elementHiddenByUser(element.id)) {
         window.elementsToExpand = [];
         return;
     }
@@ -84,14 +84,14 @@ function elementHiddenByUser(elementId) {
 
 function expandAllChildren(elementId) {
     window.elementsToExpand = [window.testdata.find(elementId)];
-    window.expandDecider = function() { return true; };
+    window.expandDecider = function () { return true; };
     expandRecursively();
 }
 
 function expandCriticalFailed(element) {
     if (element.status == "FAIL") {
         window.elementsToExpand = [element];
-        window.expandDecider = function(e) {
+        window.expandDecider = function (e) {
             return e.status == "FAIL" && (e.isCritical === undefined || e.isCritical);
         };
         expandRecursively();

@@ -146,7 +146,7 @@ function totalDetailSelected(name) {
 }
 
 function renderTotalSelector(name) {
-    var args = {linkTarget: (name !== undefined) ? 'total_'+name : 'totals',
+    var args = {linkTarget: (name) ? 'total_'+name : 'totals',
                 totalTabStatus: 'detail-tab-selected'};
     renderSelector(args, 'totalDetailsSelectorTemplate', {selected: name});
 }
@@ -178,7 +178,7 @@ function tagDetailSelected(name) {
 }
 
 function renderTagSelector(name) {
-    var args = {linkTarget: (name !== undefined) ? 'tag_'+name : 'tags',
+    var args = {linkTarget: (name) ? 'tag_'+name : 'tags',
                 tagTabStatus: 'detail-tab-selected'};
     var stats = {tags: window.testdata.statistics().tag, selected: name};
     renderSelector(args, 'tagDetailsSelectorTemplate', stats);
@@ -200,7 +200,7 @@ function suiteDetailSelected(id) {
 }
 
 function renderSuiteSelector(id) {
-    var args = {linkTarget: (id !== undefined) ? 'suite_'+id : 'suites',
+    var args = {linkTarget: (id) ? 'suite_'+id : 'suites',
                 suiteTabStatus: 'detail-tab-selected'};
     var stats = {suites: window.testdata.statistics().suite,
                  selected: id};

@@ -9,13 +9,13 @@ describe("Text decoder", function () {
     }
 
     it("should have empty string with id 0", function () {
-        var strings = window.testdata.getStringStore(["*"]);
+        var strings = window.testdata.StringStore(["*"]);
         var empty = strings.get(0);
         expect(empty).toEqual("");
     });
 
     it("should uncompress", function () {
-        var strings = window.testdata.getStringStore(["*", "eNorzk3MySmmLQEASKop9Q=="]);
+        var strings = window.testdata.StringStore(["*", "eNorzk3MySmmLQEASKop9Q=="]);
         var decompressed = strings.get(1);
         var expected = multiplyString("small", 20);
         expect(decompressed).toEqual(expected);
@@ -23,7 +23,7 @@ describe("Text decoder", function () {
 
     it("should uncompress and replace compressed in memory", function () {
         var stringArray = ["*", "eNorzk3MySmmLQEASKop9Q=="];
-        var strings = window.testdata.getStringStore(stringArray);
+        var strings = window.testdata.StringStore(stringArray);
         expect(stringArray[1]).toEqual("eNorzk3MySmmLQEASKop9Q==");
         strings.get(1);
         var expected = multiplyString("small", 20);
@@ -31,7 +31,7 @@ describe("Text decoder", function () {
     });
 
     it("should handle plain text", function () {
-        var strings = window.testdata.getStringStore(["*", "*plain text"]);
+        var strings = window.testdata.StringStore(["*", "*plain text"]);
         var actual = strings.get(1);
         expect(actual).toEqual("plain text");
     });
@@ -78,6 +78,7 @@ describe("Handling Suite", function () {
     it("should parse suite", function () {
         var suite = window.testdata.suite();
         expect(suite.name).toEqual("Suite");
+        expect(suite.id).toEqual("s1");
         expect(suite.status).toEqual("PASS");
         expect(endsWith(suite.source, "Suite.txt")).toEqual(true);
         expect(suite.doc()).toEqual("suite doc");
@@ -92,6 +93,7 @@ describe("Handling Suite", function () {
     it("should parse test", function () {
         var test = firstTest(window.testdata.suite());
         expect(test.name).toEqual("Test");
+        expect(test.id).toEqual("s1-t1");
         expect(test.status).toEqual("PASS");
         expect(test.fullName).toEqual("Suite.Test");
         expect(test.doc()).toEqual("test doc");
@@ -106,11 +108,11 @@ describe("Handling Suite", function () {
     it("should parse keyword", function () {
         var kw = nthKeyword(firstTest(window.testdata.suite()), 0);
         expect(kw.name).toEqual("BuiltIn.Sleep");
+        expect(kw.id).toEqual("s1-t1-k1");
         expect(kw.status).toEqual("PASS");
         expect(kw.times).toBeDefined();
         expect(kw.times.elapsedMillis).toBeGreaterThan(99);
         expect(kw.times.elapsedMillis).toBeLessThan(200);
-        expect(kw.path).toEqual("Suite.Test.0");
         expect(kw.type).toEqual("KEYWORD");
         expect(kw.childrenNames).toEqual(['keyword', 'message'])
     });
@@ -555,14 +557,14 @@ describe("Should split tests and keywords with --splitlog", function (){
         window.output = window.splittingOutput;
         var i = 1;
         while (window['splittingOutputKeywords'+i]) {
-            window['keywords'+i] = window['splittingOutputKeywords'+i]
-            window['strings'+i] = window['splittingOutputStrings'+i]
+            window['keywords'+i] = window['splittingOutputKeywords'+i];
+            window['strings'+i] = window['splittingOutputStrings'+i];
             i = i+1;
         }
-        var originalGetter = window.fileLoading.getCallbackHandlerForKeywords
+        var originalGetter = window.fileLoading.getCallbackHandlerForKeywords;
         window.fileLoading.getCallbackHandlerForKeywords = function(parent) {
             var normalResult = originalGetter(parent);
-            var wrapper = function (callable) {
+            function wrapper(callable) {
                 parent.isChildrenLoaded = true;
                 normalResult(callable);
             }
@@ -575,7 +577,7 @@ describe("Should split tests and keywords with --splitlog", function (){
         var test = firstTest(subSuite(1, suite));
         expect(test.isChildrenLoaded).not.toBeTruthy();
         expect(test.children()).toBeUndefined();
-        test.callWhenChildrenReady(function() {return;});
+        test.callWhenChildrenReady(function() {});
         expect(test.isChildrenLoaded).toBeTruthy();
         expect(test.children()).not.toBeUndefined();
     });
