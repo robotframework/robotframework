@@ -186,7 +186,7 @@ function addTestExecutionLog(main) {
 <script type="text/x-jquery-tmpl" id="suiteTemplate">
   <div id="${id}" class="suite">
     <div class="element-header" onclick="toggleSuite('${id}')" title="${fullName}">
-      <div class="folding-button closed"></div>
+      <div id="${id}-folding-button" class="folding-button closed"></div>
       <div class="element-header-text">
         <span class="${status.toLowerCase()}">TEST SUITE: </span>
         <span class="name">{{html name}}</span>
@@ -194,7 +194,7 @@ function addTestExecutionLog(main) {
       <a class="expand" href="javascript:expandAllChildren('${id}')"
          onclick="stopPropagation(event)">Expand All</a>
     </div>
-    <div class="children">
+    <div id="${id}-children" class="children">
       <table class="metadata">
         <tr>
           <th>Full Name:</th>
@@ -244,7 +244,7 @@ function addTestExecutionLog(main) {
 <script type="text/x-jquery-tmpl" id="testTemplate">
   <div id="${id}" class="test">
     <div class="element-header" onclick="toggleTest('${id}')" title="${fullName}">
-      <div class="folding-button closed"></div>
+      <div id="${id}-folding-button" class="folding-button closed"></div>
       <div class="element-header-text">
         <span class="${status.toLowerCase()}">TEST CASE: </span>
         <span class="name">{{html name}}</span>
@@ -253,7 +253,7 @@ function addTestExecutionLog(main) {
       <a class="expand" href="javascript:expandAllChildren('${id}')"
          onclick="stopPropagation(event)">Expand All</a>
     </div>
-    <div class="children">
+    <div id="${id}-children" class="children">
       <table class="metadata">
         <tr>
           <th>Full Name:</th>
@@ -299,7 +299,7 @@ function addTestExecutionLog(main) {
 <script type="text/x-jquery-tmpl" id="keywordTemplate">
   <div id="${id}" class="keyword">
     <div class="element-header" onclick="toggleKeyword('${id}')" title="${name}">
-      <div class="folding-button closed"></div>
+      <div id="${id}-folding-button" class="folding-button closed"></div>
       <div class="element-header-text">
         <span class="${status.toLowerCase()}">${type}: </span>
         <span class="name">{{html name}}</span>
@@ -308,7 +308,7 @@ function addTestExecutionLog(main) {
       <a class="expand" href="javascript:expandAllChildren('${id}')"
          onclick="stopPropagation(event)">Expand All</a>
     </div>
-    <div class="children">
+    <div id="${id}-children" class="children">
       <table class="metadata keyword-metadata">
         {{if doc()}}
         <tr>
