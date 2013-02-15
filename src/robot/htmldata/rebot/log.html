@@ -177,16 +177,13 @@ function addTestExecutionLog(main) {
 
 <script type="text/x-jquery-tmpl" id="suiteTemplate">
   <div id="${id}" class="suite">
-    <div class="element-header" onclick="toggleSuite('${id}')" title="${fullName}">
-      <div id="${id}-folding-button" class="folding-button closed"></div>
-      <div class="element-header-text">
-        <span class="${status.toLowerCase()}">TEST SUITE: </span>
-        <span class="name">{{html name}}</span>
-      </div>
+    <div class="element-header closed" onclick="toggleSuite('${id}')" title="${fullName}">
       <a class="expand" href="javascript:expandAllChildren('${id}')"
          onclick="stopPropagation(event)">Expand All</a>
+      <span class="${status.toLowerCase()}">TEST SUITE: </span>
+      <span class="name">{{html name}}</span>
     </div>
-    <div id="${id}-children" class="children">
+    <div class="children">
       <table class="metadata">
         <tr>
           <th>Full Name:</th>
@@ -235,17 +232,13 @@ function addTestExecutionLog(main) {
 
 <script type="text/x-jquery-tmpl" id="testTemplate">
   <div id="${id}" class="test">
-    <div class="element-header" onclick="toggleTest('${id}')" title="${fullName}">
-      <div id="${id}-folding-button" class="folding-button closed"></div>
-      <div class="element-header-text">
-        <span class="${status.toLowerCase()}">TEST CASE: </span>
-        <span class="name">{{html name}}</span>
-        {{if !isCritical}}<span>  (non-critical)</span>{{/if}}
-      </div>
+    <div class="element-header closed" onclick="toggleTest('${id}')" title="${fullName}">
       <a class="expand" href="javascript:expandAllChildren('${id}')"
          onclick="stopPropagation(event)">Expand All</a>
+      <span class="${status.toLowerCase()}">TEST CASE: </span>
+      <span class="name">{{html name}}</span> {{if !isCritical}}<span>  (non-critical)</span>{{/if}}
     </div>
-    <div id="${id}-children" class="children">
+    <div class="children">
       <table class="metadata">
         <tr>
           <th>Full Name:</th>
@@ -290,17 +283,14 @@ function addTestExecutionLog(main) {
 
 <script type="text/x-jquery-tmpl" id="keywordTemplate">
   <div id="${id}" class="keyword">
-    <div class="element-header" onclick="toggleKeyword('${id}')" title="${name}">
-      <div id="${id}-folding-button" class="folding-button closed"></div>
-      <div class="element-header-text">
-        <span class="${status.toLowerCase()}">${type}: </span>
-        <span class="name">{{html name}}</span>
-        <span class="arg">{{html arguments}}</span>
-      </div>
+    <div class="element-header closed" onclick="toggleKeyword('${id}')" title="${name}">
       <a class="expand" href="javascript:expandAllChildren('${id}')"
          onclick="stopPropagation(event)">Expand All</a>
+      <span class="${status.toLowerCase()}">${type}: </span>
+      <span class="name">{{html name}}</span>
+      <span class="arg">{{html arguments}}</span>
     </div>
-    <div id="${id}-children" class="children">
+    <div class="children">
       <table class="metadata keyword-metadata">
         {{if doc()}}
         <tr>

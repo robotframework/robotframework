@@ -13,9 +13,10 @@ function toggleKeyword(kwId) {
 }
 
 function toggleElement(elementId, childrenNames) {
-    var children = $('#' + elementId + '-children');
+    var element = $('#' + elementId);
+    var children = element.children('.children');
     children.toggle(100, '', function () {
-        $('#' + elementId + '-folding-button').toggleClass('closed');
+        element.children('.element-header').toggleClass('closed');
     });
     populateChildren(elementId, children, childrenNames);
 }
@@ -62,11 +63,12 @@ function expandRecursively() {
 }
 
 function expandElement(item) {
-    var children = $('#' + item.id + '-children');
-    // .css is faster than .show and .show w/ callback would be terribly slow
+    var element = $('#' + item.id);
+    var children = element.children('.children');
+    // .css is faster than .show and .show w/ callback is terribly slow
     children.css({'display': 'block'});
     populateChildren(item.id, children, item.childrenNames);
-    $('#' + item.id + '-folding-button').removeClass('closed');
+    element.children('.element-header').removeClass('closed');
 }
 
 function expandElementWithId(elementid) {

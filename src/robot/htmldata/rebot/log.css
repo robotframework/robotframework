@@ -24,53 +24,35 @@
 .element-header {
     border: 1px solid white;
     border-radius: 2px;
-    padding: 0.2em 0;
-    position: relative;
+    padding: 0.3em 6em 0.3em 1.4em;
+    background-repeat: no-repeat;
+    background-position: left center;
+    background-image: url(data:image/gif;base64,R0lGODlhDQALAIAAAAAAAAAAACH5BAEKAAEALAAAAAANAAsAAAIZTICpYGz/nIOxUShvPU1ZroHTlYWlJi1LAQA7);
 }
 .element-header:hover {
     cursor: pointer;
-    background: #F4F4FF;
+    background-color: #F4F4FF;
     border: 1px solid #D3D3D3;
 }
-.folding-button {
-    position: absolute;
-    left: 0.3em;
-    top: 0.4em;
-    border: 1px solid black;
-    border-radius: 2px;
-    width: 9px;
-    height: 9px;
-    background-repeat: no-repeat;
-    background-position: center center;
-    background-image: url(data:image/gif;base64,R0lGODlhCQAJAIAAAAAAAAAAACH5BAEKAAEALAAAAAAJAAkAAAIKjI+pywb/mpysAAA7);
-}
 .closed {
-    background-image: url(data:image/gif;base64,R0lGODlhCQAJAIABAAAAAP///yH5BAEKAAEALAAAAAAJAAkAAAIMjI+pAcsKYoSuuYsKADs=);
-}
-.folding-button:hover {
-    background-color: yellow;
-}
-.element-header-text {
-    margin-left: 1.4em;
-    margin-right: 6em;
+    background-image: url(data:image/gif;base64,R0lGODlhDQALAIAAAAAAAAAAACH5BAEKAAEALAAAAAANAAsAAAIZTICpYGz/nIOxwXls3VJpDGpiRlKfyS1LAQA7);
 }
 .name {
     font-weight: bold;
 }
 .expand {
-    display: inline-block;
-    position: absolute;
-    right: 0;
-    top: 0;
-    bottom: 0;
+    float: right;
+    margin-right: -7em;
     font-size: 0.8em;
     width: 7em;
+    padding: 0.3em 0 0.1em 0;
     text-align: center;
-    padding-top: 0.5em;
     color: #808080 !important;
+    border-radius: 8px;
 }
 .expand:hover {
     text-decoration: none;
+    background-color: #BBBBFF;
     color: black !important;
 }
 /* Messages and errors */
