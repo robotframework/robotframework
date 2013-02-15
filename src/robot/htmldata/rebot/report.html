@@ -208,7 +208,7 @@ function renderSuiteSelector(id) {
 }
 
 function renderSuiteDetails(id) {
-    testdata.findPathTo(id, function () {
+    testdata.findPathTo(id, function (ids) {
         var suite = testdata.find(id);
         var opts = {logURL: window.settings.logURL};
         $.tmpl('suiteDetailsTemplate', suite, opts).appendTo('#details-header');

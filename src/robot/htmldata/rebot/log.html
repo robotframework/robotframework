@@ -101,24 +101,21 @@ function popFromIterator(iterator, upTo) {
     return result;
 }
 
-function makeElementVisible(element) {
+function makeElementVisible(id) {
     // findPathTo ensures that all the data for the element has been downloaded
     // from server before executing the callback function
-    window.testdata.findPathTo(unescape(element), function (uniqueIds) {
-        for (var i in uniqueIds) {
-            expandElementWithId(uniqueIds[i]);
-        }
-        if (uniqueIds && uniqueIds.length > 0) {
-            expandCriticalFailed(window.testdata.find(uniqueIds[uniqueIds.length - 1]));
-            window.location.hash = element;
+    window.testdata.findPathTo(id, function (ids) {
+        util.map(ids, expandElementWithId);
+        if (ids.length) {
+            expandCriticalFailed(window.testdata.find(util.last(ids)));
+            window.location.hash = id;
         }
     });
 }
 
 function addTestExecutionLog(main) {
-    var body = $('body');
-    $('<h2>Test Execution Log</h2>').appendTo(body);
-    $.tmpl('suiteTemplate', main).appendTo(body);
+    $('body').append($('<h2>Test Execution Log</h2>'),
+                     $.tmpl('suiteTemplate', main));
 }
 </script>
 

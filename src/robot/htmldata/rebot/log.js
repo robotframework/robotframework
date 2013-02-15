@@ -12,12 +12,6 @@ function toggleKeyword(kwId) {
     toggleElement(kwId, ['keyword', 'message']);
 }
 
-function addElements(elems, templateName, target){
-    for (var i in elems) {
-        $.tmpl(templateName, elems[i]).appendTo(target);
-    }
-}
-
 function toggleElement(elementId, childrenNames) {
     var children = $('#' + elementId + '-children');
     children.toggle(100, '', function () {
@@ -37,10 +31,12 @@ function populateChildren(elementId, childElement, childrenNames) {
 
 function drawCallback(element, childElement, childrenNames) {
     return function () {
-        $.map(childrenNames, function (childName) {
-            addElements(element[childName + 's'](),
-                        childName + 'Template',
-                        childElement);
+        util.map(childrenNames, function (childName) {
+            var children = element[childName + 's']();
+            var template = childName + 'Template';
+            util.map(children, function (child) {
+                $.tmpl(template, child).appendTo(childElement);
+            });
         });
     }
 }
