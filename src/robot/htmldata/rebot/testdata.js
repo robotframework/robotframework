@@ -40,10 +40,6 @@ window.testdata = function () {
         return STATUSES[stats[0]];
     }
 
-    function last(items) {
-        return items[items.length-1];
-    }
-
     function childCreator(parent, childType) {
         return function (elem, strings, index) {
             return addElement(childType(parent, elem, strings, index));
@@ -138,7 +134,7 @@ window.testdata = function () {
                 return msg;
             },
             times: model.Times(times(statusElement)),
-            statistics: suiteStats(last(element)),
+            statistics: suiteStats(util.last(element)),
             metadata: parseMetadata(element[4], strings)
         });
         suite.populateKeywords(Populator(element[8], strings, childCreator(suite, createKeyword)));

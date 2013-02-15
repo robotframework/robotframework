@@ -41,6 +41,10 @@ window.util = function () {
         return false;
     }
 
+    function last(items) {
+        return items[items.length-1];
+    }
+
     function unescape(string) {
         return string.replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&amp;/g, '&');
     }
@@ -164,6 +168,7 @@ window.util = function () {
         all: all,
         any: any,
         contains: contains,
+        last: last,
         unescape: unescape,
         normalize: normalize,
         Matcher: Matcher,
