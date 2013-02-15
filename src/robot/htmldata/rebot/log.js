@@ -114,7 +114,7 @@ function getViewAnchorElements() {
 }
 
 function scrollToShortestVisibleAnchorElement(anchors) {
-    anchors = $.map(anchors, closestVisibleParent);
+    anchors = util.map(anchors, closestVisibleParent);
     var shortest = anchors[0];
     for (var i = 1; i < anchors.length; i++)
         if (shortest.height() > anchors[i].height())

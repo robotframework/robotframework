@@ -79,7 +79,7 @@ function addStatistics() {
         '<th class="stats-col-name">Statistics by Suite</th>' + statHeaders +
         '</tr></thead></table>';
     $(statTable).appendTo('#statistics-container');
-    $.map(['total', 'tag', 'suite'], addStatTable);
+    util.map(['total', 'tag', 'suite'], addStatTable);
     stopStatLinkClickPropagation();
     addTooltipsToElapsedTimes();
     enableStatisticsSorter();
