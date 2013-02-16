@@ -75,8 +75,9 @@ th {
     border-spacing: 1px;
     background-color: black;
 }
-#test-details tr:hover {
+#test-details > tbody > tr:hover {
     background: #F4F4FF;
+    cursor: pointer;
 }
 #test-details th, #test-details td {
     padding: 0.2em;

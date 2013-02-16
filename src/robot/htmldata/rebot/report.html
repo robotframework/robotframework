@@ -612,7 +612,7 @@ function hideHiddenDetailsColumns(elem) {
 
 <script type="text/x-jquery-tmpl" id="testDetailsTableRowTemplate">
   {{if $item.logURL}}
-  <tr onclick="location = '${$item.logURL}#${id}'" style="cursor: pointer" title="${fullName}">
+  <tr onclick="location = '${$item.logURL}#${id}'" title="${fullName}">
     <td class="details-col-name">
       <div><a href="${$item.logURL}#${id}"><span class="parent-name">{{html formatParentName}}</span>{{html name}}</a></div>
     </td>
