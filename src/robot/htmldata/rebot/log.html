@@ -236,7 +236,8 @@ function addTestExecutionLog(main) {
       <a class="expand" href="javascript:expandAllChildren('${id}')"
          onclick="stopPropagation(event)">Expand All</a>
       <span class="${status.toLowerCase()}">TEST CASE: </span>
-      <span class="name">{{html name}}</span> {{if !isCritical}}<span>  (non-critical)</span>{{/if}}
+      <span class="name">{{html name}}</span>
+      {{if !isCritical}}(non-critical){{/if}}
     </div>
     <div class="children">
       <table class="metadata">
