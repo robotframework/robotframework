@@ -1,14 +1,14 @@
 jquery.min
 ----------
-version 1.6.1
-http://docs.jquery.com/Downloading_jQuery#Download_jQuery
+version 1.8.3
+http://jquery.com/download
 
 jquery.tmpl.min
 ---------------
 from version control, edited on 10th June 2011 (revision 07d08cb72c7556e95059)
 https://github.com/jquery/jquery-tmpl
 
-Includes our in-place a fix for escaping &. See following links before update!
+Includes our in-place fix for escaping &. See following links before update!
 http://code.google.com/p/robotframework/source/detail?r=f0b7401071b2c65b9fe30a31f2acf302e3206ed3
 https://github.com/jquery/jquery-tmpl/issues/79
 
