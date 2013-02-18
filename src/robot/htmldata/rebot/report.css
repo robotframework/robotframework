@@ -82,6 +82,10 @@ th {
 #test-details th, #test-details td {
     padding: 0.2em;
 }
+.details-limited {
+    max-height: 20em;
+    overflow: auto;
+}
 .details-col-header {
     padding-right: 1em;
 }

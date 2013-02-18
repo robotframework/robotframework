@@ -618,11 +618,11 @@ function hideHiddenDetailsColumns(elem) {
       <div><span class="parent-name">{{html formatParentName}}</span>{{html name}}</div>
     </td>
   {{/if}}
-    <td class="details-col-doc"><div class="doc">{{html doc()}}</div></td>
+    <td class="details-col-doc"><div class="doc details-limited">{{html doc()}}</div></td>
     <td class="details-col-tags"><div>{{html tags.join(', ')}}</div></td>
     <td class="details-col-crit"><div>{{if isCritical}}yes{{else}}no{{/if}}</div></td>
     <td class="details-col-status"><div class="${status.toLowerCase()}">${status}</div></td>
-    <td class="details-col-msg"><div class="message">{{html message()}}</div></td>
+    <td class="details-col-msg"><div class="message details-limited">{{html message()}}</div></td>
     <td class="details-col-elapsed"><div>${times.elapsedTime}</div></td>
     <td class="details-col-times"><div>${times.startTime}<br>${times.endTime}</div></td>
   </tr>
