@@ -19,5 +19,5 @@ downloaded 16th June 2011.
 
 jquery.tablesorter.min
 ----------------------
-version 2.7.5
-http://mottie.github.com/tablesorter/docs
+version 2.7.8
+https://github.com/Mottie/tablesorter
