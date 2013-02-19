@@ -89,9 +89,10 @@ function drawErrorsRecursively(errors, target) {
 }
 
 function scrollToHash() {
-    // This does not scroll window in Safari.
     if (window.location.hash)
-        window.location.hash = window.location.hash.substring(1);
+        setTimeout(function () {
+			window.location.hash = window.location.hash.substring(1);
+		}, 0);
 }
 
 function popFromIterator(iterator, upTo) {
