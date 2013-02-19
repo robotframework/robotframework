@@ -1,4 +1,4 @@
-#javascript_disabled {
+#javascript-disabled {
     width: 600px;
     margin: 100px auto 0 auto;
     padding: 20px;
@@ -6,16 +6,16 @@
     border: 1px solid #9A9A9E;
     background: #FAFAFF;
 }
-#javascript_disabled h1 {
+#javascript-disabled h1 {
     width: 100%;
+    float: none;
 }
-#javascript_disabled ul {
+#javascript-disabled ul {
     font-size: 1.2em;
 }
-#javascript_disabled li {
-    clear: left;  /* without this first bullet floats right on Chrome */
+#javascript-disabled li {
     margin: 0.5em 0;
 }
-#javascript_disabled b {
+#javascript-disabled b {
     font-style: italic;
 }
