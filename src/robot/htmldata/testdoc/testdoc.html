@@ -93,16 +93,15 @@ function addKeywords(parent) {
 
 function toggleElement(elementId) {
     var element = $('#' + elementId);
-    var children = element.find('> .children');
-    children.toggle(100, '', function () {
-        element.find('> .element-header > .folding-button').toggleClass('closed');
+    element.children('.children').toggle(100, '', function () {
+        element.children('.element-header').toggleClass('closed');
     });
 }
 
 function expandAllChildren(elementId) {
     var element = $('#' + elementId);
     element.find('.children').show();
-    element.find('.folding-button').removeClass('closed');
+    element.find('.element-header').removeClass('closed');
 }
 
 // For complete cross-browser experience..
@@ -117,14 +116,11 @@ function stopPropagation(event) {
 
 <script type="text/x-jquery-tmpl" id="suiteTemplate">
   <div id="${id}" class="suite">
-    <div class="element-header" onclick="toggleElement('${id}')" title="${fullName}">
-      <div class="folding-button closed"></div>
-      <div class="element-header-text">
-        <span class="not-run">TEST SUITE: </span>
-        <span class="name">{{html name}}</span>
-      </div>
+    <div class="element-header closed" onclick="toggleElement('${id}')" title="${fullName}">
       <a class="expand" href="javascript:expandAllChildren('${id}')"
          onclick="stopPropagation(event)">Expand All</a>
+      <span class="not-run">TEST SUITE: </span>
+      <span class="name">{{html name}}</span>
     </div>
     <div class="children">
       <table class="metadata">
@@ -165,14 +161,11 @@ function stopPropagation(event) {
 
 <script type="text/x-jquery-tmpl" id="testTemplate">
   <div id="${id}" class="test">
-    <div class="element-header" onclick="toggleElement('${id}')" title="${fullName}">
-      <div class="folding-button closed"></div>
-      <div class="element-header-text">
-        <span class="not-run">TEST CASE: </span>
-        <span class="name">{{html name}}</span>
-      </div>
+    <div class="element-header closed" onclick="toggleElement('${id}')" title="${fullName}">
       <a class="expand" href="javascript:expandAllChildren('${id}')"
          onclick="stopPropagation(event)">Expand All</a>
+      <span class="not-run">TEST CASE: </span>
+      <span class="name">{{html name}}</span>
     </div>
     <div class="children">
       <table class="metadata">
@@ -205,12 +198,10 @@ function stopPropagation(event) {
 
 <script type="text/x-jquery-tmpl" id="keywordTemplate">
   <div class="keyword">
-    <div class="element-header" style="cursor: auto">
-      <div class="element-header-text">
-        <span class="not-run">${type}: </span>
-        <span class="name">{{html name}}</span>
-        <span class="arg">{{html arguments}}</span>
-      </div>
+    <div class="element-header">
+      <span class="not-run">${type}: </span>
+      <span class="name">{{html name}}</span>
+      <span class="arg">{{html arguments}}</span>
     </div>
   </div>
 </script>

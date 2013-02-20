@@ -2,9 +2,8 @@
     width: auto;
     margin-bottom: 2em;
 }
-.keyword {
-    margin-left: -0.3em;
-}
-.keyword .element-header-text {
-    margin: 0 0.3em;
+.keyword .element-header {
+    cursor: auto;
+    background-image: none;
+    padding-left: 0.3em;
 }
