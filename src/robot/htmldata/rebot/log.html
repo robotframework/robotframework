@@ -54,7 +54,6 @@ $(document).ready(function() {
     addLogLevelSelector(window.settings['minLevel'], window.settings['defaultLevel']);
     if (window.location.hash) {
         makeElementVisible(window.location.hash.substring(1));
-        scrollToHash();
     } else {
         expandSuite(topsuite);
     }
@@ -91,8 +90,8 @@ function drawErrorsRecursively(errors, target) {
 function scrollToHash() {
     if (window.location.hash)
         setTimeout(function () {
-			window.location.hash = window.location.hash.substring(1);
-		}, 0);
+            window.location.hash = window.location.hash.substring(1);
+        }, 0);
 }
 
 function popFromIterator(iterator, upTo) {
@@ -108,6 +107,7 @@ function makeElementVisible(id) {
         if (ids.length) {
             expandCriticalFailed(window.testdata.findLoaded(util.last(ids)));
             window.location.hash = id;
+            scrollToHash();
         }
     });
 }
