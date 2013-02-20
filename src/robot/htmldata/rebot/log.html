@@ -98,10 +98,10 @@ function scrollToHash() {
 
 function highlight(element, color) {
     if (color === undefined)
-        color = 250;
+        color = 245;
     element.css({'background-color': 'rgb('+color+','+color+','+color+')'});
     if (color < 256)
-        setTimeout(function () { highlight(element, color+1); }, 1000);
+        setTimeout(function () { highlight(element, color+1); }, 500);
 }
 
 function popFromIterator(iterator, upTo) {
