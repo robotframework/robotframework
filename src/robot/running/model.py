@@ -28,7 +28,7 @@ from .context import EXECUTION_CONTEXTS
 from .defaultvalues import DefaultValues
 
 
-def TestSuite(datasources, settings):
+def TestSuite(datasources, settings, process_variables=True):
     """Creates a runnable test suite from given data sources and settings.
 
     This is a factory method that returns either :class:`RunnableTestSuite`
@@ -45,35 +45,38 @@ def TestSuite(datasources, settings):
     if isinstance(datasources, basestring):
         datasources = [datasources]
     datasources = [utils.abspath(path) for path in datasources]
-    suite = _get_suite(datasources, settings['SuiteNames'], settings['WarnOnSkipped'])
+    suite = _get_suite(datasources, settings['SuiteNames'],
+                       settings['WarnOnSkipped'], process_variables)
     suite.set_options(settings)
     _check_suite_contains_tests(suite, settings['RunEmptySuite'])
     return suite
 
-def _get_suite(datasources, include_suites, warn_on_skipped):
-    if not datasources:
+def _get_suite(sources, include_suites, warn_on_skipped, process_variables):
+    if not sources:
         raise DataError("No data sources given.")
-    if len(datasources) > 1:
-        return _get_multisource_suite(datasources, include_suites, warn_on_skipped)
-    return RunnableTestSuite(_parse_suite(datasources[0], include_suites, warn_on_skipped))
+    if len(sources) > 1:
+        return _get_multisource_suite(sources, include_suites,
+                                      warn_on_skipped, process_variables)
+    data = _parse_suite(sources[0], include_suites, warn_on_skipped)
+    return RunnableTestSuite(data, process_variables=process_variables)
 
 def _parse_suite(path, include_suites, warn_on_skipped):
     try:
-        return TestData(source=path, include_suites=include_suites, warn_on_skipped=warn_on_skipped)
+        return TestData(source=path, include_suites=include_suites,
+                        warn_on_skipped=warn_on_skipped)
     except DataError, err:
         raise DataError("Parsing '%s' failed: %s" % (path, unicode(err)))
 
-def _get_multisource_suite(datasources, include_suites, warn_on_skipped):
-    suitedatas = []
-    for datasource in datasources:
+def _get_multisource_suite(sources, include_suites, warn_on_skipped, process_variables):
+    data = []
+    for src in sources:
         try:
-            suitedatas.append(_parse_suite(datasource, include_suites, warn_on_skipped))
+            data.append(_parse_suite(src, include_suites, warn_on_skipped))
         except DataError, err:
             LOGGER.warn(err)
-    suite = RunnableMultiTestSuite(suitedatas)
+    suite = RunnableMultiTestSuite(data, process_variables)
     if suite.get_test_count() == 0:
-        raise DataError("Data sources %s contain no test cases."
-                        % utils.seq2str(datasources))
+        raise DataError("Data sources %s contain no test cases." % utils.seq2str(sources))
     return suite
 
 def _check_suite_contains_tests(suite, run_empty_suites=False):
@@ -84,10 +87,11 @@ def _check_suite_contains_tests(suite, run_empty_suites=False):
 
 class RunnableTestSuite(BaseTestSuite):
 
-    def __init__(self, data, parent=None, defaults=None):
+    def __init__(self, data, parent=None, defaults=None, process_variables=True):
         BaseTestSuite.__init__(self, data.name, data.source, parent)
         self.variables = GLOBAL_VARIABLES.copy()
-        self.variables.set_from_variable_table(data.variable_table)
+        if process_variables:
+            self.variables.set_from_variable_table(data.variable_table)
         self.source = data.source
         self.doc = data.setting_table.doc.value
         self.metadata = self._get_metadata(data.setting_table.metadata)
@@ -99,9 +103,9 @@ class RunnableTestSuite(BaseTestSuite):
                                  data.setting_table.suite_teardown.args)
         defaults = DefaultValues(data.setting_table, defaults)
         for suite in data.children:
-            RunnableTestSuite(suite, parent=self, defaults=defaults)
+            RunnableTestSuite(suite, self, defaults, process_variables)
         for test in data.testcase_table:
-            RunnableTestCase(test, parent=self, defaults=defaults)
+            RunnableTestCase(test, self, defaults)
         self._exit_on_failure_mode = False
         self._skip_teardowns_on_exit_mode = False
         self._dry_run_mode = False
@@ -197,7 +201,7 @@ class RunnableTestSuite(BaseTestSuite):
 
 class RunnableMultiTestSuite(RunnableTestSuite):
 
-    def __init__(self, suitedatas):
+    def __init__(self, suitedatas, process_variables=True):
         BaseTestSuite.__init__(self, name='')
         self.variables = GLOBAL_VARIABLES.copy()
         self.doc = ''
@@ -205,7 +209,7 @@ class RunnableMultiTestSuite(RunnableTestSuite):
         self.setup = Setup(None, None)
         self.teardown = Teardown(None, None)
         for suite in suitedatas:
-            RunnableTestSuite(suite, parent=self)
+            RunnableTestSuite(suite, self, process_variables=process_variables)
         self._exit_on_failure_mode = False
         self._skip_teardowns_on_exit_mode = False
         self._dry_run_mode = False

@@ -6,6 +6,7 @@ Resource      atest_resource.txt
 ${CMD}    ${INTERPRETER} ${CURDIR}${/}..${/}..${/}..${/}src${/}robot${/}testdoc.py
 ${INPUT 1}    ${CURDIR}${/}..${/}..${/}testdata${/}misc${/}pass_and_fail.txt
 ${INPUT 2}    ${CURDIR}${/}..${/}..${/}testdata${/}misc${/}suites
+${INPUT 3}    ${CURDIR}${/}..${/}..${/}testdata${/}testdoc
 ${OUTFILE}    %{TEMPDIR}${/}testdoc-output.html
 
 
@@ -15,10 +16,14 @@ One input
     Testdoc Should Contain    "name":"Pass And Fail"    "title":"Pass And Fail"    "numberOfTests":2
     Output Should Contain Outfile    ${output}
 
+Variables and imports are not processes
+    ${output}=    Run TestDoc    ${INPUT 3}
+    Testdoc Should Contain    "name":"Testdoc"    "title":"Testdoc"    "numberOfTests":1
+    Output Should Contain Outfile    ${output}
 
 Many inputs
-    ${output}=    Run TestDoc    --exclude t1 --title MyDoc ${INPUT 1} ${INPUT2}
-    Testdoc Should Contain    "name":"Pass And Fail &amp; Suites"    "title":"MyDoc"    "numberOfTests":6
+    ${output}=    Run TestDoc    --exclude t1 --title MyDoc ${INPUT 1} ${INPUT2} ${INPUT 3}
+    Testdoc Should Contain    "name":"Pass And Fail &amp; Suites &amp; Testdoc"    "title":"MyDoc"    "numberOfTests":7
     Testdoc Should Not Contain    "name":"Suite4 First"
     Output Should Contain Outfile    ${output}
 
@@ -50,6 +55,7 @@ Output Should Contain Outfile
     [Arguments]    ${output}
     [Documentation]    Printed outfile may be in different formats.
     ...                IronPython seems to like c:\olddos~1\format~2.ext
+    Should Not Contain    ${output}    ERROR
     File Should Exist    ${output}
     Remove File    ${OUTFILE}
     File Should Not Exist    ${output}

@@ -100,7 +100,7 @@ class TestDoc(utils.Application):
 
 @disable_curdir_processing
 def TestSuiteFactory(datasources, **options):
-    return TestSuite(datasources, RobotSettings(options))
+    return TestSuite(datasources, RobotSettings(options), process_variables=False)
 
 
 class TestdocModelWriter(ModelWriter):
