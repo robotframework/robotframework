@@ -90,8 +90,18 @@ function drawErrorsRecursively(errors, target) {
 function scrollToHash() {
     if (window.location.hash)
         setTimeout(function () {
-            window.location.hash = window.location.hash.substring(1);
+            var id = window.location.hash.substring(1);
+            window.location.hash = id;
+            highlight($('#' + id));
         }, 0);
+}
+
+function highlight(element, color) {
+    if (color === undefined)
+        color = 250;
+    element.css({'background-color': 'rgb('+color+','+color+','+color+')'});
+    if (color < 256)
+        setTimeout(function () { highlight(element, color+1); }, 1000);
 }
 
 function popFromIterator(iterator, upTo) {

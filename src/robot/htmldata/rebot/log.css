@@ -22,7 +22,7 @@
 }
 /* Suite, test and kw headers */
 .element-header {
-    border: 1px solid white;
+    border: 1px solid transparent;
     border-radius: 2px;
     padding: 0.3em 6em 0.3em 1.4em;
     background-repeat: no-repeat;
@@ -32,7 +32,7 @@
 .element-header:hover {
     cursor: pointer;
     background-color: #F4F4FF;
-    border: 1px solid #D3D3D3;
+    border-color: #D3D3D3;
 }
 .closed {
     background-image: url(data:image/gif;base64,R0lGODlhDQALAIAAAAAAAAAAACH5BAEKAAEALAAAAAANAAsAAAIZTICpYGz/nIOxwXls3VJpDGpiRlKfyS1LAQA7);
