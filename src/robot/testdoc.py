@@ -85,9 +85,8 @@ class TestDoc(utils.Application):
     def __init__(self):
         utils.Application.__init__(self, USAGE, arg_limits=(2,))
 
-    def main(self, args, title=None, **options):
-        datasources = args[0:-1]
-        outfile = abspath(args[-1])
+    def main(self, datasources, title=None, **options):
+        outfile = abspath(datasources.pop())
         suite = TestSuiteFactory(datasources, **options)
         self._write_test_doc(suite, outfile, title)
         self.console(outfile)
@@ -101,8 +100,6 @@ class TestDoc(utils.Application):
 
 @disable_curdir_processing
 def TestSuiteFactory(datasources, **options):
-    if isinstance(datasources, basestring):
-        datasources = [datasources]
     return TestSuite(datasources, RobotSettings(options))
 
 
