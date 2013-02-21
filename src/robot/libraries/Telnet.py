@@ -555,10 +555,12 @@ class TelnetConnection(telnetlib.Telnet):
         return output
 
     def _submit_credentials(self, username, password, login_prompt, password_prompt):
+        # Using write_bare here instead of write because don't want to wait for
+        # newline: http://code.google.com/p/robotframework/issues/detail?id=1371
         output = self.read_until(login_prompt, 'TRACE')
-        output += self.write(username, 'TRACE')
+        self.write_bare(username + self._newline)
         output += self.read_until(password_prompt, 'TRACE')
-        output += self.write(password, 'TRACE')
+        self.write_bare(password + self._newline)
         return output
 
     def _verify_login_without_prompt(self, delay, incorrect):
