@@ -35,7 +35,10 @@ def windows_install():
     except Exception, err:
         print 'Running post-install script failed: %s' % err
         print 'Robot Framework start-up scripts may not work correctly.'
-    else:
+        return
+    # Avoid "close failed in file object destructor" error when UAC disabled
+    # http://code.google.com/p/robotframework/issues/detail?id=1331
+    if sys.stdout.fileno() != -2:
         print SUCCESS
 
 
