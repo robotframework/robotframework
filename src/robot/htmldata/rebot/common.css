@@ -106,7 +106,7 @@ h2 {
     margin-bottom: 1em;
 }
 .statistics tr:hover {
-    background: #E4E4EF;
+    background: #ECECF7;
     cursor: pointer;
 }
 .statistics th, .statistics td {

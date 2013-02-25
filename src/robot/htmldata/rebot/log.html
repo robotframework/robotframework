@@ -98,7 +98,7 @@ function scrollToHash() {
 
 function highlight(element, color) {
     if (color === undefined)
-        color = 240;
+        color = 242;
     if (color < 255) {
         element.css({'background-color': 'rgb('+color+','+color+','+color+')'});
         setTimeout(function () { highlight(element, color+1); }, 300);

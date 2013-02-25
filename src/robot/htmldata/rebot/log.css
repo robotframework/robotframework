@@ -31,8 +31,8 @@
 }
 .element-header:hover {
     cursor: pointer;
-    background-color: #E4E4EF;
-    border-color: #B4B4BF;
+    background-color: #ECECF7;
+    border-color: #BCBCD7;
 }
 .closed {
     background-image: url(data:image/gif;base64,R0lGODlhDQALAIAAAAAAAAAAACH5BAEKAAEALAAAAAANAAsAAAIZTICpYGz/nIOxwXls3VJpDGpiRlKfyS1LAQA7);
