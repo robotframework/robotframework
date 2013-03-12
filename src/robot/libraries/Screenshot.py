@@ -158,25 +158,6 @@ class Screenshot(object):
         self._given_screenshot_dir = path
         return old
 
-    def save_screenshot_to(self, path):
-        """*DEPRECATED* Use `Take Screenshot` or `Take Screenshot Without Embedding` instead."""
-        path = self._screenshot_to_file(path)
-        self._link_screenshot(path)
-        return path
-
-    def save_screenshot(self, basename="screenshot", directory=None):
-        """*DEPRECATED* Use `Take Screenshot` or `Take Screenshot Without Embedding` instead."""
-        path = self._save_screenshot(basename, directory)
-        self._link_screenshot(path)
-        return path
-
-    def log_screenshot(self, basename='screenshot', directory=None,
-                       width='100%'):
-        """*DEPRECATED* Use `Take Screenshot` or `Take Screenshot Without Embedding` instead."""
-        path = self._save_screenshot(basename, directory)
-        self._embed_screenshot(path, width)
-        return path
-
     def take_screenshot(self, name="screenshot", width="800px"):
         """Takes a screenshot in JPEG format and embeds it into the log file.
 
