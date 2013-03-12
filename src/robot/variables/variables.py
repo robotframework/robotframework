@@ -27,7 +27,7 @@ from robot import utils
 from robot.errors import DataError
 from robot.output import LOGGER
 
-from .isvar import is_var, is_scalar_var
+from .isvar import is_var, is_scalar_var, is_list_var
 from .variablesplitter import VariableSplitter
 
 
@@ -73,9 +73,11 @@ class Variables(utils.NormalizedDict):
             except ValueError:
                 try: return self._get_list_var_as_scalar(name)
                 except ValueError:
-                    try: return self._get_extended_var(name)
+                    try: return self._get_scalar_as_list_var(name)
                     except ValueError:
-                        raise DataError("Non-existing variable '%s'." % name)
+                        try: return self._get_extended_var(name)
+                        except ValueError:
+                            raise DataError("Non-existing variable '%s'." % name)
 
     def _validate_var_name(self, name):
         if not is_var(name):
@@ -90,6 +92,16 @@ class Variables(utils.NormalizedDict):
             try:
                 return self['@'+name[1:]]
             except DataError:
+                pass
+        raise ValueError
+
+    def _get_scalar_as_list_var(self, name):
+        if is_list_var(name):
+            try:
+                value = utils.NormalizedDict.__getitem__(self, '$'+name[1:])
+                iter(value)
+                return value
+            except KeyError, TypeError:
                 pass
         raise ValueError
 
