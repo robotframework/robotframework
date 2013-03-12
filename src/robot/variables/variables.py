@@ -100,6 +100,8 @@ class Variables(utils.NormalizedDict):
             try:
                 value = utils.NormalizedDict.__getitem__(self, '$'+name[1:])
                 iter(value)
+                if isinstance(value, basestring):
+                    raise ValueError
                 return value
             except KeyError, TypeError:
                 pass
