@@ -19,3 +19,6 @@ None existing scalar variable
 
 None existing list variable
   Check testcase  status=FAIL  message=Non-existing variable '\@{liss}'.
+
+Integer can not be a list variable
+  Check testcase  status=FAIL  message=Non-existing variable '\@{int}'.

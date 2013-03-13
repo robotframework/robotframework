@@ -103,7 +103,7 @@ class Variables(utils.NormalizedDict):
                 if isinstance(value, basestring):
                     raise ValueError
                 return value
-            except KeyError, TypeError:
+            except (KeyError, TypeError):
                 pass
         raise ValueError
 

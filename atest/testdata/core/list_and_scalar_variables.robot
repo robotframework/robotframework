@@ -19,3 +19,7 @@ None existing scalar variable
 None existing list variable
   Log  @{liss}
 
+Integer can not be a list variable
+  ${int}=  Evaluate  1
+  :FOR  ${i}  IN  @{int}
+  \    No Operation
