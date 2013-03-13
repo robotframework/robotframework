@@ -14,3 +14,8 @@ Scalar variable as a list variable
 Scalar variable that can not be a list variable
   Check testcase  status=FAIL  message=Non-existing variable '\@{scalar}'.
 
+None existing scalar variable
+  Check testcase  status=FAIL  message=Non-existing variable '\${scal}'.
+
+None existing list variable
+  Check testcase  status=FAIL  message=Non-existing variable '\@{liss}'.

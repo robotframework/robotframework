@@ -13,3 +13,9 @@ Scalar variable that can not be a list variable
   :FOR  ${i}  IN   @{scalar}
   \     Log   ${i}
 
+None existing scalar variable
+  Log  ${scal}
+
+None existing list variable
+  Log  @{liss}
+
