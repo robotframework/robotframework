@@ -2,6 +2,7 @@
 Resource          resvarfiles/resource.txt
 
 *** Variable ***
+${DEFINITION IN RESOURCE FILE}    ${STRING}
 
 *** Test Case ***
 Scalar String
@@ -16,6 +17,9 @@ Scalar Non-Strings
 
 Scalar String With Escapes
     Should Be Equal    ${ESCAPES}    one \\ two \\\\ \${non_existing}
+
+Resolving Local Variable Defined From Resource File
+    Should Be Equal    ${DEFINITION IN RESOURCE FILE}    Hello world!
 
 Empty Scalar String
     Should Be Equal    ${NO VALUE}    ${EMPTY}

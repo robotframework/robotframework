@@ -13,6 +13,9 @@ Scalar Non-Strings
 Scalar String With Escapes
     Check Test Case    ${TEST NAME}
 
+Resolving Local Variable Defined From Resource File
+    Check Test Case    ${TEST NAME}
+
 Empty Scalar String
     Check Test Case    ${TEST NAME}
 

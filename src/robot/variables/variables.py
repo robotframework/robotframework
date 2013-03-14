@@ -67,7 +67,7 @@ class Variables(utils.NormalizedDict):
 
     def __getitem__(self, name):
         self._validate_var_name(name)
-        try: return utils.NormalizedDict.__getitem__(self, name)
+        try: return self._solve_delayed(name, utils.NormalizedDict.__getitem__(self, name))
         except KeyError:
             try: return self._get_number_var(name)
             except ValueError:
@@ -78,6 +78,17 @@ class Variables(utils.NormalizedDict):
                         try: return self._get_extended_var(name)
                         except ValueError:
                             raise DataError("Non-existing variable '%s'." % name)
+
+    def _solve_delayed(self, name, value):
+        if value is not None:
+            if hasattr(value, 'delayed_var_value'):
+                v = value()
+                self[name] = v
+                return v
+        return value
+
+    def force_value_resolve(self):
+        self.values()
 
     def _validate_var_name(self, name):
         if not is_var(name):
@@ -290,10 +301,16 @@ class Variables(utils.NormalizedDict):
 
     def _get_var_table_name_and_value(self, name, value, path=None):
         self._validate_var_name(name)
-        value = [self._unescape_leading_trailing_spaces(cell) for cell in value]
-        if name[0] == '@':
-            return name, self.replace_list(value)
-        return name, self._get_var_table_scalar_value(name, value, path)
+        return name, self._delayed_var_value(name, value, path)
+
+    def _delayed_var_value(self, name, value, path):
+        def _delayed():
+            val = [self._unescape_leading_trailing_spaces(cell) for cell in value]
+            if name[0] == '@':
+                return self.replace_list(val)
+            return self._get_var_table_scalar_value(name, val, path)
+        _delayed.delayed_var_value = True
+        return _delayed
 
     def _unescape_leading_trailing_spaces(self, item):
         if item.endswith(' \\'):
