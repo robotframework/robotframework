@@ -20,6 +20,7 @@ Log Variables In Suite Setup
     Check Variable Message    \${False} = *  pattern=yes
     Check Variable Message    \${interpreter} = *  pattern=yes
     Check Variable Message    \${LOG_FILE} = NONE
+    Check Variable Message    \${LOG_LEVEL} = INFO
     Check Variable Message    \${None} = None
     Check Variable Message    \${null} = None
     Check Variable Message    \${OUTPUT_DIR} = *  pattern=yes
@@ -43,7 +44,7 @@ Log Variables In Suite Setup
     Check Variable Message    \@{LIST} = [ Hello | world ]
     Check Variable Message    \@{suite_setup_global_var} = [ Global var set in | suite setup ]
     Check Variable Message    \@{suite_setup_suite_var} = [ Suite var set in | suite setup ]
-    Should Be Equal As Integers  ${kw.message_count}  35  Wrong total message count
+    Should Be Equal As Integers  ${kw.message_count}  36  Wrong total message count
 
 Log Variables In Test
     ${test} =    Check Test Case    Log Variables
@@ -61,6 +62,7 @@ Log Variables In Test
     Check Variable Message    \${False} = *  pattern=yes
     Check Variable Message    \${interpreter} = *  pattern=yes
     Check Variable Message    \${LOG_FILE} = NONE
+    Check Variable Message    \${LOG_LEVEL} = TRACE
     Check Variable Message    \${None} = None
     Check Variable Message    \${null} = None
     Check Variable Message    \${OUTPUT_DIR} = *  pattern=yes
@@ -85,7 +87,7 @@ Log Variables In Test
     Check Variable Message    \@{LIST} = [ Hello | world ]
     Check Variable Message    \@{suite_setup_global_var} = [ Global var set in | suite setup ]
     Check Variable Message    \@{suite_setup_suite_var} = [ Suite var set in | suite setup ]
-    Should Be Equal As Integers  ${kw.message_count}  39  Wrong total message count
+    Should Be Equal As Integers  ${kw.message_count}  40  Wrong total message count
 
 Log Variables After Setting New Variables
     ${test} =    Check Test Case    Log Variables
@@ -104,6 +106,7 @@ Log Variables After Setting New Variables
     Check Variable Message    \${int_list} = [0, 1, 2, 3]  DEBUG
     Check Variable Message    \${interpreter} = *  DEBUG  pattern=yes
     Check Variable Message    \${LOG_FILE} = NONE  DEBUG
+    Check Variable Message    \${LOG_LEVEL} = TRACE  DEBUG
     Check Variable Message    \${None} = None  DEBUG
     Check Variable Message    \${null} = None  DEBUG
     Check Variable Message    \${OUTPUT_DIR} = *  DEBUG  pattern=yes
@@ -130,7 +133,7 @@ Log Variables After Setting New Variables
     Check Variable Message    \@{LIST} = [ Hello | world ]  DEBUG
     Check Variable Message    \@{suite_setup_global_var} = [ Global var set in | suite setup ]  DEBUG
     Check Variable Message    \@{suite_setup_suite_var} = [ Suite var set in | suite setup ]  DEBUG
-    Should Be Equal As Integers  ${kw.message_count}  42  Wrong total message count
+    Should Be Equal As Integers  ${kw.message_count}  43  Wrong total message count
 
 Log Variables In User Keyword
     ${test} =  Check Test Case  Log Variables
@@ -149,6 +152,7 @@ Log Variables In User Keyword
     Check Variable Message    \${int_list} = [0, 1, 2, 3]
     Check Variable Message    \${interpreter} = *  pattern=yes
     Check Variable Message    \${LOG_FILE} = NONE
+    Check Variable Message    \${LOG_LEVEL} = TRACE
     Check Variable Message    \${None} = None
     Check Variable Message    \${null} = None
     Check Variable Message    \${OUTPUT_DIR} = *  pattern=yes
@@ -176,7 +180,7 @@ Log Variables In User Keyword
     Check Variable Message    \@{LIST} = [ Hello | world ]
     Check Variable Message    \@{suite_setup_global_var} = [ Global var set in | suite setup ]
     Check Variable Message    \@{suite_setup_suite_var} = [ Suite var set in | suite setup ]
-    Should Be Equal As Integers  ${kw.message_count}  43  Wrong total message count
+    Should Be Equal As Integers  ${kw.message_count}  44  Wrong total message count
 
 
 *** Keywords ***

@@ -111,6 +111,17 @@ $CURDIR
     Comment  $\{CURDIR} is resolved differently than other variables and cannot be escaped with a backslash before it
     Should Start With  $\{CURDIR}  $
 
+Log Level
+    ${level}=  Set Log Level  INFO
+    Should Be Equal  ${LOG_LEVEL}  INFO
+    Set Log Level  TRACE
+    Run Keyword If  '${LOG_LEVEL}' == 'INFO'  Fail
+    Should Be Equal  ${LOG_LEVEL}  TRACE
+    Set Log Level  WARN
+    Run Keyword If  '${LOG_LEVEL}' == 'TRACE'  Fail
+    Should Be Equal  ${LOG_LEVEL}  WARN
+    [Teardown]  Set Log Level  ${level}
+
 Built-In Variables Cannot Be Overridden In Variable Table Or From CLI
     [Documentation]  Except for number variabels
     Should Not Be Equal  ${TEMPDIR}  Cannot be overridden

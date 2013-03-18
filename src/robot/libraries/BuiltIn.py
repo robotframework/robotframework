@@ -1677,6 +1677,7 @@ class _Misc:
             old = self._execution_context.output.set_log_level(level)
         except DataError, err:
             raise RuntimeError(unicode(err))
+        self._namespace.variables.set_global('${LOG_LEVEL}', level.upper())
         self.log('Log level changed from %s to %s' % (old, level.upper()))
         return old
 

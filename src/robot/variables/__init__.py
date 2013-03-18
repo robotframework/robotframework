@@ -52,6 +52,7 @@ def init_global_variables(settings):
                          ('${OUTPUT_FILE}', settings['Output']),
                          ('${REPORT_FILE}', settings['Report']),
                          ('${LOG_FILE}', settings['Log']),
+                         ('${LOG_LEVEL}', settings['LogLevel']),
                          ('${DEBUG_FILE}', settings['DebugFile']),
                          ('${PREV_TEST_NAME}', ''),
                          ('${PREV_TEST_STATUS}', ''),
