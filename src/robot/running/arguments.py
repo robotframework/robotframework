@@ -36,9 +36,9 @@ class _KeywordArguments(object):
                                                    kw_or_lib_name, self._type)
 
     def _determine_args(self, handler_or_argspec):
-        args, defaults, varargs = self._get_arg_spec(handler_or_argspec)
+        args, defaults, varargs, kwargs = self._get_arg_spec(handler_or_argspec)
         minargs = len(args) - len(defaults)
-        maxargs = len(args) if not varargs else sys.maxint
+        maxargs = len(args) if not (varargs or kwargs) else sys.maxint
         return args, defaults, varargs, minargs, maxargs
 
     def resolve(self, args, variables, output=None):
@@ -81,11 +81,11 @@ class PythonKeywordArguments(_KeywordArguments):
         defaults - list of default values
         varargs  - name of the argument accepting varargs or None
         """
-        args, varargs, _, defaults = inspect.getargspec(handler)
+        args, varargs, kwargs, defaults = inspect.getargspec(handler)
         if inspect.ismethod(handler):
             args = args[1:]  # drop 'self'
         defaults = list(defaults) if defaults else []
-        return args, defaults, varargs
+        return args, defaults, varargs, kwargs
 
 
 class JavaKeywordArguments(_KeywordArguments):
@@ -152,7 +152,7 @@ class DynamicKeywordArguments(_KeywordArguments):
 
     def _get_arg_spec(self, argspec):
         if argspec is None:
-            return [], [], '<unknown>'
+            return [], [], '<unknown>', {}
         try:
             if isinstance(argspec, basestring):
                 raise TypeError
@@ -162,10 +162,11 @@ class DynamicKeywordArguments(_KeywordArguments):
 
     def _parse_arg_spec(self, argspec):
         if not argspec:
-            return [], [], None
+            return [], [], None, {}
         args = []
         defaults = []
         vararg = None
+        kwargs = {}
         for token in argspec:
             if vararg is not None:
                 raise TypeError
@@ -180,7 +181,7 @@ class DynamicKeywordArguments(_KeywordArguments):
             if defaults:
                 raise TypeError
             args.append(token)
-        return args, defaults, vararg
+        return args, defaults, vararg, kwargs
 
 
 class RunKeywordArguments(PythonKeywordArguments):
@@ -211,7 +212,7 @@ class JavaInitArguments(JavaKeywordArguments):
 class UserKeywordArguments(object):
 
     def __init__(self, args, name):
-        self.names, self.defaults, self.varargs = self._get_arg_spec(args)
+        self.names, self.defaults, self.varargs, self.kwargs = self._get_arg_spec(args)
         self.minargs = len(self.names) - len(self.defaults)
         maxargs = len(self.names) if not self.varargs else sys.maxint
         self._arg_limit_checker = _ArgLimitChecker(self.minargs, maxargs,
@@ -233,6 +234,7 @@ class UserKeywordArguments(object):
         args = []
         defaults = []
         varargs = None
+        kwargs = {}
         for arg in origargs:
             if varargs:
                 raise DataError('Only last argument can be a list')
@@ -247,7 +249,7 @@ class UserKeywordArguments(object):
             args.append(arg)
             if default is not None:
                 defaults.append(default)
-        return args, defaults, varargs
+        return args, defaults, varargs, kwargs
 
     def _split_default(self, arg):
         if '=' not in arg:
@@ -399,7 +401,7 @@ class _ArgumentResolver(object):
         return arg.split('=', 1)
 
     def _is_arg_name(self, name):
-        return self._arg_name(name) in self._arguments.names
+        return self._arg_name(name) in self._arguments.names or True
 
     def _resolve_variables(self, posargs, kwargs, variables):
         posargs = self._replace_list(posargs, variables)
