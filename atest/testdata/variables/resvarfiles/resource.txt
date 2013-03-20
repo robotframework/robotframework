@@ -9,9 +9,7 @@ ${BOOLEAN}        ${True}
 ${NONE VALUE}     ${None}
 ${ESCAPES}        one \\ two \\\\ \${non_existing}
 ${NO VALUE}       ${EMPTY}
-${LIST}           Hello    world    !
-${LIST WITH NON STRINGS}    ${42}    ${-1.2}    ${True}    ${None}
-${LIST WITH ESCAPES}    one \\    two \\\\    three \\\\\\    \${non_existing}
+@{LIST WITH NON STRINGS}    ${42}    ${-1.2}    ${True}    ${None}
 @{ONE ITEM}       Hello again?
 @{LIST}           Hello    again    ?
 @{LIST WITH ESCAPES}    one \\    two \\\\    three \\\\\\    \${non_existing}

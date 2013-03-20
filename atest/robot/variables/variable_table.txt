@@ -3,7 +3,6 @@ Suite Setup     Run tests  ${EMPTY}  variables/variable_table.txt
 Force Tags      pybot  jybot  regression
 Resource        atest_resource.txt
 
-
 *** Test Cases ***
 Scalar String
     Check Test Case    ${TEST NAME}
@@ -16,18 +15,6 @@ Scalar String With Escapes
 
 Empty Scalar String
     Check Test Case    ${TEST NAME}
-
-Scalar List
-    Check Test Case    ${TEST NAME}
-    Syslog Contains Deprecation Warning About Variable  LIST
-
-Scalar List With Non-Strings
-    Check Test Case    ${TEST NAME}
-    Syslog Contains Deprecation Warning About Variable  LIST WITH NON STRINGS
-
-Scalar List With Escapes
-    Check Test Case    ${TEST NAME}
-    Syslog Contains Deprecation Warning About Variable  LIST WITH ESCAPES
 
 List With One Item
     Check Test Case    ${TEST NAME}
@@ -42,9 +29,6 @@ List Created From List With Escapes
     Check Test Case    ${TEST NAME}
 
 List With No Items
-    Check Test Case    ${TEST NAME}
-
-Scalar Variable Containing List Is Different Than List Variable
     Check Test Case    ${TEST NAME}
 
 Variable Names Are Case Insensitive
@@ -62,11 +46,3 @@ Assign Mark With Scalar Variable
 Assign Mark With List Variable
     Check Test Case    ${TEST NAME}
 
-*** Keywords ***
-Syslog Contains Deprecation Warning About Variable
-    [Arguments]  ${name}
-    Check Syslog Contains Regexp
-    ...  Creating a scalar variable with a list value in the Variable table is
-    ...  deprecated and this functionality will be removed in Robot Framework
-    ...  2\\.8\\. Create a list variable '@\\{${name}}' and use it as a scalar
-    ...  variable '\\$\\{${name}}' instead in file '.*'\\.

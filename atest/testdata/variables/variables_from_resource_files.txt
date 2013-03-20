@@ -27,10 +27,10 @@ Empty Scalar String
 
 Scalar List
     Should Not Be Equal    ${LIST}    Hello world !
-    Should Be True    ${LIST} == ['Hello','world', '!']
+    Should Be True    ${LIST} == ['Hello','again', '?']
     Should Be Equal    ${LIST[0]}    Hello
-    Should Be Equal    ${LIST[1]}    world
-    Should Be Equal    ${LIST[2]}    !
+    Should Be Equal    ${LIST[1]}    again
+    Should Be Equal    ${LIST[2]}    ?
 
 Scalar List With Non-Strings
     Should Be True    ${LIST WITH NON STRINGS} == [42, -1.2, True, None]
@@ -76,6 +76,7 @@ List With No Items
     Log    @{EMPTY LIST}[0]
 
 Scalar Variable Containing List Is Different Than List Variable
+    ${LIST}=    Set Variable    Hello    world    !
     ${ret} =    Catenate    ${LIST}
     Should Be True    ${ret} == ['Hello', 'world', '!']
     ${ret} =    Catenate    @{LIST}

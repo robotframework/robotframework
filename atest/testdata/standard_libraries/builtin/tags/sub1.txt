@@ -5,7 +5,7 @@ Default Tags      default-remove-also    default
 Library           Collections
 
 *** Variable ***
-${SUITE_TAGS}     default    force    force-init    set    set-init
+@{SUITE_TAGS}     default    force    force-init    set    set-init
 
 *** Test Case ***
 Set And Remove Tags In Suite Level
