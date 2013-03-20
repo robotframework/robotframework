@@ -30,7 +30,7 @@ class _KeywordArguments(object):
 
     def __init__(self, argument_source, kw_or_lib_name):
         self.name = kw_or_lib_name
-        self.names, self.defaults, self.varargs, self.minargs, self.maxargs \
+        self.names, self.defaults, self.varargs, self.kwargs, self.minargs, self.maxargs \
             = self._determine_args(argument_source)
         self._arg_limit_checker = _ArgLimitChecker(self.minargs, self.maxargs,
                                                    kw_or_lib_name, self._type)
@@ -39,7 +39,7 @@ class _KeywordArguments(object):
         args, defaults, varargs, kwargs = self._get_arg_spec(handler_or_argspec)
         minargs = len(args) - len(defaults)
         maxargs = len(args) if not (varargs or kwargs) else sys.maxint
-        return args, defaults, varargs, minargs, maxargs
+        return args, defaults, varargs, kwargs, minargs, maxargs
 
     def resolve(self, args, variables, output=None):
         posargs, namedargs = self._resolve(args, variables, output)
@@ -50,8 +50,8 @@ class _KeywordArguments(object):
     def _resolve(self, args, variables, output):
         return self._get_argument_resolver().resolve(args, output, variables)
 
-    def check_arg_limits(self, args, namedargs={}):
-        self._arg_limit_checker.check_arg_limits(args, namedargs)
+    def check_arg_limits(self, args, namedargs=None):
+        self._arg_limit_checker.check_arg_limits(args, namedargs or {})
 
     def check_arg_limits_for_dry_run(self, args):
         self._arg_limit_checker.check_arg_limits_for_dry_run(args)
@@ -75,11 +75,12 @@ class PythonKeywordArguments(_KeywordArguments):
         return PythonKeywordArgumentResolver(self)
 
     def _get_arg_spec(self, handler):
-        """Returns info about args in a tuple (args, defaults, varargs)
+        """Returns info about args in a tuple (args, defaults, varargs, kwargs)
 
         args     - list of all accepted arguments except varargs
         defaults - list of default values
         varargs  - name of the argument accepting varargs or None
+        kwargs   - name of the argument accepting kwargs or None
         """
         args, varargs, kwargs, defaults = inspect.getargspec(handler)
         if inspect.ismethod(handler):
@@ -100,7 +101,7 @@ class JavaKeywordArguments(_KeywordArguments):
     def _determine_args(self, handler_method):
         signatures = self._get_signatures(handler_method)
         minargs, maxargs = self._get_arg_limits(signatures)
-        return [], [], None, minargs, maxargs
+        return [], [], None, None, minargs, maxargs
 
     def _get_signatures(self, handler):
         co = self._get_code_object(handler)
@@ -395,13 +396,18 @@ class _ArgumentResolver(object):
             return False
         if '=' not in arg:
             return False
+        if '=' not in arg.split('\\=',1)[0]:
+            return False
         return True
 
     def _split_from_kwarg_sep(self, arg):
         return arg.split('=', 1)
 
     def _is_arg_name(self, name):
-        return self._arg_name(name) in self._arguments.names or True
+        return self._arg_name(name) in self._arguments.names or self._kwargs_is_used()
+
+    def _kwargs_is_used(self):
+        return bool(self._arguments.kwargs)
 
     def _resolve_variables(self, posargs, kwargs, variables):
         posargs = self._replace_list(posargs, variables)
