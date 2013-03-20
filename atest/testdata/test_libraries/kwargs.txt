@@ -1,0 +1,35 @@
+*** Setting ***
+Library   TestKwargsLibrary.py
+Default Tags    pybot  jybot  regression
+
+*** Test Cases ***
+Using arguments args, vargs, kwargs
+    vargs and kwargs      my command    sdfsdfsf    jada=bada     kwow=we2222
+
+Using arguments kwargs only
+    only kwargs      jada=bada     def1=we2222
+
+Does not change old bad behaviour
+    arg and default  x=y  y=z
+
+Variable assignments with default and kwargs
+    arg default and kwargs  x=y  y=z  z=x
+
+Check that positional assignment works
+    only defaulters  killu=tillu   def2=tillu
+
+Use all possible arguments types and check escaping
+    [Template]  everything
+    first  second  third  fourth=fourth
+    first  kaks=second  fourth=fourth
+    first  second  third  third
+    first  fourth=fourth
+    first  second\=fourth
+    first  second\=fourth=djskkdsj
+    first  fourth=fourth\=fourth
+
+Using equal sign as argument value should fail
+    Run Keyword And Expect Error  AssertionError  everything  first  =
+
+Using unnamed argument after named argument is given should fail
+    Run Keyword And Expect Error  *  everything  first  kaks=second  third  neli=fourth
