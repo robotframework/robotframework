@@ -1,0 +1,29 @@
+*** Setting ***
+Resource  atest_resource.txt
+Suite Setup      Run Tests  ${EMPTY}   test_libraries/kwargs.txt
+Default Tags    pybot  jybot  regression
+
+*** Test Cases ***
+Using arguments args, vargs, kwargs
+    Check Test Case
+
+Using arguments kwargs only
+    Check Test Case
+
+Does not change old bad behaviour
+    Check Test Case
+
+Variable assignments with default and kwargs
+    Check Test Case
+
+Check that positional assignment works
+    Check Test Case
+
+Use all possible arguments types and check escaping
+    Check Test Case
+
+Using equal sign as argument value should fail
+    Check Test Case
+
+Using unnamed argument after named argument is given should fail
+    Check Test Case
