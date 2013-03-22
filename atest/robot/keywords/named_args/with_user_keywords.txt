@@ -39,4 +39,9 @@ Same Argument Specified Twice
     Check Test Case  ${TESTNAME}
     Check Log Message  ${ERRORS.messages[0]}
     ...  Could not resolve named arguments because value for argument '\${first}' was given twice.  WARN
-    
+
+Varargs without naming arguments works
+    Check Test Case  ${TESTNAME}
+
+Varargs with naming does not work
+    Check Test Case  ${TESTNAME}

@@ -55,6 +55,18 @@ Same Argument Specified Twice
     ${ret}=  Two Kwargs  second=foo  bar
     Should Be Equal  ${ret}  second=foo, bar
 
+Varargs without naming arguments works
+    @{ret} =    Named arguments with varargs   foo    bar   dar
+    Should be equal   @{ret}[0]    foo
+    @{ret} =    Named arguments with varargs   foo    bar=bar   dar
+    Should be equal   @{ret}[1]    bar=bar
+    @{ret} =    Named arguments with varargs   foo    b\=bar   dar
+    Should be equal   @{ret}[1]    b=bar
+
+Varargs with naming does not work
+    [documentation]  FAIL  Naming arguments before possible varargs is not supported. Please escape b=bar as b\\=bar.
+    @{ret} =    Named arguments with varargs   foo    b=bar
+
 
 *** Keywords ***
 One Kwarg
@@ -76,3 +88,7 @@ Mandatory And Kwargs
 Escaped default value
     [arguments]  ${d1}=\${notvariable}  ${d2}=\\\\  ${d3}=\n  ${d4}=\t
     [return]  ${d1} ${d2} ${d3} ${d4}
+
+Named arguments with varargs
+    [arguments]  ${a}=default  ${b}=default   @{varargs}
+    [return]     ${a}     ${b}    @{varargs}

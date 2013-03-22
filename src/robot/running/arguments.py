@@ -354,6 +354,8 @@ class _ArgumentResolver(object):
         return self._resolve_variables(positional, named, variables)
 
     def _resolve_argument_usage(self, values, output):
+        if self._arguments.varargs:
+            self._no_named_args_before_varargs(values)
         named = {}
         last_positional = self._get_last_positional_idx(values)
         used_names = self._arguments.names[:last_positional]
@@ -368,6 +370,15 @@ class _ArgumentResolver(object):
             used_names.append(name)
             named[name] = value
         return values[:last_positional], named
+
+    def _no_named_args_before_varargs(self, values):
+        for arg in values[:len(self._arguments.names)]:
+            if '=' not in arg:
+                continue
+            name, value = self._parse_named(arg)
+            if name in self._arguments.names:
+                raise DataError("Naming arguments before possible varargs is not supported. Please escape %s as %s." % (
+                arg, arg.replace('=', '\\=')))
 
     def _get_last_positional_idx(self, values):
         last_positional_idx = self._mand_arg_count
