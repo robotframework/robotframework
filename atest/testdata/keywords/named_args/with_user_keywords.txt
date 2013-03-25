@@ -63,9 +63,13 @@ Varargs without naming arguments works
     @{ret} =    Named arguments with varargs   foo    b\=bar   dar
     Should be equal   @{ret}[1]    b=bar
 
-Varargs with naming does not work
-    [documentation]  FAIL  Naming arguments before possible varargs is not supported. Please escape b=bar as b\\=bar.
+Naming without the varargs works
     @{ret} =    Named arguments with varargs   foo    b=bar
+    Should be equal   @{ret}[1]    bar
+
+Varargs with naming does not work
+    [documentation]  FAIL  Naming arguments before varargs is not supported. Please remove prefix b= or escape b=bar as b\\=bar.
+    @{ret} =    Named arguments with varargs   foo    b=bar    dar
 
 
 *** Keywords ***

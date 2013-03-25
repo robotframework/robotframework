@@ -17,7 +17,10 @@ Mandatory Args Should Be Positioned
 Kwargs and Varargs
     Check Test Case  ${TESTNAME}
 
-Naming arguments before possible kwargs is not supported
+Naming arguments without varargs is supported
+    Check Test Case  ${TESTNAME}
+
+Naming arguments before possible varargs is not supported
     Check Test Case  ${TESTNAME}
 
 Kwarg Syntax In Variable Is Ignored

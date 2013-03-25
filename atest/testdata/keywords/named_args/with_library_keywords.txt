@@ -21,9 +21,13 @@ Kwargs and Varargs
     ${ret}=  Kwargs and Mandatory Args  1  2  3  4  5  6
     Should Be Equal  ${ret}  1, 2, 3, [4, 5, 6]
 
-Naming arguments before possible kwargs is not supported
-    [documentation]  FAIL  Naming arguments before possible varargs is not supported. Please escape d2=d2 as d2\\=d2.
-    Kwargs and Mandatory Args  mandatory  d1  d2=d2
+Naming arguments without varargs is supported
+    ${ret}=  Kwargs and Mandatory Args  mandatory  d1  d2=d2
+    Should Be Equal  ${ret}  mandatory, d1, d2, []
+
+Naming arguments before possible varargs is not supported
+    [documentation]  FAIL  Naming arguments before varargs is not supported. Please remove prefix d2= or escape d2=d2 as d2\\=d2.
+    Kwargs and Mandatory Args  mandatory  d1  d2=d2   extra
 
 Kwarg Syntax In Variable Is Ignored
     ${assignment}=  Set Variable  kwarg=value

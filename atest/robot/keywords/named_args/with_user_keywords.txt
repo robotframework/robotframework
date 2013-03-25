@@ -43,5 +43,8 @@ Same Argument Specified Twice
 Varargs without naming arguments works
     Check Test Case  ${TESTNAME}
 
+Naming without the varargs works
+    Check Test Case  ${TESTNAME}
+
 Varargs with naming does not work
     Check Test Case  ${TESTNAME}

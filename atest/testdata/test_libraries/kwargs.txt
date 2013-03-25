@@ -32,5 +32,5 @@ Using equal sign as argument value should fail
     Run Keyword And Expect Error  AssertionError  everything  first  =
 
 Using named argument before varargs should fail
-    [documentation]     FAIL Naming arguments before possible varargs is not supported. Please escape kaks=second as kaks\\=second.
+    [documentation]     FAIL Naming arguments before varargs is not supported. Please remove prefix kaks= or escape kaks=second as kaks\\=second.
     everything  first  kaks=second  third  neli=fourth
