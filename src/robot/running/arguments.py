@@ -354,10 +354,10 @@ class _ArgumentResolver(object):
         return self._resolve_variables(positional, named, variables)
 
     def _resolve_argument_usage(self, values, output):
-        named = {}
-        last_positional = self._get_last_positional_idx(values)
         if self._has_varargs_in_values(values):
             self._no_named_args_before_varargs(values)
+        named = {}
+        last_positional = self._get_last_positional_idx(values)
         used_names = self._arguments.names[:last_positional]
         for arg in values[last_positional:]:
             name, value = self._parse_named(arg)

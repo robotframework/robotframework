@@ -71,6 +71,9 @@ Varargs with naming does not work
     [documentation]  FAIL  Naming arguments before varargs is not supported. Please remove prefix b= or escape b=bar as b\\=bar.
     @{ret} =    Named arguments with varargs   foo    b=bar    dar
 
+Varargs with naming does not work with empty lists either
+    [documentation]  FAIL  Naming arguments before varargs is not supported. Please remove prefix b= or escape b=bar as b\\=bar.
+    @{ret} =    Named arguments with varargs   foo    b=bar    @{EMPTY}
 
 *** Keywords ***
 One Kwarg

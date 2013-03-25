@@ -48,3 +48,6 @@ Naming without the varargs works
 
 Varargs with naming does not work
     Check Test Case  ${TESTNAME}
+
+Varargs with naming does not work with empty lists either
+    Check Test Case  ${TESTNAME}
