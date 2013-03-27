@@ -8,9 +8,6 @@ Resource        atest_resource.txt
 Simple Kwarg
     Check Test Case  ${TESTNAME}
 
-Substitution Starts From The End
-    Check Test Case  ${TESTNAME}
-
 Kwarg Syntax In Variable Is Ignored
     Check Test Case  ${TESTNAME}
 
@@ -35,11 +32,6 @@ Inside Run Kw
 Default value with escaped content
     Check Test Case  ${TESTNAME}
 
-Same Argument Specified Twice
-    Check Test Case  ${TESTNAME}
-    Check Log Message  ${ERRORS.messages[0]}
-    ...  Could not resolve named arguments because value for argument '\${first}' was given twice.  WARN
-
 Varargs without naming arguments works
     Check Test Case  ${TESTNAME}
 
@@ -50,4 +42,16 @@ Varargs with naming does not work
     Check Test Case  ${TESTNAME}
 
 Varargs with naming does not work with empty lists either
+    Check Test Case  ${TESTNAME}
+
+Named combinations with varargs
+    Check Test Case  ${TESTNAME}
+
+Non working named combinations with varargs
+    Check Test Case  ${TESTNAME}
+
+Named combinations without varargs
+    Check Test Case  ${TESTNAME}
+
+Non working named combinations without varargs
     Check Test Case  ${TESTNAME}

@@ -23,12 +23,12 @@ class TestKwargsLibrary:
         assert(kwargs == {"jada":"bada"})
 
     def arg_and_default(self, x, y=2):
-        assert(x == 'x=y')
+        assert(x == 'y')
         assert(y == 'z')
 
     def arg_default_and_kwargs(self, x, y=2, **z):
         print x, y, z
-        assert(x == 'x=y')
+        assert(x == 'y')
         assert(y == 'z')
         assert(z == {'z':'x'})
 

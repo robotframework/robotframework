@@ -35,10 +35,10 @@ Variables containing objects
     libswithargs.Defaults  None  1.0  default2=not named
 
 Too Few Arguments
-    [Template]  Library import should have failed
-    libswithargs.Mandatory  2 arguments, got 1.
-    libswithargs.Defaults   1 to 3 arguments, got 0.
-    libswithargs.Varargs    at least 1 argument, got 0.
+    [Template]    Check Syslog Contains
+    Test Library 'libswithargs.Mandatory' missing value for argument 'mandatory2'.
+    Test Library 'libswithargs.Defaults' missing value for argument 'mandatory'.
+    Test Library 'libswithargs.Varargs' missing value for argument 'mandatory'.
 
 Too Many Arguments
     [Template]  Library import should have failed

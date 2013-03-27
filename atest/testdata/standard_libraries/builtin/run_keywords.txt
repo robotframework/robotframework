@@ -46,7 +46,7 @@ Non-existing keyword
     Run keywords  Passing  Non-Existing  Non-Existing But Not Executed
 
 Wrong number of arguments to keyword
-    [Documentation]  FAIL  Keyword 'BuiltIn.Log' expected 1 to 2 arguments, got 0.${ATD ERR}
+    [Documentation]  FAIL  Keyword 'BuiltIn.Log' missing value for argument 'message'.${ATD ERR}
     Run keywords  Passing  Log  This isn't argument to Log keyword
 
 In test setup

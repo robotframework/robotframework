@@ -9,7 +9,7 @@ Using arguments args, vargs, kwargs
 Using arguments kwargs only
     only kwargs      jada=bada     def1=we2222
 
-Does not change old bad behaviour
+Old bad behaviour has changed
     arg and default  x=y  y=z
 
 Variable assignments with default and kwargs
@@ -32,5 +32,5 @@ Using equal sign as argument value should fail
     Run Keyword And Expect Error  AssertionError  everything  first  =
 
 Using named argument before varargs should fail
-    [documentation]     FAIL Naming arguments before varargs is not supported. Please remove prefix kaks= or escape kaks=second as kaks\\=second.
+    [documentation]     FAIL Error in keyword 'TestKwargsLibrary.Everything'. Named arguments can not be given before positional arguments. Please remove prefix kaks= or escape kaks=second as kaks\\=second.
     everything  first  kaks=second  third  neli=fourth

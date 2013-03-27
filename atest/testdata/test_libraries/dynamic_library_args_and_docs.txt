@@ -11,7 +11,7 @@ Documentation and Argument Boundaries Work With No Args
     No Arg  1
 
 Documentation and Argument Boundaries Work With Mandatory Args
-    [Documentation]  FAIL Keyword 'classes.ArgDocDynamicLibrary.One Arg' expected 1 argument, got 0.
+    [Documentation]  FAIL Keyword 'classes.ArgDocDynamicLibrary.One Arg' missing value for argument 'arg'.
     One Arg  arg
     One Arg
 
@@ -37,7 +37,7 @@ Documentation and Argument Boundaries Work With No Args In Java
     Java No Arg  foo
 
 Documentation and Argument Boundaries Work With Mandatory Args In Java
-    [Documentation]  FAIL Keyword 'ArgDocDynamicJavaLibrary.Java One Arg' expected 1 argument, got 0.
+    [Documentation]  FAIL Keyword 'ArgDocDynamicJavaLibrary.Java One Arg' missing value for argument 'arg'.
     Java One Arg  arg
     Java One Arg
 
