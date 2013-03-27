@@ -105,6 +105,10 @@ Invalid Resource Import Parameters
     Stderr Should Contain Error    ${DATAFILE}
     ...  Resource file 'resources_and_variables/resources.html only one parameter allowed' does not exist
 
+Initialization file cannot be used as a resource file
+    Stderr Should Contain Error    ${DATAFILE}
+        ...  Initialization files cannot be imported as resources.
+
 Invalid Setting In Resource File
     Stderr Should Contain Error    ${RESDIR}/resources.html
     ...  Non-existing setting 'Test Setup'.

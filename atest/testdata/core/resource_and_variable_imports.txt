@@ -38,6 +38,7 @@ Resource     non_existing.html
 Variables    non_existing.py
 Resource     ${resource_dir}/invalid_resource.html
 Resource     resources_and_variables/resources.html   only one parameter allowed
+Resource     test_suite_dir_with_init_file/__init__.txt
 Variables    ${resource_dir}/invalid_variable_file.py
 Variables    resources_and_variables/dynamicVariables.py    ${non_existing_var_as_arg}
 Variables    resources_and_variables/invalid_list_variable.py

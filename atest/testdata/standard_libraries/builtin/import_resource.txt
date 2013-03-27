@@ -41,7 +41,8 @@ Re-Import Resource
 Import Resource Failure Is Catchable
     Run Keyword And Expect Error  Resource file 'non_existing.txt' does not exist.
     ...  Import Resource  non_existing.txt
-
+    Run Keyword And Expect Error  Initialization files cannot be imported as resources.
+    ...  Import Resource  ${CURDIR}/tags/__init__.txt
 
 *** User Keywords ***
 Import Resource In User Keyword
