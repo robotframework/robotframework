@@ -46,3 +46,6 @@ Assign Mark With Scalar Variable
 Assign Mark With List Variable
     Check Test Case    ${TEST NAME}
 
+Three dots on the same line should be interpreted as string
+    Check Test Case     ${TEST NAME}
+

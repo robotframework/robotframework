@@ -19,6 +19,7 @@ ${UNDER_scores}    Variable name with under scores
 @{_u_n_d_e_r___s_c_o_r_e_s_}    Variable name with under scores
 ${ASSING MARK}    This syntax works starting from 1.8
 @{ASSIGN MARK}    This syntax works    starting    from    ${1.8}
+${THREE DOTS}     ...
 
 *** Test Case ***
 Scalar String
@@ -97,3 +98,6 @@ Assign Mark With List variable
     Should Be Equal    @{ASSIGN MARK}[1]    starting
     Should Be Equal    @{ASSIGN MARK}[2]    from
     Should Be Equal    @{ASSIGN MARK}[3]    ${1.8}
+
+Three dots on the same line should be interpreted as string
+    Should Be Equal    ${THREE DOTS}    \...

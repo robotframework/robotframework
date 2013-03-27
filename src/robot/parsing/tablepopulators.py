@@ -263,6 +263,12 @@ class VariablePopulator(_PropertyPopulator):
     def populate(self):
         self._setter(self._name, self._value, self._comments.value)
 
+    def _add(self, row):
+        if row.head == '':
+            self._value.extend(row.dedent().data)
+            return
+        self._value.extend(row._tail)
+
 
 class SettingPopulator(_PropertyPopulator):
 
