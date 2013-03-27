@@ -8,9 +8,6 @@ Resource        atest_resource.txt
 Simple Kwarg
     Check Test Case  ${TESTNAME}
 
-Substitution Starts From The End
-    Check Test Case  ${TESTNAME}
-
 Mandatory Args Should Be Positioned
     Check Test Case  ${TESTNAME}
 
@@ -50,3 +47,20 @@ Inside Run Kw
 Simple Kwarg With Timeout
     Check Test Case  ${TESTNAME}
 
+Named combinations with varargs
+    Check Test Case  ${TESTNAME}
+
+Non working named combinations with varargs
+    Check Test Case  ${TESTNAME}
+
+Named combinations without varargs
+    Check Test Case  ${TESTNAME}
+
+Non working named combinations without varargs
+    Check Test Case  ${TESTNAME}
+
+Working combinations with all argument types
+    Check Test Case  ${TESTNAME}
+
+Illegal combinations with all argument types
+    Check Test Case  ${TESTNAME}

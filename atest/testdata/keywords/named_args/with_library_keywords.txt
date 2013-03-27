@@ -1,19 +1,14 @@
 *** Settings ***
 Library  KwargsLibrary
+Library  named_args_helper.py
 
 *** Test Cases ***
 Simple Kwarg
     Test With Kwargs
 
-Substitution Starts From The End
-    ${ret}=  Four Kwargs  a=foo  bar  d=quux
-    Should Be Equal  ${ret}  a=foo, bar, None, quux
-
 Mandatory Args Should Be Positioned
     ${ret}=  Mandatory And Kwargs  a  b  c
     Should Be Equal  ${ret}  a, b, c
-    ${ret}=  Mandatory And Kwargs  a  c=b
-    Should Be Equal  ${ret}  a, c=b, None
 
 Kwargs and Varargs
     ${ret}=  Kwargs and Mandatory Args  mandatory  d1  d2\=d2
@@ -26,11 +21,11 @@ Naming arguments without varargs is supported
     Should Be Equal  ${ret}  mandatory, d1, d2, []
 
 Naming arguments before possible varargs is not supported
-    [documentation]  FAIL  Naming arguments before varargs is not supported. Please remove prefix d2= or escape d2=d2 as d2\\=d2.
+    [documentation]  FAIL  Error in keyword 'KwargsLibrary.Kwargs And Mandatory Args'. Named arguments can not be given before positional arguments. Please remove prefix d2= or escape d2=d2 as d2\\=d2.
     Kwargs and Mandatory Args  mandatory  d1  d2=d2   extra
 
 Naming arguments before possible varargs is not supported with empty lists either
-    [documentation]  FAIL  Naming arguments before varargs is not supported. Please remove prefix d2= or escape d2=d2 as d2\\=d2.
+    [documentation]  FAIL  Error in keyword 'KwargsLibrary.Kwargs And Mandatory Args'. Named arguments can not be given before positional arguments. Please remove prefix d2= or escape d2=d2 as d2\\=d2.
     Kwargs and Mandatory Args  mandatory  d1  d2=d2   @{EMPTY}
 
 Kwarg Syntax In Variable Is Ignored
@@ -63,21 +58,117 @@ Escaping Kwarg
     Should Be Equal  ${ret}  kwarg=bar
 
 Using Argname Twice
-    [documentation]  FAIL  Keyword argument fst repeated.
+    [documentation]  FAIL  Argument 'fst' repeated for keyword 'KwargsLibrary.Two Kwargs'.
     ${ret}=  Two Kwargs  fst=foo  fst=foo
 
 Inside Run Kw
-    ${ret}=  Run Keyword  Four Kwargs  a=foo  bar  d=quux  
-    Should Be Equal  ${ret}  a=foo, bar, None, quux
-    @{list}  Create List  Four Kwargs  foo  c=bar  d\\=quux
+    ${ret}=  Run Keyword  Four Kwargs  foo  bar  quux
+    Should Be Equal  ${ret}  foo, bar, quux, None
+    @{list}  Create List  Four Kwargs   foo   bar  d\\=quux
     ${ret}=  Run Keyword  @{list}
-    Should Be Equal  ${ret}  foo, c=bar, d\\=quux, None
+    Should Be Equal  ${ret}  foo, bar, d\\=quux, None
 
 Simple Kwarg With Timeout
     [timeout]  10
     Test With Kwargs
 
+Named combinations with varargs
+    [template]           Execute working named vararg combination with result
+    a, default           a
+    a, default           a=a
+    a, b                 a=a   b=b
+    a, b                 b=b   a=a
+    c=c, d=d             c=c   d=d
+    a, b                 a     b
+    a, b                 a     b=b
+    a, b, c              a     b      c
+    a, b, c=c            a     b      c=c
+
+Non working named combinations with varargs
+    [template]           Execute illegal named vararg combination
+    Error in keyword 'named_args_helper.Lib Mandatory Named And Varargs'. Named arguments can not be given before positional arguments.   a=a  b
+    Keyword 'named_args_helper.Lib Mandatory Named And Varargs' missing value for argument                                      b=b
+    Error in keyword 'named_args_helper.Lib Mandatory Named And Varargs'. Named arguments can not be given before positional arguments.   b=b  b
+    Error in keyword 'named_args_helper.Lib Mandatory Named And Varargs'. Named arguments can not be given before positional arguments.   a    b=b   c
+    Error in keyword 'named_args_helper.Lib Mandatory Named And Varargs'. Value for argument 'a' was given twice                          a    b     a=a
+    Error in keyword 'named_args_helper.Lib Mandatory Named And Varargs'. Value for argument 'b' was given twice                          a    b     b=b
+    Error in keyword 'named_args_helper.Lib Mandatory Named And Varargs'. Value for argument 'a' was given twice                          a    a=a
+    Error in keyword 'named_args_helper.Lib Mandatory Named And Varargs'. Value for argument 'a' was given twice                          a    b     c    a=a
+
+Named combinations without varargs
+    [template]           Execute working named combination with result
+    a, default           a
+    a, default           a=a
+    a, b                 a=a   b=b
+    a, b                 b=b   a=a
+    a, b                 a     b
+    a, b                 a     b=b
+
+Non working named combinations without varargs
+    [template]           Execute illegal named combination
+    Error in keyword 'named_args_helper.Lib Mandatory And Named'. Named arguments can not be given before positional arguments        a=a   b
+    Keyword 'named_args_helper.Lib Mandatory And Named' missing value for argument                                          b=b
+    Error in keyword 'named_args_helper.Lib Mandatory And Named'. Named arguments can not be given before positional arguments.       b=b  b
+    Error in keyword 'named_args_helper.Lib Mandatory And Named'. Value for argument 'a' was given twice.                              a    a=a
+
+Working combinations with all argument types
+   [template]            Execute working combinations with everything
+   a, default                   a
+   a, default                   a=a
+   a, b                         a       b
+   a, b                         a       b=b
+   a, default, d1:d1            a       d1=d1
+   a, b                         a=a     b=b
+   a, default, d1:d1            a=a     d1=d1
+   a, b, c1                     a       b       c1
+   a, b, c1, d1:d1              a       b       c1      d1=d1
+   a, default, d1:d1, d2:d2     a       d1=d1   d2=d2
+
+Illegal combinations with all argument types
+   [template]            Execute illegal combinations with everything
+   Keyword 'named_args_helper.Lib Mandatory Named Varargs And Kwargs' missing value for argument 'a'.                                  d1=d
+   Error in keyword 'named_args_helper.Lib Mandatory Named Varargs And Kwargs'. Value for argument 'a' was given twice.                          a     a=a
+   Argument 'a' repeated for keyword 'named_args_helper.Lib Mandatory Named Varargs And Kwargs'.                             a=a   a=a
+   Error in keyword 'named_args_helper.Lib Mandatory Named Varargs And Kwargs'. Named arguments can not be given before positional arguments.    a=a   b
+   Error in keyword 'named_args_helper.Lib Mandatory Named Varargs And Kwargs'. Value for argument 'b' was given twice.                          a     b     b=b
+   Error in keyword 'named_args_helper.Lib Mandatory Named Varargs And Kwargs'. Value for argument 'a' was given twice.                          a     b     a=a
+   Error in keyword 'named_args_helper.Lib Mandatory Named Varargs And Kwargs'. Value for argument 'a' was given twice.                          a     b     c1      a=a
+   Error in keyword 'named_args_helper.Lib Mandatory Named Varargs And Kwargs'. Named arguments can not be given before positional arguments.    a=a   b=b   d1=d    foo
+   Argument 'b' repeated for keyword 'named_args_helper.Lib Mandatory Named Varargs And Kwargs'.                             a     b=b   b=b
+   Argument 'a' repeated for keyword 'named_args_helper.Lib Mandatory Named Varargs And Kwargs'.                             a=a   d1=d  d2=d    a=a
+
+
 *** Keywords ***
+Execute working combinations with everything
+    [arguments]    ${expected}  @{args}
+    ${res} =       Get result or error    Lib Mandatory Named varargs and kwargs   @{args}
+    Should be equal     ${expected}   ${res}
+
+Execute illegal combinations with everything
+    [arguments]    ${expected error}   @{args}
+    ${res} =       Get result or error    Lib Mandatory Named varargs and kwargs   @{args}
+    Should start with     ${res}     ${expected error}
+
+Execute working named vararg combination with result
+    [arguments]    ${expected}  @{args}
+    ${res} =       Get result or error    Lib Mandatory Named and varargs   @{args}
+    Should be equal     ${expected}   ${res}
+
+Execute illegal named vararg combination
+    [arguments]    ${expected error}   @{args}
+    ${res} =       Get result or error    Lib Mandatory Named and varargs   @{args}
+    Should start with     ${res}     ${expected error}
+
+Execute working named combination with result
+    [arguments]    ${expected}  @{args}
+    ${res} =       Get result or error    Lib Mandatory and Named   @{args}
+    Should be equal     ${expected}   ${res}
+
+Execute illegal named combination
+    [arguments]     ${expected error}     @{args}
+    ${res} =       Get result or error    Lib Mandatory and Named   @{args}
+    Should start with     ${res}     ${expected error}
+
 Test With Kwargs
     ${ret}=  One Kwarg  kwarg=bar
     Should Be Equal  ${ret}  bar

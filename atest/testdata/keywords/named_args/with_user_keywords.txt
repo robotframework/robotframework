@@ -1,3 +1,6 @@
+*** Settings ***
+Library     named_args_helper.py
+
 *** Test Cases ***
 Simple Kwarg
     ${ret}=  One Kwarg  kwarg=quux
@@ -6,10 +9,6 @@ Simple Kwarg
     Should Be Equal  ${ret}  foo, bar
     ${ret}=  Two Kw Args  second=World!  first=Hello
     Should Be Equal  ${ret}  Hello, World!
-
-Substitution Starts From The End
-    ${ret}=  Four Kwargs  a=foo  bar  d=quux
-    Should Be Equal  ${ret}  a=foo, bar, default, quux
 
 Kwarg Syntax In Variable Is Ignored
     ${assignment}=  Set Variable  kwarg=value
@@ -42,18 +41,12 @@ Mandatory Args Should Be Positioned
     Should Be Equal  ${ret}  a, c=b, KWARG VALUE
 
 Inside Run Kw
-    ${ret}=  Run Keyword  Four Kwargs  a=foo  bar  d=quux
-    Should Be Equal  ${ret}  a=foo, bar, default, quux
+    ${ret}=  Run Keyword  Four Kwargs  foo  bar  d=quux
+    Should Be Equal  ${ret}  foo, bar, default, quux
 
 Default value with escaped content
     ${ret}=  Escaped default value  d4=\${nv}
     Should Be Equal  ${ret}  \${notvariable} \\\\ \n${SPACE}\${nv}
-
-Same Argument Specified Twice
-    ${ret}=  Two Kwargs  bar  first=foo
-    Should Be Equal  ${ret}  bar, first=foo
-    ${ret}=  Two Kwargs  second=foo  bar
-    Should Be Equal  ${ret}  second=foo, bar
 
 Varargs without naming arguments works
     @{ret} =    Named arguments with varargs   foo    bar   dar
@@ -68,14 +61,84 @@ Naming without the varargs works
     Should be equal   @{ret}[1]    bar
 
 Varargs with naming does not work
-    [documentation]  FAIL  Naming arguments before varargs is not supported. Please remove prefix b= or escape b=bar as b\\=bar.
+    [documentation]  FAIL  Error in keyword 'Named arguments with varargs'. Named arguments can not be given before positional arguments. Please remove prefix b= or escape b=bar as b\\=bar.
     @{ret} =    Named arguments with varargs   foo    b=bar    dar
 
 Varargs with naming does not work with empty lists either
-    [documentation]  FAIL  Naming arguments before varargs is not supported. Please remove prefix b= or escape b=bar as b\\=bar.
+    [documentation]  FAIL  Error in keyword 'Named arguments with varargs'. Named arguments can not be given before positional arguments. Please remove prefix b= or escape b=bar as b\\=bar.
     @{ret} =    Named arguments with varargs   foo    b=bar    @{EMPTY}
 
+Named combinations with varargs
+    [template]           Execute working named vararg combination with result
+    a, default           a
+    a, default           a=a
+    a, b                 a=a   b=b
+    a, b                 b=b   a=a
+    c=c, d=d             c=c   d=d
+    a, b                 a     b
+    a, b                 a     b=b
+    a, b, c              a     b      c
+    a, b, c=c            a     b      c=c
+
+Non working named combinations with varargs
+    [template]           Execute illegal named vararg combination
+    Error in keyword 'Mandatory, Named and varargs'. Named arguments can not be given before positional arguments.   a=a  b
+    Keyword 'Mandatory, Named and varargs' missing value for argument                                      b=b
+    Error in keyword 'Mandatory, Named and varargs'. Named arguments can not be given before positional arguments.   b=b  b
+    Error in keyword 'Mandatory, Named and varargs'. Named arguments can not be given before positional arguments.   a    b=b   c
+    Error in keyword 'Mandatory, Named and varargs'. Value for argument '\${a}' was given twice.                     a    b     a=a
+    Error in keyword 'Mandatory, Named and varargs'. Value for argument '\${b}' was given twice.                     a    b     b=b
+    Error in keyword 'Mandatory, Named and varargs'. Value for argument '\${a}' was given twice.                     a    a=a
+    Error in keyword 'Mandatory, Named and varargs'. Value for argument '\${a}' was given twice.                     a    b     c    a=a
+
+Named combinations without varargs
+    [template]           Execute working named combination with result
+    a, default           a
+    a, default           a=a
+    a, b                 a=a   b=b
+    a, b                 b=b   a=a
+    a, b                 a     b
+    a, b                 a     b=b
+
+Non working named combinations without varargs
+    [template]           Execute illegal named combination
+    Error in keyword 'Mandatory and Named'. Named arguments can not be given before positional arguments        a=a   b
+    Keyword 'Mandatory and Named' missing value for argument                                          b=b
+    Error in keyword 'Mandatory and Named'. Named arguments can not be given before positional arguments.       b=b  b
+    Error in keyword 'Mandatory and Named'. Value for argument '\${a}' was given twice.                         a    a=a
+
+
 *** Keywords ***
+Execute working named vararg combination with result
+    [arguments]    ${expected}  @{args}
+    ${res} =       Get result or error    Mandatory, Named and varargs   @{args}
+    Should be equal     ${expected}   ${res}
+
+Execute illegal named vararg combination
+    [arguments]    ${expected error}   @{args}
+    ${res} =       Get result or error    Mandatory, Named and varargs   @{args}
+    Should start with     ${res}     ${expected error}
+
+Execute working named combination with result
+    [arguments]    ${expected}  @{args}
+    ${res} =       Get result or error    Mandatory and Named   @{args}
+    Should be equal     ${expected}   ${res}
+
+Execute illegal named combination
+    [arguments]     ${expected error}     @{args}
+    ${res} =       Get result or error    Mandatory and Named   @{args}
+    Should start with     ${res}     ${expected error}
+
+Mandatory, Named and varargs
+    [arguments]    ${a}   ${b}=default   @{varargs}
+    ${res}=    pretty    ${a}    ${b}    @{varargs}
+    [return]   ${res}
+
+Mandatory and Named
+    [arguments]    ${a}   ${b}=default
+    ${res}=    pretty    ${a}    ${b}
+    [return]   ${res}
+
 One Kwarg
     [arguments]  ${kwarg}=
     [return]  ${kwarg}
