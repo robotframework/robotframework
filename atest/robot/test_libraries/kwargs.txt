@@ -25,5 +25,5 @@ Use all possible arguments types and check escaping
 Using equal sign as argument value should fail
     Check Test Case
 
-Using unnamed argument after named argument is given should fail
+Using named argument before varargs should fail
     Check Test Case

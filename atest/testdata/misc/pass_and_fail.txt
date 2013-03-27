@@ -16,7 +16,7 @@ Fail
     [Documentation]    FAIL Expected failure
     [Tags]    fail
     My Keyword    Fail
-    Fail    msg=Expected failure
+    Fail    Expected failure
 
 *** Keyword ***
 My Keyword

@@ -16,10 +16,22 @@ Mandatory Args Should Be Positioned
     Should Be Equal  ${ret}  a, c=b, None
 
 Kwargs and Varargs
-    ${ret}=  Kwargs and Mandatory Args  mandatory  d2=d2  d1=d1
-    Should Be Equal  ${ret}  mandatory, d1, d2, []
+    ${ret}=  Kwargs and Mandatory Args  mandatory  d1  d2\=d2
+    Should Be Equal  ${ret}  mandatory, d1, d2=d2, []
     ${ret}=  Kwargs and Mandatory Args  1  2  3  4  5  6
     Should Be Equal  ${ret}  1, 2, 3, [4, 5, 6]
+
+Naming arguments without varargs is supported
+    ${ret}=  Kwargs and Mandatory Args  mandatory  d1  d2=d2
+    Should Be Equal  ${ret}  mandatory, d1, d2, []
+
+Naming arguments before possible varargs is not supported
+    [documentation]  FAIL  Naming arguments before varargs is not supported. Please remove prefix d2= or escape d2=d2 as d2\\=d2.
+    Kwargs and Mandatory Args  mandatory  d1  d2=d2   extra
+
+Naming arguments before possible varargs is not supported with empty lists either
+    [documentation]  FAIL  Naming arguments before varargs is not supported. Please remove prefix d2= or escape d2=d2 as d2\\=d2.
+    Kwargs and Mandatory Args  mandatory  d1  d2=d2   @{EMPTY}
 
 Kwarg Syntax In Variable Is Ignored
     ${assignment}=  Set Variable  kwarg=value

@@ -13,7 +13,7 @@ Library    libswithargs.Varargs    m3  ${1}  ${2}  WITH NAME  V3
 
 Library    libswithargs.Mixed      m1              WITH NAME  M1
 Library    libswithargs.Mixed      m2  d1          WITH NAME  M2
-Library    libswithargs.Mixed      m3  default=d1  WITH NAME  M3
+Library    libswithargs.Mixed      m3  d1          WITH NAME  M3
 Library    libswithargs.Mixed      m4  d2  v       WITH NAME  M4
 Library    libswithargs.Mixed      m5  d3  v1  v2  WITH NAME  M5
 

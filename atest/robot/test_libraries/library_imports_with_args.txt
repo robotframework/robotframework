@@ -26,7 +26,7 @@ Varargs
 Mixed
     libswithargs.Mixed  m1
     libswithargs.Mixed  m2  d1
-    libswithargs.Mixed  m3  default=d1
+    libswithargs.Mixed  m3  d1
     libswithargs.Mixed  m4  d2  v
     libswithargs.Mixed  m5  d3  v1  v2
 

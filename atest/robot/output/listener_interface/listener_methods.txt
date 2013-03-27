@@ -44,7 +44,7 @@ Java Listener
     ...  LOG MESSAGE: [INFO] Hello says "Fail"!
     ...  START KW: BuiltIn.Log [Debug message\${LEVEL2}]
     ...  LOG MESSAGE: [DEBUG] Debug message
-    ...  START KW: BuiltIn.Fail [msg=Expected failure]
+    ...  START KW: BuiltIn.Fail [Expected failure]
     ...  LOG MESSAGE: [FAIL] Expected failure
     ...  END TEST: FAIL: Expected failure
     ...  END SUITE: PASS: 1 critical test, 1 passed, 0 failed
@@ -135,7 +135,7 @@ Check Listen All File
     ...  LOG MESSAGE: [DEBUG] Debug message
     ...  KW END: PASS
     ...  KW END: PASS
-    ...  KW START: BuiltIn.Fail ['msg=Expected failure']
+    ...  KW START: BuiltIn.Fail ['Expected failure']
     ...  LOG MESSAGE: [FAIL] Expected failure
     ...  KW END: FAIL
     ...  TEST END: FAIL Expected failure crit: no

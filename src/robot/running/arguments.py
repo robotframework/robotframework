@@ -354,6 +354,8 @@ class _ArgumentResolver(object):
         return self._resolve_variables(positional, named, variables)
 
     def _resolve_argument_usage(self, values, output):
+        if self._has_varargs_in_values(values):
+            self._no_named_args_before_varargs(values)
         named = {}
         last_positional = self._get_last_positional_idx(values)
         used_names = self._arguments.names[:last_positional]
@@ -368,6 +370,22 @@ class _ArgumentResolver(object):
             used_names.append(name)
             named[name] = value
         return values[:last_positional], named
+
+    def _has_varargs_in_values(self, values):
+        return self._arguments.varargs and len(values) > len(self._arguments.names)
+
+    def _no_named_args_before_varargs(self, values):
+        for arg in values[:len(self._arguments.names)]:
+            if '=' not in arg:
+                continue
+            name, var_name = self._get_name_and_variable_name(arg)
+            if var_name in self._arguments.names:
+                raise DataError("Naming arguments before varargs is not supported. Please remove prefix %s= or escape %s as %s." % (
+                name, arg, arg.replace('=', '\\=')))
+
+    def _get_name_and_variable_name(self, arg):
+        name, _ = self._split_from_kwarg_sep(arg)
+        return name, self._coerce(name)
 
     def _get_last_positional_idx(self, values):
         last_positional_idx = self._mand_arg_count
