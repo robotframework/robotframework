@@ -13,6 +13,7 @@
 #  limitations under the License.
 
 import os
+import re
 import sys
 import copy
 
@@ -34,6 +35,7 @@ STDLIB_NAMES = set(('BuiltIn', 'Collections', 'Dialogs', 'Easter',
                     'OperatingSystem', 'Remote', 'Reserved',
                     'Screenshot', 'String', 'Telnet', 'XML'))
 IMPORTER = Importer()
+INIT_FILE_MATCHER = re.compile("(?:.+?/)?__init__\.(?:html|htm|tsv|txt|robot|rst|rest)")
 
 
 class Namespace:
@@ -90,6 +92,8 @@ class Namespace:
         self._import_resource(Resource(None, name), overwrite=overwrite)
 
     def _import_resource(self, import_setting, variables=None, overwrite=False):
+        if import_setting.type == "Resource" and INIT_FILE_MATCHER.match(import_setting.name):
+            raise DataError("Initialization files cannot be imported as resources.")
         path = self._resolve_name(import_setting, variables)
         if overwrite or path not in self._imported_resource_files:
             resource = IMPORTER.import_resource(path)
