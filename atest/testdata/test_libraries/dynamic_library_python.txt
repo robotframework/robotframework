@@ -2,6 +2,7 @@
 Library         RunKeywordLibrary
 Library         RunKeywordLibrary.RunKeywordButNoGetKeywordNamesLibrary
 Library         RunKeywordLibrary.GlobalRunKeywordLibrary
+Library         ${CURDIR}/dynamic_libraries/DynamicLibrary.py
 
 *** Test Cases ***
 Passing, Logging and Returning
@@ -31,3 +32,8 @@ Not Found Keyword
     [Documentation]  FAIL No keyword with name 'Get Keyword That Does Not Exist' found.
     Get Keyword That Does Not Exist
 
+Dynamic libraries should handle named arguments
+    say hello    Ilmari
+    say goodbye    Firstname    last_name=Lastname
+    say something to     hello    Jussi
+    say something to     hello    to_whom=JOHN    # this is a robot feature

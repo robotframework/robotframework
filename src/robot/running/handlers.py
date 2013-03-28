@@ -127,6 +127,7 @@ class _RunnableHandler(_BaseHandler):
         if timeout and timeout.active:
             output.debug(timeout.get_message)
             return lambda: timeout.run(handler, args=positional, kwargs=named)
+
         return lambda: handler(*positional, **named)
 
     def _run_with_output_captured_and_signal_monitor(self, runner, context):
@@ -144,7 +145,8 @@ class _RunnableHandler(_BaseHandler):
         if self._method:
             return self._method
         return self._get_handler(self.library.get_instance(),
-                                 self._handler_name)
+            self._handler_name)
+
 
     def _get_global_handler(self, method, name):
         return method
@@ -198,14 +200,28 @@ class _DynamicHandler(_RunnableHandler):
 
     def _get_handler(self, lib_instance, handler_name):
         runner = getattr(lib_instance, self._run_keyword_method_name)
-        return self._get_dynamic_handler(runner, handler_name)
+        return self._get_dynamic_handler(runner, handler_name, lib_instance)
 
     def _get_global_handler(self, method, name):
         return self._get_dynamic_handler(method, name)
 
-    def _get_dynamic_handler(self, runner, name):
-        def handler(*args):
-            return runner(name, list(args))
+    def _get_dynamic_handler(self, runner, name, lib_instance=None):
+        def handler(*args, **kwargs):
+            kw_arguments = []
+            kwargs = kwargs.copy()
+            if lib_instance and hasattr(lib_instance, 'get_keyword_arguments'):
+                argspec = lib_instance.get_keyword_arguments(name) or []
+                argspec = [item.split('=') for item in argspec if '=' in item]
+                for index, arg_pair in enumerate(argspec):
+                    if args[index:index + 1]:
+                        continue
+
+                    if arg_pair[0] in kwargs:
+                        kw_arguments.append(kwargs[arg_pair[0]])
+                        kwargs.pop(arg_pair[0])
+                    else:
+                        kw_arguments.append(argspec[index][1])
+            return runner(name, list(args) + kw_arguments + ["%s=%s" % (k,v) for k, v in kwargs.items()])
         return handler
 
 
