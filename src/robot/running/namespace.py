@@ -35,7 +35,7 @@ STDLIB_NAMES = set(('BuiltIn', 'Collections', 'Dialogs', 'Easter',
                     'OperatingSystem', 'Remote', 'Reserved',
                     'Screenshot', 'String', 'Telnet', 'XML'))
 IMPORTER = Importer()
-INIT_FILE_MATCHER = re.compile("(?:.+?/)?__init__\.(?:html|htm|tsv|txt|robot|rst|rest)")
+INIT_FILE_MATCHER = re.compile(r"(?:.+?[/\\])?__init__\.(?:html|htm|tsv|txt|robot|rst|rest)")
 
 
 class Namespace:
