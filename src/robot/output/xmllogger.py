@@ -60,8 +60,9 @@ class XmlLogger(object):
 
     def _write_message(self, msg):
         attrs = {'timestamp': msg.timestamp or 'N/A', 'level': msg.level}
-        if msg.html:
+        if msg.html or "*HTML*" in msg.message:
             attrs['html'] = 'yes'
+            msg.message = msg.message.replace("*HTML*","")
         self._writer.element('msg', msg.message, attrs)
 
     def start_keyword(self, kw):
