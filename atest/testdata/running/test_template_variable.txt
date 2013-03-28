@@ -1,0 +1,14 @@
+*** Settings ***
+Test Template   ${TEMPLATE}
+
+*** Variables ***
+${TEMPLATE}     Should Not Be Equal
+
+*** Test Cases ***
+Variable Template Should Work
+  Fail   No reason
+
+Overriding Variable Template
+  [Documentation]  FAIL  Some reason
+  [Template]
+  Fail   Some reason

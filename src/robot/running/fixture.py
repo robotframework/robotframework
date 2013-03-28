@@ -54,3 +54,8 @@ class Setup(_Fixture):
 
 class Teardown(_Fixture):
     pass
+
+class TestTemplate(_Fixture):
+
+    def __init__(self, name):
+        _Fixture.__init__(self, name, None)

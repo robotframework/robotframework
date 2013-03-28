@@ -13,7 +13,7 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from fixture import Setup, Teardown
+from fixture import Setup, Teardown, TestTemplate
 from timeouts import TestTimeout
 
 
@@ -66,4 +66,5 @@ class DefaultValues(object):
 
     def get_template(self, template):
         tmpl = (template if template.is_set() else self._test_template).value
-        return tmpl if tmpl and tmpl.upper() != 'NONE' else None
+        tmpl = tmpl if tmpl and tmpl.upper() != 'NONE' else None
+        return TestTemplate(tmpl)

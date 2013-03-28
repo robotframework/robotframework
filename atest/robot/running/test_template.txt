@@ -13,6 +13,9 @@ Test Default Template
 Test Overriding Default Template In Test
     Check Test Case  ${TESTNAME}
 
+Test Using Variable As A Template
+    Check Test Case  ${TESTNAME}
+
 Test Overriding Default Template In Test With Empty
     Check Test Case  ${TESTNAME}
 
