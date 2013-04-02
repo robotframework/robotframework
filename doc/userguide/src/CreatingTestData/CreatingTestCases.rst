@@ -254,6 +254,12 @@ by the example test below that uses the same keyword as the above
 example. In this example the arguments that are not specified will get
 their default values.
 
+In Robot Framework 2.8 support for using named argument syntax for
+arguments without default values was added. Also possiblity to use named
+argument syntax with Python keywords that take keyworded variable `**kwargs`
+was added.
+
+
 .. table:: Keywords with named arguments
    :class: example
 
@@ -287,8 +293,8 @@ the incompatible keywords.
           :code:`arg2=override`.
 
 The named argument syntax is used only when the part of the argument
-before the equal sign matches the name of an argument with a
-default value. This matching is started from the end of the given
+before the equal sign matches the name of an argument. 
+This matching is started from the end of the given
 argument list and stopped when there is no match. In those rare cases
 when there are accidental matches, it is possible to use :code:`\\`
 to escape this syntax like :code:`nomatch\\=here`.
