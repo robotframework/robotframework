@@ -53,7 +53,6 @@ literal string, it must be `escaped with a backslash`__ as in :code:`\\${NAME}`.
 
 __ `Scalar variables`_
 __ `List variables`_
-__ http://code.google.com/p/robotframework/issues/detail?id=484
 __ `Setting variables in command line`_
 __ Escaping_
 
