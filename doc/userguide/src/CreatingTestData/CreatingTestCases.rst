@@ -705,9 +705,8 @@ table. This usage is illustrated more thoroughly in the next section.
 
 .. note:: Test templates is a new feature in Robot Framework 2.5.
 
-.. note:: It is currently not possibly to specify the template keyword
-   	  using variables. This limitation may be lifted in the future
-   	  versions.
+.. note:: In Robot Framework 2.8 enhancement to specify the template keyword
+   	  using a variable was added.
 
 Different test case styles
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
