@@ -770,6 +770,8 @@ can be changed dynamically using keywords from the `BuiltIn`_ library.
    +------------------------+-------------------------------------------------------+------------+
    | ${OUTPUT FILE}         | An absolute path to the `output file`_.               | Everywhere |
    +------------------------+-------------------------------------------------------+------------+
+   | ${LOG_LEVEL}           | Current log level as text. New in Robot Framework 2.8 | Everywhere |
+   +------------------------+-------------------------------------------------------+------------+
    | ${LOG FILE}            | An absolute path to the `log file`_ or string NONE    | Everywhere |
    |                        | when no log file is created.                          |            |
    +------------------------+-------------------------------------------------------+------------+
