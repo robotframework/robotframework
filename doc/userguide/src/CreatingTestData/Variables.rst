@@ -20,11 +20,6 @@ and they have the syntaxes :var:`${SCALAR}` and :var:`@{LIST}`,
 respectively. In addition to this, `environment variables`_ can be used
 directly with the syntax :var:`%{VARIABLE}`.
 
-.. warning:: Using scalar variables and list variables with the same
-             base name, for example :var:`${VAR}` and :var:`@{VAR}`,
-             has been deprecated in Robot Framework 2.5. For more
-             information, see `issue 484`__ in the issue tracker.
-
 The use of variables is recommended in the following cases:
 
 - When strings change often in the test data. With variables you only
