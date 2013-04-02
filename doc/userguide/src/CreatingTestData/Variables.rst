@@ -219,8 +219,8 @@ manner can be used similarly as scalar variables:
    \              Title Should Be  Welcome @{USER}[0]!
    =============  ===============  ===================  ==========
 
-Using list variables as scalar variables
-````````````````````````````````````````
+Using list variables as scalar variables and vice versa
+```````````````````````````````````````````````````````
 
 It is possible to use list variables as scalar variables containing
 lists simply by replacing :var:`@` with :var:`$`. This makes it
@@ -244,6 +244,24 @@ and its value is used instead.
    \              Length Should Be  ${items}        2
    \              Log Many          @{items}
    =============  ================  ==============  ==========  ==========
+
+This also works the other way around. When for example a library keyword
+returns a list like object, it can be put to a scalar variable and by
+replacing :var:`$` with :var:`@` it can be used as a normal list variable.
+
+.. table:: Using scalar as a list variable
+   :class: example
+
+   =============  ==========================  ==============  ==========  ==========
+     Test Case            Action                 Argument      Argument    Argument
+   =============  ==========================  ==============  ==========  ==========
+   Example        ${items} =                   Evaluate        [1,2,3,4]
+   \              Should Be Equal As Numbers   @{items}[0]        1
+   \              Should Be Equal As Numbers   @{items}[1]        2
+   \              Should Be Equal As Numbers   @{items}[2]        3
+   \              Should Be Equal As Numbers   @{items}[3]        4
+   =============  ==========================  ==============  ==========  ==========
+
 
 Using list variables with settings
 ``````````````````````````````````
