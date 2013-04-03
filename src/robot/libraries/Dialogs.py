@@ -69,10 +69,16 @@ def execute_manual_step(message, default_error=''):
 
 def get_value_from_user(message, default_value=''):
     """Pauses test execution and asks user to input a value.
+    Input value is returned by the keyword.
 
     `message` is the instruction shown in the dialog and `default_value` is
     the possible default value shown in the input field. Selecting 'Cancel'
     fails the keyword.
+
+    Example:
+    | Do something | | | |
+    | ${value} = | Get Value From User | Enter new value  | default_value=1 |
+    | Do something with the value | ${value} | | |
     """
     return _validate_user_input(InputDialog(message, default_value))
 
