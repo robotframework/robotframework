@@ -54,7 +54,13 @@ class _Builder(object):
                  self._timestamp(item.starttime),
                  item.elapsedtime)
         msg = getattr(item, 'message', '')
-        return model if not msg else model + (self._string(msg),)
+        if not msg:
+            return model
+        elif msg.startswith('*HTML*'):
+            msg = self._string(msg[6:].lstrip(), escape=False)
+        else:
+            msg = self._string(msg)
+        return model + (msg,)
 
     def _build_keywords(self, kws, split=False):
         splitting = self._context.start_splitting_if_needed(split)
