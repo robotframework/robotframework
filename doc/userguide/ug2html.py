@@ -142,13 +142,10 @@ def create_userguide():
     vfile.close()
 
     description = 'HTML generator for Robot Framework User Guide.'
-    arguments = '''
---time
---stylesheet-path=src/userguide.css
-src/RobotFrameworkUserGuide.rst
-RobotFrameworkUserGuide.html
-'''.split('\n')[1:-1]
-
+    arguments = ['--time',
+                 '--stylesheet-path', ['src/userguide.css'],
+                 'src/RobotFrameworkUserGuide.rst',
+                 'RobotFrameworkUserGuide.html']
     os.chdir(ugdir)
     publish_cmdline(writer_name='html', description=description, argv=arguments)
     os.unlink(vfile.name)
