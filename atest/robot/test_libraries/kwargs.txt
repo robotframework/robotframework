@@ -10,9 +10,6 @@ Using arguments args, vargs, kwargs
 Using arguments kwargs only
     Check Test Case
 
-Old bad behaviour has changed
-    Check Test Case
-
 Variable assignments with default and kwargs
     Check Test Case
 

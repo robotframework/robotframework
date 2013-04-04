@@ -9,9 +9,6 @@ Using arguments args, vargs, kwargs
 Using arguments kwargs only
     only kwargs      jada=bada     def1=we2222
 
-Old bad behaviour has changed
-    arg and default  x=y  y=z
-
 Variable assignments with default and kwargs
     arg default and kwargs  x=y  y=z  z=x
 
