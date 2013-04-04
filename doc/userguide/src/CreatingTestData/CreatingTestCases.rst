@@ -307,6 +307,8 @@ to escape this syntax like :code:`nomatch\\=here`.
           :code:`=` sign, and possible spaces after it are considered
           part of the default value itself.
 
+.. note:: No positional arguments after named arguments can be given.
+
 The following example demonstrates using named arguments in different
 scenarios, including in `test library imports`__.
 
