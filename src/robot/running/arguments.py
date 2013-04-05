@@ -359,24 +359,35 @@ class _ArgumentResolver(object):
         return self._resolve_variables(positional, named, variables)
 
     def _resolve_argument_usage(self, values):
+        named, positional = self._populate_positional_and_named(values)
+        self._check_mandatories(positional, named)
+        return positional, named
+
+    def _populate_positional_and_named(self, values):
         named = {}
         positional = []
         used_positionally = set()
         for index, arg in enumerate(values):
             if not self._is_named(arg):
-                if named:
-                    self._raise_named_before_positional_error(index, values)
-                self._add_positional_name_to_used(index, used_positionally)
-                positional.append(arg)
+                self._add_positional(arg, index, named, positional, used_positionally, values)
             else:
-                name, value = self._parse_named(arg)
-                if name in named:
-                    raise DataError("Argument '%s' repeated for %s '%s'." % (name, self._type.lower(), self._name))
-                if name in used_positionally:
-                    raise DataError("Error in %s '%s'. Value for argument '%s' was given twice." % (self._type.lower(), self._name, name))
-                named[name] = value
-        self._check_mandatories(positional, named)
-        return positional, named
+                self._add_named(arg, named, used_positionally)
+        return named, positional
+
+    def _add_positional(self, arg, index, named, positional, used_positionally, values):
+        if named:
+            self._raise_named_before_positional_error(index, values)
+        self._add_positional_name_to_used(index, used_positionally)
+        positional.append(arg)
+
+    def _add_named(self, arg, named, used_positionally):
+        name, value = self._parse_named(arg)
+        if name in named:
+            raise DataError("Argument '%s' repeated for %s '%s'." % (name, self._type.lower(), self._name))
+        if name in used_positionally:
+            raise DataError("Error in %s '%s'. Value for argument '%s' was given twice." % (
+                self._type.lower(), self._name, name))
+        named[name] = value
 
     def _raise_named_before_positional_error(self, index, values):
         offending_argument = values[index - 1]
