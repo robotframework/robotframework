@@ -20,11 +20,6 @@ and they have the syntaxes :var:`${SCALAR}` and :var:`@{LIST}`,
 respectively. In addition to this, `environment variables`_ can be used
 directly with the syntax :var:`%{VARIABLE}`.
 
-.. warning:: Using scalar variables and list variables with the same
-             base name, for example :var:`${VAR}` and :var:`@{VAR}`,
-             has been deprecated in Robot Framework 2.5. For more
-             information, see `issue 484`__ in the issue tracker.
-
 The use of variables is recommended in the following cases:
 
 - When strings change often in the test data. With variables you only
@@ -58,7 +53,6 @@ literal string, it must be `escaped with a backslash`__ as in :code:`\\${NAME}`.
 
 __ `Scalar variables`_
 __ `List variables`_
-__ http://code.google.com/p/robotframework/issues/detail?id=484
 __ `Setting variables in command line`_
 __ Escaping_
 
@@ -224,8 +218,8 @@ manner can be used similarly as scalar variables:
    \              Title Should Be  Welcome @{USER}[0]!
    =============  ===============  ===================  ==========
 
-Using list variables as scalar variables
-````````````````````````````````````````
+Using list variables as scalar variables and vice versa
+```````````````````````````````````````````````````````
 
 It is possible to use list variables as scalar variables containing
 lists simply by replacing :var:`@` with :var:`$`. This makes it
@@ -249,6 +243,24 @@ and its value is used instead.
    \              Length Should Be  ${items}        2
    \              Log Many          @{items}
    =============  ================  ==============  ==========  ==========
+
+This also works the other way around. When for example a library keyword
+returns a list like object, it can be put to a scalar variable and by
+replacing :var:`$` with :var:`@` it can be used as a normal list variable.
+
+.. table:: Using scalar as a list variable
+   :class: example
+
+   =============  ==========================  ==============  ==========  ==========
+     Test Case            Action                 Argument      Argument    Argument
+   =============  ==========================  ==============  ==========  ==========
+   Example        ${items} =                   Evaluate        [1,2,3,4]
+   \              Should Be Equal As Numbers   @{items}[0]        1
+   \              Should Be Equal As Numbers   @{items}[1]        2
+   \              Should Be Equal As Numbers   @{items}[2]        3
+   \              Should Be Equal As Numbers   @{items}[3]        4
+   =============  ==========================  ==============  ==========  ==========
+
 
 Using list variables with settings
 ``````````````````````````````````
@@ -769,6 +781,8 @@ can be changed dynamically using keywords from the `BuiltIn`_ library.
    |                        | New in Robot Framework 2.7                            | teardown`_ |
    +------------------------+-------------------------------------------------------+------------+
    | ${OUTPUT FILE}         | An absolute path to the `output file`_.               | Everywhere |
+   +------------------------+-------------------------------------------------------+------------+
+   | ${LOG_LEVEL}           | Current log level as text. New in Robot Framework 2.8 | Everywhere |
    +------------------------+-------------------------------------------------------+------------+
    | ${LOG FILE}            | An absolute path to the `log file`_ or string NONE    | Everywhere |
    |                        | when no log file is created.                          |            |

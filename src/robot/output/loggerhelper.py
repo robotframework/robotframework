@@ -49,7 +49,11 @@ class AbstractLogger:
         self.write(msg, 'WARN')
 
     def fail(self, msg):
-        self.write(msg, 'FAIL')
+        html = False
+        if msg.startswith("*HTML*"):
+            html = True
+            msg = msg[6:].lstrip()
+        self.write(msg, 'FAIL', html)
 
     def error(self, msg):
         self.write(msg, 'ERROR')
