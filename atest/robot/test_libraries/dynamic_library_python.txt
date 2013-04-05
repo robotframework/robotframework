@@ -23,7 +23,28 @@ Not Found Keyword
 
 Dynamic libraries should handle named arguments
     ${tc}=    Check Test Case  ${TESTNAME}
-    Check Log Message    ${tc.kws[0].msgs[0]}    Hello Ilmari.
-    Check Log Message    ${tc.kws[1].msgs[0]}    Good bye Firstname Lastname.
-    Check Log Message    ${tc.kws[2].msgs[0]}    hello! Jussi.
-    Check Log Message    ${tc.kws[3].msgs[0]}    hello! to_whom=JOHN.
+    Check Log Message    ${tc.kws[0].msgs[0]}    Hello John.
+    Check Log Message    ${tc.kws[1].msgs[0]}    Hello Mike.
+    Check Log Message    ${tc.kws[2].msgs[0]}    Good bye John Ventura.
+    Check Log Message    ${tc.kws[3].msgs[0]}    Good bye John Smith.
+    Check Log Message    ${tc.kws[4].msgs[0]}    You! a message. -BR, Me
+    Check Log Message    ${tc.kws[5].msgs[0]}    Patrick! this is my message. -BR, someone
+    Check Log Message    ${tc.kws[6].msgs[0]}    You! a message. -BR, Jesse Ventura
+    Check Log Message    ${tc.kws[7].msgs[0]}    Randy Savage! this is my message. -BR, Hulk Hogan
+
+
+Dynamic libraries should handle using named arguments for positional arguments
+    ${tc}=    Check Test Case  ${TESTNAME}
+    Check Log Message    ${tc.kws[0].msgs[0]}    12 1
+
+
+Dynamic libraries should work without argument specification
+    ${tc}=    Check test Case    ${TESTNAME}
+    Check Log Message    ${tc.kws[0].msgs[0]}    print this
+    Check Log Message    ${tc.kws[1].msgs[0]}    x: something, y: something else
+    Check Log Message    ${tc.kws[2].msgs[0]}    x: something, y: 0
+
+
+Dynamic libraries should match named arguments same way as with user keywords
+    ${tc}=    Check Test Case  ${TESTNAME}
+    Check Log Message    ${tc.kws[0].msgs[0]}    x y=1 z=2

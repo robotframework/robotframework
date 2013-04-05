@@ -1,8 +1,9 @@
-from impl_dynlib import impl_say_hello, impl_say_goodbye, impl_say_something_to
+from impl_dynlib import impl_say_hello, impl_say_goodbye, impl_say_something_to, impl_a_keyword
 
-KEYWORDS = {"say hello": (impl_say_hello, ["first_name=Ilmari"]),
-            "say goodbye": (impl_say_goodbye, ["first_name=Ilmari", "last_name=Kontulainen"]),
-            "say something to" : (impl_say_something_to, ["message", "to_whom"])}
+KEYWORDS = {'say hello': (impl_say_hello, ['first_name=John']),
+            'say goodbye': (impl_say_goodbye, ['first_name=John', 'last_name=Smith']),
+            'say something to': (impl_say_something_to, ['message', 'to_whom=You', 'from_who=Me']),
+            'a keyword': (impl_a_keyword, ['a', 'b=1'])}
 
 class DynamicLibrary(object):
 

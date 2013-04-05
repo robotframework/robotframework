@@ -200,28 +200,39 @@ class _DynamicHandler(_RunnableHandler):
 
     def _get_handler(self, lib_instance, handler_name):
         runner = getattr(lib_instance, self._run_keyword_method_name)
-        return self._get_dynamic_handler(runner, handler_name, lib_instance)
+        return self._get_dynamic_handler(runner, handler_name, self._get_argspec(lib_instance, handler_name))
+
+    def _get_argspec(self, lib_instance, name):
+        if not hasattr(lib_instance, 'get_keyword_arguments'):
+            return []
+        return lib_instance.get_keyword_arguments(name)
+
+    def _separate_to_positional_and_kw_args(self, arguments):
+        def reducer(collector, value):
+            if '=' in value:
+                collector[1].append(value.split('='))
+            else:
+                collector[0] = collector[0] + 1
+            return collector
+        return reduce(reducer, arguments, [0, []])
 
     def _get_global_handler(self, method, name):
-        return self._get_dynamic_handler(method, name)
+        return self._get_dynamic_handler(method, name, None)
 
-    def _get_dynamic_handler(self, runner, name, lib_instance=None):
+    def _get_dynamic_handler(self, runner, name, argspec):
         def handler(*args, **kwargs):
             kw_arguments = []
             kwargs = kwargs.copy()
-            if lib_instance and hasattr(lib_instance, 'get_keyword_arguments'):
-                argspec = lib_instance.get_keyword_arguments(name) or []
-                argspec = [item.split('=') for item in argspec if '=' in item]
-                for index, arg_pair in enumerate(argspec):
-                    if args[index:index + 1]:
-                        continue
-
-                    if arg_pair[0] in kwargs:
-                        kw_arguments.append(kwargs[arg_pair[0]])
-                        kwargs.pop(arg_pair[0])
+            if argspec:
+                number_of_positionals, keyword_arguments = self._separate_to_positional_and_kw_args(argspec)
+                skip = len(args) - number_of_positionals
+                for named_argument, default_value in keyword_arguments[skip:skip + 1]:
+                    if named_argument in kwargs:
+                        kw_arguments.append(kwargs[named_argument])
+                        kwargs.pop(named_argument)
                     else:
-                        kw_arguments.append(argspec[index][1])
-            return runner(name, list(args) + kw_arguments + ["%s=%s" % (k,v) for k, v in kwargs.items()])
+                        kw_arguments.append(default_value)
+            return runner(name, list(args) + kw_arguments + kwargs.values())
         return handler
 
 

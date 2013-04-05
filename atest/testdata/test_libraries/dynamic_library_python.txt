@@ -3,6 +3,7 @@ Library         RunKeywordLibrary
 Library         RunKeywordLibrary.RunKeywordButNoGetKeywordNamesLibrary
 Library         RunKeywordLibrary.GlobalRunKeywordLibrary
 Library         ${CURDIR}/dynamic_libraries/DynamicLibrary.py
+Library         ${CURDIR}/dynamic_libraries/DynamicLibraryWithoutArgspec.py
 
 *** Test Cases ***
 Passing, Logging and Returning
@@ -33,7 +34,32 @@ Not Found Keyword
     Get Keyword That Does Not Exist
 
 Dynamic libraries should handle named arguments
-    say hello    Ilmari
-    say goodbye    Firstname    last_name=Lastname
-    say something to     hello    Jussi
-    say something to     hello    to_whom=JOHN    # this is a robot feature
+    [Documentation]    PASS
+    Say Hello
+    Say Hello    Mike
+    Say Goodbye    last_name=Ventura
+    Say Goodbye
+    Say Something To     a message
+    Say Something To     this is my message    Patrick    someone
+    Say Something To     a message    from_who=Jesse Ventura
+    Say Something To     this is my message    from_who=Hulk Hogan    to_whom=Randy Savage
+
+
+Dynamic libraries should handle using named arguments for positional arguments
+    A keyword    a=12
+
+
+Dynamic libraries should work without argument specification
+    [Documentation]    PASS
+    Do Something    print this
+    Do Something else    something    something else
+    Do Something else    something
+    Do Something else    something    y=12
+
+
+Dynamic libraries should match named arguments same way as with user keywords
+    [Documentation]    PASS as these named arguments do not match the keyword's
+    ...                argument spec, it should use them as strings to match the
+    ...                positional arguments.
+    ...                e.g. this should print strings 'x', 'y=1' and 'z=2'
+    Do something third    x    y=1    z=2
