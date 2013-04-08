@@ -412,10 +412,15 @@ class TestHandlers(unittest.TestCase):
 
     def test_global_handlers_are_created_only_once(self):
         lib = TestLibrary('classes.RecordingLibrary')
-        calls_after_init = lib._libinst.calls_to_getattr
+        instance = lib._libinst
+        assert_true(instance is not None)
+        assert_equals(instance.kw_accessed, 1)
+        assert_equals(instance.kw_called, 0)
         for _ in range(5):
             lib.handlers['kw'].run(_FakeContext(), [])
-        assert_equals(lib._libinst.calls_to_getattr, calls_after_init)
+        assert_true(lib._libinst is instance)
+        assert_equals(instance.kw_accessed, 1)
+        assert_equals(instance.kw_called, 5)
 
     if utils.is_jython:
 

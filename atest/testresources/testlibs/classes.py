@@ -116,18 +116,20 @@ class VersionObjectLibrary:
     kw = lambda x:None
 
 
-
-class RecordingLibrary:
+class RecordingLibrary(object):
     ROBOT_LIBRARY_SCOPE = 'GLOBAL'
+
     def __init__(self):
-        self.calls_to_getattr = 0
+        self.kw_accessed = 0
+        self.kw_called = 0
+
     def kw(self):
-        pass
-    def __getattr__(self, name):
-        self.calls_to_getattr += 1
-        if name != 'kw':
-            raise AttributeError
-        return self.kw
+        self.kw_called += 1
+
+    def __getattribute__(self, name):
+        if name == 'kw':
+            self.kw_accessed += 1
+        return object.__getattribute__(self, name)
 
 
 class ArgDocDynamicLibrary:
