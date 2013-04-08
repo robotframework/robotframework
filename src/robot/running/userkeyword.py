@@ -156,7 +156,8 @@ class UserKeywordHandler(object):
         return return_value
 
     def _execute(self, context, variables, args_spec, resolved_arguments):
-        args_spec.set_variables(resolved_arguments, variables, context.output)
+        args_spec.set_variables(resolved_arguments, variables)
+        args_spec.trace_log_args(context.output, variables)
         self._verify_keyword_is_valid()
         self.timeout.start()
         try:

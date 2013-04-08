@@ -15,7 +15,6 @@
 import sys
 import inspect
 from array import ArrayType
-from functools import partial
 
 from robot.errors import DataError, FrameworkError
 from robot.variables import is_list_var, is_scalar_var
@@ -41,10 +40,9 @@ class _KeywordArguments(object):
         maxargs = len(args) if not (varargs or kwargs) else sys.maxint
         return args, defaults, varargs, kwargs, minargs, maxargs
 
-    def resolve(self, args, variables, output=None):
+    def resolve(self, args, variables):
         posargs, namedargs = self._resolve(args, variables)
         self.check_arg_limits(posargs, namedargs)
-        self._tracelog_args(output, posargs, namedargs)
         return posargs, namedargs
 
     def _resolve(self, args, variables):
@@ -56,12 +54,11 @@ class _KeywordArguments(object):
     def check_arg_limits_for_dry_run(self, args):
         self._arg_limit_checker.check_arg_limits_for_dry_run(args)
 
-    def _tracelog_args(self, logger, positional, named=None):
-        if logger:
-            message = partial(self._get_tracelog_arg_message, positional, named)
-            logger.trace(message)
+    def trace_log_args(self, logger, positional, named):
+        message = lambda: self._get_trace_log_arg_message(positional, named)
+        logger.trace(message)
 
-    def _get_tracelog_arg_message(self, positional, named):
+    def _get_trace_log_arg_message(self, positional, named):
         args = [utils.safe_repr(arg) for arg in positional]
         if named:
             args += ['%s=%s' % (utils.unic(name), utils.safe_repr(value))
@@ -302,26 +299,26 @@ class UserKeywordArguments(object):
             named[name] = variables.replace_scalar(named[name])
         return variables.replace_list(positional), named
 
-    def set_variables(self, arg_values, variables, output):
+    def set_variables(self, arg_values, variables):
         before_varargs, varargs = self._split_args_and_varargs(arg_values)
         for name, value in zip(self.names, before_varargs):
             variables[name] = value
         if self.varargs:
             variables[self.varargs] = varargs
-        self._tracelog_args(output, variables)
 
     def _split_args_and_varargs(self, args):
         if not self.varargs:
             return args, []
         return args[:len(self.names)], args[len(self.names):]
 
-    def _tracelog_args(self, logger, variables):
-        logger.trace(partial(self._get_tracelog_arg_message, variables))
+    def trace_log_args(self, logger, variables):
+        message = lambda: self._get_trace_log_arg_message(variables)
+        logger.trace(message)
 
-    def _get_tracelog_arg_message(self, variables):
+    def _get_trace_log_arg_message(self, variables):
         names = self.names + ([self.varargs] if self.varargs else [])
-        args =  ['%s=%s' % (name, utils.safe_repr(variables[name]))
-                 for name in names]
+        args = ['%s=%s' % (name, utils.safe_repr(variables[name]))
+                for name in names]
         return 'Arguments: [ %s ]' % ' | '.join(args)
 
 

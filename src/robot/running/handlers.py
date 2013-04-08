@@ -116,16 +116,16 @@ class _RunnableHandler(_BaseHandler):
         return None
 
     def _run(self, context, args):
-        output = context.output
         positional, named = \
-            self.arguments.resolve(args, context.get_current_vars(), output)
-        runner = self._runner_for(self._current_handler(), output, positional,
+            self.arguments.resolve(args, context.get_current_vars())
+        self.arguments.trace_log_args(context.output, positional, named)
+        runner = self._runner_for(self._current_handler(), context, positional,
                                   named, self._get_timeout(context.namespace))
         return self._run_with_output_captured_and_signal_monitor(runner, context)
 
-    def _runner_for(self, handler, output, positional, named, timeout):
+    def _runner_for(self, handler, context, positional, named, timeout):
         if timeout and timeout.active:
-            output.debug(timeout.get_message)
+            context.output.debug(timeout.get_message)
             return lambda: timeout.run(handler, args=positional, kwargs=named)
         return lambda: handler(*positional, **named)
 
