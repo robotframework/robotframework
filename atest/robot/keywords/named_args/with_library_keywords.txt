@@ -8,6 +8,9 @@ Resource        atest_resource.txt
 Simple Kwarg
     Check Test Case  ${TESTNAME}
 
+Check Library init arguments
+    Check Test Case  ${TESTNAME}
+
 Mandatory Args Should Be Positioned
     Check Test Case  ${TESTNAME}
 
