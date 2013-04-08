@@ -18,7 +18,7 @@ Non String Value
     NonStringValue.Check Init Arguments  ${NONE}  ${666}
 
 Named Argument Syntax Doesn't Work Inside Variable
-    NotNamed.Check Init Arguments  arg2=seppo  ${NONE}
+    NotNamed.Check Init Arguments  arg2\=seppo  ${NONE}
 
 WITH NAME Doesn't Work Inside Variable
     [Documentation]  FAIL  No keyword with name 'NotWorks.Check Init Arguments' found.

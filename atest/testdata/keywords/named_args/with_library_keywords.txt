@@ -1,10 +1,13 @@
 *** Settings ***
-Library  KwargsLibrary
+Library  KwargsLibrary  kw1=arg1  kw2=arg2  kw3=arg3
 Library  named_args_helper.py
 
 *** Test Cases ***
 Simple Kwarg
     Test With Kwargs
+
+Check Library init arguments
+    Check init arguments  ${null}  ${null}  kw1=arg1  kw2=arg2  kw3=arg3
 
 Mandatory Args Should Be Positioned
     ${ret}=  Mandatory And Kwargs  a  b  c

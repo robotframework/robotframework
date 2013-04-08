@@ -127,7 +127,6 @@ class _RunnableHandler(_BaseHandler):
         if timeout and timeout.active:
             output.debug(timeout.get_message)
             return lambda: timeout.run(handler, args=positional, kwargs=named)
-
         return lambda: handler(*positional, **named)
 
     def _run_with_output_captured_and_signal_monitor(self, runner, context):
@@ -144,9 +143,7 @@ class _RunnableHandler(_BaseHandler):
     def _current_handler(self):
         if self._method:
             return self._method
-        return self._get_handler(self.library.get_instance(),
-            self._handler_name)
-
+        return self._get_handler(self.library.get_instance(), self._handler_name)
 
     def _get_global_handler(self, method, name):
         return method
