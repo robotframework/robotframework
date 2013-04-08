@@ -145,8 +145,7 @@ class UserKeywordHandler(object):
             raise error
 
     def _variable_resolving_run(self, context, variables, args_spec, argument_values):
-        resolved_arguments = args_spec.resolve(argument_values, variables,
-                                               context.output)
+        resolved_arguments = args_spec.resolve(argument_values, variables)
         error = self._execute(context, variables, args_spec, resolved_arguments)
         if error and not error.can_continue(context.teardown):
             raise error

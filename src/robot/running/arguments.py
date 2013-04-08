@@ -42,13 +42,13 @@ class _KeywordArguments(object):
         return args, defaults, varargs, kwargs, minargs, maxargs
 
     def resolve(self, args, variables, output=None):
-        posargs, namedargs = self._resolve(args, variables, output)
+        posargs, namedargs = self._resolve(args, variables)
         self.check_arg_limits(posargs, namedargs)
         self._tracelog_args(output, posargs, namedargs)
         return posargs, namedargs
 
-    def _resolve(self, args, variables, output):
-        return self._get_argument_resolver().resolve(args, output, variables)
+    def _resolve(self, args, variables):
+        return self._get_argument_resolver().resolve(args, variables)
 
     def check_arg_limits(self, args, namedargs=None):
         self._arg_limit_checker.check_arg_limits(args, namedargs or {})
@@ -191,7 +191,7 @@ class RunKeywordArguments(PythonKeywordArguments):
         PythonKeywordArguments.__init__(self, argument_source, name)
         self._arg_resolution_index = arg_resolution_index
 
-    def _resolve(self, args, variables, output):
+    def _resolve(self, args, variables):
         args = variables.replace_run_kw_info(args, self._arg_resolution_index)
         return args, {}
 
@@ -271,17 +271,17 @@ class UserKeywordArguments(object):
     def _fill_missing_args(self, arguments, needed):
         return arguments + needed * [None]
 
-    def resolve(self, arguments, variables, output):
-        positional, varargs, named = self._resolve_arg_usage(arguments, variables, output)
+    def resolve(self, arguments, variables):
+        positional, varargs, named = self._resolve_arg_usage(arguments, variables)
         self._arg_limit_checker.check_arg_limits(positional+varargs, named)
         argument_values = self._resolve_arg_values(variables, named, positional)
         argument_values += varargs
         self._arg_limit_checker.check_missing_args(argument_values, len(arguments))
         return argument_values
 
-    def _resolve_arg_usage(self, arguments, variables, output):
+    def _resolve_arg_usage(self, arguments, variables):
         resolver = UserKeywordArgumentResolver(self, self._name, self._type)
-        positional, named = resolver.resolve(arguments, output=output)
+        positional, named = resolver.resolve(arguments)
         positional, named = self._replace_variables(variables, positional, named)
         return self._split_args_and_varargs(positional) + (named,)
 
@@ -354,7 +354,7 @@ class _ArgumentResolver(object):
         self._arguments = arguments
         self._mand_arg_count = len(arguments.names) - len(arguments.defaults)
 
-    def resolve(self, values, output, variables=None):
+    def resolve(self, values, variables=None):
         positional, named = self._resolve_argument_usage(values)
         return self._resolve_variables(positional, named, variables)
 
@@ -368,48 +368,13 @@ class _ArgumentResolver(object):
         positional = []
         used_positionally = set()
         for index, arg in enumerate(values):
-            if not self._is_named(arg):
-                self._add_positional(arg, index, named, positional, used_positionally, values)
-            else:
+            if self._is_named(arg):
                 self._add_named(arg, named, used_positionally)
+            elif named:
+                self._raise_named_before_positional_error(index, values)
+            else:
+                self._add_positional(arg, index, positional, used_positionally)
         return named, positional
-
-    def _add_positional(self, arg, index, named, positional, used_positionally, values):
-        if named:
-            self._raise_named_before_positional_error(index, values)
-        self._add_positional_name_to_used(index, used_positionally)
-        positional.append(arg)
-
-    def _add_named(self, arg, named, used_positionally):
-        name, value = self._parse_named(arg)
-        if name in named:
-            raise DataError("Argument '%s' repeated for %s '%s'." % (name, self._type.lower(), self._name))
-        if name in used_positionally:
-            raise DataError("Error in %s '%s'. Value for argument '%s' was given twice." % (
-                self._type.lower(), self._name, name))
-        named[name] = value
-
-    def _raise_named_before_positional_error(self, index, values):
-        offending_argument = values[index - 1]
-        offending_name, _ = self._split_from_kwarg_sep(offending_argument)
-        raise DataError(
-            "Error in %s '%s'. Named arguments can not be given before positional arguments. Please remove prefix %s= or escape %s as %s." % (
-                self._type.lower(), self._name, offending_name, offending_argument, offending_argument.replace('=', '\\=')))
-
-    def _add_positional_name_to_used(self, index, used_positionally):
-        if index < len(self._arguments.names):
-            positional_name = self._arguments.names[index]
-            used_positionally.add(positional_name)
-
-    def _check_mandatories(self, positional, named):
-        if len(positional) >= self._mand_arg_count:
-            return
-        for name in self._arguments.names[len(positional):self._mand_arg_count]:
-            if name not in named:
-                raise DataError("%s '%s' missing value for argument '%s'." % (self._type, self._name, name))
-
-    def _optional(self, values):
-        return values[self._mand_arg_count:]
 
     def _is_named(self, arg):
         if self._is_str_with_kwarg_sep(arg):
@@ -417,12 +382,48 @@ class _ArgumentResolver(object):
             return self._is_arg_name(name)
         return False
 
+    def _add_named(self, arg, named, used_positionally):
+        name, value = self._parse_named(arg)
+        if name in named:
+            raise DataError("Argument '%s' repeated for %s '%s'."
+                            % (name, self._type.lower(), self._name))
+        if name in used_positionally:
+            raise DataError("Error in %s '%s'. Value for argument '%s' was given twice."
+                            % (self._type.lower(), self._name, name))
+        named[name] = value
+
+    def _add_positional(self, arg, index, positional, used_positionally):
+        if index < len(self._arguments.names):
+            positional_name = self._arguments.names[index]
+            used_positionally.add(positional_name)
+        positional.append(arg)
+
+    def _raise_named_before_positional_error(self, index, values):
+        argument = values[index - 1]
+        name, _ = self._split_from_kwarg_sep(argument)
+        raise DataError("Error in %s '%s'. Named arguments can not be given "
+                        "before positional arguments. Please remove prefix "
+                        "%s= or escape %s as %s."
+                        % (self._type.lower(), self._name, name,
+                           argument, argument.replace('=', '\\=')))   # FIXME: replace only once
+
+    def _check_mandatories(self, positional, named):
+        if len(positional) >= self._mand_arg_count:
+            return
+        for name in self._arguments.names[len(positional):self._mand_arg_count]:
+            if name not in named:
+                raise DataError("%s '%s' missing value for argument '%s'."
+                                % (self._type, self._name, name))
+
+    def _optional(self, values):
+        return values[self._mand_arg_count:]
+
     def _parse_named(self, arg):
         name, value = self._split_from_kwarg_sep(arg)
         return self._coerce(name), value
 
     def _is_str_with_kwarg_sep(self, arg):
-        if not isinstance(arg, basestring):
+        if not isinstance(arg, basestring): #FIXME: Do we need this check?
             return False
         if '=' not in arg:
             return False
@@ -476,7 +477,7 @@ class JavaKeywordArgumentResolver(object):
         self._arguments = arguments
         self._minargs, self._maxargs = arguments.minargs, arguments.maxargs
 
-    def resolve(self, values, output, variables):
+    def resolve(self, values, variables):
         values = variables.replace_list(values)
         self._arguments.check_arg_limits(values)
         if self._expects_varargs() and self._last_is_not_list(values):
