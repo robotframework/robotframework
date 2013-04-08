@@ -1,0 +1,22 @@
+*** Settings ***
+Suite Setup     Run Tests  -l log.html -r report.html  running/messages_in_failed_suites.txt
+Force Tags      regression  pybot  jybot
+Resource        atest_resource.txt
+
+*** Variables ***
+${MESSAGE_IN_OUTPUT}  *HTML* HTML tagged detail in <a href='http://www.robotframework.org'>Robotframework</a>
+${MESSAGE_IN_HTML}    HTML tagged detail in <a href='http://www.robotframework.org'>Robotframework</a>
+${MESSAGE_ESCAPED}    HTML tagged detail in &lt;a href='http://www.robotframework.org'&gt;Robotframework&lt;/a&gt;
+
+*** Test Cases ***
+Check fail message in the log.html
+    Check Test Case  ${TESTNAME}   FAIL   ${MESSAGE_IN_OUTPUT}
+    ${content} =         Get File   ${OUTDIR}/log.html
+    Should Contain       ${content}   ${MESSAGE_IN_HTML}
+    Should Contain       ${content}   ${MESSAGE_ESCAPED}
+
+Check fail message in the report.html
+    Check Test Case  ${TESTNAME}   FAIL   ${MESSAGE_IN_OUTPUT}
+    ${content} =         Get File   ${OUTDIR}/report.html
+    Should Contain       ${content}   ${MESSAGE_IN_HTML}
+    Should Not Contain   ${content}   ${MESSAGE_ESCAPED}

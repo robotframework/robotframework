@@ -7,3 +7,4 @@ Test with messages
   Log  debugging  DEBUG
   Log  tracing  TRACE
   Set Log Level  INFO
+  Fail  *HTML* HTML tagged content <a href='http://www.robotframework.org'>Robot Framework</a>

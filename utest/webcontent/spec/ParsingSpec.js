@@ -268,6 +268,10 @@ describe("Handling messages", function (){
         });
         expect(callbackExecuted).toBeTruthy();
     });
+
+    it("should handle fail level message", function () {
+        expectMessage(kwMessage(7), "HTML tagged content <a href='http://www.robotframework.org'>Robot Framework</a>", "FAIL");
+    });
 });
 
 
