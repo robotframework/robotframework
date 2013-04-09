@@ -21,8 +21,10 @@ from robot.errors import DataError
 from robot.common import BaseLibrary
 from robot.output import LOGGER
 
-from handlers import Handler, InitHandler, DynamicHandler
-from outputcapture import OutputCapturer
+from .dynamicmethods import (GetKeywordArguments, GetKeywordDocumentation,
+                             GetKeywordNames, RunKeyword)
+from .handlers import Handler, InitHandler, DynamicHandler
+from .outputcapture import OutputCapturer
 
 if utils.is_jython:
     from org.python.core import PyReflectedFunction, PyReflectedConstructor
@@ -45,51 +47,12 @@ def TestLibrary(name, args=None, variables=None, create_handlers=True):
 def _get_lib_class(libcode):
     if inspect.ismodule(libcode):
         return _ModuleLibrary
-    if _DynamicMethod(libcode, 'get_keyword_names'):
-        if _DynamicMethod(libcode, 'run_keyword'):
+    if GetKeywordNames(libcode):
+        if RunKeyword(libcode):
             return _DynamicLibrary
         else:
             return _HybridLibrary
     return _ClassLibrary
-
-
-class _DynamicMethod(object):
-
-    def __init__(self, libcode, underscore_name, default=None):
-        self._method = self._get_method(libcode, underscore_name)
-        self._default = default
-
-    def __call__(self, *args):
-        if not self._method:
-            return self._default
-        try:
-            value = self._method(*args)
-        except:
-            raise DataError("Calling dynamic method '%s' failed: %s" %
-                            (self._method.__name__, utils.get_error_message()))
-        else:
-            return self._to_unicode(value) if value is not None else self._default
-
-    def _to_unicode(self, value):
-        if isinstance(value, unicode):
-            return value
-        if isinstance(value, str):
-            return utils.unic(value, 'UTF-8')
-        return [self._to_unicode(v) for v in value]
-
-    def __nonzero__(self):
-        return self._method is not None
-
-    def _get_method(self, libcode, underscore_name):
-        for name in underscore_name, self._getCamelCaseName(underscore_name):
-            method = getattr(libcode, name, None)
-            if callable(method):
-                return method
-        return None
-
-    def _getCamelCaseName(self, underscore_name):
-        tokens = underscore_name.split('_')
-        return ''.join([tokens[0]] + [t.capitalize() for t in tokens[1:]])
 
 
 class _BaseTestLibrary(BaseLibrary):
@@ -331,26 +294,18 @@ class _DynamicLibrary(_BaseTestLibrary):
 
     def __init__(self, libcode, name, args, variables=None):
         _BaseTestLibrary.__init__(self, libcode, name, args, variables)
-        self._get_kw_doc = \
-            _DynamicMethod(libcode, 'get_keyword_documentation', default='')
-        self._get_kw_args = \
-            _DynamicMethod(libcode, 'get_keyword_arguments', default=None)
+        self._get_kw_doc = GetKeywordDocumentation(libcode)
+        self._get_kw_args = GetKeywordArguments(libcode)
 
     @property
     def doc(self):
         return self._get_kw_doc(self.get_instance(), '__intro__') or self._doc
 
     def _get_handler_names(self, instance):
-        try:
-            return instance.get_keyword_names()
-        except AttributeError:
-            return instance.getKeywordNames()
+        return GetKeywordNames(instance)()
 
-    def _get_handler_method(self, instance, name_is_ignored):
-        try:
-            return instance.run_keyword
-        except AttributeError:
-            return instance.runKeyword
+    def _get_handler_method(self, instance, name):
+        return RunKeyword(instance).method
 
     def _create_handler(self, handler_name, handler_method):
         doc = self._get_kw_doc(self._libinst, handler_name)
