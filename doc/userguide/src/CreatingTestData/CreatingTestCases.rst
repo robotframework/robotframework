@@ -353,6 +353,35 @@ by `user keywords`__.
 
 __ `Embedding arguments into keyword name`_
 
+Failures
+~~~~~~~~
+
+Failures occur when any of the test case steps fail. Starting from Robot Framework 2.8,
+the `error messages can include HTML formatting`__.
+
+__ `HTML in error messages`_
+
+Error messages can be given in test data like in example below. The `*HTML*` identifier needs to be at the beginning
+of the message if `HTML` formatting is needed.
+
+.. table:: Keyword error message
+   :class: example
+
+   +--------------+----------------------+-------------------------------+------------+--------------------------------+
+   |  Test Case   |     Action           |       Argument                |  Argument  |        Argument                |
+   +==============+======================+===============================+============+================================+
+   | Simple       | [Documentation]      | Error msg when assert fails   |            |                                |
+   +--------------+----------------------+-------------------------------+------------+--------------------------------+
+   |              | ${my number}=        | Get Number                    |            |                                |
+   +--------------+----------------------+-------------------------------+------------+--------------------------------+
+   |              | Should Be Equal      | ${my number}                  |     42     | `*HTML*` Number is not my      |
+   |              | As Numbers           |                               |            | <b>MAGIC</b> number.           |
+   +--------------+----------------------+-------------------------------+------------+--------------------------------+
+   |              | Fail                 | `*HTML*` Here we <i>fail</i>  |            |                                |
+   |              |                      | in any case.                  |            |                                |
+   +--------------+----------------------+-------------------------------+------------+--------------------------------+
+
+
 Test case name and documentation
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 

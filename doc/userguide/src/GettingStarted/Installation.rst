@@ -139,13 +139,13 @@ any supported interpreter.
 .. table:: Entry points to built-in tools
    :class: tabular
 
-   =================  ===============================  ======================================
+   =================  =================================  ======================================
           Tool                  Run as module                     Run as script
-   =================  ===============================  ======================================
-   libdoc             :cli:`python -m robot.libdoc`    :cli:`python path/robot/libdoc.py`
-   testdoc            :cli:`python -m robot.testdoc`   :cli:`python path/robot/testdoc.py`
-   tidy               :cli:`python -m robot.tidy`      :cli:`python path/robot/tidy.py`
-   =================  ===============================  ======================================
+   =================  =================================  ======================================
+   libdoc             :cli:`python -m robot.libdoc`      :cli:`python path/robot/libdoc.py`
+   testdoc            :cli:`python -m robot.testdoc`     :cli:`python path/robot/testdoc.py`
+   tidy               :cli:`python -m robot.tidy`        :cli:`python path/robot/tidy.py`
+   =================  =================================  ======================================
 
 Verifying installation
 ``````````````````````

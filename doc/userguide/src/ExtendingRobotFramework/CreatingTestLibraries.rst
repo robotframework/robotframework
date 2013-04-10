@@ -805,10 +805,31 @@ others, the message is created in the format :msg:`ExceptionType:
 Actual message`. In both cases, it is important for the users that the
 exception message is as informative as possible.
 
+HTML in error messages
+``````````````````````
+
+Starting from Robot Framework 2.8 it is also possible have HTML formatted
+error messages by starting the message with text :msg:`*HTML*`:
+
+.. sourcecode:: python
+
+   raise AssertionError("*HTML* <a href='robotframework.org'>Robot Framework</a> rulez!!")
+
+This method can be used both when raising an exception in a library, like
+in the example above, and `when users provide an error message in the test data`__.
+
+__ `Failures`_
+
+Cutting long messages automatically
+```````````````````````````````````
+
 If the error message is longer than 40 lines, it will be automatically
 cut from the middle to prevent reports from getting too long and
 difficult to read. The full error message is always shown in the log
 message of the failed keyword.
+
+Tracebacks
+``````````
 
 The traceback of the exception is also logged using :msg:`DEBUG` `log level`_.
 These messages are not visible in log files by default because they are very
@@ -891,7 +912,7 @@ messages, specify the log level explicitly by embedding the level into
 the message in the format :code:`*LEVEL* Actual log message`, where
 :code:`*LEVEL*` must be in the beginning of a line and :msg:`LEVEL` is
 one of the available logging levels :msg:`TRACE`, :msg:`DEBUG`,
-:msg:`INFO`, :msg:`WARN` and :msg:`HTML`.
+:msg:`INFO`, :msg:`WARN`,:msg:`FAIL`  and :msg:`HTML`.
 
 Warnings
 ````````
