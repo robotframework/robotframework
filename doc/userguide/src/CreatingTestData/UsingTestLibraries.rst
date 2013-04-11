@@ -351,7 +351,7 @@ External libraries
 
 Any test library that is not one of the standard libraries is, by
 definition, *an external library*. Robot Framework developers provide
-some generic libraries, such as SeleniumLibrary_ and SwingLibrary_,
+some generic libraries, such as Selenium2Library_ and SwingLibrary_,
 which are not packaged with the framework itself, because they require
 external dependencies. Generic libraries can also be provided by other
 parties, and most teams have also some custom libraries only for
