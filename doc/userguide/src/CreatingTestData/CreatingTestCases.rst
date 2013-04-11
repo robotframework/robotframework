@@ -357,12 +357,13 @@ Failures
 ~~~~~~~~
 
 Failures occur when any of the test case steps fail. Starting from Robot Framework 2.8,
-the `error messages can include HTML formatting`__.
+the `error messages can include HTML formatting`__, which allows to embed error related
+information into reports_ and logs_ in an accessible form.
 
 __ `HTML in error messages`_
 
-Error messages can be given in test data like in example below. The `*HTML*` identifier needs to be at the beginning
-of the message if `HTML` formatting is needed.
+Error messages can be given in test data like in example below. The `*HTML*` identifier followed by empty space needs
+to be at the beginning of the message if `HTML` formatting is needed.
 
 .. table:: Keyword error message
    :class: example
@@ -377,8 +378,9 @@ of the message if `HTML` formatting is needed.
    |              | Should Be Equal      | ${my number}                  |     42     | `*HTML*` Number is not my      |
    |              | As Numbers           |                               |            | <b>MAGIC</b> number.           |
    +--------------+----------------------+-------------------------------+------------+--------------------------------+
-   |              | Fail                 | `*HTML*` Here we <i>fail</i>  |            |                                |
-   |              |                      | in any case.                  |            |                                |
+   |              | Fail                 | `*HTML*` See more at          |            |                                |
+   |              |                      | <a href='robotframework.org'> |            |                                |
+   |              |                      | Robot Framework</a>           |            |                                |
    +--------------+----------------------+-------------------------------+------------+--------------------------------+
 
 
