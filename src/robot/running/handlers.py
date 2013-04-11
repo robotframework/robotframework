@@ -197,12 +197,7 @@ class _DynamicHandler(_RunnableHandler):
 
     def _get_handler(self, lib_instance, handler_name):
         runner = getattr(lib_instance, self._run_keyword_method_name)
-        return self._get_dynamic_handler(runner, handler_name, self._get_argspec(lib_instance, handler_name))
-
-    def _get_argspec(self, lib_instance, name):
-        if not hasattr(lib_instance, 'get_keyword_arguments'):
-            return []
-        return lib_instance.get_keyword_arguments(name)
+        return self._get_dynamic_handler(runner, handler_name)
 
     def _separate_to_positional_and_kw_args(self, arguments):
         def reducer(collector, value):
@@ -214,14 +209,14 @@ class _DynamicHandler(_RunnableHandler):
         return reduce(reducer, arguments, [0, []])
 
     def _get_global_handler(self, method, name):
-        return self._get_dynamic_handler(method, name, None)
+        return self._get_dynamic_handler(method, name)
 
-    def _get_dynamic_handler(self, runner, name, argspec):
+    def _get_dynamic_handler(self, runner, name):
         def handler(*args, **kwargs):
             kw_arguments = []
             kwargs = kwargs.copy()
-            if argspec:
-                number_of_positionals, keyword_arguments = self._separate_to_positional_and_kw_args(argspec)
+            if self._argspec:
+                number_of_positionals, keyword_arguments = self._separate_to_positional_and_kw_args(self._argspec)
                 skip = len(args) - number_of_positionals
                 for named_argument, default_value in keyword_arguments[skip:skip + 1]:
                     if named_argument in kwargs:
