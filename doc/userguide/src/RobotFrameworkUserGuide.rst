@@ -171,6 +171,7 @@ Appendices
 .. _Dialogs library documentation: ../libraries/Dialogs.html
 .. _Screenshot library documentation: ../libraries/Screenshot.html
 .. _SeleniumLibrary: http://code.google.com/p/robotframework-seleniumlibrary
+.. _Selenium2Library: https://github.com/rtomac/robotframework-selenium2library/wiki
 .. _SwingLibrary: http://code.google.com/p/robotframework-swinglibrary
 
 .. 3. Executing test cases
@@ -225,6 +226,7 @@ Appendices
 .. _issue tracker: http://issues.robotframework.org
 .. _previous User Guides: http://code.google.com/p/robotframework/wiki/UserGuide
 .. _API documentation: http://robot-framework.readthedocs.org
+.. _BitBucket: https://bitbucket.org/robotframework
 
 .. External link targets
 
