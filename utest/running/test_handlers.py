@@ -45,19 +45,20 @@ class TestPythonHandler(unittest.TestCase):
             assert_equals(handler.doc, method.expected_doc)
             assert_equals(handler.shortdoc, method.expected_shortdoc)
 
-    def test_get_arg_info(self):
+    def test_arguments(self):
         for method in _get_handler_methods(ArgInfoLibrary()):
             handler = _PythonHandler(LibraryMock(), method.__name__, method)
+            args = handler.arguments
+            argspec = (args.positional, args.defaults, args.varargs, args.kwargs)
             expected = eval(method.__doc__)
-            assert_equals(handler.arguments._get_arg_spec(method),
-                          expected, method.__name__)
+            assert_equals(argspec, expected, method.__name__)
 
     def test_arg_limits(self):
         for method in _get_handler_methods(ArgumentsPython()):
             handler = _PythonHandler(LibraryMock(), method.__name__, method)
             exp_mina, exp_maxa = eval(method.__doc__)
-            assert_equals(handler.arguments._arg_limit_checker.minargs, exp_mina)
-            assert_equals(handler.arguments._arg_limit_checker.maxargs, exp_maxa)
+            assert_equals(handler.arguments.minargs, exp_mina)
+            assert_equals(handler.arguments.maxargs, exp_maxa)
 
     def test_getarginfo_getattr(self):
         testlib = TestLibrary('classes.GetattrLibrary')
@@ -65,8 +66,8 @@ class TestPythonHandler(unittest.TestCase):
         assert_equals(len(handlers), 3)
         for handler in handlers:
             assert_true(handler.name in ['Foo','Bar','Zap'])
-            assert_equals(handler.arguments._arg_limit_checker.minargs, 0)
-            assert_equals(handler.arguments._arg_limit_checker.maxargs, sys.maxint)
+            assert_equals(handler.arguments.minargs, 0)
+            assert_equals(handler.arguments.maxargs, sys.maxint)
 
 
 class TestDynamicHandlerCreation(unittest.TestCase):
@@ -143,8 +144,8 @@ class TestDynamicHandlerCreation(unittest.TestCase):
                               doc, argspec)
 
     def _assert_arg_specs(self, handler, minargs, maxargs, names=[], defaults=[], vararg=None):
-        assert_equals(handler.arguments._arg_limit_checker.minargs, minargs)
-        assert_equals(handler.arguments._arg_limit_checker.maxargs, maxargs)
+        assert_equals(handler.arguments.minargs, minargs)
+        assert_equals(handler.arguments.maxargs, maxargs)
         assert_equals(handler.arguments.names, names)
         assert_equals(handler.arguments.defaults, defaults)
         assert_equals(handler.arguments.varargs, vararg)
@@ -161,23 +162,23 @@ if utils.is_jython:
             for count in [0, 1, 3]:
                 method = handlers['a_%d' % count]
                 handler = _JavaHandler(LibraryMock(), method.__name__, method)
-                assert_equals(handler.arguments._arg_limit_checker.minargs, count)
-                assert_equals(handler.arguments._arg_limit_checker.maxargs, count)
+                assert_equals(handler.arguments.minargs, count)
+                assert_equals(handler.arguments.maxargs, count)
 
         def test_arg_limits_with_varargs(self):
             for count in [0, 1]:
                 method = handlers['a_%d_n' % count]
                 handler = _JavaHandler(LibraryMock(), method.__name__, method)
-                assert_equals(handler.arguments._arg_limit_checker.minargs, count)
-                assert_equals(handler.arguments._arg_limit_checker.maxargs, sys.maxint)
+                assert_equals(handler.arguments.minargs, count)
+                assert_equals(handler.arguments.maxargs, sys.maxint)
 
         def test_arg_limits_with_defaults(self):
             # defaults i.e. multiple signatures
             for mina, maxa in [(0,1), (1,3)]:
                 method = handlers['a_%d_%d' % (mina, maxa)]
                 handler = _JavaHandler(LibraryMock(), method.__name__, method)
-                assert_equals(handler.arguments._arg_limit_checker.minargs, mina)
-                assert_equals(handler.arguments._arg_limit_checker.maxargs, maxa)
+                assert_equals(handler.arguments.minargs, mina)
+                assert_equals(handler.arguments.maxargs, maxa)
 
 
     class TestArgumentCoercer(unittest.TestCase):
