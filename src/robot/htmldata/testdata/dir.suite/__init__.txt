@@ -5,6 +5,15 @@ Documentation  Documentation for the whole test suite. All this forms a single
 ...            paragraph is getting pretty long. And the paragraph is getting
 ...            pretty long. Supported formatting is demonstrated below.
 
+...            = Title Level 1 =
+...            Text for level 1
+...
+...            == Title Level 2 ==
+...            Text for level 2
+...
+...            === Title Level 3 ===
+...            Text for level 3
+
 ...            - *URL:*    http://robotframework.org
 ...            - _Image:_  http://code.google.com/p/robotframework/logo?ext.png
 ...            - _*Link:*_ [http://robotframework.org|Robot Framework]
