@@ -191,3 +191,7 @@ th.stats-col-graph:hover {
 .sorter-false:hover {
     background-color: #DCDCF0;
 }
+
+.doc > h2 {font-size: 1.25em;}
+.doc > h3 {font-size: 1.1em;}
+.doc > h4 {font-size: 1.0em;}
