@@ -2,10 +2,8 @@ import unittest
 import sys
 import inspect
 
-from robot.running.handlers import (_RunnableHandler, _PythonHandler,
-                                    _JavaHandler, DynamicHandler)
+from robot.running.handlers import _PythonHandler, _JavaHandler, DynamicHandler
 from robot import utils
-from robot.errors import *
 from robot.utils.asserts import *
 from robot.running.testlibraries import TestLibrary
 
@@ -154,7 +152,7 @@ class TestDynamicHandlerCreation(unittest.TestCase):
 if utils.is_jython:
 
     handlers = dict((method.__name__, method) for method in
-                    _get_java_handler_methods(ArgumentsJava()))
+                    _get_java_handler_methods(ArgumentsJava('Arg', ['varargs'])))
 
     class TestJavaHandler(unittest.TestCase):
 
@@ -184,7 +182,12 @@ if utils.is_jython:
     class TestArgumentCoercer(unittest.TestCase):
 
         def setUp(self):
-            self.lib = TestLibrary('ArgTypeCoercion')
+            self.lib = TestLibrary('ArgTypeCoercion', ['42', 'true'])
+
+        def test_coercion_in_constructor(self):
+            instance = self.lib.get_instance()
+            assert_equals(instance.myInt, 42)
+            assert_equals(instance.myBool, True)
 
         def test_coercing_to_integer(self):
             self._test_coercion(self._handler_named('intArgument'),

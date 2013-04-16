@@ -1,6 +1,12 @@
 public class ArgTypeCoercion {
 
-    public ArgTypeCoercion(int num, boolean flag) {}
+    public int myInt;
+    public boolean myBool;
+
+    public ArgTypeCoercion(int myInt, boolean myBool) {
+        this.myInt = myInt;
+        this.myBool = myBool;
+    }
 
     public void noArgument() {}
 
