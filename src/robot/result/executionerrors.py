@@ -39,3 +39,6 @@ class ExecutionErrors(object):
 
     def __len__(self):
         return len(self.messages)
+
+    def __getitem__(self, index):
+        return self.messages[index]

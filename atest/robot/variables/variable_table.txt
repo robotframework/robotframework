@@ -49,3 +49,13 @@ Assign Mark With List Variable
 Three dots on the same line should be interpreted as string
     Check Test Case     ${TEST NAME}
 
+Using Scalar List Should Fail
+    ${path}=    Normalize Path    ${DATADIR}/variables/variable_table.txt
+    @{expected message}=    Create List     Error in file '${path}' in table 'Variables':
+    ...                     Setting variable '\${scalar list}' failed: Creating a scalar variable with
+    ...                     a list value in the Variable table is no longer possible.\nCreate
+    ...                     a list variable '\@{scalar list}' and use it as a scalar variable
+    ...                     '\${scalar list}' instead.
+    ${msg}=     Catenate     @{expected message}
+    Check Test Case     ${TEST NAME}
+    Check Log Message    ${ERRORS[0]}    ${msg}    ERROR

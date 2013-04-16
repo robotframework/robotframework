@@ -301,14 +301,15 @@ class Variables(utils.NormalizedDict):
 
     def _get_var_table_name_and_value(self, name, value, path=None):
         self._validate_var_name(name)
-        return name, self._delayed_var_value(name, value, path)
+        self._validate_var_is_not_scalar_list(name, value, path)
+        value = [self._unescape_leading_trailing_spaces(cell) for cell in value]
+        return name, self._delayed_var_value(name, value)
 
-    def _delayed_var_value(self, name, value, path):
+    def _delayed_var_value(self, name, value):
         def _delayed():
-            val = [self._unescape_leading_trailing_spaces(cell) for cell in value]
-            if name[0] == '@':
-                return self.replace_list(val)
-            return self._get_var_table_scalar_value(name, val, path)
+            if is_list_var(name):
+                return self.replace_list(value)
+            return self.replace_scalar(value[0])
         _delayed.delayed_var_value = True
         return _delayed
 
@@ -319,15 +320,11 @@ class Variables(utils.NormalizedDict):
             item = item[1:]
         return item
 
-    def _get_var_table_scalar_value(self, name, value, path=None):
-        if len(value) == 1:
-            return self.replace_scalar(value[0])
-        msg = """\
-Creating a scalar variable with a list value in the Variable table is deprecated.
-Create a list variable '@%s' and use it as a scalar variable '%s' instead""" % (name[1:], name)
-        if path:
-            msg += '\nError in file: %s' % path
-        raise DataError(msg)
+    def _validate_var_is_not_scalar_list(self, name, value, path):
+        if is_scalar_var(name) and len(value) > 1:
+            msg = """Creating a scalar variable with a list value in the Variable table is no longer possible.
+Create a list variable '@%s' and use it as a scalar variable '%s' instead.""" % (name[1:], name)
+            raise DataError(msg)
 
     def _get_variables_from_var_file(self, var_file, args):
         variables = self._get_dynamical_variables(var_file, args or ())
