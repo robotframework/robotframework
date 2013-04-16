@@ -7,11 +7,11 @@ public class ArgTypeCoercion {
         if (arg > 0) judgement = "greater than 0.";
         else if (arg == 0) judgement = "0.";
         else judgement = "smaller than 0.";
-        System.out.println("Number " + arg + " is " + judgement); 
+        System.out.println("Number " + arg + " is " + judgement);
     }
 
     public void booleanArgument(boolean arg) {
-        if (arg) 
+        if (arg)
             System.out.println("It is true!");
         else
             System.out.println("It is false!");
@@ -60,7 +60,6 @@ public class ArgTypeCoercion {
 
     public void coercableAndUnCoercableArgs(int arg1, boolean arg2, Long arg3, boolean arg4) {}
 
-	public void primitiveAndArray(int arg1, int[] arg2) {
-	}
+    public void primitiveAndArray(int arg1, int[] arg2) {}
 
 }
