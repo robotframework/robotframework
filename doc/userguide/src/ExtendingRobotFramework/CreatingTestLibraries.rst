@@ -654,43 +654,54 @@ be combined with other ways of specifying arguments:
 
 Variable number of arguments with Java
 ``````````````````````````````````````
-Robot supports Java varargs syntax for defining variable number of
-arguments.  Robot also will translate an array as the last argument in
-a keyword signature as a list of variable number of arguments. In this
-case, all leftover arguments to the keyword are packed into the
-list. This also works if the keyword is used with one argument less
-than the actual number of arguments in the signature - in this case
-the array at the end will be empty.
-
-Robot's support for variable number of arguments in Java has one
-limitation: it only works if the method has only one signature. Thus
-it is not possible to have a Java keyword that has both the default
-values and a variable number of arguments.  Of course, having a number
-of required arguments is still possible, as the examples below
-illustrate:
+Robot Framework supports `Java varargs syntax`__ for defining variable number of
+arguments. For example, the following two keywords are functionally identical
+to the above Python examples with same names:
 
 .. sourcecode:: java
 
-  public void anyNumberOfArguments(String... varargs) {
+  public void anyArguments(String... varargs) {
       System.out.println("Got arguments:");
       for (String arg: varargs) {
           System.out.println(arg);
       }
   }
 
-  public void oneArgumentRequired(String required, String... others) {
+  public void oneRequired(String required, String... others) {
       System.out.println("Required: " + required + "\nOthers:");
       for (String arg: others) {
           System.out.println(arg);
       }
   }
 
-  public void usingAnArray(String[] args) {
+For legacy reasons it is possible to use variable number of arguments also by
+having an array as the last argument. This is illustrated by the following
+examples that are identical to the previous ones:
+
+.. sourcecode:: java
+
+  public void anyArguments(String[] varargs) {
       System.out.println("Got arguments:");
-      for (String arg: args) {
+      for (String arg: varargs) {
           System.out.println(arg);
       }
   }
+
+  public void oneRequired(String required, String[] others) {
+      System.out.println("Required: " + required + "\nOthers:");
+      for (String arg: others) {
+          System.out.println(arg);
+      }
+  }
+
+The support for variable number of arguments with Java keywords has one
+limitation: it works only when methods have one signature. Thus it is not
+possible to have Java keywords with both default values and varargs.
+In addition to that, only Robot Framework 2.8 and newer support using
+varargs with `library constructors`__.
+
+__ http://docs.oracle.com/javase/1.5.0/docs/guide/language/varargs.html
+__ `Providing arguments to test libraries`_
 
 Argument types
 ''''''''''''''
@@ -767,6 +778,11 @@ conflicting signatures.
    \            Conflicting Types  1              ${2}        # must use variables
    \            Conflicting Types  ${1}           2
    ===========  =================  =============  ==========  =====================
+
+Starting from Robot Framework 2.8, argument type coercion works also with
+`Java library constructors`__.
+
+__ `Providing arguments to test libraries`_
 
 Using decorators
 ''''''''''''''''
