@@ -35,18 +35,18 @@ def UserLibrary(path):
     This is used at least by libdoc.py."""
     from robot.parsing import ResourceFile
     from robot import utils
-    from .arguments import UserKeywordArguments
+    from .arguments import UserKeywordArgumentParser
     from .userkeyword import UserLibrary as RuntimeUserLibrary
 
     resource = ResourceFile(path).populate()
     ret = RuntimeUserLibrary(resource.keyword_table.keywords, path)
     for handler in ret.handlers.values():
+        parser = UserKeywordArgumentParser()
         if handler.type != 'error':
-            handler.arguments = UserKeywordArguments(handler._keyword_args,
-                                                     handler.longname)
+            handler.arguments = parser.parse(handler.longname, handler._keyword_args)
             handler.doc = utils.unescape(handler._doc)
         else:
-            handler.arguments = UserKeywordArguments([], handler.longname)
+            handler.arguments = parser.parse(handler.longname, [])
             handler.doc = '*Creating keyword failed: %s*' % handler.error
     ret.doc = resource.setting_table.doc.value
     return ret
