@@ -12,7 +12,6 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-import sys
 from java.lang import Byte, Short, Integer, Long, Boolean, Float, Double
 
 
@@ -29,7 +28,7 @@ class ArgumentCoercer:
                 types.setdefault(index, []).append(arg)
         return sorted(types.items())
 
-    def __call__(self, args):
+    def coerce(self, args):
         return [coercer(arg) for coercer, arg in zip(self._coercers, args)]
 
 

@@ -18,9 +18,11 @@ from robot import utils
 from robot.errors import DataError
 from robot.variables import is_list_var
 
-from .arguments import (PythonKeywordArguments, JavaKeywordArguments,
-                        DynamicKeywordArguments, RunKeywordArguments,
-                        PythonInitArguments, JavaInitArguments)
+from .arguments import (PythonArgumentParser, JavaArgumentParser,
+                        DynamicArgumentParser,
+                        PythonArgumentResolver, RunKeywordArgumentResolver,
+                        DynamicArgumentResolver, JavaArgumentResolver,
+                        ArgumentLimitChecker)
 from .keywords import Keywords, Keyword
 from .outputcapture import OutputCapturer
 from .runkwregister import RUN_KW_REGISTER
@@ -29,6 +31,7 @@ from .signalhandler import STOP_SIGNAL_MONITOR
 
 if utils.is_jython:
     from org.python.core import PyReflectedFunction, PyReflectedConstructor
+    from .javaargcoercer import ArgumentCoercer
 
     def _is_java_init(init):
         return isinstance(init, PyReflectedConstructor)
@@ -59,7 +62,7 @@ def InitHandler(library, method, docgetter=None):
     return Init(library, '__init__', method, docgetter)
 
 
-class _BaseHandler(object):
+class _RunnableHandler(object):
     type = 'library'
     _doc = ''
 
@@ -67,9 +70,20 @@ class _BaseHandler(object):
         self.library = library
         self.name = utils.printable_name(handler_name, code_style=True)
         self.arguments = self._parse_arguments(handler_method)
+        self._handler_name = handler_name
+        self._method = self._get_initial_handler(library, handler_name,
+                                                 handler_method)
 
     def _parse_arguments(self, handler_method):
-        raise NotImplementedError(self.__class__.__name__)
+        raise NotImplementedError
+
+    def _get_initial_handler(self, library, name, method):
+        if library.scope == 'GLOBAL':
+            return self._get_global_handler(method, name)
+        return None
+
+    def resolve_arguments(self, args, variables):
+        raise NotImplementedError
 
     @property
     def doc(self):
@@ -87,20 +101,6 @@ class _BaseHandler(object):
     def libname(self):
         return self.library.name
 
-
-class _RunnableHandler(_BaseHandler):
-
-    def __init__(self, library, handler_name, handler_method):
-        _BaseHandler.__init__(self, library, handler_name, handler_method)
-        self._handler_name = handler_name
-        self._method = self._get_initial_handler(library, handler_name,
-                                                 handler_method)
-
-    def _get_initial_handler(self, library, name, method):
-        if library.scope == 'GLOBAL':
-            return self._get_global_handler(method, name)
-        return None
-
     def init_keyword(self, varz):
         pass
 
@@ -112,12 +112,12 @@ class _RunnableHandler(_BaseHandler):
     def _dry_run(self, context, args):
         if self.longname == 'BuiltIn.Import Library':
             return self._run(context, args)
-        self.arguments.check_arg_limits_for_dry_run(args)
+        ArgumentLimitChecker(self.arguments).check_arg_limits_for_dry_run(args)
         return None
 
     def _run(self, context, args):
         positional, named = \
-            self.arguments.resolve(args, context.get_current_vars())
+            self.resolve_arguments(args, context.get_current_vars())
         self.arguments.trace_log_args(context.output, positional, named)
         runner = self._runner_for(self._current_handler(), context, positional,
                                   named, self._get_timeout(context.namespace))
@@ -174,13 +174,30 @@ class _PythonHandler(_RunnableHandler):
         self._doc = utils.getdoc(handler_method)
 
     def _parse_arguments(self, handler_method):
-        return PythonKeywordArguments(handler_method, self.longname)
+        return PythonArgumentParser().parse(self.longname, handler_method)
+
+    def resolve_arguments(self, args, variables):
+        return PythonArgumentResolver(self.arguments).resolve(args, variables)
 
 
 class _JavaHandler(_RunnableHandler):
 
+    def __init__(self, library, handler_name, handler_method):
+        _RunnableHandler.__init__(self, library, handler_name, handler_method)
+        self._arg_coercer = ArgumentCoercer(self._get_signatures(handler_method))
+
     def _parse_arguments(self, handler_method):
-        return JavaKeywordArguments(handler_method, self.longname)
+        signatures = self._get_signatures(handler_method)
+        return JavaArgumentParser().parse(self.longname, signatures)
+
+    def _get_signatures(self, handler):
+        code_object = getattr(handler, 'im_func', handler)
+        return code_object.argslist[:code_object.nargs]
+
+    def resolve_arguments(self, args, variables):
+        positional, named = JavaArgumentResolver(self.arguments).resolve(args, variables)
+        positional = self._arg_coercer.coerce(positional)
+        return positional, named
 
 
 class _DynamicHandler(_RunnableHandler):
@@ -193,7 +210,10 @@ class _DynamicHandler(_RunnableHandler):
         self._doc = doc is not None and utils.unic(doc) or ''
 
     def _parse_arguments(self, handler_method):
-        return DynamicKeywordArguments(self._argspec, self.longname)
+        return DynamicArgumentParser().parse(self.longname, self._argspec)
+
+    def resolve_arguments(self, args, variables):
+        return DynamicArgumentResolver(self.arguments).resolve(args, variables)
 
     def _get_handler(self, lib_instance, handler_name):
         runner = getattr(lib_instance, self._run_keyword_method_name)
@@ -239,9 +259,10 @@ class _RunKeywordHandler(_PythonHandler):
         # and therefore monitoring should not raise exception yet.
         return runner()
 
-    def _parse_arguments(self, handler_method):
+    def resolve_arguments(self, args, variables):
         arg_index = self._get_args_to_process()
-        return RunKeywordArguments(handler_method, self.longname, arg_index)
+        resolver = RunKeywordArgumentResolver(self.arguments, arg_index)
+        return resolver.resolve(args, variables)
 
     def _get_args_to_process(self):
         return RUN_KW_REGISTER.get_args_to_process(self.library.orig_name,
@@ -356,6 +377,7 @@ class _XTimesHandler(_RunKeywordHandler):
 class _DynamicRunKeywordHandler(_DynamicHandler, _RunKeywordHandler):
     _parse_arguments = _RunKeywordHandler._parse_arguments
     _get_timeout = _RunKeywordHandler._get_timeout
+    resolve_arguments = _RunKeywordHandler.resolve_arguments
 
 
 class _PythonInitHandler(_PythonHandler):
@@ -372,13 +394,14 @@ class _PythonInitHandler(_PythonHandler):
         return self._doc
 
     def _parse_arguments(self, handler_method):
-        return PythonInitArguments(handler_method, self.library.name)
+        parser = PythonArgumentParser(type='Test Library')
+        return parser.parse(self.library.name, handler_method)
 
 
-class _JavaInitHandler(_BaseHandler):
+class _JavaInitHandler(_JavaHandler):
 
     def __init__(self, library, handler_name, handler_method, docgetter):
-        _BaseHandler.__init__(self, library, handler_name, handler_method)
+        _JavaHandler.__init__(self, library, handler_name, handler_method)
         self._docgetter = docgetter
 
     @property
@@ -389,4 +412,6 @@ class _JavaInitHandler(_BaseHandler):
         return self._doc
 
     def _parse_arguments(self, handler_method):
-        return JavaInitArguments(handler_method, self.library.name)
+        parser = JavaArgumentParser(type='Test Library')
+        signatures = self._get_signatures(handler_method)
+        return parser.parse(self.library.name, signatures)
