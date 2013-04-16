@@ -1,5 +1,8 @@
 public class ArgumentsJava {
 
+    public ArgumentsJava(String arg, String[] varargs) {
+    }
+
     public String a_0() {
         return "a_0";
     }

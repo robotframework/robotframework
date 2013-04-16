@@ -1,5 +1,5 @@
 *** Settings ***
-Library           ArgumentsJava
+Library           ArgumentsJava    Arg    and    varargs    accepted
 Library           ArgumentTypes
 Library           ExampleJavaLibrary
 
