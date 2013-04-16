@@ -1,5 +1,7 @@
 public class ArgTypeCoercion {
 
+    public ArgTypeCoercion(int num, boolean flag) {}
+
     public void noArgument() {}
 
     public void intArgument(int arg) {

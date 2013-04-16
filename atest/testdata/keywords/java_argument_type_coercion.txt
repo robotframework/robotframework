@@ -1,6 +1,6 @@
 *** Settings ***
 Documentation     These test check that types of arguments to keywords implemented in Java are coerced correctly. If the coercion is not correctly, a test would fail with message like TypeError: intArgument(): 1st arg can't be coerced to int
-Library           ArgTypeCoercion
+Library           ArgTypeCoercion    42    true
 
 *** Test Cases ***
 Coercing Integer Arguments
