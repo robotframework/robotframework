@@ -101,7 +101,6 @@ class PythonArgumentParser(_ArgumentParser):
 
 
 class JavaArgumentParser(_ArgumentParser):
-    # TODO: Test java inits with varargs and coersion
 
     def parse(self, name, signatures):
         minargs, maxargs = self._get_arg_limits(signatures)
@@ -121,7 +120,7 @@ class JavaArgumentParser(_ArgumentParser):
 
     def _get_single_signature_arg_limits(self, signature):
         args = signature.args
-        if len(args) > 0 and args[-1].isArray():
+        if args and args[-1].isArray():
             mina = len(args) - 1
             maxa = sys.maxint
         else:
@@ -129,13 +128,11 @@ class JavaArgumentParser(_ArgumentParser):
         return mina, maxa
 
     def _get_multi_signature_arg_limits(self, signatures):
-        mina = maxa = None
-        for sig in signatures:
+        mina = maxa = len(signatures[0].args)
+        for sig in signatures[1:]:
             argc = len(sig.args)
-            if mina is None or argc < mina:
-                mina = argc
-            if maxa is None or argc > maxa:
-                maxa = argc
+            mina = min(argc, mina)
+            maxa = max(argc, maxa)
         return mina, maxa
 
 
