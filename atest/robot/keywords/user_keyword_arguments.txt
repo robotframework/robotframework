@@ -1,50 +1,49 @@
 *** Settings ***
-Documentation   Test cases for handling valid and invalid arguments for user keywords.
-Suite Setup     Run Tests  ${EMPTY}  keywords/user_keyword_arguments.txt
-Force Tags      regression  pybot  jybot
-Resource        atest_resource.txt
+Documentation     Handling valid and invalid user keyword arguments.
+Suite Setup       Run Tests    ${EMPTY}    keywords/user_keyword_arguments.txt
+Force Tags        regression    pybot    jybot
+Resource          atest_resource.txt
 
 *** Test Cases ***
 Correct Number Of Arguments When No Defaults Or Varargs
-    Check Test Case  Correct Number Of Arguments When No Defaults Or Varargs
+    Check Test Case    ${TESTNAME}
 
 Too Few Arguments When No Defaults Or Varargs
-    Check Test Case  Too Few Arguments When No Defaults Or Varargs 1
-    Check Test Case  Too Few Arguments When No Defaults Or Varargs 2
+    Check Test Case    ${TESTNAME} 1
+    Check Test Case    ${TESTNAME} 2
 
 Too Many Arguments When No Defaults Or Varargs
-    Check Test Case  Too Many Arguments When No Defaults Or Varargs 1
-    Check Test Case  Too Many Arguments When No Defaults Or Varargs 2
-    Check Test Case  Too Many Arguments When No Defaults Or Varargs 3
+    Check Test Case    ${TESTNAME} 1
+    Check Test Case    ${TESTNAME} 2
+    Check Test Case    ${TESTNAME} 3
 
 Correct Number Of Arguments With Defaults
-    Check Test Case  Correct Number Of Arguments With Defaults
+    Check Test Case    ${TESTNAME}
 
 Too Few Arguments With Defaults
-    Check Test Case  Too Few Arguments With Defaults
+    Check Test Case    ${TESTNAME}
 
 Too Many Arguments With Defaults
-    Check Test Case  Too Many Arguments With Defaults 1
-    Check Test Case  Too Many Arguments With Defaults 2
+    Check Test Case    ${TESTNAME} 1
+    Check Test Case    ${TESTNAME} 2
 
 Correct Number Of Arguments With Varargs
-    Check Test Case  Correct Number Of Arguments With Varargs
+    Check Test Case    ${TESTNAME}
 
 Too Few Arguments With Varargs
-    Check Test Case  Too Few Arguments With Varargs
+    Check Test Case    ${TESTNAME}
 
 Correct Number Of Arguments With Defaults And Varargs
-    Check Test Case  Correct Number Of Arguments With Defaults And Varargs
+    Check Test Case    ${TESTNAME}
 
 Too Few Arguments With Defaults And Varargs
-    Check Test Case  Too Few Arguments With Defaults And Varargs
+    Check Test Case    ${TESTNAME}
 
 Default With Variable
-    Check Test Case  Default With Variable
+    Check Test Case    ${TESTNAME}
 
 Default With Automatic Variable
-    Check Test Case  Default With Automatic Variable
+    Check Test Case    ${TESTNAME}
 
 Default With Extended Variable Syntax
-    Check Test Case  Default With Extended Variable Syntax
-
+    Check Test Case    ${TESTNAME}
