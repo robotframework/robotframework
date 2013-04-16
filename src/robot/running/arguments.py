@@ -60,6 +60,16 @@ class KeywordArguments(object):
                      for name, value in named.items()]
         return 'Arguments: [ %s ]' % ' | '.join(args)
 
+    def trace_log_uk_args(self, logger, variables):
+        message = lambda: self._get_trace_log_uk_arg_message(variables)
+        logger.trace(message)
+
+    def _get_trace_log_uk_arg_message(self, variables):
+        names = self.names + ([self.varargs] if self.varargs else [])
+        args = ['%s=%s' % (name, utils.safe_repr(variables[name]))
+                for name in names]
+        return 'Arguments: [ %s ]' % ' | '.join(args)
+
 
 class _ArgumentParser(object):
 
@@ -165,15 +175,7 @@ class DynamicArgumentParser(_ArgumentParser):
         return args, defaults, vararg, kwargs
 
 
-class UserKeywordArguments(object):
-    type = _type = 'Keyword'
-
-    def __init__(self, args, name):
-        self.name = self._name = name
-        self.names, self.defaults, self.varargs, self.kwargs = self._get_arg_spec(args)
-        self.minargs = len(self.names) - len(self.defaults)
-        self.maxargs = len(self.names) if not self.varargs else sys.maxint
-        self._arg_limit_checker = ArgumentLimitChecker(self)
+class UserKeywordArgumentParser(_ArgumentParser):
 
     def _get_arg_spec(self, origargs):
         """Returns argument spec in a tuple (args, defaults, varargs).
@@ -213,69 +215,41 @@ class UserKeywordArguments(object):
             return arg, None
         return arg.split('=', 1)
 
-    def resolve_arguments_for_dry_run(self, arguments):
-        self._arg_limit_checker.check_arg_limits_for_dry_run(arguments)
-        required_number_of_args = self.minargs + len(self.defaults)
-        needed_args = required_number_of_args - len(arguments)
-        if needed_args > 0:
-            return self._fill_missing_args(arguments, needed_args)
-        return arguments
 
-    def _fill_missing_args(self, arguments, needed):
-        return arguments + needed * [None]
+class Foo:   # FIXME: We perhaps need to rename this class.........
+
+    def __init__(self, argspec):
+        self._argspec = argspec
 
     def resolve(self, arguments, variables):
-        positional, varargs, named = self._resolve_arg_usage(arguments, variables)
-        self._arg_limit_checker.check_arg_limits(positional+varargs, named)
+        positional, named = self._resolve_arg_usage(arguments, variables)
+        positional, varargs = self._split_args_and_varargs(positional)
         argument_values = self._resolve_arg_values(variables, named, positional)
         argument_values += varargs
-        self._arg_limit_checker.check_missing_args(argument_values, len(arguments))
+        ArgumentLimitChecker(self._argspec).check_missing_args(argument_values, len(arguments))
         return argument_values
 
     def _resolve_arg_usage(self, arguments, variables):
-        resolver = UserKeywordArgumentResolver(self)
-        positional, named = resolver.resolve(arguments)
-        positional, named = self._replace_variables(variables, positional, named)
-        return self._split_args_and_varargs(positional) + (named,)
+        resolver = UserKeywordArgumentResolver(self._argspec)
+        return resolver.resolve(arguments, variables)
+
+    def _split_args_and_varargs(self, args):
+        if not self._argspec.varargs:
+            return args, []
+        index = len(self._argspec.positional)
+        return args[:index], args[index:]
 
     def _resolve_arg_values(self, variables, named, positional):
         template = self._template_for(variables)
         for name, value in named.items():
-            template.set_value(self.names.index(name), value)
+            template.set_value(self._argspec.positional.index(name), value)
         for index, value in enumerate(positional):
             template.set_value(index, value)
         return template.as_list()
 
     def _template_for(self, variables):
-        defaults = variables.replace_list(list(self.defaults))
-        return UserKeywordArgsTemplate(self.minargs, defaults)
-
-    def _replace_variables(self, variables, positional, named):
-        for name in named:
-            named[name] = variables.replace_scalar(named[name])
-        return variables.replace_list(positional), named
-
-    def set_variables(self, arg_values, variables):
-        before_varargs, varargs = self._split_args_and_varargs(arg_values)
-        for name, value in zip(self.names, before_varargs):
-            variables[name] = value
-        if self.varargs:
-            variables[self.varargs] = varargs
-
-    def _split_args_and_varargs(self, args):
-        if not self.varargs:
-            return args, []
-        return args[:len(self.names)], args[len(self.names):]
-
-    def trace_log_args(self, logger, variables):
-        message = lambda: self._get_trace_log_arg_message(variables)
-        logger.trace(message)
-
-    def _get_trace_log_arg_message(self, variables):
-        names = self.names + ([self.varargs] if self.varargs else [])
-        args = ['%s=%s' % (name, utils.safe_repr(variables[name]))
-                for name in names]
-        return 'Arguments: [ %s ]' % ' | '.join(args)
+        defaults = variables.replace_list(list(self._argspec.defaults))
+        return UserKeywordArgsTemplate(self._argspec.minargs, defaults)
 
 
 class _MissingArg(object):

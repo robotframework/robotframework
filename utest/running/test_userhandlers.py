@@ -2,7 +2,7 @@ import unittest
 
 from robot.running.userkeyword import UserKeywordHandler, \
     EmbeddedArgsTemplate, EmbeddedArgs
-from robot.running.arguments import UserKeywordArguments
+from robot.running.arguments import UserKeywordArgumentParser
 from robot.utils.asserts import *
 from robot.errors import DataError
 
@@ -141,22 +141,23 @@ class TestGetArgSpec(unittest.TestCase):
                      ['default1', 'default2', 'default3'], None)
 
     def _verify(self, in_args, exp_args, exp_defaults, exp_varargs):
-        args = UserKeywordArguments(in_args.split(), 'foobar')
-        assert_equals(args.names, exp_args)
+        args = self._parse(in_args)
+        assert_equals(args.positional, exp_args)
         assert_equals(args.defaults, exp_defaults)
         assert_equals(args.varargs, exp_varargs)
 
+    def _parse(self, in_args):
+        return UserKeywordArgumentParser().parse('Name', in_args.split())
+
     def test_many_varargs_raises(self):
-        in_args = ['@{varargs}', '@{varargs2}']
-        assert_raises(DataError, UserKeywordArguments, in_args, 'foobar')
+        assert_raises(DataError, self._parse, '@{varargs} @{varargs2}')
 
     def test_args_after_varargs_raises(self):
-        in_args = ['@{varargs}', '${arg1}']
-        assert_raises(DataError, UserKeywordArguments, in_args, 'foobar')
+        assert_raises(DataError, self._parse, '@{varargs} ${arg1}')
 
     def test_get_defaults_before_args_raises(self):
-        in_args = ['${args1}=default', '${arg2}']
-        assert_raises(DataError, UserKeywordArguments, in_args, 'foobar')
+        assert_raises(DataError, self._parse, '${args1}=default ${arg2}')
+
 
 if __name__ == '__main__':
     unittest.main()

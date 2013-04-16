@@ -24,7 +24,7 @@ from robot import utils
 from .keywords import Keywords
 from .fixture import Teardown
 from .timeouts import KeywordTimeout
-from .arguments import UserKeywordArguments
+from .arguments import ArgumentLimitChecker, UserKeywordArgumentParser, Foo
 
 
 class UserLibrary(BaseLibrary):
@@ -131,22 +131,30 @@ class UserKeywordHandler(object):
         finally:
             context.end_user_keyword()
 
-    def _run(self, context, argument_values):
-        args_spec = UserKeywordArguments(self._keyword_args, self.longname)
+    def _run(self, context, arguments):
+        # TODO: Could arguments be parsed already in __init__?
+        argspec = UserKeywordArgumentParser().parse(self.longname,
+                                                    self._keyword_args)
         variables = context.get_current_vars()
         if context.dry_run:
-            return self._dry_run(context, variables, args_spec, argument_values)
-        return self._variable_resolving_run(context, variables, args_spec, argument_values)
+            return self._dry_run(context, variables, argspec, arguments)
+        return self._normal_run(context, variables, argspec, arguments)
 
-    def _dry_run(self, context, variables, args_spec, argument_values):
-        resolved_arguments = args_spec.resolve_arguments_for_dry_run(argument_values)
-        error = self._execute(context, variables, args_spec, resolved_arguments)
+    def _dry_run(self, context, variables, argspec, arguments):
+        arguments = self._resolve_dry_run_args(argspec, arguments)
+        error = self._execute(context, variables, argspec, arguments)
         if error:
             raise error
 
-    def _variable_resolving_run(self, context, variables, args_spec, argument_values):
-        resolved_arguments = args_spec.resolve(argument_values, variables)
-        error = self._execute(context, variables, args_spec, resolved_arguments)
+    def _resolve_dry_run_args(self, argspec, arguments):
+        ArgumentLimitChecker(argspec).check_arg_limits_for_dry_run(arguments)
+        required_args = argspec.minargs + len(argspec.defaults)
+        missing_args = required_args - len(arguments)
+        return arguments + [None] * missing_args
+
+    def _normal_run(self, context, variables, argspec, argument_values):
+        resolved_arguments = Foo(argspec).resolve(argument_values, variables)
+        error = self._execute(context, variables, argspec, resolved_arguments)
         if error and not error.can_continue(context.teardown):
             raise error
         return_value = self._get_return_value(variables)
@@ -155,9 +163,9 @@ class UserKeywordHandler(object):
             raise error
         return return_value
 
-    def _execute(self, context, variables, args_spec, resolved_arguments):
-        args_spec.set_variables(resolved_arguments, variables)
-        args_spec.trace_log_args(context.output, variables)
+    def _execute(self, context, variables, argspec, resolved_arguments):
+        self._set_variables(argspec, resolved_arguments, variables)
+        argspec.trace_log_uk_args(context.output, variables)
         self._verify_keyword_is_valid()
         self.timeout.start()
         try:
@@ -169,6 +177,18 @@ class UserKeywordHandler(object):
         td_error = self._run_teardown(context, error)
         if error or td_error:
             return UserKeywordExecutionFailed(error, td_error)
+
+    def _set_variables(self, argspec, arguments, variables):
+        before_varargs, varargs = self._split_args_and_varargs(argspec, arguments)
+        for name, value in zip(argspec.positional, before_varargs):
+            variables[name] = value
+        if argspec.varargs:
+            variables[argspec.varargs] = varargs
+
+    def _split_args_and_varargs(self, argspec, args):
+        if not argspec.varargs:
+            return args, []
+        return args[:len(argspec.names)], args[len(argspec.names):]
 
     def _run_teardown(self, context, error):
         if not self.teardown:
