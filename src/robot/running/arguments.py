@@ -20,9 +20,6 @@ from robot.errors import DataError, FrameworkError
 from robot.variables import is_list_var, is_scalar_var
 from robot import utils
 
-if utils.is_jython:
-    from javaargcoercer import ArgumentCoercer
-
 
 class KeywordArguments(object):
 
@@ -51,6 +48,7 @@ class KeywordArguments(object):
                 if not (self.varargs or self.kwargs) else sys.maxint
         return self._maxargs
 
+    # FIXME: Move logging elsewhere
     def trace_log_args(self, logger, positional, named):
         message = lambda: self._get_trace_log_arg_message(positional, named)
         logger.trace(message)
@@ -64,13 +62,18 @@ class KeywordArguments(object):
 
 
 class _ArgumentParser(object):
-    _type = 'Keyword'
 
-
-class PythonArgumentParser(_ArgumentParser):
+    def __init__(self, type='Keyword'):
+        self._type = type
 
     def parse(self, name, source):
         return KeywordArguments(name, self._type, *self._get_arg_spec(source))
+
+    def _get_arg_spec(self, source):
+        raise NotImplementedError
+
+
+class PythonArgumentParser(_ArgumentParser):
 
     def _get_arg_spec(self, handler):
         """Returns info about args in a tuple (args, defaults, varargs, kwargs)
@@ -88,18 +91,11 @@ class PythonArgumentParser(_ArgumentParser):
 
 
 class JavaArgumentParser(_ArgumentParser):
+    # TODO: Test java inits with varargs and coersion
 
-    def parse(self, name, handler_method):
-        signatures = self._get_signatures(handler_method)
+    def parse(self, name, signatures):
         minargs, maxargs = self._get_arg_limits(signatures)
-        args = KeywordArguments(name, self._type, minargs=minargs,
-                                maxargs=maxargs)
-        args.arg_coercer = ArgumentCoercer(signatures)
-        return args
-
-    def _get_signatures(self, handler):
-        code_object = getattr(handler, 'im_func', handler)
-        return code_object.argslist[:code_object.nargs]
+        return KeywordArguments(name, self._type, minargs=minargs, maxargs=maxargs)
 
     def _get_arg_limits(self, signatures):
         if not signatures:
@@ -133,7 +129,7 @@ class JavaArgumentParser(_ArgumentParser):
         return mina, maxa
 
 
-class DynamicArgumentParser(PythonArgumentParser):
+class DynamicArgumentParser(_ArgumentParser):
 
     def _get_arg_spec(self, argspec):
         if argspec is None:
@@ -167,19 +163,6 @@ class DynamicArgumentParser(PythonArgumentParser):
                 raise TypeError
             args.append(token)
         return args, defaults, vararg, kwargs
-
-
-class RunKeywordArgumentParser(PythonArgumentParser):
-    pass
-
-
-class PythonInitArguments(PythonArgumentParser):
-    _type = 'Test Library'
-
-
-class JavaInitArguments(JavaArgumentParser):
-    _type = 'Test Library'
-    # TODO: Test java inits with varargs and coersion
 
 
 class UserKeywordArguments(object):
@@ -479,7 +462,7 @@ class JavaArgumentResolver(object):
         ArgumentLimitChecker(self._arguments).check_arg_limits(values)
         if self._expects_varargs() and self._last_is_not_list(values):
             values[self._minargs:] = [values[self._minargs:]]
-        return self._arguments.arg_coercer(values), {}
+        return values, {}
 
     def _expects_varargs(self):
         return self._maxargs == sys.maxint

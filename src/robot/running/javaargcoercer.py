@@ -28,7 +28,7 @@ class ArgumentCoercer:
                 types.setdefault(index, []).append(arg)
         return sorted(types.items())
 
-    def __call__(self, args):
+    def coerce(self, args):
         return [coercer(arg) for coercer, arg in zip(self._coercers, args)]
 
 

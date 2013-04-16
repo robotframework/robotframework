@@ -19,8 +19,7 @@ from robot.errors import DataError
 from robot.variables import is_list_var
 
 from .arguments import (PythonArgumentParser, JavaArgumentParser,
-                        DynamicArgumentParser, RunKeywordArgumentParser,
-                        PythonInitArguments, JavaInitArguments,
+                        DynamicArgumentParser,
                         PythonArgumentResolver, RunKeywordArgumentResolver,
                         DynamicArgumentResolver, JavaArgumentResolver,
                         ArgumentLimitChecker)
@@ -32,6 +31,7 @@ from .signalhandler import STOP_SIGNAL_MONITOR
 
 if utils.is_jython:
     from org.python.core import PyReflectedFunction, PyReflectedConstructor
+    from .javaargcoercer import ArgumentCoercer
 
     def _is_java_init(init):
         return isinstance(init, PyReflectedConstructor)
@@ -182,11 +182,22 @@ class _PythonHandler(_RunnableHandler):
 
 class _JavaHandler(_RunnableHandler):
 
+    def __init__(self, library, handler_name, handler_method):
+        _RunnableHandler.__init__(self, library, handler_name, handler_method)
+        self._arg_coercer = ArgumentCoercer(self._get_signatures(handler_method))
+
     def _parse_arguments(self, handler_method):
-        return JavaArgumentParser().parse(self.longname, handler_method)
+        signatures = self._get_signatures(handler_method)
+        return JavaArgumentParser().parse(self.longname, signatures)
+
+    def _get_signatures(self, handler):
+        code_object = getattr(handler, 'im_func', handler)
+        return code_object.argslist[:code_object.nargs]
 
     def resolve_arguments(self, args, variables):
-        return JavaArgumentResolver(self.arguments).resolve(args, variables)
+        positional, named = JavaArgumentResolver(self.arguments).resolve(args, variables)
+        positional = self._arg_coercer.coerce(positional)
+        return positional, named
 
 
 class _DynamicHandler(_RunnableHandler):
@@ -247,9 +258,6 @@ class _RunKeywordHandler(_PythonHandler):
         # With run keyword variants, only the keyword to be run can fail
         # and therefore monitoring should not raise exception yet.
         return runner()
-
-    def _parse_arguments(self, handler_method):
-        return RunKeywordArgumentParser().parse(self.longname, handler_method)
 
     def resolve_arguments(self, args, variables):
         arg_index = self._get_args_to_process()
@@ -386,7 +394,8 @@ class _PythonInitHandler(_PythonHandler):
         return self._doc
 
     def _parse_arguments(self, handler_method):
-        return PythonInitArguments().parse(self.library.name, handler_method)
+        parser = PythonArgumentParser(type='Test Library')
+        return parser.parse(self.library.name, handler_method)
 
 
 class _JavaInitHandler(_JavaHandler):
@@ -403,4 +412,6 @@ class _JavaInitHandler(_JavaHandler):
         return self._doc
 
     def _parse_arguments(self, handler_method):
-        return JavaInitArguments().parse(self.library.name, handler_method)
+        parser = JavaArgumentParser(type='Test Library')
+        signatures = self._get_signatures(handler_method)
+        return parser.parse(self.library.name, signatures)
