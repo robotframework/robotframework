@@ -1,57 +1,60 @@
 *** Settings ***
-Documentation   Test cases for handling valid and invalid arguments for keywords implemented with Java. Some related tests are also in core/java_libraries.html and these test suites should actually be combined.
-Suite Setup     Run Tests  ${EMPTY}  keywords/java_arguments.txt
-Force Tags      regression  jybot
-Resource        atest_resource.txt
+Documentation     Handling valid and invalid arguments with Java keywords.
+...               Related tests also in test_libraries/java_libraries.txt.
+Suite Setup       Run Tests    ${EMPTY}    keywords/java_arguments.txt
+Force Tags        regression    jybot
+Resource          atest_resource.txt
 
 *** Test Cases ***
 Correct Number Of Arguments When No Defaults Or Varargs
-    Check Test Case  Correct Number Of Arguments When No Defaults Or Varargs
+    Check Test Case    ${TESTNAME}
 
 Too Few Arguments When No Defaults Or Varargs
-    Check Test Case  Too Few Arguments When No Defaults Or Varargs 1
-    Check Test Case  Too Few Arguments When No Defaults Or Varargs 2
+    Check Test Case    ${TESTNAME} 1
+    Check Test Case    ${TESTNAME} 2
 
 Too Many Arguments When No Defaults Or Varargs
-    Check Test Case  Too Many Arguments When No Defaults Or Varargs 1
-    Check Test Case  Too Many Arguments When No Defaults Or Varargs 2
-    Check Test Case  Too Many Arguments When No Defaults Or Varargs 3
+    Check Test Case    ${TESTNAME} 1
+    Check Test Case    ${TESTNAME} 2
+    Check Test Case    ${TESTNAME} 3
 
 Correct Number Of Arguments With Defaults
-    Check Test Case  Correct Number Of Arguments With Defaults
+    Check Test Case    ${TESTNAME}
 
 Too Few Arguments With Defaults
-    Check Test Case  Too Few Arguments With Defaults
+    Check Test Case    ${TESTNAME}
 
 Too Many Arguments With Defaults
-    Check Test Case  Too Many Arguments With Defaults 1
-    Check Test Case  Too Many Arguments With Defaults 2
+    Check Test Case    ${TESTNAME} 1
+    Check Test Case    ${TESTNAME} 2
 
 Correct Number Of Arguments With Varargs
-    Check Test Case  Correct Number Of Arguments With Varargs
+    Check Test Case    ${TESTNAME}
 
 Java Varargs Should Work
-    Check Test Case  Java Varargs Should Work
+    Check Test Case    ${TESTNAME}
 
 Too Few Arguments With Varargs
-    Check Test Case  Too Few Arguments With Varargs
+    Check Test Case    ${TESTNAME}
 
 Varargs Work Also With Arrays And Lists
-    [Documentation]  Make sure varargs support doesn't make it impossible to used Java arrays and Python lists with Java keyword expecting arrays.
-    Check Test Case  Varargs Work Also With Arrays And Lists
+    [Documentation]    Make sure varargs support doesn't make it impossible to used Java arrays and Python lists with Java keyword expecting arrays.
+    Check Test Case    ${TESTNAME}
 
 Valid Arguments For Keyword Expecting Non String Scalar Arguments
-    Check Test Case  Valid Arguments For Keyword Expecting Non String Scalar Arguments
+    Check Test Case    ${TESTNAME}
 
 Valid Arguments For Keyword Expecting Non String Array Arguments
-    Check Test Case  Valid Arguments For Keyword Expecting Non String Array Arguments
+    Check Test Case    ${TESTNAME}
 
 Invalid Argument Types
-    Check Test Case  Invalid Argument Types 1
-    Check Test Case  Invalid Argument Types 2
-    Check Test Case  Invalid Argument Types 3
-    Check Test Case  Invalid Argument Types 4
-    Check Test Case  Invalid Argument Types 5
-    Check Test Case  Invalid Argument Types 6
-    Check Test Case  Invalid Argument Types 7
+    Check Test Case    ${TESTNAME} 1
+    Check Test Case    ${TESTNAME} 2
+    Check Test Case    ${TESTNAME} 3
+    Check Test Case    ${TESTNAME} 4
+    Check Test Case    ${TESTNAME} 5
+    Check Test Case    ${TESTNAME} 6
+    Check Test Case    ${TESTNAME} 7
 
+Calling Using List Variables
+    Check Test Case    ${TESTNAME}
