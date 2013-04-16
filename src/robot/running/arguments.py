@@ -346,6 +346,8 @@ class _ArgumentResolver(object):
     def _check_mandatories(self, positional, named):
         if len(positional) >= self._mand_arg_count:
             return
+        if any(is_list_var(arg) for arg in positional):
+            return
         for name in self._arguments.names[len(positional):self._mand_arg_count]:
             if name not in named:
                 raise DataError("%s '%s' missing value for argument '%s'."

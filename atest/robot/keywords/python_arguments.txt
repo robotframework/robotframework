@@ -38,3 +38,6 @@ Correct Number Of Arguments With Defaults And Varargs
 
 Too Few Arguments With Defaults And Varargs
     Check Test Case    ${TESTNAME}
+
+Calling Using List Variables
+    Check Test Case    ${TESTNAME}

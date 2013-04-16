@@ -84,3 +84,12 @@ Correct Number Of Arguments With Defaults And Varargs
 Too Few Arguments With Defaults And Varargs
     [Documentation]    FAIL Keyword 'ArgumentsPython.A 1 2 N' missing value for argument 'arg1'.
     A 1 2 N
+
+Calling Using List Variables
+    [Documentation]    FAIL Keyword 'ArgumentsPython.A 0 1' expected 0 to 1 arguments, got 3.
+    A 0    @{EMPTY}
+    A 1    @{EMPTY}    arg
+    A 3    @{LIST}
+    A 1 3    @{LIST}
+    A 3    @{LIST}    @{EMPTY}
+    A 0 1    @{LIST}    @{EMPTY}

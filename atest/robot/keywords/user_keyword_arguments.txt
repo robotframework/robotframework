@@ -47,3 +47,6 @@ Default With Automatic Variable
 
 Default With Extended Variable Syntax
     Check Test Case    ${TESTNAME}
+
+Calling Using List Variables
+    Check Test Case    ${TESTNAME}
