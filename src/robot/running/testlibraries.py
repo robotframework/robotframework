@@ -77,7 +77,7 @@ class _BaseTestLibrary(BaseLibrary):
             self.scope = self._get_scope(libcode)
             self._libcode = libcode
             self.init =  self._create_init_handler(libcode)
-            self.positional_args, self.named_args = self.init.arguments.resolve(args, variables)
+            self.positional_args, self.named_args = self.init.resolve_arguments(args, variables)
 
     @property
     def doc(self):
@@ -271,7 +271,6 @@ class _ModuleLibrary(_BaseTestLibrary):
         return method
 
     def get_instance(self):
-        self.init.arguments.check_arg_limits(self.positional_args)
         return self._libcode
 
     def _create_init_handler(self, libcode):
@@ -289,6 +288,7 @@ class _HybridLibrary(_BaseTestLibrary):
 
 
 class _DynamicLibrary(_BaseTestLibrary):
+    # TODO: Can this be removed now that dynamic libs support named args?
     supports_named_arguments = False # this attribute is for libdoc
     _log_failure = LOGGER.warn
 

@@ -6,14 +6,17 @@ Resource         atest_resource.txt
 *** Test Cases ***
 
 Importing Abstract Java Library Fails Cleanly
-    Verify Error    0    AbstractJavaLibrary
+    Init Error    0    AbstractJavaLibrary
 
 Importing Java Library Without Public Constructor Fails Cleanly
-    Verify Error    1    JavaLibraryWithoutPublicConstructor
+    Init Error    1    JavaLibraryWithoutPublicConstructor
 
 Importing Abstract Java Library Without Public Constructor Fails Cleanly
-    Verify Error    2    java.lang.Enum
-    Verify Error    3    java.lang.Enum    arguments 'name' and '42'
+    Init Error    3    java.lang.Enum
+
+Arguments For Java Library Without Public Constructor
+    Limit Error    2    JavaLibraryWithoutPublicConstructor    3
+    Limit Error    4    java.lang.Enum    2
 
 Invalid Java Libraries Do Not Cause Fatal Errors
     Check Test Case    ${TESTNAME}
@@ -21,10 +24,19 @@ Invalid Java Libraries Do Not Cause Fatal Errors
 
 *** Keywords ***
 
+Init Error
+    [Arguments]    ${index}    ${name}
+    Verify Error    ${index}
+    ...   Creating an instance of the test library '${name}' with no arguments failed: TypeError: *
+
+Limit Error
+    [Arguments]    ${index}    ${name}    ${arg count}
+    Verify Error    ${index}
+    ...   Test Library '${name}' expected 0 arguments, got ${arg count}.
+
 Verify Error
-    [Arguments]    ${index}    ${name}    ${args}=no arguments
+    [Arguments]    ${index}    ${error}
     ${path} =    Normalize Path    ${DATADIR}/test_libraries/invalid_java_libraries.txt
-    ${msg} =    Catenate
-    ...    Error in file '${path}' in table 'Settings': Creating an instance
-    ...    of the test library '${name}' with ${args} failed: TypeError: *
-    Check Log Message    ${ERRORS.msgs[${index}]}    ${msg}    ERROR    pattern=yes
+    Check Log Message    ${ERRORS.msgs[${index}]}
+    ...    Error in file '${path}' in table 'Settings': ${error}
+    ...    ERROR    pattern=yes

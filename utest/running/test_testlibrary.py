@@ -184,8 +184,8 @@ class TestLibraryInit(unittest.TestCase):
 
     def _test_init_handler(self, libname, args=None, min=0, max=0):
         lib = TestLibrary(libname, args)
-        assert_equals(lib.init.arguments._arg_limit_checker.minargs, min)
-        assert_equals(lib.init.arguments._arg_limit_checker.maxargs, max)
+        assert_equals(lib.init.arguments.minargs, min)
+        assert_equals(lib.init.arguments.maxargs, max)
         return lib
 
     if utils.is_jython:
@@ -474,8 +474,8 @@ class TestDynamicLibrary(unittest.TestCase):
             self._assert_handler_args(lib.handlers[name], *exp)
 
     def _assert_handler_args(self, handler, minargs=0, maxargs=0):
-        assert_equals(handler.arguments._arg_limit_checker.minargs, minargs)
-        assert_equals(handler.arguments._arg_limit_checker.maxargs, maxargs)
+        assert_equals(handler.arguments.minargs, minargs)
+        assert_equals(handler.arguments.maxargs, maxargs)
 
     if utils.is_jython:
 

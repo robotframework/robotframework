@@ -24,35 +24,32 @@ if utils.is_jython:
     from javaargcoercer import ArgumentCoercer
 
 
-class _KeywordArguments(object):
-    _type = 'Keyword'
+class KeywordArguments(object):
 
-    def __init__(self, argument_source, kw_or_lib_name):
-        self.name = kw_or_lib_name
-        self.names, self.defaults, self.varargs, self.kwargs, self.minargs, self.maxargs \
-            = self._determine_args(argument_source)
-        self._arg_limit_checker = _ArgLimitChecker(self.minargs, self.maxargs,
-                                                   kw_or_lib_name, self._type)
+    def __init__(self, name, type='Keyword', positional=(), defaults=(),
+                 varargs=None, kwargs=None, minargs=None, maxargs=None):
+        self.name = name
+        self.type = type
+        self.positional = positional
+        self.names = positional   # FIXME: Remove
+        self.defaults = defaults
+        self.varargs = varargs
+        self.kwargs = kwargs
+        self._minargs = minargs
+        self._maxargs = maxargs
 
-    def _determine_args(self, handler_or_argspec):
-        args, defaults, varargs, kwargs = self._get_arg_spec(handler_or_argspec)
-        minargs = len(args) - len(defaults)
-        maxargs = len(args) if not (varargs or kwargs) else sys.maxint
-        return args, defaults, varargs, kwargs, minargs, maxargs
+    @property
+    def minargs(self):
+        if self._minargs is None:
+            self._minargs = len(self.positional) - len(self.defaults)
+        return self._minargs
 
-    def resolve(self, args, variables):
-        posargs, namedargs = self._resolve(args, variables)
-        self.check_arg_limits(posargs, namedargs)
-        return posargs, namedargs
-
-    def _resolve(self, args, variables):
-        return self._get_argument_resolver().resolve(args, variables)
-
-    def check_arg_limits(self, args, namedargs=None):
-        self._arg_limit_checker.check_arg_limits(args, namedargs or {})
-
-    def check_arg_limits_for_dry_run(self, args):
-        self._arg_limit_checker.check_arg_limits_for_dry_run(args)
+    @property
+    def maxargs(self):
+        if self._maxargs is None:
+            self._maxargs = len(self.positional) \
+                if not (self.varargs or self.kwargs) else sys.maxint
+        return self._maxargs
 
     def trace_log_args(self, logger, positional, named):
         message = lambda: self._get_trace_log_arg_message(positional, named)
@@ -66,10 +63,14 @@ class _KeywordArguments(object):
         return 'Arguments: [ %s ]' % ' | '.join(args)
 
 
-class PythonKeywordArguments(_KeywordArguments):
+class _ArgumentParser(object):
+    _type = 'Keyword'
 
-    def _get_argument_resolver(self):
-        return PythonKeywordArgumentResolver(self, self.name, self._type)
+
+class PythonArgumentParser(_ArgumentParser):
+
+    def parse(self, name, source):
+        return KeywordArguments(name, self._type, *self._get_arg_spec(source))
 
     def _get_arg_spec(self, handler):
         """Returns info about args in a tuple (args, defaults, varargs, kwargs)
@@ -86,29 +87,19 @@ class PythonKeywordArguments(_KeywordArguments):
         return args, defaults, varargs, kwargs
 
 
-class JavaKeywordArguments(_KeywordArguments):
+class JavaArgumentParser(_ArgumentParser):
 
-    def __init__(self, handler_method, name):
-        _KeywordArguments.__init__(self, handler_method, name)
-        self.arg_coercer = ArgumentCoercer(self._get_signatures(handler_method))
-
-    def _get_argument_resolver(self):
-        return JavaKeywordArgumentResolver(self)
-
-    def _determine_args(self, handler_method):
+    def parse(self, name, handler_method):
         signatures = self._get_signatures(handler_method)
         minargs, maxargs = self._get_arg_limits(signatures)
-        return [], [], None, None, minargs, maxargs
+        args = KeywordArguments(name, self._type, minargs=minargs,
+                                maxargs=maxargs)
+        args.arg_coercer = ArgumentCoercer(signatures)
+        return args
 
     def _get_signatures(self, handler):
-        co = self._get_code_object(handler)
-        return co.argslist[:co.nargs]
-
-    def _get_code_object(self, handler):
-        try:
-            return handler.im_func
-        except AttributeError:
-            return handler
+        code_object = getattr(handler, 'im_func', handler)
+        return code_object.argslist[:code_object.nargs]
 
     def _get_arg_limits(self, signatures):
         if not signatures:
@@ -119,9 +110,8 @@ class JavaKeywordArguments(_KeywordArguments):
             return self._get_multi_signature_arg_limits(signatures)
 
     def _no_signatures_arg_limits(self):
-        # This happens at least if class has no public constructors.
-        # Better to accept all arguments and leave error handling for later.
-        return 0, sys.maxint
+        # Happens when a class has no public constructors
+        return 0, 0
 
     def _get_single_signature_arg_limits(self, signature):
         args = signature.args
@@ -143,10 +133,7 @@ class JavaKeywordArguments(_KeywordArguments):
         return mina, maxa
 
 
-class DynamicKeywordArguments(_KeywordArguments):
-
-    def _get_argument_resolver(self):
-        return PythonKeywordArgumentResolver(self, self.name, self._type)
+class DynamicArgumentParser(PythonArgumentParser):
 
     def _get_arg_spec(self, argspec):
         if argspec is None:
@@ -182,42 +169,28 @@ class DynamicKeywordArguments(_KeywordArguments):
         return args, defaults, vararg, kwargs
 
 
-class RunKeywordArguments(PythonKeywordArguments):
-
-    def __init__(self, argument_source, name, arg_resolution_index):
-        PythonKeywordArguments.__init__(self, argument_source, name)
-        self._arg_resolution_index = arg_resolution_index
-
-    def _resolve(self, args, variables):
-        args = variables.replace_run_kw_info(args, self._arg_resolution_index)
-        return args, {}
+class RunKeywordArgumentParser(PythonArgumentParser):
+    pass
 
 
-class PythonInitArguments(PythonKeywordArguments):
+class PythonInitArguments(PythonArgumentParser):
     _type = 'Test Library'
 
 
-class JavaInitArguments(JavaKeywordArguments):
+class JavaInitArguments(JavaArgumentParser):
     _type = 'Test Library'
-
-    def resolve(self, args, variables=None):
-        if variables:
-            args = variables.replace_list(args)
-        self.check_arg_limits(args)
-        return args, {}
+    # TODO: Test java inits with varargs and coersion
 
 
 class UserKeywordArguments(object):
-
-    _type = 'Keyword'
+    type = _type = 'Keyword'
 
     def __init__(self, args, name):
-        self._name = name
+        self.name = self._name = name
         self.names, self.defaults, self.varargs, self.kwargs = self._get_arg_spec(args)
         self.minargs = len(self.names) - len(self.defaults)
-        maxargs = len(self.names) if not self.varargs else sys.maxint
-        self._arg_limit_checker = _ArgLimitChecker(self.minargs, maxargs,
-                                                   self._name, self._type)
+        self.maxargs = len(self.names) if not self.varargs else sys.maxint
+        self._arg_limit_checker = ArgumentLimitChecker(self)
 
     def _get_arg_spec(self, origargs):
         """Returns argument spec in a tuple (args, defaults, varargs).
@@ -277,7 +250,7 @@ class UserKeywordArguments(object):
         return argument_values
 
     def _resolve_arg_usage(self, arguments, variables):
-        resolver = UserKeywordArgumentResolver(self, self._name, self._type)
+        resolver = UserKeywordArgumentResolver(self)
         positional, named = resolver.resolve(arguments)
         positional, named = self._replace_variables(variables, positional, named)
         return self._split_args_and_varargs(positional) + (named,)
@@ -345,15 +318,24 @@ class UserKeywordArgsTemplate(object):
 
 class _ArgumentResolver(object):
 
-    def __init__(self, arguments, name, type):
-        self._name = name
-        self._type = type
+    def __init__(self, arguments):
         self._arguments = arguments
-        self._mand_arg_count = len(arguments.names) - len(arguments.defaults)
+        self._mand_arg_count = arguments.minargs  # TODO: Remove or property
+        self._arg_limit_checker = ArgumentLimitChecker(arguments)
+
+    @property
+    def _name(self):
+        return self._arguments.name
+
+    @property
+    def _type(self):
+        return self._arguments.type
 
     def resolve(self, values, variables=None):
         positional, named = self._resolve_argument_usage(values)
-        return self._resolve_variables(positional, named, variables)
+        positional, named = self._resolve_variables(positional, named, variables)
+        self._arg_limit_checker.check_arg_limits(positional, named)
+        return positional, named
 
     def _resolve_argument_usage(self, values):
         named, positional = self._populate_positional_and_named(values)
@@ -459,7 +441,19 @@ class UserKeywordArgumentResolver(_ArgumentResolver):
         return '${%s}' % name
 
 
-class PythonKeywordArgumentResolver(_ArgumentResolver):
+class RunKeywordArgumentResolver(_ArgumentResolver):
+
+    def __init__(self, arguments, arg_resolution_index):
+        _ArgumentResolver.__init__(self, arguments)
+        self._arg_resolution_index = arg_resolution_index
+
+    def resolve(self, values, variables=None):
+        args = variables.replace_run_kw_info(values, self._arg_resolution_index)
+        self._arg_limit_checker.check_arg_limits(args)
+        return args, {}
+
+
+class PythonArgumentResolver(_ArgumentResolver):
 
     def _arg_name(self, name):
         return name
@@ -468,15 +462,21 @@ class PythonKeywordArgumentResolver(_ArgumentResolver):
         return str(name)
 
 
-class JavaKeywordArgumentResolver(object):
+class DynamicArgumentResolver(PythonArgumentResolver):
+    pass
+
+
+class JavaArgumentResolver(object):
 
     def __init__(self, arguments):
         self._arguments = arguments
-        self._minargs, self._maxargs = arguments.minargs, arguments.maxargs
+        self._minargs = arguments.minargs
+        self._maxargs = arguments.maxargs
 
     def resolve(self, values, variables):
-        values = variables.replace_list(values)
-        self._arguments.check_arg_limits(values)
+        if variables:  # FIXME: Why is variables None with test lib inits??
+            values = variables.replace_list(values)
+        ArgumentLimitChecker(self._arguments).check_arg_limits(values)
         if self._expects_varargs() and self._last_is_not_list(values):
             values[self._minargs:] = [values[self._minargs:]]
         return self._arguments.arg_coercer(values), {}
@@ -489,26 +489,26 @@ class JavaKeywordArgumentResolver(object):
                     and isinstance(args[-1], (list, tuple, ArrayType)))
 
 
-class _ArgLimitChecker(object):
+class ArgumentLimitChecker(object):
 
-    def __init__(self, minargs, maxargs, name, type_):
-        self.minargs = minargs
-        self.maxargs = maxargs
-        self._name = name
-        self._type = type_
+    def __init__(self, argspec):
+        self._minargs = argspec.minargs
+        self._maxargs = argspec.maxargs
+        self._name = argspec.name
+        self._type = argspec.type
 
-    def check_arg_limits(self, args, namedargs={}):
-        self._check_arg_limits(len(args) + len(namedargs))
+    def check_arg_limits(self, args, namedargs=None):
+        self._check_arg_limits(len(args) + len(namedargs or {}))
 
     def check_arg_limits_for_dry_run(self, args):
         arg_count = len(args)
         scalar_arg_count = len([a for a in args if not is_list_var(a)])
-        if scalar_arg_count <= self.minargs and arg_count - scalar_arg_count:
-            arg_count = self.minargs
+        if scalar_arg_count <= self._minargs and arg_count - scalar_arg_count:
+            arg_count = self._minargs
         self._check_arg_limits(arg_count)
 
     def _check_arg_limits(self, arg_count):
-        if not self.minargs <= arg_count <= self.maxargs:
+        if not self._minargs <= arg_count <= self._maxargs:
             self._raise_inv_args(arg_count)
 
     def check_missing_args(self, args, arg_count):
@@ -517,12 +517,12 @@ class _ArgLimitChecker(object):
                 self._raise_inv_args(arg_count)
 
     def _raise_inv_args(self, arg_count):
-        minend = utils.plural_or_not(self.minargs)
-        if self.minargs == self.maxargs:
-            exptxt = "%d argument%s" % (self.minargs, minend)
-        elif self.maxargs != sys.maxint:
-            exptxt = "%d to %d arguments" % (self.minargs, self.maxargs)
+        minend = utils.plural_or_not(self._minargs)
+        if self._minargs == self._maxargs:
+            exptxt = "%d argument%s" % (self._minargs, minend)
+        elif self._maxargs != sys.maxint:
+            exptxt = "%d to %d arguments" % (self._minargs, self._maxargs)
         else:
-            exptxt = "at least %d argument%s" % (self.minargs, minend)
+            exptxt = "at least %d argument%s" % (self._minargs, minend)
         raise DataError("%s '%s' expected %s, got %d."
                         % (self._type, self._name, exptxt, arg_count))
