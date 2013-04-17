@@ -87,7 +87,7 @@ class ProcessLibrary(object):
         for handle in range(len(self._started_processes._connections)):
             self.kill_process(handle)
 
-    def get_pid(self, handle): #get process id
+    def get_process_id(self, handle):
         self._started_processes.switch(handle)
         return self._started_processes.current.pid
 

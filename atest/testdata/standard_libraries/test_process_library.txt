@@ -34,7 +34,7 @@ Terminating process
 
 Pid
           ${handle}=          Endless process
-          ${pid}=          Get Pid          ${handle}
+          ${pid}=          Get Process Id          ${handle}
           Run Process          kill          -9          ${pid}
           Wait For Process          ${handle}
           Process Should Be Dead          ${handle}
@@ -126,8 +126,8 @@ Stress output handling
 
 Process alias
           ${handle}=         Start New Process   python -c "print 'hello'"  shell=True    alias=hello
-          ${pid_by_handle}=   Get pid   ${handle}
-          ${pid_by_alias}=    Get pid   hello
+          ${pid_by_handle}=   Get process id   ${handle}
+          ${pid_by_alias}=    Get process id   hello
           Should Be Equal    ${pid_by_handle}    ${pid_by_alias}
 
 *** Keywords ***
