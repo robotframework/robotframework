@@ -38,24 +38,14 @@ class ProcessLibrary(object):
         config = _NewProcessConfig(conf, self._tempdir)
         stdout_stream = config.stdout_stream
         stderr_stream = config.stderr_stream
-        print "stdout tempfile is", stdout_stream.name
-        print "stderr tempfile is", stderr_stream.name
         pd = ProcessData(stdout_stream.name, stderr_stream.name)
         use_shell = config.use_shell
-        if 'cwd' in conf:
-            cwd = conf['cwd']
-        else:
-            cwd = '.'
         if use_shell and args:
             cmd = subprocess.list2cmdline(cmd)
             print cmd
         p = subprocess.Popen(cmd, stdout=stdout_stream, stderr=stderr_stream,
-                             shell=use_shell, cwd=cwd)
-        if 'alias' in conf:
-            alias = conf['alias']
-        else:
-            alias = None
-        index = self._started_processes.register(p, alias=alias)
+                             shell=use_shell, cwd=config.cwd)
+        index = self._started_processes.register(p, alias=config.alias)
         self._logs[index] = pd
         return index
 
@@ -130,7 +120,9 @@ class _NewProcessConfig(object):
         self._conf = conf
         self.stdout_stream = open(conf['stdout'], 'w') if 'stdout' in conf else self._get_temp_file("stdout")
         self.stderr_stream = open(conf['stderr'], 'w') if 'stderr' in conf else self._get_temp_file("stderr")
-        self.use_shell = (conf['shell'] != 'False') if 'shell' in conf else False
+        self.use_shell = (conf.get('shell', 'False') != 'False')
+        self.cwd = conf.get('cwd', None)
+        self.alias = conf.get('alias', None)
 
 
     def _get_temp_file(self, suffix):
