@@ -294,12 +294,22 @@ class _DynamicLibrary(_BaseTestLibrary):
 
     def __init__(self, libcode, name, args, variables=None):
         _BaseTestLibrary.__init__(self, libcode, name, args, variables)
-        self._get_kw_doc = GetKeywordDocumentation(libcode)
-        self._get_kw_args = GetKeywordArguments(libcode)
+        self._doc_get = False
 
     @property
     def doc(self):
-        return self._get_kw_doc(self.get_instance(), '__intro__') or self._doc
+        if not self._doc_get:
+            self._doc = self._get_kw_doc('__intro__') or self._doc
+            self._doc_get = True
+        return self._doc
+
+    def _get_kw_doc(self, name, instance=None):
+        getter = GetKeywordDocumentation(instance or self.get_instance())
+        return getter(name)
+
+    def _get_kw_args(self, name, instance=None):
+        getter = GetKeywordArguments(instance or self.get_instance())
+        return getter(name)
 
     def _get_handler_names(self, instance):
         return GetKeywordNames(instance)()
@@ -307,11 +317,11 @@ class _DynamicLibrary(_BaseTestLibrary):
     def _get_handler_method(self, instance, name):
         return RunKeyword(instance).method
 
-    def _create_handler(self, handler_name, handler_method):
-        doc = self._get_kw_doc(self._libinst, handler_name)
-        argspec = self._get_kw_args(self._libinst, handler_name)
-        return DynamicHandler(self, handler_name, handler_method, doc, argspec)
+    def _create_handler(self, name, method):
+        doc = self._get_kw_doc(name)
+        argspec = self._get_kw_args(name)
+        return DynamicHandler(self, name, method, doc, argspec)
 
     def _create_init_handler(self, libcode):
-        docgetter = lambda: self._get_kw_doc(self.get_instance(), '__init__')
+        docgetter = lambda: self._get_kw_doc('__init__')
         return InitHandler(self, self._resolve_init_method(libcode), docgetter)

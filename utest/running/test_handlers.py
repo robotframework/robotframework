@@ -6,6 +6,8 @@ from robot.running.handlers import _PythonHandler, _JavaHandler, DynamicHandler
 from robot import utils
 from robot.utils.asserts import *
 from robot.running.testlibraries import TestLibrary
+from robot.running.dynamicmethods import GetKeywordArguments, GetKeywordDocumentation
+from robot.errors import DataError
 
 from classes import NameLibrary, DocLibrary, ArgInfoLibrary
 from ArgumentsPython import ArgumentsPython
@@ -69,84 +71,87 @@ class TestPythonHandler(unittest.TestCase):
 
 
 class TestDynamicHandlerCreation(unittest.TestCase):
-    _type_err_msg = 'Argument spec should be a list/array of strings'
 
-    def test_with_none_doc(self):
-        assert_equals(self._create_handler().doc, '')
+    def test_none_doc(self):
+        self._assert_doc(None, '')
 
-    def test_with_empty_doc(self):
-         assert_equals(self._create_handler('').doc, '')
+    def test_empty_doc(self):
+        self._assert_doc('')
 
-    def test_with_non_empty_doc(self):
-        doc = 'This is some documentation'
-        assert_equals(self._create_handler(doc).doc, doc)
+    def test_non_empty_doc(self):
+        self._assert_doc('This is some documentation')
 
-    def test_with_non_string_doc(self):
-        doc = ['this', 'is', 'doc']
-        assert_equals(self._create_handler(doc).doc, str(doc))
-        doc = lambda x: None
-        assert_equals(self._create_handler(doc).doc, str(doc))
+    def test_non_ascii_doc(self):
+        self._assert_doc(u'P\xe4iv\xe4\xe4')
 
-    def test_with_none_argspec(self):
-        self._assert_arg_specs(self._create_handler(), 0, sys.maxint,
-                               vararg='<unknown>')
+    def test_with_utf8_doc(self):
+        doc = u'P\xe4iv\xe4\xe4'
+        self._assert_doc(doc.encode('UTF-8'), doc)
 
-    def test_with_empty_argspec(self):
-        self._assert_arg_specs(self._create_handler(argspec=[]), 0, 0)
+    def test_invalid_doc_type(self):
+        self._assert_fails('Return value must be string.', doc=True)
 
-    def test_with_mandatory_args(self):
-        for args in [['arg'], ['arg1', 'arg2', 'arg3']]:
-            handler = self._create_handler(argspec=args)
-            self._assert_arg_specs(handler, len(args), len(args), args)
+    def test_none_argspec(self):
+        self._assert_spec(None, maxargs=sys.maxint,vararg='unknown')
 
-    def test_with_only_default_args(self):
-        argspec = ['defarg1=value', 'defarg2=defvalue']
-        self._assert_arg_specs(self._create_handler(argspec=argspec), 0, 2,
-                               ['defarg1', 'defarg2'], ['value', 'defvalue'])
+    def test_empty_argspec(self):
+        self._assert_spec([])
+
+    def test_mandatory_args(self):
+        for argspec in [['arg'], ['arg1', 'arg2', 'arg3']]:
+            self._assert_spec(argspec, len(argspec), len(argspec), argspec)
+
+    def test_only_default_args(self):
+        self._assert_spec(['defarg1=value', 'defarg2=defvalue'], 0, 2,
+                          ['defarg1', 'defarg2'], ['value', 'defvalue'])
 
     def test_default_value_may_contain_equal_sign(self):
-        self._assert_arg_specs(self._create_handler(argspec=['d=foo=bar']),
-                               0, 1, ['d'], ['foo=bar'])
+        self._assert_spec(['d=foo=bar'], 0, 1, ['d'], ['foo=bar'])
 
-    def test_with_varargs(self):
-        self._assert_arg_specs(self._create_handler(argspec=['*vararg']),
-                               0, sys.maxint, vararg='vararg')
+    def test_varargs(self):
+        self._assert_spec(['*vararg'], 0, sys.maxint, vararg='vararg')
 
     def test_integration(self):
-        handler = self._create_handler(argspec=['arg', 'default=value'])
-        self._assert_arg_specs(handler, 1, 2, ['arg', 'default'], ['value'])
-        handler = self._create_handler(argspec=['arg', 'default=value', '*var'])
-        self._assert_arg_specs(handler, 1, sys.maxint, ['arg', 'default'], ['value'], 'var')
+        self._assert_spec(['arg', 'default=value'], 1, 2,
+                          ['arg', 'default'], ['value'])
+        self._assert_spec(['arg', 'default=value', '*var'], 1, sys.maxint,
+                          ['arg', 'default'], ['value'], 'var')
 
-    def test_with_string_argspec(self):
-        assert_raises_with_msg(TypeError, self._type_err_msg,
-                               self._create_handler, argspec='')
-
-    def test_with_non_iterable_argspec(self):
-        assert_raises_with_msg(TypeError, self._type_err_msg,
-                               self._create_handler, argspec=True)
+    def test_invalid_argspec_type(self):
+        for argspec in [True, [1, 2]]:
+            self._assert_fails("Return value must be list of strings.", argspec)
 
     def test_mandatory_arg_after_default_arg(self):
         for argspec in [['d=v', 'arg'], ['a', 'b', 'c=v', 'd']]:
-            assert_raises_with_msg(TypeError, self._type_err_msg,
-                                   self._create_handler, argspec=argspec)
+            self._assert_fails('Non-default argument after default arguments.',
+                               argspec)
 
     def test_vararg_not_last(self):
         for argspec in [['*foo', 'arg'], ['arg', '*var', 'arg'],
                         ['a', 'b=d', '*var', 'c'], ['*var', '*vararg']]:
-            assert_raises_with_msg(TypeError, self._type_err_msg,
-                                   self._create_handler, argspec=argspec)
+            self._assert_fails('Only last argument can be varargs.', argspec)
 
-    def _create_handler(self, doc=None, argspec=None):
+    def _assert_doc(self, doc, expected=None):
+        expected = doc if expected is None else expected
+        assert_equals(self._create_handler(doc=doc).doc, expected)
+
+    def _assert_spec(self, argspec, minargs=0, maxargs=0, positional=[],
+                     defaults=[], vararg=None):
+        arguments = self._create_handler(argspec).arguments
+        assert_equals(arguments.minargs, minargs)
+        assert_equals(arguments.maxargs, maxargs)
+        assert_equals(arguments.positional, positional)
+        assert_equals(arguments.defaults, defaults)
+        assert_equals(arguments.varargs, vararg)
+
+    def _assert_fails(self, error, argspec=None, doc=None):
+        assert_raises_with_msg(DataError, error,
+                               self._create_handler, argspec, doc)
+    def _create_handler(self, argspec=None, doc=None):
+        doc = GetKeywordDocumentation(lib=None)._handle_return_value(doc)
+        argspec = GetKeywordArguments(lib=None)._handle_return_value(argspec)
         return DynamicHandler(LibraryMock('TEST CASE'), 'mock', lambda x: None,
                               doc, argspec)
-
-    def _assert_arg_specs(self, handler, minargs, maxargs, names=[], defaults=[], vararg=None):
-        assert_equals(handler.arguments.minargs, minargs)
-        assert_equals(handler.arguments.maxargs, maxargs)
-        assert_equals(handler.arguments.names, names)
-        assert_equals(handler.arguments.defaults, defaults)
-        assert_equals(handler.arguments.varargs, vararg)
 
 
 if utils.is_jython:

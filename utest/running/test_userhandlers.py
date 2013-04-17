@@ -119,13 +119,13 @@ class TestEmbeddedArgs(unittest.TestCase):
 class TestGetArgSpec(unittest.TestCase):
 
     def test_no_args(self):
-        self._verify('', [], [], None)
+        self._verify('')
 
     def test_one_arg(self):
-        self._verify('${arg1}', ['${arg1}',], [], None)
+        self._verify('${arg1}', ['${arg1}',])
 
     def test_one_vararg(self):
-        self._verify('@{varargs}', [], [], '@{varargs}')
+        self._verify('@{varargs}', exp_varargs='@{varargs}')
 
     def test_one_default(self):
         self._verify('${arg1} ${arg2}=default @{varargs}',
@@ -138,13 +138,13 @@ class TestGetArgSpec(unittest.TestCase):
     def test_many_defaults(self):
         self._verify('${arg1}=default1 ${arg2}=default2 ${arg3}=default3',
                      ['${arg1}', '${arg2}', '${arg3}'],
-                     ['default1', 'default2', 'default3'], None)
+                     ['default1', 'default2', 'default3'])
 
-    def _verify(self, in_args, exp_args, exp_defaults, exp_varargs):
-        args = self._parse(in_args)
-        assert_equals(args.positional, exp_args)
-        assert_equals(args.defaults, exp_defaults)
-        assert_equals(args.varargs, exp_varargs)
+    def _verify(self, in_args, exp_args=[], exp_defaults=[], exp_varargs=None):
+        argspec = self._parse(in_args)
+        assert_equals(argspec.positional, exp_args)
+        assert_equals(argspec.defaults, exp_defaults)
+        assert_equals(argspec.varargs, exp_varargs)
 
     def _parse(self, in_args):
         return UserKeywordArgumentParser().parse('Name', in_args.split())

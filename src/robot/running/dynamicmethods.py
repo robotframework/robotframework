@@ -49,14 +49,15 @@ class _DynamicMethod(object):
         raise NotImplementedError
 
     def _to_string(self, value):
+        if not isinstance(value, basestring):
+            raise DataError('Return value must be string.')
         return value if isinstance(value, unicode) else unic(value, 'UTF-8')
 
     def _to_list_of_strings(self, value):
         try:
             return [self._to_string(v) for v in value]
-        except TypeError:
-            raise DataError('Return value must be list-like, got %s instead.'
-                            % type(value))
+        except (TypeError, DataError):
+            raise DataError('Return value must be list of strings.')
 
     def __nonzero__(self):
         return self.method is not no_dynamic_method
@@ -85,5 +86,5 @@ class GetKeywordArguments(_DynamicMethod):
 
     def _handle_return_value(self, value):
         if value is None:
-            return None   # FIXME: Could we return ['*unknown'] instead?
+            return ['*unknown']
         return self._to_list_of_strings(value)

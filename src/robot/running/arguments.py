@@ -77,13 +77,13 @@ class _ArgumentParser(object):
         self._type = type
 
     def parse(self, name, source):
-        return KeywordArguments(name, self._type, *self._get_arg_spec(source))
-
-    def _get_arg_spec(self, source):
         raise NotImplementedError
 
 
 class PythonArgumentParser(_ArgumentParser):
+
+    def parse(self, name, source):
+        return KeywordArguments(name, self._type, *self._get_arg_spec(source))
 
     def _get_arg_spec(self, handler):
         """Returns info about args in a tuple (args, defaults, varargs, kwargs)
@@ -136,81 +136,63 @@ class JavaArgumentParser(_ArgumentParser):
         return mina, maxa
 
 
-class DynamicArgumentParser(_ArgumentParser):
+class _ArgumentSpecParser(_ArgumentParser):
 
-    def _get_arg_spec(self, argspec):
-        if argspec is None:
-            return [], [], '<unknown>', {}
-        try:
-            if isinstance(argspec, basestring):
-                raise TypeError
-            return self._parse_arg_spec(list(argspec))
-        except TypeError:
-            raise TypeError('Argument spec should be a list/array of strings')
-
-    def _parse_arg_spec(self, argspec):
-        if not argspec:
-            return [], [], None, {}
-        args = []
-        defaults = []
-        vararg = None
-        kwargs = {}
-        for token in argspec:
-            if vararg is not None:
-                raise TypeError
-            if token.startswith('*'):
-                vararg = token[1:]
+    def parse(self, name, argspec):
+        result = KeywordArguments(name, self._type, positional=[], defaults=[])
+        for arg in argspec:
+            if result.varargs:
+                raise DataError('Only last argument can be varargs.')
+            if self._is_varargs(arg):
+                self._add_varargs(arg, result)
                 continue
-            if '=' in token:
-                arg, default = token.split('=', 1)
-                args.append(arg)
-                defaults.append(default)
+            if '=' in arg:
+                self._add_arg_with_default(arg, result)
                 continue
-            if defaults:
-                raise TypeError
-            args.append(token)
-        return args, defaults, vararg, kwargs
+            if result.defaults:
+                raise DataError('Non-default argument after default arguments.')
+            self._add_arg(arg, result)
+        return result
+
+    def _is_varargs(self, arg):
+        raise NotImplementedError
+
+    def _add_varargs(self, varargs, result):
+        result.varargs = self._format_varargs(varargs)
+
+    def _format_varargs(self, varargs):
+        return varargs
+
+    def _add_arg_with_default(self, arg, result):
+        arg, default = arg.split('=', 1)
+        self._add_arg(arg, result)
+        result.defaults.append(default)
+
+    def _add_arg(self, arg, result):
+        if not self._is_valid_arg(arg):
+            raise DataError("Invalid argument '%s'." % arg)
+        result.positional.append(arg)
+
+    def _is_valid_arg(self, arg):
+        return True
 
 
-class UserKeywordArgumentParser(_ArgumentParser):
+class DynamicArgumentParser(_ArgumentSpecParser):
 
-    def _get_arg_spec(self, origargs):
-        """Returns argument spec in a tuple (args, defaults, varargs).
+    def _is_varargs(self, arg):
+        return arg.startswith('*')
 
-        args     - tuple of all accepted arguments
-        defaults - tuple of default values
-        varargs  - name of the argument accepting varargs or None
+    def _format_varargs(self, varargs):
+        return varargs[1:]
 
-        Examples:
-          ['${arg1}', '${arg2}']
-            => ('${arg1}', '${arg2}'), (), None
-          ['${arg1}', '${arg2}=default', '@{varargs}']
-            => ('${arg1}', '${arg2}'), ('default',), '@{varargs}'
-        """
-        args = []
-        defaults = []
-        varargs = None
-        kwargs = {}
-        for arg in origargs:
-            if varargs:
-                raise DataError('Only last argument can be a list')
-            if is_list_var(arg):
-                varargs = arg
-                continue   # should be last round (otherwise DataError in next)
-            arg, default = self._split_default(arg)
-            if defaults and default is None:
-                raise DataError('Non default argument after default arguments')
-            if not is_scalar_var(arg):
-                raise DataError("Invalid argument '%s'" % arg)
-            args.append(arg)
-            if default is not None:
-                defaults.append(default)
-        return args, defaults, varargs, kwargs
 
-    def _split_default(self, arg):
-        if '=' not in arg:
-            return arg, None
-        return arg.split('=', 1)
+class UserKeywordArgumentParser(_ArgumentSpecParser):
+
+    def _is_varargs(self, arg):
+        return is_list_var(arg)
+
+    def _is_valid_arg(self, arg):
+        return is_scalar_var(arg)
 
 
 class Foo:   # FIXME: We perhaps need to rename this class.........

@@ -87,13 +87,13 @@ Too many arguments
     No Operation  ${foo}  @{list}
 
 Invalid syntax in UK
-    [Documentation]  FAIL Invalid argument '${arg'
+    [Documentation]  FAIL Invalid argument '${arg'.
     Invalid Syntax UK
 
 Multiple Failures
     [Documentation]  FAIL Several failures occurred:\n\n
     ...  1) Keyword 'BuiltIn.Should Be Equal' expected 2 to 4 arguments, got 1.\n\n
-    ...  2) Invalid argument '${arg'\n\n
+    ...  2) Invalid argument '${arg'.\n\n
     ...  3) Keyword 'BuiltIn.Log' expected 1 to 2 arguments, got 4.\n\n
     ...  4) No keyword with name 'Yet another non-existing keyword' found.\n\n
     ...  5) No keyword with name 'Does not exist' found.
