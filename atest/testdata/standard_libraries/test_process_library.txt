@@ -1,8 +1,14 @@
 *** Settings ***
 Library                 ProcessLibrary.py
 Library                 OperatingSystem
+Suite Setup             Endless process    suite_process
+Test Teardown           Restart Suite Process If Needed
+Suite Teardown          Kill Process       suite_process
 
 *** Test Cases ***
+Library Namespace should be global
+          Process Should Be Alive   suite_process
+
 Running a process
           ${result}=          Run Python Process          print 'hello'
           Result should equal          ${result}          stdout=hello\n          exit_code=0
@@ -132,7 +138,8 @@ Process alias
 
 *** Keywords ***
 Endless process
-          ${handle}=          Start Python Process          while True: pass;
+          [Arguments]       ${alias}=${null}
+          ${handle}=          Start Python Process          while True: pass;     alias=${alias}
           [Return]          ${handle}
 
 Result should equal
@@ -142,11 +149,15 @@ Result should equal
           Should Be Equal As Integers          ${result.exit_code}          ${exit_code}
 
 Start Python Process
-          [Arguments]          ${command}
-          ${handle}=          Start New Process          python          -c          ${command}
+          [Arguments]          ${command}      ${alias}=${null}
+          ${handle}=          Start New Process          python          -c          ${command}      alias=${alias}
           [Return]          ${handle}
 
 Run Python Process
           [Arguments]          ${command}
           ${result}=          Run Process          python          -c          ${command}
           [Return]          ${result}
+
+Restart Suite Process If Needed
+         ${alive}=    Process Is Alive  suite_process
+         Run Keyword If  not ${alive}   Endless Process   suite_process

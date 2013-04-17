@@ -4,6 +4,9 @@ Force Tags       regression    pybot    jybot
 Resource         atest_resource.txt
 
 *** Test Cases ***
+Library Namespace should be global
+    Check Test Case    ${TESTNAME}
+
 Running a process
     Check Test Case    ${TESTNAME}
 

@@ -23,6 +23,7 @@ class ProcessData(object):
         self.stderr = stderr
 
 class ProcessLibrary(object):
+    ROBOT_LIBRARY_SCOPE='GLOBAL'
 
     def __init__(self):
         self._started_processes = ConnectionCache()
@@ -42,7 +43,6 @@ class ProcessLibrary(object):
         use_shell = config.use_shell
         if use_shell and args:
             cmd = subprocess.list2cmdline(cmd)
-            print cmd
         p = subprocess.Popen(cmd, stdout=stdout_stream, stderr=stderr_stream,
                              shell=use_shell, cwd=config.cwd)
         index = self._started_processes.register(p, alias=config.alias)
@@ -85,7 +85,8 @@ class ProcessLibrary(object):
 
     def kill_all_processes(self):
         for handle in range(len(self._started_processes._connections)):
-            self.kill_process(handle)
+            if self.process_is_alive(handle):
+                self.kill_process(handle)
 
     def get_process_id(self, handle):
         self._started_processes.switch(handle)
