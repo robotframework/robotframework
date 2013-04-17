@@ -67,11 +67,7 @@ class ProcessLibrary(object):
             self._started_processes.switch(handle)
         exit_code = self._started_processes.current.wait()
         logs = self._logs[handle]
-        with open(logs.stdout,'r') as f:
-            stdout = f.read()
-        with open(logs.stderr,'r') as f:
-            stderr = f.read()
-        return ExecutionResult(stdout, stderr, exit_code)
+        return ExecutionResult(logs.stdout, logs.stderr, exit_code)
 
     def kill_process(self, handle=None):
         if handle:
@@ -104,11 +100,26 @@ class ProcessLibrary(object):
 
 class ExecutionResult(object):
 
-    def __init__(self, stdout=None, stderr=None, exit_code=None):
-        self.stdout = stdout or ''
-        self.stderr = stderr or ''
+    _stdout = _stderr = None
+
+    def __init__(self, stdout_name, stderr_name, exit_code=None):
+        self._stdout_name = stdout_name
+        self._stderr_name = stderr_name
         self.exit_code = exit_code
 
+    @property
+    def stdout(self):
+        if self._stdout is None:
+            with open(self._stdout_name,'r') as f:
+                self._stdout = f.read()
+        return self._stdout
+
+    @property
+    def stderr(self):
+        if self._stderr is None:
+            with open(self._stderr_name,'r') as f:
+                self._stderr = f.read()
+        return self._stderr
 
 if __name__ == '__main__':
     r = ProcessLibrary().run_process('python', '-c', "print \'hello\'")

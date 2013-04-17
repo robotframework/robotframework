@@ -97,16 +97,16 @@ Change Current Working Directory
 Setting Stdout
           ${result}=            Run Process   python -c "print 'hello'"     shell=True    stdout=myfile.txt
           ${output}=            Get File     myfile.txt
-          Remove File   myfile.txt
           Should Not Be Empty    ${output}
           Should Be Equal     ${result.stdout}      ${output}
+          Remove File   myfile.txt
 
 Setting Stderr
           ${result}=            Run Process   python -c "1/0"     shell=True    stderr=myfile.txt
           ${output}=            Get File     myfile.txt
-          Remove File   myfile.txt
           Should Not Be Empty    ${output}
           Should Be Equal     ${result.stderr}      ${output}
+          Remove File   myfile.txt
 
 Escaping equals sign
           ${result}=            Run Process    python    -c    print 'stderr\=bar.buu'    shell=True
