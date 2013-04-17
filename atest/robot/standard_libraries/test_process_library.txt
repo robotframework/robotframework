@@ -1,0 +1,59 @@
+*** Settings ***
+Suite Setup      Run Tests    ${EMPTY}    standard_libraries/test_process_library.txt
+Force Tags       regression    pybot    jybot
+Resource         atest_resource.txt
+
+*** Test Cases ***
+Running a process
+    Check Test Case    ${TESTNAME}
+
+Error in exit code and stderr output
+    Check Test Case    ${TESTNAME}
+
+Start And Wait Process
+    Check Test Case    ${TESTNAME}
+
+Killing process
+    Check Test Case    ${TESTNAME}
+
+Terminating process
+    Check Test Case    ${TESTNAME}
+
+Pid
+    Check Test Case    ${TESTNAME}
+
+Starting many processes and killing all
+    Check Test Case    ${TESTNAME}
+
+Test Process Should Be Alive
+    Check Test Case    ${TESTNAME}
+
+Test Process Should Be Dead
+    Check Test Case    ${TESTNAME}
+
+Kill Process Which Does Not Exist
+    Check Test Case    ${TESTNAME}
+
+Wait For Process Which Does Not Exist
+    Check Test Case    ${TESTNAME}
+
+Change Current Working Directory
+    Check Test Case    ${TESTNAME}
+
+Setting Stdout
+    Check Test Case    ${TESTNAME}
+
+Setting Stderr
+    Check Test Case    ${TESTNAME}
+
+Escaping equals sign
+    Check Test Case    ${TESTNAME}
+
+Running a process in a shell
+    Check Test Case    ${TESTNAME}
+
+Stress output handling
+    Check Test Case    ${TESTNAME}
+
+Process alias
+    Check Test Case    ${TESTNAME}

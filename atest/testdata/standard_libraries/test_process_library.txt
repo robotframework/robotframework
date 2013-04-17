@@ -1,0 +1,152 @@
+*** Settings ***
+Library                 ProcessLibrary.py
+Library                 OperatingSystem
+
+*** Test Cases ***
+Running a process
+          ${result}=          Run Python Process          print 'hello'
+          Result should equal          ${result}          stdout=hello\n          exit_code=0
+
+Error in exit code and stderr output
+          ${result}=          Run Python Process          1/0
+          Result should equal          ${result}          stderr=*ZeroDivisionError: integer division or modulo by zero*          exit_code=1
+
+Start And Wait Process
+          ${handle}=          Start Python Process          import time;time.sleep(0.1)
+          ${is_alive}=          Process Is Alive          ${handle}
+          Should Be True          ${is_alive}
+          Wait For Process          ${handle}
+          Process Should Be Dead          ${handle}
+
+Killing process
+          ${handle}=          Endless process
+          ${is_alive}=          Process Is Alive          ${handle}
+          Should Be True          ${is_alive}
+          Kill Process          ${handle}
+          Wait For Process          ${handle}
+          Process Should Be Dead          ${handle}
+
+Terminating process
+          ${handle}=          Endless process
+          Terminate Process          ${handle}
+          Wait For Process          ${handle}
+          Process Should Be Dead          ${handle}
+
+Pid
+          ${handle}=          Endless process
+          ${pid}=          Get Pid          ${handle}
+          Run Process          kill          -9          ${pid}
+          Wait For Process          ${handle}
+          Process Should Be Dead          ${handle}
+
+Starting many processes and killing all
+          ${handle1}=          Endless process
+          ${handle2}=          Endless process
+          ${handle3}=          Endless process
+          ${handle4}=          Endless process
+          ${handle5}=          Endless process
+          Sleep          0.1
+          Process Should be alive          ${handle1}
+          Process Should be alive          ${handle2}
+          Process Should be alive          ${handle3}
+          Process Should be alive          ${handle4}
+          Process Should be alive          ${handle5}
+          Kill all processes
+          Sleep          0.1
+          Process Should Be Dead          ${handle1}
+          Process Should Be Dead          ${handle2}
+          Process Should Be Dead          ${handle3}
+          Process Should Be Dead          ${handle4}
+          Process Should Be Dead          ${handle5}
+
+Test Process Should Be Alive
+          ${handle}=          Endless process
+          Process Should Be Alive          ${handle}
+          Kill all processes
+          Wait For Process          ${handle}
+          Run Keyword And Expect Error          Process is not alive          Process Should Be Alive          ${handle}
+
+Test Process Should Be Dead
+          ${handle}=          Endless process
+          Run Keyword And Expect Error          Process is alive          Process Should Be Dead          ${handle}
+          Kill all processes
+          Wait For Process          ${handle}
+          Process Should Be Dead          ${handle}
+
+Kill Process Which Does Not Exist
+          ${handle}=          Endless process
+          Kill Process          ${handle}
+          Kill Process          ${handle}
+
+Wait For Process Which Does Not Exist
+          ${handle}=          Endless process
+          Kill Process          ${handle}
+          Wait For Process          ${handle}
+
+Change Current Working Directory
+          ${result}=           Run Process          python          -c          import os; print os.path.abspath(os.curdir);    cwd=.
+          ${result2}=          Run Process          python          -c          import os; print os.path.abspath(os.curdir);    cwd=..
+          Should Not Be Equal          ${result.stdout}          ${result2.stdout}
+
+Setting Stdout
+          ${result}=            Run Process   python -c "print 'hello'"     shell=True    stdout=myfile.txt
+          ${output}=            Get File     myfile.txt
+          Remove File   myfile.txt
+          Should Not Be Empty    ${output}
+          Should Be Equal     ${result.stdout}      ${output}
+
+Setting Stderr
+          ${result}=            Run Process   python -c "1/0"     shell=True    stderr=myfile.txt
+          ${output}=            Get File     myfile.txt
+          Remove File   myfile.txt
+          Should Not Be Empty    ${output}
+          Should Be Equal     ${result.stderr}      ${output}
+
+Escaping equals sign
+          ${result}=            Run Process    python    -c    print 'stderr\=bar.buu'    shell=True
+          Result should equal       ${result}     stdout=*stderr=bar.buu*
+
+Running a process in a shell
+          ${result}=          Run Process          python -c "print 'hello'"      shell=True
+          Result should equal          ${result}          stdout=*hello*          exit_code=0
+          Run Keyword And Expect Error          *          Run Process          python -c "print 'hello'"   shell=False
+
+Stress output handling
+          ${handle1}=          Start Python Process          print 'PROCESS 1'
+          ${handle}=           Start Python Process          import time;time.sleep(1)
+          ${handle2}=          Start Python Process          print 'PROCESS 2'
+          : FOR          ${index}          IN RANGE          100
+          \          Input to Process          ${handle1}          no morjensfhwjehfhgäöåååöwefgwefgwegfywegfuywgefbwefybx\nihfasjfhwejkfhajkwe\nfsdahjsdfajkhgfsadhgfsdjh
+          Input to Process          ${handle2}          important stuff to process 2
+          ${output1}=          Wait For Process          ${handle1}
+          ${output2}=          Wait For Process          ${handle2}
+          ${output3}=          Wait For Process          ${handle}
+          Result should equal          ${output1}          stdout=PROCESS 1*          exit_code=0
+          Result should equal          ${output2}          stdout=PROCESS 2\nimportant stuff to process 2          exit_code=0
+
+Process alias
+          ${handle}=         Start New Process   python -c "print 'hello'"  shell=True    alias=hello
+          ${pid_by_handle}=   Get pid   ${handle}
+          ${pid_by_alias}=    Get pid   hello
+          Should Be Equal    ${pid_by_handle}    ${pid_by_alias}
+
+*** Keywords ***
+Endless process
+          ${handle}=          Start Python Process          while True: pass;
+          [Return]          ${handle}
+
+Result should equal
+          [Arguments]          ${result}          ${stdout}=          ${stderr}=          ${exit_code}=0
+          Should Match          ${result.stdout}          ${stdout}
+          Should Match          ${result.stderr}          ${stderr}
+          Should Be Equal As Integers          ${result.exit_code}          ${exit_code}
+
+Start Python Process
+          [Arguments]          ${command}
+          ${handle}=          Start New Process          python          -c          ${command}
+          [Return]          ${handle}
+
+Run Python Process
+          [Arguments]          ${command}
+          ${result}=          Run Process          python          -c          ${command}
+          [Return]          ${result}
