@@ -35,15 +35,13 @@ class ProcessLibrary(object):
 
     def start_new_process(self, command, *args, **conf):
         cmd = [command]+[str(i) for i in args]
-        stdout_stream = open(conf['stdout'], 'w') if 'stdout' in conf else self._get_temp_file()
-        stderr_stream = open(conf['stderr'], 'w') if 'stderr' in conf else self._get_temp_file("stderr")
+        config = _NewProcessConfig(conf, self._tempdir)
+        stdout_stream = config.stdout_stream
+        stderr_stream = config.stderr_stream
         print "stdout tempfile is", stdout_stream.name
         print "stderr tempfile is", stderr_stream.name
         pd = ProcessData(stdout_stream.name, stderr_stream.name)
-        if 'shell' in conf:
-            use_shell = (conf['shell'] != 'False')
-        else:
-            use_shell = False
+        use_shell = config.use_shell
         if 'cwd' in conf:
             cwd = conf['cwd']
         else:
@@ -103,12 +101,6 @@ class ProcessLibrary(object):
         self._started_processes.switch(handle)
         return self._started_processes.current.pid
 
-    def _get_temp_file(self, suffix="stdout"):
-        return tempfile.NamedTemporaryFile(delete=False,
-                                           prefix='tmp_logfile_',
-                                           suffix="_%s" % suffix,
-                                           dir=self._tempdir)
-
     def input_to_process(self, handle, msg):
         if not msg:
             return
@@ -130,3 +122,19 @@ class ExecutionResult(object):
 if __name__ == '__main__':
     r = ProcessLibrary().run_process('python', '-c', "print \'hello\'")
     print repr(r.stdout)
+
+class _NewProcessConfig(object):
+
+    def __init__(self, conf, tempdir):
+        self._tempdir = tempdir
+        self._conf = conf
+        self.stdout_stream = open(conf['stdout'], 'w') if 'stdout' in conf else self._get_temp_file("stdout")
+        self.stderr_stream = open(conf['stderr'], 'w') if 'stderr' in conf else self._get_temp_file("stderr")
+        self.use_shell = (conf['shell'] != 'False') if 'shell' in conf else False
+
+
+    def _get_temp_file(self, suffix):
+        return tempfile.NamedTemporaryFile(delete=False,
+                                           prefix='tmp_logfile_',
+                                           suffix="_%s" % suffix,
+                                           dir=self._tempdir)
