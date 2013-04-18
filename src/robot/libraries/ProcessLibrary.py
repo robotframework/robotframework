@@ -129,9 +129,6 @@ class ExecutionResult(object):
                 self._stderr = f.read()
         return self._stderr
 
-if __name__ == '__main__':
-    r = ProcessLibrary().run_process('python', '-c', "print \'hello\'")
-    print repr(r.stdout)
 
 class _NewProcessConfig(object):
 
