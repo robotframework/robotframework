@@ -24,6 +24,18 @@ Start And Wait Process
           Wait For Process          ${handle}
           Process Should Be Dead          ${handle}
 
+Switching active process
+          ${process_one}=       Endless process    one
+          Kill Process          one
+          ${process_two}=       Endless process    two
+          Process Should Be Alive   ${process_two}
+          Switch Active Process     one
+          Process Should Be Dead
+          Switch Active Process     two
+          Process Should Be Alive
+          Kill Process
+
+
 Killing process
           ${handle}=          Endless process
           ${is_alive}=          Process Is Alive          ${handle}

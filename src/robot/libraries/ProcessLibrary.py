@@ -54,11 +54,11 @@ class ProcessLibrary(object):
             self._started_processes.switch(handle)
         return self._started_processes.current.poll() is None
 
-    def process_should_be_alive(self, handle):
+    def process_should_be_alive(self, handle=None):
         if not self.process_is_alive(handle):
             raise AssertionError('Process is not alive')
 
-    def process_should_be_dead(self, handle):
+    def process_should_be_dead(self, handle=None):
         if self.process_is_alive(handle):
             raise AssertionError('Process is alive')
 
@@ -96,6 +96,9 @@ class ProcessLibrary(object):
         self._started_processes.current.wait()
         with open(alog.stdout,'a') as f:
             f.write(msg.encode('UTF-8'))
+
+    def switch_active_process(self, handle):
+        self._started_processes.switch(handle)
 
 
 class ExecutionResult(object):
