@@ -31,8 +31,12 @@ class ProcessLibrary(object):
         self._tempdir = tempfile.mkdtemp(suffix="processlib")
 
     def run_process(self, command, *args, **conf):
-        p = self.start_new_process(command, *args, **conf)
-        return self.wait_for_process(p)
+        active_process_index = self._started_processes.current_index
+        try:
+            p = self.start_new_process(command, *args, **conf)
+            return self.wait_for_process(p)
+        finally:
+            self._started_processes.switch(active_process_index)
 
     def start_new_process(self, command, *args, **conf):
         cmd = [command]+[str(i) for i in args]
@@ -84,8 +88,9 @@ class ProcessLibrary(object):
             if self.process_is_alive(handle):
                 self.kill_process(handle)
 
-    def get_process_id(self, handle):
-        self._started_processes.switch(handle)
+    def get_process_id(self, handle=None):
+        if handle:
+            self._started_processes.switch(handle)
         return self._started_processes.current.pid
 
     def input_to_process(self, handle, msg):

@@ -35,6 +35,13 @@ Switching active process
           Process Should Be Alive
           Kill Process
 
+Run process does not change active process
+          Endless process    active
+          ${expected id}=    Get Process Id
+          Run Python Process    1+1
+          ${id}=             Get Process Id
+          Should Be Equal     ${expected id}   ${id}
+
 
 Killing process
           ${handle}=          Endless process

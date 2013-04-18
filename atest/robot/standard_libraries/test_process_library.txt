@@ -19,6 +19,9 @@ Start And Wait Process
 Switching active process
     Check Test Case    ${TESTNAME}
 
+Run process does not change active process
+    Check Test Case    ${TESTNAME}
+
 Killing process
     Check Test Case    ${TESTNAME}
 
