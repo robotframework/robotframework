@@ -54,9 +54,10 @@ class ProcessLibrary(object):
         return index
 
     def process_is_alive(self, handle=None):
+        process = self._started_processes.current
         if handle:
-            self._started_processes.switch(handle)
-        return self._started_processes.current.poll() is None
+            process,_ = self._started_processes.get_connection(handle)
+        return process.poll() is None
 
     def process_should_be_alive(self, handle=None):
         if not self.process_is_alive(handle):
@@ -67,9 +68,10 @@ class ProcessLibrary(object):
             raise AssertionError('Process is alive')
 
     def wait_for_process(self, handle=None):
+        process = self._started_processes.current
         if handle:
-            self._started_processes.switch(handle)
-        exit_code = self._started_processes.current.wait()
+            process,_ = self._started_processes.get_connection(handle)
+        exit_code = process.wait()
         logs = self._logs[handle]
         return ExecutionResult(logs.stdout, logs.stderr, exit_code)
 
