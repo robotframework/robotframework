@@ -75,20 +75,18 @@ class ProcessLibrary(object):
         logs = self._logs[handle]
         return ExecutionResult(logs.stdout, logs.stderr, exit_code)
 
-    def kill_process(self, handle=None):
+    def terminate_process(self, handle=None, kill=False):
         if handle:
             self._started_processes.switch(handle)
-        self._started_processes.current.kill()
-
-    def terminate_process(self, handle=None):
-        if handle:
-            self._started_processes.switch(handle)
-        self._started_processes.current.terminate()
+        if kill:
+            self._started_processes.current.kill()
+        else:
+            self._started_processes.current.terminate()
 
     def kill_all_processes(self):
         for handle in range(len(self._started_processes._connections)):
             if self.process_is_alive(handle):
-                self.kill_process(handle)
+                self.terminate_process(handle, kill=True)
 
     def get_process_id(self, handle=None):
         if handle:
