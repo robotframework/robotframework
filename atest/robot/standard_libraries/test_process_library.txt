@@ -16,6 +16,12 @@ Error in exit code and stderr output
 Start And Wait Process
     Check Test Case    ${TESTNAME}
 
+Switching active process
+    Check Test Case    ${TESTNAME}
+
+Run process does not change active process
+    Check Test Case    ${TESTNAME}
+
 Killing process
     Check Test Case    ${TESTNAME}
 

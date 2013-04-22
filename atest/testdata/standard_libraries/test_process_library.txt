@@ -3,7 +3,7 @@ Library                 ProcessLibrary.py
 Library                 OperatingSystem
 Suite Setup             Endless process    suite_process
 Test Teardown           Restart Suite Process If Needed
-Suite Teardown          Kill Process       suite_process
+Suite Teardown          Terminate Process       suite_process
 
 *** Test Cases ***
 Library Namespace should be global
@@ -24,11 +24,30 @@ Start And Wait Process
           Wait For Process          ${handle}
           Process Should Be Dead          ${handle}
 
+Switching active process
+          ${process_one}=       Endless process    one
+          Terminate Process          one
+          ${process_two}=       Endless process    two
+          Process Should Be Alive   ${process_two}
+          Switch Active Process     one
+          Process Should Be Dead
+          Switch Active Process     two
+          Process Should Be Alive
+          Terminate Process
+
+Run process does not change active process
+          Endless process    active
+          ${expected id}=    Get Process Id
+          Run Python Process    1+1
+          ${id}=             Get Process Id
+          Should Be Equal     ${expected id}   ${id}
+
+
 Killing process
           ${handle}=          Endless process
           ${is_alive}=          Process Is Alive          ${handle}
           Should Be True          ${is_alive}
-          Kill Process          ${handle}
+          Terminate Process          ${handle}   kill=${True}
           Wait For Process          ${handle}
           Process Should Be Dead          ${handle}
 
@@ -81,12 +100,12 @@ Test Process Should Be Dead
 
 Kill Process Which Does Not Exist
           ${handle}=          Endless process
-          Kill Process          ${handle}
-          Kill Process          ${handle}
+          Terminate Process          ${handle}   kill=${True}
+          Terminate Process          ${handle}   kill=${True}
 
 Wait For Process Which Does Not Exist
           ${handle}=          Endless process
-          Kill Process          ${handle}
+          Terminate Process          ${handle}   kill=${True}
           Wait For Process          ${handle}
 
 Change Current Working Directory

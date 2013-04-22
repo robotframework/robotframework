@@ -55,13 +55,21 @@ class ConnectionCache:
         or strings that can be converted into integer. Raises RuntimeError
         if no connection with given index or alias found.
         """
+        self.current, self.current_index = self.get_connection(index_or_alias)
+        return self.current
+
+    def get_connection(self, index_or_alias):
+        """Get the connection specified by given index or alias.
+
+        If alias is given it must be a string. Indexes can be either integers
+        or strings that can be converted into integer. Raises RuntimeError
+        if no connection with given index or alias found.
+        """
         try:
             index = self._get_index(index_or_alias)
         except ValueError:
             raise RuntimeError("Non-existing index or alias '%s'" % index_or_alias)
-        self.current = self._connections[index-1]
-        self.current_index = index
-        return self.current
+        return self._connections[index-1], index
 
     def close_all(self, closer_method='close'):
         """Closes connections using given closer method and empties cache.

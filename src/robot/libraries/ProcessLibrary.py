@@ -11,7 +11,6 @@
 #  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
-from __future__ import unicode_literals
 import subprocess
 import tempfile
 from robot.utils import ConnectionCache
@@ -31,8 +30,12 @@ class ProcessLibrary(object):
         self._tempdir = tempfile.mkdtemp(suffix="processlib")
 
     def run_process(self, command, *args, **conf):
-        p = self.start_new_process(command, *args, **conf)
-        return self.wait_for_process(p)
+        active_process_index = self._started_processes.current_index
+        try:
+            p = self.start_new_process(command, *args, **conf)
+            return self.wait_for_process(p)
+        finally:
+            self._started_processes.switch(active_process_index)
 
     def start_new_process(self, command, *args, **conf):
         cmd = [command]+[str(i) for i in args]
@@ -50,43 +53,36 @@ class ProcessLibrary(object):
         return index
 
     def process_is_alive(self, handle=None):
-        if handle:
-            self._started_processes.switch(handle)
-        return self._started_processes.current.poll() is None
+        return self._process(handle).poll() is None
 
-    def process_should_be_alive(self, handle):
+    def process_should_be_alive(self, handle=None):
         if not self.process_is_alive(handle):
             raise AssertionError('Process is not alive')
 
-    def process_should_be_dead(self, handle):
+    def process_should_be_dead(self, handle=None):
         if self.process_is_alive(handle):
             raise AssertionError('Process is alive')
 
     def wait_for_process(self, handle=None):
-        if handle:
-            self._started_processes.switch(handle)
-        exit_code = self._started_processes.current.wait()
+        process = self._process(handle)
+        exit_code = process.wait()
         logs = self._logs[handle]
         return ExecutionResult(logs.stdout, logs.stderr, exit_code)
 
-    def kill_process(self, handle=None):
-        if handle:
-            self._started_processes.switch(handle)
-        self._started_processes.current.kill()
-
-    def terminate_process(self, handle=None):
-        if handle:
-            self._started_processes.switch(handle)
-        self._started_processes.current.terminate()
+    def terminate_process(self, handle=None, kill=False):
+        process = self._process(handle)
+        if kill:
+            process.kill()
+        else:
+            process.terminate()
 
     def kill_all_processes(self):
         for handle in range(len(self._started_processes._connections)):
             if self.process_is_alive(handle):
-                self.kill_process(handle)
+                self.terminate_process(handle, kill=True)
 
-    def get_process_id(self, handle):
-        self._started_processes.switch(handle)
-        return self._started_processes.current.pid
+    def get_process_id(self, handle=None):
+        return self._process(handle).pid
 
     def input_to_process(self, handle, msg):
         if not msg:
@@ -96,6 +92,16 @@ class ProcessLibrary(object):
         self._started_processes.current.wait()
         with open(alog.stdout,'a') as f:
             f.write(msg.encode('UTF-8'))
+
+    def switch_active_process(self, handle):
+        self._started_processes.switch(handle)
+
+    def _process(self, handle):
+        if handle:
+            process,_ = self._started_processes.get_connection(handle)
+        else:
+            process = self._started_processes.current
+        return process
 
 
 class ExecutionResult(object):
@@ -121,9 +127,6 @@ class ExecutionResult(object):
                 self._stderr = f.read()
         return self._stderr
 
-if __name__ == '__main__':
-    r = ProcessLibrary().run_process('python', '-c', "print \'hello\'")
-    print repr(r.stdout)
 
 class _NewProcessConfig(object):
 
