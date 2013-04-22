@@ -54,10 +54,7 @@ class ProcessLibrary(object):
         return index
 
     def process_is_alive(self, handle=None):
-        process = self._started_processes.current
-        if handle:
-            process,_ = self._started_processes.get_connection(handle)
-        return process.poll() is None
+        return self._process(handle).poll() is None
 
     def process_should_be_alive(self, handle=None):
         if not self.process_is_alive(handle):
@@ -68,20 +65,17 @@ class ProcessLibrary(object):
             raise AssertionError('Process is alive')
 
     def wait_for_process(self, handle=None):
-        process = self._started_processes.current
-        if handle:
-            process,_ = self._started_processes.get_connection(handle)
+        process = self._process(handle)
         exit_code = process.wait()
         logs = self._logs[handle]
         return ExecutionResult(logs.stdout, logs.stderr, exit_code)
 
     def terminate_process(self, handle=None, kill=False):
-        if handle:
-            self._started_processes.switch(handle)
+        process = self._process(handle)
         if kill:
-            self._started_processes.current.kill()
+            process.kill()
         else:
-            self._started_processes.current.terminate()
+            process.terminate()
 
     def kill_all_processes(self):
         for handle in range(len(self._started_processes._connections)):
@@ -89,9 +83,7 @@ class ProcessLibrary(object):
                 self.terminate_process(handle, kill=True)
 
     def get_process_id(self, handle=None):
-        if handle:
-            self._started_processes.switch(handle)
-        return self._started_processes.current.pid
+        return self._process(handle).pid
 
     def input_to_process(self, handle, msg):
         if not msg:
@@ -104,6 +96,13 @@ class ProcessLibrary(object):
 
     def switch_active_process(self, handle):
         self._started_processes.switch(handle)
+
+    def _process(self, handle):
+        if handle:
+            process,_ = self._started_processes.get_connection(handle)
+        else:
+            process = self._started_processes.current
+        return process
 
 
 class ExecutionResult(object):
