@@ -195,63 +195,6 @@ class UserKeywordArgumentParser(_ArgumentSpecParser):
         return is_scalar_var(arg)
 
 
-class Foo:   # FIXME: We perhaps need to rename this class.........
-
-    def __init__(self, argspec):
-        self._argspec = argspec
-
-    def resolve(self, arguments, variables):
-        positional, named = self._resolve_arg_usage(arguments, variables)
-        positional, varargs = self._split_args_and_varargs(positional)
-        argument_values = self._resolve_arg_values(variables, named, positional)
-        argument_values += varargs
-        ArgumentValidator(self._argspec).check_missing_args(argument_values, len(arguments))
-        return argument_values
-
-    def _resolve_arg_usage(self, arguments, variables):
-        resolver = UserKeywordArgumentResolver(self._argspec)
-        return resolver.resolve(arguments, variables)
-
-    def _split_args_and_varargs(self, args):
-        if not self._argspec.varargs:
-            return args, []
-        index = len(self._argspec.positional)
-        return args[:index], args[index:]
-
-    def _resolve_arg_values(self, variables, named, positional):
-        template = self._template_for(variables)
-        for name, value in named.items():
-            template.set_value(self._argspec.positional.index(name), value)
-        for index, value in enumerate(positional):
-            template.set_value(index, value)
-        return template.as_list()
-
-    def _template_for(self, variables):
-        defaults = variables.replace_list(list(self._argspec.defaults))
-        return UserKeywordArgsTemplate(self._argspec.minargs, defaults)
-
-
-class _MissingArg(object):
-    def __getattr__(self, name):
-        raise DataError
-
-
-class UserKeywordArgsTemplate(object):
-
-    def __init__(self, minargs, defaults):
-        self._template = [_MissingArg() for _ in range(minargs)] + defaults
-        self._already_set = set()
-
-    def set_value(self, idx, value):
-        if idx in self._already_set:
-            raise FrameworkError
-        self._already_set.add(idx)
-        self._template[idx] = value
-
-    def as_list(self):
-        return self._template
-
-
 class NamedArgumentResolver(object):
 
     def __init__(self, argspec):
@@ -364,6 +307,11 @@ class UserKeywordArgumentResolver(PythonArgumentResolver):
     def __init__(self, argspec):
         self._named_resolver = UserKeywordNamedArgumentResolver(argspec)
         self._validator = ArgumentValidator(argspec)
+        self._mapper = ArgumentMapper(argspec)
+
+    def resolve(self, arguments, variables):
+        positional, named = PythonArgumentResolver.resolve(self, arguments, variables)
+        return self._mapper.map_arguments(positional, named, variables)
 
 
 class RunKeywordArgumentResolver(object):
@@ -404,6 +352,37 @@ class JavaArgumentResolver(object):
                     and isinstance(args[-1], (list, tuple, ArrayType)))
 
 
+class ArgumentMapper(object):
+
+    def __init__(self, argspec):
+        self._argspec = argspec
+
+    def map_arguments(self, positional, named, variables):
+        template = KeywordCallTemplate(self._argspec, variables)
+        template.fill_positional(positional)
+        template.fill_named(named)
+        return list(template)
+
+
+class KeywordCallTemplate(object):
+
+    def __init__(self, argspec, variables):
+        defaults = variables.replace_list(argspec.defaults)
+        self._template = [None] * argspec.minargs + defaults
+        self._positional = argspec.positional
+
+    def fill_positional(self, positional):
+        self._template[:len(positional)] = positional
+
+    def fill_named(self, named):
+        for name, value in named.items():
+            index = self._positional.index(name)
+            self._template[index] = value
+
+    def __iter__(self):
+        return iter(self._template)
+
+
 class ArgumentValidator(object):
 
     def __init__(self, argspec):
@@ -441,11 +420,6 @@ class ArgumentValidator(object):
     def _check_arg_limits(self, arg_count):
         if not self._minargs <= arg_count <= self._maxargs:
             self._raise_inv_args(arg_count)
-
-    def check_missing_args(self, args, arg_count):
-        for a in args:
-            if isinstance(a, _MissingArg):
-                self._raise_inv_args(arg_count)
 
     def _raise_inv_args(self, arg_count):
         minend = utils.plural_or_not(self._minargs)

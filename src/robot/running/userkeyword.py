@@ -24,7 +24,8 @@ from robot import utils
 from .keywords import Keywords
 from .fixture import Teardown
 from .timeouts import KeywordTimeout
-from .arguments import ArgumentValidator, UserKeywordArgumentParser, Foo
+from .arguments import (ArgumentValidator, UserKeywordArgumentParser,
+                        UserKeywordArgumentResolver)
 
 
 class UserLibrary(BaseLibrary):
@@ -153,8 +154,9 @@ class UserKeywordHandler(object):
         return arguments + [None] * missing_args
 
     def _normal_run(self, context, variables, argspec, argument_values):
-        resolved_arguments = Foo(argspec).resolve(argument_values, variables)
-        error = self._execute(context, variables, argspec, resolved_arguments)
+        resolver = UserKeywordArgumentResolver(argspec)
+        arguments = resolver.resolve(argument_values, variables)
+        error = self._execute(context, variables, argspec, arguments)
         if error and not error.can_continue(context.teardown):
             raise error
         return_value = self._get_return_value(variables)
