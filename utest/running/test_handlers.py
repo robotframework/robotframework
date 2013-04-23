@@ -84,9 +84,10 @@ class TestDynamicHandlerCreation(unittest.TestCase):
     def test_non_ascii_doc(self):
         self._assert_doc(u'P\xe4iv\xe4\xe4')
 
-    def test_with_utf8_doc(self):
-        doc = u'P\xe4iv\xe4\xe4'
-        self._assert_doc(doc.encode('UTF-8'), doc)
+    if sys.platform != 'cli':
+        def test_with_utf8_doc(self):
+            doc = u'P\xe4iv\xe4\xe4'
+            self._assert_doc(doc.encode('UTF-8'), doc)
 
     def test_invalid_doc_type(self):
         self._assert_fails('Return value must be string.', doc=True)
