@@ -9,3 +9,6 @@ def lib_mandatory_named_and_varargs(a, b='default', *args):
 
 def lib_mandatory_and_named(a, b='default'):
     return pretty(a, b)
+
+def lib_mandatory_and_named_2(a, b='default', c='default'):
+    return pretty(a, b, c)
