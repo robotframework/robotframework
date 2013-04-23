@@ -49,10 +49,10 @@ class ProcessLibrary(object):
             cmd = subprocess.list2cmdline(cmd)
         elif use_shell:
             cmd = command
-        p = subprocess.Popen(cmd, stdout=stdout_stream, stderr=stderr_stream,
+        p = subprocess.Popen(cmd, stdout=stdout_stream, stderr=stderr_stream, stdin=subprocess.PIPE,
                              shell=use_shell, cwd=config.cwd)
+        self._logs[p] = pd
         index = self._started_processes.register(p, alias=config.alias)
-        self._logs[index] = pd
         return index
 
     def process_is_alive(self, handle=None):
@@ -69,7 +69,7 @@ class ProcessLibrary(object):
     def wait_for_process(self, handle=None):
         process = self._process(handle)
         exit_code = process.wait()
-        logs = self._logs[handle]
+        logs = self._logs[process]
         return ExecutionResult(logs.stdout, logs.stderr, exit_code)
 
     def terminate_process(self, handle=None, kill=False):
@@ -87,14 +87,8 @@ class ProcessLibrary(object):
     def get_process_id(self, handle=None):
         return self._process(handle).pid
 
-    def input_to_process(self, handle, msg):
-        if not msg:
-            return
-        alog = self._logs[handle]
-        self._started_processes.switch(handle)
-        self._started_processes.current.wait()
-        with open(alog.stdout,'a') as f:
-            f.write(msg.encode('UTF-8'))
+    def input_to_process(self, msg, handle=None):
+        self._process(handle).communicate(msg+'\n')
 
     def switch_active_process(self, handle):
         self._started_processes.switch(handle)

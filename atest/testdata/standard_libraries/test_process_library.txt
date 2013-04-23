@@ -137,18 +137,11 @@ Running a process in a shell
           Result should equal          ${result}          stdout=*hello*          exit_code=0
           Run Keyword And Expect Error          *          Run Process          python -c "print 'hello'"   shell=False
 
-Stress output handling
-          ${handle1}=          Start Python Process          print 'PROCESS 1'
-          ${handle}=           Start Python Process          import time;time.sleep(1)
-          ${handle2}=          Start Python Process          print 'PROCESS 2'
-          : FOR          ${index}          IN RANGE          100
-          \          Input to Process          ${handle1}          no morjensfhwjehfhgäöåååöwefgwefgwegfywegfuywgefbwefybx\nihfasjfhwejkfhajkwe\nfsdahjsdfajkhgfsadhgfsdjh
-          Input to Process          ${handle2}          important stuff to process 2
-          ${output1}=          Wait For Process          ${handle1}
-          ${output2}=          Wait For Process          ${handle2}
-          ${output3}=          Wait For Process          ${handle}
-          Result should equal          ${output1}          stdout=PROCESS 1*          exit_code=0
-          Result should equal          ${output2}          stdout=PROCESS 2\nimportant stuff to process 2          exit_code=0
+Input things to process
+          Start New Process   python -c "print 'inp %s' % raw_input()"  shell=True
+          Input To Process     some input
+          ${result}=         Wait For Process
+          Should Match       ${result.stdout}      *inp some input*
 
 Process alias
           ${handle}=         Start New Process   python -c "print 'hello'"  shell=True    alias=hello
