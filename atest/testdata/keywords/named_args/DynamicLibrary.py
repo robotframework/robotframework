@@ -1,5 +1,3 @@
-from robot.libraries.BuiltIn import BuiltIn
-
 from dynamic_library_impl import (mandatory_and_kwargs, mandatory_and_named, mandatory_named_and_varargs, one_kwarg,
                                  two_kwargs, four_kw_args, named_arguments_with_varargs, escaped_default_value)
 
@@ -24,9 +22,3 @@ class DynamicLibrary(object):
 
     def get_keyword_arguments(self, kw_name):
         return KEYWORDS[kw_name][1]
-
-def get_result_or_error(*args):
-    try:
-        return BuiltIn().run_keyword(*args)
-    except Exception, err:
-        return err.message
