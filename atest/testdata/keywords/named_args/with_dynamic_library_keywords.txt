@@ -1,0 +1,131 @@
+*** Settings ***
+Library    DynamicLibrary.py
+Library    helper.py
+
+*** Test Cases ***
+Simple Kwarg
+    ${ret}=  One Kwarg  kwarg=quux
+    Should Be Equal  ${ret}  quux
+    ${ret}=  Two Kwargs  first=foo  second=bar
+    Should Be Equal  ${ret}  foo, bar
+    ${ret}=  Two Kw Args  second=World!  first=Hello
+    Should Be Equal  ${ret}  Hello, World!
+
+Kwarg Syntax In Variable Is Ignored
+    ${assignment}=  Set Variable  kwarg=value
+    ${ret}=  One Kwarg  ${assignment}
+    Should Be Equal  ${ret}  kwarg=value
+
+Non-string value in UK kwarg
+    ${ret}=  One Kwarg  kwarg=${42}
+    Should Be Equal  ${ret}  ${42}
+
+Equals Sign In Kwarg Value
+    ${ret}=  One Kwarg  kwarg=bar=quux
+    Should Be Equal  ${ret}  bar=quux
+
+Using non-existing kwarg
+    ${ret}=  One Kwarg  notkwarg=some value
+    Should Be Equal  ${ret}  notkwarg=some value
+
+Escaping Kwarg
+    ${ret}=  One Kwarg  kwarg=bar\\=quux
+    Should Be Equal  ${ret}  bar\\=quux
+    ${ret}=  One Kwarg  kwarg\\=bar=quux
+    Should Be Equal  ${ret}  kwarg\\=bar=quux
+    ${ret}=  One Kwarg  kwarg\=bar
+
+Mandatory Args Should Be Positioned
+    ${ret}=  Mandatory And Kwargs  a  b  c
+    Should Be Equal  ${ret}  a, b, c
+    ${ret}=  Mandatory And Kwargs   a  c=b
+    Should Be Equal  ${ret}  a, c=b, KWARG VALUE
+
+Inside Run Kw
+    ${ret}=  Run Keyword  Four Kwargs  foo  bar  d=quux
+    Should Be Equal  ${ret}  foo, bar, default, quux
+
+Default value with escaped content
+    ${ret}=  Escaped default value  d4=\${nv}
+    Should Be Equal  ${ret}  \${notvariable} \\\\ \n${SPACE}\${nv}
+
+Varargs without naming arguments works
+    @{ret} =    Named arguments with varargs   foo    bar   dar
+    Should be equal   @{ret}[0]    foo
+    @{ret} =    Named arguments with varargs   foo    bar=bar   dar
+    Should be equal   @{ret}[1]    bar=bar
+    @{ret} =    Named arguments with varargs   foo    b\=bar   dar
+    Should be equal   @{ret}[1]    b=bar
+
+Naming without the varargs works
+    @{ret} =    Named arguments with varargs   foo    b=bar
+    Should be equal   @{ret}[1]    bar
+
+Varargs with naming does not work
+    [documentation]  FAIL  Error in keyword 'DynamicLibrary.Named Arguments With Varargs'. Named arguments can not be given before positional arguments. Please remove prefix b= or escape b=bar as b\\=bar.
+    @{ret} =    Named arguments with varargs   foo    b=bar    dar
+
+Varargs with naming does not work with empty lists either
+    [documentation]  FAIL  Error in keyword 'DynamicLibrary.Named Arguments With Varargs'. Named arguments can not be given before positional arguments. Please remove prefix b= or escape b=bar as b\\=bar.
+    @{ret} =    Named arguments with varargs   foo    b=bar    @{EMPTY}
+
+Named combinations with varargs
+    [template]           Execute working named vararg combination with result
+    a, default           a
+    a, default           a=a
+    a, b                 a=a   b=b
+    a, b                 b=b   a=a
+    c=c, d=d             c=c   d=d
+    a, b                 a     b
+    a, b                 a     b=b
+    a, b, c              a     b      c
+    a, b, c=c            a     b      c=c
+
+Non working named combinations with varargs
+    [template]           Execute illegal named vararg combination
+    Error in keyword 'DynamicLibrary.Mandatory, Named And Varargs'. Named arguments can not be given before positional arguments.   a=a  b
+    Keyword 'DynamicLibrary.Mandatory, Named And Varargs' missing value for argument                                      b=b
+    Error in keyword 'DynamicLibrary.Mandatory, Named And Varargs'. Named arguments can not be given before positional arguments.   b=b  b
+    Error in keyword 'DynamicLibrary.Mandatory, Named And Varargs'. Named arguments can not be given before positional arguments.   a    b=b   c
+    Error in keyword 'DynamicLibrary.Mandatory, Named And Varargs'. Value for argument 'a' was given twice.                     a    b     a=a
+    Error in keyword 'DynamicLibrary.Mandatory, Named And Varargs'. Value for argument 'b' was given twice.                     a    b     b=b
+    Error in keyword 'DynamicLibrary.Mandatory, Named And Varargs'. Value for argument 'a' was given twice.                     a    a=a
+    Error in keyword 'DynamicLibrary.Mandatory, Named And Varargs'. Value for argument 'a' was given twice.                     a    b     c    a=a
+
+Named combinations without varargs
+    [template]           Execute working named combination with result
+    a, default           a
+    a, default           a=a
+    a, b                 a=a   b=b
+    a, b                 b=b   a=a
+    a, b                 a     b
+    a, b                 a     b=b
+
+Non working named combinations without varargs
+    [template]           Execute illegal named combination
+    Error in keyword 'DynamicLibrary.Mandatory And Named'. Named arguments can not be given before positional arguments        a=a   b
+    Keyword 'DynamicLibrary.Mandatory And Named' missing value for argument                                          b=b
+    Error in keyword 'DynamicLibrary.Mandatory And Named'. Named arguments can not be given before positional arguments.       b=b  b
+    Error in keyword 'DynamicLibrary.Mandatory And Named'. Value for argument 'a' was given twice.                         a    a=a
+
+
+*** Keywords ***
+Execute working named vararg combination with result
+    [arguments]    ${expected}  @{args}
+    ${res} =       Get result or error    Mandatory, Named And Varargs   @{args}
+    Should be equal     ${expected}   ${res}
+
+Execute illegal named vararg combination
+    [arguments]    ${expected error}   @{args}
+    ${res} =       Get result or error    Mandatory, Named And Varargs   @{args}
+    Should start with     ${res}     ${expected error}
+
+Execute working named combination with result
+    [arguments]    ${expected}  @{args}
+    ${res} =       Get result or error    Mandatory And Named   @{args}
+    Should be equal     ${expected}   ${res}
+
+Execute illegal named combination
+    [arguments]     ${expected error}     @{args}
+    ${res} =       Get result or error    Mandatory And Named   @{args}
+    Should start with     ${res}     ${expected error}
