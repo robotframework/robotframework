@@ -219,32 +219,14 @@ class _DynamicHandler(_RunnableHandler):
         runner = getattr(lib_instance, self._run_keyword_method_name)
         return self._get_dynamic_handler(runner, handler_name)
 
-    def _separate_to_positional_and_kw_args(self, arguments):
-        def reducer(collector, value):
-            if '=' in value:
-                collector[1].append(value.split('='))
-            else:
-                collector[0] = collector[0] + 1
-            return collector
-        return reduce(reducer, arguments, [0, []])
-
     def _get_global_handler(self, method, name):
         return self._get_dynamic_handler(method, name)
 
     def _get_dynamic_handler(self, runner, name):
         def handler(*args, **kwargs):
-            kw_arguments = []
-            kwargs = kwargs.copy()
-            if self._argspec:
-                number_of_positionals, keyword_arguments = self._separate_to_positional_and_kw_args(self._argspec)
-                skip = len(args) - number_of_positionals
-                for named_argument, default_value in keyword_arguments[skip:skip + 1]:
-                    if named_argument in kwargs:
-                        kw_arguments.append(kwargs[named_argument])
-                        kwargs.pop(named_argument)
-                    else:
-                        kw_arguments.append(default_value)
-            return runner(name, list(args) + kw_arguments + kwargs.values())
+            assert not kwargs
+            # TODO: Should now need kwargs at all
+            return runner(name, list(args))
         return handler
 
 

@@ -290,14 +290,21 @@ class PythonArgumentResolver(object):
 
 
 class DynamicArgumentResolver(PythonArgumentResolver):
-    pass
+
+    def __init__(self, argspec):
+        PythonArgumentResolver.__init__(self, argspec)
+        self._mapper = ArgumentMapper(argspec, replace_variables=False)
+
+    def resolve(self, arguments, variables):
+        positional, named = PythonArgumentResolver.resolve(self, arguments, variables)
+        return self._mapper.map_arguments(positional, named, variables), {}
 
 
 class UserKeywordArgumentResolver(PythonArgumentResolver):
 
     def __init__(self, argspec):
+        PythonArgumentResolver.__init__(self, argspec)
         self._named_resolver = UserKeywordNamedArgumentResolver(argspec)
-        self._validator = ArgumentValidator(argspec)
         self._mapper = ArgumentMapper(argspec)
 
     def resolve(self, arguments, variables):
@@ -368,11 +375,15 @@ class VariableResolver(object):
 
 class ArgumentMapper(object):
 
-    def __init__(self, argspec):
+    # TODO: Need cleaner system for not replacing vars
+    # i.e. for handling uk default values with variables in general
+    def __init__(self, argspec, replace_variables=True):
         self._argspec = argspec
+        self._replace_variables = replace_variables
 
     def map_arguments(self, positional, named, variables):
-        template = KeywordCallTemplate(self._argspec, variables)
+        template = KeywordCallTemplate(self._argspec, variables,
+                                       self._replace_variables)
         template.fill_positional(positional)
         template.fill_named(named)
         return list(template)
@@ -380,8 +391,11 @@ class ArgumentMapper(object):
 
 class KeywordCallTemplate(object):
 
-    def __init__(self, argspec, variables):
-        defaults = variables.replace_list(argspec.defaults)
+    def __init__(self, argspec, variables, replace_variables=True):
+        if replace_variables:
+            defaults = variables.replace_list(argspec.defaults)
+        else:
+            defaults = argspec.defaults
         self._template = [None] * argspec.minargs + defaults
         self._positional = argspec.positional
 
