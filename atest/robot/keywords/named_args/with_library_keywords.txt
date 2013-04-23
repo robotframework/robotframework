@@ -67,3 +67,6 @@ Working combinations with all argument types
 
 Illegal combinations with all argument types
     Check Test Case  ${TESTNAME}
+
+List variable with multiple values for same variable
+    Check Test Case  ${TESTNAME}

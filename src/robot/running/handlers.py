@@ -22,7 +22,7 @@ from .arguments import (PythonArgumentParser, JavaArgumentParser,
                         DynamicArgumentParser,
                         PythonArgumentResolver, RunKeywordArgumentResolver,
                         DynamicArgumentResolver, JavaArgumentResolver,
-                        ArgumentLimitChecker)
+                        ArgumentValidator)
 from .keywords import Keywords, Keyword
 from .outputcapture import OutputCapturer
 from .runkwregister import RUN_KW_REGISTER
@@ -112,7 +112,7 @@ class _RunnableHandler(object):
     def _dry_run(self, context, args):
         if self.longname == 'BuiltIn.Import Library':
             return self._run(context, args)
-        ArgumentLimitChecker(self.arguments).check_arg_limits_for_dry_run(args)
+        ArgumentValidator(self.arguments).check_arg_limits_for_dry_run(args)
         return None
 
     def _run(self, context, args):

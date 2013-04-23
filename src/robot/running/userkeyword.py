@@ -24,7 +24,8 @@ from robot import utils
 from .keywords import Keywords
 from .fixture import Teardown
 from .timeouts import KeywordTimeout
-from .arguments import ArgumentLimitChecker, UserKeywordArgumentParser, Foo
+from .arguments import (ArgumentValidator, UserKeywordArgumentParser,
+                        UserKeywordArgumentResolver)
 
 
 class UserLibrary(BaseLibrary):
@@ -147,14 +148,15 @@ class UserKeywordHandler(object):
             raise error
 
     def _resolve_dry_run_args(self, argspec, arguments):
-        ArgumentLimitChecker(argspec).check_arg_limits_for_dry_run(arguments)
+        ArgumentValidator(argspec).check_arg_limits_for_dry_run(arguments)
         required_args = argspec.minargs + len(argspec.defaults)
         missing_args = required_args - len(arguments)
         return arguments + [None] * missing_args
 
     def _normal_run(self, context, variables, argspec, argument_values):
-        resolved_arguments = Foo(argspec).resolve(argument_values, variables)
-        error = self._execute(context, variables, argspec, resolved_arguments)
+        resolver = UserKeywordArgumentResolver(argspec)
+        arguments = resolver.resolve(argument_values, variables)
+        error = self._execute(context, variables, argspec, arguments)
         if error and not error.can_continue(context.teardown):
             raise error
         return_value = self._get_return_value(variables)
