@@ -61,11 +61,23 @@ Escaping equals sign
 Running a process in a shell
     Check Test Case    ${TESTNAME}
 
-Stress output handling
+Input things to process
     Check Test Case    ${TESTNAME}
 
 Process alias
     Check Test Case    ${TESTNAME}
 
-Lot of output
+Lot of output   [Tags]    performance
+    Check Test Case    ${TESTNAME}
+
+Redirecting Stderr to Stdout
+    Check Test Case    ${TESTNAME}
+
+Redirecting Stderr to Stdout with filename
+    Check Test Case    ${TESTNAME}
+
+Current working directory should be used with stdout and stderr
+    Check Test Case    ${TESTNAME}
+
+Current working directory should not be used with stdout and stderr when absolute path in use
     Check Test Case    ${TESTNAME}
