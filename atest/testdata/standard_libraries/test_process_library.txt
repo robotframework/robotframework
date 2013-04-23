@@ -157,13 +157,17 @@ Process alias
           Should Be Equal    ${pid_by_handle}    ${pid_by_alias}
 
 Lot of output   [Tags]    performance
-          ${handle}=         Run Process   python -vc "for i in range(350000): \tprint 'a'*8000"    shell=True   stdout=${TEMPDIR}${/}myout.txt
-          #Run   python -vc "import os,sys\nfor i in range(350000): \tprint dir(os)+dir(sys)"
-          #${handle}=         Start Process   python -vc "import os,sys\nfor i in range(350000): \tprint dir(os)+dir(sys)"    shell=True   stdout=${TEMPDIR}${/}myout.txt
+          ${handle}=         Run Process   python -vc "for i in range(350000): \tprint 'a'*400"    shell=True   stdout=${TEMPDIR}${/}myout.txt
           Log      ${handle.exit_code}
           Log      ${handle.stderr}
           File Should Not Be Empty     ${TEMPDIR}${/}myout.txt
           [Teardown]  Remove File   ${TEMPDIR}${/}myout.txt
+
+Redirecting Stderr to Stdout
+          ${result}=        Run Process   python  -c  print 'hello';1/0     stderr=STDOUT
+          Should Match     ${result.stdout}   *hello*
+          Should Match     ${result.stdout}   *ZeroDivisionError*
+          Log    ${result.stderr}
 
 *** Keywords ***
 Endless process

@@ -142,11 +142,16 @@ class _NewProcessConfig(object):
         self._tempdir = tempdir
         self._conf = conf
         self.stdout_stream = open(conf['stdout'], 'w') if 'stdout' in conf else self._get_temp_file("stdout")
-        self.stderr_stream = open(conf['stderr'], 'w') if 'stderr' in conf else self._get_temp_file("stderr")
+        self.stderr_stream = self._get_stderr(conf)
         self.use_shell = (conf.get('shell', 'False') != 'False')
         self.cwd = conf.get('cwd', None)
         self.alias = conf.get('alias', None)
 
+
+    def _get_stderr(self, conf):
+        if 'stderr' in conf and conf['stderr'] == 'STDOUT':
+            return self.stdout_stream
+        return open(conf['stderr'], 'w') if 'stderr' in conf else self._get_temp_file("stderr")
 
     def _get_temp_file(self, suffix):
         return tempfile.NamedTemporaryFile(delete=False,
