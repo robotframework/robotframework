@@ -169,6 +169,33 @@ Redirecting Stderr to Stdout
           Should Match     ${result.stdout}   *ZeroDivisionError*
           Log    ${result.stderr}
 
+Redirecting Stderr to Stdout with filename
+          ${result}=        Run Process   python  -c  print 'hello';1/0     stdout=filename.txt  stderr=filename.txt
+          Should Match     ${result.stdout}   *hello*
+          Should Match     ${result.stdout}   *ZeroDivisionError*
+          Log    ${result.stderr}
+          [Teardown]  Remove File   filename.txt
+
+Current working directory should be used with stdout and stderr
+          Create Directory    ${TEMPDIR}${/}hc
+          ${result}=        Run Process   python  -c  print 'moon kuu';1/0    cwd=${TEMPDIR}${/}hc    stdout=myout.txt   stderr=myerr.txt
+          ${output}=        Get File     ${TEMPDIR}${/}hc${/}myout.txt
+          ${output2}=       Get File     ${TEMPDIR}${/}hc${/}myerr.txt
+          Should Match     ${output}      *moon kuu*
+          Should Match     ${output2}     *ZeroDivisionError*
+          [Teardown]    Remove Directory    ${TEMPDIR}${/}hc    True
+
+Current working directory should not be used with stdout and stderr when absolute path in use
+          Create Directory    ${TEMPDIR}${/}hc
+          ${stdout_path}=   Evaluate   os.path.abspath('myout.txt')    os
+          ${result}=        Run Process   python  -c  print 'moon kuu';1/0    cwd=${TEMPDIR}${/}hc    stdout=${stdout_path}   stderr=myerr.txt
+          ${output}=        Get File     ${stdout_path}
+          ${output2}=       Get File     ${TEMPDIR}${/}hc${/}myerr.txt
+          Should Match     ${output}      *moon kuu*
+          Should Match     ${output2}     *ZeroDivisionError*
+          [Teardown]    Remove Directory    ${TEMPDIR}${/}hc    True
+
+
 *** Keywords ***
 Endless process
           [Arguments]       ${alias}=${null}

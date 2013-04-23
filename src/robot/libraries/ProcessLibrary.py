@@ -13,6 +13,7 @@
 #  limitations under the License.
 import subprocess
 import tempfile
+import os
 from robot.utils import ConnectionCache
 
 class ProcessData(object):
@@ -141,17 +142,18 @@ class _NewProcessConfig(object):
     def __init__(self, conf, tempdir):
         self._tempdir = tempdir
         self._conf = conf
-        self.stdout_stream = open(conf['stdout'], 'w') if 'stdout' in conf else self._get_temp_file("stdout")
+        self.cwd = conf.get('cwd', os.path.abspath(os.curdir))
+        self.stdout_stream = open(os.path.join(self.cwd,conf['stdout']), 'w') if 'stdout' in conf else self._get_temp_file("stdout")
         self.stderr_stream = self._get_stderr(conf)
         self.use_shell = (conf.get('shell', 'False') != 'False')
-        self.cwd = conf.get('cwd', None)
         self.alias = conf.get('alias', None)
 
 
     def _get_stderr(self, conf):
-        if 'stderr' in conf and conf['stderr'] == 'STDOUT':
-            return self.stdout_stream
-        return open(conf['stderr'], 'w') if 'stderr' in conf else self._get_temp_file("stderr")
+        if 'stderr' in conf:
+            if conf['stderr'] == 'STDOUT' or conf['stderr'] == conf.get('stdout', None):
+               return self.stdout_stream
+        return open(os.path.join(self.cwd,conf['stderr']), 'w') if 'stderr' in conf else self._get_temp_file("stderr")
 
     def _get_temp_file(self, suffix):
         return tempfile.NamedTemporaryFile(delete=False,
