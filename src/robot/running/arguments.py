@@ -23,13 +23,13 @@ from robot import utils
 
 class KeywordArguments(object):
 
-    def __init__(self, name, type='Keyword', positional=(), defaults=(),
+    def __init__(self, name, type='Keyword', positional=None, defaults=None,
                  varargs=None, kwargs=None, minargs=None, maxargs=None):
         self.name = name
         self.type = type
-        self.positional = positional
-        self.names = positional   # FIXME: Remove
-        self.defaults = defaults
+        self.positional = positional or []
+        self.names = self.positional   # FIXME: Remove
+        self.defaults = defaults or []
         self.varargs = varargs
         self.kwargs = kwargs
         self._minargs = minargs
@@ -139,7 +139,7 @@ class JavaArgumentParser(_ArgumentParser):
 class _ArgumentSpecParser(_ArgumentParser):
 
     def parse(self, name, argspec):
-        result = KeywordArguments(name, self._type, positional=[], defaults=[])
+        result = KeywordArguments(name, self._type)
         for arg in argspec:
             if result.varargs:
                 raise DataError('Only last argument can be varargs.')
@@ -325,6 +325,8 @@ class _ArgumentResolver(object):
     def _check_mandatories(self, positional, named):
         if len(positional) >= self._mand_arg_count:
             return
+        # TODO: Would it be better to check args after resolving vars?
+        # Wouldn't need to care about list vars in that case.
         if any(is_list_var(arg) for arg in positional):
             return
         for name in self._arguments.names[len(positional):self._mand_arg_count]:
@@ -352,7 +354,7 @@ class _ArgumentResolver(object):
         return arg.split('=', 1)
 
     def _is_arg_name(self, name):
-        return self._arg_name(name) in self._arguments.names or self._kwargs_is_used()
+        return self._arg_name(name) in self._arguments.positional or self._kwargs_is_used()
 
     def _kwargs_is_used(self):
         return bool(self._arguments.kwargs)
@@ -379,18 +381,6 @@ class UserKeywordArgumentResolver(_ArgumentResolver):
         return '${%s}' % name
 
 
-class RunKeywordArgumentResolver(_ArgumentResolver):
-
-    def __init__(self, arguments, arg_resolution_index):
-        _ArgumentResolver.__init__(self, arguments)
-        self._arg_resolution_index = arg_resolution_index
-
-    def resolve(self, values, variables=None):
-        args = variables.replace_run_kw_info(values, self._arg_resolution_index)
-        self._arg_limit_checker.check_arg_limits(args)
-        return args, {}
-
-
 class PythonArgumentResolver(_ArgumentResolver):
 
     def _arg_name(self, name):
@@ -402,6 +392,18 @@ class PythonArgumentResolver(_ArgumentResolver):
 
 class DynamicArgumentResolver(PythonArgumentResolver):
     pass
+
+
+class RunKeywordArgumentResolver(object):
+
+    def __init__(self, arguments, arg_resolution_index):
+        self._arg_limit_checker = ArgumentLimitChecker(arguments)
+        self._arg_resolution_index = arg_resolution_index
+
+    def resolve(self, values, variables):
+        args = variables.replace_run_kw_info(values, self._arg_resolution_index)
+        self._arg_limit_checker.check_arg_limits(args)
+        return args, {}
 
 
 class JavaArgumentResolver(object):

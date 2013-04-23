@@ -86,6 +86,7 @@ Non working named combinations with varargs
     Keyword 'Mandatory, Named and varargs' missing value for argument                                      b=b
     Error in keyword 'Mandatory, Named and varargs'. Named arguments can not be given before positional arguments.   b=b  b
     Error in keyword 'Mandatory, Named and varargs'. Named arguments can not be given before positional arguments.   a    b=b   c
+    Error in keyword 'Mandatory, Named and varargs'. Named arguments can not be given before positional arguments.   a    b=b   c=c
     Error in keyword 'Mandatory, Named and varargs'. Value for argument '\${a}' was given twice.                     a    b     a=a
     Error in keyword 'Mandatory, Named and varargs'. Value for argument '\${b}' was given twice.                     a    b     b=b
     Error in keyword 'Mandatory, Named and varargs'. Value for argument '\${a}' was given twice.                     a    a=a
