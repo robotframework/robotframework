@@ -1,6 +1,7 @@
 *** Settings ***
 Library  KwargsLibrary  kw1=arg1  kw2=arg2  kw3=arg3
-Library  named_args_helper.py
+Library  helper.py
+Library  python_library.py
 
 *** Test Cases ***
 Simple Kwarg
@@ -89,14 +90,14 @@ Named combinations with varargs
 
 Non working named combinations with varargs
     [template]           Execute illegal named vararg combination
-    Error in keyword 'named_args_helper.Lib Mandatory Named And Varargs'. Named arguments can not be given before positional arguments.   a=a  b
-    Keyword 'named_args_helper.Lib Mandatory Named And Varargs' missing value for argument                                      b=b
-    Error in keyword 'named_args_helper.Lib Mandatory Named And Varargs'. Named arguments can not be given before positional arguments.   b=b  b
-    Error in keyword 'named_args_helper.Lib Mandatory Named And Varargs'. Named arguments can not be given before positional arguments.   a    b=b   c
-    Error in keyword 'named_args_helper.Lib Mandatory Named And Varargs'. Value for argument 'a' was given twice                          a    b     a=a
-    Error in keyword 'named_args_helper.Lib Mandatory Named And Varargs'. Value for argument 'b' was given twice                          a    b     b=b
-    Error in keyword 'named_args_helper.Lib Mandatory Named And Varargs'. Value for argument 'a' was given twice                          a    a=a
-    Error in keyword 'named_args_helper.Lib Mandatory Named And Varargs'. Value for argument 'a' was given twice                          a    b     c    a=a
+    Error in keyword 'python_library.Lib Mandatory Named And Varargs'. Named arguments can not be given before positional arguments.   a=a  b
+    Keyword 'python_library.Lib Mandatory Named And Varargs' missing value for argument                                      b=b
+    Error in keyword 'python_library.Lib Mandatory Named And Varargs'. Named arguments can not be given before positional arguments.   b=b  b
+    Error in keyword 'python_library.Lib Mandatory Named And Varargs'. Named arguments can not be given before positional arguments.   a    b=b   c
+    Error in keyword 'python_library.Lib Mandatory Named And Varargs'. Value for argument 'a' was given twice                          a    b     a=a
+    Error in keyword 'python_library.Lib Mandatory Named And Varargs'. Value for argument 'b' was given twice                          a    b     b=b
+    Error in keyword 'python_library.Lib Mandatory Named And Varargs'. Value for argument 'a' was given twice                          a    a=a
+    Error in keyword 'python_library.Lib Mandatory Named And Varargs'. Value for argument 'a' was given twice                          a    b     c    a=a
 
 Named combinations without varargs
     [template]           Execute working named combination with result
@@ -109,10 +110,10 @@ Named combinations without varargs
 
 Non working named combinations without varargs
     [template]           Execute illegal named combination
-    Error in keyword 'named_args_helper.Lib Mandatory And Named'. Named arguments can not be given before positional arguments        a=a   b
-    Keyword 'named_args_helper.Lib Mandatory And Named' missing value for argument                                          b=b
-    Error in keyword 'named_args_helper.Lib Mandatory And Named'. Named arguments can not be given before positional arguments.       b=b  b
-    Error in keyword 'named_args_helper.Lib Mandatory And Named'. Value for argument 'a' was given twice.                              a    a=a
+    Error in keyword 'python_library.Lib Mandatory And Named'. Named arguments can not be given before positional arguments        a=a   b
+    Keyword 'python_library.Lib Mandatory And Named' missing value for argument                                          b=b
+    Error in keyword 'python_library.Lib Mandatory And Named'. Named arguments can not be given before positional arguments.       b=b  b
+    Error in keyword 'python_library.Lib Mandatory And Named'. Value for argument 'a' was given twice.                              a    a=a
 
 Working combinations with all argument types
    [template]            Execute working combinations with everything
@@ -129,16 +130,16 @@ Working combinations with all argument types
 
 Illegal combinations with all argument types
    [template]            Execute illegal combinations with everything
-   Keyword 'named_args_helper.Lib Mandatory Named Varargs And Kwargs' missing value for argument 'a'.                                  d1=d
-   Error in keyword 'named_args_helper.Lib Mandatory Named Varargs And Kwargs'. Value for argument 'a' was given twice.                          a     a=a
-   Argument 'a' repeated for keyword 'named_args_helper.Lib Mandatory Named Varargs And Kwargs'.                             a=a   a=a
-   Error in keyword 'named_args_helper.Lib Mandatory Named Varargs And Kwargs'. Named arguments can not be given before positional arguments.    a=a   b
-   Error in keyword 'named_args_helper.Lib Mandatory Named Varargs And Kwargs'. Value for argument 'b' was given twice.                          a     b     b=b
-   Error in keyword 'named_args_helper.Lib Mandatory Named Varargs And Kwargs'. Value for argument 'a' was given twice.                          a     b     a=a
-   Error in keyword 'named_args_helper.Lib Mandatory Named Varargs And Kwargs'. Value for argument 'a' was given twice.                          a     b     c1      a=a
-   Error in keyword 'named_args_helper.Lib Mandatory Named Varargs And Kwargs'. Named arguments can not be given before positional arguments.    a=a   b=b   d1=d    foo
-   Argument 'b' repeated for keyword 'named_args_helper.Lib Mandatory Named Varargs And Kwargs'.                             a     b=b   b=b
-   Argument 'a' repeated for keyword 'named_args_helper.Lib Mandatory Named Varargs And Kwargs'.                             a=a   d1=d  d2=d    a=a
+   Keyword 'python_library.Lib Mandatory Named Varargs And Kwargs' missing value for argument 'a'.                                  d1=d
+   Error in keyword 'python_library.Lib Mandatory Named Varargs And Kwargs'. Value for argument 'a' was given twice.                          a     a=a
+   Argument 'a' repeated for keyword 'python_library.Lib Mandatory Named Varargs And Kwargs'.                             a=a   a=a
+   Error in keyword 'python_library.Lib Mandatory Named Varargs And Kwargs'. Named arguments can not be given before positional arguments.    a=a   b
+   Error in keyword 'python_library.Lib Mandatory Named Varargs And Kwargs'. Value for argument 'b' was given twice.                          a     b     b=b
+   Error in keyword 'python_library.Lib Mandatory Named Varargs And Kwargs'. Value for argument 'a' was given twice.                          a     b     a=a
+   Error in keyword 'python_library.Lib Mandatory Named Varargs And Kwargs'. Value for argument 'a' was given twice.                          a     b     c1      a=a
+   Error in keyword 'python_library.Lib Mandatory Named Varargs And Kwargs'. Named arguments can not be given before positional arguments.    a=a   b=b   d1=d    foo
+   Argument 'b' repeated for keyword 'python_library.Lib Mandatory Named Varargs And Kwargs'.                             a     b=b   b=b
+   Argument 'a' repeated for keyword 'python_library.Lib Mandatory Named Varargs And Kwargs'.                             a=a   d1=d  d2=d    a=a
 
 
 *** Keywords ***
