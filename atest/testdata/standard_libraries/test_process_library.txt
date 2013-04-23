@@ -157,7 +157,7 @@ Process alias
           Should Be Equal    ${pid_by_handle}    ${pid_by_alias}
 
 Lot of output   [Tags]    performance
-          ${handle}=         Run Process   python -vc "import os,sys\nfor i in range(350000): \tprint dir(os)+dir(sys)"    shell=True   stdout=${TEMPDIR}${/}myout.txt
+          ${handle}=         Run Process   python -vc "for i in range(350000): \tprint 'a'*8000"    shell=True   stdout=${TEMPDIR}${/}myout.txt
           #Run   python -vc "import os,sys\nfor i in range(350000): \tprint dir(os)+dir(sys)"
           #${handle}=         Start Process   python -vc "import os,sys\nfor i in range(350000): \tprint dir(os)+dir(sys)"    shell=True   stdout=${TEMPDIR}${/}myout.txt
           Log      ${handle.exit_code}

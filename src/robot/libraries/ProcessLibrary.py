@@ -47,7 +47,7 @@ class ProcessLibrary(object):
         if use_shell and args:
             cmd = subprocess.list2cmdline(cmd)
         elif use_shell:
-            cmd = cmd[0]
+            cmd = command
         p = subprocess.Popen(cmd, stdout=stdout_stream, stderr=stderr_stream,
                              shell=use_shell, cwd=config.cwd)
         index = self._started_processes.register(p, alias=config.alias)
