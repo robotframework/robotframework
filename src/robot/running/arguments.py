@@ -280,22 +280,13 @@ class PythonArgumentResolver(object):
 
     def resolve(self, arguments, variables):
         positional, named = self._named_resolver.resolve(arguments)
-        positional, named = self._resolve_variables(positional, named, variables)
+        positional, named = self._resolve_variables(variables, positional, named)
         self._validator.validate_arguments(positional, named)
         return positional, named
 
-    def _resolve_variables(self, posargs, kwargs, variables):
-        posargs = self._replace_list(posargs, variables)
-        for name, value in kwargs.items():
-            kwargs[name] = self._replace_scalar(value, variables)
-        return posargs, kwargs
-
-    def _replace_list(self, values, variables):
-        # TODO: Why can variables be None??
-        return variables.replace_list(values) if variables else values
-
-    def _replace_scalar(self, value, variables):
-        return variables.replace_scalar(value) if variables else value
+    def _resolve_variables(self, variables, positional, named):
+        resolver = VariableResolver(variables)
+        return resolver.resolve_variables(positional, named)
 
 
 class DynamicArgumentResolver(PythonArgumentResolver):
@@ -332,11 +323,14 @@ class JavaArgumentResolver(object):
         self._argspec = argspec
 
     def resolve(self, arguments, variables):
-        if variables:  # FIXME: Why is variables None with test lib inits??
-            arguments = variables.replace_list(arguments)
-        ArgumentValidator(self._argspec).check_arg_limits(arguments)
-        self._handle_varargs(arguments)
-        return arguments, {}
+        positional, named = self._resolve_variables(variables, arguments)
+        ArgumentValidator(self._argspec).check_arg_limits(positional, named)
+        self._handle_varargs(positional)
+        return positional, named
+
+    def _resolve_variables(self, variables, arguments):
+        resolver = VariableResolver(variables)
+        return resolver.resolve_variables(arguments, named={})
 
     def _handle_varargs(self, arguments):
         if self._expects_varargs() and self._last_is_not_list(arguments):
@@ -347,9 +341,29 @@ class JavaArgumentResolver(object):
     def _expects_varargs(self):
         return self._argspec.maxargs == sys.maxint
 
-    def _last_is_not_list(self, args, minargs):
+    def _last_is_not_list(self, args):
         return not (len(args) == self._argspec.minargs + 1
                     and isinstance(args[-1], (list, tuple, ArrayType)))
+
+
+class VariableResolver(object):
+
+    def __init__(self, variables):
+        self._variables = variables
+
+    def resolve_variables(self, positional, named):
+        # TODO: Why can variables be None??
+        if not self._variables:
+            return positional, named
+        return self._replace_positional(positional), self._replace_named(named)
+
+    def _replace_positional(self, positional):
+        return self._variables.replace_list(positional)
+
+    def _replace_named(self, named):
+        for name, value in named.items():
+            named[name] = self._variables.replace_scalar(value)
+        return named
 
 
 class ArgumentMapper(object):
