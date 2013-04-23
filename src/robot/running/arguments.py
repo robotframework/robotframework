@@ -205,7 +205,7 @@ class Foo:   # FIXME: We perhaps need to rename this class.........
         positional, varargs = self._split_args_and_varargs(positional)
         argument_values = self._resolve_arg_values(variables, named, positional)
         argument_values += varargs
-        ArgumentLimitChecker(self._argspec).check_missing_args(argument_values, len(arguments))
+        ArgumentValidator(self._argspec).check_missing_args(argument_values, len(arguments))
         return argument_values
 
     def _resolve_arg_usage(self, arguments, variables):
@@ -252,44 +252,22 @@ class UserKeywordArgsTemplate(object):
         return self._template
 
 
-class _ArgumentResolver(object):
+class NamedArgumentResolver(object):
 
-    def __init__(self, arguments):
-        self._arguments = arguments
-        self._mand_arg_count = arguments.minargs  # TODO: Remove or property
-        self._arg_limit_checker = ArgumentLimitChecker(arguments)
+    def __init__(self, argspec):
+        self._argspec = argspec
 
-    @property
-    def _name(self):
-        return self._arguments.name
-
-    @property
-    def _type(self):
-        return self._arguments.type
-
-    def resolve(self, values, variables=None):
-        positional, named = self._resolve_argument_usage(values)
-        positional, named = self._resolve_variables(positional, named, variables)
-        self._arg_limit_checker.check_arg_limits(positional, named)
-        return positional, named
-
-    def _resolve_argument_usage(self, values):
-        named, positional = self._populate_positional_and_named(values)
-        self._check_mandatories(positional, named)
-        return positional, named
-
-    def _populate_positional_and_named(self, values):
+    def resolve(self, values):
         named = {}
         positional = []
-        used_positionally = set()
         for index, arg in enumerate(values):
             if self._is_named(arg):
-                self._add_named(arg, named, used_positionally)
+                self._add_named(arg, named)
             elif named:
                 self._raise_named_before_positional_error(index, values)
             else:
-                self._add_positional(arg, index, positional, used_positionally)
-        return named, positional
+                positional.append(arg)
+        return positional, named
 
     def _is_named(self, arg):
         if self._is_str_with_kwarg_sep(arg):
@@ -297,21 +275,12 @@ class _ArgumentResolver(object):
             return self._is_arg_name(name)
         return False
 
-    def _add_named(self, arg, named, used_positionally):
+    def _add_named(self, arg, named):
         name, value = self._parse_named(arg)
         if name in named:
             raise DataError("Argument '%s' repeated for %s '%s'."
-                            % (name, self._type.lower(), self._name))
-        if name in used_positionally:
-            raise DataError("Error in %s '%s'. Value for argument '%s' was given twice."
-                            % (self._type.lower(), self._name, name))
+                            % (name, self._argspec.type.lower(), self._argspec.name))
         named[name] = value
-
-    def _add_positional(self, arg, index, positional, used_positionally):
-        if index < len(self._arguments.names):
-            positional_name = self._arguments.names[index]
-            used_positionally.add(positional_name)
-        positional.append(arg)
 
     def _raise_named_before_positional_error(self, index, values):
         argument = values[index - 1]
@@ -319,34 +288,25 @@ class _ArgumentResolver(object):
         raise DataError("Error in %s '%s'. Named arguments can not be given "
                         "before positional arguments. Please remove prefix "
                         "%s= or escape %s as %s."
-                        % (self._type.lower(), self._name, name,
+                        % (self._argspec.type.lower(), self._argspec.name, name,
                            argument, argument.replace('=', '\\=')))   # FIXME: replace only once
 
-    def _check_mandatories(self, positional, named):
-        if len(positional) >= self._mand_arg_count:
-            return
-        # TODO: Would it be better to check args after resolving vars?
-        # Wouldn't need to care about list vars in that case.
-        if any(is_list_var(arg) for arg in positional):
-            return
-        for name in self._arguments.names[len(positional):self._mand_arg_count]:
-            if name not in named:
-                raise DataError("%s '%s' missing value for argument '%s'."
-                                % (self._type, self._name, name))
-
     def _optional(self, values):
-        return values[self._mand_arg_count:]
+        return values[self._argspec.minargs:]
 
     def _parse_named(self, arg):
         name, value = self._split_from_kwarg_sep(arg)
         return self._coerce(name), value
+
+    def _coerce(self, name):
+        return str(name)
 
     def _is_str_with_kwarg_sep(self, arg):
         if not isinstance(arg, basestring): #FIXME: Do we need this check?
             return False
         if '=' not in arg:
             return False
-        if '=' not in arg.split('\\=',1)[0]:
+        if '=' not in arg.split('\\=', 1)[0]:
             return False
         return True
 
@@ -354,10 +314,32 @@ class _ArgumentResolver(object):
         return arg.split('=', 1)
 
     def _is_arg_name(self, name):
-        return self._arg_name(name) in self._arguments.positional or self._kwargs_is_used()
+        return self._arg_name(name) in self._argspec.positional or self._argspec.kwargs
 
-    def _kwargs_is_used(self):
-        return bool(self._arguments.kwargs)
+    def _arg_name(self, name):
+        return name
+
+
+class UserKeywordNamedArgumentResolver(NamedArgumentResolver):
+
+    def _arg_name(self, name):
+        return '${%s}' % name
+
+    def _coerce(self, name):
+        return '${%s}' % name
+
+
+class PythonArgumentResolver(object):
+
+    def __init__(self, argspec):
+        self._named_resolver = NamedArgumentResolver(argspec)
+        self._validator = ArgumentValidator(argspec)
+
+    def resolve(self, arguments, variables):
+        positional, named = self._named_resolver.resolve(arguments)
+        positional, named = self._resolve_variables(positional, named, variables)
+        self._validator.validate_arguments(positional, named)
+        return positional, named
 
     def _resolve_variables(self, posargs, kwargs, variables):
         posargs = self._replace_list(posargs, variables)
@@ -366,38 +348,28 @@ class _ArgumentResolver(object):
         return posargs, kwargs
 
     def _replace_list(self, values, variables):
+        # TODO: Why can variables be None??
         return variables.replace_list(values) if variables else values
 
     def _replace_scalar(self, value, variables):
         return variables.replace_scalar(value) if variables else value
 
 
-class UserKeywordArgumentResolver(_ArgumentResolver):
-
-    def _arg_name(self, name):
-        return '${%s}' % name
-
-    def _coerce(self, name):
-        return '${%s}' % name
-
-
-class PythonArgumentResolver(_ArgumentResolver):
-
-    def _arg_name(self, name):
-        return name
-
-    def _coerce(self, name):
-        return str(name)
-
-
 class DynamicArgumentResolver(PythonArgumentResolver):
     pass
+
+
+class UserKeywordArgumentResolver(PythonArgumentResolver):
+
+    def __init__(self, argspec):
+        self._named_resolver = UserKeywordNamedArgumentResolver(argspec)
+        self._validator = ArgumentValidator(argspec)
 
 
 class RunKeywordArgumentResolver(object):
 
     def __init__(self, arguments, arg_resolution_index):
-        self._arg_limit_checker = ArgumentLimitChecker(arguments)
+        self._arg_limit_checker = ArgumentValidator(arguments)
         self._arg_resolution_index = arg_resolution_index
 
     def resolve(self, values, variables):
@@ -416,7 +388,7 @@ class JavaArgumentResolver(object):
     def resolve(self, values, variables):
         if variables:  # FIXME: Why is variables None with test lib inits??
             values = variables.replace_list(values)
-        ArgumentLimitChecker(self._arguments).check_arg_limits(values)
+        ArgumentValidator(self._arguments).check_arg_limits(values)
         if self._expects_varargs() and self._last_is_not_list(values):
             values[self._minargs:] = [values[self._minargs:]]
         return values, {}
@@ -429,13 +401,29 @@ class JavaArgumentResolver(object):
                     and isinstance(args[-1], (list, tuple, ArrayType)))
 
 
-class ArgumentLimitChecker(object):
+class ArgumentValidator(object):
 
     def __init__(self, argspec):
+        self._argspec = argspec
         self._minargs = argspec.minargs
         self._maxargs = argspec.maxargs
         self._name = argspec.name
         self._type = argspec.type
+
+    def validate_arguments(self, positional, named):
+        self._check_mandatories(positional, named)
+        self.check_arg_limits(positional, named)
+
+    def _check_mandatories(self, positional, named):
+        minargs = self._argspec.minargs
+        for name in self._argspec.positional[len(positional):minargs]:
+            if name not in named:
+                raise DataError("%s '%s' missing value for argument '%s'."
+                                % (self._argspec.type, self._argspec.name, name))
+        for name in self._argspec.positional[:len(positional)]:
+            if name in named:
+                raise DataError("Error in %s '%s'. Value for argument '%s' was given twice."
+                                % (self._argspec.type.lower(), self._argspec.name, name))
 
     def check_arg_limits(self, args, namedargs=None):
         self._check_arg_limits(len(args) + len(namedargs or {}))
