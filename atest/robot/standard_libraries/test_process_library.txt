@@ -66,3 +66,6 @@ Stress output handling
 
 Process alias
     Check Test Case    ${TESTNAME}
+
+Lot of output
+    Check Test Case    ${TESTNAME}

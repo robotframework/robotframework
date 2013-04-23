@@ -13,6 +13,7 @@
 #  limitations under the License.
 import subprocess
 import tempfile
+import os
 from robot.utils import ConnectionCache
 
 class ProcessData(object):
@@ -46,10 +47,12 @@ class ProcessLibrary(object):
         use_shell = config.use_shell
         if use_shell and args:
             cmd = subprocess.list2cmdline(cmd)
-        p = subprocess.Popen(cmd, stdout=stdout_stream, stderr=stderr_stream,
+        elif use_shell:
+            cmd = command
+        p = subprocess.Popen(cmd, stdout=stdout_stream, stderr=stderr_stream, stdin=subprocess.PIPE,
                              shell=use_shell, cwd=config.cwd)
+        self._logs[p] = pd
         index = self._started_processes.register(p, alias=config.alias)
-        self._logs[index] = pd
         return index
 
     def process_is_alive(self, handle=None):
@@ -66,7 +69,7 @@ class ProcessLibrary(object):
     def wait_for_process(self, handle=None):
         process = self._process(handle)
         exit_code = process.wait()
-        logs = self._logs[handle]
+        logs = self._logs[process]
         return ExecutionResult(logs.stdout, logs.stderr, exit_code)
 
     def terminate_process(self, handle=None, kill=False):
@@ -84,14 +87,8 @@ class ProcessLibrary(object):
     def get_process_id(self, handle=None):
         return self._process(handle).pid
 
-    def input_to_process(self, handle, msg):
-        if not msg:
-            return
-        alog = self._logs[handle]
-        self._started_processes.switch(handle)
-        self._started_processes.current.wait()
-        with open(alog.stdout,'a') as f:
-            f.write(msg.encode('UTF-8'))
+    def input_to_process(self, msg, handle=None):
+        self._process(handle).communicate(msg+'\n')
 
     def switch_active_process(self, handle):
         self._started_processes.switch(handle)
@@ -127,18 +124,30 @@ class ExecutionResult(object):
                 self._stderr = f.read()
         return self._stderr
 
+    def __str__(self):
+        return """\
+stdout_name : %s
+stderr_name : %s
+exit_code   : %d""" % (self._stdout_name, self._stderr_name, self.exit_code)
+
 
 class _NewProcessConfig(object):
 
     def __init__(self, conf, tempdir):
         self._tempdir = tempdir
         self._conf = conf
-        self.stdout_stream = open(conf['stdout'], 'w') if 'stdout' in conf else self._get_temp_file("stdout")
-        self.stderr_stream = open(conf['stderr'], 'w') if 'stderr' in conf else self._get_temp_file("stderr")
+        self.cwd = conf.get('cwd', os.path.abspath(os.curdir))
+        self.stdout_stream = open(os.path.join(self.cwd,conf['stdout']), 'w') if 'stdout' in conf else self._get_temp_file("stdout")
+        self.stderr_stream = self._get_stderr(conf)
         self.use_shell = (conf.get('shell', 'False') != 'False')
-        self.cwd = conf.get('cwd', None)
         self.alias = conf.get('alias', None)
 
+
+    def _get_stderr(self, conf):
+        if 'stderr' in conf:
+            if conf['stderr'] == 'STDOUT' or conf['stderr'] == conf.get('stdout', None):
+               return self.stdout_stream
+        return open(os.path.join(self.cwd,conf['stderr']), 'w') if 'stderr' in conf else self._get_temp_file("stderr")
 
     def _get_temp_file(self, suffix):
         return tempfile.NamedTemporaryFile(delete=False,
