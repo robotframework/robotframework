@@ -46,6 +46,8 @@ class ProcessLibrary(object):
         use_shell = config.use_shell
         if use_shell and args:
             cmd = subprocess.list2cmdline(cmd)
+        elif use_shell:
+            cmd = cmd[0]
         p = subprocess.Popen(cmd, stdout=stdout_stream, stderr=stderr_stream,
                              shell=use_shell, cwd=config.cwd)
         index = self._started_processes.register(p, alias=config.alias)
@@ -126,6 +128,12 @@ class ExecutionResult(object):
             with open(self._stderr_name,'r') as f:
                 self._stderr = f.read()
         return self._stderr
+
+    def __str__(self):
+        return """\
+stdout_name : %s
+stderr_name : %s
+exit_code   : %d""" % (self._stdout_name, self._stderr_name, self.exit_code)
 
 
 class _NewProcessConfig(object):
