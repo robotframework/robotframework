@@ -380,24 +380,27 @@ class RunKeywordArgumentResolver(object):
 
 class JavaArgumentResolver(object):
 
-    def __init__(self, arguments):
-        self._arguments = arguments
-        self._minargs = arguments.minargs
-        self._maxargs = arguments.maxargs
+    def __init__(self, argspec):
+        self._argspec = argspec
 
-    def resolve(self, values, variables):
+    def resolve(self, arguments, variables):
         if variables:  # FIXME: Why is variables None with test lib inits??
-            values = variables.replace_list(values)
-        ArgumentValidator(self._arguments).check_arg_limits(values)
-        if self._expects_varargs() and self._last_is_not_list(values):
-            values[self._minargs:] = [values[self._minargs:]]
-        return values, {}
+            arguments = variables.replace_list(arguments)
+        ArgumentValidator(self._argspec).check_arg_limits(arguments)
+        self._handle_varargs(arguments)
+        return arguments, {}
+
+    def _handle_varargs(self, arguments):
+        if self._expects_varargs() and self._last_is_not_list(arguments):
+            minargs = self._argspec.minargs
+            arguments[minargs:] = [arguments[minargs:]]
+        return arguments, {}
 
     def _expects_varargs(self):
-        return self._maxargs == sys.maxint
+        return self._argspec.maxargs == sys.maxint
 
-    def _last_is_not_list(self, args):
-        return not (len(args) == self._minargs + 1
+    def _last_is_not_list(self, args, minargs):
+        return not (len(args) == self._argspec.minargs + 1
                     and isinstance(args[-1], (list, tuple, ArrayType)))
 
 
