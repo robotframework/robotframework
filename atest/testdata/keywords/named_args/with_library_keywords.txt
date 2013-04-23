@@ -142,7 +142,7 @@ Illegal combinations with all argument types
    Argument 'a' repeated for keyword 'python_library.Lib Mandatory Named Varargs And Kwargs'.                             a=a   d1=d  d2=d    a=a
 
 List variable with multiple values for same variable
-    [Documentation]    FAIL Error in keyword 'named_args_helper.Lib Mandatory And Named 2'. Value for argument 'b' was given twice.
+    [Documentation]    FAIL Error in keyword 'python_library.Lib Mandatory And Named 2'. Value for argument 'b' was given twice.
     @{foo} =     Create list   a    b
     Lib mandatory and named 2    @{foo}    b=given second time
 
