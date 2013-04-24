@@ -32,7 +32,7 @@ from .context import EXECUTION_CONTEXTS
 
 
 STDLIB_NAMES = set(('BuiltIn', 'Collections', 'Dialogs', 'Easter',
-                    'OperatingSystem', 'ProcessLibrary', 'Remote', 'Reserved',
+                    'OperatingSystem', 'Process', 'Remote', 'Reserved',
                     'Screenshot', 'String', 'Telnet', 'XML'))
 IMPORTER = Importer()
 INIT_FILE_MATCHER = re.compile(r"(?:.+?[/\\])?__init__\.(?:html|htm|tsv|txt|robot|rst|rest)")

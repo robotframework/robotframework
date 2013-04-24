@@ -7,6 +7,7 @@ Libraries:
   Collections (co)
   Dialogs (di)
   OperatingSystem (op)
+  Process (pr)
   Screenshot (sc)
   String (st)
   Telnet (te)
