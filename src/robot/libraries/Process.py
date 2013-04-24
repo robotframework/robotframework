@@ -11,6 +11,7 @@
 #  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
+from __future__ import with_statement
 
 import os
 import subprocess
@@ -21,6 +22,9 @@ from robot.version import get_version
 
 
 class Process(object):
+    """Robot Framework test library for running processes.
+    """
+
     ROBOT_LIBRARY_SCOPE='GLOBAL'
     ROBOT_LIBRARY_VERSION = get_version()
 
