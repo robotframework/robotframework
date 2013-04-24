@@ -11,9 +11,11 @@
 #  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
+
+import os
 import subprocess
 import tempfile
-import os
+
 from robot.utils import ConnectionCache
 from robot.version import get_version
 
@@ -36,21 +38,24 @@ class Process(object):
             self._started_processes.switch(active_process_index)
 
     def start_new_process(self, command, *args, **conf):
-        cmd = [command]+[str(i) for i in args]
-        config = _NewProcessConfig(self._tempdir, **conf)
-        stdout_stream = config.stdout_stream
-        stderr_stream = config.stderr_stream
-        partial_result = ExecutionResult(stdout_stream.name, stderr_stream.name)
-        use_shell = config.use_shell
+        config = NewProcessConfig(self._tempdir, **conf)
+        p = subprocess.Popen(self._cmd(args, command, config.shell),
+                             stdout=config.stdout_stream,
+                             stderr=config.stderr_stream,
+                             stdin=subprocess.PIPE,
+                             shell=config.shell,
+                             cwd=config.cwd)
+        self._logs[p] = ExecutionResult(config.stdout_stream.name,
+                                        config.stderr_stream.name)
+        return self._started_processes.register(p, alias=config.alias)
+
+    def _cmd(self, args, command, use_shell):
+        cmd = [command] + [str(i) for i in args]
         if use_shell and args:
             cmd = subprocess.list2cmdline(cmd)
         elif use_shell:
             cmd = command
-        p = subprocess.Popen(cmd, stdout=stdout_stream, stderr=stderr_stream, stdin=subprocess.PIPE,
-                             shell=use_shell, cwd=config.cwd)
-        self._logs[p] = partial_result
-        index = self._started_processes.register(p, alias=config.alias)
-        return index
+        return cmd
 
     def process_is_alive(self, handle=None):
         return self._process(handle).poll() is None
@@ -128,22 +133,28 @@ stderr_name : %s
 exit_code   : %d""" % (self._stdout_name, self._stderr_name, self.exit_code)
 
 
-class _NewProcessConfig(object):
+class NewProcessConfig(object):
 
-    def __init__(self, tempdir, cwd=None, shell=False, stdout=None,
+    def __init__(self, tempdir, cwd=None,
+                 shell=False, stdout=None,
                  stderr=None, alias=None):
         self._tempdir = tempdir
         self.cwd = cwd or os.path.abspath(os.curdir)
-        self.stdout_stream = open(os.path.join(self.cwd, stdout), 'w') if stdout else self._get_temp_file("stdout")
+        self.stdout_stream = self._new_stream(stdout, 'stdout')
         self.stderr_stream = self._get_stderr(stderr, stdout)
-        self.use_shell = bool(shell)
+        self.shell = bool(shell)
         self.alias = alias
+
+    def _new_stream(self, name, postfix):
+        if name:
+            return open(os.path.join(self.cwd, name), 'w')
+        return self._get_temp_file(postfix)
 
     def _get_stderr(self, stderr, stdout):
         if stderr:
             if stderr == 'STDOUT' or stderr == stdout:
                return self.stdout_stream
-        return open(os.path.join(self.cwd, stderr), 'w') if stderr else self._get_temp_file("stderr")
+        return self._new_stream(stderr, 'stderr')
 
     def _get_temp_file(self, suffix):
         return tempfile.NamedTemporaryFile(delete=False,

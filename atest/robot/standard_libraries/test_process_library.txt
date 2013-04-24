@@ -67,7 +67,7 @@ Input things to process
 Process alias
     Check Test Case    ${TESTNAME}
 
-Lot of output   [Tags]    performance
+Lot of output
     Check Test Case    ${TESTNAME}
 
 Redirecting Stderr to Stdout
