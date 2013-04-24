@@ -923,7 +923,8 @@ class OperatingSystem:
         - ${p4} = 'abc/def'
         - ${p5} = 'abc/def'
         """
-        return os.path.normpath(path.replace('/', os.sep)) or '.'
+        path = os.path.normpath(os.path.expanduser(path.replace('/', os.sep)))
+        return path or '.'
 
     def split_path(self, path):
         """Splits the given path from the last path separator ('/' or '\\').
@@ -1204,10 +1205,11 @@ class OperatingSystem:
             self._link("Touched new file '%s'", path)
 
     def _absnorm(self, path):
+        path = self.normalize_path(path)
         try:
-            return abspath(path.replace('/', os.sep))
+            return abspath(path)
         except ValueError:  # http://ironpython.codeplex.com/workitem/29489
-            return os.path.normpath(path.replace('/', os.sep))
+            return path
 
     def _fail(self, error, default):
         raise AssertionError(error or default)
