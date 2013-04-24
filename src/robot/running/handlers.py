@@ -20,9 +20,9 @@ from robot.variables import is_list_var
 
 from .arguments import (PythonArgumentParser, JavaArgumentParser,
                         DynamicArgumentParser,
-                        PythonArgumentResolver, RunKeywordArgumentResolver,
-                        DynamicArgumentResolver, JavaArgumentResolver,
-                        ArgumentValidator)
+                        ArgumentResolver, RunKeywordArgumentResolver,
+                        JavaArgumentResolver,
+                        ArgumentValidator, ArgumentMapper)
 from .keywords import Keywords, Keyword
 from .outputcapture import OutputCapturer
 from .runkwregister import RUN_KW_REGISTER
@@ -83,7 +83,7 @@ class _RunnableHandler(object):
         return None
 
     def resolve_arguments(self, args, variables):
-        raise NotImplementedError
+        return ArgumentResolver(self.arguments).resolve(args, variables)
 
     @property
     def doc(self):
@@ -176,9 +176,6 @@ class _PythonHandler(_RunnableHandler):
     def _parse_arguments(self, handler_method):
         return PythonArgumentParser().parse(self.longname, handler_method)
 
-    def resolve_arguments(self, args, variables):
-        return PythonArgumentResolver(self.arguments).resolve(args, variables)
-
 
 class _JavaHandler(_RunnableHandler):
 
@@ -212,9 +209,6 @@ class _DynamicHandler(_RunnableHandler):
     def _parse_arguments(self, handler_method):
         return DynamicArgumentParser().parse(self.longname, self._argspec)
 
-    def resolve_arguments(self, args, variables):
-        return DynamicArgumentResolver(self.arguments).resolve(args, variables)
-
     def _get_handler(self, lib_instance, handler_name):
         runner = getattr(lib_instance, self._run_keyword_method_name)
         return self._get_dynamic_handler(runner, handler_name)
@@ -223,10 +217,9 @@ class _DynamicHandler(_RunnableHandler):
         return self._get_dynamic_handler(method, name)
 
     def _get_dynamic_handler(self, runner, name):
-        def handler(*args, **kwargs):
-            assert not kwargs
-            # TODO: Should now need kwargs at all
-            return runner(name, list(args))
+        def handler(*positional, **named):
+            args = ArgumentMapper(self.arguments).map(positional, named)
+            return runner(name, args)
         return handler
 
 
