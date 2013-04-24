@@ -1,5 +1,5 @@
 *** Settings ***
-Library                 ProcessLibrary.py
+Library                 Process.py
 Library                 OperatingSystem
 Suite Setup             Endless process    suite_process
 Test Teardown           Restart Suite Process If Needed
@@ -135,7 +135,7 @@ Escaping equals sign
 Running a process in a shell
           ${result}=          Run Process          python -c "print 'hello'"      shell=True
           Result should equal          ${result}          stdout=*hello*          exit_code=0
-          Run Keyword And Expect Error          *          Run Process          python -c "print 'hello'"   shell=False
+          Run Keyword And Expect Error          *          Run Process          python -c "print 'hello'"   shell=${False}
 
 Input things to process
           Start New Process   python -c "print 'inp %s' % raw_input()"  shell=True
