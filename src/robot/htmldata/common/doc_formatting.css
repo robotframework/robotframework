@@ -1,9 +1,9 @@
 .doc > * {
-    margin: 1em 1em 0 1em;
+    margin: 0.5em 1em 0 1em;
     padding: 0;
 }
 .doc > p, .doc > h1, .doc > h2, .doc > h3, .doc > h4 {
-    margin: 1em 0 0 0;
+    margin: 0.5em 0 0 0;
 }
 .doc > *:first-child {
     margin-top: 0;

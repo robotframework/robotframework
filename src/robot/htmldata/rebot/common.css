@@ -66,13 +66,6 @@ h2 {
 .doc > h4 {
     font-size: 1.0em;
 }
-/* Documentation margins */
-.doc > h2,.doc > h3,.doc > h4, .doc > p {
-    margin: 0.5em 0 0 0 !important;
-}
-.doc > ul {
-    margin: 0.5em 1em 0 1em !important;
-}
 /* Status text colors -- !important allows using them in links */
 .error, .fail {
     color: red !important;
