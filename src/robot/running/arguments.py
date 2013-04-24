@@ -272,7 +272,7 @@ class UserKeywordNamedArgumentResolver(NamedArgumentResolver):
         return '${%s}' % name
 
 
-class PythonArgumentResolver(object):
+class ArgumentResolver(object):
 
     def __init__(self, argspec):
         self._named_resolver = NamedArgumentResolver(argspec)
@@ -289,27 +289,12 @@ class PythonArgumentResolver(object):
         return resolver.resolve_variables(positional, named)
 
 
-class DynamicArgumentResolver(PythonArgumentResolver):
+class UserKeywordArgumentResolver(ArgumentResolver):
 
     def __init__(self, argspec):
-        PythonArgumentResolver.__init__(self, argspec)
-        self._mapper = ArgumentMapper(argspec, replace_variables=False)
-
-    def resolve(self, arguments, variables):
-        positional, named = PythonArgumentResolver.resolve(self, arguments, variables)
-        return self._mapper.map_arguments(positional, named, variables), {}
-
-
-class UserKeywordArgumentResolver(PythonArgumentResolver):
-
-    def __init__(self, argspec):
-        PythonArgumentResolver.__init__(self, argspec)
+        ArgumentResolver.__init__(self, argspec)
         self._named_resolver = UserKeywordNamedArgumentResolver(argspec)
         self._mapper = ArgumentMapper(argspec)
-
-    def resolve(self, arguments, variables):
-        positional, named = PythonArgumentResolver.resolve(self, arguments, variables)
-        return self._mapper.map_arguments(positional, named, variables)
 
 
 class RunKeywordArgumentResolver(object):
@@ -330,14 +315,15 @@ class JavaArgumentResolver(object):
         self._argspec = argspec
 
     def resolve(self, arguments, variables):
-        positional, named = self._resolve_variables(variables, arguments)
-        ArgumentValidator(self._argspec).check_arg_limits(positional, named)
-        self._handle_varargs(positional)
-        return positional, named
+        arguments = self._resolve_variables(variables, arguments)
+        ArgumentValidator(self._argspec).check_arg_limits(arguments)
+        self._handle_varargs(arguments)
+        return arguments, {}
 
     def _resolve_variables(self, variables, arguments):
-        resolver = VariableResolver(variables)
-        return resolver.resolve_variables(arguments, named={})
+        if variables:
+            arguments = variables.replace_list(arguments)
+        return arguments
 
     def _handle_varargs(self, arguments):
         if self._expects_varargs() and self._last_is_not_list(arguments):
@@ -377,13 +363,11 @@ class ArgumentMapper(object):
 
     # TODO: Need cleaner system for not replacing vars
     # i.e. for handling uk default values with variables in general
-    def __init__(self, argspec, replace_variables=True):
+    def __init__(self, argspec):
         self._argspec = argspec
-        self._replace_variables = replace_variables
 
-    def map_arguments(self, positional, named, variables):
-        template = KeywordCallTemplate(self._argspec, variables,
-                                       self._replace_variables)
+    def map(self, positional, named, variables=None):
+        template = KeywordCallTemplate(self._argspec, variables)
         template.fill_positional(positional)
         template.fill_named(named)
         return list(template)
@@ -391,11 +375,10 @@ class ArgumentMapper(object):
 
 class KeywordCallTemplate(object):
 
-    def __init__(self, argspec, variables, replace_variables=True):
-        if replace_variables:
-            defaults = variables.replace_list(argspec.defaults)
-        else:
-            defaults = argspec.defaults
+    def __init__(self, argspec, variables):
+        defaults = argspec.defaults
+        if variables:
+            defaults = variables.replace_list(defaults)
         self._template = [None] * argspec.minargs + defaults
         self._positional = argspec.positional
 
