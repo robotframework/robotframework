@@ -21,6 +21,6 @@ from .argumentresolver import (ArgumentResolver, UserKeywordArgumentResolver,
                                RunKeywordArgumentResolver, JavaArgumentResolver)
 from .argumentvalidator import ArgumentValidator
 if sys.platform.startswith('java'):
-    from .javaargcoercer import JavaArgumentCoercer
+    from .javaargumentcoercer import JavaArgumentCoercer
 else:
     JavaArgumentCoercer = None
