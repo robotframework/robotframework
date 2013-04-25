@@ -294,7 +294,6 @@ class UserKeywordArgumentResolver(ArgumentResolver):
     def __init__(self, argspec):
         ArgumentResolver.__init__(self, argspec)
         self._named_resolver = UserKeywordNamedArgumentResolver(argspec)
-        self._mapper = ArgumentMapper(argspec)
 
 
 class RunKeywordArgumentResolver(object):
