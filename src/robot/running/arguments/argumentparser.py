@@ -9,7 +9,6 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-import sys
 import inspect
 
 from robot.errors import DataError
@@ -24,22 +23,15 @@ class _ArgumentParser(object):
         self._type = type
 
     def parse(self, name, source):
+        return ArgumentSpec(name, self._type, *self._get_arg_spec(source))
+
+    def _get_arg_spec(self, source):
         raise NotImplementedError
 
 
 class PythonArgumentParser(_ArgumentParser):
 
-    def parse(self, name, source):
-        return ArgumentSpec(name, self._type, *self._get_arg_spec(source))
-
     def _get_arg_spec(self, handler):
-        """Returns info about args in a tuple (args, defaults, varargs, kwargs)
-
-        args     - list of all accepted arguments except varargs
-        defaults - list of default values
-        varargs  - name of the argument accepting varargs or None
-        kwargs   - name of the argument accepting kwargs or None
-        """
         args, varargs, kwargs, defaults = inspect.getargspec(handler)
         if inspect.ismethod(handler):
             args = args[1:]  # drop 'self'
@@ -49,38 +41,37 @@ class PythonArgumentParser(_ArgumentParser):
 
 class JavaArgumentParser(_ArgumentParser):
 
-    def parse(self, name, signatures):
-        minargs, maxargs = self._get_arg_limits(signatures)
-        return ArgumentSpec(name, self._type, minargs=minargs, maxargs=maxargs)
-
-    def _get_arg_limits(self, signatures):
+    def _get_arg_spec(self, signatures):
         if not signatures:
-            return self._no_signatures_arg_limits()
+            return self._no_signatures_arg_spec()
         elif len(signatures) == 1:
-            return self._get_single_signature_arg_limits(signatures[0])
+            return self._single_signature_arg_spec(signatures[0])
         else:
-            return self._get_multi_signature_arg_limits(signatures)
+            return self._multi_signature_arg_spec(signatures)
 
-    def _no_signatures_arg_limits(self):
+    def _no_signatures_arg_spec(self):
         # Happens when a class has no public constructors
-        return 0, 0
+        return self._format_arg_spec()
 
-    def _get_single_signature_arg_limits(self, signature):
+    def _single_signature_arg_spec(self, signature):
         args = signature.args
         if args and args[-1].isArray():
-            mina = len(args) - 1
-            maxa = sys.maxint
-        else:
-            mina = maxa = len(args)
-        return mina, maxa
+            return self._format_arg_spec(len(args)-1, varargs=True)
+        return self._format_arg_spec(len(args))
 
-    def _get_multi_signature_arg_limits(self, signatures):
+    def _multi_signature_arg_spec(self, signatures):
         mina = maxa = len(signatures[0].args)
         for sig in signatures[1:]:
             argc = len(sig.args)
             mina = min(argc, mina)
             maxa = max(argc, maxa)
-        return mina, maxa
+        return self._format_arg_spec(maxa, maxa-mina)
+
+    def _format_arg_spec(self, positional=0, defaults=0, varargs=False):
+        positional = ['arg%d' % (i+1) for i in range(positional)]
+        defaults = [''] * defaults
+        varargs = '*varargs' if varargs else None
+        return positional, defaults, varargs
 
 
 class _ArgumentSpecParser(_ArgumentParser):
