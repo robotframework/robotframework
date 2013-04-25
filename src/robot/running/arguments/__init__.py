@@ -23,4 +23,4 @@ from .argumentvalidator import ArgumentValidator
 if sys.platform.startswith('java'):
     from .javaargumentcoercer import JavaArgumentCoercer
 else:
-    JavaArgumentCoercer = None
+    JavaArgumentCoercer = lambda *args: None

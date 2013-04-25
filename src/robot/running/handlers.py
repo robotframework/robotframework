@@ -73,9 +73,13 @@ class _RunnableHandler(object):
         self._handler_name = handler_name
         self._method = self._get_initial_handler(library, handler_name,
                                                  handler_method)
+        self._argument_resolver = self._get_argument_resolver(self.arguments)
 
     def _parse_arguments(self, handler_method):
         raise NotImplementedError
+
+    def _get_argument_resolver(self, argspec):
+        return ArgumentResolver(argspec)
 
     def _get_initial_handler(self, library, name, method):
         if library.scope == 'GLOBAL':
@@ -83,7 +87,7 @@ class _RunnableHandler(object):
         return None
 
     def resolve_arguments(self, args, variables):
-        return ArgumentResolver(self.arguments).resolve(args, variables)
+        return self._argument_resolver.resolve(args, variables)
 
     @property
     def doc(self):
@@ -181,18 +185,22 @@ class _JavaHandler(_RunnableHandler):
 
     def __init__(self, library, handler_name, handler_method):
         _RunnableHandler.__init__(self, library, handler_name, handler_method)
-        self._arg_coercer = JavaArgumentCoercer(self._get_signatures(handler_method))
+        signatures = self._get_signatures(handler_method)
+        self._arg_coercer = JavaArgumentCoercer(signatures, self.arguments)
 
     def _parse_arguments(self, handler_method):
         signatures = self._get_signatures(handler_method)
         return JavaArgumentParser().parse(self.longname, signatures)
+
+    def _get_argument_resolver(self, argspec):
+        return JavaArgumentResolver(argspec)
 
     def _get_signatures(self, handler):
         code_object = getattr(handler, 'im_func', handler)
         return code_object.argslist[:code_object.nargs]
 
     def resolve_arguments(self, args, variables):
-        positional, named = JavaArgumentResolver(self.arguments).resolve(args, variables)
+        positional, named = self._argument_resolver.resolve(args, variables)
         positional = self._arg_coercer.coerce(positional)
         return positional, named
 
@@ -234,10 +242,9 @@ class _RunKeywordHandler(_PythonHandler):
         # and therefore monitoring should not raise exception yet.
         return runner()
 
-    def resolve_arguments(self, args, variables):
+    def _get_argument_resolver(self, argspec):
         arg_index = self._get_args_to_process()
-        resolver = RunKeywordArgumentResolver(self.arguments, arg_index)
-        return resolver.resolve(args, variables)
+        return RunKeywordArgumentResolver(argspec, arg_index)
 
     def _get_args_to_process(self):
         return RUN_KW_REGISTER.get_args_to_process(self.library.orig_name,
@@ -352,7 +359,7 @@ class _XTimesHandler(_RunKeywordHandler):
 class _DynamicRunKeywordHandler(_DynamicHandler, _RunKeywordHandler):
     _parse_arguments = _RunKeywordHandler._parse_arguments
     _get_timeout = _RunKeywordHandler._get_timeout
-    resolve_arguments = _RunKeywordHandler.resolve_arguments
+    _get_argument_resolver = _RunKeywordHandler._get_argument_resolver
 
 
 class _PythonInitHandler(_PythonHandler):

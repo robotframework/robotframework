@@ -20,7 +20,7 @@ from robot import utils
 class ArgumentSpec(object):
 
     def __init__(self, name, type='Keyword', positional=None, defaults=None,
-                 varargs=None, kwargs=None, minargs=None, maxargs=None):
+                 varargs=None, kwargs=None):
         self.name = name
         self.type = type
         self.positional = positional or []
@@ -28,21 +28,15 @@ class ArgumentSpec(object):
         self.defaults = defaults or []
         self.varargs = varargs
         self.kwargs = kwargs
-        self._minargs = minargs
-        self._maxargs = maxargs
 
     @property
     def minargs(self):
-        if self._minargs is None:
-            self._minargs = len(self.positional) - len(self.defaults)
-        return self._minargs
+        return len(self.positional) - len(self.defaults)
 
     @property
     def maxargs(self):
-        if self._maxargs is None:
-            self._maxargs = len(self.positional) \
-                if not (self.varargs or self.kwargs) else sys.maxint
-        return self._maxargs
+        return len(self.positional) \
+            if not (self.varargs or self.kwargs) else sys.maxint
 
     # FIXME: Move logging elsewhere
     def trace_log_args(self, logger, positional, named):
