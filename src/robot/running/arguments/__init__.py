@@ -12,9 +12,15 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+import sys
+
 from .argumentmapper import ArgumentMapper
 from .argumentparser import (PythonArgumentParser, UserKeywordArgumentParser,
                              DynamicArgumentParser, JavaArgumentParser)
 from .argumentresolver import (ArgumentResolver, UserKeywordArgumentResolver,
                                RunKeywordArgumentResolver, JavaArgumentResolver)
 from .argumentvalidator import ArgumentValidator
+if sys.platform.startswith('java'):
+    from .javaargcoercer import JavaArgumentCoercer
+else:
+    JavaArgumentCoercer = None

@@ -22,7 +22,8 @@ from .arguments import (PythonArgumentParser, JavaArgumentParser,
                         DynamicArgumentParser,
                         ArgumentResolver, RunKeywordArgumentResolver,
                         JavaArgumentResolver,
-                        ArgumentValidator, ArgumentMapper)
+                        ArgumentValidator, ArgumentMapper,
+                        JavaArgumentCoercer)
 from .keywords import Keywords, Keyword
 from .outputcapture import OutputCapturer
 from .runkwregister import RUN_KW_REGISTER
@@ -31,7 +32,6 @@ from .signalhandler import STOP_SIGNAL_MONITOR
 
 if utils.is_jython:
     from org.python.core import PyReflectedFunction, PyReflectedConstructor
-    from .javaargcoercer import ArgumentCoercer
 
     def _is_java_init(init):
         return isinstance(init, PyReflectedConstructor)
@@ -181,7 +181,7 @@ class _JavaHandler(_RunnableHandler):
 
     def __init__(self, library, handler_name, handler_method):
         _RunnableHandler.__init__(self, library, handler_name, handler_method)
-        self._arg_coercer = ArgumentCoercer(self._get_signatures(handler_method))
+        self._arg_coercer = JavaArgumentCoercer(self._get_signatures(handler_method))
 
     def _parse_arguments(self, handler_method):
         signatures = self._get_signatures(handler_method)

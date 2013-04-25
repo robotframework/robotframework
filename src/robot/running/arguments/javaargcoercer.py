@@ -15,7 +15,7 @@
 from java.lang import Byte, Short, Integer, Long, Boolean, Float, Double
 
 
-class ArgumentCoercer:
+class JavaArgumentCoercer:
 
     def __init__(self, signatures):
         types = self._parse_types(signatures)
