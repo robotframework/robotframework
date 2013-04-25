@@ -33,10 +33,15 @@ class ArgumentResolver(object):
         return positional, named
 
     def _resolve_variables(self, variables, positional, named):
-        resolver = VariableResolver(variables)
-        return resolver.resolve_variables(positional, named)
+        # TODO: Why/when can variables be None?
+        if variables:
+            positional = variables.replace_list(positional)
+            named = dict((name, variables.replace_scalar(value))
+                         for name, value in named.items())
+        return positional, named
 
 
+# TODO: Do we really need this class?
 class UserKeywordArgumentResolver(ArgumentResolver):
 
     def __init__(self, argspec):
@@ -46,32 +51,38 @@ class UserKeywordArgumentResolver(ArgumentResolver):
 
 class RunKeywordArgumentResolver(object):
 
-    def __init__(self, arguments, arg_resolution_index):
-        self._arg_limit_checker = ArgumentValidator(arguments)
-        self._arg_resolution_index = arg_resolution_index
+    def __init__(self, argspec, argument_resolution_index):
+        self._validator = ArgumentValidator(argspec)
+        self._resolution_index = argument_resolution_index
 
-    def resolve(self, values, variables):
-        args = variables.replace_run_kw_info(values, self._arg_resolution_index)
-        self._arg_limit_checker.check_arg_limits(args)
-        return args, {}
+    def resolve(self, arguments, variables):
+        arguments = self._resolve_variables(variables, arguments)
+        self._validator.check_arg_limits(arguments)
+        return arguments, {}
+
+    def _resolve_variables(self, variables, arguments):
+        return variables.replace_run_kw_info(arguments, self._resolution_index)
 
 
 class JavaArgumentResolver(object):
 
     def __init__(self, argspec):
+        self._validator = ArgumentValidator(argspec)
         self._argspec = argspec
 
     def resolve(self, arguments, variables):
         arguments = self._resolve_variables(variables, arguments)
-        ArgumentValidator(self._argspec).check_arg_limits(arguments)
+        self._validator.check_arg_limits(arguments)
         self._handle_varargs(arguments)
         return arguments, {}
 
     def _resolve_variables(self, variables, arguments):
+        # TODO: Why/when can variables be None
         if variables:
             arguments = variables.replace_list(arguments)
         return arguments
 
+    # TODO: Could coercer handle this?
     def _handle_varargs(self, arguments):
         if self._expects_varargs() and self._last_is_not_list(arguments):
             minargs = self._argspec.minargs
@@ -84,24 +95,3 @@ class JavaArgumentResolver(object):
     def _last_is_not_list(self, args):
         return not (len(args) == self._argspec.minargs + 1
                     and isinstance(args[-1], (list, tuple, ArrayType)))
-
-
-# TODO: This class can be inlined
-class VariableResolver(object):
-
-    def __init__(self, variables):
-        self._variables = variables
-
-    def resolve_variables(self, positional, named):
-        # TODO: Why can variables be None??
-        if not self._variables:
-            return positional, named
-        return self._replace_positional(positional), self._replace_named(named)
-
-    def _replace_positional(self, positional):
-        return self._variables.replace_list(positional)
-
-    def _replace_named(self, named):
-        for name, value in named.items():
-            named[name] = self._variables.replace_scalar(value)
-        return named
