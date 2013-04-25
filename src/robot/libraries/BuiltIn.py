@@ -354,12 +354,35 @@ class _Verify:
         |      | Run Keyword If | '${var}' == 'EXIT' | Exit For Loop |
         |      | Do Something   | ${var} |
 
+        Starting from Robot Framework 2.8 it is also possible to use
+        `Exit For Loop If`.
+
         New in Robot Framework 2.5.2.
         """
         # Error message is shown only if there is no enclosing for loop
         error = AssertionError('Exit for loop without enclosing for loop.')
         error.ROBOT_EXIT_FOR_LOOP = True
         raise error
+
+    def exit_for_loop_if(self, condition):
+        """Immediately stops executing the enclosing for loop if given
+        condition is true.
+
+        This keyword can be used directly in a for loop or in a keyword that
+        the for loop uses. In both cases the test execution continues after
+        the for loop. If executed outside of a for loop, the test fails.
+
+        To unconditionally exit for loop, see `Exit For Loop`.
+
+        Example:
+        | :FOR | ${var} | IN | @{SOME LIST} |
+        |      | Exit For Loop If | '${var}' == 'EXIT' |
+        |      | Do Something   | ${var} |
+
+        New in Robot Framework 2.8.
+        """
+        if self._is_true(condition):
+            self.exit_for_loop()
 
     def should_not_be_true(self, condition, msg=None):
         """Fails if the given condition is true.
