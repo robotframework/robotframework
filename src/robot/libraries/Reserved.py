@@ -12,13 +12,11 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+RESERVED_KEYWORDS = ['for', 'while', 'break', 'continue', 'end',
+                     'if', 'else', 'elif', 'else if', 'return']
 
-RESERVED_KEYWORDS = [ 'for', 'while', 'break', 'continue', 'end',
-                      'if', 'else', 'elif', 'else if', 'return' ]
 
-
-class Reserved:
-
+class Reserved(object):
     ROBOT_LIBRARY_SCOPE = 'GLOBAL'
 
     def get_keyword_names(self):
@@ -26,4 +24,3 @@ class Reserved:
 
     def run_keyword(self, name, args):
         raise Exception("'%s' is a reserved keyword" % name.title())
-
