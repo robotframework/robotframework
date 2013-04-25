@@ -15,7 +15,6 @@ from __future__ import with_statement
 
 import os
 import subprocess
-import sys
 import tempfile
 
 from robot.utils import ConnectionCache
