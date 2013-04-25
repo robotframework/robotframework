@@ -1,0 +1,14 @@
+*** Settings ***
+Suite Setup      Run Tests    ${EMPTY}    standard_libraries/process/is_process_alive.txt
+Force Tags       regression    pybot    jybot
+Resource         atest_resource.txt
+
+*** Test Cases ***
+No Process Should Fail
+    Check Test Case    ${TESTNAME}
+
+Test Process Should Be Alive
+    Check Test Case    ${TESTNAME}
+
+Test Process Should Be Dead
+    Check Test Case    ${TESTNAME}

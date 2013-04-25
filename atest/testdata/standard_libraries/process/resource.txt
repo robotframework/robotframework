@@ -1,0 +1,23 @@
+*** Keywords ***
+Endless process
+          [Arguments]       ${alias}=${null}
+          ${handle}=          Start Python Process          while True: pass;     alias=${alias}
+          [Return]          ${handle}
+
+Result should equal
+          [Arguments]          ${result}          ${stdout}=          ${stderr}=          ${exit_code}=0
+          Should Match          ${result.stdout}          ${stdout}
+          Should Match          ${result.stderr}          ${stderr}
+          Should Be Equal As Integers          ${result.exit_code}          ${exit_code}
+
+Start Python Process
+          [Arguments]          ${command}      ${alias}=${null}
+          ${handle}=          Start New Process          python          -c          ${command}      alias=${alias}
+          [Return]          ${handle}
+
+Run Python Process
+          [Arguments]          ${command}
+          ${result}=          Run Process          python          -c          ${command}
+          Log    ${result.exit_code}
+          Log    ${result.stderr}
+          [Return]          ${result}
