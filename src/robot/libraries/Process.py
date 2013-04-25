@@ -15,6 +15,7 @@ from __future__ import with_statement
 
 import os
 import subprocess
+import sys
 import tempfile
 
 from robot.utils import ConnectionCache
@@ -139,6 +140,8 @@ exit_code   : %d""" % (self._stdout_name, self._stderr_name, self.exit_code)
 
 class NewProcessConfig(object):
 
+    FILE_INDEX = 0
+
     def __init__(self, tempdir, cwd=None,
                  shell=False, stdout=None,
                  stderr=None, alias=None):
@@ -161,7 +164,6 @@ class NewProcessConfig(object):
         return self._new_stream(stderr, 'stderr')
 
     def _get_temp_file(self, suffix):
-        return tempfile.NamedTemporaryFile(delete=False,
-                                           prefix='tmp_logfile_',
-                                           suffix="_%s" % suffix,
-                                           dir=self._tempdir)
+        filename = 'tmp_logfile_%d_%s.out' % (NewProcessConfig.FILE_INDEX, suffix)
+        NewProcessConfig.FILE_INDEX += 1
+        return open(os.path.join(self._tempdir, filename), 'w')
