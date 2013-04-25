@@ -1,9 +1,10 @@
-from impl_dynlib import impl_say_hello, impl_say_goodbye, impl_say_something_to, impl_a_keyword
-
-KEYWORDS = {'say hello': (impl_say_hello, ['first_name=John']),
-            'say goodbye': (impl_say_goodbye, ['first_name=John', 'last_name=Smith']),
-            'say something to': (impl_say_something_to, ['message', 'to_whom=You', 'from_who=Me']),
-            'a keyword': (impl_a_keyword, ['a', 'b=1'])}
+KEYWORDS = {
+    'argspec with other than strings': (lambda a, *x: (a, x), [1, 2]),
+    'varargs before positional args': (lambda a, *x: (a, x), ['*varargs', 'a']),
+    'varargs before named args': (lambda a=1, *x: (a, x), ['*varargs', 'a=1']),
+    'named args before positional': (lambda a, b: (a, b), ['a=1', 'b']),
+    'method': (lambda a: a, ['a'])
+}
 
 class DynamicLibrary(object):
 
