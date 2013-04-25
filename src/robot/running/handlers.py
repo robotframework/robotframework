@@ -181,7 +181,8 @@ class _JavaHandler(_RunnableHandler):
 
     def __init__(self, library, handler_name, handler_method):
         _RunnableHandler.__init__(self, library, handler_name, handler_method)
-        self._arg_coercer = JavaArgumentCoercer(self._get_signatures(handler_method))
+        signatures = self._get_signatures(handler_method)
+        self._arg_coercer = JavaArgumentCoercer(signatures, self.arguments)
 
     def _parse_arguments(self, handler_method):
         signatures = self._get_signatures(handler_method)

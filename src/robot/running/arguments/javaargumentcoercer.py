@@ -17,10 +17,12 @@ from java.lang import Byte, Short, Integer, Long, Boolean, Float, Double
 
 class JavaArgumentCoercer(object):
 
-    def __init__(self, signatures):
+    def __init__(self, signatures, argspec):
         self._coercers = CoercerFinder().find_coercers(signatures)
+        self._varargs_handler = VarargsHandler(argspec)
 
     def coerce(self, arguments):
+        arguments = self._varargs_handler.handle(arguments)
         return [c.coerce(a) for c, a in zip(self._coercers, arguments)]
 
 
@@ -115,3 +117,28 @@ class NullCoercer(_Coercer):
 
     def coerce(self, argument):
         return argument
+
+
+class VarargsHandler(object):
+
+    def __init__(self, argspec):
+        self._index = argspec.minargs if argspec.varargs else -1
+
+    def handle(self, arguments):
+        if self._index > -1 and not self._passing_list(arguments):
+            arguments[self._index:] = [arguments[self._index:]]
+        return arguments
+
+    def _passing_list(self, arguments):
+        return self._correct_count(arguments) and self._is_list(arguments[-1])
+
+    def _correct_count(self, arguments):
+        return len(arguments) == self._index + 1
+
+    def _is_list(self, argument):
+        try:
+            list(argument)
+        except TypeError:
+            return False
+        else:
+            return not isinstance(argument, basestring)
