@@ -71,6 +71,17 @@ Dictionary Should Contain Key With Missing Key
     [Documentation]  FAIL Dictionary does not contain key 'x'
     Dictionary Should Contain Key  ${D3}  x
 
+Dictionary Should Contain Item
+    Dictionary Should Contain Item  ${D3}  a   1
+
+Dictionary Should Contain Item With Missing Key
+    [Documentation]  FAIL Dictionary does not contain key 'x'
+    Dictionary Should Contain Item  ${D3}  x   1
+
+Dictionary Should Contain Item With Wrong Value
+    [Documentation]  FAIL Value of dictionary key 'a' does not match. '1'!='2'
+    Dictionary Should Contain Item  ${D3}  a   2
+
 Dictionary Should Not Contain Key
     Dictionary Should Not Contain Key  ${D3}  x
 

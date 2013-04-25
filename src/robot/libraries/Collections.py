@@ -576,6 +576,19 @@ class _Dictionary:
         default = "Dictionary contains key '%s'" % key
         _verify_condition(not dictionary.has_key(key), default, msg)
 
+    def dictionary_should_contain_item(self, dictionary, key, value, msg=None):
+        """An item of `key`/`value` must be found in a `dictionary`.
+
+        Value is converted to unicode for comparison.
+
+        See `Lists Should Be Equal` for an explanation of `msg`.
+        The given dictionary is never altered by this keyword.
+        """
+        self.dictionary_should_contain_key(dictionary, key, msg)
+        actual, expected =  unicode(dictionary[key]), unicode(value)
+        default = "Value of dictionary key '%s' does not match. '%s'!='%s'" % (key, actual, expected)
+        _verify_condition(actual == expected, default, msg)
+
     def dictionary_should_contain_value(self, dictionary, value, msg=None):
         """Fails if `value` is not found from `dictionary`.
 
