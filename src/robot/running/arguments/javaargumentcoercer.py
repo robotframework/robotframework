@@ -15,90 +15,103 @@
 from java.lang import Byte, Short, Integer, Long, Boolean, Float, Double
 
 
-class JavaArgumentCoercer:
+class JavaArgumentCoercer(object):
 
     def __init__(self, signatures):
-        types = self._parse_types(signatures)
-        self._coercers = [_CoercionFunction(t, i+1) for i, t in types]
+        self._coercers = CoercerFinder().find_coercers(signatures)
+
+    def coerce(self, arguments):
+        return [c.coerce(a) for c, a in zip(self._coercers, arguments)]
+
+
+class CoercerFinder(object):
+
+    def find_coercers(self, signatures):
+        return [self._get_coercer(types, position)
+                for position, types in self._parse_types(signatures)]
 
     def _parse_types(self, signatures):
         types = {}
         for sig in signatures:
             for index, arg in enumerate(sig.args):
-                types.setdefault(index, []).append(arg)
+                types.setdefault(index + 1, []).append(arg)
         return sorted(types.items())
 
-    def coerce(self, args):
-        return [coercer(arg) for coercer, arg in zip(self._coercers, args)]
+    def _get_coercer(self, types, position):
+        possible = [BooleanCoercer(position), IntegerCoercer(position),
+                    FloatCoercer(position), NullCoercer(position)]
+        coercers = [self._get_coercer_for_type(t, possible) for t in types]
+        if self._coercers_conflict(*coercers):
+            return NullCoercer()
+        return coercers[0]
+
+    def _get_coercer_for_type(self, type, coercers):
+        for coercer in coercers:
+            if coercer.handles(type):
+                return coercer
+
+    def _coercers_conflict(self, first, *rest):
+        return not all(coercer is first for coercer in rest)
 
 
-class _CoercionFunction:
-    _bool_types = [Boolean]
-    _int_types = [Byte, Short, Integer, Long]
-    _float_types = [Float, Double]
-    _bool_primitives = ['boolean']
-    _int_primitives = ['byte', 'short', 'int', 'long']
-    _float_primitives = ['float', 'double']
-    _bool_primitives = ["<type 'boolean'>"]
-    _int_primitives = ["<type '%s'>" % p for p in _int_primitives]
-    _float_primitives = ["<type '%s'>" % p for p in _float_primitives]
+class _Coercer(object):
+    _name = ''
+    _types = []
+    _primitives = []
 
-    def __init__(self, arg_types, position):
+    def __init__(self, position=None):
         self._position = position
-        self.__coercer = None
-        for arg in arg_types:
-            if not (self._set_bool(arg) or
-                    self._set_int(arg) or
-                    self._set_float(arg)):
-                self.__coercer = self._no_coercion
 
-    def __call__(self, arg):
-        if not isinstance(arg, basestring):
-            return arg
-        return self.__coercer(arg)
+    def handles(self, type):
+        return type in self._types or type.__name__ in self._primitives
 
-    def _set_bool(self, arg):
-        return self._set_coercer(arg, self._bool_types,
-                                 self._bool_primitives, self._to_bool)
-
-    def _set_int(self, arg):
-        return self._set_coercer(arg, self._int_types,
-                                 self._int_primitives, self._to_int)
-
-    def _set_float(self, arg):
-        return self._set_coercer(arg, self._float_types,
-                                 self._float_primitives, self._to_float)
-
-    def _set_coercer(self, arg, type_list, primitive_list, coercer):
-        if arg in type_list or str(arg) in primitive_list:
-            if self.__coercer is None:
-                self.__coercer = coercer
-            elif self.__coercer != coercer:
-                self.__coercer = self._no_coercion
-            return True
-        return False
-
-    def _to_bool(self, arg):
+    def coerce(self, argument):
+        if not isinstance(argument, basestring):
+            return argument
         try:
-            return {'false': False, 'true': True}[arg.lower()]
+            return self._coerce(argument)
+        except ValueError:
+            raise ValueError('Argument at position %d cannot be coerced to %s.'
+                             % (self._position, self._name))
+
+    def _coerce(self, argument):
+        raise NotImplementedError
+
+
+class BooleanCoercer(_Coercer):
+    _name = 'boolean'
+    _types = [Boolean]
+    _primitives = ['boolean']
+
+    def _coerce(self, argument):
+        try:
+            return {'false': False, 'true': True}[argument.lower()]
         except KeyError:
-            self._coercion_failed('boolean')
+            raise ValueError
 
-    def _to_int(self, arg):
-        try:
-            return int(arg)
-        except ValueError:
-            self._coercion_failed('integer')
 
-    def _to_float(self, arg):
-        try:
-            return float(arg)
-        except ValueError:
-            self._coercion_failed('floating point number')
+class IntegerCoercer(_Coercer):
+    _name = 'integer'
+    _types = [Byte, Short, Integer, Long]
+    _primitives = ['byte', 'short', 'int', 'long']
 
-    def _no_coercion(self, arg):
-        return arg
+    def _coerce(self, argument):
+        return int(argument)
 
-    def _coercion_failed(self, arg_type):
-        raise ValueError('Argument at position %d cannot be coerced to %s'
-                         % (self._position, arg_type))
+
+class FloatCoercer(_Coercer):
+    _name = 'floating point number'
+    _types = [Float, Double]
+    _primitives = ['float', 'double']
+
+    def _coerce(self, argument):
+        return float(argument)
+
+
+class NullCoercer(_Coercer):
+
+    def handles(self, argument):
+        return True
+
+    def coerce(self, argument):
+        return argument

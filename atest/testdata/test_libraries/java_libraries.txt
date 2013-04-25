@@ -18,13 +18,13 @@ Boolean Arg
     Boolean 2  true
 
 Double Arg
-    [Documentation]  FAIL ValueError: Argument at position 1 cannot be coerced to floating point number
+    [Documentation]  FAIL ValueError: Argument at position 1 cannot be coerced to floating point number.
     Double 1  ${3.14}
     Double 2  ${10e2}
     Double 1  1nv4l1d
 
 Float Arg
-    [Documentation]  FAIL ValueError: Argument at position 1 cannot be coerced to floating point number
+    [Documentation]  FAIL ValueError: Argument at position 1 cannot be coerced to floating point number.
     Float 1  ${-3.14}
     Float 2  ${-10e-2}
     Float 2  1nv4l1d

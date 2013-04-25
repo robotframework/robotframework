@@ -222,7 +222,7 @@ if utils.is_jython:
                                 [42], [42])
 
         def test_coercion_fails_with_reasonable_message(self):
-            exp_msg = 'Argument at position 1 cannot be coerced to %s'
+            exp_msg = 'Argument at position 1 cannot be coerced to %s.'
             self._test_coercion_fails(self._handler_named('intArgument'),
                                       exp_msg % 'integer')
             self._test_coercion_fails(self._handler_named('booleanArgument'),

@@ -161,7 +161,7 @@ Valid Arguments For Keyword Expecting Non String Array Arguments
     Object Array    ${obj}    ${ht}    hello world    ${42}    ${null}
 
 Invalid Argument Types 1
-    [Documentation]    FAIL ValueError: Argument at position 1 cannot be coerced to integer
+    [Documentation]    FAIL ValueError: Argument at position 1 cannot be coerced to integer.
     Integer 1    this is not an integer
 
 Invalid Argument Types 2
