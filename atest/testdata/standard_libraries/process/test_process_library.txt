@@ -1,7 +1,7 @@
 *** Settings ***
 Library                 Process.py
 Library                 OperatingSystem
-Resource                resrouce.txt
+Resource                resource.txt
 Suite Setup             Endless process    suite_process
 Test Teardown           Restart Suite Process If Needed
 Suite Teardown          Terminate Process       suite_process
