@@ -12,59 +12,49 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-import sys
-
 from robot.errors import DataError
+from robot.utils import plural_or_not
 from robot.variables import is_list_var
-from robot import utils
 
 
 class ArgumentValidator(object):
 
     def __init__(self, argspec):
         self._argspec = argspec
-        self._minargs = argspec.minargs
-        self._maxargs = argspec.maxargs
-        self._name = argspec.name
-        self._type = argspec.type
 
     def validate_arguments(self, positional, named):
-        self._check_mandatories(positional, named)
-        self.check_arg_limits(positional, named)
+        self._validate_no_mandatory_missing(positional, named, self._argspec)
+        self._validate_no_arg_given_twice(positional, named, self._argspec)
+        self._validate_limits(positional, named, self._argspec)
 
-    # TODO: Proof-read error messages
-    def _check_mandatories(self, positional, named):
-        minargs = self._argspec.minargs
-        for name in self._argspec.positional[len(positional):minargs]:
+    def _validate_no_mandatory_missing(self, positional, named, spec):
+        for name in spec.positional[len(positional):spec.minargs]:
             if name not in named:
                 raise DataError("%s '%s' missing value for argument '%s'."
-                                % (self._argspec.type, self._argspec.name, name))
-        for name in self._argspec.positional[:len(positional)]:
+                                % (spec.type, spec.name, name))
+
+    def _validate_no_arg_given_twice(self, positional, named, spec):
+        for name in spec.positional[:len(positional)]:
             if name in named:
                 raise DataError("Error in %s '%s'. Value for argument '%s' was given twice."
-                                % (self._argspec.type.lower(), self._argspec.name, name))
+                                % (spec.type.lower(), spec.name, name))
 
-    def check_arg_limits(self, args, namedargs=None):
-        self._check_arg_limits(len(args) + len(namedargs or {}))
+    def validate_limits(self, positional, named=None, dry_run=False):
+        if not (dry_run and any(is_list_var(arg) for arg in positional)):
+            self._validate_limits(positional, named or {}, self._argspec)
 
-    def check_arg_limits_for_dry_run(self, args):
-        arg_count = len(args)
-        scalar_arg_count = len([a for a in args if not is_list_var(a)])
-        if scalar_arg_count <= self._minargs and arg_count - scalar_arg_count:
-            arg_count = self._minargs
-        self._check_arg_limits(arg_count)
+    def _validate_limits(self, positional, named, spec):
+        count = len(positional) + len(named)
+        if not spec.minargs <= count <= spec.maxargs:
+            self._raise_wrong_count(count, spec)
 
-    def _check_arg_limits(self, arg_count):
-        if not self._minargs <= arg_count <= self._maxargs:
-            self._raise_inv_args(arg_count)
-
-    def _raise_inv_args(self, arg_count):
-        minend = utils.plural_or_not(self._minargs)
-        if self._minargs == self._maxargs:
-            exptxt = "%d argument%s" % (self._minargs, minend)
-        elif self._maxargs != sys.maxint:
-            exptxt = "%d to %d arguments" % (self._minargs, self._maxargs)
+    def _raise_wrong_count(self, count, spec):
+        minend = plural_or_not(spec.minargs)
+        if spec.minargs == spec.maxargs:
+            expected = '%d argument%s' % (spec.minargs, minend)
+        elif not (spec.varargs or spec.kwargs):
+            expected = '%d to %d arguments' % (spec.minargs, spec.maxargs)
         else:
-            exptxt = "at least %d argument%s" % (self._minargs, minend)
+            expected = 'at least %d argument%s' % (spec.minargs, minend)
         raise DataError("%s '%s' expected %s, got %d."
-                        % (self._type, self._name, exptxt, arg_count))
+                        % (spec.type, spec.name, expected, count))

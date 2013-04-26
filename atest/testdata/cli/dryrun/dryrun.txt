@@ -84,7 +84,7 @@ Too few arguments for UK
 
 Too many arguments
     [Documentation]  FAIL  Keyword 'BuiltIn.No Operation' expected 0 arguments, got 2.
-    No Operation  ${foo}  @{list}
+    No Operation  ${foo}  bar
 
 Invalid syntax in UK
     [Documentation]  FAIL Invalid argument '${arg'.
