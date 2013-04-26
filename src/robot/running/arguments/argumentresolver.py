@@ -54,7 +54,7 @@ class RunKeywordArgumentResolver(object):
 
     def resolve(self, arguments, variables):
         arguments = self._resolve_variables(variables, arguments)
-        self._validator.check_arg_limits(arguments)
+        self._validator.validate_limits(arguments)
         return arguments, {}
 
     def _resolve_variables(self, variables, arguments):
@@ -68,7 +68,7 @@ class JavaArgumentResolver(object):
 
     def resolve(self, arguments, variables):
         arguments = self._resolve_variables(variables, arguments)
-        self._validator.check_arg_limits(arguments)
+        self._validator.validate_limits(arguments)
         return arguments, {}
 
     def _resolve_variables(self, variables, arguments):
