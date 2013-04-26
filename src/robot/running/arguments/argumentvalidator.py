@@ -23,21 +23,21 @@ class ArgumentValidator(object):
         self._argspec = argspec
 
     def validate_arguments(self, positional, named):
-        self._validate_no_mandatory_missing(positional, named, self._argspec)
-        self._validate_no_arg_given_twice(positional, named, self._argspec)
         self._validate_limits(positional, named, self._argspec)
+        self._validate_no_multiple_values(positional, named, self._argspec)
+        self._validate_no_mandatory_missing(positional, named, self._argspec)
+
+    def _validate_no_multiple_values(self, positional, named, spec):
+        for name in spec.positional[:len(positional)]:
+            if name in named:
+                raise DataError("%s '%s' got multiple values for argument '%s'."
+                                % (spec.type, spec.name, name))
 
     def _validate_no_mandatory_missing(self, positional, named, spec):
         for name in spec.positional[len(positional):spec.minargs]:
             if name not in named:
                 raise DataError("%s '%s' missing value for argument '%s'."
                                 % (spec.type, spec.name, name))
-
-    def _validate_no_arg_given_twice(self, positional, named, spec):
-        for name in spec.positional[:len(positional)]:
-            if name in named:
-                raise DataError("Error in %s '%s'. Value for argument '%s' was given twice."
-                                % (spec.type.lower(), spec.name, name))
 
     def validate_limits(self, positional, named=None, dry_run=False):
         if not (dry_run and any(is_list_var(arg) for arg in positional)):

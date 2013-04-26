@@ -5,49 +5,49 @@ Resource        atest_resource.txt
 
 *** Test Cases ***
 
-Simple Kwarg
+Simple Named
     Check Test Case  ${TESTNAME}
 
 Check Library init arguments
     Check Test Case  ${TESTNAME}
 
-Mandatory Args Should Be Positioned
+Mandatory And Named As Positional
     Check Test Case  ${TESTNAME}
 
-Kwargs and Varargs
+Mandatory And Named As Named
     Check Test Case  ${TESTNAME}
 
-Naming arguments without varargs is supported
+Mandatory, Named And Varargs As Positional
     Check Test Case  ${TESTNAME}
 
-Naming arguments before possible varargs is not supported
+Naming arguments with varargs is supported when varargs are not used
+    Check Test Case  ${TESTNAME}
+
+Naming arguments is not supported when varargs are used
     Check Test Case  ${TESTNAME}
 
 Naming arguments before possible varargs is not supported with empty lists either
     Check Test Case  ${TESTNAME}
 
-Kwarg Syntax In Variable Is Ignored
+Named Syntax In Variable Is Ignored
     Check Test Case  ${TESTNAME}
 
-Non-string value in kwarg
+Non-string named value
     Check Test Case  ${TESTNAME}
 
-Equals Sign In Kwarg Value
+Equals Sign In Named Value
     Check Test Case  ${TESTNAME}
 
-Using non-existing kwarg
+Non-existing argument does not trigger named usage
     Check Test Case  ${TESTNAME}
 
 Escaping Kwarg
     Check Test Case  ${TESTNAME}
 
-Using Argname Twice
+Naming twice
     Check Test Case  ${TESTNAME}
 
 Inside Run Kw
-    Check Test Case  ${TESTNAME}
-
-Simple Kwarg With Timeout
     Check Test Case  ${TESTNAME}
 
 Named combinations with varargs

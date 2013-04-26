@@ -62,12 +62,12 @@ Naming without the varargs works
     Should be equal   @{ret}[1]    bar
 
 Varargs with naming does not work
-    [documentation]  FAIL  Error in keyword 'DynamicLibrary.Named Arguments With Varargs'. Named arguments can not be given before positional arguments. Please remove prefix b= or escape b=bar as b\\=bar.
-    @{ret} =    Named arguments with varargs   foo    b=bar    dar
+    [documentation]  FAIL  Keyword 'DynamicLibrary.Named Arguments With Varargs' got positional argument after named arguments.
+    Named arguments with varargs   foo    b=bar    dar
 
 Varargs with naming does not work with empty lists either
-    [documentation]  FAIL  Error in keyword 'DynamicLibrary.Named Arguments With Varargs'. Named arguments can not be given before positional arguments. Please remove prefix b= or escape b=bar as b\\=bar.
-    @{ret} =    Named arguments with varargs   foo    b=bar    @{EMPTY}
+    [documentation]  FAIL  Keyword 'DynamicLibrary.Named Arguments With Varargs' got positional argument after named arguments.
+    Named arguments with varargs   foo    b=bar    @{EMPTY}
 
 Named combinations with varargs
     [template]           Execute working named vararg combination with result
@@ -83,14 +83,14 @@ Named combinations with varargs
 
 Non working named combinations with varargs
     [template]           Execute illegal named vararg combination
-    Error in keyword 'DynamicLibrary.Mandatory, Named And Varargs'. Named arguments can not be given before positional arguments.   a=a  b
-    Keyword 'DynamicLibrary.Mandatory, Named And Varargs' missing value for argument                                      b=b
-    Error in keyword 'DynamicLibrary.Mandatory, Named And Varargs'. Named arguments can not be given before positional arguments.   b=b  b
-    Error in keyword 'DynamicLibrary.Mandatory, Named And Varargs'. Named arguments can not be given before positional arguments.   a    b=b   c
-    Error in keyword 'DynamicLibrary.Mandatory, Named And Varargs'. Value for argument 'a' was given twice.                     a    b     a=a
-    Error in keyword 'DynamicLibrary.Mandatory, Named And Varargs'. Value for argument 'b' was given twice.                     a    b     b=b
-    Error in keyword 'DynamicLibrary.Mandatory, Named And Varargs'. Value for argument 'a' was given twice.                     a    a=a
-    Error in keyword 'DynamicLibrary.Mandatory, Named And Varargs'. Value for argument 'a' was given twice.                     a    b     c    a=a
+    Keyword 'DynamicLibrary.Mandatory, Named And Varargs' got positional argument after named arguments.    a=a  b
+    Keyword 'DynamicLibrary.Mandatory, Named And Varargs' missing value for argument 'a'.                   b=b
+    Keyword 'DynamicLibrary.Mandatory, Named And Varargs' got positional argument after named arguments.    b=b  b
+    Keyword 'DynamicLibrary.Mandatory, Named And Varargs' got positional argument after named arguments.    a    b=b   c
+    Keyword 'DynamicLibrary.Mandatory, Named And Varargs' got multiple values for argument 'a'.             a    b     a=a
+    Keyword 'DynamicLibrary.Mandatory, Named And Varargs' got multiple values for argument 'b'.             a    b     b=b
+    Keyword 'DynamicLibrary.Mandatory, Named And Varargs' got multiple values for argument 'a'.             a    a=a
+    Keyword 'DynamicLibrary.Mandatory, Named And Varargs' got multiple values for argument 'a'.             a    b     c    a=a
 
 Named combinations without varargs
     [template]           Execute working named combination with result
@@ -103,11 +103,10 @@ Named combinations without varargs
 
 Non working named combinations without varargs
     [template]           Execute illegal named combination
-    Error in keyword 'DynamicLibrary.Mandatory And Named'. Named arguments can not be given before positional arguments        a=a   b
-    Keyword 'DynamicLibrary.Mandatory And Named' missing value for argument                                          b=b
-    Error in keyword 'DynamicLibrary.Mandatory And Named'. Named arguments can not be given before positional arguments.       b=b  b
-    Error in keyword 'DynamicLibrary.Mandatory And Named'. Value for argument 'a' was given twice.                         a    a=a
-
+    Keyword 'DynamicLibrary.Mandatory And Named' got positional argument after named arguments.    a=a   b
+    Keyword 'DynamicLibrary.Mandatory And Named' missing value for argument 'a'.                   b=b
+    Keyword 'DynamicLibrary.Mandatory And Named' got positional argument after named arguments.    b=b  b
+    Keyword 'DynamicLibrary.Mandatory And Named' got multiple values for argument 'a'.             a    a=a
 
 *** Keywords ***
 Execute working named vararg combination with result
@@ -118,7 +117,7 @@ Execute working named vararg combination with result
 Execute illegal named vararg combination
     [arguments]    ${expected error}   @{args}
     ${res} =       Get result or error    Mandatory, Named And Varargs   @{args}
-    Should start with     ${res}     ${expected error}
+    Should be equal     ${res}     ${expected error}
 
 Execute working named combination with result
     [arguments]    ${expected}  @{args}
@@ -128,4 +127,4 @@ Execute working named combination with result
 Execute illegal named combination
     [arguments]     ${expected error}     @{args}
     ${res} =       Get result or error    Mandatory And Named   @{args}
-    Should start with     ${res}     ${expected error}
+    Should be equal     ${res}     ${expected error}
