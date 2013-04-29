@@ -19,11 +19,8 @@ from robot.errors import DataError
 from robot.variables import is_list_var
 
 from .arguments import (PythonArgumentParser, JavaArgumentParser,
-                        DynamicArgumentParser,
-                        ArgumentResolver,
-                        JavaArgumentResolver,
-                        ArgumentValidator, ArgumentMapper,
-                        JavaArgumentCoercer)
+                        DynamicArgumentParser, ArgumentResolver,
+                        ArgumentValidator, ArgumentMapper, JavaArgumentCoercer)
 from .keywords import Keywords, Keyword
 from .outputcapture import OutputCapturer
 from .runkwregister import RUN_KW_REGISTER
@@ -193,7 +190,7 @@ class _JavaHandler(_RunnableHandler):
         return JavaArgumentParser().parse(self.longname, signatures)
 
     def _get_argument_resolver(self, argspec):
-        return JavaArgumentResolver(argspec)
+        return ArgumentResolver(argspec, resolve_named=False)
 
     def _get_signatures(self, handler):
         code_object = getattr(handler, 'im_func', handler)
@@ -244,7 +241,7 @@ class _RunKeywordHandler(_PythonHandler):
 
     def _get_argument_resolver(self, argspec):
         resolve_until = self._get_args_to_process()
-        return ArgumentResolver(argspec, resolve_until)
+        return ArgumentResolver(argspec, resolve_variables_until=resolve_until)
 
     def _get_args_to_process(self):
         return RUN_KW_REGISTER.get_args_to_process(self.library.orig_name,

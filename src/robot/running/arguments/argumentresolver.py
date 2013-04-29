@@ -18,39 +18,36 @@ from .namedargumentresolver import NamedArgumentResolver
 
 class ArgumentResolver(object):
 
-    def __init__(self, argspec, resolve_variables_until=None):
-        self._named_resolver = NamedArgumentResolver(argspec)
+    def __init__(self, argspec, resolve_named=True,
+                 resolve_variables_until=None):
+        self._named_resolver = NamedArgumentResolver(argspec) \
+            if resolve_named else NullNamedResolver()
+        self._variable_replacer = VariableReplacer(resolve_variables_until)
         self._validator = ArgumentValidator(argspec)
-        self._resolve_variables_until = resolve_variables_until
 
     def resolve(self, arguments, variables):
         positional, named = self._named_resolver.resolve(arguments)
-        positional, named = self._resolve_variables(variables, positional, named)
+        positional, named = self._variable_replacer.replace(positional, named,
+                                                            variables)
         self._validator.validate_arguments(positional, named)
         return positional, named
 
-    def _resolve_variables(self, variables, positional, named):
+
+class VariableReplacer(object):
+
+    def __init__(self, resolve_until=None):
+        self._resolve_until = resolve_until
+
+    def replace(self, positional, named, variables):
         # TODO: Why/when can variables be None?
         if variables:
-            positional = variables.replace_list(positional,
-                                                self._resolve_variables_until)
+            positional = variables.replace_list(positional, self._resolve_until)
             named = dict((name, variables.replace_scalar(value))
                          for name, value in named.items())
         return positional, named
 
 
-class JavaArgumentResolver(object):
+class NullNamedResolver(object):
 
-    def __init__(self, argspec):
-        self._validator = ArgumentValidator(argspec)
-
-    def resolve(self, arguments, variables):
-        arguments = self._resolve_variables(variables, arguments)
-        self._validator.validate_limits(arguments)
+    def resolve(self, arguments):
         return arguments, {}
-
-    def _resolve_variables(self, variables, arguments):
-        # TODO: Why/when can variables be None
-        if variables:
-            arguments = variables.replace_list(arguments)
-        return arguments
