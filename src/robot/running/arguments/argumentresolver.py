@@ -12,8 +12,9 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+from robot.errors import DataError
+
 from .argumentvalidator import ArgumentValidator
-from .namedargumentresolver import NamedArgumentResolver
 
 
 class ArgumentResolver(object):
@@ -21,7 +22,7 @@ class ArgumentResolver(object):
     def __init__(self, argspec, resolve_named=True,
                  resolve_variables_until=None):
         self._named_resolver = NamedArgumentResolver(argspec) \
-            if resolve_named else NullNamedResolver()
+            if resolve_named else NullNamedArgumentResolver()
         self._variable_replacer = VariableReplacer(resolve_variables_until)
         self._validator = ArgumentValidator(argspec)
 
@@ -31,6 +32,56 @@ class ArgumentResolver(object):
                                                             variables)
         self._validator.validate_arguments(positional, named)
         return positional, named
+
+
+class NamedArgumentResolver(object):
+
+    def __init__(self, argspec):
+        self._argspec = argspec
+
+    def resolve(self, arguments):
+        positional = []
+        named = {}
+        for arg in arguments:
+            if self._is_named(arg):
+                self._add_named(arg, named)
+            elif named:
+                self._raise_positional_after_named()
+            else:
+                positional.append(arg)
+        return positional, named
+
+    def _is_named(self, arg):
+        # TODO: When is arg not string??
+        if not isinstance(arg, basestring) or '=' not in arg:
+            return False
+        name = arg.split('=')[0]
+        if self._is_escaped(name):
+            return False
+        return name in self._argspec.positional or self._argspec.kwargs
+
+    def _is_escaped(self, name):
+        return name.endswith('\\')
+
+    def _add_named(self, arg, named):
+        name, value = arg.split('=', 1)
+        if name in named:
+            self._raise_multiple_values(name)
+        named[name] = value
+
+    def _raise_multiple_values(self, name):
+        raise DataError("%s '%s' got multiple values for argument '%s'."
+                        % (self._argspec.type, self._argspec.name, name))
+
+    def _raise_positional_after_named(self):
+        raise DataError("%s '%s' got positional argument after named arguments."
+                        % (self._argspec.type, self._argspec.name))
+
+
+class NullNamedArgumentResolver(object):
+
+    def resolve(self, arguments):
+        return arguments, {}
 
 
 class VariableReplacer(object):
@@ -45,9 +96,3 @@ class VariableReplacer(object):
             named = dict((name, variables.replace_scalar(value))
                          for name, value in named.items())
         return positional, named
-
-
-class NullNamedResolver(object):
-
-    def resolve(self, arguments):
-        return arguments, {}
