@@ -149,21 +149,50 @@ class Variables(utils.NormalizedDict):
             return int(number[2:], bases[number[:2]])
         return int(number)
 
-    def replace_list(self, items):
+    def replace_list(self, items, replace_until=None):
         """Replaces variables from a list of items.
 
         If an item in a list is a @{list} variable its value is returned.
         Possible variables from other items are replaced using 'replace_scalar'.
         Result is always a list.
+
+        'replace_until' can be used to limit replacing arguments to certain
+        index from the beginning. Used with Run Keyword variants that only
+        want to resolve some of the arguments in the beginning and pass others
+        to called keywords unmodified.
         """
+        if replace_until is not None:
+            return self._replace_list_until(items, replace_until)
+        return self._replace_list(items)
+
+    def _replace_list_until(self, items, replace_until):
+        # @{list} variables can contain more or less arguments than needed.
+        # Therefore we need to go through arguments one by one.
+        processed = []
+        while len(processed) < replace_until and items:
+            processed.extend(self._replace_list([items.pop(0)]))
+        # If @{list} variable is opened, arguments going further must be
+        # escaped to prevent them being un-escaped twice.
+        if len(processed) > replace_until:
+            processed[replace_until:] = [self._escape(item)
+                                         for item in processed[replace_until:]]
+        return processed + items
+
+    def _escape(self, item):
+        item = utils.escape(item)
+        # Escape also special syntax used by Run Kw If and Run Kws.
+        if item in ('ELSE', 'ELSE IF', 'AND'):
+            item = '\\' + item
+        return item
+
+    def _replace_list(self, items):
         results = []
         for item in items or []:
             listvar = self._replace_variables_inside_possible_list_var(item)
             if listvar:
                 results.extend(self[listvar])
             else:
-                item = self.replace_scalar(item)
-                results.append(item)
+                results.append(self.replace_scalar(item))
         return results
 
     def _replace_variables_inside_possible_list_var(self, item):

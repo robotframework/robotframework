@@ -14,7 +14,9 @@
 from __future__ import with_statement
 
 import os
+import signal
 import subprocess
+import sys
 import tempfile
 
 from robot.utils import ConnectionCache
@@ -173,10 +175,27 @@ class Process(object):
         is optional, if `None` then the current process is used.
         """
         process = self._process(handle)
+
+        # This should be enough to check if we are dealing with <2.6 Python
+        if not hasattr(process,'kill'):
+            self._terminate_process(process)
+            return
         if kill:
             process.kill()
         else:
             process.terminate()
+
+    def _terminate_process(self, theprocess):
+        if sys.platform == 'win32':
+            import ctypes
+            PROCESS_TERMINATE = 1
+            handle = ctypes.windll.kernel32.OpenProcess(PROCESS_TERMINATE,
+                                                        False,
+                                                        theprocess.pid)
+            ctypes.windll.kernel32.TerminateProcess(handle, -1)
+            ctypes.windll.kernel32.CloseHandle(handle)
+        else:
+            os.kill(theprocess.pid, signal.SIGKILL)
 
     def kill_all_processes(self):
         """This keyword terminates all processes started by the library.

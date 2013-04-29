@@ -1159,7 +1159,7 @@ class _RunKeyword:
 
     def _split_run_keywords(self, keywords):
         if 'AND' not in keywords:
-            for name in self._variables.replace_run_kw_info(keywords):
+            for name in self._variables.replace_list(keywords):
                 yield name, ()
         else:
             for name, args in self._split_run_keywords_from_and(keywords):
@@ -1173,7 +1173,7 @@ class _RunKeyword:
         yield self._resolve_run_keywords_name_and_args(keywords)
 
     def _resolve_run_keywords_name_and_args(self, kw_call):
-        kw_call = self._variables.replace_run_kw_info(kw_call, needed=1)
+        kw_call = self._variables.replace_list(kw_call, replace_until=1)
         if not kw_call:
             raise DataError('Incorrect use of AND')
         return kw_call[0], kw_call[1:]
@@ -1239,7 +1239,7 @@ class _RunKeyword:
     def _split_branch(self, args, control_word, required, required_error):
         args = list(args)
         index = args.index(control_word)
-        branch = self._variables.replace_run_kw_info(args[index+1:], required)
+        branch = self._variables.replace_list(args[index+1:], required)
         if len(branch) < required:
             raise DataError('%s requires %s.' % (control_word, required_error))
         return args[:index], branch
