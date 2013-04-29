@@ -65,9 +65,20 @@ class NamedArgumentResolver(object):
 
     def _add_named(self, arg, named):
         name, value = arg.split('=', 1)
+        name = self._to_str_when_possible(name)
         if name in named:
             self._raise_multiple_values(name)
         named[name] = value
+
+    def _to_str_when_possible(self, name):
+        # TODO: Consider reporting error if str(name) fails and using Unicode
+        # is not supported. It seems that Python 2.5 doesn't handle Unicode
+        # at all and Jython 2.5 handles non-ASCII Unicode wrong. Latter needs
+        # to be reported and tested with Jython 2.7.
+        try:
+            return str(name)
+        except UnicodeError:
+            return name
 
     def _raise_multiple_values(self, name):
         raise DataError("%s '%s' got multiple values for argument '%s'."
