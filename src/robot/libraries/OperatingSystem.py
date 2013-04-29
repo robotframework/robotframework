@@ -85,8 +85,10 @@ class OperatingSystem:
     directory, e.g. ~/robot is expanded to /home/username/robot and
     ~anotheruser/robot to /home/anotheruser/robot.
 
-    However, ~username form does not work on Jython as it lacks the 'pwd'
-    module used by sys.path.expanduser().
+    Tilde expansion works also on Windows. However, the ~username form
+    does not work in Jython.
+
+    New in Robot Framework 2.8.
 
     = Path separators =
 
