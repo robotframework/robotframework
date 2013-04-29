@@ -1,6 +1,7 @@
 *** Settings ***
 Library                 Process.py
 Library                 OperatingSystem
+Resource                resource.txt
 Suite Setup             Endless process    suite_process
 Test Teardown           Restart Suite Process If Needed
 Suite Teardown          Terminate Process       suite_process
@@ -61,7 +62,6 @@ Pid
           ${handle}=          Endless process
           ${pid}=          Get Process Id          ${handle}
           Evaluate    os.kill(int(${pid}),signal.SIGTERM)    os,signal
-          #Run Process          kill          -9          ${pid}
           Wait For Process          ${handle}
           Process Should Be Dead          ${handle}
 
@@ -84,20 +84,6 @@ Starting many processes and killing all
           Process Should Be Dead          ${handle3}
           Process Should Be Dead          ${handle4}
           Process Should Be Dead          ${handle5}
-
-Test Process Should Be Alive
-          ${handle}=          Endless process
-          Process Should Be Alive          ${handle}
-          Kill all processes
-          Wait For Process          ${handle}
-          Run Keyword And Expect Error          Process is not alive          Process Should Be Alive          ${handle}
-
-Test Process Should Be Dead
-          ${handle}=          Endless process
-          Run Keyword And Expect Error          Process is alive          Process Should Be Dead          ${handle}
-          Kill all processes
-          Wait For Process          ${handle}
-          Process Should Be Dead          ${handle}
 
 Kill Process Which Does Not Exist
           ${handle}=          Endless process
@@ -190,29 +176,6 @@ Current working directory should not be used with stdout and stderr when absolut
 
 
 *** Keywords ***
-Endless process
-          [Arguments]       ${alias}=${null}
-          ${handle}=          Start Python Process          while True: pass;     alias=${alias}
-          [Return]          ${handle}
-
-Result should equal
-          [Arguments]          ${result}          ${stdout}=          ${stderr}=          ${exit_code}=0
-          Should Match          ${result.stdout}          ${stdout}
-          Should Match          ${result.stderr}          ${stderr}
-          Should Be Equal As Integers          ${result.exit_code}          ${exit_code}
-
-Start Python Process
-          [Arguments]          ${command}      ${alias}=${null}
-          ${handle}=          Start New Process          python          -c          ${command}      alias=${alias}
-          [Return]          ${handle}
-
-Run Python Process
-          [Arguments]          ${command}
-          ${result}=          Run Process          python          -c          ${command}
-          Log    ${result.exit_code}
-          Log    ${result.stderr}
-          [Return]          ${result}
-
 Restart Suite Process If Needed
          ${alive}=    Process Is Alive  suite_process
          Run Keyword If  not ${alive}   Endless Process   suite_process

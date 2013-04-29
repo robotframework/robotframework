@@ -23,6 +23,63 @@ from robot.version import get_version
 
 class Process(object):
     """Robot Framework test library for running processes.
+
+    This library utilizes Python's
+    [http://docs.python.org/2.7/library/subprocess.html#subprocess.Popen|Subprocess API and its Popen class].
+
+    The library has following main usages:
+
+    - Starting a processes, and managing their handles, stdouts and stderrs
+    - Stopping processes started by this library
+    - Switching between processes
+    - Checking process status.
+
+    == Table of contents ==
+
+    - `Arguments`
+    - `Example`
+    - `Active process`
+    - `ExecutionResult`
+
+    = Arguments =
+    `Run Process` and `Start New Process` keywords can be given several named
+    arguments, which are listed below. Default values in the parenthesis.
+
+     - `cwd` specifies if program's directory is used as cwd  (`False`)
+     - `shell` specifies if shell is used for program execution (`False`)
+     - `stdout` is a file handle for standard output
+     - `stderr` is a file handle for standard error
+     - `stdin` is a file handle for standard input
+     - `alias` is a name for the process (`None`).
+
+    = Example =
+    The following example demonstrates library's main usages as stated above.
+
+    | *** Settings *** |  |  |  |  |
+    | Library | Process |  |  |  |
+    |  |  |  |  |  |
+    | *** Test Cases *** |  |  |  |  |
+    | Example |  |  |  |  |
+    | ${handle1}= | `Start New Process` | /path/command.sh    | shell=True  | cwd=/path |
+    | ${handle2}= | `Start New Process` | ${CURDIR}${/}mytool   | shell=True |   |
+    | ${result1}=  | `Wait For Process` | ${handle1} |    |  |
+    |  | `Terminate Process` | ${handle1} |    |   |
+    | ${is_alive}= | `Process Is Alive` | ${handle2} |    |   |
+    |  | Should Be True | ${is_alive} |    |   |
+    |  | [Teardown] | `Kill All Processes` |    |   |
+
+    = Active process =
+    Many of the library keywords have `handle` as optional argument. This means
+    that if argument `handle` is NOT given, then current active process is used.
+
+    = ExecutionResult =
+    This object contains information about the process execution.
+
+    Included information is:
+
+    - `stdout` standard output file handle
+    - `stderr` standard error file handle
+    - `exit_code` from the process, `None` during execution.
     """
 
     ROBOT_LIBRARY_SCOPE='GLOBAL'
@@ -34,6 +91,8 @@ class Process(object):
         self._tempdir = tempfile.mkdtemp(suffix="processlib")
 
     def run_process(self, command, *args, **conf):
+        """This keyword runs a process and waits for it to finish.
+        """
         active_process_index = self._started_processes.current_index
         try:
             p = self.start_new_process(command, *args, **conf)
@@ -42,6 +101,10 @@ class Process(object):
             self._started_processes.switch(active_process_index)
 
     def start_new_process(self, command, *args, **conf):
+        """This keyword starts a new process with given `args` and `conf`.
+
+        Returns process index on success.
+        """
         config = NewProcessConfig(self._tempdir, **conf)
         p = subprocess.Popen(self._cmd(args, command, config.shell),
                              stdout=config.stdout_stream,
@@ -62,23 +125,53 @@ class Process(object):
         return cmd
 
     def process_is_alive(self, handle=None):
+        """Returns a running status of process with `handle`. Argument `handle`
+        is optional, if `None` then the current process is used.
+
+        Return value is either `True` or `False`
+        """
         return self._process(handle).poll() is None
 
     def process_should_be_alive(self, handle=None):
+        """Assertion keyword, which expects that process with `handle` is alive.
+        Argument `handle` is optional, if `None` then the current process is used.
+
+        Check is done using `Process Is Alive` keyword.
+
+        Raises an error if process is dead.
+        """
         if not self.process_is_alive(handle):
             raise AssertionError('Process is not alive')
 
     def process_should_be_dead(self, handle=None):
+        """Assertion keyword, which expects that process with `handle` is dead.
+        Argument `handle` is optional, if left then the current process is used.
+
+        Check is done using `Process Is Alive` keyword.
+
+        Raises an error if process is alive.
+        """
         if self.process_is_alive(handle):
             raise AssertionError('Process is alive')
 
     def wait_for_process(self, handle=None):
+        """This waits for process with `handle` to complete its execution.
+        Argument `handle` is optional, if left then the current process is used.
+
+        Returns an `ExecutionResult` object.
+        """
         process = self._process(handle)
         result = self._logs[process]
         result.exit_code = process.wait()
         return result
 
     def terminate_process(self, handle=None, kill=False):
+        """This keyword terminates process using either `Subprocess` `kill()`
+        or `terminate()`, which can be selected using `kill` argument.
+
+        Returns a running status of process with `handle`. Argument `handle`
+        is optional, if `None` then the current process is used.
+        """
         process = self._process(handle)
         if kill:
             process.kill()
@@ -86,17 +179,31 @@ class Process(object):
             process.terminate()
 
     def kill_all_processes(self):
+        """This keyword terminates all processes started by the library.
+        """
         for handle in range(len(self._started_processes._connections)):
             if self.process_is_alive(handle):
                 self.terminate_process(handle, kill=True)
 
     def get_process_id(self, handle=None):
+        """Returns a process ID of process with `handle`.
+
+        Argument `handle` is optional, if `None` then the current process is used.
+
+        Return value is a integer value.
+        """
         return self._process(handle).pid
 
     def input_to_process(self, msg, handle=None):
+        """This keyword can be used to communicate with the process with `handle`.
+
+        Argument `handle` is optional, if `None` then the current process is used.
+        """
         self._process(handle).communicate(msg+'\n')
 
     def switch_active_process(self, handle):
+        """This keyword switches active process into process with `handle`.
+        """
         self._started_processes.switch(handle)
 
     def _process(self, handle):
@@ -139,6 +246,8 @@ exit_code   : %d""" % (self._stdout_name, self._stderr_name, self.exit_code)
 
 class NewProcessConfig(object):
 
+    FILE_INDEX = 0
+
     def __init__(self, tempdir, cwd=None,
                  shell=False, stdout=None,
                  stderr=None, alias=None):
@@ -161,7 +270,6 @@ class NewProcessConfig(object):
         return self._new_stream(stderr, 'stderr')
 
     def _get_temp_file(self, suffix):
-        return tempfile.NamedTemporaryFile(delete=False,
-                                           prefix='tmp_logfile_',
-                                           suffix="_%s" % suffix,
-                                           dir=self._tempdir)
+        filename = 'tmp_logfile_%d_%s.out' % (NewProcessConfig.FILE_INDEX, suffix)
+        NewProcessConfig.FILE_INDEX += 1
+        return open(os.path.join(self._tempdir, filename), 'w')

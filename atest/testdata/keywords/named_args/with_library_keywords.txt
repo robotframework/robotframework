@@ -4,77 +4,84 @@ Library  helper.py
 Library  python_library.py
 
 *** Test Cases ***
-Simple Kwarg
-    Test With Kwargs
+Simple Named
+    ${ret}=  One Named  named=bar
+    Should Be Equal  ${ret}  bar
+    ${ret}=  Two Named  fst=bar  snd=quux
+    Should Be Equal  ${ret}  bar, quux
+    ${ret}=  Two Named  snd=quux  fst=bar
+    Should Be Equal  ${ret}  bar, quux
 
 Check Library init arguments
     Check init arguments  ${null}  ${null}  kw1=arg1  kw2=arg2  kw3=arg3
 
-Mandatory Args Should Be Positioned
-    ${ret}=  Mandatory And Kwargs  a  b  c
+Mandatory And Named As Positional
+    ${ret}=  Mandatory And Named  a  b  c
     Should Be Equal  ${ret}  a, b, c
 
-Kwargs and Varargs
-    ${ret}=  Kwargs and Mandatory Args  mandatory  d1  d2\=d2
+Mandatory And Named As Named
+    ${ret}=  Mandatory And Named  a=1  b=2  c=3
+    Should Be Equal  ${ret}  1, 2, 3
+    ${ret}=  Mandatory And Named  c=3  a=1  b=2
+    Should Be Equal  ${ret}  1, 2, 3
+
+Mandatory, Named And Varargs As Positional
+    ${ret}=  Mandatory Named And Varargs  mandatory  d1  d2\=d2
     Should Be Equal  ${ret}  mandatory, d1, d2=d2, []
-    ${ret}=  Kwargs and Mandatory Args  1  2  3  4  5  6
+    ${ret}=  Mandatory Named And Varargs  1  2  3  4  5  6
     Should Be Equal  ${ret}  1, 2, 3, [4, 5, 6]
 
-Naming arguments without varargs is supported
-    ${ret}=  Kwargs and Mandatory Args  mandatory  d1  d2=d2
+Naming arguments with varargs is supported when varargs are not used
+    ${ret}=  Mandatory Named And Varargs  mandatory  d1  d2=d2
     Should Be Equal  ${ret}  mandatory, d1, d2, []
 
-Naming arguments before possible varargs is not supported
-    [documentation]  FAIL  Error in keyword 'KwargsLibrary.Kwargs And Mandatory Args'. Named arguments can not be given before positional arguments. Please remove prefix d2= or escape d2=d2 as d2\\=d2.
-    Kwargs and Mandatory Args  mandatory  d1  d2=d2   extra
+Naming arguments is not supported when varargs are used
+    [documentation]  FAIL  Keyword 'KwargsLibrary.Mandatory Named And Varargs' got positional argument after named arguments.
+    Mandatory Named And Varargs  d1  d2=d2  vararg
 
 Naming arguments before possible varargs is not supported with empty lists either
-    [documentation]  FAIL  Error in keyword 'KwargsLibrary.Kwargs And Mandatory Args'. Named arguments can not be given before positional arguments. Please remove prefix d2= or escape d2=d2 as d2\\=d2.
-    Kwargs and Mandatory Args  mandatory  d1  d2=d2   @{EMPTY}
+    [documentation]  FAIL  Keyword 'KwargsLibrary.Mandatory Named And Varargs' got positional argument after named arguments.
+    Mandatory Named And Varargs  d1  d2=d2  @{EMPTY}
 
-Kwarg Syntax In Variable Is Ignored
-    ${assignment}=  Set Variable  kwarg=value
-    ${ret}=  One Kwarg  ${assignment}
-    Should Be Equal  ${ret}  kwarg=value
+Named Syntax In Variable Is Ignored
+    ${assignment}=  Set Variable  named=value
+    ${ret}=  One Named  ${assignment}
+    Should Be Equal  ${ret}  named=value
 
-Non-string value in kwarg
-    ${ret}=  One Kwarg  kwarg=${42}
+Non-string named value
+    ${ret}=  One Named  named=${42}
     Should Be Equal  ${ret}  ${42}
 
-Equals Sign In Kwarg Value
-    ${ret}=  One Kwarg  kwarg=bar=quux
+Equals Sign In Named Value
+    ${ret}=  One Named  named=bar=quux
     Should Be Equal  ${ret}  bar=quux
-    ${ret}=  One Kwarg  kwarg===value
+    ${ret}=  One Named  named===value
     Should Be Equal  ${ret}  ==value
 
-Using non-existing kwarg
-    ${ret}=  One Kwarg  notkwarg=value
-    Should Be Equal  ${ret}  notkwarg=value
-    ${ret}=  One Kwarg  ä=ö
+Non-existing argument does not trigger named usage
+    ${ret}=  One Named  notnamed=value
+    Should Be Equal  ${ret}  notnamed=value
+    ${ret}=  One Named  ä=ö
     Should Be Equal  ${ret}  ä=ö
 
 Escaping Kwarg
-    ${ret}=  One Kwarg  kwarg=bar\\=quux
+    ${ret}=  One Named  named=bar\\=quux
     Should Be Equal  ${ret}  bar\\=quux
-    ${ret}=  One Kwarg  kwarg\\=bar=quux
-    Should Be Equal  ${ret}  kwarg\\=bar=quux
-    ${ret}=  One Kwarg  kwarg\=bar
-    Should Be Equal  ${ret}  kwarg=bar
+    ${ret}=  One Named  named\\=bar=quux
+    Should Be Equal  ${ret}  named\\=bar=quux
+    ${ret}=  One Named  named\=bar
+    Should Be Equal  ${ret}  named=bar
 
-Using Argname Twice
-    [documentation]  FAIL  Argument 'fst' repeated for keyword 'KwargsLibrary.Two Kwargs'.
-    ${ret}=  Two Kwargs  fst=foo  fst=foo
+Naming twice
+    [documentation]  FAIL  Keyword 'KwargsLibrary.Two Named' got multiple values for argument 'fst'.
+    ${ret}=  Two Named  fst=foo  fst=foo
 
 Inside Run Kw
-    ${ret}=  Run Keyword  Four Kwargs  foo  bar  quux
+    ${ret}=  Run Keyword  Four Named  foo  bar  quux
     Should Be Equal  ${ret}  foo, bar, quux, None
-    @{list}  Create List  Four Kwargs   foo   bar  d\\=quux
+    @{list}  Create List  Four Named   foo   bar  d\\=quux
     ${ret}=  Run Keyword  @{list}
     Should Be Equal  ${ret}  foo, bar, d\\=quux, None
-
-Simple Kwarg With Timeout
-    [timeout]  10
-    Test With Kwargs
 
 Named combinations with varargs
     [template]           Execute working named vararg combination with result
@@ -90,14 +97,14 @@ Named combinations with varargs
 
 Non working named combinations with varargs
     [template]           Execute illegal named vararg combination
-    Error in keyword 'python_library.Lib Mandatory Named And Varargs'. Named arguments can not be given before positional arguments.   a=a  b
-    Keyword 'python_library.Lib Mandatory Named And Varargs' missing value for argument                                      b=b
-    Error in keyword 'python_library.Lib Mandatory Named And Varargs'. Named arguments can not be given before positional arguments.   b=b  b
-    Error in keyword 'python_library.Lib Mandatory Named And Varargs'. Named arguments can not be given before positional arguments.   a    b=b   c
-    Error in keyword 'python_library.Lib Mandatory Named And Varargs'. Value for argument 'a' was given twice                          a    b     a=a
-    Error in keyword 'python_library.Lib Mandatory Named And Varargs'. Value for argument 'b' was given twice                          a    b     b=b
-    Error in keyword 'python_library.Lib Mandatory Named And Varargs'. Value for argument 'a' was given twice                          a    a=a
-    Error in keyword 'python_library.Lib Mandatory Named And Varargs'. Value for argument 'a' was given twice                          a    b     c    a=a
+    Keyword 'python_library.Lib Mandatory Named And Varargs' got positional argument after named arguments.   a=a  b
+    Keyword 'python_library.Lib Mandatory Named And Varargs' missing value for argument 'a'.                  b=b
+    Keyword 'python_library.Lib Mandatory Named And Varargs' got positional argument after named arguments.   b=b  b
+    Keyword 'python_library.Lib Mandatory Named And Varargs' got positional argument after named arguments.   a    b=b   c
+    Keyword 'python_library.Lib Mandatory Named And Varargs' got multiple values for argument 'a'.            a    b     a=a
+    Keyword 'python_library.Lib Mandatory Named And Varargs' got multiple values for argument 'b'.            a    b     b=b
+    Keyword 'python_library.Lib Mandatory Named And Varargs' got multiple values for argument 'a'.            a    a=a
+    Keyword 'python_library.Lib Mandatory Named And Varargs' got multiple values for argument 'a'.            a    b     c    a=a
 
 Named combinations without varargs
     [template]           Execute working named combination with result
@@ -110,10 +117,10 @@ Named combinations without varargs
 
 Non working named combinations without varargs
     [template]           Execute illegal named combination
-    Error in keyword 'python_library.Lib Mandatory And Named'. Named arguments can not be given before positional arguments        a=a   b
-    Keyword 'python_library.Lib Mandatory And Named' missing value for argument                                          b=b
-    Error in keyword 'python_library.Lib Mandatory And Named'. Named arguments can not be given before positional arguments.       b=b  b
-    Error in keyword 'python_library.Lib Mandatory And Named'. Value for argument 'a' was given twice.                              a    a=a
+    Keyword 'python_library.Lib Mandatory And Named' got positional argument after named arguments.    a=a   b
+    Keyword 'python_library.Lib Mandatory And Named' missing value for argument 'a'.                   b=b
+    Keyword 'python_library.Lib Mandatory And Named' got positional argument after named arguments.    b=b  b
+    Keyword 'python_library.Lib Mandatory And Named' got multiple values for argument 'a'.             a    a=a
 
 Working combinations with all argument types
    [template]            Execute working combinations with everything
@@ -130,19 +137,19 @@ Working combinations with all argument types
 
 Illegal combinations with all argument types
    [template]            Execute illegal combinations with everything
-   Keyword 'python_library.Lib Mandatory Named Varargs And Kwargs' missing value for argument 'a'.                                  d1=d
-   Error in keyword 'python_library.Lib Mandatory Named Varargs And Kwargs'. Value for argument 'a' was given twice.                          a     a=a
-   Argument 'a' repeated for keyword 'python_library.Lib Mandatory Named Varargs And Kwargs'.                             a=a   a=a
-   Error in keyword 'python_library.Lib Mandatory Named Varargs And Kwargs'. Named arguments can not be given before positional arguments.    a=a   b
-   Error in keyword 'python_library.Lib Mandatory Named Varargs And Kwargs'. Value for argument 'b' was given twice.                          a     b     b=b
-   Error in keyword 'python_library.Lib Mandatory Named Varargs And Kwargs'. Value for argument 'a' was given twice.                          a     b     a=a
-   Error in keyword 'python_library.Lib Mandatory Named Varargs And Kwargs'. Value for argument 'a' was given twice.                          a     b     c1      a=a
-   Error in keyword 'python_library.Lib Mandatory Named Varargs And Kwargs'. Named arguments can not be given before positional arguments.    a=a   b=b   d1=d    foo
-   Argument 'b' repeated for keyword 'python_library.Lib Mandatory Named Varargs And Kwargs'.                             a     b=b   b=b
-   Argument 'a' repeated for keyword 'python_library.Lib Mandatory Named Varargs And Kwargs'.                             a=a   d1=d  d2=d    a=a
+   Keyword 'python_library.Lib Mandatory Named Varargs And Kwargs' missing value for argument 'a'.                   d1=d
+   Keyword 'python_library.Lib Mandatory Named Varargs And Kwargs' got multiple values for argument 'a'.             a     a=a
+   Keyword 'python_library.Lib Mandatory Named Varargs And Kwargs' got multiple values for argument 'a'.             a=a   a=a
+   Keyword 'python_library.Lib Mandatory Named Varargs And Kwargs' got positional argument after named arguments.    a=a   b
+   Keyword 'python_library.Lib Mandatory Named Varargs And Kwargs' got multiple values for argument 'b'.             a     b     b=b
+   Keyword 'python_library.Lib Mandatory Named Varargs And Kwargs' got multiple values for argument 'a'.             a     b     a=a
+   Keyword 'python_library.Lib Mandatory Named Varargs And Kwargs' got multiple values for argument 'a'.             a     b     c1      a=a
+   Keyword 'python_library.Lib Mandatory Named Varargs And Kwargs' got positional argument after named arguments.    a=a   b=b   d1=d    foo
+   Keyword 'python_library.Lib Mandatory Named Varargs And Kwargs' got multiple values for argument 'b'.             a     b=b   b=b
+   Keyword 'python_library.Lib Mandatory Named Varargs And Kwargs' got multiple values for argument 'a'.             a=a   d1=d  d2=d    a=a
 
 List variable with multiple values for same variable
-    [Documentation]    FAIL Error in keyword 'python_library.Lib Mandatory And Named 2'. Value for argument 'b' was given twice.
+    [Documentation]    FAIL Keyword 'python_library.Lib Mandatory And Named 2' got multiple values for argument 'b'.
     @{foo} =     Create list   a    b
     Lib mandatory and named 2    @{foo}    b=given second time
 
@@ -155,7 +162,7 @@ Execute working combinations with everything
 Execute illegal combinations with everything
     [arguments]    ${expected error}   @{args}
     ${res} =       Get result or error    Lib Mandatory Named varargs and kwargs   @{args}
-    Should start with     ${res}     ${expected error}
+    Should be equal     ${res}     ${expected error}
 
 Execute working named vararg combination with result
     [arguments]    ${expected}  @{args}
@@ -165,7 +172,7 @@ Execute working named vararg combination with result
 Execute illegal named vararg combination
     [arguments]    ${expected error}   @{args}
     ${res} =       Get result or error    Lib Mandatory Named and varargs   @{args}
-    Should start with     ${res}     ${expected error}
+    Should be equal     ${res}     ${expected error}
 
 Execute working named combination with result
     [arguments]    ${expected}  @{args}
@@ -175,12 +182,4 @@ Execute working named combination with result
 Execute illegal named combination
     [arguments]     ${expected error}     @{args}
     ${res} =       Get result or error    Lib Mandatory and Named   @{args}
-    Should start with     ${res}     ${expected error}
-
-Test With Kwargs
-    ${ret}=  One Kwarg  kwarg=bar
-    Should Be Equal  ${ret}  bar
-    ${ret}=  Two Kwargs  fst=bar  snd=quux
-    Should Be Equal  ${ret}  bar, quux
-    ${ret}=  Two Kwargs  snd=quux  fst=bar
-    Should Be Equal  ${ret}  bar, quux
+    Should be equal     ${res}     ${expected error}

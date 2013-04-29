@@ -51,6 +51,15 @@ Dictionary Should Contain Key
 Dictionary Should Contain Key With Missing Key
     Check Test Case  ${TEST NAME}
 
+Dictionary Should Contain Item
+    Check Test Case  ${TEST NAME}
+
+Dictionary Should Contain Item With Missing Key
+    Check Test Case  ${TEST NAME}
+
+Dictionary Should Contain Item With Wrong Value
+    Check Test Case  ${TEST NAME}
+
 Dictionary Should Not Contain Key
     Check Test Case  ${TEST NAME}
 

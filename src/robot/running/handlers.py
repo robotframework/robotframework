@@ -20,9 +20,10 @@ from robot.variables import is_list_var
 
 from .arguments import (PythonArgumentParser, JavaArgumentParser,
                         DynamicArgumentParser,
-                        PythonArgumentResolver, RunKeywordArgumentResolver,
-                        DynamicArgumentResolver, JavaArgumentResolver,
-                        ArgumentValidator)
+                        ArgumentResolver, RunKeywordArgumentResolver,
+                        JavaArgumentResolver,
+                        ArgumentValidator, ArgumentMapper,
+                        JavaArgumentCoercer)
 from .keywords import Keywords, Keyword
 from .outputcapture import OutputCapturer
 from .runkwregister import RUN_KW_REGISTER
@@ -31,7 +32,6 @@ from .signalhandler import STOP_SIGNAL_MONITOR
 
 if utils.is_jython:
     from org.python.core import PyReflectedFunction, PyReflectedConstructor
-    from .javaargcoercer import ArgumentCoercer
 
     def _is_java_init(init):
         return isinstance(init, PyReflectedConstructor)
@@ -73,9 +73,13 @@ class _RunnableHandler(object):
         self._handler_name = handler_name
         self._method = self._get_initial_handler(library, handler_name,
                                                  handler_method)
+        self._argument_resolver = self._get_argument_resolver(self.arguments)
 
     def _parse_arguments(self, handler_method):
         raise NotImplementedError
+
+    def _get_argument_resolver(self, argspec):
+        return ArgumentResolver(argspec)
 
     def _get_initial_handler(self, library, name, method):
         if library.scope == 'GLOBAL':
@@ -83,7 +87,7 @@ class _RunnableHandler(object):
         return None
 
     def resolve_arguments(self, args, variables):
-        raise NotImplementedError
+        return self._argument_resolver.resolve(args, variables)
 
     @property
     def doc(self):
@@ -112,7 +116,7 @@ class _RunnableHandler(object):
     def _dry_run(self, context, args):
         if self.longname == 'BuiltIn.Import Library':
             return self._run(context, args)
-        ArgumentValidator(self.arguments).check_arg_limits_for_dry_run(args)
+        ArgumentValidator(self.arguments).validate_limits(args, dry_run=True)
         return None
 
     def _run(self, context, args):
@@ -176,26 +180,27 @@ class _PythonHandler(_RunnableHandler):
     def _parse_arguments(self, handler_method):
         return PythonArgumentParser().parse(self.longname, handler_method)
 
-    def resolve_arguments(self, args, variables):
-        return PythonArgumentResolver(self.arguments).resolve(args, variables)
-
 
 class _JavaHandler(_RunnableHandler):
 
     def __init__(self, library, handler_name, handler_method):
         _RunnableHandler.__init__(self, library, handler_name, handler_method)
-        self._arg_coercer = ArgumentCoercer(self._get_signatures(handler_method))
+        signatures = self._get_signatures(handler_method)
+        self._arg_coercer = JavaArgumentCoercer(signatures, self.arguments)
 
     def _parse_arguments(self, handler_method):
         signatures = self._get_signatures(handler_method)
         return JavaArgumentParser().parse(self.longname, signatures)
+
+    def _get_argument_resolver(self, argspec):
+        return JavaArgumentResolver(argspec)
 
     def _get_signatures(self, handler):
         code_object = getattr(handler, 'im_func', handler)
         return code_object.argslist[:code_object.nargs]
 
     def resolve_arguments(self, args, variables):
-        positional, named = JavaArgumentResolver(self.arguments).resolve(args, variables)
+        positional, named = self._argument_resolver.resolve(args, variables)
         positional = self._arg_coercer.coerce(positional)
         return positional, named
 
@@ -212,9 +217,6 @@ class _DynamicHandler(_RunnableHandler):
     def _parse_arguments(self, handler_method):
         return DynamicArgumentParser().parse(self.longname, self._argspec)
 
-    def resolve_arguments(self, args, variables):
-        return DynamicArgumentResolver(self.arguments).resolve(args, variables)
-
     def _get_handler(self, lib_instance, handler_name):
         runner = getattr(lib_instance, self._run_keyword_method_name)
         return self._get_dynamic_handler(runner, handler_name)
@@ -223,10 +225,9 @@ class _DynamicHandler(_RunnableHandler):
         return self._get_dynamic_handler(method, name)
 
     def _get_dynamic_handler(self, runner, name):
-        def handler(*args, **kwargs):
-            assert not kwargs
-            # TODO: Should now need kwargs at all
-            return runner(name, list(args))
+        def handler(*positional, **named):
+            args = ArgumentMapper(self.arguments).map(positional, named)
+            return runner(name, args)
         return handler
 
 
@@ -241,10 +242,9 @@ class _RunKeywordHandler(_PythonHandler):
         # and therefore monitoring should not raise exception yet.
         return runner()
 
-    def resolve_arguments(self, args, variables):
+    def _get_argument_resolver(self, argspec):
         arg_index = self._get_args_to_process()
-        resolver = RunKeywordArgumentResolver(self.arguments, arg_index)
-        return resolver.resolve(args, variables)
+        return RunKeywordArgumentResolver(argspec, arg_index)
 
     def _get_args_to_process(self):
         return RUN_KW_REGISTER.get_args_to_process(self.library.orig_name,
@@ -359,7 +359,7 @@ class _XTimesHandler(_RunKeywordHandler):
 class _DynamicRunKeywordHandler(_DynamicHandler, _RunKeywordHandler):
     _parse_arguments = _RunKeywordHandler._parse_arguments
     _get_timeout = _RunKeywordHandler._get_timeout
-    resolve_arguments = _RunKeywordHandler.resolve_arguments
+    _get_argument_resolver = _RunKeywordHandler._get_argument_resolver
 
 
 class _PythonInitHandler(_PythonHandler):

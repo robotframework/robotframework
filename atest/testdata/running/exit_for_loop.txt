@@ -67,6 +67,19 @@ Exit For Loop In Test Teardown
 Exit For Loop In Keyword Teardown
     Exit For Loop In Keyword Teardown
 
+Exit For Loop If True
+    :FOR    ${var}    IN    one    two
+    \    Exit For Loop If     1 == 1
+    \    Fail    Should not be executed
+    Should BE Equal    ${var}    one
+
+Exit For Loop If False
+    [Documentation]   FAIL Should fail here
+    :FOR    ${var}    IN    one    two
+    \    Exit For Loop If     1 == 2
+    \    Fail    Should fail here
+
+
 *** Keyword ***
 With Loop
     :FOR    ${var}    IN    one    two

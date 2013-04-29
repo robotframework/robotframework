@@ -2,8 +2,8 @@
 Library         RunKeywordLibrary
 Library         RunKeywordLibrary.RunKeywordButNoGetKeywordNamesLibrary
 Library         RunKeywordLibrary.GlobalRunKeywordLibrary
-Library         ${CURDIR}/dynamic_libraries/DynamicLibrary.py
 Library         ${CURDIR}/dynamic_libraries/DynamicLibraryWithoutArgspec.py
+
 
 *** Test Cases ***
 Passing, Logging and Returning
@@ -33,22 +33,6 @@ Not Found Keyword
     [Documentation]  FAIL No keyword with name 'Get Keyword That Does Not Exist' found.
     Get Keyword That Does Not Exist
 
-Dynamic libraries should handle named arguments
-    [Documentation]    PASS
-    Say Hello
-    Say Hello    Mike
-    Say Goodbye    last_name=Ventura
-    Say Goodbye
-    Say Something To     a message
-    Say Something To     this is my message    Patrick    someone
-    Say Something To     a message    from_who=Jesse Ventura
-    Say Something To     this is my message    from_who=Hulk Hogan    to_whom=Randy Savage
-
-
-Dynamic libraries should handle using named arguments for positional arguments
-    A keyword    a=12
-
-
 Dynamic libraries should work without argument specification
     [Documentation]    PASS
     Do Something    print this
@@ -63,3 +47,5 @@ Dynamic libraries should match named arguments same way as with user keywords
     ...                positional arguments.
     ...                e.g. this should print strings 'x', 'y=1' and 'z=2'
     Do something third    x    y=1    z=2
+
+

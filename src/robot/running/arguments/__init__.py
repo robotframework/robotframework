@@ -12,15 +12,15 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-RESERVED_KEYWORDS = ['for', 'while', 'break', 'continue', 'end',
-                     'if', 'else', 'elif', 'else if', 'return']
+import sys
 
-
-class Reserved(object):
-    ROBOT_LIBRARY_SCOPE = 'GLOBAL'
-
-    def get_keyword_names(self):
-        return RESERVED_KEYWORDS
-
-    def run_keyword(self, name, args):
-        raise Exception("'%s' is a reserved keyword" % name.title())
+from .argumentmapper import ArgumentMapper
+from .argumentparser import (PythonArgumentParser, UserKeywordArgumentParser,
+                             DynamicArgumentParser, JavaArgumentParser)
+from .argumentresolver import (ArgumentResolver, UserKeywordArgumentResolver,
+                               RunKeywordArgumentResolver, JavaArgumentResolver)
+from .argumentvalidator import ArgumentValidator
+if sys.platform.startswith('java'):
+    from .javaargumentcoercer import JavaArgumentCoercer
+else:
+    JavaArgumentCoercer = lambda *args: None

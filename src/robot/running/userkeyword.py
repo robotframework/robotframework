@@ -25,7 +25,7 @@ from .keywords import Keywords
 from .fixture import Teardown
 from .timeouts import KeywordTimeout
 from .arguments import (ArgumentValidator, UserKeywordArgumentParser,
-                        UserKeywordArgumentResolver)
+                        UserKeywordArgumentResolver, ArgumentMapper)
 
 
 class UserLibrary(BaseLibrary):
@@ -148,14 +148,13 @@ class UserKeywordHandler(object):
             raise error
 
     def _resolve_dry_run_args(self, argspec, arguments):
-        ArgumentValidator(argspec).check_arg_limits_for_dry_run(arguments)
+        ArgumentValidator(argspec).validate_limits(arguments, dry_run=True)
         required_args = argspec.minargs + len(argspec.defaults)
         missing_args = required_args - len(arguments)
         return arguments + [None] * missing_args
 
-    def _normal_run(self, context, variables, argspec, argument_values):
-        resolver = UserKeywordArgumentResolver(argspec)
-        arguments = resolver.resolve(argument_values, variables)
+    def _normal_run(self, context, variables, argspec, arguments):
+        arguments = self._resolve_arguments(argspec, arguments, variables)
         error = self._execute(context, variables, argspec, arguments)
         if error and not error.can_continue(context.teardown):
             raise error
@@ -164,6 +163,12 @@ class UserKeywordHandler(object):
             error.return_value = return_value
             raise error
         return return_value
+
+    def _resolve_arguments(self, argspec, arguments, variables):
+        resolver = UserKeywordArgumentResolver(argspec)
+        mapper = ArgumentMapper(argspec)
+        positional, named = resolver.resolve(arguments, variables)
+        return mapper.map(positional, named, variables)
 
     def _execute(self, context, variables, argspec, resolved_arguments):
         self._set_variables(argspec, resolved_arguments, variables)

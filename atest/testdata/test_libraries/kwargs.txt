@@ -29,5 +29,5 @@ Using equal sign as argument value should fail
     Run Keyword And Expect Error  AssertionError  everything  first  =
 
 Using named argument before varargs should fail
-    [documentation]     FAIL Error in keyword 'TestKwargsLibrary.Everything'. Named arguments can not be given before positional arguments. Please remove prefix kaks= or escape kaks=second as kaks\\=second.
+    [documentation]     FAIL Keyword 'TestKwargsLibrary.Everything' got positional argument after named arguments.
     everything  first  kaks=second  third  neli=fourth

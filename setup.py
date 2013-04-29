@@ -28,8 +28,8 @@ PACKAGES = ['robot', 'robot.api', 'robot.common', 'robot.conf',
             'robot.htmldata', 'robot.libdocpkg', 'robot.libraries',
             'robot.model', 'robot.output', 'robot.parsing',
             'robot.reporting', 'robot.result', 'robot.running',
-            'robot.running.timeouts', 'robot.utils', 'robot.variables',
-            'robot.writer']
+            'robot.running.arguments', 'robot.running.timeouts',
+            'robot.utils', 'robot.variables', 'robot.writer']
 PACKAGE_DATA = [join('htmldata', directory, pattern)
                 for directory in 'rebot', 'libdoc', 'testdoc', 'lib', 'common'
                 for pattern in '*.html', '*.css', '*.js']

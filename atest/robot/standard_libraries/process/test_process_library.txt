@@ -1,5 +1,5 @@
 *** Settings ***
-Suite Setup      Run Tests    ${EMPTY}    standard_libraries/test_process_library.txt
+Suite Setup      Run Tests    ${EMPTY}    standard_libraries/process/test_process_library.txt
 Force Tags       regression    pybot    jybot
 Resource         atest_resource.txt
 
@@ -32,12 +32,6 @@ Pid
     Check Test Case    ${TESTNAME}
 
 Starting many processes and killing all
-    Check Test Case    ${TESTNAME}
-
-Test Process Should Be Alive
-    Check Test Case    ${TESTNAME}
-
-Test Process Should Be Dead
     Check Test Case    ${TESTNAME}
 
 Kill Process Which Does Not Exist
