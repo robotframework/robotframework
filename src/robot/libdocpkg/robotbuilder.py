@@ -96,23 +96,17 @@ class KeywordDocBuilder(object):
     def _get_args(self, kw):
         required, defaults = self._parse_args(kw)
         args = required + ['%s=%s' % item for item in defaults]
-        varargs = self._normalize_arg(kw.arguments.varargs, kw.type)
-        if varargs:
-            args.append('*%s' % varargs)
+        if kw.arguments.varargs:
+            args.append('*%s' % kw.arguments.varargs)
         if kw.arguments.kwargs:
             args.append('**%s' % kw.arguments.kwargs)
         return args
 
     def _parse_args(self, kw):
-        args = [self._normalize_arg(arg, kw.type) for arg in kw.arguments.names]
+        args = kw.arguments.names
         default_count = len(kw.arguments.defaults)
         if not default_count:
             return args, []
         required = args[:-default_count]
         defaults = zip(args[-default_count:], kw.arguments.defaults)
         return required, defaults
-
-    def _normalize_arg(self, arg, kw_type):
-        if arg and kw_type == 'user':
-            arg = arg[2:-1]  # strip ${} to make args look consistent
-        return arg
