@@ -76,19 +76,8 @@ class OperatingSystem:
 
     Unless otherwise noted, matching is case-insensitive on
     case-insensitive operating systems such as Windows. Pattern
-    matching is implemented using Python's `fnmatch` module:
-    http://docs.python.org/library/fnmatch.html
-
-    = Tilde expansion =
-
-    Paths beginning with '~' or '~username' are expanded to the user's home
-    directory, e.g. ~/robot is expanded to /home/username/robot and
-    ~anotheruser/robot to /home/anotheruser/robot.
-
-    Tilde expansion works also on Windows. However, the ~username form
-    does not work in Jython.
-
-    New in Robot Framework 2.8.
+    matching is implemented using
+    [http://docs.python.org/library/fnmatch.html|fnmatch module].
 
     = Path separators =
 
@@ -99,6 +88,16 @@ class OperatingSystem:
     cases the built-in variable `${/}` can be used to keep the test
     data platform independent.
 
+    = Tilde expansion =
+
+    Paths beginning with `~` or `~username` are expanded to the current or
+    specified user's home directory, respectively. The resulting path is
+    operating system dependent, but typically e.g. `~/robot` is expanded to
+    `C:\\Users\\<user>\\robot` on Windows and `/home/<user>/robot` elsewhere.
+
+    Notice that the `~username` form does not work on Jython. Tilde expansion
+    is a new feature in Robot Framework 2.8.
+
     = Example =
 
     |  *Setting*  |     *Value*     |
@@ -107,13 +106,12 @@ class OperatingSystem:
     | *Variable*  |       *Value*         |
     | ${PATH}     | ${CURDIR}/example.txt |
 
-    | *Test Case* |     *Action*      | *Argument* |    *Argument*       |
-    | Example     | Create File       | ${PATH}    | Some text           |
-    |             | File Should Exist | ${PATH}    |                     |
-    |             | Copy File         | ${PATH}    | ${TEMPDIR}/stuff    |
-    |             | ${output} =       | Run | ${CURDIR}${/}script.py arg |
+    | *Test Case* |     *Action*      | *Argument* |    *Argument*        |
+    | Example     | Create File       | ${PATH}    | Some text            |
+    |             | File Should Exist | ${PATH}    |                      |
+    |             | Copy File         | ${PATH}    | ~/file.txt           |
+    |             | ${output} =       | Run | ${TEMPDIR}${/}script.py arg |
     """
-
     ROBOT_LIBRARY_SCOPE = 'GLOBAL'
     ROBOT_LIBRARY_VERSION = __version__
 
