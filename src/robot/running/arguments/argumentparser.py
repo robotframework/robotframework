@@ -107,12 +107,10 @@ class _ArgumentSpecParser(_ArgumentParser):
         result.defaults.append(default)
 
     def _add_arg(self, arg, result):
-        if not self._is_valid_arg(arg):
-            raise DataError("Invalid argument '%s'." % arg)
-        result.positional.append(arg)
+        result.positional.append(self._format_arg(arg))
 
-    def _is_valid_arg(self, arg):
-        return True
+    def _format_arg(self, arg):
+        return arg
 
 
 class DynamicArgumentParser(_ArgumentSpecParser):
@@ -129,5 +127,10 @@ class UserKeywordArgumentParser(_ArgumentSpecParser):
     def _is_varargs(self, arg):
         return is_list_var(arg)
 
-    def _is_valid_arg(self, arg):
-        return is_scalar_var(arg)
+    def _format_varargs(self, varargs):
+        return varargs[2:-1]
+
+    def _format_arg(self, arg):
+        if not is_scalar_var(arg):
+            raise DataError("Invalid argument '%s'." % arg)
+        return arg[2:-1]
