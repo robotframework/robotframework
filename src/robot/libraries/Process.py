@@ -38,12 +38,12 @@ class Process(object):
 
     == Table of contents ==
 
-    - `Arguments`
+    - `Configurations`
     - `Example`
     - `Active process`
     - `ExecutionResult`
 
-    = Arguments =
+    = Configurations =
     `Run Process` and `Start New Process` keywords can be given several named
     arguments, which are listed below. Default values in the parenthesis.
 
@@ -65,9 +65,8 @@ class Process(object):
     | ${handle1}= | `Start New Process` | /path/command.sh    | shell=True  | cwd=/path |
     | ${handle2}= | `Start New Process` | ${CURDIR}${/}mytool   | shell=True |   |
     | ${result1}=  | `Wait For Process` | ${handle1} |    |  |
-    |  | `Terminate Process` | ${handle1} |    |   |
-    | ${is_alive}= | `Process Is Alive` | ${handle2} |    |   |
-    |  | Should Be True | ${is_alive} |    |   |
+    |  | `Terminate Process` | ${handle2} |    |   |
+    |  | `Process Should Be Dead` | ${handle2} |    |   |
     |  | [Teardown] | `Kill All Processes` |    |   |
 
     = Active process =
@@ -93,7 +92,13 @@ class Process(object):
         self._tempdir = tempfile.mkdtemp(suffix="processlib")
 
     def run_process(self, command, *args, **conf):
-        """This keyword runs a process and waits for it to finish.
+        """This keyword runs a process and waits for it to terminate.
+
+        - `command` is a child program which is started in a new process
+        - `args` are arguments for the `command`
+        - `conf` are arguments for the Subprocess API (see `Configurations`)
+
+        Finally it switches back to active process.
         """
         active_process_index = self._started_processes.current_index
         try:
@@ -103,9 +108,18 @@ class Process(object):
             self._started_processes.switch(active_process_index)
 
     def start_new_process(self, command, *args, **conf):
-        """This keyword starts a new process with given `args` and `conf`.
+        """This keyword starts a new process.
+
+        Parameters:
+        
+        - `command` is a child program which is started in a new process
+        - `args` are arguments for the `command`
+        - `conf` are arguments for the Subprocess API (see `Configurations`)
 
         Returns process index on success.
+
+        | $handle1}= | `Start New Process` | /bin/script.sh | |
+        | $handle2}= | `Start New Process` | totals | |
         """
         config = NewProcessConfig(self._tempdir, **conf)
         p = subprocess.Popen(self._cmd(args, command, config.shell),
@@ -158,9 +172,15 @@ class Process(object):
 
     def wait_for_process(self, handle=None):
         """This waits for process with `handle` to complete its execution.
+
         Argument `handle` is optional, if left then the current process is used.
 
         Returns an `ExecutionResult` object.
+
+        | ${output}= | `Wait For Process` | |
+        | Should Be Equal As Integers | ${output.exit_code} | 0 |
+        | Should Match | ${output.stdout} | `*text in the out*` |
+        | Should Match | ${output.stderr} | |
         """
         process = self._process(handle)
         result = self._logs[process]
@@ -171,8 +191,10 @@ class Process(object):
         """This keyword terminates process using either `Subprocess` `kill()`
         or `terminate()`, which can be selected using `kill` argument.
 
-        Returns a running status of process with `handle`. Argument `handle`
-        is optional, if `None` then the current process is used.
+        Argument `handle` is optional, if `None` then the current process is used.
+
+        | `Terminate Process` | | # Terminates the current process |
+        | `Terminate Process` | ${handle3} | |
         """
         process = self._process(handle)
 
@@ -210,6 +232,12 @@ class Process(object):
         Argument `handle` is optional, if `None` then the current process is used.
 
         Return value is a integer value.
+
+        | ${pid}= | `Get Process Id` | | # Gets PID of the active process | |
+        | ${handle1}= | `Start New Process` | python -c "print 'hello'" | shell=True | alias=hello |
+        | ${pid_1}= | `Get Process Id` | ${handle1} | # Gets PID of the process with `handle1` | |
+        | ${pid_2}= | `Get Process Id` | ${handle1} | # Gets PID of the process with alias `hello` | |
+        | Should Be Equal | ${pid_1} | ${pid_2} |  | |
         """
         return self._process(handle).pid
 
@@ -217,11 +245,18 @@ class Process(object):
         """This keyword can be used to communicate with the process with `handle`.
 
         Argument `handle` is optional, if `None` then the current process is used.
+
+        | `Wait For Process` | ${handle3} | |
+        | `Input To Process` | ${PASSWORD} | ${handle3} |
         """
         self._process(handle).communicate(msg+'\n')
 
     def switch_active_process(self, handle):
         """This keyword switches active process into process with `handle`.
+
+        | Run Keyword And Expect Error | `Switch Active Process` | |
+        | Run Keyword And Expect Error | `Switch Active Process` | ${nonexistent_handle} |
+        | `Switch Active Process` | ${handle1} | |
         """
         self._started_processes.switch(handle)
 
