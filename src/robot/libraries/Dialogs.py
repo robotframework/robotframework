@@ -19,6 +19,10 @@ for pausing the test execution and getting input from users. The
 dialogs are slightly different depending on are tests run on Python or
 Jython but they provide the same functionality.
 
+Long lines in the provided messages are wrapped automatically since
+Robot Framework 2.8. If you want to wrap lines manually, you can add
+newlines using \\n character sequence.
+
 The library has following two limitations:
 - It is not compatible with IronPython.
 - It cannot be used with timeouts on Python.

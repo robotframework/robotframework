@@ -65,7 +65,7 @@ class _TkDialog(Toplevel):
 
     def _create_body(self, message, value):
         frame = Frame(self)
-        Label(frame, text=message, anchor=W, justify=LEFT).pack(fill=BOTH)
+        Label(frame, text=message, anchor=W, justify=LEFT, wraplength=800).pack(fill=BOTH)
         selector = self._create_selector(frame, value)
         if selector:
             selector.pack(fill=BOTH)

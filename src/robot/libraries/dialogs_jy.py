@@ -41,17 +41,23 @@ class _SwingDialog(object):
         return value if value != UNINITIALIZED_VALUE else None
 
 
+class WrappedOptionPane(JOptionPane):
+
+    def getMaxCharactersPerLineCount(self):
+        return 120
+
+
 class MessageDialog(_SwingDialog):
 
     def __init__(self, message):
-        pane = JOptionPane(message, PLAIN_MESSAGE, DEFAULT_OPTION)
+        pane = WrappedOptionPane(message, PLAIN_MESSAGE, DEFAULT_OPTION)
         _SwingDialog.__init__(self, pane)
 
 
 class InputDialog(_SwingDialog):
 
     def __init__(self, message, default):
-        pane = JOptionPane(message, PLAIN_MESSAGE, OK_CANCEL_OPTION)
+        pane = WrappedOptionPane(message, PLAIN_MESSAGE, OK_CANCEL_OPTION)
         pane.setWantsInput(True)
         pane.setInitialSelectionValue(default)
         _SwingDialog.__init__(self, pane)
@@ -60,7 +66,7 @@ class InputDialog(_SwingDialog):
 class SelectionDialog(_SwingDialog):
 
     def __init__(self, message, options):
-        pane = JOptionPane(message, PLAIN_MESSAGE, OK_CANCEL_OPTION)
+        pane = WrappedOptionPane(message, PLAIN_MESSAGE, OK_CANCEL_OPTION)
         pane.setWantsInput(True)
         pane.setSelectionValues(options)
         _SwingDialog.__init__(self, pane)
@@ -69,8 +75,8 @@ class SelectionDialog(_SwingDialog):
 class PassFailDialog(_SwingDialog):
 
     def __init__(self, message):
-        pane = JOptionPane(message, PLAIN_MESSAGE, YES_NO_OPTION,
-                           None, ['PASS', 'FAIL'], 'PASS')
+        pane = WrappedOptionPane(message, PLAIN_MESSAGE, YES_NO_OPTION,
+                                 None, ['PASS', 'FAIL'], 'PASS')
         _SwingDialog.__init__(self, pane)
 
     def _get_value(self, pane):
