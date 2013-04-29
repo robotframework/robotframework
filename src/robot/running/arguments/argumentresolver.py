@@ -58,7 +58,7 @@ class RunKeywordArgumentResolver(object):
         return arguments, {}
 
     def _resolve_variables(self, variables, arguments):
-        return variables.replace_run_kw_info(arguments, self._resolution_index)
+        return variables.replace_list(arguments, self._resolution_index)
 
 
 class JavaArgumentResolver(object):
