@@ -1,8 +1,13 @@
 *** Keywords ***
-Endless process
+Some process
           [Arguments]       ${alias}=${null}
-          ${handle}=          Start Python Process          while True: pass;     alias=${alias}
+          ${handle}=          Start Python Process          raw_input()     alias=${alias}
           [Return]          ${handle}
+
+Stop some process
+          [Arguments]       ${alias}=${null}
+          Input To Process   stop   ${alias}
+
 
 Result should equal
           [Arguments]          ${result}          ${stdout}=          ${stderr}=          ${exit_code}=0

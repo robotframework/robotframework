@@ -2,9 +2,9 @@
 Library                 Process.py
 Library                 OperatingSystem
 Resource                resource.txt
-Suite Setup             Endless process    suite_process
+Suite Setup             Some process        suite_process
 Test Teardown           Restart Suite Process If Needed
-Suite Teardown          Terminate Process       suite_process
+Suite Teardown          Stop some process   suite_process
 
 *** Test Cases ***
 Library Namespace should be global
@@ -26,26 +26,25 @@ Start And Wait Process
           Process Should Be Dead          ${handle}
 
 Switching active process
-          ${process_one}=       Endless process    one
-          Terminate Process          one
-          ${process_two}=       Endless process    two
+          ${process_one}=       Some process    one
+          Stop Some Process         one
+          ${process_two}=       Some process    two
           Process Should Be Alive   ${process_two}
           Switch Active Process     one
           Process Should Be Dead
           Switch Active Process     two
           Process Should Be Alive
-          Terminate Process
+          Stop Some Process
 
 Run process does not change active process
-          Endless process    active
+          Some process    active
           ${expected id}=    Get Process Id
           Run Python Process    1+1
           ${id}=             Get Process Id
           Should Be Equal     ${expected id}   ${id}
 
-
 Killing process
-          ${handle}=          Endless process
+          ${handle}=          Some process
           ${is_alive}=          Process Is Alive          ${handle}
           Should Be True          ${is_alive}
           Terminate Process          ${handle}   kill=${True}
@@ -53,24 +52,24 @@ Killing process
           Process Should Be Dead          ${handle}
 
 Terminating process
-          ${handle}=          Endless process
+          ${handle}=          Some process
           Terminate Process          ${handle}
           Wait For Process          ${handle}
           Process Should Be Dead          ${handle}
 
 Pid
-          ${handle}=          Endless process
+          ${handle}=          Some process
           ${pid}=          Get Process Id          ${handle}
           Evaluate    os.kill(int(${pid}),signal.SIGTERM)    os,signal
           Wait For Process          ${handle}
           Process Should Be Dead          ${handle}
 
 Starting many processes and killing all
-          ${handle1}=          Endless process
-          ${handle2}=          Endless process
-          ${handle3}=          Endless process
-          ${handle4}=          Endless process
-          ${handle5}=          Endless process
+          ${handle1}=          Some process
+          ${handle2}=          Some process
+          ${handle3}=          Some process
+          ${handle4}=          Some process
+          ${handle5}=          Some process
           Sleep          0.1
           Process Should be alive          ${handle1}
           Process Should be alive          ${handle2}
@@ -86,12 +85,12 @@ Starting many processes and killing all
           Process Should Be Dead          ${handle5}
 
 Kill Process Which Does Not Exist
-          ${handle}=          Endless process
+          ${handle}=          Some process
           Terminate Process          ${handle}   kill=${True}
           Terminate Process          ${handle}   kill=${True}
 
 Wait For Process Which Does Not Exist
-          ${handle}=          Endless process
+          ${handle}=          Some process
           Terminate Process          ${handle}   kill=${True}
           Wait For Process          ${handle}
 
@@ -178,4 +177,4 @@ Current working directory should not be used with stdout and stderr when absolut
 *** Keywords ***
 Restart Suite Process If Needed
          ${alive}=    Process Is Alive  suite_process
-         Run Keyword If  not ${alive}   Endless Process   suite_process
+         Run Keyword If  not ${alive}   Some process    suite_process

@@ -7,14 +7,14 @@ No Process Should Fail
    Run Keyword And Expect Error   No open connection   Process Is Alive
 
 Test Process Should Be Alive
-          ${handle}=          Endless process
+          ${handle}=          Some process
           Process Should Be Alive          ${handle}
           Kill all processes
           Wait For Process          ${handle}
           Run Keyword And Expect Error          Process is not alive          Process Should Be Alive          ${handle}
 
 Test Process Should Be Dead
-          ${handle}=          Endless process
+          ${handle}=          Some process
           Run Keyword And Expect Error          Process is alive          Process Should Be Dead          ${handle}
           Kill all processes
           Wait For Process          ${handle}
