@@ -1,15 +1,19 @@
 *** Settings ***
 Library         Dialogs
 
+*** Variable ***
+${FILLER} =     wrapped${SPACE}
+
+
 *** Test Cases ***
 Pause Execution
     Pause Execution    Press OK.
 
 Pause Execution With Long Line
-    Pause Execution    Verify that this pretty long text is displayed nicely. And then press OK.
+    Pause Execution    Verify that the long text below is wrapped nicely.\n\n${FILLER*200}\n\nAnd then press OK.
 
 Pause Execution With Multiple Lines
-    Pause Execution    And verify that\nthis pretty\nlong text\nis displayed\nnicely.\n\nAnd then press OK.
+    Pause Execution    Verify that\nthis multi\nline text\nis displayed\nnicely.\n\nAnd then press OK.
 
 Execute Manual Step Passing
     Execute Manual Step    Press PASS.
