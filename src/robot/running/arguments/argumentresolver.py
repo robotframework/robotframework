@@ -13,8 +13,7 @@
 #  limitations under the License.
 
 from .argumentvalidator import ArgumentValidator
-from .namedargumentresolver import (NamedArgumentResolver,
-                                    UserKeywordNamedArgumentResolver)
+from .namedargumentresolver import NamedArgumentResolver
 
 
 class ArgumentResolver(object):
@@ -36,14 +35,6 @@ class ArgumentResolver(object):
             named = dict((name, variables.replace_scalar(value))
                          for name, value in named.items())
         return positional, named
-
-
-# TODO: Do we really need this class?
-class UserKeywordArgumentResolver(ArgumentResolver):
-
-    def __init__(self, argspec):
-        ArgumentResolver.__init__(self, argspec)
-        self._named_resolver = UserKeywordNamedArgumentResolver(argspec)
 
 
 class RunKeywordArgumentResolver(object):

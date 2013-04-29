@@ -83,14 +83,14 @@ Named combinations with varargs
 Non working named combinations with varargs
     [template]           Execute illegal named vararg combination
     Keyword 'Mandatory, Named and varargs' got positional argument after named arguments.    a=a  b
-    Keyword 'Mandatory, Named and varargs' missing value for argument '\${a}'.               b=b
+    Keyword 'Mandatory, Named and varargs' missing value for argument 'a'.               b=b
     Keyword 'Mandatory, Named and varargs' got positional argument after named arguments.    b=b  b
     Keyword 'Mandatory, Named and varargs' got positional argument after named arguments.    a    b=b   c
     Keyword 'Mandatory, Named and varargs' got positional argument after named arguments.    a    b=b   c=c
-    Keyword 'Mandatory, Named and varargs' got multiple values for argument '\${a}'.         a    b     a=a
-    Keyword 'Mandatory, Named and varargs' got multiple values for argument '\${b}'.         a    b     b=b
-    Keyword 'Mandatory, Named and varargs' got multiple values for argument '\${a}'.         a    a=a
-    Keyword 'Mandatory, Named and varargs' got multiple values for argument '\${a}'.         a    b     c    a=a
+    Keyword 'Mandatory, Named and varargs' got multiple values for argument 'a'.         a    b     a=a
+    Keyword 'Mandatory, Named and varargs' got multiple values for argument 'b'.         a    b     b=b
+    Keyword 'Mandatory, Named and varargs' got multiple values for argument 'a'.         a    a=a
+    Keyword 'Mandatory, Named and varargs' got multiple values for argument 'a'.         a    b     c    a=a
 
 Named combinations without varargs
     [template]           Execute working named combination with result
@@ -104,9 +104,9 @@ Named combinations without varargs
 Non working named combinations without varargs
     [template]           Execute illegal named combination
     Keyword 'Mandatory and Named' got positional argument after named arguments.    a=a   b
-    Keyword 'Mandatory and Named' missing value for argument '\${a}'.               b=b
+    Keyword 'Mandatory and Named' missing value for argument 'a'.               b=b
     Keyword 'Mandatory and Named' got positional argument after named arguments.    b=b  b
-    Keyword 'Mandatory and Named' got multiple values for argument '\${a}'.         a    a=a
+    Keyword 'Mandatory and Named' got multiple values for argument 'a'.         a    a=a
 
 
 *** Keywords ***

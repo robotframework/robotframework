@@ -55,7 +55,14 @@ class ArgumentSpec(object):
         logger.trace(message)
 
     def _get_trace_log_uk_arg_message(self, variables):
-        names = self.names + ([self.varargs] if self.varargs else [])
+        names = self._get_positional_with_decoration() \
+                + self._get_varargs_with_decoration()
         args = ['%s=%s' % (name, utils.safe_repr(variables[name]))
                 for name in names]
         return 'Arguments: [ %s ]' % ' | '.join(args)
+
+    def _get_positional_with_decoration(self):
+        return ['${%s}' % arg for arg in self.positional]
+
+    def _get_varargs_with_decoration(self):
+        return ['@{%s}' % self.varargs] if self.varargs else []

@@ -17,8 +17,8 @@ import sys
 from .argumentmapper import ArgumentMapper
 from .argumentparser import (PythonArgumentParser, UserKeywordArgumentParser,
                              DynamicArgumentParser, JavaArgumentParser)
-from .argumentresolver import (ArgumentResolver, UserKeywordArgumentResolver,
-                               RunKeywordArgumentResolver, JavaArgumentResolver)
+from .argumentresolver import (ArgumentResolver, RunKeywordArgumentResolver,
+                               JavaArgumentResolver)
 from .argumentvalidator import ArgumentValidator
 if sys.platform.startswith('java'):
     from .javaargumentcoercer import JavaArgumentCoercer

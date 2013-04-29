@@ -39,27 +39,16 @@ class NamedArgumentResolver(object):
         name = arg.split('=')[0]
         if self._is_escaped(name):
             return False
-        return (self._arg_name(name) in self._argspec.positional
-                or self._argspec.kwargs)
+        return (name in self._argspec.positional or self._argspec.kwargs)
 
     def _is_escaped(self, name):
         return name.endswith('\\')
 
-    def _arg_name(self, name):
-        try:
-            return str(name)
-        except UnicodeError:
-            return name    # FIXME: Better non-ASCII handling needed
-
     def _add_named(self, arg, named):
-        name, value = self._split_named(arg)
+        name, value = arg.split('=', 1)
         if name in named:
             self._raise_multiple_values(name)
         named[name] = value
-
-    def _split_named(self, arg):
-        name, value = arg.split('=', 1)
-        return self._arg_name(name), value
 
     def _raise_multiple_values(self, name):
         raise DataError("%s '%s' got multiple values for argument '%s'."
@@ -68,9 +57,3 @@ class NamedArgumentResolver(object):
     def _raise_positional_after_named(self):
         raise DataError("%s '%s' got positional argument after named arguments."
                         % (self._argspec.type, self._argspec.name))
-
-
-class UserKeywordNamedArgumentResolver(NamedArgumentResolver):
-
-    def _arg_name(self, name):
-        return '${%s}' % name
