@@ -47,7 +47,10 @@ Escaping Kwarg
 Naming twice
     Check Test Case  ${TESTNAME}
 
-Inside Run Kw
+With Run Keyword
+    Check Test Case  ${TESTNAME}
+
+Inside Run Keyword
     Check Test Case  ${TESTNAME}
 
 Named combinations with varargs

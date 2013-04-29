@@ -76,12 +76,13 @@ Naming twice
     [documentation]  FAIL  Keyword 'KwargsLibrary.Two Named' got multiple values for argument 'fst'.
     ${ret}=  Two Named  fst=foo  fst=foo
 
-Inside Run Kw
-    ${ret}=  Run Keyword  Four Named  foo  bar  quux
-    Should Be Equal  ${ret}  foo, bar, quux, None
-    @{list}  Create List  Four Named   foo   bar  d\\=quux
-    ${ret}=  Run Keyword  @{list}
-    Should Be Equal  ${ret}  foo, bar, d\\=quux, None
+With Run Keyword
+    Run Keyword  name=No Operation
+    Run Keyword If    name=Fail    condition=1 < 0
+
+Inside Run Keyword
+    ${ret}=    Run Keyword  Four Named    foo    d=quux    b=kääx
+    Should Be Equal    ${ret}    foo, kääx, None, quux
 
 Named combinations with varargs
     [template]           Execute working named vararg combination with result
