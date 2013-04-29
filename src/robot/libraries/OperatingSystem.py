@@ -79,6 +79,15 @@ class OperatingSystem:
     matching is implemented using Python's `fnmatch` module:
     http://docs.python.org/library/fnmatch.html
 
+    = Tilde expansion =
+
+    Paths beginning with '~' or '~username' are expanded to the user's home
+    directory, e.g. ~/robot is expanded to /home/username/robot and
+    ~anotheruser/robot to /home/anotheruser/robot.
+
+    However, ~username form does not work on Jython as it lacks the 'pwd'
+    module used by sys.path.expanduser().
+
     = Path separators =
 
     All keywords expecting paths as arguments accept a forward slash
