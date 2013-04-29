@@ -113,7 +113,7 @@ class _RunnableHandler(object):
     def _dry_run(self, context, args):
         if self.longname == 'BuiltIn.Import Library':
             return self._run(context, args)
-        ArgumentValidator(self.arguments).validate_limits(args, dry_run=True)
+        ArgumentValidator(self.arguments).validate_dry_run(args)
         return None
 
     def _run(self, context, args):

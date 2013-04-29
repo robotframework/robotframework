@@ -148,7 +148,7 @@ class UserKeywordHandler(object):
             raise error
 
     def _resolve_dry_run_args(self, argspec, arguments):
-        ArgumentValidator(argspec).validate_limits(arguments, dry_run=True)
+        ArgumentValidator(argspec).validate_dry_run(arguments)
         required_args = argspec.minargs + len(argspec.defaults)
         missing_args = required_args - len(arguments)
         return arguments + [None] * missing_args

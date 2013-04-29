@@ -24,13 +24,13 @@ class ArgumentResolver(object):
         self._named_resolver = NamedArgumentResolver(argspec) \
             if resolve_named else NullNamedArgumentResolver()
         self._variable_replacer = VariableReplacer(resolve_variables_until)
-        self._validator = ArgumentValidator(argspec)
+        self._argument_validator = ArgumentValidator(argspec)
 
     def resolve(self, arguments, variables):
         positional, named = self._named_resolver.resolve(arguments)
         positional, named = self._variable_replacer.replace(positional, named,
                                                             variables)
-        self._validator.validate_arguments(positional, named)
+        self._argument_validator.validate(positional, named)
         return positional, named
 
 

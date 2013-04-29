@@ -22,26 +22,14 @@ class ArgumentValidator(object):
     def __init__(self, argspec):
         self._argspec = argspec
 
-    def validate_arguments(self, positional, named):
+    def validate(self, positional, named):
         self._validate_limits(positional, named, self._argspec)
         self._validate_no_multiple_values(positional, named, self._argspec)
         self._validate_no_mandatory_missing(positional, named, self._argspec)
 
-    def _validate_no_multiple_values(self, positional, named, spec):
-        for name in spec.positional[:len(positional)]:
-            if name in named:
-                raise DataError("%s '%s' got multiple values for argument '%s'."
-                                % (spec.type, spec.name, name))
-
-    def _validate_no_mandatory_missing(self, positional, named, spec):
-        for name in spec.positional[len(positional):spec.minargs]:
-            if name not in named:
-                raise DataError("%s '%s' missing value for argument '%s'."
-                                % (spec.type, spec.name, name))
-
-    def validate_limits(self, positional, named=None, dry_run=False):
-        if not (dry_run and any(is_list_var(arg) for arg in positional)):
-            self._validate_limits(positional, named or {}, self._argspec)
+    def validate_dry_run(self, arguments):
+        if not any(is_list_var(arg) for arg in arguments):
+            self._validate_limits(arguments, {}, self._argspec)
 
     def _validate_limits(self, positional, named, spec):
         count = len(positional) + len(named)
@@ -58,3 +46,15 @@ class ArgumentValidator(object):
             expected = 'at least %d argument%s' % (spec.minargs, minend)
         raise DataError("%s '%s' expected %s, got %d."
                         % (spec.type, spec.name, expected, count))
+
+    def _validate_no_multiple_values(self, positional, named, spec):
+        for name in spec.positional[:len(positional)]:
+            if name in named:
+                raise DataError("%s '%s' got multiple values for argument '%s'."
+                                % (spec.type, spec.name, name))
+
+    def _validate_no_mandatory_missing(self, positional, named, spec):
+        for name in spec.positional[len(positional):spec.minargs]:
+            if name not in named:
+                raise DataError("%s '%s' missing value for argument '%s'."
+                                % (spec.type, spec.name, name))
