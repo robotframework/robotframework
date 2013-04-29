@@ -94,9 +94,9 @@ class Process(object):
     def run_process(self, command, *args, **conf):
         """This keyword runs a process and waits for it to terminate.
 
-        - `command` is a child program which is started in a new process
-        - `args` are arguments for the `command`
-        - `conf` are arguments for the Subprocess API (see `Configurations`)
+        The `command` is a child program which is started in a new process,
+        `args` are arguments for the `command` and `conf` are arguments for the
+        Subprocess API (see `Configurations`).
 
         Finally it switches back to active process.
         """
@@ -110,13 +110,13 @@ class Process(object):
     def start_new_process(self, command, *args, **conf):
         """This keyword starts a new process.
 
-        Parameters:
-        
-        - `command` is a child program which is started in a new process
-        - `args` are arguments for the `command`
-        - `conf` are arguments for the Subprocess API (see `Configurations`)
+        The `command` is a child program which is started in a new process,
+        `args` are arguments for the `command` and `conf` are arguments for the
+        Subprocess API (see `Configurations`).
 
         Returns process index on success.
+
+        Examples:
 
         | $handle1}= | `Start New Process` | /bin/script.sh | |
         | $handle2}= | `Start New Process` | totals | |
@@ -177,6 +177,8 @@ class Process(object):
 
         Returns an `ExecutionResult` object.
 
+        Examples:
+
         | ${output}= | `Wait For Process` | |
         | Should Be Equal As Integers | ${output.exit_code} | 0 |
         | Should Match | ${output.stdout} | `*text in the out*` |
@@ -192,6 +194,8 @@ class Process(object):
         or `terminate()`, which can be selected using `kill` argument.
 
         Argument `handle` is optional, if `None` then the current process is used.
+
+        Examples:
 
         | `Terminate Process` | | # Terminates the current process |
         | `Terminate Process` | ${handle3} | |
@@ -233,11 +237,13 @@ class Process(object):
 
         Return value is a integer value.
 
+        Examples:
+
         | ${pid}= | `Get Process Id` | | # Gets PID of the active process | |
         | ${handle1}= | `Start New Process` | python -c "print 'hello'" | shell=True | alias=hello |
-        | ${pid_1}= | `Get Process Id` | ${handle1} | # Gets PID of the process with `handle1` | |
-        | ${pid_2}= | `Get Process Id` | ${handle1} | # Gets PID of the process with alias `hello` | |
-        | Should Be Equal | ${pid_1} | ${pid_2} |  | |
+        | ${pid_1}= | `Get Process Id` | ${handle1} | # Gets PID with `handle1` | |
+        | ${pid_2}= | `Get Process Id` | ${handle1} | # Gets PID with alias `hello` | |
+        | Should Be Equal As Integers | ${pid_1} | ${pid_2} |  | |
         """
         return self._process(handle).pid
 
@@ -246,6 +252,8 @@ class Process(object):
 
         Argument `handle` is optional, if `None` then the current process is used.
 
+        Examples:
+
         | `Wait For Process` | ${handle3} | |
         | `Input To Process` | ${PASSWORD} | ${handle3} |
         """
@@ -253,6 +261,8 @@ class Process(object):
 
     def switch_active_process(self, handle):
         """This keyword switches active process into process with `handle`.
+
+        Examples:
 
         | Run Keyword And Expect Error | `Switch Active Process` | |
         | Run Keyword And Expect Error | `Switch Active Process` | ${nonexistent_handle} |
