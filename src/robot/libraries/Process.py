@@ -179,6 +179,7 @@ class Process(object):
         # This should be enough to check if we are dealing with <2.6 Python
         if not hasattr(process,'kill'):
             self._terminate_process(process)
+            return
         if kill:
             process.kill()
         else:
