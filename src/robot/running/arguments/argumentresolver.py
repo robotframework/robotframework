@@ -18,9 +18,10 @@ from .namedargumentresolver import NamedArgumentResolver
 
 class ArgumentResolver(object):
 
-    def __init__(self, argspec):
+    def __init__(self, argspec, resolve_variables_until=None):
         self._named_resolver = NamedArgumentResolver(argspec)
         self._validator = ArgumentValidator(argspec)
+        self._resolve_variables_until = resolve_variables_until
 
     def resolve(self, arguments, variables):
         positional, named = self._named_resolver.resolve(arguments)
@@ -31,25 +32,11 @@ class ArgumentResolver(object):
     def _resolve_variables(self, variables, positional, named):
         # TODO: Why/when can variables be None?
         if variables:
-            positional = variables.replace_list(positional)
+            positional = variables.replace_list(positional,
+                                                self._resolve_variables_until)
             named = dict((name, variables.replace_scalar(value))
                          for name, value in named.items())
         return positional, named
-
-
-class RunKeywordArgumentResolver(object):
-
-    def __init__(self, argspec, argument_resolution_index):
-        self._validator = ArgumentValidator(argspec)
-        self._resolution_index = argument_resolution_index
-
-    def resolve(self, arguments, variables):
-        arguments = self._resolve_variables(variables, arguments)
-        self._validator.validate_limits(arguments)
-        return arguments, {}
-
-    def _resolve_variables(self, variables, arguments):
-        return variables.replace_list(arguments, self._resolution_index)
 
 
 class JavaArgumentResolver(object):

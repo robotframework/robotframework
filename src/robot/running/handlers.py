@@ -20,7 +20,7 @@ from robot.variables import is_list_var
 
 from .arguments import (PythonArgumentParser, JavaArgumentParser,
                         DynamicArgumentParser,
-                        ArgumentResolver, RunKeywordArgumentResolver,
+                        ArgumentResolver,
                         JavaArgumentResolver,
                         ArgumentValidator, ArgumentMapper,
                         JavaArgumentCoercer)
@@ -243,8 +243,8 @@ class _RunKeywordHandler(_PythonHandler):
         return runner()
 
     def _get_argument_resolver(self, argspec):
-        arg_index = self._get_args_to_process()
-        return RunKeywordArgumentResolver(argspec, arg_index)
+        resolve_until = self._get_args_to_process()
+        return ArgumentResolver(argspec, resolve_until)
 
     def _get_args_to_process(self):
         return RUN_KW_REGISTER.get_args_to_process(self.library.orig_name,
