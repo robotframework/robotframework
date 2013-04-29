@@ -99,6 +99,8 @@ class KeywordDocBuilder(object):
         varargs = self._normalize_arg(kw.arguments.varargs, kw.type)
         if varargs:
             args.append('*%s' % varargs)
+        if kw.arguments.kwargs:
+            args.append('**%s' % kw.arguments.kwargs)
         return args
 
     def _parse_args(self, kw):

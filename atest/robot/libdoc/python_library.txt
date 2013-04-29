@@ -57,3 +57,8 @@ Keyword Documentation
     ...    | \${out} = | `Execute Command`${SPACE*3}| pwd |\n\n
     ...    | `Write`${SPACE*2}| pwd${SPACE*17}|\n
     ...    | \${out} = | `Read Until Prompt` |\n\n
+
+KwArgs and VarArgs
+    Run Libdoc And Parse Output    Process
+    Keyword Name Should Be         6    Run Process
+    Keyword Arguments Should Be    6    command    *args    **conf
