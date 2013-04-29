@@ -566,7 +566,7 @@ class _FakeNamespace:
 class _FakeVariableScope:
     def __init__(self):
         self.variables = {}
-    def replace_list(self, args):
+    def replace_list(self, args, replace_until=None):
         return []
     def replace_string(self, variable):
         try:
