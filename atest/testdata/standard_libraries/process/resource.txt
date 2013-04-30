@@ -1,28 +1,27 @@
 *** Keywords ***
 Some process
-          [Arguments]       ${alias}=${null}
-          ${handle}=          Start Python Process          raw_input()     alias=${alias}
-          [Return]          ${handle}
+    [Arguments]    ${alias}=${null}
+    ${handle}=    Start Python Process    raw_input()    alias=${alias}
+    [Return]    ${handle}
 
 Stop some process
-          [Arguments]       ${alias}=${null}
-          Input To Process   stop   ${alias}
-
+    [Arguments]    ${alias}=${null}
+    Input To Process    stop    ${alias}
 
 Result should equal
-          [Arguments]          ${result}          ${stdout}=          ${stderr}=          ${exit_code}=0
-          Should Match          ${result.stdout}          ${stdout}
-          Should Match          ${result.stderr}          ${stderr}
-          Should Be Equal As Integers          ${result.exit_code}          ${exit_code}
+    [Arguments]    ${result}    ${stdout}=    ${stderr}=    ${exit_code}=0
+    Should Match    ${result.stdout}    ${stdout}
+    Should Match    ${result.stderr}    ${stderr}
+    Should Be Equal As Integers    ${result.exit_code}    ${exit_code}
 
 Start Python Process
-          [Arguments]          ${command}      ${alias}=${null}
-          ${handle}=          Start New Process          python          -c          ${command}      alias=${alias}
-          [Return]          ${handle}
+    [Arguments]    ${command}    ${alias}=${null}
+    ${handle}=    Start New Process    python    -c    ${command}    alias=${alias}
+    [Return]    ${handle}
 
 Run Python Process
-          [Arguments]          ${command}
-          ${result}=          Run Process          python          -c          ${command}
-          Log    ${result.exit_code}
-          Log    ${result.stderr}
-          [Return]          ${result}
+    [Arguments]    ${command}
+    ${result}=    Run Process    python    -c    ${command}
+    Log    ${result.exit_code}
+    Log    ${result.stderr}
+    [Return]    ${result}
