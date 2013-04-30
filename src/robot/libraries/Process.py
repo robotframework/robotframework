@@ -221,7 +221,11 @@ class Process(object):
             ctypes.windll.kernel32.TerminateProcess(handle, -1)
             ctypes.windll.kernel32.CloseHandle(handle)
         else:
-            os.kill(theprocess.pid, signal.SIGKILL)
+            pid = theprocess.pid
+            if pid is not None:
+                os.kill(theprocess.pid, signal.SIGKILL)
+            else:
+                raise AssertionError('None Pid - can not kill process!')
 
     def kill_all_processes(self):
         """This keyword terminates all processes started by the library.
