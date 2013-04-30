@@ -60,6 +60,7 @@ Terminating process
 Pid
     ${handle}=    Some process
     ${pid}=    Get Process Id    ${handle}
+    Should Not Be Equal   ${pid}   ${None}
     Evaluate    os.kill(int(${pid}),signal.SIGTERM)    os,signal
     Wait For Process    ${handle}
     Process Should Be Dead    ${handle}

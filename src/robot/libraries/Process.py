@@ -223,7 +223,7 @@ class Process(object):
         else:
             pid = theprocess.pid
             if pid is not None:
-                os.kill(theprocess.pid, signal.SIGKILL)
+                os.kill(pid, signal.SIGKILL)
             else:
                 raise AssertionError('None Pid - can not kill process!')
 
