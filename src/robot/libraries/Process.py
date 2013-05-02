@@ -27,20 +27,25 @@ class Process(object):
     """Robot Framework test library for running processes.
 
     This library utilizes Python's
-    [http://docs.python.org/2.7/library/subprocess.html#subprocess.Popen|Subprocess API and its Popen class].
+    [http://docs.python.org/2.7/library/subprocess.html|subprocess] module and its
+    [http://docs.python.org/2.7/library/subprocess.html#subprocess.Popen|Popen] class.
 
     The library has following main usages:
 
     - Starting a processes, and managing their handles, stdouts and stderrs
-    - Stopping processes started by this library
-    - Switching between processes
-    - Checking process status.
+      (e.g. `Run Process` and `Start New Process` keywords).
+    - Stopping processes started by this library (e.g. `Kill All Processes` and
+      `Terminate Process` keywords). See `Stopping processes` for more information.
+    - Switching between processes (e.g. `Switch Active Process` keyword).
+    - Checking process status (e.g. `Process Should Be Alive` and
+      `Process Should Be Dead` keywords).
 
     == Table of contents ==
 
     - `Configurations`
     - `Example`
     - `Active process`
+    - `Stopping processes`
     - `ExecutionResult`
 
     = Configurations =
@@ -70,8 +75,18 @@ class Process(object):
     |  | [Teardown] | `Kill All Processes` |    |   |
 
     = Active process =
-    Many of the library keywords have `handle` as optional argument. This means
-    that if argument `handle` is NOT given, then current active process is used.
+    The test library keeps record which of the started processes is an active
+    process. Many of the library keywords have `handle` as optional argument. This means
+    that if argument `handle` is NOT given, then the active process is used for
+    keyword. Active process can be switched using keyword `Switch Active Process`.
+
+    = Stopping processes =
+    Due restrictions set by
+    [http://docs.python.org/2.7/library/subprocess.html|subprocess] module,
+    the process stopping is NOT functioning properly on
+    [http://www.jython.org|Jython]  and pre-2.6 Python.
+    In Jython especially we don't have the information about the PIDs of the
+    started processes therefore making the stopping of the process difficult.
 
     = ExecutionResult =
     This object contains information about the process execution.
@@ -96,9 +111,11 @@ class Process(object):
 
         The `command` is a child program which is started in a new process,
         `args` are arguments for the `command` and `conf` are arguments for the
-        Subprocess API (see `Configurations`).
+        [http://docs.python.org/2.7/library/subprocess.html|subprocess] module's
+        [http://docs.python.org/2.7/library/subprocess.html#subprocess.Popen|Popen]
+        class (see `Configurations`).
 
-        Finally it switches back to active process.
+        Finally switches back to active process.
         """
         active_process_index = self._started_processes.current_index
         try:
@@ -112,9 +129,13 @@ class Process(object):
 
         The `command` is a child program which is started in a new process,
         `args` are arguments for the `command` and `conf` are arguments for the
-        Subprocess API (see `Configurations`).
+        [http://docs.python.org/2.7/library/subprocess.html|subprocess] module's
+        [http://docs.python.org/2.7/library/subprocess.html#subprocess.Popen|Popen]
+        class (see `Configurations`).
 
         Returns process index on success.
+
+        This new process is set as an `active process`.
 
         Examples:
 
@@ -141,16 +162,18 @@ class Process(object):
         return cmd
 
     def process_is_alive(self, handle=None):
-        """Returns a running status of process with `handle`. Argument `handle`
-        is optional, if `None` then the current process is used.
+        """This keyword checks if process with `handle` is alive or not.
 
-        Return value is either `True` or `False`
+        Argument `handle` is optional, if `None` then the active process is used.
+
+        Return value is either `True` (process is alive) or `False`
+        (process has terminated).
         """
         return self._process(handle).poll() is None
 
     def process_should_be_alive(self, handle=None):
         """Assertion keyword, which expects that process with `handle` is alive.
-        Argument `handle` is optional, if `None` then the current process is used.
+        Argument `handle` is optional, if `None` then the active process is used.
 
         Check is done using `Process Is Alive` keyword.
 
@@ -161,7 +184,7 @@ class Process(object):
 
     def process_should_be_dead(self, handle=None):
         """Assertion keyword, which expects that process with `handle` is dead.
-        Argument `handle` is optional, if left then the current process is used.
+        Argument `handle` is optional, if `None` then the active process is used.
 
         Check is done using `Process Is Alive` keyword.
 
@@ -173,7 +196,7 @@ class Process(object):
     def wait_for_process(self, handle=None):
         """This waits for process with `handle` to complete its execution.
 
-        Argument `handle` is optional, if left then the current process is used.
+        Argument `handle` is optional, if `None` then the active process is used.
 
         Returns an `ExecutionResult` object.
 
@@ -190,15 +213,18 @@ class Process(object):
         return result
 
     def terminate_process(self, handle=None, kill=False):
-        """This keyword terminates process using either `Subprocess` `kill()`
-        or `terminate()`, which can be selected using `kill` argument.
+        """This keyword terminates process using either
+        [http://docs.python.org/2.7/library/subprocess.html|subprocess] module's
+        `kill()` or `terminate()`, which can be selected using `kill` argument
+        (by default `terminate()` is used).
 
-        Argument `handle` is optional, if `None` then the current process is used.
+        Argument `handle` is optional, if `None` then the active process is used.
 
         Examples:
 
-        | `Terminate Process` | | # Terminates the current process |
-        | `Terminate Process` | ${handle3} | |
+        | `Terminate Process` | |  | # Terminates the active process |
+        | `Terminate Process` | ${handle3} | | |
+        | `Terminate Process` | ${handle3} | kill=True | # Using kill instead of terminate |
         """
         process = self._process(handle)
 
@@ -237,7 +263,7 @@ class Process(object):
     def get_process_id(self, handle=None):
         """Returns a process ID of process with `handle`.
 
-        Argument `handle` is optional, if `None` then the current process is used.
+        Argument `handle` is optional, if `None` then the active process is used.
 
         Return value is a integer value.
 
@@ -254,7 +280,7 @@ class Process(object):
     def input_to_process(self, msg, handle=None):
         """This keyword can be used to communicate with the process with `handle`.
 
-        Argument `handle` is optional, if `None` then the current process is used.
+        Argument `handle` is optional, if `None` then the active process is used.
 
         Examples:
 
