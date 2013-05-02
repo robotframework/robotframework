@@ -1,0 +1,109 @@
+*** Settings ***
+Library    JavaExceptions
+Library    ForLoop.py
+
+*** Test Cases ***
+Simple Continue For Loop
+    :FOR    ${var}    IN    one    two
+    \    Continue For Loop
+    \    Fail    Should not be executed
+    Should BE Equal    ${var}    two
+
+Continue For Loop In `Run Keyword`
+    ${text}=   Set Variable  ${EMPTY}
+    :FOR    ${var}    IN    one    two    three
+    \    Run Keyword If    '${var}' == 'two'    Continue For Loop
+    \    ${text}=   Set Variable   ${text}${var}
+    Should Be Equal    ${text}     onethree
+
+Continue For Loop In User Keyword
+    :FOR    ${var}    IN    one    two
+    \    With Only Continue For Loop
+    \    Fail    Should not be executed
+    Should BE Equal    ${var}    two
+
+Continue For Loop Should Terminate Immediate Loop Only
+    :FOR    ${var}    IN    one    two
+    \    With Loop
+    \    ${x} =    Set Variable    ${var}-extra
+    Should Be Equal    ${x}    two-extra
+
+Continue For Loop In User Keyword Should Terminate Immediate Loop Only
+    :FOR    ${var}    IN    one    two
+    \    With Loop Within Loop
+    \    ${x} =    Set Variable    ${var}-extra
+    Should Be Equal    ${x}    two-extra
+
+Continue For Loop In User Keyword Calling User Keyword With Continue For Loop
+    :FOR    ${var}    IN    one    two
+    \    With Keyword For Loop Calling Keyword With Continue For Loop
+    \    ${x} =    Set Variable    ${var}-extra
+    Should Be Equal    ${x}    two-extra
+
+Continue For Loop Without For Loop Should Fail
+   [Documentation]    FAIL Continue for loop without enclosing for loop.
+   Continue For Loop
+
+Continue For Loop In User Keyword Without For Loop Should Fail
+   [Documentation]    FAIL Continue for loop without enclosing for loop.
+   With Only Continue For Loop
+
+Custom exception with ROBOT_CONTINUE_FOR_LOOP
+    :FOR    ${var}    IN    one    two
+    \    Raise Continue For Loop
+    \    Fail    Should not be executed
+    Should BE Equal    ${var}    two
+
+Custom Java exception with ROBOT_CONTINUE_FOR_LOOP
+    :FOR    ${var}    IN    one    two
+    \    Throw Continue For Loop
+    \    Fail    Should not be executed
+    Should BE Equal    ${var}    two
+
+Continue For Loop In Test Teardown
+    No Operation
+    [Teardown]      With Loop
+
+Continue For Loop In Keyword Teardown
+    Continue For Loop In Keyword Teardown
+
+Continue For Loop If True
+    :FOR    ${var}    IN    one    two
+    \    Continue For Loop If     1 == 1
+    \    Fail    Should not be executed
+    Should BE Equal    ${var}    two
+
+Continue For Loop If False
+    [Documentation]   FAIL Should fail here
+    :FOR    ${var}    IN    one    two
+    \    Continue For Loop If     1 == 2
+    \    Fail    Should fail here
+
+
+*** Keyword ***
+With Loop
+    :FOR    ${var}    IN    one    two
+    \    Continue For Loop
+    \    Fail    Should not be executed
+    Should Be Equal    ${var}    two
+
+With Only Continue For Loop
+    Continue For Loop
+    Fail
+
+With Loop Within Loop
+    :FOR    ${var}    IN    one    two
+    \    With Loop
+    \    Continue For Loop
+    \    Fail    Should not be executed
+    Should Be Equal    ${var}    two
+
+With Keyword For Loop Calling Keyword With Continue For Loop
+    :FOR    ${var}    IN    one    two
+    \    With Only Continue For Loop
+    \    Fail    Should not be executed
+    Should Be Equal    ${var}    two
+
+Continue For Loop In Keyword Teardown
+    No Operation
+    [Teardown]    With Loop

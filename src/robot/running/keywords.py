@@ -74,7 +74,7 @@ class Keyword(BaseKeyword):
         try:
             return_value = self._run(handler, context)
         except ExecutionFailed, err:
-            self.status = 'FAIL' if not err.exit_for_loop else 'PASS'
+            self.status = 'FAIL' if not err.execution_passed else 'PASS'
             self._end(context, error=err)
             raise
         else:
@@ -135,7 +135,7 @@ class Keyword(BaseKeyword):
 
     def _report_failure(self, context):
         failure = HandlerExecutionFailed()
-        if not failure.exit_for_loop:
+        if not (failure.exit_for_loop or failure.continue_for_loop):
             context.output.fail(failure.full_message)
             if failure.traceback:
                 context.output.debug(failure.traceback)
@@ -204,6 +204,8 @@ class ForLoop(BaseKeyword):
             if err:
                 if err.exit_for_loop:
                     break
+                if err.continue_for_loop:
+                    continue
                 errors.extend(err.get_errors())
                 if not err.can_continue(context.teardown, self._templated,
                                         context.dry_run):
@@ -223,7 +225,7 @@ class ForLoop(BaseKeyword):
         for var, value in zip(variables, values):
             context.get_current_vars()[var] = value
         error = self._run_with_error_handling(self.keywords.run, context)
-        foritem.end('PASS' if not error or error.exit_for_loop else 'FAIL')
+        foritem.end('PASS' if not error or error.execution_passed else 'FAIL')
         context.end_keyword(foritem)
         return error
 

@@ -342,6 +342,15 @@ class _Verify:
         error.ROBOT_EXIT_ON_FAILURE = True
         raise error
 
+    def continue_for_loop(self):
+        error = AssertionError('Continue for loop without enclosing for loop.')
+        error.ROBOT_CONTINUE_FOR_LOOP = True
+        raise error
+
+    def continue_for_loop_if(self, condition):
+        if self._is_true(condition):
+            self.continue_for_loop()
+
     def exit_for_loop(self):
         """Immediately stops executing the enclosing for loop.
 

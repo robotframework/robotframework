@@ -78,7 +78,7 @@ class ExecutionFailed(RobotError):
     """Used for communicating failures in test execution."""
 
     def __init__(self, message, timeout=False, syntax=False, exit=False,
-                 cont=False, exit_for_loop=False):
+                 cont=False, exit_for_loop=False, continue_for_loop=False):
         if '\r\n' in message:
             message = message.replace('\r\n', '\n')
         RobotError.__init__(self, utils.cut_long_message(message))
@@ -87,11 +87,17 @@ class ExecutionFailed(RobotError):
         self.exit = exit
         self.cont = cont
         self.exit_for_loop = exit_for_loop
+        self.continue_for_loop = continue_for_loop
         self.return_value = None
 
     @property
+    def execution_passed(self):
+        return self.exit_for_loop or self.continue_for_loop
+
+    @property
     def dont_cont(self):
-        return self.timeout or self.syntax or self.exit or self.exit_for_loop
+        return self.timeout or self.syntax or self.exit or self.exit_for_loop \
+            or self.continue_for_loop
 
     cont = property(lambda self: self._cont and not self.dont_cont,
                     lambda self, cont: self._set_cont(cont))
@@ -120,9 +126,11 @@ class HandlerExecutionFailed(ExecutionFailed):
         syntax = isinstance(details.error, DataError)
         exit = bool(getattr(details.error, 'ROBOT_EXIT_ON_FAILURE', False))
         cont = bool(getattr(details.error, 'ROBOT_CONTINUE_ON_FAILURE', False))
+        continue_for_loop = bool(getattr(details.error,
+                                         'ROBOT_CONTINUE_FOR_LOOP', False))
         exit_for_loop = bool(getattr(details.error, 'ROBOT_EXIT_FOR_LOOP', False))
         ExecutionFailed.__init__(self, details.message, timeout, syntax,
-                                 exit, cont, exit_for_loop)
+                                 exit, cont, exit_for_loop, continue_for_loop)
         self.full_message = details.message
         self.traceback = details.traceback
 
@@ -146,6 +154,7 @@ class ExecutionFailures(ExecutionFailed):
                 'syntax': any(err.syntax for err in errors),
                 'exit': any(err.exit for err in errors),
                 'cont': all(err.cont for err in errors),
+                'continue_for_loop': all(err.continue_for_loop for err in errors),
                 'exit_for_loop': all(err.exit_for_loop for err in errors)}
 
     def get_errors(self):

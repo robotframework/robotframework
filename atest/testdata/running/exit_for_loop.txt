@@ -1,6 +1,6 @@
 *** Settings ***
 Library    JavaExceptions
-Library    ExitForLoop.py
+Library    ForLoop.py
 
 *** Test Cases ***
 Simple Exit For Loop
