@@ -4,11 +4,7 @@ Force Tags      pybot  jybot  regression
 Resource        atest_resource.txt
 
 *** Test Cases ***
-
 Simple Named
-    Check Test Case  ${TESTNAME}
-
-Check Library init arguments
     Check Test Case  ${TESTNAME}
 
 Mandatory And Named As Positional
@@ -41,9 +37,6 @@ Equals Sign In Named Value
 Non-existing argument does not trigger named usage
     Check Test Case  ${TESTNAME}
 
-Escaping Kwarg
-    Check Test Case  ${TESTNAME}
-
 Naming twice
     Check Test Case  ${TESTNAME}
 
@@ -68,8 +61,12 @@ Non working named combinations without varargs
 Working combinations with all argument types
     Check Test Case  ${TESTNAME}
 
+Test escaping with all argument types
+    Check Test Case  ${TESTNAME}
+
 Illegal combinations with all argument types
     Check Test Case  ${TESTNAME}
 
 List variable with multiple values for same variable
     Check Test Case  ${TESTNAME}
+

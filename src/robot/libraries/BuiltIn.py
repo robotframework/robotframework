@@ -1279,7 +1279,7 @@ class _RunKeyword:
         try:
             return 'PASS', self.run_keyword(name, *args)
         except ExecutionFailed, err:
-            if err.dont_cont:
+            if err.dont_continue:
                 raise
             return 'FAIL', unicode(err)
 
@@ -1318,8 +1318,8 @@ class _RunKeyword:
         try:
             return self.run_keyword(name, *args)
         except ExecutionFailed, err:
-            if not err.dont_cont:
-                err.cont = True
+            if not err.dont_continue:
+                err.continue_on_failure = True
             raise err
 
     def run_keyword_and_expect_error(self, expected_error, name, *args):
@@ -1346,7 +1346,7 @@ class _RunKeyword:
         try:
             self.run_keyword(name, *args)
         except ExecutionFailed, err:
-            if err.dont_cont:
+            if err.dont_continue:
                 raise
         else:
             raise AssertionError("Expected error '%s' did not occur"
@@ -1418,7 +1418,7 @@ class _RunKeyword:
             try:
                 return self.run_keyword(name, *args)
             except ExecutionFailed, err:
-                if err.dont_cont:
+                if err.dont_continue:
                     raise
                 if time.time() > maxtime:
                     error = unicode(err)
