@@ -61,14 +61,6 @@ Non-existing argument does not trigger named usage
     ${ret}=  One Named  ä=ö
     Should Be Equal  ${ret}  ä=ö
 
-Escaping named
-    ${ret}=  One Named  named=bar\=quux
-    Should Be Equal  ${ret}  bar=quux
-    ${ret}=  One Named  named\=bar=quux
-    Should Be Equal  ${ret}  named=bar=quux
-    ${ret}=  One Named  named\=bar
-    Should Be Equal  ${ret}  named=bar
-
 Naming twice
     [documentation]  FAIL  Keyword 'KwargsLibrary.Two Named' got multiple values for argument 'fst'.
     ${ret}=  Two Named  fst=foo  fst=foo
@@ -132,6 +124,14 @@ Working combinations with all argument types
    a, b, c1                     a       b       c1
    a, b, c1, d1:d1              a       b       c1      d1=d1
    a, default, d1:d1, d2:d2     a       d1=d1   d2=d2
+
+Test escaping with all argument types
+   [template]            Execute working combinations with everything
+   # double escaping because of template
+   a, b=bar=foo                 a       b\\=bar=foo
+   a, foo=bar                   a       b=foo\\=bar
+   a, default, foo:foo=bar      a       foo=foo\\=bar
+   a=a, b=b                     a\\=a   b\\=b
 
 Illegal combinations with all argument types
    [template]            Execute illegal combinations with everything
