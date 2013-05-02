@@ -194,7 +194,7 @@ class Process(object):
             raise AssertionError('Process is alive')
 
     def wait_for_process(self, handle=None):
-        """This waits for process with `handle` to complete its execution.
+        """This waits for process with `handle` to terminate.
 
         Argument `handle` is optional, if `None` then the active process is used.
 
@@ -269,11 +269,11 @@ class Process(object):
 
         Examples:
 
-        | ${pid}= | `Get Process Id` | | # Gets PID of the active process | |
-        | ${handle1}= | `Start New Process` | python -c "print 'hello'" | shell=True | alias=hello |
-        | ${pid_1}= | `Get Process Id` | ${handle1} | # Gets PID with `handle1` | |
-        | ${pid_2}= | `Get Process Id` | ${handle1} | # Gets PID with alias `hello` | |
-        | Should Be Equal As Integers | ${pid_1} | ${pid_2} |  | |
+        | ${pid}= | `Get Process Id` | | | | # Gets PID of the active process |
+        | ${handle1}= | `Start New Process` | python -c "print 'hello'" | shell=True | alias=hello | |
+        | ${pid_1}= | `Get Process Id` | ${handle1} | | | # Gets PID with `handle1` |
+        | ${pid_2}= | `Get Process Id` | hello | | | # Gets PID with alias `hello` |
+        | Should Be Equal As Integers | ${pid_1} | ${pid_2} | | | |
         """
         return self._process(handle).pid
 
