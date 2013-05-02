@@ -4,6 +4,8 @@ Force Tags      regression  pybot  jybot
 Resource        atest_resource.txt
 
 *** Test Cases ***
+Check kw arguments
+    Check Test Case  ${TESTNAME}
 
 Normal Named Arguments
     Check Test Case  ${TESTNAME}

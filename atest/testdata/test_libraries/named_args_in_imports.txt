@@ -1,8 +1,10 @@
 *** Settings ***
-Library  KwargsLibrary  arg2=value2  WITH NAME  NormalNamed
-Library  KwargsLibrary  ${arg}  WITH NAME  NotNamed
-Library  KwargsLibrary  arg2=${666}  WITH NAME  NonStringValue
-Library  KwargsLibrary  @{ARGS}
+Library  NamedArgsImportLibrary.py  arg2=value2  WITH NAME  NormalNamed
+Library  NamedArgsImportLibrary.py  ${arg}  WITH NAME  NotNamed
+Library  NamedArgsImportLibrary.py  arg2=${666}  WITH NAME  NonStringValue
+Library  NamedArgsImportLibrary.py  @{ARGS}
+Library  NamedArgsImportLibrary.py  kw1=arg1  kw2=arg2  kw3=arg3   WITH NAME   KwArgs
+
 
 *** Variables ***
 ${ARG}   arg2=seppo
@@ -10,6 +12,8 @@ ${ARG}   arg2=seppo
 
 
 *** Test Cases ***
+Check kw arguments
+    KwArgs.Check init arguments  ${null}  ${null}  kw1=arg1  kw2=arg2  kw3=arg3
 
 Normal Named Arguments
     NormalNamed.Check Init Arguments  ${NONE}  value2
@@ -22,5 +26,5 @@ Named Argument Syntax Doesn't Work Inside Variable
 
 WITH NAME Doesn't Work Inside Variable
     [Documentation]  FAIL  No keyword with name 'NotWorks.Check Init Arguments' found.
-    KwargsLibrary.Check Init Arguments  WITH NAME  NotWorks
+    NamedArgsImportLibrary.Check Init Arguments  WITH NAME  NotWorks
     NotWorks.Check Init Arguments  ${NONE}  ${NONE}
