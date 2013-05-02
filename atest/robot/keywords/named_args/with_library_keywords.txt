@@ -4,11 +4,7 @@ Force Tags      pybot  jybot  regression
 Resource        atest_resource.txt
 
 *** Test Cases ***
-
 Simple Named
-    Check Test Case  ${TESTNAME}
-
-Check Library init arguments
     Check Test Case  ${TESTNAME}
 
 Mandatory And Named As Positional

@@ -1,5 +1,5 @@
 *** Settings ***
-Library  KwargsLibrary  kw1=arg1  kw2=arg2  kw3=arg3
+Library  KwargsLibrary.py
 Library  helper.py
 Library  python_library.py
 
@@ -11,9 +11,6 @@ Simple Named
     Should Be Equal  ${ret}  bar, quux
     ${ret}=  Two Named  snd=quux  fst=bar
     Should Be Equal  ${ret}  bar, quux
-
-Check Library init arguments
-    Check init arguments  ${null}  ${null}  kw1=arg1  kw2=arg2  kw3=arg3
 
 Mandatory And Named As Positional
     ${ret}=  Mandatory And Named  a  b  c
