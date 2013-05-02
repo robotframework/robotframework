@@ -64,11 +64,11 @@ Non-existing argument does not trigger named usage
     ${ret}=  One Named  ä=ö
     Should Be Equal  ${ret}  ä=ö
 
-Escaping Kwarg
-    ${ret}=  One Named  named=bar\\=quux
-    Should Be Equal  ${ret}  bar\\=quux
-    ${ret}=  One Named  named\\=bar=quux
-    Should Be Equal  ${ret}  named\\=bar=quux
+Escaping named
+    ${ret}=  One Named  named=bar\=quux
+    Should Be Equal  ${ret}  bar=quux
+    ${ret}=  One Named  named\=bar=quux
+    Should Be Equal  ${ret}  named=bar=quux
     ${ret}=  One Named  named\=bar
     Should Be Equal  ${ret}  named=bar
 

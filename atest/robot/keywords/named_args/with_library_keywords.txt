@@ -41,7 +41,7 @@ Equals Sign In Named Value
 Non-existing argument does not trigger named usage
     Check Test Case  ${TESTNAME}
 
-Escaping Kwarg
+Escaping Named
     Check Test Case  ${TESTNAME}
 
 Naming twice
