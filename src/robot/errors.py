@@ -78,35 +78,40 @@ class ExecutionFailed(RobotError):
     """Used for communicating failures in test execution."""
 
     def __init__(self, message, timeout=False, syntax=False, exit=False,
-                 cont=False, exit_for_loop=False):
+                 continue_on_failure=False, exit_for_loop=False):
         if '\r\n' in message:
             message = message.replace('\r\n', '\n')
         RobotError.__init__(self, utils.cut_long_message(message))
         self.timeout = timeout
         self.syntax = syntax
         self.exit = exit
-        self.cont = cont
+        self.continue_on_failure = continue_on_failure
         self.exit_for_loop = exit_for_loop
         self.return_value = None
 
     @property
-    def dont_cont(self):
+    def dont_continue(self):
         return self.timeout or self.syntax or self.exit or self.exit_for_loop
 
-    cont = property(lambda self: self._cont and not self.dont_cont,
-                    lambda self, cont: self._set_cont(cont))
+    def _get_continue_on_failure(self):
+        return self._continue_on_failure
 
-    def _set_cont(self, cont=True):
-        self._cont = cont
+    def _set_continue_on_failure(self, continue_on_failure):
+        self._continue_on_failure = continue_on_failure
+        for child in getattr(self, '_errors', []):
+            child.continue_on_failure = continue_on_failure
+
+    continue_on_failure = property(_get_continue_on_failure,
+                                   _set_continue_on_failure)
 
     def can_continue(self, teardown=False, templated=False, dry_run=False):
         if dry_run:
             return True
-        if self.dont_cont and not (teardown and self.syntax):
+        if self.dont_continue and not (teardown and self.syntax):
             return False
         if teardown or templated:
             return True
-        return self.cont
+        return self.continue_on_failure
 
     def get_errors(self):
         return [self]
@@ -118,13 +123,16 @@ class HandlerExecutionFailed(ExecutionFailed):
         details = utils.ErrorDetails()
         timeout = isinstance(details.error, TimeoutError)
         syntax = isinstance(details.error, DataError)
-        exit = bool(getattr(details.error, 'ROBOT_EXIT_ON_FAILURE', False))
-        cont = bool(getattr(details.error, 'ROBOT_CONTINUE_ON_FAILURE', False))
-        exit_for_loop = bool(getattr(details.error, 'ROBOT_EXIT_FOR_LOOP', False))
+        exit = self._get(details.error, 'EXIT_ON_FAILURE')
+        continue_on_failure = self._get(details.error, 'CONTINUE_ON_FAILURE')
+        exit_for_loop = self._get(details.error, 'EXIT_FOR_LOOP')
         ExecutionFailed.__init__(self, details.message, timeout, syntax,
-                                 exit, cont, exit_for_loop)
+                                 exit, continue_on_failure, exit_for_loop)
         self.full_message = details.message
         self.traceback = details.traceback
+
+    def _get(self, error, attr):
+        return bool(getattr(error, 'ROBOT_' + attr, False))
 
 
 class ExecutionFailures(ExecutionFailed):
@@ -145,17 +153,11 @@ class ExecutionFailures(ExecutionFailed):
         return {'timeout': any(err.timeout for err in errors),
                 'syntax': any(err.syntax for err in errors),
                 'exit': any(err.exit for err in errors),
-                'cont': all(err.cont for err in errors),
+                'continue_on_failure': all(err.continue_on_failure for err in errors),
                 'exit_for_loop': all(err.exit_for_loop for err in errors)}
 
     def get_errors(self):
         return self._errors
-
-    def _set_cont(self, cont):
-        ExecutionFailed._set_cont(self, cont)
-        if hasattr(self, '_errors'):
-            for err in self._errors:
-                err.cont = cont
 
 
 class UserKeywordExecutionFailed(ExecutionFailures):
