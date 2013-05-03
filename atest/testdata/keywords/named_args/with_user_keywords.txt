@@ -108,7 +108,6 @@ Non working named combinations without varargs
     Keyword 'Mandatory and Named' got positional argument after named arguments.    b=b   b
     Keyword 'Mandatory and Named' got multiple values for argument 'a'.             a     a=a
 
-
 *** Keywords ***
 Execute working named vararg combination with result
     [arguments]    ${expected}  @{args}

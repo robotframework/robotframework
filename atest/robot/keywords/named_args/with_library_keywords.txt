@@ -70,3 +70,8 @@ Illegal combinations with all argument types
 List variable with multiple values for same variable
     Check Test Case  ${TESTNAME}
 
+Unicode not allowed in named argument names
+    Check Test Case  ${TESTNAME}
+
+Empty string is allowed in kwargs names
+    Check Test Case  ${TESTNAME}
