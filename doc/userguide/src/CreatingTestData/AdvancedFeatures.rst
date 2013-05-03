@@ -423,6 +423,29 @@ libraries.
 
 .. note:: Exit for loop functionality is new in Robot Framework 2.5.2.
 
+Continuing for loop
+'''''''''''''''''''
+
+In addition to exiting a for loop mid-iteration, it is also possible to continue to the next iteration of the loop before all keywords in a for loop have been executed. `BuiltIn keyword`_ :name:`Continue For Loop` can be used to skip rest of the keywords in the enclosing for loop to move on to the next iteration of the loop.
+
+:name:`Continue For Loop` keyword can be used directly`in a for loop or in a keyword that the for loop uses. In both cases the test execution continues with the next iteration of the loop. If executed outside of a for loop, the test fails.
+
+.. table:: Continue for loop example
+   :class: example
+
+   ================  ===============  ==============  ======================  =================  ========  ========
+       Test Case     Action           Argument        Argument                Argument           Argument  Argument
+   ================  ===============  ==============  ======================  =================  ========  ========
+   Continue Example  {text}=          Set Variable    ${EMPTY}
+   \                 :FOR             ${var}          IN                      one                 two       three
+   \                                  Run Keyword If  '${var}' == 'two'       Continue For Loop
+   \                                  ${text}=        Set Variable            ${text}${var}
+   \                 Should Be Equal  ${text}          onethree
+   ================  ===============  ==============  ======================  =================  ========  ========
+
+.. note:: Continue for loop functionality is new in Robot Framework 2.8
+
+
 Removing unnecessary keywords from outputs
 ''''''''''''''''''''''''''''''''''''''''''
 
