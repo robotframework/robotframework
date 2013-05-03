@@ -1,6 +1,6 @@
 *** Settings ***
 Suite Setup      Run Tests    ${EMPTY}    standard_libraries/process/test_process_library.txt
-Force Tags       regression    pybot    jybot
+Force Tags       regression    pybot      #FIXME: MAKE THESE TESTS RUN ON JYTHON
 Resource         atest_resource.txt
 
 *** Test Cases ***
