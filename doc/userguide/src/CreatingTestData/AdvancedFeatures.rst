@@ -407,14 +407,16 @@ for loop. If executed outside of a for loop, the test fails.
 
 .. table:: Exit for loop example
    :class: example
-
-   =============  ========  ==============  ==================  ===============
-      Test Case    Action    Argument        Argument            Argument
-   =============  ========  ==============  ==================  ===============
-   Exit Example   :FOR      ${var}          IN                  @{SOME LIST}
-   \                        Run Keyword If  '${var}' == 'EXIT'  Exit For Loop
-   \                        Do Something    ${var}
-   =============  ========  ==============  ==================  ===============
+   
+   ============  ===============  ==============  =================  =============  ========
+     Test Case     Action           Argument        Argument          Argument      Argument
+   ============  ===============  ==============  =================  =============  ========
+   Exit Example  {text}=          Set Variable    ${EMPTY}
+   \             :FOR             ${var}          IN                 one            two
+   \                              Run Keyword If  '${var}' == 'two'  Exit For Loop
+   \                              ${text}=        Set Variable       ${text}${var}
+   \             Should Be Equal  ${text}         one
+   ============  ===============  ==============  =================  =============  ========
 
 Exiting a for loop can also be initiated from a keyword in a test library by
 raising an exception with :code:`ROBOT_EXIT_FOR_LOOP` attribute. Please see
