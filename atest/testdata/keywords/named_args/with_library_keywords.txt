@@ -151,6 +151,14 @@ List variable with multiple values for same variable
     @{foo} =     Create list   a    b
     Lib mandatory and named 2    @{foo}    b=given second time
 
+Unicode not allowed in named argument names
+    [Documentation]    FAIL Illegal characters in argument name: 'äö'
+    Lib Mandatory Named varargs and kwargs    a    äö=illegal
+
+Empty string is allowed in kwargs names
+    ${res} =    Lib Mandatory Named varargs and kwargs    a    b   =whut
+    Should be equal     a, b, :whut   ${res}
+
 *** Keywords ***
 Execute working combinations with everything
     [arguments]    ${expected}  @{args}
