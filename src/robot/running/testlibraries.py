@@ -75,7 +75,7 @@ class _BaseTestLibrary(BaseLibrary):
             self.doc_format = self._get_doc_format(libcode)
             self.scope = self._get_scope(libcode)
             self._libcode = libcode
-            self.init =  self._create_init_handler(libcode)
+            self.init = self._create_init_handler(libcode)
             self.positional_args, self.named_args = self.init.resolve_arguments(args, variables)
 
     @property
@@ -207,6 +207,7 @@ class _BaseTestLibrary(BaseLibrary):
 
     def _raise_creating_instance_failed(self):
         msg, details = utils.get_error_details()
+        # FIXME: Error doesn't contain named args
         if self.positional_args:
             args = "argument%s %s" % (utils.plural_or_not(self.positional_args),
                                       utils.seq2str(self.positional_args))
