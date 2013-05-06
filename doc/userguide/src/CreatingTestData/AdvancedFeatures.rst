@@ -423,14 +423,19 @@ raising an exception with :code:`ROBOT_EXIT_FOR_LOOP` attribute. Please see
 `Stopping test execution`_ for examples how to do this in Python and Java
 libraries.
 
-.. note:: Exit for loop functionality is new in Robot Framework 2.5.2.
+To conditionally exit for loop, you can use :name:`Exit For Loop If` instead of `Run Keyword If`. See how to use it in the example of :name:`Continue For Loop If` below.
+
+.. note:: 
+    Exit for loop functionality is new in Robot Framework 2.5.2.
+    
+    Exit For Loop If keyword is new in Robot Framework 2.8.
 
 Continuing for loop
 '''''''''''''''''''
 
 In addition to exiting a for loop mid-iteration, it is also possible to continue to the next iteration of the loop before all keywords in a for loop have been executed. `BuiltIn keyword`_ :name:`Continue For Loop` can be used to skip rest of the keywords in the enclosing for loop to move on to the next iteration of the loop.
 
-:name:`Continue For Loop` keyword can be used directly`in a for loop or in a keyword that the for loop uses. In both cases the test execution continues with the next iteration of the loop. If executed outside of a for loop, the test fails.
+:name:`Continue For Loop` keyword can be used directly in a for loop or in a keyword that the for loop uses. In both cases the test execution continues with the next iteration of the loop. If executed outside of a for loop, the test fails.
 
 .. table:: Continue for loop example
    :class: example
@@ -445,8 +450,23 @@ In addition to exiting a for loop mid-iteration, it is also possible to continue
    \                 Should Be Equal  ${text}          onethree
    ================  ===============  ==============  ======================  =================  ========  ========
 
-.. note:: Continue for loop functionality is new in Robot Framework 2.8.
+To conditionally continue for loop, you can use :name:`Continue For Loop If` instead of `Run Keyword If`.
 
+.. table:: Example of Continue For Loop If
+   :class: example
+
+   ================  ===============  ====================  ================  =============  ========  ========
+       Test Case     Action           Argument              Argument          Argument       Argument  Argument
+   ================  ===============  ====================  ================  =============  ========  ========
+   Continue Example  ${text}=         Set Variable          ${EMPTY}
+   \                 :FOR             ${var}                IN                one            two       three
+   \                                  Continue For Loop If  '${var}' == 'two
+   \                                  ${text}=              Set Variable      ${text}${var}
+   \                 Should Be Equal  ${text}               onethree
+   ================  ===============  ====================  ================  =============  ========  ========
+
+.. note:: 
+    Keywords Continue For Loop and Continue For Loop If are new in Robot Framework 2.8.
 
 Removing unnecessary keywords from outputs
 ''''''''''''''''''''''''''''''''''''''''''
