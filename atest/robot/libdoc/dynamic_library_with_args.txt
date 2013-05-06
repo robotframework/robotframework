@@ -23,7 +23,7 @@ Scope
     Scope Should Be    test case
 
 Named Args
-    Named Args Should Be    no
+    Named Args Should Be    yes
 
 Init Documentation
     Init Doc Should Start With    0   Dummy documentation for `__init__`.

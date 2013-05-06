@@ -26,6 +26,7 @@ class JavaDocBuilder(object):
                             doc=self._get_doc(doc),
                             version=self._get_version(doc),
                             scope=self._get_scope(doc),
+                            named_args=False,
                             doc_format=self._get_doc_format(doc))
         libdoc.keywords = self._keywords(doc)
         libdoc.inits = self._intializers(doc)

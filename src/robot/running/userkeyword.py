@@ -29,7 +29,6 @@ from .arguments import (ArgumentValidator, UserKeywordArgumentParser,
 
 
 class UserLibrary(BaseLibrary):
-    supports_named_arguments = True # this attribute is for libdoc
 
     def __init__(self, user_keywords, path=None):
         self.name = self._get_name_for_resource_file(path)

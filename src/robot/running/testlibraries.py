@@ -56,7 +56,6 @@ def _get_lib_class(libcode):
 
 
 class _BaseTestLibrary(BaseLibrary):
-    supports_named_arguments = True # this attribute is for libdoc
     _log_success = LOGGER.debug
     _log_failure = LOGGER.info
     _log_failure_details = LOGGER.debug
@@ -288,8 +287,6 @@ class _HybridLibrary(_BaseTestLibrary):
 
 
 class _DynamicLibrary(_BaseTestLibrary):
-    # TODO: Can this be removed now that dynamic libs support named args?
-    supports_named_arguments = False # this attribute is for libdoc
     _log_failure = LOGGER.warn
 
     def __init__(self, libcode, name, args, variables=None):

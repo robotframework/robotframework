@@ -33,7 +33,6 @@ class LibraryDocBuilder(object):
                             doc=self._get_doc(lib),
                             version=lib.version,
                             scope=lib.scope,
-                            named_args=lib.supports_named_arguments,
                             doc_format=lib.doc_format)
         libdoc.inits = self._get_initializers(lib)
         libdoc.keywords = KeywordDocBuilder().build_keywords(lib)
@@ -64,7 +63,7 @@ class ResourceDocBuilder(object):
     def build(self, path):
         res = self._import_resource(path)
         libdoc = LibraryDoc(name=res.name, doc=self._get_doc(res),
-                            type='resource', named_args=True)
+                            type='resource')
         libdoc.keywords = KeywordDocBuilder().build_keywords(res)
         return libdoc
 
