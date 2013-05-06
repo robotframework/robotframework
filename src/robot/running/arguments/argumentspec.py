@@ -36,32 +36,3 @@ class ArgumentSpec(object):
     def maxargs(self):
         return len(self.positional) \
             if not (self.varargs or self.kwargs) else sys.maxint
-
-    # FIXME: Move logging elsewhere
-    def trace_log_args(self, logger, positional, named):
-        message = lambda: self._get_trace_log_arg_message(positional, named)
-        logger.trace(message)
-
-    def _get_trace_log_arg_message(self, positional, named):
-        args = [utils.safe_repr(arg) for arg in positional]
-        if named:
-            args += ['%s=%s' % (utils.unic(name), utils.safe_repr(value))
-                     for name, value in named.items()]
-        return 'Arguments: [ %s ]' % ' | '.join(args)
-
-    def trace_log_uk_args(self, logger, variables):
-        message = lambda: self._get_trace_log_uk_arg_message(variables)
-        logger.trace(message)
-
-    def _get_trace_log_uk_arg_message(self, variables):
-        names = self._get_positional_with_decoration() \
-                + self._get_varargs_with_decoration()
-        args = ['%s=%s' % (name, utils.safe_repr(variables[name]))
-                for name in names]
-        return 'Arguments: [ %s ]' % ' | '.join(args)
-
-    def _get_positional_with_decoration(self):
-        return ['${%s}' % arg for arg in self.positional]
-
-    def _get_varargs_with_decoration(self):
-        return ['@{%s}' % self.varargs] if self.varargs else []

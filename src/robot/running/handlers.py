@@ -119,10 +119,16 @@ class _RunnableHandler(object):
     def _run(self, context, args):
         positional, named = \
             self.resolve_arguments(args, context.get_current_vars())
-        self.arguments.trace_log_args(context.output, positional, named)
+        context.output.trace(lambda: self._log_args(positional, named))
         runner = self._runner_for(self._current_handler(), context, positional,
                                   named, self._get_timeout(context.namespace))
         return self._run_with_output_captured_and_signal_monitor(runner, context)
+
+    def _log_args(self, positional, named):
+        positional = [utils.safe_repr(arg) for arg in positional]
+        named = ['%s=%s' % (utils.unic(name), utils.safe_repr(value))
+                 for name, value in named.items()]
+        return 'Arguments: [ %s ]' % ' | '.join(positional + named)
 
     def _runner_for(self, handler, context, positional, named, timeout):
         if timeout and timeout.active:

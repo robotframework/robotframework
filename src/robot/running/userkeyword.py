@@ -169,9 +169,9 @@ class UserKeywordHandler(object):
         positional, named = resolver.resolve(arguments, variables)
         return mapper.map(positional, named, variables)
 
-    def _execute(self, context, variables, argspec, resolved_arguments):
-        self._set_variables(argspec, resolved_arguments, variables)
-        argspec.trace_log_uk_args(context.output, variables)
+    def _execute(self, context, variables, argspec, arguments):
+        self._set_variables(argspec, arguments, variables)
+        context.output.trace(lambda: self._log_args(argspec, variables))
         self._verify_keyword_is_valid()
         self.timeout.start()
         try:
@@ -195,6 +195,13 @@ class UserKeywordHandler(object):
         if not argspec.varargs:
             return args, []
         return args[:len(argspec.positional)], args[len(argspec.positional):]
+
+    def _log_args(self, argspec, variables):
+        positional = ['${%s}' % arg for arg in argspec.positional]
+        varargs = ['@{%s}' % argspec.varargs] if argspec.varargs else []
+        args = ['%s=%s' % (name, utils.safe_repr(variables[name]))
+                for name in positional + varargs]
+        return 'Arguments: [ %s ]' % ' | '.join(args)
 
     def _run_teardown(self, context, error):
         if not self.teardown:
