@@ -52,7 +52,6 @@ class NamedArgumentResolver(object):
         return positional, named
 
     def _is_named(self, arg):
-        # TODO: When is arg not string??
         if not isinstance(arg, basestring) or '=' not in arg:
             return False
         name = arg.split('=')[0]
