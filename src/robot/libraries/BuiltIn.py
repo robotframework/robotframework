@@ -1753,12 +1753,10 @@ class _Misc:
         table.
 
         This keyword supports importing libraries both using library
-        names and physical paths. When path are used, they must be
+        names and physical paths. When paths are used, they must be
         given in absolute format. Forward slashes can be used as path
         separators in all operating systems. It is possible to use
-        arguments as well as to give a custom name with 'WITH NAME'
-        syntax. For more information about importing libraries, see
-        Robot Framework User Guide.
+        arguments and to give a custom name with 'WITH NAME' syntax.
 
         Examples:
         | Import Library | MyLibrary |
@@ -1776,8 +1774,8 @@ class _Misc:
         Variables imported with this keyword are set into the test suite scope
         similarly when importing them in the Setting table using the Variables
         setting. These variables override possible existing variables with
-        the same names and this functionality can thus be used to import new
-        variables, e.g. for each test in a test suite.
+        the same names. This functionality can thus be used to import new
+        variables, for example, for each test in a test suite.
 
         The given path must be absolute. Forward slashes can be used as path
         separator regardless the operating system.
@@ -2336,6 +2334,7 @@ for name in [attr for attr in dir(_RunKeyword) if not attr.startswith('_')]:
     register_run_keyword('BuiltIn', getattr(_RunKeyword, name))
 for name in ['set_test_variable', 'set_suite_variable', 'set_global_variable',
              'variable_should_exist', 'variable_should_not_exist', 'comment',
-             'get_variable_value']:
+             'get_variable_value', 'import_library', 'import_variables',
+             'import_resource']:
     register_run_keyword('BuiltIn', name, 0)
 del name, attr

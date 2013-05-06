@@ -13,10 +13,17 @@ Import Library 3
     Directory Should Exist  ${CURDIR}
 
 Import Library With Arguments
-    Import Library  ParameterLibrary  myhost  4242
-    ${host}  ${port} =  Parameters
-    Should Be Equal  ${host}  myhost
-    Should Be Equal  ${port}  4242
+    Import Library  ParameterLibrary  value  nön-äscii
+    ${first}  ${second} =  Parameters
+    Should Be Equal  ${first}  value
+    Should Be Equal  ${second}  nön-äscii
+
+Import Library With Variables And WITH NAME
+    ${name} =  Set Variable  ParameterLibrary
+    Import Library  ${name}  ${42}  ${name}  WITH NAME  Variables
+    ${first}  ${second} =  Variables.Parameters
+    Should Be Equal  ${first}  ${42}
+    Should Be Equal  ${second}  ParameterLibrary
 
 Import Library Using Physical Path
     Import Library  ${CURDIR}${/}RegisteredClass.py
@@ -26,15 +33,18 @@ Import Library Using Physical Path
     Should Be Equal  ${ret}  here was a bug
 
 Import Library Using Physical Path, Arguments And WITH NAME
-    ${dir} =  Normalize Path  ${CURDIR}/../../../testresources/testlibs
-    Import Library  ${dir}/ParameterLibrary.py  first param  ${2}  WITH NAME  Params With Path
+    Import Library  ${CURDIR}/../../../testresources/testlibs/ParameterLibrary.py
+    ...  first param  ${2}  WITH NAME  Params With Path
     ${params} =  Params With Path.Parameters
     Should Be True  ${params} == ('first param', 2)
+
+Import Library Arguments Are Resolved Only Once
+    ${var} =  Set Variable  \${not var}
+    Import Library  ParameterLibrary  c:\\temp  ${var}  WITH NAME  Escaping
+    ${first}  ${second} =  Escaping.Parameters
+    Should Be Equal  ${first}  c:\\temp
+    Should Be Equal  ${second}  \${not var}
 
 Import Library Failure Is Catchable
     Run Keyword And Expect Error  Importing test library 'NonExistingLib' failed: ImportError: *
     ...  Import Library  NonExistingLib
-
-'Import Library' keyword should be able to handle special arguments
-    Import Library    ParameterLibrary    ${42}    last
-    Import Library    ParameterLibrary    hyvää päivää    last

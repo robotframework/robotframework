@@ -21,6 +21,9 @@ Import Variables In User Keyword
 Re-Import Variables
     Check Test Case  ${TEST_NAME}
 
+Import Variables Arguments Are Resolved Only Once
+    Check Test Case  ${TEST NAME}
+
 Import Variables Failure Is Catchable
     Check Test Case  ${TESTNAME}
 

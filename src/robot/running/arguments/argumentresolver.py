@@ -26,7 +26,7 @@ class ArgumentResolver(object):
         self._variable_replacer = VariableReplacer(resolve_variables_until)
         self._argument_validator = ArgumentValidator(argspec)
 
-    def resolve(self, arguments, variables):
+    def resolve(self, arguments, variables=None):
         positional, named = self._named_resolver.resolve(arguments)
         positional, named = self._variable_replacer.replace(positional, named,
                                                             variables)
@@ -97,8 +97,8 @@ class VariableReplacer(object):
     def __init__(self, resolve_until=None):
         self._resolve_until = resolve_until
 
-    def replace(self, positional, named, variables):
-        # TODO: Why/when can variables be None?
+    def replace(self, positional, named, variables=None):
+        # `variables` is None when using Libdoc
         if variables:
             positional = variables.replace_list(positional, self._resolve_until)
             named = dict((name, variables.replace_scalar(value))

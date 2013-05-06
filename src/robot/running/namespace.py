@@ -86,15 +86,15 @@ class Namespace:
         action = {'Library': self._import_library,
                   'Resource': self._import_resource,
                   'Variables': self._import_variables}[import_setting.type]
-        action(import_setting, self.variables.current)
+        action(import_setting)
 
     def import_resource(self, name, overwrite=True):
         self._import_resource(Resource(None, name), overwrite=overwrite)
 
-    def _import_resource(self, import_setting, variables=None, overwrite=False):
+    def _import_resource(self, import_setting, overwrite=False):
         if import_setting.type == "Resource" and INIT_FILE_MATCHER.match(import_setting.name):
             raise DataError("Initialization files cannot be imported as resources.")
-        path = self._resolve_name(import_setting, variables)
+        path = self._resolve_name(import_setting)
         if overwrite or path not in self._imported_resource_files:
             resource = IMPORTER.import_resource(path)
             self.variables.set_from_variable_table(resource.variable_table,
@@ -106,12 +106,12 @@ class Namespace:
             LOGGER.info("Resource file '%s' already imported by suite '%s'"
                         % (path, self.suite.longname))
 
-    def import_variables(self, name, args, overwrite=False, variables=None):
-        self._import_variables(Variables(None, name, args), variables, overwrite)
+    def import_variables(self, name, args, overwrite=False):
+        self._import_variables(Variables(None, name, args), overwrite)
 
-    def _import_variables(self, import_setting, variables, overwrite=False):
-        path = self._resolve_name(import_setting, variables)
-        args = self._resolve_args(import_setting, variables)
+    def _import_variables(self, import_setting, overwrite=False):
+        path = self._resolve_name(import_setting)
+        args = self._resolve_args(import_setting)
         if overwrite or (path, args) not in self._imported_variable_files:
             self._imported_variable_files.add((path,args))
             self.variables.set_from_file(path, args, overwrite)
@@ -122,13 +122,13 @@ class Namespace:
             LOGGER.info("%s already imported by suite '%s'"
                         % (msg, self.suite.longname))
 
-    def import_library(self, name, args=None, alias=None, variables=None):
-        self._import_library(Library(None, name, args=args, alias=alias), variables)
+    def import_library(self, name, args=None, alias=None):
+        self._import_library(Library(None, name, args=args, alias=alias))
 
-    def _import_library(self, import_setting, variables):
-        name = self._resolve_name(import_setting, variables)
+    def _import_library(self, import_setting):
+        name = self._resolve_name(import_setting)
         lib = IMPORTER.import_library(name, import_setting.args,
-                                      import_setting.alias, variables)
+                                      import_setting.alias, self.variables)
         if lib.name in self._testlibs:
             LOGGER.info("Test library '%s' already imported by suite '%s'"
                         % (lib.name, self.suite.longname))
@@ -139,13 +139,12 @@ class Namespace:
             lib.start_test()
         self._import_deprecated_standard_libs(lib.name)
 
-    def _resolve_name(self, import_setting, variables):
+    def _resolve_name(self, import_setting):
         name = import_setting.name
-        if variables:
-            try:
-                name = variables.replace_string(name)
-            except DataError, err:
-                self._raise_replacing_vars_failed(import_setting, err)
+        try:
+            name = self.variables.replace_string(name)
+        except DataError, err:
+            self._raise_replacing_vars_failed(import_setting, err)
         return self._get_path(name, import_setting.directory, import_setting.type)
 
     def _raise_replacing_vars_failed(self, import_setting, err):
@@ -182,11 +181,9 @@ class Namespace:
                 'Resource': 'Resource file'}[type]
         raise DataError("%s '%s' does not exist." % (type, path))
 
-    def _resolve_args(self, import_setting, variables):
-        if not variables:
-            return import_setting.args
+    def _resolve_args(self, import_setting):
         try:
-            return variables.replace_list(import_setting.args)
+            return self.variables.replace_list(import_setting.args)
         except DataError, err:
             self._raise_replacing_vars_failed(import_setting, err)
 
