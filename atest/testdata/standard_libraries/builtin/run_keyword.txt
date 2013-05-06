@@ -2,7 +2,7 @@
 Library         Operating System
 
 *** Variables ***
-@{NEEDS ESCAPING}  c:\\temp\\foo  \${notvar}
+@{NEEDS ESCAPING}  c:\\temp\\foo  \${notvar}  ${42}
 ${FAIL KW}  Fail
 
 *** Test Cases ***
@@ -19,15 +19,21 @@ Run Keyword
 
 Run Keyword Returning Value
     ${ret} =  Run Keyword  Set Variable  hello world
-    Equals  ${ret}  hello world
+    Should Be Equal  ${ret}  hello world
     ${ret} =  Run Keyword  Evaluate  1+2
-    Equals  ${ret}  ${3}
+    Should Be Equal  ${ret}  ${3}
 
 Run Keyword With Arguments That Needs To Be Escaped
     Run Keyword  Directory Should Exist  ${CURDIR}
     Run Keyword  Log Many  @{NEEDS ESCAPING}  ${CURDIR}  \
     ${ret} =  Run Keyword  Create List  @{NEEDS ESCAPING}
-    Should Be True  ${ret} == @{NEEDS ESCAPING}
+    Should Be Equal  ${ret}  ${NEEDS ESCAPING}
+
+Escaping Arguments From Opened List Variable
+    @{named} =    Create List    Log    message=foo    INFO
+    Run Keyword    @{named}
+    @{nonstr} =    Create List    Log    ${42}    INFO
+    Run Keyword    @{nonstr}
 
 Run Keyword With UK
     [Documentation]  FAIL Expected failure in UK
@@ -82,9 +88,8 @@ Run Keyword If
 
 Timeoutted UK Passing
     [Timeout]  5 seconds
-    NOOP
+    No Operation
 
 Timeoutted UK Timeouting
     [Timeout]  300 milliseconds
     Sleep  1 second
-

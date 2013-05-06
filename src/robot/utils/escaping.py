@@ -16,7 +16,7 @@ import re
 
 
 _ESCAPE_RE = re.compile(r'(\\+)([^\\]{0,2})')   # escapes and nextchars
-_SEQS_TO_BE_ESCAPED = ('\\', '${', '@{', '%{', '&{', '*{' , '=')
+_SEQS_TO_BE_ESCAPED = ('\\', '${', '@{', '%{', '&{', '*{', '=')
 
 
 def escape(item):
