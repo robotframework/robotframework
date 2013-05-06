@@ -24,7 +24,6 @@ class ArgumentSpec(object):
         self.name = name
         self.type = type
         self.positional = positional or []
-        self.names = self.positional   # FIXME: Remove
         self.defaults = defaults or []
         self.varargs = varargs
         self.kwargs = kwargs

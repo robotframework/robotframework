@@ -195,7 +195,7 @@ class UserKeywordHandler(object):
     def _split_args_and_varargs(self, argspec, args):
         if not argspec.varargs:
             return args, []
-        return args[:len(argspec.names)], args[len(argspec.names):]
+        return args[:len(argspec.positional)], args[len(argspec.positional):]
 
     def _run_teardown(self, context, error):
         if not self.teardown:

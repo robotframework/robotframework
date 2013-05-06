@@ -277,7 +277,7 @@ class _RunKeywordHandler(_PythonHandler):
             return list(self._get_run_kw_if_keywords(args))
         if self._handler_name == 'run_keywords':
             return list(self._get_run_kws_keywords(args))
-        if 'name' in self.arguments.names and self._get_args_to_process() > 0:
+        if 'name' in self.arguments.positional and self._get_args_to_process() > 0:
             return self._get_default_run_kw_keywords(args)
         return []
 
@@ -332,7 +332,7 @@ class _RunKeywordHandler(_PythonHandler):
                 yield given_args
 
     def _get_default_run_kw_keywords(self, given_args):
-        index = self.arguments.names.index('name')
+        index = self.arguments.positional.index('name')
         return [Keyword(given_args[index], given_args[index+1:])]
 
 
