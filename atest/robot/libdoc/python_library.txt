@@ -60,5 +60,5 @@ Keyword Documentation
 
 KwArgs and VarArgs
     Run Libdoc And Parse Output    Process
-    Keyword Name Should Be         6    Run Process
-    Keyword Arguments Should Be    6    command    *args    **conf
+    Keyword Name Should Be         5    Run Process
+    Keyword Arguments Should Be    5    command    *arguments    **configuration

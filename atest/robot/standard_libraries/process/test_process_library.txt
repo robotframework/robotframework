@@ -1,6 +1,5 @@
 *** Settings ***
 Suite Setup      Run Tests    ${EMPTY}    standard_libraries/process/test_process_library.txt
-Test Setup       Check Preconditions
 Force Tags       regression    pybot    jybot
 Resource         atest_resource.txt
 
@@ -18,27 +17,6 @@ Start And Wait Process
     Check Test Case    ${TESTNAME}
 
 Switching active process
-    Check Test Case    ${TESTNAME}
-
-Run process does not change active process
-    Check Test Case    ${TESTNAME}
-
-Killing process
-    Check Test Case    ${TESTNAME}
-
-Terminating process
-    Check Test Case    ${TESTNAME}
-
-Pid
-    Check Test Case    ${TESTNAME}
-
-Starting many processes and killing all
-    Check Test Case    ${TESTNAME}
-
-Kill Process Which Does Not Exist
-    Check Test Case    ${TESTNAME}
-
-Wait For Process Which Does Not Exist
     Check Test Case    ${TESTNAME}
 
 Change Current Working Directory
@@ -76,7 +54,3 @@ Current working directory should be used with stdout and stderr
 
 Current working directory should not be used with stdout and stderr when absolute path in use
     Check Test Case    ${TESTNAME}
-
-*** Keywords ***
-Check Preconditions
-    Run Keyword If   '${SUITE.metadata.get('info')}' == 'precondition_fail'   Fail  precondition fail  -regression
