@@ -1,5 +1,5 @@
 *** Settings ***
-Suite Setup       Check Preconditions And Start suite_process
+Suite Setup       Some process    suite_process
 Suite Teardown    Stop some process    suite_process
 Test Teardown     Restart Suite Process If Needed
 Library           Process.py
@@ -35,65 +35,6 @@ Switching active process
     Switch Active Process    two
     Process Should Be Running
     Stop Some Process
-
-Run process does not change active process
-    Some process    active
-    ${expected id}=    Get Process Id
-    Run Python Process    1+1
-    ${id}=    Get Process Id
-    Should Be Equal    ${expected id}    ${id}
-
-Killing process
-    ${handle}=    Some process
-    ${is_alive}=    Process Is Running    ${handle}
-    Should Be True    ${is_alive}
-    Terminate Process    ${handle}    kill=${True}
-    Wait For Process    ${handle}
-    Process Should Be Stopped    ${handle}
-
-Terminating process
-    ${handle}=    Some process
-    Terminate Process    ${handle}
-    Wait For Process    ${handle}
-    Process Should Be Stopped    ${handle}
-
-Pid
-    ${handle}=    Some process
-    ${pid}=    Get Process Id    ${handle}
-    Should Not Be Equal   ${pid}   ${None}
-    Evaluate    os.kill(int(${pid}),signal.SIGTERM)    os,signal
-    Wait For Process    ${handle}
-    Process Should Be Stopped    ${handle}
-
-Starting many processes and killing all
-    ${handle1}=    Some process
-    ${handle2}=    Some process
-    ${handle3}=    Some process
-    ${handle4}=    Some process
-    ${handle5}=    Some process
-    Sleep    0.1
-    Process Should Be Running    ${handle1}
-    Process Should Be Running    ${handle2}
-    Process Should Be Running    ${handle3}
-    Process Should Be Running    ${handle4}
-    Process Should Be Running    ${handle5}
-    Terminate All Processes
-    Sleep    0.1
-    Process Should Be Stopped    ${handle1}
-    Process Should Be Stopped    ${handle2}
-    Process Should Be Stopped    ${handle3}
-    Process Should Be Stopped    ${handle4}
-    Process Should Be Stopped    ${handle5}
-
-Kill Process Which Does Not Exist
-    ${handle}=    Some process
-    Terminate Process    ${handle}    kill=${True}
-    Terminate Process    ${handle}    kill=${True}
-
-Wait For Process Which Does Not Exist
-    ${handle}=    Some process
-    Terminate Process    ${handle}    kill=${True}
-    Wait For Process    ${handle}
 
 Change Current Working Directory
     ${result}=    Run Process    python    -c    import os; print os.path.abspath(os.curdir);    cwd=.
@@ -182,12 +123,3 @@ Current working directory should not be used with stdout and stderr when absolut
 Restart Suite Process If Needed
     ${alive}=    Process Is Running    suite_process
     Run Keyword If    not ${alive}    Some process    suite_process
-
-Check Preconditions
-    ${is_ok}=   Evaluate   sys.version_info >= (2,6)   sys
-    Run Keyword If  not ${is_ok}    Set Suite Metadata  info   precondition_fail
-    Run Keyword If  not ${is_ok}    Fail
-
-Check Preconditions And Start suite_process
-    Some process    suite_process
-    Check Preconditions
