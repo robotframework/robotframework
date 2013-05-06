@@ -34,11 +34,11 @@ class Process(object):
 
     - Starting a processes, and managing their handles, stdouts and stderrs
       (e.g. `Run Process` and `Start New Process` keywords).
-    - Stopping processes started by this library (e.g. `Kill All Processes` and
+    - Stopping processes started by this library (e.g. `Terminate All Processes` and
       `Terminate Process` keywords). See `Stopping processes` for more information.
     - Switching between processes (e.g. `Switch Active Process` keyword).
-    - Checking process status (e.g. `Process Should Be Alive` and
-      `Process Should Be Dead` keywords).
+    - Checking process status (e.g. `Process Should Be Running` and
+      `Process Should Be Stopped` keywords).
 
     == Table of contents ==
 
@@ -106,11 +106,11 @@ class Process(object):
         self._logs = dict()
         self._tempdir = tempfile.mkdtemp(suffix="processlib")
 
-    def run_process(self, command, *args, **conf):
+    def run_process(self, command, *arguments, **configuration):
         """This keyword runs a process and waits for it to terminate.
 
         The `command` is a child program which is started in a new process,
-        `args` are arguments for the `command` and `conf` are arguments for the
+        `arguments` are arguments for the `command` and `configuration` are arguments for the
         [http://docs.python.org/2.7/library/subprocess.html|subprocess] module's
         [http://docs.python.org/2.7/library/subprocess.html#subprocess.Popen|Popen]
         class (see `Configurations`).
@@ -119,16 +119,16 @@ class Process(object):
         """
         active_process_index = self._started_processes.current_index
         try:
-            p = self.start_new_process(command, *args, **conf)
+            p = self.start_new_process(command, *arguments, **configuration)
             return self.wait_for_process(p)
         finally:
             self._started_processes.switch(active_process_index)
 
-    def start_new_process(self, command, *args, **conf):
+    def start_new_process(self, command, *arguments, **configuration):
         """This keyword starts a new process.
 
         The `command` is a child program which is started in a new process,
-        `args` are arguments for the `command` and `conf` are arguments for the
+        `arguments` are arguments for the `command` and `configuration` are arguments for the
         [http://docs.python.org/2.7/library/subprocess.html|subprocess] module's
         [http://docs.python.org/2.7/library/subprocess.html#subprocess.Popen|Popen]
         class (see `Configurations`).
@@ -142,8 +142,8 @@ class Process(object):
         | $handle1}= | `Start New Process` | /bin/script.sh | |
         | $handle2}= | `Start New Process` | totals | |
         """
-        config = NewProcessConfig(self._tempdir, **conf)
-        p = subprocess.Popen(self._cmd(args, command, config.shell),
+        config = NewProcessConfig(self._tempdir, **configuration)
+        p = subprocess.Popen(self._cmd(arguments, command, config.shell),
                              stdout=config.stdout_stream,
                              stderr=config.stderr_stream,
                              stdin=subprocess.PIPE,
@@ -161,37 +161,37 @@ class Process(object):
             cmd = command
         return cmd
 
-    def process_is_alive(self, handle=None):
-        """This keyword checks if process with `handle` is alive or not.
+    def process_is_running(self, handle=None):
+        """This keyword checks if process with `handle` is running or not.
 
         Argument `handle` is optional, if `None` then the active process is used.
 
-        Return value is either `True` (process is alive) or `False`
-        (process has terminated).
+        Return value is either `True` (process is running) or `False`
+        (process has stopped).
         """
         return self._process(handle).poll() is None
 
-    def process_should_be_alive(self, handle=None):
-        """Assertion keyword, which expects that process with `handle` is alive.
+    def process_should_be_running(self, handle=None):
+        """Assertion keyword, which expects that process with `handle` is running.
         Argument `handle` is optional, if `None` then the active process is used.
 
-        Check is done using `Process Is Alive` keyword.
+        Check is done using `Process Is Running` keyword.
 
-        Raises an error if process is dead.
+        Raises an error if process is stopped.
         """
-        if not self.process_is_alive(handle):
-            raise AssertionError('Process is not alive')
+        if not self.process_is_running(handle):
+            raise AssertionError('Process is not running')
 
-    def process_should_be_dead(self, handle=None):
-        """Assertion keyword, which expects that process with `handle` is dead.
+    def process_should_be_stopped(self, handle=None):
+        """Assertion keyword, which expects that process with `handle` is stopped.
         Argument `handle` is optional, if `None` then the active process is used.
 
-        Check is done using `Process Is Alive` keyword.
+        Check is done using `Process Is Running` keyword.
 
-        Raises an error if process is alive.
+        Raises an error if process is running.
         """
-        if self.process_is_alive(handle):
-            raise AssertionError('Process is alive')
+        if self.process_is_running(handle):
+            raise AssertionError('Process is running')
 
     def wait_for_process(self, handle=None):
         """This waits for process with `handle` to terminate.
@@ -253,12 +253,12 @@ class Process(object):
             else:
                 raise AssertionError('None Pid - can not kill process!')
 
-    def kill_all_processes(self):
+    def terminate_all_processes(self, kill=True):
         """This keyword terminates all processes started by the library.
         """
         for handle in range(len(self._started_processes._connections)):
-            if self.process_is_alive(handle):
-                self.terminate_process(handle, kill=True)
+            if self.process_is_running(handle):
+                self.terminate_process(handle, kill=kill)
 
     def get_process_id(self, handle=None):
         """Returns a process ID of process with `handle`.
@@ -277,17 +277,12 @@ class Process(object):
         """
         return self._process(handle).pid
 
-    def input_to_process(self, msg, handle=None):
-        """This keyword can be used to communicate with the process with `handle`.
+    def get_process_object(self, handle=None):
+        """Return the process object with `handle`.
 
         Argument `handle` is optional, if `None` then the active process is used.
-
-        Examples:
-
-        | `Wait For Process` | ${handle3} | |
-        | `Input To Process` | ${PASSWORD} | ${handle3} |
         """
-        self._process(handle).communicate(msg+'\n')
+        return self._process(handle)
 
     def switch_active_process(self, handle):
         """This keyword switches active process into process with `handle`.
@@ -312,22 +307,22 @@ class ExecutionResult(object):
 
     _stdout = _stderr = None
 
-    def __init__(self, stdout_name, stderr_name, exit_code=None):
-        self._stdout_name = stdout_name
-        self._stderr_name = stderr_name
+    def __init__(self, stdout_path, stderr_path, exit_code=None):
+        self.stdout_path = stdout_path
+        self.stderr_path = stderr_path
         self.exit_code = exit_code
 
     @property
     def stdout(self):
         if self._stdout is None:
-            with open(self._stdout_name,'r') as f:
+            with open(self.stdout_path,'r') as f:
                 self._stdout = f.read()
         return self._stdout
 
     @property
     def stderr(self):
         if self._stderr is None:
-            with open(self._stderr_name,'r') as f:
+            with open(self.stderr_path,'r') as f:
                 self._stderr = f.read()
         return self._stderr
 
@@ -335,7 +330,7 @@ class ExecutionResult(object):
         return """\
 stdout_name : %s
 stderr_name : %s
-exit_code   : %d""" % (self._stdout_name, self._stderr_name, self.exit_code)
+exit_code   : %d""" % (self.stdout_path, self.stderr_path, self.exit_code)
 
 
 class NewProcessConfig(object):

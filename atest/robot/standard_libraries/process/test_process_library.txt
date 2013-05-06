@@ -1,6 +1,7 @@
 *** Settings ***
 Suite Setup      Run Tests    ${EMPTY}    standard_libraries/process/test_process_library.txt
-Force Tags       regression    pybot      #FIXME: MAKE THESE TESTS RUN ON JYTHON
+Test Setup       Check Preconditions
+Force Tags       regression    pybot    jybot
 Resource         atest_resource.txt
 
 *** Test Cases ***
@@ -75,3 +76,7 @@ Current working directory should be used with stdout and stderr
 
 Current working directory should not be used with stdout and stderr when absolute path in use
     Check Test Case    ${TESTNAME}
+
+*** Keywords ***
+Check Preconditions
+    Run Keyword If   '${SUITE.metadata.get('info')}' == 'precondition_fail'   Fail  precondition fail  -regression
