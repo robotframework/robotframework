@@ -411,7 +411,7 @@ for loop. If executed outside of a for loop, the test fails.
    ============  ===============  ==============  =================  =============  ========
      Test Case     Action           Argument        Argument          Argument      Argument
    ============  ===============  ==============  =================  =============  ========
-   Exit Example  {text}=          Set Variable    ${EMPTY}
+   Exit Example  ${text}=         Set Variable    ${EMPTY}
    \             :FOR             ${var}          IN                 one            two
    \                              Run Keyword If  '${var}' == 'two'  Exit For Loop
    \                              ${text}=        Set Variable       ${text}${var}
@@ -438,14 +438,14 @@ In addition to exiting a for loop mid-iteration, it is also possible to continue
    ================  ===============  ==============  ======================  =================  ========  ========
        Test Case     Action           Argument        Argument                Argument           Argument  Argument
    ================  ===============  ==============  ======================  =================  ========  ========
-   Continue Example  {text}=          Set Variable    ${EMPTY}
+   Continue Example  ${text}=         Set Variable    ${EMPTY}
    \                 :FOR             ${var}          IN                      one                 two       three
    \                                  Run Keyword If  '${var}' == 'two'       Continue For Loop
    \                                  ${text}=        Set Variable            ${text}${var}
    \                 Should Be Equal  ${text}          onethree
    ================  ===============  ==============  ======================  =================  ========  ========
 
-.. note:: Continue for loop functionality is new in Robot Framework 2.8
+.. note:: Continue for loop functionality is new in Robot Framework 2.8.
 
 
 Removing unnecessary keywords from outputs
