@@ -343,16 +343,47 @@ class _Verify:
         raise error
 
     def continue_for_loop(self):
+        """Continues executing the enclosing for loop.
+
+        This keyword can be used in a for loop or in a keyword that the for loop
+        uses. In both cases the test execution continues with the next iteration
+        of the for loop. If executed outside of a for loop, the test fails.
+
+        Example:
+        | :FOR | ${var} | IN | @{SOME LIST} |
+        |      | Run Keyword If | '${var}' == 'CONTINUE' | Continue For Loop |
+        |      | Do Something   | ${var} |
+
+        To conditionally continue for loop, see `Continue For Loop If`.
+
+        New in Robot Framework 2.8.
+        """
         error = AssertionError('Continue for loop without enclosing for loop.')
         error.ROBOT_CONTINUE_FOR_LOOP = True
         raise error
 
     def continue_for_loop_if(self, condition):
+        """Continues to the next iteration of the enclosing loop if given condition is true.
+
+        This keyword can be used directly in a for loop or in a keyword that
+        the for loop uses. In both cases the test executions continues with the
+        next iteration of the for loop. If executed outside of a for loop, the
+        test fails.
+
+        To unconditionally continue for loop, see `Continue For Loop`.
+
+        Example:
+        | :FOR | ${var} | IN | @{SOME LIST} |
+        |      | Continue For Loop If | '${var}' == 'CONTINUE' |
+        |      | Do Something | ${var} |
+
+        New in Robot Framework 2.8.
+        """
         if self._is_true(condition):
             self.continue_for_loop()
 
     def exit_for_loop(self):
-        """Immediately stops executing the enclosing for loop.
+        """Stops executing the enclosing for loop.
 
         This keyword can be used directly in a for loop or in a keyword that
         the for loop uses. In both cases the test execution continues after
@@ -374,8 +405,7 @@ class _Verify:
         raise error
 
     def exit_for_loop_if(self, condition):
-        """Immediately stops executing the enclosing for loop if given
-        condition is true.
+        """Stops executing the enclosing for loop if given condition is true.
 
         This keyword can be used directly in a for loop or in a keyword that
         the for loop uses. In both cases the test execution continues after
