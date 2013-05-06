@@ -1755,13 +1755,16 @@ class _Misc:
         This keyword supports importing libraries both using library
         names and physical paths. When paths are used, they must be
         given in absolute format. Forward slashes can be used as path
-        separators in all operating systems. It is possible to use
-        arguments and to give a custom name with 'WITH NAME' syntax.
+        separators in all operating systems.
+
+        It is possible to pass arguments to the imported library and also
+        named argument syntax works if the library supports it. 'WITH NAME'
+        syntax can be used to give a custom name to the imported library.
 
         Examples:
         | Import Library | MyLibrary |
-        | Import Library | ${CURDIR}/Library.py | some | args |
-        | Import Library | ${CURDIR}/../libs/Lib.java | arg | WITH NAME | JavaLib |
+        | Import Library | ${CURDIR}/../Library.py | arg1 | named=arg2 |
+        | Import Library | ${LIBRARIES}/Lib.java | arg | WITH NAME | JavaLib |
         """
         try:
             self._namespace.import_library(name.replace('/', os.sep), list(args))

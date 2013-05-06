@@ -45,6 +45,12 @@ Import Library Arguments Are Resolved Only Once
     Should Be Equal  ${first}  c:\\temp
     Should Be Equal  ${second}  \${not var}
 
+Import Library With Named Arguments
+    Import Library  ParameterLibrary  port=${2}  host=first  WITH NAME  Named
+    ${first}  ${second} =  Named.Parameters
+    Should Be Equal  ${first}  first
+    Should Be Equal  ${second}  ${2}
+
 Import Library Failure Is Catchable
     Run Keyword And Expect Error  Importing test library 'NonExistingLib' failed: ImportError: *
     ...  Import Library  NonExistingLib

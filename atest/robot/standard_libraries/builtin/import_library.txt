@@ -25,5 +25,8 @@ Import Library Using Physical Path, Arguments And WITH NAME
 Import Library Arguments Are Resolved Only Once
     Check Test Case  ${TEST NAME}
 
+Import Library With Named Arguments
+    Check Test Case  ${TEST NAME}
+
 Import Library Failure Is Catchable
     Check Test Case  ${TESTNAME}
