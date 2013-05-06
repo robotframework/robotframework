@@ -36,19 +36,24 @@ class UserLibrary(BaseLibrary):
         self.embedded_arg_handlers = []
         for kw in user_keywords:
             try:
-                handler = EmbeddedArgsTemplate(kw, self.name)
+                handler = self._create_handler(kw)
             except DataError, err:
                 LOGGER.error("Creating user keyword '%s' failed: %s"
                              % (kw.name, unicode(err)))
                 continue
-            except TypeError:
-                handler = UserKeywordHandler(kw, self.name)
-            else:
-                self.embedded_arg_handlers.append(handler)
             if handler.name in self.handlers:
                 error = "Keyword '%s' defined multiple times." % handler.name
                 handler = UserErrorHandler(handler.name, error)
             self.handlers[handler.name] = handler
+
+    def _create_handler(self, kw):
+        try:
+            handler = EmbeddedArgsTemplate(kw, self.name)
+        except TypeError:
+            handler = UserKeywordHandler(kw, self.name)
+        else:
+            self.embedded_arg_handlers.append(handler)
+        return handler
 
     def _get_name_for_resource_file(self, path):
         if path is None:
@@ -107,8 +112,9 @@ class UserKeywordHandler(object):
         self.teardown = keyword.teardown
         self.libname = libname
         self.doc = self._doc = keyword.doc.value
+        self.arguments = UserKeywordArgumentParser().parse(self.longname,
+                                                           keyword.args.value)
         self._timeout = keyword.timeout
-        self._keyword_args = keyword.args.value
 
     @property
     def longname(self):
@@ -132,29 +138,25 @@ class UserKeywordHandler(object):
             context.end_user_keyword()
 
     def _run(self, context, arguments):
-        # TODO: Could arguments be parsed already in __init__?
-        argspec = UserKeywordArgumentParser().parse(self.longname,
-                                                    self._keyword_args)
         variables = context.get_current_vars()
         if context.dry_run:
-            return self._dry_run(context, variables, argspec, arguments)
-        return self._normal_run(context, variables, argspec, arguments)
+            return self._dry_run(context, variables, arguments)
+        return self._normal_run(context, variables, arguments)
 
-    def _dry_run(self, context, variables, argspec, arguments):
-        arguments = self._resolve_dry_run_args(argspec, arguments)
-        error = self._execute(context, variables, argspec, arguments)
+    def _dry_run(self, context, variables, arguments):
+        arguments = self._resolve_dry_run_args(arguments)
+        error = self._execute(context, variables, arguments)
         if error:
             raise error
 
-    def _resolve_dry_run_args(self, argspec, arguments):
-        ArgumentValidator(argspec).validate_dry_run(arguments)
-        required_args = argspec.minargs + len(argspec.defaults)
-        missing_args = required_args - len(arguments)
+    def _resolve_dry_run_args(self, arguments):
+        ArgumentValidator(self.arguments).validate_dry_run(arguments)
+        missing_args = len(self.arguments.positional) - len(arguments)
         return arguments + [None] * missing_args
 
-    def _normal_run(self, context, variables, argspec, arguments):
-        arguments = self._resolve_arguments(argspec, arguments, variables)
-        error = self._execute(context, variables, argspec, arguments)
+    def _normal_run(self, context, variables, arguments):
+        arguments = self._resolve_arguments(arguments, variables)
+        error = self._execute(context, variables, arguments)
         if error and not error.can_continue(context.teardown):
             raise error
         return_value = self._get_return_value(variables)
@@ -163,15 +165,15 @@ class UserKeywordHandler(object):
             raise error
         return return_value
 
-    def _resolve_arguments(self, argspec, arguments, variables):
-        resolver = ArgumentResolver(argspec)
-        mapper = ArgumentMapper(argspec)
+    def _resolve_arguments(self, arguments, variables):
+        resolver = ArgumentResolver(self.arguments)
+        mapper = ArgumentMapper(self.arguments)
         positional, named = resolver.resolve(arguments, variables)
         return mapper.map(positional, named, variables)
 
-    def _execute(self, context, variables, argspec, arguments):
-        self._set_variables(argspec, arguments, variables)
-        context.output.trace(lambda: self._log_args(argspec, variables))
+    def _execute(self, context, variables, arguments):
+        self._set_variables(arguments, variables)
+        context.output.trace(lambda: self._log_args(variables))
         self._verify_keyword_is_valid()
         self.timeout.start()
         try:
@@ -184,23 +186,25 @@ class UserKeywordHandler(object):
         if error or td_error:
             return UserKeywordExecutionFailed(error, td_error)
 
-    def _set_variables(self, argspec, arguments, variables):
-        before_varargs, varargs = self._split_args_and_varargs(argspec, arguments)
-        for name, value in zip(argspec.positional, before_varargs):
+    def _set_variables(self, arguments, variables):
+        before_varargs, varargs = self._split_args_and_varargs(arguments)
+        for name, value in zip(self.arguments.positional, before_varargs):
             variables['${%s}' % name] = value
-        if argspec.varargs:
-            variables['@{%s}' % argspec.varargs] = varargs
+        if self.arguments.varargs:
+            variables['@{%s}' % self.arguments.varargs] = varargs
 
-    def _split_args_and_varargs(self, argspec, args):
-        if not argspec.varargs:
+    def _split_args_and_varargs(self, args):
+        if not self.arguments.varargs:
             return args, []
-        return args[:len(argspec.positional)], args[len(argspec.positional):]
+        positional = len(self.arguments.positional)
+        return args[:positional], args[positional:]
 
-    def _log_args(self, argspec, variables):
-        positional = ['${%s}' % arg for arg in argspec.positional]
-        varargs = ['@{%s}' % argspec.varargs] if argspec.varargs else []
+    def _log_args(self, variables):
+        args = ['${%s}' % arg for arg in self.arguments.positional]
+        if self.arguments.varargs:
+            args.append('@{%s}' % self.arguments.varargs)
         args = ['%s=%s' % (name, utils.safe_repr(variables[name]))
-                for name in positional + varargs]
+                for name in args]
         return 'Arguments: [ %s ]' % ' | '.join(args)
 
     def _run_teardown(self, context, error):

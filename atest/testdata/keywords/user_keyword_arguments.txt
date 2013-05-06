@@ -110,6 +110,18 @@ Calling Using List Variables
     A 3    @{LIST}    @{EMPTY}
     A 0 1    @{LIST}    @{EMPTY}
 
+Invalid Arguments Spec - Invalid argument syntax
+    [Documentation]    FAIL No keyword with name 'Invalid argument syntax' found.
+    Invalid argument syntax
+
+Invalid Arguments Spec - Non-default after defaults
+    [Documentation]    FAIL No keyword with name 'Non-default after defaults' found.
+    Non-default after defaults
+
+Invalid Arguments Spec - Varargs not last
+    [Documentation]    FAIL No keyword with name 'Varargs not last' found.
+    Varargs not last
+
 *** Keywords ***
 A 0
     [Return]    a_0
@@ -163,3 +175,15 @@ Default With Number Variable
 Default With Extended Variable Syntax
     [Arguments]    ${arg}=${VAR.upper()}
     [Return]    ${arg}
+
+Invalid argument syntax
+    [Arguments]    no deco
+    No Operation
+
+Non-default after defaults
+    [Arguments]    ${named}=value    ${positional}
+    No Operation
+
+Varargs not last
+    [Arguments]    @{varargs}    ${positional}
+    No Operation

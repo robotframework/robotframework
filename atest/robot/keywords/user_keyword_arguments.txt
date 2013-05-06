@@ -50,3 +50,16 @@ Default With Extended Variable Syntax
 
 Calling Using List Variables
     Check Test Case    ${TESTNAME}
+
+Invalid Arguments Spec
+    [Template]    Verify Invalid Argument Spec
+    0    Invalid argument syntax    Invalid argument 'no deco'.
+    1    Non-default after defaults    Non-default argument after default arguments.
+    2    Varargs not last    Only last argument can be varargs.
+
+*** Keywords ***
+Verify Invalid Argument Spec
+    [Arguments]    ${index}    ${name}    ${error}
+    Check Test Case    ${TEST NAME} - ${name}
+    Check Log Message    ${ERRORS[${index}]}
+    ...    Creating user keyword '${name}' failed: ${error}    ERROR
