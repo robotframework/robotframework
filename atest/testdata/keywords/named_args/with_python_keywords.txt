@@ -83,7 +83,23 @@ Named combinations with varargs
     a, b                 a     b
     a, b                 a     b=b
     a, b, c              a     b      c
-    a, b, c=c            a     b      c=c
+    a, 2 (int), c=c            a     ${2}      c=c
+
+Kwargs alone
+    ${result} =    Lib Kwargs
+    Should Be Equal    ${result}    ${EMPTY}
+    ${result} =    Lib Kwargs    foo=1    bar=${2}
+    Should Be Equal    ${result}    bar:2 (int), foo:1
+
+Kwargs with positional and named
+    ${result} =    Lib Mandatory Named And Kwargs    mandatory
+    Should Be Equal    ${result}    mandatory, 2 (int)
+    ${result} =    Lib Mandatory Named And Kwargs    mandatory    optional
+    Should Be Equal    ${result}    mandatory, optional
+    ${result} =    Lib Mandatory Named And Kwargs    mandatory    b=optional
+    Should Be Equal    ${result}    mandatory, optional
+    ${result} =    Lib Mandatory Named And Kwargs    b=2    c=3    a=1    d=4
+    Should Be Equal    ${result}    1, 2, c:3, d:4
 
 Non working named combinations with varargs
     [template]           Execute illegal named vararg combination
@@ -95,6 +111,13 @@ Non working named combinations with varargs
     Keyword 'python_library.Lib Mandatory Named And Varargs' got multiple values for argument 'b'.            a    b     b=b
     Keyword 'python_library.Lib Mandatory Named And Varargs' got multiple values for argument 'a'.            a    a=a
     Keyword 'python_library.Lib Mandatory Named And Varargs' got multiple values for argument 'a'.            a    b     c    a=a
+
+Non working combinations with kwargs
+   [template]            Execute illegal combinations with kwargs
+   missing value for argument 'a'.                  b=2
+   missing value for argument 'a'.                  b=2    c=3    d=4
+   expected 1 to 2 non-keyword arguments, got 0.
+   expected 1 to 2 non-keyword arguments, got 3.    1      2      3
 
 Named combinations without varargs
     [template]           Execute working named combination with result
@@ -135,7 +158,7 @@ Test escaping with all argument types
 
 Illegal combinations with all argument types
    [template]            Execute illegal combinations with everything
-   Keyword 'python_library.Lib Mandatory Named Varargs And Kwargs' missing value for argument 'a'.                   d1=d
+   Keyword 'python_library.Lib Mandatory Named Varargs And Kwargs' expected at least 1 non-keyword argument, got 0.              d1=d
    Keyword 'python_library.Lib Mandatory Named Varargs And Kwargs' got multiple values for argument 'a'.             a     a=a
    Keyword 'python_library.Lib Mandatory Named Varargs And Kwargs' got multiple values for argument 'a'.             a=a   a=a
    Keyword 'python_library.Lib Mandatory Named Varargs And Kwargs' got positional argument after named arguments.    a=a   b
@@ -179,6 +202,11 @@ Execute illegal named vararg combination
     [arguments]    ${expected error}   @{args}
     ${res} =       Get result or error    Lib Mandatory Named and varargs   @{args}
     Should be equal     ${res}     ${expected error}
+
+Execute illegal combinations with kwargs
+    [arguments]    ${expected error}   @{args}
+    ${res} =       Get result or error    Lib Mandatory Named and Kwargs   @{args}
+    Should be equal     ${res}     Keyword 'python_library.Lib Mandatory Named And Kwargs' ${expected error}
 
 Execute working named combination with result
     [arguments]    ${expected}  @{args}

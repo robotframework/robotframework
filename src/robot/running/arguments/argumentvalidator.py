@@ -32,7 +32,7 @@ class ArgumentValidator(object):
             self._validate_limits(arguments, {}, self._argspec)
 
     def _validate_limits(self, positional, named, spec):
-        count = len(positional) + len(named)
+        count = len(positional) + sum(1 for n in named if n in spec.positional)
         if not spec.minargs <= count <= spec.maxargs:
             self._raise_wrong_count(count, spec)
 
@@ -40,10 +40,12 @@ class ArgumentValidator(object):
         minend = plural_or_not(spec.minargs)
         if spec.minargs == spec.maxargs:
             expected = '%d argument%s' % (spec.minargs, minend)
-        elif not (spec.varargs or spec.kwargs):
+        elif not spec.varargs:
             expected = '%d to %d arguments' % (spec.minargs, spec.maxargs)
         else:
             expected = 'at least %d argument%s' % (spec.minargs, minend)
+        if spec.kwargs:
+            expected = expected.replace('argument', 'non-keyword argument')
         raise DataError("%s '%s' expected %s, got %d."
                         % (spec.type, spec.name, expected, count))
 
