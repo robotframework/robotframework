@@ -1,5 +1,5 @@
 *** Settings ***
-Suite Setup     Run Tests  --loglevel trace  keywords/named_args/with_dynamic_library_keywords.txt
+Suite Setup     Run Tests  --loglevel trace  keywords/named_args/with_dynamic_keywords.txt
 Force Tags      pybot  jybot  regression
 Resource        atest_resource.txt
 
