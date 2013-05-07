@@ -244,6 +244,7 @@ class _PropertyPopulator(Populator):
         self._setter = setter
         self._value = []
         self._comments = Comments()
+        self._data_added = False
 
     def add(self, row):
         if not row.is_commented():
@@ -251,7 +252,8 @@ class _PropertyPopulator(Populator):
         self._comments.add(row)
 
     def _add(self, row):
-        self._value.extend(row.dedent().data)
+        self._value.extend(row.tail if not self._data_added else row.data)
+        self._data_added = True
 
 
 class VariablePopulator(_PropertyPopulator):
@@ -262,12 +264,6 @@ class VariablePopulator(_PropertyPopulator):
 
     def populate(self):
         self._setter(self._name, self._value, self._comments.value)
-
-    def _add(self, row):
-        if row.head == '':
-            self._value.extend(row.dedent().data)
-            return
-        self._value.extend(row._tail)
 
 
 class SettingPopulator(_PropertyPopulator):

@@ -6,8 +6,7 @@ Resource        atest_resource.txt
 *** Test Cases ***
 Multirow Settings
     Should Be Equal  ${SUITE.doc}  NO RIDE!! This doc is one long string\n!\n!\n!\n!
-    @{expected}=  Evaluate   ['t'+str(i) for i in range(1,10)]
-    Should Contain Tags   ${SUITE.tests[0]}   @{expected}
+    Should Contain Tags   ${SUITE.tests[0]}  ...  t1  t2  t3  t4  t5  t6  t7  t8  t9
 
 Multirow Variables
     Check Test Case  ${TEST NAME}
