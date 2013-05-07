@@ -14,8 +14,6 @@
 
 import sys
 
-from robot import utils
-
 
 class ArgumentSpec(object):
 
