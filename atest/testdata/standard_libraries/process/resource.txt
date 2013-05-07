@@ -7,7 +7,8 @@ Some process
 Stop some process
     [Arguments]    ${alias}=${null}
     ${process}=    Get Process Object   ${alias}
-    Log   ${process.communicate("stop\n")}
+    Log   ${process.stdin.write("stop\n")}
+    Log   ${process.stdin.close()}
 
 Result should equal
     [Arguments]    ${result}    ${stdout}=    ${stderr}=    ${exit_code}=0
