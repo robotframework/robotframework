@@ -6,21 +6,37 @@ Default Tags    pybot  jybot
 Resource        atest_resource.txt
 
 *** Test Cases ***
-Library Import Fails Because Not a Library
-    ${path} =  Normalize Path  ${CURDIR}/../../testdata/test_libraries/MyInvalidLibFile.py
-    Check Failure From Output  0  Importing test library '${path}' failed: ImportError: I'm not really a library!  raise ImportError("I'm not really a library!")
+Not a Library
+    ${path} =  Normalize Path  ${DATADIR}/test_libraries/MyInvalidLibFile.py
+    Import Should Have Failed  0
+    ...  Importing test library '${path}' failed: ImportError: I'm not really a library!
+    ...  raise ImportError("I'm not really a library!")
 
-Library Import Fails Because Initialization Fails
-    Check Failure From Output  2  Creating an instance of the test library 'InitializationFailLibrary' with no arguments failed: Initialization failed!  InitializationFailLibrary.py", line 4, in __init__
+Initializing Fails Without Arguments
+    Import Should Have Failed  1
+    ...  Initializing test library 'InitializationFailLibrary' with no arguments failed: Initialization failed with arguments 'default 1' and 'default 2'!
+    ...  InitializationFailLibrary.py", line 5, in __init__
 
-Library Import Failing In Java
+Initializing Fails With Arguments
+    Import Should Have Failed  2
+    ...  Initializing test library 'InitializationFailLibrary' with arguments [ 1 | arg2=2 ] failed: Initialization failed with arguments 1 and 2!
+    ...  InitializationFailLibrary.py", line 5, in __init__
+
+Initializing Fails Due To Too Many Arguments
+    Import Should Have Failed  3
+    ...  Test Library 'InitializationFailLibrary' expected 0 to 2 arguments, got 3.
+
+Initializing Java Library Fails
     [Tags]  jybot
-    Check Failure From Output  1  Creating an instance of the test library 'InitializationFailJavaLibrary' with no arguments failed: Initialization failed!  at InitializationFailJavaLibrary.<init>(InitializationFailJavaLibrary.java:4)
+    Import Should Have Failed  4
+    ...  Initializing test library 'InitializationFailJavaLibrary' with no arguments failed: Initialization failed!
+    ...  at InitializationFailJavaLibrary.<init>(InitializationFailJavaLibrary.java:4)
 
 *** Keywords ***
-Check Failure From Output
+Import Should Have Failed
     [Arguments]  ${index}  ${expected message}  ${expected traceback}=
     ${message} =  Set Variable  ${ERRORS.msgs[${index}].message}
-    Should Contain  ${message}  ${expected message}
+    ${path} =   Normalize Path  ${DATADIR}/test_libraries/library_import_failing.txt
+    Should Start With  ${message}  Error in file '${path}' in table 'Settings': ${expected message}
     Should Contain  ${message}  ${expected traceback}
 

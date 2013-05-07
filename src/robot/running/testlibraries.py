@@ -207,14 +207,14 @@ class _BaseTestLibrary(BaseLibrary):
 
     def _raise_creating_instance_failed(self):
         msg, details = utils.get_error_details()
-        # FIXME: Error doesn't contain named args
-        if self.positional_args:
-            args = "argument%s %s" % (utils.plural_or_not(self.positional_args),
-                                      utils.seq2str(self.positional_args))
+        if self.positional_args or self.named_args:
+            args = self.positional_args \
+                    + ['%s=%s' % item for item in self.named_args.items()]
+            args_text = 'arguments %s' % utils.seq2str2(args)
         else:
-            args = "no arguments"
-        raise DataError("Creating an instance of the test library '%s' with %s "
-                        "failed: %s\n%s" % (self.name, args, msg, details))
+            args_text = 'no arguments'
+        raise DataError("Initializing test library '%s' with %s failed: %s\n%s"
+                        % (self.name, args_text, msg, details))
 
 
 class _ClassLibrary(_BaseTestLibrary):

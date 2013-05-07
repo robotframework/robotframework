@@ -1,7 +1,9 @@
 *** Settings ***
 Library         MyInvalidLibFile.py
-Library         InitializationFailJavaLibrary.java
 Library         InitializationFailLibrary.py
+Library         InitializationFailLibrary.py    ${1}    arg2=${2}
+Library         InitializationFailLibrary.py    too    many    values
+Library         InitializationFailJavaLibrary.java
 
 *** Test Cases ***
 Test

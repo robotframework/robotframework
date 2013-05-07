@@ -27,7 +27,7 @@ Invalid Java Libraries Do Not Cause Fatal Errors
 Init Error
     [Arguments]    ${index}    ${name}
     Verify Error    ${index}
-    ...   Creating an instance of the test library '${name}' with no arguments failed: TypeError: *
+    ...   Initializing test library '${name}' with no arguments failed: TypeError: *
 
 Limit Error
     [Arguments]    ${index}    ${name}    ${arg count}
