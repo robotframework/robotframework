@@ -227,6 +227,7 @@ standard libraries:
   - `Dialogs`_
   - `Screenshot`_
   - `Remote`_
+  - `Process`_
 
 The BuiltIn library is special, because it is taken into use
 automatically and thus its keywords are always available. Other
@@ -344,6 +345,16 @@ Robot Framework natively.
 
 See separate `Remote library interface`_ section for more information
 about the concept. This library is new in Robot Framework 2.1.
+
+Process library
+'''''''''''''''
+
+The Process library has keywords for running processes. This library is
+implemented with Python's Subprocess module and it has some restrictions
+when used with Jython, and at the moment is not supported with IronPython.
+
+For more information, see the `Process library documentation`_. This
+library is new in Robot Framework 2.8.
 
 
 External libraries
