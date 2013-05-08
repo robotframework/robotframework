@@ -50,6 +50,13 @@ except NameError:
         return prefix + ''.join(reversed(bins))
 
 
+def run_keyword_variant(resolve):
+    def decorator(method):
+        RUN_KW_REGISTER.register_run_keyword('BuiltIn', method.__name__, resolve)
+        return method
+    return decorator
+
+
 class _Converter:
 
     def convert_to_integer(self, item, base=None):
@@ -827,6 +834,7 @@ class _Variables:
         """
         return utils.NormalizedDict(self._variables.current, ignore='_')
 
+    @run_keyword_variant(resolve=0)
     def get_variable_value(self, name, default=None):
         """Returns variable value or `default` if the variable does not exist.
 
@@ -859,6 +867,7 @@ class _Variables:
                                               cut_long=False)
             self.log(msg, level)
 
+    @run_keyword_variant(resolve=0)
     def variable_should_exist(self, name, msg=None):
         """Fails unless the given variable exists within the current scope.
 
@@ -875,6 +884,7 @@ class _Variables:
             else "Variable %s does not exist" % name
         asserts.fail_unless(name in self._variables, msg)
 
+    @run_keyword_variant(resolve=0)
     def variable_should_not_exist(self, name, msg=None):
         """Fails if the given variable exists within the current scope.
 
@@ -937,6 +947,7 @@ class _Variables:
         else:
             return list(values)
 
+    @run_keyword_variant(resolve=0)
     def set_test_variable(self, name, *values):
         """Makes a variable available everywhere within the scope of the current test.
 
@@ -953,6 +964,7 @@ class _Variables:
         self._variables.set_test(name, value)
         self._log_set_variable(name, value)
 
+    @run_keyword_variant(resolve=0)
     def set_suite_variable(self, name, *values):
         """Makes a variable available everywhere within the scope of the current suite.
 
@@ -999,6 +1011,7 @@ class _Variables:
         self._variables.set_suite(name, value)
         self._log_set_variable(name, value)
 
+    @run_keyword_variant(resolve=0)
     def set_global_variable(self, name, *values):
         """Makes a variable available globally in all tests and suites.
 
@@ -1633,6 +1646,7 @@ class _Control:
         if self._is_true(condition):
             self.exit_for_loop()
 
+    @run_keyword_variant(resolve=0)
     def return_from_keyword(self, *return_values):
         raise ReturnFromKeyword(return_values)
 
@@ -1727,6 +1741,7 @@ class _Misc:
         for msg in messages:
             self.log(msg)
 
+    @run_keyword_variant(resolve=0)
     def comment(self, *messages):
         """Displays the given messages in the log file as keyword arguments.
 
@@ -1756,6 +1771,7 @@ class _Misc:
         self.log('Log level changed from %s to %s' % (old, level.upper()))
         return old
 
+    @run_keyword_variant(resolve=0)
     def import_library(self, name, *args):
         """Imports a library with the given name and optional arguments.
 
@@ -1784,6 +1800,7 @@ class _Misc:
         except DataError, err:
             raise RuntimeError(unicode(err))
 
+    @run_keyword_variant(resolve=0)
     def import_variables(self, path, *args):
         """Imports a variable file with the given path and optional arguments.
 
@@ -1808,6 +1825,7 @@ class _Misc:
         except DataError, err:
             raise RuntimeError(unicode(err))
 
+    @run_keyword_variant(resolve=0)
     def import_resource(self, path):
         """Imports a resource file with the given path.
 
@@ -2365,9 +2383,4 @@ def register_run_keyword(library, keyword, args_to_process=None):
 
 for name in [attr for attr in dir(_RunKeyword) if not attr.startswith('_')]:
     register_run_keyword('BuiltIn', getattr(_RunKeyword, name))
-for name in ['set_test_variable', 'set_suite_variable', 'set_global_variable',
-             'variable_should_exist', 'variable_should_not_exist', 'comment',
-             'get_variable_value', 'import_library', 'import_variables',
-             'import_resource', 'return_from_keyword']:
-    register_run_keyword('BuiltIn', name, 0)
 del name, attr
