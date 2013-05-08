@@ -49,15 +49,3 @@ Continue For Loop If True
 
 Continue For Loop If False
     Check Test Case    ${TESTNAME}
-
-*** Keyword ***
-Test And All Keywords Should Have Passed
-    ${tc} =    Check Test Case    ${TESTNAME}
-    All Keywords Should Have Passed    ${tc}
-
-All Keywords Should Have Passed
-    [Arguments]    ${tc or kw}
-    @{kws} =    Set Variable    ${tc or kw.kws}
-    :FOR    ${kw}    IN    @{kws}
-    \    Should Be Equal    ${kw.status}    PASS
-    \    All Keywords Should Have Passed    ${kw}
