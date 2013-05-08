@@ -219,38 +219,38 @@ class Variables(utils.NormalizedDict):
         return self.replace_string(item, var)
 
     def _cannot_have_variables(self, item):
-        return (not isinstance(item, basestring)) or '{' not in item
+        return not (isinstance(item, basestring) and '{' in item)
 
-    def replace_string(self, string, splitted=None, ignore_errors=False):
+    def replace_string(self, string, splitter=None, ignore_errors=False):
         """Replaces variables from a string. Result is always a string."""
         if self._cannot_have_variables(string):
             return utils.unescape(string)
         result = []
-        if splitted is None:
-            splitted = VariableSplitter(string, self._identifiers)
+        if splitter is None:
+            splitter = VariableSplitter(string, self._identifiers)
         while True:
-            if splitted.identifier is None:
+            if splitter.identifier is None:
                 result.append(utils.unescape(string))
                 break
-            result.append(utils.unescape(string[:splitted.start]))
+            result.append(utils.unescape(string[:splitter.start]))
             try:
-                value = self._get_variable(splitted)
+                value = self._get_variable(splitter)
             except DataError:
                 if not ignore_errors:
                     raise
-                value = string[splitted.start:splitted.end]
+                value = string[splitter.start:splitter.end]
             if not isinstance(value, unicode):
                 value = utils.unic(value)
             result.append(value)
-            string = string[splitted.end:]
-            splitted = VariableSplitter(string, self._identifiers)
+            string = string[splitter.end:]
+            splitter = VariableSplitter(string, self._identifiers)
         result = ''.join(result)
         return result
 
     def _get_variable(self, var):
         """'var' is an instance of a VariableSplitter"""
         # 1) Handle reserved syntax
-        if var.identifier not in ['$','@','%']:
+        if var.identifier not in '$@%':
             value = '%s{%s}' % (var.identifier, var.base)
             LOGGER.warn("Syntax '%s' is reserved for future use. Please "
                         "escape it like '\\%s'." % (value, value))
@@ -289,7 +289,7 @@ class Variables(utils.NormalizedDict):
         var_file = self._import_variable_file(path)
         try:
             variables = self._get_variables_from_var_file(var_file, args)
-            self._set_from_file(variables, overwrite, path)
+            self._set_from_file(variables, overwrite)
         except:
             amsg = 'with arguments %s ' % utils.seq2str2(args) if args else ''
             raise DataError("Processing variable file '%s' %sfailed: %s"
@@ -298,7 +298,7 @@ class Variables(utils.NormalizedDict):
 
     # This can be used with variables got from set_from_file directly to
     # prevent importing same file multiple times
-    def _set_from_file(self, variables, overwrite, path):
+    def _set_from_file(self, variables, overwrite=False):
         list_prefix = 'LIST__'
         for name, value in variables:
             if name.startswith(list_prefix):
