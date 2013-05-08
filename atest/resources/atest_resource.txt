@@ -309,7 +309,8 @@ Test Should Have Correct Keywords  [Arguments]  @{expected}
     [Return]  ${tc}
 
 Test And All Keywords Should Have Passed
-    ${tc} =    Check Test Case    ${TESTNAME}
+    [Arguments]    ${name}=${TESTNAME}
+    ${tc} =    Check Test Case    ${name}
     All Keywords Should Have Passed    ${tc}
 
 All Keywords Should Have Passed
