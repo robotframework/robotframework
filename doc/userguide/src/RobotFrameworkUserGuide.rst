@@ -163,6 +163,7 @@ Appendices
 .. _Dialogs: `Dialogs library`_
 .. _Screenshot: `Screenshot library`_
 .. _Remote: `Remote library`_
+.. _Process: `Process library`_
 .. _BuiltIn library documentation: ../libraries/BuiltIn.html
 .. _OperatingSystem library documentation: ../libraries/OperatingSystem.html
 .. _Telnet library documentation: ../libraries/Telnet.html
@@ -170,6 +171,7 @@ Appendices
 .. _String library documentation: ../libraries/String.html
 .. _Dialogs library documentation: ../libraries/Dialogs.html
 .. _Screenshot library documentation: ../libraries/Screenshot.html
+.. _Process library documentation: ../libraries/Process.html
 .. _SeleniumLibrary: http://code.google.com/p/robotframework-seleniumlibrary
 .. _Selenium2Library: https://github.com/rtomac/robotframework-selenium2library/wiki
 .. _SwingLibrary: http://code.google.com/p/robotframework-swinglibrary
