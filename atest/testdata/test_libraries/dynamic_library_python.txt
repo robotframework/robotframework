@@ -40,9 +40,8 @@ Dynamic libraries should work without argument specification
     Do Something else    something
     Do Something else    something    y=12
 
-
 Dynamic libraries should match named arguments same way as with user keywords
-    [Documentation]    PASS as these named arguments do not match the keyword's
+    [Documentation]    As these named arguments do not match the keyword's
     ...                argument spec, it should use them as strings to match the
     ...                positional arguments.
     ...                e.g. this should print strings 'x', 'y=1' and 'z=2'
