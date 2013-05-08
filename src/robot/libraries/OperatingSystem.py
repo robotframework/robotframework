@@ -93,7 +93,7 @@ class OperatingSystem:
     Paths beginning with `~` or `~username` are expanded to the current or
     specified user's home directory, respectively. The resulting path is
     operating system dependent, but typically e.g. `~/robot` is expanded to
-    `C:\\Users\\<user>\\robot` on Windows and `/home/<user>/robot` elsewhere.
+    `C:\\Users\\<user>\\robot` on Windows and `/home/<user>/robot` on Linuxes.
 
     Notice that the `~username` form does not work on Jython. Tilde expansion
     is a new feature in Robot Framework 2.8.
