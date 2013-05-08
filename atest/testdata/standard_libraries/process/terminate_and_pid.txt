@@ -66,7 +66,7 @@ Wait For Process Which Does Not Exist
 
 *** Keywords ***
 Check Preconditions
-    ${is_ok}=   Evaluate   sys.version_info >= (2,6)   sys
+    ${is_ok}=   Evaluate   sys.version_info >= (2,6) and sys.platform != 'cli'   sys
     Run Keyword If  not ${is_ok}    Set Suite Metadata  info   precondition_fail
     Run Keyword If  not ${is_ok}    Fail
 
