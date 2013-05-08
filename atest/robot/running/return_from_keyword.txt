@@ -48,3 +48,10 @@ With continuable failure
 
 With continuable failure in for loop
     Check Test Case    ${TESTNAME}
+
+Return From Keyword If
+    Test And All Keywords Should Have Passed
+
+Return From Keyword If does not evaluate bogus arguments if condition is untrue
+    Test And All Keywords Should Have Passed
+

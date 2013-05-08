@@ -1650,6 +1650,10 @@ class _Control:
     def return_from_keyword(self, *return_values):
         raise ReturnFromKeyword(return_values)
 
+    @run_keyword_variant(resolve=1)
+    def return_from_keyword_if(self, condition, *return_values):
+        if self._is_true(condition):
+            self.return_from_keyword(*return_values)
 
 class _Misc:
 

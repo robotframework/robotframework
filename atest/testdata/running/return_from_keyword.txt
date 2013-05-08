@@ -79,6 +79,14 @@ With continuable failure in for loop
     ${ret}=    With continuable failure in for loop
     Should Be Equal    ${ret}    something to return
 
+Return From Keyword If
+    ${ret}=    With Return From Keyword If
+    Should Be Equal    ${ret}    something to return
+
+Return From Keyword If does not evaluate bogus arguments if condition is untrue
+    ${ret}=    Return From Keyword If with bogus arguments
+    Should Be Equal    ${ret}    true return value
+
 
 *** Keywords ***
 
@@ -150,3 +158,12 @@ With continuable failure in for loop
 With return in keyword inside teardown
     No Operation
     [Teardown]   Without return value
+
+With Return From Keyword If
+    Return From Keyword If    ${True}    something to return
+    Fail     Should have returned before this
+    [Return]     Should not ${evaluate}
+
+Return From Keyword If with bogus arguments
+    Return From Keyword If    ${False}    ${non existent variable}
+    [Return]    true return value
