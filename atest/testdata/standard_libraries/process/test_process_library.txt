@@ -1,6 +1,6 @@
 *** Settings ***
-Suite Setup       Some process    suite_process
-Suite Teardown    Stop some process    suite_process
+Suite Setup       Suite Setup
+Suite Teardown    Suite Teardown
 Test Teardown     Restart Suite Process If Needed
 Library           Process.py
 Library           OperatingSystem
@@ -123,3 +123,16 @@ Current working directory should not be used with stdout and stderr when absolut
 Restart Suite Process If Needed
     ${alive}=    Process Is Running    suite_process
     Run Keyword If    not ${alive}    Some process    suite_process
+
+Suite Setup
+    Check Preconditions
+    Some process    suite_process
+
+Suite Teardown
+    ${is_ok}=   Evaluate   sys.platform != 'cli'   sys
+    Run Keyword If  ${is_ok}   Stop some process    suite_process
+
+Check Preconditions
+    ${is_ok}=   Evaluate   sys.platform != 'cli'   sys
+    Run Keyword If  not ${is_ok}    Set Suite Metadata  info   precondition_fail
+    Run Keyword If  not ${is_ok}    Fail
