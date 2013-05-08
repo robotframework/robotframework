@@ -14,8 +14,6 @@
 
 import sys
 
-from robot import utils
-
 
 class ArgumentSpec(object):
 
@@ -34,5 +32,4 @@ class ArgumentSpec(object):
 
     @property
     def maxargs(self):
-        return len(self.positional) \
-            if not (self.varargs or self.kwargs) else sys.maxint
+        return len(self.positional) if not self.varargs else sys.maxint

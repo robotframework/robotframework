@@ -780,9 +780,9 @@ can be changed dynamically using keywords from the `BuiltIn`_ library.
    | ${KEYWORD MESSAGE}     | The possible error message of the current keyword.    | `Keyword   |
    |                        | New in Robot Framework 2.7                            | teardown`_ |
    +------------------------+-------------------------------------------------------+------------+
-   | ${OUTPUT FILE}         | An absolute path to the `output file`_.               | Everywhere |
+   | ${LOG LEVEL}           | Current `log level`_. New in Robot Framework 2.8.     | Everywhere |
    +------------------------+-------------------------------------------------------+------------+
-   | ${LOG_LEVEL}           | Current log level as text. New in Robot Framework 2.8 | Everywhere |
+   | ${OUTPUT FILE}         | An absolute path to the `output file`_.               | Everywhere |
    +------------------------+-------------------------------------------------------+------------+
    | ${LOG FILE}            | An absolute path to the `log file`_ or string NONE    | Everywhere |
    |                        | when no log file is created.                          |            |

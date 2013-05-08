@@ -293,7 +293,7 @@ the incompatible keywords.
           :code:`arg2=override`.
 
 The named argument syntax is used only when the part of the argument
-before the equal sign matches the name of an argument. 
+before the equal sign matches the name of an argument.
 This matching is started from the end of the given
 argument list and stopped when there is no match. In those rare cases
 when there are accidental matches, it is possible to use :code:`\\`
@@ -356,33 +356,51 @@ __ `Embedding arguments into keyword name`_
 Failures
 ~~~~~~~~
 
-Failures occur when any of the test case steps fail. Starting from Robot Framework 2.8,
-the `error messages can include HTML formatting`__, which allows to embed error related
-information into reports_ and logs_ in an accessible form.
+When test case fails
+''''''''''''''''''''
 
-__ `HTML in error messages`_
+A test case fails if any of the keyword it uses fails. Normally this means that
+execution of that test case is stopped, possible `test teardown`_ is executed,
+and then execution continues from the next test case. It is also possible to
+use special `continuable failures`__ if stopping test execution is not desired.
 
-Error messages can be given in test data like in example below. The `*HTML*` identifier followed by empty space needs
-to be at the beginning of the message if `HTML` formatting is needed.
+Error messages
+''''''''''''''
 
-.. table:: Keyword error message
+The error message assigned to a failed test case is got directly from the
+failed keyword. Often the error message is created by the keyword itself, but
+some keywords allow configuring them.
+
+In some circumstances, for example when continuable failures are used,
+a test case can fail multiple times. In that case the final error message
+is got by combining the individual errors. Very long error messages are
+automatically cut from the middle to keep reports_ easier to read. Full
+error messages are always visible in log_ file as a message of the failed
+keyword.
+
+By default error messages are normal text, but
+starting from Robot Framework 2.8 they can `contain HTML formatting`__. This
+is enabled by starting the error message with marker string :msg:`*HTML*`.
+This marker will be removed from the final error message shown in reports
+and logs. Using HTML in a custom message is shown in the second example below.
+
+.. table:: Keyword error messages
    :class: example
 
-   +--------------+----------------------+-------------------------------+------------+--------------------------------+
-   |  Test Case   |     Action           |       Argument                |  Argument  |        Argument                |
-   +==============+======================+===============================+============+================================+
-   | Simple       | [Documentation]      | Error msg when assert fails   |            |                                |
-   +--------------+----------------------+-------------------------------+------------+--------------------------------+
-   |              | ${my number}=        | Get Number                    |            |                                |
-   +--------------+----------------------+-------------------------------+------------+--------------------------------+
-   |              | Should Be Equal      | ${my number}                  |     42     | `*HTML*` Number is not my      |
-   |              | As Numbers           |                               |            | <b>MAGIC</b> number.           |
-   +--------------+----------------------+-------------------------------+------------+--------------------------------+
-   |              | Fail                 | `*HTML*` See more at          |            |                                |
-   |              |                      | <a href='robotframework.org'> |            |                                |
-   |              |                      | Robot Framework</a>           |            |                                |
-   +--------------+----------------------+-------------------------------+------------+--------------------------------+
+   +--------------+-----------------+---------------------+----------+-------------------------+
+   |  Test Case   |     Action      |       Argument      | Argument |        Argument         |
+   +==============+=================+=====================+==========+=========================+
+   | Normal Error | Fail            | This is a rather    |          |                         |
+   |              |                 | boring example...   |          |                         |
+   +--------------+-----------------+---------------------+----------+-------------------------+
+   | HTML Error   | ${number}=      | Get Number          |          |                         |
+   +--------------+-----------------+---------------------+----------+-------------------------+
+   |              | Should Be Equal | ${number}           | 42       | \*HTML\* Number is not  |
+   |              |                 |                     |          | my <b>MAGIC</b> number. |
+   +--------------+-----------------+---------------------+----------+-------------------------+
 
+__ `Continue on failure`_
+__ `HTML in error messages`_
 
 Test case name and documentation
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
