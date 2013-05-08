@@ -46,7 +46,7 @@ ${EXECDIR}
 $CURDIR
     Check Test Case  ${TESTNAME}
 
-Log Level
+${LOG LEVEL}
     Check Test Case  ${TESTNAME}
 
 Built-In Variables Cannot Be Overridden In Variable Table Or From CLI
