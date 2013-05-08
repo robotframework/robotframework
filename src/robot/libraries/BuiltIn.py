@@ -2077,17 +2077,18 @@ class _Misc:
             raise RuntimeError("'Set Test Message' keyword cannot be used in "
                                "suite setup or teardown")
         test.message = self._get_possibly_appended_value(test.message, message, append)
-        if message.startswith('*HTML*'):
-            message = message[6:].strip()
-            level = 'HTML'
-        else:
-            level = 'INFO'
+        message, level = self._get_logged_message_and_level(test.message)
         self.log('Set test message to:\n%s' % message, level)
 
     def _get_possibly_appended_value(self, initial, new, append):
         if not isinstance(new, unicode):
             new = utils.unic(new)
         return '%s %s' % (initial, new) if append and initial else new
+
+    def _get_logged_message_and_level(self, message):
+        if message.startswith('*HTML*'):
+            return message[6:].lstrip(), 'HTML'
+        return message, 'INFO'
 
     def set_test_documentation(self, doc, append=False):
         """Sets documentation for the current test case.
