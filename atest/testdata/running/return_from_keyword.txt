@@ -1,3 +1,7 @@
+*** Settings ***
+Suite Setup       Without return value
+Suite Teardown    Nested keywords with return
+
 *** Test Cases ***
 
 Without return value
@@ -24,9 +28,9 @@ With variable
 
 With list variable
     ${ret}=    With list variable    1    2    3
-    Should Be True    ${ret} == ['1', '2', '3']
+    Should Be True    ${ret} == ['0', '1', '2', '3']
 
-Keyword with escaping
+Escaping
     ${ret}=    With variable    \${not var}
     Should Be Equal    ${ret}    \${not var}
     ${ret}=    With variable    c:\\temp
@@ -36,29 +40,34 @@ In nested keyword
     ${ret}=    Nested keywords with return
     Should Be Equal    ${ret}    should be returned
 
-From for loop
+Inside for loop in keyword
     ${ret}=    With for loop
-    Should Be Equal    ${ret}     something to return
+    Should Be Equal    ${ret}     return foo
 
-Teardown is run
+Keyword teardown is run
     ${ret}=    With teardown    ${TEST NAME}
     Should Be Equal    ${ret}     something else to return
     Should Be Equal    ${test var}    ${TEST NAME}
 
-With Return From Keyword in teardown
+In a keyword inside keyword teardown
+    With return in keyword inside teardown
+
+Fails if used directly in keyword teardown
     [Documentation]    FAIL    Keyword teardown failed:
     ...                        Return from keyword without enclosing keyword
-    Return From Keyword in teardown
+    Returning directly from keyword teardown fails
     Fail    Should have failed before this
 
-Should fail if return inside test case
-    [Documentation]    FAIL    Return from keyword without enclosing keyword
+Fails if used outside keywords
+    [Documentation]    FAIL    Return from keyword without enclosing keyword\n\n
+    ...    Also teardown failed:\nReturn from keyword without enclosing keyword
     Return From Keyword    ${non existent variable}
+    [Teardown]    Return From Keyword
 
-Return values do not match unboxing
-    [Documentation]    FAIL    Cannot assign return values: Expected list-like object, got string instead.
-    ${a}    ${b}=    Return values do not match unboxing
-
+Fails if used outside keywords inside for loop
+    [Documentation]    FAIL    Return from keyword without enclosing keyword
+    :FOR    ${var}    IN    1    2    3
+    \    Return From Keyword
 
 With continuable failure
     [Documentation]    FAIL    continuable error
@@ -69,6 +78,7 @@ With continuable failure in for loop
     [Documentation]    FAIL    continuable error
     ${ret}=    With continuable failure in for loop
     Should Be Equal    ${ret}    something to return
+
 
 *** Keywords ***
 
@@ -94,8 +104,8 @@ With variable
     [Return]     Should not ${evaluate}
 
 With list variable
-    [Arguments]    @{lst}
-    Return From Keyword    @{lst}
+    [Arguments]    @{list}
+    Return From Keyword    0    @{list}
     Fail     Should have returned before this
     [Return]     Should not ${evaluate}
 
@@ -107,7 +117,7 @@ Nested keywords with return
 
 With for loop
     :FOR    ${var}    IN    foo    bar    baz
-    \       Return From Keyword    something to return
+    \       Return From Keyword    return ${var}
     \       Fail    Should have returned before this
     [Return]     Should not ${evaluate}
 
@@ -118,13 +128,25 @@ With teardown
     [Teardown]    Set Test Variable    ${test var}    ${arg}
     [Return]     Should not ${evaluate}
 
-Return From Keyword in teardown
-    Log    This should print
-    [Teardown]    Return From Keyword    foo
-    [Return]    Foo
+Returning directly from keyword teardown fails
+    No Operation
+    [Teardown]    Return From Keyword
+    [Return]    Should not ${evaluate}
 
-Return values do not match unboxing
-    Return From Keyword    something else to return
+With continuable failure
+    Run Keyword And Continue On Failure    Fail    continuable error
+    Return From Keyword    this should be returned
     Fail     Should have returned before this
     [Return]     Should not ${evaluate}
 
+With continuable failure in for loop
+    :FOR    ${var}    IN    foo    bar    baz
+    \       Run Keyword And Continue On Failure    Fail    continuable error
+    \       Return From Keyword    something to return
+    \       Fail    Should have returned before this
+    Fail     Should have returned before this
+    [Return]     Should not ${evaluate}
+
+With return in keyword inside teardown
+    No Operation
+    [Teardown]   Without return value

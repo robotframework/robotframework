@@ -146,7 +146,7 @@ class UserKeywordHandler(object):
 
     def _dry_run(self, context, variables, arguments):
         arguments = self._resolve_dry_run_args(arguments)
-        error = self._execute(context, variables, arguments)
+        error, return_ = self._execute(context, variables, arguments)
         if error:
             raise error
 
@@ -182,6 +182,7 @@ class UserKeywordHandler(object):
             self.keywords.run(context)
         except ReturnFromKeyword, ret:
             return_ = ret
+            error = ret.earlier_failures
         except ExecutionFailed, err:
             error = err
         td_error = self._run_teardown(context, error)

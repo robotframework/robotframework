@@ -48,8 +48,8 @@ class Keywords(object):
             try:
                 kw.run(context)
             except ReturnFromKeyword, ret:
-                # FIXME: Handle earlier errors
-                raise
+                ret.set_earlier_failures(errors)
+                raise ret
             except ExecutionFailed, err:
                 errors.extend(err.get_errors())
                 if not err.can_continue(context.teardown, self._templated,
@@ -164,7 +164,7 @@ class ForLoop(BaseKeyword):
         self.starttime = get_timestamp()
         context.start_keyword(self)
         error = self._run_with_error_handling(self._validate_and_run, context)
-        self.status = 'PASS' if not error else 'FAIL'
+        self.status = 'PASS' if not error or error.execution_passed else 'FAIL'
         self.endtime = get_timestamp()
         self.elapsedtime = get_elapsed_time(self.starttime, self.endtime)
         context.end_keyword(self)
@@ -206,7 +206,7 @@ class ForLoop(BaseKeyword):
             err = self._run_one_round(context, self.vars, values)
             if err:
                 if isinstance(err, ReturnFromKeyword):
-                    # FIXME: handle these kinds of exceptions better
+                    err.set_earlier_failures(errors)
                     raise err
                 if err.exit_for_loop:
                     break

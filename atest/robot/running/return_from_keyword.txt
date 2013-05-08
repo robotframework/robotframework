@@ -5,39 +5,46 @@ Resource         atest_resource.txt
 
 *** Test Cases ***
 Without return value
-    Check Test Case    ${TESTNAME}
+    Test And All Keywords Should Have Passed
 
 With single return value
-    Check Test Case    ${TESTNAME}
+    Test And All Keywords Should Have Passed
 
 With multiple return values
-    Check Test Case    ${TESTNAME}
+    Test And All Keywords Should Have Passed
 
 With variable
-    Check Test Case    ${TESTNAME}
+    Test And All Keywords Should Have Passed
 
 With list variable
-    Check Test Case    ${TESTNAME}
+    Test And All Keywords Should Have Passed
 
-Keyword with escaping
-    Check Test Case    ${TESTNAME}
+Escaping
+    Test And All Keywords Should Have Passed
 
 In nested keyword
+    Test And All Keywords Should Have Passed
+
+Inside for loop in keyword
+    Test And All Keywords Should Have Passed
+
+Keyword teardown is run
+    Test And All Keywords Should Have Passed
+
+In a keyword inside keyword teardown
+    Test And All Keywords Should Have Passed
+
+Fails if used directly in keyword teardown
     Check Test Case    ${TESTNAME}
 
-From for loop
+Fails if used outside keywords
     Check Test Case    ${TESTNAME}
 
-Teardown is run
+Fails if used outside keywords inside for loop
     Check Test Case    ${TESTNAME}
 
-With Return From Keyword in teardown
+With continuable failure
     Check Test Case    ${TESTNAME}
 
-Should fail if return inside test case
+With continuable failure in for loop
     Check Test Case    ${TESTNAME}
-
-Return values do not match unboxing
-    Check Test Case    ${TESTNAME}
-
-
