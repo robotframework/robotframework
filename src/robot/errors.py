@@ -79,7 +79,7 @@ class ExecutionFailed(RobotError):
 
     def __init__(self, message, timeout=False, syntax=False, exit=False,
                  continue_on_failure=False, exit_for_loop=False,
-                 continue_for_loop=False):
+                 continue_for_loop=False, return_value=None):
         if '\r\n' in message:
             message = message.replace('\r\n', '\n')
         RobotError.__init__(self, utils.cut_long_message(message))
@@ -89,7 +89,7 @@ class ExecutionFailed(RobotError):
         self.continue_on_failure = continue_on_failure
         self.exit_for_loop = exit_for_loop
         self.continue_for_loop = continue_for_loop
-        self.return_value = None
+        self.return_value = return_value
 
     @property
     def execution_passed(self):
@@ -193,6 +193,13 @@ class UserKeywordExecutionFailed(ExecutionFailures):
         if not run_msg:
             return 'Keyword teardown failed:\n%s' % td_msg
         return '%s\n\nAlso keyword teardown failed:\n%s' % (run_msg, td_msg)
+
+
+class ReturnFromKeyword(ExecutionFailed):
+
+    def __init__(self, return_value):
+        ExecutionFailed.__init__(self, 'Return from keyword without enclosing keyword',
+                                 return_value=return_value)
 
 
 class RemoteError(RobotError):

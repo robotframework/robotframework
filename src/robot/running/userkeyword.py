@@ -16,7 +16,8 @@ import os
 import re
 
 from robot.common import BaseLibrary, UserErrorHandler
-from robot.errors import DataError, ExecutionFailed, UserKeywordExecutionFailed
+from robot.errors import (DataError, ExecutionFailed, ReturnFromKeyword,
+                          UserKeywordExecutionFailed)
 from robot.variables import is_list_var, VariableSplitter
 from robot.output import LOGGER
 from robot import utils
@@ -156,10 +157,10 @@ class UserKeywordHandler(object):
 
     def _normal_run(self, context, variables, arguments):
         arguments = self._resolve_arguments(arguments, variables)
-        error = self._execute(context, variables, arguments)
+        error, return_ = self._execute(context, variables, arguments)
         if error and not error.can_continue(context.teardown):
             raise error
-        return_value = self._get_return_value(variables)
+        return_value = self._get_return_value(variables, return_)
         if error:
             error.return_value = return_value
             raise error
@@ -176,15 +177,17 @@ class UserKeywordHandler(object):
         context.output.trace(lambda: self._log_args(variables))
         self._verify_keyword_is_valid()
         self.timeout.start()
+        error = return_ = None
         try:
             self.keywords.run(context)
-        except ExecutionFailed, error:
-            pass
-        else:
-            error = None
+        except ReturnFromKeyword, ret:
+            return_ = ret
+        except ExecutionFailed, err:
+            error = err
         td_error = self._run_teardown(context, error)
         if error or td_error:
-            return UserKeywordExecutionFailed(error, td_error)
+            error = UserKeywordExecutionFailed(error, td_error)
+        return error, return_
 
     def _set_variables(self, arguments, variables):
         before_varargs, varargs = self._split_args_and_varargs(arguments)
@@ -225,15 +228,17 @@ class UserKeywordHandler(object):
             raise DataError("User keyword '%s' contains no keywords"
                             % self.name)
 
-    def _get_return_value(self, variables):
-        if not self.return_value:
+    def _get_return_value(self, variables, return_):
+        ret = self.return_value if not return_ else return_.return_value
+        if not ret:
             return None
+        contains_list_var = any(is_list_var(item) for item in ret)
         try:
-            ret = variables.replace_list(self.return_value)
+            ret = variables.replace_list(ret)
         except DataError, err:
             raise DataError('Replacing variables from keyword return value '
                             'failed: %s' % unicode(err))
-        if len(ret) != 1 or is_list_var(self.return_value[0]):
+        if len(ret) != 1 or contains_list_var:
             return ret
         return ret[0]
 

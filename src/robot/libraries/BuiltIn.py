@@ -17,7 +17,8 @@ import re
 import time
 
 from robot.output import LOGGER, Message
-from robot.errors import DataError, ExecutionFailed, ExecutionFailures
+from robot.errors import (DataError, ExecutionFailed, ExecutionFailures,
+                          ReturnFromKeyword)
 from robot import utils
 from robot.utils import asserts
 from robot.variables import is_var, is_list_var
@@ -1626,6 +1627,9 @@ class _Control:
         if self._is_true(condition):
             self.exit_for_loop()
 
+    def return_from_keyword(self, *return_values):
+        raise ReturnFromKeyword(return_values)
+
 
 class _Misc:
 
@@ -2341,6 +2345,6 @@ for name in [attr for attr in dir(_RunKeyword) if not attr.startswith('_')]:
 for name in ['set_test_variable', 'set_suite_variable', 'set_global_variable',
              'variable_should_exist', 'variable_should_not_exist', 'comment',
              'get_variable_value', 'import_library', 'import_variables',
-             'import_resource']:
+             'import_resource', 'return_from_keyword']:
     register_run_keyword('BuiltIn', name, 0)
 del name, attr

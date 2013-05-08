@@ -1,0 +1,130 @@
+*** Test Cases ***
+
+Without return value
+    ${ret}=    Without Return Value
+    Should Be Equal    ${ret}    ${NONE}
+    ${r1}    ${r2}    @{r3}=    Without Return Value
+    Should Be Equal    ${r1}    ${NONE}
+    Should Be Equal    ${r2}    ${NONE}
+    Should Be Empty    ${r3}
+
+With single return value
+    ${ret}=    With Single Return Value
+    Should Be Equal    ${ret}    something to return
+
+With multiple return values
+    ${r1}    ${r2}    ${r3}=     With Multiple Return Values
+    Should Be Equal     ${r1}     something
+    Should Be Equal     ${r2}     to
+    Should Be Equal     ${r3}     return
+
+With variable
+    ${ret}=    With variable    foo
+    Should Be Equal    ${ret}    foo
+
+With list variable
+    ${ret}=    With list variable    1    2    3
+    Should Be True    ${ret} == ['1', '2', '3']
+
+Keyword with escaping
+    ${ret}=    With variable    \${not var}
+    Should Be Equal    ${ret}    \${not var}
+    ${ret}=    With variable    c:\\temp
+    Should Be Equal    ${ret}    c:\\temp
+
+In nested keyword
+    ${ret}=    Nested keywords with return
+    Should Be Equal    ${ret}    should be returned
+
+From for loop
+    ${ret}=    With for loop
+    Should Be Equal    ${ret}     something to return
+
+Teardown is run
+    ${ret}=    With teardown    ${TEST NAME}
+    Should Be Equal    ${ret}     something else to return
+    Should Be Equal    ${test var}    ${TEST NAME}
+
+With Return From Keyword in teardown
+    [Documentation]    FAIL    Keyword teardown failed:
+    ...                        Return from keyword without enclosing keyword
+    Return From Keyword in teardown
+    Fail    Should have failed before this
+
+Should fail if return inside test case
+    [Documentation]    FAIL    Return from keyword without enclosing keyword
+    Return From Keyword    ${non existent variable}
+
+Return values do not match unboxing
+    [Documentation]    FAIL    Cannot assign return values: Expected list-like object, got string instead.
+    ${a}    ${b}=    Return values do not match unboxing
+
+
+With continuable failure
+    [Documentation]    FAIL    continuable error
+    ${ret}=    With continuable failure
+    Should Be Equal    ${ret}    this should be returned
+
+With continuable failure in for loop
+    [Documentation]    FAIL    continuable error
+    ${ret}=    With continuable failure in for loop
+    Should Be Equal    ${ret}    something to return
+
+*** Keywords ***
+
+Without Return Value
+    Return From Keyword
+    Fail    Should have returned before this
+    [Return]    Should not ${evaluate}
+
+With Single Return Value
+    Return From Keyword    something to return
+    Fail    Should have returned before this
+    [Return]     Should not ${evaluate}
+
+With Multiple Return Values
+    Return From Keyword     something     to      return
+    Fail    Should have returned before this
+    [Return]     Should    not    ${evaluate}
+
+With variable
+    [Arguments]    ${arg}
+    Return From Keyword    ${arg}
+    Fail     Should have returned before this
+    [Return]     Should not ${evaluate}
+
+With list variable
+    [Arguments]    @{lst}
+    Return From Keyword    @{lst}
+    Fail     Should have returned before this
+    [Return]     Should not ${evaluate}
+
+Nested keywords with return
+    Without Return Value
+    ${ret}=    With Single Return Value
+    Should Be Equal    ${ret}    something to return
+    [Return]    should be returned
+
+With for loop
+    :FOR    ${var}    IN    foo    bar    baz
+    \       Return From Keyword    something to return
+    \       Fail    Should have returned before this
+    [Return]     Should not ${evaluate}
+
+With teardown
+    [Arguments]    ${arg}
+    Return From Keyword    something else to return
+    Fail     Should have returned before this
+    [Teardown]    Set Test Variable    ${test var}    ${arg}
+    [Return]     Should not ${evaluate}
+
+Return From Keyword in teardown
+    Log    This should print
+    [Teardown]    Return From Keyword    foo
+    [Return]    Foo
+
+Return values do not match unboxing
+    Return From Keyword    something else to return
+    Fail     Should have returned before this
+    [Return]     Should not ${evaluate}
+
