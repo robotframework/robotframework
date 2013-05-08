@@ -8,7 +8,7 @@ Resource          resource.txt
 
 *** Test Cases ***
 Library Namespace should be global
-    Process Should Be Alive    suite_process
+    Process Should Be Running    suite_process
 
 Running a process
     ${result}=    Run Python Process    print 'hello'
@@ -20,80 +20,21 @@ Error in exit code and stderr output
 
 Start And Wait Process
     ${handle}=    Start Python Process    import time;time.sleep(0.1)
-    ${is_alive}=    Process Is Alive    ${handle}
+    ${is_alive}=    Process Is Running    ${handle}
     Should Be True    ${is_alive}
     Wait For Process    ${handle}
-    Process Should Be Dead    ${handle}
+    Process Should Be Stopped    ${handle}
 
 Switching active process
     ${process_one}=    Some process    one
     Stop Some Process    one
     ${process_two}=    Some process    two
-    Process Should Be Alive    ${process_two}
+    Process Should Be Running    ${process_two}
     Switch Active Process    one
-    Process Should Be Dead
+    Process Should Be Stopped
     Switch Active Process    two
-    Process Should Be Alive
+    Process Should Be Running
     Stop Some Process
-
-Run process does not change active process
-    Some process    active
-    ${expected id}=    Get Process Id
-    Run Python Process    1+1
-    ${id}=    Get Process Id
-    Should Be Equal    ${expected id}    ${id}
-
-Killing process
-    ${handle}=    Some process
-    ${is_alive}=    Process Is Alive    ${handle}
-    Should Be True    ${is_alive}
-    Terminate Process    ${handle}    kill=${True}
-    Wait For Process    ${handle}
-    Process Should Be Dead    ${handle}
-
-Terminating process
-    ${handle}=    Some process
-    Terminate Process    ${handle}
-    Wait For Process    ${handle}
-    Process Should Be Dead    ${handle}
-
-Pid
-    ${handle}=    Some process
-    ${pid}=    Get Process Id    ${handle}
-    Should Not Be Equal   ${pid}   ${None}
-    Evaluate    os.kill(int(${pid}),signal.SIGTERM)    os,signal
-    Wait For Process    ${handle}
-    Process Should Be Dead    ${handle}
-
-Starting many processes and killing all
-    ${handle1}=    Some process
-    ${handle2}=    Some process
-    ${handle3}=    Some process
-    ${handle4}=    Some process
-    ${handle5}=    Some process
-    Sleep    0.1
-    Process Should be alive    ${handle1}
-    Process Should be alive    ${handle2}
-    Process Should be alive    ${handle3}
-    Process Should be alive    ${handle4}
-    Process Should be alive    ${handle5}
-    Kill all processes
-    Sleep    0.1
-    Process Should Be Dead    ${handle1}
-    Process Should Be Dead    ${handle2}
-    Process Should Be Dead    ${handle3}
-    Process Should Be Dead    ${handle4}
-    Process Should Be Dead    ${handle5}
-
-Kill Process Which Does Not Exist
-    ${handle}=    Some process
-    Terminate Process    ${handle}    kill=${True}
-    Terminate Process    ${handle}    kill=${True}
-
-Wait For Process Which Does Not Exist
-    ${handle}=    Some process
-    Terminate Process    ${handle}    kill=${True}
-    Wait For Process    ${handle}
 
 Change Current Working Directory
     ${result}=    Run Process    python    -c    import os; print os.path.abspath(os.curdir);    cwd=.
@@ -125,7 +66,8 @@ Running a process in a shell
 
 Input things to process
     Start New Process    python -c "print 'inp %s' % raw_input()"    shell=True
-    Input To Process    some input
+    ${process}=    Get Process Object
+    Log   ${process.communicate("some input\n")}
     ${result}=    Wait For Process
     Should Match    ${result.stdout}    *inp some input*
 
@@ -179,5 +121,5 @@ Current working directory should not be used with stdout and stderr when absolut
 
 *** Keywords ***
 Restart Suite Process If Needed
-    ${alive}=    Process Is Alive    suite_process
+    ${alive}=    Process Is Running    suite_process
     Run Keyword If    not ${alive}    Some process    suite_process

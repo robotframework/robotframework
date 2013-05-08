@@ -33,7 +33,6 @@ class LibraryDocBuilder(object):
                             doc=self._get_doc(lib),
                             version=lib.version,
                             scope=lib.scope,
-                            named_args=lib.supports_named_arguments,
                             doc_format=lib.doc_format)
         libdoc.inits = self._get_initializers(lib)
         libdoc.keywords = KeywordDocBuilder().build_keywords(lib)
@@ -64,7 +63,7 @@ class ResourceDocBuilder(object):
     def build(self, path):
         res = self._import_resource(path)
         libdoc = LibraryDoc(name=res.name, doc=self._get_doc(res),
-                            type='resource', named_args=True)
+                            type='resource')
         libdoc.keywords = KeywordDocBuilder().build_keywords(res)
         return libdoc
 
@@ -91,22 +90,15 @@ class KeywordDocBuilder(object):
         return [self.build_keyword(kw) for kw in lib.handlers.values()]
 
     def build_keyword(self, kw):
-        return KeywordDoc(name=kw.name, args=self._get_args(kw), doc=kw.doc)
+        return KeywordDoc(name=kw.name, args=self._get_args(kw.arguments),
+                          doc=kw.doc)
 
-    def _get_args(self, kw):
-        required, defaults = self._parse_args(kw)
+    def _get_args(self, argspec):
+        required = argspec.positional[:argspec.minargs]
+        defaults = zip(argspec.positional[argspec.minargs:], argspec.defaults)
         args = required + ['%s=%s' % item for item in defaults]
-        if kw.arguments.varargs:
-            args.append('*%s' % kw.arguments.varargs)
-        if kw.arguments.kwargs:
-            args.append('**%s' % kw.arguments.kwargs)
+        if argspec.varargs:
+            args.append('*%s' % argspec.varargs)
+        if argspec.kwargs:
+            args.append('**%s' % argspec.kwargs)
         return args
-
-    def _parse_args(self, kw):
-        args = kw.arguments.names
-        default_count = len(kw.arguments.defaults)
-        if not default_count:
-            return args, []
-        required = args[:-default_count]
-        defaults = zip(args[-default_count:], kw.arguments.defaults)
-        return required, defaults

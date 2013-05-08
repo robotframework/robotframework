@@ -24,6 +24,11 @@ Run Keyword With Arguments That Needs To Be Escaped
     Check Log Message    ${tc.kws[1].kws[0].msgs[0]}    c:\\temp\\foo
     Check Log Message    ${tc.kws[1].kws[0].msgs[1]}    \${notvar}
 
+Escaping Arguments From Opened List Variable
+    ${tc} =    Check test Case    ${TEST NAME}
+    Check Log Message    ${tc.kws[1].kws[0].msgs[0]}    message=foo
+    Check Log Message    ${tc.kws[3].kws[0].msgs[0]}    42
+
 Run Keyword With UK
     ${tc} =    Check test Case    ${TEST NAME}
     Check Run Keyword In UK    ${tc.kws[0]}    BuiltIn.Log    Using UK

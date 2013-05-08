@@ -13,15 +13,20 @@ Import Library
 Import Library With Arguments
     Check Test Case  ${TEST NAME}
 
+Import Library With Variables And WITH NAME
+    Check Test Case  ${TEST NAME}
+
 Import Library Using Physical Path
     Check Test Case  ${TEST NAME}
 
 Import Library Using Physical Path, Arguments And WITH NAME
     Check Test Case  ${TEST NAME}
 
+Import Library Arguments Are Resolved Only Once
+    Check Test Case  ${TEST NAME}
+
+Import Library With Named Arguments
+    Check Test Case  ${TEST NAME}
+
 Import Library Failure Is Catchable
     Check Test Case  ${TESTNAME}
-
-'Import Library' keyword should be able to handle special arguments
-    Check Test Case  ${TESTNAME}
-

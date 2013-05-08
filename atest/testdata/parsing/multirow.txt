@@ -6,9 +6,11 @@ Documentation   NO RIDE!!\
 \  ...  !
 \  \  ...  !
 ...  !
-Default Tags  t1  t2  t3  t4
+# Some comments here to complicate parsing even more ...
+Default Tags  ...  t1  t2  t3  t4
 ...           t4  t5  \   t6
 ...
+...           # more comments
 \  ...           \   t7  t8
 ...           t9
 Library
@@ -22,13 +24,14 @@ Library
 ...  8
 ...
 ...  9  10
+# Comments, comments, comments, ...
 ${string}
 ...  some text
 ...
-@{list}  Hello  my
+@{list}  ...  hello
 ...  world
 ...
-\  ...  !
+\  ...  ...
 
 
 *** Test Cases ***
@@ -43,10 +46,10 @@ Invalid Usage In Test And User Keyword
 Multirow Variables
     Should Be True  ${scalarlist} == [str(i) for i in range(1,11)]
     Should Be Equal  ${string}  some text
-    Should Be Equal  @{list}[0]  Hello
-    Should Be Equal  @{list}[1]  my
+    Should Be Equal  @{list}[0]  ...
+    Should Be Equal  @{list}[1]  hello
     Should Be Equal  @{list}[2]  world
-    Should Be Equal  @{list}[3]  !
+    Should Be Equal  @{list}[3]  ...
 
 Multirow Import
     Directory Should Exist  .

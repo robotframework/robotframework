@@ -56,7 +56,6 @@ def _get_lib_class(libcode):
 
 
 class _BaseTestLibrary(BaseLibrary):
-    supports_named_arguments = True # this attribute is for libdoc
     _log_success = LOGGER.debug
     _log_failure = LOGGER.info
     _log_failure_details = LOGGER.debug
@@ -76,7 +75,7 @@ class _BaseTestLibrary(BaseLibrary):
             self.doc_format = self._get_doc_format(libcode)
             self.scope = self._get_scope(libcode)
             self._libcode = libcode
-            self.init =  self._create_init_handler(libcode)
+            self.init = self._create_init_handler(libcode)
             self.positional_args, self.named_args = self.init.resolve_arguments(args, variables)
 
     @property
@@ -208,13 +207,14 @@ class _BaseTestLibrary(BaseLibrary):
 
     def _raise_creating_instance_failed(self):
         msg, details = utils.get_error_details()
-        if self.positional_args:
-            args = "argument%s %s" % (utils.plural_or_not(self.positional_args),
-                                      utils.seq2str(self.positional_args))
+        if self.positional_args or self.named_args:
+            args = self.positional_args \
+                    + ['%s=%s' % item for item in self.named_args.items()]
+            args_text = 'arguments %s' % utils.seq2str2(args)
         else:
-            args = "no arguments"
-        raise DataError("Creating an instance of the test library '%s' with %s "
-                        "failed: %s\n%s" % (self.name, args, msg, details))
+            args_text = 'no arguments'
+        raise DataError("Initializing test library '%s' with %s failed: %s\n%s"
+                        % (self.name, args_text, msg, details))
 
 
 class _ClassLibrary(_BaseTestLibrary):
@@ -288,8 +288,6 @@ class _HybridLibrary(_BaseTestLibrary):
 
 
 class _DynamicLibrary(_BaseTestLibrary):
-    # TODO: Can this be removed now that dynamic libs support named args?
-    supports_named_arguments = False # this attribute is for libdoc
     _log_failure = LOGGER.warn
 
     def __init__(self, libcode, name, args, variables=None):

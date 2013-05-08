@@ -6,7 +6,9 @@ Some process
 
 Stop some process
     [Arguments]    ${alias}=${null}
-    Input To Process    stop    ${alias}
+    ${process}=    Get Process Object   ${alias}
+    Log   ${process.stdin.write("stop\n")}
+    Log   ${process.stdin.close()}
 
 Result should equal
     [Arguments]    ${result}    ${stdout}=    ${stderr}=    ${exit_code}=0

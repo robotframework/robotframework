@@ -19,27 +19,6 @@ Start And Wait Process
 Switching active process
     Check Test Case    ${TESTNAME}
 
-Run process does not change active process
-    Check Test Case    ${TESTNAME}
-
-Killing process
-    Check Test Case    ${TESTNAME}
-
-Terminating process
-    Check Test Case    ${TESTNAME}
-
-Pid
-    Check Test Case    ${TESTNAME}
-
-Starting many processes and killing all
-    Check Test Case    ${TESTNAME}
-
-Kill Process Which Does Not Exist
-    Check Test Case    ${TESTNAME}
-
-Wait For Process Which Does Not Exist
-    Check Test Case    ${TESTNAME}
-
 Change Current Working Directory
     Check Test Case    ${TESTNAME}
 

@@ -1,8 +1,13 @@
 from helper import pretty
 
 def lib_mandatory_named_varargs_and_kwargs(a, b='default', *args, **kwargs):
-    named = tuple(sorted('%s:%s' % (name, value) for name, value in kwargs.iteritems()))
-    return pretty(a, b, *(args+named))
+    return pretty(a, b, *args, **kwargs)
+
+def lib_kwargs(**kwargs):
+    return pretty(**kwargs)
+
+def lib_mandatory_named_and_kwargs(a, b=2, **kwargs):
+    return pretty(a, b, **kwargs)
 
 def lib_mandatory_named_and_varargs(a, b='default', *args):
     return pretty(a, b, *args)

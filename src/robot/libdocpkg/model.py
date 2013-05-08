@@ -23,7 +23,7 @@ from .output import LibdocOutput
 class LibraryDoc(object):
 
     def __init__(self, name='', doc='', version='', type='library',
-                 scope='', named_args=False, doc_format=''):
+                 scope='', named_args=True, doc_format=''):
         self.name = name
         self.doc = doc
         self.version = version

@@ -26,7 +26,7 @@ class ArgumentResolver(object):
         self._variable_replacer = VariableReplacer(resolve_variables_until)
         self._argument_validator = ArgumentValidator(argspec)
 
-    def resolve(self, arguments, variables):
+    def resolve(self, arguments, variables=None):
         positional, named = self._named_resolver.resolve(arguments)
         positional, named = self._variable_replacer.replace(positional, named,
                                                             variables)
@@ -52,7 +52,6 @@ class NamedArgumentResolver(object):
         return positional, named
 
     def _is_named(self, arg):
-        # TODO: When is arg not string??
         if not isinstance(arg, basestring) or '=' not in arg:
             return False
         name = arg.split('=')[0]
@@ -65,20 +64,17 @@ class NamedArgumentResolver(object):
 
     def _add_named(self, arg, named):
         name, value = arg.split('=', 1)
-        name = self._to_str_when_possible(name)
+        name = self._verify_str(name)
         if name in named:
             self._raise_multiple_values(name)
         named[name] = value
 
-    def _to_str_when_possible(self, name):
-        # TODO: Consider reporting error if str(name) fails and using Unicode
-        # is not supported. It seems that Python 2.5 doesn't handle Unicode
-        # at all and Jython 2.5 handles non-ASCII Unicode wrong. Latter needs
-        # to be reported and tested with Jython 2.7.
+    def _verify_str(self, name):
+        # Python 2.5 doesn't handle Unicode at all and Jython 2.5 and 2.7b1 handle non-ASCII Unicode wrong.
         try:
             return str(name)
         except UnicodeError:
-            return name
+            raise DataError("Illegal characters in argument name: '%s'" % name)
 
     def _raise_multiple_values(self, name):
         raise DataError("%s '%s' got multiple values for argument '%s'."
@@ -100,8 +96,8 @@ class VariableReplacer(object):
     def __init__(self, resolve_until=None):
         self._resolve_until = resolve_until
 
-    def replace(self, positional, named, variables):
-        # TODO: Why/when can variables be None?
+    def replace(self, positional, named, variables=None):
+        # `variables` is None when using Libdoc
         if variables:
             positional = variables.replace_list(positional, self._resolve_until)
             named = dict((name, variables.replace_scalar(value))

@@ -119,10 +119,16 @@ class _RunnableHandler(object):
     def _run(self, context, args):
         positional, named = \
             self.resolve_arguments(args, context.get_current_vars())
-        self.arguments.trace_log_args(context.output, positional, named)
+        context.output.trace(lambda: self._log_args(positional, named))
         runner = self._runner_for(self._current_handler(), context, positional,
                                   named, self._get_timeout(context.namespace))
         return self._run_with_output_captured_and_signal_monitor(runner, context)
+
+    def _log_args(self, positional, named):
+        positional = [utils.safe_repr(arg) for arg in positional]
+        named = ['%s=%s' % (utils.unic(name), utils.safe_repr(value))
+                 for name, value in named.items()]
+        return 'Arguments: [ %s ]' % ' | '.join(positional + named)
 
     def _runner_for(self, handler, context, positional, named, timeout):
         if timeout and timeout.active:
@@ -277,7 +283,7 @@ class _RunKeywordHandler(_PythonHandler):
             return list(self._get_run_kw_if_keywords(args))
         if self._handler_name == 'run_keywords':
             return list(self._get_run_kws_keywords(args))
-        if 'name' in self.arguments.names and self._get_args_to_process() > 0:
+        if 'name' in self.arguments.positional and self._get_args_to_process() > 0:
             return self._get_default_run_kw_keywords(args)
         return []
 
@@ -332,7 +338,7 @@ class _RunKeywordHandler(_PythonHandler):
                 yield given_args
 
     def _get_default_run_kw_keywords(self, given_args):
-        index = self.arguments.names.index('name')
+        index = self.arguments.positional.index('name')
         return [Keyword(given_args[index], given_args[index+1:])]
 
 

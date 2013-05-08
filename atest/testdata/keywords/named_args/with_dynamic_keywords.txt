@@ -1,5 +1,6 @@
 *** Settings ***
-Library           helper.py
+Library    DynamicLibrary.py
+Library    helper.py
 
 *** Test Cases ***
 Simple Kwarg
@@ -61,39 +62,38 @@ Naming without the varargs works
     Should be equal    @{ret}[1]    bar
 
 Varargs with naming does not work
-    [Documentation]    FAIL Keyword 'Named arguments with varargs' got positional argument after named arguments.
+    [documentation]    FAIL    Keyword 'DynamicLibrary.Named Arguments With Varargs' got positional argument after named arguments.
     Named arguments with varargs    foo    b=bar    dar
 
 Varargs with naming does not work with empty lists either
-    [Documentation]    FAIL Keyword 'Named arguments with varargs' got positional argument after named arguments.
+    [documentation]    FAIL    Keyword 'DynamicLibrary.Named Arguments With Varargs' got positional argument after named arguments.
     Named arguments with varargs    foo    b=bar    @{EMPTY}
 
 Named combinations with varargs
-    [Template]    Execute working named vararg combination with result
-    a, default    a
-    a, default    a=a
-    a, b          a=a    b=b
-    a, b          b=b    a=a
-    c=c, d=d      c=c    d=d
-    a, b          a      b
-    a, b          a      b=b
-    a, b, c       a      b      c
-    a, b, c=c     a      b      c=c
+    [template]    Execute working named vararg combination with result
+    a, default           a
+    a, default           a=a
+    a, b                 a=a    b=b
+    a, b                 b=b    a=a
+    c=c, d=d             c=c    d=d
+    a, b                 a      b
+    a, b                 a      b=b
+    a, b, c              a      b      c
+    a, b, c=c            a      b      c=c
 
 Non working named combinations with varargs
-    [Template]    Execute illegal named vararg combination
+    [template]    Execute illegal named vararg combination
     got positional argument after named arguments.    a=a    b
-    missing value for argument 'a'.    b=b
+    missing value for argument 'a'.                   b=b
     got positional argument after named arguments.    b=b    b
     got positional argument after named arguments.    a      b=b    c
-    got positional argument after named arguments.    a      b=b    c=c
     got multiple values for argument 'a'.             a      b      a=a
     got multiple values for argument 'b'.             a      b      b=b
     got multiple values for argument 'a'.             a      a=a
     got multiple values for argument 'a'.             a      b      c      a=a
 
 Named combinations without varargs
-    [Template]    Execute working named combination with result
+    [template]    Execute working named combination with result
     a, default    a
     a, default    a=a
     a, b          a=a    b=b
@@ -102,7 +102,7 @@ Named combinations without varargs
     a, b          a      b=b
 
 Non working named combinations without varargs
-    [Template]    Execute illegal named combination
+    [template]    Execute illegal named combination
     got positional argument after named arguments.    a=a    b
     missing value for argument 'a'.                   b=b
     got positional argument after named arguments.    b=b    b
@@ -110,55 +110,21 @@ Non working named combinations without varargs
 
 *** Keywords ***
 Execute working named vararg combination with result
-    [Arguments]    ${expected}    @{args}
-    ${res} =    Get result or error    Mandatory, Named and varargs    @{args}
+    [arguments]    ${expected}    @{args}
+    ${res} =    Get result or error    Mandatory, Named And Varargs    @{args}
     Should be equal    ${expected}    ${res}
 
 Execute illegal named vararg combination
-    [Arguments]    ${expected error}    @{args}
-    ${res} =    Get result or error    Mandatory, Named and varargs    @{args}
-    Should be equal    ${res}    Keyword 'Mandatory, Named and varargs' ${expected error}
+    [arguments]    ${expected error}    @{args}
+    ${res} =    Get result or error    Mandatory, Named And Varargs    @{args}
+    Should be equal    ${res}    Keyword 'DynamicLibrary.Mandatory, Named And Varargs' ${expected error}
 
 Execute working named combination with result
-    [Arguments]    ${expected}    @{args}
-    ${res} =    Get result or error    Mandatory and Named    @{args}
+    [arguments]    ${expected}    @{args}
+    ${res} =    Get result or error    Mandatory And Named    @{args}
     Should be equal    ${expected}    ${res}
 
 Execute illegal named combination
-    [Arguments]    ${expected error}    @{args}
-    ${res} =    Get result or error    Mandatory and Named    @{args}
-    Should be equal    ${res}    Keyword 'Mandatory and Named' ${expected error}
-
-Mandatory, Named and varargs
-    [Arguments]    ${a}    ${b}=default    @{varargs}
-    ${res}=    pretty    ${a}    ${b}    @{varargs}
-    [Return]    ${res}
-
-Mandatory and Named
-    [Arguments]    ${a}    ${b}=default
-    ${res}=    pretty    ${a}    ${b}
-    [Return]    ${res}
-
-One Kwarg
-    [Arguments]    ${kwarg}=
-    [Return]    ${kwarg}
-
-Two Kwargs
-    [Arguments]    ${first}=    ${second}=
-    [Return]    ${first}, ${second}
-
-Four Kw Args
-    [Arguments]    ${a}=default    ${b}=default    ${c}=default    ${d}=default
-    [Return]    ${a}, ${b}, ${c}, ${d}
-
-Mandatory And Kwargs
-    [Arguments]    ${man1}    ${man2}    ${kwarg}=KWARG VALUE
-    [Return]    ${man1}, ${man2}, ${kwarg}
-
-Escaped default value
-    [Arguments]    ${d1}=\${notvariable}    ${d2}=\\\\    ${d3}=\n    ${d4}=\t
-    [Return]    ${d1} ${d2} ${d3} ${d4}
-
-Named arguments with varargs
-    [Arguments]    ${a}=default    ${b}=default    @{varargs}
-    [Return]    ${a}    ${b}    @{varargs}
+    [arguments]    ${expected error}    @{args}
+    ${res} =    Get result or error    Mandatory And Named    @{args}
+    Should be equal    ${res}    Keyword 'DynamicLibrary.Mandatory And Named' ${expected error}

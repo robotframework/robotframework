@@ -20,6 +20,7 @@ ${UNDER_scores}    Variable name with under scores
 ${ASSING MARK}    This syntax works starting from 1.8
 @{ASSIGN MARK}    This syntax works    starting    from    ${1.8}
 ${THREE DOTS}     ...
+@{3DOTS LIST}     ...   ...
 ${SCALAR LIST}    I    am    a    scalar     list     with    many     items
 
 *** Test Case ***
@@ -102,6 +103,8 @@ Assign Mark With List variable
 
 Three dots on the same line should be interpreted as string
     Should Be Equal    ${THREE DOTS}    ...
+    ${sos} =    Catenate    SEPARATOR=---    @{3DOTS LIST}
+    Should Be Equal    ${sos}    ...---...
 
 Using Scalar List Should Fail
     [Documentation]    FAIL    Non-existing variable '${SCALAR LIST}'.

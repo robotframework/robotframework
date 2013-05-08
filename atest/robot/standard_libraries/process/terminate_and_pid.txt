@@ -1,0 +1,31 @@
+*** Settings ***
+Suite Setup      Run Tests    ${EMPTY}    standard_libraries/process/terminate_and_pid.txt
+Test Setup       Check Preconditions
+Force Tags       regression    pybot    jybot
+Resource         atest_resource.txt
+
+*** Test Cases ***
+Run process does not change active process
+    Check Test Case    ${TESTNAME}
+
+Killing process
+    Check Test Case    ${TESTNAME}
+
+Terminating process
+    Check Test Case    ${TESTNAME}
+
+Pid
+    Check Test Case    ${TESTNAME}
+
+Starting many processes and killing all
+    Check Test Case    ${TESTNAME}
+
+Kill Process Which Does Not Exist
+    Check Test Case    ${TESTNAME}
+
+Wait For Process Which Does Not Exist
+    Check Test Case    ${TESTNAME}
+
+*** Keywords ***
+Check Preconditions
+    Run Keyword If   '${SUITE.metadata.get('info')}' == 'precondition_fail'   Fail  precondition fail  -regression
