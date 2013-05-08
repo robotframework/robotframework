@@ -304,22 +304,28 @@ class _Verify:
     def fail(self, msg=None, *tags):
         """Fails the test with the given message and optionally alters its tags.
 
-        The error message is specified using the optional `msg` argument.
+        The error message is specified using the `msg` argument.
+        It is possible to use HTML in the given error message, similarly
+        as with any other keyword accepting an error message, by prefixing
+        the error with `*HTML*`.
 
-        Starting from Robot Framework 2.7.4, it is possible to modify tags of
-        the current test case by passing tags after the message. Tags starting
-        with a hyphen (e.g. `-regression`) are removed and others added. Tags
-        are modified using `Set Tags` and `Remove Tags` internally, and the
-        semantics setting and removing them are the same as with these keywords.
+        It is possible to modify tags of the current test case by passing tags
+        after the message. Tags starting with a hyphen (e.g. `-regression`) are
+        removed and others added. Tags are modified using `Set Tags` and
+        `Remove Tags` internally, and the semantics setting and removing them
+        are the same as with these keywords.
 
         Examples:
-        | Fail | Keyword not ready |             | | # Fails with the given message. |
-        | Fail | Keyword not ready | not-ready   | | # Fails and adds 'not-ready' tag. |
-        | Fail | OS not supported  | -regression | | # Removes tag 'regression'. |
-        | Fail | My message        | -old   | new  | # Adds tag 'new' and removes 'old'. |
-        | Fail | My message        | tag    | -t*  | # Removes all tags starting with 't' except the newly added 'tag'. |
+        | Fail | Test not ready   |             | | # Fails with the given message.    |
+        | Fail | *HTML*<b>Test not ready</b> | | | # Fails using HTML in the message. |
+        | Fail | Test not ready   | not-ready   | | # Fails and adds 'not-ready' tag.  |
+        | Fail | OS not supported | -regression | | # Removes tag 'regression'.        |
+        | Fail | My message       | tag    | -t*  | # Removes all tags starting with 't' except the newly added 'tag'. |
 
         See `Fatal Error` if you need to stop the whole test execution.
+
+        Support for modifying tags was added in Robot Framework 2.7.4 and
+        HTML message support in 2.8.
         """
         set_tags = [tag for tag in tags if not tag.startswith('-')]
         remove_tags = [tag[1:] for tag in tags if tag.startswith('-')]
@@ -2046,19 +2052,30 @@ class _Misc:
         `${TEST MESSAGE}`. This keyword can not be used in suite setup or
         or suite teardown.
 
-        Examples:
-        | Set Test Message | My message      |            |
-        | Set Test Message | is continued.   | append=yes |
-        | Should Be Equal  | ${TEST MESSAGE} | My message is continued. |
+        It is possible to use HTML format in the message by starting the message
+        with `*HTML*`.
 
-        New in Robot Framework 2.5. Support for `append` was added in 2.7.7.
+        Examples:
+        | Set Test Message | My message          |            |
+        | Set Test Message | is continued.       | append=yes |
+        | Should Be Equal  | ${TEST MESSAGE}     | My message is continued. |
+        | Set Test Message | *HTML*<b>Hello!</b> |            |
+
+
+        New in Robot Framework 2.5. Support for `append` was added in 2.7.7
+        and HTML support in 2.8.
         """
         test = self._namespace.test
         if not test:
             raise RuntimeError("'Set Test Message' keyword cannot be used in "
                                "suite setup or teardown")
         test.message = self._get_possibly_appended_value(test.message, message, append)
-        self.log('Set test message to:\n%s' % test.message)
+        if message.startswith('*HTML*'):
+            message = message[6:].strip()
+            level = 'HTML'
+        else:
+            level = 'INFO'
+        self.log('Set test message to:\n%s' % message, level)
 
     def _get_possibly_appended_value(self, initial, new, append):
         if not isinstance(new, unicode):
@@ -2237,8 +2254,13 @@ class BuiltIn(_Verify, _Converter, _Variables, _RunKeyword, _Misc):
     for verifications (e.g. `Should Be Equal`, `Should Contain`),
     conversions (e.g. `Convert To Integer`) and for various other purposes
     (e.g. `Log`, `Sleep`, `Run Keyword If`, `Set Global Variable`).
-    """
 
+    Many of the keywords accept an optional error message to use if the keyword
+    fails. Starting from Robot Framework 2.8, it is possible to use HTML in
+    these messages by prefixing them with `*HTML*`. See `Fail` keyword for
+    a usage example. Notice that using HTML in messages is not limited to
+    BuiltIn library but works with any error message.
+    """
     ROBOT_LIBRARY_SCOPE = 'GLOBAL'
     ROBOT_LIBRARY_VERSION = get_version()
 

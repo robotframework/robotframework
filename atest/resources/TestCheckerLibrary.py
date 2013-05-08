@@ -170,7 +170,7 @@ def process_test(test):
         test.exp_message = test.doc.split('FAIL', 1)[1].lstrip()
     else:
         test.exp_status = 'PASS'
-        test.exp_message = ''
+        test.exp_message = '' if 'PASS' not in test.doc else test.doc.split('PASS', 1)[1].lstrip()
     for kw in test.keywords:
         process_keyword(kw)
     test.setup = test.keywords.setup

@@ -1,6 +1,0 @@
-*** Test Cases ***
-Check fail message in the log.html
-    Fail          *HTML* HTML tagged detail in <a href='http://www.robotframework.org'>Robotframework</a>
-
-Check fail message in the report.html
-    Fail          *HTML* HTML tagged detail in <a href='http://www.robotframework.org'>Robotframework</a>
