@@ -273,7 +273,6 @@ inside a for loop and have another for loop there.
    \                      Log           ${var}
    ===========  ========  ============  ===========  ==========  ===========
 
-
 The for loop in :name:`Example 1` above is executed twice, so that first
 the loop variable :var:`${animal}` has the value :code:`cat` and then
 :code:`dog`. The loop consists of two :name:`Log` keywords. In the
@@ -290,10 +289,11 @@ loop is run altogether five times.
                   \    Log    2nd keyword
                   Log    Outside loop
 
-For loops are most useful and also clearest when they are used with
-`list variables`_. This is illustrated by the example below, where
-:var:`@{ELEMENTS}` contains an arbitrarily long list of element names
-and keyword :name:`Start Element` is used with all of them.
+It is often convenient to use for loops with `list variables`_. This is
+illustrated by the example below, where :var:`@{ELEMENTS}` contains
+an arbitrarily long list of elements and keyword :name:`Start Element` is
+used with all of them one by one. It is also possible to iterate over values
+of a scalar variable containing a list by `using it as a list variable`__.
 
 .. table:: For loop with a list variable
    :class: example
@@ -307,6 +307,7 @@ and keyword :name:`Start Element` is used with all of them.
 
 __ `Dividing test data to several rows`_
 __ Escaping_
+__ `Using scalar variables as lists`_
 
 Using several loop variables
 ''''''''''''''''''''''''''''

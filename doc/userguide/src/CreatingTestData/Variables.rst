@@ -218,50 +218,6 @@ manner can be used similarly as scalar variables:
    \              Title Should Be  Welcome @{USER}[0]!
    =============  ===============  ===================  ==========
 
-Using list variables as scalar variables and vice versa
-```````````````````````````````````````````````````````
-
-It is possible to use list variables as scalar variables containing
-lists simply by replacing :var:`@` with :var:`$`. This makes it
-possible to use list variables with list related keywords, for
-example, from BuiltIn_ and Collections_ libraries. This feature
-works only if there is no scalar variable with same base name as the
-list variable has. In these cases the scalar variable has precedence
-and its value is used instead.
-
-.. table:: Using list variables as scalars
-   :class: example
-
-   =============  ================  ==============  ==========  ==========
-     Test Case         Action          Argument      Argument    Argument
-   =============  ================  ==============  ==========  ==========
-   Example        @{items} =        Create List     first       second
-   \              Length Should Be  ${items}        2
-   \              Append To List    ${items}        third
-   \              Length Should Be  ${items}        3
-   \              Remove From List  ${items}        1
-   \              Length Should Be  ${items}        2
-   \              Log Many          @{items}
-   =============  ================  ==============  ==========  ==========
-
-This also works the other way around. When for example a library keyword
-returns a list like object, it can be put to a scalar variable and by
-replacing :var:`$` with :var:`@` it can be used as a normal list variable.
-
-.. table:: Using scalar as a list variable
-   :class: example
-
-   =============  ==========================  ==============  ==========  ==========
-     Test Case            Action                 Argument      Argument    Argument
-   =============  ==========================  ==============  ==========  ==========
-   Example        ${items} =                   Evaluate        [1,2,3,4]
-   \              Should Be Equal As Numbers   @{items}[0]        1
-   \              Should Be Equal As Numbers   @{items}[1]        2
-   \              Should Be Equal As Numbers   @{items}[2]        3
-   \              Should Be Equal As Numbers   @{items}[3]        4
-   =============  ==========================  ==============  ==========  ==========
-
-
 Using list variables with settings
 ``````````````````````````````````
 
@@ -289,6 +245,70 @@ those places where list variables are not supported.
    ==============  ================  ===============  ====================
 
 __ `All available settings in test data`_
+
+Using list variables as scalars
+'''''''''''''''''''''''''''''''
+
+It is possible to use list variables as scalar variables containing
+lists simply by replacing :var:`@` with :var:`$`. This makes it
+possible to use list variables with list related keywords, for
+example, from BuiltIn_ and Collections_ libraries.
+
+.. table:: Using list variable as scalar
+   :class: example
+
+   =============  ================  ==============  ==========  ==========
+     Test Case         Action          Argument      Argument    Argument
+   =============  ================  ==============  ==========  ==========
+   Example        @{list} =         Create List     first       second
+   \              Length Should Be  ${list}         2
+   \              Append To List    ${list}         third
+   \              Length Should Be  ${list}         3
+   \              Remove From List  ${list}         1
+   \              Length Should Be  ${list}         2
+   \              Log Many          @{list}
+   =============  ================  ==============  ==========  ==========
+
+Notice that possible changes to the values of the list variable are not
+limited to the current `variable scope`__. Because no new variable is created
+but instead the state of an existing variable is changed, all tests and
+keywords that see that variable will also see the changes. If this is
+a problem, :name:`Copy List` keyword from the `Collections`_ library can be
+used to create a local copy of the variable.
+
+Using list variables as scalars only works if there is no scalar variable
+with the same base name as the list variable has. In these cases the scalar
+variable has precedence and its value is used instead.
+
+__ `Variable scopes`_
+
+Using scalar variables as lists
+'''''''''''''''''''''''''''''''
+
+Starting from Robot Framework 2.8, it is also possible to use scalar variables
+as list variables. If a scalar variable contains any list-like object, it can
+be used as a list variable by replacing :var:`$` with :var:`@`. This is useful,
+for example, with `for loops`_ and when items in a scalar list needs to be
+used as a separate arguments for a keyword.
+
+.. table:: Using scalar variable as list
+   :class: example
+
+   =============  ================  ==============  ============  ==========
+     Test Case         Action          Argument        Argument    Argument
+   =============  ================  ==============  ============  ==========
+   Example        ${list} =         Create List     first         second
+   \              Log Many          @{list}
+   \              ${string} =       Catenate        @{list}
+   \              Should Be Equal   ${string}       first second
+   \              :FOR              ${item}         IN            @{list}
+   \                                Log             ${item}
+   =============  ================  ==============  ============  ==========
+
+If a scalar variable contains any non-list object, for example a string or
+an integer, using it as a list variable fails. Exactly like when using lists
+variables as scalars, using a scalar variable as a list only works if there
+is no list variable with the same base name.
 
 Environment variables
 '''''''''''''''''''''
@@ -1065,6 +1085,11 @@ Note that even though :code:`abs(number)` is recommended over
 must be in the beginning of the extended syntax. Using :code:`__xxx__`
 methods in the test data like this is already a bit questionable, and
 it is normally better to move this kind of logic into test libraries.
+
+Extended variable syntax works also when `using scalar variables as lists`_.
+If, for example, an object assigned to a variable :var:`${EXTENDED}` has
+an attribute :code:`attribute` that contains a list as a value, it can be
+used as a list variable :var:`@{EXTENDED.attribute}`.
 
 Extended variable assignment
 ''''''''''''''''''''''''''''
