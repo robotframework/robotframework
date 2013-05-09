@@ -1,0 +1,16 @@
+LIST = ['spam', 'eggs', 21]
+
+
+class _Extended:
+    list = LIST
+    def __getitem__(self, item):
+        return LIST
+
+EXTENDED = _Extended()
+
+
+class _Iterable(object):
+    def __iter__(self):
+        return iter(LIST)
+
+ITERABLE = _Iterable()

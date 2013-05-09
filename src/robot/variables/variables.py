@@ -67,17 +67,28 @@ class Variables(utils.NormalizedDict):
 
     def __getitem__(self, name):
         self._validate_var_name(name)
-        try: return self._solve_delayed(name, utils.NormalizedDict.__getitem__(self, name))
+        try:
+            return self._find_variable(name)
         except KeyError:
-            try: return self._get_number_var(name)
+            try:
+                return self._get_number_var(name)
             except ValueError:
-                try: return self._get_list_var_as_scalar(name)
+                try:
+                    return self._get_list_var_as_scalar(name)
                 except ValueError:
-                    try: return self._get_scalar_as_list_var(name)
+                    try:
+                        return self._get_scalar_var_as_list(name)
                     except ValueError:
-                        try: return self._get_extended_var(name)
+                        try:
+                            return self._get_extended_var(name)
                         except ValueError:
                             raise DataError("Non-existing variable '%s'." % name)
+
+    def _find_variable(self, name):
+        variable = utils.NormalizedDict.__getitem__(self, name)
+        # FIXME: Delayed are not solved if got through _get_list_var_as_scalar
+        # or _get_scalar_as_list
+        return self._solve_delayed(name, variable)
 
     def _solve_delayed(self, name, value):
         if value is not None:
@@ -99,24 +110,31 @@ class Variables(utils.NormalizedDict):
             self._validate_var_name(name)
 
     def _get_list_var_as_scalar(self, name):
-        if is_scalar_var(name):
-            try:
-                return self['@'+name[1:]]
-            except DataError:
-                pass
-        raise ValueError
+        if not is_scalar_var(name):
+            raise ValueError
+        name = '@'+name[1:]
+        try:
+            return self._find_variable(name)
+        except KeyError:
+            return self._get_extended_var(name)
 
-    def _get_scalar_as_list_var(self, name):
-        if is_list_var(name):
-            try:
-                value = utils.NormalizedDict.__getitem__(self, '$'+name[1:])
-                iter(value)
-                if isinstance(value, basestring):
-                    raise ValueError
-                return value
-            except (KeyError, TypeError):
-                pass
-        raise ValueError
+    def _get_scalar_var_as_list(self, name):
+        if not is_list_var(name):
+            raise ValueError
+        name = '$'+name[1:]
+        try:
+            value = self._find_variable(name)
+        except KeyError:
+            value = self._get_extended_var(name)
+        try:
+            if isinstance(value, basestring):
+                raise TypeError
+            iter(value)
+        except TypeError:
+            raise DataError("Using scalar variable '%s' as list variable '@%s' "
+                            "requires its value to be list or list-like."
+                            % (name, name[1:]))
+        return value
 
     def _get_extended_var(self, name):
         err_pre = "Resolving variable '%s' failed: " % name
