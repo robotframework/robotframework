@@ -628,7 +628,7 @@ string that just looks like a number, as an argument.
 
 Starting from Robot Framework 2.6, it is possible to create integers
 also from binary, octal, and hexadecimal values using :var:`0b`, :var:`0o`
-and :var:`0x` prefixes, respectively. The syntax is case insetive.
+and :var:`0x` prefixes, respectively. The syntax is case insensitive.
 
 .. table:: Using integer variables with base
    :class: example
@@ -931,19 +931,18 @@ Advanced variable features
 Extended variable syntax
 ''''''''''''''''''''''''
 
-Extended variable syntax can be used with objects set into scalar
-variables. It allows accessing the attributes of the object (for example,
-:var:`${obj.name}` or :var:`${obj.some_attr}`), and even calling
-its methods (for example, :var:`${obj.get_name()}` or
-:var:`${obj.getSomething('arg')}`).
+Extended variable syntax allows accessing attributes of an object assigned
+to a variable (for example, :var:`${object.attribute}`) and even calling
+its methods (for example, :var:`${obj.getName()}`). It works both with
+scalar and list variables, but is mainly useful with the former
 
 Extended variable syntax is a powerful feature, but it should
 be used with care. Accessing attributes is normally not a problem, on
-the contrary, as one variable with an object having several
+the contrary, because one variable containing an object with several
 attributes is often better than having several variables. On the
 other hand, calling methods, especially when they are used with
-arguments, can make the test data complicated. If that happens,
-it is recommended to move the code into a test library.
+arguments, can make the test data pretty complicated to understand.
+If that happens, it is recommended to move the code into a test library.
 
 The most common usages of extended variable syntax are illustrated
 in the example below. First assume that we have the following `variable file`_
@@ -963,7 +962,7 @@ and test case:
            return self.name
 
    OBJECT = MyObject('Robot')
-   DICTIONARY = { 1: 'one', 2: 'two', 3: 'three'}
+   DICTIONARY = {1: 'one', 2: 'two', 3: 'three'}
 
 .. table::
    :class: example
@@ -989,11 +988,12 @@ The extended variable syntax is evaluated in the following order:
    variable syntax is evaluated only if no matching variable
    is found.
 
-2. The real name of the base variable is created. The body of the name
-   consists of all the characters after :var:`${` until the first
-   occurrence of a non-alphanumeric character or a space (for example,
-   :var:`OBJECT` in :var:`${OBJECT.name}` and :var:`DICTIONARY` in
-   :var:`${DICTIONARY[2]}`).
+2. The name of the base variable is created. The body of the name
+   consists of all the characters after the opening :var:`{` until
+   the first occurrence of a character that is not an alphanumeric character
+   or a space. For example, base variables of :var:`${OBJECT.name}`
+   and :var:`${DICTIONARY[2]}`) are :var:`OBJECT` and :var:`DICTIONARY`,
+   respectively.
 
 3. A variable matching the body is searched. If there is no match, an
    exception is raised and the test case fails.
@@ -1132,7 +1132,7 @@ following rules:
           extended assign syntax are not limited to the current
           scope. Because no new variable is created but instead the
           state of an existing variable is changed, all tests and
-          keywords that see that variable will also see the changes
+          keywords that see that variable will also see the changes.
 
 Variables inside variables
 ''''''''''''''''''''''''''
