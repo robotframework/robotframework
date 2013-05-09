@@ -1,5 +1,5 @@
 *** Settings ***
-Suite Setup     Run Tests  ${EMPTY}  variables/list_variable_as_scalar.txt
+Suite Setup     Run Tests  ${EMPTY}  variables/list_as_scalar.txt
 Force Tags      pybot  jybot  regression
 Resource        atest_resource.txt
 
@@ -18,5 +18,3 @@ Access and Modify List Variable With Keywords From Collections Library
 
 Modifications To List Variables Live Between Test Cases
     Check Test Case  ${TESTNAME}
-
-
