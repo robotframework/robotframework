@@ -108,7 +108,6 @@ recommended only when there is no safer option available. In general,
 libraries should be implemented so that keywords cannot hang or that
 they have their own timeout mechanism, if necessary.
 
-
 Test case timeout
 '''''''''''''''''
 
@@ -232,7 +231,7 @@ For loops
 Repeating same actions several times is quite a common need in test
 automation. With Robot Framework, test libraries can have any kind of
 loop constructs, and most of the time loops should be implemented in
-them. Robot Framework also has its own For loop syntax, which is
+them. Robot Framework also has its own for loop syntax, which is
 useful, for example, when there is a need to repeat keywords from
 different libraries.
 
@@ -245,17 +244,18 @@ syntax is possible also in shell scripts or Perl.
 Normal for loop
 '''''''''''''''
 
-In a normal For loop, one variable is assigned from a list of values,
+In a normal for loop, one variable is assigned from a list of values,
 one value per iteration. The syntax starts with :name:`:FOR`, where
 colon is required to separate the syntax from normal keywords. The
 next cell contains the loop variable, the subsequent cell must have
 :name:`IN`, and the final cells contain values over which to iterate.
+These values can contain variables_.
 
-The keywords used in the For loop are on the next rows and they must
-be indented one cell to the right. The For loop ends when the indentation
-returns back to normal or the table ends. Having nested For loops
+The keywords used in the for loop are on the next rows and they must
+be indented one cell to the right. The for loop ends when the indentation
+returns back to normal or the table ends. Having nested for loops
 directly is not supported, but it is possible to use a user keyword
-inside a For loop and have another For loop there.
+inside a for loop and have another for loop there.
 
 .. table:: Simple for loops
    :class: example
@@ -269,17 +269,16 @@ inside a For loop and have another For loop there.
    \            Log       Outside loop
    \
    Example 2    :FOR      ${var}        IN           one         two
-   \            ...       three         four         five        six
-   \            ...       seven
+   \            ...       ${3}          four         ${last}
    \                      Log           ${var}
    ===========  ========  ============  ===========  ==========  ===========
 
 
-The For loop in :name:`Example 1` above is executed twice, so that first
+The for loop in :name:`Example 1` above is executed twice, so that first
 the loop variable :var:`${animal}` has the value :code:`cat` and then
 :code:`dog`. The loop consists of two :name:`Log` keywords. In the
-second example, loop values are `split into several rows`__ and the
-loop is run altogether seven times.
+second example, loop values are `split into two rows`__ and the
+loop is run altogether five times.
 
 .. tip:: If you use for loops in the `plain text format`_, remember to
          escape__ the indented cell using a backslash::
@@ -313,7 +312,7 @@ Using several loop variables
 ''''''''''''''''''''''''''''
 
 It is also possible to use several loop variables. The syntax is the
-same as with the normal For loop, but all loop variables are listed in
+same as with the normal for loop, but all loop variables are listed in
 the cells between :name:`:FOR` and :name:`IN`. There can be any number of loop
 variables, but the number of values must be evenly dividable by the number of
 variables.
@@ -341,13 +340,13 @@ loop variables, as in the first part of the example below:
 For in range
 ''''''''''''
 
-Earlier For loops always iterated over a sequence, and this is also the most
-common use case. Sometimes it is still convenient to have a For loop
+Earlier for loops always iterated over a sequence, and this is also the most
+common use case. Sometimes it is still convenient to have a for loop
 that is executed a certain number of times, and Robot Framework has a
 special :code:`FOR index IN RANGE limit` syntax for this purpose. This
 syntax is derived from the similar Python idiom.
 
-Similarly as other For loops, the For in range loop starts with
+Similarly as other for loops, the for in range loop starts with
 :name:`:FOR` and the loop variable is in the next cell. In this format
 there can be only one loop variable and it contains the current loop
 index. The next cell must contain :name:`IN RANGE` and the subsequent
@@ -407,7 +406,7 @@ for loop. If executed outside of a for loop, the test fails.
 
 .. table:: Exit for loop example
    :class: example
-   
+
    ============  ===============  ==============  =================  =============  ========
      Test Case     Action           Argument        Argument          Argument      Argument
    ============  ===============  ==============  =================  =============  ========
@@ -425,9 +424,9 @@ libraries.
 
 To conditionally exit for loop, you can use :name:`Exit For Loop If` instead of `Run Keyword If`. See how to use it in the example of :name:`Continue For Loop If` below.
 
-.. note:: 
+.. note::
     Exit for loop functionality is new in Robot Framework 2.5.2.
-    
+
     Exit For Loop If keyword is new in Robot Framework 2.8.
 
 Continuing for loop
@@ -465,7 +464,7 @@ To conditionally continue for loop, you can use :name:`Continue For Loop If` ins
    \                 Should Be Equal  ${text}               onethree
    ================  ===============  ====================  ================  =============  ========  ========
 
-.. note:: 
+.. note::
     Keywords Continue For Loop and Continue For Loop If are new in Robot Framework 2.8.
 
 Removing unnecessary keywords from outputs
