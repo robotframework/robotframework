@@ -12,6 +12,9 @@ Scalar Iterable As List Variable
 Scalar Variable As List With Extended Syntax
     Test Scalar As List    @{EXTENDED.list}
     Test Scalar As List    @{EXTENDED['whatever']}
+    ${hyvää} =    Set Variable    spam,eggs
+    ${list} =    Evaluate    [[21]]
+    Test Scalar As List    @{hyvää.split(',')}    @{list[0]}
 
 Non-alphanumeric characters in name
     ${"spëciäl" ch@rs?!} =    Copy List    ${LIST}
