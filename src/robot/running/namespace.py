@@ -13,6 +13,7 @@
 #  limitations under the License.
 
 import os
+import os.path
 import re
 import sys
 import copy
@@ -35,7 +36,6 @@ STDLIB_NAMES = set(('BuiltIn', 'Collections', 'Dialogs', 'Easter',
                     'OperatingSystem', 'Process', 'Remote', 'Reserved',
                     'Screenshot', 'String', 'Telnet', 'XML'))
 IMPORTER = Importer()
-INIT_FILE_MATCHER = re.compile(r"(?:.+?[/\\])?__init__\.(?:html|htm|tsv|txt|robot|rst|rest)")
 
 
 class Namespace:
@@ -92,9 +92,8 @@ class Namespace:
         self._import_resource(Resource(None, name), overwrite=overwrite)
 
     def _import_resource(self, import_setting, overwrite=False):
-        if import_setting.type == "Resource" and INIT_FILE_MATCHER.match(import_setting.name):
-            raise DataError("Initialization files cannot be imported as resources.")
         path = self._resolve_name(import_setting)
+        self._validate_not_importing_init_file(path)
         if overwrite or path not in self._imported_resource_files:
             resource = IMPORTER.import_resource(path)
             self.variables.set_from_variable_table(resource.variable_table,
@@ -105,6 +104,12 @@ class Namespace:
         else:
             LOGGER.info("Resource file '%s' already imported by suite '%s'"
                         % (path, self.suite.longname))
+
+    def _validate_not_importing_init_file(self, path):
+        name = os.path.splitext(os.path.basename(path))[0]
+        if name.lower() == '__init__':
+            raise DataError("Initialization file '%s' cannot be imported as "
+                            "a resource file." % path)
 
     def import_variables(self, name, args, overwrite=False):
         self._import_variables(Variables(None, name, args), overwrite)
