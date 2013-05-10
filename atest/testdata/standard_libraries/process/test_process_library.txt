@@ -117,6 +117,7 @@ Current working directory should not be used with stdout and stderr when absolut
     ${output2}=    Get File    ${TEMPDIR}${/}hc${/}myerr.txt
     Should Match    ${output}    *moon kuu*
     Should Match    ${output2}    *ZeroDivisionError*
+    Remove File    ${stdout_path}
     [Teardown]    Remove Directory    ${TEMPDIR}${/}hc    True
 
 *** Keywords ***
