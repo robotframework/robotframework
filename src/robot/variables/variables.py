@@ -86,19 +86,15 @@ class Variables(utils.NormalizedDict):
 
     def _find_variable(self, name):
         variable = utils.NormalizedDict.__getitem__(self, name)
-        # FIXME: Delayed are not solved if got through _get_list_var_as_scalar
-        # or _get_scalar_as_list
         return self._solve_delayed(name, variable)
 
     def _solve_delayed(self, name, value):
-        if value is not None:
-            if hasattr(value, 'delayed_var_value'):
-                v = value()
-                self[name] = v
-                return v
+        if isinstance(value, DelayedVariable):
+            value = value.resolve(name, self)
+            self[name] = value
         return value
 
-    def force_value_resolve(self):
+    def resolve_delayed(self):
         self.values()
 
     def _validate_var_name(self, name):
@@ -350,15 +346,7 @@ class Variables(utils.NormalizedDict):
         self._validate_var_name(name)
         self._validate_var_is_not_scalar_list(name, value)
         value = [self._unescape_leading_trailing_spaces(cell) for cell in value]
-        return name, self._delayed_var_value(name, value)
-
-    def _delayed_var_value(self, name, value):
-        def _delayed():
-            if is_list_var(name):
-                return self.replace_list(value)
-            return self.replace_scalar(value[0])
-        _delayed.delayed_var_value = True
-        return _delayed
+        return name, DelayedVariable(value)
 
     def _unescape_leading_trailing_spaces(self, item):
         if item.endswith(' \\'):
@@ -421,3 +409,14 @@ class Variables(utils.NormalizedDict):
         if extended:
             return self.has_key(variable)
         return utils.NormalizedDict.has_key(self, variable)
+
+
+class DelayedVariable(object):
+
+    def __init__(self, value):
+        self._value = value
+
+    def resolve(self, name, variables):
+        if is_list_var(name):
+            return variables.replace_list(self._value)
+        return variables.replace_scalar(self._value[0])

@@ -2,7 +2,12 @@
 Resource          resvarfiles/resource.txt
 
 *** Variable ***
-${DEFINITION IN RESOURCE FILE}    ${STRING}
+${DEFINITION IN RESOURCE (1)}    ${STRING}
+${DEFINITION IN RESOURCE (2)}    ${LIST[0]}! ${ONE ITEM[0]}
+${DEFINITION IN RESOURCE (3)}    ${LIST WITH ESCAPES}
+@{DEFINITION IN RESOURCE (4)}    @{LIST WITH ESCAPES}
+${ORIGINAL DEFINITION IN SECOND RESOURCE}    ${DEFINITION IN SECOND RESOURCE}
+${DEFINITION IN SECOND RESOURCE (local)}    ${PRIORITIES 5}
 
 *** Test Case ***
 Scalar String
@@ -17,9 +22,6 @@ Scalar Non-Strings
 
 Scalar String With Escapes
     Should Be Equal    ${ESCAPES}    one \\ two \\\\ \${non_existing}
-
-Resolving Local Variable Defined From Resource File
-    Should Be Equal    ${DEFINITION IN RESOURCE FILE}    Hello world!
 
 Empty Scalar String
     Should Be Equal    ${NO VALUE}    ${EMPTY}
@@ -36,10 +38,9 @@ Scalar List With Non-Strings
     Should Be True    ${LIST WITH NON STRINGS} == [42, -1.2, True, None]
 
 Scalar List With Escapes
-    Should Be Equal    ${LIST WITH ESCAPES [0]}    one \\
-    Should Be Equal    ${LIST WITH ESCAPES [1]}    two \\\\
-    Should Be Equal    ${LIST WITH ESCAPES [2]}    three \\\\\\
-    Should Be Equal    ${LIST WITH ESCAPES [3]}    \${non_existing}
+    Test List With Escapes
+    ...    ${LIST WITH ESCAPES [0]}    ${LIST WITH ESCAPES [1]}
+    ...    ${LIST WITH ESCAPES [2]}    ${LIST WITH ESCAPES [3]}
     ${exp} =    Create List    one \\    two \\\\    three \\\\\\    \${non_existing}
     Should Be Equal    ${LIST WITH ESCAPES}    ${exp}
     Should Be True    ${LIST WITH ESCAPES} == ['one \\\\', 'two \\\\\\\\', 'three \\\\\\\\\\\\', '\${non_existing}']    Backslashes are doubled here because 'Should Be True' uses 'eval' internally
@@ -55,10 +56,7 @@ List With Multiple Items
     Should Be True    @{LIST} == ['Hello', 'again', '?']
 
 List With Escapes
-    Should Be Equal    @{LIST WITH ESCAPES}[0]    one \\
-    Should Be Equal    @{LIST WITH ESCAPES}[1]    two \\\\
-    Should Be Equal    @{LIST WITH ESCAPES}[2]    three \\\\\\
-    Should Be Equal    @{LIST WITH ESCAPES}[3]    \${non_existing}
+    Test List With Escapes    @{LIST WITH ESCAPES}
 
 List Created From List With Escapes
     Should Be Equal    @{LIST CREATED FROM LIST WITH ESCAPES}[0]    one \\
@@ -103,7 +101,7 @@ Variable Names Are Underscore Insensitive
     Should Be Equal    @{ _u_N_de__r _S C ores__ }[0]    Variable name with under scores
 
 Assign Mark With Scalar variable
-    Should Be Equal    ${ASSING MARK}    This syntax works starting from 1.8
+    Should Be Equal    ${ASSIGN MARK}    This syntax works starting from 1.8
 
 Assign Mark With List variable
     Should Be Equal    @{ASSIGN MARK}[0]    This syntax works
@@ -111,4 +109,21 @@ Assign Mark With List variable
     Should Be Equal    @{ASSIGN MARK}[2]    from
     Should Be Equal    @{ASSIGN MARK}[3]    ${1.8}
 
-*** Keyword ***
+Variables From Resource Files Can Be Used In Local Variable Table
+    Should Be Equal    ${DEFINITION IN RESOURCE (1)}    Hello world!
+    Should Be Equal    ${DEFINITION IN RESOURCE (2)}    Hello! Hello again?
+    Test List With Escapes    @{DEFINITION IN RESOURCE (3)}
+    Test List With Escapes    @{DEFINITION IN RESOURCE (4)}
+
+Imported Resource Can Use Variables From Resources It Imports In Its Variable Table
+    Should Be Equal    ${DEFINITION IN SECOND RESOURCE}    Second Resource File
+    Should Be Equal    ${ORIGINAL DEFINITION IN SECOND RESOURCE}    Second Resource File
+    Should Be Equal    ${DEFINITION IN SECOND RESOURCE (local)}    Second Resource File
+
+*** Keywords ***
+Test List With Escapes
+    [Arguments]    ${item1}    ${item2}    ${item3}    ${item4}
+    Should Be Equal    ${item1}    one \\
+    Should Be Equal    ${item2}    two \\\\
+    Should Be Equal    ${item3}    three \\\\\\
+    Should Be Equal    ${item4}    \${non_existing}

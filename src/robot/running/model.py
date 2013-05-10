@@ -145,7 +145,7 @@ class RunnableTestSuite(BaseTestSuite):
         context = EXECUTION_CONTEXTS.start_suite(ns, output, self._dry_run_mode)
         if not errors.exit:
             ns.handle_imports()
-        self.variables.force_value_resolve()
+        self.variables.resolve_delayed()
         self._set_variable_dependent_metadata(context, errors)
         output.start_suite(self)
         return context

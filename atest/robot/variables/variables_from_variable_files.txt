@@ -51,3 +51,6 @@ Variable Names Are Case Insensitive
 
 Variable Names Are Underscore Insensitive
     Check Test Case    ${TEST NAME}
+
+Variables From Variable Files Can Be Used In Local Variable Table
+    Check Test Case    ${TEST NAME}

@@ -367,10 +367,9 @@ Variable table
 The most common source for variables are Variable tables in `test case
 files`_ and `resource files`_. Variable tables are convenient, because they
 allow creating variables in the same place as the rest of the test
-data, and the needed syntax is very simple. Their main disadvantage is
-that they only enable assigning variables into strings or a list of
-strings. If other value types are needed, `variable files`_ are
-probably a better option.
+data, and the needed syntax is very simple. Their main disadvantages are
+that values are always strings and they cannot be created dynamically.
+If either of these is a problem, `variable files`_ can be used instead.
 
 Creating scalar variables
 `````````````````````````
