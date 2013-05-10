@@ -40,7 +40,8 @@ class Process(object):
     - Checking process status (e.g. `Process Should Be Running` and
       `Process Should Be Stopped` keywords).
 
-    Note that this library has not been designed for Iron Python compatibility.
+    Note that this library has not been designed for
+    [http://ironpython.codeplex.com/|IronPython] compatibility.
 
     == Table of contents ==
 
