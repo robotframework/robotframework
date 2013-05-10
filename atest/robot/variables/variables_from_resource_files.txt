@@ -13,9 +13,6 @@ Scalar Non-Strings
 Scalar String With Escapes
     Check Test Case    ${TEST NAME}
 
-Resolving Local Variable Defined From Resource File
-    Check Test Case    ${TEST NAME}
-
 Empty Scalar String
     Check Test Case    ${TEST NAME}
 
@@ -59,4 +56,10 @@ Assign Mark With Scalar variable
     Check Test Case    ${TEST NAME}
 
 Assign Mark With List variable
+    Check Test Case    ${TEST NAME}
+
+Variables From Resource Files Can Be Used In Local Variable Table
+    Check Test Case    ${TEST NAME}
+
+Imported Resource Can Use Variables From Resources It Imports In Its Variable Table
     Check Test Case    ${TEST NAME}
