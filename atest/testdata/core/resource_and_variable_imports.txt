@@ -39,6 +39,7 @@ Variables    non_existing.py
 Resource     ${resource_dir}/invalid_resource.html
 Resource     resources_and_variables/resources.html   only one parameter allowed
 Resource     test_suite_dir_with_init_file/__init__.txt
+Resource     ${INIT FILE}
 Variables    ${resource_dir}/invalid_variable_file.py
 Variables    resources_and_variables/dynamicVariables.py    ${non_existing_var_as_arg}
 Variables    resources_and_variables/invalid_list_variable.py
@@ -47,6 +48,7 @@ Variables    resources_and_variables/invalid_list_variable.py
 ${resource_dir}       ${CURDIR}${/}resources_and_variables
 ${variables2_file}    ${resource_dir}/variables2.py
 ${works}              works
+${INIT FILE}          ${CURDIR}/test_suite_dir_with_init_file/sub_suite_with_init_file/__INIT__.txt
 
 *** Test Cases ***
 Normal Resource Import
