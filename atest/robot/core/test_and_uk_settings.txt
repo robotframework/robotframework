@@ -16,7 +16,7 @@ Test Case Tags With Variables
     Check Test Tags  Test Case Tags With Variables  force-1  test-1  test-2  test-3  test-4  test-5
 
 Test Case Tags With Non-Existing Variables
-    Check Test Tags  Test Case Tags With Non-Existing Variables  \${non-existing}  \@{non-existing}  force-1
+    Check Test Tags  Test Case Tags With Non-Existing Variables  \${non_existing}  \@{non_existing}  force-1
 
 Test Case Setup
     ${test} =  Check Test Case  Test Case Setup
@@ -82,7 +82,7 @@ User Keyword Documentation With Variables
 
 User Keyword Documentation With Non Existing Variables
     ${tc} =  Check testcase  User Keyword Documentation with non Existing Variables
-    Should Be Equal  ${tc.kws[0].doc}  Starting from RF 2.1 \@{non-existing} variables are just left unchanged in keyword documentation.
+    Should Be Equal  ${tc.kws[0].doc}  Starting from RF 2.1 \@{non_existing} variables are just left unchanged in keyword documentation.
 
 User Keyword Arguments
     [Documentation]  Check that user keyword Arguments work. Arguments and Return are handled differently than other metadatas.
