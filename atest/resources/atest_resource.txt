@@ -6,6 +6,7 @@ Library         String
 Library         TestCheckerLibrary
 Library         TestHelper
 Library         XML
+Library         read_interpreter.py
 Variables       atest_variables.py
 
 *** Variables ***
@@ -319,3 +320,9 @@ All Keywords Should Have Passed
     :FOR    ${kw}    IN    @{kws}
     \    Should Be Equal    ${kw.status}    PASS
     \    All Keywords Should Have Passed    ${kw}
+
+Run on Python 2.5
+    [arguments]     ${kw}   @{args}
+    ${interpreter} =    Get interpreter    ${OUTFILE}
+    ${is python 25} =   Is python 25    ${interpreter}
+    Run keyword if    ${is python 25}    ${kw}   @{args}
