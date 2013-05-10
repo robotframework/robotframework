@@ -64,17 +64,18 @@ class NamedArgumentResolver(object):
 
     def _add_named(self, arg, named):
         name, value = arg.split('=', 1)
-        name = self._verify_str(name)
+        name = self._convert_to_str_if_possible(name)
         if name in named:
             self._raise_multiple_values(name)
         named[name] = value
 
-    def _verify_str(self, name):
-        # Python 2.5 doesn't handle Unicode at all and Jython 2.5 and 2.7b1 handle non-ASCII Unicode wrong.
+    def _convert_to_str_if_possible(self, name):
+        # Python 2.5 doesn't handle Unicode kwargs at all, so we will try to
+        # support it by converting to str if possible
         try:
             return str(name)
         except UnicodeError:
-            raise DataError("Illegal characters in argument name: '%s'" % name)
+            return name
 
     def _raise_multiple_values(self, name):
         raise DataError("%s '%s' got multiple values for argument '%s'."

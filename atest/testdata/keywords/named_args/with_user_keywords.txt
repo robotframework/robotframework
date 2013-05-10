@@ -108,6 +108,10 @@ Non working named combinations without varargs
     got positional argument after named arguments.    b=b    b
     got multiple values for argument 'a'.             a      a=a
 
+Nön äscii named arguments
+    ${result} =      Named arguments with nönäscii     nönäscii=pöpipöö
+    Should be equal    ${result}     pöpipöö
+
 *** Keywords ***
 Execute working named vararg combination with result
     [Arguments]    ${expected}    @{args}
@@ -162,3 +166,7 @@ Escaped default value
 Named arguments with varargs
     [Arguments]    ${a}=default    ${b}=default    @{varargs}
     [Return]    ${a}    ${b}    @{varargs}
+
+Named arguments with nönäscii
+    [Arguments]    ${nönäscii}=
+    [return]       ${nönäscii}

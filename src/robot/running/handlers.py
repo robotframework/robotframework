@@ -220,6 +220,11 @@ class _DynamicHandler(_RunnableHandler):
     def _parse_arguments(self, handler_method):
         return DynamicArgumentParser().parse(self.longname, self._argspec)
 
+    def resolve_arguments(self, arguments, variables):
+        positional, named = _RunnableHandler.resolve_arguments(self, arguments, variables)
+        arguments = ArgumentMapper(self.arguments).map(positional, named)
+        return arguments, {}
+
     def _get_handler(self, lib_instance, handler_name):
         runner = getattr(lib_instance, self._run_keyword_method_name)
         return self._get_dynamic_handler(runner, handler_name)
@@ -228,9 +233,8 @@ class _DynamicHandler(_RunnableHandler):
         return self._get_dynamic_handler(method, name)
 
     def _get_dynamic_handler(self, runner, name):
-        def handler(*positional, **named):
-            args = ArgumentMapper(self.arguments).map(positional, named)
-            return runner(name, args)
+        def handler(*positional):
+            return runner(name, positional)
         return handler
 
 
