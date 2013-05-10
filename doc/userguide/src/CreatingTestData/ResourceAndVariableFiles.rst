@@ -495,7 +495,7 @@ attributes and :var:`${ANOTHER VARIABLE}` from an instance attribute.
         private String notVariable = "is private";
         public String anotherVariable;
 
-        public StaticJavaExample(String arg1, String arg2) {
+        public StaticJavaExample() {
             anotherVariable = "another value";
         }
     }
