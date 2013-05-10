@@ -40,6 +40,8 @@ class Process(object):
     - Checking process status (e.g. `Process Should Be Running` and
       `Process Should Be Stopped` keywords).
 
+    Note that this library has not been designed for Iron Python compatibility.
+
     == Table of contents ==
 
     - `Configurations`
@@ -278,7 +280,7 @@ class Process(object):
         return self._process(handle).pid
 
     def get_process_object(self, handle=None):
-        """Return the process object with `handle`.
+        """Return the underlying Popen process object with `handle`.
 
         Argument `handle` is optional, if `None` then the active process is used.
         """
