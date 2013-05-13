@@ -24,6 +24,7 @@ class _BaseSettings(object):
                  'Doc'              : ('doc', None),
                  'Metadata'         : ('metadata', []),
                  'TestNames'        : ('test', []),
+                 'RunFailed'        : ('runfailed', 'NONE'),
                  'SuiteNames'       : ('suite', []),
                  'SetTag'           : ('settag', []),
                  'Include'          : ('include', []),
@@ -68,6 +69,7 @@ class _BaseSettings(object):
             elif default == [] and isinstance(value, basestring):
                 value = [value]
             self[name] = self._process_value(name, value, log)
+        self['TestNames'] += self['RunFailed']
 
     def __setitem__(self, name, value):
         if name not in self._cli_opts:
@@ -75,6 +77,10 @@ class _BaseSettings(object):
         self._opts[name] = value
 
     def _process_value(self, name, value, log):
+        if name == 'RunFailed':
+            if value == 'NONE':
+                return []
+            return self._failed_test_from(value)
         if name == 'LogLevel':
             return self._process_log_level(value)
         if value == self._get_default_value(name):
@@ -104,6 +110,13 @@ class _BaseSettings(object):
         if name == 'RemoveKeywords':
             return [v.upper() for v in value]
         return value
+
+    def _failed_test_from(self, output):
+        from robot.result.resultbuilder import ExecutionResult
+        from robot.result.visitor import GatherFailedTests
+        gatherer = GatherFailedTests()
+        ExecutionResult(output).visit(gatherer)
+        return gatherer.results
 
     def _process_log_level(self, level):
         level, visible_level = self._split_log_level(level.upper())
@@ -313,7 +326,8 @@ class RebotSettings(_BaseSettings):
                        'LogLevel'          : ('loglevel', 'TRACE'),
                        'ProcessEmptySuite' : ('processemptysuite', False),
                        'StartTime'         : ('starttime', None),
-                       'EndTime'           : ('endtime', None)}
+                       'EndTime'           : ('endtime', None),
+                       'RunFailed'         : ('runfailed', 'NONE')}
 
     def _outputfile_disabled(self, type_, name):
         return name == 'NONE'
