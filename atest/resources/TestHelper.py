@@ -29,3 +29,15 @@ class TestHelper:
 
     def running_on_linux(self):
         return 'linux' in sys.platform
+
+    def output_should_have_correct_line_separators(self, path):
+        with open(path) as infile:
+            content = infile.read().decode('UTF-8')
+        content = content.replace(os.linesep, '')
+        extra_r = content.count('\r')
+        extra_n = content.count('\n')
+        if extra_r or extra_n:
+            err = AssertionError("Output '%s' has %d extra \\r and %d extra \\n"
+                                 % (path, extra_r, extra_n))
+            err.ROBOT_CONTINUE_ON_FAILURE = True
+            raise err
