@@ -9,7 +9,7 @@ KEYWORDS = {
 class DynamicLibrary(object):
 
     def get_keyword_names(self):
-        return KEYWORDS.keys()
+        return sorted(KEYWORDS)
 
     def run_keyword(self, kw_name, args):
         KEYWORDS[kw_name][0](*args)
