@@ -1648,10 +1648,65 @@ class _Control:
 
     @run_keyword_variant(resolve=0)
     def return_from_keyword(self, *return_values):
+        """Returns from the enclosing user keyword.
+
+        This keyword can be used to return values from user keyword in addition
+        to [Return] setting. For more detailed information about working with
+        return values, see the user guide.
+
+        To conditionally return a value from user keyword, see `Return From
+        Keyword If`.
+
+        Example:
+
+        Given user keyword definition as follows:
+
+        | Find Index | [Arguments] | ${element} | @{list} |  |  |
+        |  | ${index}=   | Set Variable | ${0} |          |  |
+        |  | :FOR | ${var} | IN | @{list} |  |
+        |  |  | Run Keyword If | '${var}' == '${element}' | Return From Keyword | ${index} |
+        |  |  | ${index}=  | Set Variable | ${index + 1} |  |
+        |  | [Return] | ${-1} |  |  |  |
+
+        one can then write:
+
+        | @{list}= | Create List | foo | baz |
+        | ${index 1}= | Find Index | baz | @{list} |
+        | ${index 2}= | Find Index | non existent | @{list} |
+
+        to get:
+
+        | ${index 1} = 1
+        | ${index 2} = -1
+
+        New in Robot Framework 2.8.
+        """
         raise ReturnFromKeyword(return_values)
 
     @run_keyword_variant(resolve=1)
     def return_from_keyword_if(self, condition, *return_values):
+        """Returns from the enclosing user keyword if condition is true.
+
+        This keyword can be used as a shorthand for `Run Keyword If` ...
+        `Return From Keyword` combination.
+
+        To unconditionally return values from user keyword, see `Return From
+        Keyword`
+
+        Example:
+
+        Given the same example as in `Return From Keyword`, we can rewrite the
+        user keyword definition as follows:
+
+        | Find Index | [Arguments] | ${element} | @{list} |  |
+        |  | ${index}= | Set Variable | ${0} |  |
+        |  | :FOR | ${var} | IN | @{list} |
+        |  |  | Return From Keyword If | '${var}' == '${element}' | ${index} |
+        |  |  | ${index}=  | Set Variable | ${index + 1} |
+        |  | [Return] | ${-1} |  |  |
+
+        New in Robot Framework 2.8.
+        """
         if self._is_true(condition):
             self.return_from_keyword(*return_values)
 
