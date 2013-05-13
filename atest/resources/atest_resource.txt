@@ -321,8 +321,8 @@ All Keywords Should Have Passed
     \    Should Be Equal    ${kw.status}    PASS
     \    All Keywords Should Have Passed    ${kw}
 
-Run on Python 2.5 and 2.6
+Run on python 2.5 and 2.6
     [arguments]     ${kw}   @{args}
     ${interpreter} =    Get interpreter    ${OUTFILE}
-    ${is python 25 or 26} =   Is python 25 or 26    ${interpreter}
-    Run keyword if    ${is python 25 or 26}    ${kw}   @{args}
+    ${is 27} =   is 27    ${interpreter}
+    Run keyword unless    ${is 27}    ${kw}   @{args}

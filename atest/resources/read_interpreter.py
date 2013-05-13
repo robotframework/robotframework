@@ -22,5 +22,3 @@ def is_jython(interpreter):
 def is_python(interpreter):
     return interpreter.interpreter.lower() == 'python'
 
-def is_python_25_or_26(interpreter):
-    return is_python(interpreter) and not is_27(interpreter)
