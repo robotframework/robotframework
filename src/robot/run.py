@@ -80,7 +80,6 @@ Options
                           pattern similarly as with --test and it can contain
                           parent name separated with a dot. For example
                           `-s X.Y` selects suite `Y` only if its parent is `X`.
- -R --runfailed file      Run failed tests that are in the given output.xml file.
  -i --include tag *       Select test cases to run by tag. Similarly as name in
                           --test, tag is case and space insensitive. There are
                           three ways to include test based on tags:
@@ -96,6 +95,9 @@ Options
                           not run even if they are included with --include.
                           Tags are excluded using the rules explained in
                           --include.
+ -r --runfailed output    Select failed tests from a previous output file to be
+                          re-run. Equivalent to selecting same tests
+                          individually using --test option.
  -c --critical tag *      Tests having given tag are considered critical. If no
                           critical tags are set, all tags are critical. Tags
                           can be given as a pattern like e.g. with --test.
