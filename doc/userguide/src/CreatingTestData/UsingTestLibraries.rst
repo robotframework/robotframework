@@ -9,9 +9,9 @@ take test libraries into use and how to use the keywords they
 provide. `Creating test libraries`_ is described in a separate
 section.
 
-.. contents:: 
+.. contents::
    :depth: 2
-   :local: 
+   :local:
 
 
 Taking test libraries into use
@@ -125,7 +125,7 @@ usages.
 
 .. table:: Importing test libraries using physical paths to them
    :class: example
-  
+
    =========  ===========================  ========  =========
     Setting               Value             Value      Value
    =========  ===========================  ========  =========
@@ -135,8 +135,8 @@ usages.
    Library    ${RESOURCES}/Example.class   \         \
    =========  ===========================  ========  =========
 
-A limitation of this approach is that libraries implemented as Python classes `must 
-be in a module with the same name as the class`__. Additionally, importing 
+A limitation of this approach is that libraries implemented as Python classes `must
+be in a module with the same name as the class`__. Additionally, importing
 libraries distributed in JAR or ZIP packages is not possible with this mechanism.
 
 __ `Test library names`_
@@ -177,15 +177,15 @@ logs and must be used in the test data when using keywords' full name
 
    =========  ===================  =========  =========
     Setting          Value           Value      Value
-   =========  ===================  =========  =========  
-   Library    com.company.TestLib  WITH NAME  TestLib  
+   =========  ===================  =========  =========
+   Library    com.company.TestLib  WITH NAME  TestLib
    Library    ${LIBRARY}           WITH NAME  MyName
    =========  ===================  =========  =========
 
 Possible arguments to the library are placed into cells between the
 original library name and the :code:`WITH NAME` text. The following example
 illustrates how the same library can be imported several times with
-different arguments: 
+different arguments:
 
 .. table:: Importing the same library several times with a different name
    :class: example
@@ -193,19 +193,19 @@ different arguments:
    =========  ===========  =============  =======  =========  =========
     Setting      Value          Value      Value     Value      Value
    =========  ===========  =============  =======  =========  =========
-   Library    SomeLibrary  localhost      1234     WITH NAME  LocalLib 
-   Library    SomeLibrary  server.domain  8080     WITH NAME  RemoteLib 
+   Library    SomeLibrary  localhost      1234     WITH NAME  LocalLib
+   Library    SomeLibrary  server.domain  8080     WITH NAME  RemoteLib
    =========  ===========  =============  =======  =========  =========
 
 .. table::
    :class: example
 
    ===========  ========================  ===========  ==========
-    Test Case             Action           Argument     Argument   
+    Test Case             Action           Argument     Argument
    ===========  ========================  ===========  ==========
-   My Test      LocalLib.Some Keyword     some arg     second arg 
-   \            RemoteLib.Some Keyword    another arg  whatever 
-   \            LocalLib.Another Keyword  \            \   
+   My Test      LocalLib.Some Keyword     some arg     second arg
+   \            RemoteLib.Some Keyword    another arg  whatever
+   \            LocalLib.Another Keyword  \            \
    ===========  ========================  ===========  ==========
 
 Setting a custom name to a test library works both when importing a
@@ -319,7 +319,7 @@ Dialogs library
 The Dialogs library provides means for pausing the test execution and
 getting input from users. The dialogs are slightly different depending
 on are tests run on Python or Jython but they provide the same
-functionality. 
+functionality.
 
 For more information, see the `Dialogs library documentation`_. This
 library is new in Robot Framework 2.1.
@@ -328,8 +328,7 @@ Screenshot library
 ''''''''''''''''''
 
 The Screenshot library has keywords to capture and store screenshots
-of the whole desktop. This library is implemented with Java AWT APIs,
-so it can be used only when running Robot Framework on Jython.
+of the whole desktop.
 
 For more information, see the `Screenshot library documentation`_.
 
