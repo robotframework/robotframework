@@ -10,14 +10,15 @@ ${TEMPFILE}       ${TEMP}${/}tidy-test-file.txt
 *** Keywords ***
 Run tidy with golden file and check result
     [Arguments]    ${options}    ${expected}
-    Run tidy and check result    ${options}    golden.txt    expected=${expected}
+    ${output} =    Run tidy and check result    ${options}    golden.txt    expected=${expected}
+    [Return]    ${output}
 
 Run tidy with golden resource file and check result
     [Arguments]    ${options}    ${expected}
-    Run tidy and check result    ${options}    golden_resource.txt    expected=${expected}
+    ${output} =    Run tidy and check result    ${options}    golden_resource.txt    expected=${expected}
+    [Return]    ${output}
 
 Check file count
     [Arguments]    ${directory}    ${pattern}    ${expected}
     ${files}=    Count Files In Directory    ${directory}    ${pattern}
     Should Be Equal As Numbers    ${files}    ${expected}
-

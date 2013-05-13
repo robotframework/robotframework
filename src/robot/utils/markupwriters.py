@@ -48,17 +48,19 @@ class _MarkupWriter(object):
         return ' '.join('%s="%s"' % (name, attribute_escape(attrs[name]))
                         for name in self._order_attrs(attrs))
 
-    def content(self, content=None, escape=True):
+    def content(self, content=None, escape=True, replace_newlines=False):
         if content:
+            if replace_newlines:
+                content = content.replace('\n', self._line_separator)
             self._write(self._escape(content) if escape else content)
 
     def end(self, name, newline=True):
         self._write('</%s>' % name, newline)
 
     def element(self, name, content=None, attrs=None, escape=True,
-                newline=True):
+                newline=True, replace_newlines=False):
         self.start(name, attrs, newline=False)
-        self.content(content, escape)
+        self.content(content, escape, replace_newlines)
         self.end(name, newline)
 
     def close(self):

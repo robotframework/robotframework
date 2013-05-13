@@ -43,14 +43,14 @@ class TidyLib(object):
                                   expected=None):
         """Runs tidy and checks that output matches content of file `expected`."""
         result = self.run_tidy(options, input, output)
-        self.compare_tidy_results(output or result, expected or input)
+        return self.compare_tidy_results(output or result, expected or input)
 
     def run_tidy_as_a_script_and_check_result(self, options, input,
                                               output=TEMP_FILE, expected=None):
         """Runs tidy and checks that output matches content of file `expected`."""
         tidy = [self._interpreter, join(ROBOT_SRC, 'robot', 'tidy.py')]
         result = self.run_tidy(options, input, output, tidy)
-        self.compare_tidy_results(output or result, expected or input)
+        return self.compare_tidy_results(output or result, expected or input)
 
     def compare_tidy_results(self, result, expected, *filters):
         if os.path.isfile(result):
@@ -68,6 +68,7 @@ class TidyLib(object):
             else:
                 assert_true(filter.match(res),
                             '%s: %r does not match %r' % (msg, res, filter.pattern))
+        return result
 
     def _filter_matches(self, filters, expected):
         for filter in filters:
@@ -81,13 +82,3 @@ class TidyLib(object):
     def _read(self, path):
         with open(self._path(path), 'rb') as f:
             return f.read().decode('UTF-8')
-
-    def output_should_have_correct_line_separators(self, expected, path=TEMP_FILE):
-        content = self._read(path)
-        expected = str(expected)
-        if expected not in content:
-            raise AssertionError('Output did not contain %r' % expected)
-        if expected == '\n' and '\r' in content:
-            raise AssertionError('Output contains \\r')
-        if '\r\r' in content:
-            raise AssertionError('Output contains \\r\\r')

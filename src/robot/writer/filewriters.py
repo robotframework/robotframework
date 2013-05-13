@@ -136,9 +136,9 @@ class HtmlFileWriter(_DataFileWriter):
 
     def write(self, datafile):
         self._writer.content(TEMPLATE_START % {'NAME': self._name},
-                             escape=False)
+                             escape=False, replace_newlines=True)
         _DataFileWriter.write(self, datafile)
-        self._writer.content(TEMPLATE_END, escape=False)
+        self._writer.content(TEMPLATE_END, escape=False, replace_newlines=True)
 
     def _write_table(self, table, is_last):
         self._writer.start('table', {'id': table.type.replace(' ', ''),

@@ -30,5 +30,5 @@ Unix
 *** Keywords ***
 Output should be correct and have correct line separators
     [Arguments]    ${options}    ${expected file}    ${expected separator}
-    Run tidy with golden file and check result    ${options}    ${expected file}
-    TidyLib.Output should have correct line separators    ${expected separator}
+    ${output} =    Run tidy with golden file and check result    ${options}    ${expected file}
+    Output should have correct line separators    ${output}    ${expected separator}
