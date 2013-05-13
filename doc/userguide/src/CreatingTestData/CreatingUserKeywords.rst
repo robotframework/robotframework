@@ -581,6 +581,46 @@ specifying those values in different cells after the
    Return Three Values  [Return]      foo             bar          zap
    ===================  ============  ==============  ===========  ==========
 
+You can also return values from keyword using the :name:`Return From Keyword` keyword. Return values using this keyword works as described above. Using both the keyword and the :opt:`[Return]` setting makes it possible to return different things from the user keyword, depending which one is encountered first. Thus, :name:`Return From Keyword` provides a mechanism to return earlier from the user keyword. 
+
+Keyword :name:`Return From Keyword If` provides a shorthand to use instead of :name:`Run Keyword If` ... :name:`Return From Keyword` combination.
+
+.. table:: :name:`Return From Keyword` and :name:`Return From Keyword If`
+    :class: example
+
+    =============  ==============  ==============  ========  ========  ========
+    Test Case      Action          Argument        Argument  Argument  Argument
+    =============  ==============  ==============  ========  ========  ========
+    Simple Return  ${ret}=         Return Things
+    \              Some Keyword    ${ret}
+    \
+    Find Index     @{list}=        Create List     foo       bar       baz
+    \              ${index}=       Get Index       baz       @{list}
+    \              Should Be True  ${index} == 2
+    \              ${index}=       Get Index       corge     @{list}
+    \              Should Be True  ${index} == -1
+    =============  ==============  ==============  ========  ========  ========
+    
+.. table::
+   :class: example
+
+   =============  ===================  ======================  =========================  ============
+     Keyword          Action                 Argument                Argument               Argument
+   =============  ===================  ======================  =========================  ============
+   Return Things  ${value}=            Get Some Value
+   \              Return From Keyword  ${value}
+   \
+   Get Index      [Arguments]          ${element}              @{list}
+   \              ${index}=            Set Variable            ${0}
+   \              :FOR                 ${item}                 IN                         @{list}
+   \                                   Return From Keyword If  '${item}' == '${element}'  ${index}
+   \                                   ${index}=               Set Variable               ${index + 1}
+   \              [Return]             ${-1}
+   =============  ===================  ======================  =========================  ============
+
+.. note::
+    :name:`Return From Keyword` and :name:`Return From Keyword If` are new keywords introduced in Robot 2.8.
+
 Keyword teardown
 ~~~~~~~~~~~~~~~~
 
