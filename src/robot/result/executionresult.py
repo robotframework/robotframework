@@ -15,7 +15,6 @@
 from __future__ import with_statement
 
 from robot.model import Statistics
-from robot.reporting.outputwriter import OutputWriter
 
 from .executionerrors import ExecutionErrors
 from .configurer import SuiteConfigurer
@@ -59,6 +58,8 @@ class Result(object):
         visitor.visit_result(self)
 
     def save(self, path=None):
+        # avoids cyclic import
+        from robot.reporting.outputwriter import OutputWriter
         self.visit(OutputWriter(path or self.source))
 
 
