@@ -15,12 +15,12 @@ Not a Library
 Initializing Fails Without Arguments
     Import Should Have Failed  1
     ...  Initializing test library 'InitializationFailLibrary' with no arguments failed: Initialization failed with arguments 'default 1' and 'default 2'!
-    ...  InitializationFailLibrary.py", line 5, in __init__
+    ...  InitializationFailLibrary.py", line 4, in __init__
 
 Initializing Fails With Arguments
     Import Should Have Failed  2
     ...  Initializing test library 'InitializationFailLibrary' with arguments [ 1 | arg2=2 ] failed: Initialization failed with arguments 1 and 2!
-    ...  InitializationFailLibrary.py", line 5, in __init__
+    ...  InitializationFailLibrary.py", line 4, in __init__
 
 Initializing Fails Due To Too Many Arguments
     Import Should Have Failed  3

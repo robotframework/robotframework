@@ -27,15 +27,18 @@ class Process(object):
     """Robot Framework test library for running processes.
 
     This library utilizes Python's
-    [http://docs.python.org/2.7/library/subprocess.html|subprocess] module and its
-    [http://docs.python.org/2.7/library/subprocess.html#subprocess.Popen|Popen] class.
+    [http://docs.python.org/2.7/library/subprocess.html|subprocess]
+    module and its
+    [http://docs.python.org/2.7/library/subprocess.html#subprocess.Popen|Popen]
+    class.
 
     The library has following main usages:
 
     - Starting a processes, and managing their handles, stdouts and stderrs
       (e.g. `Run Process` and `Start New Process` keywords).
-    - Stopping processes started by this library (e.g. `Terminate All Processes` and
-      `Terminate Process` keywords). See `Stopping processes` for more information.
+    - Stopping processes started by this library (e.g. `Terminate All Processes`
+      and `Terminate Process` keywords). See `Stopping processes` for more
+      information.
     - Switching between processes (e.g. `Switch Active Process` keyword).
     - Checking process status (e.g. `Process Should Be Running` and
       `Process Should Be Stopped` keywords).
@@ -46,44 +49,46 @@ class Process(object):
     == Table of contents ==
 
     - `Configurations`
-    - `Example`
     - `Active process`
     - `Stopping processes`
     - `ExecutionResult`
+    - `Example`
 
     = Configurations =
+
     `Run Process` and `Start New Process` keywords can be given several named
-    arguments, which are listed below. Default values in the parenthesis.
+    arguments, which are listed below.
 
-     - `cwd` specifies if program's directory is used as cwd  (`False`)
-     - `shell` specifies if shell is used for program execution (`False`)
-     - `stdout` is a file handle for standard output
-     - `stderr` is a file handle for standard error
-     - `stdin` is a file handle for standard input
-     - `alias` is a name for the process (`None`).
+    - `cwd` specifies the working directory
+    - `shell` specifies whether shell is used for program execution
+    - `stdout` is a file handle for standard output
+    - `stderr` is a file handle for standard error
+    - `alias` is a short name for the process
 
-    = Example =
-    The following example demonstrates library's main usages as stated above.
+    == Current working directory ==
 
-    | *** Settings *** |  |  |  |  |
-    | Library | Process |  |  |  |
-    |  |  |  |  |  |
-    | *** Test Cases *** |  |  |  |  |
-    | Example |  |  |  |  |
-    | ${handle1}= | `Start New Process` | /path/command.sh    | shell=True  | cwd=/path |
-    | ${handle2}= | `Start New Process` | ${CURDIR}${/}mytool   | shell=True |   |
-    | ${result1}=  | `Wait For Process` | ${handle1} |    |  |
-    |  | `Terminate Process` | ${handle2} |    |   |
-    |  | `Process Should Be Dead` | ${handle2} |    |   |
-    |  | [Teardown] | `Kill All Processes` |    |   |
+    Paragraph
+
+    == Running processes in a shell ==
+
+    Paragraph
+
+    == Standard output and error ==
+
+    Paragraph
 
     = Active process =
+
     The test library keeps record which of the started processes is an active
-    process. Many of the library keywords have `handle` as optional argument. This means
-    that if argument `handle` is NOT given, then the active process is used for
-    keyword. Active process can be switched using keyword `Switch Active Process`.
+    process. Many of the library keywords have `handle` as optional argument.
+    This means that if argument `handle` is NOT given, then the active process
+    is used for keyword. Active process can be switched using keyword
+    `Switch Active Process`.
+
+    The most recently started process is always a `active process`.
 
     = Stopping processes =
+
     Due restrictions set by
     [http://docs.python.org/2.7/library/subprocess.html|subprocess] module,
     the process stopping is NOT functioning properly on
@@ -92,6 +97,7 @@ class Process(object):
     started processes therefore making the stopping of the process difficult.
 
     = ExecutionResult =
+
     This object contains information about the process execution.
 
     Included information is:
@@ -99,6 +105,22 @@ class Process(object):
     - `stdout` standard output file handle
     - `stderr` standard error file handle
     - `exit_code` from the process, `None` during execution.
+
+    = Example =
+
+    The following example demonstrates library's main usages as stated above.
+
+    | *** Settings *** |
+    | Library | Process |
+    |  |
+    | *** Test Cases *** |
+    | Example |
+    | ${handle1}= | `Start New Process` | /path/command.sh    | shell=True  | cwd=/path |
+    | ${handle2}= | `Start New Process` | ${CURDIR}${/}mytool   | shell=True |
+    | ${result1}=  | `Wait For Process` | ${handle1} |
+    |  | `Terminate Process` | ${handle2} |
+    |  | `Process Should Be Dead` | ${handle2} |
+    |  | [Teardown] | `Kill All Processes` |
     """
 
     ROBOT_LIBRARY_SCOPE='GLOBAL'
@@ -113,7 +135,8 @@ class Process(object):
         """This keyword runs a process and waits for it to terminate.
 
         The `command` is a child program which is started in a new process,
-        `arguments` are arguments for the `command` and `configuration` are arguments for the
+        `arguments` are arguments for the `command` and `configuration` are
+        arguments for the
         [http://docs.python.org/2.7/library/subprocess.html|subprocess] module's
         [http://docs.python.org/2.7/library/subprocess.html#subprocess.Popen|Popen]
         class (see `Configurations`).
@@ -131,7 +154,8 @@ class Process(object):
         """This keyword starts a new process.
 
         The `command` is a child program which is started in a new process,
-        `arguments` are arguments for the `command` and `configuration` are arguments for the
+        `arguments` are arguments for the `command` and `configuration` are
+        arguments for the
         [http://docs.python.org/2.7/library/subprocess.html|subprocess] module's
         [http://docs.python.org/2.7/library/subprocess.html#subprocess.Popen|Popen]
         class (see `Configurations`).
@@ -142,8 +166,8 @@ class Process(object):
 
         Examples:
 
-        | $handle1}= | `Start New Process` | /bin/script.sh | |
-        | $handle2}= | `Start New Process` | totals | |
+        | $handle1}= | `Start New Process` | /bin/script.sh |
+        | $handle2}= | `Start New Process` | totals |
         """
         config = NewProcessConfig(self._tempdir, **configuration)
         p = subprocess.Popen(self._cmd(arguments, command, config.shell),
@@ -175,8 +199,9 @@ class Process(object):
         return self._process(handle).poll() is None
 
     def process_should_be_running(self, handle=None):
-        """Assertion keyword, which expects that process with `handle` is running.
-        Argument `handle` is optional, if `None` then the active process is used.
+        """Assertion keyword, which expects that process with `handle` is
+        running. Argument `handle` is optional, if `None` then the active
+        process is used.
 
         Check is done using `Process Is Running` keyword.
 
@@ -186,8 +211,9 @@ class Process(object):
             raise AssertionError('Process is not running')
 
     def process_should_be_stopped(self, handle=None):
-        """Assertion keyword, which expects that process with `handle` is stopped.
-        Argument `handle` is optional, if `None` then the active process is used.
+        """Assertion keyword, which expects that process with `handle` is
+        stopped. Argument `handle` is optional, if `None` then the active
+        process is used.
 
         Check is done using `Process Is Running` keyword.
 
@@ -199,16 +225,17 @@ class Process(object):
     def wait_for_process(self, handle=None):
         """This waits for process with `handle` to terminate.
 
-        Argument `handle` is optional, if `None` then the active process is used.
+        Argument `handle` is optional, if `None` then the active process is
+        used.
 
         Returns an `ExecutionResult` object.
 
         Examples:
 
-        | ${output}= | `Wait For Process` | |
+        | ${output}= | `Wait For Process` |
         | Should Be Equal As Integers | ${output.exit_code} | 0 |
         | Should Match | ${output.stdout} | `*text in the out*` |
-        | Should Match | ${output.stderr} | |
+        | Should Match | ${output.stderr} |
         """
         process = self._process(handle)
         result = self._logs[process]
@@ -221,12 +248,13 @@ class Process(object):
         `kill()` or `terminate()`, which can be selected using `kill` argument
         (by default `terminate()` is used).
 
-        Argument `handle` is optional, if `None` then the active process is used.
+        Argument `handle` is optional, if `None` then the active process is
+        used.
 
         Examples:
 
         | `Terminate Process` | |  | # Terminates the active process |
-        | `Terminate Process` | ${handle3} | | |
+        | `Terminate Process` | ${handle3} |
         | `Terminate Process` | ${handle3} | kill=True | # Using kill instead of terminate |
         """
         process = self._process(handle)
@@ -266,17 +294,18 @@ class Process(object):
     def get_process_id(self, handle=None):
         """Returns a process ID of process with `handle`.
 
-        Argument `handle` is optional, if `None` then the active process is used.
+        Argument `handle` is optional, if `None` then the active process is
+        used.
 
         Return value is a integer value.
 
         Examples:
 
         | ${pid}= | `Get Process Id` | | | | # Gets PID of the active process |
-        | ${handle1}= | `Start New Process` | python -c "print 'hello'" | shell=True | alias=hello | |
+        | ${handle1}= | `Start New Process` | python -c "print 'hello'" | shell=True | alias=hello |
         | ${pid_1}= | `Get Process Id` | ${handle1} | | | # Gets PID with `handle1` |
         | ${pid_2}= | `Get Process Id` | hello | | | # Gets PID with alias `hello` |
-        | Should Be Equal As Integers | ${pid_1} | ${pid_2} | | | |
+        | Should Be Equal As Integers | ${pid_1} | ${pid_2} |
         """
         return self._process(handle).pid
 
@@ -292,9 +321,9 @@ class Process(object):
 
         Examples:
 
-        | Run Keyword And Expect Error | `Switch Active Process` | |
+        | Run Keyword And Expect Error | `Switch Active Process` |
         | Run Keyword And Expect Error | `Switch Active Process` | ${nonexistent_handle} |
-        | `Switch Active Process` | ${handle1} | |
+        | `Switch Active Process` | ${handle1} |
         """
         self._started_processes.switch(handle)
 
@@ -340,9 +369,12 @@ class NewProcessConfig(object):
 
     FILE_INDEX = 0
 
-    def __init__(self, tempdir, cwd=None,
-                 shell=False, stdout=None,
-                 stderr=None, alias=None):
+    def __init__(self, tempdir,
+                 cwd=None,
+                 shell=False,
+                 stdout=None,
+                 stderr=None,
+                 alias=None):
         self._tempdir = tempdir
         self.cwd = cwd or os.path.abspath(os.curdir)
         self.stdout_stream = self._new_stream(stdout, 'stdout')

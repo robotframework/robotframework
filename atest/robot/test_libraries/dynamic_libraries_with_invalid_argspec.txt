@@ -6,7 +6,7 @@ Resource        atest_resource.txt
 *** Test Cases ***
 
 Argspec consists of something else than strings
-    Error message should be correct    1    argspec with other than strings
+    Error message should be correct    0    argspec with other than strings
     ...    Calling dynamic method 'get_keyword_arguments' failed: Return value must be list of strings.
 
 Argspec has varargs before positional arguments
@@ -18,7 +18,7 @@ Argspec has varargs before named arguments
     ...    Only last argument can be varargs.
 
 Argspec has named arguments before positional
-    Error message should be correct    0    named args before positional
+    Error message should be correct    1    named args before positional
     ...     Non-default argument after default arguments.
 
 

@@ -38,7 +38,7 @@ Wait Until In User Keyword
 
 Failing User Keyword with Wait Until
     [Documentation]  FAIL  Timeout 200 milliseconds exceeded. The last error was: Still 0 times to fail!
-    Wait Until Keyword Succeeds  ${0.2}  0.1  User Keyword
+    Wait Until Keyword Succeeds  ${0.2}  0.11  User Keyword
 
 Passing User Keyword with Wait Until
     ${return value} =  Wait Until Keyword Succeeds  10 minutes  10 milliseconds  User Keyword

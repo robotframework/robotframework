@@ -30,7 +30,7 @@ Pid
     ${handle}=    Some process
     ${pid}=    Get Process Id    ${handle}
     Should Not Be Equal   ${pid}   ${None}
-    Evaluate    os.kill(int(${pid}),signal.SIGTERM)    os,signal
+    Evaluate    os.kill(int(${pid}),signal.SIGTERM) if hasattr(os, 'kill') else os.system('taskkill /pid ${pid} /f')    os,signal
     Wait For Process    ${handle}
     Process Should Be Stopped    ${handle}
 
