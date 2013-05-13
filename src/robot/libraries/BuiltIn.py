@@ -1800,7 +1800,7 @@ class _Misc:
         | Import Library | ${LIBRARIES}/Lib.java | arg | WITH NAME | JavaLib |
         """
         try:
-            self._namespace.import_library(name.replace('/', os.sep), list(args))
+            self._namespace.import_library(name, list(args))
         except DataError, err:
             raise RuntimeError(unicode(err))
 
@@ -1824,8 +1824,7 @@ class _Misc:
         New in Robot Framework 2.5.4.
         """
         try:
-            self._namespace.import_variables(path.replace('/', os.sep),
-                                             list(args), overwrite=True)
+            self._namespace.import_variables(path, list(args), overwrite=True)
         except DataError, err:
             raise RuntimeError(unicode(err))
 
@@ -1845,7 +1844,7 @@ class _Misc:
         | Import Resource | ${CURDIR}/../resources/resource.html |
         """
         try:
-            self._namespace.import_resource(path.replace('/', os.sep))
+            self._namespace.import_resource(path)
         except DataError, err:
             raise RuntimeError(unicode(err))
 
