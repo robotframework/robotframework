@@ -17,7 +17,6 @@ import robot
 from robot.conf.settings import RebotSettings
 from robot.reporting.resultwriter import Results
 from robot.reporting.jswriter import JsResultWriter
-from robot.utils import utf8open
 
 def run_robot(testdata, outxml):
     robot.run(testdata, loglevel='DEBUG', log='NONE', report='NONE', output=outxml)
@@ -49,7 +48,7 @@ def create_jsdata(outxml, target):
               'defaultLevel': 'DEBUG',
               'reportURL': 'report.html',
               'background': {'fail': 'DeepPink'}}
-    with utf8open(target, 'w') as output:
+    with open(target, 'wb') as output:
         writer = JsResultWriter(output, start_block='', end_block='')
         writer.write(result, config)
     print 'Log:    ', normpath(join(BASEDIR, '..', 'rebot', 'log.html'))

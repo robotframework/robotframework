@@ -23,7 +23,7 @@ from .application import Application
 from .compress import compress_text
 from .connectioncache import ConnectionCache
 from .encoding import (decode_output, encode_output,
-                       decode_from_system, encode_to_system, utf8open)
+                       decode_from_system, encode_to_system)
 from .error import (get_error_message, get_error_details, ErrorDetails,
                     RERAISED_EXCEPTIONS)
 from .escaping import escape, unescape
@@ -42,7 +42,7 @@ from .robottime import (get_timestamp, get_start_timestamp, format_time,
                         timestamp_to_secs, parse_time)
 from .setter import setter
 from .text import (cut_long_message, format_assign_message,
-                  pad_console_length, get_console_length)
+                   pad_console_length, get_console_length)
 from .unic import unic, safe_repr
 
 # TODO: for backwards compatibility, remove in RF 2.8

@@ -10,3 +10,4 @@ ${BAR}     ${NONEX}
 *** Test Cases ***
 Example
     Log    ${CURDIR}
+    Nön-existing nön-ÄSCII keywörd

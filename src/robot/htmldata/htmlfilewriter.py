@@ -13,7 +13,7 @@
 #  limitations under the License.
 
 from __future__ import with_statement
-import os
+import os.path
 import re
 
 from robot.utils import HtmlWriter
@@ -68,7 +68,7 @@ class LineWriter(_Writer):
         return True
 
     def write(self, line):
-        self._output.write(line + os.linesep)
+        self._output.write(line + '\n')
 
 
 class GeneratorWriter(_Writer):
@@ -91,7 +91,7 @@ class _InliningWriter(_Writer):
     def _inline_file(self, filename, tag, attrs):
         self._html_writer.start(tag, attrs)
         for line in HtmlTemplate(os.path.join(self._base_dir, filename)):
-            self._html_writer.content(line + os.linesep, escape=False)
+            self._html_writer.content(line, escape=False, newline=True)
         self._html_writer.end(tag)
 
 

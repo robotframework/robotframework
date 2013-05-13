@@ -14,6 +14,8 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+from __future__ import with_statement
+
 USAGE = """robot.testdoc -- Robot Framework test data documentation tool
 
 Version:  <VERSION>
@@ -62,10 +64,8 @@ Examples:
   ipy path/to/robot/testdoc.py first_suite.txt second_suite.txt output.html
 """
 
+import os.path
 import sys
-import os
-from os.path import abspath, dirname
-import codecs
 import time
 
 # Allows running as a script. __name__ check needed with multiprocessing:
@@ -86,16 +86,15 @@ class TestDoc(utils.Application):
         utils.Application.__init__(self, USAGE, arg_limits=(2,))
 
     def main(self, datasources, title=None, **options):
-        outfile = abspath(datasources.pop())
+        outfile = utils.abspath(datasources.pop())
         suite = TestSuiteFactory(datasources, **options)
         self._write_test_doc(suite, outfile, title)
         self.console(outfile)
 
     def _write_test_doc(self, suite, outfile, title):
-        output = codecs.open(outfile, 'w', 'UTF-8')
-        model_writer = TestdocModelWriter(output, suite, title)
-        HtmlFileWriter(output, model_writer).write(TESTDOC)
-        output.close()
+        with open(outfile, 'w') as output:
+            model_writer = TestdocModelWriter(output, suite, title)
+            HtmlFileWriter(output, model_writer).write(TESTDOC)
 
 
 @disable_curdir_processing
@@ -112,9 +111,9 @@ class TestdocModelWriter(ModelWriter):
         self._title = title.replace('_', ' ') if title else suite.name
 
     def write(self, line):
-        self._output.write('<script type="text/javascript">' + os.linesep)
+        self._output.write('<script type="text/javascript">\n')
         self.write_data()
-        self._output.write('</script>' + os.linesep)
+        self._output.write('</script>\n')
 
     def write_data(self):
         generated_time = time.localtime()
@@ -154,7 +153,7 @@ class JsonConverter(object):
     def _get_relative_source(self, source):
         if not source or not self._output_path:
             return ''
-        return utils.get_link_path(source, dirname(self._output_path))
+        return utils.get_link_path(source, os.path.dirname(self._output_path))
 
     def _escape(self, item):
         return utils.html_escape(item)

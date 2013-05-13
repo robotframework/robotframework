@@ -14,17 +14,20 @@ ${OUTFILE}    %{TEMPDIR}${/}testdoc-output.html
 One input
     ${output}=    Run TestDoc    ${INPUT 1}
     Testdoc Should Contain    "name":"Pass And Fail"    "title":"Pass And Fail"    "numberOfTests":2
+    Outfile Should Have Correct Line Separators
     Output Should Contain Outfile    ${output}
 
 Variables and imports are not processes
     ${output}=    Run TestDoc    ${INPUT 3}
     Testdoc Should Contain    "name":"Testdoc"    "title":"Testdoc"    "numberOfTests":1
+    Outfile Should Have Correct Line Separators
     Output Should Contain Outfile    ${output}
 
 Many inputs
-    ${output}=    Run TestDoc    --exclude t1 --title MyDoc ${INPUT 1} ${INPUT2} ${INPUT 3}
-    Testdoc Should Contain    "name":"Pass And Fail &amp; Suites &amp; Testdoc"    "title":"MyDoc"    "numberOfTests":7
+    ${output}=    Run TestDoc    --exclude t1 --title Nön-ÄSCII ${INPUT 1} ${INPUT2} ${INPUT 3}
+    Testdoc Should Contain    "name":"Pass And Fail &amp; Suites &amp; Testdoc"    "title":"N\\u00f6n-\\u00c4SCII"    "numberOfTests":7
     Testdoc Should Not Contain    "name":"Suite4 First"
+    Outfile Should Have Correct Line Separators
     Output Should Contain Outfile    ${output}
 
 Invalid usage
@@ -50,6 +53,9 @@ Testdoc Should Not Contain
     ${testdoc}=    Get File    ${OUTFILE}
     : FOR     ${exp}    IN   @{expected}
     \    Should Not Contain    ${testdoc}   ${exp}
+
+Outfile Should Have Correct Line Separators
+    File should have correct line separators    ${OUTFILE}
 
 Output Should Contain Outfile
     [Arguments]    ${output}

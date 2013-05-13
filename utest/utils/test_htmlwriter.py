@@ -10,7 +10,7 @@ class TestHtmlWriter(unittest.TestCase):
 
     def setUp(self):
         self.output = StringIO()
-        self.writer = HtmlWriter(self.output)
+        self.writer = HtmlWriter(self.output, encoding=None)
 
     def test_start(self):
         self.writer.start('r')
@@ -98,6 +98,7 @@ class TestHtmlWriter(unittest.TestCase):
 
     def test_line_separator(self):
         self._test_line_separator('\n')
+        self._test_line_separator(os.linesep)
         self._test_line_separator('LINESEP')
 
     def _test_line_separator(self, linesep):
@@ -123,10 +124,7 @@ class TestHtmlWriter(unittest.TestCase):
         self._verify(u'<p name="hyv\xe4\xe4">y\xf6<i>t\xe4</i></p>'.encode(encoding))
 
     def _verify(self, expected):
-        actual = self.output.getvalue()
-        if '\n' in expected:
-            expected = expected.replace('\n', os.linesep)
-        assert_equals(actual, expected)
+        assert_equals(self.output.getvalue(), expected)
 
 
 if __name__ == '__main__':

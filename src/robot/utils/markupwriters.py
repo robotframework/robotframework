@@ -12,14 +12,12 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-import os
-
 from .markuputils import html_escape, xml_escape, attribute_escape
 
 
 class _MarkupWriter(object):
 
-    def __init__(self, output, line_separator=os.linesep, encoding=None):
+    def __init__(self, output, line_separator='\n', encoding='UTF-8'):
         """
         :param output: Either an opened, file like object, or a path to the
             desired output file. In the latter case, the file is created
@@ -32,13 +30,11 @@ class _MarkupWriter(object):
             output = open(output, 'w')
         self.output = output
         self._line_separator = line_separator
-        self._encode = self._create_encoder(encoding)
+        self._encoding = encoding
         self._preamble()
 
-    def _create_encoder(self, encoding):
-        if encoding is None:
-            return lambda text: text
-        return lambda text: text.encode(encoding)
+    def _preamble(self):
+        pass
 
     def start(self, name, attrs=None, newline=True):
         self._write('<%s %s>' % (name, self._format_attrs(attrs))
@@ -48,11 +44,18 @@ class _MarkupWriter(object):
         return ' '.join('%s="%s"' % (name, attribute_escape(attrs[name]))
                         for name in self._order_attrs(attrs))
 
-    def content(self, content=None, escape=True, replace_newlines=False):
+    def _order_attrs(self, attrs):
+        return attrs
+
+    def content(self, content=None, escape=True, newline=False,
+                replace_newlines=False):
         if content:
             if replace_newlines:
                 content = content.replace('\n', self._line_separator)
-            self._write(self._escape(content) if escape else content)
+            self._write(self._escape(content) if escape else content, newline)
+
+    def _escape(self, content):
+        raise NotImplementedError
 
     def end(self, name, newline=True):
         self._write('</%s>' % name, newline)
@@ -72,32 +75,26 @@ class _MarkupWriter(object):
         if newline:
             self.output.write(self._line_separator)
 
+    def _encode(self, text):
+        return text.encode(self._encoding) if self._encoding else text
+
 
 class HtmlWriter(_MarkupWriter):
-
-    def _preamble(self):
-        pass
-
-    def _escape(self, content):
-        return html_escape(content)
 
     def _order_attrs(self, attrs):
         return sorted(attrs)  # eases testing
 
+    def _escape(self, content):
+        return html_escape(content)
+
 
 class XmlWriter(_MarkupWriter):
-
-    def __init__(self, output, line_separator='\n', encoding=None):
-        _MarkupWriter.__init__(self, output, line_separator, encoding)
 
     def _preamble(self):
         self._write('<?xml version="1.0" encoding="UTF-8"?>', newline=True)
 
     def _escape(self, text):
         return xml_escape(text)
-
-    def _order_attrs(self, attrs):
-        return attrs
 
 
 class NullMarkupWriter(object):

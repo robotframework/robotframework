@@ -12,8 +12,6 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-import os
-
 from robot.htmldata import JsonWriter
 
 
@@ -24,8 +22,8 @@ class JsResultWriter(object):
     _strings_key = 'strings'
 
     def __init__(self, output,
-                 start_block='<script type="text/javascript">' + os.linesep,
-                 end_block='</script>' + os.linesep,
+                 start_block='<script type="text/javascript">\n',
+                 end_block='</script>\n',
                  split_threshold=9500):
         writer = JsonWriter(output, separator=end_block+start_block)
         self._write = writer.write
@@ -53,7 +51,7 @@ class JsResultWriter(object):
         variable = self._output_var(self._strings_key)
         self._write('%s = []' % variable)
         prefix = '%s = %s.concat(' % (variable, variable)
-        postfix = ');' + os.linesep
+        postfix = ');\n'
         threshold = self._split_threshold
         for index in xrange(0, len(strings), threshold):
             self._write_json(prefix, strings[index:index+threshold], postfix)

@@ -26,7 +26,7 @@ from robot.errors import DataError, Information, FrameworkError
 from robot.version import get_full_version
 
 from .misc import plural_or_not
-from .encoding import decode_output, decode_from_system, utf8open
+from .encoding import decode_output, decode_from_system
 
 
 ESCAPES = dict(
@@ -394,8 +394,8 @@ class ArgFileParser(object):
 
     def _read_from_file(self, path):
         try:
-            with utf8open(path) as f:
-                content = f.read()
+            with open(path) as f:
+                content = f.read().decode('UTF-8')
         except (IOError, UnicodeError), err:
             raise DataError("Opening argument file '%s' failed: %s"
                             % (path, err))

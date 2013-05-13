@@ -2,6 +2,8 @@ import os
 import sys
 from stat import S_IREAD, S_IWRITE
 
+from robot.api import logger
+
 
 class TestHelper:
 
@@ -30,15 +32,20 @@ class TestHelper:
     def running_on_linux(self):
         return 'linux' in sys.platform
 
-    def output_should_have_correct_line_separators(self, output, sep=os.linesep):
+    def file_should_have_correct_line_separators(self, output, sep=os.linesep):
         if os.path.isfile(output):
-            with open(output) as infile:
+            with open(output, 'rb') as infile:
                 output = infile.read().decode('UTF-8')
-        output = output.replace(sep, '')
-        extra_r = output.count('\r')
-        extra_n = output.count('\n')
+        if sep not in output:
+            self._wrong_separators('Output has no %r separators' % sep, output)
+        extra_r = output.replace(sep, '').count('\r')
+        extra_n = output.replace(sep, '').count('\n')
         if extra_r or extra_n:
-            err = AssertionError("Output has %d extra \\r and %d extra \\n"
-                                 % (extra_r, extra_n))
-            err.ROBOT_CONTINUE_ON_FAILURE = True
-            raise err
+            self._wrong_separators("Output has %d extra \\r and %d extra \\n"
+                                   % (extra_r, extra_n), output)
+
+    def _wrong_separators(self, message, output):
+        logger.info(repr(output).replace('\\n', '\\n\n'))
+        failure = AssertionError(message)
+        failure.ROBOT_CONTINUE_ON_FAILURE = True
+        raise failure

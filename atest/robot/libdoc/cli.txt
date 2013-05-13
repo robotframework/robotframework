@@ -32,6 +32,7 @@ Run Libdoc And Verify Created Output File
     [Arguments]    ${args}   ${format}    ${name}    ${version}=    ${path}=${OUTHTML}
     ${stdout} =    Run Libdoc    ${args}
     Run Keyword    ${format} Doc Should Have Been Created    ${path}    ${name}    ${version}
+    File Should Have Correct Line Separators    ${path}
     Path to output should be in stdout    ${path}    ${stdout.rstrip()}
     [Teardown]    Remove Output Files
 

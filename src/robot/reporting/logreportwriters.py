@@ -14,10 +14,8 @@
 
 from __future__ import with_statement
 from os.path import basename, splitext
-import codecs
 
 from robot.htmldata import HtmlFileWriter, ModelWriter, LOG, REPORT
-from robot.utils import utf8open
 
 from .jswriter import JsResultWriter, SplitLogWriter
 
@@ -28,7 +26,7 @@ class _LogReportWriter(object):
         self._js_model = js_model
 
     def _write_file(self, path, config, template):
-        outfile = codecs.open(path, 'wb', encoding='UTF-8') \
+        outfile = open(path, 'w') \
             if isinstance(path, basestring) else path  # unit test hook
         with outfile:
             model_writer = RobotModelWriter(outfile, self._js_model, config)
@@ -49,7 +47,7 @@ class LogWriter(_LogReportWriter):
             self._write_split_log(index, keywords, strings, '%s-%d.js' % (base, index))
 
     def _write_split_log(self, index, keywords, strings, path):
-        with utf8open(path, 'wb') as outfile:
+        with open(path, 'w') as outfile:
             writer = SplitLogWriter(outfile)
             writer.write(keywords, strings, index, basename(path))
 

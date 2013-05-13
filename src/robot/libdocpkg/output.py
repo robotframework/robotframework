@@ -12,7 +12,6 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-import codecs
 import os
 
 
@@ -25,7 +24,7 @@ class LibdocOutput(object):
 
     def __enter__(self):
         if self._format == 'HTML':
-            self._output_file = codecs.open(self._output_path, 'w', 'UTF-8')
+            self._output_file = open(self._output_path, 'w')
             return self._output_file
         return self._output_path
 
