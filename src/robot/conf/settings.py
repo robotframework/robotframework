@@ -18,12 +18,15 @@ from robot import utils
 from robot.errors import DataError, FrameworkError
 from robot.output import LOGGER, loggerhelper
 
+from .gatherfailed import gather_failed_tests
+
 
 class _BaseSettings(object):
     _cli_opts = {'Name'             : ('name', None),
                  'Doc'              : ('doc', None),
                  'Metadata'         : ('metadata', []),
                  'TestNames'        : ('test', []),
+                 'RunFailed'        : ('runfailed', 'NONE'),
                  'SuiteNames'       : ('suite', []),
                  'SetTag'           : ('settag', []),
                  'Include'          : ('include', []),
@@ -68,6 +71,7 @@ class _BaseSettings(object):
             elif default == [] and isinstance(value, basestring):
                 value = [value]
             self[name] = self._process_value(name, value, log)
+        self['TestNames'] += self['RunFailed']
 
     def __setitem__(self, name, value):
         if name not in self._cli_opts:
@@ -75,6 +79,8 @@ class _BaseSettings(object):
         self._opts[name] = value
 
     def _process_value(self, name, value, log):
+        if name == 'RunFailed':
+            return gather_failed_tests(value)
         if name == 'LogLevel':
             return self._process_log_level(value)
         if value == self._get_default_value(name):
@@ -313,7 +319,8 @@ class RebotSettings(_BaseSettings):
                        'LogLevel'          : ('loglevel', 'TRACE'),
                        'ProcessEmptySuite' : ('processemptysuite', False),
                        'StartTime'         : ('starttime', None),
-                       'EndTime'           : ('endtime', None)}
+                       'EndTime'           : ('endtime', None),
+                       'RunFailed'         : ('runfailed', 'NONE')}
 
     def _outputfile_disabled(self, type_, name):
         return name == 'NONE'
