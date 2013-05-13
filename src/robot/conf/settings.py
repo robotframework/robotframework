@@ -18,6 +18,8 @@ from robot import utils
 from robot.errors import DataError, FrameworkError
 from robot.output import LOGGER, loggerhelper
 
+from .gatherfailed import gather_failed_tests
+
 
 class _BaseSettings(object):
     _cli_opts = {'Name'             : ('name', None),
@@ -78,9 +80,7 @@ class _BaseSettings(object):
 
     def _process_value(self, name, value, log):
         if name == 'RunFailed':
-            if value == 'NONE':
-                return []
-            return self._failed_test_from(value)
+            return gather_failed_tests(value)
         if name == 'LogLevel':
             return self._process_log_level(value)
         if value == self._get_default_value(name):
@@ -110,13 +110,6 @@ class _BaseSettings(object):
         if name == 'RemoveKeywords':
             return [v.upper() for v in value]
         return value
-
-    def _failed_test_from(self, output):
-        from robot.result.resultbuilder import ExecutionResult
-        from robot.result.visitor import GatherFailedTests
-        gatherer = GatherFailedTests()
-        ExecutionResult(output).visit(gatherer)
-        return gatherer.results
 
     def _process_log_level(self, level):
         level, visible_level = self._split_log_level(level.upper())

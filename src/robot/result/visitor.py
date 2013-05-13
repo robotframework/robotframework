@@ -100,13 +100,3 @@ class ResultVisitor(SuiteVisitor):
 
     def end_errors(self, errors):
         pass
-
-
-class GatherFailedTests(ResultVisitor):
-
-    def __init__(self):
-        self.results = []
-
-    def visit_test(self, test):
-        if not test.passed:
-            self.results += [test.longname]
