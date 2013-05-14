@@ -327,7 +327,9 @@ class Namespace:
         if len(found) > 1:
             found = self._get_handler_based_on_library_search_order(found)
         if len(found) == 2:
-            found = self._filter_stdlib_handler(found[0], found[1])
+            found = self._prefer_process_over_operatingsystem(*found)
+        if len(found) == 2:
+            found = self._filter_stdlib_handler(*found)
         if len(found) == 1:
             return found[0]
         self._raise_multiple_keywords_found(name, found)
@@ -338,6 +340,14 @@ class Namespace:
                 if utils.eq(libname, handler.libname):
                     return [handler]
         return handlers
+
+    def _prefer_process_over_operatingsystem(self, handler1, handler2):
+        if handler1.library.orig_name == "Process":
+            return [handler1]
+        elif handler2.library.orig_name == "Process":
+            return [handler2]
+        else:
+            return [handler1, handler2]
 
     def _filter_stdlib_handler(self, handler1, handler2):
         if handler1.library.orig_name in STDLIB_NAMES:

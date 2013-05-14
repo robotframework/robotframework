@@ -145,12 +145,12 @@ class Process(object):
         """
         active_process_index = self._started_processes.current_index
         try:
-            p = self.start_new_process(command, *arguments, **configuration)
+            p = self.start_process(command, *arguments, **configuration)
             return self.wait_for_process(p)
         finally:
             self._started_processes.switch(active_process_index)
 
-    def start_new_process(self, command, *arguments, **configuration):
+    def start_process(self, command, *arguments, **configuration):
         """This keyword starts a new process.
 
         The `command` is a child program which is started in a new process,

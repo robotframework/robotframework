@@ -65,14 +65,14 @@ Running a process in a shell
     Run Keyword And Expect Error    *    Run Process    python -c "print 'hello'"    shell=${False}
 
 Input things to process
-    Start New Process    python -c "print 'inp %s' % raw_input()"    shell=True
+    Start Process    python -c "print 'inp %s' % raw_input()"    shell=True
     ${process}=    Get Process Object
     Log   ${process.communicate("some input\n")}
     ${result}=    Wait For Process
     Should Match    ${result.stdout}    *inp some input*
 
 Process alias
-    ${handle}=    Start New Process    python -c "print 'hello'"    shell=True    alias=hello
+    ${handle}=    Start Process    python -c "print 'hello'"    shell=True    alias=hello
     ${pid_by_handle}=    Get process id    ${handle}
     ${pid_by_alias}=    Get process id    hello
     Should Be Equal    ${pid_by_handle}    ${pid_by_alias}
