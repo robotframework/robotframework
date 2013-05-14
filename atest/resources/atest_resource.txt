@@ -326,3 +326,9 @@ Run on python 2.5 and 2.6
     ${interpreter} =    Get interpreter    ${OUTFILE}
     ${is 27} =   is 27    ${interpreter}
     Run keyword unless    ${is 27}    ${kw}   @{args}
+
+Run on python 2.5
+    [arguments]     ${kw}   @{args}
+    ${interpreter} =    Get interpreter    ${OUTFILE}
+    ${is 25} =   is 25    ${interpreter}
+    Run keyword if    ${is 25}    ${kw}   @{args}
