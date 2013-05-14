@@ -48,18 +48,6 @@ Continue For Loop In User Keyword Without For Loop Should Fail
    [Documentation]    FAIL Continue for loop without enclosing for loop.
    With Only Continue For Loop
 
-Custom exception with ROBOT_CONTINUE_FOR_LOOP
-    :FOR    ${var}    IN    one    two
-    \    Raise Continue For Loop
-    \    Fail    Should not be executed
-    Should BE Equal    ${var}    two
-
-Custom Java exception with ROBOT_CONTINUE_FOR_LOOP
-    :FOR    ${var}    IN    one    two
-    \    Throw Continue For Loop
-    \    Fail    Should not be executed
-    Should BE Equal    ${var}    two
-
 Continue For Loop In Test Teardown
     No Operation
     [Teardown]      With Loop

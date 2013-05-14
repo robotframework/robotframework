@@ -31,13 +31,6 @@ Continue For Loop Keyword Should Have No Messages
     Should Be Equal    ${tc.kws[0].kws[0].kws[0].name}    BuiltIn.Continue For Loop
     Should Be Empty    ${tc.kws[0].kws[0].kws[0].msgs}
 
-Custom exception with ROBOT_CONTINUE_FOR_LOOP
-    Test And All Keywords Should Have Passed
-
-Custom Java exception with ROBOT_CONTINUE_FOR_LOOP
-    [Tags]    jybot
-    Test And All Keywords Should Have Passed
-
 Continue For Loop In Test Teardown
     Test And All Keywords Should Have Passed
 

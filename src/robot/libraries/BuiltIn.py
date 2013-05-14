@@ -17,8 +17,8 @@ import re
 import time
 
 from robot.output import LOGGER, Message
-from robot.errors import (DataError, ExecutionFailed, ExecutionFailures,
-                          ReturnFromKeyword)
+from robot.errors import (ContinueForLoop, DataError, ExecutionFailed,
+                          ExecutionFailures, ReturnFromKeyword)
 from robot import utils
 from robot.utils import asserts
 from robot.variables import is_var, is_list_var
@@ -1581,9 +1581,7 @@ class _Control:
 
         New in Robot Framework 2.8.
         """
-        error = AssertionError('Continue for loop without enclosing for loop.')
-        error.ROBOT_CONTINUE_FOR_LOOP = True
-        raise error
+        raise ContinueForLoop()
 
     def continue_for_loop_if(self, condition):
         """Continues to the next iteration of the enclosing loop if given condition is true.
