@@ -49,8 +49,4 @@ public class JavaExceptions {
         throw new ExitForLoopException();
     }
 
-    public void throwContinueForLoop() {
-        throw new ContinueForLoopException();
-    }
-
 }
