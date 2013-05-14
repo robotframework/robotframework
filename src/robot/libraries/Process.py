@@ -18,6 +18,7 @@ import signal
 import subprocess
 import sys
 import tempfile
+from robot.errors import UnrecognizedParameterError
 
 from robot.utils import ConnectionCache
 from robot.version import get_version
@@ -35,7 +36,7 @@ class Process(object):
     The library has following main usages:
 
     - Starting a processes, and managing their handles, stdouts and stderrs
-      (e.g. `Run Process` and `Start New Process` keywords).
+      (e.g. `Run Process` and `Start Process` keywords).
     - Stopping processes started by this library (e.g. `Terminate All Processes`
       and `Terminate Process` keywords). See `Stopping processes` for more
       information.
@@ -56,20 +57,26 @@ class Process(object):
 
     = Configurations =
 
-    `Run Process` and `Start New Process` keywords can be given several named
+    `Run Process` and `Start Process` keywords can be given several named
     arguments, which are listed below.
 
     - `cwd` specifies the working directory
     - `shell` specifies whether shell is used for program execution
+    - `env` specifies the environment of the program being run
     - `stdout` is a file handle for standard output
     - `stderr` is a file handle for standard error
     - `alias` is a short name for the process
 
     == Current working directory ==
 
-    Paragraph
+    If `cwd` argument is not given, the child program's execution directory
+    will be a the directory where Robot Framework executable was launched.
 
     == Running processes in a shell ==
+
+    Paragraph
+
+    == Environment ==
 
     Paragraph
 
@@ -102,9 +109,11 @@ class Process(object):
 
     Included information is:
 
-    - `stdout` standard output file handle
-    - `stderr` standard error file handle
-    - `exit_code` from the process, `None` during execution.
+    - `stdout` standard output file content
+    - `stderr` standard error file content
+    - `stdout_path` filepath to the standard output
+    - `stderr_path filepath to the standard error
+    - `exit_code` from the process.
 
     = Example =
 
@@ -115,8 +124,8 @@ class Process(object):
     |  |
     | *** Test Cases *** |
     | Example |
-    | ${handle1}= | `Start New Process` | /path/command.sh    | shell=True  | cwd=/path |
-    | ${handle2}= | `Start New Process` | ${CURDIR}${/}mytool   | shell=True |
+    | ${handle1}= | `Start Process` | /path/command.sh    | shell=True  | cwd=/path |
+    | ${handle2}= | `Start Process` | ${CURDIR}${/}mytool   | shell=True |
     | ${result1}=  | `Wait For Process` | ${handle1} |
     |  | `Terminate Process` | ${handle2} |
     |  | `Process Should Be Dead` | ${handle2} |
@@ -166,16 +175,17 @@ class Process(object):
 
         Examples:
 
-        | $handle1}= | `Start New Process` | /bin/script.sh |
-        | $handle2}= | `Start New Process` | totals |
+        | $handle1}= | `Start Process` | /bin/script.sh |
+        | $handle2}= | `Start Process` | totals |
         """
-        config = NewProcessConfig(self._tempdir, **configuration)
+        config = ProcessConfig(self._tempdir, **configuration)
         p = subprocess.Popen(self._cmd(arguments, command, config.shell),
                              stdout=config.stdout_stream,
                              stderr=config.stderr_stream,
                              stdin=subprocess.PIPE,
                              shell=config.shell,
-                             cwd=config.cwd)
+                             cwd=config.cwd,
+                             env=config.env)
         self._logs[p] = ExecutionResult(config.stdout_stream.name,
                                         config.stderr_stream.name)
         return self._started_processes.register(p, alias=config.alias)
@@ -302,7 +312,7 @@ class Process(object):
         Examples:
 
         | ${pid}= | `Get Process Id` | | | | # Gets PID of the active process |
-        | ${handle1}= | `Start New Process` | python -c "print 'hello'" | shell=True | alias=hello |
+        | ${handle1}= | `Start Process` | python -c "print 'hello'" | shell=True | alias=hello |
         | ${pid_1}= | `Get Process Id` | ${handle1} | | | # Gets PID with `handle1` |
         | ${pid_2}= | `Get Process Id` | hello | | | # Gets PID with alias `hello` |
         | Should Be Equal As Integers | ${pid_1} | ${pid_2} |
@@ -365,7 +375,7 @@ stderr_name : %s
 exit_code   : %d""" % (self.stdout_path, self.stderr_path, self.exit_code)
 
 
-class NewProcessConfig(object):
+class ProcessConfig(object):
 
     FILE_INDEX = 0
 
@@ -374,13 +384,15 @@ class NewProcessConfig(object):
                  shell=False,
                  stdout=None,
                  stderr=None,
-                 alias=None):
+                 alias=None,
+                 **rest):
         self._tempdir = tempdir
         self.cwd = cwd or os.path.abspath(os.curdir)
         self.stdout_stream = self._new_stream(stdout, 'stdout')
         self.stderr_stream = self._get_stderr(stderr, stdout)
         self.shell = bool(shell)
         self.alias = alias
+        self.env = self._set_environment(rest)
 
     def _new_stream(self, name, postfix):
         if name:
@@ -394,6 +406,18 @@ class NewProcessConfig(object):
         return self._new_stream(stderr, 'stderr')
 
     def _get_temp_file(self, suffix):
-        filename = 'tmp_logfile_%d_%s.out' % (NewProcessConfig.FILE_INDEX, suffix)
-        NewProcessConfig.FILE_INDEX += 1
+        filename = 'tmp_logfile_%d_%s.out' % (ProcessConfig.FILE_INDEX, suffix)
+        ProcessConfig.FILE_INDEX += 1
         return open(os.path.join(self._tempdir, filename), 'w')
+
+    def _set_environment(self, env):
+        if not env:
+            return None
+        new_env = dict()
+        for key,val in env.iteritems():
+            if key == "env":
+                return val
+            elif "env:" not in key[:4]:
+                raise UnrecognizedParameterError("'%s' is not supported by this keyword." % key )
+            new_env[key[4:]] = val
+        return new_env

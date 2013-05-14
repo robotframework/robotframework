@@ -4,6 +4,7 @@ Suite Teardown    Suite Teardown
 Test Teardown     Restart Suite Process If Needed
 Library           Process.py
 Library           OperatingSystem
+Library           Collections
 Resource          resource.txt
 
 *** Test Cases ***
@@ -54,6 +55,19 @@ Setting Stderr
     Should Not Be Empty    ${output}
     Should Be Equal    ${result.stderr}    ${output}
     [Teardown]    Remove File    ${TEMPDIR}${/}myfile.txt
+
+Setting Environment
+    ${curenv}=    Get Environment Variables
+    ${setenv}=    Create Dictionary           special_var    spessu
+    ${result}=    Run Process    python -c "import os; print os.environ;"    shell=True
+    Should Match        ${result.stdout}   *PATH*
+    Should Not Match    ${result.stdout}   *special_var*
+    ${result}=    Run Process    python -c "import os; print os.environ;"    shell=True   env:special_var=spessu
+    Should Not Match    ${result.stdout}   *PATH*
+    Should Match        ${result.stdout}   *special_var*
+    ${result}=    Run Process    python -c "import os; print os.environ;"    shell=True   env=${setenv}
+    Should Not Match    ${result.stdout}   *PATH*
+    Should Match        ${result.stdout}   *special_var*
 
 Escaping equals sign
     ${result}=    Run Process    python    -c    print 'stderr\=bar.buu'    shell=True
