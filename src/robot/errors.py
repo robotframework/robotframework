@@ -97,13 +97,12 @@ class ExecutionFailed(RobotError):
         self.return_value = return_value
 
     @property
-    def execution_passed(self):
-        return self.exit_for_loop or self.continue_for_loop
+    def execution_should_be_passed(self):
+        return self.exit_for_loop
 
     @property
     def dont_continue(self):
-        return (self.timeout or self.syntax or self.exit or self.exit_for_loop
-                or self.continue_for_loop)
+        return (self.timeout or self.syntax or self.exit or self.exit_for_loop)
 
     def _get_continue_on_failure(self):
         return self._continue_on_failure
@@ -137,11 +136,10 @@ class HandlerExecutionFailed(ExecutionFailed):
         syntax = isinstance(details.error, DataError)
         exit = self._get(details.error, 'EXIT_ON_FAILURE')
         continue_on_failure = self._get(details.error, 'CONTINUE_ON_FAILURE')
-        continue_for_loop = self._get(details.error, 'CONTINUE_FOR_LOOP')
         exit_for_loop = self._get(details.error, 'EXIT_FOR_LOOP')
+
         ExecutionFailed.__init__(self, details.message, timeout, syntax,
-                                 exit, continue_on_failure, exit_for_loop,
-                                 continue_for_loop)
+                                 exit, continue_on_failure, exit_for_loop)
 
         self.full_message = details.message
         self.traceback = details.traceback
@@ -208,12 +206,23 @@ class ReturnFromKeyword(ExecutionFailed):
         self.earlier_failures = None
 
     @property
-    def execution_passed(self):
+    def execution_should_be_passed(self):
         return True
 
     def set_earlier_failures(self, failures):
         if failures:
             self.earlier_failures = ExecutionFailures(failures)
+
+
+class ContinueForLoop(ExecutionFailed):
+
+    def __init__(self):
+        ExecutionFailed.__init__(self, 'Continue for loop without ' \
+            'enclosing for loop.', continue_for_loop=True)
+
+    @property
+    def execution_should_be_passed(self):
+        return True
 
 
 class RemoteError(RobotError):

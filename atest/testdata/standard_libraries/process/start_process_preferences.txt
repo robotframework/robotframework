@@ -1,0 +1,29 @@
+*** Settings ***
+Suite Setup       Check Preconditions
+Library           Process
+Library           OperatingSystem
+Resource          resource.txt
+
+*** Test Cases ***
+Explicitly run Operating System library keyword
+    ${handle}=     OperatingSystem.Start Process    python -c "import os; print os.path.abspath(os.curdir);"
+    ${out}=        Read Process Output
+
+Explicitly run Process library keyword
+    ${handle}=     Process.Start Process            python -c "import os; print os.path.abspath(os.curdir);"      shell=True
+    ${out}=        Wait For Process
+
+Implicitly run Process library keyword
+    ${handle}=     Start Process                    python -c "import os; print os.path.abspath(os.curdir);"      shell=True
+    ${out}=        Wait For Process
+
+Implicitly run Operating System library keyword when library search order is set
+    Set Library Search Order     OperatingSystem
+    ${handle}=     Start Process    python -c "import os; print os.path.abspath(os.curdir);"
+    ${out}=        Read Process Output
+
+*** Keywords ***
+Check Preconditions
+    ${is_ok}=   Evaluate   sys.version_info >= (2,6) and sys.platform != 'cli'   sys
+    Run Keyword If  not ${is_ok}    Set Suite Metadata  info   precondition_fail
+    Run Keyword If  not ${is_ok}    Fail

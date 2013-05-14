@@ -1,0 +1,26 @@
+*** Settings ***
+Suite Setup      Run Tests    ${EMPTY}    standard_libraries/process/start_process_preferences.txt
+Test Setup       Check Preconditions
+Force Tags       regression    pybot    jybot
+Resource         atest_resource.txt
+
+*** Test Cases ***
+Explicitly run Operating System library keyword
+    ${test}=   Check Test Case    ${TESTNAME}
+    Should Be Equal  ${test.kws[0].name}  \${handle} = OperatingSystem.Start Process
+
+Explicitly run Process library keyword
+    ${test}=   Check Test Case    ${TESTNAME}
+    Should Be Equal  ${test.kws[0].name}  \${handle} = Process.Start Process
+
+Implicitly run Process library keyword
+    ${test}=   Check Test Case    ${TESTNAME}
+    Should Be Equal  ${test.kws[0].name}  \${handle} = Process.Start Process
+
+Implicitly run Operating System library keyword when library search order is set
+    ${test}=   Check Test Case    ${TESTNAME}
+    Should Be Equal  ${test.kws[1].name}  \${handle} = OperatingSystem.Start Process
+
+*** Keywords ***
+Check Preconditions
+    Run Keyword If   '${SUITE.metadata.get('info')}' == 'precondition_fail'   Fail  precondition fail  -regression
