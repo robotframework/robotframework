@@ -1,0 +1,66 @@
+*** Test Cases ***
+
+Without message
+    No Operation
+
+With message
+    No Operation
+
+Remove one tag
+    No Operation
+
+Remove multiple tags
+    No Operation
+
+Remove tags with pattern
+    No Operation
+
+Set one tag
+    No Operation
+
+Set multiple tags
+    No Operation
+
+Set tags are not removed
+    No Operation
+
+With template
+    No Operation
+
+Inside user keyword
+    No operation
+
+Inside nested user keyword
+    No operation
+
+With continuable failure
+    No operation
+
+With suite setup
+    No operation
+    # Modify tags
+
+Tags can be modified in suite setup
+    No operation
+
+With suite teardown
+    No operation
+
+Tags cannot be modified in suite teardown
+    No operation
+
+With keyword setup
+    No operation
+
+With keyword teardown
+    No operation
+
+With for loop
+    No operation
+
+With library
+    No operation
+    # Maybe?
+
+
+
