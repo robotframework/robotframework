@@ -29,6 +29,9 @@ Setting Stdout
 Setting Stderr
     Check Test Case    ${TESTNAME}
 
+Setting Environment
+    Check Test Case    ${TESTNAME}
+
 Escaping equals sign
     Check Test Case    ${TESTNAME}
 
