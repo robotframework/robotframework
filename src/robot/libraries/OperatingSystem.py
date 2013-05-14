@@ -95,8 +95,8 @@ class OperatingSystem:
     operating system dependent, but typically e.g. `~/robot` is expanded to
     `C:\\Users\\<user>\\robot` on Windows and `/home/<user>/robot` on Linuxes.
 
-    Notice that the `~username` form does not work on Jython. Tilde expansion
-    is a new feature in Robot Framework 2.8.
+    Notice that the `~username` form does not work on Jython or on Windows
+    python 2.5. Tilde expansion is a new feature in Robot Framework 2.8.
 
     = Example =
 

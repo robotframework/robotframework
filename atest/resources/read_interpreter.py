@@ -16,6 +16,9 @@ def get_interpreter(output):
 def is_27(interpreter):
     return interpreter.version.startswith('2.7')
 
+def is_25(interpreter):
+    return interpreter.version.startswith('2.5')
+
 def is_jython(interpreter):
     return interpreter.interpreter.lower() == 'jython'
 
