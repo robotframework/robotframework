@@ -1,0 +1,26 @@
+*** Settings ***
+Suite Setup     Suite initialization
+Force Tags      regression  pybot  jybot
+Resource        atest_resource.txt
+
+*** Test Cases ***
+Check that passing is not executed
+    Run Keyword And Expect Error  No test 'Passing' found*  Check Test Case   Passing
+
+Check that failing is executed
+    Check Test Case   Failing   status=FAIL  message=AssertionError
+
+Check that selected is executed
+    Check Test Case   Selected
+
+Check that none existing failing from output file is not executed
+    Run Keyword And Expect Error  No test 'None Existing' found*  Check Test Case   None Existing
+
+*** Keywords ***
+Suite initialization
+    Copy File  ${DATADIR}/cli/runfailed/runfailed1.txt  ${DATADIR}/cli/runfailed/runfailed.txt
+    Run Tests  ${EMPTY}  cli/runfailed/runfailed.txt
+    Copy File  ${OUTFILE}  output.xml
+    Copy File  ${DATADIR}/cli/runfailed/runfailed2.txt  ${DATADIR}/cli/runfailed/runfailed.txt
+    Run Tests  --runfailed output.xml --test Selected  cli/runfailed/runfailed.txt
+    Remove Files  output.xml  ${DATADIR}/cli/runfailed/runfailed.txt

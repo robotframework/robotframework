@@ -1,0 +1,12 @@
+*** Test Cases ***
+Passing
+    No Operation
+
+Failing
+    Fail
+
+Selected
+    No Operation
+
+None Existing
+    Fail
