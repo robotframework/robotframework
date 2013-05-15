@@ -538,22 +538,27 @@ User keyword return values
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Similarly as library keywords, also user keywords can return
-values. Return values are defined with the :opt:`[Return]`
-setting. The values can then be `assigned to variables`__ in test
-cases or other user keywords.
+values. Typically return values are defined with the :opt:`[Return]`
+setting, but it is also possible to use BuiltIn_ keywords
+:name:`Return From Keyword` and :name:`Return From Keyword If`.
+Regardless how values are returned, they can be `assigned to variables`__
+in test cases and in other user keywords.
 
 __ `Return values from keywords`_
 
-In a typical case, a user keyword returns one value and it can be set
-to a scalar variable. This is done by having the return value in the
-next cell after the :opt:`[Return]` setting. User keywords can
-also return several values, which can then be assigned into several
-scalar variables at once, to a list variable, or to scalar variables
-and a list variable. Several values can be returned simply by
-specifying those values in different cells after the
-:opt:`[Return]` setting.
+Using :opt:`[Return]` setting
+'''''''''''''''''''''''''''''
 
-.. table:: User keywords returning values
+The most common case is that  a user keyword returns one value and it is
+assigned to a scalar variable. When using the :opt:`[Return]` setting, this is
+done by having the return value in the next cell after the setting.
+
+User keywords can also return several values, which can then be assigned into
+several scalar variables at once, to a list variable, or to scalar variables
+and a list variable. Several values can be returned simply by
+specifying those values in different cells after the :opt:`[Return]` setting.
+
+.. table:: User keywords returning values using :opt:`[Return]` setting
    :class: example
 
    ================  ============  ===================  ===================  ===================
@@ -581,45 +586,56 @@ specifying those values in different cells after the
    Return Three Values  [Return]      foo             bar          zap
    ===================  ============  ==============  ===========  ==========
 
-You can also return values from keyword using the :name:`Return From Keyword` keyword. Return values using this keyword works as described above. Using both the keyword and the :opt:`[Return]` setting makes it possible to return different things from the user keyword, depending which one is encountered first. Thus, :name:`Return From Keyword` provides a mechanism to return earlier from the user keyword. 
+Using special keywords to return
+''''''''''''''''''''''''''''''''
 
-Keyword :name:`Return From Keyword If` provides a shorthand to use instead of :name:`Run Keyword If` ... :name:`Return From Keyword` combination.
+BuiltIn_ keywords :name:`Return From Keyword` and :name:`Return From Keyword If`
+allow returning from a user keyword conditionally in the middle of the keyword.
+Both of them also accept optional return values that are handled exactly like
+with the :opt:`[Return]` setting discussed above.
 
-.. table:: :name:`Return From Keyword` and :name:`Return From Keyword If`
-    :class: example
+The first example below is functionally identical to the previous
+:opt:`[Return]` setting example. The second, and more advanced, example
+demonstrates returning conditionally inside a `for loop`_.
 
-    =============  ==============  ==============  ========  ========  ========
-    Test Case      Action          Argument        Argument  Argument  Argument
-    =============  ==============  ==============  ========  ========  ========
-    Simple Return  ${ret}=         Return Things
-    \              Some Keyword    ${ret}
-    \
-    Find Index     @{list}=        Create List     foo       bar       baz
-    \              ${index}=       Get Index       baz       @{list}
-    \              Should Be True  ${index} == 2
-    \              ${index}=       Get Index       corge     @{list}
-    \              Should Be True  ${index} == -1
-    =============  ==============  ==============  ========  ========  ========
-    
+.. table:: User keywords returning values using special keywords
+   :class: example
+
+   ================  ===============  ================  ============  ========
+      Test Case          Action           Argument        Argument    Argument
+   ================  ===============  ================  ============  ========
+   One Return Value  ${ret} =         Return One Value  argument
+   \                 Some Keyword     ${ret}
+   \
+   Advanced          @{list} =        Create List       foo           baz
+   \                 ${index} =       Find Index        baz           @{list}
+   \                 Should Be Equal  ${index}          ${1}
+   \                 ${index} =       Find Index        non existing  @{list}
+   \                 Should Be Equal  ${index}          ${-1}
+   ================  ===============  ================  ============  ========
+
 .. table::
    :class: example
 
-   =============  ===================  ======================  =========================  ============
-     Keyword          Action                 Argument                Argument               Argument
-   =============  ===================  ======================  =========================  ============
-   Return Things  ${value}=            Get Some Value
-   \              Return From Keyword  ${value}
+   ================  ===================  ======================  =========================  ============
+        Keyword             Action                Argument                 Argument           Argument
+   ================  ===================  ======================  =========================  ============
+   Return One Value  [Arguments]          ${arg}
+   \                 Do Something         ${arg}
+   \                 ${value} =           Get Some Value
+   \                 Return From Keyword  ${value}
+   \                 Fail                 This is not executed
    \
-   Get Index      [Arguments]          ${element}              @{list}
-   \              ${index}=            Set Variable            ${0}
-   \              :FOR                 ${item}                 IN                         @{list}
-   \                                   Return From Keyword If  '${item}' == '${element}'  ${index}
-   \                                   ${index}=               Set Variable               ${index + 1}
-   \              [Return]             ${-1}
-   =============  ===================  ======================  =========================  ============
+   Find Index        [Arguments]          ${element}              @{items}
+   \                 ${index}=            Set Variable            ${0}
+   \                 :FOR                 ${item}                 IN                         @{items}
+   \                                      Return From Keyword If  '${item}' == '${element}'  ${index}
+   \                                      ${index}=               Set Variable               ${index + 1}
+   \                 Return From Keyword  ${-1}                   # Could also use [Return]
+   ================  ===================  ======================  =========================  ============
 
-.. note::
-    :name:`Return From Keyword` and :name:`Return From Keyword If` are new keywords introduced in Robot 2.8.
+.. note:: Both :name:`Return From Keyword` and :name:`Return From Keyword If`
+          are available since Robot Framework 2.8.
 
 Keyword teardown
 ~~~~~~~~~~~~~~~~
