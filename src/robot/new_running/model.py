@@ -15,14 +15,29 @@
 from robot import model
 from robot.output import Output
 from robot.conf import RobotSettings
+from robot.utils import setter
 
 from .randomizer import Randomizer
 from .runner import Runner
 
 
 class Keyword(model.Keyword):
-    __slots__ = []
+    __slots__ = ['assign']
     message_class = None  # TODO: Remove from base model?
+
+    def __init__(self, name,  args=None, assign=None, type='kw'):
+        model.Keyword.__init__(self, name=name, args=args, type=type)
+        self.assign = assign
+
+    def is_for_loop(self):
+        return False
+
+    def is_comment(self):
+        return False
+
+    @property
+    def keyword(self):
+        return self.name
 
 
 class TestCase(model.TestCase):
@@ -45,7 +60,14 @@ class TestSuite(model.TestSuite):
     variables = Variables()
     user_keywords = UserKeywords()
     status = 'RUNNING'
-    imports = []
+
+    def __init__(self, *args, **kwargs):
+        model.TestSuite.__init__(self, *args, **kwargs)
+        self.imports = []
+
+    @setter
+    def imports(self, imports):
+        return model.ItemList(Import, items=imports)
 
     def randomize(self, suites=True, tests=True):
         self.visit(Randomizer(suites, tests))
@@ -54,3 +76,15 @@ class TestSuite(model.TestSuite):
         runner = Runner(Output(RobotSettings(options)))
         self.visit(runner)
         return runner.result
+
+
+class Import(object):
+
+    # TODO: Should type be verified?
+    # TODO: Should we have separate methods for adding libs, resources, vars?
+    def __init__(self, type, name, *args):
+        self.type = type
+        self.name = name
+        self.args = args
+        self.alias = None
+        self.directory = None
