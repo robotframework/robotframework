@@ -56,6 +56,7 @@ class _BaseSettings(object):
                  'StdErr'           : ('stderr', None)}
     _output_opts = ['Output', 'Log', 'Report', 'DebugFile', 'XUnitFile']
 
+    # TODO: Is log used? Accept options as **kws instead/in addition?
     def __init__(self, options=None, log=True):
         self._opts = {}
         self._cli_opts = self._cli_opts.copy()
