@@ -392,7 +392,8 @@ class ProcessConfig(object):
         self.stderr_stream = self._get_stderr(stderr, stdout)
         self.shell = bool(shell)
         self.alias = alias
-        self.env = self._set_environment(rest)
+        self.env = None
+        self._handle_rest(rest)
 
     def _new_stream(self, name, postfix):
         if name:
@@ -410,14 +411,24 @@ class ProcessConfig(object):
         ProcessConfig.FILE_INDEX += 1
         return open(os.path.join(self._tempdir, filename), 'w')
 
-    def _set_environment(self, env):
-        if not env:
-            return None
+    def _handle_rest(self, rest):
+        if not rest:
+            return
+        must_values = dict()
+        if sys.platform == "win32":
+            must_values['COMSPEC'] = os.environ['COMSPEC']
+            must_values['PATH'] = os.environ['PATH']
         new_env = dict()
-        for key,val in env.iteritems():
+        for key,val in rest.iteritems():
+            key = str(key)
             if key == "env":
-                return val
-            elif "env:" not in key[:4]:
+                self.env = dict()
+                for k,v in val.iteritems():
+                    self.env[str(k)] = str(v)
+            elif "env:" in key[:4]:
+                new_env[key[4:]] = str(val)
+            else:
                 raise UnrecognizedParameterError("'%s' is not supported by this keyword." % key )
-            new_env[key[4:]] = val
-        return new_env
+        if not self.env:
+            self.env = new_env
+        self.env = dict(must_values.items() + self.env.items())
