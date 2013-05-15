@@ -32,6 +32,12 @@ Setting Stderr
 Setting Environment
     Check Test Case    ${TESTNAME}
 
+Setting Environment With Multiple Values
+    Check Test Case    ${TESTNAME}
+
+Setting Environment With Multiple Values Using Dictionary
+    Check Test Case    ${TESTNAME}
+    
 Escaping equals sign
     Check Test Case    ${TESTNAME}
 
