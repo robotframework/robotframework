@@ -225,6 +225,8 @@ time left.
              elsewhere than on Windows. Prior to Robot Framework 2.7 timeouts
              slowed down execution with all Python versions on all platforms.
 
+.. _for loop:
+
 For loops
 ~~~~~~~~~
 
