@@ -53,6 +53,7 @@ class Process(object):
     - `Active process`
     - `Stopping processes`
     - `ExecutionResult`
+    - `Similarities with OperatingSystem library`
     - `Example`
 
     = Configurations =
@@ -63,9 +64,9 @@ class Process(object):
     - `cwd` specifies the working directory
     - `shell` specifies whether shell is used for program execution
     - `env` specifies the environment of the program being run
-    - `stdout` is a file handle for standard output
-    - `stderr` is a file handle for standard error
-    - `alias` is a short name for the process
+    - `stdout` is a file path of standard output
+    - `stderr` is a file path of standard error
+    - `alias` is a short name for the process.
 
     == Current working directory ==
 
@@ -74,15 +75,46 @@ class Process(object):
 
     == Running processes in a shell ==
 
-    Paragraph
+    The `shell` argument specifies whether shell is used as program during
+    execution. By default this has value `False`, which means that shell
+    specific commands, like `copy` and `dir` are not available. It also means
+    that process runnable and its arguments must be given as a separate argument
+    for `Run Process` and `Start Process` keywords.
+
+    When `shell` is `True`, the program with its arguments can be given in a
+    single string for `Run Process` and `Start Process` keywords.
+
+    On Unix, the default shell is `/bin/sh`. On Windows, the default shell is
+    specified by the `COMSPEC` environment variable.
 
     == Environment ==
 
-    Paragraph
+    If `env` argument is not given or is `None`, then the current process's
+    environment is used. Argument can be used to customize the environment of
+    the program being run.
+
+    There are two ways of giving environment variables:
+
+        - as a dictionary containing environment variables in a key-value pairs
+        - or using special key `env:` in the argument.
+
+    Examples below.
+
+    | ${result}= | Run Process | python -c "import os; print os.environ;" | shell=True | env:specialvar=spessu |
+    | ${result}= | Run Process | python -c "import os; print os.environ;" | shell=True | env=${setenv} |
 
     == Standard output and error ==
 
-    Paragraph
+    Process output and error streams can be given as an argument to
+    `Run Process` and `Start Process` keywords. By default streams are stored
+    in temporary files. Information about these streams is stored into
+    `ExecutionResult` object.
+
+    The `stderr` can be redirected to the standard output stream by giving
+    argument in a way shown below.
+
+    | ${result}= | Run Process | python -c "print 'hello';1/0" | shell=True | stderr=STDOUT |
+    | ${result}= | Run Process | python -c "print 'hello';1/0" | shell=True | stdout=filename.txt | stderr=filename.txt |
 
     = Active process =
 
@@ -109,11 +141,41 @@ class Process(object):
 
     Included information is:
 
-    - `stdout` standard output file content
-    - `stderr` standard error file content
-    - `stdout_path` filepath to the standard output
-    - `stderr_path filepath to the standard error
+    - `stdout` file content of standard output stream
+    - `stderr` file content of standard error stream
+    - `stdout_path` filepath of standard output
+    - `stderr_path filepath of standard error
     - `exit_code` from the process.
+
+    | ${result}= | Run Process | python | -c | ${command} |
+    | ${output1}= | Get File | ${result.stdout_path} |
+    | ${output2}= | Get File | ${result.stderr_path} |
+    | Log | ${result.exit_code} |
+    | Should Be Equal | ${result.stdout} | ${output1} |
+    | Should Be Equal | ${result.stderr} | ${output2} |
+
+    = Similarities with OperatingSystem library =
+
+    The OperatingSystem library also contains a keyword `Start Process`. In
+    the situation that these both libraries are in use within the same test
+    suite, the `Process` library's `Start Process` will be preferred.
+
+    You can still use OperatingSystem `Start Process` by calling it explicitly
+    (e.g. `OperatingSystem.Start Process`) or by setting library search order
+    using `BuiltIn` library's keyword  `Set Library Search Order' and then
+    calling `Start Process`.
+
+    | *** Settings *** |
+    | Library | Process |
+    | Library | OperatingSystem |
+    |  |
+    | *** Test Cases *** |
+    | Similar libraries in use |
+    | | `Start Process` | /path/command.sh    | # Process Library keyword is used |
+    | | `OperatingSystem.Start Process` | ${CURDIR}${/}mytool   | # OperatingSystem library keyword is used |
+    | | `Process.Start Process` | ${CURDIR}${/}mytool   | # Process library keyword is used |
+    | | Set Library Search Order | OperatingSystem |
+    | | `Start Process` | /path/command.sh   | # OperatingSystem library keyword is used |
 
     = Example =
 
@@ -124,12 +186,12 @@ class Process(object):
     |  |
     | *** Test Cases *** |
     | Example |
-    | ${handle1}= | `Start Process` | /path/command.sh    | shell=True  | cwd=/path |
-    | ${handle2}= | `Start Process` | ${CURDIR}${/}mytool   | shell=True |
-    | ${result1}=  | `Wait For Process` | ${handle1} |
-    |  | `Terminate Process` | ${handle2} |
-    |  | `Process Should Be Dead` | ${handle2} |
-    |  | [Teardown] | `Kill All Processes` |
+    | | ${handle1}= | `Start Process` | /path/command.sh    | shell=True  | cwd=/path |
+    | | ${handle2}= | `Start Process` | ${CURDIR}${/}mytool   | shell=True |
+    | | ${result1}=  | `Wait For Process` | ${handle1} |
+    | | `Terminate Process` | ${handle2} |
+    | | `Process Should Be Dead` | ${handle2} |
+    | | [Teardown] | `Kill All Processes` |
     """
 
     ROBOT_LIBRARY_SCOPE='GLOBAL'
