@@ -57,16 +57,16 @@ Setting Stderr
     [Teardown]    Remove File    ${TEMPDIR}${/}myfile.txt
 
 Setting Environment
-    ${curenv}=    Get Environment Variables
+    @{curenv}=    Get Environment Variables
     ${setenv}=    Create Dictionary           special_var    spessu
     ${result}=    Run Process    python -c "import os; print os.environ;"    shell=True
-    Should Match        ${result.stdout}   *PATH*
+    Should Match        ${result.stdout}   *@{curenv}[0]*
     Should Not Match    ${result.stdout}   *special_var*
     ${result}=    Run Process    python -c "import os; print os.environ;"    shell=True   env:special_var=spessu
-    Should Not Match    ${result.stdout}   *PATH*
+    Should Not Match    ${result.stdout}   *@{curenv}[0]*
     Should Match        ${result.stdout}   *special_var*
     ${result}=    Run Process    python -c "import os; print os.environ;"    shell=True   env=${setenv}
-    Should Not Match    ${result.stdout}   *PATH*
+    Should Not Match    ${result.stdout}   *@{curenv}[0]*
     Should Match        ${result.stdout}   *special_var*
 
 Escaping equals sign
