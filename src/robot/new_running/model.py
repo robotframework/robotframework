@@ -24,6 +24,20 @@ class Keyword(model.Keyword):
     __slots__ = []
     message_class = None  # TODO: Remove from base model?
 
+    def is_for_loop(self):
+        return False
+
+    def is_comment(self):
+        return False
+
+    @property
+    def keyword(self):
+        return self.name
+
+    @property
+    def assign(self):
+        return []
+
 
 class TestCase(model.TestCase):
     __slots__ = []

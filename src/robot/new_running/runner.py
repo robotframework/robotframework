@@ -16,7 +16,8 @@ from robot.model import SuiteVisitor
 from robot.result.testsuite import TestSuite # TODO: expose in __init__
 from robot.running.namespace import Namespace
 from robot.running.context import EXECUTION_CONTEXTS
-from robot.running.keywords import Keyword
+from robot.running.keywords import Keyword, Keywords
+from robot.errors import ExecutionFailed
 
 
 class Runner(SuiteVisitor):
@@ -34,11 +35,13 @@ class Runner(SuiteVisitor):
         ns.handle_imports()
         self.context = EXECUTION_CONTEXTS.start_suite(ns, self.output, False)
 
-    def start_test(self, test):
-        self.current = self.result.tests.create(name=test.name)
-
-    def visit_keyword(self, kw):
-        kw = self.current.keywords.create(name=kw.name, args=kw.args)
-        runnable = Keyword(name=kw.name, args=kw.args)
-        runnable.run(self.context)
-        kw.status = runnable.status
+    def visit_test(self, test):
+        result = self.result.tests.create(name=test.name)
+        keywords = Keywords(test.keywords)
+        try:
+            keywords.run(self.context)
+        except ExecutionFailed, err:
+            result.message = unicode(err)
+            result.status = 'FAIL'
+        else:
+            result.status = 'PASS'
