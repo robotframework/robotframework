@@ -32,9 +32,29 @@ class TestRunning(unittest.TestCase):
         self._check_suite(result, 'Suite', 'FAIL')
         self._check_test(result.tests[0], 'Test', 'FAIL', 'value in variable')
 
-    def _check_suite(self, suite, name, status):
+    def test_suites_in_suites(self):
+        root = TestSuite(name='Root')
+        root.suites.create(name='Child')\
+            .tests.create(name='Test')\
+            .keywords.create('Log', args=['Hello, world!'])
+        result = root.run(output='NONE')
+        self._check_suite(result, 'Root', 'PASS', tests=0)
+        self._check_suite(result.suites[0], 'Child', 'PASS')
+        self._check_test(result.suites[0].tests[0], 'Test', 'PASS')
+
+    def test_imports(self):
+        suite = TestSuite(name='Suite')
+        suite.imports.create('Library', 'OperatingSystem')
+        suite.tests.create(name='Test').keywords.create('Directory Should Exist',
+                                                        args=['.'])
+        result = suite.run(output='NONE')
+        self._check_suite(result, 'Suite', 'PASS')
+        self._check_test(result.tests[0], 'Test', 'PASS')
+
+    def _check_suite(self, suite, name, status, tests=1):
         assert_equals(suite.name, name)
         assert_equals(suite.status, status)
+        assert_equals(len(suite.tests), tests)
 
     def _check_test(self, test, name, status, message=''):
         assert_equals(test.name, name)

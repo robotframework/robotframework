@@ -29,15 +29,16 @@ class Runner(SuiteVisitor):
 
     def start_suite(self, suite):
         if not self.result:
-            self.result = TestSuite(name=suite.name)
-            self.current = self.result
+            self.result = self.current = TestSuite(name=suite.name)
+        else:
+            self.current = self.current.suites.create(name=suite.name)
         ns = Namespace(suite, None)
-        ns.handle_imports()
         self.context = EXECUTION_CONTEXTS.start_suite(ns, self.output, False)
+        ns.handle_imports()
 
     def visit_test(self, test):
-        result = self.result.tests.create(name=test.name)
-        keywords = Keywords(test.keywords)
+        result = self.current.tests.create(name=test.name)
+        keywords = Keywords(test.keywords.normal)
         try:
             keywords.run(self.context)
         except ExecutionFailed, err:
