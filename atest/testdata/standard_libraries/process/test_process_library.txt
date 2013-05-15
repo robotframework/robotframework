@@ -58,34 +58,36 @@ Setting Stderr
 
 Setting Environment
     @{curenv}=    Get Environment Variables
-    ${setenv}=    Create Dictionary           special_var  spessu
+    ${setenv}=    Create Dictionary           specialvar  spessu
     ${result}=    Run Process    python -c "import os; print os.environ;"    shell=True
-    Should Match        ${result.stdout}   *@{curenv}[0]*
-    Should Not Match    ${result.stdout}   *special_var*
-    ${result}=    Run Process    python -c "import os; print os.environ;"    shell=True   env:special_var=spessu
-    Should Not Match    ${result.stdout}   *@{curenv}[0]*
-    Should Match        ${result.stdout}   *special_var*
+    Log           ${result.stdout}
+    Should Match Regexp        ${result.stdout}   (.*)(?i)@{curenv}[0](.*)
+    Should Not Match Regexp    ${result.stdout}   (.*)(?i)specialvar(.*)
+    ${result}=    Run Process    python -c "import os; print os.environ;"    shell=True   env:specialvar=spessu
+    Log           ${result.stdout}
+    Should Not Match Regexp    ${result.stdout}   (.*)(?i)@{curenv}[0](.*)
+    Should Match Regexp        ${result.stdout}   (.*)(?i)specialvar(.*)
     ${result}=    Run Process    python -c "import os; print os.environ;"    shell=True   env=${setenv}
-    Should Not Match    ${result.stdout}   *@{curenv}[0]*
-    Should Match        ${result.stdout}   *special_var*
+    Should Not Match Regexp    ${result.stdout}   (.*)(?i)@{curenv}[0](.*)
+    Should Match Regexp        ${result.stdout}   (.*)(?i)specialvar(.*)
 
 Setting Environment With Multiple Values
     @{curenv}=    Get Environment Variables
-    ${result}=    Run Process    python -c "import os; print os.environ;"    shell=True   env:special_var=spessu   env:diiba=daaba
-    Should Not Match    ${result.stdout}   *@{curenv}[0]*
-    Should Match        ${result.stdout}   *special_var*
-    Should Match        ${result.stdout}   *diiba*
+    ${result}=    Run Process    python -c "import os; print os.environ;"    shell=True   env:specialvar=spessu   env:diiba=daaba
+    Should Not Match Regexp   ${result.stdout}   (.*)(?i)@{curenv}[0](.*)
+    Should Match Regexp       ${result.stdout}   (.*)(?i)specialvar(.*)
+    Should Match Regexp       ${result.stdout}   (.*)(?i)diiba(.*)
 
 Setting Environment With Multiple Values Using Dictionary
     @{curenv}=    Get Environment Variables
-    ${setenv}=    Create Dictionary           special_var  spessu  diiba2  daaba2
-    ${result}=    Run Process    python -c "import os; print os.environ;"    shell=True   env=${setenv}
-    Should Not Match    ${result.stdout}   *@{curenv}[0]*
-    Should Match        ${result.stdout}   *special_var*
-    Should Match        ${result.stdout}   *diiba2*
+    ${setenv}=    Create Dictionary           specialvar  spessu  diiba2  daaba2
+    ${result}=    Run Process    python   -c    import os; print os.environ;    env=${setenv}
+    Should Not Match Regexp    ${result.stdout}   (.*)(?i)@{curenv}[0](.*)
+    Should Match Regexp        ${result.stdout}   (.*)(?i)specialvar(.*)
+    Should Match Regexp        ${result.stdout}   (.*)(?i)diiba(.*)
 
 Unsupported Arguments Should Cause Error
-    ${setenv}=    Create Dictionary           special_var  spessu
+    ${setenv}=    Create Dictionary           specialvar  spessu
     Run Keyword And Expect Error  UnrecognizedParameterError: *    Run Process    python -c "import os; print os.environ;"    shell=True   genv=${setenv}
     Run Keyword And Expect Error  UnrecognizedParameterError: *    Run Process    python -c "import os; print os.environ;"    shellx=True
 

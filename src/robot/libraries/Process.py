@@ -414,13 +414,21 @@ class ProcessConfig(object):
     def _handle_rest(self, rest):
         if not rest:
             return
+        must_values = dict()
+        if sys.platform == "win32":
+            must_values['COMSPEC'] = os.environ['COMSPEC']
+            must_values['PATH'] = os.environ['PATH']
         new_env = dict()
         for key,val in rest.iteritems():
+            key = str(key)
             if key == "env":
-                self.env = val
+                self.env = dict()
+                for k,v in val.iteritems():
+                    self.env[str(k)] = str(v)
             elif "env:" in key[:4]:
-                new_env[key[4:]] = val
+                new_env[key[4:]] = str(val)
             else:
                 raise UnrecognizedParameterError("'%s' is not supported by this keyword." % key )
         if not self.env:
             self.env = new_env
+        self.env = dict(must_values.items() + self.env.items())
