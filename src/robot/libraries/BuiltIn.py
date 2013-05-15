@@ -1648,65 +1648,74 @@ class _Control:
     def return_from_keyword(self, *return_values):
         """Returns from the enclosing user keyword.
 
-        This keyword can be used to return values from user keyword in addition
-        to [Return] setting. For more detailed information about working with
-        return values, see the user guide.
+        This keyword can be used to return from a user keyword with PASS status
+        without running it fully. It is also possible to return values similarly
+        as with the `[Return]` setting. For more detailed information about
+        working with the return values, see the User Guide.
 
-        To conditionally return a value from user keyword, see `Return From
-        Keyword If`.
+        This keyword is typically wrapped to some other keyword, such as
+        `Run Keyword If` or `Run Keyword If Test Passed`, to return based
+        on a condition:
 
-        Example:
+        | Run Keyword If | ${rc} < 0 | Return From Keyword |
+        | Run Keyword If Test Passed | Return From Keyword |
 
-        Given user keyword definition as follows:
+        It is possible to use this keyword to return from a keyword also inside
+        a for loop. That, as well as
+        returning values, is demonstrated by the `Find Index` keyword in the
+        following somewhat advanced example. Notice that it is often a good
+        idea to move this kind of complicated logic into a test library.
 
-        | Find Index | [Arguments] | ${element} | @{list} |  |  |
-        |  | ${index}=   | Set Variable | ${0} |          |  |
-        |  | :FOR | ${var} | IN | @{list} |  |
-        |  |  | Run Keyword If | '${var}' == '${element}' | Return From Keyword | ${index} |
-        |  |  | ${index}=  | Set Variable | ${index + 1} |  |
-        |  | [Return] | ${-1} |  |  |  |
+        | ***** Variables *****
+        | @{LIST} =    foo    baz
+        |
+        | ***** Test Cases *****
+        | Example
+        |     ${index} =    Find Index    baz    @{LIST}
+        |     Should Be Equal    ${index}    ${1}
+        |     ${index} =    Find Index    non existing    @{LIST}
+        |     Should Be Equal    ${index}    ${-1}
+        |
+        | ***** Keywords *****
+        | Find Index
+        |    [Arguments]    ${element}    @{items}
+        |    ${index} =    Set Variable    ${0}
+        |    :FOR    ${item}    IN    @{items}
+        |    \\    Run Keyword If    '${item}' == '${element}'    Return From Keyword    ${index}
+        |    \\    ${index} =    Set Variable    ${index + 1}
+        |    Return From Keyword    ${-1}    # Also [Return] would work here.
 
-        one can then write:
-
-        | @{list}= | Create List | foo | baz |
-        | ${index 1}= | Find Index | baz | @{list} |
-        | ${index 2}= | Find Index | non existent | @{list} |
-
-        to get:
-
-        | ${index 1} = 1
-        | ${index 2} = -1
-
-        New in Robot Framework 2.8.
+        The most common use case, returning based on an expression, can be
+        accomplished directly with `Return From Keyword If`. Both of these
+        keywords are new in Robot Framework 2.8.
         """
         raise ReturnFromKeyword(return_values)
 
     @run_keyword_variant(resolve=1)
     def return_from_keyword_if(self, condition, *return_values):
-        """Returns from the enclosing user keyword if condition is true.
+        """Returns from the enclosing user keyword if `condition` is true.
 
-        This keyword can be used as a shorthand for `Run Keyword If` ...
-        `Return From Keyword` combination.
-
-        To unconditionally return values from user keyword, see `Return From
-        Keyword`
-
-        Example:
+        A wrapper for `Return From Keyword` to return based on the given
+        condition. The condition is evaluated using the same semantics as
+        with `Should Be True` keyword.
 
         Given the same example as in `Return From Keyword`, we can rewrite the
-        user keyword definition as follows:
+        `Find Index` keyword as follows:
 
-        | Find Index | [Arguments] | ${element} | @{list} |  |
-        |  | ${index}= | Set Variable | ${0} |  |
-        |  | :FOR | ${var} | IN | @{list} |
-        |  |  | Return From Keyword If | '${var}' == '${element}' | ${index} |
-        |  |  | ${index}=  | Set Variable | ${index + 1} |
-        |  | [Return] | ${-1} |  |  |
+        | ***** Keywords *****
+        | Find Index
+        |    [Arguments]    ${element}    @{items}
+        |    ${index} =    Set Variable    ${0}
+        |    :FOR    ${item}    IN    @{items}
+        |    \\    Return From Keyword If    '${item}' == '${element}'    ${index}
+        |    \\    ${index} =    Set Variable    ${index + 1}
+        |    Return From Keyword    ${-1}
 
         New in Robot Framework 2.8.
         """
         if self._is_true(condition):
             self.return_from_keyword(*return_values)
+
 
 class _Misc:
 
