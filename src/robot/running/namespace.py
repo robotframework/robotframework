@@ -13,8 +13,6 @@
 #  limitations under the License.
 
 import os
-import os.path
-import re
 import sys
 import copy
 
@@ -58,8 +56,7 @@ class Namespace:
 
     def handle_imports(self):
         self._import_default_libraries()
-        if self.suite.source:
-            self._handle_imports(self.suite.imports)
+        self._handle_imports(self.suite.imports)
 
     def _create_variables(self, suite, parent_vars):
         variables = _VariableScopes(suite, parent_vars)
