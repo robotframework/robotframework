@@ -21,8 +21,12 @@ from .runner import Runner
 
 
 class Keyword(model.Keyword):
-    __slots__ = []
+    __slots__ = ['assign']
     message_class = None  # TODO: Remove from base model?
+
+    def __init__(self, name,  args=None, assign=None, type='kw'):
+        model.Keyword.__init__(self, name=name, args=args, type='kw')
+        self.assign = assign
 
     def is_for_loop(self):
         return False
@@ -33,10 +37,6 @@ class Keyword(model.Keyword):
     @property
     def keyword(self):
         return self.name
-
-    @property
-    def assign(self):
-        return []
 
 
 class TestCase(model.TestCase):

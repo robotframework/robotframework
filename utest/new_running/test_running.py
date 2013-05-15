@@ -23,6 +23,15 @@ class TestRunning(unittest.TestCase):
         self._check_suite(result, 'Suite', 'FAIL')
         self._check_test(result.tests[0], 'Test', 'FAIL', 'Hello, world!')
 
+    def test_assign(self):
+        suite = TestSuite(name='Suite')
+        test = suite.tests.create(name='Test')
+        test.keywords.create(assign=['${var}'], name='Set Variable', args=['value in variable'])
+        test.keywords.create('Fail', args=['${var}'])
+        result = suite.run(output='NONE')
+        self._check_suite(result, 'Suite', 'FAIL')
+        self._check_test(result.tests[0], 'Test', 'FAIL', 'value in variable')
+
     def _check_suite(self, suite, name, status):
         assert_equals(suite.name, name)
         assert_equals(suite.status, status)
