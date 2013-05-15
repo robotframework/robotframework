@@ -84,8 +84,8 @@ Return From Keyword If
     Should Be Equal    ${ret}    something to return
 
 Return From Keyword If does not evaluate bogus arguments if condition is untrue
-    ${ret}=    Return From Keyword If with bogus arguments
-    Should Be Equal    ${ret}    true return value
+    [Documentation]    FAIL Replacing variables from keyword return value failed: Non-existing variable '\${non existent 2}'.
+    Return From Keyword If with non-existing variables in arguments
 
 
 *** Keywords ***
@@ -160,10 +160,12 @@ With return in keyword inside teardown
     [Teardown]   Without return value
 
 With Return From Keyword If
-    Return From Keyword If    ${True}    something to return
+    Return From Keyword If    ${False}    not returning yet
+    Return From Keyword If    1 > 0    something to return
     Fail     Should have returned before this
     [Return]     Should not ${evaluate}
 
-Return From Keyword If with bogus arguments
-    Return From Keyword If    ${False}    ${non existent variable}
-    [Return]    true return value
+Return From Keyword If with non-existing variables in arguments
+    Return From Keyword If    0 > 1    ${non existing 1}
+    Return From Keyword If    ${True}    ${non existent 2}
+    Fail    Not executed
