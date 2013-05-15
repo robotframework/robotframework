@@ -25,7 +25,7 @@ class Keyword(model.Keyword):
     __slots__ = ['assign']
     message_class = None  # TODO: Remove from base model?
 
-    def __init__(self, name,  args=None, assign=None, type='kw'):
+    def __init__(self, name='', args=None, assign=None, type='kw'):
         model.Keyword.__init__(self, name=name, args=args, type=type)
         self.assign = assign
 
