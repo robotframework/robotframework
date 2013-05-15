@@ -13,8 +13,11 @@
 #  limitations under the License.
 
 from robot import model
+from robot.output import Output
+from robot.conf import RobotSettings
 
 from .randomizer import Randomizer
+from .runner import Runner
 
 
 class Keyword(model.Keyword):
@@ -27,11 +30,27 @@ class TestCase(model.TestCase):
     keyword_class = Keyword
 
 
+class UserKeywords(object):
+
+    def has_handler(self, name):
+        return False
+
+from robot.variables import Variables
+
+
 class TestSuite(model.TestSuite):
     __slots__ = []
     test_class = TestCase
     keyword_class = Keyword
+    variables = Variables()
+    user_keywords = UserKeywords()
+    status = 'RUNNING'
+    imports = []
 
     def randomize(self, suites=True, tests=True):
         self.visit(Randomizer(suites, tests))
 
+    def run(self, **options):
+        runner = Runner(Output(RobotSettings(options)))
+        self.visit(runner)
+        return runner.result
