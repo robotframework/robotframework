@@ -84,6 +84,11 @@ Setting Environment With Multiple Values Using Dictionary
     Should Match        ${result.stdout}   *special_var*
     Should Match        ${result.stdout}   *diiba2*
 
+Unsupported Arguments Should Cause Error
+    ${setenv}=    Create Dictionary           special_var  spessu
+    Run Keyword And Expect Error  UnrecognizedParameterError: *    Run Process    python -c "import os; print os.environ;"    shell=True   genv=${setenv}
+    Run Keyword And Expect Error  UnrecognizedParameterError: *    Run Process    python -c "import os; print os.environ;"    shellx=True
+
 Escaping equals sign
     ${result}=    Run Process    python    -c    print 'stderr\=bar.buu'    shell=True
     Result should equal    ${result}    stdout=*stderr=bar.buu*

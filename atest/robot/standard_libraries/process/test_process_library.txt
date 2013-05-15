@@ -37,7 +37,10 @@ Setting Environment With Multiple Values
 
 Setting Environment With Multiple Values Using Dictionary
     Check Test Case    ${TESTNAME}
-    
+
+Unsupported Arguments Should Cause Error
+    Check Test Case    ${TESTNAME}
+
 Escaping equals sign
     Check Test Case    ${TESTNAME}
 
