@@ -62,7 +62,8 @@ Setting Environment
     ${result}=    Run Process    python -c "import os; print os.environ;"    shell=True
     Should Match Regexp        ${result.stdout}   (.*)(?i)@{curenv}[0](.*)
     Should Not Match Regexp    ${result.stdout}   (.*)(?i)specialvar(.*)
-    ${result}=    Run Process    python -c "import os; print os.environ;"    shell=True   env:specia£var=spessu
+    ${special_var}=   Evaluate  'specialvar' if sys.version_info < (2,6) else 'specia£var'   sys
+    ${result}=    Run Process    python -c "import os; print os.environ;"    shell=True   env:${special_var}=spessu
     Should Match Regexp        ${result.stdout}   (.*)(?i)@{curenv}[0](.*)
     Should Match Regexp        ${result.stdout}   (.*)(?i)specia(.*)var(.*)
     ${result}=    Run Process    python -c "import os; print os.environ;"    shell=True   env=${setenv}
