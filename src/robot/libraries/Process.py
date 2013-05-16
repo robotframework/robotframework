@@ -335,10 +335,14 @@ class Process(object):
         if not hasattr(process,'kill'):
             self._terminate_process(process)
             return
-        if kill:
-            process.kill()
-        else:
-            process.terminate()
+        try:
+            if kill:
+                process.kill()
+            else:
+                process.terminate()
+        except OSError:
+            if process.poll() is None:
+                raise
 
     def _terminate_process(self, theprocess):
         if sys.platform == 'win32':
