@@ -16,7 +16,8 @@ from robot.model import SuiteVisitor
 from robot.result.testsuite import TestSuite # TODO: expose in __init__
 from robot.running.namespace import Namespace
 from robot.running.context import EXECUTION_CONTEXTS
-from robot.running.keywords import Keyword, Keywords
+from robot.running.keywords import Keywords
+from robot.running.userkeyword import UserLibrary
 from robot.errors import ExecutionFailed
 
 
@@ -32,7 +33,7 @@ class Runner(SuiteVisitor):
             self.result = self.current = TestSuite(name=suite.name)
         else:
             self.current = self.current.suites.create(name=suite.name)
-        ns = Namespace(suite, None)
+        ns = Namespace(suite, None, UserLibrary(suite.user_keywords))
         self.context = EXECUTION_CONTEXTS.start_suite(ns, self.output, False)
         self.output.start_suite(self.current)
         ns.handle_imports()

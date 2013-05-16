@@ -2,6 +2,10 @@ import unittest
 
 from robot.utils.asserts import assert_equals
 from robot.new_running import TestSuite
+from robot.output import LOGGER
+
+
+LOGGER.disable_automatic_console_logger()
 
 
 class TestRunning(unittest.TestCase):
@@ -51,6 +55,15 @@ class TestRunning(unittest.TestCase):
         self._check_suite(result, 'Suite', 'PASS')
         self._check_test(result.tests[0], 'Test', 'PASS')
 
+    def test_user_keywords(self):
+        suite = TestSuite(name='Suite')
+        suite.tests.create(name='Test').keywords.create('User keyword', args=['From uk'])
+        uk = suite.user_keywords.create(name='User keyword', args=['${msg}'])
+        uk.keywords.create(name='Fail', args=['${msg}'])
+        result = suite.run(output='NONE')
+        self._check_suite(result, 'Suite', 'FAIL')
+        self._check_test(result.tests[0], 'Test', 'FAIL', 'From uk')
+
     def _check_suite(self, suite, name, status, tests=1):
         assert_equals(suite.name, name)
         assert_equals(suite.status, status)
@@ -60,4 +73,3 @@ class TestRunning(unittest.TestCase):
         assert_equals(test.name, name)
         assert_equals(test.status, status)
         assert_equals(test.message, message)
-
