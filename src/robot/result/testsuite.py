@@ -76,3 +76,11 @@ class TestSuite(model.TestSuite):
 
     def filter_messages(self, log_level='TRACE'):
         self.visit(MessageFilter(log_level))
+
+    # TODO: Remove compatibility code below when new run is integrated
+    def get_full_message(self):
+        return self.full_message
+
+    @property
+    def critical(self):
+        return self.criticality

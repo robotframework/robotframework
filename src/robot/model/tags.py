@@ -51,6 +51,9 @@ class Tags(object):
     def __str__(self):
         return unicode(self).encode('UTF-8')
 
+    def __getitem__(self, item):
+        return self._tags[item]
+
 
 class TagPatterns(object):
 

@@ -73,8 +73,10 @@ class TestSuite(model.TestSuite):
         self.visit(Randomizer(suites, tests))
 
     def run(self, **options):
-        runner = Runner(Output(RobotSettings(options)))
+        output = Output(RobotSettings(options))
+        runner = Runner(output)
         self.visit(runner)
+        output.close(runner.result)
         return runner.result
 
 

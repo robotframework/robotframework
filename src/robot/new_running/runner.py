@@ -34,11 +34,17 @@ class Runner(SuiteVisitor):
             self.current = self.current.suites.create(name=suite.name)
         ns = Namespace(suite, None)
         self.context = EXECUTION_CONTEXTS.start_suite(ns, self.output, False)
+        self.output.start_suite(self.current)
         ns.handle_imports()
+
+    def end_suite(self, suite):
+        self.context.end_suite(self.current)
+        self.current = self.current.parent
 
     def visit_test(self, test):
         result = self.current.tests.create(name=test.name)
         keywords = Keywords(test.keywords.normal)
+        self.context.start_test(result)
         try:
             keywords.run(self.context)
         except ExecutionFailed, err:
@@ -46,3 +52,4 @@ class Runner(SuiteVisitor):
             result.status = 'FAIL'
         else:
             result.status = 'PASS'
+        self.context.end_test(result)

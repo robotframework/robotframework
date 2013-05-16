@@ -350,6 +350,8 @@ class RobotFramework(Application):
 
     def __init__(self):
         Application.__init__(self, USAGE, arg_limits=(1,), logger=LOGGER)
+        if os.environ.get('NEWRUN'):
+            self.main = self.new_main
 
     def main(self, datasources, **options):
         STOP_SIGNAL_MONITOR.start()
@@ -371,6 +373,27 @@ class RobotFramework(Application):
             output, settings = settings.get_rebot_datasource_and_settings()
             ResultWriter(output).write_results(settings)
         return suite.return_code
+
+    def new_main(self, datasources, **options):
+        STOP_SIGNAL_MONITOR.start()
+        namespace.IMPORTER.reset()
+        settings = RobotSettings(options)
+        pyloggingconf.initialize(settings['LogLevel'])
+        LOGGER.register_console_logger(width=settings['MonitorWidth'],
+                                       colors=settings['MonitorColors'],
+                                       markers=settings['MonitorMarkers'],
+                                       stdout=settings['StdOut'],
+                                       stderr=settings['StdErr'])
+        init_global_variables(settings)
+        from robot.new_running import TestSuiteBuilder
+        suite = TestSuiteBuilder().build(datasources[0])
+        result = suite.run(**options)
+        LOGGER.info("Tests execution ended. Statistics:\n%s"
+                    % result.statistics.message)
+        if settings.is_rebot_needed():
+            output, settings = settings.get_rebot_datasource_and_settings()
+            ResultWriter(output).write_results(settings)
+        return min(result.statistics.critical.failed, 250)
 
     def validate(self, options, arguments):
         if len(arguments) > 1:
