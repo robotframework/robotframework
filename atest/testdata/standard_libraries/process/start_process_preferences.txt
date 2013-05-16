@@ -2,6 +2,7 @@
 Suite Setup       Check Preconditions
 Library           Process
 Library           OperatingSystem
+Library           CustomLib.py
 Resource          resource.txt
 
 *** Test Cases ***
@@ -16,6 +17,9 @@ Explicitly run Process library keyword
 Implicitly run Process library keyword
     ${handle}=     Start Process                    python -c "import os; print os.path.abspath(os.curdir);"      shell=True
     ${out}=        Wait For Process
+    ${out2}=       Get Process Id                          # Should call CustomLib keyword
+    Should Match   ${out2}    The Pid
+    ${items}=      Count Items In Directory    ${CURDIR}   # OperatingSystem keywords should be reachable
 
 Implicitly run Operating System library keyword when library search order is set
     Set Library Search Order     OperatingSystem

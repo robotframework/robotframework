@@ -339,12 +339,10 @@ class Namespace:
         return handlers
 
     def _prefer_process_over_operatingsystem(self, handler1, handler2):
-        if handler1.library.orig_name == "Process":
-            return [handler1]
-        elif handler2.library.orig_name == "Process":
-            return [handler2]
-        else:
-            return [handler1, handler2]
+        handlers = {handler1.library.orig_name:handler1, handler2.library.orig_name:handler2}
+        if set(handlers.keys()) == set(['Process', 'OperatingSystem']):
+            return [handlers['Process']]
+        return [handler1, handler2]
 
     def _filter_stdlib_handler(self, handler1, handler2):
         if handler1.library.orig_name in STDLIB_NAMES:
