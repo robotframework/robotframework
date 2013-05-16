@@ -476,21 +476,27 @@ class ProcessConfig(object):
     def _handle_rest(self, rest):
         if not rest:
             return
-        must_values = dict()
-        if sys.platform == "win32":
-            must_values['COMSPEC'] = os.environ['COMSPEC']
-            must_values['PATH'] = os.environ['PATH']
+        self.env = self._construct_env(rest)
+
+    def _construct_env(self, rest):
         new_env = dict()
         for key,val in rest.iteritems():
-            key = str(key)
+            key = key.encode('utf-8')
             if key == "env":
                 self.env = dict()
                 for k,v in val.iteritems():
-                    self.env[str(k)] = str(v)
-            elif "env:" in key[:4]:
-                new_env[key[4:]] = str(val)
+                    self.env[k.encode('utf-8')] = v.encode('utf-8')
+            elif "env:" == key[:4]:
+                new_env[key[4:]] = val.encode('utf-8')
             else:
                 raise UnrecognizedParameterError("'%s' is not supported by this keyword." % key )
         if not self.env:
-            self.env = new_env
-        self.env = dict(must_values.items() + self.env.items())
+            return dict(new_env.items() + os.environ.copy().items())
+        return dict(self._must_env_values().items() + self.env.items())
+
+    def _must_env_values(self):
+        must_values = {}
+        if sys.platform == "win32":
+            must_values['COMSPEC'] = os.environ['COMSPEC']
+            must_values['PATH'] = os.environ['PATH']
+        return must_values
