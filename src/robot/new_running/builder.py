@@ -18,6 +18,13 @@ class TestSuiteBuilder(object):
                                  name=imp.name,
                                  args=tuple(imp.args),
                                  alias=imp.alias)
+        for uk_data in data.keyword_table.keywords:
+            uk = suite.user_keywords.create(name=uk_data.name,
+                                            args=tuple(uk_data.args))
+            for kw_data in uk_data.steps:
+                uk.keywords.create(name=kw_data.keyword,
+                                   args=tuple(kw_data.args),
+                                   assign=tuple(kw_data.assign))
         for test_data in data.testcase_table.tests:
             test = suite.tests.create(name=test_data.name,
                                       doc=test_data.doc.value,

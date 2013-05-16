@@ -30,6 +30,11 @@ class TestBuilding(unittest.TestCase):
         assert_equals(imp.name, 'DummyLib')
         assert_equals(imp.args, ())
 
+    def test_user_keywords(self):
+        uk = self._build('pass_and_fail.txt').user_keywords[0]
+        assert_equals(uk.name, 'My Keyword')
+        assert_equals(uk.args, ('${who}',))
+
     def test_test_data(self):
         test = self._build('pass_and_fail.txt').tests[1]
         assert_equals(test.name, 'Fail')

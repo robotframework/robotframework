@@ -16,6 +16,7 @@ from robot import model
 from robot.output import Output
 from robot.conf import RobotSettings
 from robot.utils import setter
+from robot.variables import Variables
 
 from .randomizer import Randomizer
 from .runner import Runner
@@ -45,37 +46,61 @@ class TestCase(model.TestCase):
     keyword_class = Keyword
 
 
-class UserKeywords(object):
-
-    def has_handler(self, name):
-        return False
-
-from robot.variables import Variables
-
-
 class TestSuite(model.TestSuite):
     __slots__ = []
     test_class = TestCase
     keyword_class = Keyword
     variables = Variables()
-    user_keywords = UserKeywords()
-    status = 'RUNNING'
+    status = 'RUNNING'   # TODO: Remove compatibility
 
     def __init__(self, *args, **kwargs):
         model.TestSuite.__init__(self, *args, **kwargs)
         self.imports = []
+        self.user_keywords = []
 
     @setter
     def imports(self, imports):
         return model.ItemList(Import, items=imports)
 
+    @setter
+    def user_keywords(self, keywords):
+        return model.ItemList(UserKeyword, items=keywords)
+
     def randomize(self, suites=True, tests=True):
         self.visit(Randomizer(suites, tests))
 
     def run(self, **options):
-        runner = Runner(Output(RobotSettings(options)))
+        output = Output(RobotSettings(options))
+        runner = Runner(output)
         self.visit(runner)
+        output.close(runner.result)
         return runner.result
+
+
+class UserKeyword(object):
+
+    def __init__(self, name, args=(), doc='', return_=None):
+        self.name = name
+        self.args = args
+        self.doc = doc
+        self.return_ = return_ or ()
+        self.teardown = None
+        self.timeout = Timeout()
+        self.keywords = []
+
+    @setter
+    def keywords(self, keywords):
+        return model.ItemList(Keyword, items=keywords)
+
+    # TODO: Remove compatibility
+    @property
+    def steps(self):
+        return self.keywords
+
+
+class Timeout(object):
+    value = None
+    message = ''
 
 
 class Import(object):

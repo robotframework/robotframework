@@ -11,6 +11,9 @@ class Fake(object):
     value = ''
     message = ''
 
+    def __iter__(self):
+        return iter([])
+
 class FakeArgs(object):
 
     def __init__(self, args):
@@ -18,6 +21,9 @@ class FakeArgs(object):
 
     def __nonzero__(self):
         return bool(self.value)
+
+    def __iter__(self):
+        return iter(self.value)
 
 
 class HandlerDataMock:
