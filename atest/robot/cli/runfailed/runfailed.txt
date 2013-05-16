@@ -16,11 +16,18 @@ Check that selected is executed
 Check that none existing failing from output file is not executed
     Run Keyword And Expect Error  No test 'None Existing' found*  Check Test Case   None Existing
 
+#Output contains only passing test cases
+
+#Output contains only none existing failing test cases
+
+Check that failing test case from subsuite is executed
+    Check Test Case   Really Failing   status=FAIL  message=AssertionError
+
 *** Keywords ***
 Suite initialization
-    Copy File  ${DATADIR}/cli/runfailed/runfailed1.txt  ${DATADIR}/cli/runfailed/runfailed.txt
-    Run Tests  ${EMPTY}  cli/runfailed/runfailed.txt
+    Copy File  ${DATADIR}/cli/runfailed/runfailed1.txt  ${DATADIR}/cli/runfailed/suite/runfailed.txt
+    Run Tests  ${EMPTY}  cli/runfailed/suite
     Copy File  ${OUTFILE}  output.xml
-    Copy File  ${DATADIR}/cli/runfailed/runfailed2.txt  ${DATADIR}/cli/runfailed/runfailed.txt
-    Run Tests  --runfailed output.xml --test Selected  cli/runfailed/runfailed.txt
-    Remove Files  output.xml  ${DATADIR}/cli/runfailed/runfailed.txt
+    Copy File  ${DATADIR}/cli/runfailed/runfailed2.txt  ${DATADIR}/cli/runfailed/suite/runfailed.txt
+    Run Tests  --runfailed output.xml --test Selected  cli/runfailed/suite
+    Remove Files  output.xml  ${DATADIR}/cli/runfailed/suite/runfailed.txt
