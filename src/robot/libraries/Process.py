@@ -485,7 +485,9 @@ class ProcessConfig(object):
             if key == "env":
                 self.env = dict()
                 for k,v in val.iteritems():
-                    self.env[k.encode('utf-8')] = v.encode('utf-8')
+                    k = k.encode('utf-8')
+                    v = v.encode('utf-8')
+                    self.env[k] = v
             elif "env:" == key[:4]:
                 new_env[key[4:]] = val.encode('utf-8')
             else:
