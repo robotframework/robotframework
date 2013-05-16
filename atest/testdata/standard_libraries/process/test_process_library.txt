@@ -60,21 +60,19 @@ Setting Environment
     @{curenv}=    Get Environment Variables
     ${setenv}=    Create Dictionary           specialvar  spessu
     ${result}=    Run Process    python -c "import os; print os.environ;"    shell=True
-    Log           ${result.stdout}
     Should Match Regexp        ${result.stdout}   (.*)(?i)@{curenv}[0](.*)
     Should Not Match Regexp    ${result.stdout}   (.*)(?i)specialvar(.*)
-    ${result}=    Run Process    python -c "import os; print os.environ;"    shell=True   env:specialvar=spessu
-    Log           ${result.stdout}
-    Should Not Match Regexp    ${result.stdout}   (.*)(?i)@{curenv}[0](.*)
-    Should Match Regexp        ${result.stdout}   (.*)(?i)specialvar(.*)
+    ${result}=    Run Process    python -c "import os; print os.environ;"    shell=True   env:specia£var=spessu
+    Should Match Regexp        ${result.stdout}   (.*)(?i)@{curenv}[0](.*)
+    Should Match Regexp        ${result.stdout}   (.*)(?i)specia(.*)var(.*)
     ${result}=    Run Process    python -c "import os; print os.environ;"    shell=True   env=${setenv}
     Should Not Match Regexp    ${result.stdout}   (.*)(?i)@{curenv}[0](.*)
     Should Match Regexp        ${result.stdout}   (.*)(?i)specialvar(.*)
 
 Setting Environment With Multiple Values
     @{curenv}=    Get Environment Variables
-    ${result}=    Run Process    python -c "import os; print os.environ;"    shell=True   env:specialvar=spessu   env:diiba=daaba
-    Should Not Match Regexp   ${result.stdout}   (.*)(?i)@{curenv}[0](.*)
+    ${result}=    Run Process    python -c "import os; print os.environ;"    shell=True   env:specialvar=spessu   env:diiba=da£ba
+    Should Match Regexp       ${result.stdout}   (.*)(?i)@{curenv}[0](.*)
     Should Match Regexp       ${result.stdout}   (.*)(?i)specialvar(.*)
     Should Match Regexp       ${result.stdout}   (.*)(?i)diiba(.*)
 
@@ -87,7 +85,7 @@ Setting Environment With Multiple Values Using Dictionary
     Should Match Regexp        ${result.stdout}   (.*)(?i)diiba(.*)
 
 Unsupported Arguments Should Cause Error
-    ${setenv}=    Create Dictionary           specialvar  spessu
+    ${setenv}=    Create Dictionary           sp  spessu
     Run Keyword And Expect Error  UnrecognizedParameterError: *    Run Process    python -c "import os; print os.environ;"    shell=True   genv=${setenv}
     Run Keyword And Expect Error  UnrecognizedParameterError: *    Run Process    python -c "import os; print os.environ;"    shellx=True
 
