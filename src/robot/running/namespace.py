@@ -42,11 +42,13 @@ class Namespace:
                              'OperatingSystem': 'DeprecatedOperatingSystem'}
     _library_import_by_path_endings = ('.py', '.java', '.class', '/', os.sep)
 
-    def __init__(self, suite, parent_vars):
+    def __init__(self, suite, parent_vars, user_keywords=None):
         if suite is not None:
             LOGGER.info("Initializing namespace for test suite '%s'" % suite.longname)
         self.variables = self._create_variables(suite, parent_vars)
         self.suite = suite
+        # TODO: Remove below compatibility with old/new running
+        self._user_keywords = user_keywords if user_keywords is not None else suite.user_keywords
         self.test = None
         self.uk_handlers = []
         self.library_search_order = []
@@ -301,8 +303,8 @@ class Namespace:
         return None
 
     def _get_handler_from_test_case_file_user_keywords(self, name):
-        if self.suite.user_keywords.has_handler(name):
-            return self.suite.user_keywords.get_handler(name)
+        if self._user_keywords.has_handler(name):
+            return self._user_keywords.get_handler(name)
 
     def _get_handler_from_resource_file_user_keywords(self, name):
         found = [lib.get_handler(name) for lib

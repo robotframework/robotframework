@@ -209,6 +209,7 @@ class RunnableMultiTestSuite(RunnableTestSuite):
         self.imports = []
         self.setup = Setup(None, None)
         self.teardown = Teardown(None, None)
+        self.user_keywords = None
         for suite in suitedatas:
             RunnableTestSuite(suite, self, process_variables=process_variables)
         self._exit_on_failure_mode = False
