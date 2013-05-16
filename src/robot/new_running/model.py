@@ -25,7 +25,7 @@ class Keyword(model.Keyword):
     __slots__ = ['assign']
     message_class = None  # TODO: Remove from base model?
 
-    def __init__(self, name='', args=None, assign=None, type='kw'):
+    def __init__(self, name='', args=(), assign=(), type='kw'):
         model.Keyword.__init__(self, name=name, args=args, type=type)
         self.assign = assign
 
@@ -82,9 +82,9 @@ class Import(object):
 
     # TODO: Should type be verified?
     # TODO: Should we have separate methods for adding libs, resources, vars?
-    def __init__(self, type, name, *args):
+    def __init__(self, type, name, args=(), alias=None):
         self.type = type
         self.name = name
         self.args = args
-        self.alias = None
+        self.alias = alias
         self.directory = None

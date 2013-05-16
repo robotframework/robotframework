@@ -302,6 +302,9 @@ class _DataList(object):
     def __len__(self):
         return len(self.data)
 
+    def __iter__(self):
+        return iter(self.data)
+
 
 class ImportList(_DataList):
 
