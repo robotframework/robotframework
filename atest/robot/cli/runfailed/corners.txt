@@ -16,7 +16,7 @@ Runs everything when output is set to NONE
     Run Tests  --runfailed NONE  cli/runfailed/onlypassing
     File Should Exist  ${OUTFILE}
 
-Stops on error when output does not exists
+Stops on error when output does not exist
     Run Tests Without Processing Output  --runfailed noneexisting.xml  cli/runfailed/onlypassing
     File Should Not Exist  ${OUTFILE}
     Check Stderr Contains Regexp  No such file or directory
