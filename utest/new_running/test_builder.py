@@ -70,3 +70,15 @@ class TestBuilding(unittest.TestCase):
         assert_equals(suite.suites[0].name, 'Pass And Fail')
         assert_equals(suite.suites[1].name, 'Normal')
         assert_equals(suite.suites[1].tests[1].id, 's1-s2-t2')
+
+    def test_suite_setup_and_teardown(self):
+        suite = self._build('setups_and_teardowns.txt')
+        assert_equals(suite.keywords.setup.name, 'Suite Setup')
+        assert_equals(suite.keywords.teardown.name, 'Suite Teardown')
+
+    def test_test_setup_and_teardown(self):
+        test = self._build('setups_and_teardowns.txt').tests[0]
+        assert_equals(test.keywords.setup.name, 'Test Setup')
+        assert_equals(test.keywords.teardown.name, 'Test Teardown')
+        assert_equals([kw.name for kw in test.keywords],
+                      ['Test Setup', 'Keyword', 'Test Teardown'])

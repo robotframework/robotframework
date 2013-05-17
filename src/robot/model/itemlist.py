@@ -30,6 +30,7 @@ class ItemList(object):
     def append(self, item):
         self._check_type_and_set_attrs(item)
         self._items.append(item)
+        return item
 
     def _check_type_and_set_attrs(self, item):
         if not isinstance(item, self._item_class):
