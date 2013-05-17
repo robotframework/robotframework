@@ -20,6 +20,9 @@ class TestTags(unittest.TestCase):
                     ('', 'T 1', '', 't2', 't_3', 'NONE')]:
             assert_equal(list(Tags(inp)), ['T 1', 't2', 't_3'])
 
+    def test_init_with_none(self):
+        assert_equal(list(Tags(None)), [])
+
     def test_add_string(self):
         tags = Tags(['Y'])
         tags.add('x')
@@ -89,6 +92,30 @@ class TestTags(unittest.TestCase):
         assert_equal(str(Tags()), '[]')
         assert_equal(str(Tags(['y', "X'X"])), "[X'X, y]")
         assert_equal(str(Tags([u'\xe4', 'a'])), '[a, \xc3\xa4]')
+
+    def test__add__list(self):
+        tags = Tags(['xx', 'yy'])
+        new_tags = tags + ['zz', 'ee', 'XX']
+        assert_true(isinstance(new_tags, Tags))
+        assert_equal(list(tags), ['xx', 'yy'])
+        assert_equal(list(new_tags), ['ee', 'xx', 'yy', 'zz'])
+
+    def test__add__tags(self):
+        tags1 = Tags(['xx', 'yy'])
+        tags2 = Tags(['zz', 'ee', 'XX'])
+        new_tags = tags1 + tags2
+        assert_true(isinstance(new_tags, Tags))
+        assert_equal(list(tags1), ['xx', 'yy'])
+        assert_equal(list(tags2), ['ee', 'XX', 'zz'])
+        assert_equal(list(new_tags), ['ee', 'xx', 'yy', 'zz'])
+
+    def test__add__list(self):
+        tags = Tags(['xx', 'yy'])
+        new_tags = tags + None
+        assert_true(isinstance(new_tags, Tags))
+        assert_equal(list(tags), ['xx', 'yy'])
+        assert_equal(list(new_tags), list(tags))
+        assert_true(new_tags is not tags)
 
 
 class TestTagPatterns(unittest.TestCase):

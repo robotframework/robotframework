@@ -15,6 +15,7 @@
 from robot.model import SuiteVisitor
 from robot.result.testsuite import TestSuite # TODO: expose in __init__
 from robot.running.namespace import Namespace
+from robot.variables import Variables
 from robot.running.context import EXECUTION_CONTEXTS
 from robot.running.keywords import Keywords
 from robot.running.userkeyword import UserLibrary
@@ -33,7 +34,10 @@ class Runner(SuiteVisitor):
             self.result = self.current = TestSuite(name=suite.name)
         else:
             self.current = self.current.suites.create(name=suite.name)
-        ns = Namespace(suite, None, UserLibrary(suite.user_keywords))
+        vars = Variables()
+        for var in suite.variables:
+            vars[var.name] = var.value
+        ns = Namespace(suite, None, UserLibrary(suite.user_keywords), vars)
         self.context = EXECUTION_CONTEXTS.start_suite(ns, self.output, False)
         self.output.start_suite(self.current)
         ns.handle_imports()
@@ -43,7 +47,8 @@ class Runner(SuiteVisitor):
         self.current = self.current.parent
 
     def visit_test(self, test):
-        result = self.current.tests.create(name=test.name)
+        result = self.current.tests.create(name=test.name,
+                                           tags=test.tags)
         keywords = Keywords(test.keywords.normal)
         self.context.start_test(result)
         try:
