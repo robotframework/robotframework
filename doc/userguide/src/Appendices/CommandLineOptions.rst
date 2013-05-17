@@ -20,6 +20,7 @@ Command line options for test execution
   -G, --settag <tag>      `Sets the tag(s)`_ to all executed test cases.
   -t, --test <name>       `Selects the test cases by name`_.
   -s, --suite <name>      `Selects the test suites`_ by name.
+  -R, --runfailed <file>  `Selects failed tests`_ from a previous output file to be re-run.
   -i, --include <tag>     `Selects the test cases`_ by tag.
   -e, --exclude <tag>     `Selects the test cases`_ by tag.
   -c, --critical <tag>    Tests that have the given tag are `considered critical`_.
@@ -130,6 +131,7 @@ Command line options for post-processing outputs
 .. _Sets the tag(s): `Setting tags`_
 .. _Selects the test cases by name: `By test suite and test case names`_
 .. _Selects the test suites: `Selects the test cases by name`_
+.. _Selects failed tests: `Rerunning failed tests`_
 .. _Selects the test cases: `By tag names`_
 .. _considered critical: `Setting criticality`_
 .. _not critical: `considered critical`_
