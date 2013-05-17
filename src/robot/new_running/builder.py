@@ -9,7 +9,9 @@ class TestSuiteBuilder(object):
         pass
 
     def build(self, path):
-        data = TestData(source=path)
+        return self._build(TestData(source=path))
+
+    def _build(self, data):
         suite = TestSuite(name=data.name,
                           source=data.source,
                           doc=data.setting_table.doc.value)
@@ -41,6 +43,8 @@ class TestSuiteBuilder(object):
                 test.keywords.create(name=kw_data.keyword,
                                      args=tuple(kw_data.args),
                                      assign=tuple(kw_data.assign))
+        for child in data.children:
+            suite.suites.append(self._build(child))
         return suite
 
     def _get_tags(self, test, settings):

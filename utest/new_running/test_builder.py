@@ -54,3 +54,14 @@ class TestBuilding(unittest.TestCase):
         assert_equals(kw.args, ('Pass',))
         assert_equals(kw.assign, ())
         assert_equals(kw.type, kw.KEYWORD_TYPE)
+
+    def test_directory_suite(self):
+        suite = self._build('suites')
+        assert_equals(suite.name, 'Suites')
+        assert_equals(suite.doc, '')
+        assert_equals(suite.metadata, {})
+        assert_equals(suite.suites[1].name, 'Subsuites')
+        assert_equals(suite.suites[-1].name, 'Tsuite3')
+        assert_equals(suite.suites[1].suites[1].name, 'Sub2')
+        assert_equals(len(suite.suites[1].suites[1].tests), 1)
+        assert_equals(suite.suites[1].suites[1].tests[0].id, 's1-s2-s2-t1')
