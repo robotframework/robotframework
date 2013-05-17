@@ -25,6 +25,16 @@ class TestSuiteBuilder(object):
                                  name=imp.name,
                                  args=tuple(imp.args),
                                  alias=imp.alias)
+        suite_setup = data.setting_table.suite_setup
+        if suite_setup:
+            suite.keywords.create(type='setup',
+                                  name=suite_setup.name,
+                                  args=tuple(suite_setup.args))
+        suite_teardown = data.setting_table.suite_teardown
+        if suite_teardown:
+            suite.keywords.create(type='teardown',
+                                  name=suite_teardown.name,
+                                  args=tuple(suite_teardown.args))
         for var_data in data.variable_table.variables:
             if var_data.name.startswith('$'):
                 value = var_data.value[0]
@@ -44,10 +54,20 @@ class TestSuiteBuilder(object):
                                       doc=test_data.doc.value,
                                       tags=self._get_tags(test_data,
                                                           data.setting_table))
+            test_setup = test_data.setup or test_data.parent.parent.setting_table.test_setup
+            if test_setup:
+                test.keywords.create(type='setup',
+                                     name=test_setup.name,
+                                     args=tuple(test_setup.args))
             for kw_data in test_data.steps:
                 test.keywords.create(name=kw_data.keyword,
                                      args=tuple(kw_data.args),
                                      assign=tuple(kw_data.assign))
+            test_teardown = test_data.teardown or test_data.parent.parent.setting_table.test_teardown
+            if test_teardown:
+                test.keywords.create(type='teardown',
+                                     name=test_teardown.name,
+                                     args=tuple(test_teardown.args))
         for child in data.children:
             suite.suites.append(self._build(child))
         return suite

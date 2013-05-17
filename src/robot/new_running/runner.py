@@ -18,6 +18,7 @@ from robot.running.namespace import Namespace
 from robot.variables import Variables
 from robot.running.context import EXECUTION_CONTEXTS
 from robot.running.keywords import Keywords
+from robot.running.fixture import Setup, Teardown
 from robot.running.userkeyword import UserLibrary
 from robot.errors import ExecutionFailed
 from robot import utils
@@ -30,6 +31,10 @@ class Runner(SuiteVisitor):
         self.result = None
         self.current = None
 
+    @property
+    def context(self):
+        return EXECUTION_CONTEXTS.current
+
     def start_suite(self, suite):
         result = TestSuite(name=suite.name,
                            doc=suite.doc,
@@ -39,16 +44,21 @@ class Runner(SuiteVisitor):
         if not self.result:
             self.result = self.current = result
         else:
-            self.current = self.current.suites.append(suite)
+            self.current = self.current.suites.append(result)
         vars = Variables()
         for var in suite.variables:
             vars[var.name] = var.value
-        ns = Namespace(suite, None, UserLibrary(suite.user_keywords), vars)
-        self.context = EXECUTION_CONTEXTS.start_suite(ns, self.output, False)
+        ns = Namespace(suite,
+                       self.context.namespace.variables if self.context else None,
+                       UserLibrary(suite.user_keywords),
+                       vars)
+        EXECUTION_CONTEXTS.start_suite(ns, self.output, False)
         self.output.start_suite(self.current)
         ns.handle_imports()
+        self._setup(suite.keywords.setup).run(self.context)
 
     def end_suite(self, suite):
+        self._teardown(suite.keywords.teardown).run(self.context)
         self.current.endtime = utils.get_timestamp()
         self.context.end_suite(self.current)
         self.current = self.current.parent
@@ -58,8 +68,11 @@ class Runner(SuiteVisitor):
                                            doc=test.doc,
                                            tags=test.tags,
                                            starttime=utils.get_timestamp())
+        setup = self._setup(test.keywords.setup)
         keywords = Keywords(test.keywords.normal)
+        teardown = self._teardown(test.keywords.teardown)
         self.context.start_test(result)
+        setup.run(self.context)
         try:
             keywords.run(self.context)
         except ExecutionFailed, err:
@@ -67,5 +80,20 @@ class Runner(SuiteVisitor):
             result.status = 'FAIL'
         else:
             result.status = 'PASS'
+        teardown.run(self.context)
         result.endtime = utils.get_timestamp()
         self.context.end_test(result)
+
+    def _setup(self, setup):
+        if not setup:
+            return Setup('', ())
+        setup = Setup(setup.name, setup.args)
+        setup.replace_variables(self.context.namespace.variables, [])
+        return setup
+
+    def _teardown(self, teardown):
+        if not teardown:
+            return Teardown('', ())
+        teardown = Teardown(teardown.name, teardown.args)
+        teardown.replace_variables(self.context.namespace.variables, [])
+        return teardown
