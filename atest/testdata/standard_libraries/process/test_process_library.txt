@@ -147,6 +147,7 @@ Current working directory should not be used with stdout and stderr when absolut
     Remove File    ${stdout_path}
     [Teardown]    Remove Directory    ${TEMPDIR}${/}hc    True
 
+
 *** Keywords ***
 Restart Suite Process If Needed
     ${alive}=    Process Is Running    suite_process
