@@ -8,8 +8,13 @@ class TestSuiteBuilder(object):
     def __init__(self):
         pass
 
-    def build(self, path):
-        return self._build(TestData(source=path))
+    def build(self, *paths):
+        if len(paths) == 1:
+            return self._build(TestData(source=paths[0]))
+        root = TestSuite()
+        for path in paths:
+            root.suites.append(self._build(TestData(source=path)))
+        return root
 
     def _build(self, data):
         suite = TestSuite(name=data.name,

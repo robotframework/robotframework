@@ -386,7 +386,7 @@ class RobotFramework(Application):
                                        stderr=settings['StdErr'])
         init_global_variables(settings)
         from robot.new_running import TestSuiteBuilder
-        suite = TestSuiteBuilder().build(datasources[0])
+        suite = TestSuiteBuilder().build(*datasources)
         result = suite.run(**options)
         LOGGER.info("Tests execution ended. Statistics:\n%s"
                     % result.statistics.message)
