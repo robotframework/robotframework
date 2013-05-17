@@ -18,6 +18,13 @@ class TestSuiteBuilder(object):
                                  name=imp.name,
                                  args=tuple(imp.args),
                                  alias=imp.alias)
+        for var_data in data.variable_table.variables:
+            if var_data.name.startswith('$'):
+                value = var_data.value[0]
+            else:
+                value = var_data.value
+            suite.variables.create(name=var_data.name,
+                                   value=value)
         for uk_data in data.keyword_table.keywords:
             uk = suite.user_keywords.create(name=uk_data.name,
                                             args=tuple(uk_data.args))

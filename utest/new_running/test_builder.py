@@ -30,6 +30,13 @@ class TestBuilding(unittest.TestCase):
         assert_equals(imp.name, 'DummyLib')
         assert_equals(imp.args, ())
 
+    def test_variables(self):
+        variables = self._build('pass_and_fail.txt').variables
+        assert_equals(variables[0].name, '${LEVEL1}')
+        assert_equals(variables[0].value, 'INFO')
+        assert_equals(variables[1].name, '${LEVEL2}')
+        assert_equals(variables[1].value, 'DEBUG')
+
     def test_user_keywords(self):
         uk = self._build('pass_and_fail.txt').user_keywords[0]
         assert_equals(uk.name, 'My Keyword')

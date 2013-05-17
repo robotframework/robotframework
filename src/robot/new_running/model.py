@@ -50,13 +50,13 @@ class TestSuite(model.TestSuite):
     __slots__ = []
     test_class = TestCase
     keyword_class = Keyword
-    variables = Variables()
     status = 'RUNNING'   # TODO: Remove compatibility
 
     def __init__(self, *args, **kwargs):
         model.TestSuite.__init__(self, *args, **kwargs)
         self.imports = []
         self.user_keywords = []
+        self.variables = []
 
     @setter
     def imports(self, imports):
@@ -65,6 +65,10 @@ class TestSuite(model.TestSuite):
     @setter
     def user_keywords(self, keywords):
         return model.ItemList(UserKeyword, items=keywords)
+
+    @setter
+    def variables(self, variables):
+        return model.ItemList(Variable, items=variables)
 
     def randomize(self, suites=True, tests=True):
         self.visit(Randomizer(suites, tests))
@@ -75,6 +79,19 @@ class TestSuite(model.TestSuite):
         self.visit(runner)
         output.close(runner.result)
         return runner.result
+
+    # TODO: Remove compatibility with old model
+    def _set_critical_tags(self, arg):
+        pass
+    critical = None
+
+
+class Variable(object):
+
+    def __init__(self, name, value):
+        # TODO: check name and value
+        self.name = name
+        self.value = value
 
 
 class UserKeyword(object):

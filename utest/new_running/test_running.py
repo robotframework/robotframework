@@ -25,7 +25,7 @@ class TestRunning(unittest.TestCase):
         test.keywords.create('Fail', args=['Hello, world!'])
         result = suite.run(output='NONE')
         self._check_suite(result, 'Suite', 'FAIL')
-        self._check_test(result.tests[0], 'Test', 'FAIL', 'Hello, world!')
+        self._check_test(result.tests[0], 'Test', 'FAIL', msg='Hello, world!')
 
     def test_assign(self):
         suite = TestSuite(name='Suite')
@@ -34,7 +34,7 @@ class TestRunning(unittest.TestCase):
         test.keywords.create('Fail', args=['${var}'])
         result = suite.run(output='NONE')
         self._check_suite(result, 'Suite', 'FAIL')
-        self._check_test(result.tests[0], 'Test', 'FAIL', 'value in variable')
+        self._check_test(result.tests[0], 'Test', 'FAIL', msg='value in variable')
 
     def test_suites_in_suites(self):
         root = TestSuite(name='Root')
@@ -62,14 +62,26 @@ class TestRunning(unittest.TestCase):
         uk.keywords.create(name='Fail', args=['${msg}'])
         result = suite.run(output='NONE')
         self._check_suite(result, 'Suite', 'FAIL')
-        self._check_test(result.tests[0], 'Test', 'FAIL', 'From uk')
+        self._check_test(result.tests[0], 'Test', 'FAIL', msg='From uk')
+
+    def test_variables(self):
+        suite = TestSuite(name='Suite')
+        suite.variables.create('${ERROR}', 'Error message')
+        suite.variables.create('@{LIST}', ['Error', 'added tag'])
+        suite.tests.create(name='T1').keywords.create('Fail', args=['${ERROR}'])
+        suite.tests.create(name='T2').keywords.create('Fail', args=['@{LIST}'])
+        result = suite.run(output='NONE')
+        self._check_suite(result, 'Suite', 'FAIL', tests=2)
+        self._check_test(result.tests[0], 'T1', 'FAIL', msg='Error message')
+        self._check_test(result.tests[1], 'T2', 'FAIL', ('added tag',), 'Error')
 
     def _check_suite(self, suite, name, status, tests=1):
         assert_equals(suite.name, name)
         assert_equals(suite.status, status)
         assert_equals(len(suite.tests), tests)
 
-    def _check_test(self, test, name, status, message=''):
+    def _check_test(self, test, name, status, tags=(), msg=''):
         assert_equals(test.name, name)
         assert_equals(test.status, status)
-        assert_equals(test.message, message)
+        assert_equals(test.message, msg)
+        assert_equals(tuple(test.tags), tags)

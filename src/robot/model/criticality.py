@@ -34,3 +34,8 @@ class Criticality(object):
 
     def __nonzero__(self):
         return bool(self.critical_tags or self.non_critical_tags)
+
+    # TODO: Remove compatibility with old Statistics
+    is_critical = tag_is_critical
+    is_non_critical = tag_is_non_critical
+

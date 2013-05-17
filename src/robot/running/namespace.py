@@ -42,12 +42,12 @@ class Namespace:
                              'OperatingSystem': 'DeprecatedOperatingSystem'}
     _library_import_by_path_endings = ('.py', '.java', '.class', '/', os.sep)
 
-    def __init__(self, suite, parent_vars, user_keywords=None):
+    def __init__(self, suite, parent_vars, user_keywords=None, variables=None):
         if suite is not None:
             LOGGER.info("Initializing namespace for test suite '%s'" % suite.longname)
-        self.variables = self._create_variables(suite, parent_vars)
         self.suite = suite
-        # TODO: Remove below compatibility with old/new running
+        # TODO: Remove variable and uk compatibility with old/new running
+        self.variables = self._create_variables(suite, parent_vars, variables)
         self._user_keywords = user_keywords if user_keywords is not None else suite.user_keywords
         self.test = None
         self.uk_handlers = []
@@ -60,8 +60,10 @@ class Namespace:
         self._import_default_libraries()
         self._handle_imports(self.suite.imports)
 
-    def _create_variables(self, suite, parent_vars):
-        variables = _VariableScopes(suite, parent_vars)
+    def _create_variables(self, suite, parent_vars, suite_variables=None):
+        if suite_variables is None:
+            suite_variables = suite.variables
+        variables = _VariableScopes(suite_variables, parent_vars)
         variables['${SUITE_NAME}'] = suite.longname
         variables['${SUITE_SOURCE}'] = suite.source
         variables['${SUITE_DOCUMENTATION}'] = suite.doc
@@ -390,17 +392,17 @@ class Namespace:
 
 class _VariableScopes:
 
-    def __init__(self, suite, parent_vars):
+    def __init__(self, suite_variables, parent_variables):
         # suite and parent are None only when used by copy_all
-        if suite is not None:
-            suite.variables.update(GLOBAL_VARIABLES)
-            self._suite = self.current = suite.variables
+        if suite_variables is not None:
+            suite_variables.update(GLOBAL_VARIABLES)
+            self._suite = self.current = suite_variables
         else:
             self._suite = self.current = None
         self._parents = []
-        if parent_vars is not None:
-            self._parents.append(parent_vars.current)
-            self._parents.extend(parent_vars._parents)
+        if parent_variables is not None:
+            self._parents.append(parent_variables.current)
+            self._parents.extend(parent_variables._parents)
         self._test = None
         self._uk_handlers = []
 
