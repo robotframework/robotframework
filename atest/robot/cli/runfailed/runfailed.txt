@@ -16,10 +16,6 @@ Check that selected is executed
 Check that none existing failing from output file is not executed
     Run Keyword And Expect Error  No test 'None Existing' found*  Check Test Case   None Existing
 
-#Output contains only passing test cases
-
-#Output contains only none existing failing test cases
-
 Check that failing test case from subsuite is executed
     Check Test Case   Really Failing   status=FAIL  message=AssertionError
 
