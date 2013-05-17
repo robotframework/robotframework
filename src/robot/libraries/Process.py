@@ -402,14 +402,14 @@ class Process(object):
         """
         return self._process(handle)
 
-    def switch_active_process(self, handle):
+    def switch_process(self, handle):
         """This keyword switches active process into process with `handle`.
 
         Examples:
 
-        | Run Keyword And Expect Error | `Switch Active Process` |
-        | Run Keyword And Expect Error | `Switch Active Process` | ${nonexistent_handle} |
-        | `Switch Active Process` | ${handle1} |
+        | Run Keyword And Expect Error | `Switch Process` |
+        | Run Keyword And Expect Error | `Switch Process` | ${nonexistent_handle} |
+        | `Switch Process` | ${handle1} |
         """
         self._started_processes.switch(handle)
 

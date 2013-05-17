@@ -31,9 +31,9 @@ Switching active process
     Stop Some Process    one
     ${process_two}=    Some process    two
     Process Should Be Running    ${process_two}
-    Switch Active Process    one
+    Switch Process    one
     Process Should Be Stopped
-    Switch Active Process    two
+    Switch Process    two
     Process Should Be Running
     Stop Some Process
 
