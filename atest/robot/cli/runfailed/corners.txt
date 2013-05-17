@@ -1,0 +1,20 @@
+*** Settings ***
+Force Tags      regression  pybot  jybot
+Resource        atest_resource.txt
+
+*** Test Cases ***
+Runs everything when output contains only passing test cases
+    Generate output  cli/runfailed/onlypassing  cli/runfailed/onlypassing
+    File Should Exist  ${OUTFILE}
+
+Stops on error when output contains only none existing failing test cases
+    Generate output  cli/runfailed/runfailed2.txt  cli/runfailed/onlypassing
+    File Should Not Exist  ${OUTFILE}
+    Check Stderr Contains Regexp  contains no test cases
+
+*** Keywords ***
+Generate output
+    [Arguments]  ${previous_execution}  ${execution}
+    Run Tests  ${EMPTY}  ${previous_execution}
+    Copy File  ${OUTFILE}  output.xml
+    Run Tests Without Processing Output  --runfailed output.xml  ${execution}

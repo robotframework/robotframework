@@ -1,0 +1,6 @@
+*** Test Cases ***
+Failing
+  No Operation  # Not really failing..
+
+Really Failing
+  Fail
