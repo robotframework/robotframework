@@ -19,10 +19,11 @@ import subprocess
 import sys
 import tempfile
 from robot.errors import UnrecognizedParameterError
+from robot.output import loggerhelper
 
 from robot.utils import ConnectionCache
 from robot.version import get_version
-
+from robot.api import logger
 
 class Process(object):
     """Robot Framework test library for running processes.
@@ -201,6 +202,7 @@ class Process(object):
         self._started_processes = ConnectionCache()
         self._logs = dict()
         self._tempdir = tempfile.mkdtemp(suffix="processlib")
+        self._logging_level = 'TRACE'
 
     def run_process(self, command, *arguments, **configuration):
         """This keyword runs a process and waits for it to terminate.
@@ -220,6 +222,9 @@ class Process(object):
             return self.wait_for_process(p)
         finally:
             self._started_processes.switch(active_process_index)
+
+    def _log(self, message):
+        logger.write(message, level=self._logging_level)
 
     def start_process(self, command, *arguments, **configuration):
         """This keyword starts a new process.
@@ -241,6 +246,7 @@ class Process(object):
         | $handle2}= | `Start Process` | totals |
         """
         config = ProcessConfig(self._tempdir, **configuration)
+        self._log('starting process "%r"' % command)
         p = subprocess.Popen(self._cmd(arguments, command, config.shell),
                              stdout=config.stdout_stream,
                              stderr=config.stderr_stream,
@@ -311,7 +317,9 @@ class Process(object):
         """
         process = self._process(handle)
         result = self._logs[process]
+        self._log('waiting for process to terminate')
         result.exit_code = process.wait()
+        self._log('process terminated')
         return result
 
     def terminate_process(self, handle=None, kill=False):
@@ -337,15 +345,21 @@ class Process(object):
             return
         try:
             if kill:
+                self._log('calling subprocess.Popen.kill()')
                 process.kill()
             else:
+                self._log('calling subprocess.Popen.terminate()')
                 process.terminate()
         except OSError:
+            self._log('OSError during process termination')
             if process.poll() is None:
+                self._log('Process still alive raising exception')
                 raise
+            self._log('Process is not executing - consuming OSError')
 
     def _terminate_process(self, theprocess):
         if sys.platform == 'win32':
+            self._log('terminating process using ctypes.windll.kernel32')
             import ctypes
             PROCESS_TERMINATE = 1
             handle = ctypes.windll.kernel32.OpenProcess(PROCESS_TERMINATE,
@@ -356,6 +370,7 @@ class Process(object):
         else:
             pid = theprocess.pid
             if pid is not None:
+                self._log('terminating process using os.kill')
                 os.kill(pid, signal.SIGKILL)
             else:
                 raise AssertionError('None Pid - can not kill process!')
@@ -410,6 +425,11 @@ class Process(object):
             process = self._started_processes.current
         return process
 
+
+    def set_process_library_logging_level(self, level):
+        if not level or level.upper() not in loggerhelper.LEVELS:
+            raise AssertionError('Unknown level "%s"' % level)
+        self._logging_level = level.upper()
 
 class ExecutionResult(object):
 
