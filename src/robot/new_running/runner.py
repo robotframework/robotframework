@@ -20,6 +20,7 @@ from robot.running.context import EXECUTION_CONTEXTS
 from robot.running.keywords import Keywords
 from robot.running.userkeyword import UserLibrary
 from robot.errors import ExecutionFailed
+from robot import utils
 
 
 class Runner(SuiteVisitor):
@@ -30,10 +31,15 @@ class Runner(SuiteVisitor):
         self.current = None
 
     def start_suite(self, suite):
+        result = TestSuite(name=suite.name,
+                           doc=suite.doc,
+                           metadata=suite.metadata,
+                           source=suite.source,
+                           starttime=utils.get_timestamp())
         if not self.result:
-            self.result = self.current = TestSuite(name=suite.name)
+            self.result = self.current = result
         else:
-            self.current = self.current.suites.create(name=suite.name)
+            self.current = self.current.suites.append(suite)
         vars = Variables()
         for var in suite.variables:
             vars[var.name] = var.value
@@ -43,12 +49,15 @@ class Runner(SuiteVisitor):
         ns.handle_imports()
 
     def end_suite(self, suite):
+        self.current.endtime = utils.get_timestamp()
         self.context.end_suite(self.current)
         self.current = self.current.parent
 
     def visit_test(self, test):
         result = self.current.tests.create(name=test.name,
-                                           tags=test.tags)
+                                           doc=test.doc,
+                                           tags=test.tags,
+                                           starttime=utils.get_timestamp())
         keywords = Keywords(test.keywords.normal)
         self.context.start_test(result)
         try:
@@ -58,4 +67,5 @@ class Runner(SuiteVisitor):
             result.status = 'FAIL'
         else:
             result.status = 'PASS'
+        result.endtime = utils.get_timestamp()
         self.context.end_test(result)
