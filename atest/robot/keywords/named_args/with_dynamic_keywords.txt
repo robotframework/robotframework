@@ -49,7 +49,7 @@ Named combinations with varargs
 Non working named combinations with varargs
     Check Test Case    ${TESTNAME}
 
-Named combinations without varargs
+Named arguments are set defaults only when needed
     Check Test Case    ${TESTNAME}
 
 Non working named combinations without varargs

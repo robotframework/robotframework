@@ -92,14 +92,14 @@ Non working named combinations with varargs
     got multiple values for argument 'a'.             a      a=a
     got multiple values for argument 'a'.             a      b      c      a=a
 
-Named combinations without varargs
+Named arguments are set defaults only when needed
     [template]    Execute working named combination with result
-    a, default    a
-    a, default    a=a
-    a, b          a=a    b=b
-    a, b          b=b    a=a
-    a, b          a      b
-    a, b          a      b=b
+    1             1
+    1             a=1
+    1, 2          a=1    b=2
+    1, 2          b=2    a=1
+    a, 2          b=2
+    1, b, 3       1      c=3
 
 Non working named combinations without varargs
     [template]    Execute illegal named combination
@@ -125,7 +125,7 @@ Execute illegal named vararg combination
 
 Execute working named combination with result
     [arguments]    ${expected}    @{args}
-    ${res} =    Get result or error    Mandatory And Named    @{args}
+    ${res} =    Get result or error    Three named    @{args}
     Should be equal    ${expected}    ${res}
 
 Execute illegal named combination

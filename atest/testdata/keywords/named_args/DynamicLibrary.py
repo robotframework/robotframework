@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 from dynamic_library_impl import (mandatory_and_kwargs, mandatory_and_named, mandatory_named_and_varargs, one_kwarg,
-                                 two_kwargs, four_kw_args, named_arguments_with_varargs, escaped_default_value)
+                                 two_kwargs, four_kw_args, named_arguments_with_varargs, escaped_default_value, var_args)
 
 KEYWORDS = {
     'Escaped Default Value': (escaped_default_value, ['d1=${notvariable}', 'd2=\\\\', 'd3=\n', 'd4=\t']),
@@ -13,7 +13,8 @@ KEYWORDS = {
     'Named Arguments With Varargs': (named_arguments_with_varargs, ['a=default', 'b=default', '*varargs']),
     'One Kwarg': (one_kwarg, ['kwarg=']),
     'Two Kwargs': (two_kwargs, ['first=', 'second=']),
-    u'Nön äscii named args': (two_kwargs, [u'nönäscii=', u'官话='])
+    u'Nön äscii named args': (two_kwargs, [u'nönäscii=', u'官话=']),
+    'three named': (var_args, ['a=a', 'b=b', 'c=c'])
 }
 
 class DynamicLibrary(object):

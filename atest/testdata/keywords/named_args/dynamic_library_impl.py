@@ -1,5 +1,9 @@
 from helper import pretty
 
+
+def var_args(*varargs):
+    return pretty(*varargs)
+
 def mandatory_named_and_varargs(a, b='default', *varargs):
     return pretty(a, b, *varargs)
 
