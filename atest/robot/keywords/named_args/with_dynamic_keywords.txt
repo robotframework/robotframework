@@ -4,9 +4,6 @@ Force Tags        pybot    jybot    regression
 Resource          atest_resource.txt
 
 *** Test Cases ***
-Simple Kwarg
-    Check Test Case    ${TESTNAME}
-
 Kwarg Syntax In Variable Is Ignored
     Check Test Case    ${TESTNAME}
 
