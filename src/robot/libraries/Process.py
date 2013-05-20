@@ -157,13 +157,13 @@ class Process(object):
     = Similarities with OperatingSystem library =
 
     The OperatingSystem library also contains keywords like `Start Process` or
-    `Switch Process. In
-    the situation that these both libraries are in use within the same test
-    suite, the `Process` library's `Start Process` will be preferred.
+    `Switch Process`. In the situation that these both libraries are in use
+    within the same test suite, the `Process` library's keywords will
+    be preferred.
 
-    You can still use OperatingSystem `Start Process` by calling it explicitly
+    You can still use OperatingSystem keywords by calling it explicitly
     (e.g. `OperatingSystem.Start Process`) or by setting library search order
-    using `BuiltIn` library's keyword  `Set Library Search Order' and then
+    using `BuiltIn` library's keyword `Set Library Search Order` and then
     calling `Start Process`.
 
     | *** Settings *** |
@@ -233,12 +233,13 @@ class Process(object):
         class (see `Configurations`).
 
         Configuration can contain the following options for the process:
-        stdout - A file path to use for standard output from the process
-        stderr - A file path to use for standard error from the process
-        shell  - True value will execute the process in a shell
-        cwd - Current working directory for the process
-        env and env:VARNAME=VALUE - dictionary for the environment variables to
-        use
+
+        - stdout - A file path to use for standard output from the process
+        - stderr - A file path to use for standard error from the process
+        - shell  - True value will execute the process in a shell
+        - cwd - Current working directory for the process
+        - env and env:VARNAME=VALUE - dictionary for the environment variables to
+          use
 
         Returns process index on success.
 
