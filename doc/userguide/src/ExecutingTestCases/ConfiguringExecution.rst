@@ -115,6 +115,31 @@ many interesting possibilities:
   the tests for a certain iteration can be generated (for example, :cli:`rebot
   --include iter-42 output.xml`).
 
+Re-executing failed test cases
+''''''''''''''''''''''''''''''
+
+Command line option `--runfailed (-R)` can be used to select all failed tests
+from an earlier `output file`_ for re-execution. This option is useful, for
+example, if running all tests takes a lot of time and one wants to
+iteratively fix failing test cases.
+
+::
+
+  pybot tests                           # first execute all tests
+  pybot --runfailed output.xml tests    # then re-execute failing
+
+Behind the scenes this option selects the failed tests as they would have been
+selected individually with the :opt:`--test` option. It is possible to further
+fine-tune the list of selected tests by using :opt:`--test`, :opt:`--suite`,
+:opt:`--include` and :opt:`--exclude` options.
+
+Using an output not originating from executing the same tests that are run
+now causes undefined results. Additionally, it is an error if the output
+contains no failed tests. Using a special value :opt:`NONE` as the output
+is same as not specifying this option at all.
+
+.. note:: This is a new option in Robot Framework 2.8.
+
 When no tests match selection
 '''''''''''''''''''''''''''''
 
@@ -140,26 +165,6 @@ running tests.
 
 .. note:: :opt:`--RunEmptySuite` option was added Robot Framework 2.6
           and :opt:`--ProcessEmptySuite` in 2.7.2.
-
-Rerunning failed tests
-''''''''''''''''''''''
-
-`--runfailed` command line option can be used to select all failed tests from a
-given output for re-execution. This option is useful for example in situations
-where executing all tests takes a lot of time and one wants to iteratively
-fix failing test cases. This option was added in Robot Framework 2.8.
-
-::
-
-  pybot tests     (first execute all tests)
-  pybot --runfailed output.xml tests    (then re-execute and fix tests)
-
-If the given output file doesn't contain any failing test cases or value NONE
-is passed as the argument for the command line option, all test cases are
-executed.
-
-This option will add all the failed test cases as they would have been added
-with the `--test` option.
 
 Setting criticality
 ~~~~~~~~~~~~~~~~~~~
