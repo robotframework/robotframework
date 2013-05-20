@@ -144,7 +144,7 @@ class Process(object):
     - `stdout` file content of standard output stream
     - `stderr` file content of standard error stream
     - `stdout_path` filepath of standard output
-    - `stderr_path filepath of standard error
+    - `stderr_path` filepath of standard error
     - `exit_code` from the process.
 
     | ${result}= | Run Process | python | -c | ${command} |
