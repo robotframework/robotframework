@@ -95,8 +95,8 @@ Options
                           not run even if they are included with --include.
                           Tags are excluded using the rules explained in
                           --include.
- -R --runfailed output    Select failed tests from a previous output file to be
-                          re-run. Equivalent to selecting same tests
+ -R --runfailed output    Select failed tests from an earlier output file to be
+                          re-executed. Equivalent to selecting same tests
                           individually using --test option.
  -c --critical tag *      Tests having given tag are considered critical. If no
                           critical tags are set, all tags are critical. Tags
