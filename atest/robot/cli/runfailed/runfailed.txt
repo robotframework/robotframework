@@ -16,6 +16,9 @@ Check that failing is executed
 Check that explicitly selected is executed
     Check Test Case   Selected
 
+Check that excluded failing is not executed
+    Run Keyword And Expect Error  No test 'Failing with tag' found*  Check Test Case   Failing with tag
+
 Check that non-existing failing from output file is not executed
     Run Keyword And Expect Error  No test 'Only in one suite' found*  Check Test Case   Only in one suite
 
@@ -28,5 +31,5 @@ Suite initialization
     Run Tests  ${EMPTY}  cli/runfailed/suite
     Copy File  ${OUTFILE}  ${RUN FAILED FROM}
     Copy File  ${DATADIR}/cli/runfailed/runfailed2.txt  ${DATADIR}/cli/runfailed/suite/runfailed.txt
-    Run Tests  --runfailed ${RUN FAILED FROM} --test Selected  cli/runfailed/suite
+    Run Tests  --runfailed ${RUN FAILED FROM} --test Selected --exclude tag  cli/runfailed/suite
     [Teardown]  Remove Files  ${RUN FAILED FROM}  ${DATADIR}/cli/runfailed/suite/runfailed.txt
