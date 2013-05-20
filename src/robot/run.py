@@ -375,21 +375,12 @@ class RobotFramework(Application):
         return suite.return_code
 
     def new_main(self, datasources, **options):
-        STOP_SIGNAL_MONITOR.start()
-        namespace.IMPORTER.reset()
-        settings = RobotSettings(options)
-        pyloggingconf.initialize(settings['LogLevel'])
-        LOGGER.register_console_logger(width=settings['MonitorWidth'],
-                                       colors=settings['MonitorColors'],
-                                       markers=settings['MonitorMarkers'],
-                                       stdout=settings['StdOut'],
-                                       stderr=settings['StdErr'])
-        init_global_variables(settings)
         from robot.new_running import TestSuiteBuilder
         suite = TestSuiteBuilder().build(*datasources)
         result = suite.run(**options)
         LOGGER.info("Tests execution ended. Statistics:\n%s"
                     % result.statistics.message)
+        settings = RobotSettings(options)
         if settings.is_rebot_needed():
             output, settings = settings.get_rebot_datasource_and_settings()
             ResultWriter(output).write_results(settings)

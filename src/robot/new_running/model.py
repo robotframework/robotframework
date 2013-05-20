@@ -23,7 +23,6 @@ from .runner import Runner
 
 
 class Keyword(model.Keyword):
-    __slots__ = ['assign']
     message_class = None  # TODO: Remove from base model?
 
     def __init__(self, name='', args=(), assign=(), type='kw'):
@@ -39,6 +38,29 @@ class Keyword(model.Keyword):
     @property
     def keyword(self):
         return self.name
+
+
+class ForLoop(Keyword):
+    keyword_class = Keyword
+
+    def __init__(self, vars, items, range):
+        Keyword.__init__(self, assign=vars, args=items, type='for')
+        self.range = range
+
+    @property
+    def vars(self):
+        return self.assign
+
+    @property
+    def items(self):
+        return self.args
+
+    def is_for_loop(self):
+        return True
+
+    @property
+    def steps(self):
+        return self.keywords
 
 
 class TestCase(model.TestCase):
@@ -74,7 +96,22 @@ class TestSuite(model.TestSuite):
         self.visit(Randomizer(suites, tests))
 
     def run(self, **options):
-        output = Output(RobotSettings(options))
+        from robot.conf import RobotSettings
+        from robot.output import LOGGER, Output, pyloggingconf
+        from robot.running import STOP_SIGNAL_MONITOR, namespace
+        from robot.variables import init_global_variables
+
+        STOP_SIGNAL_MONITOR.start()
+        namespace.IMPORTER.reset()
+        settings = RobotSettings(options)
+        pyloggingconf.initialize(settings['LogLevel'])
+        LOGGER.register_console_logger(width=settings['MonitorWidth'],
+                                       colors=settings['MonitorColors'],
+                                       markers=settings['MonitorMarkers'],
+                                       stdout=settings['StdOut'],
+                                       stderr=settings['StdErr'])
+        init_global_variables(settings)
+        output = Output(settings)
         runner = Runner(output)
         self.visit(runner)
         output.close(runner.result)
