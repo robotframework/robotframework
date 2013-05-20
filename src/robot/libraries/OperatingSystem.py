@@ -98,6 +98,13 @@ class OperatingSystem:
     Notice that the `~username` form does not work on Jython or on Windows
     python 2.5. Tilde expansion is a new feature in Robot Framework 2.8.
 
+    = Process library =
+
+    Process library replaces old process keywords (`Start Process` and
+    `Switch Process`) from OperatingSystem library. These keywords in the
+    OperatingSystem library might be deprecated in the future. This library is
+    new in Robot Framework 2.8.
+
     = Example =
 
     |  *Setting*  |     *Value*     |
@@ -195,7 +202,9 @@ class OperatingSystem:
         return rc, stdout
 
     def start_process(self, command, stdin=None, alias=None):
-        """Starts the given command as a background process.
+        """It is recommended to use same keyword from Process library instead.
+
+        Starts the given command as a background process.
 
         Starts the process in background and sets it as the active process.
         `Read Process Output` or `Stop Process` keywords affect this process
@@ -231,7 +240,9 @@ class OperatingSystem:
         return PROCESSES.register(process, alias)
 
     def switch_process(self, index_or_alias):
-        """Switches the active process to the specified process.
+        """It is recommended to use same keyword from Process library instead.
+
+        Switches the active process to the specified process.
 
         New active process can be specified either using an index or an alias.
         Indices are return values from `Start Process` and aliases can be
