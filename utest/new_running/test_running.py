@@ -1,11 +1,8 @@
 import unittest
+from StringIO import StringIO
 
 from robot.utils.asserts import assert_equals
 from robot.new_running import TestSuite
-from robot.output import LOGGER
-
-
-LOGGER.disable_automatic_console_logger()
 
 
 class TestRunning(unittest.TestCase):
@@ -14,7 +11,7 @@ class TestRunning(unittest.TestCase):
         suite = TestSuite(name='Suite')
         suite.tests.create(name='Test').keywords.create('Log',
                                                         args=['Hello, world!'])
-        result = suite.run(output='NONE')
+        result = self._run(suite)
         self._check_suite(result, 'Suite', 'PASS')
         self._check_test(result.tests[0], 'Test', 'PASS')
 
@@ -23,7 +20,7 @@ class TestRunning(unittest.TestCase):
         test = suite.tests.create(name='Test')
         test.keywords.create('Log', args=['Dont fail yet.'])
         test.keywords.create('Fail', args=['Hello, world!'])
-        result = suite.run(output='NONE')
+        result = self._run(suite)
         self._check_suite(result, 'Suite', 'FAIL')
         self._check_test(result.tests[0], 'Test', 'FAIL', msg='Hello, world!')
 
@@ -32,7 +29,7 @@ class TestRunning(unittest.TestCase):
         test = suite.tests.create(name='Test')
         test.keywords.create(assign=['${var}'], name='Set Variable', args=['value in variable'])
         test.keywords.create('Fail', args=['${var}'])
-        result = suite.run(output='NONE')
+        result = self._run(suite)
         self._check_suite(result, 'Suite', 'FAIL')
         self._check_test(result.tests[0], 'Test', 'FAIL', msg='value in variable')
 
@@ -41,7 +38,7 @@ class TestRunning(unittest.TestCase):
         root.suites.create(name='Child')\
             .tests.create(name='Test')\
             .keywords.create('Log', args=['Hello, world!'])
-        result = root.run(output='NONE')
+        result = self._run(root)
         self._check_suite(result, 'Root', 'PASS', tests=0)
         self._check_suite(result.suites[0], 'Child', 'PASS')
         self._check_test(result.suites[0].tests[0], 'Test', 'PASS')
@@ -51,7 +48,7 @@ class TestRunning(unittest.TestCase):
         suite.imports.create('Library', 'OperatingSystem')
         suite.tests.create(name='Test').keywords.create('Directory Should Exist',
                                                         args=['.'])
-        result = suite.run(output='NONE')
+        result = self._run(suite)
         self._check_suite(result, 'Suite', 'PASS')
         self._check_test(result.tests[0], 'Test', 'PASS')
 
@@ -60,7 +57,7 @@ class TestRunning(unittest.TestCase):
         suite.tests.create(name='Test').keywords.create('User keyword', args=['From uk'])
         uk = suite.user_keywords.create(name='User keyword', args=['${msg}'])
         uk.keywords.create(name='Fail', args=['${msg}'])
-        result = suite.run(output='NONE')
+        result = self._run(suite)
         self._check_suite(result, 'Suite', 'FAIL')
         self._check_test(result.tests[0], 'Test', 'FAIL', msg='From uk')
 
@@ -70,10 +67,13 @@ class TestRunning(unittest.TestCase):
         suite.variables.create('@{LIST}', ['Error', 'added tag'])
         suite.tests.create(name='T1').keywords.create('Fail', args=['${ERROR}'])
         suite.tests.create(name='T2').keywords.create('Fail', args=['@{LIST}'])
-        result = suite.run(output='NONE')
+        result = self._run(suite)
         self._check_suite(result, 'Suite', 'FAIL', tests=2)
         self._check_test(result.tests[0], 'T1', 'FAIL', msg='Error message')
         self._check_test(result.tests[1], 'T2', 'FAIL', ('added tag',), 'Error')
+
+    def _run(self, suite):
+        return suite.run(output='NONE', stdout=StringIO(), stderr=StringIO())
 
     def _check_suite(self, suite, name, status, tests=1):
         assert_equals(suite.name, name)
