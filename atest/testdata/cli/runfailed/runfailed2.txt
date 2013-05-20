@@ -3,7 +3,8 @@ Passing
     No Operation
 
 Failing
-    Fail
+    [Documentation]    FAIL Message
+    Fail    Message
 
 Selected
     No Operation

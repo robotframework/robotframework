@@ -3,10 +3,12 @@ Passing
     No Operation
 
 Failing
-    Fail
+    [Documentation]    FAIL Message
+    Fail    Message
 
 Selected
     No Operation
 
-None Existing
-    Fail
+Only in one suite
+    [Documentation]    FAIL Message
+    Fail    Message

@@ -1,29 +1,46 @@
 *** Settings ***
-Force Tags      regression  pybot  jybot
-Resource        atest_resource.txt
+Force Tags        regression  pybot  jybot
+Resource          atest_resource.txt
+Suite Teardown    Remove File  ${RUN FAILED FROM}
+
+*** Variables ***
+${RUN FAILED FROM}    %{TEMPDIR}${/}run-failed-output.xml
 
 *** Test Cases ***
-Runs everything when output contains only passing test cases
-    Generate output  cli/runfailed/onlypassing  cli/runfailed/onlypassing
-    File Should Exist  ${OUTFILE}
-
-Stops on error when output contains only none existing failing test cases
-    Generate output  cli/runfailed/runfailed2.txt  cli/runfailed/onlypassing
-    File Should Not Exist  ${OUTFILE}
-    Check Stderr Contains Regexp  contains no test cases
-
 Runs everything when output is set to NONE
-    Run Tests  --runfailed NONE  cli/runfailed/onlypassing
+    Run Tests  --RunFailed NoNe  cli/runfailed/onlypassing
     File Should Exist  ${OUTFILE}
+    Check Test Case    Passing
+
+Stops on error when output contains only passing test cases
+    Generate output  cli/runfailed/onlypassing
+    Run Tests Without Processing Output  -R ${RUN FAILED FROM}  cli/runfailed/onlypassing
+    Stderr Should Be Equal To
+    ...  [ ERROR ] Collecting failed tests from '${RUN FAILED FROM}' failed: All tests passed.${USAGE TIP}\n
+
+Stops on error when output contains only non-existing failing test cases
+    Generate output  cli/runfailed/runfailed2.txt
+    Run Tests Without Processing Output  --RUNF ${RUN FAILED FROM}  cli/runfailed/onlypassing
+    Stderr Should Be Equal To
+    ...  [ ERROR ]  Suite 'Onlypassing' contains no test cases named 'Runfailed2.Failing'.${USAGE TIP}\n
 
 Stops on error when output does not exist
-    Run Tests Without Processing Output  --runfailed noneexisting.xml  cli/runfailed/onlypassing
-    File Should Not Exist  ${OUTFILE}
-    Check Stderr Contains Regexp  No such file or directory
+    Run Tests Without Processing Output  --runfailed nonex.xml  cli/runfailed/onlypassing
+    Stderr Should Be Equal To
+    ...  [ ERROR ] Collecting failed tests from 'nonex.xml' failed:
+    ...  Reading XML source 'nonex.xml' failed:
+    ...  No such file or directory${USAGE TIP}\n
+
+Stops on error when output is invalid
+    Create File  ${RUN FAILED FROM}  <xml><but not='correct'/></xml>
+    Run Tests Without Processing Output  --runfailed ${RUN FAILED FROM}  cli/runfailed/onlypassing
+    Stderr Should Be Equal To
+    ...  [ ERROR ] Collecting failed tests from '${RUN FAILED FROM}' failed:
+    ...  Reading XML source '${RUN FAILED FROM}' failed:
+    ...  Incompatible XML element 'xml'${USAGE TIP}\n
 
 *** Keywords ***
-Generate output
-    [Arguments]  ${previous_execution}  ${execution}
-    Run Tests  ${EMPTY}  ${previous_execution}
-    Copy File  ${OUTFILE}  output.xml
-    Run Tests Without Processing Output  --runfailed output.xml  ${execution}
+Generate Output
+    [Arguments]  ${datafile}
+    Run Tests  ${EMPTY}  ${datafile}
+    Copy File  ${OUTFILE}  ${RUN FAILED FROM}

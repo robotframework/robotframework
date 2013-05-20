@@ -1,6 +1,7 @@
 *** Test Cases ***
 Failing
-  No Operation  # Not really failing..
+    No Operation  # Not really failing..
 
 Really Failing
-  Fail
+    [Documentation]    FAIL Message
+    Fail    Message

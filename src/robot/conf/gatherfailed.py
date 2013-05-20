@@ -12,8 +12,10 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from robot.result import ExecutionResult
+from robot.errors import DataError
 from robot.model import SuiteVisitor
+from robot.result import ExecutionResult
+from robot.utils import get_error_message
 
 
 class GatherFailedTests(SuiteVisitor):
@@ -23,7 +25,7 @@ class GatherFailedTests(SuiteVisitor):
 
     def visit_test(self, test):
         if not test.passed:
-            self.tests += [test.longname]
+            self.tests.append(test.longname)
 
     def visit_keyword(self, kw):
         pass
@@ -33,5 +35,11 @@ def gather_failed_tests(output):
     if output.upper() == 'NONE':
         return []
     gatherer = GatherFailedTests()
-    ExecutionResult(output).suite.visit(gatherer)
+    try:
+        ExecutionResult(output).suite.visit(gatherer)
+        if not gatherer.tests:
+            raise DataError('All tests passed.')
+    except:
+        raise DataError("Collecting failed tests from '%s' failed: %s"
+                        % (output, get_error_message()))
     return gatherer.tests
