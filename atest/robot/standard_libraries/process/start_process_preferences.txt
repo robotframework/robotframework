@@ -21,6 +21,9 @@ Implicitly run Operating System library keyword when library search order is set
     ${test}=   Check Test Case    ${TESTNAME}
     Should Be Equal  ${test.kws[1].name}  \${handle} = OperatingSystem.Start Process
 
+Process switch
+    Check Test Case   ${TESTNAME}
+
 *** Keywords ***
 Check Preconditions
     Run Keyword If   '${SUITE.metadata.get('info')}' == 'precondition_fail'   Fail  precondition fail  -regression

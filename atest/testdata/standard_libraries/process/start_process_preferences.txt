@@ -25,6 +25,17 @@ Implicitly run Operating System library keyword when library search order is set
     Set Library Search Order     OperatingSystem
     ${handle}=     Start Process    python -c "import os; print os.path.abspath(os.curdir);"
     ${out}=        Read Process Output
+    [Teardown]  Set Library Search Order  ${EMPTY}
+
+Process switch
+    OperatingSystem.Start Process   python -c "print 'hello'"  alias=op1
+    OperatingSystem.Start Process   python -c "print 'hello'"  alias=op2
+    Start Process  python -c "print 'hello'"  shell=True  alias=p1
+    Start Process  python -c "print 'hello'"  shell=True  alias=p2
+    Switch Process  p1
+    Switch Process  p2
+    OperatingSystem.Switch Process  op1
+    OperatingSystem.Switch Process  op2
 
 *** Keywords ***
 Check Preconditions

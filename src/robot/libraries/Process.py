@@ -421,7 +421,7 @@ class Process(object):
         | `Start Process` | dir | shell=True | alias=process1 |
         | `Start Process` | ls  | shell=True | alias=process2 |
         | # currently active process is process2 | | | |
-        | `Switch Process` | process1 | | |
+        | `Switch Prcess` | process1 | | |
         | # now active process is process 1 | | | |
         """
         self._started_processes.switch(handle)
