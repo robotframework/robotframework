@@ -40,7 +40,7 @@ class Process(object):
     - Stopping processes started by this library (e.g. `Terminate All Processes`
       and `Terminate Process` keywords). See `Stopping processes` for more
       information.
-    - Switching between processes (e.g. `Switch Active Process` keyword).
+    - Switching between processes (e.g. `Switch Process` keyword).
     - Checking process status (e.g. `Process Should Be Running` and
       `Process Should Be Stopped` keywords).
 
@@ -122,7 +122,7 @@ class Process(object):
     process. Many of the library keywords have `handle` as optional argument.
     This means that if argument `handle` is NOT given, then the active process
     is used for keyword. Active process can be switched using keyword
-    `Switch Active Process`.
+    `Switch Process`.
 
     The most recently started process is always a `active process`.
 
@@ -156,7 +156,8 @@ class Process(object):
 
     = Similarities with OperatingSystem library =
 
-    The OperatingSystem library also contains a keyword `Start Process`. In
+    The OperatingSystem library also contains keywords like `Start Process` or
+    `Switch Process. In
     the situation that these both libraries are in use within the same test
     suite, the `Process` library's `Start Process` will be preferred.
 
@@ -190,7 +191,7 @@ class Process(object):
     | | ${handle2}= | `Start Process` | ${CURDIR}${/}mytool   | shell=True |
     | | ${result1}=  | `Wait For Process` | ${handle1} |
     | | `Terminate Process` | ${handle2} |
-    | | `Process Should Be Dead` | ${handle2} |
+    | | `Process Should Be Stopped` | ${handle2} |
     | | [Teardown] | `Terminate All Processes` | kill=True |
     """
 
@@ -398,11 +399,12 @@ class Process(object):
 
         Examples:
 
-        | ${pid}= | `Get Process Id` | | | | # Gets PID of the active process |
         | ${handle1}= | `Start Process` | python -c "print 'hello'" | shell=True | alias=hello |
-        | ${pid_1}= | `Get Process Id` | ${handle1} | | | # Gets PID with `handle1` |
-        | ${pid_2}= | `Get Process Id` | hello | | | # Gets PID with alias `hello` |
+        | ${pid_1}= | `Get Process Id` | | | | # Gets PID of the active process |
+        | ${pid_2}= | `Get Process Id` | ${handle1} | | | # Gets PID with `handle1` |
+        | ${pid_3}= | `Get Process Id` | hello | | | # Gets PID with alias `hello` |
         | Should Be Equal As Integers | ${pid_1} | ${pid_2} |
+        | Should Be Equal As Integers | ${pid_1} | ${pid_3} |
         """
         return self._process(handle).pid
 
@@ -420,9 +422,9 @@ class Process(object):
 
         | `Start Process` | dir | shell=True | alias=process1 |
         | `Start Process` | ls  | shell=True | alias=process2 |
-        | # currently active process is process2 | | | |
-        | `Switch Prcess` | process1 | | |
-        | # now active process is process 1 | | | |
+        | # currently active process is process2 |
+        | `Switch Process` | process1 |
+        | # now active process is process 1 |
         """
         self._started_processes.switch(handle)
 
