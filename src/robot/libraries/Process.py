@@ -245,8 +245,11 @@ class Process(object):
 
         Examples:
 
-        | $handle1}= | `Start Process` | /bin/script.sh |
-        | $handle2}= | `Start Process` | totals |
+        | ${handle1}= | `Start Process` | /bin/script.sh |
+        | ${handle2}= | `Start Process` | totals |
+        | ${handle3}= | `Start Process` | /bin/script.sh | cwd=/some/directory/ |
+        | ${handle4}= | `Start Process` | /bin/script.sh | env:MYVAR=myvalue |
+        | ${handle5}= | `Start Process` | /bin/script.sh | stdout=somefile.out |
         """
         config = ProcessConfig(self._tempdir, **configuration)
         logger.info('starting process "%r"' % command)
