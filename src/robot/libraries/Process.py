@@ -191,7 +191,7 @@ class Process(object):
     | | ${result1}=  | `Wait For Process` | ${handle1} |
     | | `Terminate Process` | ${handle2} |
     | | `Process Should Be Dead` | ${handle2} |
-    | | [Teardown] | `Kill All Processes` |
+    | | [Teardown] | `Terminate All Processes` | kill=True |
     """
 
     ROBOT_LIBRARY_SCOPE='GLOBAL'
