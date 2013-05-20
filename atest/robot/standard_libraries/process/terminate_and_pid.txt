@@ -29,6 +29,9 @@ Wait For Process Which Does Not Exist
 Lot of output
     Check Test Case    ${TESTNAME}
 
+Getting PIDs in different ways should give same result
+    Check Test Case    ${TESTNAME}
+    
 *** Keywords ***
 Check Preconditions
     Run Keyword If   '${SUITE.metadata.get('info')}' == 'precondition_fail'   Fail  precondition fail  -regression

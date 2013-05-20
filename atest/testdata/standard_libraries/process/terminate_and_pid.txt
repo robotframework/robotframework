@@ -72,6 +72,15 @@ Lot of output
     File Should Not Be Empty    ${TEMPDIR}${/}myout.txt
     [Teardown]    Remove File    ${TEMPDIR}${/}myout.txt
 
+Getting PIDs in different ways should give same result
+    ${handle}=    Start Process    python -c "print 'hello'"    shell=True    alias=hello
+    ${pid1}=      Get Process Id
+    ${pid2}=      Get Process Id   hello
+    ${pid3}=      Get Process Id   ${handle}
+    Should Be Equal As Integers   ${pid1}   ${pid2}
+    Should Be Equal As Integers   ${pid1}   ${pid3}
+
+
 *** Keywords ***
 Check Preconditions
     ${is_ok}=   Evaluate   sys.version_info >= (2,6) and sys.platform != 'cli'   sys
