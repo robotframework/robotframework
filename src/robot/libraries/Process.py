@@ -231,6 +231,14 @@ class Process(object):
         [http://docs.python.org/2.7/library/subprocess.html#subprocess.Popen|Popen]
         class (see `Configurations`).
 
+        Configuration can contain the following options for the process:
+        stdout - A file path to use for standard output from the process
+        stderr - A file path to use for standard error from the process
+        shell  - True value will execute the process in a shell
+        cwd - Current working directory for the process
+        env and env:VARNAME=VALUE - dictionary for the environment variables to
+        use
+
         Returns process index on success.
 
         This new process is set as an `active process`.
