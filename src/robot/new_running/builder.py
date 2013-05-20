@@ -15,7 +15,7 @@
 from robot.new_running.defaults import TestDefaults
 from robot.parsing import TestData
 
-from .model import TestSuite
+from .model import TestSuite, ForLoop
 
 
 class TestSuiteBuilder(object):
@@ -83,13 +83,26 @@ class TestSuiteBuilder(object):
             value = var_data.value
         suite.variables.create(name=var_data.name, value=value)
 
-    def _create_fixture(self, target, element, fixture_type):
+    def _create_fixture(self, parent, element, fixture_type):
         if element:
-            target.keywords.create(type=fixture_type,
+            parent.keywords.create(type=fixture_type,
                                    name=element.name,
                                    args=tuple(element.args))
 
     def _create_step(self, parent, step_data):
+        if not step_data.is_for_loop():
+            self._create_normal_step(parent, step_data)
+        else:
+            self._create_for_loop(parent, step_data)
+
+    def _create_normal_step(self, parent, step_data):
         parent.keywords.create(name=step_data.keyword,
                                args=tuple(step_data.args),
                                assign=tuple(step_data.assign))
+
+    def _create_for_loop(self, parent, step_data):
+        loop = parent.keywords.append(ForLoop(vars=step_data.vars,
+                                              items=step_data.items,
+                                              range=step_data.range))
+        for step in step_data.steps:
+            self._create_normal_step(loop, step)

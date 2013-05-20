@@ -26,6 +26,7 @@ class Keyword(ModelObject):
     TEARDOWN_TYPE = 'teardown'
     FOR_LOOP_TYPE = 'for'
     FOR_ITEM_TYPE = 'foritem'
+    keyword_class = None
     message_class = Message
 
     def __init__(self, name='', doc='', args=None, type='kw', timeout=''):
@@ -40,7 +41,7 @@ class Keyword(ModelObject):
 
     @setter
     def keywords(self, keywords):
-        return Keywords(self.__class__, self, keywords)
+        return Keywords(self.keyword_class or self.__class__, self, keywords)
 
     @setter
     def messages(self, messages):
