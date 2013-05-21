@@ -196,8 +196,8 @@ class UserKeywordExecutionFailed(ExecutionFailures):
 class ReturnFromKeyword(ExecutionFailed):
 
     def __init__(self, return_value):
-        ExecutionFailed.__init__(self, 'Return from keyword without enclosing keyword',
-                                 return_value=return_value)
+        ExecutionFailed.__init__(self, 'Return from keyword without ' \
+            'enclosing keyword', return_value=return_value)
         self.earlier_failures = None
 
     @property
