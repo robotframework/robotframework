@@ -20,11 +20,12 @@ from robot.utils import XmlWriter
 
 class XUnitWriter(object):
 
-    def __init__(self, execution_result):
+    def __init__(self, execution_result, skip_noncritical):
         self._execution_result = execution_result
+        self._skip_noncritical = skip_noncritical
 
     def write(self, output):
-        writer = XUnitFileWriter(XmlWriter(output, encoding='UTF-8'))
+        writer = XUnitFileWriter(XmlWriter(output, encoding='UTF-8'), self._skip_noncritical)
         self._execution_result.visit(writer)
 
 
@@ -35,20 +36,31 @@ class XUnitFileWriter(ResultVisitor):
     http://marc.info/?l=ant-dev&m=123551933508682
     """
 
-    def __init__(self, xml_writer):
+    def __init__(self, xml_writer, skip_noncritical=False):
         self._writer = xml_writer
         self._root_suite = None
+        self._skip_noncritical = skip_noncritical
 
     def start_suite(self, suite):
         if self._root_suite:
             return
         self._root_suite = suite
+        tests, failures, skip = self._get_stats(suite.statistics)
         attrs = {'name': suite.name,
-                 'tests': str(suite.statistics.all.total),
+                 'tests': tests,
                  'errors': '0',
-                 'failures': str(suite.statistics.all.failed),
-                 'skip': '0'}
+                 'failures': failures,
+                 'skip': skip}
         self._writer.start('testsuite', attrs)
+
+    def _get_stats(self, statistics):
+        if self._skip_noncritical:
+            failures = statistics.critical.failed
+            skip = statistics.all.total - statistics.critical.total
+        else:
+            failures = statistics.all.failed
+            skip = 0
+        return str(statistics.all.total), str(failures), str(skip)
 
     def end_suite(self, suite):
         if suite is self._root_suite:
@@ -59,8 +71,15 @@ class XUnitFileWriter(ResultVisitor):
                  'name': test.name,
                  'time': self._time_as_seconds(test.elapsedtime)}
         self._writer.start('testcase', attrs)
-        if not test.passed:
+        if self._skip_noncritical and not test.critical:
+            self._skip_test(test)
+        elif not test.passed:
             test.visit(TestFailureWriter(self._writer))
+
+    def _skip_test(self, test):
+        self._writer.start('skipped', newline=False)
+        self._writer.content('PASS' if test.passed else 'FAIL')
+        self._writer.end('skipped')
 
     def _time_as_seconds(self, millis):
         return str(int(round(millis, -3) / 1000))

@@ -142,6 +142,7 @@ Options
                           similarly as --log. Default: report.html
  -x --xunitfile file      xUnit compatible result file. Not created unless this
                           option is specified.
+    --xunitskipnoncritical  Mark non-critical tests on xUnit output as skipped.
  -b --debugfile file      Debug file written during execution. Not created
                           unless this option is specified.
  -T --timestampoutputs    When this option is used, timestamp in a format
