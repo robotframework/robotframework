@@ -216,9 +216,9 @@ class ForLoop(BaseKeyword):
                 if isinstance(err, ReturnFromKeyword):
                     err.set_earlier_failures(errors)
                     raise err
-                if err.exit_for_loop:
+                if isinstance(err, ExitForLoop):
                     break
-                if err.continue_for_loop:
+                if isinstance(err, ContinueForLoop):
                     continue
                 errors.extend(err.get_errors())
                 if not err.can_continue(context.teardown, self._templated,

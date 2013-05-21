@@ -83,8 +83,7 @@ class ExecutionFailed(RobotError):
     """Used for communicating failures in test execution."""
 
     def __init__(self, message, timeout=False, syntax=False, exit=False,
-                 continue_on_failure=False, exit_for_loop=False,
-                 continue_for_loop=False, return_value=None):
+                 continue_on_failure=False, return_value=None):
         if '\r\n' in message:
             message = message.replace('\r\n', '\n')
         RobotError.__init__(self, utils.cut_long_message(message))
@@ -92,8 +91,6 @@ class ExecutionFailed(RobotError):
         self.syntax = syntax
         self.exit = exit
         self.continue_on_failure = continue_on_failure
-        self.exit_for_loop = exit_for_loop
-        self.continue_for_loop = continue_for_loop
         self.return_value = return_value
 
     @property
@@ -102,7 +99,7 @@ class ExecutionFailed(RobotError):
 
     @property
     def dont_continue(self):
-        return (self.timeout or self.syntax or self.exit)
+        return self.timeout or self.syntax or self.exit
 
     def _get_continue_on_failure(self):
         return self._continue_on_failure
@@ -216,7 +213,7 @@ class ContinueForLoop(ExecutionFailed):
 
     def __init__(self):
         ExecutionFailed.__init__(self, 'Continue for loop without ' \
-            'enclosing for loop.', continue_for_loop=True)
+            'enclosing for loop.')
 
     @property
     def execution_should_be_passed(self):
@@ -227,7 +224,7 @@ class ExitForLoop(ExecutionFailed):
 
     def __init__(self):
         ExecutionFailed.__init__(self, 'Exit for loop without ' \
-            'enclosing for loop.', exit_for_loop=True)
+            'enclosing for loop.')
 
     @property
     def execution_should_be_passed(self):

@@ -16,7 +16,7 @@ import os
 import re
 
 from robot.common import BaseLibrary, UserErrorHandler
-from robot.errors import (ContinueForLoop, DataError, ExecutionFailed,
+from robot.errors import (DataError, ExecutionFailed,
                           ReturnFromKeyword, UserKeywordExecutionFailed)
 from robot.variables import is_list_var, VariableSplitter
 from robot.output import LOGGER
