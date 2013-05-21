@@ -16,7 +16,7 @@ from robot.utils import (format_assign_message, get_elapsed_time,
                          get_error_message, get_timestamp, plural_or_not)
 from robot.errors import (ContinueForLoop, DataError, ExecutionFailed,
                           ExecutionFailures, HandlerExecutionFailed,
-                          ReturnFromKeyword)
+                          ReturnFromKeyword, ExitForLoop)
 from robot.common import BaseKeyword
 from robot.variables import is_scalar_var, VariableAssigner
 
@@ -51,6 +51,8 @@ class Keywords(object):
             except ReturnFromKeyword, ret:
                 ret.set_earlier_failures(errors)
                 raise ret
+            except ExitForLoop, exit:
+                raise exit
             except ContinueForLoop, cont:
                 raise cont
             except ExecutionFailed, err:
@@ -141,10 +143,9 @@ class Keyword(BaseKeyword):
 
     def _report_failure(self, context):
         failure = HandlerExecutionFailed()
-        if not (failure.exit_for_loop or failure.continue_for_loop):
-            context.output.fail(failure.full_message)
-            if failure.traceback:
-                context.output.debug(failure.traceback)
+        context.output.fail(failure.full_message)
+        if failure.traceback:
+            context.output.debug(failure.traceback)
         raise failure
 
 
@@ -177,6 +178,8 @@ class ForLoop(BaseKeyword):
     def _run_with_error_handling(self, runnable, context):
         try:
             runnable(context)
+        except ExitForLoop, message:
+            return message
         except ContinueForLoop:
             return None
         except ExecutionFailed, err:

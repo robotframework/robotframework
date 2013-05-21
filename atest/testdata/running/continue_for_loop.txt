@@ -1,6 +1,5 @@
 *** Settings ***
 Library    JavaExceptions
-Library    ForLoop.py
 
 *** Test Cases ***
 Simple Continue For Loop

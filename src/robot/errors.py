@@ -98,11 +98,11 @@ class ExecutionFailed(RobotError):
 
     @property
     def execution_should_be_passed(self):
-        return self.exit_for_loop
+        return False
 
     @property
     def dont_continue(self):
-        return (self.timeout or self.syntax or self.exit or self.exit_for_loop)
+        return (self.timeout or self.syntax or self.exit)
 
     def _get_continue_on_failure(self):
         return self._continue_on_failure
@@ -136,10 +136,9 @@ class HandlerExecutionFailed(ExecutionFailed):
         syntax = isinstance(details.error, DataError)
         exit = self._get(details.error, 'EXIT_ON_FAILURE')
         continue_on_failure = self._get(details.error, 'CONTINUE_ON_FAILURE')
-        exit_for_loop = self._get(details.error, 'EXIT_FOR_LOOP')
 
         ExecutionFailed.__init__(self, details.message, timeout, syntax,
-                                 exit, continue_on_failure, exit_for_loop)
+                                 exit, continue_on_failure)
 
         self.full_message = details.message
         self.traceback = details.traceback
@@ -166,9 +165,8 @@ class ExecutionFailures(ExecutionFailed):
         return {'timeout': any(err.timeout for err in errors),
                 'syntax': any(err.syntax for err in errors),
                 'exit': any(err.exit for err in errors),
-                'continue_for_loop': all(err.continue_for_loop for err in errors),
-                'continue_on_failure': all(err.continue_on_failure for err in errors),
-                'exit_for_loop': all(err.exit_for_loop for err in errors)}
+                'continue_on_failure': all(err.continue_on_failure for err in errors)
+                }
 
     def get_errors(self):
         return self._errors
@@ -219,6 +217,17 @@ class ContinueForLoop(ExecutionFailed):
     def __init__(self):
         ExecutionFailed.__init__(self, 'Continue for loop without ' \
             'enclosing for loop.', continue_for_loop=True)
+
+    @property
+    def execution_should_be_passed(self):
+        return True
+
+
+class ExitForLoop(ExecutionFailed):
+
+    def __init__(self):
+        ExecutionFailed.__init__(self, 'Exit for loop without ' \
+            'enclosing for loop.', exit_for_loop=True)
 
     @property
     def execution_should_be_passed(self):

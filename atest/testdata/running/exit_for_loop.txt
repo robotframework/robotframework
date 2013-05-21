@@ -1,6 +1,5 @@
 *** Settings ***
 Library    JavaExceptions
-Library    ForLoop.py
 
 *** Test Cases ***
 Simple Exit For Loop
@@ -47,18 +46,6 @@ Exit For Loop Without For Loop Should Fail
 Exit For Loop In User Keyword Without For Loop Should Fail
    [Documentation]    FAIL Exit for loop without enclosing for loop.
    With Only Exit For Loop
-
-Custom exception with ROBOT_EXIT_FOR_LOOP
-    :FOR    ${var}    IN    one    two
-    \    Raise Exit For Loop
-    \    Fail    Should not be executed
-    Should BE Equal    ${var}    one
-
-Custom Java exception with ROBOT_EXIT_FOR_LOOP
-    :FOR    ${var}    IN    one    two
-    \    Throw Exit For Loop
-    \    Fail    Should not be executed
-    Should BE Equal    ${var}    one
 
 Exit For Loop In Test Teardown
     No Operation

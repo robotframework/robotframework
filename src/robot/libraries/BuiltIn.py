@@ -18,7 +18,7 @@ import time
 
 from robot.output import LOGGER, Message
 from robot.errors import (ContinueForLoop, DataError, ExecutionFailed,
-                          ExecutionFailures, ReturnFromKeyword)
+                          ExecutionFailures, ExitForLoop, ReturnFromKeyword)
 from robot import utils
 from robot.utils import asserts
 from robot.variables import is_var, is_list_var
@@ -1620,10 +1620,7 @@ class _Control:
 
         New in Robot Framework 2.5.2.
         """
-        # Error message is shown only if there is no enclosing for loop
-        error = AssertionError('Exit for loop without enclosing for loop.')
-        error.ROBOT_EXIT_FOR_LOOP = True
-        raise error
+        raise ExitForLoop()
 
     def exit_for_loop_if(self, condition):
         """Stops executing the enclosing for loop if given condition is true.
