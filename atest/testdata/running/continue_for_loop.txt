@@ -66,6 +66,13 @@ Continue For Loop If False
     \    Continue For Loop If     1 == 2
     \    Fail    Should fail here
 
+With Continuable Failure
+    [Documentation]    FAIL    Several failures occurred:\n\n1) one\n\n2) three
+    :FOR    ${var}    IN    one    two    three
+    \       Continue For Loop If    '${var}' == 'two'
+    \       Run Keyword And Continue On Failure    Fail    ${var}
+    Should Be Equal    ${var}    three
+
 
 *** Keyword ***
 With Loop

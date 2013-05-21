@@ -42,3 +42,6 @@ Continue For Loop If True
 
 Continue For Loop If False
     Check Test Case    ${TESTNAME}
+
+With Continuable Failure
+    Check Test Case    ${TESTNAME}
