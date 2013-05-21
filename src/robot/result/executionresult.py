@@ -49,10 +49,11 @@ class Result(object):
             return min(self.suite.statistics.critical.failed, 250)
         return 0
 
-    def configure(self, status_rc=True, suite_config={}, stat_config={}):
-        SuiteConfigurer(**suite_config).configure(self.suite)
+    def configure(self, status_rc=True, suite_config=None, stat_config=None):
+        if suite_config:
+            SuiteConfigurer(**suite_config).configure(self.suite)
         self._status_rc = status_rc
-        self._stat_config = stat_config
+        self._stat_config = stat_config or {}
 
     def visit(self, visitor):
         visitor.visit_result(self)
