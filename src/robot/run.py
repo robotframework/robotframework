@@ -162,6 +162,8 @@ Options
                           `passed:failed`. Both color names and codes work.
                           Examples: --reportbackground green:yellow:red
                                     --reportbackground #00E:#E00
+    --xunitSkipNoncritical   Mark non critical tests on xunit output as
+                          skipped.
  -L --loglevel level      Threshold level for logging. Available levels: TRACE,
                           DEBUG, INFO (default), WARN, NONE (no logging). Use
                           syntax `LOGLEVEL:DEFAULT` to define the default

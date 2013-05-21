@@ -130,6 +130,7 @@ class StubSettings(object):
     status_rc = True
     suite_config = {}
     statistics_config = {}
+    xunit_skip_noncritical = False
 
     def __init__(self, **settings):
         self.__dict__.update(settings)
