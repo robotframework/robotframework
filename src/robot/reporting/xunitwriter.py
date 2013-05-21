@@ -47,8 +47,8 @@ class XUnitFileWriter(ResultVisitor):
         self._root_suite = suite
         if self._skip_noncritical:
             failures = str(suite.statistics.critical.failed)
-            skipped = str(suite.statistics.all.failed -
-                          suite.statistics.critical.failed)
+            skipped = str(suite.statistics.all.total -
+                          suite.statistics.critical.total)
         else:
             failures = str(suite.statistics.all.failed)
             skipped = '0'

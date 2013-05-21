@@ -53,12 +53,20 @@ Invalid XUnit File
 
 Skipping non critical tests
    Run tests  --XUnitFile xunit.xml --log NONE --report NONE --noncritical fail --xunitSkipNoncritical  ${PASS AND FAIL}
-   File Should Exist  ${OUTDIR}/xunit.xml
-   ${output}   get file      ${OUTDIR}/xunit.xml
-   log    ${output}
-   Should contain    ${output}    skip="1"
+   ${root} =  Get XUnit Node  .
+   Should be equal    ${root.attrib['failures']}    0
+   Should be equal    ${root.attrib['skip']}        1
    ${skipped} =  Get XUnit Node  testcase/skipped
    Should be equal  ${skipped.text}  FAIL
+
+Skipping all tests
+   Run tests  --XUnitFile xunit.xml --log NONE --report NONE --noncritical force --xunitSkipNoncritical  ${PASS AND FAIL}
+   ${root} =  Get XUnit Node  .
+   Should be equal    ${root.attrib['failures']}    0
+   Should be equal    ${root.attrib['skip']}        2
+   ${skipped} =  Get XUnit Nodes  testcase/skipped
+   Should be equal  ${skipped[0].text}  PASS
+   Should be equal  ${skipped[1].text}  FAIL
 
 *** Keywords ***
 Get XUnit Node
