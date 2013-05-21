@@ -377,15 +377,16 @@ class RobotFramework(Application):
 
     def new_main(self, datasources, **options):
         from robot.new_running import TestSuiteBuilder
-        suite = TestSuiteBuilder().build(*datasources)
-        result = suite.run(**options)
-        LOGGER.info("Tests execution ended. Statistics:\n%s"
-                    % result.statistics.message)
         settings = RobotSettings(options)
+        suite = TestSuiteBuilder().build(*datasources)
+        result = suite.run(settings)
+        result.configure(status_rc=settings.status_rc)
+        LOGGER.info("Tests execution ended. Statistics:\n%s"
+                    % result.suite.statistics.message)
         if settings.is_rebot_needed():
             output, settings = settings.get_rebot_datasource_and_settings()
             ResultWriter(output).write_results(settings)
-        return min(result.statistics.critical.failed, 250)
+        return result.return_code
 
     def validate(self, options, arguments):
         if len(arguments) > 1:

@@ -13,7 +13,8 @@
 #  limitations under the License.
 
 from robot.model import SuiteVisitor
-from robot.result.testsuite import TestSuite # TODO: expose in __init__
+from robot.result.testsuite import TestSuite     # TODO: expose in __init__?
+from robot.result.executionresult import Result  # ---------- ii -----------
 from robot.running.namespace import Namespace
 from robot.variables import Variables
 from robot.running.context import EXECUTION_CONTEXTS
@@ -27,9 +28,9 @@ from robot import utils
 class Runner(SuiteVisitor):
 
     def __init__(self, output):
-        self.output = output
         self.result = None
-        self.current = None
+        self._output = output
+        self._current = None
 
     @property
     def context(self):
@@ -42,9 +43,10 @@ class Runner(SuiteVisitor):
                            source=suite.source,
                            starttime=utils.get_timestamp())
         if not self.result:
-            self.result = self.current = result
+            self.result = Result(root_suite=result)
         else:
-            self.current = self.current.suites.append(result)
+            self._current.suites.append(result)
+        self._current = result
         vars = Variables()
         for var in suite.variables:
             vars[var.name] = var.value
@@ -52,22 +54,22 @@ class Runner(SuiteVisitor):
                        self.context.namespace.variables if self.context else None,
                        UserLibrary(suite.user_keywords),
                        vars)
-        EXECUTION_CONTEXTS.start_suite(ns, self.output, False)
-        self.output.start_suite(self.current)
+        EXECUTION_CONTEXTS.start_suite(ns, self._output, False)
+        self._output.start_suite(self._current)
         ns.handle_imports()
         self._setup(suite.keywords.setup).run(self.context)
 
     def end_suite(self, suite):
         self._teardown(suite.keywords.teardown).run(self.context)
-        self.current.endtime = utils.get_timestamp()
-        self.context.end_suite(self.current)
-        self.current = self.current.parent
+        self._current.endtime = utils.get_timestamp()
+        self.context.end_suite(self._current)
+        self._current = self._current.parent
 
     def visit_test(self, test):
-        result = self.current.tests.create(name=test.name,
-                                           doc=test.doc,
-                                           tags=test.tags,
-                                           starttime=utils.get_timestamp())
+        result = self._current.tests.create(name=test.name,
+                                            doc=test.doc,
+                                            tags=test.tags,
+                                            starttime=utils.get_timestamp())
         setup = self._setup(test.keywords.setup)
         keywords = Keywords(test.keywords.normal)
         teardown = self._teardown(test.keywords.teardown)

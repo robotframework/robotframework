@@ -95,7 +95,7 @@ class TestSuite(model.TestSuite):
     def randomize(self, suites=True, tests=True):
         self.visit(Randomizer(suites, tests))
 
-    def run(self, **options):
+    def run(self, settings=None, **options):
         from robot.conf import RobotSettings
         from robot.output import LOGGER, Output, pyloggingconf
         from robot.running import STOP_SIGNAL_MONITOR, namespace
@@ -103,7 +103,7 @@ class TestSuite(model.TestSuite):
 
         STOP_SIGNAL_MONITOR.start()
         namespace.IMPORTER.reset()
-        settings = RobotSettings(options)
+        settings = settings or RobotSettings(options)
         pyloggingconf.initialize(settings['LogLevel'])
         LOGGER.register_console_logger(width=settings['MonitorWidth'],
                                        colors=settings['MonitorColors'],
@@ -114,7 +114,7 @@ class TestSuite(model.TestSuite):
         output = Output(settings)
         runner = Runner(output)
         self.visit(runner)
-        output.close(runner.result)
+        output.close(runner.result.suite)
         return runner.result
 
     # TODO: Remove compatibility with old model
