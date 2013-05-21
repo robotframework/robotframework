@@ -36,7 +36,7 @@ class XUnitFileWriter(ResultVisitor):
     http://marc.info/?l=ant-dev&m=123551933508682
     """
 
-    def __init__(self, xml_writer, skip_noncritical):
+    def __init__(self, xml_writer, skip_noncritical=False):
         self._writer = xml_writer
         self._root_suite = None
         self._skip_noncritical = skip_noncritical
@@ -45,19 +45,22 @@ class XUnitFileWriter(ResultVisitor):
         if self._root_suite:
             return
         self._root_suite = suite
-        if self._skip_noncritical:
-            failures = str(suite.statistics.critical.failed)
-            skipped = str(suite.statistics.all.total -
-                          suite.statistics.critical.total)
-        else:
-            failures = str(suite.statistics.all.failed)
-            skipped = '0'
+        tests, failures, skip = self._get_stats(suite.statistics)
         attrs = {'name': suite.name,
-                 'tests': str(suite.statistics.all.total),
+                 'tests': tests,
                  'errors': '0',
                  'failures': failures,
-                 'skip': skipped}
+                 'skip': skip}
         self._writer.start('testsuite', attrs)
+
+    def _get_stats(self, statistics):
+        if self._skip_noncritical:
+            failures = statistics.critical.failed
+            skip = statistics.all.total - statistics.critical.total
+        else:
+            failures = statistics.all.failed
+            skip = 0
+        return str(statistics.all.total), str(failures), str(skip)
 
     def end_suite(self, suite):
         if suite is self._root_suite:

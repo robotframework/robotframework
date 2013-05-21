@@ -35,14 +35,17 @@ XUnit Option Given
     Length Should Be  ${failures}  5
     Should Be Equal  ${failures[0].attrib['message']}  ${MESSAGES}
 
-XUnit skip criticals
-    Run Rebot  --xunitfile xunit.xml --xunitSkipNoncritical --noncritical f1  ${INPUT FILE}
+XUnit skip non-criticals
+    Run Rebot    --xunitfile xunit.xml --XUnitSkipNonCritical --noncritical f1    ${INPUT FILE}
     Stderr Should Be Empty
-    ${root} =  Parse XML  ${OUTDIR}/xunit.xml
-    Should Be Equal  ${root.tag}  testsuite
-    ${tests} =  Get Elements  ${root}  testcase
-    Should be equal    ${root.attrib['failures']}    4
-    Should be equal    ${root.attrib['skip']}        10
+    ${root} =    Parse XML  ${OUTDIR}/xunit.xml
+    Element Attribute Should Be    ${root}    tests    18
+    Element Attribute Should Be    ${root}    failures    4
+    Element Attribute Should Be    ${root}    skip    10
+    ${skipped} =  Get Elements  ${root}  xpath=testcase/skipped
+    Should Be Equal    ${skipped[0].text}    FAIL
+    Should Be Equal    ${skipped[1].text}    PASS
+    Length Should Be    ${skipped}    10
 
 Invalid XUnit File
     Create Directory  ${INVALID}

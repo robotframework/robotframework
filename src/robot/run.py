@@ -142,6 +142,7 @@ Options
                           similarly as --log. Default: report.html
  -x --xunitfile file      xUnit compatible result file. Not created unless this
                           option is specified.
+    --xunitskipnoncritical  Mark non-critical tests on xUnit output as skipped.
  -b --debugfile file      Debug file written during execution. Not created
                           unless this option is specified.
  -T --timestampoutputs    When this option is used, timestamp in a format
@@ -162,8 +163,6 @@ Options
                           `passed:failed`. Both color names and codes work.
                           Examples: --reportbackground green:yellow:red
                                     --reportbackground #00E:#E00
-    --xunitSkipNoncritical   Mark non critical tests on xunit output as
-                          skipped.
  -L --loglevel level      Threshold level for logging. Available levels: TRACE,
                           DEBUG, INFO (default), WARN, NONE (no logging). Use
                           syntax `LOGLEVEL:DEFAULT` to define the default
