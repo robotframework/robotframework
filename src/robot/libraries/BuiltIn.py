@@ -1566,37 +1566,35 @@ class _RunKeyword:
 class _Control:
 
     def continue_for_loop(self):
-        """Continues executing the enclosing for loop.
+        """Skips the current for loop iteration and continues from the next.
 
-        This keyword can be used in a for loop or in a keyword that the for loop
-        uses. In both cases the test execution continues with the next iteration
-        of the for loop. If executed outside of a for loop, the test fails.
+        Skips the remaining keywords in the current for loop iteration and
+        continues from the next one. Can be used directly in a for loop or
+        in a keyword that the loop uses.
 
         Example:
-        | :FOR | ${var} | IN | @{SOME LIST} |
+        | :FOR | ${var}         | IN                     | @{VALUES}         |
         |      | Run Keyword If | '${var}' == 'CONTINUE' | Continue For Loop |
-        |      | Do Something   | ${var} |
+        |      | Do Something   | ${var}                 |
 
-        To conditionally continue for loop, see `Continue For Loop If`.
+        See `Continue For Loop If` to conditionally continue a for loop without
+        using `Run Keyword If` or other wrapper keywords.
 
         New in Robot Framework 2.8.
         """
         raise ContinueForLoop()
 
     def continue_for_loop_if(self, condition):
-        """Continues to the next iteration of the enclosing loop if given condition is true.
+        """Skips the current for loop iteration if the `condition` is true.
 
-        This keyword can be used directly in a for loop or in a keyword that
-        the for loop uses. In both cases the test executions continues with the
-        next iteration of the for loop. If executed outside of a for loop, the
-        test fails.
-
-        To unconditionally continue for loop, see `Continue For Loop`.
+        A wrapper for `Continue For Loop` to continue a for loop based on
+        the given condition. The condition is evaluated using the same
+        semantics as with `Should Be True` keyword.
 
         Example:
-        | :FOR | ${var} | IN | @{SOME LIST} |
+        | :FOR | ${var}               | IN                     | @{VALUES} |
         |      | Continue For Loop If | '${var}' == 'CONTINUE' |
-        |      | Do Something | ${var} |
+        |      | Do Something         | ${var}                 |
 
         New in Robot Framework 2.8.
         """
@@ -1606,17 +1604,16 @@ class _Control:
     def exit_for_loop(self):
         """Stops executing the enclosing for loop.
 
-        This keyword can be used directly in a for loop or in a keyword that
-        the for loop uses. In both cases the test execution continues after
-        the for loop. If executed outside of a for loop, the test fails.
+        Exits the enclosing for loop and continues execution after it.
+        Can be used directly in a for loop or in a keyword that the loop uses.
 
         Example:
-        | :FOR | ${var} | IN | @{SOME LIST} |
+        | :FOR | ${var}         | IN                 | @{VALUES}     |
         |      | Run Keyword If | '${var}' == 'EXIT' | Exit For Loop |
         |      | Do Something   | ${var} |
 
-        Starting from Robot Framework 2.8 it is also possible to use
-        `Exit For Loop If`.
+        See `Exit For Loop If` to conditionally exit a for loop without
+        using `Run Keyword If` or other wrapper keywords.
 
         New in Robot Framework 2.5.2.
         """
@@ -1626,18 +1623,16 @@ class _Control:
         raise error
 
     def exit_for_loop_if(self, condition):
-        """Stops executing the enclosing for loop if given condition is true.
+        """Stops executing the enclosing for loop if the `condition` is true.
 
-        This keyword can be used directly in a for loop or in a keyword that
-        the for loop uses. In both cases the test execution continues after
-        the for loop. If executed outside of a for loop, the test fails.
-
-        To unconditionally exit for loop, see `Exit For Loop`.
+        A wrapper for `Exit For Loop` to exit a for loop based on
+        the given condition. The condition is evaluated using the same
+        semantics as with `Should Be True` keyword.
 
         Example:
-        | :FOR | ${var} | IN | @{SOME LIST} |
+        | :FOR | ${var}           | IN                 | @{VALUES} |
         |      | Exit For Loop If | '${var}' == 'EXIT' |
-        |      | Do Something   | ${var} |
+        |      | Do Something     | ${var}             |
 
         New in Robot Framework 2.8.
         """
@@ -1649,9 +1644,9 @@ class _Control:
         """Returns from the enclosing user keyword.
 
         This keyword can be used to return from a user keyword with PASS status
-        without running it fully. It is also possible to return values similarly
-        as with the `[Return]` setting. For more detailed information about
-        working with the return values, see the User Guide.
+        without executing it fully. It is also possible to return values
+        similarly as with the `[Return]` setting. For more detailed information
+        about working with the return values, see the User Guide.
 
         This keyword is typically wrapped to some other keyword, such as
         `Run Keyword If` or `Run Keyword If Test Passed`, to return based
@@ -1661,10 +1656,10 @@ class _Control:
         | Run Keyword If Test Passed | Return From Keyword |
 
         It is possible to use this keyword to return from a keyword also inside
-        a for loop. That, as well as
-        returning values, is demonstrated by the `Find Index` keyword in the
-        following somewhat advanced example. Notice that it is often a good
-        idea to move this kind of complicated logic into a test library.
+        a for loop. That, as well as returning values, is demonstrated by the
+        `Find Index` keyword in the following somewhat advanced example.
+        Notice that it is often a good idea to move this kind of complicated
+        logic into a test library.
 
         | ***** Variables *****
         | @{LIST} =    foo    baz
@@ -1709,7 +1704,7 @@ class _Control:
         |    :FOR    ${item}    IN    @{items}
         |    \\    Return From Keyword If    '${item}' == '${element}'    ${index}
         |    \\    ${index} =    Set Variable    ${index + 1}
-        |    Return From Keyword    ${-1}
+        |    Return From Keyword    ${-1}    # Also [Return] would work here.
 
         New in Robot Framework 2.8.
         """
