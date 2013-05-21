@@ -66,7 +66,8 @@ class Process(object):
     - `env` specifies the environment of the program being run
     - `stdout` is a file path of standard output
     - `stderr` is a file path of standard error
-    - `alias` is a short name for the process.
+    - `alias` is a short name for the process which can be used for interacting
+    with that process.
 
     == Current working directory ==
 
@@ -156,7 +157,7 @@ class Process(object):
 
     = Similarities with OperatingSystem library =
 
-    The OperatingSystem library also contains keywords like `Start Process` or
+    The OperatingSystem library also contains the keywords `Start Process` and
     `Switch Process`. In the situation that these both libraries are in use
     within the same test suite, the `Process` library's keywords will
     be preferred.
