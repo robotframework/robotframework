@@ -4,8 +4,8 @@ Library    pass_execution_library.py
 
 *** Test Cases ***
 
-Without message
-    [Documentation]    PASS Execution Passed called
+Message is required
+    [Documentation]    FAIL Keyword 'BuiltIn.Pass Execution' expected at least 1 argument, got 0.
     Pass Execution
     Fail    should not go here
 

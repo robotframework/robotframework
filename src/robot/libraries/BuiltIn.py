@@ -811,13 +811,12 @@ class _Verify:
             msg = '%s: %s' % (msg, default)
         return msg
 
-    def pass_execution(self, message=None, *tags):
+    def pass_execution(self, message, *tags):
         self._set_and_remove_tags(tags)
-        if message:
-            log_message, level = self._get_logged_message_and_level(message)
-            log_message = 'Pass Execution with message: %s' % log_message
-            self.log(log_message, level)
+        log_message, level = self._get_logged_test_message_and_level(message)
+        self.log('Execution passed with message:\n%s' % log_message, level)
         raise PassExecution(message)
+
 
 class _Variables:
 
@@ -2163,7 +2162,7 @@ class _Misc:
             raise RuntimeError("'Set Test Message' keyword cannot be used in "
                                "suite setup or teardown")
         test.message = self._get_possibly_appended_value(test.message, message, append)
-        message, level = self._get_logged_message_and_level(test.message)
+        message, level = self._get_logged_test_message_and_level(test.message)
         self.log('Set test message to:\n%s' % message, level)
 
     def _get_possibly_appended_value(self, initial, new, append):
@@ -2171,7 +2170,7 @@ class _Misc:
             new = utils.unic(new)
         return '%s %s' % (initial, new) if append and initial else new
 
-    def _get_logged_message_and_level(self, message):
+    def _get_logged_test_message_and_level(self, message):
         if message.startswith('*HTML*'):
             return message[6:].lstrip(), 'HTML'
         return message, 'INFO'
