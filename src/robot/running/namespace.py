@@ -427,8 +427,8 @@ class _VariableScopes:
     def replace_scalar(self, items):
         return self.current.replace_scalar(items)
 
-    def replace_string(self, string):
-        return self.current.replace_string(string)
+    def replace_string(self, string, ignore_errors=False):
+        return self.current.replace_string(string, ignore_errors=ignore_errors)
 
     def set_from_file(self, path, args, overwrite=False):
         variables = self._suite.set_from_file(path, args, overwrite)
