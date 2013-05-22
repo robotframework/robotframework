@@ -15,7 +15,7 @@
 from robot import utils
 from robot.common import BaseTestSuite, BaseTestCase
 from robot.parsing import TestData
-from robot.errors import ExecutionFailed, DataError
+from robot.errors import DataError, ExecutionFailed, ExecutionPassed
 from robot.variables import GLOBAL_VARIABLES
 from robot.output import LOGGER
 
@@ -290,6 +290,9 @@ class RunnableTestCase(BaseTestCase):
     def _run_setup(self, context, errors):
         error = self.setup.run(context)
         if error:
+            if isinstance(error, ExecutionPassed):
+                self.message = error.message
+                return False
             errors.setup_failed(error)
             self._test_failed(error, errors)
         return bool(error)
@@ -297,9 +300,16 @@ class RunnableTestCase(BaseTestCase):
     def _run_keywords(self, context, errors):
         try:
             self.keywords.run(context)
+        except ExecutionPassed, pass_:
+            self.message = pass_.message
+            if pass_.earlier_failures:
+                self._fail_test_case(pass_.earlier_failures, errors)
         except ExecutionFailed, err:
-            errors.keyword_failed(err)
-            self._test_failed(err, errors)
+            self._fail_test_case(err, errors)
+
+    def _fail_test_case(self, err, errors):
+        errors.keyword_failed(err)
+        self._test_failed(err, errors)
 
     def _set_status_before_teardown(self, context, errors):
         message = errors.get_message()
@@ -315,6 +325,9 @@ class RunnableTestCase(BaseTestCase):
             return False
         error = self.teardown.run(context)
         if error:
+            if isinstance(error, ExecutionPassed):
+                self.message = error.message
+                return False
             errors.teardown_failed(error)
             self._test_failed(error, errors)
         return bool(error)

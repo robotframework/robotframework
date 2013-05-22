@@ -1,0 +1,17 @@
+*** Settings ***
+Force Tags    force1    force2
+Suite Teardown    Pass Execution    message    -force1
+
+*** Test Cases ***
+
+With suite teardown should not modify tags
+    [Documentation]   FAIL Teardown of the parent suite failed:\n'Set Tags' and 'Remove Tags' keywords cannot be used in suite teardown.
+    No Operation
+
+Should only pass successful suite teardown if test case fails
+    [Documentation]    FAIL test case should fail regardless
+    ...
+    ...                Also teardown of the parent suite failed:
+    ...                'Set Tags' and 'Remove Tags' keywords cannot be used in suite teardown.
+    Fail    test case should fail regardless
+

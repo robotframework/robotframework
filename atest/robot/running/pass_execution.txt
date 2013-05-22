@@ -1,0 +1,113 @@
+*** Settings ***
+Suite Setup      Run Tests    ${EMPTY}    running/pass_execution.txt
+Force Tags       regression    pybot    jybot
+Resource         atest_resource.txt
+
+*** Test Cases ***
+Without message
+    ${tc}=    Check Test Tags    ${TESTNAME}    force1    force2
+    Should Be Empty    ${tc.kws[0].msgs}
+
+With message
+    ${msg}=   Set Variable    Pass Execution with message: exception message
+    ${tc}=    Check Test Tags    ${TESTNAME}    force1    force2
+    Check Log Message    ${tc.kws[0].msgs[0]}    ${msg}    INFO
+
+With HTML message
+    ${tc}=    Check Test Tags    ${TESTNAME}    force1    force2
+    Check Log Message    ${tc.kws[0].msgs[0]}    Pass Execution with message: <b>message</b>    HTML
+
+Remove one tag
+    ${tc}=    Check Test Tags    ${TESTNAME}    force2
+    Check Log Message    ${tc.kws[0].msgs[0]}     Removed tag 'force1'.
+    Check Log Message    ${tc.kws[0].msgs[1]}     Pass Execution with message: message
+
+Remove multiple tags
+    ${tc}=    Check Test Tags    ${TESTNAME}
+    Check Log Message    ${tc.kws[0].msgs[0]}     Removed tags 'force1' and 'force2'.
+    Check Log Message    ${tc.kws[0].msgs[1]}     Pass Execution with message: message
+
+Remove tags with pattern
+    ${tc}=    Check Test Tags    ${TESTNAME}
+    Check Log Message    ${tc.kws[0].msgs[0]}     Removed tag 'force?'.
+    Check Log Message    ${tc.kws[0].msgs[1]}     Pass Execution with message: message
+
+Set one tag
+    ${tc}=    Check Test Tags    ${TESTNAME}    force1    force2    tag
+    Check Log Message    ${tc.kws[0].msgs[0]}     Set tag 'tag'.
+    Check Log Message    ${tc.kws[0].msgs[1]}     Pass Execution with message: message
+
+Set multiple tags
+    ${tc}=    Check Test Tags    ${TESTNAME}    force1    force2    tag1    tag2
+    Check Log Message    ${tc.kws[0].msgs[0]}     Set tags 'tag1' and 'tag2'.
+    Check Log Message    ${tc.kws[0].msgs[1]}     Pass Execution with message: message
+
+Set and remove tags
+    ${tc}=    Check Test Tags    ${TESTNAME}    tag1    tag2
+    Check Log Message    ${tc.kws[0].msgs[0]}     Removed tag 'force?'.
+    Check Log Message    ${tc.kws[0].msgs[1]}     Set tags 'tag1' and 'tag2'.
+    Check Log Message    ${tc.kws[0].msgs[2]}     Pass Execution with message: message
+
+Set tags are not removed
+    ${tc}=    Check Test Tags    ${TESTNAME}    force1    force2    tag1    tag2
+    Check Log Message    ${tc.kws[0].msgs[0]}     Removed tag 'tag?'.
+    Check Log Message    ${tc.kws[0].msgs[1]}     Set tags 'tag1' and 'tag2'.
+    Check Log Message    ${tc.kws[0].msgs[2]}     Pass Execution with message: message
+
+With template
+    Check Test Case    ${TESTNAME}
+
+Inside user keyword
+    Check Test Case    ${TESTNAME}
+
+Inside nested user keyword
+    Check Test Case    ${TESTNAME}
+
+With continuable failure
+    Check Test Case    ${TESTNAME}
+
+With test case setup
+    ${tc}=    Check Test Tags    ${TESTNAME}    force2    tag
+    Should Be True    '${tc.setup.status}' == 'PASS'
+    Check Log Message    ${tc.setup.msgs[0]}    Removed tag 'force1'.
+    Check Log Message    ${tc.setup.msgs[1]}    Set tag 'tag'.
+    Check Log Message    ${tc.setup.msgs[2]}    Pass Execution with message: message
+
+With test case teardown
+    ${tc}=    Check Test Case    ${TESTNAME}
+    Should Be True    '${tc.teardown.status}' == 'PASS'
+    Check Log Message    ${tc.teardown.msgs[0]}    Pass Execution with message: message
+
+Modifying tags in test case teardown should succeed
+    ${tc}=    Check Test Tags    ${TESTNAME}    tag1    tag2
+    Check Log Message    ${tc.teardown.msgs[0]}    Removed tag 'force?'.
+    Check Log Message    ${tc.teardown.msgs[1]}    Set tags 'tag1' and 'tag2'.
+    Check Log Message    ${tc.teardown.msgs[2]}    Pass Execution with message: message
+
+With for loop
+    ${tc}=    Check Test Tags    ${TESTNAME}    force1    force2    tag
+    Check Log Message    ${tc.kws[0].kws[0].kws[0].msgs[0]}    Set tag 'tag'.
+    Check Log Message    ${tc.kws[0].kws[0].kws[0].msgs[1]}    Pass Execution with message: message
+
+With library throwing exception
+    Check Test Case    ${TESTNAME}
+
+With library calling Pass Execution keyword
+    Check Test Case    ${TESTNAME}
+
+Should only pass successful suite setup if test case fails
+    Run Tests    ${EMPTY}    running/pass_execution_in_suite_setup.txt
+    Check Test Case    ${TESTNAME}
+
+With suite setup should modify tags
+    Check Test Tags    ${TESTNAME}    force1    tag1    tag2
+    Check Log Message    ${SUITE.setup.msgs[0]}    Removed tag 'force2'.
+    Check Log Message    ${SUITE.setup.msgs[1]}    Set tags 'tag1' and 'tag2'.
+
+Should only pass successful suite teardown if test case fails
+    Run Tests    ${EMPTY}    running/pass_execution_in_suite_teardown.txt
+    Check Test Case    ${TESTNAME}
+
+With suite teardown should not modify tags
+    Check Test Tags    ${TESTNAME}    force1    force2
+    Should Be True    '${SUITE.status}' == 'FAIL'

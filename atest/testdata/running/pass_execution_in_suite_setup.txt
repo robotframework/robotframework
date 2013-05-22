@@ -1,0 +1,15 @@
+*** Settings ***
+Force Tags    force1    force2
+Suite Setup    Pass Execution    message    tag1    tag2    -force2
+
+*** Test Cases ***
+
+Should only pass successful suite setup if test case fails
+    [Documentation]    FAIL test case should fail regardless
+    Fail    test case should fail regardless
+
+With suite setup should modify tags
+    No Operation
+
+
+

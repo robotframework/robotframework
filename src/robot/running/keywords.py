@@ -16,7 +16,7 @@ from robot.utils import (format_assign_message, get_elapsed_time,
                          get_error_message, get_timestamp, plural_or_not)
 from robot.errors import (ContinueForLoop, DataError, ExecutionFailed,
                           ExecutionFailures, HandlerExecutionFailed,
-                          ReturnFromKeyword)
+                          _ExecutionPassed, ReturnFromKeyword)
 from robot.common import BaseKeyword
 from robot.variables import is_scalar_var, VariableAssigner
 
@@ -48,11 +48,11 @@ class Keywords(object):
         for kw in self._keywords:
             try:
                 kw.run(context)
-            except ReturnFromKeyword, ret:
-                ret.set_earlier_failures(errors)
-                raise ret
-            except ContinueForLoop, cont:
-                raise cont
+            except ContinueForLoop:
+                raise
+            except (_ExecutionPassed), exp:
+                exp.set_earlier_failures(errors)
+                raise exp
             except ExecutionFailed, err:
                 errors.extend(err.get_errors())
                 if not err.can_continue(context.teardown, self._templated,
@@ -210,13 +210,13 @@ class ForLoop(BaseKeyword):
             values = items[i:i+len(self.vars)]
             err = self._run_one_round(context, self.vars, values)
             if err:
-                if isinstance(err, ReturnFromKeyword):
-                    err.set_earlier_failures(errors)
-                    raise err
                 if err.exit_for_loop:
                     break
                 if err.continue_for_loop:
                     continue
+                if isinstance(err, _ExecutionPassed):
+                    err.set_earlier_failures(errors)
+                    raise err
                 errors.extend(err.get_errors())
                 if not err.can_continue(context.teardown, self._templated,
                                         context.dry_run):

@@ -198,12 +198,13 @@ class UserKeywordExecutionFailed(ExecutionFailures):
         return '%s\n\nAlso keyword teardown failed:\n%s' % (run_msg, td_msg)
 
 
-class ReturnFromKeyword(ExecutionFailed):
+class _ExecutionPassed(ExecutionFailed):
 
-    def __init__(self, return_value):
-        ExecutionFailed.__init__(self, 'Return from keyword without enclosing keyword',
-                                 return_value=return_value)
-        self.earlier_failures = None
+    def __init__(self, message, *args, **kwargs):
+        ExecutionFailed.__init__(self,
+                                 message if message else 'Execution Passed called',
+                                 *args, **kwargs)
+        self._earlier_failures = []
 
     @property
     def execution_should_be_passed(self):
@@ -211,19 +212,32 @@ class ReturnFromKeyword(ExecutionFailed):
 
     def set_earlier_failures(self, failures):
         if failures:
-            self.earlier_failures = ExecutionFailures(failures)
-
-
-class ContinueForLoop(ExecutionFailed):
-
-    def __init__(self):
-        ExecutionFailed.__init__(self, 'Continue for loop without ' \
-            'enclosing for loop.', continue_for_loop=True)
+            self._earlier_failures.extend(failures)
 
     @property
-    def execution_should_be_passed(self):
-        return True
+    def earlier_failures(self):
+        if not self._earlier_failures:
+            return None
+        return ExecutionFailures(self._earlier_failures)
 
+
+class ReturnFromKeyword(_ExecutionPassed):
+
+    def __init__(self, return_value):
+        _ExecutionPassed.__init__(self,
+                                 'Return from keyword without enclosing keyword',
+                                 return_value=return_value)
+
+
+class ContinueForLoop(_ExecutionPassed):
+
+    def __init__(self):
+        _ExecutionPassed.__init__(self,
+                                 'Continue for loop without enclosing for loop.',
+                                 continue_for_loop=True)
+
+class ExecutionPassed(_ExecutionPassed):
+    pass
 
 class RemoteError(RobotError):
     """Used by Remote library to report remote errors."""

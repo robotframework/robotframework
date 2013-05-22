@@ -1,66 +1,127 @@
+*** Settings ***
+Force Tags    force1    force2
+Library    pass_execution_library.py
+
 *** Test Cases ***
 
 Without message
-    No Operation
+    [Documentation]    PASS Execution Passed called
+    Pass Execution
+    Fail    should not go here
 
 With message
-    No Operation
+    [Documentation]    PASS exception message
+    Pass Execution    exception message
+    Fail    should not go here
+
+With HTML message
+    [Documentation]    PASS *HTML*<b>message</b>
+    Pass Execution    *HTML*<b>message</b>
+    Fail    this should not execute
 
 Remove one tag
-    No Operation
+    [Documentation]    PASS message
+    Pass Execution    message    -force1
+    Fail    should not go here
 
 Remove multiple tags
-    No Operation
+    [Documentation]    PASS message
+    Pass Execution    message    -force1    -force2
+    Fail    should not go here
 
 Remove tags with pattern
-    No Operation
+    [Documentation]    PASS message
+    Pass Execution    message    -force?
+    Fail    should not go here
 
 Set one tag
-    No Operation
+    [Documentation]    PASS message
+    Pass Execution    message    tag
+    Fail    should not go here
 
 Set multiple tags
-    No Operation
+    [Documentation]    PASS message
+    Pass Execution    message    tag1    tag2
+    Fail    should not go here
+
+Set and remove tags
+    [Documentation]    PASS message
+    Pass Execution    message    -force?    tag1    tag2
+    Fail    should not go here
 
 Set tags are not removed
-    No Operation
+    [Documentation]    PASS message
+    Pass Execution    message    tag1    tag2    -tag?
+    Fail    should not go here
 
 With template
-    No Operation
+    [Documentation]    PASS message
+    [Template]    Template keyword
+    message
 
 Inside user keyword
-    No operation
+    [Documentation]    PASS message
+    A Keyword    message
 
 Inside nested user keyword
-    No operation
+    [Documentation]    PASS message
+    A Nested Keyword    message
 
 With continuable failure
-    No operation
+    [Documentation]    FAIL failure
+    Run Keyword And Continue On Failure    Fail    failure
+    Pass Execution    message
+    Fail    should not go here
 
-With suite setup
-    No operation
-    # Modify tags
+With test suite setup modifying tags
 
-Tags can be modified in suite setup
-    No operation
+With test case setup
+    [Documentation]    FAIL Setup should succeed
+    [Setup]    Pass Execution    message    tag   -force1
+    Fail    Setup should succeed
 
-With suite teardown
-    No operation
+With test case teardown
+    [Documentation]    FAIL message
+    [Teardown]    Pass Execution    message
+    Fail    Teardown should succeed
 
-Tags cannot be modified in suite teardown
-    No operation
-
-With keyword setup
-    No operation
-
-With keyword teardown
-    No operation
+Modifying tags in test case teardown should succeed
+    [Documentation]    PASS message
+    [Teardown]    Pass Execution    message    -force?    tag1    tag2
+    No Operation
 
 With for loop
-    No operation
+    [Documentation]    PASS message
+    :FOR    ${var}    IN    foo    bar    baz
+    \    Pass Execution    message    tag
+    \    Fail    this should not execute
 
-With library
-    No operation
-    # Maybe?
+With library throwing exception
+    [Documentation]    PASS message
+    Keyword From Library Throws Exception    message
+    Fail    this should not execute
+
+With library calling Pass Execution keyword
+    [Documentation]    PASS message
+    Keyword From Library Calls Builtin    message
+    Fail    this should not execute
 
 
+
+*** Keywords ***
+
+Template keyword
+    [Arguments]    ${message}
+    Pass Execution    ${message}
+    Fail    should not go here
+
+A Keyword
+    [Arguments]    ${message}
+    Pass Execution    ${message}
+    Fail    should not go here
+
+A Nested Keyword
+    [Arguments]    ${message}
+    A Keyword   ${message}
+    Fail   should not go here either
 

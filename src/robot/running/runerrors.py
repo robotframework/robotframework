@@ -11,6 +11,8 @@
 #  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
+from robot.errors import ExecutionPassed
+
 
 class SuiteRunErrors(object):
     _exit_on_failure_error = ('Critical failure occurred and ExitOnFailure '
@@ -66,7 +68,7 @@ class SuiteRunErrors(object):
 
     def setup_executed(self, error=None):
         self._setup_executed = True
-        if error:
+        if error and not isinstance(error, ExecutionPassed):
             self._setup_error = unicode(error)
             if error.exit:
                 self._exit_on_fatal = True
