@@ -50,7 +50,7 @@ class _Timeout(object):
     def replace_variables(self, variables):
         try:
             self.string = variables.replace_string(self.string)
-            if not self.string or self.string.upper() == 'NONE':
+            if not self:
                 return
             self.secs = utils.timestr_to_secs(self.string)
             self.string = utils.secs_to_timestr(self.secs)
@@ -81,6 +81,9 @@ class _Timeout(object):
     def __cmp__(self, other):
         return cmp(not self.active, not other.active) \
             or cmp(self.time_left(), other.time_left())
+
+    def __nonzero__(self):
+        return bool(self.string and self.string.upper() != 'NONE')
 
     def run(self, runnable, args=None, kwargs=None):
         if self.error:

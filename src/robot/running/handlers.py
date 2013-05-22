@@ -159,16 +159,14 @@ class _RunnableHandler(object):
         return getattr(lib_instance, handler_name)
 
     def _get_timeout(self, namespace):
-        timeoutable = self._get_timeoutable_items(namespace)
-        if timeoutable:
-            return min(item.timeout for item in timeoutable)
-        return None
+        timeouts = self._get_timeouts(namespace)
+        return None if not timeouts else min(timeouts)
 
-    def _get_timeoutable_items(self, namespace):
-        items = namespace.uk_handlers[:]
+    def _get_timeouts(self, namespace):
+        timeouts = [handler.timeout for handler in namespace.uk_handlers]
         if self._test_running_and_not_in_teardown(namespace.test):
-            items.append(namespace.test)
-        return items
+            timeouts.append(namespace.test.timeout)
+        return [timeout for timeout in timeouts if timeout]
 
     def _test_running_and_not_in_teardown(self, test):
         return test and test.status == 'RUNNING'
