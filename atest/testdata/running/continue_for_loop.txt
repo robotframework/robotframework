@@ -6,7 +6,7 @@ Simple Continue For Loop
     :FOR    ${var}    IN    one    two
     \    Continue For Loop
     \    Fail    Should not be executed
-    Should BE Equal    ${var}    two
+    Should Be Equal    ${var}    two
 
 Continue For Loop In `Run Keyword`
     ${text}=   Set Variable  ${EMPTY}

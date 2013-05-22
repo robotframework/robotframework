@@ -7,7 +7,7 @@ Simple Exit For Loop
     :FOR    ${var}    IN    one    two
     \    Exit For Loop
     \    Fail    Should not be executed
-    Should BE Equal    ${var}    one
+    Should Be Equal    ${var}    one
 
 Exit For Loop In `Run Keyword`
     :FOR    ${var}    IN    one    two    three
