@@ -98,9 +98,10 @@ class TestSuiteBuilder(object):
             self._create_for_loop(parent, step_data)
 
     def _create_normal_step(self, parent, step_data):
-        parent.keywords.create(name=step_data.keyword,
-                               args=tuple(step_data.args),
-                               assign=tuple(step_data.assign))
+        if not step_data.is_comment():
+            parent.keywords.create(name=step_data.keyword,
+                                   args=tuple(step_data.args),
+                                   assign=tuple(step_data.assign))
 
     def _create_for_loop(self, parent, step_data):
         loop = parent.keywords.append(ForLoop(vars=step_data.vars,

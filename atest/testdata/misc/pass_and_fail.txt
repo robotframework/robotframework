@@ -10,6 +10,7 @@ ${LEVEL2}         DEBUG
 *** Test Case ***
 Pass
     [Tags]    pass
+    # I am a comment. Please ignore me.
     My Keyword    Pass
 
 Fail
