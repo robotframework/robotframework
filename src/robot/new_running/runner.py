@@ -47,16 +47,16 @@ class Runner(SuiteVisitor):
         else:
             self._current.suites.append(result)
         self._current = result
-        vars = Variables()
-        for var in suite.variables:
-            vars[var.name] = var.value
+        variables = Variables()
+        variables.set_from_variable_table(suite.variables)
         ns = Namespace(suite,
                        self.context.namespace.variables if self.context else None,
                        UserLibrary(suite.user_keywords),
-                       vars)
+                       variables)
         EXECUTION_CONTEXTS.start_suite(ns, self._output, False)
         self._output.start_suite(self._current)
         ns.handle_imports()
+        variables.resolve_delayed()
         self._setup(suite.keywords.setup).run(self.context)
 
     def end_suite(self, suite):
