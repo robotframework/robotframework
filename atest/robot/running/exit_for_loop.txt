@@ -35,12 +35,7 @@ Exit For Loop Keyword Should Have No Messages
     Should Be Empty    ${tc.kws[0].kws[0].kws[0].msgs}
 
 Custom Exception with ROBOT_EXIT_FOR_LOOP Works But Is Deprecated
-    Prints Deprecation Warning
-    Test And All Keywords Should Have Passed
-
-Custom Java Exception with ROBOT_EXIT_FOR_LOOP Works But Is Deprecated
-    [Tags]    jybot
-    Prints Deprecation Warning
+    Check Log Message   ${ERRORS[0]}     Using ROBOT_EXIT_FOR_LOOP is deprecated in 2.8.   WARN
     Test And All Keywords Should Have Passed
 
 Exit For Loop In Test Teardown
@@ -57,9 +52,3 @@ Exit For Loop If False
 
 With Continuable Failure
     Check Test Case    ${TESTNAME}
-
-
-*** Keyword ***
-Prints Deprecation Warning
-    ${message}=   Set Variable   Using ROBOT_EXIT_FOR_LOOP is deprecated in 2.8.
-    Check Log Message  ${ERRORS[1]}   ${message}  WARN
