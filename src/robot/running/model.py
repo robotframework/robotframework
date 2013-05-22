@@ -15,7 +15,7 @@
 from robot import utils
 from robot.common import BaseTestSuite, BaseTestCase
 from robot.parsing import TestData
-from robot.errors import DataError, ExecutionFailed, ExecutionPassed
+from robot.errors import DataError, ExecutionFailed, PassExecution
 from robot.variables import GLOBAL_VARIABLES
 from robot.output import LOGGER
 
@@ -291,7 +291,7 @@ class RunnableTestCase(BaseTestCase):
     def _run_setup(self, context, errors):
         error = self.setup.run(context)
         if error:
-            if isinstance(error, ExecutionPassed):
+            if isinstance(error, PassExecution):
                 self.message = error.message
                 return False
             errors.setup_failed(error)
@@ -301,7 +301,7 @@ class RunnableTestCase(BaseTestCase):
     def _run_keywords(self, context, errors):
         try:
             self.keywords.run(context)
-        except ExecutionPassed, pass_:
+        except PassExecution, pass_:
             self.message = pass_.message
             if pass_.earlier_failures:
                 self._fail_test_case(pass_.earlier_failures, errors)
@@ -326,7 +326,7 @@ class RunnableTestCase(BaseTestCase):
             return False
         error = self.teardown.run(context)
         if error:
-            if isinstance(error, ExecutionPassed):
+            if isinstance(error, PassExecution):
                 self.message = error.message
                 return False
             errors.teardown_failed(error)

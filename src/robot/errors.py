@@ -194,7 +194,7 @@ class UserKeywordExecutionFailed(ExecutionFailures):
         return '%s\n\nAlso keyword teardown failed:\n%s' % (run_msg, td_msg)
 
 
-class _ExecutionPassed(ExecutionFailed):
+class ExecutionPassed(ExecutionFailed):
 
     def __init__(self, message, *args, **kwargs):
         ExecutionFailed.__init__(self,
@@ -213,28 +213,28 @@ class _ExecutionPassed(ExecutionFailed):
         return ExecutionFailures(self._earlier_failures)
 
 
-class ContinueForLoop(_ExecutionPassed):
+class ContinueForLoop(ExecutionPassed):
 
     def __init__(self):
-        _ExecutionPassed.__init__(self,
+        ExecutionPassed.__init__(self,
                                   'Continue for loop without enclosing for loop.')
 
 
-class ExecutionPassed(_ExecutionPassed):
+class PassExecution(ExecutionPassed):
     pass
 
 
-class ExitForLoop(_ExecutionPassed):
+class ExitForLoop(ExecutionPassed):
 
     def __init__(self):
-        _ExecutionPassed.__init__(self,
+        ExecutionPassed.__init__(self,
                                   'Exit for loop without enclosing for loop.')
 
 
-class ReturnFromKeyword(_ExecutionPassed):
+class ReturnFromKeyword(ExecutionPassed):
 
     def __init__(self, return_value):
-        _ExecutionPassed.__init__(self,
+        ExecutionPassed.__init__(self,
                                  'Return from keyword without enclosing keyword',
                                  return_value=return_value)
 

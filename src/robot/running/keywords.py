@@ -14,9 +14,9 @@
 
 from robot.utils import (format_assign_message, get_elapsed_time,
                          get_error_message, get_timestamp, plural_or_not)
-from robot.errors import (ContinueForLoop, DataError, _ExecutionPassed,
-                          ExecutionFailed, ExecutionFailures, ExitForLoop,
-                          HandlerExecutionFailed, ReturnFromKeyword)
+from robot.errors import (ContinueForLoop, DataError, ExecutionFailed,
+                          ExecutionFailures, ExecutionPassed, ExitForLoop,
+                          HandlerExecutionFailed)
 
 from robot.common import BaseKeyword
 from robot.variables import is_scalar_var, VariableAssigner
@@ -49,7 +49,7 @@ class Keywords(object):
         for kw in self._keywords:
             try:
                 kw.run(context)
-            except (_ExecutionPassed), exp:
+            except ExecutionPassed, exp:
                 exp.set_earlier_failures(errors)
                 raise exp
             except ExecutionFailed, err:
@@ -79,7 +79,7 @@ class Keyword(BaseKeyword):
         try:
             return_value = self._run(handler, context)
         except ExecutionFailed, err:
-            self.status = 'FAIL' if not isinstance(err, _ExecutionPassed) else 'PASS'
+            self.status = 'FAIL' if not isinstance(err, ExecutionPassed) else 'PASS'
             self._end(context, error=err)
             raise
         else:
@@ -165,7 +165,7 @@ class ForLoop(BaseKeyword):
         self.starttime = get_timestamp()
         context.start_keyword(self)
         error = self._run_with_error_handling(self._validate_and_run, context)
-        self.status = 'PASS' if not error or isinstance(error, _ExecutionPassed) else 'FAIL'
+        self.status = 'PASS' if not error or isinstance(error, ExecutionPassed) else 'FAIL'
         self.endtime = get_timestamp()
         self.elapsedtime = get_elapsed_time(self.starttime, self.endtime)
         context.end_keyword(self)
@@ -210,7 +210,7 @@ class ForLoop(BaseKeyword):
                     break
                 if isinstance(err, ContinueForLoop):
                     continue
-                if isinstance(err, _ExecutionPassed):
+                if isinstance(err, ExecutionPassed):
                     err.set_earlier_failures(errors)
                     raise err
                 errors.extend(err.get_errors())
@@ -232,7 +232,7 @@ class ForLoop(BaseKeyword):
         for var, value in zip(variables, values):
             context.get_current_vars()[var] = value
         error = self._run_with_error_handling(self.keywords.run, context)
-        foritem.end('PASS' if not error or isinstance(error, _ExecutionPassed) else 'FAIL')
+        foritem.end('PASS' if not error or isinstance(error, ExecutionPassed) else 'FAIL')
         context.end_keyword(foritem)
         return error
 

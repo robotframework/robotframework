@@ -11,7 +11,7 @@
 #  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
-from robot.errors import ExecutionPassed
+from robot.errors import PassExecution
 
 
 class SuiteRunErrors(object):
@@ -68,7 +68,7 @@ class SuiteRunErrors(object):
 
     def setup_executed(self, error=None):
         self._setup_executed = True
-        if error and not isinstance(error, ExecutionPassed):
+        if error and not isinstance(error, PassExecution):
             self._setup_error = unicode(error)
             if error.exit:
                 self._exit_on_fatal = True

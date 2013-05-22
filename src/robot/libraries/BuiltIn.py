@@ -18,7 +18,7 @@ import time
 
 from robot.output import LOGGER, Message
 from robot.errors import (ContinueForLoop, DataError, ExecutionFailed,
-                          ExecutionFailures, ExecutionPassed, ExitForLoop,
+                          ExecutionFailures, ExitForLoop, PassExecution,
                           ReturnFromKeyword)
 from robot import utils
 from robot.utils import asserts
@@ -817,7 +817,7 @@ class _Verify:
             log_message, level = self._get_logged_message_and_level(message)
             log_message = 'Pass Execution with message: %s' % log_message
             self.log(log_message, level)
-        raise ExecutionPassed(message)
+        raise PassExecution(message)
 
 class _Variables:
 
