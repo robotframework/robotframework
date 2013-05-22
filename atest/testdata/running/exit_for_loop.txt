@@ -1,5 +1,4 @@
 *** Settings ***
-Library    JavaExceptions
 Library    ForLoop.py
 
 *** Test Cases ***
@@ -51,12 +50,6 @@ Exit For Loop In User Keyword Without For Loop Should Fail
 Custom Exception with ROBOT_EXIT_FOR_LOOP Works But Is Deprecated
     :FOR    ${var}    IN    one    two
     \    Raise Exit For Loop
-    \    Fail    Should not be executed
-    Should BE Equal    ${var}    one
-
-Custom Java Exception with ROBOT_EXIT_FOR_LOOP Works But Is Deprecated
-    :FOR    ${var}    IN    one    two
-    \    Throw Exit For Loop
     \    Fail    Should not be executed
     Should BE Equal    ${var}    one
 
