@@ -167,3 +167,7 @@ class Import(object):
         self.args = args
         self.alias = alias
         self.directory = None
+
+    # TODO: Error reporting doesn't belong here
+    def report_invalid_syntax(self, *args):
+        pass
