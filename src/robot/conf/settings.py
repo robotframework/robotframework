@@ -319,6 +319,22 @@ class RobotSettings(_BaseSettings):
     def _escape(self, value):
         return utils.escape(value)
 
+    @property
+    def suite_config(self):
+        return {
+            'name': self['Name'],
+            'doc': self['Doc'],
+            'metadata': dict(self['Metadata']),
+            'set_tags': self['SetTag'],
+            'include_tags': self['Include'],
+            'exclude_tags': self['Exclude'],
+            'include_suites': self['SuiteNames'],
+            'include_tests': self['TestNames'],
+            'empty_suite_ok': self['RunEmptySuite'],
+            'critical': self['Critical'],
+            'non_critical': self['NonCritical']
+        }
+
 
 class RebotSettings(_BaseSettings):
     _extra_cli_opts = {'Output'            : ('output', 'NONE'),
@@ -345,13 +361,13 @@ class RebotSettings(_BaseSettings):
             'exclude_tags': self['Exclude'],
             'include_suites': self['SuiteNames'],
             'include_tests': self['TestNames'],
-            'process_empty_suite': self['ProcessEmptySuite'],
+            'empty_suite_ok': self['ProcessEmptySuite'],
             'remove_keywords': self['RemoveKeywords'],
             'log_level': self['LogLevel'],
             'critical': self['Critical'],
-            'noncritical': self['NonCritical'],
-            'starttime': self['StartTime'],
-            'endtime': self['EndTime']
+            'non_critical': self['NonCritical'],
+            'start_time': self['StartTime'],
+            'end_time': self['EndTime']
         }
 
     @property
