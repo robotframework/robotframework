@@ -55,6 +55,13 @@ class TestBuilding(unittest.TestCase):
         assert_equals(kw.assign, ())
         assert_equals(kw.type, kw.KEYWORD_TYPE)
 
+    def test_assign(self):
+        kw = self._build('unicode.txt').tests[1].keywords[0]
+        assert_equals(kw.assign, ('${msg} =',))
+        assert_equals(kw.name, 'Evaluate')
+        assert_equals(kw.args, (r"u'Fran\\xe7ais'",))
+        assert_equals(kw.type, kw.KEYWORD_TYPE)
+
     def test_directory_suite(self):
         suite = self._build('suites')
         assert_equals(suite.name, 'Suites')
