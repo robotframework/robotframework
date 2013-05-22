@@ -73,7 +73,8 @@ class TestRunning(unittest.TestCase):
         self._check_test(result.tests[1], 'T2', 'FAIL', ('added tag',), 'Error')
 
     def _run(self, suite):
-        return suite.run(output='NONE', stdout=StringIO(), stderr=StringIO())
+        result = suite.run(output='NONE', stdout=StringIO(), stderr=StringIO())
+        return result.suite
 
     def _check_suite(self, suite, name, status, tests=1):
         assert_equals(suite.name, name)
