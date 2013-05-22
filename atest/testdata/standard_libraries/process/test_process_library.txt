@@ -66,21 +66,16 @@ Setting Environment
     ${result}=    Run Process    python -c "import os; print os.getenv('normalvar', '-'), os.getenv('specialvar', '-');"    shell=True   env=${setenv}
     Should Be Equal        ${result.stdout}  - spessu\n
 
-
 Setting Environment With Multiple Values
-    @{curenv}=    Get Environment Variables
-    ${result}=    Run Process    python -c "import os; print os.environ;"    shell=True   env:specialvar=spessu   env:diiba=da£ba
-    Should Match Regexp       ${result.stdout}   (.*)(?i)@{curenv}[0](.*)
-    Should Match Regexp       ${result.stdout}   (.*)(?i)specialvar(.*)
-    Should Match Regexp       ${result.stdout}   (.*)(?i)diiba(.*)
+    Set Environment Variable  normalvar  normal
+    ${result}=    Run Process    python -c "import os; print os.getenv('normalvar', '-'), os.getenv('specialvar', '-'), os.getenv('diiba', '-');"    shell=True   env:specialvar=spessu   env:diiba=daaba
+    Should Be Equal        ${result.stdout}  normal spessu daaba\n
 
 Setting Environment With Multiple Values Using Dictionary
-    @{curenv}=    Get Environment Variables
+    Set Environment Variable  normalvar  normal
     ${setenv}=    Create Dictionary           specialvar  spessu  diiba2  daaba2
-    ${result}=    Run Process    python   -c    import os; print os.environ;    env=${setenv}
-    Should Not Match Regexp    ${result.stdout}   (.*)(?i)@{curenv}[0](.*)
-    Should Match Regexp        ${result.stdout}   (.*)(?i)specialvar(.*)
-    Should Match Regexp        ${result.stdout}   (.*)(?i)diiba(.*)
+    ${result}=    Run Process    python   -c    import os; print os.getenv('normalvar', '-'), os.getenv('specialvar', '-'), os.getenv('diiba2', '-');    env=${setenv}
+    Should Be Equal        ${result.stdout}  - spessu daaba2\n
 
 Unsupported Arguments Should Cause Error
     ${setenv}=    Create Dictionary           sp  spessu
