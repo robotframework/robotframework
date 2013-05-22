@@ -57,18 +57,15 @@ Setting Stderr
     [Teardown]    Remove File    ${TEMPDIR}${/}myfile.txt
 
 Setting Environment
-    @{curenv}=    Get Environment Variables
+    Set Environment Variable  normalvar  normal
     ${setenv}=    Create Dictionary           specialvar  spessu
-    ${result}=    Run Process    python -c "import os; print os.environ;"    shell=True
-    Should Match Regexp        ${result.stdout}   (.*)(?i)@{curenv}[0](.*)
-    Should Not Match Regexp    ${result.stdout}   (.*)(?i)specialvar(.*)
-    ${special_var}=   Evaluate  'specialvar' if sys.version_info < (2,6) else 'specia£var'   sys
-    ${result}=    Run Process    python -c "import os; print os.environ;"    shell=True   env:${special_var}=spessu
-    Should Match Regexp        ${result.stdout}   (.*)(?i)@{curenv}[0](.*)
-    Should Match Regexp        ${result.stdout}   (.*)(?i)specia(.*)var(.*)
-    ${result}=    Run Process    python -c "import os; print os.environ;"    shell=True   env=${setenv}
-    Should Not Match Regexp    ${result.stdout}   (.*)(?i)@{curenv}[0](.*)
-    Should Match Regexp        ${result.stdout}   (.*)(?i)specialvar(.*)
+    ${result}=    Run Process    python -c "import os; print os.getenv('normalvar', '-'), os.getenv('specialvar', '-');"    shell=True
+    Should Be Equal        ${result.stdout}  normal -\n
+    ${result}=    Run Process    python -c "import os; print os.getenv('normalvar', '-'), os.getenv('specialvar', '-');"    shell=True   env:specialvar=spessu
+    Should Be Equal        ${result.stdout}  normal spessu\n
+    ${result}=    Run Process    python -c "import os; print os.getenv('normalvar', '-'), os.getenv('specialvar', '-');"    shell=True   env=${setenv}
+    Should Be Equal        ${result.stdout}  - spessu\n
+
 
 Setting Environment With Multiple Values
     @{curenv}=    Get Environment Variables
