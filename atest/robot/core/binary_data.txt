@@ -1,5 +1,5 @@
 *** Settings ***
-Documentation   Test handling situation where library writes binary data into stdout or raises exception containing it.
+Documentation   Tests for libraries writes binary data into STDOUT and raising exceptions containing it.
 Suite Setup     My Run Tests
 Force Tags      regression  pybot  jybot
 Resource        atest_resource.txt
@@ -7,16 +7,18 @@ Variables       ../../resources/unicode_vars.py
 
 *** Test Cases ***
 Print Bytes
-    [Documentation]  Check that bytes 0-255, incl. control chars, can be printed ok. The output from bytes 128-255 is an empty string on Python and unichr(byte) on Jython. This is due to string/unicode implementation differences on Python and Jython
+    [Documentation]  Check that bytes 0-255, incl. control chars, can be printed ok.
+    ...  The output from bytes 128-255 is an empty string on Python and unichr(byte) on Jython.
+    ...  This is due to string/unicode implementation differences on Python and Jython.
     ${tc} =  Check Test Case  ${TESTNAME}
     Message  First check some printable bytes and control chars.  Control chars should result to an empty string.
-    :FOR  ${index}  ${exp}  IN  
+    :FOR  ${index}  ${exp}  IN
     ...  0    ${EMPTY}
     ...  1    ${EMPTY}
     ...  7    ${EMPTY}
     ...  8    ${EMPTY}
     ...  9    \t
-    ...  10   \n  
+    ...  10   \n
     ...  32   ${SPACE}
     ...  82   R
     ...  111  o
@@ -26,10 +28,9 @@ Print Bytes
     ...  123  {
     \  Check Log Message  ${tc.kws[0].msgs[${index}]}  Byte ${index}: '${exp}'
     #  Check that all bytes were really written without errors.
-    @{range} =  Evaluate  range(256)
-    :FOR  ${index}  IN  @{range}
+    :FOR  ${index}  IN RANGE  256
     \  Should Start With  ${tc.kws[0].msgs[${index}].message}  Byte ${index}:
-    Check Log Message  ${tc.kws[0].msgs[-1]}  All bytes printed succesfully
+    Check Log Message  ${tc.kws[0].msgs[-1]}  All bytes printed successfully
 
 Byte Error
     [Documentation]  Check an exception containing control chars is handled ok
