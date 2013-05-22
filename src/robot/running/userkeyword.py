@@ -128,7 +128,8 @@ class UserKeywordHandler(object):
     def init_keyword(self, varz):
         self._errors = []
         self.doc = varz.replace_meta('Documentation', self._doc, self._errors)
-        self.timeout = KeywordTimeout(self._timeout.value, self._timeout.message)
+        timeout = (self._timeout.value, self._timeout.message) if self._timeout else ()
+        self.timeout = KeywordTimeout(*timeout)
         self.timeout.replace_variables(varz)
 
     def run(self, context, arguments):

@@ -81,7 +81,12 @@ class Runner(SuiteVisitor):
         setup = self._setup(test.keywords.setup)
         keywords = Keywords(test.keywords.normal)
         teardown = self._teardown(test.keywords.teardown)
+        result.timeout = test.timeout   # TODO: Cleaner implementation to ...
+        result.status = 'RUNNING'       # ... activate timeouts
         self._context.start_test(result)
+        if test.timeout:
+            test.timeout.replace_variables(self._variables)  # FIXME: Should not change model state!!
+            test.timeout.start()
         setup.run(self._context)
         try:
             keywords.run(self._context)

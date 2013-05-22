@@ -24,7 +24,7 @@ class TestCase(ModelObject):
     __slots__ = ['parent', 'name', 'doc', 'timeout']
     keyword_class = Keyword
 
-    def __init__(self, name='', doc='', tags=None, timeout=''):
+    def __init__(self, name='', doc='', tags=None, timeout=None):
         self.parent = None
         self.name = name
         self.doc = doc

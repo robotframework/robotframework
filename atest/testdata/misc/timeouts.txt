@@ -6,12 +6,17 @@ Test Timeout     1min 42s
 *** Test Cases ***
 Default Test Timeout
     [Documentation]    I have a timeout
-    No Operation
+    Timeouted
 
 Test Timeout With Message
     [Timeout]    1d2h    The message
-    No Operation
+    Timeouted
 
 Test Timeout With Variable
     [Timeout]    ${100}
+    Timeouted
+
+*** Keywords ***
+Timeouted
+    [Timeout]    42    My message
     No Operation

@@ -14,6 +14,7 @@
 
 from robot.new_running.defaults import TestDefaults
 from robot.parsing import TestData
+from robot.running.timeouts import TestTimeout
 
 from .model import TestSuite, ForLoop
 
@@ -35,7 +36,7 @@ class TestSuiteBuilder(object):
         defaults = TestDefaults(data.setting_table, parent_defaults)
         suite = TestSuite(name=data.name,
                           source=data.source,
-                          doc=data.setting_table.doc.value,
+                          doc=unicode(data.setting_table.doc),
                           metadata=self._get_metadata(data.setting_table))
         for import_data in data.setting_table.imports:
             self._create_import(suite, import_data)
@@ -54,58 +55,64 @@ class TestSuiteBuilder(object):
     def _get_metadata(self, settings):
         return dict((meta.name, meta.value) for meta in settings.metadata)
 
-    def _create_import(self, suite, import_data):
-        suite.imports.create(type=import_data.type,
-                             name=import_data.name,
-                             args=tuple(import_data.args),
-                             alias=import_data.alias)
+    def _create_import(self, suite, data):
+        suite.imports.create(type=data.type,
+                             name=data.name,
+                             args=tuple(data.args),
+                             alias=data.alias)
 
-    def _create_test(self, suite, test_data, defaults):
-        test_values = defaults.get_test_values(test_data)
-        test = suite.tests.create(name=test_data.name,
-                                  doc=test_data.doc.value,
-                                  tags=test_values.tags.value)
-        self._create_fixture(test, test_values.setup, 'setup')
-        for step_data in test_data.steps:
+    def _create_test(self, suite, data, defaults):
+        values = defaults.get_test_values(data)
+        test = suite.tests.create(name=data.name,
+                                  doc=unicode(data.doc),
+                                  tags=values.tags.value,
+                                  timeout=TestTimeout(values.timeout.value,
+                                                      values.timeout.message))
+        self._create_fixture(test, values.setup, 'setup')
+        for step_data in data.steps:
             self._create_step(test, step_data)
-        self._create_fixture(test, test_values.teardown, 'teardown')
+        self._create_fixture(test, values.teardown, 'teardown')
 
-    def _create_user_keyword(self, suite, uk_data):
-        uk = suite.user_keywords.create(name=uk_data.name,
-                                        args=tuple(uk_data.args))
-        for step_data in uk_data.steps:
+    def _create_user_keyword(self, suite, data):
+        # TODO: Tests and uks have inconsistent timeout types
+        uk = suite.user_keywords.create(name=data.name,
+                                        args=tuple(data.args),
+                                        doc=unicode(data.doc),
+                                        return_=tuple(data.return_),
+                                        timeout=data.timeout)
+        for step_data in data.steps:
             self._create_step(uk, step_data)
 
-    def _create_variable(self, suite, var_data):
-        if not var_data:
+    def _create_variable(self, suite, data):
+        if not data:
             return
-        if var_data.name.startswith('$'):
-            value = var_data.value[0]
+        if data.name.startswith('$'):
+            value = data.value[0]
         else:
-            value = var_data.value
-        suite.variables.create(name=var_data.name, value=value)
+            value = data.value
+        suite.variables.create(name=data.name, value=value)
 
-    def _create_fixture(self, parent, element, fixture_type):
-        if element:
+    def _create_fixture(self, parent, data, fixture_type):
+        if data:
             parent.keywords.create(type=fixture_type,
-                                   name=element.name,
-                                   args=tuple(element.args))
+                                   name=data.name,
+                                   args=tuple(data.args))
 
-    def _create_step(self, parent, step_data):
-        if not step_data.is_for_loop():
-            self._create_normal_step(parent, step_data)
+    def _create_step(self, parent, data):
+        if not data.is_for_loop():
+            self._create_normal_step(parent, data)
         else:
-            self._create_for_loop(parent, step_data)
+            self._create_for_loop(parent, data)
 
-    def _create_normal_step(self, parent, step_data):
-        if not step_data.is_comment():
-            parent.keywords.create(name=step_data.keyword,
-                                   args=tuple(step_data.args),
-                                   assign=tuple(step_data.assign))
+    def _create_normal_step(self, parent, data):
+        if not data.is_comment():
+            parent.keywords.create(name=data.keyword,
+                                   args=tuple(data.args),
+                                   assign=tuple(data.assign))
 
-    def _create_for_loop(self, parent, step_data):
-        loop = parent.keywords.append(ForLoop(vars=step_data.vars,
-                                              items=step_data.items,
-                                              range=step_data.range))
-        for step in step_data.steps:
+    def _create_for_loop(self, parent, data):
+        loop = parent.keywords.append(ForLoop(vars=data.vars,
+                                              items=data.items,
+                                              range=data.range))
+        for step in data.steps:
             self._create_normal_step(loop, step)

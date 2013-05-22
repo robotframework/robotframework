@@ -133,13 +133,13 @@ class Variable(object):
 
 class UserKeyword(object):
 
-    def __init__(self, name, args=(), doc='', return_=None):
+    def __init__(self, name, args=(), doc='', return_=None, timeout=None):
         self.name = name
         self.args = args
         self.doc = doc
         self.return_ = return_ or ()
         self.teardown = None
-        self.timeout = Timeout()
+        self.timeout = timeout
         self.keywords = []
 
     @setter
@@ -150,11 +150,6 @@ class UserKeyword(object):
     @property
     def steps(self):
         return self.keywords
-
-
-class Timeout(object):
-    value = None
-    message = ''
 
 
 class Import(object):

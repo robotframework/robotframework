@@ -47,6 +47,7 @@ class TestBuilding(unittest.TestCase):
         assert_equals(test.name, 'Fail')
         assert_equals(test.doc, 'FAIL Expected failure')
         assert_equals(list(test.tags), ['fail', 'force'])
+        assert_true(not test.timeout)
 
     def test_test_keywords(self):
         kw = self._build('pass_and_fail.txt').tests[0].keywords[0]
@@ -89,3 +90,18 @@ class TestBuilding(unittest.TestCase):
         assert_equals(test.keywords.teardown.name, 'Test Teardown')
         assert_equals([kw.name for kw in test.keywords],
                       ['Test Setup', 'Keyword', 'Test Teardown'])
+
+    def test_test_timeout(self):
+        tests = self._build('timeouts.txt').tests
+        assert_equals(tests[0].timeout.string, '1min 42s')
+        assert_equals(tests[0].timeout.message, '')
+        assert_equals(tests[1].timeout.string, '1d2h')
+        assert_equals(tests[1].timeout.message, 'The message')
+        assert_equals(tests[2].timeout.string, '${100}')
+        assert_equals(tests[2].timeout.message, '')
+
+    def test_keyword_timeout(self):
+        # TODO: Tests and uks have inconsistent timeout types.
+        kw = self._build('timeouts.txt').user_keywords[0]
+        assert_equals(kw.timeout.value, '42')
+        assert_equals(kw.timeout.message, 'My message')
