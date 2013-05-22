@@ -134,6 +134,11 @@ class HandlerExecutionFailed(ExecutionFailed):
         exit = self._get(details.error, 'EXIT_ON_FAILURE')
         continue_on_failure = self._get(details.error, 'CONTINUE_ON_FAILURE')
 
+        if self._get(details.error, 'EXIT_FOR_LOOP'):
+            from robot.output import LOGGER
+            LOGGER.warn('Using ROBOT_EXIT_FOR_LOOP is deprecated in 2.8.')
+            raise ExitForLoop
+
         ExecutionFailed.__init__(self, details.message, timeout, syntax,
                                  exit, continue_on_failure)
 
