@@ -16,7 +16,7 @@ from robot.model import SuiteVisitor
 from robot.result.testsuite import TestSuite     # TODO: expose in __init__?
 from robot.result.executionresult import Result  # ---------- ii -----------
 from robot.running.namespace import Namespace
-from robot.variables import Variables
+from robot.variables import GLOBAL_VARIABLES
 from robot.running.context import EXECUTION_CONTEXTS
 from robot.running.keywords import Keywords
 from robot.running.fixture import Setup, Teardown
@@ -30,72 +30,80 @@ class Runner(SuiteVisitor):
     def __init__(self, output):
         self.result = None
         self._output = output
-        self._current = None
+        self._suite = None
 
     @property
-    def context(self):
+    def _context(self):
         return EXECUTION_CONTEXTS.current
 
+    @property
+    def _variables(self):
+        return self._context.namespace.variables
+
     def start_suite(self, suite):
+        variables = GLOBAL_VARIABLES.copy()
+        variables.set_from_variable_table(suite.variables)
+        ns = Namespace(suite,
+                       self._context.namespace.variables if self._context else None,
+                       UserLibrary(suite.user_keywords),
+                       variables)
+        EXECUTION_CONTEXTS.start_suite(ns, self._output, False)
+        ns.handle_imports()
+        variables.resolve_delayed()
         result = TestSuite(name=suite.name,
-                           doc=suite.doc,
+                           doc=self._resolve_setting(suite.doc),
                            metadata=suite.metadata,
                            source=suite.source,
                            starttime=utils.get_timestamp())
         if not self.result:
             self.result = Result(root_suite=result)
         else:
-            self._current.suites.append(result)
-        self._current = result
-        variables = Variables()
-        variables.set_from_variable_table(suite.variables)
-        ns = Namespace(suite,
-                       self.context.namespace.variables if self.context else None,
-                       UserLibrary(suite.user_keywords),
-                       variables)
-        EXECUTION_CONTEXTS.start_suite(ns, self._output, False)
-        self._output.start_suite(self._current)
-        ns.handle_imports()
-        variables.resolve_delayed()
-        self._setup(suite.keywords.setup).run(self.context)
+            self._suite.suites.append(result)
+        self._suite = result
+        self._output.start_suite(self._suite)
+        self._setup(suite.keywords.setup).run(self._context)
+
+    def _resolve_setting(self, value):
+        value = self._variables.replace_string(value, ignore_errors=True)
+        return utils.unescape(value)
 
     def end_suite(self, suite):
-        self._teardown(suite.keywords.teardown).run(self.context)
-        self._current.endtime = utils.get_timestamp()
-        self.context.end_suite(self._current)
-        self._current = self._current.parent
+        self._teardown(suite.keywords.teardown).run(self._context)
+        self._suite.endtime = utils.get_timestamp()
+        self._context.end_suite(self._suite)
+        self._suite = self._suite.parent
 
     def visit_test(self, test):
-        result = self._current.tests.create(name=test.name,
-                                            doc=test.doc,
-                                            tags=test.tags,
-                                            starttime=utils.get_timestamp())
+        result = self._suite.tests.create(name=test.name,
+                                          doc=self._resolve_setting(test.doc),
+                                          tags=test.tags,
+                                          starttime=utils.get_timestamp())
         setup = self._setup(test.keywords.setup)
         keywords = Keywords(test.keywords.normal)
         teardown = self._teardown(test.keywords.teardown)
-        self.context.start_test(result)
-        setup.run(self.context)
+        self._context.start_test(result)
+        setup.run(self._context)
         try:
-            keywords.run(self.context)
+            keywords.run(self._context)
         except ExecutionFailed, err:
             result.message = unicode(err)
             result.status = 'FAIL'
         else:
             result.status = 'PASS'
-        teardown.run(self.context)
+        teardown.run(self._context)
         result.endtime = utils.get_timestamp()
-        self.context.end_test(result)
+        self._context.end_test(result)
 
     def _setup(self, setup):
         if not setup:
             return Setup('', ())
         setup = Setup(setup.name, setup.args)
-        setup.replace_variables(self.context.namespace.variables, [])
+        setup.replace_variables(self._variables, [])
         return setup
 
     def _teardown(self, teardown):
         if not teardown:
             return Teardown('', ())
         teardown = Teardown(teardown.name, teardown.args)
-        teardown.replace_variables(self.context.namespace.variables, [])
+        teardown.replace_variables(self._variables, [])
         return teardown
