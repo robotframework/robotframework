@@ -13,3 +13,4 @@
 #  limitations under the License.
 
 from .model import TestSuite, TestCase, Keyword
+from .builder import TestSuiteBuilder

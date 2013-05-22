@@ -477,6 +477,9 @@ class Variable(object):
     def has_data(self):
         return bool(self.name or ''.join(self.value))
 
+    def __nonzero__(self):
+        return self.has_data()
+
 
 class _WithSteps(object):
 

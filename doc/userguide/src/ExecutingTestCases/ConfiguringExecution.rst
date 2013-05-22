@@ -115,6 +115,31 @@ many interesting possibilities:
   the tests for a certain iteration can be generated (for example, :cli:`rebot
   --include iter-42 output.xml`).
 
+Re-executing failed test cases
+''''''''''''''''''''''''''''''
+
+Command line option `--runfailed (-R)` can be used to select all failed tests
+from an earlier `output file`_ for re-execution. This option is useful, for
+example, if running all tests takes a lot of time and one wants to
+iteratively fix failing test cases.
+
+::
+
+  pybot tests                           # first execute all tests
+  pybot --runfailed output.xml tests    # then re-execute failing
+
+Behind the scenes this option selects the failed tests as they would have been
+selected individually with the :opt:`--test` option. It is possible to further
+fine-tune the list of selected tests by using :opt:`--test`, :opt:`--suite`,
+:opt:`--include` and :opt:`--exclude` options.
+
+Using an output not originating from executing the same tests that are run
+now causes undefined results. Additionally, it is an error if the output
+contains no failed tests. Using a special value :opt:`NONE` as the output
+is same as not specifying this option at all.
+
+.. note:: This is a new option in Robot Framework 2.8.
+
 When no tests match selection
 '''''''''''''''''''''''''''''
 

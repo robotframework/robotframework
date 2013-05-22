@@ -22,7 +22,7 @@ from robot.errors import UnrecognizedParameterError
 
 from robot.utils import ConnectionCache
 from robot.version import get_version
-
+from robot.api import logger
 
 class Process(object):
     """Robot Framework test library for running processes.
@@ -40,7 +40,7 @@ class Process(object):
     - Stopping processes started by this library (e.g. `Terminate All Processes`
       and `Terminate Process` keywords). See `Stopping processes` for more
       information.
-    - Switching between processes (e.g. `Switch Active Process` keyword).
+    - Switching between processes (e.g. `Switch Process` keyword).
     - Checking process status (e.g. `Process Should Be Running` and
       `Process Should Be Stopped` keywords).
 
@@ -53,6 +53,7 @@ class Process(object):
     - `Active process`
     - `Stopping processes`
     - `ExecutionResult`
+    - `Similarities with OperatingSystem library`
     - `Example`
 
     = Configurations =
@@ -63,9 +64,10 @@ class Process(object):
     - `cwd` specifies the working directory
     - `shell` specifies whether shell is used for program execution
     - `env` specifies the environment of the program being run
-    - `stdout` is a file handle for standard output
-    - `stderr` is a file handle for standard error
-    - `alias` is a short name for the process
+    - `stdout` is a file path of standard output
+    - `stderr` is a file path of standard error
+    - `alias` is a short name for the process which can be used for interacting
+    with that process.
 
     == Current working directory ==
 
@@ -74,15 +76,46 @@ class Process(object):
 
     == Running processes in a shell ==
 
-    Paragraph
+    The `shell` argument specifies whether shell is used as program during
+    execution. By default this has value `False`, which means that shell
+    specific commands, like `copy` and `dir` are not available. It also means
+    that process runnable and its arguments must be given as a separate argument
+    for `Run Process` and `Start Process` keywords.
+
+    When `shell` is `True`, the program with its arguments can be given in a
+    single string for `Run Process` and `Start Process` keywords.
+
+    On Unix, the default shell is `/bin/sh`. On Windows, the default shell is
+    specified by the `COMSPEC` environment variable.
 
     == Environment ==
 
-    Paragraph
+    If `env` argument is not given or is `None`, then the current process's
+    environment is used. Argument can be used to customize the environment of
+    the program being run.
+
+    There are two ways of giving environment variables:
+
+        - as a dictionary containing environment variables in a key-value pairs
+        - or using special key `env:` in the argument.
+
+    Examples below.
+
+    | ${result}= | Run Process | python -c "import os; print os.environ;" | shell=True | env:specialvar=spessu |
+    | ${result}= | Run Process | python -c "import os; print os.environ;" | shell=True | env=${setenv} |
 
     == Standard output and error ==
 
-    Paragraph
+    Process output and error streams can be given as an argument to
+    `Run Process` and `Start Process` keywords. By default streams are stored
+    in temporary files. Information about these streams is stored into
+    `ExecutionResult` object.
+
+    The `stderr` can be redirected to the standard output stream by giving
+    argument in a way shown below.
+
+    | ${result}= | Run Process | python -c "print 'hello';1/0" | shell=True | stderr=STDOUT |
+    | ${result}= | Run Process | python -c "print 'hello';1/0" | shell=True | stdout=filename.txt | stderr=filename.txt |
 
     = Active process =
 
@@ -90,7 +123,7 @@ class Process(object):
     process. Many of the library keywords have `handle` as optional argument.
     This means that if argument `handle` is NOT given, then the active process
     is used for keyword. Active process can be switched using keyword
-    `Switch Active Process`.
+    `Switch Process`.
 
     The most recently started process is always a `active process`.
 
@@ -109,11 +142,42 @@ class Process(object):
 
     Included information is:
 
-    - `stdout` standard output file content
-    - `stderr` standard error file content
-    - `stdout_path` filepath to the standard output
-    - `stderr_path filepath to the standard error
+    - `stdout` file content of standard output stream
+    - `stderr` file content of standard error stream
+    - `stdout_path` filepath of standard output
+    - `stderr_path` filepath of standard error
     - `exit_code` from the process.
+
+    | ${result}= | Run Process | python | -c | ${command} |
+    | ${output1}= | Get File | ${result.stdout_path} |
+    | ${output2}= | Get File | ${result.stderr_path} |
+    | Log | ${result.exit_code} |
+    | Should Be Equal | ${result.stdout} | ${output1} |
+    | Should Be Equal | ${result.stderr} | ${output2} |
+
+    = Similarities with OperatingSystem library =
+
+    The OperatingSystem library also contains the keywords `Start Process` and
+    `Switch Process`. In the situation that these both libraries are in use
+    within the same test suite, the `Process` library's keywords will
+    be preferred.
+
+    You can still use OperatingSystem keywords by calling it explicitly
+    (e.g. `OperatingSystem.Start Process`) or by setting library search order
+    using `BuiltIn` library's keyword `Set Library Search Order` and then
+    calling `Start Process`.
+
+    | *** Settings *** |
+    | Library | Process |
+    | Library | OperatingSystem |
+    |  |
+    | *** Test Cases *** |
+    | Similar libraries in use |
+    | | `Start Process` | /path/command.sh    | # Process Library keyword is used |
+    | | `OperatingSystem.Start Process` | ${CURDIR}${/}mytool   | # OperatingSystem library keyword is used |
+    | | `Process.Start Process` | ${CURDIR}${/}mytool   | # Process library keyword is used |
+    | | Set Library Search Order | OperatingSystem |
+    | | `Start Process` | /path/command.sh   | # OperatingSystem library keyword is used |
 
     = Example =
 
@@ -124,12 +188,12 @@ class Process(object):
     |  |
     | *** Test Cases *** |
     | Example |
-    | ${handle1}= | `Start Process` | /path/command.sh    | shell=True  | cwd=/path |
-    | ${handle2}= | `Start Process` | ${CURDIR}${/}mytool   | shell=True |
-    | ${result1}=  | `Wait For Process` | ${handle1} |
-    |  | `Terminate Process` | ${handle2} |
-    |  | `Process Should Be Dead` | ${handle2} |
-    |  | [Teardown] | `Kill All Processes` |
+    | | ${handle1}= | `Start Process` | /path/command.sh    | shell=True  | cwd=/path |
+    | | ${handle2}= | `Start Process` | ${CURDIR}${/}mytool   | shell=True |
+    | | ${result1}=  | `Wait For Process` | ${handle1} |
+    | | `Terminate Process` | ${handle2} |
+    | | `Process Should Be Stopped` | ${handle2} |
+    | | [Teardown] | `Terminate All Processes` | kill=True |
     """
 
     ROBOT_LIBRARY_SCOPE='GLOBAL'
@@ -169,16 +233,29 @@ class Process(object):
         [http://docs.python.org/2.7/library/subprocess.html#subprocess.Popen|Popen]
         class (see `Configurations`).
 
+        Configuration can contain the following options for the process:
+
+        - stdout - A file path to use for standard output from the process
+        - stderr - A file path to use for standard error from the process
+        - shell  - True value will execute the process in a shell
+        - cwd - Current working directory for the process
+        - env and env:VARNAME=VALUE - dictionary for the environment variables to
+          use
+
         Returns process index on success.
 
         This new process is set as an `active process`.
 
         Examples:
 
-        | $handle1}= | `Start Process` | /bin/script.sh |
-        | $handle2}= | `Start Process` | totals |
+        | ${handle1}= | `Start Process` | /bin/script.sh |
+        | ${handle2}= | `Start Process` | totals |
+        | ${handle3}= | `Start Process` | /bin/script.sh | cwd=/some/directory/ |
+        | ${handle4}= | `Start Process` | /bin/script.sh | env:MYVAR=myvalue |
+        | ${handle5}= | `Start Process` | /bin/script.sh | stdout=somefile.out |
         """
         config = ProcessConfig(self._tempdir, **configuration)
+        logger.info('starting process "%r"' % command)
         p = subprocess.Popen(self._cmd(arguments, command, config.shell),
                              stdout=config.stdout_stream,
                              stderr=config.stderr_stream,
@@ -249,7 +326,9 @@ class Process(object):
         """
         process = self._process(handle)
         result = self._logs[process]
+        logger.info('waiting for process to terminate')
         result.exit_code = process.wait()
+        logger.info('process terminated')
         return result
 
     def terminate_process(self, handle=None, kill=False):
@@ -273,13 +352,23 @@ class Process(object):
         if not hasattr(process,'kill'):
             self._terminate_process(process)
             return
-        if kill:
-            process.kill()
-        else:
-            process.terminate()
+        try:
+            if kill:
+                logger.info('calling subprocess.Popen.kill()')
+                process.kill()
+            else:
+                logger.info('calling subprocess.Popen.terminate()')
+                process.terminate()
+        except OSError:
+            logger.debug('OSError during process termination')
+            if process.poll() is None:
+                logger.debug('Process still alive raising exception')
+                raise
+            logger.debug('Process is not executing - consuming OSError')
 
     def _terminate_process(self, theprocess):
         if sys.platform == 'win32':
+            logger.info('terminating process using ctypes.windll.kernel32')
             import ctypes
             PROCESS_TERMINATE = 1
             handle = ctypes.windll.kernel32.OpenProcess(PROCESS_TERMINATE,
@@ -290,6 +379,7 @@ class Process(object):
         else:
             pid = theprocess.pid
             if pid is not None:
+                logger.info('terminating process using os.kill')
                 os.kill(pid, signal.SIGKILL)
             else:
                 raise AssertionError('None Pid - can not kill process!')
@@ -311,11 +401,12 @@ class Process(object):
 
         Examples:
 
-        | ${pid}= | `Get Process Id` | | | | # Gets PID of the active process |
         | ${handle1}= | `Start Process` | python -c "print 'hello'" | shell=True | alias=hello |
-        | ${pid_1}= | `Get Process Id` | ${handle1} | | | # Gets PID with `handle1` |
-        | ${pid_2}= | `Get Process Id` | hello | | | # Gets PID with alias `hello` |
+        | ${pid_1}= | `Get Process Id` | | | | # Gets PID of the active process |
+        | ${pid_2}= | `Get Process Id` | ${handle1} | | | # Gets PID with `handle1` |
+        | ${pid_3}= | `Get Process Id` | hello | | | # Gets PID with alias `hello` |
         | Should Be Equal As Integers | ${pid_1} | ${pid_2} |
+        | Should Be Equal As Integers | ${pid_1} | ${pid_3} |
         """
         return self._process(handle).pid
 
@@ -326,14 +417,16 @@ class Process(object):
         """
         return self._process(handle)
 
-    def switch_active_process(self, handle):
+    def switch_process(self, handle):
         """This keyword switches active process into process with `handle`.
 
         Examples:
 
-        | Run Keyword And Expect Error | `Switch Active Process` |
-        | Run Keyword And Expect Error | `Switch Active Process` | ${nonexistent_handle} |
-        | `Switch Active Process` | ${handle1} |
+        | `Start Process` | dir | shell=True | alias=process1 |
+        | `Start Process` | ls  | shell=True | alias=process2 |
+        | # currently active process is process2 |
+        | `Switch Process` | process1 |
+        | # now active process is process 1 |
         """
         self._started_processes.switch(handle)
 
@@ -392,7 +485,8 @@ class ProcessConfig(object):
         self.stderr_stream = self._get_stderr(stderr, stdout)
         self.shell = bool(shell)
         self.alias = alias
-        self.env = self._set_environment(rest)
+        self.env = None
+        self._handle_rest(rest)
 
     def _new_stream(self, name, postfix):
         if name:
@@ -410,14 +504,32 @@ class ProcessConfig(object):
         ProcessConfig.FILE_INDEX += 1
         return open(os.path.join(self._tempdir, filename), 'w')
 
-    def _set_environment(self, env):
-        if not env:
-            return None
+    def _handle_rest(self, rest):
+        if not rest:
+            return
+        self.env = self._construct_env(rest)
+
+    def _construct_env(self, rest):
         new_env = dict()
-        for key,val in env.iteritems():
+        for key,val in rest.iteritems():
+            key = key.encode('utf-8')
             if key == "env":
-                return val
-            elif "env:" not in key[:4]:
+                self.env = dict()
+                for k,v in val.iteritems():
+                    k = k.encode('utf-8')
+                    v = v.encode('utf-8')
+                    self.env[k] = v
+            elif "env:" == key[:4]:
+                new_env[key[4:]] = val.encode('utf-8')
+            else:
                 raise UnrecognizedParameterError("'%s' is not supported by this keyword." % key )
-            new_env[key[4:]] = val
-        return new_env
+        if not self.env:
+            return dict(new_env.items() + os.environ.copy().items())
+        return dict(self._must_env_values().items() + self.env.items())
+
+    def _must_env_values(self):
+        must_values = {}
+        if sys.platform == "win32":
+            must_values['COMSPEC'] = os.environ['COMSPEC']
+            must_values['PATH'] = os.environ['PATH']
+        return must_values

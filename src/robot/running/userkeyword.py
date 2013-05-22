@@ -16,7 +16,7 @@ import os
 import re
 
 from robot.common import BaseLibrary, UserErrorHandler
-from robot.errors import (ContinueForLoop, DataError, ExecutionFailed,
+from robot.errors import (DataError, ExecutionFailed,
                           ReturnFromKeyword, UserKeywordExecutionFailed)
 from robot.variables import is_list_var, VariableSplitter
 from robot.output import LOGGER
@@ -109,12 +109,12 @@ class UserKeywordHandler(object):
     def __init__(self, keyword, libname):
         self.name = keyword.name
         self.keywords = Keywords(keyword.steps)
-        self.return_value = keyword.return_.value
+        self.return_value = tuple(keyword.return_)
         self.teardown = keyword.teardown
         self.libname = libname
-        self.doc = self._doc = keyword.doc.value
+        self.doc = self._doc = unicode(keyword.doc)
         self.arguments = UserKeywordArgumentParser().parse(self.longname,
-                                                           keyword.args.value)
+                                                           tuple(keyword.args))
         self._timeout = keyword.timeout
 
     @property
@@ -252,7 +252,7 @@ class EmbeddedArgsTemplate(UserKeywordHandler):
     _variable_pattern = r'\$\{[^\}]+\}'
 
     def __init__(self, keyword, libname):
-        if keyword.args.value:
+        if keyword.args:
             raise TypeError('Cannot have normal arguments')
         self.embedded_args, self.name_regexp \
                 = self._read_embedded_args_and_regexp(keyword.name)

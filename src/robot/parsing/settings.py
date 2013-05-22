@@ -77,6 +77,9 @@ class Setting(object):
     def __nonzero__(self):
         return self.is_set()
 
+    def __iter__(self):
+        return iter(self.value)
+
 
 class StringValueJoiner(object):
 
@@ -107,6 +110,9 @@ class Documentation(Setting):
 
     def _data_as_list(self):
         return [self.setting_name, self.value]
+
+    def __unicode__(self):
+        return self.value
 
 
 class Template(Setting):
@@ -301,6 +307,9 @@ class _DataList(object):
 
     def __len__(self):
         return len(self.data)
+
+    def __iter__(self):
+        return iter(self.data)
 
 
 class ImportList(_DataList):

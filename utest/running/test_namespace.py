@@ -20,12 +20,7 @@ class TestNamespace(unittest.TestCase):
 class TestVariableScopes(unittest.TestCase):
 
     def test_len(self):
+        variables = {'foo': 'bar', 'quuz': 'blaah'}
         assert_equals(len(_VariableScopes(None, None)), 0)
-        assert_equals(len(_VariableScopes(DummySuite(), None)), 2 + len(GLOBAL_VARIABLES))
-        assert_equals(len(_VariableScopes(None, _VariableScopes(DummySuite(), None))), 0)
-
-
-class DummySuite(object):
-
-    def __init__(self):
-        self.variables = {'foo': 'bar', 'quuz': 'blaah'}
+        assert_equals(len(_VariableScopes(variables, None)), 2 + len(GLOBAL_VARIABLES))
+        assert_equals(len(_VariableScopes(None, _VariableScopes(variables, None))), 0)

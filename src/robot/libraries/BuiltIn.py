@@ -18,7 +18,8 @@ import time
 
 from robot.output import LOGGER, Message
 from robot.errors import (ContinueForLoop, DataError, ExecutionFailed,
-                          ExecutionFailures, ExecutionPassed, ReturnFromKeyword)
+                          ExecutionFailures, ExecutionPassed, ExitForLoop,
+                          ReturnFromKeyword)
 from robot import utils
 from robot.utils import asserts
 from robot.variables import is_var, is_list_var
@@ -1576,37 +1577,35 @@ class _RunKeyword:
 class _Control:
 
     def continue_for_loop(self):
-        """Continues executing the enclosing for loop.
+        """Skips the current for loop iteration and continues from the next.
 
-        This keyword can be used in a for loop or in a keyword that the for loop
-        uses. In both cases the test execution continues with the next iteration
-        of the for loop. If executed outside of a for loop, the test fails.
+        Skips the remaining keywords in the current for loop iteration and
+        continues from the next one. Can be used directly in a for loop or
+        in a keyword that the loop uses.
 
         Example:
-        | :FOR | ${var} | IN | @{SOME LIST} |
+        | :FOR | ${var}         | IN                     | @{VALUES}         |
         |      | Run Keyword If | '${var}' == 'CONTINUE' | Continue For Loop |
-        |      | Do Something   | ${var} |
+        |      | Do Something   | ${var}                 |
 
-        To conditionally continue for loop, see `Continue For Loop If`.
+        See `Continue For Loop If` to conditionally continue a for loop without
+        using `Run Keyword If` or other wrapper keywords.
 
         New in Robot Framework 2.8.
         """
         raise ContinueForLoop()
 
     def continue_for_loop_if(self, condition):
-        """Continues to the next iteration of the enclosing loop if given condition is true.
+        """Skips the current for loop iteration if the `condition` is true.
 
-        This keyword can be used directly in a for loop or in a keyword that
-        the for loop uses. In both cases the test executions continues with the
-        next iteration of the for loop. If executed outside of a for loop, the
-        test fails.
-
-        To unconditionally continue for loop, see `Continue For Loop`.
+        A wrapper for `Continue For Loop` to continue a for loop based on
+        the given condition. The condition is evaluated using the same
+        semantics as with `Should Be True` keyword.
 
         Example:
-        | :FOR | ${var} | IN | @{SOME LIST} |
+        | :FOR | ${var}               | IN                     | @{VALUES} |
         |      | Continue For Loop If | '${var}' == 'CONTINUE' |
-        |      | Do Something | ${var} |
+        |      | Do Something         | ${var}                 |
 
         New in Robot Framework 2.8.
         """
@@ -1616,38 +1615,32 @@ class _Control:
     def exit_for_loop(self):
         """Stops executing the enclosing for loop.
 
-        This keyword can be used directly in a for loop or in a keyword that
-        the for loop uses. In both cases the test execution continues after
-        the for loop. If executed outside of a for loop, the test fails.
+        Exits the enclosing for loop and continues execution after it.
+        Can be used directly in a for loop or in a keyword that the loop uses.
 
         Example:
-        | :FOR | ${var} | IN | @{SOME LIST} |
+        | :FOR | ${var}         | IN                 | @{VALUES}     |
         |      | Run Keyword If | '${var}' == 'EXIT' | Exit For Loop |
         |      | Do Something   | ${var} |
 
-        Starting from Robot Framework 2.8 it is also possible to use
-        `Exit For Loop If`.
+        See `Exit For Loop If` to conditionally exit a for loop without
+        using `Run Keyword If` or other wrapper keywords.
 
         New in Robot Framework 2.5.2.
         """
-        # Error message is shown only if there is no enclosing for loop
-        error = AssertionError('Exit for loop without enclosing for loop.')
-        error.ROBOT_EXIT_FOR_LOOP = True
-        raise error
+        raise ExitForLoop()
 
     def exit_for_loop_if(self, condition):
-        """Stops executing the enclosing for loop if given condition is true.
+        """Stops executing the enclosing for loop if the `condition` is true.
 
-        This keyword can be used directly in a for loop or in a keyword that
-        the for loop uses. In both cases the test execution continues after
-        the for loop. If executed outside of a for loop, the test fails.
-
-        To unconditionally exit for loop, see `Exit For Loop`.
+        A wrapper for `Exit For Loop` to exit a for loop based on
+        the given condition. The condition is evaluated using the same
+        semantics as with `Should Be True` keyword.
 
         Example:
-        | :FOR | ${var} | IN | @{SOME LIST} |
+        | :FOR | ${var}           | IN                 | @{VALUES} |
         |      | Exit For Loop If | '${var}' == 'EXIT' |
-        |      | Do Something   | ${var} |
+        |      | Do Something     | ${var}             |
 
         New in Robot Framework 2.8.
         """
@@ -1658,65 +1651,74 @@ class _Control:
     def return_from_keyword(self, *return_values):
         """Returns from the enclosing user keyword.
 
-        This keyword can be used to return values from user keyword in addition
-        to [Return] setting. For more detailed information about working with
-        return values, see the user guide.
+        This keyword can be used to return from a user keyword with PASS status
+        without executing it fully. It is also possible to return values
+        similarly as with the `[Return]` setting. For more detailed information
+        about working with the return values, see the User Guide.
 
-        To conditionally return a value from user keyword, see `Return From
-        Keyword If`.
+        This keyword is typically wrapped to some other keyword, such as
+        `Run Keyword If` or `Run Keyword If Test Passed`, to return based
+        on a condition:
 
-        Example:
+        | Run Keyword If | ${rc} < 0 | Return From Keyword |
+        | Run Keyword If Test Passed | Return From Keyword |
 
-        Given user keyword definition as follows:
+        It is possible to use this keyword to return from a keyword also inside
+        a for loop. That, as well as returning values, is demonstrated by the
+        `Find Index` keyword in the following somewhat advanced example.
+        Notice that it is often a good idea to move this kind of complicated
+        logic into a test library.
 
-        | Find Index | [Arguments] | ${element} | @{list} |  |  |
-        |  | ${index}=   | Set Variable | ${0} |          |  |
-        |  | :FOR | ${var} | IN | @{list} |  |
-        |  |  | Run Keyword If | '${var}' == '${element}' | Return From Keyword | ${index} |
-        |  |  | ${index}=  | Set Variable | ${index + 1} |  |
-        |  | [Return] | ${-1} |  |  |  |
+        | ***** Variables *****
+        | @{LIST} =    foo    baz
+        |
+        | ***** Test Cases *****
+        | Example
+        |     ${index} =    Find Index    baz    @{LIST}
+        |     Should Be Equal    ${index}    ${1}
+        |     ${index} =    Find Index    non existing    @{LIST}
+        |     Should Be Equal    ${index}    ${-1}
+        |
+        | ***** Keywords *****
+        | Find Index
+        |    [Arguments]    ${element}    @{items}
+        |    ${index} =    Set Variable    ${0}
+        |    :FOR    ${item}    IN    @{items}
+        |    \\    Run Keyword If    '${item}' == '${element}'    Return From Keyword    ${index}
+        |    \\    ${index} =    Set Variable    ${index + 1}
+        |    Return From Keyword    ${-1}    # Also [Return] would work here.
 
-        one can then write:
-
-        | @{list}= | Create List | foo | baz |
-        | ${index 1}= | Find Index | baz | @{list} |
-        | ${index 2}= | Find Index | non existent | @{list} |
-
-        to get:
-
-        | ${index 1} = 1
-        | ${index 2} = -1
-
-        New in Robot Framework 2.8.
+        The most common use case, returning based on an expression, can be
+        accomplished directly with `Return From Keyword If`. Both of these
+        keywords are new in Robot Framework 2.8.
         """
         raise ReturnFromKeyword(return_values)
 
     @run_keyword_variant(resolve=1)
     def return_from_keyword_if(self, condition, *return_values):
-        """Returns from the enclosing user keyword if condition is true.
+        """Returns from the enclosing user keyword if `condition` is true.
 
-        This keyword can be used as a shorthand for `Run Keyword If` ...
-        `Return From Keyword` combination.
-
-        To unconditionally return values from user keyword, see `Return From
-        Keyword`
-
-        Example:
+        A wrapper for `Return From Keyword` to return based on the given
+        condition. The condition is evaluated using the same semantics as
+        with `Should Be True` keyword.
 
         Given the same example as in `Return From Keyword`, we can rewrite the
-        user keyword definition as follows:
+        `Find Index` keyword as follows:
 
-        | Find Index | [Arguments] | ${element} | @{list} |  |
-        |  | ${index}= | Set Variable | ${0} |  |
-        |  | :FOR | ${var} | IN | @{list} |
-        |  |  | Return From Keyword If | '${var}' == '${element}' | ${index} |
-        |  |  | ${index}=  | Set Variable | ${index + 1} |
-        |  | [Return] | ${-1} |  |  |
+        | ***** Keywords *****
+        | Find Index
+        |    [Arguments]    ${element}    @{items}
+        |    ${index} =    Set Variable    ${0}
+        |    :FOR    ${item}    IN    @{items}
+        |    \\    Return From Keyword If    '${item}' == '${element}'    ${index}
+        |    \\    ${index} =    Set Variable    ${index + 1}
+        |    Return From Keyword    ${-1}    # Also [Return] would work here.
 
         New in Robot Framework 2.8.
         """
         if self._is_true(condition):
             self.return_from_keyword(*return_values)
+
 
 class _Misc:
 

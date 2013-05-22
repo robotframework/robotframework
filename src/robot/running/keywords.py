@@ -14,9 +14,10 @@
 
 from robot.utils import (format_assign_message, get_elapsed_time,
                          get_error_message, get_timestamp, plural_or_not)
-from robot.errors import (ContinueForLoop, DataError, ExecutionFailed,
-                          ExecutionFailures, HandlerExecutionFailed,
-                          _ExecutionPassed, ReturnFromKeyword)
+from robot.errors import (ContinueForLoop, DataError, _ExecutionPassed,
+                          ExecutionFailed, ExecutionFailures, ExitForLoop,
+                          HandlerExecutionFailed, ReturnFromKeyword)
+
 from robot.common import BaseKeyword
 from robot.variables import is_scalar_var, VariableAssigner
 
@@ -48,7 +49,7 @@ class Keywords(object):
         for kw in self._keywords:
             try:
                 kw.run(context)
-            except ContinueForLoop:
+            except (ContinueForLoop, ExitForLoop):
                 raise
             except (_ExecutionPassed), exp:
                 exp.set_earlier_failures(errors)
@@ -141,10 +142,9 @@ class Keyword(BaseKeyword):
 
     def _report_failure(self, context):
         failure = HandlerExecutionFailed()
-        if not (failure.exit_for_loop or failure.continue_for_loop):
-            context.output.fail(failure.full_message)
-            if failure.traceback:
-                context.output.debug(failure.traceback)
+        context.output.fail(failure.full_message)
+        if failure.traceback:
+            context.output.debug(failure.traceback)
         raise failure
 
 
@@ -177,6 +177,8 @@ class ForLoop(BaseKeyword):
     def _run_with_error_handling(self, runnable, context):
         try:
             runnable(context)
+        except ExitForLoop, message:
+            return message
         except ContinueForLoop:
             return None
         except ExecutionFailed, err:
@@ -210,9 +212,9 @@ class ForLoop(BaseKeyword):
             values = items[i:i+len(self.vars)]
             err = self._run_one_round(context, self.vars, values)
             if err:
-                if err.exit_for_loop:
+                if isinstance(err, ExitForLoop):
                     break
-                if err.continue_for_loop:
+                if isinstance(err, ContinueForLoop):
                     continue
                 if isinstance(err, _ExecutionPassed):
                     err.set_earlier_failures(errors)

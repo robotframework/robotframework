@@ -329,22 +329,28 @@ class Variables(utils.NormalizedDict):
             if overwrite or not self.contains(name):
                 self.set(name, value)
 
-    def set_from_variable_table(self, variable_table, overwrite=False):
-        for variable in variable_table:
-            if not variable.has_data():
-                continue
+    def set_from_variable_table(self, variables, overwrite=False):
+        for var in variables:
+            if not var:
+                continue  # TODO: Remove compatibility with old run model.
             try:
                 name, value = self._get_var_table_name_and_value(
-                    variable.name, variable.value)
+                    var.name, var.value)
                 if overwrite or not self.contains(name):
                     self.set(name, value)
             except DataError, err:
-                variable_table.report_invalid_syntax("Setting variable '%s' failed: %s"
-                                                     % (variable.name, unicode(err)))
+                # TODO: Error reporting is disabled with new model
+                if hasattr(variables, 'report_invalid_syntax'):
+                    variables.report_invalid_syntax("Setting variable '%s' failed: %s"
+                                                    % (var.name, unicode(err)))
 
     def _get_var_table_name_and_value(self, name, value):
         self._validate_var_name(name)
-        self._validate_var_is_not_scalar_list(name, value)
+        # TODO: Old run gives as scalars as list, new as strings. Clean up!
+        if is_scalar_var(name) and isinstance(value, basestring):
+            value = [value]
+        else:
+            self._validate_var_is_not_scalar_list(name, value)
         value = [self._unescape_leading_trailing_spaces(cell) for cell in value]
         return name, DelayedVariable(value)
 

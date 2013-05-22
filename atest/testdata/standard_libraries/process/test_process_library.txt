@@ -31,9 +31,9 @@ Switching active process
     Stop Some Process    one
     ${process_two}=    Some process    two
     Process Should Be Running    ${process_two}
-    Switch Active Process    one
+    Switch Process    one
     Process Should Be Stopped
-    Switch Active Process    two
+    Switch Process    two
     Process Should Be Running
     Stop Some Process
 
@@ -57,17 +57,35 @@ Setting Stderr
     [Teardown]    Remove File    ${TEMPDIR}${/}myfile.txt
 
 Setting Environment
-    ${curenv}=    Get Environment Variables
-    ${setenv}=    Create Dictionary           special_var    spessu
-    ${result}=    Run Process    python -c "import os; print os.environ;"    shell=True
-    Should Match        ${result.stdout}   *PATH*
-    Should Not Match    ${result.stdout}   *special_var*
-    ${result}=    Run Process    python -c "import os; print os.environ;"    shell=True   env:special_var=spessu
-    Should Not Match    ${result.stdout}   *PATH*
-    Should Match        ${result.stdout}   *special_var*
-    ${result}=    Run Process    python -c "import os; print os.environ;"    shell=True   env=${setenv}
-    Should Not Match    ${result.stdout}   *PATH*
-    Should Match        ${result.stdout}   *special_var*
+    Set Environment Variable  normalvar  normal
+    ${setenv}=    Create Dictionary           specialvar  spessu
+    ${result}=    Run Process    python -c "import os; print os.getenv('normalvar', '-'), os.getenv('specialvar', '-');"    shell=True
+    Should Be Equal        ${result.stdout}  normal -\n
+    ${result}=    Run Process    python -c "import os; print os.getenv('normalvar', '-'), os.getenv('specialvar', '-');"    shell=True   env:specialvar=spessu
+    Should Be Equal        ${result.stdout}  normal spessu\n
+    ${result}=    Run Process    python -c "import os; print os.getenv('normalvar', '-'), os.getenv('specialvar', '-');"    shell=True   env=${setenv}
+    Should Be Equal        ${result.stdout}  - spessu\n
+
+
+Setting Environment With Multiple Values
+    @{curenv}=    Get Environment Variables
+    ${result}=    Run Process    python -c "import os; print os.environ;"    shell=True   env:specialvar=spessu   env:diiba=da£ba
+    Should Match Regexp       ${result.stdout}   (.*)(?i)@{curenv}[0](.*)
+    Should Match Regexp       ${result.stdout}   (.*)(?i)specialvar(.*)
+    Should Match Regexp       ${result.stdout}   (.*)(?i)diiba(.*)
+
+Setting Environment With Multiple Values Using Dictionary
+    @{curenv}=    Get Environment Variables
+    ${setenv}=    Create Dictionary           specialvar  spessu  diiba2  daaba2
+    ${result}=    Run Process    python   -c    import os; print os.environ;    env=${setenv}
+    Should Not Match Regexp    ${result.stdout}   (.*)(?i)@{curenv}[0](.*)
+    Should Match Regexp        ${result.stdout}   (.*)(?i)specialvar(.*)
+    Should Match Regexp        ${result.stdout}   (.*)(?i)diiba(.*)
+
+Unsupported Arguments Should Cause Error
+    ${setenv}=    Create Dictionary           sp  spessu
+    Run Keyword And Expect Error  UnrecognizedParameterError: *    Run Process    python -c "import os; print os.environ;"    shell=True   genv=${setenv}
+    Run Keyword And Expect Error  UnrecognizedParameterError: *    Run Process    python -c "import os; print os.environ;"    shellx=True
 
 Escaping equals sign
     ${result}=    Run Process    python    -c    print 'stderr\=bar.buu'    shell=True
@@ -125,6 +143,7 @@ Current working directory should not be used with stdout and stderr when absolut
     Should Match    ${output2}    *ZeroDivisionError*
     Remove File    ${stdout_path}
     [Teardown]    Remove Directory    ${TEMPDIR}${/}hc    True
+
 
 *** Keywords ***
 Restart Suite Process If Needed

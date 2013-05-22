@@ -34,13 +34,6 @@ Exit For Loop Keyword Should Have No Messages
     Should Be Equal    ${tc.kws[0].kws[0].kws[0].name}    BuiltIn.Exit For Loop
     Should Be Empty    ${tc.kws[0].kws[0].kws[0].msgs}
 
-Custom exception with ROBOT_EXIT_FOR_LOOP
-    Test And All Keywords Should Have Passed
-
-Custom Java exception with ROBOT_EXIT_FOR_LOOP
-    [Tags]    jybot
-    Test And All Keywords Should Have Passed
-
 Exit For Loop In Test Teardown
     Test And All Keywords Should Have Passed
 
@@ -51,4 +44,7 @@ Exit For Loop If True
     Check Test Case    ${TESTNAME}
 
 Exit For Loop If False
+    Check Test Case    ${TESTNAME}
+
+With Continuable Failure
     Check Test Case    ${TESTNAME}

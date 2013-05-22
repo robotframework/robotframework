@@ -1,5 +1,5 @@
 *** Settings ***
-Suite Setup      Run Tests    ${EMPTY}    standard_libraries/process/test_process_library.txt
+Suite Setup      Run Tests    ${EMPTY}  standard_libraries/process/test_process_library.txt
 Force Tags       regression    pybot    jybot
 Test Setup       Check Preconditions
 Resource         atest_resource.txt
@@ -32,6 +32,15 @@ Setting Stderr
 Setting Environment
     Check Test Case    ${TESTNAME}
 
+Setting Environment With Multiple Values
+    Check Test Case    ${TESTNAME}
+
+Setting Environment With Multiple Values Using Dictionary
+    Check Test Case    ${TESTNAME}
+
+Unsupported Arguments Should Cause Error
+    Check Test Case    ${TESTNAME}
+
 Escaping equals sign
     Check Test Case    ${TESTNAME}
 
@@ -55,6 +64,7 @@ Current working directory should be used with stdout and stderr
 
 Current working directory should not be used with stdout and stderr when absolute path in use
     Check Test Case    ${TESTNAME}
+
 
 *** Keywords ***
 Check Preconditions

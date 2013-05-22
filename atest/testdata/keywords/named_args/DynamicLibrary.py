@@ -1,19 +1,19 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from dynamic_library_impl import (mandatory_and_kwargs, mandatory_and_named, mandatory_named_and_varargs, one_kwarg,
-                                 two_kwargs, four_kw_args, named_arguments_with_varargs, escaped_default_value)
+from dynamic_library_impl import var_args, return_argument, return_arguments
 
 KEYWORDS = {
-    'Escaped Default Value': (escaped_default_value, ['d1=${notvariable}', 'd2=\\\\', 'd3=\n', 'd4=\t']),
-    'Four Kw Args': (four_kw_args, ['a=default', 'b=default', 'c=default', 'd=default']),
-    'Mandatory, Named And Varargs': (mandatory_named_and_varargs, ['a', 'b=default', '*varargs']),
-    'Mandatory And Kwargs': (mandatory_and_kwargs, ['man1', 'man2', 'kwarg=KWARG VALUE']),
-    'Mandatory And Named': (mandatory_and_named, ['a', 'b=default']),
-    'Named Arguments With Varargs': (named_arguments_with_varargs, ['a=default', 'b=default', '*varargs']),
-    'One Kwarg': (one_kwarg, ['kwarg=']),
-    'Two Kwargs': (two_kwargs, ['first=', 'second=']),
-    u'Nön äscii named args': (two_kwargs, [u'nönäscii=', u'官话='])
+    'Escaped Default Value': (var_args, ['d1=${notvariable}', 'd2=\\\\', 'd3=\n', 'd4=\t']),
+    'Four Kw Args': (var_args, ['a=default', 'b=default', 'c=default', 'd=default']),
+    'Mandatory, Named And Varargs': (var_args, ['a', 'b=default', '*varargs']),
+    'Mandatory And Kwargs': (var_args, ['man1', 'man2', 'kwarg=KWARG VALUE']),
+    'Mandatory And Named': (var_args, ['a', 'b=default']),
+    'Named Arguments With Varargs': (return_arguments, ['a=default', 'b=default', '*varargs']),
+    'One Kwarg Returned': (return_argument, ['kwarg=']),
+    'Two Kwargs': (var_args, ['first=', 'second=']),
+    u'Nön äscii named args': (var_args, [u'nönäscii=', u'官话=']),
+    'three named': (var_args, ['a=a', 'b=b', 'c=c'])
 }
 
 class DynamicLibrary(object):

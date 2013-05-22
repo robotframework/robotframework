@@ -225,6 +225,8 @@ time left.
              elsewhere than on Windows. Prior to Robot Framework 2.7 timeouts
              slowed down execution with all Python versions on all platforms.
 
+.. _for loop:
+
 For loops
 ~~~~~~~~~
 
@@ -249,7 +251,7 @@ one value per iteration. The syntax starts with :name:`:FOR`, where
 colon is required to separate the syntax from normal keywords. The
 next cell contains the loop variable, the subsequent cell must have
 :name:`IN`, and the final cells contain values over which to iterate.
-These values can contain variables_.
+These values can contain variables_, including `list variables`_.
 
 The keywords used in the for loop are on the next rows and they must
 be indented one cell to the right. The for loop ends when the indentation
@@ -279,7 +281,7 @@ the loop variable :var:`${animal}` has the value :code:`cat` and then
 second example, loop values are `split into two rows`__ and the
 loop is run altogether five times.
 
-.. tip:: If you use for loops in the `plain text format`_, remember to
+.. tip:: If you use for loops in `plain text format`_ files, remember to
          escape__ the indented cell using a backslash::
 
               *** Test Case ***
@@ -318,9 +320,8 @@ the cells between :name:`:FOR` and :name:`IN`. There can be any number of loop
 variables, but the number of values must be evenly dividable by the number of
 variables.
 
-This syntax naturally works both with and without list variables. In
-the former case, it is often possible to organize loop values below
-loop variables, as in the first part of the example below:
+If there are lot of values to iterate, it is often convenient to organize
+them below the loop variables, as in the first loop of the example below:
 
 .. table:: Using multiple loop variables
    :class: example
@@ -395,15 +396,16 @@ useful when the limits are specified with variables.
 Exiting for loop
 ''''''''''''''''
 
-Normally for loop is executed until all the elements of the loop have been
-looped through or an error occurs and the test case or keyword fails. However
-sometimes execution of a for loop needs to be stopped before all elements of
-the loop have been gone through. `BuiltIn keyword`_ :name:`Exit For Loop` can be
-used to exit the enclosing for loop.
+Normally for loops are executed until all the loop values have been iterated
+or a keyword used inside the loop fails. If there is a need to exit the loop
+earlier,  BuiltIn_ keywords :name:`Exit For Loop` and :name:`Exit For Loop If`
+can be used to accomplish that. They works similarly as :code:`break`
+statement in Python, Java, and many other programming languages.
 
-:name:`Exit For Loop` keyword can be used directly in a for loop or in a keyword
-that the for loop uses. In both cases the test execution continues after the
-for loop. If executed outside of a for loop, the test fails.
+:name:`Exit For Loop` and :name:`Exit For Loop If` keywords can be used
+directly inside a for loop or in a keyword that the loop uses. In both cases
+test execution continues after the loop. It is an error to use these keywords
+outside a for loop.
 
 .. table:: Exit for loop example
    :class: example
@@ -418,55 +420,48 @@ for loop. If executed outside of a for loop, the test fails.
    \             Should Be Equal  ${text}         one
    ============  ===============  ==============  =================  =============  ========
 
-Exiting a for loop can also be initiated from a keyword in a test library by
-raising an exception with :code:`ROBOT_EXIT_FOR_LOOP` attribute. Please see
-`Stopping test execution`_ for examples how to do this in Python and Java
-libraries.
+In the above example it would be possible to use :name:`Exit For Loop If`
+instead of using :name:`Exit For Loop` with :name:`Run Keyword If`.
+For more information about these keywords, including more usage examples,
+see their documentation in the BuiltIn_ library.
 
-To conditionally exit for loop, you can use :name:`Exit For Loop If` instead of `Run Keyword If`. See how to use it in the example of :name:`Continue For Loop If` below.
-
-.. note::
-    Exit for loop functionality is new in Robot Framework 2.5.2.
-
-    Exit For Loop If keyword is new in Robot Framework 2.8.
+.. note:: :name:`Exit For Loop` keyword was added Robot Framework 2.5.2 and
+          :name:`Exit For Loop If` in 2.8.
 
 Continuing for loop
 '''''''''''''''''''
 
-In addition to exiting a for loop mid-iteration, it is also possible to continue to the next iteration of the loop before all keywords in a for loop have been executed. `BuiltIn keyword`_ :name:`Continue For Loop` can be used to skip rest of the keywords in the enclosing for loop to move on to the next iteration of the loop.
+In addition to exiting a for loop prematurely, it is also possible to
+continue to the next iteration of the loop before all keywords have been
+executed. This can be done using BuiltIn_ keywords :name:`Continue For Loop`
+and :name:`Continue For Loop If`, that work like :code:`continue` statement
+in many programming languages.
 
-:name:`Continue For Loop` keyword can be used directly in a for loop or in a keyword that the for loop uses. In both cases the test execution continues with the next iteration of the loop. If executed outside of a for loop, the test fails.
+:name:`Continue For Loop` and :name:`Continue For Loop If` keywords can be used
+directly inside a for loop or in a keyword that the loop uses. In both cases
+rest of the keywords in that iteration are skipped and execution continues
+from the next iteration. If these keywords are used on the last iteration,
+execution continues after the loop. It is an error to use these keywords
+outside a for loop.
 
 .. table:: Continue for loop example
    :class: example
 
-   ================  ===============  ==============  ======================  =================  ========  ========
-       Test Case     Action           Argument        Argument                Argument           Argument  Argument
-   ================  ===============  ==============  ======================  =================  ========  ========
-   Continue Example  ${text}=         Set Variable    ${EMPTY}
-   \                 :FOR             ${var}          IN                      one                 two       three
-   \                                  Run Keyword If  '${var}' == 'two'       Continue For Loop
-   \                                  ${text}=        Set Variable            ${text}${var}
-   \                 Should Be Equal  ${text}          onethree
-   ================  ===============  ==============  ======================  =================  ========  ========
-
-To conditionally continue for loop, you can use :name:`Continue For Loop If` instead of `Run Keyword If`.
-
-.. table:: Example of Continue For Loop If
-   :class: example
-
-   ================  ===============  ====================  ================  =============  ========  ========
-       Test Case     Action           Argument              Argument          Argument       Argument  Argument
-   ================  ===============  ====================  ================  =============  ========  ========
+   ================  ===============  ====================  =================  =============  ========  ========
+       Test Case         Action             Argument             Argument        Argument     Argument  Argument
+   ================  ===============  ====================  =================  =============  ========  ========
    Continue Example  ${text}=         Set Variable          ${EMPTY}
-   \                 :FOR             ${var}                IN                one            two       three
-   \                                  Continue For Loop If  '${var}' == 'two
-   \                                  ${text}=              Set Variable      ${text}${var}
+   \                 :FOR             ${var}                IN                 one            two       three
+   \                                  Continue For Loop If  '${var}' == 'two'
+   \                                  ${text} =             Set Variable       ${text}${var}
    \                 Should Be Equal  ${text}               onethree
-   ================  ===============  ====================  ================  =============  ========  ========
+   ================  ===============  ====================  =================  =============  ========  ========
 
-.. note::
-    Keywords Continue For Loop and Continue For Loop If are new in Robot Framework 2.8.
+For more information about these keywords, including usage examples, see their
+documentation in the BuiltIn_ library.
+
+.. note::  Both :name:`Continue For Loop` and :name:`Continue For Loop If`
+           were added in Robot Framework 2.8.
 
 Removing unnecessary keywords from outputs
 ''''''''''''''''''''''''''''''''''''''''''

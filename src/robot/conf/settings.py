@@ -53,9 +53,11 @@ class _BaseSettings(object):
                  'NoStatusRC'       : ('nostatusrc', False),
                  'MonitorColors'    : ('monitorcolors', 'AUTO'),
                  'StdOut'           : ('stdout', None),
-                 'StdErr'           : ('stderr', None)}
+                 'StdErr'           : ('stderr', None),
+                 'XUnitSkipNonCritical' : ('xunitskipnoncritical', False)}
     _output_opts = ['Output', 'Log', 'Report', 'DebugFile', 'XUnitFile']
 
+    # TODO: Is log used? Accept options as **kws instead/in addition?
     def __init__(self, options=None, log=True):
         self._opts = {}
         self._cli_opts = self._cli_opts.copy()
@@ -272,6 +274,10 @@ class _BaseSettings(object):
     @property
     def status_rc(self):
         return not self['NoStatusRC']
+
+    @property
+    def xunit_skip_noncritical(self):
+        return self['XUnitSkipNonCritical']
 
 
 class RobotSettings(_BaseSettings):

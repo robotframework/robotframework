@@ -95,8 +95,8 @@ Options
                           not run even if they are included with --include.
                           Tags are excluded using the rules explained in
                           --include.
- -R --runfailed output    Select failed tests from a previous output file to be
-                          re-run. Equivalent to selecting same tests
+ -R --runfailed output    Select failed tests from an earlier output file to be
+                          re-executed. Equivalent to selecting same tests
                           individually using --test option.
  -c --critical tag *      Tests having given tag are considered critical. If no
                           critical tags are set, all tags are critical. Tags
@@ -142,6 +142,7 @@ Options
                           similarly as --log. Default: report.html
  -x --xunitfile file      xUnit compatible result file. Not created unless this
                           option is specified.
+    --xunitskipnoncritical  Mark non-critical tests on xUnit output as skipped.
  -b --debugfile file      Debug file written during execution. Not created
                           unless this option is specified.
  -T --timestampoutputs    When this option is used, timestamp in a format
@@ -350,6 +351,8 @@ class RobotFramework(Application):
 
     def __init__(self):
         Application.__init__(self, USAGE, arg_limits=(1,), logger=LOGGER)
+        if os.environ.get('NEWRUN'):
+            self.main = self.new_main
 
     def main(self, datasources, **options):
         STOP_SIGNAL_MONITOR.start()
@@ -371,6 +374,19 @@ class RobotFramework(Application):
             output, settings = settings.get_rebot_datasource_and_settings()
             ResultWriter(output).write_results(settings)
         return suite.return_code
+
+    def new_main(self, datasources, **options):
+        from robot.new_running import TestSuiteBuilder
+        settings = RobotSettings(options)
+        suite = TestSuiteBuilder().build(*datasources)
+        result = suite.run(settings)
+        result.configure(status_rc=settings.status_rc)
+        LOGGER.info("Tests execution ended. Statistics:\n%s"
+                    % result.suite.statistics.message)
+        if settings.is_rebot_needed():
+            output, settings = settings.get_rebot_datasource_and_settings()
+            ResultWriter(output).write_results(settings)
+        return result.return_code
 
     def validate(self, options, arguments):
         if len(arguments) > 1:

@@ -209,6 +209,7 @@ class RunnableMultiTestSuite(RunnableTestSuite):
         self.imports = []
         self.setup = Setup(None, None)
         self.teardown = Teardown(None, None)
+        self.user_keywords = None
         for suite in suitedatas:
             RunnableTestSuite(suite, self, process_variables=process_variables)
         self._exit_on_failure_mode = False
@@ -313,11 +314,11 @@ class RunnableTestCase(BaseTestCase):
 
     def _set_status_before_teardown(self, context, errors):
         message = errors.get_message()
-        if message:
+        if message is None:
+            self.status = 'PASS'
+        else:
             self.status = 'FAIL'
             self.message = message
-        else:
-            self.status = 'PASS'
         context.set_test_status_before_teardown(self.message, self.status)
 
     def _run_teardown(self, context, errors):
