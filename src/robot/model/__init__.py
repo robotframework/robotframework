@@ -20,6 +20,7 @@ there is a plan to change also :mod:`robot.running` to use this in RF 2.8.
 This package is considered stable.
 """
 
+from .configurer import SuiteConfigurer
 from .testsuite import TestSuite
 from .testcase import TestCase
 from .keyword import Keyword

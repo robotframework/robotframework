@@ -17,6 +17,7 @@ from itertools import chain
 from robot.model import TotalStatisticsBuilder
 from robot import model, utils
 
+from .configurer import SuiteConfigurer
 from .messagefilter import MessageFilter
 from .keywordremover import KeywordRemover
 from .keyword import Keyword
@@ -76,6 +77,9 @@ class TestSuite(model.TestSuite):
 
     def filter_messages(self, log_level='TRACE'):
         self.visit(MessageFilter(log_level))
+
+    def configure(self, **options):
+        self.visit(SuiteConfigurer(**options))
 
     # TODO: Remove compatibility code below when new run is integrated
     def get_full_message(self):
