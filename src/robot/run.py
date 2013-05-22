@@ -379,6 +379,7 @@ class RobotFramework(Application):
         from robot.new_running import TestSuiteBuilder
         settings = RobotSettings(options)
         suite = TestSuiteBuilder().build(*datasources)
+        suite.configure(**settings.suite_config)
         result = suite.run(settings)
         result.configure(status_rc=settings.status_rc)
         LOGGER.info("Tests execution ended. Statistics:\n%s"

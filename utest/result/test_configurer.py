@@ -15,16 +15,16 @@ class TestSuiteAttributes(unittest.TestCase):
         self.suite.tests.create(name='Make suite non-empty')
 
     def test_name_and_doc(self):
-        SuiteConfigurer(name='New Name', doc='New Doc').configure(self.suite)
+        self.suite.visit(SuiteConfigurer(name='New Name', doc='New Doc'))
         assert_equal(self.suite.name, 'New Name')
         assert_equal(self.suite.doc, 'New Doc')
 
     def test_metadata(self):
-        SuiteConfigurer(metadata={'bb': '2', 'C': '2'}).configure(self.suite)
+        self.suite.visit(SuiteConfigurer(metadata={'bb': '2', 'C': '2'}))
         assert_equal(self.suite.metadata, {'A A': '1', 'bb': '2', 'C': '2'})
 
     def test_metadata_is_normalized(self):
-        SuiteConfigurer(metadata={'aa': '2', 'B_B': '2'}).configure(self.suite)
+        self.suite.visit(SuiteConfigurer(metadata={'aa': '2', 'B_B': '2'}))
         assert_equal(self.suite.metadata, {'A A': '2', 'bb': '2'})
 
 
@@ -37,22 +37,22 @@ class TestTestAttributes(unittest.TestCase):
         self.suite.suites[0].tests = [TestCase(tags=['tag'])]
 
     def test_set_tags(self):
-        SuiteConfigurer(set_tags=['new']).configure(self.suite)
+        self.suite.visit(SuiteConfigurer(set_tags=['new']))
         assert_equal(list(self.suite.tests[0].tags), ['new'])
         assert_equal(list(self.suite.suites[0].tests[0].tags), ['new', 'tag'])
 
     def test_tags_are_normalized(self):
-        SuiteConfigurer(set_tags=['TAG', '', 't a g', 'NONE']).configure(self.suite)
+        self.suite.visit(SuiteConfigurer(set_tags=['TAG', '', 't a g', 'NONE']))
         assert_equal(list(self.suite.tests[0].tags), ['TAG'])
         assert_equal(list(self.suite.suites[0].tests[0].tags), ['tag'])
 
     def test_remove_negative_tags(self):
-        SuiteConfigurer(set_tags=['n', '-TAG']).configure(self.suite)
+        self.suite.visit(SuiteConfigurer(set_tags=['n', '-TAG']))
         assert_equal(list(self.suite.tests[0].tags), ['n'])
         assert_equal(list(self.suite.suites[0].tests[0].tags), ['n'])
 
     def test_remove_negative_tags_using_pattern(self):
-        SuiteConfigurer(set_tags=['-t*', '-nomatch']).configure(self.suite)
+        self.suite.visit(SuiteConfigurer(set_tags=['-t*', '-nomatch']))
         assert_equal(list(self.suite.tests[0].tags), [])
         assert_equal(list(self.suite.suites[0].tests[0].tags), [])
 
@@ -66,18 +66,18 @@ class TestFiltering(unittest.TestCase):
         self.suite.suites.create(name='sub').tests.create(name='n1', tags=['t1'])
 
     def test_include(self):
-        SuiteConfigurer(include_tags=['t1', 'none', '', '?2']).configure(self.suite)
+        self.suite.visit(SuiteConfigurer(include_tags=['t1', 'none', '', '?2']))
         assert_equal([t.name for t in self.suite.tests], ['n1', 'n2'])
         assert_equal([t.name for t in self.suite.suites[0].tests], ['n1'])
 
     def test_exclude(self):
-        SuiteConfigurer(exclude_tags=['t1', '?1ANDt2']).configure(self.suite)
+        self.suite.visit(SuiteConfigurer(exclude_tags=['t1', '?1ANDt2']))
         assert_equal([t.name for t in self.suite.tests], ['n0'])
         assert_equal(list(self.suite.suites), [])
 
     def test_include_by_names(self):
-        SuiteConfigurer(include_suites=['s?b', 'xxx'],
-                        include_tests=['', '*1', 'xxx']).configure(self.suite)
+        self.suite.visit(SuiteConfigurer(include_suites=['s?b', 'xxx'],
+                                         include_tests=['', '*1', 'xxx']))
         assert_equal(list(self.suite.tests), [])
         assert_equal([t.name for t in self.suite.suites[0].tests], ['n1'])
 
@@ -87,7 +87,7 @@ class TestFiltering(unittest.TestCase):
         assert_raises_with_msg(DataError,
                                "Suite 'root' contains no tests with tag 'i', "
                                "without tag 'e' and named 't' in suite 's'.",
-                               configurer.configure, self.suite)
+                               self.suite.visit, configurer)
 
     def test_no_matching_tests_with_multiple_selectors(self):
         configurer = SuiteConfigurer(include_tags=['i1', 'i2'],
@@ -95,15 +95,19 @@ class TestFiltering(unittest.TestCase):
                                      include_suites=['s1', 's2', 's3'],
                                      include_tests=['t1', 't2'])
         assert_raises_with_msg(DataError,
-                               "Suite 'root' contains no tests with tags 'i1' or 'i2', "
-                               "without tags 'e1' or 'e2' and named 't1' or 't2' "
+                               "Suite 'root' contains no tests "
+                               "with tags 'i1' or 'i2', "
+                               "without tags 'e1' or 'e2' and "
+                               "named 't1' or 't2' "
                                "in suites 's1', 's2' or 's3'.",
-                               configurer.configure, self.suite)
+                               self.suite.visit, configurer)
 
     def test_empty_suite(self):
+        suite = TestSuite(name='x')
+        suite.visit(SuiteConfigurer(empty_suite_ok=True))
         assert_raises_with_msg(DataError,
                                "Suite 'x' contains no tests.",
-                               SuiteConfigurer().configure, TestSuite(name='x'))
+                               suite.visit, SuiteConfigurer())
 
 
 class TestRemoveKeywords(unittest.TestCase):
@@ -242,7 +246,7 @@ class TestRemoveKeywords(unittest.TestCase):
         assert_equal(len(keyword.keywords), 0)
 
     def _remove(self, option, item):
-        SuiteConfigurer(remove_keywords=option).configure(item)
+        item.visit(SuiteConfigurer(remove_keywords=option))
 
     def _remove_passed(self, item):
         self._remove('PASSED', item)

@@ -17,7 +17,6 @@ from __future__ import with_statement
 from robot.model import Statistics
 
 from .executionerrors import ExecutionErrors
-from .configurer import SuiteConfigurer
 from .testsuite import TestSuite
 
 
@@ -51,7 +50,7 @@ class Result(object):
 
     def configure(self, status_rc=True, suite_config=None, stat_config=None):
         if suite_config:
-            SuiteConfigurer(**suite_config).configure(self.suite)
+            self.suite.configure(**suite_config)
         self._status_rc = status_rc
         self._stat_config = stat_config or {}
 

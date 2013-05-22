@@ -14,6 +14,7 @@
 
 from robot.utils import setter
 
+from .configurer import SuiteConfigurer
 from .criticality import Criticality
 from .filter import Filter
 from .itemlist import ItemList
@@ -98,6 +99,9 @@ class TestSuite(ModelObject):
                included_tags=None, excluded_tags=None):
         self.visit(Filter(included_suites, included_tests,
                           included_tags, excluded_tags))
+
+    def configure(self, **options):
+        self.visit(SuiteConfigurer(**options))
 
     def visit(self, visitor):
         visitor.visit_suite(self)
