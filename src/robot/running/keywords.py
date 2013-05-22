@@ -49,8 +49,6 @@ class Keywords(object):
         for kw in self._keywords:
             try:
                 kw.run(context)
-            except (ContinueForLoop, ExitForLoop):
-                raise
             except (_ExecutionPassed), exp:
                 exp.set_earlier_failures(errors)
                 raise exp
@@ -81,7 +79,7 @@ class Keyword(BaseKeyword):
         try:
             return_value = self._run(handler, context)
         except ExecutionFailed, err:
-            self.status = 'FAIL' if not err.execution_should_be_passed else 'PASS'
+            self.status = 'FAIL' if not isinstance(err, _ExecutionPassed) else 'PASS'
             self._end(context, error=err)
             raise
         else:
@@ -167,7 +165,7 @@ class ForLoop(BaseKeyword):
         self.starttime = get_timestamp()
         context.start_keyword(self)
         error = self._run_with_error_handling(self._validate_and_run, context)
-        self.status = 'PASS' if not error or error.execution_should_be_passed else 'FAIL'
+        self.status = 'PASS' if not error or isinstance(error, _ExecutionPassed) else 'FAIL'
         self.endtime = get_timestamp()
         self.elapsedtime = get_elapsed_time(self.starttime, self.endtime)
         context.end_keyword(self)
@@ -177,10 +175,6 @@ class ForLoop(BaseKeyword):
     def _run_with_error_handling(self, runnable, context):
         try:
             runnable(context)
-        except ExitForLoop, message:
-            return message
-        except ContinueForLoop:
-            return None
         except ExecutionFailed, err:
             return err
         except DataError, err:
@@ -238,7 +232,7 @@ class ForLoop(BaseKeyword):
         for var, value in zip(variables, values):
             context.get_current_vars()[var] = value
         error = self._run_with_error_handling(self.keywords.run, context)
-        foritem.end('PASS' if not error or error.execution_should_be_passed else 'FAIL')
+        foritem.end('PASS' if not error or isinstance(error, _ExecutionPassed) else 'FAIL')
         context.end_keyword(foritem)
         return error
 
