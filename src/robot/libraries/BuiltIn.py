@@ -817,6 +817,26 @@ class _Verify:
         self.log('Execution passed with message:\n%s' % log_message, level)
         raise PassExecution(message)
 
+    def pass_execution_if(self, condition, message, *tags):
+        """Skips rest of the test with status PASS if the `condition` is true.
+
+        A wrapper for `Pass Execution` to skip the rest of test execution
+        and make test PASS, based on the given condition.
+
+        The given `condition` is evaluated similarly as with `Should Be
+        True` keyword, and `message` and `*tags` have same semantics as with
+        `Pass Execution`.
+
+        Example:
+        | :FOR | ${var}            | IN                     | @{VALUES}               |
+        |      | Pass Execution If | '${var}' == 'EXPECTED' | Correct value was found |
+        |      | Do Something      | ${var}                 |
+
+        New in Robot Framework 2.8.
+        """
+        if self._is_true(condition):
+            self.pass_execution(message, *tags)
+
 
 class _Variables:
 

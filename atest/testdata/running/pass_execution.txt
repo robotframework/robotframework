@@ -106,6 +106,19 @@ With library calling Pass Execution keyword
     Keyword From Library Calls Builtin    message
     Fail    this should not execute
 
+Should pass execution if condition true
+    [Documentation]    PASS message
+    :FOR    ${var}    IN    one    two
+    \    Pass Execution If     1 == 1    message    tag1    tag2
+    \    Fail    this should not execute
+    Should BE Equal    ${var}    one
+
+Should not pass execution if condition false
+    [Documentation]   FAIL this should execute
+    :FOR    ${var}    IN    one    two
+    \    Pass Execution If     1 == 2    message    tag1    tag2
+    \    Fail    this should execute
+    Should BE Equal    ${var}    two
 
 
 *** Keywords ***
