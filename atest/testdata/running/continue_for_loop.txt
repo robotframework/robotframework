@@ -40,11 +40,11 @@ Continue For Loop In User Keyword Calling User Keyword With Continue For Loop
     Should Be Equal    ${x}    two-extra
 
 Continue For Loop Without For Loop Should Fail
-   [Documentation]    FAIL Continue for loop without enclosing for loop.
+   [Documentation]    FAIL Invalid 'Continue For Loop' usage.
    Continue For Loop
 
 Continue For Loop In User Keyword Without For Loop Should Fail
-   [Documentation]    FAIL Continue for loop without enclosing for loop.
+   [Documentation]    FAIL Invalid 'Continue For Loop' usage.
    With Only Continue For Loop
 
 Continue For Loop In Test Teardown
