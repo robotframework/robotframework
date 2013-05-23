@@ -1,0 +1,18 @@
+*** Settings ***
+Suite Setup    Run Tests  ${EMPTY}  misc/timeouts.txt
+Resource  atest_resource.txt
+Force Tags   pybot    jybot    regression
+
+*** Test Cases ***
+Test timeout is written to XML
+    Element Attribute Should Be   ${OUTFILE}   timeout   1 minute 42 seconds   */test[@name='Default Test Timeout']
+
+Keyword timeout is written to XML
+    Element Attribute Should Be   ${OUTFILE}   timeout   42 seconds   */test[@name='Default Test Timeout']/kw[@name='Timeouted']
+
+Empty keyword timeout should not be written to XML
+    @{elems}=   Get Elements  ${OUTFILE}  .//kw[@name='BuiltIn.No Operation']
+    Element Should Not Have Attribute   @{elems}[0]    timeout
+
+Empty test timeout should not be written to XML
+    Element Should Not Have Attribute      ${OUTFILE}   timeout   */test[@name='No Timeout']
