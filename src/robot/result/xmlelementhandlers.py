@@ -100,7 +100,7 @@ class TestCaseHandler(_Handler):
 
     def start(self, elem, result):
         return result.tests.create(name=elem.get('name'),
-                                   timeout=elem.get('timeout', ''))
+                                   timeout=elem.get('timeout'))
 
     def _children(self):
         return [DocHandler(), TagsHandler(), TestStatusHandler(), KeywordHandler()]
