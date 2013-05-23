@@ -45,7 +45,7 @@ class TestBuildingSuiteExecutionResult(unittest.TestCase):
     def test_testcase_is_built(self):
         assert_equals(self._test.name, 'First One')
         assert_equals(self._test.doc, 'Test case documentation')
-        assert_equals(self._test.timeout, '')
+        assert_equals(self._test.timeout, None)
         assert_equals(list(self._test.tags), ['t1'])
         assert_equals(len(self._test.keywords), 2)
         assert_equals(self._test.status, 'PASS')
@@ -56,6 +56,7 @@ class TestBuildingSuiteExecutionResult(unittest.TestCase):
     def test_keyword_is_built(self):
         assert_equals(self._keyword.name, 'BuiltIn.Log')
         assert_equals(self._keyword.doc, 'Logs the given message with the given level.')
+        assert_equals(self._keyword.timeout, None)
         assert_equals(self._keyword.args, ['Test 1'])
         assert_equals(self._keyword.status, 'PASS')
         assert_equals(self._keyword.starttime, '20111024 13:41:20.926')
@@ -200,7 +201,7 @@ class TestBuildingFromXmlStringAndHandlingMissingInformation(unittest.TestCase):
         assert_equals(test.id, 's1-t1')
         assert_equals(test.name, 'some name')
         assert_equals(test.doc, '')
-        assert_equals(test.timeout, '')
+        assert_equals(test.timeout, None)
         assert_equals(test.critical, True)
         assert_equals(list(test.tags), [])
         assert_equals(list(test.keywords), [])

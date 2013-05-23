@@ -65,8 +65,7 @@ class XmlLogger(object):
         self._writer.element('msg', msg.message, attrs)
 
     def start_keyword(self, kw):
-        attrs = {'name'      : kw.name,
-                 'type'      : kw.type}
+        attrs = {'name': kw.name, 'type': kw.type}
         if kw.timeout:
             attrs['timeout'] = str(kw.timeout)
         self._writer.start('kw', attrs)
@@ -78,8 +77,7 @@ class XmlLogger(object):
         self._writer.end('kw')
 
     def start_test(self, test):
-        attrs = {'id'      : test.id,
-                 'name'    : test.name}
+        attrs = {'id': test.id, 'name': test.name}
         if test.timeout:
             attrs['timeout'] = str(test.timeout)
         self._writer.start('test', attrs)
