@@ -29,7 +29,13 @@ Setting Stdout
 Setting Stderr
     Check Test Case    ${TESTNAME}
 
-Setting Environment
+Without Env Configuration the Environment Should Be As It Was
+    Check Test Case    ${TESTNAME}
+
+With Env: Configuration the Environment Should Contain Additional Variable
+    Check Test Case    ${TESTNAME}
+
+With Env= Configuration the Environment Should Contain Only Additional Variable
     Check Test Case    ${TESTNAME}
 
 Setting Environment With Multiple Values

@@ -56,15 +56,21 @@ Setting Stderr
     Should Be Equal    ${result.stderr}    ${output}
     [Teardown]    Remove File    ${TEMPDIR}${/}myfile.txt
 
-Setting Environment
+Without Env Configuration the Environment Should Be As It Was
+    Set Environment Variable  normalvar  normal
+    ${result}=    Run Process    python -c "import os; print os.getenv('normalvar', '-'), os.getenv('specialvar', '-');"    shell=True
+    Should Be Equal        ${result.stdout}    normal -\n
+
+With Env: Configuration the Environment Should Contain Additional Variable
+    Set Environment Variable  normalvar  normal
+    ${result}=    Run Process    python -c "import os; print os.getenv('normalvar', '-'), os.getenv('specialvar', '-');"    shell=True   env:specialvar=spessu
+    Should Be Equal        ${result.stdout}    normal spessu\n
+
+With Env= Configuration the Environment Should Contain Only Additional Variable
     Set Environment Variable  normalvar  normal
     ${setenv}=    Create Dictionary           specialvar  spessu
-    ${result}=    Run Process    python -c "import os; print os.getenv('normalvar', '-'), os.getenv('specialvar', '-');"    shell=True
-    Should Be Equal        ${result.stdout}  normal -\n
-    ${result}=    Run Process    python -c "import os; print os.getenv('normalvar', '-'), os.getenv('specialvar', '-');"    shell=True   env:specialvar=spessu
-    Should Be Equal        ${result.stdout}  normal spessu\n
     ${result}=    Run Process    python -c "import os; print os.getenv('normalvar', '-'), os.getenv('specialvar', '-');"    shell=True   env=${setenv}
-    Should Be Equal        ${result.stdout}  - spessu\n
+    Should Be Equal        ${result.stdout}    - spessu\n
 
 Setting Environment With Multiple Values
     Set Environment Variable  normalvar  normal
