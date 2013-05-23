@@ -54,18 +54,18 @@ In a keyword inside keyword teardown
 
 Fails if used directly in keyword teardown
     [Documentation]    FAIL    Keyword teardown failed:
-    ...                        Return from keyword without enclosing keyword
+    ...                        Invalid 'Return From Keyword' usage.
     Returning directly from keyword teardown fails
     Fail    Should have failed before this
 
 Fails if used outside keywords
-    [Documentation]    FAIL    Return from keyword without enclosing keyword\n\n
-    ...    Also teardown failed:\nReturn from keyword without enclosing keyword
+    [Documentation]    FAIL    Invalid 'Return From Keyword' usage.\n\n
+    ...    Also teardown failed:\nInvalid 'Return From Keyword' usage.
     Return From Keyword    ${non existent variable}
     [Teardown]    Return From Keyword
 
 Fails if used outside keywords inside for loop
-    [Documentation]    FAIL    Return from keyword without enclosing keyword
+    [Documentation]    FAIL    Invalid 'Return From Keyword' usage.
     :FOR    ${var}    IN    1    2    3
     \    Return From Keyword
 
