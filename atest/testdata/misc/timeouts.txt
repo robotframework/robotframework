@@ -16,6 +16,10 @@ Test Timeout With Variable
     [Timeout]    ${100}
     Timeouted
 
+No Timeout
+    [Timeout]
+    No Operation
+
 *** Keywords ***
 Timeouted
     [Timeout]    42    My message
