@@ -8,8 +8,8 @@
 </arguments>
 <status status="PASS" endtime="20111024 13:41:20.888" starttime="20111024 13:41:20.886"></status>
 </kw>
-<test id="s1-s1-t1" name="First One" timeout="">
-<kw type="kw" name="BuiltIn.Log" timeout="">
+<test id="s1-s1-t1" name="First One">
+<kw type="kw" name="BuiltIn.Log">
 <doc>Logs the given message with the given level.</doc>
 <arguments>
 <arg>Test 1</arg>
@@ -17,11 +17,11 @@
 <msg timestamp="20111024 13:41:20.927" level="INFO">Test 1</msg>
 <status status="PASS" endtime="20111024 13:41:20.928" starttime="20111024 13:41:20.926"></status>
 </kw>
-<kw type="kw" name="logs on trace" timeout="">
+<kw type="kw" name="logs on trace">
 <doc></doc>
 <arguments>
 </arguments>
-<kw type="kw" name="BuiltIn.Log" timeout="">
+<kw type="kw" name="BuiltIn.Log">
 <doc>Logs the given message with the given level.</doc>
 <arguments>
 <arg>Log on ${TEST NAME}</arg>
@@ -50,8 +50,8 @@
 </arguments>
 <status status="PASS" endtime="20111024 13:41:20.888" starttime="20111024 13:41:20.886"></status>
 </kw>
-<test id="s1-s2-t1" name="First One" timeout="">
-<kw type="kw" name="BuiltIn.Log" timeout="">
+<test id="s1-s2-t1" name="First One">
+<kw type="kw" name="BuiltIn.Log">
 <doc>Logs the given message with the given level.</doc>
 <arguments>
 <arg>Test 1</arg>
@@ -59,11 +59,11 @@
 <msg timestamp="20111024 13:41:20.927" level="INFO">Test 1</msg>
 <status status="PASS" endtime="20111024 13:41:20.928" starttime="20111024 13:41:20.926"></status>
 </kw>
-<kw type="kw" name="logs on trace" timeout="">
+<kw type="kw" name="logs on trace">
 <doc></doc>
 <arguments>
 </arguments>
-<kw type="kw" name="BuiltIn.Log" timeout="">
+<kw type="kw" name="BuiltIn.Log">
 <doc>Logs the given message with the given level.</doc>
 <arguments>
 <arg>Log on ${TEST NAME}</arg>

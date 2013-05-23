@@ -4,9 +4,9 @@
 <doc></doc>
 <metadata>
 </metadata>
-<test name="Pass" timeout="">
+<test name="Pass">
 <doc></doc>
-<kw type="kw" name="BuiltIn.Log" timeout="">
+<kw type="kw" name="BuiltIn.Log">
 <doc>Logs the given message with the given level.</doc>
 <arguments>
 <arg>Nothing to see here</arg>
@@ -18,9 +18,9 @@
 </tags>
 <status status="PASS" endtime="20111031 13:06:46.972" critical="yes" starttime="20111031 13:06:46.969"></status>
 </test>
-<test name="Fail" timeout="">
+<test name="Fail">
 <doc></doc>
-<kw type="kw" name="BuiltIn.Fail" timeout="">
+<kw type="kw" name="BuiltIn.Fail">
 <doc>Fails the test immediately with the given (optional) message.</doc>
 <arguments>
 <arg>Message</arg>
@@ -35,7 +35,7 @@
 </tags>
 <status status="FAIL" endtime="20111031 13:06:46.977" critical="yes" starttime="20111031 13:06:46.972">Message</status>
 </test>
-<kw type="teardown" name="BuiltIn.Fail" timeout="">
+<kw type="teardown" name="BuiltIn.Fail">
 <doc>Fails the test immediately with the given (optional) message.</doc>
 <arguments>
 <arg>XXX</arg>
