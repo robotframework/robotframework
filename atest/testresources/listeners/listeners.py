@@ -52,7 +52,7 @@ class KeywordType(object):
     ROBOT_LISTENER_API_VERSION = '2'
 
     def start_keyword(self, name, attrs):
-        expected =  attrs['args'][0] if name == 'BuiltIn.Log' else name
+        expected = attrs['args'][0] if name.startswith('BuiltIn.') else name
         if attrs['type'] != expected:
             raise RuntimeError("Wrong keyword type '%s', expected '%s'."
                                % (attrs['type'], expected))

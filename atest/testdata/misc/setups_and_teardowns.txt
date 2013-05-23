@@ -11,6 +11,18 @@ Test Teardown   Test Teardown
 Test with setup and teardown
     Keyword
 
+Test with failing setup
+    [Setup]    Fail    Test Setup
+    Fail    Should not be executed
+
+Test with failing teardown
+    Keyword
+    [Teardown]    Fail    Test Teardown
+
+Failing test with failing teardown
+    Fail    Keyword
+    [Teardown]    Fail    Test Teardown
+
 ***Keywords***
 
 Suite Setup
