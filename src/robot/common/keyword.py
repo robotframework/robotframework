@@ -11,6 +11,7 @@
 #  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
+from robot.errors import ExecutionPassed
 
 
 class BaseKeyword:
@@ -31,3 +32,10 @@ class BaseKeyword:
     def serialize(self, serializer):
         serializer.start_keyword(self)
         serializer.end_keyword(self)
+
+    def _get_status(self, error):
+        if not error:
+            return 'PASS'
+        if isinstance(error, ExecutionPassed) and not error.earlier_failures:
+            return 'PASS'
+        return 'FAIL'

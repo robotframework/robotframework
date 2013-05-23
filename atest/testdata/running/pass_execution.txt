@@ -73,17 +73,50 @@ With continuable failure
     Pass Execution    message
     Fail    should not go here
 
-With test suite setup modifying tags
+With continuable failure in user keyword
+    [Documentation]    FAIL this fails
+    Keyword with continuable failure    this fails
+
+With continuable failure in FOR loop
+    [Documentation]    FAIL failure
+    :FOR    ${var}    IN    foo    bar
+    \    Run Keyword And Continue On Failure    Fail    failure
+    \    Pass Execution    message
+    Should Be True    '${var}' == 'foo'
+
+With continuable failure and test case teardown fails
+    [Documentation]    FAIL failure
+    ...
+    ...                     Also teardown failed:
+    ...                     teardown failure
+    Run Keyword And Continue On Failure    Fail    failure
+    Pass Execution    message
+    Fail    this should not run
+    [Teardown]    Fail    teardown failure
 
 With test case setup
     [Documentation]    FAIL Setup should succeed
     [Setup]    Pass Execution    message    tag   -force1
     Fail    Setup should succeed
 
+If test case setup fails
+    [Documentation]   FAIL Setup failed:
+    ...                    setup fail
+    [Setup]    Keyword with continuable failure    setup fail
+    Fail    this should not be executed
+
 With test case teardown
     [Documentation]    FAIL message
     [Teardown]    Pass Execution    message
     Fail    Teardown should succeed
+
+If test case teardown fails
+    [Documentation]    FAIL    message
+    ...
+    ...                Also teardown failed:
+    ...                failure
+    [Teardown]    Fail    failure
+    Pass Execution    message
 
 Modifying tags in test case teardown should succeed
     [Documentation]    PASS message
@@ -125,3 +158,8 @@ A Nested Keyword
     A Keyword   ${message}
     Fail   should not go here either
 
+Keyword with continuable failure
+    [Arguments]    ${msg}
+    Run Keyword And Continue On Failure    Fail    ${msg}
+    Pass Execution    message
+    Fail    Should not go here

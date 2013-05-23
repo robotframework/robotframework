@@ -68,6 +68,21 @@ Inside nested user keyword
 With continuable failure
     Check Test Case    ${TESTNAME}
 
+With continuable failure in user keyword
+    ${tc}=    Check Test Case    ${TESTNAME}
+    Should Be True    '${tc.kws[0].status}' == 'FAIL'
+
+With continuable failure in FOR loop
+    ${tc}=    Check Test Case    ${TESTNAME}
+    Log    ${tc.kws[0].status}
+    Should Be True    '${tc.kws[0].status}' == 'FAIL'
+    Should Be True    '${tc.kws[0].kws[0].status}' == 'FAIL'
+    Should Be True    '${tc.kws[0].kws[0].kws[0].status}' == 'FAIL'
+    Should Be True    '${tc.kws[0].kws[0].kws[1].status}' == 'PASS'
+
+With continuable failure and test case teardown fails
+    ${tc}=    Check Test Case    ${TESTNAME}
+
 With test case setup
     ${tc}=    Check Test Tags    ${TESTNAME}    force2    tag
     Should Be True    '${tc.setup.status}' == 'PASS'
@@ -75,10 +90,16 @@ With test case setup
     Check Log Message    ${tc.setup.msgs[1]}    Set tag 'tag'.
     Check Log Message    ${tc.setup.msgs[2]}    ${PREFIX}message
 
+If test case setup fails
+    ${tc}=    Check Test Case    ${TESTNAME}
+
 With test case teardown
     ${tc}=    Check Test Case    ${TESTNAME}
     Should Be True    '${tc.teardown.status}' == 'PASS'
     Check Log Message    ${tc.teardown.msgs[0]}    ${PREFIX}message
+
+If test case teardown fails
+    ${tc}=    Check Test Case    ${TESTNAME}
 
 Modifying tags in test case teardown should succeed
     ${tc}=    Check Test Tags    ${TESTNAME}    tag1    tag2

@@ -177,18 +177,21 @@ class UserKeywordHandler(object):
         context.output.trace(lambda: self._log_args(variables))
         self._verify_keyword_is_valid()
         self.timeout.start()
-        error = return_ = None
+        error = return_ = pass_ = None
         try:
             self.keywords.run(context)
         except ReturnFromKeyword, ret:
             return_ = ret
             error = ret.earlier_failures
-        except ExecutionFailed, err:
-            error = err
+        except ExecutionPassed, exc:
+            pass_ = exc
+            error = exc.earlier_failures
+        except ExecutionFailed, exc:
+            error = exc
         td_error = self._run_teardown(context, error)
-        if (error and not isinstance(error, ExecutionPassed)) or td_error:
+        if error or td_error:
             error = UserKeywordExecutionFailed(error, td_error)
-        return error, return_
+        return error or pass_, return_
 
     def _set_variables(self, arguments, variables):
         before_varargs, varargs = self._split_args_and_varargs(arguments)
@@ -219,6 +222,9 @@ class UserKeywordHandler(object):
         context.start_keyword_teardown(error)
         error = teardown.run(context)
         context.end_keyword_teardown()
+        if isinstance(error, ExecutionPassed) \
+                and not isinstance(error, ReturnFromKeyword):
+            return None
         return error
 
     def _verify_keyword_is_valid(self):
