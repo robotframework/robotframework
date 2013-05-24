@@ -13,35 +13,70 @@
 #  limitations under the License.
 
 
-class TestFailures(object):
+class ExecutionStatus(object):
 
-    def __init__(self):
+    def __init__(self, parent_status=None):
+        self.parent_status = parent_status
         self.setup_failure = None
         self.test_failure = None
         self.teardown_failure = None
+        self.teardown_allowed = False
 
-    @property
-    def run_allowed(self):
-        return self.setup_failure is None
+    def setup_executed(self, failure=None):
+        if failure:
+            self.setup_failure = unicode(failure)
+        self.teardown_allowed = True
+
+    def test_failed(self, failure):
+        self.test_failure = unicode(failure)
+
+    def teardown_executed(self, failure=None):
+        if failure:
+            self.teardown_failure = unicode(failure)
 
     @property
     def message(self):
+        if self.parent_status and self.parent_status.failures:
+            return ParentMessageCreator(self.parent_status).create()
+        return MessageCreator(self).create()
+
+    @property
+    def failures(self):
+        return bool(self.parent_status and self.parent_status.failures or
+                    self.setup_failure or
+                    self.test_failure or
+                    self.teardown_failure)
+
+
+# TODO: Messages below are not identical to old run messages!!
+# Remember to also update messages in SuiteTeardownFailureHandler
+
+class MessageCreator(object):
+    setup_failed = 'Setup failed:\n%s'
+    teardown_failed = 'Teardown failed:\n%s'
+    also_teardown_failed = '%s\n\nAlso teardown failed:\n%s'
+
+    def __init__(self, status):
+        self.setup = status.setup_failure
+        self.test = status.test_failure or ''
+        self.teardown = status.teardown_failure
+
+    def create(self):
         msg = self._get_message_before_teardown()
         return self._get_message_after_teardown(msg)
 
     def _get_message_before_teardown(self):
-        if self.setup_failure is not None:
-            return 'Setup failed:\n%s' % self.setup_failure
-        return self.test_failure or ''
+        if self.setup:
+            return self.setup_failed % self.setup
+        return self.test
 
     def _get_message_after_teardown(self, msg):
-        if self.teardown_failure is None:
+        if not self.teardown:
             return msg
         if not msg:
-            return 'Teardown failed:\n%s' % self.teardown_failure
-        return '%s\n\nAlso teardown failed:\n%s' % (msg, self.teardown_failure)
+            return self.teardown_failed % self.teardown
+        return self.also_teardown_failed % (msg, self.teardown)
 
-    def __nonzero__(self):
-        return (self.setup_failure is not None or
-                self.test_failure is not None or
-                self.teardown_failure is not None)
+
+class ParentMessageCreator(MessageCreator):
+    setup_failed = 'Parent suite setup failed:\n%s'

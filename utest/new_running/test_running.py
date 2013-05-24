@@ -10,18 +10,20 @@ CURDIR = dirname(abspath(__file__))
 DATADIR = normpath(join(CURDIR, '..', '..', 'atest', 'testdata', 'misc'))
 
 
-def run(suite):
-    result = suite.run(output='NONE', stdout=StringIO(), stderr=StringIO())
+def run(suite, **kwargs):
+    result = suite.run(output='NONE', stdout=StringIO(), stderr=StringIO(),
+                       **kwargs)
     return result.suite
 
 
-def build_and_run(path):
-    return run(TestSuiteBuilder().build(join(DATADIR, path)))
+def build(path):
+    return TestSuiteBuilder().build(join(DATADIR, path))
 
 
-def assert_suite(suite, name, status, tests=1):
+def assert_suite(suite, name, status, message='', tests=1):
     assert_equals(suite.name, name)
     assert_equals(suite.status, status)
+    assert_equals(suite.message, message)
     assert_equals(len(suite.tests), tests)
 
 
@@ -100,10 +102,10 @@ class TestRunning(unittest.TestCase):
         assert_test(result.tests[1], 'T2', 'FAIL', ('added tag',), 'Error')
 
 
-class TestSetupAndTeardown(unittest.TestCase):
+class TestTestSetupAndTeardown(unittest.TestCase):
 
     def setUp(self):
-        self.tests = build_and_run('setups_and_teardowns.txt').tests
+        self.tests = run(build('setups_and_teardowns.txt')).tests
 
     def test_passing_setup_and_teardown(self):
         assert_test(self.tests[0], 'Test with setup and teardown', 'PASS')
@@ -119,3 +121,59 @@ class TestSetupAndTeardown(unittest.TestCase):
     def test_failing_test_with_failing_teardown(self):
         assert_test(self.tests[3], 'Failing test with failing teardown', 'FAIL',
                     msg='Keyword\n\nAlso teardown failed:\nTest Teardown')
+
+
+class TestSuiteSetupAndTeardown(unittest.TestCase):
+
+    def setUp(self):
+        self.suite = build('setups_and_teardowns.txt')
+
+    def test_passing_setup_and_teardown(self):
+        suite = run(self.suite)
+        assert_suite(suite, 'Setups And Teardowns', 'FAIL', tests=4)
+        assert_test(suite.tests[0], 'Test with setup and teardown', 'PASS')
+
+    def test_failing_setup(self):
+        suite = run(self.suite, variable='SUITE SETUP:Fail')
+        assert_suite(suite, 'Setups And Teardowns', 'FAIL',
+                     'Setup failed:\nAssertionError', 4)
+        assert_test(suite.tests[0], 'Test with setup and teardown', 'FAIL',
+                    msg='Parent suite setup failed:\nAssertionError')
+
+    # TODO: Messages are inconsistent because suite teardown messages in
+    # tests come from old SuiteTeardownFailed. Change when new run integrated!
+
+    def test_failing_teardown(self):
+        suite = run(self.suite, variable='SUITE TEARDOWN:Fail')
+        assert_suite(suite, 'Setups And Teardowns', 'FAIL',
+                     'Teardown failed:\nAssertionError', 4)
+        assert_test(suite.tests[0], 'Test with setup and teardown', 'FAIL',
+                    msg='Teardown of the parent suite failed:\nAssertionError')
+
+    def test_failing_test_with_failing_teardown(self):
+        suite = run(self.suite, variable=['SUITE SETUP:Fail', 'SUITE TEARDOWN:Fail'])
+        assert_suite(suite, 'Setups And Teardowns', 'FAIL',
+                     'Setup failed:\nAssertionError\n\n'
+                     'Also teardown failed:\nAssertionError', 4)
+        assert_test(suite.tests[0], 'Test with setup and teardown', 'FAIL',
+                    msg='Parent suite setup failed:\nAssertionError\n\n'
+                        'Also teardown of the parent suite failed:\nAssertionError')
+
+    def test_nested_setups_and_teardowns(self):
+        root = TestSuite(name='Root')
+        root.keywords.create('Fail', ['Top level'], type='teardown')
+        root.suites.append(self.suite)
+        suite = run(root, variable=['SUITE SETUP:Fail', 'SUITE TEARDOWN:Fail'])
+        assert_suite(suite, 'Root', 'FAIL',
+                     'Teardown failed:\nTop level', 0)
+        assert_suite(suite.suites[0], 'Setups And Teardowns', 'FAIL',
+                     'Setup failed:\nAssertionError\n\n'
+                     'Also teardown failed:\nAssertionError', 4)
+        assert_test(suite.suites[0].tests[0], 'Test with setup and teardown', 'FAIL',
+                    msg='Parent suite setup failed:\nAssertionError\n\n'
+                        'Also teardown of the parent suite failed:\nAssertionError\n\n'
+                        'Also teardown of the parent suite failed:\nTop level')
+
+
+if __name__ == '__main__':
+    unittest.main()
