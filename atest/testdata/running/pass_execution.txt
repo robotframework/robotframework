@@ -11,12 +11,22 @@ Message is required
 
 With message
     [Documentation]    PASS exception message
-    Pass Execution    exception message
+    Pass Execution    ${EMPTY}exception message ${SPACE}
     Fail    should not go here
 
 With HTML message
     [Documentation]    PASS *HTML*<b>message</b>
     Pass Execution    *HTML*<b>message</b>
+    Fail    this should not execute
+
+With empty string as a message
+    [Documentation]    FAIL Message cannot be empty.
+    Pass Execution    ${EMPTY}
+    Fail    this should not execute
+
+With only whitespace as a message
+    [Documentation]    FAIL Message cannot be empty.
+    Pass Execution    ${SPACE} ${SPACE}
     Fail    this should not execute
 
 Remove one tag
@@ -176,3 +186,4 @@ Keyword with continuable failure
     Run Keyword And Continue On Failure    Fail    ${msg}
     Pass Execution    message
     Fail    Should not go here
+

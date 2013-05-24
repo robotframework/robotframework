@@ -19,6 +19,12 @@ With HTML message
     ${tc}=    Check Test Tags    ${TESTNAME}    force1    force2
     Check Log Message    ${tc.kws[0].msgs[0]}    ${PREFIX}<b>message</b>    HTML
 
+With empty string as a message
+    Check Test Case    ${TESTNAME}
+
+With only whitespace as a message
+    Check Test Case    ${TESTNAME}
+
 Remove one tag
     ${tc}=    Check Test Tags    ${TESTNAME}    force2
     Check Log Message    ${tc.kws[0].msgs[0]}     Removed tag 'force1'.

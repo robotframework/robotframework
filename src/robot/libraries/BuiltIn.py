@@ -812,6 +812,9 @@ class _Verify:
         return msg
 
     def pass_execution(self, message, *tags):
+        message = message.strip()
+        if not message:
+            raise RuntimeError('Message cannot be empty.')
         self._set_and_remove_tags(tags)
         log_message, level = self._get_logged_test_message_and_level(message)
         self.log('Execution passed with message:\n%s' % log_message, level)
