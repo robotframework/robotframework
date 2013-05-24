@@ -90,12 +90,15 @@ class Variables(utils.NormalizedDict):
 
     def _solve_delayed(self, name, value):
         if isinstance(value, DelayedVariable):
-            value = value.resolve(name, self)
-            self[name] = value
+            return value.resolve(name, self)
         return value
 
     def resolve_delayed(self):
-        self.values()
+        for var in self:
+            try:
+                self[var]  # getting variable indirectly resolves it if needed
+            except DataError:
+                pass
 
     def _validate_var_name(self, name):
         if not is_var(name):
@@ -330,21 +333,24 @@ class Variables(utils.NormalizedDict):
                 self.set(name, value)
 
     def set_from_variable_table(self, variables, overwrite=False):
+        def report_invalid_syntax(name, error):
+            # TODO: Error reporting is disabled with new model
+            if not hasattr(variables, 'report_invalid_syntax'):
+                return
+            variables.report_invalid_syntax("Setting variable '%s' failed: %s"
+                                            % (name, unicode(error)))
         for var in variables:
             if not var:
                 continue  # TODO: Remove compatibility with old run model.
             try:
                 name, value = self._get_var_table_name_and_value(
-                    var.name, var.value)
+                    var.name, var.value, report_invalid_syntax)
                 if overwrite or not self.contains(name):
                     self.set(name, value)
             except DataError, err:
-                # TODO: Error reporting is disabled with new model
-                if hasattr(variables, 'report_invalid_syntax'):
-                    variables.report_invalid_syntax("Setting variable '%s' failed: %s"
-                                                    % (var.name, unicode(err)))
+                report_invalid_syntax(var.name, err)
 
-    def _get_var_table_name_and_value(self, name, value):
+    def _get_var_table_name_and_value(self, name, value, error_reporter):
         self._validate_var_name(name)
         # TODO: Old run gives as scalars as list, new as strings. Clean up!
         if is_scalar_var(name) and isinstance(value, basestring):
@@ -352,7 +358,7 @@ class Variables(utils.NormalizedDict):
         else:
             self._validate_var_is_not_scalar_list(name, value)
         value = [self._unescape_leading_trailing_spaces(cell) for cell in value]
-        return name, DelayedVariable(value)
+        return name, DelayedVariable(value, error_reporter)
 
     def _unescape_leading_trailing_spaces(self, item):
         if item.endswith(' \\'):
@@ -419,10 +425,21 @@ class Variables(utils.NormalizedDict):
 
 class DelayedVariable(object):
 
-    def __init__(self, value):
+    def __init__(self, value, error_reporter):
         self._value = value
+        self._error_reporter = error_reporter
 
     def resolve(self, name, variables):
+        try:
+            value = self._resolve(name, variables)
+        except DataError, err:
+            self._error_reporter(name, err)
+            variables.pop(name)
+            raise DataError("Non-existing variable '%s'." % name)
+        variables[name] = value
+        return value
+
+    def _resolve(self, name, variables):
         if is_list_var(name):
             return variables.replace_list(self._value)
         return variables.replace_scalar(self._value[0])

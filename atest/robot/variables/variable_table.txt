@@ -50,12 +50,44 @@ Three dots on the same line should be interpreted as string
     Check Test Case     ${TEST NAME}
 
 Using Scalar List Should Fail
-    ${path}=    Normalize Path    ${DATADIR}/variables/variable_table.txt
-    ${msg}=    Catenate
-    ...    Error in file '${path}' in table 'Variables': Setting variable
-    ...    '\${SCALAR LIST}' failed: Creating a scalar variable with a list
-    ...    value in the Variable table is no longer possible. Create a list
-    ...    variable '\@{SCALAR LIST}' and use it as a scalar variable
-    ...    '\${SCALAR LIST}' instead.
     Check Test Case     ${TEST NAME}
-    Check Log Message    ${ERRORS[0]}    ${msg}    ERROR
+    Creating Variable Should Have Failed    ${ERRORS[0]}    \${SCALAR LIST}
+    ...    Creating a scalar variable with a list value in the Variable table
+    ...    is no longer possible. Create a list variable '\@{SCALAR LIST}'
+    ...    and use it as a scalar variable '\${SCALAR LIST}' instead.
+
+Creating variable using non-existing variable fails
+    Check Test Case    ${TEST NAME}
+    Creating Variable Should Have Failed    ${ERRORS[4]}    \${NONEX 1}
+    ...    Non-existing variable '\${NON EXISTING}'.
+    Creating Variable Should Have Failed    ${ERRORS[5]}    \${NONEX 2A}
+    ...    Non-existing variable '\${NON EX}'.
+    Creating Variable Should Have Failed    ${ERRORS[6]}    \${NONEX 2B}
+    ...    Non-existing variable '\${NONEX 2A}'.
+
+Using variable created from non-existing variable in imports fails
+    Creating Variable Should Have Failed    ${ERRORS[1]}    \${NONEX 3}
+    ...    Non-existing variable '\${NON EXISTING VARIABLE}'.
+    Import Should Have Failed    ${ERRORS[2]}    Resource
+    ...    Non-existing variable '\${NONEX 3}'.
+    Import Should Have Failed    ${ERRORS[3]}    Library
+    ...    Non-existing variable '\${NONEX 3}'.
+
+*** Keywords ***
+Creating Variable Should Have Failed
+    [Arguments]    ${error}    ${name}    @{message}
+    ${path} =    Normalize Path    ${DATADIR}/variables/variable_table.txt
+    ${msg} =    Catenate
+    ...    Error in file '${path}' in table 'Variables':
+    ...    Setting variable '${name}' failed:
+    ...    @{message}
+    Check Log Message    ${error}    ${msg}    ERROR
+
+Import Should Have Failed
+    [Arguments]    ${error}    ${name}    @{message}
+    ${path} =    Normalize Path    ${DATADIR}/variables/variable_table.txt
+    ${msg} =    Catenate
+    ...    Error in file '${path}' in table 'Settings':
+    ...    Replacing variables from setting '${name}' failed:
+    ...    @{message}
+    Check Log Message    ${error}    ${msg}    ERROR

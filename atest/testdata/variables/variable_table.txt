@@ -22,6 +22,14 @@ ${ASSING MARK}    This syntax works starting from 1.8
 ${THREE DOTS}     ...
 @{3DOTS LIST}     ...   ...
 ${SCALAR LIST}    I    am    a    scalar     list     with    many     items
+${NONEX 1}        Creating variable based on ${NON EXISTING} variable fails.
+${NONEX 2A}       This ${NON EX} is used for creating another variable.
+${NONEX 2B}       ${NONEX 2A}
+${NONEX 3}        This ${NON EXISTING VARIABLE} is used in imports.
+
+*** Settings ***
+Resource          ${NONEX 3}
+Library           ${NONEX 3}
 
 *** Test Case ***
 Scalar String
@@ -107,5 +115,10 @@ Three dots on the same line should be interpreted as string
     Should Be Equal    ${sos}    ...---...
 
 Using Scalar List Should Fail
-    [Documentation]    FAIL    Non-existing variable '${SCALAR LIST}'.
-    Log    ${SCALAR LIST}
+    Variable Should Not Exist    ${SCALAR LIST}
+
+Creating variable using non-existing variable fails
+    Variable Should Not Exist    ${NONEX 1}
+    Variable Should Not Exist    ${NONEX 2A}
+    Variable Should Not Exist    ${NONEX 2B}
+    Variable Should Not Exist    ${NONEX 3}
