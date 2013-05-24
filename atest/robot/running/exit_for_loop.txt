@@ -29,10 +29,10 @@ Exit For Loop Without For Loop Should Fail
 Exit For Loop In User Keyword Without For Loop Should Fail
     Check Test Case    ${TESTNAME}
 
-Exit For Loop Keyword Should Have No Messages
+Exit For Loop Keyword Should Log Info
     ${tc} =    Check Test Case    Simple Exit For Loop
     Should Be Equal    ${tc.kws[0].kws[0].kws[0].name}    BuiltIn.Exit For Loop
-    Should Be Empty    ${tc.kws[0].kws[0].kws[0].msgs}
+    Should Be Equal As Strings   ${tc.kws[0].kws[0].kws[0].msgs[0]}   Exiting for loop    INFO
 
 Custom Exception with ROBOT_EXIT_FOR_LOOP Works But Is Deprecated
     Check Log Message   ${ERRORS[0]}     Using ROBOT_EXIT_FOR_LOOP is deprecated in 2.8.   WARN
