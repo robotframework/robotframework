@@ -812,6 +812,30 @@ class _Verify:
         return msg
 
     def pass_execution(self, message, *tags):
+        """Skips the rest of the current test execution with status PASS.
+
+        The message is specified using the `msg` argument. It is possible to
+        use HTML in the given message by prefixing the message with `*HTML*`.
+
+        It is possible to modify tags of the current test case by passing tags
+        after the message. Tags starting with a hyphen (e.g. `-regression`) are
+        removed and others added. Tags are modified using `Set Tags` and
+        `Remove Tags` internally, and the semantics setting and removing them
+        are the same as with these keywords.
+
+        If this keyword is used outside a test teardown, the message is
+        overridden by possible failure message. Failures in teardown
+        are always shown in addition to this message.
+
+        Examples:
+        | Pass Execution | Skip rest of the test   | | | # Passes the current test case with the given message. |
+        | Pass Execution | *HTML*<b>Skip rest of the test</b> | | | # Passes the current test case using HTML in the message. |
+        | Pass Execution | No need to go further | case-ok | | # Fails and adds 'case-ok' tag. |
+        | Pass Execution | Deprecated | -regression | | # Removes tag 'regression'. |
+        | Pass Execution | My message | tag    | -t*  | # Removes all tags starting with 't' except the newly added 'tag'. |
+
+        New in Robot Framework 2.8.
+        """
         message = message.strip()
         if not message:
             raise RuntimeError('Message cannot be empty.')
