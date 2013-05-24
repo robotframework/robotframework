@@ -126,22 +126,24 @@ class HandlerExecutionFailed(ExecutionFailed):
         details = utils.ErrorDetails()
         timeout = isinstance(details.error, TimeoutError)
         syntax = isinstance(details.error, DataError)
-        exit = self._get(details.error, 'EXIT_ON_FAILURE')
+        exit_on_failure = self._get(details.error, 'EXIT_ON_FAILURE')
         continue_on_failure = self._get(details.error, 'CONTINUE_ON_FAILURE')
-
-        if self._get(details.error, 'EXIT_FOR_LOOP'):
-            from robot.output import LOGGER
-            LOGGER.warn('Using ROBOT_EXIT_FOR_LOOP is deprecated in 2.8.')
-            raise ExitForLoop
-
         ExecutionFailed.__init__(self, details.message, timeout, syntax,
-                                 exit, continue_on_failure)
-
+                                 exit_on_failure, continue_on_failure)
         self.full_message = details.message
         self.traceback = details.traceback
+        self._handle_deprecated_exit_for_loop(details.error)
 
     def _get(self, error, attr):
         return bool(getattr(error, 'ROBOT_' + attr, False))
+
+    def _handle_deprecated_exit_for_loop(self, error):
+        if self._get(error, 'EXIT_FOR_LOOP'):
+            from robot.output import LOGGER
+            LOGGER.warn("Support for using 'ROBOT_EXIT_FOR_LOOP' attribute to "
+                        "exit for loops is deprecated in Robot Framework 2.8 "
+                        "and will be removed in 2.9.")
+            raise ExitForLoop
 
 
 class ExecutionFailures(ExecutionFailed):
