@@ -1291,7 +1291,7 @@ framework.
 
 This is especially important when threads are run on background while
 other keywords are running. Results of communicating with the
-framework in that case are undefined and can in works case cause a
+framework in that case are undefined and can in the worst case cause a
 crash or a corrupted output file. If a keyword starts something on
 background, there should be another keyword that checks the status of
 the worker thread and reports gathered information accordingly.
