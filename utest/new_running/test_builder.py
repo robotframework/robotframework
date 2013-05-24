@@ -81,8 +81,8 @@ class TestBuilding(unittest.TestCase):
 
     def test_suite_setup_and_teardown(self):
         suite = self._build('setups_and_teardowns.txt')
-        assert_equals(suite.keywords.setup.name, 'Suite Setup')
-        assert_equals(suite.keywords.teardown.name, 'Suite Teardown')
+        assert_equals(suite.keywords.setup.name, '${SUITE SETUP}')
+        assert_equals(suite.keywords.teardown.name, '${SUITE TEARDOWN}')
 
     def test_test_setup_and_teardown(self):
         test = self._build('setups_and_teardowns.txt').tests[0]
