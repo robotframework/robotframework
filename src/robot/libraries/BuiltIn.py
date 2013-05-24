@@ -1648,6 +1648,7 @@ class _Control:
 
         New in Robot Framework 2.5.2.
         """
+        self.log("Exiting for loop")
         raise ExitForLoop()
 
     def exit_for_loop_if(self, condition):
