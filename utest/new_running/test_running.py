@@ -136,7 +136,7 @@ class TestSuiteSetupAndTeardown(unittest.TestCase):
     def test_failing_setup(self):
         suite = run(self.suite, variable='SUITE SETUP:Fail')
         assert_suite(suite, 'Setups And Teardowns', 'FAIL',
-                     'Setup failed:\nAssertionError', 4)
+                     'Suite setup failed:\nAssertionError', 4)
         assert_test(suite.tests[0], 'Test with setup and teardown', 'FAIL',
                     msg='Parent suite setup failed:\nAssertionError')
 
@@ -146,15 +146,15 @@ class TestSuiteSetupAndTeardown(unittest.TestCase):
     def test_failing_teardown(self):
         suite = run(self.suite, variable='SUITE TEARDOWN:Fail')
         assert_suite(suite, 'Setups And Teardowns', 'FAIL',
-                     'Teardown failed:\nAssertionError', 4)
+                     'Suite teardown failed:\nAssertionError', 4)
         assert_test(suite.tests[0], 'Test with setup and teardown', 'FAIL',
                     msg='Teardown of the parent suite failed:\nAssertionError')
 
     def test_failing_test_with_failing_teardown(self):
         suite = run(self.suite, variable=['SUITE SETUP:Fail', 'SUITE TEARDOWN:Fail'])
         assert_suite(suite, 'Setups And Teardowns', 'FAIL',
-                     'Setup failed:\nAssertionError\n\n'
-                     'Also teardown failed:\nAssertionError', 4)
+                     'Suite setup failed:\nAssertionError\n\n'
+                     'Also suite teardown failed:\nAssertionError', 4)
         assert_test(suite.tests[0], 'Test with setup and teardown', 'FAIL',
                     msg='Parent suite setup failed:\nAssertionError\n\n'
                         'Also teardown of the parent suite failed:\nAssertionError')
@@ -165,10 +165,10 @@ class TestSuiteSetupAndTeardown(unittest.TestCase):
         root.suites.append(self.suite)
         suite = run(root, variable=['SUITE SETUP:Fail', 'SUITE TEARDOWN:Fail'])
         assert_suite(suite, 'Root', 'FAIL',
-                     'Teardown failed:\nTop level', 0)
+                     'Suite teardown failed:\nTop level', 0)
         assert_suite(suite.suites[0], 'Setups And Teardowns', 'FAIL',
-                     'Setup failed:\nAssertionError\n\n'
-                     'Also teardown failed:\nAssertionError', 4)
+                     'Suite setup failed:\nAssertionError\n\n'
+                     'Also suite teardown failed:\nAssertionError', 4)
         assert_test(suite.suites[0].tests[0], 'Test with setup and teardown', 'FAIL',
                     msg='Parent suite setup failed:\nAssertionError\n\n'
                         'Also teardown of the parent suite failed:\nAssertionError\n\n'

@@ -92,7 +92,7 @@ class Runner(SuiteVisitor):
         if test.timeout:
             test.timeout.replace_variables(self._variables)  # FIXME: Should not change model state!!
             test.timeout.start()
-        status = ExecutionStatus(self._suite_status)
+        status = ExecutionStatus(self._suite_status, test=True)
         if not status.failures:
             self._run_setup(test.keywords.setup, status)
         try:
@@ -100,10 +100,12 @@ class Runner(SuiteVisitor):
                 keywords.run(self._context)
         except ExecutionFailed, err:
             status.test_failed(err)
+        result.status = status.status
+        result.message = status.message
         if status.teardown_allowed:
             self._run_teardown(test.keywords.teardown, status)
+        result.status = status.status
         result.message = status.message
-        result.status = 'FAIL' if status.failures else 'PASS'
         result.endtime = utils.get_timestamp()
         self._context.end_test(result)
 

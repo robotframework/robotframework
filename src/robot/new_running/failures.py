@@ -15,12 +15,13 @@
 
 class ExecutionStatus(object):
 
-    def __init__(self, parent_status=None):
+    def __init__(self, parent_status=None, test=False):
         self.parent_status = parent_status
         self.setup_failure = None
         self.test_failure = None
         self.teardown_failure = None
         self.teardown_allowed = False
+        self._test = test
 
     def setup_executed(self, failure=None):
         if failure:
@@ -37,8 +38,12 @@ class ExecutionStatus(object):
     @property
     def message(self):
         if self.parent_status and self.parent_status.failures:
-            return ParentMessageCreator(self.parent_status).create()
-        return MessageCreator(self).create()
+            message = ParentMessage(self.parent_status)
+        elif self._test:
+            message = TestMessage(self)
+        else:
+            message = SuiteMessage(self)
+        return unicode(message)
 
     @property
     def failures(self):
@@ -47,11 +52,15 @@ class ExecutionStatus(object):
                     self.test_failure or
                     self.teardown_failure)
 
+    @property
+    def status(self):
+        return 'FAIL' if self.failures else 'PASS'
+
 
 # TODO: Messages below are not identical to old run messages!!
 # Remember to also update messages in SuiteTeardownFailureHandler
 
-class MessageCreator(object):
+class TestMessage(object):
     setup_failed = 'Setup failed:\n%s'
     teardown_failed = 'Teardown failed:\n%s'
     also_teardown_failed = '%s\n\nAlso teardown failed:\n%s'
@@ -61,7 +70,7 @@ class MessageCreator(object):
         self.test = status.test_failure or ''
         self.teardown = status.teardown_failure
 
-    def create(self):
+    def __unicode__(self):
         msg = self._get_message_before_teardown()
         return self._get_message_after_teardown(msg)
 
@@ -78,5 +87,13 @@ class MessageCreator(object):
         return self.also_teardown_failed % (msg, self.teardown)
 
 
-class ParentMessageCreator(MessageCreator):
+class SuiteMessage(TestMessage):
+    setup_failed = 'Suite setup failed:\n%s'
+    teardown_failed = 'Suite teardown failed:\n%s'
+    also_teardown_failed = '%s\n\nAlso suite teardown failed:\n%s'
+
+
+class ParentMessage(SuiteMessage):
     setup_failed = 'Parent suite setup failed:\n%s'
+    teardown_failed = 'Parent suite teardown failed:\n%s'
+    also_teardown_failed = '%s\n\nAlso parent suite teardown failed:\n%s'
