@@ -1612,6 +1612,7 @@ class _Control:
 
         New in Robot Framework 2.8.
         """
+        self.log("Continuing for loop from the next iteration")
         raise ContinueForLoop()
 
     def continue_for_loop_if(self, condition):
