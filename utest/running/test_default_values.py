@@ -47,9 +47,9 @@ class TestDefaultValues(unittest.TestCase):
 
     def test_template(self):
         template = Template('Template')
-        assert_equal(self.tcf_defaults.get_template(template).name,'Foo')
+        assert_equal(self.tcf_defaults.get_template(template), 'Foo')
         template.populate(['Bar'])
-        assert_equal(self.tcf_defaults.get_template(template).name,'Bar')
+        assert_equal(self.tcf_defaults.get_template(template), 'Bar')
 
 
 if __name__ == "__main__":

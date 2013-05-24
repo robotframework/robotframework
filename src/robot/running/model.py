@@ -226,9 +226,8 @@ class RunnableTestCase(BaseTestCase):
         self.teardown = defaults.get_teardown(tc_data.teardown)
         self.tags = defaults.get_tags(tc_data.tags)
         self.timeout = defaults.get_timeout(tc_data.timeout)
-        self._template = defaults.get_template(tc_data.template)
-        self._steps = tc_data.steps
-        self._keywords = None
+        self.template = defaults.get_template(tc_data.template)
+        self.keywords = Keywords(tc_data.steps, self.template)
 
     def run(self, context, parent_errors):
         errors = self._start_run(context, parent_errors)
@@ -237,16 +236,6 @@ class RunnableTestCase(BaseTestCase):
         else:
             self._not_allowed_to_run(errors)
         self._end_run(context)
-
-    @property
-    def keywords(self):
-        if self._keywords is None:
-            self._keywords = Keywords(self._steps, self.template)
-        return self._keywords
-
-    @property
-    def template(self):
-        return self._template.name
 
     def _start_run(self, context, parent_errors):
         errors = TestRunErrors(parent_errors)
@@ -262,8 +251,6 @@ class RunnableTestCase(BaseTestCase):
                                                      errors)
         self.setup.replace_variables(context.get_current_vars(), errors)
         self.teardown.replace_variables(context.get_current_vars(), errors)
-        self._template.replace_variables(context.get_current_vars(), errors)
-        self._keywords = None
         tags = context.replace_vars_from_setting('Tags', self.tags, errors)
         self.tags = utils.normalize_tags(tags)
         self.timeout.replace_variables(context.get_current_vars())

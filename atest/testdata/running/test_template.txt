@@ -5,7 +5,6 @@ Test Template  Should Be Equal
 *** Variables ***
 ${VARIABLE}       Variable content
 ${SAME VARIABLE}  Variable content
-${TEMPLATE}       Should Not Be Equal
 
 *** Test Cases ***
 Test Using Normal Keyword Is Not Possible With Template
@@ -23,11 +22,6 @@ Test Overriding Default Template In Test
   Same  Same
   Something  Different
   42  43
-
-Test Using Variable As A Template
-  [Documentation]  FAIL Same == Same
-  [Template]  ${TEMPLATE}
-  Same  Same
 
 Test Overriding Default Template In Test With Empty
   [documentation]  FAIL This should be executed as normal keyword
@@ -57,7 +51,7 @@ Test Empty Values
   [Template]  Expect Exactly Two Args
   \           \
   ${EMPTY}    \
-    
+
 Test Template With FOR Loop
   [Documentation]  FAIL Several failures occurred:\n\n
   ...  1) This != Fails\n\n
